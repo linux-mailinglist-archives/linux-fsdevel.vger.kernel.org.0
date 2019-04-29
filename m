@@ -2,243 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AA61DAB3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2019 05:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD3BDB59
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2019 06:55:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfD2DQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Apr 2019 23:16:28 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:38156 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbfD2DQ2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Apr 2019 23:16:28 -0400
-Received: from grover.flets-west.jp (softbank126125154137.bbtec.net [126.125.154.137]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id x3T3FcVU011166;
-        Mon, 29 Apr 2019 12:15:38 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x3T3FcVU011166
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1556507738;
-        bh=16jxTJlqvgdtc0bmtHW26mp1fSFaCwPHhBiW8YOQYHQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=SXaiy2bz37BrBxiz7TFTYS5t5vhN3JA7tjv4a+WVBigceHeCEde/RgD8N0DlyfmPk
-         h6I8LVmQ3OXIwlb6XDD+ATEi2JyfisChSuPQy6t0nZCvV7oeFEqmS2uBTjjd7XptMT
-         VeZ63rTEDBkhnBuOuySOrWaDylpR3t4qFmhaQAnbvB+B/+NV+GSj8rCuLYqsVWj9Nx
-         4HkAvSn6rzt0KW5dCDSdawv4KQ43G6/GciM0RAn3S/fo59ouoo3exwmD2QecV/i+RH
-         7TAaDsffT+QHhTqnnhEsyfzFlWwFrSBRfhO7gISnzGz2FJvPP/WMVto4Y0liaC7oUx
-         5AMZSkItixgaA==
-X-Nifty-SrcIP: [126.125.154.137]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Olaf Weber <olaf@sgi.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.co.uk>,
-        "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2] unicode: refactor the rule for regenerating utf8data.h
-Date:   Mon, 29 Apr 2019 12:15:31 +0900
-Message-Id: <1556507731-830-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726090AbfD2EyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Apr 2019 00:54:04 -0400
+Received: from mga03.intel.com ([134.134.136.65]:28440 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725468AbfD2EyE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Apr 2019 00:54:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Apr 2019 21:54:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,408,1549958400"; 
+   d="scan'208";a="146566238"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga003.jf.intel.com with ESMTP; 28 Apr 2019 21:54:03 -0700
+From:   ira.weiny@intel.com
+To:     lsf-pc@lists.linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, Ira Weiny <ira.weiny@intel.com>
+Subject: [RFC PATCH 00/10] RDMA/FS DAX "LONGTERM" lease proposal
+Date:   Sun, 28 Apr 2019 21:53:49 -0700
+Message-Id: <20190429045359.8923-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-scripts/mkutf8data is used only when regenerating utf8data.h,
-which never happens in the normal kernel build. However, it is
-irrespectively built if CONFIG_UNICODE is enabled.
+From: Ira Weiny <ira.weiny@intel.com>
 
-Moreover, there is no good reason for it to reside in the scripts/
-directory since it is only used in fs/unicode/.
+In order to support RDMA to File system pages[*] without On Demand Paging a
+number of things need to be done.
 
-Hence, move it from scripts/ to fs/unicode/.
+1) GUP "longterm"[1] users need to inform the other subsystems that they have
+   taken a pin on a page which may remain pinned for a very "long time".[1]
 
-In some cases, we bypass build artifacts in the normal build. The
-conventional way to do so is to surround the code with ifdef REGENERATE_*.
+2) Any page which is "controlled" by a file system such needs to have special
+   handling.  The details of the handling depends on if the page is page cache
+   backed or not.
 
-For example,
+   2a) A page cache backed page which has been pinned by GUP Longterm can use a
+   bounce buffer to allow the file system to write back snap shots of the page.
+   This is handled by the FS recognizing the GUP longterm pin and making a copy
+   of the page to be written back.
+   	NOTE: this patch set does not address this path.
 
- - 7373f4f83c71 ("kbuild: add implicit rules for parser generation")
- - 6aaf49b495b4 ("crypto: arm,arm64 - Fix random regeneration of S_shipped")
+   2b) A FS "controlled" page which is not page cache backed is either easier
+   to deal with or harder depending on the operation the filesystem is trying
+   to do.
+   
+	2ba) [Hard case] If the FS operation _is_ a truncate or hole punch the
+	FS can no longer use the pages in question until the pin has been
+	removed.  This patch set presents a solution to this by introducing
+	some reasonable restrictions on user space applications.
 
-I rewrote the rule in a more kbuild'ish style.
+	2bb) [Easy case] If the FS operation is _not_ a truncate or hole punch
+	then there is nothing which need be done.  Data is Read or Written
+	directly to the page.  This is an easy case which would currently work
+	if not for GUP longterm pins being disabled.  Therefore this patch set
+	need not change access to the file data but does allow for GUP pins
+	after 2ba above is dealt with.
 
-In the normal build, utf8data.h is just shipped from the check-in file.
 
-$ make
-  [ snip ]
-  SHIPPED fs/unicode/utf8data.h
-  CC      fs/unicode/utf8-norm.o
-  CC      fs/unicode/utf8-core.o
-  CC      fs/unicode/utf8-selftest.o
-  AR      fs/unicode/built-in.a
+The architecture of this series is to introduce a F_LONGTERM file lease
+mechanism which applications use in one of 2 ways.
 
-If you want to generate utf8data.h based on UCD, put *.txt files into
-fs/unicode/, then pass REGENERATE_UTF8DATA=1 from the command line.
-The mkutf8data tool will be automatically compiled to generate the
-utf8data.h from the *.txt files.
+1) Applications which may require hole punch or truncation operations on files
+   they intend to mmmapping and pinning for long periods.  Can take a
+   F_LONGTERM lease on the file.  When a file system operation needs truncate
+   access to this file the lease is broken and the application gets a SIGIO.
+   Upon catching SIGIO the application can un-pin (note munmap is not required)
+   the memory associated with that file.  At that point the truncating user can
+   proceed.  Re-pinning the memory is entirely left up to the application.  In
+   some cases a new mmap will be required (as with a truncation) or a SIGBUS
+   would be experienced anyway.
 
-$ make REGENERATE_UTF8DATA=1
-  [ snip ]
-  HOSTCC  fs/unicode/mkutf8data
-  GEN     fs/unicode/utf8data.h
-  CC      fs/unicode/utf8-norm.o
-  CC      fs/unicode/utf8-core.o
-  CC      fs/unicode/utf8-selftest.o
-  AR      fs/unicode/built-in.a
+   Failure to respond to a SIGIO lease break within the system configured
+   lease-break-time will result in a SIGBUS.
 
-I renamed the check-in utf8data.h to utf8data.h_shipped so that this
-will work for the out-of-tree build.
+   WIP: SIGBUS could be caught and ignored...  what danger does this present...
+   should this be SIGKILL  or should we wait another lease-break-time and then
+   send SIGKILL?
 
-You can update it based on the latest UCD like this:
+2) Applications which don't require hold punch or truncate operations can use
+   pinning without taking a F_LONGTERM lease.  However, applications such as
+   this are expected to have considered the access to the files they are
+   mmaping and are expected to be controlling them in a way that other users on
+   a system can't truncate a file and cause a DOS on the application.  These
+   applications will be sent a SIGBUS if someone attempts to truncate or hole
+   punch a file.
 
-$ make REGENERATE_UTF8DATA=1 fs/unicode/
-$ cp fs/unicode/utf8data.h fs/unicode/utf8data.h_shipped
+	ALTERNATIVE WIP patch in series: If the F_LONGTERM lease is not taken
+	fail the GUP.
 
-Also, I added entries to .gitignore and dontdiff.
+The patches compile and have been tested to a first degree.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+NOTES:
+Can we deal with the lease/pin at the VFS layer?  or for all FSs?
+LONGTERM seems like a bad name.  Suggestions?
 
-Changes in v2:
- - Make this work correctly with O= option
+[1] The definition of long time is debatable but it has been established
+that RDMAs use of pages, minutes or hours after the pin is the extreme case
+which makes this problem most severe.
 
- Documentation/dontdiff                        |  2 ++
- fs/unicode/.gitignore                         |  2 ++
- fs/unicode/Makefile                           | 41 ++++++++++++++++++++-------
- fs/unicode/README.utf8data                    |  9 +++---
- {scripts => fs/unicode}/mkutf8data.c          |  0
- fs/unicode/{utf8data.h => utf8data.h_shipped} |  0
- scripts/Makefile                              |  1 -
- 7 files changed, 38 insertions(+), 17 deletions(-)
- create mode 100644 fs/unicode/.gitignore
- rename {scripts => fs/unicode}/mkutf8data.c (100%)
- rename fs/unicode/{utf8data.h => utf8data.h_shipped} (100%)
+[*] Not all file system pages are Page Cache pages.  FS DAX bypasses the page
+cache.
 
-diff --git a/Documentation/dontdiff b/Documentation/dontdiff
-index ef25a06..9369377 100644
---- a/Documentation/dontdiff
-+++ b/Documentation/dontdiff
-@@ -176,6 +176,7 @@ mkprep
- mkregtable
- mktables
- mktree
-+mkutf8data
- modpost
- modules.builtin
- modules.order
-@@ -254,6 +255,7 @@ vsyscall_32.lds
- wanxlfw.inc
- uImage
- unifdef
-+utf8data.h
- wakeup.bin
- wakeup.elf
- wakeup.lds
-diff --git a/fs/unicode/.gitignore b/fs/unicode/.gitignore
-new file mode 100644
-index 0000000..0381e22
---- /dev/null
-+++ b/fs/unicode/.gitignore
-@@ -0,0 +1,2 @@
-+mkutf8data
-+utf8data.h
-diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-index 671d31f..d46e9ba 100644
---- a/fs/unicode/Makefile
-+++ b/fs/unicode/Makefile
-@@ -5,15 +5,34 @@ obj-$(CONFIG_UNICODE_NORMALIZATION_SELFTEST) += utf8-selftest.o
- 
- unicode-y := utf8-norm.o utf8-core.o
- 
--# This rule is not invoked during the kernel compilation.  It is used to
--# regenerate the utf8data.h header file.
--utf8data.h.new: *.txt $(objdir)/scripts/mkutf8data
--	$(objdir)/scripts/mkutf8data \
--		-a DerivedAge.txt \
--		-c DerivedCombiningClass.txt \
--		-p DerivedCoreProperties.txt \
--		-d UnicodeData.txt \
--		-f CaseFolding.txt \
--		-n NormalizationCorrections.txt \
--		-t NormalizationTest.txt \
-+$(obj)/utf8-norm.o: $(obj)/utf8data.h
-+
-+# In the normal build, the checked-in utf8data.h is just shipped.
-+#
-+# To generate utf8data.h from UCD, put *.txt files in this directory
-+# and pass REGENERATE_UTF8DATA=1 from the command line.
-+ifdef REGENERATE_UTF8DATA
-+
-+quiet_cmd_utf8data = GEN     $@
-+      cmd_utf8data = $< \
-+		-a $(srctree)/$(src)/DerivedAge.txt \
-+		-c $(srctree)/$(src)/DerivedCombiningClass.txt \
-+		-p $(srctree)/$(src)/DerivedCoreProperties.txt \
-+		-d $(srctree)/$(src)/UnicodeData.txt \
-+		-f $(srctree)/$(src)/CaseFolding.txt \
-+		-n $(srctree)/$(src)/NormalizationCorrections.txt \
-+		-t $(srctree)/$(src)/NormalizationTest.txt \
- 		-o $@
-+
-+$(obj)/utf8data.h: $(obj)/mkutf8data $(filter %.txt, $(cmd_utf8data)) FORCE
-+	$(call if_changed,utf8data)
-+
-+else
-+
-+$(obj)/utf8data.h: $(src)/utf8data.h_shipped FORCE
-+	$(call if_changed,shipped)
-+
-+endif
-+
-+targets += utf8data.h
-+hostprogs-y += mkutf8data
-diff --git a/fs/unicode/README.utf8data b/fs/unicode/README.utf8data
-index eeb7561..459eebf 100644
---- a/fs/unicode/README.utf8data
-+++ b/fs/unicode/README.utf8data
-@@ -41,15 +41,14 @@ released version of the UCD can be found here:
- 
-   http://www.unicode.org/Public/UCD/latest/
- 
--To build the utf8data.h file, from a kernel tree that has been built,
--cd to this directory (fs/unicode) and run this command:
-+Then, build under fs/unicode/ with REGENERATE_UTF8DATA=1:
- 
--	make C=../.. objdir=../.. utf8data.h.new
-+	make REGENERATE_UTF8DATA=1 fs/unicode/
- 
--After sanity checking the newly generated utf8data.h.new file (the
-+After sanity checking the newly generated utf8data.h file (the
- version generated from the 12.1.0 UCD should be 4,109 lines long, and
- have a total size of 324k) and/or comparing it with the older version
--of utf8data.h, rename it to utf8data.h.
-+of utf8data.h_shipped, rename it to utf8data.h_shipped.
- 
- If you are a kernel developer updating to a newer version of the
- Unicode Character Database, please update this README.utf8data file
-diff --git a/scripts/mkutf8data.c b/fs/unicode/mkutf8data.c
-similarity index 100%
-rename from scripts/mkutf8data.c
-rename to fs/unicode/mkutf8data.c
-diff --git a/fs/unicode/utf8data.h b/fs/unicode/utf8data.h_shipped
-similarity index 100%
-rename from fs/unicode/utf8data.h
-rename to fs/unicode/utf8data.h_shipped
-diff --git a/scripts/Makefile b/scripts/Makefile
-index b87e3e0..9d442ee 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -20,7 +20,6 @@ hostprogs-$(CONFIG_ASN1)	 += asn1_compiler
- hostprogs-$(CONFIG_MODULE_SIG)	 += sign-file
- hostprogs-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += extract-cert
- hostprogs-$(CONFIG_SYSTEM_EXTRA_CERTIFICATE) += insert-sys-cert
--hostprogs-$(CONFIG_UNICODE) += mkutf8data
- 
- HOSTCFLAGS_sortextable.o = -I$(srctree)/tools/include
- HOSTCFLAGS_asn1_compiler.o = -I$(srctree)/include
+
+Ira Weiny (10):
+  fs/locks: Add trace_leases_conflict
+  fs/locks: Introduce FL_LONGTERM file lease
+  mm/gup: Pass flags down to __gup_device_huge* calls
+  WIP: mm/gup: Ensure F_LONGTERM lease is held on GUP pages
+  mm/gup: Take FL_LONGTERM lease if not set by user
+  fs/locks: Add longterm lease traces
+  fs/dax: Create function dax_mapping_is_dax()
+  mm/gup: fs: Send SIGBUS on truncate of active file
+  fs/locks: Add tracepoint for SIGBUS on LONGTERM expiration
+  mm/gup: Remove FOLL_LONGTERM DAX exclusion
+
+ fs/dax.c                         |  23 ++-
+ fs/ext4/inode.c                  |   4 +
+ fs/locks.c                       | 301 +++++++++++++++++++++++++++++--
+ fs/xfs/xfs_file.c                |   4 +
+ include/linux/dax.h              |   6 +
+ include/linux/fs.h               |  18 ++
+ include/linux/mm.h               |   2 +
+ include/trace/events/filelock.h  |  74 +++++++-
+ include/uapi/asm-generic/fcntl.h |   2 +
+ mm/gup.c                         | 107 ++++-------
+ mm/huge_memory.c                 |  18 ++
+ 11 files changed, 468 insertions(+), 91 deletions(-)
+
 -- 
-2.7.4
+2.20.1
 
