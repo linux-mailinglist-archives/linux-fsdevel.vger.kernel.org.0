@@ -2,270 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81FD0EC8E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 00:10:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13023ECB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 00:22:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbfD2WKB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Apr 2019 18:10:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55120 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728105AbfD2WKB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Apr 2019 18:10:01 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 956E53082E70;
-        Mon, 29 Apr 2019 22:10:00 +0000 (UTC)
-Received: from max.home.com (unknown [10.40.205.80])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D3C4E891C;
-        Mon, 29 Apr 2019 22:09:55 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     cluster-devel@redhat.com,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Bob Peterson <rpeterso@redhat.com>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Mark Syms <Mark.Syms@citrix.com>,
-        =?UTF-8?q?Edwin=20T=C3=B6r=C3=B6k?= <edvin.torok@citrix.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v7 5/5] gfs2: Fix iomap write page reclaim deadlock
-Date:   Tue, 30 Apr 2019 00:09:34 +0200
-Message-Id: <20190429220934.10415-6-agruenba@redhat.com>
-In-Reply-To: <20190429220934.10415-1-agruenba@redhat.com>
-References: <20190429220934.10415-1-agruenba@redhat.com>
+        id S1729648AbfD2WWZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Apr 2019 18:22:25 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44435 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729517AbfD2WWZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Apr 2019 18:22:25 -0400
+Received: by mail-lj1-f194.google.com with SMTP id c6so4381712lji.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2019 15:22:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5qP8LPIS9WDXF+q33OLMR6KRblHE0TT1uumAzaN6KT0=;
+        b=Ap4KLvxFKZkDFjUC0mw1xZ7/RlyGLY0qt6n8YOWhHcydxJEIJQF2/jI56wZkyydlKy
+         CucviFGLMnplMso04eSuSphYpeTSUO5d9Hipm+mKAX9LJS+7ltohv6pl3CCTBHlE6KPt
+         VfxIJB6Sn2dqfjy7rFkOT1UIpcKpvIHZcWWjoWVU0kJTymDzndZmyNi5AHmx7fJ4bSwH
+         V7jlGCSvsMGsUQWA6oS21KHY+gT974zGFSk1htAHOG28Z5Tqo5FQqiAaPIIXo855qmPz
+         yZajFN62Duq+wU7tIdW/A8EG6OrWWHp71nteQGMWAPE8+sbr69dOmHB/xttHVpghWvga
+         IewQ==
+X-Gm-Message-State: APjAAAWeEN13ifRmZrhjR4vuYrPa/FUkeGmlB30LLbTNVS2mn4AzCuQZ
+        gI4yw43tm/VQ3MF3mZbMGX6IRledPfpSSs9G4NebVg==
+X-Google-Smtp-Source: APXvYqyFZYLdrVWAfiZGBUTfAQ0jQ8XQ1atTo8351Lb5qmzNE9slvzcJcGUpJTDRiGIet8unu7MfR9SsFwZcZRYPzKw=
+X-Received: by 2002:a2e:8884:: with SMTP id k4mr10439134lji.138.1556576543331;
+ Mon, 29 Apr 2019 15:22:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 29 Apr 2019 22:10:00 +0000 (UTC)
+References: <20190417131531.9525-1-mcroce@redhat.com> <20190418154045.2ad0bd50e73a6e71c0fac768@linux-foundation.org>
+ <1109DAD2-E25B-47A3-8381-E02260FE51B9@redhat.com> <20190419010714.GH7751@bombadil.infradead.org>
+ <5C263FB9-DC10-4D51-B6E4-776ED03C0E9E@redhat.com>
+In-Reply-To: <5C263FB9-DC10-4D51-B6E4-776ED03C0E9E@redhat.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Tue, 30 Apr 2019 00:21:47 +0200
+Message-ID: <CAGnkfhyhFUyL6wBT81XntCL92SgFoyz70cA0BahiBMVRuwd5fg@mail.gmail.com>
+Subject: Re: [PATCH v3] proc/sysctl: add shared variables for range check
+To:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since commit 64bc06bb32ee ("gfs2: iomap buffered write support"), gfs2 is doing
-buffered writes by starting a transaction in iomap_begin, writing a range of
-pages, and ending that transaction in iomap_end.  This approach suffers from
-two problems:
+On Tue, Apr 23, 2019 at 5:28 AM Matteo Croce <mcroce@redhat.com> wrote:
+>
+> On April 19, 2019 10:07:14 AM GMT+09:00, Matthew Wilcox <willy@infradead.org> wrote:
+> > On Fri, Apr 19, 2019 at 09:17:17AM +0900, Matteo Croce wrote:
+> > > > extern const int sysctl_zero;
+> > > > /* comment goes here */
+> > > > #define SYSCTL_ZERO ((void *)&sysctl_zero)
+> > > >
+> > > > and then use SYSCTL_ZERO everywhere.  That centralizes the
+> > ugliness
+> > > > and
+> > > > makes it easier to switch over if/when extra1&2 are constified.
+> > > >
+> > > > But it's all a bit sad and lame :(
+> > >
+> > > No, we didn't decide yet. I need to check for all extra1,2
+> > assignment. Not an impossible task, anyway.
+> > >
+> > > I agree that the casts are ugly. Your suggested macro moves the
+> > ugliness in a single point, which is good. Or maybe we can do a single
+> > macro like:
+> > >
+> > > #define SYSCTL_VAL(x) ((void *)&sysctl_##x)
+> > >
+> > > to avoid defining one for every value. And when we decide that
+> > everything can be const, we just update the macro.
+> >
+> > If we're going to do that, we can save two EXPORTs and do:
+> >
+> > const int sysctl_vals[] = { 0, 1, -1 };
+> > EXPORT_SYMBOL(sysctl_vals);
+> >
+> > #define SYSCTL_ZERO   ((void *)&sysctl_vals[0])
+>
+> Hi Matthew,
+>
+> I like this approach, regardless of the const or not const extra1.
+>
+> I'll be AFK for a few days, then I will investigate if extra1,2 can be made const and then prepare a v4 with the single export.
 
-  (1) Any allocations necessary for the write are done in iomap_begin, so when
-  the data aren't journaled, there is no need for keeping the transaction open
-  until iomap_end.
+Hi all,
 
-  (2) Transactions keep the gfs2 log flush lock held.  When
-  iomap_file_buffered_write calls balance_dirty_pages, this can end up calling
-  gfs2_write_inode, which will try to flush the log.  This requires taking the
-  log flush lock which is already held, resulting in a deadlock.
+I turned extra{1,2) to const and I see no issues.
+I'm sending a v4 with extra{1,2} const, a single export for all vars
+as suggested by Matthew, and the define suggested by Andrew.
+Comments are welcome as usual.
 
-Fix both of these issues by not keeping transactions open from iomap_begin to
-iomap_end.  Instead, start a small transaction in page_prepare and end it in
-page_done when necessary.
-
-Reported-by: Edwin Török <edvin.torok@citrix.com>
-Fixes: 64bc06bb32ee ("gfs2: iomap buffered write support")
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
----
- fs/gfs2/aops.c | 14 +++++---
- fs/gfs2/bmap.c | 88 +++++++++++++++++++++++++++-----------------------
- 2 files changed, 58 insertions(+), 44 deletions(-)
-
-diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-index 05dd78f4b2b3..6210d4429d84 100644
---- a/fs/gfs2/aops.c
-+++ b/fs/gfs2/aops.c
-@@ -649,7 +649,7 @@ static int gfs2_readpages(struct file *file, struct address_space *mapping,
-  */
- void adjust_fs_space(struct inode *inode)
- {
--	struct gfs2_sbd *sdp = inode->i_sb->s_fs_info;
-+	struct gfs2_sbd *sdp = GFS2_SB(inode);
- 	struct gfs2_inode *m_ip = GFS2_I(sdp->sd_statfs_inode);
- 	struct gfs2_inode *l_ip = GFS2_I(sdp->sd_sc_inode);
- 	struct gfs2_statfs_change_host *m_sc = &sdp->sd_statfs_master;
-@@ -657,10 +657,13 @@ void adjust_fs_space(struct inode *inode)
- 	struct buffer_head *m_bh, *l_bh;
- 	u64 fs_total, new_free;
- 
-+	if (gfs2_trans_begin(sdp, 2 * RES_STATFS, 0) != 0)
-+		return;
-+
- 	/* Total up the file system space, according to the latest rindex. */
- 	fs_total = gfs2_ri_total(sdp);
- 	if (gfs2_meta_inode_buffer(m_ip, &m_bh) != 0)
--		return;
-+		goto out;
- 
- 	spin_lock(&sdp->sd_statfs_spin);
- 	gfs2_statfs_change_in(m_sc, m_bh->b_data +
-@@ -675,11 +678,14 @@ void adjust_fs_space(struct inode *inode)
- 	gfs2_statfs_change(sdp, new_free, new_free, 0);
- 
- 	if (gfs2_meta_inode_buffer(l_ip, &l_bh) != 0)
--		goto out;
-+		goto out2;
- 	update_statfs(sdp, m_bh, l_bh);
- 	brelse(l_bh);
--out:
-+out2:
- 	brelse(m_bh);
-+out:
-+	sdp->sd_rindex_uptodate = 0;
-+	gfs2_trans_end(sdp);
- }
- 
- /**
-diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index aa014725f84a..27c82f4aaf32 100644
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -991,17 +991,28 @@ static void gfs2_write_unlock(struct inode *inode)
- 	gfs2_glock_dq_uninit(&ip->i_gh);
- }
- 
-+static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
-+				   unsigned len, struct iomap *iomap)
-+{
-+	struct gfs2_sbd *sdp = GFS2_SB(inode);
-+
-+	return gfs2_trans_begin(sdp, RES_DINODE + (len >> inode->i_blkbits), 0);
-+}
-+
- static void gfs2_iomap_page_done(struct inode *inode, loff_t pos,
- 				 unsigned copied, struct page *page,
- 				 struct iomap *iomap)
- {
- 	struct gfs2_inode *ip = GFS2_I(inode);
-+	struct gfs2_sbd *sdp = GFS2_SB(inode);
- 
--	if (page)
-+	if (page && !gfs2_is_stuffed(ip))
- 		gfs2_page_add_databufs(ip, page, offset_in_page(pos), copied);
-+	gfs2_trans_end(sdp);
- }
- 
- static const struct iomap_page_ops gfs2_iomap_page_ops = {
-+	.page_prepare = gfs2_iomap_page_prepare,
- 	.page_done = gfs2_iomap_page_done,
- };
- 
-@@ -1057,31 +1068,45 @@ static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
- 	if (alloc_required)
- 		rblocks += gfs2_rg_blocks(ip, data_blocks + ind_blocks);
- 
--	ret = gfs2_trans_begin(sdp, rblocks, iomap->length >> inode->i_blkbits);
--	if (ret)
--		goto out_trans_fail;
-+	if (unstuff || iomap->type == IOMAP_HOLE) {
-+		struct gfs2_trans *tr;
- 
--	if (unstuff) {
--		ret = gfs2_unstuff_dinode(ip, NULL);
-+		ret = gfs2_trans_begin(sdp, rblocks,
-+				       iomap->length >> inode->i_blkbits);
- 		if (ret)
--			goto out_trans_end;
--		release_metapath(mp);
--		ret = gfs2_iomap_get(inode, iomap->offset, iomap->length,
--				     flags, iomap, mp);
--		if (ret)
--			goto out_trans_end;
--	}
-+			goto out_trans_fail;
- 
--	if (iomap->type == IOMAP_HOLE) {
--		ret = gfs2_iomap_alloc(inode, iomap, flags, mp);
--		if (ret) {
--			gfs2_trans_end(sdp);
--			gfs2_inplace_release(ip);
--			punch_hole(ip, iomap->offset, iomap->length);
--			goto out_qunlock;
-+		if (unstuff) {
-+			ret = gfs2_unstuff_dinode(ip, NULL);
-+			if (ret)
-+				goto out_trans_end;
-+			release_metapath(mp);
-+			ret = gfs2_iomap_get(inode, iomap->offset,
-+					     iomap->length, flags, iomap, mp);
-+			if (ret)
-+				goto out_trans_end;
-+		}
-+
-+		if (iomap->type == IOMAP_HOLE) {
-+			ret = gfs2_iomap_alloc(inode, iomap, flags, mp);
-+			if (ret) {
-+				gfs2_trans_end(sdp);
-+				gfs2_inplace_release(ip);
-+				punch_hole(ip, iomap->offset, iomap->length);
-+				goto out_qunlock;
-+			}
- 		}
-+
-+		tr = current->journal_info;
-+		if (tr->tr_num_buf_new)
-+			__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
-+		else
-+			gfs2_trans_add_meta(ip->i_gl, mp->mp_bh[0]);
-+
-+		gfs2_trans_end(sdp);
- 	}
--	if (!gfs2_is_stuffed(ip) && gfs2_is_jdata(ip))
-+
-+	if (gfs2_is_stuffed(ip) || gfs2_is_jdata(ip))
- 		iomap->page_ops = &gfs2_iomap_page_ops;
- 	return 0;
- 
-@@ -1121,10 +1146,6 @@ static int gfs2_iomap_begin(struct inode *inode, loff_t pos, loff_t length,
- 		    iomap->type != IOMAP_MAPPED)
- 			ret = -ENOTBLK;
- 	}
--	if (!ret) {
--		get_bh(mp.mp_bh[0]);
--		iomap->private = mp.mp_bh[0];
--	}
- 	release_metapath(&mp);
- 	trace_gfs2_iomap_end(ip, iomap, ret);
- 	return ret;
-@@ -1135,27 +1156,16 @@ static int gfs2_iomap_end(struct inode *inode, loff_t pos, loff_t length,
- {
- 	struct gfs2_inode *ip = GFS2_I(inode);
- 	struct gfs2_sbd *sdp = GFS2_SB(inode);
--	struct gfs2_trans *tr = current->journal_info;
--	struct buffer_head *dibh = iomap->private;
- 
- 	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) != IOMAP_WRITE)
- 		goto out;
- 
--	if (iomap->type != IOMAP_INLINE) {
-+	if (!gfs2_is_stuffed(ip))
- 		gfs2_ordered_add_inode(ip);
- 
--		if (tr->tr_num_buf_new)
--			__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
--		else
--			gfs2_trans_add_meta(ip->i_gl, dibh);
--	}
--
--	if (inode == sdp->sd_rindex) {
-+	if (inode == sdp->sd_rindex)
- 		adjust_fs_space(inode);
--		sdp->sd_rindex_uptodate = 0;
--	}
- 
--	gfs2_trans_end(sdp);
- 	gfs2_inplace_release(ip);
- 
- 	if (length != written && (iomap->flags & IOMAP_F_NEW)) {
-@@ -1175,8 +1185,6 @@ static int gfs2_iomap_end(struct inode *inode, loff_t pos, loff_t length,
- 	gfs2_write_unlock(inode);
- 
- out:
--	if (dibh)
--		brelse(dibh);
- 	return 0;
- }
- 
--- 
-2.20.1
-
+Regards,
+--
+Matteo Croce
+per aspera ad upstream
