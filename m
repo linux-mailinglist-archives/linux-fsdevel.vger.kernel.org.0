@@ -2,210 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 418C1DA47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2019 02:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54669DA57
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2019 03:39:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfD2A5w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Apr 2019 20:57:52 -0400
-Received: from mail-eopbgr740091.outbound.protection.outlook.com ([40.107.74.91]:14256
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726597AbfD2A5w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Apr 2019 20:57:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U7f3n13E8yguE7Bwzru7hydhPpa9jK9yJKfJ4GVCMaM=;
- b=bsTYme28G5STarc6x4SUSQhySsxrgi6iJtPysCCT7UykNsfAjVHjDIQQzlekbz6cxs9UZZcK7yYiQlTmjBvlT81b5mTsqYM2sLvIxxUradDmtbHeOFEsaLIkYgs6j6MveE9nz5upYpf9UKFyYGzbIpSbrOahJMN0vIXVnspW/u4=
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
- SN6PR13MB2528.namprd13.prod.outlook.com (52.135.95.158) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.6; Mon, 29 Apr 2019 00:57:43 +0000
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::396d:aed6:eeb4:2511]) by SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::396d:aed6:eeb4:2511%7]) with mapi id 15.20.1856.008; Mon, 29 Apr 2019
- 00:57:43 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     "amir73il@gmail.com" <amir73il@gmail.com>
-CC:     "bfields@fieldses.org" <bfields@fieldses.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "Volker.Lendecke@sernet.de" <Volker.Lendecke@sernet.de>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "pshilov@microsoft.com" <pshilov@microsoft.com>
-Subject: Re: Better interop for NFS/SMB file share mode/reservation
-Thread-Topic: Better interop for NFS/SMB file share mode/reservation
-Thread-Index: AQHUv6BUED9wy3m1tE24F/mnamgiLqXV4DAAgAAaggCAABW6AIB63KrUgAEKN4CAABrTAIAAFnQAgABzxACAAAJMgIAABwQAgAAoLQA=
-Date:   Mon, 29 Apr 2019 00:57:42 +0000
-Message-ID: <b4ee6b6f5544114c3974790a784c3e784e617ccf.camel@hammerspace.com>
-References: <CAOQ4uxjQdLrZXkpP30Pq_=Cckcb=mADrEwQUXmsG92r-gn2y5w@mail.gmail.com>
-         <379106947f859bdf5db4c6f9c4ab8c44f7423c08.camel@kernel.org>
-         <CAOQ4uxgewN=j3ju5MSowEvwhK1HqKG3n1hBRUQTi1W5asaO1dQ@mail.gmail.com>
-         <930108f76b89c93b2f1847003d9e060f09ba1a17.camel@kernel.org>
-         <CAOQ4uxgQsRaEOxz1aYzP1_1fzRpQbOm2-wuzG=ABAphPB=7Mxg@mail.gmail.com>
-         <20190426140023.GB25827@fieldses.org>
-         <CAOQ4uxhuxoEsoBbvenJ8eLGstPc4AH-msrxDC-tBFRhvDxRSNg@mail.gmail.com>
-         <20190426145006.GD25827@fieldses.org>
-         <e69d149c80187b84833fec369ad8a51247871f26.camel@kernel.org>
-         <CAOQ4uxjt+MkufaJWoqWSYZbejWa1nJEe8YYRroEBSb1jHjzkwQ@mail.gmail.com>
-         <8504a05f2b0462986b3a323aec83a5b97aae0a03.camel@kernel.org>
-         <CAOQ4uxi6fQdp_RQKHp-i6Q-m-G1+384_DafF3QzYcUq4guLd6w@mail.gmail.com>
-         <1d5265510116ece75d6eb7af6314e6709e551c6e.camel@hammerspace.com>
-         <CAOQ4uxjUBRt99efZMY8EV6SAH+9eyf6t82uQuKWHQ56yjpjqMw@mail.gmail.com>
-         <95bc6ace0f46a1b1a38de9b536ce74faaa460182.camel@hammerspace.com>
-         <CAOQ4uxhQOLZ_Hyrnvu56iERPZ7CwfKti2U+OgyaXjM9acCN2LQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhQOLZ_Hyrnvu56iERPZ7CwfKti2U+OgyaXjM9acCN2LQ@mail.gmail.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=trondmy@hammerspace.com; 
-x-originating-ip: [68.40.189.247]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c0f88b2b-f21f-4c72-484e-08d6cc3daf92
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:SN6PR13MB2528;
-x-ms-traffictypediagnostic: SN6PR13MB2528:
-x-microsoft-antispam-prvs: <SN6PR13MB252817659D4BA1579365C965B8390@SN6PR13MB2528.namprd13.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0022134A87
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(366004)(346002)(199004)(189003)(229853002)(66556008)(66946007)(26005)(91956017)(76116006)(4326008)(66476007)(508600001)(2501003)(102836004)(6512007)(76176011)(7736002)(14454004)(66446008)(8676002)(256004)(53936002)(2906002)(186003)(68736007)(64756008)(73956011)(118296001)(5660300002)(6116002)(53546011)(3846002)(6246003)(305945005)(6506007)(561944003)(97736004)(81166006)(81156014)(8936002)(1361003)(54906003)(486006)(5640700003)(71190400001)(71200400001)(66066001)(476003)(86362001)(14444005)(25786009)(2351001)(93886005)(36756003)(6916009)(6486002)(1411001)(6436002)(99286004)(2616005)(446003)(11346002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR13MB2528;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: hammerspace.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: mGgqUa5YVQ/cxdY4ZeD4v/ShhaR5Lni2TStKPg3OlLv4VJMH1CDC/fU19Iik7yu8Sq6Rr5fN0uFr0tR+194lUccs7hOxypyZiDfTvp21L68qWUZBSY/uT6o5bZbxGoaVGGHX5cjc7GEOK4r4neB0bCqQOp+u2DH47yv1bDHnzk8njq6yr47z0lS6PyK6IB1Lv6cBomiDnZaT7v5wjmJEJ7dLAjPSwf7bMIw9fEc/YvtHRxRavNDISUAJAQ7xO1lV8BZ1XZc4ZBR3UzOsJYMnqp22vsRqK55IlGHmez3r7o7+likH7/NdNxHBenx94hY9jNWxvKNCINo/b34O6xvhXjvUOG5X5AYl3O01qdGpBtD9ckJgLd+KWhBYtJgQnfZFFlTbCXZYAezdMhPT96T/WtUG4bvfBgLevcG8MokHmUo=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B4312FFDF264E34F9DB7A7C8AB6AA0E2@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1726689AbfD2BjC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Apr 2019 21:39:02 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:60154 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726439AbfD2BjC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 28 Apr 2019 21:39:02 -0400
+Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3T1cRNp065575;
+        Mon, 29 Apr 2019 10:38:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
+ Mon, 29 Apr 2019 10:38:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3T1cMeq065555
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Mon, 29 Apr 2019 10:38:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: INFO: task hung in __get_super
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>
+Cc:     axboe@kernel.dk, dvyukov@google.com, jack@suse.cz,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <001a113ed5540f411c0568cc8418@google.com>
+ <0000000000002cd22305879b22c4@google.com>
+ <20190428185109.GD23075@ZenIV.linux.org.uk>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <6c7704c1-49cd-7338-e951-1c0281bc8e4b@i-love.sakura.ne.jp>
+Date:   Mon, 29 Apr 2019 10:38:23 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0f88b2b-f21f-4c72-484e-08d6cc3daf92
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2019 00:57:42.7916
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR13MB2528
+In-Reply-To: <20190428185109.GD23075@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gU3VuLCAyMDE5LTA0LTI4IGF0IDE4OjMzIC0wNDAwLCBBbWlyIEdvbGRzdGVpbiB3cm90ZToN
-Cj4gT24gU3VuLCBBcHIgMjgsIDIwMTkgYXQgNjowOCBQTSBUcm9uZCBNeWtsZWJ1c3QgPA0KPiB0
-cm9uZG15QGhhbW1lcnNwYWNlLmNvbT4gd3JvdGU6DQo+ID4gT24gU3VuLCAyMDE5LTA0LTI4IGF0
-IDE4OjAwIC0wNDAwLCBBbWlyIEdvbGRzdGVpbiB3cm90ZToNCj4gPiA+IE9uIFN1biwgQXByIDI4
-LCAyMDE5IGF0IDExOjA2IEFNIFRyb25kIE15a2xlYnVzdA0KPiA+ID4gPHRyb25kbXlAaGFtbWVy
-c3BhY2UuY29tPiB3cm90ZToNCj4gPiA+ID4gT24gU3VuLCAyMDE5LTA0LTI4IGF0IDA5OjQ1IC0w
-NDAwLCBBbWlyIEdvbGRzdGVpbiB3cm90ZToNCj4gPiA+ID4gPiBPbiBTdW4sIEFwciAyOCwgMjAx
-OSBhdCA4OjA5IEFNIEplZmYgTGF5dG9uIDwNCj4gPiA+ID4gPiBqbGF5dG9uQGtlcm5lbC5vcmc+
-DQo+ID4gPiA+ID4gd3JvdGU6DQo+ID4gPiA+ID4gPiBPbiBTYXQsIDIwMTktMDQtMjcgYXQgMTY6
-MTYgLTA0MDAsIEFtaXIgR29sZHN0ZWluIHdyb3RlOg0KPiA+ID4gPiA+ID4gPiBbYWRkaW5nIGJh
-Y2sgc2FtYmEvbmZzIGFuZCBmc2RldmVsXQ0KPiA+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+IA0K
-PiA+ID4gPiA+ID4gY2MnaW5nIFBhdmVsIHRvbyAtLSBoZSBkaWQgYSBidW5jaCBvZiB3b3JrIGlu
-IHRoaXMgYXJlYSBhDQo+ID4gPiA+ID4gPiBmZXcNCj4gPiA+ID4gPiA+IHllYXJzDQo+ID4gPiA+
-ID4gPiBhZ28uDQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ID4gT24gRnJpLCBBcHIgMjYsIDIw
-MTkgYXQgNjoyMiBQTSBKZWZmIExheXRvbiA8DQo+ID4gPiA+ID4gPiA+IGpsYXl0b25Aa2VybmVs
-Lm9yZz4NCj4gPiA+ID4gPiA+ID4gd3JvdGU6DQo+ID4gPiA+ID4gPiA+ID4gT24gRnJpLCAyMDE5
-LTA0LTI2IGF0IDEwOjUwIC0wNDAwLCBKLiBCcnVjZSBGaWVsZHMNCj4gPiA+ID4gPiA+ID4gPiB3
-cm90ZToNCj4gPiA+ID4gPiA+ID4gPiA+IE9uIEZyaSwgQXByIDI2LCAyMDE5IGF0IDA0OjExOjAw
-UE0gKzAyMDAsIEFtaXINCj4gPiA+ID4gPiA+ID4gPiA+IEdvbGRzdGVpbg0KPiA+ID4gPiA+ID4g
-PiA+ID4gd3JvdGU6DQo+ID4gPiA+ID4gPiA+ID4gPiA+IE9uIEZyaSwgQXByIDI2LCAyMDE5LCA0
-OjAwIFBNIEouIEJydWNlIEZpZWxkcyA8DQo+ID4gPiA+ID4gPiA+ID4gPiA+IGJmaWVsZHNAZmll
-bGRzZXMub3JnPiB3cm90ZToNCj4gPiA+ID4gPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiA+ID4g
-VGhhdCBzYWlkLCB3ZSBjb3VsZCBhbHNvIGxvb2sgYXQgYSB2ZnMtbGV2ZWwgbW91bnQNCj4gPiA+
-ID4gPiA+ID4gPiBvcHRpb24NCj4gPiA+ID4gPiA+ID4gPiB0aGF0DQo+ID4gPiA+ID4gPiA+ID4g
-d291bGQNCj4gPiA+ID4gPiA+ID4gPiBtYWtlIHRoZSBrZXJuZWwgZW5mb3JjZSB0aGVzZSBmb3Ig
-YW55IG9wZW5lci4gVGhhdA0KPiA+ID4gPiA+ID4gPiA+IGNvdWxkDQo+ID4gPiA+ID4gPiA+ID4g
-YWxzbw0KPiA+ID4gPiA+ID4gPiA+IGJlIHVzZWZ1bCwNCj4gPiA+ID4gPiA+ID4gPiBhbmQgc2hv
-dWxkbid0IGJlIHRvbyBoYXJkIHRvIGltcGxlbWVudC4gTWF5YmUgZXZlbiBtYWtlDQo+ID4gPiA+
-ID4gPiA+ID4gaXQNCj4gPiA+ID4gPiA+ID4gPiBhDQo+ID4gPiA+ID4gPiA+ID4gdmZzbW91bnQt
-DQo+ID4gPiA+ID4gPiA+ID4gbGV2ZWwgb3B0aW9uIChsaWtlIC1vIHJvIGlzKS4NCj4gPiA+ID4g
-PiA+ID4gPiANCj4gPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiA+IFllaCwgSSBhbSBodW1ibHkg
-Z29pbmcgdG8gbGVhdmUgdGhpcyBzdHJ1Z2dsZSB0byBzb21lb25lDQo+ID4gPiA+ID4gPiA+IGVs
-c2UuDQo+ID4gPiA+ID4gPiA+IE5vdCBpbXBvcnRhbnQgZW5vdWdoIElNTyBhbmQgY29tcGxldGVs
-eSBpbmRlcGVuZGVudA0KPiA+ID4gPiA+ID4gPiBlZmZvcnQgdG8NCj4gPiA+ID4gPiA+ID4gdGhl
-DQo+ID4gPiA+ID4gPiA+IGFkdmlzb3J5IGF0b21pYyBvcGVuJmxvY2sgQVBJLg0KPiA+ID4gPiA+
-ID4gDQo+ID4gPiA+ID4gPiBIYXZpbmcgdGhlIGtlcm5lbCBhbGxvdyBzZXR0aW5nIGRlbnkgbW9k
-ZXMgb24gYW55IG9wZW4gY2FsbA0KPiA+ID4gPiA+ID4gaXMNCj4gPiA+ID4gPiA+IGENCj4gPiA+
-ID4gPiA+IG5vbi0NCj4gPiA+ID4gPiA+IHN0YXJ0ZXIsIGZvciB0aGUgcmVhc29ucyBCcnVjZSBv
-dXRsaW5lZCBlYXJsaWVyLiBUaGlzDQo+ID4gPiA+ID4gPiBfbXVzdF8gYmUNCj4gPiA+ID4gPiA+
-IHJlc3RyaWN0ZWQgaW4gc29tZSBmYXNoaW9uIG9yIHdlJ2xsIGJlIG9wZW5pbmcgdXAgYQ0KPiA+
-ID4gPiA+ID4gZ2lub3Jtb3VzDQo+ID4gPiA+ID4gPiBEb1MNCj4gPiA+ID4gPiA+IG1lY2hhbmlz
-bS4NCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gTXkgcHJvcG9zYWwgd2FzIHRvIG1ha2UgdGhp
-cyBvbmx5IGJlIGVuZm9yY2VkIGJ5DQo+ID4gPiA+ID4gPiBhcHBsaWNhdGlvbnMNCj4gPiA+ID4g
-PiA+IHRoYXQNCj4gPiA+ID4gPiA+IGV4cGxpY2l0bHkgb3B0LWluIGJ5IHNldHRpbmcgT19TSCov
-T19FWCogZmxhZ3MuIEl0IHdvdWxkbid0DQo+ID4gPiA+ID4gPiBiZQ0KPiA+ID4gPiA+ID4gdG9v
-DQo+ID4gPiA+ID4gPiBkaWZmaWN1bHQgdG8gYWxzbyBhbGxvdyB0aGVtIHRvIGJlIGVuZm9yY2Vk
-IG9uIGEgcGVyLWZzDQo+ID4gPiA+ID4gPiBiYXNpcw0KPiA+ID4gPiA+ID4gdmlhDQo+ID4gPiA+
-ID4gPiBtb3VudA0KPiA+ID4gPiA+ID4gb3B0aW9uIG9yIHNvbWV0aGluZy4gTWF5YmUgd2UgY291
-bGQgZXhwYW5kIHRoZSBtZWFuaW5nIG9mDQo+ID4gPiA+ID4gPiAnLW8NCj4gPiA+ID4gPiA+IG1h
-bmQnDQo+ID4gPiA+ID4gPiA/DQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+IEhvdyB3b3VsZCB5
-b3UgcHJvcG9zZSB0aGF0IHdlIHJlc3RyaWN0IHRoaXM/DQo+ID4gPiA+ID4gPiANCj4gPiA+ID4g
-PiANCj4gPiA+ID4gPiBPdXIgY29tbXVuaWNhdGlvbiBjaGFubmVsIGlzIGJyb2tlbi4NCj4gPiA+
-ID4gPiBJIGRpZCBub3QgaW50ZW5kIHRvIHByb3Bvc2UgYW55IGltcGxpY2l0IGxvY2tpbmcuDQo+
-ID4gPiA+ID4gSWYgc2FtYmEgYW5kIG5mc2QgY2FuIG9wdC1pbiB3aXRoIE9fU0hBUkUgZmxhZ3Ms
-IEkgZG8gbm90DQo+ID4gPiA+ID4gdW5kZXJzdGFuZCB3aHkgYSBtb3VudCBvcHRpb24gaXMgaGVs
-cGZ1bCBmb3IgdGhlIGNhdXNlIG9mDQo+ID4gPiA+ID4gc2FtYmEvbmZzZCBpbnRlcm9wLg0KPiA+
-ID4gPiA+IA0KPiA+ID4gPiA+IElmIHNvbWVvbmUgZWxzZSBpcyBpbnRlcmVzdGVkIGluIHNhbWJh
-L2xvY2FsIGludGVyb3AgdGhhbg0KPiA+ID4gPiA+IHllcywgYSBtb3VudCBvcHRpb24gbGlrZSBz
-dWdnZXN0ZWQgYnkgUGF2ZWwgY291bGQgYmUgYSBnb29kDQo+ID4gPiA+ID4gb3B0aW9uLA0KPiA+
-ID4gPiA+IGJ1dCBpdCBpcyBhbiBvcnRob2dvbmFsIGVmZm9ydCBJTU8uDQo+ID4gPiA+IA0KPiA+
-ID4gPiBJZiBhbiBORlMgY2xpZW50ICdvcHRzIGluJyB0byBzZXQgc2hhcmUgZGVueSwgdGhlbiB0
-aGF0IHN0aWxsDQo+ID4gPiA+IG1ha2VzDQo+ID4gPiA+IGl0DQo+ID4gPiA+IGEgbm9uLW9wdGlv
-bmFsIGxvY2sgZm9yIHRoZSBvdGhlciBORlMgY2xpZW50cywgYmVjYXVzZSBhbGwNCj4gPiA+ID4g
-b3JkaW5hcnkNCj4gPiA+ID4gb3BlbigpIGNhbGxzIHdpbGwgYmUgZ2F0ZWQgYnkgdGhlIHNlcnZl
-ciB3aGV0aGVyIG9yIG5vdCB0aGVpcg0KPiA+ID4gPiBhcHBsaWNhdGlvbiBzcGVjaWZpZXMgdGhl
-IE9fU0hBUkUgZmxhZy4gVGhlcmUgaXMgbm8gZmxhZyBpbiB0aGUNCj4gPiA+ID4gTkZTDQo+ID4g
-PiA+IHByb3RvY29sIHRoYXQgY291bGQgdGVsbCB0aGUgc2VydmVyIHRvIGlnbm9yZSBkZW55IG1v
-ZGVzLg0KPiA+ID4gPiANCj4gPiA+ID4gSU9XOiBpdCB3b3VsZCBzdWZmaWNlIGZvciAxIGNsaWVu
-dCB0byB1c2UgT19TSEFSRXxPX0RFTlkqIHRvDQo+ID4gPiA+IG9wdA0KPiA+ID4gPiBhbGwNCj4g
-PiA+ID4gdGhlIG90aGVyIGNsaWVudHMgaW4uDQo+ID4gPiA+IA0KPiA+ID4gDQo+ID4gPiBTb3Jy
-eSBmb3IgYmVpbmcgdGhpY2ssIEkgZG9uJ3QgdW5kZXJzdGFuZCBpZiB3ZSBhcmUgaW4gYWdyZWVt
-ZW50DQo+ID4gPiBvcg0KPiA+ID4gbm90Lg0KPiA+ID4gDQo+ID4gPiBNeSB1bmRlcnN0YW5kaW5n
-IGlzIHRoYXQgdGhlIG5ldHdvcmsgZmlsZSBzZXJ2ZXIgaW1wbGVtZW50YXRpb25zDQo+ID4gPiAo
-aS5lLiBzYW1iYSwga25mZHMsIEdhbmVzaGEpIHdpbGwgYWx3YXlzIHVzZSBzaGFyZS9kZW55IG1v
-ZGVzLg0KPiA+ID4gU28gZm9yIGV4YW1wbGUgbmZzIHYzIG9wZW5zIHdpbGwgYWx3YXlzIHVzZSBP
-X0RFTllfTk9ORQ0KPiA+ID4gaW4gb3JkZXIgdG8gaGF2ZSBjb3JyZWN0IGludGVyb3Agd2l0aCBz
-YW1iYSBhbmQgbmZzIHY0Lg0KPiA+ID4gDQo+ID4gPiBJZiBJIGFtIG1pc3VuZGVyc3RhbmRpbmcg
-c29tZXRoaW5nLCBwbGVhc2UgZW5saWdodGVuIG1lLg0KPiA+ID4gSWYgdGhlcmUgaXMgYSByZWFz
-b24gd2h5IG1vdW50IG9wdGlvbiBpcyBuZWVkZWQgZm9yIHRoZSBzb2xlDQo+ID4gPiBwdXJwb3Nl
-DQo+ID4gPiBvZiBpbnRlcm9wIGJldHdlZW4gbmV0d29yayBmaWxlc3lzdGVtIHNlcnZlcnMsIHBs
-ZWFzZSBlbmxpZ2h0ZW4NCj4gPiA+IG1lLg0KPiA+ID4gDQo+ID4gPiANCj4gPiANCj4gPiBTYW1l
-IGRpZmZlcmVuY2UuIEFzIGxvbmcgYXMgbmZzZCBhbmQvb3IgR2FuZXNoYSBhcmUgdHJhbnNsYXRp
-bmcNCj4gPiBPUEVONF9TSEFSRV9BQ0NFU1NfUkVBRCBhbmQgT1BFTjRfU0hBUkVfQUNDRVNTX1dS
-SVRFIGludG8gc2hhcmUNCj4gPiBhY2Nlc3MNCj4gPiBsb2NrcywgdGhlbiB0aG9zZSB3aWxsIGNv
-bmZsaWN0IHdpdGggYW55IGRlbnkgbG9ja3Mgc2V0IGJ5IHdoYXRldmVyDQo+ID4gYXBwbGljYXRp
-b24gdGhhdCB1c2VzIHRoZW0uDQo+ID4gDQo+ID4gSU9XOiBhbnkgb3BlbihPX1JET05MWSkgYW5k
-IG9wZW4oT19SRFdSKSB3aWxsIGNvbmZsaWN0IHdpdGggYW4NCj4gPiBPX0RFTllfUkVBRCB0aGF0
-IGlzIHNldCBvbiB0aGUgc2VydmVyLCBhbmQgYW55IG9wZW4oT19XUk9OTFkpIGFuZA0KPiA+IG9w
-ZW4oT19SRFdSKSB3aWxsIGNvbmZsaWN0IHdpdGggYW4gT19ERU5ZX1dSSVRFIHRoYXQgaXMgc2V0
-IG9uIHRoZQ0KPiA+IHNlcnZlci4gVGhlcmUgaXMgbm8gb3B0LW91dCBmb3IgTkZTIGNsaWVudHMg
-b24gdGhpcyBpc3N1ZSwgYmVjYXVzZQ0KPiA+IHN0YXRlZnVsIE5GU3Y0IG9wZW5zIE1VU1Qgc2V0
-IG9uZSBvciBtb3JlIG9mDQo+ID4gT1BFTjRfU0hBUkVfQUNDRVNTX1JFQUQNCj4gPiBhbmQgT1BF
-TjRfU0hBUkVfQUNDRVNTX1dSSVRFLg0KPiA+IA0KPiANCj4gVXJnaCEgSSAqdGhpbmsqIEkgdW5k
-ZXJzdGFuZCB0aGUgY29uZnVzaW9uLg0KPiANCj4gSSBiZWxpZXZlIEplZmYgd2FzIHRhbGtpbmcg
-YWJvdXQgaW1wbGVtZW50aW5nIGEgbW91bnQgb3B0aW9uDQo+IHNpbWlsYXIgdG8gLW8gbWFuZCBm
-b3IgbG9jYWwgZnMgb24gdGhlIHNlcnZlci4NCj4gV2l0aCB0aGF0IG1vdW50IG9wdGlvbiwgKmFu
-eSogb3BlbigpIGJ5IGFueSBhcHAgb2YgZmlsZSBmcm9tDQo+IHRoYXQgbW91bnQgd2lsbCB1c2Ug
-T19ERU5ZX05PTkUgdG8gaW50ZXJvcCBjb3JyZWN0bHkgd2l0aA0KPiBuZXR3b3JrIHNlcnZlcnMg
-dGhhdCBleHBsaWNpdGx5IG9wdC1pbiBmb3IgaW50ZXJvcCBvbiBzaGFyZSBtb2Rlcy4NCj4gSSBh
-Z3JlZSBpdHMgYSBuaWNlIGZlYXR1cmUgdGhhdCBpcyBlYXN5IHRvIGltcGxlbWVudCAtIG5vdCBp
-bXBvcnRhbnQNCj4gZm9yIGZpcnN0IHZlcnNpb24gSU1PLg0KPiANCj4gSSAqdGhpbmsqIHlvdSBh
-cmUgdGFsa2luZyBvbiBuZnMgY2xpZW50IG1vdW50IG9wdGlvbiBmb3INCj4gb3B0LWluL291dCBv
-ZiBzaGFyZSBtb2Rlcz8gdGhlcmUgd2FzIG5vIHN1Y2ggaW50ZW50aW9uLg0KPiANCg0KTm8uIEkn
-bSBzYXlpbmcgdGhhdCB3aGV0aGVyIHlvdSBpbnRlbmRlZCB0byBvciBub3QsIHlvdSBfYXJlXw0K
-aW1wbGVtZW50aW5nIGEgbWFuZGF0b3J5IGxvY2sgb3ZlciBORlMuIE5vIHRhbGsgYWJvdXQgT19T
-SEFSRSBmbGFncyBhbmQNCml0IGJlaW5nIGFuIG9wdC1pbiBwcm9jZXNzIGZvciBsb2NhbCBhcHBs
-aWNhdGlvbnMgY2hhbmdlcyB0aGUgZmFjdCB0aGF0DQpub24tbG9jYWwgYXBwbGljYXRpb25zIChp
-LmUuIHRoZSBvbmVzIHRoYXQgY291bnQg4pi6KSBhcmUgYmVpbmcgc3ViamVjdGVkDQp0byBhIG1h
-bmRhdG9yeSBsb2NrIHdpdGggYWxsIHRoZSBwb3RlbnRpYWwgZm9yIGRlbmlhbCBvZiBzZXJ2aWNl
-IHRoYXQNCmltcGxpZXMuDQpTbyB3ZSBuZWVkIGEgbWVjaGFuaXNtIGJleW9uZCBPX1NIQVJFIGlu
-IG9yZGVyIHRvIGVuc3VyZSB0aGlzIHN5c3RlbQ0KY2Fubm90IGJlIHVzZWQgb24gc2Vuc2l0aXZl
-IGZpbGVzIHRoYXQgbmVlZCB0byBiZSBhY2Nlc3NpYmxlIHRvIGFsbC4gSXQNCmNvdWxkIGJlIGFu
-IGV4cG9ydCBvcHRpb24sIG9yIGEgbW91bnQgb3B0aW9uLCBvciBpdCBjb3VsZCBiZSBhIG1vcmUN
-CnNwZWNpZmljIG1lY2hhbmlzbSAoZS5nLiB0aGUgc2V0Z2lkIHdpdGggbm8gZXhlY3V0ZSBtb2Rl
-IGJpdCBhcyB1c2luZw0KaW4gUE9TSVggbWFuZGF0b3J5IGxvY2tzKS4NCg0KLS0gDQpUcm9uZCBN
-eWtsZWJ1c3QNCkxpbnV4IE5GUyBjbGllbnQgbWFpbnRhaW5lciwgSGFtbWVyc3BhY2UNCnRyb25k
-Lm15a2xlYnVzdEBoYW1tZXJzcGFjZS5jb20NCg0KDQo=
+On 2019/04/29 3:51, Al Viro wrote:
+> ioctl(..., BLKRRPART) blocked on ->s_umount in __get_super().
+> The trouble is, the only things holding ->s_umount appears to be
+> these:
+
+Not always true. lockdep_print_held_locks() from debug_show_all_locks() can not
+report locks held by TASK_RUNNING threads. Due to enabling CONFIG_PRINTK_CALLER=y,
+the output from trigger_all_cpu_backtrace() is no longer included into the report
+file (i.e. premature truncation) because NMI backtrace is printed from a different
+printk() context. If we check the console output, we can understand that
+
+>> 1 lock held by syz-executor274/8083:
+
+was doing mount(2). Since there is a possibility that that thread was looping for
+many seconds enough to trigger khungtaskd warnings, we can't tell whether this is
+a locking dependency problem.
+
+----------------------------------------
+[ 1107.252933][ T1041] NMI backtrace for cpu 0
+[ 1107.257402][ T1041] CPU: 0 PID: 1041 Comm: khungtaskd Not tainted 5.1.0-rc6+ #89
+[ 1107.264960][ T1041] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+[ 1107.275380][ T1041] Call Trace:
+[ 1107.278691][ T1041]  dump_stack+0x172/0x1f0
+[ 1107.283216][ T1041]  nmi_cpu_backtrace.cold+0x63/0xa4
+[ 1107.288469][ T1041]  ? lapic_can_unplug_cpu.cold+0x38/0x38
+[ 1107.294155][ T1041]  nmi_trigger_cpumask_backtrace+0x1be/0x236
+[ 1107.300256][ T1041]  arch_trigger_cpumask_backtrace+0x14/0x20
+[ 1107.306174][ T1041]  watchdog+0x9b7/0xec0
+[ 1107.310362][ T1041]  kthread+0x357/0x430
+[ 1107.314446][ T1041]  ? reset_hung_task_detector+0x30/0x30
+[ 1107.320016][ T1041]  ? kthread_cancel_delayed_work_sync+0x20/0x20
+[ 1107.326280][ T1041]  ret_from_fork+0x3a/0x50
+[ 1107.331403][ T1041] Sending NMI from CPU 0 to CPUs 1:
+[ 1107.337617][    C1] NMI backtrace for cpu 1
+[ 1107.337625][    C1] CPU: 1 PID: 8083 Comm: syz-executor274 Not tainted 5.1.0-rc6+ #89
+[ 1107.337631][    C1] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+[ 1107.337636][    C1] RIP: 0010:debug_lockdep_rcu_enabled.part.0+0xb/0x60
+[ 1107.337648][    C1] Code: 5b 5d c3 e8 67 71 e5 ff 0f 1f 80 00 00 00 00 55 48 89 e5 e8 37 ff ff ff 5d c3 0f 1f 44 00 00 48 b8 00 00 00 00 00 fc ff df 55 <48> 89 e5 53 65 48 8b 1c 25 00 ee 01 00 48 8d bb 7c 08 00 00 48 89
+[ 1107.337652][    C1] RSP: 0018:ffff8880a85274c8 EFLAGS: 00000202
+[ 1107.337661][    C1] RAX: dffffc0000000000 RBX: ffff8880a85275d8 RCX: 1ffffffff12bcd63
+[ 1107.337666][    C1] RDX: 0000000000000000 RSI: ffffffff870d8f3c RDI: ffff8880a85275e0
+[ 1107.337672][    C1] RBP: ffff8880a85274d8 R08: ffff888081e68540 R09: ffffed1015d25bc8
+[ 1107.337677][    C1] R10: ffffed1015d25bc7 R11: ffff8880ae92de3b R12: 0000000000000000
+[ 1107.337683][    C1] R13: ffff8880a694d640 R14: ffff88809541b942 R15: 0000000000000006
+[ 1107.337689][    C1] FS:  0000000000e0b880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+[ 1107.337693][    C1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1107.337699][    C1] CR2: ffffffffff600400 CR3: 0000000092d6f000 CR4: 00000000001406e0
+[ 1107.337704][    C1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 1107.337710][    C1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 1107.337713][    C1] Call Trace:
+[ 1107.337717][    C1]  ? debug_lockdep_rcu_enabled+0x71/0xa0
+[ 1107.337721][    C1]  xas_descend+0xbf/0x370
+[ 1107.337724][    C1]  xas_load+0xef/0x150
+[ 1107.337728][    C1]  find_get_entry+0x13d/0x880
+[ 1107.337733][    C1]  ? find_get_entries_tag+0xc10/0xc10
+[ 1107.337736][    C1]  ? mark_held_locks+0xa4/0xf0
+[ 1107.337741][    C1]  ? pagecache_get_page+0x1a8/0x740
+[ 1107.337745][    C1]  pagecache_get_page+0x4c/0x740
+[ 1107.337749][    C1]  __getblk_gfp+0x27e/0x970
+[ 1107.337752][    C1]  __bread_gfp+0x2f/0x300
+[ 1107.337756][    C1]  udf_tread+0xf1/0x140
+[ 1107.337760][    C1]  udf_read_tagged+0x50/0x530
+[ 1107.337764][    C1]  udf_check_anchor_block+0x1ef/0x680
+[ 1107.337768][    C1]  ? blkpg_ioctl+0xa90/0xa90
+[ 1107.337772][    C1]  ? udf_process_sequence+0x35d0/0x35d0
+[ 1107.337776][    C1]  ? submit_bio+0xba/0x480
+[ 1107.337780][    C1]  udf_scan_anchors+0x3f4/0x680
+[ 1107.337784][    C1]  ? udf_check_anchor_block+0x680/0x680
+[ 1107.337789][    C1]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
+[ 1107.337793][    C1]  ? udf_get_last_session+0x120/0x120
+[ 1107.337797][    C1]  udf_load_vrs+0x67f/0xc80
+[ 1107.337801][    C1]  ? udf_scan_anchors+0x680/0x680
+[ 1107.337805][    C1]  ? udf_bread+0x260/0x260
+[ 1107.337809][    C1]  ? lockdep_init_map+0x1be/0x6d0
+[ 1107.337813][    C1]  udf_fill_super+0x7d8/0x16d1
+[ 1107.337817][    C1]  ? udf_load_vrs+0xc80/0xc80
+[ 1107.337820][    C1]  ? vsprintf+0x40/0x40
+[ 1107.337824][    C1]  ? set_blocksize+0x2bf/0x340
+[ 1107.337829][    C1]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[ 1107.337833][    C1]  mount_bdev+0x307/0x3c0
+[ 1107.337837][    C1]  ? udf_load_vrs+0xc80/0xc80
+[ 1107.337840][    C1]  udf_mount+0x35/0x40
+[ 1107.337844][    C1]  ? udf_get_pblock_meta25+0x3a0/0x3a0
+[ 1107.337848][    C1]  legacy_get_tree+0xf2/0x200
+[ 1107.337853][    C1]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[ 1107.337857][    C1]  vfs_get_tree+0x123/0x450
+[ 1107.337860][    C1]  do_mount+0x1436/0x2c40
+[ 1107.337864][    C1]  ? copy_mount_string+0x40/0x40
+[ 1107.337868][    C1]  ? _copy_from_user+0xdd/0x150
+[ 1107.337873][    C1]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
+[ 1107.337877][    C1]  ? copy_mount_options+0x280/0x3a0
+[ 1107.337881][    C1]  ksys_mount+0xdb/0x150
+[ 1107.337885][    C1]  __x64_sys_mount+0xbe/0x150
+[ 1107.337889][    C1]  do_syscall_64+0x103/0x610
+[ 1107.337893][    C1]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[ 1107.337897][    C1] RIP: 0033:0x441a49
+[ 1107.337909][    C1] Code: ad 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+[ 1107.337913][    C1] RSP: 002b:00007ffcabed5048 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+[ 1107.337923][    C1] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441a49
+[ 1107.337929][    C1] RDX: 0000000020000140 RSI: 0000000020000080 RDI: 0000000020000000
+[ 1107.337934][    C1] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+[ 1107.337940][    C1] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+[ 1107.337946][    C1] R13: 00000000004026e0 R14: 0000000000000000 R15: 0000000000000000
+[ 1107.339387][ T1041] Kernel panic - not syncing: hung_task: blocked tasks
+[ 1107.787589][ T1041] CPU: 0 PID: 1041 Comm: khungtaskd Not tainted 5.1.0-rc6+ #89
+[ 1107.795319][ T1041] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+[ 1107.806082][ T1041] Call Trace:
+[ 1107.809403][ T1041]  dump_stack+0x172/0x1f0
+[ 1107.813776][ T1041]  panic+0x2cb/0x65c
+[ 1107.817695][ T1041]  ? __warn_printk+0xf3/0xf3
+[ 1107.822391][ T1041]  ? lapic_can_unplug_cpu.cold+0x38/0x38
+[ 1107.828236][ T1041]  ? ___preempt_schedule+0x16/0x18
+[ 1107.833386][ T1041]  ? nmi_trigger_cpumask_backtrace+0x19e/0x236
+[ 1107.839739][ T1041]  ? nmi_trigger_cpumask_backtrace+0x1fa/0x236
+[ 1107.846024][ T1041]  ? nmi_trigger_cpumask_backtrace+0x204/0x236
+[ 1107.852196][ T1041]  ? nmi_trigger_cpumask_backtrace+0x19e/0x236
+[ 1107.858482][ T1041]  watchdog+0x9c8/0xec0
+[ 1107.862858][ T1041]  kthread+0x357/0x430
+[ 1107.866943][ T1041]  ? reset_hung_task_detector+0x30/0x30
+[ 1107.872522][ T1041]  ? kthread_cancel_delayed_work_sync+0x20/0x20
+[ 1107.878799][ T1041]  ret_from_fork+0x3a/0x50
+[ 1107.884924][ T1041] Kernel Offset: disabled
+[ 1107.889301][ T1041] Rebooting in 86400 seconds..
+----------------------------------------
+
+I don't know whether "it is not safe to print locks held by TASK_RUNNING threads"
+remains true. But since a thread's state can change at any moment, there is no
+guarantee that only locks held by !TASK_RUNNING threads will be printed by
+debug_show_all_locks(), I guess that allow printing all locks at their own risk
+using some kernel config is fine...
+
+Also, we could replace trigger_all_cpu_backtrace() with a new function which scans
+all threads and dumps threads with ->on_cpu == 1 so that the output comes from
+the same printk() context.
