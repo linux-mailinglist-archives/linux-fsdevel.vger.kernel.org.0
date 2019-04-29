@@ -2,134 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63511DA9C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2019 05:10:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AA61DAB3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2019 05:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfD2DKG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Apr 2019 23:10:06 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:51524 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbfD2DKG (ORCPT
+        id S1727093AbfD2DQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Apr 2019 23:16:28 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:38156 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726819AbfD2DQ2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Apr 2019 23:10:06 -0400
-X-Greylist: delayed 161115 seconds by postgrey-1.27 at vger.kernel.org; Sun, 28 Apr 2019 23:10:03 EDT
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x3T39r1q016871;
-        Mon, 29 Apr 2019 12:09:53 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x3T39r1q016871
+        Sun, 28 Apr 2019 23:16:28 -0400
+Received: from grover.flets-west.jp (softbank126125154137.bbtec.net [126.125.154.137]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id x3T3FcVU011166;
+        Mon, 29 Apr 2019 12:15:38 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x3T3FcVU011166
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1556507394;
-        bh=D6/eHEGu1S/FgjaRhL+TDpUVhVgXkf1tnSwVBxG2mpI=;
-        h=References:In-Reply-To:From:Date:Subject:To:From;
-        b=XRcprZIF2wGKBMmYSTpLbQfAbNmSAMHisJs4xA88NzhGpL7nAQjWoeqGWNIjqfSyw
-         NZtPgqYmwhoIpq8la6IPIC+ggry5UWQhtsofmgR1wj/sYGvexinSUR9xmMN3dp9X50
-         oagtHTJL2vU8p2s7WHgWpdynf0e5in994+tEEFkfx1JmlW+NsW9tcYRIz/2Cq+qD9B
-         Ta9UfNkXZ96ba8ovKsOXQEGqteAle0LArbzgqfBprOQ7GUGvsFAEvMyYHgwIkOuaTg
-         zOxipQ33dUA0anPBhCW7XMY/cGTkya1rK29XogoDfbuEvraF2HvQmh1ul3uE+5KMR8
-         q/ZVZ+lU/FzfA==
-X-Nifty-SrcIP: [209.85.221.170]
-Received: by mail-vk1-f170.google.com with SMTP id l17so1980970vke.7;
-        Sun, 28 Apr 2019 20:09:53 -0700 (PDT)
-X-Gm-Message-State: APjAAAX+f3saOK7soeT9QSILkkyDwEyHsSlpY5ZkkndX1yKo/dACE9DA
-        Q+9UyQ3wGIV6E8DNEWUupeMA3cFSqyLSEoOrCQI=
-X-Google-Smtp-Source: APXvYqw0bG8CrWXMrxSWRjM4j1ygj/A090lPp2tsPXHl6m/HimipQzSsHgb6CJKrA93+n4itgvz1HpCs5J32rhJs1o4=
-X-Received: by 2002:a1f:9d0a:: with SMTP id g10mr2112150vke.0.1556507392399;
- Sun, 28 Apr 2019 20:09:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <1556346241-10451-1-git-send-email-yamada.masahiro@socionext.com>
- <CAK7LNAS2vTGF0dYJ67Ct2xDL=7qxYhhK-VoVHfkqDu0d8ULd+g@mail.gmail.com> <20190428174315.GC24089@mit.edu>
-In-Reply-To: <20190428174315.GC24089@mit.edu>
+        s=dec2015msa; t=1556507738;
+        bh=16jxTJlqvgdtc0bmtHW26mp1fSFaCwPHhBiW8YOQYHQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SXaiy2bz37BrBxiz7TFTYS5t5vhN3JA7tjv4a+WVBigceHeCEde/RgD8N0DlyfmPk
+         h6I8LVmQ3OXIwlb6XDD+ATEi2JyfisChSuPQy6t0nZCvV7oeFEqmS2uBTjjd7XptMT
+         VeZ63rTEDBkhnBuOuySOrWaDylpR3t4qFmhaQAnbvB+B/+NV+GSj8rCuLYqsVWj9Nx
+         4HkAvSn6rzt0KW5dCDSdawv4KQ43G6/GciM0RAn3S/fo59ouoo3exwmD2QecV/i+RH
+         7TAaDsffT+QHhTqnnhEsyfzFlWwFrSBRfhO7gISnzGz2FJvPP/WMVto4Y0liaC7oUx
+         5AMZSkItixgaA==
+X-Nifty-SrcIP: [126.125.154.137]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 29 Apr 2019 12:09:16 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASQqbWL_Lvn+=9PX41kbHNEB4K9dVS0LS=X-h0FEN9FHg@mail.gmail.com>
-Message-ID: <CAK7LNASQqbWL_Lvn+=9PX41kbHNEB4K9dVS0LS=X-h0FEN9FHg@mail.gmail.com>
-Subject: Re: [PATCH] unicode: refactor the rule for regenerating utf8data.h
-To:     "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Olaf Weber <olaf@sgi.com>,
+To:     Olaf Weber <olaf@sgi.com>,
         Gabriel Krisman Bertazi <krisman@collabora.co.uk>,
+        "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
         Michal Marek <michal.lkml@markovi.net>,
         linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v2] unicode: refactor the rule for regenerating utf8data.h
+Date:   Mon, 29 Apr 2019 12:15:31 +0900
+Message-Id: <1556507731-830-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 2:44 AM Theodore Ts'o <tytso@mit.edu> wrote:
->
-> Thanks, for the suggestion and the patch!  I agree it's much better
-> with your proposed change (and it gets mkutf8data out of your hair :-)
+scripts/mkutf8data is used only when regenerating utf8data.h,
+which never happens in the normal kernel build. However, it is
+irrespectively built if CONFIG_UNICODE is enabled.
 
-Yes, this is my main motivation.
+Moreover, there is no good reason for it to reside in the scripts/
+directory since it is only used in fs/unicode/.
 
->
-> I did need to make one change to your patch in order for it to work
-> correctly with a build directory.  That is, to support
->
->         make -O /build/ext4 REGENERATE_UTF8DATA=1 fs/unicode/
->
-> I'll apply it to the ext4 git tree with this change.
+Hence, move it from scripts/ to fs/unicode/.
 
+In some cases, we bypass build artifacts in the normal build. The
+conventional way to do so is to surround the code with ifdef REGENERATE_*.
 
-Thanks for the suggestion.
+For example,
 
-My first thought was "don't do this",
-but it would be better to make it work with O= option.
+ - 7373f4f83c71 ("kbuild: add implicit rules for parser generation")
+ - 6aaf49b495b4 ("crypto: arm,arm64 - Fix random regeneration of S_shipped")
 
-However, even with your fix-up, it won't work correctly.
+I rewrote the rule in a more kbuild'ish style.
 
-If O= is given, the newly-generated utf8data.h will be
-put in the object tree.
+In the normal build, utf8data.h is just shipped from the check-in file.
 
-It will co-exist with the old check-in utf8data.h
-and the old one will be included because
-the include paths in the srctree are searched first.
+$ make
+  [ snip ]
+  SHIPPED fs/unicode/utf8data.h
+  CC      fs/unicode/utf8-norm.o
+  CC      fs/unicode/utf8-core.o
+  CC      fs/unicode/utf8-selftest.o
+  AR      fs/unicode/built-in.a
 
-I will send v2 shortly so that O= build will work
-correctly.
+If you want to generate utf8data.h based on UCD, put *.txt files into
+fs/unicode/, then pass REGENERATE_UTF8DATA=1 from the command line.
+The mkutf8data tool will be automatically compiled to generate the
+utf8data.h from the *.txt files.
 
-Thanks.
+$ make REGENERATE_UTF8DATA=1
+  [ snip ]
+  HOSTCC  fs/unicode/mkutf8data
+  GEN     fs/unicode/utf8data.h
+  CC      fs/unicode/utf8-norm.o
+  CC      fs/unicode/utf8-core.o
+  CC      fs/unicode/utf8-selftest.o
+  AR      fs/unicode/built-in.a
 
+I renamed the check-in utf8data.h to utf8data.h_shipped so that this
+will work for the out-of-tree build.
 
+You can update it based on the latest UCD like this:
 
+$ make REGENERATE_UTF8DATA=1 fs/unicode/
+$ cp fs/unicode/utf8data.h fs/unicode/utf8data.h_shipped
 
+Also, I added entries to .gitignore and dontdiff.
 
->                                    - Ted
->
-> diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-> index 1a109b7a1da9..45955264ac04 100644
-> --- a/fs/unicode/Makefile
-> +++ b/fs/unicode/Makefile
-> @@ -14,13 +14,13 @@ $(obj)/utf8-norm.o: $(obj)/utf8data.h
->
->  quiet_cmd_utf8data = GEN     $@
->        cmd_utf8data = $(obj)/mkutf8data \
-> -               -a $(src)/DerivedAge.txt \
-> -               -c $(src)/DerivedCombiningClass.txt \
-> -               -p $(src)/DerivedCoreProperties.txt \
-> -               -d $(src)/UnicodeData.txt \
-> -               -f $(src)/CaseFolding.txt \
-> -               -n $(src)/NormalizationCorrections.txt \
-> -               -t $(src)/NormalizationTest.txt \
-> +               -a $(srctree)/$(src)/DerivedAge.txt \
-> +               -c $(srctree)/$(src)/DerivedCombiningClass.txt \
-> +               -p $(srctree)/$(src)/DerivedCoreProperties.txt \
-> +               -d $(srctree)/$(src)/UnicodeData.txt \
-> +               -f $(srctree)/$(src)/CaseFolding.txt \
-> +               -n $(srctree)/$(src)/NormalizationCorrections.txt \
-> +               -t $(srctree)/$(src)/NormalizationTest.txt \
->                 -o $@
->
->  $(obj)/utf8data.h: $(filter %.txt, $(cmd_utf8data)) $(obj)/mkutf8data FORCE
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
+Changes in v2:
+ - Make this work correctly with O= option
 
+ Documentation/dontdiff                        |  2 ++
+ fs/unicode/.gitignore                         |  2 ++
+ fs/unicode/Makefile                           | 41 ++++++++++++++++++++-------
+ fs/unicode/README.utf8data                    |  9 +++---
+ {scripts => fs/unicode}/mkutf8data.c          |  0
+ fs/unicode/{utf8data.h => utf8data.h_shipped} |  0
+ scripts/Makefile                              |  1 -
+ 7 files changed, 38 insertions(+), 17 deletions(-)
+ create mode 100644 fs/unicode/.gitignore
+ rename {scripts => fs/unicode}/mkutf8data.c (100%)
+ rename fs/unicode/{utf8data.h => utf8data.h_shipped} (100%)
 
+diff --git a/Documentation/dontdiff b/Documentation/dontdiff
+index ef25a06..9369377 100644
+--- a/Documentation/dontdiff
++++ b/Documentation/dontdiff
+@@ -176,6 +176,7 @@ mkprep
+ mkregtable
+ mktables
+ mktree
++mkutf8data
+ modpost
+ modules.builtin
+ modules.order
+@@ -254,6 +255,7 @@ vsyscall_32.lds
+ wanxlfw.inc
+ uImage
+ unifdef
++utf8data.h
+ wakeup.bin
+ wakeup.elf
+ wakeup.lds
+diff --git a/fs/unicode/.gitignore b/fs/unicode/.gitignore
+new file mode 100644
+index 0000000..0381e22
+--- /dev/null
++++ b/fs/unicode/.gitignore
+@@ -0,0 +1,2 @@
++mkutf8data
++utf8data.h
+diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
+index 671d31f..d46e9ba 100644
+--- a/fs/unicode/Makefile
++++ b/fs/unicode/Makefile
+@@ -5,15 +5,34 @@ obj-$(CONFIG_UNICODE_NORMALIZATION_SELFTEST) += utf8-selftest.o
+ 
+ unicode-y := utf8-norm.o utf8-core.o
+ 
+-# This rule is not invoked during the kernel compilation.  It is used to
+-# regenerate the utf8data.h header file.
+-utf8data.h.new: *.txt $(objdir)/scripts/mkutf8data
+-	$(objdir)/scripts/mkutf8data \
+-		-a DerivedAge.txt \
+-		-c DerivedCombiningClass.txt \
+-		-p DerivedCoreProperties.txt \
+-		-d UnicodeData.txt \
+-		-f CaseFolding.txt \
+-		-n NormalizationCorrections.txt \
+-		-t NormalizationTest.txt \
++$(obj)/utf8-norm.o: $(obj)/utf8data.h
++
++# In the normal build, the checked-in utf8data.h is just shipped.
++#
++# To generate utf8data.h from UCD, put *.txt files in this directory
++# and pass REGENERATE_UTF8DATA=1 from the command line.
++ifdef REGENERATE_UTF8DATA
++
++quiet_cmd_utf8data = GEN     $@
++      cmd_utf8data = $< \
++		-a $(srctree)/$(src)/DerivedAge.txt \
++		-c $(srctree)/$(src)/DerivedCombiningClass.txt \
++		-p $(srctree)/$(src)/DerivedCoreProperties.txt \
++		-d $(srctree)/$(src)/UnicodeData.txt \
++		-f $(srctree)/$(src)/CaseFolding.txt \
++		-n $(srctree)/$(src)/NormalizationCorrections.txt \
++		-t $(srctree)/$(src)/NormalizationTest.txt \
+ 		-o $@
++
++$(obj)/utf8data.h: $(obj)/mkutf8data $(filter %.txt, $(cmd_utf8data)) FORCE
++	$(call if_changed,utf8data)
++
++else
++
++$(obj)/utf8data.h: $(src)/utf8data.h_shipped FORCE
++	$(call if_changed,shipped)
++
++endif
++
++targets += utf8data.h
++hostprogs-y += mkutf8data
+diff --git a/fs/unicode/README.utf8data b/fs/unicode/README.utf8data
+index eeb7561..459eebf 100644
+--- a/fs/unicode/README.utf8data
++++ b/fs/unicode/README.utf8data
+@@ -41,15 +41,14 @@ released version of the UCD can be found here:
+ 
+   http://www.unicode.org/Public/UCD/latest/
+ 
+-To build the utf8data.h file, from a kernel tree that has been built,
+-cd to this directory (fs/unicode) and run this command:
++Then, build under fs/unicode/ with REGENERATE_UTF8DATA=1:
+ 
+-	make C=../.. objdir=../.. utf8data.h.new
++	make REGENERATE_UTF8DATA=1 fs/unicode/
+ 
+-After sanity checking the newly generated utf8data.h.new file (the
++After sanity checking the newly generated utf8data.h file (the
+ version generated from the 12.1.0 UCD should be 4,109 lines long, and
+ have a total size of 324k) and/or comparing it with the older version
+-of utf8data.h, rename it to utf8data.h.
++of utf8data.h_shipped, rename it to utf8data.h_shipped.
+ 
+ If you are a kernel developer updating to a newer version of the
+ Unicode Character Database, please update this README.utf8data file
+diff --git a/scripts/mkutf8data.c b/fs/unicode/mkutf8data.c
+similarity index 100%
+rename from scripts/mkutf8data.c
+rename to fs/unicode/mkutf8data.c
+diff --git a/fs/unicode/utf8data.h b/fs/unicode/utf8data.h_shipped
+similarity index 100%
+rename from fs/unicode/utf8data.h
+rename to fs/unicode/utf8data.h_shipped
+diff --git a/scripts/Makefile b/scripts/Makefile
+index b87e3e0..9d442ee 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -20,7 +20,6 @@ hostprogs-$(CONFIG_ASN1)	 += asn1_compiler
+ hostprogs-$(CONFIG_MODULE_SIG)	 += sign-file
+ hostprogs-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += extract-cert
+ hostprogs-$(CONFIG_SYSTEM_EXTRA_CERTIFICATE) += insert-sys-cert
+-hostprogs-$(CONFIG_UNICODE) += mkutf8data
+ 
+ HOSTCFLAGS_sortextable.o = -I$(srctree)/tools/include
+ HOSTCFLAGS_asn1_compiler.o = -I$(srctree)/include
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
+
