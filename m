@@ -2,134 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5689EE8FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2019 19:28:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D5E0E975
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2019 19:46:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbfD2R1o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Apr 2019 13:27:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58480 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728997AbfD2R1o (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Apr 2019 13:27:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D4DE0AEA1;
-        Mon, 29 Apr 2019 17:27:42 +0000 (UTC)
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     linux-btrfs@vger.kernel.org
-Cc:     kilobyte@angband.pl, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        david@fromorbit.com, willy@infradead.org, hch@lst.de,
-        darrick.wong@oracle.com, dsterba@suse.cz, nborisov@suse.com,
-        linux-nvdimm@lists.01.org, Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 18/18] btrfs: trace functions for btrfs_iomap_begin/end
-Date:   Mon, 29 Apr 2019 12:26:49 -0500
-Message-Id: <20190429172649.8288-19-rgoldwyn@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190429172649.8288-1-rgoldwyn@suse.de>
-References: <20190429172649.8288-1-rgoldwyn@suse.de>
+        id S1728882AbfD2Rql (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Apr 2019 13:46:41 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35245 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728748AbfD2Rql (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Apr 2019 13:46:41 -0400
+Received: by mail-ot1-f65.google.com with SMTP id g24so4825234otq.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2019 10:46:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4XNiWMXZiJc7H/jaqikR0q3+B4O1qwVQdNrN1Gohc70=;
+        b=p5lXqVOR/D46DtPe4uu9ovh6bggojh9Qcj7Nks9hML6e1RyTRHoJrNZdph0p+vs6cO
+         haJzgWJyf3Rc6XUgrDdn2UqhiIpTrwWOuYOymK+px8PDmxMOOmkYPLj6KcTTaMpeJIyc
+         Oe8KC5R/oHHwUhteeal56TJ7bLzp+EZMAtf6Ok0ETGMG3L6dEds7kTHYhBPomWHLkV7l
+         8yu6CrZiMNRw/Bk7P2CIGKUtlz52PsmA6+ayQ6KVoYk+1rcOfHcEJrk5SK9nFwcvGDlo
+         dnkbSppIrw7RVbWqHd4TQnAqXyfK5GH8DNdU0E4s+laWicdSljEKEZgnxOjI2DZLij2C
+         JwNA==
+X-Gm-Message-State: APjAAAUc9lJAuJb6GS8U8Y0IabFmgV1Py7KxGejDloPVTM/m8nLX7MiJ
+        mvTRRKErRr2gPfoyj4AAOahG0oV+9GexsElG47vcdA==
+X-Google-Smtp-Source: APXvYqwEFPov5Fcmp1Z82klYLfGXcL8lJ+7fAYAgcVryDP/nX4tHzH4FfMhdUV9XfjfQTl9aLG0Z2jy1neqZ8hWMU+s=
+X-Received: by 2002:a9d:6397:: with SMTP id w23mr15429856otk.332.1556560000444;
+ Mon, 29 Apr 2019 10:46:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190429163239.4874-1-agruenba@redhat.com>
+In-Reply-To: <20190429163239.4874-1-agruenba@redhat.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Mon, 29 Apr 2019 19:46:29 +0200
+Message-ID: <CAHc6FU5jgGGsHS9xRDMmssOH3rzDWoRYvrnDM5mHK1ASKc60yA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/4] iomap: Clean up __generic_write_end calling
+To:     cluster-devel <cluster-devel@redhat.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Bob Peterson <rpeterso@redhat.com>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Mark Syms <Mark.Syms@citrix.com>,
+        =?UTF-8?B?RWR3aW4gVMO2csO2aw==?= <edvin.torok@citrix.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Mon, 29 Apr 2019 at 18:32, Andreas Gruenbacher <agruenba@redhat.com> wrote:
+> From: Christoph Hellwig <hch@lst.de>
+>
+> Move the call to __generic_write_end into iomap_write_end instead of
+> duplicating it in each of the three branches.  This requires open coding
+> the generic_write_end for the buffer_head case.
 
-This is for debug purposes only and can be skipped.
+Wouldn't it make sense to turn __generic_write_end into a void
+function? Right now, it just oddly return its copied argument.
 
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
----
- fs/btrfs/dax.c               |  3 +++
- include/trace/events/btrfs.h | 56 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 59 insertions(+)
-
-diff --git a/fs/btrfs/dax.c b/fs/btrfs/dax.c
-index 20ec2ec49c68..3fee28f5a199 100644
---- a/fs/btrfs/dax.c
-+++ b/fs/btrfs/dax.c
-@@ -104,6 +104,8 @@ static int btrfs_iomap_begin(struct inode *inode, loff_t pos,
- 	u64 srcblk = 0;
- 	loff_t diff;
- 
-+	trace_btrfs_iomap_begin(inode, pos, length, flags);
-+
- 	em = btrfs_get_extent(BTRFS_I(inode), NULL, 0, pos, length, 0);
- 
- 	iomap->type = IOMAP_MAPPED;
-@@ -164,6 +166,7 @@ static int btrfs_iomap_end(struct inode *inode, loff_t pos,
- {
- 	struct btrfs_iomap *bi = iomap->private;
- 	u64 wend;
-+	trace_btrfs_iomap_end(inode, pos, length, written, flags);
- 
- 	if (!bi)
- 		return 0;
-diff --git a/include/trace/events/btrfs.h b/include/trace/events/btrfs.h
-index ab1cc33adbac..8779e5789a7c 100644
---- a/include/trace/events/btrfs.h
-+++ b/include/trace/events/btrfs.h
-@@ -1850,6 +1850,62 @@ DEFINE_EVENT(btrfs__block_group, btrfs_skip_unused_block_group,
- 	TP_ARGS(bg_cache)
- );
- 
-+TRACE_EVENT(btrfs_iomap_begin,
-+
-+	TP_PROTO(const struct inode *inode, loff_t pos, loff_t length, int flags),
-+
-+	TP_ARGS(inode, pos, length, flags),
-+
-+	TP_STRUCT__entry_btrfs(
-+		__field(	u64,	ino		)
-+		__field(	u64,	pos		)
-+		__field(	u64,	length		)
-+		__field(	int,    flags		)
-+	),
-+
-+	TP_fast_assign_btrfs(btrfs_sb(inode->i_sb),
-+		__entry->ino		= btrfs_ino(BTRFS_I(inode));
-+		__entry->pos		= pos;
-+		__entry->length		= length;
-+		__entry->flags		= flags;
-+	),
-+
-+	TP_printk_btrfs("ino=%llu pos=%llu len=%llu flags=0x%x",
-+		  __entry->ino,
-+		  __entry->pos,
-+		  __entry->length,
-+		  __entry->flags)
-+);
-+
-+TRACE_EVENT(btrfs_iomap_end,
-+
-+	TP_PROTO(const struct inode *inode, loff_t pos, loff_t length, loff_t written, int flags),
-+
-+	TP_ARGS(inode, pos, length, written, flags),
-+
-+	TP_STRUCT__entry_btrfs(
-+		__field(	u64,	ino		)
-+		__field(	u64,	pos		)
-+		__field(	u64,	length		)
-+		__field(	u64,	written		)
-+		__field(	int,    flags		)
-+	),
-+
-+	TP_fast_assign_btrfs(btrfs_sb(inode->i_sb),
-+		__entry->ino		= btrfs_ino(BTRFS_I(inode));
-+		__entry->pos		= pos;
-+		__entry->length		= length;
-+		__entry->written		= written;
-+		__entry->flags		= flags;
-+	),
-+
-+	TP_printk_btrfs("ino=%llu pos=%llu len=%llu written=%llu flags=0x%x",
-+		  __entry->ino,
-+		  __entry->pos,
-+		  __entry->length,
-+		  __entry->written,
-+		  __entry->flags)
-+);
- #endif /* _TRACE_BTRFS_H */
- 
- /* This part must be outside protection */
--- 
-2.16.4
-
+Andreas
