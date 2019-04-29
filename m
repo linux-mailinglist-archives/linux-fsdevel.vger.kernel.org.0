@@ -2,260 +2,410 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94427E350
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2019 15:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6B09E3B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Apr 2019 15:27:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbfD2NKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Apr 2019 09:10:54 -0400
-Received: from mail-eopbgr770092.outbound.protection.outlook.com ([40.107.77.92]:14043
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725838AbfD2NKx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Apr 2019 09:10:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tfEaHFheB5QOwDGBzFRVE1pGKTxbnLHJu9PJQB/Fsr4=;
- b=KEajPN63P+tywG1zIW+am8mdV080kHk/8Rh7n77udTzNbMny1G9kIZk1Ucxd9c3ayD+iLx0YeEsVeNelmt1K5LAIeLUkPUX5LzjShf/YgRjs3N07uxmCe30JOwu3+otBvURnPVMCEgRWMGA7VDnpsk5wykNpkNz92fDpjsF4Rx0=
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
- SN6PR13MB2240.namprd13.prod.outlook.com (52.135.93.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.7; Mon, 29 Apr 2019 13:10:48 +0000
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::396d:aed6:eeb4:2511]) by SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::396d:aed6:eeb4:2511%7]) with mapi id 15.20.1856.008; Mon, 29 Apr 2019
- 13:10:48 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     "amir73il@gmail.com" <amir73il@gmail.com>
-CC:     "bfields@fieldses.org" <bfields@fieldses.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "Volker.Lendecke@sernet.de" <Volker.Lendecke@sernet.de>,
-        "pshilov@microsoft.com" <pshilov@microsoft.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: Better interop for NFS/SMB file share mode/reservation
-Thread-Topic: Better interop for NFS/SMB file share mode/reservation
-Thread-Index: AQHUv6BUED9wy3m1tE24F/mnamgiLqXV4DAAgAAaggCAABW6AIB63KrUgAEKN4CAABrTAIAAFnQAgABzxACAAAJMgIAABwQAgAAoLQCAALQ6gIAAGJoA
-Date:   Mon, 29 Apr 2019 13:10:48 +0000
-Message-ID: <1730f1d6e6a3370f681b9eacac4d28022bdf319c.camel@hammerspace.com>
-References: <CAOQ4uxjQdLrZXkpP30Pq_=Cckcb=mADrEwQUXmsG92r-gn2y5w@mail.gmail.com>
-         <379106947f859bdf5db4c6f9c4ab8c44f7423c08.camel@kernel.org>
-         <CAOQ4uxgewN=j3ju5MSowEvwhK1HqKG3n1hBRUQTi1W5asaO1dQ@mail.gmail.com>
-         <930108f76b89c93b2f1847003d9e060f09ba1a17.camel@kernel.org>
-         <CAOQ4uxgQsRaEOxz1aYzP1_1fzRpQbOm2-wuzG=ABAphPB=7Mxg@mail.gmail.com>
-         <20190426140023.GB25827@fieldses.org>
-         <CAOQ4uxhuxoEsoBbvenJ8eLGstPc4AH-msrxDC-tBFRhvDxRSNg@mail.gmail.com>
-         <20190426145006.GD25827@fieldses.org>
-         <e69d149c80187b84833fec369ad8a51247871f26.camel@kernel.org>
-         <CAOQ4uxjt+MkufaJWoqWSYZbejWa1nJEe8YYRroEBSb1jHjzkwQ@mail.gmail.com>
-         <8504a05f2b0462986b3a323aec83a5b97aae0a03.camel@kernel.org>
-         <CAOQ4uxi6fQdp_RQKHp-i6Q-m-G1+384_DafF3QzYcUq4guLd6w@mail.gmail.com>
-         <1d5265510116ece75d6eb7af6314e6709e551c6e.camel@hammerspace.com>
-         <CAOQ4uxjUBRt99efZMY8EV6SAH+9eyf6t82uQuKWHQ56yjpjqMw@mail.gmail.com>
-         <95bc6ace0f46a1b1a38de9b536ce74faaa460182.camel@hammerspace.com>
-         <CAOQ4uxhQOLZ_Hyrnvu56iERPZ7CwfKti2U+OgyaXjM9acCN2LQ@mail.gmail.com>
-         <b4ee6b6f5544114c3974790a784c3e784e617ccf.camel@hammerspace.com>
-         <CAOQ4uxhkXt-71=CDwWEz0axqKi_TsEj3S_dgDhXkwNmG57T61Q@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhkXt-71=CDwWEz0axqKi_TsEj3S_dgDhXkwNmG57T61Q@mail.gmail.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=trondmy@hammerspace.com; 
-x-originating-ip: [65.199.232.106]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f1915781-904b-4a57-c864-08d6cca418f3
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:SN6PR13MB2240;
-x-ms-traffictypediagnostic: SN6PR13MB2240:
-x-microsoft-antispam-prvs: <SN6PR13MB224071B989503E96BB3E8F45B8390@SN6PR13MB2240.namprd13.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0022134A87
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(136003)(189003)(199004)(6246003)(102836004)(2501003)(561944003)(118296001)(25786009)(26005)(97736004)(5660300002)(99286004)(256004)(486006)(14444005)(68736007)(6506007)(229853002)(76176011)(54906003)(5640700003)(1411001)(6486002)(6512007)(6436002)(1361003)(6916009)(76116006)(66446008)(476003)(2616005)(64756008)(2351001)(53546011)(446003)(8676002)(91956017)(73956011)(66946007)(186003)(66556008)(66476007)(53936002)(11346002)(4326008)(71190400001)(71200400001)(508600001)(3846002)(14454004)(36756003)(7736002)(8936002)(6116002)(66066001)(305945005)(81166006)(81156014)(86362001)(2906002)(93886005);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR13MB2240;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: hammerspace.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pOPPGlnWsRh9Gjpz7/ZHCkS6fg+IkathTWWcWdyCpXsR61SXa5aAfHArDREyoVQwugzxkU087YzoQ+KPwLongBg385B/sGTQ5xQaRnwE+lJjbAmNAVXV0yiTuImzjxhAfgf55crfnxIo4N0WWZSlWj3ITz8HFzSSaPQUxCcum+BqmO0S9Uq6D4doEISM74jLOeqMnLewvVLuNHyGe3WiXndd84/bp6/WT8G2SJMyfkU1xlpsEoW5ksmlNCkV3WRPfxwB/8IMOSkxyUU1HRCmw8CUdooivKbxIiTOFp98CxxDe51Aiw+Y7AnnKxqYD48ZUE2ZV6Vo/xjQFDmepA2+v/zr4Mlt72NhWm4NpylWVrFqTaFgZtCegzQNp8HF1nOaxTuuosnvQWRthnnQa9v6Vdon6QXyi8OshuprcCSfQ9s=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <591C553A2511E2498F589E7E893B2932@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1728197AbfD2N0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Apr 2019 09:26:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35816 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726949AbfD2N0u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Apr 2019 09:26:50 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A1C7A7E44B;
+        Mon, 29 Apr 2019 13:26:49 +0000 (UTC)
+Received: from redhat.com (ovpn-123-191.rdu2.redhat.com [10.10.123.191])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 041715D6A9;
+        Mon, 29 Apr 2019 13:26:47 +0000 (UTC)
+Date:   Mon, 29 Apr 2019 09:26:45 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM TOPIC] Direct block mapping through fs for device
+Message-ID: <20190429132643.GB3036@redhat.com>
+References: <20190426013814.GB3350@redhat.com>
+ <20190426062816.GG1454@dread.disaster.area>
+ <20190426152044.GB13360@redhat.com>
+ <20190427012516.GH1454@dread.disaster.area>
 MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1915781-904b-4a57-c864-08d6cca418f3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2019 13:10:48.3257
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR13MB2240
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190427012516.GH1454@dread.disaster.area>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 29 Apr 2019 13:26:49 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTA0LTI5IGF0IDA3OjQyIC0wNDAwLCBBbWlyIEdvbGRzdGVpbiB3cm90ZToN
-Cj4gT24gU3VuLCBBcHIgMjgsIDIwMTkgYXQgODo1NyBQTSBUcm9uZCBNeWtsZWJ1c3QgPA0KPiB0
-cm9uZG15QGhhbW1lcnNwYWNlLmNvbT4gd3JvdGU6DQo+ID4gT24gU3VuLCAyMDE5LTA0LTI4IGF0
-IDE4OjMzIC0wNDAwLCBBbWlyIEdvbGRzdGVpbiB3cm90ZToNCj4gPiA+IE9uIFN1biwgQXByIDI4
-LCAyMDE5IGF0IDY6MDggUE0gVHJvbmQgTXlrbGVidXN0IDwNCj4gPiA+IHRyb25kbXlAaGFtbWVy
-c3BhY2UuY29tPiB3cm90ZToNCj4gPiA+ID4gT24gU3VuLCAyMDE5LTA0LTI4IGF0IDE4OjAwIC0w
-NDAwLCBBbWlyIEdvbGRzdGVpbiB3cm90ZToNCj4gPiA+ID4gPiBPbiBTdW4sIEFwciAyOCwgMjAx
-OSBhdCAxMTowNiBBTSBUcm9uZCBNeWtsZWJ1c3QNCj4gPiA+ID4gPiA8dHJvbmRteUBoYW1tZXJz
-cGFjZS5jb20+IHdyb3RlOg0KPiA+ID4gPiA+ID4gT24gU3VuLCAyMDE5LTA0LTI4IGF0IDA5OjQ1
-IC0wNDAwLCBBbWlyIEdvbGRzdGVpbiB3cm90ZToNCj4gPiA+ID4gPiA+ID4gT24gU3VuLCBBcHIg
-MjgsIDIwMTkgYXQgODowOSBBTSBKZWZmIExheXRvbiA8DQo+ID4gPiA+ID4gPiA+IGpsYXl0b25A
-a2VybmVsLm9yZz4NCj4gPiA+ID4gPiA+ID4gd3JvdGU6DQo+ID4gPiA+ID4gPiA+ID4gT24gU2F0
-LCAyMDE5LTA0LTI3IGF0IDE2OjE2IC0wNDAwLCBBbWlyIEdvbGRzdGVpbg0KPiA+ID4gPiA+ID4g
-PiA+IHdyb3RlOg0KPiA+ID4gPiA+ID4gPiA+ID4gW2FkZGluZyBiYWNrIHNhbWJhL25mcyBhbmQg
-ZnNkZXZlbF0NCj4gPiA+ID4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+
-ID4gPiA+IGNjJ2luZyBQYXZlbCB0b28gLS0gaGUgZGlkIGEgYnVuY2ggb2Ygd29yayBpbiB0aGlz
-IGFyZWENCj4gPiA+ID4gPiA+ID4gPiBhDQo+ID4gPiA+ID4gPiA+ID4gZmV3DQo+ID4gPiA+ID4g
-PiA+ID4geWVhcnMNCj4gPiA+ID4gPiA+ID4gPiBhZ28uDQo+ID4gPiA+ID4gPiA+ID4gDQo+ID4g
-PiA+ID4gPiA+ID4gPiBPbiBGcmksIEFwciAyNiwgMjAxOSBhdCA2OjIyIFBNIEplZmYgTGF5dG9u
-IDwNCj4gPiA+ID4gPiA+ID4gPiA+IGpsYXl0b25Aa2VybmVsLm9yZz4NCj4gPiA+ID4gPiA+ID4g
-PiA+IHdyb3RlOg0KPiA+ID4gPiA+ID4gPiA+ID4gPiBPbiBGcmksIDIwMTktMDQtMjYgYXQgMTA6
-NTAgLTA0MDAsIEouIEJydWNlIEZpZWxkcw0KPiA+ID4gPiA+ID4gPiA+ID4gPiB3cm90ZToNCj4g
-PiA+ID4gPiA+ID4gPiA+ID4gPiBPbiBGcmksIEFwciAyNiwgMjAxOSBhdCAwNDoxMTowMFBNICsw
-MjAwLCBBbWlyDQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gR29sZHN0ZWluDQo+ID4gPiA+ID4gPiA+
-ID4gPiA+ID4gd3JvdGU6DQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gPiBPbiBGcmksIEFwciAyNiwg
-MjAxOSwgNDowMCBQTSBKLiBCcnVjZSBGaWVsZHMgPA0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ID4g
-YmZpZWxkc0BmaWVsZHNlcy5vcmc+IHdyb3RlOg0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ID4gDQo+
-ID4gPiA+ID4gPiA+ID4gPiA+IFRoYXQgc2FpZCwgd2UgY291bGQgYWxzbyBsb29rIGF0IGEgdmZz
-LWxldmVsIG1vdW50DQo+ID4gPiA+ID4gPiA+ID4gPiA+IG9wdGlvbg0KPiA+ID4gPiA+ID4gPiA+
-ID4gPiB0aGF0DQo+ID4gPiA+ID4gPiA+ID4gPiA+IHdvdWxkDQo+ID4gPiA+ID4gPiA+ID4gPiA+
-IG1ha2UgdGhlIGtlcm5lbCBlbmZvcmNlIHRoZXNlIGZvciBhbnkgb3BlbmVyLiBUaGF0DQo+ID4g
-PiA+ID4gPiA+ID4gPiA+IGNvdWxkDQo+ID4gPiA+ID4gPiA+ID4gPiA+IGFsc28NCj4gPiA+ID4g
-PiA+ID4gPiA+ID4gYmUgdXNlZnVsLA0KPiA+ID4gPiA+ID4gPiA+ID4gPiBhbmQgc2hvdWxkbid0
-IGJlIHRvbyBoYXJkIHRvIGltcGxlbWVudC4gTWF5YmUgZXZlbg0KPiA+ID4gPiA+ID4gPiA+ID4g
-PiBtYWtlDQo+ID4gPiA+ID4gPiA+ID4gPiA+IGl0DQo+ID4gPiA+ID4gPiA+ID4gPiA+IGENCj4g
-PiA+ID4gPiA+ID4gPiA+ID4gdmZzbW91bnQtDQo+ID4gPiA+ID4gPiA+ID4gPiA+IGxldmVsIG9w
-dGlvbiAobGlrZSAtbyBybyBpcykuDQo+ID4gPiA+ID4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4g
-PiA+ID4gDQo+ID4gPiA+ID4gPiA+ID4gPiBZZWgsIEkgYW0gaHVtYmx5IGdvaW5nIHRvIGxlYXZl
-IHRoaXMgc3RydWdnbGUgdG8NCj4gPiA+ID4gPiA+ID4gPiA+IHNvbWVvbmUNCj4gPiA+ID4gPiA+
-ID4gPiA+IGVsc2UuDQo+ID4gPiA+ID4gPiA+ID4gPiBOb3QgaW1wb3J0YW50IGVub3VnaCBJTU8g
-YW5kIGNvbXBsZXRlbHkgaW5kZXBlbmRlbnQNCj4gPiA+ID4gPiA+ID4gPiA+IGVmZm9ydCB0bw0K
-PiA+ID4gPiA+ID4gPiA+ID4gdGhlDQo+ID4gPiA+ID4gPiA+ID4gPiBhZHZpc29yeSBhdG9taWMg
-b3BlbiZsb2NrIEFQSS4NCj4gPiA+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ID4gPiBIYXZpbmcg
-dGhlIGtlcm5lbCBhbGxvdyBzZXR0aW5nIGRlbnkgbW9kZXMgb24gYW55IG9wZW4NCj4gPiA+ID4g
-PiA+ID4gPiBjYWxsDQo+ID4gPiA+ID4gPiA+ID4gaXMNCj4gPiA+ID4gPiA+ID4gPiBhDQo+ID4g
-PiA+ID4gPiA+ID4gbm9uLQ0KPiA+ID4gPiA+ID4gPiA+IHN0YXJ0ZXIsIGZvciB0aGUgcmVhc29u
-cyBCcnVjZSBvdXRsaW5lZCBlYXJsaWVyLiBUaGlzDQo+ID4gPiA+ID4gPiA+ID4gX211c3RfIGJl
-DQo+ID4gPiA+ID4gPiA+ID4gcmVzdHJpY3RlZCBpbiBzb21lIGZhc2hpb24gb3Igd2UnbGwgYmUg
-b3BlbmluZyB1cCBhDQo+ID4gPiA+ID4gPiA+ID4gZ2lub3Jtb3VzDQo+ID4gPiA+ID4gPiA+ID4g
-RG9TDQo+ID4gPiA+ID4gPiA+ID4gbWVjaGFuaXNtLg0KPiA+ID4gPiA+ID4gPiA+IA0KPiA+ID4g
-PiA+ID4gPiA+IE15IHByb3Bvc2FsIHdhcyB0byBtYWtlIHRoaXMgb25seSBiZSBlbmZvcmNlZCBi
-eQ0KPiA+ID4gPiA+ID4gPiA+IGFwcGxpY2F0aW9ucw0KPiA+ID4gPiA+ID4gPiA+IHRoYXQNCj4g
-PiA+ID4gPiA+ID4gPiBleHBsaWNpdGx5IG9wdC1pbiBieSBzZXR0aW5nIE9fU0gqL09fRVgqIGZs
-YWdzLiBJdA0KPiA+ID4gPiA+ID4gPiA+IHdvdWxkbid0DQo+ID4gPiA+ID4gPiA+ID4gYmUNCj4g
-PiA+ID4gPiA+ID4gPiB0b28NCj4gPiA+ID4gPiA+ID4gPiBkaWZmaWN1bHQgdG8gYWxzbyBhbGxv
-dyB0aGVtIHRvIGJlIGVuZm9yY2VkIG9uIGEgcGVyLWZzDQo+ID4gPiA+ID4gPiA+ID4gYmFzaXMN
-Cj4gPiA+ID4gPiA+ID4gPiB2aWENCj4gPiA+ID4gPiA+ID4gPiBtb3VudA0KPiA+ID4gPiA+ID4g
-PiA+IG9wdGlvbiBvciBzb21ldGhpbmcuIE1heWJlIHdlIGNvdWxkIGV4cGFuZCB0aGUgbWVhbmlu
-Zw0KPiA+ID4gPiA+ID4gPiA+IG9mDQo+ID4gPiA+ID4gPiA+ID4gJy1vDQo+ID4gPiA+ID4gPiA+
-ID4gbWFuZCcNCj4gPiA+ID4gPiA+ID4gPiA/DQo+ID4gPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4g
-PiA+ID4gSG93IHdvdWxkIHlvdSBwcm9wb3NlIHRoYXQgd2UgcmVzdHJpY3QgdGhpcz8NCj4gPiA+
-ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiA+IE91ciBjb21tdW5pY2F0
-aW9uIGNoYW5uZWwgaXMgYnJva2VuLg0KPiA+ID4gPiA+ID4gPiBJIGRpZCBub3QgaW50ZW5kIHRv
-IHByb3Bvc2UgYW55IGltcGxpY2l0IGxvY2tpbmcuDQo+ID4gPiA+ID4gPiA+IElmIHNhbWJhIGFu
-ZCBuZnNkIGNhbiBvcHQtaW4gd2l0aCBPX1NIQVJFIGZsYWdzLCBJIGRvIG5vdA0KPiA+ID4gPiA+
-ID4gPiB1bmRlcnN0YW5kIHdoeSBhIG1vdW50IG9wdGlvbiBpcyBoZWxwZnVsIGZvciB0aGUgY2F1
-c2Ugb2YNCj4gPiA+ID4gPiA+ID4gc2FtYmEvbmZzZCBpbnRlcm9wLg0KPiA+ID4gPiA+ID4gPiAN
-Cj4gPiA+ID4gPiA+ID4gSWYgc29tZW9uZSBlbHNlIGlzIGludGVyZXN0ZWQgaW4gc2FtYmEvbG9j
-YWwgaW50ZXJvcCB0aGFuDQo+ID4gPiA+ID4gPiA+IHllcywgYSBtb3VudCBvcHRpb24gbGlrZSBz
-dWdnZXN0ZWQgYnkgUGF2ZWwgY291bGQgYmUgYQ0KPiA+ID4gPiA+ID4gPiBnb29kDQo+ID4gPiA+
-ID4gPiA+IG9wdGlvbiwNCj4gPiA+ID4gPiA+ID4gYnV0IGl0IGlzIGFuIG9ydGhvZ29uYWwgZWZm
-b3J0IElNTy4NCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gSWYgYW4gTkZTIGNsaWVudCAnb3B0
-cyBpbicgdG8gc2V0IHNoYXJlIGRlbnksIHRoZW4gdGhhdA0KPiA+ID4gPiA+ID4gc3RpbGwNCj4g
-PiA+ID4gPiA+IG1ha2VzDQo+ID4gPiA+ID4gPiBpdA0KPiA+ID4gPiA+ID4gYSBub24tb3B0aW9u
-YWwgbG9jayBmb3IgdGhlIG90aGVyIE5GUyBjbGllbnRzLCBiZWNhdXNlIGFsbA0KPiA+ID4gPiA+
-ID4gb3JkaW5hcnkNCj4gPiA+ID4gPiA+IG9wZW4oKSBjYWxscyB3aWxsIGJlIGdhdGVkIGJ5IHRo
-ZSBzZXJ2ZXIgd2hldGhlciBvciBub3QNCj4gPiA+ID4gPiA+IHRoZWlyDQo+ID4gPiA+ID4gPiBh
-cHBsaWNhdGlvbiBzcGVjaWZpZXMgdGhlIE9fU0hBUkUgZmxhZy4gVGhlcmUgaXMgbm8gZmxhZyBp
-bg0KPiA+ID4gPiA+ID4gdGhlDQo+ID4gPiA+ID4gPiBORlMNCj4gPiA+ID4gPiA+IHByb3RvY29s
-IHRoYXQgY291bGQgdGVsbCB0aGUgc2VydmVyIHRvIGlnbm9yZSBkZW55IG1vZGVzLg0KPiA+ID4g
-PiA+ID4gDQo+ID4gPiA+ID4gPiBJT1c6IGl0IHdvdWxkIHN1ZmZpY2UgZm9yIDEgY2xpZW50IHRv
-IHVzZSBPX1NIQVJFfE9fREVOWSoNCj4gPiA+ID4gPiA+IHRvDQo+ID4gPiA+ID4gPiBvcHQNCj4g
-PiA+ID4gPiA+IGFsbA0KPiA+ID4gPiA+ID4gdGhlIG90aGVyIGNsaWVudHMgaW4uDQo+ID4gPiA+
-ID4gPiANCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBTb3JyeSBmb3IgYmVpbmcgdGhpY2ssIEkgZG9u
-J3QgdW5kZXJzdGFuZCBpZiB3ZSBhcmUgaW4NCj4gPiA+ID4gPiBhZ3JlZW1lbnQNCj4gPiA+ID4g
-PiBvcg0KPiA+ID4gPiA+IG5vdC4NCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBNeSB1bmRlcnN0YW5k
-aW5nIGlzIHRoYXQgdGhlIG5ldHdvcmsgZmlsZSBzZXJ2ZXINCj4gPiA+ID4gPiBpbXBsZW1lbnRh
-dGlvbnMNCj4gPiA+ID4gPiAoaS5lLiBzYW1iYSwga25mZHMsIEdhbmVzaGEpIHdpbGwgYWx3YXlz
-IHVzZSBzaGFyZS9kZW55DQo+ID4gPiA+ID4gbW9kZXMuDQo+ID4gPiA+ID4gU28gZm9yIGV4YW1w
-bGUgbmZzIHYzIG9wZW5zIHdpbGwgYWx3YXlzIHVzZSBPX0RFTllfTk9ORQ0KPiA+ID4gPiA+IGlu
-IG9yZGVyIHRvIGhhdmUgY29ycmVjdCBpbnRlcm9wIHdpdGggc2FtYmEgYW5kIG5mcyB2NC4NCj4g
-PiA+ID4gPiANCj4gPiA+ID4gPiBJZiBJIGFtIG1pc3VuZGVyc3RhbmRpbmcgc29tZXRoaW5nLCBw
-bGVhc2UgZW5saWdodGVuIG1lLg0KPiA+ID4gPiA+IElmIHRoZXJlIGlzIGEgcmVhc29uIHdoeSBt
-b3VudCBvcHRpb24gaXMgbmVlZGVkIGZvciB0aGUgc29sZQ0KPiA+ID4gPiA+IHB1cnBvc2UNCj4g
-PiA+ID4gPiBvZiBpbnRlcm9wIGJldHdlZW4gbmV0d29yayBmaWxlc3lzdGVtIHNlcnZlcnMsIHBs
-ZWFzZQ0KPiA+ID4gPiA+IGVubGlnaHRlbg0KPiA+ID4gPiA+IG1lLg0KPiA+ID4gPiA+IA0KPiA+
-ID4gPiA+IA0KPiA+ID4gPiANCj4gPiA+ID4gU2FtZSBkaWZmZXJlbmNlLiBBcyBsb25nIGFzIG5m
-c2QgYW5kL29yIEdhbmVzaGEgYXJlIHRyYW5zbGF0aW5nDQo+ID4gPiA+IE9QRU40X1NIQVJFX0FD
-Q0VTU19SRUFEIGFuZCBPUEVONF9TSEFSRV9BQ0NFU1NfV1JJVEUgaW50byBzaGFyZQ0KPiA+ID4g
-PiBhY2Nlc3MNCj4gPiA+ID4gbG9ja3MsIHRoZW4gdGhvc2Ugd2lsbCBjb25mbGljdCB3aXRoIGFu
-eSBkZW55IGxvY2tzIHNldCBieQ0KPiA+ID4gPiB3aGF0ZXZlcg0KPiA+ID4gPiBhcHBsaWNhdGlv
-biB0aGF0IHVzZXMgdGhlbS4NCj4gPiA+ID4gDQo+ID4gPiA+IElPVzogYW55IG9wZW4oT19SRE9O
-TFkpIGFuZCBvcGVuKE9fUkRXUikgd2lsbCBjb25mbGljdCB3aXRoIGFuDQo+ID4gPiA+IE9fREVO
-WV9SRUFEIHRoYXQgaXMgc2V0IG9uIHRoZSBzZXJ2ZXIsIGFuZCBhbnkgb3BlbihPX1dST05MWSkN
-Cj4gPiA+ID4gYW5kDQo+ID4gPiA+IG9wZW4oT19SRFdSKSB3aWxsIGNvbmZsaWN0IHdpdGggYW4g
-T19ERU5ZX1dSSVRFIHRoYXQgaXMgc2V0IG9uDQo+ID4gPiA+IHRoZQ0KPiA+ID4gPiBzZXJ2ZXIu
-IFRoZXJlIGlzIG5vIG9wdC1vdXQgZm9yIE5GUyBjbGllbnRzIG9uIHRoaXMgaXNzdWUsDQo+ID4g
-PiA+IGJlY2F1c2UNCj4gPiA+ID4gc3RhdGVmdWwgTkZTdjQgb3BlbnMgTVVTVCBzZXQgb25lIG9y
-IG1vcmUgb2YNCj4gPiA+ID4gT1BFTjRfU0hBUkVfQUNDRVNTX1JFQUQNCj4gPiA+ID4gYW5kIE9Q
-RU40X1NIQVJFX0FDQ0VTU19XUklURS4NCj4gPiA+ID4gDQo+ID4gPiANCj4gPiA+IFVyZ2ghIEkg
-KnRoaW5rKiBJIHVuZGVyc3RhbmQgdGhlIGNvbmZ1c2lvbi4NCj4gPiA+IA0KPiA+ID4gSSBiZWxp
-ZXZlIEplZmYgd2FzIHRhbGtpbmcgYWJvdXQgaW1wbGVtZW50aW5nIGEgbW91bnQgb3B0aW9uDQo+
-ID4gPiBzaW1pbGFyIHRvIC1vIG1hbmQgZm9yIGxvY2FsIGZzIG9uIHRoZSBzZXJ2ZXIuDQo+ID4g
-PiBXaXRoIHRoYXQgbW91bnQgb3B0aW9uLCAqYW55KiBvcGVuKCkgYnkgYW55IGFwcCBvZiBmaWxl
-IGZyb20NCj4gPiA+IHRoYXQgbW91bnQgd2lsbCB1c2UgT19ERU5ZX05PTkUgdG8gaW50ZXJvcCBj
-b3JyZWN0bHkgd2l0aA0KPiA+ID4gbmV0d29yayBzZXJ2ZXJzIHRoYXQgZXhwbGljaXRseSBvcHQt
-aW4gZm9yIGludGVyb3Agb24gc2hhcmUNCj4gPiA+IG1vZGVzLg0KPiA+ID4gSSBhZ3JlZSBpdHMg
-YSBuaWNlIGZlYXR1cmUgdGhhdCBpcyBlYXN5IHRvIGltcGxlbWVudCAtIG5vdA0KPiA+ID4gaW1w
-b3J0YW50DQo+ID4gPiBmb3IgZmlyc3QgdmVyc2lvbiBJTU8uDQo+ID4gPiANCj4gPiA+IEkgKnRo
-aW5rKiB5b3UgYXJlIHRhbGtpbmcgb24gbmZzIGNsaWVudCBtb3VudCBvcHRpb24gZm9yDQo+ID4g
-PiBvcHQtaW4vb3V0IG9mIHNoYXJlIG1vZGVzPyB0aGVyZSB3YXMgbm8gc3VjaCBpbnRlbnRpb24u
-DQo+ID4gPiANCj4gPiANCj4gPiBOby4gSSdtIHNheWluZyB0aGF0IHdoZXRoZXIgeW91IGludGVu
-ZGVkIHRvIG9yIG5vdCwgeW91IF9hcmVfDQo+ID4gaW1wbGVtZW50aW5nIGEgbWFuZGF0b3J5IGxv
-Y2sgb3ZlciBORlMuIE5vIHRhbGsgYWJvdXQgT19TSEFSRSBmbGFncw0KPiA+IGFuZA0KPiA+IGl0
-IGJlaW5nIGFuIG9wdC1pbiBwcm9jZXNzIGZvciBsb2NhbCBhcHBsaWNhdGlvbnMgY2hhbmdlcyB0
-aGUgZmFjdA0KPiA+IHRoYXQNCj4gPiBub24tbG9jYWwgYXBwbGljYXRpb25zIChpLmUuIHRoZSBv
-bmVzIHRoYXQgY291bnQgKSBhcmUgYmVpbmcNCj4gPiBzdWJqZWN0ZWQNCj4gPiB0byBhIG1hbmRh
-dG9yeSBsb2NrIHdpdGggYWxsIHRoZSBwb3RlbnRpYWwgZm9yIGRlbmlhbCBvZiBzZXJ2aWNlDQo+
-ID4gdGhhdA0KPiA+IGltcGxpZXMuDQo+ID4gU28gd2UgbmVlZCBhIG1lY2hhbmlzbSBiZXlvbmQg
-T19TSEFSRSBpbiBvcmRlciB0byBlbnN1cmUgdGhpcw0KPiA+IHN5c3RlbQ0KPiA+IGNhbm5vdCBi
-ZSB1c2VkIG9uIHNlbnNpdGl2ZSBmaWxlcyB0aGF0IG5lZWQgdG8gYmUgYWNjZXNzaWJsZSB0bw0K
-PiA+IGFsbC4gSXQNCj4gPiBjb3VsZCBiZSBhbiBleHBvcnQgb3B0aW9uLCBvciBhIG1vdW50IG9w
-dGlvbiwgb3IgaXQgY291bGQgYmUgYSBtb3JlDQo+ID4gc3BlY2lmaWMgbWVjaGFuaXNtIChlLmcu
-IHRoZSBzZXRnaWQgd2l0aCBubyBleGVjdXRlIG1vZGUgYml0IGFzDQo+ID4gdXNpbmcNCj4gPiBp
-biBQT1NJWCBtYW5kYXRvcnkgbG9ja3MpLg0KPiA+IA0KPiANCj4gSSBzZWUuIFRoYW5rcyBmb3Ig
-bWFraW5nIHRoYXQgY29uY2VybiBjbGVhci4NCj4gDQo+IElmIHNlcnZlciBvd25lciB3aXNoZXMg
-dG8gaGF2ZSBzYW1iYS9uZnMgaW50ZXJvcCBvYnZpb3VzbHkNCj4gc2VydmVyIG93bmVyIHNob3Vs
-ZCBjb25maWd1cmUgYm90aCBzYW1iYSBhbmQgbmZzIGZvciBpbnRlcm9wLg0KPiBuZnMgc2hvdWxk
-IHRodXMgaGF2ZSBpdCBjb25maWd1cmFibGUgdmlhIGV4cG9ydCBvcHRpb25zIElNTw0KPiBhbmQg
-bm90IHZpYSBtb3VudCBvcHRpb24gKHNlcnZlcidzIHJlc3BvbnNpYmlsaXR5KS4NCj4gDQo+IFBy
-ZXZlbnRpbmcgT19ERU5ZX1ggb24gYSBjZXJ0YWluIGZpbGUuLi4gaG1tDQo+IFdlIGNhbiBkbyB0
-aGF0IGJ1dCwgaWYgbmZzIHByb3RvY29sIGhhcyBPX0RFTlkgd2hhdCdzIHRoZQ0KPiBsb2dpYyB0
-aGF0IHdlIHdvdWxkIHdhbnQgdG8gb3ZlcnJpZGUgaXQ/DQoNCkl0IHdhcyBhZGRlZCBpbiBvcmRl
-ciB0byBzdXBwb3J0IFdpbmRvd3MgY2xpZW50cy4gVGhlcmUgaXMgYWxzbw0Kb3B0aW9uYWwgc3Vw
-cG9ydCBmb3IgbWFuZGF0b3J5IGJ5dGUgcmFuZ2UgbG9ja3MuDQoNCkhvd2V2ZXIgdGhlIGZhY3Qg
-dGhhdCB0aGUgcHJvdG9jb2wgc3VwcG9ydHMgaXQgZG9lc24ndCBhdXRvbWF0aWNhbGx5DQptYWtl
-IGl0IGEgZ29vZCBpZGVhLiBEZXNpZ24gYnkgY29tbWl0dGVlLi4uDQoNCj4gV2hhdCB3ZSBuZWVk
-IGlzIGEgd2F5IHRvIHRyYWNrLCBibGFtZSB0aGUgcmVzb3VyY2UgaG9sZGVyIGFuZA0KPiByZWxl
-YXNlIHRoZSByZXNvdXJjZSBhZG1pbmlzdHJhdGl2ZWx5Lg0KPiANCj4gRm9yIHRoYXQgbWF0dGVy
-LCBhc3N1bWluZyB0aGUgbmZzZCBhbmQgc21iZCAoZXRjKSBjYW4gY29udGFpbg0KPiB0aGVpciBv
-d24gZmRzIHdpdGhvdXQgbGVha2luZyB0aGVtIHRvIG90aGVyIG1vZHVsZXMgKG1pbnVzIGJ1Z3Mp
-DQo+IHRoZW4gcHJvdmlkZWQgd2l0aCBzdWZmaWNpZW50IHN5c2ZzL3Byb2NmcyBpbmZvIChpLmUu
-IEJydWNlJ3MgbmV3DQo+IG9wZW4NCj4gZmlsZXMgdHJhY2tpbmcpLCBhZG1pbiBzaG91bGQgYmUg
-YWJsZSB0byBraWxsIHRoZSBvZmZlbmRpbmcgbmZzL3NtYg0KPiBjbGllbnQNCj4gdG8gcmVsZWFz
-ZSB0aGUgaG9nZ2VkIGZpbGUuDQo+IA0KPiBJIGJlbGlldmUgdGhhdCBpcyB0aGUgV2luZG93cyBz
-ZXJ2ZXIgc29sdXRpb24gdG8gdGhlIERvUyB0aGF0IGlzDQo+IGltcGxpZWQNCj4gZnJvbSBPX0RF
-TlkuDQo+IA0KDQpSZWx5aW5nIG9uIGJlaW5nIGFibGUgdG8gYWNjZXNzIHRoZSBjbGllbnRzIGlz
-IG5vdCBnb29kIGVub3VnaC4gSW4NCmdlbmVyYWwsIHNlcnZlciBhZG1pbnMgdGVuZCBub3QgdG8g
-aGF2ZSBhY2Nlc3MgdG8gdGhlIGNsaWVudHMuDQoNCkhvd2V2ZXIgaXQgc2hvdWxkIGluZGVlZCBi
-ZSBwb3NzaWJsZSB0byBjcmVhdGUgYSB0b29sIG9uIHRoZSBzZXJ2ZXIgdG8NCnJldm9rZSBsb2Nr
-cyBhbmQgb3BlbiBzdGF0ZS4gTW9zdCBjb21tZXJjaWFsIHNlcnZlcnMgaGF2ZSB0aGF0IGtpbmQg
-b2YNCmZ1bmN0aW9uYWxpdHksIGFuZCBJIHdvdWxkIGFncmVlIHRoYXQgbWFrZXMgc2Vuc2UgZm9y
-IGRlYWxpbmcgd2l0aA0Kcm9ndWUgcHJvY2Vzc2VzLg0KDQotLSANClRyb25kIE15a2xlYnVzdA0K
-TGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0
-QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg==
+On Sat, Apr 27, 2019 at 11:25:16AM +1000, Dave Chinner wrote:
+> On Fri, Apr 26, 2019 at 11:20:45AM -0400, Jerome Glisse wrote:
+> > On Fri, Apr 26, 2019 at 04:28:16PM +1000, Dave Chinner wrote:
+> > > On Thu, Apr 25, 2019 at 09:38:14PM -0400, Jerome Glisse wrote:
+> > > > I see that they are still empty spot in LSF/MM schedule so i would like to
+> > > > have a discussion on allowing direct block mapping of file for devices (nic,
+> > > > gpu, fpga, ...). This is mm, fs and block discussion, thought the mm side
+> > > > is pretty light ie only adding 2 callback to vm_operations_struct:
+> > > 
+> > > The filesystem already has infrastructure for the bits it needs to
+> > > provide. They are called file layout leases (how many times do I
+> > > have to keep telling people this!), and what you do with the lease
+> > > for the LBA range the filesystem maps for you is then something you
+> > > can negotiate with the underlying block device.
+> > > 
+> > > i.e. go look at how xfs_pnfs.c works to hand out block mappings to
+> > > remote pNFS clients so they can directly access the underlying
+> > > storage. Basically, anyone wanting to map blocks needs a file layout
+> > > lease and then to manage the filesystem state over that range via
+> > > these methods in the struct export_operations:
+> > > 
+> > >         int (*get_uuid)(struct super_block *sb, u8 *buf, u32 *len, u64 *offset);
+> > >         int (*map_blocks)(struct inode *inode, loff_t offset,
+> > >                           u64 len, struct iomap *iomap,
+> > >                           bool write, u32 *device_generation);
+> > >         int (*commit_blocks)(struct inode *inode, struct iomap *iomaps,
+> > >                              int nr_iomaps, struct iattr *iattr);
+> > > 
+> > > Basically, before you read/write data, you map the blocks. if you've
+> > > written data, then you need to commit the blocks (i.e. tell the fs
+> > > they've been written to).
+> > > 
+> > > The iomap will give you a contiguous LBA range and the block device
+> > > they belong to, and you can then use that to whatever smart DMA stuff
+> > > you need to do through the block device directly.
+> > > 
+> > > If the filesystem wants the space back (e.g. because truncate) then
+> > > the lease will be revoked. The client then must finish off it's
+> > > outstanding operations, commit them and release the lease. To access
+> > > the file range again, it must renew the lease and remap the file
+> > > through ->map_blocks....
+> > 
+> > Sorry i should have explain why lease do not work. Here are list of
+> > lease shortcoming AFAIK:
+> >     - only one process
+> 
+> Sorry, what? The lease is taken by a application process that then
+> hands out the mapping to whatever parts of it - processes, threads,
+> remote clients, etc - need access. If your application doesn't
+> have an access co-ordination method, then you're already completely
+> screwed.
+
+Then i am completely screw :) The thing is that today mmap of a file
+does not mandate any kind of synchronization between process than
+mmap files and thus we have a lot of existing applications that are
+just happy with that programming model and i do not see any reasons
+to force something new on them.
+
+Here i am only trying an optimization by possibly skipping the page
+cache intermediary if filesystem and blocks device allows it and can
+do it (depending on any number of runtime conditions).
+
+So lease is inherently not compatible with mmap of file by multiple
+processes. I understand you want to push your access model but the
+reality is that we have existing applications that just do not fit
+that model and i do not see any reasons to ask them to change, it
+is never a successful approach.
+
+> 
+> >     - program ie userspace is responsible for doing the right thing
+> >       so heavy burden on userspace program
+> 
+> You're asking for direct access to storage owned by the filesystem.
+> The application *must* play by the filesystem rules. Stop trying to
+> hack around the fact that the filesystem controls access to the
+> block mapping.
+
+This is a filesystem opt-in feature if a given filesystem do not want
+to implement it then just do not implement it and it will use page
+cache. It is not mandatory i am not forcing anyone. The first reasons
+for those are not filesystem but mmap of device file. But as LSF/MM
+is up i thought it would be a good time to maybe propose that for file-
+system too. If you do not want that for your filesystem then just NAK
+any patch that add that to filesystem you care about.
+
+> 
+> >     - lease break time induce latency
+> 
+> Lease breaks should never happen in normal workloads, so this isn't
+> an issue. IF you have an application that requires exclusive access,
+> then ensure that the file can only be accessed by the application
+> and the lease should never be broken.
+> 
+> But if you are going to ask for filesystems to hand out block
+> mapping for thrid party access, the 3rd parties need to play by the
+> filesystem's access rules, and that means they /must/ break access
+> if the filesystem asks them to.
+
+The mmu notifier give you revocation at any _time_ without round
+trip to user space.
+
+> 
+> >     - lease may require privileges for the applications
+> 
+> If you can directly access the underlying block device (which
+> requires root/CAP_SYS_ADMIN) then the application has sufficient
+> privilege to get a file layout lease.
+
+Again here i am tageting mmap of file and thus do not necessarily
+need the same privileges as lease (AFAIK).
+
+> 
+> >     - work on file descriptor not virtual addresses
+> 
+> Sorry, what? You want direct access to the underlying storage device
+> for direct DMA, not access to the page cache. i.e. you need a
+> mapping for a range of a file (from offset X to Y) and you most
+> definitely do not need the file to be virtually mapped for that.
+> 
+> If you want to DMA from a userspace or peer device memory to storage
+> directly, then you definitely do not want the file to mapped into
+> the page cache, and so mmap() is most definitely the wrong interface
+> to be using to set up direct storage access to a file.
+
+I am starting from _existing_ application that do mmap and thus mmap
+is the base assumption it is my starting point. I am not trying to
+do some kind of new workload, i am trying to allow existing application
+to leverage new storage technology more efficiently without changing
+a single line in those application.
+
+I believe kernel should always try to improve existing application
+workload with no modification to the application whenever possible.
+
+> 
+> > While what i am trying to achieve is:
+> >     - support any number of process
+> 
+> file leases don't prevent that.
+
+I was under the impression that there could be only one lease at a
+time per file. Sorry if i was wrong.
+
+> 
+> >     - work on virtual addresses
+> 
+> like direct io, get_user_pages() works just fine for this.
+
+Here i am getting away of GUP to avoid the pinning issues related
+to GUP hence why there is no need in what i propose to pin anything.
+What i am trying to do is skip out the page cache copy if at all
+possible (depending on many factors) so that application can get
+better performance without modification.
+
+> >     - is an optimization ie falling back to page cache is _always_
+> >       acceptable
+> 
+> No, it isn't. Falling back to the page cache will break the layout
+> lease because the lock filesystem does IO that breaks existing
+> leases. You can't have both a layout lease and page cache access to
+> the same file.
+
+Yes and this is what i want to do, mmap access is from where i start
+so as a starting point it is what i would like to allow. If you do
+not want that for your filesystem fine.
+
+> 
+> >     - no changes to userspace program ie existing program can
+> >       benefit from this by just running on a kernel with the
+> >       feature on the system with hardware that support this.
+> 
+> That's a pipe dream. Existing direct access applications /don't work/ with
+> file-backed mmap() ranges. They will not work with DAX, either, so
+> please stop with the "work with unmodified existing applications"
+> already.
+
+I am talking about existing application that do mmap, i do not care
+about application that do direct access this is not what i am trying
+to address. I want to improve application that use mmap.
+
+> 
+> If you want peer to peer DMA to filesystem managed storage, then you
+> *must* use the filesystem to manage access to that storage.
+
+And the callback just do that, they give control to the filesystem, if
+the callback is not there then page cache is use, if it is there then
+the filesystem do not always have to succeed and it can fails and just
+fallbacks to page cache.
+
+> 
+> >     - allow multiple different devices to map the block (can be
+> >       read only if the fabric between devices is not cache coherent)
+> 
+> Nothing about a layout lease prevents that. What the application
+> does with the layout lease is it's own business.
+> 
+> >     - it is an optimization ie avoiding to waste main memory if file
+> >       is only accessed by device
+> 
+> Layout leases don't prevent this - they are explicitly for allowing
+> this sort of access to be made safely.
+> 
+> >     - there is _no pin_ and it can be revoke at _any_ time from within
+> >       the kernel ie there is no need to rely on application to do the
+> >       right thing
+> 
+> Revoke how, exactly? Are you really proposing sending SEGV to user
+> processes as the revoke mechanism?
+
+No, just mmu notifier, exactly what happens on write-back, truncate, ...
+you can walk all rmap of page and trigger mmu notifier for it or reverse
+walk file offset range and trigger mmu notifier for those.
+
+So there is no disruption to the application. After revocation it page
+fault again and the cycle start again either it end up in page cache
+or the same callback is call again.
+
+> 
+> >     - not only support filesystem but also vma that comes from device
+> >       file
+> 
+> What's a "device file" and how is that any difference from a normal
+> kernel file?
+
+Many device driver expose object (for instance all the GPU driver) through
+their device file and allow userspace to mmap the device file to access
+those object. At a given offset in the device file you will find a given
+object and this can be per application or global to all application.
+
+> 
+> > The motivation is coming from new storage technology (NVMe with CMB for
+> > instance) where block device can offer byte addressable access to block.
+> > It can be read only or read and write. When you couple this with gpu,
+> > fgpa, tpu that can crunch massive data set (in the tera bytes ranges)
+> > then avoiding going through main memory becomes an appealing prospect.
+> >
+> > If we can achieve that with no disruption to the application programming
+> > model the better it is. By allowing to mediate direct block access through
+> > vma we can achieve that.
+> 
+> I have a hammer that I can use to mediate direct block access, too.
+> 
+> That doesn't mean it's the right tool for the job. At it's most
+> fundamental level, the block mapping is between an inode, the file
+> offset and the LBA range in the block device that the storage device
+> presents to users. This is entirely /filesystem information/ and we
+> already have interfaces to manage and arbitrate safe direct storage
+> access for third parties.
+> 
+> Stop trying to re-invent the wheel and use the one we already have
+
+I have a starting point mmap and this is what i try to improve.
+.
+> 
+> > This is why i am believe something at the vma level is better suited to
+> > make such thing as easy and transparent as possible. Note that unlike
+> > GUP there is _no pinning_ so filesystem is always in total control and
+> > can revoke at _any_ time.
+> 
+> Revoke how, exactly? And how do applications pause and restart when
+> this undefined revoke mechanism is invoked? What happens to access
+> latency when this revoke occurs and why is this any different to
+> having a file layout lease revoked?
+
+Application do not pause in anyway, after invalidation it will page
+fault exactly as with truncate or write back. Then the callback is
+call again and the filesystem can say no this time and it will fall
+back to the page cache. There is no change to existing application
+it just works as it does now with no changes in behavior.
+
+> 
+> > Also because it is all kernel side we should
+> > achieve much better latency (flushing device page table is usualy faster
+> > then switching to userspace and having userspace calling back into the
+> > driver).
+> > 
+> > 
+> > > 
+> > > > So i would like to gather people feedback on general approach and few things
+> > > > like:
+> > > >     - Do block device need to be able to invalidate such mapping too ?
+> > > > 
+> > > >       It is easy for fs the to invalidate as it can walk file mappings
+> > > >       but block device do not know about file.
+> > > 
+> > > If you are needing the block device to invalidate filesystem level
+> > > information, then your model is all wrong.
+> > 
+> > It is _not_ a requirement. It is a feature and it does not need to be
+> > implemented right away the motivation comes from block device that can
+> > manage their PCIE BAR address space dynamicly and they might want to
+> > unmap some block to make room for other block. For this they would need
+> > to make sure that they can revoke access from device or CPU they might
+> > have mapped the block they want to evict.
+> 
+> This has nothing to do with the /layout lease/. Layout leases are
+> for managing direct device access, not how the application interacts
+> with the hardware that it has been given a block mapping for.
+> 
+> Jerome, it seems to me like you're conflating hardware management
+> issues with block device access and LBA management. These are
+> completely separate things that the application has to manage - the
+> filesystem and the layout lease doesn't give a shit about whether
+> the application has exhausted the hardware PCIE BAR space.  i.e.
+> hardware kicking out a user address mapping does not invalidate the
+> layout lease in any way - it just requires the application to set up
+> that direct access map in the hardware again.  The file offset to
+> LBA mapping that the layout lease manages is entirely unaffected by
+> this sort of problem.
+
+Ignore this point if it confuse you, it just something that can be
+ignore unless it becomes a problem.
+
+> 
+> > > >     - Maybe some share helpers for block devices that could track file
+> > > >       corresponding to peer mapping ?
+> > > 
+> > > If the application hasn't supplied the peer with the file it needs
+> > > to access, get a lease from and then map an LBA range out of, then
+> > > you are doing it all wrong.
+> > 
+> > I do not have the same programming model than one you have in mind, i
+> > want to allow existing application which mmap files and access that
+> > mapping through a device or CPU to directly access those blocks through
+> > the virtual address.
+> 
+> Which is the *wrong model*.
+> 
+> mmap() of a file-backed mapping does not provide a sane, workable
+> direct storage access management API. It's fundamentally flawed
+> because it does not provide any guarantee about the underlying
+> filesystem information (e.g. the block mapping) and as such, results
+> in a largely unworkable model that we need all sorts of complexity
+> to sorta make work.
+> 
+> Layout leases and the export ops provide the application with the
+> exact information they need to directly access the storage
+> underneath the filesystem in a safe manner. They do not, in any way,
+> control how the application then uses that information. If you
+> really want to use mmap() to access the storage, then you can mmap()
+> the ranges of the block device the ->map_blocks() method tells you
+> belong to that file. 
+> 
+> You can do whatever you want with those vmas and the filesystem
+> doesn't care - it's not involved in /any way whatsoever/ with the
+> data transfer into and out of the storage because ->map_blocks has
+> guaranteed that the storage is allocated. All the application needs
+> to do is call ->commit_blocks on each range of the mapping it writes
+> data into to tell the filesystem it now contains valid data.  It's
+> simple, straight forward, and hard to get wrong from both userspace
+> and the kernel filesystem side.\
+> 
+> Please stop trying to invent new and excitingly complex ways to do
+> direct block access because we ialready have infrastructure we know
+> works, we already support and is flexible enough to provide exactly
+> the sort of direct block device access mechainsms that you are
+> asking for.
+
+I understand you do not like mmap but it has been around long enough
+that it is extensively use and we have to accept that. There is no
+changing all the applications that exist out there and that rely on
+mmap and this is for those applications that such optimization would
+help.
+
+Cheers,
+Jérôme
