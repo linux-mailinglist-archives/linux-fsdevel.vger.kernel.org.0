@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5786AEEF8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 05:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E916DEEFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 05:09:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbfD3DI4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Apr 2019 23:08:56 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:46027 "EHLO
+        id S1730029AbfD3DJE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Apr 2019 23:09:04 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:54379 "EHLO
         new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729883AbfD3DI4 (ORCPT
+        by vger.kernel.org with ESMTP id S1729883AbfD3DJE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Apr 2019 23:08:56 -0400
+        Mon, 29 Apr 2019 23:09:04 -0400
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id EB66B5286;
-        Mon, 29 Apr 2019 23:08:54 -0400 (EDT)
+        by mailnew.nyi.internal (Postfix) with ESMTP id 0FA4D9A40;
+        Mon, 29 Apr 2019 23:09:03 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 29 Apr 2019 23:08:54 -0400
+  by compute3.internal (MEProxy); Mon, 29 Apr 2019 23:09:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=bxV5jBaXvA/LKL0qOR0ZLSK5IIfdrfWAd0nyjsopfiM=; b=j6+4FHAE
-        FVM8Li58NZcWW6HLlE9bl9fVj9deVbeq+Jxjc8W0HH4/aQ6y4q8QepnkNhVe78pi
-        /biDsaZbgcybTFU/OokAdYlEJiQ3BjySDRQjwsyDtEHzv3wZAFeqVoVqqFxiyrZw
-        Fh0VSQXbrxiHBNEP02LAzOWkJWkulDgZ/Xg6sKV9S5ZLrf5h9ZfZcrZzLKJfcfFk
-        guHwnmPVbrN3d96RTt3m6egGtUUq06Fmb9ypLapjBnRxm2tN9U6kaFAtNqf6qnPp
-        ND1JWNDcqiGim5drGe0p40+254w9D8NgPXf7K+jIjDYecXZskVwftSTcrVoy1Xeb
-        Vcl8ZCFCMSEmjw==
-X-ME-Sender: <xms:RrzHXAPEBhCpNjCXwNt0jBW2aqTaJsu1NQb5QmOEilZ9atFLj-nR_g>
+        fm2; bh=oAX6zCohmPiQ74kYACc2QgeImmemzleYDH4h+URdt/s=; b=o7Kj58FZ
+        umNKgzxodgukfWTcut22REHE596NdqMjuUUUKvVQLx5BPJj0NTVZ3d36ynR8D3Zf
+        hYyp6bB6IctA12jmf3nGBSK0wdsHhOvqQeEcd6b0LzA+naKDlxaYrR0fjB60JmUe
+        4MiUVO1e1yNCnRGW7kcjNv1oqoV8UyK75OUyGjJOA0g/FLXFgmnLTuDupzgBhM8P
+        CUdo56GgKBC4qFvCVJ4hWuNHTAk2LScEPqiaSMNqyfTpyPm5X2L1/ufg5GGEaQnq
+        YWqkh8PwrTQOaKGoBxk+JLF74PucyHy5GI4Mu/mGFFa507wP+nZKxpxaS6juK5kQ
+        WUOXSWsMIge3rg==
+X-ME-Sender: <xms:TrzHXLdQCrW-0MvgwMZjm0YPha3-sEY1-r7hAsOPXKXY4h4rjgd5iw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieefgdeikecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepfdfvohgsihhn
     ucevrdcujfgrrhguihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhgqeenucfkph
     epuddvuddrgeegrddvfedtrddukeeknecurfgrrhgrmhepmhgrihhlfhhrohhmpehtohgs
-    ihhnsehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedu
-X-ME-Proxy: <xmx:RrzHXB5G8MLDJ25Nk39dCyJQGv8lb2DXgPQyQGb5pupr1u1FuawfDQ>
-    <xmx:RrzHXGRF_ZQ-jDvN86MxcCg8fs88aswTX2E77CFHgvteghdNY1m2hg>
-    <xmx:RrzHXOBnLKsBdFFAEHczuCctWFVyd3ZL3YjnMVDfCx5wSFwpse0T4A>
-    <xmx:RrzHXA54wqxBOUYVI-Nae-eFnohIcFmOvxSMZniT_iRY8CO50KcmzQ>
+    ihhnsehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedv
+X-ME-Proxy: <xmx:TrzHXIIX6ZhtAuJ9-uRJfHtMmQ_S407tPx2cNRw4N-42DnZm5t0vmQ>
+    <xmx:TrzHXJrq_K8ahugLGfpzlux3Y-EBknA-l3Ipl82EKpMu5130SbM1rQ>
+    <xmx:TrzHXBXOhrAnFepNxPYOou_H311KpNLeySM9kV_iZLNApDxhg8TMoA>
+    <xmx:T7zHXCPi5HLnsGSs_FP5k0DZEP-m8e_kXjiYPsNRtLdtPEEKLF7HyQ>
 Received: from eros.localdomain (ppp121-44-230-188.bras2.syd2.internode.on.net [121.44.230.188])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2CB2D103C8;
-        Mon, 29 Apr 2019 23:08:46 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 12572103C8;
+        Mon, 29 Apr 2019 23:08:54 -0400 (EDT)
 From:   "Tobin C. Harding" <tobin@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Tobin C. Harding" <tobin@kernel.org>,
@@ -65,9 +65,9 @@ Cc:     "Tobin C. Harding" <tobin@kernel.org>,
         Hugh Dickins <hughd@google.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 02/15] tools/vm/slabinfo: Add support for -C and -M options
-Date:   Tue, 30 Apr 2019 13:07:33 +1000
-Message-Id: <20190430030746.26102-3-tobin@kernel.org>
+Subject: [RFC PATCH v4 03/15] slub: Sort slab cache list
+Date:   Tue, 30 Apr 2019 13:07:34 +1000
+Message-Id: <20190430030746.26102-4-tobin@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190430030746.26102-1-tobin@kernel.org>
 References: <20190430030746.26102-1-tobin@kernel.org>
@@ -78,150 +78,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
--C lists caches that use a ctor.
-
--M lists caches that support object migration.
-
-Add command line options to show caches with a constructor and caches
-that are movable (i.e. have migrate function).
+It is advantageous to have all defragmentable slabs together at the
+beginning of the list of slabs so that there is no need to scan the
+complete list. Put defragmentable caches first when adding a slab cache
+and others last.
 
 Co-developed-by: Christoph Lameter <cl@linux.com>
 Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 ---
- tools/vm/slabinfo.c | 40 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 36 insertions(+), 4 deletions(-)
+ mm/slab_common.c | 2 +-
+ mm/slub.c        | 6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/tools/vm/slabinfo.c b/tools/vm/slabinfo.c
-index 73818f1b2ef8..cbfc56c44c2f 100644
---- a/tools/vm/slabinfo.c
-+++ b/tools/vm/slabinfo.c
-@@ -33,6 +33,7 @@ struct slabinfo {
- 	unsigned int hwcache_align, object_size, objs_per_slab;
- 	unsigned int sanity_checks, slab_size, store_user, trace;
- 	int order, poison, reclaim_account, red_zone;
-+	int movable, ctor;
- 	unsigned long partial, objects, slabs, objects_partial, objects_total;
- 	unsigned long alloc_fastpath, alloc_slowpath;
- 	unsigned long free_fastpath, free_slowpath;
-@@ -67,6 +68,8 @@ int show_report;
- int show_alias;
- int show_slab;
- int skip_zero = 1;
-+int show_movable;
-+int show_ctor;
- int show_numa;
- int show_track;
- int show_first_alias;
-@@ -109,11 +112,13 @@ static void fatal(const char *x, ...)
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 58251ba63e4a..db5e9a0b1535 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -393,7 +393,7 @@ static struct kmem_cache *create_cache(const char *name,
+ 		goto out_free_cache;
  
- static void usage(void)
- {
--	printf("slabinfo 4/15/2011. (c) 2007 sgi/(c) 2011 Linux Foundation.\n\n"
--		"slabinfo [-aADefhilnosrStTvz1LXBU] [N=K] [-dafzput] [slab-regexp]\n"
-+	printf("slabinfo 4/15/2017. (c) 2007 sgi/(c) 2011 Linux Foundation/(c) 2017 Jump Trading LLC.\n\n"
-+	       "slabinfo [-aACDefhilMnosrStTvz1LXBU] [N=K] [-dafzput] [slab-regexp]\n"
-+
- 		"-a|--aliases           Show aliases\n"
- 		"-A|--activity          Most active slabs first\n"
- 		"-B|--Bytes             Show size in bytes\n"
-+		"-C|--ctor              Show slabs with ctors\n"
- 		"-D|--display-active    Switch line format to activity\n"
- 		"-e|--empty             Show empty slabs\n"
- 		"-f|--first-alias       Show first alias\n"
-@@ -121,6 +126,7 @@ static void usage(void)
- 		"-i|--inverted          Inverted list\n"
- 		"-l|--slabs             Show slabs\n"
- 		"-L|--Loss              Sort by loss\n"
-+		"-M|--movable           Show caches that support movable objects\n"
- 		"-n|--numa              Show NUMA information\n"
- 		"-N|--lines=K           Show the first K slabs\n"
- 		"-o|--ops               Show kmem_cache_ops\n"
-@@ -588,6 +594,12 @@ static void slabcache(struct slabinfo *s)
- 	if (show_empty && s->slabs)
+ 	s->refcount = 1;
+-	list_add(&s->list, &slab_caches);
++	list_add_tail(&s->list, &slab_caches);
+ 	memcg_link_cache(s);
+ out:
+ 	if (err)
+diff --git a/mm/slub.c b/mm/slub.c
+index ae44d640b8c1..f6b0e4a395ef 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4342,6 +4342,8 @@ void kmem_cache_setup_mobility(struct kmem_cache *s,
  		return;
+ 	}
  
-+	if (show_ctor && !s->ctor)
-+		return;
++	mutex_lock(&slab_mutex);
 +
-+	if (show_movable && !s->movable)
-+		return;
+ 	s->isolate = isolate;
+ 	s->migrate = migrate;
+ 
+@@ -4350,6 +4352,10 @@ void kmem_cache_setup_mobility(struct kmem_cache *s,
+ 	 * to disable fast cmpxchg based processing.
+ 	 */
+ 	s->flags &= ~__CMPXCHG_DOUBLE;
 +
- 	if (sort_loss == 0)
- 		store_size(size_str, slab_size(s));
- 	else
-@@ -602,6 +614,10 @@ static void slabcache(struct slabinfo *s)
- 		*p++ = '*';
- 	if (s->cache_dma)
- 		*p++ = 'd';
-+	if (s->ctor)
-+		*p++ = 'C';
-+	if (s->movable)
-+		*p++ = 'M';
- 	if (s->hwcache_align)
- 		*p++ = 'A';
- 	if (s->poison)
-@@ -636,7 +652,8 @@ static void slabcache(struct slabinfo *s)
- 		printf("%-21s %8ld %7d %15s %14s %4d %1d %3ld %3ld %s\n",
- 			s->name, s->objects, s->object_size, size_str, dist_str,
- 			s->objs_per_slab, s->order,
--			s->slabs ? (s->partial * 100) / s->slabs : 100,
-+			s->slabs ? (s->partial * 100) /
-+					(s->slabs * s->objs_per_slab) : 100,
- 			s->slabs ? (s->objects * s->object_size * 100) /
- 				(s->slabs * (page_size << s->order)) : 100,
- 			flags);
-@@ -1256,6 +1273,13 @@ static void read_slab_dir(void)
- 			slab->alloc_node_mismatch = get_obj("alloc_node_mismatch");
- 			slab->deactivate_bypass = get_obj("deactivate_bypass");
- 			chdir("..");
-+			if (read_slab_obj(slab, "ops")) {
-+				if (strstr(buffer, "ctor :"))
-+					slab->ctor = 1;
-+				if (strstr(buffer, "migrate :"))
-+					slab->movable = 1;
-+			}
++	list_move(&s->list, &slab_caches);	/* Move to top */
 +
- 			if (slab->name[0] == ':')
- 				alias_targets++;
- 			slab++;
-@@ -1332,6 +1356,8 @@ static void xtotals(void)
++	mutex_unlock(&slab_mutex);
  }
+ EXPORT_SYMBOL(kmem_cache_setup_mobility);
  
- struct option opts[] = {
-+	{ "ctor", no_argument, NULL, 'C' },
-+	{ "movable", no_argument, NULL, 'M' },
- 	{ "aliases", no_argument, NULL, 'a' },
- 	{ "activity", no_argument, NULL, 'A' },
- 	{ "debug", optional_argument, NULL, 'd' },
-@@ -1367,7 +1393,7 @@ int main(int argc, char *argv[])
- 
- 	page_size = getpagesize();
- 
--	while ((c = getopt_long(argc, argv, "aAd::Defhil1noprstvzTSN:LXBU",
-+	while ((c = getopt_long(argc, argv, "aACd::Defhil1MnoprstvzTSN:LXBU",
- 						opts, NULL)) != -1)
- 		switch (c) {
- 		case '1':
-@@ -1376,6 +1402,9 @@ int main(int argc, char *argv[])
- 		case 'a':
- 			show_alias = 1;
- 			break;
-+		case 'C':
-+			show_ctor = 1;
-+			break;
- 		case 'A':
- 			sort_active = 1;
- 			break;
-@@ -1399,6 +1428,9 @@ int main(int argc, char *argv[])
- 		case 'i':
- 			show_inverted = 1;
- 			break;
-+		case 'M':
-+			show_movable = 1;
-+			break;
- 		case 'n':
- 			show_numa = 1;
- 			break;
 -- 
 2.21.0
 
