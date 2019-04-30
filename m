@@ -2,116 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0F41FF69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 20:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F63FFF72
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 20:12:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbfD3SIj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 14:08:39 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:42407 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbfD3SIj (ORCPT
+        id S1726767AbfD3SMD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 14:12:03 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43593 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726733AbfD3SMC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 14:08:39 -0400
-Received: by mail-yw1-f67.google.com with SMTP id y131so6593974ywa.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 11:08:38 -0700 (PDT)
+        Tue, 30 Apr 2019 14:12:02 -0400
+Received: by mail-pf1-f194.google.com with SMTP id e67so7441187pfe.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 11:12:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Xil5v019vbM3B6LNJ5oLx5ybK/sELLOgqiNDryj/WS4=;
-        b=J6jpwCXSoU7Eq7a4v/BuGEqdgrF69IaBpqOL12T9GDVAPMr4fSnfDWEJUjRPxcE/aa
-         fNigHE4KOEqlZyENgRu+3RjUamg6DPnkPsUqo+KyKPP54eT63vbbvE3+J28zY2d6CAuk
-         qfCM428MXxMWIy/qHQJK5PMe+FU2XDaiA2WYI=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=keqoE4yrofLz8kYqjDMsHSkr0S8YueMxYzrRDWUbwAc=;
+        b=nel2FF2xXr6lovHX+5X+lMHSYLpbHBP2n/K5tXZUUpLin3UbJtXhYnNgYyPfij7qIo
+         BJ9uWdtOXq8wi0NQ5nwUPx5CUIAgXpAZ4y1XR0C4aL3LUHVdCK93F5EKXPgPuwdX9S+J
+         I7ytgmMcPPyO5VBUGx7rbCK6J6BAkOaZAB/6yyHN0JCf9WAo0OAXirXbebwl+gyLWRWN
+         j1Oxn1GaRKyXPS6ydD6j7sll8hiPZguc3LLILFJdntPk7IXRoOO9quyvCj7VeR8iJc85
+         7M+M5c/lDdbpj0FJD7y5B1NoIt5SOLsBi3SHAkV7ueuw6eRKjyjuiHU3hMiQf+uOkgAA
+         Kv6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xil5v019vbM3B6LNJ5oLx5ybK/sELLOgqiNDryj/WS4=;
-        b=Yy7qejDCyBZBa0zSu3fhkzBs5YYz0K3PvJPtagfzWzVsbnffgQMQCg+XSl5nUNHuQx
-         izho+/ubohlOovi4IuUM/147yj212nUBqubTDLwCdS5hCz2Juf36r3n0eL10xz0Uc8r2
-         MN1I9Hlqmuomlg8pOqGi5BQY7vi1QvShEZEN0EtgYlNFeZdRrNWdqkQm5raR8ajOs/92
-         iM2m6ggV8jFV9GIVho7Ot2MYfzt2K7eA6+PFA18GmEKmRCaj+F1cCxZNOgwaxSuYCzLc
-         TDitpEo/X8TNcPImI0bRB938r4jj1jMUyOAAr4AJbaXKESlsv8OYzpN570KV/1rhgVPH
-         kVBw==
-X-Gm-Message-State: APjAAAVJI45YoCa/N3B5qXd1IFC65/YrBYcacX7W1529c4FcgSRK13Xv
-        NPj+Xu30ugLmCWfmiEfjWi36caT8iCA=
-X-Google-Smtp-Source: APXvYqyn6MGcaYvhS3wtO/2eoISeFnIi35hOCnjsnFhOll7neMm0DcMcnIq1M9cP5/Vn7TpAhEUIXQ==
-X-Received: by 2002:a25:1102:: with SMTP id 2mr55297615ybr.456.1556647717878;
-        Tue, 30 Apr 2019 11:08:37 -0700 (PDT)
-Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
-        by smtp.gmail.com with ESMTPSA id a11sm10772898ywh.49.2019.04.30.11.08.36
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 11:08:37 -0700 (PDT)
-Received: by mail-yw1-f52.google.com with SMTP id u14so6608336ywe.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 11:08:36 -0700 (PDT)
-X-Received: by 2002:a25:d488:: with SMTP id m130mr15451236ybf.172.1556647716425;
- Tue, 30 Apr 2019 11:08:36 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=keqoE4yrofLz8kYqjDMsHSkr0S8YueMxYzrRDWUbwAc=;
+        b=SWtpsp0uYjhChJhHmT5/cbo+gH1USl0HU71smUxu/O8evZnO4slv61tttuDsoD4Zuu
+         jaM07Z/hPzpK0DAXwMVfrJwAGlVMCnXtQ7RbPKymgmfIWiBUn020vlsv/Q/ZP05NQuGi
+         mXdy4IO5PkQ4InOZgSH1rlrKRL1wjrG8wVwOtuol/tSwF0PtFI9Ya8WB8n6NaucXuQaZ
+         q59bX70Oe/uS8egNF9F7PVopZtdT5N0g+AbQYSOxw4o8JtmVbxv2freOiUze1G4Z85oL
+         TlD5p3Ornm3yp2yElbuWdF1K7inPIsI9mJfuqB99Jdu1Clc2FmzY8DLr4XtvZT9PHHJV
+         Hs1Q==
+X-Gm-Message-State: APjAAAWGIzvD1qM7HnQ38I2u7C+o74NSXvqOX97aIozg5IzylMXAXKJN
+        y9nsN0jBKmUSk5A8sgnTY1lbkg==
+X-Google-Smtp-Source: APXvYqxJznYkLaG36rMsocKbpuE5EXZvpj3VByEQMt0piXbUrjmJroHQ3MSuCS/BLz8CGIk3QrdYPA==
+X-Received: by 2002:a63:7504:: with SMTP id q4mr37268203pgc.443.1556647921914;
+        Tue, 30 Apr 2019 11:12:01 -0700 (PDT)
+Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
+        by smtp.gmail.com with ESMTPSA id b144sm13157642pfb.68.2019.04.30.11.12.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 11:12:00 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: avoid page allocation warnings
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+References: <20190430132405.8268-1-mark.rutland@arm.com>
+ <20190430141810.GF13796@bombadil.infradead.org>
+ <20190430145938.GA8314@lakrids.cambridge.arm.com>
+ <a1af3017-6572-e828-dc8a-a5c8458e6b5a@kernel.dk>
+ <20190430170302.GD8314@lakrids.cambridge.arm.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0bd395a0-e0d3-16a5-e29f-557e97782a48@kernel.dk>
+Date:   Tue, 30 Apr 2019 12:11:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190429222613.13345-1-mcroce@redhat.com> <CAGnkfhzkju6LXwHAVCHxCmMvAa1MLQGRY1czE1Boqz2OcEq39Q@mail.gmail.com>
- <CAGXu5j+qejH0c9fG=TwmSyK0FkaiNidgqYZrqgKPf4D_=u2k8A@mail.gmail.com>
- <20190430160813.GI13796@bombadil.infradead.org> <CAGnkfhxhZ7WELD-w_KA+yKogyyJ=y_=8w+HdpYoiWDbCsQi+zw@mail.gmail.com>
-In-Reply-To: <CAGnkfhxhZ7WELD-w_KA+yKogyyJ=y_=8w+HdpYoiWDbCsQi+zw@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 30 Apr 2019 11:08:22 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLvwT4qQSP5GH=MdNoW4XtEQRbeyA_=MrEAHhgBSXfJTQ@mail.gmail.com>
-Message-ID: <CAGXu5jLvwT4qQSP5GH=MdNoW4XtEQRbeyA_=MrEAHhgBSXfJTQ@mail.gmail.com>
-Subject: Re: [PATCH v4] proc/sysctl: add shared variables for range check
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190430170302.GD8314@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 9:30 AM Matteo Croce <mcroce@redhat.com> wrote:
->
-> On Tue, Apr 30, 2019 at 6:08 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Tue, Apr 30, 2019 at 08:42:42AM -0700, Kees Cook wrote:
-> > > On Tue, Apr 30, 2019 at 3:47 AM Matteo Croce <mcroce@redhat.com> wrote:
-> > > > On Tue, Apr 30, 2019 at 12:26 AM Matteo Croce <mcroce@redhat.com> wrote:
-> > > > >
-> > > > > Add a const int array containing the most commonly used values,
-> > > > > some macros to refer more easily to the correct array member,
-> > > > > and use them instead of creating a local one for every object file.
-> > > > >
-> > > >
-> > > > Ok it seems that this simply can't be done, because there are at least
-> > > > two points where extra1,2 are set to a non const struct:
-> > > > in ip_vs_control_net_init_sysctl() it's assigned to struct netns_ipvs,
-> > > > while in mpls_dev_sysctl_register() it's assigned to a struct mpls_dev
-> > > > and a struct net.
-> > >
-> > > Why can't these be converted to const also? I don't see the pointer
-> > > changing anywhere. They're created in one place and never changed.
-> >
-> > That's not true; I thought the same thing, but you need to see how
-> > they're used in the functions they're called.
-> >
-> > proc_do_defense_mode(struct ctl_table *table, int write,
-> >         struct netns_ipvs *ipvs = table->extra2;
-> >                         update_defense_level(ipvs);
-> > static void update_defense_level(struct netns_ipvs *ipvs)
-> >         spin_lock(&ipvs->dropentry_lock);
->
-> Indeed. I followed the same code path until I found this:
->
->  167                        ipvs->drop_rate = 0;
->  168                        ipvs->sysctl_drop_packet = 1;
->
-> so I think that this can't be done like this.
+On 4/30/19 11:03 AM, Mark Rutland wrote:
+> On Tue, Apr 30, 2019 at 10:21:03AM -0600, Jens Axboe wrote:
+>> On 4/30/19 8:59 AM, Mark Rutland wrote:
+>>> On Tue, Apr 30, 2019 at 07:18:10AM -0700, Matthew Wilcox wrote:
+>>>> On Tue, Apr 30, 2019 at 02:24:05PM +0100, Mark Rutland wrote:
+>>>>> In io_sqe_buffer_register() we allocate a number of arrays based on the
+>>>>> iov_len from the user-provided iov. While we limit iov_len to SZ_1G,
+>>>>> we can still attempt to allocate arrays exceeding MAX_ORDER.
+>>>>>
+>>>>> On a 64-bit system with 4KiB pages, for an iov where iov_base = 0x10 and
+>>>>> iov_len = SZ_1G, we'll calculate that nr_pages = 262145. When we try to
+>>>>> allocate a corresponding array of (16-byte) bio_vecs, requiring 4194320
+>>>>> bytes, which is greater than 4MiB. This results in SLUB warning that
+>>>>> we're trying to allocate greater than MAX_ORDER, and failing the
+>>>>> allocation.
+>>>>>
+>>>>> Avoid this by passing __GFP_NOWARN when allocating arrays for the
+>>>>> user-provided iov_len. We'll gracefully handle the failed allocation,
+>>>>> returning -ENOMEM to userspace.
+>>>>>
+>>>>> We should probably consider lowering the limit below SZ_1G, or reworking
+>>>>> the array allocations.
+>>>>
+>>>> I'd suggest that kvmalloc is probably our friend here ... we don't really
+>>>> want to return -ENOMEM to userspace for this case, I don't think.
+>>>
+>>> Sure. I'll go verify that the uring code doesn't assume this memory is
+>>> physically contiguous.
+>>>
+>>> I also guess we should be passing GFP_KERNEL_ACCOUNT rateh than a plain
+>>> GFP_KERNEL.
+>>
+>> kvmalloc() is fine, the io_uring code doesn't care about the layout of
+>> the memory, it just uses it as an index.
+> 
+> I've just had a go at that, but when using kvmalloc() with or without
+> GFP_KERNEL_ACCOUNT I hit OOM and my system hangs within a few seconds with the
+> syzkaller prog below:
+> 
+> ----
+> Syzkaller reproducer:
+> # {Threaded:false Collide:false Repeat:false RepeatTimes:0 Procs:1 Sandbox: Fault:false FaultCall:-1 FaultNth:0 EnableTun:false EnableNetDev:false EnableNetReset:false EnableCgroups:false EnableBinfmtMisc:false EnableCloseFds:false UseTmpDir:false HandleSegv:false Repro:false Trace:false}
+> r0 = io_uring_setup(0x378, &(0x7f00000000c0))
+> sendmsg$SEG6_CMD_SET_TUNSRC(0xffffffffffffffff, &(0x7f0000000240)={&(0x7f0000000000)={0x10, 0x0, 0x0, 0x40000000}, 0xc, 0x0, 0x1, 0x0, 0x0, 0x10}, 0x800)
+> io_uring_register$IORING_REGISTER_BUFFERS(r0, 0x0, &(0x7f0000000000), 0x1)
+> ----
+> 
+> ... I'm a bit worried that opens up a trivial DoS.
+> 
+> Thoughts?
 
-Ah, dang. Yeah, I missed that too.
-
-> Mind if I send a v5 without the const qualifier? At least to know the
-> kbuildbot opinion.
-
-Yeah, I think that's likely best.
+Can you post the patch you used?
 
 -- 
-Kees Cook
+Jens Axboe
+
