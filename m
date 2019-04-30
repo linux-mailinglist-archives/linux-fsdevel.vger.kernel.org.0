@@ -2,94 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A19C9FDFC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 18:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16F33FE29
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 18:51:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbfD3QdZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 12:33:25 -0400
-Received: from mail-io1-f46.google.com ([209.85.166.46]:46389 "EHLO
-        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfD3QdY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 12:33:24 -0400
-Received: by mail-io1-f46.google.com with SMTP id m14so1836807ion.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 09:33:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=av5VSNqJe7ZdTw4nzRuXBSgojWB4gnNiSMsj6Rn7YDc=;
-        b=uqHv+v7HqQD21A02DUEi0TR9EDNnqSAh+65SBAPqzIAwTrsXlla7pqKSpini2DuqBH
-         MZ5wnArL0hWFtEw6QvwH1+wal5Puz2vhMQ6jAdKCw+1QU83TWeTRMJX+jTlvKqBBAGa2
-         VesFY/GgBYduoB2sNrCPdO1kIrVl5O4+BiUeTHlxxvYwZAF/YPltSMdb60i7WZzDejMD
-         tu+NpOFTYvLCce4TnnEJLSs02L4nketpCF51AGmRsmbpx3P2gUIucB8YJY5cxr+UetWE
-         6p6/BYexB/U7z6Ik8iXqktx95i39UNFE9jIfF+5DCoIEqCAknFXgry44Hr0MwGGLL8Ox
-         dpMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=av5VSNqJe7ZdTw4nzRuXBSgojWB4gnNiSMsj6Rn7YDc=;
-        b=VwtUsBf3PhEsqrVXLMU7hdA3T6ZtVNmiAT0cwgTMBIHVttwrnY4B/tgZ4cfrz467pD
-         Gw3Zo6v/S8d0SmKV4iDKxuWSpwrn6zs7SwpVv+kkuhmp1gMj+a4otaTtwit1CnKhnJ5T
-         3qBUxPKcwiXKxj3F2V4wnVs3cwhbWYFN2ksP3e5QUrKBwvGk2ehBlDOmjT+3uIfrYtDX
-         Wxq7i0Wofqnbh5Kn/st3RfRkeNxhnOu9i0fH9cgo5ML2DA2bR5JF1UTeh7u32t3mE9V1
-         UeBHuE4+c3+4RxIGj0ExRRNaZheJmv3w529ZPsLNq1lz3KAC0YDZZfZKTXDpBj/nHlJN
-         Z9dw==
-X-Gm-Message-State: APjAAAUI3uK0gUiQvHDSQJNYvHt9l9dxqPZcGBfQGuNY1BiwjP05a1uX
-        kHe9WvriuV6NQu6XLrR1g+eK9Q9m7Um5+g==
-X-Google-Smtp-Source: APXvYqy114OccaZET0DAxPq1oVIV3uf8pOzkEUP8Ovs6BXAvr+d7OrRPRhaSDVAJ6t12mnKQFzqa9g==
-X-Received: by 2002:a5d:89c1:: with SMTP id a1mr15751044iot.214.1556642003525;
-        Tue, 30 Apr 2019 09:33:23 -0700 (PDT)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id h8sm14286582iof.36.2019.04.30.09.33.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 09:33:22 -0700 (PDT)
-Subject: Re: [PATCHv2] io_uring: free allocated io_memory once
-To:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20190430163021.54711-1-mark.rutland@arm.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b31d4f2e-8756-02ef-9c0b-55c7e755c097@kernel.dk>
-Date:   Tue, 30 Apr 2019 10:33:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726061AbfD3QvS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 12:51:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37252 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725942AbfD3QvS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Apr 2019 12:51:18 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52DF92147A;
+        Tue, 30 Apr 2019 16:51:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556643077;
+        bh=3A7w+7LZPtm+9FWKjAgeHNtIX9e4JIDaC+A4dd4ARQ8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ac5F7t0j6x24hq3IoaAVr5vKg3sOed28k6SV2U+v0kOOicvbQ9Bo+Z8sR/VlBjaY4
+         Wt7nXL7vV9xnSg1i4wF3IeXYBaH/rsVuS3+KuNG778bEP5XGmZt+kTV/rN1VaGl+Gr
+         MGfC0vxfwf3QR6eLBLVcoQPWxrmliOTjA5P2PDsM=
+Date:   Tue, 30 Apr 2019 09:51:15 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Chandan Rajendra <chandan@linux.ibm.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com,
+        hch@infradead.org
+Subject: Re: [PATCH V2 12/13] fscrypt_zeroout_range: Encrypt all zeroed out
+ blocks of a page
+Message-ID: <20190430165114.GA48973@gmail.com>
+References: <20190428043121.30925-1-chandan@linux.ibm.com>
+ <20190428043121.30925-13-chandan@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190430163021.54711-1-mark.rutland@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190428043121.30925-13-chandan@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/30/19 10:30 AM, Mark Rutland wrote:
-> If io_allocate_scq_urings() fails to allocate an sq_* region, it will
-> call io_mem_free() for any previously allocated regions, but leave
-> dangling pointers to these regions in the ctx. Any regions which have
-> not yet been allocated are left NULL. Note that when returning
-> -EOVERFLOW, the previously allocated sq_ring is not freed, which appears
-> to be an unintentional leak.
+On Sun, Apr 28, 2019 at 10:01:20AM +0530, Chandan Rajendra wrote:
+> For subpage-sized blocks, this commit adds code to encrypt all zeroed
+> out blocks mapped by a page.
 > 
-> When io_allocate_scq_urings() fails, io_uring_create() will call
-> io_ring_ctx_wait_and_kill(), which calls io_mem_free() on all the sq_*
-> regions, assuming the pointers are valid and not NULL.
+> Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
+> ---
+>  fs/crypto/bio.c | 40 ++++++++++++++++++----------------------
+>  1 file changed, 18 insertions(+), 22 deletions(-)
 > 
-> This can result in pages being freed multiple times, which has been
-> observed to corrupt the page state, leading to subsequent fun. This can
-> also result in virt_to_page() on NULL, resulting in the use of bogus
-> page addresses, and yet more subsequent fun. The latter can be detected
-> with CONFIG_DEBUG_VIRTUAL on arm64.
+> diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+> index 856f4694902d..46dd2ec50c7d 100644
+> --- a/fs/crypto/bio.c
+> +++ b/fs/crypto/bio.c
+> @@ -108,29 +108,23 @@ EXPORT_SYMBOL(fscrypt_pullback_bio_page);
+>  int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+>  				sector_t pblk, unsigned int len)
+>  {
+> -	struct fscrypt_ctx *ctx;
+>  	struct page *ciphertext_page = NULL;
+>  	struct bio *bio;
+> +	u64 total_bytes, page_bytes;
+
+page_bytes should be 'unsigned int', since it's <= PAGE_SIZE.
+
+>  	int ret, err = 0;
+>  
+> -	BUG_ON(inode->i_sb->s_blocksize != PAGE_SIZE);
+> -
+> -	ctx = fscrypt_get_ctx(inode, GFP_NOFS);
+> -	if (IS_ERR(ctx))
+> -		return PTR_ERR(ctx);
+> +	total_bytes = len << inode->i_blkbits;
+
+Should cast len to 'u64' here, in case it's greater than UINT_MAX / blocksize.
+
+>  
+> -	ciphertext_page = fscrypt_alloc_bounce_page(ctx, GFP_NOWAIT);
+> -	if (IS_ERR(ciphertext_page)) {
+> -		err = PTR_ERR(ciphertext_page);
+> -		goto errout;
+> -	}
+> +	while (total_bytes) {
+> +		page_bytes = min_t(u64, total_bytes, PAGE_SIZE);
+>  
+> -	while (len--) {
+> -		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk,
+> -					     ZERO_PAGE(0), ciphertext_page,
+> -					     PAGE_SIZE, 0, GFP_NOFS);
+> -		if (err)
+> +		ciphertext_page = fscrypt_encrypt_page(inode, ZERO_PAGE(0),
+> +						page_bytes, 0, lblk, GFP_NOFS);
+> +		if (IS_ERR(ciphertext_page)) {
+> +			err = PTR_ERR(ciphertext_page);
+> +			ciphertext_page = NULL;
+>  			goto errout;
+> +		}
+
+'ciphertext_page' is leaked after each loop iteration.  Did you mean to free it,
+or did you mean to reuse it for subsequent iterations?
+
+>  
+>  		bio = bio_alloc(GFP_NOWAIT, 1);
+>  		if (!bio) {
+> @@ -141,9 +135,8 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+>  		bio->bi_iter.bi_sector =
+>  			pblk << (inode->i_sb->s_blocksize_bits - 9);
+
+This line uses ->s_blocksize_bits, but your new code uses ->i_blkbits.  AFAIK
+they'll always be the same, but please pick one or the other to use.
+
+>  		bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
+> -		ret = bio_add_page(bio, ciphertext_page,
+> -					inode->i_sb->s_blocksize, 0);
+> -		if (ret != inode->i_sb->s_blocksize) {
+> +		ret = bio_add_page(bio, ciphertext_page, page_bytes, 0);
+> +		if (ret != page_bytes) {
+>  			/* should never happen! */
+>  			WARN_ON(1);
+>  			bio_put(bio);
+> @@ -156,12 +149,15 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+>  		bio_put(bio);
+>  		if (err)
+>  			goto errout;
+> -		lblk++;
+> -		pblk++;
+> +
+> +		lblk += page_bytes >> inode->i_blkbits;
+> +		pblk += page_bytes >> inode->i_blkbits;
+> +		total_bytes -= page_bytes;
+>  	}
+>  	err = 0;
+>  errout:
+> -	fscrypt_release_ctx(ctx);
+> +	if (!IS_ERR_OR_NULL(ciphertext_page))
+> +		fscrypt_restore_control_page(ciphertext_page);
+>  	return err;
+>  }
+>  EXPORT_SYMBOL(fscrypt_zeroout_range);
+> -- 
+> 2.19.1
 > 
-> Adding a cleanup path to io_allocate_scq_urings() complicates the logic,
-> so let's leave it to io_ring_ctx_free() to consistently free these
-> pointers, and simplify the io_allocate_scq_urings() error paths.
-
-Looks good - applied, thanks.
-
--- 
-Jens Axboe
-
