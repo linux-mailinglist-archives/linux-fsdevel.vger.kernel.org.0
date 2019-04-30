@@ -2,82 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5866DF2C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 11:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FDC0F30F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 11:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbfD3J1D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 05:27:03 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:53356 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbfD3J1D (ORCPT
+        id S1727199AbfD3Jdc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 05:33:32 -0400
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:34252 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726263AbfD3Jdc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:27:03 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3U9NkoF001045;
-        Tue, 30 Apr 2019 09:26:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=lRccY/9PTB0SivUe58hPvmQhJIneVtvQmamNLiMyYXo=;
- b=rmioHu8wwvnnPfKWLqL2H0FfeCaD+l8ZqHxQjz3ts9vY+EgJPuXV9z+DhKYNdqE2CTRN
- N55ap6zKBVrPikY8f3B1zLLIId8A1YhS5rwZEb1WKaPvHQjPSW9foRiOWxmUXV0LOhHB
- OWkesZr5zk4lKZ5OHqsdZbWUXAiVOpo9yjH/T1ktX61mZgKN5OZx516GpOe2NDtb7gVp
- UnkVVJXbVDGQqWCtFkb+qJxC2Ssei/hk6+wwaDsTTAb7BqvZjj0+Yg5eRpx7+HqKWdGw
- 7t7RTauJPF+dPImPn5QYkeyvM5GsQKHPXllK1Y3d0TT5bqIqdPcg61JezyEvnCOwsk6s zg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2s5j5u02j4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 09:26:37 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3U9Ol3S006872;
-        Tue, 30 Apr 2019 09:26:36 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2s4ew14swn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 09:26:36 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x3U9QRYh027604;
-        Tue, 30 Apr 2019 09:26:33 GMT
-Received: from kadam (/196.97.65.153)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Apr 2019 02:26:27 -0700
-Date:   Tue, 30 Apr 2019 12:26:19 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Amritha Nambiar <amritha.nambiar@intel.com>,
-        Willem de Bruijn <willemb@google.com>,
-        kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 2/2] io_uring: Potential Oops in io_sq_offload_start()
-Message-ID: <20190430092619.GC2239@kadam>
-References: <20190404104527.GX4038@hirez.programming.kicks-ass.net>
- <20190408081513.GB15239@kadam>
+        Tue, 30 Apr 2019 05:33:32 -0400
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3U9W6qk028054;
+        Tue, 30 Apr 2019 02:32:57 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=pfpt0818;
+ bh=mZ+nvmndlbaQ7SLtvyo7dLiIXEFydrptFcseZKbEb58=;
+ b=uPpPn01pAy95qOdliusea8Z/qZQMlRZi42X5BiEyyNYYoAri5xoVVRoEUbV5WZDSfklj
+ FgkdBIWdI9Ih1lFCy8YJwUrgi8Pd3jsv2atRHsmbqpmZEFvEmujABGY+aOWkR8koXNJD
+ +saTUqOYnJhasihZofF4tGHFM8f1uINDijiTUkf99/92jmW+bNK0GKUfWbWlsk/GW8un
+ R65gUT9yLxrpYTk1fh5foryHfprPEK1cL6OYnFtAqb/syBg7ytQVBh8VfZffZx3JQugO
+ BBjE3F0RL9SKUeN/CdQH1CgZQaNmdg5a3dew7PQ57T/InJOJe5Mi8H45XpKnj3dpRIdf +g== 
+Received: from sc-exch04.marvell.com ([199.233.58.184])
+        by mx0b-0016f401.pphosted.com with ESMTP id 2s68rt27wy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 30 Apr 2019 02:32:57 -0700
+Received: from SC-EXCH03.marvell.com (10.93.176.83) by SC-EXCH04.marvell.com
+ (10.93.176.84) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 30 Apr
+ 2019 02:32:56 -0700
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (104.47.46.53) by
+ SC-EXCH03.marvell.com (10.93.176.83) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Tue, 30 Apr 2019 02:32:55 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=marvell.onmicrosoft.com; s=selector1-marvell-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mZ+nvmndlbaQ7SLtvyo7dLiIXEFydrptFcseZKbEb58=;
+ b=rTg6vgKoesJnTPKM7e5WvVXNpsGvE3hXIevTIAKmfM7v42G3ZJxA31lQjho8MX7YgruQu/9yowZgv2fF16/LbFMpBevHjmKerN2V6VK835hJupLcXGXbxOKiwEv33D9qgvflrBA27d/bl1/cv5ZBVx7Hd3ELtW0B6NjZhIfwMpU=
+Received: from DM5PR18MB1578.namprd18.prod.outlook.com (10.175.224.136) by
+ DM5PR18MB2117.namprd18.prod.outlook.com (52.132.143.26) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1835.14; Tue, 30 Apr 2019 09:32:50 +0000
+Received: from DM5PR18MB1578.namprd18.prod.outlook.com
+ ([fe80::28da:f8bb:4901:b0aa]) by DM5PR18MB1578.namprd18.prod.outlook.com
+ ([fe80::28da:f8bb:4901:b0aa%10]) with mapi id 15.20.1835.018; Tue, 30 Apr
+ 2019 09:32:50 +0000
+From:   Jan Glauber <jglauber@marvell.com>
+To:     Will Deacon <will.deacon@arm.com>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jslaby@suse.com" <jslaby@suse.com>
+Subject: Re: dcache_readdir NULL inode oops
+Thread-Topic: dcache_readdir NULL inode oops
+Thread-Index: AQHUgFzbL+WYl59gXkeFkBEthHHxgw==
+Date:   Tue, 30 Apr 2019 09:32:50 +0000
+Message-ID: <20190430093234.GB5883@hc>
+References: <20181120182854.GC28838@arm.com> <20181120190317.GA29161@arm.com>
+ <20181121131900.GA18931@hc> <20181123180525.GA21017@arm.com>
+ <20181128200806.GC32668@arm.com> <20181129184950.GA7290@hc>
+ <20181130104154.GA11991@kroah.com> <875zwe389q.fsf@xmission.com>
+ <20181130160852.GN2217@ZenIV.linux.org.uk> <20181130163228.GA10964@arm.com>
+In-Reply-To: <20181130163228.GA10964@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR07CA0196.eurprd07.prod.outlook.com
+ (2603:10a6:802:3f::20) To DM5PR18MB1578.namprd18.prod.outlook.com
+ (2603:10b6:3:14d::8)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [78.43.209.53]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 59a869b2-de70-42d7-8500-08d6cd4ed038
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:DM5PR18MB2117;
+x-ms-traffictypediagnostic: DM5PR18MB2117:
+x-microsoft-antispam-prvs: <DM5PR18MB211739A0B20D2F9A21137961D83A0@DM5PR18MB2117.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2803;
+x-forefront-prvs: 00235A1EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(346002)(136003)(396003)(39860400002)(376002)(366004)(54094003)(189003)(199004)(66066001)(7736002)(305945005)(256004)(14444005)(99286004)(76176011)(102836004)(71190400001)(52116002)(97736004)(71200400001)(6506007)(316002)(54906003)(386003)(8676002)(33716001)(478600001)(3846002)(2906002)(81166006)(5660300002)(14454004)(81156014)(6116002)(68736007)(8936002)(186003)(6246003)(86362001)(6916009)(53936002)(4326008)(93886005)(1076003)(6486002)(25786009)(6436002)(6512007)(9686003)(476003)(446003)(66476007)(486006)(11346002)(66446008)(73956011)(66556008)(66946007)(64756008)(26005)(229853002)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR18MB2117;H:DM5PR18MB1578.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: zwZJBWg0ZeAjLElcd2Nh4911+L9jc/VrZDmtVcxD5z18HMwpZpQ2vt+Cyu1sHwJR+iscnZVef+lzDIMOS/r3ET50M/G09sraZOLSIjLCT9POKL/+DfqjQZn7ws/1eL5ge+iwX/5MGqqXrpInSLJkWSRJNeJEJdfynNpKjNbdlDsSV8ZMtPoHBJy2H1pg5m/VBofGMoKTC8bdJBswkE2csShuXlcQ1eTlKuAQRhTlic7OgYW9VkoH8Gwcy06I4B2CTT9Mr6I0PlqKLpdS/OIJkjxwy3LtECT/oSe9k3r6HeFb2xY+Tb04KWZr84R2jDQ3Yd4Q++22BCwWuZo4w4OzEj0oNUGVqJ4HYFbgbXQ9MZMd/bYrkDZOUqo0zXjf/YOYJJ0tBYZ0xcpZK8APS+qSl6DqTB7QicPL1rYCZ5cxb/k=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <100D159D89054645952C8FEA98BF21FA@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190408081513.GB15239@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9242 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=846
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1904300062
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9242 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=889 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1904300062
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59a869b2-de70-42d7-8500-08d6cd4ed038
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2019 09:32:50.7544
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR18MB2117
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-30_04:,,
+ signatures=0
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The io_uring patches are slated for v5.7 so we should figure out a
-solution for this bug.
+Hi Al,
 
-regrds,
-dan carpenter
+On Fri, Nov 30, 2018 at 04:32:28PM +0000, Will Deacon wrote:
+> On Fri, Nov 30, 2018 at 04:08:52PM +0000, Al Viro wrote:
+> > On Fri, Nov 30, 2018 at 09:16:49AM -0600, Eric W. Biederman wrote:
+> > > >> > +       inode_lock(parent->d_inode);
+> > > >> >         dentry->d_fsdata =3D NULL;
+> > > >> >         drop_nlink(dentry->d_inode);
+> > > >> >         d_delete(dentry);
+> > > >> > +       inode_unlock(parent->d_inode);
+> > > >> > +
+> > > >> >         dput(dentry);   /* d_alloc_name() in devpts_pty_new() */
+> > > >> >  }
+> > > >
+> > > > This feels right but getting some feedback from others would be goo=
+d.
+> > >
+> > > This is going to be special at least because we are not coming throug=
+h
+> > > the normal unlink path and we are manipulating the dcache.
+> > >
+> > > This looks plausible.  If this is whats going on then we have had thi=
+s
+> > > bug for a very long time.  I will see if I can make some time.
+> > >
+> > > It looks like in the general case everything is serialized by the
+> > > devpts_mutex.  I wonder if just changing the order of operations
+> > > here would be enough.
+> > >
+> > > AKA: drop_nlink d_delete then dentry->d_fsdata.  Ugh d_fsdata is not
+> > > implicated so that won't help here.
+> >
+> > It certainly won't.  The thing is, this
+> >                 if (!dir_emit(ctx, next->d_name.name, next->d_name.len,
+> >                               d_inode(next)->i_ino, dt_type(d_inode(nex=
+t))))
+> > in dcache_readdir() obviously can block, so all we can hold over it is
+> > blocking locks.  Which we do - specifically, ->i_rwsem on our directory=
+.
+> >
+> > It's actually worse than missing inode_lock() - consider the effects
+> > of mount --bind /mnt/foo /dev/pts/42.  What happens when that thing
+> > goes away?  Right, a lost mount...
+>=20
+> Ha, I hadn't even considered that scenario. Urgh!
+>=20
+> > I'll resurrect the "kernel-internal rm -rf done right" series and
+> > post it; devpts is not the only place suffering such problem (binfmt_mi=
+sc,
+> > etc.)
+
+I've not seen anything merged regarding this issue so I guess this is
+still open? We see a similar crash (dcache_readdir hitting a NULL inode
+ptr) but this time not with devpts.
+
+Debugging is ongoing and we're not even sure which filesystem is having
+the issue. Is my assumption correct that we should only see this when
+d_delete(dentry) is called?
+
+thanks,
+Jan
+
