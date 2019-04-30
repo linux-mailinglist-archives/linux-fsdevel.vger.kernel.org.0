@@ -2,145 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06342EF15
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 05:11:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E396AEF00
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 05:11:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730030AbfD3DKq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Apr 2019 23:10:46 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:53603 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729931AbfD3DKq (ORCPT
+        id S1730056AbfD3DJR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Apr 2019 23:09:17 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37472 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729883AbfD3DJR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Apr 2019 23:10:46 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id BF1FE9A40;
-        Mon, 29 Apr 2019 23:10:44 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 29 Apr 2019 23:10:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=BJo+tsGYz1UiYdilzcTz+d7vEhUJ+jp/yMih2keKOkE=; b=4Na3wF3I
-        x24V1uXx6GIXq0r+bQnjj+1SJ6YVMI1Ebj8HL9tPpVhag1zyRctWPePGEkZkDb4v
-        T7JhLPqcmvcj9VujzI05sNPVwfXS0vPhfBS/txTRihZVWGrdwTWDzsjO7tbNbct2
-        3ZiYs4yFlIkuKixNaDXTwotfl3aRZjWGc2rDrpHWUu+BnJojeC1RYL+JixYcJUM6
-        C+JXs/TIyu6EyE4NieFwVUhgVzxXU7lRlrUVSF4AVEzYyMrFUl3DRRs5ubXilPyO
-        Y35PGXi6rcuDrW/6tgzRfGh49RJelBQUWyRdHTfdrpcjbbL9uIz8RkLCWtYrNkDZ
-        1TNDxczMcD8R/w==
-X-ME-Sender: <xms:tLzHXDuYSrSroGo2gkFEkHVJlCaf-S_10nE0apXTQGzY2pvjrf6d4Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieefgdeilecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepfdfvohgsihhn
-    ucevrdcujfgrrhguihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhgqeenucfkph
-    epuddvuddrgeegrddvfedtrddukeeknecurfgrrhgrmhepmhgrihhlfhhrohhmpehtohgs
-    ihhnsehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpeef
-X-ME-Proxy: <xmx:tLzHXNZQsjKKFsknSj4OyF0LAKM_GoPR3BSTJCijC8xBHCQ7HNljNA>
-    <xmx:tLzHXIuabIEJy2sJOUJRbV_4ZhsABLIKgLzu7E4FJSXZu_ytLzhA-Q>
-    <xmx:tLzHXPFhz4uEu-ZmPczNucHSGXPIFbgY0nBDkQXyUpzUiLTbhgEYgQ>
-    <xmx:tLzHXCK8X0308eotLCAl5QQHXJMPI-RGNIDfTHVSva0RHVmQJBb1cw>
-Received: from eros.localdomain (ppp121-44-230-188.bras2.syd2.internode.on.net [121.44.230.188])
-        by mail.messagingengine.com (Postfix) with ESMTPA id EC48F103C8;
-        Mon, 29 Apr 2019 23:10:36 -0400 (EDT)
-From:   "Tobin C. Harding" <tobin@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Roman Gushchin <guro@fb.com>,
-        Alexander Viro <viro@ftp.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Pekka Enberg <penberg@cs.helsinki.fi>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Christopher Lameter <cl@linux.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Waiman Long <longman@redhat.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        "Theodore Ts'o" <tytso@mit.edu>, Andi Kleen <ak@linux.intel.com>,
-        David Chinner <david@fromorbit.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Rik van Riel <riel@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 15/15] dcache: Add CONFIG_DCACHE_SMO
-Date:   Tue, 30 Apr 2019 13:07:46 +1000
-Message-Id: <20190430030746.26102-16-tobin@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190430030746.26102-1-tobin@kernel.org>
-References: <20190430030746.26102-1-tobin@kernel.org>
+        Mon, 29 Apr 2019 23:09:17 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hLJ8s-0005zU-Pv; Tue, 30 Apr 2019 03:09:14 +0000
+Date:   Tue, 30 Apr 2019 04:09:14 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCHSET] sorting out RCU-delayed stuff in
+ ->destroy_inode()
+Message-ID: <20190430030914.GF23075@ZenIV.linux.org.uk>
+References: <20190416174900.GT2217@ZenIV.linux.org.uk>
+ <CAHk-=wh6cSEztastk6-A0HUSLtJT=9W38xMN5ht-OOAnL80jxg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh6cSEztastk6-A0HUSLtJT=9W38xMN5ht-OOAnL80jxg@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In an attempt to make the SMO patchset as non-invasive as possible add a
-config option CONFIG_DCACHE_SMO (under "Memory Management options") for
-enabling SMO for the DCACHE.  Whithout this option dcache constructor is
-used but no other code is built in, with this option enabled slab
-mobility is enabled and the isolate/migrate functions are built in.
+On Tue, Apr 16, 2019 at 11:01:16AM -0700, Linus Torvalds wrote:
+> On Tue, Apr 16, 2019 at 10:49 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> >  83 files changed, 241 insertions(+), 516 deletions(-)
+> 
+> I think this single line is pretty convincing on its own. Ignoring
+> docs and fs/inode.c, we have
+> 
+>  80 files changed, 190 insertions(+), 494 deletions(-)
+> 
+> IOW, just over 300 lines of boiler plate code removed.
+> 
+> The additions are
+> 
+>  - Ten more lines of actual code in fs/inode.c (and that's not
+> actually added complexity, it looks simpler if anything - most of it
+> is the new "i_callback()" helper function)
+> 
+>  - 19 lines of doc updates.
+> 
+> So it absolutely looks fine to me.
+> 
+> I only skimmed through the actual filesystem (and one networking)
+> patches, but they looked like trivial conversions to a better
+> interface.
 
-Add CONFIG_DCACHE_SMO to guard the partial shrinking of the dcache via
-Slab Movable Objects infrastructure.
+... except that this callback can (and always could) get executed after
+freeing struct super_block.  So we can't just dereference ->i_sb->s_op
+and expect to survive; the table ->s_op pointed to will still be there,
+but ->i_sb might very well have been freed, with all its contents overwritten.
+We need to copy the callback into struct inode itself, unfortunately.
+The following incremental fixes it; I'm going to fold it into the first
+commit in there.
 
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
----
- fs/dcache.c | 4 ++++
- mm/Kconfig  | 7 +++++++
- 2 files changed, 11 insertions(+)
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 3f9daba1cc78..9edce104613b 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3068,6 +3068,7 @@ void d_tmpfile(struct dentry *dentry, struct inode *inode)
- }
- EXPORT_SYMBOL(d_tmpfile);
- 
-+#ifdef CONFIG_DCACHE_SMO
- /*
-  * d_isolate() - Dentry isolation callback function.
-  * @s: The dentry cache.
-@@ -3140,6 +3141,7 @@ static void d_partial_shrink(struct kmem_cache *s, void **_unused, int __unused,
- 
- 	kfree(private);
- }
-+#endif	/* CONFIG_DCACHE_SMO */
- 
- static __initdata unsigned long dhash_entries;
- static int __init set_dhash_entries(char *str)
-@@ -3186,7 +3188,9 @@ static void __init dcache_init(void)
- 					   sizeof_field(struct dentry, d_iname),
- 					   dcache_ctor);
- 
-+#ifdef CONFIG_DCACHE_SMO
- 	kmem_cache_setup_mobility(dentry_cache, d_isolate, d_partial_shrink);
-+#endif
- 
- 	/* Hash may have been set up in dcache_init_early */
- 	if (!hashdist)
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 47040d939f3b..92fc27ad3472 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -265,6 +265,13 @@ config SMO_NODE
-        help
-          On NUMA systems enable moving objects to and from a specified node.
- 
-+config DCACHE_SMO
-+       bool "Enable Slab Movable Objects for the dcache"
-+       depends on SLUB
-+       help
-+         Under memory pressure we can try to free dentry slab cache objects from
-+         the partial slab list if this is enabled.
+diff --git a/Documentation/filesystems/porting b/Documentation/filesystems/porting
+index 9d80f9e0855e..b8d3ddd8b8db 100644
+--- a/Documentation/filesystems/porting
++++ b/Documentation/filesystems/porting
+@@ -655,3 +655,11 @@ in your dentry operations instead.
+ 		* if ->free_inode() is non-NULL, it gets scheduled by call_rcu()
+ 		* combination of NULL ->destroy_inode and NULL ->free_inode is
+ 		  treated as NULL/free_inode_nonrcu, to preserve the compatibility.
 +
- config PHYS_ADDR_T_64BIT
- 	def_bool 64BIT
++	Note that the callback (be it via ->free_inode() or explicit call_rcu()
++	in ->destroy_inode()) is *NOT* ordered wrt superblock destruction;
++	as the matter of fact, the superblock and all associated structures
++	might be already gone.  The filesystem driver is guaranteed to be still
++	there, but that's it.  Freeing memory in the callback is fine; doing
++	more than that is possible, but requires a lot of care and is best
++	avoided.
+diff --git a/fs/inode.c b/fs/inode.c
+index fb45590d284e..855dad43b11d 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -164,6 +164,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+ 	inode->i_wb_frn_avg_time = 0;
+ 	inode->i_wb_frn_history = 0;
+ #endif
++	inode->free_inode = sb->s_op->free_inode;
  
--- 
-2.21.0
-
+ 	if (security_inode_alloc(inode))
+ 		goto out;
+@@ -211,8 +212,8 @@ EXPORT_SYMBOL(free_inode_nonrcu);
+ static void i_callback(struct rcu_head *head)
+ {
+ 	struct inode *inode = container_of(head, struct inode, i_rcu);
+-	if (inode->i_sb->s_op->free_inode)
+-		inode->i_sb->s_op->free_inode(inode);
++	if (inode->free_inode)
++		inode->free_inode(inode);
+ 	else
+ 		free_inode_nonrcu(inode);
+ }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2e9b9f87caca..5ed6b39e588e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -718,6 +718,7 @@ struct inode {
+ #endif
+ 
+ 	void			*i_private; /* fs or device private pointer */
++	void (*free_inode)(struct inode *);
+ } __randomize_layout;
+ 
+ static inline unsigned int i_blocksize(const struct inode *node)
