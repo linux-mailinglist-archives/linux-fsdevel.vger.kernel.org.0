@@ -2,186 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E97101E7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 23:39:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE7B7101B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 23:21:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbfD3VjJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 17:39:09 -0400
-Received: from kadath.azazel.net ([81.187.231.250]:60758 "EHLO
-        kadath.azazel.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbfD3VjI (ORCPT
+        id S1726612AbfD3VVw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 17:21:52 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:50186 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726328AbfD3VVw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 17:39:08 -0400
-X-Greylist: delayed 1688 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Apr 2019 17:39:07 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=azazel.net;
-         s=20190108; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=yfnI1Lmce+A0N4KHmJXEkFUZ9CW+2IDNBr8KfdOaAKc=; b=bZJot5O0njqxdKFPW4gyGGEA/B
-        pUQp1Zg6kmozGZMpsraGKct+ykCHZZttpwdG6W0sXWMlLhBLiOtZNd89w5FUAIrWsZtTqRrDd0Cvp
-        5owI93PTAMh0kzmKuvMOW+hg5fPl1eheZvKR8NStbY/+/EmdaIv/gWeqRkVI/xBRldW6IoG57J8NP
-        uV/K6WjHvPDWNe3dxgd+bpcDbRPOk5lSYFuPtFo84LHq4oXCH+4GKh4JjUDCgXbZC7RNflOtlbfFK
-        LLfbGf1Yk5+UXSGt/5ovwkPfjpNlijnlt8nWEd/1FBK8AO1Q2CU8Cg06T8Oxtbdvu/Mqv+syVDQHQ
-        0QVGXsFA==;
-Received: from celephais.dreamlands ([192.168.96.3] helo=azazel.net)
-        by kadath.azazel.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <jeremy@azazel.net>)
-        id 1hLa1P-0007XH-Vb; Tue, 30 Apr 2019 22:10:40 +0100
-Date:   Tue, 30 Apr 2019 22:10:38 +0100
-From:   Jeremy Sowden <jeremy@azazel.net>
-To:     Chandan Rajendra <chandan@linux.ibm.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, ebiggers@kernel.org, jaegeuk@kernel.org,
-        yuchao0@huawei.com, hch@infradead.org
-Subject: Re: [PATCH V2 03/13] fsverity: Add call back to decide if verity
- check has to be performed
-Message-ID: <20190430211037.GA30337@azazel.net>
-References: <20190428043121.30925-1-chandan@linux.ibm.com>
- <20190428043121.30925-4-chandan@linux.ibm.com>
+        Tue, 30 Apr 2019 17:21:52 -0400
+Received: from dread.disaster.area (pa49-181-171-240.pa.nsw.optusnet.com.au [49.181.171.240])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 77CA143A20F;
+        Wed,  1 May 2019 07:21:48 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hLaCA-0004HS-TP; Wed, 01 May 2019 07:21:46 +1000
+Date:   Wed, 1 May 2019 07:21:46 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel@redhat.com, Christoph Hellwig <hch@lst.de>,
+        Bob Peterson <rpeterso@redhat.com>, Jan Kara <jack@suse.cz>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Mark Syms <Mark.Syms@citrix.com>,
+        Edwin =?iso-8859-1?B?VPZy9ms=?= <edvin.torok@citrix.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v7 0/5] iomap and gfs2 fixes
+Message-ID: <20190430212146.GL1454@dread.disaster.area>
+References: <20190429220934.10415-1-agruenba@redhat.com>
+ <20190430025028.GA5200@magnolia>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190428043121.30925-4-chandan@linux.ibm.com>
+In-Reply-To: <20190430025028.GA5200@magnolia>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 192.168.96.3
-X-SA-Exim-Mail-From: jeremy@azazel.net
-X-SA-Exim-Scanned: No (on kadath.azazel.net); SAEximRunCond expanded to false
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=UJetJGXy c=1 sm=1 tr=0 cx=a_idp_d
+        a=LhzQONXuMOhFZtk4TmSJIw==:117 a=LhzQONXuMOhFZtk4TmSJIw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
+        a=7-415B0cAAAA:8 a=JuDxSlhT3OO6blO4plAA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Apr 29, 2019 at 07:50:28PM -0700, Darrick J. Wong wrote:
+> On Tue, Apr 30, 2019 at 12:09:29AM +0200, Andreas Gruenbacher wrote:
+> > Here's another update of this patch queue, hopefully with all wrinkles
+> > ironed out now.
+> > 
+> > Darrick, I think Linus would be unhappy seeing the first four patches in
+> > the gfs2 tree; could you put them into the xfs tree instead like we did
+> > some time ago already?
+> 
+> Sure.  When I'm done reviewing them I'll put them in the iomap tree,
+> though, since we now have a separate one. :)
 
---C7zPtVaVf+AK4Oqc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'd just keep the iomap stuff in the xfs tree as a separate set of
+branches and merge them into the XFS for-next when composing it.
+That way it still gets plenty of test coverage from all the XFS
+devs and linux next without anyone having to think about.
 
-On 2019-04-28, at 10:01:11 +0530, Chandan Rajendra wrote:
-> Ext4 and F2FS store verity metadata in data extents (beyond
-> inode->i_size) associated with a file. But other filesystems might
-> choose alternative means to store verity metadata. Hence this commit
-> adds a callback function pointer to 'struct fsverity_operations' to
-> help in deciding if verity operation needs to performed against a
-> page-cache page holding file data.
->=20
-> Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
-> ---
->  fs/ext4/super.c          | 6 ++++++
->  fs/f2fs/super.c          | 6 ++++++
->  fs/read_callbacks.c      | 4 +++-
->  include/linux/fsverity.h | 1 +
->  4 files changed, 16 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index aba724f82cc3..63d73b360f1d 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1428,10 +1428,16 @@ static struct page *ext4_read_verity_metadata_pag=
-e(struct inode *inode,
->  	return read_mapping_page(inode->i_mapping, index, NULL);
->  }
-> =20
-> +static bool ext4_verity_required(struct inode *inode, pgoff_t index)
-> +{
-> +	return index < (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> +}
-> +
->  static const struct fsverity_operations ext4_verityops =3D {
->  	.set_verity		=3D ext4_set_verity,
->  	.get_metadata_end	=3D ext4_get_verity_metadata_end,
->  	.read_metadata_page	=3D ext4_read_verity_metadata_page,
-> +	.verity_required	=3D ext4_verity_required,
->  };
->  #endif /* CONFIG_FS_VERITY */
-> =20
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 2f75f06c784a..cd1299e1f92d 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2257,10 +2257,16 @@ static struct page *f2fs_read_verity_metadata_pag=
-e(struct inode *inode,
->  	return read_mapping_page(inode->i_mapping, index, NULL);
->  }
-> =20
-> +static bool f2fs_verity_required(struct inode *inode, pgoff_t index)
-> +{
-> +	return index < (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> +}
-> +
->  static const struct fsverity_operations f2fs_verityops =3D {
->  	.set_verity		=3D f2fs_set_verity,
->  	.get_metadata_end	=3D f2fs_get_verity_metadata_end,
->  	.read_metadata_page	=3D f2fs_read_verity_metadata_page,
-> +	.verity_required	=3D f2fs_verity_required,
->  };
->  #endif /* CONFIG_FS_VERITY */
-> =20
-> diff --git a/fs/read_callbacks.c b/fs/read_callbacks.c
-> index b6d5b95e67d7..6dea54b0baa9 100644
-> --- a/fs/read_callbacks.c
-> +++ b/fs/read_callbacks.c
-> @@ -86,7 +86,9 @@ struct read_callbacks_ctx *get_read_callbacks_ctx(struc=
-t inode *inode,
->  		read_callbacks_steps |=3D 1 << STEP_DECRYPT;
->  #ifdef CONFIG_FS_VERITY
->  	if (inode->i_verity_info !=3D NULL &&
-> -		(index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT)))
-> +		((inode->i_sb->s_vop->verity_required
-> +			&& inode->i_sb->s_vop->verity_required(inode, index))
-> +			|| (inode->i_sb->s_vop->verity_required =3D=3D NULL)))
+You really only need to send separate pull requests for the iomap
+and XFS branches - IMO, there's no really need to have a complete
+new tree for it...
 
-I think this is a bit easier to follow:
+Cheers,
 
-		(inode->i_sb->s_vop->verity_required =3D=3D NULL ||=20
-			inode->i_sb->s_vop->verity_required(inode, index)))
-
->  		read_callbacks_steps |=3D 1 << STEP_VERITY;
->  #endif
->  	if (read_callbacks_steps) {
-> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> index 7c33b42abf1b..b83712d6c79a 100644
-> --- a/include/linux/fsverity.h
-> +++ b/include/linux/fsverity.h
-> @@ -18,6 +18,7 @@ struct fsverity_operations {
->  	int (*set_verity)(struct inode *inode, loff_t data_i_size);
->  	int (*get_metadata_end)(struct inode *inode, loff_t *metadata_end_ret);
->  	struct page *(*read_metadata_page)(struct inode *inode, pgoff_t index);
-> +	bool (*verity_required)(struct inode *inode, pgoff_t index);
->  };
-> =20
->  #ifdef CONFIG_FS_VERITY
-> --=20
-> 2.19.1
->
->
-
-J.
-
---C7zPtVaVf+AK4Oqc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEZ8d+2N/NBLDbUxIF0Z7UzfnX9sMFAlzIucUACgkQ0Z7UzfnX
-9sOkXRAAs0l+X0JkJyKwhOumKmHaSj5HT2VmMeG/UIc6foqj7OA4MD54MqXai/i3
-r5/wwc4chDGkoFajjz44ENIrRuAbhYNL/obh0yqcE7GyxxuSREjqENvygKW7GlNZ
-185SnNSWPoQeL77oniXnImvZPQ824TMU0LbAAON0RpGWaFc6hm0fFih5aEqBBM+i
-O1kHDOV0rOoFT2edo4mSTZRNEAhbltznfgAKuIFRU6kay/tF6b6ie0Okev2XhzVu
-e74YCPm31oGXTLecBjvnXI/zDxXIeyvxhNtEh33uK3+IDPrHTnbZOKJeMYha0Rf5
-S+r+DQOB2wvLwjhFY2WAo9SKt7NMGjwrvXMvHj55SuyvCfva77uoshEwfEnJy6Ts
-e+U39A5gG5/VSHJczktjx7wYGJMdCPPnE8abCAG3BnExPpJDQ2EPYfVtU2JAnioR
-v05ULHyZoTB/qwVaay/RxptrHdkhAP2L3l+kYs6ZY0OsNqtBKIVy6EfbFkZuetyh
-qbLsZurrkpmKaYsJQpKR2Yx8ih0Q37DRO9ejEh4BOiQimdGBRCmCYv5XeWDpHRlE
-xl/T9mQjdKV4YXvZtddzYpG5lYtQHfBGqGw5pY2qjcta94hvsFTVNfB5cFMgKUAT
-XoKPnH1IzjerW5Tz6qgPzpY44qIwOXaj6vFvIGdmUBrPH+dCIaE=
-=U+NG
------END PGP SIGNATURE-----
-
---C7zPtVaVf+AK4Oqc--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
