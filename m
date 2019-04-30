@@ -2,79 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D248FD14
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 17:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4C17FD16
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 17:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfD3Pko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 11:40:44 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40648 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfD3Pko (ORCPT
+        id S1725976AbfD3Pm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 11:42:59 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:38089 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfD3Pm6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:40:44 -0400
-Received: by mail-it1-f195.google.com with SMTP id k64so5438834itb.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 08:40:43 -0700 (PDT)
+        Tue, 30 Apr 2019 11:42:58 -0400
+Received: by mail-ua1-f65.google.com with SMTP id t15so4919505uao.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 08:42:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=XNf8bzdAk7mxTr6wScNWfO8BGhgDHiA4fX/BoxjAgcg=;
-        b=pMof5wcmJ0LUqTFWWx4o2UtD3ppRgg7wMYsJig8GBxGxFsaz8YDswmVyFuUC8L9haM
-         bWTgvhVjsU7i2tU5J5gY8uHiQab/D4HZfxpO8YYD9fAjqoS1HHfSt/RGl4j7LBfQur/h
-         +NCs/7bcJt/sz/jlshrOdNKgR3eS8+TtkAkJfoQvXm5vxZnfymtzkVwupVD7qfR8ntIq
-         1lALHnkb1nwY16vTa96XC6oOTdS0oDV/8f3ObhmGAuv4UMsPpWmR6lYZbp5v1GDjYRxn
-         CqBmKZ0W/9QcYSaX37tnpp7TfeTvlqNb3yQTNIYEBV/8DrVPscX8x/MfDSW+2AG6eEeW
-         YDOQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rxw3hN1YSm26ISg+LOrlcUFUk2/ynydw3TOb8ZPeF0s=;
+        b=O/YPSKpdJNfI7U6oIOgur+JBh6lLTX26M/YLxxTMTTbCOdPzII6OA9QsPMywPziiVG
+         zpbQJz5mB/J7NdHufCTiy3vXfHvVklhiXXTRr5MFYctmmoM/5ysemaK2nE9o2A82LpFE
+         EkHyne5+Jcq6bx5DKtAGx12ur+JpsGrBj8JHk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XNf8bzdAk7mxTr6wScNWfO8BGhgDHiA4fX/BoxjAgcg=;
-        b=KWnLUVbHe5511wI2NmJHgs7As5RaAu/AUMjanf8CH30R1cG7zuSVFa8XvBBGN1PHa+
-         TCEmH49yBqXcyWWCqygfOvgsijpHYLfkRfXIz1MMInL2Un0rRHo/GrLwg4UpMiI17xaG
-         K10Yl6RWE2pO5hK6NJKoLVSjDpGR5vrL1ifpKC4qqloLr7ukN8pNpR2X/40hfxVcK6sS
-         r72I08fh+6UNhs7CKcLkSkUYjvDk/x45FjSPdhr42uNTHw0kw+5pSMrV1dyjYKwioru4
-         mGjT08FaciHTEmWTwXXq4wqQv4UQWn+nuBJZ+syla+uViIFJAo6OLPP9gJHJWObtE3PJ
-         WVNw==
-X-Gm-Message-State: APjAAAVnJOvu0MmlHnLQqnTUvouk9ypJzOO4LimNzzfW1d96cQKI3ra4
-        ioJj6i9O+f9lmTl9v+jBgF6wbmFmI9x9ww==
-X-Google-Smtp-Source: APXvYqxfp6Ww8YqTZgXv2Jj5nFCT4fYt1D4ewxgCPh/R9FaoqX4KHB9Mz9oRto40hSaRFi8+0OXZnA==
-X-Received: by 2002:a24:690f:: with SMTP id e15mr4476417itc.42.1556638842645;
-        Tue, 30 Apr 2019 08:40:42 -0700 (PDT)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id c13sm10047157ioi.28.2019.04.30.08.40.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 08:40:41 -0700 (PDT)
-Subject: Re: [PATCH v1 1/1] [io_uring] fix handling SQEs requesting NOWAIT
-To:     =?UTF-8?Q?Stefan_B=c3=bchler?= <source@stbuehler.de>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <7bcb0eb3-46d1-70e4-1108-dfd9a348bb7c@stbuehler.de>
- <20190427183419.5971-1-source@stbuehler.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b5d0c13a-8cd3-4744-524b-d63b7355c60a@kernel.dk>
-Date:   Tue, 30 Apr 2019 09:40:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rxw3hN1YSm26ISg+LOrlcUFUk2/ynydw3TOb8ZPeF0s=;
+        b=uWURjRiix8EyUQtEtN4DEtsx3tM0uRZH2bmhcbfarscy4+L+0FGAI8ViVcKGz3GZv3
+         pDMxiSQKCzvBeZxY4OZzXhGg7f8nQJ4zufEcOSMuOGEFZbPejbMRs+beZBi99PT0uDwK
+         aBYPe66Wz1IWni+2A86VfEAX8W5njW82rUC1e/8hf5/A42Y2+Hqyu0O10D377KJEsi7t
+         PdqkFuMwjJALv7WLEF3vb3GTh1BWZqkM/zjsj4zeqYbUJuad9rT7JwNh7biPezMJfNmL
+         RXrBwqtLgedj/1Ph7SBX1hR7HtQxPXReGcP7WZJzBUMA/1vdzBv0atIpxXI29PkfH/41
+         Calg==
+X-Gm-Message-State: APjAAAVvzYuc5iqI77YpYsUinf5FqNqPLVZeHfNhSgvZswag9furFCW3
+        yhsRTV6lfE9/mSce+I4HrtnSLJd6DQw=
+X-Google-Smtp-Source: APXvYqzHIMJGTz8RPJbRZysq7Jh/vUEp+QXA/sFlhyinRaIP2D6aQNJ9Yd5MvgfyYzp9kythb4XMWg==
+X-Received: by 2002:ab0:2a4a:: with SMTP id p10mr9703548uar.90.1556638977244;
+        Tue, 30 Apr 2019 08:42:57 -0700 (PDT)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id m23sm52259563vsl.24.2019.04.30.08.42.54
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 08:42:55 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id e207so3990536vsd.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 08:42:54 -0700 (PDT)
+X-Received: by 2002:a67:eecb:: with SMTP id o11mr36496756vsp.66.1556638973924;
+ Tue, 30 Apr 2019 08:42:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190427183419.5971-1-source@stbuehler.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190429222613.13345-1-mcroce@redhat.com> <CAGnkfhzkju6LXwHAVCHxCmMvAa1MLQGRY1czE1Boqz2OcEq39Q@mail.gmail.com>
+In-Reply-To: <CAGnkfhzkju6LXwHAVCHxCmMvAa1MLQGRY1czE1Boqz2OcEq39Q@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 30 Apr 2019 08:42:42 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+qejH0c9fG=TwmSyK0FkaiNidgqYZrqgKPf4D_=u2k8A@mail.gmail.com>
+Message-ID: <CAGXu5j+qejH0c9fG=TwmSyK0FkaiNidgqYZrqgKPf4D_=u2k8A@mail.gmail.com>
+Subject: Re: [PATCH v4] proc/sysctl: add shared variables for range check
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/27/19 12:34 PM, Stefan Bühler wrote:
-> Not all request types set REQ_F_FORCE_NONBLOCK when they needed async
-> punting; reverse logic instead and set REQ_F_NOWAIT if request mustn't
-> be punted.
+On Tue, Apr 30, 2019 at 3:47 AM Matteo Croce <mcroce@redhat.com> wrote:
+>
+> On Tue, Apr 30, 2019 at 12:26 AM Matteo Croce <mcroce@redhat.com> wrote:
+> >
+> > Add a const int array containing the most commonly used values,
+> > some macros to refer more easily to the correct array member,
+> > and use them instead of creating a local one for every object file.
+> >
+>
+> Ok it seems that this simply can't be done, because there are at least
+> two points where extra1,2 are set to a non const struct:
+> in ip_vs_control_net_init_sysctl() it's assigned to struct netns_ipvs,
+> while in mpls_dev_sysctl_register() it's assigned to a struct mpls_dev
+> and a struct net.
 
-I like doing it this way, so we don't have to touch the other callers.
-I've merged this one with my patch, no need to have two separate fixes
-for it.
+Why can't these be converted to const also? I don't see the pointer
+changing anywhere. They're created in one place and never changed.
+
+If it's only a couple places, it seems like it'd be nice to get these fixed.
 
 -- 
-Jens Axboe
-
+Kees Cook
