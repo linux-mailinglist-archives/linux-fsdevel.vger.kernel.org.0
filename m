@@ -2,110 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B58CAF1D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 10:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1038F210
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 10:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbfD3IMi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 04:12:38 -0400
-Received: from hr2.samba.org ([144.76.82.148]:31680 "EHLO hr2.samba.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbfD3IMi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 04:12:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42627210; h=Date:Message-ID:From:Cc:To;
-        bh=T88YzDCfdRRpRnlKh43Qlc+b4mJ+OnfqC7S9nbpXuZ4=; b=vRiWb9BVLTIgVJWYF6dRmg4j1O
-        OuaXFf1xgG0vm7zCykhRGQq+Wnk3wqEGX3Z6jKjOkxlxf/slageYACYHNUztf2tPU0RN0nUx11etp
-        xn/V34kkhZQYMz70PCshtVFwhHyfoTADViapzv2xUWTpOQG+MJ8NgxEbMSa289jy+b+E=;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1hLNsR-00080O-Bz; Tue, 30 Apr 2019 08:12:35 +0000
-Subject: Re: Better interop for NFS/SMB file share mode/reservation
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Pavel Shilovskiy <pshilov@microsoft.com>
-Cc:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "Volker.Lendecke@sernet.de" <Volker.Lendecke@sernet.de>,
-        Jeff Layton <jlayton@kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <CAOQ4uxjQdLrZXkpP30Pq_=Cckcb=mADrEwQUXmsG92r-gn2y5w@mail.gmail.com>
- <CAOQ4uxhuxoEsoBbvenJ8eLGstPc4AH-msrxDC-tBFRhvDxRSNg@mail.gmail.com>
- <20190426145006.GD25827@fieldses.org>
- <e69d149c80187b84833fec369ad8a51247871f26.camel@kernel.org>
- <CAOQ4uxjt+MkufaJWoqWSYZbejWa1nJEe8YYRroEBSb1jHjzkwQ@mail.gmail.com>
- <8504a05f2b0462986b3a323aec83a5b97aae0a03.camel@kernel.org>
- <CAOQ4uxi6fQdp_RQKHp-i6Q-m-G1+384_DafF3QzYcUq4guLd6w@mail.gmail.com>
- <1d5265510116ece75d6eb7af6314e6709e551c6e.camel@hammerspace.com>
- <CAOQ4uxjUBRt99efZMY8EV6SAH+9eyf6t82uQuKWHQ56yjpjqMw@mail.gmail.com>
- <95bc6ace0f46a1b1a38de9b536ce74faaa460182.camel@hammerspace.com>
- <CAOQ4uxhQOLZ_Hyrnvu56iERPZ7CwfKti2U+OgyaXjM9acCN2LQ@mail.gmail.com>
- <b4ee6b6f5544114c3974790a784c3e784e617ccf.camel@hammerspace.com>
- <bc2f04c55ba9290fc48d5f2b909262171ca6a19f.camel@kernel.org>
- <BYAPR21MB1303596634461C7D46B0A773B6390@BYAPR21MB1303.namprd21.prod.outlook.com>
- <CAOQ4uxirAW91yUe1nQUPPmarmMSxr_pco8NqKWB4srwyvgnRRA@mail.gmail.com>
-From:   Uri Simchoni <uri@samba.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=uri@samba.org; prefer-encrypt=mutual; keydata=
- xsBNBFby8yABCAC5Yy67UKYFYlEH1qV/Wby+XhjMSYIwM7kAR7cyATzWzy+LHrYEV9HfcdbE
- 8uIXsZJYHVrwzbK5GMV6Y+q4IEVYCkyQOTk+hDc10UqDHm6lvbKIeg7PlNtypA024bgGSzur
- BUenprtt3MxyBgreiPPa+UPbn5g+A2VC8Ud2wYv0x2IkMMCHa0tLkSDoQpuIFSP7q4YEvdn9
- E9dF6rtQYhTO3e9cQe8Faao4ujdaf8ymnIJXuVthubK1Ibg1rllnnlnCMT7/OVvaRACXSZeF
- 9/7WTIswAQ0LooWY+Lhz4tLCYrxz5UclzphQAu/mDMZkIwfoyR2Btvnj35vpHgXyRl9HABEB
- AAHNHFVyaSBTaW1jaG9uaSA8dXJpQHNhbWJhLm9yZz7CwJUEEwECAD8CGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheAFiEEhnx9/eK+MtZ4dAL4Fx15pugHO7kFAlxOrQQFCQc87VoACgkQ
- Fx15pugHO7nX+wf/RenBK3LNFfLJ/pEk37p4SLWEJcfBjy5xGIQ4brwFAkvozfSh1qtVmz0g
- mmT/APAvwcpwRChxtUoK8O5208D7MzPCPUK8j7re/+U1y7dPSgtx17p8az72m6PKp9tTGjk1
- yDP1/wftJbhxCTu2ZARnMkbHliOi7eaaEsS3IMRS1Weuy5/7A64c93nV9GlRTu0ixmzqm2hj
- hyfjnSizx+TxIr1CODZLIxevgwomPmvgI2UGgx/L8o8ZFJrk4oV9vKTwf5a9zoPxoBysozuR
- XarEu8GecMkk92aYfLGZYREgVbWGxDQXGxHl1U65QPQWntGhn9MOR4ZzJxjesnX6OSCYMs7A
- TQRW8vMgAQgAqVFS+RiFSdQbXqZ9UryAGscHY+lgBV2Xb1af9F83MzppXVltQ9r7ajYyuUNJ
- G0O+4+xV50+4yMkKjFRspBg34syuUDWhQLWd6ypM75s1NKAv1ETY9WWKC3qn6CLhNXn3Sk1N
- JK2HvBub4TOXueFi3F9ePAx9+XFUPvbFhlJTzUHo8EqTRD64f6PQKafelzIPzFVRixHt5OfP
- Uv9au+98vFaV4Ne51ENxlQR2pjee/essHj4M5W7EcAcC3frjboUUvSqptYnayrVViuZ3dquU
- T9Nsm/D8lVj9Gk8RGu4+KXC8vkDULdXN4QRayagb2Yw0JhE9DH+XQy1oInH6FgdNJwARAQAB
- wsB8BBgBAgAmAhsMFiEEhnx9/eK+MtZ4dAL4Fx15pugHO7kFAlxOrS8FCQc87YEACgkQFx15
- pugHO7mkEAf/cr/X7vJwKgbMVVeY3zxfD1IEUoWqwm0PF0jop+yi9BMgn71OLiVJbiFtoTE3
- XF+TDcVsij36ahkSOKTF/OcO3wlHLmK2PrftfH07O+zq30qYWHsH6QkFN/vwZ9C7O0K56c1Z
- cvhd8ZB/u8iy3QzCxGgvjZl2XctUGgRVdyX2OyEupWMjuO6d/k5X91GXJyFZghOjjADGORZg
- WwPAVztL1sBp4ERaIWxEXrPxg8eQm7QH4sI2pwKRQxsRGY6U1dDzdkyLBqvC4Tks4s/pZjBC
- SIMU2TPqEyeztkZaVBSWHFNNCsBKIJ+35T5uJnhXjcgKeXlxjk7WbMHZWm8RaYFqIA==
-Message-ID: <677e86ee-59b9-0826-481f-955074d164ed@samba.org>
-Date:   Tue, 30 Apr 2019 11:12:28 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726309AbfD3Ic2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 04:32:28 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:55014 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbfD3Ic2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Apr 2019 04:32:28 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3U8JsQt158710;
+        Tue, 30 Apr 2019 08:32:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=yWR9MTfmutWwKIN9OJ1tFhcDDCjFC5vqWJwkYOA89/4=;
+ b=YKGy5m/GkNSaOWuhhhU1lZANzX7gdYTSvMMyT4V5YBgrFWmrFeXkZGZhdHPW6RpDkFlL
+ jkT+RTDok4lMOD6Z+WDW1cYOpqkTFqCB+5w/NYs/E1U1Dma3/HKmbf6OkiOW0EzVjwb4
+ ou4mqosGOrG99dRZd5lM6+wN0Bc6HzOaAMqm50w80r/AjYJZJaVjDlgZXxXDVVGMEQom
+ nU4c3XcqhwwrdLl4x2C3JsfNlk+NkfNdpISxkUCZs6HymnXUZ3vnw/ef4sX8ALdSlnIc
+ hdEWxl8o/4CVmwOOFKULD40ZD3Kj8B6oCx3PFgfbg1PdH/uA71nQuGoPmHKVR/TMio93 gA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2s4fqq2wmh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Apr 2019 08:32:22 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3U8UjFs079719;
+        Tue, 30 Apr 2019 08:32:21 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2s4ew142ue-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Apr 2019 08:32:21 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x3U8WJkX025399;
+        Tue, 30 Apr 2019 08:32:19 GMT
+Received: from kadam (/196.97.65.153)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Apr 2019 01:32:19 -0700
+Date:   Tue, 30 Apr 2019 11:32:06 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Chengguang Xu <cgxu519@gmx.com>
+Cc:     gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH] chardev: set variable ret to -EBUSY before
+ checking minor range overlap
+Message-ID: <20190430083206.GA2239@kadam>
+References: <20190426073837.23086-1-cgxu519@gmx.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxirAW91yUe1nQUPPmarmMSxr_pco8NqKWB4srwyvgnRRA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190426073837.23086-1-cgxu519@gmx.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9242 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1904300057
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9242 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1904300057
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/30/19 3:31 AM, Amir Goldstein via samba-technical wrote:
->>
->> About O_DENYDELETE: I don't understand how we may reach a good interop story without a proper implementation of this flag. Windows apps may set it and Samba needs to respect it. If an NFS client removes such an opened file, what will Samba tell the Windows client?
->>
+Please don't say RESEND, say [PATCH v2].  RESEND is for when we ignored
+your patch.  (Maybe we made a mistake or maybe the mailing list tagged
+it as spam and deleted it or something).  Use [PATCH v2] instead.
+
+On Fri, Apr 26, 2019 at 03:38:37PM +0800, Chengguang Xu wrote:
+> When allocating dynamic major, the minor range overlap check
+> in __register_chrdev_region() will not fail, so actually
+> there is no real case to passing non negative error code to
+> caller. However, set variable ret to -EBUSY before chekcking
+> minor range overlap will avoid false-positive warning from
+> code analyzing tool(like Smatch) and also make the code more
+> easy to understand.
 > 
-> Samba will tell the Windows client:
-> "Sorry, my administrator has decided to trade off interop with nfs on
-> share modes,
-> with DENY_DELETE functionality, so I cannot grant you DENY_DELETE that you
-> requested."
-> Not sure if that is workable. Samba developers need to chime in.
-> 
-> Thanks,
-> Amir.
+> Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+> ---
+
+Then here under the --- cut off line put:
+
+v2: rebase against the latest linux-next
+
+That way we will remember why the patch was sent twice and what changed.
+
+>  fs/char_dev.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
 
-On Windows you don't ask for DENY_DELETE, you get it by default unless
-you ask to *allow* deletion. If you fopen() a file, even for
-reading-only, the MSVC standard C library would open it with delete
-denied because it does not explicitly request to allow it. My guess is
-that runtimes of other high-level languages behave that way too on
-Windows. That means pretty much everything would stop working.
-
-Thanks,
-Uri.
+regards,
+dan carpenter
