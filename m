@@ -2,87 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A31DEF33
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 05:33:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9EAEEF4C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 06:00:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbfD3Dcz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Apr 2019 23:32:55 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:38026 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729991AbfD3Dcy (ORCPT
+        id S1725554AbfD3EAq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 00:00:46 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38260 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbfD3EAp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Apr 2019 23:32:54 -0400
-Received: by mail-yw1-f68.google.com with SMTP id i66so4896029ywe.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Apr 2019 20:32:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dWEKtGsRIMq4v+NhZemcUNWB8/vTGODLsuHGIZCvLns=;
-        b=DDDpEVSRE8oPO+cOinkkQ7lINMkV8y8Sp8Tp7Uttz0QF6r5bQ6+/3ePMNmPLDpz7rI
-         KPala0XBYAmQ3SePPZ40hYTg86geNQPy2Grc0K4z4RE6whwqluCHezd1NGgB6rfucnUg
-         hV0HXKuk9r2hCL9OuhfjFrDv44ufG3YiG18/uldGmxv/21HyO0kCQVr3yLGsWLB7fOC3
-         SkopmmTFkLYAnVdS9QIFL6GJf2lX9LAxqwQPzB+5TwzDX+vkYdax3NVP1fpz6XxoBOlo
-         7+1lZvseE7ID/p1TWU21NN5jMaEzewo6ONCu/nBDNYNpYsDUS9LKTnK702xr83iKOnNl
-         XqIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dWEKtGsRIMq4v+NhZemcUNWB8/vTGODLsuHGIZCvLns=;
-        b=eekahtaptqnplK8b53/+qh4JR491mZT4ewhy4YQ0s1TJyTUuNzyFxP3Hc/+ss0OzfV
-         lNYkb63yfzq7zGimcMRYvsmge9lhqWcIAXmFrrdk1AcgNUbp7PZtpw4rl3PIleK8qHq9
-         GxLW5SuCq9bTrjCEsI7AennuECAjjMHh/atc7CMjb9QbEylW6IlPZiEmpBQ5H4bL2scy
-         irKolmG72oGbk5LbKb52MOp9hZ9sTLyfNNkAoSdfW1E1aSclx8NUq31kELtUAR85IqkH
-         OTydVK3hdQmdzgwaHZdvyG8ehJCXlDmWdUnCJ0x8xb+UYw5x9IC7ZYIQ5fYytzqrvGYt
-         jkdA==
-X-Gm-Message-State: APjAAAXEmtdnl1KFK9fn1sThygvOvDcmizeuOfT+8rrFeLA/LjQnCMXL
-        lByGZYNvy7c1zUqM4BmicFIeQAexLEr6Cjl/x4X0uQ==
-X-Google-Smtp-Source: APXvYqxiTSC6H3uYqE0DoAstpjwFGHHohchbO4x8XQqIAb6J5UkRzE8VEEfSYh/QD37Z8jEdNZRckmYBonsmWkkAg2k=
-X-Received: by 2002:a25:f507:: with SMTP id a7mr52256523ybe.164.1556595173714;
- Mon, 29 Apr 2019 20:32:53 -0700 (PDT)
+        Tue, 30 Apr 2019 00:00:45 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hLJwh-00071y-Ft; Tue, 30 Apr 2019 04:00:43 +0000
+Date:   Tue, 30 Apr 2019 05:00:43 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCHSET] sorting out RCU-delayed stuff in
+ ->destroy_inode()
+Message-ID: <20190430040043.GH23075@ZenIV.linux.org.uk>
+References: <20190416174900.GT2217@ZenIV.linux.org.uk>
+ <CAHk-=wh6cSEztastk6-A0HUSLtJT=9W38xMN5ht-OOAnL80jxg@mail.gmail.com>
+ <20190430030914.GF23075@ZenIV.linux.org.uk>
+ <CAHk-=wiMvCR0iENUVorfU-3EMC7G8RNSeHSQrz9tndP1uSg2BQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190429171332.152992-1-shakeelb@google.com> <20190429171332.152992-2-shakeelb@google.com>
- <20190429214123.GA3715@dhcp22.suse.cz>
-In-Reply-To: <20190429214123.GA3715@dhcp22.suse.cz>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Mon, 29 Apr 2019 23:32:42 -0400
-Message-ID: <CALvZod5uXOQfeq9_03T5dv104tWwuukL0+vEAVhk-v1_A=skQQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] memcg, fsnotify: no oom-kill for remote memcg charging
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiMvCR0iENUVorfU-3EMC7G8RNSeHSQrz9tndP1uSg2BQ@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 5:41 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Mon 29-04-19 10:13:32, Shakeel Butt wrote:
-> [...]
-> >       /*
-> >        * For queues with unlimited length lost events are not expected and
-> >        * can possibly have security implications. Avoid losing events when
-> >        * memory is short.
-> > +      *
-> > +      * Note: __GFP_NOFAIL takes precedence over __GFP_RETRY_MAYFAIL.
-> >        */
->
-> No, I there is no rule like that. Combining the two is undefined
-> currently and I do not think we want to legitimize it. What does it even
-> mean?
->
+On Mon, Apr 29, 2019 at 08:37:29PM -0700, Linus Torvalds wrote:
+> On Mon, Apr 29, 2019, 20:09 Al Viro <viro@zeniv.linux.org.uk> wrote:
+> 
+> >
+> > ... except that this callback can (and always could) get executed after
+> > freeing struct super_block.
+> >
+> 
+> Ugh.
+> 
+> That food looks nasty. Shouldn't the super block freeing wait for the
+> filesystem to be all done instead? Do a rcu synchronization or something?
+> 
+> Adding that pointer looks really wrong to me. I'd much rather delay the sb
+> freeing. Is there some reason that can't be done that I'm missing?
 
-Actually the code is doing that but I agree this is not documented and
-weird. I will fix this.
+Where would you put that synchronize_rcu()?  Doing that before ->put_super()
+is too early - inode references might be dropped in there.  OTOH, doing
+that after that point means that while struct super_block itself will be
+there, any number of data structures hanging from it might be not.
 
-Shakeel
+So we are still very limited in what we can do inside ->free_inode()
+instance *and* we get bunch of synchronize_rcu() for no good reason.
+
+Note that for normal lockless accesses (lockless ->d_revalidate(), ->d_hash(),
+etc.) we are just fine with having struct super_block freeing RCU-delayed
+(along with any data structures we might need) - the superblock had
+been seen at some point after we'd taken rcu_read_lock(), so its
+freeing won't happen until we drop it.  So we don't need synchronize_rcu()
+for that.
+
+Here the problem is that we are dealing with another RCU callback;
+synchronize_rcu() would be needed for it, but it will only protect that
+intermediate dereference of ->i_sb; any rcu-delayed stuff scheduled
+from inside ->put_super() would not be ordered wrt ->free_inode().
+And if we are doing that just for the sake of that one dereference,
+we might as well do it before scheduling i_callback().
+
+PS: we *are* guaranteed that module will still be there (unregister_filesystem()
+does synchronize_rcu() and rcu_barrier() is done before kmem_cache_destroy()
+in assorted exit_foo_fs()).
