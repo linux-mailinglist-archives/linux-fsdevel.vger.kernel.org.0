@@ -2,316 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E9ECFCF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 17:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E33BFCFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 17:35:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725942AbfD3Pdf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 11:33:35 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:49270 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfD3Pdf (ORCPT
+        id S1726289AbfD3Pf0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 11:35:26 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52863 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfD3PfV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:33:35 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3UFOBM9132005;
-        Tue, 30 Apr 2019 15:33:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
- bh=E1N7i2/XGYSszDfFaE6hIiWMezb6L1pK4BEiaM0LVCs=;
- b=PWmwqwnDWFUihe1VVrUAyd5EXMuLqkncuSn5rMLjZ4BUdj2mkH1meyAyZQ3s45cZFPur
- ME0HEli7rLhsinwnN+GN5JYe7Yn1yRQzJ17Q6Tneo6DyJMv5M8i9cUSy9KZxDuaqOlKh
- meHEjnSou20VUZmznrgv68ZtpJ7RhPR1uW6PBoFbpcI9bR3yJOioTN+3CL0jXTNQISJz
- RMyYSC1+OdAq5Fp9J5JI0eksl1hPN2Jl70cEbTrmyjPlycYxBgsgW/aSKDwxK7BW/cgk
- n+AUr7eGz/UbSMQVbAcIu37IOadC3qWYLhsjx6KXLRi4vD2S2yXREGrhAWoxWGdpxDWw dw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2s4fqq58uj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 15:33:01 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3UFWhX5109947;
-        Tue, 30 Apr 2019 15:33:00 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2s4d4ak8ny-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 15:33:00 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x3UFWwXb016341;
-        Tue, 30 Apr 2019 15:32:58 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Apr 2019 08:32:58 -0700
-Date:   Tue, 30 Apr 2019 08:32:56 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     cluster-devel@redhat.com, Christoph Hellwig <hch@lst.de>,
-        Bob Peterson <rpeterso@redhat.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Mark Syms <Mark.Syms@citrix.com>,
-        Edwin =?iso-8859-1?B?VPZy9ms=?= <edvin.torok@citrix.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v7 5/5] gfs2: Fix iomap write page reclaim deadlock
-Message-ID: <20190430153256.GF5200@magnolia>
-References: <20190429220934.10415-1-agruenba@redhat.com>
- <20190429220934.10415-6-agruenba@redhat.com>
+        Tue, 30 Apr 2019 11:35:21 -0400
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3UFYnii000575;
+        Wed, 1 May 2019 00:34:49 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Wed, 01 May 2019 00:34:49 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3UFYiwL000555
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Wed, 1 May 2019 00:34:49 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: INFO: task hung in __get_super
+To:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, dvyukov@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <001a113ed5540f411c0568cc8418@google.com>
+ <0000000000002cd22305879b22c4@google.com>
+ <20190428185109.GD23075@ZenIV.linux.org.uk>
+ <20190430025501.GB6740@quack2.suse.cz>
+ <20190430031144.GG23075@ZenIV.linux.org.uk>
+ <20190430130739.GA11224@quack2.suse.cz>
+ <20190430131820.GK23075@ZenIV.linux.org.uk>
+ <20190430150753.GA14000@quack2.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <aa220178-58d8-ffb7-399b-1d04e92e916f@i-love.sakura.ne.jp>
+Date:   Wed, 1 May 2019 00:34:44 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190429220934.10415-6-agruenba@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9243 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1904300095
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9243 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1904300095
+In-Reply-To: <20190430150753.GA14000@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 12:09:34AM +0200, Andreas Gruenbacher wrote:
-> Since commit 64bc06bb32ee ("gfs2: iomap buffered write support"), gfs2 is doing
-> buffered writes by starting a transaction in iomap_begin, writing a range of
-> pages, and ending that transaction in iomap_end.  This approach suffers from
-> two problems:
-> 
->   (1) Any allocations necessary for the write are done in iomap_begin, so when
->   the data aren't journaled, there is no need for keeping the transaction open
->   until iomap_end.
-> 
->   (2) Transactions keep the gfs2 log flush lock held.  When
->   iomap_file_buffered_write calls balance_dirty_pages, this can end up calling
->   gfs2_write_inode, which will try to flush the log.  This requires taking the
->   log flush lock which is already held, resulting in a deadlock.
+On 2019/05/01 0:07, Jan Kara wrote:
+> Ah, right. I've missed that in your patch. So your patch should be really
+> fixing the problem. Will you post it officially? Thanks!
 
-/me wonders how holding the log flush lock doesn't seriously limit
-performance, but gfs2 isn't my fight so I'll set that aside and assume
-that a patch S-o-B'd by both maintainers is ok. :)
+I still cannot understand what the problem is.
+According to console output,
 
-How should we merge this patch #5?  It doesn't touch fs/iomap.c itself,
-so do you want me to pull it into the iomap branch along with the
-previous four patches?  That would be fine with me (and easier than a
-multi-tree merge mess)...
+----------
+INFO: task syz-executor274:8097 blocked for more than 143 seconds. 
+INFO: task blkid:8099 blocked for more than 143 seconds. 
 
---D
+1 lock held by syz-executor274/8083:
+2 locks held by syz-executor274/8097:
+ #0: 000000007a5ed526 (&bdev->bd_mutex){+.+.}, at: blkdev_reread_part+0x1f/0x40 block/ioctl.c:192
+ #1: 0000000067606e21 (&type->s_umount_key#39){.+.+}, at: __get_super.part.0+0x203/0x2e0 fs/super.c:788
+1 lock held by blkid/8099:
+ #0: 000000007a5ed526 (&bdev->bd_mutex){+.+.}, at: blkdev_put+0x34/0x560 fs/block_dev.c:1866 
+----------
 
-> 
-> Fix both of these issues by not keeping transactions open from iomap_begin to
-> iomap_end.  Instead, start a small transaction in page_prepare and end it in
-> page_done when necessary.
-> 
-> Reported-by: Edwin Török <edvin.torok@citrix.com>
-> Fixes: 64bc06bb32ee ("gfs2: iomap buffered write support")
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-> ---
->  fs/gfs2/aops.c | 14 +++++---
->  fs/gfs2/bmap.c | 88 +++++++++++++++++++++++++++-----------------------
->  2 files changed, 58 insertions(+), 44 deletions(-)
-> 
-> diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-> index 05dd78f4b2b3..6210d4429d84 100644
-> --- a/fs/gfs2/aops.c
-> +++ b/fs/gfs2/aops.c
-> @@ -649,7 +649,7 @@ static int gfs2_readpages(struct file *file, struct address_space *mapping,
->   */
->  void adjust_fs_space(struct inode *inode)
->  {
-> -	struct gfs2_sbd *sdp = inode->i_sb->s_fs_info;
-> +	struct gfs2_sbd *sdp = GFS2_SB(inode);
->  	struct gfs2_inode *m_ip = GFS2_I(sdp->sd_statfs_inode);
->  	struct gfs2_inode *l_ip = GFS2_I(sdp->sd_sc_inode);
->  	struct gfs2_statfs_change_host *m_sc = &sdp->sd_statfs_master;
-> @@ -657,10 +657,13 @@ void adjust_fs_space(struct inode *inode)
->  	struct buffer_head *m_bh, *l_bh;
->  	u64 fs_total, new_free;
->  
-> +	if (gfs2_trans_begin(sdp, 2 * RES_STATFS, 0) != 0)
-> +		return;
-> +
->  	/* Total up the file system space, according to the latest rindex. */
->  	fs_total = gfs2_ri_total(sdp);
->  	if (gfs2_meta_inode_buffer(m_ip, &m_bh) != 0)
-> -		return;
-> +		goto out;
->  
->  	spin_lock(&sdp->sd_statfs_spin);
->  	gfs2_statfs_change_in(m_sc, m_bh->b_data +
-> @@ -675,11 +678,14 @@ void adjust_fs_space(struct inode *inode)
->  	gfs2_statfs_change(sdp, new_free, new_free, 0);
->  
->  	if (gfs2_meta_inode_buffer(l_ip, &l_bh) != 0)
-> -		goto out;
-> +		goto out2;
->  	update_statfs(sdp, m_bh, l_bh);
->  	brelse(l_bh);
-> -out:
-> +out2:
->  	brelse(m_bh);
-> +out:
-> +	sdp->sd_rindex_uptodate = 0;
-> +	gfs2_trans_end(sdp);
->  }
->  
->  /**
-> diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-> index aa014725f84a..27c82f4aaf32 100644
-> --- a/fs/gfs2/bmap.c
-> +++ b/fs/gfs2/bmap.c
-> @@ -991,17 +991,28 @@ static void gfs2_write_unlock(struct inode *inode)
->  	gfs2_glock_dq_uninit(&ip->i_gh);
->  }
->  
-> +static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
-> +				   unsigned len, struct iomap *iomap)
-> +{
-> +	struct gfs2_sbd *sdp = GFS2_SB(inode);
-> +
-> +	return gfs2_trans_begin(sdp, RES_DINODE + (len >> inode->i_blkbits), 0);
-> +}
-> +
->  static void gfs2_iomap_page_done(struct inode *inode, loff_t pos,
->  				 unsigned copied, struct page *page,
->  				 struct iomap *iomap)
->  {
->  	struct gfs2_inode *ip = GFS2_I(inode);
-> +	struct gfs2_sbd *sdp = GFS2_SB(inode);
->  
-> -	if (page)
-> +	if (page && !gfs2_is_stuffed(ip))
->  		gfs2_page_add_databufs(ip, page, offset_in_page(pos), copied);
-> +	gfs2_trans_end(sdp);
->  }
->  
->  static const struct iomap_page_ops gfs2_iomap_page_ops = {
-> +	.page_prepare = gfs2_iomap_page_prepare,
->  	.page_done = gfs2_iomap_page_done,
->  };
->  
-> @@ -1057,31 +1068,45 @@ static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
->  	if (alloc_required)
->  		rblocks += gfs2_rg_blocks(ip, data_blocks + ind_blocks);
->  
-> -	ret = gfs2_trans_begin(sdp, rblocks, iomap->length >> inode->i_blkbits);
-> -	if (ret)
-> -		goto out_trans_fail;
-> +	if (unstuff || iomap->type == IOMAP_HOLE) {
-> +		struct gfs2_trans *tr;
->  
-> -	if (unstuff) {
-> -		ret = gfs2_unstuff_dinode(ip, NULL);
-> +		ret = gfs2_trans_begin(sdp, rblocks,
-> +				       iomap->length >> inode->i_blkbits);
->  		if (ret)
-> -			goto out_trans_end;
-> -		release_metapath(mp);
-> -		ret = gfs2_iomap_get(inode, iomap->offset, iomap->length,
-> -				     flags, iomap, mp);
-> -		if (ret)
-> -			goto out_trans_end;
-> -	}
-> +			goto out_trans_fail;
->  
-> -	if (iomap->type == IOMAP_HOLE) {
-> -		ret = gfs2_iomap_alloc(inode, iomap, flags, mp);
-> -		if (ret) {
-> -			gfs2_trans_end(sdp);
-> -			gfs2_inplace_release(ip);
-> -			punch_hole(ip, iomap->offset, iomap->length);
-> -			goto out_qunlock;
-> +		if (unstuff) {
-> +			ret = gfs2_unstuff_dinode(ip, NULL);
-> +			if (ret)
-> +				goto out_trans_end;
-> +			release_metapath(mp);
-> +			ret = gfs2_iomap_get(inode, iomap->offset,
-> +					     iomap->length, flags, iomap, mp);
-> +			if (ret)
-> +				goto out_trans_end;
-> +		}
-> +
-> +		if (iomap->type == IOMAP_HOLE) {
-> +			ret = gfs2_iomap_alloc(inode, iomap, flags, mp);
-> +			if (ret) {
-> +				gfs2_trans_end(sdp);
-> +				gfs2_inplace_release(ip);
-> +				punch_hole(ip, iomap->offset, iomap->length);
-> +				goto out_qunlock;
-> +			}
->  		}
-> +
-> +		tr = current->journal_info;
-> +		if (tr->tr_num_buf_new)
-> +			__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
-> +		else
-> +			gfs2_trans_add_meta(ip->i_gl, mp->mp_bh[0]);
-> +
-> +		gfs2_trans_end(sdp);
->  	}
-> -	if (!gfs2_is_stuffed(ip) && gfs2_is_jdata(ip))
-> +
-> +	if (gfs2_is_stuffed(ip) || gfs2_is_jdata(ip))
->  		iomap->page_ops = &gfs2_iomap_page_ops;
->  	return 0;
->  
-> @@ -1121,10 +1146,6 @@ static int gfs2_iomap_begin(struct inode *inode, loff_t pos, loff_t length,
->  		    iomap->type != IOMAP_MAPPED)
->  			ret = -ENOTBLK;
->  	}
-> -	if (!ret) {
-> -		get_bh(mp.mp_bh[0]);
-> -		iomap->private = mp.mp_bh[0];
-> -	}
->  	release_metapath(&mp);
->  	trace_gfs2_iomap_end(ip, iomap, ret);
->  	return ret;
-> @@ -1135,27 +1156,16 @@ static int gfs2_iomap_end(struct inode *inode, loff_t pos, loff_t length,
->  {
->  	struct gfs2_inode *ip = GFS2_I(inode);
->  	struct gfs2_sbd *sdp = GFS2_SB(inode);
-> -	struct gfs2_trans *tr = current->journal_info;
-> -	struct buffer_head *dibh = iomap->private;
->  
->  	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) != IOMAP_WRITE)
->  		goto out;
->  
-> -	if (iomap->type != IOMAP_INLINE) {
-> +	if (!gfs2_is_stuffed(ip))
->  		gfs2_ordered_add_inode(ip);
->  
-> -		if (tr->tr_num_buf_new)
-> -			__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
-> -		else
-> -			gfs2_trans_add_meta(ip->i_gl, dibh);
-> -	}
-> -
-> -	if (inode == sdp->sd_rindex) {
-> +	if (inode == sdp->sd_rindex)
->  		adjust_fs_space(inode);
-> -		sdp->sd_rindex_uptodate = 0;
-> -	}
->  
-> -	gfs2_trans_end(sdp);
->  	gfs2_inplace_release(ip);
->  
->  	if (length != written && (iomap->flags & IOMAP_F_NEW)) {
-> @@ -1175,8 +1185,6 @@ static int gfs2_iomap_end(struct inode *inode, loff_t pos, loff_t length,
->  	gfs2_write_unlock(inode);
->  
->  out:
-> -	if (dibh)
-> -		brelse(dibh);
->  	return 0;
->  }
->  
-> -- 
-> 2.20.1
-> 
+8099 was blocked for too long waiting for 000000007a5ed526 held by 8097.
+8097 was blocked for too long waiting for 0000000067606e21 held by somebody.
+Since there is nobody else holding 0000000067606e21,
+I guessed that the "somebody" which is holding 0000000067606e21 is 8083.
+
+----------
+[ 1107.337625][    C1] CPU: 1 PID: 8083 Comm: syz-executor274 Not tainted 5.1.0-rc6+ #89
+[ 1107.337631][    C1] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+[ 1107.337636][    C1] RIP: 0010:debug_lockdep_rcu_enabled.part.0+0xb/0x60
+[ 1107.337648][    C1] Code: 5b 5d c3 e8 67 71 e5 ff 0f 1f 80 00 00 00 00 55 48 89 e5 e8 37 ff ff ff 5d c3 0f 1f 44 00 00 48 b8 00 00 00 00 00 fc ff df 55 <48> 89 e5 53 65 48 8b 1c 25 00 ee 01 00 48 8d bb 7c 08 00 00 48 89
+[ 1107.337652][    C1] RSP: 0018:ffff8880a85274c8 EFLAGS: 00000202
+[ 1107.337661][    C1] RAX: dffffc0000000000 RBX: ffff8880a85275d8 RCX: 1ffffffff12bcd63
+[ 1107.337666][    C1] RDX: 0000000000000000 RSI: ffffffff870d8f3c RDI: ffff8880a85275e0
+[ 1107.337672][    C1] RBP: ffff8880a85274d8 R08: ffff888081e68540 R09: ffffed1015d25bc8
+[ 1107.337677][    C1] R10: ffffed1015d25bc7 R11: ffff8880ae92de3b R12: 0000000000000000
+[ 1107.337683][    C1] R13: ffff8880a694d640 R14: ffff88809541b942 R15: 0000000000000006
+[ 1107.337689][    C1] FS:  0000000000e0b880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+[ 1107.337693][    C1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1107.337699][    C1] CR2: ffffffffff600400 CR3: 0000000092d6f000 CR4: 00000000001406e0
+[ 1107.337704][    C1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 1107.337710][    C1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 1107.337713][    C1] Call Trace:
+[ 1107.337717][    C1]  ? debug_lockdep_rcu_enabled+0x71/0xa0
+[ 1107.337721][    C1]  xas_descend+0xbf/0x370
+[ 1107.337724][    C1]  xas_load+0xef/0x150
+[ 1107.337728][    C1]  find_get_entry+0x13d/0x880
+[ 1107.337733][    C1]  ? find_get_entries_tag+0xc10/0xc10
+[ 1107.337736][    C1]  ? mark_held_locks+0xa4/0xf0
+[ 1107.337741][    C1]  ? pagecache_get_page+0x1a8/0x740
+[ 1107.337745][    C1]  pagecache_get_page+0x4c/0x740
+[ 1107.337749][    C1]  __getblk_gfp+0x27e/0x970
+[ 1107.337752][    C1]  __bread_gfp+0x2f/0x300
+[ 1107.337756][    C1]  udf_tread+0xf1/0x140
+[ 1107.337760][    C1]  udf_read_tagged+0x50/0x530
+[ 1107.337764][    C1]  udf_check_anchor_block+0x1ef/0x680
+[ 1107.337768][    C1]  ? blkpg_ioctl+0xa90/0xa90
+[ 1107.337772][    C1]  ? udf_process_sequence+0x35d0/0x35d0
+[ 1107.337776][    C1]  ? submit_bio+0xba/0x480
+[ 1107.337780][    C1]  udf_scan_anchors+0x3f4/0x680
+[ 1107.337784][    C1]  ? udf_check_anchor_block+0x680/0x680
+[ 1107.337789][    C1]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
+[ 1107.337793][    C1]  ? udf_get_last_session+0x120/0x120
+[ 1107.337797][    C1]  udf_load_vrs+0x67f/0xc80
+[ 1107.337801][    C1]  ? udf_scan_anchors+0x680/0x680
+[ 1107.337805][    C1]  ? udf_bread+0x260/0x260
+[ 1107.337809][    C1]  ? lockdep_init_map+0x1be/0x6d0
+[ 1107.337813][    C1]  udf_fill_super+0x7d8/0x16d1
+[ 1107.337817][    C1]  ? udf_load_vrs+0xc80/0xc80
+[ 1107.337820][    C1]  ? vsprintf+0x40/0x40
+[ 1107.337824][    C1]  ? set_blocksize+0x2bf/0x340
+[ 1107.337829][    C1]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[ 1107.337833][    C1]  mount_bdev+0x307/0x3c0
+[ 1107.337837][    C1]  ? udf_load_vrs+0xc80/0xc80
+[ 1107.337840][    C1]  udf_mount+0x35/0x40
+[ 1107.337844][    C1]  ? udf_get_pblock_meta25+0x3a0/0x3a0
+[ 1107.337848][    C1]  legacy_get_tree+0xf2/0x200
+[ 1107.337853][    C1]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
+[ 1107.337857][    C1]  vfs_get_tree+0x123/0x450
+[ 1107.337860][    C1]  do_mount+0x1436/0x2c40
+[ 1107.337864][    C1]  ? copy_mount_string+0x40/0x40
+[ 1107.337868][    C1]  ? _copy_from_user+0xdd/0x150
+[ 1107.337873][    C1]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
+[ 1107.337877][    C1]  ? copy_mount_options+0x280/0x3a0
+[ 1107.337881][    C1]  ksys_mount+0xdb/0x150
+[ 1107.337885][    C1]  __x64_sys_mount+0xbe/0x150
+[ 1107.337889][    C1]  do_syscall_64+0x103/0x610
+[ 1107.337893][    C1]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+----------
+
+8083 is doing mount(2) but is not holding 00000000bde6230e (loop_ctl_mutex).
+I guessed that something went wrong with 8083 inside __getblk_gfp().
+How can loop_ctl_mutex be relevant to this problem?
