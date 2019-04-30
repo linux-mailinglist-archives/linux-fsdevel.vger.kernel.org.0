@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F0AAEEF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 05:09:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5786AEEF8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 05:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbfD3DIs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Apr 2019 23:08:48 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:53895 "EHLO
+        id S1730014AbfD3DI4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Apr 2019 23:08:56 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:46027 "EHLO
         new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729883AbfD3DIs (ORCPT
+        by vger.kernel.org with ESMTP id S1729883AbfD3DI4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Apr 2019 23:08:48 -0400
+        Mon, 29 Apr 2019 23:08:56 -0400
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 22555DA1D;
-        Mon, 29 Apr 2019 23:08:47 -0400 (EDT)
+        by mailnew.nyi.internal (Postfix) with ESMTP id EB66B5286;
+        Mon, 29 Apr 2019 23:08:54 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 29 Apr 2019 23:08:47 -0400
+  by compute3.internal (MEProxy); Mon, 29 Apr 2019 23:08:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=ToWY0R45y8BHjmAdWxteY+oDuIkdik3lI8PSNGM4h2M=; b=XXcBFbLy
-        7CsIB54OmO3t9u36Gqt/SFAsTZ2sSbQXaThBA3qa/du9X8VBd4G2r0OkL+C8Yjqg
-        pXOwH9IBjsUEOkTfm+GC+7hImvu/LeaTwLudmHYjWY3KmLukO0hjusWqEsjcgoY2
-        7Lq95c8JGCepwOTAIp36JhIFfI7qLU2PVDwR1B0Yh/2zZmjgCDlqIgcYs11R9nwn
-        IpZ/X9l/DQysA1F926YMUIbIlgP6fFgSvStvNdAiRXvyNF9w2gxPwXgaI45b/Qn+
-        Brg7mr58C6/CUsEXAFasj7ezCLUqIwh+1dIUGjh3Cii8e2LwfbNGOR+GP2spdjh7
-        VR3DHONTodgAlw==
-X-ME-Sender: <xms:PrzHXH0tKj9_ratHy1B93SvawFkk3RAUcPmv0_HjDXoJWnA4D-JCeA>
+        fm2; bh=bxV5jBaXvA/LKL0qOR0ZLSK5IIfdrfWAd0nyjsopfiM=; b=j6+4FHAE
+        FVM8Li58NZcWW6HLlE9bl9fVj9deVbeq+Jxjc8W0HH4/aQ6y4q8QepnkNhVe78pi
+        /biDsaZbgcybTFU/OokAdYlEJiQ3BjySDRQjwsyDtEHzv3wZAFeqVoVqqFxiyrZw
+        Fh0VSQXbrxiHBNEP02LAzOWkJWkulDgZ/Xg6sKV9S5ZLrf5h9ZfZcrZzLKJfcfFk
+        guHwnmPVbrN3d96RTt3m6egGtUUq06Fmb9ypLapjBnRxm2tN9U6kaFAtNqf6qnPp
+        ND1JWNDcqiGim5drGe0p40+254w9D8NgPXf7K+jIjDYecXZskVwftSTcrVoy1Xeb
+        Vcl8ZCFCMSEmjw==
+X-ME-Sender: <xms:RrzHXAPEBhCpNjCXwNt0jBW2aqTaJsu1NQb5QmOEilZ9atFLj-nR_g>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieefgdeikecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepfdfvohgsihhn
     ucevrdcujfgrrhguihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhgqeenucfkph
     epuddvuddrgeegrddvfedtrddukeeknecurfgrrhgrmhepmhgrihhlfhhrohhmpehtohgs
-    ihhnsehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:PrzHXM8ncYl0Bd3eQyB6YylzltBt1Y5bgyjUHBKv5W04LPbGQFt0sQ>
-    <xmx:PrzHXE1uV25KW7X0zrw3jHNIZt7rWlHzfs7mLCIhd1udraYJV5hVsA>
-    <xmx:PrzHXJ8uImtQliJEk2xpqH8XHfkzk7ZD-hybYrrHj6rI8FXncZqfJQ>
-    <xmx:P7zHXGK01ulm9VwtReRjFUdVVCcuNY0AVRi1uekPRd5ElxGqvXRAvg>
+    ihhnsehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedu
+X-ME-Proxy: <xmx:RrzHXB5G8MLDJ25Nk39dCyJQGv8lb2DXgPQyQGb5pupr1u1FuawfDQ>
+    <xmx:RrzHXGRF_ZQ-jDvN86MxcCg8fs88aswTX2E77CFHgvteghdNY1m2hg>
+    <xmx:RrzHXOBnLKsBdFFAEHczuCctWFVyd3ZL3YjnMVDfCx5wSFwpse0T4A>
+    <xmx:RrzHXA54wqxBOUYVI-Nae-eFnohIcFmOvxSMZniT_iRY8CO50KcmzQ>
 Received: from eros.localdomain (ppp121-44-230-188.bras2.syd2.internode.on.net [121.44.230.188])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 58225103C9;
-        Mon, 29 Apr 2019 23:08:39 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 2CB2D103C8;
+        Mon, 29 Apr 2019 23:08:46 -0400 (EDT)
 From:   "Tobin C. Harding" <tobin@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Tobin C. Harding" <tobin@kernel.org>,
@@ -65,9 +65,9 @@ Cc:     "Tobin C. Harding" <tobin@kernel.org>,
         Hugh Dickins <hughd@google.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 01/15] slub: Add isolate() and migrate() methods
-Date:   Tue, 30 Apr 2019 13:07:32 +1000
-Message-Id: <20190430030746.26102-2-tobin@kernel.org>
+Subject: [RFC PATCH v4 02/15] tools/vm/slabinfo: Add support for -C and -M options
+Date:   Tue, 30 Apr 2019 13:07:33 +1000
+Message-Id: <20190430030746.26102-3-tobin@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190430030746.26102-1-tobin@kernel.org>
 References: <20190430030746.26102-1-tobin@kernel.org>
@@ -78,210 +78,150 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add the two methods needed for moving objects and enable the display of
-the callbacks via the /sys/kernel/slab interface.
+-C lists caches that use a ctor.
 
-Add documentation explaining the use of these methods and the prototypes
-for slab.h. Add functions to setup the callbacks method for a slab
-cache.
+-M lists caches that support object migration.
 
-Add empty functions for SLAB/SLOB. The API is generic so it could be
-theoretically implemented for these allocators as well.
-
-Change sysfs 'ctor' field to be 'ops' to contain all the callback
-operations defined for a slab cache.  Display the existing 'ctor'
-callback in the ops fields contents along with 'isolate' and 'migrate'
-callbacks.
+Add command line options to show caches with a constructor and caches
+that are movable (i.e. have migrate function).
 
 Co-developed-by: Christoph Lameter <cl@linux.com>
 Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 ---
- include/linux/slab.h     | 70 ++++++++++++++++++++++++++++++++++++++++
- include/linux/slub_def.h |  3 ++
- mm/slub.c                | 59 +++++++++++++++++++++++++++++----
- 3 files changed, 126 insertions(+), 6 deletions(-)
+ tools/vm/slabinfo.c | 40 ++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 36 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 9449b19c5f10..886fc130334d 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -154,6 +154,76 @@ void memcg_create_kmem_cache(struct mem_cgroup *, struct kmem_cache *);
- void memcg_deactivate_kmem_caches(struct mem_cgroup *);
- void memcg_destroy_kmem_caches(struct mem_cgroup *);
+diff --git a/tools/vm/slabinfo.c b/tools/vm/slabinfo.c
+index 73818f1b2ef8..cbfc56c44c2f 100644
+--- a/tools/vm/slabinfo.c
++++ b/tools/vm/slabinfo.c
+@@ -33,6 +33,7 @@ struct slabinfo {
+ 	unsigned int hwcache_align, object_size, objs_per_slab;
+ 	unsigned int sanity_checks, slab_size, store_user, trace;
+ 	int order, poison, reclaim_account, red_zone;
++	int movable, ctor;
+ 	unsigned long partial, objects, slabs, objects_partial, objects_total;
+ 	unsigned long alloc_fastpath, alloc_slowpath;
+ 	unsigned long free_fastpath, free_slowpath;
+@@ -67,6 +68,8 @@ int show_report;
+ int show_alias;
+ int show_slab;
+ int skip_zero = 1;
++int show_movable;
++int show_ctor;
+ int show_numa;
+ int show_track;
+ int show_first_alias;
+@@ -109,11 +112,13 @@ static void fatal(const char *x, ...)
  
-+/*
-+ * Function prototypes passed to kmem_cache_setup_mobility() to enable
-+ * mobile objects and targeted reclaim in slab caches.
-+ */
+ static void usage(void)
+ {
+-	printf("slabinfo 4/15/2011. (c) 2007 sgi/(c) 2011 Linux Foundation.\n\n"
+-		"slabinfo [-aADefhilnosrStTvz1LXBU] [N=K] [-dafzput] [slab-regexp]\n"
++	printf("slabinfo 4/15/2017. (c) 2007 sgi/(c) 2011 Linux Foundation/(c) 2017 Jump Trading LLC.\n\n"
++	       "slabinfo [-aACDefhilMnosrStTvz1LXBU] [N=K] [-dafzput] [slab-regexp]\n"
 +
-+/**
-+ * typedef kmem_cache_isolate_func - Object migration callback function.
-+ * @s: The cache we are working on.
-+ * @ptr: Pointer to an array of pointers to the objects to isolate.
-+ * @nr: Number of objects in @ptr array.
-+ *
-+ * The purpose of kmem_cache_isolate_func() is to pin each object so that
-+ * they cannot be freed until kmem_cache_migrate_func() has processed
-+ * them. This may be accomplished by increasing the refcount or setting
-+ * a flag.
-+ *
-+ * The object pointer array passed is also passed to
-+ * kmem_cache_migrate_func().  The function may remove objects from the
-+ * array by setting pointers to %NULL. This is useful if we can
-+ * determine that an object is being freed because
-+ * kmem_cache_isolate_func() was called when the subsystem was calling
-+ * kmem_cache_free().  In that case it is not necessary to increase the
-+ * refcount or specially mark the object because the release of the slab
-+ * lock will lead to the immediate freeing of the object.
-+ *
-+ * Context: Called with locks held so that the slab objects cannot be
-+ *          freed.  We are in an atomic context and no slab operations
-+ *          may be performed.
-+ * Return: A pointer that is passed to the migrate function. If any
-+ *         objects cannot be touched at this point then the pointer may
-+ *         indicate a failure and then the migration function can simply
-+ *         remove the references that were already obtained. The private
-+ *         data could be used to track the objects that were already pinned.
-+ */
-+typedef void *kmem_cache_isolate_func(struct kmem_cache *s, void **ptr, int nr);
-+
-+/**
-+ * typedef kmem_cache_migrate_func - Object migration callback function.
-+ * @s: The cache we are working on.
-+ * @ptr: Pointer to an array of pointers to the objects to migrate.
-+ * @nr: Number of objects in @ptr array.
-+ * @node: The NUMA node where the object should be allocated.
-+ * @private: The pointer returned by kmem_cache_isolate_func().
-+ *
-+ * This function is responsible for migrating objects.  Typically, for
-+ * each object in the input array you will want to allocate an new
-+ * object, copy the original object, update any pointers, and free the
-+ * old object.
-+ *
-+ * After this function returns all pointers to the old object should now
-+ * point to the new object.
-+ *
-+ * Context: Called with no locks held and interrupts enabled.  Sleeping
-+ *          is possible.  Any operation may be performed.
-+ */
-+typedef void kmem_cache_migrate_func(struct kmem_cache *s, void **ptr,
-+				     int nr, int node, void *private);
-+
-+/*
-+ * kmem_cache_setup_mobility() is used to setup callbacks for a slab cache.
-+ */
-+#ifdef CONFIG_SLUB
-+void kmem_cache_setup_mobility(struct kmem_cache *, kmem_cache_isolate_func,
-+			       kmem_cache_migrate_func);
-+#else
-+static inline void
-+kmem_cache_setup_mobility(struct kmem_cache *s, kmem_cache_isolate_func isolate,
-+			  kmem_cache_migrate_func migrate) {}
-+#endif
-+
- /*
-  * Please use this macro to create slab caches. Simply specify the
-  * name of the structure and maybe some flags that are listed above.
-diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
-index d2153789bd9f..2879a2f5f8eb 100644
---- a/include/linux/slub_def.h
-+++ b/include/linux/slub_def.h
-@@ -99,6 +99,9 @@ struct kmem_cache {
- 	gfp_t allocflags;	/* gfp flags to use on each alloc */
- 	int refcount;		/* Refcount for slab cache destroy */
- 	void (*ctor)(void *);
-+	kmem_cache_isolate_func *isolate;
-+	kmem_cache_migrate_func *migrate;
-+
- 	unsigned int inuse;		/* Offset to metadata */
- 	unsigned int align;		/* Alignment */
- 	unsigned int red_left_pad;	/* Left redzone padding size */
-diff --git a/mm/slub.c b/mm/slub.c
-index d30ede89f4a6..ae44d640b8c1 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -4326,6 +4326,33 @@ int __kmem_cache_create(struct kmem_cache *s, slab_flags_t flags)
- 	return err;
- }
+ 		"-a|--aliases           Show aliases\n"
+ 		"-A|--activity          Most active slabs first\n"
+ 		"-B|--Bytes             Show size in bytes\n"
++		"-C|--ctor              Show slabs with ctors\n"
+ 		"-D|--display-active    Switch line format to activity\n"
+ 		"-e|--empty             Show empty slabs\n"
+ 		"-f|--first-alias       Show first alias\n"
+@@ -121,6 +126,7 @@ static void usage(void)
+ 		"-i|--inverted          Inverted list\n"
+ 		"-l|--slabs             Show slabs\n"
+ 		"-L|--Loss              Sort by loss\n"
++		"-M|--movable           Show caches that support movable objects\n"
+ 		"-n|--numa              Show NUMA information\n"
+ 		"-N|--lines=K           Show the first K slabs\n"
+ 		"-o|--ops               Show kmem_cache_ops\n"
+@@ -588,6 +594,12 @@ static void slabcache(struct slabinfo *s)
+ 	if (show_empty && s->slabs)
+ 		return;
  
-+void kmem_cache_setup_mobility(struct kmem_cache *s,
-+			       kmem_cache_isolate_func isolate,
-+			       kmem_cache_migrate_func migrate)
-+{
-+	/*
-+	 * Mobile objects must have a ctor otherwise the object may be
-+	 * in an undefined state on allocation.  Since the object may
-+	 * need to be inspected by the migration function at any time
-+	 * after allocation we must ensure that the object always has a
-+	 * defined state.
-+	 */
-+	if (!s->ctor) {
-+		pr_err("%s: require constructor to setup mobility\n", s->name);
++	if (show_ctor && !s->ctor)
 +		return;
-+	}
 +
-+	s->isolate = isolate;
-+	s->migrate = migrate;
++	if (show_movable && !s->movable)
++		return;
 +
-+	/*
-+	 * Sadly serialization requirements currently mean that we have
-+	 * to disable fast cmpxchg based processing.
-+	 */
-+	s->flags &= ~__CMPXCHG_DOUBLE;
-+}
-+EXPORT_SYMBOL(kmem_cache_setup_mobility);
-+
- void *__kmalloc_track_caller(size_t size, gfp_t gfpflags, unsigned long caller)
- {
- 	struct kmem_cache *s;
-@@ -5010,13 +5037,33 @@ static ssize_t cpu_partial_store(struct kmem_cache *s, const char *buf,
- }
- SLAB_ATTR(cpu_partial);
- 
--static ssize_t ctor_show(struct kmem_cache *s, char *buf)
-+static int op_show(char *buf, const char *txt, unsigned long addr)
- {
--	if (!s->ctor)
--		return 0;
--	return sprintf(buf, "%pS\n", s->ctor);
-+	int x = 0;
-+
-+	x += sprintf(buf, "%s : ", txt);
-+	x += sprint_symbol(buf + x, addr);
-+	x += sprintf(buf + x, "\n");
-+
-+	return x;
-+}
-+
-+static ssize_t ops_show(struct kmem_cache *s, char *buf)
-+{
-+	int x = 0;
-+
+ 	if (sort_loss == 0)
+ 		store_size(size_str, slab_size(s));
+ 	else
+@@ -602,6 +614,10 @@ static void slabcache(struct slabinfo *s)
+ 		*p++ = '*';
+ 	if (s->cache_dma)
+ 		*p++ = 'd';
 +	if (s->ctor)
-+		x += op_show(buf + x, "ctor", (unsigned long)s->ctor);
++		*p++ = 'C';
++	if (s->movable)
++		*p++ = 'M';
+ 	if (s->hwcache_align)
+ 		*p++ = 'A';
+ 	if (s->poison)
+@@ -636,7 +652,8 @@ static void slabcache(struct slabinfo *s)
+ 		printf("%-21s %8ld %7d %15s %14s %4d %1d %3ld %3ld %s\n",
+ 			s->name, s->objects, s->object_size, size_str, dist_str,
+ 			s->objs_per_slab, s->order,
+-			s->slabs ? (s->partial * 100) / s->slabs : 100,
++			s->slabs ? (s->partial * 100) /
++					(s->slabs * s->objs_per_slab) : 100,
+ 			s->slabs ? (s->objects * s->object_size * 100) /
+ 				(s->slabs * (page_size << s->order)) : 100,
+ 			flags);
+@@ -1256,6 +1273,13 @@ static void read_slab_dir(void)
+ 			slab->alloc_node_mismatch = get_obj("alloc_node_mismatch");
+ 			slab->deactivate_bypass = get_obj("deactivate_bypass");
+ 			chdir("..");
++			if (read_slab_obj(slab, "ops")) {
++				if (strstr(buffer, "ctor :"))
++					slab->ctor = 1;
++				if (strstr(buffer, "migrate :"))
++					slab->movable = 1;
++			}
 +
-+	if (s->isolate)
-+		x += op_show(buf + x, "isolate", (unsigned long)s->isolate);
-+
-+	if (s->migrate)
-+		x += op_show(buf + x, "migrate", (unsigned long)s->migrate);
-+
-+	return x;
+ 			if (slab->name[0] == ':')
+ 				alias_targets++;
+ 			slab++;
+@@ -1332,6 +1356,8 @@ static void xtotals(void)
  }
--SLAB_ATTR_RO(ctor);
-+SLAB_ATTR_RO(ops);
  
- static ssize_t aliases_show(struct kmem_cache *s, char *buf)
- {
-@@ -5429,7 +5476,7 @@ static struct attribute *slab_attrs[] = {
- 	&objects_partial_attr.attr,
- 	&partial_attr.attr,
- 	&cpu_slabs_attr.attr,
--	&ctor_attr.attr,
-+	&ops_attr.attr,
- 	&aliases_attr.attr,
- 	&align_attr.attr,
- 	&hwcache_align_attr.attr,
+ struct option opts[] = {
++	{ "ctor", no_argument, NULL, 'C' },
++	{ "movable", no_argument, NULL, 'M' },
+ 	{ "aliases", no_argument, NULL, 'a' },
+ 	{ "activity", no_argument, NULL, 'A' },
+ 	{ "debug", optional_argument, NULL, 'd' },
+@@ -1367,7 +1393,7 @@ int main(int argc, char *argv[])
+ 
+ 	page_size = getpagesize();
+ 
+-	while ((c = getopt_long(argc, argv, "aAd::Defhil1noprstvzTSN:LXBU",
++	while ((c = getopt_long(argc, argv, "aACd::Defhil1MnoprstvzTSN:LXBU",
+ 						opts, NULL)) != -1)
+ 		switch (c) {
+ 		case '1':
+@@ -1376,6 +1402,9 @@ int main(int argc, char *argv[])
+ 		case 'a':
+ 			show_alias = 1;
+ 			break;
++		case 'C':
++			show_ctor = 1;
++			break;
+ 		case 'A':
+ 			sort_active = 1;
+ 			break;
+@@ -1399,6 +1428,9 @@ int main(int argc, char *argv[])
+ 		case 'i':
+ 			show_inverted = 1;
+ 			break;
++		case 'M':
++			show_movable = 1;
++			break;
+ 		case 'n':
+ 			show_numa = 1;
+ 			break;
 -- 
 2.21.0
 
