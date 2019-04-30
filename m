@@ -2,162 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CC7010286
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 00:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAB511028E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 00:41:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbfD3Wj0 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 18:39:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58638 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726056AbfD3WjZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 18:39:25 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 237C2308A9E2;
-        Tue, 30 Apr 2019 22:39:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-61.rdu2.redhat.com [10.10.120.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 669F317244;
-        Tue, 30 Apr 2019 22:39:21 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     jmorris@namei.org
-cc:     dhowells@redhat.com, dwalsh@redhat.com, vgoyal@redhat.com,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [GIT PULL] keys: Namespacing
+        id S1727001AbfD3WlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 18:41:22 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:32885 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbfD3WlV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Apr 2019 18:41:21 -0400
+Received: from mail-qt1-f197.google.com ([209.85.160.197])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <gpiccoli@canonical.com>)
+        id 1hLbRA-0000O5-5o
+        for linux-fsdevel@vger.kernel.org; Tue, 30 Apr 2019 22:41:20 +0000
+Received: by mail-qt1-f197.google.com with SMTP id s32so10004945qts.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 15:41:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=BNuNywNm3nYV5TRhn28+hTsGtHkLiVwZcTZZouyHt4g=;
+        b=i7osKI2ojy2qD+wRp74CYvZFMBBu18qyq+OSrcpO0QRMJxj8hlP6h4UsVb+i8gc2m1
+         mpHRj1TiL9s74mTIDTUNQG4iJ7cnXKkwgAGMAJvYkuykap1hcV3saBJZZYkhhJJvCGE7
+         Xq0dQxKUdd/I4KIfkI195H7bjIEvW9758NVQTa4gRr0f5sTgiDt8e2jQlIWck7vB/AP3
+         XUI1sE9gaqfk5k6EVB3xAjjWPG7CRBFiGGTRJv48kYB35oEgw4wYkEFEagjAU/E/0EIs
+         l/RQHghBIvZj1Ew5LteJCUB/YOXzLLaY5TmyE+q18BTcX4ATlfFPW3XuTqvWJqLNwnrk
+         LElA==
+X-Gm-Message-State: APjAAAXPri/Ll39Tfc6zd3VWTP/P8l3QpzoPU5F2qU7uHHs2Xbj+70Uf
+        71AtnBxOBFtBkUI8y20xv4lWOQtYASP3TL0VR0a/5OoC39+HdBNEGXt4g/O2FuX60NupHJVya3Y
+        XEfSludC3kVjNv+LQiRF5vsU+lyisa9Jb+fNt/dzQZOY=
+X-Received: by 2002:ac8:352f:: with SMTP id y44mr31084102qtb.130.1556664079007;
+        Tue, 30 Apr 2019 15:41:19 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqySp93LhP+mvPSQT1QyiKl5ZSHs1A52qRRiJ0rIyZm1NyCtfU5TBHrXwypsgBA0n7j+OqPs4w==
+X-Received: by 2002:ac8:352f:: with SMTP id y44mr31084081qtb.130.1556664078788;
+        Tue, 30 Apr 2019 15:41:18 -0700 (PDT)
+Received: from [192.168.1.201] (201-13-157-136.dial-up.telesp.net.br. [201.13.157.136])
+        by smtp.gmail.com with ESMTPSA id m60sm20407664qte.81.2019.04.30.15.41.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 15:41:18 -0700 (PDT)
+Subject: Re: [RFC] [PATCH V2 0/1] Introduce emergency raid0 stop for mounted
+ arrays
+To:     Song Liu <liu.song.a23@gmail.com>
+Cc:     axboe@kernel.dk, linux-raid <linux-raid@vger.kernel.org>,
+        jay.vosburgh@canonical.com, kernel@gpiccoli.net,
+        NeilBrown <neilb@suse.com>, dm-devel@redhat.com,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block@vger.kernel.org, gavin.guo@canonical.com
+References: <20190418220448.7219-1-gpiccoli@canonical.com>
+ <CAPhsuW4k5zz2pJBPL60VzjTcj6NTnhBh-RjvWASLcOxAk+yDEw@mail.gmail.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
+ mQENBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
+ Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
+ 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
+ irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
+ 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
+ AAG0LUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPokBNwQT
+ AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
+ 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
+ 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
+ q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
+ iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
+ LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltveuQENBFpVBxcBCADbxD6J
+ aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
+ pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
+ kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
+ nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
+ bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAGJAR8EGAEIAAkFAlpV
+ BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
+ 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
+ egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
+ Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
+ kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
+ X18zwLgdiQ==
+Message-ID: <b39b96ea-2540-a407-2232-1af91e3e6658@canonical.com>
+Date:   Tue, 30 Apr 2019 19:41:11 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <560.1556663960.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Tue, 30 Apr 2019 23:39:20 +0100
-Message-ID: <561.1556663960@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 30 Apr 2019 22:39:25 +0000 (UTC)
+In-Reply-To: <CAPhsuW4k5zz2pJBPL60VzjTcj6NTnhBh-RjvWASLcOxAk+yDEw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi James,
+> On 19/04/2019 14:08, Song Liu wrote:
+> [...]
+> I read through the discussion in V1, and I would agree with Neil that
+> current behavior is reasonable.
+> 
+> For the following example:
+> 
+> fd = open("file", "w");
+> write(fd, buf, size);
+> ret = fsync(fd);
+> 
+> If "size" is big enough, the write is not expected to be atomic for
+> md or other drives. If we remove the underlining block device
+> after write() and before fsync(), the file could get corrupted. This
+> is the same for md or NVMe/SCSI drives.
+> 
+> The application need to check "ret" from fsync(), the data is safe
+> only when fsync() returns 0.
+> 
+> Does this make sense?
+> 
 
-Can you pull this set of patches into the security tree and pass them along
-to Linus in the next merge window?  The primary thrust is to add
-namespacing to keyrings.
+Hi Song, thanks for your quick response, and sorry for my delay.
+I've noticed after v4.18 kernel started to crash when we remove one
+raid0 member while writing, so I was investigating this
+before perform your test (in fact, found 2 issues [0]), hence my delay.
 
-One miscellaneous and four prerequisite patches start:
+Your test does make sense; in fact I've tested your scenario with the
+following code (with the patches from [0]):
+https://pastebin.ubuntu.com/p/cyqpDqpM7x/
 
- (1) Use invalidation to kill off request_key authentication tokens more
-     quickly than revoking them.
+Indeed, fsync returns -1 in this case.
+Interestingly, when I do a "dd if=<some_file> of=<raid0_mount>" and try
+to "sync -f <some_file>" and "sync", it succeeds and the file is
+written, although corrupted.
 
- (2) Remove request_key_async{,_with_auxdata} - I would need to add extra
-     arguments, but they're not currently used.
+Do you think this behavior is correct? In other devices, like a pure
+SCSI disk or NVMe, the 'dd' write fails.
+Also, what about the status of the raid0 array in mdadm - it shows as
+"clean" even after the member is removed, should we change that?
 
- (3), (4) Simplify the key description management and cache the hash value
-     to avoid the need for constant recalculation during a search.  This
-     makes it easier to add namespace info to a key's index key.
 
- (5) Make it possible for keyring_search() to do searches that don't
-     recurse down into and search keyrings linked to from the starting
-     keyring.
+> Also, could you please highlight changes from V1 (if more than
+> just rebase)?
 
-Then the rest are about namespacing:
+No changes other than rebase. Worth mentioning here that a kernel bot
+(and Julia Lawall) found an issue in my patch; I forgot a
+"mutex_lock(&mddev->open_mutex);" in line 6053, which caused the first
+caveat (hung mdadm and persistent device in /dev). Thanks for pointing
+this silly mistake from me! in case this patch gets some traction, I'll
+re-submit with that fixed.
 
- (6) Replace the global list of keyring names with per-user_namespace lists
-     and exclude certain internal keyrings from being added to the lists.
+Cheers,
 
- (7) Move the user and user-session keyrings from the user_struct, and
-     store them instead in a "user keyring register" in the user_namespace.
-     This prevents KEY_SPEC_* specifiers from picking keyrings from the
-     wrong namespace.  Note that it also means that uids that share a
-     user_struct will not see the same user keyrings inside and outside a
-     user_namespace.
 
-     This has been tested by Dan Walsh in a Fedora environment, though the
-     patch was modified from the one here.
+Guilherme
 
- (8) Provide the ability to add a domain tag to a key's index key, so that
-     a keyring can hold keys of the same type and description, but
-     different target namespace/domain.
+[0] https://marc.info/?l=linux-block&m=155666385707413
 
- (9) Make the garbage collector remove keys for which the target domain tag
-     has been removed.
-
-(10) Provide a domain tag for each network namespace.
-
-(11) Tag DNS resolver keys and rxrpc/afs keys so that keys for different
-     domains can coexist in the same keyrings.
-
-In the future, hopefully, it will be possible to use the domain tags in
-ACLs to grant permissions to namespaces for containerisation.
-
-David
----
-The following changes since commit 6beff00b79ca0b5caf0ce6fb8e11f57311bd95f8:
-
-  seccomp: fix up grammar in comment (2019-04-23 16:21:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-namespace-20190430
-
-for you to fetch changes up to ccedc142360bd68fdaf444671d67d42fa306398b:
-
-  keys: Pass the network namespace into request_key mechanism (2019-04-25 13:10:25 +0100)
-
-----------------------------------------------------------------
-Keyrings namespacing
-
-----------------------------------------------------------------
-David Howells (11):
-      keys: Invalidate used request_key authentication keys
-      keys: Kill off request_key_async{,_with_auxdata}
-      keys: Simplify key description management
-      keys: Cache the hash value to avoid lots of recalculation
-      keys: Add a 'recurse' flag for keyring searches
-      keys: Namespace keyring names
-      keys: Move the user and user-session keyrings to the user_namespace
-      keys: Include target namespace in match criteria
-      keys: Garbage collect keys for which the domain has been removed
-      keys: Network namespace domain tag
-      keys: Pass the network namespace into request_key mechanism
-
- Documentation/security/keys/core.rst     |  10 +-
- certs/blacklist.c                        |   2 +-
- crypto/asymmetric_keys/asymmetric_type.c |   2 +-
- fs/afs/addr_list.c                       |   4 +-
- fs/afs/dynroot.c                         |   7 +-
- fs/cifs/dns_resolve.c                    |   3 +-
- fs/nfs/dns_resolve.c                     |   2 +-
- include/linux/dns_resolver.h             |   3 +-
- include/linux/key-type.h                 |   3 +
- include/linux/key.h                      |  50 ++++--
- include/linux/sched/user.h               |  14 --
- include/linux/user_namespace.h           |  12 +-
- include/net/net_namespace.h              |   4 +
- kernel/user.c                            |  10 +-
- kernel/user_namespace.c                  |   9 +-
- lib/digsig.c                             |   2 +-
- net/ceph/messenger.c                     |   3 +-
- net/core/net_namespace.c                 |  19 +++
- net/dns_resolver/dns_key.c               |   1 +
- net/dns_resolver/dns_query.c             |   6 +-
- net/rxrpc/key.c                          |   6 +-
- net/rxrpc/security.c                     |   2 +-
- security/integrity/digsig_asymmetric.c   |   4 +-
- security/keys/gc.c                       |   2 +-
- security/keys/internal.h                 |  10 +-
- security/keys/key.c                      |   9 +-
- security/keys/keyctl.c                   |   4 +-
- security/keys/keyring.c                  | 263 +++++++++++++++++--------------
- security/keys/persistent.c               |  10 +-
- security/keys/proc.c                     |   3 +-
- security/keys/process_keys.c             | 252 ++++++++++++++++++-----------
- security/keys/request_key.c              | 113 ++++++-------
- security/keys/request_key_auth.c         |   3 +-
- 33 files changed, 508 insertions(+), 339 deletions(-)
+> 
+> Thanks,
+> Song
+> 
