@@ -2,97 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55229FD6B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 18:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0121AFD79
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 18:08:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbfD3QEJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 12:04:09 -0400
-Received: from mail-qt1-f169.google.com ([209.85.160.169]:42395 "EHLO
-        mail-qt1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfD3QEJ (ORCPT
+        id S1726061AbfD3QIO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 12:08:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53410 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfD3QIO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 12:04:09 -0400
-Received: by mail-qt1-f169.google.com with SMTP id p20so16739788qtc.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 09:04:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7C/H9ZzSU0qP8UYq2NJoxOTSjxthMtozx8jthqagPTo=;
-        b=V17+lfAqUPk01IFJXUO56hClBUX2HDbxSbQULpTYSKkdi7HyAd33jfH5SIR8cXdcvE
-         hw/F9aMeFlPeuK5f4rBww/6N/Xmuv3823rpt63eVEiC0Qan/UjihZuDkm9RygVdZFQS+
-         uDXcBV7siz7kiet+/qLVaIcLptgJ9iivk9KSHlfQPKEm/K6sK09PpdfaQ642KUtpoLIG
-         Ei/9gzhfAHqdmqH0fjfZyrt7AVGrIzU5C9CHggarLYx36WwDp5F8075K02Wntqlwb84c
-         HpvByXvkJ7w/RAav80V4R5dscpV10nEf8hg1TH2pyWT4QZjAgYqwSCLSFK5QFiXIrs9J
-         nWbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7C/H9ZzSU0qP8UYq2NJoxOTSjxthMtozx8jthqagPTo=;
-        b=GDTDUr3mmMh7RXevVGlOu6V1CNRQ7aijEH5jdaK74kj+oJ1Zu6YFs6znvXYOrJg/pC
-         KJPkHY63kiD/9n9oUeYklybrAz6Q+O/mleEwICJK+sGdK5tZGFHwKXgVLHVxttfH6AKS
-         RPLnCbvXr5bn/+GameaXmT2Ezwono4Wsp4OqVUYGDN9iwlOxqFGRZKojEjuSrtRvqO5S
-         FIkNyuLqUk+g37d9AiONffsci5o6gUmI+XUsU84qcBt1AWgKnRKQPhIJwXXLU+APp1y6
-         UhdBd9DA24pQhbG5bO0VpXV9kFZFvvqViuAxWvOiPO+yHVPDgfhaVyA2tAimB4mlq19h
-         IwZA==
-X-Gm-Message-State: APjAAAXXIpLMgRA8ecSH8uUjvPYGY0QLxl38TDTQPDVCeMtrISPWpXVg
-        kqfmVGAHJBd/b6G69OywBth9PFwMIFCZDmADZdHD
-X-Google-Smtp-Source: APXvYqwcvQfk6RKX1YA+CEknGA6KPVffr8HcdjX65JCcNo0SBSztv0+v1lrmNaDd0LojAXwHvRQTc8ngINVBxL3bMxI=
-X-Received: by 2002:a0c:ae17:: with SMTP id y23mr31197725qvc.199.1556640247675;
- Tue, 30 Apr 2019 09:04:07 -0700 (PDT)
+        Tue, 30 Apr 2019 12:08:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UeaqpmVaWKRnTEkoOf4sPrumE1te9gNrirP9M29Vlnk=; b=acL+HmzgOS/RDc0H5BSxtqC0q
+        7gQfOtw3uFwOz6N46aQM0TJonu85B90GlYiN5pr5toMYK9O0bIpM3TbnAjek2YYsoWAEJLo7JHNzD
+        /Bk5/W0kzHDvw2lJJYaYdpXr1rkmAzx1ML+IwNOdURsxa9KaGwGLPbqbzk1gfyLuFgmbZjVVHRrzI
+        JFSZ9A5cC/Pkx5etFko/ldRUnoKF1tE/XvmTulOgc0Q5GOv+7OUaVKSk9FWF1CBoiwUWmzGiWg54O
+        34sh7ewcz2tR6Ou6d8gYRSyCXASvJBBEAcJA+2uL6YBS+kx4d4+jdHihNPaJTxoD9AJ1zGMSAXBFZ
+        AEyBiECcg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hLVIj-0004M2-F5; Tue, 30 Apr 2019 16:08:13 +0000
+Date:   Tue, 30 Apr 2019 09:08:13 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Matteo Croce <mcroce@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v4] proc/sysctl: add shared variables for range check
+Message-ID: <20190430160813.GI13796@bombadil.infradead.org>
+References: <20190429222613.13345-1-mcroce@redhat.com>
+ <CAGnkfhzkju6LXwHAVCHxCmMvAa1MLQGRY1czE1Boqz2OcEq39Q@mail.gmail.com>
+ <CAGXu5j+qejH0c9fG=TwmSyK0FkaiNidgqYZrqgKPf4D_=u2k8A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190425200012.GA6391@redhat.com> <83fda245-849a-70cc-dde0-5c451938ee97@kernel.dk>
- <503ba1f9-ad78-561a-9614-1dcb139439a6@suse.cz> <yq1v9yx2inc.fsf@oracle.com>
- <1556537518.3119.6.camel@HansenPartnership.com> <yq1zho911sg.fsf@oracle.com>
-In-Reply-To: <yq1zho911sg.fsf@oracle.com>
-From:   Jonathan Adams <jwadams@google.com>
-Date:   Tue, 30 Apr 2019 12:03:31 -0400
-Message-ID: <CA+VK+GP2R=6+GQJHX9+d6jnMWgK8i1_H5FiHdeUe3CGZZ5-86g@mail.gmail.com>
-Subject: Re: [Lsf] [LSF/MM] Preliminary agenda ? Anyone ... anyone ? Bueller ?
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        lsf@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
-        Jerome Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5j+qejH0c9fG=TwmSyK0FkaiNidgqYZrqgKPf4D_=u2k8A@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 7:36 AM Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
->
->
-> James,
->
-> > Next year, simply expand the blurb to "sponsors, partners and
-> > attendees" to make it more clear ... or better yet separate them so
-> > people can opt out of partner spam and still be on the attendee list.
->
-> We already made a note that we need an "opt-in to be on the attendee
-> list" as part of the registration process next year. That's how other
-> conferences go about it...
+On Tue, Apr 30, 2019 at 08:42:42AM -0700, Kees Cook wrote:
+> On Tue, Apr 30, 2019 at 3:47 AM Matteo Croce <mcroce@redhat.com> wrote:
+> > On Tue, Apr 30, 2019 at 12:26 AM Matteo Croce <mcroce@redhat.com> wrote:
+> > >
+> > > Add a const int array containing the most commonly used values,
+> > > some macros to refer more easily to the correct array member,
+> > > and use them instead of creating a local one for every object file.
+> > >
+> >
+> > Ok it seems that this simply can't be done, because there are at least
+> > two points where extra1,2 are set to a non const struct:
+> > in ip_vs_control_net_init_sysctl() it's assigned to struct netns_ipvs,
+> > while in mpls_dev_sysctl_register() it's assigned to a struct mpls_dev
+> > and a struct net.
+> 
+> Why can't these be converted to const also? I don't see the pointer
+> changing anywhere. They're created in one place and never changed.
 
-But there was an explicit checkbox to being on the attendance list in
-the registration form, on the second page:
+That's not true; I thought the same thing, but you need to see how
+they're used in the functions they're called.
 
-By submitting this registration you consent to The Linux=E2=80=99s
-Foundation=E2=80=99s communication with you with respect to the event or
-services to which this registration pertains.
-* The Linux Foundation Communications ...
-* Sponsor Communications    ...
-* Attendee Directory
-     By checking here, you opt-in to being listed in the event=E2=80=99s
-online attendee directory. Some of your registration data will be made
-available to other event attendees in the directory (name, title,
-company name only)
-
-Why isn't that sufficient?
-
-Cheers,
-- jonathan
+proc_do_defense_mode(struct ctl_table *table, int write,
+        struct netns_ipvs *ipvs = table->extra2;
+                        update_defense_level(ipvs);
+static void update_defense_level(struct netns_ipvs *ipvs)
+        spin_lock(&ipvs->dropentry_lock);
