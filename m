@@ -2,92 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DFA1FE59
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 19:03:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8165AFE87
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 19:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbfD3RDH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 13:03:07 -0400
-Received: from foss.arm.com ([217.140.101.70]:50334 "EHLO foss.arm.com"
+        id S1726384AbfD3RLh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 13:11:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725930AbfD3RDH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 13:03:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10576374;
-        Tue, 30 Apr 2019 10:03:07 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C3E913F5C1;
-        Tue, 30 Apr 2019 10:03:05 -0700 (PDT)
-Date:   Tue, 30 Apr 2019 18:03:03 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH] io_uring: avoid page allocation warnings
-Message-ID: <20190430170302.GD8314@lakrids.cambridge.arm.com>
-References: <20190430132405.8268-1-mark.rutland@arm.com>
- <20190430141810.GF13796@bombadil.infradead.org>
- <20190430145938.GA8314@lakrids.cambridge.arm.com>
- <a1af3017-6572-e828-dc8a-a5c8458e6b5a@kernel.dk>
+        id S1725942AbfD3RLh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Apr 2019 13:11:37 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6843A20644;
+        Tue, 30 Apr 2019 17:11:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556644296;
+        bh=8OdPkThiapl6sD5rI5vnTwpDb7WnGUe6ZTHP6sxtc7A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QFnsbD2E/4SeyMn+nJ9xzGwMqUGI81s4uzsvgj75dY1+zR4Yig5vYb922Qy/vVmD4
+         WY9pdj+uF13kzkZplUYGZTlhPZ6t8MNLdQyOsTBzoF4wQZ2hI9h77VsAMWqCyU69a2
+         +MXBOc8pjIBEpfILurQrqRpw0uhHjSMIALdajaOg=
+Date:   Tue, 30 Apr 2019 10:11:35 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Chandan Rajendra <chandan@linux.ibm.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com,
+        hch@infradead.org
+Subject: Re: [PATCH V2 10/13] fscrypt_encrypt_page: Loop across all blocks
+ mapped by a page range
+Message-ID: <20190430171133.GC48973@gmail.com>
+References: <20190428043121.30925-1-chandan@linux.ibm.com>
+ <20190428043121.30925-11-chandan@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a1af3017-6572-e828-dc8a-a5c8458e6b5a@kernel.dk>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <20190428043121.30925-11-chandan@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 10:21:03AM -0600, Jens Axboe wrote:
-> On 4/30/19 8:59 AM, Mark Rutland wrote:
-> > On Tue, Apr 30, 2019 at 07:18:10AM -0700, Matthew Wilcox wrote:
-> >> On Tue, Apr 30, 2019 at 02:24:05PM +0100, Mark Rutland wrote:
-> >>> In io_sqe_buffer_register() we allocate a number of arrays based on the
-> >>> iov_len from the user-provided iov. While we limit iov_len to SZ_1G,
-> >>> we can still attempt to allocate arrays exceeding MAX_ORDER.
-> >>>
-> >>> On a 64-bit system with 4KiB pages, for an iov where iov_base = 0x10 and
-> >>> iov_len = SZ_1G, we'll calculate that nr_pages = 262145. When we try to
-> >>> allocate a corresponding array of (16-byte) bio_vecs, requiring 4194320
-> >>> bytes, which is greater than 4MiB. This results in SLUB warning that
-> >>> we're trying to allocate greater than MAX_ORDER, and failing the
-> >>> allocation.
-> >>>
-> >>> Avoid this by passing __GFP_NOWARN when allocating arrays for the
-> >>> user-provided iov_len. We'll gracefully handle the failed allocation,
-> >>> returning -ENOMEM to userspace.
-> >>>
-> >>> We should probably consider lowering the limit below SZ_1G, or reworking
-> >>> the array allocations.
-> >>
-> >> I'd suggest that kvmalloc is probably our friend here ... we don't really
-> >> want to return -ENOMEM to userspace for this case, I don't think.
-> > 
-> > Sure. I'll go verify that the uring code doesn't assume this memory is
-> > physically contiguous.
-> > 
-> > I also guess we should be passing GFP_KERNEL_ACCOUNT rateh than a plain
-> > GFP_KERNEL.
+On Sun, Apr 28, 2019 at 10:01:18AM +0530, Chandan Rajendra wrote:
+> For subpage-sized blocks, this commit now encrypts all blocks mapped by
+> a page range.
 > 
-> kvmalloc() is fine, the io_uring code doesn't care about the layout of
-> the memory, it just uses it as an index.
+> Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
+> ---
+>  fs/crypto/crypto.c | 37 +++++++++++++++++++++++++------------
+>  1 file changed, 25 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+> index 4f0d832cae71..2d65b431563f 100644
+> --- a/fs/crypto/crypto.c
+> +++ b/fs/crypto/crypto.c
+> @@ -242,18 +242,26 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
 
-I've just had a go at that, but when using kvmalloc() with or without
-GFP_KERNEL_ACCOUNT I hit OOM and my system hangs within a few seconds with the
-syzkaller prog below:
+Need to update the function comment to clearly explain what this function
+actually does now.
 
-----
-Syzkaller reproducer:
-# {Threaded:false Collide:false Repeat:false RepeatTimes:0 Procs:1 Sandbox: Fault:false FaultCall:-1 FaultNth:0 EnableTun:false EnableNetDev:false EnableNetReset:false EnableCgroups:false EnableBinfmtMisc:false EnableCloseFds:false UseTmpDir:false HandleSegv:false Repro:false Trace:false}
-r0 = io_uring_setup(0x378, &(0x7f00000000c0))
-sendmsg$SEG6_CMD_SET_TUNSRC(0xffffffffffffffff, &(0x7f0000000240)={&(0x7f0000000000)={0x10, 0x0, 0x0, 0x40000000}, 0xc, 0x0, 0x1, 0x0, 0x0, 0x10}, 0x800)
-io_uring_register$IORING_REGISTER_BUFFERS(r0, 0x0, &(0x7f0000000000), 0x1)
-----
+>  {
+>  	struct fscrypt_ctx *ctx;
+>  	struct page *ciphertext_page = page;
+> +	int i, page_nr_blks;
+>  	int err;
+>  
+>  	BUG_ON(len % FS_CRYPTO_BLOCK_SIZE != 0);
+>  
 
-... I'm a bit worried that opens up a trivial DoS.
+Make a 'blocksize' variable so you don't have to keep calling i_blocksize().
 
-Thoughts?
+Also, you need to check whether 'len' and 'offs' are filesystem-block-aligned,
+since the code now assumes it.
 
-Thanks,
-Mark.
+	const unsigned int blocksize = i_blocksize(inode);
+
+        if (!IS_ALIGNED(len | offs, blocksize))
+                return -EINVAL;
+
+However, did you check whether that's always true for ubifs?  It looks like it
+may expect to encrypt a prefix of a block, that is only padded to the next
+16-byte boundary.
+		
+> +	page_nr_blks = len >> inode->i_blkbits;
+> +
+>  	if (inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES) {
+>  		/* with inplace-encryption we just encrypt the page */
+> -		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num, page,
+> -					     ciphertext_page, len, offs,
+> -					     gfp_flags);
+> -		if (err)
+> -			return ERR_PTR(err);
+> -
+> +		for (i = 0; i < page_nr_blks; i++) {
+> +			err = fscrypt_do_page_crypto(inode, FS_ENCRYPT,
+> +						lblk_num, page,
+> +						ciphertext_page,
+> +						i_blocksize(inode), offs,
+> +						gfp_flags);
+> +			if (err)
+> +				return ERR_PTR(err);
+> +			++lblk_num;
+> +			offs += i_blocksize(inode);
+> +		}
+>  		return ciphertext_page;
+>  	}
+>  
+> @@ -269,12 +277,17 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
+>  		goto errout;
+>  
+>  	ctx->control_page = page;
+> -	err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num,
+> -				     page, ciphertext_page, len, offs,
+> -				     gfp_flags);
+> -	if (err) {
+> -		ciphertext_page = ERR_PTR(err);
+> -		goto errout;
+> +
+> +	for (i = 0; i < page_nr_blks; i++) {
+> +		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num,
+> +					page, ciphertext_page,
+> +					i_blocksize(inode), offs, gfp_flags);
+
+As I mentioned elsewhere, renaming fscrypt_do_page_crypto() to
+fscrypt_crypt_block() would make more sense now.
+
+> +		if (err) {
+> +			ciphertext_page = ERR_PTR(err);
+> +			goto errout;
+> +		}
+> +		++lblk_num;
+> +		offs += i_blocksize(inode);
+>  	}
+>  	SetPagePrivate(ciphertext_page);
+>  	set_page_private(ciphertext_page, (unsigned long)ctx);
+> -- 
+> 2.19.1
+> 
