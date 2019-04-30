@@ -2,115 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA03F87E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 14:12:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26209F8F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 14:35:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbfD3MMc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 08:12:32 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:39040 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfD3MMc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:12:32 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3UC4RjX136070;
-        Tue, 30 Apr 2019 12:12:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=sDfolhPoDtLY6nBfVuOfoHQP4qFaH5aAZKN77BieGGk=;
- b=b4w9PYN0/nvmxM8Bh0m5KG8BUa7Y1tT5y7CfUhUw2p4snONZvCCH3UjvyQizm6ttnvjG
- NUQDiAh7dGzX9n4uAx1jcqOR4unN6cs0wGHPVMlQLSllTuukzRS6YlbJRboLsKGoAfyw
- sfNrbrcgEnWXx9S72KUkms6474UZM9/2vsPpigrAzADTUPfHZPuvpCzTc29/Lv0ixH7/
- d/1JbpaeKT6sMX+8GYY8jywqMlZ5Dc66NZOnla1S76s7AkPQr5USnXPLGRYcjOBXAUuS
- FJjBPQT2JGVHb/20oafkRnOZ0M8zn/hxZZmbIrI5rMHzMQ60hB8wRyqsQz0dAVorMpOj jQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 2s4ckdcacg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 12:12:14 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3UCAmkP161390;
-        Tue, 30 Apr 2019 12:12:13 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2s4ew16sut-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 12:12:13 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x3UCCC52029414;
-        Tue, 30 Apr 2019 12:12:12 GMT
-Received: from [192.168.0.100] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Apr 2019 05:12:12 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: Read-only Mapping of Program Text using Large THP Pages
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <CAPhsuW6uDeXrRU9pd-kPOzjJn3DVdx0O5Lny_hpyQ=Fpbhg4gw@mail.gmail.com>
-Date:   Tue, 30 Apr 2019 06:12:04 -0600
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C39B5A6C-2898-44DC-B11B-017908261C09@oracle.com>
-References: <379F21DD-006F-4E33-9BD5-F81F9BA75C10@oracle.com>
- <20190220134454.GF12668@bombadil.infradead.org>
- <07B3B085-C844-4A13-96B1-3DB0F1AF26F5@oracle.com>
- <20190220144345.GG12668@bombadil.infradead.org>
- <20190220163921.GA4451@localhost.localdomain>
- <20190220171905.GJ12668@bombadil.infradead.org>
- <B53C9F2D-966C-4DFD-8151-0A7255ACA9AD@oracle.com>
- <CAPhsuW6uDeXrRU9pd-kPOzjJn3DVdx0O5Lny_hpyQ=Fpbhg4gw@mail.gmail.com>
-To:     Song Liu <liu.song.a23@gmail.com>
-X-Mailer: Apple Mail (2.3445.104.11)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9242 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=877
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1904300080
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9242 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=902 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1904300080
+        id S1727956AbfD3Me7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 08:34:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46310 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727945AbfD3Me7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Apr 2019 08:34:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 953F080D;
+        Tue, 30 Apr 2019 05:34:58 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4BDD63F5AF;
+        Tue, 30 Apr 2019 05:34:57 -0700 (PDT)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     axboe@kernel.dk, linux-kernel@vger.kernel.org
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] io_uring: fix SQPOLL cpu validation
+Date:   Tue, 30 Apr 2019 13:34:51 +0100
+Message-Id: <20190430123451.44227-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+In io_sq_offload_start(), we call cpu_possible() on an unbounded cpu
+value from userspace. On v5.1-rc7 on arm64 with
+CONFIG_DEBUG_PER_CPU_MAPS, this results in a splat:
 
+  WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 cpu_max_bits_warn include/linux/cpumask.h:121 [inline]
 
-> On Apr 28, 2019, at 2:08 PM, Song Liu <liu.song.a23@gmail.com> wrote:
->=20
-> We will bring this proposal up in THP discussions. Would you like to =
-share more
-> thoughts on pros and cons of the two solutions? Or in other words, do =
-you have
-> strong reasons to dislike either of them?
+There was an attempt to fix this in commit:
 
-I think it's a performance issue that needs to be hashed out.
+  917257daa0fea7a0 ("io_uring: only test SQPOLL cpu after we've verified it")
 
-The obvious thing to do is read the whole large page and then map
-it, but depending on the architecture or I/O speed, mapping one
-PAGESIZE page to satisfy the single fault while the large page is
-being read in could potentially be faster. However, as with all
-swags without actual data who can say. You can also bring up the
-question of whether with SSDs and NVME storage if it makes sense
-to worry anymore about how long it would take to read a 2M or even
-1G page in from storage. I like the idea of simply reading the
-entire large page purely for neatness reasons - recovering from an
-error during redhead of a large page seems like it could become
-rather complex.
+... by adding a check after the cpu value had been limited to NR_CPU_IDS
+using array_index_nospec(). However, this left an unbound check at the
+start of the function, for which the warning still fires.
 
-One other issue is how this will interact with filesystems and how
-and how to tell filesystems I want a large page's worth of data.
-Matthew mentioned that compound_order() can be used to detect the
-page size, so that's one answer, but obviously no such code exists
-as of yet and it would need to be propagated across all file systems.
+Let's fix this correctly by checking that the cpu value is bound by
+nr_cpu_ids before passing it to cpu_possible(). Note that only
+nr_cpu_ids of a cpumask are guaranteed to exist at runtime, and
+nr_cpu_ids can be significantly smaller than NR_CPUs. For example, an
+arm64 defconfig has NR_CPUS=256, while my test VM has 4 vCPUs.
 
-I really hope the discussions at LSFMM are productive.
+Following the intent from the commit message for 917257daa0fea7a0, the
+check is moved under the SQ_AFF branch, which is the only branch where
+the cpu values is consumed. The check is performed before bounding the
+value with array_index_nospec() so that we don't silently accept bogus
+cpu values from userspace, where array_index_nospec() would force these
+values to 0.
 
--- Bill=
+I suspect we can remove the array_index_nospec() call entirely, but I've
+conservatively left that in place, updated to use nr_cpu_ids to match
+the prior check.
+
+Tested on arm64 with the Syzkaller reproducer:
+
+  https://syzkaller.appspot.com/bug?extid=cd714a07c6de2bc34293
+  https://syzkaller.appspot.com/x/repro.syz?x=15d8b397200000
+
+Full splat from before this patch:
+
+WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 cpu_max_bits_warn include/linux/cpumask.h:121 [inline]
+WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 cpumask_check include/linux/cpumask.h:128 [inline]
+WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 cpumask_test_cpu include/linux/cpumask.h:344 [inline]
+WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 io_sq_offload_start fs/io_uring.c:2244 [inline]
+WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 io_uring_create fs/io_uring.c:2864 [inline]
+WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 io_uring_setup+0x1108/0x15a0 fs/io_uring.c:2916
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 27601 Comm: syz-executor.0 Not tainted 5.1.0-rc7 #3
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+ dump_backtrace+0x0/0x2f0 include/linux/compiler.h:193
+ show_stack+0x20/0x30 arch/arm64/kernel/traps.c:158
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x110/0x190 lib/dump_stack.c:113
+ panic+0x384/0x68c kernel/panic.c:214
+ __warn+0x2bc/0x2c0 kernel/panic.c:571
+ report_bug+0x228/0x2d8 lib/bug.c:186
+ bug_handler+0xa0/0x1a0 arch/arm64/kernel/traps.c:956
+ call_break_hook arch/arm64/kernel/debug-monitors.c:301 [inline]
+ brk_handler+0x1d4/0x388 arch/arm64/kernel/debug-monitors.c:316
+ do_debug_exception+0x1a0/0x468 arch/arm64/mm/fault.c:831
+ el1_dbg+0x18/0x8c
+ cpu_max_bits_warn include/linux/cpumask.h:121 [inline]
+ cpumask_check include/linux/cpumask.h:128 [inline]
+ cpumask_test_cpu include/linux/cpumask.h:344 [inline]
+ io_sq_offload_start fs/io_uring.c:2244 [inline]
+ io_uring_create fs/io_uring.c:2864 [inline]
+ io_uring_setup+0x1108/0x15a0 fs/io_uring.c:2916
+ __do_sys_io_uring_setup fs/io_uring.c:2929 [inline]
+ __se_sys_io_uring_setup fs/io_uring.c:2926 [inline]
+ __arm64_sys_io_uring_setup+0x50/0x70 fs/io_uring.c:2926
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall arch/arm64/kernel/syscall.c:47 [inline]
+ el0_svc_common.constprop.0+0x148/0x2e0 arch/arm64/kernel/syscall.c:83
+ el0_svc_handler+0xdc/0x100 arch/arm64/kernel/syscall.c:129
+ el0_svc+0x8/0xc arch/arm64/kernel/entry.S:948
+SMP: stopping secondary CPUs
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Kernel Offset: disabled
+CPU features: 0x002,23000438
+Memory Limit: none
+Rebooting in 1 seconds..
+
+Fixes: 917257daa0fea7a0 ("io_uring: only test SQPOLL cpu after we've verified it")
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-block@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ fs/io_uring.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 0e9fb2cb1984..48fa6e86bfd6 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2240,10 +2240,6 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+ 	mmgrab(current->mm);
+ 	ctx->sqo_mm = current->mm;
+ 
+-	ret = -EINVAL;
+-	if (!cpu_possible(p->sq_thread_cpu))
+-		goto err;
+-
+ 	if (ctx->flags & IORING_SETUP_SQPOLL) {
+ 		ret = -EPERM;
+ 		if (!capable(CAP_SYS_ADMIN))
+@@ -2254,13 +2250,14 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+ 			ctx->sq_thread_idle = HZ;
+ 
+ 		if (p->flags & IORING_SETUP_SQ_AFF) {
+-			int cpu;
++			int cpu = p->sq_thread_cpu;
+ 
+-			cpu = array_index_nospec(p->sq_thread_cpu, NR_CPUS);
+ 			ret = -EINVAL;
+-			if (!cpu_possible(p->sq_thread_cpu))
++			if (cpu >= nr_cpu_ids || !cpu_possible(cpu))
+ 				goto err;
+ 
++			cpu = array_index_nospec(cpu, nr_cpu_ids);
++
+ 			ctx->sqo_thread = kthread_create_on_cpu(io_sq_thread,
+ 							ctx, cpu,
+ 							"io_uring-sq");
+-- 
+2.11.0
+
