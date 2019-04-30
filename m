@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EB0EEF01
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 05:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA6D0EF04
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 05:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730066AbfD3DJV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Apr 2019 23:09:21 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:60789 "EHLO
+        id S1730078AbfD3DJa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Apr 2019 23:09:30 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:58847 "EHLO
         new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729883AbfD3DJV (ORCPT
+        by vger.kernel.org with ESMTP id S1729883AbfD3DJa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Apr 2019 23:09:21 -0400
+        Mon, 29 Apr 2019 23:09:30 -0400
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 269D8266A;
-        Mon, 29 Apr 2019 23:09:20 -0400 (EDT)
+        by mailnew.nyi.internal (Postfix) with ESMTP id 8A2C4C248;
+        Mon, 29 Apr 2019 23:09:28 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 29 Apr 2019 23:09:20 -0400
+  by compute3.internal (MEProxy); Mon, 29 Apr 2019 23:09:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=rfKadsTflryLW7911DaQh925XQ0k2Bp3gi/G7eAxyJQ=; b=G/Duqu6R
-        IX98r8fGsTHboSiPaGfc+oXz7F7GTHMM+xq5e9jY+x01fnRalMqbv3hYxJYD+uZp
-        In3DEYyoYoQWtxbp7nwkNfxwIzekJplnUFlExEXLK+gw7KtIF585kzwLTEcCGZ++
-        06i8aJw/HpRVmjOrjZ+zcRByTtIlESsm/K8avMuIcAqnKHMqEZZQepONBedgJ86m
-        A7gBb+MrF+Uim8l1IKY6ZYJrysjVpKY0S1Q/GMa3HOeRPYOcXGEtHUUvCI4zAY0K
-        wtxNew6HgyxMWft46wy4hw8mz0Tw8GlU5LZdVhYFzFoI9JUZYgGDk3KA0aqvocjE
-        QNmgcFRnoU8vHg==
-X-ME-Sender: <xms:X7zHXAWpZWfwDdTcRbonp-iw1WBmGAsE95JETzgq3DNQBIAwY8p2ag>
+        fm2; bh=eB8W4ZifzOOx7n477C9lsHSgteznueDWRYbTVC4RGG4=; b=IIiJcM6A
+        Me6lXrEYm7aMvEu4IniFKE1Gy/ckecyeq+RQCjDcEluoWUY/TJPW6sh8UNZ+l3k2
+        nRzSrCQpCgS6c1MihLEx14Aqb0sDq3rzDhqQE2rBXsIqlEEX0OEFWdDk4O1+HlD1
+        Q5eciHxYnNKKJ+U/rB8aESqJSe+2vM6ttloEQdkdePxND+yaq286Gm0v++FZIVct
+        lQkZNj3lpvoaWE4wBqSdc+heek7Rq7NxK36kScV3p6qxBzNBhde+US49CsQEQ+hI
+        uKQkDPxz3P9ne2lS7AJxzKPqhaJqEab1e9Ou5FL6KhmkLKUWNQutfPyyUyplf60x
+        zmjKkhoXnj0BSg==
+X-ME-Sender: <xms:aLzHXJlqi0FfDPFoUUxuSGbtB6tUOB7-Pc5MdJb3HKWltGLLi6LcEw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrieefgdeikecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepfdfvohgsihhn
     ucevrdcujfgrrhguihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhgqeenucfkph
     epuddvuddrgeegrddvfedtrddukeeknecurfgrrhgrmhepmhgrihhlfhhrohhmpehtohgs
-    ihhnsehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpeeg
-X-ME-Proxy: <xmx:X7zHXAb9EJfgs0IIzDk2InQleLnEpGTHFX44RSA9c2Kmdk9QpI3RLw>
-    <xmx:X7zHXJ5dnerfV3It8K9-H-nx-0rwOSBI3EHpoVHRPzHSZhk54UmYEg>
-    <xmx:X7zHXBzswA71xafmUYrxWnjFSPX09YhVCkksYucpAv_Ur-zrLsfAqw>
-    <xmx:YLzHXNTk8x9g-EuRTTWhzsFNH42LQG0MCSp2jhvFxrvKD5TxSBpgEQ>
+    ihhnsehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpeeh
+X-ME-Proxy: <xmx:aLzHXHkleEUiYxjLHlffLtcOI3RALL_1UOh1n07H3SCaEKrqUVMO_g>
+    <xmx:aLzHXMhFu5J43jwC4dfrRejLeeDTEt2UqLRvWaD2Quf_Y7myGQ8Teg>
+    <xmx:aLzHXBEXzXuR4cJVeaJcJEbjFbRj0AAlNcsleZLkX8KXNAxmLp3l7w>
+    <xmx:aLzHXDDVCLRIopLk7sNclnepO7Lftl9WZEo6476KKXnr3fDqS_tAqg>
 Received: from eros.localdomain (ppp121-44-230-188.bras2.syd2.internode.on.net [121.44.230.188])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 77B05103CB;
-        Mon, 29 Apr 2019 23:09:12 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id C4DAA103CA;
+        Mon, 29 Apr 2019 23:09:20 -0400 (EDT)
 From:   "Tobin C. Harding" <tobin@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Tobin C. Harding" <tobin@kernel.org>,
@@ -65,9 +65,9 @@ Cc:     "Tobin C. Harding" <tobin@kernel.org>,
         Hugh Dickins <hughd@google.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 05/15] tools/vm/slabinfo: Add remote node defrag ratio output
-Date:   Tue, 30 Apr 2019 13:07:36 +1000
-Message-Id: <20190430030746.26102-6-tobin@kernel.org>
+Subject: [RFC PATCH v4 06/15] tools/vm/slabinfo: Add defrag_used_ratio output
+Date:   Tue, 30 Apr 2019 13:07:37 +1000
+Message-Id: <20190430030746.26102-7-tobin@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190430030746.26102-1-tobin@kernel.org>
 References: <20190430030746.26102-1-tobin@kernel.org>
@@ -78,42 +78,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add output line for NUMA remote node defrag ratio.
+Add output for the newly added defrag_used_ratio sysfs knob.
 
 Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 ---
- tools/vm/slabinfo.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ tools/vm/slabinfo.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/tools/vm/slabinfo.c b/tools/vm/slabinfo.c
-index cbfc56c44c2f..d2c22f9ee2d8 100644
+index d2c22f9ee2d8..ef4ff93df4cc 100644
 --- a/tools/vm/slabinfo.c
 +++ b/tools/vm/slabinfo.c
 @@ -34,6 +34,7 @@ struct slabinfo {
  	unsigned int sanity_checks, slab_size, store_user, trace;
  	int order, poison, reclaim_account, red_zone;
  	int movable, ctor;
-+	int remote_node_defrag_ratio;
++	int defrag_used_ratio;
+ 	int remote_node_defrag_ratio;
  	unsigned long partial, objects, slabs, objects_partial, objects_total;
  	unsigned long alloc_fastpath, alloc_slowpath;
- 	unsigned long free_fastpath, free_slowpath;
-@@ -377,6 +378,10 @@ static void slab_numa(struct slabinfo *s, int mode)
- 	if (skip_zero && !s->slabs)
- 		return;
+@@ -549,6 +550,8 @@ static void report(struct slabinfo *s)
+ 		printf("** Slabs are destroyed via RCU\n");
+ 	if (s->reclaim_account)
+ 		printf("** Reclaim accounting active\n");
++	if (s->movable)
++		printf("** Defragmentation at %d%%\n", s->defrag_used_ratio);
  
-+	if (mode) {
-+		printf("\nNUMA remote node defrag ratio: %3d\n",
-+		       s->remote_node_defrag_ratio);
-+	}
- 	if (!line) {
- 		printf("\n%-21s:", mode ? "NUMA nodes" : "Slab");
- 		for(node = 0; node <= highest_node; node++)
-@@ -1272,6 +1277,8 @@ static void read_slab_dir(void)
- 			slab->cpu_partial_free = get_obj("cpu_partial_free");
- 			slab->alloc_node_mismatch = get_obj("alloc_node_mismatch");
+ 	printf("\nSizes (bytes)     Slabs              Debug                Memory\n");
+ 	printf("------------------------------------------------------------------------\n");
+@@ -1279,6 +1282,7 @@ static void read_slab_dir(void)
  			slab->deactivate_bypass = get_obj("deactivate_bypass");
-+			slab->remote_node_defrag_ratio =
-+					get_obj("remote_node_defrag_ratio");
+ 			slab->remote_node_defrag_ratio =
+ 					get_obj("remote_node_defrag_ratio");
++			slab->defrag_used_ratio = get_obj("defrag_used_ratio");
  			chdir("..");
  			if (read_slab_obj(slab, "ops")) {
  				if (strstr(buffer, "ctor :"))
