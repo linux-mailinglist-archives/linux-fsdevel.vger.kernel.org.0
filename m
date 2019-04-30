@@ -2,89 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4C17FD16
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 17:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14F60FD20
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 17:45:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725976AbfD3Pm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 11:42:59 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:38089 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfD3Pm6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:42:58 -0400
-Received: by mail-ua1-f65.google.com with SMTP id t15so4919505uao.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 08:42:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rxw3hN1YSm26ISg+LOrlcUFUk2/ynydw3TOb8ZPeF0s=;
-        b=O/YPSKpdJNfI7U6oIOgur+JBh6lLTX26M/YLxxTMTTbCOdPzII6OA9QsPMywPziiVG
-         zpbQJz5mB/J7NdHufCTiy3vXfHvVklhiXXTRr5MFYctmmoM/5ysemaK2nE9o2A82LpFE
-         EkHyne5+Jcq6bx5DKtAGx12ur+JpsGrBj8JHk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rxw3hN1YSm26ISg+LOrlcUFUk2/ynydw3TOb8ZPeF0s=;
-        b=uWURjRiix8EyUQtEtN4DEtsx3tM0uRZH2bmhcbfarscy4+L+0FGAI8ViVcKGz3GZv3
-         pDMxiSQKCzvBeZxY4OZzXhGg7f8nQJ4zufEcOSMuOGEFZbPejbMRs+beZBi99PT0uDwK
-         aBYPe66Wz1IWni+2A86VfEAX8W5njW82rUC1e/8hf5/A42Y2+Hqyu0O10D377KJEsi7t
-         PdqkFuMwjJALv7WLEF3vb3GTh1BWZqkM/zjsj4zeqYbUJuad9rT7JwNh7biPezMJfNmL
-         RXrBwqtLgedj/1Ph7SBX1hR7HtQxPXReGcP7WZJzBUMA/1vdzBv0atIpxXI29PkfH/41
-         Calg==
-X-Gm-Message-State: APjAAAVvzYuc5iqI77YpYsUinf5FqNqPLVZeHfNhSgvZswag9furFCW3
-        yhsRTV6lfE9/mSce+I4HrtnSLJd6DQw=
-X-Google-Smtp-Source: APXvYqzHIMJGTz8RPJbRZysq7Jh/vUEp+QXA/sFlhyinRaIP2D6aQNJ9Yd5MvgfyYzp9kythb4XMWg==
-X-Received: by 2002:ab0:2a4a:: with SMTP id p10mr9703548uar.90.1556638977244;
-        Tue, 30 Apr 2019 08:42:57 -0700 (PDT)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id m23sm52259563vsl.24.2019.04.30.08.42.54
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 08:42:55 -0700 (PDT)
-Received: by mail-vs1-f41.google.com with SMTP id e207so3990536vsd.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 08:42:54 -0700 (PDT)
-X-Received: by 2002:a67:eecb:: with SMTP id o11mr36496756vsp.66.1556638973924;
- Tue, 30 Apr 2019 08:42:53 -0700 (PDT)
+        id S1726243AbfD3Pp1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 11:45:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37584 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725906AbfD3Pp0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Apr 2019 11:45:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 47528AD94;
+        Tue, 30 Apr 2019 15:45:25 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 2CC4DDA88B; Tue, 30 Apr 2019 17:46:25 +0200 (CEST)
+Date:   Tue, 30 Apr 2019 17:46:23 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v2 0/8] vfs: make immutable files actually immutable
+Message-ID: <20190430154622.GA20156@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-mm@kvack.org
+References: <155552786671.20411.6442426840435740050.stgit@magnolia>
 MIME-Version: 1.0
-References: <20190429222613.13345-1-mcroce@redhat.com> <CAGnkfhzkju6LXwHAVCHxCmMvAa1MLQGRY1czE1Boqz2OcEq39Q@mail.gmail.com>
-In-Reply-To: <CAGnkfhzkju6LXwHAVCHxCmMvAa1MLQGRY1czE1Boqz2OcEq39Q@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 30 Apr 2019 08:42:42 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+qejH0c9fG=TwmSyK0FkaiNidgqYZrqgKPf4D_=u2k8A@mail.gmail.com>
-Message-ID: <CAGXu5j+qejH0c9fG=TwmSyK0FkaiNidgqYZrqgKPf4D_=u2k8A@mail.gmail.com>
-Subject: Re: [PATCH v4] proc/sysctl: add shared variables for range check
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155552786671.20411.6442426840435740050.stgit@magnolia>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 3:47 AM Matteo Croce <mcroce@redhat.com> wrote:
->
-> On Tue, Apr 30, 2019 at 12:26 AM Matteo Croce <mcroce@redhat.com> wrote:
-> >
-> > Add a const int array containing the most commonly used values,
-> > some macros to refer more easily to the correct array member,
-> > and use them instead of creating a local one for every object file.
-> >
->
-> Ok it seems that this simply can't be done, because there are at least
-> two points where extra1,2 are set to a non const struct:
-> in ip_vs_control_net_init_sysctl() it's assigned to struct netns_ipvs,
-> while in mpls_dev_sysctl_register() it's assigned to a struct mpls_dev
-> and a struct net.
+On Wed, Apr 17, 2019 at 12:04:26PM -0700, Darrick J. Wong wrote:
+> Hi all,
+> 
+> The chattr(1) manpage has this to say about the immutable bit that
+> system administrators can set on files:
+> 
+> "A file with the 'i' attribute cannot be modified: it cannot be deleted
+> or renamed, no link can be created to this file, most of the file's
+> metadata can not be modified, and the file can not be opened in write
+> mode."
+> 
+> Given the clause about how the file 'cannot be modified', it is
+> surprising that programs holding writable file descriptors can continue
+> to write to and truncate files after the immutable flag has been set,
+> but they cannot call other things such as utimes, fallocate, unlink,
+> link, setxattr, or reflink.
+> 
+> Since the immutable flag is only settable by administrators, resolve
+> this inconsistent behavior in favor of the documented behavior -- once
+> the flag is set, the file cannot be modified, period.
 
-Why can't these be converted to const also? I don't see the pointer
-changing anywhere. They're created in one place and never changed.
+The manual page leaves the case undefined, though the word 'modified'
+can be interpreted in the same sense as 'mtime' ie. modifying the file
+data. The enumerated file operations that don't work on an immutable
+file suggest that it's more like the 'ctime',  ie. (state) changes are
+forbidden.
 
-If it's only a couple places, it seems like it'd be nice to get these fixed.
+Tthe patchset makes some sense, but it changes the semantics a bit. From
+'not changed but still modified' to 'neither changed nor modified'. It
+starts to sound like a word game, but I think both are often used
+interchangeably in the language. See the changelog of 1/8 where you used
+them in the other meaning regarding ctime and mtime.
 
--- 
-Kees Cook
+I personally doubt there's a real use of the undefined case, though
+something artificial like 'a process opens a fd, sets up file in a very
+specific way, sets immutable and hands the fd to an unprivileged
+process' can be made up. The overhead of the new checks seems to be
+small so performance is not the concern here.
+
+Overall, I don't see a strong reason for either semantics. As long as
+it's documented possibly with some of the corner cases described in more
+detail, fine.
