@@ -2,150 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE631FF49
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 20:05:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F41FF69
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 20:08:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfD3SFM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 14:05:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34142 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726766AbfD3SFM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 14:05:12 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D23421670;
-        Tue, 30 Apr 2019 18:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556647510;
-        bh=/OrHy1Or/tyMkA8JUJFX7tmvV8Be/iBCONobI1vb+xM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fANeawP5TAq6sRMZ/KC3wd91yZDKR94hcwD2nevA76D5zwVKGGSEThU3yNO4Eitf9
-         Xfp9tIhoNQJwVu1DnMNi/wYu1fyC8rXQzk3ZZ+asjjsOQuNgiGvJ4kesxWA258NbF8
-         yZVsqVqmOAjshcPPqPltf8l640w0/DHpRH49Wyxc=
-Date:   Tue, 30 Apr 2019 11:05:08 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Chandan Rajendra <chandan@linux.ibm.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com,
-        hch@infradead.org
-Subject: Re: [PATCH V2 02/13] Consolidate "read callbacks" into a new file
-Message-ID: <20190430180507.GD48973@gmail.com>
-References: <20190428043121.30925-1-chandan@linux.ibm.com>
- <20190428043121.30925-3-chandan@linux.ibm.com>
+        id S1726073AbfD3SIj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 14:08:39 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:42407 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726006AbfD3SIj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Apr 2019 14:08:39 -0400
+Received: by mail-yw1-f67.google.com with SMTP id y131so6593974ywa.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 11:08:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Xil5v019vbM3B6LNJ5oLx5ybK/sELLOgqiNDryj/WS4=;
+        b=J6jpwCXSoU7Eq7a4v/BuGEqdgrF69IaBpqOL12T9GDVAPMr4fSnfDWEJUjRPxcE/aa
+         fNigHE4KOEqlZyENgRu+3RjUamg6DPnkPsUqo+KyKPP54eT63vbbvE3+J28zY2d6CAuk
+         qfCM428MXxMWIy/qHQJK5PMe+FU2XDaiA2WYI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xil5v019vbM3B6LNJ5oLx5ybK/sELLOgqiNDryj/WS4=;
+        b=Yy7qejDCyBZBa0zSu3fhkzBs5YYz0K3PvJPtagfzWzVsbnffgQMQCg+XSl5nUNHuQx
+         izho+/ubohlOovi4IuUM/147yj212nUBqubTDLwCdS5hCz2Juf36r3n0eL10xz0Uc8r2
+         MN1I9Hlqmuomlg8pOqGi5BQY7vi1QvShEZEN0EtgYlNFeZdRrNWdqkQm5raR8ajOs/92
+         iM2m6ggV8jFV9GIVho7Ot2MYfzt2K7eA6+PFA18GmEKmRCaj+F1cCxZNOgwaxSuYCzLc
+         TDitpEo/X8TNcPImI0bRB938r4jj1jMUyOAAr4AJbaXKESlsv8OYzpN570KV/1rhgVPH
+         kVBw==
+X-Gm-Message-State: APjAAAVJI45YoCa/N3B5qXd1IFC65/YrBYcacX7W1529c4FcgSRK13Xv
+        NPj+Xu30ugLmCWfmiEfjWi36caT8iCA=
+X-Google-Smtp-Source: APXvYqyn6MGcaYvhS3wtO/2eoISeFnIi35hOCnjsnFhOll7neMm0DcMcnIq1M9cP5/Vn7TpAhEUIXQ==
+X-Received: by 2002:a25:1102:: with SMTP id 2mr55297615ybr.456.1556647717878;
+        Tue, 30 Apr 2019 11:08:37 -0700 (PDT)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id a11sm10772898ywh.49.2019.04.30.11.08.36
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 11:08:37 -0700 (PDT)
+Received: by mail-yw1-f52.google.com with SMTP id u14so6608336ywe.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 11:08:36 -0700 (PDT)
+X-Received: by 2002:a25:d488:: with SMTP id m130mr15451236ybf.172.1556647716425;
+ Tue, 30 Apr 2019 11:08:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190428043121.30925-3-chandan@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190429222613.13345-1-mcroce@redhat.com> <CAGnkfhzkju6LXwHAVCHxCmMvAa1MLQGRY1czE1Boqz2OcEq39Q@mail.gmail.com>
+ <CAGXu5j+qejH0c9fG=TwmSyK0FkaiNidgqYZrqgKPf4D_=u2k8A@mail.gmail.com>
+ <20190430160813.GI13796@bombadil.infradead.org> <CAGnkfhxhZ7WELD-w_KA+yKogyyJ=y_=8w+HdpYoiWDbCsQi+zw@mail.gmail.com>
+In-Reply-To: <CAGnkfhxhZ7WELD-w_KA+yKogyyJ=y_=8w+HdpYoiWDbCsQi+zw@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 30 Apr 2019 11:08:22 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLvwT4qQSP5GH=MdNoW4XtEQRbeyA_=MrEAHhgBSXfJTQ@mail.gmail.com>
+Message-ID: <CAGXu5jLvwT4qQSP5GH=MdNoW4XtEQRbeyA_=MrEAHhgBSXfJTQ@mail.gmail.com>
+Subject: Re: [PATCH v4] proc/sysctl: add shared variables for range check
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 28, 2019 at 10:01:10AM +0530, Chandan Rajendra wrote:
-> The "read callbacks" code is used by both Ext4 and F2FS. Hence to
-> remove duplicity, this commit moves the code into
-> include/linux/read_callbacks.h and fs/read_callbacks.c.
-> 
-> The corresponding decrypt and verity "work" functions have been moved
-> inside fscrypt and fsverity sources. With these in place, the read
-> callbacks code now has to just invoke enqueue functions provided by
-> fscrypt and fsverity.
-> 
-> Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
-> ---
->  fs/Kconfig                     |   4 +
->  fs/Makefile                    |   4 +
->  fs/crypto/Kconfig              |   1 +
->  fs/crypto/bio.c                |  23 ++---
->  fs/crypto/crypto.c             |  17 +--
->  fs/crypto/fscrypt_private.h    |   3 +
->  fs/ext4/ext4.h                 |   2 -
->  fs/ext4/readpage.c             | 183 +++++----------------------------
->  fs/ext4/super.c                |   9 +-
->  fs/f2fs/data.c                 | 148 ++++----------------------
->  fs/f2fs/super.c                |   9 +-
->  fs/read_callbacks.c            | 136 ++++++++++++++++++++++++
->  fs/verity/Kconfig              |   1 +
->  fs/verity/verify.c             |  12 +++
->  include/linux/fscrypt.h        |  20 +---
->  include/linux/read_callbacks.h |  21 ++++
->  16 files changed, 251 insertions(+), 342 deletions(-)
->  create mode 100644 fs/read_callbacks.c
->  create mode 100644 include/linux/read_callbacks.h
-> 
-> diff --git a/fs/Kconfig b/fs/Kconfig
-> index 97f9eb8df713..03084f2dbeaf 100644
-> --- a/fs/Kconfig
-> +++ b/fs/Kconfig
-> @@ -308,6 +308,10 @@ config NFS_COMMON
->  	depends on NFSD || NFS_FS || LOCKD
->  	default y
->  
-> +config FS_READ_CALLBACKS
-> +       bool
-> +       default n
-> +
->  source "net/sunrpc/Kconfig"
->  source "fs/ceph/Kconfig"
->  source "fs/cifs/Kconfig"
+On Tue, Apr 30, 2019 at 9:30 AM Matteo Croce <mcroce@redhat.com> wrote:
+>
+> On Tue, Apr 30, 2019 at 6:08 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Tue, Apr 30, 2019 at 08:42:42AM -0700, Kees Cook wrote:
+> > > On Tue, Apr 30, 2019 at 3:47 AM Matteo Croce <mcroce@redhat.com> wrote:
+> > > > On Tue, Apr 30, 2019 at 12:26 AM Matteo Croce <mcroce@redhat.com> wrote:
+> > > > >
+> > > > > Add a const int array containing the most commonly used values,
+> > > > > some macros to refer more easily to the correct array member,
+> > > > > and use them instead of creating a local one for every object file.
+> > > > >
+> > > >
+> > > > Ok it seems that this simply can't be done, because there are at least
+> > > > two points where extra1,2 are set to a non const struct:
+> > > > in ip_vs_control_net_init_sysctl() it's assigned to struct netns_ipvs,
+> > > > while in mpls_dev_sysctl_register() it's assigned to a struct mpls_dev
+> > > > and a struct net.
+> > >
+> > > Why can't these be converted to const also? I don't see the pointer
+> > > changing anywhere. They're created in one place and never changed.
+> >
+> > That's not true; I thought the same thing, but you need to see how
+> > they're used in the functions they're called.
+> >
+> > proc_do_defense_mode(struct ctl_table *table, int write,
+> >         struct netns_ipvs *ipvs = table->extra2;
+> >                         update_defense_level(ipvs);
+> > static void update_defense_level(struct netns_ipvs *ipvs)
+> >         spin_lock(&ipvs->dropentry_lock);
+>
+> Indeed. I followed the same code path until I found this:
+>
+>  167                        ipvs->drop_rate = 0;
+>  168                        ipvs->sysctl_drop_packet = 1;
+>
+> so I think that this can't be done like this.
 
-This shouldn't be under the 'if NETWORK_FILESYSTEMS' block, since it has nothing
-to do with network filesystems.  When trying to compile this I got:
+Ah, dang. Yeah, I missed that too.
 
-	WARNING: unmet direct dependencies detected for FS_READ_CALLBACKS
-	  Depends on [n]: NETWORK_FILESYSTEMS [=n]
-	  Selected by [y]:
-	  - FS_ENCRYPTION [=y]
-	  - FS_VERITY [=y]
+> Mind if I send a v5 without the const qualifier? At least to know the
+> kbuildbot opinion.
 
-Perhaps put it just below FS_IOMAP?
+Yeah, I think that's likely best.
 
-> diff --git a/fs/Makefile b/fs/Makefile
-> index 9dd2186e74b5..e0c0fce8cf40 100644
-> --- a/fs/Makefile
-> +++ b/fs/Makefile
-> @@ -21,6 +21,10 @@ else
->  obj-y +=	no-block.o
->  endif
->  
-> +ifeq ($(CONFIG_FS_READ_CALLBACKS),y)
-> +obj-y +=	read_callbacks.o
-> +endif
-> +
->  obj-$(CONFIG_PROC_FS) += proc_namespace.o
->  
->  obj-y				+= notify/
-> diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
-> index f0de238000c0..163c328bcbd4 100644
-> --- a/fs/crypto/Kconfig
-> +++ b/fs/crypto/Kconfig
-> @@ -8,6 +8,7 @@ config FS_ENCRYPTION
->  	select CRYPTO_CTS
->  	select CRYPTO_SHA256
->  	select KEYS
-> +	select FS_READ_CALLBACKS
->  	help
->  	  Enable encryption of files and directories.  This
->  	  feature is similar to ecryptfs, but it is more memory
-
-This selection needs to be conditional on BLOCK.
-
-	select FS_READ_CALLBACKS if BLOCK
-
-Otherwise, building without BLOCK and with UBIFS encryption support fails.
-
-	fs/read_callbacks.c: In function ‘end_read_callbacks’:
-	fs/read_callbacks.c:34:23: error: storage size of ‘iter_all’ isn’t known
-	  struct bvec_iter_all iter_all;
-			       ^~~~~~~~
-	fs/read_callbacks.c:37:20: error: dereferencing pointer to incomplete type ‘struct buffer_head’
-	   if (!PageError(bh->b_page))
-
-	[...]
-
-- Eric
+-- 
+Kees Cook
