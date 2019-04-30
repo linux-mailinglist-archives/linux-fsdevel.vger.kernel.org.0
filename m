@@ -2,122 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95359FD27
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 17:47:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4A96FD62
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 18:02:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725976AbfD3Prq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 11:47:46 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:58612 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfD3Prq (ORCPT
+        id S1726373AbfD3QCI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 12:02:08 -0400
+Received: from mail-it1-f181.google.com ([209.85.166.181]:51194 "EHLO
+        mail-it1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbfD3QCI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:47:46 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3UFiMc8138912;
-        Tue, 30 Apr 2019 15:47:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=ORetv7bkfUVIk8T/lSppKI2JhxisrSy4qmjBLBLnjjU=;
- b=tvEDCQT1n9op9yMFG/x01to6k569aBRL49XaMOFPdv8GtdoR9uOUn0CPzDt97v32z2wp
- pUmhkFrsj/WbnsZMwWThi4kf2fNpqiEHCIlQUBcDuqXv+gN9TYHs4AAJz5M70TPdrnOQ
- B+tCGls+HJ6lQN7+eNEcI4lVtu3U22tYIvzfy0BX0MzFiQsEP9LI6eCzqH7XLzjc4z/a
- 6heTrXV4DQhnSzlFy0u/bSzYweSqFFZ4q6gX5qOOi6t2HzDjj1PwrwEWzKoQ5xv2T8Gh
- shuAgbuZBKc6KnctZOUgKwfdD8vAG3P3XdeEMXpWkqaim5VZO3EsQI7W2fUnW0aNQk1U EQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 2s4ckddnpe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 15:47:11 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3UFl1sv104991;
-        Tue, 30 Apr 2019 15:47:10 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2s5u512dx3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 15:47:10 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x3UFl8PZ025334;
-        Tue, 30 Apr 2019 15:47:09 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Apr 2019 08:47:08 -0700
-Date:   Tue, 30 Apr 2019 08:47:07 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     cluster-devel <cluster-devel@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bob Peterson <rpeterso@redhat.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Mark Syms <Mark.Syms@citrix.com>,
-        Edwin =?iso-8859-1?B?VPZy9ms=?= <edvin.torok@citrix.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-mm@kvack.org
-Subject: Re: [PATCH v7 5/5] gfs2: Fix iomap write page reclaim deadlock
-Message-ID: <20190430154707.GG5200@magnolia>
-References: <20190429220934.10415-1-agruenba@redhat.com>
- <20190429220934.10415-6-agruenba@redhat.com>
- <20190430153256.GF5200@magnolia>
- <CAHc6FU5hHFWeGM8+fhfaNs22cSG+wtuTKZcMMKbfeetg1CK4BQ@mail.gmail.com>
+        Tue, 30 Apr 2019 12:02:08 -0400
+Received: by mail-it1-f181.google.com with SMTP id q14so5538301itk.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 09:02:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=w33iHm/NIDtoRjKE7zCkCFMXmgKclArP4aM0hTCBvkg=;
+        b=zVOFqbOJMDduG7Z12jn5jgnfC+x1VXyTO5Oi6rszRaN5l0ZZCkUrY5g38sMAB9bdX4
+         iTQDSpXHLp9FJOYuNo5F0OzQLo2/bc3Dn/JsbyGJexzkmPS52di4DJbjKsskjKeSO5c9
+         dVnKY6ybpGeVyER96CHofgFOgaQMccNR00ucvW0y7RgpN0v9jzsuzTM4Bf2pMg3lJyX6
+         GCPM/u7t9fQN+JMFDbhR5lbPOI6tQ6f2J+Ns3CsFeIu6ZRGacz3hE61RHCZgmAAR4Zd/
+         xQ4zvIMtxMm0YUKSSC057n2/c16cX6ngj8XBgHM/p+IZuI6yD/ufL1d0rUQ0aFLSnpOT
+         ZJkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=w33iHm/NIDtoRjKE7zCkCFMXmgKclArP4aM0hTCBvkg=;
+        b=IkTmkHdN+2TxTnRVGAdm/sK1wEu2brXcgipVbuu+J8NaD06OgiCn3sU0u4f4p6rhr9
+         srS1dMTX76qy4IhQHXQInrw2svAKvKI/fnbfpqr0ypF+RND8CKIatDu04ubZxu93Eu4e
+         OaIvpFVv2dZFp0hxlZ2R9Tk0omEMpNz2FQ+4RH7+ez54X9hxhCfM34PUk3brvfhfxtbd
+         nCZOX1zbCjbX7ogzLsrQG0yy2muKFQZWgpn/o+Mfb7pndazwWIr28b6MYpZ2LJq/uWhn
+         0ubg3DueRApLxzpGr6kF4vgsJzT5EgPfS6gsFLAfongzWJiaWSR3Ayfvh39uJEp581mK
+         va/g==
+X-Gm-Message-State: APjAAAXJT1G7VYYGFPfPFldRRdh3S+ulacc0LXjoFTTBmABklMvTXgZg
+        zcsqcEhsNIHBsqHZhOd/LBUESV8+P7AXKg==
+X-Google-Smtp-Source: APXvYqxgk0EOn6NJ7vvNtNmAqSwkT68MIv/OsZt6v4wN1GPgeSBLuNv9FLDGeeni2GVPapjp1g25WQ==
+X-Received: by 2002:a24:61cc:: with SMTP id s195mr4147717itc.142.1556640126719;
+        Tue, 30 Apr 2019 09:02:06 -0700 (PDT)
+Received: from [192.168.1.158] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id k3sm4860485iob.47.2019.04.30.09.02.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 09:02:05 -0700 (PDT)
+Subject: Re: io_uring: submission error handling
+To:     =?UTF-8?Q?Stefan_B=c3=bchler?= <source@stbuehler.de>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <366484f9-cc5b-e477-6cc5-6c65f21afdcb@stbuehler.de>
+ <37071226-375a-07a6-d3d3-21323145de71@kernel.dk>
+ <bc077192-56cc-7497-ee43-6a0bcc369d16@kernel.dk>
+ <66fb4ed7-a267-1b0b-d609-af34d9e1aa54@stbuehler.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8ce7be42-4183-b441-9a26-6b3441ed5fef@kernel.dk>
+Date:   Tue, 30 Apr 2019 10:02:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHc6FU5hHFWeGM8+fhfaNs22cSG+wtuTKZcMMKbfeetg1CK4BQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9243 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1904300096
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9243 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1904300097
+In-Reply-To: <66fb4ed7-a267-1b0b-d609-af34d9e1aa54@stbuehler.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 05:39:28PM +0200, Andreas Gruenbacher wrote:
-> On Tue, 30 Apr 2019 at 17:33, Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> > On Tue, Apr 30, 2019 at 12:09:34AM +0200, Andreas Gruenbacher wrote:
-> > > Since commit 64bc06bb32ee ("gfs2: iomap buffered write support"), gfs2 is doing
-> > > buffered writes by starting a transaction in iomap_begin, writing a range of
-> > > pages, and ending that transaction in iomap_end.  This approach suffers from
-> > > two problems:
-> > >
-> > >   (1) Any allocations necessary for the write are done in iomap_begin, so when
-> > >   the data aren't journaled, there is no need for keeping the transaction open
-> > >   until iomap_end.
-> > >
-> > >   (2) Transactions keep the gfs2 log flush lock held.  When
-> > >   iomap_file_buffered_write calls balance_dirty_pages, this can end up calling
-> > >   gfs2_write_inode, which will try to flush the log.  This requires taking the
-> > >   log flush lock which is already held, resulting in a deadlock.
-> >
-> > /me wonders how holding the log flush lock doesn't seriously limit
-> > performance, but gfs2 isn't my fight so I'll set that aside and assume
-> > that a patch S-o-B'd by both maintainers is ok. :)
+On 4/27/19 9:50 AM, Stefan Bühler wrote:
+> Hi,
 > 
-> This only affects inline and journaled data, not standard writes, so
-> it's not quite as bad as it looks.
-
-Ah, ok.
-
-> > How should we merge this patch #5?  It doesn't touch fs/iomap.c itself,
-> > so do you want me to pull it into the iomap branch along with the
-> > previous four patches?  That would be fine with me (and easier than a
-> > multi-tree merge mess)...
+> On 24.04.19 00:07, Jens Axboe wrote:
+>> On 4/23/19 2:31 PM, Jens Axboe wrote:
+>>>> 1. An error for a submission should be returned as completion for that
+>>>> submission.  Please don't break my main event loop with strange error
+>>>> codes just because a single operation is broken/not supported/...
+>>>
+>>> So that's the case I was referring to above. We can just make that change,
+>>> there's absolutely no reason to have errors passed back through a different
+>>> channel.
+>>
+>> Thinking about this a bit more, and I think the current approach is the
+>> best one. The issue is that only submission side events tied to an sqe
+>> can return an cqe, the rest have to be returned through the system call
+>> value. So I think it's cleaner to keep it as-is, honestly.
 > 
-> I'd prefer to get this merged via the gfs2 tree once the iomap fixes
-> have been pulled.
-
-Ok, I'll take the first four patches through the iomap branch and cc you
-on the pull request.
-
---D
-
+> Not sure we're talking about the same.
 > 
-> Thanks,
-> Andreas
+> I'm talking about the errors returned by io_submit_sqe: io_submit_sqes
+> (called by the SQ thread) calls io_cqring_add_event if there was an
+> error, but io_ring_submit (called by io_uring_enter) doesn't: instead,
+> if there were successfully submitted entries before, it will just return
+> those (and "undo" the current SQE), otherwise it will return the error,
+> which will then be returned by io_uring_enter.
+> 
+> But if I get an error from io_uring_enter I have no idea whether it was
+> some generic error (say EINVAL for broken flags or EBADF for a
+> non-io-uring filedescriptor) or an error related to a single submission.
+> 
+> I think io_ring_submit should call io_cqring_add_event on errors too
+> (like io_submit_sqes), and not stop handling submissions (and never
+> return an error).
+> 
+> Maybe io_cqring_add_event could then even be moved to io_submit_sqe and
+> just return whether the job is already done or not (io_submit_sqes
+> returns the new "inflight" jobs, and io_ring_submit the total number of
+> submitted jobs).
+
+I think we are talking about the same thing, actually. See below patch.
+This changes it so that any error that occurs on behalf of a specific
+sqe WILL trigger a completion event, instead of returning it through
+io_uring_enter(). io_uring_enter() can still return -ERROR for errors
+that aren't specific to an sqe.
+
+I think this is what you had in mind?
+
+Totally untested, will do so now.
+
+-- 
+Jens Axboe
+
