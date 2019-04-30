@@ -2,131 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF81F2B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 11:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5866DF2C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 11:27:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbfD3JWm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 05:22:42 -0400
-Received: from mail-yw1-f49.google.com ([209.85.161.49]:44273 "EHLO
-        mail-yw1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbfD3JWl (ORCPT
+        id S1726793AbfD3J1D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 05:27:03 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53356 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbfD3J1D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 05:22:41 -0400
-Received: by mail-yw1-f49.google.com with SMTP id j4so5349066ywk.11;
-        Tue, 30 Apr 2019 02:22:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=O71BR93nfVKV7X+BaaevcM23d4NroedovEN8YpLCNFc=;
-        b=JcInW5rB9D8GUPZ8eanzEAStA6lvRQhboAjNfLzzLdXysYXomWALWwxj8+wTzvVYpa
-         jLBy7vcbQaJD7mn8T5Sntys7faEG9YVKoEsGk7SwAh6x6cEYHNgmj8A2haTuJ+kyho0w
-         ZloKwHb4U+H7rrb30t5RK0fyGo//KfIGrV7iYEYDfmnKtk/4nU3zTb2cnI0ux3hc2VF5
-         MFyzzzTCYOA3bKMbJEnpkbcJGTbyxNno8ZMlD/MqkP3wKpg4r67bP3mhDMRpFThrIpcB
-         tP9+3s8Xdq/IhNwAbwJJBEstIfHnp22w7/Kbmxgi5D9Ezmvu6/T0JG1EBV0Vwc/j2rrY
-         X9Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=O71BR93nfVKV7X+BaaevcM23d4NroedovEN8YpLCNFc=;
-        b=n/P08XTB0SjWLtHzLHFsDXCv6G+n4JNLH3uKGZdzQTUs5R6WRmenWTHoE3h9xbZBmd
-         ACuAMCgOPEiNN3hWSKvy8hTIP9qW8T5n3fJi+Bu1t2BuOSS35e31RgMo4+GBPE5ZlXET
-         RYmKqkxCLsmr1/1xi7VMsRxJyNDRCWN2Ws80IJLA0oY4bDKxHnTxc3b9cQUIOG2ZVCbw
-         wPHBX064ddezedF+ZekUSVQfgmR2wnL5HTqrNcmBtKzhkVVq/eXuQqvUL8in9X1zetZW
-         99VPNanzg/ByOCqQ669/c9OeNb6L62vxb+1223H6wckvynffpsLOeFpdU4uSV7S0DtXL
-         Mktg==
-X-Gm-Message-State: APjAAAU1hUQJlxQ1CeCB1145ig/fgGM6+Nux1Ie9WXQVeOq0cHB+37xi
-        O7xeBWTSIO0m0BIF6QM45dQGlkzBS+QncnRYKXI=
-X-Google-Smtp-Source: APXvYqyJZqlIcP4RcRxCE9J+CCDpDAOQezVG4wmzGr92TpdSb96QB+9P1jtwCzw83+ORzm1Cz6J4GtL1iisDo0MaJVw=
-X-Received: by 2002:a81:1150:: with SMTP id 77mr54593542ywr.241.1556616160900;
- Tue, 30 Apr 2019 02:22:40 -0700 (PDT)
+        Tue, 30 Apr 2019 05:27:03 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3U9NkoF001045;
+        Tue, 30 Apr 2019 09:26:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=lRccY/9PTB0SivUe58hPvmQhJIneVtvQmamNLiMyYXo=;
+ b=rmioHu8wwvnnPfKWLqL2H0FfeCaD+l8ZqHxQjz3ts9vY+EgJPuXV9z+DhKYNdqE2CTRN
+ N55ap6zKBVrPikY8f3B1zLLIId8A1YhS5rwZEb1WKaPvHQjPSW9foRiOWxmUXV0LOhHB
+ OWkesZr5zk4lKZ5OHqsdZbWUXAiVOpo9yjH/T1ktX61mZgKN5OZx516GpOe2NDtb7gVp
+ UnkVVJXbVDGQqWCtFkb+qJxC2Ssei/hk6+wwaDsTTAb7BqvZjj0+Yg5eRpx7+HqKWdGw
+ 7t7RTauJPF+dPImPn5QYkeyvM5GsQKHPXllK1Y3d0TT5bqIqdPcg61JezyEvnCOwsk6s zg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2s5j5u02j4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Apr 2019 09:26:37 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3U9Ol3S006872;
+        Tue, 30 Apr 2019 09:26:36 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2s4ew14swn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Apr 2019 09:26:36 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x3U9QRYh027604;
+        Tue, 30 Apr 2019 09:26:33 GMT
+Received: from kadam (/196.97.65.153)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Apr 2019 02:26:27 -0700
+Date:   Tue, 30 Apr 2019 12:26:19 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Amritha Nambiar <amritha.nambiar@intel.com>,
+        Willem de Bruijn <willemb@google.com>,
+        kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 2/2] io_uring: Potential Oops in io_sq_offload_start()
+Message-ID: <20190430092619.GC2239@kadam>
+References: <20190404104527.GX4038@hirez.programming.kicks-ass.net>
+ <20190408081513.GB15239@kadam>
 MIME-Version: 1.0
-References: <CAOQ4uxjQdLrZXkpP30Pq_=Cckcb=mADrEwQUXmsG92r-gn2y5w@mail.gmail.com>
- <CAOQ4uxhuxoEsoBbvenJ8eLGstPc4AH-msrxDC-tBFRhvDxRSNg@mail.gmail.com>
- <20190426145006.GD25827@fieldses.org> <e69d149c80187b84833fec369ad8a51247871f26.camel@kernel.org>
- <CAOQ4uxjt+MkufaJWoqWSYZbejWa1nJEe8YYRroEBSb1jHjzkwQ@mail.gmail.com>
- <8504a05f2b0462986b3a323aec83a5b97aae0a03.camel@kernel.org>
- <CAOQ4uxi6fQdp_RQKHp-i6Q-m-G1+384_DafF3QzYcUq4guLd6w@mail.gmail.com>
- <1d5265510116ece75d6eb7af6314e6709e551c6e.camel@hammerspace.com>
- <CAOQ4uxjUBRt99efZMY8EV6SAH+9eyf6t82uQuKWHQ56yjpjqMw@mail.gmail.com>
- <95bc6ace0f46a1b1a38de9b536ce74faaa460182.camel@hammerspace.com>
- <CAOQ4uxhQOLZ_Hyrnvu56iERPZ7CwfKti2U+OgyaXjM9acCN2LQ@mail.gmail.com>
- <b4ee6b6f5544114c3974790a784c3e784e617ccf.camel@hammerspace.com>
- <bc2f04c55ba9290fc48d5f2b909262171ca6a19f.camel@kernel.org>
- <BYAPR21MB1303596634461C7D46B0A773B6390@BYAPR21MB1303.namprd21.prod.outlook.com>
- <CAOQ4uxirAW91yUe1nQUPPmarmMSxr_pco8NqKWB4srwyvgnRRA@mail.gmail.com> <677e86ee-59b9-0826-481f-955074d164ed@samba.org>
-In-Reply-To: <677e86ee-59b9-0826-481f-955074d164ed@samba.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 30 Apr 2019 05:22:29 -0400
-Message-ID: <CAOQ4uxiwDPDyQPrPkUzZCO8jkySRiSK+AZu1dxppXvVA4q6XnA@mail.gmail.com>
-Subject: Re: Better interop for NFS/SMB file share mode/reservation
-To:     Uri Simchoni <uri@samba.org>
-Cc:     Pavel Shilovskiy <pshilov@microsoft.com>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "Volker.Lendecke@sernet.de" <Volker.Lendecke@sernet.de>,
-        Jeff Layton <jlayton@kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190408081513.GB15239@kadam>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9242 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=846
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1904300062
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9242 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=889 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1904300062
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 4:12 AM Uri Simchoni <uri@samba.org> wrote:
->
-> On 4/30/19 3:31 AM, Amir Goldstein via samba-technical wrote:
-> >>
-> >> About O_DENYDELETE: I don't understand how we may reach a good interop=
- story without a proper implementation of this flag. Windows apps may set i=
-t and Samba needs to respect it. If an NFS client removes such an opened fi=
-le, what will Samba tell the Windows client?
-> >>
-> >
-> > Samba will tell the Windows client:
-> > "Sorry, my administrator has decided to trade off interop with nfs on
-> > share modes,
-> > with DENY_DELETE functionality, so I cannot grant you DENY_DELETE that =
-you
-> > requested."
-> > Not sure if that is workable. Samba developers need to chime in.
-> >
-> > Thanks,
-> > Amir.
-> >
->
-> On Windows you don't ask for DENY_DELETE, you get it by default unless
-> you ask to *allow* deletion. If you fopen() a file, even for
-> reading-only, the MSVC standard C library would open it with delete
-> denied because it does not explicitly request to allow it. My guess is
-> that runtimes of other high-level languages behave that way too on
-> Windows. That means pretty much everything would stop working.
->
+The io_uring patches are slated for v5.7 so we should figure out a
+solution for this bug.
 
-I see. I was wondering about something else.
-Windows deletes a file by opening it for DELETE_ON_CLOSE
-and then "The file is to be deleted immediately after all of its handles ar=
-e
-closed, which includes the specified handle and any other open or
-duplicated handles.".
-What about hardlinks?
-Are open handles associate with a specific path? not a specific inode?
-
-I should note that Linux NFS client does something similar called silly
-rename. To unlink a file, rename it to temp name, then unlink temp name
-on last handle close to that file from that client.
-
-If, and its a very big if, samba could guess what the silly rename temp nam=
-e
-would be, DENY_DELETE could have been implement as creating a link
-to file with silly rename name.
-
-Of course we cannot rely on the NFS client to enforce the samba interop,
-but nfsd v4 server and samba could both use a similar technique to
-coordinate unlink/rename and DENY_DELETE.
-
-Thanks,
-Amir.
+regrds,
+dan carpenter
