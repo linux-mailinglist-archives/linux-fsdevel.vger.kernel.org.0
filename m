@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70ED7FCD7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 17:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E9ECFCF0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 17:33:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725950AbfD3P05 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 11:26:57 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:60876 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725930AbfD3P05 (ORCPT
+        id S1725942AbfD3Pdf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 11:33:35 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:49270 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfD3Pdf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 11:26:57 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3UFOXkW110533;
-        Tue, 30 Apr 2019 15:26:29 GMT
+        Tue, 30 Apr 2019 11:33:35 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3UFOBM9132005;
+        Tue, 30 Apr 2019 15:33:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=GP7BtA84ivQNMdsMKZBYVXe+9V8f4N3iqEFhAXP+9sU=;
- b=ux2QZJeZOV2RwfeCOt5Fwitbzg65YB8PWWvqo9Gr3+uBYd8grAQ1RMoW2rlaXtTH/O41
- zB3a+7FNt5/wiSJCTceiIFJIEULrchwFxJwyStBfhrRszrF0cx9zHgUVb6n9+uAkkG4r
- 5RutasAnvK9RuB0rKnNV60OyDWD4m6hhpXx8H20HTSVBRNnbYKzigBx3HeFFpnb/k12s
- g3dqpNChdgl72zsXUT5F3GxpvMlkMRNM5J9YuDcX3ctkOI0YENEr9dkRtF3oOQEj81cw
- 0n5n85my190UTUHLg8SmvHDHJvFHcyNlBU9XleRytWhmploJFcJX4vBvDzn6gMrnjnKg EQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2s5j5u207g-1
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=E1N7i2/XGYSszDfFaE6hIiWMezb6L1pK4BEiaM0LVCs=;
+ b=PWmwqwnDWFUihe1VVrUAyd5EXMuLqkncuSn5rMLjZ4BUdj2mkH1meyAyZQ3s45cZFPur
+ ME0HEli7rLhsinwnN+GN5JYe7Yn1yRQzJ17Q6Tneo6DyJMv5M8i9cUSy9KZxDuaqOlKh
+ meHEjnSou20VUZmznrgv68ZtpJ7RhPR1uW6PBoFbpcI9bR3yJOioTN+3CL0jXTNQISJz
+ RMyYSC1+OdAq5Fp9J5JI0eksl1hPN2Jl70cEbTrmyjPlycYxBgsgW/aSKDwxK7BW/cgk
+ n+AUr7eGz/UbSMQVbAcIu37IOadC3qWYLhsjx6KXLRi4vD2S2yXREGrhAWoxWGdpxDWw dw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2s4fqq58uj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 15:26:29 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3UFOkof124244;
-        Tue, 30 Apr 2019 15:26:28 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2s4ew1aach-1
+        Tue, 30 Apr 2019 15:33:01 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3UFWhX5109947;
+        Tue, 30 Apr 2019 15:33:00 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2s4d4ak8ny-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Apr 2019 15:26:28 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x3UFQRom010154;
-        Tue, 30 Apr 2019 15:26:27 GMT
+        Tue, 30 Apr 2019 15:33:00 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x3UFWwXb016341;
+        Tue, 30 Apr 2019 15:32:58 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Apr 2019 08:26:27 -0700
-Date:   Tue, 30 Apr 2019 08:26:25 -0700
+        with ESMTP ; Tue, 30 Apr 2019 08:32:58 -0700
+Date:   Tue, 30 Apr 2019 08:32:56 -0700
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     Andreas Gruenbacher <agruenba@redhat.com>
 Cc:     cluster-devel@redhat.com, Christoph Hellwig <hch@lst.de>,
@@ -51,23 +51,24 @@ Cc:     cluster-devel@redhat.com, Christoph Hellwig <hch@lst.de>,
         Mark Syms <Mark.Syms@citrix.com>,
         Edwin =?iso-8859-1?B?VPZy9ms=?= <edvin.torok@citrix.com>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v7 4/5] iomap: Add a page_prepare callback
-Message-ID: <20190430152625.GE5200@magnolia>
+Subject: Re: [PATCH v7 5/5] gfs2: Fix iomap write page reclaim deadlock
+Message-ID: <20190430153256.GF5200@magnolia>
 References: <20190429220934.10415-1-agruenba@redhat.com>
- <20190429220934.10415-5-agruenba@redhat.com>
+ <20190429220934.10415-6-agruenba@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190429220934.10415-5-agruenba@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190429220934.10415-6-agruenba@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9243 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1904300095
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9243 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1904300095
@@ -76,188 +77,241 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 12:09:33AM +0200, Andreas Gruenbacher wrote:
-> Move the page_done callback into a separate iomap_page_ops structure and
-> add a page_prepare calback to be called before the next page is written
-> to.  In gfs2, we'll want to start a transaction in page_prepare and end
-> it in page_done.  Other filesystems that implement data journaling will
-> require the same kind of mechanism.
+On Tue, Apr 30, 2019 at 12:09:34AM +0200, Andreas Gruenbacher wrote:
+> Since commit 64bc06bb32ee ("gfs2: iomap buffered write support"), gfs2 is doing
+> buffered writes by starting a transaction in iomap_begin, writing a range of
+> pages, and ending that transaction in iomap_end.  This approach suffers from
+> two problems:
 > 
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Jan Kara <jack@suse.cz>
+>   (1) Any allocations necessary for the write are done in iomap_begin, so when
+>   the data aren't journaled, there is no need for keeping the transaction open
+>   until iomap_end.
+> 
+>   (2) Transactions keep the gfs2 log flush lock held.  When
+>   iomap_file_buffered_write calls balance_dirty_pages, this can end up calling
+>   gfs2_write_inode, which will try to flush the log.  This requires taking the
+>   log flush lock which is already held, resulting in a deadlock.
 
-Looks fine, assuming you've done the appropriate QA/testing on the gfs2
-side. :)
+/me wonders how holding the log flush lock doesn't seriously limit
+performance, but gfs2 isn't my fight so I'll set that aside and assume
+that a patch S-o-B'd by both maintainers is ok. :)
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+How should we merge this patch #5?  It doesn't touch fs/iomap.c itself,
+so do you want me to pull it into the iomap branch along with the
+previous four patches?  That would be fine with me (and easier than a
+multi-tree merge mess)...
 
 --D
 
-> ---
->  fs/gfs2/bmap.c        | 15 ++++++++++-----
->  fs/iomap.c            | 36 ++++++++++++++++++++++++++----------
->  include/linux/iomap.h | 22 +++++++++++++++++-----
->  3 files changed, 53 insertions(+), 20 deletions(-)
 > 
+> Fix both of these issues by not keeping transactions open from iomap_begin to
+> iomap_end.  Instead, start a small transaction in page_prepare and end it in
+> page_done when necessary.
+> 
+> Reported-by: Edwin Török <edvin.torok@citrix.com>
+> Fixes: 64bc06bb32ee ("gfs2: iomap buffered write support")
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+> ---
+>  fs/gfs2/aops.c | 14 +++++---
+>  fs/gfs2/bmap.c | 88 +++++++++++++++++++++++++++-----------------------
+>  2 files changed, 58 insertions(+), 44 deletions(-)
+> 
+> diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+> index 05dd78f4b2b3..6210d4429d84 100644
+> --- a/fs/gfs2/aops.c
+> +++ b/fs/gfs2/aops.c
+> @@ -649,7 +649,7 @@ static int gfs2_readpages(struct file *file, struct address_space *mapping,
+>   */
+>  void adjust_fs_space(struct inode *inode)
+>  {
+> -	struct gfs2_sbd *sdp = inode->i_sb->s_fs_info;
+> +	struct gfs2_sbd *sdp = GFS2_SB(inode);
+>  	struct gfs2_inode *m_ip = GFS2_I(sdp->sd_statfs_inode);
+>  	struct gfs2_inode *l_ip = GFS2_I(sdp->sd_sc_inode);
+>  	struct gfs2_statfs_change_host *m_sc = &sdp->sd_statfs_master;
+> @@ -657,10 +657,13 @@ void adjust_fs_space(struct inode *inode)
+>  	struct buffer_head *m_bh, *l_bh;
+>  	u64 fs_total, new_free;
+>  
+> +	if (gfs2_trans_begin(sdp, 2 * RES_STATFS, 0) != 0)
+> +		return;
+> +
+>  	/* Total up the file system space, according to the latest rindex. */
+>  	fs_total = gfs2_ri_total(sdp);
+>  	if (gfs2_meta_inode_buffer(m_ip, &m_bh) != 0)
+> -		return;
+> +		goto out;
+>  
+>  	spin_lock(&sdp->sd_statfs_spin);
+>  	gfs2_statfs_change_in(m_sc, m_bh->b_data +
+> @@ -675,11 +678,14 @@ void adjust_fs_space(struct inode *inode)
+>  	gfs2_statfs_change(sdp, new_free, new_free, 0);
+>  
+>  	if (gfs2_meta_inode_buffer(l_ip, &l_bh) != 0)
+> -		goto out;
+> +		goto out2;
+>  	update_statfs(sdp, m_bh, l_bh);
+>  	brelse(l_bh);
+> -out:
+> +out2:
+>  	brelse(m_bh);
+> +out:
+> +	sdp->sd_rindex_uptodate = 0;
+> +	gfs2_trans_end(sdp);
+>  }
+>  
+>  /**
 > diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-> index 5da4ca9041c0..aa014725f84a 100644
+> index aa014725f84a..27c82f4aaf32 100644
 > --- a/fs/gfs2/bmap.c
 > +++ b/fs/gfs2/bmap.c
-> @@ -991,15 +991,20 @@ static void gfs2_write_unlock(struct inode *inode)
+> @@ -991,17 +991,28 @@ static void gfs2_write_unlock(struct inode *inode)
 >  	gfs2_glock_dq_uninit(&ip->i_gh);
 >  }
 >  
-> -static void gfs2_iomap_journaled_page_done(struct inode *inode, loff_t pos,
-> -				unsigned copied, struct page *page,
-> -				struct iomap *iomap)
-> +static void gfs2_iomap_page_done(struct inode *inode, loff_t pos,
-> +				 unsigned copied, struct page *page,
-> +				 struct iomap *iomap)
+> +static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
+> +				   unsigned len, struct iomap *iomap)
+> +{
+> +	struct gfs2_sbd *sdp = GFS2_SB(inode);
+> +
+> +	return gfs2_trans_begin(sdp, RES_DINODE + (len >> inode->i_blkbits), 0);
+> +}
+> +
+>  static void gfs2_iomap_page_done(struct inode *inode, loff_t pos,
+>  				 unsigned copied, struct page *page,
+>  				 struct iomap *iomap)
 >  {
 >  	struct gfs2_inode *ip = GFS2_I(inode);
+> +	struct gfs2_sbd *sdp = GFS2_SB(inode);
 >  
-> -	gfs2_page_add_databufs(ip, page, offset_in_page(pos), copied);
-> +	if (page)
-> +		gfs2_page_add_databufs(ip, page, offset_in_page(pos), copied);
+> -	if (page)
+> +	if (page && !gfs2_is_stuffed(ip))
+>  		gfs2_page_add_databufs(ip, page, offset_in_page(pos), copied);
+> +	gfs2_trans_end(sdp);
 >  }
 >  
-> +static const struct iomap_page_ops gfs2_iomap_page_ops = {
-> +	.page_done = gfs2_iomap_page_done,
-> +};
+>  static const struct iomap_page_ops gfs2_iomap_page_ops = {
+> +	.page_prepare = gfs2_iomap_page_prepare,
+>  	.page_done = gfs2_iomap_page_done,
+>  };
+>  
+> @@ -1057,31 +1068,45 @@ static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
+>  	if (alloc_required)
+>  		rblocks += gfs2_rg_blocks(ip, data_blocks + ind_blocks);
+>  
+> -	ret = gfs2_trans_begin(sdp, rblocks, iomap->length >> inode->i_blkbits);
+> -	if (ret)
+> -		goto out_trans_fail;
+> +	if (unstuff || iomap->type == IOMAP_HOLE) {
+> +		struct gfs2_trans *tr;
+>  
+> -	if (unstuff) {
+> -		ret = gfs2_unstuff_dinode(ip, NULL);
+> +		ret = gfs2_trans_begin(sdp, rblocks,
+> +				       iomap->length >> inode->i_blkbits);
+>  		if (ret)
+> -			goto out_trans_end;
+> -		release_metapath(mp);
+> -		ret = gfs2_iomap_get(inode, iomap->offset, iomap->length,
+> -				     flags, iomap, mp);
+> -		if (ret)
+> -			goto out_trans_end;
+> -	}
+> +			goto out_trans_fail;
+>  
+> -	if (iomap->type == IOMAP_HOLE) {
+> -		ret = gfs2_iomap_alloc(inode, iomap, flags, mp);
+> -		if (ret) {
+> -			gfs2_trans_end(sdp);
+> -			gfs2_inplace_release(ip);
+> -			punch_hole(ip, iomap->offset, iomap->length);
+> -			goto out_qunlock;
+> +		if (unstuff) {
+> +			ret = gfs2_unstuff_dinode(ip, NULL);
+> +			if (ret)
+> +				goto out_trans_end;
+> +			release_metapath(mp);
+> +			ret = gfs2_iomap_get(inode, iomap->offset,
+> +					     iomap->length, flags, iomap, mp);
+> +			if (ret)
+> +				goto out_trans_end;
+> +		}
 > +
->  static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
->  				  loff_t length, unsigned flags,
->  				  struct iomap *iomap,
-> @@ -1077,7 +1082,7 @@ static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
+> +		if (iomap->type == IOMAP_HOLE) {
+> +			ret = gfs2_iomap_alloc(inode, iomap, flags, mp);
+> +			if (ret) {
+> +				gfs2_trans_end(sdp);
+> +				gfs2_inplace_release(ip);
+> +				punch_hole(ip, iomap->offset, iomap->length);
+> +				goto out_qunlock;
+> +			}
 >  		}
+> +
+> +		tr = current->journal_info;
+> +		if (tr->tr_num_buf_new)
+> +			__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
+> +		else
+> +			gfs2_trans_add_meta(ip->i_gl, mp->mp_bh[0]);
+> +
+> +		gfs2_trans_end(sdp);
 >  	}
->  	if (!gfs2_is_stuffed(ip) && gfs2_is_jdata(ip))
-> -		iomap->page_done = gfs2_iomap_journaled_page_done;
-> +		iomap->page_ops = &gfs2_iomap_page_ops;
+> -	if (!gfs2_is_stuffed(ip) && gfs2_is_jdata(ip))
+> +
+> +	if (gfs2_is_stuffed(ip) || gfs2_is_jdata(ip))
+>  		iomap->page_ops = &gfs2_iomap_page_ops;
 >  	return 0;
 >  
->  out_trans_end:
-> diff --git a/fs/iomap.c b/fs/iomap.c
-> index 62e3461704ce..a3ffc83134ee 100644
-> --- a/fs/iomap.c
-> +++ b/fs/iomap.c
-> @@ -665,6 +665,7 @@ static int
->  iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
->  		struct page **pagep, struct iomap *iomap)
->  {
-> +	const struct iomap_page_ops *page_ops = iomap->page_ops;
->  	pgoff_t index = pos >> PAGE_SHIFT;
->  	struct page *page;
->  	int status = 0;
-> @@ -674,9 +675,17 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
->  	if (fatal_signal_pending(current))
->  		return -EINTR;
->  
-> +	if (page_ops && page_ops->page_prepare) {
-> +		status = page_ops->page_prepare(inode, pos, len, iomap);
-> +		if (status)
-> +			return status;
-> +	}
-> +
->  	page = grab_cache_page_write_begin(inode->i_mapping, index, flags);
-> -	if (!page)
-> -		return -ENOMEM;
-> +	if (!page) {
-> +		status = -ENOMEM;
-> +		goto out_no_page;
-> +	}
->  
->  	if (iomap->type == IOMAP_INLINE)
->  		iomap_read_inline_data(inode, page, iomap);
-> @@ -684,15 +693,21 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
->  		status = __block_write_begin_int(page, pos, len, NULL, iomap);
->  	else
->  		status = __iomap_write_begin(inode, pos, len, page, iomap);
-> -	if (unlikely(status)) {
-> -		unlock_page(page);
-> -		put_page(page);
-> -		page = NULL;
->  
-> -		iomap_write_failed(inode, pos, len);
+> @@ -1121,10 +1146,6 @@ static int gfs2_iomap_begin(struct inode *inode, loff_t pos, loff_t length,
+>  		    iomap->type != IOMAP_MAPPED)
+>  			ret = -ENOTBLK;
+>  	}
+> -	if (!ret) {
+> -		get_bh(mp.mp_bh[0]);
+> -		iomap->private = mp.mp_bh[0];
 > -	}
-> +	if (unlikely(status))
-> +		goto out_unlock;
+>  	release_metapath(&mp);
+>  	trace_gfs2_iomap_end(ip, iomap, ret);
+>  	return ret;
+> @@ -1135,27 +1156,16 @@ static int gfs2_iomap_end(struct inode *inode, loff_t pos, loff_t length,
+>  {
+>  	struct gfs2_inode *ip = GFS2_I(inode);
+>  	struct gfs2_sbd *sdp = GFS2_SB(inode);
+> -	struct gfs2_trans *tr = current->journal_info;
+> -	struct buffer_head *dibh = iomap->private;
 >  
->  	*pagep = page;
-> +	return 0;
-> +
-> +out_unlock:
-> +	unlock_page(page);
-> +	put_page(page);
-> +	iomap_write_failed(inode, pos, len);
-> +
-> +out_no_page:
-> +	if (page_ops && page_ops->page_done)
-> +		page_ops->page_done(inode, pos, 0, NULL, iomap);
->  	return status;
+>  	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) != IOMAP_WRITE)
+>  		goto out;
+>  
+> -	if (iomap->type != IOMAP_INLINE) {
+> +	if (!gfs2_is_stuffed(ip))
+>  		gfs2_ordered_add_inode(ip);
+>  
+> -		if (tr->tr_num_buf_new)
+> -			__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
+> -		else
+> -			gfs2_trans_add_meta(ip->i_gl, dibh);
+> -	}
+> -
+> -	if (inode == sdp->sd_rindex) {
+> +	if (inode == sdp->sd_rindex)
+>  		adjust_fs_space(inode);
+> -		sdp->sd_rindex_uptodate = 0;
+> -	}
+>  
+> -	gfs2_trans_end(sdp);
+>  	gfs2_inplace_release(ip);
+>  
+>  	if (length != written && (iomap->flags & IOMAP_F_NEW)) {
+> @@ -1175,8 +1185,6 @@ static int gfs2_iomap_end(struct inode *inode, loff_t pos, loff_t length,
+>  	gfs2_write_unlock(inode);
+>  
+>  out:
+> -	if (dibh)
+> -		brelse(dibh);
+>  	return 0;
 >  }
 >  
-> @@ -766,6 +781,7 @@ static int
->  iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
->  		unsigned copied, struct page *page, struct iomap *iomap)
->  {
-> +	const struct iomap_page_ops *page_ops = iomap->page_ops;
->  	int ret;
->  
->  	if (iomap->type == IOMAP_INLINE) {
-> @@ -778,8 +794,8 @@ iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
->  	}
->  
->  	__generic_write_end(inode, pos, ret, page);
-> -	if (iomap->page_done)
-> -		iomap->page_done(inode, pos, copied, page, iomap);
-> +	if (page_ops && page_ops->page_done)
-> +		page_ops->page_done(inode, pos, copied, page, iomap);
->  	put_page(page);
->  
->  	if (ret < len)
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 0fefb5455bda..2103b94cb1bf 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -53,6 +53,8 @@ struct vm_fault;
->   */
->  #define IOMAP_NULL_ADDR -1ULL	/* addr is not valid */
->  
-> +struct iomap_page_ops;
-> +
->  struct iomap {
->  	u64			addr; /* disk offset of mapping, bytes */
->  	loff_t			offset;	/* file offset of mapping, bytes */
-> @@ -63,12 +65,22 @@ struct iomap {
->  	struct dax_device	*dax_dev; /* dax_dev for dax operations */
->  	void			*inline_data;
->  	void			*private; /* filesystem private */
-> +	const struct iomap_page_ops *page_ops;
-> +};
->  
-> -	/*
-> -	 * Called when finished processing a page in the mapping returned in
-> -	 * this iomap.  At least for now this is only supported in the buffered
-> -	 * write path.
-> -	 */
-> +/*
-> + * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
-> + * and page_done will be called for each page written to.  This only applies to
-> + * buffered writes as unbuffered writes will not typically have pages
-> + * associated with them.
-> + *
-> + * When page_prepare succeeds, page_done will always be called to do any
-> + * cleanup work necessary.  In that page_done call, @page will be NULL if the
-> + * associated page could not be obtained.
-> + */
-> +struct iomap_page_ops {
-> +	int (*page_prepare)(struct inode *inode, loff_t pos, unsigned len,
-> +			struct iomap *iomap);
->  	void (*page_done)(struct inode *inode, loff_t pos, unsigned copied,
->  			struct page *page, struct iomap *iomap);
->  };
 > -- 
 > 2.20.1
 > 
