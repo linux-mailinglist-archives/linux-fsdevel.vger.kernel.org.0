@@ -2,158 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAB511028E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 00:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 368C71031B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 01:08:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbfD3WlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 18:41:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:32885 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbfD3WlV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 18:41:21 -0400
-Received: from mail-qt1-f197.google.com ([209.85.160.197])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <gpiccoli@canonical.com>)
-        id 1hLbRA-0000O5-5o
-        for linux-fsdevel@vger.kernel.org; Tue, 30 Apr 2019 22:41:20 +0000
-Received: by mail-qt1-f197.google.com with SMTP id s32so10004945qts.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 15:41:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=BNuNywNm3nYV5TRhn28+hTsGtHkLiVwZcTZZouyHt4g=;
-        b=i7osKI2ojy2qD+wRp74CYvZFMBBu18qyq+OSrcpO0QRMJxj8hlP6h4UsVb+i8gc2m1
-         mpHRj1TiL9s74mTIDTUNQG4iJ7cnXKkwgAGMAJvYkuykap1hcV3saBJZZYkhhJJvCGE7
-         Xq0dQxKUdd/I4KIfkI195H7bjIEvW9758NVQTa4gRr0f5sTgiDt8e2jQlIWck7vB/AP3
-         XUI1sE9gaqfk5k6EVB3xAjjWPG7CRBFiGGTRJv48kYB35oEgw4wYkEFEagjAU/E/0EIs
-         l/RQHghBIvZj1Ew5LteJCUB/YOXzLLaY5TmyE+q18BTcX4ATlfFPW3XuTqvWJqLNwnrk
-         LElA==
-X-Gm-Message-State: APjAAAXPri/Ll39Tfc6zd3VWTP/P8l3QpzoPU5F2qU7uHHs2Xbj+70Uf
-        71AtnBxOBFtBkUI8y20xv4lWOQtYASP3TL0VR0a/5OoC39+HdBNEGXt4g/O2FuX60NupHJVya3Y
-        XEfSludC3kVjNv+LQiRF5vsU+lyisa9Jb+fNt/dzQZOY=
-X-Received: by 2002:ac8:352f:: with SMTP id y44mr31084102qtb.130.1556664079007;
-        Tue, 30 Apr 2019 15:41:19 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqySp93LhP+mvPSQT1QyiKl5ZSHs1A52qRRiJ0rIyZm1NyCtfU5TBHrXwypsgBA0n7j+OqPs4w==
-X-Received: by 2002:ac8:352f:: with SMTP id y44mr31084081qtb.130.1556664078788;
-        Tue, 30 Apr 2019 15:41:18 -0700 (PDT)
-Received: from [192.168.1.201] (201-13-157-136.dial-up.telesp.net.br. [201.13.157.136])
-        by smtp.gmail.com with ESMTPSA id m60sm20407664qte.81.2019.04.30.15.41.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 15:41:18 -0700 (PDT)
-Subject: Re: [RFC] [PATCH V2 0/1] Introduce emergency raid0 stop for mounted
- arrays
-To:     Song Liu <liu.song.a23@gmail.com>
-Cc:     axboe@kernel.dk, linux-raid <linux-raid@vger.kernel.org>,
-        jay.vosburgh@canonical.com, kernel@gpiccoli.net,
-        NeilBrown <neilb@suse.com>, dm-devel@redhat.com,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org, gavin.guo@canonical.com
-References: <20190418220448.7219-1-gpiccoli@canonical.com>
- <CAPhsuW4k5zz2pJBPL60VzjTcj6NTnhBh-RjvWASLcOxAk+yDEw@mail.gmail.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
- mQENBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
- Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
- 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
- irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
- 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
- AAG0LUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPokBNwQT
- AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
- 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
- 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
- q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
- iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
- LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltveuQENBFpVBxcBCADbxD6J
- aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
- pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
- kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
- nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
- bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAGJAR8EGAEIAAkFAlpV
- BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
- 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
- egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
- Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
- kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
- X18zwLgdiQ==
-Message-ID: <b39b96ea-2540-a407-2232-1af91e3e6658@canonical.com>
-Date:   Tue, 30 Apr 2019 19:41:11 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726412AbfD3XIp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 19:08:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726086AbfD3XIo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Apr 2019 19:08:44 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2555520854;
+        Tue, 30 Apr 2019 23:08:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556665723;
+        bh=J2V4xk+5wKE2yB/A9WdiJV6T4tnAMLRxNPNCtj9jca8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SR4PU50IpjiiE/2E7ygI/c9uL7kL9KMoNGzgCg5z3qU8jru7qcuZk795ziPs7WPH0
+         4CVd4Zp9AjEqAkJ0/IseaPzbsnjVe9UrQgy8/fSDRJqoLohq0S7l8d32G6kxtpoQeo
+         Ea6eqFzFovHvOPkFNhmTsw94caM1sI9DMHL9ap+g=
+Date:   Tue, 30 Apr 2019 16:08:41 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Chandan Rajendra <chandan@linux.ibm.com>
+Cc:     tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net,
+        hch@infradead.org, linux-fscrypt@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
+        jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH V2 10/13] fscrypt_encrypt_page: Loop across
+ all blocks mapped by a page range
+Message-ID: <20190430230840.GE48973@gmail.com>
+References: <20190428043121.30925-1-chandan@linux.ibm.com>
+ <20190428043121.30925-11-chandan@linux.ibm.com>
+ <20190430171133.GC48973@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPhsuW4k5zz2pJBPL60VzjTcj6NTnhBh-RjvWASLcOxAk+yDEw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190430171133.GC48973@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On 19/04/2019 14:08, Song Liu wrote:
-> [...]
-> I read through the discussion in V1, and I would agree with Neil that
-> current behavior is reasonable.
+On Tue, Apr 30, 2019 at 10:11:35AM -0700, Eric Biggers wrote:
+> On Sun, Apr 28, 2019 at 10:01:18AM +0530, Chandan Rajendra wrote:
+> > For subpage-sized blocks, this commit now encrypts all blocks mapped by
+> > a page range.
+> > 
+> > Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
+> > ---
+> >  fs/crypto/crypto.c | 37 +++++++++++++++++++++++++------------
+> >  1 file changed, 25 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+> > index 4f0d832cae71..2d65b431563f 100644
+> > --- a/fs/crypto/crypto.c
+> > +++ b/fs/crypto/crypto.c
+> > @@ -242,18 +242,26 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
 > 
-> For the following example:
+> Need to update the function comment to clearly explain what this function
+> actually does now.
 > 
-> fd = open("file", "w");
-> write(fd, buf, size);
-> ret = fsync(fd);
+> >  {
+> >  	struct fscrypt_ctx *ctx;
+> >  	struct page *ciphertext_page = page;
+> > +	int i, page_nr_blks;
+> >  	int err;
+> >  
+> >  	BUG_ON(len % FS_CRYPTO_BLOCK_SIZE != 0);
+> >  
 > 
-> If "size" is big enough, the write is not expected to be atomic for
-> md or other drives. If we remove the underlining block device
-> after write() and before fsync(), the file could get corrupted. This
-> is the same for md or NVMe/SCSI drives.
+> Make a 'blocksize' variable so you don't have to keep calling i_blocksize().
 > 
-> The application need to check "ret" from fsync(), the data is safe
-> only when fsync() returns 0.
+> Also, you need to check whether 'len' and 'offs' are filesystem-block-aligned,
+> since the code now assumes it.
 > 
-> Does this make sense?
+> 	const unsigned int blocksize = i_blocksize(inode);
 > 
-
-Hi Song, thanks for your quick response, and sorry for my delay.
-I've noticed after v4.18 kernel started to crash when we remove one
-raid0 member while writing, so I was investigating this
-before perform your test (in fact, found 2 issues [0]), hence my delay.
-
-Your test does make sense; in fact I've tested your scenario with the
-following code (with the patches from [0]):
-https://pastebin.ubuntu.com/p/cyqpDqpM7x/
-
-Indeed, fsync returns -1 in this case.
-Interestingly, when I do a "dd if=<some_file> of=<raid0_mount>" and try
-to "sync -f <some_file>" and "sync", it succeeds and the file is
-written, although corrupted.
-
-Do you think this behavior is correct? In other devices, like a pure
-SCSI disk or NVMe, the 'dd' write fails.
-Also, what about the status of the raid0 array in mdadm - it shows as
-"clean" even after the member is removed, should we change that?
-
-
-> Also, could you please highlight changes from V1 (if more than
-> just rebase)?
-
-No changes other than rebase. Worth mentioning here that a kernel bot
-(and Julia Lawall) found an issue in my patch; I forgot a
-"mutex_lock(&mddev->open_mutex);" in line 6053, which caused the first
-caveat (hung mdadm and persistent device in /dev). Thanks for pointing
-this silly mistake from me! in case this patch gets some traction, I'll
-re-submit with that fixed.
-
-Cheers,
-
-
-Guilherme
-
-[0] https://marc.info/?l=linux-block&m=155666385707413
-
+>         if (!IS_ALIGNED(len | offs, blocksize))
+>                 return -EINVAL;
 > 
-> Thanks,
-> Song
-> 
+> However, did you check whether that's always true for ubifs?  It looks like it
+> may expect to encrypt a prefix of a block, that is only padded to the next
+> 16-byte boundary.
+> 		
+> > +	page_nr_blks = len >> inode->i_blkbits;
+> > +
+> >  	if (inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES) {
+> >  		/* with inplace-encryption we just encrypt the page */
+> > -		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num, page,
+> > -					     ciphertext_page, len, offs,
+> > -					     gfp_flags);
+> > -		if (err)
+> > -			return ERR_PTR(err);
+> > -
+> > +		for (i = 0; i < page_nr_blks; i++) {
+> > +			err = fscrypt_do_page_crypto(inode, FS_ENCRYPT,
+> > +						lblk_num, page,
+> > +						ciphertext_page,
+> > +						i_blocksize(inode), offs,
+> > +						gfp_flags);
+> > +			if (err)
+> > +				return ERR_PTR(err);
+
+Apparently ubifs does encrypt data shorter than the filesystem block size, so
+this part is wrong.
+
+I suggest we split this into two functions, fscrypt_encrypt_block_inplace() and
+fscrypt_encrypt_blocks(), so that it's conceptually simpler what each function
+does.  Currently this works completely differently depending on whether the
+filesystem set FS_CFLG_OWN_PAGES in its fscrypt_operations, which is weird.
+
+I also noticed that using fscrypt_ctx for writes seems to be unnecessary.
+AFAICS, page_private(bounce_page) could point directly to the pagecache page.
+That would simplify things a lot, especially since then fscrypt_ctx could be
+removed entirely after you convert reads to use read_callbacks_ctx.
+
+IMO, these would be worthwhile cleanups for fscrypt by themselves, without
+waiting for the read_callbacks stuff to be finalized.  Finalizing the
+read_callbacks stuff will probably require reaching a consensus about how they
+should work with future filesystem features like fsverity and compression.
+
+So to move things forward, I'm considering sending out a series with the above
+cleanups for fscrypt, plus the equivalent of your patches:
+
+	"fscrypt_encrypt_page: Loop across all blocks mapped by a page range"
+	"fscrypt_zeroout_range: Encrypt all zeroed out blocks of a page"
+	"Add decryption support for sub-pagesized blocks" (fs/crypto/ part only)
+
+Then hopefully we can get all that applied for 5.3 so that fs/crypto/ itself is
+ready for blocksize != PAGE_SIZE; and get your changes to ext4_bio_write_page(),
+__ext4_block_zero_page_range(), and ext4_block_write_begin() applied too, so
+that ext4 is partially ready for encryption with blocksize != PAGE_SIZE.
+
+Then only the read_callbacks stuff will remain, to get encryption support into
+fs/mpage.c and fs/buffer.c.  Do you think that's a good plan?
+
+Thanks!
+
+- Eric
