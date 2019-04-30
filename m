@@ -2,190 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A96A1FDB0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 18:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52A9EFDAE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Apr 2019 18:20:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbfD3QU2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Apr 2019 12:20:28 -0400
-Received: from foss.arm.com ([217.140.101.70]:49742 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbfD3QU2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Apr 2019 12:20:28 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C129374;
-        Tue, 30 Apr 2019 09:20:27 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CB1973F5C1;
-        Tue, 30 Apr 2019 09:20:25 -0700 (PDT)
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.or
-Subject: [PATCH] io_uring: free allocated io_memory once
-Date:   Tue, 30 Apr 2019 17:20:18 +0100
-Message-Id: <20190430162018.40040-1-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
+        id S1726073AbfD3QUb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Apr 2019 12:20:31 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:54404 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbfD3QUb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Apr 2019 12:20:31 -0400
+Received: by mail-it1-f193.google.com with SMTP id a190so5610203ite.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 09:20:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=03ijMv3pe9wYEbXxfAK0xCr66KgdDf7vWbmZYlw+LGA=;
+        b=PGyU6Gmho9l/ZEy0l80G3ZBJ9GXjRmIO54nH4zlUDdlQWbPvOPm+kkJ5pXgC1uPvcE
+         DSGoqrba32u3DihKxfzsvcJ9X8U+U1pWzrMTMXKlKnEjl49pDOE75v9mDxPTBudyQYUF
+         0Ia9XgYnSNupinYJvomlYvrCwIzMTShGJdZJmpDBnKssQm1s0+v30K46NP03JlDaQhsq
+         JqvamY51I2GjnEUIKgJ1q5ZRITcuga/GOVtXwbePQQrceIOhr9Csx5XG43lT5ji7ES3u
+         VVeGmovdkwnXOjfsBZqvcBkUnxtqF2+SyVguJ54T8CoV1CjiwWrokj0YJfsE0fsfdDVn
+         Z2Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=03ijMv3pe9wYEbXxfAK0xCr66KgdDf7vWbmZYlw+LGA=;
+        b=Kv1yVy6bdokgm2Gfxf1Yg6m3bt4pNtV3aS1+0rr5S7WY/3p6zsKq2hRVb9Vk7vPfwU
+         rzzZuw52r+dzbGrmeHbS+wL5pjP++1HwHDlcCK8c4H3oI62UDLc7K//j+l7mnV3/WroT
+         3y2VQHYPMfHtdWHqPCABKUuX2LLg9lyKLLAknCB3tGtDUMHfzYGzJBkhmVGZ1hIN7BU6
+         yE+NDRlZw3VSMOThw8xZeeerJ/wPYWDZ0QZ+M6Zbhb/Ir/1NhN8tnM5KBEAKCg81bnF7
+         4SDs0NABtuGcPNNWKIcINCd1Ate2vM8qtRoNA/igi0YsWaNj+0hG9WG54KkBcMSTuPnC
+         AdBA==
+X-Gm-Message-State: APjAAAXy73QlfR/Hq769QoRsaSRr6HQiEAfbctbZRPuAtbkYq4IkeszZ
+        Xx9jEo7XFp6RdCndV9Knt4cfw4nVJ+3v5g==
+X-Google-Smtp-Source: APXvYqwUryhDnffsFIh3zZKpZsR5lr+x1JWy0gtNIlVE7+ofo3OlcHTgfSCFq1qKOOUrG4fjMTNL8A==
+X-Received: by 2002:a24:5f90:: with SMTP id r138mr4298837itb.43.1556641229584;
+        Tue, 30 Apr 2019 09:20:29 -0700 (PDT)
+Received: from [192.168.1.158] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id i203sm1676403iti.7.2019.04.30.09.20.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 09:20:28 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: fix SQPOLL cpu validation
+To:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20190430123451.44227-1-mark.rutland@arm.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <4acfc374-1d4d-4698-51b9-6d12d30fb488@kernel.dk>
+Date:   Tue, 30 Apr 2019 10:20:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190430123451.44227-1-mark.rutland@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If io_allocate_scq_urings() fails to allocate an sq_* region, it will
-call io_mem_free() for any previously allocated regions, but leave
-dangling pointers to these regions in the ctx. Any regions which have
-not yet been allocated are left NULL. Note that when returning
--EOVERFLOW, the previously allocated sq_ring is not freed, which appears
-to be an unintentional leak.
+On 4/30/19 6:34 AM, Mark Rutland wrote:
+> In io_sq_offload_start(), we call cpu_possible() on an unbounded cpu
+> value from userspace. On v5.1-rc7 on arm64 with
+> CONFIG_DEBUG_PER_CPU_MAPS, this results in a splat:
+> 
+>   WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 cpu_max_bits_warn include/linux/cpumask.h:121 [inline]
+> 
+> There was an attempt to fix this in commit:
+> 
+>   917257daa0fea7a0 ("io_uring: only test SQPOLL cpu after we've verified it")
+> 
+> ... by adding a check after the cpu value had been limited to NR_CPU_IDS
+> using array_index_nospec(). However, this left an unbound check at the
+> start of the function, for which the warning still fires.
+> 
+> Let's fix this correctly by checking that the cpu value is bound by
+> nr_cpu_ids before passing it to cpu_possible(). Note that only
+> nr_cpu_ids of a cpumask are guaranteed to exist at runtime, and
+> nr_cpu_ids can be significantly smaller than NR_CPUs. For example, an
+> arm64 defconfig has NR_CPUS=256, while my test VM has 4 vCPUs.
+> 
+> Following the intent from the commit message for 917257daa0fea7a0, the
+> check is moved under the SQ_AFF branch, which is the only branch where
+> the cpu values is consumed. The check is performed before bounding the
+> value with array_index_nospec() so that we don't silently accept bogus
+> cpu values from userspace, where array_index_nospec() would force these
+> values to 0.
+> 
+> I suspect we can remove the array_index_nospec() call entirely, but I've
+> conservatively left that in place, updated to use nr_cpu_ids to match
+> the prior check.
+> 
+> Tested on arm64 with the Syzkaller reproducer:
+> 
+>   https://syzkaller.appspot.com/bug?extid=cd714a07c6de2bc34293
+>   https://syzkaller.appspot.com/x/repro.syz?x=15d8b397200000
+> 
+> Full splat from before this patch:
+> 
+> WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 cpu_max_bits_warn include/linux/cpumask.h:121 [inline]
+> WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 cpumask_check include/linux/cpumask.h:128 [inline]
+> WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 cpumask_test_cpu include/linux/cpumask.h:344 [inline]
+> WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 io_sq_offload_start fs/io_uring.c:2244 [inline]
+> WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 io_uring_create fs/io_uring.c:2864 [inline]
+> WARNING: CPU: 1 PID: 27601 at include/linux/cpumask.h:121 io_uring_setup+0x1108/0x15a0 fs/io_uring.c:2916
+> Kernel panic - not syncing: panic_on_warn set ...
+> CPU: 1 PID: 27601 Comm: syz-executor.0 Not tainted 5.1.0-rc7 #3
+> Hardware name: linux,dummy-virt (DT)
+> Call trace:
+>  dump_backtrace+0x0/0x2f0 include/linux/compiler.h:193
+>  show_stack+0x20/0x30 arch/arm64/kernel/traps.c:158
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x110/0x190 lib/dump_stack.c:113
+>  panic+0x384/0x68c kernel/panic.c:214
+>  __warn+0x2bc/0x2c0 kernel/panic.c:571
+>  report_bug+0x228/0x2d8 lib/bug.c:186
+>  bug_handler+0xa0/0x1a0 arch/arm64/kernel/traps.c:956
+>  call_break_hook arch/arm64/kernel/debug-monitors.c:301 [inline]
+>  brk_handler+0x1d4/0x388 arch/arm64/kernel/debug-monitors.c:316
+>  do_debug_exception+0x1a0/0x468 arch/arm64/mm/fault.c:831
+>  el1_dbg+0x18/0x8c
+>  cpu_max_bits_warn include/linux/cpumask.h:121 [inline]
+>  cpumask_check include/linux/cpumask.h:128 [inline]
+>  cpumask_test_cpu include/linux/cpumask.h:344 [inline]
+>  io_sq_offload_start fs/io_uring.c:2244 [inline]
+>  io_uring_create fs/io_uring.c:2864 [inline]
+>  io_uring_setup+0x1108/0x15a0 fs/io_uring.c:2916
+>  __do_sys_io_uring_setup fs/io_uring.c:2929 [inline]
+>  __se_sys_io_uring_setup fs/io_uring.c:2926 [inline]
+>  __arm64_sys_io_uring_setup+0x50/0x70 fs/io_uring.c:2926
+>  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>  invoke_syscall arch/arm64/kernel/syscall.c:47 [inline]
+>  el0_svc_common.constprop.0+0x148/0x2e0 arch/arm64/kernel/syscall.c:83
+>  el0_svc_handler+0xdc/0x100 arch/arm64/kernel/syscall.c:129
+>  el0_svc+0x8/0xc arch/arm64/kernel/entry.S:948
+> SMP: stopping secondary CPUs
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> CPU features: 0x002,23000438
+> Memory Limit: none
+> Rebooting in 1 seconds..
 
-When io_allocate_scq_urings() fails, io_uring_create() will call
-io_ring_ctx_wait_and_kill(), which calls io_mem_free() on all the sq_*
-regions, assuming the pointers are valid and not NULL.
+Applied, thanks.
 
-This can result in pages being freed multiple times, which has been
-observed to corrupt the page state, leading to subsequent fun. This can
-also result in virt_to_page() on NULL, resulting in the use of bogus
-page addresses, and yet more subsequent fun. The latter can be detected
-with CONFIG_DEBUG_VIRTUAL on arm64.
-
-Adding a cleanup path to io_allocate_scq_urings() complicates the logic,
-so let's leave it to io_ring_ctx_free() to consistently free these
-pointers, and simplify the io_allocate_scq_urings() error paths.
-
-Full splats from before this patch below. Note that the pointer logged
-by the DEBUG_VIRTUAL "non-linear address" warning has been hashed, and
-is actually NULL.
-
-[   26.098129] page:ffff80000e949a00 count:0 mapcount:-128 mapping:0000000000000000 index:0x0
-[   26.102976] flags: 0x63fffc000000()
-[   26.104373] raw: 000063fffc000000 ffff80000e86c188 ffff80000ea3df08 0000000000000000
-[   26.108917] raw: 0000000000000000 0000000000000001 00000000ffffff7f 0000000000000000
-[   26.137235] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
-[   26.143960] ------------[ cut here ]------------
-[   26.146020] kernel BUG at include/linux/mm.h:547!
-[   26.147586] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-[   26.149163] Modules linked in:
-[   26.150287] Process syz-executor.21 (pid: 20204, stack limit = 0x000000000e9cefeb)
-[   26.153307] CPU: 2 PID: 20204 Comm: syz-executor.21 Not tainted 5.1.0-rc7-00004-g7d30b2ea43d6 #18
-[   26.156566] Hardware name: linux,dummy-virt (DT)
-[   26.158089] pstate: 40400005 (nZcv daif +PAN -UAO)
-[   26.159869] pc : io_mem_free+0x9c/0xa8
-[   26.161436] lr : io_mem_free+0x9c/0xa8
-[   26.162720] sp : ffff000013003d60
-[   26.164048] x29: ffff000013003d60 x28: ffff800025048040
-[   26.165804] x27: 0000000000000000 x26: ffff800025048040
-[   26.167352] x25: 00000000000000c0 x24: ffff0000112c2820
-[   26.169682] x23: 0000000000000000 x22: 0000000020000080
-[   26.171899] x21: ffff80002143b418 x20: ffff80002143b400
-[   26.174236] x19: ffff80002143b280 x18: 0000000000000000
-[   26.176607] x17: 0000000000000000 x16: 0000000000000000
-[   26.178997] x15: 0000000000000000 x14: 0000000000000000
-[   26.181508] x13: 00009178a5e077b2 x12: 0000000000000001
-[   26.183863] x11: 0000000000000000 x10: 0000000000000980
-[   26.186437] x9 : ffff000013003a80 x8 : ffff800025048a20
-[   26.189006] x7 : ffff8000250481c0 x6 : ffff80002ffe9118
-[   26.191359] x5 : ffff80002ffe9118 x4 : 0000000000000000
-[   26.193863] x3 : ffff80002ffefe98 x2 : 44c06ddd107d1f00
-[   26.196642] x1 : 0000000000000000 x0 : 000000000000003e
-[   26.198892] Call trace:
-[   26.199893]  io_mem_free+0x9c/0xa8
-[   26.201155]  io_ring_ctx_wait_and_kill+0xec/0x180
-[   26.202688]  io_uring_setup+0x6c4/0x6f0
-[   26.204091]  __arm64_sys_io_uring_setup+0x18/0x20
-[   26.205576]  el0_svc_common.constprop.0+0x7c/0xe8
-[   26.207186]  el0_svc_handler+0x28/0x78
-[   26.208389]  el0_svc+0x8/0xc
-[   26.209408] Code: aa0203e0 d0006861 9133a021 97fcdc3c (d4210000)
-[   26.211995] ---[ end trace bdb81cd43a21e50d ]---
-
-[   81.770626] ------------[ cut here ]------------
-[   81.825015] virt_to_phys used for non-linear address: 000000000d42f2c7 (          (null))
-[   81.827860] WARNING: CPU: 1 PID: 30171 at arch/arm64/mm/physaddr.c:15 __virt_to_phys+0x48/0x68
-[   81.831202] Modules linked in:
-[   81.832212] CPU: 1 PID: 30171 Comm: syz-executor.20 Not tainted 5.1.0-rc7-00004-g7d30b2ea43d6 #19
-[   81.835616] Hardware name: linux,dummy-virt (DT)
-[   81.836863] pstate: 60400005 (nZCv daif +PAN -UAO)
-[   81.838727] pc : __virt_to_phys+0x48/0x68
-[   81.840572] lr : __virt_to_phys+0x48/0x68
-[   81.842264] sp : ffff80002cf67c70
-[   81.843858] x29: ffff80002cf67c70 x28: ffff800014358e18
-[   81.846463] x27: 0000000000000000 x26: 0000000020000080
-[   81.849148] x25: 0000000000000000 x24: ffff80001bb01f40
-[   81.851986] x23: ffff200011db06c8 x22: ffff2000127e3c60
-[   81.854351] x21: ffff800014358cc0 x20: ffff800014358d98
-[   81.856711] x19: 0000000000000000 x18: 0000000000000000
-[   81.859132] x17: 0000000000000000 x16: 0000000000000000
-[   81.861586] x15: 0000000000000000 x14: 0000000000000000
-[   81.863905] x13: 0000000000000000 x12: ffff1000037603e9
-[   81.866226] x11: 1ffff000037603e8 x10: 0000000000000980
-[   81.868776] x9 : ffff80002cf67840 x8 : ffff80001bb02920
-[   81.873272] x7 : ffff1000037603e9 x6 : ffff80001bb01f47
-[   81.875266] x5 : ffff1000037603e9 x4 : dfff200000000000
-[   81.876875] x3 : ffff200010087528 x2 : ffff1000059ecf58
-[   81.878751] x1 : 44c06ddd107d1f00 x0 : 0000000000000000
-[   81.880453] Call trace:
-[   81.881164]  __virt_to_phys+0x48/0x68
-[   81.882919]  io_mem_free+0x18/0x110
-[   81.886585]  io_ring_ctx_wait_and_kill+0x13c/0x1f0
-[   81.891212]  io_uring_setup+0xa60/0xad0
-[   81.892881]  __arm64_sys_io_uring_setup+0x2c/0x38
-[   81.894398]  el0_svc_common.constprop.0+0xac/0x150
-[   81.896306]  el0_svc_handler+0x34/0x88
-[   81.897744]  el0_svc+0x8/0xc
-[   81.898715] ---[ end trace b4a703802243cbba ]---
-
-Fixes: 2b188cc1bb857a9d ("Add io_uring IO interface")
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-block@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.or
----
- fs/io_uring.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 25fc8cb56fc5..5228e9b41708 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2552,9 +2552,12 @@ static void io_ring_ctx_free(struct io_ring_ctx *ctx)
- 		sock_release(ctx->ring_sock);
- #endif
- 
--	io_mem_free(ctx->sq_ring);
--	io_mem_free(ctx->sq_sqes);
--	io_mem_free(ctx->cq_ring);
-+	if (ctx->sq_ring)
-+		io_mem_free(ctx->sq_ring);
-+	if (ctx->sq_sqes)
-+		io_mem_free(ctx->sq_sqes);
-+	if (ctx->cq_ring)
-+		io_mem_free(ctx->cq_ring);
- 
- 	percpu_ref_exit(&ctx->refs);
- 	if (ctx->account_mem)
-@@ -2747,17 +2750,12 @@ static int io_allocate_scq_urings(struct io_ring_ctx *ctx,
- 		return -EOVERFLOW;
- 
- 	ctx->sq_sqes = io_mem_alloc(size);
--	if (!ctx->sq_sqes) {
--		io_mem_free(ctx->sq_ring);
-+	if (!ctx->sq_sqes)
- 		return -ENOMEM;
--	}
- 
- 	cq_ring = io_mem_alloc(struct_size(cq_ring, cqes, p->cq_entries));
--	if (!cq_ring) {
--		io_mem_free(ctx->sq_ring);
--		io_mem_free(ctx->sq_sqes);
-+	if (!cq_ring)
- 		return -ENOMEM;
--	}
- 
- 	ctx->cq_ring = cq_ring;
- 	cq_ring->ring_mask = p->cq_entries - 1;
 -- 
-2.11.0
+Jens Axboe
 
