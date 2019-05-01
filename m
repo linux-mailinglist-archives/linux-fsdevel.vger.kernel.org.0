@@ -2,88 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9035F10A7C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 18:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4FF710ACA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 18:11:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbfEAQAo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 12:00:44 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:50800 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbfEAQAo (ORCPT
+        id S1726472AbfEAQLw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 12:11:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45064 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbfEAQLw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 12:00:44 -0400
-Received: by mail-it1-f195.google.com with SMTP id q14so10458186itk.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 09:00:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UucgAJ6vzQAJLUd8MejiceLufM+Rh+s5b6O4bHFTuzI=;
-        b=mFi6QfPYyieJqHPZQXRfHHQ3WBm3B47xy+U1F43tfa/c8xD/oCRdQPCyQLse59bH6u
-         rwFxaZRlvWgrLjxkbzjWZCnOnkEig0rDmc3Ay6+aAluhblZIeD73A/psLZIWKxAe5SHb
-         +QvghO18x5taI/6ZuClbSwGl9KeXfvSeT5BzMJc1FLpIKnHL9AvPC7We5WNkzFXj4djD
-         sp0c1Fgni/+VNaUU47LWahauEpxwRgHOnbWR0eKuAg+/+Xp08ftFkikjjuTdr7lpxbOT
-         nJ/8JPgYI2gtW0rfJ4umEbRIB1KMVsUA9QZxIviKsXyaaNc4SyLzhZK6+CpRji18Xt+H
-         ir0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UucgAJ6vzQAJLUd8MejiceLufM+Rh+s5b6O4bHFTuzI=;
-        b=kW+wm8JTwXrhTtleU9DIqhmwmG3hz56qW4WtF1tQOzE6vC+IlJP7b4ALcb3SSvXip4
-         R9r4J5XHuG1ruluQVX3zIs60gfIBexPsSY4RziHLWPYNHoXsPrqhA3cO11sDWZqqWozi
-         UinyRfccX1C46d/DHWBayC2gXExjjPFMOZT8LJYxmJbPGlvHYuhOyWVroEZziSmVhOql
-         ttvu+KJIxTse0VrMGhYXl6coq71A9qkuXdwLBJXddJTl/msezkvOZBysWAAJzc51ikaO
-         +0Ov2VV2syEQUQLvPm0puVBzKh44reJosVvx4QpbPVJS9fTGaCwWggQHG4gE+qGsiTei
-         DRZA==
-X-Gm-Message-State: APjAAAXRA8W1xxAhHixvG9sbzyjAS2aR6R37aZqeKCwcg7m7hMOY+DX/
-        rkkIKVH2jHi89mgAOM4YXI0nFg==
-X-Google-Smtp-Source: APXvYqyngemqaTJRtwt7edU3xJc85kB0kSghkkjs8I9dP2T+jLH2ib7wQ2eYqYgvb4dDcNdLhVepBw==
-X-Received: by 2002:a24:4290:: with SMTP id i138mr8362892itb.129.1556726443331;
-        Wed, 01 May 2019 09:00:43 -0700 (PDT)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id 15sm3275504itm.6.2019.05.01.09.00.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 09:00:42 -0700 (PDT)
-Subject: Re: [PATCHv2] io_uring: avoid page allocation warnings
-To:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-References: <20190501155916.34008-1-mark.rutland@arm.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7c75a9bf-204f-1159-a2db-4679158652a2@kernel.dk>
-Date:   Wed, 1 May 2019 10:00:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 1 May 2019 12:11:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=C1JFCpcZ5l1nzCsgLfhWfKHo8a7m+wqGevCNCESRWiM=; b=MAOqUMQ6iCrux1T2lnLWrrMA0
+        pzGBGE98fkJDy0cZui0RUSuQQrFLCDmP+RTSvz4D2gWrt6vD5GD6i5leWy7SegcCM3smGGeN8vMVZ
+        bAch2fJnrOwiVY77u2hxXkBrYSfpTKLF1v5RDs1WUhwfnPNbe40Sjb6pDAgFidvYIYr+qMfS8jLZJ
+        IYQa0tJdTngD/fY7zYIeivJ/przbOG7LHNaTd0XFyJ3B/44zx4H10vnl/k0nofGAThY19VCzgSWfw
+        bZKuMR22AqbSsZgWrVkRSkJnD1/swNenF/2dt4xb7ZCSfwRwKrTIAxg//KHGclVtKxeICFNj8vySn
+        /tLbf1d7g==;
+Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hLrpl-0003lM-C7; Wed, 01 May 2019 16:11:51 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     darrick.wong@oracle.com
+Cc:     agruenba@redhat.com, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] iomap: move iomap_read_inline_data around
+Date:   Wed,  1 May 2019 12:11:11 -0400
+Message-Id: <20190501161111.32475-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190501155916.34008-1-mark.rutland@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/1/19 9:59 AM, Mark Rutland wrote:
-> In io_sqe_buffer_register() we allocate a number of arrays based on the
-> iov_len from the user-provided iov. While we limit iov_len to SZ_1G,
-> we can still attempt to allocate arrays exceeding MAX_ORDER.
-> 
-> On a 64-bit system with 4KiB pages, for an iov where iov_base = 0x10 and
-> iov_len = SZ_1G, we'll calculate that nr_pages = 262145. When we try to
-> allocate a corresponding array of (16-byte) bio_vecs, requiring 4194320
-> bytes, which is greater than 4MiB. This results in SLUB warning that
-> we're trying to allocate greater than MAX_ORDER, and failing the
-> allocation.
-> 
-> Avoid this by using kvmalloc() for allocations dependent on the
-> user-provided iov_len. At the same time, fix a leak of imu->bvec when
-> registration fails.
+iomap_read_inline_data ended up being placed in the middle of the bio
+based read I/O completion handling, which tends to confuse the heck out
+of me whenever I follow the code.  Move it to a more suitable place.
 
-Applied, thanks.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/iomap.c | 40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
+diff --git a/fs/iomap.c b/fs/iomap.c
+index fbfe20b7f6f0..9ef049d61e8a 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -240,26 +240,6 @@ iomap_read_page_end_io(struct bio_vec *bvec, int error)
+ 	iomap_read_finish(iop, page);
+ }
+ 
+-static void
+-iomap_read_inline_data(struct inode *inode, struct page *page,
+-		struct iomap *iomap)
+-{
+-	size_t size = i_size_read(inode);
+-	void *addr;
+-
+-	if (PageUptodate(page))
+-		return;
+-
+-	BUG_ON(page->index);
+-	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+-
+-	addr = kmap_atomic(page);
+-	memcpy(addr, iomap->inline_data, size);
+-	memset(addr + size, 0, PAGE_SIZE - size);
+-	kunmap_atomic(addr);
+-	SetPageUptodate(page);
+-}
+-
+ static void
+ iomap_read_end_io(struct bio *bio)
+ {
+@@ -281,6 +261,26 @@ struct iomap_readpage_ctx {
+ 	struct list_head	*pages;
+ };
+ 
++static void
++iomap_read_inline_data(struct inode *inode, struct page *page,
++		struct iomap *iomap)
++{
++	size_t size = i_size_read(inode);
++	void *addr;
++
++	if (PageUptodate(page))
++		return;
++
++	BUG_ON(page->index);
++	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
++
++	addr = kmap_atomic(page);
++	memcpy(addr, iomap->inline_data, size);
++	memset(addr + size, 0, PAGE_SIZE - size);
++	kunmap_atomic(addr);
++	SetPageUptodate(page);
++}
++
+ static loff_t
+ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 		struct iomap *iomap)
 -- 
-Jens Axboe
+2.20.1
 
