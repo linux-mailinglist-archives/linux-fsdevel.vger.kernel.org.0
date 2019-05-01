@@ -2,104 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BF1F105DD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 09:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9523105E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 09:39:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbfEAHYt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 03:24:49 -0400
-Received: from smtpbg202.qq.com ([184.105.206.29]:47765 "EHLO smtpbg202.qq.com"
+        id S1726067AbfEAHjH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 03:39:07 -0400
+Received: from dcvr.yhbt.net ([64.71.152.64]:43340 "EHLO dcvr.yhbt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbfEAHYt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 03:24:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1556695482;
-        bh=5OYycxbwytoGNlsaJHsNXYpwDWjxGCcdM8AS1gUFazM=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version;
-        b=aiqQ8uG+WNV/0xesQxRnqGu9YYCOWwPUWVqK1+DibDqEuchRsw8KROuqqNOIzbzA8
-         uYNDVCdgNxOLsswm7xdlawl4tjSFRcl5BWHSA1m3tMP3fUEd6H2g4voxLbhUaBomXY
-         k3FgP2QVLRINPZbLoxOI/SQTDj81XADitnb4Z4fE=
-X-QQ-mid: esmtp7t1556695480tox338gz4
-Received: from localhost.localdomain (unknown [61.48.57.6])
-        by esmtp4.qq.com (ESMTP) with 
-        id ; Wed, 01 May 2019 15:24:31 +0800 (CST)
-X-QQ-SSF: 01000000000000F0FH3000000000000
-X-QQ-FEAT: wEhDafM0Yc9uu8tyfM1rs+CFPVVrQlgWGMwpH1exmA6DNb1aBj9yruVSyiDwv
-        HUzY2sEecLEEc0Tc9eOu5UFloLajb2qYKmlQB7KTkEPiQkcDuCGhd+irVhE9JOwaFaUUqPi
-        onnZYmNOc0BB2bA++XTkx/cm7RYkZVavTZrFmQcoBKYaolBgME8Eb0U7v7yz70VivX1ARxv
-        54hprnjiBT9kwi2yTF7xngFWIIrVV1FwY62Vxekq3K/s7qbLhr9RdMObuE9Lh0a+nIVOpPV
-        Q3ceP/1btYSc+H9nHyk15S7t4Y9bddd75kfA==
-X-QQ-GoodBg: 0
-From:   Shenghui Wang <shhuiw@foxmail.com>
-To:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     jmoyer@redhat.com
-Subject: [PATCH] io_uring: use cpu_online() to check p->sq_thread_cpu instead of cpu_possible()
-Date:   Wed,  1 May 2019 15:24:30 +0800
-Message-Id: <20190501072430.6674-1-shhuiw@foxmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726014AbfEAHjH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 May 2019 03:39:07 -0400
+Received: from localhost (dcvr.yhbt.net [127.0.0.1])
+        by dcvr.yhbt.net (Postfix) with ESMTP id 98E9F1F453;
+        Wed,  1 May 2019 07:39:06 +0000 (UTC)
+Date:   Wed, 1 May 2019 07:39:06 +0000
+From:   Eric Wong <e@80x24.org>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Davidlohr Bueso <dave@stgolabs.net>, Arnd Bergmann <arnd@arndb.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jason Baron <jbaron@akamai.com>, linux-kernel@vger.kernel.org,
+        Omar Kilani <omar.kilani@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: Strange issues with epoll since 5.0
+Message-ID: <20190501073906.ekqr7xbw3qkfgv56@dcvr>
+References: <CA+8F9hicnF=kvjXPZFQy=Pa2HJUS3JS+G9VswFHNQQynPMHGVQ@mail.gmail.com>
+ <20190424193903.swlfmfuo6cqnpkwa@dcvr>
+ <20190427093319.sgicqik2oqkez3wk@dcvr>
+ <CABeXuvrY9QdvF1gTfiMt-eVp7VtobwG9xzjQFkErq+3wpW_P3Q@mail.gmail.com>
+ <20190428004858.el3yk6hljloeoxza@dcvr>
+ <20190429204754.hkz7z736tdk4ucum@linux-r8p5>
+ <20190429210427.dmfemfft2t2gdwko@dcvr>
+ <CABeXuvqpAjk8ocRUabVU4Yviv7kgRkMneLE1Xy-jAtHdXAHBVw@mail.gmail.com>
+ <20190501021405.hfvd7ps623liu25i@dcvr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtp:foxmail.com:bgforeign:bgforeign4
-X-QQ-Bgrelay: 1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190501021405.hfvd7ps623liu25i@dcvr>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This issue is found by running liburing/test/io_uring_setup test.
+Eric Wong <e@80x24.org> wrote:
+> (didn't test AIO, but everything else seems good)
 
-When test run, the testcase "attempt to bind to invalid cpu" would not
-pass with messages like:
-   io_uring_setup(1, 0xbfc2f7c8), \
-flags: IORING_SETUP_SQPOLL|IORING_SETUP_SQ_AFF, \
-resv: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000, \
-sq_thread_cpu: 2
-   expected -1, got 3
-   FAIL
+"seems" != "is"
 
-On my system, there is:
-   CPU(s) possible : 0-3
-   CPU(s) online   : 0-1
-   CPU(s) offline  : 2-3
-   CPU(s) present  : 0-1
+Now that I understand the fix for epoll, the fs/select.c changes
+would hit the same problem and not return -EINTR when it should.
 
-The sq_thread_cpu 2 is offline on my system, so the bind should fail.
-But cpu_possible() will pass the check. We shouldn't be able to bind
-to an offline cpu. Use cpu_online() to do the check.
-
-After the change, the testcase run as expected: EINVAL will be returned
-for cpu offlined.
-
-Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
----
- fs/io_uring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0e9fb2cb1984..aa3d39860a1c 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2241,7 +2241,7 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
- 	ctx->sqo_mm = current->mm;
- 
- 	ret = -EINVAL;
--	if (!cpu_possible(p->sq_thread_cpu))
-+	if (!cpu_online(p->sq_thread_cpu))
- 		goto err;
- 
- 	if (ctx->flags & IORING_SETUP_SQPOLL) {
-@@ -2258,7 +2258,7 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
- 
- 			cpu = array_index_nospec(p->sq_thread_cpu, NR_CPUS);
- 			ret = -EINVAL;
--			if (!cpu_possible(p->sq_thread_cpu))
-+			if (!cpu_online(p->sq_thread_cpu))
- 				goto err;
- 
- 			ctx->sqo_thread = kthread_create_on_cpu(io_sq_thread,
--- 
-2.20.1
-
-
-
+I'll let you guys decide how to fix this, but there's definitely
+a problem when "(errno == EINTR)" comparisons in userspace
+stop working.
