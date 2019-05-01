@@ -2,140 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2442410A1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 17:34:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8253B10A1D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 17:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfEAPeK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 11:34:10 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45255 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfEAPeK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 11:34:10 -0400
-Received: by mail-qt1-f194.google.com with SMTP id b3so20315222qtc.12;
-        Wed, 01 May 2019 08:34:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N7BVof8zcWOlmgfoNNTzY2OrKwZHtJkNJJ/tVCOczZQ=;
-        b=LJOCQpTuAOMonbbFd+HFYKhAdfAuYbz/YN7leE+vqtSDSU77hZTmtUm3kYo7OdSMgM
-         bH+Uv1E5hNu61ylGEuBOy/k+G8bWfbgx1x4bt1RyzeeGPtU4wtJFqhNrbXKVLmh94P5W
-         H3JUZA9DgRHA5jzjjyiyGIQ0AqNMI6bzImj/vOm9YVV4oR/FGuBfYGCrY5ue21OVzIdv
-         oBsJuDbw1wtIi+98ifSfhjY4bQJVSklHmKuSmnCSGb3iwN/kbnqBhhGyP68b00fF+kuh
-         9J7hQkjNfqRKZOp//X4aLOdG0KSktlZqMG5xgHHuyoM6+AgFw6h7NDcSqZqnr21zte0i
-         lb6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N7BVof8zcWOlmgfoNNTzY2OrKwZHtJkNJJ/tVCOczZQ=;
-        b=h/hTBNedrkrOUCYqYHNM3Hz5ikRud9Y+DDk9KA3nMGtuk0I72PxcfSox2YUZa/5B6a
-         TIAxMHHCc27k+1JWAKABlAlEVBVc1qNN9CNHwvtdO4Pd520Dss19xU5PcugQWLqwEY53
-         zWyIeyvFthmVU9JSOACAwQ0wd0LkykfHn53VJtAeZuS/mDnYIWszJNhcrMturReP1Z54
-         Ofh/l3hhyvVBEqblpPl5XC/HMUtfu1PA044wJVUE2JGkjPQCrtVg3dH5IvVJjUrql8cn
-         mGpoSlkYbz/qQFyLr2V/3K7b+uPFu+n1wVtXPwQUzq+jiDJ/rc23QoXyZBk1mcTIoyGE
-         Q/dw==
-X-Gm-Message-State: APjAAAVvSGkRn8x3AoslH4uKx+46P4aO/6Ul0habDp9qpxwuBQCZcrni
-        C8aurwo4OEVDnI1mapL2N4kLUw96fo04gJGHxYQAd6f/
-X-Google-Smtp-Source: APXvYqzROLS7CvGrZASPPcvG/dxihfU9bAmIpDLNRjhMKwZG33h79JY5/Yot97nB/NsbR3Hm3m6NGf/lJdTltx6q0ic=
-X-Received: by 2002:ac8:25b8:: with SMTP id e53mr24425025qte.194.1556724849335;
- Wed, 01 May 2019 08:34:09 -0700 (PDT)
+        id S1726780AbfEAPeN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 11:34:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60630 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726579AbfEAPeM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 May 2019 11:34:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 22A71ADD4;
+        Wed,  1 May 2019 15:34:11 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id CF7DE1E3BEC; Wed,  1 May 2019 17:34:09 +0200 (CEST)
+Date:   Wed, 1 May 2019 17:34:09 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [GIT PULL] fsnotify fix for v5.1-rc8
+Message-ID: <20190501153409.GC6024@quack2.suse.cz>
+References: <20190430214149.GA482@quack2.suse.cz>
+ <CAHk-=wgn8iEOsT0wwHu4RoZSODb7bRAq5bS59wgZttHbn4gZrg@mail.gmail.com>
+ <20190501145228.GB6024@quack2.suse.cz>
 MIME-Version: 1.0
-References: <20190418220448.7219-1-gpiccoli@canonical.com> <CAPhsuW4k5zz2pJBPL60VzjTcj6NTnhBh-RjvWASLcOxAk+yDEw@mail.gmail.com>
- <b39b96ea-2540-a407-2232-1af91e3e6658@canonical.com>
-In-Reply-To: <b39b96ea-2540-a407-2232-1af91e3e6658@canonical.com>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Wed, 1 May 2019 08:33:58 -0700
-Message-ID: <CAPhsuW65EW8JgjE8zknPQPXYcmDhX9LEhTKGb0KHywqKuZkUcA@mail.gmail.com>
-Subject: Re: [RFC] [PATCH V2 0/1] Introduce emergency raid0 stop for mounted arrays
-To:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Cc:     axboe@kernel.dk, linux-raid <linux-raid@vger.kernel.org>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>, kernel@gpiccoli.net,
-        NeilBrown <neilb@suse.com>, dm-devel@redhat.com,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org, gavin.guo@canonical.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190501145228.GB6024@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 3:41 PM Guilherme G. Piccoli
-<gpiccoli@canonical.com> wrote:
->
-> > On 19/04/2019 14:08, Song Liu wrote:
-> > [...]
-> > I read through the discussion in V1, and I would agree with Neil that
-> > current behavior is reasonable.
-> >
-> > For the following example:
-> >
-> > fd = open("file", "w");
-> > write(fd, buf, size);
-> > ret = fsync(fd);
-> >
-> > If "size" is big enough, the write is not expected to be atomic for
-> > md or other drives. If we remove the underlining block device
-> > after write() and before fsync(), the file could get corrupted. This
-> > is the same for md or NVMe/SCSI drives.
-> >
-> > The application need to check "ret" from fsync(), the data is safe
-> > only when fsync() returns 0.
-> >
-> > Does this make sense?
-> >
->
-> Hi Song, thanks for your quick response, and sorry for my delay.
-> I've noticed after v4.18 kernel started to crash when we remove one
-> raid0 member while writing, so I was investigating this
-> before perform your test (in fact, found 2 issues [0]), hence my delay.
->
-> Your test does make sense; in fact I've tested your scenario with the
-> following code (with the patches from [0]):
-> https://pastebin.ubuntu.com/p/cyqpDqpM7x/
->
-> Indeed, fsync returns -1 in this case.
-> Interestingly, when I do a "dd if=<some_file> of=<raid0_mount>" and try
-> to "sync -f <some_file>" and "sync", it succeeds and the file is
-> written, although corrupted.
+On Wed 01-05-19 16:52:28, Jan Kara wrote:
+> On Tue 30-04-19 15:10:30, Linus Torvalds wrote:
+> > On Tue, Apr 30, 2019 at 2:41 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > to get a fix of user trigerable NULL pointer dereference syzbot has
+> > > recently spotted. The problem has been introduced in rc1 so no CC stable is
+> > > needed.
+> > 
+> > Hmm. Pulled, but I thin kthe use of READ_ONCE/WRITE_ONCE is suspicious.
+> > 
+> > If we're reading a pointer like this locklessly, the proper sequence
+> > is almost always something like "smp_store_release()" to write the
+> > pointer, and "smp_load_acquire()" to read it.
+> > 
+> > Because that not only does the "access once" semantics, but it also
+> > guarantees that when we actually look _through_ the pointer, we see
+> > the data that was written to it. In contrast, code like this (from the
+> > fix)
+> > 
+> > +       WRITE_ONCE(mark->connector, conn);
+> > 
+> >    ...
+> > 
+> > +               conn = READ_ONCE(iter_info->marks[type]->connector);
+> > +               /* Mark is just getting destroyed or created? */
+> > +               if (!conn)
+> > +                       continue;
+> > +               fsid = conn->fsid;
+> > 
+> > is rather suspicious, because there's no obvious guarantee that tjhe
+> > "conn->fsid" part was written on one CPU before we read it on another.
+> 
+> Hum, you're right. The WRITE_ONCE(mark->connector, conn) still is not
+> enough. It needs to have a barrier so that the connector initialization is
+> guaranteed to be visible by RCU reader.
+> READ_ONCE(iter_info->marks[type]->connector) is safe as is already contains
+> smp_read_barrier_depends() which is all that should be needed once we have
+> write barrier before WRITE_ONCE().
+> 
+> Since I don't think this is a practical problem, I'll just queue the fix
+> for the merge window. Thanks for spotting this!
 
-I guess this is some issue with sync command, but I haven't got time
-to look into it. How about running dd with oflag=sync or oflag=direct?
+And looking some more into this. I don't think the issue can happen at all.
+The thing is that the "connector" gets allocated, initialized, and attached
+to inode / mntpoint / sb using cmpxchg() which provides the barrier. Then
+mark gets added to connector's list and mark->connector is set. So *mark*
+changes happening in fsnotify_add_mark_list() can get reordered (but
+there's just list addition there) but *connector* changes are safely
+visible. But this certainly deserves a comment as even I got confused and
+it was me who wrote this all ;)
 
->
-> Do you think this behavior is correct? In other devices, like a pure
-> SCSI disk or NVMe, the 'dd' write fails.
-> Also, what about the status of the raid0 array in mdadm - it shows as
-> "clean" even after the member is removed, should we change that?
-
-I guess this is because the kernel hasn't detect the array is gone? In
-that case, I think reducing the latency would be useful for some use
-cases.
-
-Thanks,
-Song
-
->
->
-> > Also, could you please highlight changes from V1 (if more than
-> > just rebase)?
->
-> No changes other than rebase. Worth mentioning here that a kernel bot
-> (and Julia Lawall) found an issue in my patch; I forgot a
-> "mutex_lock(&mddev->open_mutex);" in line 6053, which caused the first
-> caveat (hung mdadm and persistent device in /dev). Thanks for pointing
-> this silly mistake from me! in case this patch gets some traction, I'll
-> re-submit with that fixed.
->
-> Cheers,
->
->
-> Guilherme
->
-> [0] https://marc.info/?l=linux-block&m=155666385707413
->
-> >
-> > Thanks,
-> > Song
-> >
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
