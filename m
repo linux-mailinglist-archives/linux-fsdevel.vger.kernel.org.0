@@ -2,176 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02ACB10936
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 16:39:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4220010991
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 16:48:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfEAOjJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 10:39:09 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45074 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbfEAOjJ (ORCPT
+        id S1726694AbfEAOsr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 10:48:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33582 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726673AbfEAOsq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 10:39:09 -0400
-Received: by mail-io1-f68.google.com with SMTP id e8so14938621ioe.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 07:39:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=D+YD+tuNUu91Iyn44JKrPk1BpBj3AFej76i6TR02JAo=;
-        b=Mb5SfcdGZ7NwMGa+u2H81mJzlRgcWxVTgOQf2JfO2aYQw1zjEu1szFJVDjB87TGH4x
-         pJfFKUOZGQj4oiId7YdGqExzikcv5VqeTqH2D1Ot/toybyEjspGC7ZI4H5q7eMNqKiBf
-         x2XydqD+X32kO1ueEEPdp7WCV7FTQa6lOoIM1TPpgv+ysV9KF16cStjlxcB2Os62ZBk+
-         qOVHpEBRx2jkn5iOhHiEa/Jlbz7+/0ZCwXdjTWV+13f2kLottlfRr1T103PdPC9zw/Rr
-         oe1JgH8NrXcuLwcorL2wUSvFkG8GsHJLvU6t1xTI/7w7+qIEy0FiHb49n7F8X1P6CRLH
-         aMXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=D+YD+tuNUu91Iyn44JKrPk1BpBj3AFej76i6TR02JAo=;
-        b=lj7MnlmPPk/8CgQbQFncFSsm5TvFwzkyKhlfzW3LdDZfPWj0GKueGEOO/ErJXkBdTE
-         WS0sYSZSw4P37vI4oYKn/+VB87cpUwYTZ6VL6OQfvDVCbSbjp62YQw2mSP6GeC4WEcnL
-         o5jAKYChR8e1BHjO5YMxjOGDjCmnE5NRLRHPi5lo+n9OC0gryYyuH/RdZm6LV942HZ09
-         FmAzFrJEqZ+NP0yJjjlv5iVgRiK/rHVa0vtPmV+BkGZiR4CFAMCOxtKp06NU6QdVbA40
-         B9P6ocxYRe2551ebeyNhW3N3DSf1rp5BeU2hyVV4cNcTMzBx5zTEyvYXY1y26l8MCINg
-         bGEA==
-X-Gm-Message-State: APjAAAW9+YPX9SdcmhT8UucSbA7KiHlrjx/7qXZCyCGLvR3f4aBmN46Y
-        Z2lWXREKV4kXrJbvt6umXrmx2ONF24HgeA==
-X-Google-Smtp-Source: APXvYqx6pDQDS4TCOe+Ri8MN90Jo7ttqTVw+2uGZv35CzzHRRIwMxW3ql1o0w0s72Ub9kKtFxIUENA==
-X-Received: by 2002:a5e:920c:: with SMTP id y12mr23987279iop.65.1556721548131;
-        Wed, 01 May 2019 07:39:08 -0700 (PDT)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id b8sm7629245ior.5.2019.05.01.07.39.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 07:39:07 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: use cpu_online() to check p->sq_thread_cpu
- instead of cpu_possible()
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Shenghui Wang <shhuiw@foxmail.com>, viro@zeniv.linux.org.uk,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20190501072430.6674-1-shhuiw@foxmail.com>
- <x49wojaxuaa.fsf@segfault.boston.devel.redhat.com>
- <cd55b1e4-9395-a8b7-707e-ceed9d6c0c15@kernel.dk>
- <x49o94mxn1w.fsf@segfault.boston.devel.redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <bcf4aa58-ec09-3d73-89f8-fdfdc3ea2896@kernel.dk>
-Date:   Wed, 1 May 2019 08:39:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 1 May 2019 10:48:46 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x41Eatom046314
+        for <linux-fsdevel@vger.kernel.org>; Wed, 1 May 2019 10:48:45 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2s7cemjrr8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 10:48:45 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
+        Wed, 1 May 2019 15:48:43 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 1 May 2019 15:48:39 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x41EmcUB38535298
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 May 2019 14:48:38 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1671442042;
+        Wed,  1 May 2019 14:48:38 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0920F4204B;
+        Wed,  1 May 2019 14:48:36 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.33.136])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  1 May 2019 14:48:35 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.ibm.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net,
+        hch@infradead.org, linux-fscrypt@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
+        jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH V2 10/13] fscrypt_encrypt_page: Loop across all blocks mapped by a page range
+Date:   Wed, 01 May 2019 20:19:35 +0530
+Organization: IBM
+In-Reply-To: <20190430230840.GE48973@gmail.com>
+References: <20190428043121.30925-1-chandan@linux.ibm.com> <20190430171133.GC48973@gmail.com> <20190430230840.GE48973@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <x49o94mxn1w.fsf@segfault.boston.devel.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 19050114-0020-0000-0000-000003383BE6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050114-0021-0000-0000-0000218ABF86
+Message-Id: <4666731.7CFakFE75r@localhost.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-01_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905010094
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/1/19 8:32 AM, Jeff Moyer wrote:
-> Jens Axboe <axboe@kernel.dk> writes:
+On Wednesday, May 1, 2019 4:38:41 AM IST Eric Biggers wrote:
+> On Tue, Apr 30, 2019 at 10:11:35AM -0700, Eric Biggers wrote:
+> > On Sun, Apr 28, 2019 at 10:01:18AM +0530, Chandan Rajendra wrote:
+> > > For subpage-sized blocks, this commit now encrypts all blocks mapped by
+> > > a page range.
+> > > 
+> > > Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
+> > > ---
+> > >  fs/crypto/crypto.c | 37 +++++++++++++++++++++++++------------
+> > >  1 file changed, 25 insertions(+), 12 deletions(-)
+> > > 
+> > > diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+> > > index 4f0d832cae71..2d65b431563f 100644
+> > > --- a/fs/crypto/crypto.c
+> > > +++ b/fs/crypto/crypto.c
+> > > @@ -242,18 +242,26 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
+> > 
+> > Need to update the function comment to clearly explain what this function
+> > actually does now.
+> > 
+> > >  {
+> > >  	struct fscrypt_ctx *ctx;
+> > >  	struct page *ciphertext_page = page;
+> > > +	int i, page_nr_blks;
+> > >  	int err;
+> > >  
+> > >  	BUG_ON(len % FS_CRYPTO_BLOCK_SIZE != 0);
+> > >  
+> > 
+> > Make a 'blocksize' variable so you don't have to keep calling i_blocksize().
+> > 
+> > Also, you need to check whether 'len' and 'offs' are filesystem-block-aligned,
+> > since the code now assumes it.
+> > 
+> > 	const unsigned int blocksize = i_blocksize(inode);
+> > 
+> >         if (!IS_ALIGNED(len | offs, blocksize))
+> >                 return -EINVAL;
+> > 
+> > However, did you check whether that's always true for ubifs?  It looks like it
+> > may expect to encrypt a prefix of a block, that is only padded to the next
+> > 16-byte boundary.
+> > 		
+> > > +	page_nr_blks = len >> inode->i_blkbits;
+> > > +
+> > >  	if (inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES) {
+> > >  		/* with inplace-encryption we just encrypt the page */
+> > > -		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num, page,
+> > > -					     ciphertext_page, len, offs,
+> > > -					     gfp_flags);
+> > > -		if (err)
+> > > -			return ERR_PTR(err);
+> > > -
+> > > +		for (i = 0; i < page_nr_blks; i++) {
+> > > +			err = fscrypt_do_page_crypto(inode, FS_ENCRYPT,
+> > > +						lblk_num, page,
+> > > +						ciphertext_page,
+> > > +						i_blocksize(inode), offs,
+> > > +						gfp_flags);
+> > > +			if (err)
+> > > +				return ERR_PTR(err);
 > 
->> On 5/1/19 5:56 AM, Jeff Moyer wrote:
->>> Shenghui Wang <shhuiw@foxmail.com> writes:
->>>
->>>> This issue is found by running liburing/test/io_uring_setup test.
->>>>
->>>> When test run, the testcase "attempt to bind to invalid cpu" would not
->>>> pass with messages like:
->>>>    io_uring_setup(1, 0xbfc2f7c8), \
->>>> flags: IORING_SETUP_SQPOLL|IORING_SETUP_SQ_AFF, \
->>>> resv: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000, \
->>>> sq_thread_cpu: 2
->>>>    expected -1, got 3
->>>>    FAIL
->>>>
->>>> On my system, there is:
->>>>    CPU(s) possible : 0-3
->>>>    CPU(s) online   : 0-1
->>>>    CPU(s) offline  : 2-3
->>>>    CPU(s) present  : 0-1
->>>>
->>>> The sq_thread_cpu 2 is offline on my system, so the bind should fail.
->>>> But cpu_possible() will pass the check. We shouldn't be able to bind
->>>> to an offline cpu. Use cpu_online() to do the check.
->>>>
->>>> After the change, the testcase run as expected: EINVAL will be returned
->>>> for cpu offlined.
->>>>
->>>> Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
->>>> ---
->>>>  fs/io_uring.c | 4 ++--
->>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>> index 0e9fb2cb1984..aa3d39860a1c 100644
->>>> --- a/fs/io_uring.c
->>>> +++ b/fs/io_uring.c
->>>> @@ -2241,7 +2241,7 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
->>>>  	ctx->sqo_mm = current->mm;
->>>>  
->>>>  	ret = -EINVAL;
->>>> -	if (!cpu_possible(p->sq_thread_cpu))
->>>> +	if (!cpu_online(p->sq_thread_cpu))
->>>>  		goto err;
->>>>  
->>>>  	if (ctx->flags & IORING_SETUP_SQPOLL) {
->>>> @@ -2258,7 +2258,7 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
->>>>  
->>>>  			cpu = array_index_nospec(p->sq_thread_cpu, NR_CPUS);
->>>>  			ret = -EINVAL;
->>>> -			if (!cpu_possible(p->sq_thread_cpu))
->>>> +			if (!cpu_online(p->sq_thread_cpu))
->>>>  				goto err;
->>>>  
->>>>  			ctx->sqo_thread = kthread_create_on_cpu(io_sq_thread,
->>>
->>> Hmm.  Why are we doing this check twice?  Oh... Jens, I think you
->>> braino'd commit 917257daa0fea.  Have a look.  You probably wanted to get
->>> rid of the first check for cpu_possible.
->>
->> Added a fixup patch the other day:
->>
->> http://git.kernel.dk/cgit/linux-block/commit/?h=for-linus&id=362bf8670efccebca22efda1ee5a5ee831ec5efb
+> Apparently ubifs does encrypt data shorter than the filesystem block size, so
+> this part is wrong.
 > 
-> @@ -2333,13 +2329,14 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
->  			ctx->sq_thread_idle = HZ;
->  
->  		if (p->flags & IORING_SETUP_SQ_AFF) {
-> -			int cpu;
-> +			int cpu = p->sq_thread_cpu;
->  
-> -			cpu = array_index_nospec(p->sq_thread_cpu, NR_CPUS);
->  			ret = -EINVAL;
-> -			if (!cpu_possible(p->sq_thread_cpu))
-> +			if (cpu >= nr_cpu_ids || !cpu_possible(cpu))
->  				goto err;
->  
-> +			cpu = array_index_nospec(cpu, nr_cpu_ids);
-> +
+> I suggest we split this into two functions, fscrypt_encrypt_block_inplace() and
+> fscrypt_encrypt_blocks(), so that it's conceptually simpler what each function
+> does.  Currently this works completely differently depending on whether the
+> filesystem set FS_CFLG_OWN_PAGES in its fscrypt_operations, which is weird.
 > 
-> Why do you do the array_index_nospec last?  Why wouldn't that be written
-> as:
+> I also noticed that using fscrypt_ctx for writes seems to be unnecessary.
+> AFAICS, page_private(bounce_page) could point directly to the pagecache page.
+> That would simplify things a lot, especially since then fscrypt_ctx could be
+> removed entirely after you convert reads to use read_callbacks_ctx.
 > 
-> 	if (p->flags & IORING_SETUP_SQ_AFF) {
-> 		int cpu = array_index_nospec(p->sq_thread_cpu, nr_cpu_ids);
+> IMO, these would be worthwhile cleanups for fscrypt by themselves, without
+> waiting for the read_callbacks stuff to be finalized.  Finalizing the
+> read_callbacks stuff will probably require reaching a consensus about how they
+> should work with future filesystem features like fsverity and compression.
 > 
-> 		ret = -EINVAL;
-> 		if (!cpu_possible(cpu))
-> 			goto err;
+> So to move things forward, I'm considering sending out a series with the above
+> cleanups for fscrypt, plus the equivalent of your patches:
 > 
-> 		ctx->sqo_thread = kthread_create_on_cpu(io_sq_thread,
-> 						ctx, cpu,
-> 						"io_uring-sq");
-> 	} else {
-> ...
+> 	"fscrypt_encrypt_page: Loop across all blocks mapped by a page range"
+> 	"fscrypt_zeroout_range: Encrypt all zeroed out blocks of a page"
+> 	"Add decryption support for sub-pagesized blocks" (fs/crypto/ part only)
 > 
-> That would take away some head-scratching for me.
+> Then hopefully we can get all that applied for 5.3 so that fs/crypto/ itself is
+> ready for blocksize != PAGE_SIZE; and get your changes to ext4_bio_write_page(),
+> __ext4_block_zero_page_range(), and ext4_block_write_begin() applied too, so
+> that ext4 is partially ready for encryption with blocksize != PAGE_SIZE.
+> 
+> Then only the read_callbacks stuff will remain, to get encryption support into
+> fs/mpage.c and fs/buffer.c.  Do you think that's a good plan?
 
-Agree, I've cleaned it up, it was a bit of a mess.
+Hi Eric,
+
+IMHO, I will continue posting the next version of the current patchset and if
+there are no serious reservations from FS maintainers the "read callbacks"
+patchset can be merged. In such a scenario, the cleanups being
+non-complicated, can be merged later.
 
 -- 
-Jens Axboe
+chandan
+
+
 
