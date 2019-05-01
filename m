@@ -2,140 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3323910E45
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 22:54:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7882010E49
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 22:55:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbfEAUyJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 16:54:09 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50624 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726088AbfEAUyJ (ORCPT
+        id S1726145AbfEAUzp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 16:55:45 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:40948 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726088AbfEAUzp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 16:54:09 -0400
-Received: by mail-it1-f194.google.com with SMTP id q14so722287itk.0;
-        Wed, 01 May 2019 13:54:08 -0700 (PDT)
+        Wed, 1 May 2019 16:55:45 -0400
+Received: by mail-yw1-f66.google.com with SMTP id t79so24553ywc.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 13:55:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NIcJKYBcMp0LBZVdGWmzzu8eQ6eVC6AwEkLQJhbgPJA=;
-        b=uQOR/ugMpYcHFXtprrn5lLtqOgrkNpwpZgQl13kys6czcZPk8ShghAJNb/tq+GerLz
-         aFa8rVINWNqfqcBUW+oLMEN4v1TVZTrmsMXUYF5S3RnjZN6t2KR54P/GSIpn522xOD76
-         aIfVMfBp5Ls4Gw4RjG5Lw2a2o5KEdKzKrFh8nS82TqMRrc3wEz8mYIjqjkKSQRHsF3/d
-         KC0R0vKhgYa5Bk7Ex+gpoSw7zkXqK5pEty7RvS6D/RdmloGmb8oZjgsJppdUITXCrqWI
-         WwQVEsDyF9rjMWcywF+ccA+KC6tWrDE7d2KFaCHwZ0Y1qx64ZNYwCuobSFyofd5la7tB
-         elGA==
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=aAYZCbi0VoSmmJV447FzNll6sGqvQaQ9x6mMPmHmAI4=;
+        b=X+fxKdNubUSEWdz6YamleAbHQ6uLnohL159H15RTgJJJ2xfWmnYhTfTjjA/eCrQS35
+         zGS7308JRWp1SHHJ8qaZdCBMHx51dzzZETcNos4rbFbngmqZJ1j0DMJvwQ/LEWyuN8Ba
+         zVzq4h1x5CAd0aLYMMxPBBaQ5x98wo/uByJPc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NIcJKYBcMp0LBZVdGWmzzu8eQ6eVC6AwEkLQJhbgPJA=;
-        b=ck2eLxj+/S2KCGdY617akxtCQfiJTMG2G2VR8MOy2nbcy5de0GZyG8RKk7Ut1C2LAW
-         hfjuHHZkQt8ee1n4W2LY98WDElu/zeWUw3fdhaET8ctSBD1M9yg0Xu5dkn+51m0rW9oP
-         ye6HzvHho5NX1e9ZO4CmL3SGlHHda3eYnCUINivF8XBvRK70CgsUdOlPVsZFx9L8M0bl
-         pfYZ0a6OtAvPmKDKSoxYO2IRaxlBHud739GZt9aOHpfeUz0gi/oca9PXj3uBz9kme+ca
-         pVr99cOrFZUYYoIRcCvD9LtrpIUsVvqui9kIeHIlF0c6gqf2cjoAgTk1+sjowjCIe3ZM
-         rkYQ==
-X-Gm-Message-State: APjAAAV7yck8YLAdI2Yvhc1mk+H1f99eHo/lf3jGUHb4IUEwwULKJjZ9
-        C9HNyJPJTPuLkuOY/NThkE+NlPFS7cvqRs7a4SaM6BU/
-X-Google-Smtp-Source: APXvYqwDSBwuoIz5Cx9CEVGIcqE/OP3knt8Grs33/FqLWFRA3yEiK7fltJ3XAl5Bin3Nlf+6Jumm0lwyN4qmA4T6+qw=
-X-Received: by 2002:a24:7347:: with SMTP id y68mr9823741itb.58.1556744048323;
- Wed, 01 May 2019 13:54:08 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=aAYZCbi0VoSmmJV447FzNll6sGqvQaQ9x6mMPmHmAI4=;
+        b=NA4G1XIMdpPvy09KwQQTk1/0iNKP8hDhbjW1jZXMnoOAVl4BkTzAi2XLM+a+VopQ57
+         YatMOYp5CSzKCKUdBYjqJB+yk9LJnxNs86hKSj6ZllgG0ofRt7jmoHy7ycxzcw+giAET
+         vFpN/pWrXmoOuXKT6Mcq4ZxObVxecV32jzUvpF8nBE/Z0RRcqS3W/iXstC0eeagKS4iW
+         xMsMnVHx/9uoEwTN+CWW39O4g7MAVSFfOOWehfGoaAnnK5nv7Lg8YeeV3Zm+Lc89gSsN
+         dErzy1MU13xoyFbg76A9ACQe+0tPRxzVCbDiIPlfHHCBkSqrCKDiicgGtXT/+OTivSy2
+         C60A==
+X-Gm-Message-State: APjAAAWTnlSthFAZEzsPK+PhHmpNkQ/ixwJTob7nxXamEpGgIep/cDYY
+        H4Uq/HI/CEH6/580x3bM3Zv/qQ==
+X-Google-Smtp-Source: APXvYqy2PMhVL/u5NrVzSus4wnXFIbyY6IcxLKfwkdsm7GFCR48GA++vrN0jwomc5NoLzOEX2LA4Qg==
+X-Received: by 2002:a81:59c2:: with SMTP id n185mr1043756ywb.21.1556744144365;
+        Wed, 01 May 2019 13:55:44 -0700 (PDT)
+Received: from veci.piliscsaba.redhat.com (adsl-173-228-226-134.prtc.net. [173.228.226.134])
+        by smtp.gmail.com with ESMTPSA id w189sm9488181ywe.42.2019.05.01.13.55.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 May 2019 13:55:43 -0700 (PDT)
+Date:   Wed, 1 May 2019 16:55:41 -0400
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Steve French <smfrench@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH] network fs notification
+Message-ID: <20190501205541.GC30899@veci.piliscsaba.redhat.com>
 MIME-Version: 1.0
-References: <20190424193903.swlfmfuo6cqnpkwa@dcvr> <20190427093319.sgicqik2oqkez3wk@dcvr>
- <CABeXuvrY9QdvF1gTfiMt-eVp7VtobwG9xzjQFkErq+3wpW_P3Q@mail.gmail.com>
- <20190428004858.el3yk6hljloeoxza@dcvr> <20190429204754.hkz7z736tdk4ucum@linux-r8p5>
- <20190429210427.dmfemfft2t2gdwko@dcvr> <CABeXuvqpAjk8ocRUabVU4Yviv7kgRkMneLE1Xy-jAtHdXAHBVw@mail.gmail.com>
- <20190501021405.hfvd7ps623liu25i@dcvr> <20190501073906.ekqr7xbw3qkfgv56@dcvr>
- <CABeXuvq7gCV2qPOo+Q8jvNyRaTvhkRLRbnL_oJ-AuK7Sp=P3QQ@mail.gmail.com> <20190501204826.umekxc7oynslakes@dcvr>
-In-Reply-To: <20190501204826.umekxc7oynslakes@dcvr>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Wed, 1 May 2019 13:53:57 -0700
-Message-ID: <CABeXuvqbCDhp+67SpGLAO7dYiWzWufewQBn+MTxY5NYsaQVrPg@mail.gmail.com>
-Subject: Re: Strange issues with epoll since 5.0
-To:     Eric Wong <e@80x24.org>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>, Arnd Bergmann <arnd@arndb.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 1, 2019 at 1:48 PM Eric Wong <e@80x24.org> wrote:
->
-> Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> > So here is my analysis:
->
-> <snip everything I agree with>
->
-> > So the 854a6ed56839a40f6 seems to be better than the original code in
-> > that it detects the signal.
->
-> OTOH, does matter to anybody that a signal is detected slightly
-> sooner than it would've been, otherwise?
+This is a really really trivial first iteration, but I think it's enough to
+try out CIFS notification support.  Doesn't deal with mark deletion, but
+that's best effort anyway: fsnotify() will filter out unneeded events.
 
-The original code drops the signal altogether. This is because it
-overwrites the current's sigmask with the provided
-one(set_current_blocked()). If a signal bit was set, it is lost
-forever. It does not detect it sooner. The check for pending signal is
-sooner and not just before the syscall returns.
-This is what the patch in discussion does: check for signals just
-before returning.
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/notify/fanotify/fanotify_user.c |    6 +++++-
+ fs/notify/inotify/inotify_user.c   |    2 ++
+ include/linux/fs.h                 |    1 +
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
->
-> > But, the problem is that it doesn't
-> > communicate it to the userspace.
->
-> Yup, that's a big problem :)
->
-> > So a patch like below solves the problem. This is incomplete. I'll
-> > verify and send you a proper fix you can test soon. This is just for
-> > the sake of discussion:
-> >
-> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > index 4a0e98d87fcc..63a387329c3d 100644
-> > --- a/fs/eventpoll.c
-> > +++ b/fs/eventpoll.c
-> > @@ -2317,7 +2317,7 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct
-> > epoll_event __user *, events,
-> >                 int, maxevents, int, timeout, const sigset_t __user *, sigmask,
-> >                 size_t, sigsetsize)
-> >  {
-> > -       int error;
-> > +       int error, signal_detected;
-> >         sigset_t ksigmask, sigsaved;
-> >
-> >         /*
-> > @@ -2330,7 +2330,10 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct
-> > epoll_event __user *, events,
-> >
-> >         error = do_epoll_wait(epfd, events, maxevents, timeout);
-> >
-> > -       restore_user_sigmask(sigmask, &sigsaved);
-> > +       signal_detected = restore_user_sigmask(sigmask, &sigsaved);
-> > +
-> > +       if (signal_detected && !error)
-> > +               return -EITNR;
-> >
-> >         return error;
->
-> Looks like a reasonable API.
->
-> > @@ -2862,7 +2862,7 @@ void restore_user_sigmask(const void __user
-> > *usigmask, sigset_t *sigsaved)
-> >         if (signal_pending(current)) {
-> >                 current->saved_sigmask = *sigsaved;
-> >                 set_restore_sigmask();
-> > -               return;
-> > +               return 0;
->
-> Shouldn't that "return 1" if a signal is pending?
-
-Yep, I meant this to be 1.
-
--Deepa
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1041,9 +1041,13 @@ static int do_fanotify_mark(int fanotify
+ 		else if (mark_type == FAN_MARK_FILESYSTEM)
+ 			ret = fanotify_add_sb_mark(group, mnt->mnt_sb, mask,
+ 						   flags, fsid);
+-		else
++		else {
+ 			ret = fanotify_add_inode_mark(group, inode, mask,
+ 						      flags, fsid);
++
++			if (!ret && inode->i_op->notify_update)
++				inode->i_op->notify_update(inode);
++		}
+ 		break;
+ 	case FAN_MARK_REMOVE:
+ 		if (mark_type == FAN_MARK_MOUNT)
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -754,6 +754,8 @@ SYSCALL_DEFINE3(inotify_add_watch, int,
+ 
+ 	/* create/update an inode mark */
+ 	ret = inotify_update_watch(group, inode, mask);
++	if (!ret && inode->i_op->notify_update)
++		inode->i_op->notify_update(inode);
+ 	path_put(&path);
+ fput_and_out:
+ 	fdput(f);
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1852,6 +1852,7 @@ struct inode_operations {
+ 			   umode_t create_mode);
+ 	int (*tmpfile) (struct inode *, struct dentry *, umode_t);
+ 	int (*set_acl)(struct inode *, struct posix_acl *, int);
++	void (*notify_update)(struct inode *inode);
+ } ____cacheline_aligned;
+ 
+ static inline ssize_t call_read_iter(struct file *file, struct kiocb *kio,
