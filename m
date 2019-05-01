@@ -2,193 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F7D310A0C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 17:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2442410A1B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 17:34:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbfEAP33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 11:29:29 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34852 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfEAP33 (ORCPT
+        id S1726735AbfEAPeK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 11:34:10 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45255 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfEAPeK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 11:29:29 -0400
-Received: by mail-io1-f66.google.com with SMTP id r18so15126737ioh.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 08:29:28 -0700 (PDT)
+        Wed, 1 May 2019 11:34:10 -0400
+Received: by mail-qt1-f194.google.com with SMTP id b3so20315222qtc.12;
+        Wed, 01 May 2019 08:34:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w9icvTpHr/0UAUYKXVxAi0Mjttdtx3G15AY7sawXcdw=;
-        b=GmHq9NsEB0M1Qo6k1yWcAHJTK0LWrOuMLjXx9IWyix/blgs73E4lFLnPvnhmLAAS5u
-         nwqL5nI6DiCbISjtx1RjtFET5bxHiEOPGBOyCGyDbh/tfZlYZTXA6UDZVjaqSVCb60Bh
-         Og8GxSsoOVPGIn+hKcIX6dSyo0eablzlos+vwYtQayNZgF4rWR3xH5xVSlpYyteP3SDS
-         3SoEqVtQn4apu/yRc564DLei1YlkoLjOn93D2lvn8uWV+fK8AMgTkGWwbsTHZnHqwfZs
-         fs7npyoefdRfvUWewCSTCEurMzYSKUFufcv/2sLNSRT5WUMow1oL5g+kogrIdBZWEIih
-         abFg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N7BVof8zcWOlmgfoNNTzY2OrKwZHtJkNJJ/tVCOczZQ=;
+        b=LJOCQpTuAOMonbbFd+HFYKhAdfAuYbz/YN7leE+vqtSDSU77hZTmtUm3kYo7OdSMgM
+         bH+Uv1E5hNu61ylGEuBOy/k+G8bWfbgx1x4bt1RyzeeGPtU4wtJFqhNrbXKVLmh94P5W
+         H3JUZA9DgRHA5jzjjyiyGIQ0AqNMI6bzImj/vOm9YVV4oR/FGuBfYGCrY5ue21OVzIdv
+         oBsJuDbw1wtIi+98ifSfhjY4bQJVSklHmKuSmnCSGb3iwN/kbnqBhhGyP68b00fF+kuh
+         9J7hQkjNfqRKZOp//X4aLOdG0KSktlZqMG5xgHHuyoM6+AgFw6h7NDcSqZqnr21zte0i
+         lb6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w9icvTpHr/0UAUYKXVxAi0Mjttdtx3G15AY7sawXcdw=;
-        b=VJeuG0kynispmsKyV5FS8GDP24F+2fdliJJkiOXoCwuRf5ZMh3Jmu5HB1TzfsQ6IlZ
-         wS4W4CC5eeWiihJ6mdWERUorlXtZ5CgHE6CisEcEZD7osfFbFxAhSPwtrubrFnW0/2CK
-         nzai7FK2FV6TX9gDYuC9OIlOrtw+6Cqd6cSRz8zgE8jGi99ewGRo7d4u5F9jgQ0wPjIR
-         xXf+9OPpsJ0CJjqJXOcQJTkPnNSzu0wOl9WGUxaIrkfELRCZs/SHFGyZHs8fYFppoNbR
-         SRUWe5HNYKfNCheQJNfyIva/DEnAcQworbvGLmswmrbFvXApDHef5Dltn/EkqznmEDYp
-         v03w==
-X-Gm-Message-State: APjAAAVHeQ148tdSsLIE59wsGxW0CWyKQrhFCnZZfcOVbWUOkdzgjPxY
-        alrnuZ3BmVkhcLsetPxZFauJS8L8M6Zs+Q==
-X-Google-Smtp-Source: APXvYqxxdhXPqY0wown7mv3DfGcCQbx7MWnNeZLu50Ky50fVdx2xvbdy2IE0njr544wEEG5wdyV9qQ==
-X-Received: by 2002:a6b:6f11:: with SMTP id k17mr20872583ioc.76.1556724568160;
-        Wed, 01 May 2019 08:29:28 -0700 (PDT)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id y7sm4851938ioq.87.2019.05.01.08.29.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 May 2019 08:29:26 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: avoid page allocation warnings
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-References: <20190430132405.8268-1-mark.rutland@arm.com>
- <20190430141810.GF13796@bombadil.infradead.org>
- <20190430145938.GA8314@lakrids.cambridge.arm.com>
- <a1af3017-6572-e828-dc8a-a5c8458e6b5a@kernel.dk>
- <20190430170302.GD8314@lakrids.cambridge.arm.com>
- <0bd395a0-e0d3-16a5-e29f-557e97782a48@kernel.dk>
- <20190501103026.GA11740@lakrids.cambridge.arm.com>
- <710a3048-ccab-260d-d8b7-1d51ff6d589d@kernel.dk>
- <20190501150921.GE11740@lakrids.cambridge.arm.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <88fee953-ea3e-b9c0-650c-60faea07dd04@kernel.dk>
-Date:   Wed, 1 May 2019 09:29:25 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N7BVof8zcWOlmgfoNNTzY2OrKwZHtJkNJJ/tVCOczZQ=;
+        b=h/hTBNedrkrOUCYqYHNM3Hz5ikRud9Y+DDk9KA3nMGtuk0I72PxcfSox2YUZa/5B6a
+         TIAxMHHCc27k+1JWAKABlAlEVBVc1qNN9CNHwvtdO4Pd520Dss19xU5PcugQWLqwEY53
+         zWyIeyvFthmVU9JSOACAwQ0wd0LkykfHn53VJtAeZuS/mDnYIWszJNhcrMturReP1Z54
+         Ofh/l3hhyvVBEqblpPl5XC/HMUtfu1PA044wJVUE2JGkjPQCrtVg3dH5IvVJjUrql8cn
+         mGpoSlkYbz/qQFyLr2V/3K7b+uPFu+n1wVtXPwQUzq+jiDJ/rc23QoXyZBk1mcTIoyGE
+         Q/dw==
+X-Gm-Message-State: APjAAAVvSGkRn8x3AoslH4uKx+46P4aO/6Ul0habDp9qpxwuBQCZcrni
+        C8aurwo4OEVDnI1mapL2N4kLUw96fo04gJGHxYQAd6f/
+X-Google-Smtp-Source: APXvYqzROLS7CvGrZASPPcvG/dxihfU9bAmIpDLNRjhMKwZG33h79JY5/Yot97nB/NsbR3Hm3m6NGf/lJdTltx6q0ic=
+X-Received: by 2002:ac8:25b8:: with SMTP id e53mr24425025qte.194.1556724849335;
+ Wed, 01 May 2019 08:34:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190501150921.GE11740@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190418220448.7219-1-gpiccoli@canonical.com> <CAPhsuW4k5zz2pJBPL60VzjTcj6NTnhBh-RjvWASLcOxAk+yDEw@mail.gmail.com>
+ <b39b96ea-2540-a407-2232-1af91e3e6658@canonical.com>
+In-Reply-To: <b39b96ea-2540-a407-2232-1af91e3e6658@canonical.com>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Wed, 1 May 2019 08:33:58 -0700
+Message-ID: <CAPhsuW65EW8JgjE8zknPQPXYcmDhX9LEhTKGb0KHywqKuZkUcA@mail.gmail.com>
+Subject: Re: [RFC] [PATCH V2 0/1] Introduce emergency raid0 stop for mounted arrays
+To:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+Cc:     axboe@kernel.dk, linux-raid <linux-raid@vger.kernel.org>,
+        Jay Vosburgh <jay.vosburgh@canonical.com>, kernel@gpiccoli.net,
+        NeilBrown <neilb@suse.com>, dm-devel@redhat.com,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block@vger.kernel.org, gavin.guo@canonical.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/1/19 9:09 AM, Mark Rutland wrote:
-> On Wed, May 01, 2019 at 06:41:43AM -0600, Jens Axboe wrote:
->> On 5/1/19 4:30 AM, Mark Rutland wrote:
->>> On Tue, Apr 30, 2019 at 12:11:59PM -0600, Jens Axboe wrote:
->>>> On 4/30/19 11:03 AM, Mark Rutland wrote:
->>>>> I've just had a go at that, but when using kvmalloc() with or without
->>>>> GFP_KERNEL_ACCOUNT I hit OOM and my system hangs within a few seconds with the
->>>>> syzkaller prog below:
->>>>>
->>>>> ----
->>>>> Syzkaller reproducer:
->>>>> # {Threaded:false Collide:false Repeat:false RepeatTimes:0 Procs:1 Sandbox: Fault:false FaultCall:-1 FaultNth:0 EnableTun:false EnableNetDev:false EnableNetReset:false EnableCgroups:false EnableBinfmtMisc:false EnableCloseFds:false UseTmpDir:false HandleSegv:false Repro:false Trace:false}
->>>>> r0 = io_uring_setup(0x378, &(0x7f00000000c0))
->>>>> sendmsg$SEG6_CMD_SET_TUNSRC(0xffffffffffffffff, &(0x7f0000000240)={&(0x7f0000000000)={0x10, 0x0, 0x0, 0x40000000}, 0xc, 0x0, 0x1, 0x0, 0x0, 0x10}, 0x800)
->>>>> io_uring_register$IORING_REGISTER_BUFFERS(r0, 0x0, &(0x7f0000000000), 0x1)
->>>>> ----
->>>>>
->>>>> ... I'm a bit worried that opens up a trivial DoS.
->>>>>
->>>>> Thoughts?
->>>>
->>>> Can you post the patch you used?
->>>
->>> Diff below.
->>
->> And the reproducer, that was never posted.
-> 
-> It was; the "Syzakller reproducer" above is the reproducer I used with
-> syz-repro.
-> 
-> I've manually minimized that to C below. AFAICT, that hits a leak, which
-> is what's triggering the OOM after the program is run a number of times
-> with the previously posted kvmalloc patch.
-> 
-> Per /proc/meminfo, that memory isn't accounted anywhere.
-> 
->> Patch looks fine to me. Note
->> that buffer registration is under the protection of RLIMIT_MEMLOCK.
->> That's usually very limited for non-root, as root you can of course
->> consume as much as you want and OOM the system.
-> 
-> Sure.
-> 
-> As above, it looks like there's a leak, regardless.
+On Tue, Apr 30, 2019 at 3:41 PM Guilherme G. Piccoli
+<gpiccoli@canonical.com> wrote:
+>
+> > On 19/04/2019 14:08, Song Liu wrote:
+> > [...]
+> > I read through the discussion in V1, and I would agree with Neil that
+> > current behavior is reasonable.
+> >
+> > For the following example:
+> >
+> > fd = open("file", "w");
+> > write(fd, buf, size);
+> > ret = fsync(fd);
+> >
+> > If "size" is big enough, the write is not expected to be atomic for
+> > md or other drives. If we remove the underlining block device
+> > after write() and before fsync(), the file could get corrupted. This
+> > is the same for md or NVMe/SCSI drives.
+> >
+> > The application need to check "ret" from fsync(), the data is safe
+> > only when fsync() returns 0.
+> >
+> > Does this make sense?
+> >
+>
+> Hi Song, thanks for your quick response, and sorry for my delay.
+> I've noticed after v4.18 kernel started to crash when we remove one
+> raid0 member while writing, so I was investigating this
+> before perform your test (in fact, found 2 issues [0]), hence my delay.
+>
+> Your test does make sense; in fact I've tested your scenario with the
+> following code (with the patches from [0]):
+> https://pastebin.ubuntu.com/p/cyqpDqpM7x/
+>
+> Indeed, fsync returns -1 in this case.
+> Interestingly, when I do a "dd if=<some_file> of=<raid0_mount>" and try
+> to "sync -f <some_file>" and "sync", it succeeds and the file is
+> written, although corrupted.
 
-The leak is that we're not releasing imu->bvec in case of error. I fixed
-a missing kfree -> kvfree as well in your patch, with this rolled up
-version it works for me.
+I guess this is some issue with sync command, but I haven't got time
+to look into it. How about running dd with oflag=sync or oflag=direct?
 
+>
+> Do you think this behavior is correct? In other devices, like a pure
+> SCSI disk or NVMe, the 'dd' write fails.
+> Also, what about the status of the raid0 array in mdadm - it shows as
+> "clean" even after the member is removed, should we change that?
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 18cecb6a0151..3e817d40fb96 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2443,7 +2443,7 @@ static int io_sqe_buffer_unregister(struct io_ring_ctx *ctx)
- 
- 		if (ctx->account_mem)
- 			io_unaccount_mem(ctx->user, imu->nr_bvecs);
--		kfree(imu->bvec);
-+		kvfree(imu->bvec);
- 		imu->nr_bvecs = 0;
- 	}
- 
-@@ -2533,11 +2533,11 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
- 
- 		ret = 0;
- 		if (!pages || nr_pages > got_pages) {
--			kfree(vmas);
--			kfree(pages);
--			pages = kmalloc_array(nr_pages, sizeof(struct page *),
-+			kvfree(vmas);
-+			kvfree(pages);
-+			pages = kvmalloc_array(nr_pages, sizeof(struct page *),
- 						GFP_KERNEL);
--			vmas = kmalloc_array(nr_pages,
-+			vmas = kvmalloc_array(nr_pages,
- 					sizeof(struct vm_area_struct *),
- 					GFP_KERNEL);
- 			if (!pages || !vmas) {
-@@ -2549,7 +2549,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
- 			got_pages = nr_pages;
- 		}
- 
--		imu->bvec = kmalloc_array(nr_pages, sizeof(struct bio_vec),
-+		imu->bvec = kvmalloc_array(nr_pages, sizeof(struct bio_vec),
- 						GFP_KERNEL);
- 		ret = -ENOMEM;
- 		if (!imu->bvec) {
-@@ -2588,6 +2588,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
- 			}
- 			if (ctx->account_mem)
- 				io_unaccount_mem(ctx->user, nr_pages);
-+			kvfree(imu->bvec);
- 			goto err;
- 		}
- 
-@@ -2610,12 +2611,12 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
- 
- 		ctx->nr_user_bufs++;
- 	}
--	kfree(pages);
--	kfree(vmas);
-+	kvfree(pages);
-+	kvfree(vmas);
- 	return 0;
- err:
--	kfree(pages);
--	kfree(vmas);
-+	kvfree(pages);
-+	kvfree(vmas);
- 	io_sqe_buffer_unregister(ctx);
- 	return ret;
- }
+I guess this is because the kernel hasn't detect the array is gone? In
+that case, I think reducing the latency would be useful for some use
+cases.
 
--- 
-Jens Axboe
+Thanks,
+Song
 
+>
+>
+> > Also, could you please highlight changes from V1 (if more than
+> > just rebase)?
+>
+> No changes other than rebase. Worth mentioning here that a kernel bot
+> (and Julia Lawall) found an issue in my patch; I forgot a
+> "mutex_lock(&mddev->open_mutex);" in line 6053, which caused the first
+> caveat (hung mdadm and persistent device in /dev). Thanks for pointing
+> this silly mistake from me! in case this patch gets some traction, I'll
+> re-submit with that fixed.
+>
+> Cheers,
+>
+>
+> Guilherme
+>
+> [0] https://marc.info/?l=linux-block&m=155666385707413
+>
+> >
+> > Thanks,
+> > Song
+> >
