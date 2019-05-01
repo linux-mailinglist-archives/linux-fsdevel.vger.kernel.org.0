@@ -2,154 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDB6010904
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 16:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E332C107F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 14:41:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbfEAOYk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 10:24:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55126 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726779AbfEAOYk (ORCPT
+        id S1726409AbfEAMlr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 08:41:47 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42717 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbfEAMlr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 10:24:40 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x41EMCUM006550
-        for <linux-fsdevel@vger.kernel.org>; Wed, 1 May 2019 10:24:39 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2s7cemhvgc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 10:24:38 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
-        Wed, 1 May 2019 15:24:36 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 1 May 2019 15:24:32 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x41EOVGx38076636
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 May 2019 14:24:31 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 01D4652054;
-        Wed,  1 May 2019 14:24:31 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.33.136])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id C3E805204E;
-        Wed,  1 May 2019 14:24:28 +0000 (GMT)
-From:   Chandan Rajendra <chandan@linux.ibm.com>
-To:     Jeremy Sowden <jeremy@azazel.net>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, ebiggers@kernel.org, jaegeuk@kernel.org,
-        yuchao0@huawei.com, hch@infradead.org
-Subject: Re: [PATCH V2 03/13] fsverity: Add call back to decide if verity check has to be performed
-Date:   Wed, 01 May 2019 18:03:56 +0530
-Organization: IBM
-In-Reply-To: <20190430211037.GA30337@azazel.net>
-References: <20190428043121.30925-1-chandan@linux.ibm.com> <20190428043121.30925-4-chandan@linux.ibm.com> <20190430211037.GA30337@azazel.net>
+        Wed, 1 May 2019 08:41:47 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p6so8253473pgh.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 05:41:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=d7xrkUfJOvuEcy/MxrLHTxsIlMzizmM/IKOsgVzHrss=;
+        b=2D6ufJKpjQs/C8AEiwpSbiA3m8Ey1zqeO2YTOGzalxj66UrmGjyo5LkL+iea0V0uj1
+         rXqh2PCCr93pBAoDQk3UQoUV1u7E1uxJDxuX8fRYSGAh9AsRB/LD1Q6xMmIe9Kc4SsUW
+         LPlnVFPB3EM/itW0PbBSPiyYFZhhC279Y4qOmGvJnP+l7KIeafILcW2KUM+0Rmk56SWy
+         3lDw1GlRHQGOxkRRFfeIQkjZ1nfK6FBeTPQwSxJPChk66u3e5N2EnyW7r8YdZmHg/Zoo
+         GuEHS8pKxD2o8tMKXr/zHOCuYnBrHgDjRRTnJvBQvDVKfAs5ULXfq88R8MeIDTzSPZZa
+         AYVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=d7xrkUfJOvuEcy/MxrLHTxsIlMzizmM/IKOsgVzHrss=;
+        b=qRhn9clE0h9V4W7c5SZE/o/bX7cjzNJx7PhUzU+WvAYGIpeg0qu+0Eha5/e+SAJ0IZ
+         CbMNLuG7c431oEsO21mmNX+IOFlMatOjDEcL/6Wx52yQaAjlMOYA5slZ8NzluRaPV1VN
+         2Xfv4IEMwKrsen0RJ1kQiAhR+OajzVQjtlMQpKCHmY2463+fv4f/hVa4uqOWzg0mRCXd
+         HgSHhZ6dLqWtdcUzdDS/NbO5SOUmRlXl9lYB6MpkuAZi1i+7CJWgqqYev6X+yxWJfuYr
+         TWjY5qA2o1rqpfVKBCppkDc39HrSGSUxjx2PEX+hLiVoaN8iqkrrZxnHA36g2YXbhLrO
+         FWZg==
+X-Gm-Message-State: APjAAAUk3j/f1xDztGWRzLjgLIq/PI/1D6WamZLxBZfB1AVUc5atZmgI
+        FwywwvCysFJOSTwfNezHWrRbgXZVRT5OQw==
+X-Google-Smtp-Source: APXvYqxiVh/AS1A6oCylujU5bu05ckHS24lp5QIeAn+fda0wU+Co39UgF4zixKjC7SC2pxOJHAvKGA==
+X-Received: by 2002:a63:8a4a:: with SMTP id y71mr30200038pgd.270.1556714506557;
+        Wed, 01 May 2019 05:41:46 -0700 (PDT)
+Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
+        by smtp.gmail.com with ESMTPSA id m131sm577985pfc.25.2019.05.01.05.41.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 May 2019 05:41:45 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: avoid page allocation warnings
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+References: <20190430132405.8268-1-mark.rutland@arm.com>
+ <20190430141810.GF13796@bombadil.infradead.org>
+ <20190430145938.GA8314@lakrids.cambridge.arm.com>
+ <a1af3017-6572-e828-dc8a-a5c8458e6b5a@kernel.dk>
+ <20190430170302.GD8314@lakrids.cambridge.arm.com>
+ <0bd395a0-e0d3-16a5-e29f-557e97782a48@kernel.dk>
+ <20190501103026.GA11740@lakrids.cambridge.arm.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <710a3048-ccab-260d-d8b7-1d51ff6d589d@kernel.dk>
+Date:   Wed, 1 May 2019 06:41:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-TM-AS-GCONF: 00
-x-cbid: 19050114-0012-0000-0000-000003173D63
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050114-0013-0000-0000-0000214FA97D
-Message-Id: <1679959.ODoryAfBfi@localhost.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-01_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905010092
+In-Reply-To: <20190501103026.GA11740@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wednesday, May 1, 2019 2:40:38 AM IST Jeremy Sowden wrote:
-> On 2019-04-28, at 10:01:11 +0530, Chandan Rajendra wrote:
-> > Ext4 and F2FS store verity metadata in data extents (beyond
-> > inode->i_size) associated with a file. But other filesystems might
-> > choose alternative means to store verity metadata. Hence this commit
-> > adds a callback function pointer to 'struct fsverity_operations' to
-> > help in deciding if verity operation needs to performed against a
-> > page-cache page holding file data.
-> > 
-> > Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
-> > ---
-> >  fs/ext4/super.c          | 6 ++++++
-> >  fs/f2fs/super.c          | 6 ++++++
-> >  fs/read_callbacks.c      | 4 +++-
-> >  include/linux/fsverity.h | 1 +
-> >  4 files changed, 16 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > index aba724f82cc3..63d73b360f1d 100644
-> > --- a/fs/ext4/super.c
-> > +++ b/fs/ext4/super.c
-> > @@ -1428,10 +1428,16 @@ static struct page *ext4_read_verity_metadata_page(struct inode *inode,
-> >  	return read_mapping_page(inode->i_mapping, index, NULL);
-> >  }
-> >  
-> > +static bool ext4_verity_required(struct inode *inode, pgoff_t index)
-> > +{
-> > +	return index < (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> > +}
-> > +
-> >  static const struct fsverity_operations ext4_verityops = {
-> >  	.set_verity		= ext4_set_verity,
-> >  	.get_metadata_end	= ext4_get_verity_metadata_end,
-> >  	.read_metadata_page	= ext4_read_verity_metadata_page,
-> > +	.verity_required	= ext4_verity_required,
-> >  };
-> >  #endif /* CONFIG_FS_VERITY */
-> >  
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 2f75f06c784a..cd1299e1f92d 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -2257,10 +2257,16 @@ static struct page *f2fs_read_verity_metadata_page(struct inode *inode,
-> >  	return read_mapping_page(inode->i_mapping, index, NULL);
-> >  }
-> >  
-> > +static bool f2fs_verity_required(struct inode *inode, pgoff_t index)
-> > +{
-> > +	return index < (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> > +}
-> > +
-> >  static const struct fsverity_operations f2fs_verityops = {
-> >  	.set_verity		= f2fs_set_verity,
-> >  	.get_metadata_end	= f2fs_get_verity_metadata_end,
-> >  	.read_metadata_page	= f2fs_read_verity_metadata_page,
-> > +	.verity_required	= f2fs_verity_required,
-> >  };
-> >  #endif /* CONFIG_FS_VERITY */
-> >  
-> > diff --git a/fs/read_callbacks.c b/fs/read_callbacks.c
-> > index b6d5b95e67d7..6dea54b0baa9 100644
-> > --- a/fs/read_callbacks.c
-> > +++ b/fs/read_callbacks.c
-> > @@ -86,7 +86,9 @@ struct read_callbacks_ctx *get_read_callbacks_ctx(struct inode *inode,
-> >  		read_callbacks_steps |= 1 << STEP_DECRYPT;
-> >  #ifdef CONFIG_FS_VERITY
-> >  	if (inode->i_verity_info != NULL &&
-> > -		(index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT)))
-> > +		((inode->i_sb->s_vop->verity_required
-> > +			&& inode->i_sb->s_vop->verity_required(inode, index))
-> > +			|| (inode->i_sb->s_vop->verity_required == NULL)))
+On 5/1/19 4:30 AM, Mark Rutland wrote:
+> On Tue, Apr 30, 2019 at 12:11:59PM -0600, Jens Axboe wrote:
+>> On 4/30/19 11:03 AM, Mark Rutland wrote:
+>>> On Tue, Apr 30, 2019 at 10:21:03AM -0600, Jens Axboe wrote:
+>>>> On 4/30/19 8:59 AM, Mark Rutland wrote:
+>>>>> On Tue, Apr 30, 2019 at 07:18:10AM -0700, Matthew Wilcox wrote:
+>>>>>> On Tue, Apr 30, 2019 at 02:24:05PM +0100, Mark Rutland wrote:
+>>>>>>> In io_sqe_buffer_register() we allocate a number of arrays based on the
+>>>>>>> iov_len from the user-provided iov. While we limit iov_len to SZ_1G,
+>>>>>>> we can still attempt to allocate arrays exceeding MAX_ORDER.
+>>>>>>>
+>>>>>>> On a 64-bit system with 4KiB pages, for an iov where iov_base = 0x10 and
+>>>>>>> iov_len = SZ_1G, we'll calculate that nr_pages = 262145. When we try to
+>>>>>>> allocate a corresponding array of (16-byte) bio_vecs, requiring 4194320
+>>>>>>> bytes, which is greater than 4MiB. This results in SLUB warning that
+>>>>>>> we're trying to allocate greater than MAX_ORDER, and failing the
+>>>>>>> allocation.
+>>>>>>>
+>>>>>>> Avoid this by passing __GFP_NOWARN when allocating arrays for the
+>>>>>>> user-provided iov_len. We'll gracefully handle the failed allocation,
+>>>>>>> returning -ENOMEM to userspace.
+>>>>>>>
+>>>>>>> We should probably consider lowering the limit below SZ_1G, or reworking
+>>>>>>> the array allocations.
+>>>>>>
+>>>>>> I'd suggest that kvmalloc is probably our friend here ... we don't really
+>>>>>> want to return -ENOMEM to userspace for this case, I don't think.
+>>>>>
+>>>>> Sure. I'll go verify that the uring code doesn't assume this memory is
+>>>>> physically contiguous.
+>>>>>
+>>>>> I also guess we should be passing GFP_KERNEL_ACCOUNT rateh than a plain
+>>>>> GFP_KERNEL.
+>>>>
+>>>> kvmalloc() is fine, the io_uring code doesn't care about the layout of
+>>>> the memory, it just uses it as an index.
+>>>
+>>> I've just had a go at that, but when using kvmalloc() with or without
+>>> GFP_KERNEL_ACCOUNT I hit OOM and my system hangs within a few seconds with the
+>>> syzkaller prog below:
+>>>
+>>> ----
+>>> Syzkaller reproducer:
+>>> # {Threaded:false Collide:false Repeat:false RepeatTimes:0 Procs:1 Sandbox: Fault:false FaultCall:-1 FaultNth:0 EnableTun:false EnableNetDev:false EnableNetReset:false EnableCgroups:false EnableBinfmtMisc:false EnableCloseFds:false UseTmpDir:false HandleSegv:false Repro:false Trace:false}
+>>> r0 = io_uring_setup(0x378, &(0x7f00000000c0))
+>>> sendmsg$SEG6_CMD_SET_TUNSRC(0xffffffffffffffff, &(0x7f0000000240)={&(0x7f0000000000)={0x10, 0x0, 0x0, 0x40000000}, 0xc, 0x0, 0x1, 0x0, 0x0, 0x10}, 0x800)
+>>> io_uring_register$IORING_REGISTER_BUFFERS(r0, 0x0, &(0x7f0000000000), 0x1)
+>>> ----
+>>>
+>>> ... I'm a bit worried that opens up a trivial DoS.
+>>>
+>>> Thoughts?
+>>
+>> Can you post the patch you used?
 > 
-> I think this is a bit easier to follow:
-> 
-> 		(inode->i_sb->s_vop->verity_required == NULL || 
-> 			inode->i_sb->s_vop->verity_required(inode, index)))
+> Diff below.
 
-Yes, you are right. I will implement the changes suggested by you.
+And the reproducer, that was never posted. Patch looks fine to me. Note
+that buffer registration is under the protection of RLIMIT_MEMLOCK.
+That's usually very limited for non-root, as root you can of course
+consume as much as you want and OOM the system.
 
 -- 
-chandan
-
-
+Jens Axboe
 
