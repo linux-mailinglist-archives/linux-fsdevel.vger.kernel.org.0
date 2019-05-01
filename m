@@ -2,112 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 085B710596
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 08:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9120A105A0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 08:49:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbfEAGn1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 02:43:27 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46138 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfEAGn0 (ORCPT
+        id S1726004AbfEAGto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 02:49:44 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44597 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfEAGtn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 02:43:26 -0400
-Received: by mail-pl1-f195.google.com with SMTP id bi2so3051403plb.13;
-        Tue, 30 Apr 2019 23:43:26 -0700 (PDT)
+        Wed, 1 May 2019 02:49:43 -0400
+Received: by mail-qt1-f194.google.com with SMTP id s10so19119016qtc.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 23:49:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tZpDbbxPQIQaiTEJ/QF3eG59ACeQtX21Wr99/jZNM7o=;
-        b=VICxe5gWrDbyG3fzdiTZ3NxrsnDGD2Bmk3eV/dfKI+Nspwr3svro/9NsjGbukA37YM
-         EreicPwuqGiQxyidBPdvRKLT7UQfIfoemCx1oFnRwJmgDXOH9m3jGoWaEDppqsqI7TR8
-         mNNiNLCyLJJB33DoeIodvbZpuDgVtvsuJuId4/lwVaT2uwiGL1P1ZwOmj1jPk9/dkjqv
-         h6CIZ77DVLxmeCJBc7LOVLMKA0fg1VPl17ujhbBvxBArg1+onpwQuv2B/8BS4W09FJmk
-         PL3XIKlZN5Ua49e0i03pz6qg3690Zqu4IdzHr9qx0NkTU4L9FYx8RuFRDnDvgiwpB/HF
-         gs0w==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L/2rF64aRaDUSZBrA9IJUuBuyItqcz2FNBCbr5ui9w8=;
+        b=YUFV8mM+ygoPgPR2my7rzrjO4Tcc2KN7Hhg7QsfLluc8JvFnOGquAQp2Zt+aJ/+BCf
+         Hoi4lm+j2TcrGP3Q/AeiBajkKHmXkhwx+HGBpmPeZTEAX/LNpthQvpUYP/r3ki0sx0b5
+         t1cFeQLTVqAiYaVnriVe4UxnsClRQo4qm0K5WXbeKW35c3Qh9eYfOmvKcwBsFlXIgTVX
+         +2nFT3DkTHtGP1/W1hdmaGAwus628oN4l30AsV8HxkFOzQ8pXcT/NfH97vzZjWD8SyP5
+         fCDDiTbMCOL0VNeyK7zubJPLc+mnNS1LhJM/9/MOG2MX0v92lzGP+O6iLWn9jyoLeEdH
+         QZyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tZpDbbxPQIQaiTEJ/QF3eG59ACeQtX21Wr99/jZNM7o=;
-        b=rUXYhCTHwn82yeucOjRE3EkxUho6vIlw3r5CdXCJXx1M2sOnsBePG2BeFJfsNwgf5/
-         xI/WqZRKYDNLae90tDBTc9CvPXE66yo4ZRNZuzVGTb4LtoGWxc7lGJed8rMdIp87z07w
-         tDu7ZdjyLQCFxPW0gbtyHjJjWJjX8muOSE583imK9/yEoaH0L3IK047zgBH17p4gc+wt
-         62bGGnhtlsrzYrZ76KdEj83V0T5S7tfCPNqZ192aTfTtWmmsoiItxYkngdMc+6+yM872
-         2eTIqvjNhmezt6nX7IZ5EdHZH7NnZXTHkzQqC0MLvNFAI0VEe61yLS6SJMOKZuxYsty3
-         KXYQ==
-X-Gm-Message-State: APjAAAVtOniobu8idukFvI51Gz4zUl2Ifo72SHsn9/GR2LwI5Nrcv8U9
-        sfZ0OUmhtTyJ8vYhvumwkEE=
-X-Google-Smtp-Source: APXvYqyCkaw2Mtev/GQI2Ae/9T0TBTMQyOtHtcJP5lPKRujliHcQCSg+hLV/y0BUYpsPOA4Ju4SE5g==
-X-Received: by 2002:a17:902:6b47:: with SMTP id g7mr28995601plt.227.1556693005762;
-        Tue, 30 Apr 2019 23:43:25 -0700 (PDT)
-Received: from bridge.localdomain ([119.28.31.106])
-        by smtp.gmail.com with ESMTPSA id 25sm56800323pfo.145.2019.04.30.23.43.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2019 23:43:25 -0700 (PDT)
-From:   Wenbin Zeng <wenbin.zeng@gmail.com>
-X-Google-Original-From: Wenbin Zeng <wenbinzeng@tencent.com>
-To:     viro@zeniv.linux.org.uk, davem@davemloft.net, bfields@fieldses.org,
-        jlayton@kernel.org, trond.myklebust@hammerspace.com,
-        anna.schumaker@netapp.com, wenbinzeng@tencent.com,
-        dsahern@gmail.com, nicolas.dichtel@6wind.com, willy@infradead.org,
-        edumazet@google.com, jakub.kicinski@netronome.com,
-        tyhicks@canonical.com, chuck.lever@oracle.com, neilb@suse.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: [PATCH 3/3] auth_gss: fix deadlock that blocks rpcsec_gss_exit_net when use-gss-proxy==1
-Date:   Wed,  1 May 2019 14:42:25 +0800
-Message-Id: <1556692945-3996-4-git-send-email-wenbinzeng@tencent.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1556692945-3996-1-git-send-email-wenbinzeng@tencent.com>
-References: <1556692945-3996-1-git-send-email-wenbinzeng@tencent.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L/2rF64aRaDUSZBrA9IJUuBuyItqcz2FNBCbr5ui9w8=;
+        b=MJCQoInhLanPJ+eA7JPWjOkIZv82HsBQWaj0USRn4+grJC9aJWQPwB/Ur0l1JgVaHc
+         1lCAs6Vcxy7LDSbkx5WMclm4GqnsKvI5awKznxEbJAPlRoGEl85RETHNtgEQf6jLYR2X
+         Zg7i9uPeGVuOOFr2kZhbB4WqKAWSkzrS8l37ez1+oSZE8bUxsK2/biZN2lVxsbX5jGq1
+         /AQGN1grGLKJoOBX/Ql0OD+QTasiCJvsQPFLVDCOJNkyUMSmqgVfcDtik4+wf5iVqbsa
+         TS2Mvu8bzo/d8A9YiG3HKpgEMA6YEWb1RnygdE8DIGawDuFjLva0J4YK0WxPSlV/7x0r
+         qnEA==
+X-Gm-Message-State: APjAAAUQ7yF1K/2dBhrR15J797cUnLVWNVtihH6Qy76HkZ9j4iiQVpF3
+        phMH2Qg/Tn1Z7JLwiKyShyyFsBxieCLFxW6Salg=
+X-Google-Smtp-Source: APXvYqyxdr/kouVHncCCtc3/TJQj7PmvKG+5ws9O4PorPQzWGc8akf32T9jfvVH9ybnE6aJs4wdBgZMBZPS9exen/s4=
+X-Received: by 2002:ac8:2d24:: with SMTP id n33mr49306580qta.70.1556693383039;
+ Tue, 30 Apr 2019 23:49:43 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190501003535.23426-1-jencce.kernel@gmail.com> <20190501010338.GN23075@ZenIV.linux.org.uk>
+In-Reply-To: <20190501010338.GN23075@ZenIV.linux.org.uk>
+From:   Murphy Zhou <jencce.kernel@gmail.com>
+Date:   Wed, 1 May 2019 14:49:31 +0800
+Message-ID: <CADJHv_ved62oihqNmj=JB6PfDKx1AJrv5WsD+aTpsUTOQEwaCw@mail.gmail.com>
+Subject: Re: [PATCH resend] vfs: return EINVAL instead of ENOENT when missing source
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When use-gss-proxy is set to 1, write_gssp() creates a rpc client in
-gssp_rpc_create(), this increases netns refcount by 2, these refcounts are
-supposed to be released in rpcsec_gss_exit_net(), but it will never happen
-because rpcsec_gss_exit_net() is triggered only when netns refcount gets
-to 0, specifically:
-    refcount=0 -> cleanup_net() -> ops_exit_list -> rpcsec_gss_exit_net
-It is a deadlock situation here, refcount will never get to 0 unless
-rpcsec_gss_exit_net() is called.
+On Wed, May 1, 2019 at 9:03 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Wed, May 01, 2019 at 08:35:35AM +0800, Murphy Zhou wrote:
+> > From: Xiong Zhou <jencce.kernel@gmail.com>
+> >
+> > mount(2) with a NULL source device would return ENOENT instead of EINVAL
+> > after this commit:
+>
+> See ee948837d7fa in vfs.git#fixes...
 
-This fix introduced a new callback i.e. evict in struct proc_ns_operations,
-which is called in nsfs_evict. Moving rpcsec_gss_exit_net to evict path
-gives it a chance to get called and avoids the above deadlock situation.
-
-Signed-off-by: Wenbin Zeng <wenbinzeng@tencent.com>
----
- net/sunrpc/auth_gss/auth_gss.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
-index 3fd56c0..3e6bd59 100644
---- a/net/sunrpc/auth_gss/auth_gss.c
-+++ b/net/sunrpc/auth_gss/auth_gss.c
-@@ -2136,14 +2136,17 @@ static __net_init int rpcsec_gss_init_net(struct net *net)
- 	return gss_svc_init_net(net);
- }
- 
--static __net_exit void rpcsec_gss_exit_net(struct net *net)
-+static void rpcsec_gss_evict_net(struct net *net)
- {
--	gss_svc_shutdown_net(net);
-+	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
-+
-+	if (sn->gssp_clnt)
-+		gss_svc_shutdown_net(net);
- }
- 
- static struct pernet_operations rpcsec_gss_net_ops = {
- 	.init = rpcsec_gss_init_net,
--	.exit = rpcsec_gss_exit_net,
-+	.evict = rpcsec_gss_evict_net,
- };
- 
- /*
--- 
-1.8.3.1
-
+Got it. Thanks!
