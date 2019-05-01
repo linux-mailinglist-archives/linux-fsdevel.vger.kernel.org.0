@@ -2,189 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 599E1108F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 16:21:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA75410922
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 16:32:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726547AbfEAOVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 10:21:34 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44430 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726501AbfEAOVe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 10:21:34 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x41E992Z140344
-        for <linux-fsdevel@vger.kernel.org>; Wed, 1 May 2019 10:21:32 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2s7cuurra2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 10:21:32 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
-        Wed, 1 May 2019 15:21:30 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 1 May 2019 15:21:27 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x41ELQbC52691046
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 May 2019 14:21:26 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E86B4204C;
-        Wed,  1 May 2019 14:21:26 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4BDB84204F;
-        Wed,  1 May 2019 14:21:24 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.33.136])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  1 May 2019 14:21:24 +0000 (GMT)
-From:   Chandan Rajendra <chandan@linux.ibm.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com,
-        hch@infradead.org
-Subject: Re: [PATCH V2 12/13] fscrypt_zeroout_range: Encrypt all zeroed out blocks of a page
-Date:   Wed, 01 May 2019 19:52:02 +0530
-Organization: IBM
-In-Reply-To: <20190430165114.GA48973@gmail.com>
-References: <20190428043121.30925-1-chandan@linux.ibm.com> <20190428043121.30925-13-chandan@linux.ibm.com> <20190430165114.GA48973@gmail.com>
+        id S1726821AbfEAOcq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 10:32:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55468 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726506AbfEAOcq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 May 2019 10:32:46 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A600D3082DCE;
+        Wed,  1 May 2019 14:32:45 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DDF1161D34;
+        Wed,  1 May 2019 14:32:44 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Shenghui Wang <shhuiw@foxmail.com>, viro@zeniv.linux.org.uk,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] io_uring: use cpu_online() to check p->sq_thread_cpu instead of cpu_possible()
+References: <20190501072430.6674-1-shhuiw@foxmail.com>
+        <x49wojaxuaa.fsf@segfault.boston.devel.redhat.com>
+        <cd55b1e4-9395-a8b7-707e-ceed9d6c0c15@kernel.dk>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Wed, 01 May 2019 10:32:43 -0400
+In-Reply-To: <cd55b1e4-9395-a8b7-707e-ceed9d6c0c15@kernel.dk> (Jens Axboe's
+        message of "Wed, 1 May 2019 08:15:33 -0600")
+Message-ID: <x49o94mxn1w.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-TM-AS-GCONF: 00
-x-cbid: 19050114-4275-0000-0000-000003304E6B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19050114-4276-0000-0000-0000383FAABA
-Message-Id: <5118219.DRdbvtsWY3@localhost.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-01_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=5 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905010091
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 01 May 2019 14:32:45 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tuesday, April 30, 2019 10:21:15 PM IST Eric Biggers wrote:
-> On Sun, Apr 28, 2019 at 10:01:20AM +0530, Chandan Rajendra wrote:
-> > For subpage-sized blocks, this commit adds code to encrypt all zeroed
-> > out blocks mapped by a page.
-> > 
-> > Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
-> > ---
-> >  fs/crypto/bio.c | 40 ++++++++++++++++++----------------------
-> >  1 file changed, 18 insertions(+), 22 deletions(-)
-> > 
-> > diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-> > index 856f4694902d..46dd2ec50c7d 100644
-> > --- a/fs/crypto/bio.c
-> > +++ b/fs/crypto/bio.c
-> > @@ -108,29 +108,23 @@ EXPORT_SYMBOL(fscrypt_pullback_bio_page);
-> >  int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
-> >  				sector_t pblk, unsigned int len)
-> >  {
-> > -	struct fscrypt_ctx *ctx;
-> >  	struct page *ciphertext_page = NULL;
-> >  	struct bio *bio;
-> > +	u64 total_bytes, page_bytes;
-> 
-> page_bytes should be 'unsigned int', since it's <= PAGE_SIZE.
-> 
-> >  	int ret, err = 0;
-> >  
-> > -	BUG_ON(inode->i_sb->s_blocksize != PAGE_SIZE);
-> > -
-> > -	ctx = fscrypt_get_ctx(inode, GFP_NOFS);
-> > -	if (IS_ERR(ctx))
-> > -		return PTR_ERR(ctx);
-> > +	total_bytes = len << inode->i_blkbits;
-> 
-> Should cast len to 'u64' here, in case it's greater than UINT_MAX / blocksize.
-> 
-> >  
-> > -	ciphertext_page = fscrypt_alloc_bounce_page(ctx, GFP_NOWAIT);
-> > -	if (IS_ERR(ciphertext_page)) {
-> > -		err = PTR_ERR(ciphertext_page);
-> > -		goto errout;
-> > -	}
-> > +	while (total_bytes) {
-> > +		page_bytes = min_t(u64, total_bytes, PAGE_SIZE);
-> >  
-> > -	while (len--) {
-> > -		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk,
-> > -					     ZERO_PAGE(0), ciphertext_page,
-> > -					     PAGE_SIZE, 0, GFP_NOFS);
-> > -		if (err)
-> > +		ciphertext_page = fscrypt_encrypt_page(inode, ZERO_PAGE(0),
-> > +						page_bytes, 0, lblk, GFP_NOFS);
-> > +		if (IS_ERR(ciphertext_page)) {
-> > +			err = PTR_ERR(ciphertext_page);
-> > +			ciphertext_page = NULL;
-> >  			goto errout;
-> > +		}
-> 
-> 'ciphertext_page' is leaked after each loop iteration.  Did you mean to free it,
-> or did you mean to reuse it for subsequent iterations?
+Jens Axboe <axboe@kernel.dk> writes:
 
-Thanks for pointing this out. I actually meant to free it. I will see if I can
-reuse ciphertext_page in my next patchset rather than freeing and allocating
-it each time the loop is executed.
+> On 5/1/19 5:56 AM, Jeff Moyer wrote:
+>> Shenghui Wang <shhuiw@foxmail.com> writes:
+>> 
+>>> This issue is found by running liburing/test/io_uring_setup test.
+>>>
+>>> When test run, the testcase "attempt to bind to invalid cpu" would not
+>>> pass with messages like:
+>>>    io_uring_setup(1, 0xbfc2f7c8), \
+>>> flags: IORING_SETUP_SQPOLL|IORING_SETUP_SQ_AFF, \
+>>> resv: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000, \
+>>> sq_thread_cpu: 2
+>>>    expected -1, got 3
+>>>    FAIL
+>>>
+>>> On my system, there is:
+>>>    CPU(s) possible : 0-3
+>>>    CPU(s) online   : 0-1
+>>>    CPU(s) offline  : 2-3
+>>>    CPU(s) present  : 0-1
+>>>
+>>> The sq_thread_cpu 2 is offline on my system, so the bind should fail.
+>>> But cpu_possible() will pass the check. We shouldn't be able to bind
+>>> to an offline cpu. Use cpu_online() to do the check.
+>>>
+>>> After the change, the testcase run as expected: EINVAL will be returned
+>>> for cpu offlined.
+>>>
+>>> Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
+>>> ---
+>>>  fs/io_uring.c | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>> index 0e9fb2cb1984..aa3d39860a1c 100644
+>>> --- a/fs/io_uring.c
+>>> +++ b/fs/io_uring.c
+>>> @@ -2241,7 +2241,7 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+>>>  	ctx->sqo_mm = current->mm;
+>>>  
+>>>  	ret = -EINVAL;
+>>> -	if (!cpu_possible(p->sq_thread_cpu))
+>>> +	if (!cpu_online(p->sq_thread_cpu))
+>>>  		goto err;
+>>>  
+>>>  	if (ctx->flags & IORING_SETUP_SQPOLL) {
+>>> @@ -2258,7 +2258,7 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+>>>  
+>>>  			cpu = array_index_nospec(p->sq_thread_cpu, NR_CPUS);
+>>>  			ret = -EINVAL;
+>>> -			if (!cpu_possible(p->sq_thread_cpu))
+>>> +			if (!cpu_online(p->sq_thread_cpu))
+>>>  				goto err;
+>>>  
+>>>  			ctx->sqo_thread = kthread_create_on_cpu(io_sq_thread,
+>> 
+>> Hmm.  Why are we doing this check twice?  Oh... Jens, I think you
+>> braino'd commit 917257daa0fea.  Have a look.  You probably wanted to get
+>> rid of the first check for cpu_possible.
+>
+> Added a fixup patch the other day:
+>
+> http://git.kernel.dk/cgit/linux-block/commit/?h=for-linus&id=362bf8670efccebca22efda1ee5a5ee831ec5efb
 
-> 
-> >  
-> >  		bio = bio_alloc(GFP_NOWAIT, 1);
-> >  		if (!bio) {
-> > @@ -141,9 +135,8 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
-> >  		bio->bi_iter.bi_sector =
-> >  			pblk << (inode->i_sb->s_blocksize_bits - 9);
-> 
-> This line uses ->s_blocksize_bits, but your new code uses ->i_blkbits.  AFAIK
-> they'll always be the same, but please pick one or the other to use.
+@@ -2333,13 +2329,14 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+ 			ctx->sq_thread_idle = HZ;
+ 
+ 		if (p->flags & IORING_SETUP_SQ_AFF) {
+-			int cpu;
++			int cpu = p->sq_thread_cpu;
+ 
+-			cpu = array_index_nospec(p->sq_thread_cpu, NR_CPUS);
+ 			ret = -EINVAL;
+-			if (!cpu_possible(p->sq_thread_cpu))
++			if (cpu >= nr_cpu_ids || !cpu_possible(cpu))
+ 				goto err;
+ 
++			cpu = array_index_nospec(cpu, nr_cpu_ids);
++
 
-I will fix this.
+Why do you do the array_index_nospec last?  Why wouldn't that be written
+as:
 
-> 
-> >  		bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
-> > -		ret = bio_add_page(bio, ciphertext_page,
-> > -					inode->i_sb->s_blocksize, 0);
-> > -		if (ret != inode->i_sb->s_blocksize) {
-> > +		ret = bio_add_page(bio, ciphertext_page, page_bytes, 0);
-> > +		if (ret != page_bytes) {
-> >  			/* should never happen! */
-> >  			WARN_ON(1);
-> >  			bio_put(bio);
-> > @@ -156,12 +149,15 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
-> >  		bio_put(bio);
-> >  		if (err)
-> >  			goto errout;
-> > -		lblk++;
-> > -		pblk++;
-> > +
-> > +		lblk += page_bytes >> inode->i_blkbits;
-> > +		pblk += page_bytes >> inode->i_blkbits;
-> > +		total_bytes -= page_bytes;
-> >  	}
-> >  	err = 0;
-> >  errout:
-> > -	fscrypt_release_ctx(ctx);
-> > +	if (!IS_ERR_OR_NULL(ciphertext_page))
-> > +		fscrypt_restore_control_page(ciphertext_page);
-> >  	return err;
-> >  }
-> >  EXPORT_SYMBOL(fscrypt_zeroout_range);
-> 
-> 
+	if (p->flags & IORING_SETUP_SQ_AFF) {
+		int cpu = array_index_nospec(p->sq_thread_cpu, nr_cpu_ids);
 
+		ret = -EINVAL;
+		if (!cpu_possible(cpu))
+			goto err;
 
--- 
-chandan
+		ctx->sqo_thread = kthread_create_on_cpu(io_sq_thread,
+						ctx, cpu,
+						"io_uring-sq");
+	} else {
+...
 
+That would take away some head-scratching for me.
 
-
+Cheers,
+Jeff
