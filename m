@@ -2,69 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9120A105A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 08:49:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF1F105DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 09:24:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726004AbfEAGto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 02:49:44 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44597 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfEAGtn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 02:49:43 -0400
-Received: by mail-qt1-f194.google.com with SMTP id s10so19119016qtc.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Apr 2019 23:49:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L/2rF64aRaDUSZBrA9IJUuBuyItqcz2FNBCbr5ui9w8=;
-        b=YUFV8mM+ygoPgPR2my7rzrjO4Tcc2KN7Hhg7QsfLluc8JvFnOGquAQp2Zt+aJ/+BCf
-         Hoi4lm+j2TcrGP3Q/AeiBajkKHmXkhwx+HGBpmPeZTEAX/LNpthQvpUYP/r3ki0sx0b5
-         t1cFeQLTVqAiYaVnriVe4UxnsClRQo4qm0K5WXbeKW35c3Qh9eYfOmvKcwBsFlXIgTVX
-         +2nFT3DkTHtGP1/W1hdmaGAwus628oN4l30AsV8HxkFOzQ8pXcT/NfH97vzZjWD8SyP5
-         fCDDiTbMCOL0VNeyK7zubJPLc+mnNS1LhJM/9/MOG2MX0v92lzGP+O6iLWn9jyoLeEdH
-         QZyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L/2rF64aRaDUSZBrA9IJUuBuyItqcz2FNBCbr5ui9w8=;
-        b=MJCQoInhLanPJ+eA7JPWjOkIZv82HsBQWaj0USRn4+grJC9aJWQPwB/Ur0l1JgVaHc
-         1lCAs6Vcxy7LDSbkx5WMclm4GqnsKvI5awKznxEbJAPlRoGEl85RETHNtgEQf6jLYR2X
-         Zg7i9uPeGVuOOFr2kZhbB4WqKAWSkzrS8l37ez1+oSZE8bUxsK2/biZN2lVxsbX5jGq1
-         /AQGN1grGLKJoOBX/Ql0OD+QTasiCJvsQPFLVDCOJNkyUMSmqgVfcDtik4+wf5iVqbsa
-         TS2Mvu8bzo/d8A9YiG3HKpgEMA6YEWb1RnygdE8DIGawDuFjLva0J4YK0WxPSlV/7x0r
-         qnEA==
-X-Gm-Message-State: APjAAAUQ7yF1K/2dBhrR15J797cUnLVWNVtihH6Qy76HkZ9j4iiQVpF3
-        phMH2Qg/Tn1Z7JLwiKyShyyFsBxieCLFxW6Salg=
-X-Google-Smtp-Source: APXvYqyxdr/kouVHncCCtc3/TJQj7PmvKG+5ws9O4PorPQzWGc8akf32T9jfvVH9ybnE6aJs4wdBgZMBZPS9exen/s4=
-X-Received: by 2002:ac8:2d24:: with SMTP id n33mr49306580qta.70.1556693383039;
- Tue, 30 Apr 2019 23:49:43 -0700 (PDT)
+        id S1726005AbfEAHYt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 03:24:49 -0400
+Received: from smtpbg202.qq.com ([184.105.206.29]:47765 "EHLO smtpbg202.qq.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725776AbfEAHYt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 May 2019 03:24:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1556695482;
+        bh=5OYycxbwytoGNlsaJHsNXYpwDWjxGCcdM8AS1gUFazM=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=aiqQ8uG+WNV/0xesQxRnqGu9YYCOWwPUWVqK1+DibDqEuchRsw8KROuqqNOIzbzA8
+         uYNDVCdgNxOLsswm7xdlawl4tjSFRcl5BWHSA1m3tMP3fUEd6H2g4voxLbhUaBomXY
+         k3FgP2QVLRINPZbLoxOI/SQTDj81XADitnb4Z4fE=
+X-QQ-mid: esmtp7t1556695480tox338gz4
+Received: from localhost.localdomain (unknown [61.48.57.6])
+        by esmtp4.qq.com (ESMTP) with 
+        id ; Wed, 01 May 2019 15:24:31 +0800 (CST)
+X-QQ-SSF: 01000000000000F0FH3000000000000
+X-QQ-FEAT: wEhDafM0Yc9uu8tyfM1rs+CFPVVrQlgWGMwpH1exmA6DNb1aBj9yruVSyiDwv
+        HUzY2sEecLEEc0Tc9eOu5UFloLajb2qYKmlQB7KTkEPiQkcDuCGhd+irVhE9JOwaFaUUqPi
+        onnZYmNOc0BB2bA++XTkx/cm7RYkZVavTZrFmQcoBKYaolBgME8Eb0U7v7yz70VivX1ARxv
+        54hprnjiBT9kwi2yTF7xngFWIIrVV1FwY62Vxekq3K/s7qbLhr9RdMObuE9Lh0a+nIVOpPV
+        Q3ceP/1btYSc+H9nHyk15S7t4Y9bddd75kfA==
+X-QQ-GoodBg: 0
+From:   Shenghui Wang <shhuiw@foxmail.com>
+To:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     jmoyer@redhat.com
+Subject: [PATCH] io_uring: use cpu_online() to check p->sq_thread_cpu instead of cpu_possible()
+Date:   Wed,  1 May 2019 15:24:30 +0800
+Message-Id: <20190501072430.6674-1-shhuiw@foxmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190501003535.23426-1-jencce.kernel@gmail.com> <20190501010338.GN23075@ZenIV.linux.org.uk>
-In-Reply-To: <20190501010338.GN23075@ZenIV.linux.org.uk>
-From:   Murphy Zhou <jencce.kernel@gmail.com>
-Date:   Wed, 1 May 2019 14:49:31 +0800
-Message-ID: <CADJHv_ved62oihqNmj=JB6PfDKx1AJrv5WsD+aTpsUTOQEwaCw@mail.gmail.com>
-Subject: Re: [PATCH resend] vfs: return EINVAL instead of ENOENT when missing source
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtp:foxmail.com:bgforeign:bgforeign4
+X-QQ-Bgrelay: 1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 1, 2019 at 9:03 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, May 01, 2019 at 08:35:35AM +0800, Murphy Zhou wrote:
-> > From: Xiong Zhou <jencce.kernel@gmail.com>
-> >
-> > mount(2) with a NULL source device would return ENOENT instead of EINVAL
-> > after this commit:
->
-> See ee948837d7fa in vfs.git#fixes...
+This issue is found by running liburing/test/io_uring_setup test.
 
-Got it. Thanks!
+When test run, the testcase "attempt to bind to invalid cpu" would not
+pass with messages like:
+   io_uring_setup(1, 0xbfc2f7c8), \
+flags: IORING_SETUP_SQPOLL|IORING_SETUP_SQ_AFF, \
+resv: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000, \
+sq_thread_cpu: 2
+   expected -1, got 3
+   FAIL
+
+On my system, there is:
+   CPU(s) possible : 0-3
+   CPU(s) online   : 0-1
+   CPU(s) offline  : 2-3
+   CPU(s) present  : 0-1
+
+The sq_thread_cpu 2 is offline on my system, so the bind should fail.
+But cpu_possible() will pass the check. We shouldn't be able to bind
+to an offline cpu. Use cpu_online() to do the check.
+
+After the change, the testcase run as expected: EINVAL will be returned
+for cpu offlined.
+
+Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
+---
+ fs/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 0e9fb2cb1984..aa3d39860a1c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2241,7 +2241,7 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+ 	ctx->sqo_mm = current->mm;
+ 
+ 	ret = -EINVAL;
+-	if (!cpu_possible(p->sq_thread_cpu))
++	if (!cpu_online(p->sq_thread_cpu))
+ 		goto err;
+ 
+ 	if (ctx->flags & IORING_SETUP_SQPOLL) {
+@@ -2258,7 +2258,7 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+ 
+ 			cpu = array_index_nospec(p->sq_thread_cpu, NR_CPUS);
+ 			ret = -EINVAL;
+-			if (!cpu_possible(p->sq_thread_cpu))
++			if (!cpu_online(p->sq_thread_cpu))
+ 				goto err;
+ 
+ 			ctx->sqo_thread = kthread_create_on_cpu(io_sq_thread,
+-- 
+2.20.1
+
+
+
