@@ -2,85 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DD0C10F2F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 00:46:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C716310F81
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 01:02:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbfEAWqP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 18:46:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47246 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726126AbfEAWqJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 18:46:09 -0400
-Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1E92217D7;
-        Wed,  1 May 2019 22:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556750768;
-        bh=xD7PqOfhddvE9okJKFAirf34SL4fz8KKEtN16Qy6Kso=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gilxO/PqfpEGq5c0zQGIqQZrLC3gFUWqXtIObS+nLMp9ZEEI5orwUg2BzcJT9mUB0
-         THM/ewxak22G9gQkbw7qJvZ7zyBtX1k20tFJtJctGjT8wJLhM8WiB18YU5BunF+PRW
-         GFG0+lcuMb/OEg+KZIGOYNlpwWk/GuCg7qsQ78Zk=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        Chandan Rajendra <chandan@linux.ibm.com>
-Subject: [PATCH 13/13] ext4: encrypt only up to last block in ext4_bio_write_page()
-Date:   Wed,  1 May 2019 15:45:15 -0700
-Message-Id: <20190501224515.43059-14-ebiggers@kernel.org>
+        id S1726175AbfEAXCL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 19:02:11 -0400
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:53587 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfEAXCL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 May 2019 19:02:11 -0400
+Received: by mail-vk1-f202.google.com with SMTP id g12so241934vkf.20
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 16:02:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=De7JrG6+3XL344zZMScSqunmKbgZceVjMJC0FL9AbxY=;
+        b=qtzfVeePMbJhJqE+Yf+Kv1DhoZE9ng7nvFaWF8RJXgdCikBdWv36SI916RGwYzUukq
+         xZ9iRq7CanllZWM7N5EMvSrH76h/QHHPUoEYCnmM+oUL1rzrZdP/C9kf6bQfkkH2oii8
+         V97WCJiEG/EbkMT96CrHZ3ULLAQCRx09BXRHAZU8A+nmmtZPD4qqi9tcI9XX7ENyOW6Q
+         pByKUepLMJrt85M4mkzTyPvyDYRRbm2pwYxrVTb6Gm/Oqz+saBFL/hmmcJKeXHcDy2/O
+         6eNpA52lwMEF/MP27yaxHbVokdjjs1RKVkQH0OPZY00rCv9fgG3G1mGLf74KJ8HBy8CY
+         U+lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=De7JrG6+3XL344zZMScSqunmKbgZceVjMJC0FL9AbxY=;
+        b=X/ayXKQyyrTH0hu0j/q8Bq2jIvD4aDV8ZJImr/GOmx8mdFfXkuqU2rVIPRzPbXleDA
+         TmBe3fuIvhJXkGr2BoGPzFSd1Qba70NwDqmQMEWe5qFRquBE97myyzV4YdiLwdAMMQQf
+         BZEZ5NhwcEVlAElEAnW9vlJfNW0TlzpWl/CtpCxDXBJEFNHcD0yhb7d07tqOsyQuMDIs
+         PYmB4nMXx+UUP/VOTBL/U+zinW8K/slhpOdF+jGObZA3Kc/b1CEcjhRZgA1ZKbFq9IlC
+         S7nGgk+z+lsu+HQ3el5agh2Fmaj3PdZSSbmJRg1caXRlIcIetzRBK0mPbQD+TasJZ48t
+         a7+g==
+X-Gm-Message-State: APjAAAVsUFgbVIBgr40fh/lVa2VPDJGMRaSrB2O9kczeJz0EZIYdHgID
+        Yl8/eFmHEhjylUS1BnWjG6NK74FgzvOSH6j5lGq48w==
+X-Google-Smtp-Source: APXvYqytaGaXIlQSl5wsYvREjZvXVeqTJ4FhNvP2xNvz38NyshdL0U4pqVOMRR/ps0I6/FLnggB5b5wmfrnXtO1aUnE0lA==
+X-Received: by 2002:ab0:20a1:: with SMTP id y1mr213208ual.101.1556751729917;
+ Wed, 01 May 2019 16:02:09 -0700 (PDT)
+Date:   Wed,  1 May 2019 16:01:09 -0700
+Message-Id: <20190501230126.229218-1-brendanhiggins@google.com>
+Mime-Version: 1.0
 X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
-In-Reply-To: <20190501224515.43059-1-ebiggers@kernel.org>
-References: <20190501224515.43059-1-ebiggers@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        keescook@google.com, kieran.bingham@ideasonboard.com,
+        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
+        shuah@kernel.org
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com,
+        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
+        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
+        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
+        pmladek@suse.com, richard@nod.at, rientjes@google.com,
+        rostedt@goodmis.org, wfg@linux.intel.com,
+        Brendan Higgins <brendanhiggins@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+## TLDR
 
-As an optimization, don't encrypt blocks fully beyond i_size, since
-those definitely won't need to be written out.  Also add a comment.
+I rebased the last patchset on 5.1-rc7 in hopes that we can get this in
+5.2.
 
-This is in preparation for allowing encryption on ext4 filesystems with
-blocksize != PAGE_SIZE.
+Shuah, I think you, Greg KH, and myself talked off thread, and we agreed
+we would merge through your tree when the time came? Am I remembering
+correctly?
 
-This is based on work by Chandan Rajendra.
+## Background
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/ext4/page-io.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+This patch set proposes KUnit, a lightweight unit testing and mocking
+framework for the Linux kernel.
 
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index 457ddf051608f..ab843ad89df2f 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -468,11 +468,19 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
- 
- 	bh = head = page_buffers(page);
- 
-+	/*
-+	 * If any blocks are being written to an encrypted file, encrypt them
-+	 * into a bounce page.  For simplicity, just encrypt until the last
-+	 * block which might be needed.  This may cause some unneeded blocks
-+	 * (e.g. holes) to be unnecessarily encrypted, but this is rare and
-+	 * can't happen in the common case of blocksize == PAGE_SIZE.
-+	 */
- 	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) && nr_to_submit) {
- 		gfp_t gfp_flags = GFP_NOFS;
-+		unsigned int enc_bytes = round_up(len, i_blocksize(inode));
- 
- 	retry_encrypt:
--		bounce_page = fscrypt_encrypt_pagecache_blocks(page, PAGE_SIZE,
-+		bounce_page = fscrypt_encrypt_pagecache_blocks(page, enc_bytes,
- 							       0, gfp_flags);
- 		if (IS_ERR(bounce_page)) {
- 			ret = PTR_ERR(bounce_page);
+Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+it does not require installing the kernel on a test machine or in a VM
+and does not require tests to be written in userspace running on a host
+kernel. Additionally, KUnit is fast: From invocation to completion KUnit
+can run several dozen tests in under a second. Currently, the entire
+KUnit test suite for KUnit runs in under a second from the initial
+invocation (build time excluded).
+
+KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+Googletest/Googlemock for C++. KUnit provides facilities for defining
+unit test cases, grouping related test cases into test suites, providing
+common infrastructure for running tests, mocking, spying, and much more.
+
+## What's so special about unit testing?
+
+A unit test is supposed to test a single unit of code in isolation,
+hence the name. There should be no dependencies outside the control of
+the test; this means no external dependencies, which makes tests orders
+of magnitudes faster. Likewise, since there are no external dependencies,
+there are no hoops to jump through to run the tests. Additionally, this
+makes unit tests deterministic: a failing unit test always indicates a
+problem. Finally, because unit tests necessarily have finer granularity,
+they are able to test all code paths easily solving the classic problem
+of difficulty in exercising error handling code.
+
+## Is KUnit trying to replace other testing frameworks for the kernel?
+
+No. Most existing tests for the Linux kernel are end-to-end tests, which
+have their place. A well tested system has lots of unit tests, a
+reasonable number of integration tests, and some end-to-end tests. KUnit
+is just trying to address the unit test space which is currently not
+being addressed.
+
+## More information on KUnit
+
+There is a bunch of documentation near the end of this patch set that
+describes how to use KUnit and best practices for writing unit tests.
+For convenience I am hosting the compiled docs here:
+https://google.github.io/kunit-docs/third_party/kernel/docs/
+Additionally for convenience, I have applied these patches to a branch:
+https://kunit.googlesource.com/linux/+/kunit/rfc/v5.1-rc7/v1
+The repo may be cloned with:
+git clone https://kunit.googlesource.com/linux
+This patchset is on the kunit/rfc/v5.1-rc7/v1 branch.
+
+## Changes Since Last Version
+
+None. I just rebased the last patchset on v5.1-rc7.
+
 -- 
 2.21.0.593.g511ec345e18-goog
 
