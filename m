@@ -2,108 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7882010E49
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 22:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E30A10EDC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 23:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbfEAUzp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 16:55:45 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:40948 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726088AbfEAUzp (ORCPT
+        id S1726301AbfEAV5Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 17:57:16 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55149 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbfEAV5Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 16:55:45 -0400
-Received: by mail-yw1-f66.google.com with SMTP id t79so24553ywc.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 13:55:44 -0700 (PDT)
+        Wed, 1 May 2019 17:57:16 -0400
+Received: by mail-it1-f195.google.com with SMTP id a190so929673ite.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 14:57:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=aAYZCbi0VoSmmJV447FzNll6sGqvQaQ9x6mMPmHmAI4=;
-        b=X+fxKdNubUSEWdz6YamleAbHQ6uLnohL159H15RTgJJJ2xfWmnYhTfTjjA/eCrQS35
-         zGS7308JRWp1SHHJ8qaZdCBMHx51dzzZETcNos4rbFbngmqZJ1j0DMJvwQ/LEWyuN8Ba
-         zVzq4h1x5CAd0aLYMMxPBBaQ5x98wo/uByJPc=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=TuzrgtFnewRP7Az/ul/8XSuGGtyu58jE0oPsW6+MEAI=;
+        b=zuyE1eDhKGoj82/2Fhg7aMy0ci0Lu6OK6LcYuEMrFei7aUhMOqFe47RYDBR/Aacen8
+         TrJPQpuBATcYNwAAE6U/kA2vkesbB0WjaF91oy3F6MPM5mipLNUNFL0wdeWGh+zqRte/
+         dum7CIT49PHZcYDSApfFGppqqZi+FoXzckJExcxI2DY+LTQS4IxLNWpWR2c1eMJN5SsZ
+         XSMoNyHq5lAA4adtPZgQSXeqUaQC/NJtax9oywb93ubkG8W1A1eM991B/nYCVwjmKKr4
+         lqPbiEbj4s6lFBZSie8BQf9oQ7ZM5ACsOEEfUZxju7jyxAdQdSCrkPlROKKHUeQ/sI4C
+         rE1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=aAYZCbi0VoSmmJV447FzNll6sGqvQaQ9x6mMPmHmAI4=;
-        b=NA4G1XIMdpPvy09KwQQTk1/0iNKP8hDhbjW1jZXMnoOAVl4BkTzAi2XLM+a+VopQ57
-         YatMOYp5CSzKCKUdBYjqJB+yk9LJnxNs86hKSj6ZllgG0ofRt7jmoHy7ycxzcw+giAET
-         vFpN/pWrXmoOuXKT6Mcq4ZxObVxecV32jzUvpF8nBE/Z0RRcqS3W/iXstC0eeagKS4iW
-         xMsMnVHx/9uoEwTN+CWW39O4g7MAVSFfOOWehfGoaAnnK5nv7Lg8YeeV3Zm+Lc89gSsN
-         dErzy1MU13xoyFbg76A9ACQe+0tPRxzVCbDiIPlfHHCBkSqrCKDiicgGtXT/+OTivSy2
-         C60A==
-X-Gm-Message-State: APjAAAWTnlSthFAZEzsPK+PhHmpNkQ/ixwJTob7nxXamEpGgIep/cDYY
-        H4Uq/HI/CEH6/580x3bM3Zv/qQ==
-X-Google-Smtp-Source: APXvYqy2PMhVL/u5NrVzSus4wnXFIbyY6IcxLKfwkdsm7GFCR48GA++vrN0jwomc5NoLzOEX2LA4Qg==
-X-Received: by 2002:a81:59c2:: with SMTP id n185mr1043756ywb.21.1556744144365;
-        Wed, 01 May 2019 13:55:44 -0700 (PDT)
-Received: from veci.piliscsaba.redhat.com (adsl-173-228-226-134.prtc.net. [173.228.226.134])
-        by smtp.gmail.com with ESMTPSA id w189sm9488181ywe.42.2019.05.01.13.55.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 May 2019 13:55:43 -0700 (PDT)
-Date:   Wed, 1 May 2019 16:55:41 -0400
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Steve French <smfrench@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH] network fs notification
-Message-ID: <20190501205541.GC30899@veci.piliscsaba.redhat.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TuzrgtFnewRP7Az/ul/8XSuGGtyu58jE0oPsW6+MEAI=;
+        b=cMYDSCgytXoh86MrgESdl+3FEBZTiJwx/JQjrbtivRpztsexXz9U+uNmxwZyT3b9DK
+         ocuHAFzjPOMHfoE3XE9eqkwxVI9DqPQbY++F6X8X7HjU+0gY8sLVIEHKwqG3u0PuoiLr
+         LMlSAY2AUp0EleqQrzUcmeaMd1ynNqVFW9wbzolj4pPV1a+jp1tpvbOX949++fiF/HBX
+         0P4Io0VyPkw4NiBTxJEvUz/So7ddwfPD/cmPcjGMQRPwY2i3oVmJqACMVecha8Ib/R9P
+         IUCMzP2JlTcXWWwyfR/0C1G5wpnMt20SM6/Itlh3on/7TPL3X/TQx2RPZc1EU20xDKKr
+         AD9Q==
+X-Gm-Message-State: APjAAAVy6uFLNwp2Ar0l9KdW50BM8l8Hm3l5P+u5DV1myN34mDsgq2ai
+        fTybbZVdcH4sY52QoRmfpq4DvVc9KANSJA==
+X-Google-Smtp-Source: APXvYqz9/cdAtBgYCfg98tPbhFuc2v8QLYYXTs9aHihYSWRS5MJM6E2fMfiggX556KpgYaSpi1Dw6A==
+X-Received: by 2002:a24:2e4f:: with SMTP id i76mr9619870ita.171.1556747835400;
+        Wed, 01 May 2019 14:57:15 -0700 (PDT)
+Received: from [192.168.1.113] (174-23-158-160.slkc.qwest.net. [174.23.158.160])
+        by smtp.gmail.com with ESMTPSA id d133sm4004433ita.5.2019.05.01.14.57.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 May 2019 14:57:14 -0700 (PDT)
+Subject: Re: [PATCH v1 1/1] [io_uring] req->error only used for iopoll
+To:     =?UTF-8?Q?Stefan_B=c3=bchler?= <source@stbuehler.de>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20190501115336.13438-1-source@stbuehler.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <f9499cb0-8e00-8e82-0acb-edf1c5556f21@kernel.dk>
+Date:   Wed, 1 May 2019 15:57:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190501115336.13438-1-source@stbuehler.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a really really trivial first iteration, but I think it's enough to
-try out CIFS notification support.  Doesn't deal with mark deletion, but
-that's best effort anyway: fsnotify() will filter out unneeded events.
+On 5/1/19 5:53 AM, Stefan Bühler wrote:
+> No need to set it in io_poll_add; io_poll_complete doesn't use it to set
+> the result in the CQE.
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/notify/fanotify/fanotify_user.c |    6 +++++-
- fs/notify/inotify/inotify_user.c   |    2 ++
- include/linux/fs.h                 |    1 +
- 3 files changed, 8 insertions(+), 1 deletion(-)
+Looks good, I added this for the 5.2 series. Thanks.
 
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1041,9 +1041,13 @@ static int do_fanotify_mark(int fanotify
- 		else if (mark_type == FAN_MARK_FILESYSTEM)
- 			ret = fanotify_add_sb_mark(group, mnt->mnt_sb, mask,
- 						   flags, fsid);
--		else
-+		else {
- 			ret = fanotify_add_inode_mark(group, inode, mask,
- 						      flags, fsid);
-+
-+			if (!ret && inode->i_op->notify_update)
-+				inode->i_op->notify_update(inode);
-+		}
- 		break;
- 	case FAN_MARK_REMOVE:
- 		if (mark_type == FAN_MARK_MOUNT)
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -754,6 +754,8 @@ SYSCALL_DEFINE3(inotify_add_watch, int,
- 
- 	/* create/update an inode mark */
- 	ret = inotify_update_watch(group, inode, mask);
-+	if (!ret && inode->i_op->notify_update)
-+		inode->i_op->notify_update(inode);
- 	path_put(&path);
- fput_and_out:
- 	fdput(f);
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1852,6 +1852,7 @@ struct inode_operations {
- 			   umode_t create_mode);
- 	int (*tmpfile) (struct inode *, struct dentry *, umode_t);
- 	int (*set_acl)(struct inode *, struct posix_acl *, int);
-+	void (*notify_update)(struct inode *inode);
- } ____cacheline_aligned;
- 
- static inline ssize_t call_read_iter(struct file *file, struct kiocb *kio,
+-- 
+Jens Axboe
+
