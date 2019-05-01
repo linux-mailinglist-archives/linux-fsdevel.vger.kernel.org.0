@@ -2,53 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 626D210A35
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 17:41:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7893510A50
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 May 2019 17:56:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfEAPk7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 11:40:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55116 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbfEAPk7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 11:40:59 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 005FB8666E;
-        Wed,  1 May 2019 15:40:59 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4ED56629BF;
-        Wed,  1 May 2019 15:40:58 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
+        id S1726509AbfEAPz4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 11:55:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33082 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726452AbfEAPz4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 May 2019 11:55:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9ECD1A78;
+        Wed,  1 May 2019 08:55:55 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F2FD3F719;
+        Wed,  1 May 2019 08:55:54 -0700 (PDT)
+Date:   Wed, 1 May 2019 16:55:51 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Shenghui Wang <shhuiw@foxmail.com>, viro@zeniv.linux.org.uk,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] io_uring: use cpu_online() to check p->sq_thread_cpu instead of cpu_possible()
-References: <20190501072430.6674-1-shhuiw@foxmail.com>
-        <x49wojaxuaa.fsf@segfault.boston.devel.redhat.com>
-        <cd55b1e4-9395-a8b7-707e-ceed9d6c0c15@kernel.dk>
-        <x49o94mxn1w.fsf@segfault.boston.devel.redhat.com>
-        <bcf4aa58-ec09-3d73-89f8-fdfdc3ea2896@kernel.dk>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Wed, 01 May 2019 11:40:57 -0400
-In-Reply-To: <bcf4aa58-ec09-3d73-89f8-fdfdc3ea2896@kernel.dk> (Jens Axboe's
-        message of "Wed, 1 May 2019 08:39:05 -0600")
-Message-ID: <x49tvee89o6.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH] io_uring: avoid page allocation warnings
+Message-ID: <20190501155551.GF11740@lakrids.cambridge.arm.com>
+References: <20190430132405.8268-1-mark.rutland@arm.com>
+ <20190430141810.GF13796@bombadil.infradead.org>
+ <20190430145938.GA8314@lakrids.cambridge.arm.com>
+ <a1af3017-6572-e828-dc8a-a5c8458e6b5a@kernel.dk>
+ <20190430170302.GD8314@lakrids.cambridge.arm.com>
+ <0bd395a0-e0d3-16a5-e29f-557e97782a48@kernel.dk>
+ <20190501103026.GA11740@lakrids.cambridge.arm.com>
+ <710a3048-ccab-260d-d8b7-1d51ff6d589d@kernel.dk>
+ <20190501150921.GE11740@lakrids.cambridge.arm.com>
+ <88fee953-ea3e-b9c0-650c-60faea07dd04@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 01 May 2019 15:40:59 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88fee953-ea3e-b9c0-650c-60faea07dd04@kernel.dk>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jens Axboe <axboe@kernel.dk> writes:
+On Wed, May 01, 2019 at 09:29:25AM -0600, Jens Axboe wrote:
+> On 5/1/19 9:09 AM, Mark Rutland wrote:
+> > I've manually minimized that to C below. AFAICT, that hits a leak, which
+> > is what's triggering the OOM after the program is run a number of times
+> > with the previously posted kvmalloc patch.
+> > 
+> > Per /proc/meminfo, that memory isn't accounted anywhere.
+> > 
+> >> Patch looks fine to me. Note
+> >> that buffer registration is under the protection of RLIMIT_MEMLOCK.
+> >> That's usually very limited for non-root, as root you can of course
+> >> consume as much as you want and OOM the system.
+> > 
+> > Sure.
+> > 
+> > As above, it looks like there's a leak, regardless.
+> 
+> The leak is that we're not releasing imu->bvec in case of error. I fixed
+> a missing kfree -> kvfree as well in your patch, with this rolled up
+> version it works for me.
 
-> Agree, I've cleaned it up, it was a bit of a mess.
+That works for me too.
 
-LGTM, thanks!
+I'll fold that into v2, and send that out momentarily.
 
--Jeff
+Thanks,
+Mark.
