@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E2B311204
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 06:03:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B20B711205
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 06:04:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725772AbfEBED5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 00:03:57 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:45824 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbfEBED4 (ORCPT
+        id S1725780AbfEBEEA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 00:04:00 -0400
+Received: from mail-yw1-f74.google.com ([209.85.161.74]:40896 "EHLO
+        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbfEBED7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 00:03:56 -0400
-Received: by mail-pl1-f201.google.com with SMTP id d10so596792plo.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 21:03:56 -0700 (PDT)
+        Thu, 2 May 2019 00:03:59 -0400
+Received: by mail-yw1-f74.google.com with SMTP id y66so2004477ywy.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 21:03:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=FTGJtpVoTjeu1V1Sw0UdbZGuFv52q6kQBSEgglatuTk=;
-        b=ojgUBfSkkB1EETF4JXueOdQcmbS8HjBujrtSDHxPDCf/ZqMOM6qUPj/8IAvJm19VDZ
-         VIZoGEpKPVbJvKx+HD+paaba3HvEfJ0fvzxF+tVyEsLVp6AjceaOe+JiU5QbhZwJbYA8
-         LB9M9NDgVLBv/7HbT5eGvrw0kmIcJYh/05991XLfOJZF4mtRKittNVwLmxgZ+X1+632g
-         f4sQz+RSAiVP66cLrYJxh6D7+WXgcHXwM5EKcEOizFTVdEI6roppOdYP7zZP6Zd6Vq7y
-         fkkMKUIu7pgR0R3FvNI3+HexvrLFe5Cq46mzHX/ezqvW69br60h0EMtD/bmwt5tM1pu7
-         /LbA==
+        bh=Fpq90doCuaBYqCHGT6JZetud+jytsYKWmlOyk9NsZyo=;
+        b=upncsahJRob2YmdNdKhzY+wISGAUb3MKEDuqA2ywhWDd+URky8cXuv2LEiNM1mPV2i
+         BZDyNg+SfnGnRvoqEzugbT1DvmFfUHeTpAjTszAs9fBGNYv6ePcQTZNkuOFEvxLSa9lZ
+         MPooQ/lfj2aYFAvP5SY9bWqZiXyd+VGZapqD3ab/4/q0NIKPBD/T9GOvr8vFApnuW7oF
+         22a1Y9NPQwcXEhAWmjblI/GWi0FrxAiWZl79ClS2aydt1K27FKCWapFSz2mfa7iP8vKc
+         Uw2qycQS0szHNytscgP9WcfIE7kA+yOUYYKMe1Ee2dSsS5vmdNlm+MusqXwFVHgSpm6W
+         1PYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=FTGJtpVoTjeu1V1Sw0UdbZGuFv52q6kQBSEgglatuTk=;
-        b=Pai6HlJ9BU5RFUkm6eJ3+4b43hlwhHetzYlccGZyIoyg4qOLdBQgtFpDgixWMnnPIu
-         cXFXsaIPYcJ1VPvomZX9ZOcAjgAK5x7tr/h8ipwyeDCOb9PY8PNKxM4LIjQ+h1zgTgbr
-         k1ENOuWSzYS2qdyvReAr5sHLMurSFchyQPntR8DN+EEKnc6fnGmzxU+wrsAr4YHqecU6
-         3mZub9TfU98ofXHBSulK7lDsuyOeGmjQfF3CG628W08xB+/exKq/SRzyvuY/dyhNAbCC
-         /c6C8PW8FF3byNFj3ZDJqvIb3hVBB2pHNV4K9bdj9l9K53aFs6DnXR5LUZwGytYYxz3v
-         G/DA==
-X-Gm-Message-State: APjAAAUBdcNuJc8jN4bMaM6ZeMPfdydYlX9EW9m6YTRpJMmfBH8eCcY5
-        YXw9KiD1bLCq8Dxomrv7PIn7l67mcdOQPewnHzqsmJ9v0TJKIBDoyYk2sPn0dEftoGOWJtdvNUM
-        rSv04y/AmHGPTKvYeNZbRj1KAnFxyRve2i8g4QDjFBte7s+5DjQ6XmTJO8GKSob3WVBPPvXgrqX
-        4=
-X-Google-Smtp-Source: APXvYqySRqeEjTOAPzRJ+gU/lQ/xFzfML7D151OmhWDCXMnfN0v1+UOfkzATDrgpkOlK2sGB2RkMsQnWGoKwfQ==
-X-Received: by 2002:a63:4c26:: with SMTP id z38mr1595233pga.425.1556769835838;
- Wed, 01 May 2019 21:03:55 -0700 (PDT)
-Date:   Wed,  1 May 2019 21:03:27 -0700
+        bh=Fpq90doCuaBYqCHGT6JZetud+jytsYKWmlOyk9NsZyo=;
+        b=aLsiNUBDkuHZX3wloGoaiJtzwmuRifJpbz2EZBGwX7m2Ph0JkJtPaiFDxAMmZTqZHC
+         ip4jcmrXVmOhj+5TU2N4t/jxtmW+VF84ZsoO5ZxW8a0kOWbLFtl4owUKC352XwscVR16
+         0XG7TUHtarG3MT98AZj5gYtcmZTBaZrSbV9qeZvehaCcR+0RCj8yJ2gls+mdkIjIS9Ic
+         CNMnEcsd6VRv9EHNCRx9jb40oDkkKw9CqaqKQcx2e8MYF61MfbNsZX7azixz4DzPSCZI
+         IYqKVSV2tbHfl70N1f0vWTGUof5g5DIFWvfAbSM4jgPbmbbR1VrBOUQryDD09MDCmFh/
+         WDwQ==
+X-Gm-Message-State: APjAAAU2LfW8LXiPi5q1XMaLv5G/HENMbyaU/YSyCI8yNVF8vNtDpoj9
+        GAM0JKbdAGFovBpoxQfidCMUst3P9Raj2ce9tBAT7Uy1V1nCvdWU+y/UFxQXLkWumgHF6c6SfhJ
+        VQG4VX7xQle/GAyJAirCD+oTRUGo1DEtn4chRHCDny2KuMse0StOqgZZrHzKnu99KMBpIEzDjgd
+        s=
+X-Google-Smtp-Source: APXvYqz4Qiknc3sH81AkFa/oEMuSDmwuQnN4CS9kbqobf8IPZX2i9fsxQNK/ebf1kqcLsJD02Y/iVY3zkYT7KQ==
+X-Received: by 2002:a25:2602:: with SMTP id m2mr1204146ybm.3.1556769838105;
+ Wed, 01 May 2019 21:03:58 -0700 (PDT)
+Date:   Wed,  1 May 2019 21:03:28 -0700
 In-Reply-To: <20190502040331.81196-1-ezemtsov@google.com>
-Message-Id: <20190502040331.81196-3-ezemtsov@google.com>
+Message-Id: <20190502040331.81196-4-ezemtsov@google.com>
 Mime-Version: 1.0
 References: <20190502040331.81196-1-ezemtsov@google.com>
 X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
-Subject: [PATCH 2/6] incfs: Backing file format
+Subject: [PATCH 3/6] incfs: Management of in-memory FS data structures
 From:   ezemtsov@google.com
 To:     linux-fsdevel@vger.kernel.org
 Cc:     tytso@mit.edu, Eugene Zemtsov <ezemtsov@google.com>
@@ -61,929 +61,1569 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eugene Zemtsov <ezemtsov@google.com>
 
-- Read and write logic for ondisk backing file format (aka incfs image)
-- Add format.c and format.h
-- Utils in internal.h
+- Data structures for files, dirs, blocks, segments etc.
+- Reading and uncompressing data blocks
+- Waiting for temporarily missing data blocks
+- Pending reads reporting
+- Processing incfs instructions coming from ioctl
+- Processing metadata blocks read from the backing file
 
 Signed-off-by: Eugene Zemtsov <ezemtsov@google.com>
 ---
- fs/incfs/Makefile   |   2 +-
- fs/incfs/format.c   | 554 ++++++++++++++++++++++++++++++++++++++++++++
- fs/incfs/format.h   | 294 +++++++++++++++++++++++
- fs/incfs/internal.h |  31 +++
- 4 files changed, 880 insertions(+), 1 deletion(-)
- create mode 100644 fs/incfs/format.c
- create mode 100644 fs/incfs/format.h
- create mode 100644 fs/incfs/internal.h
+ fs/incfs/Makefile    |    2 +-
+ fs/incfs/data_mgmt.c | 1312 ++++++++++++++++++++++++++++++++++++++++++
+ fs/incfs/data_mgmt.h |  213 +++++++
+ 3 files changed, 1526 insertions(+), 1 deletion(-)
+ create mode 100644 fs/incfs/data_mgmt.c
+ create mode 100644 fs/incfs/data_mgmt.h
 
 diff --git a/fs/incfs/Makefile b/fs/incfs/Makefile
-index 7892196c634f..cdea18c7213e 100644
+index cdea18c7213e..19250a09348e 100644
 --- a/fs/incfs/Makefile
 +++ b/fs/incfs/Makefile
 @@ -1,4 +1,4 @@
  # SPDX-License-Identifier: GPL-2.0
  obj-$(CONFIG_INCREMENTAL_FS)	+= incrementalfs.o
 
--incrementalfs-y := main.o vfs.o
-\ No newline at end of file
-+incrementalfs-y := main.o vfs.o format.o
-diff --git a/fs/incfs/format.c b/fs/incfs/format.c
+-incrementalfs-y := main.o vfs.o format.o
++incrementalfs-y := main.o vfs.o format.o data_mgmt.o
+diff --git a/fs/incfs/data_mgmt.c b/fs/incfs/data_mgmt.c
 new file mode 100644
-index 000000000000..a0e6ecec09d3
+index 000000000000..c19b0cbae2d8
 --- /dev/null
-+++ b/fs/incfs/format.c
-@@ -0,0 +1,554 @@
++++ b/fs/incfs/data_mgmt.c
+@@ -0,0 +1,1312 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright 2018 Google LLC
++ * Copyright 2019 Google LLC
 + */
-+#include <linux/fs.h>
-+#include <linux/file.h>
++#include <linux/gfp.h>
 +#include <linux/types.h>
-+#include <linux/mutex.h>
-+#include <linux/mm.h>
-+#include <linux/falloc.h>
 +#include <linux/slab.h>
++#include <linux/file.h>
++#include <linux/jiffies.h>
++#include <linux/mm.h>
++#include <linux/lz4.h>
++#include <linux/rhashtable.h>
 +#include <linux/crc32.h>
 +
-+#include "format.h"
++#include "data_mgmt.h"
 +
-+struct backing_file_context *incfs_alloc_bfc(struct file *backing_file)
++#define INCFS_MIN_FILE_INODE INCFS_ROOT_INODE
++#define INCFS_MAX_FILE_INODE (INCFS_MIN_FILE_INODE + (1 << 30))
++
++static u32 ino_hash(const void *data, u32 len, u32 seed);
++
++static struct rhashtable_params node_map_params = {
++	.nelem_hint		= 20,
++	.key_len		= FIELD_SIZEOF(struct inode_info, n_ino),
++	.key_offset		= offsetof(struct inode_info, n_ino),
++	.head_offset		= offsetof(struct inode_info, n_hash_list),
++	.automatic_shrinking	= false,
++	.hashfn = ino_hash
++};
++
++struct mount_info *incfs_alloc_mount_info(struct super_block *sb,
++					struct file *backing_file)
 +{
-+	struct backing_file_context *result = NULL;
++	struct mount_info *mi = NULL;
++	int error = 0;
++
++	mi = kzalloc(sizeof(*mi), GFP_NOFS);
++	if (!mi) {
++		error = -ENOMEM;
++		goto err;
++	}
++
++	error = rhashtable_init(&mi->mi_nodes, &node_map_params);
++	if (error)
++		goto err;
++
++	mi->mi_bf_context = incfs_alloc_bfc(backing_file);
++	if (IS_ERR(mi->mi_bf_context)) {
++		error = PTR_ERR(mi->mi_bf_context);
++		mi->mi_bf_context = NULL;
++		goto err;
++	}
++
++	mi->mi_sb = sb;
++
++	/* Initialize root dir */
++	mi->mi_root.d_node.n_ino = INCFS_ROOT_INODE;
++	mi->mi_root.d_node.n_mount_info = mi;
++	mi->mi_root.d_node.n_type = INCFS_NODE_DIR;
++	mi->mi_root.d_node.n_mode = S_IFDIR | 0555;
++	INIT_LIST_HEAD(&mi->mi_root.d_entries_head);
++	INIT_LIST_HEAD(&mi->mi_root.d_node.n_parent_links_head);
++	mi->mi_next_ino = INCFS_ROOT_INODE + 1;
++
++	error = rhashtable_insert_fast(&mi->mi_nodes,
++					&mi->mi_root.d_node.n_hash_list,
++					node_map_params);
++	if (error)
++		goto err;
++
++	spin_lock_init(&mi->pending_reads_counters_lock);
++	mutex_init(&mi->mi_nodes_mutex);
++	mutex_init(&mi->mi_dir_ops_mutex);
++	init_waitqueue_head(&mi->mi_pending_reads_notif_wq);
++	return mi;
++err:
++
++	if (mi) {
++		rhashtable_destroy(&mi->mi_nodes);
++
++		if (mi->mi_bf_context)
++			incfs_free_bfc(mi->mi_bf_context);
++
++		kfree(mi);
++	}
++	return ERR_PTR(error);
++}
++
++static bool is_valid_inode(int ino)
++{
++	return ino >= INCFS_MIN_FILE_INODE && ino <= INCFS_MAX_FILE_INODE;
++}
++
++static u32 ino_hash(const void *data, u32 len, u32 seed)
++{
++	const int *ino = data;
++
++	return (u32)(*ino) ^ seed;
++}
++
++static void data_file_segment_init(struct data_file_segment *segment)
++{
++	INIT_LIST_HEAD(&segment->reads_list_head);
++	init_waitqueue_head(&segment->new_data_arrival_wq);
++	mutex_init(&segment->reads_mutex);
++	mutex_init(&segment->blockmap_mutex);
++}
++
++static void data_file_segment_destroy(struct data_file_segment *segment)
++{
++	list_del(&segment->reads_list_head);
++	mutex_destroy(&segment->reads_mutex);
++	mutex_destroy(&segment->blockmap_mutex);
++}
++
++static void free_data_file(struct data_file *df)
++{
++	int i;
++
++	if (!df)
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(df->df_segments); i++)
++		data_file_segment_destroy(&df->df_segments[i]);
++	kfree(df);
++}
++
++/*
++ * Adds a new file to the mount_info and
++ * returns an error code (!NULL) in case of an error.
++ */
++static struct data_file *add_data_file(struct mount_info *mi, int ino,
++					loff_t size, umode_t mode)
++{
++	struct data_file *df = NULL;
++	int error = 0;
++	int i;
++
++	if (!mi)
++		return ERR_PTR(-EFAULT);
++
++	if (!is_valid_inode(ino))
++		return ERR_PTR(-EINVAL);
++
++	LOCK_REQUIRED(mi->mi_nodes_mutex);
++
++	if (rhashtable_lookup_fast(&mi->mi_nodes, &ino, node_map_params))
++		return ERR_PTR(-EEXIST);
++
++	df = kzalloc(sizeof(*df), GFP_NOFS);
++	if (!df)
++		return ERR_PTR(-ENOMEM);
++
++	df->df_node.n_ino = ino;
++	df->df_node.n_type = INCFS_NODE_FILE;
++	df->df_node.n_mode = (mode & 0555) | S_IFREG;
++	df->df_node.n_mount_info = mi;
++	INIT_LIST_HEAD(&df->df_node.n_parent_links_head);
++
++	df->df_size = size;
++	if (size > 0)
++		df->df_block_count =
++			1 + (size - 1) / INCFS_DATA_FILE_BLOCK_SIZE;
++
++	for (i = 0; i < ARRAY_SIZE(df->df_segments); i++)
++		data_file_segment_init(&df->df_segments[i]);
++
++	error = rhashtable_insert_fast(&mi->mi_nodes,
++					&df->df_node.n_hash_list,
++					node_map_params);
++	if (error) {
++		free_data_file(df);
++		return ERR_PTR(error);
++	}
++	return df;
++}
++
++static void free_dir_entry(struct dir_entry_info *entry)
++{
++	if (!entry)
++		return;
++
++	kfree(entry->de_name.data);
++	kfree(entry);
++}
++
++static void free_dir(struct directory *dir)
++{
++	struct dir_entry_info *entry = NULL;
++	struct dir_entry_info *tmp = NULL;
++
++	if (!dir)
++		return;
++
++	list_for_each_entry_safe(entry, tmp, &dir->d_entries_head,
++				  de_entries_list) {
++		free_dir_entry(entry);
++	}
++
++	kfree(dir);
++}
++
++static void hashtable_free_node(void *ptr, void *arg)
++{
++	struct mount_info *mi = arg;
++	struct inode_info *node = ptr;
++	struct data_file *df = incfs_get_file_from_node(node);
++	struct directory *dir = NULL;
++
++	if (df) {
++		free_data_file(df);
++		return;
++	}
++
++	dir = incfs_get_dir_from_node(node);
++	if (dir && dir != &mi->mi_root)
++		free_dir(dir);
++}
++
++void incfs_free_mount_info(struct mount_info *mi)
++{
++	if (!mi)
++		return;
++
++	if (mi->mi_bf_context)
++		incfs_free_bfc(mi->mi_bf_context);
++
++	rhashtable_free_and_destroy(&mi->mi_nodes, hashtable_free_node, mi);
++	mutex_destroy(&mi->mi_nodes_mutex);
++	mutex_destroy(&mi->mi_dir_ops_mutex);
++	kfree(mi);
++}
++
++static struct directory *add_dir(struct mount_info *mi, int ino, umode_t mode)
++{
++	struct directory *result = NULL;
++	int error = 0;
++
++	if (!mi)
++		return ERR_PTR(-EFAULT);
++
++	if (!is_valid_inode(ino))
++		return ERR_PTR(-EINVAL);
++
++	LOCK_REQUIRED(mi->mi_nodes_mutex);
++
++	if (rhashtable_lookup_fast(&mi->mi_nodes, &ino, node_map_params))
++		return ERR_PTR(-EEXIST);
 +
 +	result = kzalloc(sizeof(*result), GFP_NOFS);
 +	if (!result)
 +		return ERR_PTR(-ENOMEM);
 +
-+	result->bc_file = backing_file;
-+	mutex_init(&result->bc_mutex);
++	result->d_node.n_ino = ino;
++	result->d_node.n_type = INCFS_NODE_DIR;
++	result->d_node.n_mode = (mode & 0555) | S_IFDIR;
++	result->d_node.n_mount_info = mi;
++	INIT_LIST_HEAD(&result->d_entries_head);
++	INIT_LIST_HEAD(&result->d_node.n_parent_links_head);
++
++	error = rhashtable_insert_fast(&mi->mi_nodes,
++					&result->d_node.n_hash_list,
++					node_map_params);
++	if (error) {
++		free_dir(result);
++		return ERR_PTR(error);
++	}
 +	return result;
 +}
 +
-+void incfs_free_bfc(struct backing_file_context *bfc)
++static struct dir_entry_info *add_dir_entry(struct directory *dir,
++				     const char *name, size_t name_len,
++				     struct inode_info *child)
 +{
-+	if (!bfc)
-+		return;
++	struct dir_entry_info *result = NULL;
++	struct dir_entry_info *entry = NULL;
++	struct mount_info *mi = NULL;
++	int error = 0;
 +
-+	if (bfc->bc_file)
-+		fput(bfc->bc_file);
++	if (!dir || !child || !name)
++		return ERR_PTR(-EFAULT);
 +
-+	mutex_destroy(&bfc->bc_mutex);
-+	kfree(bfc);
++	if ((child->n_ino == INCFS_ROOT_INODE) ||
++		(child->n_ino == dir->d_node.n_ino))
++		return ERR_PTR(-EINVAL);
++
++	mi = dir->d_node.n_mount_info;
++
++	result = kzalloc(sizeof(*result), GFP_NOFS);
++	if (!result) {
++		error = -ENOMEM;
++		goto err;
++	}
++
++	result->de_parent = dir;
++	result->de_child = child;
++	result->de_name.len = name_len;
++	result->de_name.data = kstrndup(name, name_len, GFP_NOFS);
++	if (!result->de_name.data) {
++		error = -ENOMEM;
++		goto err;
++	}
++
++	mutex_lock(&mi->mi_dir_ops_mutex);
++	list_for_each_entry(entry, &dir->d_entries_head, de_entries_list) {
++		if (incfs_equal_ranges(range((u8 *)name, name_len),
++				       entry->de_name)) {
++			error = -EEXIST;
++			goto err;
++		}
++	}
++
++	if (child->n_type == INCFS_NODE_DIR) {
++		/*
++		 * Directories are not allowed to be referenced from more
++		 * than one parent directory. If parent link list is not
++		 * empty we can't create another name for this directory.
++		 */
++		if (!list_empty(&child->n_parent_links_head)) {
++			error = -EMLINK;
++			goto err;
++		}
++	}
++	/* Adding to the child's list of all links pointing to it. */
++	list_add_tail(&result->de_backlink_list,
++		&child->n_parent_links_head);
++
++	/* Adding to the dentry list's end to preserve insertion order. */
++	list_add_tail(&result->de_entries_list, &dir->d_entries_head);
++	atomic_inc(&dir->d_version);
++
++	mutex_unlock(&mi->mi_dir_ops_mutex);
++	return result;
++
++err:
++	mutex_unlock(&mi->mi_dir_ops_mutex);
++	if (result) {
++		kfree(result->de_name.data);
++		kfree(result);
++	}
++
++	return ERR_PTR(error);
 +}
 +
-+loff_t incfs_get_end_offset(struct file *f)
++static int remove_dir_entry(struct directory *dir,
++			const char *name, size_t name_len)
 +{
-+	/*
-+	 * This function assumes that file size and the end-offset
-+	 * are the same. This is not always true.
-+	 */
-+	return i_size_read(file_inode(f));
-+}
-+
-+/*
-+ * Truncate the tail of the file to the given length.
-+ * Used to rollback partially successful multistep writes.
-+ */
-+static int truncate_backing_file(struct backing_file_context *bfc,
-+				loff_t new_end)
-+{
-+	struct inode *inode = NULL;
-+	struct dentry *dentry = NULL;
-+	loff_t old_end = 0;
-+	struct iattr attr;
++	struct dir_entry_info *entry = NULL;
++	struct dir_entry_info *iter = NULL;
++	struct directory *subdir = NULL;
++	struct mount_info *mi = NULL;
 +	int result = 0;
 +
-+	if (!bfc)
++	if (!dir || !name)
 +		return -EFAULT;
 +
-+	LOCK_REQUIRED(bfc->bc_mutex);
++	mi = dir->d_node.n_mount_info;
++	mutex_lock(&mi->mi_dir_ops_mutex);
++	list_for_each_entry(iter, &dir->d_entries_head, de_entries_list) {
++		if (incfs_equal_ranges(range((u8 *)name, name_len),
++					iter->de_name)) {
++			entry = iter;
++			break;
++		}
++	}
 +
-+	if (!bfc->bc_file)
-+		return -EFAULT;
++	if (!entry) {
++		result = -ENOENT;
++		goto out;
++	}
 +
-+	old_end = incfs_get_end_offset(bfc->bc_file);
-+	if (old_end == new_end)
-+		return 0;
-+	if (old_end < new_end)
-+		return -EINVAL;
++	subdir = incfs_get_dir_from_node(entry->de_child);
++	if (subdir && !list_empty(&subdir->d_entries_head)) {
++		/* Can't remove a dir entry for not empty directory. */
++		result = -ENOTEMPTY;
++		goto out;
++	}
 +
-+	inode = bfc->bc_file->f_inode;
-+	dentry = bfc->bc_file->f_path.dentry;
++	list_del(&entry->de_backlink_list);
++	list_del(&entry->de_entries_list);
 +
-+	attr.ia_size = new_end;
-+	attr.ia_valid = ATTR_SIZE;
++	free_dir_entry(entry);
++	atomic_inc(&dir->d_version);
 +
-+	inode_lock(inode);
-+	result = notify_change(dentry, &attr, NULL);
-+	inode_unlock(inode);
-+
++out:
++	mutex_unlock(&mi->mi_dir_ops_mutex);
 +	return result;
 +}
 +
-+/* Append a given number of zero bytes to the end of the backing file. */
-+static int append_zeros(struct backing_file_context *bfc, size_t len)
++static struct data_file_segment *get_file_segment(struct data_file *df,
++					   int block_index)
 +{
-+	loff_t file_size = 0;
-+	loff_t new_last_byte_offset = 0;
-+	int res = 0;
++	int seg_idx = block_index % ARRAY_SIZE(df->df_segments);
 +
-+	if (!bfc)
-+		return -EFAULT;
-+
-+	if (len == 0)
-+		return -EINVAL;
-+
-+	LOCK_REQUIRED(bfc->bc_mutex);
-+
-+	/*
-+	 * Allocate only one byte at the new desired end of the file.
-+	 * It will increase file size and create a zeroed area of
-+	 * a given size.
-+	 */
-+	file_size = incfs_get_end_offset(bfc->bc_file);
-+	new_last_byte_offset = file_size + len - 1;
-+	res = vfs_fallocate(bfc->bc_file, 0, new_last_byte_offset, 1);
-+	if (res)
-+		return res;
-+
-+	res = vfs_fsync_range(bfc->bc_file, file_size, file_size + len, 1);
-+	return res;
++	return &df->df_segments[seg_idx];
 +}
 +
-+static int write_to_bf(struct backing_file_context *bfc, const void *buf,
-+			size_t count, loff_t pos, bool sync)
++static struct pending_read *alloc_pending_read(void)
 +{
-+	ssize_t res = 0;
-+	loff_t p = pos;
++	struct pending_read *result = NULL;
 +
-+	res = kernel_write(bfc->bc_file, buf, count, &p);
-+	if (res < 0)
-+		return res;
-+	if (res != count)
-+		return -EIO;
++	result = kzalloc(sizeof(*result), GFP_NOFS);
++	if (!result)
++		return NULL;
 +
-+	if (sync)
-+		return vfs_fsync_range(bfc->bc_file, pos, pos + count, 1);
++	INIT_LIST_HEAD(&result->reads_list);
++	return result;
++}
 +
++static bool is_read_done(struct pending_read *read)
++{
++	/*
++	 * A barrier to make sure that updated value of read->done
++	 * is properly reloaded each time we try to wake up or just before
++	 * sleeping on new_data_arrival_wq.
++	 */
++	smp_mb__before_atomic();
++	return atomic_read(&read->done) != 0;
++}
++
++static void set_read_done(struct pending_read *read)
++{
++	atomic_inc(&read->done);
++	/*
++	 * A barrier to make sure that a new value of read->done
++	 * is globally visible.
++	 */
++	smp_mb__after_atomic();
++}
++
++struct inode_info *incfs_get_node_by_name(struct directory *dir,
++					  const char *name, int *dir_ver_out)
++{
++	struct mount_info *mi = NULL;
++	struct dir_entry_info *entry = NULL;
++	struct inode_info *result = NULL;
++	size_t len = 0;
++
++	if (!dir || !name)
++		return NULL;
++
++	mi = dir->d_node.n_mount_info;
++	len = strlen(name);
++
++	mutex_lock(&mi->mi_dir_ops_mutex);
++	list_for_each_entry(entry, &dir->d_entries_head, de_entries_list) {
++		if (incfs_equal_ranges(entry->de_name,
++					range((u8 *)name, len))) {
++			result = entry->de_child;
++			break;
++		}
++	}
++	if (dir_ver_out)
++		*dir_ver_out = atomic_read(&dir->d_version);
++	mutex_unlock(&mi->mi_dir_ops_mutex);
++	return result;
++}
++
++struct data_file *incfs_get_file_from_node(struct inode_info *node)
++{
++	if (!node || node->n_type != INCFS_NODE_FILE)
++		return NULL;
++	return container_of(node, struct data_file, df_node);
++}
++
++struct directory *incfs_get_dir_from_node(struct inode_info *node)
++{
++	if (!node || node->n_type != INCFS_NODE_DIR)
++		return NULL;
++	return container_of(node, struct directory, d_node);
++}
++
++struct inode_info *incfs_get_node_by_ino(struct mount_info *mi, int ino)
++{
++	if (!mi)
++		return NULL;
++
++	LOCK_REQUIRED(mi->mi_nodes_mutex);
++	return rhashtable_lookup_fast(&mi->mi_nodes, &ino, node_map_params);
++}
++
++struct data_file *incfs_get_file_by_ino(struct mount_info *mi, int ino)
++{
++	return incfs_get_file_from_node(incfs_get_node_by_ino(mi, ino));
++}
++
++struct directory *incfs_get_dir_by_ino(struct mount_info *mi, int ino)
++{
++	return incfs_get_dir_from_node(incfs_get_node_by_ino(mi, ino));
++}
++
++static int get_data_file_block(struct data_file *df, int index,
++			struct data_file_block *res_block)
++{
++	struct incfs_blockmap_entry bme = {};
++	struct backing_file_context *bfc = NULL;
++	loff_t blockmap_off = 0;
++	u16 flags = 0;
++	int error = 0;
++
++	if (!df || !res_block)
++		return -EFAULT;
++
++	blockmap_off = atomic64_read(&df->df_blockmap_off);
++	bfc = df->df_node.n_mount_info->mi_bf_context;
++
++	if (index < 0 || index >= df->df_block_count || blockmap_off == 0)
++		return -EINVAL;
++
++	error = incfs_read_blockmap_entry(bfc, index, blockmap_off, &bme);
++	if (error)
++		return error;
++
++	flags = le16_to_cpu(bme.me_flags);
++	res_block->db_backing_file_data_offset =
++		le16_to_cpu(bme.me_data_offset_hi);
++	res_block->db_backing_file_data_offset <<= 32;
++	res_block->db_backing_file_data_offset |=
++		le32_to_cpu(bme.me_data_offset_lo);
++	res_block->db_stored_size = le16_to_cpu(bme.me_data_size);
++	res_block->db_crc = le32_to_cpu(bme.me_data_crc);
++	res_block->db_comp_alg = (flags & INCFS_BLOCK_COMPRESSED_LZ4) ?
++					 COMPRESSION_LZ4 :
++					 COMPRESSION_NONE;
 +	return 0;
 +}
 +
-+static u32 calc_md_crc(struct incfs_md_header *record)
++static int notify_pending_reads(struct data_file_segment *segment, int index)
 +{
-+	u32 result = 0;
-+	__le32 saved_crc = record->h_record_crc;
-+	__le64 saved_md_offset = record->h_next_md_offset;
-+	size_t record_size = min_t(size_t, le16_to_cpu(record->h_record_size),
-+				INCFS_MAX_METADATA_RECORD_SIZE);
++	struct pending_read *entry = NULL;
 +
-+	/* Zero fields which needs to be excluded from CRC calculation. */
-+	record->h_record_crc = 0;
-+	record->h_next_md_offset = 0;
-+	result = crc32(0, record, record_size);
++	if (!segment || index < 0)
++		return -EINVAL;
 +
-+	/* Restore excluded fields. */
-+	record->h_record_crc = saved_crc;
-+	record->h_next_md_offset = saved_md_offset;
-+
-+	return result;
++	/* Notify pending reads waiting for this block. */
++	mutex_lock(&segment->reads_mutex);
++	list_for_each_entry(entry, &segment->reads_list_head, reads_list) {
++		if (entry->block_index == index)
++			set_read_done(entry);
++	}
++	mutex_unlock(&segment->reads_mutex);
++	wake_up_all(&segment->new_data_arrival_wq);
++	return 0;
 +}
 +
 +/*
-+ * Append a given metadata record to the backing file and update a previous
-+ * record to add the new record the the metadata list.
++ * Quickly checks if there are pending reads with a serial number larger
++ * than a given one.
 + */
-+static int append_md_to_backing_file(struct backing_file_context *bfc,
-+			      struct incfs_md_header *record)
++bool incfs_fresh_pending_reads_exist(struct mount_info *mi, int last_number)
 +{
-+	int result = 0;
-+	loff_t record_offset;
-+	loff_t file_pos;
-+	__le64 new_md_offset;
-+	size_t record_size;
++	bool result = false;
 +
-+	if (!bfc || !record)
-+		return -EFAULT;
-+
-+	if (bfc->bc_last_md_record_offset < 0)
-+		return -EINVAL;
-+
-+	LOCK_REQUIRED(bfc->bc_mutex);
-+
-+	record_size = le16_to_cpu(record->h_record_size);
-+	file_pos = incfs_get_end_offset(bfc->bc_file);
-+	record->h_prev_md_offset = bfc->bc_last_md_record_offset;
-+	record->h_next_md_offset = 0;
-+	record->h_record_crc = cpu_to_le32(calc_md_crc(record));
-+
-+	/* Write the metadata record to the end of the backing file */
-+	record_offset = file_pos;
-+	new_md_offset = cpu_to_le64(record_offset);
-+	result = write_to_bf(bfc, record, record_size, file_pos, true);
-+	if (result)
-+		return result;
-+
-+	/* Update next metadata offset in a previous record or a superblock. */
-+	if (bfc->bc_last_md_record_offset) {
-+		/*
-+		 * Find a place in the previous md record where new record's
-+		 * offset needs to be saved.
-+		 */
-+		file_pos = bfc->bc_last_md_record_offset +
-+			offsetof(struct incfs_md_header, h_next_md_offset);
-+	} else {
-+		/* No metadata yet, file a place to update in the superblock. */
-+		file_pos = offsetof(struct incfs_super_block,
-+				s_first_md_offset);
-+	}
-+	result = write_to_bf(bfc, &new_md_offset, sizeof(new_md_offset),
-+				file_pos, true);
-+	if (result)
-+		return result;
-+
-+	bfc->bc_last_md_record_offset = record_offset;
++	spin_lock(&mi->pending_reads_counters_lock);
++	result = (mi->mi_last_pending_read_number > last_number) &&
++		 (mi->mi_pending_reads_count > 0);
++	spin_unlock(&mi->pending_reads_counters_lock);
 +	return result;
 +}
 +
-+/* Append incfs_inode metadata record to the backing file. */
-+int incfs_write_inode_to_backing_file(struct backing_file_context *bfc, u64 ino,
-+				u64 size, u16 mode)
++static bool is_data_block_present(struct data_file_block *block)
 +{
-+	struct incfs_inode disk_inode = {};
-+
-+	if (!bfc)
-+		return -EFAULT;
-+
-+	LOCK_REQUIRED(bfc->bc_mutex);
-+	disk_inode.i_header.h_md_entry_type = INCFS_MD_INODE;
-+	disk_inode.i_header.h_record_size = cpu_to_le16(sizeof(disk_inode));
-+	disk_inode.i_header.h_next_md_offset = cpu_to_le64(0);
-+	disk_inode.i_no = cpu_to_le64(ino);
-+	disk_inode.i_size = cpu_to_le64(size);
-+	disk_inode.i_mode = cpu_to_le16(mode);
-+	disk_inode.i_flags = cpu_to_le32(0);
-+
-+	return append_md_to_backing_file(bfc, &disk_inode.i_header);
-+}
-+
-+/* Append incfs_dir_action metadata record to the backing file. */
-+int incfs_write_dir_action(struct backing_file_context *bfc, u64 dir_ino,
-+		     u64 dentry_ino, enum incfs_dir_action_type type,
-+		     struct mem_range name)
-+{
-+	struct incfs_dir_action action = {};
-+	u8 name_len = min_t(u8, INCFS_MAX_NAME_LEN, name.len);
-+
-+	if (!bfc)
-+		return -EFAULT;
-+
-+	LOCK_REQUIRED(bfc->bc_mutex);
-+	action.da_header.h_md_entry_type = INCFS_MD_DIR_ACTION;
-+	action.da_header.h_record_size = cpu_to_le16(sizeof(action));
-+	action.da_header.h_next_md_offset = cpu_to_le64(0);
-+	action.da_dir_inode = cpu_to_le64(dir_ino);
-+	action.da_entry_inode = cpu_to_le64(dentry_ino);
-+	action.da_type = (__u8)type;
-+	action.da_name_len = name_len;
-+	memcpy(action.da_name, name.data, name_len);
-+
-+	return append_md_to_backing_file(bfc, &action.da_header);
++	return (block->db_backing_file_data_offset != 0) &&
++	       (block->db_stored_size != 0);
 +}
 +
 +/*
-+ * Reserve 0-filled space for the blockmap body, and append
-+ * incfs_blockmap metadata record pointing to it.
++ * Notifies a given data file about pending read from a given block.
++ * Returns a new pending read entry.
 + */
-+int incfs_write_blockmap_to_backing_file(struct backing_file_context *bfc,
-+				u64 ino, u32 block_count, loff_t *map_base_off)
++static struct pending_read *add_pending_read(struct data_file *df,
++						int block_index)
 +{
-+	struct incfs_blockmap blockmap = {};
-+	int result = 0;
-+	loff_t file_end = 0;
-+	size_t map_size = block_count * sizeof(struct incfs_blockmap_entry);
++	struct pending_read *result = NULL;
++	struct data_file_segment *segment = NULL;
++	struct mount_info *mi = NULL;
 +
-+	if (!bfc)
-+		return -EFAULT;
++	WARN_ON(!df);
++	segment = get_file_segment(df, block_index);
++	mi = df->df_node.n_mount_info;
 +
-+	blockmap.m_header.h_md_entry_type = INCFS_MD_BLOCK_MAP;
-+	blockmap.m_header.h_record_size = cpu_to_le16(sizeof(blockmap));
-+	blockmap.m_header.h_next_md_offset = cpu_to_le64(0);
-+	blockmap.m_inode = cpu_to_le64(ino);
-+	blockmap.m_block_count = cpu_to_le32(block_count);
++	WARN_ON(!segment);
++	WARN_ON(!mi);
 +
-+	LOCK_REQUIRED(bfc->bc_mutex);
++	result = alloc_pending_read();
++	if (!result)
++		return NULL;
 +
-+	/* Reserve 0-filled space for the blockmap body in the backing file. */
-+	file_end = incfs_get_end_offset(bfc->bc_file);
-+	result = append_zeros(bfc, map_size);
-+	if (result)
-+		return result;
++	result->block_index = block_index;
 +
-+	/* Write blockmap metadata record pointing to the body written above. */
-+	blockmap.m_base_offset = cpu_to_le64(file_end);
-+	result = append_md_to_backing_file(bfc, &blockmap.m_header);
-+	if (result) {
-+		/* Error, rollback file changes */
-+		truncate_backing_file(bfc, file_end);
-+	} else if (map_base_off) {
-+		*map_base_off = file_end;
++	mutex_lock(&segment->reads_mutex);
++
++	spin_lock(&mi->pending_reads_counters_lock);
++	result->serial_number = ++mi->mi_last_pending_read_number;
++	mi->mi_pending_reads_count++;
++	spin_unlock(&mi->pending_reads_counters_lock);
++
++	list_add(&result->reads_list, &segment->reads_list_head);
++	mutex_unlock(&segment->reads_mutex);
++
++	wake_up_all(&mi->mi_pending_reads_notif_wq);
++	return result;
++}
++
++/* Notifies a given data file that pending read is completed. */
++static void remove_pending_read(struct data_file *df, struct pending_read *read)
++{
++	struct data_file_segment *segment = NULL;
++	struct mount_info *mi = NULL;
++
++	if (!df || !read) {
++		WARN_ON(!df);
++		WARN_ON(!read);
++		return;
 +	}
 +
-+	return result;
++	segment = get_file_segment(df, read->block_index);
++	mi = df->df_node.n_mount_info;
++
++	WARN_ON(!segment);
++	WARN_ON(!mi);
++
++	mutex_lock(&segment->reads_mutex);
++	list_del(&read->reads_list);
++
++	spin_lock(&mi->pending_reads_counters_lock);
++	mi->mi_pending_reads_count--;
++	spin_unlock(&mi->pending_reads_counters_lock);
++	mutex_unlock(&segment->reads_mutex);
++
++	kfree(read);
 +}
 +
-+/*
-+ * Write a backing file header (superblock).
-+ * It should always be called only on empty file.
-+ * incfs_super_block.s_first_md_offset is 0 for now, but will be updated
-+ * once first metadata record is added.
-+ */
-+int incfs_write_sb_to_backing_file(struct backing_file_context *bfc)
++static int wait_for_data_block(struct data_file *df, int block_index,
++			int timeout_ms, struct data_file_block *res_block)
 +{
-+	struct incfs_super_block sb = {};
-+	loff_t file_pos = 0;
++	struct data_file_block block = {};
++	struct data_file_segment *segment = NULL;
++	struct pending_read *read = NULL;
++	int error = 0;
++	int wait_res = 0;
 +
-+	if (!bfc)
++	if (!df || !res_block)
 +		return -EFAULT;
 +
-+	sb.s_magic = cpu_to_le64(INCFS_MAGIC_NUMBER);
-+	sb.s_version = cpu_to_le64(INCFS_FORMAT_CURRENT_VER);
-+	sb.s_super_block_size = cpu_to_le16(sizeof(sb));
-+	sb.s_first_md_offset = cpu_to_le64(0);
-+	sb.s_data_block_size = cpu_to_le16(INCFS_DATA_FILE_BLOCK_SIZE);
-+
-+	LOCK_REQUIRED(bfc->bc_mutex);
-+
-+	file_pos = incfs_get_end_offset(bfc->bc_file);
-+	if (file_pos != 0)
-+		return -EEXIST;
-+
-+	return write_to_bf(bfc, &sb, sizeof(sb), file_pos, true);
-+}
-+
-+/* Write a given data block and update file's blockmap to point it. */
-+int incfs_write_data_block_to_backing_file(struct backing_file_context *bfc,
-+				     struct mem_range block, int block_index,
-+				     loff_t bm_base_off, u16 flags, u32 crc)
-+{
-+	struct incfs_blockmap_entry bm_entry = {};
-+	int result = 0;
-+	loff_t data_offset = 0;
-+	loff_t bm_entry_off =
-+		bm_base_off + sizeof(struct incfs_blockmap_entry) * block_index;
-+
-+	if (!bfc)
-+		return -EFAULT;
-+
-+	if (block.len >= (1 << 16) || block_index < 0)
++	if (block_index < 0 || block_index >= df->df_block_count)
 +		return -EINVAL;
 +
-+	LOCK_REQUIRED(bfc->bc_mutex);
-+
-+	data_offset = incfs_get_end_offset(bfc->bc_file);
-+	if (data_offset <= bm_entry_off) {
-+		/* Blockmap entry is beyond the file's end. It is not normal. */
-+		return -EINVAL;
-+	}
-+
-+	/* Write the block data at the end of the backing file. */
-+	result = write_to_bf(bfc, block.data, block.len, data_offset, false);
-+	if (result)
-+		return result;
-+
-+	/* Update the blockmap to point to the newly written data. */
-+	bm_entry.me_data_offset_lo = cpu_to_le32((u32)data_offset);
-+	bm_entry.me_data_offset_hi = cpu_to_le16((u16)(data_offset >> 32));
-+	bm_entry.me_data_size = cpu_to_le16((u16)block.len);
-+	bm_entry.me_flags = cpu_to_le16(flags);
-+	bm_entry.me_data_crc = cpu_to_le32(crc);
-+
-+	result = write_to_bf(bfc, &bm_entry, sizeof(bm_entry),
-+				bm_entry_off, false);
-+
-+	return result;
-+}
-+
-+/* Initialize a new image in a given backing file. */
-+int incfs_make_empty_backing_file(struct backing_file_context *bfc)
-+{
-+	int result = 0;
-+
-+	if (!bfc || !bfc->bc_file)
-+		return -EFAULT;
-+
-+	result = mutex_lock_interruptible(&bfc->bc_mutex);
-+	if (result)
-+		goto out;
-+
-+	result = truncate_backing_file(bfc, 0);
-+	if (result)
-+		goto out;
-+
-+	result = incfs_write_sb_to_backing_file(bfc);
-+out:
-+	mutex_unlock(&bfc->bc_mutex);
-+	return result;
-+}
-+
-+int incfs_read_blockmap_entry(struct backing_file_context *bfc, int block_index,
-+			loff_t bm_base_off,
-+			struct incfs_blockmap_entry *bm_entry)
-+{
-+	loff_t bm_entry_off =
-+		bm_base_off + sizeof(struct incfs_blockmap_entry) * block_index;
-+	const size_t bytes_to_read = sizeof(struct incfs_blockmap_entry);
-+	int result = 0;
-+
-+	if (!bfc || !bm_entry)
-+		return -EFAULT;
-+
-+	if (block_index < 0 || bm_base_off <= 0)
++	if (atomic64_read(&df->df_blockmap_off) <= 0)
 +		return -ENODATA;
 +
-+	result = kernel_read(bfc->bc_file, bm_entry, bytes_to_read,
-+			     &bm_entry_off);
++	segment = get_file_segment(df, block_index);
++	WARN_ON(!segment);
++
++	error = mutex_lock_interruptible(&segment->blockmap_mutex);
++	if (error)
++		return error;
++
++	/* Look up the given block */
++	error = get_data_file_block(df, block_index, &block);
++
++	/* If it's not found, create a pending read */
++	if (!error && !is_data_block_present(&block))
++		read = add_pending_read(df, block_index);
++
++	mutex_unlock(&segment->blockmap_mutex);
++	if (error)
++		return error;
++
++	/* If the block was found, just return it. No need to wait. */
++	if (is_data_block_present(&block)) {
++		*res_block = block;
++		return 0;
++	}
++
++	if (!read)
++		return -ENOMEM;
++
++	/* Wait for notifications about block's arrival */
++	wait_res =
++		wait_event_interruptible_timeout(segment->new_data_arrival_wq,
++						 (is_read_done(read)),
++						 msecs_to_jiffies(timeout_ms));
++
++	/* Woke up, the pending read is nor longer needed. */
++	remove_pending_read(df, read);
++	read = NULL;
++
++	if (wait_res == 0) {
++		/* Wait has timed out */
++		return -ETIME;
++	}
++	if (wait_res < 0) {
++		/*
++		 * Only ERESTARTSYS is really expected here when a signal
++		 * comes while we wait.
++		 */
++		return wait_res;
++	}
++
++	error = mutex_lock_interruptible(&segment->blockmap_mutex);
++	if (error)
++		return error;
++
++	/*
++	 * Re-read block's info now, it has just arrived and
++	 * should be available.
++	 */
++	error = get_data_file_block(df, block_index, &block);
++	if (!error) {
++		if (is_data_block_present(&block))
++			*res_block = block;
++		else {
++			/*
++			 * Somehow wait finished successfully bug block still
++			 * can't be found. It's not normal.
++			 */
++			pr_warn("Wait succeeded, but block %d:%d not found.",
++				df->df_node.n_ino, block_index);
++			error = -ENODATA;
++		}
++	}
++
++	mutex_unlock(&segment->blockmap_mutex);
++	return error;
++}
++
++int incfs_collect_pending_reads(struct mount_info *mi, int sn_lowerbound,
++			  struct incfs_pending_read_info *reads, int reads_size)
++{
++	int i = 0;
++	int reported_reads = 0;
++	bool stop = true;
++	int start_sn = 0;
++	int start_count = 0;
++	struct rhashtable_iter iter;
++	struct inode_info *node;
++	int error = 0;
++
++	if (!mi)
++		return -EFAULT;
++
++	mutex_lock(&mi->mi_nodes_mutex);
++
++	spin_lock(&mi->pending_reads_counters_lock);
++	start_sn = mi->mi_last_pending_read_number;
++	start_count = mi->mi_pending_reads_count;
++	spin_unlock(&mi->pending_reads_counters_lock);
++
++	stop = (reads_size == 0 || start_count == 0);
++
++	rhashtable_walk_enter(&mi->mi_nodes, &iter);
++	rhashtable_walk_start(&iter);
++
++	while (!stop && (node = rhashtable_walk_next(&iter))) {
++		struct data_file *df = NULL;
++
++		if (IS_ERR(node)) {
++			error = PTR_ERR(node);
++			break;
++		}
++		df = incfs_get_file_from_node(node);
++		if (!df)
++			continue;
++
++		rhashtable_walk_stop(&iter);
++		for (i = 0; i < SEGMENTS_PER_FILE && !stop; i++) {
++			struct data_file_segment *segment = &df->df_segments[i];
++			struct pending_read *entry = NULL;
++
++			mutex_lock(&segment->reads_mutex);
++			list_for_each_entry(entry, &segment->reads_list_head,
++					     reads_list) {
++				if (entry->serial_number <= sn_lowerbound)
++					continue;
++				/*
++				 * Skip over pending reads that were not here at
++				 * the beggining of the collection process.
++				 * They will be addressed during a next call.
++				 *
++				 * If this is not done, and all pending reads
++				 * are reported, then there might be a race
++				 * between this code and pending reads being
++				 * added to other segmeents/files.
++				 *
++				 * Skipping everything newer than read number
++				 * known at the beggining guaranties consistent
++				 * snapshot of pending reads across all files
++				 * and segments. Is saves us from having to
++				 * instoduce a big contended lock for
++				 * everything.
++				 */
++				if (entry->serial_number > start_sn)
++					continue;
++
++				reads[reported_reads].file_ino =
++					df->df_node.n_ino;
++				reads[reported_reads].block_index =
++					entry->block_index;
++				reads[reported_reads].serial_number =
++					entry->serial_number;
++
++				reported_reads++;
++				stop = (reported_reads >= reads_size) ||
++					(reported_reads >= start_count);
++				if (stop)
++					break;
++			}
++			mutex_unlock(&segment->reads_mutex);
++		}
++		rhashtable_walk_start(&iter);
++	}
++
++	rhashtable_walk_stop(&iter);
++	rhashtable_walk_exit(&iter);
++	mutex_unlock(&mi->mi_nodes_mutex);
++	return error ? error : reported_reads;
++}
++
++static ssize_t decompress(struct mem_range src, struct mem_range dst)
++{
++	int result = LZ4_decompress_safe(src.data, dst.data, src.len, dst.len);
++
++	if (result < 0)
++		return -EBADMSG;
++
++	return result;
++}
++
++static ssize_t read_with_crc(struct file *f, void *buf, size_t len,
++				loff_t pos, u32 expected_crc)
++{
++	ssize_t result = 0;
++	u32 buf_crc = 0;
++
++	result = kernel_read(f, buf, len, &pos);
++	if (result == len) {
++		buf_crc = crc32(0, buf, len);
++		if (buf_crc != expected_crc) {
++			const char *name = f->f_path.dentry->d_name.name;
++
++			pr_warn_once("incfs: Data CRC mismatch in %s. %u %u",
++				name, buf_crc, expected_crc);
++			return -EBADMSG;
++		}
++	}
++	return result;
++}
++
++ssize_t incfs_read_data_file_block(struct mem_range dst, struct data_file *df,
++			     int index)
++{
++	loff_t pos;
++	ssize_t result;
++	size_t bytes_to_read;
++	u8 *decomp_buffer;
++	struct mount_info *mi = NULL;
++	struct file *bf = NULL;
++	const size_t decomp_buf_size = 2 * INCFS_DATA_FILE_BLOCK_SIZE;
++	struct data_file_block block = {};
++	int timeout_ms = 0;
++
++	if (!dst.data || !df)
++		return -EFAULT;
++
++	mi = df->df_node.n_mount_info;
++	bf = mi->mi_bf_context->bc_file;
++	timeout_ms = mi->mi_options.read_timeout_ms;
++
++	result = wait_for_data_block(df, index, timeout_ms, &block);
 +	if (result < 0)
 +		return result;
-+	if (result < bytes_to_read)
-+		return -EIO;
-+	return 0;
-+}
 +
-+int incfs_read_superblock(struct backing_file_context *bfc,
-+				loff_t *first_md_off)
-+{
-+	loff_t pos = 0;
-+	ssize_t bytes_read = 0;
-+	struct incfs_super_block sb = {};
++	pos = block.db_backing_file_data_offset;
++	if (block.db_comp_alg == COMPRESSION_NONE) {
++		bytes_to_read = min(dst.len, block.db_stored_size);
++		result = read_with_crc(bf, dst.data, bytes_to_read,
++					pos, block.db_crc);
 +
-+	if (!bfc || !first_md_off)
-+		return -EFAULT;
++		/* Some data was read, but not enough */
++		if (result >= 0 && result != bytes_to_read)
++			result = -EIO;
++	} else {
++		decomp_buffer = (u8 *)__get_free_pages(
++			GFP_NOFS, get_order(decomp_buf_size));
++		if (!decomp_buffer)
++			return -ENOMEM;
 +
-+	LOCK_REQUIRED(bfc->bc_mutex);
-+	bytes_read = kernel_read(bfc->bc_file, &sb, sizeof(sb), &pos);
-+	if (bytes_read < 0)
-+		return bytes_read;
++		bytes_to_read = min(decomp_buf_size, block.db_stored_size);
++		result = read_with_crc(bf, decomp_buffer, bytes_to_read,
++					pos, block.db_crc);
++		if (result == bytes_to_read) {
++			result = decompress(range(decomp_buffer, bytes_to_read),
++					    dst);
++			if (result < 0) {
++				const char *name =
++						bf->f_path.dentry->d_name.name;
 +
-+	if (bytes_read < sizeof(sb))
-+		return -EBADMSG;
-+
-+	if (le64_to_cpu(sb.s_magic) != INCFS_MAGIC_NUMBER)
-+		return -EILSEQ;
-+
-+	if (le64_to_cpu(sb.s_version) > INCFS_FORMAT_CURRENT_VER)
-+		return -EILSEQ;
-+
-+	if (le16_to_cpu(sb.s_data_block_size) != INCFS_DATA_FILE_BLOCK_SIZE)
-+		return -EILSEQ;
-+
-+	if (le16_to_cpu(sb.s_super_block_size) > sizeof(sb))
-+		return -EILSEQ;
-+
-+	*first_md_off = le64_to_cpu(sb.s_first_md_offset);
-+	return 0;
-+}
-+
-+/*
-+ * Read through metadata records from the backing file one by one
-+ * and call provided metadata handlers.
-+ */
-+int incfs_read_next_metadata_record(struct backing_file_context *bfc,
-+			      struct metadata_handler *handler)
-+{
-+	loff_t pos = 0;
-+	const ssize_t max_md_size = INCFS_MAX_METADATA_RECORD_SIZE;
-+	ssize_t bytes_read = 0;
-+	size_t md_record_size = 0;
-+	loff_t next_record = 0;
-+	loff_t prev_record = 0;
-+	int res = 0;
-+	struct incfs_md_header *md_hdr = NULL;
-+
-+	if (!bfc || !handler)
-+		return -EFAULT;
-+
-+	LOCK_REQUIRED(bfc->bc_mutex);
-+
-+	if (handler->md_record_offset == 0)
-+		return -EPERM;
-+
-+	memset(&handler->md_buffer, 0, max_md_size);
-+	pos = handler->md_record_offset;
-+	bytes_read = kernel_read(bfc->bc_file, (u8 *)&handler->md_buffer,
-+				 max_md_size, &pos);
-+	if (bytes_read < 0)
-+		return bytes_read;
-+	if (bytes_read < sizeof(*md_hdr))
-+		return -EBADMSG;
-+
-+	md_hdr = &handler->md_buffer.md_header;
-+	next_record = le64_to_cpu(md_hdr->h_next_md_offset);
-+	prev_record = le64_to_cpu(md_hdr->h_prev_md_offset);
-+	md_record_size = le16_to_cpu(md_hdr->h_record_size);
-+
-+	if (md_record_size > max_md_size) {
-+		pr_warn("incfs: The record is too large. Size: %ld",
-+				md_record_size);
-+		return -EBADMSG;
-+	}
-+
-+	if (bytes_read < md_record_size) {
-+		pr_warn("incfs: The record hasn't been fully read.");
-+		return -EBADMSG;
-+	}
-+
-+	if (next_record <= handler->md_record_offset && next_record != 0) {
-+		pr_warn("incfs: Next record (%lld) points back in file.",
-+			next_record);
-+		return -EBADMSG;
-+	}
-+
-+	if (prev_record != handler->md_prev_record_offset) {
-+		pr_warn("incfs: Metadata chain has been corrupted.");
-+		return -EBADMSG;
-+	}
-+
-+	if (le32_to_cpu(md_hdr->h_record_crc) != calc_md_crc(md_hdr)) {
-+		pr_warn("incfs: Metadata CRC mismatch.");
-+		return -EBADMSG;
-+	}
-+
-+	switch (md_hdr->h_md_entry_type) {
-+	case INCFS_MD_NONE:
-+		break;
-+	case INCFS_MD_INODE:
-+		if (handler->handle_inode)
-+			res = handler->handle_inode(&handler->md_buffer.inode,
-+						    handler);
-+		break;
-+	case INCFS_MD_BLOCK_MAP:
-+		if (handler->handle_blockmap)
-+			res = handler->handle_blockmap(
-+				&handler->md_buffer.blockmap, handler);
-+		break;
-+	case INCFS_MD_DIR_ACTION:
-+		if (handler->handle_dir_action)
-+			res = handler->handle_dir_action(
-+				&handler->md_buffer.dir_action, handler);
-+		break;
-+	default:
-+		res = -ENOTSUPP;
-+		break;
-+	}
-+
-+	if (!res) {
-+		if (next_record == 0) {
-+			/*
-+			 * Zero offset for the next record means that the last
-+			 * metadata record has just been processed.
-+			 */
-+			bfc->bc_last_md_record_offset =
-+				handler->md_record_offset;
++				pr_warn_once("incfs: Decompression error. %s",
++					name);
++			}
++		} else if (result >= 0) {
++			/* Some data was read, but not enough */
++			result = -EIO;
 +		}
-+		handler->md_prev_record_offset = handler->md_record_offset;
-+		handler->md_record_offset = next_record;
++
++		free_pages((unsigned long)decomp_buffer,
++			   get_order(decomp_buf_size));
 +	}
-+	return res;
++
++	return result;
 +}
-diff --git a/fs/incfs/format.h b/fs/incfs/format.h
++
++int incfs_process_new_data_block(struct mount_info *mi,
++			   struct incfs_new_data_block *block,
++			   u8 *data)
++{
++	struct backing_file_context *bfc = NULL;
++	struct data_file *df = NULL;
++	struct data_file_segment *segment = NULL;
++	struct data_file_block existing_block = {};
++	u16 flags = 0;
++	u32 crc = 0;
++	int error = 0;
++
++	if (!mi || !block)
++		return -EFAULT;
++	bfc = mi->mi_bf_context;
++
++	mutex_lock(&mi->mi_nodes_mutex);
++	df = incfs_get_file_by_ino(mi, block->file_ino);
++	mutex_unlock(&mi->mi_nodes_mutex);
++
++	if (!df)
++		return -ENOENT;
++	if (block->block_index >= df->df_block_count)
++		return -ERANGE;
++	segment = get_file_segment(df, block->block_index);
++	if (!segment)
++		return -EFAULT;
++	if (block->compression == COMPRESSION_LZ4)
++		flags |= INCFS_BLOCK_COMPRESSED_LZ4;
++
++
++	crc = crc32(0, data, block->data_len);
++	error = mutex_lock_interruptible(&segment->blockmap_mutex);
++	if (error)
++		return error;
++
++	error = get_data_file_block(df, block->block_index, &existing_block);
++	if (error)
++		goto unlock;
++	if (is_data_block_present(&existing_block)) {
++		/* Block is already present, nothing to do here */
++		goto unlock;
++	}
++
++	error = mutex_lock_interruptible(&bfc->bc_mutex);
++	if (!error) {
++		error = incfs_write_data_block_to_backing_file(
++			bfc, range(data, block->data_len),
++			block->block_index, atomic64_read(&df->df_blockmap_off),
++			flags, crc);
++		mutex_unlock(&bfc->bc_mutex);
++	}
++	if (!error)
++		error = notify_pending_reads(segment, block->block_index);
++
++unlock:
++	mutex_unlock(&segment->blockmap_mutex);
++	return error;
++}
++
++int incfs_process_new_file_inst(struct mount_info *mi,
++			  struct incfs_new_file_instruction *inst)
++{
++	struct directory *new_dir = NULL;
++	struct data_file *new_file = NULL;
++	struct backing_file_context *bfc = NULL;
++	u16 mode = 0;
++	int error = 0;
++
++	if (!mi || !inst)
++		return -EFAULT;
++
++	bfc = mi->mi_bf_context;
++	error = mutex_lock_interruptible(&bfc->bc_mutex);
++	if (error)
++		return error;
++
++	/* Create and register in-memory dir or data_file objects */
++	mutex_lock(&mi->mi_nodes_mutex);
++	if (atomic_read(&mi->mi_nodes.nelems) >= INCFS_MAX_FILES) {
++		/* File system already has too many files. */
++		error = -ENFILE;
++	} else if (S_ISREG(inst->mode)) {
++		/* Create a regular file. */
++		inst->ino_out = mi->mi_next_ino;
++		new_file = add_data_file(mi, inst->ino_out, inst->size,
++			inst->mode);
++
++		if (IS_ERR_OR_NULL(new_file))
++			error = PTR_ERR(new_file);
++		else {
++			mi->mi_next_ino++;
++			mode = new_file->df_node.n_mode;
++		}
++	} else if (S_ISDIR(inst->mode)) {
++		/* Create a directory. */
++		inst->ino_out = mi->mi_next_ino;
++		new_dir = add_dir(mi, inst->ino_out, inst->mode);
++
++		if (IS_ERR_OR_NULL(new_dir))
++			error = PTR_ERR(new_dir);
++		else {
++			mi->mi_next_ino++;
++			mode = new_dir->d_node.n_mode;
++		}
++	} else
++		error = -EINVAL;
++	mutex_unlock(&mi->mi_nodes_mutex);
++	if (error)
++		goto out;
++
++	/* Write inode to the backing file */
++	error = incfs_write_inode_to_backing_file(bfc, inst->ino_out,
++					inst->size, mode);
++	if (error)
++		goto out;
++
++	/* If it's a data file, also reserve space for the block map. */
++	if (new_file && new_file->df_block_count > 0) {
++		loff_t bm_base_off = 0;
++
++		error = incfs_write_blockmap_to_backing_file(bfc,
++						       new_file->df_node.n_ino,
++						       new_file->df_block_count,
++						       &bm_base_off);
++		if (error)
++			goto out;
++		atomic64_set(&new_file->df_blockmap_off, bm_base_off);
++	}
++out:
++	mutex_unlock(&bfc->bc_mutex);
++	return error;
++}
++
++int incfs_process_new_dir_entry_inst(struct mount_info *mi,
++			       enum incfs_instruction_type type,
++			       struct incfs_dir_entry_instruction *inst,
++			       char *name)
++{
++	struct backing_file_context *bfc = NULL;
++	int error = 0;
++
++	if (!mi || !inst)
++		return -EFAULT;
++
++	bfc = mi->mi_bf_context;
++	error = mutex_lock_interruptible(&bfc->bc_mutex);
++	if (error)
++		return error;
++
++	switch (type) {
++	case INCFS_INSTRUCTION_ADD_DIR_ENTRY: {
++		struct dir_entry_info *dentry = NULL;
++		struct inode_info *child = NULL;
++		struct directory *parent = NULL;
++
++		/* Find nodes that we want to connect */
++		mutex_lock(&mi->mi_nodes_mutex);
++		parent = incfs_get_dir_by_ino(mi, inst->dir_ino);
++		child = incfs_get_node_by_ino(mi, inst->child_ino);
++		mutex_unlock(&mi->mi_nodes_mutex);
++		if (!child || !parent) {
++			error = -ENOENT;
++			goto out;
++		}
++
++		/* Put a dir/file into a parent dir object in memory */
++		dentry = add_dir_entry(parent, name, inst->name_len, child);
++		if (IS_ERR_OR_NULL(dentry)) {
++			error = PTR_ERR(dentry);
++			goto out;
++		}
++
++		/* Save record about the dir entry to the backing file */
++		error = incfs_write_dir_action(bfc, inst->dir_ino,
++				inst->child_ino, INCFS_DIRA_ADD_ENTRY,
++				dentry->de_name);
++		break;
++	}
++	case INCFS_INSTRUCTION_REMOVE_DIR_ENTRY: {
++		struct directory *dir = NULL;
++
++		/* Find nodes that we want to connect */
++		mutex_lock(&mi->mi_nodes_mutex);
++		dir = incfs_get_dir_by_ino(mi, inst->dir_ino);
++		mutex_unlock(&mi->mi_nodes_mutex);
++
++		if (!dir) {
++			error = -ENOENT;
++			goto out;
++		}
++
++		/* Remove dir entry from the dir object in memory */
++		error = remove_dir_entry(dir, name, inst->name_len);
++		if (error)
++			goto out;
++
++		/* Save record about the dir entry to the backing file */
++		error = incfs_write_dir_action(
++			bfc, dir->d_node.n_ino, inst->child_ino,
++			INCFS_DIRA_REMOVE_ENTRY,
++			range((u8 *)name, inst->name_len));
++		break;
++	}
++	default:
++		error = -ENOTSUPP;
++		break;
++	}
++
++out:
++	mutex_unlock(&bfc->bc_mutex);
++	return error;
++}
++
++static int process_inode_md(struct incfs_inode *inode,
++			    struct metadata_handler *handler)
++{
++	struct mount_info *mi = handler->context;
++	int error = 0;
++	u64 ino = le64_to_cpu(inode->i_no);
++	u64 size = le64_to_cpu(inode->i_size);
++	u16 mode = le16_to_cpu(inode->i_mode);
++
++	if (!mi)
++		return -EFAULT;
++
++	mutex_lock(&mi->mi_nodes_mutex);
++	if (S_ISREG(mode)) {
++		struct data_file *df = add_data_file(mi, ino, size, mode);
++
++		if (!df)
++			error = -EFAULT;
++		else if (IS_ERR(df))
++			error = PTR_ERR(df);
++	} else if (S_ISDIR(mode)) {
++		struct directory *dir = add_dir(mi, ino, mode);
++
++		if (!dir)
++			error = -EFAULT;
++		else if (IS_ERR(dir))
++			error = PTR_ERR(dir);
++	} else
++		error = -EINVAL;
++
++	if (!error && ino >= mi->mi_next_ino)
++		mi->mi_next_ino = ino + 1;
++	mutex_unlock(&mi->mi_nodes_mutex);
++	return error;
++}
++
++static int process_blockmap_md(struct incfs_blockmap *bm,
++			       struct metadata_handler *handler)
++{
++	struct mount_info *mi = handler->context;
++	struct data_file *df = NULL;
++	int error = 0;
++	u64 ino = le64_to_cpu(bm->m_inode);
++	loff_t base_off = le64_to_cpu(bm->m_base_offset);
++	u32 block_count = le32_to_cpu(bm->m_block_count);
++
++	if (!mi)
++		return -EFAULT;
++
++	mutex_lock(&mi->mi_nodes_mutex);
++	df = incfs_get_file_by_ino(mi, ino);
++	mutex_unlock(&mi->mi_nodes_mutex);
++
++	if (!df)
++		return -ENOENT;
++
++	if (df->df_block_count != block_count)
++		return -EBADFD;
++
++	if (atomic64_cmpxchg(&df->df_blockmap_off, 0, base_off) != 0)
++		error = -EBADFD;
++
++	return error;
++}
++
++static int process_dir_action_md(struct incfs_dir_action *da,
++				 struct metadata_handler *handler)
++{
++	struct mount_info *mi = handler->context;
++	struct directory *dir = NULL;
++	u64 dir_ino = le64_to_cpu(da->da_dir_inode);
++	u64 entry_ino = le64_to_cpu(da->da_entry_inode);
++	u8 type = da->da_type;
++	u8 name_len = da->da_name_len;
++	char *name = da->da_name;
++	int result = 0;
++
++	if (!mi)
++		return -EFAULT;
++
++	switch (type) {
++	case INCFS_DIRA_NONE:
++		result = 0;
++		break;
++	case INCFS_DIRA_ADD_ENTRY: {
++		struct inode_info *node = NULL;
++		struct dir_entry_info *dentry = NULL;
++
++		mutex_lock(&mi->mi_nodes_mutex);
++		dir = incfs_get_dir_by_ino(mi, dir_ino);
++		node = incfs_get_node_by_ino(mi, entry_ino);
++		mutex_unlock(&mi->mi_nodes_mutex);
++
++		if (!dir || !node)
++			return -ENOENT;
++
++		dentry = add_dir_entry(dir, name, name_len, node);
++		if (IS_ERR_OR_NULL(dentry))
++			return PTR_ERR(dentry);
++		break;
++	}
++
++	case INCFS_DIRA_REMOVE_ENTRY: {
++		mutex_lock(&mi->mi_nodes_mutex);
++		dir = incfs_get_dir_by_ino(mi, dir_ino);
++		mutex_unlock(&mi->mi_nodes_mutex);
++
++		if (!dir)
++			return -ENOENT;
++
++		result = remove_dir_entry(dir, name, name_len);
++		break;
++	}
++	default:
++		result = -ENOTSUPP;
++	}
++	return result;
++}
++
++int incfs_scan_backing_file(struct mount_info *mi)
++{
++	struct metadata_handler *handler = NULL;
++	int result = 0;
++	int records_count = 0;
++	int error = 0;
++	struct backing_file_context *bfc = NULL;
++
++	if (!mi || !mi->mi_bf_context)
++		return -EFAULT;
++
++	bfc = mi->mi_bf_context;
++
++	handler = kzalloc(sizeof(*handler), GFP_NOFS);
++	if (!handler)
++		return -ENOMEM;
++
++	/* No writing to the backing file while it's being scanned. */
++	error = mutex_lock_interruptible(&bfc->bc_mutex);
++	if (error)
++		goto out;
++
++	/* Reading superblock */
++	error = incfs_read_superblock(bfc, &handler->md_record_offset);
++	if (error)
++		goto unlock;
++
++	handler->context = mi;
++	handler->handle_inode = process_inode_md;
++	handler->handle_blockmap = process_blockmap_md;
++	handler->handle_dir_action = process_dir_action_md;
++
++	pr_debug("Starting reading incfs-metadata records at offset %lld",
++		 handler->md_record_offset);
++	while (handler->md_record_offset > 0) {
++		error = incfs_read_next_metadata_record(bfc, handler);
++		if (error) {
++			pr_warn("incfs: Error during reading incfs-metadata record. Offset: %lld Record #%d Error code: %d",
++				handler->md_record_offset, records_count + 1,
++				-error);
++			break;
++		}
++		records_count++;
++	}
++	if (error) {
++		pr_debug("Error %d after reading %d incfs-metadata records.",
++			 -error, records_count);
++		result = error;
++	} else {
++		pr_debug("Finished reading %d incfs-metadata records.",
++			 records_count);
++		result = records_count;
++	}
++unlock:
++	mutex_unlock(&bfc->bc_mutex);
++out:
++	kfree(handler);
++	return result;
++}
++
++bool incfs_equal_ranges(struct mem_range lhs, struct mem_range rhs)
++{
++	if (lhs.len != rhs.len)
++		return false;
++	return memcmp(lhs.data, rhs.data, lhs.len) == 0;
++}
+diff --git a/fs/incfs/data_mgmt.h b/fs/incfs/data_mgmt.h
 new file mode 100644
-index 000000000000..2c2114bdd08f
+index 000000000000..d849e262cf84
 --- /dev/null
-+++ b/fs/incfs/format.h
-@@ -0,0 +1,294 @@
++++ b/fs/incfs/data_mgmt.h
+@@ -0,0 +1,213 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Copyright 2018 Google LLC
++ * Copyright 2019 Google LLC
 + */
++#ifndef _INCFS_DATA_MGMT_H
++#define _INCFS_DATA_MGMT_H
 +
-+/*
-+ * Overview
-+ * --------
-+ * The backbone of the incremental-fs ondisk format is an append only linked
-+ * list of metadata blocks. Each metadata block contains an offset of the next
-+ * one. These blocks describe files and directories on the
-+ * file system. They also represent actions of adding and removing file names
-+ * (hard links).
-+ *
-+ * Every time incremental-fs instance is mounted, it reads through this list
-+ * to recreate filesystem's state in memory. An offset of the first record in
-+ * the metadata list is stored in the superblock at the beginning of the backing
-+ * file.
-+ *
-+ * Most of the backing file is taken by data areas and blockmaps.
-+ * Since data blocks can be compressed and have different sizes,
-+ * single per-file data area can't be pre-allocated. That's why blockmaps are
-+ * needed in order to find a location and size of each data block in
-+ * the backing file. Each time a file is created, a corresponding block map is
-+ * allocated to store future offsets of data blocks.
-+ *
-+ * Whenever a data block is given by data loader to incremental-fs:
-+ *   - A data area with the given block is appended to the end of
-+ *     the backing file.
-+ *   - A record in the blockmap for the given block index is updated to reflect
-+ *     its location, size, and compression algorithm.
-+
-+ * Metadata records
-+ * ----------------
-+ * incfs_inode - metadata record to declare a file or a directory.
-+ *                    incfs_inode.i_mode determents if it is a file
-+ *                    or a directory.
-+ * incfs_blockmap_entry - metadata record that specifies size and location
-+ *                           of a blockmap area for a given file. This area
-+ *                           contains an array of incfs_blockmap_entry-s.
-+ * incfs_dir_action - metadata record that specifies changes made to a
-+ *                   to a directory structure, e.g. add or remove a hardlink.
-+ *
-+ * Metadata header
-+ * ---------------
-+ * incfs_md_header - header of a metadata record. It's always a part
-+ *                   of other structures and served purpose of metadata
-+ *                   bookkeeping.
-+ *
-+ *              +-----------------------------------------------+       ^
-+ *              |            incfs_md_header                    |       |
-+ *              | 1. type of body(INODE, BLOCKMAP, DIR ACTION..)|       |
-+ *              | 2. size of the whole record header + body     |       |
-+ *              | 3. CRC the whole record header + body         |       |
-+ *              | 4. offset of the previous md record           |]------+
-+ *              | 5. offset of the next md record (md link)     |]---+
-+ *              +-----------------------------------------------+    |
-+ *              |  Metadata record body with useful data        |    |
-+ *              +-----------------------------------------------+    |
-+ *                                                                   +--->
-+ *
-+ * Other ondisk structures
-+ * -----------------------
-+ * incfs_super_block - backing file header
-+ * incfs_blockmap_entry - a record in a blockmap area that describes size
-+ *                       and location of a data block.
-+ * Data blocks dont have any particular structure, they are written to the
-+ * backing file in a raw form as they come from a data loader.
-+ *
-+ * Backing file layout
-+ * -------------------
-+ *
-+ *
-+ *              +-------------------------------------------+
-+ *              |            incfs_super_block              |]---+
-+ *              +-------------------------------------------+    |
-+ *              |                 metadata                  |<---+
-+ *              |                incfs_inode                |]---+
-+ *              +-------------------------------------------+    |
-+ *                        .........................              |
-+ *              +-------------------------------------------+    |   metadata
-+ *     +------->|               blockmap area               |    |  list links
-+ *     |        |          [incfs_blockmap_entry]           |    |
-+ *     |        |          [incfs_blockmap_entry]           |    |
-+ *     |        |          [incfs_blockmap_entry]           |    |
-+ *     |    +--[|          [incfs_blockmap_entry]           |    |
-+ *     |    |   |          [incfs_blockmap_entry]           |    |
-+ *     |    |   |          [incfs_blockmap_entry]           |    |
-+ *     |    |   +-------------------------------------------+    |
-+ *     |    |             .........................              |
-+ *     |    |   +-------------------------------------------+    |
-+ *     |    |   |                 metadata                  |<---+
-+ *     +----|--[|               incfs_blockmap              |]---+
-+ *          |   +-------------------------------------------+    |
-+ *          |             .........................              |
-+ *          |   +-------------------------------------------+    |
-+ *          +-->|                 data block                |    |
-+ *              +-------------------------------------------+    |
-+ *                        .........................              |
-+ *              +-------------------------------------------+    |
-+ *              |                 metadata                  |<---+
-+ *              |             incfs_dir_action              |
-+ *              +-------------------------------------------+
-+ */
-+#ifndef _INCFS_FORMAT_H
-+#define _INCFS_FORMAT_H
++#include <linux/fs.h>
 +#include <linux/types.h>
-+#include <linux/kernel.h>
-+#include <uapi/linux/incrementalfs.h>
++#include <linux/mutex.h>
++#include <linux/completion.h>
++#include <linux/wait.h>
++#include <linux/rhashtable-types.h>
 +
 +#include "internal.h"
++#include "format.h"
 +
-+#define INCFS_MAX_NAME_LEN 255
-+#define INCFS_FORMAT_V1 1
-+#define INCFS_FORMAT_CURRENT_VER INCFS_FORMAT_V1
++#define SEGMENTS_PER_FILE 5
 +
-+enum incfs_metadata_type {
-+	INCFS_MD_NONE = 0,
-+	INCFS_MD_INODE = 1,
-+	INCFS_MD_BLOCK_MAP = 2,
-+	INCFS_MD_DIR_ACTION = 3
++struct data_file_block {
++	loff_t db_backing_file_data_offset;
++
++	size_t db_stored_size;
++
++	u32 db_crc;
++
++	enum incfs_compression_alg db_comp_alg;
 +};
 +
-+/* Header included at the beginning of all metadata records on the disk. */
-+struct incfs_md_header {
-+	__u8 h_md_entry_type;
++struct pending_read {
++	struct list_head reads_list;
++
++	int block_index;
++
++	int serial_number;
++
++	atomic_t done;
++};
++
++struct data_file_segment {
++	wait_queue_head_t new_data_arrival_wq;
++
++	/* Protects reads and writes from the blockmap */
++	/* Good candidate for read/write mutex */
++	struct mutex blockmap_mutex;
++
++	/* Protects reads_list_head */
++	struct mutex reads_mutex;
++
++	/* List of active pending_read objects */
++	struct list_head reads_list_head;
++};
++
++struct mount_info;
++
++enum incfs_node_type { INCFS_NODE_FILE = 0, INCFS_NODE_DIR = 1 };
++
++/* Common parts between data files and dirs. */
++struct inode_info {
++	struct mount_info *n_mount_info; /* Mount this file belongs to */
++
++	/* Hash bucket list for mount_info.mi_nodes */
++	struct rhash_head n_hash_list;
++
++	/* List of dir_entry_info pointing to this node */
++	struct list_head n_parent_links_head;
++
++	int n_ino;
++
++	umode_t n_mode;
++
++	u8 n_type; /* Node type values from enum incfs_node_type */
++};
++
++struct data_file {
++	struct inode_info df_node;
 +
 +	/*
-+	 * Size of the metadata record.
-+	 * (e.g. inode, dir entry etc) not just this struct.
++	 * Array of segments used to reduce lock contention for the file.
++	 * Segment is chosen for a block depends on the block's index.
 +	 */
-+	__le16 h_record_size;
++	struct data_file_segment df_segments[SEGMENTS_PER_FILE];
++
++	/* Base offset of the block map. */
++	atomic64_t df_blockmap_off;
++
++	/* File size in bytes */
++	loff_t df_size;
++
++	int df_block_count; /* File size in DATA_FILE_BLOCK_SIZE blocks */
++};
++
++struct directory {
++	struct inode_info d_node;
++
++	/* List of struct dir_entry_info belonging to this directory */
++	struct list_head d_entries_head;
++
++	atomic_t d_version;
++};
++
++struct dir_entry_info {
++	struct list_head de_entries_list;
++
++	struct list_head de_backlink_list;
++
++	struct mem_range de_name;
++
++	struct inode_info *de_child;
++
++	struct directory *de_parent;
++};
++
++struct mount_options {
++	unsigned int backing_fd;
++	unsigned int read_timeout_ms;
++};
++
++struct mount_info {
++	struct super_block *mi_sb;
++	struct mount_options mi_options;
 +
 +	/*
-+	 * CRC32 of the metadata record.
-+	 * (e.g. inode, dir entry etc) not just this struct.
++	 * Protects operations with directory entries, basically it
++	 * protects all instances of lists:
++	 *   - directory.d_entries_head
++	 *   - inode_info.n_parent_links_head
 +	 */
-+	__le32 h_record_crc;
++	struct mutex mi_dir_ops_mutex;
 +
-+	/* Offset of the next metadata entry if any */
-+	__le64 h_next_md_offset;
++	/* Protects mi_nodes, mi_next_ino, and mi_root */
++	struct mutex mi_nodes_mutex;
 +
-+	/* Offset of the previous metadata entry if any */
-+	__le64 h_prev_md_offset;
-+
-+} __packed;
-+
-+/* Backing file header */
-+struct incfs_super_block {
-+	__le64 s_magic; /* Magic signature: INCFS_MAGIC_NUMBER */
-+	__le64 s_version; /* Format version: INCFS_FORMAT_CURRENT_VER */
-+	__le16 s_super_block_size; /* sizeof(incfs_super_block) */
-+	__le32 s_flags; /* Reserved for future use. */
-+	__le64 s_first_md_offset; /* Offset of the first metadata record */
-+	__le16 s_data_block_size; /* INCFS_DATA_FILE_BLOCK_SIZE */
-+} __packed;
-+
-+/* Metadata record for files and directories. Type = INCFS_MD_INODE */
-+struct incfs_inode {
-+	struct incfs_md_header i_header;
-+	__le64 i_no; /* inode number */
-+	__le64 i_size; /* Full size of the file's content */
-+	__le16 i_mode; /* File mode */
-+	__le32 i_flags; /* Reserved for future use. */
-+} __packed;
-+
-+enum incfs_block_map_entry_flags {
-+	INCFS_BLOCK_COMPRESSED_LZ4 = (1 << 0),
-+};
-+
-+/* Block map entry pointing to an actual location of the data block. */
-+struct incfs_blockmap_entry {
-+	/* Offset of the actual data block. Lower 32 bits */
-+	__le32 me_data_offset_lo;
-+
-+	/* Offset of the actual data block. Higher 16 bits */
-+	__le16 me_data_offset_hi;
-+
-+	/* How many bytes the data actually occupies in the backing file */
-+	__le16 me_data_size;
-+
-+	/* Block flags from incfs_block_map_entry_flags */
-+	__u16 me_flags;
-+
-+	/* CRC32 of the block's data */
-+	__le32 me_data_crc;
-+} __packed;
-+
-+/* Metadata record for locations of file blocks. Type = INCFS_MD_BLOCK_MAP */
-+struct incfs_blockmap {
-+	struct incfs_md_header m_header;
-+	/* inode of a file this map belongs to */
-+	__le64 m_inode;
-+
-+	/* Base offset of the array of incfs_blockmap_entry */
-+	__le64 m_base_offset;
-+
-+	/* Size of the map entry array in blocks */
-+	__le32 m_block_count;
-+} __packed;
-+
-+enum incfs_dir_action_type {
-+	INCFS_DIRA_NONE = 0,
-+	INCFS_DIRA_ADD_ENTRY = 1,
-+	INCFS_DIRA_REMOVE_ENTRY = 2,
-+};
-+
-+/* Metadata record of directory content change. Type = INCFS_MD_DIR_ACTION */
-+struct incfs_dir_action {
-+	struct incfs_md_header da_header;
-+	__le64 da_dir_inode; /* Parent directory inode number */
-+	__le64 da_entry_inode; /* File/subdirectory inode number */
-+	__u8 da_type; /* One of enums incfs_dir_action_type */
-+	__u8 da_name_len; /* Name length */
-+	char da_name[INCFS_MAX_NAME_LEN]; /* File name */
-+} __packed;
-+
-+/* State of the backing file. */
-+struct backing_file_context {
-+	/* Protects writes to bc_file */
-+	struct mutex bc_mutex;
-+
-+	/* File object to read data from */
-+	struct file *bc_file;
++	/* State of the backing file */
++	struct backing_file_context *mi_bf_context;
 +
 +	/*
-+	 * Offset of the last known metadata record in the backing file.
-+	 * 0 means there are no metadata records.
++	 * Hashtable (int ino) -> (struct inode_info)
 +	 */
-+	loff_t bc_last_md_record_offset;
++	struct rhashtable mi_nodes;
++
++	/* Directory entry for the filesystem root */
++	struct directory mi_root;
++
++	/* Node number to allocate next */
++	int mi_next_ino;
++
++	/* Protects mi_last_pending_read_number and mi_pending_reads_count */
++	spinlock_t pending_reads_counters_lock;
++
++	/*
++	 * A queue of waiters who want to be notified about new pending reads.
++	 */
++	wait_queue_head_t mi_pending_reads_notif_wq;
++
++	/*
++	 * Last serial number that was assigned to a pending read.
++	 * 0 means no pending reads have been seen yet.
++	 */
++	int mi_last_pending_read_number;
++
++	/* Total number of reads waiting on data from all files */
++	int mi_pending_reads_count;
 +};
 +
-+struct metadata_handler {
-+	loff_t md_record_offset;
-+	loff_t md_prev_record_offset;
-+	void *context;
++/* mount_info functions */
++struct mount_info *incfs_alloc_mount_info(struct super_block *sb,
++					struct file *backing_file);
++void incfs_free_mount_info(struct mount_info *mi);
 +
-+	union {
-+		struct incfs_md_header md_header;
-+		struct incfs_inode inode;
-+		struct incfs_blockmap blockmap;
-+		struct incfs_dir_action dir_action;
-+	} md_buffer;
++bool incfs_fresh_pending_reads_exist(struct mount_info *mi, int last_number);
 +
-+	int (*handle_inode)(struct incfs_inode *inode,
-+			    struct metadata_handler *handler);
-+	int (*handle_blockmap)(struct incfs_blockmap *bm,
-+			       struct metadata_handler *handler);
-+	int (*handle_dir_action)(struct incfs_dir_action *da,
-+				 struct metadata_handler *handler);
-+};
-+#define INCFS_MAX_METADATA_RECORD_SIZE \
-+	FIELD_SIZEOF(struct metadata_handler, md_buffer)
++struct inode_info *incfs_get_node_by_name(struct directory *dir,
++					const char *name, int *dir_ver_out);
++struct data_file *incfs_get_file_from_node(struct inode_info *node);
++struct directory *incfs_get_dir_from_node(struct inode_info *node);
++struct inode_info *incfs_get_node_by_ino(struct mount_info *mi, int ino);
++struct data_file *incfs_get_file_by_ino(struct mount_info *mi, int ino);
++struct directory *incfs_get_dir_by_ino(struct mount_info *mi, int ino);
 +
-+loff_t incfs_get_end_offset(struct file *f);
++ssize_t incfs_read_data_file_block(struct mem_range dst, struct data_file *df,
++			     int index);
 +
-+/* Backing file context management */
-+struct backing_file_context *incfs_alloc_bfc(struct file *backing_file);
-+
-+void incfs_free_bfc(struct backing_file_context *bfc);
-+
-+/* Writing stuff */
-+int incfs_write_inode_to_backing_file(struct backing_file_context *bfc, u64 ino,
-+				      u64 size, u16 mode);
-+
-+int incfs_write_dir_action(struct backing_file_context *bfc, u64 dir_ino,
-+			   u64 dentry_ino, enum incfs_dir_action_type type,
-+			   struct mem_range name);
-+
-+int incfs_write_blockmap_to_backing_file(struct backing_file_context *bfc,
-+					 u64 ino, u32 block_count,
-+					 loff_t *map_base_off);
-+
-+int incfs_write_sb_to_backing_file(struct backing_file_context *bfc);
-+
-+int incfs_write_data_block_to_backing_file(struct backing_file_context *bfc,
-+					   struct mem_range block,
-+					   int block_index, loff_t bm_base_off,
-+					   u16 flags, u32 crc);
-+
-+int incfs_make_empty_backing_file(struct backing_file_context *bfc);
-+
-+/* Reading stuff */
-+int incfs_read_superblock(struct backing_file_context *bfc,
-+			  loff_t *first_md_off);
-+
-+int incfs_read_blockmap_entry(struct backing_file_context *bfc, int block_index,
-+			      loff_t bm_base_off,
-+			      struct incfs_blockmap_entry *bm_entry);
-+
-+int incfs_read_next_metadata_record(struct backing_file_context *bfc,
-+				    struct metadata_handler *handler);
-+
-+#endif /* _INCFS_FORMAT_H */
-diff --git a/fs/incfs/internal.h b/fs/incfs/internal.h
-new file mode 100644
-index 000000000000..de8b6240e347
---- /dev/null
-+++ b/fs/incfs/internal.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Copyright 2018 Google LLC
++ * Collects pending reads and saves them into the array (reads/reads_size).
++ * Only reads with serial_number > sn_lowerbound are reported.
++ * Returns how many reads were saved into the array.
 + */
-+#ifndef _INCFS_INTERNAL_H
-+#define _INCFS_INTERNAL_H
-+#include <linux/types.h>
++int incfs_collect_pending_reads(struct mount_info *mi, int sn_lowerbound,
++			  struct incfs_pending_read_info *reads,
++			  int reads_size);
 +
-+struct mem_range {
-+	u8 *data;
-+	size_t len;
-+};
++/* Instructions processing */
++int incfs_process_new_file_inst(struct mount_info *mi,
++			  struct incfs_new_file_instruction *inst);
++int incfs_process_new_dir_entry_inst(struct mount_info *mi,
++			       enum incfs_instruction_type type,
++			       struct incfs_dir_entry_instruction *inst,
++			       char *name);
 +
-+static inline struct mem_range range(u8 *data, size_t len)
-+{
-+	return (struct mem_range){ .data = data, .len = len };
-+}
++int incfs_process_new_data_block(struct mount_info *mi,
++			   struct incfs_new_data_block *block,
++			   u8 *data);
 +
-+#ifdef DEBUG
-+#define LOCK_REQUIRED(lock)                                                    \
-+	do {                                                                   \
-+		if (!mutex_is_locked(&(lock))) {                               \
-+			pr_err(#lock " must be taken");                        \
-+			panic("Lock not taken.");                              \
-+		}                                                              \
-+	} while (0)
-+#else
-+#define LOCK_REQUIRED(lock)
-+#endif
++/*
++ * Scans whole backing file for metadata records.
++ * Returns an error or a number of processed metadata records.
++ */
++int incfs_scan_backing_file(struct mount_info *mi);
 +
-+#endif /* _INCFS_INTERNAL_H */
++bool incfs_equal_ranges(struct mem_range lhs, struct mem_range rhs);
++
++#endif /* _INCFS_DATA_MGMT_H */
 --
 2.21.0.593.g511ec345e18-goog
 
