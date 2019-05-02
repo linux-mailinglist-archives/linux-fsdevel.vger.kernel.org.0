@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B438D117B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 12:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96698117C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 13:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbfEBK6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 06:58:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48976 "EHLO mail.kernel.org"
+        id S1726349AbfEBLAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 07:00:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726268AbfEBK6w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 06:58:52 -0400
+        id S1726270AbfEBLAL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 May 2019 07:00:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B53B620656;
-        Thu,  2 May 2019 10:58:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15DE020873;
+        Thu,  2 May 2019 11:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556794731;
-        bh=T+a6pMLcd5HD33Dp1GZ3s3ZyPMK+MqwsS3ME8Zht+Rk=;
+        s=default; t=1556794810;
+        bh=45dEsHaryCD2YgFTD+ut5sayCsIeyqDSb8beWTRv3KM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xn9qtrH/6iSeajL86xHXikqGvmBkjkPTLd1nQIMw4pWMh7dALh2KSvL9dx0J57LgI
-         quJUvnif3o9cb3481YZvUlkI6jUNhggJl4YQx1f7LdW6Giv789veSDWkw97Tu8zDGX
-         B/7+uvqfWjfGoe3LMHNAL8STZruUkOlyRkyfu/So=
-Date:   Thu, 2 May 2019 12:58:49 +0200
+        b=Ul7LjAUmXIs6gOiMJ5yQjFk0zB2SKusIa68Zpp0UBAocQuuUVwuhC7PesmVCGFfiy
+         SS6gtBjzqaPb3ZVbYzNFxN4EXaZpTzrRYDfwrecZrNKFK2hfGaPAAUEI48b1a51Bd/
+         lCw83jb9L+bxfslPdh/y69NItWGJmuQH7yIvU0I4=
+Date:   Thu, 2 May 2019 13:00:08 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Brendan Higgins <brendanhiggins@google.com>
 Cc:     frowand.list@gmail.com, keescook@google.com,
@@ -41,58 +41,32 @@ Cc:     frowand.list@gmail.com, keescook@google.com,
         knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
         pmladek@suse.com, richard@nod.at, rientjes@google.com,
         rostedt@goodmis.org, wfg@linux.intel.com
-Subject: Re: [PATCH v2 07/17] kunit: test: add initial tests
-Message-ID: <20190502105849.GB12416@kroah.com>
+Subject: Re: [PATCH v2 04/17] kunit: test: add kunit_stream a std::stream
+ like logger
+Message-ID: <20190502110008.GC12416@kroah.com>
 References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-8-brendanhiggins@google.com>
+ <20190501230126.229218-5-brendanhiggins@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190501230126.229218-8-brendanhiggins@google.com>
+In-Reply-To: <20190501230126.229218-5-brendanhiggins@google.com>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 01, 2019 at 04:01:16PM -0700, Brendan Higgins wrote:
-> Add a test for string stream along with a simpler example.
-> 
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> ---
->  kunit/Kconfig              | 12 ++++++
->  kunit/Makefile             |  4 ++
->  kunit/example-test.c       | 88 ++++++++++++++++++++++++++++++++++++++
->  kunit/string-stream-test.c | 61 ++++++++++++++++++++++++++
->  4 files changed, 165 insertions(+)
->  create mode 100644 kunit/example-test.c
->  create mode 100644 kunit/string-stream-test.c
-> 
-> diff --git a/kunit/Kconfig b/kunit/Kconfig
-> index 64480092b2c24..5cb500355c873 100644
-> --- a/kunit/Kconfig
-> +++ b/kunit/Kconfig
-> @@ -13,4 +13,16 @@ config KUNIT
->  	  special hardware. For more information, please see
->  	  Documentation/kunit/
->  
-> +config KUNIT_TEST
-> +	bool "KUnit test for KUnit"
-> +	depends on KUNIT
-> +	help
-> +	  Enables KUnit test to test KUnit.
-> +
-> +config KUNIT_EXAMPLE_TEST
-> +	bool "Example test for KUnit"
-> +	depends on KUNIT
-> +	help
-> +	  Enables example KUnit test to demo features of KUnit.
+On Wed, May 01, 2019 at 04:01:13PM -0700, Brendan Higgins wrote:
+> A lot of the expectation and assertion infrastructure prints out fairly
+> complicated test failure messages, so add a C++ style log library for
+> for logging test results.
 
-Can't these tests be module?
+Ideally we would always use a standard logging format, like the
+kselftest tests all are aiming to do.  That way the output can be easily
+parsed by tools to see if the tests succeed/fail easily.
 
-Or am I mis-reading the previous logic?
-
-Anyway, just a question, nothing objecting to this as-is for now.
+Any chance of having this logging framework enforcing that format as
+well?
 
 thanks,
 
