@@ -2,182 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77DAE120D9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 19:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFBFE120E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 19:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726126AbfEBRLr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 13:11:47 -0400
-Received: from newman.cs.utexas.edu ([128.83.139.110]:59137 "EHLO
-        newman.cs.utexas.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbfEBRLr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 13:11:47 -0400
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-        (authenticated bits=0)
-        by newman.cs.utexas.edu (8.14.4/8.14.4/Debian-4.1ubuntu1.1) with ESMTP id x42HBim5017743
-        (version=TLSv1/SSLv3 cipher=AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 2 May 2019 12:11:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.utexas.edu;
-        s=default; t=1556817105;
-        bh=pgCrtlqQQrmOLxSzX7m4HC5H2ch2mxjx7j74ZSjdewc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Z89RFJ2XXQxhorGsjwGAVinoU7VzuX5bCw1fyUccNkik2XNl++Vl/S7TOZaALyXl9
-         Z36k1QSOlp7/nhOF8tXamUltK4+Lu8ktZjQjo6E8UfLZzuJUwN8URULGOMSnqmgkbO
-         CqAqouYbzLhXKnVtGMtNdst5+GGNJMm8WmLT1q7Y=
-Received: by mail-ot1-f51.google.com with SMTP id o39so2772037ota.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 10:11:45 -0700 (PDT)
-X-Gm-Message-State: APjAAAV03D/a4G6zEBKoG7cGGMxrNQ5/HpwmF+9zCVKmNTy7J1N8JNTw
-        8A9DzF4hSkpSwP12CuNiZOpbTBAtCdbdvLv49m4NIA==
-X-Google-Smtp-Source: APXvYqxrUzG0zhwA5bosjR4EEx4uXp6sSEJT96ie89U0vMzetZ8bs1BUBBfv35MARCIwB5BRYmSlrpklDJCA9u6p6aQ=
-X-Received: by 2002:a9d:7d04:: with SMTP id v4mr3124301otn.185.1556817104653;
- Thu, 02 May 2019 10:11:44 -0700 (PDT)
+        id S1726359AbfEBRQE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 13:16:04 -0400
+Received: from fieldses.org ([173.255.197.46]:52264 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725951AbfEBRQE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 May 2019 13:16:04 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 9E9321BE3; Thu,  2 May 2019 13:16:03 -0400 (EDT)
+Date:   Thu, 2 May 2019 13:16:03 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Andreas =?utf-8?Q?Gr=C3=BCnbacher?= 
+        <andreas.gruenbacher@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        NeilBrown <neilb@suse.com>, Amir Goldstein <amir73il@gmail.com>,
+        Patrick Plagwitz <Patrick_Plagwitz@web.de>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
+Message-ID: <20190502171603.GA1778@fieldses.org>
+References: <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com>
+ <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com>
+ <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com>
+ <20161206185806.GC31197@fieldses.org>
+ <87bm0l4nra.fsf@notabene.neil.brown.name>
+ <CAOQ4uxjYEjqbLcVYoUaPzp-jqY_3tpPBhO7cE7kbq63XrPRQLQ@mail.gmail.com>
+ <875zqt4igg.fsf@notabene.neil.brown.name>
+ <CAHc6FU52OCCGUnHXOCFTv1diP_5i4yZvF6fAth9=aynwS+twQg@mail.gmail.com>
+ <CAJfpegsthQn_=3AQJf7ojxoQBpHMA3dz1fCBjNZXsCA1E0oqnw@mail.gmail.com>
+ <CAHpGcML0KuoGSyXyyDnXHkSp3nDnSjJPeZeWEmt8CXxQeojxwg@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
- <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
-From:   Vijay Chidambaram <vijay@cs.utexas.edu>
-Date:   Thu, 2 May 2019 12:11:33 -0500
-X-Gmail-Original-Message-ID: <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
-Message-ID: <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
-Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties contract
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     lsf-pc@lists.linux-foundation.org,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jayashree Mohan <jaya@cs.utexas.edu>,
-        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
-        lwn@lwn.net
-Content-Type: text/plain; charset="UTF-8"
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.3.9 (newman.cs.utexas.edu [128.83.139.110]); Thu, 02 May 2019 12:11:45 -0500 (CDT)
-X-Virus-Scanned: clamav-milter 0.98.7 at newman
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHpGcML0KuoGSyXyyDnXHkSp3nDnSjJPeZeWEmt8CXxQeojxwg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thank you for driving this discussion Amir. I'm glad ext4 and btrfs
-developers want to provide these semantics.
+On Thu, May 02, 2019 at 05:08:14PM +0200, Andreas Grünbacher wrote:
+> You'll still see permissions that differ from what the filesystem
+> enforces, and copy-up would change that behavior.
 
-If I'm understanding this correctly, the new semantics will be: any
-data changes to files written with O_TMPFILE will be visible if the
-associated metadata is also visible. Basically, there will be a
-barrier between O_TMPFILE data and O_TMPFILE metadata.
+That's always true, and this issue isn't really specific to NFSv4 ACLs
+(or ACLs at all), it already exists with just mode bits.  The client
+doesn't know how principals may be mapped on the server, doesn't know
+group membership, etc.
 
-The expectation is that applications will use this, and then rename
-the O_TMPFILE file over the original file. Is this correct? If so, is
-there also an implied barrier between O_TMPFILE metadata and the
-rename?
+That's the usual model, anyway.  Permissions are almost entirely the
+server's responsibility, and we just provide a few attributes to set/get
+those server-side permissions.
 
-Where does this land us on the discussion about documenting
-file-system crash-recovery guarantees? Has that been deemed not
-necessary?
+The overlayfs/NFS case is different, I think: the nfs filesystem may be
+just a static read-only template for a filesystem that's only ever used
+by clients, and for all I know maybe permissions should only be
+interpreted on the client side in that case.
 
-Thanks,
-Vijay Chidambaram
-http://www.cs.utexas.edu/~vijay/
-
-On Thu, May 2, 2019 at 11:12 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Sat, Apr 27, 2019 at 5:00 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > Suggestion for another filesystems track topic.
-> >
-> > Some of you may remember the emotional(?) discussions that ensued
-> > when the crashmonkey developers embarked on a mission to document
-> > and verify filesystem crash recovery guaranties:
-> >
-> > https://lore.kernel.org/linux-fsdevel/CAOQ4uxj8YpYPPdEvAvKPKXO7wdBg6T1O3osd6fSPFKH9j=i2Yg@mail.gmail.com/
-> >
-> > There are two camps among filesystem developers and every camp
-> > has good arguments for wanting to document existing behavior and for
-> > not wanting to document anything beyond "use fsync if you want any guaranty".
-> >
-> > I would like to take a suggestion proposed by Jan on a related discussion:
-> > https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQx+TO3Dt7TA3ocXnNxbr3+oVyJLYUSpv4QCt_Texdvw@mail.gmail.com/
-> >
-> > and make a proposal that may be able to meet the concerns of
-> > both camps.
-> >
-> > The proposal is to add new APIs which communicate
-> > crash consistency requirements of the application to the filesystem.
-> >
-> > Example API could look like this:
-> > renameat2(..., RENAME_METADATA_BARRIER | RENAME_DATA_BARRIER)
-> > It's just an example. The API could take another form and may need
-> > more barrier types (I proposed to use new file_sync_range() flags).
-> >
-> > The idea is simple though.
-> > METADATA_BARRIER means all the inode metadata will be observed
-> > after crash if rename is observed after crash.
-> > DATA_BARRIER same for file data.
-> > We may also want a "ALL_METADATA_BARRIER" and/or
-> > "METADATA_DEPENDENCY_BARRIER" to more accurately
-> > describe what SOMC guaranties actually provide today.
-> >
-> > The implementation is also simple. filesystem that currently
-> > have SOMC behavior don't need to do anything to respect
-> > METADATA_BARRIER and only need to call
-> > filemap_write_and_wait_range() to respect DATA_BARRIER.
-> > filesystem developers are thus not tying their hands w.r.t future
-> > performance optimizations for operations that are not explicitly
-> > requesting a barrier.
-> >
->
-> An update: Following the LSF session on $SUBJECT I had a discussion
-> with Ted, Jan and Chris.
->
-> We were all in agreement that linking an O_TMPFILE into the namespace
-> is probably already perceived by users as the barrier/atomic operation that
-> I am trying to describe.
->
-> So at least maintainers of btrfs/ext4/ext2 are sympathetic to the idea of
-> providing the required semantics when linking O_TMPFILE *as long* as
-> the semantics are properly documented.
->
-> This is what open(2) man page has to say right now:
->
->  *  Creating a file that is initially invisible, which is then
-> populated with data
->     and adjusted to have  appropriate  filesystem  attributes  (fchown(2),
->     fchmod(2), fsetxattr(2), etc.)  before being atomically linked into the
->     filesystem in a fully formed state (using linkat(2) as described above).
->
-> The phrase that I would like to add (probably in link(2) man page) is:
-> "The filesystem provided the guaranty that after a crash, if the linked
->  O_TMPFILE is observed in the target directory, than all the data and
->  metadata modifications made to the file before being linked are also
->  observed."
->
-> For some filesystems, btrfs in farticular, that would mean an implicit
-> fsync on the linked inode. On other filesystems, ext4/xfs in particular
-> that would only require at least committing delayed allocations, but
-> will NOT require inode fsync nor journal commit/flushing disk caches.
->
-> I would like to hear the opinion of XFS developers and filesystem
-> maintainers who did not attend the LSF session.
->
-> I have no objection to adding an opt-in LINK_ATOMIC flag
-> and pass it down to filesystems instead of changing behavior and
-> patching stable kernels, but I prefer the latter.
->
-> I believe this should have been the semantics to begin with
-> if for no other reason, because users would expect it regardless
-> of whatever we write in manual page and no matter how many
-> !!!!!!!! we use for disclaimers.
->
-> And if we can all agree on that, then O_TMPFILE is quite young
-> in historic perspective, so not too late to call the expectation gap
-> a bug and fix it.(?)
->
-> Taking this another step forward, if we agree on the language
-> I used above to describe the expected behavior, then we can
-> add an opt-in RENAME_ATOMIC flag to provide the same
-> semantics and document it in the same manner (this functionality
-> is needed for directories and non regular files) and all there is left
-> is the fun part of choosing the flag name ;-)
->
-> Thanks,
-> Amir.
+--b.
