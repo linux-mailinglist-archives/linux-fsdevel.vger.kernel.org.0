@@ -2,162 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AD8612535
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 01:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D808F12544
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 01:57:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbfEBXpm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 19:45:42 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39930 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbfEBXpm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 19:45:42 -0400
-Received: by mail-oi1-f194.google.com with SMTP id w130so2725851oie.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 16:45:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ylV5gAlOXI2nFNZnhMPfqqvANEP1/evAl3taiRkcInQ=;
-        b=OrjlPAypoDuLTmMWabsyH76U4J0Mgjkpr3DQnHBX1C/sWw9dQWGJZqdGNPLs+jVmSg
-         c3bYyd65ExNrwdSzAF9/C3j2TwsTXUxo6mYRYKux2ifXavoN2kS9n00OiZWShZJ2VN9E
-         Jey0nYLCGUng4+ySvL4+XGzNZ7sYP4XCUNcymRLj9xf6jLOnFx+3mvowrkn0pYKwRyZg
-         3M2fA5czV+OipZELphNhEy5iD2t61ukDrrNzVoHA9OjKJNH0VGnLzAHCbuiCf9QjtvzN
-         IDmzum+SPe0jeiAShs/g76LnFAxiI2OcVPBTp+1OnYkCXtTKkvmMFQSC+CcJJLS2aj7L
-         YRtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ylV5gAlOXI2nFNZnhMPfqqvANEP1/evAl3taiRkcInQ=;
-        b=s24655VFEQIpRpkGE0ORTnlMBzwJ1EhTSMB8MMbOosetUC4/aIq9u+hzIJmrfGUmQf
-         KAAoEsesksjGwvovhVofTUsD4v1nrfAX+G/MIkw1D9eMBpgAkcvOEIXsQfUW+8lS3K5E
-         y20gBA6hFAtgmOVLIwknTb+IU2lEGRupw66AGSK3Cm/bHmIufdbftf/2jH7LrWi7jPOO
-         l+1G7Um6qyWKRy2+1atUDRwyRYXkuZ4qAo4JNbKgANRWs4cutxbKbB5MwjmzH8VXx4Df
-         XSsLOxkmGr4AxQTK0t/jtFCm6AJKGIxVykM1fZxt8toGGJF7vQVsSLtEtGIa4J61X23A
-         +WmA==
-X-Gm-Message-State: APjAAAVmFrJExWGAXvSNdPh0y1+vzrxmbvSVfAhbCSZhP1wk4U7AsCwT
-        bH4xuTB41TwS0J1uAc71+TKwe3O4c0qhFc/LfYHf7A==
-X-Google-Smtp-Source: APXvYqza1ahwn/TDeWwW8NfzPMf/2RsvBcbxrAIWRnpkKGe/w6LvErCEtGQm7aaUbxq8tyCdcrjFzojfQN03A2rWnss=
-X-Received: by 2002:aca:57d8:: with SMTP id l207mr4208582oib.44.1556840740661;
- Thu, 02 May 2019 16:45:40 -0700 (PDT)
+        id S1726197AbfEBX5W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 19:57:22 -0400
+Received: from mga18.intel.com ([134.134.136.126]:10841 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726053AbfEBX5W (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 May 2019 19:57:22 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 16:57:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,423,1549958400"; 
+   d="gz'50?scan'50,208,50";a="167186677"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 02 May 2019 16:57:19 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1hMLZn-000HrN-GU; Fri, 03 May 2019 07:57:19 +0800
+Date:   Fri, 3 May 2019 07:56:45 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     kbuild-all@01.org, linux-fsdevel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>
+Subject: [vfs:work.mount-syscalls 1/10] <stdin>:1388:2: warning: #warning
+ syscall open_tree not implemented
+Message-ID: <201905030743.YhWB3r4A%lkp@intel.com>
 MIME-Version: 1.0
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-13-brendanhiggins@google.com> <20190502110220.GD12416@kroah.com>
- <CAFd5g47t=EdLKFCT=CnPkrM2z0nDVo24Gz4j0VxFOJbARP37Lg@mail.gmail.com> <a49c5088-a821-210c-66de-f422536f5b01@gmail.com>
-In-Reply-To: <a49c5088-a821-210c-66de-f422536f5b01@gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 2 May 2019 16:45:29 -0700
-Message-ID: <CAFd5g44iWRchQKdJYtjRtPY6e-6e0eXpKXXsx5Ooi6sWE474KA@mail.gmail.com>
-Subject: Re: [PATCH v2 12/17] kunit: tool: add Python wrappers for running
- KUnit tests
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        shuah@kernel.org, devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
-        Felix Guo <felixguoxiuping@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="qDbXVdCdHGoSgWSk"
+Content-Disposition: inline
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 2, 2019 at 2:16 PM Frank Rowand <frowand.list@gmail.com> wrote:
->
-> On 5/2/19 11:07 AM, Brendan Higgins wrote:
-> > On Thu, May 2, 2019 at 4:02 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >>
-> >> On Wed, May 01, 2019 at 04:01:21PM -0700, Brendan Higgins wrote:
-> >>> From: Felix Guo <felixguoxiuping@gmail.com>
-> >>>
-> >>> The ultimate goal is to create minimal isolated test binaries; in the
-> >>> meantime we are using UML to provide the infrastructure to run tests, so
-> >>> define an abstract way to configure and run tests that allow us to
-> >>> change the context in which tests are built without affecting the user.
-> >>> This also makes pretty and dynamic error reporting, and a lot of other
-> >>> nice features easier.
-> >>>
-> >>> kunit_config.py:
-> >>>   - parse .config and Kconfig files.
-> >>>
-> >>> kunit_kernel.py: provides helper functions to:
-> >>>   - configure the kernel using kunitconfig.
-> >>>   - build the kernel with the appropriate configuration.
-> >>>   - provide function to invoke the kernel and stream the output back.
-> >>>
-> >>> Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
-> >>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> >>
-> >> Ah, here's probably my answer to my previous logging format question,
-> >> right?  What's the chance that these wrappers output stuff in a standard
-> >> format that test-framework-tools can already parse?  :)
 
-To be clear, the test-framework-tools format we are talking about is
-TAP13[1], correct?
+--qDbXVdCdHGoSgWSk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-My understanding is that is what kselftest is being converted to use.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount-syscalls
+head:   f1b5618e013af28b3c78daf424436a79674423c0
+commit: a07b20004793d8926f78d63eb5980559f7813404 [1/10] vfs: syscall: Add open_tree(2) to reference or clone a mount
+config: c6x-evmc6678_defconfig (attached as .config)
+compiler: c6x-elf-gcc (GCC) 8.1.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        git checkout a07b20004793d8926f78d63eb5980559f7813404
+        # save the attached .config to linux build tree
+        GCC_VERSION=8.1.0 make.cross ARCH=c6x 
 
-> >
-> > It should be pretty easy to do. I had some patches that pack up the
-> > results into a serialized format for a presubmit service; it should be
-> > pretty straightforward to take the same logic and just change the
-> > output format.
->
-> When examining and trying out the previous versions of the patch I found
-> the wrappers useful to provide information about how to control and use
-> the tests, but I had no interest in using the scripts as they do not
-> fit in with my personal environment and workflow.
->
-> In the previous versions of the patch, these helper scripts are optional,
-> which is good for my use case.  If the helper scripts are required to
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
-They are still optional.
+All warnings (new ones prefixed by >>):
 
-> get the data into the proper format then the scripts are not quite so
-> optional, they become the expected environment.  I think the proper
-> format should exist without the helper scripts.
+>> <stdin>:1388:2: warning: #warning syscall open_tree not implemented [-Wcpp]
 
-That's a good point. A couple things,
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-First off, supporting TAP13, either in the kernel or the wrapper
-script is not hard, but I don't think that is the real issue that you
-raise.
+--qDbXVdCdHGoSgWSk
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
-If your only concern is that you will always be able to have human
-readable KUnit results printed to the kernel log, that is a guarantee
-I feel comfortable making. Beyond that, I think it is going to take a
-long while before I would feel comfortable guaranteeing anything about
-how will KUnit work, what kind of data it will want to expose, and how
-it will be organized. I think the wrapper script provides a nice
-facade that I can maintain, can mediate between the implementation
-details and the user, and can mediate between the implementation
-details and other pieces of software that might want to consume
-results.
+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
+4jbaV0gAAA==
 
-[1] https://testanything.org/tap-version-13-specification.html
+--qDbXVdCdHGoSgWSk--
