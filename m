@@ -2,95 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8699311A99
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 15:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E861811A96
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 15:56:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbfEBN4q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 09:56:46 -0400
-Received: from mfb02-md.ns.itscom.net ([175.177.155.110]:50396 "EHLO
+        id S1726336AbfEBN4o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 09:56:44 -0400
+Received: from mfb02-md.ns.itscom.net ([175.177.155.110]:50392 "EHLO
         mfb02-md.ns.itscom.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfEBN4q (ORCPT
+        with ESMTP id S1726283AbfEBN4o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 09:56:46 -0400
+        Thu, 2 May 2019 09:56:44 -0400
 Received: from mail03-md.ns.itscom.net (mail03-md.ns.itscom.net [175.177.155.113])
-        by mfb02-md.ns.itscom.net (Postfix) with ESMTP id E05DA1748AF9
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 May 2019 22:47:10 +0900 (JST)
+        by mfb02-md.ns.itscom.net (Postfix) with ESMTP id E431817489AD
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 May 2019 22:47:33 +0900 (JST)
 Received: from cmsa01-mds.s.noc.itscom.net (cmsa01-md.ns.itscom.net [175.177.0.91])
-        by mail03-md-outgoing.ns.itscom.net (Postfix) with ESMTP id 4F3C4FF0530;
-        Thu,  2 May 2019 22:47:09 +0900 (JST)
+        by mail03-md-outgoing.ns.itscom.net (Postfix) with ESMTP id 231B3FF0527;
+        Thu,  2 May 2019 22:47:33 +0900 (JST)
 Received: from jromail.nowhere ([219.110.243.48])
         by cmsa-md with ESMTP
-        id MC3JhjzYCz4K5MC3JhE3t5; Thu, 02 May 2019 22:47:09 +0900
-Received: from jro by jrobl id 1hMC3J-0000ZV-0P ; Thu, 02 May 2019 22:47:09 +0900
+        id MC3hhjzZ0z4K5MC3hhE3tC; Thu, 02 May 2019 22:47:33 +0900
+Received: from jro by jrobl id 1hMC3g-0000Ze-UE ; Thu, 02 May 2019 22:47:32 +0900
 From:   "J. R. Okajima" <hooanon05g@gmail.com>
-Subject: Re: [PATCH] OVL: add honoracl=off mount option.
-To:     NeilBrown <neilb@suse.com>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Andreas =?utf-8?Q?Gr=C3=BCnbacher?= 
-        <andreas.gruenbacher@gmail.com>,
-        Patrick Plagwitz <Patrick_Plagwitz@web.de>,
-        "linux-unionfs\@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-In-Reply-To: <8736lx4goa.fsf@notabene.neil.brown.name>
-References: <CAJfpeguwUtRWRGmNmimNp-FXzWqMCCQMb24iWPu0w_J0_rOnnw@mail.gmail.com> <20161205151933.GA17517@fieldses.org> <CAJfpegtpkavseTFLspaC7svbvHRq-0-7jvyh63+DK5iWHTGnaQ@mail.gmail.com> <20161205162559.GB17517@fieldses.org> <CAHpGcMKHjic6L+J0qvMYNG9hVCcDO1hEpx4BiEk0ZCKDV39BmA@mail.gmail.com> <266c571f-e4e2-7c61-5ee2-8ece0c2d06e9@web.de> <CAHpGcMKmtppfn7PVrGKEEtVphuLV=YQ2GDYKOqje4ZANhzSgDw@mail.gmail.com> <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com> <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com> <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com> <20161206185806.GC31197@fieldses.org> <87bm0l4nra.fsf@notabene.neil.brown.name> <8736lx4goa.fsf@notabene.neil.brown.name>
+Subject: Re: Initial patches for Incremental FS
+To:     ezemtsov@google.com
+Cc:     linux-fsdevel@vger.kernel.org, tytso@mit.edu
+In-Reply-To: <20190502040331.81196-1-ezemtsov@google.com>
+References: <20190502040331.81196-1-ezemtsov@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2199.1556804828.1@jrobl>
-Date:   Thu, 02 May 2019 22:47:08 +0900
-Message-ID: <2200.1556804828@jrobl>
+Content-ID: <2208.1556804852.1@jrobl>
+Date:   Thu, 02 May 2019 22:47:32 +0900
+Message-ID: <2209.1556804852@jrobl>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-NeilBrown:
-> If the upper and lower layers use incompatible ACL formats, it is not
-> possible to copy the ACL xttr from one to the other, so overlayfs
-> cannot work with them.
-> This happens particularly with NFSv4 which uses system.nfs4_acl, and
-> ext4 which uses system.posix_acl_access.
+ezemtsov@google.com:
+> Incremental FS is special-purpose Linux virtual file system that allows
+> execution of a program while its binary and resource files are still being
+> lazily downloaded over the network, USB etc. It is focused on incremental
+	:::
 
-FYI,
-Aufs had met the same problem many years ago, and I introduced some
-options called ICEX (Ignore Copyup Error on Xattr).
+I had developed a very similar userspace daemon many years ago which is
+called ULOOP.  As you can guess it is based upon the loopback block
+device in stead of the filesystem.
 
-(from the design doc in aufs)
+(from the readme file)
 ----------------------------------------
-For example, the src branch supports ACL but the dst branch doesn't
-because the dst branch may natively un-support it or temporary
-un-support it due to "noacl" mount option. Of course, the dst branch fs
-may NOT return an error even if the XATTR is not supported. It is
-totally up to the branch fs.
+1. sample for HTTP
+Simple 'make' will build ./drivers/block/uloop.ko and ./ulohttp.
+Ulohttp application behaves like losetup(8). Additionally, ulohttp is
+an actual daemon which handles I/O request.
+Here is a syntax.
 
-Anyway when the aufs internal copy-up gets an error from the dst branch
-fs, then aufs tries removing the just copied entry and returns the error
-to the userspace. The worst case of this situation will be all copy-up
-will fail.
+ulohttp [-b bitmap] [-c cache] device URL
 
-For the copy-up operation, there two basic approaches.
-- copy the specified XATTR only (by category above), and return the
-  error unconditionally if it happens.
-- copy all XATTR, and ignore the error on the specified category only.
+The device is /dev/loopN and the URL is a URL for fs-image file via
+HTTP. The http server must support byte range (Range: header).
+The bitmap is a new filename or previously specified as the bitmap for
+the same URL. Its filesize will be 'the size of the specified fs-image
+/ pagesize (usually 4k) / bits in a byte (8)', and round-up to
+pagesize.
+The cache is a new filename or previously specified as the cache for
+the same URL. Its filesize will be 'the size of the specified
+fs-image', and round-up to pagesize.
+Note that both the bitmap and the cache are re-usable as long as you
+don't change the filedata and URL.
 
-In order to support XATTR and to implement the correct behaviour, aufs
-chooses the latter approach and introduces some new branch attributes,
-"icexsec", "icexsys", "icextr", "icexusr", and "icexoth".
-They correspond to the XATTR namespaces (see above). Additionally, to be
-convenient, "icex" is also provided which means all "icex*" attributes
-are set (here the word "icex" stands for "ignore copy-error on XATTR").
+When someone reads from the specified /dev/loopN, or accesses a file
+on a filesystem after mounting /dev/loopN, ULOOP driver first checks
+the corresponding bit in the bitmap file. When the bit is not set,
+which means the block is not retrieved yet, it passes the offset and
+size of the I/O request to ulohttp daemon.
+Ulohttp converts the offset and the size into HTTP GET request with
+Range header and send it to the http server.
+Retriving the data from the http server, ulohttp stores it to the
+cache file, and tells ULOOP driver that the HTTP transfer completes.
+Then the ULOOP driver sets the corresponding bit in the bitmap, and
+finishes the I/O/request.
 
-The meaning of these attributes is to ignore the error from setting
-XATTR on that branch.
-Note that aufs tries copying all XATTR unconditionally, and ignores the
-error from the dst branch according to the specified attributes.
+In other words, it is equivalent to this operation.
+$ wget URL_for_fsimage
+$ sudo mount -o loop retrieved_fsimage /mnt
+But ULOOP driver and ulohttp retrieves only the data (block) on-demand,
+and stores into the cache file. The first access to a block is slow
+since it involves HTTP GET, but the next access to the same block is
+fast since it is in the local cache file. In this case, the behaviour
+is equivalent to the simple /dev/loop device.
+
 ----------------------------------------
 
-But recent nfs4 got changed its behaviour around ACL, and it didn't pass
-my local tests.  I had posted about that, but got no reply.
+If you are interested, then try
+https://sourceforge.net/p/aufs/aufs-util/ci/aufs4.14/tree/sample/uloop/
+
+It is just for your information.
 
 
 J. R. Okajima
