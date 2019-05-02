@@ -2,100 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0093A11C34
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 17:08:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78B0C11C3A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 17:09:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbfEBPIy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 11:08:54 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:39319 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfEBPIy (ORCPT
+        id S1726268AbfEBPJp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 11:09:45 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51108 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726197AbfEBPJp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 11:08:54 -0400
-Received: by mail-yw1-f66.google.com with SMTP id x204so1814690ywg.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 08:08:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rqMffDWXPbkTYXOIBLsJNd+7CEmQumG8SUdlx8ggtc0=;
-        b=vC4wZGu2IpVydbPCSH9vHrpqk8meiMYppOXxYoPwqm7VjAywlTAIqtXFNNV6+zMJDv
-         UWxbsKqbE7Kb7Z4x1ZjURc0quvxhkL+Cq+2Y3Sg6vajFUO0jEmSFITVf0APBYE3jG3vA
-         DMhEjr4vZ7+2RyZrk4DGL0OthF3iXObSJCWC3CqLGV+iEj48VqDekbqDOuig2/QKcBiX
-         Gm8pmjgX+aB7/0il9s2+E8l0negisHbq545NhESDWqwB/H6ASVeHjXB1k9G+iB5HePi2
-         mvWENmiWbPZc4FyEgJtEtN72+m+sGKt/bXqt99hnTFlVs1HLXE9y0N1Z9kztTkLWy6vP
-         MATg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rqMffDWXPbkTYXOIBLsJNd+7CEmQumG8SUdlx8ggtc0=;
-        b=RUxlIfwZbaYUuYvzqM2LR1Je4+gWmKkE7Wj04Cs7UWMM0xFMGxPWZxcDL4mognwTW1
-         nq620JL/Z3lWWz++L+oXEzVwj6sTREPb+bIkMx71PeY9WCGVillcKLOTSHUnF50bkg4l
-         RAdJZaGh9wt3k1TtZ++241weYIv2Caq6E28as3Zk1EolVFy3MNxOV314IKkbELZtEs9R
-         jxaz7df2EUrKMhiQSh/y/mnWGnVLVmqMrVPiEwj4DpWkKtFu8YaYio6yhAIETdWQMOkc
-         H4O54eNVky9wFx8fyQRG589pjWkulhOCD3vMNDGsEsgCKM/BPdRItV58QCiZtULD41yI
-         bDSg==
-X-Gm-Message-State: APjAAAW0Vs/I8qt3LwI5vl6B5RQ6CREv/PH+F2C3cWWvSwLKUbhacuir
-        Ex0qrjzqv8WP9EVQUEVqcGDAXa7AA4odyotz/rY=
-X-Google-Smtp-Source: APXvYqwCR58QzycDRUxQQ1hl8P0btB4wDeWX3RWnOY7WHU+aV1E6OKHY1ZpCV/IkBF4QeqRbAPzeyYoPbV3cWasAwTs=
-X-Received: by 2002:a0d:ff82:: with SMTP id p124mr3747501ywf.409.1556809732891;
- Thu, 02 May 2019 08:08:52 -0700 (PDT)
+        Thu, 2 May 2019 11:09:45 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x42F7WBI137738
+        for <linux-fsdevel@vger.kernel.org>; Thu, 2 May 2019 11:09:43 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2s8235thpa-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 11:09:43 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
+        Thu, 2 May 2019 16:09:41 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 2 May 2019 16:09:38 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x42F9bNd16187540
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 2 May 2019 15:09:37 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 221794C04E;
+        Thu,  2 May 2019 15:09:37 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 904814C044;
+        Thu,  2 May 2019 15:09:35 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.71.82])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  2 May 2019 15:09:35 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.ibm.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 01/13] fscrypt: simplify bounce page handling
+Date:   Thu, 02 May 2019 20:40:34 +0530
+Organization: IBM
+In-Reply-To: <20190501224515.43059-2-ebiggers@kernel.org>
+References: <20190501224515.43059-1-ebiggers@kernel.org> <20190501224515.43059-2-ebiggers@kernel.org>
 MIME-Version: 1.0
-References: <20190501205541.GC30899@veci.piliscsaba.redhat.com> <20190502143905.GA25032@quack2.suse.cz>
-In-Reply-To: <20190502143905.GA25032@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 2 May 2019 11:08:41 -0400
-Message-ID: <CAOQ4uxiLwwmOG0gtNDXng3O=hq3o0jAx66aXnSYV+T7UHtr=8A@mail.gmail.com>
-Subject: Re: [RFC PATCH] network fs notification
-To:     Jan Kara <jack@suse.cz>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <smfrench@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 19050215-0016-0000-0000-000002779FA6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050215-0017-0000-0000-000032D43490
+Message-Id: <3273903.Njs8gtEjer@localhost.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-02_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=526 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905020102
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 2, 2019 at 10:39 AM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 01-05-19 16:55:41, Miklos Szeredi wrote:
-> > This is a really really trivial first iteration, but I think it's enough to
-> > try out CIFS notification support.  Doesn't deal with mark deletion, but
-> > that's best effort anyway: fsnotify() will filter out unneeded events.
-> >
-> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > ---
-> >  fs/notify/fanotify/fanotify_user.c |    6 +++++-
-> >  fs/notify/inotify/inotify_user.c   |    2 ++
-> >  include/linux/fs.h                 |    1 +
-> >  3 files changed, 8 insertions(+), 1 deletion(-)
-> >
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -1041,9 +1041,13 @@ static int do_fanotify_mark(int fanotify
-> >               else if (mark_type == FAN_MARK_FILESYSTEM)
-> >                       ret = fanotify_add_sb_mark(group, mnt->mnt_sb, mask,
-> >                                                  flags, fsid);
-> > -             else
-> > +             else {
-> >                       ret = fanotify_add_inode_mark(group, inode, mask,
-> >                                                     flags, fsid);
-> > +
-> > +                     if (!ret && inode->i_op->notify_update)
-> > +                             inode->i_op->notify_update(inode);
-> > +             }
->
-> Yeah, so I had something like this in mind but I wanted to inform the
-> filesystem about superblock and mountpoint marks as well. And I'd pass the
-> 'mask' as well as presumably filesystem could behave differently depending
-> on whether we are looking for create vs unlink vs file change events etc...
->
+On Thursday, May 2, 2019 4:15:03 AM IST Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Currently, bounce page handling for writes to encrypted files is
+> unnecessarily complicated.  A fscrypt_ctx is allocated along with each
+> bounce page, page_private(bounce_page) points to this fscrypt_ctx, and
+> fscrypt_ctx::w::control_page points to the original pagecache page.
+> 
+> However, because writes don't use the fscrypt_ctx for anything else,
+> there's no reason why page_private(bounce_page) can't just point to the
+> original pagecache page directly.
+> 
+> Therefore, this patch makes this change.  In the process, it also cleans
+> up the API exposed to filesystems that allows testing whether a page is
+> a bounce page, getting the pagecache page from a bounce page, and
+> freeing a bounce page.
 
-It probably wouldn't hurt to update fs about mount marks,
-but in the context of "remote" fs, the changes are most certainly
-being done on a different mount, a different machine most likely...
+Looks good to me,
 
-Thanks,
-Amir.
+Reviewed-by: Chandan Rajendra <chandan@linux.ibm.com>
+
+-- 
+chandan
+
+
+
