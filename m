@@ -2,212 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0D9123D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 23:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA494123FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 23:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbfEBVFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 17:05:54 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:44906 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfEBVFy (ORCPT
+        id S1726201AbfEBVQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 17:16:28 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36361 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbfEBVQ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 17:05:54 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x42L4PkD036372;
-        Thu, 2 May 2019 21:05:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=7pY7M/ejd/CdjQKheUzHbPlIC1MLHfFvlMQLp7rQ08A=;
- b=hEExdEEYWCzQo45uHLUsPPWADf01Yitwa6cIS9Mw2lEEFstvikk2t/uoqOKzTsG5H9FD
- SF8kdIynvNCDB7JCJvcRAZlDCnVfLYYAjtHyoQn8kb1UCBsT4VS3e2HCaRfZbXcTrayM
- 4iwWOf0rlL2TD5HRoeNGRebxm1DGfDRrtEP6M2oz4YIYS5D2MCxhS8sB3J5U8dVOYecb
- qi3zRjWr/lHpb6zTmP6d58IkakzdpQuP2qGofvWBeaypOkNOpOcT1pUaFiwebmC8GGUJ
- /gedr75WWe95ZRRqOdr/23yreEdy2/ukHs+mYcTF0pCRzBXbYGzidREG53vI7SUySYgE Pw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 2s6xhykcj3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 May 2019 21:05:30 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x42L4qC6039220;
-        Thu, 2 May 2019 21:05:29 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2s7rtby03q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 May 2019 21:05:29 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x42L5QqY005488;
-        Thu, 2 May 2019 21:05:26 GMT
-Received: from localhost (/10.145.179.89)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 02 May 2019 14:05:26 -0700
-Date:   Thu, 2 May 2019 14:05:24 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     lsf-pc@lists.linux-foundation.org,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jayashree Mohan <jaya@cs.utexas.edu>,
-        Vijaychidambaram Velayudhan Pillai <vijay@cs.utexas.edu>,
-        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
-        lwn@lwn.net
-Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties
- contract
-Message-ID: <20190502210524.GI5200@magnolia>
-References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
- <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
+        Thu, 2 May 2019 17:16:27 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 85so1633188pgc.3;
+        Thu, 02 May 2019 14:16:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SXzn4PL7BS9Zk+Qjz5Z6ao7p78pnuZhgvrrpjIHBgqs=;
+        b=kCJFdJIIF969KctuD3d2wM6Ofbq6dPOZFLTH8wlGl+7+cVokVRuDwro7NOWN9ohV8k
+         ImAl50lyzEBsv7yN+yDsApIRZoLtSCfwhyzyxPvjXoEWcvwOBh4YVBGfYFjfXofVIUhG
+         4IdfwHyJltRS5sW89ee6jcilUM33Ka1rf9l/1hx/r4xvkgirrOsCcjMVyOo7fNRjZFEX
+         W57GSaPxOGJB3pNyXX+NzqVUj3/2JEPXwOjRvCBv8sNkyMt8fb6SSscfdGTffg6t6JdB
+         E1xSneePimV/qvTL3gOacgC8P6jcyMC1ik1HBxyp2Tove1HOXYfOKbo6mTy7cNVaJPvY
+         TkNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SXzn4PL7BS9Zk+Qjz5Z6ao7p78pnuZhgvrrpjIHBgqs=;
+        b=pcJqDcIzbpppzXFbvgI0rUcsLQ6lnBA27PfHO9JPODM+fQgYK63DOJxxWgTVdq9FWp
+         V2Azdulv3zKvkEnOEVQ/udBOpZsAdMmU+YEkQ5ObvZllNXUnrXPk4z5wo7QEPOp4nybN
+         L7d+5/1X0D05k8J4xphzTNJbcUa4edawtNYodf5pXehhJ96msYgDZWXzVbJ+n0in1CKc
+         x9YaDZsbm1w0AshA5yOMDasYnrX++vdexqLx0T7kpsp4iP+unwGfd/aj9piYTLxaWTo8
+         fC8WVrNCqFlTWQYyMpeNABlAL36Arjc/9hieexCg8SfxSV0/mFT088kBzTf22bhYPP+L
+         HsRw==
+X-Gm-Message-State: APjAAAXZTHeEI4ilZYR6xyaLTDyRV7ZS/GCwKiPFe3/dPT8uX9G468mX
+        aSo5coEv1JtmH2fZJI/vmzI=
+X-Google-Smtp-Source: APXvYqyaAKrOO8dNkOZg12O3d42lENfOgkrL7qBtR/V01hTlj71I+CQb4vEU5IP/L2A0+G0+xdSQEg==
+X-Received: by 2002:a63:5f42:: with SMTP id t63mr6174518pgb.275.1556831786717;
+        Thu, 02 May 2019 14:16:26 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id f63sm102173pfc.180.2019.05.02.14.16.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 May 2019 14:16:26 -0700 (PDT)
+Subject: Re: [PATCH v2 12/17] kunit: tool: add Python wrappers for running
+ KUnit tests
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah@kernel.org, devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
+        Felix Guo <felixguoxiuping@gmail.com>
+References: <20190501230126.229218-1-brendanhiggins@google.com>
+ <20190501230126.229218-13-brendanhiggins@google.com>
+ <20190502110220.GD12416@kroah.com>
+ <CAFd5g47t=EdLKFCT=CnPkrM2z0nDVo24Gz4j0VxFOJbARP37Lg@mail.gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <a49c5088-a821-210c-66de-f422536f5b01@gmail.com>
+Date:   Thu, 2 May 2019 14:16:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9245 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905020132
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9245 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905020132
+In-Reply-To: <CAFd5g47t=EdLKFCT=CnPkrM2z0nDVo24Gz4j0VxFOJbARP37Lg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 02, 2019 at 12:12:22PM -0400, Amir Goldstein wrote:
-> On Sat, Apr 27, 2019 at 5:00 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > Suggestion for another filesystems track topic.
-> >
-> > Some of you may remember the emotional(?) discussions that ensued
-> > when the crashmonkey developers embarked on a mission to document
-> > and verify filesystem crash recovery guaranties:
-> >
-> > https://lore.kernel.org/linux-fsdevel/CAOQ4uxj8YpYPPdEvAvKPKXO7wdBg6T1O3osd6fSPFKH9j=i2Yg@mail.gmail.com/
-> >
-> > There are two camps among filesystem developers and every camp
-> > has good arguments for wanting to document existing behavior and for
-> > not wanting to document anything beyond "use fsync if you want any guaranty".
-> >
-> > I would like to take a suggestion proposed by Jan on a related discussion:
-> > https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQx+TO3Dt7TA3ocXnNxbr3+oVyJLYUSpv4QCt_Texdvw@mail.gmail.com/
-> >
-> > and make a proposal that may be able to meet the concerns of
-> > both camps.
-> >
-> > The proposal is to add new APIs which communicate
-> > crash consistency requirements of the application to the filesystem.
-> >
-> > Example API could look like this:
-> > renameat2(..., RENAME_METADATA_BARRIER | RENAME_DATA_BARRIER)
-> > It's just an example. The API could take another form and may need
-> > more barrier types (I proposed to use new file_sync_range() flags).
-> >
-> > The idea is simple though.
-> > METADATA_BARRIER means all the inode metadata will be observed
-> > after crash if rename is observed after crash.
-> > DATA_BARRIER same for file data.
-> > We may also want a "ALL_METADATA_BARRIER" and/or
-> > "METADATA_DEPENDENCY_BARRIER" to more accurately
-> > describe what SOMC guaranties actually provide today.
-> >
-> > The implementation is also simple. filesystem that currently
-> > have SOMC behavior don't need to do anything to respect
-> > METADATA_BARRIER and only need to call
-> > filemap_write_and_wait_range() to respect DATA_BARRIER.
-> > filesystem developers are thus not tying their hands w.r.t future
-> > performance optimizations for operations that are not explicitly
-> > requesting a barrier.
-> >
+On 5/2/19 11:07 AM, Brendan Higgins wrote:
+> On Thu, May 2, 2019 at 4:02 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>>
+>> On Wed, May 01, 2019 at 04:01:21PM -0700, Brendan Higgins wrote:
+>>> From: Felix Guo <felixguoxiuping@gmail.com>
+>>>
+>>> The ultimate goal is to create minimal isolated test binaries; in the
+>>> meantime we are using UML to provide the infrastructure to run tests, so
+>>> define an abstract way to configure and run tests that allow us to
+>>> change the context in which tests are built without affecting the user.
+>>> This also makes pretty and dynamic error reporting, and a lot of other
+>>> nice features easier.
+>>>
+>>> kunit_config.py:
+>>>   - parse .config and Kconfig files.
+>>>
+>>> kunit_kernel.py: provides helper functions to:
+>>>   - configure the kernel using kunitconfig.
+>>>   - build the kernel with the appropriate configuration.
+>>>   - provide function to invoke the kernel and stream the output back.
+>>>
+>>> Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
+>>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+>>
+>> Ah, here's probably my answer to my previous logging format question,
+>> right?  What's the chance that these wrappers output stuff in a standard
+>> format that test-framework-tools can already parse?  :)
 > 
-> An update: Following the LSF session on $SUBJECT I had a discussion
-> with Ted, Jan and Chris.
-> 
-> We were all in agreement that linking an O_TMPFILE into the namespace
-> is probably already perceived by users as the barrier/atomic operation that
-> I am trying to describe.
-> 
-> So at least maintainers of btrfs/ext4/ext2 are sympathetic to the idea of
-> providing the required semantics when linking O_TMPFILE *as long* as
-> the semantics are properly documented.
-> 
-> This is what open(2) man page has to say right now:
-> 
->  *  Creating a file that is initially invisible, which is then
-> populated with data
->     and adjusted to have  appropriate  filesystem  attributes  (fchown(2),
->     fchmod(2), fsetxattr(2), etc.)  before being atomically linked into the
->     filesystem in a fully formed state (using linkat(2) as described above).
-> 
-> The phrase that I would like to add (probably in link(2) man page) is:
-> "The filesystem provided the guaranty that after a crash, if the linked
->  O_TMPFILE is observed in the target directory, than all the data and
+> It should be pretty easy to do. I had some patches that pack up the
+> results into a serialized format for a presubmit service; it should be
+> pretty straightforward to take the same logic and just change the
+> output format.
 
-"if the linked O_TMPFILE is observed" ... meaning that if we can't
-recover all the data+metadata information then it's ok to obliterate the
-file?  Is the filesystem allowed to drop the tmpfile data if userspace
-links the tmpfile into a directory but doesn't fsync the directory?
+When examining and trying out the previous versions of the patch I found
+the wrappers useful to provide information about how to control and use
+the tests, but I had no interest in using the scripts as they do not
+fit in with my personal environment and workflow.
 
-TBH I would've thought the basis of the RENAME_ATOMIC (and LINK_ATOMIC?)
-user requirement would be "Until I say otherwise I want always to be
-able to read <data> from this given string <pathname>."
+In the previous versions of the patch, these helper scripts are optional,
+which is good for my use case.  If the helper scripts are required to
+get the data into the proper format then the scripts are not quite so
+optional, they become the expected environment.  I think the proper
+format should exist without the helper scripts.
 
-(vs. regular Unix rename/link where we make you specify how much you
-care about that by hitting us on the head with a file fsync and then a
-directory fsync.)
-
->  metadata modifications made to the file before being linked are also
->  observed."
-> 
-> For some filesystems, btrfs in farticular, that would mean an implicit
-> fsync on the linked inode. On other filesystems, ext4/xfs in particular
-> that would only require at least committing delayed allocations, but
-> will NOT require inode fsync nor journal commit/flushing disk caches.
-
-I don't think it does much good to commit delalloc blocks but not flush
-dirty overwrites, and I don't think it makes a lot of sense to flush out
-overwrite data without also pushing out the inode metadata too.
-
-FWIW I'm ok with the "Here's a 'I'm really serious' flag that carries
-with it a full fsync, though how to sell developers on using it?
-
-> I would like to hear the opinion of XFS developers and filesystem
-> maintainers who did not attend the LSF session.
-
-I miss you all too.  Sorry I couldn't make it this year. :(
-
-> I have no objection to adding an opt-in LINK_ATOMIC flag
-> and pass it down to filesystems instead of changing behavior and
-> patching stable kernels, but I prefer the latter.
-> 
-> I believe this should have been the semantics to begin with
-> if for no other reason, because users would expect it regardless
-> of whatever we write in manual page and no matter how many
-> !!!!!!!! we use for disclaimers.
-> 
-> And if we can all agree on that, then O_TMPFILE is quite young
-> in historic perspective, so not too late to call the expectation gap
-> a bug and fix it.(?)
-
-Why would linking an O_TMPFILE be a special case as opposed to making
-hard links in general?  If you hardlink a dirty file then surely you'd
-also want to be able to read the data from the new location?
-
-> Taking this another step forward, if we agree on the language
-> I used above to describe the expected behavior, then we can
-> add an opt-in RENAME_ATOMIC flag to provide the same
-> semantics and document it in the same manner (this functionality
-> is needed for directories and non regular files) and all there is left
-> is the fun part of choosing the flag name ;-)
-
-Will have to think about /that/ some more.
-
---D
-
-> 
-> Thanks,
-> Amir.
+-Frank
