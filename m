@@ -2,576 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC9D1238B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 22:41:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0D9123D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 23:05:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbfEBUls (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 16:41:48 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59220 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfEBUls (ORCPT
+        id S1726175AbfEBVFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 17:05:54 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:44906 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfEBVFy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 16:41:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=mZQoNwnK1Ap2srLPfaYfs07Mlrg3Nsogmm7NfDWy+k8=; b=HbCv6yx4+WlH7vmiqebO3y83yj
-        dNu4D20tqVNdFLoPSibvpSIy32QtWlovmcwLKly5NLHOoqQLMqqY1y9Ku9hqs+jS+up0RyXlo0rgV
-        Wfkh5FdgpRK3FG4zcQsppuyo3H5yVHw4OLu5CVIQgN3KyKYBuHA13mcyxgtl/Ux1FkO07pM7u1amW
-        +5EhBf+0p1XoPGg9zbFA1ijGImfX2ge4TZMljwaqiXdwYpkl7MejgNfMp94JMitTHBwjlnN9NZQ6v
-        fGmLVXTUdRxTcsHJMP0R6p/ggwVAay2EgoTck/dZhVQsbQaaXUeAd3/pI7IOHJ0Djy3Ti876cnMWZ
-        2Ql1HUGA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hMIWW-0003nt-BL; Thu, 02 May 2019 20:41:44 +0000
-Subject: Re: [PATCH 1/6] incfs: Add first files of incrementalfs
-To:     ezemtsov@google.com, linux-fsdevel@vger.kernel.org
-Cc:     tytso@mit.edu
-References: <20190502040331.81196-1-ezemtsov@google.com>
- <20190502040331.81196-2-ezemtsov@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e36f89ef-2060-9cb6-2b3f-0b246c9208d2@infradead.org>
-Date:   Thu, 2 May 2019 13:41:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 2 May 2019 17:05:54 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x42L4PkD036372;
+        Thu, 2 May 2019 21:05:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=7pY7M/ejd/CdjQKheUzHbPlIC1MLHfFvlMQLp7rQ08A=;
+ b=hEExdEEYWCzQo45uHLUsPPWADf01Yitwa6cIS9Mw2lEEFstvikk2t/uoqOKzTsG5H9FD
+ SF8kdIynvNCDB7JCJvcRAZlDCnVfLYYAjtHyoQn8kb1UCBsT4VS3e2HCaRfZbXcTrayM
+ 4iwWOf0rlL2TD5HRoeNGRebxm1DGfDRrtEP6M2oz4YIYS5D2MCxhS8sB3J5U8dVOYecb
+ qi3zRjWr/lHpb6zTmP6d58IkakzdpQuP2qGofvWBeaypOkNOpOcT1pUaFiwebmC8GGUJ
+ /gedr75WWe95ZRRqOdr/23yreEdy2/ukHs+mYcTF0pCRzBXbYGzidREG53vI7SUySYgE Pw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 2s6xhykcj3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 May 2019 21:05:30 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x42L4qC6039220;
+        Thu, 2 May 2019 21:05:29 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2s7rtby03q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 May 2019 21:05:29 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x42L5QqY005488;
+        Thu, 2 May 2019 21:05:26 GMT
+Received: from localhost (/10.145.179.89)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 02 May 2019 14:05:26 -0700
+Date:   Thu, 2 May 2019 14:05:24 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     lsf-pc@lists.linux-foundation.org,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jayashree Mohan <jaya@cs.utexas.edu>,
+        Vijaychidambaram Velayudhan Pillai <vijay@cs.utexas.edu>,
+        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
+        lwn@lwn.net
+Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties
+ contract
+Message-ID: <20190502210524.GI5200@magnolia>
+References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
+ <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190502040331.81196-2-ezemtsov@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9245 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905020132
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9245 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905020132
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/1/19 9:03 PM, ezemtsov@google.com wrote:
-> From: Eugene Zemtsov <ezemtsov@google.com>
+On Thu, May 02, 2019 at 12:12:22PM -0400, Amir Goldstein wrote:
+> On Sat, Apr 27, 2019 at 5:00 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > Suggestion for another filesystems track topic.
+> >
+> > Some of you may remember the emotional(?) discussions that ensued
+> > when the crashmonkey developers embarked on a mission to document
+> > and verify filesystem crash recovery guaranties:
+> >
+> > https://lore.kernel.org/linux-fsdevel/CAOQ4uxj8YpYPPdEvAvKPKXO7wdBg6T1O3osd6fSPFKH9j=i2Yg@mail.gmail.com/
+> >
+> > There are two camps among filesystem developers and every camp
+> > has good arguments for wanting to document existing behavior and for
+> > not wanting to document anything beyond "use fsync if you want any guaranty".
+> >
+> > I would like to take a suggestion proposed by Jan on a related discussion:
+> > https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQx+TO3Dt7TA3ocXnNxbr3+oVyJLYUSpv4QCt_Texdvw@mail.gmail.com/
+> >
+> > and make a proposal that may be able to meet the concerns of
+> > both camps.
+> >
+> > The proposal is to add new APIs which communicate
+> > crash consistency requirements of the application to the filesystem.
+> >
+> > Example API could look like this:
+> > renameat2(..., RENAME_METADATA_BARRIER | RENAME_DATA_BARRIER)
+> > It's just an example. The API could take another form and may need
+> > more barrier types (I proposed to use new file_sync_range() flags).
+> >
+> > The idea is simple though.
+> > METADATA_BARRIER means all the inode metadata will be observed
+> > after crash if rename is observed after crash.
+> > DATA_BARRIER same for file data.
+> > We may also want a "ALL_METADATA_BARRIER" and/or
+> > "METADATA_DEPENDENCY_BARRIER" to more accurately
+> > describe what SOMC guaranties actually provide today.
+> >
+> > The implementation is also simple. filesystem that currently
+> > have SOMC behavior don't need to do anything to respect
+> > METADATA_BARRIER and only need to call
+> > filemap_write_and_wait_range() to respect DATA_BARRIER.
+> > filesystem developers are thus not tying their hands w.r.t future
+> > performance optimizations for operations that are not explicitly
+> > requesting a barrier.
+> >
 > 
-> - fs/incfs dir
-> - Kconfig (CONFIG_INCREMENTAL_FS)
-> - Makefile
-> - Module and file system initialization and clean up code
-> - New MAINTAINERS entry
-> - Add incrementalfs.h UAPI header
-> - Register ioctl range in ioctl-numbers.txt
-> - Documentation
+> An update: Following the LSF session on $SUBJECT I had a discussion
+> with Ted, Jan and Chris.
 > 
-> Signed-off-by: Eugene Zemtsov <ezemtsov@google.com>
-
-Hi,
-This is just Documentation comments...
-
-> ---
->  Documentation/filesystems/incrementalfs.rst | 452 ++++++++++++++++++++
->  Documentation/ioctl/ioctl-number.txt        |   1 +
->  MAINTAINERS                                 |   7 +
->  fs/Kconfig                                  |   1 +
->  fs/Makefile                                 |   1 +
->  fs/incfs/Kconfig                            |  10 +
->  fs/incfs/Makefile                           |   4 +
->  fs/incfs/main.c                             |  85 ++++
->  fs/incfs/vfs.c                              |  37 ++
->  include/uapi/linux/incrementalfs.h          | 189 ++++++++
->  10 files changed, 787 insertions(+)
->  create mode 100644 Documentation/filesystems/incrementalfs.rst
->  create mode 100644 fs/incfs/Kconfig
->  create mode 100644 fs/incfs/Makefile
->  create mode 100644 fs/incfs/main.c
->  create mode 100644 fs/incfs/vfs.c
->  create mode 100644 include/uapi/linux/incrementalfs.h
+> We were all in agreement that linking an O_TMPFILE into the namespace
+> is probably already perceived by users as the barrier/atomic operation that
+> I am trying to describe.
 > 
-> diff --git a/Documentation/filesystems/incrementalfs.rst b/Documentation/filesystems/incrementalfs.rst
-> new file mode 100644
-> index 000000000000..682e3dcb6b5a
-> --- /dev/null
-> +++ b/Documentation/filesystems/incrementalfs.rst
-> @@ -0,0 +1,452 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=======================
-> +Incremental File System
-> +=======================
-> +
-> +Overview
-> +========
-> +Incremental FS is special-purpose Linux virtual file system that allows
-> +execution of a program while its binary and resource files are still being
-> +lazily downloaded over the network, USB etc. It is focused on incremental
-> +delivery for a small number (under 100) of big files (more than 10 megabytes).
-> +Incremental FS doesn’t allow direct writes into files and, once loaded, file
-> +content never changes. Incremental FS doesn’t use a block device, instead it
-> +saves data into a backing file located on a regular file-system.
-> +
-> +But why?
-> +--------
-> +To allow running **big** Android apps before their binaries and resources are
-> +fully downloaded to an Android device. If an app reads something not loaded yet,
-> +it needs to wait for the data block to be fetched, but in most cases hot blocks
-> +can be loaded in advance.
-> +
-> +Workflow
-> +--------
-> +A userspace process, called a data loader, mounts an instance of incremental-fs
-> +giving it a file descriptor on an underlying file system (like ext4 or f2fs).
-> +Incremental-fs reads content (if any) of this backing file and interprets it as
-> +a file system image with files, directories and data blocks. At this point
-> +the data loader can declare new files to be shown by incremental-fs.
-> +
-> +A process is started from a binary located on incremental-fs.
-> +All reads are served directly from the backing file
-> +without roundtrips into userspace. If the process accesses a data block that was
-> +not originally present in the backing file, the read operation waits.
-> +
-> +Meanwhile the data loader can feed new data blocks to incremental-fs by calling
-> +write() on a special .cmd pseudo-file. The data loader can request information
-> +about pending reads by calling poll() and read() on the .cmd pseudo-file.
-> +This mechanism allows the data loader to serve most urgently needed data first.
-> +Once a data block is given to incremental-fs, it saves it to the backing file
-> +and unblocks all the reads waiting for this block.
-> +
-> +Eventually all data for all files is uploaded by the data loader, and saved by
-> +incremental-fs into the backing file. At that moment the data loader is not
-> +needed any longer. The backing file will play the role of a complete
-> +filesystem image for all future runs of the program.
-> +
-> +Non-goals
-> +---------
-> +* Allowing direct writes by the executing processes into files on incremental-fs
-> +* Allowing the data loader change file size or content after it was loaded.
-> +* Having more than a couple hundred files and directories.
-> +
-> +
-> +Features
-> +========
-> +
-> +Read-only, but not unchanging
-> +-----------------------------
-> +On the surface a mount directory of incremental-fs would look similar to
-> +a read-only instance of network file system: files and directories can be
-> +listed and read, but can’t be directly created or modified via creat() or
-> +write(). At the same time the data loader can make changes to a directory
-> +structure via external ioctl-s. i.e. link and unlink files and directories
-> +(if they empty). Data can't be changed this way, once a file block is loaded
+> So at least maintainers of btrfs/ext4/ext2 are sympathetic to the idea of
+> providing the required semantics when linking O_TMPFILE *as long* as
+> the semantics are properly documented.
+> 
+> This is what open(2) man page has to say right now:
+> 
+>  *  Creating a file that is initially invisible, which is then
+> populated with data
+>     and adjusted to have  appropriate  filesystem  attributes  (fchown(2),
+>     fchmod(2), fsetxattr(2), etc.)  before being atomically linked into the
+>     filesystem in a fully formed state (using linkat(2) as described above).
+> 
+> The phrase that I would like to add (probably in link(2) man page) is:
+> "The filesystem provided the guaranty that after a crash, if the linked
+>  O_TMPFILE is observed in the target directory, than all the data and
 
-                                               way; once
+"if the linked O_TMPFILE is observed" ... meaning that if we can't
+recover all the data+metadata information then it's ok to obliterate the
+file?  Is the filesystem allowed to drop the tmpfile data if userspace
+links the tmpfile into a directory but doesn't fsync the directory?
 
-> +there is no way to change it.
-> +
-> +Filesystem image in a backing file
-> +----------------------------------
-> +Instead of using a block device, all data and metadata is stored in a
+TBH I would've thought the basis of the RENAME_ATOMIC (and LINK_ATOMIC?)
+user requirement would be "Until I say otherwise I want always to be
+able to read <data> from this given string <pathname>."
 
-                                                          are stored
+(vs. regular Unix rename/link where we make you specify how much you
+care about that by hitting us on the head with a file fsync and then a
+directory fsync.)
 
-> +backing file provided as a mount parameter. The backing file is located on
-> +an underlying file system (like ext4 or f2fs). Such approach is very similar
-> +to what might be achieved by using loopback device with a traditional file
-> +system, but it avoids extra set-up steps and indirections. It also allows
-> +incremental-fs image to dynamically grow as new files and data come without
-> +having to do any extra steps for resizing.
-> +
-> +If the backing file contains data at the moment when incremental-fs is mounted,
-> +content of the backing file is being interpreted as filesystem image.
+>  metadata modifications made to the file before being linked are also
+>  observed."
+> 
+> For some filesystems, btrfs in farticular, that would mean an implicit
+> fsync on the linked inode. On other filesystems, ext4/xfs in particular
+> that would only require at least committing delayed allocations, but
+> will NOT require inode fsync nor journal commit/flushing disk caches.
 
-                          file is interpreted as
+I don't think it does much good to commit delalloc blocks but not flush
+dirty overwrites, and I don't think it makes a lot of sense to flush out
+overwrite data without also pushing out the inode metadata too.
 
-> +New files and data can still be added through the external interface,
-> +and they will be saved to the backing file.
-> +
-> +Data compression
-> +----------------
-> +Incremental-fs can store compressed data. In this case each 4KB data block is
-> +compressed separately. Data blocks can be provided to incremental-fs by
-> +the data loader in a compressed form. Incremental-fs uncompresses blocks
-> +each time a executing process reads it (modulo page cache). Compression also
+FWIW I'm ok with the "Here's a 'I'm really serious' flag that carries
+with it a full fsync, though how to sell developers on using it?
 
-             an executing process
+> I would like to hear the opinion of XFS developers and filesystem
+> maintainers who did not attend the LSF session.
 
-> +takes care of blocks composed of all zero bytes removing necessity to handle
-> +this case separately.
-> +
-> +Partially present files
-> +-----------------------
-> +Data in the files consists of 4KB blocks, each block can be present or absent.
+I miss you all too.  Sorry I couldn't make it this year. :(
 
-                                     blocks; each block
+> I have no objection to adding an opt-in LINK_ATOMIC flag
+> and pass it down to filesystems instead of changing behavior and
+> patching stable kernels, but I prefer the latter.
+> 
+> I believe this should have been the semantics to begin with
+> if for no other reason, because users would expect it regardless
+> of whatever we write in manual page and no matter how many
+> !!!!!!!! we use for disclaimers.
+> 
+> And if we can all agree on that, then O_TMPFILE is quite young
+> in historic perspective, so not too late to call the expectation gap
+> a bug and fix it.(?)
 
-> +Unlike in sparse files, reading an absent block doesn’t return all zeros.
-> +It waits for the data block to be loaded via the ioctl interface
-> +(respecting a timeout). Once a data block is loaded it never disappears
-> +and can’t be changed or erased from a file. This ability to frictionlessly
-> +wait for temporary missing data is the main feature of incremental-fs.
-> +
-> +Hard links. Multiple names for the same file
-> +--------------------------------------------
-> +Like all traditional UNIX file systems, incremental-fs supports hard links,
-> +i.e. different file names in different directories can refer to the same file.
-> +As mentioned above new hard links can be created and removed via
-> +the ioctl interface, but actual data files are immutable, modulo partial
-> +data loading. Each directory can only have at most one name referencing it.
-> +
-> +Inspection of incremental-fs internal state
-> +-------------------------------------------
-> +poll() and read() on the .cmd pseudo-file allow data loaders to get a list of
-> +read operations stalled due to lack of a data block (pending reads).
-> +
-> +
-> +Application Programming Interface
-> +=================================
-> +
-> +Regular file system interface
-> +-----------------------------
-> +Executing process access files and directories via regular Linux file interface:
+Why would linking an O_TMPFILE be a special case as opposed to making
+hard links in general?  If you hardlink a dirty file then surely you'd
+also want to be able to read the data from the new location?
 
-                     accesses
+> Taking this another step forward, if we agree on the language
+> I used above to describe the expected behavior, then we can
+> add an opt-in RENAME_ATOMIC flag to provide the same
+> semantics and document it in the same manner (this functionality
+> is needed for directories and non regular files) and all there is left
+> is the fun part of choosing the flag name ;-)
 
-> +open, read, close etc. All the intricacies of data loading a file representation
-> +are hidden from them.
-> +
-> +External .cmd file interface
-> +----------------------------
-> +When incremental-fs is mounted, a mount directory contains a pseudo-file
-> +called '.cmd'. The data loader will open this file and call read(), write(),
-> +poll() and ioctl() on it inspect and change state of incremental-fs.
-> +
-> +poll() and read() are used by the data loader to wait for pending reads to
-> +appear and obtain an array of ``struct incfs_pending_read_info``.
-> +
-> +write() is used by the data loader to feed new data blocks to incremental-fs.
-> +A data buffer given to write() is interpreted as an array of
-> +``struct incfs_new_data_block``. Structs in the array describe locations and
-> +properties of data blocks loaded with this write() call.
-> +
-> +``ioctl(INCFS_IOC_PROCESS_INSTRUCTION)`` is used to change structure of
-> +incremental-fs. It receives an pointer to ``struct incfs_instruction``
+Will have to think about /that/ some more.
 
-                               a pointer
+--D
 
-> +where type field can have be one of the following values.
-> +
-> +**INCFS_INSTRUCTION_NEW_FILE**
-> +Creates an inode (a file or a directory) without a name.
-> +It assumes ``incfs_new_file_instruction.file`` is populated with details.
-> +
-> +**INCFS_INSTRUCTION_ADD_DIR_ENTRY**
-> +Creates a name (aka hardlink) for an inode in a directory.
-> +A directory can't have more than one hardlink pointing to it, but files can be
-> +linked from different directories.
-> +It assumes ``incfs_new_file_instruction.dir_entry`` is populated with details.
-> +
-> +**INCFS_INSTRUCTION_REMOVE_DIR_ENTRY**
-> +Remove a name (aka hardlink) for a file from a directory.
-> +Only empty directories can be unlinked.
-> +It assumes ``incfs_new_file_instruction.dir_entry`` is populated with details.
-> +
-> +For more details see in uapi/linux/incrementalfs.h and samples below.
-> +
-> +Supported mount options
-> +-----------------------
-> +See ``fs/incfs/options.c`` for more details.
-> +
-> +    * ``backing_fd=<unsigned int>``
-> +        Required. A file descriptor of a backing file opened by the process
-> +        calling mount(2). This descriptor can be closed after mount returns.
-> +
-> +    * ``read_timeout_msc=<unsigned int>``
-> +        Default: 1000. Timeout in milliseconds before a read operation fails
-> +        if no data found in the backing file or provided by the data loader.
-> +
-> +Sysfs files
-> +-----------
-> +``/sys/fs/incremental-fs/version`` - a current version of the filesystem.
-> +One ASCII encoded positive integer number with a new line at the end.
-> +
-> +
-> +Examples
-> +--------
-> +See ``sample_data_loader.c`` for a complete implementation of a data loader.
-> +
-> +Mount incremental-fs
-> +~~~~~~~~~~~~~~~~~~~~
-> +
-> +::
-> +
-> +    int mount_fs(char *mount_dir, char *backing_file, int timeout_msc)
-> +    {
-> +        static const char fs_name[] = INCFS_NAME;
-> +        char mount_options[512];
-> +        int backing_fd;
-> +        int result;
-> +
-> +        backing_fd = open(backing_file, O_RDWR);
-> +        if (backing_fd == -1) {
-> +            perror("Error in opening backing file");
-> +            return 1;
-> +        }
-> +
-> +        snprintf(mount_options, ARRAY_SIZE(mount_options),
-> +            "backing_fd=%u,read_timeout_msc=%u", backing_fd, timeout_msc);
-> +
-> +        result = mount(fs_name, mount_dir, fs_name, 0, mount_options);
-> +        if (result != 0)
-> +            perror("Error mounting fs.");
-> +        return result;
-> +    }
-> +
-> +Open .cmd file
-> +~~~~~~~~~~~~~~
-> +
-> +::
-> +
-> +    int open_commands_file(char *mount_dir)
-> +    {
-> +        char cmd_file[255];
-> +        int cmd_fd;
-> +
-> +        snprintf(cmd_file, ARRAY_SIZE(cmd_file), "%s/.cmd", mount_dir);
-> +        cmd_fd = open(cmd_file, O_RDWR);
-> +        if (cmd_fd < 0)
-> +            perror("Can't open commands file");
-> +        return cmd_fd;
-> +    }
-> +
-> +Add a file to the file system
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +::
-> +
-> +    int create_file(int cmd_fd, char *filename, int *ino_out, size_t size)
-> +    {
-> +        int ret = 0;
-> +        __u16 ino = 0;
-> +        struct incfs_instruction inst = {
-> +                .version = INCFS_HEADER_VER,
-> +                .type = INCFS_INSTRUCTION_NEW_FILE,
-> +                .file = {
-> +                    .size = size,
-> +                    .mode = S_IFREG | 0555,
-> +                }
-> +        };
-> +
-> +        ret = ioctl(cmd_fd, INCFS_IOC_PROCESS_INSTRUCTION, &inst);
-> +        if (ret)
-> +            return -errno;
-> +
-> +        ino = inst.file.ino_out;
-> +        inst = (struct incfs_instruction){
-> +                .version = INCFS_HEADER_VER,
-> +                .type = INCFS_INSTRUCTION_ADD_DIR_ENTRY,
-> +                .dir_entry = {
-> +                    .dir_ino = INCFS_ROOT_INODE,
-> +                    .child_ino = ino,
-> +                    .name = ptr_to_u64(filename),
-> +                    .name_len = strlen(filename)
-> +                }
-> +            };
-> +        ret = ioctl(cmd_fd, INCFS_IOC_PROCESS_INSTRUCTION, &inst);
-> +        if (ret)
-> +            return -errno;
-> +        *ino_out = ino;
-> +        return 0;
-> +    }
-> +
-> +Load data into a file
-> +~~~~~~~~~~~~~~~~~~~~~
-> +
-> +::
-> +
-> +    int cmd_fd = open_commands_file(path_to_mount_dir);
-> +    char *data = get_some_data();
-> +    struct incfs_new_data_block block;
-> +    int err;
-> +
-> +    block.file_ino = file_ino;
-> +    block.block_index = 0;
-> +    block.compression = COMPRESSION_NONE;
-> +    block.data = (__u64)data;
-> +    block.data_len = INCFS_DATA_FILE_BLOCK_SIZE;
-> +
-> +    err = write(cmd_fd, &block, sizeof(block));
-> +
-> +
-> +Get an array of pending reads
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +::
-> +
-> +    int poll_res = 0;
-> +    struct incfs_pending_read_info reads[10];
-> +    int cmd_fd = open_commands_file(path_to_mount_dir);
-> +    struct pollfd pollfd = {
-> +        .fd = cmd_fd,
-> +        .events = POLLIN
-> +    };
-> +
-> +    poll_res = poll(&pollfd, 1, timeout);
-> +    if (poll_res > 0 && (pollfd.revents | POLLIN)) {
-> +        ssize_t read_res = read(cmd_fd, reads, sizeof(reads));
-> +        if (read_res > 0)
-> +            printf("Waiting reads %ld\n", read_res / sizeof(reads[0]));
-> +    }
-> +
-> +
-> +
-> +Ondisk format
-> +=============
-> +
-> +General principles
-> +------------------
-> +* The backbone of the incremental-fs ondisk format is an append only linked
-> +  list of metadata blocks. Each metadata block contains an offset of the next
-> +  one. These blocks describe files and directories on the
-> +  file system. They also represent actions of adding and removing file names
-> +  (hard links).
-> +  Every time incremental-fs instance is mounted, it reads through this list
-> +  to recreate filesystem's state in memory. An offset of the first record in the
-> +  metadata list is stored in the superblock at the beginning of the backing
-> +  file.
-> +
-> +* Most of the backing file is taken by data areas and blockmaps.
-> +  Since data blocks can be compressed and have different sizes,
-> +  single per-file data area can't be pre-allocated. That's why blockmaps are
-> +  needed in order to find a location and size of each data block in
-> +  the backing file. Each time a file is created, a corresponding block map is
-> +  allocated to store future offsets of data blocks.
-> +
-> +  Whenever a data block is given by data loader to incremental-fs:
-> +    - A data area with the given block is appended to the end of
-> +      the backing file.
-> +    - A record in the blockmap for the given block index is updated to reflect
-> +      its location, size, and compression algorithm.
-> +
-> +Important format details
-> +------------------------
-> +Ondisk structures are defined in the ``format.h`` file. They are all packed
-> +and use little-endian order.
-> +A backing file must start with ``incfs_super_block`` with ``s_magic`` field
-> +equal to 0x5346434e49 "INCFS".
-> +
-> +Metadata records:
-> +
-> +* ``incfs_inode`` - metadata record to declare a file or a directory.
-> +                    ``incfs_inode.i_mode`` determents if it is a file
-
-                                              determines
-
-> +                    or a directory.
-> +* ``incfs_blockmap_entry`` - metadata record that specifies size and location
-> +                            of a blockmap area for a given file. This area
-> +                            contains an array of ``incfs_blockmap_entry``-s.
-> +* ``incfs_dir_action`` - metadata record that specifies changes made to a
-> +                    to a directory structure, e.g. add or remove a hardlink.
-> +* ``incfs_md_header`` - header of a metadata record. It's always a part
-> +                    of other structures and served purpose of metadata
-
-?                                              serves
-
-> +                    bookkeeping.
-> +
-> +Other ondisk structures:
-> +
-> +* ``incfs_super_block`` - backing file header
-> +* ``incfs_blockmap_entry`` - a record in a blockmap area that describes size
-> +                        and location of a data block.
-> +* Data blocks dont have any particular structure, they are written to the backing
-
-                 don't
-
-> +  file in a raw form as they come from a data loader.
-> +
-> +
-> +Backing file layout
-> +-------------------
-> +::
-> +
-> +              +-------------------------------------------+
-> +              |            incfs_super_block              |]---+
-> +              +-------------------------------------------+    |
-> +              |                 metadata                  |<---+
-> +              |                incfs_inode                |]---+
-> +              +-------------------------------------------+    |
-> +                        .........................              |
-> +              +-------------------------------------------+    |   metadata
-> +     +------->|               blockmap area               |    |  list links
-> +     |        |          [incfs_blockmap_entry]           |    |
-> +     |        |          [incfs_blockmap_entry]           |    |
-> +     |        |          [incfs_blockmap_entry]           |    |
-> +     |    +--[|          [incfs_blockmap_entry]           |    |
-> +     |    |   |          [incfs_blockmap_entry]           |    |
-> +     |    |   |          [incfs_blockmap_entry]           |    |
-> +     |    |   +-------------------------------------------+    |
-> +     |    |             .........................              |
-> +     |    |   +-------------------------------------------+    |
-> +     |    |   |                 metadata                  |<---+
-> +     +----|--[|               incfs_blockmap              |]---+
-> +          |   +-------------------------------------------+    |
-> +          |             .........................              |
-> +          |   +-------------------------------------------+    |
-> +          +-->|                 data block                |    |
-> +              +-------------------------------------------+    |
-> +                        .........................              |
-> +              +-------------------------------------------+    |
-> +              |                 metadata                  |<---+
-> +              |             incfs_dir_action              |
-> +              +-------------------------------------------+
-> +
-> +Unreferenced files and absence of garbage collection
-> +----------------------------------------------------
-> +Described file format can produce files that don't have any names for them in
-> +any directories. Incremental-fs takes no steps to prevent such situations or
-> +reclaim space occupied by such files in the backing file. If garbage collection
-> +is needed it has to be implemented as a separate userspace tool.
-> +
-> +
-> +Design alternatives
-> +===================
-> +
-> +Why isn't incremental-fs implemented via FUSE?
-> +----------------------------------------------
-> +TLDR: FUSE-based filesystems add 20-80% of performance overhead for target
-> +scenarios, and increase power use on mobile beyond acceptable limit
-> +for widespread deployment. A custom kernel filesystem is the way to overcome
-> +these limitations.
-> +
-> +From the theoretical side of things, FUSE filesystem adds some overhead to
-> +each filesystem operation that’s not handled by OS page cache:
-> +
-> +    * When an IO request arrives to FUSE driver (D), it puts it into a queue
-> +      that runs on a separate kernel thread
-> +    * Then another separate user-mode handler process (H) has to run,
-> +      potentially after a context switch, to read the request from the queue.
-> +      Reading the request adds a kernel-user mode transition to the handling.
-> +    * (H) sends the IO request to kernel to handle it on some underlying storage
-> +      filesystem. This adds a user-kernel and kernel-user mode transition
-> +      pair to the handling.
-> +    * (H) then responds to the FUSE request via a write(2) call.
-> +      Writing the response is another user-kernel mode transition.
-> +    * (D) needs to read the response from (H) when its kernel thread runs
-> +      and forward it to the user
-> +
-> +Together, the scenario adds 2 extra user-kernel-user mode transition pairs,
-> +and potentially has up to 3 additional context switches for the FUSE kernel
-> +thread and the user-mode handler to start running for each IO request on the
-> +filesystem.
-> +This overhead can vary from unnoticeable to unmanageable, depending on the
-> +target scenario. But it will always burn extra power via CPU staying longer
-> +in non-idle state, handling context switches and mode transitions.
-> +One important goal for the new filesystem is to be able to handle each page
-> +read separately on demand, because we don't want to wait and download more data
-> +than absolutely necessary. Thus readahead would need to be disabled completely.
-> +This increases the number of separate IO requests and the FUSE related overhead
-> +by almost 32x (128KB readahead limit vs 4KB individual block operations)
-> +
-> +For more info see a 2017 USENIX research paper:
-> +To FUSE or Not to FUSE: Performance of User-Space File Systems
-> +Bharath Kumar Reddy Vangoor, Stony Brook University;
-> +Vasily Tarasov, IBM Research-Almaden;
-> +Erez Zadok, Stony Brook University
-> +https://www.usenix.org/system/files/conference/fast17/fast17-vangoor.pdf
-
-
--- 
-~Randy
+> 
+> Thanks,
+> Amir.
