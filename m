@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D03E3117A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 12:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B438D117B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 12:59:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbfEBKu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 06:50:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46836 "EHLO mail.kernel.org"
+        id S1726353AbfEBK6w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 06:58:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726439AbfEBKu4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 06:50:56 -0400
+        id S1726268AbfEBK6w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 May 2019 06:58:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 862482075E;
-        Thu,  2 May 2019 10:50:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B53B620656;
+        Thu,  2 May 2019 10:58:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556794256;
-        bh=Ayblsy3jHDm2CChtokJ923ivXLZjfyjL6uNubfrhVOA=;
+        s=default; t=1556794731;
+        bh=T+a6pMLcd5HD33Dp1GZ3s3ZyPMK+MqwsS3ME8Zht+Rk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QXN7qfD9kVZ8X14uPJyJaEtMH+8kKfNVIsH6ibUWlQkRylnV/zLp9rQ6le2tunE78
-         SSJF7dmrJsP0QsUsoC9j31We0mjmXawkaN8LppVzAyCBUPD5b9pzAyl6ekchbNAzFq
-         btjAwtKByeIBqfun6usLtq6HFfVq7lLUJLvG54Zg=
-Date:   Thu, 2 May 2019 12:50:53 +0200
+        b=xn9qtrH/6iSeajL86xHXikqGvmBkjkPTLd1nQIMw4pWMh7dALh2KSvL9dx0J57LgI
+         quJUvnif3o9cb3481YZvUlkI6jUNhggJl4YQx1f7LdW6Giv789veSDWkw97Tu8zDGX
+         B/7+uvqfWjfGoe3LMHNAL8STZruUkOlyRkyfu/So=
+Date:   Thu, 2 May 2019 12:58:49 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Brendan Higgins <brendanhiggins@google.com>
 Cc:     frowand.list@gmail.com, keescook@google.com,
@@ -41,36 +41,58 @@ Cc:     frowand.list@gmail.com, keescook@google.com,
         knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
         pmladek@suse.com, richard@nod.at, rientjes@google.com,
         rostedt@goodmis.org, wfg@linux.intel.com
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-Message-ID: <20190502105053.GA12416@kroah.com>
+Subject: Re: [PATCH v2 07/17] kunit: test: add initial tests
+Message-ID: <20190502105849.GB12416@kroah.com>
 References: <20190501230126.229218-1-brendanhiggins@google.com>
+ <20190501230126.229218-8-brendanhiggins@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190501230126.229218-1-brendanhiggins@google.com>
+In-Reply-To: <20190501230126.229218-8-brendanhiggins@google.com>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 01, 2019 at 04:01:09PM -0700, Brendan Higgins wrote:
-> ## TLDR
+On Wed, May 01, 2019 at 04:01:16PM -0700, Brendan Higgins wrote:
+> Add a test for string stream along with a simpler example.
 > 
-> I rebased the last patchset on 5.1-rc7 in hopes that we can get this in
-> 5.2.
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> ---
+>  kunit/Kconfig              | 12 ++++++
+>  kunit/Makefile             |  4 ++
+>  kunit/example-test.c       | 88 ++++++++++++++++++++++++++++++++++++++
+>  kunit/string-stream-test.c | 61 ++++++++++++++++++++++++++
+>  4 files changed, 165 insertions(+)
+>  create mode 100644 kunit/example-test.c
+>  create mode 100644 kunit/string-stream-test.c
+> 
+> diff --git a/kunit/Kconfig b/kunit/Kconfig
+> index 64480092b2c24..5cb500355c873 100644
+> --- a/kunit/Kconfig
+> +++ b/kunit/Kconfig
+> @@ -13,4 +13,16 @@ config KUNIT
+>  	  special hardware. For more information, please see
+>  	  Documentation/kunit/
+>  
+> +config KUNIT_TEST
+> +	bool "KUnit test for KUnit"
+> +	depends on KUNIT
+> +	help
+> +	  Enables KUnit test to test KUnit.
+> +
+> +config KUNIT_EXAMPLE_TEST
+> +	bool "Example test for KUnit"
+> +	depends on KUNIT
+> +	help
+> +	  Enables example KUnit test to demo features of KUnit.
 
-That might be rushing it, normally trees are already closed now for
-5.2-rc1 if 5.1-final comes out this Sunday.
+Can't these tests be module?
 
-> Shuah, I think you, Greg KH, and myself talked off thread, and we agreed
-> we would merge through your tree when the time came? Am I remembering
-> correctly?
+Or am I mis-reading the previous logic?
 
-No objection from me.
-
-Let me go review the latest round of patches now.
+Anyway, just a question, nothing objecting to this as-is for now.
 
 thanks,
 
