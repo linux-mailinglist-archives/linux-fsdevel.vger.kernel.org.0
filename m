@@ -2,82 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5042C117EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 13:05:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B36F11818
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 13:20:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726405AbfEBLFR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 07:05:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbfEBLFQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 07:05:16 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4391720656;
-        Thu,  2 May 2019 11:05:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556795115;
-        bh=g52VJv58ny9inOghbRxttm2JEOFg/YzNJiIi1xgevz0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=srcuUUfJlFr42/9IsMaL5I/QT1gc7U4FMTE1sI3n6k8wik0XOQdtZ3s/SmQvEj2j3
-         nem5uAwCIgmlBdJqoOCKPYyD7+0J7m4Es/11yPHJKGUPXjz6aLsDABY2+K1HZTiH2j
-         NwAGsAXg2Nr8uriB/0jqHcN2lzmFJtLPXJT3z5pc=
-Date:   Thu, 2 May 2019 13:05:13 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     frowand.list@gmail.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-Message-ID: <20190502110513.GF12416@kroah.com>
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190502105053.GA12416@kroah.com>
+        id S1726220AbfEBLUE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 07:20:04 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:39571 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbfEBLUE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 May 2019 07:20:04 -0400
+Received: by mail-yw1-f68.google.com with SMTP id x204so1251444ywg.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 04:20:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+D5VUZn+Yb6P85sIoiQuPJTfWNYQICmTFwW3mz6oljQ=;
+        b=ObP7GkFfdLoMmZgX6kZ0UAVPcQzpd/GnbitUN0B7QeEQz2XqsTWZ1TATlm+HxxdjSa
+         Ok+kRmZ6LpHARRKlmyZqLFIjxTkMyFl4wKFdSJNKQTjZI90ssbm3ggShchv7a0m+2BAw
+         CfUZKqUZyWg+NDamr4fh1dS4U05VEcMTtybhVqUTc9vKtdNz8dH55ORf1HEETTZukMrX
+         +ZC8dyUTMIWhzKgiipLRQNZVUo/cBr4ly+z7Zf8Lo6pqLAF8ivvBiX7XbMDjzHLt/zb9
+         534mbQHA4KfzN1vupR1M7Q6nrjK3hnLSqGgyi9hnRMMmdJpYwkE1LUZ65uivLlXguxCr
+         8a/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+D5VUZn+Yb6P85sIoiQuPJTfWNYQICmTFwW3mz6oljQ=;
+        b=FAJ5rkKxj8qgP4fqsKQK9O6ykc4GpfubsTD7UuxK+lLc3mQaqOLiqFH3CjuwVrUjPF
+         T5xZs+D1ddd5g8SsHgwL54V5xDO26BjzOUM3KIacycUHTdm4rSi1m1apl/hBth6p3dfV
+         0M1PJfUXHTqyas5Jl1KWKLp8eg2IF3FyOs3mMZxTGWMOCmwv0dexCIVIC1Buqg5HFPqb
+         7gwVQA04HOC9ANQvhpbNtkPcBxmiKDU+Xv/JJIwWOEkmGuARgE764TWGnXdk4B4w7vSD
+         78Wub/ACvgIIZcSfX+vYicQvhKHpNPJm5qujo1OKShLbsGP95rKMp9yv3gzABXsYHki0
+         ZdAg==
+X-Gm-Message-State: APjAAAX/pBonbS2ODLOd25m82v+cGiT3EmrZt6G8/m3CS88vxAARfRea
+        aQa1pcFi8BR3u5M8T4kk1xDNqF1VlnosLeNQ/biO1aT5CKM=
+X-Google-Smtp-Source: APXvYqxE7eOKAQ3px7Gpem8juLQVvInXXxZ5kYC7TrTSrzVmYmuovVl3E4OQ10+4Xvkb59SNV7U5HzBBRDOVWrdhpDY=
+X-Received: by 2002:a5b:48a:: with SMTP id n10mr2449710ybp.320.1556796003031;
+ Thu, 02 May 2019 04:20:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190502105053.GA12416@kroah.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190502040331.81196-1-ezemtsov@google.com>
+In-Reply-To: <20190502040331.81196-1-ezemtsov@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 2 May 2019 07:19:52 -0400
+Message-ID: <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
+Subject: Re: Initial patches for Incremental FS
+To:     ezemtsov@google.com
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 02, 2019 at 12:50:53PM +0200, Greg KH wrote:
-> On Wed, May 01, 2019 at 04:01:09PM -0700, Brendan Higgins wrote:
-> > ## TLDR
-> > 
-> > I rebased the last patchset on 5.1-rc7 in hopes that we can get this in
-> > 5.2.
-> 
-> That might be rushing it, normally trees are already closed now for
-> 5.2-rc1 if 5.1-final comes out this Sunday.
-> 
-> > Shuah, I think you, Greg KH, and myself talked off thread, and we agreed
-> > we would merge through your tree when the time came? Am I remembering
-> > correctly?
-> 
-> No objection from me.
-> 
-> Let me go review the latest round of patches now.
+On Thu, May 2, 2019 at 12:04 AM <ezemtsov@google.com> wrote:
+>
+> Hi All,
+>
+> Please take a look at Incremental FS.
+>
+> Incremental FS is special-purpose Linux virtual file system that allows
+> execution of a program while its binary and resource files are still bein=
+g
+> lazily downloaded over the network, USB etc. It is focused on incremental
+> delivery for a small number (under 100) of big files (more than 10 megaby=
+tes each).
+> Incremental FS doesn=E2=80=99t allow direct writes into files and, once l=
+oaded, file
+> content never changes. Incremental FS doesn=E2=80=99t use a block device,=
+ instead it
+> saves data into a backing file located on a regular file-system.
+>
+> What=E2=80=99s it for?
+>
+> It allows running big Android apps before their binaries and resources ar=
+e
+> fully loaded to an Android device. If an app reads something not loaded y=
+et,
+> it needs to wait for the data block to be fetched, but in most cases hot =
+blocks
+> can be loaded in advance and apps can run smoothly and almost instantly.
 
-Overall, looks good to me, and provides a framework we can build on.
-I'm a bit annoyed at the reliance on uml at the moment, but we can work
-on that in the future :)
+This sounds very useful.
 
-Thanks for sticking with this, now the real work begins...
+Why does it have to be a new special-purpose Linux virtual file?
+Why not FUSE, which is meant for this purpose?
+Those are things that you should explain when you are proposing a new
+filesystem,
+but I will answer for you - because FUSE page fault will incur high
+latency also after
+blocks are locally available in your backend store. Right?
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+How about fscache support for FUSE then?
+You can even write your own fscache backend if the existing ones don't
+fit your needs for some reason.
+
+Do you know of the project https://vfsforgit.org/?
+Not exactly the same use case but very similar.
+There is ongoing work on a Linux port developed by GitHub.com:
+https://github.com/github/libprojfs
+
+Piling logic into the kernel is not the answer.
+Adding the missing interfaces to the kernel is the answer.
+
+Thanks,
+Amir.
