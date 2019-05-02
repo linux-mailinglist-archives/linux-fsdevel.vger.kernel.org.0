@@ -2,136 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 874211210F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 19:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DE9A12129
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 19:40:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfEBReJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 13:34:09 -0400
-Received: from esa12.utexas.iphmx.com ([216.71.154.221]:14337 "EHLO
-        esa12.utexas.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbfEBReI (ORCPT
+        id S1726338AbfEBRj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 13:39:59 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:42456 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbfEBRj7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 13:34:08 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 May 2019 13:34:08 EDT
-X-Utexas-Sender-Group: RELAYLIST-O365
-X-IronPort-MID: 138834046
-IronPort-PHdr: =?us-ascii?q?9a23=3Aip7gOR+mjZgpSf9uRHGN82YQeigqvan1NQcJ65?=
- =?us-ascii?q?0hzqhDabmn44+8YR7E/fs4iljPUM2b8P9Ch+fM+4HYEW0bqdfk0jgZdYBUER?=
- =?us-ascii?q?oMiMEYhQslVdaKDkDnPtbvZjA6WtleWU9s5De2PVUGUMs=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EFAAD/JstchzImL2hlGwEBAQEDAQE?=
- =?us-ascii?q?BBwMBAQGBUQYBAQELAYE9UIFhBAsoCoQGg0cDhFJfiVGCV5hQgSQDGDwBDgE?=
- =?us-ascii?q?tAoQ+AheGQDQJDgEDAQEFAQEBAQICAhABAQEIDQkIKSMMg0U5MgEBAQEBAQE?=
- =?us-ascii?q?BAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQUCODkBAQQSEREMAQE3AQ8?=
- =?us-ascii?q?CAQgYAgImAgICMBUCAQ0CBAENJ4MAgWsDHQGiED0CYgILgQEpiF9xgS+CeQE?=
- =?us-ascii?q?BBYUCGEEHgUYJgQsnAYtcBoFBPoE4gms+hESDCoJYjSEsmVsJAoIJkjoGG5V?=
- =?us-ascii?q?BjBaUYwIEAgQFAg4BAQWBT4IPchODJ4IPGoNVilNAATGBKZITAYEgAQE?=
-X-IPAS-Result: =?us-ascii?q?A2EFAAD/JstchzImL2hlGwEBAQEDAQEBBwMBAQGBUQYBA?=
- =?us-ascii?q?QELAYE9UIFhBAsoCoQGg0cDhFJfiVGCV5hQgSQDGDwBDgEtAoQ+AheGQDQJD?=
- =?us-ascii?q?gEDAQEFAQEBAQICAhABAQEIDQkIKSMMg0U5MgEBAQEBAQEBAQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQEBAQEBAQEBAQEBAQEBAQUCODkBAQQSEREMAQE3AQ8CAQgYAgImAgICM?=
- =?us-ascii?q?BUCAQ0CBAENJ4MAgWsDHQGiED0CYgILgQEpiF9xgS+CeQEBBYUCGEEHgUYJg?=
- =?us-ascii?q?QsnAYtcBoFBPoE4gms+hESDCoJYjSEsmVsJAoIJkjoGG5VBjBaUYwIEAgQFA?=
- =?us-ascii?q?g4BAQWBT4IPchODJ4IPGoNVilNAATGBKZITAYEgAQE?=
-X-IronPort-AV: E=Sophos;i="5.60,422,1549951200"; 
-   d="scan'208";a="138834046"
-X-Utexas-Seen-Outbound: true
-Received: from mail-bl2nam02lp2050.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([104.47.38.50])
-  by esa12.utexas.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 May 2019 12:27:00 -0500
+        Thu, 2 May 2019 13:39:59 -0400
+Received: by mail-yw1-f68.google.com with SMTP id y131so2186042ywa.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 10:39:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=utexas.onmicrosoft.com; s=selector1-utexas-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9MEN8xRdIofZXWFIwJFbJpfIVZjNRVNflFWfswFQ1tw=;
- b=MTg5UjaFQGlig1mKIrjRxWk9mSrUhWP4rfsOrrptrIU8269wEOwgBmbmjB2KeaPw0Zt+0+0CLY/O+McBkUeruGNzMFzoNBrwQg1TYp1Qp0EZ94dod1zPJbpNYu96o7xVPYa4c02Yxe4s0UVaYvcXB+0ahauyM3EYZ5S32aXV8Fs=
-Received: from DM5PR0601MB3718.namprd06.prod.outlook.com (10.167.109.15) by
- DM5PR0601MB3688.namprd06.prod.outlook.com (10.167.108.166) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.11; Thu, 2 May 2019 17:26:56 +0000
-Received: from DM5PR0601MB3718.namprd06.prod.outlook.com
- ([fe80::d02d:6aa3:ca06:3507]) by DM5PR0601MB3718.namprd06.prod.outlook.com
- ([fe80::d02d:6aa3:ca06:3507%6]) with mapi id 15.20.1856.008; Thu, 2 May 2019
- 17:26:56 +0000
-From:   "Goetz, Patrick G" <pgoetz@math.utexas.edu>
-To:     NeilBrown <neilb@suse.com>, Amir Goldstein <amir73il@gmail.com>
-CC:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        =?utf-8?B?QW5kcmVhcyBHcsO8bmJhY2hlcg==?= 
-        <andreas.gruenbacher@gmail.com>,
-        Patrick Plagwitz <Patrick_Plagwitz@web.de>,
-        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
-Thread-Topic: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
-Thread-Index: AQHVAIspItZqAESGCECfW8viq8okK6ZXI70AgAARYICAAOJCAA==
-Date:   Thu, 2 May 2019 17:26:56 +0000
-Message-ID: <8f3ba729-ed44-7bed-5ff8-b962547e5582@math.utexas.edu>
-References: <CAJfpeguwUtRWRGmNmimNp-FXzWqMCCQMb24iWPu0w_J0_rOnnw@mail.gmail.com>
- <20161205151933.GA17517@fieldses.org>
- <CAJfpegtpkavseTFLspaC7svbvHRq-0-7jvyh63+DK5iWHTGnaQ@mail.gmail.com>
- <20161205162559.GB17517@fieldses.org>
- <CAHpGcMKHjic6L+J0qvMYNG9hVCcDO1hEpx4BiEk0ZCKDV39BmA@mail.gmail.com>
- <266c571f-e4e2-7c61-5ee2-8ece0c2d06e9@web.de>
- <CAHpGcMKmtppfn7PVrGKEEtVphuLV=YQ2GDYKOqje4ZANhzSgDw@mail.gmail.com>
- <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com>
- <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com>
- <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com>
- <20161206185806.GC31197@fieldses.org>
- <87bm0l4nra.fsf@notabene.neil.brown.name>
- <CAOQ4uxjYEjqbLcVYoUaPzp-jqY_3tpPBhO7cE7kbq63XrPRQLQ@mail.gmail.com>
- <875zqt4igg.fsf@notabene.neil.brown.name>
-In-Reply-To: <875zqt4igg.fsf@notabene.neil.brown.name>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DM5PR21CA0051.namprd21.prod.outlook.com
- (2603:10b6:3:129::13) To DM5PR0601MB3718.namprd06.prod.outlook.com
- (2603:10b6:4:7d::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pgoetz@math.utexas.edu; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [128.83.133.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a162ef5f-9ecd-483b-7eaf-08d6cf236032
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:DM5PR0601MB3688;
-x-ms-traffictypediagnostic: DM5PR0601MB3688:
-x-microsoft-antispam-prvs: <DM5PR0601MB36887E3013395627E1834B4C83340@DM5PR0601MB3688.namprd06.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4303;
-x-forefront-prvs: 0025434D2D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(396003)(39860400002)(136003)(199004)(189003)(478600001)(305945005)(66066001)(8676002)(3846002)(7736002)(316002)(6246003)(6116002)(229853002)(53936002)(186003)(88552002)(52116002)(110136005)(6512007)(6436002)(54906003)(75432002)(102836004)(786003)(26005)(7416002)(99286004)(5660300002)(476003)(81156014)(8936002)(486006)(76176011)(81166006)(4744005)(2906002)(31686004)(6486002)(25786009)(256004)(14444005)(71190400001)(386003)(66556008)(6506007)(66946007)(73956011)(68736007)(64756008)(31696002)(66476007)(66446008)(86362001)(446003)(4326008)(11346002)(14454004)(2616005)(71200400001)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR0601MB3688;H:DM5PR0601MB3718.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: math.utexas.edu does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: eNnPxdoBxHCsSUSMbxFo2KJMLgxuOV+u2EnQIcLcXcU268MZNWgG96dwJlPEFyQ1xt602hp+RKO/orzwJhThJ6umjdZyXo5zKlaALf1LOh9O537cdcvFMVUKvqC/gChVUkO154TDBPxXy8hU94uxIaqmnOLjp5BA5a6tNHjYggBuay/+QFFfHGvfhDJdcssDuBS/jUIdkaVvU0arfOPS0+a9k5Q7pMzXDNi1s7hx8TDM7CYweAqxVlT0X6ZLot98zyuYtslsM6+MlMqJMKA2zeIscID2KEOaomBzaYoCJjwGk6wCFKn/dsv7qC0dYKZBz/sJUVjf+KETgIlHQdkmpN7/Jxa0t2nKouDm0EdkUyRnX5xYW1TXlgIlVk6vutfRUaimtf4lLoSd6vxJYbUWRCgmBGl220OYScmkFwS99ms=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E61925DA62D1E54E930FFD18D9DA927D@namprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zIttL0t4AS0Zz3UxbcFh+mxaazoURxQz+i9NrA3xWxM=;
+        b=LwAMiG9EhZEOIIDyE+kUe3zmX2QhPV6KfTcAw5aEW67gJl4iW4QyNyOlR9gFHs7kji
+         kjbHTJa9Id/7r8oCrPhrCkCgOpFVsJ5c6lj1ATf6C1reJC2j0ycptutdwohn3wxfwneB
+         BnOtQpi1AmHdIAHqC58RRjbvs4NyPxTLRS1rl3rniFrWuj2YcuwLEUsGXpWwjgd4Ffni
+         226QYZohb3wMHkhycKry4dl1DOuf1aWEvb/SVrMOCqUVsdJ4SnKQbbuYwalzMXJElPAJ
+         XnrZGeTiAEtqDAdcS9sCJ7E2+qxnCKWi7gW/PNgXREyTktGqEvsLfNgIu0N4r7Zka8qG
+         sdOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zIttL0t4AS0Zz3UxbcFh+mxaazoURxQz+i9NrA3xWxM=;
+        b=MPsJq5STYWFSbMiDsANyi/cCah9YTo5sKN55DHk7wjRfCO2eBg5484YScF/XwrE0Q2
+         sFUyrBHa6M2GGTJMWT+Y0n4dy+iUNTNXCkT5y/jgBd1GqiAZYPDF5Bedf1jrrdfpA/6P
+         TQrLsZW6tBIfPdOtuf5QC5HlkP9t/e9AF0Py39oO98N2Ns9fEIKQd/QwK+9jKnfRNWjk
+         ROlM+QAFZVSCzdO7sjVL3o+T/Iko0aDrpc4ifcFwvnR4mRhOyI+q97M4aAmCo9/77LTH
+         5KSWS9vdNyrnj8qbQjNZty4n9sVzNhQbTSzubqRuciRxkgZn5h7VfFIVUR54aPtLGaZh
+         wE8w==
+X-Gm-Message-State: APjAAAU29d1F69WRKEAG1lsZBnKu6ouSu356yhM6v1dwwBDcBU9Rvr7T
+        GJLowWFbnn0JXOurpUbkwywUn7KlCoX4OxYw2hw=
+X-Google-Smtp-Source: APXvYqzlVT47hpGRbi/Yl8yijWS9KZ3qEdPS0NBuSIGQDDcxa1VHMD2n6nEQlEVgh5m6VlnbirHc/mUKd5qM8lMeiGU=
+X-Received: by 2002:a5b:48a:: with SMTP id n10mr4277104ybp.320.1556818798080;
+ Thu, 02 May 2019 10:39:58 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: math.utexas.edu
-X-MS-Exchange-CrossTenant-Network-Message-Id: a162ef5f-9ecd-483b-7eaf-08d6cf236032
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2019 17:26:56.6852
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 31d7e2a5-bdd8-414e-9e97-bea998ebdfe1
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR0601MB3688
+References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
+ <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com> <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
+In-Reply-To: <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 2 May 2019 13:39:47 -0400
+Message-ID: <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com>
+Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties contract
+To:     Vijay Chidambaram <vijay@cs.utexas.edu>
+Cc:     lsf-pc@lists.linux-foundation.org,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jayashree Mohan <jaya@cs.utexas.edu>,
+        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
+        lwn@lwn.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gNS8xLzE5IDEwOjU3IFBNLCBOZWlsQnJvd24gd3JvdGU6DQo+IFN1cHBvcnQgc29tZSBkYXkg
-c3VwcG9ydCBmb3IgbmZzNCBhY2xzIHdlcmUgYWRkZWQgdG8gZXh0NCAobm90IGEgdG90YWxseQ0K
-PiByaWRpY3Vsb3VzIHN1Z2dlc3Rpb24pLiAgV2Ugd291bGQgdGhlbiB3YW50IE5GUyB0byBhbGxv
-dyBpdCdzIEFDTHMgdG8gYmUNCj4gY29waWVkIHVwLg0KDQoNCklzIHRoZXJlIHNvbWUgcmVhc29u
-IHdoeSB0aGVyZSBoYXNuJ3QgYmVlbiBhIGdyZWF0ZXIgZWZmb3J0IHRvIGFkZCBORlN2NCANCkFD
-TCBzdXBwb3J0IHRvIHRoZSBtYWluc3RyZWFtIGxpbnV4IGZpbGVzeXN0ZW1zPyAgSSBoYXZlIHRv
-IHN1cHBvcnQgYSANCmh5YnJpZCBsaW51eC93aW5kb3dzIGVudmlyb25tZW50IGFuZCBub3QgaGF2
-aW5nIHRoZXNlIEFDTHMgb24gZXh0NCBpcyBhIA0KZGFpbHkgaGVhZGFjaGUgZm9yIG1lLg0KDQpB
-bHNvLCBpdCBkb2Vzbid0IHRha2UgbXVjaCBuZWVkIGZvciBzZWN1cml0eSBncmFudWxhcml0eSB0
-byByZWFsaXplIHRoYXQgDQpQT1NJWCBBQ0xzIChub3QgZXZlciBldmVuIGZvcm1hbGx5IHN0YW5k
-YXJkaXplZCEpIGFyZSBmYWlybHkgaW5hZGVxdWF0ZSwgDQpidXQgbW9yZSBpbXBvcnRhbnRseSwg
-ZG9uJ3QgcGxheSBuaWNlbHkgd2l0aCB0aGVpciBXaW5kb3dzIGZyaWVuZHMuDQoNCg==
+On Thu, May 2, 2019 at 1:11 PM Vijay Chidambaram <vijay@cs.utexas.edu> wrote:
+>
+> Thank you for driving this discussion Amir. I'm glad ext4 and btrfs
+> developers want to provide these semantics.
+>
+> If I'm understanding this correctly, the new semantics will be: any
+> data changes to files written with O_TMPFILE will be visible if the
+> associated metadata is also visible. Basically, there will be a
+> barrier between O_TMPFILE data and O_TMPFILE metadata.
+
+Mmm, this phrasing deviates from what I wrote.
+The agreement is that we should document something *minimal*
+that users can understand. I was hoping that this phrasing meets
+those requirements:
+
+""The filesystem provided the guaranty that after a crash, if the linked
+ O_TMPFILE is observed in the target directory, than all the data and
+ metadata modifications made to the file before being linked are also
+ observed."
+
+No more, no less.
+
+>
+> The expectation is that applications will use this, and then rename
+> the O_TMPFILE file over the original file. Is this correct? If so, is
+> there also an implied barrier between O_TMPFILE metadata and the
+> rename?
+
+Not really, the use case is when users want to create a file to apear
+"atomically" in the namespace with certain data and metadata.
+
+For replacing an existing file with another the same could be
+achieved with renameat2(AT_FDCWD, tempname, AT_FDCWD, newname,
+RENAME_ATOMIC). There is no need to create the tempname
+file using O_TMPFILE in that case, but if you do, the RENAME_ATOMIC
+flag would be redundant.
+
+RENAME_ATOMIC flag is needed because directories and non regular
+files cannot be created using O_TMPFILE.
+
+>
+> Where does this land us on the discussion about documenting
+> file-system crash-recovery guarantees? Has that been deemed not
+> necessary?
+>
+
+Can't say for sure.
+Some filesystem maintainers hold on to the opinion that they do
+NOT wish to have a document describing existing behavior of specific
+filesystems, which is large parts of the document that your group posted.
+
+They would rather that only the guaranties of the APIs are documented
+and those should already be documented in man pages anyway - if they
+are not, man pages could be improved.
+
+I am not saying there is no room for a document that elaborates on those
+guaranties. I personally think that could be useful and certainly think that
+your group's work for adding xfstest coverage for API guaranties is useful.
+
+Thanks,
+Amir.
