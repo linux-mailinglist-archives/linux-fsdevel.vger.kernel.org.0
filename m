@@ -2,59 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E34EA11203
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 06:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E2B311204
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 06:03:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725613AbfEBEDz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 00:03:55 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:52991 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbfEBEDz (ORCPT
+        id S1725772AbfEBED5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 00:03:57 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:45824 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbfEBED4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 00:03:55 -0400
-Received: by mail-pf1-f202.google.com with SMTP id w184so551231pfb.19
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 21:03:54 -0700 (PDT)
+        Thu, 2 May 2019 00:03:56 -0400
+Received: by mail-pl1-f201.google.com with SMTP id d10so596792plo.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 21:03:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc:content-transfer-encoding;
-        bh=aZwfm4SAugDj9zwvtYV/fY+EtwO0yAQl0Qc94D9PEmk=;
-        b=b0q54N5Ccszcu8u0tUd0+GcekJSDAHeOfm/CopjeXzs56VqK3/7iRBQiqbsFfTq6BT
-         JFKG+JzndtVv4MggMszhoYATHTUwc+9I7vDAmF/6JX4oy0LqRlz21pJ/MCBzxbjAOrJF
-         b2M7LEdVDy50tYmWyZlBWIweNeyWtkT6CDspjHBCvBqGhJl3RzUvz/2oq2GPMgnAyxo7
-         BQdxH3t6Qkr/eM2k52562E7pL9bjBqF78VqXbB79xLe3nr2nv5hq1uYk5C5ZbiregeP4
-         LOEEGZpbpxYdSb0zVSU1RuoXmQ7Yxklsh2hVSPrMlfp8SSi1eaxQ1PiZZRyg40yrtchC
-         NzKQ==
+         :cc;
+        bh=FTGJtpVoTjeu1V1Sw0UdbZGuFv52q6kQBSEgglatuTk=;
+        b=ojgUBfSkkB1EETF4JXueOdQcmbS8HjBujrtSDHxPDCf/ZqMOM6qUPj/8IAvJm19VDZ
+         VIZoGEpKPVbJvKx+HD+paaba3HvEfJ0fvzxF+tVyEsLVp6AjceaOe+JiU5QbhZwJbYA8
+         LB9M9NDgVLBv/7HbT5eGvrw0kmIcJYh/05991XLfOJZF4mtRKittNVwLmxgZ+X1+632g
+         f4sQz+RSAiVP66cLrYJxh6D7+WXgcHXwM5EKcEOizFTVdEI6roppOdYP7zZP6Zd6Vq7y
+         fkkMKUIu7pgR0R3FvNI3+HexvrLFe5Cq46mzHX/ezqvW69br60h0EMtD/bmwt5tM1pu7
+         /LbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc:content-transfer-encoding;
-        bh=aZwfm4SAugDj9zwvtYV/fY+EtwO0yAQl0Qc94D9PEmk=;
-        b=hQvFiWKdiLlRRB10G1CES8Lk2DNmLqE5nCfDB2kxMS4gAD5+OFff5FJ9cp+t3vWAmE
-         Bq97ReRbs51uKAf+Onq9KiqosaN4pJml8NH/mj6KzVWEpCvHoqiICpp9YiAYJEPYJOqm
-         95j1494CQnfiSnL4oYpCmGf9DafR8ByUjAbsi6NfHSDe4M2Dko19yTDpDsiKJx4oDb/H
-         Q+4LQfsDUwJnpmIFdwuz9E8EMTK7MJmPZ/CHOYJ/IUp/rtWyOiAv7pnykc4nlyEyjlwl
-         7MoocYt/o8iQnUoJUIqMq6pXCdsHNJXMBgbtyL9yzaQGYibtpXoBINOY9mJ0pqXVRpW+
-         1jxQ==
-X-Gm-Message-State: APjAAAUQ132NYLq7OQwRp/LZrPfBBjO5gZi3YKizRIPCVqHol7cirnfz
-        s3uQESB5TkUW2bt6dbNjMNAnd+1FUbeviDt1Z2Bt5snt7xxMj7nOm+duOz8XXgu6bgt/NSyM8bh
-        3BdGYr72YsfyvxQn+WfTDqg9SN3k/nfZezoy0ZlWrk3dmcebfiH3rfRGZmgFn5rrUL3Fa6GrZUh
-        s=
-X-Google-Smtp-Source: APXvYqz7eqJUKoQCHNrcvr6DpDygg0nLSBKy1VA3cU3U8nUMvsBRtc6Vedq3lA6QH+fZFVrvE4xTToMHpA43KA==
-X-Received: by 2002:a63:4a5a:: with SMTP id j26mr1497030pgl.361.1556769833783;
- Wed, 01 May 2019 21:03:53 -0700 (PDT)
-Date:   Wed,  1 May 2019 21:03:26 -0700
+         :references:subject:from:to:cc;
+        bh=FTGJtpVoTjeu1V1Sw0UdbZGuFv52q6kQBSEgglatuTk=;
+        b=Pai6HlJ9BU5RFUkm6eJ3+4b43hlwhHetzYlccGZyIoyg4qOLdBQgtFpDgixWMnnPIu
+         cXFXsaIPYcJ1VPvomZX9ZOcAjgAK5x7tr/h8ipwyeDCOb9PY8PNKxM4LIjQ+h1zgTgbr
+         k1ENOuWSzYS2qdyvReAr5sHLMurSFchyQPntR8DN+EEKnc6fnGmzxU+wrsAr4YHqecU6
+         3mZub9TfU98ofXHBSulK7lDsuyOeGmjQfF3CG628W08xB+/exKq/SRzyvuY/dyhNAbCC
+         /c6C8PW8FF3byNFj3ZDJqvIb3hVBB2pHNV4K9bdj9l9K53aFs6DnXR5LUZwGytYYxz3v
+         G/DA==
+X-Gm-Message-State: APjAAAUBdcNuJc8jN4bMaM6ZeMPfdydYlX9EW9m6YTRpJMmfBH8eCcY5
+        YXw9KiD1bLCq8Dxomrv7PIn7l67mcdOQPewnHzqsmJ9v0TJKIBDoyYk2sPn0dEftoGOWJtdvNUM
+        rSv04y/AmHGPTKvYeNZbRj1KAnFxyRve2i8g4QDjFBte7s+5DjQ6XmTJO8GKSob3WVBPPvXgrqX
+        4=
+X-Google-Smtp-Source: APXvYqySRqeEjTOAPzRJ+gU/lQ/xFzfML7D151OmhWDCXMnfN0v1+UOfkzATDrgpkOlK2sGB2RkMsQnWGoKwfQ==
+X-Received: by 2002:a63:4c26:: with SMTP id z38mr1595233pga.425.1556769835838;
+ Wed, 01 May 2019 21:03:55 -0700 (PDT)
+Date:   Wed,  1 May 2019 21:03:27 -0700
 In-Reply-To: <20190502040331.81196-1-ezemtsov@google.com>
-Message-Id: <20190502040331.81196-2-ezemtsov@google.com>
+Message-Id: <20190502040331.81196-3-ezemtsov@google.com>
 Mime-Version: 1.0
 References: <20190502040331.81196-1-ezemtsov@google.com>
 X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
-Subject: [PATCH 1/6] incfs: Add first files of incrementalfs
+Subject: [PATCH 2/6] incfs: Backing file format
 From:   ezemtsov@google.com
 To:     linux-fsdevel@vger.kernel.org
 Cc:     tytso@mit.edu, Eugene Zemtsov <ezemtsov@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -62,996 +61,929 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eugene Zemtsov <ezemtsov@google.com>
 
-- fs/incfs dir
-- Kconfig (CONFIG_INCREMENTAL_FS)
-- Makefile
-- Module and file system initialization and clean up code
-- New MAINTAINERS entry
-- Add incrementalfs.h UAPI header
-- Register ioctl range in ioctl-numbers.txt
-- Documentation
+- Read and write logic for ondisk backing file format (aka incfs image)
+- Add format.c and format.h
+- Utils in internal.h
 
 Signed-off-by: Eugene Zemtsov <ezemtsov@google.com>
 ---
- Documentation/filesystems/incrementalfs.rst | 452 ++++++++++++++++++++
- Documentation/ioctl/ioctl-number.txt        |   1 +
- MAINTAINERS                                 |   7 +
- fs/Kconfig                                  |   1 +
- fs/Makefile                                 |   1 +
- fs/incfs/Kconfig                            |  10 +
- fs/incfs/Makefile                           |   4 +
- fs/incfs/main.c                             |  85 ++++
- fs/incfs/vfs.c                              |  37 ++
- include/uapi/linux/incrementalfs.h          | 189 ++++++++
- 10 files changed, 787 insertions(+)
- create mode 100644 Documentation/filesystems/incrementalfs.rst
- create mode 100644 fs/incfs/Kconfig
- create mode 100644 fs/incfs/Makefile
- create mode 100644 fs/incfs/main.c
- create mode 100644 fs/incfs/vfs.c
- create mode 100644 include/uapi/linux/incrementalfs.h
+ fs/incfs/Makefile   |   2 +-
+ fs/incfs/format.c   | 554 ++++++++++++++++++++++++++++++++++++++++++++
+ fs/incfs/format.h   | 294 +++++++++++++++++++++++
+ fs/incfs/internal.h |  31 +++
+ 4 files changed, 880 insertions(+), 1 deletion(-)
+ create mode 100644 fs/incfs/format.c
+ create mode 100644 fs/incfs/format.h
+ create mode 100644 fs/incfs/internal.h
 
-diff --git a/Documentation/filesystems/incrementalfs.rst b/Documentation/fi=
-lesystems/incrementalfs.rst
-new file mode 100644
-index 000000000000..682e3dcb6b5a
---- /dev/null
-+++ b/Documentation/filesystems/incrementalfs.rst
-@@ -0,0 +1,452 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+Incremental File System
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+Overview
-+=3D=3D=3D=3D=3D=3D=3D=3D
-+Incremental FS is special-purpose Linux virtual file system that allows
-+execution of a program while its binary and resource files are still being
-+lazily downloaded over the network, USB etc. It is focused on incremental
-+delivery for a small number (under 100) of big files (more than 10 megabyt=
-es).
-+Incremental FS doesn=E2=80=99t allow direct writes into files and, once lo=
-aded, file
-+content never changes. Incremental FS doesn=E2=80=99t use a block device, =
-instead it
-+saves data into a backing file located on a regular file-system.
-+
-+But why?
-+--------
-+To allow running **big** Android apps before their binaries and resources =
-are
-+fully downloaded to an Android device. If an app reads something not loade=
-d yet,
-+it needs to wait for the data block to be fetched, but in most cases hot b=
-locks
-+can be loaded in advance.
-+
-+Workflow
-+--------
-+A userspace process, called a data loader, mounts an instance of increment=
-al-fs
-+giving it a file descriptor on an underlying file system (like ext4 or f2f=
-s).
-+Incremental-fs reads content (if any) of this backing file and interprets =
-it as
-+a file system image with files, directories and data blocks. At this point
-+the data loader can declare new files to be shown by incremental-fs.
-+
-+A process is started from a binary located on incremental-fs.
-+All reads are served directly from the backing file
-+without roundtrips into userspace. If the process accesses a data block th=
-at was
-+not originally present in the backing file, the read operation waits.
-+
-+Meanwhile the data loader can feed new data blocks to incremental-fs by ca=
-lling
-+write() on a special .cmd pseudo-file. The data loader can request informa=
-tion
-+about pending reads by calling poll() and read() on the .cmd pseudo-file.
-+This mechanism allows the data loader to serve most urgently needed data f=
-irst.
-+Once a data block is given to incremental-fs, it saves it to the backing f=
-ile
-+and unblocks all the reads waiting for this block.
-+
-+Eventually all data for all files is uploaded by the data loader, and save=
-d by
-+incremental-fs into the backing file. At that moment the data loader is no=
-t
-+needed any longer. The backing file will play the role of a complete
-+filesystem image for all future runs of the program.
-+
-+Non-goals
-+---------
-+* Allowing direct writes by the executing processes into files on incremen=
-tal-fs
-+* Allowing the data loader change file size or content after it was loaded=
-.
-+* Having more than a couple hundred files and directories.
-+
-+
-+Features
-+=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+Read-only, but not unchanging
-+-----------------------------
-+On the surface a mount directory of incremental-fs would look similar to
-+a read-only instance of network file system: files and directories can be
-+listed and read, but can=E2=80=99t be directly created or modified via cre=
-at() or
-+write(). At the same time the data loader can make changes to a directory
-+structure via external ioctl-s. i.e. link and unlink files and directories
-+(if they empty). Data can't be changed this way, once a file block is load=
-ed
-+there is no way to change it.
-+
-+Filesystem image in a backing file
-+----------------------------------
-+Instead of using a block device, all data and metadata is stored in a
-+backing file provided as a mount parameter. The backing file is located on
-+an underlying file system (like ext4 or f2fs). Such approach is very simil=
-ar
-+to what might be achieved by using loopback device with a traditional file
-+system, but it avoids extra set-up steps and indirections. It also allows
-+incremental-fs image to dynamically grow as new files and data come withou=
-t
-+having to do any extra steps for resizing.
-+
-+If the backing file contains data at the moment when incremental-fs is mou=
-nted,
-+content of the backing file is being interpreted as filesystem image.
-+New files and data can still be added through the external interface,
-+and they will be saved to the backing file.
-+
-+Data compression
-+----------------
-+Incremental-fs can store compressed data. In this case each 4KB data block=
- is
-+compressed separately. Data blocks can be provided to incremental-fs by
-+the data loader in a compressed form. Incremental-fs uncompresses blocks
-+each time a executing process reads it (modulo page cache). Compression al=
-so
-+takes care of blocks composed of all zero bytes removing necessity to hand=
-le
-+this case separately.
-+
-+Partially present files
-+-----------------------
-+Data in the files consists of 4KB blocks, each block can be present or abs=
-ent.
-+Unlike in sparse files, reading an absent block doesn=E2=80=99t return all=
- zeros.
-+It waits for the data block to be loaded via the ioctl interface
-+(respecting a timeout). Once a data block is loaded it never disappears
-+and can=E2=80=99t be changed or erased from a file. This ability to fricti=
-onlessly
-+wait for temporary missing data is the main feature of incremental-fs.
-+
-+Hard links. Multiple names for the same file
-+--------------------------------------------
-+Like all traditional UNIX file systems, incremental-fs supports hard links=
-,
-+i.e. different file names in different directories can refer to the same f=
-ile.
-+As mentioned above new hard links can be created and removed via
-+the ioctl interface, but actual data files are immutable, modulo partial
-+data loading. Each directory can only have at most one name referencing it=
-.
-+
-+Inspection of incremental-fs internal state
-+-------------------------------------------
-+poll() and read() on the .cmd pseudo-file allow data loaders to get a list=
- of
-+read operations stalled due to lack of a data block (pending reads).
-+
-+
-+Application Programming Interface
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+Regular file system interface
-+-----------------------------
-+Executing process access files and directories via regular Linux file inte=
-rface:
-+open, read, close etc. All the intricacies of data loading a file represen=
-tation
-+are hidden from them.
-+
-+External .cmd file interface
-+----------------------------
-+When incremental-fs is mounted, a mount directory contains a pseudo-file
-+called '.cmd'. The data loader will open this file and call read(), write(=
-),
-+poll() and ioctl() on it inspect and change state of incremental-fs.
-+
-+poll() and read() are used by the data loader to wait for pending reads to
-+appear and obtain an array of ``struct incfs_pending_read_info``.
-+
-+write() is used by the data loader to feed new data blocks to incremental-=
-fs.
-+A data buffer given to write() is interpreted as an array of
-+``struct incfs_new_data_block``. Structs in the array describe locations a=
-nd
-+properties of data blocks loaded with this write() call.
-+
-+``ioctl(INCFS_IOC_PROCESS_INSTRUCTION)`` is used to change structure of
-+incremental-fs. It receives an pointer to ``struct incfs_instruction``
-+where type field can have be one of the following values.
-+
-+**INCFS_INSTRUCTION_NEW_FILE**
-+Creates an inode (a file or a directory) without a name.
-+It assumes ``incfs_new_file_instruction.file`` is populated with details.
-+
-+**INCFS_INSTRUCTION_ADD_DIR_ENTRY**
-+Creates a name (aka hardlink) for an inode in a directory.
-+A directory can't have more than one hardlink pointing to it, but files ca=
-n be
-+linked from different directories.
-+It assumes ``incfs_new_file_instruction.dir_entry`` is populated with deta=
-ils.
-+
-+**INCFS_INSTRUCTION_REMOVE_DIR_ENTRY**
-+Remove a name (aka hardlink) for a file from a directory.
-+Only empty directories can be unlinked.
-+It assumes ``incfs_new_file_instruction.dir_entry`` is populated with deta=
-ils.
-+
-+For more details see in uapi/linux/incrementalfs.h and samples below.
-+
-+Supported mount options
-+-----------------------
-+See ``fs/incfs/options.c`` for more details.
-+
-+    * ``backing_fd=3D<unsigned int>``
-+        Required. A file descriptor of a backing file opened by the proces=
-s
-+        calling mount(2). This descriptor can be closed after mount return=
-s.
-+
-+    * ``read_timeout_msc=3D<unsigned int>``
-+        Default: 1000. Timeout in milliseconds before a read operation fai=
-ls
-+        if no data found in the backing file or provided by the data loade=
-r.
-+
-+Sysfs files
-+-----------
-+``/sys/fs/incremental-fs/version`` - a current version of the filesystem.
-+One ASCII encoded positive integer number with a new line at the end.
-+
-+
-+Examples
-+--------
-+See ``sample_data_loader.c`` for a complete implementation of a data loade=
-r.
-+
-+Mount incremental-fs
-+~~~~~~~~~~~~~~~~~~~~
-+
-+::
-+
-+    int mount_fs(char *mount_dir, char *backing_file, int timeout_msc)
-+    {
-+        static const char fs_name[] =3D INCFS_NAME;
-+        char mount_options[512];
-+        int backing_fd;
-+        int result;
-+
-+        backing_fd =3D open(backing_file, O_RDWR);
-+        if (backing_fd =3D=3D -1) {
-+            perror("Error in opening backing file");
-+            return 1;
-+        }
-+
-+        snprintf(mount_options, ARRAY_SIZE(mount_options),
-+            "backing_fd=3D%u,read_timeout_msc=3D%u", backing_fd, timeout_m=
-sc);
-+
-+        result =3D mount(fs_name, mount_dir, fs_name, 0, mount_options);
-+        if (result !=3D 0)
-+            perror("Error mounting fs.");
-+        return result;
-+    }
-+
-+Open .cmd file
-+~~~~~~~~~~~~~~
-+
-+::
-+
-+    int open_commands_file(char *mount_dir)
-+    {
-+        char cmd_file[255];
-+        int cmd_fd;
-+
-+        snprintf(cmd_file, ARRAY_SIZE(cmd_file), "%s/.cmd", mount_dir);
-+        cmd_fd =3D open(cmd_file, O_RDWR);
-+        if (cmd_fd < 0)
-+            perror("Can't open commands file");
-+        return cmd_fd;
-+    }
-+
-+Add a file to the file system
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+::
-+
-+    int create_file(int cmd_fd, char *filename, int *ino_out, size_t size)
-+    {
-+        int ret =3D 0;
-+        __u16 ino =3D 0;
-+        struct incfs_instruction inst =3D {
-+                .version =3D INCFS_HEADER_VER,
-+                .type =3D INCFS_INSTRUCTION_NEW_FILE,
-+                .file =3D {
-+                    .size =3D size,
-+                    .mode =3D S_IFREG | 0555,
-+                }
-+        };
-+
-+        ret =3D ioctl(cmd_fd, INCFS_IOC_PROCESS_INSTRUCTION, &inst);
-+        if (ret)
-+            return -errno;
-+
-+        ino =3D inst.file.ino_out;
-+        inst =3D (struct incfs_instruction){
-+                .version =3D INCFS_HEADER_VER,
-+                .type =3D INCFS_INSTRUCTION_ADD_DIR_ENTRY,
-+                .dir_entry =3D {
-+                    .dir_ino =3D INCFS_ROOT_INODE,
-+                    .child_ino =3D ino,
-+                    .name =3D ptr_to_u64(filename),
-+                    .name_len =3D strlen(filename)
-+                }
-+            };
-+        ret =3D ioctl(cmd_fd, INCFS_IOC_PROCESS_INSTRUCTION, &inst);
-+        if (ret)
-+            return -errno;
-+        *ino_out =3D ino;
-+        return 0;
-+    }
-+
-+Load data into a file
-+~~~~~~~~~~~~~~~~~~~~~
-+
-+::
-+
-+    int cmd_fd =3D open_commands_file(path_to_mount_dir);
-+    char *data =3D get_some_data();
-+    struct incfs_new_data_block block;
-+    int err;
-+
-+    block.file_ino =3D file_ino;
-+    block.block_index =3D 0;
-+    block.compression =3D COMPRESSION_NONE;
-+    block.data =3D (__u64)data;
-+    block.data_len =3D INCFS_DATA_FILE_BLOCK_SIZE;
-+
-+    err =3D write(cmd_fd, &block, sizeof(block));
-+
-+
-+Get an array of pending reads
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+::
-+
-+    int poll_res =3D 0;
-+    struct incfs_pending_read_info reads[10];
-+    int cmd_fd =3D open_commands_file(path_to_mount_dir);
-+    struct pollfd pollfd =3D {
-+        .fd =3D cmd_fd,
-+        .events =3D POLLIN
-+    };
-+
-+    poll_res =3D poll(&pollfd, 1, timeout);
-+    if (poll_res > 0 && (pollfd.revents | POLLIN)) {
-+        ssize_t read_res =3D read(cmd_fd, reads, sizeof(reads));
-+        if (read_res > 0)
-+            printf("Waiting reads %ld\n", read_res / sizeof(reads[0]));
-+    }
-+
-+
-+
-+Ondisk format
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+General principles
-+------------------
-+* The backbone of the incremental-fs ondisk format is an append only linke=
-d
-+  list of metadata blocks. Each metadata block contains an offset of the n=
-ext
-+  one. These blocks describe files and directories on the
-+  file system. They also represent actions of adding and removing file nam=
-es
-+  (hard links).
-+  Every time incremental-fs instance is mounted, it reads through this lis=
-t
-+  to recreate filesystem's state in memory. An offset of the first record =
-in the
-+  metadata list is stored in the superblock at the beginning of the backin=
-g
-+  file.
-+
-+* Most of the backing file is taken by data areas and blockmaps.
-+  Since data blocks can be compressed and have different sizes,
-+  single per-file data area can't be pre-allocated. That's why blockmaps a=
-re
-+  needed in order to find a location and size of each data block in
-+  the backing file. Each time a file is created, a corresponding block map=
- is
-+  allocated to store future offsets of data blocks.
-+
-+  Whenever a data block is given by data loader to incremental-fs:
-+    - A data area with the given block is appended to the end of
-+      the backing file.
-+    - A record in the blockmap for the given block index is updated to ref=
-lect
-+      its location, size, and compression algorithm.
-+
-+Important format details
-+------------------------
-+Ondisk structures are defined in the ``format.h`` file. They are all packe=
-d
-+and use little-endian order.
-+A backing file must start with ``incfs_super_block`` with ``s_magic`` fiel=
-d
-+equal to 0x5346434e49 "INCFS".
-+
-+Metadata records:
-+
-+* ``incfs_inode`` - metadata record to declare a file or a directory.
-+                    ``incfs_inode.i_mode`` determents if it is a file
-+                    or a directory.
-+* ``incfs_blockmap_entry`` - metadata record that specifies size and locat=
-ion
-+                            of a blockmap area for a given file. This area
-+                            contains an array of ``incfs_blockmap_entry``-=
-s.
-+* ``incfs_dir_action`` - metadata record that specifies changes made to a
-+                    to a directory structure, e.g. add or remove a hardlin=
-k.
-+* ``incfs_md_header`` - header of a metadata record. It's always a part
-+                    of other structures and served purpose of metadata
-+                    bookkeeping.
-+
-+Other ondisk structures:
-+
-+* ``incfs_super_block`` - backing file header
-+* ``incfs_blockmap_entry`` - a record in a blockmap area that describes si=
-ze
-+                        and location of a data block.
-+* Data blocks dont have any particular structure, they are written to the =
-backing
-+  file in a raw form as they come from a data loader.
-+
-+
-+Backing file layout
-+-------------------
-+::
-+
-+              +-------------------------------------------+
-+              |            incfs_super_block              |]---+
-+              +-------------------------------------------+    |
-+              |                 metadata                  |<---+
-+              |                incfs_inode                |]---+
-+              +-------------------------------------------+    |
-+                        .........................              |
-+              +-------------------------------------------+    |   metadat=
-a
-+     +------->|               blockmap area               |    |  list lin=
-ks
-+     |        |          [incfs_blockmap_entry]           |    |
-+     |        |          [incfs_blockmap_entry]           |    |
-+     |        |          [incfs_blockmap_entry]           |    |
-+     |    +--[|          [incfs_blockmap_entry]           |    |
-+     |    |   |          [incfs_blockmap_entry]           |    |
-+     |    |   |          [incfs_blockmap_entry]           |    |
-+     |    |   +-------------------------------------------+    |
-+     |    |             .........................              |
-+     |    |   +-------------------------------------------+    |
-+     |    |   |                 metadata                  |<---+
-+     +----|--[|               incfs_blockmap              |]---+
-+          |   +-------------------------------------------+    |
-+          |             .........................              |
-+          |   +-------------------------------------------+    |
-+          +-->|                 data block                |    |
-+              +-------------------------------------------+    |
-+                        .........................              |
-+              +-------------------------------------------+    |
-+              |                 metadata                  |<---+
-+              |             incfs_dir_action              |
-+              +-------------------------------------------+
-+
-+Unreferenced files and absence of garbage collection
-+----------------------------------------------------
-+Described file format can produce files that don't have any names for them=
- in
-+any directories. Incremental-fs takes no steps to prevent such situations =
-or
-+reclaim space occupied by such files in the backing file. If garbage colle=
-ction
-+is needed it has to be implemented as a separate userspace tool.
-+
-+
-+Design alternatives
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+
-+Why isn't incremental-fs implemented via FUSE?
-+----------------------------------------------
-+TLDR: FUSE-based filesystems add 20-80% of performance overhead for target
-+scenarios, and increase power use on mobile beyond acceptable limit
-+for widespread deployment. A custom kernel filesystem is the way to overco=
-me
-+these limitations.
-+
-+From the theoretical side of things, FUSE filesystem adds some overhead to
-+each filesystem operation that=E2=80=99s not handled by OS page cache:
-+
-+    * When an IO request arrives to FUSE driver (D), it puts it into a que=
-ue
-+      that runs on a separate kernel thread
-+    * Then another separate user-mode handler process (H) has to run,
-+      potentially after a context switch, to read the request from the que=
-ue.
-+      Reading the request adds a kernel-user mode transition to the handli=
-ng.
-+    * (H) sends the IO request to kernel to handle it on some underlying s=
-torage
-+      filesystem. This adds a user-kernel and kernel-user mode transition
-+      pair to the handling.
-+    * (H) then responds to the FUSE request via a write(2) call.
-+      Writing the response is another user-kernel mode transition.
-+    * (D) needs to read the response from (H) when its kernel thread runs
-+      and forward it to the user
-+
-+Together, the scenario adds 2 extra user-kernel-user mode transition pairs=
-,
-+and potentially has up to 3 additional context switches for the FUSE kerne=
-l
-+thread and the user-mode handler to start running for each IO request on t=
-he
-+filesystem.
-+This overhead can vary from unnoticeable to unmanageable, depending on the
-+target scenario. But it will always burn extra power via CPU staying longe=
-r
-+in non-idle state, handling context switches and mode transitions.
-+One important goal for the new filesystem is to be able to handle each pag=
-e
-+read separately on demand, because we don't want to wait and download more=
- data
-+than absolutely necessary. Thus readahead would need to be disabled comple=
-tely.
-+This increases the number of separate IO requests and the FUSE related ove=
-rhead
-+by almost 32x (128KB readahead limit vs 4KB individual block operations)
-+
-+For more info see a 2017 USENIX research paper:
-+To FUSE or Not to FUSE: Performance of User-Space File Systems
-+Bharath Kumar Reddy Vangoor, Stony Brook University;
-+Vasily Tarasov, IBM Research-Almaden;
-+Erez Zadok, Stony Brook University
-+https://www.usenix.org/system/files/conference/fast17/fast17-vangoor.pdf
-diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioc=
-tl-number.txt
-index c9558146ac58..a5f8e0eaff91 100644
---- a/Documentation/ioctl/ioctl-number.txt
-+++ b/Documentation/ioctl/ioctl-number.txt
-@@ -227,6 +227,7 @@ Code  Seq#(hex)	Include File		Comments
- 'f'	00-0F	fs/ocfs2/ocfs2_fs.h	conflict!
- 'g'	00-0F	linux/usb/gadgetfs.h
- 'g'	20-2F	linux/usb/g_printer.h
-+'g'	30-3F	include/uapi/linux/incrementalfs.h
- 'h'	00-7F				conflict! Charon filesystem
- 					<mailto:zapman@interlan.net>
- 'h'	00-1F	linux/hpet.h		conflict!
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5c38f21aee78..c92ad89ee5e5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7630,6 +7630,13 @@ F:	Documentation/hwmon/ina2xx
- F:	drivers/hwmon/ina2xx.c
- F:	include/linux/platform_data/ina2xx.h
-
-+INCREMENTAL FILESYSTEM
-+M:	Eugene Zemtsov <ezemtsov@google.com>
-+S:	Supported
-+F:	fs/incfs/
-+F:	include/uapi/linux/incrementalfs.h
-+F:	Documentation/filesystems/incrementalfs.rst
-+
- INDUSTRY PACK SUBSYSTEM (IPACK)
- M:	Samuel Iglesias Gonsalvez <siglesias@igalia.com>
- M:	Jens Taprogge <jens.taprogge@taprogge.org>
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 3e6d3101f3ff..19f89c936209 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -119,6 +119,7 @@ source "fs/quota/Kconfig"
- source "fs/autofs/Kconfig"
- source "fs/fuse/Kconfig"
- source "fs/overlayfs/Kconfig"
-+source "fs/incfs/Kconfig"
-
- menu "Caches"
-
-diff --git a/fs/Makefile b/fs/Makefile
-index 427fec226fae..08c6b827df1a 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -108,6 +108,7 @@ obj-$(CONFIG_AUTOFS_FS)		+=3D autofs/
- obj-$(CONFIG_ADFS_FS)		+=3D adfs/
- obj-$(CONFIG_FUSE_FS)		+=3D fuse/
- obj-$(CONFIG_OVERLAY_FS)	+=3D overlayfs/
-+obj-$(CONFIG_INCREMENTAL_FS)	+=3D incfs/
- obj-$(CONFIG_ORANGEFS_FS)       +=3D orangefs/
- obj-$(CONFIG_UDF_FS)		+=3D udf/
- obj-$(CONFIG_SUN_OPENPROMFS)	+=3D openpromfs/
-diff --git a/fs/incfs/Kconfig b/fs/incfs/Kconfig
-new file mode 100644
-index 000000000000..a810131deed0
---- /dev/null
-+++ b/fs/incfs/Kconfig
-@@ -0,0 +1,10 @@
-+config INCREMENTAL_FS
-+	tristate "Incremental file system support"
-+	depends on BLOCK && CRC32
-+	help
-+	  Incremental FS is a read-only virtual file system that facilitates exec=
-ution
-+	  of programs while their binaries are still being lazily downloaded over=
- the
-+	  network, USB or pigeon post.
-+
-+	  To compile this file system support as a module, choose M here: the
-+	  module will be called incrementalfs.
-\ No newline at end of file
 diff --git a/fs/incfs/Makefile b/fs/incfs/Makefile
-new file mode 100644
-index 000000000000..7892196c634f
---- /dev/null
+index 7892196c634f..cdea18c7213e 100644
+--- a/fs/incfs/Makefile
 +++ b/fs/incfs/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_INCREMENTAL_FS)	+=3D incrementalfs.o
-+
-+incrementalfs-y :=3D main.o vfs.o
+@@ -1,4 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_INCREMENTAL_FS)	+= incrementalfs.o
+
+-incrementalfs-y := main.o vfs.o
 \ No newline at end of file
-diff --git a/fs/incfs/main.c b/fs/incfs/main.c
++incrementalfs-y := main.o vfs.o format.o
+diff --git a/fs/incfs/format.c b/fs/incfs/format.c
 new file mode 100644
-index 000000000000..07e1952ede9e
+index 000000000000..a0e6ecec09d3
 --- /dev/null
-+++ b/fs/incfs/main.c
-@@ -0,0 +1,85 @@
++++ b/fs/incfs/format.c
+@@ -0,0 +1,554 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright 2018 Google LLC
 + */
 +#include <linux/fs.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
++#include <linux/file.h>
++#include <linux/types.h>
++#include <linux/mutex.h>
++#include <linux/mm.h>
++#include <linux/falloc.h>
++#include <linux/slab.h>
++#include <linux/crc32.h>
 +
-+#include <uapi/linux/incrementalfs.h>
++#include "format.h"
 +
-+#define INCFS_CORE_VERSION 1
-+
-+extern struct file_system_type incfs_fs_type;
-+
-+static struct kobject *sysfs_root;
-+
-+static ssize_t version_show(struct kobject *kobj,
-+			    struct kobj_attribute *attr, char *buff)
++struct backing_file_context *incfs_alloc_bfc(struct file *backing_file)
 +{
-+	return snprintf(buff, PAGE_SIZE, "%d\n", INCFS_CORE_VERSION);
++	struct backing_file_context *result = NULL;
++
++	result = kzalloc(sizeof(*result), GFP_NOFS);
++	if (!result)
++		return ERR_PTR(-ENOMEM);
++
++	result->bc_file = backing_file;
++	mutex_init(&result->bc_mutex);
++	return result;
 +}
 +
-+static struct kobj_attribute version_attr =3D __ATTR_RO(version);
-+
-+static struct attribute *attributes[] =3D {
-+	&version_attr.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group attr_group =3D {
-+	.attrs =3D attributes,
-+};
-+
-+static int __init init_sysfs(void)
++void incfs_free_bfc(struct backing_file_context *bfc)
 +{
-+	int res =3D 0;
++	if (!bfc)
++		return;
 +
-+	sysfs_root =3D kobject_create_and_add(INCFS_NAME, fs_kobj);
-+	if (!sysfs_root)
-+		return -ENOMEM;
++	if (bfc->bc_file)
++		fput(bfc->bc_file);
 +
-+	res =3D sysfs_create_group(sysfs_root, &attr_group);
-+	if (res) {
-+		kobject_put(sysfs_root);
-+		sysfs_root =3D NULL;
-+	}
++	mutex_destroy(&bfc->bc_mutex);
++	kfree(bfc);
++}
++
++loff_t incfs_get_end_offset(struct file *f)
++{
++	/*
++	 * This function assumes that file size and the end-offset
++	 * are the same. This is not always true.
++	 */
++	return i_size_read(file_inode(f));
++}
++
++/*
++ * Truncate the tail of the file to the given length.
++ * Used to rollback partially successful multistep writes.
++ */
++static int truncate_backing_file(struct backing_file_context *bfc,
++				loff_t new_end)
++{
++	struct inode *inode = NULL;
++	struct dentry *dentry = NULL;
++	loff_t old_end = 0;
++	struct iattr attr;
++	int result = 0;
++
++	if (!bfc)
++		return -EFAULT;
++
++	LOCK_REQUIRED(bfc->bc_mutex);
++
++	if (!bfc->bc_file)
++		return -EFAULT;
++
++	old_end = incfs_get_end_offset(bfc->bc_file);
++	if (old_end == new_end)
++		return 0;
++	if (old_end < new_end)
++		return -EINVAL;
++
++	inode = bfc->bc_file->f_inode;
++	dentry = bfc->bc_file->f_path.dentry;
++
++	attr.ia_size = new_end;
++	attr.ia_valid = ATTR_SIZE;
++
++	inode_lock(inode);
++	result = notify_change(dentry, &attr, NULL);
++	inode_unlock(inode);
++
++	return result;
++}
++
++/* Append a given number of zero bytes to the end of the backing file. */
++static int append_zeros(struct backing_file_context *bfc, size_t len)
++{
++	loff_t file_size = 0;
++	loff_t new_last_byte_offset = 0;
++	int res = 0;
++
++	if (!bfc)
++		return -EFAULT;
++
++	if (len == 0)
++		return -EINVAL;
++
++	LOCK_REQUIRED(bfc->bc_mutex);
++
++	/*
++	 * Allocate only one byte at the new desired end of the file.
++	 * It will increase file size and create a zeroed area of
++	 * a given size.
++	 */
++	file_size = incfs_get_end_offset(bfc->bc_file);
++	new_last_byte_offset = file_size + len - 1;
++	res = vfs_fallocate(bfc->bc_file, 0, new_last_byte_offset, 1);
++	if (res)
++		return res;
++
++	res = vfs_fsync_range(bfc->bc_file, file_size, file_size + len, 1);
 +	return res;
 +}
 +
-+static void cleanup_sysfs(void)
++static int write_to_bf(struct backing_file_context *bfc, const void *buf,
++			size_t count, loff_t pos, bool sync)
 +{
-+	if (sysfs_root) {
-+		sysfs_remove_group(sysfs_root, &attr_group);
-+		kobject_put(sysfs_root);
-+		sysfs_root =3D NULL;
-+	}
-+}
++	ssize_t res = 0;
++	loff_t p = pos;
 +
-+static int __init init_incfs_module(void)
-+{
-+	int err =3D 0;
++	res = kernel_write(bfc->bc_file, buf, count, &p);
++	if (res < 0)
++		return res;
++	if (res != count)
++		return -EIO;
 +
-+	err =3D init_sysfs();
-+	if (err)
-+		return err;
++	if (sync)
++		return vfs_fsync_range(bfc->bc_file, pos, pos + count, 1);
 +
-+	err =3D register_filesystem(&incfs_fs_type);
-+	if (err)
-+		cleanup_sysfs();
-+
-+	return err;
-+}
-+
-+static void __exit cleanup_incfs_module(void)
-+{
-+	cleanup_sysfs();
-+	unregister_filesystem(&incfs_fs_type);
-+}
-+
-+module_init(init_incfs_module);
-+module_exit(cleanup_incfs_module);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Eugene Zemtsov <ezemtsov@google.com>");
-+MODULE_DESCRIPTION("Incremental File System");
-diff --git a/fs/incfs/vfs.c b/fs/incfs/vfs.c
-new file mode 100644
-index 000000000000..2e71f0edf8a1
---- /dev/null
-+++ b/fs/incfs/vfs.c
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2018 Google LLC
-+ */
-+#include <linux/blkdev.h>
-+#include <linux/fs.h>
-+
-+#include <uapi/linux/incrementalfs.h>
-+
-+static struct dentry *mount_fs(struct file_system_type *type, int flags,
-+			       const char *dev_name, void *data);
-+static void kill_sb(struct super_block *sb);
-+
-+struct file_system_type incfs_fs_type =3D {
-+	.owner =3D THIS_MODULE,
-+	.name =3D INCFS_NAME,
-+	.mount =3D mount_fs,
-+	.kill_sb =3D kill_sb,
-+	.fs_flags =3D 0
-+};
-+
-+static int fill_super_block(struct super_block *sb, void *data, int silent=
-)
-+{
 +	return 0;
 +}
 +
-+static struct dentry *mount_fs(struct file_system_type *type, int flags,
-+			       const char *dev_name, void *data)
++static u32 calc_md_crc(struct incfs_md_header *record)
 +{
-+	return mount_nodev(type, flags, data, fill_super_block);
++	u32 result = 0;
++	__le32 saved_crc = record->h_record_crc;
++	__le64 saved_md_offset = record->h_next_md_offset;
++	size_t record_size = min_t(size_t, le16_to_cpu(record->h_record_size),
++				INCFS_MAX_METADATA_RECORD_SIZE);
++
++	/* Zero fields which needs to be excluded from CRC calculation. */
++	record->h_record_crc = 0;
++	record->h_next_md_offset = 0;
++	result = crc32(0, record, record_size);
++
++	/* Restore excluded fields. */
++	record->h_record_crc = saved_crc;
++	record->h_next_md_offset = saved_md_offset;
++
++	return result;
 +}
 +
-+static void kill_sb(struct super_block *sb)
++/*
++ * Append a given metadata record to the backing file and update a previous
++ * record to add the new record the the metadata list.
++ */
++static int append_md_to_backing_file(struct backing_file_context *bfc,
++			      struct incfs_md_header *record)
 +{
-+	generic_shutdown_super(sb);
++	int result = 0;
++	loff_t record_offset;
++	loff_t file_pos;
++	__le64 new_md_offset;
++	size_t record_size;
++
++	if (!bfc || !record)
++		return -EFAULT;
++
++	if (bfc->bc_last_md_record_offset < 0)
++		return -EINVAL;
++
++	LOCK_REQUIRED(bfc->bc_mutex);
++
++	record_size = le16_to_cpu(record->h_record_size);
++	file_pos = incfs_get_end_offset(bfc->bc_file);
++	record->h_prev_md_offset = bfc->bc_last_md_record_offset;
++	record->h_next_md_offset = 0;
++	record->h_record_crc = cpu_to_le32(calc_md_crc(record));
++
++	/* Write the metadata record to the end of the backing file */
++	record_offset = file_pos;
++	new_md_offset = cpu_to_le64(record_offset);
++	result = write_to_bf(bfc, record, record_size, file_pos, true);
++	if (result)
++		return result;
++
++	/* Update next metadata offset in a previous record or a superblock. */
++	if (bfc->bc_last_md_record_offset) {
++		/*
++		 * Find a place in the previous md record where new record's
++		 * offset needs to be saved.
++		 */
++		file_pos = bfc->bc_last_md_record_offset +
++			offsetof(struct incfs_md_header, h_next_md_offset);
++	} else {
++		/* No metadata yet, file a place to update in the superblock. */
++		file_pos = offsetof(struct incfs_super_block,
++				s_first_md_offset);
++	}
++	result = write_to_bf(bfc, &new_md_offset, sizeof(new_md_offset),
++				file_pos, true);
++	if (result)
++		return result;
++
++	bfc->bc_last_md_record_offset = record_offset;
++	return result;
 +}
 +
-diff --git a/include/uapi/linux/incrementalfs.h b/include/uapi/linux/increm=
-entalfs.h
++/* Append incfs_inode metadata record to the backing file. */
++int incfs_write_inode_to_backing_file(struct backing_file_context *bfc, u64 ino,
++				u64 size, u16 mode)
++{
++	struct incfs_inode disk_inode = {};
++
++	if (!bfc)
++		return -EFAULT;
++
++	LOCK_REQUIRED(bfc->bc_mutex);
++	disk_inode.i_header.h_md_entry_type = INCFS_MD_INODE;
++	disk_inode.i_header.h_record_size = cpu_to_le16(sizeof(disk_inode));
++	disk_inode.i_header.h_next_md_offset = cpu_to_le64(0);
++	disk_inode.i_no = cpu_to_le64(ino);
++	disk_inode.i_size = cpu_to_le64(size);
++	disk_inode.i_mode = cpu_to_le16(mode);
++	disk_inode.i_flags = cpu_to_le32(0);
++
++	return append_md_to_backing_file(bfc, &disk_inode.i_header);
++}
++
++/* Append incfs_dir_action metadata record to the backing file. */
++int incfs_write_dir_action(struct backing_file_context *bfc, u64 dir_ino,
++		     u64 dentry_ino, enum incfs_dir_action_type type,
++		     struct mem_range name)
++{
++	struct incfs_dir_action action = {};
++	u8 name_len = min_t(u8, INCFS_MAX_NAME_LEN, name.len);
++
++	if (!bfc)
++		return -EFAULT;
++
++	LOCK_REQUIRED(bfc->bc_mutex);
++	action.da_header.h_md_entry_type = INCFS_MD_DIR_ACTION;
++	action.da_header.h_record_size = cpu_to_le16(sizeof(action));
++	action.da_header.h_next_md_offset = cpu_to_le64(0);
++	action.da_dir_inode = cpu_to_le64(dir_ino);
++	action.da_entry_inode = cpu_to_le64(dentry_ino);
++	action.da_type = (__u8)type;
++	action.da_name_len = name_len;
++	memcpy(action.da_name, name.data, name_len);
++
++	return append_md_to_backing_file(bfc, &action.da_header);
++}
++
++/*
++ * Reserve 0-filled space for the blockmap body, and append
++ * incfs_blockmap metadata record pointing to it.
++ */
++int incfs_write_blockmap_to_backing_file(struct backing_file_context *bfc,
++				u64 ino, u32 block_count, loff_t *map_base_off)
++{
++	struct incfs_blockmap blockmap = {};
++	int result = 0;
++	loff_t file_end = 0;
++	size_t map_size = block_count * sizeof(struct incfs_blockmap_entry);
++
++	if (!bfc)
++		return -EFAULT;
++
++	blockmap.m_header.h_md_entry_type = INCFS_MD_BLOCK_MAP;
++	blockmap.m_header.h_record_size = cpu_to_le16(sizeof(blockmap));
++	blockmap.m_header.h_next_md_offset = cpu_to_le64(0);
++	blockmap.m_inode = cpu_to_le64(ino);
++	blockmap.m_block_count = cpu_to_le32(block_count);
++
++	LOCK_REQUIRED(bfc->bc_mutex);
++
++	/* Reserve 0-filled space for the blockmap body in the backing file. */
++	file_end = incfs_get_end_offset(bfc->bc_file);
++	result = append_zeros(bfc, map_size);
++	if (result)
++		return result;
++
++	/* Write blockmap metadata record pointing to the body written above. */
++	blockmap.m_base_offset = cpu_to_le64(file_end);
++	result = append_md_to_backing_file(bfc, &blockmap.m_header);
++	if (result) {
++		/* Error, rollback file changes */
++		truncate_backing_file(bfc, file_end);
++	} else if (map_base_off) {
++		*map_base_off = file_end;
++	}
++
++	return result;
++}
++
++/*
++ * Write a backing file header (superblock).
++ * It should always be called only on empty file.
++ * incfs_super_block.s_first_md_offset is 0 for now, but will be updated
++ * once first metadata record is added.
++ */
++int incfs_write_sb_to_backing_file(struct backing_file_context *bfc)
++{
++	struct incfs_super_block sb = {};
++	loff_t file_pos = 0;
++
++	if (!bfc)
++		return -EFAULT;
++
++	sb.s_magic = cpu_to_le64(INCFS_MAGIC_NUMBER);
++	sb.s_version = cpu_to_le64(INCFS_FORMAT_CURRENT_VER);
++	sb.s_super_block_size = cpu_to_le16(sizeof(sb));
++	sb.s_first_md_offset = cpu_to_le64(0);
++	sb.s_data_block_size = cpu_to_le16(INCFS_DATA_FILE_BLOCK_SIZE);
++
++	LOCK_REQUIRED(bfc->bc_mutex);
++
++	file_pos = incfs_get_end_offset(bfc->bc_file);
++	if (file_pos != 0)
++		return -EEXIST;
++
++	return write_to_bf(bfc, &sb, sizeof(sb), file_pos, true);
++}
++
++/* Write a given data block and update file's blockmap to point it. */
++int incfs_write_data_block_to_backing_file(struct backing_file_context *bfc,
++				     struct mem_range block, int block_index,
++				     loff_t bm_base_off, u16 flags, u32 crc)
++{
++	struct incfs_blockmap_entry bm_entry = {};
++	int result = 0;
++	loff_t data_offset = 0;
++	loff_t bm_entry_off =
++		bm_base_off + sizeof(struct incfs_blockmap_entry) * block_index;
++
++	if (!bfc)
++		return -EFAULT;
++
++	if (block.len >= (1 << 16) || block_index < 0)
++		return -EINVAL;
++
++	LOCK_REQUIRED(bfc->bc_mutex);
++
++	data_offset = incfs_get_end_offset(bfc->bc_file);
++	if (data_offset <= bm_entry_off) {
++		/* Blockmap entry is beyond the file's end. It is not normal. */
++		return -EINVAL;
++	}
++
++	/* Write the block data at the end of the backing file. */
++	result = write_to_bf(bfc, block.data, block.len, data_offset, false);
++	if (result)
++		return result;
++
++	/* Update the blockmap to point to the newly written data. */
++	bm_entry.me_data_offset_lo = cpu_to_le32((u32)data_offset);
++	bm_entry.me_data_offset_hi = cpu_to_le16((u16)(data_offset >> 32));
++	bm_entry.me_data_size = cpu_to_le16((u16)block.len);
++	bm_entry.me_flags = cpu_to_le16(flags);
++	bm_entry.me_data_crc = cpu_to_le32(crc);
++
++	result = write_to_bf(bfc, &bm_entry, sizeof(bm_entry),
++				bm_entry_off, false);
++
++	return result;
++}
++
++/* Initialize a new image in a given backing file. */
++int incfs_make_empty_backing_file(struct backing_file_context *bfc)
++{
++	int result = 0;
++
++	if (!bfc || !bfc->bc_file)
++		return -EFAULT;
++
++	result = mutex_lock_interruptible(&bfc->bc_mutex);
++	if (result)
++		goto out;
++
++	result = truncate_backing_file(bfc, 0);
++	if (result)
++		goto out;
++
++	result = incfs_write_sb_to_backing_file(bfc);
++out:
++	mutex_unlock(&bfc->bc_mutex);
++	return result;
++}
++
++int incfs_read_blockmap_entry(struct backing_file_context *bfc, int block_index,
++			loff_t bm_base_off,
++			struct incfs_blockmap_entry *bm_entry)
++{
++	loff_t bm_entry_off =
++		bm_base_off + sizeof(struct incfs_blockmap_entry) * block_index;
++	const size_t bytes_to_read = sizeof(struct incfs_blockmap_entry);
++	int result = 0;
++
++	if (!bfc || !bm_entry)
++		return -EFAULT;
++
++	if (block_index < 0 || bm_base_off <= 0)
++		return -ENODATA;
++
++	result = kernel_read(bfc->bc_file, bm_entry, bytes_to_read,
++			     &bm_entry_off);
++	if (result < 0)
++		return result;
++	if (result < bytes_to_read)
++		return -EIO;
++	return 0;
++}
++
++int incfs_read_superblock(struct backing_file_context *bfc,
++				loff_t *first_md_off)
++{
++	loff_t pos = 0;
++	ssize_t bytes_read = 0;
++	struct incfs_super_block sb = {};
++
++	if (!bfc || !first_md_off)
++		return -EFAULT;
++
++	LOCK_REQUIRED(bfc->bc_mutex);
++	bytes_read = kernel_read(bfc->bc_file, &sb, sizeof(sb), &pos);
++	if (bytes_read < 0)
++		return bytes_read;
++
++	if (bytes_read < sizeof(sb))
++		return -EBADMSG;
++
++	if (le64_to_cpu(sb.s_magic) != INCFS_MAGIC_NUMBER)
++		return -EILSEQ;
++
++	if (le64_to_cpu(sb.s_version) > INCFS_FORMAT_CURRENT_VER)
++		return -EILSEQ;
++
++	if (le16_to_cpu(sb.s_data_block_size) != INCFS_DATA_FILE_BLOCK_SIZE)
++		return -EILSEQ;
++
++	if (le16_to_cpu(sb.s_super_block_size) > sizeof(sb))
++		return -EILSEQ;
++
++	*first_md_off = le64_to_cpu(sb.s_first_md_offset);
++	return 0;
++}
++
++/*
++ * Read through metadata records from the backing file one by one
++ * and call provided metadata handlers.
++ */
++int incfs_read_next_metadata_record(struct backing_file_context *bfc,
++			      struct metadata_handler *handler)
++{
++	loff_t pos = 0;
++	const ssize_t max_md_size = INCFS_MAX_METADATA_RECORD_SIZE;
++	ssize_t bytes_read = 0;
++	size_t md_record_size = 0;
++	loff_t next_record = 0;
++	loff_t prev_record = 0;
++	int res = 0;
++	struct incfs_md_header *md_hdr = NULL;
++
++	if (!bfc || !handler)
++		return -EFAULT;
++
++	LOCK_REQUIRED(bfc->bc_mutex);
++
++	if (handler->md_record_offset == 0)
++		return -EPERM;
++
++	memset(&handler->md_buffer, 0, max_md_size);
++	pos = handler->md_record_offset;
++	bytes_read = kernel_read(bfc->bc_file, (u8 *)&handler->md_buffer,
++				 max_md_size, &pos);
++	if (bytes_read < 0)
++		return bytes_read;
++	if (bytes_read < sizeof(*md_hdr))
++		return -EBADMSG;
++
++	md_hdr = &handler->md_buffer.md_header;
++	next_record = le64_to_cpu(md_hdr->h_next_md_offset);
++	prev_record = le64_to_cpu(md_hdr->h_prev_md_offset);
++	md_record_size = le16_to_cpu(md_hdr->h_record_size);
++
++	if (md_record_size > max_md_size) {
++		pr_warn("incfs: The record is too large. Size: %ld",
++				md_record_size);
++		return -EBADMSG;
++	}
++
++	if (bytes_read < md_record_size) {
++		pr_warn("incfs: The record hasn't been fully read.");
++		return -EBADMSG;
++	}
++
++	if (next_record <= handler->md_record_offset && next_record != 0) {
++		pr_warn("incfs: Next record (%lld) points back in file.",
++			next_record);
++		return -EBADMSG;
++	}
++
++	if (prev_record != handler->md_prev_record_offset) {
++		pr_warn("incfs: Metadata chain has been corrupted.");
++		return -EBADMSG;
++	}
++
++	if (le32_to_cpu(md_hdr->h_record_crc) != calc_md_crc(md_hdr)) {
++		pr_warn("incfs: Metadata CRC mismatch.");
++		return -EBADMSG;
++	}
++
++	switch (md_hdr->h_md_entry_type) {
++	case INCFS_MD_NONE:
++		break;
++	case INCFS_MD_INODE:
++		if (handler->handle_inode)
++			res = handler->handle_inode(&handler->md_buffer.inode,
++						    handler);
++		break;
++	case INCFS_MD_BLOCK_MAP:
++		if (handler->handle_blockmap)
++			res = handler->handle_blockmap(
++				&handler->md_buffer.blockmap, handler);
++		break;
++	case INCFS_MD_DIR_ACTION:
++		if (handler->handle_dir_action)
++			res = handler->handle_dir_action(
++				&handler->md_buffer.dir_action, handler);
++		break;
++	default:
++		res = -ENOTSUPP;
++		break;
++	}
++
++	if (!res) {
++		if (next_record == 0) {
++			/*
++			 * Zero offset for the next record means that the last
++			 * metadata record has just been processed.
++			 */
++			bfc->bc_last_md_record_offset =
++				handler->md_record_offset;
++		}
++		handler->md_prev_record_offset = handler->md_record_offset;
++		handler->md_record_offset = next_record;
++	}
++	return res;
++}
+diff --git a/fs/incfs/format.h b/fs/incfs/format.h
 new file mode 100644
-index 000000000000..5bcf66ac852b
+index 000000000000..2c2114bdd08f
 --- /dev/null
-+++ b/include/uapi/linux/incrementalfs.h
-@@ -0,0 +1,189 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++++ b/fs/incfs/format.h
+@@ -0,0 +1,294 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Userspace interface for Incremental FS.
-+ *
-+ * Incremental FS is special-purpose Linux virtual file system that allows
-+ * execution of a program while its binary and resource files are still be=
-ing
-+ * lazily downloaded over the network, USB etc.
-+ *
-+ * Copyright 2019 Google LLC
++ * Copyright 2018 Google LLC
 + */
-+#ifndef _UAPI_LINUX_INCREMENTALFS_H
-+#define _UAPI_LINUX_INCREMENTALFS_H
 +
-+#include <linux/limits.h>
-+#include <linux/ioctl.h>
++/*
++ * Overview
++ * --------
++ * The backbone of the incremental-fs ondisk format is an append only linked
++ * list of metadata blocks. Each metadata block contains an offset of the next
++ * one. These blocks describe files and directories on the
++ * file system. They also represent actions of adding and removing file names
++ * (hard links).
++ *
++ * Every time incremental-fs instance is mounted, it reads through this list
++ * to recreate filesystem's state in memory. An offset of the first record in
++ * the metadata list is stored in the superblock at the beginning of the backing
++ * file.
++ *
++ * Most of the backing file is taken by data areas and blockmaps.
++ * Since data blocks can be compressed and have different sizes,
++ * single per-file data area can't be pre-allocated. That's why blockmaps are
++ * needed in order to find a location and size of each data block in
++ * the backing file. Each time a file is created, a corresponding block map is
++ * allocated to store future offsets of data blocks.
++ *
++ * Whenever a data block is given by data loader to incremental-fs:
++ *   - A data area with the given block is appended to the end of
++ *     the backing file.
++ *   - A record in the blockmap for the given block index is updated to reflect
++ *     its location, size, and compression algorithm.
++
++ * Metadata records
++ * ----------------
++ * incfs_inode - metadata record to declare a file or a directory.
++ *                    incfs_inode.i_mode determents if it is a file
++ *                    or a directory.
++ * incfs_blockmap_entry - metadata record that specifies size and location
++ *                           of a blockmap area for a given file. This area
++ *                           contains an array of incfs_blockmap_entry-s.
++ * incfs_dir_action - metadata record that specifies changes made to a
++ *                   to a directory structure, e.g. add or remove a hardlink.
++ *
++ * Metadata header
++ * ---------------
++ * incfs_md_header - header of a metadata record. It's always a part
++ *                   of other structures and served purpose of metadata
++ *                   bookkeeping.
++ *
++ *              +-----------------------------------------------+       ^
++ *              |            incfs_md_header                    |       |
++ *              | 1. type of body(INODE, BLOCKMAP, DIR ACTION..)|       |
++ *              | 2. size of the whole record header + body     |       |
++ *              | 3. CRC the whole record header + body         |       |
++ *              | 4. offset of the previous md record           |]------+
++ *              | 5. offset of the next md record (md link)     |]---+
++ *              +-----------------------------------------------+    |
++ *              |  Metadata record body with useful data        |    |
++ *              +-----------------------------------------------+    |
++ *                                                                   +--->
++ *
++ * Other ondisk structures
++ * -----------------------
++ * incfs_super_block - backing file header
++ * incfs_blockmap_entry - a record in a blockmap area that describes size
++ *                       and location of a data block.
++ * Data blocks dont have any particular structure, they are written to the
++ * backing file in a raw form as they come from a data loader.
++ *
++ * Backing file layout
++ * -------------------
++ *
++ *
++ *              +-------------------------------------------+
++ *              |            incfs_super_block              |]---+
++ *              +-------------------------------------------+    |
++ *              |                 metadata                  |<---+
++ *              |                incfs_inode                |]---+
++ *              +-------------------------------------------+    |
++ *                        .........................              |
++ *              +-------------------------------------------+    |   metadata
++ *     +------->|               blockmap area               |    |  list links
++ *     |        |          [incfs_blockmap_entry]           |    |
++ *     |        |          [incfs_blockmap_entry]           |    |
++ *     |        |          [incfs_blockmap_entry]           |    |
++ *     |    +--[|          [incfs_blockmap_entry]           |    |
++ *     |    |   |          [incfs_blockmap_entry]           |    |
++ *     |    |   |          [incfs_blockmap_entry]           |    |
++ *     |    |   +-------------------------------------------+    |
++ *     |    |             .........................              |
++ *     |    |   +-------------------------------------------+    |
++ *     |    |   |                 metadata                  |<---+
++ *     +----|--[|               incfs_blockmap              |]---+
++ *          |   +-------------------------------------------+    |
++ *          |             .........................              |
++ *          |   +-------------------------------------------+    |
++ *          +-->|                 data block                |    |
++ *              +-------------------------------------------+    |
++ *                        .........................              |
++ *              +-------------------------------------------+    |
++ *              |                 metadata                  |<---+
++ *              |             incfs_dir_action              |
++ *              +-------------------------------------------+
++ */
++#ifndef _INCFS_FORMAT_H
++#define _INCFS_FORMAT_H
 +#include <linux/types.h>
++#include <linux/kernel.h>
++#include <uapi/linux/incrementalfs.h>
 +
-+/* =3D=3D=3D=3D=3D constants =3D=3D=3D=3D=3D */
-+#define INCFS_NAME "incremental-fs"
-+#define INCFS_MAGIC_NUMBER (0x5346434e49ul)
-+#define INCFS_DATA_FILE_BLOCK_SIZE 4096
-+#define INCFS_HEADER_VER 1
++#include "internal.h"
 +
-+#define INCFS_MAX_FILES 1000
-+#define INCFS_COMMAND_INODE 1
-+#define INCFS_ROOT_INODE 2
++#define INCFS_MAX_NAME_LEN 255
++#define INCFS_FORMAT_V1 1
++#define INCFS_FORMAT_CURRENT_VER INCFS_FORMAT_V1
 +
-+#define INCFS_IOCTL_BASE_CODE 'g'
-+
-+/* =3D=3D=3D=3D=3D ioctl requests on command file =3D=3D=3D=3D=3D */
-+
-+/* Make changes to the file system via incfs instructions. */
-+#define INCFS_IOC_PROCESS_INSTRUCTION \
-+	_IOWR(INCFS_IOCTL_BASE_CODE, 30, struct incfs_instruction)
-+
-+enum incfs_compression_alg { COMPRESSION_NONE =3D 0, COMPRESSION_LZ4 =3D 1=
- };
-+
-+/*
-+ * Description of a pending read. A pending read - a read call by
-+ * a userspace program for which the filesystem currently doesn't have dat=
-a.
-+ *
-+ * This structs can be read from .cmd file to obtain a set of reads which
-+ * are currently pending.
-+ */
-+struct incfs_pending_read_info {
-+	/* Inode number of a file that is being read from. */
-+	__aligned_u64 file_ino;
-+
-+	/* Index of a file block that is being read. */
-+	__u32 block_index;
-+
-+	/* A serial number of this pending read. */
-+	__u32 serial_number;
++enum incfs_metadata_type {
++	INCFS_MD_NONE = 0,
++	INCFS_MD_INODE = 1,
++	INCFS_MD_BLOCK_MAP = 2,
++	INCFS_MD_DIR_ACTION = 3
 +};
 +
-+/*
-+ * A struct to be written into a .cmd file to provide a data block for a f=
-ile.
-+ */
-+struct incfs_new_data_block {
-+	/* Inode number of a file this block belongs to. */
-+	__aligned_u64 file_ino;
-+
-+	/* Index of a data block. */
-+	__u32 block_index;
-+
-+	/* Length of data */
-+	__u32 data_len;
++/* Header included at the beginning of all metadata records on the disk. */
++struct incfs_md_header {
++	__u8 h_md_entry_type;
 +
 +	/*
-+	 * A pointer ot an actual data for the block.
-+	 *
-+	 * Equivalent to: __u8 *data;
++	 * Size of the metadata record.
++	 * (e.g. inode, dir entry etc) not just this struct.
 +	 */
-+	__aligned_u64 data;
++	__le16 h_record_size;
 +
 +	/*
-+	 * Compression algorithm used to compress the data block.
-+	 * Values from enum incfs_compression_alg.
++	 * CRC32 of the metadata record.
++	 * (e.g. inode, dir entry etc) not just this struct.
 +	 */
-+	__u32 compression;
++	__le32 h_record_crc;
 +
-+	__u32 reserved1;
++	/* Offset of the next metadata entry if any */
++	__le64 h_next_md_offset;
 +
-+	__aligned_u64 reserved2;
++	/* Offset of the previous metadata entry if any */
++	__le64 h_prev_md_offset;
++
++} __packed;
++
++/* Backing file header */
++struct incfs_super_block {
++	__le64 s_magic; /* Magic signature: INCFS_MAGIC_NUMBER */
++	__le64 s_version; /* Format version: INCFS_FORMAT_CURRENT_VER */
++	__le16 s_super_block_size; /* sizeof(incfs_super_block) */
++	__le32 s_flags; /* Reserved for future use. */
++	__le64 s_first_md_offset; /* Offset of the first metadata record */
++	__le16 s_data_block_size; /* INCFS_DATA_FILE_BLOCK_SIZE */
++} __packed;
++
++/* Metadata record for files and directories. Type = INCFS_MD_INODE */
++struct incfs_inode {
++	struct incfs_md_header i_header;
++	__le64 i_no; /* inode number */
++	__le64 i_size; /* Full size of the file's content */
++	__le16 i_mode; /* File mode */
++	__le32 i_flags; /* Reserved for future use. */
++} __packed;
++
++enum incfs_block_map_entry_flags {
++	INCFS_BLOCK_COMPRESSED_LZ4 = (1 << 0),
 +};
 +
-+enum incfs_instruction_type {
-+	INCFS_INSTRUCTION_NOOP =3D 0,
-+	INCFS_INSTRUCTION_NEW_FILE =3D 1,
-+	INCFS_INSTRUCTION_ADD_DIR_ENTRY =3D 3,
-+	INCFS_INSTRUCTION_REMOVE_DIR_ENTRY =3D 4,
++/* Block map entry pointing to an actual location of the data block. */
++struct incfs_blockmap_entry {
++	/* Offset of the actual data block. Lower 32 bits */
++	__le32 me_data_offset_lo;
++
++	/* Offset of the actual data block. Higher 16 bits */
++	__le16 me_data_offset_hi;
++
++	/* How many bytes the data actually occupies in the backing file */
++	__le16 me_data_size;
++
++	/* Block flags from incfs_block_map_entry_flags */
++	__u16 me_flags;
++
++	/* CRC32 of the block's data */
++	__le32 me_data_crc;
++} __packed;
++
++/* Metadata record for locations of file blocks. Type = INCFS_MD_BLOCK_MAP */
++struct incfs_blockmap {
++	struct incfs_md_header m_header;
++	/* inode of a file this map belongs to */
++	__le64 m_inode;
++
++	/* Base offset of the array of incfs_blockmap_entry */
++	__le64 m_base_offset;
++
++	/* Size of the map entry array in blocks */
++	__le32 m_block_count;
++} __packed;
++
++enum incfs_dir_action_type {
++	INCFS_DIRA_NONE = 0,
++	INCFS_DIRA_ADD_ENTRY = 1,
++	INCFS_DIRA_REMOVE_ENTRY = 2,
 +};
 +
-+/*
-+ * Create a new file or directory.
-+ * Corresponds to INCFS_INSTRUCTION_NEW_FILE
-+ */
-+struct incfs_new_file_instruction {
-+	/*
-+	 * [Out param. Populated by the kernel after ioctl.]
-+	 * Inode number of a newly created file.
-+	 */
-+	__aligned_u64 ino_out;
++/* Metadata record of directory content change. Type = INCFS_MD_DIR_ACTION */
++struct incfs_dir_action {
++	struct incfs_md_header da_header;
++	__le64 da_dir_inode; /* Parent directory inode number */
++	__le64 da_entry_inode; /* File/subdirectory inode number */
++	__u8 da_type; /* One of enums incfs_dir_action_type */
++	__u8 da_name_len; /* Name length */
++	char da_name[INCFS_MAX_NAME_LEN]; /* File name */
++} __packed;
++
++/* State of the backing file. */
++struct backing_file_context {
++	/* Protects writes to bc_file */
++	struct mutex bc_mutex;
++
++	/* File object to read data from */
++	struct file *bc_file;
 +
 +	/*
-+	 * Total size of the new file. Ignored if S_ISDIR(mode).
++	 * Offset of the last known metadata record in the backing file.
++	 * 0 means there are no metadata records.
 +	 */
-+	__aligned_u64 size;
-+
-+	/*
-+	 * File mode. Permissions and dir flag.
-+	 */
-+	__u16 mode;
-+
-+	__u16 reserved1;
-+
-+	__u32 reserved2;
-+
-+	__aligned_u64 reserved3;
-+
-+	__aligned_u64 reserved4;
-+
-+	__aligned_u64 reserved5;
-+
-+	__aligned_u64 reserved6;
-+
-+	__aligned_u64 reserved7;
++	loff_t bc_last_md_record_offset;
 +};
 +
-+/*
-+ * Create or remove a name (aka hardlink) for a file in a directory.
-+ * Corresponds to
-+ * INCFS_INSTRUCTION_ADD_DIR_ENTRY,
-+ * INCFS_INSTRUCTION_REMOVE_DIR_ENTRY
-+ */
-+struct incfs_dir_entry_instruction {
-+	/* Inode number of a directory to add/remove a file to/from. */
-+	__aligned_u64 dir_ino;
-+
-+	/* File to add/remove. */
-+	__aligned_u64 child_ino;
-+
-+	/* Length of name field */
-+	__u32 name_len;
-+
-+	__u32 reserved1;
-+
-+	/*
-+	 * A pointer to the name characters of a file to add/remove
-+	 *
-+	 * Equivalent to: char *name;
-+	 */
-+	__aligned_u64 name;
-+
-+	__aligned_u64 reserved2;
-+
-+	__aligned_u64 reserved3;
-+
-+	__aligned_u64 reserved4;
-+
-+	__aligned_u64 reserved5;
-+};
-+
-+/*
-+ * An Incremental FS instruction is the way for userspace
-+ * to
-+ *   - create files and directories
-+ *   - show and hide files in the directory structure
-+ */
-+struct incfs_instruction {
-+	/* Populate with INCFS_HEADER_VER */
-+	__u32 version;
-+
-+	/*
-+	 * Type - what this instruction actually does.
-+	 * Values from enum incfs_instruction_type.
-+	 */
-+	__u32 type;
++struct metadata_handler {
++	loff_t md_record_offset;
++	loff_t md_prev_record_offset;
++	void *context;
 +
 +	union {
-+		struct incfs_new_file_instruction file;
-+		struct incfs_dir_entry_instruction dir_entry;
++		struct incfs_md_header md_header;
++		struct incfs_inode inode;
++		struct incfs_blockmap blockmap;
++		struct incfs_dir_action dir_action;
++	} md_buffer;
 +
-+		/* Hard limit on the instruction body size in the future. */
-+		__u8 reserved[64];
-+	};
++	int (*handle_inode)(struct incfs_inode *inode,
++			    struct metadata_handler *handler);
++	int (*handle_blockmap)(struct incfs_blockmap *bm,
++			       struct metadata_handler *handler);
++	int (*handle_dir_action)(struct incfs_dir_action *da,
++				 struct metadata_handler *handler);
++};
++#define INCFS_MAX_METADATA_RECORD_SIZE \
++	FIELD_SIZEOF(struct metadata_handler, md_buffer)
++
++loff_t incfs_get_end_offset(struct file *f);
++
++/* Backing file context management */
++struct backing_file_context *incfs_alloc_bfc(struct file *backing_file);
++
++void incfs_free_bfc(struct backing_file_context *bfc);
++
++/* Writing stuff */
++int incfs_write_inode_to_backing_file(struct backing_file_context *bfc, u64 ino,
++				      u64 size, u16 mode);
++
++int incfs_write_dir_action(struct backing_file_context *bfc, u64 dir_ino,
++			   u64 dentry_ino, enum incfs_dir_action_type type,
++			   struct mem_range name);
++
++int incfs_write_blockmap_to_backing_file(struct backing_file_context *bfc,
++					 u64 ino, u32 block_count,
++					 loff_t *map_base_off);
++
++int incfs_write_sb_to_backing_file(struct backing_file_context *bfc);
++
++int incfs_write_data_block_to_backing_file(struct backing_file_context *bfc,
++					   struct mem_range block,
++					   int block_index, loff_t bm_base_off,
++					   u16 flags, u32 crc);
++
++int incfs_make_empty_backing_file(struct backing_file_context *bfc);
++
++/* Reading stuff */
++int incfs_read_superblock(struct backing_file_context *bfc,
++			  loff_t *first_md_off);
++
++int incfs_read_blockmap_entry(struct backing_file_context *bfc, int block_index,
++			      loff_t bm_base_off,
++			      struct incfs_blockmap_entry *bm_entry);
++
++int incfs_read_next_metadata_record(struct backing_file_context *bfc,
++				    struct metadata_handler *handler);
++
++#endif /* _INCFS_FORMAT_H */
+diff --git a/fs/incfs/internal.h b/fs/incfs/internal.h
+new file mode 100644
+index 000000000000..de8b6240e347
+--- /dev/null
++++ b/fs/incfs/internal.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright 2018 Google LLC
++ */
++#ifndef _INCFS_INTERNAL_H
++#define _INCFS_INTERNAL_H
++#include <linux/types.h>
++
++struct mem_range {
++	u8 *data;
++	size_t len;
 +};
 +
-+#endif /* _UAPI_LINUX_INCREMENTALFS_H */
++static inline struct mem_range range(u8 *data, size_t len)
++{
++	return (struct mem_range){ .data = data, .len = len };
++}
++
++#ifdef DEBUG
++#define LOCK_REQUIRED(lock)                                                    \
++	do {                                                                   \
++		if (!mutex_is_locked(&(lock))) {                               \
++			pr_err(#lock " must be taken");                        \
++			panic("Lock not taken.");                              \
++		}                                                              \
++	} while (0)
++#else
++#define LOCK_REQUIRED(lock)
++#endif
++
++#endif /* _INCFS_INTERNAL_H */
 --
 2.21.0.593.g511ec345e18-goog
 
