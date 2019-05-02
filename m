@@ -2,79 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5219B121EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 20:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF59412220
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 20:46:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbfEBSeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 14:34:08 -0400
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:38465 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbfEBSeI (ORCPT
+        id S1726411AbfEBSp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 14:45:56 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:33247 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbfEBSpz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 14:34:08 -0400
-Received: by mail-wr1-f41.google.com with SMTP id k16so4753091wrn.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 11:34:07 -0700 (PDT)
+        Thu, 2 May 2019 14:45:55 -0400
+Received: by mail-oi1-f194.google.com with SMTP id l1so2567742oib.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 11:45:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=GtI5Tb9SFBI3B1ZJB/GXq7EgjI6y6AfHAArnGC6S7II=;
-        b=YZubNvfw9f08VAVmYeysQ9beos02k15haIkRxMOFmawa+twb34tHDAQbpIGYDLf/ow
-         5scMUVXNBgM+9R19bmM9rwONYjqDAO+8yXQMhaFMXC9+x+G8n5t6QC0ow02qqGvxSqnO
-         p4B/3upKa4Dy2JinaA++qF5jn6tWzlevr0IGMztZRAZ2YX8T5yHXGI9DRGPIufdbiufc
-         D3XqtIdFVuAGXbzt1/il2mFUasHbp5p1XYlBj0IH4vGo6IYGnmEhUt+0kp2yhuss8Om/
-         mZDMUFUk8KSWKdj5ZYX04wKFB/VuaMAsq+wV6GkPq7jyN3xsnEgQKuvUYEuHjLyRZvHy
-         rzUA==
+        bh=17OVt5sF62dgswwCTgJsxP7RAt3WsAf5VJ4Ut9AHOnQ=;
+        b=P9mmkEctGFviK6NgZSHwMcUWXoaX/YoeIAK9bJMcE3Lx9wj9ioBeHG7azUaTRvfMEz
+         TY2RHOx0ThWPnz2RyK/JeVea8tpHo/vQkabwSgIPQaucOPCDrRgdtpJvHIeyfXSXZIdh
+         EEpMDUWFYZWhjIh9jDc8FJvMTlSL8vQ8VfgY4koM+if0RzgjLUM+G7N96Iar9oJO2RWW
+         y2bZo1FvLirTsbvZcF5UvfSKsfdjWdxyGHNZOdT8DOFyQvGPVysWQaUTlUo3hkMnOD0e
+         RSC2W/FJE39vCVMCViynhllAgBlnR6+D6q04cTiRfgx2IG0+4k0zkzJ9Spq984jh3G9l
+         lWjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GtI5Tb9SFBI3B1ZJB/GXq7EgjI6y6AfHAArnGC6S7II=;
-        b=k90XIFfs7rZzgtRiuzxAnxDF77wI3tllvVToqVrRbd2y8NxVoQowCfSl7dB0Fyqiem
-         HvSyBjwVEx4QDaSbvPBswXJT3et/vZ1fPi/20jVX+L0PEQPcCg5Z30HYKAld+5K2VnSO
-         Fd8WHn+Q476FKkK4LLmtfHlQBEh8j3LiRQF6r7a7t30KpUdGIsbVf6ZwXmYwDQidXyWU
-         lg8xCM+ZFrPy8rNUci25GBFdcXDwmUfM810HTKQcFujkNfguwxy0JJgTdgvTry+0DDyO
-         mpQ2FgjKReSmKMbwfB5DvPoSX636x9Eo3YrWJlR6fhrbgj1aRlfjfcJATknPNlS6FyaC
-         /zvA==
-X-Gm-Message-State: APjAAAU3yWE8cjPO7y9k+OgR0OBK29XqSNepwIYwhiYxKB4eV8yN5WPC
-        rEnHdQoJenV3YgjEoiE2ETfeQXOmXxsRFrV0IOE=
-X-Google-Smtp-Source: APXvYqxnemZ2e4ppbL14WpVcnBspRgB/L+6moy8AKRGouftY1xWm19feySTLfd4DlRWcjMCCXtCpaNXUzjbeycD6yhY=
-X-Received: by 2002:a5d:5343:: with SMTP id t3mr4022565wrv.262.1556822046255;
- Thu, 02 May 2019 11:34:06 -0700 (PDT)
+        bh=17OVt5sF62dgswwCTgJsxP7RAt3WsAf5VJ4Ut9AHOnQ=;
+        b=k9ivNqZSAW37ujeSMj416eAQMip+rbpjgV9bE8yikvv7fKylEhaBKz9t68XLHL/E/I
+         dIWUXj9s2fTRsprYAO/0zcRW0sPtGypmZ3BqwOWDVpKodTsNWTVczu3/CvRVpqcOEEf/
+         f6wYxd+FaaSJEKd3yRhZdtMBMJ9pP9ID6DElobgGTWgHO8jxPDpgZ8Fp/ReTVvQolmI1
+         FHx5cvOeLv5KapjdWU70Sx92nhQlfz6BSdPHTpbO4RougzSKktk/+jjG97f2lhfvuYiw
+         wwZezNTXF9wqKv1Tj+xUdWlAPn8DRhFUhJQTZc31BYfT/r48YH9y3nlgm68mx6h50zPX
+         ewug==
+X-Gm-Message-State: APjAAAVdZlhm7nkgVgOaEVq8kIkSA5Lm7L6SSMp31pPPcmlMhNOGegSP
+        CyJ8zopq6+l/GEuaHCrykvtUWQcCVoIp/1aYBAt6qQ==
+X-Google-Smtp-Source: APXvYqzC6lEhFzCwba9WNGtoNJlN2/sxNxsRqKIHnQJUgSQQ4oc4XCI9kW3OGRwazcEXau+lGinuQZlka+T3d8xNOxI=
+X-Received: by 2002:aca:4586:: with SMTP id s128mr3264542oia.148.1556822754511;
+ Thu, 02 May 2019 11:45:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190502040331.81196-1-ezemtsov@google.com> <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
- <CAFLxGvyfeuwhX=9Fu2XAoT7mxgKmr7T=238y8Mf8yAZnNXnOhg@mail.gmail.com>
-In-Reply-To: <CAFLxGvyfeuwhX=9Fu2XAoT7mxgKmr7T=238y8Mf8yAZnNXnOhg@mail.gmail.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Thu, 2 May 2019 20:33:55 +0200
-Message-ID: <CAFLxGvzPTA89j2RZnYsaQTdpmfo_=Xnw7fs38fw4t0H=CHUneA@mail.gmail.com>
-Subject: Re: Initial patches for Incremental FS
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     ezemtsov@google.com, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Miklos Szeredi <miklos@szeredi.hu>
+References: <20190501230126.229218-1-brendanhiggins@google.com>
+ <20190501230126.229218-17-brendanhiggins@google.com> <20190502110347.GE12416@kroah.com>
+ <ECADFF3FD767C149AD96A924E7EA6EAF9770A3A0@USCULXMSG01.am.sony.com>
+In-Reply-To: <ECADFF3FD767C149AD96A924E7EA6EAF9770A3A0@USCULXMSG01.am.sony.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 2 May 2019 11:45:43 -0700
+Message-ID: <CAFd5g471Wawu6g14p0AO3aY8VPBKLA0mjHSdfR1qStFGzp3iGQ@mail.gmail.com>
+Subject: Re: [PATCH v2 16/17] kernel/sysctl-test: Add null pointer test for sysctl.c:proc_dointvec()
+To:     "Bird, Timothy" <Tim.Bird@sony.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah@kernel.org, devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
+        Iurii Zaikin <yzaikin@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 2, 2019 at 8:16 PM Richard Weinberger
-<richard.weinberger@gmail.com> wrote:
-> > Piling logic into the kernel is not the answer.
-> > Adding the missing interfaces to the kernel is the answer.
+On Thu, May 2, 2019 at 11:15 AM <Tim.Bird@sony.com> wrote:
 >
-> I wonder whether userfaultfd can but used for that use-case too?
+>
+>
+> > -----Original Message-----
+> > From: Greg KH
+> >
+> > On Wed, May 01, 2019 at 04:01:25PM -0700, Brendan Higgins wrote:
+> > > From: Iurii Zaikin <yzaikin@google.com>
+> > >
+> > > KUnit tests for initialized data behavior of proc_dointvec that is
+> > > explicitly checked in the code. Includes basic parsing tests including
+> > > int min/max overflow.
+> > >
+> > > Signed-off-by: Iurii Zaikin <yzaikin@google.com>
+> > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > > ---
+> > >  kernel/Makefile      |   2 +
+> > >  kernel/sysctl-test.c | 292
+> > +++++++++++++++++++++++++++++++++++++++++++
+> > >  lib/Kconfig.debug    |   6 +
+> > >  3 files changed, 300 insertions(+)
+> > >  create mode 100644 kernel/sysctl-test.c
+> > >
+> > > diff --git a/kernel/Makefile b/kernel/Makefile
+> > > index 6c57e78817dad..c81a8976b6a4b 100644
+> > > --- a/kernel/Makefile
+> > > +++ b/kernel/Makefile
+> > > @@ -112,6 +112,8 @@ obj-$(CONFIG_HAS_IOMEM) += iomem.o
+> > >  obj-$(CONFIG_ZONE_DEVICE) += memremap.o
+> > >  obj-$(CONFIG_RSEQ) += rseq.o
+> > >
+> > > +obj-$(CONFIG_SYSCTL_KUNIT_TEST) += sysctl-test.o
+> >
+> > You are going to have to have a "standard" naming scheme for test
+> > modules, are you going to recommend "foo-test" over "test-foo"?  If so,
+> > that's fine, we should just be consistant and document it somewhere.
+> >
+> > Personally, I'd prefer "test-foo", but that's just me, naming is hard...
+>
+> My preference would be "test-foo" as well.  Just my 2 cents.
 
-...hit the send button too eary.
+I definitely agree we should be consistent. My personal bias
+(unsurprisingly) is "foo-test," but this is just because that is the
+convention I am used to in other projects I have worked on.
 
-My thought is, userfaultfd is used to support live migration of VMs such that
-pages from the remote side are loaded on demand.
-Sounds a little like the android app use-case, hm?
+On an unbiased note, we are currently almost evenly split between the
+two conventions with *slight* preference for "foo-test": I ran the two
+following grep commands on v5.1-rc7:
 
-The loader (ld-linux) runs the app and using userfaultfd missing pages
-get downloaded on demand.
+grep -Hrn --exclude-dir="build" -e "config [a-zA-Z_0-9]\+_TEST$" | wc -l
+grep -Hrn --exclude-dir="build" -e "config TEST_[a-zA-Z_0-9]\+" | wc -l
 
--- 
-Thanks,
-//richard
+"foo-test" has 36 occurrences.
+"test-foo" has 33 occurrences.
+
+The things I am more concerned about is how this would affect file
+naming. If we have a unit test for foo.c, I think foo_test.c is more
+consistent with our namespacing conventions. The other thing, is if we
+already have a Kconfig symbol called FOO_TEST (or TEST_FOO) what
+should we name the KUnit test in this case? FOO_UNIT_TEST?
+FOO_KUNIT_TEST, like I did above?
+
+Cheers
