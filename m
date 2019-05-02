@@ -2,85 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E47F11AC1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 16:04:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFB1B11AC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 16:05:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbfEBOEb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 10:04:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41754 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbfEBOEb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 10:04:31 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB3F1206DF;
-        Thu,  2 May 2019 14:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556805870;
-        bh=Wa7agHm7Un4ja3yaCvgGgD1ND3pUZJ7MD4aKZiRFMCM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=yX5jTSzrUif4ca3k3xa8i9BRvwX2CoEc3LSZADtQzBQU989uyUErZwEyIeGvuAtbz
-         UMq4IZzjZwSlSfIlEfCCs4JueRJdLmpmGVu4hBGn/PniD+9zEIFE0G2oc27b7amOah
-         TyFD1OvQOYCZcqsTjmi92jjUJmi6G3VQLb2z3k/0=
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     frowand.list@gmail.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        robh@kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com, shuah <shuah@kernel.org>
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190502105053.GA12416@kroah.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <76e84d54-6b7e-8cc1-492b-43822fc43ac4@kernel.org>
-Date:   Thu, 2 May 2019 08:04:14 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726380AbfEBOFD convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 2 May 2019 10:05:03 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41975 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfEBOFC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 May 2019 10:05:02 -0400
+Received: by mail-oi1-f194.google.com with SMTP id v23so1754766oif.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 07:05:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4IqJbBFrVtTZ0oqzJ67Gm9A7iC2geeoklI44WKE5eEI=;
+        b=rSVU3uPsADs9ob9nE5Rzp/4iKZBmWp6sasU2oS6YDoclrBvmTVOTx7KL3uLK2Mf1rp
+         +1cMoNmj2jF091bWUlKGMCzy3GtMcyQSjOUHkHmfjI6/jT0rMmpjVS0GAEZ4rs4ydht0
+         lICSG9bvCPzemesx0pRVBYyNCiH2NGHhItvVvqBE08DvVmHUyFpKSNRVpaGOQMdXhSMc
+         k+LnsbO0DEzCH76BBEhkI6VO8MaQTdNrENMMt5K6INr1TuOhQmh+HK3qOSzzUZ0l/NAJ
+         pTvZp5EAmKurAj5SeUe3B8SDK5hiVghyi8g1LWkCj23p5Sz6xzL4LKgQIVW9T1qBR10l
+         CCIg==
+X-Gm-Message-State: APjAAAWasOR9M8jp1BkJf7YDtavAeMwph9yGsJAVAynxLm6VIQ2D7tEp
+        zLikrYoXD/eqTaYS93HQRcOCUkbGWJ9/VY4GCYjz9w==
+X-Google-Smtp-Source: APXvYqxQaPoecIhQ0ywakL0+8rFGAnEtV+06xebpZjZ4MXPOOp6535GBw75TR32zAWw/jHJ5jS5EoUX8/OA/7dCk4P0=
+X-Received: by 2002:aca:f086:: with SMTP id o128mr2371553oih.101.1556805901943;
+ Thu, 02 May 2019 07:05:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190502105053.GA12416@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAJfpeguwUtRWRGmNmimNp-FXzWqMCCQMb24iWPu0w_J0_rOnnw@mail.gmail.com>
+ <20161205151933.GA17517@fieldses.org> <CAJfpegtpkavseTFLspaC7svbvHRq-0-7jvyh63+DK5iWHTGnaQ@mail.gmail.com>
+ <20161205162559.GB17517@fieldses.org> <CAHpGcMKHjic6L+J0qvMYNG9hVCcDO1hEpx4BiEk0ZCKDV39BmA@mail.gmail.com>
+ <266c571f-e4e2-7c61-5ee2-8ece0c2d06e9@web.de> <CAHpGcMKmtppfn7PVrGKEEtVphuLV=YQ2GDYKOqje4ZANhzSgDw@mail.gmail.com>
+ <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com>
+ <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com>
+ <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com>
+ <20161206185806.GC31197@fieldses.org> <87bm0l4nra.fsf@notabene.neil.brown.name>
+ <CAOQ4uxjYEjqbLcVYoUaPzp-jqY_3tpPBhO7cE7kbq63XrPRQLQ@mail.gmail.com> <875zqt4igg.fsf@notabene.neil.brown.name>
+In-Reply-To: <875zqt4igg.fsf@notabene.neil.brown.name>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Thu, 2 May 2019 16:04:50 +0200
+Message-ID: <CAHc6FU52OCCGUnHXOCFTv1diP_5i4yZvF6fAth9=aynwS+twQg@mail.gmail.com>
+Subject: Re: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
+To:     NeilBrown <neilb@suse.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>,
+        Patrick Plagwitz <Patrick_Plagwitz@web.de>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/2/19 4:50 AM, Greg KH wrote:
-> On Wed, May 01, 2019 at 04:01:09PM -0700, Brendan Higgins wrote:
->> ## TLDR
->>
->> I rebased the last patchset on 5.1-rc7 in hopes that we can get this in
->> 5.2.
-> 
-> That might be rushing it, normally trees are already closed now for
-> 5.2-rc1 if 5.1-final comes out this Sunday.
-> 
->> Shuah, I think you, Greg KH, and myself talked off thread, and we agreed
->> we would merge through your tree when the time came? Am I remembering
->> correctly?
-> 
-> No objection from me.
-> 
+On Thu, 2 May 2019 at 05:57, NeilBrown <neilb@suse.com> wrote:
+> On Wed, May 01 2019, Amir Goldstein wrote:
+> > On Wed, May 1, 2019 at 10:03 PM NeilBrown <neilb@suse.com> wrote:
+> >> On Tue, Dec 06 2016, J. Bruce Fields wrote:
+> >> > On Tue, Dec 06, 2016 at 02:18:31PM +0100, Andreas Gruenbacher wrote:
+> >> >> On Tue, Dec 6, 2016 at 11:08 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >> >> > On Tue, Dec 6, 2016 at 12:24 AM, Andreas Grünbacher
+> >> >> > <andreas.gruenbacher@gmail.com> wrote:
+> >> >> >> 2016-12-06 0:19 GMT+01:00 Andreas Grünbacher <andreas.gruenbacher@gmail.com>:
+> >> >> >
+> >> >> >>> It's not hard to come up with a heuristic that determines if a
+> >> >> >>> system.nfs4_acl value is equivalent to a file mode, and to ignore the
+> >> >> >>> attribute in that case. (The file mode is transmitted in its own
+> >> >> >>> attribute already, so actually converting .) That way, overlayfs could
+> >> >> >>> still fail copying up files that have an actual ACL. It's still an
+> >> >> >>> ugly hack ...
+> >> >> >>
+> >> >> >> Actually, that kind of heuristic would make sense in the NFS client
+> >> >> >> which could then hide the "system.nfs4_acl" attribute.
 
-Yes. I can take these through kselftest tree when the time comes.
-Agree with Greg that 5.2 might be rushing it. 5.3 would be a good
-target.
+I still think the nfs client could make this problem mostly go away by
+not exposing "system.nfs4_acl" xattrs when the acl is equivalent to
+the file mode. The richacl patches contain a workable abgorithm for
+that. The problem would remain for files that have an actual NFS4 ACL,
+which just cannot be mapped to a file mode or to POSIX ACLs in the
+general case, as well as for files that have a POSIX ACL. Mapping NFS4
+ACL that used to be a POSIX ACL back to POSIX ACLs could be achieved
+in many cases as well, but the code would be quite messy. A better way
+seems to be to using a filesystem that doesn't support POSIX ACLs in
+the first place. Unfortunately, xfs doesn't allow turning off POSIX
+ACLs, for example.
 
-thanks,
--- Shuah
+Andreas
 
-
-
+> >> >> > Even simpler would be if knfsd didn't send the attribute if not
+> >> >> > necessary.  Looks like there's code actively creating the nfs4_acl on
+> >> >> > the wire even if the filesystem had none:
+> >> >> >
+> >> >> >     pacl = get_acl(inode, ACL_TYPE_ACCESS);
+> >> >> >     if (!pacl)
+> >> >> >         pacl = posix_acl_from_mode(inode->i_mode, GFP_KERNEL);
+> >> >> >
+> >> >> > What's the point?
+> >> >>
+> >> >> That's how the protocol is specified.
+> >> >
+> >> > Yep, even if we could make that change to nfsd it wouldn't help the
+> >> > client with the large number of other servers that are out there
+> >> > (including older knfsd's).
+> >> >
+> >> > --b.
+> >> >
+> >> >> (I'm not saying that that's very helpful.)
+> >> >>
+> >> >> Andreas
+> >>
+> >> Hi everyone.....
+> >>  I have a customer facing this problem, and so stumbled onto the email
+> >>  thread.
+> >>  Unfortunately it didn't resolve anything.  Maybe I can help kick things
+> >>  along???
+> >>
+> >>  The core problem here is that NFSv4 and ext4 use different and largely
+> >>  incompatible ACL implementations.  There is no way to accurately
+> >>  translate from one to the other in general (common specific examples
+> >>  can be converted).
+> >>
+> >>  This means that either:
+> >>    1/ overlayfs cannot use ext4 for upper and NFS for lower (or vice
+> >>       versa) or
+> >>    2/ overlayfs need to accept that sometimes it cannot copy ACLs, and
+> >>       that is OK.
+> >>
+> >>  Silently not copying the ACLs is probably not a good idea as it might
+> >>  result in inappropriate permissions being given away.
+> >
+> > For example? permissions given away to do what?
+> > Note that ovl_permission() only check permissions of *mounter*
+> > to read the lower NFS file and ovl_open()/ovl_read_iter() access
+> > the lower file with *mounter* credentials.
+> >
+> > I might be wrong, but seems to me that once admin mounted
+> > overlayfs with lower NFS, NFS ACLs are not being enforced at all
+> > even before copy up.
+>
+> I guess it is just as well that copy-up fails then - if the lower-level
+> permission check is being ignored.
+>
+> >
+> >> So if the
+> >>  sysadmin wants this (and some clearly do), they need a way to
+> >>  explicitly say "I accept the risk".  If only standard Unix permissions
+> >>  are used, there is no risk, so this seems reasonable.
+> >>
+> >>  So I would like to propose a new option for overlayfs
+> >>     nocopyupacl:   when overlayfs is copying a file (or directory etc)
+> >>         from the lower filesystem to the upper filesystem, it does not
+> >>         copy extended attributes with the "system." prefix.  These are
+> >>         used for storing ACL information and this is sometimes not
+> >>         compatible between different filesystem types (e.g. ext4 and
+> >>         NFSv4).  Standard Unix ownership permission flags (rwx) *are*
+> >>         copied so this option does not risk giving away inappropriate
+> >>         permissions unless the lowerfs uses unusual ACLs.
+> >>
+> >>
+> >
+> > I am wondering if it would make more sense for nfs to register a
+> > security_inode_copy_up_xattr() hook.
+> > That is the mechanism that prevents copying up other security.*
+> > xattrs?
+>
+> No, I don't think that would make sense.
+> Support some day support for nfs4 acls were added to ext4 (not a totally
+> ridiculous suggestion).  We would then want NFS to allow it's ACLs to be
+> copied up.
+>
+> Thanks,
+> NeilBrown
+>
+>
+> >
+> > Thanks,
+> > Amir.
