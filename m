@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42D4811206
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 06:04:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3969F11207
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 06:04:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725807AbfEBEEC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 00:04:02 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:45071 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbfEBEEC (ORCPT
+        id S1726055AbfEBEEH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 00:04:07 -0400
+Received: from mail-yw1-f73.google.com ([209.85.161.73]:50718 "EHLO
+        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfEBEEH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 00:04:02 -0400
-Received: by mail-qt1-f201.google.com with SMTP id n1so929031qte.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 21:04:00 -0700 (PDT)
+        Thu, 2 May 2019 00:04:07 -0400
+Received: by mail-yw1-f73.google.com with SMTP id j66so1966299ywa.17
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 May 2019 21:04:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=SJknDWAqiERicKTZpJyc1ef2whRW3qWIM8RhnWjq+lA=;
-        b=tq7A8fqX2KEepRzt7pSH1u7IBOfjKEadGtVV4rm76w6Xe9fXxhjOWITn20Q9IHsXgb
-         BeYtqEES42bV0rRiM92pCfzsnqMF0v2gL/9YSJdu36Vdz0OT3I59e04YQ4b4F2ewwClm
-         Oui3fbV7pCRrOqOFRMPf2cf1/aaS0D6VWDQnStbZGk2Qlim9oZO0YidXQhZhE2oNxFut
-         GKKGEc57Mdnh5o4i26G2xEpAcgO5C8PfrJ8O1nb/7SjE0bU+9rR0ZL6xoAvppaLXvsvh
-         NNgWx6WrOXPZRcpDhaHEErXiDzHyeWvMX/IZIeuEeFoWvi0r7o8nfcK0Ir3WK4G/2ylL
-         Vn2Q==
+        bh=MSgT6H7NVvxbaiBARPgQvrKPRDe5d9QWUx3dqoIjICQ=;
+        b=lBwj9EAVWUjsiL/hHHU9U5d+QC1JlFlQqW0elFNvktAcfdtqADCR2j2gBbnmduB3mu
+         zit30vbbmdPYk6+sVEhsmksvW6aopoaztfrq/hgEAaGjaKxk5YnnGSeWnXAFaG8ivs2V
+         YAY4BGTGL7qEjOhQ/2ae7tXN3fpSVes7O+1W3MKhmItdcXJRcZ2tFkax8d1SA2QJ6K4s
+         PvnFpUhDptNDqUrgfYvsX7aqkgI7js7VLTDa8x501cU+54gMhSmemVQG5q5nL9Jko4ly
+         a5/+b3v3RqYv8nZYJwNiFLh3xUF/wBn4ivQopdNYTXO6gBtjkow3pKrALcfnZS+dM/Bz
+         wasg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=SJknDWAqiERicKTZpJyc1ef2whRW3qWIM8RhnWjq+lA=;
-        b=tXHfk7enVYCH3R4QxjyOmwhIhG05aCn/sB2nw558zOUXG2kF1Bp61rCcx93XRxUwB8
-         ZEK+6n7Hb7jnObT3fkOOuVSu3vZ35UcKaRA9c2835X2k33u8ElHCiVZKJnvpDVigcUYv
-         gSHAbhKQpjBP1Tc3az31+Jx6R3vJiX2myOy2mEE8hVHP8PPOrmIYdmgSkSQ8Aru+jdtU
-         bChan/glNcpvm890Ob/dCV1AeyYdclRsuKYkfRMpQwX4O97fndqCfysKfwLKyXyJVE/d
-         aSXTb2/76MF8wAcfJEzY60wKYbEsmVWNqlFT33Ub2kinzsYMnwGGnjDAsa/+wf/NAvSA
-         4y/w==
-X-Gm-Message-State: APjAAAWGpoa1eb2EtVD0S3RiklAomwb0f2LbgYPCNqhiAqA2C/cdUGtZ
-        zZg5hVmsQX1A9eB/1IIsEiupU5RsEanRrsRHRpiXudoZKeupiH1q8fgVfQ1/aCBzx2AtY94BqF8
-        hDDeiD5koj8g9VFtlcn+KPf31UiyKLn2mP+TKsFE1BuoCXn6wtOTakYIiHi4EmxvgmtqsbciSvc
-        k=
-X-Google-Smtp-Source: APXvYqyy3STKH3LpH4xeUGsPTyaIzihPT0SH/Vx29vrFa3JsK8QmKChCzU4gTyfAZaucZKzMeZxaKc0QH8VAIw==
-X-Received: by 2002:a0c:d0b2:: with SMTP id z47mr1375212qvg.203.1556769840399;
- Wed, 01 May 2019 21:04:00 -0700 (PDT)
-Date:   Wed,  1 May 2019 21:03:29 -0700
+        bh=MSgT6H7NVvxbaiBARPgQvrKPRDe5d9QWUx3dqoIjICQ=;
+        b=UNoYhYfGdoR1+t6qNsjrF3BpgNfbs6XmBzfqtwK6505t0CpTaQ+d9/4m4bP8Vsrlsz
+         vXRrHGeNW13qL7mKfB8j9oVMW9prv2RsxdVR+U+aasEIv6N8D8eyTLhyzuoJOAjqv+d1
+         UIjRobyJo7PYct2PpY/kD5o0cv4aaqWvyftb1ViK5kC/tnStur8U0ToX5ky9kalyNgRH
+         c4OUjFx4D6LYlWJRCRN3hKRmM15IdQLiXg00H3mueiEyD8kdOcKvK1NhiaFJyq+z/EvB
+         4OSKon2+DmkgdGqPu3eAUWg7BwNtEocKMU4oDKaMyTvP0pmDxYoH+NrYQ15sPkZgkGYA
+         ECVw==
+X-Gm-Message-State: APjAAAXQUHfISenwR6jILaS12EuAo3rKlGTiMxyH9VI8FmfLZbAp6jLL
+        Bvqf+4K9YUTS8EVragOx9tdDdxTxvSVAW2OLC6bI0kdpocfGs5hxo4kannGQAUO5u6kKegXQ0tB
+        fpawRhMx1UPOQ8FYwhrGgv7yekRqQCOLFRzTQGnsEvndZx5vJPvWwS3vyra5kkJQSb5XD2WjxXm
+        8=
+X-Google-Smtp-Source: APXvYqx3IeOguSNBTZmSP8bK1XDNfVtAKGrGnUaxCdQ+TeerQ0mH0HYklNpyHgfj6EPHxpyBTlZpjOsJgewmAg==
+X-Received: by 2002:a25:2d46:: with SMTP id s6mr1228280ybe.436.1556769845431;
+ Wed, 01 May 2019 21:04:05 -0700 (PDT)
+Date:   Wed,  1 May 2019 21:03:31 -0700
 In-Reply-To: <20190502040331.81196-1-ezemtsov@google.com>
-Message-Id: <20190502040331.81196-5-ezemtsov@google.com>
+Message-Id: <20190502040331.81196-7-ezemtsov@google.com>
 Mime-Version: 1.0
 References: <20190502040331.81196-1-ezemtsov@google.com>
 X-Mailer: git-send-email 2.21.0.593.g511ec345e18-goog
-Subject: [PATCH 4/6] incfs: Integration with VFS layer
+Subject: [PATCH 6/6] incfs: Integration tests for incremental-fs
 From:   ezemtsov@google.com
 To:     linux-fsdevel@vger.kernel.org
 Cc:     tytso@mit.edu, Eugene Zemtsov <ezemtsov@google.com>
@@ -61,886 +61,1894 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eugene Zemtsov <ezemtsov@google.com>
 
-Implementation of VFS callbacks for
-- Reading data pages
-- Traversing dir structure
-- Handling ioctl-s
-- Handling .cmd file reads and writes
-- Mounting/unmounting file system
+Testing main use cases for Incremental FS.
+Things like:
+	- interaction between consuments and producers
+	- basic dir operations
+	- mounting a backing file with existing data
 
 Signed-off-by: Eugene Zemtsov <ezemtsov@google.com>
 ---
- fs/incfs/vfs.c | 834 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 834 insertions(+)
+ tools/testing/selftests/Makefile              |    1 +
+ .../selftests/filesystems/incfs/.gitignore    |    1 +
+ .../selftests/filesystems/incfs/Makefile      |   12 +
+ .../selftests/filesystems/incfs/config        |    1 +
+ .../selftests/filesystems/incfs/incfs_test.c  | 1603 +++++++++++++++++
+ .../selftests/filesystems/incfs/utils.c       |  159 ++
+ .../selftests/filesystems/incfs/utils.h       |   39 +
+ 7 files changed, 1816 insertions(+)
+ create mode 100644 tools/testing/selftests/filesystems/incfs/.gitignore
+ create mode 100644 tools/testing/selftests/filesystems/incfs/Makefile
+ create mode 100644 tools/testing/selftests/filesystems/incfs/config
+ create mode 100644 tools/testing/selftests/filesystems/incfs/incfs_test.c
+ create mode 100644 tools/testing/selftests/filesystems/incfs/utils.c
+ create mode 100644 tools/testing/selftests/filesystems/incfs/utils.h
 
-diff --git a/fs/incfs/vfs.c b/fs/incfs/vfs.c
-index 2e71f0edf8a1..7b453f19b543 100644
---- a/fs/incfs/vfs.c
-+++ b/fs/incfs/vfs.c
-@@ -4,12 +4,50 @@
-  */
- #include <linux/blkdev.h>
- #include <linux/fs.h>
-+#include <linux/namei.h>
-+#include <linux/file.h>
-+#include <linux/mm.h>
-+#include <linux/mount.h>
-+#include <linux/kernel.h>
-+#include <linux/pagemap.h>
-+#include <linux/string.h>
-+#include <linux/parser.h>
-+#include <linux/seq_file.h>
-+#include <linux/poll.h>
-
- #include <uapi/linux/incrementalfs.h>
-+#include "data_mgmt.h"
-
-+#define READ_EXEC_FILE_MODE 0555
-+#define READ_WRITE_FILE_MODE 0666
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 971fc8428117..78fd8590cede 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -11,6 +11,7 @@ TARGETS += efivarfs
+ TARGETS += exec
+ TARGETS += filesystems
+ TARGETS += filesystems/binderfs
++TARGETS += filesystems/incfs
+ TARGETS += firmware
+ TARGETS += ftrace
+ TARGETS += futex
+diff --git a/tools/testing/selftests/filesystems/incfs/.gitignore b/tools/testing/selftests/filesystems/incfs/.gitignore
+new file mode 100644
+index 000000000000..4cba9c219a92
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/incfs/.gitignore
+@@ -0,0 +1 @@
++incfs_test
+\ No newline at end of file
+diff --git a/tools/testing/selftests/filesystems/incfs/Makefile b/tools/testing/selftests/filesystems/incfs/Makefile
+new file mode 100644
+index 000000000000..493efc23fa33
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/incfs/Makefile
+@@ -0,0 +1,12 @@
++# SPDX-License-Identifier: GPL-2.0
++CFLAGS += -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wall
++CFLAGS += -I../../../../../usr/include/
++CFLAGS += -I../../../../include/uapi/
++CFLAGS += -I../../../../lib
 +
-+static int remount_fs(struct super_block *sb, int *flags, char *data);
- static struct dentry *mount_fs(struct file_system_type *type, int flags,
- 			       const char *dev_name, void *data);
-+static struct dentry *dir_lookup(struct inode *dir_inode, struct dentry *dentry,
-+				 unsigned int flags);
-+static int iterate_incfs_dir(struct file *file, struct dir_context *ctx);
-+static int read_one_page(struct file *f, struct page *page);
-+static ssize_t command_write(struct file *f, const char __user *buf,
-+			size_t size, loff_t *offset);
-+static ssize_t command_read(struct file *f, char __user *buf, size_t len,
-+			    loff_t *ppos);
-+static __poll_t command_poll(struct file *file, poll_table *wait);
-+static int command_open(struct inode *inode, struct file *file);
-+static int command_release(struct inode *, struct file *);
++EXTRA_SOURCES := utils.c ../../../../lib/lz4.c
++TEST_GEN_PROGS := incfs_test
 +
- static void kill_sb(struct super_block *sb);
-+static int dentry_revalidate(struct dentry *dentry, unsigned int flags);
-+static int dentry_revalidate_weak(struct dentry *dentry, unsigned int flags);
-+static long dispatch_ioctl(struct file *f, unsigned int req, unsigned long arg);
-+static int show_options(struct seq_file *, struct dentry *);
-+static int show_devname(struct seq_file *, struct dentry *);
++include ../../lib.mk
 +
-+/* State of an open .cmd file, unique for each file descriptor. */
-+struct command_file_state {
-+	/* A serial number of the last pending read obtained from this file. */
-+	int last_pending_read_sn;
-+};
-
- struct file_system_type incfs_fs_type = {
- 	.owner = THIS_MODULE,
-@@ -19,9 +57,785 @@ struct file_system_type incfs_fs_type = {
- 	.fs_flags = 0
- };
-
-+static const struct super_operations incfs_super_ops = {
-+	.statfs = simple_statfs,
-+	.remount_fs = remount_fs,
-+	.show_options = show_options,
-+	.show_devname = show_devname
-+};
++$(OUTPUT)/incfs_test: incfs_test.c $(EXTRA_SOURCES)
+diff --git a/tools/testing/selftests/filesystems/incfs/config b/tools/testing/selftests/filesystems/incfs/config
+new file mode 100644
+index 000000000000..b6749837a318
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/incfs/config
+@@ -0,0 +1 @@
++CONFIG_INCREMENTAL_FS=y
+\ No newline at end of file
+diff --git a/tools/testing/selftests/filesystems/incfs/incfs_test.c b/tools/testing/selftests/filesystems/incfs/incfs_test.c
+new file mode 100644
+index 000000000000..6c2797970f77
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/incfs/incfs_test.c
+@@ -0,0 +1,1603 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2018 Google LLC
++ */
++#include <stdlib.h>
++#include <unistd.h>
++#include <sys/types.h>
++#include <dirent.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <sys/mount.h>
++#include <errno.h>
++#include <sys/wait.h>
++#include <alloca.h>
++#include <string.h>
++#include <stdio.h>
++#include <stdbool.h>
++#include <stdint.h>
++#include "../../kselftest.h"
 +
-+static const struct inode_operations incfs_dir_inode_ops = {
-+	.lookup = dir_lookup,
-+};
++#include "lz4.h"
++#include "utils.h"
++#define TEST_FAILURE 1
++#define TEST_SUCCESS 0
 +
-+static const struct file_operations incfs_dir_fops = {
-+	.llseek = generic_file_llseek,
-+	.read = generic_read_dir,
-+	.iterate = iterate_incfs_dir,
-+};
-+
-+static const struct dentry_operations incfs_dentry_ops = {
-+	.d_revalidate = dentry_revalidate,
-+	.d_weak_revalidate = dentry_revalidate_weak,
-+};
-+
-+static const struct address_space_operations incfs_address_space_ops = {
-+	.readpage = read_one_page,
++struct test_file {
++	int ino;
++	char *name;
++	off_t size;
 +};
 +
-+static const struct file_operations incfs_file_ops = {
-+	.read_iter = generic_file_read_iter,
-+	.mmap = generic_file_mmap,
-+	.splice_read = generic_file_splice_read,
-+	.llseek = generic_file_llseek
++struct test_files_set {
++	struct test_file *files;
++	int files_count;
 +};
 +
-+static const struct file_operations incfs_command_file_ops = {
-+	.read = command_read,
-+	.write = command_write,
-+	.poll = command_poll,
-+	.open = command_open,
-+	.release = command_release,
-+	.llseek = noop_llseek,
-+	.unlocked_ioctl = dispatch_ioctl,
-+	.compat_ioctl = dispatch_ioctl
-+};
-+
-+static const struct inode_operations incfs_file_inode_ops = {
-+	.setattr = simple_setattr,
-+	.getattr = simple_getattr,
-+};
-+
-+static const char command_file_name[] = ".cmd";
-+static struct mem_range command_file_name_range = {
-+	.data = (u8 *)command_file_name,
-+	.len = ARRAY_SIZE(command_file_name) - 1
-+};
-+static struct mem_range dot_range = {
-+	.data = (u8 *)".",
-+	.len = 1
-+};
-+static struct mem_range dotdot_range = {
-+	.data = (u8 *)"..",
-+	.len = 2
-+};
-+
-+enum parse_parameter { Opt_backing_fd, Opt_read_timeout, Opt_err };
-+static const match_table_t option_tokens = {
-+	{ Opt_backing_fd, "backing_fd=%u" },
-+	{ Opt_read_timeout, "read_timeout_ms=%u" },
-+	{ Opt_err, NULL }
-+};
-+
-+static struct super_block *file_superblock(struct file *f)
++struct test_files_set get_test_files_set(void)
 +{
-+	struct inode *inode;
-+
-+	inode = file_inode(f);
-+	return inode->i_sb;
++	static struct test_file files[] = {
++			{ .name = "file_one_byte", .size = 1 },
++			{ .name = "file_one_block",
++			.size = INCFS_DATA_FILE_BLOCK_SIZE },
++			{ .name = "file_one_and_a_half_blocks",
++			.size = INCFS_DATA_FILE_BLOCK_SIZE +
++				INCFS_DATA_FILE_BLOCK_SIZE / 2 },
++			{ .name = "file_three",
++			.size = 300 * INCFS_DATA_FILE_BLOCK_SIZE + 3 },
++			{ .name = "file_four",
++			.size = 400 * INCFS_DATA_FILE_BLOCK_SIZE + 7 },
++			{ .name = "file_five",
++			.size = 500 * INCFS_DATA_FILE_BLOCK_SIZE + 7 },
++			{ .name = "file_six",
++			.size = 600 * INCFS_DATA_FILE_BLOCK_SIZE + 7 },
++			{ .name = "file_seven",
++			.size = 700 * INCFS_DATA_FILE_BLOCK_SIZE + 7 },
++			{ .name = "file_eight",
++			.size = 800 * INCFS_DATA_FILE_BLOCK_SIZE + 7 },
++			{ .name = "file_nine",
++			.size = 900 * INCFS_DATA_FILE_BLOCK_SIZE + 7 },
++			{ .name = "file_big",
++			.size = 500 * 1024 * 1024 }
++		};
++	return (struct test_files_set){
++		.files = files,
++		.files_count = ARRAY_SIZE(files)
++	};
 +}
 +
-+static struct mount_info *get_mount_info(struct super_block *sb)
++struct test_files_set get_small_test_files_set(void)
 +{
-+	struct mount_info *result = sb->s_fs_info;
-+
-+	WARN_ON(!result);
-+	return result;
++	static struct test_file files[] = {
++			{ .name = "file_one_byte", .size = 1 },
++			{ .name = "file_one_block",
++			.size = INCFS_DATA_FILE_BLOCK_SIZE },
++			{ .name = "file_one_and_a_half_blocks",
++			.size = INCFS_DATA_FILE_BLOCK_SIZE +
++				INCFS_DATA_FILE_BLOCK_SIZE / 2 },
++			{ .name = "file_three",
++			.size = 300 * INCFS_DATA_FILE_BLOCK_SIZE + 3 },
++			{ .name = "file_four",
++			.size = 400 * INCFS_DATA_FILE_BLOCK_SIZE + 7 }
++		};
++	return (struct test_files_set){
++		.files = files,
++		.files_count = ARRAY_SIZE(files)
++	};
 +}
 +
-+static int validate_name(struct mem_range name)
++static int get_file_block_seed(int file, int block)
 +{
-+	int i = 0;
++	return 7919 * file + block;
++}
 +
-+	if (name.len > INCFS_MAX_NAME_LEN)
-+		return -ENAMETOOLONG;
++static loff_t min(loff_t a, loff_t b)
++{
++	return a < b ? a : b;
++}
 +
-+	if (incfs_equal_ranges(dot_range, name) ||
-+	    incfs_equal_ranges(dotdot_range, name) ||
-+	    incfs_equal_ranges(command_file_name_range, name))
++static pid_t flush_and_fork(void)
++{
++	fflush(stdout);
++	return fork();
++}
++
++static void print_error(char *msg)
++{
++	ksft_print_msg("%s: %s\n", msg, strerror(errno));
++}
++
++static int wait_for_process(pid_t pid)
++{
++	int status;
++	int wait_res;
++
++	wait_res = waitpid(pid, &status, 0);
++	if (wait_res <= 0) {
++		print_error("Can't wait for the child");
 +		return -EINVAL;
-+
-+	for (i = 0; i < name.len; i++)
-+		if (name.data[i] == 0 || name.data[i] == '/')
-+			return -EINVAL;
-+
++	}
++	if (!WIFEXITED(status)) {
++		ksft_print_msg("Unexpected child status pid=%d\n", pid);
++		return -EINVAL;
++	}
++	status = WEXITSTATUS(status);
++	if (status != 0)
++		return status;
 +	return 0;
 +}
 +
-+static int read_one_page(struct file *f, struct page *page)
++static void rnd_buf(uint8_t *data, size_t len, unsigned int seed)
 +{
-+	loff_t offset = 0;
-+	loff_t size = 0;
-+	ssize_t bytes_to_read = 0;
-+	ssize_t read_result = 0;
-+	struct inode *inode = page->mapping->host;
-+	int block_index = 0;
++	int i;
++
++	for (i = 0; i < len; i++) {
++		seed = 1103515245 * seed + 12345;
++		data[i] = (uint8_t)(seed >> (i % 13));
++	}
++}
++
++struct file_and_block {
++	struct test_file *file;
++	int block_index;
++};
++
++static int emit_test_blocks(int fd, struct file_and_block *blocks, int count)
++{
++	uint8_t data[INCFS_DATA_FILE_BLOCK_SIZE];
++	uint8_t comp_data[2 * INCFS_DATA_FILE_BLOCK_SIZE];
++	int block_count = (count > 32) ? 32 : count;
++	int data_buf_size = 2 * INCFS_DATA_FILE_BLOCK_SIZE
++					* block_count;
++	uint8_t *data_buf = malloc(data_buf_size);
++	uint8_t *current_data = data_buf;
++	uint8_t *data_end = data_buf + data_buf_size;
++	struct incfs_new_data_block *block_buf =
++			calloc(block_count, sizeof(*block_buf));
++	ssize_t write_res = 0;
++	int error = 0;
++	int i = 0;
++	int blocks_written = 0;
++
++	for (i = 0; i < block_count; i++) {
++		int block_index = blocks[i].block_index;
++		struct test_file *file = blocks[i].file;
++		bool compress = (file->ino + block_index) % 2 == 0;
++		int seed = get_file_block_seed(file->ino, block_index);
++		off_t block_offset =
++			((off_t)block_index) * INCFS_DATA_FILE_BLOCK_SIZE;
++		size_t block_size = 0;
++
++		if (block_offset > file->size) {
++			error = -EINVAL;
++			break;
++		} else {
++			if (file->size - block_offset
++					> INCFS_DATA_FILE_BLOCK_SIZE)
++				block_size = INCFS_DATA_FILE_BLOCK_SIZE;
++			else
++				block_size = file->size - block_offset;
++		}
++
++		rnd_buf(data, block_size, seed);
++		if (compress) {
++			size_t comp_size = LZ4_compress_default((char *)data,
++				(char *)comp_data, block_size,
++				ARRAY_SIZE(comp_data));
++
++			if (comp_size <= 0) {
++				error = -EBADMSG;
++				break;
++			}
++			if (current_data + comp_size > data_end) {
++				error = -ENOMEM;
++				break;
++			}
++			memcpy(current_data, comp_data, comp_size);
++			block_size = comp_size;
++			block_buf[i].compression = COMPRESSION_LZ4;
++		} else {
++			if (current_data + block_size > data_end) {
++				error = -ENOMEM;
++				break;
++			}
++			memcpy(current_data, data, block_size);
++			block_buf[i].compression = COMPRESSION_NONE;
++		}
++
++		block_buf[i].file_ino = file->ino;
++		block_buf[i].block_index = block_index;
++		block_buf[i].data_len = block_size;
++		block_buf[i].data = ptr_to_u64(current_data);
++		block_buf[i].compression =
++			compress ? COMPRESSION_LZ4 : COMPRESSION_NONE;
++		current_data += block_size;
++	}
++
++	if (!error) {
++		write_res = write(fd, block_buf, sizeof(*block_buf) * i);
++		if (write_res < 0)
++			error = -errno;
++		else
++			blocks_written = write_res / sizeof(*block_buf);
++	}
++	if (error) {
++		ksft_print_msg("Writing data block error. Write returned: %d. Error:%s\n",
++				write_res, strerror(-error));
++	}
++	free(block_buf);
++	free(data_buf);
++	return (error < 0) ? error : blocks_written;
++}
++
++static int emit_test_block(int fd, struct test_file *file, int block_index)
++{
++	struct file_and_block blk = {
++		.file = file,
++		.block_index = block_index
++	};
++	int res = 0;
++
++	res = emit_test_blocks(fd, &blk, 1);
++	if (res == 0)
++		return -EINVAL;
++	if (res == 1)
++		return 0;
++	return res;
++}
++
++static void shuffle(int array[], int count, unsigned int seed)
++{
++	int i;
++
++	for (i = 0; i < count - 1; i++) {
++		int items_left = count - i;
++		int shuffle_index;
++		int v;
++
++		seed = 1103515245 * seed + 12345;
++		shuffle_index = i + seed % items_left;
++
++		v = array[shuffle_index];
++		array[shuffle_index] = array[i];
++		array[i] = v;
++	}
++}
++
++static int emit_test_file_data(int fd, struct test_file *file)
++{
++	int i;
++	int block_cnt = 1 + (file->size - 1) / INCFS_DATA_FILE_BLOCK_SIZE;
++	int *block_indexes = NULL;
++	struct file_and_block *blocks = NULL;
 +	int result = 0;
-+	struct data_file *df = NULL;
-+	void *page_start = kmap(page);
++	int blocks_written = 0;
 +
-+	offset = page_offset(page);
-+	block_index = offset / INCFS_DATA_FILE_BLOCK_SIZE;
-+	if (offset & (INCFS_DATA_FILE_BLOCK_SIZE - 1)) {
-+		/*
-+		 * Page offset must be a multiplier of
-+		 * INCFS_DATA_FILE_BLOCK_SIZE
-+		 */
-+		pr_warn("incfs: Not aligned read from a file %d at offset %lld",
-+			(int)inode->i_ino, offset);
-+		result = -EINVAL;
-+		goto out;
++	if (file->size == 0)
++		return 0;
++
++	blocks = calloc(block_cnt, sizeof(*blocks));
++	block_indexes = calloc(block_cnt, sizeof(*block_indexes));
++	for (i = 0; i < block_cnt; i++)
++		block_indexes[i] = i;
++
++	shuffle(block_indexes, block_cnt, file->ino);
++	for (i = 0; i < block_cnt; i++) {
++		blocks[i].block_index = block_indexes[i];
++		blocks[i].file = file;
 +	}
 +
-+	size = i_size_read(inode);
-+	df = incfs_get_file_from_node((struct inode_info *)inode->i_private);
-+	if (!df) {
-+		result = -EBADF;
-+		goto out;
++	for (i = 0; i < block_cnt; i += blocks_written) {
++		blocks_written = emit_test_blocks(fd,
++				blocks + i,
++				block_cnt - i);
++		if (blocks_written < 0) {
++			result = blocks_written;
++			goto out;
++		}
++		if (blocks_written == 0) {
++			result = -EIO;
++			goto out;
++		}
 +	}
-+
-+	if (offset < size) {
-+		bytes_to_read = min_t(loff_t, size - offset, PAGE_SIZE);
-+		read_result = incfs_read_data_file_block(
-+			range(page_start, bytes_to_read), df, block_index);
-+	} else {
-+		bytes_to_read = 0;
-+		read_result = 0;
-+	}
-+
-+	if (read_result < 0)
-+		result = read_result;
-+	else if (read_result < PAGE_SIZE)
-+		zero_user(page, read_result, PAGE_SIZE - read_result);
-+
 +out:
-+	if (result == 0)
-+		SetPageUptodate(page);
-+	else
-+		SetPageError(page);
-+
-+	flush_dcache_page(page);
-+	kunmap(page);
-+	unlock_page(page);
++	free(blocks);
++	free(block_indexes);
 +	return result;
 +}
 +
-+static long ioctl_process_instructions(struct mount_info *mi, void __user *arg)
++static loff_t read_whole_file(char *filename)
 +{
-+	struct incfs_instruction inst = {};
-+	int error = 0;
-+	const ssize_t data_buf_size = 2 * INCFS_DATA_FILE_BLOCK_SIZE;
-+	bool copy_inst_back = false;
-+	struct incfs_instruction __user *inst_usr_ptr = arg;
-+	u8 *data_buf = NULL;
++	int fd = -1;
++	loff_t result;
++	loff_t bytes_read = 0;
++	uint8_t buff[16 * 1024];
 +
-+	data_buf = (u8 *)__get_free_pages(GFP_NOFS,
-+					  get_order(data_buf_size));
-+	if (!data_buf)
-+		return -ENOMEM;
++	fd = open(filename, O_RDONLY);
++	if (fd <= 0)
++		return fd;
 +
-+	/*
-+	 * Make sure that incfs_instruction doesn't have
-+	 * anything beyond reserved.
-+	 */
-+	BUILD_BUG_ON(sizeof(struct incfs_instruction) >
-+		offsetof(struct incfs_instruction, reserved) +
-+		sizeof(inst.reserved));
-+	if (copy_from_user(&inst, inst_usr_ptr, sizeof(inst)) > 0) {
-+		error = -EINVAL;
-+		goto out;
-+	}
++	while (1) {
++		int read_result = read(fd, buff, ARRAY_SIZE(buff));
 +
-+	if (inst.version != INCFS_HEADER_VER)
-+		return -ENOTSUPP;
-+
-+	switch (inst.type) {
-+	case INCFS_INSTRUCTION_NEW_FILE: {
-+		error = incfs_process_new_file_inst(mi, &inst.file);
-+		copy_inst_back = true;
-+		break;
-+	}
-+	case INCFS_INSTRUCTION_ADD_DIR_ENTRY:
-+	case INCFS_INSTRUCTION_REMOVE_DIR_ENTRY: {
-+		if (inst.dir_entry.name_len > data_buf_size) {
-+			error = -E2BIG;
++		if (read_result < 0) {
++			print_error("Error during reading from a file.");
++			result = -errno;
++			goto cleanup;
++		} else if (read_result == 0)
 +			break;
++
++		bytes_read += read_result;
++	}
++	result = bytes_read;
++
++cleanup:
++	close(fd);
++	return result;
++}
++
++
++static int read_test_file(uint8_t *buf, size_t len,
++			char *filename, int block_idx)
++{
++	int fd = -1;
++	int result;
++	int bytes_read = 0;
++	size_t bytes_to_read = len;
++	off_t offset = ((off_t)block_idx) * INCFS_DATA_FILE_BLOCK_SIZE;
++
++	fd = open(filename, O_RDONLY);
++	if (fd <= 0)
++		return fd;
++
++	if (lseek(fd, offset, SEEK_SET) != offset) {
++		print_error("Seek error");
++		return -errno;
++	}
++
++	while (bytes_read < bytes_to_read) {
++		int read_result =
++			read(fd, buf + bytes_read, bytes_to_read - bytes_read);
++		if (read_result < 0) {
++			result = -errno;
++			goto cleanup;
++		} else if (read_result == 0)
++			break;
++
++		bytes_read += read_result;
++	}
++	result = bytes_read;
++
++cleanup:
++	close(fd);
++	return result;
++}
++
++static int open_test_backing_file(char *mount_dir, bool delete)
++{
++	char backing_file_name[255];
++	int backing_fd;
++
++	snprintf(backing_file_name, ARRAY_SIZE(backing_file_name), "%s.img",
++		 mount_dir);
++	backing_fd = open(backing_file_name, O_CREAT | O_RDWR | O_TRUNC, 0666);
++	if (backing_fd < 0)
++		print_error("Can't open backing file");
++	else if (delete) {
++		/* Once backing file was opened, it's safe to delete it ;) */
++		remove(backing_file_name);
++	}
++	return backing_fd;
++}
++
++static int open_existing_test_backing_file(char *mount_dir, bool delete)
++{
++	char backing_file_name[255];
++	int backing_fd;
++
++	snprintf(backing_file_name, ARRAY_SIZE(backing_file_name), "%s.img",
++		 mount_dir);
++	backing_fd = open(backing_file_name, O_RDWR);
++	if (backing_fd < 0)
++		print_error("Can't open backing file");
++	else if (delete) {
++		/* Once backing file was opened, it's safe to delete it ;) */
++		remove(backing_file_name);
++	}
++	return backing_fd;
++}
++
++static int validate_test_file_content_with_seed(char *mount_dir,
++					 struct test_file *file,
++					 unsigned int shuffle_seed)
++{
++	int error = -1;
++	char *filename = concat_file_name(mount_dir, file->name);
++	off_t size = file->size;
++	loff_t actual_size = get_file_size(filename);
++	int block_cnt = 1 + (size - 1) / INCFS_DATA_FILE_BLOCK_SIZE;
++	int *block_indexes = NULL;
++	int i;
++
++	block_indexes = alloca(sizeof(int) * block_cnt);
++	for (i = 0; i < block_cnt; i++)
++		block_indexes[i] = i;
++
++	if (shuffle_seed != 0)
++		shuffle(block_indexes, block_cnt, shuffle_seed);
++
++	if (actual_size != size) {
++		ksft_print_msg("File size doesn't match. name: %s expected size:%ld actual size:%ld\n",
++		       filename, size, actual_size);
++		error = -1;
++		goto failure;
++	}
++
++	for (i = 0; i < block_cnt; i++) {
++		int block_idx = block_indexes[i];
++		uint8_t expected_block[INCFS_DATA_FILE_BLOCK_SIZE];
++		uint8_t actual_block[INCFS_DATA_FILE_BLOCK_SIZE];
++		int seed = get_file_block_seed(file->ino, block_idx);
++		size_t bytes_to_compare =
++			min((off_t)INCFS_DATA_FILE_BLOCK_SIZE,
++			size - ((off_t)block_idx) * INCFS_DATA_FILE_BLOCK_SIZE);
++		int read_result =
++			read_test_file(actual_block, INCFS_DATA_FILE_BLOCK_SIZE,
++				       filename, block_idx);
++		if (read_result < 0) {
++			ksft_print_msg("Error reading block %d from file %s. Error: %s\n",
++			       block_idx, filename, strerror(-read_result));
++			error = read_result;
++			goto failure;
 +		}
-+		if (copy_from_user(data_buf,
-+				u64_to_user_ptr(inst.dir_entry.name),
-+				inst.dir_entry.name_len)) {
-+			error = -EFAULT;
-+			break;
++		rnd_buf(expected_block, INCFS_DATA_FILE_BLOCK_SIZE, seed);
++		if (memcmp(expected_block, actual_block, bytes_to_compare)) {
++			ksft_print_msg("File contents don't match. name: %s block:%d\n",
++			       file->name, block_idx);
++			error = -2;
++			goto failure;
 +		}
-+		error = validate_name(range(data_buf,
-+					inst.dir_entry.name_len));
-+		if (error)
-+			break;
++	}
++	free(filename);
++	return 0;
 +
-+		error = incfs_process_new_dir_entry_inst(mi, inst.type,
-+							&inst.dir_entry,
-+							(char *)data_buf);
-+		break;
-+	}
-+	default:
-+		error = -EINVAL;
-+		break;
-+	}
-+
-+	if (!error && copy_inst_back) {
-+		/*
-+		 * Copy instruction back to populate _out fields.
-+		 */
-+		if (copy_to_user(inst_usr_ptr, &inst, sizeof(inst)))
-+			error = -EFAULT;
-+	}
-+out:
-+	if (data_buf)
-+		free_pages((unsigned long)data_buf, get_order(data_buf_size));
++failure:
++	free(filename);
 +	return error;
 +}
 +
-+static long dispatch_ioctl(struct file *f, unsigned int req, unsigned long arg)
++static int validate_test_file_content(char *mount_dir, struct test_file *file)
 +{
-+	struct mount_info *mi = get_mount_info(file_superblock(f));
-+
-+	switch (req) {
-+	case INCFS_IOC_PROCESS_INSTRUCTION:
-+		return ioctl_process_instructions(mi, (void __user *)arg);
-+	default:
-+		return -EINVAL;
-+	}
++	return validate_test_file_content_with_seed(mount_dir, file, 0);
 +}
 +
-+static int command_open(struct inode *inode, struct file *file)
++static int dynamic_files_and_data_test(char *mount_dir)
 +{
-+	struct command_file_state *cmd_state = NULL;
++	struct test_files_set test = get_test_files_set();
++	const int file_num = test.files_count;
++	const int missing_file_idx = 5;
++	int backing_fd = -1, cmd_fd = -1;
++	int i;
 +
-+	cmd_state = kzalloc(sizeof(*cmd_state), GFP_NOFS);
-+	if (!cmd_state)
-+		return -ENOMEM;
++	backing_fd = open_test_backing_file(mount_dir, true);
++	if (backing_fd < 0)
++		goto failure;
 +
-+	file->private_data = cmd_state;
-+	return 0;
-+}
++	/* Mount FS and release the backing file. */
++	if (mount_fs(mount_dir, backing_fd, 50) != 0)
++		goto failure;
++	close(backing_fd);
 +
-+static int command_release(struct inode *inode, struct file *file)
-+{
-+	kfree(file->private_data);
-+	return 0;
-+}
++	cmd_fd = open_commands_file(mount_dir);
++	if (cmd_fd < 0)
++		goto failure;
 +
-+static ssize_t command_write(struct file *f, const char __user *buf,
-+			size_t size, loff_t *offset)
-+{
-+	struct mount_info *mi = get_mount_info(file_superblock(f));
-+	const ssize_t data_buf_size = 2 * INCFS_DATA_FILE_BLOCK_SIZE;
-+	size_t block_count = size / sizeof(struct incfs_new_data_block);
-+	struct incfs_new_data_block __user *usr_blocks =
-+				(struct incfs_new_data_block __user *)buf;
-+	u8 *data_buf = NULL;
-+	ssize_t error = 0;
-+	int i = 0;
++	/* Check that test files don't exist in the filesystem. */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++		char *filename = concat_file_name(mount_dir, file->name);
 +
-+	data_buf = (u8 *)__get_free_pages(GFP_NOFS,
-+					  get_order(data_buf_size));
-+	if (!data_buf)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < block_count; i++) {
-+		struct incfs_new_data_block block = {};
-+
-+		if (copy_from_user(&block, &usr_blocks[i], sizeof(block)) > 0) {
-+			error = -EFAULT;
-+			break;
++		if (access(filename, F_OK) != -1) {
++			ksft_print_msg("File %s somehow already exists in a clean FS.\n",
++			       filename);
++			goto failure;
 +		}
-+
-+		if (block.data_len > data_buf_size) {
-+			error = -E2BIG;
-+			break;
-+		}
-+		if (copy_from_user(data_buf, u64_to_user_ptr(block.data),
-+					block.data_len) > 0) {
-+			error = -EFAULT;
-+			break;
-+		}
-+		block.data = 0; /* To make sure nobody uses it. */
-+		error = incfs_process_new_data_block(mi, &block, data_buf);
-+		if (error)
-+			break;
++		free(filename);
 +	}
 +
-+	if (data_buf)
-+		free_pages((unsigned long)data_buf, get_order(data_buf_size));
-+	*offset = 0;
++	/* Write test data into the command file. */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++		int res;
 +
-+	/*
-+	 * Only report the error if no records were processed, otherwise
-+	 * just return how many were processed successfully.
-+	 */
-+	if (i == 0)
-+		return error;
++		res = emit_file(cmd_fd, file->name,
++			&file->ino, INCFS_ROOT_INODE, file->size);
++		if (res < 0) {
++			ksft_print_msg("Error %s emiting file %s.\n",
++					strerror(-res), file->name);
++			goto failure;
++		}
 +
-+	return i * sizeof(struct incfs_new_data_block);
++		/* Skip writing data to one file so we can check */
++		/* that it's missing later. */
++		if (i == missing_file_idx)
++			continue;
++
++		res = emit_test_file_data(cmd_fd, file);
++		if (res) {
++			ksft_print_msg("Error %s emiting data for %s.\n",
++					strerror(-res), file->name);
++			goto failure;
++		}
++	}
++
++	/* Validate contents of the FS */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++
++		if (i == missing_file_idx) {
++			/* No data has been written to this file. */
++			/* Check for read error; */
++			uint8_t buf;
++			char *filename =
++				concat_file_name(mount_dir, file->name);
++			int res = read_test_file(&buf, 1, filename, 0);
++
++			free(filename);
++			if (res > 0) {
++				ksft_print_msg("Data present, even though never writtern.\n");
++				goto failure;
++			}
++			if (res != -ETIME) {
++				ksft_print_msg("Wrong error code: %d.\n", res);
++				goto failure;
++			}
++		} else {
++			if (validate_test_file_content(mount_dir, file) < 0)
++				goto failure;
++		}
++	}
++
++	close(cmd_fd);
++	cmd_fd = -1;
++	if (umount(mount_dir) != 0) {
++		print_error("Can't unmout FS");
++		goto failure;
++	}
++
++	return TEST_SUCCESS;
++
++failure:
++	close(cmd_fd);
++	umount(mount_dir);
++	return TEST_FAILURE;
 +}
 +
-+static ssize_t command_read(struct file *f, char __user *buf, size_t len,
-+			    loff_t *ppos)
++static int errors_on_overwrite_test(char *mount_dir)
 +{
-+	struct command_file_state *cmd_state = f->private_data;
-+	struct mount_info *mi = get_mount_info(file_superblock(f));
-+	struct incfs_pending_read_info *reads_buf = NULL;
-+	size_t reads_to_collect = len / sizeof(*reads_buf);
-+	int last_known_read_sn = READ_ONCE(cmd_state->last_pending_read_sn);
-+	int new_max_sn = last_known_read_sn;
-+	int reads_collected = 0;
-+	ssize_t result = 0;
++	struct test_files_set test = get_small_test_files_set();
++	const int file_num = test.files_count;
++	int backing_fd = -1, cmd_fd = -1;
++	int i, bidx;
++
++	backing_fd = open_test_backing_file(mount_dir, true);
++	if (backing_fd < 0)
++		goto failure;
++
++	/* Mount FS and release the backing file. */
++	if (mount_fs(mount_dir, backing_fd, 50) != 0)
++		goto failure;
++	close(backing_fd);
++
++	cmd_fd = open_commands_file(mount_dir);
++	if (cmd_fd < 0)
++		goto failure;
++
++	/* Write test data into the command file. */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++		int emit_res;
++
++		emit_res = emit_file(cmd_fd, file->name, &file->ino,
++				     INCFS_ROOT_INODE, file->size);
++		if (emit_res < 0)
++			goto failure;
++
++		emit_res = emit_test_file_data(cmd_fd, file);
++		if (emit_res)
++			goto failure;
++	}
++
++	/* Write again, this time all writes should fail. */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++		int emit_res;
++
++		emit_res = emit_file(cmd_fd, file->name, &file->ino,
++				     INCFS_ROOT_INODE, file->size);
++		if (emit_res != -EEXIST) {
++			ksft_print_msg("Repeated file %s wasn't reported.\n",
++			       file->name);
++			goto failure;
++		}
++
++		for (bidx = 0; bidx * INCFS_DATA_FILE_BLOCK_SIZE < file->size;
++		     bidx++) {
++			emit_res = emit_test_block(cmd_fd, file, bidx);
++
++			/* Repeated blocks are ignored without an error */
++			if (emit_res < 0) {
++				ksft_print_msg("Repeated block was reported. err:%s\n",
++				       strerror(-emit_res));
++				goto failure;
++			}
++		}
++	}
++
++	/* Validate contents of the FS */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++
++		if (validate_test_file_content(mount_dir, file) < 0)
++			goto failure;
++	}
++
++	close(cmd_fd);
++	cmd_fd = -1;
++	if (umount(mount_dir) != 0) {
++		print_error("Can't unmout FS");
++		goto failure;
++	}
++
++	return TEST_SUCCESS;
++
++failure:
++	close(cmd_fd);
++	umount(mount_dir);
++	return TEST_FAILURE;
++}
++
++static int work_after_remount_test(char *mount_dir)
++{
++	struct test_files_set test = get_test_files_set();
++	const int file_num = test.files_count;
++	const int file_num_stage1 = file_num / 2;
++	const int file_num_stage2 = file_num;
 +	int i = 0;
++	int backing_fd = -1, cmd_fd = -1;
 +
-+	if (!incfs_fresh_pending_reads_exist(mi, last_known_read_sn))
-+		return 0;
++	backing_fd = open_test_backing_file(mount_dir, false);
++	if (backing_fd < 0)
++		goto failure;
 +
-+	reads_buf = (struct incfs_pending_read_info *)get_zeroed_page(
-+		GFP_NOFS);
-+	if (!reads_buf)
-+		return -ENOMEM;
++	/* Mount FS and release the backing file. */
++	if (mount_fs(mount_dir, backing_fd, 50) != 0)
++		goto failure;
++	close(backing_fd);
++	backing_fd = -1;
 +
-+	reads_to_collect = min_t(size_t, PAGE_SIZE / sizeof(*reads_buf),
-+				reads_to_collect);
++	cmd_fd = open_commands_file(mount_dir);
++	if (cmd_fd < 0)
++		goto failure;
 +
-+	reads_collected = incfs_collect_pending_reads(
-+		mi, last_known_read_sn, reads_buf, reads_to_collect);
-+	if (reads_collected < 0) {
-+		result = reads_collected;
++	/* Write first half of the data into the command file. (stage 1) */
++	for (i = 0; i < file_num_stage1; i++) {
++		struct test_file *file = &test.files[i];
++
++		emit_file(cmd_fd, file->name, &file->ino, INCFS_ROOT_INODE,
++			  file->size);
++		if (emit_test_file_data(cmd_fd, file))
++			goto failure;
++	}
++
++	/* Unmount and mount again, to see that data is persistent. */
++	close(cmd_fd);
++	cmd_fd = -1;
++	if (umount(mount_dir) != 0) {
++		print_error("Can't unmout FS");
++		goto failure;
++	}
++	backing_fd = open_existing_test_backing_file(mount_dir, false);
++	if (backing_fd < 0)
++		goto failure;
++	if (mount_fs(mount_dir, backing_fd, 50) != 0)
++		goto failure;
++	close(backing_fd);
++	backing_fd = -1;
++
++	cmd_fd = open_commands_file(mount_dir);
++	if (cmd_fd < 0)
++		goto failure;
++
++	/* Write the second half of the data into the command file. (stage 2) */
++	for (; i < file_num_stage2; i++) {
++		struct test_file *file = &test.files[i];
++
++		emit_file(cmd_fd, file->name, &file->ino, INCFS_ROOT_INODE,
++			  file->size);
++		if (emit_test_file_data(cmd_fd, file))
++			goto failure;
++	}
++
++	/* Validate contents of the FS */
++	for (i = 0; i < file_num_stage2; i++) {
++		struct test_file *file = &test.files[i];
++
++		if (validate_test_file_content(mount_dir, file) < 0)
++			goto failure;
++	}
++
++	/* Hide all files */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++		char *filename = concat_file_name(mount_dir, file->name);
++
++		if (access(filename, F_OK) != 0) {
++			ksft_print_msg("File %s is not visible.\n", filename);
++			goto failure;
++		}
++
++		unlink_node(cmd_fd, INCFS_ROOT_INODE, file->name);
++
++		if (access(filename, F_OK) != -1) {
++			ksft_print_msg("File %s is still visible.\n", filename);
++			goto failure;
++		}
++		free(filename);
++	}
++
++	/* Unmount and mount again, to see that unlinked files stay unlinked. */
++	close(cmd_fd);
++	cmd_fd = -1;
++	if (umount(mount_dir) != 0) {
++		print_error("Can't unmout FS");
++		goto failure;
++	}
++	backing_fd = open_existing_test_backing_file(mount_dir, true);
++	if (backing_fd < 0)
++		goto failure;
++	if (mount_fs(mount_dir, backing_fd, 50) != 0)
++		goto failure;
++	close(backing_fd);
++	backing_fd = -1;
++
++	cmd_fd = open_commands_file(mount_dir);
++	if (cmd_fd < 0)
++		goto failure;
++
++	/* Validate all hidden files are still hidden. */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++		char *filename = concat_file_name(mount_dir, file->name);
++
++		if (access(filename, F_OK) != -1) {
++			ksft_print_msg("File %s is still visible.\n", filename);
++			goto failure;
++		}
++		free(filename);
++	}
++
++	/* Final unmount */
++	close(cmd_fd);
++	cmd_fd = -1;
++	if (umount(mount_dir) != 0) {
++		print_error("Can't unmout FS");
++		goto failure;
++	}
++
++	return TEST_SUCCESS;
++
++failure:
++	close(cmd_fd);
++	close(backing_fd);
++	umount(mount_dir);
++	return TEST_FAILURE;
++}
++
++static int validate_dir(char *dir_path, struct dirent *entries, int count)
++{
++	DIR *dir;
++	struct dirent *dp;
++	int result = 0;
++	int matching_entries = 0;
++
++	dir = opendir(dir_path);
++	if (!dir) {
++		result = -errno;
 +		goto out;
 +	}
 +
-+	for (i = 0; i < reads_collected; i++)
-+		if (reads_buf[i].serial_number > new_max_sn)
-+			new_max_sn = reads_buf[i].serial_number;
++	while ((dp = readdir(dir))) {
++		int i;
 +
-+	/*
-+	 * Just to make sure that we don't accidentally copy more data
-+	 * to reads buffer than userspace can handle.
-+	 */
-+	reads_collected = min_t(size_t, reads_collected, reads_to_collect);
-+	result = reads_collected * sizeof(*reads_buf);
++		if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
++			continue;
 +
-+	/* Copy reads info to the userspace buffer */
-+	if (copy_to_user(buf, reads_buf, result)) {
-+		result = -EFAULT;
-+		goto out;
++		for (i = 0; i < count; i++) {
++			struct dirent *entry = entries + i;
++
++			if ((dp->d_ino == entry->d_ino) &&
++			    (strcmp(dp->d_name, entry->d_name) == 0) &&
++			    (dp->d_type == entry->d_type)) {
++				matching_entries++;
++				break;
++			}
++		}
 +	}
++	result = count - matching_entries;
 +
-+	 WRITE_ONCE(cmd_state->last_pending_read_sn, new_max_sn);
-+	 *ppos = 0;
 +out:
-+	if (reads_buf)
-+		free_page((unsigned long)reads_buf);
++	if (dir)
++		closedir(dir);
 +	return result;
 +}
 +
-+static __poll_t command_poll(struct file *file, poll_table *wait)
++/* Test for:
++ *  1. No more than one hardlink can be created for a dir.
++ *  2. Only an empty dir can be unlinked.
++ */
++static int dirs_corner_cases(char *mount_dir)
 +{
-+	struct command_file_state *cmd_state = file->private_data;
-+	struct mount_info *mi = get_mount_info(file_superblock(file));
-+	__poll_t ret = 0;
++	int dir1_ino = 0;
++	int dir2_ino = 0;
++	int backing_fd = -1, cmd_fd = -1;
++	char dirname1[] = "dir1";
++	char *dir_path1 = concat_file_name(mount_dir, dirname1);
++	char dirname2[] = "dir2";
++	char *dir_path2 = concat_file_name(dir_path1, dirname2);
++	struct stat st = {};
++	int ret;
++	struct incfs_instruction inst = {};
 +
-+	poll_wait(file, &mi->mi_pending_reads_notif_wq, wait);
-+	if (incfs_fresh_pending_reads_exist(mi,
-+		cmd_state->last_pending_read_sn))
-+		ret = EPOLLIN | EPOLLRDNORM;
++	backing_fd = open_test_backing_file(mount_dir, true);
++	if (backing_fd < 0)
++		goto failure;
 +
++	/* Mount FS and release the backing file. */
++	if (mount_fs(mount_dir, backing_fd, 50) != 0)
++		goto failure;
++	close(backing_fd);
++	backing_fd = -1;
++
++	cmd_fd = open_commands_file(mount_dir);
++	if (cmd_fd < 0)
++		goto failure;
++
++	/* Create dir1 node. */
++	inst = (struct incfs_instruction) {
++			.type = INCFS_INSTRUCTION_NEW_FILE,
++			.file = {
++				.size = 0,
++				.mode = S_IFDIR | 0555,
++			}
++	};
++	ret = send_md_instruction(cmd_fd, &inst);
++	dir1_ino = inst.file.ino_out;
++	if (ret)
++		goto failure;
++
++	/* Create dir2 node. */
++	inst = (struct incfs_instruction) {
++			.type = INCFS_INSTRUCTION_NEW_FILE,
++			.file = {
++				.size = 0,
++				.mode = S_IFDIR | 0555,
++			}
++	};
++	ret = send_md_instruction(cmd_fd, &inst);
++	dir2_ino = inst.file.ino_out;
++	if (ret)
++		goto failure;
++
++	/* Try to put dir1 into itself. */
++	inst = (struct incfs_instruction){
++			.type = INCFS_INSTRUCTION_ADD_DIR_ENTRY,
++			.dir_entry = {
++				.dir_ino = dir1_ino,
++				.child_ino = dir1_ino,
++				.name = ptr_to_u64(dirname1),
++				.name_len = strlen(dirname1)
++			}
++	};
++	ret = send_md_instruction(cmd_fd, &inst);
++	if (ret != -EINVAL)
++		goto failure;
++
++	/* Try to put root into dir1. */
++	inst = (struct incfs_instruction){
++			.type = INCFS_INSTRUCTION_ADD_DIR_ENTRY,
++			.dir_entry = {
++				.dir_ino = dir1_ino,
++				.child_ino = INCFS_ROOT_INODE,
++				.name = ptr_to_u64(dirname1),
++				.name_len = strlen(dirname1)
++			}
++	};
++	ret = send_md_instruction(cmd_fd, &inst);
++	if (ret != -EINVAL)
++		goto failure;
++
++	/* Put dir1 into root. */
++	inst = (struct incfs_instruction){
++			.type = INCFS_INSTRUCTION_ADD_DIR_ENTRY,
++			.dir_entry = {
++				.dir_ino = INCFS_ROOT_INODE,
++				.child_ino = dir1_ino,
++				.name = ptr_to_u64(dirname1),
++				.name_len = strlen(dirname1)
++			}
++	};
++	ret = send_md_instruction(cmd_fd, &inst);
++	if (ret)
++		goto failure;
++
++	/* Check dir1 is visible. */
++	if (stat(dir_path1, &st) != 0 || st.st_ino != dir1_ino) {
++		print_error("stat failed for dir1");
++		goto failure;
++	}
++
++	/* Put dir2 into dir1. */
++	inst = (struct incfs_instruction){
++			.type = INCFS_INSTRUCTION_ADD_DIR_ENTRY,
++			.dir_entry = {
++				.dir_ino = dir1_ino,
++				.child_ino = dir2_ino,
++				.name = ptr_to_u64(dirname2),
++				.name_len = strlen(dirname2)
++			}
++	};
++	ret = send_md_instruction(cmd_fd, &inst);
++	if (ret)
++		goto failure;
++
++	/* Check dir2 is visible. */
++	if (stat(dir_path2, &st) != 0 || st.st_ino != dir2_ino) {
++		print_error("stat failed for dir2");
++		goto failure;
++	}
++
++	/* Try to create a loop. Put dir2 into dir1. */
++	inst = (struct incfs_instruction){
++			.type = INCFS_INSTRUCTION_ADD_DIR_ENTRY,
++			.dir_entry = {
++				.dir_ino = dir2_ino,
++				.child_ino = dir1_ino,
++				.name = ptr_to_u64(dirname1),
++				.name_len = strlen(dirname1)
++			}
++	};
++	ret = send_md_instruction(cmd_fd, &inst);
++	if (ret != -EMLINK) {
++		ksft_print_msg("Loop creation test filed. %s\n",
++					strerror(-ret));
++		goto failure;
++	}
++
++	/* Try to unlink dir1 without removing dir2 first. */
++	ret = unlink_node(cmd_fd, INCFS_ROOT_INODE, dirname1);
++	if (ret != -ENOTEMPTY) {
++		ksft_print_msg("Unlinked non empty dir: %s\n", strerror(-ret));
++		goto failure;
++	}
++
++	ret = unlink_node(cmd_fd, dir1_ino, dirname2);
++	if (ret)
++		goto failure;
++
++	ret = unlink_node(cmd_fd, INCFS_ROOT_INODE, dirname1);
++	if (ret)
++		goto failure;
++
++	close(cmd_fd);
++	cmd_fd = -1;
++	if (umount(mount_dir) != 0) {
++		print_error("Can't unmout FS");
++		goto failure;
++	}
++	free(dir_path1);
++	free(dir_path2);
++
++	return TEST_SUCCESS;
++
++failure:
++	close(cmd_fd);
++	close(backing_fd);
++	umount(mount_dir);
++	return TEST_FAILURE;
++}
++
++static int directory_structure_test(char *mount_dir)
++{
++	int dir_ino = 0;
++	int file_ino = 0;
++	int backing_fd = -1, cmd_fd = -1;
++	int mismatch_count = 0;
++	char dirname[] = "dir";
++	char filename[] = "file";
++	char *dir_path = concat_file_name(mount_dir, dirname);
++	char *file_path = concat_file_name(dir_path, filename);
++	struct stat st;
++	int ret;
++
++	backing_fd = open_test_backing_file(mount_dir, true);
++	if (backing_fd < 0)
++		goto failure;
++
++	/* Mount FS and release the backing file. */
++	if (mount_fs(mount_dir, backing_fd, 50) != 0)
++		goto failure;
++	close(backing_fd);
++	backing_fd = -1;
++
++	cmd_fd = open_commands_file(mount_dir);
++	if (cmd_fd < 0)
++		goto failure;
++
++	/* Write test data into the command file. */
++	ret = emit_dir(cmd_fd, dirname, &dir_ino, INCFS_ROOT_INODE);
++	if (ret < 0) {
++		ksft_print_msg("Error creating a dir: %s\n", strerror(-ret));
++		goto failure;
++	}
++	ret = emit_file(cmd_fd, filename, &file_ino, dir_ino, 0);
++	if (ret < 0) {
++		ksft_print_msg("Error creating a file: %s\n", strerror(-ret));
++		goto failure;
++	}
++
++	/* Validate directory structure */
++	{
++		struct dirent dir_dentry = { .d_ino = dir_ino,
++					     .d_type = DT_DIR,
++					     .d_name = "dir" };
++		struct dirent cmd_dentry = { .d_ino = INCFS_COMMAND_INODE,
++					     .d_type = DT_REG,
++					     .d_name = ".cmd" };
++		struct dirent file_dentry = { .d_ino = file_ino,
++					      .d_type = DT_REG,
++					      .d_name = "file" };
++		struct dirent root_entries[] = { cmd_dentry, dir_dentry };
++		struct dirent dir_entries[] = { file_dentry };
++
++		mismatch_count = validate_dir(mount_dir, root_entries,
++					      ARRAY_SIZE(root_entries));
++		if (mismatch_count) {
++			ksft_print_msg("Root validatoin failed. Mismatch %d",
++			       mismatch_count);
++			goto failure;
++		}
++
++		mismatch_count = validate_dir(dir_path, dir_entries,
++					      ARRAY_SIZE(dir_entries));
++		if (mismatch_count) {
++			ksft_print_msg("Subdir validatoin failed. Mismatch %d",
++			       mismatch_count);
++			goto failure;
++		}
++	}
++
++	/* Validate file inode */
++	if (stat(file_path, &st) != 0) {
++		print_error("stat failed");
++		goto failure;
++	}
++
++	if (st.st_ino != file_ino) {
++		ksft_print_msg("Unexpected file inode.");
++		goto failure;
++	}
++
++	if (st.st_size != 0) {
++		ksft_print_msg("Unexpected file size.");
++		goto failure;
++	}
++
++	ret = unlink_node(cmd_fd, dir_ino, filename);
++	if (ret < 0) {
++		ksft_print_msg("Error unlinking a file: %s\n", strerror(-ret));
++		goto failure;
++	}
++
++	/* Validate directory structure */
++	{
++		struct dirent dir_entries[0] = {};
++
++		mismatch_count = validate_dir(dir_path, dir_entries, 0);
++		if (mismatch_count) {
++			ksft_print_msg("Second subdir validatoin failed. Mismatch %d",
++			       mismatch_count);
++			goto failure;
++		}
++
++		if (access(file_path, F_OK) != -1) {
++			ksft_print_msg("Unlinked file is still visible");
++			goto failure;
++		}
++	}
++
++	close(cmd_fd);
++	cmd_fd = -1;
++	if (umount(mount_dir) != 0) {
++		print_error("Can't unmout FS");
++		goto failure;
++	}
++	free(file_path);
++	free(dir_path);
++
++	return TEST_SUCCESS;
++
++failure:
++	close(cmd_fd);
++	close(backing_fd);
++	umount(mount_dir);
++	return TEST_FAILURE;
++}
++
++static int data_producer(int fd, struct test_files_set *test_set)
++{
++	int ret = 0;
++	int timeout_ms = 1000;
++	struct incfs_pending_read_info prs[100] = {};
++	int prs_size = ARRAY_SIZE(prs);
++
++	while ((ret = wait_for_pending_reads(fd, timeout_ms,
++						prs, prs_size)) > 0) {
++		struct file_and_block blocks[ARRAY_SIZE(prs)] = {};
++		int read_count = ret;
++		int i;
++
++		for (i = 0; i < read_count; i++) {
++			int j = 0;
++
++			for (j = 0; j < test_set->files_count; j++) {
++				if (test_set->files[j].ino == prs[i].file_ino)
++					blocks[i].file = &test_set->files[j];
++			}
++			blocks[i].block_index = prs[i].block_index;
++		}
++
++		ret = emit_test_blocks(fd, blocks, read_count);
++		if (ret < 0) {
++			ksft_print_msg("Emitting test data error: %s\n",
++				strerror(-ret));
++			return ret;
++		}
++	}
 +	return ret;
 +}
 +
-+static struct timespec64 backing_file_time(struct super_block *sb)
++
++static int multiple_providers_test(char *mount_dir)
 +{
-+	struct timespec64 zero_time = { .tv_sec = 0, .tv_nsec = 0 };
-+	struct mount_info *mi = get_mount_info(sb);
-+	struct inode *backing_inode = NULL;
++	struct test_files_set test = get_test_files_set();
++	const int file_num = test.files_count;
++	const int producer_count = 5;
++	int backing_fd = -1, cmd_fd = -1;
++	int status;
++	int i;
++	pid_t *producer_pids = alloca(producer_count * sizeof(pid_t));
 +
-+	backing_inode = file_inode(mi->mi_bf_context->bc_file);
-+	if (!backing_inode)
-+		return zero_time;
-+	return backing_inode->i_ctime;
-+}
++	backing_fd = open_test_backing_file(mount_dir, true);
++	if (backing_fd < 0)
++		goto failure;
 +
-+static struct inode *get_inode_for_incfs_node(struct super_block *sb,
-+					      struct inode_info *n_info)
-+{
-+	unsigned long ino = n_info->n_ino;
-+	struct inode *inode = iget_locked(sb, ino);
++	/* Mount FS and release the backing file. */
++	if (mount_fs(mount_dir, backing_fd, 10000) != 0)
++		goto failure;
++	close(backing_fd);
 +
-+	if (!inode)
-+		return NULL;
++	cmd_fd = open_commands_file(mount_dir);
++	if (cmd_fd < 0)
++		goto failure;
 +
-+	if (inode->i_state & I_NEW) {
-+		inode->i_ctime = backing_file_time(sb);
-+		inode->i_mtime = inode->i_ctime;
-+		inode->i_atime = inode->i_ctime;
-+		inode->i_ino = ino;
-+		inode->i_private = n_info;
-+		inode_init_owner(inode, NULL, n_info->n_mode);
++	/* Tell FS about the files, without actually providing the data. */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
 +
-+		switch (n_info->n_type) {
-+		case INCFS_NODE_FILE: {
-+			struct data_file *df = incfs_get_file_from_node(n_info);
-+
-+			inode->i_size = df->df_size;
-+			inode->i_blocks = df->df_block_count;
-+			inode->i_mapping->a_ops = &incfs_address_space_ops;
-+			inode->i_op = &incfs_file_inode_ops;
-+			inode->i_fop = &incfs_file_ops;
-+			break;
-+		}
-+		case INCFS_NODE_DIR:
-+			inode->i_size = 0;
-+			inode->i_blocks = 1;
-+			inode->i_mapping->a_ops = &incfs_address_space_ops;
-+			inode->i_op = &incfs_dir_inode_ops;
-+			inode->i_fop = &incfs_dir_fops;
-+			break;
-+
-+			break;
-+		default:
-+			pr_warn("incfs: Unknown inode type");
-+			break;
-+		}
-+
-+		unlock_new_inode(inode);
++		if (emit_file(cmd_fd, file->name, &file->ino, INCFS_ROOT_INODE,
++			      file->size) < 0)
++			goto failure;
 +	}
 +
-+	return inode;
-+}
++	/* Start producer processes */
++	for (i = 0; i < producer_count; i++) {
++		pid_t producer_pid = flush_and_fork();
 +
-+static struct inode *get_inode_for_commands(struct super_block *sb)
-+{
-+	struct inode *inode = iget_locked(sb, INCFS_COMMAND_INODE);
++		if (producer_pid == 0) {
++			int ret;
++			/*
++			 * This is a child that should provide data to
++			 * pending reads.
++			 */
 +
-+	if (!inode)
-+		return NULL;
-+
-+	if (inode->i_state & I_NEW) {
-+		inode->i_ctime = backing_file_time(sb);
-+		inode->i_mtime = inode->i_ctime;
-+		inode->i_atime = inode->i_ctime;
-+		inode->i_size = 0;
-+		inode->i_ino = INCFS_COMMAND_INODE;
-+		inode->i_private = NULL;
-+
-+		inode_init_owner(inode, NULL, S_IFREG | READ_WRITE_FILE_MODE);
-+
-+		inode->i_op = &incfs_file_inode_ops;
-+		inode->i_fop = &incfs_command_file_ops;
-+
-+		unlock_new_inode(inode);
-+	}
-+
-+	return inode;
-+}
-+
-+static int iterate_incfs_dir(struct file *file, struct dir_context *ctx)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct directory *dir = NULL;
-+	struct mount_info *mi = NULL;
-+	struct dir_entry_info *entry;
-+	loff_t entries_found = 0;
-+	loff_t aux_entries_count = 2; // 2 for "." and ".."
-+
-+	dir = incfs_get_dir_from_node((struct inode_info *)inode->i_private);
-+	if (!dir)
-+		return -EFAULT;
-+
-+	if (!dir_emit_dots(file, ctx))
-+		return 0;
-+
-+	mi = dir->d_node.n_mount_info;
-+	if (ctx->pos == 2 && dir->d_node.n_ino == INCFS_ROOT_INODE) {
-+		if (!dir_emit(ctx, command_file_name,
-+			      ARRAY_SIZE(command_file_name) - 1,
-+			      INCFS_COMMAND_INODE, DT_REG))
-+			return 0;
-+		ctx->pos++;
-+		aux_entries_count++; //Aux entry for the .cmd file
-+	}
-+
-+	mutex_lock(&mi->mi_dir_ops_mutex);
-+	list_for_each_entry(entry, &dir->d_entries_head, de_entries_list) {
-+		unsigned int type = (entry->de_child->n_type == INCFS_NODE_DIR)
-+					? DT_DIR : DT_REG;
-+
-+		entries_found++;
-+		if (entries_found > ctx->pos - aux_entries_count) {
-+			if (!dir_emit(ctx, entry->de_name.data,
-+					entry->de_name.len,
-+					entry->de_child->n_ino, type))
-+				break;
-+			ctx->pos++;
++			ret = data_producer(cmd_fd, &test);
++			exit(-ret);
++		} else if (producer_pid > 0) {
++			producer_pids[i] = producer_pid;
++		} else {
++			print_error("Fork error");
++			goto failure;
 +		}
 +	}
-+	mutex_unlock(&mi->mi_dir_ops_mutex);
-+	return 0;
++
++	/* Validate FS content */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++		char *filename = concat_file_name(mount_dir, file->name);
++		loff_t read_result = read_whole_file(filename);
++
++		free(filename);
++		if (read_result != file->size) {
++			ksft_print_msg("Error validating file %s. Result: %ld\n",
++				file->name, read_result);
++			goto failure;
++		}
++	}
++
++	/* Check that all producers has finished with 0 exit status */
++	for (i = 0; i < producer_count; i++) {
++		status = wait_for_process(producer_pids[i]);
++		if (status != 0) {
++			ksft_print_msg("Producer %d failed with code (%s)\n",
++			       i, strerror(status));
++			goto failure;
++		}
++	}
++
++	close(cmd_fd);
++	cmd_fd = -1;
++	if (umount(mount_dir) != 0) {
++		print_error("Can't unmout FS");
++		goto failure;
++	}
++
++	return TEST_SUCCESS;
++
++failure:
++	close(cmd_fd);
++	umount(mount_dir);
++	return TEST_FAILURE;
 +}
 +
-+static struct dentry *dir_lookup(struct inode *dir_inode, struct dentry *dentry,
-+				 unsigned int flags)
++static int concurrent_reads_and_writes_test(char *mount_dir)
 +{
-+	struct inode *result = NULL;
-+	struct super_block *sb = dir_inode->i_sb;
-+	struct mount_info *mi = get_mount_info(sb);
-+	int dir_ver = 0;
-+	struct mem_range name_rng = range((u8 *)dentry->d_name.name,
-+						dentry->d_name.len);
++	struct test_files_set test = get_test_files_set();
++	const int file_num = test.files_count;
++	/* Validate each file from that many child processes. */
++	const int child_multiplier = 3;
++	int backing_fd = -1, cmd_fd = -1;
++	int status;
++	int i;
++	pid_t producer_pid;
++	pid_t *child_pids = alloca(child_multiplier * file_num * sizeof(pid_t));
 +
-+	if (incfs_equal_ranges(dot_range, name_rng))
-+		result = dir_inode;
-+	else if (incfs_equal_ranges(dotdot_range, name_rng)) {
-+		struct directory *parent_dir = NULL;
++	backing_fd = open_test_backing_file(mount_dir, true);
++	if (backing_fd < 0)
++		goto failure;
 +
-+		mutex_lock(&mi->mi_nodes_mutex);
-+		parent_dir = incfs_get_dir_by_ino(mi, parent_ino(dentry));
-+		if (parent_dir)
-+			result = get_inode_for_incfs_node(sb,
-+							&parent_dir->d_node);
-+		mutex_unlock(&mi->mi_nodes_mutex);
-+	} else if (incfs_equal_ranges(command_file_name_range, name_rng)) {
-+		result = get_inode_for_commands(sb);
++	/* Mount FS and release the backing file. */
++	if (mount_fs(mount_dir, backing_fd, 10000) != 0)
++		goto failure;
++	close(backing_fd);
++
++	cmd_fd = open_commands_file(mount_dir);
++	if (cmd_fd < 0)
++		goto failure;
++
++	/* Tell FS about the files, without actually providing the data. */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++
++		if (emit_file(cmd_fd, file->name, &file->ino, INCFS_ROOT_INODE,
++			      file->size) < 0)
++			goto failure;
++	}
++
++	/* Start child processes acessing data in the files */
++	for (i = 0; i < file_num * child_multiplier; i++) {
++		struct test_file *file = &test.files[i / child_multiplier];
++		pid_t child_pid = flush_and_fork();
++
++		if (child_pid == 0) {
++			/* This is a child process, do the data validation. */
++			int ret = validate_test_file_content_with_seed(
++				mount_dir, file, i);
++			if (ret >= 0) {
++				/* Zero exit status if data is valid. */
++				exit(0);
++			}
++
++			/* Positive status if validation error found. */
++			exit(-ret);
++		} else if (child_pid > 0) {
++			child_pids[i] = child_pid;
++		} else {
++			print_error("Fork error");
++			goto failure;
++		}
++	}
++
++	producer_pid = flush_and_fork();
++	if (producer_pid == 0) {
++		int ret;
++		/*
++		 * This is a child that should provide data to
++		 * pending reads.
++		 */
++
++		ret = data_producer(cmd_fd, &test);
++		exit(-ret);
 +	} else {
-+		struct directory *dir = NULL;
-+		struct inode_info *n_info = NULL;
-+
-+		mutex_lock(&mi->mi_nodes_mutex);
-+		dir = incfs_get_dir_from_node(
-+			(struct inode_info *)dir_inode->i_private);
-+		n_info = incfs_get_node_by_name(dir, dentry->d_name.name,
-+						&dir_ver);
-+		if (n_info)
-+			result = get_inode_for_incfs_node(sb, n_info);
-+
-+		mutex_unlock(&mi->mi_nodes_mutex);
-+	}
-+	dentry->d_fsdata = (void *)(long)dir_ver;
-+	d_add(dentry, result);
-+	return NULL;
-+}
-+
-+static int parse_options(struct mount_options *opts, char *str)
-+{
-+	substring_t args[MAX_OPT_ARGS];
-+	int value;
-+	char *position;
-+
-+	if (opts == NULL)
-+		return -EFAULT;
-+
-+	opts->backing_fd = 0;
-+	opts->read_timeout_ms = 1000; /* Default: 1s */
-+	if (str == NULL || *str == 0)
-+		return 0;
-+
-+	while ((position = strsep(&str, ",")) != NULL) {
-+		int token;
-+
-+		if (!*position)
-+			continue;
-+
-+		token = match_token(position, option_tokens, args);
-+
-+		switch (token) {
-+		case Opt_backing_fd:
-+			if (match_int(&args[0], &value))
-+				return -EINVAL;
-+			opts->backing_fd = value;
-+			break;
-+		case Opt_read_timeout:
-+			if (match_int(&args[0], &value))
-+				return -EINVAL;
-+			opts->read_timeout_ms = value;
-+			break;
-+		default:
-+			return -EINVAL;
++		status = wait_for_process(producer_pid);
++		if (status != 0) {
++			ksft_print_msg("Data produces failed. %d(%s) ", status,
++			       strerror(status));
++			goto failure;
 +		}
 +	}
 +
-+	return 0;
-+}
++	/* Check that all children has finished with 0 exit status */
++	for (i = 0; i < file_num * child_multiplier; i++) {
++		struct test_file *file = &test.files[i / child_multiplier];
 +
-+static int remount_fs(struct super_block *sb, int *flags, char *data)
-+{
-+	struct mount_info *mi = get_mount_info(sb);
-+	struct mount_options options;
-+	int err = 0;
-+
-+	sync_filesystem(sb);
-+	err = parse_options(&options, (char *)data);
-+	if (err)
-+		return err;
-+
-+	if (mi->mi_options.read_timeout_ms != options.read_timeout_ms) {
-+		mi->mi_options.read_timeout_ms = options.read_timeout_ms;
-+		pr_info("New Incremental-fs timeout_ms=%d",
-+			options.read_timeout_ms);
++		status = wait_for_process(child_pids[i]);
++		if (status != 0) {
++			ksft_print_msg("Validation for the file %s failed with code %d (%s)\n",
++			       file->name, status, strerror(status));
++			goto failure;
++		}
 +	}
 +
-+	return 0;
++	/* Check that there are no pending reads left */
++	{
++		struct incfs_pending_read_info prs[1] = {};
++		int timeout = 0;
++		int read_count = wait_for_pending_reads(cmd_fd, timeout, prs,
++							ARRAY_SIZE(prs));
++
++		if (read_count) {
++			ksft_print_msg("Pending reads pending when all data written\n");
++			goto failure;
++		}
++	}
++
++	close(cmd_fd);
++	cmd_fd = -1;
++	if (umount(mount_dir) != 0) {
++		print_error("Can't unmout FS");
++		goto failure;
++	}
++
++	return TEST_SUCCESS;
++
++failure:
++	close(cmd_fd);
++	umount(mount_dir);
++	return TEST_FAILURE;
 +}
 +
-+static int dentry_revalidate(struct dentry *dentry, unsigned int flags)
++static int child_procs_waiting_for_data_test(char *mount_dir)
 +{
-+	int dentry_ver = (int)(long)dentry->d_fsdata;
-+	struct inode *inode = NULL;
-+	struct dentry *parent = NULL;
-+	struct directory *parent_dir = NULL;
++	struct test_files_set test = get_test_files_set();
++	const int file_num = test.files_count;
++	int backing_fd = -1, cmd_fd = -1;
++	int i;
++	pid_t *child_pids = alloca(file_num * sizeof(pid_t));
 +
-+	if (flags & LOOKUP_RCU)
-+		return -ECHILD;
++	backing_fd = open_test_backing_file(mount_dir, true);
++	if (backing_fd < 0)
++		goto failure;
 +
-+	parent = dget_parent(dentry);
-+	parent_dir = incfs_get_dir_from_node((struct inode_info *)
-+						d_inode(parent)->i_private);
-+	dput(parent);
++	/* Mount FS and release the backing file. (10s wait time) */
++	if (mount_fs(mount_dir, backing_fd, 10000) != 0)
++		goto failure;
++	close(backing_fd);
 +
-+	if (!parent_dir)
-+		return 0;
++	cmd_fd = open_commands_file(mount_dir);
++	if (cmd_fd < 0)
++		goto failure;
++
++	/* Tell FS about the files, without actually providing the data. */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++
++		emit_file(cmd_fd, file->name, &file->ino, INCFS_ROOT_INODE,
++			  file->size);
++	}
++
++	/* Start child processes acessing data in the files */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++		pid_t child_pid = flush_and_fork();
++
++		if (child_pid == 0) {
++			/* This is a child process, do the data validation. */
++			int ret = validate_test_file_content(mount_dir, file);
++
++			if (ret >= 0) {
++				/* Zero exit status if data is valid. */
++				exit(0);
++			}
++
++			/* Positive status if validation error found. */
++			exit(-ret);
++		} else if (child_pid > 0) {
++			child_pids[i] = child_pid;
++		} else {
++			print_error("Fork error");
++			goto failure;
++		}
++	}
++
++	/* Write test data into the command file. */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++
++		if (emit_test_file_data(cmd_fd, file))
++			goto failure;
++	}
++
++	/* Check that all children has finished with 0 exit status */
++	for (i = 0; i < file_num; i++) {
++		struct test_file *file = &test.files[i];
++		int status = wait_for_process(child_pids[i]);
++
++		if (status != 0) {
++			ksft_print_msg("Validation for the file %s failed with code %d (%s)\n",
++			       file->name, status, strerror(status));
++			goto failure;
++		}
++	}
++
++	close(cmd_fd);
++	cmd_fd = -1;
++	if (umount(mount_dir) != 0) {
++		print_error("Can't unmout FS");
++		goto failure;
++	}
++
++	return TEST_SUCCESS;
++
++failure:
++	close(cmd_fd);
++	umount(mount_dir);
++	return TEST_FAILURE;
++}
++
++static int file_count_limit(char *mount_dir)
++{
++	int file_ino = 0;
++	int i;
++	int backing_fd = -1, cmd_fd = -1;
++	char filename[100];
++	char file_path[100];
++	int ret;
++
++	backing_fd = open_test_backing_file(mount_dir, true);
++	if (backing_fd < 0)
++		goto failure;
++
++	if (mount_fs(mount_dir, backing_fd, 50) != 0)
++		goto failure;
++	close(backing_fd);
++	backing_fd = -1;
++
++	cmd_fd = open_commands_file(mount_dir);
++	if (cmd_fd < 0)
++		goto failure;
 +
 +	/*
-+	 * Reload globally visible parent dir version. If it hasn't changed
-+	 * since the dentry had been created, it must be still valid.
++	 * Create INCFS_MAX_FILES - 1 files as see that everything works.
++	 * One inode is already taken by the root dir.
 +	 */
-+	smp_mb__before_atomic();
-+	if (dentry_ver == atomic_read(&parent_dir->d_version))
-+		return 1;
++	for (i = 0; i < INCFS_MAX_FILES - 1; i++) {
++		struct stat st;
 +
-+	/* Root dentry is always valid. */
-+	inode = d_inode(dentry);
-+	if (inode && inode->i_ino == INCFS_ROOT_INODE)
-+		return 1;
++		sprintf(filename, "file_%d", i);
++		sprintf(file_path, "%s/%s", mount_dir, filename);
++		ret = emit_file(cmd_fd, filename, &file_ino,
++				INCFS_ROOT_INODE, 0);
++		if (ret < 0) {
++			ksft_print_msg("Error creating a file: %s (%s)\n",
++				filename, strerror(-ret));
++			goto failure;
++		}
 +
++		if (stat(file_path, &st) != 0) {
++			print_error("stat failed");
++			goto failure;
++		}
++	}
++
++	ret = emit_file(cmd_fd, "over_limit_file", &file_ino,
++			INCFS_ROOT_INODE, 0);
++	if (ret != -ENFILE) {
++		ksft_print_msg("Too many files were allowed to be cerated.\n");
++		goto failure;
++	}
++
++	close(cmd_fd);
++	cmd_fd = -1;
++	if (umount(mount_dir) != 0) {
++		print_error("Can't unmout FS");
++		goto failure;
++	}
++	return TEST_SUCCESS;
++
++failure:
++	close(cmd_fd);
++	close(backing_fd);
++	umount(mount_dir);
++	return TEST_FAILURE;
++}
++
++static char *setup_mount_dir()
++{
++	struct stat st;
++	char *current_dir = get_current_dir_name();
++	char *mount_dir = concat_file_name(current_dir,
++						"incfs_test_mount_dir");
++
++	free(current_dir);
++	if (stat(mount_dir, &st) == 0) {
++		if (S_ISDIR(st.st_mode))
++			return mount_dir;
++
++		ksft_print_msg("%s is a file, not a dir.\n", mount_dir);
++		return NULL;
++	}
++
++	if (mkdir(mount_dir, 0777)) {
++		print_error("Can't create mount dir.");
++		return NULL;
++	}
++
++	return mount_dir;
++}
++
++int main(int argc, char *argv[])
++{
++	char *mount_dir = NULL;
++	int fails = 0;
++
++	ksft_print_header();
++
++	if (geteuid() != 0)
++		ksft_print_msg("Not a root, might fail to mount.\n");
++
++	mount_dir = setup_mount_dir();
++	if (mount_dir == NULL)
++		ksft_exit_fail_msg("Can't create a mount dir\n");
++
++#define RUN_TEST(test)                                                         \
++	do {                                                                   \
++		ksft_print_msg("Running " #test "\n");                         \
++		if (test(mount_dir) == TEST_SUCCESS)                           \
++			ksft_test_result_pass(#test "\n");                     \
++		else {                                                         \
++			ksft_test_result_fail(#test "\n");                     \
++			fails++;                                               \
++		}                                                              \
++	} while (0)
++
++	RUN_TEST(directory_structure_test);
++	RUN_TEST(dirs_corner_cases);
++	RUN_TEST(file_count_limit);
++	RUN_TEST(work_after_remount_test);
++	RUN_TEST(child_procs_waiting_for_data_test);
++	RUN_TEST(errors_on_overwrite_test);
++	RUN_TEST(concurrent_reads_and_writes_test);
++	RUN_TEST(multiple_providers_test);
++	RUN_TEST(dynamic_files_and_data_test);
++
++#undef RUN_TEST
++	umount2(mount_dir, MNT_FORCE);
++	rmdir(mount_dir);
++
++	if (fails > 0)
++		ksft_exit_pass();
++	else
++		ksft_exit_pass();
 +	return 0;
 +}
+diff --git a/tools/testing/selftests/filesystems/incfs/utils.c b/tools/testing/selftests/filesystems/incfs/utils.c
+new file mode 100644
+index 000000000000..1f83b97225de
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/incfs/utils.c
+@@ -0,0 +1,159 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2018 Google LLC
++ */
++#include <stdio.h>
++#include <fcntl.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <sys/ioctl.h>
++#include <sys/mount.h>
++#include <errno.h>
++#include <string.h>
++#include <poll.h>
 +
-+static int dentry_revalidate_weak(struct dentry *dentry, unsigned int flags)
++#include "utils.h"
++
++int mount_fs(char *mount_dir, int backing_fd, int read_timeout_ms)
 +{
-+	/*
-+	 * Weak version of revalidate only needs to make sure that inode
-+	 * is still okay. Incremental-fs never deletes inodes, so no need
-+	 * for extra steps here.
-+	 */
-+	struct inode *inode = d_inode(dentry);
++	static const char fs_name[] = INCFS_NAME;
++	char mount_options[512];
++	int result;
 +
-+	if (!inode || !inode->i_private)
-+		return 0;
-+	return 1;
-+}
++	snprintf(mount_options, ARRAY_SIZE(mount_options),
++		 "backing_fd=%u,read_timeout_ms=%u",
++		 backing_fd, read_timeout_ms);
 +
- static int fill_super_block(struct super_block *sb, void *data, int silent)
- {
-+	struct mount_options options;
-+	struct inode *inode = NULL;
-+	struct mount_info *mi = NULL;
-+	struct file *backing_file = NULL;
-+	const char *file_name = NULL;
-+	int result = 0;
-+
-+	sb->s_op = &incfs_super_ops;
-+	sb->s_d_op = &incfs_dentry_ops;
-+	sb->s_flags |= S_NOATIME;
-+	sb->s_magic = INCFS_MAGIC_NUMBER;
-+	sb->s_time_gran = 1;
-+	sb->s_blocksize = INCFS_DATA_FILE_BLOCK_SIZE;
-+	sb->s_blocksize_bits = blksize_bits(sb->s_blocksize);
-+	sb->s_maxbytes = MAX_LFS_FILESIZE;
-+
-+	BUILD_BUG_ON(PAGE_SIZE != INCFS_DATA_FILE_BLOCK_SIZE);
-+
-+	result = parse_options(&options, (char *)data);
++	result = mount(fs_name, mount_dir, fs_name, 0, mount_options);
 +	if (result != 0)
-+		goto err;
-+
-+	if (options.backing_fd == 0) {
-+		pr_err("Backing FD not set, filesystem can't be mounted.");
-+		result = -EBADFD;
-+		goto err;
-+	}
-+
-+	backing_file = fget(options.backing_fd);
-+	if (!backing_file) {
-+		pr_err("Invalid backing FD: %d", options.backing_fd);
-+		result = -EBADFD;
-+		goto err;
-+	}
-+
-+	mi = incfs_alloc_mount_info(sb, backing_file);
-+	if (IS_ERR_OR_NULL(mi)) {
-+		result = PTR_ERR(mi);
-+		mi = NULL;
-+		goto err;
-+	}
-+
-+	mi->mi_options = options;
-+	sb->s_fs_info = mi;
-+	file_name = mi->mi_bf_context->bc_file->f_path.dentry->d_name.name;
-+
-+	inode = new_inode(sb);
-+	if (inode) {
-+		inode->i_ino = INCFS_ROOT_INODE;
-+		inode->i_ctime = backing_file_time(sb);
-+		inode->i_mtime = inode->i_ctime;
-+		inode->i_atime = inode->i_ctime;
-+		inode->i_private = &mi->mi_root.d_node;
-+
-+		inode->i_op = &incfs_dir_inode_ops;
-+		inode->i_fop = &incfs_dir_fops;
-+
-+		inode_init_owner(inode, NULL, S_IFDIR | READ_EXEC_FILE_MODE);
-+	}
-+
-+	sb->s_root = d_make_root(inode);
-+	if (!sb->s_root) {
-+		result = -ENOMEM;
-+		goto err;
-+	}
-+
-+	if (incfs_get_end_offset(mi->mi_bf_context->bc_file) > 0) {
-+		int found_mds = 0;
-+
-+		/*
-+		 * Backing file has data,
-+		 * let's try to interpret it as inc-fs image.
-+		 */
-+		found_mds = incfs_scan_backing_file(mi);
-+		if (found_mds < 0) {
-+			result = found_mds;
-+			pr_err("Backing file '%s' scan error: %d",
-+				file_name, -result);
-+			goto err;
-+		}
-+	} else {
-+		/*
-+		 * No data in the backing file,
-+		 * let's initialize a new image.
-+		 */
-+		result = incfs_make_empty_backing_file(mi->mi_bf_context);
-+		if (result < 0) {
-+			pr_err("Backing file '%s' initialization error: %d",
-+				file_name, -result);
-+			goto err;
-+		}
-+	}
- 	return 0;
-+err:
-+	sb->s_fs_info = NULL;
-+	incfs_free_mount_info(mi);
-+	if (!mi && backing_file) {
-+		/*
-+		 * Close backing_file only if mount_info was never created.
-+		 * Otherwise it's closed in incfs_free_mount_info.
-+		 */
-+		fput(backing_file);
-+	}
++		perror("Error mounting fs.");
 +	return result;
- }
-
- static struct dentry *mount_fs(struct file_system_type *type, int flags,
-@@ -32,6 +846,26 @@ static struct dentry *mount_fs(struct file_system_type *type, int flags,
-
- static void kill_sb(struct super_block *sb)
- {
-+	struct mount_info *mi = sb->s_fs_info;
++}
 +
-+	incfs_free_mount_info(mi);
- 	generic_shutdown_super(sb);
- }
-
-+static int show_devname(struct seq_file *m, struct dentry *root)
++int unlink_node(int fd, int parent_ino, char *filename)
 +{
-+	struct mount_info *mi = get_mount_info(root->d_sb);
-+	const char *backing_file =
-+			mi->mi_bf_context->bc_file->f_path.dentry->d_name.name;
++	struct incfs_instruction inst = {
++			.type = INCFS_INSTRUCTION_REMOVE_DIR_ENTRY,
++			.dir_entry = {
++				.dir_ino = parent_ino,
++				.name = ptr_to_u64(filename),
++				.name_len = strlen(filename)
++			}
++	};
 +
-+	seq_puts(m, backing_file);
++	return send_md_instruction(fd, &inst);
++}
++
++int emit_node(int fd, char *filename, int *ino_out, int parent_ino,
++		size_t size, mode_t mode)
++{
++	int ret = 0;
++	__u64 ino = 0;
++	struct incfs_instruction inst = {
++			.type = INCFS_INSTRUCTION_NEW_FILE,
++			.file = {
++				.size = size,
++				.mode = mode,
++			}
++	};
++
++	ret = send_md_instruction(fd, &inst);
++	if (ret)
++		return ret;
++
++	ino = inst.file.ino_out;
++	inst = (struct incfs_instruction){
++			.type = INCFS_INSTRUCTION_ADD_DIR_ENTRY,
++			.dir_entry = {
++				.dir_ino = parent_ino,
++				.child_ino = ino,
++				.name = ptr_to_u64(filename),
++				.name_len = strlen(filename)
++			}
++		};
++	ret = send_md_instruction(fd, &inst);
++	if (ret)
++		return ret;
++	*ino_out = ino;
 +	return 0;
 +}
 +
-+static int show_options(struct seq_file *m, struct dentry *root)
-+{
-+	struct mount_info *mi = get_mount_info(root->d_sb);
 +
-+	seq_printf(m, ",read_timeout_ms=%u", mi->mi_options.read_timeout_ms);
-+	return 0;
++int emit_dir(int fd, char *filename, int *ino_out, int parent_ino)
++{
++	return emit_node(fd, filename, ino_out, parent_ino, 0, S_IFDIR | 0555);
 +}
++
++int emit_file(int fd, char *filename, int *ino_out, int parent_ino, size_t size)
++{
++	return emit_node(fd, filename, ino_out, parent_ino, size,
++				S_IFREG | 0555);
++}
++
++int send_md_instruction(int cmd_fd, struct incfs_instruction *inst)
++{
++	inst->version = INCFS_HEADER_VER;
++	if (ioctl(cmd_fd, INCFS_IOC_PROCESS_INSTRUCTION, inst) == 0)
++		return 0;
++	return -errno;
++}
++
++loff_t get_file_size(char *name)
++{
++	struct stat st;
++
++	if (stat(name, &st) == 0)
++		return st.st_size;
++	return -ENOENT;
++}
++
++int open_commands_file(char *mount_dir)
++{
++	char cmd_file[255];
++	int cmd_fd;
++
++	snprintf(cmd_file, ARRAY_SIZE(cmd_file), "%s/.cmd", mount_dir);
++	cmd_fd = open(cmd_file, O_RDWR);
++	if (cmd_fd < 0)
++		perror("Can't open commands file");
++	return cmd_fd;
++}
++
++int wait_for_pending_reads(int fd, int timeout_ms,
++	struct incfs_pending_read_info *prs, int prs_count)
++{
++	ssize_t read_res = 0;
++
++	if (timeout_ms > 0) {
++		int poll_res = 0;
++		struct pollfd pollfd = {
++			.fd = fd,
++			.events = POLLIN
++		};
++
++		poll_res = poll(&pollfd, 1, timeout_ms);
++		if (poll_res < 0)
++			return -errno;
++		if (poll_res == 0)
++			return 0;
++		if (!(pollfd.revents | POLLIN))
++			return 0;
++	}
++
++	read_res = read(fd, prs, prs_count * sizeof(*prs));
++	if (read_res < 0)
++		return -errno;
++
++	return read_res / sizeof(*prs);
++}
++
++char *concat_file_name(char *dir, char *file)
++{
++	char full_name[FILENAME_MAX] = "";
++
++	if (snprintf(full_name, ARRAY_SIZE(full_name), "%s/%s", dir, file) < 0)
++		return NULL;
++	return strdup(full_name);
++}
+diff --git a/tools/testing/selftests/filesystems/incfs/utils.h b/tools/testing/selftests/filesystems/incfs/utils.h
+new file mode 100644
+index 000000000000..c3423fe01857
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/incfs/utils.h
+@@ -0,0 +1,39 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright 2019 Google LLC
++ */
++#include <stdbool.h>
++#include <sys/stat.h>
++
++#include "../../include/uapi/linux/incrementalfs.h"
++
++#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
++
++#ifdef __LP64__
++#define ptr_to_u64(p) ((__u64)p)
++#else
++#define ptr_to_u64(p) ((__u64)(__u32)p)
++#endif
++
++int mount_fs(char *mount_dir, int backing_fd, int read_timeout_ms);
++
++int send_md_instruction(int cmd_fd, struct incfs_instruction *inst);
++
++int emit_node(int fd, char *filename, int *ino_out, int parent_ino,
++		size_t size, mode_t mode);
++
++int emit_dir(int fd, char *filename, int *ino_out, int parent_ino);
++
++int emit_file(int fd, char *filename, int *ino_out, int parent_ino,
++		size_t size);
++
++int unlink_node(int fd, int parent_ino, char *filename);
++
++loff_t get_file_size(char *name);
++
++int open_commands_file(char *mount_dir);
++
++int wait_for_pending_reads(int fd, int timeout_ms,
++	struct incfs_pending_read_info *prs, int prs_count);
++
++char *concat_file_name(char *dir, char *file);
 --
 2.21.0.593.g511ec345e18-goog
 
