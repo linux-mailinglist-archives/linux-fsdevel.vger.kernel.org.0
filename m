@@ -2,149 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C459B121C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 20:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D052121C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 20:16:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbfEBSPU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 14:15:20 -0400
-Received: from mail-eopbgr710117.outbound.protection.outlook.com ([40.107.71.117]:8421
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726091AbfEBSPT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 14:15:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Sony.onmicrosoft.com;
- s=selector1-Sony-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Iu+qU7j1g4e0qKYY8NI+jYs8IDMeXiI9rKB2912aQxk=;
- b=RUlxFd43z0o0UbNfcJc6XxkFUNZRjbE6rDjHopszHC++6umPBCdj0bHYmEu7/iA8OAlvWwEHPLv4Yg1CRE6zRz/uncBnYwU/smDnizFcPa8KTi/iq744WUooeJBhZ48XuxmeUwYKfjzNGNs1IeBdyoq+75fOWCNe+LpZq2kMfXQ=
-Received: from DM5PR13CA0023.namprd13.prod.outlook.com (2603:10b6:3:23::33) by
- DM5PR13MB1402.namprd13.prod.outlook.com (2603:10b6:3:124::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.9; Thu, 2 May 2019 18:15:13 +0000
-Received: from CY1NAM02FT045.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::207) by DM5PR13CA0023.outlook.office365.com
- (2603:10b6:3:23::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1856.6 via Frontend
- Transport; Thu, 2 May 2019 18:15:13 +0000
-Authentication-Results: spf=permerror (sender IP is 160.33.194.229)
- smtp.mailfrom=sony.com; linuxfoundation.org; dkim=none (message not signed)
- header.d=none;linuxfoundation.org; dmarc=none action=none
- header.from=sony.com;
-Received-SPF: PermError (protection.outlook.com: domain of sony.com used an
- invalid SPF mechanism)
-Received: from usculsndmail02v.am.sony.com (160.33.194.229) by
- CY1NAM02FT045.mail.protection.outlook.com (10.152.75.111) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1856.11 via Frontend Transport; Thu, 2 May 2019 18:15:10 +0000
-Received: from usculsndmail12v.am.sony.com (usculsndmail12v.am.sony.com [146.215.230.103])
-        by usculsndmail02v.am.sony.com (Sentrion-MTA-4.3.2/Sentrion-MTA-4.3.2) with ESMTP id x42IF8nt010260;
-        Thu, 2 May 2019 18:15:08 GMT
-Received: from USCULXHUB07V.am.sony.com (usculxhub07v.am.sony.com [146.215.231.168])
-        by usculsndmail12v.am.sony.com (Sentrion-MTA-4.3.2/Sentrion-MTA-4.3.2) with ESMTP id x42IF6Jm028842;
-        Thu, 2 May 2019 18:15:06 GMT
-Received: from USCULXMSG01.am.sony.com ([fe80::b09d:6cb6:665e:d1b5]) by
- USCULXHUB07V.am.sony.com ([146.215.231.168]) with mapi id 14.03.0439.000;
- Thu, 2 May 2019 14:15:06 -0400
-From:   <Tim.Bird@sony.com>
-To:     <gregkh@linuxfoundation.org>, <brendanhiggins@google.com>
-CC:     <frowand.list@gmail.com>, <keescook@google.com>,
-        <kieran.bingham@ideasonboard.com>, <mcgrof@kernel.org>,
-        <robh@kernel.org>, <sboyd@kernel.org>, <shuah@kernel.org>,
-        <devicetree@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <kunit-dev@googlegroups.com>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kbuild@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-um@lists.infradead.org>,
-        <Alexander.Levin@microsoft.com>, <amir73il@gmail.com>,
-        <dan.carpenter@oracle.com>, <dan.j.williams@intel.com>,
-        <daniel@ffwll.ch>, <jdike@addtoit.com>, <joel@jms.id.au>,
-        <julia.lawall@lip6.fr>, <khilman@baylibre.com>,
-        <knut.omang@oracle.com>, <logang@deltatee.com>,
-        <mpe@ellerman.id.au>, <pmladek@suse.com>, <richard@nod.at>,
-        <rientjes@google.com>, <rostedt@goodmis.org>,
-        <wfg@linux.intel.com>, <yzaikin@google.com>
-Subject: RE: [PATCH v2 16/17] kernel/sysctl-test: Add null pointer test for
- sysctl.c:proc_dointvec()
-Thread-Topic: [PATCH v2 16/17] kernel/sysctl-test: Add null pointer test for
- sysctl.c:proc_dointvec()
-Thread-Index: AQHVAHJbh4bzAud+AEekHmLRH8eTgKZX75eAgAA1NbA=
-Date:   Thu, 2 May 2019 18:14:53 +0000
-Message-ID: <ECADFF3FD767C149AD96A924E7EA6EAF9770A3A0@USCULXMSG01.am.sony.com>
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-17-brendanhiggins@google.com>
- <20190502110347.GE12416@kroah.com>
-In-Reply-To: <20190502110347.GE12416@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [146.215.228.6]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726144AbfEBSQT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 14:16:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50840 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726120AbfEBSQT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 May 2019 14:16:19 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C9E5205F4;
+        Thu,  2 May 2019 18:16:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556820977;
+        bh=aENbewv6gIVI63hHJV1DryX63oKvmh/WF/btWzUFUMk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hqeYSoO4ZRe1722GO9trLTxlRKWYuYUhpRM25njMTVJRJatv0qy/100ozsMjm7WTq
+         7eeD+Y9THKqO4gs3Kj6xVQnkX+saVGU7CpRr+KhmtjGPJeD8lE35pGoVZ/b66OUBeL
+         mZDAgWmI2m8A6sbGEA5NQ+J2o0yLrQDTBlIEiQDQ=
+Date:   Thu, 2 May 2019 11:16:15 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Chandan Rajendra <chandan@linux.ibm.com>
+Cc:     tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net,
+        hch@infradead.org, linux-fscrypt@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
+        jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH V2 10/13] fscrypt_encrypt_page: Loop across
+ all blocks mapped by a page range
+Message-ID: <20190502181614.GA35523@gmail.com>
+References: <20190428043121.30925-1-chandan@linux.ibm.com>
+ <4666731.7CFakFE75r@localhost.localdomain>
+ <20190501222859.GA127264@gmail.com>
+ <11064745.d7X6JK8F7Z@dhcp-9-193-88-253>
 MIME-Version: 1.0
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:160.33.194.229;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(1496009)(376002)(136003)(396003)(39860400002)(346002)(2980300002)(448002)(199004)(189003)(13464003)(72206003)(478600001)(47776003)(46406003)(37786003)(33656002)(97756001)(86362001)(70206006)(5660300002)(70586007)(356004)(6666004)(102836004)(186003)(426003)(11346002)(446003)(336012)(26005)(476003)(66066001)(55016002)(76176011)(7696005)(229853002)(8676002)(126002)(55846006)(85326001)(246002)(86152003)(8746002)(8936002)(486006)(50466002)(6246003)(7406005)(7416002)(4326008)(6116002)(3846002)(2906002)(110136005)(54906003)(2876002)(316002)(7736002)(305945005)(23726003)(5001870100001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR13MB1402;H:usculsndmail02v.am.sony.com;FPR:;SPF:PermError;LANG:en;PTR:mail.sonyusa.com,mail02.sonyusa.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f2927ae1-d49f-4bad-60b8-08d6cf2a1ea6
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:DM5PR13MB1402;
-X-MS-TrafficTypeDiagnostic: DM5PR13MB1402:
-X-Microsoft-Antispam-PRVS: <DM5PR13MB140230E0A68E41CAF530C442FD340@DM5PR13MB1402.namprd13.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
-X-Forefront-PRVS: 0025434D2D
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: bU7dXAdMkBInmgFf3lbIAW/yrfjtPBT7xmHmRhPy+u/F81wqySYLneMKTgJ9uy6f0YnZlYzBIkUsJAFTKMvemgB8r0n8PpNut2dmxJyH0Tk3YniGZd66ERVNzNrefJVodv/kWUa6hgaki3mMtJp344RiOE+WDa1J6M1g8Xj9npIFmFbrKiNIqwy1kXQ1Nos1+jmUPPhdwmrCrUM652L4NDdpkYmrbJHGyo9Ki1uRlPub4F9xawbOv81NFQPbIr5jHTyV64qs0ySjS1hcXMVutCtRZYsHhbYXhA/h75upZypux1FfLor+rwCD2yUnL3L99DmemLALTzZurd+QM2IHPlRwBxUAIqwKyaM/GkcGTDxtfN/V3xavfSUHvudrqzxUZr4qoNFcRzjn8zuSDnhx4cCFFWZq6LryN47KBRJZgiU=
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2019 18:15:10.9314
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2927ae1-d49f-4bad-60b8-08d6cf2a1ea6
-X-MS-Exchange-CrossTenant-Id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[160.33.194.229];Helo=[usculsndmail02v.am.sony.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR13MB1402
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11064745.d7X6JK8F7Z@dhcp-9-193-88-253>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Chandan,
 
+On Thu, May 02, 2019 at 11:22:05AM +0530, Chandan Rajendra wrote:
+> On Thursday, May 2, 2019 3:59:01 AM IST Eric Biggers wrote:
+> > Hi Chandan,
+> > 
+> > On Wed, May 01, 2019 at 08:19:35PM +0530, Chandan Rajendra wrote:
+> > > On Wednesday, May 1, 2019 4:38:41 AM IST Eric Biggers wrote:
+> > > > On Tue, Apr 30, 2019 at 10:11:35AM -0700, Eric Biggers wrote:
+> > > > > On Sun, Apr 28, 2019 at 10:01:18AM +0530, Chandan Rajendra wrote:
+> > > > > > For subpage-sized blocks, this commit now encrypts all blocks mapped by
+> > > > > > a page range.
+> > > > > > 
+> > > > > > Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
+> > > > > > ---
+> > > > > >  fs/crypto/crypto.c | 37 +++++++++++++++++++++++++------------
+> > > > > >  1 file changed, 25 insertions(+), 12 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+> > > > > > index 4f0d832cae71..2d65b431563f 100644
+> > > > > > --- a/fs/crypto/crypto.c
+> > > > > > +++ b/fs/crypto/crypto.c
+> > > > > > @@ -242,18 +242,26 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
+> > > > > 
+> > > > > Need to update the function comment to clearly explain what this function
+> > > > > actually does now.
+> > > > > 
+> > > > > >  {
+> > > > > >  	struct fscrypt_ctx *ctx;
+> > > > > >  	struct page *ciphertext_page = page;
+> > > > > > +	int i, page_nr_blks;
+> > > > > >  	int err;
+> > > > > >  
+> > > > > >  	BUG_ON(len % FS_CRYPTO_BLOCK_SIZE != 0);
+> > > > > >  
+> > > > > 
+> > > > > Make a 'blocksize' variable so you don't have to keep calling i_blocksize().
+> > > > > 
+> > > > > Also, you need to check whether 'len' and 'offs' are filesystem-block-aligned,
+> > > > > since the code now assumes it.
+> > > > > 
+> > > > > 	const unsigned int blocksize = i_blocksize(inode);
+> > > > > 
+> > > > >         if (!IS_ALIGNED(len | offs, blocksize))
+> > > > >                 return -EINVAL;
+> > > > > 
+> > > > > However, did you check whether that's always true for ubifs?  It looks like it
+> > > > > may expect to encrypt a prefix of a block, that is only padded to the next
+> > > > > 16-byte boundary.
+> > > > > 		
+> > > > > > +	page_nr_blks = len >> inode->i_blkbits;
+> > > > > > +
+> > > > > >  	if (inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES) {
+> > > > > >  		/* with inplace-encryption we just encrypt the page */
+> > > > > > -		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num, page,
+> > > > > > -					     ciphertext_page, len, offs,
+> > > > > > -					     gfp_flags);
+> > > > > > -		if (err)
+> > > > > > -			return ERR_PTR(err);
+> > > > > > -
+> > > > > > +		for (i = 0; i < page_nr_blks; i++) {
+> > > > > > +			err = fscrypt_do_page_crypto(inode, FS_ENCRYPT,
+> > > > > > +						lblk_num, page,
+> > > > > > +						ciphertext_page,
+> > > > > > +						i_blocksize(inode), offs,
+> > > > > > +						gfp_flags);
+> > > > > > +			if (err)
+> > > > > > +				return ERR_PTR(err);
+> > > > 
+> > > > Apparently ubifs does encrypt data shorter than the filesystem block size, so
+> > > > this part is wrong.
+> > > > 
+> > > > I suggest we split this into two functions, fscrypt_encrypt_block_inplace() and
+> > > > fscrypt_encrypt_blocks(), so that it's conceptually simpler what each function
+> > > > does.  Currently this works completely differently depending on whether the
+> > > > filesystem set FS_CFLG_OWN_PAGES in its fscrypt_operations, which is weird.
+> > > > 
+> > > > I also noticed that using fscrypt_ctx for writes seems to be unnecessary.
+> > > > AFAICS, page_private(bounce_page) could point directly to the pagecache page.
+> > > > That would simplify things a lot, especially since then fscrypt_ctx could be
+> > > > removed entirely after you convert reads to use read_callbacks_ctx.
+> > > > 
+> > > > IMO, these would be worthwhile cleanups for fscrypt by themselves, without
+> > > > waiting for the read_callbacks stuff to be finalized.  Finalizing the
+> > > > read_callbacks stuff will probably require reaching a consensus about how they
+> > > > should work with future filesystem features like fsverity and compression.
+> > > > 
+> > > > So to move things forward, I'm considering sending out a series with the above
+> > > > cleanups for fscrypt, plus the equivalent of your patches:
+> > > > 
+> > > > 	"fscrypt_encrypt_page: Loop across all blocks mapped by a page range"
+> > > > 	"fscrypt_zeroout_range: Encrypt all zeroed out blocks of a page"
+> > > > 	"Add decryption support for sub-pagesized blocks" (fs/crypto/ part only)
+> > > > 
+> > > > Then hopefully we can get all that applied for 5.3 so that fs/crypto/ itself is
+> > > > ready for blocksize != PAGE_SIZE; and get your changes to ext4_bio_write_page(),
+> > > > __ext4_block_zero_page_range(), and ext4_block_write_begin() applied too, so
+> > > > that ext4 is partially ready for encryption with blocksize != PAGE_SIZE.
+> > > > 
+> > > > Then only the read_callbacks stuff will remain, to get encryption support into
+> > > > fs/mpage.c and fs/buffer.c.  Do you think that's a good plan?
+> > > 
+> > > Hi Eric,
+> > > 
+> > > IMHO, I will continue posting the next version of the current patchset and if
+> > > there are no serious reservations from FS maintainers the "read callbacks"
+> > > patchset can be merged. In such a scenario, the cleanups being
+> > > non-complicated, can be merged later.
+> > > 
+> > 
+> > Most of the patches I have in mind are actually things that are in your patchset
+> > already, or have been requested, or will be requested eventually :-).  I'm
+> > concerned that people will keep going back and forth on this patchset for a lot
+> > longer, arguing about fsverity, compression, details of the fs/crypto/ stuff,
+> > etc.  Moreover it's based on unmerged patches that add the fsverity feature, so
+> > it can't be merged as-is anyway.
+> > 
+> > IMO, it's also difficult for people to review the read_callbacks stuff when it's
+> > mixed in with lots of other fscrypt and ext4 changes for blocksize != PAGE_SIZE.
+> > 
+> > I actually have a patchset almost ready already, so I'm going to send it out and
+> > see what you think.  It *should* make things a lot easier for you, since then
+> > you can base a much smaller read_callbacks patchset on top of it.
+> 
+> One of the things that I am concerned most about is the fact that the more we
+> delay merging read_callbacks patchset, the more the chances of filesystems
+> adding further operations that get executed after read I/O completes. Most of
+> the time, these implementations tend to have filesystem specific changes which
+> are going to be very difficult (impossible?) to make them work with
+> read_callback patchset. So instead of making things easier, delaying merging
+> the read_callback patchset ends up actually having the opposite effect.
+> 
+> With the read_callback patchset merged, FS feature developers will take
+> read_callback framework into consideration before designing/implementing new
+> related features.
+> 
 
-> -----Original Message-----
-> From: Greg KH=20
->=20
-> On Wed, May 01, 2019 at 04:01:25PM -0700, Brendan Higgins wrote:
-> > From: Iurii Zaikin <yzaikin@google.com>
-> >
-> > KUnit tests for initialized data behavior of proc_dointvec that is
-> > explicitly checked in the code. Includes basic parsing tests including
-> > int min/max overflow.
-> >
-> > Signed-off-by: Iurii Zaikin <yzaikin@google.com>
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > ---
-> >  kernel/Makefile      |   2 +
-> >  kernel/sysctl-test.c | 292
-> +++++++++++++++++++++++++++++++++++++++++++
-> >  lib/Kconfig.debug    |   6 +
-> >  3 files changed, 300 insertions(+)
-> >  create mode 100644 kernel/sysctl-test.c
-> >
-> > diff --git a/kernel/Makefile b/kernel/Makefile
-> > index 6c57e78817dad..c81a8976b6a4b 100644
-> > --- a/kernel/Makefile
-> > +++ b/kernel/Makefile
-> > @@ -112,6 +112,8 @@ obj-$(CONFIG_HAS_IOMEM) +=3D iomem.o
-> >  obj-$(CONFIG_ZONE_DEVICE) +=3D memremap.o
-> >  obj-$(CONFIG_RSEQ) +=3D rseq.o
-> >
-> > +obj-$(CONFIG_SYSCTL_KUNIT_TEST) +=3D sysctl-test.o
->=20
-> You are going to have to have a "standard" naming scheme for test
-> modules, are you going to recommend "foo-test" over "test-foo"?  If so,
-> that's fine, we should just be consistant and document it somewhere.
->=20
-> Personally, I'd prefer "test-foo", but that's just me, naming is hard...
+The main problems are that your patchset mixes up conceptually unrelated
+changes, and is dependent on future filesystem features.  See how it starts by
+adding read_callbacks support for both fscrypt *and* fsverity (the latter of
+which is not merged yet), then updates fs/crypto/ to support subpage blocks,
+*then* goes back and finishes read_callbacks to support buffer_heads since that
+depended on the fs/crypto/ changes.  The ext4 changes for subpage blocks are
+mixed in too throughout the patchset.  So I don't think it can proceed in its
+current form; it's too much for anyone to handle at once.
 
-My preference would be "test-foo" as well.  Just my 2 cents.
- -- Tim
+And I see your first patchset for ext4 encryption with subpage blocks was sent
+almost a year and a half ago, so it's indeed been going in circles for a while.
 
+But based on your work I've been able to get the fs/crypto/ and ext4
+preparations for subpage blocks into a clean set of changes by themselves.
+There are needed in any case, so IMO we should take them first in order to
+unblock the rest.
+
+I don't really understand your point about forcing filesystems to be compatible
+with read_callbacks.  The whole point of read_callbacks is that it's a common
+support layer which makes it easier for filesystems to do the things they're
+doing anyway, or will be doing.  So it shouldn't affect filesystem designs.
+
+Thanks!
+
+- Eric
