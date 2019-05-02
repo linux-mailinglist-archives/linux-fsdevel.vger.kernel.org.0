@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA494123FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 23:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C704C12406
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 23:19:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbfEBVQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 17:16:28 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36361 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbfEBVQ1 (ORCPT
+        id S1726128AbfEBVS6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 17:18:58 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44989 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbfEBVS5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 17:16:27 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 85so1633188pgc.3;
-        Thu, 02 May 2019 14:16:27 -0700 (PDT)
+        Thu, 2 May 2019 17:18:57 -0400
+Received: by mail-pf1-f195.google.com with SMTP id y13so1738499pfm.11;
+        Thu, 02 May 2019 14:18:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SXzn4PL7BS9Zk+Qjz5Z6ao7p78pnuZhgvrrpjIHBgqs=;
-        b=kCJFdJIIF969KctuD3d2wM6Ofbq6dPOZFLTH8wlGl+7+cVokVRuDwro7NOWN9ohV8k
-         ImAl50lyzEBsv7yN+yDsApIRZoLtSCfwhyzyxPvjXoEWcvwOBh4YVBGfYFjfXofVIUhG
-         4IdfwHyJltRS5sW89ee6jcilUM33Ka1rf9l/1hx/r4xvkgirrOsCcjMVyOo7fNRjZFEX
-         W57GSaPxOGJB3pNyXX+NzqVUj3/2JEPXwOjRvCBv8sNkyMt8fb6SSscfdGTffg6t6JdB
-         E1xSneePimV/qvTL3gOacgC8P6jcyMC1ik1HBxyp2Tove1HOXYfOKbo6mTy7cNVaJPvY
-         TkNA==
+        bh=IMDXeiJnZScTm/Z2fnilFyDCMvT/so814pMi9HZOjlE=;
+        b=F6aEAFFTMEY1A2qy1v4j/PN2GP6GkE/6G2UBiv6QtH3csxGy/tWQz9UyALBQT0H1TD
+         MeqU6hM9umqY0cg0Apce+C6xD7p/xobhUeh9MvWiRshhDTYwjMCFPRJXDlmB1nI2J9BP
+         OzIBfpWyS6JYvMDV31/EOZgJHoSWDTYYtNA+I4V1u8ppBrJn22kX8LSoN6iqCo9WhEY7
+         d+Gb6Xl5Xs5otxILTZsg9XkKBj+kf5e2zhHYN3mehnTBbPBGx+Rmo9Huu3e7g+KZRBMy
+         FLtK+ZKMR1Bm1xie5Eekig7pGAK9pe7NuFPMeA4bw49W6KmIoFN+i8IYZC8Mr/CFaKXa
+         I9Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=SXzn4PL7BS9Zk+Qjz5Z6ao7p78pnuZhgvrrpjIHBgqs=;
-        b=pcJqDcIzbpppzXFbvgI0rUcsLQ6lnBA27PfHO9JPODM+fQgYK63DOJxxWgTVdq9FWp
-         V2Azdulv3zKvkEnOEVQ/udBOpZsAdMmU+YEkQ5ObvZllNXUnrXPk4z5wo7QEPOp4nybN
-         L7d+5/1X0D05k8J4xphzTNJbcUa4edawtNYodf5pXehhJ96msYgDZWXzVbJ+n0in1CKc
-         x9YaDZsbm1w0AshA5yOMDasYnrX++vdexqLx0T7kpsp4iP+unwGfd/aj9piYTLxaWTo8
-         fC8WVrNCqFlTWQYyMpeNABlAL36Arjc/9hieexCg8SfxSV0/mFT088kBzTf22bhYPP+L
-         HsRw==
-X-Gm-Message-State: APjAAAXZTHeEI4ilZYR6xyaLTDyRV7ZS/GCwKiPFe3/dPT8uX9G468mX
-        aSo5coEv1JtmH2fZJI/vmzI=
-X-Google-Smtp-Source: APXvYqyaAKrOO8dNkOZg12O3d42lENfOgkrL7qBtR/V01hTlj71I+CQb4vEU5IP/L2A0+G0+xdSQEg==
-X-Received: by 2002:a63:5f42:: with SMTP id t63mr6174518pgb.275.1556831786717;
-        Thu, 02 May 2019 14:16:26 -0700 (PDT)
+        bh=IMDXeiJnZScTm/Z2fnilFyDCMvT/so814pMi9HZOjlE=;
+        b=hDDN271P8NcMcvALdq2P5oOss1i/8EkzQNfhiYOq9TDxmhwIbkUswQ9nggKntqUBbZ
+         uHejWkd4ExzGsZg5FKf5x85Iw/MtoCQLinOqq51GQNYKZ5sJMnvYDc67vx/5KJXmfWBw
+         IeteT6r0VdqaiVo67CpfPrnuVzfo67JBGnwyW9PSPaZnTmWGFMDRmMmePjRXb5bPSW2v
+         HFWW9t08ynkAryy34hvkMSH8+wXHe+iPSbEJ3E0O3kwuoZHSVdB7J1DdyUkeq5Rb7uc8
+         IwWyTKrHno2KlydOK39cbpKSpOR3YFKhXyT/aL1qWj7t5LfZlk0SWIdW06pWdg3I8t2m
+         Ep+w==
+X-Gm-Message-State: APjAAAWzlhg9+Fslm+jgPdxOwzs5uJB73aLecIUreuApi2JPPLA2yOkB
+        gnKVcsaAeAMKGopqX15eNh8=
+X-Google-Smtp-Source: APXvYqyX3j/ct3IijwmpxxuiCJMGeDGeHP5eVJgN3Sl6Ovmj2WM37sI+ZAhRzZjNxXrFUHk4WRTuBA==
+X-Received: by 2002:a65:5089:: with SMTP id r9mr6248599pgp.14.1556831937028;
+        Thu, 02 May 2019 14:18:57 -0700 (PDT)
 Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id f63sm102173pfc.180.2019.05.02.14.16.23
+        by smtp.gmail.com with ESMTPSA id l1sm232976pgp.9.2019.05.02.14.18.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 May 2019 14:16:26 -0700 (PDT)
-Subject: Re: [PATCH v2 12/17] kunit: tool: add Python wrappers for running
- KUnit tests
+        Thu, 02 May 2019 14:18:56 -0700 (PDT)
+Subject: Re: [PATCH v2 04/17] kunit: test: add kunit_stream a std::stream like
+ logger
 To:     Brendan Higgins <brendanhiggins@google.com>,
         Greg KH <gregkh@linuxfoundation.org>
 Cc:     Kees Cook <keescook@google.com>,
@@ -77,19 +77,18 @@ Cc:     Kees Cook <keescook@google.com>,
         Petr Mladek <pmladek@suse.com>,
         Richard Weinberger <richard@nod.at>,
         David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
-        Felix Guo <felixguoxiuping@gmail.com>
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
 References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-13-brendanhiggins@google.com>
- <20190502110220.GD12416@kroah.com>
- <CAFd5g47t=EdLKFCT=CnPkrM2z0nDVo24Gz4j0VxFOJbARP37Lg@mail.gmail.com>
+ <20190501230126.229218-5-brendanhiggins@google.com>
+ <20190502110008.GC12416@kroah.com>
+ <CAFd5g47ssM7RQZxQsUJ86UigcF-Uz+Kwv2yvKN_gZK-TtW89bA@mail.gmail.com>
 From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <a49c5088-a821-210c-66de-f422536f5b01@gmail.com>
-Date:   Thu, 2 May 2019 14:16:23 -0700
+Message-ID: <6fcf1218-a026-fd7b-236f-ea95f6312e1d@gmail.com>
+Date:   Thu, 2 May 2019 14:18:53 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <CAFd5g47t=EdLKFCT=CnPkrM2z0nDVo24Gz4j0VxFOJbARP37Lg@mail.gmail.com>
+In-Reply-To: <CAFd5g47ssM7RQZxQsUJ86UigcF-Uz+Kwv2yvKN_gZK-TtW89bA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -98,48 +97,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/2/19 11:07 AM, Brendan Higgins wrote:
-> On Thu, May 2, 2019 at 4:02 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+On 5/2/19 1:25 PM, Brendan Higgins wrote:
+> On Thu, May 2, 2019 at 4:00 AM Greg KH <gregkh@linuxfoundation.org> wrote:
 >>
->> On Wed, May 01, 2019 at 04:01:21PM -0700, Brendan Higgins wrote:
->>> From: Felix Guo <felixguoxiuping@gmail.com>
->>>
->>> The ultimate goal is to create minimal isolated test binaries; in the
->>> meantime we are using UML to provide the infrastructure to run tests, so
->>> define an abstract way to configure and run tests that allow us to
->>> change the context in which tests are built without affecting the user.
->>> This also makes pretty and dynamic error reporting, and a lot of other
->>> nice features easier.
->>>
->>> kunit_config.py:
->>>   - parse .config and Kconfig files.
->>>
->>> kunit_kernel.py: provides helper functions to:
->>>   - configure the kernel using kunitconfig.
->>>   - build the kernel with the appropriate configuration.
->>>   - provide function to invoke the kernel and stream the output back.
->>>
->>> Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
->>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+>> On Wed, May 01, 2019 at 04:01:13PM -0700, Brendan Higgins wrote:
+>>> A lot of the expectation and assertion infrastructure prints out fairly
+>>> complicated test failure messages, so add a C++ style log library for
+>>> for logging test results.
 >>
->> Ah, here's probably my answer to my previous logging format question,
->> right?  What's the chance that these wrappers output stuff in a standard
->> format that test-framework-tools can already parse?  :)
+>> Ideally we would always use a standard logging format, like the
+>> kselftest tests all are aiming to do.  That way the output can be easily
+>> parsed by tools to see if the tests succeed/fail easily.
+>>
+>> Any chance of having this logging framework enforcing that format as
+>> well?
 > 
-> It should be pretty easy to do. I had some patches that pack up the
-> results into a serialized format for a presubmit service; it should be
-> pretty straightforward to take the same logic and just change the
-> output format.
+> I agree with your comment on the later patch that we should handle
+> this at the wrapper script layer (KUnit tool).
 
-When examining and trying out the previous versions of the patch I found
-the wrappers useful to provide information about how to control and use
-the tests, but I had no interest in using the scripts as they do not
-fit in with my personal environment and workflow.
+This discussion is a little confusing, because it is spread across two
+patches.
 
-In the previous versions of the patch, these helper scripts are optional,
-which is good for my use case.  If the helper scripts are required to
-get the data into the proper format then the scripts are not quite so
-optional, they become the expected environment.  I think the proper
-format should exist without the helper scripts.
+I do not agree that this should be handled in the wrapper script, as
+noted in my reply to patch 12, so not repeating it here.
 
 -Frank
