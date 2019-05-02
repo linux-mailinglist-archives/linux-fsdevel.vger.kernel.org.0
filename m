@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96698117C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 13:00:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A729117CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 13:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbfEBLAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 07:00:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49404 "EHLO mail.kernel.org"
+        id S1726302AbfEBLCX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 07:02:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbfEBLAL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 07:00:11 -0400
+        id S1726267AbfEBLCX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 May 2019 07:02:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15DE020873;
-        Thu,  2 May 2019 11:00:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5A6B20656;
+        Thu,  2 May 2019 11:02:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556794810;
-        bh=45dEsHaryCD2YgFTD+ut5sayCsIeyqDSb8beWTRv3KM=;
+        s=default; t=1556794942;
+        bh=nOdygw9Kk1rPOSBt7SYd7W2YRVezyBvv7bv92jfZhHM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ul7LjAUmXIs6gOiMJ5yQjFk0zB2SKusIa68Zpp0UBAocQuuUVwuhC7PesmVCGFfiy
-         SS6gtBjzqaPb3ZVbYzNFxN4EXaZpTzrRYDfwrecZrNKFK2hfGaPAAUEI48b1a51Bd/
-         lCw83jb9L+bxfslPdh/y69NItWGJmuQH7yIvU0I4=
-Date:   Thu, 2 May 2019 13:00:08 +0200
+        b=QVhLNVl+kFCGa4qKMxbE3iXUhUTDNoqNjOrwG/PTklDuyc/zZitjl4iGVIUEcK9mq
+         ZjtTSTPd/IYzKKg9UaCBiZ1iUe+zjqgu6eX3MtWFfMyatUxvweOtiAQ0LBZimoeXJA
+         oWjvyASNbWkhMa6vm3fnEL/GbAHDE6uY2kQH7jq4=
+Date:   Thu, 2 May 2019 13:02:20 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Brendan Higgins <brendanhiggins@google.com>
 Cc:     frowand.list@gmail.com, keescook@google.com,
@@ -40,33 +40,47 @@ Cc:     frowand.list@gmail.com, keescook@google.com,
         joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
         knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
         pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-Subject: Re: [PATCH v2 04/17] kunit: test: add kunit_stream a std::stream
- like logger
-Message-ID: <20190502110008.GC12416@kroah.com>
+        rostedt@goodmis.org, wfg@linux.intel.com,
+        Felix Guo <felixguoxiuping@gmail.com>
+Subject: Re: [PATCH v2 12/17] kunit: tool: add Python wrappers for running
+ KUnit tests
+Message-ID: <20190502110220.GD12416@kroah.com>
 References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-5-brendanhiggins@google.com>
+ <20190501230126.229218-13-brendanhiggins@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190501230126.229218-5-brendanhiggins@google.com>
+In-Reply-To: <20190501230126.229218-13-brendanhiggins@google.com>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 01, 2019 at 04:01:13PM -0700, Brendan Higgins wrote:
-> A lot of the expectation and assertion infrastructure prints out fairly
-> complicated test failure messages, so add a C++ style log library for
-> for logging test results.
+On Wed, May 01, 2019 at 04:01:21PM -0700, Brendan Higgins wrote:
+> From: Felix Guo <felixguoxiuping@gmail.com>
+> 
+> The ultimate goal is to create minimal isolated test binaries; in the
+> meantime we are using UML to provide the infrastructure to run tests, so
+> define an abstract way to configure and run tests that allow us to
+> change the context in which tests are built without affecting the user.
+> This also makes pretty and dynamic error reporting, and a lot of other
+> nice features easier.
+> 
+> kunit_config.py:
+>   - parse .config and Kconfig files.
+> 
+> kunit_kernel.py: provides helper functions to:
+>   - configure the kernel using kunitconfig.
+>   - build the kernel with the appropriate configuration.
+>   - provide function to invoke the kernel and stream the output back.
+> 
+> Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 
-Ideally we would always use a standard logging format, like the
-kselftest tests all are aiming to do.  That way the output can be easily
-parsed by tools to see if the tests succeed/fail easily.
-
-Any chance of having this logging framework enforcing that format as
-well?
+Ah, here's probably my answer to my previous logging format question,
+right?  What's the chance that these wrappers output stuff in a standard
+format that test-framework-tools can already parse?  :)
 
 thanks,
 
