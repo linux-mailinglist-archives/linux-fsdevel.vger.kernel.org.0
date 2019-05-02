@@ -2,123 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D19B120EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 19:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 874211210F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 19:34:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbfEBRWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 13:22:31 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40903 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbfEBRWb (ORCPT
+        id S1726359AbfEBReJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 13:34:09 -0400
+Received: from esa12.utexas.iphmx.com ([216.71.154.221]:14337 "EHLO
+        esa12.utexas.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbfEBReI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 13:22:31 -0400
-Received: by mail-io1-f65.google.com with SMTP id m9so2874280iok.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 10:22:30 -0700 (PDT)
+        Thu, 2 May 2019 13:34:08 -0400
+X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 May 2019 13:34:08 EDT
+X-Utexas-Sender-Group: RELAYLIST-O365
+X-IronPort-MID: 138834046
+IronPort-PHdr: =?us-ascii?q?9a23=3Aip7gOR+mjZgpSf9uRHGN82YQeigqvan1NQcJ65?=
+ =?us-ascii?q?0hzqhDabmn44+8YR7E/fs4iljPUM2b8P9Ch+fM+4HYEW0bqdfk0jgZdYBUER?=
+ =?us-ascii?q?oMiMEYhQslVdaKDkDnPtbvZjA6WtleWU9s5De2PVUGUMs=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EFAAD/JstchzImL2hlGwEBAQEDAQE?=
+ =?us-ascii?q?BBwMBAQGBUQYBAQELAYE9UIFhBAsoCoQGg0cDhFJfiVGCV5hQgSQDGDwBDgE?=
+ =?us-ascii?q?tAoQ+AheGQDQJDgEDAQEFAQEBAQICAhABAQEIDQkIKSMMg0U5MgEBAQEBAQE?=
+ =?us-ascii?q?BAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQUCODkBAQQSEREMAQE3AQ8?=
+ =?us-ascii?q?CAQgYAgImAgICMBUCAQ0CBAENJ4MAgWsDHQGiED0CYgILgQEpiF9xgS+CeQE?=
+ =?us-ascii?q?BBYUCGEEHgUYJgQsnAYtcBoFBPoE4gms+hESDCoJYjSEsmVsJAoIJkjoGG5V?=
+ =?us-ascii?q?BjBaUYwIEAgQFAg4BAQWBT4IPchODJ4IPGoNVilNAATGBKZITAYEgAQE?=
+X-IPAS-Result: =?us-ascii?q?A2EFAAD/JstchzImL2hlGwEBAQEDAQEBBwMBAQGBUQYBA?=
+ =?us-ascii?q?QELAYE9UIFhBAsoCoQGg0cDhFJfiVGCV5hQgSQDGDwBDgEtAoQ+AheGQDQJD?=
+ =?us-ascii?q?gEDAQEFAQEBAQICAhABAQEIDQkIKSMMg0U5MgEBAQEBAQEBAQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQEBAQEBAQEBAQEBAQEBAQUCODkBAQQSEREMAQE3AQ8CAQgYAgImAgICM?=
+ =?us-ascii?q?BUCAQ0CBAENJ4MAgWsDHQGiED0CYgILgQEpiF9xgS+CeQEBBYUCGEEHgUYJg?=
+ =?us-ascii?q?QsnAYtcBoFBPoE4gms+hESDCoJYjSEsmVsJAoIJkjoGG5VBjBaUYwIEAgQFA?=
+ =?us-ascii?q?g4BAQWBT4IPchODJ4IPGoNVilNAATGBKZITAYEgAQE?=
+X-IronPort-AV: E=Sophos;i="5.60,422,1549951200"; 
+   d="scan'208";a="138834046"
+X-Utexas-Seen-Outbound: true
+Received: from mail-bl2nam02lp2050.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([104.47.38.50])
+  by esa12.utexas.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 May 2019 12:27:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lVHnT7hS+jtT3CyJtyT3U+Tp35eXJOQlQwQcIaozN1k=;
-        b=FLgcmPKzggLBQIsMH4re/H0qjoV0go8u3NnhOQTe3q6vtF7IZyqdZhxY2Frt/Uzr3D
-         8he+fhuhfJhPyDhgiPSeR1tqXNPbHuTm7cZwA5xQzKPhBw8Q1Dc/1Io5z/6XN8T11+s9
-         jr9cIJmfO1yOy7RVgVgwAZhMS+uQDzeU7Hfww=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lVHnT7hS+jtT3CyJtyT3U+Tp35eXJOQlQwQcIaozN1k=;
-        b=tu7xoD+R63VT+pyH4TC5XeSw+SpScdovS7gqwDGrInDnOzHx8LhD0tK9AZ0LY1D5Jj
-         keJBP9AWc0ocj4WkF4/ghHuw3hkE+vvYIOLG/wcEs2+bsPi/Z+bGHx4ZyTulAIGxNI2c
-         NQlapaW2Z+OLtUZ6nrZmUNCUs+Sf1sV504Fkrg3sdmgpH//1bcjsiZ5VZq/NxH2/Bw8X
-         Qw57U51JsyXRzhtsKmtHZQyp0zJ4NcREYtPTGwnBw3kVue3fBakS9dJjXydlI1k9ROfL
-         raxNaBcSo2ZMXZYnUOv51lOxL4Z8ek3OkhyuBqBkFKGw3ffUApDmaLDOk9fZOsaXuIAq
-         h4xA==
-X-Gm-Message-State: APjAAAWFlI4ycRDzFU9vBT+FDPvUzVyua+GnynoIzNxECAl/6Gv6K3UP
-        aQyMC9/51hvRbBgUxVZ9gCYVo2lZi6vMgkLsSUq2Fh7b
-X-Google-Smtp-Source: APXvYqxRcQWDmHe7TCWgRcO75l9wTQKl4tNubQ/rdcxvg4G1z8dMoWm7dqyPzBWAwF9NM6opXmtOKPro585mJXhMVVA=
-X-Received: by 2002:a6b:ee04:: with SMTP id i4mr3469718ioh.246.1556817750306;
- Thu, 02 May 2019 10:22:30 -0700 (PDT)
+ d=utexas.onmicrosoft.com; s=selector1-utexas-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9MEN8xRdIofZXWFIwJFbJpfIVZjNRVNflFWfswFQ1tw=;
+ b=MTg5UjaFQGlig1mKIrjRxWk9mSrUhWP4rfsOrrptrIU8269wEOwgBmbmjB2KeaPw0Zt+0+0CLY/O+McBkUeruGNzMFzoNBrwQg1TYp1Qp0EZ94dod1zPJbpNYu96o7xVPYa4c02Yxe4s0UVaYvcXB+0ahauyM3EYZ5S32aXV8Fs=
+Received: from DM5PR0601MB3718.namprd06.prod.outlook.com (10.167.109.15) by
+ DM5PR0601MB3688.namprd06.prod.outlook.com (10.167.108.166) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.11; Thu, 2 May 2019 17:26:56 +0000
+Received: from DM5PR0601MB3718.namprd06.prod.outlook.com
+ ([fe80::d02d:6aa3:ca06:3507]) by DM5PR0601MB3718.namprd06.prod.outlook.com
+ ([fe80::d02d:6aa3:ca06:3507%6]) with mapi id 15.20.1856.008; Thu, 2 May 2019
+ 17:26:56 +0000
+From:   "Goetz, Patrick G" <pgoetz@math.utexas.edu>
+To:     NeilBrown <neilb@suse.com>, Amir Goldstein <amir73il@gmail.com>
+CC:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        =?utf-8?B?QW5kcmVhcyBHcsO8bmJhY2hlcg==?= 
+        <andreas.gruenbacher@gmail.com>,
+        Patrick Plagwitz <Patrick_Plagwitz@web.de>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
+Thread-Topic: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
+Thread-Index: AQHVAIspItZqAESGCECfW8viq8okK6ZXI70AgAARYICAAOJCAA==
+Date:   Thu, 2 May 2019 17:26:56 +0000
+Message-ID: <8f3ba729-ed44-7bed-5ff8-b962547e5582@math.utexas.edu>
+References: <CAJfpeguwUtRWRGmNmimNp-FXzWqMCCQMb24iWPu0w_J0_rOnnw@mail.gmail.com>
+ <20161205151933.GA17517@fieldses.org>
+ <CAJfpegtpkavseTFLspaC7svbvHRq-0-7jvyh63+DK5iWHTGnaQ@mail.gmail.com>
+ <20161205162559.GB17517@fieldses.org>
+ <CAHpGcMKHjic6L+J0qvMYNG9hVCcDO1hEpx4BiEk0ZCKDV39BmA@mail.gmail.com>
+ <266c571f-e4e2-7c61-5ee2-8ece0c2d06e9@web.de>
+ <CAHpGcMKmtppfn7PVrGKEEtVphuLV=YQ2GDYKOqje4ZANhzSgDw@mail.gmail.com>
+ <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com>
+ <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com>
+ <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com>
+ <20161206185806.GC31197@fieldses.org>
+ <87bm0l4nra.fsf@notabene.neil.brown.name>
+ <CAOQ4uxjYEjqbLcVYoUaPzp-jqY_3tpPBhO7cE7kbq63XrPRQLQ@mail.gmail.com>
+ <875zqt4igg.fsf@notabene.neil.brown.name>
+In-Reply-To: <875zqt4igg.fsf@notabene.neil.brown.name>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: DM5PR21CA0051.namprd21.prod.outlook.com
+ (2603:10b6:3:129::13) To DM5PR0601MB3718.namprd06.prod.outlook.com
+ (2603:10b6:4:7d::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pgoetz@math.utexas.edu; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [128.83.133.100]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a162ef5f-9ecd-483b-7eaf-08d6cf236032
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:DM5PR0601MB3688;
+x-ms-traffictypediagnostic: DM5PR0601MB3688:
+x-microsoft-antispam-prvs: <DM5PR0601MB36887E3013395627E1834B4C83340@DM5PR0601MB3688.namprd06.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4303;
+x-forefront-prvs: 0025434D2D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(396003)(39860400002)(136003)(199004)(189003)(478600001)(305945005)(66066001)(8676002)(3846002)(7736002)(316002)(6246003)(6116002)(229853002)(53936002)(186003)(88552002)(52116002)(110136005)(6512007)(6436002)(54906003)(75432002)(102836004)(786003)(26005)(7416002)(99286004)(5660300002)(476003)(81156014)(8936002)(486006)(76176011)(81166006)(4744005)(2906002)(31686004)(6486002)(25786009)(256004)(14444005)(71190400001)(386003)(66556008)(6506007)(66946007)(73956011)(68736007)(64756008)(31696002)(66476007)(66446008)(86362001)(446003)(4326008)(11346002)(14454004)(2616005)(71200400001)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR0601MB3688;H:DM5PR0601MB3718.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: math.utexas.edu does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: eNnPxdoBxHCsSUSMbxFo2KJMLgxuOV+u2EnQIcLcXcU268MZNWgG96dwJlPEFyQ1xt602hp+RKO/orzwJhThJ6umjdZyXo5zKlaALf1LOh9O537cdcvFMVUKvqC/gChVUkO154TDBPxXy8hU94uxIaqmnOLjp5BA5a6tNHjYggBuay/+QFFfHGvfhDJdcssDuBS/jUIdkaVvU0arfOPS0+a9k5Q7pMzXDNi1s7hx8TDM7CYweAqxVlT0X6ZLot98zyuYtslsM6+MlMqJMKA2zeIscID2KEOaomBzaYoCJjwGk6wCFKn/dsv7qC0dYKZBz/sJUVjf+KETgIlHQdkmpN7/Jxa0t2nKouDm0EdkUyRnX5xYW1TXlgIlVk6vutfRUaimtf4lLoSd6vxJYbUWRCgmBGl220OYScmkFwS99ms=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E61925DA62D1E54E930FFD18D9DA927D@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190501205541.GC30899@veci.piliscsaba.redhat.com>
- <20190502143905.GA25032@quack2.suse.cz> <CAOQ4uxiLwwmOG0gtNDXng3O=hq3o0jAx66aXnSYV+T7UHtr=8A@mail.gmail.com>
- <20190502154137.GC25032@quack2.suse.cz>
-In-Reply-To: <20190502154137.GC25032@quack2.suse.cz>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 2 May 2019 13:22:19 -0400
-Message-ID: <CAJfpeguj6pPnm2C=PX+ZR0kHAis4YBQC0sWwve5cLW6RiJ9eLA@mail.gmail.com>
-Subject: Re: [RFC PATCH] network fs notification
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Steve French <smfrench@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: math.utexas.edu
+X-MS-Exchange-CrossTenant-Network-Message-Id: a162ef5f-9ecd-483b-7eaf-08d6cf236032
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2019 17:26:56.6852
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 31d7e2a5-bdd8-414e-9e97-bea998ebdfe1
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR0601MB3688
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 2, 2019 at 11:41 AM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 02-05-19 11:08:41, Amir Goldstein wrote:
-> > On Thu, May 2, 2019 at 10:39 AM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Wed 01-05-19 16:55:41, Miklos Szeredi wrote:
-> > > > This is a really really trivial first iteration, but I think it's enough to
-> > > > try out CIFS notification support.  Doesn't deal with mark deletion, but
-> > > > that's best effort anyway: fsnotify() will filter out unneeded events.
-> > > >
-> > > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > > > ---
-> > > >  fs/notify/fanotify/fanotify_user.c |    6 +++++-
-> > > >  fs/notify/inotify/inotify_user.c   |    2 ++
-> > > >  include/linux/fs.h                 |    1 +
-> > > >  3 files changed, 8 insertions(+), 1 deletion(-)
-> > > >
-> > > > --- a/fs/notify/fanotify/fanotify_user.c
-> > > > +++ b/fs/notify/fanotify/fanotify_user.c
-> > > > @@ -1041,9 +1041,13 @@ static int do_fanotify_mark(int fanotify
-> > > >               else if (mark_type == FAN_MARK_FILESYSTEM)
-> > > >                       ret = fanotify_add_sb_mark(group, mnt->mnt_sb, mask,
-> > > >                                                  flags, fsid);
-> > > > -             else
-> > > > +             else {
-> > > >                       ret = fanotify_add_inode_mark(group, inode, mask,
-> > > >                                                     flags, fsid);
-> > > > +
-> > > > +                     if (!ret && inode->i_op->notify_update)
-> > > > +                             inode->i_op->notify_update(inode);
-> > > > +             }
-> > >
-> > > Yeah, so I had something like this in mind but I wanted to inform the
-> > > filesystem about superblock and mountpoint marks as well. And I'd pass the
-> > > 'mask' as well as presumably filesystem could behave differently depending
-> > > on whether we are looking for create vs unlink vs file change events etc...
-
-Hmm.  I'm not sure we need to pass the mask, since it's in the inode
-filesystem can read it.  But this code is completely racy in this
-respect and doesn't even include hooks in the delete notification.  So
-it's basically just to try it out.
-
-> >
-> > It probably wouldn't hurt to update fs about mount marks,
-> > but in the context of "remote" fs, the changes are most certainly
-> > being done on a different mount, a different machine most likely...
->
-> I agree. I guess I'm missing your point :) What I understood from Steve is
-> that e.g. cifs could ask the server to provide the notifications. E.g. FUSE
-> could propagate this information to userspace daemon which could place
-> appropriate fsnotify marks on underlying objects and then transform the
-> events to events on the FUSE filesystem? At least that's what I was
-> imagining, didn't think too much about it.
-
-Exactly.  For inode and superblock notification that's clear (don't
-know if CIFS can do superblock notifications or not).  However, mount
-notification is something that possibly means: notify me of any
-changes made through this mount only.  I.e. if there's a bind mount
-and the filesystem is modified through that, then we don't get the
-mount notification for the original mount.  So I guess it makes sense
-to say: if you want remote notifications, just use the superblock
-notification.
-
-Thanks,
-Miklos
+T24gNS8xLzE5IDEwOjU3IFBNLCBOZWlsQnJvd24gd3JvdGU6DQo+IFN1cHBvcnQgc29tZSBkYXkg
+c3VwcG9ydCBmb3IgbmZzNCBhY2xzIHdlcmUgYWRkZWQgdG8gZXh0NCAobm90IGEgdG90YWxseQ0K
+PiByaWRpY3Vsb3VzIHN1Z2dlc3Rpb24pLiAgV2Ugd291bGQgdGhlbiB3YW50IE5GUyB0byBhbGxv
+dyBpdCdzIEFDTHMgdG8gYmUNCj4gY29waWVkIHVwLg0KDQoNCklzIHRoZXJlIHNvbWUgcmVhc29u
+IHdoeSB0aGVyZSBoYXNuJ3QgYmVlbiBhIGdyZWF0ZXIgZWZmb3J0IHRvIGFkZCBORlN2NCANCkFD
+TCBzdXBwb3J0IHRvIHRoZSBtYWluc3RyZWFtIGxpbnV4IGZpbGVzeXN0ZW1zPyAgSSBoYXZlIHRv
+IHN1cHBvcnQgYSANCmh5YnJpZCBsaW51eC93aW5kb3dzIGVudmlyb25tZW50IGFuZCBub3QgaGF2
+aW5nIHRoZXNlIEFDTHMgb24gZXh0NCBpcyBhIA0KZGFpbHkgaGVhZGFjaGUgZm9yIG1lLg0KDQpB
+bHNvLCBpdCBkb2Vzbid0IHRha2UgbXVjaCBuZWVkIGZvciBzZWN1cml0eSBncmFudWxhcml0eSB0
+byByZWFsaXplIHRoYXQgDQpQT1NJWCBBQ0xzIChub3QgZXZlciBldmVuIGZvcm1hbGx5IHN0YW5k
+YXJkaXplZCEpIGFyZSBmYWlybHkgaW5hZGVxdWF0ZSwgDQpidXQgbW9yZSBpbXBvcnRhbnRseSwg
+ZG9uJ3QgcGxheSBuaWNlbHkgd2l0aCB0aGVpciBXaW5kb3dzIGZyaWVuZHMuDQoNCg==
