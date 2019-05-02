@@ -2,147 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19FEC111D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 05:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19F21111F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 May 2019 05:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbfEBDTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 May 2019 23:19:32 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:34238 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbfEBDTc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 May 2019 23:19:32 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x423A2LX123407;
-        Thu, 2 May 2019 03:19:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=2493aj9eAFUSolLRq5wu7qZnhNz2tGnrVP07Q1j7Pfs=;
- b=Cev4onefGVYui8ZUvgh1LQNh1yqH0uPsv5bKcm6oYeIkb4l1VmG4wMavnaUQpjH2rC7y
- gUCFpDNFT4vwYFnSYU/AQIRO3jxOiZgawdAe6jA+DDtl1xs34rdXDNpHhdNUzQ1FFtX+
- XrnZStcm85Tc9MBLDq2F58ImGepSS7smEEZv4cSwet1G+/O/HDt0/vjb0vJBGokEZNZt
- cVQx1E6604MYky5xjyFXttyyE7j1d0yTiJK+2aiFWDrztxhs8my6bWVOw/UeCbjgC1tI
- UzNc0pNyVlAEMHaN9cCO/IO6rQk+sjLlNAHiI12QHlUYCFj2xhD+0nDRRSt4pxF82tr4 Lg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 2s6xhydvej-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 May 2019 03:19:17 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x423J9Sv064932;
-        Thu, 2 May 2019 03:19:16 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2s6xhgtpj4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 May 2019 03:19:16 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x423JDaX016405;
-        Thu, 2 May 2019 03:19:13 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 01 May 2019 20:19:13 -0700
-Date:   Wed, 1 May 2019 20:19:12 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     agruenba@redhat.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] iomap: move iomap_read_inline_data around
-Message-ID: <20190502031912.GH5200@magnolia>
-References: <20190501161111.32475-1-hch@lst.de>
+        id S1726197AbfEBD5Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 May 2019 23:57:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46684 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726186AbfEBD5Q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 May 2019 23:57:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A63C2AC10;
+        Thu,  2 May 2019 03:57:13 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 02 May 2019 13:57:03 +1000
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Andreas =?utf-8?Q?Gr=C3=BCnbacher?= 
+        <andreas.gruenbacher@gmail.com>,
+        Patrick Plagwitz <Patrick_Plagwitz@web.de>,
+        "linux-unionfs\@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
+In-Reply-To: <CAOQ4uxjYEjqbLcVYoUaPzp-jqY_3tpPBhO7cE7kbq63XrPRQLQ@mail.gmail.com>
+References: <CAJfpeguwUtRWRGmNmimNp-FXzWqMCCQMb24iWPu0w_J0_rOnnw@mail.gmail.com> <20161205151933.GA17517@fieldses.org> <CAJfpegtpkavseTFLspaC7svbvHRq-0-7jvyh63+DK5iWHTGnaQ@mail.gmail.com> <20161205162559.GB17517@fieldses.org> <CAHpGcMKHjic6L+J0qvMYNG9hVCcDO1hEpx4BiEk0ZCKDV39BmA@mail.gmail.com> <266c571f-e4e2-7c61-5ee2-8ece0c2d06e9@web.de> <CAHpGcMKmtppfn7PVrGKEEtVphuLV=YQ2GDYKOqje4ZANhzSgDw@mail.gmail.com> <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com> <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com> <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com> <20161206185806.GC31197@fieldses.org> <87bm0l4nra.fsf@notabene.neil.brown.name> <CAOQ4uxjYEjqbLcVYoUaPzp-jqY_3tpPBhO7cE7kbq63XrPRQLQ@mail.gmail.com>
+Message-ID: <875zqt4igg.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190501161111.32475-1-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9244 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905020024
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9244 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905020024
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 01, 2019 at 12:11:11PM -0400, Christoph Hellwig wrote:
-> iomap_read_inline_data ended up being placed in the middle of the bio
-> based read I/O completion handling, which tends to confuse the heck out
-> of me whenever I follow the code.  Move it to a more suitable place.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+On Wed, May 01 2019, Amir Goldstein wrote:
 
---D
+> On Wed, May 1, 2019 at 10:03 PM NeilBrown <neilb@suse.com> wrote:
+>>
+>> On Tue, Dec 06 2016, J. Bruce Fields wrote:
+>>
+>> > On Tue, Dec 06, 2016 at 02:18:31PM +0100, Andreas Gruenbacher wrote:
+>> >> On Tue, Dec 6, 2016 at 11:08 AM, Miklos Szeredi <miklos@szeredi.hu> w=
+rote:
+>> >> > On Tue, Dec 6, 2016 at 12:24 AM, Andreas Gr=C3=BCnbacher
+>> >> > <andreas.gruenbacher@gmail.com> wrote:
+>> >> >> 2016-12-06 0:19 GMT+01:00 Andreas Gr=C3=BCnbacher <andreas.gruenba=
+cher@gmail.com>:
+>> >> >
+>> >> >>> It's not hard to come up with a heuristic that determines if a
+>> >> >>> system.nfs4_acl value is equivalent to a file mode, and to ignore=
+ the
+>> >> >>> attribute in that case. (The file mode is transmitted in its own
+>> >> >>> attribute already, so actually converting .) That way, overlayfs =
+could
+>> >> >>> still fail copying up files that have an actual ACL. It's still an
+>> >> >>> ugly hack ...
+>> >> >>
+>> >> >> Actually, that kind of heuristic would make sense in the NFS client
+>> >> >> which could then hide the "system.nfs4_acl" attribute.
+>> >> >
+>> >> > Even simpler would be if knfsd didn't send the attribute if not
+>> >> > necessary.  Looks like there's code actively creating the nfs4_acl =
+on
+>> >> > the wire even if the filesystem had none:
+>> >> >
+>> >> >     pacl =3D get_acl(inode, ACL_TYPE_ACCESS);
+>> >> >     if (!pacl)
+>> >> >         pacl =3D posix_acl_from_mode(inode->i_mode, GFP_KERNEL);
+>> >> >
+>> >> > What's the point?
+>> >>
+>> >> That's how the protocol is specified.
+>> >
+>> > Yep, even if we could make that change to nfsd it wouldn't help the
+>> > client with the large number of other servers that are out there
+>> > (including older knfsd's).
+>> >
+>> > --b.
+>> >
+>> >> (I'm not saying that that's very helpful.)
+>> >>
+>> >> Andreas
+>>
+>> Hi everyone.....
+>>  I have a customer facing this problem, and so stumbled onto the email
+>>  thread.
+>>  Unfortunately it didn't resolve anything.  Maybe I can help kick things
+>>  along???
+>>
+>>  The core problem here is that NFSv4 and ext4 use different and largely
+>>  incompatible ACL implementations.  There is no way to accurately
+>>  translate from one to the other in general (common specific examples
+>>  can be converted).
+>>
+>>  This means that either:
+>>    1/ overlayfs cannot use ext4 for upper and NFS for lower (or vice
+>>       versa) or
+>>    2/ overlayfs need to accept that sometimes it cannot copy ACLs, and
+>>       that is OK.
+>>
+>>  Silently not copying the ACLs is probably not a good idea as it might
+>>  result in inappropriate permissions being given away.
+>
+> For example? permissions given away to do what?
+> Note that ovl_permission() only check permissions of *mounter*
+> to read the lower NFS file and ovl_open()/ovl_read_iter() access
+> the lower file with *mounter* credentials.
+>
+> I might be wrong, but seems to me that once admin mounted
+> overlayfs with lower NFS, NFS ACLs are not being enforced at all
+> even before copy up.
 
-> ---
->  fs/iomap.c | 40 ++++++++++++++++++++--------------------
->  1 file changed, 20 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/iomap.c b/fs/iomap.c
-> index fbfe20b7f6f0..9ef049d61e8a 100644
-> --- a/fs/iomap.c
-> +++ b/fs/iomap.c
-> @@ -240,26 +240,6 @@ iomap_read_page_end_io(struct bio_vec *bvec, int error)
->  	iomap_read_finish(iop, page);
->  }
->  
-> -static void
-> -iomap_read_inline_data(struct inode *inode, struct page *page,
-> -		struct iomap *iomap)
-> -{
-> -	size_t size = i_size_read(inode);
-> -	void *addr;
-> -
-> -	if (PageUptodate(page))
-> -		return;
-> -
-> -	BUG_ON(page->index);
-> -	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
-> -
-> -	addr = kmap_atomic(page);
-> -	memcpy(addr, iomap->inline_data, size);
-> -	memset(addr + size, 0, PAGE_SIZE - size);
-> -	kunmap_atomic(addr);
-> -	SetPageUptodate(page);
-> -}
-> -
->  static void
->  iomap_read_end_io(struct bio *bio)
->  {
-> @@ -281,6 +261,26 @@ struct iomap_readpage_ctx {
->  	struct list_head	*pages;
->  };
->  
-> +static void
-> +iomap_read_inline_data(struct inode *inode, struct page *page,
-> +		struct iomap *iomap)
-> +{
-> +	size_t size = i_size_read(inode);
-> +	void *addr;
-> +
-> +	if (PageUptodate(page))
-> +		return;
-> +
-> +	BUG_ON(page->index);
-> +	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
-> +
-> +	addr = kmap_atomic(page);
-> +	memcpy(addr, iomap->inline_data, size);
-> +	memset(addr + size, 0, PAGE_SIZE - size);
-> +	kunmap_atomic(addr);
-> +	SetPageUptodate(page);
-> +}
-> +
->  static loff_t
->  iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  		struct iomap *iomap)
-> -- 
-> 2.20.1
-> 
+I guess it is just as well that copy-up fails then - if the lower-level
+permission check is being ignored.
+
+>
+>> So if the
+>>  sysadmin wants this (and some clearly do), they need a way to
+>>  explicitly say "I accept the risk".  If only standard Unix permissions
+>>  are used, there is no risk, so this seems reasonable.
+>>
+>>  So I would like to propose a new option for overlayfs
+>>     nocopyupacl:   when overlayfs is copying a file (or directory etc)
+>>         from the lower filesystem to the upper filesystem, it does not
+>>         copy extended attributes with the "system." prefix.  These are
+>>         used for storing ACL information and this is sometimes not
+>>         compatible between different filesystem types (e.g. ext4 and
+>>         NFSv4).  Standard Unix ownership permission flags (rwx) *are*
+>>         copied so this option does not risk giving away inappropriate
+>>         permissions unless the lowerfs uses unusual ACLs.
+>>
+>>
+>
+> I am wondering if it would make more sense for nfs to register a
+> security_inode_copy_up_xattr() hook.
+> That is the mechanism that prevents copying up other security.*
+> xattrs?
+
+No, I don't think that would make sense.
+Support some day support for nfs4 acls were added to ext4 (not a totally
+ridiculous suggestion).  We would then want NFS to allow it's ACLs to be
+copied up.
+
+Thanks,
+NeilBrown
+
+
+>
+> Thanks,
+> Amir.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlzKao8ACgkQOeye3VZi
+gblRlBAAvBfk2jX/vg9m1uaP0EEz3Ta0ixcKfA562CyVPtxCJ1i2folavvKXbA7i
+zUK9ZURimMkmGoN06wIepjCJRaaCA3G9Q2fw03Z2+LQdzecbfzsWKNQgITJ5IUP9
+q3114hOw+oKFPMKDpJBYqwWQfP0gc7mTC114UhTm8gpBfbSwNVeNFzNYO+XX7cjx
+VLVvzjNXNgTcSRv3ojhcR3nKE29eCwGlQM4Adr0GEcvUW6lfh/6A89jEHegXmH+j
+AJ+15UjNSMNB2MXMT0hZ1GVj1DFPfSu64iP1ZRInVVnYGSphp0EB3atok65dDWU7
+TxCgvHU1mOXb8wXY2zQxF+XxZ1Mw+70ADX2JVhFYqJ/aT4FKH9xeHg+AGgXZOv0s
+0GhTLr5ffcVDLCcD+Q0MGvEMJDlVEwrjzt8gFNtXbhAQSumkURuDWqJlen+M6GAn
+jN0+qRbDZ3fKdlLQOLVdwgdeAxSZmLMPnnbNwt6REFiT7htF67sQUY1wA04lh4o0
+rnodztakNYHAUdxM/9mUH66UZuWGvKG7ap+VHjawvboIW788iKLuhAz4PsFyBJW3
+v+RMsD/4H2EvrSQN1IzeU5qz1HiPdsbF3QgkFLuciEpfIs8nkNKnnWViNC/hB7tn
+Q+VRDogKoYelNX3tlq4812N2EccBkTbQykyayhMiEvzugKsmDvA=
+=eO7x
+-----END PGP SIGNATURE-----
+--=-=-=--
