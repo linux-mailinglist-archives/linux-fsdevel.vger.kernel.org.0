@@ -2,32 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69AEE127EE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 08:42:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4353127F9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 08:48:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfECGmp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 May 2019 02:42:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40822 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725804AbfECGmo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 May 2019 02:42:44 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8DA92075E;
-        Fri,  3 May 2019 06:42:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556865763;
-        bh=eSwQ5MQqLLW9fJpp5z5L5wdOX/D46QfRbdkcz2wVbPw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a8bRpPlYbJzGxvGVmp2uL9uXUULFTshM8QSJGuUzKTk19JZNQGVZMB/Y6WWZUO0Xk
-         +Bv6ggtukUnBovktNVzoNapiH66e7QwUF2ou6Nv/zJgv58EYkE7vJAmpFpEvKEp4BX
-         kligVpalV/krymcpGsId8WYpq006/flMnMSyr3rA=
-Date:   Fri, 3 May 2019 08:42:41 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     "Bird, Timothy" <Tim.Bird@sony.com>,
-        Frank Rowand <frowand.list@gmail.com>,
+        id S1726958AbfECGsn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 May 2019 02:48:43 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40121 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfECGsn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 May 2019 02:48:43 -0400
+Received: by mail-ot1-f68.google.com with SMTP id w6so4401705otl.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 23:48:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B/vgrL6mFJjbubEtdk9xy4dCVOTfDfNigFjtHMJz6Hg=;
+        b=BWFlXcxdKPCg7HeydPM9nymqdJaKu5v0FhgYXNSsx2wC9FgZ6BWl9owIL4tp34RHzV
+         0O2CI2x3Gf2dd6TLPVl+UCJIuR6ugbJgNiJ5ahKuIYIQ+IA6TXvM7s76WSfiT5u9UOjU
+         BAmfjJWmXXmLvLfanifCHtnmcT9eQgxYIv2/nMEQ/h+Jh7SQ4Wq8KAXXS2vmQSRvUjv3
+         lY5jQIBJ2XBRYHgExTQbP6djFMEjOYOf+5XNpdQj+/aplIkBZPZ/tX1ygb8a9ZyYzeEG
+         YiV5A2XgkK4p5mdxg0WTkGqiAuXfNRl77gHQcoJRclt/bqm0TtNUGFDJL3udF8SKeGs/
+         dUEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B/vgrL6mFJjbubEtdk9xy4dCVOTfDfNigFjtHMJz6Hg=;
+        b=LdPpvIk6SI61ND+cmI5AMS7EadzEHbirevTQa6bWWAWZmDvWzUkwowhJJrGSBiK5H+
+         54/Gzd/IPfAJsCUkkjHlReQlHSSgEwSCOgjV+wb1C5dvtp0lyiB1SRPCYt8sqMuThiYw
+         fdjKMWZGjjmoFN0DpO2OG2vyu+V+62pQHqZgdnQiHjpikRHiv5z7r2wDc9TD83jnnKHm
+         muEzyDKdl2AUeQUXMlX/4Rg7l0bpJLWWzO/BLSnlEcAUCvHy2av/uSnTE0R/t0f440dB
+         qnMtWPDgeAdcFk7e8cvpVU5K1eaqST8AGmig34vWDI+jG+DqzBzAGPqkRnvEcG32ofio
+         42CQ==
+X-Gm-Message-State: APjAAAUfBsp8wxB75NzvZIhGzVdPjwjUmhCinsPtSeEIN41Hft/6ORy6
+        Pv94bgpyz7lKTHTw/K51kRAMNaUCZuo7upp7v2iZkA==
+X-Google-Smtp-Source: APXvYqyPne+GcGg5xCp23Lwb83V334Sd3k9K4ces08vt/qj/xTxzgyMfUgwlwCqUT5AUGkcD/SfnjL8zKAwKDrfcpHY=
+X-Received: by 2002:a9d:5cc3:: with SMTP id r3mr5382470oti.338.1556866121691;
+ Thu, 02 May 2019 23:48:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190501230126.229218-1-brendanhiggins@google.com>
+ <20190501230126.229218-9-brendanhiggins@google.com> <0a605543-477a-1854-eb35-6e586606889b@deltatee.com>
+In-Reply-To: <0a605543-477a-1854-eb35-6e586606889b@deltatee.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 2 May 2019 23:48:30 -0700
+Message-ID: <CAFd5g47hxAd=+72xbPJbWPdZCXRXmtLpsGhUh=zc7MSwfcaGJQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/17] kunit: test: add support for test abort
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
         Kees Cook <keescook@google.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
@@ -41,6 +65,7 @@ Cc:     "Bird, Timothy" <Tim.Bird@sony.com>,
         linux-nvdimm <linux-nvdimm@lists.01.org>,
         linux-um@lists.infradead.org,
         Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
         Amir Goldstein <amir73il@gmail.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Dan Williams <dan.j.williams@intel.com>,
@@ -49,98 +74,103 @@ Cc:     "Bird, Timothy" <Tim.Bird@sony.com>,
         Julia Lawall <julia.lawall@lip6.fr>,
         Kevin Hilman <khilman@baylibre.com>,
         Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Petr Mladek <pmladek@suse.com>,
         Richard Weinberger <richard@nod.at>,
         David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: Re: [PATCH v2 16/17] kernel/sysctl-test: Add null pointer test for
- sysctl.c:proc_dointvec()
-Message-ID: <20190503064241.GC20723@kroah.com>
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-17-brendanhiggins@google.com>
- <20190502110347.GE12416@kroah.com>
- <ECADFF3FD767C149AD96A924E7EA6EAF9770A3A0@USCULXMSG01.am.sony.com>
- <CAFd5g471Wawu6g14p0AO3aY8VPBKLA0mjHSdfR1qStFGzp3iGQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFd5g471Wawu6g14p0AO3aY8VPBKLA0mjHSdfR1qStFGzp3iGQ@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 02, 2019 at 11:45:43AM -0700, Brendan Higgins wrote:
-> On Thu, May 2, 2019 at 11:15 AM <Tim.Bird@sony.com> wrote:
-> >
-> >
-> >
-> > > -----Original Message-----
-> > > From: Greg KH
-> > >
-> > > On Wed, May 01, 2019 at 04:01:25PM -0700, Brendan Higgins wrote:
-> > > > From: Iurii Zaikin <yzaikin@google.com>
-> > > >
-> > > > KUnit tests for initialized data behavior of proc_dointvec that is
-> > > > explicitly checked in the code. Includes basic parsing tests including
-> > > > int min/max overflow.
-> > > >
-> > > > Signed-off-by: Iurii Zaikin <yzaikin@google.com>
-> > > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > > > ---
-> > > >  kernel/Makefile      |   2 +
-> > > >  kernel/sysctl-test.c | 292
-> > > +++++++++++++++++++++++++++++++++++++++++++
-> > > >  lib/Kconfig.debug    |   6 +
-> > > >  3 files changed, 300 insertions(+)
-> > > >  create mode 100644 kernel/sysctl-test.c
-> > > >
-> > > > diff --git a/kernel/Makefile b/kernel/Makefile
-> > > > index 6c57e78817dad..c81a8976b6a4b 100644
-> > > > --- a/kernel/Makefile
-> > > > +++ b/kernel/Makefile
-> > > > @@ -112,6 +112,8 @@ obj-$(CONFIG_HAS_IOMEM) += iomem.o
-> > > >  obj-$(CONFIG_ZONE_DEVICE) += memremap.o
-> > > >  obj-$(CONFIG_RSEQ) += rseq.o
-> > > >
-> > > > +obj-$(CONFIG_SYSCTL_KUNIT_TEST) += sysctl-test.o
-> > >
-> > > You are going to have to have a "standard" naming scheme for test
-> > > modules, are you going to recommend "foo-test" over "test-foo"?  If so,
-> > > that's fine, we should just be consistant and document it somewhere.
-> > >
-> > > Personally, I'd prefer "test-foo", but that's just me, naming is hard...
-> >
-> > My preference would be "test-foo" as well.  Just my 2 cents.
-> 
-> I definitely agree we should be consistent. My personal bias
-> (unsurprisingly) is "foo-test," but this is just because that is the
-> convention I am used to in other projects I have worked on.
-> 
-> On an unbiased note, we are currently almost evenly split between the
-> two conventions with *slight* preference for "foo-test": I ran the two
-> following grep commands on v5.1-rc7:
-> 
-> grep -Hrn --exclude-dir="build" -e "config [a-zA-Z_0-9]\+_TEST$" | wc -l
-> grep -Hrn --exclude-dir="build" -e "config TEST_[a-zA-Z_0-9]\+" | wc -l
-> 
-> "foo-test" has 36 occurrences.
-> "test-foo" has 33 occurrences.
-> 
-> The things I am more concerned about is how this would affect file
-> naming. If we have a unit test for foo.c, I think foo_test.c is more
-> consistent with our namespacing conventions. The other thing, is if we
-> already have a Kconfig symbol called FOO_TEST (or TEST_FOO) what
-> should we name the KUnit test in this case? FOO_UNIT_TEST?
-> FOO_KUNIT_TEST, like I did above?
+On Thu, May 2, 2019 at 8:15 PM Logan Gunthorpe <logang@deltatee.com> wrote:
+>
+>
+>
+> On 2019-05-01 5:01 p.m., Brendan Higgins wrote:
+> > +/*
+> > + * struct kunit_try_catch - provides a generic way to run code which might fail.
+> > + * @context: used to pass user data to the try and catch functions.
+> > + *
+> > + * kunit_try_catch provides a generic, architecture independent way to execute
+> > + * an arbitrary function of type kunit_try_catch_func_t which may bail out by
+> > + * calling kunit_try_catch_throw(). If kunit_try_catch_throw() is called, @try
+> > + * is stopped at the site of invocation and @catch is catch is called.
+>
+> I found some of the C++ comparisons in this series a bit distasteful but
+> wasn't going to say anything until I saw the try catch.... But looking
+> into the implementation it's just a thread that can exit early which
+> seems fine to me. Just a poor choice of name I guess...
 
-Ok, I can live with "foo-test", as you are right, in a directory listing
-and config option, it makes more sense to add it as a suffix.
+Guilty as charged (I have a long history with C++, sorry). Would you
+prefer I changed the name? I just figured that try-catch is a commonly
+understood pattern that describes exactly what I am doing.
 
-thanks,
+>
+> [snip]
+>
+> > +static void __noreturn kunit_abort(struct kunit *test)
+> > +{
+> > +     kunit_set_death_test(test, true);
+> > +
+> > +     kunit_try_catch_throw(&test->try_catch);
+> > +
+> > +     /*
+> > +      * Throw could not abort from test.
+> > +      *
+> > +      * XXX: we should never reach this line! As kunit_try_catch_throw is
+> > +      * marked __noreturn.
+> > +      */
+> > +     WARN_ONCE(true, "Throw could not abort from test!\n");
+> > +}
+> > +
+> >  int kunit_init_test(struct kunit *test, const char *name)
+> >  {
+> >       spin_lock_init(&test->lock);
+> > @@ -77,6 +103,7 @@ int kunit_init_test(struct kunit *test, const char *name)
+> >       test->name = name;
+> >       test->vprintk = kunit_vprintk;
+> >       test->fail = kunit_fail;
+> > +     test->abort = kunit_abort;
+>
+> There are a number of these function pointers which seem to be pointless
+> to me as you only ever set them to one function. Just call the function
+> directly. As it is, it is an unnecessary indirection for someone reading
+> the code. If and when you have multiple implementations of the function
+> then add the pointer. Don't assume you're going to need it later on and
+> add all this maintenance burden if you never use it..
 
-greg k-h
+Ah, yes, Frank (and probably others) previously asked me to remove
+unnecessary method pointers; I removed all the totally unused ones. As
+for these, I don't use them in this patchset, but I use them in my
+patchsets that will follow up this one. These in particular are
+present so that they can be mocked out for testing.
+
+>
+> [snip]
+>
+> > +void kunit_generic_try_catch_init(struct kunit_try_catch *try_catch)
+> > +{
+> > +     try_catch->run = kunit_generic_run_try_catch;
+> > +     try_catch->throw = kunit_generic_throw;
+> > +}
+>
+> Same here. There's only one implementation of try_catch and I can't
+> really see any sensible justification for another implementation. Even
+> if there is, add the indirection when the second implementation is
+> added. This isn't C++ and we don't need to make everything a "method".
+
+These methods are for a UML specific implementation in a follow up
+patchset, which is needed for some features like crash recovery, death
+tests, and removes dependence on kthreads.
+
+I know this probably sounds like premature complexity. Arguably it is
+in hindsight, but I wrote those features before I pulled out these
+interfaces (they were actually both originally in this patchset, but I
+dropped them to make this patchset easier to review). I can remove
+these methods and add them back in when I actually use them in the
+follow up patchsets if you prefer.
+
+Thanks!
