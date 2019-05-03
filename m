@@ -2,22 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F0DE13124
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 17:27:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D89D1314B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 17:35:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbfECP1D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 May 2019 11:27:03 -0400
-Received: from fieldses.org ([173.255.197.46]:54374 "EHLO fieldses.org"
+        id S1728343AbfECPfc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 May 2019 11:35:32 -0400
+Received: from fieldses.org ([173.255.197.46]:54398 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726267AbfECP1D (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 May 2019 11:27:03 -0400
+        id S1726724AbfECPfc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 May 2019 11:35:32 -0400
 Received: by fieldses.org (Postfix, from userid 2815)
-        id 8AC291CC9; Fri,  3 May 2019 11:27:02 -0400 (EDT)
-Date:   Fri, 3 May 2019 11:27:02 -0400
+        id 82E561C26; Fri,  3 May 2019 11:35:31 -0400 (EDT)
+Date:   Fri, 3 May 2019 11:35:31 -0400
 From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     "Goetz, Patrick G" <pgoetz@math.utexas.edu>
+To:     NeilBrown <neilb@suse.com>
 Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        NeilBrown <neilb@suse.com>, Amir Goldstein <amir73il@gmail.com>,
         Miklos Szeredi <miklos@szeredi.hu>,
         Andreas =?utf-8?Q?Gr=C3=BCnbacher?= 
         <andreas.gruenbacher@gmail.com>,
@@ -27,66 +26,121 @@ Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
-Message-ID: <20190503152702.GI12608@fieldses.org>
-References: <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com>
+Message-ID: <20190503153531.GJ12608@fieldses.org>
+References: <CAJfpegtpkavseTFLspaC7svbvHRq-0-7jvyh63+DK5iWHTGnaQ@mail.gmail.com>
+ <20161205162559.GB17517@fieldses.org>
+ <CAHpGcMKHjic6L+J0qvMYNG9hVCcDO1hEpx4BiEk0ZCKDV39BmA@mail.gmail.com>
+ <266c571f-e4e2-7c61-5ee2-8ece0c2d06e9@web.de>
+ <CAHpGcMKmtppfn7PVrGKEEtVphuLV=YQ2GDYKOqje4ZANhzSgDw@mail.gmail.com>
+ <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com>
  <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com>
  <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com>
  <20161206185806.GC31197@fieldses.org>
  <87bm0l4nra.fsf@notabene.neil.brown.name>
- <CAOQ4uxjYEjqbLcVYoUaPzp-jqY_3tpPBhO7cE7kbq63XrPRQLQ@mail.gmail.com>
- <875zqt4igg.fsf@notabene.neil.brown.name>
- <8f3ba729-ed44-7bed-5ff8-b962547e5582@math.utexas.edu>
- <CAHc6FU4czPQ8xxv5efvhkizU3obpV_05VEWYKydXDDDYcp8j=w@mail.gmail.com>
- <31520294-b2cc-c1cb-d9c5-d3811e00939a@math.utexas.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <31520294-b2cc-c1cb-d9c5-d3811e00939a@math.utexas.edu>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87bm0l4nra.fsf@notabene.neil.brown.name>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 02, 2019 at 05:51:12PM +0000, Goetz, Patrick G wrote:
+On Thu, May 02, 2019 at 12:02:33PM +1000, NeilBrown wrote:
+> On Tue, Dec 06 2016, J. Bruce Fields wrote:
 > 
+> > On Tue, Dec 06, 2016 at 02:18:31PM +0100, Andreas Gruenbacher wrote:
+> >> On Tue, Dec 6, 2016 at 11:08 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >> > On Tue, Dec 6, 2016 at 12:24 AM, Andreas Grünbacher
+> >> > <andreas.gruenbacher@gmail.com> wrote:
+> >> >> 2016-12-06 0:19 GMT+01:00 Andreas Grünbacher <andreas.gruenbacher@gmail.com>:
+> >> >
+> >> >>> It's not hard to come up with a heuristic that determines if a
+> >> >>> system.nfs4_acl value is equivalent to a file mode, and to ignore the
+> >> >>> attribute in that case. (The file mode is transmitted in its own
+> >> >>> attribute already, so actually converting .) That way, overlayfs could
+> >> >>> still fail copying up files that have an actual ACL. It's still an
+> >> >>> ugly hack ...
+> >> >>
+> >> >> Actually, that kind of heuristic would make sense in the NFS client
+> >> >> which could then hide the "system.nfs4_acl" attribute.
+> >> >
+> >> > Even simpler would be if knfsd didn't send the attribute if not
+> >> > necessary.  Looks like there's code actively creating the nfs4_acl on
+> >> > the wire even if the filesystem had none:
+> >> >
+> >> >     pacl = get_acl(inode, ACL_TYPE_ACCESS);
+> >> >     if (!pacl)
+> >> >         pacl = posix_acl_from_mode(inode->i_mode, GFP_KERNEL);
+> >> >
+> >> > What's the point?
+> >> 
+> >> That's how the protocol is specified.
+> >
+> > Yep, even if we could make that change to nfsd it wouldn't help the
+> > client with the large number of other servers that are out there
+> > (including older knfsd's).
+> >
+> > --b.
+> >
+> >> (I'm not saying that that's very helpful.)
+> >> 
+> >> Andreas
 > 
-> On 5/2/19 12:44 PM, Andreas Gruenbacher wrote:
-> > On Thu, 2 May 2019 at 19:27, Goetz, Patrick G <pgoetz@math.utexas.edu> wrote:
-> >> On 5/1/19 10:57 PM, NeilBrown wrote:
-> >>> Support some day support for nfs4 acls were added to ext4 (not a totally
-> >>> ridiculous suggestion).  We would then want NFS to allow it's ACLs to be
-> >>> copied up.
-> >>
-> >> Is there some reason why there hasn't been a greater effort to add NFSv4
-> >> ACL support to the mainstream linux filesystems?  I have to support a
-> >> hybrid linux/windows environment and not having these ACLs on ext4 is a
-> >> daily headache for me.
-> > 
-> > The patches for implementing that have been rejected over and over
-> > again, and nobody is working on them anymore.
-> > 
-> > Andreas
+> Hi everyone.....
+>  I have a customer facing this problem, and so stumbled onto the email
+>  thread.
+>  Unfortunately it didn't resolve anything.  Maybe I can help kick things
+>  along???
 > 
-> That's the part I don't understand -- why are the RichACL patches being 
-> rejected?
+>  The core problem here is that NFSv4 and ext4 use different and largely
+>  incompatible ACL implementations.  There is no way to accurately
+>  translate from one to the other in general (common specific examples
+>  can be converted).
+> 
+>  This means that either:
+>    1/ overlayfs cannot use ext4 for upper and NFS for lower (or vice
+>       versa) or
+>    2/ overlayfs need to accept that sometimes it cannot copy ACLs, and
+>       that is OK.
+> 
+>  Silently not copying the ACLs is probably not a good idea as it might
+>  result in inappropriate permissions being given away.  So if the
+>  sysadmin wants this (and some clearly do), they need a way to
+>  explicitly say "I accept the risk".
 
-Looking back through old mail....:
+So, I feel like silently copying ACLs up *also* carries a risk, if that
+means switching from server-enforcement to client-enforcement of those
+permissions.
 
-	http://lkml.kernel.org/r/20160311140134.GA14808@infradead.org
+Sorry, I know we had another thread recently about permissions in this
+situation, and I've forgotten the conclusion.
 
-	For one I still see no reason to merge this broken ACL model at
-	all.  It provides our actualy Linux users no benefit at all,
-	while breaking a lot of assumptions, especially by adding allow
-	and deny ACE at the same sime.
-
-	It also doesn't help with the issue that the main thing it's
-	trying to be compatible with (Windows) actually uses a
-	fundamentally different identifier to apply the ACLs to - as
-	long as you're still limited to users and groups and not guids
-	we'll still have that mapping problem anyway.
-
-Christoph also had some objections to the implementation which I think
-were addressed, but I could be wrong.
+Out of curiosity, what's done with selinux labels?
 
 --b.
+
+> If only standard Unix permissions
+>  are used, there is no risk, so this seems reasonable.
+> 
+>  So I would like to propose a new option for overlayfs
+>     nocopyupacl:   when overlayfs is copying a file (or directory etc)
+>         from the lower filesystem to the upper filesystem, it does not
+>         copy extended attributes with the "system." prefix.  These are
+>         used for storing ACL information and this is sometimes not
+>         compatible between different filesystem types (e.g. ext4 and
+>         NFSv4).  Standard Unix ownership permission flags (rwx) *are*
+>         copied so this option does not risk giving away inappropriate
+>         permissions unless the lowerfs uses unusual ACLs.
+> 
+> 
+>  Miklos: would you find that acceptable?
+> 
+> Thanks,
+> NeilBrown
+> 
+>    
+
+
