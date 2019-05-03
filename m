@@ -2,135 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E11391270D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 07:18:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 236621270F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 07:20:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbfECFSf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 May 2019 01:18:35 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41210 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbfECFSf (ORCPT
+        id S1726475AbfECFUB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 May 2019 01:20:01 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:45832 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfECFUB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 May 2019 01:18:35 -0400
-Received: by mail-ot1-f66.google.com with SMTP id g8so4248225otl.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 22:18:34 -0700 (PDT)
+        Fri, 3 May 2019 01:20:01 -0400
+Received: by mail-yw1-f65.google.com with SMTP id w18so3386425ywa.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 22:20:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TcYMhvle0qn3Vbr1jw5wZlfwobq39YCNyqpLb7cb7Ao=;
-        b=vMgoD4BZW5GJfaQp5wHB4n5Uh0dHYfDvtMT6no12+p0edzsKljaBNtH2QSDc0E6VzT
-         LcuVJrv7cdGqX7U8FfKi5bagOC/nhHdsiKYsGPft1mReUq108TVFisXe9TJrijP3ncN9
-         v39q83CXeT5lkt4WLd/fwqU8g5riscYutv4Dl0z3LH4QLnkrqcMdMPzrzbEAqplHU0Uu
-         m3PA8EGRjwXV1jBeELzeCCKDGehqdroKwQf1lX98y7iQ89oh7pPsirzbD3JpTdCcD6Pl
-         9jznQM6AV2RqS1bTQE7nMwTk67da6P41iEI1afzG3TYud6oBdVc8/EIcpi2ctCF9A2Zz
-         QXpg==
+         :cc:content-transfer-encoding;
+        bh=fkhRwXX5VvF4TygeZMoOxCa8yLo6jNah2uGHNM0OfHw=;
+        b=RkIocCnNk7Pl2zdEnqkp5wDYZ+ifM/luRvwNa/AVqqY7LDJFQmwn0fVrUDpPL5af2q
+         PYeFYcM9u7ibjR0rPx9AfYXzOTC8JQNMcFGsRLcor94EMZc9j7v80y7BXaAyVLJVVc25
+         6pRZtfOX8B0/XkyAorAtxp0cURpzNnO4/JME4BrvKInDirTt78arb7dFysU//2Hm2bUC
+         36uOcp5z6+0TUcH+ZE8jTFKYYKDT2OZvtuXGwyUfXR+nvtFolLqM9+ph/eHgcwTDubes
+         PY9397oGQlI1clXp61btxwfDyxo0Fv0N1Ifa3rN1FZPQd3NGdvsgTGsh0QO699BsBXuT
+         UN1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TcYMhvle0qn3Vbr1jw5wZlfwobq39YCNyqpLb7cb7Ao=;
-        b=pyz4YezdR8KlcXOz1pqxsA8+Cdn9KU/4d/6lpjeKoW28i5bVC7r7oMe8tKhZG1DRVo
-         x1MipuShITD7a7cGfZQukH4ue3qE67FmGvDVOdZhQnt9pFStpdwu7yYFNeQ/ZPYv6CRw
-         Aftb2ko6KnCP3Iee5TqsaJcLkYWOFkEtUyHBnPmpOfcV48l57lZO3gsfRtNrJHycdfAc
-         2r+BhsLCENB9/PE49Zp4E2WxKaJ21byNhg2sFqViPiII5hbKH8avScUqvyoLIpHAER6z
-         i4Tj/2dEmkTb/4d8Wzek7IYdSW6yuFMJcBMLbITbP49YnvbBdCNXtFG2i+NN+mo2lt/q
-         ERHA==
-X-Gm-Message-State: APjAAAUW9RpGFHSz/54Ie4Yd5RCOJNCNL7YiGOaUZ8/yACYZtA5mkAVu
-        hNg6aNT5haAn8Gc/kn+zoPZ++he8KULsbU5WT8pAaA==
-X-Google-Smtp-Source: APXvYqyA2rSR/zhocpuvfAEjnR+/hEY11wb5Z34WyJg2tb2IGWD/sjsI629/w4anWfW9OX32ft4Cf8TKrI7DL3H8Uik=
-X-Received: by 2002:a05:6830:204a:: with SMTP id f10mr4960513otp.83.1556860714114;
- Thu, 02 May 2019 22:18:34 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fkhRwXX5VvF4TygeZMoOxCa8yLo6jNah2uGHNM0OfHw=;
+        b=Vn/2zdWuNKQWQUx1WkByUgPSj++MedxWo3U+JKqN0A/p2ZAauIUeeApmLsl1QeZ36/
+         4yrUmUBwfZjYw95iz7Vu6e3kkudrfUcoDXwP7RS8hHEJ2N4t1Nq7WOi0j7Iq/DPcAO+s
+         lio0XfjZa0TNshqF6RgeMAu7IhouJb8JBLjWp6J+cvvpXfggBjXOBWIj6Drj0CZLF4Ts
+         58Od5clEowRcaaIv7cJIoeGm/5Xe1Zl6e27Y/6dLP0h1SuMvC2qMWoTZnn2iDtDqmVMg
+         Nd5T0oDPdnlOq5JPaR3GlXlhuVGfbUlKpQq18LsPXKBuS2hms51fRQ+Xb4Qt/f++9N0D
+         hQqQ==
+X-Gm-Message-State: APjAAAUUNnaf+K5aB9fL4ruoGWCsegDDoupEkQ3W8wd5cm2K2ZnonC7r
+        W9xuOtzHHELWX7VdUU0CcEwJMoIDJykeI8hNvbzUOvPS
+X-Google-Smtp-Source: APXvYqw0lNiQSHhZjo2+zuw79wwB92voenTYqxPEZl/HOo/zLwnLlTjPv/GBvlrfM5F1ucAHPiGUhAm9/kMlFmIdgm8=
+X-Received: by 2002:a0d:ff82:: with SMTP id p124mr6685317ywf.409.1556860800145;
+ Thu, 02 May 2019 22:20:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-8-brendanhiggins@google.com> <d4934565-9b41-880e-3bbe-984224b50fac@kernel.org>
-In-Reply-To: <d4934565-9b41-880e-3bbe-984224b50fac@kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 2 May 2019 22:18:22 -0700
-Message-ID: <CAFd5g44ex8B71K78V7-kRqcRw18Jou_c0KFtTR7wBpArw+P+MQ@mail.gmail.com>
-Subject: Re: [PATCH v2 07/17] kunit: test: add initial tests
-To:     shuah <shuah@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
-        skhan@linuxfoundation.org
+References: <20190502040331.81196-1-ezemtsov@google.com> <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
+ <20190502131034.GA25007@mit.edu> <20190502132623.GU23075@ZenIV.linux.org.uk> <CAK8JDrFZW1jwOmhq+YVDPJi9jWWrCRkwpqQ085EouVSyzw-1cg@mail.gmail.com>
+In-Reply-To: <CAK8JDrFZW1jwOmhq+YVDPJi9jWWrCRkwpqQ085EouVSyzw-1cg@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 3 May 2019 01:19:48 -0400
+Message-ID: <CAOQ4uxhDYvBOLBkyYXRC6aS_me+Q=1sBAtzOSkdqbo+N-Rtx=Q@mail.gmail.com>
+Subject: Re: Initial patches for Incremental FS
+To:     Eugene Zemtsov <ezemtsov@google.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Theodore Tso <tytso@mit.edu>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Richard Weinberger <richard.weinberger@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 2, 2019 at 6:27 PM shuah <shuah@kernel.org> wrote:
+On Fri, May 3, 2019 at 12:23 AM Eugene Zemtsov <ezemtsov@google.com> wrote:
 >
-> On 5/1/19 5:01 PM, Brendan Higgins wrote:
-> > Add a test for string stream along with a simpler example.
+> On Thu, May 2, 2019 at 6:26 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
 > >
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > ---
-> >   kunit/Kconfig              | 12 ++++++
-> >   kunit/Makefile             |  4 ++
-> >   kunit/example-test.c       | 88 ++++++++++++++++++++++++++++++++++++++
-> >   kunit/string-stream-test.c | 61 ++++++++++++++++++++++++++
-> >   4 files changed, 165 insertions(+)
-> >   create mode 100644 kunit/example-test.c
-> >   create mode 100644 kunit/string-stream-test.c
+> > Why not CODA, though, with local fs as cache?
+>
+> On Thu, May 2, 2019 at 4:20 AM Amir Goldstein <amir73il@gmail.com> wrote:
 > >
-> > diff --git a/kunit/Kconfig b/kunit/Kconfig
-> > index 64480092b2c24..5cb500355c873 100644
-> > --- a/kunit/Kconfig
-> > +++ b/kunit/Kconfig
-> > @@ -13,4 +13,16 @@ config KUNIT
-> >         special hardware. For more information, please see
-> >         Documentation/kunit/
+> > This sounds very useful.
 > >
-> > +config KUNIT_TEST
-> > +     bool "KUnit test for KUnit"
-> > +     depends on KUNIT
-> > +     help
-> > +       Enables KUnit test to test KUnit.
-> > +
+> > Why does it have to be a new special-purpose Linux virtual file?
+> > Why not FUSE, which is meant for this purpose?
+> > Those are things that you should explain when you are proposing a new
+> > filesystem,
+> > but I will answer for you - because FUSE page fault will incur high
+> > latency also after
+> > blocks are locally available in your backend store. Right?
+> >
+> > How about fscache support for FUSE then?
+> > You can even write your own fscache backend if the existing ones don't
+> > fit your needs for some reason.
+> >
+> > Piling logic into the kernel is not the answer.
+> > Adding the missing interfaces to the kernel is the answer.
+> >
 >
-> Please add a bit more information on what this config option
-> does. Why should user care to enable it?
+> Thanks for the interest and feedback. What I dreaded most was silence.
 >
-> > +config KUNIT_EXAMPLE_TEST
-> > +     bool "Example test for KUnit"
-> > +     depends on KUNIT
-> > +     help
-> > +       Enables example KUnit test to demo features of KUnit.
-> > +
+> Probably I should have given a bit more details in the introductory email=
+.
+> Important features we=E2=80=99re aiming for:
 >
-> Same here.
+> 1. An attempt to read a missing data block gives a userspace data loader =
+a
+> chance to fetch it. Once a block is loaded (in advance or after a page fa=
+ult)
+> it is saved into a local backing storage and following reads of the same =
+block
+> are done directly by the kernel. [Implemented]
+>
+> 2. Block level compression. It saves space on a device, while still allow=
+ing
+> very granular loading and mapping. Less granular compression would trigge=
+r
+> loading of more data than absolutely necessary, and that=E2=80=99s the th=
+ing we
+> want to avoid. [Implemented]
+>
+> 3. Block level integrity verification. The signature scheme is similar to
+> DMverity or fs-verity. In other words, each file has a Merkle tree with
+> crypto-digests of 4KB blocks. The root digest is signed with RSASSA or EC=
+DSA.
+> Each time a data block is read digest is calculated and checked with the
+> Merkle tree, if the signature check fails the read operation fails as wel=
+l.
+> Ideally I=E2=80=99d like to use fs-verity API for that. [Not implemented =
+yet.]
+>
+> 4. New files can be pushed into incremental-fs =E2=80=9Cexternally=E2=80=
+=9D when an app needs
+> a new resource or a binary. This is needed for situations when a new reso=
+urce
+> or a new version of code is available, e.g. a user just changed the syste=
+m
+> language to Spanish, or a developer rolled out an app update.
+> Things change over time and this means that we can=E2=80=99t just increme=
+ntally
+> load a precooked ext4 image and mount it via a loopback device.   [Implem=
+ented]
+>
+> 5. No need to support writes or file resizing. It eliminates a lot of
+> complexity.
+>
+> Currently not all of these features are implemented yet, but they all wil=
+l be
+> needed to achieve our goals:
+>  - Apps can be delivered incrementally without having to wait for extra d=
+ata.
+>    At the same time given enough time the app can be downloaded fully wit=
+hout
+>    having to keep a connection open after that.
+> - App=E2=80=99s integrity should be verifiable without having to read all=
+ its blocks.
+> - Local storage and battery need to be conserved.
+> - Apps binaries and resources can change over time.
+>    Such changes are triggered by external events.
+>
 
-Sounds reasonable. Will fix in the next revision.
+This really sounds to me like the properties of a network filesystem
+with local cache. It seems that you did a thorough research, but
+I am not sure that you examined the fscache option properly.
+Remember, if an existing module does not meet your needs,
+it does not mean that creating a new module is the right answer.
+It may be that extending an existing module is something that
+everyone, including yourself will benefit from.
 
-< snip >
+> I=E2=80=99d like to comment on proposed alternative solutions:
+>
+> FUSE
+> We have a FUSE based prototype and though functional it turned out to be =
+battery
+> hungry and read performance leaving much to be desired.
+> Our measurements were roughly corresponding to results in the article
+> I link in PATCH 1 incrementalfs.rst
+>
+> In this thread Amir Goldstein absolutely correctly pointed out that FUSE=
+=E2=80=99s
+> constant overhead keeps hurting app=E2=80=99s performance even when all b=
+locks are
+> available locally. But not only that, FUSE needs to be involved with each
+> readdir() and stat() call. And to our surprise we learned that many apps =
+do
+> directory traversals and stat()-s much more often that it seems reasonabl=
+e.
+>
 
-Thanks!
+That is a real problem. Alas readdir cache, recently added probably solves
+your problem since your directory changes are infrequent.
+stat cache also exists, but will be used depending on policy of mount optio=
+ns.
+I am sure you can come up with caching policy that will meet your needs
+and AFAIK FUSE protocol supports invalidating cache entries from server
+(i.e. on "external" changes).
+
+> Moreover, Android has a bit of a recent history with FUSE. A big chunk of
+> Android directory tree (=E2=80=9Cexternal storage=E2=80=9D) use to be mou=
+nted via FUSE.
+> It didn=E2=80=99t turn out to be a great approach and it was eventually r=
+eplaced by
+> a kernel module.
+>
+
+I am aware of that history.
+I suspect the decision to write sdcardfs followed similar logic to the one
+that has lead you to write incfs.
+
+> I reckon the amount of changes that we=E2=80=99d need to introduce to FUS=
+E in order
+> to make it support things mentioned above will be, to put it mildly,
+> very substantial. And having to be as generic as FUSE (i.e. support write=
+s etc)
+> will make the task much more complicated than it is now.
+>
+
+Maybe. We won't know until you explore this option. Will we?
+
+Thanks,
+Amir.
