@@ -2,180 +2,309 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBA1D125FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 03:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D76FD125FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 03:26:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbfECBZ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 21:25:29 -0400
-Received: from mga18.intel.com ([134.134.136.126]:15306 "EHLO mga18.intel.com"
+        id S1726616AbfECB0k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 21:26:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbfECBZ3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 21:25:29 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 18:25:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,423,1549958400"; 
-   d="gz'50?scan'50,208,50";a="321012439"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 02 May 2019 18:25:27 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1hMMx5-0006vW-AI; Fri, 03 May 2019 09:25:27 +0800
-Date:   Fri, 3 May 2019 09:24:59 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     kbuild-all@01.org, linux-fsdevel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [vfs:work.mount-syscalls 7/10] <stdin>:1397:2: warning: #warning
- syscall fsconfig not implemented
-Message-ID: <201905030957.jJccKc7H%lkp@intel.com>
+        id S1726327AbfECB0k (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 May 2019 21:26:40 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD7F22075E;
+        Fri,  3 May 2019 01:26:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556846798;
+        bh=ezIzjSzXH0XYlnG8MDnPY/5HL3hONlOSfYSFuod7JP4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dSKrZ0M3+KMtPQkDdumpJNz+AO6E8QIThgPYAO13XHWWwflaoRbIz/oNqlv7qoGTe
+         VXl92EIa/rUgQudCogxHlCVDc61J3iy5Cvqxwo79kJh2ROhBpjJ7BSMqTUevaRDp6y
+         lAlz7wW77WAmzYXCoP5yBl+76exX90pmOHxKFBS8=
+Subject: Re: [PATCH v2 03/17] kunit: test: add string_stream a std::stream
+ like string builder
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        keescook@google.com, kieran.bingham@ideasonboard.com,
+        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com,
+        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
+        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
+        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
+        pmladek@suse.com, richard@nod.at, rientjes@google.com,
+        rostedt@goodmis.org, wfg@linux.intel.com, skhan@linuxfoundation.org
+References: <20190501230126.229218-1-brendanhiggins@google.com>
+ <20190501230126.229218-4-brendanhiggins@google.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <1befe456-d981-d726-44f9-ebe3702ee51d@kernel.org>
+Date:   Thu, 2 May 2019 19:26:35 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1yeeQ81UyVL57Vl7"
-Content-Disposition: inline
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190501230126.229218-4-brendanhiggins@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 5/1/19 5:01 PM, Brendan Higgins wrote:
+> A number of test features need to do pretty complicated string printing
+> where it may not be possible to rely on a single preallocated string
+> with parameters.
+> 
+> So provide a library for constructing the string as you go similar to
+> C++'s std::string.
+> 
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> ---
+>   include/kunit/string-stream.h |  51 ++++++++++++
+>   kunit/Makefile                |   3 +-
+>   kunit/string-stream.c         | 144 ++++++++++++++++++++++++++++++++++
+>   3 files changed, 197 insertions(+), 1 deletion(-)
+>   create mode 100644 include/kunit/string-stream.h
+>   create mode 100644 kunit/string-stream.c
+> 
+> diff --git a/include/kunit/string-stream.h b/include/kunit/string-stream.h
+> new file mode 100644
+> index 0000000000000..567a4629406da
+> --- /dev/null
+> +++ b/include/kunit/string-stream.h
+> @@ -0,0 +1,51 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * C++ stream style string builder used in KUnit for building messages.
+> + *
+> + * Copyright (C) 2019, Google LLC.
+> + * Author: Brendan Higgins <brendanhiggins@google.com>
+> + */
+> +
+> +#ifndef _KUNIT_STRING_STREAM_H
+> +#define _KUNIT_STRING_STREAM_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/kref.h>
+> +#include <stdarg.h>
+> +
+> +struct string_stream_fragment {
+> +	struct list_head node;
+> +	char *fragment;
+> +};
+> +
+> +struct string_stream {
+> +	size_t length;
+> +	struct list_head fragments;
+> +
+> +	/* length and fragments are protected by this lock */
+> +	spinlock_t lock;
+> +	struct kref refcount;
+> +};
+> +
+> +struct string_stream *new_string_stream(void);
+> +
+> +void destroy_string_stream(struct string_stream *stream);
+> +
+> +void string_stream_get(struct string_stream *stream);
+> +
+> +int string_stream_put(struct string_stream *stream);
+> +
+> +int string_stream_add(struct string_stream *this, const char *fmt, ...);
+> +
+> +int string_stream_vadd(struct string_stream *this,
+> +		       const char *fmt,
+> +		       va_list args);
+> +
+> +char *string_stream_get_string(struct string_stream *this);
+> +
+> +void string_stream_clear(struct string_stream *this);
+> +
+> +bool string_stream_is_empty(struct string_stream *this);
+> +
+> +#endif /* _KUNIT_STRING_STREAM_H */
+> diff --git a/kunit/Makefile b/kunit/Makefile
+> index 5efdc4dea2c08..275b565a0e81f 100644
+> --- a/kunit/Makefile
+> +++ b/kunit/Makefile
+> @@ -1 +1,2 @@
+> -obj-$(CONFIG_KUNIT) +=			test.o
+> +obj-$(CONFIG_KUNIT) +=			test.o \
+> +					string-stream.o
+> diff --git a/kunit/string-stream.c b/kunit/string-stream.c
+> new file mode 100644
+> index 0000000000000..7018194ecf2fa
+> --- /dev/null
+> +++ b/kunit/string-stream.c
+> @@ -0,0 +1,144 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * C++ stream style string builder used in KUnit for building messages.
+> + *
+> + * Copyright (C) 2019, Google LLC.
+> + * Author: Brendan Higgins <brendanhiggins@google.com>
+> + */
+> +
+> +#include <linux/list.h>
+> +#include <linux/slab.h>
+> +#include <kunit/string-stream.h>
+> +
+> +int string_stream_vadd(struct string_stream *this,
+> +		       const char *fmt,
+> +		       va_list args)
+> +{
+> +	struct string_stream_fragment *fragment;
 
---1yeeQ81UyVL57Vl7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Since there is field with the same name, please use a different
+name. Using the same name for the struct which contains a field
+of the same name get very confusing and will hard to maintain
+the code.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount-syscalls
-head:   f1b5618e013af28b3c78daf424436a79674423c0
-commit: ecdab150fddb42fe6a739335257949220033b782 [7/10] vfs: syscall: Add fsconfig() for configuring and managing a context
-config: c6x-evmc6678_defconfig (attached as .config)
-compiler: c6x-elf-gcc (GCC) 8.1.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git checkout ecdab150fddb42fe6a739335257949220033b782
-        # save the attached .config to linux build tree
-        GCC_VERSION=8.1.0 make.cross ARCH=c6x 
+> +	int len;
+> +	va_list args_for_counting;
+> +	unsigned long flags;
+> +
+> +	/* Make a copy because `vsnprintf` could change it */
+> +	va_copy(args_for_counting, args);
+> +
+> +	/* Need space for null byte. */
+> +	len = vsnprintf(NULL, 0, fmt, args_for_counting) + 1;
+> +
+> +	va_end(args_for_counting);
+> +
+> +	fragment = kmalloc(sizeof(*fragment), GFP_KERNEL);
+> +	if (!fragment)
+> +		return -ENOMEM;
+> +
+> +	fragment->fragment = kmalloc(len, GFP_KERNEL);
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+This is confusing. See above comment.
 
-All warnings (new ones prefixed by >>):
 
-   <stdin>:1388:2: warning: #warning syscall open_tree not implemented [-Wcpp]
-   <stdin>:1391:2: warning: #warning syscall move_mount not implemented [-Wcpp]
-   <stdin>:1394:2: warning: #warning syscall fsopen not implemented [-Wcpp]
->> <stdin>:1397:2: warning: #warning syscall fsconfig not implemented [-Wcpp]
+> +	if (!fragment->fragment) {
+> +		kfree(fragment);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	len = vsnprintf(fragment->fragment, len, fmt, args);
+> +	spin_lock_irqsave(&this->lock, flags);
+> +	this->length += len;
+> +	list_add_tail(&fragment->node, &this->fragments);
+> +	spin_unlock_irqrestore(&this->lock, flags);
+> +	return 0;
+> +}
+> +
+> +int string_stream_add(struct string_stream *this, const char *fmt, ...)
+> +{
+> +	va_list args;
+> +	int result;
+> +
+> +	va_start(args, fmt);
+> +	result = string_stream_vadd(this, fmt, args);
+> +	va_end(args);
+> +	return result;
+> +}
+> +
+> +void string_stream_clear(struct string_stream *this)
+> +{
+> +	struct string_stream_fragment *fragment, *fragment_safe;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&this->lock, flags);
+> +	list_for_each_entry_safe(fragment,
+> +				 fragment_safe,
+> +				 &this->fragments,
+> +				 node) {
+> +		list_del(&fragment->node);
+> +		kfree(fragment->fragment);
+> +		kfree(fragment);
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+This is what git me down the road of checking the structure
+name to begin with. :)
 
---1yeeQ81UyVL57Vl7
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+> +	}
+> +	this->length = 0;
+> +	spin_unlock_irqrestore(&this->lock, flags);
+> +}
+> +
+> +char *string_stream_get_string(struct string_stream *this)
+> +{
+> +	struct string_stream_fragment *fragment;
+> +	size_t buf_len = this->length + 1; /* +1 for null byte. */
+> +	char *buf;
+> +	unsigned long flags;
+> +
+> +	buf = kzalloc(buf_len, GFP_KERNEL);
+> +	if (!buf)
+> +		return NULL;
+> +
+> +	spin_lock_irqsave(&this->lock, flags);
+> +	list_for_each_entry(fragment, &this->fragments, node)
+> +		strlcat(buf, fragment->fragment, buf_len);
+> +	spin_unlock_irqrestore(&this->lock, flags);
+> +
+> +	return buf;
+> +}
+> +
+> +bool string_stream_is_empty(struct string_stream *this)
+> +{
+> +	bool is_empty;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&this->lock, flags);
+> +	is_empty = list_empty(&this->fragments);
+> +	spin_unlock_irqrestore(&this->lock, flags);
+> +
+> +	return is_empty;
+> +}
+> +
+> +void destroy_string_stream(struct string_stream *stream)
+> +{
+> +	string_stream_clear(stream);
+> +	kfree(stream);
+> +}
+> +
+> +static void string_stream_destroy(struct kref *kref)
+> +{
+> +	struct string_stream *stream = container_of(kref,
+> +						    struct string_stream,
+> +						    refcount);
+> +	destroy_string_stream(stream);
+> +}
+> +
+> +struct string_stream *new_string_stream(void)
+> +{
+> +	struct string_stream *stream = kzalloc(sizeof(*stream), GFP_KERNEL);
+> +
+> +	if (!stream)
+> +		return NULL;
+> +
+> +	INIT_LIST_HEAD(&stream->fragments);
+> +	spin_lock_init(&stream->lock);
+> +	kref_init(&stream->refcount);
+> +	return stream;
+> +}
+> +
+> +void string_stream_get(struct string_stream *stream)
+> +{
+> +	kref_get(&stream->refcount);
+> +}
+> +
+> +int string_stream_put(struct string_stream *stream)
+> +{
+> +	return kref_put(&stream->refcount, &string_stream_destroy);
+> +}
+> +
+> 
 
-H4sICAOXy1wAAy5jb25maWcAjVxtk9u2rv7eX6FpZ+4kc5pk37JN7539QFGUzVgUtaLkl3zR
-OF5l48muvccvPdl/fwFStimJdE6nncQESJEgCDwAwf7x2x8B2e/Wz/PdcjF/enoNHutVvZnv
-6ofg2/Kp/r8gkkEqi4BFvHgPzMlytf/5YXH7M/j4/vL9xbvN4jIY1ZtV/RTQ9erb8nEPnZfr
-1W9//Ab//gGNzy8wzuZ/A+jzrn769u5xsQjeDCh9G3zCEYCLyjTmg4rSiqsKKHevhyb4UY1Z
-rrhM7z5dXF5cHHkTkg6OpAtriCFRFVGiGshCngZqCBOSp5Ugs5BVZcpTXnCS8C8sajFGXJEw
-Yf8FM8/vq4nMR9CiFzvQsnsKtvVu/3JaWJjLEUsrmVZKZFZvGLJi6bgi+aBKuODF3fUViqyZ
-iRQZh2kUTBXBchus1jsc+NA7kZQkBwH8/vupn02oSFlIR+ew5ElUKZIU2LVpjFhMyqSohlIV
-KRHs7vc3q/WqfntkUDM15pm1PU0D/kmLBNqPkygVS3hof1kLCAQWbPdft6/bXf18EtCApSzn
-VMtTDeWkLeFICsJT66sZyRVDkqUozQgUVj9iY5YW6rApxfK53mxdny04HcGuMPhkcRoqldXw
-C0pfyNReEjRm8A0ZceqQqOnFo4R1Rjr9HPLBsMqZgu8K2J4TIcsZE1kB/Cmzv3hoH8ukTAuS
-z+zvdrl6sqZZ+aGYb38EOxBAMF89BNvdfLcN5ovFer/aLVePHUlAh4pQKuFbPB3YEwlVBJ+R
-lCmFHIV7Hor35pDTMlAuwaezCmj2N+BnxaYgYZeyK8Nsd1ed/nxk/uI8KqjxMagWj4u7y5uT
-3HlajOAYxKzLc22dw0Euy0y59hwOCSgjiKWl+oWqUhc7npRUdU5J3uE9iZNHPhIdMjrKJEwe
-1amQOXOyKeCLtAXQK3DzzFSs4OSDElFSsMjJlLOEzFxWJBlB17E2ZHnUNmw5ETCwkmVOmWVj
-8qgafOGWEYSGEBquWi3JF0FaDdMvHbrs/L6xxQo2XGZwyMBYV7HM8djCH4KklDlW0eVW8JeW
-iTOmrfltVPT0W4DF5LiP9gTUgBWCqJHuTZLEpdFa8A291Vd/8EzPeEjSlpnJpOJTh1FB5T79
-DsuBtYokBguXW4OEBExqXLbnEpcFmzqmwDKZWDJRfJCSJI7sEwqTsRu0SbYbCLe2kMuqzI3N
-OZCjMYcJNVKwliWYCEmecy3wpm2ELDPROlqHtsotxCNZrxsVvODjlvENs9i1CUc6zINFkefE
-ZPTy4qZnDRuclNWbb+vN83y1qAP2T70Cm0zAOlO0yuCpTmZyLIzcKm2Tze6e9CQpQzh9sK0u
-nQbsQAoAHqN2FxK6VBFGarNJNxsJQfz5gB2QQnfsKgZXlHAFZglUVAq3xWkxDkkeget2S1EI
-kuH+yUkbgHncoIx5AkrkEsft1LIXE8XEETCojKeIGRxQAj4W5mAUYblg//oMwwkDj170Ceao
-nczR7bQKUedYnjKXMlIRwcRZFUppnaqmtYXtDpxgp6jb6KMTx4+xNOIkdZkP7Aqwdlp9Abgh
-Qfw5ujutoNlmvai32/Um2L2+GMzwrZ7v9pt6ayBFs4WSVoVQ11cX9Pbm40f3Nrd4/vo1z19X
-/wXPjUsvLY7bvz5ZZkHLG3RRmFNOogjcpbq7+PnpwvzTAncQXThGB8LVx4sODrxus3ZGcQ9z
-B8Mcp6w98zBH2NWNHeabxfflrl6g1N891C/16gFMRLB+wajKMg5DMoYl5XRYga+lbCilpcO6
-/foqhABDxnFl6ajuRhOLtwmNVEEAVOSyYBQQxQGLHk6ijMoEkCs4Ou070GBarmZQ6IApAWsF
-tvqqY4XMPNAldCYI+JjKIcvRxEWC6PPegoQs1pZP+6WeNR1QOX73db6FSPWHMawvmzXErC1g
-myXlgKc6pIG48vfHf/3rCEW0TiiB7veis87uwptDk0gS9Uhl6mw2PY7Ek02TURObubFd0x3Q
-7TGE8zigA2cb8nbJuAeo9U6eIucC5gi7GlUjdIdOkNeyjkkYkdiCDQABFVUc9uq+BCzapiA4
-DFU7lDg1dwLEHgvgFzbIeeEOew5caMXcHgE5DgZTh4y5l20SumMavTwQjsxIXwGz+Wa3xFMZ
-FGAtWxYSPleAu8Ldi8aIOyOHZIWKpDqxWmAp5q1mEzrLQC2+1w/7pxZGEPeAnow9iRgxHuPV
-QRzNwjZGPRDC+N4Vq6RabOgdtRJDeNiKtxt6Dp9s6Odozr4T2Frm62wTm95aCuxnvdjv5l+f
-ap2eCjSQ2lnyCHkai0IbqTjKuJWsgKYO5DWsiuY8a2GZhhADKHRrhaELrlyZAPxIVOpEj56y
-qJ/Xm9dAzFfzx/rZacvxSwBsT1PDBjCPEUO8WxmzePAdWQLWNCu0ZMDbq7u/9T+npIMQZdWg
-JXPC2RQj97vLIwuDfYcwRoOFkWhhlYSBuhLQDOfKv2QAUdyUsPTgMpbjZ8C9FG4jNCizKmQp
-HQqSj5wcKetnN6L6nyXg52iz/MecBwt7UwCVfXeB/nW5aHoEsrsHpYHaQ5ZkdmzRaoZTWQxb
-gAwsUCGy2GU4YcVpRJKWHwVTrIeLeS4mJGcmEXfQlHi5ef7PfFMHT+v5Q72x9GOifY89LzYF
-t38cpzWnI7fJL5ipOyZokDXaUEtlrZUBjK2iHMIit91sGNgY3MsZBkxfNsOASRBy7NYszUbU
-LKUHZsAiIettY7jfBg9671ubPkg9Lk4ULtMbFZZhkLG9bhljsFF4sq5AxbNZQPxiD1Axkicz
-N2kkw8+thgMOtdtaBlIiwIKtG8MxNWbBnh1IMO/kY2y/k0lnBq1xly5XnAK6wh9nMjyJlFnf
-tWMrWMHUxKd3n/pD03yWFRL5+gc4D6PgYblFW/4QfK0X8/22DjDLWMFxghCE47E3XZ4ADtcP
-lpFvhgdo358V4n0zoSsXSad3Lv9qoX8a5VJU2aig0bhvOdKxYIHav7ysNztb57C9immPXyy3
-C5eOwgkTM9xpdz4hpYlUJdgE3HlOPYdKwRrcWz/OSNpOTZ/Wd9XVCuNMGYhbBNv+0gyl+vua
-Tm973Yr653wb8NV2t9k/6/TF9jtYrYdgt5mvtjhUACC8xs1dLF/wr4fLIPK0gxgniLMBAffd
-GLuH9X9WaPCC5zWCm+DNpv73fgkhZ8Cv6NtDV77aAcIXsMD/CTb1k76gOk28w4JGwtj5A01R
-Hjuax6CYrdajBIACxln1Fn/6yHC93XWGOxHpfPPgmoKXf/1yjL3VDlZn44U3VCrx1vJ1x7n3
-583oUPYmjQi90UhLaMdgFOA7RAutyIvwqEJb5lFC2s71HwmkIG4r7MYGBckHrNDux+34x8Kx
-AS/7XX8xJ1ybZmVf1YewH1rb+AcZYJd2QgPvddzghAjmPDsUVH4OVmljnfTDqoqZLcuxyxyD
-i5n+/Qlg3MzyAwkbEDrzNh6s2sfb9swB5kG0buBG7hE0pgjA9KUuI59EAGT1PUE7kgWL2fE+
-0DKCpr5+AbKaPwUPfTDWzO/T1ceLvl1dr95pwtZ015bDsaPNGCVERAB9PXcdhkdRmk49Nx2G
-gyQFA+D0uSADHPC/YP0V2xSzjtMqU7/kJLnbPDfkWCVVkv1qEPjFpgQzJnzAKWyZG5013DrU
-Lj3RP6iUuSVwknkmeGXuGtyfGE7O5Xnz679vb9wUMjmHKwsK/2XuQUHWycxplq+o0xhcuSXO
-rz07kbntmgJZuGXgMYRZ1p9jVmTB4mm9+NF1XGylA9psOMOUCGZdAfpgXUEFTTpxBodbZJjb
-3q1hvDrYfa+D+cODzj7AydGjbt+3oiCe0iJ3x2qDjEtf8mVy6V6PnAAkJ2PPXaWmImb1XA1r
-uiqzLHHj1uFEyNStDUOWC+Jex4QUdBhJV8ZfqRDvxRQPk9atDrS7YC4VxMmOhD6+2z/tlt/2
-q4XO/TSeyGH7RIw+VDA42QmE4J5zcuIaJjRyqyXyCIzoPN4VyEN+e3N1WWXCAwGHBYXoQHF6
-7R1ixESWeG5icALF7fXf7kQ+kpX4eOHWHRJOP15c+L287j1T1KMBSC54RcT19cdpVShKzkip
-uBfTT7dus8MGJcRnHnspWMSJVlGXtx9s5i/fl4uty8ZEuXtjob2KsoqyfoRAoMsJNpgmmgVv
-yP5huQYseLyHeesuqiKAp5Ll18188xps1vsdQOzjQPFm/lwHX/ffvgE2ifpRSOxJuhI6SvA6
-qwItdMnBupEpU1dMXcKRk0PKK3DSRcKaGygrkwL0Ztx2o74LwCuIIW2B0FL1C4iwTeOEhzYY
-xvbs++sWi9iCZP6KuKx/IlMA9fjFKWV87FwcUgckGngMWTHLmFv5sGMuMR8/4WCVvDxlknGv
-Ry4n7s0RwqPxTCi8Q/JkzSYAHiP3lwjFlCAPAbt48ut5gdVUxJNWidAc9aJUE9gLEpaxleQ8
-aQ5md2KeuM0AKacARDNfamPM80MeyZVtQzKXIJG0VRV0aBa8HxWJ5WKz3q6/7YLh60u9eTcO
-Hvf11g1BAS56rpaTUZMKGZWt/Nlwcrha7scOGgSo9X7jcRyEJ6Gc9vrl9fN6V2Og6OqFybUC
-4/a+vclfnrePzj6ZUAch+Q/7hOf9RJyC77xRurArkCuIh5Yvb4PtS71YfjtmWU/W7flp/QjN
-ak27JzfcQOy/WD+7aIDlP8Sbut7Cqa6D+/WG37vYlu/F1NV+v58/wcjdoa3FUfAsvZVN8Q7x
-p69TA/fHtHRDHYGYO86ZJ8szLbx+DvbPU+LHPbuTTRzxcX4fLGAz+oE+UOjQrr0CN1RBDKGL
-AdL87tLG/uAOvGZKAz0MRAqweL7oIBZ9PQQ42yoHPCHSpnICGZzeiYpqJFOCJvTKy4VoGdAB
-SyHWjdxRYJvlzDgYjHHAEuK+64dabNmUVFefUoGBgNtGt7hw+l4uQbJsCNFdJSJxe+spMdBQ
-mhL36gR1zzQnfTNNVg+b9fLB3gUI5nLJ3QgwIlNnOyZB+0o4nGAycLFcPbqtqRsx4YVvAojf
-rU+YNHQSPCGY4tI9ZZVw4VNtnEIOf08Z7aPAGG8cjfLaVVok4RGWCcWquWa23QAc+Ksqdn8M
-aNdnaDc+Ws44fAU+56F/9pOmftIgVt6ZhsWZz6U8OdM1vur1PC4RsWCs2uIybabsoJLOuluE
-EFjmPmqVDArMfwG8n3XplqZglh2vJLh0lkapVBY8tkq9om4DNw1Vt+IzJobgFMF9KT15UUy6
-xcq70YbslSxW43hozSVRh2wO4XzxvRMSqN6NryFH73IpPuCdCKr+SfNPx0XJv8FU+WZRRrFr
-BpFUH2JSfEgL37imNMIz6hj6enWx6MnLeJ5tvX9Y65qB3gFu7pzsW1rpetOgm8GDJlHOXOqD
-9Wb2MLrEt3W5rv/wbygWFGjlhZ4FE54VJv3VqXqx3yx3ry7QPWIzTxKf0RKrawDLM6WdegEu
-2Jd7NLxnic5DruvNDlWe+thQmc303TPF09qCzF029+cKAjGP5hEyYt7r7USJu99f58/zP/F2
-6WW5+nM7/1YDw/Lhz+VqVz+ixOzaSn1X2ZOtI84+GEVe4HU+WPzWJuegJBRCYFewkNPL2y5z
-cXkR8di5VCTzoqw8Y11fdca6voLNSGLP3XXDkEDUFs4+Oboaijtp27CQfEI8KXjDAULxUT3p
-YKB4Ce50U8JD/THPZWdOP3lQECarz8voC4wNRh4v8q1b/OSLBFR/KKWz22+c7dMv2Nz9XU0/
-3fbaNJ7L+ryc3N70GgGwu9qKYSnCHgGfSfXHDelne+ebVo80TmvrvNqwCJ3XGxal/YrDItiv
-OVr80tNuSQLzRFy2iqVME+KGdqUUtkf2FHTdky40JZk2I9YWYzN8MyE5OxaldspVdZWsLlAB
-XnwpYjIgv+KiWSsjgc0k497S/UMoBMZRcHrbftgi887rs9OwkTsMwwd0+FrDZSB5GEfWIhWc
-3U4FLrqEdOA8ML9ZLxq+zxc/TNmtbn3ZgH39oS8yHp7r7aPLLTVvr/Bywx3nGDo+v3Bad/hD
-SQ3zBrrs+Pgm4S8vx33JWXF3fP0FXk+RgWOEGwv3SlkcphJ1X0H9Zr1vfacf2QGwWvzY6oUv
-mnevrrWbwiiwMu6onqW6mlqUqjBPvVxQNSfCvFC9u7y4umnvWKYfwHbrea3wgUT6C8Dlhm2m
-IhgGCGXiyf/pJbg9PsObCmWm3q8oA7SgC2MB7AjSyZSeAEWLxbzElWky6w9n6qwnjIwOFY1u
-aEUw0QG4KndVu5qhzHuBTtlmVH/dPz4a5T4pJ+oNRGgsVdyTzTFDIqOGOm4dx2EyCSA67SQX
-O8PI8DOIxAPj8B2Qv7qyEToW9wNkgg+e4Rp7LjI00dSV5mzgLV03fCaNpQtQXcfWPDYYEUXS
-g6mzH3Jhs57sqVr18D6BpFSOm0oG7TC7axx2SquaOlHYvyBZL37sX8zJHM5Xj500YKyracsM
-RjLPHzzrQ2I1LFOsXFHurPvk3nktae15CooIyi3dsW2LjrmFkp2eJxgi2kxZFndWAduhALzj
-Utp0v5KY7kZJWBr1rU5H1DiDEWNZR2sNXsbc9vHUBG+2gLz19fSfwfN+V/+s4S/1bvH+/fu3
-fZvoSpl39QvfJJ6tODWeEw4GzPAMW5Mg0M744ODcw+pUBGhFgdV5XT942vmJmZvTW5640JSB
-SQAjqwCOgNjP1FA0dskc/zMc8B/EIaFU5043vrc7Z6r4rzjUOROl0x+ceQrGDA/NYcEp1qX3
-Q1h8Ke60tfguHB/w+gWPHL/cHc2EtsNLZffqzAkyK4DTbRxO7nc1zZZopQEfoUvE3ZF8I7KK
-5TngRJ5+Nn7PnezR/2sGJ89hDfhuXxgRoF53r8J0hbV+dKl8V7uaxUvFK+KmkAyfV/hFHWIN
-tJ+uc6xj/TjhHFvzcMBLPwDk8+dNL2nIpljefmbNBueaXIKnWgr5RsBYeNLKmkFjRXcwr+kG
-Yp+lg0p4qjA0R1l6MvSaOiV57rlA1XTMC8aJnPg5cnC2Q/2e74w8gcVP5ZE72WkUcOQ2dWZt
-+F7Bm/iJObgmfEp4/rWIHunwMOLMluv83pm59PB+V2V0GsqbXtNMAIYoAa04Owy6IU/WBPp7
-NVsDw7SKSEEwMMzLXlr75N+JyBKPzyxD5XwnrNvBU/FBKtqxsC4dOML7/wdXZgKrQkgAAA==
-
---1yeeQ81UyVL57Vl7--
+thanks,
+-- Shuah
