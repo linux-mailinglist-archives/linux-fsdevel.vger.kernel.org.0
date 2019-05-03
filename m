@@ -2,183 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD13712644
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 04:03:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7251912650
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 04:34:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbfECCDa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 22:03:30 -0400
-Received: from mga17.intel.com ([192.55.52.151]:53015 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726022AbfECCDa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 22:03:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 19:03:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,424,1549958400"; 
-   d="gz'50?scan'50,208,50";a="343004107"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 02 May 2019 19:03:29 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1hMNXs-0002p8-LX; Fri, 03 May 2019 10:03:28 +0800
-Date:   Fri, 3 May 2019 10:02:50 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     kbuild-all@01.org, linux-fsdevel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [vfs:work.mount-syscalls 9/10] <stdin>:1403:2: warning: #warning
- syscall fspick not implemented
-Message-ID: <201905031047.HiwC2hNJ%lkp@intel.com>
+        id S1726121AbfECCbM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 22:31:12 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:59817 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726022AbfECCbM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 May 2019 22:31:12 -0400
+Received: from callcc.thunk.org (adsl-173-228-226-134.prtc.net [173.228.226.134])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x432Uh5F012819
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 2 May 2019 22:30:46 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 49FDD420024; Thu,  2 May 2019 22:30:43 -0400 (EDT)
+Date:   Thu, 2 May 2019 22:30:43 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Vijay Chidambaram <vijay@cs.utexas.edu>,
+        lsf-pc@lists.linux-foundation.org,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jayashree Mohan <jaya@cs.utexas.edu>,
+        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
+        lwn@lwn.net
+Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties
+ contract
+Message-ID: <20190503023043.GB23724@mit.edu>
+References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
+ <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
+ <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
+ <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="vtzGhvizbBRQ85DL"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, May 02, 2019 at 01:39:47PM -0400, Amir Goldstein wrote:
+> > The expectation is that applications will use this, and then rename
+> > the O_TMPFILE file over the original file. Is this correct? If so, is
+> > there also an implied barrier between O_TMPFILE metadata and the
+> > rename?
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In the case of O_TMPFILE, the file can be brought into the namespace
+using something like:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount-syscalls
-head:   f1b5618e013af28b3c78daf424436a79674423c0
-commit: cf3cba4a429be43e5527a3f78859b1bfd9ebc5fb [9/10] vfs: syscall: Add fspick() to select a superblock for reconfiguration
-config: c6x-evmc6678_defconfig (attached as .config)
-compiler: c6x-elf-gcc (GCC) 8.1.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git checkout cf3cba4a429be43e5527a3f78859b1bfd9ebc5fb
-        # save the attached .config to linux build tree
-        GCC_VERSION=8.1.0 make.cross ARCH=c6x 
+linkat(AT_FDCWD, "/proc/self/fd/42", AT_FDCWD, pathname, AT_SYMLINK_FOLLOW);
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+it's not using rename.
 
-All warnings (new ones prefixed by >>):
+To be clear, this discussion happened in the hallway, and it's not
+clear it had full support by everyone.  After our discussion, some of
+us came up with an example where forcing a call to
+filemap_write_and_wait() before the linkat(2) might *not* be the right
+thing.  Suppose some browser wanted to wait until a file was fully(
+downloaded before letting it appear in the directory --- but what was
+being downloaded was a 4 GiB DVD image (say, a distribution's install
+media).  If the download was done using O_TMPFILE followed by
+linkat(2), that might be a case where forcing the data blocks to disk
+before allowing the linkat(2) to proceed might not be what the
+application or the user would want.
 
-   <stdin>:1388:2: warning: #warning syscall open_tree not implemented [-Wcpp]
-   <stdin>:1391:2: warning: #warning syscall move_mount not implemented [-Wcpp]
-   <stdin>:1394:2: warning: #warning syscall fsopen not implemented [-Wcpp]
-   <stdin>:1397:2: warning: #warning syscall fsconfig not implemented [-Wcpp]
-   <stdin>:1400:2: warning: #warning syscall fsmount not implemented [-Wcpp]
->> <stdin>:1403:2: warning: #warning syscall fspick not implemented [-Wcpp]
+So it might be that we will need to add a linkat flag to indicate that
+we want the kernel to call filemap_write_and_wait() before making the
+metadata changes in linkat(2).
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> For replacing an existing file with another the same could be
+> achieved with renameat2(AT_FDCWD, tempname, AT_FDCWD, newname,
+> RENAME_ATOMIC). There is no need to create the tempname
+> file using O_TMPFILE in that case, but if you do, the RENAME_ATOMIC
+> flag would be redundant.
+> 
+> RENAME_ATOMIC flag is needed because directories and non regular
+> files cannot be created using O_TMPFILE.
 
---vtzGhvizbBRQ85DL
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+I think there's much less consensus about this.  Again, most of this
+happened in a hallway conversation.
 
-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
+> > Where does this land us on the discussion about documenting
+> > file-system crash-recovery guarantees? Has that been deemed not
+> > necessary?
+> 
+> Can't say for sure.
+> Some filesystem maintainers hold on to the opinion that they do
+> NOT wish to have a document describing existing behavior of specific
+> filesystems, which is large parts of the document that your group posted.
+> 
+> They would rather that only the guaranties of the APIs are documented
+> and those should already be documented in man pages anyway - if they
+> are not, man pages could be improved.
+> 
+> I am not saying there is no room for a document that elaborates on those
+> guaranties. I personally think that could be useful and certainly think that
+> your group's work for adding xfstest coverage for API guaranties is useful.
 
---vtzGhvizbBRQ85DL--
+Again, here is my concern.  If we promise that ext4 will always obey
+Dave Chinner's SOMC model, it would forever rule out Daejun Park and
+Dongkun Shin's "iJournaling: Fine-grained journaling for improving the
+latency of fsync system call"[1] published in Usenix ATC 2017.
+
+[1] https://www.usenix.org/system/files/conference/atc17/atc17-park.pdf
+
+That's because this provides a fast fsync() using an incremental
+journal.  This fast fsync would cause the metadata associated with the
+inode being fsync'ed to be persisted after the crash --- ahead of
+metadata changes to other, potentially completely unrelated files,
+which would *not* be persisted after the crash.  Fine grained
+journalling would provide all of the guarantee all of the POSIX, and
+for applications that only care about the single file being fsync'ed
+-- they would be happy.  BUT, it violates the proposed crash
+consistency guarantees.
+
+So if the crash consistency guarantees forbids future innovations
+where applications might *want* a fast fsync() that doesn't drag
+unrelated inodes into the persistence guarantees, is that really what
+we want?  Do we want to forever rule out various academic
+investigations such as Park and Shin's because "it violates the crash
+consistency recovery model"?  Especially if some applications don't
+*need* the crash consistency model?
+
+						- Ted
+
+P.S.  I feel especially strong about this because I'm working with an
+engineer currently trying to implement a simplified version of Park
+and Shin's proposal...  So this is not a hypothetical concern of mine.
+I'd much rather not invalidate all of this engineer's work to date,
+especially since there is a published paper demonstrating that for
+some workloads (such as sqlite), this approach can be a big win.
+
+P.P.S.  One of the other discussions that did happen during the main
+LSF/MM File system session, and for which there was general agreement
+across a number of major file system maintainers, was a fsync2()
+system call which would take a list of file descriptors (and flags)
+that should be fsync'ed.  The semantics would be that when the
+fsync2() successfully returns, all of the guarantees of fsync() or
+fdatasync() requested by the list of file descriptors and flags would
+be satisfied.  This would allow file systems to more optimally fsync a
+batch of files, for example by implementing data integrity writebacks
+for all of the files, followed by a single journal commit to guarantee
+persistence for all of the metadata changes.
