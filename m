@@ -2,128 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15208126A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 06:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E9F5126AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 06:17:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725793AbfECEQo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 May 2019 00:16:44 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:43289 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbfECEQo (ORCPT
+        id S1725804AbfECERf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 May 2019 00:17:35 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:47883 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725765AbfECERf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 May 2019 00:16:44 -0400
-Received: by mail-yw1-f65.google.com with SMTP id p19so496825ywe.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 21:16:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vf5mInp7UYaZ/4qW3eNsXHV3KbFkT3uAMhg8Vqa2kqg=;
-        b=RsXLe3N7WsAbganPDS3PMUIl3zjsFSvnTvmEK5rk/ocxpdRuZMNrtILSvfaS9ZybZj
-         4Qz/+9MyO35nwJK9neZve91EeP3Hs7fssPQLqlfeXuF3bCGo+daizOgLYRK+HTsKGt6v
-         MNCq+n8jZlnBCsNwGpohzHRzAiKdllDSzn5U0Maa/jHTvu0+X+2XKGOZ87uOrjz/1eqh
-         4SSDjzu7zF63UogTqen6NWS+s3h+O5a5D7JrbS+6b73SAIIzqtmJ8dbRQm5f5p89skHQ
-         mauw8tDj/QyiO/UD1FMlOlLdo/bp9a24ukUckNwvwnsQN0hzLFumUcweVtrhaRqOTZEU
-         FiRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vf5mInp7UYaZ/4qW3eNsXHV3KbFkT3uAMhg8Vqa2kqg=;
-        b=WlHYJ4wCPl4KP76jz5FKonVoQy1H5ZUBRDeEwa6BkhyhFjZKxmMgHzUeWjAaPFuz2A
-         Aakze/Ioz71BkjKvQAWiSJmDuzazlQ91CHTDdsGCXK7JmpsFdVi+NfuJUH8FCWz5c+5m
-         2oVciXTebQV/9v2DjQZz1lWY8kODDJspDmWx8tqo8f9TEECE8DzdQa/uYYVPWOU9RqoN
-         BblrEmhHBk9yf+/5fUxzkg/ZXmzynJtkOcprHBNCqN26beh+2IjQnfOPU7EiS+ld2foz
-         R4utOn9ZXzUyngE8CJKeU6G1VjOhVHFvwR6UCyze46p/9oIbEDgbStSYAfgW6nfuhUPB
-         1yYA==
-X-Gm-Message-State: APjAAAWlX8593aOgD+t+rv2CikmFr4qLAdxH2BUGFNE+XrXNO2t0ErHW
-        Y37uer6uJP5oUorsuMaQU+etlBRVkqwUFWlfzwg=
-X-Google-Smtp-Source: APXvYqwS6X2lRF2QpB2h8zTjfRBwCWEUfabNLRjpoH/MVSyHBF8ZAkM/EMDUmxOo+UVkfspGvliJUFjBoEfcEnsxWVQ=
-X-Received: by 2002:a25:74c9:: with SMTP id p192mr6434544ybc.507.1556857003945;
- Thu, 02 May 2019 21:16:43 -0700 (PDT)
+        Fri, 3 May 2019 00:17:35 -0400
+Received: from dread.disaster.area (pa49-181-171-240.pa.nsw.optusnet.com.au [49.181.171.240])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 5C68810C7FA;
+        Fri,  3 May 2019 14:17:29 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hMPdX-0007M4-4d; Fri, 03 May 2019 14:17:27 +1000
+Date:   Fri, 3 May 2019 14:17:27 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Davidlohr Bueso <dbueso@suse.com>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [POC][PATCH] xfs: reduce ilock contention on buffered randrw
+ workload
+Message-ID: <20190503041727.GL29573@dread.disaster.area>
+References: <20190404165737.30889-1-amir73il@gmail.com>
+ <20190404211730.GD26298@dastard>
+ <20190408103303.GA18239@quack2.suse.cz>
+ <1554741429.3326.43.camel@suse.com>
+ <20190411011117.GC29573@dread.disaster.area>
+ <20190416122240.GN29573@dread.disaster.area>
+ <20190418031013.GX29573@dread.disaster.area>
+ <1555611694.18313.12.camel@suse.com>
+ <20190420235412.GY29573@dread.disaster.area>
 MIME-Version: 1.0
-References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
- <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
- <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
- <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com> <20190503023043.GB23724@mit.edu>
-In-Reply-To: <20190503023043.GB23724@mit.edu>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 3 May 2019 00:16:32 -0400
-Message-ID: <CAOQ4uxjM+ivnn-oU482GmRqOF6bYY5j89NdyHnfH++f49qB4yw@mail.gmail.com>
-Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties contract
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Vijay Chidambaram <vijay@cs.utexas.edu>,
-        lsf-pc@lists.linux-foundation.org,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jayashree Mohan <jaya@cs.utexas.edu>,
-        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
-        lwn@lwn.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190420235412.GY29573@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=UJetJGXy c=1 sm=1 tr=0 cx=a_idp_d
+        a=LhzQONXuMOhFZtk4TmSJIw==:117 a=LhzQONXuMOhFZtk4TmSJIw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
+        a=7-415B0cAAAA:8 a=D79AUM_G46nmkUiCrisA:9 a=p9yrIyJAQYQFRsFV:21
+        a=oE2srWebBFOnxU3x:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 2, 2019 at 10:30 PM Theodore Ts'o <tytso@mit.edu> wrote:
->
-> On Thu, May 02, 2019 at 01:39:47PM -0400, Amir Goldstein wrote:
-> > > The expectation is that applications will use this, and then rename
-> > > the O_TMPFILE file over the original file. Is this correct? If so, is
-> > > there also an implied barrier between O_TMPFILE metadata and the
-> > > rename?
->
-> In the case of O_TMPFILE, the file can be brought into the namespace
-> using something like:
->
-> linkat(AT_FDCWD, "/proc/self/fd/42", AT_FDCWD, pathname, AT_SYMLINK_FOLLOW);
->
-> it's not using rename.
->
-> To be clear, this discussion happened in the hallway, and it's not
-> clear it had full support by everyone.  After our discussion, some of
-> us came up with an example where forcing a call to
-> filemap_write_and_wait() before the linkat(2) might *not* be the right
-> thing.  Suppose some browser wanted to wait until a file was fully(
-> downloaded before letting it appear in the directory --- but what was
-> being downloaded was a 4 GiB DVD image (say, a distribution's install
-> media).  If the download was done using O_TMPFILE followed by
-> linkat(2), that might be a case where forcing the data blocks to disk
-> before allowing the linkat(2) to proceed might not be what the
-> application or the user would want.
->
-> So it might be that we will need to add a linkat flag to indicate that
-> we want the kernel to call filemap_write_and_wait() before making the
-> metadata changes in linkat(2).
->
+On Sun, Apr 21, 2019 at 09:54:12AM +1000, Dave Chinner wrote:
+> On Thu, Apr 18, 2019 at 11:21:34AM -0700, Davidlohr Bueso wrote:
+> > On Thu, 2019-04-18 at 13:10 +1000, Dave Chinner wrote:
+> > > Now the stuff I've been working on has the same interface as
+> > > Davidlohr's patch, so I can swap and change them without thinking
+> > > about it. It's still completely unoptimised, but:
+> > > 
+> > > 			IOPS read/write (direct IO)
+> > > processes	rwsem		DB rangelock	XFS
+> > > rangelock
+> > >  1		78k / 78k	75k / 75k	72k / 72k
+> > >  2		131k / 131k	123k / 123k	133k / 133k
+> > >  4		267k / 267k	183k / 183k	237k / 237k
+> > >  8		372k / 372k	177k / 177k	265k / 265k
+> > >  16		315k / 315k	135k / 135k	228k / 228k
+> > > 
+> > > It's still substantially faster than the interval tree code.
+....
+> > > /me goes off and thinks more about adding optimistic lock coupling
+> > > to the XFS iext btree to get rid of the need for tree-wide
+> > > locking altogether
+> > 
+> > I was not aware of this code.
+> 
+> It's relatively new, and directly tailored to the needs of caching
+> the XFS extent tree - it's not really a generic btree in that it's
+> record store format is the XFS on-disk extent record. i.e. it
+> only stores 54 bits of start offset and 21 bits of length in it's 16
+> byte records, and the rest of the space is for the record data.
 
-Agreed.
+SO now I have a mostly working OLC btree based on this tree which is
+plumbed into xfsprogs userspace and some testing code. I think I can
+say now that the code will actually work, and it /should/ scale
+better than a rwsem.
 
-> > For replacing an existing file with another the same could be
-> > achieved with renameat2(AT_FDCWD, tempname, AT_FDCWD, newname,
-> > RENAME_ATOMIC). There is no need to create the tempname
-> > file using O_TMPFILE in that case, but if you do, the RENAME_ATOMIC
-> > flag would be redundant.
-> >
-> > RENAME_ATOMIC flag is needed because directories and non regular
-> > files cannot be created using O_TMPFILE.
->
-> I think there's much less consensus about this.  Again, most of this
-> happened in a hallway conversation.
->
+The userspace test harness that I have ran a "thread profile" to
+indicated scalability. Basically it ran each thread in a different
+offset range and locked a hundred ranges and then unlocked them, and
+then looped over this. The btree is a single level for the first 14
+locks, 2-level for up to 210 locks, and 3-level for up to 3150
+locks. Hence most of this testing results in the btree being 2-3
+levels and so largely removes the global root node lock as a point
+of contention. It's "best case" for concurrency for an OLC btree.
 
-OK. we can leave that one for later.
-Although I am not sure what the concern is.
-If we are able to agree  and document a LINK_ATOMIC flag,
-what would be the down side of documenting a RENAME_ATOMIC
-flag with same semantics? After all, as I said, this is what many users
-already expect when renaming a temp file (as ext4 heuristics prove).
+On a 16p machine:
 
-I would love to get Dave's take on the proposal of LINK_ATOMIC/
-RENAME_ATOMIC, preferably before the discussion wanders off
-to an argument about what SOMC means...
+		     Range lock/unlock ops/s
+threads		mutex btree		OLC btree
+  1		  5239442		  949487
+  2		  1014466		 1398539
+  4		   985940		 2405275
+  8		   733195		 3288435
+  16		   653429		 2809225
 
-Thanks,
-Amir.
+When looking at these numbers, remember that the mutex btree kernel
+range lock performed a lot better than the interval tree range lock,
+and they were only ~30% down on an rwsem. The mutex btree code shows
+cache residency effects for the single threaded load, hence it looks
+much faster than it is for occasional and multithreaded access.
+
+However, at 2 threads (where hot CPU caches don't affect the
+performance), the OLC btree is 40% faster, and at 8 threads it is
+4.5x faster than the mutex btree. The OLC btree starts slowing down
+at 16 threads, largely because the tree itself doesn't have enough
+depth to provide the interior nodes to scale to higher concurrency
+levels without contention, but it's still running at 4.5x faster
+than the mutex btree....
+
+The best part is when I run worse case threaded workloads on the
+OLC btree. If I run the same 100-lock loops, but this time change
+the offsets of each thread so they interleave into adjacent records
+in the btree (i.e. every thread touches every leaf), then the
+performance is still pretty damn good:
+
+		     Range lock/unlock ops/s
+threads		Worst Case		Best Case
+  1		  1045991		  949487
+  2		  1530212		 1398539
+  4		  1147099		 2405275
+  8		  1602114		 3288435
+  16		  1731890		 2809225
+
+IOWs, performance is down and somewhat variable around tree
+height changes (4 threads straddles the 2-3 level tree height
+threshold), but it's still a massive improvement on the mutex_btree
+and it's not going backwards as threads are added.
+
+Concept proven.
+
+Next steps are:
+
+	- separate the OLC btree from the XFS iext btree
+	  implementation. It will still have a similar interface
+	  (i.e. can't manipulate the btree records directly), but
+	  there's sufficient difference in structure for them to be
+	  separate implementations.
+	- expand records out to full 64bit extents. The iext tree
+	  memory usage constraints no longer apply, so the record
+	  size can go up a little bit.
+	- work out whether RCU read locking and kfree_rcu() will
+	  work with the requirement to do memory allocation while
+	  holding rcu_read_lock(). Alternative is an internal
+	  garbage collector mechanism, kinda like I've hacked up to
+	  simulate kfree_rcu() in userspace.
+	- fix all the little bugs that still exist in the code.
+	- Think about structural optimisations like parent pointers
+	  to avoid costly path walks to find parents for 
+	  modifications.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
