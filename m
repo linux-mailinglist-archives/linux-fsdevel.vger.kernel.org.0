@@ -2,170 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E9F5126AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 06:17:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB28126B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 06:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725804AbfECERf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 May 2019 00:17:35 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:47883 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725765AbfECERf (ORCPT
+        id S1725777AbfECEXp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 May 2019 00:23:45 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35953 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725308AbfECEXo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 May 2019 00:17:35 -0400
-Received: from dread.disaster.area (pa49-181-171-240.pa.nsw.optusnet.com.au [49.181.171.240])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 5C68810C7FA;
-        Fri,  3 May 2019 14:17:29 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hMPdX-0007M4-4d; Fri, 03 May 2019 14:17:27 +1000
-Date:   Fri, 3 May 2019 14:17:27 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Davidlohr Bueso <dbueso@suse.com>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [POC][PATCH] xfs: reduce ilock contention on buffered randrw
- workload
-Message-ID: <20190503041727.GL29573@dread.disaster.area>
-References: <20190404165737.30889-1-amir73il@gmail.com>
- <20190404211730.GD26298@dastard>
- <20190408103303.GA18239@quack2.suse.cz>
- <1554741429.3326.43.camel@suse.com>
- <20190411011117.GC29573@dread.disaster.area>
- <20190416122240.GN29573@dread.disaster.area>
- <20190418031013.GX29573@dread.disaster.area>
- <1555611694.18313.12.camel@suse.com>
- <20190420235412.GY29573@dread.disaster.area>
+        Fri, 3 May 2019 00:23:44 -0400
+Received: by mail-it1-f195.google.com with SMTP id v143so7194320itc.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 21:23:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vnLx+uU3nio/BlFRYLNOFf/f4mGQ9taOTqoUXxowcWo=;
+        b=uFMdkq0xZEofeNPAcKh9JwaCjN56DXO/LiyJhoNSiaK37S2aj8kLGJJVpDj3s1YfHD
+         LgNaf41u2RniKOMrYz6usEeNTsvIJyqEZHe0pXPBBMvRuGZUMVDA8u6QS5JLNO8lsVlU
+         m6Ymkqh0wg0fHhV+KPO88cPhDUrOrO5uI8ablcd7S7IhWdpjXORoco6gj3kvSV4DSJRx
+         Wdo6VNlW8ZnyzvRt3TyTC5tzSfcD5yoiLUTHTN5JaluyE9+mM8LrW6vuIq1LlFZsKQ6N
+         vxqmjD9oVOLyYk+6o/hqh508k9sd1L5GlUyVXzOZKHeV8ajPvQat2TRyD40VFdllVpYo
+         XKBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vnLx+uU3nio/BlFRYLNOFf/f4mGQ9taOTqoUXxowcWo=;
+        b=Y72/zv9LStUPutQtfh3LwUp59h0GWBtPz5vWgVysANadmC1r9kfoCNb8886edLi9aE
+         tIJETuNZr8EUtl9+4EHwVAQuhCGDnR817FVNceIWkcCLMjniCgyxuvibxinDaUX86szM
+         iO07spDJAk1+l+HpA+PVxEL5LW/ATezUilWZT3opB8QjSjlUlQhOjYCcF0bttnLhQRyP
+         saazrPnb0z2uq3+5zWNHwrIg7nVpcu4CL0QtJAi5vKKTpz+g01zcwfgbWmMSBbhUI+Pd
+         KfJ2Vrd51jUtR1yH5L6yET4GI3iVZBkBVH9q699XGKzgNT7Haf7pWWCFPNuIm8+qX6YZ
+         ggWg==
+X-Gm-Message-State: APjAAAXkCdsFGabaOPhiV/MeTfJ7lPPLG/64kR6If4AiUVNbioP2qDRM
+        iPCyWs+UMTIEwp0lQh8dg5iPGS5i+QHJdIFojMmubUN/+Zzn
+X-Google-Smtp-Source: APXvYqzgIpIkMsIhl0EDrQ5rqavot2LiFFy3UV4mYVs3WZZm6LwZTyDYXjyP/QWHasYh9ptzZg1fZBT7swmESUq7OUY=
+X-Received: by 2002:a24:c685:: with SMTP id j127mr5754427itg.21.1556857423248;
+ Thu, 02 May 2019 21:23:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190420235412.GY29573@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=UJetJGXy c=1 sm=1 tr=0 cx=a_idp_d
-        a=LhzQONXuMOhFZtk4TmSJIw==:117 a=LhzQONXuMOhFZtk4TmSJIw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
-        a=7-415B0cAAAA:8 a=D79AUM_G46nmkUiCrisA:9 a=p9yrIyJAQYQFRsFV:21
-        a=oE2srWebBFOnxU3x:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20190502040331.81196-1-ezemtsov@google.com> <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
+ <20190502131034.GA25007@mit.edu> <20190502132623.GU23075@ZenIV.linux.org.uk>
+In-Reply-To: <20190502132623.GU23075@ZenIV.linux.org.uk>
+From:   Eugene Zemtsov <ezemtsov@google.com>
+Date:   Thu, 2 May 2019 21:23:31 -0700
+Message-ID: <CAK8JDrFZW1jwOmhq+YVDPJi9jWWrCRkwpqQ085EouVSyzw-1cg@mail.gmail.com>
+Subject: Re: Initial patches for Incremental FS
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, tytso@mit.edu,
+        Amir Goldstein <amir73il@gmail.com>, miklos@szeredi.hu,
+        richard.weinberger@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 21, 2019 at 09:54:12AM +1000, Dave Chinner wrote:
-> On Thu, Apr 18, 2019 at 11:21:34AM -0700, Davidlohr Bueso wrote:
-> > On Thu, 2019-04-18 at 13:10 +1000, Dave Chinner wrote:
-> > > Now the stuff I've been working on has the same interface as
-> > > Davidlohr's patch, so I can swap and change them without thinking
-> > > about it. It's still completely unoptimised, but:
-> > > 
-> > > 			IOPS read/write (direct IO)
-> > > processes	rwsem		DB rangelock	XFS
-> > > rangelock
-> > >  1		78k / 78k	75k / 75k	72k / 72k
-> > >  2		131k / 131k	123k / 123k	133k / 133k
-> > >  4		267k / 267k	183k / 183k	237k / 237k
-> > >  8		372k / 372k	177k / 177k	265k / 265k
-> > >  16		315k / 315k	135k / 135k	228k / 228k
-> > > 
-> > > It's still substantially faster than the interval tree code.
-....
-> > > /me goes off and thinks more about adding optimistic lock coupling
-> > > to the XFS iext btree to get rid of the need for tree-wide
-> > > locking altogether
-> > 
-> > I was not aware of this code.
-> 
-> It's relatively new, and directly tailored to the needs of caching
-> the XFS extent tree - it's not really a generic btree in that it's
-> record store format is the XFS on-disk extent record. i.e. it
-> only stores 54 bits of start offset and 21 bits of length in it's 16
-> byte records, and the rest of the space is for the record data.
+On Thu, May 2, 2019 at 6:26 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Why not CODA, though, with local fs as cache?
 
-SO now I have a mostly working OLC btree based on this tree which is
-plumbed into xfsprogs userspace and some testing code. I think I can
-say now that the code will actually work, and it /should/ scale
-better than a rwsem.
+On Thu, May 2, 2019 at 4:20 AM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> This sounds very useful.
+>
+> Why does it have to be a new special-purpose Linux virtual file?
+> Why not FUSE, which is meant for this purpose?
+> Those are things that you should explain when you are proposing a new
+> filesystem,
+> but I will answer for you - because FUSE page fault will incur high
+> latency also after
+> blocks are locally available in your backend store. Right?
+>
+> How about fscache support for FUSE then?
+> You can even write your own fscache backend if the existing ones don't
+> fit your needs for some reason.
+>
+> Piling logic into the kernel is not the answer.
+> Adding the missing interfaces to the kernel is the answer.
+>
 
-The userspace test harness that I have ran a "thread profile" to
-indicated scalability. Basically it ran each thread in a different
-offset range and locked a hundred ranges and then unlocked them, and
-then looped over this. The btree is a single level for the first 14
-locks, 2-level for up to 210 locks, and 3-level for up to 3150
-locks. Hence most of this testing results in the btree being 2-3
-levels and so largely removes the global root node lock as a point
-of contention. It's "best case" for concurrency for an OLC btree.
+Thanks for the interest and feedback. What I dreaded most was silence.
 
-On a 16p machine:
+Probably I should have given a bit more details in the introductory email.
+Important features we=E2=80=99re aiming for:
 
-		     Range lock/unlock ops/s
-threads		mutex btree		OLC btree
-  1		  5239442		  949487
-  2		  1014466		 1398539
-  4		   985940		 2405275
-  8		   733195		 3288435
-  16		   653429		 2809225
+1. An attempt to read a missing data block gives a userspace data loader a
+chance to fetch it. Once a block is loaded (in advance or after a page faul=
+t)
+it is saved into a local backing storage and following reads of the same bl=
+ock
+are done directly by the kernel. [Implemented]
 
-When looking at these numbers, remember that the mutex btree kernel
-range lock performed a lot better than the interval tree range lock,
-and they were only ~30% down on an rwsem. The mutex btree code shows
-cache residency effects for the single threaded load, hence it looks
-much faster than it is for occasional and multithreaded access.
+2. Block level compression. It saves space on a device, while still allowin=
+g
+very granular loading and mapping. Less granular compression would trigger
+loading of more data than absolutely necessary, and that=E2=80=99s the thin=
+g we
+want to avoid. [Implemented]
 
-However, at 2 threads (where hot CPU caches don't affect the
-performance), the OLC btree is 40% faster, and at 8 threads it is
-4.5x faster than the mutex btree. The OLC btree starts slowing down
-at 16 threads, largely because the tree itself doesn't have enough
-depth to provide the interior nodes to scale to higher concurrency
-levels without contention, but it's still running at 4.5x faster
-than the mutex btree....
+3. Block level integrity verification. The signature scheme is similar to
+DMverity or fs-verity. In other words, each file has a Merkle tree with
+crypto-digests of 4KB blocks. The root digest is signed with RSASSA or ECDS=
+A.
+Each time a data block is read digest is calculated and checked with the
+Merkle tree, if the signature check fails the read operation fails as well.
+Ideally I=E2=80=99d like to use fs-verity API for that. [Not implemented ye=
+t.]
 
-The best part is when I run worse case threaded workloads on the
-OLC btree. If I run the same 100-lock loops, but this time change
-the offsets of each thread so they interleave into adjacent records
-in the btree (i.e. every thread touches every leaf), then the
-performance is still pretty damn good:
+4. New files can be pushed into incremental-fs =E2=80=9Cexternally=E2=80=9D=
+ when an app needs
+a new resource or a binary. This is needed for situations when a new resour=
+ce
+or a new version of code is available, e.g. a user just changed the system
+language to Spanish, or a developer rolled out an app update.
+Things change over time and this means that we can=E2=80=99t just increment=
+ally
+load a precooked ext4 image and mount it via a loopback device.   [Implemen=
+ted]
 
-		     Range lock/unlock ops/s
-threads		Worst Case		Best Case
-  1		  1045991		  949487
-  2		  1530212		 1398539
-  4		  1147099		 2405275
-  8		  1602114		 3288435
-  16		  1731890		 2809225
+5. No need to support writes or file resizing. It eliminates a lot of
+complexity.
 
-IOWs, performance is down and somewhat variable around tree
-height changes (4 threads straddles the 2-3 level tree height
-threshold), but it's still a massive improvement on the mutex_btree
-and it's not going backwards as threads are added.
+Currently not all of these features are implemented yet, but they all will =
+be
+needed to achieve our goals:
+ - Apps can be delivered incrementally without having to wait for extra dat=
+a.
+   At the same time given enough time the app can be downloaded fully witho=
+ut
+   having to keep a connection open after that.
+- App=E2=80=99s integrity should be verifiable without having to read all i=
+ts blocks.
+- Local storage and battery need to be conserved.
+- Apps binaries and resources can change over time.
+   Such changes are triggered by external events.
 
-Concept proven.
+I=E2=80=99d like to comment on proposed alternative solutions:
 
-Next steps are:
+FUSE
+We have a FUSE based prototype and though functional it turned out to be ba=
+ttery
+hungry and read performance leaving much to be desired.
+Our measurements were roughly corresponding to results in the article
+I link in PATCH 1 incrementalfs.rst
 
-	- separate the OLC btree from the XFS iext btree
-	  implementation. It will still have a similar interface
-	  (i.e. can't manipulate the btree records directly), but
-	  there's sufficient difference in structure for them to be
-	  separate implementations.
-	- expand records out to full 64bit extents. The iext tree
-	  memory usage constraints no longer apply, so the record
-	  size can go up a little bit.
-	- work out whether RCU read locking and kfree_rcu() will
-	  work with the requirement to do memory allocation while
-	  holding rcu_read_lock(). Alternative is an internal
-	  garbage collector mechanism, kinda like I've hacked up to
-	  simulate kfree_rcu() in userspace.
-	- fix all the little bugs that still exist in the code.
-	- Think about structural optimisations like parent pointers
-	  to avoid costly path walks to find parents for 
-	  modifications.
+In this thread Amir Goldstein absolutely correctly pointed out that FUSE=E2=
+=80=99s
+constant overhead keeps hurting app=E2=80=99s performance even when all blo=
+cks are
+available locally. But not only that, FUSE needs to be involved with each
+readdir() and stat() call. And to our surprise we learned that many apps do
+directory traversals and stat()-s much more often that it seems reasonable.
 
-Cheers,
+Moreover, Android has a bit of a recent history with FUSE. A big chunk of
+Android directory tree (=E2=80=9Cexternal storage=E2=80=9D) use to be mount=
+ed via FUSE.
+It didn=E2=80=99t turn out to be a great approach and it was eventually rep=
+laced by
+a kernel module.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I reckon the amount of changes that we=E2=80=99d need to introduce to FUSE =
+in order
+to make it support things mentioned above will be, to put it mildly,
+very substantial. And having to be as generic as FUSE (i.e. support writes =
+etc)
+will make the task much more complicated than it is now.
+
+Coda
+Indeed it is somewhat similar to what we need. But according to Coda=E2=80=
+=99s
+documentation it fetches a whole file first time it is accessed,
+which is opposite of what we need. It is not really obvious that adding all
+the things above to Coda would be simpler than creating a separate driver.
+Especially if Coda needs to keep supporting all of its existing features.
+
+userfaultfd
+As far as I can see this would only work for mmap-ed files.
+All read() and readdir() calls would never return right results.
+
+
+
+
+--=20
+Thanks,
+Eugene Zemtsov.
