@@ -2,67 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 868B812B78
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 12:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46FAE12C82
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 13:36:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbfECKaI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 May 2019 06:30:08 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:58063 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725777AbfECKaI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 May 2019 06:30:08 -0400
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x43ATVk1042216;
-        Fri, 3 May 2019 19:29:31 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
- Fri, 03 May 2019 19:29:31 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x43ATQ3O042117
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 3 May 2019 19:29:30 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: task hung in __get_super
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, dvyukov@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <001a113ed5540f411c0568cc8418@google.com>
- <0000000000002cd22305879b22c4@google.com>
- <20190428185109.GD23075@ZenIV.linux.org.uk>
- <20190430025501.GB6740@quack2.suse.cz>
- <20190430031144.GG23075@ZenIV.linux.org.uk>
- <20190430130739.GA11224@quack2.suse.cz>
- <20190430131820.GK23075@ZenIV.linux.org.uk>
- <20190430150753.GA14000@quack2.suse.cz>
- <aa220178-58d8-ffb7-399b-1d04e92e916f@i-love.sakura.ne.jp>
-Message-ID: <71265ac6-c127-838f-d129-a9a95f755ecf@i-love.sakura.ne.jp>
-Date:   Fri, 3 May 2019 19:29:26 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727107AbfECLgt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 May 2019 07:36:49 -0400
+Received: from mga02.intel.com ([134.134.136.20]:61073 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726476AbfECLgs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 May 2019 07:36:48 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 04:36:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,425,1549958400"; 
+   d="scan'208";a="140951290"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga006.jf.intel.com with ESMTP; 03 May 2019 04:36:47 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1hMWUg-000H0F-UG; Fri, 03 May 2019 19:36:46 +0800
+Date:   Fri, 3 May 2019 19:35:55 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     kbuild-all@01.org, linux-fsdevel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>
+Subject: [vfs:work.mount-syscalls 1/10] fs/namespace.c:2386:35: sparse:
+ sparse: incorrect type in argument 2 (different address spaces)
+Message-ID: <201905031942.C09dfO2c%lkp@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <aa220178-58d8-ffb7-399b-1d04e92e916f@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/05/01 0:34, Tetsuo Handa wrote:
-> I still cannot understand what the problem is.
-(...snipped...)
-> I guessed that something went wrong with 8083 inside __getblk_gfp().
-> How can loop_ctl_mutex be relevant to this problem?
-> 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount-syscalls
+head:   f1b5618e013af28b3c78daf424436a79674423c0
+commit: a07b20004793d8926f78d63eb5980559f7813404 [1/10] vfs: syscall: Add open_tree(2) to reference or clone a mount
+reproduce:
+        # apt-get install sparse
+        git checkout a07b20004793d8926f78d63eb5980559f7813404
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-syzbot got similar NMI backtrace. No loop_ctl_mutex is involved.
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
-INFO: task hung in mount_bdev (2)
-https://syzkaller.appspot.com/bug?id=d9b9fa1428ff2466de64fc85256e769f516cea58
+
+sparse warnings: (new ones prefixed by >>)
+
+   fs/namespace.c:1736:22: sparse: sparse: symbol 'to_mnt_ns' was not declared. Should it be static?
+>> fs/namespace.c:2386:35: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected char const [noderef] <asn:1> *name @@    got f] <asn:1> *name @@
+>> fs/namespace.c:2386:35: sparse:    expected char const [noderef] <asn:1> *name
+>> fs/namespace.c:2386:35: sparse:    got char const *filename
+
+vim +2386 fs/namespace.c
+
+  2352	
+  2353	SYSCALL_DEFINE3(open_tree, int, dfd, const char *, filename, unsigned, flags)
+  2354	{
+  2355		struct file *file;
+  2356		struct path path;
+  2357		int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
+  2358		bool detached = flags & OPEN_TREE_CLONE;
+  2359		int error;
+  2360		int fd;
+  2361	
+  2362		BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
+  2363	
+  2364		if (flags & ~(AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE |
+  2365			      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE |
+  2366			      OPEN_TREE_CLOEXEC))
+  2367			return -EINVAL;
+  2368	
+  2369		if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE)) == AT_RECURSIVE)
+  2370			return -EINVAL;
+  2371	
+  2372		if (flags & AT_NO_AUTOMOUNT)
+  2373			lookup_flags &= ~LOOKUP_AUTOMOUNT;
+  2374		if (flags & AT_SYMLINK_NOFOLLOW)
+  2375			lookup_flags &= ~LOOKUP_FOLLOW;
+  2376		if (flags & AT_EMPTY_PATH)
+  2377			lookup_flags |= LOOKUP_EMPTY;
+  2378	
+  2379		if (detached && !may_mount())
+  2380			return -EPERM;
+  2381	
+  2382		fd = get_unused_fd_flags(flags & O_CLOEXEC);
+  2383		if (fd < 0)
+  2384			return fd;
+  2385	
+> 2386		error = user_path_at(dfd, filename, lookup_flags, &path);
+  2387		if (unlikely(error)) {
+  2388			file = ERR_PTR(error);
+  2389		} else {
+  2390			if (detached)
+  2391				file = open_detached_copy(&path, flags & AT_RECURSIVE);
+  2392			else
+  2393				file = dentry_open(&path, O_PATH, current_cred());
+  2394			path_put(&path);
+  2395		}
+  2396		if (IS_ERR(file)) {
+  2397			put_unused_fd(fd);
+  2398			return PTR_ERR(file);
+  2399		}
+  2400		fd_install(fd, file);
+  2401		return fd;
+  2402	}
+  2403	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
