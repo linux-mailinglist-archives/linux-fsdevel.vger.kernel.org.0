@@ -2,120 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46FAE12C82
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 13:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D805012CA0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 13:44:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfECLgt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 May 2019 07:36:49 -0400
-Received: from mga02.intel.com ([134.134.136.20]:61073 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726476AbfECLgs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 May 2019 07:36:48 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 May 2019 04:36:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,425,1549958400"; 
-   d="scan'208";a="140951290"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 03 May 2019 04:36:47 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1hMWUg-000H0F-UG; Fri, 03 May 2019 19:36:46 +0800
-Date:   Fri, 3 May 2019 19:35:55 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     kbuild-all@01.org, linux-fsdevel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>
-Subject: [vfs:work.mount-syscalls 1/10] fs/namespace.c:2386:35: sparse:
- sparse: incorrect type in argument 2 (different address spaces)
-Message-ID: <201905031942.C09dfO2c%lkp@intel.com>
+        id S1727639AbfECLoV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 May 2019 07:44:21 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:42120 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfECLoV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 May 2019 07:44:21 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x43BdQ35061107;
+        Fri, 3 May 2019 11:43:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=/lUSL6u6dCv+qk16245uxZt1XSGKYM9t/rlDDOHNkoM=;
+ b=RxZCYN0gGG+lQ+eUhZU3ekXqD8QfSg69uur9UTnrN9aU1f9+Ggw+y5LXgk6EOXcU4JCQ
+ 2k83xHsdvNPIs3UiadOfmOuBfxRV3UJLAjac3a9+lnaNMCk+97wpdHWu5FS3/9U774bm
+ zJyd8fDi2tZpEVzaDhsQdezf1YjUyc8DwLDrBQwcXeiQqh3GvhWz1IWvOu6oACsCwYC3
+ bU79La0Rm9+XSLjl2tTglB3nuZ+keGvYxPbPQQLkC04rbKY5k9OG2nqVZbu4eg23+9KW
+ 8kvLfMr1+4HpVBdesZOaOnigRpEUjQUbEhwauuN03U8ZTed3Lu/wFXMh8903i3l1kMcE 6w== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 2s6xhyp62p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 03 May 2019 11:43:55 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x43BgnR4145790;
+        Fri, 3 May 2019 11:43:54 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2s7rtc82w4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 03 May 2019 11:43:54 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x43BhqvR005877;
+        Fri, 3 May 2019 11:43:53 GMT
+Received: from mwanda (/196.104.111.181)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 03 May 2019 04:43:52 -0700
+Date:   Fri, 3 May 2019 14:43:34 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Amritha Nambiar <amritha.nambiar@intel.com>,
+        Willem de Bruijn <willemb@google.com>,
+        kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 2/2] io_uring: Potential Oops in io_sq_offload_start()
+Message-ID: <20190503114334.GA16540@mwanda>
+References: <20190404104527.GX4038@hirez.programming.kicks-ass.net>
+ <20190408081513.GB15239@kadam>
+ <20190430092619.GC2239@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190430092619.GC2239@kadam>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9245 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=848
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905030074
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9245 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=894 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905030074
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount-syscalls
-head:   f1b5618e013af28b3c78daf424436a79674423c0
-commit: a07b20004793d8926f78d63eb5980559f7813404 [1/10] vfs: syscall: Add open_tree(2) to reference or clone a mount
-reproduce:
-        # apt-get install sparse
-        git checkout a07b20004793d8926f78d63eb5980559f7813404
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+On Tue, Apr 30, 2019 at 12:26:19PM +0300, Dan Carpenter wrote:
+> The io_uring patches are slated for v5.7 so we should figure out a
+> solution for this bug.
+> 
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+Never mind.  We merged a different fix.  975554b03edd
+("io_uring: fix SQPOLL cpu validation").
 
+regards,
+dan carpenter
 
-sparse warnings: (new ones prefixed by >>)
-
-   fs/namespace.c:1736:22: sparse: sparse: symbol 'to_mnt_ns' was not declared. Should it be static?
->> fs/namespace.c:2386:35: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected char const [noderef] <asn:1> *name @@    got f] <asn:1> *name @@
->> fs/namespace.c:2386:35: sparse:    expected char const [noderef] <asn:1> *name
->> fs/namespace.c:2386:35: sparse:    got char const *filename
-
-vim +2386 fs/namespace.c
-
-  2352	
-  2353	SYSCALL_DEFINE3(open_tree, int, dfd, const char *, filename, unsigned, flags)
-  2354	{
-  2355		struct file *file;
-  2356		struct path path;
-  2357		int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
-  2358		bool detached = flags & OPEN_TREE_CLONE;
-  2359		int error;
-  2360		int fd;
-  2361	
-  2362		BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
-  2363	
-  2364		if (flags & ~(AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE |
-  2365			      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE |
-  2366			      OPEN_TREE_CLOEXEC))
-  2367			return -EINVAL;
-  2368	
-  2369		if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE)) == AT_RECURSIVE)
-  2370			return -EINVAL;
-  2371	
-  2372		if (flags & AT_NO_AUTOMOUNT)
-  2373			lookup_flags &= ~LOOKUP_AUTOMOUNT;
-  2374		if (flags & AT_SYMLINK_NOFOLLOW)
-  2375			lookup_flags &= ~LOOKUP_FOLLOW;
-  2376		if (flags & AT_EMPTY_PATH)
-  2377			lookup_flags |= LOOKUP_EMPTY;
-  2378	
-  2379		if (detached && !may_mount())
-  2380			return -EPERM;
-  2381	
-  2382		fd = get_unused_fd_flags(flags & O_CLOEXEC);
-  2383		if (fd < 0)
-  2384			return fd;
-  2385	
-> 2386		error = user_path_at(dfd, filename, lookup_flags, &path);
-  2387		if (unlikely(error)) {
-  2388			file = ERR_PTR(error);
-  2389		} else {
-  2390			if (detached)
-  2391				file = open_detached_copy(&path, flags & AT_RECURSIVE);
-  2392			else
-  2393				file = dentry_open(&path, O_PATH, current_cred());
-  2394			path_put(&path);
-  2395		}
-  2396		if (IS_ERR(file)) {
-  2397			put_unused_fd(fd);
-  2398			return PTR_ERR(file);
-  2399		}
-  2400		fd_install(fd, file);
-  2401		return fd;
-  2402	}
-  2403	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
