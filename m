@@ -2,84 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2327312AEC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 11:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF24B12AF1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 11:47:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfECJqP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 May 2019 05:46:15 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:50435 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725777AbfECJqP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 May 2019 05:46:15 -0400
-Received: from callcc.thunk.org (adsl-173-228-226-134.prtc.net [173.228.226.134])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x439jhYI011160
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 3 May 2019 05:45:46 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 5AD4D420024; Fri,  3 May 2019 05:45:43 -0400 (EDT)
-Date:   Fri, 3 May 2019 05:45:43 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Vijay Chidambaram <vijay@cs.utexas.edu>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        lsf-pc@lists.linux-foundation.org,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jayashree Mohan <jaya@cs.utexas.edu>,
-        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
-        lwn@lwn.net
-Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties
- contract
-Message-ID: <20190503094543.GD23724@mit.edu>
-References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
- <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
- <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
- <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com>
- <20190503023043.GB23724@mit.edu>
- <CAHWVdUV115x8spvAd3p-6iDRE--yZULbF6DDc+Hapt2s+pJgbA@mail.gmail.com>
+        id S1727033AbfECJrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 May 2019 05:47:19 -0400
+Received: from mail.stbuehler.de ([5.9.32.208]:42206 "EHLO mail.stbuehler.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726681AbfECJrT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 May 2019 05:47:19 -0400
+Received: from chromobil.fritz.box (unknown [IPv6:2a02:8070:a29c:5000:823f:5dff:fe0f:b5b6])
+        by mail.stbuehler.de (Postfix) with ESMTPSA id 0CD33C007E8;
+        Fri,  3 May 2019 09:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=stbuehler.de;
+        s=stbuehler1; t=1556876836;
+        bh=HNNhAZo5XVrEo+Uqw618pAuMsJsK5ZN2WxF8rpFqaWU=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=QM3GQxN4cWeLETVrDHadaXOpobocuozHgTTYBEHRxWyX9UEE3bCoxBefVrLSTHm8R
+         V4pD9YcV/tw1BzQWw0NRXdcyM9vt67W7yer6zvlQdKb4yORBbb8WvBJRSfsKJffkOr
+         kVz7i/+wqCX8c6rA1XL3AfAH9vTx+7Sw9mgCkLSE=
+From:   =?UTF-8?q?Stefan=20B=C3=BChler?= <source@stbuehler.de>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 1/2] io_uring: restructure io_{read,write} control flow
+Date:   Fri,  3 May 2019 11:47:14 +0200
+Message-Id: <20190503094715.2381-1-source@stbuehler.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <37071226-375a-07a6-d3d3-21323145de71@kernel.dk>
+References: <37071226-375a-07a6-d3d3-21323145de71@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHWVdUV115x8spvAd3p-6iDRE--yZULbF6DDc+Hapt2s+pJgbA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 02, 2019 at 10:15:01PM -0500, Vijay Chidambaram wrote:
-> 
-> A few things to clarify:
-> 1) We are not suggesting that all file systems follow SOMC semantics.
-> If ext4 does not want to do so, we are quite happy to document ext4
-> provides a different set of reasonable semantics. We can make the
-> ext4-related documentation as minimal as you want (or drop ext4 from
-> documentation entirely). I'm hoping this will satisfy you.
-> 2) As I understand it, I do not think SOMC rules out the scenario in
-> your example, because it does not require fsync to push un-related
-> files to storage.
-> 3) We are not documenting how fsync works internally, merely what the
-> user-visible behavior is. I think this will actually free up file
-> systems to optimize fsync aggressively while making sure they provide
-> the required user-visible behavior.
+Call io_async_list_note at the end if -EAGAIN is going to be returned;
+we need iov_count for that, which we have (almost) at the same time as
+we need to free iovec.
 
-As documented, the draft of the rules *I* saw specifically said that a
-fsync() to inode B would guarantee that metadata changes for inode A,
-which were made before the changes to inode B, would be persisted to
-disk since the metadata changes for B happened after the changes to
-inode A.  It used the fsync(2) *explicitly* as an example for how
-ordering of unrelated files could be guaranteed.  And this would
-invalidate Park and Shin's incremental journal for fsync.
+Instead of using a second return value reset the normal one after
+passing it to io_rw_done.
 
-If the guarantees are when fsync(2) is *not* being used, sure, then
-the SOMC model is naturally what would happen with most common file
-system.  But then fsync(2) needs to appear nowhere in the crash
-consistency model description, and that is not the case today.
+Unless rw_verify_area returns -EAGAIN this shouldn't result in different
+behavior.
 
-Best regards,
+This change should make it easier to punt a request to the workers by
+returning -EAGAIN and still calling io_async_list_note if needed.
 
-						- Ted
+Signed-off-by: Stefan Bühler <source@stbuehler.de>
+---
+ fs/io_uring.c | 89 ++++++++++++++++++++++-----------------------------
+ 1 file changed, 39 insertions(+), 50 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 84efb8956734..52e435a72b6f 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1062,26 +1062,24 @@ static int io_read(struct io_kiocb *req, const struct sqe_submit *s,
+ 	ret = io_import_iovec(req->ctx, READ, s, &iovec, &iter);
+ 	if (ret)
+ 		return ret;
+-
+ 	iov_count = iov_iter_count(&iter);
++
+ 	ret = rw_verify_area(READ, file, &kiocb->ki_pos, iov_count);
+-	if (!ret) {
+-		ssize_t ret2;
++	if (ret)
++		goto out_free;
+ 
+-		/* Catch -EAGAIN return for forced non-blocking submission */
+-		ret2 = call_read_iter(file, kiocb, &iter);
+-		if (!force_nonblock || ret2 != -EAGAIN) {
+-			io_rw_done(kiocb, ret2);
+-		} else {
+-			/*
+-			 * If ->needs_lock is true, we're already in async
+-			 * context.
+-			 */
+-			if (!s->needs_lock)
+-				io_async_list_note(READ, req, iov_count);
+-			ret = -EAGAIN;
+-		}
++	/* Passthrough -EAGAIN return for forced non-blocking submission */
++	ret = call_read_iter(file, kiocb, &iter);
++	if (!(force_nonblock && ret == -EAGAIN)) {
++		io_rw_done(kiocb, ret);
++		ret = 0;
+ 	}
++
++out_free:
++	/* If ->needs_lock is true, we're already in async context. */
++	if (ret == -EAGAIN && !s->needs_lock)
++		io_async_list_note(READ, req, iov_count);
++
+ 	kfree(iovec);
+ 	return ret;
+ }
+@@ -1109,50 +1107,41 @@ static int io_write(struct io_kiocb *req, const struct sqe_submit *s,
+ 	ret = io_import_iovec(req->ctx, WRITE, s, &iovec, &iter);
+ 	if (ret)
+ 		return ret;
+-
+ 	iov_count = iov_iter_count(&iter);
+ 
+ 	ret = -EAGAIN;
+-	if (force_nonblock && !(kiocb->ki_flags & IOCB_DIRECT)) {
+-		/* If ->needs_lock is true, we're already in async context. */
+-		if (!s->needs_lock)
+-			io_async_list_note(WRITE, req, iov_count);
++	if (force_nonblock && !(kiocb->ki_flags & IOCB_DIRECT))
+ 		goto out_free;
+-	}
+ 
+ 	ret = rw_verify_area(WRITE, file, &kiocb->ki_pos, iov_count);
+-	if (!ret) {
+-		ssize_t ret2;
++	if (ret)
++		goto out_free;
+ 
+-		/*
+-		 * Open-code file_start_write here to grab freeze protection,
+-		 * which will be released by another thread in
+-		 * io_complete_rw().  Fool lockdep by telling it the lock got
+-		 * released so that it doesn't complain about the held lock when
+-		 * we return to userspace.
+-		 */
+-		if (S_ISREG(file_inode(file)->i_mode)) {
+-			__sb_start_write(file_inode(file)->i_sb,
+-						SB_FREEZE_WRITE, true);
+-			__sb_writers_release(file_inode(file)->i_sb,
+-						SB_FREEZE_WRITE);
+-		}
+-		kiocb->ki_flags |= IOCB_WRITE;
++	/*
++	 * Open-code file_start_write here to grab freeze protection,
++	 * which will be released by another thread in
++	 * io_complete_rw().  Fool lockdep by telling it the lock got
++	 * released so that it doesn't complain about the held lock when
++	 * we return to userspace.
++	 */
++	if (S_ISREG(file_inode(file)->i_mode)) {
++		__sb_start_write(file_inode(file)->i_sb, SB_FREEZE_WRITE, true);
++		__sb_writers_release(file_inode(file)->i_sb, SB_FREEZE_WRITE);
++	}
++	kiocb->ki_flags |= IOCB_WRITE;
+ 
+-		ret2 = call_write_iter(file, kiocb, &iter);
+-		if (!force_nonblock || ret2 != -EAGAIN) {
+-			io_rw_done(kiocb, ret2);
+-		} else {
+-			/*
+-			 * If ->needs_lock is true, we're already in async
+-			 * context.
+-			 */
+-			if (!s->needs_lock)
+-				io_async_list_note(WRITE, req, iov_count);
+-			ret = -EAGAIN;
+-		}
++	/* Passthrough -EAGAIN return for forced non-blocking submission */
++	ret = call_write_iter(file, kiocb, &iter);
++	if (!(force_nonblock && ret == -EAGAIN)) {
++		io_rw_done(kiocb, ret);
++		ret = 0;
+ 	}
++
+ out_free:
++	/* If ->needs_lock is true, we're already in async context. */
++	if (ret == -EAGAIN && !s->needs_lock)
++		io_async_list_note(WRITE, req, iov_count);
++
+ 	kfree(iovec);
+ 	return ret;
+ }
+-- 
+2.20.1
+
