@@ -2,107 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0EED12B23
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 11:59:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61AC212B57
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 12:16:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbfECJ72 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 May 2019 05:59:28 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:52638 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725777AbfECJ72 (ORCPT
+        id S1726585AbfECKQG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 May 2019 06:16:06 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:40091 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfECKQG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 May 2019 05:59:28 -0400
-Received: from callcc.thunk.org (adsl-173-228-226-134.prtc.net [173.228.226.134])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x439wkQA013933
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 3 May 2019 05:58:48 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 4D119420024; Fri,  3 May 2019 05:58:46 -0400 (EDT)
-Date:   Fri, 3 May 2019 05:58:46 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Vijay Chidambaram <vijay@cs.utexas.edu>,
-        lsf-pc@lists.linux-foundation.org,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jayashree Mohan <jaya@cs.utexas.edu>,
-        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
-        lwn@lwn.net
-Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties
- contract
-Message-ID: <20190503095846.GE23724@mit.edu>
-References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
- <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
- <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
- <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com>
- <20190503023043.GB23724@mit.edu>
- <CAOQ4uxjM+ivnn-oU482GmRqOF6bYY5j89NdyHnfH++f49qB4yw@mail.gmail.com>
+        Fri, 3 May 2019 06:16:06 -0400
+Received: by mail-it1-f200.google.com with SMTP id j8so4290631ita.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 May 2019 03:16:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=ksZiUycHQUU5gaMM+swJiiJAczcg7RX7RdnQSdhRCek=;
+        b=VY5QfBCQ6cHgC3w4AwM2J35rgHSu4rJkyZTjPIyHDV6EP3Ay4Xp+CS5L3JpXLQLITn
+         CG1ufMUBBlxVg+zEde0pVuXWYicSMmyXs731P1qM3nEMjS4VQzQAsLfUxrLV/jyjA+hY
+         gUz/azx84NPIXjZIwocK6NL7UChCqNSiv0PxKK8qALlGJEFLfmPxmA8LIbDSfsdrJAJw
+         ptXF9eR5/0ohJxSo1qusftx0watIRSXM8x/4QWQHc5jjuHNdClRath7Pu40FnSAq9kgB
+         EB3Cx5NlK0X8vpIttvOt2u72HebSvRLJhQmLugb4/m/n9vrEyHgwpUF7TDnwYOnrvkm9
+         B2CA==
+X-Gm-Message-State: APjAAAXVXPFW1ojvPU55nQvrvMaguOLc+jBp/dzGmpYf+gwwoSbhZ7xC
+        9gtdLZFYlX12rOQee2GSs7bry/qTJQ1mrGiY7t4fFWZCdXVn
+X-Google-Smtp-Source: APXvYqy4HCDetetZ/MKz0/4sqoObInvZQcLO6v7qu4qICZHOauUnCv5FVa1RLnzhrK6Gc6y3A1FXGqK6CQ75w+SjuILMJV2PZ0AW
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjM+ivnn-oU482GmRqOF6bYY5j89NdyHnfH++f49qB4yw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a02:a402:: with SMTP id c2mr6320642jal.13.1556878565206;
+ Fri, 03 May 2019 03:16:05 -0700 (PDT)
+Date:   Fri, 03 May 2019 03:16:05 -0700
+In-Reply-To: <00000000000014285d05765bf72a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d6796c0587f9097c@google.com>
+Subject: Re: BUG: unable to handle kernel paging request in do_mount
+From:   syzbot <syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sabin.rapan@gmail.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 03, 2019 at 12:16:32AM -0400, Amir Goldstein wrote:
-> OK. we can leave that one for later.
-> Although I am not sure what the concern is.
-> If we are able to agree  and document a LINK_ATOMIC flag,
-> what would be the down side of documenting a RENAME_ATOMIC
-> flag with same semantics? After all, as I said, this is what many users
-> already expect when renaming a temp file (as ext4 heuristics prove).
-
-The problem is if the "temp file" has been hardlinked to 1000
-different directories, does the rename() have to guarantee that we
-have to make sure that the changes to all 1000 directories have been
-persisted to disk?  And all of the parent directories of those 1000
-directories have also *all* been persisted to disk, all the way up to
-the root?
-
-With the O_TMPFILE linkat case, we know that inode hasn't been
-hard-linked to any other directory, and mercifully directories have
-only one parent directory, so we only have to check one set of
-directory inodes all the way up to the root having been persisted.
-
-But.... I can already imagine someone complaining that if due to bind
-mounts and 1000 mount namespaces, there is some *other* directory
-pathname which could be used to reach said "tmpfile", we have to
-guarantee that all parent directories which could be used to reach
-said "tmpfile" even if they span a dozen different file systems,
-*also* have to be persisted due to sloppy drafting of what the
-atomicity rules might happen to be.
-
-If we are only guaranteeing the persistence of the containing
-directories of the source and destination files, that's pretty easy.
-But then the consistency rules need to *explicitly* state this.  Some
-of the handwaving definitions of what would be guaranteed.... scare
-me.
-
-						- Ted
-
-P.S.  If we were going to do this, we'd probably want to simply define
-a flag to be AT_FSYNC, using the strict POSIX definition of fsync,
-which is to say, as a result of the linkat or renameat, the file in
-question, and its associated metadata, are guaranteed to be persisted
-to disk.  No other guarantees about any other inode's metadata
-regardless of when they might be made, would be guaranteed.
-
-If people really want "global barrier" semantics, then perhaps it
-would be better to simply define a barrierfs(2) system call that works
-like syncfs(2) --- it applies to the whole file system, and guarantees
-that all changes made after barrierfs(2) will be visible if any
-changes made *after* barrierfs(2) are visible.  Amir, you used "global
-ordering" a few times; if you really need that, let's define a new
-system call which guarantees that.  Maybe some of the research
-proposals for exotic changes to SSD semantics, etc., would allow
-barrierfs(2) semantics to be something that we could implement more
-efficiently than syncfs(2).  But let's make this be explicit, as
-opposed to some magic guarantee that falls out as a side effect of the
-fsync(2) system call to a single inode.
+This bug is marked as fixed by commit:
+vfs: namespace: error pointer dereference in do_remount()
+But I can't find it in any tested tree for more than 90 days.
+Is it a correct commit? Please update it by replying:
+#syz fix: exact-commit-title
+Until then the bug is still considered open and
+new crashes with the same signature are ignored.
