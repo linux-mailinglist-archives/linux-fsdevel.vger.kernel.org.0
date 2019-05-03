@@ -2,199 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77CEC12DB3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 14:34:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B74612E54
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 14:47:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbfECMdx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 May 2019 08:33:53 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:45436 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbfECMdx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 May 2019 08:33:53 -0400
-Received: from adsl-173-228-226-134.prtc.net ([173.228.226.134] helo=[172.20.29.49])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hMXNQ-0007dH-Hy; Fri, 03 May 2019 06:33:22 -0600
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        shuah@kernel.org, devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-9-brendanhiggins@google.com>
- <0a605543-477a-1854-eb35-6e586606889b@deltatee.com>
- <CAFd5g47hxAd=+72xbPJbWPdZCXRXmtLpsGhUh=zc7MSwfcaGJQ@mail.gmail.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <b2379db6-634a-001e-6f67-37427d8a2666@deltatee.com>
-Date:   Fri, 3 May 2019 06:33:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CAFd5g47hxAd=+72xbPJbWPdZCXRXmtLpsGhUh=zc7MSwfcaGJQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 173.228.226.134
-X-SA-Exim-Rcpt-To: wfg@linux.intel.com, rostedt@goodmis.org, rientjes@google.com, richard@nod.at, pmladek@suse.com, mpe@ellerman.id.au, knut.omang@oracle.com, khilman@baylibre.com, julia.lawall@lip6.fr, joel@jms.id.au, jdike@addtoit.com, daniel@ffwll.ch, dan.j.williams@intel.com, dan.carpenter@oracle.com, amir73il@gmail.com, Tim.Bird@sony.com, Alexander.Levin@microsoft.com, linux-um@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, kunit-dev@googlegroups.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, shuah@kernel.org, sboyd@kernel.org, robh@kernel.org, mcgrof@kernel.org, kieran.bingham@ideasonboard.com, keescook@google.com, gregkh@linuxfoundation.org, frowand.list@gmail.com, brendanhiggins@google.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH v2 08/17] kunit: test: add support for test abort
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1728103AbfECMrf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 May 2019 08:47:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45688 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727992AbfECMre (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 May 2019 08:47:34 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x43CWLXs071356
+        for <linux-fsdevel@vger.kernel.org>; Fri, 3 May 2019 08:47:32 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2s8m6cmkb8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 May 2019 08:47:32 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 3 May 2019 13:47:30 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 3 May 2019 13:47:27 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x43ClQi429098078
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 3 May 2019 12:47:27 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C94D642059;
+        Fri,  3 May 2019 12:47:26 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BEB5C42047;
+        Fri,  3 May 2019 12:47:25 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.95.126])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  3 May 2019 12:47:25 +0000 (GMT)
+Subject: Re: [PATCH V2 3/4] IMA: Optionally make use of filesystem-provided
+ hashes
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
+Date:   Fri, 03 May 2019 08:47:14 -0400
+In-Reply-To: <8e806482-2f55-8c9e-ab95-a3ba4c728535@huawei.com>
+References: <20190226215034.68772-1-matthewgarrett@google.com>
+         <1551923650.31706.258.camel@linux.ibm.com>
+         <CACdnJuv+d2qEc+vQosmDOzdu57Jjpjq9-CZEy8epz0ob5mptsA@mail.gmail.com>
+         <1551991690.31706.416.camel@linux.ibm.com>
+         <CACdnJuvkA6M_fu3+BARH2AMHksTXbvWmRyK9ZaxcH-xZMq4G2g@mail.gmail.com>
+         <CACdnJuv2zV1OnbVaHqkB2UU=dAEzzffajAFg_xsgXRMvuZ5fTw@mail.gmail.com>
+         <1554416328.24612.11.camel@HansenPartnership.com>
+         <CACdnJutZzJu7FxcLWasyvx9BLQJeGrA=7WA389JL8ixFJ6Skrg@mail.gmail.com>
+         <1554417315.24612.15.camel@HansenPartnership.com>
+         <CACdnJuutKe+i8KLUmPWjbFOWfrO2FzYVPjYZGgEatFmZWkw=UA@mail.gmail.com>
+         <1554431217.24612.37.camel@HansenPartnership.com>
+         <CACdnJut_vN9pJXq-j9fEO1CFZ-Aq83cO2LiFmep=Fn9_NOKhWQ@mail.gmail.com>
+         <CACdnJusKM74vZ=zg+0fe50gNRVaDPCdw9mfbbq45yTqnZfZX5w@mail.gmail.com>
+         <1556828700.4134.128.camel@linux.ibm.com>
+         <CACdnJutAw02Hq=NDeHoSsZAh2D95EBag_U8GYoSfNJ7eM61OxQ@mail.gmail.com>
+         <1556838167.7067.9.camel@linux.ibm.com>
+         <6fc66a58-2d34-e8cc-ee01-ec04c85196eb@huawei.com>
+         <8e806482-2f55-8c9e-ab95-a3ba4c728535@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19050312-0008-0000-0000-000002E2E8A1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050312-0009-0000-0000-0000224F5A97
+Message-Id: <1556887634.4754.28.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=757 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905030079
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, 2019-05-03 at 10:17 +0200, Roberto Sassu wrote:
+> On 5/3/2019 8:51 AM, Roberto Sassu wrote:
+> > On 5/3/2019 1:02 AM, Mimi Zohar wrote:
 
-
-On 2019-05-03 12:48 a.m., Brendan Higgins wrote:
-> On Thu, May 2, 2019 at 8:15 PM Logan Gunthorpe <logang@deltatee.com> wrote:
->> On 2019-05-01 5:01 p.m., Brendan Higgins wrote:
->>> +/*
->>> + * struct kunit_try_catch - provides a generic way to run code which might fail.
->>> + * @context: used to pass user data to the try and catch functions.
->>> + *
->>> + * kunit_try_catch provides a generic, architecture independent way to execute
->>> + * an arbitrary function of type kunit_try_catch_func_t which may bail out by
->>> + * calling kunit_try_catch_throw(). If kunit_try_catch_throw() is called, @try
->>> + * is stopped at the site of invocation and @catch is catch is called.
->>
->> I found some of the C++ comparisons in this series a bit distasteful but
->> wasn't going to say anything until I saw the try catch.... But looking
->> into the implementation it's just a thread that can exit early which
->> seems fine to me. Just a poor choice of name I guess...
+> >> Perhaps instead of making the template format dynamic based on fields,
+> >> as I suggested above, define a per policy rule template format option.
+> > 
+> > This should not be too complicated. The template to use will be returned
+> > by ima_get_action() to process_measurement().
 > 
-> Guilty as charged (I have a long history with C++, sorry). Would you
-> prefer I changed the name? I just figured that try-catch is a commonly
-> understood pattern that describes exactly what I am doing.
-
-It is a commonly understood pattern, but I don't think it's what the
-code is doing. Try-catch cleans up an entire stack and allows each level
-of the stack to apply local cleanup. This implementation simply exits a
-thread and has none of that complexity. To me, it seems like an odd
-abstraction here as it's really just a test runner that can exit early
-(though I haven't seen the follow-up UML implementation).
-
-I would prefer to see this cleaned up such that the abstraction matches
-more what's going on but I don't feel that strongly about it so I'll
-leave it up to you to figure out what's best unless other reviewers have
-stronger opinions.
-
->>
->> [snip]
->>
->>> +static void __noreturn kunit_abort(struct kunit *test)
->>> +{
->>> +     kunit_set_death_test(test, true);
->>> +
->>> +     kunit_try_catch_throw(&test->try_catch);
->>> +
->>> +     /*
->>> +      * Throw could not abort from test.
->>> +      *
->>> +      * XXX: we should never reach this line! As kunit_try_catch_throw is
->>> +      * marked __noreturn.
->>> +      */
->>> +     WARN_ONCE(true, "Throw could not abort from test!\n");
->>> +}
->>> +
->>>  int kunit_init_test(struct kunit *test, const char *name)
->>>  {
->>>       spin_lock_init(&test->lock);
->>> @@ -77,6 +103,7 @@ int kunit_init_test(struct kunit *test, const char *name)
->>>       test->name = name;
->>>       test->vprintk = kunit_vprintk;
->>>       test->fail = kunit_fail;
->>> +     test->abort = kunit_abort;
->>
->> There are a number of these function pointers which seem to be pointless
->> to me as you only ever set them to one function. Just call the function
->> directly. As it is, it is an unnecessary indirection for someone reading
->> the code. If and when you have multiple implementations of the function
->> then add the pointer. Don't assume you're going to need it later on and
->> add all this maintenance burden if you never use it..
+> Some time ago I made some patches:
 > 
-> Ah, yes, Frank (and probably others) previously asked me to remove
-> unnecessary method pointers; I removed all the totally unused ones. As
-> for these, I don't use them in this patchset, but I use them in my
-> patchsets that will follow up this one. These in particular are
-> present so that they can be mocked out for testing.
+> https://sourceforge.net/p/linux-ima/mailman/message/31655784/
 
-Adding indirection and function pointers solely for the purpose of
-mocking out while testing doesn't sit well with me and I don't think it
-should be a pattern that's encouraged. Adding extra complexity like this
-to a design to make it unit-testable doesn't seem like something that
-makes sense in kernel code. Especially given that indirect calls are
-more expensive in the age of spectre.
+Thank you for the reference!  In addition to Matthew's VFS hash use
+case, Thiago's appended signature support would benefit from a per
+policy rule template.  Do you want, and have time, to add this
+support?
 
-Also, mocking these particular functions seems like it's an artifact of
-how you've designed the try/catch abstraction. If the abstraction was
-more around an abort-able test runner then it doesn't make sense to need
-to mock out the abort/fail functions as you will be testing overly
-generic features of something that don't seem necessary to the
-implementation.
+Mimi
 
->>
->> [snip]
->>
->>> +void kunit_generic_try_catch_init(struct kunit_try_catch *try_catch)
->>> +{
->>> +     try_catch->run = kunit_generic_run_try_catch;
->>> +     try_catch->throw = kunit_generic_throw;
->>> +}
->>
->> Same here. There's only one implementation of try_catch and I can't
->> really see any sensible justification for another implementation. Even
->> if there is, add the indirection when the second implementation is
->> added. This isn't C++ and we don't need to make everything a "method".
-> 
-> These methods are for a UML specific implementation in a follow up
-> patchset, which is needed for some features like crash recovery, death
-> tests, and removes dependence on kthreads.
-> 
-> I know this probably sounds like premature complexity. Arguably it is
-> in hindsight, but I wrote those features before I pulled out these
-> interfaces (they were actually both originally in this patchset, but I
-> dropped them to make this patchset easier to review). I can remove
-> these methods and add them back in when I actually use them in the
-> follow up patchsets if you prefer.
-
-Yes, remove them now and add them back when you use them in follow-up
-patches. If reviewers find problems with the follow-up patches or have a
-better suggestion on how to do what ever it is you are doing, then you
-just have this unnecessary code and there's wasted developer time and
-review bandwidth that will need to be spent cleaning it up.
-
-Thanks,
-
-Logan
