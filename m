@@ -2,179 +2,332 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E043A125E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 03:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91FBA125EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 May 2019 03:06:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbfECBF0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 May 2019 21:05:26 -0400
-Received: from mga03.intel.com ([134.134.136.65]:44118 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbfECBF0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 May 2019 21:05:26 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 May 2019 18:05:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,423,1549958400"; 
-   d="gz'50?scan'50,208,50";a="140843634"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 02 May 2019 18:05:22 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1hMMde-000FYB-7M; Fri, 03 May 2019 09:05:22 +0800
-Date:   Fri, 3 May 2019 09:04:46 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     kbuild-all@01.org, linux-fsdevel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [vfs:work.mount-syscalls 5/10] <stdin>:1394:2: warning: #warning
- syscall fsopen not implemented
-Message-ID: <201905030945.jqNRNYJ2%lkp@intel.com>
+        id S1726488AbfECBGH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 May 2019 21:06:07 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:52614 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbfECBGH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 May 2019 21:06:07 -0400
+Received: by mail-io1-f71.google.com with SMTP id t12so3315200ioc.19
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 May 2019 18:06:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=VzCj3Nnmvs7DMHUtzSYcHisPUznb7GXkmaagy/qmZY0=;
+        b=Hlk1LFSwjAAe09nIBi931JymItoDzEu5h+rSAq/c671MBHkhnTM0sqVVGdcUkfk2BI
+         +txTCKLvFhcGF3jf7LBQgL5NU0p1t1TRyWF6PKoIepP12msV4m5Z4P2Zf3b34lKf4rwm
+         w4iVB2+l6Ndd0WA45eZNPt9PHhZH80snJ/o6uBmAage9XOc85ifeTeTzQ+dIR7TmL2zN
+         18jHAxFrXB5cbLEMwraxjETig5XMq4Cgq8C4l/MO7+bf+UaY2HE47rQLxdCFnynMPBjr
+         AtbNVTPipWgL7qf1yODAXbZ7Dvec3YamGfOurYzulCe48fUvBA1ujP2TEArDQne5Tcus
+         yyMQ==
+X-Gm-Message-State: APjAAAWy3PhfQYvdT73l6jo6k/m9Iwo6qtUdcjMZyxkeomcumAgaW8hu
+        x6dmQ15M2Mka7FxLICaZfOkwvuxrillfLWT2v1K5rT0ctBLG
+X-Google-Smtp-Source: APXvYqwszxiZU65FeCKJ2+aBskWIPIbsUDr5NoENAtRCJ7u6BPShgBMyZbu8a0Dzz1l5PqEPqty0g1MFxiDczwxihPQnAvPMvvFr
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="5vNYLRcllDrimb99"
-Content-Disposition: inline
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Received: by 2002:a24:d91:: with SMTP id 139mr5175945itx.152.1556845566181;
+ Thu, 02 May 2019 18:06:06 -0700 (PDT)
+Date:   Thu, 02 May 2019 18:06:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f14d5c0587f15a95@google.com>
+Subject: INFO: task hung in mount_bdev (2)
+From:   syzbot <syzbot+97889fb583ef1f3d42c6@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
 
---5vNYLRcllDrimb99
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+syzbot found the following crash on:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount-syscalls
-head:   f1b5618e013af28b3c78daf424436a79674423c0
-commit: 24dcb3d90a1f67fe08c68a004af37df059d74005 [5/10] vfs: syscall: Add fsopen() to prepare for superblock creation
-config: c6x-evmc6678_defconfig (attached as .config)
-compiler: c6x-elf-gcc (GCC) 8.1.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git checkout 24dcb3d90a1f67fe08c68a004af37df059d74005
-        # save the attached .config to linux build tree
-        GCC_VERSION=8.1.0 make.cross ARCH=c6x 
+HEAD commit:    9520b532 Merge tag 'for-linus' of git://git.armlinux.org.u..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1104bb90a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a42d110b47dd6b36
+dashboard link: https://syzkaller.appspot.com/bug?extid=97889fb583ef1f3d42c6
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10357834a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10e1d160a00000
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+Bisection is inconclusive: the bug happens on the oldest tested release.
 
-All warnings (new ones prefixed by >>):
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1478aa98a00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1278aa98a00000
 
-   <stdin>:1388:2: warning: #warning syscall open_tree not implemented [-Wcpp]
-   <stdin>:1391:2: warning: #warning syscall move_mount not implemented [-Wcpp]
->> <stdin>:1394:2: warning: #warning syscall fsopen not implemented [-Wcpp]
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+97889fb583ef1f3d42c6@syzkaller.appspotmail.com
+
+INFO: task syz-executor013:7561 blocked for more than 143 seconds.
+       Not tainted 5.1.0-rc6+ #90
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor013 D29336  7561   7543 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2877 [inline]
+  __schedule+0x813/0x1cc0 kernel/sched/core.c:3518
+  schedule+0x92/0x180 kernel/sched/core.c:3562
+  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3620
+  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
+  __mutex_lock+0x726/0x1310 kernel/locking/mutex.c:1072
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+  mount_bdev+0x93/0x3c0 fs/super.c:1313
+  udf_mount+0x35/0x40 fs/udf/super.c:131
+  legacy_get_tree+0xf2/0x200 fs/fs_context.c:584
+  vfs_get_tree+0x123/0x450 fs/super.c:1481
+  do_new_mount fs/namespace.c:2622 [inline]
+  do_mount+0x1436/0x2c40 fs/namespace.c:2942
+  ksys_mount+0xdb/0x150 fs/namespace.c:3151
+  __do_sys_mount fs/namespace.c:3165 [inline]
+  __se_sys_mount fs/namespace.c:3162 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3162
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x44a739
+Code: 00 49 6e 76 61 6c 69 64 20 22 24 41 63 74 69 6f 6e 51 75 65 75 65 43  
+68 65 63 6b 70 6f 69 6e 74 49 6e 74 65 72 76 61 6c 22 2c <20> 65 72 72 6f  
+72 20 25 64 2e 20 49 67 6e 6f 72 65 64 2c 20 72 75
+RSP: 002b:00007f9541ef0db8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00000000006dbc28 RCX: 000000000044a739
+RDX: 0000000020000240 RSI: 0000000020000200 RDI: 0000000020000080
+RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
+R13: 00007ffc6cf3cddf R14: 00007f9541ef19c0 R15: 0000000000000000
+INFO: task syz-executor013:7563 blocked for more than 143 seconds.
+       Not tainted 5.1.0-rc6+ #90
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor013 D29720  7563   7541 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2877 [inline]
+  __schedule+0x813/0x1cc0 kernel/sched/core.c:3518
+  schedule+0x92/0x180 kernel/sched/core.c:3562
+  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3620
+  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
+  __mutex_lock+0x726/0x1310 kernel/locking/mutex.c:1072
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+  mount_bdev+0x93/0x3c0 fs/super.c:1313
+  udf_mount+0x35/0x40 fs/udf/super.c:131
+  legacy_get_tree+0xf2/0x200 fs/fs_context.c:584
+  vfs_get_tree+0x123/0x450 fs/super.c:1481
+  do_new_mount fs/namespace.c:2622 [inline]
+  do_mount+0x1436/0x2c40 fs/namespace.c:2942
+  ksys_mount+0xdb/0x150 fs/namespace.c:3151
+  __do_sys_mount fs/namespace.c:3165 [inline]
+  __se_sys_mount fs/namespace.c:3162 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3162
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x44a739
+Code: 00 49 6e 76 61 6c 69 64 20 22 24 41 63 74 69 6f 6e 51 75 65 75 65 43  
+68 65 63 6b 70 6f 69 6e 74 49 6e 74 65 72 76 61 6c 22 2c <20> 65 72 72 6f  
+72 20 25 64 2e 20 49 67 6e 6f 72 65 64 2c 20 72 75
+RSP: 002b:00007f9541ef0db8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00000000006dbc28 RCX: 000000000044a739
+RDX: 0000000020000240 RSI: 0000000020000200 RDI: 0000000020000080
+RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
+R13: 00007ffc6cf3cddf R14: 00007f9541ef19c0 R15: 0000000000000000
+INFO: task syz-executor013:7559 blocked for more than 143 seconds.
+       Not tainted 5.1.0-rc6+ #90
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor013 D29096  7559   7544 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2877 [inline]
+  __schedule+0x813/0x1cc0 kernel/sched/core.c:3518
+  schedule+0x92/0x180 kernel/sched/core.c:3562
+  __rwsem_down_write_failed_common kernel/locking/rwsem-xadd.c:582 [inline]
+  rwsem_down_write_failed+0x774/0xc30 kernel/locking/rwsem-xadd.c:611
+  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
+  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
+  down_write+0x53/0x90 kernel/locking/rwsem.c:72
+  grab_super+0xb4/0x290 fs/super.c:385
+  sget_userns+0x1ab/0x560 fs/super.c:601
+  sget+0x10c/0x150 fs/super.c:660
+  mount_bdev+0xff/0x3c0 fs/super.c:1319
+  udf_mount+0x35/0x40 fs/udf/super.c:131
+  legacy_get_tree+0xf2/0x200 fs/fs_context.c:584
+  vfs_get_tree+0x123/0x450 fs/super.c:1481
+  do_new_mount fs/namespace.c:2622 [inline]
+  do_mount+0x1436/0x2c40 fs/namespace.c:2942
+  ksys_mount+0xdb/0x150 fs/namespace.c:3151
+  __do_sys_mount fs/namespace.c:3165 [inline]
+  __se_sys_mount fs/namespace.c:3162 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3162
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x44a739
+Code: 00 49 6e 76 61 6c 69 64 20 22 24 41 63 74 69 6f 6e 51 75 65 75 65 43  
+68 65 63 6b 70 6f 69 6e 74 49 6e 74 65 72 76 61 6c 22 2c <20> 65 72 72 6f  
+72 20 25 64 2e 20 49 67 6e 6f 72 65 64 2c 20 72 75
+RSP: 002b:00007f9541ef0db8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00000000006dbc28 RCX: 000000000044a739
+RDX: 0000000020000240 RSI: 0000000020000200 RDI: 0000000020000080
+RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
+R13: 00007ffc6cf3cddf R14: 00007f9541ef19c0 R15: 0000000000000000
+INFO: task syz-executor013:7565 blocked for more than 144 seconds.
+       Not tainted 5.1.0-rc6+ #90
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor013 D29720  7565   7542 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2877 [inline]
+  __schedule+0x813/0x1cc0 kernel/sched/core.c:3518
+  schedule+0x92/0x180 kernel/sched/core.c:3562
+  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3620
+  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
+  __mutex_lock+0x726/0x1310 kernel/locking/mutex.c:1072
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+  mount_bdev+0x93/0x3c0 fs/super.c:1313
+  udf_mount+0x35/0x40 fs/udf/super.c:131
+  legacy_get_tree+0xf2/0x200 fs/fs_context.c:584
+  vfs_get_tree+0x123/0x450 fs/super.c:1481
+  do_new_mount fs/namespace.c:2622 [inline]
+  do_mount+0x1436/0x2c40 fs/namespace.c:2942
+  ksys_mount+0xdb/0x150 fs/namespace.c:3151
+  __do_sys_mount fs/namespace.c:3165 [inline]
+  __se_sys_mount fs/namespace.c:3162 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3162
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x44a739
+Code: 00 49 6e 76 61 6c 69 64 20 22 24 41 63 74 69 6f 6e 51 75 65 75 65 43  
+68 65 63 6b 70 6f 69 6e 74 49 6e 74 65 72 76 61 6c 22 2c <20> 65 72 72 6f  
+72 20 25 64 2e 20 49 67 6e 6f 72 65 64 2c 20 72 75
+RSP: 002b:00007f9541ef0db8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00000000006dbc28 RCX: 000000000044a739
+RDX: 0000000020000240 RSI: 0000000020000200 RDI: 0000000020000080
+RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
+R13: 00007ffc6cf3cddf R14: 00007f9541ef19c0 R15: 0000000000000000
+INFO: task syz-executor013:7562 blocked for more than 144 seconds.
+       Not tainted 5.1.0-rc6+ #90
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor013 D29720  7562   7546 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2877 [inline]
+  __schedule+0x813/0x1cc0 kernel/sched/core.c:3518
+  schedule+0x92/0x180 kernel/sched/core.c:3562
+  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3620
+  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
+  __mutex_lock+0x726/0x1310 kernel/locking/mutex.c:1072
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+  mount_bdev+0x93/0x3c0 fs/super.c:1313
+  udf_mount+0x35/0x40 fs/udf/super.c:131
+  legacy_get_tree+0xf2/0x200 fs/fs_context.c:584
+  vfs_get_tree+0x123/0x450 fs/super.c:1481
+  do_new_mount fs/namespace.c:2622 [inline]
+  do_mount+0x1436/0x2c40 fs/namespace.c:2942
+  ksys_mount+0xdb/0x150 fs/namespace.c:3151
+  __do_sys_mount fs/namespace.c:3165 [inline]
+  __se_sys_mount fs/namespace.c:3162 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3162
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x44a739
+Code: 00 49 6e 76 61 6c 69 64 20 22 24 41 63 74 69 6f 6e 51 75 65 75 65 43  
+68 65 63 6b 70 6f 69 6e 74 49 6e 74 65 72 76 61 6c 22 2c <20> 65 72 72 6f  
+72 20 25 64 2e 20 49 67 6e 6f 72 65 64 2c 20 72 75
+RSP: 002b:00007f9541ef0db8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00000000006dbc28 RCX: 000000000044a739
+RDX: 0000000020000240 RSI: 0000000020000200 RDI: 0000000020000080
+RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
+R13: 00007ffc6cf3cddf R14: 00007f9541ef19c0 R15: 0000000000000000
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/1042:
+  #0: 000000006329251d (rcu_read_lock){....}, at:  
+debug_show_all_locks+0x5f/0x27e kernel/locking/lockdep.c:5057
+1 lock held by rsyslogd/7425:
+  #0: 00000000d77ddd95 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xee/0x110  
+fs/file.c:801
+2 locks held by getty/7515:
+  #0: 000000004c45b4e6 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 00000000cb1f5c30 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
+2 locks held by getty/7516:
+  #0: 0000000061e5eac7 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 00000000aab03c35 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
+2 locks held by getty/7517:
+  #0: 00000000205ee5b4 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 0000000002712bdb (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
+2 locks held by getty/7518:
+  #0: 000000000cc046b2 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 00000000d5140a4a (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
+2 locks held by getty/7519:
+  #0: 000000003624da6d (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 00000000f5b16893 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
+2 locks held by getty/7520:
+  #0: 0000000082294f91 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 00000000870dfcb5 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
+2 locks held by getty/7521:
+  #0: 000000000f72fa86 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 00000000a044b2e0 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2156
+2 locks held by syz-executor013/7547:
+1 lock held by syz-executor013/7561:
+  #0: 00000000d97cb347 (&bdev->bd_fsfreeze_mutex){+.+.}, at:  
+mount_bdev+0x93/0x3c0 fs/super.c:1313
+1 lock held by syz-executor013/7563:
+  #0: 00000000d97cb347 (&bdev->bd_fsfreeze_mutex){+.+.}, at:  
+mount_bdev+0x93/0x3c0 fs/super.c:1313
+2 locks held by syz-executor013/7559:
+  #0: 00000000d97cb347 (&bdev->bd_fsfreeze_mutex){+.+.}, at:  
+mount_bdev+0x93/0x3c0 fs/super.c:1313
+  #1: 000000001ecfe564 (&type->s_umount_key#39){+.+.}, at:  
+grab_super+0xb4/0x290 fs/super.c:385
+1 lock held by syz-executor013/7565:
+  #0: 00000000d97cb347 (&bdev->bd_fsfreeze_mutex){+.+.}, at:  
+mount_bdev+0x93/0x3c0 fs/super.c:1313
+1 lock held by syz-executor013/7562:
+  #0: 00000000d97cb347 (&bdev->bd_fsfreeze_mutex){+.+.}, at:  
+mount_bdev+0x93/0x3c0 fs/super.c:1313
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 1042 Comm: khungtaskd Not tainted 5.1.0-rc6+ #90
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:204 [inline]
+  watchdog+0x9b7/0xec0 kernel/hung_task.c:288
+  kthread+0x357/0x430 kernel/kthread.c:253
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Sending NMI from CPU 1 to CPUs 0:
+
 
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---5vNYLRcllDrimb99
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---5vNYLRcllDrimb99--
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
