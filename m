@@ -2,32 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 907BC13943
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2019 12:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECD6813956
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2019 12:43:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbfEDKkQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 May 2019 06:40:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44018 "EHLO mail.kernel.org"
+        id S1726775AbfEDKmz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 May 2019 06:42:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725981AbfEDKkP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 May 2019 06:40:15 -0400
+        id S1725981AbfEDKmz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 4 May 2019 06:42:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21B9B206DF;
-        Sat,  4 May 2019 10:40:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83EC9206DF;
+        Sat,  4 May 2019 10:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1556966414;
-        bh=ZtaXllWS1pW5iu83jiogyXoGhA2z0cHfZWqL2iOl0tk=;
+        s=default; t=1556966574;
+        bh=2wZMR8kL7s1krXCBVQ2gHWVCoJe2nAbegB0hEA5FL6g=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RMn5lzZLL3HFn059n+mYYbCZCfCFSbJL0BubXf+7IIzwGpN3fTwhTfeyIKdjim/HM
-         zSpglcbIOjRyWHBccdUctPLb1/x4vk8bwpbvSIIaVSe3FuovZlhDX5c5EOmjT62X7z
-         PNcd1lmo3U/hgtHtLZnjopNCJ8osmB6ssQVrxqhc=
-Date:   Sat, 4 May 2019 12:40:12 +0200
+        b=g2qAYqK93MmeEO5EtmmbYxkKej3oQNG4Xe6XPJD6vrQPt38T1svHdBKrBvdMiYWgD
+         AZ7qWDqABTJ6olUjiTR2iLAVWnkx5H2eC/KCt6WPfdYa51NsGiNAAeStPcWNLEDQJV
+         lDwxJTqazCCtkTaH5ybwPNJUh0FxQBUrP7ZHlU+A=
+Date:   Sat, 4 May 2019 12:42:51 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     "Bird, Timothy" <Tim.Bird@sony.com>,
-        Frank Rowand <frowand.list@gmail.com>,
+Cc:     Frank Rowand <frowand.list@gmail.com>,
         Kees Cook <keescook@google.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
@@ -42,6 +41,7 @@ Cc:     "Bird, Timothy" <Tim.Bird@sony.com>,
         linux-nvdimm <linux-nvdimm@lists.01.org>,
         linux-um@lists.infradead.org,
         Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
         Amir Goldstein <amir73il@gmail.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Dan Williams <dan.j.williams@intel.com>,
@@ -56,100 +56,68 @@ Cc:     "Bird, Timothy" <Tim.Bird@sony.com>,
         Richard Weinberger <richard@nod.at>,
         David Rientjes <rientjes@google.com>,
         Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: Re: [PATCH v2 16/17] kernel/sysctl-test: Add null pointer test for
- sysctl.c:proc_dointvec()
-Message-ID: <20190504104012.GA1478@kroah.com>
+        Felix Guo <felixguoxiuping@gmail.com>
+Subject: Re: [PATCH v2 12/17] kunit: tool: add Python wrappers for running
+ KUnit tests
+Message-ID: <20190504104251.GB1478@kroah.com>
 References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-17-brendanhiggins@google.com>
- <20190502110347.GE12416@kroah.com>
- <ECADFF3FD767C149AD96A924E7EA6EAF9770A3A0@USCULXMSG01.am.sony.com>
- <CAFd5g471Wawu6g14p0AO3aY8VPBKLA0mjHSdfR1qStFGzp3iGQ@mail.gmail.com>
- <20190503064241.GC20723@kroah.com>
- <CAFd5g44NrKM9WQCF1xW-BWpFNsC05UAS9jt1-S+vNRuBDZVsHQ@mail.gmail.com>
+ <20190501230126.229218-13-brendanhiggins@google.com>
+ <20190502110220.GD12416@kroah.com>
+ <CAFd5g47t=EdLKFCT=CnPkrM2z0nDVo24Gz4j0VxFOJbARP37Lg@mail.gmail.com>
+ <a49c5088-a821-210c-66de-f422536f5b01@gmail.com>
+ <CAFd5g44iWRchQKdJYtjRtPY6e-6e0eXpKXXsx5Ooi6sWE474KA@mail.gmail.com>
+ <1a5f3c44-9fa9-d423-66bf-45255a90c468@gmail.com>
+ <CAFd5g45RYm+zfdJXnyp2KZZH5ojfOzy++aq+4zBeE5VDu6WgEw@mail.gmail.com>
+ <052fa196-4ea9-8384-79b7-fe6bacc0ee82@gmail.com>
+ <CAFd5g47aY-CL+d7DfiyTidY4aAVY+eg1TM1UJ4nYqKSfHOi-0w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFd5g44NrKM9WQCF1xW-BWpFNsC05UAS9jt1-S+vNRuBDZVsHQ@mail.gmail.com>
+In-Reply-To: <CAFd5g47aY-CL+d7DfiyTidY4aAVY+eg1TM1UJ4nYqKSfHOi-0w@mail.gmail.com>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 03, 2019 at 04:41:10PM -0700, Brendan Higgins wrote:
-> > On Thu, May 02, 2019 at 11:45:43AM -0700, Brendan Higgins wrote:
-> > > On Thu, May 2, 2019 at 11:15 AM <Tim.Bird@sony.com> wrote:
-> > > >
-> > > >
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Greg KH
-> > > > >
-> > > > > On Wed, May 01, 2019 at 04:01:25PM -0700, Brendan Higgins wrote:
-> > > > > > From: Iurii Zaikin <yzaikin@google.com>
-> > > > > >
-> > > > > > KUnit tests for initialized data behavior of proc_dointvec that is
-> > > > > > explicitly checked in the code. Includes basic parsing tests including
-> > > > > > int min/max overflow.
-> > > > > >
-> > > > > > Signed-off-by: Iurii Zaikin <yzaikin@google.com>
-> > > > > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > > > > > ---
-> > > > > >  kernel/Makefile      |   2 +
-> > > > > >  kernel/sysctl-test.c | 292
-> > > > > +++++++++++++++++++++++++++++++++++++++++++
-> > > > > >  lib/Kconfig.debug    |   6 +
-> > > > > >  3 files changed, 300 insertions(+)
-> > > > > >  create mode 100644 kernel/sysctl-test.c
-> > > > > >
-> > > > > > diff --git a/kernel/Makefile b/kernel/Makefile
-> > > > > > index 6c57e78817dad..c81a8976b6a4b 100644
-> > > > > > --- a/kernel/Makefile
-> > > > > > +++ b/kernel/Makefile
-> > > > > > @@ -112,6 +112,8 @@ obj-$(CONFIG_HAS_IOMEM) += iomem.o
-> > > > > >  obj-$(CONFIG_ZONE_DEVICE) += memremap.o
-> > > > > >  obj-$(CONFIG_RSEQ) += rseq.o
-> > > > > >
-> > > > > > +obj-$(CONFIG_SYSCTL_KUNIT_TEST) += sysctl-test.o
-> > > > >
-> > > > > You are going to have to have a "standard" naming scheme for test
-> > > > > modules, are you going to recommend "foo-test" over "test-foo"?  If so,
-> > > > > that's fine, we should just be consistant and document it somewhere.
-> > > > >
-> > > > > Personally, I'd prefer "test-foo", but that's just me, naming is hard...
-> > > >
-> > > > My preference would be "test-foo" as well.  Just my 2 cents.
-> > >
-> > > I definitely agree we should be consistent. My personal bias
-> > > (unsurprisingly) is "foo-test," but this is just because that is the
-> > > convention I am used to in other projects I have worked on.
-> > >
-> > > On an unbiased note, we are currently almost evenly split between the
-> > > two conventions with *slight* preference for "foo-test": I ran the two
-> > > following grep commands on v5.1-rc7:
-> > >
-> > > grep -Hrn --exclude-dir="build" -e "config [a-zA-Z_0-9]\+_TEST$" | wc -l
-> > > grep -Hrn --exclude-dir="build" -e "config TEST_[a-zA-Z_0-9]\+" | wc -l
-> > >
-> > > "foo-test" has 36 occurrences.
-> > > "test-foo" has 33 occurrences.
-> > >
-> > > The things I am more concerned about is how this would affect file
-> > > naming. If we have a unit test for foo.c, I think foo_test.c is more
-> > > consistent with our namespacing conventions. The other thing, is if we
-> > > already have a Kconfig symbol called FOO_TEST (or TEST_FOO) what
-> > > should we name the KUnit test in this case? FOO_UNIT_TEST?
-> > > FOO_KUNIT_TEST, like I did above?
-> >
-> > Ok, I can live with "foo-test", as you are right, in a directory listing
-> > and config option, it makes more sense to add it as a suffix.
-> 
-> Cool, so just for future reference, if we already have a Kconfig
-> symbol called FOO_TEST (or TEST_FOO) what should we name the KUnit
-> test in this case? FOO_UNIT_TEST? FOO_KUNIT_TEST, like I did above?
+On Fri, May 03, 2019 at 04:14:49PM -0700, Brendan Higgins wrote:
+> In any case, it sounds like you and Greg are in agreement on the core
+> libraries generating the output in TAP13, so I won't argue that point
+> further.
 
-FOO_KUNIT_TEST is fine, I doubt that's going to come up very often.
+Great!
+
+> ## Analysis of using TAP13
+> 
+> One of my earlier concerns was that TAP13 is a bit over constrained
+> for what I would like to output from the KUnit core. It only allows
+> data to be output as either:
+>  - test number
+>  - ok/not ok with single line description
+>  - directive
+>  - diagnostics
+>  - YAML block
+> 
+> The test number must become before a set of ok/not ok lines, and does
+> not contain any additional information. One annoying thing about this
+> is it doesn't provide any kind of nesting or grouping.
+
+It should handle nesting just fine, I think we do that already today.
+
+> There is one ok/not ok line per test and it may have a short
+> description of the test immediately after 'ok' or 'not ok'; this is
+> problematic because it wants the first thing you say about a test to
+> be after you know whether it passes or not.
+
+Take a look at the output of our current tests, I think you might find
+it to be a bit more flexible than you think.
+
+Also, this isn't our standard, we picked it because we needed a standard
+that the tools of today already understand.  It might have issues and
+other problems, but we are not in the business of writing test output
+parsing tools, and we don't want to force everyone out there to write
+custom parsers.  We want them to be able to use the tools they already
+have so they can test the kernel, and to do so as easily as possible.
 
 thanks,
 
