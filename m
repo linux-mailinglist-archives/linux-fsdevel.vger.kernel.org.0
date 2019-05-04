@@ -2,90 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 672BC13880
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2019 11:46:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 907BC13943
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2019 12:40:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfEDJqM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 May 2019 05:46:12 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38968 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfEDJqM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 May 2019 05:46:12 -0400
-Received: by mail-wm1-f65.google.com with SMTP id n25so9333774wmk.4;
-        Sat, 04 May 2019 02:46:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=5YhmT25K8XX07nrGhSFEcxH6PFWKiVj8FEoiwNFPytU=;
-        b=BOp0Tvf7Djq5AHFQjNYGfcmQ5zwB8eIIbJ6au6gggaXOyKgZZKsmqX6gaHPUKEITHK
-         XwArTQhFI4UDc6+r5pQEFG2KezECELniZisoTrZ7h2GVcOOyqzGI3ROaPz5E6ZCWoJzT
-         KJG36AJhNGU3AKIiBU+SuISLxP9MyxNHffm0xa31aIRsWi0xqn1ZoqjdwALj7dm+0iCd
-         cfbmT0zU6+pPe9kwvVj4SeH0rquFN/veJeaBoqxux8UH0oHVt1QO/6P4JYmuXCbEc2ld
-         mlDuvdyJsnOis/IWybfpEqs99uPoKbooNn2Emsycm2UtaVdaViSwJNnKsbpKgTQCK3ay
-         wBaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5YhmT25K8XX07nrGhSFEcxH6PFWKiVj8FEoiwNFPytU=;
-        b=rrCk+5sl28NOWQ+EeOCLlk/fPnDGFOG4z4E99dtohToyyFW+hGa+xq3W6QL2H5arQ9
-         3eldbFvF2ZaSipo7fnCdT0lwcrYyMn1XtciCiJ0VG5IudHCrF/Gat+l2d40zAeM/ulFO
-         c4CjcGzx1KSw6+Zlb/08R7+awYl8BQbhImE3OzqN2ETAYwB5jhyu690QJxKUsEGuyMF8
-         YkL+9lLw1BIaHQEfksqqlwml5C/C3frl/3Iy8/lJnzkiHj5c6gZWODSwYDagpHwhUNRO
-         ZfpgFm2CB+pco2FCfUKDYeENhqxU96FRbfrlXD8RfD1XnwUZYfOrU4u41qtJ4ol07g2l
-         v7Pw==
-X-Gm-Message-State: APjAAAWlPKwMM/Dw1BMMzSxrnTGzLZXgvYa1Joo2+9gcd++lqhPfHO27
-        b+B+ZxTXnloKDQiEWNvJBUI=
-X-Google-Smtp-Source: APXvYqzct3O1AJZ7vm+dMw81PPmq/a2MsCbi0t6I+XUFcUPPyZsj/lTVOdYeeBbsEl89XxANsE8Law==
-X-Received: by 2002:a1c:cc10:: with SMTP id h16mr9856469wmb.39.1556963170471;
-        Sat, 04 May 2019 02:46:10 -0700 (PDT)
-Received: from localhost.localdomain (bzq-79-179-250-108.red.bezeqint.net. [79.179.250.108])
-        by smtp.gmail.com with ESMTPSA id o6sm7624806wre.60.2019.05.04.02.46.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 04 May 2019 02:46:09 -0700 (PDT)
-From:   Carmeli Tamir <carmeli.tamir@gmail.com>
-To:     carmeli.tamir@gmail.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] Changed unsigned param type to unsigned int
-Date:   Sat,  4 May 2019 05:45:49 -0400
-Message-Id: <20190504094549.10021-3-carmeli.tamir@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190504094549.10021-1-carmeli.tamir@gmail.com>
-References: <20190504094549.10021-1-carmeli.tamir@gmail.com>
+        id S1727265AbfEDKkQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 May 2019 06:40:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44018 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725981AbfEDKkP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 4 May 2019 06:40:15 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21B9B206DF;
+        Sat,  4 May 2019 10:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556966414;
+        bh=ZtaXllWS1pW5iu83jiogyXoGhA2z0cHfZWqL2iOl0tk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RMn5lzZLL3HFn059n+mYYbCZCfCFSbJL0BubXf+7IIzwGpN3fTwhTfeyIKdjim/HM
+         zSpglcbIOjRyWHBccdUctPLb1/x4vk8bwpbvSIIaVSe3FuovZlhDX5c5EOmjT62X7z
+         PNcd1lmo3U/hgtHtLZnjopNCJ8osmB6ssQVrxqhc=
+Date:   Sat, 4 May 2019 12:40:12 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     "Bird, Timothy" <Tim.Bird@sony.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah <shuah@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
+        Iurii Zaikin <yzaikin@google.com>
+Subject: Re: [PATCH v2 16/17] kernel/sysctl-test: Add null pointer test for
+ sysctl.c:proc_dointvec()
+Message-ID: <20190504104012.GA1478@kroah.com>
+References: <20190501230126.229218-1-brendanhiggins@google.com>
+ <20190501230126.229218-17-brendanhiggins@google.com>
+ <20190502110347.GE12416@kroah.com>
+ <ECADFF3FD767C149AD96A924E7EA6EAF9770A3A0@USCULXMSG01.am.sony.com>
+ <CAFd5g471Wawu6g14p0AO3aY8VPBKLA0mjHSdfR1qStFGzp3iGQ@mail.gmail.com>
+ <20190503064241.GC20723@kroah.com>
+ <CAFd5g44NrKM9WQCF1xW-BWpFNsC05UAS9jt1-S+vNRuBDZVsHQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFd5g44NrKM9WQCF1xW-BWpFNsC05UAS9jt1-S+vNRuBDZVsHQ@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Tamir <carmeli.tamir@gmail.com>
+On Fri, May 03, 2019 at 04:41:10PM -0700, Brendan Higgins wrote:
+> > On Thu, May 02, 2019 at 11:45:43AM -0700, Brendan Higgins wrote:
+> > > On Thu, May 2, 2019 at 11:15 AM <Tim.Bird@sony.com> wrote:
+> > > >
+> > > >
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: Greg KH
+> > > > >
+> > > > > On Wed, May 01, 2019 at 04:01:25PM -0700, Brendan Higgins wrote:
+> > > > > > From: Iurii Zaikin <yzaikin@google.com>
+> > > > > >
+> > > > > > KUnit tests for initialized data behavior of proc_dointvec that is
+> > > > > > explicitly checked in the code. Includes basic parsing tests including
+> > > > > > int min/max overflow.
+> > > > > >
+> > > > > > Signed-off-by: Iurii Zaikin <yzaikin@google.com>
+> > > > > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > > > > > ---
+> > > > > >  kernel/Makefile      |   2 +
+> > > > > >  kernel/sysctl-test.c | 292
+> > > > > +++++++++++++++++++++++++++++++++++++++++++
+> > > > > >  lib/Kconfig.debug    |   6 +
+> > > > > >  3 files changed, 300 insertions(+)
+> > > > > >  create mode 100644 kernel/sysctl-test.c
+> > > > > >
+> > > > > > diff --git a/kernel/Makefile b/kernel/Makefile
+> > > > > > index 6c57e78817dad..c81a8976b6a4b 100644
+> > > > > > --- a/kernel/Makefile
+> > > > > > +++ b/kernel/Makefile
+> > > > > > @@ -112,6 +112,8 @@ obj-$(CONFIG_HAS_IOMEM) += iomem.o
+> > > > > >  obj-$(CONFIG_ZONE_DEVICE) += memremap.o
+> > > > > >  obj-$(CONFIG_RSEQ) += rseq.o
+> > > > > >
+> > > > > > +obj-$(CONFIG_SYSCTL_KUNIT_TEST) += sysctl-test.o
+> > > > >
+> > > > > You are going to have to have a "standard" naming scheme for test
+> > > > > modules, are you going to recommend "foo-test" over "test-foo"?  If so,
+> > > > > that's fine, we should just be consistant and document it somewhere.
+> > > > >
+> > > > > Personally, I'd prefer "test-foo", but that's just me, naming is hard...
+> > > >
+> > > > My preference would be "test-foo" as well.  Just my 2 cents.
+> > >
+> > > I definitely agree we should be consistent. My personal bias
+> > > (unsurprisingly) is "foo-test," but this is just because that is the
+> > > convention I am used to in other projects I have worked on.
+> > >
+> > > On an unbiased note, we are currently almost evenly split between the
+> > > two conventions with *slight* preference for "foo-test": I ran the two
+> > > following grep commands on v5.1-rc7:
+> > >
+> > > grep -Hrn --exclude-dir="build" -e "config [a-zA-Z_0-9]\+_TEST$" | wc -l
+> > > grep -Hrn --exclude-dir="build" -e "config TEST_[a-zA-Z_0-9]\+" | wc -l
+> > >
+> > > "foo-test" has 36 occurrences.
+> > > "test-foo" has 33 occurrences.
+> > >
+> > > The things I am more concerned about is how this would affect file
+> > > naming. If we have a unit test for foo.c, I think foo_test.c is more
+> > > consistent with our namespacing conventions. The other thing, is if we
+> > > already have a Kconfig symbol called FOO_TEST (or TEST_FOO) what
+> > > should we name the KUnit test in this case? FOO_UNIT_TEST?
+> > > FOO_KUNIT_TEST, like I did above?
+> >
+> > Ok, I can live with "foo-test", as you are right, in a directory listing
+> > and config option, it makes more sense to add it as a suffix.
+> 
+> Cool, so just for future reference, if we already have a Kconfig
+> symbol called FOO_TEST (or TEST_FOO) what should we name the KUnit
+> test in this case? FOO_UNIT_TEST? FOO_KUNIT_TEST, like I did above?
 
-Fixed a checkpatch warning for usage of unsigned type.
-Submitted as different patch in the series since it's not related
-to the change, just wanted to fix checkpatch warnings from it.
+FOO_KUNIT_TEST is fine, I doubt that's going to come up very often.
 
-Signed-off-by: Carmeli Tamir <carmeli.tamir@gmail.com>
----
- fs/filesystems.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+thanks,
 
-diff --git a/fs/filesystems.c b/fs/filesystems.c
-index f12b98f2f079..561fd7787822 100644
---- a/fs/filesystems.c
-+++ b/fs/filesystems.c
-@@ -46,7 +46,8 @@ void put_filesystem(struct file_system_type *fs)
- 	module_put(fs->owner);
- }
- 
--static struct file_system_type *find_filesystem(const char *name, unsigned len)
-+static struct file_system_type *find_filesystem(const char *name,
-+		unsigned int len)
- {
- 	struct file_system_type *p;
- 
--- 
-2.19.1
-
+greg k-h
