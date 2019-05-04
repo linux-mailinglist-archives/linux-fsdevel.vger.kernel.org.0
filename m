@@ -2,63 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90DE51373D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2019 06:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73A961387B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2019 11:42:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725852AbfEDEKs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 May 2019 00:10:48 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55786 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbfEDEKs (ORCPT
+        id S1726520AbfEDJm2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 May 2019 05:42:28 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39754 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfEDJm2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 May 2019 00:10:48 -0400
-Received: from localhost (unknown [75.104.87.19])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0F1A014D84551;
-        Fri,  3 May 2019 21:10:29 -0700 (PDT)
-Date:   Sat, 04 May 2019 00:10:25 -0400 (EDT)
-Message-Id: <20190504.001025.1191902881190952783.davem@davemloft.net>
-To:     wenbin.zeng@gmail.com
-Cc:     viro@zeniv.linux.org.uk, bfields@fieldses.org, jlayton@kernel.org,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        wenbinzeng@tencent.com, dsahern@gmail.com,
-        nicolas.dichtel@6wind.com, willy@infradead.org,
-        edumazet@google.com, jakub.kicinski@netronome.com,
-        tyhicks@canonical.com, chuck.lever@oracle.com, neilb@suse.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 2/3] netns: add netns_evict into netns_operations
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1556692945-3996-3-git-send-email-wenbinzeng@tencent.com>
-References: <1556692945-3996-1-git-send-email-wenbinzeng@tencent.com>
-        <1556692945-3996-3-git-send-email-wenbinzeng@tencent.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 03 May 2019 21:10:47 -0700 (PDT)
+        Sat, 4 May 2019 05:42:28 -0400
+Received: by mail-wm1-f67.google.com with SMTP id n25so9326445wmk.4;
+        Sat, 04 May 2019 02:42:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=EYUTX8c297XneKoeSHCwPD3Tbzv8GCxiVDcwaABHHH4=;
+        b=HmcM6CTgTZAbBAmYwuAGcS/05xw/rSCxFXC12KWuf4NUUdypt6THfzKgreNqDhD1Dd
+         0Idyk/2SHue0BR3Y/vxlyNq4o+frhO9UoV7YilTv1EsMbAsmPBLQbvHgsFqAhBIFjhM4
+         lLjnZtnHac9zCq/8fZW5+iRRMGEkbYStYuDCI1GpDAUrnNpI6VnCJZWtgsDYE3uRj1bf
+         +uXS45q6u+2PKYH5GrzjdZYF2m+O4CDPK8WEK7WhHMKdDGY0rNhDdWqWP8WZbuMYd9Ki
+         aF0dh4H4BHdZDwLHzJfjuw5gvJ6yX29zhenQkYArtsGAzF/BAO7G7LGAmimbsNGjnx7L
+         Wb/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=EYUTX8c297XneKoeSHCwPD3Tbzv8GCxiVDcwaABHHH4=;
+        b=PeNq866QxMpTcOUlMVqYNI1q1y+xwGPkug1BUIAwYAGI/owpQXzEOHR6mqgX8/btzj
+         NR7gCaHol5PoHuF4yMvz6pGDc+/KtjLX/NctqymXh7J2x5TkqlDGrVgch9EK5MmRZLCH
+         RDg44jZiYGpkVg6ToFP1juGXtU9n/ieiDeBNxchB8Tdcq44Nh3mdW3hMge58L2gh82q2
+         LxMrrxjQ5wjIgGApyU3ILVBEDs/ah62+LGzTN77DlBzlciaSU1xdZg3Mmu82gM6CCueg
+         sXWLx+YzZ/IPnAWGLfCk5SaaDiG4MITmSIFVcxpAdHoABg6kdY4c1T6aG56O3CsxuMEz
+         vV6w==
+X-Gm-Message-State: APjAAAVrn8/TV53iPhDztHCh9+k5F/al841kQdvLbhmZ/dFfS8wP9Q7I
+        TCW5in597sQw2VR0smKsaM0=
+X-Google-Smtp-Source: APXvYqx/MBWyVTdZfn6ssAEw1tcYL0GtpLZW61frOtGJytrBprwvipLWMVDs4u6Ro0N4zgCjbSmFPQ==
+X-Received: by 2002:a05:600c:247:: with SMTP id 7mr9966114wmj.31.1556962946176;
+        Sat, 04 May 2019 02:42:26 -0700 (PDT)
+Received: from localhost.localdomain (bzq-79-179-250-108.red.bezeqint.net. [79.179.250.108])
+        by smtp.gmail.com with ESMTPSA id b10sm8387993wme.25.2019.05.04.02.42.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 04 May 2019 02:42:25 -0700 (PDT)
+From:   Carmeli Tamir <carmeli.tamir@gmail.com>
+To:     carmeli.tamir@gmail.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Refactor file_systems to use the kernel's list
+Date:   Sat,  4 May 2019 05:42:12 -0400
+Message-Id: <20190504094212.9945-4-carmeli.tamir@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190504094212.9945-1-carmeli.tamir@gmail.com>
+References: <20190504094212.9945-1-carmeli.tamir@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Wenbin Zeng <wenbin.zeng@gmail.com>
-Date: Wed,  1 May 2019 14:42:24 +0800
+struct file_system_type defines a next field which is used to link the file_system_type structs registered to the kernel. This patch set replaces the propietry linked list implementation with the kernel's list.h.
 
-> The newly added netns_evict() shall be called when the netns inode being
-> evicted. It provides another path to release netns refcounts, previously
-> netns_put() is the only choice, but it is not able to release all netns
-> refcount, for example, a rpc client holds two netns refcounts, these
-> refcounts are supposed to be released when the rpc client is freed, but
-> the code to free rpc client is normally triggered by put() callback only
-> when netns refcount gets to 0, specifically:
->     refcount=0 -> cleanup_net() -> ops_exit_list -> free rpc client
-> But netns refcount will never get to 0 before rpc client gets freed, to
-> break the deadlock, the code to free rpc client can be put into the newly
-> added netns_evict.
-> 
-> Signed-off-by: Wenbin Zeng <wenbinzeng@tencent.com>
+This change makes clearer interfaces and code (e.g. the change in register_filesystem and find_filesystem), and eliminates unnecessary usage of * and & operators.
 
-Acked-by: David S. Miller <davem@davemloft.net>
+Tested by comparing the lists in /proc/filesystems.
+
+Carmeli Tamir (2):
+  Use list.h instead of file_system_type next
+  Changed unsigned param type to unsigned int
+
+ fs/filesystems.c   | 69 ++++++++++++++++++++++++----------------------
+ include/linux/fs.h |  2 +-
+ 2 files changed, 37 insertions(+), 34 deletions(-)
+
+-- 
+2.19.1
+
