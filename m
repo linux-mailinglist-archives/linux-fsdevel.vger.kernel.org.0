@@ -2,160 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0DE613646
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2019 01:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D76DA1367F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 May 2019 02:18:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfECXlY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 May 2019 19:41:24 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:36366 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbfECXlX (ORCPT
+        id S1726521AbfEDASI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 May 2019 20:18:08 -0400
+Received: from newman.cs.utexas.edu ([128.83.139.110]:46276 "EHLO
+        newman.cs.utexas.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726059AbfEDASI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 May 2019 19:41:23 -0400
-Received: by mail-ot1-f68.google.com with SMTP id b18so6807837otq.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 May 2019 16:41:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mKALN1OkcwtQhcysb+FWH3t2vFKNjrdMKVQt2ijO0Po=;
-        b=uHwVMflHMaQY3whJ1EE4nVizGRxOy/tr5WOjeZAzMUNneEi1VOxLR7ILboGXaDspKX
-         EZdcTnWDLsjH5Xuv6Dpbla+mLd+ZOej6UTDsdicbg1f2NGRfNWvT53QLlViJ91MtO47Y
-         +NMNZSv0/KOCCjGp/8Z6JcV8oAgctk1uHe5BjikYU+meECnNZzF0Xtb+m6Lql1RyQZ+f
-         6pOCAlUul4FDKtOsuwcFiCf6Z4SU4Q97jpl1Ljx2pJqKs6Ok7cLSU5UcjCBf989disYo
-         L1k/caWEqmSpv8hm8mIrQVDY6SOrZ43BcimXmBjT67ScyO4HOEunsbiGdbsaE+Lu0zj7
-         pGEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mKALN1OkcwtQhcysb+FWH3t2vFKNjrdMKVQt2ijO0Po=;
-        b=GUCUbRmBjlDkWkO2x10SSirnCPVbox6+VGhQE7mbTlR6hTD/Zg+tcBvJNnvojCp7LK
-         o12hjZAsrq/NpFfd3klj06T0fcuXxKcaZUD2Ha6dNN3jITNL4pzYZTjP8WHPQ9gdvDXt
-         lM8Vny5nBmeKu0gtdQ4+ozdtw+KnAxnZCxZsESmscEi9Nij3mdgSnBqFhJX+xVj8FUrx
-         PX+GWrpScHGTCzx+kvn7IU/Ux0/OCET+3B1ZoWaP54fXjbd1tB6hF3Kpi8HGGsye60zc
-         bundTfD06cnYRYhVVEZ4qnYgmaxqmqD3AUY82v2uvvICpwSUOtNOypKiMcVoW0zgXiZP
-         JZIg==
-X-Gm-Message-State: APjAAAX+QTL+YckCfRVPgc6h+astqS0hZVp68RTdmyFweM/Z+gC6vHCq
-        svKAonnvZ9a/AHg8cSGA4/HHOWNteFQDf60VMIcCgA==
-X-Google-Smtp-Source: APXvYqzBloPRnX50VrJGlf0zwqZMx4kE8jlcjkF1A4MmAb/1CmwV6C22Krcs7y2A5uFCH7cqu5h7HYnPPCqLvVBMptw=
-X-Received: by 2002:a9d:5cc3:: with SMTP id r3mr8335667oti.338.1556926881968;
- Fri, 03 May 2019 16:41:21 -0700 (PDT)
+        Fri, 3 May 2019 20:18:08 -0400
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+        (authenticated bits=0)
+        by newman.cs.utexas.edu (8.14.4/8.14.4/Debian-4.1ubuntu1.1) with ESMTP id x440I6h5015864
+        (version=TLSv1/SSLv3 cipher=AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Fri, 3 May 2019 19:18:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.utexas.edu;
+        s=default; t=1556929086;
+        bh=do6FZFsLfUaYoh6r1GPjrzM/556ikEAls0W/lvuNMUk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=G9YRK92bzfs8Fs6midBc1o4HoyYCfivhIAYB9iMd4cDpoJtIGC8+smEe7FZlGuK38
+         mCOTXnPHM7ipVKocuUMyAEk2tNoI4PUgE6gmvaL+79iyjzFUM1yvNH0e7PTzvWSUsV
+         g+6iRWy2EJ3fypJK+HLURXoWgx2oHLDRy4om09aY=
+Received: by mail-ot1-f42.google.com with SMTP id g24so6870513otq.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 May 2019 17:18:06 -0700 (PDT)
+X-Gm-Message-State: APjAAAWXHcIgpiGl0fguH2Q5EUyNBdRNH4KaZ8Us8j4TvVrfRj++NBl+
+        hms+84Sl6q/1c3LWZlAsqolmQIRwa8e8H8mSq10mgA==
+X-Google-Smtp-Source: APXvYqxK7frUfo0lci16jAHaiZRByf9iF2EdUeV+9q678lczfj7FoJzU9lVPCqsTq4lsVZpxwQ9Y//w0rWeQdQvMoBY=
+X-Received: by 2002:a05:6830:158f:: with SMTP id i15mr1626333otr.14.1556929085917;
+ Fri, 03 May 2019 17:18:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-17-brendanhiggins@google.com> <20190502110347.GE12416@kroah.com>
- <ECADFF3FD767C149AD96A924E7EA6EAF9770A3A0@USCULXMSG01.am.sony.com>
- <CAFd5g471Wawu6g14p0AO3aY8VPBKLA0mjHSdfR1qStFGzp3iGQ@mail.gmail.com> <20190503064241.GC20723@kroah.com>
-In-Reply-To: <20190503064241.GC20723@kroah.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Fri, 3 May 2019 16:41:10 -0700
-Message-ID: <CAFd5g44NrKM9WQCF1xW-BWpFNsC05UAS9jt1-S+vNRuBDZVsHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 16/17] kernel/sysctl-test: Add null pointer test for sysctl.c:proc_dointvec()
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "Bird, Timothy" <Tim.Bird@sony.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        shuah <shuah@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
-        Iurii Zaikin <yzaikin@google.com>
+References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
+ <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
+ <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
+ <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com>
+ <20190503023043.GB23724@mit.edu> <CAHWVdUV115x8spvAd3p-6iDRE--yZULbF6DDc+Hapt2s+pJgbA@mail.gmail.com>
+ <20190503094543.GD23724@mit.edu>
+In-Reply-To: <20190503094543.GD23724@mit.edu>
+From:   Vijay Chidambaram <vijay@cs.utexas.edu>
+Date:   Fri, 3 May 2019 19:17:54 -0500
+X-Gmail-Original-Message-ID: <CAHWVdUWrKigH8g-Jhi404y+XvuhXAx4b+PBW8_hLF4110etSLg@mail.gmail.com>
+Message-ID: <CAHWVdUWrKigH8g-Jhi404y+XvuhXAx4b+PBW8_hLF4110etSLg@mail.gmail.com>
+Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties contract
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        lsf-pc@lists.linux-foundation.org,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jayashree Mohan <jaya@cs.utexas.edu>,
+        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
+        lwn@lwn.net
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.3.9 (newman.cs.utexas.edu [128.83.139.110]); Fri, 03 May 2019 19:18:06 -0500 (CDT)
+X-Virus-Scanned: clamav-milter 0.98.7 at newman
+X-Virus-Status: Clean
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Thu, May 02, 2019 at 11:45:43AM -0700, Brendan Higgins wrote:
-> > On Thu, May 2, 2019 at 11:15 AM <Tim.Bird@sony.com> wrote:
-> > >
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Greg KH
-> > > >
-> > > > On Wed, May 01, 2019 at 04:01:25PM -0700, Brendan Higgins wrote:
-> > > > > From: Iurii Zaikin <yzaikin@google.com>
-> > > > >
-> > > > > KUnit tests for initialized data behavior of proc_dointvec that is
-> > > > > explicitly checked in the code. Includes basic parsing tests including
-> > > > > int min/max overflow.
-> > > > >
-> > > > > Signed-off-by: Iurii Zaikin <yzaikin@google.com>
-> > > > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > > > > ---
-> > > > >  kernel/Makefile      |   2 +
-> > > > >  kernel/sysctl-test.c | 292
-> > > > +++++++++++++++++++++++++++++++++++++++++++
-> > > > >  lib/Kconfig.debug    |   6 +
-> > > > >  3 files changed, 300 insertions(+)
-> > > > >  create mode 100644 kernel/sysctl-test.c
-> > > > >
-> > > > > diff --git a/kernel/Makefile b/kernel/Makefile
-> > > > > index 6c57e78817dad..c81a8976b6a4b 100644
-> > > > > --- a/kernel/Makefile
-> > > > > +++ b/kernel/Makefile
-> > > > > @@ -112,6 +112,8 @@ obj-$(CONFIG_HAS_IOMEM) += iomem.o
-> > > > >  obj-$(CONFIG_ZONE_DEVICE) += memremap.o
-> > > > >  obj-$(CONFIG_RSEQ) += rseq.o
-> > > > >
-> > > > > +obj-$(CONFIG_SYSCTL_KUNIT_TEST) += sysctl-test.o
-> > > >
-> > > > You are going to have to have a "standard" naming scheme for test
-> > > > modules, are you going to recommend "foo-test" over "test-foo"?  If so,
-> > > > that's fine, we should just be consistant and document it somewhere.
-> > > >
-> > > > Personally, I'd prefer "test-foo", but that's just me, naming is hard...
-> > >
-> > > My preference would be "test-foo" as well.  Just my 2 cents.
-> >
-> > I definitely agree we should be consistent. My personal bias
-> > (unsurprisingly) is "foo-test," but this is just because that is the
-> > convention I am used to in other projects I have worked on.
-> >
-> > On an unbiased note, we are currently almost evenly split between the
-> > two conventions with *slight* preference for "foo-test": I ran the two
-> > following grep commands on v5.1-rc7:
-> >
-> > grep -Hrn --exclude-dir="build" -e "config [a-zA-Z_0-9]\+_TEST$" | wc -l
-> > grep -Hrn --exclude-dir="build" -e "config TEST_[a-zA-Z_0-9]\+" | wc -l
-> >
-> > "foo-test" has 36 occurrences.
-> > "test-foo" has 33 occurrences.
-> >
-> > The things I am more concerned about is how this would affect file
-> > naming. If we have a unit test for foo.c, I think foo_test.c is more
-> > consistent with our namespacing conventions. The other thing, is if we
-> > already have a Kconfig symbol called FOO_TEST (or TEST_FOO) what
-> > should we name the KUnit test in this case? FOO_UNIT_TEST?
-> > FOO_KUNIT_TEST, like I did above?
+> As documented, the draft of the rules *I* saw specifically said that a
+> fsync() to inode B would guarantee that metadata changes for inode A,
+> which were made before the changes to inode B, would be persisted to
+> disk since the metadata changes for B happened after the changes to
+> inode A.  It used the fsync(2) *explicitly* as an example for how
+> ordering of unrelated files could be guaranteed.  And this would
+> invalidate Park and Shin's incremental journal for fsync.
 >
-> Ok, I can live with "foo-test", as you are right, in a directory listing
-> and config option, it makes more sense to add it as a suffix.
+> If the guarantees are when fsync(2) is *not* being used, sure, then
+> the SOMC model is naturally what would happen with most common file
+> system.  But then fsync(2) needs to appear nowhere in the crash
+> consistency model description, and that is not the case today.
+>
 
-Cool, so just for future reference, if we already have a Kconfig
-symbol called FOO_TEST (or TEST_FOO) what should we name the KUnit
-test in this case? FOO_UNIT_TEST? FOO_KUNIT_TEST, like I did above?
+I think there might be a mis-understanding about the example
+(reproduced below) and about SOMC. The relationship that matters is
+not whether X happens before Y. The relationship between X and Y is
+that they are in the same directory, so fsync(new file X) implies
+fsync(X's parent directory) which contains Y.  In the example, X is
+A/foo and Y is A/bar. For truly un-related files such as A/foo and
+B/bar, SOMC does indeed allow fsync(A/foo) to not persist B/bar.
+
+touch A/foo
+echo =E2=80=9Chello=E2=80=9D >  A/foo
+sync
+mv A/foo A/bar
+echo =E2=80=9Cworld=E2=80=9D > A/foo
+fsync A/foo
+CRASH
+
+We could rewrite the example to not include fsync, but this example
+comes directly from xfstest generic/342, so we would like to preserve
+it.
+
+But in any case, I think this is beside the point. If ext4 does not
+want to provide SOMC-like behavior, I think that is totally
+reasonable. The documentation does *not* say all file systems should
+provide SOMC. As long as the documentation does not say ext4 provides
+SOMC-like behavior, are you okay with the rest of the documentation
+effort? If so, we can send out v3 with these changes.
+
+Please forgive my continued pushing on this:  I would like to see more
+documentation about these file-system aspects in the kernel. XFS and
+btrfs developers approved of the effort, so there is some support for
+this. We have already put in some work on the documentation, so I'd
+like to see it finished up and merged. (Sorry for hijacking/forking
+the thread Amir!)
