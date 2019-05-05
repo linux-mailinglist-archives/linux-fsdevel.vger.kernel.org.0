@@ -2,107 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBF53141D7
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2019 20:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28BFC14237
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 May 2019 22:07:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfEES00 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 May 2019 14:26:26 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:36669 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbfEES00 (ORCPT
+        id S1727767AbfEEUHh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 May 2019 16:07:37 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39456 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbfEEUHg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 May 2019 14:26:26 -0400
-Received: by mail-yw1-f68.google.com with SMTP id q185so8718391ywe.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 May 2019 11:26:25 -0700 (PDT)
+        Sun, 5 May 2019 16:07:36 -0400
+Received: by mail-wm1-f67.google.com with SMTP id n25so12678715wmk.4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 May 2019 13:07:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4/yZ8vxVRHr/ebEgX80KHhSm47yf9wQnIHda3hAE+RA=;
-        b=pSgjwBvk3z5l5uZklgdwK7WVW8vYGN+5jgWosCIUtq9ojoBEbi+p4ZTkABsS1rryUm
-         s/5rVZXDBfIf24peoU/Xx6QM+iIbRf3jwW0sYvD9viJlq4NiMCjwTbOqEe8mT4KorWbr
-         ZHDfNSmgl1+AbVxN2Wz6CzwYIMY1pH16bpDkHNOQm0CQHFo3avv+7EyL/4/Tppm9warb
-         CryeFiXFgwAeO2C6CNLhww87vqNx+l7qjmwnYDmGCx29LHrR9e0Zsw98GngQtE3sMd+m
-         goUFpBOIhoQ1rpQ0TKZkakOIcvxPPZpbsNjEIwl3ezjUdN7HbCeclxIQaHdQhoOU3ves
-         +DqA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=QqxibxNMmfPfD5PyZl52O7idiSeu/yeuNm0c0sVJouM=;
+        b=l8OuHSr18TVE/h8E65gCenp+1TnterovA+qrnsaQT8/bRj69kG+liWSIZwKNZyHZjt
+         S/vSikBAmii0hhd6E8KEcZapvqZ8OcNMaBZ1RHs/SflG9kGWbXBpuSBjLG5kL6fnqog2
+         hsasJTrZmbPkRt2RwCi8Pyagku1LhN84EaGegUoJQrVa1EmHgpSYVBvi0+ksx8Wy9wdW
+         LZVgEEwR+ow+KosswR6s8Ok4YUv9Nijcutw89L9akhB5oQb9RCKiDnTfPZfo9NCZaU09
+         Ker2bbAvdt6uDdoHTxtXV0lfeXDtT3LfBPF+KdL4ph63oLaI2dZ1jDraqMX0DIcxm2X/
+         1AFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4/yZ8vxVRHr/ebEgX80KHhSm47yf9wQnIHda3hAE+RA=;
-        b=GHVSYQsFb5sCztkATWEdHejkcYcguA+x6JdVtHwP+GR+1B0n9AVs5kA7OEf/85w63S
-         +9adHV6Vtn6fLkx5tVQ1ojZGrqfMDg+KKu3TGMhEmGMWwPQSBqI81boyL5UYdUEM/nxs
-         Ca3IvOAnTzldQnn/xgaDWfwHKeQ33O/CLqpQsrmunlg7Y1xJfvAhgHuvmNXIG2TET48k
-         p8L+oFZeEvjYV++CxmznkIr0Wu5Lf0O23HIC7bogm0+jEBeo3qsz3ovu4qlUc5oNw12/
-         +dcIb2EVvtxWS0ZevZBZYBiaC9zg4XNFdnMd1b5GI3eKF0TDrCOba0I+jzce0cZeK4J0
-         dkGg==
-X-Gm-Message-State: APjAAAWQeS/iV5NjyAXeOLcMk4WWgWvqvX6ZR7KTNRCmxbiBiUQdyjrD
-        LI7veV5/HqYaUkPxD1JuMVP7wBnMvIv8zU4gcQQ=
-X-Google-Smtp-Source: APXvYqylPfXvPrgaCJnZp9ZwOu9DtS+z+XdCLbgr4JitRzHaSx1wqex1/S4xaup0fKPCmcVbE6TJLXqBNpF1luR3HVM=
-X-Received: by 2002:a0d:ff82:: with SMTP id p124mr15836954ywf.409.1557080785290;
- Sun, 05 May 2019 11:26:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190505091549.1934-1-amir73il@gmail.com> <201905060021.I3fgRl4C%lkp@intel.com>
-In-Reply-To: <201905060021.I3fgRl4C%lkp@intel.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=QqxibxNMmfPfD5PyZl52O7idiSeu/yeuNm0c0sVJouM=;
+        b=Vurc7SHDb17LNlJ3CdW4aAPaK/9Nw/nnREkbHuIPcXjFf/z380wa31W2YkfF18X2V+
+         VIqxRlYYzzDlUcTlPn83zczaP3X3Bo2NK9m5dCmPzxq1OYly12IGnO0xCeBJFbgLZ+GE
+         KlT6WdmXvjzfyuPYFP+DJNjUpHvvniRrZ3dZCkT6NAl6t7eq3O1a+I0tg7LB6fkYCCWZ
+         WIdUNkotUTncn5WCnhtM3g4HP0K8RLJ9DN8nGUcJBmHPOI2cyQxQjDLVKR9PMttZxJGG
+         fZD2BCcHBfLLCaPF4eJxvVWkRxf4e/YcrVmVwAvBoErts+za5DL+a8SKJfru5GS5yToU
+         F8pg==
+X-Gm-Message-State: APjAAAURKip2AGMgnUiFnenuwojvfr7Bzd8rDl0egLx6YPhpi+dVOjVh
+        bFwfDkVfij3cSGxtP5oGUKU=
+X-Google-Smtp-Source: APXvYqxOtb9tClI3BMY9EiOHlbxbn/rUhYSYhpuMcigusk+ypcpbilXLx1dJOXbHqDCud385G3UtyA==
+X-Received: by 2002:a1c:1f92:: with SMTP id f140mr11566460wmf.132.1557086854408;
+        Sun, 05 May 2019 13:07:34 -0700 (PDT)
+Received: from localhost.localdomain ([5.102.238.208])
+        by smtp.gmail.com with ESMTPSA id n17sm6833711wrw.77.2019.05.05.13.07.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 05 May 2019 13:07:33 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 5 May 2019 21:26:14 +0300
-Message-ID: <CAOQ4uxgde7UeFRkD13CHYX2g3SyKY92zX8Tt_wSShkNd9QPYOA@mail.gmail.com>
-Subject: Re: [PATCH] fsnotify: fix unlink performance regression
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, Jan Kara <jack@suse.cz>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+To:     Jan Kara <jack@suse.cz>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKP <lkp@01.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel@vger.kernel.org, LKP <lkp@01.org>
+Subject: [PATCH v2] fsnotify: fix unlink performance regression
+Date:   Sun,  5 May 2019 23:07:28 +0300
+Message-Id: <20190505200728.5892-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <CAOQ4uxgde7UeFRkD13CHYX2g3SyKY92zX8Tt_wSShkNd9QPYOA@mail.gmail.com>
+References: <CAOQ4uxgde7UeFRkD13CHYX2g3SyKY92zX8Tt_wSShkNd9QPYOA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 5, 2019 at 7:34 PM kbuild test robot <lkp@intel.com> wrote:
->
-> Hi Amir,
->
-> I love your patch! Yet something to improve:
->
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v5.1-rc7 next-20190503]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Amir-Goldstein/fsnotify-fix-unlink-performance-regression/20190505-233115
-> config: riscv-tinyconfig (attached as .config)
-> compiler: riscv64-linux-gcc (GCC) 8.1.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=8.1.0 make.cross ARCH=riscv
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
->
-> All errors (new ones prefixed by >>):
->
->    In file included from fs///attr.c:15:
->    include/linux/fsnotify.h: In function 'fsnotify_nameremove':
-> >> include/linux/fsnotify.h:179:23: error: 'struct inode' has no member named 'i_fsnotify_mask'
->      if (!(d_inode(parent)->i_fsnotify_mask & FS_DELETE) &&
->                           ^~
-> >> include/linux/fsnotify.h:180:20: error: 'struct super_block' has no member named 's_fsnotify_mask'
->          !(dentry->d_sb->s_fsnotify_mask & FS_DELETE))
->                        ^~
->
+__fsnotify_parent() has an optimization in place to avoid unneeded
+take_dentry_name_snapshot().  When fsnotify_nameremove() was changed
+not to call __fsnotify_parent(), we left out the optimization.
+Kernel test robot reported a 5% performance regression in concurrent
+unlink() workload.
 
-Crap! forgot these wrappers are not NOOPed without CONFIG_FSNOTIFY.
-It is so annoying to fix bugs in code that should not exist.
+Modify __fsnotify_parent() so that it can be called also to report
+directory modififcation events and use it from fsnotify_nameremove().
 
-In d_delete() at this point, dentry is either negative or inode->i_nlink
-which accounts for this name should be decremented.
-If d_move() was possible on this dentry, bad things would happen.
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Link: https://lore.kernel.org/lkml/20190505062153.GG29809@shao2-debian/
+Link: https://lore.kernel.org/linux-fsdevel/20190104090357.GD22409@quack2.suse.cz/
+Fixes: 5f02a8776384 ("fsnotify: annotate directory entry modification events")
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-I really wish I could just drop this take_dentry_name_snapshot()
-and leave the WARN_ON() I suggested instead...
-For now will just send an unbroken patch.
+Jan,
+
+A nicer approach reusing __fsnotify_parent() instead of copying code
+from it.
+
+This version does not apply cleanly to Al's for-next branch (there are
+some fsnotify changes in work.dcache). The conflict is trivial and
+resolved on my fsnotify branch [1].
 
 Thanks,
 Amir.
+
+Changes since v1:
+- Fix build without CONFIG_FSNOTIFY
+- Use __fsnotify_parent() for reporting FS_DELETE
+
+[1] https://github.com/amir73il/linux/commits/fsnotify
+
+ fs/notify/fsnotify.c     | 22 +++++++++++-----------
+ include/linux/fsnotify.h | 15 +++------------
+ 2 files changed, 14 insertions(+), 23 deletions(-)
+
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index df06f3da166c..265b726d6e8d 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -151,31 +151,31 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
+ 	spin_unlock(&inode->i_lock);
+ }
+ 
+-/* Notify this dentry's parent about a child's events. */
++/*
++ * Notify this dentry's parent about an event and make sure that name is stable.
++ * Events "on child" are only reported if parent is watching.
++ * Directory modification events are also reported if super block is watching.
++ */
+ int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask)
+ {
+ 	struct dentry *parent;
+ 	struct inode *p_inode;
+ 	int ret = 0;
++	bool on_child = (mask & FS_EVENT_ON_CHILD);
++	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
+ 
+-	if (!dentry)
+-		dentry = path->dentry;
+-
+-	if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
++	if (on_child && !(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
+ 		return 0;
+ 
+ 	parent = dget_parent(dentry);
+ 	p_inode = parent->d_inode;
+ 
+-	if (unlikely(!fsnotify_inode_watches_children(p_inode))) {
++	if (on_child && unlikely(!fsnotify_inode_watches_children(p_inode))) {
+ 		__fsnotify_update_child_dentry_flags(p_inode);
+-	} else if (p_inode->i_fsnotify_mask & mask & ALL_FSNOTIFY_EVENTS) {
++	} else if ((p_inode->i_fsnotify_mask & test_mask) ||
++		   (!on_child && (dentry->d_sb->s_fsnotify_mask & test_mask))) {
+ 		struct name_snapshot name;
+ 
+-		/* we are notifying a parent so come up with the new mask which
+-		 * specifies these are events which came from a child. */
+-		mask |= FS_EVENT_ON_CHILD;
+-
+ 		take_dentry_name_snapshot(&name, dentry);
+ 		if (path)
+ 			ret = fsnotify(p_inode, mask, path, FSNOTIFY_EVENT_PATH,
+diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+index 09587e2860b5..8641bf9a1eda 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -37,7 +37,7 @@ static inline int fsnotify_parent(const struct path *path,
+ 	if (!dentry)
+ 		dentry = path->dentry;
+ 
+-	return __fsnotify_parent(path, dentry, mask);
++	return __fsnotify_parent(path, dentry, mask | FS_EVENT_ON_CHILD);
+ }
+ 
+ /*
+@@ -158,13 +158,11 @@ static inline void fsnotify_vfsmount_delete(struct vfsmount *mnt)
+  * dentry->d_parent should be stable. However there are some corner cases where
+  * inode lock is not held. So to be on the safe side and be reselient to future
+  * callers and out of tree users of d_delete(), we do not assume that d_parent
+- * and d_name are stable and we use dget_parent() and
++ * and d_name are stable and we use __fsnotify_parent() to
+  * take_dentry_name_snapshot() to grab stable references.
+  */
+ static inline void fsnotify_nameremove(struct dentry *dentry, int isdir)
+ {
+-	struct dentry *parent;
+-	struct name_snapshot name;
+ 	__u32 mask = FS_DELETE;
+ 
+ 	/* d_delete() of pseudo inode? (e.g. __ns_get_path() playing tricks) */
+@@ -174,14 +172,7 @@ static inline void fsnotify_nameremove(struct dentry *dentry, int isdir)
+ 	if (isdir)
+ 		mask |= FS_ISDIR;
+ 
+-	parent = dget_parent(dentry);
+-	take_dentry_name_snapshot(&name, dentry);
+-
+-	fsnotify(d_inode(parent), mask, d_inode(dentry), FSNOTIFY_EVENT_INODE,
+-		 name.name, 0);
+-
+-	release_dentry_name_snapshot(&name);
+-	dput(parent);
++	__fsnotify_parent(NULL, dentry, mask);
+ }
+ 
+ /*
+-- 
+2.17.1
+
