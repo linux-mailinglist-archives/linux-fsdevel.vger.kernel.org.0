@@ -2,35 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0509152D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2019 19:35:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7656B1530F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2019 19:50:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbfEFRfd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 May 2019 13:35:33 -0400
-Received: from mail133-31.atl131.mandrillapp.com ([198.2.133.31]:12303 "EHLO
+        id S1726519AbfEFRuf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 May 2019 13:50:35 -0400
+Received: from mail133-31.atl131.mandrillapp.com ([198.2.133.31]:9935 "EHLO
         mail133-31.atl131.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726426AbfEFRfd (ORCPT
+        by vger.kernel.org with ESMTP id S1725883AbfEFRuf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 May 2019 13:35:33 -0400
-X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 13:35:32 EDT
+        Mon, 6 May 2019 13:50:35 -0400
+X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 May 2019 13:50:34 EDT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
- h=From:Subject:To:Cc:Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=rfgDjKTmnZ6x2r/PxDrCJ83aQW0m2mt8bkvR4gYyUZI=;
- b=HObcMkf2W6O6fwlygJtXbYbc0oSye2NwhLsho7jTS0yOwAYVH707i7RC9rpJQe7d729YApkSJ76X
-   SeGtT2C+OcnQmVQVVupdDkhixWSF6ZF3iydMIMNhKz4d4YJxnC/QtAT+kdJ2lHpfAfhSf9bLJX7g
-   /Hwou4neSzOxGpEmZN4=
-Received: from pmta02.mandrill.prod.atl01.rsglab.com (127.0.0.1) by mail133-31.atl131.mandrillapp.com id hq1o681sar8o for <linux-fsdevel@vger.kernel.org>; Mon, 6 May 2019 17:20:31 +0000 (envelope-from <bounce-md_31050260.5cd06cdf.v1-07a3ab0c5abd44bd85b1c9da20cb57e6@mandrillapp.com>)
+ h=From:Subject:To:Cc:Message-Id:In-Reply-To:References:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=qZUWN1kEJ7Nm/rElYRgeKRzf22qzOgyt1hGga7WcdSQ=;
+ b=YE5RRrf5C8lt+QZJFxQiAsshpiu5XPngReCSiOhUflV9zrDNSwPEFaO+cq43zWfDrXWBR2vNsqxX
+   IQ7mCESVGjQ0ROZW4D+AmkUXM4t8GEIPUhIM0EI/A5Jmz0fHpR+Iv6sQgBj4rZ1cY6uMu9IT6wor
+   kg4I2qxPwZGxRW4vVqU=
+Received: from pmta02.mandrill.prod.atl01.rsglab.com (127.0.0.1) by mail133-31.atl131.mandrillapp.com id hq1puk1sar8t for <linux-fsdevel@vger.kernel.org>; Mon, 6 May 2019 17:20:46 +0000 (envelope-from <bounce-md_31050260.5cd06ced.v1-8f0b2b09c45a4202a2beadd2cc921498@mandrillapp.com>)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1557163231; h=From : 
- Subject : To : Cc : Message-Id : Date : MIME-Version : Content-Type : 
- Content-Transfer-Encoding : From : Subject : Date : X-Mandrill-User : 
- List-Unsubscribe; bh=rfgDjKTmnZ6x2r/PxDrCJ83aQW0m2mt8bkvR4gYyUZI=; 
- b=pubZ8tJEC1thyqxSEMseIrocIG5cQDkAFEWbx42MTqPTAi5WOgNztrj3GBNQFpscE353a4
- 6+HkHnnHXC85RKcczFGbg6sQm1eKwuplMyq7zLxhbdSC/B1maplNkQmQ92xlKgWOMMZMQiVb
- IcMI/pLO8K8rxLFm2zXqSbI6d6RBg=
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1557163245; h=From : 
+ Subject : To : Cc : Message-Id : In-Reply-To : References : Date : 
+ MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
+ Subject : Date : X-Mandrill-User : List-Unsubscribe; 
+ bh=qZUWN1kEJ7Nm/rElYRgeKRzf22qzOgyt1hGga7WcdSQ=; 
+ b=qrxPcuXD81STVbPIX5GOVqrEyWkpjL/84wKVoc293eliPhst2mJnHLdyQOAv38w0H2O8Nw
+ gGyTXJu2sDtvEbKVHDC/d5TQdTToeE7Ipq4e+4PhDXc+uO3zkADT+JAGCUgmEeJ67IFy84pu
+ 1aiVtR1GbgcN+2ELKgTi7GyXX/+F0=
 From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: [PATCH 0/3] stream_open bits for Linux 5.2
-Received: from [87.98.221.171] by mandrillapp.com id 07a3ab0c5abd44bd85b1c9da20cb57e6; Mon, 06 May 2019 17:20:31 +0000
+Subject: [PATCH 1/3] dtlk: remove double call to nonseekable_open
+Received: from [87.98.221.171] by mandrillapp.com id 8f0b2b09c45a4202a2beadd2cc921498; Mon, 06 May 2019 17:20:45 +0000
 X-Mailer: git-send-email 2.20.1
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
@@ -41,11 +42,13 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
         Miklos Szeredi <miklos@szeredi.hu>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Kirill Smelkov <kirr@nexedi.com>
-Message-Id: <cover.1557162679.git.kirr@nexedi.com>
+Message-Id: <184012ad69b275a17d6fa40a8d4dcf15ef76c4d2.1557162679.git.kirr@nexedi.com>
+In-Reply-To: <cover.1557162679.git.kirr@nexedi.com>
+References: <cover.1557162679.git.kirr@nexedi.com>
 X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.07a3ab0c5abd44bd85b1c9da20cb57e6
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.8f0b2b09c45a4202a2beadd2cc921498
 X-Mandrill-User: md_31050260
-Date:   Mon, 06 May 2019 17:20:31 +0000
+Date:   Mon, 06 May 2019 17:20:45 +0000
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
@@ -54,158 +57,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus,
+dtlk_open currently has 2 calls to nonseekable_open which are both
+executed on success path. It was not hurting to make the extra call as
+nonseekable_open is only changing file->f_flags in idempotent way.
+However the first nonseekable_open is indeed both unneeded and looks
+suspicious.
 
-Please consider applying the following stream_open related patches:
+The first nonseekable_open was added in 6244f13c51 ("Fix up a couple of
+drivers - notable sg - for nonseekability."; 2004-Aug-7). The second
+nonseekable_open call was introduced in dc5c724584 ("Remove ESPIPE logic
+from drivers, letting the VFS layer handle it instead.; 2004-Aug-8). The
+latter patch being mass change probably missed to remove
+nonseekable_open that was introduced into dtlk_open the day before.
 
-- The first one removes unnecessary double nonseekable_open from
-  drivers/char/dtlk.c as noticed by Pavel Machek while reviewing
-  nonseekable_open -> stream_open mass conversion.
+Fix it: remove the extra/unneeded nonseekable_open call and leave the
+call to nonseekable_open only on the path where we are actually opening
+the file.
 
-- The second one is the mass conversion patch promised in 10dce8af3422 ("fs:
-  stream_open - opener for stream-like files so that read and write can run
-  simultaneously without deadlock") and is automatically generated by running
+Suggested-by: Pavel Machek <pavel@denx.de>
+Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
+---
+ drivers/char/dtlk.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-	$ make coccicheck MODE=patch COCCI=scripts/coccinelle/api/stream_open.cocci
-
-  I've verified each generated change manually - that it is correct to convert -
-  and each other nonseekable_open instance left - that it is either not correct
-  to convert there, or that it is not converted due to current stream_open.cocci
-  limitations. More details on this in the patch.
-
-- The third patch changes VFS to pass ppos=NULL into .read/.write for files
-  that declare themselves streams. It was suggested by Rasmus Villemoes and makes
-  sure that if ppos starts to be erroneously used in a stream file, such bug
-  won't go unnoticed and will produce an oops instead of creating illusion of
-  position change being taken into account.
-
-  Note: this patch does not conflict with "fuse: Add FOPEN_STREAM to use
-  stream_open()" that will be hopefully coming via FUSE tree, because fs/fuse/
-  uses new-style .read_iter/.write_iter, and for these accessors position is
-  still passed as non-pointer kiocb.ki_pos .
-
-I was hoping for the patches to be picked up into VFS tree, but since that did
-not happenned for some reason I'm sending them to you directly.
-
-Maybe it will help: the patches can be also pulled from here:
-
-	git pull https://lab.nexedi.com/kirr/linux.git y/stream_open-5.2
-
-
-Thanks beforehand,
-Kirill
-
-Kirill Smelkov (3):
-  dtlk: remove double call to nonseekable_open
-  *: convert stream-like files from nonseekable_open -> stream_open
-  vfs: pass ppos=NULL to .read()/.write() of FMODE_STREAM files
-
- arch/powerpc/platforms/52xx/mpc52xx_gpt.c |   2 +-
- arch/powerpc/platforms/cell/spufs/file.c  |   2 +-
- arch/um/drivers/harddog_kern.c            |   2 +-
- arch/x86/kernel/cpu/microcode/core.c      |   2 +-
- drivers/char/ds1620.c                     |   2 +-
- drivers/char/dtlk.c                       |   3 +-
- drivers/char/ipmi/ipmi_watchdog.c         |   2 +-
- drivers/char/pcmcia/cm4000_cs.c           |   2 +-
- drivers/char/pcmcia/scr24x_cs.c           |   2 +-
- drivers/char/tb0219.c                     |   2 +-
- drivers/firewire/nosy.c                   |   2 +-
- drivers/gnss/core.c                       |   2 +-
- drivers/hid/uhid.c                        |   2 +-
- drivers/hwmon/fschmd.c                    |   2 +-
- drivers/hwmon/w83793.c                    |   2 +-
- drivers/infiniband/core/ucm.c             |   2 +-
- drivers/infiniband/core/ucma.c            |   2 +-
- drivers/infiniband/core/user_mad.c        |   2 +-
- drivers/infiniband/core/uverbs_main.c     |   2 +-
- drivers/input/evdev.c                     |   2 +-
- drivers/input/joydev.c                    |   2 +-
- drivers/input/misc/uinput.c               |   2 +-
- drivers/isdn/capi/capi.c                  |   2 +-
- drivers/leds/uleds.c                      |   2 +-
- drivers/media/rc/lirc_dev.c               |   2 +-
- drivers/pci/switch/switchtec.c            |   2 +-
- drivers/platform/chrome/cros_ec_debugfs.c |   2 +-
- drivers/rtc/rtc-ds1374.c                  |   2 +-
- drivers/rtc/rtc-m41t80.c                  |   2 +-
- drivers/s390/char/fs3270.c                |   2 +-
- drivers/s390/char/tape_char.c             |   2 +-
- drivers/s390/char/zcore.c                 |   2 +-
- drivers/s390/crypto/zcrypt_api.c          |   2 +-
- drivers/spi/spidev.c                      |   2 +-
- drivers/staging/pi433/pi433_if.c          |   2 +-
- drivers/usb/misc/ldusb.c                  |   2 +-
- drivers/watchdog/acquirewdt.c             |   2 +-
- drivers/watchdog/advantechwdt.c           |   2 +-
- drivers/watchdog/alim1535_wdt.c           |   2 +-
- drivers/watchdog/alim7101_wdt.c           |   2 +-
- drivers/watchdog/ar7_wdt.c                |   2 +-
- drivers/watchdog/at91rm9200_wdt.c         |   2 +-
- drivers/watchdog/ath79_wdt.c              |   2 +-
- drivers/watchdog/bcm63xx_wdt.c            |   2 +-
- drivers/watchdog/cpu5wdt.c                |   2 +-
- drivers/watchdog/cpwd.c                   |   2 +-
- drivers/watchdog/eurotechwdt.c            |   2 +-
- drivers/watchdog/f71808e_wdt.c            |   2 +-
- drivers/watchdog/gef_wdt.c                |   2 +-
- drivers/watchdog/geodewdt.c               |   2 +-
- drivers/watchdog/ib700wdt.c               |   2 +-
- drivers/watchdog/ibmasr.c                 |   2 +-
- drivers/watchdog/indydog.c                |   2 +-
- drivers/watchdog/intel_scu_watchdog.c     |   2 +-
- drivers/watchdog/iop_wdt.c                |   2 +-
- drivers/watchdog/it8712f_wdt.c            |   2 +-
- drivers/watchdog/ixp4xx_wdt.c             |   2 +-
- drivers/watchdog/ks8695_wdt.c             |   2 +-
- drivers/watchdog/m54xx_wdt.c              |   2 +-
- drivers/watchdog/machzwd.c                |   2 +-
- drivers/watchdog/mixcomwd.c               |   2 +-
- drivers/watchdog/mtx-1_wdt.c              |   2 +-
- drivers/watchdog/mv64x60_wdt.c            |   2 +-
- drivers/watchdog/nuc900_wdt.c             |   2 +-
- drivers/watchdog/nv_tco.c                 |   2 +-
- drivers/watchdog/pc87413_wdt.c            |   2 +-
- drivers/watchdog/pcwd.c                   |   4 +-
- drivers/watchdog/pcwd_pci.c               |   4 +-
- drivers/watchdog/pcwd_usb.c               |   4 +-
- drivers/watchdog/pika_wdt.c               |   2 +-
- drivers/watchdog/pnx833x_wdt.c            |   2 +-
- drivers/watchdog/rc32434_wdt.c            |   2 +-
- drivers/watchdog/rdc321x_wdt.c            |   2 +-
- drivers/watchdog/riowd.c                  |   2 +-
- drivers/watchdog/sa1100_wdt.c             |   2 +-
- drivers/watchdog/sb_wdog.c                |   2 +-
- drivers/watchdog/sbc60xxwdt.c             |   2 +-
- drivers/watchdog/sbc7240_wdt.c            |   2 +-
- drivers/watchdog/sbc8360.c                |   2 +-
- drivers/watchdog/sbc_epx_c3.c             |   2 +-
- drivers/watchdog/sbc_fitpc2_wdt.c         |   2 +-
- drivers/watchdog/sc1200wdt.c              |   2 +-
- drivers/watchdog/sc520_wdt.c              |   2 +-
- drivers/watchdog/sch311x_wdt.c            |   2 +-
- drivers/watchdog/scx200_wdt.c             |   2 +-
- drivers/watchdog/smsc37b787_wdt.c         |   2 +-
- drivers/watchdog/w83877f_wdt.c            |   2 +-
- drivers/watchdog/w83977f_wdt.c            |   2 +-
- drivers/watchdog/wafer5823wdt.c           |   2 +-
- drivers/watchdog/watchdog_dev.c           |   2 +-
- drivers/watchdog/wdrtas.c                 |   4 +-
- drivers/watchdog/wdt.c                    |   4 +-
- drivers/watchdog/wdt285.c                 |   2 +-
- drivers/watchdog/wdt977.c                 |   2 +-
- drivers/watchdog/wdt_pci.c                |   4 +-
- drivers/xen/evtchn.c                      |   2 +-
- fs/open.c                                 |   5 +-
- fs/read_write.c                           | 113 +++++++++++++---------
- net/batman-adv/icmp_socket.c              |   2 +-
- net/batman-adv/log.c                      |   2 +-
- net/rfkill/core.c                         |   2 +-
- sound/core/control.c                      |   2 +-
- sound/core/rawmidi.c                      |   2 +-
- sound/core/seq/seq_clientmgr.c            |   2 +-
- sound/core/timer.c                        |   2 +-
- 105 files changed, 179 insertions(+), 158 deletions(-)
-
+diff --git a/drivers/char/dtlk.c b/drivers/char/dtlk.c
+index f882460b5a44..669c3311adc4 100644
+--- a/drivers/char/dtlk.c
++++ b/drivers/char/dtlk.c
+@@ -298,7 +298,6 @@ static int dtlk_open(struct inode *inode, struct file *file)
+ {
+ 	TRACE_TEXT("(dtlk_open");
+ 
+-	nonseekable_open(inode, file);
+ 	switch (iminor(inode)) {
+ 	case DTLK_MINOR:
+ 		if (dtlk_busy)
 -- 
 2.20.1
