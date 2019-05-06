@@ -2,103 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5542714719
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2019 11:04:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12838148FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2019 13:33:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbfEFJED (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 May 2019 05:04:03 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41233 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbfEFJEC (ORCPT
+        id S1726150AbfEFLdw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 May 2019 07:33:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38910 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725856AbfEFLdw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 May 2019 05:04:02 -0400
-Received: by mail-oi1-f193.google.com with SMTP id b17so1755003oie.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 02:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w3CwerUbOgOXXiCSnS9RlnGeZVnQdj5otMQLyftCR5U=;
-        b=e+nL3WusVlSphHxBUuOnwpeLcTbcxkM3d0tJwFVnHeQxPP67ruHIlvq20gXdKZhu2H
-         bB9lDEUqhP1wiSu91mOioGKtT4ycBoUxoh4FC+hVoBp2F1BbODAaUF2mKyUrYhOAKqit
-         T2YBO051njEtXYukqn8B+THQu9IDpG8A3FVKKTOi4pDJ7oz0d7KTjVHPE8z2o4ACwsE9
-         ykptic7rc2BJziW9//fZQROuPUNapGoh5nZURetTsM9RFF/vX1CnGbAUdl8YpJIBiHYh
-         HGrZrCbs8q8pyJ0vRF0MLBvicTMU2fCeAXdJWGTYB+VAAWlNl7nlXw7CpLz/tNO1+YWN
-         PWrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w3CwerUbOgOXXiCSnS9RlnGeZVnQdj5otMQLyftCR5U=;
-        b=hvRoYuodse5nI4HMIQTxdKv2O5WgOrSUXPjpLHR1UH4wi1UV2yM/5PO/yC18xv3EpR
-         5WVxwGyQ3OozG8fmUy+erRORoPvVcD7nK/TIAXraUDVO4V7doq0Go2veleYNOSRlswG3
-         9xE7B0LGwlAS1pUkDJwroNVvHNH3roxGUdzIgZaIjsUvZM6FJtCskK7mYA/7TiYxcaxe
-         1nKHG71enfdogYl91kYQ6YAwqYsJDjOFvPn2CU1y5YjfZDawX21hLRZOC8MvmOCkiVH5
-         7WpbG8NvH7xp3RZk7DDy3EaKHi6MGNEX5eB+RA9nvoO05NAXlwckVZbQDmjIhjft2H55
-         KFXA==
-X-Gm-Message-State: APjAAAUHg9Y1qN+ylfpVUWaa6LLr+kvZciS8SSTpuwzyc7Ve5K/9EiLx
-        UyTdl/9IUGrCquBXqFPFoUillx25o9bBhgBTTcSHJQ==
-X-Google-Smtp-Source: APXvYqwEoyQ/+gdbpiq96mf1vlv5hUoY2bhtp6ecuZwu3ufRDNiX4lPMqoN7zAZpCfyk7yZAb5CAmenmXz4Vrtgwk5I=
-X-Received: by 2002:aca:d4cf:: with SMTP id l198mr457112oig.137.1557133441163;
- Mon, 06 May 2019 02:04:01 -0700 (PDT)
+        Mon, 6 May 2019 07:33:52 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x46BXPcM072199
+        for <linux-fsdevel@vger.kernel.org>; Mon, 6 May 2019 07:33:51 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2sakgx1map-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 07:33:50 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
+        Mon, 6 May 2019 12:33:49 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 6 May 2019 12:33:46 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x46BXjD750331788
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 6 May 2019 11:33:45 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8F2B8AE057;
+        Mon,  6 May 2019 11:33:45 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 08F4AAE055;
+        Mon,  6 May 2019 11:33:44 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.70.42])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  6 May 2019 11:33:43 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.ibm.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 09/13] fscrypt: support decrypting multiple filesystem blocks per page
+Date:   Mon, 06 May 2019 14:39:22 +0530
+Organization: IBM
+In-Reply-To: <20190501224515.43059-10-ebiggers@kernel.org>
+References: <20190501224515.43059-1-ebiggers@kernel.org> <20190501224515.43059-10-ebiggers@kernel.org>
 MIME-Version: 1.0
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-12-brendanhiggins@google.com> <8c37fd20-859c-9c34-4465-8adfcfdaab09@kernel.org>
-In-Reply-To: <8c37fd20-859c-9c34-4465-8adfcfdaab09@kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 6 May 2019 02:03:49 -0700
-Message-ID: <CAFd5g44q3qyahykujDzOoO01DwGMUm+Kce-tOAzSW90U4mQM7w@mail.gmail.com>
-Subject: Re: [PATCH v2 11/17] kunit: test: add test managed resource tests
-To:     shuah <shuah@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
-        Avinash Kondareddy <akndr41@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 19050611-0012-0000-0000-00000318CA53
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19050611-0013-0000-0000-0000215142F6
+Message-Id: <2349515.8nsl4jZa1H@dhcp-9-109-212-164>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-06_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905060102
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 3, 2019 at 7:34 AM shuah <shuah@kernel.org> wrote:
->
-> On 5/1/19 5:01 PM, Brendan Higgins wrote:
-> > From: Avinash Kondareddy <akndr41@gmail.com>
-> >
-> > Tests how tests interact with test managed resources in their lifetime.
-> >
-> > Signed-off-by: Avinash Kondareddy <akndr41@gmail.com>
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > ---
->
-> I think this change log could use more details. It is vague on what it
-> does.
+On Thursday, May 2, 2019 4:15:11 AM IST Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Rename fscrypt_decrypt_page() to fscrypt_decrypt_pagecache_blocks() and
+> redefine its behavior to decrypt all filesystem blocks in the given
+> region of the given page, rather than assuming that the region consists
+> of just one filesystem block.  Also remove the 'inode' and 'lblk_num'
+> parameters, since they can be retrieved from the page as it's already
+> assumed to be a pagecache page.
+> 
+> This is in preparation for allowing encryption on ext4 filesystems with
+> blocksize != PAGE_SIZE.
+> 
+> This is based on work by Chandan Rajendra.
 
-Agreed. Will fix in next revision.
+Looks good to me,
+
+Reviewed-by: Chandan Rajendra <chandan@linux.ibm.com>
+
+-- 
+chandan
+
+
+
