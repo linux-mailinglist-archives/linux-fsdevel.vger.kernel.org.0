@@ -2,129 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71B4A152F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2019 19:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 318E61535B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2019 20:04:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726495AbfEFRoI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 May 2019 13:44:08 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:32813 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbfEFRoI (ORCPT
+        id S1726591AbfEFSEA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 May 2019 14:04:00 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:35759 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726327AbfEFSEA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 May 2019 13:44:08 -0400
-Received: by mail-vs1-f66.google.com with SMTP id z145so8675922vsc.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 10:44:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OeGgjZBJ9uWD1pdsX/+zOfgOjAibZGBp9WPaU0eToUc=;
-        b=m4Zw2fBY+VMLzhBfTBbz4Dtlq0Cc6l6MqEwoJ7YTjrYPzeO8QeIYW3yIFLyCL117Kt
-         axxocOSPh/a+gWkz5TWdPKqb2BPRt/jtybJOfLKxxemlLxpId3LZKDrEsHYJlkXqRfwz
-         fCTrKPtDSaBjY4auU4otyGauXVMtlpMTLmviNmwp8xF+tgZuQMZPsaKxN5HR6oBL5vv2
-         Zb040i1FzkyXpGkN4I4IP7WFVE6iEZwE10S2R1vSIzVYWL40r/PqrLJElx8kQUpZMdyS
-         9343jPbZPHbXIDd2SJlyBmLnUf59HZ8PtlBE/IOAyuF/EUfnmI/1F3+fvCafLr94a9B9
-         gs7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OeGgjZBJ9uWD1pdsX/+zOfgOjAibZGBp9WPaU0eToUc=;
-        b=KtY5l3pFt9h0nblQN3t4kW+K41R2r/cFO2rJ+N5hfMp6WtEW3QhD50JNH/5ERa1X2E
-         p4YaIMKzyzxuuJ7JNDxgLL06DvQ2kD535hUNDvEW8Y4OZDTT65qfIT11N/wM5n/MWKlO
-         GRRPEujjZsVbA8ZagWE5JEVCort+L4qHVnfgnePigY0cqHHQBqOFWJ+cyrjNHXVxWnSz
-         ndCmleqSUD0Fw3MTBvrCWes51I75yV0d6HDLaXJMBsL52FPA7AgbQxqIRgltiVMNvgDk
-         1kqhcqZrRq4FjBlHp1AZNIFK1WfRUehrrJkYmU99CKvwIK9HR4hA2Jtnlghodpcq6qdC
-         w3fA==
-X-Gm-Message-State: APjAAAXDT7CrxJkZMlPCexkPSD1lklrs0yaJI2Tvif7PoDHfFlRSiWYE
-        YlL6vTEgXwLfR+4V4qGDfa8jgAvkZTfTghxoUqmtfw==
-X-Google-Smtp-Source: APXvYqxj9ho/3KigVFISlPQqfamyJ4vl1xCgP8i9j8q0ibA/ApDLHmmjNXKUf72ouvJJD/44drdXvLamKur++kGc2Rs=
-X-Received: by 2002:a67:dd95:: with SMTP id i21mr8883021vsk.48.1557164647231;
- Mon, 06 May 2019 10:44:07 -0700 (PDT)
+        Mon, 6 May 2019 14:04:00 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id D0F8F220CB;
+        Mon,  6 May 2019 14:03:56 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 06 May 2019 14:03:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=Me+YpgbdIGiVitedxC/gQk/BMWh
+        0B+lfqVT9kHkmymg=; b=S2cZbbc+k5PJneo7CgUYQnRpZwV2HWbDO82XDu6qLJe
+        IetmxVB6rFhMitKcMAmwtTTs7csejMkW5Hf7z0RFXcgCIvm9saLJcV2lqd1Tr1B9
+        DoBp7cCSqpj3PwoEiAnYN/wXTmfDq62bT7sNU4q4aU/cTwAksrulfzp918noYXYI
+        2J3bUrqnXj5oJnzZgPnFiWIEYo3Pco4VtZMFbfYQA80jrIdoCuxkNKwxDQHSOMYS
+        xSm2IOLgkKSZ3nR0VWUVd9u8jXY+xT7Z+PAt9Q+Dp4fKT17V7LWIdK6SCQrePl95
+        cZWHKC9XdCBzKSJJYDaVegnD7oBVDzRjqm9EzAQyWRA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Me+Ypg
+        bdIGiVitedxC/gQk/BMWh0B+lfqVT9kHkmymg=; b=uSkP0Ok5Pw4EhpjAShDCXe
+        AZn8QME969+91uPXVVYk9UqiN6aFAwHFqGVuAJa7rHXRq9LSp8ksbcXJVvNrqt2K
+        JKnrcX+PREsCZaKEdroAryeAq/TrtVgmJKOTdpgcL2za0RnI5cDsu+1h4uHvMbWd
+        MSlew1/Mr/cj0RVElcqVSk7JvZQ/PqLHgMTL1gH+QVtl+GRpjivDlYAoBoOvvcdD
+        WAqIDQtF/y9dAowgc9ZdZRyqfqJJYrmwrIchkNR8YO79zxiODSlGsWfyPtSkQoPv
+        Eeu6UTm7iJAUClNfXWYdoc6epOrhhoP2xcQDT81X5sktZl6RcAIpisVP9BXjBj5w
+        ==
+X-ME-Sender: <xms:DHfQXK8lDUUY2TAVCfvjyXIsDly3DnQucge-AUUWv1cqudrmJe5sxQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrjeekgddvvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
+    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecukfhppeelke
+    drvddutddrudegtddrudejudenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghs
+    segrnhgrrhgriigvlhdruggvnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:DHfQXIYlJF_dYg7jf1jAUA1h_4aErnd8GS1UOt4CalEex3k6qEx7Ug>
+    <xmx:DHfQXIFFMTYj-gH4w3CyDVfmA710pgAXNF3gLd28m2SIEnbiSOWEKQ>
+    <xmx:DHfQXK1gyYOTvD8PGfInpIGQXFwUaem4SSETST0xYgqu3X_rCS6PQw>
+    <xmx:DHfQXF4TdfdBIOFcRpwmhBRN5CvgEMs5ObO_BPM1VByScYlL480Qrg>
+Received: from intern.anarazel.de (c-98-210-140-171.hsd1.ca.comcast.net [98.210.140.171])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D6C47E448F;
+        Mon,  6 May 2019 14:03:55 -0400 (EDT)
+Date:   Mon, 6 May 2019 11:03:54 -0700
+From:   Andres Freund <andres@anarazel.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        hch@infradead.org, clm@fb.com
+Subject: Re: [PATCH 1/3] io_uring: add support for marking commands as
+ draining
+Message-ID: <20190506180354.maksphiaokual4jd@alap3.anarazel.de>
+References: <20190411150657.18480-1-axboe@kernel.dk>
+ <20190411150657.18480-2-axboe@kernel.dk>
 MIME-Version: 1.0
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-13-brendanhiggins@google.com> <20190502110220.GD12416@kroah.com>
- <CAFd5g47t=EdLKFCT=CnPkrM2z0nDVo24Gz4j0VxFOJbARP37Lg@mail.gmail.com>
- <a49c5088-a821-210c-66de-f422536f5b01@gmail.com> <CAFd5g44iWRchQKdJYtjRtPY6e-6e0eXpKXXsx5Ooi6sWE474KA@mail.gmail.com>
- <1a5f3c44-9fa9-d423-66bf-45255a90c468@gmail.com> <CAFd5g45RYm+zfdJXnyp2KZZH5ojfOzy++aq+4zBeE5VDu6WgEw@mail.gmail.com>
- <052fa196-4ea9-8384-79b7-fe6bacc0ee82@gmail.com> <CAFd5g47aY-CL+d7DfiyTidY4aAVY+eg1TM1UJ4nYqKSfHOi-0w@mail.gmail.com>
- <63f63c7c-6185-5e64-b338-6a5e7fb9e27c@gmail.com>
-In-Reply-To: <63f63c7c-6185-5e64-b338-6a5e7fb9e27c@gmail.com>
-From:   Kees Cook <keescook@google.com>
-Date:   Mon, 6 May 2019 10:43:55 -0700
-Message-ID: <CAGXu5jJpp2HyEWMtAde+VUt=9ni3HRu69NM4rUQJu4kBrnx9Kw@mail.gmail.com>
-Subject: Re: [PATCH v2 12/17] kunit: tool: add Python wrappers for running
- KUnit tests
-To:     Frank Rowand <frowand.list@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
-        Felix Guo <felixguoxiuping@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190411150657.18480-2-axboe@kernel.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 5, 2019 at 5:19 PM Frank Rowand <frowand.list@gmail.com> wrote:
-> You can see the full version 14 document in the submitter's repo:
->
->   $ git clone https://github.com/isaacs/testanything.github.io.git
->   $ cd testanything.github.io
->   $ git checkout tap14
->   $ ls tap-version-14-specification.md
->
-> My understanding is the the version 14 specification is not trying to
-> add new features, but instead capture what is already implemented in
-> the wild.
+Hi,
 
-Oh! I didn't know about the work on TAP 14. I'll go read through this.
+On 2019-04-11 09:06:55 -0600, Jens Axboe wrote:
+> There are no ordering constraints between the submission and completion
+> side of io_uring. But sometimes that would be useful to have. One common
+> example is doing an fsync, for instance, and have it ordered with
+> previous writes. Without support for that, the application must do this
+> tracking itself.
 
-> > ## Here is what I propose for this patchset:
-> >
-> >  - Print out test number range at the beginning of each test suite.
-> >  - Print out log lines as soon as they happen as diagnostics.
-> >  - Print out the lines that state whether a test passes or fails as a
-> > ok/not ok line.
-> >
-> > This would be technically conforming with TAP13 and is consistent with
-> > what some kselftests have done.
+The facility seems useful for at least this postgres developer playing
+with optionally using io_uring in parts of postgres. As you say, I'd
+otherwise need to manually implement drains in userland.
 
-This is what I fixed kselftest to actually do (it wasn't doing correct
-TAP13), and Shuah is testing the series now:
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=ksft-tap-refactor
 
-I'll go read TAP 14 now...
+> This adds a general SQE flag, IOSQE_IO_DRAIN. If a command is marked
+> with this flag, then it will not be issued before previous commands have
+> completed, and subsequent commands submitted after the drain will not be
+> issued before the drain is started.. If there are no pending commands,
+> setting this flag will not change the behavior of the issue of the
+> command.
 
--- 
-Kees Cook
+I think it'd be good if there were some documentation about how io_uring
+interacts with writes done via a different io_uring queue, or
+traditional write(2) et al.  And whether IOSQE_IO_DRAIN drain influences
+that.
+
+In none of the docs I read it's documented if an io_uring fsync
+guarantees that a write(2) that finished before an IORING_OP_FSYNC op is
+submitted is durable? Given the current implementation that clearly
+seems to be the case, but it's not great to rely on the current
+implementation as a user of data integrity operations.
+
+Similarly, it'd be good if there were docs about how traditional
+read/write/fsync and multiple io_uring queues interact in the face of
+concurrent operations. For plain read/write we have posix providing some
+baseline guarantees, but obviously doesn't mean anything for io_uring.
+
+I suspect that most people's intuition will be "it's obvious", but also
+that such intuitions are likely to differ between people.
+
+Greetings,
+
+Andres Freund
