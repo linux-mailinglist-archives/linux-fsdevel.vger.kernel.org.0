@@ -2,70 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE7A14389
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2019 04:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1517D143C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2019 05:36:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725830AbfEFCuC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 May 2019 22:50:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33618 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725786AbfEFCuC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 May 2019 22:50:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SG/rqX2xe67P88isvEgP5AEb4JnGOKR0/Rffnrqoj/g=; b=WJA6/CXLEDQTYnpUBLJPsai+N
-        tCWHQkJK/nOPhgE2J9w19yZr4RUhQO7/0/IwTJLqgCuTfCQxH/eHVPJvP7h6oWfBgSnv94QCp/vi6
-        WJ6sBW/Rl/Xes4l/14jVYVmK2JA4L/i1D80nKfPHfqW4kC8N6waRFio0xrBSJWYq+hP9E/gFbmpbG
-        rHpJpHJHk4eJ/X9W2Y37xIWjIUWUg1eht2Nec79WPL8CbqrcG8xT1wpRBJrBJnbSs2SbFquvdTSKv
-        vyytHuXpCBy7svNsjBh0b+CuDVIdvLLpCXSrheUzo08JOd8t7aM0xWzJfIIMhfYt0GgkxPCEjKdRN
-        UA++FiZxA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hNThX-0000uE-3I; Mon, 06 May 2019 02:49:59 +0000
-Date:   Sun, 5 May 2019 19:49:58 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Tamir Carmeli <carmeli.tamir@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] Use list.h instead of file_system_type next
-Message-ID: <20190506024958.GC16963@bombadil.infradead.org>
-References: <20190504094549.10021-1-carmeli.tamir@gmail.com>
- <20190504094549.10021-2-carmeli.tamir@gmail.com>
- <20190504134503.GA16963@bombadil.infradead.org>
- <CAKxm1-H9cgym_RQ-oLcZWEPpyUf5NrZPt_Zu3U=mpU=E38SbvQ@mail.gmail.com>
+        id S1725828AbfEFDga (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 May 2019 23:36:30 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7168 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725813AbfEFDga (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 5 May 2019 23:36:30 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9EF054C1408C98A0F850;
+        Mon,  6 May 2019 11:36:28 +0800 (CST)
+Received: from [127.0.0.1] (10.177.33.43) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Mon, 6 May 2019
+ 11:36:21 +0800
+To:     <viro@zeniv.linux.org.uk>
+CC:     <linux-fsdevel@vger.kernel.org>, <yi.zhang@huawei.com>,
+        <houtao1@huawei.com>, <miaoxie@huawei.com>
+From:   yangerkun <yangerkun@huawei.com>
+Subject: system panic while dentry reference count overflow
+Message-ID: <af9a8dec-98a2-896f-448b-04ded0af95f0@huawei.com>
+Date:   Mon, 6 May 2019 11:36:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKxm1-H9cgym_RQ-oLcZWEPpyUf5NrZPt_Zu3U=mpU=E38SbvQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.33.43]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 05, 2019 at 09:25:21PM +0300, Tamir Carmeli wrote:
-> I just found it weird that there is a proprietary implementation of a
-> linked list while surely the kernel already offers well established
-> data structures.
+Hi,
 
-It's a singly linked list rather than a doubly linked list.
+Run process parallel which each code show as below(2T memory), reference 
+count of root dentry will overflow since allocation of negative dentry 
+should do count++ for root dentry. Then, another dput of root dentry 
+will free it, which cause crash of system. I wondered is there anyone 
+has found this problem?
 
-> IMO, the current code is a bit hard to understand, especially the
-> addition of a new struct to the list in the line "*p = fs" after
-> find_filesystem returned the last member.
-> Correct, I'm not familiar with all the use cases of the code.
+#include<stdlib.h> 
 
-It looks like a fairly standard implementation of a singly-linked 
-list in C to me.
+#include<stdio.h> 
 
-> I'm not sure that XArray is a good choice since there is no notion of
-> an index attached to the pointer, it's really just a linked list of
-> pointers.
+#include<string.h> 
 
-You don't need to attach an index to the pointer; you can just use
-xa_alloc() to store it at the first available index.
+#include<time.h> 
+
+ 
+
+int main() 
+
+{ 
+
+     const char *forname="_dOeSnotExist_.db"; 
+
+     int i; 
+
+     char filename[100]=""; 
+
+     struct timespec time1 = {0, 0}; 
+
+     for(;;) 
+
+     { 
+
+         clock_gettime(CLOCK_REALTIME, &time1); 
+
+         for(i=0; i < 10000; i++) { 
+
+ 
+sprintf(filename,"/%d%d%d%s",time1.tv_sec,time1.tv_nsec,i,forname); 
+
+             access(filename,0); 
+
+             memset(filename,'\0',100); 
+
+         } 
+
+     } 
+
+     return 0; 
+
+ 
+
+} 
+
+~ 
+
+Thanks,
+Kun.
 
