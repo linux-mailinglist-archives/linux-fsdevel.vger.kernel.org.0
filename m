@@ -2,232 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D66F015631
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 00:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30F7C15672
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 01:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfEFWmm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 May 2019 18:42:42 -0400
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:35730 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbfEFWmm (ORCPT
+        id S1727307AbfEFXlE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 May 2019 19:41:04 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33850 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727300AbfEFXlD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 May 2019 18:42:42 -0400
-Received: by mail-pg1-f201.google.com with SMTP id e12so8923389pgh.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 15:42:41 -0700 (PDT)
+        Mon, 6 May 2019 19:41:03 -0400
+Received: by mail-pl1-f193.google.com with SMTP id ck18so7162655plb.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 16:41:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=ipw+LMcfEDjJ+AA2+yx8vQdoGWoNvZJDgj4O5eaPy48=;
-        b=S1yBDfff9buckZcEiJxBRkUjcgtNAPoOHcbr4h6qmmtAE4OvAYHwqGl2iQ2ZcVPVMU
-         yB6fv5QZb/10blblZIwslNDvVNcCnd8ezvGn+vUIORUwfkwxodIfHSA/+OJ7k2NUUiwP
-         a8hfoNb8PTz08RasQK//dfPx7MEwRaT2yqg5cVJcxcdFPJMsc+xe9H4Ef3K0EPMLet4n
-         O70bba9261xVQ8cJo4kUpKBkrrz3+n1EGZDx+oHc3V9WMjfyCaGMExQN/YTd2Yz3O9Sy
-         wTNQ1276oIS2dJ/YURK6XMEy0d8KCAIUuiUSKQ9OGTlDYk1KpCCYgh3H4A7pypx1o8BD
-         xcCw==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Cu/5JLglbZpHB47mRPcBeCr0QHZlpel2E25udH/pb8w=;
+        b=efMGrJ6hFKv1kWPIdHDNK8bAG+KmrqFIq7qrsTa6ne5vSAl2jnHP54JiVIsTJdEJDi
+         CBW+7olfq5tZCbPUpejU5CnjJ1THnVL4aJ3zbedyl9GQNj8YoAcIW4iaPZ44FJEWCS1t
+         Os3V8E/VAJdllE5t/eGLCt1E4LaaHPWBEM/eoUCcEKNLUHXy0yDGTVWdyCU7/lupW7kV
+         DHP+LpyR+7o30TJJre/FmlFduYquWNTocbcId5NpAGjpNfC9+tp4qUt4A3fhgqSbIXLW
+         CZ+MqHNnqxuSWHsxFvu1cVO/C0mj+GiMqfkDgHRnUQy6yOOean9ifprUG9mjO/Ml+tSE
+         pruQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=ipw+LMcfEDjJ+AA2+yx8vQdoGWoNvZJDgj4O5eaPy48=;
-        b=nq9JB2h3fX1um0qofmGxNJhhLNmLt3h87rilZYdQQLl/rsThuoB6DEnkFNwuCtm3Cj
-         v+4oEsBxNQ9xTC1+NvZMIC1Hd7smQxNdN0CqaTJHF2Gf+WwDGzbcg88iAKSX62oO+hW0
-         TPzJK5nSamKJ/BGGbPXsirCyYXYPAG3WZ/q41BWoE3PsB8dSg1LG+Tj6hmOkX9qOLRI3
-         FLj/Rh1DliADeEl1TpLMkQDhnhHcaODk/90TL0C5O4cqhVLOU3kv3aaKzZTmgwaV5PJa
-         fhOsX3FFjOD27UdfCrWuLSUCrBaTnuFZA1Zw3DWrOGjFWCY0E0jSPwvTBUH1/ZeyqJNp
-         S5hw==
-X-Gm-Message-State: APjAAAV/IWwrqS2Fvxydw0WLIJOBwGCPIfd3zQyk8ywG0w/WSuV0ruOK
-        YJ1phnn5ZdujdehBk7uOK1cXqUCVcy0=
-X-Google-Smtp-Source: APXvYqxIH+MnjuhsHaj8L0248uwqZ8fzbJ1KTD7utVUEd0u/SAgCR7YoMJxT1E67epSkPA6O4rcT88ZCZ5Y=
-X-Received: by 2002:a63:d615:: with SMTP id q21mr16154733pgg.401.1557182561147;
- Mon, 06 May 2019 15:42:41 -0700 (PDT)
-Date:   Mon,  6 May 2019 15:35:44 -0700
-In-Reply-To: <20190506223544.195371-1-satyat@google.com>
-Message-Id: <20190506223544.195371-5-satyat@google.com>
-Mime-Version: 1.0
-References: <20190506223544.195371-1-satyat@google.com>
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [RFC PATCH 4/4] f2fs: Wire up f2fs to use inline encryption via fscrypt
-From:   Satya Tangirala <satyat@google.com>
-To:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Parshuram Raju Thombare <pthombar@cadence.com>,
-        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Satya Tangirala <satyat@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Cu/5JLglbZpHB47mRPcBeCr0QHZlpel2E25udH/pb8w=;
+        b=tUXMKNDLVPzt2rk1gAp+QorNoPQ9C0cOE50B5Z246Zg/UrwnL+2od0GCcMz5YH7i6D
+         Ux0CzWrx1eEmsPN7HptZPYEIhT+LNIHKp3Kk0IQYTRNpFgR91NcIb7rai9FNTvidYv6S
+         5pxWG446U2BUzWpH4OEIYFuU59x2YqmIzEoMwvbrcs6vI/Chvn0qaeevidngChi/pIdr
+         P7vcDPbzKFa0/uqUkVQ845cQj1bymDLEGPBeU543qDRIYvvOMslEZngRbc7MeGPERRb6
+         JDyydD7b3G7En+B/Ki9sXzLQq9IJvjCk4u1qt0NOUPuJAZx+gG7JROuMT//034nWcYuR
+         4J/A==
+X-Gm-Message-State: APjAAAWGTfts4s3xO20czq3pTzBh+8EVyBLraITcDBPKGryXt51ZQIeb
+        7cbmXVZJVEdQFOKjYKUpMiKoBw==
+X-Google-Smtp-Source: APXvYqyvNo1wcRlCIjQJfL9ucrmYmg+degrKDwjLlQZEoxJHLyUp1v/+wMdRm0VtY/kOSZU5ltjnHw==
+X-Received: by 2002:a17:902:e00a:: with SMTP id ca10mr5734832plb.18.1557186062326;
+        Mon, 06 May 2019 16:41:02 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:1ef2:5820:d6a2:5572:e4a3? ([2601:646:c200:1ef2:5820:d6a2:5572:e4a3])
+        by smtp.gmail.com with ESMTPSA id n9sm13924474pff.59.2019.05.06.16.41.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 16:41:01 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16E227)
+In-Reply-To: <20190506191735.nmzf7kwfh7b6e2tf@yavin>
+Date:   Mon, 6 May 2019 16:41:00 -0700
+Cc:     Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A982EE7E-7E92-460A-A458-2F9C3586E9DA@amacapital.net>
+References: <20190506165439.9155-1-cyphar@cyphar.com> <20190506165439.9155-6-cyphar@cyphar.com> <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com> <20190506191735.nmzf7kwfh7b6e2tf@yavin>
+To:     Aleksa Sarai <cyphar@cyphar.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Satya Tangirala <satyat@google.com>
----
- fs/f2fs/data.c  | 69 ++++++++++++++++++++++++++++++++++++++++++++++---
- fs/f2fs/super.c |  1 +
- 2 files changed, 67 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9727944139f2..7ac6768a52a5 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -279,9 +279,18 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
- 	return bio;
- }
- 
-+static inline u64 hw_crypt_dun(struct inode *inode, struct page *page)
-+{
-+	return (((u64)inode->i_ino) << 32) | (page->index & 0xFFFFFFFF);
-+}
-+
- static inline void __submit_bio(struct f2fs_sb_info *sbi,
- 				struct bio *bio, enum page_type type)
- {
-+	struct page *page;
-+	struct inode *inode;
-+	int err = 0;
-+
- 	if (!is_read_io(bio_op(bio))) {
- 		unsigned int start;
- 
-@@ -323,7 +332,21 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
- 		trace_f2fs_submit_read_bio(sbi->sb, type, bio);
- 	else
- 		trace_f2fs_submit_write_bio(sbi->sb, type, bio);
--	submit_bio(bio);
-+
-+	if (bio_has_data(bio)) {
-+		page = bio_page(bio);
-+		if (page && page->mapping && page->mapping->host) {
-+			inode = page->mapping->host;
-+			err = fscrypt_set_bio_crypt_ctx(inode, bio,
-+						hw_crypt_dun(inode, page));
-+		}
-+	}
-+	if (err) {
-+		bio->bi_status = BLK_STS_IOERR;
-+		bio_endio(bio);
-+	} else {
-+		submit_bio(bio);
-+	}
- }
- 
- static void __submit_merged_bio(struct f2fs_bio_info *io)
-@@ -484,6 +507,9 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
- 	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
- 	struct page *bio_page;
-+	struct inode *fio_inode, *bio_inode;
-+	struct page *first_page;
-+	u64 next_dun = 0;
- 
- 	f2fs_bug_on(sbi, is_read_io(fio->op));
- 
-@@ -512,10 +538,29 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 
- 	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
- 
-+	fio_inode = fio->page->mapping->host;
-+	bio_inode = NULL;
-+	first_page = NULL;
-+	next_dun = 0;
-+	if (io->bio) {
-+		first_page = bio_page(io->bio);
-+		if (first_page->mapping) {
-+			bio_inode = first_page->mapping->host;
-+			if (fscrypt_inode_is_hw_encrypted(bio_inode)) {
-+				next_dun =
-+					hw_crypt_dun(bio_inode, first_page) +
-+				    (io->bio->bi_iter.bi_size >> PAGE_SHIFT);
-+			}
-+		}
-+	}
- 	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
- 	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags) ||
--			!__same_bdev(sbi, fio->new_blkaddr, io->bio)))
-+			!__same_bdev(sbi, fio->new_blkaddr, io->bio) ||
-+			!fscrypt_inode_crypt_mergeable(bio_inode, fio_inode) ||
-+			(fscrypt_inode_is_hw_encrypted(bio_inode) &&
-+			 next_dun != hw_crypt_dun(fio_inode, fio->page))))
- 		__submit_merged_bio(io);
-+
- alloc_new:
- 	if (io->bio == NULL) {
- 		if ((fio->type == DATA || fio->type == NODE) &&
-@@ -570,7 +615,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- 	bio->bi_end_io = f2fs_read_end_io;
- 	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
- 
--	if (f2fs_encrypted_file(inode))
-+	if (f2fs_encrypted_file(inode) && !fscrypt_inode_is_hw_encrypted(inode))
- 		post_read_steps |= 1 << STEP_DECRYPT;
- 	if (post_read_steps) {
- 		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
-@@ -1525,6 +1570,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 	sector_t last_block_in_file;
- 	sector_t block_nr;
- 	struct f2fs_map_blocks map;
-+	u64 next_dun = 0;
- 
- 	map.m_pblk = 0;
- 	map.m_lblk = 0;
-@@ -1606,6 +1652,13 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 			__submit_bio(F2FS_I_SB(inode), bio, DATA);
- 			bio = NULL;
- 		}
-+
-+		if (bio && fscrypt_inode_is_hw_encrypted(inode) &&
-+		    next_dun != hw_crypt_dun(inode, page)) {
-+			__submit_bio(F2FS_I_SB(inode), bio, DATA);
-+			bio = NULL;
-+		}
-+
- 		if (bio == NULL) {
- 			bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
- 					is_readahead ? REQ_RAHEAD : 0);
-@@ -1624,6 +1677,9 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
- 			goto submit_and_realloc;
- 
-+		if (fscrypt_inode_is_hw_encrypted(inode))
-+			next_dun = hw_crypt_dun(inode, page) + 1;
-+
- 		inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
- 		ClearPageError(page);
- 		last_block_in_bio = block_nr;
-@@ -2591,12 +2647,19 @@ static void f2fs_dio_submit_bio(struct bio *bio, struct inode *inode,
- {
- 	struct f2fs_private_dio *dio;
- 	bool write = (bio_op(bio) == REQ_OP_WRITE);
-+	u64 data_unit_num = (((u64)inode->i_ino) << 32) |
-+			    ((file_offset >> PAGE_SHIFT) & 0xFFFFFFFF);
- 
- 	dio = f2fs_kzalloc(F2FS_I_SB(inode),
- 			sizeof(struct f2fs_private_dio), GFP_NOFS);
- 	if (!dio)
- 		goto out;
- 
-+	if (fscrypt_set_bio_crypt_ctx(inode, bio, data_unit_num) != 0) {
-+		kvfree(dio);
-+		goto out;
-+	}
-+
- 	dio->inode = inode;
- 	dio->orig_end_io = bio->bi_end_io;
- 	dio->orig_private = bio->bi_private;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f2aaa2cc6b3e..e98c85d42e8d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2225,6 +2225,7 @@ static const struct fscrypt_operations f2fs_cryptops = {
- 	.dummy_context	= f2fs_dummy_context,
- 	.empty_dir	= f2fs_empty_dir,
- 	.max_namelen	= F2FS_NAME_LEN,
-+	.hw_crypt_supp	= true,
- };
- #endif
- 
--- 
-2.21.0.1020.gf2820cf01a-goog
 
+> On May 6, 2019, at 12:17 PM, Aleksa Sarai <cyphar@cyphar.com> wrote:
+>=20
+>> On 2019-05-06, Jann Horn <jannh@google.com> wrote:
+>>> On Mon, May 6, 2019 at 6:56 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+>>> The need to be able to scope path resolution of interpreters became
+>>> clear with one of the possible vectors used in CVE-2019-5736 (which
+>>> most major container runtimes were vulnerable to).
+>>>=20
+>>> Naively, it might seem that openat(2) -- which supports path scoping --
+>>> can be combined with execveat(AT_EMPTY_PATH) to trivially scope the
+>>> binary being executed. Unfortunately, a "bad binary" (usually a symlink)=
+
+>>> could be written as a #!-style script with the symlink target as the
+>>> interpreter -- which would be completely missed by just scoping the
+>>> openat(2). An example of this being exploitable is CVE-2019-5736.
+>>>=20
+>>> In order to get around this, we need to pass down to each binfmt_*
+>>> implementation the scoping flags requested in execveat(2). In order to
+>>> maintain backwards-compatibility we only pass the scoping AT_* flags.
+>>>=20
+>>> To avoid breaking userspace (in the exceptionally rare cases where you
+>>> have #!-scripts with a relative path being execveat(2)-ed with dfd !=3D
+>>> AT_FDCWD), we only pass dfd down to binfmt_* if any of our new flags are=
+
+>>> set in execveat(2).
+>>=20
+>> This seems extremely dangerous. I like the overall series, but not this p=
+atch.
+>>=20
+>>> @@ -1762,6 +1774,12 @@ static int __do_execve_file(int fd, struct filena=
+me *filename,
+>>>=20
+>>>        sched_exec();
+>>>=20
+>>> +       bprm->flags =3D flags & (AT_XDEV | AT_NO_MAGICLINKS | AT_NO_SYML=
+INKS |
+>>> +                              AT_THIS_ROOT);
+>> [...]
+>>> +#define AT_THIS_ROOT           0x100000 /* - Scope ".." resolution to d=
+irfd (like chroot(2)). */
+>>=20
+>> So now what happens if there is a setuid root ELF binary with program
+>> interpreter "/lib64/ld-linux-x86-64.so.2" (like /bin/su), and an
+>> unprivileged user runs it with execveat(..., AT_THIS_ROOT)? Is that
+>> going to let the unprivileged user decide which interpreter the
+>> setuid-root process should use? =46rom a high-level perspective, opening
+>> the interpreter should be controlled by the program that is being
+>> loaded, not by the program that invoked it.
+>=20
+> I went a bit nuts with openat_exec(), and I did end up adding it to the
+> ELF interpreter lookup (and you're completely right that this is a bad
+> idea -- I will drop it from this patch if it's included in the next
+> series).
+>=20
+> The proposed solutions you give below are much nicer than this patch so
+> I can drop it and work on fixing those issues separately.
+>=20
+>> In my opinion, CVE-2019-5736 points out two different problems:
+>>=20
+>> The big problem: The __ptrace_may_access() logic has a special-case
+>> short-circuit for "introspection" that you can't opt out of; this
+>> makes it possible to open things in procfs that are related to the
+>> current process even if the credentials of the process wouldn't permit
+>> accessing another process like it. I think the proper fix to deal with
+>> this would be to add a prctl() flag for "set whether introspection is
+>> allowed for this process", and if userspace has manually un-set that
+>> flag, any introspection special-case logic would be skipped.
+>=20
+> We could do PR_SET_DUMPABLE=3D3 for this, I guess?
+>=20
+>> An additional problem: /proc/*/exe can be used to open a file for
+>> writing; I think it may have been Andy Lutomirski who pointed out some
+>> time ago that it would be nice if you couldn't use /proc/*/fd/* to
+>> re-open files with more privileges, which is sort of the same thing.
+>=20
+> This is something I'm currently working on a series for, which would
+> boil down to some restrictions on how re-opening of file descriptors
+> works through procfs.
+>=20
+> However, execveat() of a procfs magiclink is a bit hard to block --
+> there is no way for userspace to to represent a file being "open for
+> execute" so they are all "open for execute" by default and blocking it
+> outright seems a bit extreme (though I actually hope to eventually add
+> the ability to mark an O_PATH as "open for X" to resolveat(2) -- hence
+> why I've reserved some bits).
+
+There=E2=80=99s an O_MAYEXEC series floating around.
+
+>=20
+> (Thinking more about it, there is an argument that I should include the
+> above patch into this series so that we can block re-opening of fds
+> opened through resolveat(2) without explicit flags from the outset.)
+>=20
+> --=20
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> <https://www.cyphar.com/>
