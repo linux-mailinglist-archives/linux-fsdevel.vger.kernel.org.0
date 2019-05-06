@@ -2,96 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66D4B150BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2019 17:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 695711511B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2019 18:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbfEFPx6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 May 2019 11:53:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:3346 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfEFPx6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 May 2019 11:53:58 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7C482306D334;
-        Mon,  6 May 2019 15:53:57 +0000 (UTC)
-Received: from jsavitz.bos.com (dhcp-17-161.bos.redhat.com [10.18.17.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3793560BEC;
-        Mon,  6 May 2019 15:53:48 +0000 (UTC)
-From:   Joel Savitz <jsavitz@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Joel Savitz <jsavitz@redhat.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Yury Norov <yury.norov@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3] fs/proc: add VmTaskSize field to /proc/$$/status
-Date:   Mon,  6 May 2019 11:53:43 -0400
-Message-Id: <1557158023-23021-1-git-send-email-jsavitz@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 06 May 2019 15:53:58 +0000 (UTC)
+        id S1726037AbfEFQVu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 May 2019 12:21:50 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:55346 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbfEFQVu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 May 2019 12:21:50 -0400
+Received: by mail-it1-f196.google.com with SMTP id q132so6006058itc.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 09:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JM/WZfijWawO0dM75sC9wd0xm0O1e7k2DME12T/WG/Q=;
+        b=UFXgx9HuMJqBVirFEYXePbVMPL7ifubbChBpKxZBsozZhVZdUX8Ot96uTiSw/V7CNk
+         fSLYzzNvhbUb5hAYmI5Zl6SEyQ2jdbAKtEms3Ypy2pQmMDDum4DOht2B4MltviwdHnoq
+         pXa0AIgIt5dGhunS5vhMZ92AiF53tkkXPDPv+0pTedFeqkTRhFOKBfgyTCqxB/Bi1xP2
+         dPQnaN2VrGkDeGBjsgm960JmoMz207/11+prKIuW9Ru/8earF5aZf93UhtGUWdlB18Eq
+         8yfQOtssex78N19DTIEBJQMWZ9atH8CaNx3iNa+PeisifL3Ff8LW9WaSlUw/DyuxyxS9
+         5Phg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JM/WZfijWawO0dM75sC9wd0xm0O1e7k2DME12T/WG/Q=;
+        b=EKPeSc0S+9i512sMxqfNSBCSOXnKxNhwfRkriJKSAygbGZC5jQcXz7EGdVtCgtA1xS
+         sADEa7l9ksZLfUmZDqVQpA5/512t6qxg9HCOsdMVzB26q92gwhpaPYlxv4hFsMSPP5q4
+         FKuwYH+poEVfcYczr8KYnOwPy0kZoN8gBbXnPSCWZaMt5UCRNlqIF+FpRNRK/TPyOUbf
+         /Vmb6WIbqvha9OiaXrFIAdm+IpVo2qj3qrSx86U/sY+0vrgAO3qTA3BE6ySGE0lCzJeH
+         KF5VcAFoce3ncgJ2O4KEDlzmPDRiPv7zoqxE2tiuQ1L03A903m4Pno+PfmXQrVZGXKGk
+         +YXQ==
+X-Gm-Message-State: APjAAAUJSs0H5uqe4xFKMeoypJQB6AVxhG3Dv24t+p6wZTEHvEq364Bz
+        La5up+OGIliGeAco/MAjVH2lDg==
+X-Google-Smtp-Source: APXvYqx5RyQ8KTZzVdgGtPBddYXhbpfXTeY6xfZ5bVFKqngkFqVvd5/hfJWmx5YQugDGs5G6H8rXIA==
+X-Received: by 2002:a24:6987:: with SMTP id e129mr18889644itc.28.1557159709220;
+        Mon, 06 May 2019 09:21:49 -0700 (PDT)
+Received: from [192.168.1.158] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id d10sm3880686ios.72.2019.05.06.09.21.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 09:21:48 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: fix shadowed variable ret return code being not
+ checked
+To:     Colin King <colin.king@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190505220122.5024-1-colin.king@canonical.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5ccacedd-41d9-f33c-25de-ae16bcdb7b08@kernel.dk>
+Date:   Mon, 6 May 2019 10:21:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190505220122.5024-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is currently no easy and architecture-independent way to find the
-lowest unusable virtual address available to a process without
-brute-force calculation. This patch allows a user to easily retrieve
-this value via /proc/<pid>/status.
+On 5/5/19 4:01 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently variable ret is declared in a while-loop code block that
+> shadows another variable ret. When an error occurs in the while-loop
+> the error return in ret is not being set in the outer code block and
+> so the error check on ret is always going to be checking on the wrong
+> ret variable resulting in check that is always going to be true and
+> a premature return occurs.
+> 
+> Fix this by removing the declaration of the inner while-loop variable
+> ret so that shadowing does not occur.
 
-Using this patch, any program that previously needed to waste cpu cycles
-recalculating a non-sensitive process-dependent value already known to
-the kernel can now be optimized to use this mechanism.
+Thanks, applied.
 
-Signed-off-by: Joel Savitz <jsavitz@redhat.com>
----
- Documentation/filesystems/proc.txt | 2 ++
- fs/proc/task_mmu.c                 | 2 ++
- 2 files changed, 4 insertions(+)
-
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index 66cad5c86171..1c6a912e3975 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -187,6 +187,7 @@ read the file /proc/PID/status:
-   VmLib:      1412 kB
-   VmPTE:        20 kb
-   VmSwap:        0 kB
-+  VmTaskSize:	137438953468 kB
-   HugetlbPages:          0 kB
-   CoreDumping:    0
-   THP_enabled:	  1
-@@ -263,6 +264,7 @@ Table 1-2: Contents of the status files (as of 4.19)
-  VmPTE                       size of page table entries
-  VmSwap                      amount of swap used by anonymous private data
-                              (shmem swap usage is not included)
-+ VmTaskSize                  lowest unusable address in process virtual memory
-  HugetlbPages                size of hugetlb memory portions
-  CoreDumping                 process's memory is currently being dumped
-                              (killing the process may lead to a corrupted core)
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 95ca1fe7283c..0af7081f7b19 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -74,6 +74,8 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
- 	seq_put_decimal_ull_width(m,
- 		    " kB\nVmPTE:\t", mm_pgtables_bytes(mm) >> 10, 8);
- 	SEQ_PUT_DEC(" kB\nVmSwap:\t", swap);
-+	seq_put_decimal_ull_width(m,
-+		    " kB\nVmTaskSize:\t", mm->task_size >> 10, 8);
- 	seq_puts(m, " kB\n");
- 	hugetlb_report_usage(m, mm);
- }
 -- 
-2.18.1
+Jens Axboe
 
