@@ -2,128 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84229155C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 May 2019 23:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 183981561F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 00:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfEFVnG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 May 2019 17:43:06 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42952 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbfEFVnF (ORCPT
+        id S1726618AbfEFWmW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 May 2019 18:42:22 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:34639 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfEFWmW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 May 2019 17:43:05 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k9so10709496oig.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 14:43:05 -0700 (PDT)
+        Mon, 6 May 2019 18:42:22 -0400
+Received: by mail-qk1-f202.google.com with SMTP id s70so16117383qka.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 15:42:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=94ZZFjAz8L6vodxrYz5ZCQ36NJZDWbAB/OOZ4duFwS4=;
-        b=tLixckVpvUKIIP5RUjay0lZW7YNSS3dUAp/uUYFinYYsKHGVICkPCkOYGtF3sbBoWy
-         WrEckQ4QP028zfHhbL5kBL+ohEGOP1dDKk+Bp5+VWfMsnb090NYGYzTdl/D4Y4BZg795
-         E2qTT59iEGKQL66/nZu7o3rbn+PokHJnlfYdNIP/E2c/XuQzdE7pg9j0bvYzbCuwwxJL
-         emPADFPM3ZOiA8e/GRITu0dcg4Os+e17Y3+CUGf4fPlweNagjJdF4OInhRnPReNkri5n
-         LWQH1BOxdyyoBD4Yg62n/XVFQ/+F+SIAiTFtipiJC/QAUrtnzp2bJR8vq6aT+hCDGigV
-         3HDQ==
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=HDQgsnfMdYj2HzAh+6ZKVkk4GAFoPt2zIEZOsu0qMIU=;
+        b=wCfDCpO4iwQ8hM3pS4WghaopX9OaZw7S2s2pTYHSwTSzHwuGPvStk8RQDoVx+YV2pc
+         qgnKeomPe77Vcy3FFjVYTRmifdcB60+Gc7J3PFHQ4aUvu2T4jdlGwFp+jOvzqXYCVaXc
+         YSnHMYF9+4ykKg28N41l/erKi55iAyZMcJUFZZSGFDo8Yfhk1ozwmcEk2PCJuH9bb9fS
+         V65i43xZSrYa3zgcaLYvWwQnmiQRf+n6iv03QdS3oMjU4xQ+Z+KMpQ7zxEFlSqAP63qf
+         Yp3HvJ5nzXdFxshzoOiykpBvSe/FQ6DOSGUTmrWEAY5r9a+KPWYuW/TuL0CZesVvnhAg
+         Om+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=94ZZFjAz8L6vodxrYz5ZCQ36NJZDWbAB/OOZ4duFwS4=;
-        b=iZFBCoWan7Wo6h6iQRK3eflLFEFG/OhuU/B1mN2lF9ArBQZ8pxnEdzEViv8NXpzF/A
-         TYMb+J35KX6+97qVMtbTlgmuMz0ES+1oxrgIE7W7MwLbD77gEDC2CplqnhatyQktJ2Q6
-         NP3gDKxDNBCuuFUsrvdFj62B4NomSyQy6uu2VaZqOsBvzo89zGTq65+Wh4Cnnmt30jbX
-         RuJGwnepKri6XNzUea9gPFBJMqe8lVaj3FrnDN1TPa3cFateLaF2O9baAN5NKBNTEndL
-         TuLpgoqSZy5abcQ+vWGb9ewpZQBodH6p1Fi7kAWHCDXNcrZLWH5fIZaTtqvb36ejWxbG
-         NiRg==
-X-Gm-Message-State: APjAAAV7agAaAKkPvOn7R7wKn0q6rbvIgB3IjlRnFKsIOB0sXFHFhBvF
-        3N5xbak3C/V0J2fyv5mXdSUQ4r6Dok1k4hPU/+mf2Q==
-X-Google-Smtp-Source: APXvYqyhYHswKnB+01odEGOhapU2d1ybkbO7OVGv0qMcxCiM57xMXMGlQ7Mu0aMV2CefJNmt9LchrL7CnYaGHRcRbVk=
-X-Received: by 2002:aca:d4cf:: with SMTP id l198mr192007oig.137.1557178984528;
- Mon, 06 May 2019 14:43:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <20190501230126.229218-13-brendanhiggins@google.com> <20190502110220.GD12416@kroah.com>
- <CAFd5g47t=EdLKFCT=CnPkrM2z0nDVo24Gz4j0VxFOJbARP37Lg@mail.gmail.com>
- <a49c5088-a821-210c-66de-f422536f5b01@gmail.com> <CAFd5g44iWRchQKdJYtjRtPY6e-6e0eXpKXXsx5Ooi6sWE474KA@mail.gmail.com>
- <1a5f3c44-9fa9-d423-66bf-45255a90c468@gmail.com> <CAFd5g45RYm+zfdJXnyp2KZZH5ojfOzy++aq+4zBeE5VDu6WgEw@mail.gmail.com>
- <052fa196-4ea9-8384-79b7-fe6bacc0ee82@gmail.com> <CAFd5g47aY-CL+d7DfiyTidY4aAVY+eg1TM1UJ4nYqKSfHOi-0w@mail.gmail.com>
- <63f63c7c-6185-5e64-b338-6a5e7fb9e27c@gmail.com> <CAGXu5jJpp2HyEWMtAde+VUt=9ni3HRu69NM4rUQJu4kBrnx9Kw@mail.gmail.com>
-In-Reply-To: <CAGXu5jJpp2HyEWMtAde+VUt=9ni3HRu69NM4rUQJu4kBrnx9Kw@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 6 May 2019 14:42:53 -0700
-Message-ID: <CAFd5g47d-e31NecDEbMud0rUH55EbhcS0wJpjB1PZZaX5Udqmw@mail.gmail.com>
-Subject: Re: [PATCH v2 12/17] kunit: tool: add Python wrappers for running
- KUnit tests
-To:     Kees Cook <keescook@google.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
-        Felix Guo <felixguoxiuping@gmail.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=HDQgsnfMdYj2HzAh+6ZKVkk4GAFoPt2zIEZOsu0qMIU=;
+        b=DslcNSdqfhm8pvbHjtPSsNBwVPP/NpQvV9pX6PE8AQlUnrogXbHrTwvb0KtaUKzQJb
+         X4k+Y5nZi5Upt8MgKqAwuh6485TtvbBW8jFRGar4EDlTUV9XZlxh2kbM9kAuGrXFU3RP
+         b8WbjJVej6d5d7eiz1u3gsYafkomPN0Ta6E6f+aq3UDxiLFC0QdHEoP8C9somuxbPZGR
+         i05xDG1FMEXp+zBsSlp8UGekn5GeZetmVX2pjWCofJV7jrwuqWVq5Cc20SXPuHEuz1SG
+         8SoBT//n/3YKeIc95YJ+7o0KmhxdROBpi+2Y97Ue1KQYfiZul9Fb2FqTVRtazoC5vdAY
+         Bucw==
+X-Gm-Message-State: APjAAAWg1M2unJiT8fGFVS52qZatgjzPCDN7fVSwSGA29up9nyAnS29z
+        qFZU/bFsuLhjmt+YXKIHuuZLQX1kmy4=
+X-Google-Smtp-Source: APXvYqxwA5++xM6gxezRNh+erunt1hddnW/QI/qj9Iu7UOgd0D8UkctzXLxKtJg+FWmw0YdKUWa/J4QBF1w=
+X-Received: by 2002:a0c:b50d:: with SMTP id d13mr22650815qve.222.1557182541362;
+ Mon, 06 May 2019 15:42:21 -0700 (PDT)
+Date:   Mon,  6 May 2019 15:35:40 -0700
+Message-Id: <20190506223544.195371-1-satyat@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+Subject: [RFC PATCH 0/4] Inline Encryption Support
+From:   Satya Tangirala <satyat@google.com>
+To:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Parshuram Raju Thombare <pthombar@cadence.com>,
+        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Satya Tangirala <satyat@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Sun, May 5, 2019 at 5:19 PM Frank Rowand <frowand.list@gmail.com> wrote:
-> > You can see the full version 14 document in the submitter's repo:
-> >
-> >   $ git clone https://github.com/isaacs/testanything.github.io.git
-> >   $ cd testanything.github.io
-> >   $ git checkout tap14
-> >   $ ls tap-version-14-specification.md
-> >
-> > My understanding is the the version 14 specification is not trying to
-> > add new features, but instead capture what is already implemented in
-> > the wild.
->
-> Oh! I didn't know about the work on TAP 14. I'll go read through this.
->
-> > > ## Here is what I propose for this patchset:
-> > >
-> > >  - Print out test number range at the beginning of each test suite.
-> > >  - Print out log lines as soon as they happen as diagnostics.
-> > >  - Print out the lines that state whether a test passes or fails as a
-> > > ok/not ok line.
-> > >
-> > > This would be technically conforming with TAP13 and is consistent with
-> > > what some kselftests have done.
->
-> This is what I fixed kselftest to actually do (it wasn't doing correct
-> TAP13), and Shuah is testing the series now:
-> https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=ksft-tap-refactor
+This patch series adds support for Inline Encryption to the block layer,
+fscrypt and f2fs.
 
-Oh, cool! I guess this is an okay approach then.
+Inline Encryption hardware allows software to specify an encryption context
+(an encryption key, crypto algorithm, data unit num, data unit size, etc.)
+along with a data transfer request to a storage device, and the inline
+encryption hardware will use that context to en/decrypt the data. The
+inline encryption hardware is part of the storage device, and it
+conceptually sits on the data path between system memory and the storage
+device. Inline Encryption hardware has become increasingly common, and we
+want to support it in the kernel.
 
-Thanks!
+Inline Encryption hardware implementations often function around the
+concept of a limited number of "keyslots", which can hold an encryption
+context each. The storage device can be directed to en/decrypt any
+particular request with the encryption context stored in any particular
+keyslot.
+
+Patch 1 introduces a Keyslot Manager to efficiently manage keyslots.
+The keyslot manager also functions as the interface that upper layers will
+use to program keys into inline encryption hardware. For more information
+on the Keyslot Manager, refer to documentation found in
+block/keyslot-manager.c and linux/keyslot-manager.h.
+
+We also want to be able to make use of inline encryption hardware with
+layered devices like device mapper. To this end, Patch 1 also introduces
+blk-crypto. Blk-crypto delegates crypto operations to inline encryption
+hardware when available, and also contains a software fallback to the
+kernel crypto API. Given that blk-crypto works as a software fallback,
+we are considering removing file content en/decryption from fscrypt and
+simply using blk-crypto in a future patch. For more details on blk-crypto,
+refer to Documentation/block/blk-crypto.txt.
+
+Patch 2 adds support for inline encryption into the UFS driver according
+to the JEDEC UFS HCI v2.1 specification. Inline encryption support for
+other drivers (like eMMC) may be added in the same way - the device driver
+should set up a Keyslot Manager in the device's request_queue (refer to
+the UFS crypto additions in ufshcd-crypto.c for an example).
+
+Patches 3 and 4 add support to fscrypt and f2fs, so that we have
+a complete stack that can make use of inline encryption.
+
+There have been a few patch sets addressing Inline Encryption Support in
+the past. Briefly, this patch set differs from those as follows:
+
+1) https://lkml.org/lkml/2018/10/17/1022
+"crypto: qce: ice: Add support for Inline Crypto Engine"
+is specific to certain hardware, while our patch set's Inline
+Encryption support for UFS is implemented according to the JEDEC UFS
+specification.
+
+2) https://lkml.org/lkml/2018/5/28/1187
+"scsi: ufs: UFS Host Controller crypto changes" registers inline
+encryption support as a kernel crypto algorithm. Our patch set views
+inline encryption as being fundamentally different from a generic crypto
+provider (in that inline encryption is tied to a device), and so does
+not use the kernel crypto API to represent inline encryption hardware.
+
+3) https://lkml.org/lkml/2018/12/11/190
+"scsi: ufs: add real time/inline crypto support to UFS HCD" requires
+the device mapper to work - our patch does not.
+
+Satya Tangirala (4):
+  block: Block Layer changes for Inline Encryption Support
+  scsi: ufs: UFS driver v2.1 crypto support
+  fscrypt: wire up fscrypt to use blk-crypto
+  f2fs: Wire up f2fs to use inline encryption via fscrypt
+
+ Documentation/block/blk-crypto.txt | 185 ++++++++++
+ block/Kconfig                      |  16 +
+ block/Makefile                     |   3 +
+ block/bio.c                        |  45 +++
+ block/blk-core.c                   |  14 +-
+ block/blk-crypto.c                 | 572 +++++++++++++++++++++++++++++
+ block/blk-merge.c                  |  87 ++++-
+ block/bounce.c                     |   1 +
+ block/keyslot-manager.c            | 314 ++++++++++++++++
+ drivers/scsi/ufs/Kconfig           |  10 +
+ drivers/scsi/ufs/Makefile          |   1 +
+ drivers/scsi/ufs/ufshcd-crypto.c   | 449 ++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd-crypto.h   |  92 +++++
+ drivers/scsi/ufs/ufshcd.c          |  85 ++++-
+ drivers/scsi/ufs/ufshcd.h          |  23 ++
+ drivers/scsi/ufs/ufshci.h          |  67 +++-
+ fs/crypto/Kconfig                  |   7 +
+ fs/crypto/bio.c                    | 156 ++++++--
+ fs/crypto/crypto.c                 |   9 +
+ fs/crypto/fscrypt_private.h        |  10 +
+ fs/crypto/keyinfo.c                |  69 ++--
+ fs/crypto/policy.c                 |  10 +
+ fs/f2fs/data.c                     |  69 +++-
+ fs/f2fs/super.c                    |   1 +
+ include/linux/bio.h                | 166 +++++++++
+ include/linux/blk-crypto.h         |  40 ++
+ include/linux/blk_types.h          |  49 +++
+ include/linux/blkdev.h             |   9 +
+ include/linux/fscrypt.h            |  58 +++
+ include/linux/keyslot-manager.h    | 131 +++++++
+ include/uapi/linux/fs.h            |  12 +-
+ 31 files changed, 2701 insertions(+), 59 deletions(-)
+ create mode 100644 Documentation/block/blk-crypto.txt
+ create mode 100644 block/blk-crypto.c
+ create mode 100644 block/keyslot-manager.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
+ create mode 100644 include/linux/blk-crypto.h
+ create mode 100644 include/linux/keyslot-manager.h
+
+-- 
+2.21.0.1020.gf2820cf01a-goog
+
