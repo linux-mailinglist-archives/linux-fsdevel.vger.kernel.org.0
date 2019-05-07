@@ -2,64 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 045D215720
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 02:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2B6D15724
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 03:02:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbfEGA6p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 May 2019 20:58:45 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:38228 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbfEGA6o (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 May 2019 20:58:44 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hNoRO-000209-WB; Tue, 07 May 2019 00:58:43 +0000
-Date:   Tue, 7 May 2019 01:58:42 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs.git pile 2: several fixes to backport
-Message-ID: <20190507005842.GG23075@ZenIV.linux.org.uk>
+        id S1726415AbfEGBCn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 May 2019 21:02:43 -0400
+Received: from fieldses.org ([173.255.197.46]:58610 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726073AbfEGBCn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 May 2019 21:02:43 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id A6D24C57; Mon,  6 May 2019 21:02:42 -0400 (EDT)
+Date:   Mon, 6 May 2019 21:02:42 -0400
+To:     Andrew W Elble <aweits@rit.edu>
+Cc:     Benjamin Coddington <bcodding@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, abe@purdue.edu,
+        lsof-l@lists.purdue.edu, util-linux@vger.kernel.org,
+        jlayton@redhat.com
+Subject: Re: [PATCH 09/10] nfsd: expose some more information about NFSv4
+ opens
+Message-ID: <20190507010242.GB4835@fieldses.org>
+References: <1556201060-7947-1-git-send-email-bfields@redhat.com>
+ <1556201060-7947-10-git-send-email-bfields@redhat.com>
+ <786E0C83-A22D-461A-A9D1-AF7B42018CE9@redhat.com>
+ <m2k1f8hmr5.fsf@discipline.rit.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <m2k1f8hmr5.fsf@discipline.rit.edu>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+From:   bfields@fieldses.org (J. Bruce Fields)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	acct_on() fix for deadlock caught be overlayfs folks,
-autofs RCU use-after-free SNAFU (->d_manage() can be called
-lockless, so we need to RCU-delay freeing the objects it
-looks at) and (hopefully) the end of "do we need freeing this
-dentry RCU-delayed" whack-a-mole.
+On Thu, May 02, 2019 at 11:58:06AM -0400, Andrew W Elble wrote:
+> Benjamin Coddington <bcodding@redhat.com> writes:
+> 
+> > On 25 Apr 2019, at 10:04, J. Bruce Fields wrote:
+> >
+> >> From: "J. Bruce Fields" <bfields@redhat.com>
+> >>
+> >> Add open modes, device numbers, inode numbers, and open owners to each
+> >> line of nfsd/clients/#/opens.
+> >>
+> >> Open owners are totally opaque but seem to sometimes have some useful
+> >> ascii strings included, so passing through printable ascii characters
+> >> and escaping the rest seems useful while still being machine-readable.
+> >> ---
+> >>  fs/nfsd/nfs4state.c            | 40
+> >> ++++++++++++++++++++++++++++------
+> >>  fs/nfsd/state.h                |  2 +-
+> >>  fs/seq_file.c                  | 17 +++++++++++++++
+> >>  include/linux/seq_file.h       |  2 ++
+> >>  include/linux/string_helpers.h |  1 +
+> >>  lib/string_helpers.c           |  5 +++--
+> >>  6 files changed, 57 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> >> index 829d1e5440d3..f53621a65e60 100644
+> >> --- a/fs/nfsd/nfs4state.c
+> >> +++ b/fs/nfsd/nfs4state.c
+> >> @@ -42,6 +42,7 @@
+> >>  #include <linux/sunrpc/svcauth_gss.h>
+> >>  #include <linux/sunrpc/addr.h>
+> >>  #include <linux/jhash.h>
+> >> +#include <linux/string_helpers.h>
+> >>  #include "xdr4.h"
+> >>  #include "xdr4cb.h"
+> >>  #include "vfs.h"
+> >> @@ -2261,16 +2262,41 @@ static void opens_stop(struct seq_file *s,
+> >> void *v)
+> >>  static int opens_show(struct seq_file *s, void *v)
+> >>  {
+> >>  	struct nfs4_stid *st = v;
+> >> -	struct nfs4_ol_stateid *os;
+> >> -	u64 stateid;
+> >> +	struct nfs4_ol_stateid *ols;
+> >> +	struct nfs4_file *nf;
+> >> +	struct file *file;
+> >> +	struct inode *inode;
+> >> +	struct nfs4_stateowner *oo;
+> >> +	unsigned int access, deny;
+> >>
+> >>  	if (st->sc_type != NFS4_OPEN_STID)
+> >>  		return 0; /* XXX: or SEQ_SKIP? */
+> >> -	os = openlockstateid(st);
+> >> -	/* XXX: get info about file, etc., here */
+> >> +	ols = openlockstateid(st);
+> >> +	oo = ols->st_stateowner;
+> >> +	nf = st->sc_file;
+> >> +	file = find_any_file(nf);
+> 
+> Is there a matching fput() missing somewhere, or did I just not see it...?
 
-The following changes since commit 79a3aaa7b82e3106be97842dedfd8429248896e6:
+Oops, fixed.
 
-  Linux 5.1-rc3 (2019-03-31 14:39:29 -0700)
+> >> +	inode = d_inode(file->f_path.dentry);
+> >> +
+> >> +	seq_printf(s, STATEID_FMT, STATEID_VAL(&st->sc_stateid));
+> >
+> > Should we match the byte order printed with what wireshark/tshark sees?
+> 
+> ^^ +1
 
-are available in the git repository at:
+Yeah, I agree, I'm changing that to just be a "%16phN", which should
+give us what wireshark does.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git stable-fodder
+Thanks for the review!
 
-for you to fetch changes up to ce285c267a003acbf607f3540ff71287f82e5282:
-
-  autofs: fix use-after-free in lockless ->d_manage() (2019-04-09 19:18:19 -0400)
-
-----------------------------------------------------------------
-Al Viro (3):
-      acct_on(): don't mess with freeze protection
-      dcache: sort the freeing-without-RCU-delay mess for good.
-      autofs: fix use-after-free in lockless ->d_manage()
-
- Documentation/filesystems/porting |  5 +++++
- fs/autofs/autofs_i.h              |  1 +
- fs/autofs/inode.c                 |  2 +-
- fs/dcache.c                       | 24 +++++++++++++-----------
- fs/internal.h                     |  2 --
- fs/nsfs.c                         |  3 +--
- include/linux/dcache.h            |  2 +-
- include/linux/mount.h             |  2 ++
- kernel/acct.c                     |  4 ++--
- 9 files changed, 26 insertions(+), 19 deletions(-)
+--b.
