@@ -2,363 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E82A16741
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 17:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1537167AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 18:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbfEGP57 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 11:57:59 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46702 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbfEGP57 (ORCPT
+        id S1726672AbfEGQTt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 12:19:49 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48568 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfEGQTt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 11:57:59 -0400
-Received: by mail-ot1-f66.google.com with SMTP id v17so7331929otp.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2019 08:57:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5Z5TigwEera364CM2VdxaFhBvvqoQcUUDoPjuwON3M8=;
-        b=Fhw5wO5azxXSmUnVRy0VmVZxtI/8TimIdTzYQ/UeoAQYQZGviAYTNksdgqJ+h4IZlZ
-         mTokc54qsRDW2yS4EvQ+bDPSH4FN4IflNhrlICbYtcUDota0DTDSg99mmSQiDtoSf8RM
-         h7KMdjvi1jKcaWslrq7D0NRQycOzn/nIUefPAYMi5pPAS4MZzUQXex130Qk9KqmdbCgA
-         0R3yL7+k/LxSJXiaiPle11wC6eBLMtw1mmTrGkhB4TAaZf7hOXNDW04OmQMQDJQ7s7DR
-         WTyr5IX3eLwtE2yFAI+mQoZ9iViMdkKcVLHWFCAbjLvJsw1+eYUPSIO/QHK4niDfxWAj
-         /g4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5Z5TigwEera364CM2VdxaFhBvvqoQcUUDoPjuwON3M8=;
-        b=ZXZqdEGtaObHsEj9uBnYCdr6UwaOs5kgVCD4WqMTsmwvdlUFpqJTbFZnUzQzPykky9
-         o2Ezd6iQOXP4d/Fi+josC+JxB8LktDsNpUXTNvJziRXZC5paa2cdz0SP6l/ENMefbSfy
-         pce4nh4tM7WBvC/jCNbrXQKvhXBOhU8YLJj79X6cQsPP0ptwFkvxJjcHtVwFkGuaivof
-         5ACi9c3p0sViWjh5DhGLOL9okUGCmWighf8r4W3nVZcbo8GddrHTd4p4kZxC1xKSjjuK
-         arR6uRZPI1i4KfokH1IZbMRaZohkYbe767Kb/7ZFjRLBZ+H2QMcw7If3ZfEI6z4Rrf7P
-         Mv7Q==
-X-Gm-Message-State: APjAAAVr7cbuKfj7vf/ReN/TcO/Dh2S/GZ2QXBbT/zHoN5uNpi5xD/fC
-        4TleAmHdIn+068c0j///5fHISOzSTK4AS3r/IKp2EQ==
-X-Google-Smtp-Source: APXvYqznV4n0rtnwALOxXWGajN2p+ua09SAXiEIQ3HSkpkefYwXUadugP+hgxSmobjgqjOaL0Vn4qNDOneSoOTZ4bSE=
-X-Received: by 2002:a9d:739a:: with SMTP id j26mr1315767otk.242.1557244677914;
- Tue, 07 May 2019 08:57:57 -0700 (PDT)
+        Tue, 7 May 2019 12:19:49 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x47GE4tr157451;
+        Tue, 7 May 2019 16:17:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=JFFlnWS0WxSMENUMsRBMs4+e/sfuzMFmGvWcjKKQQuc=;
+ b=TKQ0ZY42TnZrA9kUXuIIQxHZJtlgsPZc/HUlXzQ4TUAvfAYUIXRd3TufRkYlIsL/qYnH
+ gEOc/3eGhv+v8nTxOS8S21kRqbBtPYiYTEKBQBAnom75SF+6NN9JdMkr6m+iXE4suPUy
+ M8pk/1FBF18jWlrv22JoleV2scB2kxIrjAnXvCYleCsCB2wshmO8nENxJSX0+PxVJUiQ
+ ZYNWGbaeLaZaSTwok9d5T6R6aHykl/CLecrfPWn2A3d57LkaTuFX9ZNvyXgC4fQ28IyP
+ l2LCbcZAeGQ6QNp9COGNfS/FdR1duRVLEebs8Og572/1EJwAKTyBze4/M2itosUoGBUM Pg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2s94b0phet-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 May 2019 16:17:57 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x47GH2b6135005;
+        Tue, 7 May 2019 16:17:56 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2s9ayeyus1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 May 2019 16:17:56 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x47GHiM0002137;
+        Tue, 7 May 2019 16:17:44 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 07 May 2019 09:17:44 -0700
+Date:   Tue, 7 May 2019 09:17:36 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Pankaj Gupta <pagupta@redhat.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        KVM list <kvm@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Christoph Hellwig <hch@infradead.org>,
+        Len Brown <lenb@kernel.org>, Jan Kara <jack@suse.cz>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        lcapitulino@redhat.com, Kevin Wolf <kwolf@redhat.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        jmoyer <jmoyer@redhat.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        david <david@fromorbit.com>, cohuck@redhat.com,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, kilobyte@angband.pl,
+        yuval shaia <yuval.shaia@oracle.com>
+Subject: Re: [PATCH v7 6/6] xfs: disable map_sync for async flush
+Message-ID: <20190507161736.GV5207@magnolia>
+References: <20190426050039.17460-1-pagupta@redhat.com>
+ <20190426050039.17460-7-pagupta@redhat.com>
+ <CAPcyv4hCP4E4xPkQx25tqhznon6ADwrYJB1yujkrO-A7LUnsmg@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190502040331.81196-1-ezemtsov@google.com> <20190502040331.81196-2-ezemtsov@google.com>
-In-Reply-To: <20190502040331.81196-2-ezemtsov@google.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 7 May 2019 17:57:31 +0200
-Message-ID: <CAG48ez3SWdcSbdeu9sBx-MUSONgk9_Kmx62NmCALAVou1q9kCw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] incfs: Add first files of incrementalfs
-To:     ezemtsov@google.com
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4hCP4E4xPkQx25tqhznon6ADwrYJB1yujkrO-A7LUnsmg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9250 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905070105
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9250 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905070105
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+linux-api
+On Tue, May 07, 2019 at 08:37:01AM -0700, Dan Williams wrote:
+> On Thu, Apr 25, 2019 at 10:03 PM Pankaj Gupta <pagupta@redhat.com> wrote:
+> >
+> > Dont support 'MAP_SYNC' with non-DAX files and DAX files
+> > with asynchronous dax_device. Virtio pmem provides
+> > asynchronous host page cache flush mechanism. We don't
+> > support 'MAP_SYNC' with virtio pmem and xfs.
+> >
+> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> > ---
+> >  fs/xfs/xfs_file.c | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> Darrick, does this look ok to take through the nvdimm tree?
 
-On Tue, May 7, 2019 at 4:23 PM <ezemtsov@google.com> wrote:
-> - fs/incfs dir
-> - Kconfig (CONFIG_INCREMENTAL_FS)
-> - Makefile
-> - Module and file system initialization and clean up code
-> - New MAINTAINERS entry
-> - Add incrementalfs.h UAPI header
-> - Register ioctl range in ioctl-numbers.txt
-> - Documentation
->
-> Signed-off-by: Eugene Zemtsov <ezemtsov@google.com>
-[...]
-> diff --git a/Documentation/filesystems/incrementalfs.rst b/Documentation/=
-filesystems/incrementalfs.rst
-> new file mode 100644
-> index 000000000000..682e3dcb6b5a
-> --- /dev/null
-> +++ b/Documentation/filesystems/incrementalfs.rst
-> @@ -0,0 +1,452 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Incremental File System
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Overview
-> +=3D=3D=3D=3D=3D=3D=3D=3D
-> +Incremental FS is special-purpose Linux virtual file system that allows
-> +execution of a program while its binary and resource files are still bei=
-ng
-> +lazily downloaded over the network, USB etc. It is focused on incrementa=
-l
-> +delivery for a small number (under 100) of big files (more than 10 megab=
-ytes).
-> +Incremental FS doesn=E2=80=99t allow direct writes into files and, once =
-loaded, file
-> +content never changes. Incremental FS doesn=E2=80=99t use a block device=
-, instead it
-> +saves data into a backing file located on a regular file-system.
-> +
-> +But why?
-> +--------
-> +To allow running **big** Android apps before their binaries and resource=
-s are
-> +fully downloaded to an Android device. If an app reads something not loa=
-ded yet,
-> +it needs to wait for the data block to be fetched, but in most cases hot=
- blocks
-> +can be loaded in advance.
+<urk> forgot about this, sorry. :/
 
-But the idea is that eventually, the complete application will be
-downloaded, right? You're not planning to download the last few chunks
-of an app on demand weeks after it has been installed?
+> >
+> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> > index a7ceae90110e..f17652cca5ff 100644
+> > --- a/fs/xfs/xfs_file.c
+> > +++ b/fs/xfs/xfs_file.c
+> > @@ -1203,11 +1203,14 @@ xfs_file_mmap(
+> >         struct file     *filp,
+> >         struct vm_area_struct *vma)
+> >  {
+> > +       struct dax_device       *dax_dev;
+> > +
+> > +       dax_dev = xfs_find_daxdev_for_inode(file_inode(filp));
+> >         /*
+> > -        * We don't support synchronous mappings for non-DAX files. At least
+> > -        * until someone comes with a sensible use case.
+> > +        * We don't support synchronous mappings for non-DAX files and
+> > +        * for DAX files if underneath dax_device is not synchronous.
+> >          */
+> > -       if (!IS_DAX(file_inode(filp)) && (vma->vm_flags & VM_SYNC))
+> > +       if (!daxdev_mapping_supported(vma, dax_dev))
+> >                 return -EOPNOTSUPP;
 
-> +Workflow
-> +--------
-> +A userspace process, called a data loader, mounts an instance of increme=
-ntal-fs
-> +giving it a file descriptor on an underlying file system (like ext4 or f=
-2fs).
-> +Incremental-fs reads content (if any) of this backing file and interpret=
-s it as
-> +a file system image with files, directories and data blocks. At this poi=
-nt
-> +the data loader can declare new files to be shown by incremental-fs.
-> +
-> +A process is started from a binary located on incremental-fs.
-> +All reads are served directly from the backing file
-> +without roundtrips into userspace. If the process accesses a data block =
-that was
-> +not originally present in the backing file, the read operation waits.
-> +
-> +Meanwhile the data loader can feed new data blocks to incremental-fs by =
-calling
-> +write() on a special .cmd pseudo-file. The data loader can request infor=
-mation
-> +about pending reads by calling poll() and read() on the .cmd pseudo-file=
-.
-> +This mechanism allows the data loader to serve most urgently needed data=
- first.
-> +Once a data block is given to incremental-fs, it saves it to the backing=
- file
-> +and unblocks all the reads waiting for this block.
-> +
-> +Eventually all data for all files is uploaded by the data loader, and sa=
-ved by
-> +incremental-fs into the backing file. At that moment the data loader is =
-not
-> +needed any longer. The backing file will play the role of a complete
-> +filesystem image for all future runs of the program.
+LGTM, and I'm fine with it going through nvdimm.  Nothing in
+xfs-5.2-merge touches that function so it should be clean.
 
-This means that for all future runs, you still need to mount an incfs
-instance to be able to access application files, even when the
-complete application has been downloaded already, right? Wouldn't it
-be nicer if, once the complete application has been downloaded, you
-could stop using a shim layer entirely? That way, the performance of
-the shim layer would also matter less.
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-Is there a reason why this thing is not backed by a normal directory
-hierarchy on the backing file system, instead of the single image file
-you're proposing?
+--D
 
-> +External .cmd file interface
-> +----------------------------
-> +When incremental-fs is mounted, a mount directory contains a pseudo-file
-> +called '.cmd'. The data loader will open this file and call read(), writ=
-e(),
-> +poll() and ioctl() on it inspect and change state of incremental-fs.
-> +
-> +poll() and read() are used by the data loader to wait for pending reads =
-to
-> +appear and obtain an array of ``struct incfs_pending_read_info``.
-> +
-> +write() is used by the data loader to feed new data blocks to incrementa=
-l-fs.
-> +A data buffer given to write() is interpreted as an array of
-> +``struct incfs_new_data_block``. Structs in the array describe locations=
- and
-> +properties of data blocks loaded with this write() call.
-
-You can't do that. A write() handler must not interpret written data
-as pointers; that must be handled with an ioctl instead.
-
-> +``ioctl(INCFS_IOC_PROCESS_INSTRUCTION)`` is used to change structure of
-> +incremental-fs. It receives an pointer to ``struct incfs_instruction``
-> +where type field can have be one of the following values.
-> +
-> +**INCFS_INSTRUCTION_NEW_FILE**
-> +Creates an inode (a file or a directory) without a name.
-> +It assumes ``incfs_new_file_instruction.file`` is populated with details=
-.
-> +
-> +**INCFS_INSTRUCTION_ADD_DIR_ENTRY**
-> +Creates a name (aka hardlink) for an inode in a directory.
-> +A directory can't have more than one hardlink pointing to it, but files =
-can be
-> +linked from different directories.
-> +It assumes ``incfs_new_file_instruction.dir_entry`` is populated with de=
-tails.
-> +
-> +**INCFS_INSTRUCTION_REMOVE_DIR_ENTRY**
-> +Remove a name (aka hardlink) for a file from a directory.
-> +Only empty directories can be unlinked.
-> +It assumes ``incfs_new_file_instruction.dir_entry`` is populated with de=
-tails.
-
-What is the usecase for removing directory entries?
-
-With the API you're proposing, you're always going to want to populate
-the entire directory hierarchy before running an application from
-incfs, because otherwise lookups and readdir might fail in a way the
-application doesn't expect, right?
-
-> +For more details see in uapi/linux/incrementalfs.h and samples below.
-> +
-> +Supported mount options
-> +-----------------------
-> +See ``fs/incfs/options.c`` for more details.
-> +
-> +    * ``backing_fd=3D<unsigned int>``
-> +        Required. A file descriptor of a backing file opened by the proc=
-ess
-> +        calling mount(2). This descriptor can be closed after mount retu=
-rns.
-> +
-> +    * ``read_timeout_msc=3D<unsigned int>``
-> +        Default: 1000. Timeout in milliseconds before a read operation f=
-ails
-> +        if no data found in the backing file or provided by the data loa=
-der.
-
-So... if I run an application from this incremental file system, and
-the application page faults on a page that hasn't been loaded yet, and
-my phone happens to not have connectivity for a second because it's
-moving between wifi and cellular or whatever, the application will
-crash?
-
-> +Open .cmd file
-> +~~~~~~~~~~~~~~
-> +
-> +::
-> +
-> +    int open_commands_file(char *mount_dir)
-> +    {
-> +        char cmd_file[255];
-> +        int cmd_fd;
-> +
-> +        snprintf(cmd_file, ARRAY_SIZE(cmd_file), "%s/.cmd", mount_dir);
-> +        cmd_fd =3D open(cmd_file, O_RDWR);
-> +        if (cmd_fd < 0)
-> +            perror("Can't open commands file");
-> +        return cmd_fd;
-> +    }
-
-How is access control for this supposed to work? The command file is
-created with mode 0666, so does that mean that any instance of the
-application can write arbitrary code into chunks that haven't been
-loaded yet, modulo SELinux?
-
-> +Design alternatives
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Why isn't incremental-fs implemented via FUSE?
-> +----------------------------------------------
-> +TLDR: FUSE-based filesystems add 20-80% of performance overhead for targ=
-et
-> +scenarios
-
-Really?
-
-> and increase power use on mobile beyond acceptable limit
-> +for widespread deployment.
-
-From what I can tell, you only really need this thing to be active
-while the application is still being downloaded - and at that point in
-time, you're shoving packets over a wireless connection, checking data
-integrity, writing blocks to disk, and so on, right? Does FUSE add
-noticeable power use to that?
-
-> A custom kernel filesystem is the way to overcome
-> +these limitations.
-
-I doubt that. I see two main alternatives that I think would both be better=
-:
-
-1. Use a FUSE filesystem to trap writes while files are being
-downloaded, then switch to native ext4.
-2. Add an eBPF hook in the ext4 read path. The hook would take the
-inode number and the offset as input and return a value that indicates
-whether the kernel should let the read go through or block the read
-and send a notification to userspace over a file descriptor. Sort of
-like userfaultfd, except with an eBPF-based fastpath. (And to deal
-with readahead, you could perhaps add a flag that is passed through to
-the read code to say "this is readahead", and then throw an error
-instead of blocking the read.)
-
-> +From the theoretical side of things, FUSE filesystem adds some overhead =
-to
-> +each filesystem operation that=E2=80=99s not handled by OS page cache:
-
-How many filesystem operations do you have during application download
-that are not handled by the OS page cache?
-
-> +    * When an IO request arrives to FUSE driver (D), it puts it into a q=
-ueue
-> +      that runs on a separate kernel thread
-> +    * Then another separate user-mode handler process (H) has to run,
-> +      potentially after a context switch, to read the request from the q=
-ueue.
-> +      Reading the request adds a kernel-user mode transition to the hand=
-ling.
-> +    * (H) sends the IO request to kernel to handle it on some underlying=
- storage
-> +      filesystem. This adds a user-kernel and kernel-user mode transitio=
-n
-> +      pair to the handling.
-> +    * (H) then responds to the FUSE request via a write(2) call.
-> +      Writing the response is another user-kernel mode transition.
-> +    * (D) needs to read the response from (H) when its kernel thread run=
-s
-> +      and forward it to the user
-> +
-> +Together, the scenario adds 2 extra user-kernel-user mode transition pai=
-rs,
-> +and potentially has up to 3 additional context switches for the FUSE ker=
-nel
-> +thread and the user-mode handler to start running for each IO request on=
- the
-> +filesystem.
-> +This overhead can vary from unnoticeable to unmanageable, depending on t=
-he
-> +target scenario.
-
-Is the overhead of extra context switches really "unmanageable"
-compared to the latency of storage?
-
-> But it will always burn extra power via CPU staying longer
-> +in non-idle state, handling context switches and mode transitions.
-> +One important goal for the new filesystem is to be able to handle each p=
-age
-> +read separately on demand, because we don't want to wait and download mo=
-re data
-> +than absolutely necessary. Thus readahead would need to be disabled comp=
-letely.
-> +This increases the number of separate IO requests and the FUSE related o=
-verhead
-> +by almost 32x (128KB readahead limit vs 4KB individual block operations)
-
-You could implement the readahead in the FUSE filesystem, no? Check if
-adjacent blocks are already available, and if so, shove them into the
-page cache without waiting for the kernel to ask for them?
-
-> +For more info see a 2017 USENIX research paper:
-> +To FUSE or Not to FUSE: Performance of User-Space File Systems
-> +Bharath Kumar Reddy Vangoor, Stony Brook University;
-> +Vasily Tarasov, IBM Research-Almaden;
-> +Erez Zadok, Stony Brook University
-> +https://www.usenix.org/system/files/conference/fast17/fast17-vangoor.pdf
-
-From that paper, the workloads that are interesting for you are either
-the seq-rd-1th-1f or the rnd-rd-1th-1f workloads, right?
+> >
+> >         file_accessed(filp);
+> > --
+> > 2.20.1
+> >
