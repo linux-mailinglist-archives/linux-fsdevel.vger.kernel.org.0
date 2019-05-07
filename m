@@ -2,140 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A01E16479
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 15:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFCF4165E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 16:40:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbfEGNXc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 09:23:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37304 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726321AbfEGNXc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 09:23:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 756B6AEBF;
-        Tue,  7 May 2019 13:23:30 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 097871E3C5A; Tue,  7 May 2019 15:23:30 +0200 (CEST)
-Date:   Tue, 7 May 2019 15:23:30 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.14 50/95] fsnotify: generalize handling of
- extra event flags
-Message-ID: <20190507132330.GB4635@quack2.suse.cz>
-References: <20190507053826.31622-1-sashal@kernel.org>
- <20190507053826.31622-50-sashal@kernel.org>
+        id S1726486AbfEGOkY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 10:40:24 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35793 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbfEGOkX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 May 2019 10:40:23 -0400
+Received: by mail-it1-f194.google.com with SMTP id l140so26132371itb.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2019 07:40:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pyUWJ7Av0oOOQv/K8zAkAH27VXW6ZvjzZBAYlwzk+JE=;
+        b=vBtODXdTWcIG/JPMk+dA4ixPAxlwSNtAyglnXqNFbDVizPQtGACV2Dll63v5OjjGiQ
+         LRMpe/QxIH0zU001EYHDPygTnbPvpfumBr5cAEo2MHtD5RysnGg6lAIV0Y4K5fAFoI+u
+         d8NvDxdZZXS75b8WtD4sY84mEROLXOtJJxxskHgCI+fi0VS0i2PwLKWXbs+PQWXxDkrp
+         x1LDjNji6QBo++s6Q8z45oNUvqyb5DzOV65aaBFnU8XwLyKoDCjJER0xVxJuKUHZlJ+W
+         wbnnxw/EVJ6vp42bxS/mEQGpVGHHAIuvM8IA28ovJ+vaOd3vRIdSG/hIcrkvlaN55fbx
+         c/zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pyUWJ7Av0oOOQv/K8zAkAH27VXW6ZvjzZBAYlwzk+JE=;
+        b=ujzU5zpq6ESo/8ihWn9szsgedWxwf7edrrTLbjY40mwV03otV2gALIHNq633gkkkkH
+         2okSOLR7P7Rp8dDmdLjaqejfzXB2dgCyXeQJLx+EMYun4+6FEpybUafBa08tQORC3Rax
+         wJqCX3rRS4bqz7UrXJtRtkiTefihy9p/m3CaVgG+8IiNPFrmsblBY8JCt1hr1+4hFbiB
+         aU6HsgukeDFH5yoJa4nNE0qYDSFfxxi4VIWDlbYx1OAWbZ4EV+5+4l4QNVZsw77gzDYE
+         H5wZciSnCm/HiYpGkhBCC1MOFibz2OlGWPklEb+TONHlze4BeNujy/di5eWYle0ViTmX
+         nWKQ==
+X-Gm-Message-State: APjAAAVc4zxsoRnlv65zReWmuhKfbSR96ngoMtldQhTFwPaLGFeBrby6
+        87aS+AxD48H+vadCj9ruPvhtMQRBdVuC/A==
+X-Google-Smtp-Source: APXvYqygnd5gN2lgBy59l/EECQ9yWQVuYS8cn5GwiG4j1FbyVT3fYCrSVoCoDyfAdugCkoKOsmjq8w==
+X-Received: by 2002:a24:2b50:: with SMTP id h77mr8216956ita.63.1557240022990;
+        Tue, 07 May 2019 07:40:22 -0700 (PDT)
+Received: from [192.168.1.158] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id j8sm5927365itk.0.2019.05.07.07.40.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 07:40:22 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: use cpu_online() to check p->sq_thread_cpu
+ instead of cpu_possible()
+To:     Shenghui Wang <shhuiw@foxmail.com>, viro@zeniv.linux.org.uk,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     jmoyer@redhat.com
+References: <20190507080016.1945-1-shhuiw@foxmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <2d1a6bf3-d329-5552-7ae5-20ba727bb39e@kernel.dk>
+Date:   Tue, 7 May 2019 08:40:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190507053826.31622-50-sashal@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190507080016.1945-1-shhuiw@foxmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 07-05-19 01:37:39, Sasha Levin wrote:
-> From: Amir Goldstein <amir73il@gmail.com>
+On 5/7/19 2:00 AM, Shenghui Wang wrote:
+> This issue is found by running liburing/test/io_uring_setup test.
 > 
-> [ Upstream commit 007d1e8395eaa59b0e7ad9eb2b53a40859446a88 ]
+> When test run, the testcase "attempt to bind to invalid cpu" would not
+> pass with messages like:
+>    io_uring_setup(1, 0xbfc2f7c8), \
+> flags: IORING_SETUP_SQPOLL|IORING_SETUP_SQ_AFF, \
+> resv: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000, \
+> sq_thread_cpu: 2
+>    expected -1, got 3
+>    FAIL
 > 
-> FS_EVENT_ON_CHILD gets a special treatment in fsnotify() because it is
-> not a flag specifying an event type, but rather an extra flags that may
-> be reported along with another event and control the handling of the
-> event by the backend.
+> On my system, there is:
+>    CPU(s) possible : 0-3
+>    CPU(s) online   : 0-1
+>    CPU(s) offline  : 2-3
+>    CPU(s) present  : 0-1
 > 
-> FS_ISDIR is also an "extra flag" and not an "event type" and therefore
-> desrves the same treatment. With inotify/dnotify backends it was never
-> possible to set FS_ISDIR in mark masks, so it did not matter.
-> With fanotify backend, mark adding code jumps through hoops to avoid
-> setting the FS_ISDIR in the commulative object mask.
+> The sq_thread_cpu 2 is offline on my system, so the bind should fail.
+> But cpu_possible() will pass the check. We shouldn't be able to bind
+> to an offline cpu. Use cpu_online() to do the check.
 > 
-> Separate the constant ALL_FSNOTIFY_EVENTS to ALL_FSNOTIFY_FLAGS and
-> ALL_FSNOTIFY_EVENTS, so the latter can be used to test for specific
-> event types.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> After the change, the testcase run as expected: EINVAL will be returned
+> for cpu offlined.
 
-Sasha, why did you select this patch? It is just a cleanup with no user
-visible effect and was done mostly to simplify implementing following
-features...
+Applied, thanks.
 
-								Honza
-
-> ---
->  fs/notify/fsnotify.c             | 7 +++----
->  include/linux/fsnotify_backend.h | 9 +++++++--
->  2 files changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 506da82ff3f1..dc080c642dd0 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -192,7 +192,7 @@ static int send_to_group(struct inode *to_tell,
->  			 struct fsnotify_iter_info *iter_info)
->  {
->  	struct fsnotify_group *group = NULL;
-> -	__u32 test_mask = (mask & ~FS_EVENT_ON_CHILD);
-> +	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
->  	__u32 marks_mask = 0;
->  	__u32 marks_ignored_mask = 0;
->  
-> @@ -256,8 +256,7 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
->  	struct fsnotify_iter_info iter_info;
->  	struct mount *mnt;
->  	int ret = 0;
-> -	/* global tests shouldn't care about events on child only the specific event */
-> -	__u32 test_mask = (mask & ~FS_EVENT_ON_CHILD);
-> +	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
->  
->  	if (data_is == FSNOTIFY_EVENT_PATH)
->  		mnt = real_mount(((const struct path *)data)->mnt);
-> @@ -380,7 +379,7 @@ static __init int fsnotify_init(void)
->  {
->  	int ret;
->  
-> -	BUG_ON(hweight32(ALL_FSNOTIFY_EVENTS) != 23);
-> +	BUG_ON(hweight32(ALL_FSNOTIFY_BITS) != 23);
->  
->  	ret = init_srcu_struct(&fsnotify_mark_srcu);
->  	if (ret)
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index ce74278a454a..81052313adeb 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -67,15 +67,20 @@
->  
->  #define ALL_FSNOTIFY_PERM_EVENTS (FS_OPEN_PERM | FS_ACCESS_PERM)
->  
-> +/* Events that can be reported to backends */
->  #define ALL_FSNOTIFY_EVENTS (FS_ACCESS | FS_MODIFY | FS_ATTRIB | \
->  			     FS_CLOSE_WRITE | FS_CLOSE_NOWRITE | FS_OPEN | \
->  			     FS_MOVED_FROM | FS_MOVED_TO | FS_CREATE | \
->  			     FS_DELETE | FS_DELETE_SELF | FS_MOVE_SELF | \
->  			     FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED | \
-> -			     FS_OPEN_PERM | FS_ACCESS_PERM | FS_EXCL_UNLINK | \
-> -			     FS_ISDIR | FS_IN_ONESHOT | FS_DN_RENAME | \
-> +			     FS_OPEN_PERM | FS_ACCESS_PERM | FS_DN_RENAME)
-> +
-> +/* Extra flags that may be reported with event or control handling of events */
-> +#define ALL_FSNOTIFY_FLAGS  (FS_EXCL_UNLINK | FS_ISDIR | FS_IN_ONESHOT | \
->  			     FS_DN_MULTISHOT | FS_EVENT_ON_CHILD)
->  
-> +#define ALL_FSNOTIFY_BITS   (ALL_FSNOTIFY_EVENTS | ALL_FSNOTIFY_FLAGS)
-> +
->  struct fsnotify_group;
->  struct fsnotify_event;
->  struct fsnotify_mark;
-> -- 
-> 2.20.1
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jens Axboe
+
