@@ -2,514 +2,304 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0FA4166DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 17:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F7AB166E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 17:36:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfEGPfY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 11:35:24 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:44108 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbfEGPfY (ORCPT
+        id S1726656AbfEGPgN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 11:36:13 -0400
+Received: from mail-pf1-f170.google.com ([209.85.210.170]:45854 "EHLO
+        mail-pf1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbfEGPgM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 11:35:24 -0400
-Received: by mail-oi1-f195.google.com with SMTP id y25so5623050oih.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2019 08:35:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pln9LT1uNdfaqhJNGD+O26m6HebQTGwT47fBp9Sl9RM=;
-        b=TlGX4D8425HPlx+7p+S0uYa/l9Wse5Bk4e2arPdiSpjovqCqDcs+9LOYMOP6HfVzU0
-         TWixf7FReM5mQZFLKUId2NxKdlxa9AmTAx53KG06ByqkPKInRDkKj/naYzXM7aFtQOC5
-         rg+i8/s0NWyk/g3LXvPPJ9BYcQFfV3d3JpkImMB83c5tbrFtE7Io0Uov0MqEhKRrEd0/
-         /B00oahA9VK286ch70ZgQX9KWibCmtGVFgUCeE5ien9ew8Ayr+MOjSm0BSwOgvIMfCPD
-         a4Fpj3kJ9T9hbc2xCKpy9lxg0dmVjMqFRY7fdATI6H+XP2xoy1APBNUg/iLxqOxOz87V
-         8nCA==
+        Tue, 7 May 2019 11:36:12 -0400
+Received: by mail-pf1-f170.google.com with SMTP id e24so8836990pfi.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2019 08:36:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pln9LT1uNdfaqhJNGD+O26m6HebQTGwT47fBp9Sl9RM=;
-        b=k47cThP6ENdgO3XUbg07B5ruQ+Poni/MqQQRc+Xo/84OU5D+gn46VdSX5f2ob/vsUP
-         +efupE403JlFe0QAZDDir+MHKl77rmftkdYhMd96b0mDk3E6gdIx9KlvuvjkjbKCyDFh
-         jrDEIJG4ucrShBjD9CAMCov/bVIkHdZN9bIybTeDHi65LTgVtk15YG3qX0OIzEJXMs1C
-         eM34Mb9883QK0XjasyUTCpapw4OGXpbq7193kyuDxfcDnZ1zw0y/JW4pz/7K6NuOM3v9
-         fi/WgiyALGKu75yTJJ9da9k1uOP/yIlWKCzMgtZE+Uo3APNAbvgzti0XWFUcl4PywskP
-         bQUg==
-X-Gm-Message-State: APjAAAXsGqRFybYSaFyMdKcb4r1hPpmOc/zWvM42qS3J60MCYA/ezS6z
-        LR8nMH3wcR7cpIoaoiqOOsqaMUl7AyY6kFkwT+nHmg==
-X-Google-Smtp-Source: APXvYqyeQ6p2bch8wmzCnpksKWy3fVGWmfRiIOMb1+AjV0Hj+AEzvzFaNNgudGwCcMt1jKM2z5AdKFkEM5L2bjm1/vk=
-X-Received: by 2002:aca:220f:: with SMTP id b15mr541042oic.73.1557243323110;
- Tue, 07 May 2019 08:35:23 -0700 (PDT)
+        bh=abKk0Imehww17+9V4XWjj7VqCjduYWvulFIBhq3ypF4=;
+        b=JNJceeQrX30Cq+of5fWwurysfXIeoGUjb/o0SCg8RAPSd5wIurW1Lj4s6FTwuKE8U7
+         bW65m0GLwcZNXnyz7JU/bWUPhR2jd3vRxu+sX41yc6wNLctaGUvwpMWle6AC9dB7zDaa
+         AqPJdTgXVac3q7RfA1bsNHIGq7uf74FlzAFHLexH3jUbXbBcYP0PqmLyC7m3rd5i9mM2
+         JBZ9G3mmW2BQkPd/KqoP4T6fx+2484xKq8NK0UFXfy83PG+Gm3scXFYp5uHK/9lW9ngE
+         dMmF+27zEo5Vin+1vq/28PcZO9Iki1p8F4FqNAXZwhldw8RMmPtB8ZDPdO4SXk1f5MBE
+         NbYA==
+X-Gm-Message-State: APjAAAWxJ5scMrA8/ubYcdbeE5Zin/KTPWKR0AQ3r8BnbL2qDdPD+x6m
+        2nazNGCLJGvsncp/k0n3XmbWYzbAWOwk3yv8RihK3g==
+X-Google-Smtp-Source: APXvYqwfUQVdcXou3KL+89Tkcofg07AFnW1IKNQilotpZFGWz1pwKSBL19mlHv7NEtzZizKfrDUvWulo4IWnu4oEn+k=
+X-Received: by 2002:aa7:9563:: with SMTP id x3mr33255807pfq.118.1557243371118;
+ Tue, 07 May 2019 08:36:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190426050039.17460-1-pagupta@redhat.com> <20190426050039.17460-3-pagupta@redhat.com>
-In-Reply-To: <20190426050039.17460-3-pagupta@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 7 May 2019 08:35:12 -0700
-Message-ID: <CAPcyv4hdT5bbgv0Gy1r0Xb3RMfE_Zpe7DV10a=F1PFeTeEt+Fw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/6] virtio-pmem: Add virtio pmem driver
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        KVM list <kvm@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Qemu Developers <qemu-devel@nongnu.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Christoph Hellwig <hch@infradead.org>,
-        Len Brown <lenb@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        lcapitulino@redhat.com, Kevin Wolf <kwolf@redhat.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        jmoyer <jmoyer@redhat.com>,
-        Nitesh Narayan Lal <nilal@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        david <david@fromorbit.com>, cohuck@redhat.com,
-        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, kilobyte@angband.pl,
-        yuval shaia <yuval.shaia@oracle.com>
+References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
+ <20190507071021.wtm25mxx2as6babr@work> <CACj3i71HdW0ys_YujGFJkobMmZAZtEPo7B2tgZjEY8oP_T9T6g@mail.gmail.com>
+ <20190507094015.hb76w3rjzx7shxjp@work> <09953ba7-e4f2-36e9-33b7-0ddbbb848257@gmail.com>
+In-Reply-To: <09953ba7-e4f2-36e9-33b7-0ddbbb848257@gmail.com>
+From:   Bryan Gurney <bgurney@redhat.com>
+Date:   Tue, 7 May 2019 11:35:55 -0400
+Message-ID: <CAHhmqcT_yabMDY+dZoBAUA28f6tkPe0uH+xtRUS51gvv4p2vuQ@mail.gmail.com>
+Subject: Re: Testing devices for discard support properly
+To:     Ric Wheeler <ricwheeler@gmail.com>
+Cc:     Lukas Czerner <lczerner@redhat.com>, Jan Tulak <jtulak@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Nikolay Borisov <nborisov@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Pankaj,
-
-Some minor file placement comments below.
-
-On Thu, Apr 25, 2019 at 10:02 PM Pankaj Gupta <pagupta@redhat.com> wrote:
+On Tue, May 7, 2019 at 8:57 AM Ric Wheeler <ricwheeler@gmail.com> wrote:
 >
-> This patch adds virtio-pmem driver for KVM guest.
 >
-> Guest reads the persistent memory range information from
-> Qemu over VIRTIO and registers it on nvdimm_bus. It also
-> creates a nd_region object with the persistent memory
-> range information so that existing 'nvdimm/pmem' driver
-> can reserve this into system memory map. This way
-> 'virtio-pmem' driver uses existing functionality of pmem
-> driver to register persistent memory compatible for DAX
-> capable filesystems.
+> On 5/7/19 5:40 AM, Lukas Czerner wrote:
+> > On Tue, May 07, 2019 at 10:48:55AM +0200, Jan Tulak wrote:
+> >> On Tue, May 7, 2019 at 9:10 AM Lukas Czerner <lczerner@redhat.com> wrote:
+> >>> On Mon, May 06, 2019 at 04:56:44PM -0400, Ric Wheeler wrote:
+> >> ...
+> >>>> * Whole device discard at the block level both for a device that has been
+> >>>> completely written and for one that had already been trimmed
+> >>> Yes, usefull. Also note that a long time ago when I've done the testing
+> >>> I noticed that after a discard request, especially after whole device
+> >>> discard, the read/write IO performance went down significanly for some
+> >>> drives. I am sure things have changed, but I think it would be
+> >>> interesting to see how does it behave now.
 >
-> This also provides function to perform guest flush over
-> VIRTIO from 'pmem' driver when userspace performs flush
-> on DAX memory range.
 >
-> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> ---
->  drivers/nvdimm/virtio_pmem.c     | 114 +++++++++++++++++++++++++++++
->  drivers/virtio/Kconfig           |  10 +++
->  drivers/virtio/Makefile          |   1 +
->  drivers/virtio/pmem.c            | 118 +++++++++++++++++++++++++++++++
->  include/linux/virtio_pmem.h      |  60 ++++++++++++++++
->  include/uapi/linux/virtio_ids.h  |   1 +
->  include/uapi/linux/virtio_pmem.h |  10 +++
->  7 files changed, 314 insertions(+)
->  create mode 100644 drivers/nvdimm/virtio_pmem.c
->  create mode 100644 drivers/virtio/pmem.c
->  create mode 100644 include/linux/virtio_pmem.h
->  create mode 100644 include/uapi/linux/virtio_pmem.h
+> My understanding of how drives (not just SSD's but they are the main
+> target here) can handle a discard can vary a lot, including:
 >
-> diff --git a/drivers/nvdimm/virtio_pmem.c b/drivers/nvdimm/virtio_pmem.c
-> new file mode 100644
-> index 000000000000..66b582f751a3
-> --- /dev/null
-> +++ b/drivers/nvdimm/virtio_pmem.c
-> @@ -0,0 +1,114 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * virtio_pmem.c: Virtio pmem Driver
-> + *
-> + * Discovers persistent memory range information
-> + * from host and provides a virtio based flushing
-> + * interface.
-> + */
-> +#include <linux/virtio_pmem.h>
-> +#include "nd.h"
-> +
-> + /* The interrupt handler */
-> +void host_ack(struct virtqueue *vq)
-> +{
-> +       unsigned int len;
-> +       unsigned long flags;
-> +       struct virtio_pmem_request *req, *req_buf;
-> +       struct virtio_pmem *vpmem = vq->vdev->priv;
-> +
-> +       spin_lock_irqsave(&vpmem->pmem_lock, flags);
-> +       while ((req = virtqueue_get_buf(vq, &len)) != NULL) {
-> +               req->done = true;
-> +               wake_up(&req->host_acked);
-> +
-> +               if (!list_empty(&vpmem->req_list)) {
-> +                       req_buf = list_first_entry(&vpmem->req_list,
-> +                                       struct virtio_pmem_request, list);
-> +                       list_del(&vpmem->req_list);
-> +                       req_buf->wq_buf_avail = true;
-> +                       wake_up(&req_buf->wq_buf);
-> +               }
-> +       }
-> +       spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> +}
-> +EXPORT_SYMBOL_GPL(host_ack);
-> +
-> + /* The request submission function */
-> +int virtio_pmem_flush(struct nd_region *nd_region)
-> +{
-> +       int err;
-> +       unsigned long flags;
-> +       struct scatterlist *sgs[2], sg, ret;
-> +       struct virtio_device *vdev = nd_region->provider_data;
-> +       struct virtio_pmem *vpmem = vdev->priv;
-> +       struct virtio_pmem_request *req;
-> +
-> +       might_sleep();
-> +       req = kmalloc(sizeof(*req), GFP_KERNEL);
-> +       if (!req)
-> +               return -ENOMEM;
-> +
-> +       req->done = req->wq_buf_avail = false;
-> +       strcpy(req->name, "FLUSH");
-> +       init_waitqueue_head(&req->host_acked);
-> +       init_waitqueue_head(&req->wq_buf);
-> +       sg_init_one(&sg, req->name, strlen(req->name));
-> +       sgs[0] = &sg;
-> +       sg_init_one(&ret, &req->ret, sizeof(req->ret));
-> +       sgs[1] = &ret;
-> +
-> +       spin_lock_irqsave(&vpmem->pmem_lock, flags);
-> +       err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req, GFP_ATOMIC);
-> +       if (err) {
-> +               dev_err(&vdev->dev, "failed to send command to virtio pmem device\n");
-> +
-> +               list_add_tail(&vpmem->req_list, &req->list);
-> +               spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> +
-> +               /* When host has read buffer, this completes via host_ack */
-> +               wait_event(req->wq_buf, req->wq_buf_avail);
-> +               spin_lock_irqsave(&vpmem->pmem_lock, flags);
-> +       }
-> +       err = virtqueue_kick(vpmem->req_vq);
-> +       spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> +
-> +       if (!err) {
-> +               err = -EIO;
-> +               goto ret;
-> +       }
-> +       /* When host has read buffer, this completes via host_ack */
-> +       wait_event(req->host_acked, req->done);
-> +       err = req->ret;
-> +ret:
-> +       kfree(req);
-> +       return err;
-> +};
-> +
-> + /* The asynchronous flush callback function */
-> +int async_pmem_flush(struct nd_region *nd_region, struct bio *bio)
-> +{
-> +       int rc = 0;
-> +
-> +       /* Create child bio for asynchronous flush and chain with
-> +        * parent bio. Otherwise directly call nd_region flush.
-> +        */
-> +       if (bio && bio->bi_iter.bi_sector != -1) {
-> +               struct bio *child = bio_alloc(GFP_ATOMIC, 0);
-> +
-> +               if (!child)
-> +                       return -ENOMEM;
-> +               bio_copy_dev(child, bio);
-> +               child->bi_opf = REQ_PREFLUSH;
-> +               child->bi_iter.bi_sector = -1;
-> +               bio_chain(child, bio);
-> +               submit_bio(child);
-> +       } else {
-> +               if (virtio_pmem_flush(nd_region))
-> +                       rc = -EIO;
-> +       }
-> +
-> +       return rc;
-> +};
-> +EXPORT_SYMBOL_GPL(async_pmem_flush);
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-> index 35897649c24f..9f634a2ed638 100644
-> --- a/drivers/virtio/Kconfig
-> +++ b/drivers/virtio/Kconfig
-> @@ -42,6 +42,16 @@ config VIRTIO_PCI_LEGACY
+> * just ignore it for any reason and not return a failure - it is just a
+> hint by spec.
 >
->           If unsure, say Y.
+> * update metadata to mark that region as unused and then defer any real
+> work to later (like doing wear level stuff, pre-erase for writes, etc).
+> This can have a post-discard impact. I think of this kind of like
+> updating page table entries for virtual memory - low cost update now,
+> all real work deferred.
 >
-> +config VIRTIO_PMEM
-> +       tristate "Support for virtio pmem driver"
-> +       depends on VIRTIO
-> +       depends on LIBNVDIMM
-> +       help
-> +       This driver provides support for virtio based flushing interface
-> +       for persistent memory range.
-> +
-> +       If unsure, say M.
-> +
->  config VIRTIO_BALLOON
->         tristate "Virtio balloon driver"
->         depends on VIRTIO
-> diff --git a/drivers/virtio/Makefile b/drivers/virtio/Makefile
-> index 3a2b5c5dcf46..143ce91eabe9 100644
-> --- a/drivers/virtio/Makefile
-> +++ b/drivers/virtio/Makefile
-> @@ -6,3 +6,4 @@ virtio_pci-y := virtio_pci_modern.o virtio_pci_common.o
->  virtio_pci-$(CONFIG_VIRTIO_PCI_LEGACY) += virtio_pci_legacy.o
->  obj-$(CONFIG_VIRTIO_BALLOON) += virtio_balloon.o
->  obj-$(CONFIG_VIRTIO_INPUT) += virtio_input.o
-> +obj-$(CONFIG_VIRTIO_PMEM) += pmem.o ../nvdimm/virtio_pmem.o
-> diff --git a/drivers/virtio/pmem.c b/drivers/virtio/pmem.c
-> new file mode 100644
-> index 000000000000..309788628e41
-> --- /dev/null
-> +++ b/drivers/virtio/pmem.c
-
-It's not clear to me why this driver is located in drivers/virtio/
-
-> @@ -0,0 +1,118 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * virtio_pmem.c: Virtio pmem Driver
-> + *
-> + * Discovers persistent memory range information
-> + * from host and registers the virtual pmem device
-> + * with libnvdimm core.
-> + */
-> +#include <linux/virtio_pmem.h>
-> +#include <../../drivers/nvdimm/nd.h>
-
-...especially because it seems to require nvdimm internals.
-
-However I don't see why that header is included.
-
-In any event lets move this to drivers/nvdimm/virtio.c to live
-alongside the other generic bus provider drivers/nvdimm/e820.c.
-
-> +
-> +static struct virtio_device_id id_table[] = {
-> +       { VIRTIO_ID_PMEM, VIRTIO_DEV_ANY_ID },
-> +       { 0 },
-> +};
-> +
-> + /* Initialize virt queue */
-> +static int init_vq(struct virtio_pmem *vpmem)
-> +{
-> +       /* single vq */
-> +       vpmem->req_vq = virtio_find_single_vq(vpmem->vdev,
-> +                               host_ack, "flush_queue");
-> +       if (IS_ERR(vpmem->req_vq))
-> +               return PTR_ERR(vpmem->req_vq);
-> +
-> +       spin_lock_init(&vpmem->pmem_lock);
-> +       INIT_LIST_HEAD(&vpmem->req_list);
-> +
-> +       return 0;
-> +};
-> +
-> +static int virtio_pmem_probe(struct virtio_device *vdev)
-> +{
-> +       int err = 0;
-> +       struct resource res;
-> +       struct virtio_pmem *vpmem;
-> +       struct nd_region_desc ndr_desc = {};
-> +       int nid = dev_to_node(&vdev->dev);
-> +       struct nd_region *nd_region;
-> +
-> +       if (!vdev->config->get) {
-> +               dev_err(&vdev->dev, "%s failure: config access disabled\n",
-> +                       __func__);
-> +               return -EINVAL;
-> +       }
-> +
-> +       vpmem = devm_kzalloc(&vdev->dev, sizeof(*vpmem), GFP_KERNEL);
-> +       if (!vpmem) {
-> +               err = -ENOMEM;
-> +               goto out_err;
-> +       }
-> +
-> +       vpmem->vdev = vdev;
-> +       vdev->priv = vpmem;
-> +       err = init_vq(vpmem);
-> +       if (err)
-> +               goto out_err;
-> +
-> +       virtio_cread(vpmem->vdev, struct virtio_pmem_config,
-> +                       start, &vpmem->start);
-> +       virtio_cread(vpmem->vdev, struct virtio_pmem_config,
-> +                       size, &vpmem->size);
-> +
-> +       res.start = vpmem->start;
-> +       res.end   = vpmem->start + vpmem->size-1;
-> +       vpmem->nd_desc.provider_name = "virtio-pmem";
-> +       vpmem->nd_desc.module = THIS_MODULE;
-> +
-> +       vpmem->nvdimm_bus = nvdimm_bus_register(&vdev->dev,
-> +                                               &vpmem->nd_desc);
-> +       if (!vpmem->nvdimm_bus)
-> +               goto out_vq;
-> +
-> +       dev_set_drvdata(&vdev->dev, vpmem->nvdimm_bus);
-> +
-> +       ndr_desc.res = &res;
-> +       ndr_desc.numa_node = nid;
-> +       ndr_desc.flush = async_pmem_flush;
-> +       set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
-> +       set_bit(ND_REGION_ASYNC, &ndr_desc.flags);
-> +       nd_region = nvdimm_pmem_region_create(vpmem->nvdimm_bus, &ndr_desc);
-> +
-> +       if (!nd_region)
-> +               goto out_nd;
-> +       nd_region->provider_data =  dev_to_virtio
-> +                                       (nd_region->dev.parent->parent);
-> +       return 0;
-> +out_nd:
-> +       err = -ENXIO;
-> +       nvdimm_bus_unregister(vpmem->nvdimm_bus);
-> +out_vq:
-> +       vdev->config->del_vqs(vdev);
-> +out_err:
-> +       dev_err(&vdev->dev, "failed to register virtio pmem memory\n");
-> +       return err;
-> +}
-> +
-> +static void virtio_pmem_remove(struct virtio_device *vdev)
-> +{
-> +       struct nvdimm_bus *nvdimm_bus = dev_get_drvdata(&vdev->dev);
-> +
-> +       nvdimm_bus_unregister(nvdimm_bus);
-> +       vdev->config->del_vqs(vdev);
-> +       vdev->config->reset(vdev);
-> +}
-> +
-> +static struct virtio_driver virtio_pmem_driver = {
-> +       .driver.name            = KBUILD_MODNAME,
-> +       .driver.owner           = THIS_MODULE,
-> +       .id_table               = id_table,
-> +       .probe                  = virtio_pmem_probe,
-> +       .remove                 = virtio_pmem_remove,
-> +};
-> +
-> +module_virtio_driver(virtio_pmem_driver);
-> +MODULE_DEVICE_TABLE(virtio, id_table);
-> +MODULE_DESCRIPTION("Virtio pmem driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/virtio_pmem.h b/include/linux/virtio_pmem.h
-> new file mode 100644
-> index 000000000000..ab1da877575d
-> --- /dev/null
-> +++ b/include/linux/virtio_pmem.h
-
-Why is this a global header?
-
-Seems it can move to drivers/nvdimm/virtio.h.
-
-Also, I'd like to get a virtio ack from Michael (mst@redhat.com)
-before taking this through the nvdimm tree.
-
-> @@ -0,0 +1,60 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * virtio_pmem.h: virtio pmem Driver
-> + *
-> + * Discovers persistent memory range information
-> + * from host and provides a virtio based flushing
-> + * interface.
-> + **/
-> +
-> +#ifndef _LINUX_VIRTIO_PMEM_H
-> +#define _LINUX_VIRTIO_PMEM_H
-> +
-> +#include <linux/virtio_ids.h>
-> +#include <linux/module.h>
-> +#include <linux/virtio_config.h>
-> +#include <uapi/linux/virtio_pmem.h>
-> +#include <linux/libnvdimm.h>
-> +#include <linux/spinlock.h>
-> +
-> +struct virtio_pmem_request {
-> +       /* Host return status corresponding to flush request */
-> +       int ret;
-> +
-> +       /* command name*/
-> +       char name[16];
-> +
-> +       /* Wait queue to process deferred work after ack from host */
-> +       wait_queue_head_t host_acked;
-> +       bool done;
-> +
-> +       /* Wait queue to process deferred work after virt queue buffer avail */
-> +       wait_queue_head_t wq_buf;
-> +       bool wq_buf_avail;
-> +       struct list_head list;
-> +};
-> +
-> +struct virtio_pmem {
-> +       struct virtio_device *vdev;
-> +
-> +       /* Virtio pmem request queue */
-> +       struct virtqueue *req_vq;
-> +
-> +       /* nvdimm bus registers virtio pmem device */
-> +       struct nvdimm_bus *nvdimm_bus;
-> +       struct nvdimm_bus_descriptor nd_desc;
-> +
-> +       /* List to store deferred work if virtqueue is full */
-> +       struct list_head req_list;
-> +
-> +       /* Synchronize virtqueue data */
-> +       spinlock_t pmem_lock;
-> +
-> +       /* Memory region information */
-> +       uint64_t start;
-> +       uint64_t size;
-> +};
-> +
-> +void host_ack(struct virtqueue *vq);
-> +int async_pmem_flush(struct nd_region *nd_region, struct bio *bio);
-> +#endif
-> diff --git a/include/uapi/linux/virtio_ids.h b/include/uapi/linux/virtio_ids.h
-> index 6d5c3b2d4f4d..32b2f94d1f58 100644
-> --- a/include/uapi/linux/virtio_ids.h
-> +++ b/include/uapi/linux/virtio_ids.h
-> @@ -43,5 +43,6 @@
->  #define VIRTIO_ID_INPUT        18 /* virtio input */
->  #define VIRTIO_ID_VSOCK        19 /* virtio vsock transport */
->  #define VIRTIO_ID_CRYPTO       20 /* virtio crypto */
-> +#define VIRTIO_ID_PMEM         27 /* virtio pmem */
+> * do everything as part of the command - this can be relatively slow,
+> most of the cost of a write I would guess (i.e., go in and over-write
+> the region with zeros or just do the erase of the flash block under the
+> region).
 >
->  #endif /* _LINUX_VIRTIO_IDS_H */
-> diff --git a/include/uapi/linux/virtio_pmem.h b/include/uapi/linux/virtio_pmem.h
-> new file mode 100644
-> index 000000000000..fa3f7d52717a
-> --- /dev/null
-> +++ b/include/uapi/linux/virtio_pmem.h
-> @@ -0,0 +1,10 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifndef _UAPI_LINUX_VIRTIO_PMEM_H
-> +#define _UAPI_LINUX_VIRTIO_PMEM_H
-> +
-> +struct virtio_pmem_config {
-> +       __le64 start;
-> +       __le64 size;
-> +};
-> +#endif
-> --
-> 2.20.1
+> Your earlier work supports the need to test IO performance after doing
+> the trims/discards - we might want to test it right away, then see if
+> waiting 10 minutes, 30 minutes, etc helps?
+
+Using blktrace / blkparse may be a good way to visualize certain
+latency differences of a drive, depending on the scenario.
+
+I tried these quick fio tests in succession while tracing an NVMe device:
+
+- fio --name=writetest --filename=/dev/nvme0n1p1 --rw=write
+--bs=1048576 --size=2G --iodepth=32 --ioengine=libaio --direct=1
+- fio --name=writetest --filename=/dev/nvme0n1p1 --rw=trim
+--bs=1048576 --size=128M --iodepth=32 --ioengine=libaio --direct=1
+- fio --name=writetest --filename=/dev/nvme0n1p1 --rw=write
+--bs=1048576 --size=2G --iodepth=32 --ioengine=libaio --direct=1
+
+...and if I run "blkparse -t -i nvme0n1p1.blktrace.0", I see output
+that looks like this:
+
+(The number after the "sector + size" in parentheses is the "time
+delta per IO", which I believe is effectively the "completion latency"
+for the IO.)
+
+259,1   23       42     0.130790560 13843  C  WS 2048 + 256 (   69234) [0]
+259,1   23       84     0.130832015 13843  C  WS 2304 + 256 (  106529) [0]
+259,1   23      110     0.130879691 13843  C  WS 2560 + 256 (  151234) [0]
+259,1   23      127     0.130932938 13843  C  WS 2816 + 256 (  201708) [0]
+259,1   23      169     0.130985313 13843  C  WS 3072 + 256 (  251695) [0]
+259,1   23      244     0.131068599 13843  C  WS 3328 + 256 (  332505) [0]
+259,1   23      255     0.131120364 13843  C  WS 3584 + 256 (  382228) [0]
+259,1   23      295     0.131169431 13843  C  WS 3840 + 256 (  429079) [0]
+259,1   23      337     0.131254437 13843  C  WS 4096 + 256 (  452715) [0]
+259,1   23      379     0.131303693 13843  C  WS 4352 + 256 (  498415) [0]
+...
+
+259,1   23     2886     0.145571119     0  C  WS 68864 + 256 (12172318) [0]
+259,1   23     2887     0.145621801     0  C  WS 69120 + 256 (12220934) [0]
+259,1   23     2888     0.145707376     0  C  WS 69376 + 256 (12304282) [0]
+259,1   23     2889     0.145758056 13843  C  WS 69632 + 256 (12305257) [0]
+259,1   23     2897     0.145806491 13843  C  WS 69888 + 256 (12351416) [0]
+259,1   23     2932     0.145855909     0  C  WS 70144 + 256 (12398688) [0]
+259,1   23     2933     0.145906931     0  C  WS 70400 + 256 (12447322) [0]
+259,1   23     2934     0.145955324     0  C  WS 70656 + 256 (12493640) [0]
+259,1   23     2935     0.146047271     0  C  WS 70912 + 256 (12583404) [0]
+259,1   23     2936     0.146098918     0  C  WS 71168 + 256 (12633107) [0]
+259,1   23     2937     0.146147758     0  C  WS 71424 + 256 (12680779) [0]
+259,1   23     2938     0.146199611 13843  C  WS 71680 + 256 (12673451) [0]
+259,1   23     2947     0.146248198 13843  C  WS 71936 + 256 (12717754) [0]
+...
+
+259,1   19        8     1.654335893     0  C  DS 2048 + 2048 (  703367) [0]
+259,1   19       16     1.654407034     0  C  DS 4096 + 2048 (   16801) [0]
+259,1   19       24     1.654441037     0  C  DS 6144 + 2048 (   14973) [0]
+259,1   19       32     1.654473187     0  C  DS 8192 + 2048 (   18403) [0]
+259,1   19       40     1.654508066     0  C  DS 10240 + 2048 (   15949) [0]
+259,1   19       48     1.654546974     0  C  DS 12288 + 2048 (   25803) [0]
+259,1   19       56     1.654575186     0  C  DS 14336 + 2048 (   15839) [0]
+259,1   19       64     1.654602836     0  C  DS 16384 + 2048 (   15449) [0]
+259,1   19       72     1.654629376     0  C  DS 18432 + 2048 (   14659) [0]
+259,1   19       80     1.654655744     0  C  DS 20480 + 2048 (   14653) [0]
+259,1   19       88     1.654682306     0  C  DS 22528 + 2048 (   14769) [0]
+259,1   19       96     1.654710616     0  C  DS 24576 + 2048 (   16660) [0]
+259,1   19      104     1.654737113     0  C  DS 26624 + 2048 (   14876) [0]
+259,1   19      112     1.654763661     0  C  DS 28672 + 2048 (   14707) [0]
+259,1   19      120     1.654790141     0  C  DS 30720 + 2048 (   14809) [0]
+
+I can see two things:
+
+1. The writes appear to be limited to 128 kilobytes, which agrees with
+the device's "queue/max_hw_sectors_kb" value.
+2. The discard completion latency ("C DS" actions) is very low, at
+about 16 microseonds.
+
+It's possible to filter this output further:
+
+blkparse -t -i nvme0n1p1.blktrace.0 | grep C\ *[RWD] | tr -d \(\) |
+awk '{print $4, $6, $7, $8, $9, $10, $11}'
+
+...to yield output that's more digestible to a graphing program like gnuplot:
+
+0.130790560 C WS 2048 + 256 69234
+0.130832015 C WS 2304 + 256 106529
+0.130879691 C WS 2560 + 256 151234
+0.130932938 C WS 2816 + 256 201708
+0.130985313 C WS 3072 + 256 251695
+0.131068599 C WS 3328 + 256 332505
+0.131120364 C WS 3584 + 256 382228
+
+...at which point you can look at the graph, and see patterns, like
+the peak latency during a sustained write, or "two bands" of latency,
+as though there are "two queues" on the device, for some reason, and
+so on.
+
+I usually create a graph with the timestamp as the X axis, and the
+"track-ios" output as the Y axis.
+
 >
+> >>>
+> >>>> * Discard performance at the block level for 4k discards for a device that
+> >>>> has been completely written and again the same test for a device that has
+> >>>> been completely discarded.
+> >>>>
+> >>>> * Same test for large discards - say at a megabyte and/or gigabyte size?
+> >>>  From my testing (again it was long time ago and things probably changed
+> >>> since then) most of the drives I've seen had largely the same or similar
+> >>> timing for discard request regardless of the size (hence, the conclusion
+> >>> was the bigger the request the better). A small variation I did see
+> >>> could have been explained by kernel implementation and discard_max_bytes
+> >>> limitations as well.
+> >>>
+> >>>> * Same test done at the device optimal discard chunk size and alignment
+> >>>>
+> >>>> Should the discard pattern be done with a random pattern? Or just
+> >>>> sequential?
+> >>> I think that all of the above will be interesting. However there are two
+> >>> sides of it. One is just pure discard performance to figure out what
+> >>> could be the expectations and the other will be "real" workload
+> >>> performance. Since from my experience discard can have an impact on
+> >>> drive IO performance beyond of what's obvious, testing mixed workload
+> >>> (IO + discard) is going to be very important as well. And that's where
+> >>> fio workloads can come in (I actually do not know if fio already
+> >>> supports this or not).
+> >>>
+>
+> Really good points. I think it is probably best to test just at the
+> block device level to eliminate any possible file system interactions
+> here.  The lessons learned though might help file systems handle things
+> more effectively?
+>
+> >> And:
+> >>
+> >> On Tue, May 7, 2019 at 10:22 AM Nikolay Borisov <nborisov@suse.com> wrote:
+> >>> I have some vague recollection this was brought up before but how sure
+> >>> are we that when a discard request is sent down to disk and a response
+> >>> is returned the actual data has indeed been discarded. What about NCQ
+> >>> effects i.e "instant completion" while doing work in the background. Or
+> >>> ignoring the discard request altogether?
+> >>
+> >> As Nikolay writes in the other thread, I too have a feeling that there
+> >> have been a discard-related discussion at LSF/MM before. And if I
+> >> remember, there were hints that the drives (sometimes) do asynchronous
+> >> trim after returning a success. Which would explain the similar time
+> >> for all sizes and IO drop after trim.
+> > Yes, that was definitely the case  in the past. It's also why we've
+> > seen IO performance drop after a big (whole device) discard as the
+> > device was busy in the background.
+>
+> For SATA specifically, there was a time when the ATA discard command was
+> not queued so we had to drain all other pending requests, do the
+> discard, and then resume. This was painfully slow then (not clear that
+> this was related to the performance impact you saw - it would be an
+> impact I think for the next few dozen commands?).
+>
+> The T13 people (and most drives I hope) fixed this years back to be a
+> queued command so we don't have that same concern now I think.
+
+There are still some ATA devices that are blacklisted due to problems
+handling queued trim (ATA_HORKAGE_NO_NCQ_TRIM), as well as problems
+handing zero-after-trim (ATA_HORKAGE_ZERO_AFTER_TRIM).  Most newer
+drives fixed those problems, but the older drives will still be out in
+the field until they get replaced with newer drives.
+
+The "zero after trim" issue might be important to applications that
+expect a discard to zero the blocks that were specified in the discard
+command.  For drives that "post-process" discards, is there a time
+threshold of when those blocks are expected to return zeroes?
+
+
+Thanks,
+
+Bryan
+
+>
+> >
+> > However Nikolay does have a point. IIRC device is free to ignore discard
+> > requests, I do not think there is any reliable way to actually tell that
+> > the data was really discarded. I can even imagine a situation that the
+> > device is not going to do anything unless it's pass some threshold of
+> > free blocks for wear leveling. If that's the case our tests are not
+> > going to be very useful unless they do stress such corner cases. But
+> > that's just my speculation, so someone with a better knowledge of what
+> > vendors are doing might tell us if it's something to worry about or not.
+>
+>
+> The way I think of it is our "nirvana" state for discard would be:
+>
+> * all drives have very low cost discard commands with minimal
+> post-discard performance impact on the normal workload which would let
+> us issue the in-band discards (-o discard mount option)
+>
+> * drives might still (and should be expected to) ignore some of these
+> commands so freed and "discarded" space might still not be really discarded.
+>
+> * we will still need to run a periodic (once a day? a week?) fstrim to
+> give the drive a chance to clean up anything even when using "mount -o
+> discard". Of course, the fstrim size is bigger I expect than the size
+> from inband discard so testing larger sizes will be important.
+>
+> Does this make sense?
+>
+> Ric
+>
+>
+> >
+> >> So, I think that the mixed workload (IO + discard) is a pretty
+> >> important part of the whole topic and a pure discard test doesn't
+> >> really tell us anything, at least for some drives.
+> > I think both are important especially since mixed IO tests are going to
+> > be highly workload specific.
+> >
+> > -Lukas
+> >
+> >> Jan
+> >>
+> >>
+> >>
+> >> --
+> >> Jan Tulak
