@@ -2,88 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38879162B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 13:22:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB33A1640D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 14:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbfEGLWc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 07:22:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49448 "EHLO mx1.redhat.com"
+        id S1726685AbfEGMyf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 08:54:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59966 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbfEGLWc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 07:22:32 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1726000AbfEGMye (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 May 2019 08:54:34 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0FF76155E0;
-        Tue,  7 May 2019 11:22:32 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 12EA91FC;
-        Tue,  7 May 2019 11:22:30 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Shenghui Wang <shhuiw@foxmail.com>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] io_uring: use cpu_online() to check p->sq_thread_cpu instead of cpu_possible()
-References: <20190507080319.2045-1-shhuiw@foxmail.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Tue, 07 May 2019 07:22:30 -0400
-In-Reply-To: <20190507080319.2045-1-shhuiw@foxmail.com> (Shenghui Wang's
-        message of "Tue, 7 May 2019 16:03:19 +0800")
-Message-ID: <x49mujypkzt.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3544B81E07;
+        Tue,  7 May 2019 12:54:34 +0000 (UTC)
+Received: from x230.aquini.net (dhcp-17-61.bos.redhat.com [10.18.17.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CDE1E5C3FA;
+        Tue,  7 May 2019 12:54:32 +0000 (UTC)
+Date:   Tue, 7 May 2019 08:54:31 -0400
+From:   Rafael Aquini <aquini@redhat.com>
+To:     Joel Savitz <jsavitz@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Yury Norov <yury.norov@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] fs/proc: add VmTaskSize field to /proc/$$/status
+Message-ID: <20190507125430.GA31025@x230.aquini.net>
+References: <1557158023-23021-1-git-send-email-jsavitz@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 07 May 2019 11:22:32 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557158023-23021-1-git-send-email-jsavitz@redhat.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 07 May 2019 12:54:34 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Shenghui Wang <shhuiw@foxmail.com> writes:
-
-> This issue is found by running liburing/test/io_uring_setup test.
->
-> When test run, the testcase "attempt to bind to invalid cpu" would not
-> pass with messages like:
->    io_uring_setup(1, 0xbfc2f7c8), \
-> flags: IORING_SETUP_SQPOLL|IORING_SETUP_SQ_AFF, \
-> resv: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000, \
-> sq_thread_cpu: 2
->    expected -1, got 3
->    FAIL
->
-> On my system, there is:
->    CPU(s) possible : 0-3
->    CPU(s) online   : 0-1
->    CPU(s) offline  : 2-3
->    CPU(s) present  : 0-1
->
-> The sq_thread_cpu 2 is offline on my system, so the bind should fail.
-> But cpu_possible() will pass the check. We shouldn't be able to bind
-> to an offline cpu. Use cpu_online() to do the check.
->
-> After the change, the testcase run as expected: EINVAL will be returned
-> for cpu offlined.
->
-> Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
+On Mon, May 06, 2019 at 11:53:43AM -0400, Joel Savitz wrote:
+> There is currently no easy and architecture-independent way to find the
+> lowest unusable virtual address available to a process without
+> brute-force calculation. This patch allows a user to easily retrieve
+> this value via /proc/<pid>/status.
+> 
+> Using this patch, any program that previously needed to waste cpu cycles
+> recalculating a non-sensitive process-dependent value already known to
+> the kernel can now be optimized to use this mechanism.
+> 
+> Signed-off-by: Joel Savitz <jsavitz@redhat.com>
 > ---
->  fs/io_uring.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index d91cbd53d3ca..718d7b873f4a 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -2472,7 +2472,7 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
->  							nr_cpu_ids);
->  
->  			ret = -EINVAL;
-> -			if (!cpu_possible(cpu))
-> +			if (!cpu_online(cpu))
->  				goto err;
->  
->  			ctx->sqo_thread = kthread_create_on_cpu(io_sq_thread,
+>  Documentation/filesystems/proc.txt | 2 ++
+>  fs/proc/task_mmu.c                 | 2 ++
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+> index 66cad5c86171..1c6a912e3975 100644
+> --- a/Documentation/filesystems/proc.txt
+> +++ b/Documentation/filesystems/proc.txt
+> @@ -187,6 +187,7 @@ read the file /proc/PID/status:
+>    VmLib:      1412 kB
+>    VmPTE:        20 kb
+>    VmSwap:        0 kB
+> +  VmTaskSize:	137438953468 kB
+>    HugetlbPages:          0 kB
+>    CoreDumping:    0
+>    THP_enabled:	  1
+> @@ -263,6 +264,7 @@ Table 1-2: Contents of the status files (as of 4.19)
+>   VmPTE                       size of page table entries
+>   VmSwap                      amount of swap used by anonymous private data
+>                               (shmem swap usage is not included)
+> + VmTaskSize                  lowest unusable address in process virtual memory
 
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+Can we change this help text to "size of process' virtual address space memory" ?
+
+>   HugetlbPages                size of hugetlb memory portions
+>   CoreDumping                 process's memory is currently being dumped
+>                               (killing the process may lead to a corrupted core)
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 95ca1fe7283c..0af7081f7b19 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -74,6 +74,8 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+>  	seq_put_decimal_ull_width(m,
+>  		    " kB\nVmPTE:\t", mm_pgtables_bytes(mm) >> 10, 8);
+>  	SEQ_PUT_DEC(" kB\nVmSwap:\t", swap);
+> +	seq_put_decimal_ull_width(m,
+> +		    " kB\nVmTaskSize:\t", mm->task_size >> 10, 8);
+>  	seq_puts(m, " kB\n");
+>  	hugetlb_report_usage(m, mm);
+>  }
+> -- 
+> 2.18.1
+> 
+Acked-by: Rafael Aquini <aquini@redhat.com>
