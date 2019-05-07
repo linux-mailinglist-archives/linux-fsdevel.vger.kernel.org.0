@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEACD16840
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 18:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE4AD16842
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 18:45:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfEGQoa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 12:44:30 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:35606 "EHLO mx2.mailbox.org"
+        id S1727272AbfEGQoi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 12:44:38 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:36094 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727253AbfEGQo3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 12:44:29 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        id S1727253AbfEGQoi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 May 2019 12:44:38 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id DDAFBA0152;
-        Tue,  7 May 2019 18:44:25 +0200 (CEST)
+        by mx2.mailbox.org (Postfix) with ESMTPS id A3289A10AF;
+        Tue,  7 May 2019 18:44:34 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id GX11Q6EHbWJ3; Tue,  7 May 2019 18:44:19 +0200 (CEST)
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id hJ64cGgf98uT; Tue,  7 May 2019 18:44:29 +0200 (CEST)
 From:   Aleksa Sarai <cyphar@cyphar.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@kernel.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
         Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Christian Brauner <christian@brauner.io>,
         Eric Biederman <ebiederm@xmission.com>,
         Andy Lutomirski <luto@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexei Starovoitov <ast@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
         David Drysdale <drysdale@google.com>,
         Chanho Min <chanho.min@lge.com>,
         Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
@@ -41,9 +41,9 @@ Cc:     Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
         containers@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: [PATCH v7 4/5] namei: aggressively check for nd->root escape on ".." resolution
-Date:   Wed,  8 May 2019 02:43:16 +1000
-Message-Id: <20190507164317.13562-5-cyphar@cyphar.com>
+Subject: [PATCH v7 5/5] namei: resolveat(2) syscall
+Date:   Wed,  8 May 2019 02:43:17 +1000
+Message-Id: <20190507164317.13562-6-cyphar@cyphar.com>
 In-Reply-To: <20190507164317.13562-1-cyphar@cyphar.com>
 References: <20190507164317.13562-1-cyphar@cyphar.com>
 MIME-Version: 1.0
@@ -53,157 +53,301 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch allows for LOOKUP_BENEATH and LOOKUP_IN_ROOT to safely permit
-".." resolution (in the case of LOOKUP_BENEATH the resolution will still
-fail if ".." resolution would resolve a path outside of the root --
-while LOOKUP_IN_ROOT will chroot(2)-style scope it). "magic link" jumps
-are still disallowed entirely because now they could result in
-inconsistent behaviour if resolution encounters a subsequent "..".
+The most obvious syscall to add support for the new LOOKUP_* scoping
+flags would be openat(2) (along with the required execveat(2) change
+included in this series). However, there are a few reasons to not do
+this:
 
-The need for this patch is explained by observing there is a fairly
-easy-to-exploit race condition with chroot(2) (and thus by extension
-LOOKUP_IN_ROOT and LOOKUP_BENEATH) where a rename(2) of a path can be
-used to "skip over" nd->root and thus escape to the filesystem above
-nd->root.
+ * The new LOOKUP_* flags are intended to be security features, and
+   openat(2) will silently ignore all unknown flags. This means that
+   users would need to avoid foot-gunning themselves constantly when
+   using this interface if it were part of openat(2).
 
-  thread1 [attacker]:
-    for (;;)
-      renameat2(AT_FDCWD, "/a/b/c", AT_FDCWD, "/a/d", RENAME_EXCHANGE);
-  thread2 [victim]:
-    for (;;)
-      resolveat(dirb, "b/c/../../etc/shadow", RESOLVE_IN_ROOT);
+ * Resolution scoping feels like a different operation to the existing
+   O_* flags. And since openat(2) has limited flag space, it seems to be
+   quite wasteful to clutter it with 5 flags that are all
+   resolution-related. Arguably O_NOFOLLOw is also a resolution flag but
+   its entire purpose is to error out if you encounter a trailing
+   symlink not to scope resolution.
 
-With fairly significant regularity, thread2 will resolve to
-"/etc/shadow" rather than "/a/b/etc/shadow". There is also a similar
-(though somewhat more privileged) attack using MS_MOVE.
+ * Other systems would be able to reimplement this syscall allowing for
+   cross-OS standardisation rather than being hidden amongst O_* flags
+   which may result in it not being used by all the parties that might
+   want to use it (file servers, web servers, container runtimes, etc).
 
-With this patch, such cases will be detected *during* ".." resolution
-(which is the weak point of chroot(2) -- since walking *into* a
-subdirectory tautologically cannot result in you walking *outside*
-nd->root -- except through a bind-mount or "magic link"). By detecting
-this at ".." resolution (rather than checking only at the end of the
-entire resolution) we can both correct escapes by jumping back to the
-root (in the case of LOOKUP_IN_ROOT), as well as avoid revealing to
-attackers the structure of the filesystem outside of the root (through
-timing attacks for instance).
+ * It gives us the opportunity to iterate on the O_PATH interface in the
+   future. There are some potential security improvements that can be
+   made to O_PATH (handling /proc/self/fd re-opening of file descriptors
+   much more sanely) which could be made even better with some other
+   bits (such as ACC_MODE bits which work for O_PATH).
 
-In order to avoid a quadratic lookup with each ".." entry, we only
-activate the slow path if a write through &rename_lock or &mount_lock
-have occurred during path resolution (&rename_lock and &mount_lock are
-re-taken to further optimise the lookup). Since the primary attack being
-protected against is MS_MOVE or rename(2), not doing additional checks
-unless a mount or rename have occurred avoids making the common case
-slow.
+To this end, we introduce the resolveat(2) syscall. At the moment it's
+effectively another way of getting a bog-standard O_PATH descriptor but
+with the ability to use the new LOOKUP_* flags.
 
-The use of path_is_under() here might seem suspect, but on further
-inspection of the most important race (a path was *inside* the root but
-is now *outside*), there appears to be no attack potential. If
-path_is_under() occurs before the rename, then the path will be resolved
-but since the path was originally inside the root there is no escape.
-Subsequent ".." jumps are guaranteed to check path_is_under() (by
-construction, &rename_lock or &mount_lock must have been taken by the
-attacker after path_is_under() returned in the victim), and thus will
-not be able to escape from the previously-inside-root path. Walking down
-is still safe since the entire subtree was moved (either by rename(2) or
-MS_MOVE) and because (as discussed above) walking down is safe.
+Because resolveat(2) only provides the ability to get O_PATH
+descriptors, users will need to get creative with /proc/self/fd in order
+to get a usable file descriptor for other uses. However, in future we
+can add O_EMPTYPATH support to openat(2) which would allow for
+re-opening without procfs (though as mentioned above there are some
+security improvements that should be made to the interfaces).
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kees Cook <keescook@chromium.org>
+NOTE: This patch adds the syscall to all architectures using the new
+      unified syscall numbering, but several architectures are missing
+      newer (nr > 423) syscalls -- hence the uneven gaps in the syscall
+      tables.
+
+Cc: Christian Brauner <christian@brauner.io>
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- fs/namei.c | 48 +++++++++++++++++++++++++++++++++---------------
- 1 file changed, 33 insertions(+), 15 deletions(-)
+ arch/alpha/kernel/syscalls/syscall.tbl      |  1 +
+ arch/arm/tools/syscall.tbl                  |  1 +
+ arch/ia64/kernel/syscalls/syscall.tbl       |  1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |  1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |  1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |  1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |  1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |  1 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |  1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |  1 +
+ arch/s390/kernel/syscalls/syscall.tbl       |  1 +
+ arch/sh/kernel/syscalls/syscall.tbl         |  1 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |  1 +
+ arch/x86/entry/syscalls/syscall_32.tbl      |  1 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |  1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |  1 +
+ fs/namei.c                                  | 46 +++++++++++++++++++++
+ include/uapi/linux/fcntl.h                  | 13 ++++++
+ 18 files changed, 75 insertions(+)
 
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index 63ed39cbd3bd..72f431b1dc9c 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -461,5 +461,6 @@
+ 530	common	getegid				sys_getegid
+ 531	common	geteuid				sys_geteuid
+ 532	common	getppid				sys_getppid
++533	common	resolveat			sys_resolveat
+ # all other architectures have common numbers for new syscall, alpha
+ # is the exception.
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 9016f4081bb9..1bc0282a67f7 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -437,3 +437,4 @@
+ 421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
+ 422	common	futex_time64			sys_futex
+ 423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
++428	common	resolveat			sys_resolveat
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index ab9cda5f6136..d3ae73ffaf48 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -344,3 +344,4 @@
+ 332	common	pkey_free			sys_pkey_free
+ 333	common	rseq				sys_rseq
+ # 334 through 423 are reserved to sync up with other architectures
++428	common	resolveat			sys_resolveat
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index 125c14178979..81b7389e9e58 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -423,3 +423,4 @@
+ 421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
+ 422	common	futex_time64			sys_futex
+ 423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
++428	common	resolveat			sys_resolveat
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index 8ee3a8c18498..626aed10e2b5 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -429,3 +429,4 @@
+ 421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
+ 422	common	futex_time64			sys_futex
+ 423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
++428	common	resolveat			sys_resolveat
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index 15f4117900ee..8cbd6032d6bf 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -362,3 +362,4 @@
+ 421	n32	rt_sigtimedwait_time64		compat_sys_rt_sigtimedwait_time64
+ 422	n32	futex_time64			sys_futex
+ 423	n32	sched_rr_get_interval_time64	sys_sched_rr_get_interval
++428	n32	resolveat			sys_resolveat
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index c85502e67b44..234923a1fc88 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -338,3 +338,4 @@
+ 327	n64	rseq				sys_rseq
+ 328	n64	io_pgetevents			sys_io_pgetevents
+ # 329 through 423 are reserved to sync up with other architectures
++428	n64	resolveat			sys_resolveat
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index 2e063d0f837e..7b4586acf35d 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -411,3 +411,4 @@
+ 421	o32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
+ 422	o32	futex_time64			sys_futex			sys_futex
+ 423	o32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
++428	o32	resolveat			sys_resolveat			sys_resolveat
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index b26766c6647d..19a9a92dc5f8 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -420,3 +420,4 @@
+ 421	32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
+ 422	32	futex_time64			sys_futex			sys_futex
+ 423	32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
++428	common	resolveat			sys_resolveat			sys_resolveat
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index b18abb0c3dae..bfcd75b928de 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -505,3 +505,4 @@
+ 421	32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
+ 422	32	futex_time64			sys_futex			sys_futex
+ 423	32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
++428	common	resolveat			sys_resolveat			sys_resolveat
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index 02579f95f391..084e51f02e65 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -426,3 +426,4 @@
+ 421	32	rt_sigtimedwait_time64	-				compat_sys_rt_sigtimedwait_time64
+ 422	32	futex_time64		-				sys_futex
+ 423	32	sched_rr_get_interval_time64	-			sys_sched_rr_get_interval
++428	common	resolveat		sys_resolveat			-
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index bfda678576e4..e9115c5cec72 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -426,3 +426,4 @@
+ 421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
+ 422	common	futex_time64			sys_futex
+ 423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
++428	common	resolveat			sys_resolveat
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index b9a5a04b2d2c..2d3fdd913d89 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -469,3 +469,4 @@
+ 421	32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
+ 422	32	futex_time64			sys_futex			sys_futex
+ 423	32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
++428	common	resolveat			sys_resolveat			sys_resolveat
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 4cd5f982b1e5..101feef22473 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -438,3 +438,4 @@
+ 425	i386	io_uring_setup		sys_io_uring_setup		__ia32_sys_io_uring_setup
+ 426	i386	io_uring_enter		sys_io_uring_enter		__ia32_sys_io_uring_enter
+ 427	i386	io_uring_register	sys_io_uring_register		__ia32_sys_io_uring_register
++428	i386	resolveat		sys_resolveat			__ia32_sys_resolveat
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 64ca0d06259a..c7c197bf07bc 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -355,6 +355,7 @@
+ 425	common	io_uring_setup		__x64_sys_io_uring_setup
+ 426	common	io_uring_enter		__x64_sys_io_uring_enter
+ 427	common	io_uring_register	__x64_sys_io_uring_register
++428	common	resolveat		__x64_sys_resolveat
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 6af49929de85..86c44f15dfa4 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -394,3 +394,4 @@
+ 421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
+ 422	common	futex_time64			sys_futex
+ 423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
++428	common	resolveat			sys_resolveat
 diff --git a/fs/namei.c b/fs/namei.c
-index 3a3cba593b85..2b6a1bf4e745 100644
+index 2b6a1bf4e745..2cc5b171f6ec 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -491,7 +491,7 @@ struct nameidata {
- 	struct path	root;
- 	struct inode	*inode; /* path.dentry.d_inode */
- 	unsigned int	flags;
--	unsigned	seq, m_seq;
-+	unsigned	seq, m_seq, r_seq;
- 	int		last_type;
- 	unsigned	depth;
- 	int		total_link_count;
-@@ -1739,19 +1739,35 @@ static inline int may_lookup(struct nameidata *nd)
- static inline int handle_dots(struct nameidata *nd, int type)
- {
- 	if (type == LAST_DOTDOT) {
--		/*
--		 * LOOKUP_BENEATH resolving ".." is not currently safe -- races can
--		 * cause our parent to have moved outside of the root and us to skip
--		 * over it.
--		 */
--		if (unlikely(nd->flags & (LOOKUP_BENEATH | LOOKUP_IN_ROOT)))
--			return -EXDEV;
-+		int error = 0;
-+
- 		if (!nd->root.mnt)
- 			set_root(nd);
--		if (nd->flags & LOOKUP_RCU) {
--			return follow_dotdot_rcu(nd);
--		} else
--			return follow_dotdot(nd);
-+		if (nd->flags & LOOKUP_RCU)
-+			error = follow_dotdot_rcu(nd);
-+		else
-+			error = follow_dotdot(nd);
-+		if (error)
-+			return error;
-+
-+		if (unlikely(nd->flags & (LOOKUP_BENEATH | LOOKUP_IN_ROOT))) {
-+			bool m_retry = read_seqretry(&mount_lock, nd->m_seq);
-+			bool r_retry = read_seqretry(&rename_lock, nd->r_seq);
-+
-+			/*
-+			 * Don't bother checking unless there's a racing
-+			 * rename(2) or MS_MOVE.
-+			 */
-+			if (likely(!m_retry && !r_retry))
-+				return 0;
-+
-+			if (m_retry && !(nd->flags & LOOKUP_RCU))
-+				nd->m_seq = read_seqbegin(&mount_lock);
-+			if (r_retry)
-+				nd->r_seq = read_seqbegin(&rename_lock);
-+			if (!path_is_under(&nd->path, &nd->root))
-+				return -EXDEV;
-+		}
- 	}
- 	return 0;
+@@ -3656,6 +3656,52 @@ struct file *do_filp_open(int dfd, struct filename *pathname,
+ 	return filp;
  }
-@@ -2272,6 +2288,11 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 	nd->last_type = LAST_ROOT; /* if there are only slashes... */
- 	nd->flags = flags | LOOKUP_JUMPED | LOOKUP_PARENT;
- 	nd->depth = 0;
-+
-+	nd->m_seq = read_seqbegin(&mount_lock);
-+	if (unlikely(flags & (LOOKUP_BENEATH | LOOKUP_IN_ROOT)))
-+		nd->r_seq = read_seqbegin(&rename_lock);
-+
- 	if (flags & LOOKUP_ROOT) {
- 		struct dentry *root = nd->root.dentry;
- 		struct inode *inode = root->d_inode;
-@@ -2282,7 +2303,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 		if (flags & LOOKUP_RCU) {
- 			nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
- 			nd->root_seq = nd->seq;
--			nd->m_seq = read_seqbegin(&mount_lock);
- 		} else {
- 			path_get(&nd->path);
- 		}
-@@ -2293,8 +2313,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 	nd->path.mnt = NULL;
- 	nd->path.dentry = NULL;
  
--	nd->m_seq = read_seqbegin(&mount_lock);
--
- 	if (unlikely(nd->flags & (LOOKUP_BENEATH | LOOKUP_IN_ROOT))) {
- 		error = dirfd_path_init(nd);
- 		if (unlikely(error))
++SYSCALL_DEFINE3(resolveat, int, dfd, const char __user *, path,
++		unsigned long, flags)
++{
++	int fd;
++	struct filename *tmp;
++	struct open_flags op = {
++		.open_flag = O_PATH,
++	};
++
++	if (flags & ~VALID_RESOLVE_FLAGS)
++		return -EINVAL;
++
++	if (flags & RESOLVE_CLOEXEC)
++		op.open_flag |= O_CLOEXEC;
++	if (!(flags & RESOLVE_NOFOLLOW))
++		op.lookup_flags |= LOOKUP_FOLLOW;
++	if (flags & RESOLVE_BENEATH)
++		op.lookup_flags |= LOOKUP_BENEATH;
++	if (flags & RESOLVE_XDEV)
++		op.lookup_flags |= LOOKUP_XDEV;
++	if (flags & RESOLVE_NO_MAGICLINKS)
++		op.lookup_flags |= LOOKUP_NO_MAGICLINKS;
++	if (flags & RESOLVE_NO_SYMLINKS)
++		op.lookup_flags |= LOOKUP_NO_SYMLINKS;
++	if (flags & RESOLVE_IN_ROOT)
++		op.lookup_flags |= LOOKUP_IN_ROOT;
++
++	tmp = getname(path);
++	if (IS_ERR(tmp))
++		return PTR_ERR(tmp);
++
++	fd = get_unused_fd_flags(op.open_flag);
++	if (fd >= 0) {
++		struct file *f = do_filp_open(dfd, tmp, &op);
++		if (IS_ERR(f)) {
++			put_unused_fd(fd);
++			fd = PTR_ERR(f);
++		} else {
++			fsnotify_open(f);
++			fd_install(fd, f);
++		}
++	}
++	putname(tmp);
++	return fd;
++}
++
+ struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
+ 		const char *name, const struct open_flags *op)
+ {
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 1d338357df8a..c57245a21281 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -94,4 +94,17 @@
+ #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
+ 
+ 
++/* Bottom 3 bits of RESOLVE_* are reserved for future ACC_MODE extensions. */
++#define RESOLVE_CLOEXEC		0x008 /* Set O_CLOEXEC on the returned fd. */
++#define RESOLVE_NOFOLLOW	0x010 /* Don't follow trailing symlinks. */
++
++#define RESOLVE_RESOLUTION_TYPE	0x3E0 /* Type of path-resolution scoping we are applying. */
++#define RESOLVE_BENEATH		0x020 /* - Block "lexical" trickery like "..", symlinks, absolute paths, etc. */
++#define RESOLVE_XDEV		0x040 /* - Block mount-point crossings (includes bind-mounts). */
++#define RESOLVE_NO_MAGICLINKS	0x080 /* - Block procfs-style "magic" symlinks. */
++#define RESOLVE_NO_SYMLINKS	0x100 /* - Block all symlinks (implies AT_NO_MAGICLINKS). */
++#define RESOLVE_IN_ROOT		0x200 /* - Scope ".." resolution to dirfd (like chroot(2)). */
++
++#define VALID_RESOLVE_FLAGS	(RESOLVE_CLOEXEC | RESOLVE_NOFOLLOW | RESOLVE_RESOLUTION_TYPE)
++
+ #endif /* _UAPI_LINUX_FCNTL_H */
 -- 
 2.21.0
 
