@@ -2,99 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A02491576C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 03:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5E3E157F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 05:14:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbfEGBur (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 May 2019 21:50:47 -0400
-Received: from mail-lj1-f180.google.com ([209.85.208.180]:41758 "EHLO
-        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbfEGBur (ORCPT
+        id S1726931AbfEGDOR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 May 2019 23:14:17 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46486 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbfEGDOR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 May 2019 21:50:47 -0400
-Received: by mail-lj1-f180.google.com with SMTP id k8so12770579lja.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 18:50:46 -0700 (PDT)
+        Mon, 6 May 2019 23:14:17 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j11so7822249pff.13;
+        Mon, 06 May 2019 20:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oTmx315aI+e3IpTFIK2JkU5Ig8gY6u+ajBS71um0vTY=;
-        b=Zyx1YydnHgapUWH1Iwt4LxqO9GW6APT4up+CYNoMRFOMMFJceV7rK6R+jC2hXf81xW
-         Kn9ojQDzPxePIZ8ViB4E9gj+OexFNLICpxDl6+pRf+gYWla1UsAxMtT6v6PJputF9si4
-         JnPQh5YEjzAJVd+ysRyWjgsw7cs2X0XcIreb4=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XPy6o0NjYz38vWpV6pc1h2A6N4smSYs4Cq49Ux9zwV8=;
+        b=uTQNGYZ1XWIvXYHBEeJQovmqhK2Jtpq+d64Qro6G5OKceot5sQNTlLbfduNr0K3PGx
+         CsKeB5E/nKLx2mO5rHvB5C3cSTlrSg27HAg1bLnsc6sS6Ob71hOBqLsY7CZ9Kc78pahW
+         2bjV9Jxur71IdhgsqsXU4h/nzLhauMpdelIF+i15235Qca74Y0OgvP33q3BLK9LqDfFd
+         Xr/fhjikEY63MLGvaPSmYU14OjokXybBFpWj/AGZsAXkXpEZkB0f6qswg2ygyAISGWpA
+         7eDh4rZZ2yShjUppASxA0qxx7J3s6zLlj/zKwFDiXJf9dX+MaLJqGhuEngD27vSXcDZx
+         mNcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oTmx315aI+e3IpTFIK2JkU5Ig8gY6u+ajBS71um0vTY=;
-        b=Tz7fJakg0ey6j3kSSd8b9IqipL9nfe+86JZpkb+SWGU3mROefycruFHoYKEyAKNLro
-         aBXJn49LaEc9QiGIMlzdrpEswMZQnkqpOel4evfAaA+KE5b2jPFh0EVGP7ceAbdquUB0
-         BrHQRRXhbEjKakt1SNSRNj5s5FZFiiFJJzyabFlkl5GxQoBRkOH45qm5Zaz86K4XgKMM
-         PjMr1i0vW/hoe/uXtDRoMWFwhhrhtEIEm/EvudzV5oj5pHqNDdhLcI2xZzW64RqTBU0M
-         qioYBzSgseTfIfmdsMI+Xjj99/2d23Stluv2m2wGnetAATX23Mx/73PPhuDwv53V6SUP
-         Z2QA==
-X-Gm-Message-State: APjAAAV689Dw1rqIgP/sRo6yCT9lF3rfduvwUN13CfpchZUB4I0XMr91
-        6LYF/0PZFXa6Hydy+DfuPljcCYdwyHs=
-X-Google-Smtp-Source: APXvYqwl077NMRsMNkeWKgYZCNCu3goQtzJxhgYqUk50Xakvu/zKQkSaVvnTefLihz8aVPxMIAJhZw==
-X-Received: by 2002:a2e:988e:: with SMTP id b14mr15073295ljj.126.1557193845263;
-        Mon, 06 May 2019 18:50:45 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id 10sm2754480ljv.47.2019.05.06.18.50.43
-        for <linux-fsdevel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XPy6o0NjYz38vWpV6pc1h2A6N4smSYs4Cq49Ux9zwV8=;
+        b=bpGmhPA4nLB6Twbk5csOyQsxQkRfpaM0M3+zBCdYF2ditokfKtQja54RhMiUuc8VKm
+         99wUhRwxzKKuwyDDRdKqc6806OVTvYJavNSiJdHNcBvgtC7UWcOTyRAUDT0EEbaN1iDK
+         +RVrbZ901k3ouQgWRIsfQp0kmUNLbEGByWkcmXyT3JEvzPSjDv/lPCMVi7oNFshfQhZV
+         DQViNHZ5miie3fHmUTwEvaSjQ13KFLJ1W3FHorGtDGD0t85LWDeqsujQJ57zffUlBUWq
+         qmAY4eJOXIAnz2b787wqSKwdvk1M4M4d3RaXVzdp3qBJC96szIC6dw2ggUlAs/J5IJVe
+         /PYA==
+X-Gm-Message-State: APjAAAU5SaVa7bH19Pdkzl0Pf2PmKJ6V6i2/NLXVqmpEE+nCc7gnNWnF
+        MWEiMzXZNqRh8l8aS+kWvo5YXwxZ0NA=
+X-Google-Smtp-Source: APXvYqwISNSy9xefPMYRgOslBbKIROeiQ4y33+rxQnv0dnHw2MR5wA3FiL1meR7p3JPjBqzEw/Pz1Q==
+X-Received: by 2002:a65:4802:: with SMTP id h2mr34368073pgs.98.1557198856091;
+        Mon, 06 May 2019 20:14:16 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id m11sm17053726pgd.12.2019.05.06.20.14.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 18:50:44 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id k8so12770509lja.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 18:50:43 -0700 (PDT)
-X-Received: by 2002:a05:651c:8f:: with SMTP id 15mr14691844ljq.118.1557193843522;
- Mon, 06 May 2019 18:50:43 -0700 (PDT)
+        Mon, 06 May 2019 20:14:15 -0700 (PDT)
+Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        gregkh@linuxfoundation.org, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com,
+        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
+        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
+        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
+        pmladek@suse.com, richard@nod.at, rientjes@google.com,
+        rostedt@goodmis.org, wfg@linux.intel.com
+References: <20190501230126.229218-1-brendanhiggins@google.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
+Date:   Mon, 6 May 2019 20:14:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <af9a8dec-98a2-896f-448b-04ded0af95f0@huawei.com> <20190507004046.GE23075@ZenIV.linux.org.uk>
-In-Reply-To: <20190507004046.GE23075@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 6 May 2019 18:50:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjjK16yyug_5-xjPjXniE_T9tzQwxW45JJOHb=ho9kqrA@mail.gmail.com>
-Message-ID: <CAHk-=wjjK16yyug_5-xjPjXniE_T9tzQwxW45JJOHb=ho9kqrA@mail.gmail.com>
-Subject: Re: system panic while dentry reference count overflow
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     yangerkun <yangerkun@huawei.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        yi.zhang@huawei.com, houtao1@huawei.com, miaoxie@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190501230126.229218-1-brendanhiggins@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 6, 2019 at 5:40 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Linus, lockref is your code, IIRC; which variant would you consider
-> more feasible?
+On 5/1/19 4:01 PM, Brendan Higgins wrote:
+> ## TLDR
+> 
+> I rebased the last patchset on 5.1-rc7 in hopes that we can get this in
+> 5.2.
+> 
+> Shuah, I think you, Greg KH, and myself talked off thread, and we agreed
+> we would merge through your tree when the time came? Am I remembering
+> correctly?
+> 
+> ## Background
+> 
+> This patch set proposes KUnit, a lightweight unit testing and mocking
+> framework for the Linux kernel.
+> 
+> Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+> it does not require installing the kernel on a test machine or in a VM
+> and does not require tests to be written in userspace running on a host
+> kernel. Additionally, KUnit is fast: From invocation to completion KUnit
+> can run several dozen tests in under a second. Currently, the entire
+> KUnit test suite for KUnit runs in under a second from the initial
+> invocation (build time excluded).
+> 
+> KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+> Googletest/Googlemock for C++. KUnit provides facilities for defining
+> unit test cases, grouping related test cases into test suites, providing
+> common infrastructure for running tests, mocking, spying, and much more.
 
-I think we should strive for the same kind of count overflow handling
-that the pageref patches did: keep the count at 32 bits, but just add
-a new "try_dget()" thing that returns "no" when the count grows too
-large.
+As a result of the emails replying to this patch thread, I am now
+starting to look at kselftest.  My level of understanding is based
+on some slide presentations, an LWN article, https://kselftest.wiki.kernel.org/
+and a _tiny_ bit of looking at kselftest code.
 
-And then use the "try_dget()" model when possible, and particularly
-for the easy cases for user mode to trigger. You don't have to catch
-them all, and in most places it isn't worth even worrying about it
-because users can't force billions of those places to be active at
-once.
+tl;dr; I don't really understand kselftest yet.
 
-I don't see the original email (I'm not on fsdevel, and google doesn't
-find it), so I don't see if there was some particular case that was
-pointed out as being an easy attack vector.
 
-For the page ref counts, it was all about get_user_pages() and a
-couple of other places, and the patches ended up being small and
-localized:
+(1) why KUnit exists
 
-  15fab63e1e57 fs: prevent page refcount overflow in pipe_buf_get
-  8fde12ca79af mm: prevent get_user_pages() from overflowing page refcount
-  88b1a17dfc3e mm: add 'try_get_page()' helper function
-  f958d7b528b1 mm: make page ref count overflow check tighter and more explicit
+> ## What's so special about unit testing?
+> 
+> A unit test is supposed to test a single unit of code in isolation,
+> hence the name. There should be no dependencies outside the control of
+> the test; this means no external dependencies, which makes tests orders
+> of magnitudes faster. Likewise, since there are no external dependencies,
+> there are no hoops to jump through to run the tests. Additionally, this
+> makes unit tests deterministic: a failing unit test always indicates a
+> problem. Finally, because unit tests necessarily have finer granularity,
+> they are able to test all code paths easily solving the classic problem
+> of difficulty in exercising error handling code.
 
-and I think we should see this kind of thing as the primary model,
-rather than do the whole "let's make everything 64-bit".
+(2) KUnit is not meant to replace kselftest
 
-                 Linus
+> ## Is KUnit trying to replace other testing frameworks for the kernel?
+> 
+> No. Most existing tests for the Linux kernel are end-to-end tests, which
+> have their place. A well tested system has lots of unit tests, a
+> reasonable number of integration tests, and some end-to-end tests. KUnit
+> is just trying to address the unit test space which is currently not
+> being addressed.
+
+My understanding is that the intent of KUnit is to avoid booting a kernel on
+real hardware or in a virtual machine.  That seems to be a matter of semantics
+to me because isn't invoking a UML Linux just running the Linux kernel in
+a different form of virtualization?
+
+So I do not understand why KUnit is an improvement over kselftest.
+
+It seems to me that KUnit is just another piece of infrastructure that I
+am going to have to be familiar with as a kernel developer.  More overhead,
+more information to stuff into my tiny little brain.
+
+I would guess that some developers will focus on just one of the two test
+environments (and some will focus on both), splitting the development
+resources instead of pooling them on a common infrastructure.
+
+What am I missing?
+
+-Frank
+
+
+> 
+> ## More information on KUnit
+> 
+> There is a bunch of documentation near the end of this patch set that
+> describes how to use KUnit and best practices for writing unit tests.
+> For convenience I am hosting the compiled docs here:
+> https://google.github.io/kunit-docs/third_party/kernel/docs/
+> Additionally for convenience, I have applied these patches to a branch:
+> https://kunit.googlesource.com/linux/+/kunit/rfc/v5.1-rc7/v1
+> The repo may be cloned with:
+> git clone https://kunit.googlesource.com/linux
+> This patchset is on the kunit/rfc/v5.1-rc7/v1 branch.
+> 
+> ## Changes Since Last Version
+> 
+> None. I just rebased the last patchset on v5.1-rc7.
+> 
+
