@@ -2,136 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79DEE15F3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 10:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDD8F15FBB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 10:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfEGIVz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 04:21:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37550 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726197AbfEGIVz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 04:21:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 49711AE52;
-        Tue,  7 May 2019 08:21:53 +0000 (UTC)
+        id S1726728AbfEGItJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 04:49:09 -0400
+Received: from mail-wr1-f53.google.com ([209.85.221.53]:43201 "EHLO
+        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfEGItI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 May 2019 04:49:08 -0400
+Received: by mail-wr1-f53.google.com with SMTP id r4so5809983wro.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2019 01:49:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eDqWezXMALgcwT8s3H6PEODX+jJb0aIcO1v12Ssi1bc=;
+        b=L6EbqEawkyvP91PQ/ogSPbAtiglWo6xcUU38rxyNZiG4uXkFLyRmAXAWuOyq0rNvvH
+         /gtcEwyFfd+9TEgUulYvPQ20WIyujhzWWiFcx3C9WZ3nJ2Ly8/LF1FPBnAbbJE1f8qls
+         gmi6Z1fqvkKKx4SsoG0bp+AN95n5RssRMp+Nq5/Gts/BBu2/+PEp8FeKcM91ZD+jUSuU
+         8bddIX6a5dxC0Tzd5nyKJA9a4qmhZlymZfeyFHWph7A9zbgmKuKnWNLPFwtlQV8TXMVW
+         CimVVPx1JeWacmp2WU7w/CDMWcy/eIgmmPjZpRAh1zjBD0EodsJzD+FK3pZnmHKxqC/y
+         exmw==
+X-Gm-Message-State: APjAAAVimGPe0BDXV6JulS2GBnBKo1U7oJOyfN3swZrT4NYpI6kahdYa
+        bbBgfqeQ1mZEEvBbFg5wvJtA5CaJyNAK7Wgj8Cah5g==
+X-Google-Smtp-Source: APXvYqyBWsiJINBU5xtijGWkwXIOzI1HRrMl+F3lMjtbgV5GJHcWzPpfd3oGScFrpc7M708L5NaRTzNDu2iBbA77twQ=
+X-Received: by 2002:adf:f108:: with SMTP id r8mr11467848wro.221.1557218946960;
+ Tue, 07 May 2019 01:49:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com> <20190507071021.wtm25mxx2as6babr@work>
+In-Reply-To: <20190507071021.wtm25mxx2as6babr@work>
+From:   Jan Tulak <jtulak@redhat.com>
+Date:   Tue, 7 May 2019 10:48:55 +0200
+Message-ID: <CACj3i71HdW0ys_YujGFJkobMmZAZtEPo7B2tgZjEY8oP_T9T6g@mail.gmail.com>
 Subject: Re: Testing devices for discard support properly
-To:     Ric Wheeler <ricwheeler@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+To:     Lukas Czerner <lczerner@redhat.com>
+Cc:     Ric Wheeler <ricwheeler@gmail.com>, Jens Axboe <axboe@kernel.dk>,
         linux-block@vger.kernel.org,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        lczerner@redhat.com
-References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <53ed750b-0b92-510b-495d-384de49967b2@suse.com>
-Date:   Tue, 7 May 2019 11:21:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Nikolay Borisov <nborisov@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, May 7, 2019 at 9:10 AM Lukas Czerner <lczerner@redhat.com> wrote:
+>
+> On Mon, May 06, 2019 at 04:56:44PM -0400, Ric Wheeler wrote:
+> >
+...
+> >
+> > * Whole device discard at the block level both for a device that has been
+> > completely written and for one that had already been trimmed
+>
+> Yes, usefull. Also note that a long time ago when I've done the testing
+> I noticed that after a discard request, especially after whole device
+> discard, the read/write IO performance went down significanly for some
+> drives. I am sure things have changed, but I think it would be
+> interesting to see how does it behave now.
+>
+> >
+> > * Discard performance at the block level for 4k discards for a device that
+> > has been completely written and again the same test for a device that has
+> > been completely discarded.
+> >
+> > * Same test for large discards - say at a megabyte and/or gigabyte size?
+>
+> From my testing (again it was long time ago and things probably changed
+> since then) most of the drives I've seen had largely the same or similar
+> timing for discard request regardless of the size (hence, the conclusion
+> was the bigger the request the better). A small variation I did see
+> could have been explained by kernel implementation and discard_max_bytes
+> limitations as well.
+>
+> >
+> > * Same test done at the device optimal discard chunk size and alignment
+> >
+> > Should the discard pattern be done with a random pattern? Or just
+> > sequential?
+>
+> I think that all of the above will be interesting. However there are two
+> sides of it. One is just pure discard performance to figure out what
+> could be the expectations and the other will be "real" workload
+> performance. Since from my experience discard can have an impact on
+> drive IO performance beyond of what's obvious, testing mixed workload
+> (IO + discard) is going to be very important as well. And that's where
+> fio workloads can come in (I actually do not know if fio already
+> supports this or not).
+>
+
+And:
+
+On Tue, May 7, 2019 at 10:22 AM Nikolay Borisov <nborisov@suse.com> wrote:
+> I have some vague recollection this was brought up before but how sure
+> are we that when a discard request is sent down to disk and a response
+> is returned the actual data has indeed been discarded. What about NCQ
+> effects i.e "instant completion" while doing work in the background. Or
+> ignoring the discard request altogether?
 
 
-On 6.05.19 г. 23:56 ч., Ric Wheeler wrote:
-> 
-> (repost without the html spam, sorry!)
-> 
-> Last week at LSF/MM, I suggested we can provide a tool or test suite to
-> test discard performance.
-> 
-> Put in the most positive light, it will be useful for drive vendors to
-> use to qualify their offerings before sending them out to the world. For
-> customers that care, they can use the same set of tests to help during
-> selection to weed out any real issues.
-> 
-> Also, community users can run the same tools of course and share the
-> results.
-> 
-> Down to the questions part:
-> 
-> Â * Do we just need to figure out a workload to feed our existing tools
-> like blkdiscard and fio?
-> 
-> * What workloads are key?
-> 
-> Thoughts about what I would start getting timings for:
-> 
-> * Whole device discard at the block level both for a device that has
-> been completely written and for one that had already been trimmed
-> 
-> * Discard performance at the block level for 4k discards for a device
-> that has been completely written and again the same test for a device
-> that has been completely discarded.
-> 
-> * Same test for large discards - say at a megabyte and/or gigabyte size?
-> 
-> * Same test done at the device optimal discard chunk size and alignment
-> 
-> Should the discard pattern be done with a random pattern? Or just
-> sequential?
-> 
-> I think the above would give us a solid base, thoughts or comments?
+As Nikolay writes in the other thread, I too have a feeling that there
+have been a discard-related discussion at LSF/MM before. And if I
+remember, there were hints that the drives (sometimes) do asynchronous
+trim after returning a success. Which would explain the similar time
+for all sizes and IO drop after trim.
 
-I have some vague recollection this was brought up before but how sure
-are we that when a discard request is sent down to disk and a response
-is returned the actual data has indeed been discarded. What about NCQ
-effects i.e "instant completion" while doing work in the background. Or
-ignoring the discard request altogether?
+So, I think that the mixed workload (IO + discard) is a pretty
+important part of the whole topic and a pure discard test doesn't
+really tell us anything, at least for some drives.
 
-> 
-> Thanks!
-> 
-> Ric
-> 
-> 
-> 
-> 
+Jan
+
+
+
+-- 
+Jan Tulak
