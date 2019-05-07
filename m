@@ -2,106 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A5316D64
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 00:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A543C16DF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 01:51:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbfEGWEy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 18:04:54 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:51602 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725843AbfEGWEy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 18:04:54 -0400
-Received: from dread.disaster.area (pa49-181-171-240.pa.nsw.optusnet.com.au [49.181.171.240])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0A508105F850;
-        Wed,  8 May 2019 08:04:51 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hO8Cg-0004uQ-1H; Wed, 08 May 2019 08:04:50 +1000
-Date:   Wed, 8 May 2019 08:04:50 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ric Wheeler <ricwheeler@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        lczerner@redhat.com
-Subject: Re: Testing devices for discard support properly
-Message-ID: <20190507220449.GP1454@dread.disaster.area>
-References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
+        id S1726470AbfEGXvQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 19:51:16 -0400
+Received: from fieldses.org ([173.255.197.46]:59706 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726091AbfEGXvQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 May 2019 19:51:16 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 583C51DCB; Tue,  7 May 2019 19:51:15 -0400 (EDT)
+Date:   Tue, 7 May 2019 19:51:15 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     NeilBrown <neilb@suse.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Andreas =?utf-8?Q?Gr=C3=BCnbacher?= 
+        <andreas.gruenbacher@gmail.com>,
+        Patrick Plagwitz <Patrick_Plagwitz@web.de>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
+Message-ID: <20190507235115.GB16853@fieldses.org>
+References: <CAHpGcMKHjic6L+J0qvMYNG9hVCcDO1hEpx4BiEk0ZCKDV39BmA@mail.gmail.com>
+ <266c571f-e4e2-7c61-5ee2-8ece0c2d06e9@web.de>
+ <CAHpGcMKmtppfn7PVrGKEEtVphuLV=YQ2GDYKOqje4ZANhzSgDw@mail.gmail.com>
+ <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com>
+ <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com>
+ <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com>
+ <20161206185806.GC31197@fieldses.org>
+ <87bm0l4nra.fsf@notabene.neil.brown.name>
+ <20190503153531.GJ12608@fieldses.org>
+ <CAJfpegv-0mUs=XRgerxR_Zz_MvYuDvb95v0QZeBUcHNnenusnw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
-        a=LhzQONXuMOhFZtk4TmSJIw==:117 a=LhzQONXuMOhFZtk4TmSJIw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
-        a=7-415B0cAAAA:8 a=cBRT43P-7hDb3wOkE_MA:9 a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <CAJfpegv-0mUs=XRgerxR_Zz_MvYuDvb95v0QZeBUcHNnenusnw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 06, 2019 at 04:56:44PM -0400, Ric Wheeler wrote:
+On Tue, May 07, 2019 at 04:07:21AM -0400, Miklos Szeredi wrote:
+> On Fri, May 3, 2019 at 11:35 AM J. Bruce Fields <bfields@fieldses.org> wrote:
+> >
+> > On Thu, May 02, 2019 at 12:02:33PM +1000, NeilBrown wrote:
 > 
-> (repost without the html spam, sorry!)
+> > >  Silently not copying the ACLs is probably not a good idea as it might
+> > >  result in inappropriate permissions being given away.  So if the
+> > >  sysadmin wants this (and some clearly do), they need a way to
+> > >  explicitly say "I accept the risk".
+> >
+> > So, I feel like silently copying ACLs up *also* carries a risk, if that
+> > means switching from server-enforcement to client-enforcement of those
+> > permissions.
 > 
-> Last week at LSF/MM, I suggested we can provide a tool or test suite to test
-> discard performance.
-> 
-> Put in the most positive light, it will be useful for drive vendors to use
-> to qualify their offerings before sending them out to the world. For
-> customers that care, they can use the same set of tests to help during
-> selection to weed out any real issues.
-> 
-> Also, community users can run the same tools of course and share the
-> results.
+> That's not correct: permissions are checked on the overlay layer,
+> regardless of where the actual file resides.  For filesystems using a
+> server enforced permission model that means possibly different
+> permissions for accesses through overlayfs than for accesses without
+> overlayfs.  Apparently this is missing from the documentation and
+> definitely needs to be added.
 
-My big question here is this:
+Well, we did have a thread on this pretty recently, I think, and I'm
+just not remembering the conclusion.  Yes, it'd be nice to have this
+documented.
 
-- is "discard" even relevant for future devices?
+In the case of NFSv4 ACLs, we not only lack storage for them, we don't
+even have code to evaluate them.
 
-i.e. before we start saying "we want discard to not suck", perhaps
-we should list all the specific uses we ahve for discard, what we
-expect to occur, and whether we have better interfaces than
-"discard" to acheive that thing.
+--b.
 
-Indeed, we have fallocate() on block devices now, which means we
-have a well defined block device space management API for clearing
-and removing allocated block device space. i.e.:
-
-	FALLOC_FL_ZERO_RANGE: Future reads from the range must
-	return zero and future writes to the range must not return
-	ENOSPC. (i.e. must remain allocated space, can physically
-	write zeros to acheive this)
-
-	FALLOC_FL_PUNCH_HOLE: Free the backing store and guarantee
-	future reads from the range return zeroes. Future writes to
-	the range may return ENOSPC. This operation fails if the
-	underlying device cannot do this operation without
-	physically writing zeroes.
-
-	FALLOC_FL_PUNCH_HOLE | FALLOC_FL_NO_HIDE_STALE: run a
-	discard on the range and provide no guarantees about the
-	result. It may or may not do anything, and a subsequent read
-	could return anything at all.
-
-IMO, trying to "optimise discard" is completely the wrong direction
-to take. We should be getting rid of "discard" and it's interfaces
-operations - deprecate the ioctls, fix all other kernel callers of
-blkdev_issue_discard() to call blkdev_fallocate() and ensure that
-drive vendors understand that they need to make FALLOC_FL_ZERO_RANGE
-and FALLOC_FL_PUNCH_HOLE work, and that FALLOC_FL_PUNCH_HOLE |
-FALLOC_FL_NO_HIDE_STALE is deprecated (like discard) and will be
-going away.
-
-So, can we just deprecate blkdev_issue_discard and all the
-interfaces that lead to it as a first step?
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> So I think it's perfectly fine to allow copying up ACLs, as long as
+> the ACL is representable on the upper fs.  If that cannot be ensured,
+> then the only sane thing to do is to disable ACL checking across the
+> overlay ("noacl" option).
