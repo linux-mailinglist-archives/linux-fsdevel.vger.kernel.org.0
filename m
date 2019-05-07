@@ -2,96 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B2EA15705
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 02:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DEDA15708
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 02:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfEGAjj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 May 2019 20:39:39 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37368 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbfEGAji (ORCPT
+        id S1726322AbfEGAku (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 May 2019 20:40:50 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38036 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbfEGAku (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 May 2019 20:39:38 -0400
-Received: by mail-pf1-f195.google.com with SMTP id g3so7655461pfi.4;
-        Mon, 06 May 2019 17:39:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=jcaJYu9k2K/e9UA37e4lNVwPX2D+yjNGXI9JGGSJkRE=;
-        b=c2RSDkFsRz7AyAkJOqzDXMceVQjsCcehWKOGsAP1q9/zYfniKWAJlW8pzjjfftJiDb
-         DIi6fyLXHkSfjqhQjeveUbK33DMmF+H/+m8sZbnm0D7aUdZoXja467JrEoQRtlssHNYP
-         afe4mvHiYSnePXwfbek8yXEudXg5xjq+Tmi3mBhnG0YrRh+blnFuI+1uUnu+nqEZvHYn
-         WSSeVreIwAVaC/G10KrUdz6UylEMUvLx3pSpdsTB4rfjmIfhhcg1xmamAdI105vSlPx0
-         bT0SkI3o6XoU4b3pjgAmKAOfRZ/RGWBtCEa0kcNTEBtLVNJmAkFlX20T12KOIzP8GxWP
-         mF1A==
-X-Gm-Message-State: APjAAAWfSKc4QITmSgx11+0zfEwSW8OLXcbY+pNMwwx3CiWsd9aq9UB2
-        kaGREIlxSSomW3/98HGD5Pw=
-X-Google-Smtp-Source: APXvYqz305JvA8tBvlLgeIzbmIlJTERQw5eS72zuyvsg8q1RnQmjKumWSkxTRs4/cXesLG82pyGOeg==
-X-Received: by 2002:a65:5086:: with SMTP id r6mr36798945pgp.301.1557189577924;
-        Mon, 06 May 2019 17:39:37 -0700 (PDT)
-Received: from asus.site ([2601:647:4000:5dd1:a41e:80b4:deb3:fb66])
-        by smtp.gmail.com with ESMTPSA id m8sm18990887pgn.59.2019.05.06.17.39.36
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 17:39:36 -0700 (PDT)
-Subject: Re: [RFC PATCH 2/4] scsi: ufs: UFS driver v2.1 crypto support
-To:     Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Parshuram Raju Thombare <pthombar@cadence.com>,
-        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>
-References: <20190506223544.195371-1-satyat@google.com>
- <20190506223544.195371-3-satyat@google.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <f689f1a4-c507-30fd-0c3e-e6fe6d63b30d@acm.org>
-Date:   Mon, 6 May 2019 17:39:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 6 May 2019 20:40:50 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hNoA2-0001ab-SV; Tue, 07 May 2019 00:40:46 +0000
+Date:   Tue, 7 May 2019 01:40:46 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     yangerkun <yangerkun@huawei.com>
+Cc:     linux-fsdevel@vger.kernel.org, yi.zhang@huawei.com,
+        houtao1@huawei.com, miaoxie@huawei.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: system panic while dentry reference count overflow
+Message-ID: <20190507004046.GE23075@ZenIV.linux.org.uk>
+References: <af9a8dec-98a2-896f-448b-04ded0af95f0@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190506223544.195371-3-satyat@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af9a8dec-98a2-896f-448b-04ded0af95f0@huawei.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/6/19 3:35 PM, Satya Tangirala wrote:
-> +/*TODO: worry about endianness and cpu_to_le32 */
+On Mon, May 06, 2019 at 11:36:10AM +0800, yangerkun wrote:
+> Hi,
+> 
+> Run process parallel which each code show as below(2T memory), reference
+> count of root dentry will overflow since allocation of negative dentry
+> should do count++ for root dentry. Then, another dput of root dentry will
+> free it, which cause crash of system. I wondered is there anyone has found
+> this problem?
 
-Please fix endianness issues before reposting this patch series and
-please also make sure that this patch series is sparse-clean.
-Instructions for how to use sparse are available at
-https://kernelnewbies.org/Sparse.
+The problem is, in principle, known - it's just that you need an obscene
+amount of RAM to trigger it (you need 4G objects of some sort to hold those
+references).
 
-Thanks,
+_If_ you have that much RAM, there's any number of ways to hit that thing -
+it doesn't have to be cached results of lookups in directory as in your
+testcase.  E.g. raise /proc/sys/fs/file-nr past 4Gb (you will need a lot
+of RAM for that, or the thing won't let you go that high) and just keep
+opening the same file (using enough processes to get around the per-process
+limit, or playing with SCM_RIGHTS sendmsg to yourself, etc.)
 
-Bart.
+I don't think that making dget() able to fail is a feasible approach;
+there are too many callers and hundreds of brand-new failure exits
+that will almost never be exercised is _the_ recipe for bitrot from
+hell.
+
+An obvious approach would be to use atomic_long_t; the problem is that
+it's not atomic_t - it's lockref, which is limited to 32 bits.  Doing
+a wider variant... hell knows - wider cmpxchg variants might be
+usable, or we could put the upper bits into a separate word, with
+cmpxchg loops in lockref_get() et.al. treating "lower bits all zero" as
+"fall back to grabbing spinlock".
+
+Linus, lockref is your code, IIRC; which variant would you consider
+more feasible?
+
+We don't have that many places looking at the refcount, fortunately.
+And most of them are using d_count(dentry) (comparisons or printk).
+The rest is almost all in fs/dcache.c...  So it's not as if we'd
+been tied to refcount representation by arseloads of code all over
+the tree.
