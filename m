@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B05BB15B06
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 07:51:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D35E015AFE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 07:51:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729165AbfEGFvF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 01:51:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59452 "EHLO mail.kernel.org"
+        id S1727726AbfEGFun (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 01:50:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728995AbfEGFj6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 01:39:58 -0400
+        id S1729013AbfEGFkE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 May 2019 01:40:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9ACF0216F4;
-        Tue,  7 May 2019 05:39:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60267206A3;
+        Tue,  7 May 2019 05:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557207598;
-        bh=NokzQTe48QPHBQvyu/mp0gTTSkMF3B3nNkgwopDX6Rs=;
+        s=default; t=1557207603;
+        bh=oltf7s8yWvOf91gejP7+tfmQ/hNH4o0McIR8F6hT8ys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZcA2Wmd2psZlcHLkUFyugE5AmFHIDHw0lC14TUe/LdMTo0a148NZuajvdVhbxtJgJ
-         AycBnkM8VdGUFKmfkOxQqmNBs6p2xa3D4z+A47VM9TitdV2cZcUGbMytTW9bzAgdN1
-         Ug+AFgdsjPrG8oiVbIj99he8kHiT3KqlfjysWf78=
+        b=UpG6C3IESQwcZyRQnBt7tALx1bais1M0nsL8oJScyW3aPlnRKcJsmhTyYxbbHBpu6
+         r/5Tj8+Dd9Kkj0t8oYCwoeTKTrvIxo3P7krH8P+e10JnT3zPh+dyTB6qIfbOPCAAKJ
+         dmQR4WZ30mHLRNLIwx0nKP4y3ijUck5502AKQOCM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 47/95] fuse: fix possibly missed wake-up after abort
-Date:   Tue,  7 May 2019 01:37:36 -0400
-Message-Id: <20190507053826.31622-47-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 50/95] fsnotify: generalize handling of extra event flags
+Date:   Tue,  7 May 2019 01:37:39 -0400
+Message-Id: <20190507053826.31622-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190507053826.31622-1-sashal@kernel.org>
 References: <20190507053826.31622-1-sashal@kernel.org>
@@ -43,62 +43,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-[ Upstream commit 2d84a2d19b6150c6dbac1e6ebad9c82e4c123772 ]
+[ Upstream commit 007d1e8395eaa59b0e7ad9eb2b53a40859446a88 ]
 
-In current fuse_drop_waiting() implementation it's possible that
-fuse_wait_aborted() will not be woken up in the unlikely case that
-fuse_abort_conn() + fuse_wait_aborted() runs in between checking
-fc->connected and calling atomic_dec(&fc->num_waiting).
+FS_EVENT_ON_CHILD gets a special treatment in fsnotify() because it is
+not a flag specifying an event type, but rather an extra flags that may
+be reported along with another event and control the handling of the
+event by the backend.
 
-Do the atomic_dec_and_test() unconditionally, which also provides the
-necessary barrier against reordering with the fc->connected check.
+FS_ISDIR is also an "extra flag" and not an "event type" and therefore
+desrves the same treatment. With inotify/dnotify backends it was never
+possible to set FS_ISDIR in mark masks, so it did not matter.
+With fanotify backend, mark adding code jumps through hoops to avoid
+setting the FS_ISDIR in the commulative object mask.
 
-The explicit smp_mb() in fuse_wait_aborted() is not actually needed, since
-the spin_unlock() in fuse_abort_conn() provides the necessary RELEASE
-barrier after resetting fc->connected.  However, this is not a performance
-sensitive path, and adding the explicit barrier makes it easier to
-document.
+Separate the constant ALL_FSNOTIFY_EVENTS to ALL_FSNOTIFY_FLAGS and
+ALL_FSNOTIFY_EVENTS, so the latter can be used to test for specific
+event types.
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: b8f95e5d13f5 ("fuse: umount should wait for all requests")
-Cc: <stable@vger.kernel.org> #v4.19
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/fuse/dev.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ fs/notify/fsnotify.c             | 7 +++----
+ include/linux/fsnotify_backend.h | 9 +++++++--
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 63fd33383413..af78ceead2dc 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -133,9 +133,13 @@ static bool fuse_block_alloc(struct fuse_conn *fc, bool for_background)
- 
- static void fuse_drop_waiting(struct fuse_conn *fc)
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 506da82ff3f1..dc080c642dd0 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -192,7 +192,7 @@ static int send_to_group(struct inode *to_tell,
+ 			 struct fsnotify_iter_info *iter_info)
  {
--	if (fc->connected) {
--		atomic_dec(&fc->num_waiting);
--	} else if (atomic_dec_and_test(&fc->num_waiting)) {
-+	/*
-+	 * lockess check of fc->connected is okay, because atomic_dec_and_test()
-+	 * provides a memory barrier mached with the one in fuse_wait_aborted()
-+	 * to ensure no wake-up is missed.
-+	 */
-+	if (atomic_dec_and_test(&fc->num_waiting) &&
-+	    !READ_ONCE(fc->connected)) {
- 		/* wake up aborters */
- 		wake_up_all(&fc->blocked_waitq);
- 	}
-@@ -2170,6 +2174,8 @@ EXPORT_SYMBOL_GPL(fuse_abort_conn);
+ 	struct fsnotify_group *group = NULL;
+-	__u32 test_mask = (mask & ~FS_EVENT_ON_CHILD);
++	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
+ 	__u32 marks_mask = 0;
+ 	__u32 marks_ignored_mask = 0;
  
- void fuse_wait_aborted(struct fuse_conn *fc)
+@@ -256,8 +256,7 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
+ 	struct fsnotify_iter_info iter_info;
+ 	struct mount *mnt;
+ 	int ret = 0;
+-	/* global tests shouldn't care about events on child only the specific event */
+-	__u32 test_mask = (mask & ~FS_EVENT_ON_CHILD);
++	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
+ 
+ 	if (data_is == FSNOTIFY_EVENT_PATH)
+ 		mnt = real_mount(((const struct path *)data)->mnt);
+@@ -380,7 +379,7 @@ static __init int fsnotify_init(void)
  {
-+	/* matches implicit memory barrier in fuse_drop_waiting() */
-+	smp_mb();
- 	wait_event(fc->blocked_waitq, atomic_read(&fc->num_waiting) == 0);
- }
+ 	int ret;
  
+-	BUG_ON(hweight32(ALL_FSNOTIFY_EVENTS) != 23);
++	BUG_ON(hweight32(ALL_FSNOTIFY_BITS) != 23);
+ 
+ 	ret = init_srcu_struct(&fsnotify_mark_srcu);
+ 	if (ret)
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index ce74278a454a..81052313adeb 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -67,15 +67,20 @@
+ 
+ #define ALL_FSNOTIFY_PERM_EVENTS (FS_OPEN_PERM | FS_ACCESS_PERM)
+ 
++/* Events that can be reported to backends */
+ #define ALL_FSNOTIFY_EVENTS (FS_ACCESS | FS_MODIFY | FS_ATTRIB | \
+ 			     FS_CLOSE_WRITE | FS_CLOSE_NOWRITE | FS_OPEN | \
+ 			     FS_MOVED_FROM | FS_MOVED_TO | FS_CREATE | \
+ 			     FS_DELETE | FS_DELETE_SELF | FS_MOVE_SELF | \
+ 			     FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED | \
+-			     FS_OPEN_PERM | FS_ACCESS_PERM | FS_EXCL_UNLINK | \
+-			     FS_ISDIR | FS_IN_ONESHOT | FS_DN_RENAME | \
++			     FS_OPEN_PERM | FS_ACCESS_PERM | FS_DN_RENAME)
++
++/* Extra flags that may be reported with event or control handling of events */
++#define ALL_FSNOTIFY_FLAGS  (FS_EXCL_UNLINK | FS_ISDIR | FS_IN_ONESHOT | \
+ 			     FS_DN_MULTISHOT | FS_EVENT_ON_CHILD)
+ 
++#define ALL_FSNOTIFY_BITS   (ALL_FSNOTIFY_EVENTS | ALL_FSNOTIFY_FLAGS)
++
+ struct fsnotify_group;
+ struct fsnotify_event;
+ struct fsnotify_mark;
 -- 
 2.20.1
 
