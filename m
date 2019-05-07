@@ -2,88 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B0B16C48
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 22:34:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC7F516C8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 22:48:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbfEGUd5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 16:33:57 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51988 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbfEGUd5 (ORCPT
+        id S1727000AbfEGUrw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 16:47:52 -0400
+Received: from mail-lf1-f46.google.com ([209.85.167.46]:44325 "EHLO
+        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726371AbfEGUrw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 16:33:57 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hO6mh-0008FZ-M0; Tue, 07 May 2019 20:33:55 +0000
-Date:   Tue, 7 May 2019 21:33:55 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs.git misc dcache-related stuff
-Message-ID: <20190507203355.GK23075@ZenIV.linux.org.uk>
+        Tue, 7 May 2019 16:47:52 -0400
+Received: by mail-lf1-f46.google.com with SMTP id n134so11029325lfn.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2019 13:47:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kdv9nSMUlrd4GCcRzSl6xwpcWlq/+hgYrQfZOrRT0o0=;
+        b=fw3e0JpONfe14HLxlQvZ2U3hr0x7TDuvkN0RlwCV93UKyTNtDvwVwnvfsR+Rdm8OvQ
+         d9U1/wxrnRU1b9xSr9mcESjhOoUpP56iLcf5x/OuRqB4UK7nxDPSJfODTUimerSkT5VS
+         5JDnUuUXPHTP6KvPlgPnFy9QyyzWqfmGYYJgk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kdv9nSMUlrd4GCcRzSl6xwpcWlq/+hgYrQfZOrRT0o0=;
+        b=hH7uJjKILujc1uBWcGtHpt4h845T0AO3Krj7f/PIE08qNz2Etxj9Hi+6DL5vnH1rKk
+         5hNsD5KwZuRf/LHUjMv+0oxfGQJ2fkI/ksa7GoGVEDPrxNxOu0fY4QTnlhAuXuh9teQb
+         Pp2CSjna4cAdSXiRH6gkBO685DbAJkyMOwOaXNIzQ1PkIftZ2X/W2Dg0GIVb2LY6BdXP
+         C/3vZLXeHg4adCx2gEJUJRQC/pssDaW1q8/KrtO/PrsyBGyJKGvRY3FmjbFQO1MRIwu9
+         rkoc0naWYBDs7STnFLIUIn0zZuXL8q7EoRCRXwGnL4CHXnJ6iFlDrUGswQhAuoiFFu23
+         beZQ==
+X-Gm-Message-State: APjAAAUCgXB7Zxj0J3wkCCrV9kOCsX8hKK8pIj4yBQWvwn9cxTiBTn+F
+        v5O/tQnMJHd4mW2f6plHDaobvEOTUis=
+X-Google-Smtp-Source: APXvYqyC4Hd0dYW2r1V2UHkcljcYZizZ+smybQ3E9NOp6ROXJnWujHev+76PpwbeaIWesXiQjzhjFg==
+X-Received: by 2002:ac2:5c48:: with SMTP id s8mr18727161lfp.126.1557262069240;
+        Tue, 07 May 2019 13:47:49 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id m19sm3485010ljg.35.2019.05.07.13.47.48
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 13:47:48 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id z1so3344319ljb.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2019 13:47:48 -0700 (PDT)
+X-Received: by 2002:a2e:9ac8:: with SMTP id p8mr16963855ljj.79.1557262067816;
+ Tue, 07 May 2019 13:47:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <af9a8dec-98a2-896f-448b-04ded0af95f0@huawei.com>
+ <20190507004046.GE23075@ZenIV.linux.org.uk> <CAHk-=wjjK16yyug_5-xjPjXniE_T9tzQwxW45JJOHb=ho9kqrA@mail.gmail.com>
+ <20190507041552.GH23075@ZenIV.linux.org.uk> <CAHk-=wiQ-SdFKP_7TpM3qzNR85S8mxhpzMG0U-H-t4+KRiP35g@mail.gmail.com>
+ <20190507191613.GI23075@ZenIV.linux.org.uk> <CAHk-=whbaKc+5HvXypMTrS9qGzL=QCuY9U_27Yo8=bHC6BpDsg@mail.gmail.com>
+ <20190507195503.GJ23075@ZenIV.linux.org.uk>
+In-Reply-To: <20190507195503.GJ23075@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 7 May 2019 13:47:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whj-JPwYzmn6tCJHV219Z4nOPrNCYJr04DyCzoNZb79AQ@mail.gmail.com>
+Message-ID: <CAHk-=whj-JPwYzmn6tCJHV219Z4nOPrNCYJr04DyCzoNZb79AQ@mail.gmail.com>
+Subject: Re: system panic while dentry reference count overflow
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     yangerkun <yangerkun@huawei.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        yi.zhang@huawei.com, houtao1@huawei.com, miaoxie@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	Most of that pile is putting name length into struct name_snapshot
-and making use of it.  Beginning of that series ("ovl_lookup_real_one():
-don't bother with strlen()") ought to have been split in two (separate
-switch of name_snapshot to struct qstr from overlayfs reaping the trivial
-benefits of that), but I wanted to avoid a rebase - by the time I'd spotted
-that it was (a) in -next and (b) close to 5.1-final ;-/
+On Tue, May 7, 2019 at 12:55 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>
+>         Provided that lockref.c is updated accordingly (look at e.g.
+> lockref_get_not_zero()).
 
-The following changes since commit ce285c267a003acbf607f3540ff71287f82e5282:
+Yeah, we should likely just make this all a lockref feature.
 
-  autofs: fix use-after-free in lockless ->d_manage() (2019-04-09 19:18:19 -0400)
+The dcache is *almost* the only user of lockrefs. We've got them in
+gfs2 too, but that looks like it would be perfectly happy with the
+same model.
 
-are available in the git repository at:
+>         lockref_get_not_zero() hitting dead dentry is not abnormal,
+> so we'd better not complain in such case...  BTW, wouldn't that WARN_ON()
+> in dget() belong in lockref_get()?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.dcache
+Yeah.
 
-for you to fetch changes up to 795d673af1afae8146ac3070a2d77cfae5287c43:
-
-  audit_compare_dname_path(): switch to const struct qstr * (2019-04-28 20:33:43 -0400)
-
-----------------------------------------------------------------
-Al Viro (10):
-      unexport d_alloc_pseudo()
-      nsfs: unobfuscate
-      sysv: bury the broken "quietly truncate the long filenames" logics
-      ovl_lookup_real_one(): don't bother with strlen()
-      switch fsnotify_move() to passing const struct qstr * for old_name
-      fsnotify(): switch to passing const struct qstr * for file_name
-      fsnotify: switch send_to_group() and ->handle_event to const struct qstr *
-      inotify_handle_event(): don't bother with strlen()
-      audit_update_watch(): switch to const struct qstr *
-      audit_compare_dname_path(): switch to const struct qstr *
-
- Documentation/filesystems/porting    |  5 +++++
- fs/dcache.c                          | 18 +++++++++---------
- fs/debugfs/inode.c                   |  2 +-
- fs/internal.h                        |  1 +
- fs/kernfs/file.c                     |  6 ++++--
- fs/namei.c                           |  4 ++--
- fs/notify/dnotify/dnotify.c          |  2 +-
- fs/notify/fanotify/fanotify.c        |  2 +-
- fs/notify/fsnotify.c                 |  8 ++++----
- fs/notify/inotify/inotify.h          |  2 +-
- fs/notify/inotify/inotify_fsnotify.c |  6 +++---
- fs/nsfs.c                            | 23 ++++++++++-------------
- fs/overlayfs/export.c                |  2 +-
- fs/sysv/namei.c                      | 15 ---------------
- fs/sysv/super.c                      |  3 ---
- fs/sysv/sysv.h                       |  3 ---
- include/linux/dcache.h               |  3 +--
- include/linux/fsnotify.h             | 10 +++++-----
- include/linux/fsnotify_backend.h     |  6 +++---
- kernel/audit.h                       |  2 +-
- kernel/audit_fsnotify.c              |  2 +-
- kernel/audit_tree.c                  |  2 +-
- kernel/audit_watch.c                 |  4 ++--
- kernel/auditfilter.c                 |  6 +++---
- kernel/auditsc.c                     |  4 ++--
- 25 files changed, 62 insertions(+), 79 deletions(-)
+              Linus
