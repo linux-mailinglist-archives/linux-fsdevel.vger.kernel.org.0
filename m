@@ -2,120 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDD8F15FBB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 10:49:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEB9315FE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 10:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbfEGItJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 04:49:09 -0400
-Received: from mail-wr1-f53.google.com ([209.85.221.53]:43201 "EHLO
-        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfEGItI (ORCPT
+        id S1726487AbfEGI5M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 04:57:12 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52747 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfEGI5M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 04:49:08 -0400
-Received: by mail-wr1-f53.google.com with SMTP id r4so5809983wro.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2019 01:49:07 -0700 (PDT)
+        Tue, 7 May 2019 04:57:12 -0400
+Received: by mail-wm1-f68.google.com with SMTP id o25so8245464wmf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2019 01:57:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6Z2sVzYpP+wgAKUKdpL2LjYw489n9WsWuxWr3ip8Pd4=;
+        b=LVLmHvJq0N/68xeOQDEpjNlOvrdoCbKi7QCI5JHG/RL4ExKgL+ojc50giySybYrwi/
+         PiKxNQ+yA6RrKNAfyocfSrsHLKuCxgr0lIIz4uwdM9WCKFXZkFKb4VnC4xM1NqZCy7wA
+         d8CnLJxFNrUyoKZukZSmyW7qz3m9ZaIxC76pQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eDqWezXMALgcwT8s3H6PEODX+jJb0aIcO1v12Ssi1bc=;
-        b=L6EbqEawkyvP91PQ/ogSPbAtiglWo6xcUU38rxyNZiG4uXkFLyRmAXAWuOyq0rNvvH
-         /gtcEwyFfd+9TEgUulYvPQ20WIyujhzWWiFcx3C9WZ3nJ2Ly8/LF1FPBnAbbJE1f8qls
-         gmi6Z1fqvkKKx4SsoG0bp+AN95n5RssRMp+Nq5/Gts/BBu2/+PEp8FeKcM91ZD+jUSuU
-         8bddIX6a5dxC0Tzd5nyKJA9a4qmhZlymZfeyFHWph7A9zbgmKuKnWNLPFwtlQV8TXMVW
-         CimVVPx1JeWacmp2WU7w/CDMWcy/eIgmmPjZpRAh1zjBD0EodsJzD+FK3pZnmHKxqC/y
-         exmw==
-X-Gm-Message-State: APjAAAVimGPe0BDXV6JulS2GBnBKo1U7oJOyfN3swZrT4NYpI6kahdYa
-        bbBgfqeQ1mZEEvBbFg5wvJtA5CaJyNAK7Wgj8Cah5g==
-X-Google-Smtp-Source: APXvYqyBWsiJINBU5xtijGWkwXIOzI1HRrMl+F3lMjtbgV5GJHcWzPpfd3oGScFrpc7M708L5NaRTzNDu2iBbA77twQ=
-X-Received: by 2002:adf:f108:: with SMTP id r8mr11467848wro.221.1557218946960;
- Tue, 07 May 2019 01:49:06 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6Z2sVzYpP+wgAKUKdpL2LjYw489n9WsWuxWr3ip8Pd4=;
+        b=srlRnssz10aO0RWb0WSNncl2Uo4cAsNq8lxCauttIqIYlEzyxM0FFoE0I02k9jflPV
+         jmM2EX0d4LtRvXGP+ZTQbFsxH48wFTWIGjznkTHP2eaaVTdVSwZ92dwZKcq2zmL6CL5L
+         52NnRjkxDJNfrZxPEalYY7o48GtcuY1KydQtf/6KpqQmzmXXIJQReKzSKmRdIYdlStd7
+         9Gy0IGZbpc2Lqlzw/e8IQ9uufJ4e/UrqqV6ml3ShXWmL/WXpJR/HRm6dQHwD1kZt2U5M
+         DuwNIggPRxR7iBpTAZqOQvIg6JMZrTKc7/QvBtKzJrhuGpQDQSZYddNNaHHIsOgtoDEd
+         o12g==
+X-Gm-Message-State: APjAAAXmdfVd6NXXUn+9aNHfu+9mydGHT4BiOOV9r0XDvro1xdNP+kLX
+        MyZHYePoK3yPDoCn7jNsiitnTH/moG4=
+X-Google-Smtp-Source: APXvYqyl0j4dXg2VfM3Q2EroRr/ElXYa/hS84HT+zP4S68xd6l028uNYXTNOVRGb9zVryYiTnjfTQQ==
+X-Received: by 2002:a05:600c:2506:: with SMTP id d6mr20901593wma.106.1557219430542;
+        Tue, 07 May 2019 01:57:10 -0700 (PDT)
+Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id u8sm11616473wmc.14.2019.05.07.01.57.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 May 2019 01:57:09 -0700 (PDT)
+Date:   Tue, 7 May 2019 10:57:07 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Steve French <smfrench@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] network fs notification
+Message-ID: <20190507085707.GD30899@veci.piliscsaba.redhat.com>
+References: <20190501205541.GC30899@veci.piliscsaba.redhat.com>
 MIME-Version: 1.0
-References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com> <20190507071021.wtm25mxx2as6babr@work>
-In-Reply-To: <20190507071021.wtm25mxx2as6babr@work>
-From:   Jan Tulak <jtulak@redhat.com>
-Date:   Tue, 7 May 2019 10:48:55 +0200
-Message-ID: <CACj3i71HdW0ys_YujGFJkobMmZAZtEPo7B2tgZjEY8oP_T9T6g@mail.gmail.com>
-Subject: Re: Testing devices for discard support properly
-To:     Lukas Czerner <lczerner@redhat.com>
-Cc:     Ric Wheeler <ricwheeler@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Nikolay Borisov <nborisov@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190501205541.GC30899@veci.piliscsaba.redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 7, 2019 at 9:10 AM Lukas Czerner <lczerner@redhat.com> wrote:
->
-> On Mon, May 06, 2019 at 04:56:44PM -0400, Ric Wheeler wrote:
-> >
-...
-> >
-> > * Whole device discard at the block level both for a device that has been
-> > completely written and for one that had already been trimmed
->
-> Yes, usefull. Also note that a long time ago when I've done the testing
-> I noticed that after a discard request, especially after whole device
-> discard, the read/write IO performance went down significanly for some
-> drives. I am sure things have changed, but I think it would be
-> interesting to see how does it behave now.
->
-> >
-> > * Discard performance at the block level for 4k discards for a device that
-> > has been completely written and again the same test for a device that has
-> > been completely discarded.
-> >
-> > * Same test for large discards - say at a megabyte and/or gigabyte size?
->
-> From my testing (again it was long time ago and things probably changed
-> since then) most of the drives I've seen had largely the same or similar
-> timing for discard request regardless of the size (hence, the conclusion
-> was the bigger the request the better). A small variation I did see
-> could have been explained by kernel implementation and discard_max_bytes
-> limitations as well.
->
-> >
-> > * Same test done at the device optimal discard chunk size and alignment
-> >
-> > Should the discard pattern be done with a random pattern? Or just
-> > sequential?
->
-> I think that all of the above will be interesting. However there are two
-> sides of it. One is just pure discard performance to figure out what
-> could be the expectations and the other will be "real" workload
-> performance. Since from my experience discard can have an impact on
-> drive IO performance beyond of what's obvious, testing mixed workload
-> (IO + discard) is going to be very important as well. And that's where
-> fio workloads can come in (I actually do not know if fio already
-> supports this or not).
->
+On Wed, May 01, 2019 at 04:55:41PM -0400, Miklos Szeredi wrote:
+> This is a really really trivial first iteration, but I think it's enough to
+> try out CIFS notification support.  Doesn't deal with mark deletion, but
+> that's best effort anyway: fsnotify() will filter out unneeded events.
 
-And:
+And this one actually does something for inotify.  I haven't tested fanotify
+yet, but that one looks okay.
 
-On Tue, May 7, 2019 at 10:22 AM Nikolay Borisov <nborisov@suse.com> wrote:
-> I have some vague recollection this was brought up before but how sure
-> are we that when a discard request is sent down to disk and a response
-> is returned the actual data has indeed been discarded. What about NCQ
-> effects i.e "instant completion" while doing work in the background. Or
-> ignoring the discard request altogether?
+Note: FAN_MARK_MOUNT doesn't work yet, and we are not sure if it should work or
+not.  FAN_MARK_FILESYSTEM would be a better candidate for remote notification,
+since remote accesses are not associated with any particular local mount of the
+filesystem.  But perhaps we need to turn on whole file notification for remote
+due to the fact that applications rely on FAN_MARK_MOUNT already...  Btw, does the smb protocol support whole filesystem (or subtree) notifications?
 
+Thanks,
+Miklos
 
-As Nikolay writes in the other thread, I too have a feeling that there
-have been a discard-related discussion at LSF/MM before. And if I
-remember, there were hints that the drives (sometimes) do asynchronous
-trim after returning a success. Which would explain the similar time
-for all sizes and IO drop after trim.
+---
+ fs/notify/fanotify/fanotify_user.c |    6 +++++-
+ fs/notify/inotify/inotify_user.c   |    2 ++
+ include/linux/fs.h                 |    1 +
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
-So, I think that the mixed workload (IO + discard) is a pretty
-important part of the whole topic and a pure discard test doesn't
-really tell us anything, at least for some drives.
-
-Jan
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1041,9 +1041,13 @@ static int do_fanotify_mark(int fanotify
+ 		else if (mark_type == FAN_MARK_FILESYSTEM)
+ 			ret = fanotify_add_sb_mark(group, mnt->mnt_sb, mask,
+ 						   flags, fsid);
+-		else
++		else {
+ 			ret = fanotify_add_inode_mark(group, inode, mask,
+ 						      flags, fsid);
++
++			if (!ret && inode->i_op->notify_update)
++				inode->i_op->notify_update(inode);
++		}
+ 		break;
+ 	case FAN_MARK_REMOVE:
+ 		if (mark_type == FAN_MARK_MOUNT)
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -754,6 +754,8 @@ SYSCALL_DEFINE3(inotify_add_watch, int,
+ 
+ 	/* create/update an inode mark */
+ 	ret = inotify_update_watch(group, inode, mask);
++	if (ret >= 0 && inode->i_op->notify_update)
++		inode->i_op->notify_update(inode);
+ 	path_put(&path);
+ fput_and_out:
+ 	fdput(f);
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1852,6 +1852,7 @@ struct inode_operations {
+ 			   umode_t create_mode);
+ 	int (*tmpfile) (struct inode *, struct dentry *, umode_t);
+ 	int (*set_acl)(struct inode *, struct posix_acl *, int);
++	void (*notify_update)(struct inode *inode);
+ } ____cacheline_aligned;
+ 
+ static inline ssize_t call_read_iter(struct file *file, struct kiocb *kio,
 
 
-
--- 
-Jan Tulak
