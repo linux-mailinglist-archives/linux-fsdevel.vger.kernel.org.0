@@ -2,63 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A8B116CB1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 22:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C43416CF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 23:15:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbfEGUxV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 16:53:21 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52278 "EHLO
+        id S1727668AbfEGVO7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 17:14:59 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:52552 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727644AbfEGUxV (ORCPT
+        with ESMTP id S1727320AbfEGVO7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 16:53:21 -0400
+        Tue, 7 May 2019 17:14:59 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hO75T-0000aP-6S; Tue, 07 May 2019 20:53:19 +0000
-Date:   Tue, 7 May 2019 21:53:19 +0100
+        id 1hO7QM-0001Hp-IN; Tue, 07 May 2019 21:14:54 +0000
+Date:   Tue, 7 May 2019 22:14:54 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs.git misc pieces
-Message-ID: <20190507205319.GN23075@ZenIV.linux.org.uk>
+Cc:     yangerkun <yangerkun@huawei.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        yi.zhang@huawei.com, houtao1@huawei.com, miaoxie@huawei.com
+Subject: Re: system panic while dentry reference count overflow
+Message-ID: <20190507211454.GO23075@ZenIV.linux.org.uk>
+References: <af9a8dec-98a2-896f-448b-04ded0af95f0@huawei.com>
+ <20190507004046.GE23075@ZenIV.linux.org.uk>
+ <CAHk-=wjjK16yyug_5-xjPjXniE_T9tzQwxW45JJOHb=ho9kqrA@mail.gmail.com>
+ <20190507041552.GH23075@ZenIV.linux.org.uk>
+ <CAHk-=wiQ-SdFKP_7TpM3qzNR85S8mxhpzMG0U-H-t4+KRiP35g@mail.gmail.com>
+ <20190507191613.GI23075@ZenIV.linux.org.uk>
+ <CAHk-=whbaKc+5HvXypMTrS9qGzL=QCuY9U_27Yo8=bHC6BpDsg@mail.gmail.com>
+ <20190507195503.GJ23075@ZenIV.linux.org.uk>
+ <CAHk-=whj-JPwYzmn6tCJHV219Z4nOPrNCYJr04DyCzoNZb79AQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAHk-=whj-JPwYzmn6tCJHV219Z4nOPrNCYJr04DyCzoNZb79AQ@mail.gmail.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	Assorted stuff, with no common topic whatsoever...
+On Tue, May 07, 2019 at 01:47:31PM -0700, Linus Torvalds wrote:
+> On Tue, May 7, 2019 at 12:55 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> >
+> >         Provided that lockref.c is updated accordingly (look at e.g.
+> > lockref_get_not_zero()).
+> 
+> Yeah, we should likely just make this all a lockref feature.
+> 
+> The dcache is *almost* the only user of lockrefs. We've got them in
+> gfs2 too, but that looks like it would be perfectly happy with the
+> same model.
+> 
+> >         lockref_get_not_zero() hitting dead dentry is not abnormal,
+> > so we'd better not complain in such case...  BTW, wouldn't that WARN_ON()
+> > in dget() belong in lockref_get()?
+> 
+> Yeah.
 
-The following changes since commit 79a3aaa7b82e3106be97842dedfd8429248896e6:
+	OK...  Lockref parts aside, I suspect that the right sequence
+would be
+	* make d_alloc() and d_alloc_cursor() check for excessive
+growth of parent's refcount and fail if it's about to occur.  That will
+result in -ENOMEM for now, if we want another errno value, we can
+follow with making d_alloc() return ERR_PTR() on failure (instead of
+NULL)
+	* lift the increment of new parent's refcount into the
+callers of __d_move(..., false)
+	* make the callers in d_splice_alias() fail if refcount is
+about to overflow
+	* add a reference-consuming variant of d_move()
+	* switch d_move() callers to that one by one, lifting
+the refcount increment into those, with bailout on overflow
+	* make complete_walk() check for overflow, bail out
+if it happens.
+	* ditto for clone_mnt().
 
-  Linux 5.1-rc3 (2019-03-31 14:39:29 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
-
-for you to fetch changes up to 6ee9706aa22e026f438caabb2982e5f78de2c82c:
-
-  libfs: document simple_get_link() (2019-04-30 23:59:25 -0400)
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      fs: use timespec64 in relatime_need_update
-
-Chengguang Xu (1):
-      fs/block_dev.c: remove unused include
-
-Eric Biggers (4):
-      Documentation/filesystems/vfs.txt: remove bogus "Last updated" date
-      Documentation/filesystems/vfs.txt: document how ->i_link works
-      Documentation/filesystems/Locking: fix ->get_link() prototype
-      libfs: document simple_get_link()
-
- Documentation/filesystems/Locking |  2 +-
- Documentation/filesystems/vfs.txt |  8 ++++++--
- fs/block_dev.c                    |  1 -
- fs/inode.c                        |  4 ++--
- fs/libfs.c                        | 14 ++++++++++++++
- 5 files changed, 23 insertions(+), 6 deletions(-)
+That would take care of the majority of long-term references; then
+we'll see what's left...
