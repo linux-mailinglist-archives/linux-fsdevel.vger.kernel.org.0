@@ -2,97 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98AA615741
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 03:25:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A02491576C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 03:50:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfEGBZp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 May 2019 21:25:45 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43945 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbfEGBZp (ORCPT
+        id S1726101AbfEGBur (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 May 2019 21:50:47 -0400
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:41758 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbfEGBur (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 May 2019 21:25:45 -0400
-Received: by mail-pg1-f195.google.com with SMTP id t22so7356717pgi.10;
-        Mon, 06 May 2019 18:25:44 -0700 (PDT)
+        Mon, 6 May 2019 21:50:47 -0400
+Received: by mail-lj1-f180.google.com with SMTP id k8so12770579lja.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 18:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oTmx315aI+e3IpTFIK2JkU5Ig8gY6u+ajBS71um0vTY=;
+        b=Zyx1YydnHgapUWH1Iwt4LxqO9GW6APT4up+CYNoMRFOMMFJceV7rK6R+jC2hXf81xW
+         Kn9ojQDzPxePIZ8ViB4E9gj+OexFNLICpxDl6+pRf+gYWla1UsAxMtT6v6PJputF9si4
+         JnPQh5YEjzAJVd+ysRyWjgsw7cs2X0XcIreb4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=B1TBQ08ugs3m4sIfITw+AiGXxU4fEWXaDojwh4qY/20=;
-        b=psg1Pwm8B52cxSZbwbWfSCwZ1tEsU4Cmrd0JxKRDN4nINzgTbbvwHWPUbfnS8Ae3lE
-         JqLXu+mPhLUTlukVxtzSazuaZ5tlVxpDl2AeR7LUjp5xZQqX1uVXHysjWaaVvipaPP0+
-         oEIBW379/MQiq0yfNb0ONi+bQPNGPGATIltH79IPx4aqeAlYELUCEh1vKYuZQYIXLt7M
-         QokmBIYpvzV7qeqA6boDj8lVSMTuK8tfqoXjnExykXL7oY8+q4QCzur6sdIndbhCtaCm
-         dTnEpWznWCx+WT1fCdtH9Kdj9xLH9S0q7lEHp4VdbSuUwcdzhYolZZmOUG+HvBuTjLng
-         6yZQ==
-X-Gm-Message-State: APjAAAVi86BqM8vVjWyMhc5CCx6wzRnE6qC+nzwvRE3ZLXao/L/KqVHM
-        QCZ3r8scup2NG27D8cw6FK0=
-X-Google-Smtp-Source: APXvYqyphd2/TpNoEqoJW0JjbWvCHzgio35/s3Wy84FGPgaaFDOWnrSxtnG4rF8vSAokTB6OHff03A==
-X-Received: by 2002:a62:e718:: with SMTP id s24mr15023495pfh.247.1557192344473;
-        Mon, 06 May 2019 18:25:44 -0700 (PDT)
-Received: from asus.site ([2601:647:4000:5dd1:a41e:80b4:deb3:fb66])
-        by smtp.gmail.com with ESMTPSA id p7sm13955980pgn.64.2019.05.06.18.25.43
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 18:25:43 -0700 (PDT)
-Subject: Re: [RFC PATCH 4/4] f2fs: Wire up f2fs to use inline encryption via
- fscrypt
-To:     Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Parshuram Raju Thombare <pthombar@cadence.com>,
-        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>
-References: <20190506223544.195371-1-satyat@google.com>
- <20190506223544.195371-5-satyat@google.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <58ca036a-7635-9b6f-d778-c89802a50129@acm.org>
-Date:   Mon, 6 May 2019 18:25:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oTmx315aI+e3IpTFIK2JkU5Ig8gY6u+ajBS71um0vTY=;
+        b=Tz7fJakg0ey6j3kSSd8b9IqipL9nfe+86JZpkb+SWGU3mROefycruFHoYKEyAKNLro
+         aBXJn49LaEc9QiGIMlzdrpEswMZQnkqpOel4evfAaA+KE5b2jPFh0EVGP7ceAbdquUB0
+         BrHQRRXhbEjKakt1SNSRNj5s5FZFiiFJJzyabFlkl5GxQoBRkOH45qm5Zaz86K4XgKMM
+         PjMr1i0vW/hoe/uXtDRoMWFwhhrhtEIEm/EvudzV5oj5pHqNDdhLcI2xZzW64RqTBU0M
+         qioYBzSgseTfIfmdsMI+Xjj99/2d23Stluv2m2wGnetAATX23Mx/73PPhuDwv53V6SUP
+         Z2QA==
+X-Gm-Message-State: APjAAAV689Dw1rqIgP/sRo6yCT9lF3rfduvwUN13CfpchZUB4I0XMr91
+        6LYF/0PZFXa6Hydy+DfuPljcCYdwyHs=
+X-Google-Smtp-Source: APXvYqwl077NMRsMNkeWKgYZCNCu3goQtzJxhgYqUk50Xakvu/zKQkSaVvnTefLihz8aVPxMIAJhZw==
+X-Received: by 2002:a2e:988e:: with SMTP id b14mr15073295ljj.126.1557193845263;
+        Mon, 06 May 2019 18:50:45 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id 10sm2754480ljv.47.2019.05.06.18.50.43
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 18:50:44 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id k8so12770509lja.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 May 2019 18:50:43 -0700 (PDT)
+X-Received: by 2002:a05:651c:8f:: with SMTP id 15mr14691844ljq.118.1557193843522;
+ Mon, 06 May 2019 18:50:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190506223544.195371-5-satyat@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <af9a8dec-98a2-896f-448b-04ded0af95f0@huawei.com> <20190507004046.GE23075@ZenIV.linux.org.uk>
+In-Reply-To: <20190507004046.GE23075@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 6 May 2019 18:50:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjjK16yyug_5-xjPjXniE_T9tzQwxW45JJOHb=ho9kqrA@mail.gmail.com>
+Message-ID: <CAHk-=wjjK16yyug_5-xjPjXniE_T9tzQwxW45JJOHb=ho9kqrA@mail.gmail.com>
+Subject: Re: system panic while dentry reference count overflow
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     yangerkun <yangerkun@huawei.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        yi.zhang@huawei.com, houtao1@huawei.com, miaoxie@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/6/19 3:35 PM, Satya Tangirala wrote:
-> +static inline u64 hw_crypt_dun(struct inode *inode, struct page *page)
-> +{
-> +	return (((u64)inode->i_ino) << 32) | (page->index & 0xFFFFFFFF);
-> +}
+On Mon, May 6, 2019 at 5:40 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Linus, lockref is your code, IIRC; which variant would you consider
+> more feasible?
 
-How about using lower_32_bits() instead of "& 0xFFFFFFFF"?
+I think we should strive for the same kind of count overflow handling
+that the pageref patches did: keep the count at 32 bits, but just add
+a new "try_dget()" thing that returns "no" when the count grows too
+large.
 
-Thanks,
+And then use the "try_dget()" model when possible, and particularly
+for the easy cases for user mode to trigger. You don't have to catch
+them all, and in most places it isn't worth even worrying about it
+because users can't force billions of those places to be active at
+once.
 
-Bart.
+I don't see the original email (I'm not on fsdevel, and google doesn't
+find it), so I don't see if there was some particular case that was
+pointed out as being an easy attack vector.
+
+For the page ref counts, it was all about get_user_pages() and a
+couple of other places, and the patches ended up being small and
+localized:
+
+  15fab63e1e57 fs: prevent page refcount overflow in pipe_buf_get
+  8fde12ca79af mm: prevent get_user_pages() from overflowing page refcount
+  88b1a17dfc3e mm: add 'try_get_page()' helper function
+  f958d7b528b1 mm: make page ref count overflow check tighter and more explicit
+
+and I think we should see this kind of thing as the primary model,
+rather than do the whole "let's make everything 64-bit".
+
+                 Linus
