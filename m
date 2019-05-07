@@ -2,165 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A98F1691A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 19:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E37B016A5F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 20:38:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfEGRYp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 13:24:45 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:46096 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726473AbfEGRYp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 13:24:45 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x47HMurS031460
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 7 May 2019 13:22:59 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 7D6D5420024; Tue,  7 May 2019 13:22:56 -0400 (EDT)
-Date:   Tue, 7 May 2019 13:22:56 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-Message-ID: <20190507172256.GB5900@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org, robh@kernel.org,
-        sboyd@kernel.org, shuah@kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
- <20190507080119.GB28121@kroah.com>
+        id S1727331AbfEGSiE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 14:38:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39096 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726634AbfEGSiD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 May 2019 14:38:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CABF3AD04;
+        Tue,  7 May 2019 18:38:01 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 1052D1E3C5A; Tue,  7 May 2019 20:38:00 +0200 (CEST)
+Date:   Tue, 7 May 2019 20:38:00 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Vijay Chidambaram <vijay@cs.utexas.edu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        lsf-pc@lists.linux-foundation.org,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jayashree Mohan <jaya@cs.utexas.edu>,
+        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
+        lwn@lwn.net
+Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties
+ contract
+Message-ID: <20190507183800.GG4635@quack2.suse.cz>
+References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
+ <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
+ <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
+ <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com>
+ <20190503023043.GB23724@mit.edu>
+ <CAHWVdUV115x8spvAd3p-6iDRE--yZULbF6DDc+Hapt2s+pJgbA@mail.gmail.com>
+ <20190503094543.GD23724@mit.edu>
+ <CAHWVdUWrKigH8g-Jhi404y+XvuhXAx4b+PBW8_hLF4110etSLg@mail.gmail.com>
+ <20190504014307.GA4058@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190507080119.GB28121@kroah.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190504014307.GA4058@mit.edu>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 07, 2019 at 10:01:19AM +0200, Greg KH wrote:
-> > My understanding is that the intent of KUnit is to avoid booting a kernel on
-> > real hardware or in a virtual machine.  That seems to be a matter of semantics
-> > to me because isn't invoking a UML Linux just running the Linux kernel in
-> > a different form of virtualization?
+On Fri 03-05-19 21:43:07, Theodore Ts'o wrote:
+> On Fri, May 03, 2019 at 07:17:54PM -0500, Vijay Chidambaram wrote:
 > > 
-> > So I do not understand why KUnit is an improvement over kselftest.
-> > 
-> > It seems to me that KUnit is just another piece of infrastructure that I
-> > am going to have to be familiar with as a kernel developer.  More overhead,
-> > more information to stuff into my tiny little brain.
-> > 
-> > I would guess that some developers will focus on just one of the two test
-> > environments (and some will focus on both), splitting the development
-> > resources instead of pooling them on a common infrastructure.
-> > 
-> > What am I missing?
+> > I think there might be a mis-understanding about the example
+> > (reproduced below) and about SOMC. The relationship that matters is
+> > not whether X happens before Y. The relationship between X and Y is
+> > that they are in the same directory, so fsync(new file X) implies
+> > fsync(X's parent directory) which contains Y.  In the example, X is
+> > A/foo and Y is A/bar. For truly un-related files such as A/foo and
+> > B/bar, SOMC does indeed allow fsync(A/foo) to not persist B/bar.
 > 
-> kselftest provides no in-kernel framework for testing kernel code
-> specifically.  That should be what kunit provides, an "easy" way to
-> write in-kernel tests for things.
+> When you say "X and Y are in the same directory", how does this apply
+> in the face of hard links?  Remember, file X might be in a 100
+> different directories.  Does that mean if changes to file X is visible
+> after a crash, all files Y in any of X's 100 containing directories
+> that were modified before X must have their changes be visible after
+> the crash?
 > 
-> Brendan, did I get it right?
+> I suspect that the SOMC as articulated by Dave does make such global
+> guarantees.  Certainly without Park and Shin's incremental fsync,
+> unrelated files will have the property that if A/foo is modified after
+> B/bar, and B/bar's metadata changes are visible after a crash, A/foo's
+> metadata will also be visible.  This is true for ext4, and xfs.
+> 
+> Even if we ignore the hard link problem, and assume that it only
+> applies for files foo and bar with st_nlinks == 1, the crash
+> consistency guarantees you've described will *still* rule out Park and
+> Shin's increment fsync.  So depending on whether ext4 has fast fsync's
+> enabled, we might or might not have behavior consistency with your
+> proposed crash consistency rules.
+> 
+> But at this point, even if we promulgate these "guarantees" in a
+> kernel documentation file, applications won't be able to depend on
+> them.  If they do, they will be unreliable depending on which file
+> system they use; so they won't be particularly useful for application
+> authors care about portability.  (Or worse, for users who are under
+> the delusion that the application authors care about portability, and
+> who will be subject to data corruption after a crash.)  Do we *really*
+> want to be promulgating these semantics to application authors?
 
-Yes, that's basically right.  You don't *have* to use KUnit.  It's
-supposed to be a simple way to run a large number of small tests that
-for specific small components in a system.
+I agree that having fs specific promises for crash consistency is bad.
+The application would have to detect what filesystem it is running on and
+based on that issue fsync or not. I don't think many applications will get
+this right so IMO it would result in more problems in case crash, not less.
 
-For example, I currently use xfstests using KVM and GCE to test all of
-ext4.  These tests require using multiple 5 GB and 20GB virtual disks,
-and it works by mounting ext4 file systems and exercising ext4 through
-the system call interfaces, using userspace tools such as fsstress,
-fsx, fio, etc.  It requires time overhead to start the VM, create and
-allocate virtual disks, etc.  For example, to run a single 3 seconds
-xfstest (generic/001), it requires full 10 seconds to run it via
-kvm-xfstests.
+> Finally, I'll note that generic/342 is much more specific, and your
+> proposed crash consistency rule is more general.
+> 
+> # Test that if we rename a file, create a new file that has the old name of the
+> # other file and is a child of the same parent directory, fsync the new inode,
+> # power fail and mount the filesystem, we do not lose the first file and that
+> # file has the name it was renamed to.
+> 
+> > touch A/foo
+> > echo “hello” >  A/foo
+> > sync
+> > mv A/foo A/bar
+> > echo “world” > A/foo
+> > fsync A/foo
+> > CRASH
+> 
+> Sure, that's one that fast commit will honor.
 
-KUnit is something else; it's specifically intended to allow you to
-create lightweight tests quickly and easily, and by reducing the
-effort needed to write and run unit tests, hopefully we'll have a lot
-more of them and thus improve kernel quality.
+Hum, but will this be also honored in case of hardlinks? E.g.
 
-As an example, I have a volunteer working on developing KUinit tests
-for ext4.  We're going to start by testing the ext4 extent status
-tree.  The source code is at fs/ext4/extent_status.c; it's
-approximately 1800 LOC.  The Kunit tests for the extent status tree
-will exercise all of the corner cases for the various extent status
-tree functions --- e.g., ext4_es_insert_delayed_block(),
-ext4_es_remove_extent(), ext4_es_cache_extent(), etc.  And it will do
-this in isolation without our needing to create a test file system or
-using a test block device.
+echo "hello" >A/foo
+ln A/foo B/foo
+sync
+mv A/foo A/bar
+mv B/foo B/bar
+echo "world" >A/foo
+fsync A/foo
 
-Next we'll test the ext4 block allocator, again in isolation.  To test
-the block allocator we will have to write "mock functions" which
-simulate reading allocation bitmaps from disk.  Again, this will allow
-the test writer to explicitly construct corner cases and validate that
-the block allocator works as expected without having to reverese
-engineer file system data structures which will force a particular
-code path to be executed.
+Will you also persist changes to B? If not, will you persist them if we
+do 'ln A/foo B/foo' before 'fsync A/foo'? I'm just wondering where you draw
+the borderline if you actually do care about namespace changes in addition
+to inode + its metadata...
 
-So this is why it's largely irrelevant to me that KUinit uses UML.  In
-fact, it's a feature.  We're not testing device drivers, or the
-scheduler, or anything else architecture-specific.  UML is not about
-virtualization.  What it's about in this context is allowing us to
-start running test code as quickly as possible.  Booting KVM takes
-about 3-4 seconds, and this includes initializing virtio_scsi and
-other device drivers.  If by using UML we can hold the amount of
-unnecessary kernel subsystem initialization down to the absolute
-minimum, and if it means that we can communicating to the test
-framework via a userspace "printf" from UML/KUnit code, as opposed to
-via a virtual serial port to KVM's virtual console, it all makes for
-lighter weight testing.
+> But what about:
+> 
+> echo "world" > A/foo
+> echo "hello" > A/bar
+> chmod 755 A/bar
+> sync
+> chmod 750 A/bar
+> echo "new world" >> A/foo
+> fsync A/foo
+> CRASH
+> 
+> .... will your crash consistency rules guarantee that the permissions
+> change for A/bar is visible after the fsync of A/foo?
+> 
+> Or if A/foo and A/bar exists, and we do:
+> 
+> echo "world" > A/foo
+> echo "hello" > A/bar
+> sync
+> mv A/bar A/quux
+> echo "new world" >> A/foo
+> fsync A/foo
+> CRASH
+> 
+> ... is the rename of A/bar and A/quux guaranteed to be visible after
+> the crash?
 
-Why did I go looking for a volunteer to write KUnit tests for ext4?
-Well, I have a plan to make some changes in restructing how ext4's
-write path works, in order to support things like copy-on-write, a
-more efficient delayed allocation system, etc.  This will require
-making changes to the extent status tree, and by having unit tests for
-the extent status tree, we'll be able to detect any bugs that we might
-accidentally introduce in the es tree far more quickly than if we
-didn't have those tests available.  Google has long found that having
-these sorts of unit tests is a real win for developer velocity for any
-non-trivial code module (or C++ class), even when you take into
-account the time it takes to create the unit tests.
+And I agree that guaranteeing ordering of operations in the same
+directory but for unrelated names to operations on inode in that directory
+does not seem very useful.
 
-					- Ted
-
-P.S.  Many thanks to Brendan for finding such a volunteer for me; the
-person in question is a SRE from Switzerland who is interested in
-getting involved with kernel testing, and this is going to be their
-20% project.  :-)
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
