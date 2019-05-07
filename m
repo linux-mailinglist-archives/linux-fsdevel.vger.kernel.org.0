@@ -2,133 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D35E015AFE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 07:51:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE14A15DE7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 09:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfEGFun (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 01:50:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59544 "EHLO mail.kernel.org"
+        id S1726538AbfEGHK2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 03:10:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47461 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729013AbfEGFkE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 01:40:04 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726297AbfEGHK2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 May 2019 03:10:28 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60267206A3;
-        Tue,  7 May 2019 05:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557207603;
-        bh=oltf7s8yWvOf91gejP7+tfmQ/hNH4o0McIR8F6hT8ys=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UpG6C3IESQwcZyRQnBt7tALx1bais1M0nsL8oJScyW3aPlnRKcJsmhTyYxbbHBpu6
-         r/5Tj8+Dd9Kkj0t8oYCwoeTKTrvIxo3P7krH8P+e10JnT3zPh+dyTB6qIfbOPCAAKJ
-         dmQR4WZ30mHLRNLIwx0nKP4y3ijUck5502AKQOCM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 50/95] fsnotify: generalize handling of extra event flags
-Date:   Tue,  7 May 2019 01:37:39 -0400
-Message-Id: <20190507053826.31622-50-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190507053826.31622-1-sashal@kernel.org>
-References: <20190507053826.31622-1-sashal@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id B9728B5BA;
+        Tue,  7 May 2019 07:10:27 +0000 (UTC)
+Received: from work (unknown [10.40.205.118])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4E44461B67;
+        Tue,  7 May 2019 07:10:26 +0000 (UTC)
+Date:   Tue, 7 May 2019 09:10:21 +0200
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     Ric Wheeler <ricwheeler@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Testing devices for discard support properly
+Message-ID: <20190507071021.wtm25mxx2as6babr@work>
+References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 07 May 2019 07:10:27 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+On Mon, May 06, 2019 at 04:56:44PM -0400, Ric Wheeler wrote:
+> 
+> (repost without the html spam, sorry!)
+> 
+> Last week at LSF/MM, I suggested we can provide a tool or test suite to test
+> discard performance.
+> 
+> Put in the most positive light, it will be useful for drive vendors to use
+> to qualify their offerings before sending them out to the world. For
+> customers that care, they can use the same set of tests to help during
+> selection to weed out any real issues.
+> 
+> Also, community users can run the same tools of course and share the
+> results.
+> 
+> Down to the questions part:
+> 
+>  * Do we just need to figure out a workload to feed our existing tools like
+> blkdiscard and fio?
 
-[ Upstream commit 007d1e8395eaa59b0e7ad9eb2b53a40859446a88 ]
+Hi Ric,
 
-FS_EVENT_ON_CHILD gets a special treatment in fsnotify() because it is
-not a flag specifying an event type, but rather an extra flags that may
-be reported along with another event and control the handling of the
-event by the backend.
+I think being able to specify workload using fio will be very useful
+regardless if we'll end up with with a standalone discard testing tool
+or not.
 
-FS_ISDIR is also an "extra flag" and not an "event type" and therefore
-desrves the same treatment. With inotify/dnotify backends it was never
-possible to set FS_ISDIR in mark masks, so it did not matter.
-With fanotify backend, mark adding code jumps through hoops to avoid
-setting the FS_ISDIR in the commulative object mask.
+> 
+> * What workloads are key?
+> 
+> Thoughts about what I would start getting timings for:
 
-Separate the constant ALL_FSNOTIFY_EVENTS to ALL_FSNOTIFY_FLAGS and
-ALL_FSNOTIFY_EVENTS, so the latter can be used to test for specific
-event types.
+A long time ago I wrote a tool for testing discaed performance. You can
+find it here. Keep in mind that it was really long time ago since I even
+looked at it, so not sure if it still even compiles.
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- fs/notify/fsnotify.c             | 7 +++----
- include/linux/fsnotify_backend.h | 9 +++++++--
- 2 files changed, 10 insertions(+), 6 deletions(-)
+https://sourceforge.net/projects/test-discard/
 
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 506da82ff3f1..dc080c642dd0 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -192,7 +192,7 @@ static int send_to_group(struct inode *to_tell,
- 			 struct fsnotify_iter_info *iter_info)
- {
- 	struct fsnotify_group *group = NULL;
--	__u32 test_mask = (mask & ~FS_EVENT_ON_CHILD);
-+	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
- 	__u32 marks_mask = 0;
- 	__u32 marks_ignored_mask = 0;
- 
-@@ -256,8 +256,7 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
- 	struct fsnotify_iter_info iter_info;
- 	struct mount *mnt;
- 	int ret = 0;
--	/* global tests shouldn't care about events on child only the specific event */
--	__u32 test_mask = (mask & ~FS_EVENT_ON_CHILD);
-+	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
- 
- 	if (data_is == FSNOTIFY_EVENT_PATH)
- 		mnt = real_mount(((const struct path *)data)->mnt);
-@@ -380,7 +379,7 @@ static __init int fsnotify_init(void)
- {
- 	int ret;
- 
--	BUG_ON(hweight32(ALL_FSNOTIFY_EVENTS) != 23);
-+	BUG_ON(hweight32(ALL_FSNOTIFY_BITS) != 23);
- 
- 	ret = init_srcu_struct(&fsnotify_mark_srcu);
- 	if (ret)
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index ce74278a454a..81052313adeb 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -67,15 +67,20 @@
- 
- #define ALL_FSNOTIFY_PERM_EVENTS (FS_OPEN_PERM | FS_ACCESS_PERM)
- 
-+/* Events that can be reported to backends */
- #define ALL_FSNOTIFY_EVENTS (FS_ACCESS | FS_MODIFY | FS_ATTRIB | \
- 			     FS_CLOSE_WRITE | FS_CLOSE_NOWRITE | FS_OPEN | \
- 			     FS_MOVED_FROM | FS_MOVED_TO | FS_CREATE | \
- 			     FS_DELETE | FS_DELETE_SELF | FS_MOVE_SELF | \
- 			     FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED | \
--			     FS_OPEN_PERM | FS_ACCESS_PERM | FS_EXCL_UNLINK | \
--			     FS_ISDIR | FS_IN_ONESHOT | FS_DN_RENAME | \
-+			     FS_OPEN_PERM | FS_ACCESS_PERM | FS_DN_RENAME)
-+
-+/* Extra flags that may be reported with event or control handling of events */
-+#define ALL_FSNOTIFY_FLAGS  (FS_EXCL_UNLINK | FS_ISDIR | FS_IN_ONESHOT | \
- 			     FS_DN_MULTISHOT | FS_EVENT_ON_CHILD)
- 
-+#define ALL_FSNOTIFY_BITS   (ALL_FSNOTIFY_EVENTS | ALL_FSNOTIFY_FLAGS)
-+
- struct fsnotify_group;
- struct fsnotify_event;
- struct fsnotify_mark;
--- 
-2.20.1
+You can go through the README file to see what it does but in summary
+you can:
 
+- specify size of discard request
+- specify range of discard request size to test
+- discard already discarded blocks
+- can test with sequential or random pattern
+- for every discard request size tested it will give you results like
+
+<record_size> <total_size> <min> <max> <avg> <sum> <throughput in MB/s>
+
+> 
+> * Whole device discard at the block level both for a device that has been
+> completely written and for one that had already been trimmed
+
+Yes, usefull. Also note that a long time ago when I've done the testing
+I noticed that after a discard request, especially after whole device
+discard, the read/write IO performance went down significanly for some
+drives. I am sure things have changed, but I think it would be
+interesting to see how does it behave now.
+
+> 
+> * Discard performance at the block level for 4k discards for a device that
+> has been completely written and again the same test for a device that has
+> been completely discarded.
+> 
+> * Same test for large discards - say at a megabyte and/or gigabyte size?
+
+From my testing (again it was long time ago and things probably changed
+since then) most of the drives I've seen had largely the same or similar
+timing for discard request regardless of the size (hence, the conclusion
+was the bigger the request the better). A small variation I did see
+could have been explained by kernel implementation and discard_max_bytes
+limitations as well.
+
+> 
+> * Same test done at the device optimal discard chunk size and alignment
+> 
+> Should the discard pattern be done with a random pattern? Or just
+> sequential?
+
+I think that all of the above will be interesting. However there are two
+sides of it. One is just pure discard performance to figure out what
+could be the expectations and the other will be "real" workload
+performance. Since from my experience discard can have an impact on
+drive IO performance beyond of what's obvious, testing mixed workload
+(IO + discard) is going to be very important as well. And that's where
+fio workloads can come in (I actually do not know if fio already
+supports this or not).
+
+-Lukas
+
+> 
+> I think the above would give us a solid base, thoughts or comments?
+> 
+> Thanks!
+> 
+> Ric
+> 
+> 
+> 
+> 
