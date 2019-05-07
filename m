@@ -2,167 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E37B016A5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 20:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E23A16AC4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 May 2019 20:54:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbfEGSiE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 14:38:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39096 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726634AbfEGSiD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 14:38:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CABF3AD04;
-        Tue,  7 May 2019 18:38:01 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1052D1E3C5A; Tue,  7 May 2019 20:38:00 +0200 (CEST)
-Date:   Tue, 7 May 2019 20:38:00 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Vijay Chidambaram <vijay@cs.utexas.edu>,
-        Amir Goldstein <amir73il@gmail.com>,
-        lsf-pc@lists.linux-foundation.org,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jayashree Mohan <jaya@cs.utexas.edu>,
-        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
-        lwn@lwn.net
-Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties
- contract
-Message-ID: <20190507183800.GG4635@quack2.suse.cz>
-References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
- <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
- <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
- <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com>
- <20190503023043.GB23724@mit.edu>
- <CAHWVdUV115x8spvAd3p-6iDRE--yZULbF6DDc+Hapt2s+pJgbA@mail.gmail.com>
- <20190503094543.GD23724@mit.edu>
- <CAHWVdUWrKigH8g-Jhi404y+XvuhXAx4b+PBW8_hLF4110etSLg@mail.gmail.com>
- <20190504014307.GA4058@mit.edu>
+        id S1727323AbfEGSyn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 14:54:43 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33807 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726464AbfEGSym (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 May 2019 14:54:42 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v18so10430577lfi.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2019 11:54:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=03Uys/LodQHobuNrmkDI+EEraEEB0uwMGVfOXBSwJiE=;
+        b=K1WZMlTVwBp3Swx98o8GlV/oq7Kzpl3yWUPGTOhlU/o7eYV9nXLTyb0enpz+tbwcox
+         0SbmYut9wMOX54HOmv8M3sEYWlC+Sw5C6fheSJdC8bky7ZBNWJBbxH7K9aJ3h+s9oDK8
+         PSQaBWp2nTgkevaKHVc7kCihTZotTYFSmUBug=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=03Uys/LodQHobuNrmkDI+EEraEEB0uwMGVfOXBSwJiE=;
+        b=euqWV/Fh0aIJEOsGVlrjZCJwKO7LgYMhT9Sz/bNyrwJAybnXfQRTDbZ6mS7hG3mOLd
+         pIaaGAj4u68sqwk75byKCw7wZSC0XWqIVuYHNrRbtMUcejuo8dWNU9IFuEYClu99ewJf
+         7Er5u++g7jVs1Nf76IZ/zKiKNNxZacx0yjYBohIprkUn2tUj4ttXALwDikZL5V1Pjdi5
+         ASsgFnWuzWtA8b+679AQRg53oem6GIBSVqmXWbHBer4wbHRuSbD70l2mdypYqwmvbN9i
+         OKDiO2VoJ4purQ+raI0p5qy1DLzcd0JXSXdMlhvFBtFZ4+FK2ShAB3e/x2o/A8LWNKLZ
+         SxNA==
+X-Gm-Message-State: APjAAAXyoUNawGFiW9AUghnMVSrQXatWZCEhB4wGJgYh36ayvIZf5eHS
+        XmltweEebXpMPovRgdy+XhYFHBNPVRE=
+X-Google-Smtp-Source: APXvYqyDrRGNVQkVBePHsS85SZE9+GsZGrJbclMx+JUevJWIEtds9A0KjyyrpH9di004rQDRTYKh1g==
+X-Received: by 2002:ac2:4192:: with SMTP id z18mr17446536lfh.96.1557255280658;
+        Tue, 07 May 2019 11:54:40 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id b25sm3516164lji.50.2019.05.07.11.54.37
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 07 May 2019 11:54:37 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id y10so8772593lji.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 May 2019 11:54:37 -0700 (PDT)
+X-Received: by 2002:a2e:9d86:: with SMTP id c6mr16188873ljj.135.1557255277072;
+ Tue, 07 May 2019 11:54:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190504014307.GA4058@mit.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1557162679.git.kirr@nexedi.com>
+In-Reply-To: <cover.1557162679.git.kirr@nexedi.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 7 May 2019 11:54:21 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg1tFzcaX2v9Z91vPJiBR486ddW5MtgDL02-fOen2F0Aw@mail.gmail.com>
+Message-ID: <CAHk-=wg1tFzcaX2v9Z91vPJiBR486ddW5MtgDL02-fOen2F0Aw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] stream_open bits for Linux 5.2
+To:     Kirill Smelkov <kirr@nexedi.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@denx.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 03-05-19 21:43:07, Theodore Ts'o wrote:
-> On Fri, May 03, 2019 at 07:17:54PM -0500, Vijay Chidambaram wrote:
-> > 
-> > I think there might be a mis-understanding about the example
-> > (reproduced below) and about SOMC. The relationship that matters is
-> > not whether X happens before Y. The relationship between X and Y is
-> > that they are in the same directory, so fsync(new file X) implies
-> > fsync(X's parent directory) which contains Y.  In the example, X is
-> > A/foo and Y is A/bar. For truly un-related files such as A/foo and
-> > B/bar, SOMC does indeed allow fsync(A/foo) to not persist B/bar.
-> 
-> When you say "X and Y are in the same directory", how does this apply
-> in the face of hard links?  Remember, file X might be in a 100
-> different directories.  Does that mean if changes to file X is visible
-> after a crash, all files Y in any of X's 100 containing directories
-> that were modified before X must have their changes be visible after
-> the crash?
-> 
-> I suspect that the SOMC as articulated by Dave does make such global
-> guarantees.  Certainly without Park and Shin's incremental fsync,
-> unrelated files will have the property that if A/foo is modified after
-> B/bar, and B/bar's metadata changes are visible after a crash, A/foo's
-> metadata will also be visible.  This is true for ext4, and xfs.
-> 
-> Even if we ignore the hard link problem, and assume that it only
-> applies for files foo and bar with st_nlinks == 1, the crash
-> consistency guarantees you've described will *still* rule out Park and
-> Shin's increment fsync.  So depending on whether ext4 has fast fsync's
-> enabled, we might or might not have behavior consistency with your
-> proposed crash consistency rules.
-> 
-> But at this point, even if we promulgate these "guarantees" in a
-> kernel documentation file, applications won't be able to depend on
-> them.  If they do, they will be unreliable depending on which file
-> system they use; so they won't be particularly useful for application
-> authors care about portability.  (Or worse, for users who are under
-> the delusion that the application authors care about portability, and
-> who will be subject to data corruption after a crash.)  Do we *really*
-> want to be promulgating these semantics to application authors?
+On Mon, May 6, 2019 at 10:20 AM Kirill Smelkov <kirr@nexedi.com> wrote:
+>
+> Maybe it will help: the patches can be also pulled from here:
+>
+>         git pull https://lab.nexedi.com/kirr/linux.git y/stream_open-5.2
 
-I agree that having fs specific promises for crash consistency is bad.
-The application would have to detect what filesystem it is running on and
-based on that issue fsync or not. I don't think many applications will get
-this right so IMO it would result in more problems in case crash, not less.
+I'll take this, but I generally *really* want a signed tag for
+non-kernel.org git tree sources. The gpg key used for signing doesn't
+necessarily even have to be signed by others yet, but just the fact
+that there's a pgp key means that then future pulls at least verify
+that it's the sam,e controlling entity, and we can get the signatures
+later.
 
-> Finally, I'll note that generic/342 is much more specific, and your
-> proposed crash consistency rule is more general.
-> 
-> # Test that if we rename a file, create a new file that has the old name of the
-> # other file and is a child of the same parent directory, fsync the new inode,
-> # power fail and mount the filesystem, we do not lose the first file and that
-> # file has the name it was renamed to.
-> 
-> > touch A/foo
-> > echo “hello” >  A/foo
-> > sync
-> > mv A/foo A/bar
-> > echo “world” > A/foo
-> > fsync A/foo
-> > CRASH
-> 
-> Sure, that's one that fast commit will honor.
+For something one-time where I will then look through the details of
+each commit it's not like I absolutely require it, which is why I'm
+pulling it, but just in general I wanted to point this out.
 
-Hum, but will this be also honored in case of hardlinks? E.g.
-
-echo "hello" >A/foo
-ln A/foo B/foo
-sync
-mv A/foo A/bar
-mv B/foo B/bar
-echo "world" >A/foo
-fsync A/foo
-
-Will you also persist changes to B? If not, will you persist them if we
-do 'ln A/foo B/foo' before 'fsync A/foo'? I'm just wondering where you draw
-the borderline if you actually do care about namespace changes in addition
-to inode + its metadata...
-
-> But what about:
-> 
-> echo "world" > A/foo
-> echo "hello" > A/bar
-> chmod 755 A/bar
-> sync
-> chmod 750 A/bar
-> echo "new world" >> A/foo
-> fsync A/foo
-> CRASH
-> 
-> .... will your crash consistency rules guarantee that the permissions
-> change for A/bar is visible after the fsync of A/foo?
-> 
-> Or if A/foo and A/bar exists, and we do:
-> 
-> echo "world" > A/foo
-> echo "hello" > A/bar
-> sync
-> mv A/bar A/quux
-> echo "new world" >> A/foo
-> fsync A/foo
-> CRASH
-> 
-> ... is the rename of A/bar and A/quux guaranteed to be visible after
-> the crash?
-
-And I agree that guaranteeing ordering of operations in the same
-directory but for unrelated names to operations on inode in that directory
-does not seem very useful.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+                        Linus
