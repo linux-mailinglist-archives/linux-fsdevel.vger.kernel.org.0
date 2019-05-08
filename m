@@ -2,117 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46DA2181D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 23:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2905F18247
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 00:32:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbfEHV6h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 May 2019 17:58:37 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:42200 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726837AbfEHV6h (ORCPT
+        id S1726924AbfEHWcB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 May 2019 18:32:01 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:36866 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726700AbfEHWcB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 May 2019 17:58:37 -0400
+        Wed, 8 May 2019 18:32:01 -0400
 Received: from dread.disaster.area (pa49-181-171-240.pa.nsw.optusnet.com.au [49.181.171.240])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id F37BBC927;
-        Thu,  9 May 2019 07:58:32 +1000 (AEST)
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id B1B2243A37B;
+        Thu,  9 May 2019 08:31:58 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92)
         (envelope-from <david@fromorbit.com>)
-        id 1hOUa8-0005Mv-Ex; Thu, 09 May 2019 07:58:32 +1000
-Date:   Thu, 9 May 2019 07:58:32 +1000
+        id 1hOV6T-0005Ym-2J; Thu, 09 May 2019 08:31:57 +1000
+Date:   Thu, 9 May 2019 08:31:57 +1000
 From:   Dave Chinner <david@fromorbit.com>
-To:     Ric Wheeler <ricwheeler@gmail.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Ric Wheeler <ricwheeler@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         lczerner@redhat.com
 Subject: Re: Testing devices for discard support properly
-Message-ID: <20190508215832.GR1454@dread.disaster.area>
+Message-ID: <20190508223157.GS1454@dread.disaster.area>
 References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
  <20190507220449.GP1454@dread.disaster.area>
- <a409b3d1-960b-84a4-1b8d-1822c305ea18@gmail.com>
- <20190508011407.GQ1454@dread.disaster.area>
- <13b63de0-18bc-eb24-63b4-3c69c6a007b3@gmail.com>
- <yq1a7fwlvzb.fsf@oracle.com>
- <0a16285c-545a-e94a-c733-bcc3d4556557@gmail.com>
+ <yq1ef58ly5j.fsf@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0a16285c-545a-e94a-c733-bcc3d4556557@gmail.com>
+In-Reply-To: <yq1ef58ly5j.fsf@oracle.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
         a=LhzQONXuMOhFZtk4TmSJIw==:117 a=LhzQONXuMOhFZtk4TmSJIw==:17
         a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
-        a=7-415B0cAAAA:8 a=P-JoTcFpvW-QmwlPBo0A:9 a=Hlrat0HlZ4lAMFzh:21
-        a=eYFAa6E9YxbT3pTG:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=7-415B0cAAAA:8 a=3ZI2Ntb0NxUUy2vjhPgA:9 a=P0u-9IdFAXDTa2Fe:21
+        a=AIsqQvJzzN8EsQi8:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 08, 2019 at 01:09:03PM -0400, Ric Wheeler wrote:
+On Wed, May 08, 2019 at 12:16:24PM -0400, Martin K. Petersen wrote:
 > 
-> On 5/8/19 1:03 PM, Martin K. Petersen wrote:
-> > Ric,
-> > 
-> > > That all makes sense, but I think it is orthogonal in large part to
-> > > the need to get a good way to measure performance.
-> > There are two parts to the performance puzzle:
-> > 
-> >   1. How does mixing discards/zeroouts with regular reads and writes
-> >      affect system performance?
-> > 
-> >   2. How does issuing discards affect the tail latency of the device for
-> >      a given workload? Is it worth it?
-> > 
-> > Providing tooling for (1) is feasible whereas (2) is highly
-> > workload-specific. So unless we can make the cost of (1) negligible,
-> > we'll have to defer (2) to the user.
+> Hi Dave,
 > 
-> Agree, but I think that there is also a base level performance question -
-> how does the discard/zero perform by itself.
+> > My big question here is this:
+> >
+> > - is "discard" even relevant for future devices?
 > 
-> Specifically, we have had to punt the discard of a whole block device before
-> mkfs (back at RH) since it tripped up a significant number of devices.
-> Similar pain for small discards (say one fs page) - is it too slow to do?
+> It's hard to make predictions. Especially about the future. But discard
+> is definitely relevant on a bunch of current drives across the entire
+> spectrum from junk to enterprise. Depending on workload,
+> over-provisioning, media type, etc.
+> 
+> Plus, as Ric pointed out, thin provisioning is also relevant. Different
+> use case but exactly the same plumbing.
+> 
+> > IMO, trying to "optimise discard" is completely the wrong direction
+> > to take. We should be getting rid of "discard" and it's interfaces
+> > operations - deprecate the ioctls, fix all other kernel callers of
+> > blkdev_issue_discard() to call blkdev_fallocate()
+> 
+> blkdev_fallocate() is implemented using blkdev_issue_discard().
 
-Small discards are already skipped is the device indicates it has
-a minumum discard granularity. This is another reason why the "-o
-discard" mount option isn't sufficient by itself and fstrim is still
-required - filesystems often only free small isolated chunks of
-space at a time and hence never may send discards to the device.
+Only when told to do PUNCH_HOLE|NO_HIDE_STALE which means "we don't
+care what the device does" as this fallcoate command provides no
+guarantees for the data returned by subsequent reads. It is,
+esssentially, a get out of gaol free mechanism for indeterminate
+device capabilities.
 
-> > > For SCSI, I think the "WRITE_SAME" command *might* do discard
-> > > internally or just might end up re-writing large regions of slow,
-> > > spinning drives so I think it is less interesting.
-> > WRITE SAME has an UNMAP flag that tells the device to deallocate, if
-> > possible. The results are deterministic (unlike the UNMAP command).
+> > and ensure that drive vendors understand that they need to make
+> > FALLOC_FL_ZERO_RANGE and FALLOC_FL_PUNCH_HOLE work, and that
+> > FALLOC_FL_PUNCH_HOLE | FALLOC_FL_NO_HIDE_STALE is deprecated (like
+> > discard) and will be going away.
+> 
+> Fast, cheap, easy. Pick any two.
+> 
+> The issue is that -- from the device perspective -- guaranteeing zeroes
+> requires substantially more effort than deallocating blocks. To the
 
-That's kinda what I'm getting at here - we need to define the
-behaviour the OS provides users, and then ensure that the behaviour
-is standardised correctly so that devices behave correctly. i.e.  we
-want devices to support WRITE_SAME w/ UNMAP flag well (because
-that's an exact representation of FALLOC_FL_PUNCH_HOLE
-requirements), and don't really care about the UNMAP command.
+People used to make that assertion about filesystems, too. It took
+linux filesystem developers years to realise that unwritten extents
+are actually very simple and require very little extra code and no
+extra space in metadata to implement. If you are already tracking
+allocated blocks/space, then you're 99% of the way to efficient
+management of logically zeroed disk space.
 
-> > WRITE SAME also has an ANCHOR flag which provides a use case we
-> > currently don't have fallocate plumbing for: Allocating blocks without
-> > caring about their contents. I.e. the blocks described by the I/O are
-> > locked down to prevent ENOSPC for future writes.
+> point where several vendors have given up making it work altogether and
+> either report no discard support or silently ignore discard requests
+> causing you to waste queue slots for no good reason.
 
-So WRITE_SAME (0) with an ANCHOR flag does not return zeroes on
-subsequent reads? i.e. it is effectively
-fallocate(FALLOC_FL_NO_HIDE_STALE) preallocation semantics?
+I call bullshit.
 
-For many use cases cases we actually want zeroed space to be
-guaranteed so we don't expose stale data from previous device use
-into the new user's visibility - can that be done with WRITE_SAME
-and the ANCHOR flag?
+> So while instant zeroing of a 100TB drive would be nice, I don't think
+> it's a realistic goal given the architectural limitations of many of
+> these devices. Conceptually, you'd think it would be as easy as
+> unlinking an inode.
+
+Unlinking an inode is one of the most complex things a filesystem
+has to do. Marking allocated space as "contains zeros" is trivial in
+comparison.
+
+> But in practice the devices keep much more (and
+> different) state around in their FTLs than a filesystem does in its
+> metadata.
+> 
+> Wrt. device command processing performance:
+> 
+> 1. Our expectation is that REQ_DISCARD (FL_PUNCH_HOLE |
+>    FL_NO_HIDE_STALE), which gets translated into ATA DSM TRIM, NVMe
+>    DEALLOCATE, SCSI UNMAP, executes in O(1) regardless of the number of
+>    blocks operated on.
+> 
+>    Due to the ambiguity of ATA DSM TRIM and early SCSI we ended up in a
+>    situation where the industry applied additional semantics
+>    (deterministic zeroing) to that particular operation. And that has
+>    caused grief because devices often end up in the O(n-or-worse) bucket
+>    when determinism is a requirement.
+
+Which is why I want us to deprecate the use of REQ_DISCARD.
+
+
+> 2. Our expectation for the allocating REQ_ZEROOUT (FL_ZERO_RANGE), which
+>    gets translated into NVMe WRITE ZEROES, SCSI WRITE SAME, is that the
+>    command executes in O(n) but that it is faster -- or at least not
+>    worse -- than doing a regular WRITE to the same block range.
+
+You're missing the important requirement of fallocate(ZERO_RANGE):
+that the space is also allocated and ENOSPC will never be returned
+for subsequent writes to that range. i.e. it is allocated but
+"unwritten" space that contains zeros.
+
+> 3. Our expectation for the deallocating REQ_ZEROOUT (FL_PUNCH_HOLE),
+>    which gets translated into ATA DSM TRIM w/ whitelist, NVMe WRITE
+>    ZEROES w/ DEAC, SCSI WRITE SAME w/ UNMAP, is that the command will
+>    execute in O(1) for any portion of the block range described by the
+
+FL_PUNCH_HOLE has no O(1) requirement - it has a "all possible space
+must be freed" requirement. The larger the range, to longer it will
+take.
+
+For example, punching out a range that contains a single extent
+might take a couple of hundred microseconds on XFS, but punching out
+a range that contains 50 million extents in a single operation (yes,
+we see sparse vm image files with that sort of extreme fragmentation
+in production systems) can take 5-10 minutes to run.
+
+That is acceptable behaviour for a space deallocation operation.
+Expecting space deallocation will always run on O(1) time is ...
+insanity. If I were a device vendor being asked to do this, I'd be
+saying no, too, because it's simply an unrealistic expectation.
+
+If you're going to suggest any sort of performance guideline, then
+O(log N) is the best we can expect for deallocation operations
+(where N is the size of the range to be deallocated). This is
+possible to implement without significant complexity or requiring
+background cleanup and future IO latency impact.....
+
+>    I/O that is aligned to and a multiple of the internal device
+>    granularity. With an additional small O(n_head_LBs) + O(n_tail_LBs)
+>    overhead for zeroing any LBs at the beginning and end of the block
+>    range described by the I/O that do not comprise a full block wrt. the
+>    internal device granularity.
+
+That's expected, and exaclty what filesystems do for sub-block punch
+and zeroing ranges.
+
+> Does that description make sense?
+> 
+> The problem is that most vendors implement (3) using (1). But can't make
+> it work well because (3) was -- and still is for ATA -- outside the
+> scope of what the protocols can express.
+> 
+> And I agree with you that if (3) was implemented correctly in all
+> devices, we wouldn't need (1) at all. At least not for devices with an
+> internal granularity << total capacity.
+
+What I'm saying is that we should be pushing standards to ensure (3)
+is correctly standardise, certified and implemented because that is
+what the "Linux OS" requires from future hardware.
 
 Cheers,
 
 Dave.
-
 -- 
 Dave Chinner
 david@fromorbit.com
