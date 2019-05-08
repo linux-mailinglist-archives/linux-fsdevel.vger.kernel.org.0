@@ -2,266 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E91E316ED5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 04:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21F9716F64
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 05:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbfEHCNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 22:13:04 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43750 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbfEHCNE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 22:13:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=KLUJds55VK5wfuQIecfJeAznkW/rjS8krJ4iieQMrlM=; b=tssjbXhtg14AjIn8ih+V1mun7c
-        KuZfpq0AzpZeVpXGTJldMwIPiHg3wF1ZKju0TTzme4FU1wiYttpO7ECWDDTCz+XGh1chMohxVAjOY
-        s8m2oERwJPQw3Pac2MrN5a8EX0e3iyAti6mAxtH2aACg182I6+L0CIBJOd7nim9p5keeOgT5H2jF8
-        29pCRV9/FN6eEDLi/b3u+hGfohtOJbTRlMEuAziF6bVloBoZJUATWTg/RleOGwU9+h9ZSQmn+KQEn
-        13dizgMXllhEVD5myM8ErBFxdaqz47OvrctYksjrYS8AyAY0pm3dVUj9eg3sOFtZ7bwnMvcGnmprD
-        xrnzJfKQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hOC4i-0008WM-LS; Wed, 08 May 2019 02:12:53 +0000
-Subject: Re: [RFC PATCH 1/4] block: Block Layer changes for Inline Encryption
- Support
-To:     Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Parshuram Raju Thombare <pthombar@cadence.com>,
+        id S1726666AbfEHDCc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 23:02:32 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:58118 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726371AbfEHDCc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 May 2019 23:02:32 -0400
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id C58DAE8031A6EC7146F9;
+        Wed,  8 May 2019 11:02:29 +0800 (CST)
+Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
+ DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 8 May 2019 11:02:29 +0800
+Received: from [10.134.22.195] (10.134.22.195) by
+ dggeme763-chm.china.huawei.com (10.3.19.109) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Wed, 8 May 2019 11:02:28 +0800
+Subject: Re: [RFC PATCH 4/4] f2fs: Wire up f2fs to use inline encryption via
+ fscrypt
+To:     Satya Tangirala <satyat@google.com>, <linux-block@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     Parshuram Raju Thombare <pthombar@cadence.com>,
         Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
         Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>
 References: <20190506223544.195371-1-satyat@google.com>
- <20190506223544.195371-2-satyat@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5a1632db-c59a-6ac1-87d7-9307e4744aa7@infradead.org>
-Date:   Tue, 7 May 2019 19:12:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ <20190506223544.195371-5-satyat@google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <18ff678e-81eb-c883-eeb0-500c886f3580@huawei.com>
+Date:   Wed, 8 May 2019 11:02:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190506223544.195371-2-satyat@google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190506223544.195371-5-satyat@google.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-ClientProxiedBy: dggeme704-chm.china.huawei.com (10.1.199.100) To
+ dggeme763-chm.china.huawei.com (10.3.19.109)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-This is documentation comments...
+Hi Satya,
 
-On 5/6/19 3:35 PM, Satya Tangirala wrote:
-> diff --git a/Documentation/block/blk-crypto.txt b/Documentation/block/blk-crypto.txt
-> new file mode 100644
-> index 000000000000..a1b82361cb16
-> --- /dev/null
-> +++ b/Documentation/block/blk-crypto.txt
-> @@ -0,0 +1,185 @@
-> +BLK-CRYPTO and KEYSLOT MANAGER
-> +===========================
-> +
-> +CONTENTS
-> +1. Objective
-> +2. Constraints and notes
-> +3. Design
-> +4. Blk-crypto
-> + 4-1 What does blk-crypto do on bio submission
-> +5. Layered Devices
-> +6. Future optimizations for layered devices
-> +
-> +1. Objective
-> +============
-> +
-> +We want to support inline encryption (IE) in the kernel.
-> +To allow for testing, we also want a software fallback when actual
-> +IE hardware is absent. We also want IE to work with layered devices
-> +like dm and loopback (i.e. we want to be able to use the IE hardware
-> +of the underlying devices if present, or else fall back to software
-> +en/decryption).
-> +
-> +
-> +2. Constraints and notes
-> +========================
-> +
-> +1) IE hardware have a limited number of “keyslots” that can be programmed
-> +with an encryption context (key, algorithm, data unit size, etc.) at any time.
-> +One can specify a keyslot in a data requests made to the device, and when the
++Cc f2fs mailing list.
 
-                             in data requests
-or
-                             in a data request
+On 2019/5/7 6:35, Satya Tangirala wrote:
+> Signed-off-by: Satya Tangirala <satyat@google.com>
+> ---
+>  fs/f2fs/data.c  | 69 ++++++++++++++++++++++++++++++++++++++++++++++---
+>  fs/f2fs/super.c |  1 +
+>  2 files changed, 67 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 9727944139f2..7ac6768a52a5 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -279,9 +279,18 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
+>  	return bio;
+>  }
+>  
+> +static inline u64 hw_crypt_dun(struct inode *inode, struct page *page)
+> +{
+> +	return (((u64)inode->i_ino) << 32) | (page->index & 0xFFFFFFFF);
+> +}
+> +
+>  static inline void __submit_bio(struct f2fs_sb_info *sbi,
+>  				struct bio *bio, enum page_type type)
+>  {
+> +	struct page *page;
+> +	struct inode *inode;
+> +	int err = 0;
+> +
+>  	if (!is_read_io(bio_op(bio))) {
+>  		unsigned int start;
+>  
+> @@ -323,7 +332,21 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
+>  		trace_f2fs_submit_read_bio(sbi->sb, type, bio);
+>  	else
+>  		trace_f2fs_submit_write_bio(sbi->sb, type, bio);
+> -	submit_bio(bio);
+> +
+> +	if (bio_has_data(bio)) {
+> +		page = bio_page(bio);
+> +		if (page && page->mapping && page->mapping->host) {
+> +			inode = page->mapping->host;
+> +			err = fscrypt_set_bio_crypt_ctx(inode, bio,
 
-> +device will en/decrypt the data using the encryption context programmed into
-> +that specified keyslot. Of course, when possible, we want to make multiple
-> +requests with the the same encryption context share the same keyslot.
-> +
-> +2) We need a way for filesystems to specify an encryption context to use for
-> +en/decrypting a struct bio, and a device driver (like UFS) needs to be able
-> +to use that encryption context when it processes the bio.
-> +
-> +3) We need a way for device drivers to expose their capabilities in a unified
-> +way to the upper layers.
-> +
-> +
-> +3. Design
-> +=========
-> +
-> +We add a struct bio_crypt_context to struct bio that can represent an
-> +encryption context, because we need to able to pass this encryption context
-> +from the FS layer to the device driver to act upon.
-> +
-> +While IE hardware works on the notion of keyslots, the FS layer has no
-> +knowledge of keyslots - it simply wants to specify an encryption context to
-> +use while en/decrypting a bio.
-> +
-> +We introduce a keyslot manager (KSM) that handles the translation from
-> +encryption contexts specified by the FS to keyslots on the IE hardware.
-> +This KSM also serves as the way IE hardware can expose their capabilities to
-> +upper layers. The generic mode of operation is: each device driver that wants
-> +to support IE will construct a KSM and set it up in its struct request_queue.
-> +Upper layers that want to use IE on this device can then use this KSM in
-> +the device’s struct request_queue to translate an encryption context into
-> +a keyslot. The presence of the KSM in the request queue shall be used to mean
-> +that the device supports IE.
-> +
-> +On the device driver end of the interface, the device driver needs to tell the
-> +KSM how to actually manipulate the IE hardware in the device to do things like
-> +programming the crypto key into the IE hardware into a particular keyslot. All
-> +this is achieved through the struct keyslot_mgmt_ll_ops that the device driver
-> +passes to the KSM when creating it.
-> +
-> +It uses refcounts to track which keyslots are idle (either they have no
-> +encryption context programmed, or there are no in flight struct bios
-> +referencing that keyslot). When a new encryption context needs a keyslot, it
-> +tries to find a keyslot that has already been programmed with the same
-> +encryption context, and if there is no such keyslot, it evicts the least
-> +recently used idle keyslot and programs the new encryption context into that
-> +one. If no idle keyslots are available, then the caller will sleep until there
-> +is at least one.
-> +
-> +
-> +4. Blk-crypto
-> +=============
-> +
-> +The above is sufficient for simple cases, but does not work if there is a
-> +need for a software fallback, or if we are want to use IE with layered devices.
-> +To these ends, we introduce blk-crypto. Blk-crypto allows us to present a
-> +unified view of encryption to the FS (so FS only needs to specify an
-> +encryption context and not worry about keyslots at all), and block crypto can
-> +decide whether to delegate the en/decryption to IE hardware or to software
-> +(i.e. to the kernel crypto API). Block crypto maintains an internal KSM that
-> +serves as the software fallback to the kernel crypto API.
-> +
-> +Blk-crypto needs to ensure that the encryption context is programmed into the
-> +"correct" keyslot manager for IE. If a bio is submitted to a layered device
-> +that eventually passes the bio down to a device that really does support IE, we
-> +want the encryption context to be programmed into a keyslot for the KSM of the
-> +device with IE support. However, blk-crypto does not know a-priori whether a
+Should sanity check in fscrypt_set_bio_crypt_ctx() be necessary? as we have
+already did the check in fscrypt_get_encryption_info().
 
-                                                             a priori
+If it's not necessary, we can relax to not care about the error handling.
 
-> +particular device is the final device in the layering structure for a bio or
-> +not. So in the case that a particular device does not support IE, since it is
-> +possibly the final destination device for the bio, if the bio requires
-> +encryption (i.e. the bio is doing a write operation), blk-crypto must fallback
-> +to software *before* sending the bio to the device.
-> +
-> +Blk-crypto ensures that
-> +1) The bio’s encryption context is programmed into a keyslot in the KSM of the
-> +request queue that the bio is being submitted to (or the software fallback KSM
-> +if the request queue doesn’t have a KSM), and that the processing_ksm in the
-> +bi_crypt_context is set to this KSM
-> +
-> +2) That the bio has its own individual reference to the keyslot in this KSM.
-> +Once the bio passes through block crypto, its encryption context is programmed
+> +						hw_crypt_dun(inode, page));
+> +		}
+> +	}
+> +	if (err) {
+> +		bio->bi_status = BLK_STS_IOERR;
+> +		bio_endio(bio);
+> +	} else {
+> +		submit_bio(bio);
+> +	}
+>  }
+>  
+>  static void __submit_merged_bio(struct f2fs_bio_info *io)
+> @@ -484,6 +507,9 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+>  	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
+>  	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
+>  	struct page *bio_page;
+> +	struct inode *fio_inode, *bio_inode;
+> +	struct page *first_page;
+> +	u64 next_dun = 0;
+>  
+>  	f2fs_bug_on(sbi, is_read_io(fio->op));
+>  
+> @@ -512,10 +538,29 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+>  
+>  	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
+>  
+> +	fio_inode = fio->page->mapping->host;
+> +	bio_inode = NULL;
+> +	first_page = NULL;
+> +	next_dun = 0;
+> +	if (io->bio) {
+> +		first_page = bio_page(io->bio);
+> +		if (first_page->mapping) {
+> +			bio_inode = first_page->mapping->host;
+> +			if (fscrypt_inode_is_hw_encrypted(bio_inode)) {
+> +				next_dun =
+> +					hw_crypt_dun(bio_inode, first_page) +
+> +				    (io->bio->bi_iter.bi_size >> PAGE_SHIFT);
+> +			}
+> +		}
+> +	}
+>  	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
+>  	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags) ||
+> -			!__same_bdev(sbi, fio->new_blkaddr, io->bio)))
+> +			!__same_bdev(sbi, fio->new_blkaddr, io->bio) ||
+> +			!fscrypt_inode_crypt_mergeable(bio_inode, fio_inode) ||
+> +			(fscrypt_inode_is_hw_encrypted(bio_inode) &&
+> +			 next_dun != hw_crypt_dun(fio_inode, fio->page))))
 
-                          is   block crypto
-                 the same as   blk-crypto?
-If so, consistency would be Good.
+The merge condition becomes so complicated and looks not so clean, I just
+suggest we can introduce single static inline function to wrap all inline
+encryption condition, which can help to make codes more clean.
 
-> +in some KSM. The “its own individual reference to the keyslot” ensures that
-> +keyslots can be released by each bio independently of other bios while ensuring
-> +that the bio has a valid reference to the keyslot when, for e.g., the software
-> +fallback KSM in blk-crypto performs crypto for on the device’s behalf. The
-> +individual references are ensured by increasing the refcount for the keyslot in
-> +the processing_ksm when a bio with a programmed encryption context is cloned.
+>  		__submit_merged_bio(io);
 > +
+>  alloc_new:
+>  	if (io->bio == NULL) {
+>  		if ((fio->type == DATA || fio->type == NODE) &&
+> @@ -570,7 +615,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+>  	bio->bi_end_io = f2fs_read_end_io;
+>  	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
+>  
+> -	if (f2fs_encrypted_file(inode))
+> +	if (f2fs_encrypted_file(inode) && !fscrypt_inode_is_hw_encrypted(inode))
+>  		post_read_steps |= 1 << STEP_DECRYPT;
+>  	if (post_read_steps) {
+>  		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
+> @@ -1525,6 +1570,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
+>  	sector_t last_block_in_file;
+>  	sector_t block_nr;
+>  	struct f2fs_map_blocks map;
+> +	u64 next_dun = 0;
+>  
+>  	map.m_pblk = 0;
+>  	map.m_lblk = 0;
+> @@ -1606,6 +1652,13 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
+>  			__submit_bio(F2FS_I_SB(inode), bio, DATA);
+>  			bio = NULL;
+>  		}
 > +
-> +4-1. What blk-crypto does on bio submission
-> +-------------------------------------------
+> +		if (bio && fscrypt_inode_is_hw_encrypted(inode) &&
+> +		    next_dun != hw_crypt_dun(inode, page)) {
+> +			__submit_bio(F2FS_I_SB(inode), bio, DATA);
+> +			bio = NULL;
+> +		}
 > +
-> +Case 1: blk-crypto is given a bio with only an encryption context that hasn’t
-> +been programmed into any keyslot in any KSM (for e.g. a bio from the FS). In
-> +this case, blk-crypto will program the encryption context into the KSM of the
-> +request queue the bio is being submitted to (and if this KSM does not exist,
-> +then it will program it into blk-crypto’s internal KSM for software fallback).
-> +The KSM that this encryption context was programmed into is stored as the
-> +processing_ksm in the bio’s bi_crypt_context.
+>  		if (bio == NULL) {
+>  			bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
+>  					is_readahead ? REQ_RAHEAD : 0);
+> @@ -1624,6 +1677,9 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
+>  		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
+>  			goto submit_and_realloc;
+>  
+> +		if (fscrypt_inode_is_hw_encrypted(inode))
+> +			next_dun = hw_crypt_dun(inode, page) + 1;
 > +
-> +Case 2: blk-crypto is given a bio whose encryption context has already been
-> +programmed into a keyslot in the *software fallback KSM*. In this case,
-> +blk-crypto does nothing; it treats the bio as not having specified an
-> +encryption context. Note that we cannot do what we will do in Case 3 here
-> +because we would have already encrypted the bio in software by this point.
-> +
-> +Case 3: blk-crypto is given a bio whose encryption context has already been
-> +programmed into a keyslot in some KSM (that is *not* the software fallback
-> +KSM). In this case, blk-crypto first releases that keyslot from that KSM and
-> +then treats the bio as in Case 1.
-> +
-> +This way, when a device driver is processing a bio, it can be sure that
-> +the bio’s encryption context has been programmed into some KSM (either the
-> +device driver’s request queue’s KSM, or blk-crypto’s software fallback KSM).
-> +It then simply needs to check if the bio’s processing_ksm is the device’s
-> +request queue’s KSM. If so, then it should proceed with IE. If not, it should
-> +simply do nothing with respect to crypto, because some other KSM (perhaps the
-> +blk-crypto software fallback KSM) is handling the en/decryption.
-> +
-> +Blk-crypto will release the keyslot that is being held by the bio (and also
-> +decrypt it if the bio is using the software fallback KSM) once
-> +bio_remaining_done returns true for the bio.
-> +
-> +
-> +5. Layered Devices
-> +==================
-> +
-> +Layered devices that wish to support IE need to create their own keyslot
-> +manager for their request queue, and expose whatever functionality they choose.
-> +When a layered device wants to pass a bio to another layer (either by
-> +resubmitting the same bio, or by submitting a clone), it doesn’t need to do
-> +anything special because the bio (or the clone) will once again pass through
-> +blk-crypto, which will work as described in Case 3. If a layered device wants
-> +for some reason to do the IO by itself instead of passing it on to a child
-> +device, but it also chose to expose IE capabilities by setting up a KSM in its
-> +request queue, it is then responsible for en/decrypting the data itself. In
-> +such cases, the device can choose to call the blk-crypto function
-> +blk_crypto_fallback_to_software (TODO: Not yet implemented), which will
-> +cause the en/decryption to be done via software fallback.
-> +
-> +
-> +6. Future Optimizations for layered devices
-> +===========================================
-> +
-> +Creating a keyslot manager for the layered device uses up memory for each
-> +keyslot, and in general, a layered device (like dm-linear) merely passes the
-> +request on to a “child” device, so the keyslots in the layered device itself
-> +might be completely unused. We can instead define a new type of KSM; the
-> +“passthrough KSM”, that layered devices can use to let blk-crypto know that
-> +this layered device *will* pass the bio to some child device (and hence
-> +through blk-crypto again, at which point blk-crypto can program the encryption
-> +context, instead of programming it into the layered device’s KSM). Again, if
-> +the device “lies” and decides to do the IO itself instead of passing it on to
-> +a child device, it is responsible for doing the en/decryption (and can choose
-> +to call blk_crypto_fallback_to_software). Another use case for the
-> +"passthrough KSM" is for IE devices that want to manage their own keyslots/do
-> +not have a limited number of keyslots.
+>  		inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
+>  		ClearPageError(page);
+>  		last_block_in_bio = block_nr;
+> @@ -2591,12 +2647,19 @@ static void f2fs_dio_submit_bio(struct bio *bio, struct inode *inode,
+>  {
+>  	struct f2fs_private_dio *dio;
+>  	bool write = (bio_op(bio) == REQ_OP_WRITE);
+> +	u64 data_unit_num = (((u64)inode->i_ino) << 32) |
+> +			    ((file_offset >> PAGE_SHIFT) & 0xFFFFFFFF);
 
+Can we allow hw_crypt_dun() to accept @offset as parameter instead of @page? so
+we can use hw_crypt_dun() here to replace raw codes.
 
--- 
-~Randy
+Thanks,
+
+>  
+>  	dio = f2fs_kzalloc(F2FS_I_SB(inode),
+>  			sizeof(struct f2fs_private_dio), GFP_NOFS);
+>  	if (!dio)
+>  		goto out;
+>  
+> +	if (fscrypt_set_bio_crypt_ctx(inode, bio, data_unit_num) != 0) {
+> +		kvfree(dio);
+> +		goto out;
+> +	}
+> +
+>  	dio->inode = inode;
+>  	dio->orig_end_io = bio->bi_end_io;
+>  	dio->orig_private = bio->bi_private;
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index f2aaa2cc6b3e..e98c85d42e8d 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2225,6 +2225,7 @@ static const struct fscrypt_operations f2fs_cryptops = {
+>  	.dummy_context	= f2fs_dummy_context,
+>  	.empty_dir	= f2fs_empty_dir,
+>  	.max_namelen	= F2FS_NAME_LEN,
+> +	.hw_crypt_supp	= true,
+>  };
+>  #endif
+>  
+> 
