@@ -2,115 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AC2117F0A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 19:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13CE217F98
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 20:12:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728819AbfEHRZn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 May 2019 13:25:43 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:49432 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728699AbfEHRZm (ORCPT
+        id S1727369AbfEHSMV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 May 2019 14:12:21 -0400
+Received: from mail-qt1-f173.google.com ([209.85.160.173]:34340 "EHLO
+        mail-qt1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfEHSMV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 May 2019 13:25:42 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x48HInZk184579;
-        Wed, 8 May 2019 17:25:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=dFTxaQ24NAATSsmBHSrROslLa2vl3IgKmJlOXAq2ldk=;
- b=paMercWLEwqdqZA3ppB27Wwqv4kca1pR22E+vaBswwr+0n8dZFyVMJFd1XLIbaKsU0CY
- M4b0kwoDWvScsRzimR2cQKAVdUGHn4f+QVSn87nrLrpxzi6KOfCzWBcCB/AbqaCyuXj7
- 8DDaCeZZqZjn4NuX0vF11T1ut19GzSUnpaUSizrnBX8OZs7graAFS15PpBhlWPEoha6r
- XfIdpzrdvLhdg1bCn8oaK/68RCjM8gGKfJDLrg7Vg8dqlEAe2q5gjRML7g6Z9ZedQxf/
- WubDzcgGcfw7YNFi97yYWeTuRdlSxLNSk8EtrzM+9y8t7giWKBVdOX5qEKULPgM+UCWP PQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2s94b0wm51-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 08 May 2019 17:25:30 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x48HP2Gn148349;
-        Wed, 8 May 2019 17:25:28 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2s94ba8k7h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 08 May 2019 17:25:28 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x48HPQko004421;
-        Wed, 8 May 2019 17:25:26 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 08 May 2019 10:25:25 -0700
-To:     Ric Wheeler <ricwheeler@gmail.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Wed, 8 May 2019 14:12:21 -0400
+Received: by mail-qt1-f173.google.com with SMTP id j6so24342747qtq.1;
+        Wed, 08 May 2019 11:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3EtBSWKXvWhK5ahRNqbD9aitgAQyO29KGemVXp7iPbI=;
+        b=p0zgYRavLfnFw6tzfy5RxlKX+Yaq4nP5orA7fNJUfhm/WwQk9NPg0U19DrwONAJZiD
+         5zjay4uKP5n4jLY/lvGu4OaU8DB5+H39KVI8kq2rdgEVdXqbLHkkmJO47BnFCcIfQB4g
+         vFtfHGktCXBuZ6KyCOuOQE8EASJnmCIvVsmsFNzte4Dm3e0Q6XqBeBCi/OmkwPXxzq0v
+         X3C0FlDW+rxGTqg1fuWwY0Ncaf4ZGYpEcFZUT/WE9YLXSDaJdC8Dg8VBOah9yEnmvE+Q
+         t/IIgk+HQRstPF/Wizgm7lpY0JNvzavtyF2FGNCgEgVU6NzC7d67GLUTbdyXu67LbZZv
+         Y7xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3EtBSWKXvWhK5ahRNqbD9aitgAQyO29KGemVXp7iPbI=;
+        b=Otr/t0H5J4fDi3J0g4H70qDDipbhwDzBfSHLzJ2iQ9l+hI+ZDb0opfqJ/xpvpOljdN
+         gyTvufFxA5SAAKmq7VCN0xmCJySdVJxTLGv6ih8r44U08XUxo6CAGB/KG/iUweNEFf8Y
+         yEExZeyV24YmzPBW1w2zrTQlY5uOCRrMgx2abJa5TsfcBLchDY6HYpTlzLacBvNy6hi6
+         sWOw2LuhF2icr5exy4Tfk6X4XpOD6YovIu53bYl3sx+++JAx4OffB1RJMsjLU+MbmV8I
+         07uvyAWiYn8uGPocFew5YRr8rCgjkBkG0yAIRrbBYAEeLCMan98iyJWLF/VQLcxuVNSR
+         sQvQ==
+X-Gm-Message-State: APjAAAWI0lfu8S95j//gZBbuWjZKacADDdlM/wg0qU4713Rq4ktEmRoO
+        7yA3tHPxDkJcLpI/HYohy9nby9OgdI8=
+X-Google-Smtp-Source: APXvYqyoob7gPuJlyn5s8stW5f2v6LO1MyR170RnlDAEDFVoylkYDdtKbUfyxATBcAnb7o/wAAm4qw==
+X-Received: by 2002:ad4:51c2:: with SMTP id p2mr15308535qvq.64.1557339140076;
+        Wed, 08 May 2019 11:12:20 -0700 (PDT)
+Received: from localhost.localdomain ([163.114.130.128])
+        by smtp.gmail.com with ESMTPSA id r47sm8814874qte.70.2019.05.08.11.12.18
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 May 2019 11:12:19 -0700 (PDT)
+From:   Ric Wheeler <ricwheeler@gmail.com>
+Subject: Re: Testing devices for discard support properly
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         lczerner@redhat.com
-Subject: Re: Testing devices for discard support properly
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
 References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
-        <20190507220449.GP1454@dread.disaster.area>
-        <a409b3d1-960b-84a4-1b8d-1822c305ea18@gmail.com>
-        <20190508011407.GQ1454@dread.disaster.area>
-        <13b63de0-18bc-eb24-63b4-3c69c6a007b3@gmail.com>
-        <yq1a7fwlvzb.fsf@oracle.com>
-        <0a16285c-545a-e94a-c733-bcc3d4556557@gmail.com>
-Date:   Wed, 08 May 2019 13:25:22 -0400
-In-Reply-To: <0a16285c-545a-e94a-c733-bcc3d4556557@gmail.com> (Ric Wheeler's
-        message of "Wed, 8 May 2019 13:09:03 -0400")
-Message-ID: <yq15zqkluyl.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+ <20190507220449.GP1454@dread.disaster.area>
+ <a409b3d1-960b-84a4-1b8d-1822c305ea18@gmail.com>
+ <20190508011407.GQ1454@dread.disaster.area>
+ <13b63de0-18bc-eb24-63b4-3c69c6a007b3@gmail.com> <yq1a7fwlvzb.fsf@oracle.com>
+ <0a16285c-545a-e94a-c733-bcc3d4556557@gmail.com> <yq15zqkluyl.fsf@oracle.com>
+Message-ID: <99144ff8-4f2c-487d-a366-6294f87beb58@gmail.com>
+Date:   Wed, 8 May 2019 14:12:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905080106
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905080106
+In-Reply-To: <yq15zqkluyl.fsf@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+(stripped out the html junk, resending)
 
-Ric,
+On 5/8/19 1:25 PM, Martin K. Petersen wrote:
+>>> WRITE SAME also has an ANCHOR flag which provides a use case we
+>>> currently don't have fallocate plumbing for: Allocating blocks without
+>>> caring about their contents. I.e. the blocks described by the I/O are
+>>> locked down to prevent ENOSPC for future writes.
+>> Thanks for that detail! Sounds like ANCHOR in this case exposes
+>> whatever data is there (similar I suppose to normal block device
+>> behavior without discard for unused space)? Seems like it would be
+>> useful for virtually provisioned devices (enterprise arrays or
+>> something like dm-thin targets) more than normal SSD's?
+> It is typically used to pin down important areas to ensure one doesn't
+> get ENOSPC when writing journal or metadata. However, these are
+> typically the areas that we deliberately zero to ensure predictable
+> results. So I think the only case where anchoring makes much sense is on
+> devices that do zero detection and thus wouldn't actually provision N
+> blocks full of zeroes.
 
-> Agree, but I think that there is also a base level performance
-> question - how does the discard/zero perform by itself.  Specifically,
-> we have had to punt the discard of a whole block device before mkfs
-> (back at RH) since it tripped up a significant number of
-> devices. Similar pain for small discards (say one fs page) - is it too
-> slow to do?
+This behavior at the block layer might also be interesting for something 
+like the VDO device (compression/dedup make it near impossible to 
+predict how much space is really there since it is content specific). 
+Might be useful as a way to hint to VDO about how to give users a 
+promise of "at least this much" space? If the content is good for 
+compression or dedup, you would get more, but never see less.
 
-Sure. Just wanted to emphasize the difference between the performance
-cost of executing the command and the potential future performance
-impact.
+Ric
 
->> WRITE SAME also has an ANCHOR flag which provides a use case we
->> currently don't have fallocate plumbing for: Allocating blocks without
->> caring about their contents. I.e. the blocks described by the I/O are
->> locked down to prevent ENOSPC for future writes.
->
-> Thanks for that detail! Sounds like ANCHOR in this case exposes
-> whatever data is there (similar I suppose to normal block device
-> behavior without discard for unused space)? Seems like it would be
-> useful for virtually provisioned devices (enterprise arrays or
-> something like dm-thin targets) more than normal SSD's?
 
-It is typically used to pin down important areas to ensure one doesn't
-get ENOSPC when writing journal or metadata. However, these are
-typically the areas that we deliberately zero to ensure predictable
-results. So I think the only case where anchoring makes much sense is on
-devices that do zero detection and thus wouldn't actually provision N
-blocks full of zeroes.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
