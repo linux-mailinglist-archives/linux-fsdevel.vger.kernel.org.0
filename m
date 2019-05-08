@@ -2,243 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D809C17A7A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 15:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1D8717AFE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 15:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728974AbfEHNWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 May 2019 09:22:31 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34962 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728056AbfEHNWb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 May 2019 09:22:31 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w12so13749386wrp.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2019 06:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6ohE2xbTpUYzLEqPlShDMeZUkRblKnapcCYi2034pYU=;
-        b=NQIlrTy4z9jZyQQXlcz/rN7Lqf9MmMk1JIr30W0TLNui5ub3oP7KGK7nJSFBZtGmfF
-         IVLv8rfHGiq31nZDgot2yHyJQgJko4j+dUo9txR4DV7SNJZwzcuWuBHnB04WOrFYYvZH
-         7s8iy607QyK28ukYrHNmH+uAnoZFxG2qfN9ZTryqOoSsj453vgDHaIYuF90cVxPadMAK
-         yKtwq1K7oFvuvWZS9cr0B0bPpp4ABSG3tXffQtg4b5xflnoDo/oiRdTrshrYupRNUtDH
-         MjD1yZn77vIK7rObsU1zzNPfZ7Rx3Ghxl7ueOoLFhJKVWD5SkOQSOJRRRkl0Hh6kaPL/
-         ekag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6ohE2xbTpUYzLEqPlShDMeZUkRblKnapcCYi2034pYU=;
-        b=Z+px+IVROdbBmGyEe9FjH5n+L+EHIzf481xcviyT+2zbwgKsOoNM5iGrKNs3hm2I+/
-         dYwDRlzeTa6TxZmGc5m5vvSyww78A50ml+zLdJkk2lmC6bKnC1mlQJG+nfxoQr5eZSMZ
-         uAQN6/BYDloslcSWe0cozotujYrzA//w73fb1I0dK7fDeSNwrEjga3ZGXrNsvXX8d+J3
-         fbB787AFBwqj6AebOWYkUw7WHrsgQu2Kt3aJjS/G8p5J1bj0/fKSPnOiHyMJw+y1JxoJ
-         SRPEikCy2cnuDcTIBRAQ7X46vPVVU5o7ftp/8FKUeNRpZcLfzEwVfyKAAZcwoHMw7+tT
-         fkOQ==
-X-Gm-Message-State: APjAAAXfazb7XKFNNtqL6VIok8+yGx8vAxfRhROiFVZhWyY4Z4gblQoj
-        zarGuuVnhDnRO6biVPz5ztyRUipQI8xrBw==
-X-Google-Smtp-Source: APXvYqxHkHuqm9N7LvcRDGJ3bK0VMl7t9TXHcMXpUw9vdDb3HAQ6mBgXXpIkglR1aEboyylnKqnCOQ==
-X-Received: by 2002:adf:df88:: with SMTP id z8mr26199414wrl.209.1557321749191;
-        Wed, 08 May 2019 06:22:29 -0700 (PDT)
-Received: from localhost.localdomain (v22018046084765073.goodsrv.de. [185.183.158.195])
-        by smtp.gmail.com with ESMTPSA id o4sm3144193wmo.20.2019.05.08.06.22.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 06:22:28 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     viro@zeniv.linux.org.uk, dhowells@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christian Brauner <christian@brauner.io>
-Subject: [PATCH] fs: make all new mount api fds cloexec by default
-Date:   Wed,  8 May 2019 15:22:18 +0200
-Message-Id: <20190508132218.3617-1-christian@brauner.io>
-X-Mailer: git-send-email 2.21.0
+        id S1727060AbfEHNrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 May 2019 09:47:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33752 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725910AbfEHNrT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 May 2019 09:47:19 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3174D307EA8C;
+        Wed,  8 May 2019 13:47:18 +0000 (UTC)
+Received: from x230.aquini.net (dhcp-17-61.bos.redhat.com [10.18.17.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3429660CA1;
+        Wed,  8 May 2019 13:47:16 +0000 (UTC)
+Date:   Wed, 8 May 2019 09:47:14 -0400
+From:   Rafael Aquini <aquini@redhat.com>
+To:     Yury Norov <yury.norov@gmail.com>
+Cc:     Joel Savitz <jsavitz@redhat.com>, linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Sandeep Patil <sspatil@android.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] fs/proc: add VmTaskSize field to /proc/$$/status
+Message-ID: <20190508134714.GA27786@x230.aquini.net>
+References: <1557158023-23021-1-git-send-email-jsavitz@redhat.com>
+ <20190507125430.GA31025@x230.aquini.net>
+ <20190508063716.GA3096@yury-thinkpad>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190508063716.GA3096@yury-thinkpad>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 08 May 2019 13:47:18 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This makes file descriptors returned from the new syscalls of the new mount
-api cloexec by default.
+On Tue, May 07, 2019 at 11:37:16PM -0700, Yury Norov wrote:
+> On Tue, May 07, 2019 at 08:54:31AM -0400, Rafael Aquini wrote:
+> > On Mon, May 06, 2019 at 11:53:43AM -0400, Joel Savitz wrote:
+> > > There is currently no easy and architecture-independent way to find the
+> > > lowest unusable virtual address available to a process without
+> > > brute-force calculation. This patch allows a user to easily retrieve
+> > > this value via /proc/<pid>/status.
+> > > 
+> > > Using this patch, any program that previously needed to waste cpu cycles
+> > > recalculating a non-sensitive process-dependent value already known to
+> > > the kernel can now be optimized to use this mechanism.
+> > > 
+> > > Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+> > > ---
+> > >  Documentation/filesystems/proc.txt | 2 ++
+> > >  fs/proc/task_mmu.c                 | 2 ++
+> > >  2 files changed, 4 insertions(+)
+> > > 
+> > > diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+> > > index 66cad5c86171..1c6a912e3975 100644
+> > > --- a/Documentation/filesystems/proc.txt
+> > > +++ b/Documentation/filesystems/proc.txt
+> > > @@ -187,6 +187,7 @@ read the file /proc/PID/status:
+> > >    VmLib:      1412 kB
+> > >    VmPTE:        20 kb
+> > >    VmSwap:        0 kB
+> > > +  VmTaskSize:	137438953468 kB
+> > >    HugetlbPages:          0 kB
+> > >    CoreDumping:    0
+> > >    THP_enabled:	  1
+> > > @@ -263,6 +264,7 @@ Table 1-2: Contents of the status files (as of 4.19)
+> > >   VmPTE                       size of page table entries
+> > >   VmSwap                      amount of swap used by anonymous private data
+> > >                               (shmem swap usage is not included)
+> > > + VmTaskSize                  lowest unusable address in process virtual memory
+> > 
+> > Can we change this help text to "size of process' virtual address space memory" ?
+> 
+> Agree. Or go in other direction and make it VmEnd
+> 
+> > >   HugetlbPages                size of hugetlb memory portions
+> > >   CoreDumping                 process's memory is currently being dumped
+> > >                               (killing the process may lead to a corrupted core)
+> > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > > index 95ca1fe7283c..0af7081f7b19 100644
+> > > --- a/fs/proc/task_mmu.c
+> > > +++ b/fs/proc/task_mmu.c
+> > > @@ -74,6 +74,8 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+> > >  	seq_put_decimal_ull_width(m,
+> > >  		    " kB\nVmPTE:\t", mm_pgtables_bytes(mm) >> 10, 8);
+> > >  	SEQ_PUT_DEC(" kB\nVmSwap:\t", swap);
+> > > +	seq_put_decimal_ull_width(m,
+> > > +		    " kB\nVmTaskSize:\t", mm->task_size >> 10, 8);
+> > >  	seq_puts(m, " kB\n");
+> > >  	hugetlb_report_usage(m, mm);
+> > >  }
+> 
+> I'm OK with technical part, but I still have questions not answered
+> (or wrongly answered) in v1 and v2. Below is the very detailed
+> description of the concerns I have.
+> 
+> 1. What is the exact reason for it? Original version tells about some
+> test that takes so much time that you were able to drink a cup of
+> coffee before it was done. The test as you said implements linear
+> search to find the last page and so is of O(n). If it's only for some
+> random test, I think the kernel can survive without it. Do you have a
+> real example of useful programs that suffer without this information?
+> 
+> 
+> 2. I have nothing against taking breaks and see nothing weird if
+> ineffective algorithms take time. On my system (x86, Ubuntu) the last
+> mapped region according to /proc/<pid>/maps is:
+> ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0     [vsyscall]
+> So to find the required address, we have to inspect 2559 pages. With a
+> binary search it would take 12 iterations at max. If my calculation is
+> wrong or your environment is completely different - please elaborate.
+> 
+> 3. As far as I can see, Linux currently does not support dynamic
+> TASK_SIZE. It means that for any platform+ABI combination VmTaskSize
+> will be always the same. So VmTaskSize would be effectively useless waste
 
-From a userspace perspective it is rarely the case that fds are supposed to
-be inherited across exec. In fact, most of the time userspace either needs
-to remember to pass the <SPECIFIC>_CLOEXEC flag along or needs to invoke
-fcntl() on fd to prevent accidentally leaking the fd. This is a much bigger
-issue than accidentally forgetting to remove the cloexec flag to inherit
-the fd.
-For old file descriptor types we can't break userspace but new ones should
-- whenever reasonable - be cloexec by default. Examples of this policy are
-the new seccomp notify fds and also pidfds. If userspace wants to inherit
-fds across exec they can remove the O_CLOEXEC flag and need to opt in to
-inheritance explicitly.
+Assuming you can have it fixed and decide upon one another at compile
+time also is not necessarely true, unfortunately. One could adjust PAGE_OFFSET, 
+at kernel config, to provide different splits for the virtual address space,
+which will affect TASK_SIZE, eventually. (see arch/x86/Kconfig)
 
-Note, this also has the advantage that we can get rid of all the special
-flags per file descriptor type for the new mount api. In total this lets us
-remove 4 flags:
-- FSMOUNT_CLOEXEC
-- FSOPEN_CLOEXEC
-- FSPICK_CLOEXEC
-- OPEN_TREE_CLOEXEC
+ 
+> of lines. In fact, TASK SIZE is compiler time information and should
+> be exposed to user in headers. In discussion to v2 Rafael Aquini answered
+> for this concern that TASK_SIZE is a runtime resolved macro. It's
+> true, but my main point is: GCC knows what type of binary it compiles
+> and is able to select proper value. We are already doing similar things
+> where appropriate. Refer for example to my arm64/ilp32 series:
+> arch/arm64/include/uapi/asm/bitsperlong.h:
+> -#define __BITS_PER_LONG 64
+> +#if defined(__LP64__)
+> +/* Assuming __LP64__ will be defined for native ELF64's and not for ILP32. */
+> +#  define __BITS_PER_LONG 64
+> +#elif defined(__ILP32__)
+> +#  define __BITS_PER_LONG 32
+> +#else
+> +#  error "Neither LP64 nor ILP32: unsupported ABI in asm/bitsperlong.h"
+> +#endif
+> 
 
-Ideally, this would be changed before rc1 is out since this would
-otherwise a UAPI break.
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
----
- fs/fsopen.c                | 13 ++++++-------
- fs/namespace.c             | 11 ++++-------
- include/uapi/linux/mount.h | 18 +++---------------
- 3 files changed, 13 insertions(+), 29 deletions(-)
+You are correct, but you miss the point Joel is trying to provide that
+value in an architectural agnostic way to avoid the hassle of keep adding
+more preprocessor complexity and being concerned about arch particularities.
 
-diff --git a/fs/fsopen.c b/fs/fsopen.c
-index 3bb9c0c8cbcc..a38fa8c616cf 100644
---- a/fs/fsopen.c
-+++ b/fs/fsopen.c
-@@ -88,12 +88,12 @@ const struct file_operations fscontext_fops = {
- /*
-  * Attach a filesystem context to a file and an fd.
-  */
--static int fscontext_create_fd(struct fs_context *fc, unsigned int o_flags)
-+static int fscontext_create_fd(struct fs_context *fc)
- {
- 	int fd;
- 
- 	fd = anon_inode_getfd("fscontext", &fscontext_fops, fc,
--			      O_RDWR | o_flags);
-+			      O_RDWR | O_CLOEXEC);
- 	if (fd < 0)
- 		put_fs_context(fc);
- 	return fd;
-@@ -126,7 +126,7 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
- 	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	if (flags & ~FSOPEN_CLOEXEC)
-+	if (flags)
- 		return -EINVAL;
- 
- 	fs_name = strndup_user(_fs_name, PAGE_SIZE);
-@@ -149,7 +149,7 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
- 	if (ret < 0)
- 		goto err_fc;
- 
--	return fscontext_create_fd(fc, flags & FSOPEN_CLOEXEC ? O_CLOEXEC : 0);
-+	return fscontext_create_fd(fc);
- 
- err_fc:
- 	put_fs_context(fc);
-@@ -169,8 +169,7 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags
- 	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	if ((flags & ~(FSPICK_CLOEXEC |
--		       FSPICK_SYMLINK_NOFOLLOW |
-+	if ((flags & ~(FSPICK_SYMLINK_NOFOLLOW |
- 		       FSPICK_NO_AUTOMOUNT |
- 		       FSPICK_EMPTY_PATH)) != 0)
- 		return -EINVAL;
-@@ -203,7 +202,7 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags
- 		goto err_fc;
- 
- 	path_put(&target);
--	return fscontext_create_fd(fc, flags & FSPICK_CLOEXEC ? O_CLOEXEC : 0);
-+	return fscontext_create_fd(fc);
- 
- err_fc:
- 	put_fs_context(fc);
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 3357c3d65475..ab8cea5d745f 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2369,11 +2369,8 @@ SYSCALL_DEFINE3(open_tree, int, dfd, const char *, filename, unsigned, flags)
- 	int error;
- 	int fd;
- 
--	BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
--
- 	if (flags & ~(AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE |
--		      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE |
--		      OPEN_TREE_CLOEXEC))
-+		      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE))
- 		return -EINVAL;
- 
- 	if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE)) == AT_RECURSIVE)
-@@ -2389,7 +2386,7 @@ SYSCALL_DEFINE3(open_tree, int, dfd, const char *, filename, unsigned, flags)
- 	if (detached && !may_mount())
- 		return -EPERM;
- 
--	fd = get_unused_fd_flags(flags & O_CLOEXEC);
-+	fd = get_unused_fd_flags(flags | O_CLOEXEC);
- 	if (fd < 0)
- 		return fd;
- 
-@@ -3352,7 +3349,7 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
- 	if (!may_mount())
- 		return -EPERM;
- 
--	if ((flags & ~(FSMOUNT_CLOEXEC)) != 0)
-+	if (flags)
- 		return -EINVAL;
- 
- 	if (attr_flags & ~(MOUNT_ATTR_RDONLY |
-@@ -3457,7 +3454,7 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
- 	}
- 	file->f_mode |= FMODE_NEED_UNMOUNT;
- 
--	ret = get_unused_fd_flags((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0);
-+	ret = get_unused_fd_flags(flags | O_CLOEXEC);
- 	if (ret >= 0)
- 		fd_install(ret, file);
- 	else
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 96a0240f23fe..c688e4ac843b 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -59,7 +59,6 @@
-  * open_tree() flags.
-  */
- #define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
--#define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
- 
- /*
-  * move_mount() flags.
-@@ -72,18 +71,12 @@
- #define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
- #define MOVE_MOUNT__MASK		0x00000077
- 
--/*
-- * fsopen() flags.
-- */
--#define FSOPEN_CLOEXEC		0x00000001
--
- /*
-  * fspick() flags.
-  */
--#define FSPICK_CLOEXEC		0x00000001
--#define FSPICK_SYMLINK_NOFOLLOW	0x00000002
--#define FSPICK_NO_AUTOMOUNT	0x00000004
--#define FSPICK_EMPTY_PATH	0x00000008
-+#define FSPICK_SYMLINK_NOFOLLOW	0x00000001
-+#define FSPICK_NO_AUTOMOUNT	0x00000002
-+#define FSPICK_EMPTY_PATH	0x00000004
- 
- /*
-  * The type of fsconfig() call made.
-@@ -99,11 +92,6 @@ enum fsconfig_command {
- 	FSCONFIG_CMD_RECONFIGURE = 7,	/* Invoke superblock reconfiguration */
- };
- 
--/*
-- * fsmount() flags.
-- */
--#define FSMOUNT_CLOEXEC		0x00000001
--
- /*
-  * Mount attributes.
-  */
--- 
-2.21.0
+You were spot on pointing the issues with the prctl(2) approach before,
+but I don't see the need to overengineer the suggested approach here. 
+The cost of getting mm->task_size exported via /proc/<pid>/status is
+neglectable, and prevents further complexity going in for such simple
+task.
 
+
+Regards,
+-- Rafael
