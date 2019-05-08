@@ -2,181 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C9F4178D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 13:49:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D809C17A7A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 15:22:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbfEHLtM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 May 2019 07:49:12 -0400
-Received: from [66.55.73.32] ([66.55.73.32]:47450 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-FAIL-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1727972AbfEHLtM (ORCPT
+        id S1728974AbfEHNWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 May 2019 09:22:31 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34962 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728056AbfEHNWb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 May 2019 07:49:12 -0400
-X-Greylist: delayed 459 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 May 2019 07:49:11 EDT
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id DDDBC2DC005C;
-        Wed,  8 May 2019 07:41:31 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1557315692;
-        bh=qGJ1gft/kRGbomR5Gk2AnhkGNE1jEj5BAJb5oyv/unk=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=D+zmQJifkhs/X6hPId/5NOett9ofrnDtUcWmjqgDQKc3MmGh9k5veKFfjfUsCtBRf
-         FZFf+wE05oyytQb7I5QSxpb8YxDDNMe6ras9l+lOOdI2I4wiVfcvVdJcxhmp074fZd
-         eRfG22Mm+p4YPGTk3H20/tVbabqxfxaCBFrcWbKEadAx4wluAml+keUbhh37xxzXH1
-         jtnTkpsPpKimyEG7DXFY/jeFQeaJwfUkTK4Y4DMRUEvIV24VAnYN4wKYIXpQo7fIGQ
-         VGyU0Ocndb2O+pHLhMLiHTXnhHlfJTLiOr/fkcrymF6eMLuTxDHq2RU1TzLj/TXOk3
-         0DHxjm3K4DlaD2QfxJxOwBDRpmGvsUA8eIUifWm1Sn5HQZJb+LlRhYErwP2ZYDV3+C
-         49RUeWCn3gF4iQu8ftb0irqDnHSyUrWFqyq4nWWgrsBOv2CSo+ZX1rkDkY6YAan0OZ
-         R5UsEzcVLiOBK726gA7kr8p0v149w9/LtDfcs4XWO4JVXsDJSNWwTjckKovyK9ONYa
-         5CpWuRo7c7nrXNmuqkuBSzsJddB0icDr3C5q9J7R5hsEiM6ZjPf1kRCxaGMNO/56Lw
-         6LX/sDBs5uEivJwatqdQjgbEIoWnyCHietGWGP4y8wVI8SHGxaoZVonCIdFTE8Jl3v
-         W7xdnNfZrPNxEU3wwX3/F4u4=
-Received: from Hawking (ntp.lan [10.0.1.1])
-        (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x48BfEeD017421
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 8 May 2019 21:41:15 +1000 (AEST)
-        (envelope-from alastair@d-silva.org)
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     "'David Laight'" <David.Laight@ACULAB.COM>,
-        "'Alastair D'Silva'" <alastair@au1.ibm.com>
-Cc:     "'Jani Nikula'" <jani.nikula@linux.intel.com>,
-        "'Joonas Lahtinen'" <joonas.lahtinen@linux.intel.com>,
-        "'Rodrigo Vivi'" <rodrigo.vivi@intel.com>,
-        "'David Airlie'" <airlied@linux.ie>,
-        "'Daniel Vetter'" <daniel@ffwll.ch>,
-        "'Dan Carpenter'" <dan.carpenter@oracle.com>,
-        "'Karsten Keil'" <isdn@linux-pingi.de>,
-        "'Jassi Brar'" <jassisinghbrar@gmail.com>,
-        "'Tom Lendacky'" <thomas.lendacky@amd.com>,
-        "'David S. Miller'" <davem@davemloft.net>,
-        "'Jose Abreu'" <Jose.Abreu@synopsys.com>,
-        "'Kalle Valo'" <kvalo@codeaurora.org>,
-        "'Stanislaw Gruszka'" <sgruszka@redhat.com>,
-        "'Benson Leung'" <bleung@chromium.org>,
-        "'Enric Balletbo i Serra'" <enric.balletbo@collabora.com>,
-        "'James E.J. Bottomley'" <jejb@linux.ibm.com>,
-        "'Martin K. Petersen'" <martin.petersen@oracle.com>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'Alexander Viro'" <viro@zeniv.linux.org.uk>,
-        "'Petr Mladek'" <pmladek@suse.com>,
-        "'Sergey Senozhatsky'" <sergey.senozhatsky@gmail.com>,
-        "'Steven Rostedt'" <rostedt@goodmis.org>,
-        "'Andrew Morton'" <akpm@linux-foundation.org>,
-        <intel-gfx@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <ath10k@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20190508070148.23130-1-alastair@au1.ibm.com> <20190508070148.23130-5-alastair@au1.ibm.com> <c98a499a4e824bcd824d5ad53d037c67@AcuMS.aculab.com>
-In-Reply-To: <c98a499a4e824bcd824d5ad53d037c67@AcuMS.aculab.com>
-Subject: RE: [PATCH v2 4/7] lib/hexdump.c: Replace ascii bool in hex_dump_to_buffer with flags
-Date:   Wed, 8 May 2019 21:41:15 +1000
-Message-ID: <0a1c01d50592$f90f6f00$eb2e4d00$@d-silva.org>
+        Wed, 8 May 2019 09:22:31 -0400
+Received: by mail-wr1-f67.google.com with SMTP id w12so13749386wrp.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2019 06:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6ohE2xbTpUYzLEqPlShDMeZUkRblKnapcCYi2034pYU=;
+        b=NQIlrTy4z9jZyQQXlcz/rN7Lqf9MmMk1JIr30W0TLNui5ub3oP7KGK7nJSFBZtGmfF
+         IVLv8rfHGiq31nZDgot2yHyJQgJko4j+dUo9txR4DV7SNJZwzcuWuBHnB04WOrFYYvZH
+         7s8iy607QyK28ukYrHNmH+uAnoZFxG2qfN9ZTryqOoSsj453vgDHaIYuF90cVxPadMAK
+         yKtwq1K7oFvuvWZS9cr0B0bPpp4ABSG3tXffQtg4b5xflnoDo/oiRdTrshrYupRNUtDH
+         MjD1yZn77vIK7rObsU1zzNPfZ7Rx3Ghxl7ueOoLFhJKVWD5SkOQSOJRRRkl0Hh6kaPL/
+         ekag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6ohE2xbTpUYzLEqPlShDMeZUkRblKnapcCYi2034pYU=;
+        b=Z+px+IVROdbBmGyEe9FjH5n+L+EHIzf481xcviyT+2zbwgKsOoNM5iGrKNs3hm2I+/
+         dYwDRlzeTa6TxZmGc5m5vvSyww78A50ml+zLdJkk2lmC6bKnC1mlQJG+nfxoQr5eZSMZ
+         uAQN6/BYDloslcSWe0cozotujYrzA//w73fb1I0dK7fDeSNwrEjga3ZGXrNsvXX8d+J3
+         fbB787AFBwqj6AebOWYkUw7WHrsgQu2Kt3aJjS/G8p5J1bj0/fKSPnOiHyMJw+y1JxoJ
+         SRPEikCy2cnuDcTIBRAQ7X46vPVVU5o7ftp/8FKUeNRpZcLfzEwVfyKAAZcwoHMw7+tT
+         fkOQ==
+X-Gm-Message-State: APjAAAXfazb7XKFNNtqL6VIok8+yGx8vAxfRhROiFVZhWyY4Z4gblQoj
+        zarGuuVnhDnRO6biVPz5ztyRUipQI8xrBw==
+X-Google-Smtp-Source: APXvYqxHkHuqm9N7LvcRDGJ3bK0VMl7t9TXHcMXpUw9vdDb3HAQ6mBgXXpIkglR1aEboyylnKqnCOQ==
+X-Received: by 2002:adf:df88:: with SMTP id z8mr26199414wrl.209.1557321749191;
+        Wed, 08 May 2019 06:22:29 -0700 (PDT)
+Received: from localhost.localdomain (v22018046084765073.goodsrv.de. [185.183.158.195])
+        by smtp.gmail.com with ESMTPSA id o4sm3144193wmo.20.2019.05.08.06.22.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 May 2019 06:22:28 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     viro@zeniv.linux.org.uk, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Christian Brauner <christian@brauner.io>
+Subject: [PATCH] fs: make all new mount api fds cloexec by default
+Date:   Wed,  8 May 2019 15:22:18 +0200
+Message-Id: <20190508132218.3617-1-christian@brauner.io>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGz7QD7bMLLz3XdMyQiMIIzLY+D4AHts+RHAcfZVGymhZij0A==
-Content-Language: en-au
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Wed, 08 May 2019 21:41:26 +1000 (AEST)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> -----Original Message-----
-> From: David Laight <David.Laight@ACULAB.COM>
-> Sent: Wednesday, 8 May 2019 7:20 PM
-> To: 'Alastair D'Silva' <alastair@au1.ibm.com>; alastair@d-silva.org
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>; Joonas Lahtinen
-> <joonas.lahtinen@linux.intel.com>; Rodrigo Vivi =
-<rodrigo.vivi@intel.com>;
-> David Airlie <airlied@linux.ie>; Daniel Vetter <daniel@ffwll.ch>; Dan
-> Carpenter <dan.carpenter@oracle.com>; Karsten Keil <isdn@linux-
-> pingi.de>; Jassi Brar <jassisinghbrar@gmail.com>; Tom Lendacky
-> <thomas.lendacky@amd.com>; David S. Miller <davem@davemloft.net>;
-> Jose Abreu <Jose.Abreu@synopsys.com>; Kalle Valo
-> <kvalo@codeaurora.org>; Stanislaw Gruszka <sgruszka@redhat.com>;
-> Benson Leung <bleung@chromium.org>; Enric Balletbo i Serra
-> <enric.balletbo@collabora.com>; James E.J. Bottomley
-> <jejb@linux.ibm.com>; Martin K. Petersen <martin.petersen@oracle.com>;
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Alexander Viro
-> <viro@zeniv.linux.org.uk>; Petr Mladek <pmladek@suse.com>; Sergey
-> Senozhatsky <sergey.senozhatsky@gmail.com>; Steven Rostedt
-> <rostedt@goodmis.org>; Andrew Morton <akpm@linux-foundation.org>;
-> intel-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; =
-linux-
-> kernel@vger.kernel.org; netdev@vger.kernel.org;
-> ath10k@lists.infradead.org; linux-wireless@vger.kernel.org; linux-
-> scsi@vger.kernel.org; linux-fbdev@vger.kernel.org;
-> devel@driverdev.osuosl.org; linux-fsdevel@vger.kernel.org
-> Subject: RE: [PATCH v2 4/7] lib/hexdump.c: Replace ascii bool in
-> hex_dump_to_buffer with flags
->=20
-> From: Alastair D'Silva
-> > Sent: 08 May 2019 08:02
-> > To: alastair@d-silva.org
-> ...
-> > --- a/include/linux/printk.h
-> > +++ b/include/linux/printk.h
-> > @@ -480,13 +480,13 @@ enum {
-> >  	DUMP_PREFIX_OFFSET
-> >  };
-> >
-> > -extern int hex_dump_to_buffer(const void *buf, size_t len, int =
-rowsize,
-> > -			      int groupsize, char *linebuf, size_t linebuflen,
-> > -			      bool ascii);
-> > -
-> >  #define HEXDUMP_ASCII			(1 << 0)
-> >  #define HEXDUMP_SUPPRESS_REPEATED	(1 << 1)
->=20
-> These ought to be BIT(0) and BIT(1)
+This makes file descriptors returned from the new syscalls of the new mount
+api cloexec by default.
 
-Thanks, I'll address that.
+From a userspace perspective it is rarely the case that fds are supposed to
+be inherited across exec. In fact, most of the time userspace either needs
+to remember to pass the <SPECIFIC>_CLOEXEC flag along or needs to invoke
+fcntl() on fd to prevent accidentally leaking the fd. This is a much bigger
+issue than accidentally forgetting to remove the cloexec flag to inherit
+the fd.
+For old file descriptor types we can't break userspace but new ones should
+- whenever reasonable - be cloexec by default. Examples of this policy are
+the new seccomp notify fds and also pidfds. If userspace wants to inherit
+fds across exec they can remove the O_CLOEXEC flag and need to opt in to
+inheritance explicitly.
 
->=20
-> > +extern int hex_dump_to_buffer(const void *buf, size_t len, int =
-rowsize,
-> > +			      int groupsize, char *linebuf, size_t linebuflen,
-> > +			      u64 flags);
->=20
-> Why 'u64 flags' ?
-> How many flags do you envisage ??
-> Your HEXDUMP_ASCII (etc) flags are currently signed values and might =
-get
-> sign extended causing grief.
-> 'unsigned int flags' is probably sufficient.
+Note, this also has the advantage that we can get rid of all the special
+flags per file descriptor type for the new mount api. In total this lets us
+remove 4 flags:
+- FSMOUNT_CLOEXEC
+- FSOPEN_CLOEXEC
+- FSPICK_CLOEXEC
+- OPEN_TREE_CLOEXEC
 
-I was trying to avoid having to change the prototype again in the =
-future, but it's not a big deal, if enough work goes in to require more =
-than 32 bits, it can be updated at that point.
+Ideally, this would be changed before rc1 is out since this would
+otherwise a UAPI break.
 
->=20
-> I've not really looked at the code, it seems OTT in places though.
+Signed-off-by: Christian Brauner <christian@brauner.io>
+---
+ fs/fsopen.c                | 13 ++++++-------
+ fs/namespace.c             | 11 ++++-------
+ include/uapi/linux/mount.h | 18 +++---------------
+ 3 files changed, 13 insertions(+), 29 deletions(-)
 
-I'll wait for more concrete criticisms here, this it a bit too vague to =
-take any action on.
-
-> If someone copies it somewhere where the performance matters (I've =
-user
-> space code which is dominated by its tracing!) then you don't want all =
-the
-> function calls and conditionals even if you want some of the =
-functionality.
-
-Calling hexdump (even in it's unaltered form) in performance critical =
-code is always going to suck. As you mentioned before, it's all based =
-around printf. A performance conscious user would be better off building =
-their code around hex_asc_hi/lo instead (see lib/vsprintf.c:hex_string).
-
---=20
-Alastair D'Silva           mob: 0423 762 819
-skype: alastair_dsilva     msn: alastair@d-silva.org
-blog: http://alastair.d-silva.org    Twitter: @EvilDeece
-
-
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+index 3bb9c0c8cbcc..a38fa8c616cf 100644
+--- a/fs/fsopen.c
++++ b/fs/fsopen.c
+@@ -88,12 +88,12 @@ const struct file_operations fscontext_fops = {
+ /*
+  * Attach a filesystem context to a file and an fd.
+  */
+-static int fscontext_create_fd(struct fs_context *fc, unsigned int o_flags)
++static int fscontext_create_fd(struct fs_context *fc)
+ {
+ 	int fd;
+ 
+ 	fd = anon_inode_getfd("fscontext", &fscontext_fops, fc,
+-			      O_RDWR | o_flags);
++			      O_RDWR | O_CLOEXEC);
+ 	if (fd < 0)
+ 		put_fs_context(fc);
+ 	return fd;
+@@ -126,7 +126,7 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
+ 	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+-	if (flags & ~FSOPEN_CLOEXEC)
++	if (flags)
+ 		return -EINVAL;
+ 
+ 	fs_name = strndup_user(_fs_name, PAGE_SIZE);
+@@ -149,7 +149,7 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
+ 	if (ret < 0)
+ 		goto err_fc;
+ 
+-	return fscontext_create_fd(fc, flags & FSOPEN_CLOEXEC ? O_CLOEXEC : 0);
++	return fscontext_create_fd(fc);
+ 
+ err_fc:
+ 	put_fs_context(fc);
+@@ -169,8 +169,7 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags
+ 	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+-	if ((flags & ~(FSPICK_CLOEXEC |
+-		       FSPICK_SYMLINK_NOFOLLOW |
++	if ((flags & ~(FSPICK_SYMLINK_NOFOLLOW |
+ 		       FSPICK_NO_AUTOMOUNT |
+ 		       FSPICK_EMPTY_PATH)) != 0)
+ 		return -EINVAL;
+@@ -203,7 +202,7 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags
+ 		goto err_fc;
+ 
+ 	path_put(&target);
+-	return fscontext_create_fd(fc, flags & FSPICK_CLOEXEC ? O_CLOEXEC : 0);
++	return fscontext_create_fd(fc);
+ 
+ err_fc:
+ 	put_fs_context(fc);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 3357c3d65475..ab8cea5d745f 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2369,11 +2369,8 @@ SYSCALL_DEFINE3(open_tree, int, dfd, const char *, filename, unsigned, flags)
+ 	int error;
+ 	int fd;
+ 
+-	BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
+-
+ 	if (flags & ~(AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE |
+-		      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE |
+-		      OPEN_TREE_CLOEXEC))
++		      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE))
+ 		return -EINVAL;
+ 
+ 	if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE)) == AT_RECURSIVE)
+@@ -2389,7 +2386,7 @@ SYSCALL_DEFINE3(open_tree, int, dfd, const char *, filename, unsigned, flags)
+ 	if (detached && !may_mount())
+ 		return -EPERM;
+ 
+-	fd = get_unused_fd_flags(flags & O_CLOEXEC);
++	fd = get_unused_fd_flags(flags | O_CLOEXEC);
+ 	if (fd < 0)
+ 		return fd;
+ 
+@@ -3352,7 +3349,7 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 	if (!may_mount())
+ 		return -EPERM;
+ 
+-	if ((flags & ~(FSMOUNT_CLOEXEC)) != 0)
++	if (flags)
+ 		return -EINVAL;
+ 
+ 	if (attr_flags & ~(MOUNT_ATTR_RDONLY |
+@@ -3457,7 +3454,7 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 	}
+ 	file->f_mode |= FMODE_NEED_UNMOUNT;
+ 
+-	ret = get_unused_fd_flags((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0);
++	ret = get_unused_fd_flags(flags | O_CLOEXEC);
+ 	if (ret >= 0)
+ 		fd_install(ret, file);
+ 	else
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+index 96a0240f23fe..c688e4ac843b 100644
+--- a/include/uapi/linux/mount.h
++++ b/include/uapi/linux/mount.h
+@@ -59,7 +59,6 @@
+  * open_tree() flags.
+  */
+ #define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
+-#define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
+ 
+ /*
+  * move_mount() flags.
+@@ -72,18 +71,12 @@
+ #define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
+ #define MOVE_MOUNT__MASK		0x00000077
+ 
+-/*
+- * fsopen() flags.
+- */
+-#define FSOPEN_CLOEXEC		0x00000001
+-
+ /*
+  * fspick() flags.
+  */
+-#define FSPICK_CLOEXEC		0x00000001
+-#define FSPICK_SYMLINK_NOFOLLOW	0x00000002
+-#define FSPICK_NO_AUTOMOUNT	0x00000004
+-#define FSPICK_EMPTY_PATH	0x00000008
++#define FSPICK_SYMLINK_NOFOLLOW	0x00000001
++#define FSPICK_NO_AUTOMOUNT	0x00000002
++#define FSPICK_EMPTY_PATH	0x00000004
+ 
+ /*
+  * The type of fsconfig() call made.
+@@ -99,11 +92,6 @@ enum fsconfig_command {
+ 	FSCONFIG_CMD_RECONFIGURE = 7,	/* Invoke superblock reconfiguration */
+ };
+ 
+-/*
+- * fsmount() flags.
+- */
+-#define FSMOUNT_CLOEXEC		0x00000001
+-
+ /*
+  * Mount attributes.
+  */
+-- 
+2.21.0
 
