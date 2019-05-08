@@ -2,124 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53000180D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 22:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46DA2181D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 23:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbfEHUKJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 May 2019 16:10:09 -0400
-Received: from mail-it1-f178.google.com ([209.85.166.178]:51350 "EHLO
-        mail-it1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726709AbfEHUKJ (ORCPT
+        id S1728279AbfEHV6h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 May 2019 17:58:37 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:42200 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726837AbfEHV6h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 May 2019 16:10:09 -0400
-Received: by mail-it1-f178.google.com with SMTP id s3so6241799itk.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2019 13:10:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Vx8Ow06kq29IlKUgtcX/TbYg2KMhAxUkXiBjxkCvUeg=;
-        b=PpErFxB7TnTclCLCVzWY6V6Fx2wmr0USRSvTi9VzKXuXdFNW1530XYlXtiQC9UDnfy
-         jPOnaTSR07YWLghR3XeSRF2bKDMkyfPoaF1V8A/cCeek5jbyu2ufU3xq3NBjpLrlskew
-         j0+NpmL1lKdnJd867tcxk+AzanK/dCnB0KksqF05U/fTsxBPUgy5zHvbE0DHYxslv4iV
-         EqxdoXi2N7jStgh/a0cCgYLsa3lholEaQoUt/r/5h+gmuCIZTxyu8A+aq1AprJvlI8mD
-         y/YSxDLDf/U6jQCmI0Rnlc3JotFrCxhfmHTQiuz3vJkFL+CsVhQj9gBXZwvyl4GcM5wa
-         vYEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Vx8Ow06kq29IlKUgtcX/TbYg2KMhAxUkXiBjxkCvUeg=;
-        b=B/fxe9dfoetIoBP2KmMaB1P+qA7OEsHdG19DSakqTL6jalOjyZ01UC3FJMI0sz4+um
-         3PUUkCULLgpeKpdhnzqOOfPYGIOsTBuNZlfQAxBgmdksNJx+CwfuAO86yrKJ+9kC5SpZ
-         ae0tWDoOOR++jThP2I/MDPaKYpBZDYxojSQa5imQ2fEckRvZek9K8zHkh8G+HcXiAW7S
-         cre0zkPLsarIz9HglTd1oICSM+2cxqF8kg3IE0nCufxJ+zqRatHopPFsT1mh+eXtvxn8
-         o3PO96nNH9HOhKZ48mPKmJxC+4osAgP73dwsszkULMpmsxmDvgscWWReEwilYk0CKPUj
-         kwzA==
-X-Gm-Message-State: APjAAAW294IJ3q8tmThPvkaUSYOBH3W2kcx9dsvmJbRmAZTSrNUG45L9
-        kA4yAyhza0KaIkpiZbmGJtiUsph2szDZ98pp4Vf2
-X-Google-Smtp-Source: APXvYqzaTRdxrVcnUjee2nV403JUqIlr8cnQC8HK75JUJYyp9TpQlUf/FAuc5UldLUfnINFjYN23PHBssyLX8/CbBfQ=
-X-Received: by 2002:a24:f584:: with SMTP id k126mr5260248ith.31.1557346207755;
- Wed, 08 May 2019 13:10:07 -0700 (PDT)
+        Wed, 8 May 2019 17:58:37 -0400
+Received: from dread.disaster.area (pa49-181-171-240.pa.nsw.optusnet.com.au [49.181.171.240])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id F37BBC927;
+        Thu,  9 May 2019 07:58:32 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hOUa8-0005Mv-Ex; Thu, 09 May 2019 07:58:32 +1000
+Date:   Thu, 9 May 2019 07:58:32 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ric Wheeler <ricwheeler@gmail.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        lczerner@redhat.com
+Subject: Re: Testing devices for discard support properly
+Message-ID: <20190508215832.GR1454@dread.disaster.area>
+References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
+ <20190507220449.GP1454@dread.disaster.area>
+ <a409b3d1-960b-84a4-1b8d-1822c305ea18@gmail.com>
+ <20190508011407.GQ1454@dread.disaster.area>
+ <13b63de0-18bc-eb24-63b4-3c69c6a007b3@gmail.com>
+ <yq1a7fwlvzb.fsf@oracle.com>
+ <0a16285c-545a-e94a-c733-bcc3d4556557@gmail.com>
 MIME-Version: 1.0
-References: <20190502040331.81196-1-ezemtsov@google.com> <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
- <20190502131034.GA25007@mit.edu> <20190502132623.GU23075@ZenIV.linux.org.uk>
- <CAK8JDrFZW1jwOmhq+YVDPJi9jWWrCRkwpqQ085EouVSyzw-1cg@mail.gmail.com> <CAOQ4uxhDYvBOLBkyYXRC6aS_me+Q=1sBAtzOSkdqbo+N-Rtx=Q@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhDYvBOLBkyYXRC6aS_me+Q=1sBAtzOSkdqbo+N-Rtx=Q@mail.gmail.com>
-From:   Eugene Zemtsov <ezemtsov@google.com>
-Date:   Wed, 8 May 2019 13:09:56 -0700
-Message-ID: <CAK8JDrGRzA+yphpuX+GQ0syRwF_p2Fora+roGCnYqB5E1eOmXA@mail.gmail.com>
-Subject: Re: Initial patches for Incremental FS
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Theodore Tso <tytso@mit.edu>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Richard Weinberger <richard.weinberger@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a16285c-545a-e94a-c733-bcc3d4556557@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
+        a=LhzQONXuMOhFZtk4TmSJIw==:117 a=LhzQONXuMOhFZtk4TmSJIw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
+        a=7-415B0cAAAA:8 a=P-JoTcFpvW-QmwlPBo0A:9 a=Hlrat0HlZ4lAMFzh:21
+        a=eYFAa6E9YxbT3pTG:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> This really sounds to me like the properties of a network filesystem
-> with local cache. It seems that you did a thorough research, but
-> I am not sure that you examined the fscache option properly.
-> Remember, if an existing module does not meet your needs,
-> it does not mean that creating a new module is the right answer.
-> It may be that extending an existing module is something that
-> everyone, including yourself will benefit from.
+On Wed, May 08, 2019 at 01:09:03PM -0400, Ric Wheeler wrote:
+> 
+> On 5/8/19 1:03 PM, Martin K. Petersen wrote:
+> > Ric,
+> > 
+> > > That all makes sense, but I think it is orthogonal in large part to
+> > > the need to get a good way to measure performance.
+> > There are two parts to the performance puzzle:
+> > 
+> >   1. How does mixing discards/zeroouts with regular reads and writes
+> >      affect system performance?
+> > 
+> >   2. How does issuing discards affect the tail latency of the device for
+> >      a given workload? Is it worth it?
+> > 
+> > Providing tooling for (1) is feasible whereas (2) is highly
+> > workload-specific. So unless we can make the cost of (1) negligible,
+> > we'll have to defer (2) to the user.
+> 
+> Agree, but I think that there is also a base level performance question -
+> how does the discard/zero perform by itself.
+> 
+> Specifically, we have had to punt the discard of a whole block device before
+> mkfs (back at RH) since it tripped up a significant number of devices.
+> Similar pain for small discards (say one fs page) - is it too slow to do?
 
-> I am sure you can come up with caching policy that will meet your needs
-> and AFAIK FUSE protocol supports invalidating cache entries from server
-> (i.e. on "external" changes).
+Small discards are already skipped is the device indicates it has
+a minumum discard granularity. This is another reason why the "-o
+discard" mount option isn't sufficient by itself and fstrim is still
+required - filesystems often only free small isolated chunks of
+space at a time and hence never may send discards to the device.
 
-You=E2=80=99re right. On a very high level it looks quite plausible that in=
-cfs can be
-replaced by a combination of
-1. fscache interface change to accomodate compression, hashes etc
-2. a new fscache backend
-3. a FUSE change, that would allow FUSE to load data to fscache and server =
-data
-    from directly fscache.
+> > > For SCSI, I think the "WRITE_SAME" command *might* do discard
+> > > internally or just might end up re-writing large regions of slow,
+> > > spinning drives so I think it is less interesting.
+> > WRITE SAME has an UNMAP flag that tells the device to deallocate, if
+> > possible. The results are deterministic (unlike the UNMAP command).
 
-After it is all done, FUSE and fscache will have more features and support =
-more
-use cases for years to come. But this approach is not without
-tradeoffs, features
-increase support burden and FUSE interface changes are almost
-impossible to deprecate.
+That's kinda what I'm getting at here - we need to define the
+behaviour the OS provides users, and then ensure that the behaviour
+is standardised correctly so that devices behave correctly. i.e.  we
+want devices to support WRITE_SAME w/ UNMAP flag well (because
+that's an exact representation of FALLOC_FL_PUNCH_HOLE
+requirements), and don't really care about the UNMAP command.
 
-On the other hand we have a simple self-contained module, which handles
-incremental app loading for Android. All in all, incfs currently has
-about 6KLOC,
-where only 3.5KLOC is actual kernel code. It is not likely to be used =E2=
-=80=9Cas is=E2=80=9D
-for other purposes, but it doesn=E2=80=99t increase already significant com=
-plexity of
-fscache, FUSE, and VFS. People working with those components won=E2=80=99t =
-need to fret
-about extra hooks and corner cases created for incremental app loading.
-If for some reason incfs doesn=E2=80=99t gain wide adoption, it can be rela=
-tively
-painlessly removed from the kernel.
+> > WRITE SAME also has an ANCHOR flag which provides a use case we
+> > currently don't have fallocate plumbing for: Allocating blocks without
+> > caring about their contents. I.e. the blocks described by the I/O are
+> > locked down to prevent ENOSPC for future writes.
 
-Having a standalone module is very important for me on a yet another level.
-It helps in porting it to older kernels. Patches scattered across fs/ subst=
-ree
-will be less portable and self contained. (BTW this is the reason to have
-a version file in sysfs - new versions of incfs can be backported to
-older kernels.)
+So WRITE_SAME (0) with an ANCHOR flag does not return zeroes on
+subsequent reads? i.e. it is effectively
+fallocate(FALLOC_FL_NO_HIDE_STALE) preallocation semantics?
 
-Hopefully this will clarify why I think that VFS interface is the right bou=
-ndary
-for incremental-fs. It is sufficiently low-level to achieve all
-goals of incremental app loading, but at the same time sufficiently isolate=
-d
-not to meddle with the rest of the kernel.
+For many use cases cases we actually want zeroed space to be
+guaranteed so we don't expose stale data from previous device use
+into the new user's visibility - can that be done with WRITE_SAME
+and the ANCHOR flag?
 
-Thoughts?
+Cheers,
 
-Thanks,
-Eugene.
+Dave.
+
+-- 
+Dave Chinner
+david@fromorbit.com
