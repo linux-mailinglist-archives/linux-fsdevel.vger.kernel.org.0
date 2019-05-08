@@ -2,149 +2,266 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D9D416E8D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 03:17:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E91E316ED5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 04:13:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbfEHBOP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 May 2019 21:14:15 -0400
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:46577 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726276AbfEHBOO (ORCPT
+        id S1726435AbfEHCNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 May 2019 22:13:04 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43750 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726371AbfEHCNE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 May 2019 21:14:14 -0400
-Received: from dread.disaster.area (pa49-181-171-240.pa.nsw.optusnet.com.au [49.181.171.240])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id B0CA13DBA92;
-        Wed,  8 May 2019 11:14:09 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hOB9r-0005zP-R5; Wed, 08 May 2019 11:14:07 +1000
-Date:   Wed, 8 May 2019 11:14:07 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ric Wheeler <ricwheeler@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        lczerner@redhat.com
-Subject: Re: Testing devices for discard support properly
-Message-ID: <20190508011407.GQ1454@dread.disaster.area>
-References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
- <20190507220449.GP1454@dread.disaster.area>
- <a409b3d1-960b-84a4-1b8d-1822c305ea18@gmail.com>
+        Tue, 7 May 2019 22:13:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=KLUJds55VK5wfuQIecfJeAznkW/rjS8krJ4iieQMrlM=; b=tssjbXhtg14AjIn8ih+V1mun7c
+        KuZfpq0AzpZeVpXGTJldMwIPiHg3wF1ZKju0TTzme4FU1wiYttpO7ECWDDTCz+XGh1chMohxVAjOY
+        s8m2oERwJPQw3Pac2MrN5a8EX0e3iyAti6mAxtH2aACg182I6+L0CIBJOd7nim9p5keeOgT5H2jF8
+        29pCRV9/FN6eEDLi/b3u+hGfohtOJbTRlMEuAziF6bVloBoZJUATWTg/RleOGwU9+h9ZSQmn+KQEn
+        13dizgMXllhEVD5myM8ErBFxdaqz47OvrctYksjrYS8AyAY0pm3dVUj9eg3sOFtZ7bwnMvcGnmprD
+        xrnzJfKQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hOC4i-0008WM-LS; Wed, 08 May 2019 02:12:53 +0000
+Subject: Re: [RFC PATCH 1/4] block: Block Layer changes for Inline Encryption
+ Support
+To:     Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Parshuram Raju Thombare <pthombar@cadence.com>,
+        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>
+References: <20190506223544.195371-1-satyat@google.com>
+ <20190506223544.195371-2-satyat@google.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <5a1632db-c59a-6ac1-87d7-9307e4744aa7@infradead.org>
+Date:   Tue, 7 May 2019 19:12:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a409b3d1-960b-84a4-1b8d-1822c305ea18@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
-        a=LhzQONXuMOhFZtk4TmSJIw==:117 a=LhzQONXuMOhFZtk4TmSJIw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
-        a=7-415B0cAAAA:8 a=pTFbs0_EDW14dEQKZ04A:9 a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20190506223544.195371-2-satyat@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 07, 2019 at 08:07:53PM -0400, Ric Wheeler wrote:
-> On 5/7/19 6:04 PM, Dave Chinner wrote:
-> > On Mon, May 06, 2019 at 04:56:44PM -0400, Ric Wheeler wrote:
-> > > (repost without the html spam, sorry!)
-> > > 
-> > > Last week at LSF/MM, I suggested we can provide a tool or test suite to test
-> > > discard performance.
-> > > 
-> > > Put in the most positive light, it will be useful for drive vendors to use
-> > > to qualify their offerings before sending them out to the world. For
-> > > customers that care, they can use the same set of tests to help during
-> > > selection to weed out any real issues.
-> > > 
-> > > Also, community users can run the same tools of course and share the
-> > > results.
-> > My big question here is this:
-> > 
-> > - is "discard" even relevant for future devices?
-> 
-> 
-> Hard to tell - current devices vary greatly.
-> 
-> Keep in mind that discard (or the interfaces you mention below) are not
-> specific to SSD devices on flash alone, they are also useful for letting us
-> free up space on software block devices. For example, iSCSI targets backed
-> by a file, dm thin devices, virtual machines backed by files on the host,
-> etc.
+Hi,
+This is documentation comments...
 
-Sure, but those use cases are entirely covered by ithe well defined
-semantics of FALLOC_FL_ALLOC, FALLOC_FL_ZERO_RANGE and
-FALLOC_FL_PUNCH_HOLE.
+On 5/6/19 3:35 PM, Satya Tangirala wrote:
+> diff --git a/Documentation/block/blk-crypto.txt b/Documentation/block/blk-crypto.txt
+> new file mode 100644
+> index 000000000000..a1b82361cb16
+> --- /dev/null
+> +++ b/Documentation/block/blk-crypto.txt
+> @@ -0,0 +1,185 @@
+> +BLK-CRYPTO and KEYSLOT MANAGER
+> +===========================
+> +
+> +CONTENTS
+> +1. Objective
+> +2. Constraints and notes
+> +3. Design
+> +4. Blk-crypto
+> + 4-1 What does blk-crypto do on bio submission
+> +5. Layered Devices
+> +6. Future optimizations for layered devices
+> +
+> +1. Objective
+> +============
+> +
+> +We want to support inline encryption (IE) in the kernel.
+> +To allow for testing, we also want a software fallback when actual
+> +IE hardware is absent. We also want IE to work with layered devices
+> +like dm and loopback (i.e. we want to be able to use the IE hardware
+> +of the underlying devices if present, or else fall back to software
+> +en/decryption).
+> +
+> +
+> +2. Constraints and notes
+> +========================
+> +
+> +1) IE hardware have a limited number of “keyslots” that can be programmed
+> +with an encryption context (key, algorithm, data unit size, etc.) at any time.
+> +One can specify a keyslot in a data requests made to the device, and when the
 
-> > i.e. before we start saying "we want discard to not suck", perhaps
-> > we should list all the specific uses we ahve for discard, what we
-> > expect to occur, and whether we have better interfaces than
-> > "discard" to acheive that thing.
-> > 
-> > Indeed, we have fallocate() on block devices now, which means we
-> > have a well defined block device space management API for clearing
-> > and removing allocated block device space. i.e.:
-> > 
-> > 	FALLOC_FL_ZERO_RANGE: Future reads from the range must
-> > 	return zero and future writes to the range must not return
-> > 	ENOSPC. (i.e. must remain allocated space, can physically
-> > 	write zeros to acheive this)
-> > 
-> > 	FALLOC_FL_PUNCH_HOLE: Free the backing store and guarantee
-> > 	future reads from the range return zeroes. Future writes to
-> > 	the range may return ENOSPC. This operation fails if the
-> > 	underlying device cannot do this operation without
-> > 	physically writing zeroes.
-> > 
-> > 	FALLOC_FL_PUNCH_HOLE | FALLOC_FL_NO_HIDE_STALE: run a
-> > 	discard on the range and provide no guarantees about the
-> > 	result. It may or may not do anything, and a subsequent read
-> > 	could return anything at all.
-> > 
-> > IMO, trying to "optimise discard" is completely the wrong direction
-> > to take. We should be getting rid of "discard" and it's interfaces
-> > operations - deprecate the ioctls, fix all other kernel callers of
-> > blkdev_issue_discard() to call blkdev_fallocate() and ensure that
-> > drive vendors understand that they need to make FALLOC_FL_ZERO_RANGE
-> > and FALLOC_FL_PUNCH_HOLE work, and that FALLOC_FL_PUNCH_HOLE |
-> > FALLOC_FL_NO_HIDE_STALE is deprecated (like discard) and will be
-> > going away.
-> > 
-> > So, can we just deprecate blkdev_issue_discard and all the
-> > interfaces that lead to it as a first step?
-> 
-> 
-> In this case, I think you would lose a couple of things:
-> 
-> * informing the block device on truncate or unlink that the space was freed
-> up (or we simply hide that under there some way but then what does this
-> really change?). Wouldn't this be the most common source for informing
-> devices of freed space?
+                             in data requests
+or
+                             in a data request
 
-Why would we lose that? The filesytem calls
-blkdev_fallocate(FALLOC_FL_PUNCH_HOLE) (or a better, async interface
-to the same functionality) instead of blkdev_issue_discard().  i.e.
-the filesystems use interfaces with guaranteed semantics instead of
-"discard".
+> +device will en/decrypt the data using the encryption context programmed into
+> +that specified keyslot. Of course, when possible, we want to make multiple
+> +requests with the the same encryption context share the same keyslot.
+> +
+> +2) We need a way for filesystems to specify an encryption context to use for
+> +en/decrypting a struct bio, and a device driver (like UFS) needs to be able
+> +to use that encryption context when it processes the bio.
+> +
+> +3) We need a way for device drivers to expose their capabilities in a unified
+> +way to the upper layers.
+> +
+> +
+> +3. Design
+> +=========
+> +
+> +We add a struct bio_crypt_context to struct bio that can represent an
+> +encryption context, because we need to able to pass this encryption context
+> +from the FS layer to the device driver to act upon.
+> +
+> +While IE hardware works on the notion of keyslots, the FS layer has no
+> +knowledge of keyslots - it simply wants to specify an encryption context to
+> +use while en/decrypting a bio.
+> +
+> +We introduce a keyslot manager (KSM) that handles the translation from
+> +encryption contexts specified by the FS to keyslots on the IE hardware.
+> +This KSM also serves as the way IE hardware can expose their capabilities to
+> +upper layers. The generic mode of operation is: each device driver that wants
+> +to support IE will construct a KSM and set it up in its struct request_queue.
+> +Upper layers that want to use IE on this device can then use this KSM in
+> +the device’s struct request_queue to translate an encryption context into
+> +a keyslot. The presence of the KSM in the request queue shall be used to mean
+> +that the device supports IE.
+> +
+> +On the device driver end of the interface, the device driver needs to tell the
+> +KSM how to actually manipulate the IE hardware in the device to do things like
+> +programming the crypto key into the IE hardware into a particular keyslot. All
+> +this is achieved through the struct keyslot_mgmt_ll_ops that the device driver
+> +passes to the KSM when creating it.
+> +
+> +It uses refcounts to track which keyslots are idle (either they have no
+> +encryption context programmed, or there are no in flight struct bios
+> +referencing that keyslot). When a new encryption context needs a keyslot, it
+> +tries to find a keyslot that has already been programmed with the same
+> +encryption context, and if there is no such keyslot, it evicts the least
+> +recently used idle keyslot and programs the new encryption context into that
+> +one. If no idle keyslots are available, then the caller will sleep until there
+> +is at least one.
+> +
+> +
+> +4. Blk-crypto
+> +=============
+> +
+> +The above is sufficient for simple cases, but does not work if there is a
+> +need for a software fallback, or if we are want to use IE with layered devices.
+> +To these ends, we introduce blk-crypto. Blk-crypto allows us to present a
+> +unified view of encryption to the FS (so FS only needs to specify an
+> +encryption context and not worry about keyslots at all), and block crypto can
+> +decide whether to delegate the en/decryption to IE hardware or to software
+> +(i.e. to the kernel crypto API). Block crypto maintains an internal KSM that
+> +serves as the software fallback to the kernel crypto API.
+> +
+> +Blk-crypto needs to ensure that the encryption context is programmed into the
+> +"correct" keyslot manager for IE. If a bio is submitted to a layered device
+> +that eventually passes the bio down to a device that really does support IE, we
+> +want the encryption context to be programmed into a keyslot for the KSM of the
+> +device with IE support. However, blk-crypto does not know a-priori whether a
 
-> * the various SCSI/ATA commands are hints - the target device can ignore
-> them - so we still need to be able to do clean up passes with something like
-> fstrim I think occasionally.
+                                                             a priori
 
-And that's the problem we need to solve - as long as the hardware
-can treat these operations as hints (i.e. as "discards" rather than
-"you must free this space and return zeroes") then there is no
-motivation for vendors to improve the status quo.
+> +particular device is the final device in the layering structure for a bio or
+> +not. So in the case that a particular device does not support IE, since it is
+> +possibly the final destination device for the bio, if the bio requires
+> +encryption (i.e. the bio is doing a write operation), blk-crypto must fallback
+> +to software *before* sending the bio to the device.
+> +
+> +Blk-crypto ensures that
+> +1) The bio’s encryption context is programmed into a keyslot in the KSM of the
+> +request queue that the bio is being submitted to (or the software fallback KSM
+> +if the request queue doesn’t have a KSM), and that the processing_ksm in the
+> +bi_crypt_context is set to this KSM
+> +
+> +2) That the bio has its own individual reference to the keyslot in this KSM.
+> +Once the bio passes through block crypto, its encryption context is programmed
 
-Nobody can rely on discard to do anything. Even ignoring the device
-performance/implementation problems, it's an unusable API from an
-application perspective. The first step to fixing the discard
-problem is at the block device API level.....
+                          is   block crypto
+                 the same as   blk-crypto?
+If so, consistency would be Good.
 
-Cheers,
+> +in some KSM. The “its own individual reference to the keyslot” ensures that
+> +keyslots can be released by each bio independently of other bios while ensuring
+> +that the bio has a valid reference to the keyslot when, for e.g., the software
+> +fallback KSM in blk-crypto performs crypto for on the device’s behalf. The
+> +individual references are ensured by increasing the refcount for the keyslot in
+> +the processing_ksm when a bio with a programmed encryption context is cloned.
+> +
+> +
+> +4-1. What blk-crypto does on bio submission
+> +-------------------------------------------
+> +
+> +Case 1: blk-crypto is given a bio with only an encryption context that hasn’t
+> +been programmed into any keyslot in any KSM (for e.g. a bio from the FS). In
+> +this case, blk-crypto will program the encryption context into the KSM of the
+> +request queue the bio is being submitted to (and if this KSM does not exist,
+> +then it will program it into blk-crypto’s internal KSM for software fallback).
+> +The KSM that this encryption context was programmed into is stored as the
+> +processing_ksm in the bio’s bi_crypt_context.
+> +
+> +Case 2: blk-crypto is given a bio whose encryption context has already been
+> +programmed into a keyslot in the *software fallback KSM*. In this case,
+> +blk-crypto does nothing; it treats the bio as not having specified an
+> +encryption context. Note that we cannot do what we will do in Case 3 here
+> +because we would have already encrypted the bio in software by this point.
+> +
+> +Case 3: blk-crypto is given a bio whose encryption context has already been
+> +programmed into a keyslot in some KSM (that is *not* the software fallback
+> +KSM). In this case, blk-crypto first releases that keyslot from that KSM and
+> +then treats the bio as in Case 1.
+> +
+> +This way, when a device driver is processing a bio, it can be sure that
+> +the bio’s encryption context has been programmed into some KSM (either the
+> +device driver’s request queue’s KSM, or blk-crypto’s software fallback KSM).
+> +It then simply needs to check if the bio’s processing_ksm is the device’s
+> +request queue’s KSM. If so, then it should proceed with IE. If not, it should
+> +simply do nothing with respect to crypto, because some other KSM (perhaps the
+> +blk-crypto software fallback KSM) is handling the en/decryption.
+> +
+> +Blk-crypto will release the keyslot that is being held by the bio (and also
+> +decrypt it if the bio is using the software fallback KSM) once
+> +bio_remaining_done returns true for the bio.
+> +
+> +
+> +5. Layered Devices
+> +==================
+> +
+> +Layered devices that wish to support IE need to create their own keyslot
+> +manager for their request queue, and expose whatever functionality they choose.
+> +When a layered device wants to pass a bio to another layer (either by
+> +resubmitting the same bio, or by submitting a clone), it doesn’t need to do
+> +anything special because the bio (or the clone) will once again pass through
+> +blk-crypto, which will work as described in Case 3. If a layered device wants
+> +for some reason to do the IO by itself instead of passing it on to a child
+> +device, but it also chose to expose IE capabilities by setting up a KSM in its
+> +request queue, it is then responsible for en/decrypting the data itself. In
+> +such cases, the device can choose to call the blk-crypto function
+> +blk_crypto_fallback_to_software (TODO: Not yet implemented), which will
+> +cause the en/decryption to be done via software fallback.
+> +
+> +
+> +6. Future Optimizations for layered devices
+> +===========================================
+> +
+> +Creating a keyslot manager for the layered device uses up memory for each
+> +keyslot, and in general, a layered device (like dm-linear) merely passes the
+> +request on to a “child” device, so the keyslots in the layered device itself
+> +might be completely unused. We can instead define a new type of KSM; the
+> +“passthrough KSM”, that layered devices can use to let blk-crypto know that
+> +this layered device *will* pass the bio to some child device (and hence
+> +through blk-crypto again, at which point blk-crypto can program the encryption
+> +context, instead of programming it into the layered device’s KSM). Again, if
+> +the device “lies” and decides to do the IO itself instead of passing it on to
+> +a child device, it is responsible for doing the en/decryption (and can choose
+> +to call blk_crypto_fallback_to_software). Another use case for the
+> +"passthrough KSM" is for IE devices that want to manage their own keyslots/do
+> +not have a limited number of keyslots.
 
-Dave.
+
 -- 
-Dave Chinner
-david@fromorbit.com
+~Randy
