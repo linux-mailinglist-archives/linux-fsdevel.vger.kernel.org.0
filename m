@@ -2,57 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D23CA17B47
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 16:05:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94A2817B5F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 May 2019 16:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbfEHOFq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 May 2019 10:05:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50364 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726869AbfEHOFq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 May 2019 10:05:46 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9C54E59473;
-        Wed,  8 May 2019 14:05:46 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-61.rdu2.redhat.com [10.10.120.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 30EE95B809;
-        Wed,  8 May 2019 14:05:44 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190508132218.3617-1-christian@brauner.io>
-References: <20190508132218.3617-1-christian@brauner.io>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: make all new mount api fds cloexec by default
+        id S1726803AbfEHONu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 May 2019 10:13:50 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54639 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725910AbfEHONu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 May 2019 10:13:50 -0400
+Received: by mail-it1-f195.google.com with SMTP id a190so4267798ite.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2019 07:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=OELUENc3UGFI4n64xtHyWctIjuS1FHXlpju+VHmaEhI=;
+        b=dLgN7MwfahWL5KRvq3nO48znS+N9vOxoLsZ0QKbz7QjqM81X6SYBt5biQTM7+yWxNn
+         61hwvNv4/Xge+ia6X9lVvgneqZgtbYVP2Fu0ONbXMlWp9sMU4vqYUuo0GiNV349YSA2l
+         oiebe0j3GbK+pGQNSEjH0cQ+geiyC6ydVuvIjaZmTua1E2WPE0b1k3VP/lh0cTvcJ/Px
+         Nl4FNQ8D6JkogwX2s8u8O8CZ/VlqG8itnONJUFQoHub+tPKUqEXZ4rUDrkPQFZWPNfOm
+         VzpBSYTemWyOdzXnZ++1T28ctbhpB5M7GrKg9Ws5SQgbnaArchI0+JMZvrI4IdIDQaPD
+         4ycQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=OELUENc3UGFI4n64xtHyWctIjuS1FHXlpju+VHmaEhI=;
+        b=nCdgCV+4m0OeGxj5U+ZcjCgzQlg21zO7xheAXKZZTUkBuj6nZXOIrz0uXhTSo8yheR
+         6FCrgCgRcbKbg/Ih+2qyIElTHp4D8uKgtRfjWug7Me6FiTAS5+Kn9C9h/7QQwmooLeIF
+         aANONgbBUxMmWVkFSpxplteZRl4ROUAxfYZsSp+2O3KTr2S+AiLlCtymw6SxWLmIzgD2
+         57z9krqU+KKhS0l+OODtsZnZ5bThf8UtzNyOyrFo/qxsTBEdsct+oOXnA2PaP5jAE6im
+         /qWbOqIWEosA/mzDOsfX4L2kXSmeICUNep3laaG0NHpqOw3dqvyvCWuW4otk67MKI80X
+         hU5Q==
+X-Gm-Message-State: APjAAAWXuQ2/cMW7HpXrHvEQ3SDnal1VSxwipJwDUkL9nf39lTXI0k09
+        bylL6vld9s0c+uXvx+lMwHNklw==
+X-Google-Smtp-Source: APXvYqxyZFk7D1oD/2eJU/YNb79OWIUwIVwdt2F+Z5X5GYcbtQ+wiIBOk/azDs0gGrN5+XNcPkN1bg==
+X-Received: by 2002:a05:6638:94:: with SMTP id v20mr27688629jao.2.1557324829960;
+        Wed, 08 May 2019 07:13:49 -0700 (PDT)
+Received: from [26.66.241.113] ([172.56.12.182])
+        by smtp.gmail.com with ESMTPSA id r6sm2554802iog.38.2019.05.08.07.13.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 May 2019 07:13:48 -0700 (PDT)
+Date:   Wed, 08 May 2019 16:13:32 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <4158.1557324343@warthog.procyon.org.uk>
+References: <20190508132218.3617-1-christian@brauner.io> <4158.1557324343@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4157.1557324343.1@warthog.procyon.org.uk>
-Date:   Wed, 08 May 2019 15:05:43 +0100
-Message-ID: <4158.1557324343@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 08 May 2019 14:05:46 +0000 (UTC)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] fs: make all new mount api fds cloexec by default
+To:     David Howells <dhowells@redhat.com>
+CC:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Christian Brauner <christian@brauner.io>
+Message-ID: <937AFC55-9B52-44C1-893E-CE396F1BD5B7@brauner.io>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christian Brauner <christian@brauner.io> wrote:
+On May 8, 2019 4:05:43 PM GMT+02:00, David Howells <dhowells@redhat=2Ecom> =
+wrote:
+>Christian Brauner <christian@brauner=2Eio> wrote:
+>
+>> -	fd =3D get_unused_fd_flags(flags & O_CLOEXEC);
+>> +	fd =3D get_unused_fd_flags(flags | O_CLOEXEC);
+>
+>That'll break if there are any flags other than O_CLOEXEC=2E
+>
+>> -	ret =3D get_unused_fd_flags((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC :
+>0);
+>> +	ret =3D get_unused_fd_flags(flags | O_CLOEXEC);
+>
+>That'll break because flags is not compatible with what
+>get_unused_fd_flags()
+>is expecting=2E
 
-> -	fd = get_unused_fd_flags(flags & O_CLOEXEC);
-> +	fd = get_unused_fd_flags(flags | O_CLOEXEC);
+Technically only when new flags are added=2E
+Right now it works correctly=2E
+I'll send a v1 soon=2E
 
-That'll break if there are any flags other than O_CLOEXEC.
+Thanks for catching that, David=2E
+Christian
 
-> -	ret = get_unused_fd_flags((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0);
-> +	ret = get_unused_fd_flags(flags | O_CLOEXEC);
-
-That'll break because flags is not compatible with what get_unused_fd_flags()
-is expecting.
-
-David
