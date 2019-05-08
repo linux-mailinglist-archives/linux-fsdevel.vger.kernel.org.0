@@ -2,193 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2905F18247
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 00:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76D05182A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 01:21:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfEHWcB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 May 2019 18:32:01 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:36866 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726700AbfEHWcB (ORCPT
+        id S1727922AbfEHXV1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 May 2019 19:21:27 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:35986 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727763AbfEHXV1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 May 2019 18:32:01 -0400
-Received: from dread.disaster.area (pa49-181-171-240.pa.nsw.optusnet.com.au [49.181.171.240])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id B1B2243A37B;
-        Thu,  9 May 2019 08:31:58 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hOV6T-0005Ym-2J; Thu, 09 May 2019 08:31:57 +1000
-Date:   Thu, 9 May 2019 08:31:57 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Ric Wheeler <ricwheeler@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        lczerner@redhat.com
-Subject: Re: Testing devices for discard support properly
-Message-ID: <20190508223157.GS1454@dread.disaster.area>
-References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
- <20190507220449.GP1454@dread.disaster.area>
- <yq1ef58ly5j.fsf@oracle.com>
+        Wed, 8 May 2019 19:21:27 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x48NIRsb026484;
+        Wed, 8 May 2019 16:20:55 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=lCdKIPHMGvGvKmpk8HbdROgwQl29v5EI3TaR7mBLsA0=;
+ b=Pew+PYZM1QGT2MtjUHc5cGi8l27SXBbToaK7F9TuFPp3oTTYU+whHtRiRc3QZAO5Zuu1
+ O+MxB7AZEYfkVoTz21gowViQXBz1TniDPynF8clJOnKu22xUcpufxvXwEI1iwlx9OTuY
+ EKpgc24XYoU+S1doILWUQMg6jkQ4SFtmL9Q= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by m0089730.ppops.net with ESMTP id 2sc7t2r5db-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 08 May 2019 16:20:55 -0700
+Received: from prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) by
+ prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Wed, 8 May 2019 16:20:54 -0700
+Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
+ prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Wed, 8 May 2019 16:20:53 -0700
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Wed, 8 May 2019 16:20:53 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lCdKIPHMGvGvKmpk8HbdROgwQl29v5EI3TaR7mBLsA0=;
+ b=MV69l51gbUsBTwbnHJhapq3cSvmtIF6OxMJgTP04A32LqgR4dYeyPH63cZRVrC3GfPJ5P8F/P94ub8sNEEN6CcRQV9xTwmZztlRocVVyOzm3OLkwYjA1daGex7FkEcXwwuqElHkpL3p6Uu049K1vL8/3Gp5MkTrVbw2PHJ3oKTA=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB2678.namprd15.prod.outlook.com (20.179.156.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1878.20; Wed, 8 May 2019 23:20:51 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ddd2:172e:d688:b5b7]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ddd2:172e:d688:b5b7%3]) with mapi id 15.20.1856.012; Wed, 8 May 2019
+ 23:20:51 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Shakeel Butt <shakeelb@google.com>
+CC:     Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2] memcg, fsnotify: no oom-kill for remote memcg charging
+Thread-Topic: [PATCH v2] memcg, fsnotify: no oom-kill for remote memcg
+ charging
+Thread-Index: AQHVAokQTI6+FEdd6UGTORMvAHxc7KZh5EEA
+Date:   Wed, 8 May 2019 23:20:51 +0000
+Message-ID: <20190508232042.GA1104@tower.DHCP.thefacebook.com>
+References: <20190504145242.258875-1-shakeelb@google.com>
+In-Reply-To: <20190504145242.258875-1-shakeelb@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR08CA0035.namprd08.prod.outlook.com
+ (2603:10b6:301:5f::48) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:152::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::2:524d]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: bf008100-e7c3-4e95-aded-08d6d40bcf73
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR15MB2678;
+x-ms-traffictypediagnostic: BYAPR15MB2678:
+x-microsoft-antispam-prvs: <BYAPR15MB2678AB6FB8BA07664B988789BE320@BYAPR15MB2678.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 0031A0FFAF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(346002)(396003)(376002)(39860400002)(199004)(189003)(54534003)(6916009)(1076003)(86362001)(2906002)(102836004)(7736002)(6506007)(386003)(71190400001)(33656002)(71200400001)(25786009)(6246003)(305945005)(446003)(14454004)(4326008)(7416002)(68736007)(46003)(73956011)(478600001)(6116002)(5660300002)(66946007)(186003)(66446008)(64756008)(66556008)(66476007)(14444005)(256004)(53936002)(8936002)(6486002)(99286004)(52116002)(229853002)(11346002)(76176011)(6436002)(316002)(486006)(54906003)(8676002)(81166006)(81156014)(9686003)(6512007)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2678;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: M9ViFNyD/FCUCLUJj4EkV9tPxnfSYa1qKvRE+Dut1F1h5GU8e2828C3QhQncfW4qAWfT8O8S013bCbISnnrTQaj73Z/2z8mj0OPfbOP7pL7QZnO9/+JFq/Qss6tCl8oWbM87NSOrWO4gCfPbzMavhcAKIY/fXvY8z6ckJ+G+ys/1c9tq/6KVpwqhHgOotzHwJRAHnhnInB7drqHvB9xcS76uWuiNWe9HOgL4JXl4FS7nyvsPVzmuF24FXH2HMlSkZSGylnyU+EnDx4fGajZ16euc0btpq68mGpe+wVAzAFGT+2bDJ4PuncwXvR36kInToCsZQ8+l1pdHAS+FFu3qCxkjR3SvkGLRr48eQ6uMFQUbLY/A9TFYZP92vMLbVRW2BpXzndx4YCkEf6FwHOohc4+8NXTeI4Bk4gh/Jm+WVTU=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <FAA360BA6EA9A646B5F14EE9A945F468@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq1ef58ly5j.fsf@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
-        a=LhzQONXuMOhFZtk4TmSJIw==:117 a=LhzQONXuMOhFZtk4TmSJIw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
-        a=7-415B0cAAAA:8 a=3ZI2Ntb0NxUUy2vjhPgA:9 a=P0u-9IdFAXDTa2Fe:21
-        a=AIsqQvJzzN8EsQi8:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf008100-e7c3-4e95-aded-08d6d40bcf73
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2019 23:20:51.3370
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2678
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-08_12:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 08, 2019 at 12:16:24PM -0400, Martin K. Petersen wrote:
-> 
-> Hi Dave,
-> 
-> > My big question here is this:
-> >
-> > - is "discard" even relevant for future devices?
-> 
-> It's hard to make predictions. Especially about the future. But discard
-> is definitely relevant on a bunch of current drives across the entire
-> spectrum from junk to enterprise. Depending on workload,
-> over-provisioning, media type, etc.
-> 
-> Plus, as Ric pointed out, thin provisioning is also relevant. Different
-> use case but exactly the same plumbing.
-> 
-> > IMO, trying to "optimise discard" is completely the wrong direction
-> > to take. We should be getting rid of "discard" and it's interfaces
-> > operations - deprecate the ioctls, fix all other kernel callers of
-> > blkdev_issue_discard() to call blkdev_fallocate()
-> 
-> blkdev_fallocate() is implemented using blkdev_issue_discard().
+On Sat, May 04, 2019 at 07:52:42AM -0700, Shakeel Butt wrote:
+> The commit d46eb14b735b ("fs: fsnotify: account fsnotify metadata to
+> kmemcg") added remote memcg charging for fanotify and inotify event
+> objects. The aim was to charge the memory to the listener who is
+> interested in the events but without triggering the OOM killer.
+> Otherwise there would be security concerns for the listener. At the
+> time, oom-kill trigger was not in the charging path. A parallel work
+> added the oom-kill back to charging path i.e. commit 29ef680ae7c2
+> ("memcg, oom: move out_of_memory back to the charge path"). So to not
+> trigger oom-killer in the remote memcg, explicitly add
+> __GFP_RETRY_MAYFAIL to the fanotigy and inotify event allocations.
+>=20
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> ---
+> Changelog since v1:
+> - Fixed usage of __GFP_RETRY_MAYFAIL flag.
+>=20
+>  fs/notify/fanotify/fanotify.c        | 5 ++++-
+>  fs/notify/inotify/inotify_fsnotify.c | 7 +++++--
+>  2 files changed, 9 insertions(+), 3 deletions(-)
 
-Only when told to do PUNCH_HOLE|NO_HIDE_STALE which means "we don't
-care what the device does" as this fallcoate command provides no
-guarantees for the data returned by subsequent reads. It is,
-esssentially, a get out of gaol free mechanism for indeterminate
-device capabilities.
+Hi Shakeel,
 
-> > and ensure that drive vendors understand that they need to make
-> > FALLOC_FL_ZERO_RANGE and FALLOC_FL_PUNCH_HOLE work, and that
-> > FALLOC_FL_PUNCH_HOLE | FALLOC_FL_NO_HIDE_STALE is deprecated (like
-> > discard) and will be going away.
-> 
-> Fast, cheap, easy. Pick any two.
-> 
-> The issue is that -- from the device perspective -- guaranteeing zeroes
-> requires substantially more effort than deallocating blocks. To the
+the patch looks good to me!
 
-People used to make that assertion about filesystems, too. It took
-linux filesystem developers years to realise that unwritten extents
-are actually very simple and require very little extra code and no
-extra space in metadata to implement. If you are already tracking
-allocated blocks/space, then you're 99% of the way to efficient
-management of logically zeroed disk space.
+Reviewed-by: Roman Gushchin <guro@fb.com>
 
-> point where several vendors have given up making it work altogether and
-> either report no discard support or silently ignore discard requests
-> causing you to waste queue slots for no good reason.
-
-I call bullshit.
-
-> So while instant zeroing of a 100TB drive would be nice, I don't think
-> it's a realistic goal given the architectural limitations of many of
-> these devices. Conceptually, you'd think it would be as easy as
-> unlinking an inode.
-
-Unlinking an inode is one of the most complex things a filesystem
-has to do. Marking allocated space as "contains zeros" is trivial in
-comparison.
-
-> But in practice the devices keep much more (and
-> different) state around in their FTLs than a filesystem does in its
-> metadata.
-> 
-> Wrt. device command processing performance:
-> 
-> 1. Our expectation is that REQ_DISCARD (FL_PUNCH_HOLE |
->    FL_NO_HIDE_STALE), which gets translated into ATA DSM TRIM, NVMe
->    DEALLOCATE, SCSI UNMAP, executes in O(1) regardless of the number of
->    blocks operated on.
-> 
->    Due to the ambiguity of ATA DSM TRIM and early SCSI we ended up in a
->    situation where the industry applied additional semantics
->    (deterministic zeroing) to that particular operation. And that has
->    caused grief because devices often end up in the O(n-or-worse) bucket
->    when determinism is a requirement.
-
-Which is why I want us to deprecate the use of REQ_DISCARD.
-
-
-> 2. Our expectation for the allocating REQ_ZEROOUT (FL_ZERO_RANGE), which
->    gets translated into NVMe WRITE ZEROES, SCSI WRITE SAME, is that the
->    command executes in O(n) but that it is faster -- or at least not
->    worse -- than doing a regular WRITE to the same block range.
-
-You're missing the important requirement of fallocate(ZERO_RANGE):
-that the space is also allocated and ENOSPC will never be returned
-for subsequent writes to that range. i.e. it is allocated but
-"unwritten" space that contains zeros.
-
-> 3. Our expectation for the deallocating REQ_ZEROOUT (FL_PUNCH_HOLE),
->    which gets translated into ATA DSM TRIM w/ whitelist, NVMe WRITE
->    ZEROES w/ DEAC, SCSI WRITE SAME w/ UNMAP, is that the command will
->    execute in O(1) for any portion of the block range described by the
-
-FL_PUNCH_HOLE has no O(1) requirement - it has a "all possible space
-must be freed" requirement. The larger the range, to longer it will
-take.
-
-For example, punching out a range that contains a single extent
-might take a couple of hundred microseconds on XFS, but punching out
-a range that contains 50 million extents in a single operation (yes,
-we see sparse vm image files with that sort of extreme fragmentation
-in production systems) can take 5-10 minutes to run.
-
-That is acceptable behaviour for a space deallocation operation.
-Expecting space deallocation will always run on O(1) time is ...
-insanity. If I were a device vendor being asked to do this, I'd be
-saying no, too, because it's simply an unrealistic expectation.
-
-If you're going to suggest any sort of performance guideline, then
-O(log N) is the best we can expect for deallocation operations
-(where N is the size of the range to be deallocated). This is
-possible to implement without significant complexity or requiring
-background cleanup and future IO latency impact.....
-
->    I/O that is aligned to and a multiple of the internal device
->    granularity. With an additional small O(n_head_LBs) + O(n_tail_LBs)
->    overhead for zeroing any LBs at the beginning and end of the block
->    range described by the I/O that do not comprise a full block wrt. the
->    internal device granularity.
-
-That's expected, and exaclty what filesystems do for sub-block punch
-and zeroing ranges.
-
-> Does that description make sense?
-> 
-> The problem is that most vendors implement (3) using (1). But can't make
-> it work well because (3) was -- and still is for ATA -- outside the
-> scope of what the protocols can express.
-> 
-> And I agree with you that if (3) was implemented correctly in all
-> devices, we wouldn't need (1) at all. At least not for devices with an
-> internal granularity << total capacity.
-
-What I'm saying is that we should be pushing standards to ensure (3)
-is correctly standardise, certified and implemented because that is
-what the "Linux OS" requires from future hardware.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks!
