@@ -2,134 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6BB61848E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 06:35:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E975D184AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 07:02:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbfEIEfb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 May 2019 00:35:31 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:40954 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfEIEfb (ORCPT
+        id S1728589AbfEIFCe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 May 2019 01:02:34 -0400
+Received: from newman.cs.utexas.edu ([128.83.139.110]:48955 "EHLO
+        newman.cs.utexas.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbfEIFCe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 May 2019 00:35:31 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x494YJKg104323;
-        Thu, 9 May 2019 04:35:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=RV+2M5Iv0ng37u9CKt+NTqF87XfFZ6Qo80WAgSf1i94=;
- b=A7ni1vmq5k3wIYCnYTnrvRuKP8vAWvBWlYQBjkQpL25kasewA9Va459kJPC8eW6Uf6oc
- BgMQ2ZEQ/1A9E/9B81mxT2ZyMDdM4h2hrc+pCwFqEttF5EgFSEXUUGGTLlrAdKRHuluJ
- SJeqm8BI93zSoXXWdgQH6haeJA/qNR+TSHp93VSHpoQsrhQt/O8wR30DSkFoNNaHmylN
- A62bK8iWRopelvyfuCsLxwhA/EYw/DIxtGx6ZGs7KgHbzDltyXytrgqIZV1DCfu2bX1X
- x2CENnzb9Bets4GnSdgOPsUZXV+HhwdkVmbht8Nrlwqm73jrfO7AJXtN5RAlUIJOufc6 0w== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2s94b107bp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 May 2019 04:35:13 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x494XO0N159903;
-        Thu, 9 May 2019 04:35:12 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2s94agj9fj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 May 2019 04:35:12 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x494Z9d1020365;
-        Thu, 9 May 2019 04:35:09 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 08 May 2019 21:35:09 -0700
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Ric Wheeler <ricwheeler@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        lczerner@redhat.com
-Subject: Re: Testing devices for discard support properly
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
-        <20190507220449.GP1454@dread.disaster.area>
-        <a409b3d1-960b-84a4-1b8d-1822c305ea18@gmail.com>
-        <20190508011407.GQ1454@dread.disaster.area>
-        <13b63de0-18bc-eb24-63b4-3c69c6a007b3@gmail.com>
-        <yq1a7fwlvzb.fsf@oracle.com>
-        <0a16285c-545a-e94a-c733-bcc3d4556557@gmail.com>
-        <20190508215832.GR1454@dread.disaster.area>
-        <yq1lfzgicn6.fsf@oracle.com>
-        <20190509032044.GW1454@dread.disaster.area>
-Date:   Thu, 09 May 2019 00:35:07 -0400
-In-Reply-To: <20190509032044.GW1454@dread.disaster.area> (Dave Chinner's
-        message of "Thu, 9 May 2019 13:20:44 +1000")
-Message-ID: <yq1d0ksi6tg.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Thu, 9 May 2019 01:02:34 -0400
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+        (authenticated bits=0)
+        by newman.cs.utexas.edu (8.14.4/8.14.4/Debian-4.1ubuntu1.1) with ESMTP id x4952Uh3042165
+        (version=TLSv1/SSLv3 cipher=AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 9 May 2019 00:02:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.utexas.edu;
+        s=default; t=1557378150;
+        bh=M9kSPIUHJWPmVO2qzlacbT1dp1+eyxwKUZdc7X0fUp4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JxNIckgs3sVa5A9ZYh4kDEw00zV1smckKhfriEj6D2m9U/kciJJN3ie8UOmIQfVmO
+         JICRVIwK9dkD8Y4isNTjVclPtG0TnwXDips4D70e+XCfgd5IkSqnTka1EXCPTJ7YLa
+         pRGUXK5QUVhuSacNZNWayP0v8IQ3v3qfotPaN7gw=
+Received: by mail-oi1-f174.google.com with SMTP id j9so911327oie.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 May 2019 22:02:30 -0700 (PDT)
+X-Gm-Message-State: APjAAAUDR0iGr0hYrJeJLEyrnPoa4KHNRylfaGzOUHUZdy5putTt8YnY
+        HWp6GtqTJIMGt9irF90juDFd1CZ5TRC0yOnEVrNoZA==
+X-Google-Smtp-Source: APXvYqzoYOrl0bNTx7Vg3gJGLvhDqIKGL5VA0mpz1rzOkW0c2cQ1eSSjnEXm2DoopH+EzkxSNGvniR/o5FeZI3UpT7c=
+X-Received: by 2002:a05:6808:8d:: with SMTP id s13mr278633oic.6.1557378149812;
+ Wed, 08 May 2019 22:02:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905090028
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905090029
+References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
+ <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
+ <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
+ <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com>
+ <20190503023043.GB23724@mit.edu> <20190509014327.GT1454@dread.disaster.area> <20190509022013.GC7031@mit.edu>
+In-Reply-To: <20190509022013.GC7031@mit.edu>
+From:   Vijay Chidambaram <vijay@cs.utexas.edu>
+Date:   Thu, 9 May 2019 00:02:17 -0500
+X-Gmail-Original-Message-ID: <CAHWVdUVViC_EJm3K7MfvfSQ+G1u=SX=RXAZWPYjZuS16JWxNEw@mail.gmail.com>
+Message-ID: <CAHWVdUVViC_EJm3K7MfvfSQ+G1u=SX=RXAZWPYjZuS16JWxNEw@mail.gmail.com>
+Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties contract
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        lsf-pc@lists.linux-foundation.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jayashree Mohan <jaya@cs.utexas.edu>,
+        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
+        lwn@lwn.net
+Content-Type: text/plain; charset="UTF-8"
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.3.9 (newman.cs.utexas.edu [128.83.139.110]); Thu, 09 May 2019 00:02:30 -0500 (CDT)
+X-Virus-Scanned: clamav-milter 0.98.7 at newman
+X-Virus-Status: Clean
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-Dave,
-
->> The answer is that it depends. It can return zeroes or a
->> device-specific initialization pattern (oh joy).
+On Wed, May 8, 2019 at 9:30 PM Theodore Ts'o <tytso@mit.edu> wrote:
 >
-> So they ignore the "write zeroes" part of the command?
+> On Thu, May 09, 2019 at 11:43:27AM +1000, Dave Chinner wrote:
+> >
+> > .... the whole point of SOMC is that allows filesystems to avoid
+> > dragging external metadata into fsync() operations /unless/ there's
+> > a user visible ordering dependency that must be maintained between
+> > objects.  If all you are doing is stabilising file data in a stable
+> > file/directory, then independent, incremental journaling of the
+> > fsync operations on that file fit the SOMC model just fine.
+>
+> Well, that's not what Vijay's crash consistency guarantees state.  It
+> guarantees quite a bit more than what you've written above.  Which is
+> my concern.
 
-I'd have to look to see how ANCHOR and NDOB interact on a WRITE
-SAME. That's the closest thing SCSI has to WRITE ZEROES.
+The intention is to capture Dave's SOMC semantics. We can re-iterate
+and re-phrase until we capture what Dave meant precisely. I am fairly
+confident we can do this, given that Dave himself is participating and
+helping us refine the text. So this doesn't seem like a reason not to
+have documentation at all to me.
 
-You can check whether a device has a non-standard initialization
-pattern. It's a bit convoluted given that devices can autonomously
-transition blocks between different states based on the initialization
-pattern. But again, I don't think anybody has actually implemented this
-part of the spec.
+As we have stated on multiple times on this and other threads, the
+intention is *not* to come up with one set of crash-recovery
+guarantees that every Linux file system must abide by forever. Ted,
+you keep repeating this, though we have never said this was our
+intention.
 
->> We have:
->> 
->>    Allocate and zero:	FALLOC_FL_ZERO_RANGE
->>    Deallocate and zero:	FALLOC_FL_PUNCH_HOLE
->>    Deallocate:		FALLOC_FL_PUNCH_HOLE | FALLOC_FL_NO_HIDE_STALE
->> but are missing:
->> 
->>    Allocate:		FALLOC_FL_ZERO_RANGE | FALLOC_FL_NO_HIDE_STALE
+The intention behind this effort is to simply document the
+crash-recovery guarantees provided today by different Linux file
+systems. Ted, you question why this is required at all, and why we
+simply can't use POSIX and man pages. The answer:
 
-Copy and paste error. "Allocate:" would be FALLOC_FL_NO_HIDE_STALE in
-the ANCHOR case. It's really just a preallocation but the blocks could
-contain something other than zeroes depending on the device.
+1. POSIX is vague. Not persisting data to stable media on fsync is
+also allowed in POSIX (but no Linux file system actually does this),
+so its not very useful in terms of understanding what crash-recovery
+guarantees file systems actually provide. Given that all Linux file
+systems provide something more than POSIX, the natural question to ask
+is what do they provide? We understood this from working on
+CrashMonkey, and we wanted to document it.
+2. Other parts of the Linux kernel have much better documentation,
+even though they similarly want to provide freedom for developers to
+optimize and change internal implementation. I don't think
+documentation and freedom to change internals are mutually exclusive.
+3. XFS provides SOMC semantics, and btrfs developers have stated they
+want to provide SOMC as well. F2FS developers have a mode in which
+they seek to provide SOMC semantics. Given all this, it seemed prudent
+to document SOMC.
+4. Apart from developers, a document like this would also help
+academic researchers understand the current state-of-the-art in
+crash-recovery guarantees and the different choices made by different
+file systems. It is non-trivial to understand this without
+documentation.
 
-> So we've defined the fallocate flags to have /completely/ different
-> behaviour on block devices to filesystems.
+FWIW, I think the position of "if we don't write it down, application
+developers can't depend on it" is wrong. Even with nothing written
+down, developers noticed they could skip fsync() in ext3 when
+atomically updating files with rename(). This lead to the whole ext4
+rename-and-delayed-allocation problem. The much better path, IMO, is
+to document the current set of guarantees given by different file
+systems, and talk about what is intended and what is not. This would
+give application developers much better guidance in writing
+applications.
 
-Are you referring to the "Allocate" case or something else? From
-fallocate(2):
+If ext4 wants to develop incremental fsync and introduce a new set of
+semantics that is different from SOMC and much closer to minimal
+POSIX, I don't think the documentation affects that at all. As Dave
+notes, diversity is good! Documentation is also good :)
 
-"Specifying the FALLOC_FL_ZERO_RANGE flag [...] zeroes space [...].
-Within the specified range, blocks are preallocated for the regions that
-span the holes in the file.  After a successful call, subsequent reads
-from this range will return zeroes."
-
-"Specifying the FALLOC_FL_PUNCH_HOLE flag [...] deallocates space [...].
-Within the specified range, partial filesystem blocks are zeroed, and
-whole filesystem blocks are removed from the file.  After a successful
-call, subsequent reads from this range will return zeroes."
-
-That matches the block device behavior as far as I'm concerned.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+That being said, I think I'll stop our push to get this documented
+inside the Linux kernel at this point. We got useful comments from
+Dave, Amir, and others, so we will incorporate those comments and put
+up the documentation on a University of Texas web page. If someone
+else wants to carry on and get this merged, you are welcome to do so
+:)
