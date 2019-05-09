@@ -2,85 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ADE51900C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 20:12:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57FF31903E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 20:33:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfEISMR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 May 2019 14:12:17 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35450 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbfEISMR (ORCPT
+        id S1726727AbfEISdu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 May 2019 14:33:50 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39350 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726632AbfEISdu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 May 2019 14:12:17 -0400
-Received: by mail-pf1-f194.google.com with SMTP id t87so1736577pfa.2;
-        Thu, 09 May 2019 11:12:16 -0700 (PDT)
+        Thu, 9 May 2019 14:33:50 -0400
+Received: by mail-ot1-f67.google.com with SMTP id o39so3226761ota.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 May 2019 11:33:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Uxi0dT3bZPj5ZkTVCL1ze6BziBmMlaGGA5Ikg1U2vOM=;
-        b=NVDbC1bDsKomR5b17X9A07TUn96+Z0R3C4QHe4+4XmcpJtOfCd8CgmuLCZMfSUHc2Y
-         AZQbhyOHVN3PbnfvpXNwIyTiJEC0AnC3A31KnDgtom1X8Z0bgVekXTI3BVaR1rUMtVkc
-         mpvbZA/KClKMuTnmyJdmslHsYwuIqmD1989ZCuOTgZCEOLUbJp+Az3OuPzbniWLdhZRK
-         A4eykSViXmcMIyntll9GMv/G9FH9fbRHmzzNbY06sd7ytRr4VIvYZ01eaVqBFzNo471Q
-         13oOjpRmdvJZD1oIeJ41HPZmqYmiXnHa+CbiBBf3n0hUjCKPHXEpNrM3Np8eHuClrL/7
-         NdMg==
+        bh=6LDuh9KBtjyZgSBqOPlt4ghOhYRTyR7+OimbX5fXjTc=;
+        b=m7MZm5jn+yUTyqYeKP+3U2AfIk2e/Jl7gRlj1d0vNElu89qzzwPGU4WFh2pRN3iGK8
+         6NkXYiIaZxmWqTWtDTsXMCjBrxg3Wi+ON8VLjl28KeXWmZ1yCAk7U2iA9U5wOLGpVrf6
+         4C4jvycCm53aEaILky7UnN3UKRuEHLH4DYCjk6kbWNpnMsPw3O4PTkZ34RDNe5jWnbck
+         UmNUnENCXk7ZL3MZ1rYS34gPy7dbedYHUod/vucgxDHzv2UGKYZZ9m/Ped5rsgK+BFk/
+         Fy+UM5SnDsH5pIswj8zYSyHMqUWESF+i8+t6ovRwRYGQ/c3kpcWuWIDJlTrTTBHJz/6S
+         zOfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Uxi0dT3bZPj5ZkTVCL1ze6BziBmMlaGGA5Ikg1U2vOM=;
-        b=KWBcRuY1ZFzu4sDVv4UmjfwaKq1ypyP0wFO59su254aqLyO6sqd/qe8lg7LtaVz+DZ
-         DILQ9g6ui/wPoGC+ficqXkRo8/cZLajKc7LRcS47etHwJevyR7jZbJXZJGmjZ48gcO3P
-         IkPPTgdGpXmJkG8hm1mKuPJ3/w6i5NiFgZ4Qbfw+ugFaB8LYJbP8CuSR9NOiHp+PNo8s
-         k5XisFBfgDa/QJLLLv1TVZFAV7OFG7gvLqRqdYgjVJjI9FY2YzQZllZFpeWtAUm5i8uG
-         4rko+w0bTxlE42902DWkY6i0xMxZHzuK8dlHs/AScygUbbTTtmT45g4ixWwIE36L0KB7
-         kSDQ==
-X-Gm-Message-State: APjAAAXPCZ+B1UcrGCXT2T3mP2FLcr1s2tYqe1Y376c+ear2LYSpRPYZ
-        yzSV9gY5e1hZoLb8cS85b70=
-X-Google-Smtp-Source: APXvYqwGz4a+VK7p6ts4ffA1rbfVCYWZRJS4YjX+gCEsA57HSqJ7sXPY9ft7Z0NWCteDTJWoQXvRRA==
-X-Received: by 2002:a65:5941:: with SMTP id g1mr7554475pgu.51.1557425535979;
-        Thu, 09 May 2019 11:12:15 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id l68sm6532427pfb.20.2019.05.09.11.12.13
+        bh=6LDuh9KBtjyZgSBqOPlt4ghOhYRTyR7+OimbX5fXjTc=;
+        b=aD1efLCsZqZb/kyQUv6flZRVEmZ2+yuXJAtLEtwXA2EUa5gDXc9ANB9XkomXmPIpKe
+         4lFsuvSXYsyjXBMsBgIngv4JAW9KWDKmfl0RZphfTKAiL5Y+97oPQca5igk4yGRFQOaH
+         j14xGTw/BK6IBqV16kO9dBPNYdCjuAt41kjlz5fmChidq49/96RLqK3VKZ3OeT76gIAC
+         u1cQa9u6r2FtowLBarjb5p+iZ7LWMluI6R0N5X7YG2Rt4piBBpfNeiKNQk99Lhz9ISBm
+         Iniesb8oX9Npagl+0GEyG/DOK5qn4uZLvIFfkNnkKW42Jmv7XbNAeKP6P9iY6BbyRzjQ
+         wqVg==
+X-Gm-Message-State: APjAAAWVyRcHwIsymUiuRVDX9x9riD8jqBwbOghgpmZA9pPEGhA1rpkY
+        wJmpEFgQcGNrrN5GPHsomdiCBg==
+X-Google-Smtp-Source: APXvYqyC+t5IsIZRkPqBYoKSelJuMnV/D1ZbE+b+3mQahrODmHmWzUUCjlIwBfKd2Oj/f6iFjJVnEg==
+X-Received: by 2002:a9d:7c88:: with SMTP id q8mr151513otn.167.1557426829720;
+        Thu, 09 May 2019 11:33:49 -0700 (PDT)
+Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
+        by smtp.googlemail.com with ESMTPSA id j1sm1034165otl.43.2019.05.09.11.33.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 11:12:15 -0700 (PDT)
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-To:     Tim.Bird@sony.com, tytso@mit.edu, knut.omang@oracle.com
-Cc:     gregkh@linuxfoundation.org, brendanhiggins@google.com,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        logang@deltatee.com, mpe@ellerman.id.au, pmladek@suse.com,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
- <20190507080119.GB28121@kroah.com>
- <a09a7e0e-9894-8c1a-34eb-fc482b1759d0@gmail.com>
- <20190509015856.GB7031@mit.edu>
- <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
- <20190509032017.GA29703@mit.edu>
- <7fd35df81c06f6eb319223a22e7b93f29926edb9.camel@oracle.com>
- <20190509133551.GD29703@mit.edu>
- <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com>
-Date:   Thu, 9 May 2019 11:12:12 -0700
+        Thu, 09 May 2019 11:33:49 -0700 (PDT)
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk
+Cc:     linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
+        arnd@arndb.de, james.w.mcmechan@gmail.com
+References: <20190509112420.15671-1-roberto.sassu@huawei.com>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <fca8e601-1144-1bb8-c007-518651f624a5@landley.net>
+Date:   Thu, 9 May 2019 13:34:13 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
+In-Reply-To: <20190509112420.15671-1-roberto.sassu@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -89,107 +72,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/9/19 10:00 AM, Tim.Bird@sony.com wrote:
->> -----Original Message-----
->> From: Theodore Ts'o 
->>
-
-< massive snip >
-
-I'll reply in more detail to some other earlier messages in this thread
-later.
-
-This reply is an attempt to return to the intent of my original reply to
-patch 0 of this series.
-
-
->> Ultimately, I'm a pragmatist.  If KTF serves your needs best, good for
->> you.  If other approaches are better for other parts of the kernel,
->> let's not try to impose a strict "There Must Be Only One" religion.
->> That's already not true today, and for good reason.  There are many
->> different kinds of kernel code, and many different types of test
->> philosophies.  Trying to force all kernel testing into a single
->> Procrustean Bed is simply not productive.
+On 5/9/19 6:24 AM, Roberto Sassu wrote:
+> This patch set aims at solving the following use case: appraise files from
+> the initial ram disk. To do that, IMA checks the signature/hash from the
+> security.ima xattr. Unfortunately, this use case cannot be implemented
+> currently, as the CPIO format does not support xattrs.
 > 
-> Had to look up "Procrustean Bed" - great phrase.  :-)
-> 
-> I'm not of the opinion that there must only be one test framework
-> in the kernel. But we should avoid unnecessary multiplication. Every
-> person is going to have a different idea for where the line of necessity
-> is drawn.  My own opinion is that what KUnit is adding is different enough
-> from kselftest, that it's a valuable addition.  
-> 
->  -- Tim
+> This proposal consists in marshaling pathnames and xattrs in a file called
+> .xattr-list. They are unmarshaled by the CPIO parser after all files have
+> been extracted.
 
-My first reply to patch 0 was in the context of knowing next to nothing
-about kselftest.  My level of understanding was essentially from slideware.
-(As the thread progressed, I dug a little deeper into kselftest, so now have
-a slightly better, though still fairly surface understanding of kselftest).
+So it's in-band signalling that has a higher peak memory requirement.
 
-Maybe I did not explain myself clearly enough in that reply.  I will try
-again here.
+> The difference with another proposal
+> (https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+> included in an image without changing the image format, as opposed to
+> defining a new one. As seen from the discussion, if a new format has to be
+> defined, it should fix the issues of the existing format, which requires
+> more time.
 
-Patch 0 provided a one paragraph explanation of why KUnit exists, titled
+So you've explicitly chosen _not_ to address Y2038 while you're there.
 
-   "## What's so special about unit testing?"
-
-Patch 0 also provided a statement that it is not meant to replace
-kselftest, in a paragraph titled
-
-   "## Is KUnit trying to replace other testing frameworks for the kernel?"
-
-I stated:
-
-   "My understanding is that the intent of KUnit is to avoid booting a kernel on
-   real hardware or in a virtual machine.  That seems to be a matter of semantics
-   to me because isn't invoking a UML Linux just running the Linux kernel in
-   a different form of virtualization?
-
-   So I do not understand why KUnit is an improvement over kselftest.
-
-   ...
-
-   What am I missing?"
-
-
-I was looking for a fuller, better explanation than was given in patch 0
-of how KUnit provides something that is different than what kselftest
-provides for creating unit tests for kernel code.
-
-New question "(2)":
-
-(2) If KUnit provides something unique, then the obvious follow on
-question would be: does it make sense to (a) integrate that feature into
-kselftest, (b) integrate the current kselftest in kernel test functionality
-into KUnit and convert the in kernel test portion of kselftest to use
-KUnit, or (c) KUnit and kselftest are so different that they need to
-remain separate features.
-
-*****  Please do not reply to this email with a discussion of "(2)".
-*****  Such a discussion is premature if there is not an answer
-*****  to my first question.
-
-Observation (3), rephrased:
-
-(3) I also brought up the issue that if option (c) was the answer to
-question "(2)" (instead of either option (a) or option (b)) then this
-is extra overhead for any developer or maintainer involved in different
-subsystems that use the different frameworks.  I intended this as one
-possible motivation for why my first question mattered.
-
-Ted grabbed hold of this issue and basically ignored what I intended
-to be my core question.  Nobody else has answered my core question,
-though Knut's first reply did manage to get somewhere near the
-intent of my core question.
-
-*****  Please do not reply to this email with a discussion of "(3)".
-*****  Such a discussion is premature if there is not an answer
-*****  to my first question.
-*****
-*****  Also that discussion is already occurring in this thread,
-*****  feel free to discuss it there if you want, even though I
-*****  feel such discussion is premature.
-
-I still do not have an answer to my original question.
-
--Frank
+Rob
