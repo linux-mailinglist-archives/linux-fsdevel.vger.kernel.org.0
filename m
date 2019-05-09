@@ -2,103 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F19A218412
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 05:20:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B102F18427
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 05:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfEIDUt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 May 2019 23:20:49 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:44559 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726711AbfEIDUt (ORCPT
+        id S1726281AbfEIDbc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 May 2019 23:31:32 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:34381 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726109AbfEIDbc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 May 2019 23:20:49 -0400
-Received: from dread.disaster.area (pa49-181-171-240.pa.nsw.optusnet.com.au [49.181.171.240])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 801B2438D3B;
-        Thu,  9 May 2019 13:20:45 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hOZbw-0007CE-7S; Thu, 09 May 2019 13:20:44 +1000
-Date:   Thu, 9 May 2019 13:20:44 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Ric Wheeler <ricwheeler@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        lczerner@redhat.com
-Subject: Re: Testing devices for discard support properly
-Message-ID: <20190509032044.GW1454@dread.disaster.area>
-References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
- <20190507220449.GP1454@dread.disaster.area>
- <a409b3d1-960b-84a4-1b8d-1822c305ea18@gmail.com>
- <20190508011407.GQ1454@dread.disaster.area>
- <13b63de0-18bc-eb24-63b4-3c69c6a007b3@gmail.com>
- <yq1a7fwlvzb.fsf@oracle.com>
- <0a16285c-545a-e94a-c733-bcc3d4556557@gmail.com>
- <20190508215832.GR1454@dread.disaster.area>
- <yq1lfzgicn6.fsf@oracle.com>
+        Wed, 8 May 2019 23:31:32 -0400
+Received: from callcc.thunk.org ([66.31.38.53])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x493V03d014929
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 8 May 2019 23:31:01 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 2CA6F420024; Wed,  8 May 2019 23:31:00 -0400 (EDT)
+Date:   Wed, 8 May 2019 23:31:00 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Vijay Chidambaram <vijay@cs.utexas.edu>,
+        lsf-pc@lists.linux-foundation.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jayashree Mohan <jaya@cs.utexas.edu>,
+        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
+        lwn@lwn.net
+Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties
+ contract
+Message-ID: <20190509033100.GB29703@mit.edu>
+References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
+ <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
+ <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
+ <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com>
+ <20190503023043.GB23724@mit.edu>
+ <20190509014327.GT1454@dread.disaster.area>
+ <20190509022013.GC7031@mit.edu>
+ <20190509025845.GV1454@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <yq1lfzgicn6.fsf@oracle.com>
+In-Reply-To: <20190509025845.GV1454@dread.disaster.area>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
-        a=LhzQONXuMOhFZtk4TmSJIw==:117 a=LhzQONXuMOhFZtk4TmSJIw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
-        a=7-415B0cAAAA:8 a=ZpXykw6QandueLHp6qYA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 08, 2019 at 10:29:17PM -0400, Martin K. Petersen wrote:
+On Thu, May 09, 2019 at 12:58:45PM +1000, Dave Chinner wrote:
 > 
-> Dave,
-> 
-> >> > WRITE SAME also has an ANCHOR flag which provides a use case we
-> >> > currently don't have fallocate plumbing for: Allocating blocks without
-> >> > caring about their contents. I.e. the blocks described by the I/O are
-> >> > locked down to prevent ENOSPC for future writes.
-> >
-> > So WRITE_SAME (0) with an ANCHOR flag does not return zeroes on
-> > subsequent reads? i.e. it is effectively
-> > fallocate(FALLOC_FL_NO_HIDE_STALE) preallocation semantics?
-> 
-> The answer is that it depends. It can return zeroes or a device-specific
-> initialization pattern (oh joy).
+> SOMC does not defining crash consistency rules - it defines change
+> dependecies and how ordering and atomicity impact the dependency
+> graph. How other people have interpreted that is out of my control.
 
-So they ignore the "write zeroes" part of the command?
+Fine; but it's a specific set of the crash consistency rules which I'm
+objecting to; it's not a promise that I think I want to make.  (And
+before you blindly sign on the bottom line, I'd suggest that you read
+it very carefully before deciding whether you want to agree to those
+consistency rules as something that XFS will have honor forever.  The
+way I read it, it's goes beyond what you've articulated as SOMC.)
 
-And the standards allow that?
+> A new syscall with essentially the same user interface doesn't
+> guarantee that these implementation problems will be solved.
 
-> > For many use cases cases we actually want zeroed space to be
-> > guaranteed so we don't expose stale data from previous device use into
-> > the new user's visibility - can that be done with WRITE_SAME and the
-> > ANCHOR flag?
-> 
-> That's just a regular zeroout.
-> 
-> We have:
-> 
->    Allocate and zero:	FALLOC_FL_ZERO_RANGE
->    Deallocate and zero:	FALLOC_FL_PUNCH_HOLE
->    Deallocate:		FALLOC_FL_PUNCH_HOLE | FALLOC_FL_NO_HIDE_STALE
-> but are missing:
-> 
->    Allocate:		FALLOC_FL_ZERO_RANGE | FALLOC_FL_NO_HIDE_STALE
+Well, it makes it easier to send all of the requests to the file
+system in a single bundle.  I'd also argue that it's simpler and
+easier for an application to use a fsync2() interface as I sketched
+out than trying to use the whole AIO or io_uring machinery.
 
-So we've defined the fallocate flags to have /completely/ different
-behaviour on block devices to filesystems.
+> So it's essentially identical to the AIO_FSYNC interface, except
+> that it is synchronous.
 
-<sigh>
+Pretty much, yes.
 
-We excel at screwing up APIs, don't we?
+> Sheesh! Did LSFMM include a free lobotomy for participants, or
+> something?
 
-I give up, we've piled the shit too high on this one to dig it out
-now....
+Well, we missed your presence, alas.  No doubt your attendance would
+have improved the discussion.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Cheers,
+
+					- Ted
