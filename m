@@ -2,130 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 698D4183B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 04:20:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21DF6183C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 04:29:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbfEICUn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 May 2019 22:20:43 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:49965 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725842AbfEICUn (ORCPT
+        id S1726526AbfEIC3l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 May 2019 22:29:41 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:40054 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbfEIC3l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 May 2019 22:20:43 -0400
-Received: from callcc.thunk.org ([66.31.38.53])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x492KEDn029318
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 8 May 2019 22:20:15 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 06FB1420024; Wed,  8 May 2019 22:20:14 -0400 (EDT)
-Date:   Wed, 8 May 2019 22:20:13 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
+        Wed, 8 May 2019 22:29:41 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x492TOcc014506;
+        Thu, 9 May 2019 02:29:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=amoBd9+kKibP5f0l9xbY+4adfmr/54YpP2HUFSA6MB8=;
+ b=I6hSZsKxeCGVMFNLEmKVnd36I46xQKm15sJhn+HdjLIJrPc6jO7suQFgUOz5Q0+tt+Mh
+ uB/9CCp7NWF2ZhnNptlypV/6NwDCDYIrkH5Ot2VCAQumAmC1tTM9sERQ0cQFKa92yOLM
+ EH+4lBqri0lFGorHephFYUS/hQOwF8vZKvMjNKjlWUdTX31iE32/Idv5cyCX26nvM+v4
+ 3lwABtiv66Lfus+40lS2ETh/8uStb7DkzdyxDG1EcAZhGUSDaL8LCvZvSyvTtDe6JQlg
+ 7luWqoj2wSIvIt3fq7cPfPm4D1ofV6O99izifLEI6zjOLJ7P7FI1Z/MiAvJ/UXIncvWp fw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 2s94b67x43-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 May 2019 02:29:24 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x492T3Ca143813;
+        Thu, 9 May 2019 02:29:21 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2s94bagy0j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 May 2019 02:29:21 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x492TKsQ015494;
+        Thu, 9 May 2019 02:29:20 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 08 May 2019 19:29:20 -0700
 To:     Dave Chinner <david@fromorbit.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Vijay Chidambaram <vijay@cs.utexas.edu>,
-        lsf-pc@lists.linux-foundation.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jayashree Mohan <jaya@cs.utexas.edu>,
-        Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
-        lwn@lwn.net
-Subject: Re: [TOPIC] Extending the filesystem crash recovery guaranties
- contract
-Message-ID: <20190509022013.GC7031@mit.edu>
-References: <CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com>
- <CAOQ4uxgEicLTA4LtV2fpvx7okEEa=FtbYE7Qa_=JeVEGXz40kw@mail.gmail.com>
- <CAHWVdUXS+e71QNFAyhFUY4W7o3mzVCb=8UrRZAN=v9bv7j6ssA@mail.gmail.com>
- <CAOQ4uxjNWLvh7EmizA7PjmViG5nPMsvB2UbHW6-hhbZiLadQTA@mail.gmail.com>
- <20190503023043.GB23724@mit.edu>
- <20190509014327.GT1454@dread.disaster.area>
+Cc:     Ric Wheeler <ricwheeler@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        lczerner@redhat.com
+Subject: Re: Testing devices for discard support properly
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
+        <20190507220449.GP1454@dread.disaster.area>
+        <a409b3d1-960b-84a4-1b8d-1822c305ea18@gmail.com>
+        <20190508011407.GQ1454@dread.disaster.area>
+        <13b63de0-18bc-eb24-63b4-3c69c6a007b3@gmail.com>
+        <yq1a7fwlvzb.fsf@oracle.com>
+        <0a16285c-545a-e94a-c733-bcc3d4556557@gmail.com>
+        <20190508215832.GR1454@dread.disaster.area>
+Date:   Wed, 08 May 2019 22:29:17 -0400
+In-Reply-To: <20190508215832.GR1454@dread.disaster.area> (Dave Chinner's
+        message of "Thu, 9 May 2019 07:58:32 +1000")
+Message-ID: <yq1lfzgicn6.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190509014327.GT1454@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=881
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905090013
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=911 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905090013
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 09, 2019 at 11:43:27AM +1000, Dave Chinner wrote:
-> 
-> .... the whole point of SOMC is that allows filesystems to avoid
-> dragging external metadata into fsync() operations /unless/ there's
-> a user visible ordering dependency that must be maintained between
-> objects.  If all you are doing is stabilising file data in a stable
-> file/directory, then independent, incremental journaling of the
-> fsync operations on that file fit the SOMC model just fine.
 
-Well, that's not what Vijay's crash consistency guarantees state.  It
-guarantees quite a bit more than what you've written above.  Which is
-my concern.
+Dave,
 
-> > P.P.S.  One of the other discussions that did happen during the main
-> > LSF/MM File system session, and for which there was general agreement
-> > across a number of major file system maintainers, was a fsync2()
-> > system call which would take a list of file descriptors (and flags)
-> > that should be fsync'ed.
-> 
-> Hmmmm, that wasn't on the agenda, and nobody has documented it as
-> yet.
+>> > WRITE SAME also has an ANCHOR flag which provides a use case we
+>> > currently don't have fallocate plumbing for: Allocating blocks without
+>> > caring about their contents. I.e. the blocks described by the I/O are
+>> > locked down to prevent ENOSPC for future writes.
+>
+> So WRITE_SAME (0) with an ANCHOR flag does not return zeroes on
+> subsequent reads? i.e. it is effectively
+> fallocate(FALLOC_FL_NO_HIDE_STALE) preallocation semantics?
 
-It came up as suggested alternative during Ric Wheeler's "Async all
-the things" session.  The problem he was trying to address was
-programs (perhaps userspace file servers) who need to fsync a large
-number of files at the same time.  The problem with his suggested
-solution (which we have for AIO and io_uring already) of having the
-program issue a large number of asynchronous fsync's and then waiting
-for them all, is that the back-end interface is a work queue, so there
-is a lot of effective serialization that takes place.
+The answer is that it depends. It can return zeroes or a device-specific
+initialization pattern (oh joy).
 
-> > The semantics would be that when the
-> > fsync2() successfully returns, all of the guarantees of fsync() or
-> > fdatasync() requested by the list of file descriptors and flags would
-> > be satisfied.  This would allow file systems to more optimally fsync a
-> > batch of files, for example by implementing data integrity writebacks
-> > for all of the files, followed by a single journal commit to guarantee
-> > persistence for all of the metadata changes.
-> 
-> What happens when you get writeback errors on only some of the fds?
-> How do you report the failures and what do you do with the journal
-> commit on partial success?
+> For many use cases cases we actually want zeroed space to be
+> guaranteed so we don't expose stale data from previous device use into
+> the new user's visibility - can that be done with WRITE_SAME and the
+> ANCHOR flag?
 
-Well, one approach would be to pass back the errors in the structure.
-Say something like this:
+That's just a regular zeroout.
 
-     int fsync2(int len, struct fsync_req[]);
+We have:
 
-     struct fsync_req {
-          int	fd;        /* IN */
-	  int	flags;	   /* IN */
-	  int	retval;    /* OUT */
-     };
+   Allocate and zero:	FALLOC_FL_ZERO_RANGE
+   Deallocate and zero:	FALLOC_FL_PUNCH_HOLE
+   Deallocate:		FALLOC_FL_PUNCH_HOLE | FALLOC_FL_NO_HIDE_STALE
 
-As far as what do you do with the journal commit on partial success,
-this are no atomic, "all or nothing" guarantees with this interface.
-It is implementation specific whether there would be one or more file
-system commits necessary before fsync2 returned.
+but are missing:
 
-> Of course, this ignores the elephant in the room: applications can
-> /already do this/ using AIO_FSYNC and have individual error status
-> for each fd. Not to mention that filesystems already batch
-> concurrent fsync journal commits into a single operation. I'm not
-> seeing the point of a new syscall to do this right now....
+   Allocate:		FALLOC_FL_ZERO_RANGE | FALLOC_FL_NO_HIDE_STALE
 
-But it doesn't work very well, because the implementation uses a
-workqueue.  Sure, you could create N worker threads for N fd's that
-you want to fsync, and then file system can batch the fsync requests.
-But wouldn't be so much simpler to give a list of fd's that should be
-fsync'ed to the file system?  That way you don't have to do lots of
-work to split up the work so they can be submitted in parallel, only
-to have the file system batch up all of the requests being issued from
-all of those kernel threads.
+The devices that implement anchor semantics are few and far between. I
+have yet to see one.
 
-So yes, it's identical to the interfaces we already have.  Just like
-select(2), poll(2) and epoll(2) are functionality identical...
-
-     	  	     	    	   	 - Ted
+-- 
+Martin K. Petersen	Oracle Linux Engineering
