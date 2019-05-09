@@ -2,78 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBDD01832A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 03:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A910318305
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 May 2019 02:59:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726100AbfEIBPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 May 2019 21:15:21 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41408 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfEIBPU (ORCPT
+        id S1726554AbfEIA7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 May 2019 20:59:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34062 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfEIA7E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 May 2019 21:15:20 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z3so281395pgp.8;
-        Wed, 08 May 2019 18:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1+Jfl9iXviaxHbmbhnDjk1eQnpFz6l/2Nut9ww82zvo=;
-        b=a3KgZzLZ0y84UNUIY8RS+nYDRzFkAivRDtTwVjhJ1vYp+v2Z6HVSzmnnRowbVUedfI
-         93zPM5T0iF4iJCU1PddnaPwpC/nrCINNvHKs9PmQ0ayrLgURqYfh7EH67znRVZxTURN5
-         VsMO/ROT48Ly/mYey3OTt/dpawpdAk7DUuJetc8MAAQuinmU4P2PjwyMam4VRQGyIo8C
-         F5An8gjuExmDUN5kMRWiGJsQOqa4gz/Zgv9YpcjdE85z0otG8d1GXhf4e05Hdx2o8s1c
-         hn9kGYBDYT3L0e4JtQg2AhBurTKMtE9VNzBNe+yPm2LTyV/rg3Wp/BZ+nH8mhD2rC6M3
-         7+6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1+Jfl9iXviaxHbmbhnDjk1eQnpFz6l/2Nut9ww82zvo=;
-        b=a086WzWOF9zlpKfGBY4LodiG2Cqf1r78lIcu1kGog3yz0L8IXZX3AiX0Bm3K05j7UU
-         zFmvbNfY35LhML5kZ7dS0fRrhsbyrASjkP6idMqmIxkj8p+AZcj7fnrv2JqgM6i6r+A+
-         N6nKV0nuElLWf/e1MjnFkJYLwuAxJi++XY/wDHK654ADK4oQWqiN3aowMniqL7Q0KR2i
-         PCIhm5A8fEHp0Vcj/0r0ZumSDnO0d9OqH7nTiUjIvTuPEm+mkULak+uD3GkxtLL9/DQ2
-         RWZI+r6CyMa6Nq6Ra1ZcVFrKbGSEDg5OAsbcUTr2sMOotGJRRqmz615xO+V+DHzumOtc
-         ew+g==
-X-Gm-Message-State: APjAAAVnUsL4IZX+D6Com+KFV+QDYMijxJK67QglVIaqRDH8l8n3vztP
-        KBgRmvUYpzcEje71+1MWSUfPf+n1
-X-Google-Smtp-Source: APXvYqzW2wEIzqNsRgYl9IE5EX5P/24Mi1edBj4NYy1YPo+96Z3/rjpt+DtwN4pC4yu/pBUKvsKvyA==
-X-Received: by 2002:a65:628b:: with SMTP id f11mr1432751pgv.95.1557362619650;
-        Wed, 08 May 2019 17:43:39 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id 63sm543120pfu.95.2019.05.08.17.43.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 May 2019 17:43:38 -0700 (PDT)
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Brendan Higgins <brendanhiggins@google.com>, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
- <20190507080119.GB28121@kroah.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <a09a7e0e-9894-8c1a-34eb-fc482b1759d0@gmail.com>
-Date:   Wed, 8 May 2019 17:43:35 -0700
+        Wed, 8 May 2019 20:59:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jF6l3iV1rXe+x0MwS+AXxE/3MQbA5vLmSrDtVx8hKJ0=; b=iDLjyMGHb2MtEiX7sNEsrIOc+
+        r555boyzgroaM/roefjfl/8sPXIlDAXxtafMFPJgts5KIWBA3q3sxMLL9Wjox7NuUoSN+lZsyGDWw
+        1YIQfXQ89Etqt/gh+FhXMlhdhbL9rncYRHCp1u5Ydd7sskuGKJOM6SqnvXr8Ix+x0A1cHoy/Pusmm
+        afAw4Qn3zKr+mSjjshNzlrS6rfxIYZK+kWmsANoEiID2eXPgmAt9+V8rVX6zZpa52fnCPoRfx1GZ/
+        Wu13zOk/d8d44/7sOxIazBgLErLk/FQfGqZzRDcPlEkhHnuFiQz1PmBOXDcuzYl28U3M+xDV4tosD
+        uSeh53laQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hOXOb-0001bQ-J1; Thu, 09 May 2019 00:58:49 +0000
+Subject: Re: [PATCH v2 3/7] lib/hexdump.c: Optionally suppress lines of
+ repeated bytes
+To:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     linux-fbdev@vger.kernel.org,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Petr Mladek <pmladek@suse.com>,
+        David Airlie <airlied@linux.ie>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        dri-devel@lists.freedesktop.org, devel@driverdev.osuosl.org,
+        linux-scsi@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
+        ath10k@lists.infradead.org, intel-gfx@lists.freedesktop.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        linux-fsdevel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Benson Leung <bleung@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Daniel Vetter <daniel@ffwll.ch>, netdev@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20190508070148.23130-1-alastair@au1.ibm.com>
+ <20190508070148.23130-4-alastair@au1.ibm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <dc093079-43a0-0a45-f5dd-88b20702fd93@infradead.org>
+Date:   Wed, 8 May 2019 17:58:46 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190507080119.GB28121@kroah.com>
+In-Reply-To: <20190508070148.23130-4-alastair@au1.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -82,117 +76,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/7/19 1:01 AM, Greg KH wrote:
-> On Mon, May 06, 2019 at 08:14:12PM -0700, Frank Rowand wrote:
->> On 5/1/19 4:01 PM, Brendan Higgins wrote:
->>> ## TLDR
->>>
->>> I rebased the last patchset on 5.1-rc7 in hopes that we can get this in
->>> 5.2.
->>>
->>> Shuah, I think you, Greg KH, and myself talked off thread, and we agreed
->>> we would merge through your tree when the time came? Am I remembering
->>> correctly?
->>>
->>> ## Background
->>>
->>> This patch set proposes KUnit, a lightweight unit testing and mocking
->>> framework for the Linux kernel.
->>>
->>> Unlike Autotest and kselftest, KUnit is a true unit testing framework;
->>> it does not require installing the kernel on a test machine or in a VM
->>> and does not require tests to be written in userspace running on a host
->>> kernel. Additionally, KUnit is fast: From invocation to completion KUnit
->>> can run several dozen tests in under a second. Currently, the entire
->>> KUnit test suite for KUnit runs in under a second from the initial
->>> invocation (build time excluded).
->>>
->>> KUnit is heavily inspired by JUnit, Python's unittest.mock, and
->>> Googletest/Googlemock for C++. KUnit provides facilities for defining
->>> unit test cases, grouping related test cases into test suites, providing
->>> common infrastructure for running tests, mocking, spying, and much more.
->>
->> As a result of the emails replying to this patch thread, I am now
->> starting to look at kselftest.  My level of understanding is based
->> on some slide presentations, an LWN article, https://kselftest.wiki.kernel.org/
->> and a _tiny_ bit of looking at kselftest code.
->>
->> tl;dr; I don't really understand kselftest yet.
->>
->>
->> (1) why KUnit exists
->>
->>> ## What's so special about unit testing?
->>>
->>> A unit test is supposed to test a single unit of code in isolation,
->>> hence the name. There should be no dependencies outside the control of
->>> the test; this means no external dependencies, which makes tests orders
->>> of magnitudes faster. Likewise, since there are no external dependencies,
->>> there are no hoops to jump through to run the tests. Additionally, this
->>> makes unit tests deterministic: a failing unit test always indicates a
->>> problem. Finally, because unit tests necessarily have finer granularity,
->>> they are able to test all code paths easily solving the classic problem
->>> of difficulty in exercising error handling code.
->>
->> (2) KUnit is not meant to replace kselftest
->>
->>> ## Is KUnit trying to replace other testing frameworks for the kernel?
->>>
->>> No. Most existing tests for the Linux kernel are end-to-end tests, which
->>> have their place. A well tested system has lots of unit tests, a
->>> reasonable number of integration tests, and some end-to-end tests. KUnit
->>> is just trying to address the unit test space which is currently not
->>> being addressed.
->>
->> My understanding is that the intent of KUnit is to avoid booting a kernel on
->> real hardware or in a virtual machine.  That seems to be a matter of semantics
->> to me because isn't invoking a UML Linux just running the Linux kernel in
->> a different form of virtualization?
->>
->> So I do not understand why KUnit is an improvement over kselftest.
->>
->> It seems to me that KUnit is just another piece of infrastructure that I
->> am going to have to be familiar with as a kernel developer.  More overhead,
->> more information to stuff into my tiny little brain.
->>
->> I would guess that some developers will focus on just one of the two test
->> environments (and some will focus on both), splitting the development
->> resources instead of pooling them on a common infrastructure.
->>
->> What am I missing?
+On 5/8/19 12:01 AM, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
 > 
-> kselftest provides no in-kernel framework for testing kernel code
-> specifically.  That should be what kunit provides, an "easy" way to
-> write in-kernel tests for things.
-
-kselftest provides a mechanism for in-kernel tests via modules.  For
-example, see:
-
-  tools/testing/selftests/vm/run_vmtests invokes:
-    tools/testing/selftests/vm/test_vmalloc.sh
-      loads module:
-        test_vmalloc
-        (which is built from lib/test_vmalloc.c if CONFIG_TEST_VMALLOC)
-
-A very quick and dirty search (likely to miss some tests) finds modules:
-
-  test_bitmap
-  test_bpf
-  test_firmware
-  test_printf
-  test_static_key_base
-  test_static_keys
-  test_user_copy
-  test_vmalloc
-
--Frank
-
+> Some buffers may only be partially filled with useful data, while the rest
+> is padded (typically with 0x00 or 0xff).
 > 
-> Brendan, did I get it right?
+> This patch introduces a flag to allow the supression of lines of repeated
+> bytes, which are replaced with '** Skipped %u bytes of value 0x%x **'
 > 
-> thanks,
+> An inline wrapper function is provided for backwards compatibility with
+> existing code, which maintains the original behaviour.
 > 
-> greg k-h
-> .
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> ---
+>  include/linux/printk.h | 25 +++++++++---
+>  lib/hexdump.c          | 91 ++++++++++++++++++++++++++++++++++++------
+>  2 files changed, 99 insertions(+), 17 deletions(-)
 > 
 
+Hi,
+Did you do "make htmldocs" or something similar on this?
+
+> diff --git a/lib/hexdump.c b/lib/hexdump.c
+> index 3943507bc0e9..d61a1e4f19fa 100644
+> --- a/lib/hexdump.c
+> +++ b/lib/hexdump.c
+> @@ -212,8 +212,44 @@ int hex_dump_to_buffer(const void *buf, size_t len, int rowsize, int groupsize,
+>  EXPORT_SYMBOL(hex_dump_to_buffer);
+>  
+>  #ifdef CONFIG_PRINTK
+> +
+> +/**
+> + * Check if a buffer contains only a single byte value
+> + * @buf: pointer to the buffer
+> + * @len: the size of the buffer in bytes
+> + * @val: outputs the value if if the bytes are identical
+
+Does this work without a function name?
+Documentation/doc-guide/kernel-doc.rst says the general format is:
+
+  /**
+   * function_name() - Brief description of function.
+   * @arg1: Describe the first argument.
+   * @arg2: Describe the second argument.
+   *        One can provide multiple line descriptions
+   *        for arguments.
+   *
+
+> + */
+
+>  /**
+> - * print_hex_dump - print a text hex dump to syslog for a binary blob of data
+> + * print_hex_dump_ext: dump a binary blob of data to syslog in hexadecimal
+
+Also not in the general documented format.
+
+>   * @level: kernel log level (e.g. KERN_DEBUG)
+>   * @prefix_str: string to prefix each line with;
+>   *  caller supplies trailing spaces for alignment if desired
+
+
+-- 
+~Randy
