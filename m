@@ -2,215 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4F95198FA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 09:25:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5EEE1995A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 10:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbfEJHZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 May 2019 03:25:04 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45837 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbfEJHZE (ORCPT
+        id S1727048AbfEJIM0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 May 2019 04:12:26 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54671 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbfEJIMZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 May 2019 03:25:04 -0400
-Received: by mail-pg1-f193.google.com with SMTP id i21so2553486pgi.12;
-        Fri, 10 May 2019 00:25:03 -0700 (PDT)
+        Fri, 10 May 2019 04:12:25 -0400
+Received: by mail-it1-f194.google.com with SMTP id a190so7976243ite.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 01:12:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MxdAiari0nmP4dzXk8y1jGFeEkTXq4eqOJGoyehmXIg=;
-        b=S4deC/hCB9MWckQ7p7EvDz7MCjGrl8YSsW+gbeIAUPtPvn/NVkV0jpq3+YnLs+0HM5
-         6L3YHqvsUz8azvLbSvXfAILZ+X3c6w3Kzb5VB0LhrqklV+Hq/fyPjB279ApmeAlgLKaa
-         RhHdrOkokuhbQTYXqpF3Hlsbqzu6Wkc1aB6BEjbWgKuV0TEPz+8TPURDADd7CJRozhe3
-         KquzhfcwsEh7OzsOwWJImDW9qTVMzw7Pbkzi4Hekb+dD27dxFYC0CJHTC1kUcuYGosq5
-         xmyseexu3M+Tzdp5ZqYb+j1U4CADmYf817shn+tWjiu6gFZD7O27U8SvaNsXb22eDHgB
-         ngcA==
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BBAzF3ukUH/0YN2wqJedYjAOrMYWc/znufhrHMASOjw=;
+        b=DTbMLXFLcAiB15aupDILUkfkz5gcC9f94HX5NsBdu7KUdwUxv8H4sA/hHV0eLJv1Zg
+         VK8qSoAs3eoT26WJzo3aCh8WcBLCOqjCQC56r8GX2qHK3fUKr0w/DnfabTgCCXRGaun2
+         hQtjdrH9YxiarIh9Zizdq7T+K/OxLjodKRv2Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MxdAiari0nmP4dzXk8y1jGFeEkTXq4eqOJGoyehmXIg=;
-        b=miaMqnM2rdpUn/9xD2z9/YgKBpGNlpJV0v2tx5jALcuQwetyn0ev9UJX1F9YP2onl1
-         1UVESVOp8MhWF8lh+zCnzpSH8uIuxB2xg3B2uAp62ntGgwMGJ484NM2qPviC3xuSJSOm
-         CS/5eDGYSkySLXRBhWobVnGvIIDcRT3uhQLfnZhkh1BadvlbpdO05W7dwbpWMLH0s9l8
-         ZgRv7hsri2zizrkpDzhsK+rVEXGwPYABzMd/5znUbjnwmK0ohTIcnbG2QrN1U33Xz4N6
-         iYNG6gmb1mP2115WaQngmZlyG+Nb5nM6fUK0+lkWaJLEgHIE66qRAYFuCsGAV2YMrDhf
-         OzqA==
-X-Gm-Message-State: APjAAAXVm/K9kV72uyMbGGITXuCgsKULX1c3nD99xwyfK7GOkySvV0Fb
-        MrKsNdzTXedR1X5UvpJldIE=
-X-Google-Smtp-Source: APXvYqymmigac22Jqy6M2hK7+ePaHYrKV0Cx4Y210l9vnI9b0FU2xOOkWf23ZRWm2Tq7zbG6sKZFvQ==
-X-Received: by 2002:aa7:8046:: with SMTP id y6mr12066017pfm.251.1557473102856;
-        Fri, 10 May 2019 00:25:02 -0700 (PDT)
-Received: from localhost ([2601:640:1:34d8:19d3:11c4:475e:3daa])
-        by smtp.gmail.com with ESMTPSA id z66sm6289282pfz.83.2019.05.10.00.25.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 10 May 2019 00:25:01 -0700 (PDT)
-Date:   Fri, 10 May 2019 00:25:00 -0700
-From:   Yury Norov <yury.norov@gmail.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Rafael Aquini <aquini@redhat.com>,
-        Joel Savitz <jsavitz@redhat.com>, linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Sandeep Patil <sspatil@android.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] fs/proc: add VmTaskSize field to /proc/$$/status
-Message-ID: <20190510072500.GA1520@yury-thinkpad>
-References: <1557158023-23021-1-git-send-email-jsavitz@redhat.com>
- <20190507125430.GA31025@x230.aquini.net>
- <20190508063716.GA3096@yury-thinkpad>
- <87k1ezugqh.fsf@concordia.ellerman.id.au>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BBAzF3ukUH/0YN2wqJedYjAOrMYWc/znufhrHMASOjw=;
+        b=qDrEbSwWB2c+VlBGcoJTMMiiKtSUBnoxvoXj0CqLaED9oVzoLRSvCdIKxEvdW0fubK
+         KDWxFNnUIyTeZmhtSyzD7sGuOaiHsEOnp1Us2rEZueVlTrBeZv2Ic/MXygcmxse8pgDo
+         cBQfU4DHTUMkUk5vrYMbSfGfxTg3PmCRvCZ7ZV8k8Vc5pPogplU/0qgA23jDHyiAu+wX
+         wcgRdufRCuWWGyfQB8Wd26rc0HSZDJ/C7RNLnNtyfFh4A40RBEldN26g+zeJ1lQOPvDb
+         MWzZ1qSVjQiG+s8WiFllMOldDbpYcOBGfRAUZIjcp+xfNArlahTNnLcsXH+fr7TsaqnY
+         4TGA==
+X-Gm-Message-State: APjAAAVqtH2vvJm5DAVFanw+KcdF6b0ZBVuZTDakhZae9o7y9DdoyPSa
+        Xr8IZbam+20dktDznuMmZ8n6wBYLv68o7c3eGx032Q==
+X-Google-Smtp-Source: APXvYqwtKFD3/r+cWIqBKLLuiGzfuFV2T1vL9O4CSxpGbXJpLMcrf9zEidMeL+0DEwVPJdbGFlDa8SqPmFsr6woW+ok=
+X-Received: by 2002:a05:660c:4d0:: with SMTP id v16mr7006290itk.62.1557475944416;
+ Fri, 10 May 2019 01:12:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k1ezugqh.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <a09a7e0e-9894-8c1a-34eb-fc482b1759d0@gmail.com>
+ <20190509015856.GB7031@mit.edu> <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
+ <20190509032017.GA29703@mit.edu> <7fd35df81c06f6eb319223a22e7b93f29926edb9.camel@oracle.com>
+ <20190509133551.GD29703@mit.edu> <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
+ <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com> <20190509214233.GA20877@mit.edu>
+ <b09ba170-229b-fde4-3e9a-e50d6ab4c1b5@deltatee.com> <20190509233043.GC20877@mit.edu>
+ <8914afef-1e66-e6e3-f891-5855768d3018@deltatee.com> <6d6e91ec-33d3-830b-4895-4d7a20ba7d45@gmail.com>
+ <a1b88d5add15d43de0468c32d9a2427629337abb.camel@oracle.com>
+In-Reply-To: <a1b88d5add15d43de0468c32d9a2427629337abb.camel@oracle.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Fri, 10 May 2019 10:12:13 +0200
+Message-ID: <CAKMK7uFd1xUx8u3xWLwifVSq4OEnMO4S-m0hESe68UzONXnMFg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     Knut Omang <knut.omang@oracle.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Tim.Bird@sony.com,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Rob Herring <robh@kernel.org>, sboyd@kernel.org,
+        Shuah Khan <shuah@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, linux-nvdimm@lists.01.org,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>, jdike@addtoit.com,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 10, 2019 at 01:32:22PM +1000, Michael Ellerman wrote:
-> Yury Norov <yury.norov@gmail.com> writes:
-> > On Tue, May 07, 2019 at 08:54:31AM -0400, Rafael Aquini wrote:
-> >> On Mon, May 06, 2019 at 11:53:43AM -0400, Joel Savitz wrote:
-> >> > There is currently no easy and architecture-independent way to find the
-> >> > lowest unusable virtual address available to a process without
-> >> > brute-force calculation. This patch allows a user to easily retrieve
-> >> > this value via /proc/<pid>/status.
-> >> > 
-> >> > Using this patch, any program that previously needed to waste cpu cycles
-> >> > recalculating a non-sensitive process-dependent value already known to
-> >> > the kernel can now be optimized to use this mechanism.
-> >> > 
-> >> > Signed-off-by: Joel Savitz <jsavitz@redhat.com>
-> >> > ---
-> >> >  Documentation/filesystems/proc.txt | 2 ++
-> >> >  fs/proc/task_mmu.c                 | 2 ++
-> >> >  2 files changed, 4 insertions(+)
-> >> > 
-> >> > diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-> >> > index 66cad5c86171..1c6a912e3975 100644
-> >> > --- a/Documentation/filesystems/proc.txt
-> >> > +++ b/Documentation/filesystems/proc.txt
-> >> > @@ -187,6 +187,7 @@ read the file /proc/PID/status:
-> >> >    VmLib:      1412 kB
-> >> >    VmPTE:        20 kb
-> >> >    VmSwap:        0 kB
-> >> > +  VmTaskSize:	137438953468 kB
-> >> >    HugetlbPages:          0 kB
-> >> >    CoreDumping:    0
-> >> >    THP_enabled:	  1
-> >> > @@ -263,6 +264,7 @@ Table 1-2: Contents of the status files (as of 4.19)
-> >> >   VmPTE                       size of page table entries
-> >> >   VmSwap                      amount of swap used by anonymous private data
-> >> >                               (shmem swap usage is not included)
-> >> > + VmTaskSize                  lowest unusable address in process virtual memory
-> >> 
-> >> Can we change this help text to "size of process' virtual address space memory" ?
+On Fri, May 10, 2019 at 7:49 AM Knut Omang <knut.omang@oracle.com> wrote:
+>
+> On Thu, 2019-05-09 at 22:18 -0700, Frank Rowand wrote:
+> > On 5/9/19 4:40 PM, Logan Gunthorpe wrote:
+> > >
+> > >
+> > > On 2019-05-09 5:30 p.m., Theodore Ts'o wrote:
+> > >> On Thu, May 09, 2019 at 04:20:05PM -0600, Logan Gunthorpe wrote:
+> > >>>
+> > >>> The second item, arguably, does have significant overlap with kselftest.
+> > >>> Whether you are running short tests in a light weight UML environment or
+> > >>> higher level tests in an heavier VM the two could be using the same
+> > >>> framework for writing or defining in-kernel tests. It *may* also be valuable
+> > >>> for some people to be able to run all the UML tests in the heavy VM
+> > >>> environment along side other higher level tests.
+> > >>>
+> > >>> Looking at the selftests tree in the repo, we already have similar items to
+> > >>> what Kunit is adding as I described in point (2) above. kselftest_harness.h
+> > >>> contains macros like EXPECT_* and ASSERT_* with very similar intentions to
+> > >>> the new KUNIT_EXECPT_* and KUNIT_ASSERT_* macros.
+> > >>>
+> > >>> However, the number of users of this harness appears to be quite small. Most
+> > >>> of the code in the selftests tree seems to be a random mismash of scripts
+> > >>> and userspace code so it's not hard to see it as something completely
+> > >>> different from the new Kunit:
+> > >>>
+> > >>> $ git grep --files-with-matches kselftest_harness.h *
+> > >>
+> > >> To the extent that we can unify how tests are written, I agree that
+> > >> this would be a good thing.  However, you should note that
+> > >> kselftest_harness.h is currently assums that it will be included in
+> > >> userspace programs.  This is most obviously seen if you look closely
+> > >> at the functions defined in the header files which makes calls to
+> > >> fork(), abort() and fprintf().
+> > >
+> > > Ah, yes. I obviously did not dig deep enough. Using kunit for
+> > > in-kernel tests and kselftest_harness for userspace tests seems like
+> > > a sensible line to draw to me. Trying to unify kernel and userspace
+> > > here sounds like it could be difficult so it's probably not worth
+> > > forcing the issue unless someone wants to do some really fancy work
+> > > to get it done.
+> > >
+> > > Based on some of the other commenters, I was under the impression
+> > > that kselftests had in-kernel tests but I'm not sure where or if they
+> > > exist.
 > >
-> > Agree. Or go in other direction and make it VmEnd
-> 
-> Yeah I think VmEnd would be clearer to folks who aren't familiar with
-> the kernel's usage of the TASK_SIZE terminology.
-> 
-> >> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> >> > index 95ca1fe7283c..0af7081f7b19 100644
-> >> > --- a/fs/proc/task_mmu.c
-> >> > +++ b/fs/proc/task_mmu.c
-> >> > @@ -74,6 +74,8 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
-> >> >  	seq_put_decimal_ull_width(m,
-> >> >  		    " kB\nVmPTE:\t", mm_pgtables_bytes(mm) >> 10, 8);
-> >> >  	SEQ_PUT_DEC(" kB\nVmSwap:\t", swap);
-> >> > +	seq_put_decimal_ull_width(m,
-> >> > +		    " kB\nVmTaskSize:\t", mm->task_size >> 10, 8);
-> >> >  	seq_puts(m, " kB\n");
-> >> >  	hugetlb_report_usage(m, mm);
-> >> >  }
+> > YES, kselftest has in-kernel tests.  (Excuse the shouting...)
 > >
-> > I'm OK with technical part, but I still have questions not answered
-> > (or wrongly answered) in v1 and v2. Below is the very detailed
-> > description of the concerns I have.
+> > Here is a likely list of them in the kernel source tree:
 > >
-> > 1. What is the exact reason for it? Original version tells about some
-> > test that takes so much time that you were able to drink a cup of
-> > coffee before it was done. The test as you said implements linear
-> > search to find the last page and so is of O(n). If it's only for some
-> > random test, I think the kernel can survive without it. Do you have a
-> > real example of useful programs that suffer without this information?
+> > $ grep module_init lib/test_*.c
+> > lib/test_bitfield.c:module_init(test_bitfields)
+> > lib/test_bitmap.c:module_init(test_bitmap_init);
+> > lib/test_bpf.c:module_init(test_bpf_init);
+> > lib/test_debug_virtual.c:module_init(test_debug_virtual_init);
+> > lib/test_firmware.c:module_init(test_firmware_init);
+> > lib/test_hash.c:module_init(test_hash_init);  /* Does everything */
+> > lib/test_hexdump.c:module_init(test_hexdump_init);
+> > lib/test_ida.c:module_init(ida_checks);
+> > lib/test_kasan.c:module_init(kmalloc_tests_init);
+> > lib/test_list_sort.c:module_init(list_sort_test);
+> > lib/test_memcat_p.c:module_init(test_memcat_p_init);
+> > lib/test_module.c:static int __init test_module_init(void)
+> > lib/test_module.c:module_init(test_module_init);
+> > lib/test_objagg.c:module_init(test_objagg_init);
+> > lib/test_overflow.c:static int __init test_module_init(void)
+> > lib/test_overflow.c:module_init(test_module_init);
+> > lib/test_parman.c:module_init(test_parman_init);
+> > lib/test_printf.c:module_init(test_printf_init);
+> > lib/test_rhashtable.c:module_init(test_rht_init);
+> > lib/test_siphash.c:module_init(siphash_test_init);
+> > lib/test_sort.c:module_init(test_sort_init);
+> > lib/test_stackinit.c:module_init(test_stackinit_init);
+> > lib/test_static_key_base.c:module_init(test_static_key_base_init);
+> > lib/test_static_keys.c:module_init(test_static_key_init);
+> > lib/test_string.c:module_init(string_selftest_init);
+> > lib/test_ubsan.c:module_init(test_ubsan_init);
+> > lib/test_user_copy.c:module_init(test_user_copy_init);
+> > lib/test_uuid.c:module_init(test_uuid_init);
+> > lib/test_vmalloc.c:module_init(vmalloc_test_init)
+> > lib/test_xarray.c:module_init(xarray_checks);
 > >
 > >
-> > 2. I have nothing against taking breaks and see nothing weird if
-> > ineffective algorithms take time. On my system (x86, Ubuntu) the last
-> > mapped region according to /proc/<pid>/maps is:
-> > ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0     [vsyscall]
-> > So to find the required address, we have to inspect 2559 pages. With a
-> > binary search it would take 12 iterations at max. If my calculation is
-> > wrong or your environment is completely different - please elaborate.
-> 
-> I agree it should not be hard to calculate, but at the same time it's
-> trivial for the kernel to export the information so I don't see why the
-> kernel shouldn't.
-
-Kernel shouldn't do it unless there will be real users of the feature.
-Otherwise it's pure bloating.
-
-One possible user of it that I can imagine is mmap(MAP_FIXED). The
-documentation is very clear about it:
-
-   Furthermore,  this  option  is  extremely  hazardous (when used on its own),
-   because it forcibly removes preexisting mappings, making it easy for a 
-   multithreaded  process  to corrupt its own address space.
-
-VmEnd provided by kernel may encourage people to solve their problems
-by using MAP_FIXED which is potentially dangerous.
-
-Another scenario of VmEnd is to understand how many top bits of address will
-be always zero to allocate them for user's purpose, like smart pointers. It
-worth to discuss this usecase with compiler people. If they have interest,
-I think it's more straightforward to give them something like:
-   int preserve_top_bits(int nbits);
-
-Anything else?
- 
-> > 3. As far as I can see, Linux currently does not support dynamic
-> > TASK_SIZE. It means that for any platform+ABI combination VmTaskSize
-> > will be always the same. So VmTaskSize would be effectively useless waste
-> > of lines. In fact, TASK SIZE is compiler time information and should
-> > be exposed to user in headers. In discussion to v2 Rafael Aquini answered
-> > for this concern that TASK_SIZE is a runtime resolved macro. It's
-> > true, but my main point is: GCC knows what type of binary it compiles
-> > and is able to select proper value. We are already doing similar things
-> > where appropriate. Refer for example to my arm64/ilp32 series:
+> > > If they do exists, it seems like it would make sense to
+> > > convert those to kunit and have Kunit tests run-able in a VM or
+> > > baremetal instance.
 > >
-> > arch/arm64/include/uapi/asm/bitsperlong.h:
-> > -#define __BITS_PER_LONG 64
-> > +#if defined(__LP64__)
-> > +/* Assuming __LP64__ will be defined for native ELF64's and not for ILP32. */
-> > +#  define __BITS_PER_LONG 64
-> > +#elif defined(__ILP32__)
-> > +#  define __BITS_PER_LONG 32
-> > +#else
-> > +#  error "Neither LP64 nor ILP32: unsupported ABI in asm/bitsperlong.h"
-> > +#endif
+> > They already run in a VM.
 > >
-> > __LP64__ and __ILP32__ are symbols provided by GCC to distinguish
-> > between ABIs. So userspace is able to take proper __BITS_PER_LONG value
-> > at compile time, not at runtime. I think, you can do the same thing for
-> > TASK_SIZE.
-> 
-> No you can't do it at compile time for TASK_SIZE.
-> 
-> On powerpc a 64-bit program might run on a kernel built with 4K pages
-> where TASK_SIZE is 64TB, and that same program can run on a kernel built
-> with 64K pages where TASK_SIZE is 4PB.
-> 
-> And it's not just determined by PAGE_SIZE, that same program might also
-> run on an older kernel where TASK_SIZE with 64K pages was 512TB.
+> > They already run on bare metal.
+> >
+> > They already run in UML.
+> >
+> > This is not to say that KUnit does not make sense.  But I'm still trying
+> > to get a better description of the KUnit features (and there are
+> > some).
+>
+> FYI, I have a master student who looks at converting some of these to KTF, such as for
+> instance the XArray tests, which lended themselves quite good to a semi-automated
+> conversion.
+>
+> The result is also a somewhat more compact code as well as the flexibility
+> provided by the Googletest executor and the KTF frameworks, such as running selected
+> tests, output formatting, debugging features etc.
 
-OK, understood.
+So is KTF already in upstream? Or is the plan to unify the KTF and
+Kunit in-kernel test harnesses? Because there's tons of these
+in-kernel unit tests already, and every merge we get more (Frank's
+list didn't even look into drivers or anywhere else, e.g. it's missing
+the locking self tests I worked on in the past), and a more structured
+approach would really be good.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
