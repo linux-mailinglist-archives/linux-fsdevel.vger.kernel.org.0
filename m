@@ -2,95 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 657561A46F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 23:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50EEA1A484
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 23:28:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbfEJVUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 May 2019 17:20:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727767AbfEJVUj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 May 2019 17:20:39 -0400
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E28FA21841
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 21:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557523238;
-        bh=eVSDLxFRJtNqvSdy6nzYE0dpoYEOh2L4bbdtCHYcgX4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0fS3cTmHczG1ssOc5teJdrM/TgWQ6nVTFhgCqAq8ASGKhIkMVg92wafAOLYiI3MWl
-         INOHmViBS9cNEKaDJzcRJl2lEH3LwAKUHnacjQ8LBm+I8aoDSG2JbRqJtx70KX/w7K
-         pTHZRqYnAaT5e2/zJ0Nn7aMXre7H8IOi3HsAkp+Y=
-Received: by mail-wm1-f46.google.com with SMTP id n25so8670396wmk.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 14:20:37 -0700 (PDT)
-X-Gm-Message-State: APjAAAW9zCwJ3948rs7nkxtA6ZrIHri3EWvrJ48uI0N3NrnwO/Wr17rC
-        tSC3aMAJRzINgTP0u8N2gal7yLhI6kvpExnm6BxIPA==
-X-Google-Smtp-Source: APXvYqxmLWOSJzfnM1hN1P+7VEpgHvDb4cHKF5KSb97t7Bb1E5U/runa9boZbrE+HP301qSI8wrEMedzUhCobT/8uJY=
-X-Received: by 2002:a7b:cb58:: with SMTP id v24mr8095092wmj.107.1557523234745;
- Fri, 10 May 2019 14:20:34 -0700 (PDT)
+        id S1728158AbfEJV2l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 May 2019 17:28:41 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38975 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728103AbfEJV2k (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 May 2019 17:28:40 -0400
+Received: by mail-ed1-f68.google.com with SMTP id e24so6937522edq.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 14:28:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ULvb6m5Ct7N+U+Hk+TL0VPodYz5yvNtcE2Pdidu8130=;
+        b=OpeS/e5yAb8uvpLXYNqA6N1MI8D7JXLjmHyNft0qks+8R/zc45m3XbQH7ZLcDfretb
+         NJx/g0yV7jox/sIORLwOrxO1a9CV1jZa4gZ98sX8gwy7R8ojzc6s0LmwQEN7UABbk8mb
+         Fxhe8bCtYUg4ePrk9piZU6axZgBrTRfXt2Nca9QBNovg68zQtj8GUi/rd7SCaOGE7XQG
+         maBuJVPgPv8M7/MFnTidvVHklN5G7hqvUjLYWauPMuQewufDa3+DR5c2bfu6JIzKNOi0
+         rmTdxIt5cPg9YEIjCngJ1xtbJ4MWbtHDYD1wkUYVwYJKhe+0vPHojo8IZxOQPW4XrFjy
+         V9dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ULvb6m5Ct7N+U+Hk+TL0VPodYz5yvNtcE2Pdidu8130=;
+        b=aaACfFXXqS0P43EdISPu8kHmVGCfTN9EDe0uQnld/7yYMg7osq/6pdl8/ERjWgM+eb
+         n4xze2sRiBX2OzAgcxlXsuzYyj66pQwwABUHB6ri9UvIXQMEhBaAoIXgYOhifO3ZufKU
+         XVXtt391fMfhTk1KMDjwO32HHqhxwGk7RHgYL+cjJW8EBId/BJltO03Hy7YhcDzU5Ti3
+         7NbyqHjvSYFdmXFBdphi3Ex52zqUaKu8lCOS/wIDXEaeNPso3FTpDlTQqgqJgOP9U4hr
+         iBiGettWAm+ZWP+cA+jyF9Rkn+DaErxo/f80h0RPrKc7YCGZAzDvGlLYOUgnAendu1wJ
+         erhQ==
+X-Gm-Message-State: APjAAAVLPbRj9nTP+gh/ZrJ1714Gmp+L7Oh3nz7G67IqDUPjFL0qHZeF
+        EDtRa1CnJpi9zpiTAGxM0TAGAQ==
+X-Google-Smtp-Source: APXvYqwB8IbdmimHYeSIRTDySy1Eup7HC96peg+2fx8bMgd82d1e5doTbK2hNZI5/C/ZsrOzqlCN9w==
+X-Received: by 2002:a50:f5d0:: with SMTP id x16mr13446339edm.287.1557523718509;
+        Fri, 10 May 2019 14:28:38 -0700 (PDT)
+Received: from google.com ([2a00:79e0:1b:201:ee0a:cce3:df40:3ac5])
+        by smtp.gmail.com with ESMTPSA id c6sm1742858edk.81.2019.05.10.14.28.36
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 10 May 2019 14:28:37 -0700 (PDT)
+Date:   Fri, 10 May 2019 23:28:31 +0200
+From:   Jann Horn <jannh@google.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
+        arnd@arndb.de, rob@landley.net, james.w.mcmechan@gmail.com
+Subject: Re: [PATCH v2 1/3] fs: add ksys_lsetxattr() wrapper
+Message-ID: <20190510212831.GD253532@google.com>
+References: <20190509112420.15671-1-roberto.sassu@huawei.com>
+ <20190509112420.15671-2-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-References: <20190506165439.9155-1-cyphar@cyphar.com> <20190506165439.9155-6-cyphar@cyphar.com>
- <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com>
- <20190506191735.nmzf7kwfh7b6e2tf@yavin> <20190510204141.GB253532@google.com>
-In-Reply-To: <20190510204141.GB253532@google.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 10 May 2019 14:20:23 -0700
-X-Gmail-Original-Message-ID: <CALCETrW2nn=omqJb4p+m-BDsCOhg+YZQ3ELd4BdhODV3G44gfA@mail.gmail.com>
-Message-ID: <CALCETrW2nn=omqJb4p+m-BDsCOhg+YZQ3ELd4BdhODV3G44gfA@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
-To:     Jann Horn <jannh@google.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190509112420.15671-2-roberto.sassu@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 10, 2019 at 1:41 PM Jann Horn <jannh@google.com> wrote:
->
-> On Tue, May 07, 2019 at 05:17:35AM +1000, Aleksa Sarai wrote:
-> > On 2019-05-06, Jann Horn <jannh@google.com> wrote:
-> > > In my opinion, CVE-2019-5736 points out two different problems:
-> > >
-> > > The big problem: The __ptrace_may_access() logic has a special-case
-> > > short-circuit for "introspection" that you can't opt out of; this
-> > > makes it possible to open things in procfs that are related to the
-> > > current process even if the credentials of the process wouldn't permit
-> > > accessing another process like it. I think the proper fix to deal with
-> > > this would be to add a prctl() flag for "set whether introspection is
-> > > allowed for this process", and if userspace has manually un-set that
-> > > flag, any introspection special-case logic would be skipped.
-> >
-> > We could do PR_SET_DUMPABLE=3 for this, I guess?
->
-> Hmm... I'd make it a new prctl() command, since introspection is
-> somewhat orthogonal to dumpability. Also, dumpability is per-mm, and I
-> think the introspection flag should be per-thread.
+On Thu, May 09, 2019 at 01:24:18PM +0200, Roberto Sassu wrote:
+> Similarly to commit 03450e271a16 ("fs: add ksys_fchmod() and do_fchmodat()
+> helpers and ksys_chmod() wrapper; remove in-kernel calls to syscall"), this
+> patch introduces the ksys_lsetxattr() helper to avoid in-kernel calls to
+> the sys_lsetxattr() syscall.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+[...]
+> +int ksys_lsetxattr(const char __user *pathname,
+> +		   const char __user *name, const void __user *value,
+> +		   size_t size, int flags)
+> +{
+> +	return path_setxattr(pathname, name, value, size, flags, 0);
+> +}
 
-I've lost track of the context here, but it seems to me that
-mitigating attacks involving accidental following of /proc links
-shouldn't depend on dumpability.  What's the actual problem this is
-trying to solve again?
+Instead of exposing ksys_lsetxattr(), wouldn't it be cleaner to use
+kern_path() and vfs_setxattr(), or something like that? Otherwise you're
+adding more code that has to cast between kernel and user pointers.
