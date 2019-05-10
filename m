@@ -2,101 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C47E1A72E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2019 10:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 800201A409
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 22:42:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbfEKIg0 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 May 2019 04:36:26 -0400
-Received: from imsantv23.netvigator.com ([210.87.247.11]:56330 "EHLO
-        imsantv23.netvigator.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728427AbfEKIg0 (ORCPT
+        id S1727970AbfEJUlv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 May 2019 16:41:51 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46202 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727911AbfEJUlv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 May 2019 04:36:26 -0400
-X-Greylist: delayed 1196 seconds by postgrey-1.27 at vger.kernel.org; Sat, 11 May 2019 04:36:24 EDT
-Received: from wbironout1.netvigator.com (wbironout1.netvigator.com [210.87.247.7])
-        by imsantv23.netvigator.com (8.14.4/8.14.4) with ESMTP id x4B8CPSQ017775;
-        Sat, 11 May 2019 16:12:25 +0800
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0D//wC0g9Zc/wJSUspkghmCeANvEhQBA?=
- =?us-ascii?q?RKGQYVviF0CARyBdxSHHoQOhQxDgjVFAYIoAYQuE4FnCQEBAQ4vAQGGTSNLBAI?=
- =?us-ascii?q?EBAEEbShCFgGFAyAxFTBaAgwBDgEeLYIUdYFpAQECHAEFkQt5mWMdgXgFARcND?=
- =?us-ascii?q?QKDKYFygX0KGQQKGQ1ggUONAoFXP4E0EIIqhH+DAmUCCxmCDXKHKYMghxSICYx?=
- =?us-ascii?q?IOQcCAoIJWosfdoFMhCEbXYE2ZYVng04UA4IDDgFegU6Eao1AkTWBCgg5AYEfX?=
- =?us-ascii?q?gMvbQqBV3CBbgolgm+OcC0jMwGMV4QUAQE?=
-X-IronPort-AV: E=Sophos;i="5.60,456,1549900800"; 
-   d="scan'208";a="135404818"
-X-MGA-submission: =?us-ascii?q?MDG7vQ56R4Q4Q2lZFFeBBQ+FGVVSp6NbUXHJ5x?=
- =?us-ascii?q?1DFBUOQb/UTRXtwwNl7KTAcCk6srWdHJiN70LpmhH5OZgj04jOaRrm7l?=
- =?us-ascii?q?HK1VDxjJIz8GWWZ1EmH9bLPMUKIDN7qWs3qEBc5BFbB5zyQipQGGlg/V?=
- =?us-ascii?q?5f?=
-Received: from unknown (HELO ghmg01.great-harvest.local) ([202.82.82.2])
-  by wbironout1v.netvigator.com with ESMTP; 11 May 2019 16:11:58 +0800
-X-AuditID: c0a80a1c-f2bff70000000f0a-1c-5cd5ddd7bea2
-Received: from [192.168.1.12] (Unknown_Domain [64.191.169.42])
-        (using TLS with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        by ghmg01.great-harvest.local (Symantec Messaging Gateway) with SMTP id 46.2B.03850.7DDD5DC5; Sat, 11 May 2019 04:23:56 +0800 (HKT)
-Content-Type: text/plain; charset="iso-8859-1"
-Message-ID: <46.2B.03850.7DDD5DC5@ghmg01.great-harvest.local>
+        Fri, 10 May 2019 16:41:51 -0400
+Received: by mail-ed1-f66.google.com with SMTP id f37so6752211edb.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 13:41:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ganxwCo69+MjYlGVZok+ayq0HYAVtlcSkabz2Ai2RCk=;
+        b=PX2FYdIQmLYOG9DttH4kv0cprRCB1CVkzY1eQ8hgHHfnNYlZVbH8CkFKMApWWjI0HT
+         j5gDUyr+dgeMEfMtJZKOl6Avf3+OFUhwoaDxYrbETZB0PXHFBlolbkxshIsiYJkw3xz0
+         ExmEM4ZdWgWVb98u3zlAzqBG13c4bV1FqysXsiqDc5fSBrP1nVEiCOuom7lIrU27F3+T
+         PtJXUG+7sxBGLlZaplytARycQIqD1n7MGS0a1TxzoFrFhJ+W+rN/vxN8sj3a1jAx/DoJ
+         aQAW8vAu2sRduqDDMMN5IWslifXd7edG+2owQD24IU5u1FkoJ80+KhpJxTdUd+90l+Ne
+         ihmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ganxwCo69+MjYlGVZok+ayq0HYAVtlcSkabz2Ai2RCk=;
+        b=adKYisCGeXw8+E8qTDfc6508Kf9omgT/gmCIbFyDtHX8DwsNEfKxFXWyb7BvWAmGCu
+         H+9FA98lR66PH8rSMDF+PLsrko23unEggxFo6M8LezdqKmbhDe8OONk8KzlU0BZQ5uyS
+         vrXHT6S8YTcOYrNjQZvLmTqlUojtTttASmK2SYEKMkph1Pkzo1UEPUBd8Ngywp3hvveZ
+         fus6I7qDMF5sct4WFi+BZeKhribYc9QMlDVQXwpWtZm86WfpyThe9usZ2LTo9P8L6M5S
+         Zv+lST16wCaZZEc4n3i9tUTXywlMQDprhZGaluZdk4UnHitVknXxuKrQ9dqUnhPJP8EE
+         xJXA==
+X-Gm-Message-State: APjAAAV2Lflyvda3hautE6P0KOF9zQ5ErjBPJP6bJXH3fTvedsm112Xu
+        Jq9y6KsRlQ05pdilHB4/nsoyiQ==
+X-Google-Smtp-Source: APXvYqwrQpOQMxFo7pL64woeiMd6ENZAMPxG/EeBd9+8Jln82x4vS7EDIT7ItJ2WpRWhrlGsKx5V/Q==
+X-Received: by 2002:a50:9968:: with SMTP id l37mr13505242edb.143.1557520909008;
+        Fri, 10 May 2019 13:41:49 -0700 (PDT)
+Received: from google.com ([2a00:79e0:1b:201:ee0a:cce3:df40:3ac5])
+        by smtp.gmail.com with ESMTPSA id q4sm878740ejb.65.2019.05.10.13.41.47
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 10 May 2019 13:41:47 -0700 (PDT)
+Date:   Fri, 10 May 2019 22:41:41 +0200
+From:   Jann Horn <jannh@google.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
+Message-ID: <20190510204141.GB253532@google.com>
+References: <20190506165439.9155-1-cyphar@cyphar.com>
+ <20190506165439.9155-6-cyphar@cyphar.com>
+ <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com>
+ <20190506191735.nmzf7kwfh7b6e2tf@yavin>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Business Offer.                     
-To:     Recipients <re.schwartz@gmail.com>
-From:   "Rexon Schwartz" <re.schwartz@gmail.com>
-Date:   Fri, 10 May 2019 16:23:38 -0400
-Reply-To: rexonschwartz@gmail.com
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsXisH+llu6du1djDP7eUbc4PfEes8W5PddZ
-        LHYsbWC1WLxtEbvF5U0XmCwOtH5isphwSMXi5PTnrBarP59gslj0fQ2jxe9JX9ksHvbcZLf4
-        3bme1aKnJdtiz96TLBbvDr9nt/g3ex2bxdXnXxktzl6+zWSx776+g4jH1leLWT0m9i9m89jU
-        +o7NY+Lv3ywe00/NYPNYtHYhk8ePg5MZPY5O0fSYP+0Uo8fvmUdYPf5N28vkcXPrUhYg9y6L
-        x8l5B5k8nq2dDmRdn8kYIBLFZZOSmpNZllqkb5fAlbH//TG2gr8cFetmt7E0ME5j72Lk5JAQ
-        MJE4cewgUxcjF4eQwEomia1XfrCCJJgF9CRuTJ3CBmLzCthK3Ft4nhXCFpQ4OfMJC0SNtsSy
-        ha+Zuxg5gGw1ia9dJSBhYQFdibuHf4CViACFt25eBraLDWhk/4fjjCDlLAKqEtemGoGEhQQU
-        Jb7MfccygZFnFpLFs5Asm4Vk2SyEZQsYWVYxSqVn5KYbGOqlF6UmluhmJBaVpRaX6OXkJyfm
-        bGIExuKBFVwyOxj/H3M+xCjAwajEwyuQfDVGiDWxrLgy9xCjBAezkghvkc6VGCHelMTKqtSi
-        /Pii0pzU4kOM0hwsSuK83OaMUUIC6YklqdmpqQWpRTBZJg5OqQbGg5VLOP+x19yedz7hzEr3
-        G4x2+WevnWyVO6C/UJen1zpYmsP1+o2FrsJ/FrFXB/pYGxWsPxj8v1x+6YQUxkzW+899/MPX
-        NSgaaR9YvOtUo8Faf5aFZ9J31p5km/rg474pmu9OeC9hPHnftJBtWaRkIMvcrV3WMq9WP126
-        cpqUfFPULzO72Tb3lFiKMxINtZiLihMBQrqjQsECAAA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190506191735.nmzf7kwfh7b6e2tf@yavin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Sir/Madam,
+On Tue, May 07, 2019 at 05:17:35AM +1000, Aleksa Sarai wrote:
+> On 2019-05-06, Jann Horn <jannh@google.com> wrote:
+> > In my opinion, CVE-2019-5736 points out two different problems:
+> >
+> > The big problem: The __ptrace_may_access() logic has a special-case
+> > short-circuit for "introspection" that you can't opt out of; this
+> > makes it possible to open things in procfs that are related to the
+> > current process even if the credentials of the process wouldn't permit
+> > accessing another process like it. I think the proper fix to deal with
+> > this would be to add a prctl() flag for "set whether introspection is
+> > allowed for this process", and if userspace has manually un-set that
+> > flag, any introspection special-case logic would be skipped.
+> 
+> We could do PR_SET_DUMPABLE=3 for this, I guess?
 
-I am sorry to encroach into your privacy in this manner, I
-found you listed in the Trade Center Chambers of Commerce
-directory here in Iraq and I find it pleasurable to offer
-you my partnership in business.
+Hmm... I'd make it a new prctl() command, since introspection is
+somewhat orthogonal to dumpability. Also, dumpability is per-mm, and I
+think the introspection flag should be per-thread.
 
-I only pray at this time that your address is still valid. I
-want to solicit your attention to receive money on my
-behalf.
+> > An additional problem: /proc/*/exe can be used to open a file for
+> > writing; I think it may have been Andy Lutomirski who pointed out some
+> > time ago that it would be nice if you couldn't use /proc/*/fd/* to
+> > re-open files with more privileges, which is sort of the same thing.
+> 
+> This is something I'm currently working on a series for, which would
+> boil down to some restrictions on how re-opening of file descriptors
+> works through procfs.
 
-I am CPT Rexon Schwartz, an officer in the USA Army and also
-a West Point Graduate presently serving in the Military with
-the 82nd Air Borne Division Peace keeping force.
+Ah, nice!
 
-I am on the move to Afghanistan and i really need your help
-in assisting me with the safe keeping of two military trunk
-boxes. I hope you can be trusted? Kindly view for your
-record: http://news.bbc.co.uk/2/hi/7444083.stm.
-If you can be trusted, I will explain further when i get
-a response from you.
+> However, execveat() of a procfs magiclink is a bit hard to block --
+> there is no way for userspace to to represent a file being "open for
+> execute" so they are all "open for execute" by default and blocking it
+> outright seems a bit extreme (though I actually hope to eventually add
+> the ability to mark an O_PATH as "open for X" to resolveat(2) -- hence
+> why I've reserved some bits).
 
-Nevertheless, reconfirm the following to me as follows and
-please ensure to reply via my private e-mail address:
-rexonschwartz@gmail.com
+(For what it's worth, I'm mostly concerned about read vs write, not
+really about execute, since execute really is just another form of
+reading in my opinion.)
 
-1.Name:
-2.Address:
-3.Telephone:
-4.Copy of drivers license:
+> (Thinking more about it, there is an argument that I should include the
+> above patch into this series so that we can block re-opening of fds
+> opened through resolveat(2) without explicit flags from the outset.)
 
-Thanks for your cooperation, God bless you and America !!
-
-Best Regards,
-Cpt.Rexon Schwartz.
