@@ -2,199 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7003D19816
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 07:32:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AB8019826
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 07:42:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbfEJFcI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 May 2019 01:32:08 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:19784 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726978AbfEJFcH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 May 2019 01:32:07 -0400
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190510053204epoutp04d05917be1b7dd9b3705f52e9565110d8~dO16yU5Fc0693306933epoutp047
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 05:32:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190510053204epoutp04d05917be1b7dd9b3705f52e9565110d8~dO16yU5Fc0693306933epoutp047
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1557466324;
-        bh=KakuJdCn1X04cvo+OPpSwDWAoomNlnwTJIRTnYYBv6U=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=r+Hu5PS0BK6fvvWLaanScq6bC0wz55yHmXEn3RDv0VeqcWuENuPw57SSrEnk2kcWc
-         Geb1YjRitdP0yUNJxsCkDpwwhYrnpm9lUVoqzvyfUhzrzlXwlMoO4+O67pR2EHible
-         FlwphkxiVsi8NQ8eCBjtgCM8lyVOLN+3w4npXCwg=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20190510053203epcas5p13c5af3d4e765a7620fd7b80b356dd51c~dO16f0SwO1510415104epcas5p1J;
-        Fri, 10 May 2019 05:32:03 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        69.68.04067.3DC05DC5; Fri, 10 May 2019 14:32:03 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190510053203epcas5p39e4eb4a5996e0461da380399c5322f6c~dO16N2q8S1408014080epcas5p3J;
-        Fri, 10 May 2019 05:32:03 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190510053203epsmtrp266e4f71343665729e467acaaadbad96d~dO16NNTab2509725097epsmtrp2p;
-        Fri, 10 May 2019 05:32:03 +0000 (GMT)
-X-AuditID: b6c32a4b-78bff70000000fe3-0e-5cd50cd31896
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        50.C3.03692.3DC05DC5; Fri, 10 May 2019 14:32:03 +0900 (KST)
-Received: from JOSHIK01 (unknown [107.111.93.135]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20190510053202epsmtip21bdeaf626cdde8d26da59cb5caeab57c~dO15Nik400291002910epsmtip2J;
-        Fri, 10 May 2019 05:32:02 +0000 (GMT)
-From:   "kanchan" <joshi.k@samsung.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-ext4@vger.kernel.org>
-In-Reply-To: <1556191202-3245-1-git-send-email-joshi.k@samsung.com>
-Subject: RE: [PATCH v5 0/7] Extend write-hint framework, and add write-hint
- for Ext4 journal
-Date:   Fri, 10 May 2019 11:01:47 +0530
-Message-ID: <031601d506f1$b2956d80$17c04880$@samsung.com>
+        id S1726963AbfEJFmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 May 2019 01:42:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40548 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725927AbfEJFmT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 May 2019 01:42:19 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 66DA9C057F47;
+        Fri, 10 May 2019 05:42:18 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 450421001E65;
+        Fri, 10 May 2019 05:42:18 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id F35A341F56;
+        Fri, 10 May 2019 05:42:17 +0000 (UTC)
+Date:   Fri, 10 May 2019 01:42:17 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     akpm@linux-foundation.org, stable@vger.kernel.org,
+        Piotr Balcer <piotr.balcer@intel.com>,
+        Yan Ma <yan.ma@intel.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Chandan Rajendra <chandan@linux.ibm.com>,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Message-ID: <1750394500.27863545.1557466937334.JavaMail.zimbra@redhat.com>
+In-Reply-To: <155741946350.372037.11148198430068238140.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <155741946350.372037.11148198430068238140.stgit@dwillia2-desk3.amr.corp.intel.com>
+Subject: Re: [PATCH] mm/huge_memory: Fix vmf_insert_pfn_{pmd, pud}() crash,
+ handle unaligned addresses
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQJoSeMIlXjPMuci1lQDnd0IsY+e8wLu+qiYpSXTDJA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKKsWRmVeSWpSXmKPExsWy7bCmuu5lnqsxBs/vaFvsvaVtMXPeHTaL
-        PXtPslhc3jWHzWL+sqfsDqwem5fUe3zeJBfAFMVlk5Kak1mWWqRvl8CV8WP/B7aCXTIVX/5s
-        YW1gvCPWxcjJISFgIrFh7ReWLkYuDiGB3YwSOxauhnI+MUocOX+UEcL5xiix7+JqZpiW478m
-        sEEk9jJK9J69AVX1nFHizpYFLCBVbAKqEvd+9IJViQgsY5Q49/kJG0iCU8BZYsPie2CjhAXi
-        JBruTmAHsVmAGrZ3NoE18wpYSqw9coYdwhaUODnzCVicWUBbYtnC11BnKEjs/nSUFcQWEbCS
-        aOqazAZRIy7x8ugRdpDFEgIb2CT+3emGanCR6Di5hRXCFpZ4dXwLO4QtJfH53V42CLtY4ted
-        o8wQzR2MEtcbZrJAJOwlLu75y9TFyAG0QVNi/S59iGV8Er2/n4CFJQR4JTrahCCqFSXuTXoK
-        tUpc4uGMJVC2h8TDt5uhoTWNUWLKlsusExgVZiH5cxaSP2ch+WcWwuYFjCyrGCVTC4pz01OL
-        TQuM81LL9YoTc4tL89L1kvNzNzGCE4uW9w7GTed8DjEKcDAq8fBa8F+JEWJNLCuuzD3EKMHB
-        rCTCW6QDFOJNSaysSi3Kjy8qzUktPsQozcGiJM47ifVqjJBAemJJanZqakFqEUyWiYNTqoGx
-        9+g9RclDM3QvrdF+3ybNXTP96qPICbo++WV8bp93C9j5X1PgOPmxx/ynN9Mj5t+75sin1u1p
-        2yq2+0YPxy9O14vNyfmyrze//7hm35nd7SL3bUW/BqinXNCveCArIq29yDfv2tmy05Ke4pHv
-        st6I2796Nmf3+Q1Mx5Z8nbSIoVnI2Gt+z9swJZbijERDLeai4kQAxrKziygDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsWy7bCSvO5lnqsxBjfPC1nsvaVtMXPeHTaL
-        PXtPslhc3jWHzWL+sqfsDqwem5fUe3zeJBfAFMVlk5Kak1mWWqRvl8CVcejdCsaCNpmKr7se
-        sDQwLhHrYuTkkBAwkTj+awJbFyMXh5DAbkaJHWsXs0MkxCWar/2AsoUlVv57zg5R9JRR4uWW
-        AywgCTYBVYl7P3rBukUEVjFKLD6+G2rUFEaJzSufsoFUcQo4S2xYfI8ZxBYWiJFYP3khWJwF
-        qHt7ZxPYJF4BS4m1R86wQ9iCEidnPgGLMwtoS/Q+bGWEsZctfM0McZKCxO5PR1lBbBEBK4mm
-        rslsEDXiEi+PHmGfwCg0C8moWUhGzUIyahaSlgWMLKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz
-        0vWS83M3MYKjQEtzB+PlJfGHGAU4GJV4eC34r8QIsSaWFVfmHmKU4GBWEuEt0gEK8aYkVlal
-        FuXHF5XmpBYfYpTmYFES532adyxSSCA9sSQ1OzW1ILUIJsvEwSnVwOgoemRRXfusT+fm+0SV
-        nbmarRxXcqa3P3grY89aO9VL09x15yzXkloRN1V0VVfreuvyHcYLQrSUV3QwXrM1P88RrM+7
-        OrBXf6d7mN+t9fyfLr6r8Nm7OIulyFm0W7H+ZlSu4+y5+evYmlui16yeuf7n/6CUGm6nyUkf
-        uX3dwr+/e946naH/khJLcUaioRZzUXEiAH7U1ld+AgAA
-X-CMS-MailID: 20190510053203epcas5p39e4eb4a5996e0461da380399c5322f6c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20190425112347epcas2p1f7be48b8f0d2203252b8c9dd510c1b61
-References: <CGME20190425112347epcas2p1f7be48b8f0d2203252b8c9dd510c1b61@epcas2p1.samsung.com>
-        <1556191202-3245-1-git-send-email-joshi.k@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.65.16.148, 10.4.195.13]
+Thread-Topic: mm/huge_memory: Fix vmf_insert_pfn_{pmd, pud}() crash, handle unaligned addresses
+Thread-Index: gtFotDOw5RjI2gXScL+S1YykooYblA==
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 10 May 2019 05:42:18 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jens & other maintainers,
 
-If this patch-set is in fine shape now, can it please be considered for mer=
-ge in near future?
+> 
+> Starting with commit c6f3c5ee40c1 "mm/huge_memory.c: fix modifying of
+> page protection by insert_pfn_pmd()" vmf_insert_pfn_pmd() internally
+> calls pmdp_set_access_flags(). That helper enforces a pmd aligned
+> @address argument via VM_BUG_ON() assertion.
+> 
+> Update the implementation to take a 'struct vm_fault' argument directly
+> and apply the address alignment fixup internally to fix crash signatures
+> like:
+> 
+>     kernel BUG at arch/x86/mm/pgtable.c:515!
+>     invalid opcode: 0000 [#1] SMP NOPTI
+>     CPU: 51 PID: 43713 Comm: java Tainted: G           OE     4.19.35 #1
+>     [..]
+>     RIP: 0010:pmdp_set_access_flags+0x48/0x50
+>     [..]
+>     Call Trace:
+>      vmf_insert_pfn_pmd+0x198/0x350
+>      dax_iomap_fault+0xe82/0x1190
+>      ext4_dax_huge_fault+0x103/0x1f0
+>      ? __switch_to_asm+0x40/0x70
+>      __handle_mm_fault+0x3f6/0x1370
+>      ? __switch_to_asm+0x34/0x70
+>      ? __switch_to_asm+0x40/0x70
+>      handle_mm_fault+0xda/0x200
+>      __do_page_fault+0x249/0x4f0
+>      do_page_fault+0x32/0x110
+>      ? page_fault+0x8/0x30
+>      page_fault+0x1e/0x30
+> 
+> Cc: vger.kernel.org>
+> Fixes: c6f3c5ee40c1 ("mm/huge_memory.c: fix modifying of page protection by
+> insert_pfn_pmd()")
+> Reported-by: Piotr Balcer <piotr.balcer@intel.com>
+> Tested-by: Yan Ma <yan.ma@intel.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Cc: Chandan Rajendra <chandan@linux.ibm.com>
+> Cc: Jan Kara suse.cz>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Matthew Wilcox infradead.org>
+> Cc: Souptick Joarder <jrdr.linux@gmail.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+> 
+>  drivers/dax/device.c    |    6 ++----
+>  fs/dax.c                |    6 ++----
+>  include/linux/huge_mm.h |    6 ++----
+>  mm/huge_memory.c        |   16 ++++++++++------
+>  4 files changed, 16 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+> index e428468ab661..996d68ff992a 100644
+> --- a/drivers/dax/device.c
+> +++ b/drivers/dax/device.c
+> @@ -184,8 +184,7 @@ static vm_fault_t __dev_dax_pmd_fault(struct dev_dax
+> *dev_dax,
+>  
+>          *pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
+>  
+> -        return vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd, *pfn,
+> -                        vmf->flags & FAULT_FLAG_WRITE);
+> +        return vmf_insert_pfn_pmd(vmf, *pfn, vmf->flags & FAULT_FLAG_WRITE);
+>  }
+>  
+>  #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+> @@ -235,8 +234,7 @@ static vm_fault_t __dev_dax_pud_fault(struct dev_dax
+> *dev_dax,
+>  
+>          *pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
+>  
+> -        return vmf_insert_pfn_pud(vmf->vma, vmf->address, vmf->pud, *pfn,
+> -                        vmf->flags & FAULT_FLAG_WRITE);
+> +        return vmf_insert_pfn_pud(vmf, *pfn, vmf->flags & FAULT_FLAG_WRITE);
+>  }
+>  #else
+>  static vm_fault_t __dev_dax_pud_fault(struct dev_dax *dev_dax,
+> diff --git a/fs/dax.c b/fs/dax.c
+> index e5e54da1715f..83009875308c 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -1575,8 +1575,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault
+> *vmf, pfn_t *pfnp,
+>                  }
+>  
+>                  trace_dax_pmd_insert_mapping(inode, vmf, PMD_SIZE, pfn, entry);
+> -                result = vmf_insert_pfn_pmd(vma, vmf->address, vmf->pmd, pfn,
+> -                                            write);
+> +                result = vmf_insert_pfn_pmd(vmf, pfn, write);
+>                  break;
+>          case IOMAP_UNWRITTEN:
+>          case IOMAP_HOLE:
+> @@ -1686,8 +1685,7 @@ dax_insert_pfn_mkwrite(struct vm_fault *vmf, pfn_t pfn,
+> unsigned int order)
+>                  ret = vmf_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
+>  #ifdef CONFIG_FS_DAX_PMD
+>          else if (order == PMD_ORDER)
+> -                ret = vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd,
+> -                        pfn, true);
+> +                ret = vmf_insert_pfn_pmd(vmf, pfn, FAULT_FLAG_WRITE);
+>  #endif
+>          else
+>                  ret = VM_FAULT_FALLBACK;
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 381e872bfde0..7cd5c150c21d 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -47,10 +47,8 @@ extern bool move_huge_pmd(struct vm_area_struct *vma,
+> unsigned long old_addr,
+>  extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>                          unsigned long addr, pgprot_t newprot,
+>                          int prot_numa);
+> -vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long
+> addr,
+> -                        pmd_t *pmd, pfn_t pfn, bool write);
+> -vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long
+> addr,
+> -                        pud_t *pud, pfn_t pfn, bool write);
+> +vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+> +vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
+>  enum transparent_hugepage_flag {
+>          TRANSPARENT_HUGEPAGE_FLAG,
+>          TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 165ea46bf149..4310c6e9e5a3 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -793,11 +793,13 @@ static void insert_pfn_pmd(struct vm_area_struct *vma,
+> unsigned long addr,
+>                  pte_free(mm, pgtable);
+>  }
+>  
+> -vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long
+> addr,
+> -                        pmd_t *pmd, pfn_t pfn, bool write)
+> +vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
+>  {
+> +        unsigned long addr = vmf->address & PMD_MASK;
+> +        struct vm_area_struct *vma = vmf->vma;
+>          pgprot_t pgprot = vma->vm_page_prot;
+>          pgtable_t pgtable = NULL;
+> +
+>          /*
+>           * If we had pmd_special, we could avoid all these restrictions,
+>           * but we need to be consistent with PTEs and architectures that
+> @@ -820,7 +822,7 @@ vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma,
+> unsigned long addr,
+>  
+>          track_pfn_insert(vma, &pgprot, pfn);
+>  
+> -        insert_pfn_pmd(vma, addr, pmd, pfn, pgprot, write, pgtable);
+> +        insert_pfn_pmd(vma, addr, vmf->pmd, pfn, pgprot, write, pgtable);
+>          return VM_FAULT_NOPAGE;
+>  }
+>  EXPORT_SYMBOL_GPL(vmf_insert_pfn_pmd);
+> @@ -869,10 +871,12 @@ static void insert_pfn_pud(struct vm_area_struct *vma,
+> unsigned long addr,
+>          spin_unlock(ptl);
+>  }
+>  
+> -vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long
+> addr,
+> -                        pud_t *pud, pfn_t pfn, bool write)
+> +vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write)
+>  {
+> +        unsigned long addr = vmf->address & PUD_MASK;
+> +        struct vm_area_struct *vma = vmf->vma;
+>          pgprot_t pgprot = vma->vm_page_prot;
+> +
+>          /*
+>           * If we had pud_special, we could avoid all these restrictions,
+>           * but we need to be consistent with PTEs and architectures that
+> @@ -889,7 +893,7 @@ vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma,
+> unsigned long addr,
+>  
+>          track_pfn_insert(vma, &pgprot, pfn);
+>  
+> -        insert_pfn_pud(vma, addr, pud, pfn, pgprot, write);
+> +        insert_pfn_pud(vma, addr, vmf->pud, pfn, pgprot, write);
+>          return VM_FAULT_NOPAGE;
+>  }
+>  EXPORT_SYMBOL_GPL(vmf_insert_pfn_pud);
+> 
 
-Thanks,
+Thanks for the patch. 
+This patch solves the issue faced while testing virtio pmem.
 
------Original Message-----
-From: Kanchan Joshi =5Bmailto:joshi.k=40samsung.com=5D=20
-Sent: Thursday, April 25, 2019 4:50 PM
-To: linux-kernel=40vger.kernel.org; linux-block=40vger.kernel.org; linux-nv=
-me=40lists.infradead.org; linux-fsdevel=40vger.kernel.org; linux-ext4=40vge=
-r.kernel.org
-Cc: prakash.v=40samsung.com; anshul=40samsung.com; Kanchan Joshi <joshi.k=
-=40samsung.com>
-Subject: =5BPATCH v5 0/7=5D Extend write-hint framework, and add write-hint=
- for Ext4 journal
+Tested-by: Pankaj Gupta <pagupta@redhat.com>
 
-V5 series, towards extending write-hint/streams infrastructure for kernel-c=
-omponents, and adding support for sending write-hint with Ext4/JBD2 journal=
-.
-
-Here is the history/changelog -
-
-Changes since v4:
-- Removed write-hint field from request. bi_write_hint in bio is used for
-  merging checks now.
-- Modified write-hint-to-stream conversion logic. Now, kernel hints are map=
-ped
-  to upper range of stream-ids, while user-hints continue to remain mapped =
-to
-  lower range of stream-ids.
-
-Changes since v3:
-- Correction in grouping related changes into patches
-- Rectification in commit text at places
-
-Changes since v2:
-- Introduce API in block layer so that drivers can register stream info. Ad=
-ded
-  new limit in request queue for this purpose.
-- Block layer does the conversion from write-hint to stream-id.
-- Stream feature is not disabled anymore if device reports less streams tha=
-n
-  a particular number (which was set as 4 earlier).
-- Any write-hint beyond reported stream-count turn to 0.
-- New macro =22WRITE_LIFE_KERN_MIN=22 can be used as base by kernel mode co=
-mponents.
-
-Changes since v1:
-- introduce four more hints for in-kernel use, as recommended by Dave chinn=
-er
-  & Jens axboe. This isolates kernel-mode hints from user-mode ones.
-- remove mount-option to specify write-hint, as recommended by Jan kara &
-  Dave chinner. Rather, FS always sets write-hint for journal. This gets ig=
-nored
-  if device does not support stream.
-- Removed code-redundancy for write_dirty_buffer (Jan kara's review comment=
-)
-
-V4 patch:
-https://lkml.org/lkml/2019/4/17/870
-
-V3 patch:
-https://marc.info/?l=3Dlinux-block&m=3D155384631909082&w=3D2
-
-V2 patch:
-https://patchwork.kernel.org/cover/10754405/
-
-V1 patch:
-https://marc.info/?l=3Dlinux-fsdevel&m=3D154444637519020&w=3D2
-
-
-Kanchan Joshi (7):
-  fs: introduce write-hint start point for in-kernel hints
-  block: increase stream count for in-kernel use
-  block: introduce API to register stream information with block-layer
-  block: introduce write-hint to stream-id conversion
-  nvme: register stream info with block layer
-  fs: introduce APIs to enable passing write-hint with buffer-head
-  fs/ext4,jbd2: add support for sending write-hint with journal
-
- block/blk-core.c            =7C 29 ++++++++++++++++++++++++++++-
- block/blk-merge.c           =7C  4 ++--
- block/blk-settings.c        =7C 12 ++++++++++++
- drivers/nvme/host/core.c    =7C 23 ++++++-----------------
- fs/buffer.c                 =7C 18 ++++++++++++++++--
- fs/ext4/ext4_jbd2.h         =7C  1 +
- fs/ext4/super.c             =7C  2 ++
- fs/jbd2/commit.c            =7C 11 +++++++----
- fs/jbd2/journal.c           =7C  3 ++-
- fs/jbd2/revoke.c            =7C  3 ++-
- include/linux/blkdev.h      =7C  8 ++++++--
- include/linux/buffer_head.h =7C  3 +++
- include/linux/fs.h          =7C  2 ++
- include/linux/jbd2.h        =7C  8 ++++++++
- 14 files changed, 97 insertions(+), 30 deletions(-)
-
---
-2.7.4
-
-
+> 
