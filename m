@@ -2,126 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B88F1A3BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 22:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B057D1A3D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 22:14:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728000AbfEJUKm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 May 2019 16:10:42 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33470 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727980AbfEJUKm (ORCPT
+        id S1727973AbfEJUOT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 May 2019 16:14:19 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42574 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727653AbfEJUOS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 May 2019 16:10:42 -0400
-Received: by mail-ed1-f65.google.com with SMTP id n17so6704317edb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 13:10:41 -0700 (PDT)
+        Fri, 10 May 2019 16:14:18 -0400
+Received: by mail-oi1-f194.google.com with SMTP id k9so5417941oig.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 13:14:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lt6uPVHRTb6qycTyfS8wkIJ7UlOCcAUHHaR/0rJBxrQ=;
-        b=QV72T8OMOUUuvtH5oPeL7SVsQpebI/2757iB7nfbi1QgQeFEOr2Pzznb+d2dTeQJaB
-         75txDSZZkqVnX5uQQsVZIGR7r1ncJFMx40HiqBczLATKX+lLzoAyQ1V+YExXXPTkrUaN
-         X1M2+twWwnDTuIqBKLxkHrxqOmrDznz1TXYRI9Lc0vSRp6S2FI2NSwJhVeLJM4hzPC8X
-         QJhJL217BpKHtcGFYN/Evmo/EX1PKkh85bbGMdRJ93FXIygL7dHcx843s3QZlSHEfmn4
-         R+NqS8iRGL49r2mAQfDtJGZi2y12ooafACxZWAizNtF2SobCC1chFXd0fWimueXDK9Gs
-         FtoQ==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=glYXor0GQ9DfKpghbnKPKxe+zUzoJeb7GoYJ26Vk6ps=;
+        b=yf8U/VwdNl5tfgFPEKe5qh3THkRWZb9un60SOgkfJ/5LhvAwk90OALPbQmqH8NGPZg
+         Cr23IQd+McBJGud2E9ep2+5K3niud5mH6fhTcdytKwGg0ifP80vvI1KiLl0J9xx4xwjq
+         TEllzhY/P52SG7Zgqu0zO0TcVHYyKzcfJiA7uwMKIIPnUXohIrhjvrd+s0fzp7fbWFpQ
+         y62fi/8hXK8LlUhb+lV4PauDhwTsmzrWQoEzPH1EBWKu2DNHNpcM/c0ugQiTxq1CS/Pn
+         ELZfOgWViQuoOxYDdqZ2L8n4KiCZbfdn+ONJLYDNxFTBB6M7dS0ALwRsezeWWJXIVakV
+         lNVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lt6uPVHRTb6qycTyfS8wkIJ7UlOCcAUHHaR/0rJBxrQ=;
-        b=o60TF58dygL6TjJSfOK+QMUFt1h9nov8PCX2OMOYYHvN4cZRqkTfDu7bJem9s0RY7f
-         B6uMJWVFdkPd0EofwA1cnFK2Nmbr1O7om6iu5Vl/HUp7sM1IVT39V0k8MG1ClrNznrIQ
-         s76W3G+y9JcprmYZIrzIn/g4G1D1QmCFULgmRe84VmTbakw/6WqWigkZ3XxHtriSuwLs
-         DuUY6eqE9U0MDLJePvXO36pLrRPes3kfr4gjlGfzE5udkTJVndjsRkgWlOTLSRmXgBJk
-         K36iTAMeGB5nUkaoXAR+F27+Lwm7SZNTlOlfC/yG9kK68aYq0t7X5zoEzoh7aZSnLoTe
-         +cdQ==
-X-Gm-Message-State: APjAAAVMo1L6N0xFVQ3kvT4OBGkWjGAo+eAbZQQJs59EEFoWKG0ky5lw
-        3Sicqk+L8TSObbSOydSmjj3Zzw==
-X-Google-Smtp-Source: APXvYqzUgNqtgrYldPEctqQFjJcqlqIpZBpRrpOZjmBasE/wUyTEH0k9GdgYn5cen2XiV7pz/Q0joQ==
-X-Received: by 2002:a50:982f:: with SMTP id g44mr13613170edb.278.1557519040152;
-        Fri, 10 May 2019 13:10:40 -0700 (PDT)
-Received: from google.com ([2a00:79e0:1b:201:ee0a:cce3:df40:3ac5])
-        by smtp.gmail.com with ESMTPSA id k37sm1719073edb.11.2019.05.10.13.10.38
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 10 May 2019 13:10:38 -0700 (PDT)
-Date:   Fri, 10 May 2019 22:10:32 +0200
-From:   Jann Horn <jannh@google.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
-Message-ID: <20190510201032.GA253532@google.com>
-References: <20190506165439.9155-1-cyphar@cyphar.com>
- <20190506165439.9155-6-cyphar@cyphar.com>
- <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com>
- <87o94d6aql.fsf@xmission.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=glYXor0GQ9DfKpghbnKPKxe+zUzoJeb7GoYJ26Vk6ps=;
+        b=lr6CEWYAT2QZMlc3UIb0zPFSd2ZEgAsV2XoypcZG0vwlZcae9L34GYEXvt2YTnZkCU
+         L7g2hkpIPQFkqdmX5lhffSVyH1eqGeWQogFF+bE/RYHAkkSV361DYYL/5iaW/WXY8IME
+         zmiK48+/a16JBjAULFLBWaImUX0GlSjyl5mdvBhXyp9g02w4L/EnTn1FP/mIXOs7hAXa
+         3/21auOdC0vhFb3alnN5bJhHRK9d1ZIePNIQOt6k02/84ZdtEjL16TJ3crydVyWDf639
+         ZlLObrn8P6YYobkAvHBf1DAO2Tr7GUlNX4bEFe7BtaFM6v9U+QeqQcWYUc/xSawRGM6X
+         CO0Q==
+X-Gm-Message-State: APjAAAUBHtPt8wazYT7vzQvBlFYosXtiMd3LEGqx0NKVyBTXlvN9qZU/
+        E2FJ8R4xDnjAftztW6VZ4q6AFS2H7B7D4EhySLDYQQ==
+X-Google-Smtp-Source: APXvYqx7Iy3DOMIV9DNLu2fGaxr7KgtVySuDwyKCLAPX5/jruFRFKJ7CbI+68cxoMCTMjkHKJ+jW3/SnCYNqZpzsnJI=
+X-Received: by 2002:aca:4208:: with SMTP id p8mr6821131oia.105.1557519257995;
+ Fri, 10 May 2019 13:14:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o94d6aql.fsf@xmission.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190510155202.14737-1-pagupta@redhat.com> <20190510155202.14737-4-pagupta@redhat.com>
+In-Reply-To: <20190510155202.14737-4-pagupta@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 10 May 2019 13:14:07 -0700
+Message-ID: <CAPcyv4hbVNRFSyS2CTbmO88uhnbeH4eiukAng2cxgbDzLfizwg@mail.gmail.com>
+Subject: Re: [PATCH v8 3/6] libnvdimm: add dax_dev sync flag
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        KVM list <kvm@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Christoph Hellwig <hch@infradead.org>,
+        Len Brown <lenb@kernel.org>, Jan Kara <jack@suse.cz>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        lcapitulino@redhat.com, Kevin Wolf <kwolf@redhat.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        jmoyer <jmoyer@redhat.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        david <david@fromorbit.com>, cohuck@redhat.com,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Adam Borowski <kilobyte@angband.pl>,
+        yuval shaia <yuval.shaia@oracle.com>, jstaron@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 07, 2019 at 07:38:58PM -0500, Eric W. Biederman wrote:
-> Jann Horn <jannh@google.com> writes:
-> > In my opinion, CVE-2019-5736 points out two different problems:
-> >
-> > The big problem: The __ptrace_may_access() logic has a special-case
-> > short-circuit for "introspection" that you can't opt out of;
-> 
-> Once upon a time in a galaxy far far away I fixed a bug where we missing
-> ptrace_may_access checks on various proc files and systems using selinux
-> stopped working.  At the time selinux did not allow ptrace like access
-> to yourself.  The "introspection" special case was the quick and simple
-> work-around.
-> 
-> There is nothing fundamental in having the "introspection" special case
-> except that various lsms have probably grown to depend upon it being
-> there.  I expect without difficulty we could move the check down
-> into the various lsms.  Which would get that check out of the core
-> kernel code.
+On Fri, May 10, 2019 at 8:53 AM Pankaj Gupta <pagupta@redhat.com> wrote:
+>
+> This patch adds 'DAXDEV_SYNC' flag which is set
+> for nd_region doing synchronous flush. This later
+> is used to disable MAP_SYNC functionality for
+> ext4 & xfs filesystem for devices don't support
+> synchronous flush.
+>
+> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> ---
+>  drivers/dax/bus.c            |  2 +-
+>  drivers/dax/super.c          | 13 ++++++++++++-
+>  drivers/md/dm.c              |  3 ++-
+>  drivers/nvdimm/pmem.c        |  5 ++++-
+>  drivers/nvdimm/region_devs.c |  7 +++++++
+>  include/linux/dax.h          |  8 ++++++--
+>  include/linux/libnvdimm.h    |  1 +
+>  7 files changed, 33 insertions(+), 6 deletions(-)
+[..]
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index 043f0761e4a0..ee007b75d9fd 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -1969,7 +1969,8 @@ static struct mapped_device *alloc_dev(int minor)
+>         sprintf(md->disk->disk_name, "dm-%d", minor);
+>
+>         if (IS_ENABLED(CONFIG_DAX_DRIVER)) {
+> -               dax_dev = alloc_dax(md, md->disk->disk_name, &dm_dax_ops);
+> +               dax_dev = alloc_dax(md, md->disk->disk_name, &dm_dax_ops,
+> +                                                        DAXDEV_F_SYNC);
 
-Oh, if that's an option, that would be great, I think.
-
-
-But this means, for example, that a non-root, non-dumpable process can't
-open /proc/self/maps anymore, or open /proc/self/fd/*, and things like
-that, without making itself dumpable. I would be surprised if there is
-no code out there that relies on that.
-
-From what I can tell, without the introspection special case,
-introspection would fail in the following cases (assuming that the
-process is not capable and isn't using sys_setfs[ug]id()):
-
- - ruid/euid/suid are not all the same
- - rgid/egid/sgid are not all the same
- - process is not dumpable
-
-I think that there probably should be some way for a non-dumpable
-process to look at its own procfs entries? If we could start from a
-clean slate, I'd propose an opt-in flag to openat() for that, but
-since we don't have a clean slate, I'd be afraid of breaking things
-with that. But maybe I'm just being overly careful here?
+Apologies for not realizing this until now, but this is broken.
+Imaging a device-mapper configuration composed of both 'async'
+virtio-pmem and 'sync' pmem. The 'sync' flag needs to be unified
+across all members. I would change this argument to '0' and then
+arrange for it to be set at dm_table_supports_dax() time after
+validating that all components support synchronous dax.
