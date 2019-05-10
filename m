@@ -2,84 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 228EB1A44B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 23:05:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A12EA1A459
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 23:12:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727964AbfEJVFb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 May 2019 17:05:31 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42318 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727677AbfEJVFa (ORCPT
+        id S1728023AbfEJVMo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 May 2019 17:12:44 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33994 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbfEJVMn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 May 2019 17:05:30 -0400
-Received: by mail-pl1-f194.google.com with SMTP id x15so3352312pln.9;
-        Fri, 10 May 2019 14:05:29 -0700 (PDT)
+        Fri, 10 May 2019 17:12:43 -0400
+Received: by mail-pf1-f194.google.com with SMTP id n19so3853703pfa.1;
+        Fri, 10 May 2019 14:12:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=bKDY86DQ3W8jTrCX7JTAOvqhYJw5e29RxFbksE/Tm5E=;
-        b=ClByEsCJDjCVHeIc+90ps1Fj8itwE3WgKR5kUdmpBCEn0XRD4+vae4F5yS9j6jFewt
-         i8EIhmCz9GOc0J8MAK9oo5WNI87DbetO7EoWQmFkjrhZnKZ4hpEC46joMxGiml6HzJn6
-         Esp4jJPn0ybvOdsTm9KytSGKplglomfRdTbNfugibupGksfwjDJ7B/5+zwOnz5GXhS+5
-         OiBSN99TU65NMtcc0hINGCuApQDz95rvHRCELmdJpbWewZtUafw2OJhO1KjvbJxIOV2E
-         o8/DjWywoSrMDvb6uZzjlHBmZJtTYDGx6bIzx/d3I26QP2DnWBbB6fy8tESDC+RQmIHs
-         xfJg==
+        bh=+ESw1rm0vOQ8XrrTL92EUV44kZc8ZXapKKTT6DaubOw=;
+        b=abQaEAUT/PwZVqII0uePTmS9FBR01d5OlkiCxRNEH2BX3NkEApVpdySLV3IoMgo3eE
+         MP1rCnCnuCPSjhTkzHIQIu9EjwponUbG5NaVheL2B404JO3C7VDo9y+Mqy+KY7Lg/zk4
+         HZTfCWvMUNfLp0nVXqu1vIXWG6DicO5EafSNtq2E9JGj8YNzk+9a7zc27b0qnafPNljm
+         IM58BuLw+T91Vgkv/o68Z8iYzoCT3SgFEQ+60d0CSXdbj6HfDIyr/aisHXQJRc+XYuor
+         tOktoH4JOGyFwmXPs1QyTI/Nhvaq7L9FFdinnXWtQ6JoCZdVbpWiloLrGBNB+AoVHD1q
+         8ApQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=bKDY86DQ3W8jTrCX7JTAOvqhYJw5e29RxFbksE/Tm5E=;
-        b=cSQmjcf9TMyjyFSuqW+J9Haq/XERIKiQkba5zDdZ0N6Wd34CSWlT3fNZ7p1+wRWNNl
-         91QScstT9XS8v2RumRSg29mctxAu3Fyc6gxGCKqfPgIpkmp2XjDRPM4d5eal5bRriM3q
-         PcsXLZixm9StYM8AKea9H2/iAoR19uKQNI2rO3syIMtxO6XWV5e/AVNoipMU6Wc3pHop
-         Q31uSH9/YD6a/QRcRG0/FhONETcfeGvjfn0aN7yjxjW1gYPd/qsPBINoYsxjRV/KQdlJ
-         Ebc0YuTFvy1D5BZEPfkiBZsNRSHef5wJT+gJX9SBrNNfJT5rsLXEfZQAfUFN6E+jB04U
-         rCOQ==
-X-Gm-Message-State: APjAAAUbEUos8P829BIMpODXNS/BUsD/d/fBByJyh+2+bfwXh77PniMZ
-        AdOMmdOK9JaBP0AAG9x67G8=
-X-Google-Smtp-Source: APXvYqywYvbG31SDd1wnXI23JEAmm1Kft3apAyHEzsebGAIN14xMmXaQg0pIdJvJogj74UqlweKbzg==
-X-Received: by 2002:a17:902:2d:: with SMTP id 42mr15993810pla.34.1557522329358;
-        Fri, 10 May 2019 14:05:29 -0700 (PDT)
+        bh=+ESw1rm0vOQ8XrrTL92EUV44kZc8ZXapKKTT6DaubOw=;
+        b=YpAvhgZJMjWG8B+lqGeacDkXmA9iQB031V7R8AcxIoLDMCyTQ671G97r2oQGdrJW45
+         F8zCZiZ089U+/WN0HhbabW4ylUFBo0fU2OfHdtJ8/s7qcDdc166vNLOkkwYPLqr+sH9m
+         bqQdiwDjl1VSGtUCevq856NjQ53MZX3C5IwndI79C+DBsnu69yMRZ1HDJyrw5Aa79xYd
+         GsLZ+4PVNmv5/ULPmz4eFrhu2Xg+pH9fMyUQh6JGjIv7NgCyemeHAkPj/+KrPkkhiG1l
+         PqN29l8ShriJ1npkCcY+LyKWItHVDsQlKRWJ9uGG8l+pMPG6X5F3Jnp1rCjI/bK/IskY
+         EDRA==
+X-Gm-Message-State: APjAAAVjQ9EHargyCm1IcO1azTbK1NlU7f0iZBoAMgmSrYZtaA5l/jnI
+        7TDH3RJmzmzC8AR8LkT+qXc=
+X-Google-Smtp-Source: APXvYqwYkJPgFPW1Q2jECQKvaMp3I+Sd6dA//ZzL+oYRc3FbXlWvh0CqFEtZZOyMry0CoGOK+X3rcA==
+X-Received: by 2002:a62:6842:: with SMTP id d63mr17487032pfc.9.1557522763176;
+        Fri, 10 May 2019 14:12:43 -0700 (PDT)
 Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id p2sm7613330pgd.63.2019.05.10.14.05.26
+        by smtp.gmail.com with ESMTPSA id r8sm7860997pfn.11.2019.05.10.14.12.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 10 May 2019 14:05:28 -0700 (PDT)
+        Fri, 10 May 2019 14:12:42 -0700 (PDT)
 Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
  testing framework
-To:     Theodore Ts'o <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-References: <20190501230126.229218-1-brendanhiggins@google.com>
- <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
+To:     Theodore Ts'o <tytso@mit.edu>, Tim.Bird@sony.com,
+        knut.omang@oracle.com, gregkh@linuxfoundation.org,
+        brendanhiggins@google.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, amir73il@gmail.com,
+        dan.carpenter@oracle.com, dan.j.williams@intel.com,
+        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
+        julia.lawall@lip6.fr, khilman@baylibre.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, richard@nod.at,
+        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com
+References: <54940124-50df-16ec-1a32-ad794ee05da7@gmail.com>
  <20190507080119.GB28121@kroah.com>
  <a09a7e0e-9894-8c1a-34eb-fc482b1759d0@gmail.com>
  <20190509015856.GB7031@mit.edu>
  <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
- <78e4d46e-6212-9871-51d6-dd2126f39d45@gmail.com>
- <20190510104338.GB6889@mit.edu>
+ <20190509032017.GA29703@mit.edu>
+ <7fd35df81c06f6eb319223a22e7b93f29926edb9.camel@oracle.com>
+ <20190509133551.GD29703@mit.edu>
+ <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
+ <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com>
+ <20190509214233.GA20877@mit.edu>
 From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <86ea0fa1-8ce7-c299-3144-c57fc465c891@gmail.com>
-Date:   Fri, 10 May 2019 14:05:26 -0700
+Message-ID: <80c72e64-2665-bd51-f78c-97f50f9a53ba@gmail.com>
+Date:   Fri, 10 May 2019 14:12:40 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190510104338.GB6889@mit.edu>
+In-Reply-To: <20190509214233.GA20877@mit.edu>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -88,107 +90,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/10/19 3:43 AM, Theodore Ts'o wrote:
-> On Thu, May 09, 2019 at 10:11:01PM -0700, Frank Rowand wrote:
->>>> You *can* run in-kernel test using modules; but there is no framework
->>>> for the in-kernel code found in the test modules, which means each of
->>>> the in-kernel code has to create their own in-kernel test
->>>> infrastructure.
+On 5/9/19 2:42 PM, Theodore Ts'o wrote:
+> On Thu, May 09, 2019 at 11:12:12AM -0700, Frank Rowand wrote:
 >>
->> The kselftest in-kernel tests follow a common pattern.  As such, there
->> is a framework.
-> 
-> So we may have different definitions of "framework".  In my book, code
-> reuse by "cut and paste" does not make a framework.  Could they be
-> rewritten to *use* a framework, whether it be KTF or KUnit?  Sure!
-> But they are not using a framework *today*.
-> 
->> This next two paragraphs you ignored entirely in your reply:
+>>    "My understanding is that the intent of KUnit is to avoid booting a kernel on
+>>    real hardware or in a virtual machine.  That seems to be a matter of semantics
+>>    to me because isn't invoking a UML Linux just running the Linux kernel in
+>>    a different form of virtualization?
 >>
->>> Why create an entire new subsystem (KUnit) when you can add a header
->>> file (and .c code as appropriate) that outputs the proper TAP formatted
->>> results from kselftest kernel test modules?
+>>    So I do not understand why KUnit is an improvement over kselftest.
+>>
+>>    ...
+>>
+>>    What am I missing?"
 > 
-> And you keep ignoring my main observation, which is that spinning up a
-> VM, letting systemd start, mounting a root file system, etc., is all
-> unnecessary overhead which takes time.  This is important to me,
-> because developer velocity is extremely important if you are doing
-> test driven development.
-
-No, I do not "keep ignoring my main observation".  You made that
-observation in an email of Thu, 9 May 2019 09:35:51 -0400.  In my
-reply to Tim's reply to your email, I wrote:
-
-   "< massive snip >
-
-   I'll reply in more detail to some other earlier messages in this thread
-   later.
-
-   This reply is an attempt to return to the intent of my original reply to
-   patch 0 of this series."
-
-
-I have not directly replied to any of your other emails that have made
-that observation (I may have replied to other emails that were replies
-to such an email of yours, but not in the context of the overhead).
-After this email, my next reply will be my delayed response to your
-original email about overhead.
-
-And the "mommy, he hit me first" argument does not contribute to a
-constructive conversation about a kernel patch submittal.
-
-
-> Yes, you can manually unload a module, recompile the module, somehow
-> get the module back into the VM (perhaps by using virtio-9p), and then
-> reloading the module with the in-kernel test code, and the restart the
-> test.  BUT: (a) even if it is faster, it requires a lot of manual
-> steps, and would be very hard to automate, and (b) if the test code
-> ever OOPS or triggers a lockdep warning, you will need to restart the
-> VM, and so this involves all of the VM restart overhead, plus trying
-> to automate determining when you actually do need to restart the VM
-> versus unloading and reloading the module.   It's clunky.
-
-I have mentioned before that the in-kernel kselftest tests can be
-run in UML.  You simply select the configure options to build them
-into the kernel instead of building them as modules.  Then build
-a UML kernel and execute ("boot") the UML kernel.
-
-This is exactly the same as for KUnit.  No more overhead.  No less
-overhead.  No more steps.  No fewer steps.
-
-
+> One major difference: kselftest requires a userspace environment; it
+> starts systemd, requires a root file system from which you can load
+> modules, etc.  Kunit doesn't require a root file system; doesn't
+> require that you start systemd; doesn't allow you to run arbitrary
+> perl, python, bash, etc. scripts.  As such, it's much lighter weight
+> than kselftest, and will have much less overhead before you can start
+> running tests.  So it's not really the same kind of virtualization.
 > 
-> Being able to do the equivalent of "make && make check" is a really
-> big deal.  And "make check" needs to go fast.
+> Does this help?
 > 
-> You keep ignore this point, perhaps because you don't care about this
-> issue?  Which is fine, and why we may just need to agree to disagree.
-
-No, I agree that fast test execution is useful.
-
-
-> 
-> Cheers,
-> 
-> 						- Ted
-> 
-> P.S.  Running scripts is Turing-equivalent, so it's self-evident that
-> *anything* you can do with other test frameworks you can somehow do in
-> kselftests.  That argument doesn't impress me, and why I do consider
-> it quite flippant.  (Heck, /bin/vi is Turing equivalent so we could
-> use vi to as a kernel test framework.  Or we could use emacs.  Let's
-> not.  :-)
-
-I have not been talking about running scripts, other than to the extent
-that _one of the ways_ the in-kernel kselftests can be invoked is via
-a script that loads the test module.  The same exact in-kernel test can
-instead be built into a UML kernel, as mentioned above.
-
-
-> The question is whether it is the most best and most efficient way to
-> do that testing.  And developer velocity is a really big part of my
-> evaluation function when judging whether or a test framework is fit
-> for that purpose.
-> .
+> 					- Ted
 > 
 
+I'm back to reply to this subthread, after a delay, as promised.
+
+That is the type of information that I was looking for, so
+thank you for the reply.
+
+However, the reply is incorrect.  Kselftest in-kernel tests (which
+is the context here) can be configured as built in instead of as
+a module, and built in a UML kernel.  The UML kernel can boot,
+running the in-kernel tests before UML attempts to invoke the
+init process.
+
+No userspace environment needed.  So exactly the same overhead
+as KUnit when invoked in that manner.
