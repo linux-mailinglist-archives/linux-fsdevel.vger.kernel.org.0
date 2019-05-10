@@ -2,97 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD897197CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 06:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6220197EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 07:10:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfEJEu4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 May 2019 00:50:56 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:43736 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726284AbfEJEu4 (ORCPT
+        id S1727023AbfEJFJw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 May 2019 01:09:52 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36636 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbfEJFJw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 May 2019 00:50:56 -0400
-Received: from callcc.thunk.org ([66.31.38.53])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4A4livR031694
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 May 2019 00:47:45 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 11AEE420024; Fri, 10 May 2019 00:47:44 -0400 (EDT)
-Date:   Fri, 10 May 2019 00:47:43 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>, Tim.Bird@sony.com,
-        knut.omang@oracle.com, gregkh@linuxfoundation.org,
-        brendanhiggins@google.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, amir73il@gmail.com,
-        dan.carpenter@oracle.com, dan.j.williams@intel.com,
-        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
-        julia.lawall@lip6.fr, khilman@baylibre.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-Message-ID: <20190510044743.GA6889@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Frank Rowand <frowand.list@gmail.com>, Tim.Bird@sony.com,
-        knut.omang@oracle.com, gregkh@linuxfoundation.org,
-        brendanhiggins@google.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org, robh@kernel.org,
-        sboyd@kernel.org, shuah@kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        mpe@ellerman.id.au, pmladek@suse.com, richard@nod.at,
-        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com
-References: <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
- <20190509032017.GA29703@mit.edu>
- <7fd35df81c06f6eb319223a22e7b93f29926edb9.camel@oracle.com>
- <20190509133551.GD29703@mit.edu>
- <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
- <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com>
- <20190509214233.GA20877@mit.edu>
- <b09ba170-229b-fde4-3e9a-e50d6ab4c1b5@deltatee.com>
- <20190509233043.GC20877@mit.edu>
- <8914afef-1e66-e6e3-f891-5855768d3018@deltatee.com>
+        Fri, 10 May 2019 01:09:52 -0400
+Received: by mail-pl1-f195.google.com with SMTP id d21so2252346plr.3;
+        Thu, 09 May 2019 22:09:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pFPzu6ptUdap+HQEdZU/NpniArB2AscIANfBOrUGg54=;
+        b=FYzv4YSGVKRu2v9DOUeHh/yQz0Vz3kt8dQJKQwBwfC0cBZvtEXxTZCywEitn1UpcgW
+         XkST+HOc+n4VCqKotPRHzUZ+sFD9AaqDZ/gY9qQXJZi7JDmLnK0msVlgGtQ4rEXXzvBU
+         9jVHVsx/+hYxc06UcqUFNWIKOJkeTRI8RmA3teazetsjx2wDS8e+a7jE5a5vGAji+voC
+         KI3/U4OHfb0U5jvwHnVIPYCLTLdVP3dF4TXDPNaw7I/h8yVSccI31kwZpnT5J3td4JpG
+         /cqP7e4dE7bCNoT4iW/a4wuhxMGDew59r08EXv9AmNyAATkvU6enwUy4+u0B746/euyb
+         Yl5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pFPzu6ptUdap+HQEdZU/NpniArB2AscIANfBOrUGg54=;
+        b=G5q3aTGNFQDqgwJ4kRVWAmcnziz77kLdfmrz3QwlPjNSJXlbS9Xo5ocPMngdUihkoS
+         Tk4LIND4ycHOO2F8cy9hjgCO0U5IW6pi4NPqmNzWX7RVmU2P/oTTT0YE3Cr4Grhk74PV
+         mNTbEvGXvFq6KoTnsO4r92H97Cb80bILiArN+eStDh1U3IoYgCW1iAdyqOXg/8YTwYyU
+         L3gIameajx8R0xIweox+/ONax5pxDYQatYRJESu+ApE19hanP70lsWpY7Ovp7WrumqEP
+         SbD0mFQ2S+W8mJ7DuiiErJmIy7FHkaTFZjnG6zZI6HGADC2dr3SKLCuGexttBApEQsJ5
+         QkVQ==
+X-Gm-Message-State: APjAAAUlTpwAK1eQify4EfXsB+xDKvz+Y3CPSbFCRh5oB3fA2S8UjzoG
+        XcHtSCsqsCNSzq7WTHKIXbA=
+X-Google-Smtp-Source: APXvYqwuVzLlL0yF6d17Moq5sYdl+fIF2CwKA+mt39Kz91RUlO+cvr4Q989/g+L0bROSSbaGjA6u7w==
+X-Received: by 2002:a17:902:2c01:: with SMTP id m1mr5824060plb.108.1557464991733;
+        Thu, 09 May 2019 22:09:51 -0700 (PDT)
+Received: from bridge ([119.28.31.106])
+        by smtp.gmail.com with ESMTPSA id 6sm5124653pfd.85.2019.05.09.22.09.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 22:09:51 -0700 (PDT)
+Date:   Fri, 10 May 2019 13:09:46 +0800
+From:   Wenbin Zeng <wenbin.zeng@gmail.com>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     viro@zeniv.linux.org.uk, davem@davemloft.net, jlayton@kernel.org,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        wenbinzeng@tencent.com, dsahern@gmail.com,
+        nicolas.dichtel@6wind.com, willy@infradead.org,
+        edumazet@google.com, jakub.kicinski@netronome.com,
+        tyhicks@canonical.com, chuck.lever@oracle.com, neilb@suse.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 0/3] auth_gss: netns refcount leaks when use-gss-proxy==1
+Message-ID: <20190510050946.GA17994@bridge>
+References: <1556692945-3996-1-git-send-email-wenbinzeng@tencent.com>
+ <20190509205218.GA23548@fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8914afef-1e66-e6e3-f891-5855768d3018@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190509205218.GA23548@fieldses.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 09, 2019 at 05:40:48PM -0600, Logan Gunthorpe wrote:
+On Thu, May 09, 2019 at 04:52:18PM -0400, J. Bruce Fields wrote:
+> Thanks for figuring this out!
 > 
-> Based on some of the other commenters, I was under the impression that
-> kselftests had in-kernel tests but I'm not sure where or if they exist. If
-> they do exists, it seems like it would make sense to convert those to kunit
-> and have Kunit tests run-able in a VM or baremetal instance.
+> I guess I'll take these patches (with the one fix in your response to
+> Al) through the nfsd tree, unless someone tells me otherwise.  (The
+> original bug was introduced through nfsd.)
 
-There are kselftests tests which are shell scripts which load a
-module, and the module runs the in-kernel code.  However, I didn't see
-much infrastructure for the in-kernel test code; the one or two test
-modules called from kselftests looked pretty ad hoc to me.
+Thank you, Bruce.
+I am submitting v2 with that fix right away.
 
-That's why I used the "vise grips" analogy.  You can use a pair of
-vise grips like a monkey wrench; but it's not really a monkey wrench,
-and might not be the best tool to loosen or tighten nuts and bolts.
+> 
+> How serious are the consequences of the leak?  I'm wondering if it's
+> worth a stable cc or not.
 
-       	   	     	       	   - Ted
+Though the leak only happens with _privileged_ docker containers that have
+gssproxy service enabled and use-gss-proxy set to 1, the consequences
+can be ugly, the killed/stopped containers not only leave struct net
+unfreed, also possibly leave behind veth devices linked to the netns, in
+environments that containers are frequently killed/stopped, it is quite
+ugly.
+
+> 
+> --b.
+> 
+> On Wed, May 01, 2019 at 02:42:22PM +0800, Wenbin Zeng wrote:
+> > This patch series fixes an auth_gss bug that results in netns refcount leaks when use-gss-proxy is set to 1.
+> > 
+> > The problem was found in privileged docker containers with gssproxy service enabled and /proc/net/rpc/use-gss-proxy set to 1, the corresponding struct net->count ends up at 2 after container gets killed, the consequence is that the struct net cannot be freed.
+> > 
+> > It turns out that write_gssp() called gssp_rpc_create() to create a rpc client, this increases net->count by 2; rpcsec_gss_exit_net() is supposed to decrease net->count but it never gets called because its call-path is:
+> > 	net->count==0 -> cleanup_net -> ops_exit_list -> rpcsec_gss_exit_net
+> > Before rpcsec_gss_exit_net() gets called, net->count cannot reach 0, this is a deadlock situation.
+> > 
+> > To fix the problem, we must break the deadlock, rpcsec_gss_exit_net() should move out of the put() path and find another chance to get called, I think nsfs_evict() is a good place to go, when netns inode gets evicted we call rpcsec_gss_exit_net() to free the rpc client, this requires a new callback i.e. evict to be added in struct proc_ns_operations, and add netns_evict() as one of netns_operations as well.
+> > 
+> > Wenbin Zeng (3):
+> >   nsfs: add evict callback into struct proc_ns_operations
+> >   netns: add netns_evict into netns_operations
+> >   auth_gss: fix deadlock that blocks rpcsec_gss_exit_net when
+> >     use-gss-proxy==1
+> > 
+> >  fs/nsfs.c                      |  2 ++
+> >  include/linux/proc_ns.h        |  1 +
+> >  include/net/net_namespace.h    |  1 +
+> >  net/core/net_namespace.c       | 12 ++++++++++++
+> >  net/sunrpc/auth_gss/auth_gss.c |  9 ++++++---
+> >  5 files changed, 22 insertions(+), 3 deletions(-)
+> > 
+> > -- 
+> > 1.8.3.1
