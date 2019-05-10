@@ -2,188 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5F719801
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 07:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7003D19816
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 07:32:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbfEJFSa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 May 2019 01:18:30 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40965 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfEJFSa (ORCPT
+        id S1727000AbfEJFcI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 May 2019 01:32:08 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:19784 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbfEJFcH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 May 2019 01:18:30 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z3so2402074pgp.8;
-        Thu, 09 May 2019 22:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=xr7T45ENj0X8h0TTVYIw3YN3QMd5VAPV0aYioKPyHGs=;
-        b=E1W7JeDYer401ts5Pou7l1Dg8TvNv88Ns4Lxp8N/AgQI/qtmKYf4sNUlvOULHL6msw
-         bA+I7RbCsYKAaaMHAvXT6Fy1BGVr1yesoASaRLH6j/RcI8tUmGMA5UmJ/rWF+KvKU+u2
-         kHaJkGp0GSxbcaoUl+lU2S18kDfjfldcm6/dgG8YRjndn5rv5Vcgo2gT7GV7bNpO12MH
-         WACO3dSP6EWF4OBYJVOjOuhUw87UecegOh600ZVYpyP23r15SmCI6/2JOlQtfBmzCiBv
-         GKCcSYfhY18upXwnqcnmZwEFLwwyITRtKemOfO3+vrLyFwKarkL6tbKzZ3EF3xyKXxzT
-         KHfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xr7T45ENj0X8h0TTVYIw3YN3QMd5VAPV0aYioKPyHGs=;
-        b=ZrLeRC0dVWtw2i61ISCEscA5vpfCyC7KvDc3i1oD2xwj8o2iB/JJLjiew5JkH26+d3
-         a2s0QCFgKyMyWO0mcwc1yjTWIKephgp0MX+dt9WPclc4QT5N6yK3qx7x/O2IaYnSgaUE
-         pn0zmZpdK+fr1i5qQ1KPQO/+Px+X4FBqiPaDbldNQ9YHLbeqzlArTaXqCG9dn/EuwKhR
-         ksmnhOkltM3zMVM6wQjZzF+yQvRZDG0WBi1EHN7MSO6nTbUK8ZFQUmVNwgBow0WY1pGp
-         Eu4GPG2Bye7rc0KkKaNFE9h/o8aUOdGzf2B2qRHFzu/1MVdsu/Orzyc38Wr+JscuvRXS
-         Q+Yw==
-X-Gm-Message-State: APjAAAWiogm++iDkzrUGupfAleMM4AAWGyj8ZvdCM9hCMUm3srvmVz2S
-        7IeSfgOutr7l3Xt0uljExdw=
-X-Google-Smtp-Source: APXvYqwtH7Skgh8l1ykgmrPjhuMGx9pfdkEsTTFsM6aBvQOxMoXlEpvU8usovtkKH/1Zc0SXCzAcIQ==
-X-Received: by 2002:a63:4820:: with SMTP id v32mr11058846pga.89.1557465509602;
-        Thu, 09 May 2019 22:18:29 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id l19sm4974597pff.1.2019.05.09.22.18.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 22:18:29 -0700 (PDT)
-Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        Theodore Ts'o <tytso@mit.edu>, Tim.Bird@sony.com,
-        knut.omang@oracle.com, gregkh@linuxfoundation.org,
-        brendanhiggins@google.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, amir73il@gmail.com,
-        dan.carpenter@oracle.com, dan.j.williams@intel.com,
-        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
-        julia.lawall@lip6.fr, khilman@baylibre.com, mpe@ellerman.id.au,
-        pmladek@suse.com, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-References: <a09a7e0e-9894-8c1a-34eb-fc482b1759d0@gmail.com>
- <20190509015856.GB7031@mit.edu>
- <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
- <20190509032017.GA29703@mit.edu>
- <7fd35df81c06f6eb319223a22e7b93f29926edb9.camel@oracle.com>
- <20190509133551.GD29703@mit.edu>
- <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
- <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com>
- <20190509214233.GA20877@mit.edu>
- <b09ba170-229b-fde4-3e9a-e50d6ab4c1b5@deltatee.com>
- <20190509233043.GC20877@mit.edu>
- <8914afef-1e66-e6e3-f891-5855768d3018@deltatee.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <6d6e91ec-33d3-830b-4895-4d7a20ba7d45@gmail.com>
-Date:   Thu, 9 May 2019 22:18:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 10 May 2019 01:32:07 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190510053204epoutp04d05917be1b7dd9b3705f52e9565110d8~dO16yU5Fc0693306933epoutp047
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 05:32:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190510053204epoutp04d05917be1b7dd9b3705f52e9565110d8~dO16yU5Fc0693306933epoutp047
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1557466324;
+        bh=KakuJdCn1X04cvo+OPpSwDWAoomNlnwTJIRTnYYBv6U=;
+        h=From:To:In-Reply-To:Subject:Date:References:From;
+        b=r+Hu5PS0BK6fvvWLaanScq6bC0wz55yHmXEn3RDv0VeqcWuENuPw57SSrEnk2kcWc
+         Geb1YjRitdP0yUNJxsCkDpwwhYrnpm9lUVoqzvyfUhzrzlXwlMoO4+O67pR2EHible
+         FlwphkxiVsi8NQ8eCBjtgCM8lyVOLN+3w4npXCwg=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20190510053203epcas5p13c5af3d4e765a7620fd7b80b356dd51c~dO16f0SwO1510415104epcas5p1J;
+        Fri, 10 May 2019 05:32:03 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        69.68.04067.3DC05DC5; Fri, 10 May 2019 14:32:03 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190510053203epcas5p39e4eb4a5996e0461da380399c5322f6c~dO16N2q8S1408014080epcas5p3J;
+        Fri, 10 May 2019 05:32:03 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190510053203epsmtrp266e4f71343665729e467acaaadbad96d~dO16NNTab2509725097epsmtrp2p;
+        Fri, 10 May 2019 05:32:03 +0000 (GMT)
+X-AuditID: b6c32a4b-78bff70000000fe3-0e-5cd50cd31896
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        50.C3.03692.3DC05DC5; Fri, 10 May 2019 14:32:03 +0900 (KST)
+Received: from JOSHIK01 (unknown [107.111.93.135]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20190510053202epsmtip21bdeaf626cdde8d26da59cb5caeab57c~dO15Nik400291002910epsmtip2J;
+        Fri, 10 May 2019 05:32:02 +0000 (GMT)
+From:   "kanchan" <joshi.k@samsung.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-ext4@vger.kernel.org>
+In-Reply-To: <1556191202-3245-1-git-send-email-joshi.k@samsung.com>
+Subject: RE: [PATCH v5 0/7] Extend write-hint framework, and add write-hint
+ for Ext4 journal
+Date:   Fri, 10 May 2019 11:01:47 +0530
+Message-ID: <031601d506f1$b2956d80$17c04880$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <8914afef-1e66-e6e3-f891-5855768d3018@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQJoSeMIlXjPMuci1lQDnd0IsY+e8wLu+qiYpSXTDJA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKKsWRmVeSWpSXmKPExsWy7bCmuu5lnqsxBs/vaFvsvaVtMXPeHTaL
+        PXtPslhc3jWHzWL+sqfsDqwem5fUe3zeJBfAFMVlk5Kak1mWWqRvl8CV8WP/B7aCXTIVX/5s
+        YW1gvCPWxcjJISFgIrFh7ReWLkYuDiGB3YwSOxauhnI+MUocOX+UEcL5xiix7+JqZpiW478m
+        sEEk9jJK9J69AVX1nFHizpYFLCBVbAKqEvd+9IJViQgsY5Q49/kJG0iCU8BZYsPie2CjhAXi
+        JBruTmAHsVmAGrZ3NoE18wpYSqw9coYdwhaUODnzCVicWUBbYtnC11BnKEjs/nSUFcQWEbCS
+        aOqazAZRIy7x8ugRdpDFEgIb2CT+3emGanCR6Di5hRXCFpZ4dXwLO4QtJfH53V42CLtY4ted
+        o8wQzR2MEtcbZrJAJOwlLu75y9TFyAG0QVNi/S59iGV8Er2/n4CFJQR4JTrahCCqFSXuTXoK
+        tUpc4uGMJVC2h8TDt5uhoTWNUWLKlsusExgVZiH5cxaSP2ch+WcWwuYFjCyrGCVTC4pz01OL
+        TQuM81LL9YoTc4tL89L1kvNzNzGCE4uW9w7GTed8DjEKcDAq8fBa8F+JEWJNLCuuzD3EKMHB
+        rCTCW6QDFOJNSaysSi3Kjy8qzUktPsQozcGiJM47ifVqjJBAemJJanZqakFqEUyWiYNTqoGx
+        9+g9RclDM3QvrdF+3ybNXTP96qPICbo++WV8bp93C9j5X1PgOPmxx/ynN9Mj5t+75sin1u1p
+        2yq2+0YPxy9O14vNyfmyrze//7hm35nd7SL3bUW/BqinXNCveCArIq29yDfv2tmy05Ke4pHv
+        st6I2796Nmf3+Q1Mx5Z8nbSIoVnI2Gt+z9swJZbijERDLeai4kQAxrKziygDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsWy7bCSvO5lnqsxBjfPC1nsvaVtMXPeHTaL
+        PXtPslhc3jWHzWL+sqfsDqwem5fUe3zeJBfAFMVlk5Kak1mWWqRvl8CVcejdCsaCNpmKr7se
+        sDQwLhHrYuTkkBAwkTj+awJbFyMXh5DAbkaJHWsXs0MkxCWar/2AsoUlVv57zg5R9JRR4uWW
+        AywgCTYBVYl7P3rBukUEVjFKLD6+G2rUFEaJzSufsoFUcQo4S2xYfI8ZxBYWiJFYP3khWJwF
+        qHt7ZxPYJF4BS4m1R86wQ9iCEidnPgGLMwtoS/Q+bGWEsZctfM0McZKCxO5PR1lBbBEBK4mm
+        rslsEDXiEi+PHmGfwCg0C8moWUhGzUIyahaSlgWMLKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz
+        0vWS83M3MYKjQEtzB+PlJfGHGAU4GJV4eC34r8QIsSaWFVfmHmKU4GBWEuEt0gEK8aYkVlal
+        FuXHF5XmpBYfYpTmYFES532adyxSSCA9sSQ1OzW1ILUIJsvEwSnVwOgoemRRXfusT+fm+0SV
+        nbmarRxXcqa3P3grY89aO9VL09x15yzXkloRN1V0VVfreuvyHcYLQrSUV3QwXrM1P88RrM+7
+        OrBXf6d7mN+t9fyfLr6r8Nm7OIulyFm0W7H+ZlSu4+y5+evYmlui16yeuf7n/6CUGm6nyUkf
+        uX3dwr+/e946naH/khJLcUaioRZzUXEiAH7U1ld+AgAA
+X-CMS-MailID: 20190510053203epcas5p39e4eb4a5996e0461da380399c5322f6c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20190425112347epcas2p1f7be48b8f0d2203252b8c9dd510c1b61
+References: <CGME20190425112347epcas2p1f7be48b8f0d2203252b8c9dd510c1b61@epcas2p1.samsung.com>
+        <1556191202-3245-1-git-send-email-joshi.k@samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/9/19 4:40 PM, Logan Gunthorpe wrote:
-> 
-> 
-> On 2019-05-09 5:30 p.m., Theodore Ts'o wrote:
->> On Thu, May 09, 2019 at 04:20:05PM -0600, Logan Gunthorpe wrote:
->>>
->>> The second item, arguably, does have significant overlap with kselftest.
->>> Whether you are running short tests in a light weight UML environment or
->>> higher level tests in an heavier VM the two could be using the same
->>> framework for writing or defining in-kernel tests. It *may* also be valuable
->>> for some people to be able to run all the UML tests in the heavy VM
->>> environment along side other higher level tests.
->>>
->>> Looking at the selftests tree in the repo, we already have similar items to
->>> what Kunit is adding as I described in point (2) above. kselftest_harness.h
->>> contains macros like EXPECT_* and ASSERT_* with very similar intentions to
->>> the new KUNIT_EXECPT_* and KUNIT_ASSERT_* macros.
->>>
->>> However, the number of users of this harness appears to be quite small. Most
->>> of the code in the selftests tree seems to be a random mismash of scripts
->>> and userspace code so it's not hard to see it as something completely
->>> different from the new Kunit:
->>>
->>> $ git grep --files-with-matches kselftest_harness.h *
->>
->> To the extent that we can unify how tests are written, I agree that
->> this would be a good thing.  However, you should note that
->> kselftest_harness.h is currently assums that it will be included in
->> userspace programs.  This is most obviously seen if you look closely
->> at the functions defined in the header files which makes calls to
->> fork(), abort() and fprintf().
-> 
-> Ah, yes. I obviously did not dig deep enough. Using kunit for
-> in-kernel tests and kselftest_harness for userspace tests seems like
-> a sensible line to draw to me. Trying to unify kernel and userspace
-> here sounds like it could be difficult so it's probably not worth
-> forcing the issue unless someone wants to do some really fancy work
-> to get it done.
-> 
-> Based on some of the other commenters, I was under the impression
-> that kselftests had in-kernel tests but I'm not sure where or if they
-> exist.
+Hi Jens & other maintainers,
 
-YES, kselftest has in-kernel tests.  (Excuse the shouting...)
+If this patch-set is in fine shape now, can it please be considered for mer=
+ge in near future?
 
-Here is a likely list of them in the kernel source tree:
+Thanks,
 
-$ grep module_init lib/test_*.c
-lib/test_bitfield.c:module_init(test_bitfields)
-lib/test_bitmap.c:module_init(test_bitmap_init);
-lib/test_bpf.c:module_init(test_bpf_init);
-lib/test_debug_virtual.c:module_init(test_debug_virtual_init);
-lib/test_firmware.c:module_init(test_firmware_init);
-lib/test_hash.c:module_init(test_hash_init);	/* Does everything */
-lib/test_hexdump.c:module_init(test_hexdump_init);
-lib/test_ida.c:module_init(ida_checks);
-lib/test_kasan.c:module_init(kmalloc_tests_init);
-lib/test_list_sort.c:module_init(list_sort_test);
-lib/test_memcat_p.c:module_init(test_memcat_p_init);
-lib/test_module.c:static int __init test_module_init(void)
-lib/test_module.c:module_init(test_module_init);
-lib/test_objagg.c:module_init(test_objagg_init);
-lib/test_overflow.c:static int __init test_module_init(void)
-lib/test_overflow.c:module_init(test_module_init);
-lib/test_parman.c:module_init(test_parman_init);
-lib/test_printf.c:module_init(test_printf_init);
-lib/test_rhashtable.c:module_init(test_rht_init);
-lib/test_siphash.c:module_init(siphash_test_init);
-lib/test_sort.c:module_init(test_sort_init);
-lib/test_stackinit.c:module_init(test_stackinit_init);
-lib/test_static_key_base.c:module_init(test_static_key_base_init);
-lib/test_static_keys.c:module_init(test_static_key_init);
-lib/test_string.c:module_init(string_selftest_init);
-lib/test_ubsan.c:module_init(test_ubsan_init);
-lib/test_user_copy.c:module_init(test_user_copy_init);
-lib/test_uuid.c:module_init(test_uuid_init);
-lib/test_vmalloc.c:module_init(vmalloc_test_init)
-lib/test_xarray.c:module_init(xarray_checks);
+-----Original Message-----
+From: Kanchan Joshi =5Bmailto:joshi.k=40samsung.com=5D=20
+Sent: Thursday, April 25, 2019 4:50 PM
+To: linux-kernel=40vger.kernel.org; linux-block=40vger.kernel.org; linux-nv=
+me=40lists.infradead.org; linux-fsdevel=40vger.kernel.org; linux-ext4=40vge=
+r.kernel.org
+Cc: prakash.v=40samsung.com; anshul=40samsung.com; Kanchan Joshi <joshi.k=
+=40samsung.com>
+Subject: =5BPATCH v5 0/7=5D Extend write-hint framework, and add write-hint=
+ for Ext4 journal
+
+V5 series, towards extending write-hint/streams infrastructure for kernel-c=
+omponents, and adding support for sending write-hint with Ext4/JBD2 journal=
+.
+
+Here is the history/changelog -
+
+Changes since v4:
+- Removed write-hint field from request. bi_write_hint in bio is used for
+  merging checks now.
+- Modified write-hint-to-stream conversion logic. Now, kernel hints are map=
+ped
+  to upper range of stream-ids, while user-hints continue to remain mapped =
+to
+  lower range of stream-ids.
+
+Changes since v3:
+- Correction in grouping related changes into patches
+- Rectification in commit text at places
+
+Changes since v2:
+- Introduce API in block layer so that drivers can register stream info. Ad=
+ded
+  new limit in request queue for this purpose.
+- Block layer does the conversion from write-hint to stream-id.
+- Stream feature is not disabled anymore if device reports less streams tha=
+n
+  a particular number (which was set as 4 earlier).
+- Any write-hint beyond reported stream-count turn to 0.
+- New macro =22WRITE_LIFE_KERN_MIN=22 can be used as base by kernel mode co=
+mponents.
+
+Changes since v1:
+- introduce four more hints for in-kernel use, as recommended by Dave chinn=
+er
+  & Jens axboe. This isolates kernel-mode hints from user-mode ones.
+- remove mount-option to specify write-hint, as recommended by Jan kara &
+  Dave chinner. Rather, FS always sets write-hint for journal. This gets ig=
+nored
+  if device does not support stream.
+- Removed code-redundancy for write_dirty_buffer (Jan kara's review comment=
+)
+
+V4 patch:
+https://lkml.org/lkml/2019/4/17/870
+
+V3 patch:
+https://marc.info/?l=3Dlinux-block&m=3D155384631909082&w=3D2
+
+V2 patch:
+https://patchwork.kernel.org/cover/10754405/
+
+V1 patch:
+https://marc.info/?l=3Dlinux-fsdevel&m=3D154444637519020&w=3D2
 
 
-> If they do exists, it seems like it would make sense to
-> convert those to kunit and have Kunit tests run-able in a VM or
-> baremetal instance.
+Kanchan Joshi (7):
+  fs: introduce write-hint start point for in-kernel hints
+  block: increase stream count for in-kernel use
+  block: introduce API to register stream information with block-layer
+  block: introduce write-hint to stream-id conversion
+  nvme: register stream info with block layer
+  fs: introduce APIs to enable passing write-hint with buffer-head
+  fs/ext4,jbd2: add support for sending write-hint with journal
 
-They already run in a VM.
+ block/blk-core.c            =7C 29 ++++++++++++++++++++++++++++-
+ block/blk-merge.c           =7C  4 ++--
+ block/blk-settings.c        =7C 12 ++++++++++++
+ drivers/nvme/host/core.c    =7C 23 ++++++-----------------
+ fs/buffer.c                 =7C 18 ++++++++++++++++--
+ fs/ext4/ext4_jbd2.h         =7C  1 +
+ fs/ext4/super.c             =7C  2 ++
+ fs/jbd2/commit.c            =7C 11 +++++++----
+ fs/jbd2/journal.c           =7C  3 ++-
+ fs/jbd2/revoke.c            =7C  3 ++-
+ include/linux/blkdev.h      =7C  8 ++++++--
+ include/linux/buffer_head.h =7C  3 +++
+ include/linux/fs.h          =7C  2 ++
+ include/linux/jbd2.h        =7C  8 ++++++++
+ 14 files changed, 97 insertions(+), 30 deletions(-)
 
-They already run on bare metal.
+--
+2.7.4
 
-They already run in UML.
 
-This is not to say that KUnit does not make sense.  But I'm still trying
-to get a better description of the KUnit features (and there are
-some).
-
--Frank
