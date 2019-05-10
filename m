@@ -2,455 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0988F1A593
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2019 01:33:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C77F81A59D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2019 01:36:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbfEJXdo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 May 2019 19:33:44 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38004 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728137AbfEJXdn (ORCPT
+        id S1728008AbfEJXgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 May 2019 19:36:52 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33532 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727921AbfEJXgv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 May 2019 19:33:43 -0400
-Received: by mail-oi1-f196.google.com with SMTP id u199so5716380oie.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 16:33:43 -0700 (PDT)
+        Fri, 10 May 2019 19:36:51 -0400
+Received: by mail-lj1-f195.google.com with SMTP id w1so3867944ljw.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 16:36:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=brauner.io; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=WC/y1DmHB2Y90knG08MAWJGLd/iKaXtu4mQo0QQg32o=;
-        b=prtx5XbQoKn8R8zrPANnGGghcOCZK+wRPFO9hQpMhQaWx9/y/5msAKm524s/8jfR4q
-         Hy/plrFCxwPLklnjRg1ytI1vkn65dKxxuODtQeQONgGnDyY1Qeyz0ulF0k6we7eJvilt
-         tmVlP80ebYIRcJwK89TR50H36szz+HZnzK7WWoKiff6yLgse0PR4bCCx+krMuh/OcsHY
-         rTLVV48h5/TQ1ELvZZDMwiGcklzyIYGSPlmmucHXjV/zIDskI4WdEUyDfHwtO5v/HA5K
-         wzM6gR/i/MF76pXW0PLzzNQE/aQ80Tklyd5SMmPr2Rqn7ds79bCo7+Dp3zNj56KtP/n1
-         rr+g==
+        bh=UCHjfY8ffpbEmMSgw3athUzkrjNiBk31tuUuOHfkH0E=;
+        b=SObLv4AvXYIrUFwvgxqqJzOJ2V92LqChl1+4qkDW9oRt6uYTBuqgGeYXehc6lunlS0
+         WOi20UjpfhFKIt7GAejYR6JkXn+du2032xYUCPTsw8KIplwp0QIOYf+wmiFdJdsVSvnm
+         tY1BdLVmpbwMUdhJNF7tzn3SCKxPGKz6HBG+k8RDtDR3BEMTaYF6Gn+s+ocewQgwD21/
+         J7UK8FTHZnS0+VyOasXkg60jp1yVFsV9SWY7l2DwZTm3YenVwEIGPGRuAb19M6HgLxf6
+         SOU2iF9zUmYQCurzaildkMAe0vsxwPYHp9AjmpAxnIegeVv5BkiS0k1FQ3gZGq5hlntK
+         dLbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=WC/y1DmHB2Y90knG08MAWJGLd/iKaXtu4mQo0QQg32o=;
-        b=Dz+ywhm1+nnXd//Zltn0vB01RFuo1HWhvBCykao1/N4J+6fY3uVdrrgzJPBT0cjbmY
-         xE/Z/Bxy0Q9rvGkzgFQxfKMsoVxTDHFA8XOW8lPEHAEJcu/MVQIrbK9WF/OAgPUSnNTZ
-         Qb8dN5lXyP5T94rNwtLOo8Ps19J5U3O7fCKb0SYlDrU6wtb1OkJt58qEfdCJLQAnzXR4
-         Q2TCD5CNcksUakK9tNJFczppdWwlsn+MJPN22rcKysom313jRLW30l2n8h0TE8PoWoTT
-         Y6bwX0R4oSMXiu6w8qakXq0VsS0WSiTY4Cc+xXx228+7lahnDuU/inzrDbJliT4TG9px
-         7OMw==
-X-Gm-Message-State: APjAAAWm52dj0ubsDSqoMtAaC2GoduNafOTnFczSGtGO9ceaapFB+K0O
-        gDJHCdCdel9BH+yZ44c5RARjyiBrAivKCat1SUh4Hg==
-X-Google-Smtp-Source: APXvYqy3hU8IrTm8PSkpuEnPK36JXZdIT/LmyaieX/IDEIUp9CvxH/SS4vBmVUBtvUxwooicCRs3MOkHKX/DpSGnAGY=
-X-Received: by 2002:aca:de57:: with SMTP id v84mr7193950oig.149.1557531222870;
- Fri, 10 May 2019 16:33:42 -0700 (PDT)
+        bh=UCHjfY8ffpbEmMSgw3athUzkrjNiBk31tuUuOHfkH0E=;
+        b=KUZbIXVxe9BOraYQPl798PBliyJUmVu75kU0cVFNgLK1oFW0OkuHwAjmJR4/IV231K
+         OU1x/c2lbHgna664PqA3EBkOl51jVRCQkXqMgPTzVvBxL8t0fzG3bvvplo+OuHMYu8RR
+         HATaLbtHfZArH1ifUpQ4wZ5/w3yJuMF7cAbQt/hvAJ0mRibsosAfqe7S6plTGwEeRI2m
+         q3g/CbM+/UGfVfXwaBOaYC1nFKOJwocFu45iSdleKT00jBdPOEfeaxEFsfcrqY5HXm0v
+         ip5x5VOE84/cTp9W51FFxRUreN9pGntHjwTpaFoNxGarVxb6asyHqE3YMVZqD1LqlYko
+         b7Mw==
+X-Gm-Message-State: APjAAAVSAbJLWGEoAu+OyJk1aBrB0cu7GzHOkvgwGmFFSVtzQjxOfequ
+        NvoZqanMAMyQlpk+TDxyHkz0/p9zvOYU9XipdPjSCQ==
+X-Google-Smtp-Source: APXvYqwBw+D2wbm/jYmKoBNPSWcGv60F4u2IzN+qmva779guxg3NE/QEjxPitdeYXgQTpHW3uRqhaxlB5IpYP37eA7o=
+X-Received: by 2002:a2e:1293:: with SMTP id 19mr7423135ljs.120.1557531408970;
+ Fri, 10 May 2019 16:36:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190426050039.17460-1-pagupta@redhat.com> <20190426050039.17460-3-pagupta@redhat.com>
- <CAPcyv4hdT5bbgv0Gy1r0Xb3RMfE_Zpe7DV10a=F1PFeTeEt+Fw@mail.gmail.com> <2066697253.27249896.1557314351749.JavaMail.zimbra@redhat.com>
-In-Reply-To: <2066697253.27249896.1557314351749.JavaMail.zimbra@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 10 May 2019 16:33:31 -0700
-Message-ID: <CAPcyv4ifTg=_UzA_P1J6Lo_+djisrHxy+QEa_frbeq50UXHKsg@mail.gmail.com>
-Subject: Re: [Qemu-devel] [PATCH v7 2/6] virtio-pmem: Add virtio pmem driver
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     cohuck@redhat.com, Jan Kara <jack@suse.cz>,
-        KVM list <kvm@vger.kernel.org>,
-        Jason Wang <jasowang@redhat.com>, david <david@fromorbit.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Qemu Developers <qemu-devel@nongnu.org>,
-        virtualization@lists.linux-foundation.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        jmoyer <jmoyer@redhat.com>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Len Brown <lenb@kernel.org>, kilobyte@angband.pl,
-        Rik van Riel <riel@surriel.com>,
-        yuval shaia <yuval.shaia@oracle.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        Kevin Wolf <kwolf@redhat.com>,
-        Nitesh Narayan Lal <nilal@redhat.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
+References: <20190506165439.9155-1-cyphar@cyphar.com> <20190506165439.9155-6-cyphar@cyphar.com>
+ <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com>
+ <20190506191735.nmzf7kwfh7b6e2tf@yavin> <20190510204141.GB253532@google.com>
+ <CALCETrW2nn=omqJb4p+m-BDsCOhg+YZQ3ELd4BdhODV3G44gfA@mail.gmail.com> <20190510225527.GA59914@google.com>
+In-Reply-To: <20190510225527.GA59914@google.com>
+From:   Christian Brauner <christian@brauner.io>
+Date:   Sat, 11 May 2019 01:36:37 +0200
+Message-ID: <CAHrFyr5vjTZfgtMsHwr6iwVVFxVsU3UCOiEq=FM-rjr0kPGHUw@mail.gmail.com>
+Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
+To:     Jann Horn <jannh@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Igor Mammedov <imammedo@redhat.com>
+        Linux API <linux-api@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 8, 2019 at 4:19 AM Pankaj Gupta <pagupta@redhat.com> wrote:
+On Sat, May 11, 2019 at 12:55 AM Jann Horn <jannh@google.com> wrote:
 >
->
-> Hi Dan,
->
-> Thank you for the review. Please see my reply inline.
->
-> >
-> > Hi Pankaj,
-> >
-> > Some minor file placement comments below.
->
-> Sure.
->
-> >
-> > On Thu, Apr 25, 2019 at 10:02 PM Pankaj Gupta <pagupta@redhat.com> wrote:
+> On Fri, May 10, 2019 at 02:20:23PM -0700, Andy Lutomirski wrote:
+> > On Fri, May 10, 2019 at 1:41 PM Jann Horn <jannh@google.com> wrote:
 > > >
-> > > This patch adds virtio-pmem driver for KVM guest.
+> > > On Tue, May 07, 2019 at 05:17:35AM +1000, Aleksa Sarai wrote:
+> > > > On 2019-05-06, Jann Horn <jannh@google.com> wrote:
+> > > > > In my opinion, CVE-2019-5736 points out two different problems:
+> > > > >
+> > > > > The big problem: The __ptrace_may_access() logic has a special-case
+> > > > > short-circuit for "introspection" that you can't opt out of; this
+> > > > > makes it possible to open things in procfs that are related to the
+> > > > > current process even if the credentials of the process wouldn't permit
+> > > > > accessing another process like it. I think the proper fix to deal with
+> > > > > this would be to add a prctl() flag for "set whether introspection is
+> > > > > allowed for this process", and if userspace has manually un-set that
+> > > > > flag, any introspection special-case logic would be skipped.
+> > > >
+> > > > We could do PR_SET_DUMPABLE=3 for this, I guess?
 > > >
-> > > Guest reads the persistent memory range information from
-> > > Qemu over VIRTIO and registers it on nvdimm_bus. It also
-> > > creates a nd_region object with the persistent memory
-> > > range information so that existing 'nvdimm/pmem' driver
-> > > can reserve this into system memory map. This way
-> > > 'virtio-pmem' driver uses existing functionality of pmem
-> > > driver to register persistent memory compatible for DAX
-> > > capable filesystems.
-> > >
-> > > This also provides function to perform guest flush over
-> > > VIRTIO from 'pmem' driver when userspace performs flush
-> > > on DAX memory range.
-> > >
-> > > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> > > ---
-> > >  drivers/nvdimm/virtio_pmem.c     | 114 +++++++++++++++++++++++++++++
-> > >  drivers/virtio/Kconfig           |  10 +++
-> > >  drivers/virtio/Makefile          |   1 +
-> > >  drivers/virtio/pmem.c            | 118 +++++++++++++++++++++++++++++++
-> > >  include/linux/virtio_pmem.h      |  60 ++++++++++++++++
-> > >  include/uapi/linux/virtio_ids.h  |   1 +
-> > >  include/uapi/linux/virtio_pmem.h |  10 +++
-> > >  7 files changed, 314 insertions(+)
-> > >  create mode 100644 drivers/nvdimm/virtio_pmem.c
-> > >  create mode 100644 drivers/virtio/pmem.c
-> > >  create mode 100644 include/linux/virtio_pmem.h
-> > >  create mode 100644 include/uapi/linux/virtio_pmem.h
-> > >
-> > > diff --git a/drivers/nvdimm/virtio_pmem.c b/drivers/nvdimm/virtio_pmem.c
-> > > new file mode 100644
-> > > index 000000000000..66b582f751a3
-> > > --- /dev/null
-> > > +++ b/drivers/nvdimm/virtio_pmem.c
-> > > @@ -0,0 +1,114 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * virtio_pmem.c: Virtio pmem Driver
-> > > + *
-> > > + * Discovers persistent memory range information
-> > > + * from host and provides a virtio based flushing
-> > > + * interface.
-> > > + */
-> > > +#include <linux/virtio_pmem.h>
-> > > +#include "nd.h"
-> > > +
-> > > + /* The interrupt handler */
-> > > +void host_ack(struct virtqueue *vq)
-> > > +{
-> > > +       unsigned int len;
-> > > +       unsigned long flags;
-> > > +       struct virtio_pmem_request *req, *req_buf;
-> > > +       struct virtio_pmem *vpmem = vq->vdev->priv;
-> > > +
-> > > +       spin_lock_irqsave(&vpmem->pmem_lock, flags);
-> > > +       while ((req = virtqueue_get_buf(vq, &len)) != NULL) {
-> > > +               req->done = true;
-> > > +               wake_up(&req->host_acked);
-> > > +
-> > > +               if (!list_empty(&vpmem->req_list)) {
-> > > +                       req_buf = list_first_entry(&vpmem->req_list,
-> > > +                                       struct virtio_pmem_request, list);
-> > > +                       list_del(&vpmem->req_list);
-> > > +                       req_buf->wq_buf_avail = true;
-> > > +                       wake_up(&req_buf->wq_buf);
-> > > +               }
-> > > +       }
-> > > +       spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(host_ack);
-> > > +
-> > > + /* The request submission function */
-> > > +int virtio_pmem_flush(struct nd_region *nd_region)
-> > > +{
-> > > +       int err;
-> > > +       unsigned long flags;
-> > > +       struct scatterlist *sgs[2], sg, ret;
-> > > +       struct virtio_device *vdev = nd_region->provider_data;
-> > > +       struct virtio_pmem *vpmem = vdev->priv;
-> > > +       struct virtio_pmem_request *req;
-> > > +
-> > > +       might_sleep();
-> > > +       req = kmalloc(sizeof(*req), GFP_KERNEL);
-> > > +       if (!req)
-> > > +               return -ENOMEM;
-> > > +
-> > > +       req->done = req->wq_buf_avail = false;
-> > > +       strcpy(req->name, "FLUSH");
-> > > +       init_waitqueue_head(&req->host_acked);
-> > > +       init_waitqueue_head(&req->wq_buf);
-> > > +       sg_init_one(&sg, req->name, strlen(req->name));
-> > > +       sgs[0] = &sg;
-> > > +       sg_init_one(&ret, &req->ret, sizeof(req->ret));
-> > > +       sgs[1] = &ret;
-> > > +
-> > > +       spin_lock_irqsave(&vpmem->pmem_lock, flags);
-> > > +       err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req, GFP_ATOMIC);
-> > > +       if (err) {
-> > > +               dev_err(&vdev->dev, "failed to send command to virtio pmem
-> > > device\n");
-> > > +
-> > > +               list_add_tail(&vpmem->req_list, &req->list);
-> > > +               spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> > > +
-> > > +               /* When host has read buffer, this completes via host_ack
-> > > */
-> > > +               wait_event(req->wq_buf, req->wq_buf_avail);
-> > > +               spin_lock_irqsave(&vpmem->pmem_lock, flags);
-> > > +       }
-> > > +       err = virtqueue_kick(vpmem->req_vq);
-> > > +       spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> > > +
-> > > +       if (!err) {
-> > > +               err = -EIO;
-> > > +               goto ret;
-> > > +       }
-> > > +       /* When host has read buffer, this completes via host_ack */
-> > > +       wait_event(req->host_acked, req->done);
-> > > +       err = req->ret;
-> > > +ret:
-> > > +       kfree(req);
-> > > +       return err;
-> > > +};
-> > > +
-> > > + /* The asynchronous flush callback function */
-> > > +int async_pmem_flush(struct nd_region *nd_region, struct bio *bio)
-> > > +{
-> > > +       int rc = 0;
-> > > +
-> > > +       /* Create child bio for asynchronous flush and chain with
-> > > +        * parent bio. Otherwise directly call nd_region flush.
-> > > +        */
-> > > +       if (bio && bio->bi_iter.bi_sector != -1) {
-> > > +               struct bio *child = bio_alloc(GFP_ATOMIC, 0);
-> > > +
-> > > +               if (!child)
-> > > +                       return -ENOMEM;
-> > > +               bio_copy_dev(child, bio);
-> > > +               child->bi_opf = REQ_PREFLUSH;
-> > > +               child->bi_iter.bi_sector = -1;
-> > > +               bio_chain(child, bio);
-> > > +               submit_bio(child);
-> > > +       } else {
-> > > +               if (virtio_pmem_flush(nd_region))
-> > > +                       rc = -EIO;
-> > > +       }
-> > > +
-> > > +       return rc;
-> > > +};
-> > > +EXPORT_SYMBOL_GPL(async_pmem_flush);
-> > > +MODULE_LICENSE("GPL");
-> > > diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-> > > index 35897649c24f..9f634a2ed638 100644
-> > > --- a/drivers/virtio/Kconfig
-> > > +++ b/drivers/virtio/Kconfig
-> > > @@ -42,6 +42,16 @@ config VIRTIO_PCI_LEGACY
-> > >
-> > >           If unsure, say Y.
-> > >
-> > > +config VIRTIO_PMEM
-> > > +       tristate "Support for virtio pmem driver"
-> > > +       depends on VIRTIO
-> > > +       depends on LIBNVDIMM
-> > > +       help
-> > > +       This driver provides support for virtio based flushing interface
-> > > +       for persistent memory range.
-> > > +
-> > > +       If unsure, say M.
-> > > +
-> > >  config VIRTIO_BALLOON
-> > >         tristate "Virtio balloon driver"
-> > >         depends on VIRTIO
-> > > diff --git a/drivers/virtio/Makefile b/drivers/virtio/Makefile
-> > > index 3a2b5c5dcf46..143ce91eabe9 100644
-> > > --- a/drivers/virtio/Makefile
-> > > +++ b/drivers/virtio/Makefile
-> > > @@ -6,3 +6,4 @@ virtio_pci-y := virtio_pci_modern.o virtio_pci_common.o
-> > >  virtio_pci-$(CONFIG_VIRTIO_PCI_LEGACY) += virtio_pci_legacy.o
-> > >  obj-$(CONFIG_VIRTIO_BALLOON) += virtio_balloon.o
-> > >  obj-$(CONFIG_VIRTIO_INPUT) += virtio_input.o
-> > > +obj-$(CONFIG_VIRTIO_PMEM) += pmem.o ../nvdimm/virtio_pmem.o
-> > > diff --git a/drivers/virtio/pmem.c b/drivers/virtio/pmem.c
-> > > new file mode 100644
-> > > index 000000000000..309788628e41
-> > > --- /dev/null
-> > > +++ b/drivers/virtio/pmem.c
+> > > Hmm... I'd make it a new prctl() command, since introspection is
+> > > somewhat orthogonal to dumpability. Also, dumpability is per-mm, and I
+> > > think the introspection flag should be per-thread.
 > >
-> > It's not clear to me why this driver is located in drivers/virtio/
+> > I've lost track of the context here, but it seems to me that
+> > mitigating attacks involving accidental following of /proc links
+> > shouldn't depend on dumpability.  What's the actual problem this is
+> > trying to solve again?
 >
-> Like other VIRTIO drivers, I placed it initially in drivers/virtio directory.
+> The one actual security problem that I've seen related to this is
+> CVE-2019-5736. There is a write-up of it at
+> <https://blog.dragonsector.pl/2019/02/cve-2019-5736-escape-from-docker-and.html>
+> under "Successful approach", but it goes more or less as follows:
 >
-> >
-> > > @@ -0,0 +1,118 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * virtio_pmem.c: Virtio pmem Driver
-> > > + *
-> > > + * Discovers persistent memory range information
-> > > + * from host and registers the virtual pmem device
-> > > + * with libnvdimm core.
-> > > + */
-> > > +#include <linux/virtio_pmem.h>
-> > > +#include <../../drivers/nvdimm/nd.h>
-> >
-> > ...especially because it seems to require nvdimm internals.
-> >
-> > However I don't see why that header is included.
+> A container is running that doesn't use user namespaces (because for
+> some reason I don't understand, apparently some people still do that).
+> An evil process is running inside the container with UID 0 (as in,
+> GLOBAL_ROOT_UID); so if the evil process inside the container was able
+> to reach root-owned files on the host filesystem, it could write into
+> them.
 >
-> Removed.
+> The container engine wants to spawn a new process inside the container.
+> It forks off a child that joins the container's namespaces (including
+> PID and mount namespaces), and then the child calls execve() on some
+> path in the container.
+> The attacker replaces the executable in the container with a symlink
+> to /proc/self/exe and replaces a library inside the container with a
+> malicious one.
+> When the container engine calls execve(), intending to run an executable
+> inside the container, it instead goes through ptrace_may_access() using
+> the introspection short-circuit and re-executes its own executable
+> through the jumped symlink /proc/self/exe (which is normally unreachable
+> for the container). After the execve(), the process loads an evil
+> library from inside the container and is under the control of the
+> container.
+> Now the container controls a process whose /proc/self/exe is a jumped
+> symlink to a host executable, and the container can write into it.
 >
-> >
-> > In any event lets move this to drivers/nvdimm/virtio.c to live
-> > alongside the other generic bus provider drivers/nvdimm/e820.c.
+> Some container engines are now using an extremely ugly hack to work
+> around this - whenever they want to enter a container, they copy the
+> host binary into a new memfd and execute that to avoid exposing the
+> original host binary to containers:
+> <https://github.com/opencontainers/runc/commit/0a8e4117e7f715d5fbeef398405813ce8e88558b>
 >
-> o.k. Makes sense.
 >
-> >
-> > > +
-> > > +static struct virtio_device_id id_table[] = {
-> > > +       { VIRTIO_ID_PMEM, VIRTIO_DEV_ANY_ID },
-> > > +       { 0 },
-> > > +};
-> > > +
-> > > + /* Initialize virt queue */
-> > > +static int init_vq(struct virtio_pmem *vpmem)
-> > > +{
-> > > +       /* single vq */
-> > > +       vpmem->req_vq = virtio_find_single_vq(vpmem->vdev,
-> > > +                               host_ack, "flush_queue");
-> > > +       if (IS_ERR(vpmem->req_vq))
-> > > +               return PTR_ERR(vpmem->req_vq);
-> > > +
-> > > +       spin_lock_init(&vpmem->pmem_lock);
-> > > +       INIT_LIST_HEAD(&vpmem->req_list);
-> > > +
-> > > +       return 0;
-> > > +};
-> > > +
-> > > +static int virtio_pmem_probe(struct virtio_device *vdev)
-> > > +{
-> > > +       int err = 0;
-> > > +       struct resource res;
-> > > +       struct virtio_pmem *vpmem;
-> > > +       struct nd_region_desc ndr_desc = {};
-> > > +       int nid = dev_to_node(&vdev->dev);
-> > > +       struct nd_region *nd_region;
-> > > +
-> > > +       if (!vdev->config->get) {
-> > > +               dev_err(&vdev->dev, "%s failure: config access disabled\n",
-> > > +                       __func__);
-> > > +               return -EINVAL;
-> > > +       }
-> > > +
-> > > +       vpmem = devm_kzalloc(&vdev->dev, sizeof(*vpmem), GFP_KERNEL);
-> > > +       if (!vpmem) {
-> > > +               err = -ENOMEM;
-> > > +               goto out_err;
-> > > +       }
-> > > +
-> > > +       vpmem->vdev = vdev;
-> > > +       vdev->priv = vpmem;
-> > > +       err = init_vq(vpmem);
-> > > +       if (err)
-> > > +               goto out_err;
-> > > +
-> > > +       virtio_cread(vpmem->vdev, struct virtio_pmem_config,
-> > > +                       start, &vpmem->start);
-> > > +       virtio_cread(vpmem->vdev, struct virtio_pmem_config,
-> > > +                       size, &vpmem->size);
-> > > +
-> > > +       res.start = vpmem->start;
-> > > +       res.end   = vpmem->start + vpmem->size-1;
-> > > +       vpmem->nd_desc.provider_name = "virtio-pmem";
-> > > +       vpmem->nd_desc.module = THIS_MODULE;
-> > > +
-> > > +       vpmem->nvdimm_bus = nvdimm_bus_register(&vdev->dev,
-> > > +                                               &vpmem->nd_desc);
-> > > +       if (!vpmem->nvdimm_bus)
-> > > +               goto out_vq;
-> > > +
-> > > +       dev_set_drvdata(&vdev->dev, vpmem->nvdimm_bus);
-> > > +
-> > > +       ndr_desc.res = &res;
-> > > +       ndr_desc.numa_node = nid;
-> > > +       ndr_desc.flush = async_pmem_flush;
-> > > +       set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
-> > > +       set_bit(ND_REGION_ASYNC, &ndr_desc.flags);
-> > > +       nd_region = nvdimm_pmem_region_create(vpmem->nvdimm_bus,
-> > > &ndr_desc);
-> > > +
-> > > +       if (!nd_region)
-> > > +               goto out_nd;
-> > > +       nd_region->provider_data =  dev_to_virtio
-> > > +                                       (nd_region->dev.parent->parent);
-> > > +       return 0;
-> > > +out_nd:
-> > > +       err = -ENXIO;
-> > > +       nvdimm_bus_unregister(vpmem->nvdimm_bus);
-> > > +out_vq:
-> > > +       vdev->config->del_vqs(vdev);
-> > > +out_err:
-> > > +       dev_err(&vdev->dev, "failed to register virtio pmem memory\n");
-> > > +       return err;
-> > > +}
-> > > +
-> > > +static void virtio_pmem_remove(struct virtio_device *vdev)
-> > > +{
-> > > +       struct nvdimm_bus *nvdimm_bus = dev_get_drvdata(&vdev->dev);
-> > > +
-> > > +       nvdimm_bus_unregister(nvdimm_bus);
-> > > +       vdev->config->del_vqs(vdev);
-> > > +       vdev->config->reset(vdev);
-> > > +}
-> > > +
-> > > +static struct virtio_driver virtio_pmem_driver = {
-> > > +       .driver.name            = KBUILD_MODNAME,
-> > > +       .driver.owner           = THIS_MODULE,
-> > > +       .id_table               = id_table,
-> > > +       .probe                  = virtio_pmem_probe,
-> > > +       .remove                 = virtio_pmem_remove,
-> > > +};
-> > > +
-> > > +module_virtio_driver(virtio_pmem_driver);
-> > > +MODULE_DEVICE_TABLE(virtio, id_table);
-> > > +MODULE_DESCRIPTION("Virtio pmem driver");
-> > > +MODULE_LICENSE("GPL");
-> > > diff --git a/include/linux/virtio_pmem.h b/include/linux/virtio_pmem.h
-> > > new file mode 100644
-> > > index 000000000000..ab1da877575d
-> > > --- /dev/null
-> > > +++ b/include/linux/virtio_pmem.h
-> >
-> > Why is this a global header?
+> In my opinion, the problems here are:
 >
-> This is where other virtio driver headers are also placed.
-> I think this is to access uapi config file in :
->
-> ./include/uapi/linux/virtio_pmem.h
->
-> Is it okay if we keep 'virtio_pmem.h' in global header?
+>  - Apparently some people run untrusted containers without user
+>    namespaces. It would be really nice if people could not do that.
+>    (Probably the biggest problem here.)
 
-No, I don't think so. While virtio_console.h and virtio_net.h make
-sense as global headers because they are consumed from multiple
-drivers, there is no need for virtio_caif.h, for example, to be a
-global header. I see no practical reason that the private details of
-virtio_pmem.h need to be made available outside of the virtio_pmem.c
-consumer.
+I know I sound like a broken record since I've been going on about this
+forever together with a lot of other people but honestly,
+the fact that people are running untrusted workloads in privileged containers
+is the real issue here.
+
+Aleksa is a good friend of mine and we have discussed this a lot so I hope
+he doesn't hate me for saying this again: it is crazy that there are container
+runtimes out there that promise (or at least do not state the opposite)
+containers without user namespaces or containers with user namespaces
+that allow to map the host root id to anything can be safe. They cannot.
+
+Even if this /proc/*/exe thing is somehow blocked there
+are other ways of escaping from a privileged container.
+We (i.e. LXC) literally do not accept CVEs for privileged containers
+because we do not consider them safe by design.
+It seems to me to be heading in the wrong direction to keep up the
+illusion that with enough effort we can make this all nice and safe.
+Yes, the userspace memfd hack we came up with is as ugly as a security
+patch can be but if you make promises you can't keep you better be
+prepared to pay the price when things start to fall apart.
+So if this part of the patch is just needed to handle this do we really
+want to do all that tricky work or is there more to gain from this that
+makes it worth it.
+
+Christian
