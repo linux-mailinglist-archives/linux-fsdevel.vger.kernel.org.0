@@ -2,99 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E82CA1A0DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 17:59:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E6641A12F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 May 2019 18:18:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfEJP7z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 May 2019 11:59:55 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37082 "EHLO mx1.redhat.com"
+        id S1727551AbfEJQSg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 May 2019 12:18:36 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:36628 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727346AbfEJP7z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 May 2019 11:59:55 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B85A930842D1;
-        Fri, 10 May 2019 15:59:54 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9E5421FC;
-        Fri, 10 May 2019 15:59:54 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 76BC33FB10;
-        Fri, 10 May 2019 15:59:54 +0000 (UTC)
-Date:   Fri, 10 May 2019 11:59:53 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Adam Borowski <kilobyte@angband.pl>, linux-btrfs@vger.kernel.org,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, david <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>, dsterba@suse.cz,
-        nborisov@suse.com, linux-nvdimm <linux-nvdimm@lists.01.org>
-Message-ID: <1582528207.27988270.1557503993894.JavaMail.zimbra@redhat.com>
-In-Reply-To: <CAPcyv4jPF70QECzpgDCwzasJT38eOqG9tfQRbo37OWg+YzGu_w@mail.gmail.com>
-References: <20190429172649.8288-13-rgoldwyn@suse.de> <20190510153222.24665-1-kilobyte@angband.pl> <CAPcyv4jPF70QECzpgDCwzasJT38eOqG9tfQRbo37OWg+YzGu_w@mail.gmail.com>
-Subject: Re: [PATCH for-goldwyn] btrfs: disallow MAP_SYNC outside of DAX
- mounts
+        id S1727271AbfEJQSg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 May 2019 12:18:36 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hP8Dm-0006xr-3M; Fri, 10 May 2019 10:18:07 -0600
+To:     Frank Rowand <frowand.list@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>, Tim.Bird@sony.com,
+        knut.omang@oracle.com, gregkh@linuxfoundation.org,
+        brendanhiggins@google.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, amir73il@gmail.com,
+        dan.carpenter@oracle.com, dan.j.williams@intel.com,
+        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
+        julia.lawall@lip6.fr, khilman@baylibre.com, mpe@ellerman.id.au,
+        pmladek@suse.com, richard@nod.at, rientjes@google.com,
+        rostedt@goodmis.org, wfg@linux.intel.com
+References: <a09a7e0e-9894-8c1a-34eb-fc482b1759d0@gmail.com>
+ <20190509015856.GB7031@mit.edu>
+ <580e092f-fa4e-eedc-9e9a-a57dd085f0a6@gmail.com>
+ <20190509032017.GA29703@mit.edu>
+ <7fd35df81c06f6eb319223a22e7b93f29926edb9.camel@oracle.com>
+ <20190509133551.GD29703@mit.edu>
+ <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
+ <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com>
+ <20190509214233.GA20877@mit.edu>
+ <b09ba170-229b-fde4-3e9a-e50d6ab4c1b5@deltatee.com>
+ <20190509233043.GC20877@mit.edu>
+ <8914afef-1e66-e6e3-f891-5855768d3018@deltatee.com>
+ <6d6e91ec-33d3-830b-4895-4d7a20ba7d45@gmail.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <3faa022b-0b70-0375-aa6d-12ea83a2671f@deltatee.com>
+Date:   Fri, 10 May 2019 10:17:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <6d6e91ec-33d3-830b-4895-4d7a20ba7d45@gmail.com>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.65.16.148, 10.4.195.16]
-Thread-Topic: btrfs: disallow MAP_SYNC outside of DAX mounts
-Thread-Index: R9x6cQ2xHivFBl+OL2QrtCwDPNR03Q==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 10 May 2019 15:59:54 +0000 (UTC)
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: wfg@linux.intel.com, rostedt@goodmis.org, rientjes@google.com, richard@nod.at, pmladek@suse.com, mpe@ellerman.id.au, khilman@baylibre.com, julia.lawall@lip6.fr, joel@jms.id.au, jdike@addtoit.com, daniel@ffwll.ch, dan.j.williams@intel.com, dan.carpenter@oracle.com, amir73il@gmail.com, Alexander.Levin@microsoft.com, linux-um@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, kunit-dev@googlegroups.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, shuah@kernel.org, sboyd@kernel.org, robh@kernel.org, mcgrof@kernel.org, kieran.bingham@ideasonboard.com, keescook@google.com, brendanhiggins@google.com, gregkh@linuxfoundation.org, knut.omang@oracle.com, Tim.Bird@sony.com, tytso@mit.edu, frowand.list@gmail.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-6.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
+        autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-> >
-> > Even if allocation is done synchronously, data would be lost except on
-> > actual pmem.  Explicit msync()s don't need MAP_SYNC, and don't require
-> > a sync per page.
-> >
-> > Signed-off-by: Adam Borowski <kilobyte@angband.pl>
-> > ---
-> > MAP_SYNC can't be allowed unconditionally, as cacheline flushes don't help
-> > guarantee persistency in page cache.  This fixes an error in my earlier
-> > patch "btrfs: allow MAP_SYNC mmap" -- you'd probably want to amend that.
-> >
-> >
-> >  fs/btrfs/file.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> > index 362a9cf9dcb2..0bc5428037ba 100644
-> > --- a/fs/btrfs/file.c
-> > +++ b/fs/btrfs/file.c
-> > @@ -2233,6 +2233,13 @@ static int btrfs_file_mmap(struct file   *filp,
-> > struct vm_area_struct *vma)
-> >         if (!IS_DAX(inode) && !mapping->a_ops->readpage)
-> >                 return -ENOEXEC;
-> >
-> > +       /*
-> > +        * Normal operation of btrfs is pretty much an antithesis of
-> > MAP_SYNC;
-> > +        * supporting it outside DAX is pointless.
-> > +        */
-> > +       if (!IS_DAX(inode) && (vma->vm_flags & VM_SYNC))
-> > +               return -EOPNOTSUPP;
-> > +
-> 
-> If the virtio-pmem patch set goes upstream prior to btrfs-dax support
-> this will need to switch over to the new daxdev_mapping_supported()
-> helper.
 
-I was planning to do changes for virtio pmem & BTRFS. I was waiting for 
-DAX support for BTRFS to merge upstream.
+On 2019-05-09 11:18 p.m., Frank Rowand wrote:
 
-Thank you,
-Pankaj 
- 
+> YES, kselftest has in-kernel tests.  (Excuse the shouting...)
+
+Cool. From my cursory look, in my opinion, these would be greatly
+improved by converting them to the framework Brendan is proposing for Kunit.
+
+>> If they do exists, it seems like it would make sense to
+>> convert those to kunit and have Kunit tests run-able in a VM or
+>> baremetal instance.
 > 
-> https://lore.kernel.org/lkml/20190426050039.17460-5-pagupta@redhat.com/
+> They already run in a VM.
 > 
+> They already run on bare metal.
+> 
+> They already run in UML.
+
+Simply being able to run in UML is not the only thing here. Kunit
+provides the infrastructure to quickly build, run and report results for
+all the tests from userspace without needing to worry about the details
+of building and running a UML kernel, then parsing dmesg to figure out
+what tests were run or not.
+
+> This is not to say that KUnit does not make sense.  But I'm still trying
+> to get a better description of the KUnit features (and there are
+> some).
+
+So read the patches, or the documentation[1] or the LWN article[2]. It's
+pretty well described in a lot of places -- that's one of the big
+advantages of it. In contrast, few people seems to have any concept of
+what kselftests are or where they are or how to run them (I was
+surprised to find the in-kernel tests in the lib tree).
+
+Logan
+
+[1] https://google.github.io/kunit-docs/third_party/kernel/docs/
+[2] https://lwn.net/Articles/780985/
