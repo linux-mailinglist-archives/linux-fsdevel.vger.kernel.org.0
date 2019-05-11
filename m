@@ -2,126 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D2C81A9B4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2019 00:40:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D7C91A9BA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2019 00:44:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbfEKWkB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 May 2019 18:40:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33516 "EHLO mail.kernel.org"
+        id S1726296AbfEKWo1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 May 2019 18:44:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbfEKWkB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 May 2019 18:40:01 -0400
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        id S1726210AbfEKWo0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 11 May 2019 18:44:26 -0400
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA60F2184D
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2019 22:39:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 273F821882
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2019 22:44:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557614400;
-        bh=6aAVxVoG0YErbZEF5yAMdrjDFqc8XWrGVGwGxXiD2h8=;
+        s=default; t=1557614665;
+        bh=DBGXq/wo5eO+VqLPrQODgPeSLnJ8AW0XoIMolnMCp6Q=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oOZpwkFy4KvTDWQ5x5WmN/Wa2/j/gcwfjt6x79ZL178HwDByZxOuKJdbpmoh5MPbi
-         Q9L2idDgToQpAZDmoMzdQolUzlnxexTRLumvHOVlxwJkKKLK5rfwiShuaMuNv4Sneh
-         xYPL1JqnSu3BKdnF/2mH8CY5/L/nb0cln6QvsWkc=
-Received: by mail-wm1-f47.google.com with SMTP id m20so8740769wmg.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2019 15:39:59 -0700 (PDT)
-X-Gm-Message-State: APjAAAXruaqDs1PJupowZtAzrz2FcMvAuUS4bWEvEWkJh6gwr82zNC+O
-        DXoALb8svgj7xEbZVG5oWSDMHUNvGMUdRgQrJunHjQ==
-X-Google-Smtp-Source: APXvYqw8wpn9vXY9rQ/LMQUH9mP2L9fR7s63JaX9ok1OnI1y0hE/ySixRfj2P53nN+TZ8buAf8WBOkoM5tw1kuhN8ZY=
-X-Received: by 2002:a1c:eb18:: with SMTP id j24mr11759062wmh.32.1557614396632;
- Sat, 11 May 2019 15:39:56 -0700 (PDT)
+        b=2T1xXzIyLDFtQqcxDJubuIMPoaEwT56pjInA0mlMgeInYHftrgyEJJ1vJcvv+Tkuf
+         eA8Y/MST6nLsAmwk6H3JEMwXXqquGK0WICtADAdRVPD2CSlR8kj0BwKZncxL4LGmv8
+         hdsfKVy1tsrMoucuy5dczDnqZPdjIjsc/GSodU54=
+Received: by mail-wr1-f46.google.com with SMTP id r4so11307726wro.10
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2019 15:44:25 -0700 (PDT)
+X-Gm-Message-State: APjAAAU/N0G8QTSqrMtXrk5Z/jItkHe7A+Dn8YI/m7p65L0Rpc/QzETg
+        lqA466dJjkHrlwYABGpUQwDHuNT8C3UcAdNczReUCA==
+X-Google-Smtp-Source: APXvYqz9VVf+0M9zlAhmu/aFtD6QMQ36wIxFeD0UzE/oiKErAKWSOoq0eUm7WmnOKqEkU517LcD4VC3J8VtYROM702w=
+X-Received: by 2002:adf:fb4a:: with SMTP id c10mr12063994wrs.309.1557614663619;
+ Sat, 11 May 2019 15:44:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190506165439.9155-1-cyphar@cyphar.com> <20190506165439.9155-6-cyphar@cyphar.com>
- <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com>
- <20190506191735.nmzf7kwfh7b6e2tf@yavin> <20190510204141.GB253532@google.com>
- <CALCETrW2nn=omqJb4p+m-BDsCOhg+YZQ3ELd4BdhODV3G44gfA@mail.gmail.com>
- <20190510225527.GA59914@google.com> <C60DC580-854D-478D-AF23-5F29FB7C3E50@amacapital.net>
- <CAHk-=wh1JJD_RabMaFfinsAQp1vHGJOQ1rKqihafY=r7yHc8sQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wh1JJD_RabMaFfinsAQp1vHGJOQ1rKqihafY=r7yHc8sQ@mail.gmail.com>
+References: <20190509112420.15671-1-roberto.sassu@huawei.com>
+In-Reply-To: <20190509112420.15671-1-roberto.sassu@huawei.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 11 May 2019 15:39:45 -0700
-X-Gmail-Original-Message-ID: <CALCETrUOj=4VWp=B=QT0BQ8X_Ds_b+pt68oDwfjGb+K0StXmWA@mail.gmail.com>
-Message-ID: <CALCETrUOj=4VWp=B=QT0BQ8X_Ds_b+pt68oDwfjGb+K0StXmWA@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
+Date:   Sat, 11 May 2019 15:44:12 -0700
+X-Gmail-Original-Message-ID: <CALCETrXy7gqmmy37=nrMAisGadZ+qbjZjXtWFF8Crq86xNpsfA@mail.gmail.com>
+Message-ID: <CALCETrXy7gqmmy37=nrMAisGadZ+qbjZjXtWFF8Crq86xNpsfA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        initramfs@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com,
+        "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Rob Landley <rob@landley.net>, james.w.mcmechan@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On May 11, 2019, at 10:21 AM, Linus Torvalds <torvalds@linux-foundation.o=
-rg> wrote:
+On Thu, May 9, 2019 at 4:27 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
 >
->> On Sat, May 11, 2019 at 1:00 PM Andy Lutomirski <luto@amacapital.net> wr=
-ote:
->>
->> A better =E2=80=9Cspawn=E2=80=9D API should fix this.
+> This patch set aims at solving the following use case: appraise files from
+> the initial ram disk. To do that, IMA checks the signature/hash from the
+> security.ima xattr. Unfortunately, this use case cannot be implemented
+> currently, as the CPIO format does not support xattrs.
 >
-> Andy, stop with the "spawn would be better".
-
-It doesn=E2=80=99t have to be spawn per se.  But the current situation suck=
-s.
-
+> This proposal consists in marshaling pathnames and xattrs in a file called
+> .xattr-list. They are unmarshaled by the CPIO parser after all files have
+> been extracted.
 >
-> Notice? None of the real problems are about execve or would be solved
-> by any spawn API. You just think that because you've apparently been
-> talking to too many MS people that think fork (and thus indirectly
-> execve()) is bad process management.
+> The difference from v1 (https://lkml.org/lkml/2018/11/22/1182) is that all
+> xattrs are stored in a single file and not per file (solves the file name
+> limitation issue, as it is not necessary to add a suffix to files
+> containing xattrs).
 >
->
+> The difference with another proposal
+> (https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+> included in an image without changing the image format, as opposed to
+> defining a new one. As seen from the discussion, if a new format has to be
+> defined, it should fix the issues of the existing format, which requires
+> more time.
 
-I=E2=80=99ve literally never spoken to an MS person about it.
+I read some of those emails.  ISTM that adding TAR support should be
+seriously considered.  Sure, it's baroque, but it's very, very well
+supported, and it does exactly what we need.
 
-What container managers and init systems *want* is a way to drop
-privileges, change namespaces, etc and then run something in a
-controlled way so that the intermediate states aren=E2=80=99t dangerous. An
-API for this could be spawn-like or exec-like =E2=80=94 that particular
-distinction is beside the point.  Having personally written code that
-mucks with namepsaces, I've wanted two particular abilities that are
-both quite awkward:
-
-a) Change all my UIDs and GIDs to match a container, enter that
-container's namespaces, and run some binary in the container's
-filesystem, all atomically enough that I don't need to worry about
-accidentally leaking privileges into the container.  A
-super-duper-non-dumpable mode would kind of allow this, but I'd worry
-that there's some other hole besides ptrace() and /proc/self.
-
-b) Change all my UIDs and GIDs to match a container, enter that
-container's namespaces, and run some binary that is *not* in the
-container's filesystem.  This happens, for example, if the container's
-mount namespace has no exec mounts at all.  We don't have a fantastic
-way to do this at all right now due to /proc/self/exe.
-
-Regardless, the actual CVE at hand would have been nicely avoided if
-writing to /proc/self/exe didn=E2=80=99t work, and I see no reason we can=
-=E2=80=99t
-make that happen.
-
-I suppose we could also consider a change to disable /proc/self/exe if
-it's not reachable from /proc/self/root.  By "disable", I mean that
-readlink() should maybe still work, but actually trying to open it
-could probably fail safely.
+--Andy
