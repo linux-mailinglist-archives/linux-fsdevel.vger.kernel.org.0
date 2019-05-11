@@ -2,126 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 136031A89E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2019 19:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5588B1A8B9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2019 19:27:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbfEKRID (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 May 2019 13:08:03 -0400
-Received: from mail.stbuehler.de ([5.9.32.208]:54752 "EHLO mail.stbuehler.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725945AbfEKRID (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 May 2019 13:08:03 -0400
-Received: from chromobil.fritz.box (unknown [IPv6:2a02:8070:a29c:5000:823f:5dff:fe0f:b5b6])
-        by mail.stbuehler.de (Postfix) with ESMTPSA id 75BE5C00A01;
-        Sat, 11 May 2019 17:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=stbuehler.de;
-        s=stbuehler1; t=1557594481;
-        bh=UvzKPBgcb3z7tPf6cm2ZxLlr17a42KxrWBRpHJot+sY=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=pf0hs1ePKiTJs6q1kmvuupUsBfRXewdBsKuZfCuY4MU36KhLP73wAm7mxgRzJGBqJ
-         mIotsmL21z+1LZcN6AvuKoiB9WUSawfLKC6G+PiWhBAMFTF5vvE93AjL7IZ/MfNaH6
-         2kes0Oi7GIIKocEsrbqCeT9kijRCb6/J6ym7cFvg=
-From:   =?UTF-8?q?Stefan=20B=C3=BChler?= <source@stbuehler.de>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/1] io_uring: fix race condition reading SQE data
-Date:   Sat, 11 May 2019 19:08:01 +0200
-Message-Id: <20190511170801.32182-1-source@stbuehler.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <3900c9a9-41a2-31cb-3a7b-e93251505b15@kernel.dk>
-References: <3900c9a9-41a2-31cb-3a7b-e93251505b15@kernel.dk>
+        id S1727924AbfEKR1Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 May 2019 13:27:25 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44065 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727565AbfEKR1Y (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 11 May 2019 13:27:24 -0400
+Received: by mail-lj1-f195.google.com with SMTP id e13so7600407ljl.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2019 10:27:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/KXVrXCOoOJzYs9luHiRMdkROvz6GYngOgjcnMA4n3A=;
+        b=Hety9aPlucNn5YIwnDgl8T3xjH+kXuoGBPFuY/OFtMOJcXBxT9yY1dN0jhbCAtXCK0
+         Fa6aOPlBmmvU40A7F6POImQufHmWg9Vb9DX0ym6/HYmPb7jC+B4zImEGQr9edmzZr+8E
+         D7AZsufzimvvqZsX7ErQ2Z7DvHrgK4oj1AIJI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/KXVrXCOoOJzYs9luHiRMdkROvz6GYngOgjcnMA4n3A=;
+        b=Uo2WyrHvXPp8nf4/lIlo8WVZZbsObb5IMlISL3mWvXf6wblgAQMCj8AZ5VbKBrpxSy
+         ljBgn4eg9obdJSBN4AlM3JynpJccrjIGr6gsqWigGrM1dFwVadcMsJcKLm1i+9iJ4VyO
+         5vGjyhI6PjQcr2eXvH6Py3Y4+vwr4wbIduLsUj4vYUmO/57orY5AxN7svOsLyNu/eLma
+         KrjrosCPREoFZYvNg+Az2SwR88o4eZI+hF/UdGt/ztkgnIwRLoUDTiy6uLx7JHrGD3hC
+         YXZ4nrNTSz9wYYq+m4HszBQBo9G0OV2ol8vmdWfQd8CLESHBDGh5D9a//8jUNniVXD0w
+         8HWQ==
+X-Gm-Message-State: APjAAAWQzLNl4snuLkhdddTnbGJ67J1OLnW6iTkdc0dWy5M/io6yLPOT
+        Ry5HB4OZnsbf16fJvSYZpAy1tmRi8ZA=
+X-Google-Smtp-Source: APXvYqyb2qgLWEBIavHV4lomwjVazq1Xcui/uVPfyII0vb1moB0sRkL7U49U2C2nQwUKEsxP0VQGKg==
+X-Received: by 2002:a2e:9a8f:: with SMTP id p15mr9064596lji.191.1557595642143;
+        Sat, 11 May 2019 10:27:22 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id l17sm2282558lfp.49.2019.05.11.10.27.21
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 11 May 2019 10:27:21 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id r76so7598030lja.12
+        for <linux-fsdevel@vger.kernel.org>; Sat, 11 May 2019 10:27:21 -0700 (PDT)
+X-Received: by 2002:a2e:9d86:: with SMTP id c6mr9078356ljj.135.1557595287924;
+ Sat, 11 May 2019 10:21:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190506165439.9155-1-cyphar@cyphar.com> <20190506165439.9155-6-cyphar@cyphar.com>
+ <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com>
+ <20190506191735.nmzf7kwfh7b6e2tf@yavin> <20190510204141.GB253532@google.com>
+ <CALCETrW2nn=omqJb4p+m-BDsCOhg+YZQ3ELd4BdhODV3G44gfA@mail.gmail.com>
+ <20190510225527.GA59914@google.com> <C60DC580-854D-478D-AF23-5F29FB7C3E50@amacapital.net>
+In-Reply-To: <C60DC580-854D-478D-AF23-5F29FB7C3E50@amacapital.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 11 May 2019 13:21:11 -0400
+X-Gmail-Original-Message-ID: <CAHk-=wh1JJD_RabMaFfinsAQp1vHGJOQ1rKqihafY=r7yHc8sQ@mail.gmail.com>
+Message-ID: <CAHk-=wh1JJD_RabMaFfinsAQp1vHGJOQ1rKqihafY=r7yHc8sQ@mail.gmail.com>
+Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When punting to workers the SQE gets copied after the initial try.
-There is a race condition between reading SQE data for the initial try
-and copying it for punting it to the workers.
+On Sat, May 11, 2019 at 1:00 PM Andy Lutomirski <luto@amacapital.net> wrote=
+:
+>
+> A better =E2=80=9Cspawn=E2=80=9D API should fix this.
 
-For example io_rw_done calls kiocb->ki_complete even if it was prepared
-for IORING_OP_FSYNC (and would be NULL).
+Andy, stop with the "spawn would be better".
 
-The easiest solution for now is to alway prepare again in the worker.
+Spawn is garbage. It's garbage because it's fundamentally too
+inflexible, and it's garbage because it is quite complex to try to
+work around the inflexibility by having those complex "action pointer
+arrays" to make up for its failings.
 
-req->file is safe to prepare though as long as it is checked before use.
+And spawn() would fundamentally have all the same permission issues
+that you now point to execve() as having, so it doesn't even *solve*
+anything.
 
-Signed-off-by: Stefan Bühler <source@stbuehler.de>
----
- fs/io_uring.c | 17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
+You've said this whole "spawn would fix things" thing before, and it's
+wrong. Spawn isn't better. Really. If fixes absolutely zero things,
+and the only reason for spawn existing is because VMS and NT had that
+broken and inflexible model.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 48ea3977012a..576d9c652b4c 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -329,9 +329,8 @@ struct io_kiocb {
- #define REQ_F_IOPOLL_COMPLETED	2	/* polled IO has completed */
- #define REQ_F_FIXED_FILE	4	/* ctx owns file */
- #define REQ_F_SEQ_PREV		8	/* sequential with previous */
--#define REQ_F_PREPPED		16	/* prep already done */
--#define REQ_F_IO_DRAIN		32	/* drain existing IO first */
--#define REQ_F_IO_DRAINED	64	/* drain done */
-+#define REQ_F_IO_DRAIN		16	/* drain existing IO first */
-+#define REQ_F_IO_DRAINED	32	/* drain done */
- 	u64			user_data;
- 	u32			error;	/* iopoll result from callback */
- 	u32			sequence;
-@@ -896,9 +895,6 @@ static int io_prep_rw(struct io_kiocb *req, const struct sqe_submit *s,
- 
- 	if (!req->file)
- 		return -EBADF;
--	/* For -EAGAIN retry, everything is already prepped */
--	if (req->flags & REQ_F_PREPPED)
--		return 0;
- 
- 	if (force_nonblock && !io_file_supports_async(req->file))
- 		force_nonblock = false;
-@@ -941,7 +937,6 @@ static int io_prep_rw(struct io_kiocb *req, const struct sqe_submit *s,
- 			return -EINVAL;
- 		kiocb->ki_complete = io_complete_rw;
- 	}
--	req->flags |= REQ_F_PREPPED;
- 	return 0;
- }
- 
-@@ -1227,16 +1222,12 @@ static int io_prep_fsync(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	if (!req->file)
- 		return -EBADF;
--	/* Prep already done (EAGAIN retry) */
--	if (req->flags & REQ_F_PREPPED)
--		return 0;
- 
- 	if (unlikely(ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
- 	if (unlikely(sqe->addr || sqe->ioprio || sqe->buf_index))
- 		return -EINVAL;
- 
--	req->flags |= REQ_F_PREPPED;
- 	return 0;
- }
- 
-@@ -1277,16 +1268,12 @@ static int io_prep_sfr(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 
- 	if (!req->file)
- 		return -EBADF;
--	/* Prep already done (EAGAIN retry) */
--	if (req->flags & REQ_F_PREPPED)
--		return 0;
- 
- 	if (unlikely(ctx->flags & IORING_SETUP_IOPOLL))
- 		return -EINVAL;
- 	if (unlikely(sqe->addr || sqe->ioprio || sqe->buf_index))
- 		return -EINVAL;
- 
--	req->flags |= REQ_F_PREPPED;
- 	return ret;
- }
- 
--- 
-2.20.1
+There's at least one paper from some MS people about how "spawn()" is
+wonderful, and maybe you bought into the garbage from that. But that
+paper is about how they hate fork(), not because of execve(). And if
+you hate fork, use "vfork()" instead (preferably with an immediate
+call to a non-returning function in the child to avoid the stack
+re-use issue that makes it so simple to screw up vfork() in hard to
+debug ways).
 
+execve() is a _fine_ model. That's not the problem in this whole issue
+at all - never was, and never will be.
+
+The problem in this discussion is (a) having privileges you shouldn't
+have and (b) having other interfaces that make it easyish to change
+the filesystem layout to confuse those entities with privileges.
+
+So the reason the open flags can be problematic is exactly because
+they effectively change filesystem layout. And no, it's not just
+AT_THIS_ROOT, although that's the obvious one. Things like "you can't
+follow symlinks" can also effectively change the layout: imagine if
+you have a PATH-like lookup model, and you end up having symlinks as
+part of the standard filesystem layout.. Now a "don't follow symlinks"
+can turn the *standard* executable into something that isn't found,
+and then you might end up executing something else instead (think root
+having '.' as the last entry in path, which some people used to
+suggest as the fix for the completely bad "first entry" case)..
+
+Notice? None of the real problems are about execve or would be solved
+by any spawn API. You just think that because you've apparently been
+talking to too many MS people that think fork (and thus indirectly
+execve()) is bad process management.
+
+                Linus
