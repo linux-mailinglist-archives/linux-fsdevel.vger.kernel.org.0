@@ -2,176 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C77F81A59D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2019 01:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 387101A5E9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 May 2019 02:46:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbfEJXgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 May 2019 19:36:52 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33532 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727921AbfEJXgv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 May 2019 19:36:51 -0400
-Received: by mail-lj1-f195.google.com with SMTP id w1so3867944ljw.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 May 2019 16:36:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UCHjfY8ffpbEmMSgw3athUzkrjNiBk31tuUuOHfkH0E=;
-        b=SObLv4AvXYIrUFwvgxqqJzOJ2V92LqChl1+4qkDW9oRt6uYTBuqgGeYXehc6lunlS0
-         WOi20UjpfhFKIt7GAejYR6JkXn+du2032xYUCPTsw8KIplwp0QIOYf+wmiFdJdsVSvnm
-         tY1BdLVmpbwMUdhJNF7tzn3SCKxPGKz6HBG+k8RDtDR3BEMTaYF6Gn+s+ocewQgwD21/
-         J7UK8FTHZnS0+VyOasXkg60jp1yVFsV9SWY7l2DwZTm3YenVwEIGPGRuAb19M6HgLxf6
-         SOU2iF9zUmYQCurzaildkMAe0vsxwPYHp9AjmpAxnIegeVv5BkiS0k1FQ3gZGq5hlntK
-         dLbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UCHjfY8ffpbEmMSgw3athUzkrjNiBk31tuUuOHfkH0E=;
-        b=KUZbIXVxe9BOraYQPl798PBliyJUmVu75kU0cVFNgLK1oFW0OkuHwAjmJR4/IV231K
-         OU1x/c2lbHgna664PqA3EBkOl51jVRCQkXqMgPTzVvBxL8t0fzG3bvvplo+OuHMYu8RR
-         HATaLbtHfZArH1ifUpQ4wZ5/w3yJuMF7cAbQt/hvAJ0mRibsosAfqe7S6plTGwEeRI2m
-         q3g/CbM+/UGfVfXwaBOaYC1nFKOJwocFu45iSdleKT00jBdPOEfeaxEFsfcrqY5HXm0v
-         ip5x5VOE84/cTp9W51FFxRUreN9pGntHjwTpaFoNxGarVxb6asyHqE3YMVZqD1LqlYko
-         b7Mw==
-X-Gm-Message-State: APjAAAVSAbJLWGEoAu+OyJk1aBrB0cu7GzHOkvgwGmFFSVtzQjxOfequ
-        NvoZqanMAMyQlpk+TDxyHkz0/p9zvOYU9XipdPjSCQ==
-X-Google-Smtp-Source: APXvYqwBw+D2wbm/jYmKoBNPSWcGv60F4u2IzN+qmva779guxg3NE/QEjxPitdeYXgQTpHW3uRqhaxlB5IpYP37eA7o=
-X-Received: by 2002:a2e:1293:: with SMTP id 19mr7423135ljs.120.1557531408970;
- Fri, 10 May 2019 16:36:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190506165439.9155-1-cyphar@cyphar.com> <20190506165439.9155-6-cyphar@cyphar.com>
- <CAG48ez0-CiODf6UBHWTaog97prx=VAd3HgHvEjdGNz344m1xKw@mail.gmail.com>
- <20190506191735.nmzf7kwfh7b6e2tf@yavin> <20190510204141.GB253532@google.com>
- <CALCETrW2nn=omqJb4p+m-BDsCOhg+YZQ3ELd4BdhODV3G44gfA@mail.gmail.com> <20190510225527.GA59914@google.com>
-In-Reply-To: <20190510225527.GA59914@google.com>
-From:   Christian Brauner <christian@brauner.io>
-Date:   Sat, 11 May 2019 01:36:37 +0200
-Message-ID: <CAHrFyr5vjTZfgtMsHwr6iwVVFxVsU3UCOiEq=FM-rjr0kPGHUw@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] binfmt_*: scope path resolution of interpreters
-To:     Jann Horn <jannh@google.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
+        id S1728176AbfEKApw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 May 2019 20:45:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38628 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727961AbfEKApv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 May 2019 20:45:51 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 264E2DF23;
+        Sat, 11 May 2019 00:45:51 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D99122CFE6;
+        Sat, 11 May 2019 00:45:50 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 3309B41F56;
+        Sat, 11 May 2019 00:45:50 +0000 (UTC)
+Date:   Fri, 10 May 2019 20:45:49 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        KVM list <kvm@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Christoph Hellwig <hch@infradead.org>,
+        Len Brown <lenb@kernel.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        lcapitulino@redhat.com, Kevin Wolf <kwolf@redhat.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        jmoyer <jmoyer@redhat.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        david <david@fromorbit.com>, cohuck@redhat.com,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Adam Borowski <kilobyte@angband.pl>,
+        yuval shaia <yuval.shaia@oracle.com>, jstaron@google.com
+Message-ID: <864186878.28040999.1557535549792.JavaMail.zimbra@redhat.com>
+In-Reply-To: <CAPcyv4hbVNRFSyS2CTbmO88uhnbeH4eiukAng2cxgbDzLfizwg@mail.gmail.com>
+References: <20190510155202.14737-1-pagupta@redhat.com> <20190510155202.14737-4-pagupta@redhat.com> <CAPcyv4hbVNRFSyS2CTbmO88uhnbeH4eiukAng2cxgbDzLfizwg@mail.gmail.com>
+Subject: Re: [PATCH v8 3/6] libnvdimm: add dax_dev sync flag
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.14, 10.4.195.12]
+Thread-Topic: libnvdimm: add dax_dev sync flag
+Thread-Index: gVGO0BoaDll3U20KXC407XNgj3ThLg==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Sat, 11 May 2019 00:45:51 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 11, 2019 at 12:55 AM Jann Horn <jannh@google.com> wrote:
->
-> On Fri, May 10, 2019 at 02:20:23PM -0700, Andy Lutomirski wrote:
-> > On Fri, May 10, 2019 at 1:41 PM Jann Horn <jannh@google.com> wrote:
-> > >
-> > > On Tue, May 07, 2019 at 05:17:35AM +1000, Aleksa Sarai wrote:
-> > > > On 2019-05-06, Jann Horn <jannh@google.com> wrote:
-> > > > > In my opinion, CVE-2019-5736 points out two different problems:
-> > > > >
-> > > > > The big problem: The __ptrace_may_access() logic has a special-case
-> > > > > short-circuit for "introspection" that you can't opt out of; this
-> > > > > makes it possible to open things in procfs that are related to the
-> > > > > current process even if the credentials of the process wouldn't permit
-> > > > > accessing another process like it. I think the proper fix to deal with
-> > > > > this would be to add a prctl() flag for "set whether introspection is
-> > > > > allowed for this process", and if userspace has manually un-set that
-> > > > > flag, any introspection special-case logic would be skipped.
-> > > >
-> > > > We could do PR_SET_DUMPABLE=3 for this, I guess?
-> > >
-> > > Hmm... I'd make it a new prctl() command, since introspection is
-> > > somewhat orthogonal to dumpability. Also, dumpability is per-mm, and I
-> > > think the introspection flag should be per-thread.
+
+
 > >
-> > I've lost track of the context here, but it seems to me that
-> > mitigating attacks involving accidental following of /proc links
-> > shouldn't depend on dumpability.  What's the actual problem this is
-> > trying to solve again?
->
-> The one actual security problem that I've seen related to this is
-> CVE-2019-5736. There is a write-up of it at
-> <https://blog.dragonsector.pl/2019/02/cve-2019-5736-escape-from-docker-and.html>
-> under "Successful approach", but it goes more or less as follows:
->
-> A container is running that doesn't use user namespaces (because for
-> some reason I don't understand, apparently some people still do that).
-> An evil process is running inside the container with UID 0 (as in,
-> GLOBAL_ROOT_UID); so if the evil process inside the container was able
-> to reach root-owned files on the host filesystem, it could write into
-> them.
->
-> The container engine wants to spawn a new process inside the container.
-> It forks off a child that joins the container's namespaces (including
-> PID and mount namespaces), and then the child calls execve() on some
-> path in the container.
-> The attacker replaces the executable in the container with a symlink
-> to /proc/self/exe and replaces a library inside the container with a
-> malicious one.
-> When the container engine calls execve(), intending to run an executable
-> inside the container, it instead goes through ptrace_may_access() using
-> the introspection short-circuit and re-executes its own executable
-> through the jumped symlink /proc/self/exe (which is normally unreachable
-> for the container). After the execve(), the process loads an evil
-> library from inside the container and is under the control of the
-> container.
-> Now the container controls a process whose /proc/self/exe is a jumped
-> symlink to a host executable, and the container can write into it.
->
-> Some container engines are now using an extremely ugly hack to work
-> around this - whenever they want to enter a container, they copy the
-> host binary into a new memfd and execute that to avoid exposing the
-> original host binary to containers:
-> <https://github.com/opencontainers/runc/commit/0a8e4117e7f715d5fbeef398405813ce8e88558b>
->
->
-> In my opinion, the problems here are:
->
->  - Apparently some people run untrusted containers without user
->    namespaces. It would be really nice if people could not do that.
->    (Probably the biggest problem here.)
+> > This patch adds 'DAXDEV_SYNC' flag which is set
+> > for nd_region doing synchronous flush. This later
+> > is used to disable MAP_SYNC functionality for
+> > ext4 & xfs filesystem for devices don't support
+> > synchronous flush.
+> >
+> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> > ---
+> >  drivers/dax/bus.c            |  2 +-
+> >  drivers/dax/super.c          | 13 ++++++++++++-
+> >  drivers/md/dm.c              |  3 ++-
+> >  drivers/nvdimm/pmem.c        |  5 ++++-
+> >  drivers/nvdimm/region_devs.c |  7 +++++++
+> >  include/linux/dax.h          |  8 ++++++--
+> >  include/linux/libnvdimm.h    |  1 +
+> >  7 files changed, 33 insertions(+), 6 deletions(-)
+> [..]
+> > diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> > index 043f0761e4a0..ee007b75d9fd 100644
+> > --- a/drivers/md/dm.c
+> > +++ b/drivers/md/dm.c
+> > @@ -1969,7 +1969,8 @@ static struct mapped_device *alloc_dev(int minor)
+> >         sprintf(md->disk->disk_name, "dm-%d", minor);
+> >
+> >         if (IS_ENABLED(CONFIG_DAX_DRIVER)) {
+> > -               dax_dev = alloc_dax(md, md->disk->disk_name, &dm_dax_ops);
+> > +               dax_dev = alloc_dax(md, md->disk->disk_name, &dm_dax_ops,
+> > +                                                        DAXDEV_F_SYNC);
+> 
+> Apologies for not realizing this until now, but this is broken.
+> Imaging a device-mapper configuration composed of both 'async'
+> virtio-pmem and 'sync' pmem. The 'sync' flag needs to be unified
+> across all members. I would change this argument to '0' and then
+> arrange for it to be set at dm_table_supports_dax() time after
+> validating that all components support synchronous dax.
 
-I know I sound like a broken record since I've been going on about this
-forever together with a lot of other people but honestly,
-the fact that people are running untrusted workloads in privileged containers
-is the real issue here.
+o.k. Need to set 'DAXDEV_F_SYNC' flag after verifying all the target
+components support synchronous DAX.
 
-Aleksa is a good friend of mine and we have discussed this a lot so I hope
-he doesn't hate me for saying this again: it is crazy that there are container
-runtimes out there that promise (or at least do not state the opposite)
-containers without user namespaces or containers with user namespaces
-that allow to map the host root id to anything can be safe. They cannot.
+Just a question, If device mapper configuration have composed of both 
+virtio-pmem or pmem devices, we want to configure device mapper for async flush?
 
-Even if this /proc/*/exe thing is somehow blocked there
-are other ways of escaping from a privileged container.
-We (i.e. LXC) literally do not accept CVEs for privileged containers
-because we do not consider them safe by design.
-It seems to me to be heading in the wrong direction to keep up the
-illusion that with enough effort we can make this all nice and safe.
-Yes, the userspace memfd hack we came up with is as ugly as a security
-patch can be but if you make promises you can't keep you better be
-prepared to pay the price when things start to fall apart.
-So if this part of the patch is just needed to handle this do we really
-want to do all that tricky work or is there more to gain from this that
-makes it worth it.
-
-Christian
+Thank you,
+Pankaj 
+> 
