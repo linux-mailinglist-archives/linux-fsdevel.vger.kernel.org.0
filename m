@@ -2,111 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 078D71AD2B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2019 18:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 789A71AD42
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 May 2019 19:05:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbfELQwi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 May 2019 12:52:38 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:44775 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726913AbfELQwi (ORCPT
+        id S1726529AbfELRFT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 May 2019 13:05:19 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:32810 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726889AbfELRFT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 May 2019 12:52:38 -0400
-Received: by mail-qk1-f194.google.com with SMTP id w25so6620312qkj.11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 May 2019 09:52:37 -0700 (PDT)
+        Sun, 12 May 2019 13:05:19 -0400
+Received: by mail-oi1-f193.google.com with SMTP id m204so7743999oib.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 May 2019 10:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=QSdaCWlLqhcDnznsymm2aG1Z95spPWEN1cuWFhXTYhg=;
+        b=M1kb+HIzVOLjPCV4h6Pn4lve+FlnoRhh7JL/WOdRAHWhP7XRiXt2Sb1zCx+P73FWpH
+         KH+vO3XX2/+B76I47eV+x5dE3f6pnMgrTIJE7VNh4ZChznUcTJY9sLB9hecdROdExjmg
+         /JPQRL9+WNauQRy09PAuL4L+fpknOrj50gkModVL0BMNekoH7GBXdRdXfxoaLcWOG03L
+         Y+O3tl58C2QvVdDq9MUnLdKYMn7lI9M9GE8l5NKOH1AX/WldekcH2nLERHsnEiX4sVsK
+         tDUJ/uw9Na9lpPhy3YjlBknNgRsJ/+qzkinLg8HkU903BWLWhwIYA6J1YzU1WDzc0gEI
+         hjfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tv7+SbtJTW406Xn58+T3o8cNYwcZMfaM6OpdKpHHAGI=;
-        b=LsTNAm4XmJ/2rK7a5o/Yh+pXZlqV4lqT9LMEsiM/Ph6PDcO/5R5VQWUcnlFrnGF9qc
-         IRC8/ViLBXoxSOoViA764Bu2ARAUFoFdTIgzS6BmsVaUFuYDxSZTdvJ7jf6d16llyePw
-         R0iU49NsioUm5tqsjpmO27E+5Qzpsw6MMgKyAGZoQqR3bPTzNvOyGjsXZJPa4etK33uM
-         LrL980Z7yoL7h+R05w/VI6fXazK1pwM6UJRtzw5pbQMS2F4g65GOBFjIFhRFvkz7cyOz
-         RYcbKTdnp9uASpcAGnH2DT7ODUfS6COSb6W7mL5TU+eDFlQX7iZ2qr2Pg45N6LwSE69J
-         wL/g==
-X-Gm-Message-State: APjAAAV1zwagMFDQZcvHDT16Uz66L0oWKc0c1UprxtwAjZQXPaRvtwEW
-        OJILlRTHM+PWMJtmenBZ22vtPQ==
-X-Google-Smtp-Source: APXvYqxk9SXE+foxB/6DAoFm93oskr+MiF5xkYgB0SEkfaz8myE/mnL8/ZXigyA4Y2k8vy6g71yM+Q==
-X-Received: by 2002:a37:9fcb:: with SMTP id i194mr18869154qke.258.1557679957115;
-        Sun, 12 May 2019 09:52:37 -0700 (PDT)
-Received: from redhat.com (pool-173-76-105-71.bstnma.fios.verizon.net. [173.76.105.71])
-        by smtp.gmail.com with ESMTPSA id o37sm4708706qta.86.2019.05.12.09.52.34
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 12 May 2019 09:52:36 -0700 (PDT)
-Date:   Sun, 12 May 2019 12:52:33 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        KVM list <kvm@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Qemu Developers <qemu-devel@nongnu.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Christoph Hellwig <hch@infradead.org>,
-        Len Brown <lenb@kernel.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        lcapitulino@redhat.com, Kevin Wolf <kwolf@redhat.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        jmoyer <jmoyer@redhat.com>,
-        Nitesh Narayan Lal <nilal@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        david <david@fromorbit.com>, cohuck@redhat.com,
-        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        yuval shaia <yuval.shaia@oracle.com>, jstaron@google.com
-Subject: Re: [PATCH v8 0/6] virtio pmem driver
-Message-ID: <20190512125221-mutt-send-email-mst@kernel.org>
-References: <20190510155202.14737-1-pagupta@redhat.com>
- <CAPcyv4joEZaePvzc__N9Q3nozoHgQn7hNFPjBVo5BP6cc4rkEA@mail.gmail.com>
- <1909759746.28039539.1557531183427.JavaMail.zimbra@redhat.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QSdaCWlLqhcDnznsymm2aG1Z95spPWEN1cuWFhXTYhg=;
+        b=FUmz218my2KHtuLtxzWi1AbcxTMFuonmZOi+ocbIo/KZpx3JJqFHBNUTYclG7JauiY
+         vmx4M3j9vVzQIB+5S9bB704R4RlHlf1xktk1keTJQr74m/LmlPTU8GxE7NNYFd0AqLBq
+         CUDDel5CK4bmt9WxPclUWgp8OqSQoM/QYkwx/E+ieP39tEGZtqMiIIpdvg25inKLpdv/
+         OkxoSdoSKHV2GLcm86kVtQY5jgnllv4F4l2SlqsRtII/xzpZmQMKeKjU+ur2wscg6IAI
+         36Zy5gvzCE8tx5tqavm7wXWBn7ZrXc4KjRbXm7VHsq/+2ULF5meoa9XrmFxjaoRw/yLJ
+         3OVA==
+X-Gm-Message-State: APjAAAVsl0sc5V+LxFkybxG9O7snghR8nGaBUHmfCd+3wUtjHahH2P3E
+        QzpJerugIz2+o3mUEyPRu5zMQA==
+X-Google-Smtp-Source: APXvYqyWbK23VrEkToZOwoQB+/N6sOOi7C92304sjVSrsw7En9uosUTt+tMWJRIvjnvIj1tmphPF2Q==
+X-Received: by 2002:aca:e594:: with SMTP id c142mr3854397oih.155.1557680718422;
+        Sun, 12 May 2019 10:05:18 -0700 (PDT)
+Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
+        by smtp.googlemail.com with ESMTPSA id w192sm4456571oiw.57.2019.05.12.10.05.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 12 May 2019 10:05:17 -0700 (PDT)
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
+        arnd@arndb.de, james.w.mcmechan@gmail.com
+References: <20190509112420.15671-1-roberto.sassu@huawei.com>
+ <20190512091748.s6fvy2f5p2a2o6ja@isilmar-4.linta.de>
+ <1557665567.10635.222.camel@linux.ibm.com>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
+Date:   Sun, 12 May 2019 12:05:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1909759746.28039539.1557531183427.JavaMail.zimbra@redhat.com>
+In-Reply-To: <1557665567.10635.222.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 10, 2019 at 07:33:03PM -0400, Pankaj Gupta wrote:
+On 5/12/19 7:52 AM, Mimi Zohar wrote:
+> On Sun, 2019-05-12 at 11:17 +0200, Dominik Brodowski wrote:
+>> On Thu, May 09, 2019 at 01:24:17PM +0200, Roberto Sassu wrote:
+>>> This proposal consists in marshaling pathnames and xattrs in a file called
+>>> .xattr-list. They are unmarshaled by the CPIO parser after all files have
+>>> been extracted.
+>>
+>> Couldn't this parsing of the .xattr-list file and the setting of the xattrs
+>> be done equivalently by the initramfs' /init? Why is kernel involvement
+>> actually required here?
 > 
-> > >
-> > >  Hi Michael & Dan,
-> > >
-> > >  Please review/ack the patch series from LIBNVDIMM & VIRTIO side.
-> > >  We have ack on ext4, xfs patches(4, 5 & 6) patch 2. Still need
-> > >  your ack on nvdimm patches(1 & 3) & virtio patch 2.
-> > 
-> > I was planning to merge these via the nvdimm tree, not ack them. Did
-> > you have another maintainer lined up to take these patches?
-> 
-> Sorry! for not being clear on this. I wanted to say same.
-> 
-> Proposed the patch series to be merged via nvdimm tree as kindly agreed
-> by you. We only need an ack on virtio patch 2 from Micahel.
-> 
-> Thank you for all your help.
-> 
-> Best regards,
-> Pankaj Gupta
+> It's too late.  The /init itself should be signed and verified.
 
-Fine by me.
+If the initramfs cpio.gz image was signed and verified by the extractor, how is
+the init in it _not_ verified?
 
-> > 
+Rob
