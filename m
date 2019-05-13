@@ -2,84 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B0871B9B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2019 17:16:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1E641BABA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2019 18:11:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfEMPQD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 May 2019 11:16:03 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51911 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbfEMPQC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 May 2019 11:16:02 -0400
-Received: by mail-it1-f196.google.com with SMTP id s3so20896465itk.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 May 2019 08:16:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=zQKAeApbQkGSD0p9oJ6Vk8zjf372ECXjcP7amsJgHmE=;
-        b=XqjVMG6jbZ7CL5+3ycqBJDm2IZ4Is0m01tiJzG1wE9WJp07ok3eMK6eZxKbdTnBNsz
-         8FE+QprL9A4TLnzKsxrBuRTBl1EWTjHdQm27KeoCjvLCf7xxHfn3BDyynV53cGVMJtV9
-         nxGZMnPe1uywHCoVeLJuz9muXMgkkkSd9Xcz7xxIQ4krdFtYPHKuKcensTbuvPalQf8o
-         nSMTA2+01DL8XCtb34vPkaubCi1uGUeBwcYJ9XvFG8H1V/okutNH4ZcE23J3ChUL0v8c
-         QOStHA84Q6P1TcSUNce3Cp+rceqF5nUx5y5f2p78zmJjevaRCT6Ti3Mr9gRLWCR+HPQB
-         XP8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zQKAeApbQkGSD0p9oJ6Vk8zjf372ECXjcP7amsJgHmE=;
-        b=JcGP2RfEZ4QG/xBURPFN22nKscPgTbUyO777YVEIP66EEIlMJ7UxF5lZmHTmw5P0nA
-         XffznwCrYJe6uAnEZRBKE7KVWgAS/wmk9VEy9dG9odfvmXpivOmlJ7vS46+iDHela+OV
-         Cpbh1zSfjGnCzgzQSTaU2JlScoMbo15WbC1B1foxKD4TutfAuaTD2/YCOwPvVDpBiTt8
-         fuRF4hNnDaPF+slQCUb+pCh86CSgzcls8//4EMEdgCFHtxgs9PfBd9xkpdH3ApJ4QmXC
-         s12/PIDvGY5voZFZJdGnrotwnwPg6n6GdNTbDhT+AGIg5g15h8jI83nK4kfz7T5oUCL4
-         we6Q==
-X-Gm-Message-State: APjAAAUyEnC5QwEXPUuxYzTvW8u9B9G6iHUuDB8ZBYWAJdzk9zMSRy+6
-        MGIRRS2lKI3XvWjqOiR4ZhGzLKIxFpLJxA==
-X-Google-Smtp-Source: APXvYqyae2kbVGHd9cIxb31cVMqpb47k9n3/oInM0VA5XiPnBWhONSYMR28gs0cOUgIUTDki9iqSmA==
-X-Received: by 2002:a02:1142:: with SMTP id 63mr18630806jaf.19.1557760560527;
-        Mon, 13 May 2019 08:16:00 -0700 (PDT)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id q16sm4360158ior.75.2019.05.13.08.15.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2019 08:15:59 -0700 (PDT)
-Subject: Re: [PATCH 1/1] io_uring: fix race condition reading SQE data
-To:     =?UTF-8?Q?Stefan_B=c3=bchler?= <source@stbuehler.de>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <3900c9a9-41a2-31cb-3a7b-e93251505b15@kernel.dk>
- <20190511170801.32182-1-source@stbuehler.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3c0071d2-528b-573a-49fe-c6f72398840c@kernel.dk>
-Date:   Mon, 13 May 2019 09:15:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1731584AbfEMQKr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 May 2019 12:10:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59194 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731581AbfEMQKr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 May 2019 12:10:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 126D3AF5B;
+        Mon, 13 May 2019 16:10:46 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id B14BC1E3E10; Mon, 13 May 2019 18:10:45 +0200 (CEST)
+Date:   Mon, 13 May 2019 18:10:45 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] Quota, udf, ext2, and reiserfs cleanups for v5.2-rc1
+Message-ID: <20190513161045.GB13297@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20190511170801.32182-1-source@stbuehler.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/11/19 11:08 AM, Stefan Bühler wrote:
-> When punting to workers the SQE gets copied after the initial try.
-> There is a race condition between reading SQE data for the initial try
-> and copying it for punting it to the workers.
-> 
-> For example io_rw_done calls kiocb->ki_complete even if it was prepared
-> for IORING_OP_FSYNC (and would be NULL).
-> 
-> The easiest solution for now is to alway prepare again in the worker.
-> 
-> req->file is safe to prepare though as long as it is checked before use.
+  Hello Linus,
 
-Looks good, as we discussed a week or so ago. Applied, thanks.
+  could you please pull from
+
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.2-rc1
+
+to get couple of small bugfixes and cleanups for quota, udf, ext2, and
+reiserfs.
+
+Top of the tree is 632a9f3acd66. The full shortlog is:
+
+Bharath Vedartham (1):
+      fs/reiserfs/journal.c: Make remove_journal_hash static
+
+Chengguang Xu (3):
+      quota: code cleanup for __dquot_alloc_space()
+      quota: fix wrong indentation
+      quota: check time limit when back out space/inode change
+
+Jan Kara (1):
+      udf: Explain handling of load_nls() failure
+
+Jiang Biao (1):
+      fs/quota: erase unused but set variable warning
+
+Sascha Hauer (1):
+      quota: remove trailing whitespaces
+
+Shuning Zhang (1):
+      ext2: Adjust the comment of function ext2_alloc_branch
+
+Wenwen Wang (1):
+      udf: fix an uninitialized read bug and remove dead code
+
+The diffstat is
+
+ fs/ext2/inode.c       |  4 +++-
+ fs/quota/dquot.c      | 37 ++++++++++++++++++++-----------------
+ fs/quota/quota_v1.c   |  2 +-
+ fs/quota/quota_v2.c   |  2 +-
+ fs/reiserfs/journal.c |  2 +-
+ fs/udf/namei.c        | 15 ---------------
+ fs/udf/super.c        |  5 +++++
+ 7 files changed, 31 insertions(+), 36 deletions(-)
+
+							Thanks
+								Honza
 
 -- 
-Jens Axboe
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
