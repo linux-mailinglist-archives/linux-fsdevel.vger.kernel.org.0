@@ -2,53 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B3A81BFAA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2019 00:55:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 593E11BFBD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2019 01:07:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbfEMWzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 May 2019 18:55:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726642AbfEMWzE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 May 2019 18:55:04 -0400
-Subject: Re: [GIT PULL] Fsnotify changes for v5.2-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557788104;
-        bh=CGgj29CtBcinK6dbtfj30zSagGKR+3ZD1GzHkX6wUOk=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=XEazL+PXFfJYsuKr2zB7rnPN5Lb99MfawqfuFNXbecGKWMzqkTjZrxqz6AKH5KuJp
-         RyUCYEcfkt0F7WxZRewcgzHoVMzn8GZ6RrNRBD/yefQahkVGp5ECLjix3jf2UZwH1w
-         fBsaGwqWht6VRGsbrdUlzvR6TOw3ryp25UmQwaUY=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190513162114.GC13297@quack2.suse.cz>
-References: <20190513162114.GC13297@quack2.suse.cz>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190513162114.GC13297@quack2.suse.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git
- fsnotify_for_v5.2-rc1
-X-PR-Tracked-Commit-Id: 4d8e7055a4058ee191296699803c5090e14f0dff
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d4c608115c6203efbab14befab90a6d1b61177d8
-Message-Id: <155778810442.1812.16164415531985822126.pr-tracker-bot@kernel.org>
-Date:   Mon, 13 May 2019 22:55:04 +0000
-To:     Jan Kara <jack@suse.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
+        id S1726475AbfEMXGv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 May 2019 19:06:51 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:43843 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726233AbfEMXGv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 May 2019 19:06:51 -0400
+Received: from callcc.thunk.org (rrcs-67-53-55-100.west.biz.rr.com [67.53.55.100])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4DN6hUY006602
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 May 2019 19:06:45 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 14F3A420024; Mon, 13 May 2019 19:06:43 -0400 (EDT)
+Date:   Mon, 13 May 2019 19:06:43 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-block@vger.kernel.org,
+        netdev@vger.kernel.org, ksummit-discuss@lists.linuxfoundation.org
+Subject: Maintainer's / Kernel Summit 2019 planning kick-off
+Message-ID: <20190513230643.GA4347@mit.edu>
+Reply-To: tytso@mit.edu
+Mail-Followup-To: tytso@mit.edu, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, netdev@vger.kernel.org,
+        ksummit-discuss@lists.linuxfoundation.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Mon, 13 May 2019 18:21:14 +0200:
+[ Feel free to forward this to other Linux kernel mailing lists as
+  appropriate -- Ted ]
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v5.2-rc1
+This year, the Maintainer's and Kernel Summit will be at the Corinthia
+Hotel in Lisbon, Portugal, September 9th -- 12th.  The Kernel Summit
+will be held as a track during the Linux Plumbers Conference
+September 9th -- 11th.  The Maintainer's Summit will be held
+afterwards, on September 12th.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d4c608115c6203efbab14befab90a6d1b61177d8
+As in previous years, the "Maintainer's Summit" is an invite-only,
+half-day event, where the primary focus will be process issues around
+Linux Kernel Development.  It will be limited to 30 invitees and a
+handful of sponsored attendees.  This makes it smaller than the first
+few kernel summits (which were limited to around 50 attendees).
 
-Thank you!
+The "Kernel Summit" is organized as a track which is run in parallel
+with the other tracks at the Linux Plumber's Conference (LPC), and is
+open to all registered attendees of LPC.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Linus has a generated a list of 18 people to use as a core list.  The
+program committee will pick at least ten people from that list, and
+then use the rest of Linus's list as a starting point of people to be
+considered.  People who suggest topics that should be discussed on the
+Maintainer's summit will also be added to the list for consideration.
+To make topic suggestions for the Maintainer's Summit, please send
+e-mail to the ksummit-discuss@lists.linuxfoundation.org list with a
+subject prefix of [MAINTAINERS SUMMIT].
+
+The other job of the program committee will be to organize the program
+for the Kernel Summit.  The goal of the Kernel Summit track will be to
+provide a forum to discuss specific technical issues that would be
+easier to resolve in person than over e-mail.  The program committee
+will also consider "information sharing" topics if they are clearly of
+interest to the wider development community (i.e., advanced training
+in topics that would be useful to kernel developers).
+
+To suggest a topic for the Kernel Summit, please do two things.
+First, please tag your e-mail with [TECH TOPIC].  As before, please
+use a separate e-mail for each topic, and send the topic suggestions
+to the ksummit-discuss list.
+
+Secondly, please create a topic at the Linux Plumbers Conference
+proposal submission site and target it to the Kernel Summit track.
+For your convenience you can use:
+
+	http://bit.ly/lpc19-submit
+
+Please do both steps.  I'll try to notice if someone forgets one or
+the other, but your chances of making your proposal gets the necessary
+attention and consideration by submiting both to the mailing list and
+the web site.
+
+People who submit topic suggestions before May 31st and which are
+accepted, will be given a free admission to the Linux Plumbers
+Conference.
+
+We will reserving roughly half of the Kernel Summit slots for
+last-minute discussions that will be scheduled during the week of
+Plumber's, in an "unconference style".  This allows ideas that come up
+in hallway discussions, and in the LPC miniconferences, to be given
+scheduled, dedicated times for discussion.
+
+If you were not subscribed on to the kernel-discuss mailing list from
+last year (or if you had removed yourself after the kernel summit),
+you can subscribe to the discuss list using mailman:
+
+   https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
+
+The program committee this year is composed of the following people:
+
+Greg Kroah-Hartman
+Jens Axboe
+Jon Corbet
+Ted Ts'o
+Thomas Gleixner
