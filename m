@@ -2,87 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30CFA1AEB8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2019 03:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4598F1AED5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 May 2019 04:22:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbfEMB2f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 May 2019 21:28:35 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:54496 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727054AbfEMB2f (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 May 2019 21:28:35 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 37AC3B4F05FB5C5EF4EE;
-        Mon, 13 May 2019 09:28:33 +0800 (CST)
-Received: from [127.0.0.1] (10.177.33.43) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Mon, 13 May 2019
- 09:28:26 +0800
-Subject: Re: [Question] softlockup in __fsnotify_update_child_dentry_flags
-To:     Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>
-CC:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "zhangyi (F)" <yi.zhang@huawei.com>, Hou Tao <houtao1@huawei.com>,
-        <huawei.libin@huawei.com>, Miao Xie <miaoxie@huawei.com>,
-        <suoben@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Waiman Long <longman@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>
-References: <0ce0173a-78f0-ae69-05b2-8374fbe3ba37@huawei.com>
- <CAOQ4uxjVf5yTNpuj=6Yb9eXpUwALx3-4tmbFG9g_WKrtkWw7wA@mail.gmail.com>
- <20190512123739.GA8050@bombadil.infradead.org>
-From:   yangerkun <yangerkun@huawei.com>
-Message-ID: <7d79bdc1-fc11-e605-2d15-7d2787c81444@huawei.com>
-Date:   Mon, 13 May 2019 09:25:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727341AbfEMCWX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 May 2019 22:22:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57218 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbfEMCWW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 12 May 2019 22:22:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ovf8DxL66KOTW+e+mFqo250OtpU+burSC7yTnGdUx9E=; b=AbePClkk+AJWmJvb0upl911ZC
+        MEyXdrYDiT8LmhcbY19c6hKyXF9FPg4jigBtQEH9NxvQ8VsHvdvRIjLLDLoMgU/GMNmLtHMJ/+hPM
+        VjYmiqUISNNxVbGZme1Fz3ovXuG6U9U47MWS9yl2id5/4IQhSe3ALoeGqltBSB7+r1r4Jo9TmzlyB
+        7OG51iHF4G/9hrdfdeNilfzs/X/w/cqEFFH9nlFd1O10w3KQOD1vSa5ml9WdvA67xyU+uvcemv1Sx
+        VHUHFB31aA7RVVpBA8uF9ftE+xr4yn6pkUm/91Mu80Ansjx3qkg5fQNihB1rJi1FaGLoAUiAp/y6b
+        +T4VYOwUg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hQ0be-0007bW-Fv; Mon, 13 May 2019 02:22:22 +0000
+Date:   Sun, 12 May 2019 19:22:22 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Shawn Landden <slandden@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: COW in XArray
+Message-ID: <20190513022222.GA3721@bombadil.infradead.org>
+References: <CA+49okpy=FUsZpc-WcBG9tMUwzgP7MYNuPPKN22BR=dq3HQ9tA@mail.gmail.com>
+ <CA+49okq7+G7wRgr4N8QLMf-6pvqvYumMQzX6qrvp-qQQsRsGHQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190512123739.GA8050@bombadil.infradead.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.33.43]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+49okq7+G7wRgr4N8QLMf-6pvqvYumMQzX6qrvp-qQQsRsGHQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sun, May 12, 2019 at 09:56:47AM -0500, Shawn Landden wrote:
+> I am trying to implement epochs for pids. For this I need to allow
+> radix tree operations to be specified COW (deletion does not need to
+> change). Radix
+> trees look like they are under alot of work by you, so how can I best
+> get this feature, and have some code I can work with to write my
+> feature?
 
+Hi Shawn,
 
-Matthew Wilcox wrote on 2019/5/12 20:37:
-> On Sun, May 12, 2019 at 12:20:14PM +0300, Amir Goldstein wrote:
->> On Fri, May 10, 2019 at 5:38 PM yangerkun <yangerkun@huawei.com> wrote:
->>> We find the lock of lockref has been catched with cpu 40. And since
->>> there is too much negative dentry in root dentry's d_subdirs, traversing
->>> will spend so long time with holding d_lock of root dentry. So other
->>> thread waiting for the lockref.lock will softlockup.
->>
->> IMO, this is DoS that can be manifested in several other ways.
->> __fsnotify_update_child_dentry_flags() is just a private case of single
->> level d_walk(). Many other uses of d_walk(), such as path_has_submounts()
->> will exhibit the same behavior under similar DoS.
->>
->> Here is a link to a discussion of a similar issue with negative dentries:
->> https://lore.kernel.org/lkml/187ee69a-451d-adaa-0714-2acbefc46d2f@redhat.com/
->>
->> I suppose we can think of better ways to iterate all non-negative
->> child dentries,
->> like keep them all at the tail of d_subdirs, but not sure about the implications
->> of moving the dentry in the list on d_instantiate().
->> We don't really have to move the dentries that turn negative (i.e. d_delete()),
->> because those are not likely to be the real source of DoS.
-> 
-> We should probably be more aggressive about reclaiming negative dentries.
-> It's clearly ludicrous to have a million negative dentries in a single
-> directory, for example.
+I'd love to help, but I don't quite understand what you want.
 
-How about add a reference to record allocation of negative under one 
-dir, and once it come to the limit, we return false directly in 
-retain_dentry while wo do dput?
+Here's the conversion of the PID allocator from the IDR to the XArray:
 
-Thanks,
-Kun.
-> 
-> .
-> 
+http://git.infradead.org/users/willy/linux-dax.git/commitdiff/223ad3ae5dfffdfc5642b1ce54df2c7836b57ef1
 
+What semantics do you want to change?
