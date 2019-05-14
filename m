@@ -2,121 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E19111E58C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 01:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 284BA1E5A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 01:38:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726517AbfENXZO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 May 2019 19:25:14 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46258 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726286AbfENXZN (ORCPT
+        id S1726473AbfENXio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 May 2019 19:38:44 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:47037 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbfENXio (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 May 2019 19:25:13 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y11so281535pfm.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2019 16:25:13 -0700 (PDT)
+        Tue, 14 May 2019 19:38:44 -0400
+Received: by mail-oi1-f195.google.com with SMTP id 203so424578oid.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2019 16:38:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4Jy0W2AOE8X2G5DhaX0aRTRku/ISFojI4Jx+xxzmku0=;
-        b=MQyJklXnbo6c96JLKB7QksEJHkSpFBHsrJS476t6XQjCpcmGuNq+IaehI46rq7cwoT
-         5/83MudsTcPwLAbJQi+E/WmVnctS8ig6t3ILH9hcfgEVCDySDpa/WBKmvGuT+TW4+eQ/
-         S0mwkFbAjmxc5fsPkl2wQBiW7k+GUPaiQJ2GyWSoGs0PuW8MdgL5cUCvBhefg1tJKEs1
-         qTdCbxKYYLs1akDBll4MhMba7K4eHfr7lI87DpyzfvZwtlscx4zjYkzIKYzvyEhxi2i1
-         yOVJ7B7mk2BP2yJFkPIlDEqeXR3rL1YA08yj2q7YWAYVfzf7Fawslh7NINITcHYKajd3
-         6xGA==
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kYvQT6mY9JfQHDpLNfUkCh431/BzUwth4mETG8vnTcM=;
+        b=rH1kN6xjlUQPAimKjhf1g5xol5K7bxpX+XExDwea7rJ/vrEQeHR+gNLXC3ZVH4TQZ9
+         nB+xK5+dfFBG+AS7/qk8hqyz2HQWexnTzW8k5LJW1xanq4EH8KofvdU+krYoB4fiF8Vt
+         fPWv1qAMT3PwG44QcHmls8cQO1gCx6JOi0ZF7v60B6oUPIayDactRAml6HwN/Z9XOve5
+         ipNHYxw0+3e1MrlsX6gxLtTtFC7qklUGicX7c6sNm+KGZAZRTO3CR+Vb+0+CyjD/lvna
+         uv4xTwEp5X40rPribrLMqvuk4Sk3d3SkDo1lGscczxN91c6+TpmIAuOPFrsNrQ2x/hlX
+         cVOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4Jy0W2AOE8X2G5DhaX0aRTRku/ISFojI4Jx+xxzmku0=;
-        b=iO6eXq07Ya6RxdC4TXWotFuoQ1mzCENB2f1Ghe5d+pBKkPFGBKyjsxgswk/XS/8uHD
-         5rWvWb1XH3JuH+8YZxFTixhxIj7KYgFgv7hoMtfUOFY1rEyZ6V59URphis/yREoFjo2Z
-         +nRHTbQdpT95PW42mCKYDhOWIt1dM5PoibFMq4atuE2cGD3NBDOv4rFh8Z6i5xsc8GFm
-         a3B3xQSq+0YRnEcQw277BuGgwchVUta+aSZiWPMHuIVt7l3fPCPcR5FhKstIioHC2WCw
-         6pierMACsESc45DF0MXAp/sciybKgmkwQoJLJE+q4Q7D59nQJJbPep67cHrrVf6UkA9+
-         S19w==
-X-Gm-Message-State: APjAAAVP/hpGdqL4zN+cgmuUM7xmrhFEK/6woyeXiD+dJQTokg32Xk9N
-        dg/2ujRBluCnakLrDwL+F4PuCA==
-X-Google-Smtp-Source: APXvYqwFT36xTe7xIV4JHHBk0GWoU89u5XYlVl2IpbZ1GuRL1xHoENSFO5jHtT0PWOMWGfK71tbjWA==
-X-Received: by 2002:a62:6585:: with SMTP id z127mr4445645pfb.179.1557876312369;
-        Tue, 14 May 2019 16:25:12 -0700 (PDT)
-Received: from google.com ([2620:15c:2cd:2:d714:29b4:a56b:b23b])
-        by smtp.gmail.com with ESMTPSA id 2sm205811pgc.49.2019.05.14.16.25.10
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 14 May 2019 16:25:11 -0700 (PDT)
-Date:   Tue, 14 May 2019 16:25:06 -0700
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com
-Subject: Re: [PATCH v4 16/18] MAINTAINERS: add entry for KUnit the unit
- testing framework
-Message-ID: <20190514232506.GA16788@google.com>
-References: <20190514221711.248228-1-brendanhiggins@google.com>
- <20190514221711.248228-17-brendanhiggins@google.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kYvQT6mY9JfQHDpLNfUkCh431/BzUwth4mETG8vnTcM=;
+        b=XrgAFN/C9VYC379dpakZ8XW75ciaanI9fZqazi/ciGmP4dTQJiNlR1S3WQDpD689kg
+         QZ0LcHTLVQsgq1VLy0t/j7Ebzxf7m6hjjMBXX7Qm08gCkQAOYD/hPp52+SOsfh6EoM9e
+         y0n11A+I42G0y9olYCPNrGYcc/qLJk/cA+wYibRHdonw2M3r/PUJurAkh8aa+WXZkerM
+         pUbnt43KmZaYN45T6I4Ae9jWP4XxmiAgUqxzlJXq5g13Ig2TPAOCzMnIIY5RhhrNKS/h
+         X43g4rac7McdV9GH0FoG/KdeDeMYSFym44HCF4SIPGA3PUjybyciMRozBST7XJ37Xgf3
+         L+QQ==
+X-Gm-Message-State: APjAAAXsYKPGjxrYnZXC3PbfBK9hMKiKDs3epqlxXqyrKaVhZ+jO1LWs
+        1RGczqBbjwmJyQBD2qZx8apfvA==
+X-Google-Smtp-Source: APXvYqxxe8Yr5f9XAWXGbDojS8nV2uootZLPvLP3tvJ3cgiNcLPrf4uxkN+Rr9TfiQsk/Azg0isydg==
+X-Received: by 2002:aca:f189:: with SMTP id p131mr367929oih.89.1557877123450;
+        Tue, 14 May 2019 16:38:43 -0700 (PDT)
+Received: from [192.168.1.5] (rrcs-97-77-70-138.sw.biz.rr.com. [97.77.70.138])
+        by smtp.googlemail.com with ESMTPSA id x64sm141795oia.32.2019.05.14.16.38.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2019 16:38:42 -0700 (PDT)
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     Arvind Sankar <niveditas98@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        initramfs@vger.kernel.org
+References: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
+ <20190512194322.GA71658@rani.riverdale.lan>
+ <3fe0e74b-19ca-6081-3afe-e05921b1bfe6@huawei.com>
+ <4f522e28-29c8-5930-5d90-e0086b503613@landley.net>
+ <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
+ <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
+ <1557861511.3378.19.camel@HansenPartnership.com>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <4da3dbda-bb76-5d71-d5c5-c03d98350ab0@landley.net>
+Date:   Tue, 14 May 2019 18:39:16 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190514221711.248228-17-brendanhiggins@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1557861511.3378.19.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 14, 2019 at 03:17:09PM -0700, Brendan Higgins wrote:
-> Add myself as maintainer of KUnit, the Linux kernel's unit testing
-> framework.
+On 5/14/19 2:18 PM, James Bottomley wrote:
+>> I think Rob is right here.  If /init was statically built into the
+>> kernel image, it has no more ability to compromise the kernel than
+>> anything else in the kernel.  What's the problem here?
 > 
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-> ---
->  MAINTAINERS | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> The specific problem is that unless you own the kernel signing key,
+> which is really untrue for most distribution consumers because the
+> distro owns the key, you cannot build the initrd statically into the
+> kernel.  You can take the distro signed kernel, link it with the initrd
+> then resign the combination with your key, provided you insert your key
+> into the MoK variables as a trusted secure boot key, but the distros
+> have been unhappy recommending this as standard practice.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2c2fce72e694f..8a91887c8d541 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8448,6 +8448,17 @@ S:	Maintained
->  F:	tools/testing/selftests/
->  F:	Documentation/dev-tools/kselftest*
->  
-> +KERNEL UNIT TESTING FRAMEWORK (KUnit)
-> +M:	Brendan Higgins <brendanhiggins@google.com>
-> +L:	linux-kselftest@vger.kernel.org
-> +L:	kunit-dev@googlegroups.com
-> +W:	https://google.github.io/kunit-docs/third_party/kernel/docs/
-> +S:	Maintained
-> +F:	Documentation/kunit/
+> If our model for security is going to be to link the kernel and the
+> initrd statically to give signature protection over the aggregate then
+> we need to figure out how to execute this via the distros.  If we
+> accept that the split model, where the distro owns and signs the kernel
+> but the machine owner builds and is responsible for the initrd, then we
+> need to explore split security models like this proposal.
 
-Dang it! I forgot to update the documentation path...
+You can have a built-in and an external initrd? The second extracts over the
+first? (I know because once upon a time conflicting files would append. It
+sounds like the desired behavior here is O_EXCL fail and move on.)
 
-Will fix in next revision.
-
-> +F:	include/kunit/
-> +F:	kunit/
-> +F:	tools/testing/kunit/
-> +
->  KERNEL USERMODE HELPER
->  M:	Luis Chamberlain <mcgrof@kernel.org>
->  L:	linux-kernel@vger.kernel.org
-> -- 
-> 2.21.0.1020.gf2820cf01a-goog
-> 
+Rob
