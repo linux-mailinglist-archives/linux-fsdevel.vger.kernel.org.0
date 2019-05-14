@@ -2,89 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 366201C97D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2019 15:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFD221CAA8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2019 16:44:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbfENNe1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 May 2019 09:34:27 -0400
-Received: from ms.lwn.net ([45.79.88.28]:44280 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfENNe0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 May 2019 09:34:26 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id D706B740;
-        Tue, 14 May 2019 13:34:23 +0000 (UTC)
-Date:   Tue, 14 May 2019 07:34:22 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, rdunlap@infradead.org, richard@nod.at,
-        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com,
-        Felix Guo <felixguoxiuping@gmail.com>
-Subject: Re: [PATCH v3 15/18] Documentation: kunit: add documentation for
- KUnit
-Message-ID: <20190514073422.4287267c@lwn.net>
-In-Reply-To: <20190514054251.186196-16-brendanhiggins@google.com>
-References: <20190514054251.186196-1-brendanhiggins@google.com>
-        <20190514054251.186196-16-brendanhiggins@google.com>
-Organization: LWN.net
+        id S1726180AbfENOoL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 May 2019 10:44:11 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:39743 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbfENOoL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 May 2019 10:44:11 -0400
+Received: by mail-qk1-f195.google.com with SMTP id z128so10431156qkb.6;
+        Tue, 14 May 2019 07:44:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=MK/EeSYeIjxF8YTDVcELY66892EK1YJmsPeFgAgfrjM=;
+        b=qFdfOb2sfefv9BKhBFjgSIS+uytVFyTYQ01SS/qtY0zqykm8VlTLnzSLtzv7QxzVth
+         Un7eDsop3VKZJC1EVd6XQpNfWig7m6h2m69LtD0Y5JLiiTr04ZS0LEWa7FjLql/o3qHl
+         O7HVDtrCJDu7HTU8+WIMJdMxzEreKcply4xEir4+Pv1PClq2/Gcu6WNG4NDBJuK3VSZa
+         2eWFbELeMgW2NQ06TCD4S95CPB0dl3sK1becx5Cf0gM8+0W5lLRqw6P2+vPwbQcqMgl8
+         W2lYGRotHkH389BRu9YrUNYuioMiZFGvkiJfKEBfRZBe5j/iZzUTy5QB/vcHsTWMgq5t
+         /OrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=MK/EeSYeIjxF8YTDVcELY66892EK1YJmsPeFgAgfrjM=;
+        b=n1dehGjbpQoYTxOTZowrc24AuLMmTi8H6Ep3ikekGaApmG/Xw4+9olSaq5Gw9+ce+L
+         N9eGG/K+Z0nPr8zdnHOS3eMQhWvZfVfH7crOx4UCvjJxiW51nLHY/9ADRu2Viv8OTasI
+         osKofXo3PZZaUgktc98071oeN3Vt1XJhdC+74aLmtXzXczQZFSGdc6eMirGx5ovbdx53
+         RnNnu4+688hniVb5Ol5zoAduuyq4ZPE5RzZbQesXGdY+WdNFUdKa55N53uCyOWJLFWo3
+         m5CHrf56v+u/gLp/HZxA4aL/Q+jNFQIKnB+6NzXJvSYOtU0ssD7M0/tEb2yd5QaNsQwo
+         Ojhg==
+X-Gm-Message-State: APjAAAWJpoHgUsfH4tZj0vq6smNBtWroRhITQtp8uAcS64YCAFcz4DqS
+        0ksg3EEPsmgOktdOyTC73P4=
+X-Google-Smtp-Source: APXvYqyOJRF/R0s6XEjfz+HFqZXUy/U3dE0Nq2kon+YZAEx3Nx+C5qxM5rRFpkNMj/j57uhOGWxe4Q==
+X-Received: by 2002:a37:495:: with SMTP id 143mr27573670qke.106.1557845049750;
+        Tue, 14 May 2019 07:44:09 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id d64sm5449740qke.55.2019.05.14.07.44.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2019 07:44:09 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Tue, 14 May 2019 10:44:07 -0400
+To:     Rob Landley <rob@landley.net>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Arvind Sankar <niveditas98@gmail.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        initramfs@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Message-ID: <20190514144406.GA37109@rani.riverdale.lan>
+References: <20190512194322.GA71658@rani.riverdale.lan>
+ <3fe0e74b-19ca-6081-3afe-e05921b1bfe6@huawei.com>
+ <4f522e28-29c8-5930-5d90-e0086b503613@landley.net>
+ <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
+ <20190513172007.GA69717@rani.riverdale.lan>
+ <20190513175250.GC69717@rani.riverdale.lan>
+ <1557772584.4969.62.camel@linux.ibm.com>
+ <20190513184744.GA12386@rani.riverdale.lan>
+ <1557785351.4969.94.camel@linux.ibm.com>
+ <66b57ae5-bb5a-c008-8490-2c90e050fc65@landley.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <66b57ae5-bb5a-c008-8490-2c90e050fc65@landley.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 13 May 2019 22:42:49 -0700
-Brendan Higgins <brendanhiggins@google.com> wrote:
-
-> Add documentation for KUnit, the Linux kernel unit testing framework.
-> - Add intro and usage guide for KUnit
-> - Add API reference
+On Tue, May 14, 2019 at 01:06:45AM -0500, Rob Landley wrote:
+> On 5/13/19 5:09 PM, Mimi Zohar wrote:
+> >> Ok, but wouldn't my idea still work? Leave the default compiled-in
+> >> policy set to not appraise initramfs. The embedded /init sets all the
+> >> xattrs, changes the policy to appraise tmpfs, and then exec's the real
+> >> init? Then everything except the embedded /init and the file with the
+> >> xattrs will be appraised, and the embedded /init was verified as part of
+> >> the kernel image signature. The only additional kernel change needed
+> >> then is to add a config option to the kernel to disallow overwriting the
+> >> embedded initramfs (or at least the embedded /init).
+> > 
+> > Yes and no.  The current IMA design allows a builtin policy to be
+> > specified on the boot command line ("ima_policy="), so that it exists
+> > from boot, and allows it to be replaced once with a custom policy.
+> >  After that, assuming that CONFIG_IMA_WRITE_POLICY is configured,
+> > additional rules may be appended.  As your embedded /init solution
+> > already replaces the builtin policy, the IMA policy couldn't currently
+> > be replaced a second time with a custom policy based on LSM labels.
 > 
-> Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-> ---
-> Changes Since Last Revision:
->  - Addressed reference to incorrect number of sections, as per Randy's
->    comment.
->  - Make section underlines same length as the section title, as per
->    Randy's comments.
-> ---
->  Documentation/index.rst           |   1 +
->  Documentation/kunit/api/index.rst |  16 +
->  Documentation/kunit/api/test.rst  |  14 +
->  Documentation/kunit/faq.rst       |  62 ++++
->  Documentation/kunit/index.rst     |  79 ++++
->  Documentation/kunit/start.rst     | 180 ++++++++++
->  Documentation/kunit/usage.rst     | 575 ++++++++++++++++++++++++++++++
+> So your design assumption you're changing other code to work around in that
+> instance is the policy can only be replaced once rather than having a "finalize"
+> option when it's set, making it immutable from then on.
+> 
+> Rob
+I agree it would be better to have a finalize option. Outside of my
+idea, it seems the current setup would make it so while developing an
+IMA policy you need to keep rebooting to test your changes?
 
-Certainly it's great to see all this documentation coming with this
-feature!
-
-Naturally, though, I have one request: I'd rather not see this at the top
-level, which is more than crowded enough as it is.  Can this material
-please go into the development tools book, alongside the kselftest
-documentation?
-
-Thanks,
-
-jon
+I'd suggest having a knob that starts out unrestricted, and can be
+one-way changed to append-only or immutable. This seems like a good idea
+even if you decide the embedded image is too much trouble or unworkable
+for other reasons.
