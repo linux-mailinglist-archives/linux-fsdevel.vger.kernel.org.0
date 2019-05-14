@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EF6B1E4B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 00:19:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 781BF1E4B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 00:19:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfENWTP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 May 2019 18:19:15 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36255 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfENWTP (ORCPT
+        id S1726924AbfENWTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 May 2019 18:19:20 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44906 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726908AbfENWTR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 May 2019 18:19:15 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s17so472757wru.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2019 15:19:13 -0700 (PDT)
+        Tue, 14 May 2019 18:19:17 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c5so426783wrs.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2019 15:19:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GVlogRg79Wqyr1hZWWSXcwzY7VWlV2o1M6WoAHCLED4=;
-        b=c0a7CG91NaHEsAS1B28yPqeIc130Anvsi+y3Zn0jOQrEZPtPkRNMz4RysUZKvGqhMN
-         D0p66+Xck0oqFmMYwR43WFgpNiqijgrB206AePuDSePpeqgKHxT66bj2bEmOzTxh8a5g
-         rRdxO9cWSNkXa1y6UZS2SeHVwDXkzlVm0WAD/7+QinKDhxSeKSa4JsZ5aIq/e1teDLVV
-         VTtgAyDal5EuhYsyS+SpujtKFtPBsupWshZTxHL600QwjYaX7Tk6DJNjTFXRi+7KqYwq
-         5GoeT10w+85cxw9Rtm7OVHHRD+o+ajZyBIWd51qhJHXmbLjrjbtClJUX18Klr831gGTr
-         3YUQ==
+        bh=lHvWPEdPz5M7DfRwzXnDIFqCatHT/VGerDKnxkatJLs=;
+        b=WARQeUrm/NT+TkZelOgiWmqg+YGLpTlAMQ3NFnD7ht7ON0d6xY5k8UN/wZTCbrzQfk
+         3E3+8lHV6MTkvvdkECQZwQo5uMMiPsXvAej60qhos5sl/eX5LLe+RdPL8Jvez7/2j658
+         P/WHfbVUJf4ZJy+jyQGHXQtcN6zFeYcqa8OdFNbBSDXTklaJNiP0KCxLSfw+iQ8nGYTl
+         K/MStvB3jWo5Nc6DGy8019POgxJdN8j72LKcYh1L1m4Jzg7I3LuFZ16iKkpAF69qgT/f
+         h3RKvO6wME9o/WyOvY2ARe3t4xDotNLlEIeT56sWgjuJno9tMgquwjHEvWJQxnLMyIWJ
+         tZSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GVlogRg79Wqyr1hZWWSXcwzY7VWlV2o1M6WoAHCLED4=;
-        b=YXB6gCPA3Ij2mI8hbISfomT4qu97aWxhAop1kZ68gQvZtMx0MSX/lOAH4HRCwn5EPj
-         Lz50+8oz2p2Y7d9hBZZxuRQefjCL/2m4eBhzvJYbOLhAsbc+kkSgfU8rLgC/ffBvRa+y
-         POcTp5eTxvTu6yQchryjT7XS2QEmBCaaDB31PyYHu40mQSNC+LwQzccP7cqeOBDfp2fs
-         9lqawfjt43BNmuZxnvbeBs6ycU5NziYzJbWIVcHMW0szxJ5iBEyxf7Dtardm3OHMQE6Q
-         vbS/u0uvLocI8QJF3a8GOSs16uBSRJYMUQyyrTRwxsLCmRQ699NbIObXkv5d27yEUyIG
-         23oA==
-X-Gm-Message-State: APjAAAUevHXN2FcJyZjSwxINoajTIw+tO1vKQ950OmK030FuzfM9t5Dy
-        AkWqryg3I38+9xLELAnXBHo=
-X-Google-Smtp-Source: APXvYqw8Eq1TWWuinP3vzYIvXxxUKOGhtUVFIAwJShUfFCRAtI9YeDpCRsp0Vo7dwj+WSULFvYc8rg==
-X-Received: by 2002:adf:ce88:: with SMTP id r8mr1841616wrn.191.1557872353319;
-        Tue, 14 May 2019 15:19:13 -0700 (PDT)
+        bh=lHvWPEdPz5M7DfRwzXnDIFqCatHT/VGerDKnxkatJLs=;
+        b=KkBn7K2RllXfd5YPecQoc2TYrMU+9MM9yschhVqjPs5yJ+RmGmDqw3rlvDRkaiW4l0
+         XV335pdjPk+aSg4sNI0wo76t9JGZpmBZykv3pEVFrasO/MQAevdCxciPUGbHiB4Q6991
+         UUXDXWMZsgSB3yrqLuL2km27sItslWH/NXpCt7l/qRJu6LsxxnJRBkIkbR+FSzcVIhVe
+         xBQs2VpbnqEvc2UF3zG6c87F5IFPlmXQSNEexPUu6aILgPpUzyJ7Wbs+h9+K4/3oIOqE
+         FPRWKGT87wVG+81s9WrpyRLn0IPb/eHYuhqvMs+evlq1I1+7PguaDBMfjOAHKHokKNV4
+         Q1QA==
+X-Gm-Message-State: APjAAAUTlLqqKVAD1XjhWs7lD/ts5d84gJDYym+VjHyhsKdvqYXnqRVW
+        LfwxFVEgelMzs1Yn3oKY+84=
+X-Google-Smtp-Source: APXvYqzeC7IK0k0ctAt3hzpTTxXVXPcz2RKRk6oje1eMjoFU73Xc2sfMqT3btYeaKPSi1hQy7hR9ug==
+X-Received: by 2002:adf:b243:: with SMTP id y3mr22539278wra.21.1557872354937;
+        Tue, 14 May 2019 15:19:14 -0700 (PDT)
 Received: from localhost.localdomain ([5.102.238.208])
-        by smtp.gmail.com with ESMTPSA id h188sm423553wmf.48.2019.05.14.15.19.12
+        by smtp.gmail.com with ESMTPSA id h188sm423553wmf.48.2019.05.14.15.19.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 15:19:12 -0700 (PDT)
+        Tue, 14 May 2019 15:19:14 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Subject: [RFC][PATCH 2/4] fsnotify: add empty fsnotify_remove() hook
-Date:   Wed, 15 May 2019 01:18:59 +0300
-Message-Id: <20190514221901.29125-3-amir73il@gmail.com>
+Subject: [RFC][PATCH 3/4] fs: convert filesystems to use simple_remove() helper
+Date:   Wed, 15 May 2019 01:19:00 +0300
+Message-Id: <20190514221901.29125-4-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190514221901.29125-1-amir73il@gmail.com>
 References: <20190514221901.29125-1-amir73il@gmail.com>
@@ -58,90 +58,177 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We would like to move fsnotify_nameremove() calls from d_delete()
-into a higher layer where the hook makes more sense and so we can
-consider every d_delete() call site individually.
-
-Start by creating an empty hook called fsnotify_remove() and place
-it in the proper VFS call sites.  After all d_delete() call sites
-will be converted to use the new hook, it will replace the old
-fsnotify_nameremove() hook in d_delete().
+Convert some filesystems to use the new simple_remove() helper.
+This will allow them to generate fsnotify delete events after the
+fsnotify_nameremove() hook is removed from d_delete().
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/libfs.c               |  5 ++++-
- fs/namei.c               |  2 ++
- include/linux/fsnotify.h | 13 +++++++++++++
- 3 files changed, 19 insertions(+), 1 deletion(-)
+ arch/s390/hypfs/inode.c            |  9 ++-------
+ drivers/infiniband/hw/qib/qib_fs.c |  3 +--
+ fs/debugfs/inode.c                 | 20 ++++----------------
+ fs/tracefs/inode.c                 | 23 ++++-------------------
+ net/sunrpc/rpc_pipe.c              | 16 ++--------------
+ security/apparmor/apparmorfs.c     |  6 +-----
+ 6 files changed, 14 insertions(+), 63 deletions(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 030e67c52b5f..0dd676fc9272 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -10,6 +10,7 @@
- #include <linux/cred.h>
- #include <linux/mount.h>
- #include <linux/vfs.h>
-+#include <linux/fsnotify.h>
- #include <linux/quotaops.h>
- #include <linux/mutex.h>
- #include <linux/namei.h>
-@@ -367,8 +368,10 @@ int simple_remove(struct inode *dir, struct dentry *dentry)
- 	else
- 		ret = simple_unlink(dir, dentry);
+diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
+index ccad1398abd4..30a0ab967461 100644
+--- a/arch/s390/hypfs/inode.c
++++ b/arch/s390/hypfs/inode.c
+@@ -70,13 +70,8 @@ static void hypfs_remove(struct dentry *dentry)
  
--	if (!ret)
-+	if (!ret) {
-+		fsnotify_remove(dir, dentry);
- 		d_delete(dentry);
-+	}
+ 	parent = dentry->d_parent;
+ 	inode_lock(d_inode(parent));
+-	if (simple_positive(dentry)) {
+-		if (d_is_dir(dentry))
+-			simple_rmdir(d_inode(parent), dentry);
+-		else
+-			simple_unlink(d_inode(parent), dentry);
+-	}
+-	d_delete(dentry);
++	if (simple_positive(dentry))
++		simple_remove(d_inode(parent), dentry);
  	dput(dentry);
- 
- 	return ret;
-diff --git a/fs/namei.c b/fs/namei.c
-index 20831c2fbb34..c9eda9cc5d43 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3883,6 +3883,7 @@ int vfs_rmdir(struct inode *dir, struct dentry *dentry)
- 	dentry->d_inode->i_flags |= S_DEAD;
- 	dont_mount(dentry);
- 	detach_mounts(dentry);
-+	fsnotify_remove(dir, dentry);
- 
- out:
- 	inode_unlock(dentry->d_inode);
-@@ -3999,6 +4000,7 @@ int vfs_unlink(struct inode *dir, struct dentry *dentry, struct inode **delegate
- 			if (!error) {
- 				dont_mount(dentry);
- 				detach_mounts(dentry);
-+				fsnotify_remove(dir, dentry);
- 			}
- 		}
+ 	inode_unlock(d_inode(parent));
+ }
+diff --git a/drivers/infiniband/hw/qib/qib_fs.c b/drivers/infiniband/hw/qib/qib_fs.c
+index ceb42d948412..795938a2488b 100644
+--- a/drivers/infiniband/hw/qib/qib_fs.c
++++ b/drivers/infiniband/hw/qib/qib_fs.c
+@@ -491,8 +491,7 @@ static int remove_device_files(struct super_block *sb,
  	}
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index 94972e8eb6d1..455dff82595e 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -151,6 +151,19 @@ static inline void fsnotify_vfsmount_delete(struct vfsmount *mnt)
- 	__fsnotify_vfsmount_delete(mnt);
+ 	remove_file(dir, "flash");
+ 	inode_unlock(d_inode(dir));
+-	ret = simple_rmdir(d_inode(root), dir);
+-	d_delete(dir);
++	ret = simple_remove(d_inode(root), dir);
+ 	dput(dir);
+ 
+ bail:
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index acef14ad53db..bc96198df1d4 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -617,13 +617,10 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
+ }
+ EXPORT_SYMBOL_GPL(debugfs_create_symlink);
+ 
+-static void __debugfs_remove_file(struct dentry *dentry, struct dentry *parent)
++static void __debugfs_file_removed(struct dentry *dentry)
+ {
+ 	struct debugfs_fsdata *fsd;
+ 
+-	simple_unlink(d_inode(parent), dentry);
+-	d_delete(dentry);
+-
+ 	/*
+ 	 * Paired with the closing smp_mb() implied by a successful
+ 	 * cmpxchg() in debugfs_file_get(): either
+@@ -643,18 +640,9 @@ static int __debugfs_remove(struct dentry *dentry, struct dentry *parent)
+ 	int ret = 0;
+ 
+ 	if (simple_positive(dentry)) {
+-		dget(dentry);
+-		if (!d_is_reg(dentry)) {
+-			if (d_is_dir(dentry))
+-				ret = simple_rmdir(d_inode(parent), dentry);
+-			else
+-				simple_unlink(d_inode(parent), dentry);
+-			if (!ret)
+-				d_delete(dentry);
+-		} else {
+-			__debugfs_remove_file(dentry, parent);
+-		}
+-		dput(dentry);
++		ret = simple_remove(d_inode(parent), dentry);
++		if (d_is_reg(dentry))
++			__debugfs_file_removed(dentry);
+ 	}
+ 	return ret;
+ }
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index 7098c49f3693..6ac31ea9ad5d 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -501,25 +501,10 @@ __init struct dentry *tracefs_create_instance_dir(const char *name,
+ 
+ static int __tracefs_remove(struct dentry *dentry, struct dentry *parent)
+ {
+-	int ret = 0;
+-
+-	if (simple_positive(dentry)) {
+-		if (dentry->d_inode) {
+-			dget(dentry);
+-			switch (dentry->d_inode->i_mode & S_IFMT) {
+-			case S_IFDIR:
+-				ret = simple_rmdir(parent->d_inode, dentry);
+-				break;
+-			default:
+-				simple_unlink(parent->d_inode, dentry);
+-				break;
+-			}
+-			if (!ret)
+-				d_delete(dentry);
+-			dput(dentry);
+-		}
+-	}
+-	return ret;
++	if (simple_positive(dentry))
++		return simple_remove(d_inode(parent), dentry);
++
++	return 0;
  }
  
-+/*
-+ * fsnotify_remove - a filename was removed from a directory
-+ *
-+ * Caller must make sure that dentry->d_name is stable.
-+ */
-+static inline void fsnotify_remove(struct inode *dir, struct dentry *dentry)
-+{
-+	/* Expected to be called before d_delete() */
-+	WARN_ON_ONCE(d_is_negative(dentry));
-+
-+	/* TODO: call fsnotify_dirent() */
-+}
-+
- /*
-  * fsnotify_inoderemove - an inode is going away
-  */
+ /**
+diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
+index 979d23646e33..5b1a59776b9a 100644
+--- a/net/sunrpc/rpc_pipe.c
++++ b/net/sunrpc/rpc_pipe.c
+@@ -593,24 +593,12 @@ static int __rpc_mkpipe_dentry(struct inode *dir, struct dentry *dentry,
+ 
+ static int __rpc_rmdir(struct inode *dir, struct dentry *dentry)
+ {
+-	int ret;
+-
+-	dget(dentry);
+-	ret = simple_rmdir(dir, dentry);
+-	d_delete(dentry);
+-	dput(dentry);
+-	return ret;
++	return simple_remove(dir, dentry);
+ }
+ 
+ static int __rpc_unlink(struct inode *dir, struct dentry *dentry)
+ {
+-	int ret;
+-
+-	dget(dentry);
+-	ret = simple_unlink(dir, dentry);
+-	d_delete(dentry);
+-	dput(dentry);
+-	return ret;
++	return simple_remove(dir, dentry);
+ }
+ 
+ static int __rpc_rmpipe(struct inode *dir, struct dentry *dentry)
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 9ab5613fe07c..4a10acb4a6d3 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -351,11 +351,7 @@ static void aafs_remove(struct dentry *dentry)
+ 	dir = d_inode(dentry->d_parent);
+ 	inode_lock(dir);
+ 	if (simple_positive(dentry)) {
+-		if (d_is_dir(dentry))
+-			simple_rmdir(dir, dentry);
+-		else
+-			simple_unlink(dir, dentry);
+-		d_delete(dentry);
++		simple_remove(dir, dentry);
+ 		dput(dentry);
+ 	}
+ 	inode_unlock(dir);
 -- 
 2.17.1
 
