@@ -2,88 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E12EC1C550
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2019 10:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01E6C1C5FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2019 11:25:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbfENIsm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 May 2019 04:48:42 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35050 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfENIsm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 May 2019 04:48:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6D6XPiWXHxqHbgGlzUb4e9FTkb9mj+8eXq8zwFhMaYI=; b=gQyJ4Bn+wwRdSW9t/2bWSVmyc
-        AwkGokt1sRtEs0MFOzfvXdxNauIujIkO6DiCAA3SOTN0UFbrDi+SLIZripyW+aGfpCexFCP0BzvAH
-        IlYP9j/H30eFgvgo9ZkFb3AKPBLsupHh7y68WZsbeVhh54K9lwJtSLIvcIDJS1VEaRQGKi/fVSfGS
-        48zJdBoc3DzvL/pKKac0qDcALZBmcyi0ZeXu7FkhM4YyodyeuMGqq3ZAdBYQrpl3nrJxsVTrtSutJ
-        0YkFNQHEEV1TPeoT3CoGRRj7cYr67v35O8QkZL1uGCglGPoJ5gpayGhWwv0+XlAiPH89k4GZ/Z81C
-        usWzVhhCw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hQT5N-0006we-E6; Tue, 14 May 2019 08:46:57 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 662E32029FD7A; Tue, 14 May 2019 10:46:55 +0200 (CEST)
-Date:   Tue, 14 May 2019 10:46:55 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
-        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com, mpe@ellerman.id.au,
-        pmladek@suse.com, rdunlap@infradead.org, richard@nod.at,
-        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com,
-        kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 08/18] objtool: add kunit_try_catch_throw to the
- noreturn list
-Message-ID: <20190514084655.GK2589@hirez.programming.kicks-ass.net>
-References: <20190514054251.186196-1-brendanhiggins@google.com>
- <20190514054251.186196-9-brendanhiggins@google.com>
- <20190514065643.GC2589@hirez.programming.kicks-ass.net>
- <20190514081223.GA230665@google.com>
+        id S1726447AbfENJZU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 May 2019 05:25:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53398 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726148AbfENJZU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 May 2019 05:25:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 83CE3AD5C;
+        Tue, 14 May 2019 09:25:19 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 361A11E3C55; Tue, 14 May 2019 11:25:19 +0200 (CEST)
+Date:   Tue, 14 May 2019 11:25:19 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Olivier Chapelliere <olivier.chapelliere@alcmeon.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: stuck in inotify_release
+Message-ID: <20190514092519.GA20782@quack2.suse.cz>
+References: <CANp+0hhbsegocrx-MK0DS=Qx4DfivB27nSKHrukiFAY6x6cJQA@mail.gmail.com>
+ <20190328095207.GD22915@quack2.suse.cz>
+ <CANp+0hhdCeP4R=MJFkk2z=v5Q5z1K0gjVCWRz_T6mwzsYtx36g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190514081223.GA230665@google.com>
+In-Reply-To: <CANp+0hhdCeP4R=MJFkk2z=v5Q5z1K0gjVCWRz_T6mwzsYtx36g@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 14, 2019 at 01:12:23AM -0700, Brendan Higgins wrote:
-> On Tue, May 14, 2019 at 08:56:43AM +0200, Peter Zijlstra wrote:
-> > On Mon, May 13, 2019 at 10:42:42PM -0700, Brendan Higgins wrote:
-> > > This fixes the following warning seen on GCC 7.3:
-> > >   kunit/test-test.o: warning: objtool: kunit_test_unsuccessful_try() falls through to next function kunit_test_catch()
-> > > 
-> > 
-> > What is that file and function; no kernel tree near me seems to have
-> > that.
-> 
-> Oh, sorry about that. The function is added in the following patch,
-> "[PATCH v3 09/18] kunit: test: add support for test abort"[1].
-> 
-> My apologies if this patch is supposed to come after it in sequence, but
-> I assumed it should come before otherwise objtool would complain about
-> the symbol when it is introduced.
+Hello!
 
-Or send me all patches such that I have context, or have a sane
-Changelog that gives me context. Just don't give me one patch with a
-crappy changelog.
+On Mon 06-05-19 20:54:24, Olivier Chapelliere wrote:
+> It finally took a month to happen again : python processes watching a
+> directory are stuck in inotify_release.
+> I ran the sysrq commands as you requested and attached the result.
+
+Thanks. I was looking into these traces but the situation is the same as
+before. Everyone is blocked waiting for inotify group to shut down. That is
+blocked waiting for worker to finish destroying notification marks and the
+worker is blocked in synchronize_srcu() waiting for SRCU grace period to
+end. Now I didn't find any process that would be holding the SRCU lock so
+it seems that someone exited the SRCU locked section without releasing the
+lock. I've checked 4.15 your Ubuntu kernel is based on and I don't see how
+that would be possible. It it possible though, that the problem is
+introduced by some Ubuntu specific backports. Would it be possible for you
+to run some vanilla kernel (i.e., without Ubuntu modifications)?
+
+								Honza
+
+> On Thu, Mar 28, 2019 at 10:52 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > Hello,
+> >
+> > On Thu 28-03-19 09:26:45, Olivier Chapelliere wrote:
+> > > According to what I read on internet you seem to be the right person to get
+> > > in touch with when one has problems with inotify.
+> >
+> > Yes, there's also linux-fsdevel@vger.kernel.org mailing list which we use
+> > (added to CC).
+> >
+> > > We are monitoring several directories in python processes through inotify.
+> > > But after few days all processes are stuck in a call to inotify_release.
+> > > Once I detected the problem, I dumped info to dmesg with sysrq-trigger
+> > > (dmesg content attached):
+> > > echo w > /proc/sysrq-trigger
+> >
+> > Looking through the stack traces, all of them wait in fput() ->
+> > inotify_release() -> ... -> fsnotify_wait_marks_destroyed() ->
+> > flush_delayed_work(&reaper_work). So they wait for worker process to
+> > destroy all marks for the group. However that worker (kworker/u8:4) is
+> > stuck in:
+> >
+> > fsnotify_mark_destroy_workfn() -> synchronize_srcu(&fsnotify_mark_srcu)
+> >
+> > So the question is who is holding fsnotify_mark_srcu so that SRCU cannot
+> > declare new grace period. I don't see any such process among the processes
+> > you've shown in the dump (but it should be there) so it's a bit of a
+> > mystery.
+> >
+> > > Our production env is ubuntu 18.04 kernel 4.15 fs ext4
+> > > This problem appears on a weekly basis so I will be able to run additional
+> > > commands to track down the issue if needed.
+> >
+> > So when this happens again, try grabbing output of sysrq-l and sysrq-t if
+> > we can find the task holding fsnotify_mark_srcu.
+> >
+> >                                                                 Honza
+> > --
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
+> 
+> 
+> 
+> -- 
+> Olivier Chapelliere
+
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
