@@ -2,117 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF34F1CBB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2019 17:20:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CDB81CBCC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 May 2019 17:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725980AbfENPUH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 May 2019 11:20:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49648 "EHLO mail.kernel.org"
+        id S1726248AbfENPZV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 May 2019 11:25:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:15996 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbfENPUG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 May 2019 11:20:06 -0400
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726084AbfENPZV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 May 2019 11:25:21 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EDD1216E3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2019 15:20:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557847205;
-        bh=xQanGgKgajbHtyLgJhLsCWkGAN1PdRL7As5ataJeHr8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MllZpyCT0BM/1JzBLxYHNTJoWfcB2/SEoCw4IV8RrlHyrb4V9+fS3wxWA9Llt18ZF
-         TUi2m5qWnOXlTfBvBVhy2kNZux5UdUx0eu1WqO26J0L0LpERMgiYFEjRig7XYym/oB
-         ZYgWO1/ePmHcBpJHJTqtaV5xcmvSsgTK5PVDtsqk=
-Received: by mail-wr1-f43.google.com with SMTP id r4so19665983wro.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 May 2019 08:20:05 -0700 (PDT)
-X-Gm-Message-State: APjAAAVr/Exuzpgm+vuO3UvOzLWgIZpRy4qnDFPlfVGIBGzIW21Qg8ae
-        olUQrvw0ImWDrQRW3HI061F5FgGU8l6nVmXiI2yNdQ==
-X-Google-Smtp-Source: APXvYqwELjaWm3pDhSAXXkdctielWFjoEeoi62C+ui9DnTaRhS+mhM5kpFFLL672+S8yqjttQBVqPkUrTRqBFHVIKUM=
-X-Received: by 2002:adf:ef8f:: with SMTP id d15mr22930401wro.330.1557847204088;
- Tue, 14 May 2019 08:20:04 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id C4A433087BB4;
+        Tue, 14 May 2019 15:25:20 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A887B608A6;
+        Tue, 14 May 2019 15:25:20 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 62E0118089CC;
+        Tue, 14 May 2019 15:25:20 +0000 (UTC)
+Date:   Tue, 14 May 2019 11:25:20 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        dan j williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, jack@suse.cz, mst@redhat.com,
+        jasowang@redhat.com, david@fromorbit.com, lcapitulino@redhat.com,
+        adilger kernel <adilger.kernel@dilger.ca>, zwisler@kernel.org,
+        aarcange@redhat.com, dave jiang <dave.jiang@intel.com>,
+        jstaron@google.com, darrick wong <darrick.wong@oracle.com>,
+        vishal l verma <vishal.l.verma@intel.com>, david@redhat.com,
+        willy@infradead.org, hch@infradead.org, jmoyer@redhat.com,
+        nilal@redhat.com, lenb@kernel.org, kilobyte@angband.pl,
+        riel@surriel.com, yuval shaia <yuval.shaia@oracle.com>,
+        stefanha@redhat.com, pbonzini@redhat.com,
+        dan j williams <dan.j.williams@intel.com>, kwolf@redhat.com,
+        tytso@mit.edu, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        cohuck@redhat.com, rjw@rjwysocki.net, imammedo@redhat.com
+Message-ID: <1112624345.28705248.1557847520326.JavaMail.zimbra@redhat.com>
+In-Reply-To: <c22d42f6-ef94-0310-36f2-e9085d3464c2@infradead.org>
+References: <20190514145422.16923-1-pagupta@redhat.com> <20190514145422.16923-3-pagupta@redhat.com> <c22d42f6-ef94-0310-36f2-e9085d3464c2@infradead.org>
+Subject: Re: [Qemu-devel] [PATCH v9 2/7] virtio-pmem: Add virtio pmem driver
 MIME-Version: 1.0
-References: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
- <20190512194322.GA71658@rani.riverdale.lan> <3fe0e74b-19ca-6081-3afe-e05921b1bfe6@huawei.com>
- <4f522e28-29c8-5930-5d90-e0086b503613@landley.net> <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
-In-Reply-To: <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 14 May 2019 08:19:52 -0700
-X-Gmail-Original-Message-ID: <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
-Message-ID: <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
- ram disk
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Rob Landley <rob@landley.net>,
-        Arvind Sankar <niveditas98@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        initramfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.65.16.148, 10.4.195.17]
+Thread-Topic: virtio-pmem: Add virtio pmem driver
+Thread-Index: dlXNsat06Cmvl53reNYz3WCWYqwXeA==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 14 May 2019 15:25:21 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 13, 2019 at 5:47 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
->
-> On 5/13/2019 11:07 AM, Rob Landley wrote:
-> >
-> >
-> > On 5/13/19 2:49 AM, Roberto Sassu wrote:
-> >> On 5/12/2019 9:43 PM, Arvind Sankar wrote:
-> >>> On Sun, May 12, 2019 at 05:05:48PM +0000, Rob Landley wrote:
-> >>>> On 5/12/19 7:52 AM, Mimi Zohar wrote:
-> >>>>> On Sun, 2019-05-12 at 11:17 +0200, Dominik Brodowski wrote:
-> >>>>>> On Thu, May 09, 2019 at 01:24:17PM +0200, Roberto Sassu wrote:
-> >>>>>>> This proposal consists in marshaling pathnames and xattrs in a file called
-> >>>>>>> .xattr-list. They are unmarshaled by the CPIO parser after all files have
-> >>>>>>> been extracted.
-> >>>>>>
-> >>>>>> Couldn't this parsing of the .xattr-list file and the setting of the xattrs
-> >>>>>> be done equivalently by the initramfs' /init? Why is kernel involvement
-> >>>>>> actually required here?
-> >>>>>
-> >>>>> It's too late.  The /init itself should be signed and verified.
-> >>>>
-> >>>> If the initramfs cpio.gz image was signed and verified by the extractor, how is
-> >>>> the init in it _not_ verified?
-> >>>>
-> >>>> Ro
-> >>>
-> >>> Wouldn't the below work even before enforcing signatures on external
-> >>> initramfs:
-> >>> 1. Create an embedded initramfs with an /init that does the xattr
-> >>> parsing/setting. This will be verified as part of the kernel image
-> >>> signature, so no new code required.
-> >>> 2. Add a config option/boot parameter to panic the kernel if an external
-> >>> initramfs attempts to overwrite anything in the embedded initramfs. This
-> >>> prevents overwriting the embedded /init even if the external initramfs
-> >>> is unverified.
-> >>
-> >> Unfortunately, it wouldn't work. IMA is already initialized and it would
-> >> verify /init in the embedded initial ram disk.
-> >
-> > So you made broken infrastructure that's causing you problems. Sounds unfortunate.
->
-> The idea is to be able to verify anything that is accessed, as soon as
-> rootfs is available, without distinction between embedded or external
-> initial ram disk.
->
-> Also, requiring an embedded initramfs for xattrs would be an issue for
-> systems that use it for other purposes.
->
->
-> >> The only reason why
-> >> opening .xattr-list works is that IMA is not yet initialized
-> >> (late_initcall vs rootfs_initcall).
-> >
-> > Launching init before enabling ima is bad because... you didn't think of it?
->
-> No, because /init can potentially compromise the integrity of the
-> system.
 
-I think Rob is right here.  If /init was statically built into the
-kernel image, it has no more ability to compromise the kernel than
-anything else in the kernel.  What's the problem here?
+> On 5/14/19 7:54 AM, Pankaj Gupta wrote:
+> > diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
+> > index 35897649c24f..94bad084ebab 100644
+> > --- a/drivers/virtio/Kconfig
+> > +++ b/drivers/virtio/Kconfig
+> > @@ -42,6 +42,17 @@ config VIRTIO_PCI_LEGACY
+> >  
+> >  	  If unsure, say Y.
+> >  
+> > +config VIRTIO_PMEM
+> > +	tristate "Support for virtio pmem driver"
+> > +	depends on VIRTIO
+> > +	depends on LIBNVDIMM
+> > +	help
+> > +	This driver provides access to virtio-pmem devices, storage devices
+> > +	that are mapped into the physical address space - similar to NVDIMMs
+> > +	 - with a virtio-based flushing interface.
+> > +
+> > +	If unsure, say M.
+> 
+> <beep>
+> from Documentation/process/coding-style.rst:
+> "Lines under a ``config`` definition
+> are indented with one tab, while help text is indented an additional two
+> spaces."
+
+ah... I changed help text and 'checkpatch' did not say anything :( .
+
+Will wait for Dan, If its possible to add two spaces to help text while applying
+the series.
+
+Thanks,
+Pankaj
+  
+
+> 
+> > +
+> >  config VIRTIO_BALLOON
+> >  	tristate "Virtio balloon driver"
+> >  	depends on VIRTIO
+> 
+> thanks.
+> --
+> ~Randy
+> 
+> 
