@@ -2,434 +2,412 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E7771E718
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 05:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F7A1E743
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 06:02:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbfEODWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 May 2019 23:22:31 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:3010 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726218AbfEODWa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 May 2019 23:22:30 -0400
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id 4A5B075BAE43DBE82259;
-        Wed, 15 May 2019 11:22:27 +0800 (CST)
-Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
- DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 15 May 2019 11:22:27 +0800
-Received: from [10.134.22.195] (10.134.22.195) by
- dggeme763-chm.china.huawei.com (10.3.19.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Wed, 15 May 2019 11:22:26 +0800
-Subject: Re: [RFC PATCH 1/1] f2fs-dev: ioctl for removing a range from F2FS
-To:     sunqiuyang <sunqiuyang@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <miaoxie@huawei.com>, <fangwei1@huawei.com>
-References: <20190221051517.48644-1-sunqiuyang@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <8ea8a66d-0ce6-cf7b-acce-5b4a39b2d0c9@huawei.com>
-Date:   Wed, 15 May 2019 11:22:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726330AbfEOECh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 May 2019 00:02:37 -0400
+Received: from mga17.intel.com ([192.55.52.151]:26399 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725875AbfEOECh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 May 2019 00:02:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 May 2019 21:02:37 -0700
+X-ExtLoop1: 1
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga005.fm.intel.com with ESMTP; 14 May 2019 21:02:36 -0700
+Subject: [PATCH] dax: Arrange for dax_supported check to span multiple
+ devices
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     snitzer@redhat.com
+Cc:     stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Pankaj Gupta <pagupta@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Date:   Tue, 14 May 2019 20:48:49 -0700
+Message-ID: <155789172402.748145.11853718580748830476.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-In-Reply-To: <20190221051517.48644-1-sunqiuyang@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-ClientProxiedBy: dggeme718-chm.china.huawei.com (10.1.199.114) To
- dggeme763-chm.china.huawei.com (10.3.19.109)
-X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sorry for the long delay. :P
+Pankaj reports that starting with commit ad428cdb525a "dax: Check the
+end of the block-device capacity with dax_direct_access()" device-mapper
+no longer allows dax operation. This results from the stricter checks in
+__bdev_dax_supported() that validate that the start and end of a
+block-device map to the same 'pagemap' instance.
 
-On 2019/2/21 13:15, sunqiuyang wrote:
-> From: Qiuyang Sun <sunqiuyang@huawei.com>
-> 
-> This ioctl shrinks a given length (aligned to sections) from end of the
-> main area. Any cursegs and valid blocks will be moved out before
-> invalidating the range.
-> 
-> This feature can be used for adjusting partition sizes online.
-> 
-> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
-> ---
->  fs/f2fs/f2fs.h    |  9 ++++++
->  fs/f2fs/file.c    | 28 +++++++++++++++++++
->  fs/f2fs/gc.c      | 83 +++++++++++++++++++++++++++++++++++++++++++++++++++++--
->  fs/f2fs/segment.c | 47 +++++++++++++++++++++++--------
->  fs/f2fs/segment.h |  1 +
->  fs/f2fs/super.c   |  1 +
->  6 files changed, 156 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 8c69e12..fd7f3ba 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -406,6 +406,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
->  #define F2FS_IOC_SET_PIN_FILE		_IOW(F2FS_IOCTL_MAGIC, 13, __u32)
->  #define F2FS_IOC_GET_PIN_FILE		_IOR(F2FS_IOCTL_MAGIC, 14, __u32)
->  #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
-> +#define F2FS_IOC_RESIZE_FROM_END	_IOWR(F2FS_IOCTL_MAGIC, 16,	\
+Teach the dax-core and device-mapper to validate the 'pagemap' on a
+per-target basis. This is accomplished by refactoring the
+bdev_dax_supported() internals into generic_fsdax_supported() which
+takes a sector range to validate. Consequently generic_fsdax_supported()
+is suitable to be used in a device-mapper ->iterate_devices() callback.
+A new ->dax_supported() operation is added to allow composite devices to
+split and route upper-level bdev_dax_supported() requests.
 
-F2FS_IOC_SHRINK_RESIZE
+Fixes: ad428cdb525a ("dax: Check the end of the block-device...")
+Cc: <stable@vger.kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Mike Snitzer <snitzer@redhat.com>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Reported-by: Pankaj Gupta <pagupta@redhat.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+Hi Mike,
 
-_IOW()
+Another day another new dax operation to allow device-mapper to better
+scope dax operations.
 
-> +						struct f2fs_resize_from_end)
->  
->  #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
->  #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
-> @@ -457,6 +459,10 @@ struct f2fs_flush_device {
->  	u32 segments;		/* # of segments to flush */
->  };
->  
-> +struct f2fs_resize_from_end {
+Let me know if the device-mapper changes look sane. This passes a new
+unit test that indeed fails on current mainline.
 
-f2fs_resize_context or f2fs_resize_param?
+https://github.com/pmem/ndctl/blob/device-mapper-pending/test/dm.sh
 
-> +	u64 len;		/* bytes to shrink */
-> +};
-> +
->  /* for inline stuff */
->  #define DEF_INLINE_RESERVED_SIZE	1
->  static inline int get_extra_isize(struct inode *inode);
-> @@ -1226,6 +1232,7 @@ struct f2fs_sb_info {
->  	unsigned int segs_per_sec;		/* segments per section */
->  	unsigned int secs_per_zone;		/* sections per zone */
->  	unsigned int total_sections;		/* total section count */
-> +	unsigned int new_total_sections;	/* for resize from end */
+ drivers/dax/super.c          |   88 +++++++++++++++++++++++++++---------------
+ drivers/md/dm-table.c        |   17 +++++---
+ drivers/md/dm.c              |   20 ++++++++++
+ drivers/md/dm.h              |    1 
+ drivers/nvdimm/pmem.c        |    1 
+ drivers/s390/block/dcssblk.c |    1 
+ include/linux/dax.h          |   19 +++++++++
+ 7 files changed, 110 insertions(+), 37 deletions(-)
 
-Maybe
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index 0a339b85133e..ec2f2262e3a9 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -73,22 +73,12 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
+ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
+ #endif
+ 
+-/**
+- * __bdev_dax_supported() - Check if the device supports dax for filesystem
+- * @bdev: block device to check
+- * @blocksize: The block size of the device
+- *
+- * This is a library function for filesystems to check if the block device
+- * can be mounted with dax option.
+- *
+- * Return: true if supported, false if unsupported
+- */
+-bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
++bool generic_fsdax_supported(struct dax_device *dax_dev,
++		struct block_device *bdev, int blocksize, sector_t start,
++		sector_t sectors)
+ {
+-	struct dax_device *dax_dev;
+ 	bool dax_enabled = false;
+ 	pgoff_t pgoff, pgoff_end;
+-	struct request_queue *q;
+ 	char buf[BDEVNAME_SIZE];
+ 	void *kaddr, *end_kaddr;
+ 	pfn_t pfn, end_pfn;
+@@ -102,21 +92,14 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 		return false;
+ 	}
+ 
+-	q = bdev_get_queue(bdev);
+-	if (!q || !blk_queue_dax(q)) {
+-		pr_debug("%s: error: request queue doesn't support dax\n",
+-				bdevname(bdev, buf));
+-		return false;
+-	}
+-
+-	err = bdev_dax_pgoff(bdev, 0, PAGE_SIZE, &pgoff);
++	err = bdev_dax_pgoff(bdev, start, PAGE_SIZE, &pgoff);
+ 	if (err) {
+ 		pr_debug("%s: error: unaligned partition for dax\n",
+ 				bdevname(bdev, buf));
+ 		return false;
+ 	}
+ 
+-	last_page = PFN_DOWN(i_size_read(bdev->bd_inode) - 1) * 8;
++	last_page = PFN_DOWN((start + sectors - 1) * 512) * PAGE_SIZE / 512;
+ 	err = bdev_dax_pgoff(bdev, last_page, PAGE_SIZE, &pgoff_end);
+ 	if (err) {
+ 		pr_debug("%s: error: unaligned partition for dax\n",
+@@ -124,20 +107,11 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 		return false;
+ 	}
+ 
+-	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+-	if (!dax_dev) {
+-		pr_debug("%s: error: device does not support dax\n",
+-				bdevname(bdev, buf));
+-		return false;
+-	}
+-
+ 	id = dax_read_lock();
+ 	len = dax_direct_access(dax_dev, pgoff, 1, &kaddr, &pfn);
+ 	len2 = dax_direct_access(dax_dev, pgoff_end, 1, &end_kaddr, &end_pfn);
+ 	dax_read_unlock(id);
+ 
+-	put_dax(dax_dev);
+-
+ 	if (len < 1 || len2 < 1) {
+ 		pr_debug("%s: error: dax access failed (%ld)\n",
+ 				bdevname(bdev, buf), len < 1 ? len : len2);
+@@ -178,6 +152,49 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 	}
+ 	return true;
+ }
++EXPORT_SYMBOL_GPL(generic_fsdax_supported);
++
++/**
++ * __bdev_dax_supported() - Check if the device supports dax for filesystem
++ * @bdev: block device to check
++ * @blocksize: The block size of the device
++ *
++ * This is a library function for filesystems to check if the block device
++ * can be mounted with dax option.
++ *
++ * Return: true if supported, false if unsupported
++ */
++bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
++{
++	struct dax_device *dax_dev;
++	struct request_queue *q;
++	char buf[BDEVNAME_SIZE];
++	bool ret;
++	int id;
++
++	q = bdev_get_queue(bdev);
++	if (!q || !blk_queue_dax(q)) {
++		pr_debug("%s: error: request queue doesn't support dax\n",
++				bdevname(bdev, buf));
++		return false;
++	}
++
++	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
++	if (!dax_dev) {
++		pr_debug("%s: error: device does not support dax\n",
++				bdevname(bdev, buf));
++		return false;
++	}
++
++	id = dax_read_lock();
++	ret = dax_supported(dax_dev, bdev, blocksize, 0,
++			i_size_read(bdev->bd_inode) / 512);
++	dax_read_unlock(id);
++
++	put_dax(dax_dev);
++
++	return ret;
++}
+ EXPORT_SYMBOL_GPL(__bdev_dax_supported);
+ #endif
+ 
+@@ -303,6 +320,15 @@ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
+ }
+ EXPORT_SYMBOL_GPL(dax_direct_access);
+ 
++bool dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
++		int blocksize, sector_t start, sector_t len)
++{
++	if (!dax_alive(dax_dev))
++		return false;
++
++	return dax_dev->ops->dax_supported(dax_dev, bdev, blocksize, start, len);
++}
++
+ size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+ 		size_t bytes, struct iov_iter *i)
+ {
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index cde3b49b2a91..350cf0451456 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -880,13 +880,17 @@ void dm_table_set_type(struct dm_table *t, enum dm_queue_mode type)
+ }
+ EXPORT_SYMBOL_GPL(dm_table_set_type);
+ 
++/* validate the dax capability of the target device span */
+ static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
+-			       sector_t start, sector_t len, void *data)
++				       sector_t start, sector_t len, void *data)
+ {
+-	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
++	int blocksize = *(int *) data;
++
++	return generic_fsdax_supported(dev->dax_dev, dev->bdev, blocksize,
++			start, len);
+ }
+ 
+-static bool dm_table_supports_dax(struct dm_table *t)
++bool dm_table_supports_dax(struct dm_table *t, int blocksize)
+ {
+ 	struct dm_target *ti;
+ 	unsigned i;
+@@ -899,7 +903,8 @@ static bool dm_table_supports_dax(struct dm_table *t)
+ 			return false;
+ 
+ 		if (!ti->type->iterate_devices ||
+-		    !ti->type->iterate_devices(ti, device_supports_dax, NULL))
++		    !ti->type->iterate_devices(ti, device_supports_dax,
++			    &blocksize))
+ 			return false;
+ 	}
+ 
+@@ -979,7 +984,7 @@ static int dm_table_determine_type(struct dm_table *t)
+ verify_bio_based:
+ 		/* We must use this table as bio-based */
+ 		t->type = DM_TYPE_BIO_BASED;
+-		if (dm_table_supports_dax(t) ||
++		if (dm_table_supports_dax(t, PAGE_SIZE) ||
+ 		    (list_empty(devices) && live_md_type == DM_TYPE_DAX_BIO_BASED)) {
+ 			t->type = DM_TYPE_DAX_BIO_BASED;
+ 		} else {
+@@ -1905,7 +1910,7 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 	}
+ 	blk_queue_write_cache(q, wc, fua);
+ 
+-	if (dm_table_supports_dax(t))
++	if (dm_table_supports_dax(t, PAGE_SIZE))
+ 		blk_queue_flag_set(QUEUE_FLAG_DAX, q);
+ 	else
+ 		blk_queue_flag_clear(QUEUE_FLAG_DAX, q);
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 043f0761e4a0..c28787f5357b 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1105,6 +1105,25 @@ static long dm_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+ 	return ret;
+ }
+ 
++static bool dm_dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
++		int blocksize, sector_t start, sector_t len)
++{
++	struct mapped_device *md = dax_get_private(dax_dev);
++	struct dm_table *map;
++	int srcu_idx;
++	bool ret;
++
++	map = dm_get_live_table(md, &srcu_idx);
++	if (!map)
++		return false;
++
++	ret = dm_table_supports_dax(map, blocksize);
++
++	dm_put_live_table(md, srcu_idx);
++
++	return ret;
++}
++
+ static size_t dm_dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff,
+ 				    void *addr, size_t bytes, struct iov_iter *i)
+ {
+@@ -3192,6 +3211,7 @@ static const struct block_device_operations dm_blk_dops = {
+ 
+ static const struct dax_operations dm_dax_ops = {
+ 	.direct_access = dm_dax_direct_access,
++	.dax_supported = dm_dax_supported,
+ 	.copy_from_iter = dm_dax_copy_from_iter,
+ 	.copy_to_iter = dm_dax_copy_to_iter,
+ };
+diff --git a/drivers/md/dm.h b/drivers/md/dm.h
+index 2d539b82ec08..e5e240bfa2d0 100644
+--- a/drivers/md/dm.h
++++ b/drivers/md/dm.h
+@@ -78,6 +78,7 @@ void dm_unlock_md_type(struct mapped_device *md);
+ void dm_set_md_type(struct mapped_device *md, enum dm_queue_mode type);
+ enum dm_queue_mode dm_get_md_type(struct mapped_device *md);
+ struct target_type *dm_get_immutable_target_type(struct mapped_device *md);
++bool dm_table_supports_dax(struct dm_table *t, int blocksize);
+ 
+ int dm_setup_md_queue(struct mapped_device *md, struct dm_table *t);
+ 
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 0279eb1da3ef..845c5b430cdd 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -295,6 +295,7 @@ static size_t pmem_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff,
+ 
+ static const struct dax_operations pmem_dax_ops = {
+ 	.direct_access = pmem_dax_direct_access,
++	.dax_supported = generic_fsdax_supported,
+ 	.copy_from_iter = pmem_copy_from_iter,
+ 	.copy_to_iter = pmem_copy_to_iter,
+ };
+diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
+index 4e8aedd50cb0..d04d4378ca50 100644
+--- a/drivers/s390/block/dcssblk.c
++++ b/drivers/s390/block/dcssblk.c
+@@ -59,6 +59,7 @@ static size_t dcssblk_dax_copy_to_iter(struct dax_device *dax_dev,
+ 
+ static const struct dax_operations dcssblk_dax_ops = {
+ 	.direct_access = dcssblk_dax_direct_access,
++	.dax_supported = generic_fsdax_supported,
+ 	.copy_from_iter = dcssblk_dax_copy_from_iter,
+ 	.copy_to_iter = dcssblk_dax_copy_to_iter,
+ };
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 0dd316a74a29..f5544fc62319 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -19,6 +19,12 @@ struct dax_operations {
+ 	 */
+ 	long (*direct_access)(struct dax_device *, pgoff_t, long,
+ 			void **, pfn_t *);
++	/*
++	 * Validate whether this device is usable as an fsdax backing
++	 * device.
++	 */
++	bool (*dax_supported)(struct dax_device *, struct block_device *, int,
++			sector_t, sector_t);
+ 	/* copy_from_iter: required operation for fs-dax direct-i/o */
+ 	size_t (*copy_from_iter)(struct dax_device *, pgoff_t, void *, size_t,
+ 			struct iov_iter *);
+@@ -75,6 +81,10 @@ static inline bool bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 	return __bdev_dax_supported(bdev, blocksize);
+ }
+ 
++bool generic_fsdax_supported(struct dax_device *dax_dev,
++		struct block_device *bdev, int blocksize, sector_t start,
++		sector_t sectors);
++
+ static inline struct dax_device *fs_dax_get_by_host(const char *host)
+ {
+ 	return dax_get_by_host(host);
+@@ -99,6 +109,13 @@ static inline bool bdev_dax_supported(struct block_device *bdev,
+ 	return false;
+ }
+ 
++static inline bool generic_fsdax_supported(struct dax_device *dax_dev,
++		struct block_device *bdev, int blocksize, sector_t start,
++		sector_t sectors)
++{
++	return false;
++}
++
+ static inline struct dax_device *fs_dax_get_by_host(const char *host)
+ {
+ 	return NULL;
+@@ -142,6 +159,8 @@ bool dax_alive(struct dax_device *dax_dev);
+ void *dax_get_private(struct dax_device *dax_dev);
+ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
+ 		void **kaddr, pfn_t *pfn);
++bool dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
++		int blocksize, sector_t start, sector_t len);
+ size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+ 		size_t bytes, struct iov_iter *i);
+ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
 
-unsigned int current_total_sections;	/* for shrink resize */
-
-or last_total_sections.
-
->  	unsigned int total_node_count;		/* total node block count */
->  	unsigned int total_valid_node_count;	/* valid node block count */
->  	loff_t max_file_blocks;			/* max block index of file */
-> @@ -3008,6 +3015,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
->  int f2fs_disable_cp_again(struct f2fs_sb_info *sbi);
->  void f2fs_release_discard_addrs(struct f2fs_sb_info *sbi);
->  int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
-> +void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type);
->  void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi);
->  int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range);
->  bool f2fs_exist_trim_candidates(struct f2fs_sb_info *sbi,
-> @@ -3146,6 +3154,7 @@ int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
->  int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
->  			unsigned int segno);
->  void f2fs_build_gc_manager(struct f2fs_sb_info *sbi);
-> +int f2fs_resize_from_end(struct f2fs_sb_info *sbi, size_t resize_len);
-
-f2fs_shrink_resize()
-
->  
->  /*
->   * recovery.c
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index b8f5d12..29e70fd 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -2968,6 +2968,32 @@ static int f2fs_ioc_precache_extents(struct file *filp, unsigned long arg)
->  	return f2fs_precache_extents(file_inode(filp));
->  }
->  
-> +static int f2fs_ioc_resize_from_end(struct file *filp, unsigned long arg)
-
-f2fs_ioc_shrink_resize()
-
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(filp));
-> +	struct f2fs_resize_from_end param;
-> +	int ret;
-> +
-> +	if (!capable(CAP_SYS_ADMIN))
-> +		return -EPERM;
-> +
-> +	if (f2fs_readonly(sbi->sb))
-> +		return -EROFS;
-> +
-> +	if (copy_from_user(&param, (struct f2fs_resize_from_end __user *)arg,
-> +				sizeof(param)))
-> +		return -EFAULT;
-> +
-> +	ret = mnt_want_write_file(filp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = f2fs_resize_from_end(sbi, param.len);
-> +	mnt_drop_write_file(filp);
-> +
-> +	return ret;
-> +}
-> +
->  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  {
->  	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
-> @@ -3024,6 +3050,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  		return f2fs_ioc_set_pin_file(filp, arg);
->  	case F2FS_IOC_PRECACHE_EXTENTS:
->  		return f2fs_ioc_precache_extents(filp, arg);
-> +	case F2FS_IOC_RESIZE_FROM_END:
-> +		return f2fs_ioc_resize_from_end(filp, arg);
->  	default:
->  		return -ENOTTY;
->  	}
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 195cf0f..3877e99 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -311,7 +311,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->  	struct sit_info *sm = SIT_I(sbi);
->  	struct victim_sel_policy p;
->  	unsigned int secno, last_victim;
-> -	unsigned int last_segment = MAIN_SEGS(sbi);
-> +	unsigned int last_segment = NEW_MAIN_SECS(sbi) * sbi->segs_per_sec;
->  	unsigned int nsearched = 0;
->  
->  	mutex_lock(&dirty_i->seglist_lock);
-> @@ -404,7 +404,8 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->  				sm->last_victim[p.gc_mode] = last_victim + 1;
->  			else
->  				sm->last_victim[p.gc_mode] = segno + 1;
-> -			sm->last_victim[p.gc_mode] %= MAIN_SEGS(sbi);
-> +			sm->last_victim[p.gc_mode] %=
-> +				(NEW_MAIN_SECS(sbi) * sbi->segs_per_sec);
->  			break;
->  		}
->  	}
-> @@ -1350,3 +1351,81 @@ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
->  		SIT_I(sbi)->last_victim[ALLOC_NEXT] =
->  				GET_SEGNO(sbi, FDEV(0).end_blk) + 1;
->  }
-> +
-> +static void free_segment_range(struct f2fs_sb_info *sbi, unsigned int start,
-> +							unsigned int end)
-> +{
-> +	int type;
-> +	unsigned int segno, next_inuse;
-> +	struct gc_inode_list gc_list = {
-> +		.ilist = LIST_HEAD_INIT(gc_list.ilist),
-> +		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
-> +	};
-> +
-> +	/* Move out cursegs from the target range */
-> +	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_TYPE; type++) {
-> +		segno = CURSEG_I(sbi, type)->segno;
-> +		if (segno >= start && segno <= end)
-> +			allocate_segment_for_resize(sbi, type);
-> +	}
-> +
-> +	/* do GC to move out valid blocks in the range */
-> +	mutex_lock(&sbi->gc_mutex);
-> +	for (segno = start; segno <= end; segno += sbi->segs_per_sec)
-> +		do_garbage_collect(sbi, segno, &gc_list, FG_GC);
-
-Should consider error handling here.
-
-> +
-> +	mutex_unlock(&sbi->gc_mutex);
-> +	put_gc_inode(&gc_list);
-> +
-> +	f2fs_sync_fs(sbi->sb, 1);
-
-Ditto.
-
-> +
-> +	next_inuse = find_next_inuse(FREE_I(sbi), end + 1, start);
-> +	if (next_inuse <= end) {
-> +		f2fs_msg(sbi->sb, KERN_ERR,
-> +			"segno %u should be free but still inuse!", next_inuse);
-> +		f2fs_bug_on(sbi, 1);
-> +	}
-> +}
-> +
-> +int f2fs_resize_from_end(struct f2fs_sb_info *sbi, size_t resize_len)
-> +{
-> +	unsigned int section_size = F2FS_BLKSIZE * BLKS_PER_SEC(sbi);
-> +	unsigned int secs = (resize_len + section_size - 1) / section_size;
-> +	int gc_mode;
-> +
-> +	if (secs * BLKS_PER_SEC(sbi) + valid_user_blocks(sbi) +
-> +		sbi->current_reserved_blocks + sbi->unusable_block_count +
-> +		F2FS_OPTION(sbi).root_reserved_blocks > sbi->user_block_count)
-
-Will the calculation overflow if secs is too large?
-
-> +		return -ENOSPC;
-> +
-> +	mutex_lock(&DIRTY_I(sbi)->seglist_lock);
-> +	NEW_MAIN_SECS(sbi) = MAIN_SECS(sbi) - secs;
-> +	for (gc_mode = 0; gc_mode < MAX_GC_POLICY; gc_mode++)
-> +		if (SIT_I(sbi)->last_victim[gc_mode] >=
-> +					NEW_MAIN_SECS(sbi) * sbi->segs_per_sec)
-> +			SIT_I(sbi)->last_victim[gc_mode] = 0;
-> +	mutex_unlock(&DIRTY_I(sbi)->seglist_lock);
-> +
-> +	free_segment_range(sbi, NEW_MAIN_SECS(sbi) * sbi->segs_per_sec,
-> +			MAIN_SEGS(sbi) - 1);
-
-Error handling here.
-
-> +
-> +	/* Update FS metadata */
-> +	SM_I(sbi)->segment_count -= secs * sbi->segs_per_sec;
-> +	MAIN_SECS(sbi) = NEW_MAIN_SECS(sbi);
-> +	MAIN_SEGS(sbi) = MAIN_SECS(sbi) * sbi->segs_per_sec;
-> +	sbi->user_block_count -= secs * BLKS_PER_SEC(sbi);
-> +	sbi->ckpt->user_block_count = cpu_to_le64(sbi->user_block_count);
-> +	FREE_I(sbi)->free_sections -= secs;
-> +	FREE_I(sbi)->free_segments -= secs * sbi->segs_per_sec;
-> +
-> +	/* Update superblock */
-> +	F2FS_RAW_SUPER(sbi)->section_count = cpu_to_le32(MAIN_SECS(sbi));
-> +	F2FS_RAW_SUPER(sbi)->segment_count = cpu_to_le32(le32_to_cpu(
-> +		F2FS_RAW_SUPER(sbi)->segment_count) - secs * sbi->segs_per_sec);
-> +	F2FS_RAW_SUPER(sbi)->segment_count_main = cpu_to_le32(MAIN_SEGS(sbi));
-> +	F2FS_RAW_SUPER(sbi)->block_count = cpu_to_le32(le32_to_cpu(
-> +		F2FS_RAW_SUPER(sbi)->block_count) - secs * BLKS_PER_SEC(sbi));
-> +	f2fs_commit_super(sbi, false);
-
-Ditto.
-
-> +
-> +	return 0;
-> +}
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 4aef183..294074c 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -2348,7 +2348,7 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
->  {
->  	struct free_segmap_info *free_i = FREE_I(sbi);
->  	unsigned int segno, secno, zoneno;
-> -	unsigned int total_zones = MAIN_SECS(sbi) / sbi->secs_per_zone;
-> +	unsigned int total_zones = NEW_MAIN_SECS(sbi) / sbi->secs_per_zone;
->  	unsigned int hint = GET_SEC_FROM_SEG(sbi, *newseg);
->  	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
->  	unsigned int left_start = hint;
-> @@ -2365,12 +2365,13 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
->  			goto got_it;
->  	}
->  find_other_zone:
-> -	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
-> -	if (secno >= MAIN_SECS(sbi)) {
-> +	secno = find_next_zero_bit(free_i->free_secmap, NEW_MAIN_SECS(sbi),
-> +									hint);
-> +	if (secno >= NEW_MAIN_SECS(sbi)) {
->  		if (dir == ALLOC_RIGHT) {
->  			secno = find_next_zero_bit(free_i->free_secmap,
-> -							MAIN_SECS(sbi), 0);
-> -			f2fs_bug_on(sbi, secno >= MAIN_SECS(sbi));
-> +							NEW_MAIN_SECS(sbi), 0);
-> +			f2fs_bug_on(sbi, secno >= NEW_MAIN_SECS(sbi));
->  		} else {
->  			go_left = 1;
->  			left_start = hint - 1;
-> @@ -2385,8 +2386,8 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
->  			continue;
->  		}
->  		left_start = find_next_zero_bit(free_i->free_secmap,
-> -							MAIN_SECS(sbi), 0);
-> -		f2fs_bug_on(sbi, left_start >= MAIN_SECS(sbi));
-> +							NEW_MAIN_SECS(sbi), 0);
-> +		f2fs_bug_on(sbi, left_start >= NEW_MAIN_SECS(sbi));
->  		break;
->  	}
->  	secno = left_start;
-> @@ -2639,6 +2640,25 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
->  	stat_inc_seg_type(sbi, curseg);
->  }
->  
-> +void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type)
-> +{
-> +	struct curseg_info *curseg = CURSEG_I(sbi, type);
-> +	unsigned int old_segno = curseg->segno;
-> +
-> +	if (f2fs_need_SSR(sbi) && get_ssr_segment(sbi, type))
-
-If section size is large, and we set migration_granularity to 1, we may select
-sbi->next_victim_seg[BG_GC/FG_GC] as candidate instead of searching new one in
-->get_victim().
-
-After then, new allocated segment may still locate in shrinking range.
-
-Thanks,
-
-> +		change_curseg(sbi, type);
-> +	else
-> +		new_curseg(sbi, type, true);
-> +
-> +	stat_inc_seg_type(sbi, curseg);
-> +
-> +	if (get_valid_blocks(sbi, old_segno, false) == 0)
-> +		__set_test_and_free(sbi, old_segno);
-> +	f2fs_msg(sbi->sb, KERN_NOTICE,
-> +		"For resize: curseg of type %d: %u ==> %u",
-> +		type, old_segno, curseg->segno);
-> +}
-> +
->  void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
->  {
->  	struct curseg_info *curseg;
-> @@ -3738,6 +3758,12 @@ static void remove_sits_in_journal(struct f2fs_sb_info *sbi)
->  		bool dirtied;
->  
->  		segno = le32_to_cpu(segno_in_journal(journal, i));
-> +		if (segno >= MAIN_SEGS(sbi)) {
-> +			f2fs_msg(sbi->sb, KERN_NOTICE,
-> +				"Skip segno %u / %u in jnl!\n",
-> +				segno, MAIN_SEGS(sbi));
-> +			continue;
-> +		}
->  		dirtied = __mark_sit_entry_dirty(sbi, segno);
->  
->  		if (!dirtied)
-> @@ -4093,12 +4119,11 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
->  
->  		start = le32_to_cpu(segno_in_journal(journal, i));
->  		if (start >= MAIN_SEGS(sbi)) {
-> -			f2fs_msg(sbi->sb, KERN_ERR,
-> +			/* This may happen if the FS was once resized. */
-> +			f2fs_msg(sbi->sb, KERN_NOTICE,
->  					"Wrong journal entry on segno %u",
->  					start);
-> -			set_sbi_flag(sbi, SBI_NEED_FSCK);
-> -			err = -EINVAL;
-> -			break;
-> +			continue;
->  		}
->  
->  		se = &sit_i->sentries[start];
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 5c7ed04..54caf99 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -59,6 +59,7 @@
->  
->  #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
->  #define MAIN_SECS(sbi)	((sbi)->total_sections)
-> +#define NEW_MAIN_SECS(sbi)	((sbi)->new_total_sections)
->  
->  #define TOTAL_SEGS(sbi)							\
->  	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 3dc7f56..5cd2ced 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2713,6 +2713,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
->  	sbi->segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
->  	sbi->secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
->  	sbi->total_sections = le32_to_cpu(raw_super->section_count);
-> +	sbi->new_total_sections = sbi->total_sections;
->  	sbi->total_node_count =
->  		(le32_to_cpu(raw_super->segment_count_nat) / 2)
->  			* sbi->blocks_per_seg * NAT_ENTRY_PER_BLOCK;
-> 
