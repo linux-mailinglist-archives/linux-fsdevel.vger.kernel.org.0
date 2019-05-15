@@ -2,263 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4A731EC73
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 12:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62AEA1EE45
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 13:19:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726084AbfEOK5A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 May 2019 06:57:00 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:44579 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725953AbfEOK5A (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 May 2019 06:57:00 -0400
-Received: by mail-yw1-f65.google.com with SMTP id e74so950798ywe.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2019 03:56:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UmwdHt8AF7XZGV8P5GNOe8l9mGbHf0DiKhgi/565fMw=;
-        b=hcgTNOyAa86+YrsEmVJAUsIid5u+Qs3dhz18hzW2U9pA8u70K8Naoo7FgW0nHDMgNr
-         kxP84C3PRrgW+22i8JVKDmly8HiwKfPRM96t7WwYbwjY44typ6hPtfpRzymOPjtDUCmN
-         rGDsaXF5HudLy1+t00qCaghYfiUlKMc3FRuy732puw5BIwH1NLKz450NKUQFT/BiZNJ3
-         uAC3slu5QTv2A5BWVvkp+xIwC4nJChRWhRVT7T0nLtCUitPp8N2xrC+LiSY7o3bq/THj
-         Jbkf4bpgUob8iO1OuSwRz891EDsL0ChfN9R07nL3849J+Q3cC+zvpKie3KhaE/v09Nq4
-         HvIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UmwdHt8AF7XZGV8P5GNOe8l9mGbHf0DiKhgi/565fMw=;
-        b=FZ8OtexBnL0KeZs4c9/rjGGEUoXF7sEBXfoEKFczP6MlSRXoD5xqIps1tbZgvRZQt+
-         IkCaCzIt0Wvq1Mepyu7qhwvPFpNMdFmhzN1P+A5jM85lRMO1xjLlwHkTeLEI19taedhj
-         9c9wUT/ELHd3/qTv4p029i7+C5lMrYZE5NM80HqDozTGPkXWOszX04d+c585cgPXi91S
-         /afE/j31gPfRgWRxBAHuHtRGKchmXEpU8OW7udNb94X9o55QChZ2F5qDkKk3gkqORdoM
-         5NhfZAU/4Y/JAN5NoD4zZu9NIVLaH0T875P5RghKL2FWN2x38HWgaDsrr256ftj3O5C8
-         9G5Q==
-X-Gm-Message-State: APjAAAVPOfIyyOkekt0YUjbblg15HFFDMptrNEdQ2N1q6eCEJ2HRF7QD
-        On+SRMUFodR6A5rdXYExqOU+uKH85+Uk4ZwA3pI=
-X-Google-Smtp-Source: APXvYqx4KUKoXb2ghJmhxzOhfh4RD0rSGQbgEtXn8UWlWXllZNPTiSOjy3AMzXi0ELJPyjX+oAEPwzyKW6L+WZq5TQI=
-X-Received: by 2002:a81:9903:: with SMTP id q3mr19390811ywg.211.1557917819033;
- Wed, 15 May 2019 03:56:59 -0700 (PDT)
+        id S1730933AbfEOLTS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 May 2019 07:19:18 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32942 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730926AbfEOLTS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 May 2019 07:19:18 -0400
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 140A8AC54039E2847CA4;
+        Wed, 15 May 2019 12:19:16 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 15 May
+ 2019 12:19:06 +0100
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Arvind Sankar <nivedita@alum.mit.edu>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+CC:     Rob Landley <rob@landley.net>, Andy Lutomirski <luto@kernel.org>,
+        "Arvind Sankar" <niveditas98@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Linux API" <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        <initramfs@vger.kernel.org>,
+        "Silviu Vlasceanu" <Silviu.Vlasceanu@huawei.com>
+References: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
+ <20190512194322.GA71658@rani.riverdale.lan>
+ <3fe0e74b-19ca-6081-3afe-e05921b1bfe6@huawei.com>
+ <4f522e28-29c8-5930-5d90-e0086b503613@landley.net>
+ <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
+ <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
+ <1557861511.3378.19.camel@HansenPartnership.com>
+ <4da3dbda-bb76-5d71-d5c5-c03d98350ab0@landley.net>
+ <1557878052.2873.6.camel@HansenPartnership.com>
+ <20190515005221.GB88615@rani.riverdale.lan>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <a138af12-d983-453e-f0b2-661a80b7e837@huawei.com>
+Date:   Wed, 15 May 2019 13:19:04 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20190514221901.29125-1-amir73il@gmail.com> <20190514221901.29125-5-amir73il@gmail.com>
- <20190515082407.GD11965@quack2.suse.cz>
-In-Reply-To: <20190515082407.GD11965@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 15 May 2019 13:56:47 +0300
-Message-ID: <CAOQ4uxgP3BaEoYEHoCKHxeueG=eZjxfgD3=sJUfhqSk7xKV47g@mail.gmail.com>
-Subject: Re: [RFC][PATCH 4/4] fsnotify: move fsnotify_nameremove() hook out of d_delete()
-To:     Jan Kara <jack@suse.cz>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190515005221.GB88615@rani.riverdale.lan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 15, 2019 at 11:24 AM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 15-05-19 01:19:01, Amir Goldstein wrote:
-> > d_delete() was piggy backed for the fsnotify_nameremove() hook when
-> > in fact not all callers of d_delete() care about fsnotify events.
-> >
-> > For all callers of d_delete() that may be interested in fsnotify
-> > events, we made sure that parent dir and d_name are stable and
-> > we call the fsnotify_remove() hook before calling d_delete().
-> > Because of that, fsnotify_remove() does not need the safety measures
-> > that were in fsnotify_nameremove() to stabilize parent and name.
->
-> Looks good, some smaller comments below.
->
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/afs/dir_silly.c               |  5 ----
-> >  fs/btrfs/ioctl.c                 |  4 +++-
-> >  fs/configfs/dir.c                |  3 +++
-> >  fs/dcache.c                      |  2 --
-> >  fs/devpts/inode.c                |  1 +
-> >  fs/nfs/unlink.c                  |  6 -----
-> >  fs/notify/fsnotify.c             | 41 --------------------------------
-> >  include/linux/fsnotify.h         |  7 +++++-
-> >  include/linux/fsnotify_backend.h |  4 ----
-> >  9 files changed, 13 insertions(+), 60 deletions(-)
-> >
-> > diff --git a/fs/afs/dir_silly.c b/fs/afs/dir_silly.c
-> > index f6f89fdab6b2..d3494825d08a 100644
-> > --- a/fs/afs/dir_silly.c
-> > +++ b/fs/afs/dir_silly.c
-> > @@ -57,11 +57,6 @@ static int afs_do_silly_rename(struct afs_vnode *dvnode, struct afs_vnode *vnode
-> >               if (test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags))
-> >                       afs_edit_dir_add(dvnode, &new->d_name,
-> >                                        &vnode->fid, afs_edit_dir_for_silly_1);
-> > -
-> > -             /* vfs_unlink and the like do not issue this when a file is
-> > -              * sillyrenamed, so do it here.
-> > -              */
-> > -             fsnotify_nameremove(old, 0);
-> >       }
-> >
-> >       _leave(" = %d", ret);
->
-> This changes the behavior when rename happens to overwrite a file, doesn't
-> it? It is more consistent that way and I don't think anybody depends on it
-> so I agree but it might deserve a comment in the changelog.
+On 5/15/2019 2:52 AM, Arvind Sankar wrote:
+> On Tue, May 14, 2019 at 04:54:12PM -0700, James Bottomley wrote:
+>> On Tue, 2019-05-14 at 18:39 -0500, Rob Landley wrote:
+>>> On 5/14/19 2:18 PM, James Bottomley wrote:
+>>>>> I think Rob is right here.  If /init was statically built into
+>>>>> the kernel image, it has no more ability to compromise the kernel
+>>>>> than anything else in the kernel.  What's the problem here?
+>>>>
+>>>> The specific problem is that unless you own the kernel signing key,
+>>>> which is really untrue for most distribution consumers because the
+>>>> distro owns the key, you cannot build the initrd statically into
+>>>> the kernel.  You can take the distro signed kernel, link it with
+>>>> the initrd then resign the combination with your key, provided you
+>>>> insert your key into the MoK variables as a trusted secure boot
+>>>> key, but the distros have been unhappy recommending this as
+>>>> standard practice.
+>>>>
+>>>> If our model for security is going to be to link the kernel and the
+>>>> initrd statically to give signature protection over the aggregate
+>>>> then we need to figure out how to execute this via the distros.  If
+>>>> we accept that the split model, where the distro owns and signs the
+>>>> kernel but the machine owner builds and is responsible for the
+>>>> initrd, then we need to explore split security models like this
+>>>> proposal.
+>>>
+>>> You can have a built-in and an external initrd? The second extracts
+>>> over the first? (I know because once upon a time conflicting files
+>>> would append. It sounds like the desired behavior here is O_EXCL fail
+>>> and move on.)
+>>
+>> Technically yes, because the first initrd could find the second by some
+>> predefined means, extract it to a temporary directory and do a
+>> pivot_root() and then the second would do some stuff, find the real
+>> root and do a pivot_root() again.  However, while possible, wouldn't it
+>> just add to the rendezvous complexity without adding any benefits? even
+>> if the first initrd is built and signed by the distro and the second is
+>> built by you, the first has to verify the second somehow.  I suppose
+>> the second could be tar extracted, which would add xattrs, if that's
+>> the goal?
+>>
+>> James
+>>
+> You can specify multiple initrd's to the boot loader, and they get
+> loaded in sequence into memory and parsed by the kernel before /init is
+> launched. Currently I believe later ones will overwrite the earlier
+> ones, which is why we've been talking about adding an option to prevent
+> that. You don't have to mess with manually finding/parsing initramfs's
+> which wouldn't even be feasible since you may not have the drivers
+> loaded yet to access the device/filesystem on which they live.
+> 
+> Once that's done, the embedded /init is just going to do in userspace
+> wht the current patch does in the kernel. So all the files in the
+> external initramfs(es) would need to have IMA signatures via the special
+> xattr file.
 
-Right. Good spotting. This is very inconsistent...
+So, the scheme you are proposing is not equivalent: using the distro key
+to verify signatures, compared to adding a new user key to verify the
+initramfs he builds. Why would it be necessary for the user to share
+responsibility with the distro, if the only files he uses come from the
+distro?
 
->
-> > diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
-> > index 591e82ba443c..78566002234a 100644
-> > --- a/fs/configfs/dir.c
-> > +++ b/fs/configfs/dir.c
-> > @@ -1797,6 +1798,7 @@ void configfs_unregister_group(struct config_group *group)
-> >       configfs_detach_group(&group->cg_item);
-> >       d_inode(dentry)->i_flags |= S_DEAD;
-> >       dont_mount(dentry);
-> > +     fsnotify_remove(d_inode(parent), dentry);
-> >       d_delete(dentry);
-> >       inode_unlock(d_inode(parent));
-> >
-> > @@ -1925,6 +1927,7 @@ void configfs_unregister_subsystem(struct configfs_subsystem *subsys)
-> >       configfs_detach_group(&group->cg_item);
-> >       d_inode(dentry)->i_flags |= S_DEAD;
-> >       dont_mount(dentry);
-> > +     fsnotify_remove(d_inode(root), dentry);
-> >       inode_unlock(d_inode(dentry));
-> >
-> >       d_delete(dentry);
->
-> Is his really needed? We have a call chain:
->  configfs_detach_group()
->    configfs_detach_item()
->      configfs_remove_dir()
->        remove_dir()
->          simple_rmdir()
->
-> Ah, but this is the special configfs treatment you were speaking about as
-> configfs_detach_group() can get called also from vfs_rmdir(). I see. But
-> please separate this into a special patch with a good changelog.
 
-OK. I prefer a separate patch per filesystem even for trivial cases like
-btrfs, but in order to do that I need to use the empty hook technique.
-I will try to convince you in favor of empty hook in reply to your comment.
+> Note that if you want the flexibility to be able to load one or both of
+> two external initramfs's, the current in-kernel proposal wouldn't be
+> enough -- the xattr specification would have to be more flexible (eg
+> reading .xattr-list* to allow each initramfs to specifiy its own
+> xattrs. This sort of enhancement would be much easier to handle with the
+> userspace variant.
 
->
-> > diff --git a/fs/nfs/unlink.c b/fs/nfs/unlink.c
-> > index 52d533967485..0effeee28352 100644
-> > --- a/fs/nfs/unlink.c
-> > +++ b/fs/nfs/unlink.c
-> > @@ -396,12 +396,6 @@ nfs_complete_sillyrename(struct rpc_task *task, struct nfs_renamedata *data)
-> >               nfs_cancel_async_unlink(dentry);
-> >               return;
-> >       }
-> > -
-> > -     /*
-> > -      * vfs_unlink and the like do not issue this when a file is
-> > -      * sillyrenamed, so do it here.
-> > -      */
-> > -     fsnotify_nameremove(dentry, 0);
-> >  }
->
-> Ditto as for AFS I assume...
+Yes, the alternative solution is to parse .xattr-list at the time it is
+extracted. The .xattr-list of each initramfs will be processed. Also,
+the CPIO parser doesn't have to reopen the file after all other files
+have been extracted.
 
-Yap.
+Roberto
 
->
-> > diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> > index 8c7cbac7183c..5433e37fb0c5 100644
-> > --- a/fs/notify/fsnotify.c
-> > +++ b/fs/notify/fsnotify.c
-> > @@ -107,47 +107,6 @@ void fsnotify_sb_delete(struct super_block *sb)
-> >       fsnotify_clear_marks_by_sb(sb);
-> >  }
-> >
-> > -/*
-> > - * fsnotify_nameremove - a filename was removed from a directory
-> > - *
-> > - * This is mostly called under parent vfs inode lock so name and
-> > - * dentry->d_parent should be stable. However there are some corner cases where
-> > - * inode lock is not held. So to be on the safe side and be reselient to future
-> > - * callers and out of tree users of d_delete(), we do not assume that d_parent
-> > - * and d_name are stable and we use dget_parent() and
-> > - * take_dentry_name_snapshot() to grab stable references.
-> > - */
-> > -void fsnotify_nameremove(struct dentry *dentry, int isdir)
-> > -{
-> > -     struct dentry *parent;
-> > -     struct name_snapshot name;
-> > -     __u32 mask = FS_DELETE;
-> > -
-> > -     /* d_delete() of pseudo inode? (e.g. __ns_get_path() playing tricks) */
-> > -     if (IS_ROOT(dentry))
-> > -             return;
-> > -
-> > -     if (isdir)
-> > -             mask |= FS_ISDIR;
-> > -
-> > -     parent = dget_parent(dentry);
-> > -     /* Avoid unneeded take_dentry_name_snapshot() */
-> > -     if (!(d_inode(parent)->i_fsnotify_mask & FS_DELETE) &&
-> > -         !(dentry->d_sb->s_fsnotify_mask & FS_DELETE))
-> > -             goto out_dput;
-> > -
-> > -     take_dentry_name_snapshot(&name, dentry);
-> > -
-> > -     fsnotify(d_inode(parent), mask, d_inode(dentry), FSNOTIFY_EVENT_INODE,
-> > -              &name.name, 0);
-> > -
-> > -     release_dentry_name_snapshot(&name);
-> > -
-> > -out_dput:
-> > -     dput(parent);
-> > -}
-> > -EXPORT_SYMBOL(fsnotify_nameremove);
-> > -
-> >  /*
-> >   * Given an inode, first check if we care what happens to our children.  Inotify
-> >   * and dnotify both tell their parents about events.  If we care about any event
-> > diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> > index 455dff82595e..7f68cb9825dd 100644
-> > --- a/include/linux/fsnotify.h
-> > +++ b/include/linux/fsnotify.h
-> > @@ -158,10 +158,15 @@ static inline void fsnotify_vfsmount_delete(struct vfsmount *mnt)
-> >   */
-> >  static inline void fsnotify_remove(struct inode *dir, struct dentry *dentry)
-> >  {
-> > +     __u32 mask = FS_DELETE;
-> > +
-> >       /* Expected to be called before d_delete() */
-> >       WARN_ON_ONCE(d_is_negative(dentry));
-> >
-> > -     /* TODO: call fsnotify_dirent() */
-> > +     if (d_is_dir(dentry))
-> > +             mask |= FS_ISDIR;
-> > +
-> > +     fsnotify_dirent(dir, dentry, mask);
-> >  }
->
-> With folding patch 2 into this patch, I'd leave fsnotify changes for a
-> separate patch. I.e., keep fsnotify_nameremove() as is in this patch just
-> change its callsites and then simplify fsnotify_nameremove() in the next
-> patch.
->
-
-I agree we should leave simplifying fsontify hook to last patch, but
-I *would* like to add new hook name(s) and discard the old hook, because:
-1. I hate the moniker nameremove
-2. fsnotify_nameremove() args are incompatible with similar hooks
-3. Will allow me to write individual patches for btrfs, devpty, configfs
-4. I'd like to suggest fsnotify_rmdir/fsnotify_unlink to pair with
-    fsnotify_mkdir/fsnotify_create
-
-- I can start with empty hooks.
-- Then add new hooks to all chosen call sites
-- Then move fsnotify_nameremove() from d_delete() into
-  fsnotify_rmdir/fsnotify_unlink.
-- Finally, simply fsnotify_rmdir/fsnotify_unlink to use fsnotify_dirent()
-  and kill the complicated fsnotify_nameremove().
-
-Thanks,
-Amir.
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
