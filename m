@@ -2,127 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 051411FADC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 21:31:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B1B21FAB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 21:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727895AbfEOTaj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 May 2019 15:30:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35000 "EHLO mx1.redhat.com"
+        id S1728134AbfEOT3T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 May 2019 15:29:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53886 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727297AbfEOT1d (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 May 2019 15:27:33 -0400
+        id S1727560AbfEOT1e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 May 2019 15:27:34 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 80E0BC09AD11;
+        by mx1.redhat.com (Postfix) with ESMTPS id B3C34308ED53;
         Wed, 15 May 2019 19:27:33 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5C0D15D9CC;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B80B5D728;
         Wed, 15 May 2019 19:27:33 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id CBD3F225484; Wed, 15 May 2019 15:27:29 -0400 (EDT)
+        id D1897225485; Wed, 15 May 2019 15:27:29 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org, linux-nvdimm@lists.01.org
 Cc:     vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
         dgilbert@redhat.com, swhiteho@redhat.com
-Subject: [PATCH v2 16/30] virtio: Implement get_shm_region for MMIO transport
-Date:   Wed, 15 May 2019 15:27:01 -0400
-Message-Id: <20190515192715.18000-17-vgoyal@redhat.com>
+Subject: [PATCH v2 17/30] fuse, dax: add fuse_conn->dax_dev field
+Date:   Wed, 15 May 2019 15:27:02 -0400
+Message-Id: <20190515192715.18000-18-vgoyal@redhat.com>
 In-Reply-To: <20190515192715.18000-1-vgoyal@redhat.com>
 References: <20190515192715.18000-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 15 May 2019 19:27:33 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 15 May 2019 19:27:33 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Sebastien Boeuf <sebastien.boeuf@intel.com>
+From: Stefan Hajnoczi <stefanha@redhat.com>
 
-On MMIO a new set of registers is defined for finding SHM
-regions.  Add their definitions and use them to find the region.
+A struct dax_device instance is a prerequisite for the DAX filesystem
+APIs.  Let virtio_fs associate a dax_device with a fuse_conn.  Classic
+FUSE and CUSE set the pointer to NULL, disabling DAX.
 
-Signed-off-by: Sebastien Boeuf <sebastien.boeuf@intel.com>
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
 ---
- drivers/virtio/virtio_mmio.c     | 32 ++++++++++++++++++++++++++++++++
- include/uapi/linux/virtio_mmio.h | 11 +++++++++++
- 2 files changed, 43 insertions(+)
+ fs/fuse/cuse.c      | 3 ++-
+ fs/fuse/fuse_i.h    | 9 ++++++++-
+ fs/fuse/inode.c     | 9 ++++++---
+ fs/fuse/virtio_fs.c | 1 +
+ 4 files changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
-index d9dd0f789279..ac42520abd86 100644
---- a/drivers/virtio/virtio_mmio.c
-+++ b/drivers/virtio/virtio_mmio.c
-@@ -499,6 +499,37 @@ static const char *vm_bus_name(struct virtio_device *vdev)
- 	return vm_dev->pdev->name;
- }
+diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+index a509747153a7..417448f11f9f 100644
+--- a/fs/fuse/cuse.c
++++ b/fs/fuse/cuse.c
+@@ -504,7 +504,8 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+ 	 * Limit the cuse channel to requests that can
+ 	 * be represented in file->f_cred->user_ns.
+ 	 */
+-	fuse_conn_init(&cc->fc, file->f_cred->user_ns, &fuse_dev_fiq_ops, NULL);
++	fuse_conn_init(&cc->fc, file->f_cred->user_ns, NULL, &fuse_dev_fiq_ops,
++					NULL);
  
-+static bool vm_get_shm_region(struct virtio_device *vdev,
-+			      struct virtio_shm_region *region, u8 id)
-+{
-+	struct virtio_mmio_device *vm_dev = to_virtio_mmio_device(vdev);
-+	u64 len, addr;
+ 	fud = fuse_dev_alloc_install(&cc->fc);
+ 	if (!fud) {
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index f5cb4d40b83f..46fc1a454084 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -74,6 +74,9 @@ struct fuse_mount_data {
+ 	unsigned max_read;
+ 	unsigned blksize;
+ 
++	/* DAX device, may be NULL */
++	struct dax_device *dax_dev;
 +
-+	/* Select the region we're interested in */
-+	writel(id, vm_dev->base + VIRTIO_MMIO_SHM_SEL);
+ 	/* fuse input queue operations */
+ 	const struct fuse_iqueue_ops *fiq_ops;
+ 
+@@ -822,6 +825,9 @@ struct fuse_conn {
+ 
+ 	/** List of device instances belonging to this connection */
+ 	struct list_head devices;
 +
-+	/* Read the region size */
-+	len = (u64) readl(vm_dev->base + VIRTIO_MMIO_SHM_LEN_LOW);
-+	len |= (u64) readl(vm_dev->base + VIRTIO_MMIO_SHM_LEN_HIGH) << 32;
-+
-+	region->len = len;
-+
-+	/* Check if region length is -1. If that's the case, the shared memory
-+	 * region does not exist and there is no need to proceed further.
-+	 */
-+	if (len == ~(u64)0) {
-+		return false;
-+	}
-+
-+	/* Read the region base address */
-+	addr = (u64) readl(vm_dev->base + VIRTIO_MMIO_SHM_BASE_LOW);
-+	addr |= (u64) readl(vm_dev->base + VIRTIO_MMIO_SHM_BASE_HIGH) << 32;
-+
-+	region->addr = addr;
-+
-+	return true;
-+}
-+
- static const struct virtio_config_ops virtio_mmio_config_ops = {
- 	.get		= vm_get,
- 	.set		= vm_set,
-@@ -511,6 +542,7 @@ static const struct virtio_config_ops virtio_mmio_config_ops = {
- 	.get_features	= vm_get_features,
- 	.finalize_features = vm_finalize_features,
- 	.bus_name	= vm_bus_name,
-+	.get_shm_region = vm_get_shm_region,
++	/** DAX device, non-NULL if DAX is supported */
++	struct dax_device *dax_dev;
  };
  
+ static inline struct fuse_conn *get_fuse_conn_super(struct super_block *sb)
+@@ -1049,7 +1055,8 @@ struct fuse_conn *fuse_conn_get(struct fuse_conn *fc);
+  * Initialize fuse_conn
+  */
+ void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns,
+-		    const struct fuse_iqueue_ops *fiq_ops, void *fiq_priv);
++			struct dax_device *dax_dev,
++			const struct fuse_iqueue_ops *fiq_ops, void *fiq_priv);
  
-diff --git a/include/uapi/linux/virtio_mmio.h b/include/uapi/linux/virtio_mmio.h
-index c4b09689ab64..0650f91bea6c 100644
---- a/include/uapi/linux/virtio_mmio.h
-+++ b/include/uapi/linux/virtio_mmio.h
-@@ -122,6 +122,17 @@
- #define VIRTIO_MMIO_QUEUE_USED_LOW	0x0a0
- #define VIRTIO_MMIO_QUEUE_USED_HIGH	0x0a4
+ /**
+  * Release reference to fuse_conn
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 731a8a74d032..42f3ac5b7521 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -603,7 +603,8 @@ static void fuse_pqueue_init(struct fuse_pqueue *fpq)
+ }
  
-+/* Shared memory region id */
-+#define VIRTIO_MMIO_SHM_SEL             0x0ac
-+
-+/* Shared memory region length, 64 bits in two halves */
-+#define VIRTIO_MMIO_SHM_LEN_LOW         0x0b0
-+#define VIRTIO_MMIO_SHM_LEN_HIGH        0x0b4
-+
-+/* Shared memory region base address, 64 bits in two halves */
-+#define VIRTIO_MMIO_SHM_BASE_LOW        0x0b8
-+#define VIRTIO_MMIO_SHM_BASE_HIGH       0x0bc
-+
- /* Configuration atomicity value */
- #define VIRTIO_MMIO_CONFIG_GENERATION	0x0fc
+ void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns,
+-		    const struct fuse_iqueue_ops *fiq_ops, void *fiq_priv)
++			struct dax_device *dax_dev,
++			const struct fuse_iqueue_ops *fiq_ops, void *fiq_priv)
+ {
+ 	memset(fc, 0, sizeof(*fc));
+ 	spin_lock_init(&fc->lock);
+@@ -628,6 +629,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns,
+ 	atomic64_set(&fc->attr_version, 1);
+ 	get_random_bytes(&fc->scramble_key, sizeof(fc->scramble_key));
+ 	fc->pid_ns = get_pid_ns(task_active_pid_ns(current));
++	fc->dax_dev = dax_dev;
+ 	fc->user_ns = get_user_ns(user_ns);
+ 	fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
+ }
+@@ -1140,8 +1142,8 @@ int fuse_fill_super_common(struct super_block *sb,
+ 	if (!fc)
+ 		goto err;
  
+-	fuse_conn_init(fc, sb->s_user_ns, mount_data->fiq_ops,
+-		       mount_data->fiq_priv);
++	fuse_conn_init(fc, sb->s_user_ns, mount_data->dax_dev,
++		       mount_data->fiq_ops, mount_data->fiq_priv);
+ 	fc->release = fuse_free_conn;
+ 
+ 	fud = fuse_dev_alloc_install(fc);
+@@ -1243,6 +1245,7 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto err_fput;
+ 	__set_bit(FR_BACKGROUND, &init_req->flags);
+ 
++	d.dax_dev = NULL;
+ 	d.fiq_ops = &fuse_dev_fiq_ops;
+ 	d.fiq_priv = NULL;
+ 	d.fudptr = &file->private_data;
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index e76e0f5dce40..a23a1fb67217 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -866,6 +866,7 @@ static int virtio_fs_fill_super(struct super_block *sb, void *data,
+  		goto err_free_fuse_devs;
+ 	__set_bit(FR_BACKGROUND, &init_req->flags);
+ 
++	d.dax_dev = NULL;
+ 	d.fiq_ops = &virtio_fs_fiq_ops;
+ 	d.fiq_priv = fs;
+ 	d.fudptr = (void **)&fs->vqs[VQ_REQUEST].fud;
 -- 
 2.20.1
 
