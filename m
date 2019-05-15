@@ -2,244 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E70A1FBCE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 22:53:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C18381FC12
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 23:07:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbfEOUxJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 May 2019 16:53:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37800 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726985AbfEOUxJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 May 2019 16:53:09 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C8B8B309264F;
-        Wed, 15 May 2019 20:53:07 +0000 (UTC)
-Received: from [10.36.116.133] (ovpn-116-133.ams2.redhat.com [10.36.116.133])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5C08460BE5;
-        Wed, 15 May 2019 20:52:54 +0000 (UTC)
-Subject: Re: [PATCH v9 2/7] virtio-pmem: Add virtio pmem driver
-From:   David Hildenbrand <david@redhat.com>
-To:     Pankaj Gupta <pagupta@redhat.com>, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, mst@redhat.com
-Cc:     dan.j.williams@intel.com, zwisler@kernel.org,
-        vishal.l.verma@intel.com, dave.jiang@intel.com,
-        jasowang@redhat.com, willy@infradead.org, rjw@rjwysocki.net,
-        hch@infradead.org, lenb@kernel.org, jack@suse.cz, tytso@mit.edu,
-        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
-        lcapitulino@redhat.com, kwolf@redhat.com, imammedo@redhat.com,
-        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
-        stefanha@redhat.com, aarcange@redhat.com, david@fromorbit.com,
-        cohuck@redhat.com, xiaoguangrong.eric@gmail.com,
-        pbonzini@redhat.com, kilobyte@angband.pl, yuval.shaia@oracle.com,
-        jstaron@google.com
-References: <20190514145422.16923-1-pagupta@redhat.com>
- <20190514145422.16923-3-pagupta@redhat.com>
- <9f6b1d8e-ef90-7d8b-56da-61a426953ba3@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <1d6f6964-4653-ebf3-554f-666fda3779f1@redhat.com>
-Date:   Wed, 15 May 2019 22:52:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726918AbfEOVHh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 May 2019 17:07:37 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33593 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfEOVHg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 May 2019 17:07:36 -0400
+Received: by mail-ot1-f65.google.com with SMTP id 66so1438094otq.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2019 14:07:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zEAiaEFTDEo5AHTXNi1igG//m3yl73MYATUt/TyQM/s=;
+        b=JldDYW+LTAR5BoMmvzt3GhFBKSNFCQljO95A7CQF8h7lezT59wkCmoZR8HlZNeo3ZX
+         ACz18is11PqZLJkpbZTbPrVApVsXuwCwQzpumDKhMYUGYyeEKSs4shc89Funjj7rmnrR
+         zPCblVOMVW4B/FdfDdDBm0eQtlDpcEoDreFJYHB2TrhXh9porw+VCF0gkgtOPIdPF4AY
+         hPK/m0cAXNVhKubNUJt+B+Ge41ks183CJ7yggGXayFgFqQhy+nfr59BSRoNiAIUor77P
+         UmqXqpMAHdjAUWsPGhNLbi9iUpZ9FsKZwds3Nd3zmasJxQ+15Rm38l4yGAgNrmpf7grH
+         OFBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zEAiaEFTDEo5AHTXNi1igG//m3yl73MYATUt/TyQM/s=;
+        b=DM5kNznHLnPHVLD5Qh9ubukejEeoKuKzDRubnCEbdmPJQJRpL5lAXoNmy/Ml1KbU6f
+         1HP7L3QsFpjDNiJWoNVtm/s4FhitOHWVvWlmTAV2j3/UH653WhkX2k88r3quTO4lCRX4
+         A41V6Gyt4M4GbH5uPK7Z8r4jU9PD9sf8A4i4lCLtT11pXWR1hCYQ1GsfrSL/ed9wklb5
+         Ke/M9b2QWIpHcNl9rLYeo3cJ4J9dqV6I8BwLEKQi1QF3UUNwvAdeVvAYu8VFManOfMEX
+         M4OY+Tep7hwwTEVqyWZiOh/swAIYbKzvv2+6yYzLyy2WLUHdx0B6mRmqe2sf70973/Lt
+         tQZw==
+X-Gm-Message-State: APjAAAWMXUXrs13ZNL6vroqky8sBtrnw4+TPybHKAyUeESMVaVqaALJl
+        8LTfJmpLsN79bsoHJW/REIaUnZXPdJfeGfbIijsa6A==
+X-Google-Smtp-Source: APXvYqyDA/EWUSXzmLh3QyRTwliJkHZQ726n1NRYV2Be3duzD6pV8jVLvRmpMo63mBrfvCQmmCONZIUwdUcOhHdo8aI=
+X-Received: by 2002:a05:6830:14d3:: with SMTP id t19mr27993804otq.57.1557954454945;
+ Wed, 15 May 2019 14:07:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <9f6b1d8e-ef90-7d8b-56da-61a426953ba3@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 15 May 2019 20:53:08 +0000 (UTC)
+References: <20190514145422.16923-1-pagupta@redhat.com> <20190514145422.16923-2-pagupta@redhat.com>
+In-Reply-To: <20190514145422.16923-2-pagupta@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 15 May 2019 14:07:23 -0700
+Message-ID: <CAPcyv4gEr_zPJEQp3k89v2UXfHp9PQwnJXY+W99HwXfxpvua_w@mail.gmail.com>
+Subject: Re: [PATCH v9 1/7] libnvdimm: nd_region flush callback support
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        KVM list <kvm@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Christoph Hellwig <hch@infradead.org>,
+        Len Brown <lenb@kernel.org>, Jan Kara <jack@suse.cz>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        lcapitulino@redhat.com, Kevin Wolf <kwolf@redhat.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        jmoyer <jmoyer@redhat.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        david <david@fromorbit.com>, cohuck@redhat.com,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Adam Borowski <kilobyte@angband.pl>,
+        yuval shaia <yuval.shaia@oracle.com>, jstaron@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 15.05.19 22:46, David Hildenbrand wrote:
->> +	vpmem->vdev = vdev;
->> +	vdev->priv = vpmem;
->> +	err = init_vq(vpmem);
->> +	if (err) {
->> +		dev_err(&vdev->dev, "failed to initialize virtio pmem vq's\n");
->> +		goto out_err;
->> +	}
->> +
->> +	virtio_cread(vpmem->vdev, struct virtio_pmem_config,
->> +			start, &vpmem->start);
->> +	virtio_cread(vpmem->vdev, struct virtio_pmem_config,
->> +			size, &vpmem->size);
->> +
->> +	res.start = vpmem->start;
->> +	res.end   = vpmem->start + vpmem->size-1;
-> 
-> nit: " - 1;"
-> 
->> +	vpmem->nd_desc.provider_name = "virtio-pmem";
->> +	vpmem->nd_desc.module = THIS_MODULE;
->> +
->> +	vpmem->nvdimm_bus = nvdimm_bus_register(&vdev->dev,
->> +						&vpmem->nd_desc);
->> +	if (!vpmem->nvdimm_bus) {
->> +		dev_err(&vdev->dev, "failed to register device with nvdimm_bus\n");
->> +		err = -ENXIO;
->> +		goto out_vq;
->> +	}
->> +
->> +	dev_set_drvdata(&vdev->dev, vpmem->nvdimm_bus);
->> +
->> +	ndr_desc.res = &res;
->> +	ndr_desc.numa_node = nid;
->> +	ndr_desc.flush = async_pmem_flush;
->> +	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
->> +	set_bit(ND_REGION_ASYNC, &ndr_desc.flags);
->> +	nd_region = nvdimm_pmem_region_create(vpmem->nvdimm_bus, &ndr_desc);
->> +	if (!nd_region) {
->> +		dev_err(&vdev->dev, "failed to create nvdimm region\n");
->> +		err = -ENXIO;
->> +		goto out_nd;
->> +	}
->> +	nd_region->provider_data = dev_to_virtio(nd_region->dev.parent->parent);
->> +	return 0;
->> +out_nd:
->> +	nvdimm_bus_unregister(vpmem->nvdimm_bus);
->> +out_vq:
->> +	vdev->config->del_vqs(vdev);
->> +out_err:
->> +	return err;
->> +}
->> +
->> +static void virtio_pmem_remove(struct virtio_device *vdev)
->> +{
->> +	struct nvdimm_bus *nvdimm_bus = dev_get_drvdata(&vdev->dev);
->> +
->> +	nvdimm_bus_unregister(nvdimm_bus);
->> +	vdev->config->del_vqs(vdev);
->> +	vdev->config->reset(vdev);
->> +}
->> +
->> +static struct virtio_driver virtio_pmem_driver = {
->> +	.driver.name		= KBUILD_MODNAME,
->> +	.driver.owner		= THIS_MODULE,
->> +	.id_table		= id_table,
->> +	.probe			= virtio_pmem_probe,
->> +	.remove			= virtio_pmem_remove,
->> +};
->> +
->> +module_virtio_driver(virtio_pmem_driver);
->> +MODULE_DEVICE_TABLE(virtio, id_table);
->> +MODULE_DESCRIPTION("Virtio pmem driver");
->> +MODULE_LICENSE("GPL");
->> diff --git a/drivers/nvdimm/virtio_pmem.h b/drivers/nvdimm/virtio_pmem.h
->> new file mode 100644
->> index 000000000000..ab1da877575d
->> --- /dev/null
->> +++ b/drivers/nvdimm/virtio_pmem.h
->> @@ -0,0 +1,60 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * virtio_pmem.h: virtio pmem Driver
->> + *
->> + * Discovers persistent memory range information
->> + * from host and provides a virtio based flushing
->> + * interface.
->> + **/
->> +
->> +#ifndef _LINUX_VIRTIO_PMEM_H
->> +#define _LINUX_VIRTIO_PMEM_H
->> +
->> +#include <linux/virtio_ids.h>
->> +#include <linux/module.h>
->> +#include <linux/virtio_config.h>
->> +#include <uapi/linux/virtio_pmem.h>
->> +#include <linux/libnvdimm.h>
->> +#include <linux/spinlock.h>
->> +
->> +struct virtio_pmem_request {
->> +	/* Host return status corresponding to flush request */
->> +	int ret;
->> +
->> +	/* command name*/
->> +	char name[16];
-> 
-> So ... why are we sending string commands and expect native-endianess
-> integers and don't define a proper request/response structure + request
-> types in include/uapi/linux/virtio_pmem.h like
-> 
-> struct virtio_pmem_resp {
-> 	__virtio32 ret;
-> }
+On Tue, May 14, 2019 at 7:55 AM Pankaj Gupta <pagupta@redhat.com> wrote:
+>
+> This patch adds functionality to perform flush from guest
+> to host over VIRTIO. We are registering a callback based
+> on 'nd_region' type. virtio_pmem driver requires this special
+> flush function. For rest of the region types we are registering
+> existing flush function. Report error returned by host fsync
+> failure to userspace.
+>
+> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> ---
+>  drivers/acpi/nfit/core.c     |  4 ++--
+>  drivers/nvdimm/claim.c       |  6 ++++--
+>  drivers/nvdimm/nd.h          |  1 +
+>  drivers/nvdimm/pmem.c        | 13 ++++++++-----
+>  drivers/nvdimm/region_devs.c | 26 ++++++++++++++++++++++++--
+>  include/linux/libnvdimm.h    |  8 +++++++-
+>  6 files changed, 46 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> index 5a389a4f4f65..08dde76cf459 100644
+> --- a/drivers/acpi/nfit/core.c
+> +++ b/drivers/acpi/nfit/core.c
+> @@ -2434,7 +2434,7 @@ static void write_blk_ctl(struct nfit_blk *nfit_blk=
+, unsigned int bw,
+>                 offset =3D to_interleave_offset(offset, mmio);
+>
+>         writeq(cmd, mmio->addr.base + offset);
+> -       nvdimm_flush(nfit_blk->nd_region);
+> +       nvdimm_flush(nfit_blk->nd_region, NULL);
+>
+>         if (nfit_blk->dimm_flags & NFIT_BLK_DCR_LATCH)
+>                 readq(mmio->addr.base + offset);
+> @@ -2483,7 +2483,7 @@ static int acpi_nfit_blk_single_io(struct nfit_blk =
+*nfit_blk,
+>         }
+>
+>         if (rw)
+> -               nvdimm_flush(nfit_blk->nd_region);
+> +               nvdimm_flush(nfit_blk->nd_region, NULL);
+>
+>         rc =3D read_blk_stat(nfit_blk, lane) ? -EIO : 0;
+>         return rc;
+> diff --git a/drivers/nvdimm/claim.c b/drivers/nvdimm/claim.c
+> index fb667bf469c7..13510bae1e6f 100644
+> --- a/drivers/nvdimm/claim.c
+> +++ b/drivers/nvdimm/claim.c
+> @@ -263,7 +263,7 @@ static int nsio_rw_bytes(struct nd_namespace_common *=
+ndns,
+>         struct nd_namespace_io *nsio =3D to_nd_namespace_io(&ndns->dev);
+>         unsigned int sz_align =3D ALIGN(size + (offset & (512 - 1)), 512)=
+;
+>         sector_t sector =3D offset >> 9;
+> -       int rc =3D 0;
+> +       int rc =3D 0, ret =3D 0;
+>
+>         if (unlikely(!size))
+>                 return 0;
+> @@ -301,7 +301,9 @@ static int nsio_rw_bytes(struct nd_namespace_common *=
+ndns,
+>         }
+>
+>         memcpy_flushcache(nsio->addr + offset, buf, size);
+> -       nvdimm_flush(to_nd_region(ndns->dev.parent));
+> +       ret =3D nvdimm_flush(to_nd_region(ndns->dev.parent), NULL);
+> +       if (ret)
+> +               rc =3D ret;
+>
+>         return rc;
+>  }
+> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+> index a5ac3b240293..0c74d2428bd7 100644
+> --- a/drivers/nvdimm/nd.h
+> +++ b/drivers/nvdimm/nd.h
+> @@ -159,6 +159,7 @@ struct nd_region {
+>         struct badblocks bb;
+>         struct nd_interleave_set *nd_set;
+>         struct nd_percpu_lane __percpu *lane;
+> +       int (*flush)(struct nd_region *nd_region, struct bio *bio);
 
-FWIW, I wonder if we should even properly translate return values and
-define types like
+So this triggers:
 
-VIRTIO_PMEM_RESP_TYPE_OK	0
-VIRTIO_PMEM_RESP_TYPE_EIO	1
-
-..
-
-> 
-> #define VIRTIO_PMEM_REQ_TYPE_FLUSH	1
-> struct virtio_pmem_req {
-> 	__virtio16 type;
-> }
-> 
-> ... and this way we also define a proper endianess format for exchange
-> and keep it extensible
-> 
-> @MST, what's your take on this?
-> 
-> 
-
-
--- 
-
-Thanks,
-
-David / dhildenb
+In file included from drivers/nvdimm/e820.c:7:
+./include/linux/libnvdimm.h:140:51: warning: =E2=80=98struct bio=E2=80=99 d=
+eclared
+inside parameter list will not be visible outside of this definition
+or declaration
+  int (*flush)(struct nd_region *nd_region, struct bio *bio);
+                                                   ^~~
+I was already feeling uneasy about trying to squeeze this into v5.2,
+but this warning and the continued drip of comments leads me to
+conclude that this driver would do well to wait one more development
+cycle. Lets close out the final fixups and let this driver soak in
+-next. Then for the v5.3 cycle I'll redouble my efforts towards the
+goal of closing patch acceptance at the -rc6 / -rc7 development
+milestone.
