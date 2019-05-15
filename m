@@ -2,68 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0E1E1EF98
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 13:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE1C1F0A0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 13:46:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733114AbfEOLc6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 May 2019 07:32:58 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:56840 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733107AbfEOLc4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 May 2019 07:32:56 -0400
-Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4FBWPRh046477;
-        Wed, 15 May 2019 20:32:25 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
- Wed, 15 May 2019 20:32:25 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4FBWOeM046474
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 15 May 2019 20:32:24 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: task hung in __get_super
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>,
-        dvyukov@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-block@vger.kernel.org
-References: <0000000000002cd22305879b22c4@google.com>
- <201905150102.x4F12b6o009249@www262.sakura.ne.jp>
- <20190515102133.GA16193@quack2.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <024bba2a-4d2f-1861-bfd9-819511bdf6eb@i-love.sakura.ne.jp>
-Date:   Wed, 15 May 2019 20:32:27 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1730297AbfEOLpo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 May 2019 07:45:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45278 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729557AbfEOLpn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 May 2019 07:45:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8DC13AF46;
+        Wed, 15 May 2019 11:45:41 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 82A571E3CA1; Wed, 15 May 2019 13:45:39 +0200 (CEST)
+Date:   Wed, 15 May 2019 13:45:39 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC][PATCH 4/4] fsnotify: move fsnotify_nameremove() hook out
+ of d_delete()
+Message-ID: <20190515114539.GC7418@quack2.suse.cz>
+References: <20190514221901.29125-1-amir73il@gmail.com>
+ <20190514221901.29125-5-amir73il@gmail.com>
+ <20190515082407.GD11965@quack2.suse.cz>
+ <CAOQ4uxgP3BaEoYEHoCKHxeueG=eZjxfgD3=sJUfhqSk7xKV47g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190515102133.GA16193@quack2.suse.cz>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgP3BaEoYEHoCKHxeueG=eZjxfgD3=sJUfhqSk7xKV47g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/05/15 19:21, Jan Kara wrote:
-> The question is how to fix this problem. The simplest fix I can see is that
-> we'd just refuse to do LOOP_SET_FD if someone has the block device
-> exclusively open as there are high chances such user will be unpleasantly
-> surprised by the device changing under him. OTOH this has some potential
-> for userspace visible regressions. But I guess it's worth a try. Something
-> like attached patch?
+On Wed 15-05-19 13:56:47, Amir Goldstein wrote:
+> On Wed, May 15, 2019 at 11:24 AM Jan Kara <jack@suse.cz> wrote:
+> > > diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> > > index 8c7cbac7183c..5433e37fb0c5 100644
+> > > --- a/fs/notify/fsnotify.c
+> > > +++ b/fs/notify/fsnotify.c
+> > > @@ -107,47 +107,6 @@ void fsnotify_sb_delete(struct super_block *sb)
+> > >       fsnotify_clear_marks_by_sb(sb);
+> > >  }
+> > >
+> > > -/*
+> > > - * fsnotify_nameremove - a filename was removed from a directory
+> > > - *
+> > > - * This is mostly called under parent vfs inode lock so name and
+> > > - * dentry->d_parent should be stable. However there are some corner cases where
+> > > - * inode lock is not held. So to be on the safe side and be reselient to future
+> > > - * callers and out of tree users of d_delete(), we do not assume that d_parent
+> > > - * and d_name are stable and we use dget_parent() and
+> > > - * take_dentry_name_snapshot() to grab stable references.
+> > > - */
+> > > -void fsnotify_nameremove(struct dentry *dentry, int isdir)
+> > > -{
+> > > -     struct dentry *parent;
+> > > -     struct name_snapshot name;
+> > > -     __u32 mask = FS_DELETE;
+> > > -
+> > > -     /* d_delete() of pseudo inode? (e.g. __ns_get_path() playing tricks) */
+> > > -     if (IS_ROOT(dentry))
+> > > -             return;
+> > > -
+> > > -     if (isdir)
+> > > -             mask |= FS_ISDIR;
+> > > -
+> > > -     parent = dget_parent(dentry);
+> > > -     /* Avoid unneeded take_dentry_name_snapshot() */
+> > > -     if (!(d_inode(parent)->i_fsnotify_mask & FS_DELETE) &&
+> > > -         !(dentry->d_sb->s_fsnotify_mask & FS_DELETE))
+> > > -             goto out_dput;
+> > > -
+> > > -     take_dentry_name_snapshot(&name, dentry);
+> > > -
+> > > -     fsnotify(d_inode(parent), mask, d_inode(dentry), FSNOTIFY_EVENT_INODE,
+> > > -              &name.name, 0);
+> > > -
+> > > -     release_dentry_name_snapshot(&name);
+> > > -
+> > > -out_dput:
+> > > -     dput(parent);
+> > > -}
+> > > -EXPORT_SYMBOL(fsnotify_nameremove);
+> > > -
+> > >  /*
+> > >   * Given an inode, first check if we care what happens to our children.  Inotify
+> > >   * and dnotify both tell their parents about events.  If we care about any event
+> > > diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> > > index 455dff82595e..7f68cb9825dd 100644
+> > > --- a/include/linux/fsnotify.h
+> > > +++ b/include/linux/fsnotify.h
+> > > @@ -158,10 +158,15 @@ static inline void fsnotify_vfsmount_delete(struct vfsmount *mnt)
+> > >   */
+> > >  static inline void fsnotify_remove(struct inode *dir, struct dentry *dentry)
+> > >  {
+> > > +     __u32 mask = FS_DELETE;
+> > > +
+> > >       /* Expected to be called before d_delete() */
+> > >       WARN_ON_ONCE(d_is_negative(dentry));
+> > >
+> > > -     /* TODO: call fsnotify_dirent() */
+> > > +     if (d_is_dir(dentry))
+> > > +             mask |= FS_ISDIR;
+> > > +
+> > > +     fsnotify_dirent(dir, dentry, mask);
+> > >  }
+> >
+> > With folding patch 2 into this patch, I'd leave fsnotify changes for a
+> > separate patch. I.e., keep fsnotify_nameremove() as is in this patch just
+> > change its callsites and then simplify fsnotify_nameremove() in the next
+> > patch.
+> >
+> 
+> I agree we should leave simplifying fsontify hook to last patch, but
+> I *would* like to add new hook name(s) and discard the old hook, because:
+> 1. I hate the moniker nameremove
+> 2. fsnotify_nameremove() args are incompatible with similar hooks
+> 3. Will allow me to write individual patches for btrfs, devpty, configfs
+> 4. I'd like to suggest fsnotify_rmdir/fsnotify_unlink to pair with
+>     fsnotify_mkdir/fsnotify_create
+> 
+> - I can start with empty hooks.
+> - Then add new hooks to all chosen call sites
+> - Then move fsnotify_nameremove() from d_delete() into
+>   fsnotify_rmdir/fsnotify_unlink.
+> - Finally, simply fsnotify_rmdir/fsnotify_unlink to use fsnotify_dirent()
+>   and kill the complicated fsnotify_nameremove().
 
-(1) If I understand correctly, FMODE_EXCL is set at blkdev_open() only if O_EXCL
-    is specified. How can we detect if O_EXCL was not used, for the reproducer
-    ( https://syzkaller.appspot.com/text?tag=ReproC&x=135385a8a00000 ) is not
-    using O_EXCL ?
+This sounds OK to me as well.
 
-(2) There seems to be no serialization. What guarantees that mount_bdev()
-    does not start due to preempted after the check added by this patch?
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
