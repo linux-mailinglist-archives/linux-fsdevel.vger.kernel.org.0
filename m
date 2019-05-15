@@ -2,141 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DE1C1F0A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 13:46:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2A9E1F1F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 14:00:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730297AbfEOLpo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 May 2019 07:45:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45278 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729557AbfEOLpn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 May 2019 07:45:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8DC13AF46;
-        Wed, 15 May 2019 11:45:41 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 82A571E3CA1; Wed, 15 May 2019 13:45:39 +0200 (CEST)
-Date:   Wed, 15 May 2019 13:45:39 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 4/4] fsnotify: move fsnotify_nameremove() hook out
- of d_delete()
-Message-ID: <20190515114539.GC7418@quack2.suse.cz>
-References: <20190514221901.29125-1-amir73il@gmail.com>
- <20190514221901.29125-5-amir73il@gmail.com>
- <20190515082407.GD11965@quack2.suse.cz>
- <CAOQ4uxgP3BaEoYEHoCKHxeueG=eZjxfgD3=sJUfhqSk7xKV47g@mail.gmail.com>
+        id S1730691AbfEOL7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 May 2019 07:59:02 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:44047 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730461AbfEOL7B (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 May 2019 07:59:01 -0400
+Received: by mail-it1-f200.google.com with SMTP id o83so2023527itc.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2019 04:59:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=wLlE37yrPzANdfG8Iq9EHwFi5Q9N85cm606vgS2oU/4=;
+        b=Zc4DiB5H2qMnGTf87hgXEQjYVPYAu4Y5Ko8yOGyVDvic+9BCs5qNP5BGLbDwujDOrK
+         ya893djp2schtlW5gnI38C5sZ57WlQpkcWSj7Um0xzz03h7CG0/IMDY1MhSmxkg2MDcV
+         O0aPATPqdPcbps44h4gKnezOlD4hFYZefw34VLL/cRW2RrGQv2b4EyYm1Cis6qFZ1hXf
+         FkOrHdblpUQ4Qx0De7TTyOV7EnyFAJ+5RP8NmbQAbqKyjqWwOCB76/fq4AwDax9mvH9v
+         KWCCZaPok39G6Azu0ve2dPQT/1Qj6TEoUpKtlQ0K86wTDWsXQc476IwCVNjrgCMXQoRU
+         eevw==
+X-Gm-Message-State: APjAAAVLlmT7QB479wT4Q1b8G9SPLUmEdN5UHQASvcfBX+pCdHhNHDSA
+        3w92EBH/GjW2Lve/3WUZNJagDtrYgJEr5Y1GcuGoWMmjqXTn
+X-Google-Smtp-Source: APXvYqxhuea74sT72yLEr885VWUmC0yDDZPYDcDl1CPKw5tL3esMrV9W9iAbuAnr0eDXBy6JlimI1pULYWtWhNarz5FlgldoTSCn
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgP3BaEoYEHoCKHxeueG=eZjxfgD3=sJUfhqSk7xKV47g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a24:f68b:: with SMTP id u133mr7534350ith.139.1557921541063;
+ Wed, 15 May 2019 04:59:01 -0700 (PDT)
+Date:   Wed, 15 May 2019 04:59:01 -0700
+In-Reply-To: <20190515102133.GA16193@quack2.suse.cz>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000b0c360588ebe04f@google.com>
+Subject: Re: INFO: task hung in __get_super
+From:   syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, dvyukov@google.com, jack@suse.cz,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 15-05-19 13:56:47, Amir Goldstein wrote:
-> On Wed, May 15, 2019 at 11:24 AM Jan Kara <jack@suse.cz> wrote:
-> > > diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> > > index 8c7cbac7183c..5433e37fb0c5 100644
-> > > --- a/fs/notify/fsnotify.c
-> > > +++ b/fs/notify/fsnotify.c
-> > > @@ -107,47 +107,6 @@ void fsnotify_sb_delete(struct super_block *sb)
-> > >       fsnotify_clear_marks_by_sb(sb);
-> > >  }
-> > >
-> > > -/*
-> > > - * fsnotify_nameremove - a filename was removed from a directory
-> > > - *
-> > > - * This is mostly called under parent vfs inode lock so name and
-> > > - * dentry->d_parent should be stable. However there are some corner cases where
-> > > - * inode lock is not held. So to be on the safe side and be reselient to future
-> > > - * callers and out of tree users of d_delete(), we do not assume that d_parent
-> > > - * and d_name are stable and we use dget_parent() and
-> > > - * take_dentry_name_snapshot() to grab stable references.
-> > > - */
-> > > -void fsnotify_nameremove(struct dentry *dentry, int isdir)
-> > > -{
-> > > -     struct dentry *parent;
-> > > -     struct name_snapshot name;
-> > > -     __u32 mask = FS_DELETE;
-> > > -
-> > > -     /* d_delete() of pseudo inode? (e.g. __ns_get_path() playing tricks) */
-> > > -     if (IS_ROOT(dentry))
-> > > -             return;
-> > > -
-> > > -     if (isdir)
-> > > -             mask |= FS_ISDIR;
-> > > -
-> > > -     parent = dget_parent(dentry);
-> > > -     /* Avoid unneeded take_dentry_name_snapshot() */
-> > > -     if (!(d_inode(parent)->i_fsnotify_mask & FS_DELETE) &&
-> > > -         !(dentry->d_sb->s_fsnotify_mask & FS_DELETE))
-> > > -             goto out_dput;
-> > > -
-> > > -     take_dentry_name_snapshot(&name, dentry);
-> > > -
-> > > -     fsnotify(d_inode(parent), mask, d_inode(dentry), FSNOTIFY_EVENT_INODE,
-> > > -              &name.name, 0);
-> > > -
-> > > -     release_dentry_name_snapshot(&name);
-> > > -
-> > > -out_dput:
-> > > -     dput(parent);
-> > > -}
-> > > -EXPORT_SYMBOL(fsnotify_nameremove);
-> > > -
-> > >  /*
-> > >   * Given an inode, first check if we care what happens to our children.  Inotify
-> > >   * and dnotify both tell their parents about events.  If we care about any event
-> > > diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> > > index 455dff82595e..7f68cb9825dd 100644
-> > > --- a/include/linux/fsnotify.h
-> > > +++ b/include/linux/fsnotify.h
-> > > @@ -158,10 +158,15 @@ static inline void fsnotify_vfsmount_delete(struct vfsmount *mnt)
-> > >   */
-> > >  static inline void fsnotify_remove(struct inode *dir, struct dentry *dentry)
-> > >  {
-> > > +     __u32 mask = FS_DELETE;
-> > > +
-> > >       /* Expected to be called before d_delete() */
-> > >       WARN_ON_ONCE(d_is_negative(dentry));
-> > >
-> > > -     /* TODO: call fsnotify_dirent() */
-> > > +     if (d_is_dir(dentry))
-> > > +             mask |= FS_ISDIR;
-> > > +
-> > > +     fsnotify_dirent(dir, dentry, mask);
-> > >  }
-> >
-> > With folding patch 2 into this patch, I'd leave fsnotify changes for a
-> > separate patch. I.e., keep fsnotify_nameremove() as is in this patch just
-> > change its callsites and then simplify fsnotify_nameremove() in the next
-> > patch.
-> >
-> 
-> I agree we should leave simplifying fsontify hook to last patch, but
-> I *would* like to add new hook name(s) and discard the old hook, because:
-> 1. I hate the moniker nameremove
-> 2. fsnotify_nameremove() args are incompatible with similar hooks
-> 3. Will allow me to write individual patches for btrfs, devpty, configfs
-> 4. I'd like to suggest fsnotify_rmdir/fsnotify_unlink to pair with
->     fsnotify_mkdir/fsnotify_create
-> 
-> - I can start with empty hooks.
-> - Then add new hooks to all chosen call sites
-> - Then move fsnotify_nameremove() from d_delete() into
->   fsnotify_rmdir/fsnotify_unlink.
-> - Finally, simply fsnotify_rmdir/fsnotify_unlink to use fsnotify_dirent()
->   and kill the complicated fsnotify_nameremove().
+Hello,
 
-This sounds OK to me as well.
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reported-and-tested-by:  
+syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         e93c9c99 Linux 5.1
+git tree:        
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v5.1
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5edd1df52e9bc982
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=133626d8a00000
+
+Note: testing is done by a robot and is best-effort only.
