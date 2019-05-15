@@ -2,119 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 983EB1FAEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 21:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DA3D1FAEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 21:31:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726584AbfEOT1c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 May 2019 15:27:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55550 "EHLO mx1.redhat.com"
+        id S1727941AbfEOTb0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 May 2019 15:31:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49824 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbfEOT1c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1726302AbfEOT1c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 15 May 2019 15:27:32 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 248B9307CB5E;
+        by mx1.redhat.com (Postfix) with ESMTPS id 62695300174D;
         Wed, 15 May 2019 19:27:32 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CE1B95D721;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D50411001DE1;
         Wed, 15 May 2019 19:27:29 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 692B4225477; Wed, 15 May 2019 15:27:29 -0400 (EDT)
+        id 6FE5E225478; Wed, 15 May 2019 15:27:29 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org, linux-nvdimm@lists.01.org
 Cc:     vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
         dgilbert@redhat.com, swhiteho@redhat.com
-Subject: [PATCH v2 03/30] fuse: Use default_file_splice_read for direct IO
-Date:   Wed, 15 May 2019 15:26:48 -0400
-Message-Id: <20190515192715.18000-4-vgoyal@redhat.com>
+Subject: [PATCH v2 04/30] fuse: export fuse_end_request()
+Date:   Wed, 15 May 2019 15:26:49 -0400
+Message-Id: <20190515192715.18000-5-vgoyal@redhat.com>
 In-Reply-To: <20190515192715.18000-1-vgoyal@redhat.com>
 References: <20190515192715.18000-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 15 May 2019 19:27:32 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 15 May 2019 19:27:32 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Stefan Hajnoczi <stefanha@redhat.com>
 
+virtio-fs will need to complete requests from outside fs/fuse/dev.c.
+Make the symbol visible.
+
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
 ---
- fs/fuse/file.c     | 15 ++++++++++++++-
- fs/splice.c        |  3 ++-
- include/linux/fs.h |  2 ++
- 3 files changed, 18 insertions(+), 2 deletions(-)
+ fs/fuse/dev.c    | 19 ++++++++++---------
+ fs/fuse/fuse_i.h |  5 +++++
+ 2 files changed, 15 insertions(+), 9 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 5baf07fd2876..e9a7aa97c539 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2167,6 +2167,19 @@ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
- 	return 0;
- }
- 
-+static ssize_t fuse_file_splice_read(struct file *in, loff_t *ppos,
-+				     struct pipe_inode_info *pipe, size_t len,
-+				     unsigned int flags)
-+{
-+	struct fuse_file *ff = in->private_data;
-+
-+	if (ff->open_flags & FOPEN_DIRECT_IO)
-+		return default_file_splice_read(in, ppos, pipe, len, flags);
-+	else
-+		return generic_file_splice_read(in, ppos, pipe, len, flags);
-+
-+}
-+
- static int convert_fuse_file_lock(struct fuse_conn *fc,
- 				  const struct fuse_file_lock *ffl,
- 				  struct file_lock *fl)
-@@ -3174,7 +3187,7 @@ static const struct file_operations fuse_file_operations = {
- 	.fsync		= fuse_fsync,
- 	.lock		= fuse_file_lock,
- 	.flock		= fuse_file_flock,
--	.splice_read	= generic_file_splice_read,
-+	.splice_read	= fuse_file_splice_read,
- 	.splice_write	= iter_file_splice_write,
- 	.unlocked_ioctl	= fuse_file_ioctl,
- 	.compat_ioctl	= fuse_file_compat_ioctl,
-diff --git a/fs/splice.c b/fs/splice.c
-index 25212dcca2df..e2e881e34935 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -361,7 +361,7 @@ static ssize_t kernel_readv(struct file *file, const struct kvec *vec,
- 	return res;
- }
- 
--static ssize_t default_file_splice_read(struct file *in, loff_t *ppos,
-+ssize_t default_file_splice_read(struct file *in, loff_t *ppos,
- 				 struct pipe_inode_info *pipe, size_t len,
- 				 unsigned int flags)
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 9971a35cf1ef..46d1aecd7506 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -427,7 +427,7 @@ static void flush_bg_queue(struct fuse_conn *fc)
+  * the 'end' callback is called if given, else the reference to the
+  * request is released
+  */
+-static void request_end(struct fuse_conn *fc, struct fuse_req *req)
++void fuse_request_end(struct fuse_conn *fc, struct fuse_req *req)
  {
-@@ -425,6 +425,7 @@ static ssize_t default_file_splice_read(struct file *in, loff_t *ppos,
- 	iov_iter_advance(&to, copied);	/* truncates and discards */
- 	return res;
- }
-+EXPORT_SYMBOL(default_file_splice_read);
+ 	struct fuse_iqueue *fiq = &fc->iq;
  
- /*
-  * Send 'sd->len' bytes to socket from 'sd->file' at position 'sd->pos'
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index dd28e7679089..6804aecf7e30 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3055,6 +3055,8 @@ extern void block_sync_page(struct page *page);
- /* fs/splice.c */
- extern ssize_t generic_file_splice_read(struct file *, loff_t *,
- 		struct pipe_inode_info *, size_t, unsigned int);
-+extern ssize_t default_file_splice_read(struct file *, loff_t *,
-+		struct pipe_inode_info *, size_t, unsigned int);
- extern ssize_t iter_file_splice_write(struct pipe_inode_info *,
- 		struct file *, loff_t *, size_t, unsigned int);
- extern ssize_t generic_splice_sendpage(struct pipe_inode_info *pipe,
+@@ -480,6 +480,7 @@ static void request_end(struct fuse_conn *fc, struct fuse_req *req)
+ put_request:
+ 	fuse_put_request(fc, req);
+ }
++EXPORT_SYMBOL_GPL(fuse_request_end);
+ 
+ static int queue_interrupt(struct fuse_iqueue *fiq, struct fuse_req *req)
+ {
+@@ -567,12 +568,12 @@ static void __fuse_request_send(struct fuse_conn *fc, struct fuse_req *req)
+ 		req->in.h.unique = fuse_get_unique(fiq);
+ 		queue_request(fiq, req);
+ 		/* acquire extra reference, since request is still needed
+-		   after request_end() */
++		   after fuse_request_end() */
+ 		__fuse_get_request(req);
+ 		spin_unlock(&fiq->waitq.lock);
+ 
+ 		request_wait_answer(fc, req);
+-		/* Pairs with smp_wmb() in request_end() */
++		/* Pairs with smp_wmb() in fuse_request_end() */
+ 		smp_rmb();
+ 	}
+ }
+@@ -1302,7 +1303,7 @@ __releases(fiq->waitq.lock)
+  * the pending list and copies request data to userspace buffer.  If
+  * no reply is needed (FORGET) or request has been aborted or there
+  * was an error during the copying then it's finished by calling
+- * request_end().  Otherwise add it to the processing list, and set
++ * fuse_request_end().  Otherwise add it to the processing list, and set
+  * the 'sent' flag.
+  */
+ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+@@ -1362,7 +1363,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+ 		/* SETXATTR is special, since it may contain too large data */
+ 		if (in->h.opcode == FUSE_SETXATTR)
+ 			req->out.h.error = -E2BIG;
+-		request_end(fc, req);
++		fuse_request_end(fc, req);
+ 		goto restart;
+ 	}
+ 	spin_lock(&fpq->lock);
+@@ -1405,7 +1406,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+ 	if (!test_bit(FR_PRIVATE, &req->flags))
+ 		list_del_init(&req->list);
+ 	spin_unlock(&fpq->lock);
+-	request_end(fc, req);
++	fuse_request_end(fc, req);
+ 	return err;
+ 
+  err_unlock:
+@@ -1913,7 +1914,7 @@ static int copy_out_args(struct fuse_copy_state *cs, struct fuse_out *out,
+  * the write buffer.  The request is then searched on the processing
+  * list by the unique ID found in the header.  If found, then remove
+  * it from the list and copy the rest of the buffer to the request.
+- * The request is finished by calling request_end()
++ * The request is finished by calling fuse_request_end().
+  */
+ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
+ 				 struct fuse_copy_state *cs, size_t nbytes)
+@@ -2000,7 +2001,7 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
+ 		list_del_init(&req->list);
+ 	spin_unlock(&fpq->lock);
+ 
+-	request_end(fc, req);
++	fuse_request_end(fc, req);
+ out:
+ 	return err ? err : nbytes;
+ 
+@@ -2140,7 +2141,7 @@ static void end_requests(struct fuse_conn *fc, struct list_head *head)
+ 		req->out.h.error = -ECONNABORTED;
+ 		clear_bit(FR_SENT, &req->flags);
+ 		list_del_init(&req->list);
+-		request_end(fc, req);
++		fuse_request_end(fc, req);
+ 	}
+ }
+ 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 0920c0c032a0..c4584c873b87 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -949,6 +949,11 @@ ssize_t fuse_simple_request(struct fuse_conn *fc, struct fuse_args *args);
+ void fuse_request_send_background(struct fuse_conn *fc, struct fuse_req *req);
+ bool fuse_request_queue_background(struct fuse_conn *fc, struct fuse_req *req);
+ 
++/**
++ * End a finished request
++ */
++void fuse_request_end(struct fuse_conn *fc, struct fuse_req *req);
++
+ /* Abort all requests */
+ void fuse_abort_conn(struct fuse_conn *fc);
+ void fuse_wait_aborted(struct fuse_conn *fc);
 -- 
 2.20.1
 
