@@ -2,108 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF0DF1E5D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 01:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB9801E5F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 02:14:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfENXyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 May 2019 19:54:15 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:53400 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726265AbfENXyP (ORCPT
+        id S1726572AbfEOAOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 May 2019 20:14:36 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40209 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbfEOAOf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 May 2019 19:54:15 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 58BE08EE109;
-        Tue, 14 May 2019 16:54:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1557878054;
-        bh=j9GFywY1HLyNTdpWDqU6DRZqFaBO1GawDh8yt+cMaqU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=dZV9RO/IA1wL58RbfktzvhF4K1xZl/4zGz3TLRxcm5GlTLjC8covABFSucBWREaS9
-         OSBPyqqim2IdYRtdQFIEyy2fzVtY/Vq9MwU3Jngf6/fjS6Z38hRGtcegh99WZyvLSm
-         aWkuGylJdngUC4YlL6U49VhosDHd1xpTt5qV56rc=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id woy7T4AMZn2a; Tue, 14 May 2019 16:54:14 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 9FDBB8EE0ED;
-        Tue, 14 May 2019 16:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1557878054;
-        bh=j9GFywY1HLyNTdpWDqU6DRZqFaBO1GawDh8yt+cMaqU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=dZV9RO/IA1wL58RbfktzvhF4K1xZl/4zGz3TLRxcm5GlTLjC8covABFSucBWREaS9
-         OSBPyqqim2IdYRtdQFIEyy2fzVtY/Vq9MwU3Jngf6/fjS6Z38hRGtcegh99WZyvLSm
-         aWkuGylJdngUC4YlL6U49VhosDHd1xpTt5qV56rc=
-Message-ID: <1557878052.2873.6.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
- ram disk
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Rob Landley <rob@landley.net>, Andy Lutomirski <luto@kernel.org>
-Cc:     Arvind Sankar <niveditas98@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        initramfs@vger.kernel.org
-Date:   Tue, 14 May 2019 16:54:12 -0700
-In-Reply-To: <4da3dbda-bb76-5d71-d5c5-c03d98350ab0@landley.net>
-References: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
-         <20190512194322.GA71658@rani.riverdale.lan>
-         <3fe0e74b-19ca-6081-3afe-e05921b1bfe6@huawei.com>
-         <4f522e28-29c8-5930-5d90-e0086b503613@landley.net>
-         <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
-         <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
-         <1557861511.3378.19.camel@HansenPartnership.com>
-         <4da3dbda-bb76-5d71-d5c5-c03d98350ab0@landley.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        Tue, 14 May 2019 20:14:35 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u17so350787pfn.7;
+        Tue, 14 May 2019 17:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=aAQdPwK8UhHmXdxJzm6jQLoLZaXI/Q5xb4j3/5myTwU=;
+        b=DtjFqYj39Dm0Rv+bcjGdBjQ6EN0VVznNIsEvch4bISyaQ/e0Png3fqdAoPlSGFyybQ
+         9RdNTatJQF70rYkneWxA0HwEKweBx5SaUxs2qBiWZDr2CTLQmWuFJ9nH5nKDx0Dww2GW
+         Z8rok8HxjbdcQqXcj08v6osdgn+0zsqQwd3jqGM6V3OG1lyeNu7zeDJOjnPSzz2eaTXl
+         jxqU2PXw8XetaV5HqNXVfIpEJuQGiWY6E99WNHu/hGpkNajhdTPWmMM+DcAwvntY2jlA
+         MKDGZsE67wbYfTS3WmTNpzqmm/7pYEDSBFFQRWFMC7Etq/VfKLXr71eehd6T4tb/NW+Q
+         rbkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aAQdPwK8UhHmXdxJzm6jQLoLZaXI/Q5xb4j3/5myTwU=;
+        b=p0PxiK9JT6yDylKkFj7pEo61s2+4o7GjmdE91030oYKFG1H+80kG69yW1v7f62QjqN
+         1v1byjVvJ/tQn3StBnxx2IemaYTyKqYcpm0bGPUhlMMPQ8PnmkdZCDDwA4248OwGc/wE
+         jBFc8VjAFSeIXkJpD78jhPFDd8IlvIGji8uPwxQyt1DqSPGg+QkzTc6SOCUs0gBoIv+K
+         St4rdsej44N6MVlIwD0D2v6h2+Dist0Vj/3S7Cd7FDLzuNSxNrcvXI28350t2APX7I6K
+         AU4itUtrOnZtfpevHG6Wy6TAca37/8556Mja5sm/uJPmk4CNv/pEoKmhkxYd3suzIia8
+         38Cw==
+X-Gm-Message-State: APjAAAW2FBjlSkuSsGQx/jUKXwMEgpL/j2A4Lq6bNr5r4ZGqdGUzgW8i
+        JajfQ/plgoON7xm7AZN07Rk=
+X-Google-Smtp-Source: APXvYqy79bd1G+CGXC0fbDQHPyQsJJqd7yTY4vTthhujhOHeBpcxwWbjzotGY9gkl1u9fw5B3eNBzQ==
+X-Received: by 2002:a63:d04b:: with SMTP id s11mr41453267pgi.187.1557879274578;
+        Tue, 14 May 2019 17:14:34 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id u6sm334194pfm.10.2019.05.14.17.14.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2019 17:14:33 -0700 (PDT)
+Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        Theodore Ts'o <tytso@mit.edu>, Tim.Bird@sony.com,
+        knut.omang@oracle.com, gregkh@linuxfoundation.org,
+        keescook@google.com, kieran.bingham@ideasonboard.com,
+        mcgrof@kernel.org, robh@kernel.org, sboyd@kernel.org,
+        shuah@kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com,
+        dan.j.williams@intel.com, daniel@ffwll.ch, jdike@addtoit.com,
+        joel@jms.id.au, julia.lawall@lip6.fr, khilman@baylibre.com,
+        mpe@ellerman.id.au, pmladek@suse.com, richard@nod.at,
+        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com
+References: <20190509133551.GD29703@mit.edu>
+ <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
+ <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com>
+ <20190509214233.GA20877@mit.edu>
+ <b09ba170-229b-fde4-3e9a-e50d6ab4c1b5@deltatee.com>
+ <20190509233043.GC20877@mit.edu>
+ <8914afef-1e66-e6e3-f891-5855768d3018@deltatee.com>
+ <6d6e91ec-33d3-830b-4895-4d7a20ba7d45@gmail.com>
+ <3faa022b-0b70-0375-aa6d-12ea83a2671f@deltatee.com>
+ <d148a554-2a71-a5a4-4bb2-d84d2c483277@gmail.com>
+ <20190514083819.GC230665@google.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <5ff098a9-9424-901c-9017-d4492e306528@gmail.com>
+Date:   Tue, 14 May 2019 17:14:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190514083819.GC230665@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2019-05-14 at 18:39 -0500, Rob Landley wrote:
-> On 5/14/19 2:18 PM, James Bottomley wrote:
-> > > I think Rob is right here.  If /init was statically built into
-> > > the kernel image, it has no more ability to compromise the kernel
-> > > than anything else in the kernel.  What's the problem here?
-> > 
-> > The specific problem is that unless you own the kernel signing key,
-> > which is really untrue for most distribution consumers because the
-> > distro owns the key, you cannot build the initrd statically into
-> > the kernel.  You can take the distro signed kernel, link it with
-> > the initrd then resign the combination with your key, provided you
-> > insert your key into the MoK variables as a trusted secure boot
-> > key, but the distros have been unhappy recommending this as
-> > standard practice.
-> > 
-> > If our model for security is going to be to link the kernel and the
-> > initrd statically to give signature protection over the aggregate
-> > then we need to figure out how to execute this via the distros.  If
-> > we accept that the split model, where the distro owns and signs the
-> > kernel but the machine owner builds and is responsible for the
-> > initrd, then we need to explore split security models like this
-> > proposal.
+On 5/14/19 1:38 AM, Brendan Higgins wrote:
+> On Fri, May 10, 2019 at 03:13:40PM -0700, Frank Rowand wrote:
+>> On 5/10/19 9:17 AM, Logan Gunthorpe wrote:
+>>>
+>>>
+>>> On 2019-05-09 11:18 p.m., Frank Rowand wrote:
+>>>
+>>>> YES, kselftest has in-kernel tests.  (Excuse the shouting...)
+>>>
+>>> Cool. From my cursory look, in my opinion, these would be greatly
+>>> improved by converting them to the framework Brendan is proposing for Kunit.
+>>>
+>>>>> If they do exists, it seems like it would make sense to
+>>>>> convert those to kunit and have Kunit tests run-able in a VM or
+>>>>> baremetal instance.
+>>>>
+>>>> They already run in a VM.
+>>>>
+>>>> They already run on bare metal.
+>>>>
+>>>> They already run in UML.
+>>>
+>>> Simply being able to run in UML is not the only thing here. Kunit
+>>> provides the infrastructure to quickly build, run and report results for
+>>> all the tests from userspace without needing to worry about the details
+>>> of building and running a UML kernel, then parsing dmesg to figure out
+>>> what tests were run or not.
+>>
+>> Yes.  But that is not the only environment that KUnit must support to be
+>> of use to me for devicetree unittests (this is not new, Brendan is quite
+>> aware of my needs and is not ignoring them).
+>>
+>>
+>>>> This is not to say that KUnit does not make sense.  But I'm still trying
+>>>> to get a better description of the KUnit features (and there are
+>>>> some).
+>>>
+>>> So read the patches, or the documentation[1] or the LWN article[2]. It's
+>>> pretty well described in a lot of places -- that's one of the big
+>>> advantages of it. In contrast, few people seems to have any concept of
+>>> what kselftests are or where they are or how to run them (I was
+>>> surprised to find the in-kernel tests in the lib tree).
+>>>
+>>> Logan
+>>>
+>>> [1] https://google.github.io/kunit-docs/third_party/kernel/docs/
+>>> [2] https://lwn.net/Articles/780985/
+>>
+>> I have been following the RFC versions.  I have installed the RFC patches
+>> and run them to the extent that they worked (devicetree unittests were
+>> a guinea pig for test conversion in the RFC series, but the converted
+>> tests did not work).  I read portions of the code while trying to
+>> understand the unittests conversion.  I made review comments based on
+>> the portion of the code that I did read.  I have read the documentation
+>> (very nice btw, as I have said before, but should be expanded).
+>>
+>> My comment is that the description to submit the patch series should
+>> be fuller -- KUnit potentially has a lot of nice attributes, and I
+>> still think I have only scratched the surface.  The average reviewer
+>> may have even less in-depth knowledge than I do.  And as I have
+>> commented before, I keep diving into areas that I had no previous
+>> experience with (such as kselftest) to be able to properly judge this
+>> patch series.
 > 
-> You can have a built-in and an external initrd? The second extracts
-> over the first? (I know because once upon a time conflicting files
-> would append. It sounds like the desired behavior here is O_EXCL fail
-> and move on.)
+> Thanks for the praise! That means a lot coming from you!
+> 
+> I really cannot disagree that I could use more documentation. You can
+> pretty much always use more documentation. Nevertheless, is there a
+> particular part of the documentation that you think it lacking?
 
-Technically yes, because the first initrd could find the second by some
-predefined means, extract it to a temporary directory and do a
-pivot_root() and then the second would do some stuff, find the real
-root and do a pivot_root() again.  However, while possible, wouldn't it
-just add to the rendezvous complexity without adding any benefits? even
-if the first initrd is built and signed by the distro and the second is
-built by you, the first has to verify the second somehow.  I suppose
-the second could be tar extracted, which would add xattrs, if that's
-the goal?
+I wasn't talking about the documentation that is part of KUnit.  I was
+targeting patch 0.
 
-James
+
+> It sounds like there was a pretty long discussion here about, a number
+> of different things.
+> 
+> Do you want a better description of what unit testing is and how KUnit
+> helps make it possible?
+> 
+> Do you want more of an explanation distinguishing KUnit from kselftest?
+> How so?
+
+The high level issue is to provide reviewers with enough context to be
+able to evaluate the patch series.  That is probably not very obvious
+at this point in the thread.  At this point I was responding to Logan's
+response to me that I should be reading Documentation to get a better
+description of KUnit features.  I _think_ that Logan thought that I
+did not understand KUnit features and was trying to be helpful by
+pointing out where I could get more information.  If so, he was missing
+my intended point had been that patch 0 should provide more information
+to justify adding this feature.
+
+One thing that has become very apparent in the discussion of this patch
+series is that some people do not understand that kselftest includes
+in-kernel tests, not just userspace tests.  As such, KUnit is an
+additional implementation of "the same feature".  (One can debate
+exactly which in-kernel test features kselftest and KUnit provide,
+and how much overlap exists or does not exist.  So don't take "the
+same feature" as my final opinion of how much overlap exists.)  So
+that is a key element to be noted and explained.
+
+I don't have a goal of finding all the things to include in patch 0,
+that is really your job as the patch submitter.  But as a reviewer,
+it is easy for me to point out an obvious hole, even if I don't find
+all of the holes.  kselftest vs KUnit overlap was an obvious hole to
+me.
+
+So, yes, more of an explanation about the in-kernel testing available
+via kselftest vs the in-kernel testing available via KUnit, and how
+they provide the same or different functionality.  Should both exist?
+Should one replace the other?  If one provides additional features,
+should the additional features be merged into a common base?
+
+> Do you just want better documentation on how to test the kernel? What
+> tools we have at our disposal and when to use what tools?
+> 
+> Thanks!
+> .
+> 
 
