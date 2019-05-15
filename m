@@ -2,100 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C39441FAD1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 21:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26ACE1FAB8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 21:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbfEOT3h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 May 2019 15:29:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46604 "EHLO mx1.redhat.com"
+        id S1727805AbfEOT3S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 May 2019 15:29:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36204 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727651AbfEOT1e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1727655AbfEOT1e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 15 May 2019 15:27:34 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 17A6144FB1;
+        by mx1.redhat.com (Postfix) with ESMTPS id 1FF7330C1AE6;
         Wed, 15 May 2019 19:27:34 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E58975D723;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EE2AC5D728;
         Wed, 15 May 2019 19:27:33 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 1EF9022548F; Wed, 15 May 2019 15:27:30 -0400 (EDT)
+        id 253D4225490; Wed, 15 May 2019 15:27:30 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org, linux-nvdimm@lists.01.org
 Cc:     vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
         dgilbert@redhat.com, swhiteho@redhat.com
-Subject: [PATCH v2 27/30] fuse: Release file in process context
-Date:   Wed, 15 May 2019 15:27:12 -0400
-Message-Id: <20190515192715.18000-28-vgoyal@redhat.com>
+Subject: [PATCH v2 28/30] fuse: Reschedule dax free work if too many EAGAIN attempts
+Date:   Wed, 15 May 2019 15:27:13 -0400
+Message-Id: <20190515192715.18000-29-vgoyal@redhat.com>
 In-Reply-To: <20190515192715.18000-1-vgoyal@redhat.com>
 References: <20190515192715.18000-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 15 May 2019 19:27:34 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 15 May 2019 19:27:34 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fuse_file_put(sync) can be called with sync=true/false. If sync=true,
-it waits for release request response and then calls iput() in the
-caller's context. If sync=false, it does not wait for release request
-response, frees the fuse_file struct immediately and req->end function
-does the iput().
+fuse_dax_free_memory() can be very cpu intensive in corner cases. For example,
+if one inode has consumed all the memory and a setupmapping request is
+pending, that means inode lock is held by request and worker thread will
+not get lock for a while. And given there is only one inode consuming all
+the dax ranges, all the attempts to acquire lock will fail.
 
-iput() can be a problem with DAX if called in req->end context. If this
-is last reference to inode (VFS has let go its reference already), then
-iput() will clean DAX mappings as well and send REMOVEMAPPING requests
-and wait for completion. (All the the worker thread context which is
-processing fuse replies from daemon on the host).
-
-That means it blocks worker thread and it stops processing further
-replies and system deadlocks.
-
-So for now, force sync release of file in case of DAX inodes.
+So if there are too many inode lock failures (-EAGAIN), reschedule the
+worker with a 10ms delay.
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/fuse/file.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ fs/fuse/file.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 87fc2b5e0a3a..b0293a308b5e 100644
+index b0293a308b5e..9b82d9b4ebc3 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -475,6 +475,7 @@ void fuse_release_common(struct file *file, bool isdir)
- 	struct fuse_file *ff = file->private_data;
- 	struct fuse_req *req = ff->reserved_req;
- 	int opcode = isdir ? FUSE_RELEASEDIR : FUSE_RELEASE;
-+	bool sync = false;
+@@ -4047,7 +4047,7 @@ int fuse_dax_free_one_mapping(struct fuse_conn *fc, struct inode *inode,
+ int fuse_dax_free_memory(struct fuse_conn *fc, unsigned long nr_to_free)
+ {
+ 	struct fuse_dax_mapping *dmap, *pos, *temp;
+-	int ret, nr_freed = 0;
++	int ret, nr_freed = 0, nr_eagain = 0;
+ 	u64 dmap_start = 0, window_offset = 0;
+ 	struct inode *inode = NULL;
  
- 	fuse_prepare_release(fi, ff, file->f_flags, opcode);
+@@ -4056,6 +4056,12 @@ int fuse_dax_free_memory(struct fuse_conn *fc, unsigned long nr_to_free)
+ 		if (nr_freed >= nr_to_free)
+ 			break;
  
-@@ -495,8 +496,20 @@ void fuse_release_common(struct file *file, bool isdir)
- 	 * Make the release synchronous if this is a fuseblk mount,
- 	 * synchronous RELEASE is allowed (and desirable) in this case
- 	 * because the server can be trusted not to screw up.
-+	 *
-+	 * For DAX, fuse server is trusted. So it should be fine to
-+	 * do a sync file put. Doing async file put is creating
-+	 * problems right now because when request finish, iput()
-+	 * can lead to freeing of inode. That means it tears down
-+	 * mappings backing DAX memory and sends REMOVEMAPPING message
-+	 * to server and blocks for completion. Currently, waiting
-+	 * in req->end context deadlocks the system as same worker thread
-+	 * can't process REMOVEMAPPING reply it is waiting for.
- 	 */
--	fuse_file_put(ff, ff->fc->destroy_req != NULL, isdir);
-+	if (IS_DAX(req->misc.release.inode) || ff->fc->destroy_req != NULL)
-+		sync = true;
++		if (nr_eagain > 20) {
++			queue_delayed_work(system_long_wq, &fc->dax_free_work,
++						msecs_to_jiffies(10));
++			return 0;
++		}
 +
-+	fuse_file_put(ff, sync, isdir);
- }
+ 		dmap = NULL;
+ 		spin_lock(&fc->lock);
  
- static int fuse_open(struct inode *inode, struct file *file)
+@@ -4093,8 +4099,10 @@ int fuse_dax_free_memory(struct fuse_conn *fc, unsigned long nr_to_free)
+ 		}
+ 
+ 		/* Could not get inode lock. Try next element */
+-		if (ret == -EAGAIN)
++		if (ret == -EAGAIN) {
++			nr_eagain++;
+ 			continue;
++		}
+ 		nr_freed++;
+ 	}
+ 	return 0;
 -- 
 2.20.1
 
