@@ -2,424 +2,268 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB4631E8FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 09:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 903BC1E947
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 May 2019 09:42:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725937AbfEOHag (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 May 2019 03:30:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53452 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725871AbfEOHag (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 May 2019 03:30:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 49DC1AEB3;
-        Wed, 15 May 2019 07:30:34 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 9C9291E3CA1; Wed, 15 May 2019 09:30:31 +0200 (CEST)
-Date:   Wed, 15 May 2019 09:30:31 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     snitzer@redhat.com, stable@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dax: Arrange for dax_supported check to span multiple
- devices
-Message-ID: <20190515073031.GA11965@quack2.suse.cz>
-References: <155789172402.748145.11853718580748830476.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1725871AbfEOHlt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 May 2019 03:41:49 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41175 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbfEOHls (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 May 2019 03:41:48 -0400
+Received: by mail-ed1-f65.google.com with SMTP id m4so2742982edd.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 May 2019 00:41:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2zskjbN09R5wendyqZQRHX/H4SiND0VyVsc8hHlWH90=;
+        b=JZJQkfh5WJgpd9RQilQ/pHLDXquURzd9PP7da/2TJy+L6MibswSPsSTQCbNlnr0bG1
+         H1IOgDxbiga6cG2caK4SV6oMYSjkhxEj+JDTxsL4iMvHGMPynSqbwQ1+W1ZidZdyDUfp
+         A4O6d8SaTe4aarn+lAeSUMg2L9dS5IRK1y5uA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=2zskjbN09R5wendyqZQRHX/H4SiND0VyVsc8hHlWH90=;
+        b=oJ06YyDNvZfGNYbae+ZMuCqjIslTMhFrepTU64lBV9NcB/DsYyoGFb3UzBZiBbLVDO
+         bUFxUTAICXiXq/dVAdX7aFUwgdkre4mV3J4/9e0BEf15/yrASC38Y5vRi2qrK/zDKbqd
+         OErXwPVkcTgthGBS8DZYKzt6bKtjnpxlTBbyGr7uEDd+D2oz/Lb/6gb/QIF4h5lSUH3q
+         x7Kcd7DV4Z5r+UjRTOmh470WFBaylgg/WA8ITxwJAONsd25iLGdbO0+Yqq2kSVo6SgI3
+         /UJT1Whk8wsEikGmMMrAzWR4+VkVJhIUjWIrEFCAuviCGksGReoQI10kFmAnmw+fmiBz
+         JQYw==
+X-Gm-Message-State: APjAAAUKnnS+cvob+RszV+Gr6shc/l6ZNjZbH3oKWFZjHJzAC2PBc66f
+        YMQYTVau5KC3GvwkKAGIBbzNJQ==
+X-Google-Smtp-Source: APXvYqxlVorrQMT/bjOZ2bxd9Tq8NFaUM6+xiZePbw/NWhiH17BnzbbypQzqxmDX8X/b0giy2e7tHQ==
+X-Received: by 2002:a50:8dcd:: with SMTP id s13mr40466209edh.247.1557906106265;
+        Wed, 15 May 2019 00:41:46 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id b48sm515288edb.28.2019.05.15.00.41.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 May 2019 00:41:45 -0700 (PDT)
+Date:   Wed, 15 May 2019 09:41:41 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Theodore Ts'o <tytso@mit.edu>,
+        Frank Rowand <frowand.list@gmail.com>, Tim.Bird@sony.com,
+        Knut Omang <knut.omang@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Rob Herring <robh@kernel.org>, sboyd@kernel.org,
+        Shuah Khan <shuah@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, linux-nvdimm@lists.01.org,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>, jdike@addtoit.com,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+Message-ID: <20190515074141.GY17751@phenom.ffwll.local>
+Mail-Followup-To: Brendan Higgins <brendanhiggins@google.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Frank Rowand <frowand.list@gmail.com>, Tim.Bird@sony.com,
+        Knut Omang <knut.omang@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Rob Herring <robh@kernel.org>, sboyd@kernel.org,
+        Shuah Khan <shuah@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>, jdike@addtoit.com,
+        Joel Stanley <joel@jms.id.au>, Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>, Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+References: <20190509133551.GD29703@mit.edu>
+ <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
+ <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com>
+ <20190509214233.GA20877@mit.edu>
+ <80c72e64-2665-bd51-f78c-97f50f9a53ba@gmail.com>
+ <20190511173344.GA8507@mit.edu>
+ <20190513144451.GQ17751@phenom.ffwll.local>
+ <20190514060433.GA181462@google.com>
+ <CAKMK7uHqtSF_sazJTbFL+xmQJRk4iwukCKZHoDHhsKkLXk=ECQ@mail.gmail.com>
+ <20190514183618.GC109557@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <155789172402.748145.11853718580748830476.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <20190514183618.GC109557@google.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 14-05-19 20:48:49, Dan Williams wrote:
-> Pankaj reports that starting with commit ad428cdb525a "dax: Check the
-> end of the block-device capacity with dax_direct_access()" device-mapper
-> no longer allows dax operation. This results from the stricter checks in
-> __bdev_dax_supported() that validate that the start and end of a
-> block-device map to the same 'pagemap' instance.
+On Tue, May 14, 2019 at 11:36:18AM -0700, Brendan Higgins wrote:
+> On Tue, May 14, 2019 at 02:05:05PM +0200, Daniel Vetter wrote:
+> > On Tue, May 14, 2019 at 8:04 AM Brendan Higgins
+> > <brendanhiggins@google.com> wrote:
+> > >
+> > > On Mon, May 13, 2019 at 04:44:51PM +0200, Daniel Vetter wrote:
+> > > > On Sat, May 11, 2019 at 01:33:44PM -0400, Theodore Ts'o wrote:
+> > > > > On Fri, May 10, 2019 at 02:12:40PM -0700, Frank Rowand wrote:
+> > > > > > However, the reply is incorrect.  Kselftest in-kernel tests (which
+> > > > > > is the context here) can be configured as built in instead of as
+> > > > > > a module, and built in a UML kernel.  The UML kernel can boot,
+> > > > > > running the in-kernel tests before UML attempts to invoke the
+> > > > > > init process.
+> > > > >
+> > > > > Um, Citation needed?
+> > > > >
+> > > > > I don't see any evidence for this in the kselftest documentation, nor
+> > > > > do I see any evidence of this in the kselftest Makefiles.
+> > > > >
+> > > > > There exists test modules in the kernel that run before the init
+> > > > > scripts run --- but that's not strictly speaking part of kselftests,
+> > > > > and do not have any kind of infrastructure.  As noted, the
+> > > > > kselftests_harness header file fundamentally assumes that you are
+> > > > > running test code in userspace.
+> > > >
+> > > > Yeah I really like the "no userspace required at all" design of kunit,
+> > > > while still collecting results in a well-defined way (unless the current
+> > > > self-test that just run when you load the module, with maybe some
+> > > > kselftest ad-hoc wrapper around to collect the results).
+> > > >
+> > > > What I want to do long-term is to run these kernel unit tests as part of
+> > > > the build-testing, most likely in gitlab (sooner or later, for drm.git
+> > >
+> > > Totally! This is part of the reason I have been insisting on a minimum
+> > > of UML compatibility for all unit tests. If you can suffiently constrain
+> > > the environment that is required for tests to run in, it makes it much
+> > > easier not only for a human to run your tests, but it also makes it a
+> > > lot easier for an automated service to be able to run your tests.
+> > >
+> > > I actually have a prototype presubmit already working on my
+> > > "stable/non-upstream" branch. You can checkout what presubmit results
+> > > look like here[1][2].
+> > 
+> > ug gerrit :-)
 > 
-> Teach the dax-core and device-mapper to validate the 'pagemap' on a
-> per-target basis. This is accomplished by refactoring the
-> bdev_dax_supported() internals into generic_fsdax_supported() which
-> takes a sector range to validate. Consequently generic_fsdax_supported()
-> is suitable to be used in a device-mapper ->iterate_devices() callback.
-> A new ->dax_supported() operation is added to allow composite devices to
-> split and route upper-level bdev_dax_supported() requests.
+> Yeah, yeah, I know, but it is a lot easier for me to get a project set
+> up here using Gerrit, when we already use that for a lot of other
+> projects.
 > 
-> Fixes: ad428cdb525a ("dax: Check the end of the block-device...")
-> Cc: <stable@vger.kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Mike Snitzer <snitzer@redhat.com>
-> Cc: Keith Busch <keith.busch@intel.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Reported-by: Pankaj Gupta <pagupta@redhat.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Also, Gerrit has gotten a lot better over the last two years or so. Two
+> years ago, I wouldn't touch it with a ten foot pole. It's not so bad
+> anymore, at least if you are used to using a web UI to review code.
 
-Thanks for the fix. The patch looks good to me so feel free to add:
+I was somewhat joking, I'm just not used to gerrit ... And seems to indeed
+be a lot more polished than last time I looked at it seriously.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> > > > only ofc). So that people get their pull requests (and patch series, we
+> > > > have some ideas to tie this into patchwork) automatically tested for this
+> > >
+> > > Might that be Snowpatch[3]? I talked to Russell, the creator of Snowpatch,
+> > > and he seemed pretty open to collaboration.
+> > >
+> > > Before I heard about Snowpatch, I had an intern write a translation
+> > > layer that made Prow (the presubmit service that I used in the prototype
+> > > above) work with LKML[4].
+> > 
+> > There's about 3-4 forks/clones of patchwork. snowpatch is one, we have
+> > a different one on freedesktop.org. It's a bit a mess :-/
+> 
+> Oh, I didn't realize that. I found your patchwork instance here[5], but
+> do you have a place where I can see the changes you have added to
+> support presubmit?
 
-								Honza
+Ok here's a few links. Aside from the usual patch view we've also added a
+series view:
 
-> ---
-> Hi Mike,
+https://patchwork.freedesktop.org/project/intel-gfx/series/?ordering=-last_updated
+
+This ties the patches + cover letter together, and it even (tries to at
+least) track revisions. Here's an example which is currently at revision
+9:
+
+https://patchwork.freedesktop.org/series/57232/
+
+Below the patch list for each revision we also have the test result list.
+If you click on the grey bar it'll expand with the summary from CI, the
+"See full logs" is link to the full results from our CI. This is driven
+with some REST api from our jenkins.
+
+Patchwork also sends out mails for these results.
+
+Source is on gitlab: https://gitlab.freedesktop.org/patchwork-fdo
+ 
+> > > I am not married to either approach, but I think between the two of
+> > > them, most of the initial legwork has been done to make presubmit on
+> > > LKML a reality.
+> > 
+> > We do have presubmit CI working already with our freedesktop.org
+> > patchwork. The missing glue is just tying that into gitlab CI somehow
+> > (since we want to unify build testing more and make it easier for
+> > contributors to adjust things).
 > 
-> Another day another new dax operation to allow device-mapper to better
-> scope dax operations.
+> I checked out a couple of your projects on your patchwork instance: AMD
+> X.Org drivers, DRI devel, and Wayland. I saw the tab you added for
+> tests, but none of them actually had any test results. Can you point me
+> at one that does?
+
+Atm we use the CI stuff only on intel-gfx, with the our gpu CI farm, see
+links above.
+
+Cheers, Daniel
+
 > 
-> Let me know if the device-mapper changes look sane. This passes a new
-> unit test that indeed fails on current mainline.
+> Cheers!
 > 
-> https://github.com/pmem/ndctl/blob/device-mapper-pending/test/dm.sh
+> [5] https://patchwork.freedesktop.org/
 > 
->  drivers/dax/super.c          |   88 +++++++++++++++++++++++++++---------------
->  drivers/md/dm-table.c        |   17 +++++---
->  drivers/md/dm.c              |   20 ++++++++++
->  drivers/md/dm.h              |    1 
->  drivers/nvdimm/pmem.c        |    1 
->  drivers/s390/block/dcssblk.c |    1 
->  include/linux/dax.h          |   19 +++++++++
->  7 files changed, 110 insertions(+), 37 deletions(-)
+> > > > super basic stuff.
+> > >
+> > > I am really excited to hear back on what you think!
+> > >
+> > > Cheers!
+> > >
+> > > [1] https://kunit-review.googlesource.com/c/linux/+/1509/10#message-7bfa40efb132e15c8388755c273837559911425c
+> > > [2] https://kunit-review.googlesource.com/c/linux/+/1509/10#message-a6784496eafff442ac98fb068bf1a0f36ee73509
+> > > [3] https://developer.ibm.com/open/projects/snowpatch/
+> > > [4] https://kunit.googlesource.com/prow-lkml/
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
 > 
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index 0a339b85133e..ec2f2262e3a9 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -73,22 +73,12 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
->  EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
->  #endif
->  
-> -/**
-> - * __bdev_dax_supported() - Check if the device supports dax for filesystem
-> - * @bdev: block device to check
-> - * @blocksize: The block size of the device
-> - *
-> - * This is a library function for filesystems to check if the block device
-> - * can be mounted with dax option.
-> - *
-> - * Return: true if supported, false if unsupported
-> - */
-> -bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
-> +bool generic_fsdax_supported(struct dax_device *dax_dev,
-> +		struct block_device *bdev, int blocksize, sector_t start,
-> +		sector_t sectors)
->  {
-> -	struct dax_device *dax_dev;
->  	bool dax_enabled = false;
->  	pgoff_t pgoff, pgoff_end;
-> -	struct request_queue *q;
->  	char buf[BDEVNAME_SIZE];
->  	void *kaddr, *end_kaddr;
->  	pfn_t pfn, end_pfn;
-> @@ -102,21 +92,14 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
->  		return false;
->  	}
->  
-> -	q = bdev_get_queue(bdev);
-> -	if (!q || !blk_queue_dax(q)) {
-> -		pr_debug("%s: error: request queue doesn't support dax\n",
-> -				bdevname(bdev, buf));
-> -		return false;
-> -	}
-> -
-> -	err = bdev_dax_pgoff(bdev, 0, PAGE_SIZE, &pgoff);
-> +	err = bdev_dax_pgoff(bdev, start, PAGE_SIZE, &pgoff);
->  	if (err) {
->  		pr_debug("%s: error: unaligned partition for dax\n",
->  				bdevname(bdev, buf));
->  		return false;
->  	}
->  
-> -	last_page = PFN_DOWN(i_size_read(bdev->bd_inode) - 1) * 8;
-> +	last_page = PFN_DOWN((start + sectors - 1) * 512) * PAGE_SIZE / 512;
->  	err = bdev_dax_pgoff(bdev, last_page, PAGE_SIZE, &pgoff_end);
->  	if (err) {
->  		pr_debug("%s: error: unaligned partition for dax\n",
-> @@ -124,20 +107,11 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
->  		return false;
->  	}
->  
-> -	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
-> -	if (!dax_dev) {
-> -		pr_debug("%s: error: device does not support dax\n",
-> -				bdevname(bdev, buf));
-> -		return false;
-> -	}
-> -
->  	id = dax_read_lock();
->  	len = dax_direct_access(dax_dev, pgoff, 1, &kaddr, &pfn);
->  	len2 = dax_direct_access(dax_dev, pgoff_end, 1, &end_kaddr, &end_pfn);
->  	dax_read_unlock(id);
->  
-> -	put_dax(dax_dev);
-> -
->  	if (len < 1 || len2 < 1) {
->  		pr_debug("%s: error: dax access failed (%ld)\n",
->  				bdevname(bdev, buf), len < 1 ? len : len2);
-> @@ -178,6 +152,49 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
->  	}
->  	return true;
->  }
-> +EXPORT_SYMBOL_GPL(generic_fsdax_supported);
-> +
-> +/**
-> + * __bdev_dax_supported() - Check if the device supports dax for filesystem
-> + * @bdev: block device to check
-> + * @blocksize: The block size of the device
-> + *
-> + * This is a library function for filesystems to check if the block device
-> + * can be mounted with dax option.
-> + *
-> + * Return: true if supported, false if unsupported
-> + */
-> +bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
-> +{
-> +	struct dax_device *dax_dev;
-> +	struct request_queue *q;
-> +	char buf[BDEVNAME_SIZE];
-> +	bool ret;
-> +	int id;
-> +
-> +	q = bdev_get_queue(bdev);
-> +	if (!q || !blk_queue_dax(q)) {
-> +		pr_debug("%s: error: request queue doesn't support dax\n",
-> +				bdevname(bdev, buf));
-> +		return false;
-> +	}
-> +
-> +	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
-> +	if (!dax_dev) {
-> +		pr_debug("%s: error: device does not support dax\n",
-> +				bdevname(bdev, buf));
-> +		return false;
-> +	}
-> +
-> +	id = dax_read_lock();
-> +	ret = dax_supported(dax_dev, bdev, blocksize, 0,
-> +			i_size_read(bdev->bd_inode) / 512);
-> +	dax_read_unlock(id);
-> +
-> +	put_dax(dax_dev);
-> +
-> +	return ret;
-> +}
->  EXPORT_SYMBOL_GPL(__bdev_dax_supported);
->  #endif
->  
-> @@ -303,6 +320,15 @@ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
->  }
->  EXPORT_SYMBOL_GPL(dax_direct_access);
->  
-> +bool dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
-> +		int blocksize, sector_t start, sector_t len)
-> +{
-> +	if (!dax_alive(dax_dev))
-> +		return false;
-> +
-> +	return dax_dev->ops->dax_supported(dax_dev, bdev, blocksize, start, len);
-> +}
-> +
->  size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
->  		size_t bytes, struct iov_iter *i)
->  {
-> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-> index cde3b49b2a91..350cf0451456 100644
-> --- a/drivers/md/dm-table.c
-> +++ b/drivers/md/dm-table.c
-> @@ -880,13 +880,17 @@ void dm_table_set_type(struct dm_table *t, enum dm_queue_mode type)
->  }
->  EXPORT_SYMBOL_GPL(dm_table_set_type);
->  
-> +/* validate the dax capability of the target device span */
->  static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
-> -			       sector_t start, sector_t len, void *data)
-> +				       sector_t start, sector_t len, void *data)
->  {
-> -	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
-> +	int blocksize = *(int *) data;
-> +
-> +	return generic_fsdax_supported(dev->dax_dev, dev->bdev, blocksize,
-> +			start, len);
->  }
->  
-> -static bool dm_table_supports_dax(struct dm_table *t)
-> +bool dm_table_supports_dax(struct dm_table *t, int blocksize)
->  {
->  	struct dm_target *ti;
->  	unsigned i;
-> @@ -899,7 +903,8 @@ static bool dm_table_supports_dax(struct dm_table *t)
->  			return false;
->  
->  		if (!ti->type->iterate_devices ||
-> -		    !ti->type->iterate_devices(ti, device_supports_dax, NULL))
-> +		    !ti->type->iterate_devices(ti, device_supports_dax,
-> +			    &blocksize))
->  			return false;
->  	}
->  
-> @@ -979,7 +984,7 @@ static int dm_table_determine_type(struct dm_table *t)
->  verify_bio_based:
->  		/* We must use this table as bio-based */
->  		t->type = DM_TYPE_BIO_BASED;
-> -		if (dm_table_supports_dax(t) ||
-> +		if (dm_table_supports_dax(t, PAGE_SIZE) ||
->  		    (list_empty(devices) && live_md_type == DM_TYPE_DAX_BIO_BASED)) {
->  			t->type = DM_TYPE_DAX_BIO_BASED;
->  		} else {
-> @@ -1905,7 +1910,7 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
->  	}
->  	blk_queue_write_cache(q, wc, fua);
->  
-> -	if (dm_table_supports_dax(t))
-> +	if (dm_table_supports_dax(t, PAGE_SIZE))
->  		blk_queue_flag_set(QUEUE_FLAG_DAX, q);
->  	else
->  		blk_queue_flag_clear(QUEUE_FLAG_DAX, q);
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 043f0761e4a0..c28787f5357b 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -1105,6 +1105,25 @@ static long dm_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
->  	return ret;
->  }
->  
-> +static bool dm_dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
-> +		int blocksize, sector_t start, sector_t len)
-> +{
-> +	struct mapped_device *md = dax_get_private(dax_dev);
-> +	struct dm_table *map;
-> +	int srcu_idx;
-> +	bool ret;
-> +
-> +	map = dm_get_live_table(md, &srcu_idx);
-> +	if (!map)
-> +		return false;
-> +
-> +	ret = dm_table_supports_dax(map, blocksize);
-> +
-> +	dm_put_live_table(md, srcu_idx);
-> +
-> +	return ret;
-> +}
-> +
->  static size_t dm_dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff,
->  				    void *addr, size_t bytes, struct iov_iter *i)
->  {
-> @@ -3192,6 +3211,7 @@ static const struct block_device_operations dm_blk_dops = {
->  
->  static const struct dax_operations dm_dax_ops = {
->  	.direct_access = dm_dax_direct_access,
-> +	.dax_supported = dm_dax_supported,
->  	.copy_from_iter = dm_dax_copy_from_iter,
->  	.copy_to_iter = dm_dax_copy_to_iter,
->  };
-> diff --git a/drivers/md/dm.h b/drivers/md/dm.h
-> index 2d539b82ec08..e5e240bfa2d0 100644
-> --- a/drivers/md/dm.h
-> +++ b/drivers/md/dm.h
-> @@ -78,6 +78,7 @@ void dm_unlock_md_type(struct mapped_device *md);
->  void dm_set_md_type(struct mapped_device *md, enum dm_queue_mode type);
->  enum dm_queue_mode dm_get_md_type(struct mapped_device *md);
->  struct target_type *dm_get_immutable_target_type(struct mapped_device *md);
-> +bool dm_table_supports_dax(struct dm_table *t, int blocksize);
->  
->  int dm_setup_md_queue(struct mapped_device *md, struct dm_table *t);
->  
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 0279eb1da3ef..845c5b430cdd 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -295,6 +295,7 @@ static size_t pmem_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff,
->  
->  static const struct dax_operations pmem_dax_ops = {
->  	.direct_access = pmem_dax_direct_access,
-> +	.dax_supported = generic_fsdax_supported,
->  	.copy_from_iter = pmem_copy_from_iter,
->  	.copy_to_iter = pmem_copy_to_iter,
->  };
-> diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
-> index 4e8aedd50cb0..d04d4378ca50 100644
-> --- a/drivers/s390/block/dcssblk.c
-> +++ b/drivers/s390/block/dcssblk.c
-> @@ -59,6 +59,7 @@ static size_t dcssblk_dax_copy_to_iter(struct dax_device *dax_dev,
->  
->  static const struct dax_operations dcssblk_dax_ops = {
->  	.direct_access = dcssblk_dax_direct_access,
-> +	.dax_supported = generic_fsdax_supported,
->  	.copy_from_iter = dcssblk_dax_copy_from_iter,
->  	.copy_to_iter = dcssblk_dax_copy_to_iter,
->  };
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 0dd316a74a29..f5544fc62319 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -19,6 +19,12 @@ struct dax_operations {
->  	 */
->  	long (*direct_access)(struct dax_device *, pgoff_t, long,
->  			void **, pfn_t *);
-> +	/*
-> +	 * Validate whether this device is usable as an fsdax backing
-> +	 * device.
-> +	 */
-> +	bool (*dax_supported)(struct dax_device *, struct block_device *, int,
-> +			sector_t, sector_t);
->  	/* copy_from_iter: required operation for fs-dax direct-i/o */
->  	size_t (*copy_from_iter)(struct dax_device *, pgoff_t, void *, size_t,
->  			struct iov_iter *);
-> @@ -75,6 +81,10 @@ static inline bool bdev_dax_supported(struct block_device *bdev, int blocksize)
->  	return __bdev_dax_supported(bdev, blocksize);
->  }
->  
-> +bool generic_fsdax_supported(struct dax_device *dax_dev,
-> +		struct block_device *bdev, int blocksize, sector_t start,
-> +		sector_t sectors);
-> +
->  static inline struct dax_device *fs_dax_get_by_host(const char *host)
->  {
->  	return dax_get_by_host(host);
-> @@ -99,6 +109,13 @@ static inline bool bdev_dax_supported(struct block_device *bdev,
->  	return false;
->  }
->  
-> +static inline bool generic_fsdax_supported(struct dax_device *dax_dev,
-> +		struct block_device *bdev, int blocksize, sector_t start,
-> +		sector_t sectors)
-> +{
-> +	return false;
-> +}
-> +
->  static inline struct dax_device *fs_dax_get_by_host(const char *host)
->  {
->  	return NULL;
-> @@ -142,6 +159,8 @@ bool dax_alive(struct dax_device *dax_dev);
->  void *dax_get_private(struct dax_device *dax_dev);
->  long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
->  		void **kaddr, pfn_t *pfn);
-> +bool dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
-> +		int blocksize, sector_t start, sector_t len);
->  size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
->  		size_t bytes, struct iov_iter *i);
->  size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
-> 
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
