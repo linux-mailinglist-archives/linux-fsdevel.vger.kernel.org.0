@@ -2,332 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06B7F20661
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 14:00:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99BD62067B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 14:00:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbfEPLwi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 May 2019 07:52:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38606 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726878AbfEPLwh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 May 2019 07:52:37 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 65EF6308FEC1;
-        Thu, 16 May 2019 11:52:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-61.rdu2.redhat.com [10.10.120.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 914746A25A;
-        Thu, 16 May 2019 11:52:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 4/4] uapi: Wire up the mount API syscalls on non-x86 arches
- [ver #2]
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
-Cc:     Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@arndb.de>,
-        dhowells@redhat.com, christian@brauner.io, arnd@arndb.de,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 16 May 2019 12:52:34 +0100
-Message-ID: <155800755482.4037.14407450837395686732.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155800752418.4037.9567789434648701032.stgit@warthog.procyon.org.uk>
-References: <155800752418.4037.9567789434648701032.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 16 May 2019 11:52:37 +0000 (UTC)
+        id S1727218AbfEPL4X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 May 2019 07:56:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40974 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726723AbfEPL4X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 May 2019 07:56:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7A9D6ACAA;
+        Thu, 16 May 2019 11:56:22 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 3D82B1E3ED6; Thu, 16 May 2019 13:56:22 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
+To:     <linux-fsdevel@vger.kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Subject: [PATCH v2] fanotify: Disallow permission events for proc filesystem
+Date:   Thu, 16 May 2019 13:56:19 +0200
+Message-Id: <20190516115619.18926-1-jack@suse.cz>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Wire up the mount API syscalls on non-x86 arches.
+Proc filesystem has special locking rules for various files. Thus
+fanotify which opens files on event delivery can easily deadlock
+against another process that waits for fanotify permission event to be
+handled. Since permission events on /proc have doubtful value anyway,
+just disallow them.
 
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/linux-fsdevel/20190320131642.GE9485@quack2.suse.cz/
+Signed-off-by: Jan Kara <jack@suse.cz>
 ---
+ fs/notify/fanotify/fanotify_user.c | 22 ++++++++++++++++++++++
+ fs/proc/root.c                     |  2 +-
+ include/linux/fs.h                 |  1 +
+ 3 files changed, 24 insertions(+), 1 deletion(-)
 
- arch/alpha/kernel/syscalls/syscall.tbl      |    6 ++++++
- arch/arm/tools/syscall.tbl                  |    6 ++++++
- arch/arm64/include/asm/unistd.h             |    2 +-
- arch/arm64/include/asm/unistd32.h           |   12 ++++++++++++
- arch/ia64/kernel/syscalls/syscall.tbl       |    6 ++++++
- arch/m68k/kernel/syscalls/syscall.tbl       |    6 ++++++
- arch/microblaze/kernel/syscalls/syscall.tbl |    6 ++++++
- arch/mips/kernel/syscalls/syscall_n32.tbl   |    6 ++++++
- arch/mips/kernel/syscalls/syscall_n64.tbl   |    6 ++++++
- arch/mips/kernel/syscalls/syscall_o32.tbl   |    6 ++++++
- arch/parisc/kernel/syscalls/syscall.tbl     |    6 ++++++
- arch/powerpc/kernel/syscalls/syscall.tbl    |    6 ++++++
- arch/s390/kernel/syscalls/syscall.tbl       |    6 ++++++
- arch/sh/kernel/syscalls/syscall.tbl         |    6 ++++++
- arch/sparc/kernel/syscalls/syscall.tbl      |    6 ++++++
- arch/xtensa/kernel/syscalls/syscall.tbl     |    6 ++++++
- include/uapi/asm-generic/unistd.h           |   14 +++++++++++++-
- 17 files changed, 110 insertions(+), 2 deletions(-)
+Changes since v1:
+* use type flag to detect filesystems not supporting permission events
+* return -EINVAL instead of -EOPNOTSUPP for such filesystems
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 165f268beafc..9e7704e44f6d 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -467,3 +467,9 @@
- 535	common	io_uring_setup			sys_io_uring_setup
- 536	common	io_uring_enter			sys_io_uring_enter
- 537	common	io_uring_register		sys_io_uring_register
-+538	common	open_tree			sys_open_tree
-+539	common	move_mount			sys_move_mount
-+540	common	fsopen				sys_fsopen
-+541	common	fsconfig			sys_fsconfig
-+542	common	fsmount				sys_fsmount
-+543	common	fspick				sys_fspick
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 0393917eaa57..aaf479a9e92d 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -441,3 +441,9 @@
- 425	common	io_uring_setup			sys_io_uring_setup
- 426	common	io_uring_enter			sys_io_uring_enter
- 427	common	io_uring_register		sys_io_uring_register
-+428	common	open_tree			sys_open_tree
-+429	common	move_mount			sys_move_mount
-+430	common	fsopen				sys_fsopen
-+431	common	fsconfig			sys_fsconfig
-+432	common	fsmount				sys_fsmount
-+433	common	fspick				sys_fspick
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index f2a83ff6b73c..70e6882853c0 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -44,7 +44,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index a90bb19dcfa2..91006f47e420 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -920,6 +920,22 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
+ 	return 0;
+ }
  
--#define __NR_compat_syscalls		428
-+#define __NR_compat_syscalls		434
- #endif
++static int fanotify_events_supported(struct path *path, __u64 mask)
++{
++	/*
++	 * Some filesystems such as 'proc' acquire unusual locks when opening
++	 * files. For them fanotify permission events have high chances of
++	 * deadlocking the system - open done when reporting fanotify event
++	 * blocks on this "unusual" lock while another process holding the lock
++	 * waits for fanotify permission event to be answered. Just disallow
++	 * permission events for such filesystems.
++	 */
++	if (mask & FANOTIFY_PERM_EVENTS &&
++	    path->mnt->mnt_sb->s_type->fs_flags & FS_DISALLOW_NOTIFY_PERM)
++		return -EINVAL;
++	return 0;
++}
++
+ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 			    int dfd, const char  __user *pathname)
+ {
+@@ -1018,6 +1034,12 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	if (ret)
+ 		goto fput_and_out;
  
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 23f1a44acada..c39e90600bb3 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -874,6 +874,18 @@ __SYSCALL(__NR_io_uring_setup, sys_io_uring_setup)
- __SYSCALL(__NR_io_uring_enter, sys_io_uring_enter)
- #define __NR_io_uring_register 427
- __SYSCALL(__NR_io_uring_register, sys_io_uring_register)
-+#define __NR_open_tree 428
-+__SYSCALL(__NR_open_tree, sys_open_tree)
-+#define __NR_move_mount 429
-+__SYSCALL(__NR_move_mount, sys_move_mount)
-+#define __NR_fsopen 430
-+__SYSCALL(__NR_fsopen, sys_fsopen)
-+#define __NR_fsconfig 431
-+__SYSCALL(__NR_fsconfig, sys_fsconfig)
-+#define __NR_fsmount 432
-+__SYSCALL(__NR_fsmount, sys_fsmount)
-+#define __NR_fspick 433
-+__SYSCALL(__NR_fspick, sys_fspick)
++	if (flags & FAN_MARK_ADD) {
++		ret = fanotify_events_supported(&path, mask);
++		if (ret)
++			goto path_put_and_out;
++	}
++
+ 	if (FAN_GROUP_FLAG(group, FAN_REPORT_FID)) {
+ 		ret = fanotify_test_fid(&path, &__fsid);
+ 		if (ret)
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index 8b145e7b9661..522199e9525e 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -211,7 +211,7 @@ static struct file_system_type proc_fs_type = {
+ 	.init_fs_context	= proc_init_fs_context,
+ 	.parameters		= &proc_fs_parameters,
+ 	.kill_sb		= proc_kill_sb,
+-	.fs_flags		= FS_USERNS_MOUNT,
++	.fs_flags		= FS_USERNS_MOUNT | FS_DISALLOW_NOTIFY_PERM,
+ };
  
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index 56e3d0b685e1..e01df3f2f80d 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -348,3 +348,9 @@
- 425	common	io_uring_setup			sys_io_uring_setup
- 426	common	io_uring_enter			sys_io_uring_enter
- 427	common	io_uring_register		sys_io_uring_register
-+428	common	open_tree			sys_open_tree
-+429	common	move_mount			sys_move_mount
-+430	common	fsopen				sys_fsopen
-+431	common	fsconfig			sys_fsconfig
-+432	common	fsmount				sys_fsmount
-+433	common	fspick				sys_fspick
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index df4ec3ec71d1..7e3d0734b2f3 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -427,3 +427,9 @@
- 425	common	io_uring_setup			sys_io_uring_setup
- 426	common	io_uring_enter			sys_io_uring_enter
- 427	common	io_uring_register		sys_io_uring_register
-+428	common	open_tree			sys_open_tree
-+429	common	move_mount			sys_move_mount
-+430	common	fsopen				sys_fsopen
-+431	common	fsconfig			sys_fsconfig
-+432	common	fsmount				sys_fsmount
-+433	common	fspick				sys_fspick
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 4964947732af..26339e417695 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -433,3 +433,9 @@
- 425	common	io_uring_setup			sys_io_uring_setup
- 426	common	io_uring_enter			sys_io_uring_enter
- 427	common	io_uring_register		sys_io_uring_register
-+428	common	open_tree			sys_open_tree
-+429	common	move_mount			sys_move_mount
-+430	common	fsopen				sys_fsopen
-+431	common	fsconfig			sys_fsconfig
-+432	common	fsmount				sys_fsmount
-+433	common	fspick				sys_fspick
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 9392dfe33f97..0e2dd68ade57 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -366,3 +366,9 @@
- 425	n32	io_uring_setup			sys_io_uring_setup
- 426	n32	io_uring_enter			sys_io_uring_enter
- 427	n32	io_uring_register		sys_io_uring_register
-+428	n32	open_tree			sys_open_tree
-+429	n32	move_mount			sys_move_mount
-+430	n32	fsopen				sys_fsopen
-+431	n32	fsconfig			sys_fsconfig
-+432	n32	fsmount				sys_fsmount
-+433	n32	fspick				sys_fspick
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index cd0c8aa21fba..5eebfa0d155c 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -342,3 +342,9 @@
- 425	n64	io_uring_setup			sys_io_uring_setup
- 426	n64	io_uring_enter			sys_io_uring_enter
- 427	n64	io_uring_register		sys_io_uring_register
-+428	n64	open_tree			sys_open_tree
-+429	n64	move_mount			sys_move_mount
-+430	n64	fsopen				sys_fsopen
-+431	n64	fsconfig			sys_fsconfig
-+432	n64	fsmount				sys_fsmount
-+433	n64	fspick				sys_fspick
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index e849e8ffe4a2..3cc1374e02d0 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -415,3 +415,9 @@
- 425	o32	io_uring_setup			sys_io_uring_setup
- 426	o32	io_uring_enter			sys_io_uring_enter
- 427	o32	io_uring_register		sys_io_uring_register
-+428	o32	open_tree			sys_open_tree
-+429	o32	move_mount			sys_move_mount
-+430	o32	fsopen				sys_fsopen
-+431	o32	fsconfig			sys_fsconfig
-+432	o32	fsmount				sys_fsmount
-+433	o32	fspick				sys_fspick
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index fe8ca623add8..c9e377d59232 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -424,3 +424,9 @@
- 425	common	io_uring_setup			sys_io_uring_setup
- 426	common	io_uring_enter			sys_io_uring_enter
- 427	common	io_uring_register		sys_io_uring_register
-+428	common	open_tree			sys_open_tree
-+429	common	move_mount			sys_move_mount
-+430	common	fsopen				sys_fsopen
-+431	common	fsconfig			sys_fsconfig
-+432	common	fsmount				sys_fsmount
-+433	common	fspick				sys_fspick
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 00f5a63c8d9a..103655d84b4b 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -509,3 +509,9 @@
- 425	common	io_uring_setup			sys_io_uring_setup
- 426	common	io_uring_enter			sys_io_uring_enter
- 427	common	io_uring_register		sys_io_uring_register
-+428	common	open_tree			sys_open_tree
-+429	common	move_mount			sys_move_mount
-+430	common	fsopen				sys_fsopen
-+431	common	fsconfig			sys_fsconfig
-+432	common	fsmount				sys_fsmount
-+433	common	fspick				sys_fspick
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 061418f787c3..e822b2964a83 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -430,3 +430,9 @@
- 425  common	io_uring_setup		sys_io_uring_setup              sys_io_uring_setup
- 426  common	io_uring_enter		sys_io_uring_enter              sys_io_uring_enter
- 427  common	io_uring_register	sys_io_uring_register           sys_io_uring_register
-+428  common	open_tree		sys_open_tree			sys_open_tree
-+429  common	move_mount		sys_move_mount			sys_move_mount
-+430  common	fsopen			sys_fsopen			sys_fsopen
-+431  common	fsconfig		sys_fsconfig			sys_fsconfig
-+432  common	fsmount			sys_fsmount			sys_fsmount
-+433  common	fspick			sys_fspick			sys_fspick
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index 480b057556ee..016a727d4357 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -430,3 +430,9 @@
- 425	common	io_uring_setup			sys_io_uring_setup
- 426	common	io_uring_enter			sys_io_uring_enter
- 427	common	io_uring_register		sys_io_uring_register
-+428	common	open_tree			sys_open_tree
-+429	common	move_mount			sys_move_mount
-+430	common	fsopen				sys_fsopen
-+431	common	fsconfig			sys_fsconfig
-+432	common	fsmount				sys_fsmount
-+433	common	fspick				sys_fspick
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index a1dd24307b00..e047480b1605 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -473,3 +473,9 @@
- 425	common	io_uring_setup			sys_io_uring_setup
- 426	common	io_uring_enter			sys_io_uring_enter
- 427	common	io_uring_register		sys_io_uring_register
-+428	common	open_tree			sys_open_tree
-+429	common	move_mount			sys_move_mount
-+430	common	fsopen				sys_fsopen
-+431	common	fsconfig			sys_fsconfig
-+432	common	fsmount				sys_fsmount
-+433	common	fspick				sys_fspick
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 30084eaf8422..5fa0ee1c8e00 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -398,3 +398,9 @@
- 425	common	io_uring_setup			sys_io_uring_setup
- 426	common	io_uring_enter			sys_io_uring_enter
- 427	common	io_uring_register		sys_io_uring_register
-+428	common	open_tree			sys_open_tree
-+429	common	move_mount			sys_move_mount
-+430	common	fsopen				sys_fsopen
-+431	common	fsconfig			sys_fsconfig
-+432	common	fsmount				sys_fsmount
-+433	common	fspick				sys_fspick
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index dee7292e1df6..a87904daf103 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -832,9 +832,21 @@ __SYSCALL(__NR_io_uring_setup, sys_io_uring_setup)
- __SYSCALL(__NR_io_uring_enter, sys_io_uring_enter)
- #define __NR_io_uring_register 427
- __SYSCALL(__NR_io_uring_register, sys_io_uring_register)
-+#define __NR_open_tree 428
-+__SYSCALL(__NR_open_tree, sys_open_tree)
-+#define __NR_move_mount 429
-+__SYSCALL(__NR_move_mount, sys_move_mount)
-+#define __NR_fsopen 430
-+__SYSCALL(__NR_fsopen, sys_fsopen)
-+#define __NR_fsconfig 431
-+__SYSCALL(__NR_fsconfig, sys_fsconfig)
-+#define __NR_fsmount 432
-+__SYSCALL(__NR_fsmount, sys_fsmount)
-+#define __NR_fspick 433
-+__SYSCALL(__NR_fspick, sys_fspick)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 428
-+#define __NR_syscalls 434
- 
- /*
-  * 32 bit systems traditionally used different
+ void __init proc_root_init(void)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f7fdfe93e25d..c7136c98b5ba 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2184,6 +2184,7 @@ struct file_system_type {
+ #define FS_BINARY_MOUNTDATA	2
+ #define FS_HAS_SUBTYPE		4
+ #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
++#define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
+ #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+ 	int (*init_fs_context)(struct fs_context *);
+ 	const struct fs_parameter_description *parameters;
+-- 
+2.16.4
 
