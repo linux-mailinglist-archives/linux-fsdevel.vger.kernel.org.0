@@ -2,75 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD46320C9B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 18:10:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71D5A20CC4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 18:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbfEPQKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 May 2019 12:10:32 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33231 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbfEPQKb (ORCPT
+        id S1727010AbfEPQRv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 May 2019 12:17:51 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:58908 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726794AbfEPQRv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 May 2019 12:10:31 -0400
-Received: by mail-lj1-f196.google.com with SMTP id w1so3672619ljw.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 May 2019 09:10:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OJVoHOdwqPmtIGZYRe7rwFLvOITb6Eou9scimDVik8g=;
-        b=JBL1tXAneD2P7JzHehKu6All1l+r9l2U+WQBkVg/moWc907ohcWYVQg0L+OHvLyG5O
-         9tCXeL3wmQx1AWaJA5k8oJ2JLq3BU7IUhjxPXitYEdXkTp0CAkU/Dg9PgpirSWV4raFh
-         lVG2cRQs3CIuRMTLQslyR3ys0dSb11KxtNDiOsM5k4jC8EP8TLD536D52rBC3T+yWhTd
-         x0JGCgqgtMYQdCrGrgLh6GqR1RwAWRgk6RZdUyiLf/FzhCi5PzuJ39flRBKQT5qN0nQc
-         OrUWWTdXk7i0rAdnt1erlK6esOWEDKMNI4DuDLZXOicGvtnY4xe57oydDwoReFgHXx3b
-         4HiA==
-X-Gm-Message-State: APjAAAWmmPUGFKIbA/zEqAI5HjttqnPXj+oIOyt3+RvydDy/fI6SZXHn
-        e3uJNA+jyexoUj6CDJF/G5Lqs2POTW8Saa4KgbdMrA==
-X-Google-Smtp-Source: APXvYqytsMIKpyzg6Sr7Ma0RrX3P9yIKHhEzTRRSX0gI9JlTBX9wZXbT94dI4qFs37peKTqIzS8XBfKzh47Ff2ccEeY=
-X-Received: by 2002:a2e:2b81:: with SMTP id r1mr22861818ljr.138.1558023029982;
- Thu, 16 May 2019 09:10:29 -0700 (PDT)
+        Thu, 16 May 2019 12:17:51 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hRJ4l-0003JI-Co; Thu, 16 May 2019 16:17:47 +0000
+Date:   Thu, 16 May 2019 17:17:47 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Joel Becker <jlbec@evilplan.org>
+Subject: Re: [PATCH v2 00/14] Sort out fsnotify_nameremove() mess
+Message-ID: <20190516161747.GA17978@ZenIV.linux.org.uk>
+References: <20190516102641.6574-1-amir73il@gmail.com>
+ <20190516122506.GF13274@quack2.suse.cz>
+ <CAOQ4uxjiHuN7dcciucaRXvhj6g9wgz4k313NV3c_XbUrC8+sug@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190430180111.10688-1-mcroce@redhat.com> <CAGXu5jJG1D6YvTaSY3hpB8_APmwe=rGn8FkyAfCGuQZ3O2j1Yg@mail.gmail.com>
-In-Reply-To: <CAGXu5jJG1D6YvTaSY3hpB8_APmwe=rGn8FkyAfCGuQZ3O2j1Yg@mail.gmail.com>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Thu, 16 May 2019 18:09:53 +0200
-Message-ID: <CAGnkfhyjmpPAjQFpm-w3v0kMWTKRHTq5v6w0m9KScN2a7bMgeg@mail.gmail.com>
-Subject: Re: [PATCH v5] proc/sysctl: add shared variables for range check
-To:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjiHuN7dcciucaRXvhj6g9wgz4k313NV3c_XbUrC8+sug@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 8:14 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Tue, Apr 30, 2019 at 11:01 AM Matteo Croce <mcroce@redhat.com> wrote:
-> >
-> > In the sysctl code the proc_dointvec_minmax() function is often used to
-> > validate the user supplied value between an allowed range. This function
-> > uses the extra1 and extra2 members from struct ctl_table as minimum and
-> > maximum allowed value.
-> >
-[...]
-> >
-> > Signed-off-by: Matteo Croce <mcroce@redhat.com>
->
-> Acked-by: Kees Cook <keescook@chromium.org>
->
-> --
-> Kees Cook
+On Thu, May 16, 2019 at 04:56:20PM +0300, Amir Goldstein wrote:
 
-Hi all,
+> > Why is this a cleanup? detach_groups() is used also from
+> > configfs_detach_group() which gets called from configfs_rmdir() which is
+> > real deletion.
+> 
+> True, configfs is a special case where both cleanup and real deletion
+> use the same helper. configfs_detach_group() is either called for cleanup
+> or from vfs_rmdir->configfs_rmdir()/configfs_unregister_{group,subsystem}()
+> the latter 3 cases have new fsnotify hooks.
 
-just a ping about this patch. Any tought, suggestion, concern or criticism?
+FWIW, I've an old series on configfs, from the "deal with kernel-side rm -rf
+properly" pile.
 
-Regards,
--- 
-Matteo Croce
-per aspera ad upstream
+I'll try to resurrect and post it.  A _lot_ of locking crap in there is
+due to the bad idea of having the subtree being built reachable from
+root as we are putting it together; massaging it to the form when we
+build a subtree and move it in place only when we are past the last
+failure makes for much simpler logics, for obvious reasons.  The massage
+is not trivial, though.
+
+In general, the problem with kernel-side recursive removals is that
+a bunch of places are trying to cobble local solutions for the problem
+that is actually a missing primitive.  And fucking it up in all kinds
+of ways.  We definitely want a unified primitive for that; the question
+is what kind of API would be kludge-free for callers.
+
+I've a pile of notes and half-assed patch series in that direction;
+I'll dig it out and try to get something coherent out of it.
