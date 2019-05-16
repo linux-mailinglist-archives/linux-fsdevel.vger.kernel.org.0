@@ -2,24 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 912301FD70
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 03:49:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F2F51FD6E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 03:49:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbfEPBq0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1727301AbfEPBq0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 15 May 2019 21:46:26 -0400
-Received: from fieldses.org ([173.255.197.46]:33070 "EHLO fieldses.org"
+Received: from fieldses.org ([173.255.197.46]:33072 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726998AbfEPBUX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1726999AbfEPBUX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 15 May 2019 21:20:23 -0400
 Received: by fieldses.org (Postfix, from userid 2815)
-        id 580471E67; Wed, 15 May 2019 21:20:23 -0400 (EDT)
+        id 5E8171E3A; Wed, 15 May 2019 21:20:23 -0400 (EDT)
 From:   "J. Bruce Fields" <bfields@redhat.com>
 To:     linux-nfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org,
         "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 01/12] nfsd: persist nfsd filesystem across mounts
-Date:   Wed, 15 May 2019 21:20:07 -0400
-Message-Id: <1557969619-17157-3-git-send-email-bfields@redhat.com>
+Subject: [PATCH 2/2] nfsd: fh_drop_write in nfsd_unlink
+Date:   Wed, 15 May 2019 21:20:08 -0400
+Message-Id: <1557969619-17157-4-git-send-email-bfields@redhat.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1557969619-17157-1-git-send-email-bfields@redhat.com>
 References: <1557969619-17157-1-git-send-email-bfields@redhat.com>
@@ -30,70 +30,45 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "J. Bruce Fields" <bfields@redhat.com>
 
-Keep around one internal mount of the nfsd filesystem so that we can
-e.g. add stuff to it when clients come and go, regardless of whether
-anyone has it mounted.
+fh_want_write() can now be called twice, but I'm also fixing up the
+callers not to do that.
+
+Other cases include setattr and create.
 
 Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 ---
- fs/nfsd/netns.h  |  3 +++
- fs/nfsd/nfsctl.c | 13 +++++++++++++
- 2 files changed, 16 insertions(+)
+ fs/nfsd/vfs.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
-index 32cb8c027483..cce335e1ec98 100644
---- a/fs/nfsd/netns.h
-+++ b/fs/nfsd/netns.h
-@@ -55,6 +55,9 @@ struct nfsd_net {
- 	bool grace_ended;
- 	time_t boot_time;
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 7dc98e14655d..fc24ee47eab5 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -1786,12 +1786,12 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
+ 	rdentry = lookup_one_len(fname, dentry, flen);
+ 	host_err = PTR_ERR(rdentry);
+ 	if (IS_ERR(rdentry))
+-		goto out_nfserr;
++		goto out_drop_write;
  
-+	/* internal mount of the "nfsd" pseudofilesystem: */
-+	struct vfsmount *nfsd_mnt;
-+
- 	/*
- 	 * reclaim_str_hashtbl[] holds known client info from previous reset/reboot
- 	 * used in reboot/reset lease grace period processing
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index f2feb2d11bae..8d2062428569 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -1231,6 +1231,7 @@ unsigned int nfsd_net_id;
- static __net_init int nfsd_init_net(struct net *net)
- {
- 	int retval;
-+	struct vfsmount *mnt;
- 	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
+ 	if (d_really_is_negative(rdentry)) {
+ 		dput(rdentry);
+-		err = nfserr_noent;
+-		goto out;
++		host_err = -ENOENT;
++		goto out_drop_write;
+ 	}
  
- 	retval = nfsd_export_init(net);
-@@ -1248,8 +1249,17 @@ static __net_init int nfsd_init_net(struct net *net)
+ 	if (!type)
+@@ -1805,6 +1805,8 @@ nfsd_unlink(struct svc_rqst *rqstp, struct svc_fh *fhp, int type,
+ 		host_err = commit_metadata(fhp);
+ 	dput(rdentry);
  
- 	atomic_set(&nn->ntf_refcnt, 0);
- 	init_waitqueue_head(&nn->ntf_wq);
-+
-+	mnt =  vfs_kern_mount(&nfsd_fs_type, SB_KERNMOUNT, "nfsd", NULL);
-+	if (IS_ERR(mnt)) {
-+		retval = PTR_ERR(mnt);
-+		goto out_mount_err;
-+	}
-+	nn->nfsd_mnt = mnt;
- 	return 0;
- 
-+out_mount_err:
-+	nfsd_idmap_shutdown(net);
- out_idmap_error:
- 	nfsd_export_shutdown(net);
- out_export_error:
-@@ -1258,6 +1268,9 @@ static __net_init int nfsd_init_net(struct net *net)
- 
- static __net_exit void nfsd_exit_net(struct net *net)
- {
-+	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
-+
-+	mntput(nn->nfsd_mnt);
- 	nfsd_idmap_shutdown(net);
- 	nfsd_export_shutdown(net);
- }
++out_drop_write:
++	fh_drop_write(fhp);
+ out_nfserr:
+ 	err = nfserrno(host_err);
+ out:
 -- 
 2.21.0
 
