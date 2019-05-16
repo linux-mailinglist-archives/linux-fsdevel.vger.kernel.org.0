@@ -2,122 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC6320EFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 20:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 387FF20F94
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 22:23:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbfEPS5w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 May 2019 14:57:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39566 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726529AbfEPS5w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 May 2019 14:57:52 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 99A843083392;
-        Thu, 16 May 2019 18:57:38 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 036B719C4F;
-        Thu, 16 May 2019 18:57:33 +0000 (UTC)
-Date:   Thu, 16 May 2019 14:57:32 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: dax: Arrange for dax_supported check to span multiple devices
-Message-ID: <20190516185732.GA27796@redhat.com>
-References: <155789172402.748145.11853718580748830476.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1727550AbfEPUXf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 May 2019 16:23:35 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:50168 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726409AbfEPUXf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 May 2019 16:23:35 -0400
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id A0DE572CCD5;
+        Thu, 16 May 2019 23:23:31 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 8D0A47CC6FF; Thu, 16 May 2019 23:23:31 +0300 (MSK)
+Date:   Thu, 16 May 2019 23:23:31 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christian Brauner <christian@brauner.io>,
+        David Howells <dhowells@redhat.com>,
+        torvalds@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH 0/4] uapi, vfs: Change the mount API UAPI [ver #2]
+Message-ID: <20190516202331.GA29908@altlinux.org>
+References: <155800752418.4037.9567789434648701032.stgit@warthog.procyon.org.uk>
+ <20190516162259.GB17978@ZenIV.linux.org.uk>
+ <20190516163151.urrmrueugockxtdy@brauner.io>
+ <20190516165021.GD17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <155789172402.748145.11853718580748830476.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 16 May 2019 18:57:52 +0000 (UTC)
+In-Reply-To: <20190516165021.GD17978@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 14 2019 at 11:48pm -0400,
-Dan Williams <dan.j.williams@intel.com> wrote:
+[looks like linux-abi is a typo, Cc'ed linux-api instead]
 
-> Pankaj reports that starting with commit ad428cdb525a "dax: Check the
-> end of the block-device capacity with dax_direct_access()" device-mapper
-> no longer allows dax operation. This results from the stricter checks in
-> __bdev_dax_supported() that validate that the start and end of a
-> block-device map to the same 'pagemap' instance.
+On Thu, May 16, 2019 at 05:50:22PM +0100, Al Viro wrote:
+> [linux-abi cc'd]
 > 
-> Teach the dax-core and device-mapper to validate the 'pagemap' on a
-> per-target basis. This is accomplished by refactoring the
-> bdev_dax_supported() internals into generic_fsdax_supported() which
-> takes a sector range to validate. Consequently generic_fsdax_supported()
-> is suitable to be used in a device-mapper ->iterate_devices() callback.
-> A new ->dax_supported() operation is added to allow composite devices to
-> split and route upper-level bdev_dax_supported() requests.
+> On Thu, May 16, 2019 at 06:31:52PM +0200, Christian Brauner wrote:
+> > On Thu, May 16, 2019 at 05:22:59PM +0100, Al Viro wrote:
+> > > On Thu, May 16, 2019 at 12:52:04PM +0100, David Howells wrote:
+> > > > 
+> > > > Hi Linus, Al,
+> > > > 
+> > > > Here are some patches that make changes to the mount API UAPI and two of
+> > > > them really need applying, before -rc1 - if they're going to be applied at
+> > > > all.
+> > > 
+> > > I'm fine with 2--4, but I'm not convinced that cloexec-by-default crusade
+> > > makes any sense.  Could somebody give coherent arguments in favour of
+> > > abandoning the existing conventions?
+> > 
+> > So as I said in the commit message. From a userspace perspective it's
+> > more of an issue if one accidently leaks an fd to a task during exec.
+> > 
+> > Also, most of the time one does not want to inherit an fd during an
+> > exec. It is a hazzle to always have to specify an extra flag.
+> > 
+> > As Al pointed out to me open() semantics are not going anywhere. Sure,
+> > no argument there at all.
+> > But the idea of making fds cloexec by default is only targeted at fds
+> > that come from separate syscalls. fsopen(), open_tree_clone(), etc. they
+> > all return fds independent of open() so it's really easy to have them
+> > cloexec by default without regressing anyone and we also remove the need
+> > for a bunch of separate flags for each syscall to turn them into
+> > cloexec-fds. I mean, those for syscalls came with 4 separate flags to be
+> > able to specify that the returned fd should be made cloexec. The other
+> > way around, cloexec by default, fcntl() to remove the cloexec bit is way
+> > saner imho.
 > 
-> Fixes: ad428cdb525a ("dax: Check the end of the block-device...")
-> Cc: <stable@vger.kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Mike Snitzer <snitzer@redhat.com>
-> Cc: Keith Busch <keith.busch@intel.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Reported-by: Pankaj Gupta <pagupta@redhat.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
-> Hi Mike,
+> Re separate flags - it is, in principle, a valid argument.  OTOH, I'm not
+> sure if they need to be separate - they all have the same value and
+> I don't see any reason for that to change...
 > 
-> Another day another new dax operation to allow device-mapper to better
-> scope dax operations.
-> 
-> Let me know if the device-mapper changes look sane. This passes a new
-> unit test that indeed fails on current mainline.
-> 
-> https://github.com/pmem/ndctl/blob/device-mapper-pending/test/dm.sh
-> 
->  drivers/dax/super.c          |   88 +++++++++++++++++++++++++++---------------
->  drivers/md/dm-table.c        |   17 +++++---
->  drivers/md/dm.c              |   20 ++++++++++
->  drivers/md/dm.h              |    1 
->  drivers/nvdimm/pmem.c        |    1 
->  drivers/s390/block/dcssblk.c |    1 
->  include/linux/dax.h          |   19 +++++++++
->  7 files changed, 110 insertions(+), 37 deletions(-)
-> 
+> Only tangentially related, but I wonder if something like close_range(from, to)
+> would be a more useful approach...  That kind of open-coded loops is not
+> rare in userland and kernel-side code can do them much cheaper.  Something
+> like
+> 	/* that exec is sensitive */
+> 	unshare(CLONE_FILES);
+> 	/* we don't want anything past stderr here */
+> 	close_range(3, ~0U);
+> 	execve(....);
+> on the userland side of thing.  Comments?
 
-...
+glibc people need a syscall to implement closefrom properly, see
+https://sourceware.org/bugzilla/show_bug.cgi?id=10353#c14
 
-> diff --git a/drivers/md/dm.h b/drivers/md/dm.h
-> index 2d539b82ec08..e5e240bfa2d0 100644
-> --- a/drivers/md/dm.h
-> +++ b/drivers/md/dm.h
-> @@ -78,6 +78,7 @@ void dm_unlock_md_type(struct mapped_device *md);
->  void dm_set_md_type(struct mapped_device *md, enum dm_queue_mode type);
->  enum dm_queue_mode dm_get_md_type(struct mapped_device *md);
->  struct target_type *dm_get_immutable_target_type(struct mapped_device *md);
-> +bool dm_table_supports_dax(struct dm_table *t, int blocksize);
->  
->  int dm_setup_md_queue(struct mapped_device *md, struct dm_table *t);
->  
 
-I'd prefer to have dm_table_supports_dax come just after
-dm_table_get_md_mempools in the preceding dm_table section of dm.h (just
-above this mapped_device section you extended).
-
-But other than that nit, patch looks great on a DM level:
-
-Reviewed-by: Mike Snitzer <snitzer@redhat.com>
+-- 
+ldv
