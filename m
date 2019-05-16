@@ -2,158 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3A9420D6E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 18:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72D8620D97
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 19:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbfEPQwj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 May 2019 12:52:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41584 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726357AbfEPQwj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 May 2019 12:52:39 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0196A20815;
-        Thu, 16 May 2019 16:52:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558025558;
-        bh=qJ3Z8JMOHDKjKO8Lk9hU8PRkDRtv+wJvSmKRY3KuUMw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1hl5hd+7fSMjNCRuYzP1cQvaPb/peRCEm65qajgW3pegVEAj8aDPu3Kxs1Mdak5CA
-         Ub0gCZG8grmiK39aRkzPFr0grkPPJ2Q5tKO53ro3s036UOee9Azdvypy8yHEuo8Sd8
-         ftimzJ5ajL5fSdK7leHZeCmiseBqk9bSPBrt3pG0=
-Date:   Thu, 16 May 2019 18:52:36 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 06/14] fs: convert debugfs to use simple_remove()
- helper
-Message-ID: <20190516165236.GA27726@kroah.com>
-References: <20190516102641.6574-1-amir73il@gmail.com>
- <20190516102641.6574-7-amir73il@gmail.com>
- <20190516103547.GA2125@kroah.com>
- <CAOQ4uxg9zpwRa9Ei_4M=g+SoXH1-KgYV2TqzsfEsxTKpq-e3Pg@mail.gmail.com>
- <20190516120227.GE13274@quack2.suse.cz>
- <CAOQ4uxgcY1PHyrz=POFvAFxoe36QqMLObzkewDWmeqBMLmWuMQ@mail.gmail.com>
- <20190516152847.GA612@kroah.com>
- <CAOQ4uxjkN3dWrr3YMaado5uR3LigzeY8CH7HEwGLt3W6n1s7kQ@mail.gmail.com>
+        id S1727364AbfEPRBp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 May 2019 13:01:45 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35531 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbfEPRBp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 May 2019 13:01:45 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g5so1931857plt.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 May 2019 10:01:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=UbW9OcHTdmweEe6jEqXt1jRPoIseo4HiLO48u7I/E6w=;
+        b=bTgD2EPwBGcpZl92sfVXF1mzeT293eUcgXDX1177GZ+Q2351otKnS+/h07ZitT4sQB
+         7zP91kzhVMiWU7paAkMJJVxM3b/x1IdEQCoMrH8sbohS31cLXtVHKNMFzJ+0d1htCdOZ
+         ZDo43zIWPqLEIi85KM6bgbe+nZl1TfRufuYhy5dnO1eCQhMVSj/QpE4eIFCUfwL0FoFN
+         OEY6XQtIUXkfoUVjxHLMfJ8kp9AMqobu1d7H2X4kUB+OEXi9DnnUQY5bnLJonOfnGcLm
+         qXJVhKpyujfMt2KLizaodabJUSqlmuiNskVJNHCBWMXq2o/nEedH2d37szJWncf5oteS
+         YLUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=UbW9OcHTdmweEe6jEqXt1jRPoIseo4HiLO48u7I/E6w=;
+        b=Z3LTVjcbkxbZ+KSgXSXY8hE6RFd2WR/lcslDOmTzTLpLuwKvrQGzHlIgkA+TzI06oG
+         thkl/4QlVjytbaWExShM1cANtZYYabSFjAyuD/tWqR9yTAkv8OaL+f2UUotkNGCumC6Q
+         JUNKHNH1GPnpf3rrBJvYrEbOaMD5HXytX6ExwoRSNn3SpGV8H6MirmmIce8IYqYMD4qQ
+         BpuZSa/iwbP8EtOir9sB9v95dzBBMijS9iJ60LkdjiBe/paiu9wa9idJ75Dop36TYYTS
+         voL0VNwurx3lndaLvjHz94OrrkUQ9Pecl1ew4n4cSqGGH4ZFglhu3CfoDKD/JgSF9Bdb
+         xN3Q==
+X-Gm-Message-State: APjAAAWOjtn5yrzlkeIzx2OHFZI/j+fpw3/ciGPQIkzDQrU50hy83HDr
+        VMIBkdnQBab8OEszh0ajfs/PNg==
+X-Google-Smtp-Source: APXvYqyJy18chfw6Qdjoi4ZIKROBk69gIGm7+7Q5FYxXqcrl/KLsacNX0tJWoYudaBwoVkgxqL/RGw==
+X-Received: by 2002:a17:902:b18c:: with SMTP id s12mr32892833plr.181.1558026104675;
+        Thu, 16 May 2019 10:01:44 -0700 (PDT)
+Received: from [25.170.25.245] ([208.54.39.147])
+        by smtp.gmail.com with ESMTPSA id c129sm7997133pfg.178.2019.05.16.10.01.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 10:01:43 -0700 (PDT)
+Date:   Thu, 16 May 2019 19:01:34 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190516165021.GD17978@ZenIV.linux.org.uk>
+References: <155800752418.4037.9567789434648701032.stgit@warthog.procyon.org.uk> <20190516162259.GB17978@ZenIV.linux.org.uk> <20190516163151.urrmrueugockxtdy@brauner.io> <20190516165021.GD17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjkN3dWrr3YMaado5uR3LigzeY8CH7HEwGLt3W6n1s7kQ@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/4] uapi, vfs: Change the mount API UAPI [ver #2]
+To:     Al Viro <viro@zeniv.linux.org.uk>
+CC:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-abi@vger.kernel.org
+From:   Christian Brauner <christian@brauner.io>
+Message-ID: <308AC02E-168C-4547-AF64-F98970B4368D@brauner.io>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 16, 2019 at 06:38:50PM +0300, Amir Goldstein wrote:
-> On Thu, May 16, 2019 at 6:28 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Thu, May 16, 2019 at 03:09:20PM +0300, Amir Goldstein wrote:
-> > > On Thu, May 16, 2019 at 3:02 PM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > On Thu 16-05-19 13:44:51, Amir Goldstein wrote:
-> > > > > On Thu, May 16, 2019 at 1:35 PM Greg Kroah-Hartman
-> > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > >
-> > > > > > On Thu, May 16, 2019 at 01:26:33PM +0300, Amir Goldstein wrote:
-> > > > > > > This will allow generating fsnotify delete events after the
-> > > > > > > fsnotify_nameremove() hook is removed from d_delete().
-> > > > > > >
-> > > > > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > > > ---
-> > > > > > >  fs/debugfs/inode.c | 20 ++++----------------
-> > > > > > >  1 file changed, 4 insertions(+), 16 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> > > > > > > index acef14ad53db..bc96198df1d4 100644
-> > > > > > > --- a/fs/debugfs/inode.c
-> > > > > > > +++ b/fs/debugfs/inode.c
-> > > > > > > @@ -617,13 +617,10 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
-> > > > > > >  }
-> > > > > > >  EXPORT_SYMBOL_GPL(debugfs_create_symlink);
-> > > > > > >
-> > > > > > > -static void __debugfs_remove_file(struct dentry *dentry, struct dentry *parent)
-> > > > > > > +static void __debugfs_file_removed(struct dentry *dentry)
-> > > > > > >  {
-> > > > > > >       struct debugfs_fsdata *fsd;
-> > > > > > >
-> > > > > > > -     simple_unlink(d_inode(parent), dentry);
-> > > > > > > -     d_delete(dentry);
-> > > > > >
-> > > > > > What happened to this call?  Why no unlinking anymore?
-> > > > > >
-> > > > > > > -
-> > > > > > >       /*
-> > > > > > >        * Paired with the closing smp_mb() implied by a successful
-> > > > > > >        * cmpxchg() in debugfs_file_get(): either
-> > > > > > > @@ -643,18 +640,9 @@ static int __debugfs_remove(struct dentry *dentry, struct dentry *parent)
-> > > > > > >       int ret = 0;
-> > > > > > >
-> > > > > > >       if (simple_positive(dentry)) {
-> > > > > > > -             dget(dentry);
-> > > > > > > -             if (!d_is_reg(dentry)) {
-> > > > > > > -                     if (d_is_dir(dentry))
-> > > > > > > -                             ret = simple_rmdir(d_inode(parent), dentry);
-> > > > > > > -                     else
-> > > > > > > -                             simple_unlink(d_inode(parent), dentry);
-> > > > > > > -                     if (!ret)
-> > > > > > > -                             d_delete(dentry);
-> > > > > > > -             } else {
-> > > > > > > -                     __debugfs_remove_file(dentry, parent);
-> > > > > > > -             }
-> > > > > > > -             dput(dentry);
-> > > > > > > +             ret = simple_remove(d_inode(parent), dentry);
-> > > > > > > +             if (d_is_reg(dentry))
-> > > > > >
-> > > > > > Can't dentry be gone here?  This doesn't seem to match the same pattern
-> > > > > > as before.
-> > > > > >
-> > > > > > What am I missing?
-> > > > > >
-> > > > >
-> > > > > The grammatical change __debugfs_remove_file() => __debugfs_file_removed()
-> > > > > After change, the helper only does the post delete stuff.
-> > > > > simple_unlink() is now done inside simple_remove().
-> > > > > This debugfs patch depends on a patch that adds the simple_remove() helper.
-> > > > > sorry for not mentioning this explicitly.
-> > > >
-> > > > Right. But Greg is right that simple_remove() may have dropped last dentry
-> > > > reference and thus you now pass freed dentry to d_is_reg() and
-> > > > __debugfs_file_removed()?
-> > > >
-> > >
-> > > It seem so. Good spotting!
-> >
-> > Yes, that's what I was trying to say.  I don't think this conversion is
-> > correct, so you might either have to rework your simple_rmdir(), or this
-> > patch, to make it work properly.
-> >
-> 
-> To fix the correctness issue we will keep dget(dentry)/dput(dentry)
-> in place both in __debugfs_remove() and in simple_remove(), i.e:
-> 
->                dget(dentry);
->                ret = simple_remove(d_inode(parent), dentry);
->                if (d_is_reg(dentry))
->                        __debugfs_file_removed(dentry);
->                dput(dentry);
-> 
-> Will this have addressed your concern?
+On May 16, 2019 6:50:22 PM GMT+02:00, Al Viro <viro@zeniv=2Elinux=2Eorg=2Eu=
+k> wrote:
+>[linux-abi cc'd]
+>
+>On Thu, May 16, 2019 at 06:31:52PM +0200, Christian Brauner wrote:
+>> On Thu, May 16, 2019 at 05:22:59PM +0100, Al Viro wrote:
+>> > On Thu, May 16, 2019 at 12:52:04PM +0100, David Howells wrote:
+>> > >=20
+>> > > Hi Linus, Al,
+>> > >=20
+>> > > Here are some patches that make changes to the mount API UAPI and
+>two of
+>> > > them really need applying, before -rc1 - if they're going to be
+>applied at
+>> > > all=2E
+>> >=20
+>> > I'm fine with 2--4, but I'm not convinced that cloexec-by-default
+>crusade
+>> > makes any sense=2E  Could somebody give coherent arguments in favour
+>of
+>> > abandoning the existing conventions?
+>>=20
+>> So as I said in the commit message=2E From a userspace perspective it's
+>> more of an issue if one accidently leaks an fd to a task during exec=2E
+>>=20
+>> Also, most of the time one does not want to inherit an fd during an
+>> exec=2E It is a hazzle to always have to specify an extra flag=2E
+>>=20
+>> As Al pointed out to me open() semantics are not going anywhere=2E
+>Sure,
+>> no argument there at all=2E
+>> But the idea of making fds cloexec by default is only targeted at fds
+>> that come from separate syscalls=2E fsopen(), open_tree_clone(), etc=2E
+>they
+>> all return fds independent of open() so it's really easy to have them
+>> cloexec by default without regressing anyone and we also remove the
+>need
+>> for a bunch of separate flags for each syscall to turn them into
+>> cloexec-fds=2E I mean, those for syscalls came with 4 separate flags to
+>be
+>> able to specify that the returned fd should be made cloexec=2E The
+>other
+>> way around, cloexec by default, fcntl() to remove the cloexec bit is
+>way
+>> saner imho=2E
+>
+>Re separate flags - it is, in principle, a valid argument=2E  OTOH, I'm
+>not
+>sure if they need to be separate - they all have the same value and
+>I don't see any reason for that to change=2E=2E=2E
+>
+>Only tangentially related, but I wonder if something like
+>close_range(from, to)
+>would be a more useful approach=2E=2E=2E  That kind of open-coded loops i=
+s
+>not
+>rare in userland and kernel-side code can do them much cheaper=2E=20
+>Something
+>like
+>	/* that exec is sensitive */
+>	unshare(CLONE_FILES);
+>	/* we don't want anything past stderr here */
+>	close_range(3, ~0U);
+>	execve(=2E=2E=2E=2E);
+>on the userland side of thing=2E  Comments?
 
-Shouldn't you check for !d_is_reg before calling simple_remove()?
-> 
-> BTW, I forwarded you the dependency patch that is needed for the
-> context of this review.
-
-I had dug it out of the original series when I reviewed this :)
-
-thanks,
-
-greg k-h
+Very much in favor of that!
+That'd be a neat new addition=2E
