@@ -2,149 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0868B20359
+	by mail.lfdr.de (Postfix) with ESMTP id 94E322035A
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 12:26:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbfEPK04 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1726778AbfEPK04 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 16 May 2019 06:26:56 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52728 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfEPK0z (ORCPT
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39048 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbfEPK04 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 May 2019 06:26:55 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y3so3042146wmm.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 May 2019 03:26:54 -0700 (PDT)
+        Thu, 16 May 2019 06:26:56 -0400
+Received: by mail-wm1-f67.google.com with SMTP id n25so2525532wmk.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 May 2019 03:26:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=cPdn+EZbCmqzwXp1LeUmfoWXB+C+YJ65+q4Y4POd+Ic=;
-        b=ghnyG4Qg7rIDNbljhthqXgVRiRbAnhhbIRFykieS4icq3nQ4YZdUdnGjzvk+bsw9fq
-         8HdxkOFlPALHzW1m87CjHoGp1nF4CsGVsFPEHxF/45gyUQgbOUc9H8WkK23Pdjn1yRn7
-         KJXDlRFKx6MGB/OXOi/Nw0ruo/pr8RXrYfWFP4d9WxRvKASRXqX3U2PXf5/fYoAiERBO
-         szZOktWpL5uWkkhUfPjeCh+qnCjq/MKm7vM7+Jx2nhEPqOwpe/5d52I9v+2d7NdbJ5O+
-         2L8CLVBVeWEM4g7EVFWj8W1QvbhEt4Od811P+uYhJZ3kW/JIUBXqD3O7+DY8EaCk4iUs
-         Q1JA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=6OuFsnHiV6x010Ff4QUoBuXDtH16aIZ/7pT/eI266KQ=;
+        b=BGsCJWmN1XkPwTN0Cu7Av0zoNp0CZhAgevGKgpGpdOM9qBZXWRicnAEQvUgGwi2Qjo
+         A2pvzoNWStXccMqYio95ABa3VHIzb5KtUbyNfqeAY5K/O1YO9FyKLrHfHW5lpZWkCD/E
+         R4cP02gPPaIhe7+CAp7D0ckarYaMY1Gg0x52MnaPljOem6J8gE2xItGRg46IM7mwBdxe
+         vz4WPUfJfKRU0rnlqLlbX2yQlPAJ1xSR1wQGiI/gZCi/mbc/fIrLheo/JkB5E0qu4qgO
+         dGf9mZO7gTP1XTQO3l3GLkGWaozpn9YqDlvRlT546TbNNwCw39Ai7j1lPVk4Xh9dnII4
+         686A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cPdn+EZbCmqzwXp1LeUmfoWXB+C+YJ65+q4Y4POd+Ic=;
-        b=gq8mJHo4hRMCe4BeNiZ2pBUGJkiVGAaac0ot/JiXXXxVDzhgB3EXy+9zBgeqHLMYfL
-         1ZUe3vYkaDEKFb6yBOxCoIkcHuQJjwhMtWL+LpAwQfy6oBIztqQHIU7xmWD8EFSvjNfD
-         ptlluVEovvi+6HJnlVtQtKhV834O3m2cF55mnV7tAX5cRgNXfjLMR8zkI/UV2XDsa7Bw
-         vcWhMhO5myMZt7DJV7dPZn49htY/P0CGkpoGid7JJzdM1LsdW7mfkoR929LYxH6TCjjM
-         6q6/GjDZgfvusni/uRtCtjEtCBwjngKSt4WVwQ2VnC5nNtq86RSkNgrifpQObYbPv5L7
-         ZGpQ==
-X-Gm-Message-State: APjAAAV7UwphhNh1lMSmim5fGinM/RsPkqQvkoh9UgtHFXxmTpwo1B1F
-        gUwMVsOwKM4k+yL0H4kO+UDRMbWu
-X-Google-Smtp-Source: APXvYqzjHCaUlE83syGTcAX7NMYMe/Uz9DFZsX4R6vfPvwf7VbvOmnneYPgEqfVTrfsi5izNGpvMFg==
-X-Received: by 2002:a7b:cb48:: with SMTP id v8mr9092308wmj.108.1558002413324;
-        Thu, 16 May 2019 03:26:53 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=6OuFsnHiV6x010Ff4QUoBuXDtH16aIZ/7pT/eI266KQ=;
+        b=YnHEqnWevkRm3fhvMUXyzQueZdj1OIQMf4+oCQMDP1Pgj8cLn8+QEBqI9mj5Hmwy9Z
+         RFVKATVIiK8WTZgpzbzZWQXm651NG3R8Poj+6ScKRuXcXjtxUC89ZWt2PGexQHIM2d3G
+         Pdt1YTJ55DuCYDBbAzgEBZGCYhPMYS8kTm3SwZuibtR/jL8IbnPY4P6wyc9cuL8keb78
+         jKfhoJsbBWipEXoNXxk/QVRzquyjT654H77EKTlmsWllEIpfgWvnPGRBskC4VvRROtwg
+         oYDuvwtvC7QugHFEfWdtiiHkJxB8IorG+mx0cUyiXVgIKWFoRORzBXkOnaahTDJl6uYN
+         Y5Lw==
+X-Gm-Message-State: APjAAAW8OnyMi4j9Kbno3RRR2/zWcGcYU3hLTD1qcMfkqHm68LYf8YtB
+        81Y13YeH85a1W6ONLFSbPOU=
+X-Google-Smtp-Source: APXvYqzJIvUoBbyxAV+kJ9o7pD0WJv8KYMZxxhCYLZcavXm+TmJ3VgBQaEMv43sGmwo0rgJ0OBZphg==
+X-Received: by 2002:a1c:b782:: with SMTP id h124mr28071419wmf.5.1558002414789;
+        Thu, 16 May 2019 03:26:54 -0700 (PDT)
 Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
-        by smtp.gmail.com with ESMTPSA id d72sm4506299wmd.12.2019.05.16.03.26.52
+        by smtp.gmail.com with ESMTPSA id d72sm4506299wmd.12.2019.05.16.03.26.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 03:26:52 -0700 (PDT)
+        Thu, 16 May 2019 03:26:54 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 00/14] Sort out fsnotify_nameremove() mess
-Date:   Thu, 16 May 2019 13:26:27 +0300
-Message-Id: <20190516102641.6574-1-amir73il@gmail.com>
+        linux-fsdevel@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 01/14] ASoC: rename functions that pollute the simple_xxx namespace
+Date:   Thu, 16 May 2019 13:26:28 +0300
+Message-Id: <20190516102641.6574-2-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190516102641.6574-1-amir73il@gmail.com>
+References: <20190516102641.6574-1-amir73il@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jan,
+include/linux/fs.h defines a bunch of simple fs helpers, (e.g.
+simple_rename) and we intend to add an fs helper named simple_remove.
 
-What do you think will be the best merge strategy for this patch series?
+Rename the ASoC driver static functions, so they will not collide with
+the upcoming fs helper function name.
 
-How about sending first 3 prep patches to Linus for applying at the end
-of v5.2 merge window, so individual maintainers can pick up per fs
-patches for the v5.3 development cycle?
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ sound/soc/generic/simple-card.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-The following d_delete() call sites have been audited and will no longer
-generate fsnotify event after this series:
-
-drivers/usb/gadget/function/f_fs.c:ffs_epfiles_destroy() - cleanup? (*)
-fs/ceph/dir.c:ceph_unlink() - from vfs_unlink()
-fs/ceph/inode.c:ceph_fill_trace() - invalidate (**)
-fs/configfs/dir.c:detach_groups() - cleanup (*)
-fs/configfs/dir.c:configfs_attach_item() - cleanup (*)
-fs/configfs/dir.c:configfs_attach_group() - cleanup (*)
-fs/efivarfs/file.c:efivarfs_file_write() - invalidate (**)
-fs/fuse/dir.c:fuse_reverse_inval_entry() - invalidate (**)
-fs/nfs/dir.c:nfs_dentry_handle_enoent() - invalidate (**)
-fs/nsfs.c:__ns_get_path() - invalidate (**)
-fs/ocfs2/dlmglue.c:ocfs2_dentry_convert_worker() - invalidate? (**)
-fs/reiserfs/xattr.c:xattr_{unlink,rmdir}() - hidden xattr inode
-
-(*) There are 2 "cleanup" use cases:
-  - Create;init;delte if init failed
-  - Batch delete of files within dir before removing dir
-  Both those cases are not interesting for users that wish to observe
-  configuration changes on pseudo filesystems.  Often, there is already
-  an fsnotify event generated on the directory removal which is what
-  users should find interesting, for example:
-  configfs_unregister_{group,subsystem}().
-
-(**) The different "invalidate" use cases differ, but they all share
-  one thing in common - user is not guarantied to get an event with
-  current kernel.  For example, when a file is deleted remotely on
-  nfs server, nfs client is not guarantied to get an fsnotify delete
-  event.  On current kernel, nfs client could generate an fsnotify
-  delete event if the local entry happens to be in cache and client
-  finds out that entry is deleted on server during another user
-  operation.  Incidentally, this group of use cases is where most of
-  the call sites are with "unstable" d_name, which is the reason for
-  this patch series to begin with.
-
-Thanks,
-Amir.
-
-Changes since v1:
-- Split up per filesystem patches
-- New hook names fsnotify_{unlink,rmdir}()
-- Simplify fsnotify code in separate final patch
-
-Amir Goldstein (14):
-  ASoC: rename functions that pollute the simple_xxx namespace
-  fs: create simple_remove() helper
-  fsnotify: add empty fsnotify_{unlink,rmdir}() hooks
-  fs: convert hypfs to use simple_remove() helper
-  fs: convert qibfs/ipathfs to use simple_remove() helper
-  fs: convert debugfs to use simple_remove() helper
-  fs: convert tracefs to use simple_remove() helper
-  fs: convert rpc_pipefs to use simple_remove() helper
-  fs: convert apparmorfs to use simple_remove() helper
-  fsnotify: call fsnotify_rmdir() hook from btrfs
-  fsnotify: call fsnotify_rmdir() hook from configfs
-  fsnotify: call fsnotify_unlink() hook from devpts
-  fsnotify: move fsnotify_nameremove() hook out of d_delete()
-  fsnotify: get rid of fsnotify_nameremove()
-
- arch/s390/hypfs/inode.c            |  9 ++-----
- drivers/infiniband/hw/qib/qib_fs.c |  3 +--
- fs/afs/dir_silly.c                 |  5 ----
- fs/btrfs/ioctl.c                   |  4 ++-
- fs/configfs/dir.c                  |  3 +++
- fs/dcache.c                        |  2 --
- fs/debugfs/inode.c                 | 20 +++------------
- fs/devpts/inode.c                  |  1 +
- fs/libfs.c                         | 32 +++++++++++++++++++++++
- fs/namei.c                         |  2 ++
- fs/nfs/unlink.c                    |  6 -----
- fs/notify/fsnotify.c               | 41 ------------------------------
- fs/tracefs/inode.c                 | 23 +++--------------
- include/linux/fs.h                 |  1 +
- include/linux/fsnotify.h           | 26 +++++++++++++++++++
- include/linux/fsnotify_backend.h   |  4 ---
- net/sunrpc/rpc_pipe.c              | 16 ++----------
- security/apparmor/apparmorfs.c     |  6 +----
- sound/soc/generic/simple-card.c    |  8 +++---
- 19 files changed, 86 insertions(+), 126 deletions(-)
-
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 9b568f578bcd..d16e894fce2b 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -607,7 +607,7 @@ static int simple_soc_probe(struct snd_soc_card *card)
+ 	return 0;
+ }
+ 
+-static int simple_probe(struct platform_device *pdev)
++static int asoc_simple_probe(struct platform_device *pdev)
+ {
+ 	struct asoc_simple_priv *priv;
+ 	struct device *dev = &pdev->dev;
+@@ -705,7 +705,7 @@ static int simple_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int simple_remove(struct platform_device *pdev)
++static int asoc_simple_remove(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = platform_get_drvdata(pdev);
+ 
+@@ -726,8 +726,8 @@ static struct platform_driver asoc_simple_card = {
+ 		.pm = &snd_soc_pm_ops,
+ 		.of_match_table = simple_of_match,
+ 	},
+-	.probe = simple_probe,
+-	.remove = simple_remove,
++	.probe = asoc_simple_probe,
++	.remove = asoc_simple_remove,
+ };
+ 
+ module_platform_driver(asoc_simple_card);
 -- 
 2.17.1
 
