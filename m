@@ -2,64 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1FBB206C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 14:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCB34206DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 14:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfEPMRw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 May 2019 08:17:52 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:54496 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbfEPMRw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 May 2019 08:17:52 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4GCHI2r077140;
-        Thu, 16 May 2019 21:17:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Thu, 16 May 2019 21:17:18 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4GCHBWG076893
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 16 May 2019 21:17:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: task hung in __get_super
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>,
-        dvyukov@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-block@vger.kernel.org
-References: <0000000000002cd22305879b22c4@google.com>
- <201905150102.x4F12b6o009249@www262.sakura.ne.jp>
- <20190515102133.GA16193@quack2.suse.cz>
- <024bba2a-4d2f-1861-bfd9-819511bdf6eb@i-love.sakura.ne.jp>
- <20190515130730.GA9526@quack2.suse.cz>
- <20190516114817.GD13274@quack2.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <ca1e5916-73ee-6fc4-1d78-428691f7fc64@i-love.sakura.ne.jp>
-Date:   Thu, 16 May 2019 21:17:14 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727071AbfEPMZJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 May 2019 08:25:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45678 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726955AbfEPMZI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 May 2019 08:25:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0BEB5ABF3;
+        Thu, 16 May 2019 12:25:07 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9C47F1E3ED6; Thu, 16 May 2019 14:25:06 +0200 (CEST)
+Date:   Thu, 16 May 2019 14:25:06 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 00/14] Sort out fsnotify_nameremove() mess
+Message-ID: <20190516122506.GF13274@quack2.suse.cz>
+References: <20190516102641.6574-1-amir73il@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190516114817.GD13274@quack2.suse.cz>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190516102641.6574-1-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/05/16 20:48, Jan Kara wrote:
-> OK, so non-racy fix was a bit more involved and I've ended up just
-> upgrading the file reference to an exclusive one in loop_set_fd() instead
-> of trying to hand-craft some locking solution. The result is attached and
-> it passes blktests.
+Hi,
 
-blkdev_get() has corresponding blkdev_put().
-bdgrab() does not have corresponding bdput() ?
+On Thu 16-05-19 13:26:27, Amir Goldstein wrote:
+> What do you think will be the best merge strategy for this patch series?
+> 
+> How about sending first 3 prep patches to Linus for applying at the end
+> of v5.2 merge window, so individual maintainers can pick up per fs
+> patches for the v5.3 development cycle?
+
+I don't think we'll make it for rc1. But those three cleanup patches would
+be OK for rc2 as well. But overall patches are not very intrusive so I'm
+also OK with pushing the patches myself once we get acks from respective
+maintainers if Al will be too busy and won't react.
+
+> The following d_delete() call sites have been audited and will no longer
+> generate fsnotify event after this series:
+> 
+> drivers/usb/gadget/function/f_fs.c:ffs_epfiles_destroy() - cleanup? (*)
+
+Not really but creation events are not generated either.
+
+> fs/ceph/dir.c:ceph_unlink() - from vfs_unlink()
+> fs/ceph/inode.c:ceph_fill_trace() - invalidate (**)
+
+There's one more 'invalidate' case in fs/ceph/inode.c.
+
+> fs/configfs/dir.c:detach_groups() - cleanup (*)
+
+Why is this a cleanup? detach_groups() is used also from
+configfs_detach_group() which gets called from configfs_rmdir() which is
+real deletion.
+
+> fs/configfs/dir.c:configfs_attach_item() - cleanup (*)
+> fs/configfs/dir.c:configfs_attach_group() - cleanup (*)
+> fs/efivarfs/file.c:efivarfs_file_write() - invalidate (**)
+> fs/fuse/dir.c:fuse_reverse_inval_entry() - invalidate (**)
+> fs/nfs/dir.c:nfs_dentry_handle_enoent() - invalidate (**)
+> fs/nsfs.c:__ns_get_path() - invalidate (**)
+
+More a cleanup case I'd say...
+
+> fs/ocfs2/dlmglue.c:ocfs2_dentry_convert_worker() - invalidate? (**)
+
+This is really invalidate.
+
+> fs/reiserfs/xattr.c:xattr_{unlink,rmdir}() - hidden xattr inode
+> 
+> (*) There are 2 "cleanup" use cases:
+>   - Create;init;delte if init failed
+>   - Batch delete of files within dir before removing dir
+>   Both those cases are not interesting for users that wish to observe
+>   configuration changes on pseudo filesystems.  Often, there is already
+>   an fsnotify event generated on the directory removal which is what
+>   users should find interesting, for example:
+>   configfs_unregister_{group,subsystem}().
+> 
+> (**) The different "invalidate" use cases differ, but they all share
+>   one thing in common - user is not guarantied to get an event with
+>   current kernel.  For example, when a file is deleted remotely on
+>   nfs server, nfs client is not guarantied to get an fsnotify delete
+>   event.  On current kernel, nfs client could generate an fsnotify
+>   delete event if the local entry happens to be in cache and client
+>   finds out that entry is deleted on server during another user
+>   operation.  Incidentally, this group of use cases is where most of
+>   the call sites are with "unstable" d_name, which is the reason for
+>   this patch series to begin with.
+
+Thanks. Maybe for other reviewers it would be more convincing to take
+sanitized output of 'git grep "[^a-z_]d_delete("' and annotate how each
+callsite is handled - i.e., "cleanup, invalidate, simple_remove, vfs,
+manual - patch X". But I'm now reasonably convinced we didn't forget
+anything :).
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
