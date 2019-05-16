@@ -2,178 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C7BD20634
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 13:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3082F20659
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 14:00:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbfEPLsX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 May 2019 07:48:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39348 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727505AbfEPLsW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 May 2019 07:48:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 31D10ACAA;
-        Thu, 16 May 2019 11:48:19 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 364101E3ED6; Thu, 16 May 2019 13:48:17 +0200 (CEST)
-Date:   Thu, 16 May 2019 13:48:17 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>,
-        dvyukov@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-block@vger.kernel.org
-Subject: Re: INFO: task hung in __get_super
-Message-ID: <20190516114817.GD13274@quack2.suse.cz>
-References: <0000000000002cd22305879b22c4@google.com>
- <201905150102.x4F12b6o009249@www262.sakura.ne.jp>
- <20190515102133.GA16193@quack2.suse.cz>
- <024bba2a-4d2f-1861-bfd9-819511bdf6eb@i-love.sakura.ne.jp>
- <20190515130730.GA9526@quack2.suse.cz>
+        id S1727152AbfEPLwH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 May 2019 07:52:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36202 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726383AbfEPLwG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 May 2019 07:52:06 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 85A0AD77F2;
+        Thu, 16 May 2019 11:52:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-61.rdu2.redhat.com [10.10.120.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1EF92100203C;
+        Thu, 16 May 2019 11:52:04 +0000 (UTC)
+Subject: [PATCH 0/4] uapi, vfs: Change the mount API UAPI [ver #2]
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Cc:     Christian Brauner <christian@brauner.io>,
+        Arnd Bergmann <arnd@arndb.de>, dhowells@redhat.com,
+        christian@brauner.io, arnd@arndb.de, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 16 May 2019 12:52:04 +0100
+Message-ID: <155800752418.4037.9567789434648701032.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="/04w6evG8XlLl3ft"
-Content-Disposition: inline
-In-Reply-To: <20190515130730.GA9526@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 16 May 2019 11:52:06 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Linus, Al,
 
-On Wed 15-05-19 15:07:30, Jan Kara wrote:
-> On Wed 15-05-19 20:32:27, Tetsuo Handa wrote:
-> > On 2019/05/15 19:21, Jan Kara wrote:
-> > > The question is how to fix this problem. The simplest fix I can see is that
-> > > we'd just refuse to do LOOP_SET_FD if someone has the block device
-> > > exclusively open as there are high chances such user will be unpleasantly
-> > > surprised by the device changing under him. OTOH this has some potential
-> > > for userspace visible regressions. But I guess it's worth a try. Something
-> > > like attached patch?
-> > 
-> > (1) If I understand correctly, FMODE_EXCL is set at blkdev_open() only if
-> > O_EXCL is specified.
-> 
-> Yes.
-> 
-> > How can we detect if O_EXCL was not used, for the reproducer (
-> > https://syzkaller.appspot.com/text?tag=ReproC&x=135385a8a00000 ) is not
-> > using O_EXCL ?
-> 
-> mount_bdev() is using O_EXCL and that's what matters.
-> 
-> > (2) There seems to be no serialization. What guarantees that mount_bdev()
-> >     does not start due to preempted after the check added by this patch?
-> 
-> That's a good question. lo_ctl_mutex actually synchronizes most of this
-> (taken in both loop_set_fd() and lo_open()) but you're right that there's
-> still a small race window where loop_set_fd() need not see bdev->bd_holders
-> elevated while blkdev_get() will succeed. So I need to think a bit more
-> about proper synchronization of this.
+Here are some patches that make changes to the mount API UAPI and two of
+them really need applying, before -rc1 - if they're going to be applied at
+all.
 
-OK, so non-racy fix was a bit more involved and I've ended up just
-upgrading the file reference to an exclusive one in loop_set_fd() instead
-of trying to hand-craft some locking solution. The result is attached and
-it passes blktests.
+The following changes are made:
 
-Let syzbot also test it:
+ (1) Make the file descriptors returned by open_tree(), fsopen(), fspick()
+     and fsmount() O_CLOEXEC by default and remove the flags that allow
+     this to be specified from the UAPI, shuffling other flags down as
+     appropriate.  fcntl() can still be used to change the flag.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v5.1
+ (2) Make the name of the anon inode object "[fscontext]" with square
+     brackets to match other users.
 
-									Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+ (3) Fix the numbering of the mount API syscalls to be in the common space
+     rather than in the arch-specific space.
 
---/04w6evG8XlLl3ft
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment; filename="0001-loop-Don-t-change-loop-device-under-exclusive-opener.patch"
+ (4) Wire up the mount API syscalls on all arches (it's only on x86
+     currently).
 
-From e7a35f48a902b42894eba8cc4201ca745bfd5dfe Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Wed, 15 May 2019 11:45:10 +0200
-Subject: [PATCH] loop: Don't change loop device under exclusive opener
-
-Loop module allows calling LOOP_SET_FD while there are other openers of
-the loop device. Even exclusive ones. This can lead to weird
-consequences such as kernel deadlocks like:
-
-mount_bdev()				lo_ioctl()
-  udf_fill_super()
-    udf_load_vrs()
-      sb_set_blocksize() - sets desired block size B
-      udf_tread()
-        sb_bread()
-          __bread_gfp(bdev, block, B)
-					  loop_set_fd()
-					    set_blocksize()
-            - now __getblk_slow() indefinitely loops because B != bdev
-              block size
-
-Fix the problem by disallowing LOOP_SET_FD ioctl when there are
-exclusive openers of a loop device.
-
-[Deliberately chosen not to CC stable as a user with priviledges to
-trigger this race has other means of taking the system down and this
-has a potential of breaking some weird userspace setup]
-
-Reported-by: syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com
-Signed-off-by: Jan Kara <jack@suse.cz>
+Thanks,
+David
 ---
- drivers/block/loop.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+Christian Brauner (2):
+      uapi, fs: make all new mount api fds cloexec by default
+      uapi, fsopen: use square brackets around "fscontext"
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 102d79575895..f11b7dc16e9d 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -945,9 +945,20 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
- 	if (!file)
- 		goto out;
- 
-+	/*
-+	 * If we don't hold exclusive handle for the device, upgrade to it
-+	 * here to avoid changing device under exclusive owner.
-+	 */
-+	if (!(mode & FMODE_EXCL)) {
-+		bdgrab(bdev);
-+		error = blkdev_get(bdev, mode | FMODE_EXCL, loop_set_fd);
-+		if (error)
-+			goto out_putf;
-+	}
-+
- 	error = mutex_lock_killable(&loop_ctl_mutex);
- 	if (error)
--		goto out_putf;
-+		goto out_bdev;
- 
- 	error = -EBUSY;
- 	if (lo->lo_state != Lo_unbound)
-@@ -1012,10 +1023,15 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
- 	mutex_unlock(&loop_ctl_mutex);
- 	if (partscan)
- 		loop_reread_partitions(lo, bdev);
-+	if (!(mode & FMODE_EXCL))
-+		blkdev_put(bdev, mode | FMODE_EXCL);
- 	return 0;
- 
- out_unlock:
- 	mutex_unlock(&loop_ctl_mutex);
-+out_bdev:
-+	if (!(mode & FMODE_EXCL))
-+		blkdev_put(bdev, mode | FMODE_EXCL);
- out_putf:
- 	fput(file);
- out:
--- 
-2.16.4
+David Howells (2):
+      uapi, x86: Fix the syscall numbering of the mount API syscalls
+      uapi: Wire up the mount API syscalls on non-x86 arches
 
 
---/04w6evG8XlLl3ft--
+ arch/alpha/kernel/syscalls/syscall.tbl      |    6 ++++++
+ arch/arm/tools/syscall.tbl                  |    6 ++++++
+ arch/arm64/include/asm/unistd.h             |    2 +-
+ arch/arm64/include/asm/unistd32.h           |   12 ++++++++++++
+ arch/ia64/kernel/syscalls/syscall.tbl       |    6 ++++++
+ arch/m68k/kernel/syscalls/syscall.tbl       |    6 ++++++
+ arch/microblaze/kernel/syscalls/syscall.tbl |    6 ++++++
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |    6 ++++++
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |    6 ++++++
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |    6 ++++++
+ arch/parisc/kernel/syscalls/syscall.tbl     |    6 ++++++
+ arch/powerpc/kernel/syscalls/syscall.tbl    |    6 ++++++
+ arch/s390/kernel/syscalls/syscall.tbl       |    6 ++++++
+ arch/sh/kernel/syscalls/syscall.tbl         |    6 ++++++
+ arch/sparc/kernel/syscalls/syscall.tbl      |    6 ++++++
+ arch/x86/entry/syscalls/syscall_32.tbl      |   12 ++++++------
+ arch/x86/entry/syscalls/syscall_64.tbl      |   12 ++++++------
+ arch/xtensa/kernel/syscalls/syscall.tbl     |    6 ++++++
+ fs/fsopen.c                                 |   15 +++++++--------
+ fs/namespace.c                              |   11 ++++-------
+ include/uapi/asm-generic/unistd.h           |   14 +++++++++++++-
+ include/uapi/linux/mount.h                  |   18 +++---------------
+ 22 files changed, 136 insertions(+), 44 deletions(-)
+
