@@ -2,28 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C42EC1FD51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 03:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD1B31FCF4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 03:46:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbfEPBq0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1727322AbfEPBq0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 15 May 2019 21:46:26 -0400
-Received: from fieldses.org ([173.255.197.46]:33066 "EHLO fieldses.org"
+Received: from fieldses.org ([173.255.197.46]:33068 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726995AbfEPBUY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 May 2019 21:20:24 -0400
+        id S1726996AbfEPBUX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 May 2019 21:20:23 -0400
 Received: by fieldses.org (Postfix, from userid 2815)
-        id 469B61D39; Wed, 15 May 2019 21:20:23 -0400 (EDT)
+        id 4BAF88BF; Wed, 15 May 2019 21:20:23 -0400 (EDT)
 From:   "J. Bruce Fields" <bfields@redhat.com>
 To:     linux-nfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org,
         "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 00/12] exposing knfsd state to userspace
-Date:   Wed, 15 May 2019 21:20:05 -0400
-Message-Id: <1557969619-17157-1-git-send-email-bfields@redhat.com>
+Subject: [PATCH 1/2] nfsd: allow fh_want_write to be called twice
+Date:   Wed, 15 May 2019 21:20:06 -0400
+Message-Id: <1557969619-17157-2-git-send-email-bfields@redhat.com>
 X-Mailer: git-send-email 1.8.3.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1557969619-17157-1-git-send-email-bfields@redhat.com>
+References: <1557969619-17157-1-git-send-email-bfields@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -31,111 +30,46 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "J. Bruce Fields" <bfields@redhat.com>
 
-This is still a little rough, but maybe closer.  Changes since last
-time:
-	- renamed the "opens" file to "states" and added some (minimal)
-	  information about lock, delegation, and layout stateids as
-	  well as opens.
-	- converted the states file to a YAML-like format.
-	- added the ability to remove a client's state by writing
-	  "expire\n" into a new nfsd/client/#/ctl file.
+A fuzzer recently triggered lockdep warnings about potential sb_writers
+deadlocks caused by fh_want_write().
 
-Recapping discussion from last time:
+Looks like we aren't careful to pair each fh_want_write() with an
+fh_drop_write().
 
-The following patches expose information about NFSv4 state held by knfsd
-on behalf of NFSv4 clients.  This especially important for opens, which
-are currently invisible to userspace on the server, unlike locks
-(/proc/locks) and local processes' opens (under /proc/<pid>/).
+It's not normally a problem since fh_put() will call fh_drop_write() for
+us.  And was OK for NFSv3 where we'd do one operation that might call
+fh_want_write(), and then put the filehandle.
 
-The approach is to add a new directory /proc/fs/nfsd/clients/ with
-subdirectories for each active NFSv4 client.  Each subdirectory has an
-"info" file with some basic information to help identify the client and
-a "states" directory that lists the open state held by that client.
+But an NFSv4 protocol fuzzer can do weird things like call unlink twice
+in a compound, and then we get into trouble.
 
-Currently these pseudofiles look like:
+I'm a little worried about this approach of just leaving everything to
+fh_put().  But I think there are probably a lot of
+fh_want_write()/fh_drop_write() imbalances so for now I think we need it
+to be more forgiving.
 
-  # find /proc/fs/nfsd/clients -type f|xargs tail 
-  ==> /proc/fs/nfsd/clients/3/opens <==
- - 0x020000006a5fdc5c4ad09d9e01000000: { type: open, access: rw, deny: --, superblock: "fd:10:13649", owner: "open id:\x00\x00\x00&\x00\x00\x00\x00\x00\x0046��QH " }
- - 0x010000006a5fdc5c4ad09d9e03000000: { type: open, access: r-, deny: --, superblock: "fd:10:13650", owner: "open id:\x00\x00\x00&\x00\x00\x00\x00\x00\x0046��QH" }
- - 0x010000006a5fdc5c4ad09d9e04000000: { type: deleg, access: r, superblock: "fd:10:13650" }
- - 0x010000006a5fdc5c4ad09d9e06000000: { type: lock, superblock: "fd:10:13649", owner: "lock id:\x00\x00\x00&\x00\x00\x00\x00\x00\x00\x00\x00" }
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+---
+ fs/nfsd/vfs.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-
-  ==> /proc/fs/nfsd/clients/3/info <==
-  clientid: 6debfb505cc0cd36
-  address: 192.168.122.36:907
-  name: "Linux NFSv4.2 test2.fieldses.org"
-  minor version: 2
-
-I'm conflicted about how I'm representing stateowners and client names,
-both opaque byte-streams in the protocol but that often include
-human-readable ascii.
-
-Possibly also todo:
-	- add some information about krb5 principals to the clients
-	  file.
-	- add information about the stateids used to represent
-	  asynchronous copies.  They're a little different from the
-	  other stateids and might end up in a separate "copies" file,
-	- this duplicates some functionality of the little-used fault
-	  injection code; could we replace it entirely?
-	- some of the bits of filesystem code could probably be shared
-	  with rpc_pipefs and libfs.
-
---b.
-
-J. Bruce Fields (10):
-  nfsd: persist nfsd filesystem across mounts
-  nfsd: rename cl_refcount
-  nfsd4: use reference count to free client
-  nfsd: add nfsd/clients directory
-  nfsd: make client/ directory names small ints
-  rpc: replace rpc_filelist by tree_descr
-  nfsd4: add a client info file
-  nfsd4: add file to display list of client's opens
-  nfsd: expose some more information about NFSv4 opens
-  nfsd: add more information to client info file
-
- fs/nfsd/netns.h                |   6 +
- fs/nfsd/nfs4state.c            | 228 ++++++++++++++++++++++++++++++---
- fs/nfsd/nfsctl.c               | 225 +++++++++++++++++++++++++++++++-
- fs/nfsd/nfsd.h                 |  11 ++
- fs/nfsd/state.h                |   9 +-
- fs/seq_file.c                  |  17 +++
- include/linux/seq_file.h       |   2 +
- include/linux/string_helpers.h |   1 +
- lib/string_helpers.c           |   5 +-
- net/sunrpc/rpc_pipe.c          |  37 ++----
- 10 files changed, 491 insertions(+), 50 deletions(-)
-
--- 
-2.20.1
-
-
-J. Bruce Fields (12):
-  nfsd: persist nfsd filesystem across mounts
-  nfsd: rename cl_refcount
-  nfsd4: use reference count to free client
-  nfsd: add nfsd/clients directory
-  nfsd: make client/ directory names small ints
-  nfsd4: add a client info file
-  nfsd: copy client's address including port number to cl_addr
-  nfsd: add more information to client info file
-  nfsd4: add file to display list of client's opens
-  nfsd: show lock and deleg stateids
-  nfsd4: show layout stateids
-  nfsd: allow forced expiration of NFSv4 clients
-
- fs/nfsd/netns.h          |   6 +
- fs/nfsd/nfs4state.c      | 418 ++++++++++++++++++++++++++++++++++++---
- fs/nfsd/nfsctl.c         | 225 ++++++++++++++++++++-
- fs/nfsd/nfsd.h           |  11 ++
- fs/nfsd/state.h          |   7 +-
- fs/seq_file.c            |  17 ++
- include/linux/seq_file.h |   2 +
- 7 files changed, 661 insertions(+), 25 deletions(-)
-
+diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
+index a7e107309f76..db351247892d 100644
+--- a/fs/nfsd/vfs.h
++++ b/fs/nfsd/vfs.h
+@@ -120,8 +120,11 @@ void		nfsd_put_raparams(struct file *file, struct raparms *ra);
+ 
+ static inline int fh_want_write(struct svc_fh *fh)
+ {
+-	int ret = mnt_want_write(fh->fh_export->ex_path.mnt);
++	int ret;
+ 
++	if (fh->fh_want_write)
++		return 0;
++	ret = mnt_want_write(fh->fh_export->ex_path.mnt);
+ 	if (!ret)
+ 		fh->fh_want_write = true;
+ 	return ret;
 -- 
 2.21.0
 
