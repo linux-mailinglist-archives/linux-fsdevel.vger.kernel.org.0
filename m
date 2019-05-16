@@ -2,128 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD53203D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 12:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CE5F203F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 12:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbfEPKpD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 May 2019 06:45:03 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:42503 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbfEPKpD (ORCPT
+        id S1726959AbfEPK5w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 May 2019 06:57:52 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:41987 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726660AbfEPK5v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 May 2019 06:45:03 -0400
-Received: by mail-yw1-f66.google.com with SMTP id s5so1160959ywd.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 May 2019 03:45:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R9bXYwH1E7a3cZBIa00+bFNr4gYRJYUIZglUEzW8tow=;
-        b=VtYlaDjbCZMTZzdSrNpz/G5ZSeCyb8o51XBVmucqcvfBd7OEFoj1hHUaZIPMl8Lkm+
-         b5Cz4HFr/zi2YRyhg0cjQG8zzJIGZF/l3G3qTbHt/cxhWmmWmLds05OEV/hZocR30Fw9
-         C5FGCwrxpAPBcTtfmuJgSGMGWYDRKMFeGK5Hi8WaK+HXt7w/WkVQjhXNHMvCmXZQtla7
-         uJxoGUOZtUnq3BFvUiaSJScyOIZdQ2ygiIVg/Rg/cHluJsrRycYExKSKBf1HAyhT6YSV
-         a17smt1a+5t8S74kQLlWmEwk5Jq4eimb4CM8YebOzP4JlALnKd3kRhW+oqNsib2fPQI6
-         oPCg==
+        Thu, 16 May 2019 06:57:51 -0400
+Received: by mail-qk1-f196.google.com with SMTP id d4so1917260qkc.9;
+        Thu, 16 May 2019 03:57:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=R9bXYwH1E7a3cZBIa00+bFNr4gYRJYUIZglUEzW8tow=;
-        b=tAfsqaZeM+b9r2qgn+HhiIVFuJnRrEtCmr6z3h6OzIP9bP7AJUdbpb+n2ILwKh7X25
-         7kba0lifJS+EoIJ9S3dT5Rv7DE0kOn7Px5s5cc4ZboeLIOLb0GTae5TI3P/vDQZxessw
-         sK/SUOCqG1c8HsL+v0yKSgLOOeJ5FgrHoPo9ZAVgiGqSfsfHBTaFV6I/Sr1N4KwjprnE
-         qjsW2jWLcim1K/CwGHQOFZUsoQ1xeFlZDNzj9nzTOGVaXHCFokj+j4BUnKDvILTZKByt
-         xmMpmC5QswG+day3ds0689k93qR+lS1/+yUE8kB+x54STj+zm+seAmSwhOYQ5FH/I8c5
-         WPWA==
-X-Gm-Message-State: APjAAAVHJO5/N4jku0I2oHbfoeuriBF3Q2o58cc5MCdQn0LqwpGf3UFf
-        MQAh4jwh8o8C3HHAclVMfR1gkpXgV9aue7lHjhZwZgtE
-X-Google-Smtp-Source: APXvYqyXGvGYJllACjYbXngqE/diiiNyAI5mNcdQV2c5k7phaFvigbhRh2oqjuL/gYYYbDxVAmhYm0H4oX2Mc2RhDu0=
-X-Received: by 2002:a81:63c3:: with SMTP id x186mr22784377ywb.248.1558003502882;
- Thu, 16 May 2019 03:45:02 -0700 (PDT)
+        bh=aCf53hCQoTWRnc+iZ0G/hbKzA1wZVJqGhF/yu3TPIjE=;
+        b=gbZ/qRMDZrPE69UC8+4w1zV6JINvrCpjsLbWcwKwzI8UI3CJNjoenAFYH1N2Vpp4RP
+         gJ0f5NKpKdbmpdSvHH8NLcXXJGLStzulS33eBiDk/hJ0PIZybWi+yDNlV85jkBc+eRSq
+         rsVSeLMI4Dr+8nzyNpEkuXtQ3cfSI8Bh1lF9MK3na8eS+dX2GHsKu8Xf9y1x1mVxfjEF
+         VzMB1DfMI/LjlWj2SqE5sxbsQXP/3C6VMaykTpOTdUfw12voknPi+3n2newXT/9RD2sd
+         GjItkfXxQPZ0Et5IFv1mYiP3Jk6OfvkV4TVh9aOaD52NK6tEaW4S7lSAoXrNPpW8BATD
+         T6KQ==
+X-Gm-Message-State: APjAAAU3MtrF1KOg1zE2HUIbv0lDqeV8DomIMCeuiBDghMBhlGi/lfku
+        GHe0Sl48zNyCsCFyfcpRMJBW2fGeyNqjOk3DueM=
+X-Google-Smtp-Source: APXvYqxHUlclMun46EUI6hhWL0uRd1RyH8Yxyp8/vUn1bjtLtEkR/SvlDGi7zqiTh66Giq0qf20Kt0cHa0y9xR0L/WI=
+X-Received: by 2002:a37:ac0a:: with SMTP id e10mr37762394qkm.254.1558004270813;
+ Thu, 16 May 2019 03:57:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190516102641.6574-1-amir73il@gmail.com> <20190516102641.6574-7-amir73il@gmail.com>
- <20190516103547.GA2125@kroah.com>
-In-Reply-To: <20190516103547.GA2125@kroah.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 16 May 2019 13:44:51 +0300
-Message-ID: <CAOQ4uxg9zpwRa9Ei_4M=g+SoXH1-KgYV2TqzsfEsxTKpq-e3Pg@mail.gmail.com>
-Subject: Re: [PATCH v2 06/14] fs: convert debugfs to use simple_remove() helper
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20190516085810.31077-1-rpenyaev@suse.de> <20190516085810.31077-14-rpenyaev@suse.de>
+ <CAK8P3a2-fN_BHEnEHvf4X9Ysy4t0_SnJetQLvFU1kFa3OtM0fQ@mail.gmail.com> <41b847c48ccbe0c406bd54c16fbc1bf0@suse.de>
+In-Reply-To: <41b847c48ccbe0c406bd54c16fbc1bf0@suse.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 16 May 2019 12:57:34 +0200
+Message-ID: <CAK8P3a2TqHVyuPpQrghS8LfrvBffavsAFA5XC20Unf89CssRPw@mail.gmail.com>
+Subject: Re: [PATCH v3 13/13] epoll: implement epoll_create2() syscall
+To:     Roman Penyaev <rpenyaev@suse.de>
+Cc:     Azat Khuzhin <azat@libevent.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 16, 2019 at 1:35 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Thu, May 16, 2019 at 12:20 PM Roman Penyaev <rpenyaev@suse.de> wrote:
 >
-> On Thu, May 16, 2019 at 01:26:33PM +0300, Amir Goldstein wrote:
-> > This will allow generating fsnotify delete events after the
-> > fsnotify_nameremove() hook is removed from d_delete().
+> On 2019-05-16 12:03, Arnd Bergmann wrote:
+> > On Thu, May 16, 2019 at 10:59 AM Roman Penyaev <rpenyaev@suse.de>
+> > wrote:
+> >>
+> >> epoll_create2() is needed to accept EPOLL_USERPOLL flags
+> >> and size, i.e. this patch wires up polling from userspace.
 > >
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/debugfs/inode.c | 20 ++++----------------
-> >  1 file changed, 4 insertions(+), 16 deletions(-)
-> >
-> > diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> > index acef14ad53db..bc96198df1d4 100644
-> > --- a/fs/debugfs/inode.c
-> > +++ b/fs/debugfs/inode.c
-> > @@ -617,13 +617,10 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
-> >  }
-> >  EXPORT_SYMBOL_GPL(debugfs_create_symlink);
-> >
-> > -static void __debugfs_remove_file(struct dentry *dentry, struct dentry *parent)
-> > +static void __debugfs_file_removed(struct dentry *dentry)
-> >  {
-> >       struct debugfs_fsdata *fsd;
-> >
-> > -     simple_unlink(d_inode(parent), dentry);
-> > -     d_delete(dentry);
+> > Could you add the system call to all syscall*.tbl files at the same
+> > time here?
 >
-> What happened to this call?  Why no unlinking anymore?
+> For all other archs, you mean?  Sure.  But what is the rule of thumb?
+> Sometimes people tend to add to the most common x86 and other tables
+> are left untouched, but then you commit the rest, e.g.
 >
-> > -
-> >       /*
-> >        * Paired with the closing smp_mb() implied by a successful
-> >        * cmpxchg() in debugfs_file_get(): either
-> > @@ -643,18 +640,9 @@ static int __debugfs_remove(struct dentry *dentry, struct dentry *parent)
-> >       int ret = 0;
-> >
-> >       if (simple_positive(dentry)) {
-> > -             dget(dentry);
-> > -             if (!d_is_reg(dentry)) {
-> > -                     if (d_is_dir(dentry))
-> > -                             ret = simple_rmdir(d_inode(parent), dentry);
-> > -                     else
-> > -                             simple_unlink(d_inode(parent), dentry);
-> > -                     if (!ret)
-> > -                             d_delete(dentry);
-> > -             } else {
-> > -                     __debugfs_remove_file(dentry, parent);
-> > -             }
-> > -             dput(dentry);
-> > +             ret = simple_remove(d_inode(parent), dentry);
-> > +             if (d_is_reg(dentry))
+> commit 39036cd2727395c3369b1051005da74059a85317
+> Author: Arnd Bergmann <arnd@arndb.de>
+> Date:   Thu Feb 28 13:59:19 2019 +0100
 >
-> Can't dentry be gone here?  This doesn't seem to match the same pattern
-> as before.
->
-> What am I missing?
->
+>      arch: add pidfd and io_uring syscalls everywhere
 
-The grammatical change __debugfs_remove_file() => __debugfs_file_removed()
-After change, the helper only does the post delete stuff.
-simple_unlink() is now done inside simple_remove().
-This debugfs patch depends on a patch that adds the simple_remove() helper.
-sorry for not mentioning this explicitly.
+We only recently introduced syscall.tbl files in a common format,
+which makes it much easier to add new ones. I hope we can
+do it for all architectures right away from now on.
 
-Thanks,
-Amir.
+I just noticed that the new mount API assigns six new system
+calls as well, but did not use the same numbers across
+architectures. I hope we can still rectify that before -rc1
+and use the next available ones (428..433), then yours should
+be 434 on all architectures, with the exception of arch/alpha.
+
+      Arnd
