@@ -2,59 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45D3721254
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 04:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D10DB21268
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 05:11:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbfEQC4a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 May 2019 22:56:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39282 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbfEQC4a (ORCPT
+        id S1727480AbfEQDL2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 May 2019 23:11:28 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38286 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726447AbfEQDL2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 May 2019 22:56:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4HJiSDZ6NVpZlfpbAIE9JY9i5H7mtH87panNL0CH9Zw=; b=joMy3UdnsiCdt1hoeX13+Vv6h
-        LAb/YlelQoJg7XbXDsVeak+AK5oiHXrplz9aGnkr5ikxMvftHA1d864zkhZUa7INRGljf3cop5faP
-        6eLUOQWenVHaZqNYk0FpGvaRzfthCKI//0n63yuNpBVSwQwrM04ognUMtqpwrowWlHP+EzWZwHDQt
-        VYLFo+QzkJp2hyaqrNyEOSkbuF0RdzAkrqLZgtTOJ4MZDZ6aoUA2pHNk19c5b4bJGIndt+0aPROMw
-        uUW5VNR1jtv2m7Vn1ceu8dz9MH/ntT9SeaaiPZaWC+wuizEVbbi/1JlJe5AbV4fOkY5Uv5mVOejYj
-        O/LWOHXmw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hRT2q-000080-Sj; Fri, 17 May 2019 02:56:28 +0000
-Date:   Thu, 16 May 2019 19:56:28 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     sunqiuyang <sunqiuyang@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, yuchao0@huawei.com,
-        miaoxie@huawei.com, fangwei1@huawei.com, stummala@codeaurora.org
-Subject: Re: [PATCH v2 1/1] f2fs: ioctl for removing a range from F2FS
-Message-ID: <20190517025628.GF31704@bombadil.infradead.org>
-References: <20190517021647.43083-1-sunqiuyang@huawei.com>
+        Thu, 16 May 2019 23:11:28 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hRTHK-0001RR-EC; Fri, 17 May 2019 03:11:26 +0000
+Date:   Fri, 17 May 2019 04:11:26 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [git pull] vfs.git mount followups
+Message-ID: <20190517031125.GF17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190517021647.43083-1-sunqiuyang@huawei.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 17, 2019 at 10:16:47AM +0800, sunqiuyang wrote:
-> +++ b/fs/f2fs/f2fs.h
-> @@ -423,6 +423,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
->  #define F2FS_IOC_SET_PIN_FILE		_IOW(F2FS_IOCTL_MAGIC, 13, __u32)
->  #define F2FS_IOC_GET_PIN_FILE		_IOR(F2FS_IOCTL_MAGIC, 14, __u32)
->  #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
-> +#define F2FS_IOC_SHRINK_RESIZE		_IOW(F2FS_IOCTL_MAGIC, 16,	\
-> +						struct f2fs_resize_param)
+	Propagation of new syscalls to other architectures + cosmetical
+change from Christian (fscontext didn't follow the convention for anon
+inode names).
 
-Why not match ext4?
+	What is _not_ included is cloexec changes - I really don't see
+the benefits for the cloexec-by-default for new syscalls, when there's
+no chance in hell of switching to that policy for old ones.
 
-fs/ext4/ext4.h:#define EXT4_IOC_RESIZE_FS               _IOW('f', 16, __u64)
+The following changes since commit 05883eee857eab4693e7d13ebab06716475c5754:
 
+  do_move_mount(): fix an unsafe use of is_anon_ns() (2019-05-09 02:32:50 -0400)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+
+for you to fetch changes up to d8076bdb56af5e5918376cd1573a6b0007fc1a89:
+
+  uapi: Wire up the mount API syscalls on non-x86 arches [ver #2] (2019-05-16 12:23:45 -0400)
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      uapi, fsopen: use square brackets around "fscontext" [ver #2]
+
+David Howells (2):
+      uapi, x86: Fix the syscall numbering of the mount API syscalls [ver #2]
+      uapi: Wire up the mount API syscalls on non-x86 arches [ver #2]
+
+ arch/alpha/kernel/syscalls/syscall.tbl      |  6 ++++++
+ arch/arm/tools/syscall.tbl                  |  6 ++++++
+ arch/arm64/include/asm/unistd.h             |  2 +-
+ arch/arm64/include/asm/unistd32.h           | 12 ++++++++++++
+ arch/ia64/kernel/syscalls/syscall.tbl       |  6 ++++++
+ arch/m68k/kernel/syscalls/syscall.tbl       |  6 ++++++
+ arch/microblaze/kernel/syscalls/syscall.tbl |  6 ++++++
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |  6 ++++++
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |  6 ++++++
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |  6 ++++++
+ arch/parisc/kernel/syscalls/syscall.tbl     |  6 ++++++
+ arch/powerpc/kernel/syscalls/syscall.tbl    |  6 ++++++
+ arch/s390/kernel/syscalls/syscall.tbl       |  6 ++++++
+ arch/sh/kernel/syscalls/syscall.tbl         |  6 ++++++
+ arch/sparc/kernel/syscalls/syscall.tbl      |  6 ++++++
+ arch/x86/entry/syscalls/syscall_32.tbl      | 12 ++++++------
+ arch/x86/entry/syscalls/syscall_64.tbl      | 12 ++++++------
+ arch/xtensa/kernel/syscalls/syscall.tbl     |  6 ++++++
+ fs/fsopen.c                                 |  2 +-
+ include/uapi/asm-generic/unistd.h           | 14 +++++++++++++-
+ 20 files changed, 123 insertions(+), 15 deletions(-)
