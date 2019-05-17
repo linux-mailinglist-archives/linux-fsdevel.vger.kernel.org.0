@@ -2,150 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6B46213E5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 08:55:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E4FD213F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 09:02:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbfEQGzA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 May 2019 02:55:00 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45365 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726871AbfEQGzA (ORCPT
+        id S1727840AbfEQHCA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 May 2019 03:02:00 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42882 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbfEQHCA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 May 2019 02:55:00 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b18so5800644wrq.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 May 2019 23:54:58 -0700 (PDT)
+        Fri, 17 May 2019 03:02:00 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l2so5842767wrb.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 May 2019 00:01:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
         h=date:user-agent:in-reply-to:references:mime-version
          :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=4Ft7vXd1zuW+VBauzDv2GqD/tRxDd6qBcaHK1f4P0u0=;
-        b=Dh+1CbT6CcF0vPmgJk2+E2MWtzwYSqSzTXYy6MkqNyqwJ4O7EEhwvIK0mt900W4AUC
-         i+ym48gKb2zVLc2yruZU/QElE/hfhRKAk8goAtPKPbAAtzn/9GhV3HfGPRKW/x6OB9O4
-         YAOK7dJavS8lvJLnYNNTYJrm3nM26WdErWCLMWIUO5Ibo1CC0zKEgfRQS+UbWp4QCXtG
-         klfR3yQ1604qtCSQT2irXTeGzZv13hyeNDsJfb4CDMwVzw5b9AJsW1d3NpCrbxp5bDQy
-         rWv8t6ZiaMu+DEYYs/jVG+nsY3m6tNWEMzq06os9YP4X0LDP3Xv80VHQMJnK6Wm9A4Kh
-         1SUg==
+        bh=Ss4NB5m+SG0EZIQDhH7NjLniRsiUjmxyrNTSlSe9Hss=;
+        b=PLgLyLnGuNGgT8VXGDwFxsshlERTrEv9OeoVFs0VRs0YgE+oPWe56SBGIyYtrVf2qT
+         h2pdyfEY/oOLqsJF5QN2mBsXJLsqmOkXJo/R6RZYSLOMW/LOsm5w2oJ8lYNTcc3uA17x
+         2EV4wPAYG/ukn1NpGIT68nOA5b3i25a7sq3W9IhHEuhpuFTpbQ1AU7cpe8D7hESI6PPv
+         lovLb4l0+uh5JFzw3HisD90486y8A6x05kXEZ6ctIlvmi6xE6u0nnGaMk7kNuYD2Eraw
+         stZ+ACK2Cb7HA29wckCg26It3pti49UGs62KuUwdrA1d8+FhhFMcUsA+GBaNXrnM83sl
+         Igfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:user-agent:in-reply-to:references
          :mime-version:content-transfer-encoding:subject:to:cc:from
          :message-id;
-        bh=4Ft7vXd1zuW+VBauzDv2GqD/tRxDd6qBcaHK1f4P0u0=;
-        b=XpYQGVOuF+S3PCUbgxfuz3RApFa4mpBzeA9ZCuz7DqS9w8081BjlBEcvF1wQYvzebA
-         TZ4lvBOninHIZXDcPobuSTG2Ch0JuyfxDmRa+fQlUZ4qq9UxWCABbjGtXlljp8cMNq0J
-         lY0IvgbawcEpR55WpwiVKUi+a9wIjO+1rzzDwbmrgrrLPgi9F8rtHfEUmS7youBTcYbv
-         vmbHZPXE0RD8WmgVktvYYuBU+4150FmbE4QyqiYmdkz08XArhvV99alJ5m2G7yAA8Hz6
-         jEejcDSdwd7X+adCCNl9LiPuzzvImnwUms/GPZJ3jsd1F0zdgb7XwBKPZxsoXTBjyPdA
-         gNfg==
-X-Gm-Message-State: APjAAAVi8Nnb3gG4LdDXY06ZTN8+3LaVKw+A7rYTpCPnut216QtErNd0
-        TTPhhQt/DeatPlqeRn/egrnqfA==
-X-Google-Smtp-Source: APXvYqxlzt7I3AKYu26X01bVUVKlpPBiyYa8Q4VkKvznW1qD7TyuMByccR8dAdsIOGEIHnNIr90JsA==
-X-Received: by 2002:adf:ec8e:: with SMTP id z14mr5189366wrn.198.1558076098185;
-        Thu, 16 May 2019 23:54:58 -0700 (PDT)
+        bh=Ss4NB5m+SG0EZIQDhH7NjLniRsiUjmxyrNTSlSe9Hss=;
+        b=AycRyF/VVYkerHSkUIl1+BkOg4bKgKjmKN5KTry6XccSvAD5ffWmNfsULCpedTZsRJ
+         RO6CQtJDzu2Pwku3pkbGTV82nzvPbYGKCEx9fU/yJFip3aWkx3gTtD/0vX+5++FK4Ig+
+         v/TBR1EKX0nPpBontf2pPaZLUY6OZI3VmUJ7IQALJLEisZD99xVqO08pl6d2p+b4+zVy
+         C1zGcc7NDYJhSw+SDjsFpV2aRlF84C/+GhC9XxXEZug2aVc7GT3wvcfi8Bjn06NSzOxb
+         RN1gKe9iv5qdftakbDNlkAO1V3ZdqWUAVbGEpn96sAME/luxmAioxOox3+hYIDLi+X2P
+         qw5w==
+X-Gm-Message-State: APjAAAXgCipVh5oq23855DUtiNIS2SNq8W+ECuuAWNggMrV2Wtw5nDhp
+        YA6DnjXUVcARUCyyo0T0WLqbdw==
+X-Google-Smtp-Source: APXvYqwlgwQ3Ti3QErOn6prvvwGIqOr2oU52GGb1WUMpJUlWibmqRpjYkl8UEH1bwumcelp6Jd7x0g==
+X-Received: by 2002:adf:f6c4:: with SMTP id y4mr6314398wrp.37.1558076518190;
+        Fri, 17 May 2019 00:01:58 -0700 (PDT)
 Received: from [172.18.135.95] ([46.183.103.8])
-        by smtp.gmail.com with ESMTPSA id v5sm14219659wra.83.2019.05.16.23.54.57
+        by smtp.gmail.com with ESMTPSA id e8sm16976835wrc.34.2019.05.17.00.01.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 May 2019 23:54:57 -0700 (PDT)
-Date:   Fri, 17 May 2019 08:54:52 +0200
+        Fri, 17 May 2019 00:01:57 -0700 (PDT)
+Date:   Fri, 17 May 2019 09:01:42 +0200
 User-Agent: K-9 Mail for Android
-In-Reply-To: <20190516202331.GA29908@altlinux.org>
-References: <155800752418.4037.9567789434648701032.stgit@warthog.procyon.org.uk> <20190516162259.GB17978@ZenIV.linux.org.uk> <20190516163151.urrmrueugockxtdy@brauner.io> <20190516165021.GD17978@ZenIV.linux.org.uk> <20190516202331.GA29908@altlinux.org>
+In-Reply-To: <20190516165021.GD17978@ZenIV.linux.org.uk>
+References: <155800752418.4037.9567789434648701032.stgit@warthog.procyon.org.uk> <20190516162259.GB17978@ZenIV.linux.org.uk> <20190516163151.urrmrueugockxtdy@brauner.io> <20190516165021.GD17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain;
  charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Subject: Re: [PATCH 0/4] uapi, vfs: Change the mount API UAPI [ver #2]
-To:     "Dmitry V. Levin" <ldv@altlinux.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
+To:     Al Viro <viro@zeniv.linux.org.uk>
 CC:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org,
         Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+        linux-kernel@vger.kernel.org, linux-api <linux-api@vger.kernel.org>
 From:   Christian Brauner <christian@brauner.io>
-Message-ID: <D41D33CA-ADFC-4E79-9C9C-79FE19E068CA@brauner.io>
+Message-ID: <F67AF221-C576-4424-88D7-7C6074D0A6C6@brauner.io>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On May 16, 2019 10:23:31 PM GMT+02:00, "Dmitry V=2E Levin" <ldv@altlinux=2E=
-org> wrote:
->[looks like linux-abi is a typo, Cc'ed linux-api instead]
+On May 16, 2019 6:50:22 PM GMT+02:00, Al Viro <viro@zeniv=2Elinux=2Eorg=2Eu=
+k> wrote:
+>[linux-abi cc'd]
 >
->On Thu, May 16, 2019 at 05:50:22PM +0100, Al Viro wrote:
->> [linux-abi cc'd]
->>=20
->> On Thu, May 16, 2019 at 06:31:52PM +0200, Christian Brauner wrote:
->> > On Thu, May 16, 2019 at 05:22:59PM +0100, Al Viro wrote:
->> > > On Thu, May 16, 2019 at 12:52:04PM +0100, David Howells wrote:
->> > > >=20
->> > > > Hi Linus, Al,
->> > > >=20
->> > > > Here are some patches that make changes to the mount API UAPI
->and two of
->> > > > them really need applying, before -rc1 - if they're going to be
->applied at
->> > > > all=2E
+>On Thu, May 16, 2019 at 06:31:52PM +0200, Christian Brauner wrote:
+>> On Thu, May 16, 2019 at 05:22:59PM +0100, Al Viro wrote:
+>> > On Thu, May 16, 2019 at 12:52:04PM +0100, David Howells wrote:
 >> > >=20
->> > > I'm fine with 2--4, but I'm not convinced that cloexec-by-default
+>> > > Hi Linus, Al,
+>> > >=20
+>> > > Here are some patches that make changes to the mount API UAPI and
+>two of
+>> > > them really need applying, before -rc1 - if they're going to be
+>applied at
+>> > > all=2E
+>> >=20
+>> > I'm fine with 2--4, but I'm not convinced that cloexec-by-default
 >crusade
->> > > makes any sense=2E  Could somebody give coherent arguments in
->favour of
->> > > abandoning the existing conventions?
->> >=20
->> > So as I said in the commit message=2E From a userspace perspective
->it's
->> > more of an issue if one accidently leaks an fd to a task during
->exec=2E
->> >=20
->> > Also, most of the time one does not want to inherit an fd during an
->> > exec=2E It is a hazzle to always have to specify an extra flag=2E
->> >=20
->> > As Al pointed out to me open() semantics are not going anywhere=2E
+>> > makes any sense=2E  Could somebody give coherent arguments in favour
+>of
+>> > abandoning the existing conventions?
+>>=20
+>> So as I said in the commit message=2E From a userspace perspective it's
+>> more of an issue if one accidently leaks an fd to a task during exec=2E
+>>=20
+>> Also, most of the time one does not want to inherit an fd during an
+>> exec=2E It is a hazzle to always have to specify an extra flag=2E
+>>=20
+>> As Al pointed out to me open() semantics are not going anywhere=2E
 >Sure,
->> > no argument there at all=2E
->> > But the idea of making fds cloexec by default is only targeted at
->fds
->> > that come from separate syscalls=2E fsopen(), open_tree_clone(), etc=
-=2E
+>> no argument there at all=2E
+>> But the idea of making fds cloexec by default is only targeted at fds
+>> that come from separate syscalls=2E fsopen(), open_tree_clone(), etc=2E
 >they
->> > all return fds independent of open() so it's really easy to have
->them
->> > cloexec by default without regressing anyone and we also remove the
+>> all return fds independent of open() so it's really easy to have them
+>> cloexec by default without regressing anyone and we also remove the
 >need
->> > for a bunch of separate flags for each syscall to turn them into
->> > cloexec-fds=2E I mean, those for syscalls came with 4 separate flags
->to be
->> > able to specify that the returned fd should be made cloexec=2E The
+>> for a bunch of separate flags for each syscall to turn them into
+>> cloexec-fds=2E I mean, those for syscalls came with 4 separate flags to
+>be
+>> able to specify that the returned fd should be made cloexec=2E The
 >other
->> > way around, cloexec by default, fcntl() to remove the cloexec bit
->is way
->> > saner imho=2E
->>=20
->> Re separate flags - it is, in principle, a valid argument=2E  OTOH, I'm
->not
->> sure if they need to be separate - they all have the same value and
->> I don't see any reason for that to change=2E=2E=2E
->>=20
->> Only tangentially related, but I wonder if something like
->close_range(from, to)
->> would be a more useful approach=2E=2E=2E  That kind of open-coded loops=
- is
->not
->> rare in userland and kernel-side code can do them much cheaper=2E=20
->Something
->> like
->> 	/* that exec is sensitive */
->> 	unshare(CLONE_FILES);
->> 	/* we don't want anything past stderr here */
->> 	close_range(3, ~0U);
->> 	execve(=2E=2E=2E=2E);
->> on the userland side of thing=2E  Comments?
+>> way around, cloexec by default, fcntl() to remove the cloexec bit is
+>way
+>> saner imho=2E
 >
->glibc people need a syscall to implement closefrom properly, see
->https://sourceware=2Eorg/bugzilla/show_bug=2Ecgi?id=3D10353#c14
+>Re separate flags - it is, in principle, a valid argument=2E  OTOH, I'm
+>not
+>sure if they need to be separate - they all have the same value and
+>I don't see any reason for that to change=2E=2E=2E
 
-I have a prototype for close_range()=2E
-I'll send it out after rc1=2E
+One last thing I'd like to point out is that
+we already have syscalls and ioctls that
+return cloexec fds=2E So the consistency
+argument is kinda dead=2E
+
+If you still prefer to have cloexec flags
+for the 4 new syscalls then yes,
+if they could at least all have the same name
+(FSMOUNT_CLOEXEC?) that would be good=2E
+
+>
+>Only tangentially related, but I wonder if something like
+>close_range(from, to)
+>would be a more useful approach=2E=2E=2E  That kind of open-coded loops i=
+s
+>not
+>rare in userland and kernel-side code can do them much cheaper=2E=20
+>Something
+>like
+>	/* that exec is sensitive */
+>	unshare(CLONE_FILES);
+>	/* we don't want anything past stderr here */
+>	close_range(3, ~0U);
+>	execve(=2E=2E=2E=2E);
+>on the userland side of thing=2E  Comments?
+
+Said it before but, the list was mistyped so again:
+I think that's a great idea=2E
+I have a prototype for close_range(start, end, flags)=2E
+I'll wait after rc1 and then send it out=2E
 
 Christian
-
