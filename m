@@ -2,109 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 251BC21D7A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 20:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13EE721D6A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 20:38:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbfEQShR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 May 2019 14:37:17 -0400
-Received: from hurricane.elijah.cs.cmu.edu ([128.2.209.191]:57552 "EHLO
+        id S1729386AbfEQShD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 May 2019 14:37:03 -0400
+Received: from hurricane.elijah.cs.cmu.edu ([128.2.209.191]:57564 "EHLO
         hurricane.elijah.cs.cmu.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726740AbfEQShC (ORCPT
+        by vger.kernel.org with ESMTP id S1727872AbfEQShC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 17 May 2019 14:37:02 -0400
 Received: from jaharkes by hurricane.elijah.cs.cmu.edu with local (Exim 4.92)
         (envelope-from <jaharkes@hurricane.elijah.cs.cmu.edu>)
-        id 1hRhj2-0000nf-AO; Fri, 17 May 2019 14:37:00 -0400
+        id 1hRhj2-0000nj-CI; Fri, 17 May 2019 14:37:00 -0400
 From:   Jan Harkes <jaharkes@cs.cmu.edu>
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jan Harkes <jaharkes@cs.cmu.edu>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 00/22] Coda updates
-Date:   Fri, 17 May 2019 14:36:38 -0400
-Message-Id: <cover.1558117389.git.jaharkes@cs.cmu.edu>
+Cc:     Jan Harkes <jaharkes@cs.cmu.edu>, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH 01/22] coda: pass the host file in vma->vm_file on mmap
+Date:   Fri, 17 May 2019 14:36:39 -0400
+Message-Id: <0e850c6e59c0b147dc2dcd51a3af004c948c3697.1558117389.git.jaharkes@cs.cmu.edu>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <cover.1558117389.git.jaharkes@cs.cmu.edu>
+References: <cover.1558117389.git.jaharkes@cs.cmu.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following patch series is a collection of various fixes for Coda,
-most of which were collected from linux-fsdevel or linux-kernel but
-which have as yet not found their way upstream.
+Various file systems expect that vma->vm_file points at their own file
+handle, several use file_inode(vma->vm_file) to get at their inode or
+use vma->vm_file->private_data. However the way Coda wrapped mmap on a
+host file broke this assumption, vm_file was still pointing at the Coda
+file and the host file systems would scribble over Coda's inode and
+private file data.
 
-I've previously sent these March 20th, one of those patched is now
-dropped as it got merged independently but there is a new patch in this
-series that fixes a memory corruption when a Coda file is mmapped.
+This patch fixes the incorrect expectation and wraps vm_ops->open and
+vm_ops->close to allow Coda to track when the vm_area_struct is
+destroyed so we still release the reference on the Coda file handle at
+the right time.
 
+Cc: stable@vger.kernel.org
+Signed-off-by: Jan Harkes <jaharkes@cs.cmu.edu>
+---
+ fs/coda/file.c | 70 ++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 68 insertions(+), 2 deletions(-)
 
-Arnd Bergmann (1):
-  coda: stop using 'struct timespec' in user API
-
-Colin Ian King (1):
-  coda: clean up indentation, replace spaces with tab
-
-Dan Carpenter (2):
-  coda: get rid of CODA_ALLOC()
-  coda: get rid of CODA_FREE()
-
-David Howells (1):
-  coda: Move internal defs out of include/linux/ [ver #2]
-
-Fabian Frederick (6):
-  coda: destroy mutex in put_super()
-  coda: use SIZE() for stat
-  coda: add __init to init_coda_psdev()
-  coda: remove sysctl object from module when unused
-  coda: remove sb test in coda_fid_to_inode()
-  coda: ftoc validity check integration
-
-Jan Harkes (7):
-  coda: pass the host file in vma->vm_file on mmap
-  coda: potential buffer overflow in coda_psdev_write()
-  coda: don't try to print names that were considered too long
-  uapi linux/coda_psdev.h: Move CODA_REQ_ from uapi to kernel side
-    headers
-  coda: change Coda's user api to use 64-bit time_t in timespec
-  coda: bump module version
-  coda: remove uapi/linux/coda_psdev.h
-
-Mikko Rapeli (2):
-  uapi linux/coda.h: use __kernel_pid_t for userspace
-  uapi linux/coda_psdev.h: move upc_req definition from uapi to kernel
-    side headers
-
-Sam Protsenko (1):
-  coda: Fix build using bare-metal toolchain
-
-Zhouyang Jia (1):
-  coda: add error handling for fget
-
- Documentation/filesystems/coda.txt      | 11 +--
- fs/coda/Makefile                        |  3 +-
- fs/coda/cache.c                         |  2 +-
- fs/coda/cnode.c                         | 17 +++--
- fs/coda/coda_fs_i.h                     |  3 +-
- fs/coda/coda_int.h                      | 10 +++
- fs/coda/coda_linux.c                    | 45 +++++++++----
- fs/coda/coda_linux.h                    | 16 -----
- {include/linux => fs/coda}/coda_psdev.h | 52 +++++++++-----
- fs/coda/dir.c                           | 12 ++--
- fs/coda/file.c                          | 90 ++++++++++++++++++++-----
- fs/coda/inode.c                         |  3 +-
- fs/coda/pioctl.c                        |  3 +-
- fs/coda/psdev.c                         | 36 ++++++----
- fs/coda/symlink.c                       |  3 +-
- fs/coda/sysctl.c                        | 11 ---
- fs/coda/upcall.c                        | 78 ++++++++++++++-------
- include/linux/coda.h                    |  3 +-
- include/uapi/linux/coda.h               | 29 ++++----
- include/uapi/linux/coda_psdev.h         | 28 --------
- 20 files changed, 274 insertions(+), 181 deletions(-)
- rename {include/linux => fs/coda}/coda_psdev.h (62%)
- delete mode 100644 include/uapi/linux/coda_psdev.h
-
+diff --git a/fs/coda/file.c b/fs/coda/file.c
+index 1cbc1f2298ee..43d371551d2b 100644
+--- a/fs/coda/file.c
++++ b/fs/coda/file.c
+@@ -27,6 +27,13 @@
+ #include "coda_linux.h"
+ #include "coda_int.h"
+ 
++struct coda_vm_ops {
++	atomic_t refcnt;
++	struct file *coda_file;
++	const struct vm_operations_struct *host_vm_ops;
++	struct vm_operations_struct vm_ops;
++};
++
+ static ssize_t
+ coda_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+@@ -61,6 +68,34 @@ coda_file_write_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	return ret;
+ }
+ 
++static void
++coda_vm_open(struct vm_area_struct *vma)
++{
++	struct coda_vm_ops *cvm_ops =
++		container_of(vma->vm_ops, struct coda_vm_ops, vm_ops);
++
++	atomic_inc(&cvm_ops->refcnt);
++
++	if (cvm_ops->host_vm_ops && cvm_ops->host_vm_ops->open)
++		cvm_ops->host_vm_ops->open(vma);
++}
++
++static void
++coda_vm_close(struct vm_area_struct *vma)
++{
++	struct coda_vm_ops *cvm_ops =
++		container_of(vma->vm_ops, struct coda_vm_ops, vm_ops);
++
++	if (cvm_ops->host_vm_ops && cvm_ops->host_vm_ops->close)
++		cvm_ops->host_vm_ops->close(vma);
++
++	if (atomic_dec_and_test(&cvm_ops->refcnt)) {
++		vma->vm_ops = cvm_ops->host_vm_ops;
++		fput(cvm_ops->coda_file);
++		kfree(cvm_ops);
++	}
++}
++
+ static int
+ coda_file_mmap(struct file *coda_file, struct vm_area_struct *vma)
+ {
+@@ -68,6 +103,8 @@ coda_file_mmap(struct file *coda_file, struct vm_area_struct *vma)
+ 	struct coda_inode_info *cii;
+ 	struct file *host_file;
+ 	struct inode *coda_inode, *host_inode;
++	struct coda_vm_ops *cvm_ops;
++	int ret;
+ 
+ 	cfi = CODA_FTOC(coda_file);
+ 	BUG_ON(!cfi || cfi->cfi_magic != CODA_MAGIC);
+@@ -76,6 +113,13 @@ coda_file_mmap(struct file *coda_file, struct vm_area_struct *vma)
+ 	if (!host_file->f_op->mmap)
+ 		return -ENODEV;
+ 
++	if (WARN_ON(coda_file != vma->vm_file))
++		return -EIO;
++
++	cvm_ops = kmalloc(sizeof(struct coda_vm_ops), GFP_KERNEL);
++	if (!cvm_ops)
++		return -ENOMEM;
++
+ 	coda_inode = file_inode(coda_file);
+ 	host_inode = file_inode(host_file);
+ 
+@@ -89,6 +133,7 @@ coda_file_mmap(struct file *coda_file, struct vm_area_struct *vma)
+ 	 * the container file on us! */
+ 	else if (coda_inode->i_mapping != host_inode->i_mapping) {
+ 		spin_unlock(&cii->c_lock);
++		kfree(cvm_ops);
+ 		return -EBUSY;
+ 	}
+ 
+@@ -97,7 +142,29 @@ coda_file_mmap(struct file *coda_file, struct vm_area_struct *vma)
+ 	cfi->cfi_mapcount++;
+ 	spin_unlock(&cii->c_lock);
+ 
+-	return call_mmap(host_file, vma);
++	vma->vm_file = get_file(host_file);
++	ret = call_mmap(vma->vm_file, vma);
++
++	if (ret) {
++		/* if call_mmap fails, our caller will put coda_file so we
++		 * should drop the reference to the host_file that we got.
++		 */
++		fput(host_file);
++		kfree(cvm_ops);
++	} else {
++		/* here we add redirects for the open/close vm_operations */
++		cvm_ops->host_vm_ops = vma->vm_ops;
++		if (vma->vm_ops)
++			cvm_ops->vm_ops = *vma->vm_ops;
++
++		cvm_ops->vm_ops.open = coda_vm_open;
++		cvm_ops->vm_ops.close = coda_vm_close;
++		cvm_ops->coda_file = coda_file;
++		atomic_set(&cvm_ops->refcnt, 1);
++
++		vma->vm_ops = &cvm_ops->vm_ops;
++	}
++	return ret;
+ }
+ 
+ int coda_open(struct inode *coda_inode, struct file *coda_file)
+@@ -207,4 +274,3 @@ const struct file_operations coda_file_operations = {
+ 	.fsync		= coda_fsync,
+ 	.splice_read	= generic_file_splice_read,
+ };
+-
 -- 
 2.20.1
 
