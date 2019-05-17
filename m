@@ -2,114 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7681622062
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 May 2019 00:37:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58DA92202A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 May 2019 00:17:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbfEQWhI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 May 2019 18:37:08 -0400
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:38982 "EHLO
-        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728179AbfEQWhI (ORCPT
+        id S1729198AbfEQWRg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 May 2019 18:17:36 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34098 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbfEQWRg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 May 2019 18:37:08 -0400
-X-Greylist: delayed 1255 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 May 2019 18:37:06 EDT
-Received: from [4.30.142.84] (helo=srivatsab-a01.vmware.com)
-        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
-        (Exim 4.82)
-        (envelope-from <srivatsa@csail.mit.edu>)
-        id 1hRl91-000BD0-LI; Fri, 17 May 2019 18:16:03 -0400
-To:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     axboe@kernel.dk, paolo.valente@linaro.org, jack@suse.cz,
-        jmoyer@redhat.com, tytso@mit.edu, amakhalov@vmware.com,
-        anishs@vmware.com, srivatsab@vmware.com,
-        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Subject: CFQ idling kills I/O performance on ext4 with blkio cgroup controller
-Message-ID: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
-Date:   Fri, 17 May 2019 15:16:01 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        Fri, 17 May 2019 18:17:36 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h1so9871005qtp.1;
+        Fri, 17 May 2019 15:17:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4Hl8T+4u/qgIIk8+r4CsaXe+ilR4CzdKuLNrb4mEdnE=;
+        b=NV6J2lErU6kauPc1kdxYtPdNeGXhZZheMQ4RIrEQR9uGKQuH4FGDCUqL7wyIsbrmL2
+         SedIMzzQajeBX/kOSToUXNSVRlHY+qB+iRxAX/xrtGX3IVXJ/tiLfTLLQc0ntNtLp4r4
+         ktTQGzGO/15ZcxMbT24qyow8ZDxjcsIlQz2VrMiMeoWdyMQRzOx7VmKPMnNCuCjVYzkN
+         J//i5uYN7StnsOKqjoJU7u7vIpdBvwsq7bLS6C+9uvNwR9aV1Q4ZjzIi51gFdUtlj6eu
+         cXO/vRglGr6Gl0rW1pE2aKVtQ8lXDvszVctfM2YwH1ZmsQ8/hsL0MfFatbfnP1SEFdrG
+         uHrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4Hl8T+4u/qgIIk8+r4CsaXe+ilR4CzdKuLNrb4mEdnE=;
+        b=OdklydhNB/+vzQslkY3Jf0TSZ8MJ/aawk5df0E+o4LY5JCy2C9D8Scaf/oS/B26y5q
+         CN4T3yrp5plwDepkNHVpaiXVM/SxcwK8u7vzowLkWNPWMzIFPI6P+uruUlIduNfmVAWL
+         ReSorAVk6fVHvMykzCNxtugmcl7CmfNeKV8VYkhRkfnWW2KUfn/XmmFyjN+z9MpnHzcA
+         8HXFoxSu+PGaAjCO9VOlCDo7kFCBGmDxOjY4GwmYujQs5iO7D+kFerhz9UssqAV/HWBk
+         wSquE+R6+mv8tMq5HXQOhyX58KFzd3nqd6mT7tpV7R1Mq71PpVdaxzSXaJ1ywC6GyWwF
+         uRHA==
+X-Gm-Message-State: APjAAAUDJsQSPcbqXfo0Gup6IyC9zEmI4CPQwa10+e5xq2+w/0T6os6W
+        Va5avxB9goEROwoMl0MKRVg=
+X-Google-Smtp-Source: APXvYqxxUYDge47vddAWXjHSnKIL8D9j1YJySwbTD27V4UaA7kVHiSbNMOKcE9PfZBtm16oIHqUGXQ==
+X-Received: by 2002:ac8:32d1:: with SMTP id a17mr43459703qtb.111.1558131454998;
+        Fri, 17 May 2019 15:17:34 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id c16sm5405296qkb.15.2019.05.17.15.17.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 May 2019 15:17:34 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Fri, 17 May 2019 18:17:32 -0400
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com, arnd@arndb.de,
+        rob@landley.net, james.w.mcmechan@gmail.com, niveditas98@gmail.com
+Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
+Message-ID: <20190517221731.GA11358@rani.riverdale.lan>
+References: <20190517165519.11507-1-roberto.sassu@huawei.com>
+ <20190517165519.11507-3-roberto.sassu@huawei.com>
+ <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
+ <20190517210219.GA5998@rani.riverdale.lan>
+ <d48f35a1-aab1-2f20-2e91-5e81a84b107f@zytor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <d48f35a1-aab1-2f20-2e91-5e81a84b107f@zytor.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, May 17, 2019 at 02:47:31PM -0700, H. Peter Anvin wrote:
+> On 5/17/19 2:02 PM, Arvind Sankar wrote:
+> > On Fri, May 17, 2019 at 01:18:11PM -0700, hpa@zytor.com wrote:
+> >>
+> >> Ok... I just realized this does not work for a modular initramfs, composed at load time from multiple files, which is a very real problem. Should be easy enough to deal with: instead of one large file, use one companion file per source file, perhaps something like filename..xattrs (suggesting double dots to make it less likely to conflict with a "real" file.) No leading dot, as it makes it more likely that archivers will sort them before the file proper.
+> > This version of the patch was changed from the previous one exactly to deal with this case --
+> > it allows for the bootloader to load multiple initramfs archives, each
+> > with its own .xattr-list file, and to have that work properly.
+> > Could you elaborate on the issue that you see?
+> > 
+> 
+> Well, for one thing, how do you define "cpio archive", each with its own
+> .xattr-list file? Second, that would seem to depend on the ordering, no,
+> in which case you depend critically on .xattr-list file following the
+> files, which most archivers won't do.
+> 
+> Either way it seems cleaner to have this per file; especially if/as it
+> can be done without actually mucking up the format.
+> 
+> I need to run, but I'll post a more detailed explanation of what I did
+> in a little bit.
+> 
+> 	-hpa
+> 
+Not sure what you mean by how do I define it? Each cpio archive will
+contain its own .xattr-list file with signatures for the files within
+it, that was the idea.
 
-Hi,
+You need to review the code more closely I think -- it does not depend
+on the .xattr-list file following the files to which it applies.
 
-One of my colleagues noticed upto 10x - 30x drop in I/O throughput
-running the following command, with the CFQ I/O scheduler:
+The code first extracts .xattr-list as though it was a regular file. If
+a later dupe shows up (presumably from a second archive, although the
+patch will actually allow a second one in the same archive), it will
+then process the existing .xattr-list file and apply the attributes
+listed within it. It then will proceed to read the second one and
+overwrite the first one with it (this is the normal behaviour in the
+kernel cpio parser). At the end once all the archives have been
+extracted, if there is an .xattr-list file in the rootfs it will be
+parsed (it would've been the last one encountered, which hasn't been
+parsed yet, just extracted).
 
-dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflags=dsync
-
-Throughput with CFQ: 60 KB/s
-Throughput with noop or deadline: 1.5 MB/s - 2 MB/s
-
-I spent some time looking into it and found that this is caused by the
-undesirable interaction between 4 different components:
-
-- blkio cgroup controller enabled
-- ext4 with the jbd2 kthread running in the root blkio cgroup
-- dd running on ext4, in any other blkio cgroup than that of jbd2
-- CFQ I/O scheduler with defaults for slice_idle and group_idle
-
-
-When docker is enabled, systemd creates a blkio cgroup called
-system.slice to run system services (and docker) under it, and a
-separate blkio cgroup called user.slice for user processes. So, when
-dd is invoked, it runs under user.slice.
-
-The dd command above includes the dsync flag, which performs an
-fdatasync after every write to the output file. Since dd is writing to
-a file on ext4, jbd2 will be active, committing transactions
-corresponding to those fdatasync requests from dd. (In other words, dd
-depends on jdb2, in order to make forward progress). But jdb2 being a
-kernel thread, runs in the root blkio cgroup, as opposed to dd, which
-runs under user.slice.
-
-Now, if the I/O scheduler in use for the underlying block device is
-CFQ, then its inter-queue/inter-group idling takes effect (via the
-slice_idle and group_idle parameters, both of which default to 8ms).
-Therefore, everytime CFQ switches between processing requests from dd
-vs jbd2, this 8ms idle time is injected, which slows down the overall
-throughput tremendously!
-
-To verify this theory, I tried various experiments, and in all cases,
-the 4 pre-conditions mentioned above were necessary to reproduce this
-performance drop. For example, if I used an XFS filesystem (which
-doesn't use a separate kthread like jbd2 for journaling), or if I dd'ed
-directly to a block device, I couldn't reproduce the performance
-issue. Similarly, running dd in the root blkio cgroup (where jbd2
-runs) also gets full performance; as does using the noop or deadline
-I/O schedulers; or even CFQ itself, with slice_idle and group_idle set
-to zero.
-
-These results were reproduced on a Linux VM (kernel v4.19) on ESXi,
-both with virtualized storage as well as with disk pass-through,
-backed by a rotational hard disk in both cases. The same problem was
-also seen with the BFQ I/O scheduler in kernel v5.1.
-
-Searching for any earlier discussions of this problem, I found an old
-thread on LKML that encountered this behavior [1], as well as a docker
-github issue [2] with similar symptoms (mentioned later in the
-thread).
-
-So, I'm curious to know if this is a well-understood problem and if
-anybody has any thoughts on how to fix it.
-
-Thank you very much!
-
-
-[1]. https://lkml.org/lkml/2015/11/19/359
-
-[2]. https://github.com/moby/moby/issues/21485
-     https://github.com/moby/moby/issues/21485#issuecomment-222941103
-
-Regards,
-Srivatsa
+Regarding the idea to use the high 16 bits of the mode field in
+the header that's another possibility. It would just require additional
+support in the program that actually creates the archive though, which
+the current patch doesn't.
