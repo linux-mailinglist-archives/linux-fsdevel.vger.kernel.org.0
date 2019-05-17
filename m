@@ -2,84 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19EEF215EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 11:06:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0407B216DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 12:17:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbfEQJGb convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 May 2019 05:06:31 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:58038 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728245AbfEQJGa (ORCPT
+        id S1728638AbfEQKRD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 May 2019 06:17:03 -0400
+Received: from mail-it1-f199.google.com ([209.85.166.199]:58286 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727912AbfEQKRD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 May 2019 05:06:30 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-51-y_73BxfGMMizl2DShogLcw-1; Fri, 17 May 2019 10:06:27 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 17 May 2019 10:06:26 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 17 May 2019 10:06:26 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Jan Kara' <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>
-CC:     "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Jeff Moyer <jmoyer@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Smits <jeff.smits@intel.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: RE: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
-Thread-Topic: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
-Thread-Index: AQHVDI00Hs6UetBw5UmdJ+47dYtmSqZvBeSA
-Date:   Fri, 17 May 2019 09:06:26 +0000
-Message-ID: <2d8b1ba7890940bf8a512d4eef0d99b3@AcuMS.aculab.com>
-References: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190517084739.GB20550@quack2.suse.cz>
-In-Reply-To: <20190517084739.GB20550@quack2.suse.cz>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 17 May 2019 06:17:03 -0400
+Received: by mail-it1-f199.google.com with SMTP id p23so5984328itc.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 May 2019 03:17:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=ksZiUycHQUU5gaMM+swJiiJAczcg7RX7RdnQSdhRCek=;
+        b=Z6BUlwRW7zYG1f0bn9MA5mDKW/jZLmjFMFvzBM2hrHxkHWf1TcCtQUsjhi4i0Z5Sbt
+         DsnGpxz6naGDpbozjbNUz8jq4ZyH0bMYx05k8S3s9947yalSnzAJpYjzoAIMSL6FLzkk
+         oAtwe74KVzBHlIPFsulnmmBdjiDOPW1/6rrb6njOdV2cgwED7Spflqg2iu3A0GyZfPXK
+         f8ycsy5RD7JoyIYYIRUVGUx6DgHGM9GzwD1b5bA79i+mXO8nESxeaM8sL8fTeFqoP+91
+         4JevnoK6tf/DaYMbEiGcwM6DfwjVmKliaZWQutQvqPnfri6msSkIw2crUH31VaQwZTxu
+         +i2g==
+X-Gm-Message-State: APjAAAUfTqJC0aOGXvm6dJmliXY95j7OGJBmQr5c+1wlkTVKw0UAlnff
+        oMV86V67az2lGwhYAo+Y0w8RsMMeRmfWTxjTmKH+DohCYBhd
+X-Google-Smtp-Source: APXvYqw1oALLAqN8e3Fodf0np8lqv+KYYXmmSFcJpfGLY48IypppnFKQuLhi4L+WpUvyZ4V0BGWmjPiSc8Glg/RO/7JGhSptNX8G
 MIME-Version: 1.0
-X-MC-Unique: y_73BxfGMMizl2DShogLcw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+X-Received: by 2002:a05:6638:148:: with SMTP id y8mr395593jao.8.1558088222942;
+ Fri, 17 May 2019 03:17:02 -0700 (PDT)
+Date:   Fri, 17 May 2019 03:17:02 -0700
+In-Reply-To: <00000000000014285d05765bf72a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000eaf23058912af14@google.com>
+Subject: Re: BUG: unable to handle kernel paging request in do_mount
+From:   syzbot <syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sabin.rapan@gmail.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jan Kara
-> Sent: 17 May 2019 09:48
-...
-> So this last paragraph is not obvious to me as check_copy_size() does a lot
-> of various checks in CONFIG_HARDENED_USERCOPY case. I agree that some of
-> those checks don't make sense for PMEM pages but I'd rather handle that by
-> refining check_copy_size() and check_object_size() functions to detect and
-> appropriately handle pmem pages rather that generally skip all the checks
-> in pmem_copy_from/to_iter(). And yes, every check in such hot path is going
-> to cost performance but that's what user asked for with
-> CONFIG_HARDENED_USERCOPY... Kees?
-
-Except that all the distros enable it by default.
-So you get the performance cost whether you (as a user) want it or not.
-
-I've changed some of our code to use __get_user() to avoid
-these stupid overheads.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+This bug is marked as fixed by commit:
+vfs: namespace: error pointer dereference in do_remount()
+But I can't find it in any tested tree for more than 90 days.
+Is it a correct commit? Please update it by replying:
+#syz fix: exact-commit-title
+Until then the bug is still considered open and
+new crashes with the same signature are ignored.
