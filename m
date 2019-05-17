@@ -2,162 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBFC320FDB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 May 2019 23:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF6E121136
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 02:19:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbfEPVLE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 May 2019 17:11:04 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37335 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727510AbfEPVLD (ORCPT
+        id S1726408AbfEQATh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 May 2019 20:19:37 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43047 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbfEQATh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 May 2019 17:11:03 -0400
-Received: by mail-ot1-f66.google.com with SMTP id r10so4820210otd.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 May 2019 14:11:03 -0700 (PDT)
+        Thu, 16 May 2019 20:19:37 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t22so2348996pgi.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 May 2019 17:19:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rncqV+v/sler+WaccX6aFzyW2GBZSvBqWUUQAw2Omxg=;
-        b=sBwrHSYohh/5AbGwZanEBCpP/ONR4apwYXhQR3Gh/nmGJtaYsMQTILIps0vPrhK0t4
-         CFYcTvs94aN+IOc+2QZpIXl51EU5IBQlgFonCamtkrRCVj/m9LnNsdaUArIfw/wnVMX1
-         it246fg4xNMigWkvBlEoYYGsJfwssAsUdk0iD+mLFtO/R/3IlWHbu3tqxSmWEw6cY0BX
-         4XjHiTUAOuJdPSch+xJSHicRb+bZZ3UaTbvFnIGhFEKbOFTSbXlsjy65Yr90mqwgS0g+
-         F54PjHp1w24jDlC42LFHVVZElkpBuaZb2H3aaORxH/+8FksYfNLY93NcnkFWw0Yb3+aM
-         op3Q==
+        d=google.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=grI6nIUF/mMOBdv6LrPvHsdNVES0yai/LfFYIZ4bkWY=;
+        b=trB5X+v2CFHJR5/h5Ogo8pnGEbixSq/5SbMCfW0BvmcDG2zeRdzxHL4lknPMI8JsaG
+         91o9aNowjUtiTckfyBLWY/pZJBmRERl33EcI9dq0zR0lXd+XHl45wImJtwD6qTmBiD3C
+         YvIdILOfNr02D208IUOgX7xjB1B80gLQERVK/akSkqvFqS79gmXpU/duephS4OxkvMCj
+         iFkaZbcWb+04sJYfOvlYsPNWM7LK/oP8HkDOryS8f1XdKVoMLZUlQ8YVZMbBQiMDnraB
+         fYXacmGWn0btEdYeftIv0rPSsHpeCBXpkkAwnfL+k2zqdhfQJ6WS6TGQ7DeGxI98ZyT1
+         d5aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rncqV+v/sler+WaccX6aFzyW2GBZSvBqWUUQAw2Omxg=;
-        b=BE+qFO55VNAipakbNyi+nto+IJt83ZtPlW9h7WkrcTrNjLEqJIWpmrULmDeVOpwmRy
-         /rbyqsCA7Mm6c4pIikU+0pI2oxDEqKNb5nd3am8VSZRcAISWsqj0E0+Ohu0ghQyum7pY
-         Q7lJAcbVE3Fs1Bl0sIcnWW5OADnl8XaRSPbBXu5naLtF1U2XV+DGb6cn2iV8ku/lShNC
-         kpfI0/zPDSLrAsYgP1woDhdVkiwxzxeYr1SR+1U7y6u4SNBQwJ69gdtmDbXSjx39oj65
-         0jZK132TxGnkJ4BWBULMZ4lyj/02xIhYZR+GaUxyi3aTomLPSH+ZbWQJWgPUqrqZWjkl
-         qrIA==
-X-Gm-Message-State: APjAAAWzgT/xtnBo1XkmlV5d146f3+qWP9dlQV5V0qJjKTXZrglUtp+X
-        bN1m2m2GGfRDSZhPEDxsYXF+3O9KRINxLyxqNhhWRw==
-X-Google-Smtp-Source: APXvYqxulCJOUDUzJnfXBMN0SCHXR6S91sR3HjlOoR5MHBwl1p8VnIbStmYVv5DJAXlVl4H2Wm68Ee2JYrTDQVx19M4=
-X-Received: by 2002:a9d:61ca:: with SMTP id h10mr3517132otk.247.1558041062704;
- Thu, 16 May 2019 14:11:02 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=grI6nIUF/mMOBdv6LrPvHsdNVES0yai/LfFYIZ4bkWY=;
+        b=sBg7Qom3ti9MasV/smTzGTmkH3aXD1xyI9uzCnmBLdBJNQmxP71Ezqj+sfn3xOqEkO
+         pHPp476l5KZ39XgD3ngwmhsCPa6gSRBNJ0WlWdogBQvceJwh7BrUy5Ug63T+W+01NOeq
+         /O61Xh4gQUQ87FB6QTkjAZzna+dAqCVaoM4jr82kJVcU9gn3o8et2bLFzaDowx2n+I//
+         vCd8RjyEmFF3B/zx3m/qHeFIlh6qOxDuGS5BuOfb1lfddVzqlG2BhjddJkEqzYDEYjg8
+         uyr9jdN996ZsVUzrL0pGg3y+9xuLsJWXMz6xw+Sl2jwudLJ+ZYRYHUXs+OFOCXDZrbSj
+         QMIw==
+X-Gm-Message-State: APjAAAVQ4p+Q3DbSSnrBXlaEtyAvPC/h1kjmWTdHFz+FBbwyUQsGz/nt
+        I9ksA84ZwpAW4GFhAJbJNSnraQ==
+X-Google-Smtp-Source: APXvYqyv1iVBQbL6jyOdYGu6UtPQiwVBUuqofcSXUoK/ck1DMyLzSDgzGJaT2Ro5WErOmsiHR9V/gQ==
+X-Received: by 2002:a63:d816:: with SMTP id b22mr52619479pgh.16.1558051959951;
+        Thu, 16 May 2019 17:12:39 -0700 (PDT)
+Received: from jstaron2.mtv.corp.google.com ([2620:15c:202:201:b94f:2527:c39f:ca2d])
+        by smtp.gmail.com with ESMTPSA id a6sm7245768pgd.67.2019.05.16.17.12.37
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 17:12:39 -0700 (PDT)
+Subject: Re: [PATCH v9 2/7] virtio-pmem: Add virtio pmem driver
+To:     Pankaj Gupta <pagupta@redhat.com>, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Cc:     dan.j.williams@intel.com, zwisler@kernel.org,
+        vishal.l.verma@intel.com, dave.jiang@intel.com, mst@redhat.com,
+        jasowang@redhat.com, willy@infradead.org, rjw@rjwysocki.net,
+        hch@infradead.org, lenb@kernel.org, jack@suse.cz, tytso@mit.edu,
+        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
+        lcapitulino@redhat.com, kwolf@redhat.com, imammedo@redhat.com,
+        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
+        stefanha@redhat.com, aarcange@redhat.com, david@redhat.com,
+        david@fromorbit.com, cohuck@redhat.com,
+        xiaoguangrong.eric@gmail.com, pbonzini@redhat.com,
+        kilobyte@angband.pl, yuval.shaia@oracle.com, smbarber@google.com
+References: <20190514145422.16923-1-pagupta@redhat.com>
+ <20190514145422.16923-3-pagupta@redhat.com>
+From:   =?UTF-8?Q?Jakub_Staro=c5=84?= <jstaron@google.com>
+Message-ID: <c06514fd-8675-ba74-4b7b-ff0eb4a91605@google.com>
+Date:   Thu, 16 May 2019 17:12:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <155789172402.748145.11853718580748830476.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190516185732.GA27796@redhat.com>
-In-Reply-To: <20190516185732.GA27796@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 16 May 2019 14:10:51 -0700
-Message-ID: <CAPcyv4j5M7ZgJqFtRxw1t2p4tb579azdb6=FedV-rcqJ3GJPNw@mail.gmail.com>
-Subject: Re: dax: Arrange for dax_supported check to span multiple devices
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     stable <stable@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190514145422.16923-3-pagupta@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 16, 2019 at 11:58 AM Mike Snitzer <snitzer@redhat.com> wrote:
->
-> On Tue, May 14 2019 at 11:48pm -0400,
-> Dan Williams <dan.j.williams@intel.com> wrote:
->
-> > Pankaj reports that starting with commit ad428cdb525a "dax: Check the
-> > end of the block-device capacity with dax_direct_access()" device-mapper
-> > no longer allows dax operation. This results from the stricter checks in
-> > __bdev_dax_supported() that validate that the start and end of a
-> > block-device map to the same 'pagemap' instance.
-> >
-> > Teach the dax-core and device-mapper to validate the 'pagemap' on a
-> > per-target basis. This is accomplished by refactoring the
-> > bdev_dax_supported() internals into generic_fsdax_supported() which
-> > takes a sector range to validate. Consequently generic_fsdax_supported()
-> > is suitable to be used in a device-mapper ->iterate_devices() callback.
-> > A new ->dax_supported() operation is added to allow composite devices to
-> > split and route upper-level bdev_dax_supported() requests.
-> >
-> > Fixes: ad428cdb525a ("dax: Check the end of the block-device...")
-> > Cc: <stable@vger.kernel.org>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Ira Weiny <ira.weiny@intel.com>
-> > Cc: Dave Jiang <dave.jiang@intel.com>
-> > Cc: Mike Snitzer <snitzer@redhat.com>
-> > Cc: Keith Busch <keith.busch@intel.com>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > Cc: Vishal Verma <vishal.l.verma@intel.com>
-> > Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> > Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> > Reported-by: Pankaj Gupta <pagupta@redhat.com>
-> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > ---
-> > Hi Mike,
-> >
-> > Another day another new dax operation to allow device-mapper to better
-> > scope dax operations.
-> >
-> > Let me know if the device-mapper changes look sane. This passes a new
-> > unit test that indeed fails on current mainline.
-> >
-> > https://github.com/pmem/ndctl/blob/device-mapper-pending/test/dm.sh
-> >
-> >  drivers/dax/super.c          |   88 +++++++++++++++++++++++++++---------------
-> >  drivers/md/dm-table.c        |   17 +++++---
-> >  drivers/md/dm.c              |   20 ++++++++++
-> >  drivers/md/dm.h              |    1
-> >  drivers/nvdimm/pmem.c        |    1
-> >  drivers/s390/block/dcssblk.c |    1
-> >  include/linux/dax.h          |   19 +++++++++
-> >  7 files changed, 110 insertions(+), 37 deletions(-)
-> >
->
-> ...
->
-> > diff --git a/drivers/md/dm.h b/drivers/md/dm.h
-> > index 2d539b82ec08..e5e240bfa2d0 100644
-> > --- a/drivers/md/dm.h
-> > +++ b/drivers/md/dm.h
-> > @@ -78,6 +78,7 @@ void dm_unlock_md_type(struct mapped_device *md);
-> >  void dm_set_md_type(struct mapped_device *md, enum dm_queue_mode type);
-> >  enum dm_queue_mode dm_get_md_type(struct mapped_device *md);
-> >  struct target_type *dm_get_immutable_target_type(struct mapped_device *md);
-> > +bool dm_table_supports_dax(struct dm_table *t, int blocksize);
-> >
-> >  int dm_setup_md_queue(struct mapped_device *md, struct dm_table *t);
-> >
->
-> I'd prefer to have dm_table_supports_dax come just after
-> dm_table_get_md_mempools in the preceding dm_table section of dm.h (just
-> above this mapped_device section you extended).
->
-> But other than that nit, patch looks great on a DM level:
->
-> Reviewed-by: Mike Snitzer <snitzer@redhat.com>
+On 5/14/19 7:54 AM, Pankaj Gupta wrote:
+> +		if (!list_empty(&vpmem->req_list)) {
+> +			req_buf = list_first_entry(&vpmem->req_list,
+> +					struct virtio_pmem_request, list);
+> +			req_buf->wq_buf_avail = true;
+> +			wake_up(&req_buf->wq_buf);
+> +			list_del(&req_buf->list);
+Yes, this change is the right one, thank you!
 
-Thanks Mike, I folded in this change:
+> +	 /*
+> +	  * If virtqueue_add_sgs returns -ENOSPC then req_vq virtual
+> +	  * queue does not have free descriptor. We add the request
+> +	  * to req_list and wait for host_ack to wake us up when free
+> +	  * slots are available.
+> +	  */
+> +	while ((err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req,
+> +					GFP_ATOMIC)) == -ENOSPC) {
+> +
+> +		dev_err(&vdev->dev, "failed to send command to virtio pmem" \
+> +			"device, no free slots in the virtqueue\n");
+> +		req->wq_buf_avail = false;
+> +		list_add_tail(&req->list, &vpmem->req_list);
+> +		spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> +
+> +		/* A host response results in "host_ack" getting called */
+> +		wait_event(req->wq_buf, req->wq_buf_avail);
+> +		spin_lock_irqsave(&vpmem->pmem_lock, flags);
+> +	}
+> +	err1 = virtqueue_kick(vpmem->req_vq);
+> +	spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> +
+> +	/*
+> +	 * virtqueue_add_sgs failed with error different than -ENOSPC, we can't
+> +	 * do anything about that.
+> +	 */
+> +	if (err || !err1) {
+> +		dev_info(&vdev->dev, "failed to send command to virtio pmem device\n");
+> +		err = -EIO;
+> +	} else {
+> +		/* A host repsonse results in "host_ack" getting called */
+> +		wait_event(req->host_acked, req->done);
+> +		err = req->ret;
+> +I confirm that the failures I was facing with the `-ENOSPC` error path are not present in v9.
 
-@@ -72,13 +72,13 @@ bool dm_table_bio_based(struct dm_table *t);
- bool dm_table_request_based(struct dm_table *t);
- void dm_table_free_md_mempools(struct dm_table *t);
- struct dm_md_mempools *dm_table_get_md_mempools(struct dm_table *t);
-+bool dm_table_supports_dax(struct dm_table *t, int blocksize);
-
- void dm_lock_md_type(struct mapped_device *md);
- void dm_unlock_md_type(struct mapped_device *md);
- void dm_set_md_type(struct mapped_device *md, enum dm_queue_mode type);
- enum dm_queue_mode dm_get_md_type(struct mapped_device *md);
- struct target_type *dm_get_immutable_target_type(struct mapped_device *md);
--bool dm_table_supports_dax(struct dm_table *t, int blocksize);
-
- int dm_setup_md_queue(struct mapped_device *md, struct dm_table *t);
+Best,
+Jakub Staron
