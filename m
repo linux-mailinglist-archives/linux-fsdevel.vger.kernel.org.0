@@ -2,124 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9FA721378
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 07:36:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6B46213E5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 08:55:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfEQFgA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 May 2019 01:36:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51660 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727317AbfEQFgA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 May 2019 01:36:00 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7DB4D81DE6;
-        Fri, 17 May 2019 05:35:59 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 58AE01001DD2;
-        Fri, 17 May 2019 05:35:59 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 0AB9A1806B10;
-        Fri, 17 May 2019 05:35:59 +0000 (UTC)
-Date:   Fri, 17 May 2019 01:35:58 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Jakub =?utf-8?Q?Staro=C5=84?= <jstaron@google.com>
-Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, jack@suse.cz, mst@redhat.com,
-        jasowang@redhat.com, david@fromorbit.com, lcapitulino@redhat.com,
-        adilger kernel <adilger.kernel@dilger.ca>, smbarber@google.com,
-        zwisler@kernel.org, aarcange@redhat.com,
-        dave jiang <dave.jiang@intel.com>,
-        darrick wong <darrick.wong@oracle.com>,
-        vishal l verma <vishal.l.verma@intel.com>, david@redhat.com,
-        willy@infradead.org, hch@infradead.org, jmoyer@redhat.com,
-        nilal@redhat.com, lenb@kernel.org, kilobyte@angband.pl,
-        riel@surriel.com, yuval shaia <yuval.shaia@oracle.com>,
-        stefanha@redhat.com, pbonzini@redhat.com,
-        dan j williams <dan.j.williams@intel.com>, kwolf@redhat.com,
-        tytso@mit.edu, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        cohuck@redhat.com, rjw@rjwysocki.net, imammedo@redhat.com
-Message-ID: <1954162775.29408078.1558071358974.JavaMail.zimbra@redhat.com>
-In-Reply-To: <c06514fd-8675-ba74-4b7b-ff0eb4a91605@google.com>
-References: <20190514145422.16923-1-pagupta@redhat.com> <20190514145422.16923-3-pagupta@redhat.com> <c06514fd-8675-ba74-4b7b-ff0eb4a91605@google.com>
-Subject: Re: [Qemu-devel] [PATCH v9 2/7] virtio-pmem: Add virtio pmem driver
+        id S1727748AbfEQGzA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 May 2019 02:55:00 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45365 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbfEQGzA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 May 2019 02:55:00 -0400
+Received: by mail-wr1-f65.google.com with SMTP id b18so5800644wrq.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 May 2019 23:54:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=4Ft7vXd1zuW+VBauzDv2GqD/tRxDd6qBcaHK1f4P0u0=;
+        b=Dh+1CbT6CcF0vPmgJk2+E2MWtzwYSqSzTXYy6MkqNyqwJ4O7EEhwvIK0mt900W4AUC
+         i+ym48gKb2zVLc2yruZU/QElE/hfhRKAk8goAtPKPbAAtzn/9GhV3HfGPRKW/x6OB9O4
+         YAOK7dJavS8lvJLnYNNTYJrm3nM26WdErWCLMWIUO5Ibo1CC0zKEgfRQS+UbWp4QCXtG
+         klfR3yQ1604qtCSQT2irXTeGzZv13hyeNDsJfb4CDMwVzw5b9AJsW1d3NpCrbxp5bDQy
+         rWv8t6ZiaMu+DEYYs/jVG+nsY3m6tNWEMzq06os9YP4X0LDP3Xv80VHQMJnK6Wm9A4Kh
+         1SUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=4Ft7vXd1zuW+VBauzDv2GqD/tRxDd6qBcaHK1f4P0u0=;
+        b=XpYQGVOuF+S3PCUbgxfuz3RApFa4mpBzeA9ZCuz7DqS9w8081BjlBEcvF1wQYvzebA
+         TZ4lvBOninHIZXDcPobuSTG2Ch0JuyfxDmRa+fQlUZ4qq9UxWCABbjGtXlljp8cMNq0J
+         lY0IvgbawcEpR55WpwiVKUi+a9wIjO+1rzzDwbmrgrrLPgi9F8rtHfEUmS7youBTcYbv
+         vmbHZPXE0RD8WmgVktvYYuBU+4150FmbE4QyqiYmdkz08XArhvV99alJ5m2G7yAA8Hz6
+         jEejcDSdwd7X+adCCNl9LiPuzzvImnwUms/GPZJ3jsd1F0zdgb7XwBKPZxsoXTBjyPdA
+         gNfg==
+X-Gm-Message-State: APjAAAVi8Nnb3gG4LdDXY06ZTN8+3LaVKw+A7rYTpCPnut216QtErNd0
+        TTPhhQt/DeatPlqeRn/egrnqfA==
+X-Google-Smtp-Source: APXvYqxlzt7I3AKYu26X01bVUVKlpPBiyYa8Q4VkKvznW1qD7TyuMByccR8dAdsIOGEIHnNIr90JsA==
+X-Received: by 2002:adf:ec8e:: with SMTP id z14mr5189366wrn.198.1558076098185;
+        Thu, 16 May 2019 23:54:58 -0700 (PDT)
+Received: from [172.18.135.95] ([46.183.103.8])
+        by smtp.gmail.com with ESMTPSA id v5sm14219659wra.83.2019.05.16.23.54.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 May 2019 23:54:57 -0700 (PDT)
+Date:   Fri, 17 May 2019 08:54:52 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190516202331.GA29908@altlinux.org>
+References: <155800752418.4037.9567789434648701032.stgit@warthog.procyon.org.uk> <20190516162259.GB17978@ZenIV.linux.org.uk> <20190516163151.urrmrueugockxtdy@brauner.io> <20190516165021.GD17978@ZenIV.linux.org.uk> <20190516202331.GA29908@altlinux.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.188, 10.4.195.1]
-Thread-Topic: virtio-pmem: Add virtio pmem driver
-Thread-Index: Jfq72a6Lppgn6G/na6kHvdhmTQkM6g==
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 17 May 2019 05:35:59 +0000 (UTC)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/4] uapi, vfs: Change the mount API UAPI [ver #2]
+To:     "Dmitry V. Levin" <ldv@altlinux.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+CC:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+From:   Christian Brauner <christian@brauner.io>
+Message-ID: <D41D33CA-ADFC-4E79-9C9C-79FE19E068CA@brauner.io>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On May 16, 2019 10:23:31 PM GMT+02:00, "Dmitry V=2E Levin" <ldv@altlinux=2E=
+org> wrote:
+>[looks like linux-abi is a typo, Cc'ed linux-api instead]
+>
+>On Thu, May 16, 2019 at 05:50:22PM +0100, Al Viro wrote:
+>> [linux-abi cc'd]
+>>=20
+>> On Thu, May 16, 2019 at 06:31:52PM +0200, Christian Brauner wrote:
+>> > On Thu, May 16, 2019 at 05:22:59PM +0100, Al Viro wrote:
+>> > > On Thu, May 16, 2019 at 12:52:04PM +0100, David Howells wrote:
+>> > > >=20
+>> > > > Hi Linus, Al,
+>> > > >=20
+>> > > > Here are some patches that make changes to the mount API UAPI
+>and two of
+>> > > > them really need applying, before -rc1 - if they're going to be
+>applied at
+>> > > > all=2E
+>> > >=20
+>> > > I'm fine with 2--4, but I'm not convinced that cloexec-by-default
+>crusade
+>> > > makes any sense=2E  Could somebody give coherent arguments in
+>favour of
+>> > > abandoning the existing conventions?
+>> >=20
+>> > So as I said in the commit message=2E From a userspace perspective
+>it's
+>> > more of an issue if one accidently leaks an fd to a task during
+>exec=2E
+>> >=20
+>> > Also, most of the time one does not want to inherit an fd during an
+>> > exec=2E It is a hazzle to always have to specify an extra flag=2E
+>> >=20
+>> > As Al pointed out to me open() semantics are not going anywhere=2E
+>Sure,
+>> > no argument there at all=2E
+>> > But the idea of making fds cloexec by default is only targeted at
+>fds
+>> > that come from separate syscalls=2E fsopen(), open_tree_clone(), etc=
+=2E
+>they
+>> > all return fds independent of open() so it's really easy to have
+>them
+>> > cloexec by default without regressing anyone and we also remove the
+>need
+>> > for a bunch of separate flags for each syscall to turn them into
+>> > cloexec-fds=2E I mean, those for syscalls came with 4 separate flags
+>to be
+>> > able to specify that the returned fd should be made cloexec=2E The
+>other
+>> > way around, cloexec by default, fcntl() to remove the cloexec bit
+>is way
+>> > saner imho=2E
+>>=20
+>> Re separate flags - it is, in principle, a valid argument=2E  OTOH, I'm
+>not
+>> sure if they need to be separate - they all have the same value and
+>> I don't see any reason for that to change=2E=2E=2E
+>>=20
+>> Only tangentially related, but I wonder if something like
+>close_range(from, to)
+>> would be a more useful approach=2E=2E=2E  That kind of open-coded loops=
+ is
+>not
+>> rare in userland and kernel-side code can do them much cheaper=2E=20
+>Something
+>> like
+>> 	/* that exec is sensitive */
+>> 	unshare(CLONE_FILES);
+>> 	/* we don't want anything past stderr here */
+>> 	close_range(3, ~0U);
+>> 	execve(=2E=2E=2E=2E);
+>> on the userland side of thing=2E  Comments?
+>
+>glibc people need a syscall to implement closefrom properly, see
+>https://sourceware=2Eorg/bugzilla/show_bug=2Ecgi?id=3D10353#c14
 
+I have a prototype for close_range()=2E
+I'll send it out after rc1=2E
 
-Hi Jakub,
+Christian
 
-> 
-> On 5/14/19 7:54 AM, Pankaj Gupta wrote:
-> > +		if (!list_empty(&vpmem->req_list)) {
-> > +			req_buf = list_first_entry(&vpmem->req_list,
-> > +					struct virtio_pmem_request, list);
-> > +			req_buf->wq_buf_avail = true;
-> > +			wake_up(&req_buf->wq_buf);
-> > +			list_del(&req_buf->list);
-> Yes, this change is the right one, thank you!
-
-Thank you for the confirmation.
-
-> 
-> > +	 /*
-> > +	  * If virtqueue_add_sgs returns -ENOSPC then req_vq virtual
-> > +	  * queue does not have free descriptor. We add the request
-> > +	  * to req_list and wait for host_ack to wake us up when free
-> > +	  * slots are available.
-> > +	  */
-> > +	while ((err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req,
-> > +					GFP_ATOMIC)) == -ENOSPC) {
-> > +
-> > +		dev_err(&vdev->dev, "failed to send command to virtio pmem" \
-> > +			"device, no free slots in the virtqueue\n");
-> > +		req->wq_buf_avail = false;
-> > +		list_add_tail(&req->list, &vpmem->req_list);
-> > +		spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> > +
-> > +		/* A host response results in "host_ack" getting called */
-> > +		wait_event(req->wq_buf, req->wq_buf_avail);
-> > +		spin_lock_irqsave(&vpmem->pmem_lock, flags);
-> > +	}
-> > +	err1 = virtqueue_kick(vpmem->req_vq);
-> > +	spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> > +
-> > +	/*
-> > +	 * virtqueue_add_sgs failed with error different than -ENOSPC, we can't
-> > +	 * do anything about that.
-> > +	 */
-> > +	if (err || !err1) {
-> > +		dev_info(&vdev->dev, "failed to send command to virtio pmem device\n");
-> > +		err = -EIO;
-> > +	} else {
-> > +		/* A host repsonse results in "host_ack" getting called */
-> > +		wait_event(req->host_acked, req->done);
-> > +		err = req->ret;
-> > +I confirm that the failures I was facing with the `-ENOSPC` error path are
-> > not present in v9.
-
-Can I take it your reviewed/acked-by? or tested-by tag? for the virtio patch :)
-
-Thank you,
-Pankaj
-
-> 
-> Best,
-> Jakub Staron
-> 
-> 
