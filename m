@@ -2,225 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AA6521C22
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 19:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11B8721C7A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 19:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbfEQQ76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 May 2019 12:59:58 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32953 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726575AbfEQQ76 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 May 2019 12:59:58 -0400
-Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id A5B5E1A365CDA136CABA;
-        Fri, 17 May 2019 17:59:56 +0100 (IST)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
- by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Fri, 17 May 2019 17:59:46 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
-        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
-        <takondra@cisco.com>, <kamensky@cisco.com>, <hpa@zytor.com>,
-        <arnd@arndb.de>, <rob@landley.net>, <james.w.mcmechan@gmail.com>,
-        <niveditas98@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-Date:   Fri, 17 May 2019 18:55:19 +0200
-Message-ID: <20190517165519.11507-3-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190517165519.11507-1-roberto.sassu@huawei.com>
-References: <20190517165519.11507-1-roberto.sassu@huawei.com>
+        id S1726441AbfEQR3A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 May 2019 13:29:00 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45215 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfEQR3A (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 May 2019 13:29:00 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w144so5689723oie.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 May 2019 10:28:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DZg+iPjy57Sau/2Fv2Pd7vOTOxQm9eqfYjNJZeyrWIs=;
+        b=dJsV4x6IxLCgdPBEdcoEAdj7Zz5cN+2SMQigBpwwLCEnytqZSwk8zS1uvReMjOe4cj
+         Q24WakyMkK56lXo3uuygO/fpLNaDFdlHZ4HKZ89RdkRYdy7710qGfvhjYW0h2qLXROj5
+         Udi0Ja8h/Gn5ceLVB/Dd8MsMGQWpESB4ureyJ+HPhXQP+qv0PLzcH82NXB6OZOpHv/ol
+         jiw0rT7qOiQrtpVx/2IyOEEJ4tL4ltdsslvJg/tILl3oaaWcaKU303I9MpGYmzHslK2g
+         CI3AyFD5/HFMxWLbDcHtj5KFQRpwpFleoORC+4GRdyjxHEFM2eK+lztKXJz8ctBDuLma
+         Vs0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DZg+iPjy57Sau/2Fv2Pd7vOTOxQm9eqfYjNJZeyrWIs=;
+        b=Rp8MhCyF5GnBYQeCfxcBTvDvZbmiMVe/e7iOm/Tg6dwY34kNbJ/Xhlina4UMRjw7iQ
+         DA+5fECsDHhikdnj5Dmk1n+IC+hAc4Cu6ov+nD3GSS56ywEFw6hyZcp/FXAj0ZECLVeJ
+         SUvpsSkAng3uzvOH5inFHL5xzgHZBrv0r0LNooVpLXomOa02dcD3KIbVr0Y0kkqGxjcF
+         Vp8ce1xrRRJUErYVrffGGAOEEWed19LGXNsHJpOmBoH7kPSnbyk0oF30uw4pKCNjCfEY
+         QEIErXQMryzggLCYZfplbV+ts9EDMXaxZH9FnEXxrAHMe8zG6O2qusA4aNC+Duy6oiRg
+         Fi5Q==
+X-Gm-Message-State: APjAAAWlGie3A1BdHrapCyizcSIAV9apwn7xdIFIdYDC8YpTK2IXlakn
+        k8v5PNEqbgYwex0IkxAAd9UiYh3WOmNKpmzQVfqoxg==
+X-Google-Smtp-Source: APXvYqyypz+lE+RFowzVzsoRyDPIn100uvW4JTOwzRg1F63adltFZC2q4xwOBjZ3OZAsNEKxmDVZopC2u4kD8gMpRhg=
+X-Received: by 2002:aca:4208:: with SMTP id p8mr16013695oia.105.1558114139313;
+ Fri, 17 May 2019 10:28:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.154]
-X-CFilter-Loop: Reflected
+References: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190517084739.GB20550@quack2.suse.cz> <CAPcyv4iZZCgcC657ZOysBP9=1ejp3jfFj=VETVBPrgmfg7xUEw@mail.gmail.com>
+ <201905170855.8E2E1AC616@keescook>
+In-Reply-To: <201905170855.8E2E1AC616@keescook>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 17 May 2019 10:28:48 -0700
+Message-ID: <CAPcyv4g9HpMaifC+Qe2RVbgL_qq9vQvjwr-Jw813xhxcviehYQ@mail.gmail.com>
+Subject: Re: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-nvdimm <linux-nvdimm@lists.01.org>,
+        stable <stable@vger.kernel.org>, Jeff Moyer <jmoyer@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Smits <jeff.smits@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch adds support for an alternative method to add xattrs to files in
-the rootfs filesystem. Instead of extracting them directly from the ram
-disk image, they are extracted from a regular file called .xattr-list, that
-can be added by any ram disk generator available today. The file format is:
+On Fri, May 17, 2019 at 8:57 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Fri, May 17, 2019 at 08:08:27AM -0700, Dan Williams wrote:
+> > As far as I can see it's mostly check_heap_object() that is the
+> > problem, so I'm open to finding a way to just bypass that sub-routine.
+> > However, as far as I can see none of the other block / filesystem user
+> > copy implementations submit to the hardened checks, like
+> > bio_copy_from_iter(), and iov_iter_copy_from_user_atomic() . So,
+> > either those need to grow additional checks, or the hardened copy
+> > implementation is targeting single object copy use cases, not
+> > necessarily block-I/O. Yes, Kees, please advise.
+>
+> The intention is mainly for copies that haven't had explicit bounds
+> checking already performed on them, yes. Is there something getting
+> checked out of the slab, or is it literally just the overhead of doing
+> the "is this slab?" check that you're seeing?
 
-<file #N data len (ASCII, 10 chars)><file #N path>\0
-<xattr #N data len (ASCII, 8 chars)><xattr #N name>\0<xattr #N value>
+It's literally the overhead of "is this slab?" since it needs to go
+retrieve the struct page and read that potentially cold cacheline. In
+the case where that page is on memory media that is higher latency
+than DRAM we get the ~37% performance loss that Jeff measured.
 
-.xattr-list can be generated by executing:
+The path is via the filesystem ->write_iter() file operation. In the
+DAX case the filesystem traps that path early, before submitting block
+I/O, and routes it to the dax_iomap_actor() routine. That routine
+validates that the logical file offset is within bounds of the file,
+then it does a sector-to-pfn translation which validates that the
+physical mapping is within bounds of the block device.
 
-$ getfattr --absolute-names -d -h -R -e hex -m - \
-      <file list> | xattr.awk -b > ${initdir}/.xattr-list
-
-where the content of the xattr.awk script is:
-
-#! /usr/bin/awk -f
-{
-  if (!length($0)) {
-    printf("%.10x%s\0", len, file);
-    for (x in xattr) {
-      printf("%.8x%s\0", xattr_len[x], x);
-      for (i = 0; i < length(xattr[x]) / 2; i++) {
-        printf("%c", strtonum("0x"substr(xattr[x], i * 2 + 1, 2)));
-      }
-    }
-    i = 0;
-    delete xattr;
-    delete xattr_len;
-    next;
-  };
-  if (i == 0) {
-    file=$3;
-    len=length(file) + 8 + 1;
-  }
-  if (i > 0) {
-    split($0, a, "=");
-    xattr[a[1]]=substr(a[2], 3);
-    xattr_len[a[1]]=length(a[1]) + 1 + 8 + length(xattr[a[1]]) / 2;
-    len+=xattr_len[a[1]];
-  };
-  i++;
-}
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- init/initramfs.c | 99 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
-
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 0c6dd1d5d3f6..6ec018c6279a 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -13,6 +13,8 @@
- #include <linux/namei.h>
- #include <linux/xattr.h>
- 
-+#define XATTR_LIST_FILENAME ".xattr-list"
-+
- static ssize_t __init xwrite(int fd, const char *p, size_t count)
- {
- 	ssize_t out = 0;
-@@ -382,6 +384,97 @@ static int __init __maybe_unused do_setxattrs(char *pathname)
- 	return 0;
- }
- 
-+struct path_hdr {
-+	char p_size[10]; /* total size including p_size field */
-+	char p_data[];   /* <path>\0<xattrs> */
-+};
-+
-+static int __init do_readxattrs(void)
-+{
-+	struct path_hdr hdr;
-+	char *path = NULL;
-+	char str[sizeof(hdr.p_size) + 1];
-+	unsigned long file_entry_size;
-+	size_t size, path_size, total_size;
-+	struct kstat st;
-+	struct file *file;
-+	loff_t pos;
-+	int ret;
-+
-+	ret = vfs_lstat(XATTR_LIST_FILENAME, &st);
-+	if (ret < 0)
-+		return ret;
-+
-+	total_size = st.size;
-+
-+	file = filp_open(XATTR_LIST_FILENAME, O_RDONLY, 0);
-+	if (IS_ERR(file))
-+		return PTR_ERR(file);
-+
-+	pos = file->f_pos;
-+
-+	while (total_size) {
-+		size = kernel_read(file, (char *)&hdr, sizeof(hdr), &pos);
-+		if (size != sizeof(hdr)) {
-+			ret = -EIO;
-+			goto out;
-+		}
-+
-+		total_size -= size;
-+
-+		str[sizeof(hdr.p_size)] = 0;
-+		memcpy(str, hdr.p_size, sizeof(hdr.p_size));
-+		ret = kstrtoul(str, 16, &file_entry_size);
-+		if (ret < 0)
-+			goto out;
-+
-+		file_entry_size -= sizeof(sizeof(hdr.p_size));
-+		if (file_entry_size > total_size) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		path = vmalloc(file_entry_size);
-+		if (!path) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+
-+		size = kernel_read(file, path, file_entry_size, &pos);
-+		if (size != file_entry_size) {
-+			ret = -EIO;
-+			goto out_free;
-+		}
-+
-+		total_size -= size;
-+
-+		path_size = strnlen(path, file_entry_size);
-+		if (path_size == file_entry_size) {
-+			ret = -EINVAL;
-+			goto out_free;
-+		}
-+
-+		xattr_buf = path + path_size + 1;
-+		xattr_len = file_entry_size - path_size - 1;
-+
-+		ret = do_setxattrs(path);
-+		vfree(path);
-+		path = NULL;
-+
-+		if (ret < 0)
-+			break;
-+	}
-+out_free:
-+	vfree(path);
-+out:
-+	fput(file);
-+
-+	if (ret < 0)
-+		error("Unable to parse xattrs");
-+
-+	return ret;
-+}
-+
- static __initdata int wfd;
- 
- static int __init do_name(void)
-@@ -391,6 +484,11 @@ static int __init do_name(void)
- 	if (strcmp(collected, "TRAILER!!!") == 0) {
- 		free_hash();
- 		return 0;
-+	} else if (strcmp(collected, XATTR_LIST_FILENAME) == 0) {
-+		struct kstat st;
-+
-+		if (!vfs_lstat(collected, &st))
-+			do_readxattrs();
- 	}
- 	clean_path(collected, mode);
- 	if (S_ISREG(mode)) {
-@@ -562,6 +660,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
- 		buf += my_inptr;
- 		len -= my_inptr;
- 	}
-+	do_readxattrs();
- 	dir_utime();
- 	kfree(name_buf);
- 	kfree(symlink_buf);
--- 
-2.17.1
-
+It seems dax_iomap_actor() is not a path where we'd be worried about
+needing hardened user copy checks.
