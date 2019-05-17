@@ -2,25 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D550F21D7E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 20:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D56021D6B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 May 2019 20:38:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729410AbfEQShW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 May 2019 14:37:22 -0400
-Received: from hurricane.elijah.cs.cmu.edu ([128.2.209.191]:57572 "EHLO
+        id S1729387AbfEQShD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 May 2019 14:37:03 -0400
+Received: from hurricane.elijah.cs.cmu.edu ([128.2.209.191]:57596 "EHLO
         hurricane.elijah.cs.cmu.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728253AbfEQShC (ORCPT
+        by vger.kernel.org with ESMTP id S1729360AbfEQShC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 17 May 2019 14:37:02 -0400
 Received: from jaharkes by hurricane.elijah.cs.cmu.edu with local (Exim 4.92)
         (envelope-from <jaharkes@hurricane.elijah.cs.cmu.edu>)
-        id 1hRhj2-0000oH-Qd; Fri, 17 May 2019 14:37:00 -0400
+        id 1hRhj2-0000oN-SY; Fri, 17 May 2019 14:37:00 -0400
 From:   Jan Harkes <jaharkes@cs.cmu.edu>
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jan Harkes <jaharkes@cs.cmu.edu>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 08/22] uapi linux/coda_psdev.h: Move CODA_REQ_ from uapi to kernel side headers
-Date:   Fri, 17 May 2019 14:36:46 -0400
-Message-Id: <baeafc30dad70d8b422ee679420099c2d8aa7da0.1558117389.git.jaharkes@cs.cmu.edu>
+Cc:     Jan Harkes <jaharkes@cs.cmu.edu>, linux-fsdevel@vger.kernel.org,
+        Colin Ian King <colin.king@canonical.com>
+Subject: [PATCH 09/22] coda: clean up indentation, replace spaces with tab
+Date:   Fri, 17 May 2019 14:36:47 -0400
+Message-Id: <ffc2bfa5a37ffcdf891c51b2e2ed618103965b24.1558117389.git.jaharkes@cs.cmu.edu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.1558117389.git.jaharkes@cs.cmu.edu>
 References: <cover.1558117389.git.jaharkes@cs.cmu.edu>
@@ -31,44 +32,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These constants only used internally and not exposed to userspace.
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fix to clean up indentation, replace spaces with tab
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Jan Harkes <jaharkes@cs.cmu.edu>
 ---
- include/linux/coda_psdev.h      | 5 +++++
- include/uapi/linux/coda_psdev.h | 5 -----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ fs/coda/psdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/coda_psdev.h b/include/linux/coda_psdev.h
-index d1672fd5e638..9487f792770c 100644
---- a/include/linux/coda_psdev.h
-+++ b/include/linux/coda_psdev.h
-@@ -31,6 +31,11 @@ struct upc_req {
- 	wait_queue_head_t	uc_sleep;   /* process' wait queue */
- };
- 
-+#define CODA_REQ_ASYNC  0x1
-+#define CODA_REQ_READ   0x2
-+#define CODA_REQ_WRITE  0x4
-+#define CODA_REQ_ABORT  0x8
-+
- static inline struct venus_comm *coda_vcp(struct super_block *sb)
- {
- 	return (struct venus_comm *)((sb)->s_fs_info);
-diff --git a/include/uapi/linux/coda_psdev.h b/include/uapi/linux/coda_psdev.h
-index d50d51a57fe4..3dacb7fad66a 100644
---- a/include/uapi/linux/coda_psdev.h
-+++ b/include/uapi/linux/coda_psdev.h
-@@ -7,9 +7,4 @@
- #define CODA_PSDEV_MAJOR 67
- #define MAX_CODADEVS  5	   /* how many do we allow */
- 
--#define CODA_REQ_ASYNC  0x1
--#define CODA_REQ_READ   0x2
--#define CODA_REQ_WRITE  0x4
--#define CODA_REQ_ABORT  0x8
--
- #endif /* _UAPI__CODA_PSDEV_H */
+diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
+index 0cd646a5d0c2..7e9ee614ec57 100644
+--- a/fs/coda/psdev.c
++++ b/fs/coda/psdev.c
+@@ -364,7 +364,7 @@ static int init_coda_psdev(void)
+ 	if (register_chrdev(CODA_PSDEV_MAJOR, "coda", &coda_psdev_fops)) {
+ 		pr_err("%s: unable to get major %d\n",
+ 		       __func__, CODA_PSDEV_MAJOR);
+-              return -EIO;
++		return -EIO;
+ 	}
+ 	coda_psdev_class = class_create(THIS_MODULE, "coda");
+ 	if (IS_ERR(coda_psdev_class)) {
 -- 
 2.20.1
 
