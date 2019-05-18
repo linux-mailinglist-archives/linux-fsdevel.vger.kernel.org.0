@@ -2,153 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5AE7224F2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 May 2019 22:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5A822547
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 May 2019 23:42:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729530AbfERUux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 May 2019 16:50:53 -0400
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:48063 "EHLO
-        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725446AbfERUux (ORCPT
+        id S1729440AbfERVl4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 May 2019 17:41:56 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45252 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727600AbfERVlz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 May 2019 16:50:53 -0400
-Received: from c-73-193-85-113.hsd1.wa.comcast.net ([73.193.85.113] helo=srivatsab-a01.vmware.com)
-        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
-        (Exim 4.82)
-        (envelope-from <srivatsa@csail.mit.edu>)
-        id 1hS6I2-000S32-KG; Sat, 18 May 2019 16:50:46 -0400
-Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
- controller
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, axboe@kernel.dk, jack@suse.cz,
-        jmoyer@redhat.com, tytso@mit.edu, amakhalov@vmware.com,
-        anishs@vmware.com, srivatsab@vmware.com
-References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
- <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
-From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Message-ID: <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
-Date:   Sat, 18 May 2019 13:50:42 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        Sat, 18 May 2019 17:41:55 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hS75R-0006cQ-1J; Sat, 18 May 2019 21:41:49 +0000
+Date:   Sat, 18 May 2019 22:41:49 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Theodore Ts'o <tytso@mit.edu>, Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, sabin.rapan@gmail.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: BUG: unable to handle kernel paging request in do_mount
+Message-ID: <20190518214148.GI17978@ZenIV.linux.org.uk>
+References: <00000000000014285d05765bf72a@google.com>
+ <0000000000000eaf23058912af14@google.com>
+ <20190517134850.GG17978@ZenIV.linux.org.uk>
+ <CACT4Y+Z8760uYQP0jKgJmVC5sstqTv9pE6K6YjK_feeK6-Obfg@mail.gmail.com>
+ <CACT4Y+bQ+zW_9a3F4jY0xcAn_Hdk5yAwX2K3E38z9fttbF0SJA@mail.gmail.com>
+ <20190518162142.GH17978@ZenIV.linux.org.uk>
+ <20190518201843.GD14277@mit.edu>
 MIME-Version: 1.0
-In-Reply-To: <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190518201843.GD14277@mit.edu>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/18/19 11:39 AM, Paolo Valente wrote:
-> I've addressed these issues in my last batch of improvements for BFQ,
-> which landed in the upcoming 5.2. If you give it a try, and still see
-> the problem, then I'll be glad to reproduce it, and hopefully fix it
-> for you.
->
+On Sat, May 18, 2019 at 04:18:43PM -0400, Theodore Ts'o wrote:
 
-Hi Paolo,
-
-Thank you for looking into this!
-
-I just tried current mainline at commit 72cf0b07, but unfortunately
-didn't see any improvement:
-
-dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflag=dsync
-
-With mq-deadline, I get:
-
-5120000 bytes (5.1 MB, 4.9 MiB) copied, 3.90981 s, 1.3 MB/s
-
-With bfq, I get:
-5120000 bytes (5.1 MB, 4.9 MiB) copied, 84.8216 s, 60.4 kB/s
-
-Please let me know if any more info about my setup might be helpful.
-
-Thank you!
-
-Regards,
-Srivatsa
-VMware Photon OS
-
+> > What would you prefer to happen in such situations?  Commit summaries
+> > modified enough to confuse CI tools into *NOT* noticing that those
+> > are versions of the same patch?  Some kind of metadata telling the
+> > same tools that such-and-such commits got folded in (and they might
+> > have been split in process, with parts folded into different spots
+> > in the series, at that)?
+> > 
+> > Because "never fold in, never reorder, just accumulate patches in
+> > the end of the series" is not going to fly.  For a lot of reasons.
 > 
->> Il giorno 18 mag 2019, alle ore 00:16, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
->>
->>
->> Hi,
->>
->> One of my colleagues noticed upto 10x - 30x drop in I/O throughput
->> running the following command, with the CFQ I/O scheduler:
->>
->> dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflags=dsync
->>
->> Throughput with CFQ: 60 KB/s
->> Throughput with noop or deadline: 1.5 MB/s - 2 MB/s
->>
->> I spent some time looking into it and found that this is caused by the
->> undesirable interaction between 4 different components:
->>
->> - blkio cgroup controller enabled
->> - ext4 with the jbd2 kthread running in the root blkio cgroup
->> - dd running on ext4, in any other blkio cgroup than that of jbd2
->> - CFQ I/O scheduler with defaults for slice_idle and group_idle
->>
->>
->> When docker is enabled, systemd creates a blkio cgroup called
->> system.slice to run system services (and docker) under it, and a
->> separate blkio cgroup called user.slice for user processes. So, when
->> dd is invoked, it runs under user.slice.
->>
->> The dd command above includes the dsync flag, which performs an
->> fdatasync after every write to the output file. Since dd is writing to
->> a file on ext4, jbd2 will be active, committing transactions
->> corresponding to those fdatasync requests from dd. (In other words, dd
->> depends on jdb2, in order to make forward progress). But jdb2 being a
->> kernel thread, runs in the root blkio cgroup, as opposed to dd, which
->> runs under user.slice.
->>
->> Now, if the I/O scheduler in use for the underlying block device is
->> CFQ, then its inter-queue/inter-group idling takes effect (via the
->> slice_idle and group_idle parameters, both of which default to 8ms).
->> Therefore, everytime CFQ switches between processing requests from dd
->> vs jbd2, this 8ms idle time is injected, which slows down the overall
->> throughput tremendously!
->>
->> To verify this theory, I tried various experiments, and in all cases,
->> the 4 pre-conditions mentioned above were necessary to reproduce this
->> performance drop. For example, if I used an XFS filesystem (which
->> doesn't use a separate kthread like jbd2 for journaling), or if I dd'ed
->> directly to a block device, I couldn't reproduce the performance
->> issue. Similarly, running dd in the root blkio cgroup (where jbd2
->> runs) also gets full performance; as does using the noop or deadline
->> I/O schedulers; or even CFQ itself, with slice_idle and group_idle set
->> to zero.
->>
->> These results were reproduced on a Linux VM (kernel v4.19) on ESXi,
->> both with virtualized storage as well as with disk pass-through,
->> backed by a rotational hard disk in both cases. The same problem was
->> also seen with the BFQ I/O scheduler in kernel v5.1.
->>
->> Searching for any earlier discussions of this problem, I found an old
->> thread on LKML that encountered this behavior [1], as well as a docker
->> github issue [2] with similar symptoms (mentioned later in the
->> thread).
->>
->> So, I'm curious to know if this is a well-understood problem and if
->> anybody has any thoughts on how to fix it.
->>
->> Thank you very much!
->>
->>
->> [1]. https://lkml.org/lkml/2015/11/19/359
->>
->> [2]. https://github.com/moby/moby/issues/21485
->>     https://github.com/moby/moby/issues/21485#issuecomment-222941103
->>
->> Regards,
->> Srivatsa
-> 
+> As far as I'm concerned, this is the tools problem; I don't think it's
+> worth it for developers to feel they need to twist themselves into
+> knots just to try to make the CI tools' life easier.
 
+FWIW, what _is_ the underlying problem?  It looks like the basic issue
+is with rebase/cherry-pick of a commit; it seems to be trying to
+handle two things:
+	1) report X' in commit C' is similar to report X in commit C,
+with C' apparently being a rebase/cherry-pick/whatnot of C; don't
+want to lose that information
+	2) reports X, Y and Z in commit C don't seem to be reoccuring
+on the current tree, without any claimed fix in it.  Want to keep
+an eye on those.
+
+... and getting screwed by a mix of those two: reports X, Y and Z in
+commit C don't seem to be reoccuring on the current tree, even though
+it does contain a commit C' that seems to be a rebase of C.  A fix for
+C is *not* present as an identifiable commit in the current tree.
+Was it lost or was it renamed/merged with other commits/replaced by
+another fix?
+
+What I don't quite understand is why does the tool care.  Suppose
+we have a buggy commit + clearly marked fix.  And see a report
+very similar to the original ones, on the tree with alleged fix
+clearly present.  IME the earlier reports are often quite relevant -
+the fix might have been incomplete/racy/etc., and in that case
+the old reports (*AND* pointer to the commit that was supposed to
+have fixed those) are very useful.
+
+What's the problem these reminders are trying to solve?  Computational
+resources eaten by comparisons?
