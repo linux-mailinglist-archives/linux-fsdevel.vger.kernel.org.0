@@ -2,44 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0F7A221C1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 May 2019 07:50:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D6E6222FE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 May 2019 12:04:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726015AbfERFuD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 May 2019 01:50:03 -0400
-Received: from mga06.intel.com ([134.134.136.31]:23785 "EHLO mga06.intel.com"
+        id S1728654AbfERKEs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 May 2019 06:04:48 -0400
+Received: from mga17.intel.com ([192.55.52.151]:10785 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725468AbfERFuD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 May 2019 01:50:03 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1725468AbfERKEr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 18 May 2019 06:04:47 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 May 2019 22:49:58 -0700
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 May 2019 03:04:46 -0700
 X-ExtLoop1: 1
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 17 May 2019 22:49:54 -0700
+  by orsmga002.jf.intel.com with ESMTP; 18 May 2019 03:04:44 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1hRsED-0005px-KE; Sat, 18 May 2019 13:49:53 +0800
-Date:   Sat, 18 May 2019 13:49:34 +0800
+        id 1hRwCq-0006Gp-09; Sat, 18 May 2019 18:04:44 +0800
+Date:   Sat, 18 May 2019 18:04:00 +0800
 From:   kbuild test robot <lkp@intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     kbuild-all@01.org, viro@zeniv.linux.org.uk,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
-        arnd@arndb.de, rob@landley.net, james.w.mcmechan@gmail.com,
-        niveditas98@gmail.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-Message-ID: <201905181320.40kqTTSD%lkp@intel.com>
-References: <20190517165519.11507-3-roberto.sassu@huawei.com>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     kbuild-all@01.org, linux-integrity@vger.kernel.org,
+        zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
+        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH V3 5/6] IMA: Add a ima-vfs-sig measurement template
+Message-ID: <201905181851.ooheCtWW%lkp@intel.com>
+References: <20190517212448.14256-6-matthewgarrett@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190517165519.11507-3-roberto.sassu@huawei.com>
+In-Reply-To: <20190517212448.14256-6-matthewgarrett@google.com>
 X-Patchwork-Hint: ignore
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -47,15 +45,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Roberto,
+Hi Matthew,
 
-Thank you for the patch! Perhaps something to improve:
+I love your patch! Perhaps something to improve:
 
-[auto build test WARNING on linus/master]
+[auto build test WARNING on integrity/next-integrity]
 [also build test WARNING on v5.1 next-20190517]
 [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-url:    https://github.com/0day-ci/linux/commits/Roberto-Sassu/initramfs-set-extended-attributes/20190518-055846
+url:    https://github.com/0day-ci/linux/commits/Matthew-Garrett/IMA-Support-asking-the-VFS-for-a-file-hash/20190518-150531
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
 reproduce:
         # apt-get install sparse
         make ARCH=x86_64 allmodconfig
@@ -67,284 +66,231 @@ Reported-by: kbuild test robot <lkp@intel.com>
 
 sparse warnings: (new ones prefixed by >>)
 
-   init/initramfs.c:24:45: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected char const [noderef] <asn:1> *buf @@    got f] <asn:1> *buf @@
-   init/initramfs.c:24:45: sparse:    expected char const [noderef] <asn:1> *buf
-   init/initramfs.c:24:45: sparse:    got char const *p
-   init/initramfs.c:115:36: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got n:1> *filename @@
-   init/initramfs.c:115:36: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:115:36: sparse:    got char *filename
-   init/initramfs.c:303:24: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *name @@    got n:1> *name @@
-   init/initramfs.c:303:24: sparse:    expected char const [noderef] <asn:1> *name
-   init/initramfs.c:303:24: sparse:    got char *path
-   init/initramfs.c:305:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *pathname @@    got n:1> *pathname @@
-   init/initramfs.c:305:36: sparse:    expected char const [noderef] <asn:1> *pathname
-   init/initramfs.c:305:36: sparse:    got char *path
-   init/initramfs.c:307:37: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *pathname @@    got n:1> *pathname @@
-   init/initramfs.c:307:37: sparse:    expected char const [noderef] <asn:1> *pathname
-   init/initramfs.c:307:37: sparse:    got char *path
-   init/initramfs.c:317:43: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *oldname @@    got n:1> *oldname @@
-   init/initramfs.c:317:43: sparse:    expected char const [noderef] <asn:1> *oldname
-   init/initramfs.c:317:43: sparse:    got char *old
-   init/initramfs.c:317:48: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected char const [noderef] <asn:1> *newname @@    got char char const [noderef] <asn:1> *newname @@
-   init/initramfs.c:317:48: sparse:    expected char const [noderef] <asn:1> *newname
-   init/initramfs.c:317:48: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:404:25: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *name @@    got n:1> *name @@
-   init/initramfs.c:404:25: sparse:    expected char const [noderef] <asn:1> *name
-   init/initramfs.c:404:25: sparse:    got char *
->> init/initramfs.c:490:32: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *name @@    got char char const [noderef] <asn:1> *name @@
-   init/initramfs.c:490:32: sparse:    expected char const [noderef] <asn:1> *name
-   init/initramfs.c:490:32: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:500:41: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:500:41: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:500:41: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:512:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *pathname @@    got char char const [noderef] <asn:1> *pathname @@
-   init/initramfs.c:512:28: sparse:    expected char const [noderef] <asn:1> *pathname
-   init/initramfs.c:512:28: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:513:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:513:28: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:513:28: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:514:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:514:28: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:514:28: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:519:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:519:36: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:519:36: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:520:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:520:36: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:520:36: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:521:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:521:36: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:521:36: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:552:32: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *oldname @@    got n:1> *oldname @@
-   init/initramfs.c:552:32: sparse:    expected char const [noderef] <asn:1> *oldname
-   init/initramfs.c:552:32: sparse:    got char *
-   init/initramfs.c:552:53: sparse: sparse: incorrect type in argument 2 (different address spaces) @@    expected char const [noderef] <asn:1> *newname @@    got char char const [noderef] <asn:1> *newname @@
-   init/initramfs.c:552:53: sparse:    expected char const [noderef] <asn:1> *newname
-   init/initramfs.c:552:53: sparse:    got char *static [toplevel] [assigned] collected
-   init/initramfs.c:553:21: sparse: sparse: incorrect type in argument 1 (different address spaces) @@    expected char const [noderef] <asn:1> *filename @@    got char char const [noderef] <asn:1> *filename @@
-   init/initramfs.c:553:21: sparse:    expected char const [noderef] <asn:1> *filename
-   init/initramfs.c:553:21: sparse:    got char *static [toplevel] [assigned] collected
+   security/integrity/ima/ima_template_lib.c:110:60: sparse: sparse: restricted __le32 degrades to integer
+   security/integrity/ima/ima_template_lib.c:193:49: sparse: sparse: cast to restricted __le32
+>> security/integrity/ima/ima_template_lib.c:299:66: sparse: sparse: Using plain integer as NULL pointer
 
-vim +490 init/initramfs.c
+vim +299 security/integrity/ima/ima_template_lib.c
 
-   310	
-   311	static int __init maybe_link(void)
-   312	{
-   313		if (nlink >= 2) {
-   314			char *old = find_link(major, minor, ino, mode, collected);
-   315			if (old) {
-   316				clean_path(collected, 0);
- > 317				return (ksys_link(old, collected) < 0) ? -1 : 1;
-   318			}
-   319		}
-   320		return 0;
-   321	}
-   322	
-   323	struct xattr_hdr {
-   324		char c_size[8]; /* total size including c_size field */
-   325		char c_data[];  /* <name>\0<value> */
-   326	};
-   327	
-   328	static int __init __maybe_unused do_setxattrs(char *pathname)
-   329	{
-   330		char *buf = xattr_buf;
-   331		char *bufend = buf + xattr_len;
-   332		struct xattr_hdr *hdr;
-   333		char str[sizeof(hdr->c_size) + 1];
-   334		struct path path;
-   335	
-   336		if (!xattr_len)
-   337			return 0;
-   338	
-   339		str[sizeof(hdr->c_size)] = 0;
-   340	
-   341		while (buf < bufend) {
-   342			char *xattr_name, *xattr_value;
-   343			unsigned long xattr_entry_size;
-   344			unsigned long xattr_name_size, xattr_value_size;
-   345			int ret;
-   346	
-   347			if (buf + sizeof(hdr->c_size) > bufend) {
-   348				error("malformed xattrs");
-   349				break;
-   350			}
-   351	
-   352			hdr = (struct xattr_hdr *)buf;
-   353			memcpy(str, hdr->c_size, sizeof(hdr->c_size));
-   354			ret = kstrtoul(str, 16, &xattr_entry_size);
-   355			buf += xattr_entry_size;
-   356			if (ret || buf > bufend || !xattr_entry_size) {
-   357				error("malformed xattrs");
-   358				break;
-   359			}
-   360	
-   361			xattr_name = hdr->c_data;
-   362			xattr_name_size = strnlen(xattr_name,
-   363						xattr_entry_size - sizeof(hdr->c_size));
-   364			if (xattr_name_size == xattr_entry_size - sizeof(hdr->c_size)) {
-   365				error("malformed xattrs");
-   366				break;
-   367			}
-   368	
-   369			xattr_value = xattr_name + xattr_name_size + 1;
-   370			xattr_value_size = buf - xattr_value;
-   371	
-   372			ret = kern_path(pathname, 0, &path);
-   373			if (!ret) {
-   374				ret = vfs_setxattr(path.dentry, xattr_name, xattr_value,
-   375						   xattr_value_size, 0);
-   376	
-   377				path_put(&path);
-   378			}
-   379	
-   380			pr_debug("%s: %s size: %lu val: %s (ret: %d)\n", pathname,
-   381				 xattr_name, xattr_value_size, xattr_value, ret);
-   382		}
-   383	
-   384		return 0;
-   385	}
-   386	
-   387	struct path_hdr {
-   388		char p_size[10]; /* total size including p_size field */
-   389		char p_data[];   /* <path>\0<xattrs> */
-   390	};
-   391	
-   392	static int __init do_readxattrs(void)
-   393	{
-   394		struct path_hdr hdr;
-   395		char *path = NULL;
-   396		char str[sizeof(hdr.p_size) + 1];
-   397		unsigned long file_entry_size;
-   398		size_t size, path_size, total_size;
-   399		struct kstat st;
-   400		struct file *file;
-   401		loff_t pos;
-   402		int ret;
-   403	
-   404		ret = vfs_lstat(XATTR_LIST_FILENAME, &st);
-   405		if (ret < 0)
-   406			return ret;
-   407	
-   408		total_size = st.size;
-   409	
-   410		file = filp_open(XATTR_LIST_FILENAME, O_RDONLY, 0);
-   411		if (IS_ERR(file))
-   412			return PTR_ERR(file);
-   413	
-   414		pos = file->f_pos;
-   415	
-   416		while (total_size) {
-   417			size = kernel_read(file, (char *)&hdr, sizeof(hdr), &pos);
-   418			if (size != sizeof(hdr)) {
-   419				ret = -EIO;
-   420				goto out;
-   421			}
-   422	
-   423			total_size -= size;
-   424	
-   425			str[sizeof(hdr.p_size)] = 0;
-   426			memcpy(str, hdr.p_size, sizeof(hdr.p_size));
-   427			ret = kstrtoul(str, 16, &file_entry_size);
-   428			if (ret < 0)
-   429				goto out;
-   430	
-   431			file_entry_size -= sizeof(sizeof(hdr.p_size));
-   432			if (file_entry_size > total_size) {
-   433				ret = -EINVAL;
-   434				goto out;
-   435			}
-   436	
-   437			path = vmalloc(file_entry_size);
-   438			if (!path) {
-   439				ret = -ENOMEM;
-   440				goto out;
-   441			}
-   442	
-   443			size = kernel_read(file, path, file_entry_size, &pos);
-   444			if (size != file_entry_size) {
-   445				ret = -EIO;
-   446				goto out_free;
-   447			}
-   448	
-   449			total_size -= size;
-   450	
-   451			path_size = strnlen(path, file_entry_size);
-   452			if (path_size == file_entry_size) {
-   453				ret = -EINVAL;
-   454				goto out_free;
-   455			}
-   456	
-   457			xattr_buf = path + path_size + 1;
-   458			xattr_len = file_entry_size - path_size - 1;
-   459	
-   460			ret = do_setxattrs(path);
-   461			vfree(path);
-   462			path = NULL;
-   463	
-   464			if (ret < 0)
-   465				break;
-   466		}
-   467	out_free:
-   468		vfree(path);
-   469	out:
-   470		fput(file);
-   471	
-   472		if (ret < 0)
-   473			error("Unable to parse xattrs");
-   474	
-   475		return ret;
-   476	}
-   477	
-   478	static __initdata int wfd;
-   479	
-   480	static int __init do_name(void)
-   481	{
-   482		state = SkipIt;
-   483		next_state = Reset;
-   484		if (strcmp(collected, "TRAILER!!!") == 0) {
-   485			free_hash();
-   486			return 0;
-   487		} else if (strcmp(collected, XATTR_LIST_FILENAME) == 0) {
-   488			struct kstat st;
-   489	
- > 490			if (!vfs_lstat(collected, &st))
-   491				do_readxattrs();
-   492		}
-   493		clean_path(collected, mode);
-   494		if (S_ISREG(mode)) {
-   495			int ml = maybe_link();
-   496			if (ml >= 0) {
-   497				int openflags = O_WRONLY|O_CREAT;
-   498				if (ml != 1)
-   499					openflags |= O_TRUNC;
-   500				wfd = ksys_open(collected, openflags, mode);
-   501	
-   502				if (wfd >= 0) {
-   503					ksys_fchown(wfd, uid, gid);
-   504					ksys_fchmod(wfd, mode);
-   505					if (body_len)
-   506						ksys_ftruncate(wfd, body_len);
-   507					vcollected = kstrdup(collected, GFP_KERNEL);
-   508					state = CopyFile;
-   509				}
-   510			}
-   511		} else if (S_ISDIR(mode)) {
-   512			ksys_mkdir(collected, mode);
-   513			ksys_chown(collected, uid, gid);
-   514			ksys_chmod(collected, mode);
-   515			dir_add(collected, mtime);
-   516		} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
-   517			   S_ISFIFO(mode) || S_ISSOCK(mode)) {
-   518			if (maybe_link() == 0) {
-   519				ksys_mknod(collected, mode, rdev);
-   520				ksys_chown(collected, uid, gid);
-   521				ksys_chmod(collected, mode);
-   522				do_utime(collected, mtime);
-   523			}
-   524		}
-   525		return 0;
-   526	}
-   527	
+3ce1217d6 Roberto Sassu   2013-06-07  100  
+3ce1217d6 Roberto Sassu   2013-06-07  101  static void ima_show_template_data_binary(struct seq_file *m,
+3ce1217d6 Roberto Sassu   2013-06-07  102  					  enum ima_show_type show,
+3ce1217d6 Roberto Sassu   2013-06-07  103  					  enum data_formats datafmt,
+3ce1217d6 Roberto Sassu   2013-06-07  104  					  struct ima_field_data *field_data)
+3ce1217d6 Roberto Sassu   2013-06-07  105  {
+c019e307a Roberto Sassu   2014-02-03  106  	u32 len = (show == IMA_SHOW_BINARY_OLD_STRING_FMT) ?
+c019e307a Roberto Sassu   2014-02-03  107  	    strlen(field_data->data) : field_data->len;
+c019e307a Roberto Sassu   2014-02-03  108  
+d68a6fe9f Mimi Zohar      2016-12-19  109  	if (show != IMA_SHOW_BINARY_NO_FIELD_LEN) {
+d68a6fe9f Mimi Zohar      2016-12-19 @110  		u32 field_len = !ima_canonical_fmt ? len : cpu_to_le32(len);
+d68a6fe9f Mimi Zohar      2016-12-19  111  
+d68a6fe9f Mimi Zohar      2016-12-19  112  		ima_putc(m, &field_len, sizeof(field_len));
+d68a6fe9f Mimi Zohar      2016-12-19  113  	}
+3e8e5503a Roberto Sassu   2013-11-08  114  
+c019e307a Roberto Sassu   2014-02-03  115  	if (!len)
+3ce1217d6 Roberto Sassu   2013-06-07  116  		return;
+3e8e5503a Roberto Sassu   2013-11-08  117  
+c019e307a Roberto Sassu   2014-02-03  118  	ima_putc(m, field_data->data, len);
+3ce1217d6 Roberto Sassu   2013-06-07  119  }
+3ce1217d6 Roberto Sassu   2013-06-07  120  
+3ce1217d6 Roberto Sassu   2013-06-07  121  static void ima_show_template_field_data(struct seq_file *m,
+3ce1217d6 Roberto Sassu   2013-06-07  122  					 enum ima_show_type show,
+3ce1217d6 Roberto Sassu   2013-06-07  123  					 enum data_formats datafmt,
+3ce1217d6 Roberto Sassu   2013-06-07  124  					 struct ima_field_data *field_data)
+3ce1217d6 Roberto Sassu   2013-06-07  125  {
+3ce1217d6 Roberto Sassu   2013-06-07  126  	switch (show) {
+3ce1217d6 Roberto Sassu   2013-06-07  127  	case IMA_SHOW_ASCII:
+3ce1217d6 Roberto Sassu   2013-06-07  128  		ima_show_template_data_ascii(m, show, datafmt, field_data);
+3ce1217d6 Roberto Sassu   2013-06-07  129  		break;
+3ce1217d6 Roberto Sassu   2013-06-07  130  	case IMA_SHOW_BINARY:
+3e8e5503a Roberto Sassu   2013-11-08  131  	case IMA_SHOW_BINARY_NO_FIELD_LEN:
+c019e307a Roberto Sassu   2014-02-03  132  	case IMA_SHOW_BINARY_OLD_STRING_FMT:
+3ce1217d6 Roberto Sassu   2013-06-07  133  		ima_show_template_data_binary(m, show, datafmt, field_data);
+3ce1217d6 Roberto Sassu   2013-06-07  134  		break;
+3ce1217d6 Roberto Sassu   2013-06-07  135  	default:
+3ce1217d6 Roberto Sassu   2013-06-07  136  		break;
+3ce1217d6 Roberto Sassu   2013-06-07  137  	}
+3ce1217d6 Roberto Sassu   2013-06-07  138  }
+3ce1217d6 Roberto Sassu   2013-06-07  139  
+3ce1217d6 Roberto Sassu   2013-06-07  140  void ima_show_template_digest(struct seq_file *m, enum ima_show_type show,
+3ce1217d6 Roberto Sassu   2013-06-07  141  			      struct ima_field_data *field_data)
+3ce1217d6 Roberto Sassu   2013-06-07  142  {
+3ce1217d6 Roberto Sassu   2013-06-07  143  	ima_show_template_field_data(m, show, DATA_FMT_DIGEST, field_data);
+3ce1217d6 Roberto Sassu   2013-06-07  144  }
+3ce1217d6 Roberto Sassu   2013-06-07  145  
+4d7aeee73 Roberto Sassu   2013-06-07  146  void ima_show_template_digest_ng(struct seq_file *m, enum ima_show_type show,
+4d7aeee73 Roberto Sassu   2013-06-07  147  				 struct ima_field_data *field_data)
+4d7aeee73 Roberto Sassu   2013-06-07  148  {
+4d7aeee73 Roberto Sassu   2013-06-07  149  	ima_show_template_field_data(m, show, DATA_FMT_DIGEST_WITH_ALGO,
+4d7aeee73 Roberto Sassu   2013-06-07  150  				     field_data);
+4d7aeee73 Roberto Sassu   2013-06-07  151  }
+4d7aeee73 Roberto Sassu   2013-06-07  152  
+3ce1217d6 Roberto Sassu   2013-06-07  153  void ima_show_template_string(struct seq_file *m, enum ima_show_type show,
+3ce1217d6 Roberto Sassu   2013-06-07  154  			      struct ima_field_data *field_data)
+3ce1217d6 Roberto Sassu   2013-06-07  155  {
+3ce1217d6 Roberto Sassu   2013-06-07  156  	ima_show_template_field_data(m, show, DATA_FMT_STRING, field_data);
+3ce1217d6 Roberto Sassu   2013-06-07  157  }
+3ce1217d6 Roberto Sassu   2013-06-07  158  
+bcbc9b0cf Mimi Zohar      2013-07-23  159  void ima_show_template_sig(struct seq_file *m, enum ima_show_type show,
+bcbc9b0cf Mimi Zohar      2013-07-23  160  			   struct ima_field_data *field_data)
+bcbc9b0cf Mimi Zohar      2013-07-23  161  {
+bcbc9b0cf Mimi Zohar      2013-07-23  162  	ima_show_template_field_data(m, show, DATA_FMT_HEX, field_data);
+bcbc9b0cf Mimi Zohar      2013-07-23  163  }
+bcbc9b0cf Mimi Zohar      2013-07-23  164  
+b17fd9ecf Roberto Sassu   2017-05-16  165  /**
+b17fd9ecf Roberto Sassu   2017-05-16  166   * ima_parse_buf() - Parses lengths and data from an input buffer
+b17fd9ecf Roberto Sassu   2017-05-16  167   * @bufstartp:       Buffer start address.
+b17fd9ecf Roberto Sassu   2017-05-16  168   * @bufendp:         Buffer end address.
+b17fd9ecf Roberto Sassu   2017-05-16  169   * @bufcurp:         Pointer to remaining (non-parsed) data.
+b17fd9ecf Roberto Sassu   2017-05-16  170   * @maxfields:       Length of fields array.
+b17fd9ecf Roberto Sassu   2017-05-16  171   * @fields:          Array containing lengths and pointers of parsed data.
+b17fd9ecf Roberto Sassu   2017-05-16  172   * @curfields:       Number of array items containing parsed data.
+b17fd9ecf Roberto Sassu   2017-05-16  173   * @len_mask:        Bitmap (if bit is set, data length should not be parsed).
+b17fd9ecf Roberto Sassu   2017-05-16  174   * @enforce_mask:    Check if curfields == maxfields and/or bufcurp == bufendp.
+b17fd9ecf Roberto Sassu   2017-05-16  175   * @bufname:         String identifier of the input buffer.
+b17fd9ecf Roberto Sassu   2017-05-16  176   *
+b17fd9ecf Roberto Sassu   2017-05-16  177   * Return: 0 on success, -EINVAL on error.
+b17fd9ecf Roberto Sassu   2017-05-16  178   */
+b17fd9ecf Roberto Sassu   2017-05-16  179  int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
+b17fd9ecf Roberto Sassu   2017-05-16  180  		  int maxfields, struct ima_field_data *fields, int *curfields,
+b17fd9ecf Roberto Sassu   2017-05-16  181  		  unsigned long *len_mask, int enforce_mask, char *bufname)
+b17fd9ecf Roberto Sassu   2017-05-16  182  {
+b17fd9ecf Roberto Sassu   2017-05-16  183  	void *bufp = bufstartp;
+b17fd9ecf Roberto Sassu   2017-05-16  184  	int i;
+b17fd9ecf Roberto Sassu   2017-05-16  185  
+b17fd9ecf Roberto Sassu   2017-05-16  186  	for (i = 0; i < maxfields; i++) {
+b17fd9ecf Roberto Sassu   2017-05-16  187  		if (len_mask == NULL || !test_bit(i, len_mask)) {
+b17fd9ecf Roberto Sassu   2017-05-16  188  			if (bufp > (bufendp - sizeof(u32)))
+b17fd9ecf Roberto Sassu   2017-05-16  189  				break;
+b17fd9ecf Roberto Sassu   2017-05-16  190  
+b17fd9ecf Roberto Sassu   2017-05-16  191  			fields[i].len = *(u32 *)bufp;
+b17fd9ecf Roberto Sassu   2017-05-16  192  			if (ima_canonical_fmt)
+b17fd9ecf Roberto Sassu   2017-05-16  193  				fields[i].len = le32_to_cpu(fields[i].len);
+b17fd9ecf Roberto Sassu   2017-05-16  194  
+b17fd9ecf Roberto Sassu   2017-05-16  195  			bufp += sizeof(u32);
+b17fd9ecf Roberto Sassu   2017-05-16  196  		}
+b17fd9ecf Roberto Sassu   2017-05-16  197  
+b17fd9ecf Roberto Sassu   2017-05-16  198  		if (bufp > (bufendp - fields[i].len))
+b17fd9ecf Roberto Sassu   2017-05-16  199  			break;
+b17fd9ecf Roberto Sassu   2017-05-16  200  
+b17fd9ecf Roberto Sassu   2017-05-16  201  		fields[i].data = bufp;
+b17fd9ecf Roberto Sassu   2017-05-16  202  		bufp += fields[i].len;
+b17fd9ecf Roberto Sassu   2017-05-16  203  	}
+b17fd9ecf Roberto Sassu   2017-05-16  204  
+b17fd9ecf Roberto Sassu   2017-05-16  205  	if ((enforce_mask & ENFORCE_FIELDS) && i != maxfields) {
+b17fd9ecf Roberto Sassu   2017-05-16  206  		pr_err("%s: nr of fields mismatch: expected: %d, current: %d\n",
+b17fd9ecf Roberto Sassu   2017-05-16  207  		       bufname, maxfields, i);
+b17fd9ecf Roberto Sassu   2017-05-16  208  		return -EINVAL;
+b17fd9ecf Roberto Sassu   2017-05-16  209  	}
+b17fd9ecf Roberto Sassu   2017-05-16  210  
+b17fd9ecf Roberto Sassu   2017-05-16  211  	if ((enforce_mask & ENFORCE_BUFEND) && bufp != bufendp) {
+b17fd9ecf Roberto Sassu   2017-05-16  212  		pr_err("%s: buf end mismatch: expected: %p, current: %p\n",
+b17fd9ecf Roberto Sassu   2017-05-16  213  		       bufname, bufendp, bufp);
+b17fd9ecf Roberto Sassu   2017-05-16  214  		return -EINVAL;
+b17fd9ecf Roberto Sassu   2017-05-16  215  	}
+b17fd9ecf Roberto Sassu   2017-05-16  216  
+b17fd9ecf Roberto Sassu   2017-05-16  217  	if (curfields)
+b17fd9ecf Roberto Sassu   2017-05-16  218  		*curfields = i;
+b17fd9ecf Roberto Sassu   2017-05-16  219  
+b17fd9ecf Roberto Sassu   2017-05-16  220  	if (bufcurp)
+b17fd9ecf Roberto Sassu   2017-05-16  221  		*bufcurp = bufp;
+b17fd9ecf Roberto Sassu   2017-05-16  222  
+b17fd9ecf Roberto Sassu   2017-05-16  223  	return 0;
+b17fd9ecf Roberto Sassu   2017-05-16  224  }
+b17fd9ecf Roberto Sassu   2017-05-16  225  
+4d7aeee73 Roberto Sassu   2013-06-07  226  static int ima_eventdigest_init_common(u8 *digest, u32 digestsize, u8 hash_algo,
+b0b4536f1 Matthew Garrett 2019-05-17  227  				       struct ima_event_data *event_data,
+b0b4536f1 Matthew Garrett 2019-05-17  228  				       struct ima_field_data *field_data,
+b0b4536f1 Matthew Garrett 2019-05-17  229  				       bool from_vfs)
+4d7aeee73 Roberto Sassu   2013-06-07  230  {
+3ce1217d6 Roberto Sassu   2013-06-07  231  	/*
+4d7aeee73 Roberto Sassu   2013-06-07  232  	 * digest formats:
+4d7aeee73 Roberto Sassu   2013-06-07  233  	 *  - DATA_FMT_DIGEST: digest
+4d7aeee73 Roberto Sassu   2013-06-07  234  	 *  - DATA_FMT_DIGEST_WITH_ALGO: [<hash algo>] + ':' + '\0' + digest,
+4d7aeee73 Roberto Sassu   2013-06-07  235  	 *    where <hash algo> is provided if the hash algoritm is not
+4d7aeee73 Roberto Sassu   2013-06-07  236  	 *    SHA1 or MD5
+4d7aeee73 Roberto Sassu   2013-06-07  237  	 */
+4d7aeee73 Roberto Sassu   2013-06-07  238  	u8 buffer[CRYPTO_MAX_ALG_NAME + 2 + IMA_MAX_DIGEST_SIZE] = { 0 };
+4d7aeee73 Roberto Sassu   2013-06-07  239  	enum data_formats fmt = DATA_FMT_DIGEST;
+4d7aeee73 Roberto Sassu   2013-06-07  240  	u32 offset = 0;
+4d7aeee73 Roberto Sassu   2013-06-07  241  
+b0b4536f1 Matthew Garrett 2019-05-17  242  	if (from_vfs)
+b0b4536f1 Matthew Garrett 2019-05-17  243  		offset += snprintf(buffer, 5, "vfs:");
+b0b4536f1 Matthew Garrett 2019-05-17  244  
+dcf4e3928 Roberto Sassu   2013-11-08  245  	if (hash_algo < HASH_ALGO__LAST) {
+4d7aeee73 Roberto Sassu   2013-06-07  246  		fmt = DATA_FMT_DIGEST_WITH_ALGO;
+b0b4536f1 Matthew Garrett 2019-05-17  247  		offset += snprintf(buffer + offset, CRYPTO_MAX_ALG_NAME + 1,
+b0b4536f1 Matthew Garrett 2019-05-17  248  				   "%s", hash_algo_name[hash_algo]);
+4d7aeee73 Roberto Sassu   2013-06-07  249  		buffer[offset] = ':';
+4d7aeee73 Roberto Sassu   2013-06-07  250  		offset += 2;
+4d7aeee73 Roberto Sassu   2013-06-07  251  	}
+4d7aeee73 Roberto Sassu   2013-06-07  252  
+4d7aeee73 Roberto Sassu   2013-06-07  253  	if (digest)
+4d7aeee73 Roberto Sassu   2013-06-07  254  		memcpy(buffer + offset, digest, digestsize);
+4d7aeee73 Roberto Sassu   2013-06-07  255  	else
+4d7aeee73 Roberto Sassu   2013-06-07  256  		/*
+4d7aeee73 Roberto Sassu   2013-06-07  257  		 * If digest is NULL, the event being recorded is a violation.
+4d7aeee73 Roberto Sassu   2013-06-07  258  		 * Make room for the digest by increasing the offset of
+4d7aeee73 Roberto Sassu   2013-06-07  259  		 * IMA_DIGEST_SIZE.
+4d7aeee73 Roberto Sassu   2013-06-07  260  		 */
+4d7aeee73 Roberto Sassu   2013-06-07  261  		offset += IMA_DIGEST_SIZE;
+4d7aeee73 Roberto Sassu   2013-06-07  262  
+4d7aeee73 Roberto Sassu   2013-06-07  263  	return ima_write_template_field_data(buffer, offset + digestsize,
+4d7aeee73 Roberto Sassu   2013-06-07  264  					     fmt, field_data);
+4d7aeee73 Roberto Sassu   2013-06-07  265  }
+4d7aeee73 Roberto Sassu   2013-06-07  266  
+4d7aeee73 Roberto Sassu   2013-06-07  267  /*
+4d7aeee73 Roberto Sassu   2013-06-07  268   * This function writes the digest of an event (with size limit).
+3ce1217d6 Roberto Sassu   2013-06-07  269   */
+23b574193 Roberto Sassu   2015-04-11  270  int ima_eventdigest_init(struct ima_event_data *event_data,
+3ce1217d6 Roberto Sassu   2013-06-07  271  			 struct ima_field_data *field_data)
+3ce1217d6 Roberto Sassu   2013-06-07  272  {
+3ce1217d6 Roberto Sassu   2013-06-07  273  	struct {
+3ce1217d6 Roberto Sassu   2013-06-07  274  		struct ima_digest_data hdr;
+3ce1217d6 Roberto Sassu   2013-06-07  275  		char digest[IMA_MAX_DIGEST_SIZE];
+3ce1217d6 Roberto Sassu   2013-06-07  276  	} hash;
+4d7aeee73 Roberto Sassu   2013-06-07  277  	u8 *cur_digest = NULL;
+4d7aeee73 Roberto Sassu   2013-06-07  278  	u32 cur_digestsize = 0;
+3ce1217d6 Roberto Sassu   2013-06-07  279  	struct inode *inode;
+3ce1217d6 Roberto Sassu   2013-06-07  280  	int result;
+3ce1217d6 Roberto Sassu   2013-06-07  281  
+3ce1217d6 Roberto Sassu   2013-06-07  282  	memset(&hash, 0, sizeof(hash));
+3ce1217d6 Roberto Sassu   2013-06-07  283  
+8d94eb9b5 Roberto Sassu   2015-04-11  284  	if (event_data->violation)	/* recording a violation. */
+3ce1217d6 Roberto Sassu   2013-06-07  285  		goto out;
+3ce1217d6 Roberto Sassu   2013-06-07  286  
+23b574193 Roberto Sassu   2015-04-11  287  	if (ima_template_hash_algo_allowed(event_data->iint->ima_hash->algo)) {
+23b574193 Roberto Sassu   2015-04-11  288  		cur_digest = event_data->iint->ima_hash->digest;
+23b574193 Roberto Sassu   2015-04-11  289  		cur_digestsize = event_data->iint->ima_hash->length;
+3ce1217d6 Roberto Sassu   2013-06-07  290  		goto out;
+3ce1217d6 Roberto Sassu   2013-06-07  291  	}
+3ce1217d6 Roberto Sassu   2013-06-07  292  
+23b574193 Roberto Sassu   2015-04-11  293  	if (!event_data->file)	/* missing info to re-calculate the digest */
+3ce1217d6 Roberto Sassu   2013-06-07  294  		return -EINVAL;
+3ce1217d6 Roberto Sassu   2013-06-07  295  
+23b574193 Roberto Sassu   2015-04-11  296  	inode = file_inode(event_data->file);
+4d7aeee73 Roberto Sassu   2013-06-07  297  	hash.hdr.algo = ima_template_hash_algo_allowed(ima_hash_algo) ?
+4d7aeee73 Roberto Sassu   2013-06-07  298  	    ima_hash_algo : HASH_ALGO_SHA1;
+16bcdb6da Matthew Garrett 2019-05-17 @299  	result = ima_calc_file_hash(event_data->file, &hash.hdr, false);
+3ce1217d6 Roberto Sassu   2013-06-07  300  	if (result) {
+3ce1217d6 Roberto Sassu   2013-06-07  301  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+23b574193 Roberto Sassu   2015-04-11  302  				    event_data->filename, "collect_data",
+3ce1217d6 Roberto Sassu   2013-06-07  303  				    "failed", result, 0);
+3ce1217d6 Roberto Sassu   2013-06-07  304  		return result;
+3ce1217d6 Roberto Sassu   2013-06-07  305  	}
+4d7aeee73 Roberto Sassu   2013-06-07  306  	cur_digest = hash.hdr.digest;
+4d7aeee73 Roberto Sassu   2013-06-07  307  	cur_digestsize = hash.hdr.length;
+3ce1217d6 Roberto Sassu   2013-06-07  308  out:
+712a49bd7 Roberto Sassu   2013-11-08  309  	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
+b0b4536f1 Matthew Garrett 2019-05-17  310  			       HASH_ALGO__LAST, event_data, field_data, false);
+3ce1217d6 Roberto Sassu   2013-06-07  311  }
+3ce1217d6 Roberto Sassu   2013-06-07  312  
+
+:::::: The code at line 299 was first introduced by commit
+:::::: 16bcdb6da2aa16a1457c8023e4b2efd9cfba5107 IMA: Optionally make use of filesystem-provided hashes
+
+:::::: TO: Matthew Garrett <mjg59@google.com>
+:::::: CC: 0day robot <lkp@intel.com>
 
 ---
 0-DAY kernel test infrastructure                Open Source Technology Center
