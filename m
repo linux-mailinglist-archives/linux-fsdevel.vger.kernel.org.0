@@ -2,97 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61F5E242D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 23:27:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FE8224390
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 00:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbfETV1P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 May 2019 17:27:15 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54466 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726196AbfETV1P (ORCPT
+        id S1727044AbfETWpz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 18:45:55 -0400
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:53113 "EHLO
+        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726107AbfETWpz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 May 2019 17:27:15 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4KLMkmi132101
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2019 17:27:13 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sm0b78hne-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2019 17:27:13 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 20 May 2019 22:27:11 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 20 May 2019 22:27:07 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4KLR6hR37814350
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 May 2019 21:27:06 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 834614C04E;
-        Mon, 20 May 2019 21:27:06 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EFBA04C044;
-        Mon, 20 May 2019 21:27:04 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.80.109])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 20 May 2019 21:27:04 +0000 (GMT)
-Subject: Re: [PATCH V3 6/6] IMA: Allow profiles to define the desired IMA
- template
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        prakhar srivastava <prsriva02@gmail.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Date:   Mon, 20 May 2019 17:26:54 -0400
-In-Reply-To: <CACdnJutPywtoyjykDnfX_gazfo_iQ9TCFPYgK60PcOFFFy39YQ@mail.gmail.com>
-References: <20190517212448.14256-1-matthewgarrett@google.com>
-         <20190517212448.14256-7-matthewgarrett@google.com>
-         <1558136840.4507.91.camel@linux.ibm.com>
-         <CACdnJutPywtoyjykDnfX_gazfo_iQ9TCFPYgK60PcOFFFy39YQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19052021-0020-0000-0000-0000033EB7E7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052021-0021-0000-0000-0000219191F3
-Message-Id: <1558387614.4039.84.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905200132
+        Mon, 20 May 2019 18:45:55 -0400
+Received: from [4.30.142.84] (helo=srivatsab-a01.vmware.com)
+        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
+        (Exim 4.82)
+        (envelope-from <srivatsa@csail.mit.edu>)
+        id 1hSr2T-000DNC-Gj; Mon, 20 May 2019 18:45:49 -0400
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        jmoyer@redhat.com, tytso@mit.edu, amakhalov@vmware.com,
+        anishs@vmware.com, srivatsab@vmware.com
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
+ <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
+ <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
+From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Message-ID: <238e14ff-68d1-3b21-a291-28de4f2d77af@csail.mit.edu>
+Date:   Mon, 20 May 2019 15:45:46 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2019-05-20 at 13:59 -0700, Matthew Garrett wrote:
-> On Fri, May 17, 2019 at 4:47 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > Matthew, I'm going to ask you to separate out this patch from this
-> > patch set.  Roberto, Thiago, Prakhar, I'm going to ask you to review
-> > Matthew's patch.  I'm expecting all of the patchsets will be re-posted
-> > based on it.
+On 5/20/19 3:19 AM, Paolo Valente wrote:
 > 
-> Would you like something along these lines merged before reviewing the
-> rest of them, or is adding the ima-vfs-ng template and allowing admins
-> to configure it as default sufficient?
+> 
+>> Il giorno 18 mag 2019, alle ore 22:50, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
+>>
+>> On 5/18/19 11:39 AM, Paolo Valente wrote:
+>>> I've addressed these issues in my last batch of improvements for BFQ,
+>>> which landed in the upcoming 5.2. If you give it a try, and still see
+>>> the problem, then I'll be glad to reproduce it, and hopefully fix it
+>>> for you.
+>>>
+>>
+>> Hi Paolo,
+>>
+>> Thank you for looking into this!
+>>
+>> I just tried current mainline at commit 72cf0b07, but unfortunately
+>> didn't see any improvement:
+>>
+>> dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflag=dsync
+>>
+>> With mq-deadline, I get:
+>>
+>> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 3.90981 s, 1.3 MB/s
+>>
+>> With bfq, I get:
+>> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 84.8216 s, 60.4 kB/s
+>>
+> 
+> Hi Srivatsa,
+> thanks for reproducing this on mainline.  I seem to have reproduced a
+> bonsai-tree version of this issue.  Before digging into the block
+> trace, I'd like to ask you for some feedback.
+> 
+> First, in my test, the total throughput of the disk happens to be
+> about 20 times as high as that enjoyed by dd, regardless of the I/O
+> scheduler.  I guess this massive overhead is normal with dsync, but
+> I'd like know whether it is about the same on your side.  This will
+> help me understand whether I'll actually be analyzing about the same
+> problem as yours.
+> 
 
-This patch is really independent of the patch set.  I'd really like it
-as a separate, independent patch in case it needs to be back ported.
- It will also make it easier to review.
+Do you mean to say the throughput obtained by dd'ing directly to the
+block device (bypassing the filesystem)? That does give me a 20x
+speedup with bs=512, but much more with a bigger block size (achieving
+a max throughput of about 110 MB/s).
 
-Mimi
+dd if=/dev/zero of=/dev/sdc bs=512 count=10000 conv=fsync
+10000+0 records in
+10000+0 records out
+5120000 bytes (5.1 MB, 4.9 MiB) copied, 0.15257 s, 33.6 MB/s
 
+dd if=/dev/zero of=/dev/sdc bs=4k count=10000 conv=fsync
+10000+0 records in
+10000+0 records out
+40960000 bytes (41 MB, 39 MiB) copied, 0.395081 s, 104 MB/s
+
+I'm testing this on a Toshiba MG03ACA1 (1TB) hard disk.
+
+> Second, the commands I used follow.  Do they implement your test case
+> correctly?
+> 
+> [root@localhost tmp]# mkdir /sys/fs/cgroup/blkio/testgrp
+> [root@localhost tmp]# echo $BASHPID > /sys/fs/cgroup/blkio/testgrp/cgroup.procs
+> [root@localhost tmp]# cat /sys/block/sda/queue/scheduler
+> [mq-deadline] bfq none
+> [root@localhost tmp]# dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflag=dsync
+> 10000+0 record dentro
+> 10000+0 record fuori
+> 5120000 bytes (5,1 MB, 4,9 MiB) copied, 14,6892 s, 349 kB/s
+> [root@localhost tmp]# echo bfq > /sys/block/sda/queue/scheduler
+> [root@localhost tmp]# dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflag=dsync
+> 10000+0 record dentro
+> 10000+0 record fuori
+> 5120000 bytes (5,1 MB, 4,9 MiB) copied, 20,1953 s, 254 kB/s
+> 
+
+Yes, this is indeed the testcase, although I see a much bigger
+drop in performance with bfq, compared to the results from
+your setup.
+
+Regards,
+Srivatsa
