@@ -2,52 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6371022CB1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 09:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 116F322D6D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 09:52:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730545AbfETHK6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 May 2019 03:10:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41020 "EHLO mx1.suse.de"
+        id S1729719AbfETHwc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 03:52:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47656 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729518AbfETHK5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 May 2019 03:10:57 -0400
+        id S1727733AbfETHwb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 May 2019 03:52:31 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 56767AD5C;
-        Mon, 20 May 2019 07:10:56 +0000 (UTC)
-Date:   Mon, 20 May 2019 09:10:55 +0200
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        dmitry.kasatkin@gmail.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH V3 1/6] VFS: Add a call to obtain a file's hash
-Message-ID: <20190520071055.GB4985@x250>
-References: <20190517212448.14256-1-matthewgarrett@google.com>
- <20190517212448.14256-2-matthewgarrett@google.com>
+        by mx1.suse.de (Postfix) with ESMTP id 4247CAF31;
+        Mon, 20 May 2019 07:52:30 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5D54B1E3ED6; Mon, 20 May 2019 09:52:32 +0200 (CEST)
+Date:   Mon, 20 May 2019 09:52:32 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Kees Cook <keescook@chromium.org>, Jan Kara <jack@suse.cz>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        stable <stable@vger.kernel.org>, Jeff Moyer <jmoyer@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Smits <jeff.smits@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
+Message-ID: <20190520075232.GA30972@quack2.suse.cz>
+References: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190517084739.GB20550@quack2.suse.cz>
+ <CAPcyv4iZZCgcC657ZOysBP9=1ejp3jfFj=VETVBPrgmfg7xUEw@mail.gmail.com>
+ <201905170855.8E2E1AC616@keescook>
+ <CAPcyv4g9HpMaifC+Qe2RVbgL_qq9vQvjwr-Jw813xhxcviehYQ@mail.gmail.com>
+ <201905171225.29F9564BA2@keescook>
+ <CAPcyv4iSeUPWFeSZW-dmYz9TnWhqVCx1Y1VjtUv+125_ZSQaYg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190517212448.14256-2-matthewgarrett@google.com>
+In-Reply-To: <CAPcyv4iSeUPWFeSZW-dmYz9TnWhqVCx1Y1VjtUv+125_ZSQaYg@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 17, 2019 at 02:24:43PM -0700, Matthew Garrett wrote:
-> + * vfs_gethash - obtain a file's hash
-[...]
-> +int vfs_get_hash(struct file *file, enum hash_algo hash, uint8_t *buf,
+On Sat 18-05-19 21:46:03, Dan Williams wrote:
+> On Fri, May 17, 2019 at 12:25 PM Kees Cook <keescook@chromium.org> wrote:
+> > On Fri, May 17, 2019 at 10:28:48AM -0700, Dan Williams wrote:
+> > > It seems dax_iomap_actor() is not a path where we'd be worried about
+> > > needing hardened user copy checks.
+> >
+> > I would agree: I think the proposed patch makes sense. :)
+> 
+> Sounds like an acked-by to me.
 
-Nit: the kernel-doc says it's called vfs_gethash(), but the function is called
-vfs_get_hash().
+Yeah, if Kees agrees, I'm fine with skipping the checks as well. I just
+wanted that to be clarified. Also it helped me that you wrote:
+
+That routine (dax_iomap_actor()) validates that the logical file offset is
+within bounds of the file, then it does a sector-to-pfn translation which
+validates that the physical mapping is within bounds of the block device.
+
+That is more specific than "dax_iomap_actor() takes care of necessary
+checks" which was in the changelog. And the above paragraph helped me
+clarify which checks in dax_iomap_actor() you think replace those usercopy
+checks. So I think it would be good to add that paragraph to those
+copy_from_pmem() functions as a comment just in case we are wondering in
+the future why we are skipping the checks... Also feel free to add:
+
+Acked-by: Jan Kara <jack@suse.cz>
+
+								Honza
 -- 
-Johannes Thumshirn                            SUSE Labs Filesystems
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
