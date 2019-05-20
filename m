@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B88DF22B50
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 07:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 993DE22B52
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 07:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbfETFmc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 May 2019 01:42:32 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:60187 "EHLO
+        id S1730306AbfETFmj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 01:42:39 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:39715 "EHLO
         new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727057AbfETFmc (ORCPT
+        by vger.kernel.org with ESMTP id S1727057AbfETFmj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 May 2019 01:42:32 -0400
+        Mon, 20 May 2019 01:42:39 -0400
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 3DB96D210;
-        Mon, 20 May 2019 01:42:30 -0400 (EDT)
+        by mailnew.nyi.internal (Postfix) with ESMTP id 7AE6FDC02;
+        Mon, 20 May 2019 01:42:37 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 20 May 2019 01:42:30 -0400
+  by compute3.internal (MEProxy); Mon, 20 May 2019 01:42:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=K23AG6kPeiLizgBxJZXoFVpxoNhX/Z2JwBtP24yd/wE=; b=FP1+azQc
-        rQo9GjVhupZBKSw2zglCLDgHlLDuQoAd2mhHz9NO4RMZnIck3CtwAzP/p0ddUgtn
-        VuJd5rvuTRdb8D8ThKHXrNgTgMt0nG032738vlqt4bUylqfMz6CkhRHYHXIfgwSn
-        6NYAtjYgYyh0940MzBe8khndc1V4L8T3xeYYdt/gRW8Nb30ZlmwDTZT/JnLdDZI0
-        Ij+teHPg39csT2Osu1f114zoyoguVS18FbF+3qdM7IuPI3GFc3s6s7+uov0gHyCs
-        ePW1AzP7C1mZyxIycSvVCr/fH4oC0ieZ9WULZkNjbWWKMqqJa6JrWCmn011VVuVX
-        caINSxyKVfQeXA==
-X-ME-Sender: <xms:RT7iXC2InbPmzyuA9REKLFAK1bCKQ4LqYmvI2I0T6vSHQutp0LFt6A>
+        fm2; bh=9XDuSxwKrHTa5OuRmvXZIbQcLUkhgPbDvSR6tXiHu4g=; b=ZcsCbH2n
+        kx1kNHGoZK7ikUL9wnmYUEIsxrCWj1knqAFlyLdJaK9uiLS4iwz5G6z8XnewR98P
+        De3WXWOu9CSDdOa9H4CPAzqGZhflIdG8VTY1+mkbcNeVpIoMLEqoaiCKuEDKQOHq
+        HitUxfue0bnJaGOnMPDRx7f5SXaX4p/RBYpc1kJKQNcn9BqhxRNp5wyMNC1K8Fp8
+        M4o6TSgZ+aaec/tmYMbuJ2fdiNGwLkapRM7eW3288aSZR+rc2lr0UlsRxsHRWE4u
+        G+tcdDg2vlwDKOCGt2/jhDtYvydr8vwlB8kSArZcUjXvmFFU4spRPENzaXHDQsAT
+        nq5LQTuebmFuXA==
+X-ME-Sender: <xms:TT7iXP7sdPmzL_XjBf-SCXt2lnZFK6UEFfWrE0MdSG8ZVHKJwf6JdA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddtjedguddtudcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
     enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepfdfvohgs
     ihhnucevrdcujfgrrhguihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhgqeenuc
     fkphepuddvgedrudeiledrudehiedrvddtfeenucfrrghrrghmpehmrghilhhfrhhomhep
-    thhosghinheskhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgepuddt
-X-ME-Proxy: <xmx:Rj7iXFRfMMbSmAHEzmwwGpVv2lXNpOK70SQPWbwAg8s4DDeh1ZhQRQ>
-    <xmx:Rj7iXMtXiLkB9_OP7b0zNaIImi-BNC6QeNzWj_5qBAzz3V7CkSLyaA>
-    <xmx:Rj7iXCZB2GCalL1ts1d4kX482fYP3CniVdjnjIbOzmH8ck4xukBRIA>
-    <xmx:Rj7iXAMDvvpYf6PEZYXhKKdRjRq2yvF2U4dQy6orwT4-g6VwLEvLqg>
+    thhosghinheskhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgepuddu
+X-ME-Proxy: <xmx:TT7iXM3S0wWSHuOZ_QMDFp8AKLmAVo8ovx_PaEtDM4bRF-J-XGjHvw>
+    <xmx:TT7iXNr4NvtjYgQKd4zatTiyeRAm_GdEzGo_suVqMn_-nLOIRSbLUg>
+    <xmx:TT7iXGku1-N4F3BSm6qgpO5GVx4p-PIPIRlDT3JcI0ppwPMMxzcv8A>
+    <xmx:TT7iXLnTVkFyQncKoIgfxX4T90UGnscdbg6U_lbRfV3mB1KvlOi-RA>
 Received: from eros.localdomain (124-169-156-203.dyn.iinet.net.au [124.169.156.203])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 22A3580060;
-        Mon, 20 May 2019 01:42:22 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5638E8005B;
+        Mon, 20 May 2019 01:42:30 -0400 (EDT)
 From:   "Tobin C. Harding" <tobin@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>
@@ -65,9 +65,9 @@ Cc:     "Tobin C. Harding" <tobin@kernel.org>,
         Hugh Dickins <hughd@google.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v5 11/16] tools/testing/slab: Add XArray movable objects tests
-Date:   Mon, 20 May 2019 15:40:12 +1000
-Message-Id: <20190520054017.32299-12-tobin@kernel.org>
+Subject: [RFC PATCH v5 12/16] slub: Enable moving objects to/from specific nodes
+Date:   Mon, 20 May 2019 15:40:13 +1000
+Message-Id: <20190520054017.32299-13-tobin@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190520054017.32299-1-tobin@kernel.org>
 References: <20190520054017.32299-1-tobin@kernel.org>
@@ -78,319 +78,341 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We just implemented movable objects for the XArray.  Let's test it
-intree.
+We have just implemented Slab Movable Objects (object migration).
+Currently object migration is used to defrag a cache.  On NUMA systems
+it would be nice to be able to control the source and destination nodes
+when moving objects.
 
-Add test module for the XArray's movable objects implementation.
+Add CONFIG_SMO_NODE to guard this feature.  CONFIG_SMO_NODE depends on
+CONFIG_SLUB_DEBUG because we use the full list.
 
-Functionality of the XArray Slab Movable Object implementation can
-usually be seen by simply by using `slabinfo` on a running machine since
-the radix tree is typically in use on a running machine and will have
-partial slabs.  For repeated testing we can use the test module to run
-to simulate a workload on the XArray then use `slabinfo` to test object
-migration is functioning.
+Implement moving all objects (including those in full slabs) to a
+specific node.  Expose this functionality to userspace via a sysfs entry.
 
-If testing on freshly spun up VM (low radix tree workload) it may be
-necessary to load/unload the module a number of times to create partial
-slabs.
+Add sysfs entry:
 
-Example test session
---------------------
+   /sysfs/kernel/slab/<cache>/move
 
-Relevant /proc/slabinfo column headers:
+With this users get access to the following functionality:
 
-  name   <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab>
+ - Move all objects to specified node.
 
-Prior to testing slabinfo report for radix_tree_node:
+   	echo "N1" > move
 
-  # slabinfo radix_tree_node --report
+ - Move all objects from specified node to other specified
+   node (from N1 -> to N2):
 
-  Slabcache: radix_tree_node  Aliases:  0 Order :  2 Objects: 8352
-  ** Reclaim accounting active
-  ** Defragmentation at 30%
+   	echo "N1 N2" > move
 
-  Sizes (bytes)     Slabs              Debug                Memory
-  ------------------------------------------------------------------------
-  Object :     576  Total  :     497   Sanity Checks : On   Total: 8142848
-  SlabObj:     912  Full   :     473   Redzoning     : On   Used : 4810752
-  SlabSiz:   16384  Partial:      24   Poisoning     : On   Loss : 3332096
-  Loss   :     336  CpuSlab:       0   Tracking      : On   Lalig: 2806272
-  Align  :       8  Objects:      17   Tracing       : Off  Lpadd:  437360
+This also enables shrinking slabs on a specific node:
 
-Here you can see the kernel was built with Slab Movable Objects enabled
-for the XArray (XArray uses the radix tree below the surface).
-
-After inserting the test module (note we have triggered allocation of a
-number of radix tree nodes increasing the object count but decreasing the
-number of partial slabs):
-
-  # slabinfo radix_tree_node --report
-
-  Slabcache: radix_tree_node  Aliases:  0 Order :  2 Objects: 8442
-  ** Reclaim accounting active
-  ** Defragmentation at 30%
-
-  Sizes (bytes)     Slabs              Debug                Memory
-  ------------------------------------------------------------------------
-  Object :     576  Total  :     499   Sanity Checks : On   Total: 8175616
-  SlabObj:     912  Full   :     484   Redzoning     : On   Used : 4862592
-  SlabSiz:   16384  Partial:      15   Poisoning     : On   Loss : 3313024
-  Loss   :     336  CpuSlab:       0   Tracking      : On   Lalig: 2836512
-  Align  :       8  Objects:      17   Tracing       : Off  Lpadd:  439120
-
-Now we can shrink the radix_tree_node cache:
-
-  # slabinfo radix_tree_node --shrink
-  # slabinfo radix_tree_node --report
-
-  Slabcache: radix_tree_node  Aliases:  0 Order :  2 Objects: 8515
-  ** Reclaim accounting active
-  ** Defragmentation at 30%
-
-  Sizes (bytes)     Slabs              Debug                Memory
-  ------------------------------------------------------------------------
-  Object :     576  Total  :     501   Sanity Checks : On   Total: 8208384
-  SlabObj:     912  Full   :     500   Redzoning     : On   Used : 4904640
-  SlabSiz:   16384  Partial:       1   Poisoning     : On   Loss : 3303744
-  Loss   :     336  CpuSlab:       0   Tracking      : On   Lalig: 2861040
-  Align  :       8  Objects:      17   Tracing       : Off  Lpadd:  440880
-
-Note the single remaining partial slab.
+   	echo "N1 N1" > move
 
 Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 ---
- tools/testing/slab/Makefile             |   2 +-
- tools/testing/slab/slub_defrag_xarray.c | 211 ++++++++++++++++++++++++
- 2 files changed, 212 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/slab/slub_defrag_xarray.c
+ mm/Kconfig |   7 ++
+ mm/slub.c  | 249 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 256 insertions(+)
 
-diff --git a/tools/testing/slab/Makefile b/tools/testing/slab/Makefile
-index 440c2e3e356f..44c18d9a4d52 100644
---- a/tools/testing/slab/Makefile
-+++ b/tools/testing/slab/Makefile
-@@ -1,4 +1,4 @@
--obj-m += slub_defrag.o
-+obj-m += slub_defrag.o slub_defrag_xarray.o
+diff --git a/mm/Kconfig b/mm/Kconfig
+index ee8d1f311858..aa8d60e69a01 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -258,6 +258,13 @@ config ARCH_ENABLE_THP_MIGRATION
+ config CONTIG_ALLOC
+        def_bool (MEMORY_ISOLATION && COMPACTION) || CMA
  
- KTREE=../../..
++config SMO_NODE
++       bool "Enable per node control of Slab Movable Objects"
++       depends on SLUB && SYSFS
++       select SLUB_DEBUG
++       help
++         On NUMA systems enable moving objects to and from a specified node.
++
+ config PHYS_ADDR_T_64BIT
+ 	def_bool 64BIT
  
-diff --git a/tools/testing/slab/slub_defrag_xarray.c b/tools/testing/slab/slub_defrag_xarray.c
-new file mode 100644
-index 000000000000..41143f73256c
---- /dev/null
-+++ b/tools/testing/slab/slub_defrag_xarray.c
-@@ -0,0 +1,211 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/slab.h>
-+#include <linux/string.h>
-+#include <linux/uaccess.h>
-+#include <linux/list.h>
-+#include <linux/gfp.h>
-+#include <linux/xarray.h>
-+
-+#define SMOX_CACHE_NAME "smox_test"
-+static struct kmem_cache *cachep;
-+
+diff --git a/mm/slub.c b/mm/slub.c
+index 2157205df7ba..9582f2fc97d2 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4336,6 +4336,106 @@ static void move_slab_page(struct page *page, void *scratch, int node)
+ 	s->migrate(s, vector, count, node, private);
+ }
+ 
++#ifdef CONFIG_SMO_NODE
 +/*
-+ * Declare XArrays globally so we can clean them up on module unload.
++ * kmem_cache_move() - Attempt to move all slab objects.
++ * @s: The cache we are working on.
++ * @node: The node to move objects away from.
++ * @target_node: The node to move objects on to.
++ *
++ * Attempts to move all objects (partial slabs and full slabs) to target
++ * node.
++ *
++ * Context: Takes the list_lock.
++ * Return: The number of slabs remaining on node.
 + */
-+
-+/* Used by test_smo_xarray()*/
-+DEFINE_XARRAY(things);
-+
-+/* Thing to store pointers to in the XArray */
-+struct smox_thing {
-+	long id;
-+};
-+
-+/* It's up to the caller to ensure id is unique */
-+static struct smox_thing *alloc_thing(int id)
++static unsigned long kmem_cache_move(struct kmem_cache *s,
++				     int node, int target_node)
 +{
-+	struct smox_thing *thing;
++	struct kmem_cache_node *n = get_node(s, node);
++	LIST_HEAD(move_list);
++	struct page *page, *page2;
++	unsigned long flags;
++	void **scratch;
 +
-+	thing = kmem_cache_alloc(cachep, GFP_KERNEL);
-+	if (!thing)
-+		return ERR_PTR(-ENOMEM);
-+
-+	thing->id = id;
-+	return thing;
-+}
-+
-+/**
-+ * smox_object_ctor() - SMO object constructor function.
-+ * @ptr: Pointer to memory where the object should be constructed.
-+ */
-+void smox_object_ctor(void *ptr)
-+{
-+	struct smox_thing *thing = ptr;
-+
-+	thing->id = -1;
-+}
-+
-+/**
-+ * smox_cache_migrate() - kmem_cache migrate function.
-+ * @cp: kmem_cache pointer.
-+ * @objs: Array of pointers to objects to migrate.
-+ * @size: Number of objects in @objs.
-+ * @node: NUMA node where the object should be allocated.
-+ * @private: Pointer returned by kmem_cache_isolate_func().
-+ */
-+void smox_cache_migrate(struct kmem_cache *cp, void **objs, int size,
-+			int node, void *private)
-+{
-+	struct smox_thing **ptrs = (struct smox_thing **)objs;
-+	struct smox_thing *old, *new;
-+	struct smox_thing *thing;
-+	unsigned long index;
-+	void *entry;
-+	int i;
-+
-+	for (i = 0; i < size; i++) {
-+		old = ptrs[i];
-+
-+		new = kmem_cache_alloc(cachep, GFP_KERNEL);
-+		if (!new) {
-+			pr_debug("kmem_cache_alloc failed\n");
-+			return;
-+		}
-+
-+		new->id = old->id;
-+
-+		/* Update reference the brain dead way */
-+		xa_for_each(&things, index, thing) {
-+			if (thing == old) {
-+				entry = xa_store(&things, index, new, GFP_KERNEL);
-+				if (entry != old) {
-+					pr_err("failed to exchange new/old\n");
-+					return;
-+				}
-+			}
-+		}
-+		kmem_cache_free(cachep, old);
-+	}
-+}
-+
-+/*
-+ * test_smo_xarray() - Run some tests using an XArray.
-+ */
-+static int test_smo_xarray(void)
-+{
-+	const int keep = 6; /* Free 5 out of 6 items */
-+	const int nr_items = 10000;
-+	struct smox_thing *thing;
-+	unsigned long index;
-+	void *entry;
-+	int expected;
-+	int i;
-+
-+	/*
-+	 * Populate XArray, this adds to the radix_tree_node cache as
-+	 * well as the smox_test cache.
-+	 */
-+	for (i = 0; i < nr_items; i++) {
-+		thing = alloc_thing(i);
-+		entry = xa_store(&things, i, thing, GFP_KERNEL);
-+		if (xa_is_err(entry)) {
-+			pr_err("smox: failed to allocate entry: %d\n", i);
-+			return -ENOMEM;
-+		}
++	if (!s->migrate) {
++		pr_warn("%s SMO not enabled, cannot move objects\n", s->name);
++		goto out;
 +	}
 +
-+	/* Now free  items, putting holes in both caches. */
-+	for (i = 0; i < nr_items; i++) {
-+		if (i % keep == 0)
++	scratch = alloc_scratch(s);
++	if (!scratch)
++		goto out;
++
++	spin_lock_irqsave(&n->list_lock, flags);
++
++	list_for_each_entry_safe(page, page2, &n->partial, lru) {
++		if (!slab_trylock(page))
++			/* Busy slab. Get out of the way */
 +			continue;
 +
-+		thing = xa_erase(&things, i);
-+		if (xa_is_err(thing))
-+			pr_err("smox: error erasing entry: %d\n", i);
-+		kmem_cache_free(cachep, thing);
-+	}
++		if (page->inuse) {
++			list_move(&page->lru, &move_list);
++			/* Stop page being considered for allocations */
++			n->nr_partial--;
++			page->frozen = 1;
 +
-+	expected = 0;
-+	xa_for_each(&things, index, thing) {
-+		if (thing->id != expected || index != expected) {
-+			pr_err("smox: error; got %ld want %d at %ld\n",
-+			       thing->id, expected, index);
-+			return -1;
++			slab_unlock(page);
++		} else {	/* Empty slab page */
++			list_del(&page->lru);
++			n->nr_partial--;
++			slab_unlock(page);
++			discard_slab(s, page);
 +		}
-+		expected += keep;
++	}
++	list_for_each_entry_safe(page, page2, &n->full, lru) {
++		if (!slab_trylock(page))
++			continue;
++
++		list_move(&page->lru, &move_list);
++		page->frozen = 1;
++		slab_unlock(page);
 +	}
 +
-+	/*
-+	 * Leave caches sparsely allocated.  Shrink caches manually with:
-+	 *
-+	 *   slabinfo radix_tree_node --shrink
-+	 *   slabinfo smox_test --shrink
-+	 */
++	spin_unlock_irqrestore(&n->list_lock, flags);
 +
++	list_for_each_entry(page, &move_list, lru) {
++		if (page->inuse)
++			move_slab_page(page, scratch, target_node);
++	}
++	kfree(scratch);
++
++	/* Bail here to save taking the list_lock */
++	if (list_empty(&move_list))
++		goto out;
++
++	/* Inspect results and dispose of pages */
++	spin_lock_irqsave(&n->list_lock, flags);
++	list_for_each_entry_safe(page, page2, &move_list, lru) {
++		list_del(&page->lru);
++		slab_lock(page);
++		page->frozen = 0;
++
++		if (page->inuse) {
++			if (page->inuse == page->objects) {
++				list_add(&page->lru, &n->full);
++				slab_unlock(page);
++			} else {
++				n->nr_partial++;
++				list_add_tail(&page->lru, &n->partial);
++				slab_unlock(page);
++			}
++		} else {
++			slab_unlock(page);
++			discard_slab(s, page);
++		}
++	}
++	spin_unlock_irqrestore(&n->list_lock, flags);
++out:
++	return atomic_long_read(&n->nr_slabs);
++}
++#endif	/* CONFIG_SMO_NODE */
++
+ /*
+  * kmem_cache_defrag() - Defragment node.
+  * @s: cache we are working on.
+@@ -4450,6 +4550,32 @@ static unsigned long kmem_cache_defrag(struct kmem_cache *s,
+ 	return n->nr_partial;
+ }
+ 
++#ifdef CONFIG_SMO_NODE
++/*
++ * kmem_cache_move_to_node() - Move all slab objects to node.
++ * @s: The cache we are working on.
++ * @node: The target node to move objects to.
++ *
++ * Attempt to move all slab objects from all nodes to @node.
++ *
++ * Return: The total number of slabs left on emptied nodes.
++ */
++static unsigned long kmem_cache_move_to_node(struct kmem_cache *s, int node)
++{
++	unsigned long left = 0;
++	int nid;
++
++	for_each_node_state(nid, N_NORMAL_MEMORY) {
++		if (nid == node)
++			continue;
++
++		left += kmem_cache_move(s, nid, node);
++	}
++
++	return left;
++}
++#endif
++
+ /**
+  * kmem_defrag_slabs() - Defrag slab caches.
+  * @node: The node to defrag or -1 for all nodes.
+@@ -5594,6 +5720,126 @@ static ssize_t shrink_store(struct kmem_cache *s,
+ }
+ SLAB_ATTR(shrink);
+ 
++#ifdef CONFIG_SMO_NODE
++static ssize_t move_show(struct kmem_cache *s, char *buf)
++{
 +	return 0;
 +}
 +
-+static int __init smox_cache_init(void)
++/*
++ * parse_move_store_input() - Parse buf getting integer arguments.
++ * @buf: Buffer to parse.
++ * @length: Length of @buf.
++ * @arg0: Return parameter, first argument.
++ * @arg1: Return parameter, second argument.
++ *
++ * Parses the input from user write to sysfs file 'move'.  Input string
++ * should contain either one or two node specifiers of form Nx where x
++ * is an integer specifying the NUMA node ID.  'N' or 'n' may be used.
++ * n/N may be omitted.
++ *
++ * e.g.
++ *     echo 'N1' > /sysfs/kernel/slab/cache/move
++ * or
++ *     echo 'N0 N2' > /sysfs/kernel/slab/cache/move
++ *
++ * Regex matching accepted forms: '[nN]?[0-9]( [nN]?[0-9])?'
++ *
++ * FIXME: This is really fragile.  Input must be exactly correct,
++ *        spurious whitespace causes parse errors.
++ *
++ * Return: 0 if an argument was successfully converted, or an error code.
++ */
++static ssize_t parse_move_store_input(const char *buf, size_t length,
++				      long *arg0, long *arg1)
 +{
-+	cachep = kmem_cache_create(SMOX_CACHE_NAME,
-+				   sizeof(struct smox_thing),
-+				   0, 0, smox_object_ctor);
-+	if (!cachep)
-+		return -1;
++	char *s, *save, *ptr;
++	int ret = 0;
 +
-+	return 0;
-+}
++	if (!buf)
++		return -EINVAL;
 +
-+static void __exit smox_cache_cleanup(void)
-+{
-+	struct smox_thing *thing;
-+	unsigned long i;
++	s = kstrdup(buf, GFP_KERNEL);
++	if (!s)
++		return -ENOMEM;
++	save = s;
 +
-+	xa_for_each(&things, i, thing) {
-+		kmem_cache_free(cachep, thing);
++	if (s[length - 1] == '\n') {
++		s[length - 1] = '\0';
++		length--;
 +	}
-+	xa_destroy(&things);
-+	kmem_cache_destroy(cachep);
++
++	ptr = strsep(&s, " ");
++	if (!ptr || strcmp(ptr, "") == 0) {
++		ret = 0;
++		goto out;
++	}
++
++	if (*ptr == 'N' || *ptr == 'n')
++		ptr++;
++	ret = kstrtol(ptr, 10, arg0);
++	if (ret < 0)
++		goto out;
++
++	if (s) {
++		if (*s == 'N' || *s == 'n')
++			s++;
++		ret = kstrtol(s, 10, arg1);
++		if (ret < 0)
++			goto out;
++	}
++
++	ret = 0;
++out:
++	kfree(save);
++	return ret;
 +}
 +
-+static int __init smox_init(void)
++static bool is_valid_node(int node)
 +{
++	int nid;
++
++	for_each_node_state(nid, N_NORMAL_MEMORY) {
++		if (nid == node)
++			return true;
++	}
++	return false;
++}
++
++/*
++ * move_store() - Move objects between nodes.
++ * @s: The cache we are working on.
++ * @buf: String received.
++ * @length: Length of @buf.
++ *
++ * Writes to /sys/kernel/slab/<cache>/move are interpreted as follows:
++ *
++ *  echo "N1" > move       : Move all objects (from all nodes) to node 1.
++ *  echo "N0 N1" > move    : Move all objects from node 0 to node 1.
++ *
++ * 'N' may be omitted:
++ */
++static ssize_t move_store(struct kmem_cache *s, const char *buf, size_t length)
++{
++	long arg0 = -1;
++	long arg1 = -1;
 +	int ret;
 +
-+	ret = smox_cache_init();
-+	if (ret) {
-+		pr_err("smo_xarray: failed to create cache\n");
-+		return ret;
-+	}
-+	pr_info("smo_xarray: created kmem_cache: %s\n", SMOX_CACHE_NAME);
++	ret = parse_move_store_input(buf, length, &arg0, &arg1);
++	if (ret < 0)
++		return -EINVAL;
 +
-+	kmem_cache_setup_mobility(cachep, NULL, smox_cache_migrate);
-+	pr_info("smo_xarray: kmem_cache %s defrag enabled\n", SMOX_CACHE_NAME);
++	if (is_valid_node(arg0) && is_valid_node(arg1))
++		(void)kmem_cache_move(s, arg0, arg1);
++	else if (is_valid_node(arg0))
++		(void)kmem_cache_move_to_node(s, arg0);
 +
-+	/*
-+	 * Running this test consumes memory unless you shrink the
-+	 * radix_tree_node cache manually with `slabinfo`.
-+	 */
-+	ret = test_smo_xarray();
-+	if (ret)
-+		pr_warn("test_smo_xarray failed: %d\n", ret);
-+
-+	pr_info("smo_xarray: module loaded successfully\n");
-+	return 0;
++	/* FIXME: What should we be returning here? */
++	return length;
 +}
-+module_init(smox_init);
++SLAB_ATTR(move);
++#endif	/* CONFIG_SMO_NODE */
 +
-+static void __exit smox_exit(void)
-+{
-+	smox_cache_cleanup();
-+
-+	pr_info("smo_xarray: module removed\n");
-+}
-+module_exit(smox_exit);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Tobin C. Harding");
-+MODULE_DESCRIPTION("SMO XArray test module.");
+ #ifdef CONFIG_NUMA
+ static ssize_t remote_node_defrag_ratio_show(struct kmem_cache *s, char *buf)
+ {
+@@ -5718,6 +5964,9 @@ static struct attribute *slab_attrs[] = {
+ 	&reclaim_account_attr.attr,
+ 	&destroy_by_rcu_attr.attr,
+ 	&shrink_attr.attr,
++#ifdef CONFIG_SMO_NODE
++	&move_attr.attr,
++#endif
+ 	&slabs_cpu_partial_attr.attr,
+ #ifdef CONFIG_SLUB_DEBUG
+ 	&total_objects_attr.attr,
 -- 
 2.21.0
 
