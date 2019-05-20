@@ -2,75 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6E1C22B5D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 07:43:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7436A22C06
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 08:26:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730406AbfETFnI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 May 2019 01:43:08 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:46491 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729535AbfETFnI (ORCPT
+        id S1730592AbfETGZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 02:25:59 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36677 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728634AbfETGZ7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 May 2019 01:43:08 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id BB657115CB;
-        Mon, 20 May 2019 01:43:06 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 20 May 2019 01:43:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=BWgf9mQL60frF07ii2U3Yx/gnin3umDFroib+xOOshw=; b=LhKqHj9w
-        zvjIxq0G2O5k2GycyyiBsamzi2rk2+Lf+YY+F5xR7uqTFhkUs01LFET99pHIduQs
-        zOM4rZdOSvJ/+z966a1bZjVfEqSxqIESB2sj2qYi/MyuhQjzu91wrVGuA9y2tEt/
-        krfRq77gRiJ8tckBxpUTJnqfd3NJOGBYPJN2U39hcDUUkSJSWZSjJ0xSt1+Ea1O1
-        +jt7qGo8NnY9WOhtrB/Q8GgsmaFNzTIQ9zSeGHSaxKOlKiD0s5oDmFpMAD46hK7W
-        JEhgU6aa+NeSITEQ9r1zxvFsz532rqKkHToJnh6sHAdJRobsuaRB9jd+5RQ66NuX
-        WpprC/lEu1nFAw==
-X-ME-Sender: <xms:aj7iXJT6i9Oat66hbsjAGRKp8ivhzPTtOeQjhFevKqB3toMa-3N_4g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddtjedguddtudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepfdfvohgs
-    ihhnucevrdcujfgrrhguihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhgqeenuc
-    fkphepuddvgedrudeiledrudehiedrvddtfeenucfrrghrrghmpehmrghilhhfrhhomhep
-    thhosghinheskhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgepudeh
-X-ME-Proxy: <xmx:aj7iXLsm8RfzRwpzWMqOv4yqNrnHvY2PreCiTcGGNgXUH65_A7ky8A>
-    <xmx:aj7iXAxrdVYMTdmWW8Gdd31xDdHcU__M5rtYQ53IYinJWakQoNXpiw>
-    <xmx:aj7iXN4O0EDlsxcZeLWMLUQnoXTPf_dzVR16xXlScM2-D2s4qKZjEw>
-    <xmx:aj7iXIdowHHWet0oDJd0Uj4YrXknJYhGbESKyg7DQcS8YC1W7Av8MA>
-Received: from eros.localdomain (124-169-156-203.dyn.iinet.net.au [124.169.156.203])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3664D80060;
-        Mon, 20 May 2019 01:42:58 -0400 (EDT)
-From:   "Tobin C. Harding" <tobin@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Roman Gushchin <guro@fb.com>,
-        Alexander Viro <viro@ftp.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Pekka Enberg <penberg@cs.helsinki.fi>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Christopher Lameter <cl@linux.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Waiman Long <longman@redhat.com>,
-        Tycho Andersen <tycho@tycho.ws>, Theodore Ts'o <tytso@mit.edu>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Chinner <david@fromorbit.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Rik van Riel <riel@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v5 16/16] dcache: Add CONFIG_DCACHE_SMO
-Date:   Mon, 20 May 2019 15:40:17 +1000
-Message-Id: <20190520054017.32299-17-tobin@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520054017.32299-1-tobin@kernel.org>
-References: <20190520054017.32299-1-tobin@kernel.org>
+        Mon, 20 May 2019 02:25:59 -0400
+Received: by mail-pl1-f193.google.com with SMTP id d21so6224719plr.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 May 2019 23:25:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=63xHHZG4cCJKLX16xEPSfZS7UyrdZwd6ga9JsMxKYuA=;
+        b=Px5FqM/mS1qyALv+qJhcikuGpTx7I75PqW5boA29rD51XQx76h2wTajAGDbEZbxspY
+         bxlnJQW5+dQICDbCxrvtk6px/wRRXsisMheeia/L8MThczsPUsR/lTbwznXHMmrYdHdd
+         Yy4Qt5CfjIehQFSi50fwMq7vUMfAShTqOv0ZA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=63xHHZG4cCJKLX16xEPSfZS7UyrdZwd6ga9JsMxKYuA=;
+        b=YeJxYH/SPhTby2IAr7jUYnCHzkG83iu1vr0UG9U0Pf9uF+dVFerPyYCSLw67rpV/Kf
+         As6MKetFhmIOcLn4JcRdFxxqI31L50B+sFURsp9Z0n6daQ8jq9eCDfYcNMOed03+gCa5
+         PddvgcPL5vYxVrmUcZN7m3JJAMecF7JrO6WXOeVw8c8XnXBlUOz4D6W+Xufgw/1KMkih
+         902qvSrKJxdrUDwBo+AkmJZ5Qs57+ASj91pSXonLCqvUD+s5HiZTkdR8BL8C+sz8SWt/
+         DWu3nauuXa682eV9lu6OwFcFD7drzUN2qWRKS9vG4GKQLhzMqh5Lbsvd72LqB+T6Tf7q
+         cI1Q==
+X-Gm-Message-State: APjAAAWnhdA0msYoYgwOtCfJgVMiKWGsh7mpXA23r7ukBCeqcVLFYL5u
+        kh1+ZhE31gyPh1EgQtc8Sm33IQ==
+X-Google-Smtp-Source: APXvYqwzCBetVhqi03nlstH+2xiRvE1S8LLzzKPoHl8PnMWGRbi9WPqIjh6DlV3BAMChVYt4vLwyIQ==
+X-Received: by 2002:a17:902:bc4b:: with SMTP id t11mr67117635plz.255.1558333558539;
+        Sun, 19 May 2019 23:25:58 -0700 (PDT)
+Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
+        by smtp.gmail.com with ESMTPSA id q17sm28567910pfq.74.2019.05.19.23.25.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 19 May 2019 23:25:57 -0700 (PDT)
+From:   Daniel Axtens <dja@axtens.net>
+To:     nayna@linux.ibm.com, cclaudio@linux.ibm.com,
+        linux-fsdevel@vger.kernel.org, greg@kroah.com,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Daniel Axtens <dja@axtens.net>
+Subject: [WIP RFC PATCH 0/6] Generic Firmware Variable Filesystem
+Date:   Mon, 20 May 2019 16:25:47 +1000
+Message-Id: <20190520062553.14947-1-dja@axtens.net>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -78,69 +58,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In an attempt to make the SMO patchset as non-invasive as possible add a
-config option CONFIG_DCACHE_SMO (under "Memory Management options") for
-enabling SMO for the DCACHE.  Whithout this option dcache constructor is
-used but no other code is built in, with this option enabled slab
-mobility is enabled and the isolate/migrate functions are built in.
+Hi all,
 
-Add CONFIG_DCACHE_SMO to guard the partial shrinking of the dcache via
-Slab Movable Objects infrastructure.
+As PowerNV moves towards secure boot, we need a place to put secure
+variables. One option that has been canvassed is to make our secure
+variables look like EFI variables. This is an early sketch of another
+approach where we create a generic firmware variable file system,
+fwvarfs, and an OPAL Secure Variable backend for it.
 
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
----
- fs/dcache.c | 4 ++++
- mm/Kconfig  | 7 +++++++
- 2 files changed, 11 insertions(+)
+In short, platforms provide a simple backend that can interface with
+the hardware, and fwvarfs deals with translating that into a
+filesystem that you can use. Almost all of the hard work is done by
+kernfs: fwvarfs provides a pretty thin layer on top of that to make
+backends a simple as possible.
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 0dfe580c2d42..96063e872366 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3072,6 +3072,7 @@ void d_tmpfile(struct dentry *dentry, struct inode *inode)
- }
- EXPORT_SYMBOL(d_tmpfile);
+Behaviour and the API is documented in Documentation/filesystems/fwvarfs.txt
+
+To demonstrate the concept, a fully functional memory-based backend is
+provided, and a read-only but userspace-compatible EFI backend.
+
+For OPAL secure variables, I have taken Claudio's commit, tweaked it
+to apply to linux-next, replaced all the EFI support with a generic
+API, and then written a backend against that. There's a coming version
+from Claudio that moves the opal calls towards a simple key/value
+interface rather than (name, vendor) pairs - I haven't waited for
+that: this is really just to demonstrate that it could be done rather
+than an attempt to get mergable code.  It is also compile tested only
+as I haven't yet set myself up with a test machine.
+
+The patches are a bit rough, and there are a number of outstanding
+TODOs sprinkled in everywhere. The idea is just to do a proof of
+concept to inform our discussions:
+
+ - Is this the sort of approach you'd like (generic vs specific)?
  
-+#ifdef CONFIG_DCACHE_SMO
- /*
-  * d_isolate() - Dentry isolation callback function.
-  * @s: The dentry cache.
-@@ -3144,6 +3145,7 @@ static void d_partial_shrink(struct kmem_cache *s, void **_unused, int __unused,
+ - Does the backend API make sense?
  
- 	kfree(private);
- }
-+#endif	/* CONFIG_DCACHE_SMO */
- 
- static __initdata unsigned long dhash_entries;
- static int __init set_dhash_entries(char *str)
-@@ -3190,7 +3192,9 @@ static void __init dcache_init(void)
- 					   sizeof_field(struct dentry, d_iname),
- 					   dcache_ctor);
- 
-+#ifdef CONFIG_DCACHE_SMO
- 	kmem_cache_setup_mobility(dentry_cache, d_isolate, d_partial_shrink);
-+#endif
- 
- 	/* Hash may have been set up in dcache_init_early */
- 	if (!hashdist)
-diff --git a/mm/Kconfig b/mm/Kconfig
-index aa8d60e69a01..7dcea76e5ecc 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -265,6 +265,13 @@ config SMO_NODE
-        help
-          On NUMA systems enable moving objects to and from a specified node.
- 
-+config DCACHE_SMO
-+       bool "Enable Slab Movable Objects for the dcache"
-+       depends on SLUB
-+       help
-+         Under memory pressure we can try to free dentry slab cache objects from
-+         the partial slab list if this is enabled.
-+
- config PHYS_ADDR_T_64BIT
- 	def_bool 64BIT
- 
+ - Is the use of kernfs the correct decision, or is it potentially too
+   limiting? (e.g. no ability to do case-insensitivity like efivarfs)
+
+ - Is assuming flat fwvars correct or is there a firmware with a
+   hierarchical structure?
+
+Regards,
+Daniel
+
+Claudio Carvalho (1):
+  powerpc/powernv: Add support for OPAL secure variables
+
+Daniel Axtens (5):
+  kernfs: add create() and unlink() hooks
+  fwvarfs: a generic firmware variable filesystem
+  fwvarfs: efi backend
+  powerpc/powernv: Remove EFI support for OPAL secure variables
+  fwvarfs: Add opal_secvar backend
+
+ Documentation/filesystems/fwvarfs.txt        | 154 ++++++++++
+ arch/powerpc/include/asm/opal-api.h          |   6 +-
+ arch/powerpc/include/asm/opal-secvar.h       |  58 ++++
+ arch/powerpc/include/asm/opal.h              |  10 +
+ arch/powerpc/platforms/powernv/Kconfig       |   8 +
+ arch/powerpc/platforms/powernv/Makefile      |   1 +
+ arch/powerpc/platforms/powernv/opal-call.c   |   4 +
+ arch/powerpc/platforms/powernv/opal-secvar.c | 121 ++++++++
+ fs/Kconfig                                   |   1 +
+ fs/Makefile                                  |   1 +
+ fs/fwvarfs/Kconfig                           |  47 +++
+ fs/fwvarfs/Makefile                          |  10 +
+ fs/fwvarfs/efi.c                             | 177 +++++++++++
+ fs/fwvarfs/fwvarfs.c                         | 294 +++++++++++++++++++
+ fs/fwvarfs/fwvarfs.h                         | 124 ++++++++
+ fs/fwvarfs/mem.c                             | 113 +++++++
+ fs/fwvarfs/opal_secvar.c                     | 218 ++++++++++++++
+ fs/kernfs/dir.c                              |  54 ++++
+ include/linux/kernfs.h                       |   3 +
+ include/uapi/linux/magic.h                   |   1 +
+ 20 files changed, 1404 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/filesystems/fwvarfs.txt
+ create mode 100644 arch/powerpc/include/asm/opal-secvar.h
+ create mode 100644 arch/powerpc/platforms/powernv/opal-secvar.c
+ create mode 100644 fs/fwvarfs/Kconfig
+ create mode 100644 fs/fwvarfs/Makefile
+ create mode 100644 fs/fwvarfs/efi.c
+ create mode 100644 fs/fwvarfs/fwvarfs.c
+ create mode 100644 fs/fwvarfs/fwvarfs.h
+ create mode 100644 fs/fwvarfs/mem.c
+ create mode 100644 fs/fwvarfs/opal_secvar.c
+
 -- 
-2.21.0
+2.19.1
 
