@@ -2,119 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11D0824118
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 21:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82D9D2421A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 22:26:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726010AbfETTY0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 May 2019 15:24:26 -0400
-Received: from mga11.intel.com ([192.55.52.93]:3051 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725616AbfETTY0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 May 2019 15:24:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 12:24:25 -0700
-X-ExtLoop1: 1
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga001.jf.intel.com with ESMTP; 20 May 2019 12:24:25 -0700
-Subject: [PATCH v2] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     stable@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Smits <jeff.smits@intel.com>,
-        Kees Cook <keescook@chromium.org>, Jan Kara <jack@suse.cz>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Mon, 20 May 2019 12:10:38 -0700
-Message-ID: <155837931725.876528.6291628638777172042.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1726566AbfETUZz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 16:25:55 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:55227 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725763AbfETUZz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 May 2019 16:25:55 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 01A7524627;
+        Mon, 20 May 2019 16:25:52 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Mon, 20 May 2019 16:25:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
+        :to:cc:subject:references:date:in-reply-to:message-id
+        :mime-version:content-type:content-transfer-encoding; s=fm2; bh=
+        2s8insJw7SXiaaoi7n/jvMQaGaOOEQGGn9MA9sTXCzY=; b=nTVN23Gom1plLxpc
+        7qd56RBh1d3zg39gxTuhjiar9f2o+0UBPe9IZOUFZwuGyCZiz0l6OEjzfyMegQRB
+        kpA61V1jEC4TJQ6w/csBHq88m8rH6mzeHd9p3ib/VOh/wcURQ8E4JWe1z+rxoDJS
+        riIbZmeDgi+SR5rL4zO6JYWtHsTKgQ1fgrGPdVUDNFDlAUnBW6lV7On+2rf54yIL
+        98ercTcOkQk43giawKpcbz/pB31VOiezM2LsBxthPivE5C81+raWg2rB5OuMjRhP
+        Bm55qTL1E09AlbLJFdhjjdOC5Zsqy2sf8CEohNnAKruGmn+Ryx6fjXLilfgFcdkx
+        FyBTrw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=2s8insJw7SXiaaoi7n/jvMQaGaOOEQGGn9MA9sTXC
+        zY=; b=piEfKWYZVjjloiN91Gr8WKPqaq5AB5JOvYVIJFVUyuzruj6zx1inX4Ag2
+        fHo2iGeXPT2KD4m5QyY9l3y/uzN6Fyc27m+oNff2mjLkQeRPRFkGgd1u2D2MKzyH
+        zYPCtPggTO9+u2y2vAfbrikr2neLOK1hRytDAYPuQ4igrL2vHjYpXMVa44QF/+P8
+        vi3bP/E0bYzo7EBvOpFJC+A0RMa1rxC91IOX9oU4w4fo/FPaHBzvgcB3CUZdoe0N
+        dz84LaB6Wto9snsa10XIiO4I7T5RPSg7eMU3Ybmd6ND8Gx1lK4Dcwbrk+6c6GO/q
+        FqfYzEaykUJxI1j2CQEHa+VHKwuIg==
+X-ME-Sender: <xms:Tg3jXPSPMV2Zifntr-gXS1Wod57QlBL87TAYu2mgEZ5BEHPu6ehCIQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddtkedgudehvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvffufhffjgfkfgggtgfgsehtqhdttddtreejnecuhfhrohhmpefpihhk
+    ohhlrghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuffhomh
+    grihhnpehgihhthhhusgdrtghomhenucfkphepudekhedrfedrleegrdduleegnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpefpihhkohhlrghushesrhgrthhhrdhorhhgnecuvehluh
+    hsthgvrhfuihiivgepud
+X-ME-Proxy: <xmx:Tw3jXHnofyaTWPXOM2EmL4-bZccirz8aglg4Gej6SaqXedM5iw-pJA>
+    <xmx:Tw3jXNxHbGqRnanASHfrQtGZr1_gLfZC5xRf-eHKyikxX1k4XJuDvg>
+    <xmx:Tw3jXB0MfLetAtMWCuMMAzXvfg_2Dtfd153_MlpY0_ka-S1Cd8Pu1g>
+    <xmx:Tw3jXMtNSUyYLa786PlpyrIhNLWWtCZBzCQrj1CGUaRQmT-zupvToQ>
+Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
+        by mail.messagingengine.com (Postfix) with ESMTPA id AA09B80061;
+        Mon, 20 May 2019 16:25:50 -0400 (EDT)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id CB17360;
+        Mon, 20 May 2019 20:25:49 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id 9E565E00E1; Mon, 20 May 2019 21:25:49 +0100 (BST)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-nvdimm@lists.01.org, stefanha@redhat.com,
+        dgilbert@redhat.com, swhiteho@redhat.com
+Subject: Re: [PATCH v2 02/30] fuse: Clear setuid bit even in cache=never path
+References: <20190515192715.18000-1-vgoyal@redhat.com>
+        <20190515192715.18000-3-vgoyal@redhat.com>
+        <20190520144137.GA24093@localhost.localdomain>
+        <20190520144437.GB24093@localhost.localdomain>
+Mail-Copies-To: never
+Mail-Followup-To: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal
+        <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-nvdimm@lists.01.org, stefanha@redhat.com, dgilbert@redhat.com,
+        swhiteho@redhat.com
+Date:   Mon, 20 May 2019 21:25:49 +0100
+In-Reply-To: <20190520144437.GB24093@localhost.localdomain> (Miklos Szeredi's
+        message of "Mon, 20 May 2019 16:44:37 +0200")
+Message-ID: <87k1ekub3m.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jeff discovered that performance improves from ~375K iops to ~519K iops
-on a simple psync-write fio workload when moving the location of 'struct
-page' from the default PMEM location to DRAM. This result is surprising
-because the expectation is that 'struct page' for dax is only needed for
-third party references to dax mappings. For example, a dax-mapped buffer
-passed to another system call for direct-I/O requires 'struct page' for
-sending the request down the driver stack and pinning the page. There is
-no usage of 'struct page' for first party access to a file via
-read(2)/write(2) and friends.
+On May 20 2019, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Mon, May 20, 2019 at 04:41:37PM +0200, Miklos Szeredi wrote:
+>> On Wed, May 15, 2019 at 03:26:47PM -0400, Vivek Goyal wrote:
+>> > If fuse daemon is started with cache=3Dnever, fuse falls back to direc=
+t IO.
+>> > In that write path we don't call file_remove_privs() and that means se=
+tuid
+>> > bit is not cleared if unpriviliged user writes to a file with setuid b=
+it set.
+>> >=20
+>> > pjdfstest chmod test 12.t tests this and fails.
+>>=20
+>> I think better sulution is to tell the server if the suid bit needs to be
+>> removed, so it can do so in a race free way.
+>>=20
+>> Here's the kernel patch, and I'll reply with the libfuse patch.
+>
+> Here are the patches for libfuse and passthrough_ll.
 
-However, this "no page needed" expectation is violated by
-CONFIG_HARDENED_USERCOPY and the check_copy_size() performed in
-copy_from_iter_full_nocache() and copy_to_iter_mcsafe(). The
-check_heap_object() helper routine assumes the buffer is backed by a
-slab allocator (DRAM) page and applies some checks.  Those checks are
-invalid, dax pages do not originate from the slab, and redundant,
-dax_iomap_actor() has already validated that the I/O is within bounds.
-Specifically that routine validates that the logical file offset is
-within bounds of the file, then it does a sector-to-pfn translation
-which validates that the physical mapping is within bounds of the block
-device.
+Could you also submit them as pull requests at https://github.com/libfuse/l=
+ibfuse/pulls?
 
-Bypass additional hardened usercopy overhead and call the 'no check'
-versions of the copy_{to,from}_iter operations directly.
+Best,
+-Nikolaus
 
-Fixes: 0aed55af8834 ("x86, uaccess: introduce copy_from_iter_flushcache...")
-Cc: <stable@vger.kernel.org>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Matthew Wilcox <willy@infradead.org>
-Reported-and-tested-by: Jeff Smits <jeff.smits@intel.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Changes since v1 [1]:
-* Update the changelog to clarify which checks in dax_iomap_actor()
-  obviate the need for "hardened" checks. (Jan)
-* Update the code comment in drivers/nvdimm/pmem.c to reflect the same.
-* Collect some Acks from Kees and Jan.
+--=20
+GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
 
-[1]: https://lore.kernel.org/lkml/155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com/
-
- drivers/nvdimm/pmem.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 845c5b430cdd..c894f45e5077 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -281,16 +281,21 @@ static long pmem_dax_direct_access(struct dax_device *dax_dev,
- 	return __pmem_direct_access(pmem, pgoff, nr_pages, kaddr, pfn);
- }
- 
-+/*
-+ * Use the 'no check' versions of copy_from_iter_flushcache() and
-+ * copy_to_iter_mcsafe() to bypass HARDENED_USERCOPY overhead. Bounds
-+ * checking is handled by dax_iomap_actor()
-+ */
- static size_t pmem_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff,
- 		void *addr, size_t bytes, struct iov_iter *i)
- {
--	return copy_from_iter_flushcache(addr, bytes, i);
-+	return _copy_from_iter_flushcache(addr, bytes, i);
- }
- 
- static size_t pmem_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff,
- 		void *addr, size_t bytes, struct iov_iter *i)
- {
--	return copy_to_iter_mcsafe(addr, bytes, i);
-+	return _copy_to_iter_mcsafe(addr, bytes, i);
- }
- 
- static const struct dax_operations pmem_dax_ops = {
-
+             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
+=AB
