@@ -2,24 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBDBA2381C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 15:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51CA823821
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 15:34:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387786AbfETNe0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 May 2019 09:34:26 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:62748 "EHLO mx2.mailbox.org"
+        id S1732091AbfETNel (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 09:34:41 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:59666 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387617AbfETNeZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 May 2019 09:34:25 -0400
+        id S1728634AbfETNek (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 May 2019 09:34:40 -0400
 Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 0C83CA1039;
-        Mon, 20 May 2019 15:34:23 +0200 (CEST)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 7072950251;
+        Mon, 20 May 2019 15:34:37 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp2.mailbox.org ([80.241.60.241])
         by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id sFqK244XqxzI; Mon, 20 May 2019 15:34:20 +0200 (CEST)
+        with ESMTP id u25V7i0GyP7E; Mon, 20 May 2019 15:34:32 +0200 (CEST)
 From:   Aleksa Sarai <cyphar@cyphar.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@kernel.org>,
@@ -45,9 +45,9 @@ Cc:     Aleksa Sarai <cyphar@cyphar.com>,
         linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org
-Subject: [PATCH RFC v8 03/10] open: O_EMPTYPATH: procfs-less file descriptor re-opening
-Date:   Mon, 20 May 2019 23:32:58 +1000
-Message-Id: <20190520133305.11925-4-cyphar@cyphar.com>
+Subject: [PATCH RFC v8 04/10] namei: split out nd->dfd handling to dirfd_path_init
+Date:   Mon, 20 May 2019 23:32:59 +1000
+Message-Id: <20190520133305.11925-5-cyphar@cyphar.com>
 In-Reply-To: <20190520133305.11925-1-cyphar@cyphar.com>
 References: <20190520133305.11925-1-cyphar@cyphar.com>
 MIME-Version: 1.0
@@ -57,153 +57,143 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Userspace has made use of /proc/self/fd very liberally to allow for
-descriptors to be re-opened. There are a wide variety of uses for this
-feature, but it has always required constructing a pathname and could
-not be done without procfs mounted. The obvious solution for this is to
-extend openat(2) to have an AT_EMPTY_PATH-equivalent -- O_EMPTYPATH.
-
-Now that descriptor re-opening has been made safe through the new
-magic-link resolution restrictions, we can replicate these restrictions
-for O_EMPTYPATH. In particular, we only allow "upgrading" the file
-descriptor if the corresponding FMODE_PATH_* bit is set (or the
-FMODE_{READ,WRITE} cases for non-O_PATH file descriptors).
-
-When doing openat(O_EMPTYPATH|O_PATH), O_PATH takes precedence and
-O_EMPTYPATH is ignored. Very few users ever have a need to O_PATH
-re-open an existing file descriptor, and so accommodating them at the
-expense of further complicating O_PATH makes little sense. Ultimately,
-if users ask for this we can always add RESOLVE_EMPTY_PATH to
-resolveat(2) in the future.
+Previously, path_init's handling of *at(dfd, ...) was only done once,
+but with LOOKUP_BENEATH (and LOOKUP_IN_ROOT) we have to parse the
+initial nd->path at different times (before or after absolute path
+handling) depending on whether we have been asked to scope resolution
+within a root.
 
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- fs/fcntl.c                       |  2 +-
- fs/namei.c                       | 27 +++++++++++++++++++++++++++
- fs/open.c                        |  7 ++++++-
- include/linux/fcntl.h            |  2 +-
- include/uapi/asm-generic/fcntl.h |  5 +++++
- 5 files changed, 40 insertions(+), 3 deletions(-)
+ fs/namei.c | 103 ++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 59 insertions(+), 44 deletions(-)
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 083185174c6d..6c85c4d0c006 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -1031,7 +1031,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-+	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
- 		HWEIGHT32(
- 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
- 			__FMODE_EXEC | __FMODE_NONOTIFY));
 diff --git a/fs/namei.c b/fs/namei.c
-index 5ff61624b8f0..46c5302eea4a 100644
+index 46c5302eea4a..dc323e25d4d2 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -3599,6 +3599,31 @@ static int do_o_path(struct nameidata *nd, unsigned flags, struct file *file)
- 	return error;
+@@ -2251,9 +2251,59 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+ 	}
  }
  
-+static int do_o_emptypath(struct nameidata *nd, struct file *newfile)
++/*
++ * Configure nd->path based on the nd->dfd. This is only used as part of
++ * path_init().
++ */
++static inline int dirfd_path_init(struct nameidata *nd)
 +{
-+	int error;
-+	struct fd f;
++	if (nd->dfd == AT_FDCWD) {
++		if (nd->flags & LOOKUP_RCU) {
++			struct fs_struct *fs = current->fs;
++			unsigned seq;
 +
-+	/* We don't support AT_FDCWD since O_PATH cannot be set here. */
-+	f = fdget_raw(nd->dfd);
-+	if (!f.file)
-+		return -EBADF;
++			do {
++				seq = read_seqcount_begin(&fs->seq);
++				nd->path = fs->pwd;
++				nd->inode = nd->path.dentry->d_inode;
++				nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
++			} while (read_seqcount_retry(&fs->seq, seq));
++		} else {
++			get_fs_pwd(current->fs, &nd->path);
++			nd->inode = nd->path.dentry->d_inode;
++		}
++	} else {
++		/* Caller must check execute permissions on the starting path component */
++		struct fd f = fdget_raw(nd->dfd);
++		struct dentry *dentry;
 +
-+	/* Update opath_mask as though we went through trailing_symlink(). */
-+	if (!(f.file->f_mode & (FMODE_READ | FMODE_PATH_READ)))
-+		nd->opath_mask &= ~FMODE_PATH_READ;
-+	if (!(f.file->f_mode & (FMODE_WRITE | FMODE_PATH_WRITE)))
-+		nd->opath_mask &= ~FMODE_PATH_WRITE;
++		if (!f.file)
++			return -EBADF;
 +
-+	/* Obey the same restrictions as magic-links. */
-+	error = may_open_magiclink(f.file->f_mode, nd->acc_mode);
-+	if (!error)
-+		error = vfs_open(&f.file->f_path, newfile);
++		dentry = f.file->f_path.dentry;
 +
-+	fdput(f);
-+	return error;
++		if (*nd->name->name && unlikely(!d_can_lookup(dentry))) {
++			fdput(f);
++			return -ENOTDIR;
++		}
++
++		nd->path = f.file->f_path;
++		if (nd->flags & LOOKUP_RCU) {
++			nd->inode = nd->path.dentry->d_inode;
++			nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
++		} else {
++			path_get(&nd->path);
++			nd->inode = nd->path.dentry->d_inode;
++		}
++		fdput(f);
++	}
++	return 0;
 +}
 +
- static struct file *path_openat(struct nameidata *nd,
- 			const struct open_flags *op, unsigned flags)
+ /* must be paired with terminate_walk() */
+ static const char *path_init(struct nameidata *nd, unsigned flags)
  {
-@@ -3614,6 +3639,8 @@ static struct file *path_openat(struct nameidata *nd,
++	int error;
+ 	const char *s = nd->name->name;
  
- 	if (unlikely(file->f_flags & __O_TMPFILE)) {
- 		error = do_tmpfile(nd, flags, op, file);
-+	} else if (unlikely(file->f_flags & O_EMPTYPATH)) {
-+		error = do_o_emptypath(nd, file);
- 	} else if (unlikely(file->f_flags & O_PATH)) {
- 		error = do_o_path(nd, flags, file);
- 	} else {
-diff --git a/fs/open.c b/fs/open.c
-index c1d4f343e85f..a6ccfea899b9 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -995,6 +995,8 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
- 		lookup_flags |= LOOKUP_DIRECTORY;
- 	if (!(flags & O_NOFOLLOW))
- 		lookup_flags |= LOOKUP_FOLLOW;
-+	if (flags & O_EMPTYPATH)
-+		lookup_flags |= LOOKUP_EMPTY;
- 	op->lookup_flags = lookup_flags;
- 	return 0;
+ 	if (!*s)
+@@ -2287,52 +2337,17 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 
+ 	nd->m_seq = read_seqbegin(&mount_lock);
+ 	if (*s == '/') {
+-		set_root(nd);
+-		if (likely(!nd_jump_root(nd)))
+-			return s;
+-		return ERR_PTR(-ECHILD);
+-	} else if (nd->dfd == AT_FDCWD) {
+-		if (flags & LOOKUP_RCU) {
+-			struct fs_struct *fs = current->fs;
+-			unsigned seq;
+-
+-			do {
+-				seq = read_seqcount_begin(&fs->seq);
+-				nd->path = fs->pwd;
+-				nd->inode = nd->path.dentry->d_inode;
+-				nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
+-			} while (read_seqcount_retry(&fs->seq, seq));
+-		} else {
+-			get_fs_pwd(current->fs, &nd->path);
+-			nd->inode = nd->path.dentry->d_inode;
+-		}
+-		return s;
+-	} else {
+-		/* Caller must check execute permissions on the starting path component */
+-		struct fd f = fdget_raw(nd->dfd);
+-		struct dentry *dentry;
+-
+-		if (!f.file)
+-			return ERR_PTR(-EBADF);
+-
+-		dentry = f.file->f_path.dentry;
+-
+-		if (*s && unlikely(!d_can_lookup(dentry))) {
+-			fdput(f);
+-			return ERR_PTR(-ENOTDIR);
+-		}
+-
+-		nd->path = f.file->f_path;
+-		if (flags & LOOKUP_RCU) {
+-			nd->inode = nd->path.dentry->d_inode;
+-			nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
+-		} else {
+-			path_get(&nd->path);
+-			nd->inode = nd->path.dentry->d_inode;
+-		}
+-		fdput(f);
++		if (likely(!nd->root.mnt))
++			set_root(nd);
++		error = nd_jump_root(nd);
++		if (unlikely(error))
++			s = ERR_PTR(error);
+ 		return s;
+ 	}
++	error = dirfd_path_init(nd);
++	if (unlikely(error))
++		return ERR_PTR(error);
++	return s;
  }
-@@ -1056,14 +1058,17 @@ long do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode)
- {
- 	struct open_flags op;
- 	int fd = build_open_flags(flags, mode, &op);
-+	int empty = 0;
- 	struct filename *tmp;
  
- 	if (fd)
- 		return fd;
- 
--	tmp = getname(filename);
-+	tmp = getname_flags(filename, op.lookup_flags, &empty);
- 	if (IS_ERR(tmp))
- 		return PTR_ERR(tmp);
-+	if (!empty)
-+		op.open_flag &= ~O_EMPTYPATH;
- 
- 	fd = get_unused_fd_flags(flags);
- 	if (fd >= 0) {
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index d019df946cb2..2868ae6c8fc1 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -9,7 +9,7 @@
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_EMPTYPATH)
- 
- #ifndef force_o_largefile
- #define force_o_largefile() (!IS_ENABLED(CONFIG_ARCH_32BIT_OFF_T))
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 9dc0bf0c5a6e..307f7c414a51 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -89,6 +89,11 @@
- #define __O_TMPFILE	020000000
- #endif
- 
-+#ifndef O_EMPTYPATH
-+#define O_EMPTYPATH 040000000
-+#endif
-+
-+
- /* a horrid kludge trying to make sure that this will fail on old kernels */
- #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
- #define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)      
+ static const char *trailing_symlink(struct nameidata *nd)
 -- 
 2.21.0
 
