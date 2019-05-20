@@ -2,166 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 300E923996
+	by mail.lfdr.de (Postfix) with ESMTP id ADEBF23997
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 16:13:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390495AbfETONW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 May 2019 10:13:22 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:47714 "EHLO
+        id S2390596AbfETONY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 10:13:24 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:47720 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390094AbfETONW (ORCPT
+        with ESMTP id S2390094AbfETONY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 May 2019 10:13:22 -0400
+        Mon, 20 May 2019 10:13:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
         Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
         In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=IBZQ718yaSzpLTFYqFOqG3uwpcR0uN8Ys9by252OO1g=; b=TRLlCmXsOMAWrVwx+qlydGBawM
-        IiZ6zVw54wtcLnu31w1k3JoMh5GANsjVNaQWKelXvxxcH1LDrkcJFiYqIf/LRy5Lc5NdiIB5djJeh
-        wuH3mOU3wc9JhpCbiRYraD8rdgsOJiaHvhUu8INyS36fEkjBVVKj69/DD8ck2Gz6zGgSeFDJQJvz8
-        iQIQeZ7z960epHtt05qjOHrexgVZvNfxD5YpSjk8Ytt1OrvV/lXT3qE9E9726tCxX0eBXgWMYubx2
-        tKrpUaq2WJSlXtljNGea3eGatN4N9Lgjsys5d8mzdWEotMDYhAQXyp0/fiH/9dD5TMXI0kFDASXU5
-        gPtL5bqQ==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([2002:4e20:1eda:1:222:68ff:fe15:37dd]:42592 helo=rmk-PC.armlinux.org.uk)
+        bh=Is+DzwLvuIsL84U6TcG4XOfBnWjRyuQtkV+Iew7zdvU=; b=0iWrgzWrktJ41u3gEzm97ecAa9
+        8FJ86JQnkrMXR1g1xaH7EncAtrGHUQDtov1XZDdtk+3sd5lWC6QikIQQWewYiiQIDfwZip3GNG6b5
+        BZvJ9IamPTGnft6pRiDoE/vCjdw4UZEpWuN1qGiB8gACks55kMSSZiBkQNAfJHA6ssj1gLzPQ1JQE
+        PIiEIPyBHGJW9DlCzL4SEpYPCJxxAdM5cx/WbPQ2+nYb5BBgLO4pH3RKh6G84Ka4EG+vzJ9zUBZIA
+        QTx1FDBJW60XoXluThlSuwwi8/4K8ZOV3Kh5nNHa5xcKpxFTxcgiccbD1/aNhHwa4BHNtOo3WncFg
+        y/OtjMeA==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:33164 helo=rmk-PC.armlinux.org.uk)
         by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.90_1)
         (envelope-from <rmk@armlinux.org.uk>)
-        id 1hSj2R-0003AH-5F; Mon, 20 May 2019 15:13:15 +0100
+        id 1hSj2W-0003Ap-6A; Mon, 20 May 2019 15:13:20 +0100
 Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.82_1-5b7a7c0-XX)
         (envelope-from <rmk@armlinux.org.uk>)
-        id 1hSj2P-0000LW-RM; Mon, 20 May 2019 15:13:13 +0100
+        id 1hSj2U-0000Ld-VO; Mon, 20 May 2019 15:13:19 +0100
 In-Reply-To: <20190520141227.krqowhs3yg7hpige@shell.armlinux.org.uk>
 References: <20190520141227.krqowhs3yg7hpige@shell.armlinux.org.uk>
 From:   Russell King <rmk+kernel@armlinux.org.uk>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/7] fs/adfs: factor out object fixups
+Subject: [PATCH 4/7] fs/adfs: factor out filename fixup
 MIME-Version: 1.0
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1hSj2P-0000LW-RM@rmk-PC.armlinux.org.uk>
-Date:   Mon, 20 May 2019 15:13:13 +0100
+Message-Id: <E1hSj2U-0000Ld-VO@rmk-PC.armlinux.org.uk>
+Date:   Mon, 20 May 2019 15:13:18 +0100
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Factor out the directory object fixups, which parse the filetype and
-optionally apply the filetype suffix to the filename.
+Move the filename fixup to adfs_object_fixup() so we only have one
+implementation of this.
 
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 ---
- fs/adfs/adfs.h      |  1 +
- fs/adfs/dir.c       | 21 +++++++++++++++++++++
- fs/adfs/dir_f.c     | 17 +----------------
- fs/adfs/dir_fplus.c | 18 +-----------------
- 4 files changed, 24 insertions(+), 33 deletions(-)
+ fs/adfs/dir.c       | 13 +++++++++++++
+ fs/adfs/dir_f.c     | 26 ++++++++++----------------
+ fs/adfs/dir_fplus.c |  6 +-----
+ 3 files changed, 24 insertions(+), 21 deletions(-)
 
-diff --git a/fs/adfs/adfs.h b/fs/adfs/adfs.h
-index c76db75f02aa..1097bee65fa9 100644
---- a/fs/adfs/adfs.h
-+++ b/fs/adfs/adfs.h
-@@ -172,6 +172,7 @@ extern const struct dentry_operations adfs_dentry_operations;
- extern const struct adfs_dir_ops adfs_f_dir_ops;
- extern const struct adfs_dir_ops adfs_fplus_dir_ops;
- 
-+void adfs_object_fixup(struct adfs_dir *dir, struct object_info *obj);
- extern int adfs_dir_update(struct super_block *sb, struct object_info *obj,
- 			   int wait);
- 
 diff --git a/fs/adfs/dir.c b/fs/adfs/dir.c
-index be4b4f950500..03490f16300d 100644
+index 03490f16300d..877d5cffe9e9 100644
 --- a/fs/adfs/dir.c
 +++ b/fs/adfs/dir.c
-@@ -16,6 +16,27 @@
-  */
- static DEFINE_RWLOCK(adfs_dir_lock);
+@@ -18,6 +18,19 @@ static DEFINE_RWLOCK(adfs_dir_lock);
  
-+void adfs_object_fixup(struct adfs_dir *dir, struct object_info *obj)
-+{
-+	obj->filetype = -1;
+ void adfs_object_fixup(struct adfs_dir *dir, struct object_info *obj)
+ {
++	unsigned int i;
 +
 +	/*
-+	 * object is a file and is filetyped and timestamped?
-+	 * RISC OS 12-bit filetype is stored in load_address[19:8]
++	 * RISC OS allows the use of '/' in directory entry names, so we need
++	 * to fix these up.  '/' is typically used for FAT compatibility to
++	 * represent '.', so do the same conversion here.  In any case, '.'
++	 * will never be in a RISC OS name since it is used as the pathname
++	 * separator.
 +	 */
-+	if ((0 == (obj->attr & ADFS_NDA_DIRECTORY)) &&
-+	    (0xfff00000 == (0xfff00000 & obj->loadaddr))) {
-+		obj->filetype = (__u16) ((0x000fff00 & obj->loadaddr) >> 8);
++	for (i = 0; i < obj->name_len; i++)
++		if (obj->name[i] == '/')
++			obj->name[i] = '.';
 +
-+		/* optionally append the ,xyz hex filetype suffix */
-+		if (ADFS_SB(dir->sb)->s_ftsuffix)
-+			obj->name_len +=
-+				append_filetype_suffix(
-+					&obj->name[obj->name_len],
-+					obj->filetype);
-+	}
-+}
-+
- static int
- adfs_readdir(struct file *file, struct dir_context *ctx)
- {
+ 	obj->filetype = -1;
+ 
+ 	/*
 diff --git a/fs/adfs/dir_f.c b/fs/adfs/dir_f.c
-index 0fbfd0b04ae0..1bab896918ed 100644
+index 1bab896918ed..033884541a63 100644
 --- a/fs/adfs/dir_f.c
 +++ b/fs/adfs/dir_f.c
-@@ -216,23 +216,8 @@ adfs_dir2obj(struct adfs_dir *dir, struct object_info *obj,
- 	obj->execaddr = adfs_readval(de->direxec, 4);
- 	obj->size     = adfs_readval(de->dirlen,  4);
- 	obj->attr     = de->newdiratts;
--	obj->filetype = -1;
- 
--	/*
--	 * object is a file and is filetyped and timestamped?
--	 * RISC OS 12-bit filetype is stored in load_address[19:8]
--	 */
--	if ((0 == (obj->attr & ADFS_NDA_DIRECTORY)) &&
--		(0xfff00000 == (0xfff00000 & obj->loadaddr))) {
--		obj->filetype = (__u16) ((0x000fff00 & obj->loadaddr) >> 8);
--
--		/* optionally append the ,xyz hex filetype suffix */
--		if (ADFS_SB(dir->sb)->s_ftsuffix)
--			obj->name_len +=
--				append_filetype_suffix(
--					&obj->name[obj->name_len],
--					obj->filetype);
--	}
-+	adfs_object_fixup(dir, obj);
+@@ -41,21 +41,6 @@ static inline void adfs_writeval(unsigned char *p, int len, unsigned int val)
+ 	}
  }
  
- /*
+-static inline int adfs_readname(char *buf, char *ptr, int maxlen)
+-{
+-	char *old_buf = buf;
+-
+-	while ((unsigned char)*ptr >= ' ' && maxlen--) {
+-		if (*ptr == '/')
+-			*buf++ = '.';
+-		else
+-			*buf++ = *ptr;
+-		ptr++;
+-	}
+-
+-	return buf - old_buf;
+-}
+-
+ #define ror13(v) ((v >> 13) | (v << 19))
+ 
+ #define dir_u8(idx)				\
+@@ -210,7 +195,16 @@ static inline void
+ adfs_dir2obj(struct adfs_dir *dir, struct object_info *obj,
+ 	struct adfs_direntry *de)
+ {
+-	obj->name_len =	adfs_readname(obj->name, de->dirobname, ADFS_F_NAME_LEN);
++	unsigned int name_len;
++
++	for (name_len = 0; name_len < ADFS_F_NAME_LEN; name_len++) {
++		if (de->dirobname[name_len] < ' ')
++			break;
++
++		obj->name[name_len] = de->dirobname[name_len];
++	}
++
++	obj->name_len =	name_len;
+ 	obj->file_id  = adfs_readval(de->dirinddiscadd, 3);
+ 	obj->loadaddr = adfs_readval(de->dirload, 4);
+ 	obj->execaddr = adfs_readval(de->direxec, 4);
 diff --git a/fs/adfs/dir_fplus.c b/fs/adfs/dir_fplus.c
-index c92cfb638c18..308009d00a5b 100644
+index 308009d00a5b..97b9f28f459b 100644
 --- a/fs/adfs/dir_fplus.c
 +++ b/fs/adfs/dir_fplus.c
-@@ -197,23 +197,7 @@ adfs_fplus_getnext(struct adfs_dir *dir, struct object_info *obj)
- 		if (obj->name[i] == '/')
- 			obj->name[i] = '.';
+@@ -169,7 +169,7 @@ adfs_fplus_getnext(struct adfs_dir *dir, struct object_info *obj)
+ 		(struct adfs_bigdirheader *) dir->bh_fplus[0]->b_data;
+ 	struct adfs_bigdirentry bde;
+ 	unsigned int offset;
+-	int i, ret = -ENOENT;
++	int ret = -ENOENT;
  
--	obj->filetype = -1;
+ 	if (dir->pos >= le32_to_cpu(h->bigdirentries))
+ 		goto out;
+@@ -193,10 +193,6 @@ adfs_fplus_getnext(struct adfs_dir *dir, struct object_info *obj)
+ 	offset += le32_to_cpu(bde.bigdirobnameptr);
+ 
+ 	dir_memcpy(dir, offset, obj->name, obj->name_len);
+-	for (i = 0; i < obj->name_len; i++)
+-		if (obj->name[i] == '/')
+-			obj->name[i] = '.';
 -
--	/*
--	 * object is a file and is filetyped and timestamped?
--	 * RISC OS 12-bit filetype is stored in load_address[19:8]
--	 */
--	if ((0 == (obj->attr & ADFS_NDA_DIRECTORY)) &&
--		(0xfff00000 == (0xfff00000 & obj->loadaddr))) {
--		obj->filetype = (__u16) ((0x000fff00 & obj->loadaddr) >> 8);
--
--		/* optionally append the ,xyz hex filetype suffix */
--		if (ADFS_SB(dir->sb)->s_ftsuffix)
--			obj->name_len +=
--				append_filetype_suffix(
--					&obj->name[obj->name_len],
--					obj->filetype);
--	}
-+	adfs_object_fixup(dir, obj);
+ 	adfs_object_fixup(dir, obj);
  
  	dir->pos += 1;
- 	ret = 0;
 -- 
 2.7.4
 
