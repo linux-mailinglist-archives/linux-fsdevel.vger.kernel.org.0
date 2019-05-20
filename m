@@ -2,91 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D605622A80
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 05:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CCE822B3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 07:41:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730273AbfETDrn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 May 2019 23:47:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56734 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726014AbfETDrn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 May 2019 23:47:43 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CC0F9308A963;
-        Mon, 20 May 2019 03:47:42 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B0F8E611A1;
-        Mon, 20 May 2019 03:47:42 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 786E518089C8;
-        Mon, 20 May 2019 03:47:42 +0000 (UTC)
-Date:   Sun, 19 May 2019 23:47:42 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Jakub =?utf-8?Q?Staro=C5=84?= <jstaron@google.com>
-Cc:     cohuck@redhat.com, jack@suse.cz, kvm@vger.kernel.org,
-        mst@redhat.com, jasowang@redhat.com, david@fromorbit.com,
-        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
-        adilger kernel <adilger.kernel@dilger.ca>, smbarber@google.com,
-        zwisler@kernel.org, aarcange@redhat.com,
-        dave jiang <dave.jiang@intel.com>, linux-nvdimm@lists.01.org,
-        vishal l verma <vishal.l.verma@intel.com>, david@redhat.com,
-        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
-        jmoyer@redhat.com, linux-ext4@vger.kernel.org, lenb@kernel.org,
-        kilobyte@angband.pl, riel@surriel.com,
-        yuval shaia <yuval.shaia@oracle.com>, stefanha@redhat.com,
-        imammedo@redhat.com, dan j williams <dan.j.williams@intel.com>,
-        lcapitulino@redhat.com, kwolf@redhat.com, nilal@redhat.com,
-        tytso@mit.edu, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        darrick wong <darrick.wong@oracle.com>, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, pbonzini@redhat.com
-Message-ID: <68418388.29774907.1558324062441.JavaMail.zimbra@redhat.com>
-In-Reply-To: <1902045958.29774859.1558323977950.JavaMail.zimbra@redhat.com>
-References: <20190514145422.16923-1-pagupta@redhat.com> <20190514145422.16923-3-pagupta@redhat.com> <c06514fd-8675-ba74-4b7b-ff0eb4a91605@google.com> <1954162775.29408078.1558071358974.JavaMail.zimbra@redhat.com> <5e27fa73-53f5-007a-e0c1-f32f83e5764f@google.com> <1902045958.29774859.1558323977950.JavaMail.zimbra@redhat.com>
-Subject: Re: [Qemu-devel] [PATCH v9 2/7] virtio-pmem: Add virtio pmem driver
+        id S1725763AbfETFlP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 01:41:15 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:33339 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725613AbfETFlP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 May 2019 01:41:15 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 5EE8240D7;
+        Mon, 20 May 2019 01:41:13 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Mon, 20 May 2019 01:41:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=0r/Sn1Y0gO0Oyf6yW
+        SFKUDRK3ejus11HRZy7eGnGflw=; b=rdmJSE8h9XyUOGAIv/XSalLdgxvzqP7Zs
+        qzNQ2b2J62DI0tLAstwp0mU/KAivM79ira4ir6eU9aE1T0v4V1+hZBza6J95Yrr6
+        fch2eFMr84W3Q66XoiUTtficSc0IsxQdA/QOVd7meKJfNJwMhX+792bI5YbhuPvT
+        aoMO/SDU7qc0THRuY+RFStolsfmr6bFC00L+Pm05Jbcwz34Mct9+6CTRAb36AQ8L
+        e9FPLLGDtJMm1RXv3AGn9YVMZ4Y6tsVYlnqbCVHdP80DZrTJQ9/0ZIFsO0uODSHT
+        nlkU5Mu+Wc/F+vHpy18HLHzP31r0fhvG0TCCRiGwxKURtYYBK/t8Q==
+X-ME-Sender: <xms:9T3iXHLIt4vNmKYs0VNUf3XtYk2meotQ7mfiDUh6Jkd9d_B7QRoqIA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddtjedguddtudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepfdfvohgsihhn
+    ucevrdcujfgrrhguihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhgqeenucffoh
+    hmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduvdegrdduieelrdduheeirddvtdef
+    necurfgrrhgrmhepmhgrihhlfhhrohhmpehtohgsihhnsehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:9T3iXCxHOeLs0Brh--rNvBlGvfP0gl1TFmfFykbobJzlrDeYdfnxqg>
+    <xmx:9T3iXK4hgcnMZ3pVD3MYg7ejVQfn5Pevh06iZr3mDZzvk1OJ1kGLlg>
+    <xmx:9T3iXKsQxmRfae1PKOqtD62SZIgSspcMsEg-nosXpSyaO7Lt8I7Lhg>
+    <xmx:-T3iXARXSH-QbhMw9vVJXU1BmnRC9M8sTH4QG1AEFtiGYLH8faRhUg>
+Received: from eros.localdomain (124-169-156-203.dyn.iinet.net.au [124.169.156.203])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 05EF080061;
+        Mon, 20 May 2019 01:41:02 -0400 (EDT)
+From:   "Tobin C. Harding" <tobin@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Roman Gushchin <guro@fb.com>,
+        Alexander Viro <viro@ftp.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Pekka Enberg <penberg@cs.helsinki.fi>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Christopher Lameter <cl@linux.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Waiman Long <longman@redhat.com>,
+        Tycho Andersen <tycho@tycho.ws>, Theodore Ts'o <tytso@mit.edu>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Chinner <david@fromorbit.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        Rik van Riel <riel@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v5 00/16] Slab Movable Objects (SMO)
+Date:   Mon, 20 May 2019 15:40:01 +1000
+Message-Id: <20190520054017.32299-1-tobin@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.42, 10.4.195.12]
-Thread-Topic: virtio-pmem: Add virtio pmem driver
-Thread-Index: 4LLaKD2mAqtUZ1AopBm+Wwx4LVVjgdYM8BfX
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 20 May 2019 03:47:43 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi,
 
-> 
-> 
-> > On 5/16/19 10:35 PM, Pankaj Gupta wrote:
-> > > Can I take it your reviewed/acked-by? or tested-by tag? for the virtio
-> > > patch :)I don't feel that I have enough expertise to give the reviewed-by
-> > > tag, but you can
-> > take my acked-by + tested-by.
-> > 
-> > Acked-by: Jakub Staron <jstaron@google.com>
-> > Tested-by: Jakub Staron <jstaron@google.com>
-> > 
-> > No kernel panics/stalls encountered during testing this patches (v9) with
-> > QEMU + xfstests.
-> 
-> Thank you for testing and confirming the results. I will add your tested &
-> acked-by in v10.
-> 
-> > Some CPU stalls encountered while testing with crosvm instead of QEMU with
-> > xfstests
-> > (test generic/464) but no repro for QEMU, so the fault may be on the side
-> > of
-> > crosvm.
-> 
-> yes, looks like crosvm related as we did not see any of this in my and your
-> testing with Qemu.
+Another iteration of the SMO patch set, updates to this version are
+restricted to the XArray patches (#9 and #10 and tested with module
+implemented in #11).
 
-Also, they don't seem to be related with virtio-pmem.
+Applies on top of Linus' tree (tag: v5.2-rc1).
 
-Thanks,
-Pankaj
+This is a patch set implementing movable objects within the SLUB
+allocator.  This is work based on Christopher Lameter's patch set:
+
+ https://lore.kernel.org/patchwork/project/lkml/list/?series=377335
+
+The original code logic is from that set and implemented by Christopher.
+Clean up, refactoring, documentation, and additional features by myself.
+Responsibility for any bugs remaining falls solely with myself.
+
+I am intending on sending a non-RFC version soon after this one (if
+XArray stuff is ok).  If anyone has any objects with SMO in general
+please yell at me now.
+
+Changes to this version:
+
+Patch XArray to use a separate slab cache.  Currently the radix tree and
+XArray use the same slab cache.  Radix tree nodes can not be moved but
+XArray nodes can.
+
+Matthew,
+
+Does this fit in ok with your plans for the XArray and radix tree?  I
+don't really like the function names used here or the init function name
+(xarray_slabcache_init()).  If there is a better way to do this please
+mercilessly correct me :)
+
+
+Thanks for looking at this,
+Tobin.
+
+
+Tobin C. Harding (16):
+  slub: Add isolate() and migrate() methods
+  tools/vm/slabinfo: Add support for -C and -M options
+  slub: Sort slab cache list
+  slub: Slab defrag core
+  tools/vm/slabinfo: Add remote node defrag ratio output
+  tools/vm/slabinfo: Add defrag_used_ratio output
+  tools/testing/slab: Add object migration test module
+  tools/testing/slab: Add object migration test suite
+  lib: Separate radix_tree_node and xa_node slab cache
+  xarray: Implement migration function for xa_node objects
+  tools/testing/slab: Add XArray movable objects tests
+  slub: Enable moving objects to/from specific nodes
+  slub: Enable balancing slabs across nodes
+  dcache: Provide a dentry constructor
+  dcache: Implement partial shrink via Slab Movable Objects
+  dcache: Add CONFIG_DCACHE_SMO
+
+ Documentation/ABI/testing/sysfs-kernel-slab |  14 +
+ fs/dcache.c                                 | 110 ++-
+ include/linux/slab.h                        |  71 ++
+ include/linux/slub_def.h                    |  10 +
+ include/linux/xarray.h                      |   3 +
+ init/main.c                                 |   2 +
+ lib/radix-tree.c                            |   2 +-
+ lib/xarray.c                                | 109 ++-
+ mm/Kconfig                                  |  14 +
+ mm/slab_common.c                            |   2 +-
+ mm/slub.c                                   | 819 ++++++++++++++++++--
+ tools/testing/slab/Makefile                 |  10 +
+ tools/testing/slab/slub_defrag.c            | 567 ++++++++++++++
+ tools/testing/slab/slub_defrag.py           | 451 +++++++++++
+ tools/testing/slab/slub_defrag_xarray.c     | 211 +++++
+ tools/vm/slabinfo.c                         |  51 +-
+ 16 files changed, 2343 insertions(+), 103 deletions(-)
+ create mode 100644 tools/testing/slab/Makefile
+ create mode 100644 tools/testing/slab/slub_defrag.c
+ create mode 100755 tools/testing/slab/slub_defrag.py
+ create mode 100644 tools/testing/slab/slub_defrag_xarray.c
+
+-- 
+2.21.0
+
