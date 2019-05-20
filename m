@@ -2,220 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CD3122FDF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 11:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7528222FE8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 11:12:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730354AbfETJJt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 May 2019 05:09:49 -0400
-Received: from master.debian.org ([82.195.75.110]:47354 "EHLO
-        master.debian.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbfETJJt (ORCPT
+        id S1731201AbfETJKx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 05:10:53 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37235 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726169AbfETJKx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 May 2019 05:09:49 -0400
-X-Greylist: delayed 468 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 05:09:47 EDT
-Received: from pabs by master.debian.org with local (Exim 4.89)
-        (envelope-from <pabs@master.debian.org>)
-        id 1hSeAn-0004YE-6T; Mon, 20 May 2019 09:01:33 +0000
-From:   Paul Wise <pabs3@bonedaddy.net>
-To:     Neil Horman <nhorman@tuxdriver.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Paul Wise <pabs3@bonedaddy.net>, Jakub Wilk <jwilk@jwilk.net>
-Subject: [PATCH] coredump: Split pipe command whitespace before expanding template
-Date:   Mon, 20 May 2019 17:01:15 +0800
-Message-Id: <20190520090115.11276-1-pabs3@bonedaddy.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <c8b7ecb8508895bf4adb62a748e2ea2c71854597.camel@bonedaddy.net>
-References: <c8b7ecb8508895bf4adb62a748e2ea2c71854597.camel@bonedaddy.net>
+        Mon, 20 May 2019 05:10:53 -0400
+Received: by mail-yw1-f66.google.com with SMTP id 186so5573443ywo.4;
+        Mon, 20 May 2019 02:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WO0nb0i3TlfUEi3Ta1dEHoPzpd1bYnb4mrBSpQaLWfM=;
+        b=Xv0hYodwAou2zdmZxFJFkZxUeVf2epBSGZOWi2TyQkrLXK8DUAYF+ifb6tHe6uP1uJ
+         WpIFKZqzTWDvwDlxDgVUR8RUElqV6b5mzhbhGUonKzOHzxIGbAfME2G07FUKU2zb8XCl
+         kT1nIN4zh1LvcCTOmQeYmbJG6jMj8IX+OyaJ8uYq9msIUvr1n6BVU/Sg7iEt7A4rJZP6
+         l26TIYtOAS+ByK2yoLoRUFW6ywzCkUOPdHMh3A2VoVhAUIp59Ikd0eZefAk8OcUUmC+J
+         3YaaybhHqRgI1WA7XetpaCtWYUokDERoaOGtAXYMBoxHzFRbsI9JbgMJv2bUzKnpSM0z
+         P/NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WO0nb0i3TlfUEi3Ta1dEHoPzpd1bYnb4mrBSpQaLWfM=;
+        b=eYOrWPR030iZWhZsRO0nHPUDOy0pzDriqNlX+sKWBZby3Ji9YGGc87StT9RnAQ/TXO
+         AagjbZVMpq26aOytdZYrIc7WuZ0WdocDRLEFkCqyC7kXZfR+Oh0jZhOlMfknZEmujUO0
+         kJA63vcExrdeQqXHTykQK6sis2Oh3sgIKvm8u8mOPelb8/vI0xfbhu2Z5+0uW7mKmAxI
+         Hm/vmTIHzDXVibEGk1n6ufvEMwuwr70B9q5kK8YsKNy1KutuQM8TaCTpgOs++Ohur4v2
+         R8AZNt7cXviajV4v3ilLFMJZYUtSn5cM2TYfEbq8RRk/JXFpuw51pmYPAQpF+XGQ+QlA
+         QsKA==
+X-Gm-Message-State: APjAAAWDxyTf561eOQec2t30li/AH1aVq3RHTkjaqjfTQV8KpfSwcfcG
+        G3MmSfn7vxLwSDhD2eCoQFldiaHjGjR9oxu2QalVkUpS
+X-Google-Smtp-Source: APXvYqx9mTAu+qQpn6hP0ibWMhR1UvqszSsJ9fuDVbqrSlIwIjiQ3UEY9jsYVs6CD9h8EHaHcN+sZy7TcOhwoQejgec=
+X-Received: by 2002:a81:3344:: with SMTP id z65mr2829786ywz.294.1558343451573;
+ Mon, 20 May 2019 02:10:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181203083416.28978-1-david@fromorbit.com> <20181203083416.28978-2-david@fromorbit.com>
+ <CAOQ4uxhOQY8M5rbgHKREN5qpeDGHv0-xK3r37Lj6XfqFoE4qjg@mail.gmail.com>
+ <20181204151332.GA32245@infradead.org> <20181204212948.GO6311@dastard>
+ <CAN-5tyGU=y5JO5UNcmn3rX1gRyK_UxjQvQ+kCsP34_NT2-mQ_A@mail.gmail.com> <20181204223102.GR6311@dastard>
+In-Reply-To: <20181204223102.GR6311@dastard>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 20 May 2019 12:10:39 +0300
+Message-ID: <CAOQ4uxhPoJ2vOwGN7PFWkD6+_zdTeMAhT4KphnyktaQ23zqvBw@mail.gmail.com>
+Subject: Re: [PATCH 01/11] vfs: copy_file_range source range over EOF should fail
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        ceph-devel@vger.kernel.org, CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Save the offsets of the start of each argument to avoid having to
-update pointers to each argument after every corename krealloc and
-to avoid having to duplicate the memory for the dump command.
+On Wed, Dec 5, 2018 at 12:31 AM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Tue, Dec 04, 2018 at 04:47:18PM -0500, Olga Kornievskaia wrote:
+> > On Tue, Dec 4, 2018 at 4:35 PM Dave Chinner <david@fromorbit.com> wrote:
+> > >
+> > > On Tue, Dec 04, 2018 at 07:13:32AM -0800, Christoph Hellwig wrote:
+> > > > On Mon, Dec 03, 2018 at 02:46:20PM +0200, Amir Goldstein wrote:
+> > > > > > From: Dave Chinner <dchinner@redhat.com>
+> > > > > >
+> > > > > > The man page says:
+> > > > > >
+> > > > > > EINVAL Requested range extends beyond the end of the source file
+> > > > > >
+> > > > > > But the current behaviour is that copy_file_range does a short
+> > > > > > copy up to the source file EOF. Fix the kernel behaviour to match
+> > > > > > the behaviour described in the man page.
+> > > >
+> > > > I think the behavior implemented is a lot more useful than the one
+> > > > documented..
+> > >
+> > > The current behaviour is really nasty. Because copy_file_range() can
+> > > return short copies, the caller has to implement a loop to ensure
+> > > the range hey want get copied.  When the source range you are
+> > > trying to copy overlaps source EOF, this loop:
+> > >
+> > >         while (len > 0) {
+> > >                 ret = copy_file_range(... len ...)
+> > >                 ...
+> > >                 off_in += ret;
+> > >                 off_out += ret;
+> > >                 len -= ret;
+> > >         }
+> > >
+> > > Currently the fallback code copies up to the end of the source file
+> > > on the first copy and then fails the second copy with EINVAL because
+> > > the source range is now completely beyond EOF.
+> > >
+> > > So, from an application perspective, did the copy succeed or did it
+> > > fail?
+> > >
+> > > Existing tools that exercise copy_file_range (like xfs_io) consider
+> > > this a failure, because the second copy_file_range() call returns
+> > > EINVAL and not some "there is no more to copy" marker like read()
+> > > returning 0 bytes when attempting to read beyond EOF.
+> > >
+> > > IOWs, we cannot tell the difference between a real error and a short
+> > > copy because the input range spans EOF and it was silently
+> > > shortened. That's the API problem we need to fix here - the existing
+> > > behaviour is really crappy for applications. Erroring out
+> > > immmediately is one solution, and it's what the man page says should
+> > > happen so that is what I implemented.
+> > >
+> > > Realistically, though, I think an attempt to read beyond EOF for the
+> > > copy should result in behaviour like read() (i.e. return 0 bytes),
+> > > not EINVAL. The existing behaviour needs to change, though.
+> >
+> > There are two checks to consider
+> > 1. pos_in >= EOF should return EINVAL
+> > 2. however what's perhaps should be relaxed is pos_in+len >= EOF
+> > should return a short copy.
+> >
+> > Having check#1 enforced allows to us to differentiate between a real
+> > error and a short copy.
+>
+> That's what the code does right now and *exactly what I'm trying to
+> fix* because it EINVAL is ambiguous and not an indicator that we've
+> reached the end of the source file. EINVAL can indicate several
+> different errors, so it really has to be treated as a "copy failed"
+> error by applications.
+>
+> Have a look at read/pread() - they return 0 in this case to indicate
+> a short read, and the value of zero is explicitly defined as meaning
+> "read position is beyond EOF".  Applications know straight away that
+> there is no more data to be read and there was no error, so can
+> terminate on a successful short read.
+>
+> We need to allow applications to terminate copy loops on a
+> successful short copy. IOWs, applications need to either:
+>
+>         - get an immediate error saying the range is invalid rather
+>           than doing a short copy (as per the man page); or
+>         - have an explicit marker to say "no more data to be copied"
+>
+> Applications need the "no more data to copy" case to be explicit and
+> unambiguous so they can make sane decisions about whether a short
+> copy was successful because the file was shorter than expected or
+> whether a short copy was a result of a real error being encountered.
+> The current behaviour is largely unusable for applications because
+> they have to guess at the reason for EINVAL part way through a
+> copy....
+>
 
-Executable names containing spaces were previously being expanded from
-%e or %E and then split in the middle of the filename. This is incorrect
-behaviour since an argument list can represent arguments with spaces.
+Dave,
 
-The splitting could lead to extra arguments being passed to the core dump
-handler that it might have interpreted as options or ignored completely.
+I went a head and implemented the desired behavior.
+However, while testing I observed that the desired behavior is already
+the existing behavior. For example, trying to copy 10 bytes from a 2 bytes file,
+xfs_io copy loop ends as expected:
+copy_file_range(4, [0], 3, [0], 10, 0)  = 2
+copy_file_range(4, [2], 3, [2], 8, 0)   = 0
 
-Core dump handlers that are not aware of this Linux kernel issue will be
-using %e or %E without considering that it may be split and so they will
-be vulnerable to processes with spaces in their names breaking their
-argument list. If their internals are otherwise well written, such as
-if they are written in shell but quote arguments, they will work better
-after this change than before. If they are not well written, then there
-is a slight chance of breakage depending on the details of the code but
-they will already be fairly broken by the split filenames.
+This was tested on ext4 and xfs with reflink on recent kernel as well as on
+v4.20-rc1 (era of original patch set).
 
-Core dump handlers that are aware of this Linux kernel issue will be
-placing %e or %E as the last item in their core_pattern and then
-aggregating all of the remaining arguments into one, separated by
-spaces. Alternatively they will be obtaining the filename via other
-methods. Both of these will be compatible with the new arrangement.
+Where and how did you observe the EINVAL behavior described above?
+(besides man page that is). There are even xfstests (which you modified)
+that verify the return 0 for past EOF behavior.
 
-A side effect from this change is that unknown template types
-(for example %z) result in an empty argument to the dump handler
-instead of the argument being dropped. This is a desired change as:
+For now, I am just dropping this patch from the patch series.
+Let me know if I am missing something.
 
-It is easier for dump handlers to process empty arguments than dropped
-ones, especially if they are written in shell or don't pass each template
-item with a preceding command-line option in order to differentiate
-between individual template types. Most core_patterns in the wild do not
-use options so they can confuse different template types (especially
-numeric ones) if an earlier one gets dropped in old kernels. If the
-kernel introduces a new template type and a core_pattern uses it, the
-core dump handler might not expect that the argument can be dropped in
-old kernels.
-
-For example, this can result in security issues when %d is dropped in old
-kernels. This happened with the corekeeper package in Debian and resulted
-in the interface between corekeeper and Linux having to be rewritten to
-use command-line options to differentiate between template types.
-
-The core_pattern for most core dump handlers is written by the handler
-author who would generally not insert unknown template types so this
-change should be compatible with all the core dump handlers that exist.
-
-Reported-by: Jakub Wilk <jwilk@jwilk.net>
-Reported-in: <20190312145043.jxjoj66kqssptolr@jwilk.net>
-Reported-by: Paul Wise <pabs3@bonedaddy.net>
-Reported-in: <c8b7ecb8508895bf4adb62a748e2ea2c71854597.camel@bonedaddy.net>
-Suggestions-from: Jakub Wilk <jwilk@jwilk.net>
-Signed-off-by: Paul Wise <pabs3@bonedaddy.net>
-See-also: https://bugs.debian.org/924398
-Fixes: commit 74aadce986052f20088c2678f589ea0e8d3a4b59
----
- fs/coredump.c | 45 ++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 40 insertions(+), 5 deletions(-)
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index e42e17e55bfd..40c440efb5f4 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -7,6 +7,7 @@
- #include <linux/stat.h>
- #include <linux/fcntl.h>
- #include <linux/swap.h>
-+#include <linux/ctype.h>
- #include <linux/string.h>
- #include <linux/init.h>
- #include <linux/pagemap.h>
-@@ -187,11 +188,13 @@ static int cn_print_exe_file(struct core_name *cn)
-  * name into corename, which must have space for at least
-  * CORENAME_MAX_SIZE bytes plus one byte for the zero terminator.
-  */
--static int format_corename(struct core_name *cn, struct coredump_params *cprm)
-+static int format_corename(struct core_name *cn, struct coredump_params *cprm,
-+			   size_t **argv, int *argc)
- {
- 	const struct cred *cred = current_cred();
- 	const char *pat_ptr = core_pattern;
- 	int ispipe = (*pat_ptr == '|');
-+	bool was_space = false;
- 	int pid_in_pattern = 0;
- 	int err = 0;
- 
-@@ -201,12 +204,36 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm)
- 		return -ENOMEM;
- 	cn->corename[0] = '\0';
- 
--	if (ispipe)
-+	if (ispipe) {
-+		/* sizeof(core_pattern) / 2 is the maximum number of args. */
-+		int argvs = sizeof(core_pattern) / 2;
-+		(*argvs) = kmalloc_array(argvs, sizeof(**argv), GFP_KERNEL);
-+		if (!(*argv))
-+			return -ENOMEM;
-+		(*argv)[(*argc)++] = 0;
- 		++pat_ptr;
-+	}
- 
- 	/* Repeat as long as we have more pattern to process and more output
- 	   space */
- 	while (*pat_ptr) {
-+		/*
-+		 * Split on spaces before doing template expansion so that
-+		 * %e and %E don't get split if they have spaces in them
-+		 */
-+		if (ispipe) {
-+			if (isspace(*pat_ptr)) {
-+				was_space = true;
-+				pat_ptr++;
-+				continue;
-+			} else if (was_space) {
-+				was_space = false;
-+				err = cn_printf(cn, "%c", '\0');
-+				if (err)
-+					return err;
-+				(*argv)[(*argc)++] = cn->used;
-+			}
-+		}
- 		if (*pat_ptr != '%') {
- 			err = cn_printf(cn, "%c", *pat_ptr++);
- 		} else {
-@@ -546,6 +573,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 	struct cred *cred;
- 	int retval = 0;
- 	int ispipe;
-+	size_t *argv = NULL;
-+	int argc = 0;
- 	struct files_struct *displaced;
- 	/* require nonrelative corefile path and be extra careful */
- 	bool need_suid_safe = false;
-@@ -592,9 +621,10 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 
- 	old_cred = override_creds(cred);
- 
--	ispipe = format_corename(&cn, &cprm);
-+	ispipe = format_corename(&cn, &cprm, &argv, &argc);
- 
- 	if (ispipe) {
-+		int argi;
- 		int dump_count;
- 		char **helper_argv;
- 		struct subprocess_info *sub_info;
-@@ -637,12 +667,16 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 			goto fail_dropcount;
- 		}
- 
--		helper_argv = argv_split(GFP_KERNEL, cn.corename, NULL);
-+		helper_argv = kmalloc_array(argc + 1, sizeof(*helper_argv),
-+					    GFP_KERNEL);
- 		if (!helper_argv) {
- 			printk(KERN_WARNING "%s failed to allocate memory\n",
- 			       __func__);
- 			goto fail_dropcount;
- 		}
-+		for (argi = 0; argi < argc; argi++)
-+			helper_argv[argi] = cn.corename + argv[argi];
-+		helper_argv[argi] = NULL;
- 
- 		retval = -ENOMEM;
- 		sub_info = call_usermodehelper_setup(helper_argv[0],
-@@ -652,7 +686,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 			retval = call_usermodehelper_exec(sub_info,
- 							  UMH_WAIT_EXEC);
- 
--		argv_free(helper_argv);
-+		kfree(helper_argv);
- 		if (retval) {
- 			printk(KERN_INFO "Core dump to |%s pipe failed\n",
- 			       cn.corename);
-@@ -766,6 +800,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 	if (ispipe)
- 		atomic_dec(&core_dump_count);
- fail_unlock:
-+	kfree(argv);
- 	kfree(cn.corename);
- 	coredump_finish(mm, core_dumped);
- 	revert_creds(old_cred);
--- 
-2.20.1
-
+Thanks,
+Amir.
