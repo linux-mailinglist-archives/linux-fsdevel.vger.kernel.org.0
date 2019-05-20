@@ -2,179 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7528222FE8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 11:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B42F22FF9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 May 2019 11:16:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731201AbfETJKx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 May 2019 05:10:53 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:37235 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbfETJKx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 May 2019 05:10:53 -0400
-Received: by mail-yw1-f66.google.com with SMTP id 186so5573443ywo.4;
-        Mon, 20 May 2019 02:10:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WO0nb0i3TlfUEi3Ta1dEHoPzpd1bYnb4mrBSpQaLWfM=;
-        b=Xv0hYodwAou2zdmZxFJFkZxUeVf2epBSGZOWi2TyQkrLXK8DUAYF+ifb6tHe6uP1uJ
-         WpIFKZqzTWDvwDlxDgVUR8RUElqV6b5mzhbhGUonKzOHzxIGbAfME2G07FUKU2zb8XCl
-         kT1nIN4zh1LvcCTOmQeYmbJG6jMj8IX+OyaJ8uYq9msIUvr1n6BVU/Sg7iEt7A4rJZP6
-         l26TIYtOAS+ByK2yoLoRUFW6ywzCkUOPdHMh3A2VoVhAUIp59Ikd0eZefAk8OcUUmC+J
-         3YaaybhHqRgI1WA7XetpaCtWYUokDERoaOGtAXYMBoxHzFRbsI9JbgMJv2bUzKnpSM0z
-         P/NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WO0nb0i3TlfUEi3Ta1dEHoPzpd1bYnb4mrBSpQaLWfM=;
-        b=eYOrWPR030iZWhZsRO0nHPUDOy0pzDriqNlX+sKWBZby3Ji9YGGc87StT9RnAQ/TXO
-         AagjbZVMpq26aOytdZYrIc7WuZ0WdocDRLEFkCqyC7kXZfR+Oh0jZhOlMfknZEmujUO0
-         kJA63vcExrdeQqXHTykQK6sis2Oh3sgIKvm8u8mOPelb8/vI0xfbhu2Z5+0uW7mKmAxI
-         Hm/vmTIHzDXVibEGk1n6ufvEMwuwr70B9q5kK8YsKNy1KutuQM8TaCTpgOs++Ohur4v2
-         R8AZNt7cXviajV4v3ilLFMJZYUtSn5cM2TYfEbq8RRk/JXFpuw51pmYPAQpF+XGQ+QlA
-         QsKA==
-X-Gm-Message-State: APjAAAWDxyTf561eOQec2t30li/AH1aVq3RHTkjaqjfTQV8KpfSwcfcG
-        G3MmSfn7vxLwSDhD2eCoQFldiaHjGjR9oxu2QalVkUpS
-X-Google-Smtp-Source: APXvYqx9mTAu+qQpn6hP0ibWMhR1UvqszSsJ9fuDVbqrSlIwIjiQ3UEY9jsYVs6CD9h8EHaHcN+sZy7TcOhwoQejgec=
-X-Received: by 2002:a81:3344:: with SMTP id z65mr2829786ywz.294.1558343451573;
- Mon, 20 May 2019 02:10:51 -0700 (PDT)
+        id S1731843AbfETJQC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 05:16:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37692 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730677AbfETJQC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 May 2019 05:16:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BE23FAE4B;
+        Mon, 20 May 2019 09:15:59 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id F16311E3C5F; Mon, 20 May 2019 11:15:58 +0200 (CEST)
+Date:   Mon, 20 May 2019 11:15:58 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
+        linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, axboe@kernel.dk, jack@suse.cz,
+        jmoyer@redhat.com, amakhalov@vmware.com, anishs@vmware.com,
+        srivatsab@vmware.com
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+Message-ID: <20190520091558.GC2172@quack2.suse.cz>
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
+ <20190518192847.GB14277@mit.edu>
 MIME-Version: 1.0
-References: <20181203083416.28978-1-david@fromorbit.com> <20181203083416.28978-2-david@fromorbit.com>
- <CAOQ4uxhOQY8M5rbgHKREN5qpeDGHv0-xK3r37Lj6XfqFoE4qjg@mail.gmail.com>
- <20181204151332.GA32245@infradead.org> <20181204212948.GO6311@dastard>
- <CAN-5tyGU=y5JO5UNcmn3rX1gRyK_UxjQvQ+kCsP34_NT2-mQ_A@mail.gmail.com> <20181204223102.GR6311@dastard>
-In-Reply-To: <20181204223102.GR6311@dastard>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 20 May 2019 12:10:39 +0300
-Message-ID: <CAOQ4uxhPoJ2vOwGN7PFWkD6+_zdTeMAhT4KphnyktaQ23zqvBw@mail.gmail.com>
-Subject: Re: [PATCH 01/11] vfs: copy_file_range source range over EOF should fail
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Olga Kornievskaia <olga.kornievskaia@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        ceph-devel@vger.kernel.org, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190518192847.GB14277@mit.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 12:31 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Tue, Dec 04, 2018 at 04:47:18PM -0500, Olga Kornievskaia wrote:
-> > On Tue, Dec 4, 2018 at 4:35 PM Dave Chinner <david@fromorbit.com> wrote:
-> > >
-> > > On Tue, Dec 04, 2018 at 07:13:32AM -0800, Christoph Hellwig wrote:
-> > > > On Mon, Dec 03, 2018 at 02:46:20PM +0200, Amir Goldstein wrote:
-> > > > > > From: Dave Chinner <dchinner@redhat.com>
-> > > > > >
-> > > > > > The man page says:
-> > > > > >
-> > > > > > EINVAL Requested range extends beyond the end of the source file
-> > > > > >
-> > > > > > But the current behaviour is that copy_file_range does a short
-> > > > > > copy up to the source file EOF. Fix the kernel behaviour to match
-> > > > > > the behaviour described in the man page.
-> > > >
-> > > > I think the behavior implemented is a lot more useful than the one
-> > > > documented..
-> > >
-> > > The current behaviour is really nasty. Because copy_file_range() can
-> > > return short copies, the caller has to implement a loop to ensure
-> > > the range hey want get copied.  When the source range you are
-> > > trying to copy overlaps source EOF, this loop:
-> > >
-> > >         while (len > 0) {
-> > >                 ret = copy_file_range(... len ...)
-> > >                 ...
-> > >                 off_in += ret;
-> > >                 off_out += ret;
-> > >                 len -= ret;
-> > >         }
-> > >
-> > > Currently the fallback code copies up to the end of the source file
-> > > on the first copy and then fails the second copy with EINVAL because
-> > > the source range is now completely beyond EOF.
-> > >
-> > > So, from an application perspective, did the copy succeed or did it
-> > > fail?
-> > >
-> > > Existing tools that exercise copy_file_range (like xfs_io) consider
-> > > this a failure, because the second copy_file_range() call returns
-> > > EINVAL and not some "there is no more to copy" marker like read()
-> > > returning 0 bytes when attempting to read beyond EOF.
-> > >
-> > > IOWs, we cannot tell the difference between a real error and a short
-> > > copy because the input range spans EOF and it was silently
-> > > shortened. That's the API problem we need to fix here - the existing
-> > > behaviour is really crappy for applications. Erroring out
-> > > immmediately is one solution, and it's what the man page says should
-> > > happen so that is what I implemented.
-> > >
-> > > Realistically, though, I think an attempt to read beyond EOF for the
-> > > copy should result in behaviour like read() (i.e. return 0 bytes),
-> > > not EINVAL. The existing behaviour needs to change, though.
-> >
-> > There are two checks to consider
-> > 1. pos_in >= EOF should return EINVAL
-> > 2. however what's perhaps should be relaxed is pos_in+len >= EOF
-> > should return a short copy.
-> >
-> > Having check#1 enforced allows to us to differentiate between a real
-> > error and a short copy.
->
-> That's what the code does right now and *exactly what I'm trying to
-> fix* because it EINVAL is ambiguous and not an indicator that we've
-> reached the end of the source file. EINVAL can indicate several
-> different errors, so it really has to be treated as a "copy failed"
-> error by applications.
->
-> Have a look at read/pread() - they return 0 in this case to indicate
-> a short read, and the value of zero is explicitly defined as meaning
-> "read position is beyond EOF".  Applications know straight away that
-> there is no more data to be read and there was no error, so can
-> terminate on a successful short read.
->
-> We need to allow applications to terminate copy loops on a
-> successful short copy. IOWs, applications need to either:
->
->         - get an immediate error saying the range is invalid rather
->           than doing a short copy (as per the man page); or
->         - have an explicit marker to say "no more data to be copied"
->
-> Applications need the "no more data to copy" case to be explicit and
-> unambiguous so they can make sane decisions about whether a short
-> copy was successful because the file was shorter than expected or
-> whether a short copy was a result of a real error being encountered.
-> The current behaviour is largely unusable for applications because
-> they have to guess at the reason for EINVAL part way through a
-> copy....
->
+On Sat 18-05-19 15:28:47, Theodore Ts'o wrote:
+> On Sat, May 18, 2019 at 08:39:54PM +0200, Paolo Valente wrote:
+> > I've addressed these issues in my last batch of improvements for
+> > BFQ, which landed in the upcoming 5.2. If you give it a try, and
+> > still see the problem, then I'll be glad to reproduce it, and
+> > hopefully fix it for you.
+> 
+> Hi Paolo, I'm curious if you could give a quick summary about what you
+> changed in BFQ?
+> 
+> I was considering adding support so that if userspace calls fsync(2)
+> or fdatasync(2), to attach the process's CSS to the transaction, and
+> then charge all of the journal metadata writes the process's CSS.  If
+> there are multiple fsync's batched into the transaction, the first
+> process which forced the early transaction commit would get charged
+> the entire journal write.  OTOH, journal writes are sequential I/O, so
+> the amount of disk time for writing the journal is going to be
+> relatively small, and especially, the fact that work from other
+> cgroups is going to be minimal, especially if hadn't issued an
+> fsync().
 
-Dave,
+But this makes priority-inversion problems with ext4 journal worse, doesn't
+it? If we submit journal commit in blkio cgroup of some random process, it
+may get throttled which then effectively blocks the whole filesystem. Or do
+you want to implement a more complex back-pressure mechanism where you'd
+just account to different blkio cgroup during journal commit and then
+throttle as different point where you are not blocking other tasks from
+progress?
 
-I went a head and implemented the desired behavior.
-However, while testing I observed that the desired behavior is already
-the existing behavior. For example, trying to copy 10 bytes from a 2 bytes file,
-xfs_io copy loop ends as expected:
-copy_file_range(4, [0], 3, [0], 10, 0)  = 2
-copy_file_range(4, [2], 3, [2], 8, 0)   = 0
+> In the case where you have three cgroups all issuing fsync(2) and they
+> all landed in the same jbd2 transaction thanks to commit batching, in
+> the ideal world we would split up the disk time usage equally across
+> those three cgroups.  But it's probably not worth doing that...
+> 
+> That being said, we probably do need some BFQ support, since in the
+> case where we have multiple processes doing buffered writes w/o fsync,
+> we do charnge the data=ordered writeback to each block cgroup.  Worse,
+> the commit can't complete until the all of the data integrity
+> writebacks have completed.  And if there are N cgroups with dirty
+> inodes, and slice_idle set to 8ms, there is going to be 8*N ms worth
+> of idle time tacked onto the commit time.
 
-This was tested on ext4 and xfs with reflink on recent kernel as well as on
-v4.20-rc1 (era of original patch set).
+Yeah. At least in some cases, we know there won't be any more IO from a
+particular cgroup in the near future (e.g. transaction commit completing,
+or when the layers above IO scheduler already know which IO they are going
+to submit next) and in that case idling is just a waste of time. But so far
+I haven't decided how should look a reasonably clean interface for this
+that isn't specific to a particular IO scheduler implementation.
 
-Where and how did you observe the EINVAL behavior described above?
-(besides man page that is). There are even xfstests (which you modified)
-that verify the return 0 for past EOF behavior.
-
-For now, I am just dropping this patch from the patch series.
-Let me know if I am missing something.
-
-Thanks,
-Amir.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
