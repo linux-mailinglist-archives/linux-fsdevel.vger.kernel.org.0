@@ -2,219 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 451D324521
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 02:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E6A24523
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 02:39:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbfEUAif (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 May 2019 20:38:35 -0400
-Received: from master.debian.org ([82.195.75.110]:54046 "EHLO
-        master.debian.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbfEUAif (ORCPT
+        id S1727441AbfEUAjY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 20:39:24 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54240 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726586AbfEUAjY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 May 2019 20:38:35 -0400
-Received: from pabs by master.debian.org with local (Exim 4.89)
-        (envelope-from <pabs@master.debian.org>)
-        id 1hSsnC-0001uo-8h; Tue, 21 May 2019 00:38:10 +0000
-From:   Paul Wise <pabs3@bonedaddy.net>
-To:     Neil Horman <nhorman@tuxdriver.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Paul Wise <pabs3@bonedaddy.net>, Jakub Wilk <jwilk@jwilk.net>
-Subject: [PATCH] coredump: Split pipe command whitespace before expanding template
-Date:   Tue, 21 May 2019 08:37:56 +0800
-Message-Id: <20190521003756.5236-1-pabs3@bonedaddy.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <201905202342.COVmaSLI%lkp@intel.com>
-References: <201905202342.COVmaSLI%lkp@intel.com>
+        Mon, 20 May 2019 20:39:24 -0400
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4L0S56l028300;
+        Mon, 20 May 2019 17:38:45 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=E3+cLSVQNP4p25wZAs7M154LsdZMQ5nxvcwFvwkF7vA=;
+ b=VYSChcHGvoes0aoHcuoyIWkJa98s0Lw6pyTkZms7n4RKfOV8ThxKfoTSR1NLZnjwHuA7
+ 4FH3nhtzfrCG4/NDm1MIakVc68YqpIROcUIXOmsdtabEFXzdLitGSMUtODonzFAuvtkK
+ M3DQTdxuZyil9qiekFKPBfewi9OhnqAI5MI= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2skusdtf1h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 20 May 2019 17:38:45 -0700
+Received: from prn-hub05.TheFacebook.com (2620:10d:c081:35::129) by
+ prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Mon, 20 May 2019 17:38:44 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.29) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Mon, 20 May 2019 17:38:44 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E3+cLSVQNP4p25wZAs7M154LsdZMQ5nxvcwFvwkF7vA=;
+ b=Lpxvp1lM86qlDs6r95jZcMFZ0d8iGkyYmH7giaFCbaBKGAWOyaOX7NhJh2hyXLvNGr11y5TPa8cFfg2eXB7HfOjc+7qQqaVhd8/a+wIKRHkGZutgy7QjG3o8QMVdOa2DDbjtTG44I47V4m6AcfYAhRAsX3o1gq8ZWcxJfj853EA=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB3030.namprd15.prod.outlook.com (20.178.238.91) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.17; Tue, 21 May 2019 00:38:40 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::d4f6:b485:69ee:fd9a]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::d4f6:b485:69ee:fd9a%7]) with mapi id 15.20.1900.020; Tue, 21 May 2019
+ 00:38:40 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     "Tobin C. Harding" <tobin@kernel.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@ftp.linux.org.uk>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        Pekka Enberg <penberg@cs.helsinki.fi>,
+        "David Rientjes" <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Christopher Lameter <cl@linux.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Waiman Long <longman@redhat.com>,
+        "Tycho Andersen" <tycho@tycho.ws>, Theodore Ts'o <tytso@mit.edu>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Chinner <david@fromorbit.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        Rik van Riel <riel@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v5 03/16] slub: Sort slab cache list
+Thread-Topic: [RFC PATCH v5 03/16] slub: Sort slab cache list
+Thread-Index: AQHVDs62IV4Zydo66E+iHqIO5Pdo5qZ0vW8A
+Date:   Tue, 21 May 2019 00:38:40 +0000
+Message-ID: <20190521003835.GB21811@tower.DHCP.thefacebook.com>
+References: <20190520054017.32299-1-tobin@kernel.org>
+ <20190520054017.32299-4-tobin@kernel.org>
+In-Reply-To: <20190520054017.32299-4-tobin@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR14CA0005.namprd14.prod.outlook.com
+ (2603:10b6:300:ae::15) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:152::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::3:a985]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 70c0967b-98c8-44cd-25cf-08d6dd84ab7c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR15MB3030;
+x-ms-traffictypediagnostic: BYAPR15MB3030:
+x-microsoft-antispam-prvs: <BYAPR15MB30307E13ABD855F4D387D23CBE070@BYAPR15MB3030.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2887;
+x-forefront-prvs: 0044C17179
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(376002)(346002)(396003)(199004)(189003)(6116002)(7736002)(8676002)(81166006)(81156014)(4326008)(66946007)(73956011)(64756008)(186003)(66476007)(66556008)(68736007)(66446008)(6436002)(53936002)(9686003)(6486002)(6246003)(99286004)(6512007)(7416002)(305945005)(446003)(316002)(6916009)(8936002)(46003)(102836004)(229853002)(76176011)(54906003)(52116002)(486006)(25786009)(476003)(2906002)(11346002)(33656002)(386003)(6506007)(14454004)(256004)(71200400001)(86362001)(71190400001)(478600001)(1076003)(5660300002)(4744005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3030;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 4s+SYJPSmiJ7nXYS5W4A3hnVp7aVbFPYyJbjP1TFSqIoKDGJQgHciWYFBrFvNzAUgySmic9Mv2MTMg0OLmiX8cNilaXRRmzYCnc09FqqhZH+ONyDzTSHnsjRoDkYirOUepqEdIGj2LmxYw6ngRqMU8nH6nV+luREC7o55arAdrMnqG5QLm7/9OGXX/EMqcV6HV+QJons4uiGp9Vgm+7BIH7jvfV9svnHD3bmg1dwTTuQhnxstF+YXvzEnJ8lFuNzLnzh4+M8elynSCGoHe7t43wRrnahpsL+ctMjIr4uTDaHWLA/lrvLJmG2cjkLq+8V1CSAgpl/bhj4ldGgsDe5eEItXoM+fWIlIPxws27p7q6ryj9Eq5G5nviPUQ8+eEJvYOShEMPyTiSQVkpVmVbskqxw6qp1KdK1dxW3nJ41JIQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7DA0F6E4E77DF64B87BF2DF516986776@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70c0967b-98c8-44cd-25cf-08d6dd84ab7c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 00:38:40.5953
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3030
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Save the offsets of the start of each argument to avoid having to
-update pointers to each argument after every corename krealloc and
-to avoid having to duplicate the memory for the dump command.
+On Mon, May 20, 2019 at 03:40:04PM +1000, Tobin C. Harding wrote:
+> It is advantageous to have all defragmentable slabs together at the
+> beginning of the list of slabs so that there is no need to scan the
+> complete list. Put defragmentable caches first when adding a slab cache
+> and others last.
+>=20
+> Co-developed-by: Christoph Lameter <cl@linux.com>
+> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 
-Executable names containing spaces were previously being expanded from
-%e or %E and then split in the middle of the filename. This is incorrect
-behaviour since an argument list can represent arguments with spaces.
-
-The splitting could lead to extra arguments being passed to the core dump
-handler that it might have interpreted as options or ignored completely.
-
-Core dump handlers that are not aware of this Linux kernel issue will be
-using %e or %E without considering that it may be split and so they will
-be vulnerable to processes with spaces in their names breaking their
-argument list. If their internals are otherwise well written, such as
-if they are written in shell but quote arguments, they will work better
-after this change than before. If they are not well written, then there
-is a slight chance of breakage depending on the details of the code but
-they will already be fairly broken by the split filenames.
-
-Core dump handlers that are aware of this Linux kernel issue will be
-placing %e or %E as the last item in their core_pattern and then
-aggregating all of the remaining arguments into one, separated by
-spaces. Alternatively they will be obtaining the filename via other
-methods. Both of these will be compatible with the new arrangement.
-
-A side effect from this change is that unknown template types
-(for example %z) result in an empty argument to the dump handler
-instead of the argument being dropped. This is a desired change as:
-
-It is easier for dump handlers to process empty arguments than dropped
-ones, especially if they are written in shell or don't pass each template
-item with a preceding command-line option in order to differentiate
-between individual template types. Most core_patterns in the wild do not
-use options so they can confuse different template types (especially
-numeric ones) if an earlier one gets dropped in old kernels. If the
-kernel introduces a new template type and a core_pattern uses it, the
-core dump handler might not expect that the argument can be dropped in
-old kernels.
-
-For example, this can result in security issues when %d is dropped in old
-kernels. This happened with the corekeeper package in Debian and resulted
-in the interface between corekeeper and Linux having to be rewritten to
-use command-line options to differentiate between template types.
-
-The core_pattern for most core dump handlers is written by the handler
-author who would generally not insert unknown template types so this
-change should be compatible with all the core dump handlers that exist.
-
-Reported-by: Jakub Wilk <jwilk@jwilk.net>
-Reported-in: <20190312145043.jxjoj66kqssptolr@jwilk.net>
-Reported-by: Paul Wise <pabs3@bonedaddy.net>
-Reported-in: <c8b7ecb8508895bf4adb62a748e2ea2c71854597.camel@bonedaddy.net>
-Suggestions-from: Jakub Wilk <jwilk@jwilk.net>
-Signed-off-by: Paul Wise <pabs3@bonedaddy.net>
-See-also: https://bugs.debian.org/924398
-Fixes: commit 74aadce986052f20088c2678f589ea0e8d3a4b59
----
- fs/coredump.c | 45 ++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 40 insertions(+), 5 deletions(-)
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index e42e17e55bfd..c45582b5856c 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -7,6 +7,7 @@
- #include <linux/stat.h>
- #include <linux/fcntl.h>
- #include <linux/swap.h>
-+#include <linux/ctype.h>
- #include <linux/string.h>
- #include <linux/init.h>
- #include <linux/pagemap.h>
-@@ -187,11 +188,13 @@ static int cn_print_exe_file(struct core_name *cn)
-  * name into corename, which must have space for at least
-  * CORENAME_MAX_SIZE bytes plus one byte for the zero terminator.
-  */
--static int format_corename(struct core_name *cn, struct coredump_params *cprm)
-+static int format_corename(struct core_name *cn, struct coredump_params *cprm,
-+			   size_t **argv, int *argc)
- {
- 	const struct cred *cred = current_cred();
- 	const char *pat_ptr = core_pattern;
- 	int ispipe = (*pat_ptr == '|');
-+	bool was_space = false;
- 	int pid_in_pattern = 0;
- 	int err = 0;
- 
-@@ -201,12 +204,36 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm)
- 		return -ENOMEM;
- 	cn->corename[0] = '\0';
- 
--	if (ispipe)
-+	if (ispipe) {
-+		/* sizeof(core_pattern) / 2 is the maximum number of args. */
-+		int argvs = sizeof(core_pattern) / 2;
-+		(*argv) = kmalloc_array(argvs, sizeof(**argv), GFP_KERNEL);
-+		if (!(*argv))
-+			return -ENOMEM;
-+		(*argv)[(*argc)++] = 0;
- 		++pat_ptr;
-+	}
- 
- 	/* Repeat as long as we have more pattern to process and more output
- 	   space */
- 	while (*pat_ptr) {
-+		/*
-+		 * Split on spaces before doing template expansion so that
-+		 * %e and %E don't get split if they have spaces in them
-+		 */
-+		if (ispipe) {
-+			if (isspace(*pat_ptr)) {
-+				was_space = true;
-+				pat_ptr++;
-+				continue;
-+			} else if (was_space) {
-+				was_space = false;
-+				err = cn_printf(cn, "%c", '\0');
-+				if (err)
-+					return err;
-+				(*argv)[(*argc)++] = cn->used;
-+			}
-+		}
- 		if (*pat_ptr != '%') {
- 			err = cn_printf(cn, "%c", *pat_ptr++);
- 		} else {
-@@ -546,6 +573,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 	struct cred *cred;
- 	int retval = 0;
- 	int ispipe;
-+	size_t *argv = NULL;
-+	int argc = 0;
- 	struct files_struct *displaced;
- 	/* require nonrelative corefile path and be extra careful */
- 	bool need_suid_safe = false;
-@@ -592,9 +621,10 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 
- 	old_cred = override_creds(cred);
- 
--	ispipe = format_corename(&cn, &cprm);
-+	ispipe = format_corename(&cn, &cprm, &argv, &argc);
- 
- 	if (ispipe) {
-+		int argi;
- 		int dump_count;
- 		char **helper_argv;
- 		struct subprocess_info *sub_info;
-@@ -637,12 +667,16 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 			goto fail_dropcount;
- 		}
- 
--		helper_argv = argv_split(GFP_KERNEL, cn.corename, NULL);
-+		helper_argv = kmalloc_array(argc + 1, sizeof(*helper_argv),
-+					    GFP_KERNEL);
- 		if (!helper_argv) {
- 			printk(KERN_WARNING "%s failed to allocate memory\n",
- 			       __func__);
- 			goto fail_dropcount;
- 		}
-+		for (argi = 0; argi < argc; argi++)
-+			helper_argv[argi] = cn.corename + argv[argi];
-+		helper_argv[argi] = NULL;
- 
- 		retval = -ENOMEM;
- 		sub_info = call_usermodehelper_setup(helper_argv[0],
-@@ -652,7 +686,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 			retval = call_usermodehelper_exec(sub_info,
- 							  UMH_WAIT_EXEC);
- 
--		argv_free(helper_argv);
-+		kfree(helper_argv);
- 		if (retval) {
- 			printk(KERN_INFO "Core dump to |%s pipe failed\n",
- 			       cn.corename);
-@@ -766,6 +800,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 	if (ispipe)
- 		atomic_dec(&core_dump_count);
- fail_unlock:
-+	kfree(argv);
- 	kfree(cn.corename);
- 	coredump_finish(mm, core_dumped);
- 	revert_creds(old_cred);
--- 
-2.20.1
-
+Reviewed-by: Roman Gushchin <guro@fb.com>
