@@ -2,103 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A676255A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 18:31:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC5B9255AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 18:32:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728987AbfEUQa6 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 12:30:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:61737 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728945AbfEUQa6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 12:30:58 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 36C037FDEE;
-        Tue, 21 May 2019 16:30:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-170.rdu2.redhat.com [10.10.120.170])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7B1B95E7AF;
-        Tue, 21 May 2019 16:30:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190521150006.GJ17978@ZenIV.linux.org.uk>
-References: <20190521150006.GJ17978@ZenIV.linux.org.uk> <20190521113448.20654-1-christian@brauner.io>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, jannh@google.com, fweimer@redhat.com,
-        oleg@redhat.com, tglx@linutronix.de, torvalds@linux-foundation.org,
-        arnd@arndb.de, shuah@kernel.org, tkjos@android.com,
-        ldv@altlinux.org, miklos@szeredi.hu, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH 1/2] open: add close_range()
+        id S1728404AbfEUQcB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 May 2019 12:32:01 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:41432 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728055AbfEUQcB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 May 2019 12:32:01 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4LGV973024567
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 May 2019 12:31:10 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id DF045420481; Tue, 21 May 2019 12:31:08 -0400 (EDT)
+Date:   Tue, 21 May 2019 12:31:08 -0400
+To:     Jan Kara <jack@suse.cz>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
+        linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, jmoyer@redhat.com,
+        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+Message-ID: <20190521163108.GB2591@mit.edu>
+Mail-Followup-To: tytso@mit.edu, Jan Kara <jack@suse.cz>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
+        linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, jmoyer@redhat.com,
+        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
+ <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
+ <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
+ <238e14ff-68d1-3b21-a291-28de4f2d77af@csail.mit.edu>
+ <6EB6C9D2-E774-48FA-AC95-BC98D97645D0@linaro.org>
+ <20190521091026.GA17019@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <28113.1558456227.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Tue, 21 May 2019 17:30:27 +0100
-Message-ID: <28114.1558456227@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 21 May 2019 16:30:57 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521091026.GA17019@quack2.suse.cz>
+>From:  Theodore Ts'o <tytso@mit.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   "Theodore Ts'o" <tytso@mit.edu>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al Viro <viro@zeniv.linux.org.uk> wrote:
-
-> Umm...  That's going to be very painful if you dup2() something to MAX_INT and
-> then run that; roughly 2G iterations of bouncing ->file_lock up and down,
-> without anything that would yield CPU in process.
+On Tue, May 21, 2019 at 11:10:26AM +0200, Jan Kara wrote:
+> > [root@localhost tmp]# dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflag=dsync
 > 
-> If anything, I would suggest something like
-> 
-> 	fd = *start_fd;
-> 	grab the lock
->         fdt = files_fdtable(files);
-> more:
-> 	look for the next eviction candidate in ->open_fds, starting at fd
-> 	if there's none up to max_fd
-> 		drop the lock
-> 		return NULL
-> 	*start_fd = fd + 1;
-> 	if the fscker is really opened and not just reserved
-> 		rcu_assign_pointer(fdt->fd[fd], NULL);
-> 		__put_unused_fd(files, fd);
-> 		drop the lock
-> 		return the file we'd got
-> 	if (unlikely(need_resched()))
-> 		drop lock
-> 		cond_resched();
-> 		grab lock
-> 		fdt = files_fdtable(files);
-> 	goto more;
-> 
-> with the main loop being basically
-> 	while ((file = pick_next(files, &start_fd, max_fd)) != NULL)
-> 		filp_close(file, files);
+> Yes and that's expected. It just shows how inefficient small synchronous IO
+> is. Look, dd(1) writes 512-bytes. From FS point of view we have to write:
+> full fs block with data (+4KB), inode to journal (+4KB), journal descriptor
+> block (+4KB), journal superblock (+4KB), transaction commit block (+4KB) -
+> so that's 20KB just from top of my head to write 512 bytes...
 
-If we can live with close_from(int first) rather than close_range(), then this
-can perhaps be done a lot more efficiently by:
+Well, it's not *that* bad.  With fdatasync(), we're only having to do
+this worse case thing every 8 writes.  The other writes, we don't
+actually need to do any file-system level block allocation, so it's
+only a 512 byte write to the disk[1] seven out of eight writes.
 
-	new = alloc_fdtable(first);
-	spin_lock(&files->file_lock);
-	old = files_fdtable(files);
-	copy_fds(new, old, 0, first - 1);
-	rcu_assign_pointer(files->fdt, new);
-	spin_unlock(&files->file_lock);
-	clear_fds(old, 0, first - 1);
-	close_fdt_from(old, first);
-	kfree_rcu(old);
+That's also true for the slice_idle hit, of course, We only need to do
+a jbd2 transaction when there is a block allocation, and that's only
+going to happen one in eight writes.
 
-David
+       	   	      	     	     	   - Ted
+
+[1] Of course, small synchronous writes to a HDD are *also* terrible
+for performance, just from the HDD's perspective.  For a random write
+workload, if you are using disks with a 4k physical sector size, it's
+having to do a read/modify/write for each 512 byte write.  And HDD
+vendors are talking about wanting to go to a 32k or 64k physical
+sector size...  In this sequential write workload, you'll mostly be
+shielded from this by the HDD's cache, but the fact that you have to
+wait for the bits to hit the platter is always going to be painful.
