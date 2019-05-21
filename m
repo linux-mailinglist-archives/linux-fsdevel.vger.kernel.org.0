@@ -2,435 +2,387 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC0A24B69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 11:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E916F24DD6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 13:25:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbfEUJZx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 05:25:53 -0400
-Received: from dcvr.yhbt.net ([64.71.152.64]:51100 "EHLO dcvr.yhbt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbfEUJZx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 05:25:53 -0400
-Received: from localhost (dcvr.yhbt.net [127.0.0.1])
-        by dcvr.yhbt.net (Postfix) with ESMTP id 7773F1F462;
-        Tue, 21 May 2019 09:25:51 +0000 (UTC)
-Date:   Tue, 21 May 2019 09:25:51 +0000
-From:   Eric Wong <e@80x24.org>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        arnd@arndb.de, dbueso@suse.de, axboe@kernel.dk, dave@stgolabs.net,
-        jbaron@akamai.com, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, omar.kilani@gmail.com, tglx@linutronix.de,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] signal: Adjust error codes according to
- restore_user_sigmask()
-Message-ID: <20190521092551.fwtb6recko3tahwj@dcvr>
-References: <20190507043954.9020-1-deepa.kernel@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190507043954.9020-1-deepa.kernel@gmail.com>
+        id S1727941AbfEULZg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 May 2019 07:25:36 -0400
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:33921 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbfEULZg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 May 2019 07:25:36 -0400
+Received: by mail-wm1-f51.google.com with SMTP id j187so2091964wma.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2019 04:25:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=YVtUbiCVJuU9zLov0dx/GMIqSmYQFkP8m1oHN78Ed+w=;
+        b=YtyiBo0xzYWRm93dnXC1IOV1GGSPpuvt9/OD3LMwwWMcRfV50EiOJiKCX/9WJm/kpf
+         jtWkwA4GZn5exV5WuPSaJ9z3RBLGplJE51W941Uzybtdl/7Thd1s7O/zGw/OjXAqI7F2
+         SpwOPx3hxFeDCJqlYct+QNpDPoVLA/aOfuqgsx4NjGRzE+dxIijbcQrh5qd6bMon+PQg
+         E5Srqz+pnSj71+OpqKAdG6E/DmzH+EG+LovsYtduwyaqSRI9E0qYi97m55bLI0W2uxNc
+         1jimuBBRLEz+Ru4sRymbE7KAzIya8pAhfUD/Yhkp6MtMu4aT/8s9XKg7QJsahPI9X/r5
+         +h7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=YVtUbiCVJuU9zLov0dx/GMIqSmYQFkP8m1oHN78Ed+w=;
+        b=Hhy+qJknIfPoDfRR9TgwEQe3haLCWrN/arUugZwFMycqy938iTSPQaQ1Gto4Fb0oym
+         hqVMeOJIoGlOu2G2viMkwg8FnfQ+kXb4OBdK+F9J+kuoyPcDEKAVicSNV29Sjs/vHMcO
+         F/z3yel1rRX/jrXL4dhH+6s0HeRj1abkQAjcRLSXccbntqGxW+M/KwHFo4ejp2/xN3ya
+         EDgNB/7u/GpbvWsjt947+SWvsFlQ5RUo8FwSTiUPnrUdJ+y+rNiWMVB3q0r6u/q4GFPI
+         O1jLfoGP2mirM98fVemx4Lu5k6w9oMwsNG4Wh2D8jcPSOAVqkSXLz42hHy5zRX4jpRNq
+         zkgw==
+X-Gm-Message-State: APjAAAVN54MB06YMQVyPXdReAALZmiiI0nSvuimMtPdbfC9kylX6mZ82
+        FvIgBps5Zhd46fiHOZIQ742RXA==
+X-Google-Smtp-Source: APXvYqzydcEHp+GclU0FJyV63jFC/+K9SjhJch4Wz/JeBBvppx3akP3bwgwHxANEsWHR86K0mYQk4w==
+X-Received: by 2002:a7b:c001:: with SMTP id c1mr3268291wmb.49.1558437932197;
+        Tue, 21 May 2019 04:25:32 -0700 (PDT)
+Received: from [192.168.0.101] ([88.147.35.136])
+        by smtp.gmail.com with ESMTPSA id 20sm3717068wmj.36.2019.05.21.04.25.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 May 2019 04:25:31 -0700 (PDT)
+From:   Paolo Valente <paolo.valente@linaro.org>
+Message-Id: <A0DFE635-EFEC-4670-AD70-5D813E170BEE@linaro.org>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_D52538F2-72FE-4CD4-B761-CCE9B24F2A35";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+Date:   Tue, 21 May 2019 13:25:29 +0200
+In-Reply-To: <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        jmoyer@redhat.com, tytso@mit.edu, amakhalov@vmware.com,
+        anishs@vmware.com, srivatsab@vmware.com
+To:     "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
+ <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
+ <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
+X-Mailer: Apple Mail (2.3445.104.8)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It's been 2 weeks and this fix hasn't appeared in mmots / mmotm.
-I also noticed it's missing Cc: for stable@ (below)
 
-Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> For all the syscalls that receive a sigmask from the userland,
-> the user sigmask is to be in effect through the syscall execution.
-> At the end of syscall, sigmask of the current process is restored
-> to what it was before the switch over to user sigmask.
-> But, for this to be true in practice, the sigmask should be restored
-> only at the the point we change the saved_sigmask. Anything before
-> that loses signals. And, anything after is just pointless as the
-> signal is already lost by restoring the sigmask.
-> 
-> The inherent issue was detected because of a regression caused by
-> 854a6ed56839a.
-> The patch moved the signal_pending() check closer to restoring of the
-> user sigmask. But, it failed to update the error code accordingly.
-> 
-> Detailed issue discussion permalink:
-> https://lore.kernel.org/linux-fsdevel/20190427093319.sgicqik2oqkez3wk@dcvr/
-> 
-> Note that the patch returns interrupted errors (EINTR, ERESTARTNOHAND,
-> etc) only when there is no other error. If there is a signal and an error
-> like EINVAL, the syscalls return -EINVAL rather than the interrupted
-> error codes.
-> 
-> The sys_io_uring_enter() seems to be returning success when there is
-> a signal and the queue is not empty. This seems to be a bug. I will
-> follow up with a separate patch for that.
-> 
-> Reported-by: Eric Wong <e@80x24.org>
-> Fixes: 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add restore_user_sigmask()")
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
+--Apple-Mail=_D52538F2-72FE-4CD4-B761-CCE9B24F2A35
+Content-Type: multipart/mixed;
+	boundary="Apple-Mail=_21B10740-0BE7-4709-B8E2-677D365FE8FA"
 
-Cc: <stable@vger.kernel.org> # 5.0.x
-Cc: <stable@vger.kernel.org> # 5.1.x
 
-> ---
-> 
->  fs/aio.c               | 24 ++++++++++++------------
->  fs/eventpoll.c         | 14 ++++++++++----
->  fs/io_uring.c          |  9 ++++++---
->  fs/select.c            | 37 +++++++++++++++++++++----------------
->  include/linux/signal.h |  2 +-
->  kernel/signal.c        | 13 ++++++++++---
->  6 files changed, 60 insertions(+), 39 deletions(-)
-> 
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 3490d1fa0e16..ebd2b1980161 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -2095,7 +2095,7 @@ SYSCALL_DEFINE6(io_pgetevents,
->  	struct __aio_sigset	ksig = { NULL, };
->  	sigset_t		ksigmask, sigsaved;
->  	struct timespec64	ts;
-> -	int ret;
-> +	int ret, signal_detected;
->  
->  	if (timeout && unlikely(get_timespec64(&ts, timeout)))
->  		return -EFAULT;
-> @@ -2108,8 +2108,8 @@ SYSCALL_DEFINE6(io_pgetevents,
->  		return ret;
->  
->  	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
-> -	restore_user_sigmask(ksig.sigmask, &sigsaved);
-> -	if (signal_pending(current) && !ret)
-> +	signal_detected = restore_user_sigmask(ksig.sigmask, &sigsaved);
-> +	if (signal_detected && !ret)
->  		ret = -ERESTARTNOHAND;
->  
->  	return ret;
-> @@ -2128,7 +2128,7 @@ SYSCALL_DEFINE6(io_pgetevents_time32,
->  	struct __aio_sigset	ksig = { NULL, };
->  	sigset_t		ksigmask, sigsaved;
->  	struct timespec64	ts;
-> -	int ret;
-> +	int ret, signal_detected;
->  
->  	if (timeout && unlikely(get_old_timespec32(&ts, timeout)))
->  		return -EFAULT;
-> @@ -2142,8 +2142,8 @@ SYSCALL_DEFINE6(io_pgetevents_time32,
->  		return ret;
->  
->  	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
-> -	restore_user_sigmask(ksig.sigmask, &sigsaved);
-> -	if (signal_pending(current) && !ret)
-> +	signal_detected = restore_user_sigmask(ksig.sigmask, &sigsaved);
-> +	if (signal_detected && !ret)
->  		ret = -ERESTARTNOHAND;
->  
->  	return ret;
-> @@ -2193,7 +2193,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
->  	struct __compat_aio_sigset ksig = { NULL, };
->  	sigset_t ksigmask, sigsaved;
->  	struct timespec64 t;
-> -	int ret;
-> +	int ret, signal_detected;
->  
->  	if (timeout && get_old_timespec32(&t, timeout))
->  		return -EFAULT;
-> @@ -2206,8 +2206,8 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
->  		return ret;
->  
->  	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &t : NULL);
-> -	restore_user_sigmask(ksig.sigmask, &sigsaved);
-> -	if (signal_pending(current) && !ret)
-> +	signal_detected = restore_user_sigmask(ksig.sigmask, &sigsaved);
-> +	if (signal_detected && !ret)
->  		ret = -ERESTARTNOHAND;
->  
->  	return ret;
-> @@ -2226,7 +2226,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
->  	struct __compat_aio_sigset ksig = { NULL, };
->  	sigset_t ksigmask, sigsaved;
->  	struct timespec64 t;
-> -	int ret;
-> +	int ret, signal_detected;
->  
->  	if (timeout && get_timespec64(&t, timeout))
->  		return -EFAULT;
-> @@ -2239,8 +2239,8 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
->  		return ret;
->  
->  	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &t : NULL);
-> -	restore_user_sigmask(ksig.sigmask, &sigsaved);
-> -	if (signal_pending(current) && !ret)
-> +	signal_detected = restore_user_sigmask(ksig.sigmask, &sigsaved);
-> +	if (signal_detected && !ret)
->  		ret = -ERESTARTNOHAND;
->  
->  	return ret;
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 4a0e98d87fcc..fe5a0724b417 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -2317,7 +2317,7 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct epoll_event __user *, events,
->  		int, maxevents, int, timeout, const sigset_t __user *, sigmask,
->  		size_t, sigsetsize)
->  {
-> -	int error;
-> +	int error, signal_detected;
->  	sigset_t ksigmask, sigsaved;
->  
->  	/*
-> @@ -2330,7 +2330,10 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct epoll_event __user *, events,
->  
->  	error = do_epoll_wait(epfd, events, maxevents, timeout);
->  
-> -	restore_user_sigmask(sigmask, &sigsaved);
-> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
-> +
-> +	if (signal_detected && !error)
-> +		error = -EINTR;
->  
->  	return error;
->  }
-> @@ -2342,7 +2345,7 @@ COMPAT_SYSCALL_DEFINE6(epoll_pwait, int, epfd,
->  			const compat_sigset_t __user *, sigmask,
->  			compat_size_t, sigsetsize)
->  {
-> -	long err;
-> +	long err, signal_detected;
->  	sigset_t ksigmask, sigsaved;
->  
->  	/*
-> @@ -2355,7 +2358,10 @@ COMPAT_SYSCALL_DEFINE6(epoll_pwait, int, epfd,
->  
->  	err = do_epoll_wait(epfd, events, maxevents, timeout);
->  
-> -	restore_user_sigmask(sigmask, &sigsaved);
-> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
-> +
-> +	if (signal_detected && !err)
-> +		err = -EINTR;
->  
->  	return err;
->  }
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 452e35357865..8fd4710f371d 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -2195,7 +2195,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->  	struct io_cq_ring *ring = ctx->cq_ring;
->  	sigset_t ksigmask, sigsaved;
->  	DEFINE_WAIT(wait);
-> -	int ret;
-> +	int ret, signal_detected;
->  
->  	/* See comment at the top of this file */
->  	smp_rmb();
-> @@ -2234,8 +2234,11 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
->  
->  	finish_wait(&ctx->wait, &wait);
->  
-> -	if (sig)
-> -		restore_user_sigmask(sig, &sigsaved);
-> +	if (sig) {
-> +		signal_detected = restore_user_sigmask(sig, &sigsaved);
-> +		if (signal_detected && !ret)
-> +			ret  = -EINTR;
-> +	}
->  
->  	return READ_ONCE(ring->r.head) == READ_ONCE(ring->r.tail) ? ret : 0;
->  }
-> diff --git a/fs/select.c b/fs/select.c
-> index 6cbc9ff56ba0..da9cfea35159 100644
-> --- a/fs/select.c
-> +++ b/fs/select.c
-> @@ -732,7 +732,7 @@ static long do_pselect(int n, fd_set __user *inp, fd_set __user *outp,
->  {
->  	sigset_t ksigmask, sigsaved;
->  	struct timespec64 ts, end_time, *to = NULL;
-> -	int ret;
-> +	int ret, signal_detected;
->  
->  	if (tsp) {
->  		switch (type) {
-> @@ -760,7 +760,9 @@ static long do_pselect(int n, fd_set __user *inp, fd_set __user *outp,
->  	ret = core_sys_select(n, inp, outp, exp, to);
->  	ret = poll_select_copy_remaining(&end_time, tsp, type, ret);
->  
-> -	restore_user_sigmask(sigmask, &sigsaved);
-> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
-> +	if (signal_detected && !ret)
-> +		ret = -EINTR;
->  
->  	return ret;
->  }
-> @@ -1089,7 +1091,7 @@ SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
->  {
->  	sigset_t ksigmask, sigsaved;
->  	struct timespec64 ts, end_time, *to = NULL;
-> -	int ret;
-> +	int ret, signal_detected;
->  
->  	if (tsp) {
->  		if (get_timespec64(&ts, tsp))
-> @@ -1106,10 +1108,10 @@ SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
->  
->  	ret = do_sys_poll(ufds, nfds, to);
->  
-> -	restore_user_sigmask(sigmask, &sigsaved);
-> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
->  
->  	/* We can restart this syscall, usually */
-> -	if (ret == -EINTR)
-> +	if (ret == -EINTR || (signal_detected && !ret))
->  		ret = -ERESTARTNOHAND;
->  
->  	ret = poll_select_copy_remaining(&end_time, tsp, PT_TIMESPEC, ret);
-> @@ -1125,7 +1127,7 @@ SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds, unsigned int, nfds,
->  {
->  	sigset_t ksigmask, sigsaved;
->  	struct timespec64 ts, end_time, *to = NULL;
-> -	int ret;
-> +	int ret, signal_detected;
->  
->  	if (tsp) {
->  		if (get_old_timespec32(&ts, tsp))
-> @@ -1142,10 +1144,10 @@ SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds, unsigned int, nfds,
->  
->  	ret = do_sys_poll(ufds, nfds, to);
->  
-> -	restore_user_sigmask(sigmask, &sigsaved);
-> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
->  
->  	/* We can restart this syscall, usually */
-> -	if (ret == -EINTR)
-> +	if (ret == -EINTR || (signal_detected && !ret))
->  		ret = -ERESTARTNOHAND;
->  
->  	ret = poll_select_copy_remaining(&end_time, tsp, PT_OLD_TIMESPEC, ret);
-> @@ -1324,7 +1326,7 @@ static long do_compat_pselect(int n, compat_ulong_t __user *inp,
->  {
->  	sigset_t ksigmask, sigsaved;
->  	struct timespec64 ts, end_time, *to = NULL;
-> -	int ret;
-> +	int ret, signal_detected;
->  
->  	if (tsp) {
->  		switch (type) {
-> @@ -1352,7 +1354,10 @@ static long do_compat_pselect(int n, compat_ulong_t __user *inp,
->  	ret = compat_core_sys_select(n, inp, outp, exp, to);
->  	ret = poll_select_copy_remaining(&end_time, tsp, type, ret);
->  
-> -	restore_user_sigmask(sigmask, &sigsaved);
-> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
-> +
-> +	if (signal_detected && !ret)
-> +		ret = -EINTR;
->  
->  	return ret;
->  }
-> @@ -1408,7 +1413,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds,
->  {
->  	sigset_t ksigmask, sigsaved;
->  	struct timespec64 ts, end_time, *to = NULL;
-> -	int ret;
-> +	int ret, signal_detected;
->  
->  	if (tsp) {
->  		if (get_old_timespec32(&ts, tsp))
-> @@ -1425,10 +1430,10 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds,
->  
->  	ret = do_sys_poll(ufds, nfds, to);
->  
-> -	restore_user_sigmask(sigmask, &sigsaved);
-> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
->  
->  	/* We can restart this syscall, usually */
-> -	if (ret == -EINTR)
-> +	if (ret == -EINTR || (signal_detected && !ret))
->  		ret = -ERESTARTNOHAND;
->  
->  	ret = poll_select_copy_remaining(&end_time, tsp, PT_OLD_TIMESPEC, ret);
-> @@ -1444,7 +1449,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time64, struct pollfd __user *, ufds,
->  {
->  	sigset_t ksigmask, sigsaved;
->  	struct timespec64 ts, end_time, *to = NULL;
-> -	int ret;
-> +	int ret, signal_detected;
->  
->  	if (tsp) {
->  		if (get_timespec64(&ts, tsp))
-> @@ -1461,10 +1466,10 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time64, struct pollfd __user *, ufds,
->  
->  	ret = do_sys_poll(ufds, nfds, to);
->  
-> -	restore_user_sigmask(sigmask, &sigsaved);
-> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
->  
->  	/* We can restart this syscall, usually */
-> -	if (ret == -EINTR)
-> +	if (ret == -EINTR || (signal_detected && !ret))
->  		ret = -ERESTARTNOHAND;
->  
->  	ret = poll_select_copy_remaining(&end_time, tsp, PT_TIMESPEC, ret);
-> diff --git a/include/linux/signal.h b/include/linux/signal.h
-> index 9702016734b1..1d36e8629edf 100644
-> --- a/include/linux/signal.h
-> +++ b/include/linux/signal.h
-> @@ -275,7 +275,7 @@ extern int __group_send_sig_info(int, struct kernel_siginfo *, struct task_struc
->  extern int sigprocmask(int, sigset_t *, sigset_t *);
->  extern int set_user_sigmask(const sigset_t __user *usigmask, sigset_t *set,
->  	sigset_t *oldset, size_t sigsetsize);
-> -extern void restore_user_sigmask(const void __user *usigmask,
-> +extern int restore_user_sigmask(const void __user *usigmask,
->  				 sigset_t *sigsaved);
->  extern void set_current_blocked(sigset_t *);
->  extern void __set_current_blocked(const sigset_t *);
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index e46d527ff467..ea0321b70315 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -2906,15 +2906,21 @@ EXPORT_SYMBOL(set_compat_user_sigmask);
->   * usigmask: sigmask passed in from userland.
->   * sigsaved: saved sigmask when the syscall started and changed the sigmask to
->   *           usigmask.
-> + * returns 1 in case a pending signal is detected.
-> + *
-> + * Users of the api need to adjust their return values based on whether the
-> + * signal was detected here. If a signal is detected, it is delivered to the
-> + * userspace. So without an error like -EINTR, userspace might fail to
-> + * adjust the flow of execution.
->   *
->   * This is useful for syscalls such as ppoll, pselect, io_pgetevents and
->   * epoll_pwait where a new sigmask is passed in from userland for the syscalls.
->   */
-> -void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
-> +int restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
->  {
->  
->  	if (!usigmask)
-> -		return;
-> +		return 0;
->  	/*
->  	 * When signals are pending, do not restore them here.
->  	 * Restoring sigmask here can lead to delivering signals that the above
-> @@ -2923,7 +2929,7 @@ void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
->  	if (signal_pending(current)) {
->  		current->saved_sigmask = *sigsaved;
->  		set_restore_sigmask();
-> -		return;
-> +		return 1;
->  	}
->  
->  	/*
-> @@ -2931,6 +2937,7 @@ void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
->  	 * saved_sigmask when signals are not pending.
->  	 */
->  	set_current_blocked(sigsaved);
-> +	return 0;
->  }
->  EXPORT_SYMBOL(restore_user_sigmask);
->  
-> -- 
-> 2.17.1
+--Apple-Mail=_21B10740-0BE7-4709-B8E2-677D365FE8FA
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
+
+
+
+> Il giorno 20 mag 2019, alle ore 12:19, Paolo Valente =
+<paolo.valente@linaro.org> ha scritto:
+>=20
+>=20
+>=20
+>> Il giorno 18 mag 2019, alle ore 22:50, Srivatsa S. Bhat =
+<srivatsa@csail.mit.edu> ha scritto:
+>>=20
+>> On 5/18/19 11:39 AM, Paolo Valente wrote:
+>>> I've addressed these issues in my last batch of improvements for =
+BFQ,
+>>> which landed in the upcoming 5.2. If you give it a try, and still =
+see
+>>> the problem, then I'll be glad to reproduce it, and hopefully fix it
+>>> for you.
+>>>=20
+>>=20
+>> Hi Paolo,
+>>=20
+>> Thank you for looking into this!
+>>=20
+>> I just tried current mainline at commit 72cf0b07, but unfortunately
+>> didn't see any improvement:
+>>=20
+>> dd if=3D/dev/zero of=3D/root/test.img bs=3D512 count=3D10000 =
+oflag=3Ddsync
+>>=20
+>> With mq-deadline, I get:
+>>=20
+>> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 3.90981 s, 1.3 MB/s
+>>=20
+>> With bfq, I get:
+>> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 84.8216 s, 60.4 kB/s
+>>=20
+>=20
+> Hi Srivatsa,
+> thanks for reproducing this on mainline.  I seem to have reproduced a
+> bonsai-tree version of this issue.
+
+Hi again Srivatsa,
+I've analyzed the trace, and I've found the cause of the loss of
+throughput in on my side.  To find out whether it is the same cause as
+on your side, I've prepared a script that executes your test and takes
+a trace during the test.  If ok for you, could you please
+- change the value for the DEVS parameter in the attached script, if
+  needed
+- execute the script
+- send me the trace file that the script will leave in your working
+dir
+
+Looking forward to your trace,
+Paolo
+
+
+--Apple-Mail=_21B10740-0BE7-4709-B8E2-677D365FE8FA
+Content-Disposition: attachment;
+	filename=dsync_test.sh
+Content-Type: application/octet-stream;
+	x-unix-mode=0744;
+	name="dsync_test.sh"
+Content-Transfer-Encoding: 7bit
+
+#!/bin/bash
+
+DEVS=sda # please set this parameter to the dev name for your test drive
+
+SCHED=bfq
+TRACE=1
+
+function init_tracing {
+	if [ "$TRACE" == "1" ] ; then
+		if [ ! -d /sys/kernel/debug/tracing ] ; then
+			mount -t debugfs none /sys/kernel/debug
+		fi
+		echo nop > /sys/kernel/debug/tracing/current_tracer
+		echo 500000 > /sys/kernel/debug/tracing/buffer_size_kb
+		echo "${SCHED}*" "__${SCHED}*" >\
+			/sys/kernel/debug/tracing/set_ftrace_filter
+		echo blk > /sys/kernel/debug/tracing/current_tracer
+	fi
+}
+
+function set_tracing {
+	if [ "$TRACE" == "1" ] ; then
+	    if [[ -e /sys/kernel/debug/tracing/tracing_enabled && \
+		$(cat /sys/kernel/debug/tracing/tracing_enabled) -ne $1 ]]; then
+			echo "echo $1 > /sys/kernel/debug/tracing/tracing_enabled"
+			echo $1 > /sys/kernel/debug/tracing/tracing_enabled
+		fi
+		dev=$(echo $DEVS | awk '{ print $1 }')
+		if [[ -e /sys/block/$dev/trace/enable && \
+			  $(cat /sys/block/$dev/trace/enable) -ne $1 ]]; then
+		    echo "echo $1 > /sys/block/$dev/trace/enable"
+		    echo $1 > /sys/block/$dev/trace/enable
+		fi
+
+		if [ "$1" == 0 ]; then
+		    for cpu_path in /sys/kernel/debug/tracing/per_cpu/cpu?
+		    do
+			stat_file=$cpu_path/stats
+			OVER=$(grep "overrun" $stat_file | \
+			    grep -v "overrun: 0")
+			if [ "$OVER" != "" ]; then
+			    cpu=$(basename $cpu_path)
+			    echo $OVER on $cpu, please increase buffer size!
+			fi
+		    done
+		fi
+	fi
+}
+
+init_tracing
+
+mkdir /sys/fs/cgroup/blkio/testgrp
+echo $BASHPID > /sys/fs/cgroup/blkio/testgrp/cgroup.procs
+echo > /sys/kernel/debug/tracing/trace
+set_tracing 1 
+echo bfq > /sys/block/sda/queue/scheduler
+cat /sys/block/sda/queue/scheduler
+echo 0 > /sys/block/sda/queue/iosched/low_latency
+dd if=/dev/zero of=/root/test.img bs=512 count=5000 oflag=dsync
+set_tracing 0
+echo 1 > /sys/block/sda/queue/iosched/low_latency
+cp /sys/kernel/debug/tracing/trace .
+echo $BASHPID > /sys/fs/cgroup/blkio/cgroup.procs 
+rmdir /sys/fs/cgroup/blkio/testgrp
+
+--Apple-Mail=_21B10740-0BE7-4709-B8E2-677D365FE8FA
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
+
+
+>  Before digging into the block
+> trace, I'd like to ask you for some feedback.
+>=20
+> First, in my test, the total throughput of the disk happens to be
+> about 20 times as high as that enjoyed by dd, regardless of the I/O
+> scheduler.  I guess this massive overhead is normal with dsync, but
+> I'd like know whether it is about the same on your side.  This will
+> help me understand whether I'll actually be analyzing about the same
+> problem as yours.
+>=20
+> Second, the commands I used follow.  Do they implement your test case
+> correctly?
+>=20
+> [root@localhost tmp]# mkdir /sys/fs/cgroup/blkio/testgrp
+> [root@localhost tmp]# echo $BASHPID > =
+/sys/fs/cgroup/blkio/testgrp/cgroup.procs
+> [root@localhost tmp]# cat /sys/block/sda/queue/scheduler
+> [mq-deadline] bfq none
+> [root@localhost tmp]# dd if=3D/dev/zero of=3D/root/test.img bs=3D512 =
+count=3D10000 oflag=3Ddsync
+> 10000+0 record dentro
+> 10000+0 record fuori
+> 5120000 bytes (5,1 MB, 4,9 MiB) copied, 14,6892 s, 349 kB/s
+> [root@localhost tmp]# echo bfq > /sys/block/sda/queue/scheduler
+> [root@localhost tmp]# dd if=3D/dev/zero of=3D/root/test.img bs=3D512 =
+count=3D10000 oflag=3Ddsync
+> 10000+0 record dentro
+> 10000+0 record fuori
+> 5120000 bytes (5,1 MB, 4,9 MiB) copied, 20,1953 s, 254 kB/s
+>=20
+> Thanks,
+> Paolo
+>=20
+>> Please let me know if any more info about my setup might be helpful.
+>>=20
+>> Thank you!
+>>=20
+>> Regards,
+>> Srivatsa
+>> VMware Photon OS
+>>=20
+>>>=20
+>>>> Il giorno 18 mag 2019, alle ore 00:16, Srivatsa S. Bhat =
+<srivatsa@csail.mit.edu> ha scritto:
+>>>>=20
+>>>>=20
+>>>> Hi,
+>>>>=20
+>>>> One of my colleagues noticed upto 10x - 30x drop in I/O throughput
+>>>> running the following command, with the CFQ I/O scheduler:
+>>>>=20
+>>>> dd if=3D/dev/zero of=3D/root/test.img bs=3D512 count=3D10000 =
+oflags=3Ddsync
+>>>>=20
+>>>> Throughput with CFQ: 60 KB/s
+>>>> Throughput with noop or deadline: 1.5 MB/s - 2 MB/s
+>>>>=20
+>>>> I spent some time looking into it and found that this is caused by =
+the
+>>>> undesirable interaction between 4 different components:
+>>>>=20
+>>>> - blkio cgroup controller enabled
+>>>> - ext4 with the jbd2 kthread running in the root blkio cgroup
+>>>> - dd running on ext4, in any other blkio cgroup than that of jbd2
+>>>> - CFQ I/O scheduler with defaults for slice_idle and group_idle
+>>>>=20
+>>>>=20
+>>>> When docker is enabled, systemd creates a blkio cgroup called
+>>>> system.slice to run system services (and docker) under it, and a
+>>>> separate blkio cgroup called user.slice for user processes. So, =
+when
+>>>> dd is invoked, it runs under user.slice.
+>>>>=20
+>>>> The dd command above includes the dsync flag, which performs an
+>>>> fdatasync after every write to the output file. Since dd is writing =
+to
+>>>> a file on ext4, jbd2 will be active, committing transactions
+>>>> corresponding to those fdatasync requests from dd. (In other words, =
+dd
+>>>> depends on jdb2, in order to make forward progress). But jdb2 being =
+a
+>>>> kernel thread, runs in the root blkio cgroup, as opposed to dd, =
+which
+>>>> runs under user.slice.
+>>>>=20
+>>>> Now, if the I/O scheduler in use for the underlying block device is
+>>>> CFQ, then its inter-queue/inter-group idling takes effect (via the
+>>>> slice_idle and group_idle parameters, both of which default to =
+8ms).
+>>>> Therefore, everytime CFQ switches between processing requests from =
+dd
+>>>> vs jbd2, this 8ms idle time is injected, which slows down the =
+overall
+>>>> throughput tremendously!
+>>>>=20
+>>>> To verify this theory, I tried various experiments, and in all =
+cases,
+>>>> the 4 pre-conditions mentioned above were necessary to reproduce =
+this
+>>>> performance drop. For example, if I used an XFS filesystem (which
+>>>> doesn't use a separate kthread like jbd2 for journaling), or if I =
+dd'ed
+>>>> directly to a block device, I couldn't reproduce the performance
+>>>> issue. Similarly, running dd in the root blkio cgroup (where jbd2
+>>>> runs) also gets full performance; as does using the noop or =
+deadline
+>>>> I/O schedulers; or even CFQ itself, with slice_idle and group_idle =
+set
+>>>> to zero.
+>>>>=20
+>>>> These results were reproduced on a Linux VM (kernel v4.19) on ESXi,
+>>>> both with virtualized storage as well as with disk pass-through,
+>>>> backed by a rotational hard disk in both cases. The same problem =
+was
+>>>> also seen with the BFQ I/O scheduler in kernel v5.1.
+>>>>=20
+>>>> Searching for any earlier discussions of this problem, I found an =
+old
+>>>> thread on LKML that encountered this behavior [1], as well as a =
+docker
+>>>> github issue [2] with similar symptoms (mentioned later in the
+>>>> thread).
+>>>>=20
+>>>> So, I'm curious to know if this is a well-understood problem and if
+>>>> anybody has any thoughts on how to fix it.
+>>>>=20
+>>>> Thank you very much!
+>>>>=20
+>>>>=20
+>>>> [1]. https://lkml.org/lkml/2015/11/19/359
+>>>>=20
+>>>> [2]. https://github.com/moby/moby/issues/21485
+>>>>   https://github.com/moby/moby/issues/21485#issuecomment-222941103
+>>>>=20
+>>>> Regards,
+>>>> Srivatsa
+
+
+--Apple-Mail=_21B10740-0BE7-4709-B8E2-677D365FE8FA--
+
+--Apple-Mail=_D52538F2-72FE-4CD4-B761-CCE9B24F2A35
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEpYoduex+OneZyvO8OAkCLQGo9oMFAlzj4CkACgkQOAkCLQGo
+9oNhnw/9FknbSsZTxjcEVqr8AsffId7OcCZ7Rw6q+INMQwaQfs9+omWFzm7hrm3R
+STwhoKDQimEHtpszFDoR1egchU/yKWD62iom+vYoyln+EaSSuFAgxx9wIJlT3G+U
+cJH5ydhQZUNaWN1k4KUH1rKGhTeeOIK/7SqQWYLBLZwbethCP/SxG/3LKbbefPE2
+oWH+tlkl3kEsklEIVEZdQuJsy9EtTY6IiKjJwFSaDD54++25n0jfq2fNwqqZRNzS
+pNmX7pv8QpfutBkICbSgBrfZNiiZl4mhEl1pkKmUF48+C+R+kM8dBpaC8sHlq7rG
+wV/ek3yHfauMeSMUuZpTeMO2sPpdfausH+/snmAftQeMqC6T+e3DtSfY9+NkBvAK
+orMQa+BZUbzjfqmXR/M910/orEGkFvuyyOJKQjt2MaUMTJCrf+1/+y9x42ambCTo
+cPJNv9jcG5G2J8jSX6KUpfwspB/o0ZU+gCszyYehk7lHIYvZQDk11u9+bM4nktpK
+uUEHVUx3zOq251DxNG5P0dAZq7H66CMJCz8S25q6UJJsejN8YnSBUTLg2FVyrGaw
+KTWp5TaVeD40RmfWmpz/kSAxDKCSkCcdH3G1j+6SxiFibMfDE0+0ejenqCY5uH8v
+VPG7HR838Vz4U6qih4GERPZLXI2Oi3rFT8931fRuapT6+gNcVIY=
+=lQSt
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_D52538F2-72FE-4CD4-B761-CCE9B24F2A35--
