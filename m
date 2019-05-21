@@ -2,248 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0014425633
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 18:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CBFB2562B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 18:54:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbfEUQyd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 12:54:33 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48530 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727965AbfEUQyd (ORCPT
+        id S1729166AbfEUQxz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 May 2019 12:53:55 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40566 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729154AbfEUQxz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 12:54:33 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4LGmok1004822;
-        Tue, 21 May 2019 16:54:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Pz6BufVarPJg8ICI5ViYb3JygWozLK3xsIvX2++usjc=;
- b=YDWuZZyvqldL74IykiKin4/zl4iLSTQrI05qhcS8lNtW56kwcy4m8+x1g97nKr6bYVMp
- +cm+SxMUZAmPhDjHbfIPn/IUZW+cBwkJzae6WuRPrhzlguSIJrkBPXazAIqRJZxxpQ3L
- OnvjtU4h4ZdozFgYMyyqQ4XR4Rnu+5xksVUDyaSrzE1JzgP5trlmn7owztbp+LVqp+70
- 7qwzCD3IAuUyp9wYrQd3iUgwh1X20b55f78DheMuM486PNmvpIhpDfAYnkJsXWn3rSoR
- REt15auisiKhhXBmghahKf0fVJFWDmUKT6SVgAOjjoMvzvAgjsGA3ccEWvH8MGvSLjLI 1w== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2sjapqep03-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 May 2019 16:54:05 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4LGpWNW173928;
-        Tue, 21 May 2019 16:52:05 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2sks1yadjd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 May 2019 16:52:04 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4LGq0ja019690;
-        Tue, 21 May 2019 16:52:01 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 21 May 2019 16:52:00 +0000
-Date:   Tue, 21 May 2019 09:51:58 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     linux-btrfs@vger.kernel.org, kilobyte@angband.pl,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz, david@fromorbit.com,
-        willy@infradead.org, hch@lst.de, dsterba@suse.cz,
-        nborisov@suse.com, linux-nvdimm@lists.01.org,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 04/18] dax: Introduce IOMAP_DAX_COW to CoW edges during
- writes
-Message-ID: <20190521165158.GB5125@magnolia>
-References: <20190429172649.8288-1-rgoldwyn@suse.de>
- <20190429172649.8288-5-rgoldwyn@suse.de>
+        Tue, 21 May 2019 12:53:55 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f10so4024091wre.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2019 09:53:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RjB7EuozO9SbpuWjY+CIL5jhjOJH/kZTishJT3qd1so=;
+        b=DVrrdj/uSypBpQeJ7w1A/QlA+FyxTxrTjqgIjCbG0reYil1YwuJTymbPcq5VHJqvVz
+         +ycMes6cu/p9bim38A9JdNpiuhKR9vQv7DKRlOjTKaH0aqGgcMNm9LyZRCsl86xL9T/2
+         v52uCPRsGaEw7QZ8JAwWz7Kq/Yj8TlXF4sm4C/8FN/Sr2m4ymsOhSa0mlT/aKrxO9iLl
+         j1mrN/7F1XvRVqFUi9infQrf5nFqVWvyb3hSIPgiuXrpPOdfJR8Np8CmTFbMGebX0RJF
+         ggWVReABajaL93O9n4VuSlBrHfB9XuQYf2S00X4VsMQ9qcMjAtgT2YCUTAII0Ql7QzsL
+         6EMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RjB7EuozO9SbpuWjY+CIL5jhjOJH/kZTishJT3qd1so=;
+        b=F9cy+Y08pHsNox27gKdldUdfsUfZwLNdCdx4fq4gbyijW2Kbv+S1y9HpvKuabUThLk
+         El5/z2/BW7Kh8uXia7tV1b5rPwSlo5yFO38iHHdkgvm2Bexjw0InM3zgL7qckvg0ysnP
+         1Bu6nBRUXCbMtfWv90FuWo3Z+R33qu2wX9t8+T/lWMrxzVxg1qvyMOYyGd5r0cvoByTL
+         c89bH6beU/EtDEn+zScc35geibxBCL66QvstB85/br6jcW6KVmx5Ly3KMsytrATGHSN8
+         cE1c8LU1iomd7RWJTA+SY4vk3boQA+D2RPef3+Lzr7iNU5JQ/BKWcwO9bzHRMzoWfoDE
+         L0Qg==
+X-Gm-Message-State: APjAAAUtN827qs9hNgdFHpBmiUVziCut4fgRqDJxmwwG1UKxBv9Qcj8U
+        dRiUHr4wWCYKmo9xQh7dqKIy7w==
+X-Google-Smtp-Source: APXvYqzvE8cesTA8vFkWKOJDTA1w0C5Fkm0j+9nhaMupM7B34j2tZxI4AHBlMWgH0cSYuDDVbKye1A==
+X-Received: by 2002:a5d:4d46:: with SMTP id a6mr13850707wru.142.1558457632993;
+        Tue, 21 May 2019 09:53:52 -0700 (PDT)
+Received: from brauner.io ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id t194sm6090599wmt.3.2019.05.21.09.53.51
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 21 May 2019 09:53:52 -0700 (PDT)
+Date:   Tue, 21 May 2019 18:53:50 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, jannh@google.com, fweimer@redhat.com,
+        oleg@redhat.com, tglx@linutronix.de, torvalds@linux-foundation.org,
+        arnd@arndb.de, shuah@kernel.org, dhowells@redhat.com,
+        tkjos@android.com, ldv@altlinux.org, miklos@szeredi.hu,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH 1/2] open: add close_range()
+Message-ID: <20190521165349.lduphxylwnfgael4@brauner.io>
+References: <20190521113448.20654-1-christian@brauner.io>
+ <20190521150006.GJ17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190429172649.8288-5-rgoldwyn@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9264 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905210103
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9264 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905210103
+In-Reply-To: <20190521150006.GJ17978@ZenIV.linux.org.uk>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 12:26:35PM -0500, Goldwyn Rodrigues wrote:
-> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Tue, May 21, 2019 at 04:00:06PM +0100, Al Viro wrote:
+> On Tue, May 21, 2019 at 01:34:47PM +0200, Christian Brauner wrote:
 > 
-> The IOMAP_DAX_COW is a iomap type which performs copy of
-> edges of data while performing a write if start/end are
-> not page aligned. The source address is expected in
-> iomap->inline_data.
+> > This adds the close_range() syscall. It allows to efficiently close a range
+> > of file descriptors up to all file descriptors of a calling task.
+> > 
+> > The syscall came up in a recent discussion around the new mount API and
+> > making new file descriptor types cloexec by default. During this
+> > discussion, Al suggested the close_range() syscall (cf. [1]). Note, a
+> > syscall in this manner has been requested by various people over time.
+> > 
+> > First, it helps to close all file descriptors of an exec()ing task. This
+> > can be done safely via (quoting Al's example from [1] verbatim):
+> > 
+> >         /* that exec is sensitive */
+> >         unshare(CLONE_FILES);
+> >         /* we don't want anything past stderr here */
+> >         close_range(3, ~0U);
+> >         execve(....);
+> > 
+> > The code snippet above is one way of working around the problem that file
+> > descriptors are not cloexec by default. This is aggravated by the fact that
+> > we can't just switch them over without massively regressing userspace. For
+> > a whole class of programs having an in-kernel method of closing all file
+> > descriptors is very helpful (e.g. demons, service managers, programming
+> > language standard libraries, container managers etc.).
+> > (Please note, unshare(CLONE_FILES) should only be needed if the calling
+> >  task is multi-threaded and shares the file descriptor table with another
+> >  thread in which case two threads could race with one thread allocating
+> >  file descriptors and the other one closing them via close_range(). For the
+> >  general case close_range() before the execve() is sufficient.)
+> > 
+> > Second, it allows userspace to avoid implementing closing all file
+> > descriptors by parsing through /proc/<pid>/fd/* and calling close() on each
+> > file descriptor. From looking at various large(ish) userspace code bases
+> > this or similar patterns are very common in:
+> > - service managers (cf. [4])
+> > - libcs (cf. [6])
+> > - container runtimes (cf. [5])
+> > - programming language runtimes/standard libraries
+> >   - Python (cf. [2])
+> >   - Rust (cf. [7], [8])
+> > As Dmitry pointed out there's even a long-standing glibc bug about missing
+> > kernel support for this task (cf. [3]).
+> > In addition, the syscall will also work for tasks that do not have procfs
+> > mounted and on kernels that do not have procfs support compiled in. In such
+> > situations the only way to make sure that all file descriptors are closed
+> > is to call close() on each file descriptor up to UINT_MAX or RLIMIT_NOFILE,
+> > OPEN_MAX trickery (cf. comment [8] on Rust).
+> > 
+> > The performance is striking. For good measure, comparing the following
+> > simple close_all_fds() userspace implementation that is essentially just
+> > glibc's version in [6]:
+> > 
+> > static int close_all_fds(void)
+> > {
+> >         DIR *dir;
+> >         struct dirent *direntp;
+> > 
+> >         dir = opendir("/proc/self/fd");
+> >         if (!dir)
+> >                 return -1;
+> > 
+> >         while ((direntp = readdir(dir))) {
+> >                 int fd;
+> >                 if (strcmp(direntp->d_name, ".") == 0)
+> >                         continue;
+> >                 if (strcmp(direntp->d_name, "..") == 0)
+> >                         continue;
+> >                 fd = atoi(direntp->d_name);
+> >                 if (fd == 0 || fd == 1 || fd == 2)
+> >                         continue;
+> >                 close(fd);
+> >         }
+> > 
+> >         closedir(dir); /* cannot fail */
+> >         return 0;
+> > }
+> > 
+> > to close_range() yields:
+> > 1. closing 4 open files:
+> >    - close_all_fds(): ~280 us
+> >    - close_range():    ~24 us
+> > 
+> > 2. closing 1000 open files:
+> >    - close_all_fds(): ~5000 us
+> >    - close_range():   ~800 us
+> > 
+> > close_range() is designed to allow for some flexibility. Specifically, it
+> > does not simply always close all open file descriptors of a task. Instead,
+> > callers can specify an upper bound.
+> > This is e.g. useful for scenarios where specific file descriptors are
+> > created with well-known numbers that are supposed to be excluded from
+> > getting closed.
+> > For extra paranoia close_range() comes with a flags argument. This can e.g.
+> > be used to implement extension. Once can imagine userspace wanting to stop
+> > at the first error instead of ignoring errors under certain circumstances.
+> > There might be other valid ideas in the future. In any case, a flag
+> > argument doesn't hurt and keeps us on the safe side.
+> > 
+> > >From an implementation side this is kept rather dumb. It saw some input
+> > from David and Jann but all nonsense is obviously my own!
+> > - Errors to close file descriptors are currently ignored. (Could be changed
+> >   by setting a flag in the future if needed.)
+> > - __close_range() is a rather simplistic wrapper around __close_fd().
+> >   My reasoning behind this is based on the nature of how __close_fd() needs
+> >   to release an fd. But maybe I misunderstood specifics:
+> >   We take the files_lock and rcu-dereference the fdtable of the calling
+> >   task, we find the entry in the fdtable, get the file and need to release
+> >   files_lock before calling filp_close().
+> >   In the meantime the fdtable might have been altered so we can't just
+> >   retake the spinlock and keep the old rcu-reference of the fdtable
+> >   around. Instead we need to grab a fresh reference to the fdtable.
+> >   If my reasoning is correct then there's really no point in fancyfying
+> >   __close_range(): We just need to rcu-dereference the fdtable of the
+> >   calling task once to cap the max_fd value correctly and then go on
+> >   calling __close_fd() in a loop.
 > 
-> dax_copy_edges() is a helper functions performs a copy from
-> one part of the device to another for data not page aligned.
-> If iomap->inline_data is NULL, it memset's the area to zero.
+> > +/**
+> > + * __close_range() - Close all file descriptors in a given range.
+> > + *
+> > + * @fd:     starting file descriptor to close
+> > + * @max_fd: last file descriptor to close
+> > + *
+> > + * This closes a range of file descriptors. All file descriptors
+> > + * from @fd up to and including @max_fd are closed.
+> > + */
+> > +int __close_range(struct files_struct *files, unsigned fd, unsigned max_fd)
+> > +{
+> > +	unsigned int cur_max;
+> > +
+> > +	if (fd > max_fd)
+> > +		return -EINVAL;
+> > +
+> > +	rcu_read_lock();
+> > +	cur_max = files_fdtable(files)->max_fds;
+> > +	rcu_read_unlock();
+> > +
+> > +	/* cap to last valid index into fdtable */
+> > +	if (max_fd >= cur_max)
+> > +		max_fd = cur_max - 1;
+> > +
+> > +	while (fd <= max_fd)
+> > +		__close_fd(files, fd++);
+> > +
+> > +	return 0;
+> > +}
 > 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> ---
->  fs/dax.c              | 46 +++++++++++++++++++++++++++++++++++++++++++++-
->  include/linux/iomap.h |  1 +
->  2 files changed, 46 insertions(+), 1 deletion(-)
+> Umm...  That's going to be very painful if you dup2() something to MAX_INT and
+> then run that; roughly 2G iterations of bouncing ->file_lock up and down,
+> without anything that would yield CPU in process.
 > 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index e5e54da1715f..610bfa861a28 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1084,6 +1084,42 @@ int __dax_zero_page_range(struct block_device *bdev,
->  }
->  EXPORT_SYMBOL_GPL(__dax_zero_page_range);
->  
-> +/*
-> + * dax_copy_edges - Copies the part of the pages not included in
-> + * 		    the write, but required for CoW because
-> + * 		    offset/offset+length are not page aligned.
-> + */
-> +static int dax_copy_edges(struct inode *inode, loff_t pos, loff_t length,
-> +			   struct iomap *iomap, void *daddr)
-> +{
-> +	unsigned offset = pos & (PAGE_SIZE - 1);
-> +	loff_t end = pos + length;
-> +	loff_t pg_end = round_up(end, PAGE_SIZE);
-> +	void *saddr = iomap->inline_data;
-> +	int ret = 0;
-> +	/*
-> +	 * Copy the first part of the page
-> +	 * Note: we pass offset as length
-> +	 */
-> +	if (offset) {
-> +		if (saddr)
-> +			ret = memcpy_mcsafe(daddr, saddr, offset);
-> +		else
-> +			memset(daddr, 0, offset);
-> +	}
-> +
-> +	/* Copy the last part of the range */
-> +	if (end < pg_end) {
-> +		if (saddr)
-> +			ret = memcpy_mcsafe(daddr + offset + length,
-> +			       saddr + offset + length,	pg_end - end);
-> +		else
-> +			memset(daddr + offset + length, 0,
-> +					pg_end - end);
-> +	}
-> +	return ret;
-> +}
-> +
->  static loff_t
->  dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  		struct iomap *iomap)
-> @@ -1105,9 +1141,11 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  			return iov_iter_zero(min(length, end - pos), iter);
->  	}
->  
-> -	if (WARN_ON_ONCE(iomap->type != IOMAP_MAPPED))
-> +	if (WARN_ON_ONCE(iomap->type != IOMAP_MAPPED
-> +			 && iomap->type != IOMAP_DAX_COW))
-
-I reiterate (from V3) that the && goes on the previous line...
-
-	if (WARN_ON_ONCE(iomap->type != IOMAP_MAPPED &&
-			 iomap->type != IOMAP_DAX_COW))
-
->  		return -EIO;
->  
-> +
->  	/*
->  	 * Write can allocate block for an area which has a hole page mapped
->  	 * into page tables. We have to tear down these mappings so that data
-> @@ -1144,6 +1182,12 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  			break;
->  		}
->  
-> +		if (iomap->type == IOMAP_DAX_COW) {
-> +			ret = dax_copy_edges(inode, pos, length, iomap, kaddr);
-> +			if (ret)
-> +				break;
-> +		}
-> +
->  		map_len = PFN_PHYS(map_len);
->  		kaddr += offset;
->  		map_len -= offset;
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 0fefb5455bda..6e885c5a38a3 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -25,6 +25,7 @@ struct vm_fault;
->  #define IOMAP_MAPPED	0x03	/* blocks allocated at @addr */
->  #define IOMAP_UNWRITTEN	0x04	/* blocks allocated at @addr in unwritten state */
->  #define IOMAP_INLINE	0x05	/* data inline in the inode */
-
-> +#define IOMAP_DAX_COW	0x06
-
-DAX isn't going to be the only scenario where we need a way to
-communicate to iomap actors the need to implement copy on write.
-
-XFS also uses struct iomap to hand out file leases to clients.  The
-lease code /currently/ doesn't support files with shared blocks (because
-the only user is pNFS) but one could easily imagine a future where some
-client wants to lease a file with shared blocks, in which case XFS will
-want to convey the COW details to the lessee.
-
-> +/* Copy data pointed by inline_data before write*/
-
-A month ago during the V3 patchset review, I wrote (possibly in an other
-thread, sorry) about something that I'm putting my foot down about now
-for the V4 patchset, which is the {re,ab}use of @inline_data for the
-data source address.
-
-We cannot use @inline_data to convey the source address.  @inline_data
-(so far) is used to point to the in-memory representation of the storage
-described by @addr.  For data writes, @addr is the location of the write
-on disk and @inline_data is the location of the write in memory.
-
-Reusing @inline_data here to point to the location of the source data in
-memory is a totally different thing and will likely result in confusion.
-On a practical level, this also means that we cannot support the case of
-COW && INLINE because the type codes collide and so would the users of
-@inline_data.  This isn't required *right now*, but if you had a pmem
-filesystem that stages inode updates in memory and flips a pointer to
-commit changes then the ->iomap_begin function will need to convey two
-pointers at once.
-
-So this brings us back to Dave's suggestion during the V1 patchset
-review that instead of adding more iomap flags/types and overloading
-fields, we simply pass two struct iomaps into ->iomap_begin:
-
- - Change iomap_apply() to "struct iomap iomap[2] = 0;" and pass
-   &iomap[0] into the ->iomap_begin and ->iomap_end functions.  The
-   first iomap will be filled in with the destination for the write (as
-   all implementations do now), and the second iomap can be filled in
-   with the source information for a COW operation.
-
- - If the ->iomap_begin implementation decides that COW is necessary for
-   the requested operation, then it should fill out that second iomap
-   with information about the extent that the actor must copied before
-   returning.  The second iomap's offset and length must match the
-   first.  If COW isn't necessary, the ->iomap_begin implementation
-   ignores it, and the second iomap retains type == 0 (i.e. invalid
-   mapping).
-
-Proceeding along these lines will (AFAICT) still allow you to enable all
-the btrfs functionality in the rest of this patchset while making the
-task of wiring up XFS fairly simple.  No overloaded fields and no new
-flags.
-
-This is how I'd like to see this patchset should proceed to V5.  Does
-that make sense?
-
---D
-
->  
->  /*
->   * Flags for all iomap mappings:
-> -- 
-> 2.16.4
+> If anything, I would suggest something like
 > 
+> 	fd = *start_fd;
+> 	grab the lock
+>         fdt = files_fdtable(files);
+> more:
+> 	look for the next eviction candidate in ->open_fds, starting at fd
+> 	if there's none up to max_fd
+> 		drop the lock
+> 		return NULL
+> 	*start_fd = fd + 1;
+> 	if the fscker is really opened and not just reserved
+> 		rcu_assign_pointer(fdt->fd[fd], NULL);
+> 		__put_unused_fd(files, fd);
+> 		drop the lock
+> 		return the file we'd got
+> 	if (unlikely(need_resched()))
+> 		drop lock
+> 		cond_resched();
+> 		grab lock
+> 		fdt = files_fdtable(files);
+> 	goto more;
+> 
+> with the main loop being basically
+> 	while ((file = pick_next(files, &start_fd, max_fd)) != NULL)
+> 		filp_close(file, files);
+
+That's obviously much more clever than what I had.
+I honestly have never thought about using open_fds before this. Seemed
+extremely localized to file.c
+Thanks for the pointers!
+
+Christian
