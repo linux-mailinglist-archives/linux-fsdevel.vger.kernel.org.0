@@ -2,134 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AF97245A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 03:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EBE8245A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 03:32:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfEUBcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 May 2019 21:32:04 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:41409 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727043AbfEUBcE (ORCPT
+        id S1727347AbfEUBcu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 May 2019 21:32:50 -0400
+Received: from mail-lj1-f169.google.com ([209.85.208.169]:44556 "EHLO
+        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726677AbfEUBcu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 May 2019 21:32:04 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 3E68295B1;
-        Mon, 20 May 2019 21:32:03 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 20 May 2019 21:32:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=XT/UdYnmx7GrDaJa60CFoxeSSHk
-        /OGQKeLYVIbFsryY=; b=lB8rpyD1L4izyfnU4fBk6mH7b53SchEIWKjue1YVeRl
-        NaxeXlXU3AaPgw36mvOLaTbLtOUPaDqMeT+GaLwkFcvhHpd8QV5CTYxWtlLjz7YE
-        zCMCS+eSHHf3MGGbaplZ9ZHBqMEbvDTmovpvTZNIl3eC79ObvEjTPK4so04BUjH4
-        xTz/EIuOAoBWxpMI1bk03H3M2qey9Wmhj0nxuo24oYJolUm31DvtrPDTfLwxua0U
-        AJyYFkychOiXckDOeIr78aAlFUCDhP4WE2x7fE6WlwlzijeFQ5ve14lm4INg0KpF
-        OjFJFr0Uy8Vp9Yzk4ITBJG7Qkrj8hpH1+jnXnIDGkbQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=XT/UdY
-        nmx7GrDaJa60CFoxeSSHk/OGQKeLYVIbFsryY=; b=Berg9P+nH9RaKmggVwHyFY
-        ApnFW6s0HIqbC+uMEYd8rjX2+6kWRsRoQp+raQ2T9qfB7WC+tagKTopn3HoXZ27s
-        39IJChaiXtznrwkVkZTcAJSBT0LGYCBfs7/B8Ht/4L7CPKM6pME6GRqigMejfStF
-        T3CfnV8eyI/SSLfHCcngFmO5+CE/puyR5j7NHmCWaEVDWYDPNSMreOeK8bB+sNkZ
-        SLCOgynt+12z9I141bI2lzYDPCZimSWYxkjaUqUcNPrr9FyjJrDg2RnX1X3zh5sO
-        W7Wg09xwB2quTckKG1cV1Fbj0QeZMUrx4GOQKLPk/zRmgjUjYBMGW7mnY5NClFTw
-        ==
-X-ME-Sender: <xms:D1XjXAfATuU3Uag8wco2cm4s08ym59tHCiZtH1Cc9iosm-DbvUQ9jA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddtledggeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    gfrhhlucfvnfffucdlfedtmdenucfjughrpeffhffvuffkfhggtggujgfofgesthdtredt
-    ofervdenucfhrhhomhepfdfvohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtoh
-    gsihhnrdgttgeqnecukfhppeduvdegrdduieelrdduheeirddvtdefnecurfgrrhgrmhep
-    mhgrihhlfhhrohhmpehmvgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:D1XjXOIir_QTYGS-KY606mTBNFzQq-3A2lmPVbGkjZzrv9G36JbWGw>
-    <xmx:D1XjXEkD0kkSzgiUKY5Y1K_HxDHL4yq4zvtG4DB2Yo4nWmGOySzttA>
-    <xmx:D1XjXBWseqKrRdaZT63yAe7xvv8CMZwaOc-enQ-nA1EZod8iZkHtRQ>
-    <xmx:E1XjXIGw8idhiXFZEFQXC6iOs0Uu7FRcPRe_sWu08XKXEIq31RyoTw>
-Received: from localhost (124-169-156-203.dyn.iinet.net.au [124.169.156.203])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D925610379;
-        Mon, 20 May 2019 21:31:57 -0400 (EDT)
-Date:   Tue, 21 May 2019 11:31:18 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@ftp.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Pekka Enberg <penberg@cs.helsinki.fi>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Christopher Lameter <cl@linux.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Waiman Long <longman@redhat.com>,
-        Tycho Andersen <tycho@tycho.ws>, Theodore Ts'o <tytso@mit.edu>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Chinner <david@fromorbit.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Rik van Riel <riel@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v5 16/16] dcache: Add CONFIG_DCACHE_SMO
-Message-ID: <20190521013118.GB25898@eros.localdomain>
-References: <20190520054017.32299-1-tobin@kernel.org>
- <20190520054017.32299-17-tobin@kernel.org>
- <20190521005740.GA9552@tower.DHCP.thefacebook.com>
+        Mon, 20 May 2019 21:32:50 -0400
+Received: by mail-lj1-f169.google.com with SMTP id e13so14220853ljl.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 May 2019 18:32:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=4fczlIAu46Dfdk97JDXeih55bEKhVpj+7BBQoa4D2So=;
+        b=jyBYHefXrnbXbU7iTypnEZZM9UPo0KJOue1Epino2d3PlrAr3QEqk7Zf2D+KML3q7e
+         9n26dOBgbNXwkvDFsbU87ZCm0k9QFDJszXkwSQ+jZNRtS9UDOr/OePe5opcLHM/AlmNx
+         JIFY8kzbQ4AdcINFW/+EhHz2SS/HhzIz4DJFlYBDe5GA9SxipXOufI8HoaIzH4wZjtXK
+         +Hr0Z/0RODgV1hG06KFeMEHwrKXG8iPEVf0EHX64PlDx30yFEHeFwpbzo28wmUxu0YNC
+         MI7QWEiXMewaivfN/zqlg6TgBYKVHd3nlTeER1n5w1nUNPS/w9sbH0RDO8EvBfph4X2/
+         V2Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=4fczlIAu46Dfdk97JDXeih55bEKhVpj+7BBQoa4D2So=;
+        b=lRYSxMXGpqAqEeqLaOQfl9yUICYrOLjZpurOqzvOyRQ92bIN9ZF5ZJrhB0ry/KeMVD
+         b4iBP94MZUnt7gNnqsiktQJonC80q8NiDw1QZCaLf0UvQ3Z9pUGkaU4mM74YhjIsNUCu
+         CxywS7V3DJRfK9gQpZVvxz/aW5Ru33k4DN5VkCF/1Wt5djRg5LbvqiDPu74pKWklIZo3
+         +pbjZyUF5f9Uloz0u/lxeabT6v6FcD2NF73gqmQCNAXg3EdZplAzrjhmBHOI6+gTdEnv
+         rLApJoK/WiH4v+lBP40zOooFB5GA0w9H1w9hK7jzsn0rbIMftUwPdd0ps9EQ614Gv2Fi
+         tUDA==
+X-Gm-Message-State: APjAAAUxP8KdQvWSkrUsHJitc6yBe1H8of1CqAo1YOqCdOYZoRshByLT
+        a4AM35C3hWEgvonDlKIiMyKjuhGv9vtzCCErYBtdAQ==
+X-Google-Smtp-Source: APXvYqzvC2IJvFVsPA9gAfTjKrdAXGxMndAbM7lBDt2wHBYo997nMmDhlbpZuhwqNL5Jr5JkccMEWeWb3MKEvbmcupY=
+X-Received: by 2002:a2e:2b58:: with SMTP id q85mr40132637lje.179.1558402367197;
+ Mon, 20 May 2019 18:32:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521005740.GA9552@tower.DHCP.thefacebook.com>
-X-Mailer: Mutt 1.11.4 (2019-03-13)
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190502040331.81196-1-ezemtsov@google.com> <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
+ <20190502131034.GA25007@mit.edu> <20190502132623.GU23075@ZenIV.linux.org.uk>
+ <CAK8JDrFZW1jwOmhq+YVDPJi9jWWrCRkwpqQ085EouVSyzw-1cg@mail.gmail.com>
+ <CAOQ4uxhDYvBOLBkyYXRC6aS_me+Q=1sBAtzOSkdqbo+N-Rtx=Q@mail.gmail.com>
+ <CAK8JDrGRzA+yphpuX+GQ0syRwF_p2Fora+roGCnYqB5E1eOmXA@mail.gmail.com>
+ <CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=w_AeM6YM=zVixsUfQ@mail.gmail.com> <CAK8JDrEQnXTcCtAPkb+S4r4hORiKh_yX=0A0A=LYSVKUo_n4OA@mail.gmail.com>
+In-Reply-To: <CAK8JDrEQnXTcCtAPkb+S4r4hORiKh_yX=0A0A=LYSVKUo_n4OA@mail.gmail.com>
+From:   Yurii Zubrytskyi <zyy@google.com>
+Date:   Mon, 20 May 2019 18:32:36 -0700
+Message-ID: <CAJeUaNCvr=X-cc+B3rsunKcdC6yHSGGa4G+8X+n8OxGKHeE3zQ@mail.gmail.com>
+Subject: Re: Initial patches for Incremental FS
+To:     Eugene Zemtsov <ezemtsov@google.com>, amir73il@gmail.com,
+        linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 21, 2019 at 12:57:47AM +0000, Roman Gushchin wrote:
-> On Mon, May 20, 2019 at 03:40:17PM +1000, Tobin C. Harding wrote:
-> > In an attempt to make the SMO patchset as non-invasive as possible add a
-> > config option CONFIG_DCACHE_SMO (under "Memory Management options") for
-> > enabling SMO for the DCACHE.  Whithout this option dcache constructor is
-> > used but no other code is built in, with this option enabled slab
-> > mobility is enabled and the isolate/migrate functions are built in.
-> > 
-> > Add CONFIG_DCACHE_SMO to guard the partial shrinking of the dcache via
-> > Slab Movable Objects infrastructure.
-> 
-> Hm, isn't it better to make it a static branch? Or basically anything
-> that allows switching on the fly?
+On Thu, May 9, 2019 at 1:15 AM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> I think you have made the right choice for you and for the product you are
+> working on to use an isolated module to provide this functionality.
+>
+> But I assume the purpose of your posting was to request upstream inclusion,
+> community code review, etc. This is not likely to happen when the
+> implementation and design choices are derived from Employer needs vs.
+> the community needs. Sure, you can get high level design review, which is
+> what *this* is, but I recon not much more.
+>
+> This discussion has several references to community projects that can benefit
+> from this functionality, but not in its current form.
+>
+> This development model has worked well in the past for Android and the Android
+> user base leverage could help to get you a ticket to staging, but eventually,
+> those modules (e.g. ashmem) often do get replaced with more community oriented
+> APIs.
+>
 
-If that is wanted, turning SMO on and off per cache, we can probably do
-this in the SMO code in SLUB.
+Hi fsdevel
+I'm Yurii, and I work with Eugene on the same team and the same project.
 
-> It seems that the cost of just building it in shouldn't be that high.
-> And the question if the defragmentation worth the trouble is so much
-> easier to answer if it's possible to turn it on and off without rebooting.
+I want to explain how we ended up with a custom filesystem instead of
+trying to improve FUSE for everyone, and
+why we think (maybe incorrectly) that it may be still pretty useful
+for the community.
+As the project goal was to allow instant (-ish) deployment of apps
+from the dev environment to Android phone, we were hoping to
+stick with plain FUSE filesystem, and that's what we've done at first.
+But it turned out that even with the best tuning it was still
+really slow and battery-hungry (phones spent energy faster than they
+were charging over the cord).
+At this point we've already collected the profiles for the filesystem
+usage, and also figured out what features are essential
+to make it usable for streaming:
+1. Random reads are the most common -> 4kb-sized read is the size we
+have to support, and may not go to usermode on each of those
+2. Android tends to list the app directory and stat files in it often
+-> these operations need to be cached in kernel as well
+3. Because of *random* reads streaming files sequentially isn't
+optimal -> need to be able to collect read logs from first deployment
+    and stream in that order next time on incremental builds
+4. Devices have small flash cards, need to deploy uncompressed game
+images for speed and mmap access ->
+    support storing 4kb blocks compressed
+4.1. Host computer is much better at compression -> support streaming
+compressed blocks into the filesystem storage directly, without
+       recompression on the phone
+5. Android has to verify app signature for installation -> need to
+support per-block signing and lazy verification
+5.1. For big games even per-block signature data can be huge, so need
+to stream even the signatures
+6. Development cycle is usually edit-build-try-edit-... -> need to
+support delta-patches from existing files
+7. File names for installed apps are standard and different from what
+they were on the host ->
+    must be able to store user-supplied 'key' next to each file to identify it
+8. Files never change -> no need to have complex code for mutable data
+in the filesystem
 
-If the question is 'is defragmentation worth the trouble for the
-dcache', I'm not sure having SMO turned off helps answer that question.
-If one doesn't shrink the dentry cache there should be very little
-overhead in having SMO enabled.  So if one wants to explore this
-question then they can turn on the config option.  Please correct me if
-I'm wrong.
+In the end, we saw only two ways how to make all of this work: either
+take sdcardfs as a base and extend it, or change FUSE to
+support cache in kernel; and as you can imagine, sdcardfs route got
+thrown out of the window immediately after looking at the code.
+But after learning some FUSE internals and its code what we found out
+is that to make it do all the listed things we'd basically have
+to implement a totally new filesystem inside of it. The only real use
+of FUSE that remained was to send FUSE_INIT, and occasional
+read requests. Everything else required, first of all, making a cache
+object inside FUSE intercept every message before it goes to the
+user mode, and also adding new specialized commands initiated by the
+usermode (e.g. prefetching data that hasn't been requested
+yet, or streaming hashes in). Some things even didn't make sense for a
+generic usecase (e.g. having a limited circular buffer of read
+blocks in kernel that user can ask for and flush).
 
-The ifdef guard is there so memory management is not having any negative
-effects on the dcache/VFS (no matter how small).  It also means that the
-VFS guys don't have to keep an eye on what SMO is doing, they can
-just configure SMO out.  The dcache is already fairly complex, I'm not
-sure adding complexity to it without good reason is sound practice.  At
-best SMO is only going to by mildly useful to the dcache so I feel we
-should err on the side of caution.
+In the end, after several tries we just came to a conclusion that the
+very set of original requirements is so specific that, funny enough,
+anyone who wants to create a lazy-loading experience would hit most of
+them, while anyone who's doing something else, would miss
+most of them. That's the main reason to go with a separate specialized
+driver module, and the reason to share it with the community -
+we have a feeling that people will benefit from a high-quality
+implementation of lazy loading in kernel, and we will benefit from the
+community support and guiding.
 
-Open to ideas.
+Again, we all are human and can be wrong at any step when making
+conclusions. E.g. we didn't know about the fscache subsystem,
+and were only planning to create a cache object inside FUSE instead.
+But for now I still feel that our original research stands, and
+that in the long run specialized filesystem serves its users much
+better than several scattered changes in other places that all
+pretty much look like the same filesystem split into three parts and
+adopted to the interfaces those places force onto it. Even more,
+those changes and interfaces look quite strange on their own, when not
+used together.
 
-Thanks,
-Tobin.
+Please tell me what you think about this whole thing. We do care about
+the feature in general, not about making it
+look as we've coded it right now. If you feel that making fscache
+interface that covers the whole FUSE usermode
+messages + allows for those requirements is useful beyond streaming,
+we'll investigate that route further.
+
+Thank you, and sorry for a long email
+
+--
+Thanks, Yurii
