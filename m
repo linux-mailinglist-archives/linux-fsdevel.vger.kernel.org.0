@@ -2,143 +2,269 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FA1924754
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 07:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AB3A247A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 07:53:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbfEUFJq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 01:09:46 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42508 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfEUFJq (ORCPT
+        id S1726719AbfEUFxF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 May 2019 01:53:05 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:37340 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725794AbfEUFxE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 01:09:46 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 13so8398723pfw.9;
-        Mon, 20 May 2019 22:09:45 -0700 (PDT)
+        Tue, 21 May 2019 01:53:04 -0400
+Received: by mail-yw1-f67.google.com with SMTP id 186so6852429ywo.4;
+        Mon, 20 May 2019 22:53:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=iH4Hc02N2HPKJftxMQstfzc1qp7qmQky02xsvvHODHg=;
-        b=Lze49Glktl6JLr3SbrFTi2/1ILDiooabrHGNIg/0rtAEefxsCm+nJlw8NzHcKqW7uO
-         2Xp3siOi9c0zs+eNCzH3/+Kk6J11XwowGUX5Ot6iIoa2p4aX8RiBgbEKPPYW7a7/FM/h
-         iZzWb3xwpyEjcb9FWQN4bWZkgyOqv6GV/2L+S9GCoyEb12XtM4qLNXHhOgirYXcbYW9a
-         Hg6Wmi1OxLguiDnquGYcQoMg4Db8ADzAM1kM8c76TtawbgjmBYkgqdz/hJ/plC/4kpvI
-         lCDRXgGH88Im9wqce2/Ycq8OoXEHjTxGXBKcyEjvEwUhbGsEIx+kfLttcSYHkmr5edO2
-         bE0Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uK0emkVrsqGKeKCiH2odgGuk2wkMBSrXqKthY8RV7To=;
+        b=iZ1mSfiSQWFrm2ofUptWw5Ut1AEwOK0wT9dJ+SY1icUbRs1Kw/a2fVQd5m1diS/z3J
+         obXO4vmQrmm4ziVe8AjJYb8VEKlH8RV4aq4TtUKp29Xlvq1cPfgBly+1dBUl2hBe8iQg
+         LPkweMDY3cU7wRyjjmuolWFuf46pH3Vugbv9RUHklIotqaAkYN8dtjj2IM5hMEbJE+b4
+         1fIVnegYI1wksFEmkU0Y85tr1+6JVs6cbiW+80GgYbNuZPBKpJSLlC4jDbeWLm3auiam
+         l+MQOPZU+20sudmcvBoCZUiASSNSxzFAvvFnvSnNUgBoD4I3C5cgxk889NbkuMNEjtIG
+         TV5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=iH4Hc02N2HPKJftxMQstfzc1qp7qmQky02xsvvHODHg=;
-        b=unSv/oiEsPY0MkkIbJgIWY1QpKavaRNmbsIH3lKG8ew3HQmKNP77Lmn1PNxsGKWRlY
-         WJXT7Oaf4mXhNacsfHl5rIW3RpibpUck8v2hUVM8cKgos13XqaxHu6QYnFAcRszT7jXv
-         JTmVIr6mXsJjiXe0k1Jx4teQyfj6ZOyZHxRX9lrVQNte5EWjk0asX+I/4f7lY4S+LdlN
-         tZnaDED7qXDWaNRl+36iP77wCkGulkmeWCU0dgZxZUP/Ypm89aeSwLaWa8L/Jc1WKeqW
-         8caCPu7pT921Z2PhgRfjHtZUNtnA3FIuh6EMVPP8cZLTGjSgME0XERRHGSUwiBr01k39
-         NrZg==
-X-Gm-Message-State: APjAAAW1yUYo9zBc/w3UjW7poQd2sHhg5rUGXzMOxmQ+5bFTWxzXZrTV
-        W+YMX78/1SME35qUk7WhTJk=
-X-Google-Smtp-Source: APXvYqwfB9R7DykIPPepOiis2elRrcwkJO/eaod12JpyqcUJ08biDGJIlxfpgBCUzQJW5T7C/BnMUg==
-X-Received: by 2002:a63:c64c:: with SMTP id x12mr79098885pgg.379.1558415385446;
-        Mon, 20 May 2019 22:09:45 -0700 (PDT)
-Received: from localhost ([43.224.245.181])
-        by smtp.gmail.com with ESMTPSA id f29sm48456740pfq.11.2019.05.20.22.09.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 22:09:44 -0700 (PDT)
-From:   Weitao Hou <houweitaoo@gmail.com>
-To:     mcgrof@kernel.org, keescook@chromium.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Weitao Hou <houweitaoo@gmail.com>
-Subject: [PATCH v3] kernel: fix typos and some coding style in comments
-Date:   Tue, 21 May 2019 13:09:37 +0800
-Message-Id: <20190521050937.4370-1-houweitaoo@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uK0emkVrsqGKeKCiH2odgGuk2wkMBSrXqKthY8RV7To=;
+        b=AYfZ3YuPJaGPVXscqntdltJj4ABPLILfJUBk+YFQSdn/xe7tV68tD/JZ0thYzy/jGF
+         R0dAU9TNZlDhnE6XjJ1tpgg0h8+D4hv+crAsdTxfgpFVN3YZE4NvbD/BPZesqMRMRwTP
+         r7EUWcWNg0aZhWOeuQm4/JO0L4nHCVc+cmmeIgJjZqVTnA6Z8OIU6I+lnTLa9re1c6bJ
+         e/d6OCSbjUs+JeZll/IXflIXp/u/uvgXNljte9z5LJRFA17t6lQWL26HL95lQalgFvbk
+         QcvN2yl7F2Vh/tpCXAb5J6V2x31ftI031b0ZdFlCuc6TOFjzdXx62QKqnhNjCvxw1pDB
+         qsRA==
+X-Gm-Message-State: APjAAAXGpEwceRP43Pw8enwDxAe2W0zAu/JKmPy9et1iqaNHm+6TW/AZ
+        Ff7qlIAgAs5W/kW9ETyJW2TTZl2KgU3ZwLb+eoA=
+X-Google-Smtp-Source: APXvYqxBP8n4T+H5UZSoNTkjwpChzWPd5ZPM8sapnzQurKHQZ8lxQHkTjj4jNN/P7vZwXPfz4s4jHh64BZqSFh+XvEw=
+X-Received: by 2002:a81:3344:: with SMTP id z65mr5808059ywz.294.1558417983731;
+ Mon, 20 May 2019 22:53:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181203083416.28978-1-david@fromorbit.com> <20181203083952.GC6311@dastard>
+In-Reply-To: <20181203083952.GC6311@dastard>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 21 May 2019 08:52:52 +0300
+Message-ID: <CAOQ4uxgeMJWBQn-WRUuqb=Dok4tZ8VBCKusGNLU-MYWGedm89A@mail.gmail.com>
+Subject: Re: [PATCH 12/11] man-pages: copy_file_range updates
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        ceph-devel@vger.kernel.org, CIFS <linux-cifs@vger.kernel.org>,
+        linux-api@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fix lenght to length
+On Mon, Dec 3, 2018 at 10:40 AM Dave Chinner <david@fromorbit.com> wrote:
+>
+> From: Dave Chinner <dchinner@redhat.com>
+>
+> Update with all the missing errors the syscall can return, the
+> behaviour the syscall should have w.r.t. to copies within single
+> files, etc.
 
-Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
----
-Changes in v3:
-- fix all other same typos with git grep
----
- .../devicetree/bindings/usb/s3c2410-usb.txt    |  2 +-
- .../wireless/mediatek/mt76/mt76x02_usb_core.c  |  2 +-
- kernel/sysctl.c                                | 18 +++++++++---------
- sound/soc/qcom/qdsp6/q6asm.c                   |  2 +-
- 4 files changed, 12 insertions(+), 12 deletions(-)
+Below are the changes I have made to V2 of this man-page update in accordance to
+agreed change of behavior (i.e. short copy up to EOF).
 
-diff --git a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-index e45b38ce2986..26c85afd0b53 100644
---- a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-+++ b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-@@ -4,7 +4,7 @@ OHCI
- 
- Required properties:
-  - compatible: should be "samsung,s3c2410-ohci" for USB host controller
-- - reg: address and lenght of the controller memory mapped region
-+ - reg: address and length of the controller memory mapped region
-  - interrupts: interrupt number for the USB OHCI controller
-  - clocks: Should reference the bus and host clocks
-  - clock-names: Should contain two strings
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c b/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c
-index 6b89f7eab26c..e0f5e6202a27 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c
-@@ -53,7 +53,7 @@ int mt76x02u_skb_dma_info(struct sk_buff *skb, int port, u32 flags)
- 	pad = round_up(skb->len, 4) + 4 - skb->len;
- 
- 	/* First packet of a A-MSDU burst keeps track of the whole burst
--	 * length, need to update lenght of it and the last packet.
-+	 * length, need to update length of it and the last packet.
- 	 */
- 	skb_walk_frags(skb, iter) {
- 		last = iter;
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 943c89178e3d..f78f725f225e 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -187,17 +187,17 @@ extern int no_unaligned_warning;
-  * enum sysctl_writes_mode - supported sysctl write modes
-  *
-  * @SYSCTL_WRITES_LEGACY: each write syscall must fully contain the sysctl value
-- * 	to be written, and multiple writes on the same sysctl file descriptor
-- * 	will rewrite the sysctl value, regardless of file position. No warning
-- * 	is issued when the initial position is not 0.
-+ *	to be written, and multiple writes on the same sysctl file descriptor
-+ *	will rewrite the sysctl value, regardless of file position. No warning
-+ *	is issued when the initial position is not 0.
-  * @SYSCTL_WRITES_WARN: same as above but warn when the initial file position is
-- * 	not 0.
-+ *	not 0.
-  * @SYSCTL_WRITES_STRICT: writes to numeric sysctl entries must always be at
-- * 	file position 0 and the value must be fully contained in the buffer
-- * 	sent to the write syscall. If dealing with strings respect the file
-- * 	position, but restrict this to the max length of the buffer, anything
-- * 	passed the max lenght will be ignored. Multiple writes will append
-- * 	to the buffer.
-+ *	file position 0 and the value must be fully contained in the buffer
-+ *	sent to the write syscall. If dealing with strings respect the file
-+ *	position, but restrict this to the max length of the buffer, anything
-+ *	passed the max length will be ignored. Multiple writes will append
-+ *	to the buffer.
-  *
-  * These write modes control how current file position affects the behavior of
-  * updating sysctl values through the proc interface on each write.
-diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
-index 4f85cb19a309..e8141a33a55e 100644
---- a/sound/soc/qcom/qdsp6/q6asm.c
-+++ b/sound/soc/qcom/qdsp6/q6asm.c
-@@ -1194,7 +1194,7 @@ EXPORT_SYMBOL_GPL(q6asm_open_read);
-  * q6asm_write_async() - non blocking write
-  *
-  * @ac: audio client pointer
-- * @len: lenght in bytes
-+ * @len: length in bytes
-  * @msw_ts: timestamp msw
-  * @lsw_ts: timestamp lsw
-  * @wflags: flags associated with write
--- 
-2.18.0
+This is a heads up before posting to verify my interpretation is correct.
+I still have more testing to do before posting.
 
+The main thing is adding:
+ .BR copy_file_range ()
+ will return the number of bytes copied between files.
+ This could be less than the length originally requested.
++If the file offset of
++.I fd_in
++is at or past the end of file, no bytes are copied, and
++.BR copy_file_range ()
++returns zero.
+
+But see also other changes below...
+
+>
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> ---
+>  man2/copy_file_range.2 | 94 +++++++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 77 insertions(+), 17 deletions(-)
+>
+> diff --git a/man2/copy_file_range.2 b/man2/copy_file_range.2
+> index 20374abb21f0..23b00c2f3fea 100644
+> --- a/man2/copy_file_range.2
+> +++ b/man2/copy_file_range.2
+> @@ -42,9 +42,9 @@ without the additional cost of transferring data from the kernel to user space
+>  and then back into the kernel.
+>  It copies up to
+>  .I len
+> -bytes of data from file descriptor
+> +bytes of data from the source file descriptor
+>  .I fd_in
+> -to file descriptor
+> +to target file descriptor
+>  .IR fd_out ,
+>  overwriting any data that exists within the requested range of the target file.
+>  .PP
+> @@ -74,6 +74,11 @@ is not changed, but
+>  .I off_in
+>  is adjusted appropriately.
+>  .PP
+> +.I fd_in
+> +and
+> +.I fd_out
+> +can refer to the same file. If they refer to the same file, then the source and
+> +target ranges are not allowed to overlap.
+>  .PP
+>  The
+>  .I flags
+> @@ -93,34 +98,73 @@ is set to indicate the error.
+>  .SH ERRORS
+>  .TP
+>  .B EBADF
+> -One or more file descriptors are not valid; or
+> +One or more file descriptors are not valid.
+> +.TP
+> +.B EBADF
+>  .I fd_in
+>  is not open for reading; or
+>  .I fd_out
+> -is not open for writing; or
+> -the
+> +is not open for writing.
+> +.TP
+> +.B EBADF
+> +The
+>  .B O_APPEND
+>  flag is set for the open file description referred to by
+>  .IR fd_out .
+>  .TP
+>  .B EFBIG
+> -An attempt was made to write a file that exceeds the implementation-defined
+> -maximum file size or the process's file size limit,
+> -or to write at a position past the maximum allowed offset.
+> +An attempt was made to write at a position past the maximum file offset the
+> +kernel supports.
+
+Updated to "...attempt made to read or write..."
+
+> +.TP
+> +.B EFBIG
+> +An attempt was made to write a range that exceeds the allowed maximum file size.
+> +The maximum file size differs between filesystem implemenations and can be
+> +different to the maximum allowed file offset.
+> +.TP
+> +.B EFBIG
+> +An attempt was made to write beyond the process's file size resource
+> +limit. This may also result in the process receiving a
+> +.I SIGXFSZ
+> +signal.
+>  .TP
+>  .B EINVAL
+> -Requested range extends beyond the end of the source file; or the
+
+Removed this.
+
+> -.I flags
+> -argument is not 0.
+> +.I (off_in + len)
+> +spans the end of the source file.
+>  .TP
+> -.B EIO
+> -A low-level I/O error occurred while copying.
+> +.B EINVAL
+> +.I fd_in
+> +and
+> +.I fd_out
+> +refer to the same file and the source and target ranges overlap.
+> +.TP
+> +.B EINVAL
+> +.I fd_in
+> +or
+> +.I fd_out
+> +is not a regular file.
+>  .TP
+>  .B EISDIR
+>  .I fd_in
+>  or
+>  .I fd_out
+>  refers to a directory.
+> +.B EINVAL
+> +The
+> +.I flags
+> +argument is not 0.
+> +.TP
+> +.B EINVAL
+> +.I off_in
+> +or
+> +.I (off_in + len)
+> +is beyond the maximum valid file offset.
+
+Removed this. Updated entry for EFBIG with in offset.
+
+> +.TP
+> +.B EOVERFLOW
+> +The requested source or destination range is too large to represent in the
+> +specified data types.
+> +.TP
+> +.B EIO
+> +A low-level I/O error occurred while copying.
+>  .TP
+>  .B ENOMEM
+>  Out of memory.
+> @@ -128,16 +172,32 @@ Out of memory.
+>  .B ENOSPC
+>  There is not enough space on the target filesystem to complete the copy.
+>  .TP
+> -.B EXDEV
+> -The files referred to by
+> -.IR file_in " and " file_out
+
+Kept this one with added "(pre Linux 5.3)"
+
+> -are not on the same mounted filesystem.
+> +.B TXTBSY
+> +.I fd_in
+> +or
+> +.I fd_out
+> +refers to an active swap file.
+> +.TP
+> +.B EPERM
+> +.I fd_out
+> +refers to an immutable file.
+> +.TP
+> +.B EACCES
+> +The user does not have write permissions for the destination file.
+>  .SH VERSIONS
+>  The
+>  .BR copy_file_range ()
+>  system call first appeared in Linux 4.5, but glibc 2.27 provides a user-space
+>  emulation when it is not available.
+>  .\" https://sourceware.org/git/?p=glibc.git;a=commit;f=posix/unistd.h;h=bad7a0c81f501fbbcc79af9eaa4b8254441c4a1f
+> +.PP
+> +A major rework of the kernel implementation occurred in 4.21. Areas of the API
+> +that weren't clearly defined were clarified and the API bounds are much more
+> +strictly checked than on earlier kernels. Applications should target the
+> +behaviour and requirements of 4.21 kernels.
+> +.PP
+> +First support for cross-filesystem copies was introduced in Linux 4.21. Older
+> +kernels will return -EXDEV when cross-filesystem copies are attempted.
+>  .SH CONFORMING TO
+>  The
+>  .BR copy_file_range ()
+
+Updates example loop termination condition to:
+         len \-= ret;
+-    } while (len > 0);
++    } while (len > 0 && ret > 0);
+
+
+WIP is available here:
+https://github.com/amir73il/man-pages/commits/copy_file_range
+
+Thanks,
+Amir.
