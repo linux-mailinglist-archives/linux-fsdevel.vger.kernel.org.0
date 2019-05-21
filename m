@@ -2,260 +2,353 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CBFB2562B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 18:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83FFC2565D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 19:09:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729166AbfEUQxz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 12:53:55 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40566 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729154AbfEUQxz (ORCPT
+        id S1728175AbfEURJM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 May 2019 13:09:12 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:46966 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbfEURJM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 12:53:55 -0400
-Received: by mail-wr1-f65.google.com with SMTP id f10so4024091wre.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2019 09:53:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RjB7EuozO9SbpuWjY+CIL5jhjOJH/kZTishJT3qd1so=;
-        b=DVrrdj/uSypBpQeJ7w1A/QlA+FyxTxrTjqgIjCbG0reYil1YwuJTymbPcq5VHJqvVz
-         +ycMes6cu/p9bim38A9JdNpiuhKR9vQv7DKRlOjTKaH0aqGgcMNm9LyZRCsl86xL9T/2
-         v52uCPRsGaEw7QZ8JAwWz7Kq/Yj8TlXF4sm4C/8FN/Sr2m4ymsOhSa0mlT/aKrxO9iLl
-         j1mrN/7F1XvRVqFUi9infQrf5nFqVWvyb3hSIPgiuXrpPOdfJR8Np8CmTFbMGebX0RJF
-         ggWVReABajaL93O9n4VuSlBrHfB9XuQYf2S00X4VsMQ9qcMjAtgT2YCUTAII0Ql7QzsL
-         6EMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RjB7EuozO9SbpuWjY+CIL5jhjOJH/kZTishJT3qd1so=;
-        b=F9cy+Y08pHsNox27gKdldUdfsUfZwLNdCdx4fq4gbyijW2Kbv+S1y9HpvKuabUThLk
-         El5/z2/BW7Kh8uXia7tV1b5rPwSlo5yFO38iHHdkgvm2Bexjw0InM3zgL7qckvg0ysnP
-         1Bu6nBRUXCbMtfWv90FuWo3Z+R33qu2wX9t8+T/lWMrxzVxg1qvyMOYyGd5r0cvoByTL
-         c89bH6beU/EtDEn+zScc35geibxBCL66QvstB85/br6jcW6KVmx5Ly3KMsytrATGHSN8
-         cE1c8LU1iomd7RWJTA+SY4vk3boQA+D2RPef3+Lzr7iNU5JQ/BKWcwO9bzHRMzoWfoDE
-         L0Qg==
-X-Gm-Message-State: APjAAAUtN827qs9hNgdFHpBmiUVziCut4fgRqDJxmwwG1UKxBv9Qcj8U
-        dRiUHr4wWCYKmo9xQh7dqKIy7w==
-X-Google-Smtp-Source: APXvYqzvE8cesTA8vFkWKOJDTA1w0C5Fkm0j+9nhaMupM7B34j2tZxI4AHBlMWgH0cSYuDDVbKye1A==
-X-Received: by 2002:a5d:4d46:: with SMTP id a6mr13850707wru.142.1558457632993;
-        Tue, 21 May 2019 09:53:52 -0700 (PDT)
-Received: from brauner.io ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id t194sm6090599wmt.3.2019.05.21.09.53.51
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 21 May 2019 09:53:52 -0700 (PDT)
-Date:   Tue, 21 May 2019 18:53:50 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, jannh@google.com, fweimer@redhat.com,
-        oleg@redhat.com, tglx@linutronix.de, torvalds@linux-foundation.org,
-        arnd@arndb.de, shuah@kernel.org, dhowells@redhat.com,
-        tkjos@android.com, ldv@altlinux.org, miklos@szeredi.hu,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH 1/2] open: add close_range()
-Message-ID: <20190521165349.lduphxylwnfgael4@brauner.io>
-References: <20190521113448.20654-1-christian@brauner.io>
- <20190521150006.GJ17978@ZenIV.linux.org.uk>
+        Tue, 21 May 2019 13:09:12 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4LH4IcS021379;
+        Tue, 21 May 2019 17:08:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=HazVTBltFCp/JT3i6Fvm6JwAe4wUusgx/zu8SGigWk0=;
+ b=uMq4Uyq/16/NnldfnA2K8y7S+jtYyNqtdb/8owL5xEHH/CO9e4dEEbRrvS8ig+8OoHMV
+ /lAnQNlpnL6ThnZuMaeNQvKrR6zRUIscvFBIy39YKlROn/RJ+iSGiAqNF/i6wcDt43b8
+ r3K0vV6Axo219jhwn8yw1fG9p8DIfAdIn3hUQp//pMhy5sFrbkoDwBoZ2dzogvp973n9
+ m/usURFUxnDuQGU8UWgHoLOAinXajUFhMc5JF/vHw/m3L6MeOaboaipHsF8QZcPgiAgQ
+ ntrOzppGA5j2t6tle9IouCoiLtsJKvu3vqaYJZ+2GyUQrh8whS/po/tYK3RNeuAIDsHe hQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 2sj7jdq33r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 May 2019 17:08:47 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4LH84Y4042728;
+        Tue, 21 May 2019 17:08:46 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2sm0473gyw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 May 2019 17:08:46 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4LH8jBE018197;
+        Tue, 21 May 2019 17:08:45 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 21 May 2019 17:08:45 +0000
+Date:   Tue, 21 May 2019 10:08:43 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-btrfs@vger.kernel.org, kilobyte@angband.pl,
+        linux-fsdevel@vger.kernel.org, jack@suse.cz, david@fromorbit.com,
+        willy@infradead.org, hch@lst.de, dsterba@suse.cz,
+        nborisov@suse.com, linux-nvdimm@lists.01.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 07/18] btrfs: add dax write support
+Message-ID: <20190521170843.GC5125@magnolia>
+References: <20190429172649.8288-1-rgoldwyn@suse.de>
+ <20190429172649.8288-8-rgoldwyn@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190521150006.GJ17978@ZenIV.linux.org.uk>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190429172649.8288-8-rgoldwyn@suse.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9264 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905210105
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9264 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905210105
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 21, 2019 at 04:00:06PM +0100, Al Viro wrote:
-> On Tue, May 21, 2019 at 01:34:47PM +0200, Christian Brauner wrote:
+On Mon, Apr 29, 2019 at 12:26:38PM -0500, Goldwyn Rodrigues wrote:
+> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 > 
-> > This adds the close_range() syscall. It allows to efficiently close a range
-> > of file descriptors up to all file descriptors of a calling task.
-> > 
-> > The syscall came up in a recent discussion around the new mount API and
-> > making new file descriptor types cloexec by default. During this
-> > discussion, Al suggested the close_range() syscall (cf. [1]). Note, a
-> > syscall in this manner has been requested by various people over time.
-> > 
-> > First, it helps to close all file descriptors of an exec()ing task. This
-> > can be done safely via (quoting Al's example from [1] verbatim):
-> > 
-> >         /* that exec is sensitive */
-> >         unshare(CLONE_FILES);
-> >         /* we don't want anything past stderr here */
-> >         close_range(3, ~0U);
-> >         execve(....);
-> > 
-> > The code snippet above is one way of working around the problem that file
-> > descriptors are not cloexec by default. This is aggravated by the fact that
-> > we can't just switch them over without massively regressing userspace. For
-> > a whole class of programs having an in-kernel method of closing all file
-> > descriptors is very helpful (e.g. demons, service managers, programming
-> > language standard libraries, container managers etc.).
-> > (Please note, unshare(CLONE_FILES) should only be needed if the calling
-> >  task is multi-threaded and shares the file descriptor table with another
-> >  thread in which case two threads could race with one thread allocating
-> >  file descriptors and the other one closing them via close_range(). For the
-> >  general case close_range() before the execve() is sufficient.)
-> > 
-> > Second, it allows userspace to avoid implementing closing all file
-> > descriptors by parsing through /proc/<pid>/fd/* and calling close() on each
-> > file descriptor. From looking at various large(ish) userspace code bases
-> > this or similar patterns are very common in:
-> > - service managers (cf. [4])
-> > - libcs (cf. [6])
-> > - container runtimes (cf. [5])
-> > - programming language runtimes/standard libraries
-> >   - Python (cf. [2])
-> >   - Rust (cf. [7], [8])
-> > As Dmitry pointed out there's even a long-standing glibc bug about missing
-> > kernel support for this task (cf. [3]).
-> > In addition, the syscall will also work for tasks that do not have procfs
-> > mounted and on kernels that do not have procfs support compiled in. In such
-> > situations the only way to make sure that all file descriptors are closed
-> > is to call close() on each file descriptor up to UINT_MAX or RLIMIT_NOFILE,
-> > OPEN_MAX trickery (cf. comment [8] on Rust).
-> > 
-> > The performance is striking. For good measure, comparing the following
-> > simple close_all_fds() userspace implementation that is essentially just
-> > glibc's version in [6]:
-> > 
-> > static int close_all_fds(void)
-> > {
-> >         DIR *dir;
-> >         struct dirent *direntp;
-> > 
-> >         dir = opendir("/proc/self/fd");
-> >         if (!dir)
-> >                 return -1;
-> > 
-> >         while ((direntp = readdir(dir))) {
-> >                 int fd;
-> >                 if (strcmp(direntp->d_name, ".") == 0)
-> >                         continue;
-> >                 if (strcmp(direntp->d_name, "..") == 0)
-> >                         continue;
-> >                 fd = atoi(direntp->d_name);
-> >                 if (fd == 0 || fd == 1 || fd == 2)
-> >                         continue;
-> >                 close(fd);
-> >         }
-> > 
-> >         closedir(dir); /* cannot fail */
-> >         return 0;
-> > }
-> > 
-> > to close_range() yields:
-> > 1. closing 4 open files:
-> >    - close_all_fds(): ~280 us
-> >    - close_range():    ~24 us
-> > 
-> > 2. closing 1000 open files:
-> >    - close_all_fds(): ~5000 us
-> >    - close_range():   ~800 us
-> > 
-> > close_range() is designed to allow for some flexibility. Specifically, it
-> > does not simply always close all open file descriptors of a task. Instead,
-> > callers can specify an upper bound.
-> > This is e.g. useful for scenarios where specific file descriptors are
-> > created with well-known numbers that are supposed to be excluded from
-> > getting closed.
-> > For extra paranoia close_range() comes with a flags argument. This can e.g.
-> > be used to implement extension. Once can imagine userspace wanting to stop
-> > at the first error instead of ignoring errors under certain circumstances.
-> > There might be other valid ideas in the future. In any case, a flag
-> > argument doesn't hurt and keeps us on the safe side.
-> > 
-> > >From an implementation side this is kept rather dumb. It saw some input
-> > from David and Jann but all nonsense is obviously my own!
-> > - Errors to close file descriptors are currently ignored. (Could be changed
-> >   by setting a flag in the future if needed.)
-> > - __close_range() is a rather simplistic wrapper around __close_fd().
-> >   My reasoning behind this is based on the nature of how __close_fd() needs
-> >   to release an fd. But maybe I misunderstood specifics:
-> >   We take the files_lock and rcu-dereference the fdtable of the calling
-> >   task, we find the entry in the fdtable, get the file and need to release
-> >   files_lock before calling filp_close().
-> >   In the meantime the fdtable might have been altered so we can't just
-> >   retake the spinlock and keep the old rcu-reference of the fdtable
-> >   around. Instead we need to grab a fresh reference to the fdtable.
-> >   If my reasoning is correct then there's really no point in fancyfying
-> >   __close_range(): We just need to rcu-dereference the fdtable of the
-> >   calling task once to cap the max_fd value correctly and then go on
-> >   calling __close_fd() in a loop.
+> IOMAP_DAX_COW allows to inform the dax code, to first perform
+> a copy which are not page-aligned before performing the write.
+> The responsibility of checking if data edges are page aligned
+> is performed in ->iomap_begin() and the source address is
+> stored in ->inline_data
 > 
-> > +/**
-> > + * __close_range() - Close all file descriptors in a given range.
-> > + *
-> > + * @fd:     starting file descriptor to close
-> > + * @max_fd: last file descriptor to close
-> > + *
-> > + * This closes a range of file descriptors. All file descriptors
-> > + * from @fd up to and including @max_fd are closed.
-> > + */
-> > +int __close_range(struct files_struct *files, unsigned fd, unsigned max_fd)
-> > +{
-> > +	unsigned int cur_max;
-> > +
-> > +	if (fd > max_fd)
-> > +		return -EINVAL;
-> > +
-> > +	rcu_read_lock();
-> > +	cur_max = files_fdtable(files)->max_fds;
-> > +	rcu_read_unlock();
-> > +
-> > +	/* cap to last valid index into fdtable */
-> > +	if (max_fd >= cur_max)
-> > +		max_fd = cur_max - 1;
-> > +
-> > +	while (fd <= max_fd)
-> > +		__close_fd(files, fd++);
-> > +
-> > +	return 0;
-> > +}
+> A new struct btrfs_iomap is passed from iomap_begin() to
+> iomap_end(), which contains all the accounting and locking information
+> for CoW based writes.
 > 
-> Umm...  That's going to be very painful if you dup2() something to MAX_INT and
-> then run that; roughly 2G iterations of bouncing ->file_lock up and down,
-> without anything that would yield CPU in process.
+> For writing to a hole, iomap->inline_data is set to zero.
 > 
-> If anything, I would suggest something like
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> ---
+>  fs/btrfs/ctree.h |   6 ++
+>  fs/btrfs/dax.c   | 182 +++++++++++++++++++++++++++++++++++++++++++++++++++++--
+>  fs/btrfs/file.c  |   4 +-
+>  3 files changed, 185 insertions(+), 7 deletions(-)
 > 
-> 	fd = *start_fd;
-> 	grab the lock
->         fdt = files_fdtable(files);
-> more:
-> 	look for the next eviction candidate in ->open_fds, starting at fd
-> 	if there's none up to max_fd
-> 		drop the lock
-> 		return NULL
-> 	*start_fd = fd + 1;
-> 	if the fscker is really opened and not just reserved
-> 		rcu_assign_pointer(fdt->fd[fd], NULL);
-> 		__put_unused_fd(files, fd);
-> 		drop the lock
-> 		return the file we'd got
-> 	if (unlikely(need_resched()))
-> 		drop lock
-> 		cond_resched();
-> 		grab lock
-> 		fdt = files_fdtable(files);
-> 	goto more;
-> 
-> with the main loop being basically
-> 	while ((file = pick_next(files, &start_fd, max_fd)) != NULL)
-> 		filp_close(file, files);
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index 1e3e758b83c2..eec01eb92f33 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -3801,6 +3801,12 @@ int btree_readahead_hook(struct extent_buffer *eb, int err);
+>  #ifdef CONFIG_FS_DAX
+>  /* dax.c */
+>  ssize_t btrfs_file_dax_read(struct kiocb *iocb, struct iov_iter *to);
+> +ssize_t btrfs_file_dax_write(struct kiocb *iocb, struct iov_iter *from);
+> +#else
+> +static inline ssize_t btrfs_file_dax_write(struct kiocb *iocb, struct iov_iter *from)
+> +{
+> +	return 0;
+> +}
+>  #endif /* CONFIG_FS_DAX */
+>  
+>  static inline int is_fstree(u64 rootid)
+> diff --git a/fs/btrfs/dax.c b/fs/btrfs/dax.c
+> index bf3d46b0acb6..f5cc9bcdbf14 100644
+> --- a/fs/btrfs/dax.c
+> +++ b/fs/btrfs/dax.c
+> @@ -9,30 +9,184 @@
+>  #ifdef CONFIG_FS_DAX
+>  #include <linux/dax.h>
+>  #include <linux/iomap.h>
+> +#include <linux/uio.h>
+>  #include "ctree.h"
+>  #include "btrfs_inode.h"
+>  
+> +struct btrfs_iomap {
+> +	u64 start;
+> +	u64 end;
+> +	bool nocow;
+> +	struct extent_changeset *data_reserved;
+> +	struct extent_state *cached_state;
+> +};
+> +
+> +static struct btrfs_iomap *btrfs_iomap_init(struct inode *inode,
+> +				     struct extent_map **em,
+> +				     loff_t pos, loff_t length)
+> +{
+> +	int ret = 0;
+> +	struct extent_map *map = *em;
+> +	struct btrfs_iomap *bi;
+> +
+> +	bi = kzalloc(sizeof(struct btrfs_iomap), GFP_NOFS);
+> +	if (!bi)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	bi->start = round_down(pos, PAGE_SIZE);
+> +	bi->end = PAGE_ALIGN(pos + length);
+> +
+> +	/* Wait for existing ordered extents in range to finish */
+> +	btrfs_wait_ordered_range(inode, bi->start, bi->end - bi->start);
+> +
+> +	lock_extent_bits(&BTRFS_I(inode)->io_tree, bi->start, bi->end, &bi->cached_state);
+> +
+> +	ret = btrfs_delalloc_reserve_space(inode, &bi->data_reserved,
+> +			bi->start, bi->end - bi->start);
+> +	if (ret) {
+> +		unlock_extent_cached(&BTRFS_I(inode)->io_tree, bi->start, bi->end,
+> +				&bi->cached_state);
+> +		kfree(bi);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	refcount_inc(&map->refs);
+> +	ret = btrfs_get_extent_map_write(em, NULL,
+> +			inode, bi->start, bi->end - bi->start, &bi->nocow);
+> +	if (ret) {
+> +		unlock_extent_cached(&BTRFS_I(inode)->io_tree, bi->start, bi->end,
+> +				&bi->cached_state);
+> +		btrfs_delalloc_release_space(inode,
+> +				bi->data_reserved, bi->start,
+> +				bi->end - bi->start, true);
+> +		extent_changeset_free(bi->data_reserved);
+> +		kfree(bi);
+> +		return ERR_PTR(ret);
+> +	}
+> +	free_extent_map(map);
+> +	return bi;
+> +}
+> +
+> +static void *dax_address(struct block_device *bdev, struct dax_device *dax_dev,
+> +			 sector_t sector, loff_t pos, loff_t length)
 
-That's obviously much more clever than what I had.
-I honestly have never thought about using open_fds before this. Seemed
-extremely localized to file.c
-Thanks for the pointers!
+This looks like a common function for fs/dax.c.
 
-Christian
+--D
+
+> +{
+> +	size_t size = ALIGN(pos + length, PAGE_SIZE);
+> +	int id, ret = 0;
+> +	void *kaddr = NULL;
+> +	pgoff_t pgoff;
+> +	long map_len;
+> +
+> +	id = dax_read_lock();
+> +
+> +	ret = bdev_dax_pgoff(bdev, sector, size, &pgoff);
+> +	if (ret)
+> +		goto out;
+> +
+> +	map_len = dax_direct_access(dax_dev, pgoff, PHYS_PFN(size),
+> +			&kaddr, NULL);
+> +	if (map_len < 0)
+> +		ret = map_len;
+> +
+> +out:
+> +	dax_read_unlock(id);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +	return kaddr;
+> +}
+> +
+>  static int btrfs_iomap_begin(struct inode *inode, loff_t pos,
+>  		loff_t length, unsigned flags, struct iomap *iomap)
+>  {
+>  	struct extent_map *em;
+>  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+> +	struct btrfs_iomap *bi = NULL;
+> +	unsigned offset = pos & (PAGE_SIZE - 1);
+> +	u64 srcblk = 0;
+> +	loff_t diff;
+> +
+>  	em = btrfs_get_extent(BTRFS_I(inode), NULL, 0, pos, length, 0);
+> +
+> +	iomap->type = IOMAP_MAPPED;
+> +
+> +	if (flags & IOMAP_WRITE) {
+> +		if (em->block_start != EXTENT_MAP_HOLE)
+> +			srcblk = em->block_start + pos - em->start - offset;
+> +
+> +		bi = btrfs_iomap_init(inode, &em, pos, length);
+> +		if (IS_ERR(bi))
+> +			return PTR_ERR(bi);
+> +
+> +	}
+> +
+> +	/*
+> +	 * Advance the difference between pos and start, to align well with
+> +	 * inline_data in case of writes
+> +	 */
+> +	diff = round_down(pos - em->start, PAGE_SIZE);
+> +	iomap->offset = em->start + diff;
+> +	iomap->length = em->len - diff;
+> +	iomap->bdev = em->bdev;
+> +	iomap->dax_dev = fs_info->dax_dev;
+> +
+> +	/*
+> +	 * This will be true for reads only since we have already
+> +	 * allocated em
+> +	 */
+>  	if (em->block_start == EXTENT_MAP_HOLE) {
+>  		iomap->type = IOMAP_HOLE;
+>  		return 0;
+>  	}
+> -	iomap->type = IOMAP_MAPPED;
+> -	iomap->bdev = em->bdev;
+> -	iomap->dax_dev = fs_info->dax_dev;
+> -	iomap->offset = em->start;
+> -	iomap->length = em->len;
+> -	iomap->addr = em->block_start;
+> +
+> +	iomap->addr = em->block_start + diff;
+> +	/* Check if we really need to copy data from old extent */
+> +	if (bi && !bi->nocow && (offset || pos + length < bi->end)) {
+> +		iomap->type = IOMAP_DAX_COW;
+> +		if (srcblk) {
+> +			sector_t sector = (srcblk + (pos & PAGE_MASK) -
+> +					  iomap->offset) >> 9;
+> +			iomap->inline_data = dax_address(em->bdev,
+> +					fs_info->dax_dev, sector, pos, length);
+> +			if (IS_ERR(iomap->inline_data)) {
+> +				kfree(bi);
+> +				return PTR_ERR(iomap->inline_data);
+> +			}
+> +		}
+> +	}
+> +
+> +	iomap->private = bi;
+> +	return 0;
+> +}
+> +
+> +static int btrfs_iomap_end(struct inode *inode, loff_t pos,
+> +		loff_t length, ssize_t written, unsigned flags,
+> +		struct iomap *iomap)
+> +{
+> +	struct btrfs_iomap *bi = iomap->private;
+> +	u64 wend;
+> +
+> +	if (!bi)
+> +		return 0;
+> +
+> +	unlock_extent_cached(&BTRFS_I(inode)->io_tree, bi->start, bi->end,
+> +			&bi->cached_state);
+> +
+> +	wend = PAGE_ALIGN(pos + written);
+> +	if (wend < bi->end) {
+> +		btrfs_delalloc_release_space(inode,
+> +				bi->data_reserved, wend,
+> +				bi->end - wend, true);
+> +	}
+> +
+> +	btrfs_update_ordered_extent(inode, bi->start, wend - bi->start, true);
+> +	btrfs_delalloc_release_extents(BTRFS_I(inode), wend - bi->start, false);
+> +	extent_changeset_free(bi->data_reserved);
+> +	kfree(bi);
+>  	return 0;
+>  }
+>  
+>  static const struct iomap_ops btrfs_iomap_ops = {
+>  	.iomap_begin		= btrfs_iomap_begin,
+> +	.iomap_end		= btrfs_iomap_end,
+>  };
+>  
+>  ssize_t btrfs_file_dax_read(struct kiocb *iocb, struct iov_iter *to)
+> @@ -46,4 +200,20 @@ ssize_t btrfs_file_dax_read(struct kiocb *iocb, struct iov_iter *to)
+>  
+>  	return ret;
+>  }
+> +
+> +ssize_t btrfs_file_dax_write(struct kiocb *iocb, struct iov_iter *iter)
+> +{
+> +	ssize_t ret = 0;
+> +	u64 pos = iocb->ki_pos;
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	ret = dax_iomap_rw(iocb, iter, &btrfs_iomap_ops);
+> +
+> +	if (ret > 0) {
+> +		pos += ret;
+> +		if (pos > i_size_read(inode))
+> +			i_size_write(inode, pos);
+> +		iocb->ki_pos = pos;
+> +	}
+> +	return ret;
+> +}
+>  #endif /* CONFIG_FS_DAX */
+> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> index 9194591f9eea..a795023e26ca 100644
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@ -1964,7 +1964,9 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
+>  	if (sync)
+>  		atomic_inc(&BTRFS_I(inode)->sync_writers);
+>  
+> -	if (iocb->ki_flags & IOCB_DIRECT) {
+> +	if (IS_DAX(inode)) {
+> +		num_written = btrfs_file_dax_write(iocb, from);
+> +	} else if (iocb->ki_flags & IOCB_DIRECT) {
+>  		num_written = __btrfs_direct_write(iocb, from);
+>  	} else {
+>  		num_written = btrfs_buffered_write(iocb, from);
+> -- 
+> 2.16.4
+> 
