@@ -2,136 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A6AF25A33
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 23:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDB7B25A4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 00:27:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbfEUV50 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 17:57:26 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41650 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727156AbfEUV50 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 17:57:26 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z3so171936pgp.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2019 14:57:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aIltc2Hu1zZzkC+Vq1d4j3ZMtjHqyYeiNsrF2aiFQWg=;
-        b=axzxYQV0RWm7r7Qxg61535aTjvYWPTGz+cOuSV1XRn/ZJATUXMrZ7FidH9bTOFNizb
-         TxMl7EWxnlPyIZMsyjmC4YcC+5EdWgckcvAs5HKogRei+MdNkOuN3ruO3LbWC6lU16e7
-         Ftc2slcXMG3o00+sVtWuhPXTPWEyvAVkK/Jib1IsHg/lk4iRljRNYmGeNw8DdQzs0qQp
-         tyV8YUfFw7cvE9uYdFiuVtJrgTlf1yNwv0SN5WghL3+Lc28JkQ2JpHApHY3J8DFku0Zd
-         pnqn96jJ0CHQHCc/UMj/j7cxFnFUW1I1470Xe5eEBf1+MoRZhrismsIGOF/Ua9qgo/gg
-         fG2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aIltc2Hu1zZzkC+Vq1d4j3ZMtjHqyYeiNsrF2aiFQWg=;
-        b=Vps1WeGsar37UMA1oSdT4TvfgwrZY4oup7cBWselDC8VItpH5a0B3yqirNzadBBV49
-         q60+3h20xiYBM+7pN9yccKSf80siIGd5yyh4vfpVy/UFF7gX1wx5qBMVWFdHCaEZB426
-         Nq0aJpgLjWVjxb4XF8p6pJQTDVs6SbthiKhUs31AebIyBtvjIoxSikxYxqCRn3o74vOw
-         audJic5Xa99YL7sdRS9okvVQbqHsZyzmBDJjTjQAgzJLDmysWnW2Sj7lvwXw08/NfdGN
-         GviHF+iKrbMdw98Gbg61FSlyCcxNXS9qHCzgz64qwBX2wrI+1mnCRtGnQel26DJqPsVH
-         Cohw==
-X-Gm-Message-State: APjAAAVkbpap1ZarTNxhgg6q3ZScQpwm07ZouZRTNJrkXU0DOQodkKZA
-        4TqA3+WHveq7Bmtw10DFlc7X7QA+xg==
-X-Google-Smtp-Source: APXvYqy0vR/xK2Nu7qrv6gpfTPKOMRPr1/DbQ6DjWCVcBdCh4ULlE2BXxdDM0EPxiXqSVMhLlhPBbg==
-X-Received: by 2002:a63:1212:: with SMTP id h18mr35786102pgl.266.1558475845390;
-        Tue, 21 May 2019 14:57:25 -0700 (PDT)
-Received: from neo ([120.17.20.160])
-        by smtp.gmail.com with ESMTPSA id g22sm25796013pfo.28.2019.05.21.14.57.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 14:57:24 -0700 (PDT)
-Date:   Wed, 22 May 2019 07:57:18 +1000
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] fanotify: Disallow permission events for proc filesystem
-Message-ID: <20190521215716.GB20383@neo>
-References: <20190515193337.11167-1-jack@suse.cz>
- <CAOQ4uxhKV9qXGDA6PuCKrbBjM_f2ed_XScY3KkWVX8PXzwCwCA@mail.gmail.com>
- <20190516083632.GC13274@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190516083632.GC13274@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726391AbfEUW1u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 May 2019 18:27:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50018 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726017AbfEUW1u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 May 2019 18:27:50 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2A5C217D7;
+        Tue, 21 May 2019 22:27:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558477669;
+        bh=f5uEoHUN4BmcdB5I8paRLRa+KIbFOaIzyTepmZ7yDes=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aYlPqqP861Eho4x2nqqJFvRWWd/odtIQcz9aqclko8lAceqQYjeJ/t5tGi1KP0wiJ
+         038YM5HOU3qLCLPDaAKxkytnBl/M5vZrjsK5K7vMh2XNjz4DcB73WwBR2Yl2AJi/Sm
+         bOws1O/C+vDEjEsToQuVRz5LZMZVnS7PF8zdTE5Q=
+Date:   Tue, 21 May 2019 15:27:48 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Eric Wong <e@80x24.org>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        arnd@arndb.de, dbueso@suse.de, axboe@kernel.dk, dave@stgolabs.net,
+        jbaron@akamai.com, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, omar.kilani@gmail.com, tglx@linutronix.de,
+        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 1/1] signal: Adjust error codes according to
+ restore_user_sigmask()
+Message-Id: <20190521152748.6b4cd70cf83a1183caa6aae7@linux-foundation.org>
+In-Reply-To: <20190521092551.fwtb6recko3tahwj@dcvr>
+References: <20190507043954.9020-1-deepa.kernel@gmail.com>
+        <20190521092551.fwtb6recko3tahwj@dcvr>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 16, 2019 at 10:36:32AM +0200, Jan Kara wrote:
-> On Thu 16-05-19 08:54:37, Amir Goldstein wrote:
-> > On Wed, May 15, 2019 at 10:33 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > Proc filesystem has special locking rules for various files. Thus
-> > > fanotify which opens files on event delivery can easily deadlock
-> > > against another process that waits for fanotify permission event to be
-> > > handled. Since permission events on /proc have doubtful value anyway,
-> > > just disallow them.
-> > >
-> > 
-> > Let's add context:
-> > Link: https://lore.kernel.org/linux-fsdevel/20190320131642.GE9485@quack2.suse.cz/
-> 
-> OK, will add.
-> 
-> > > Signed-off-by: Jan Kara <jack@suse.cz>
-> > > ---
-> > >  fs/notify/fanotify/fanotify_user.c | 20 ++++++++++++++++++++
-> > >  1 file changed, 20 insertions(+)
-> > >
-> > > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > > index a90bb19dcfa2..73719949faa6 100644
-> > > --- a/fs/notify/fanotify/fanotify_user.c
-> > > +++ b/fs/notify/fanotify/fanotify_user.c
-> > > @@ -920,6 +920,20 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
-> > >         return 0;
-> > >  }
-> > >
-> > > +static int fanotify_events_supported(struct path *path, __u64 mask)
-> > > +{
-> > > +       /*
-> > > +        * Proc is special and various files have special locking rules so
-> > > +        * fanotify permission events have high chances of deadlocking the
-> > > +        * system. Just disallow them.
-> > > +        */
-> > > +       if (mask & FANOTIFY_PERM_EVENTS &&
-> > > +           !strcmp(path->mnt->mnt_sb->s_type->name, "proc")) {
-> > 
-> > Better use an SB_I_ flag to forbid permission events on fs?
-> 
-> So checking s_type->name indeed felt dirty. I don't think we need a
-> superblock flag though. I'll probably just go with FS_XXX flag in
-> file_system_type.
+On Tue, 21 May 2019 09:25:51 +0000 Eric Wong <e@80x24.org> wrote:
 
-Would the same apply for some files that backed by sysfs and reside in
-/sys?
- 
+> Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> > For all the syscalls that receive a sigmask from the userland,
+> > the user sigmask is to be in effect through the syscall execution.
+> > At the end of syscall, sigmask of the current process is restored
+> > to what it was before the switch over to user sigmask.
+> > But, for this to be true in practice, the sigmask should be restored
+> > only at the the point we change the saved_sigmask. Anything before
+> > that loses signals. And, anything after is just pointless as the
+> > signal is already lost by restoring the sigmask.
 > > 
-> > > +               return -EOPNOTSUPP;
+> > The inherent issue was detected because of a regression caused by
+> > 854a6ed56839a.
+> > The patch moved the signal_pending() check closer to restoring of the
+> > user sigmask. But, it failed to update the error code accordingly.
 > > 
-> > I would go with EINVAL following precedent of per filesystem flags
-> > check on rename(2), but not insisting.
-> 
-> I was undecided between EOPNOTSUPP and EINVAL. So let's go with EINVAL.
+> > Detailed issue discussion permalink:
+> > https://lore.kernel.org/linux-fsdevel/20190427093319.sgicqik2oqkez3wk@dcvr/
+> > 
+> > Note that the patch returns interrupted errors (EINTR, ERESTARTNOHAND,
+> > etc) only when there is no other error. If there is a signal and an error
+> > like EINVAL, the syscalls return -EINVAL rather than the interrupted
+> > error codes.
+> > 
+> > The sys_io_uring_enter() seems to be returning success when there is
+> > a signal and the queue is not empty. This seems to be a bug. I will
+> > follow up with a separate patch for that.
+> > 
+> > Reported-by: Eric Wong <e@80x24.org>
+> > Fixes: 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add restore_user_sigmask()")
+> > Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> > Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
 
-I was also thinking that EINVAL makes more sense in this particular
-case.
- 
-> > Anyway, following Matthew's man page update for FAN_REPORT_FID,
-> > we should also add this as reason for EOPNOTSUPP/EINVAL.
-> 
-> Good point.
+(top-posting fixed).
 
-I've followed up Michael in regards to the FAN_REPORT_FID patch series,
-but no response as of yet. I'm happy to write the changes for this one
-if you like?
+> It's been 2 weeks and this fix hasn't appeared in mmots / mmotm.
+> I also noticed it's missing Cc: for stable@ (below)
 
--- 
-Matthew Bobrowski
+Why is a -stable backport needed?  I see some talk above about lost
+signals but it is unclear whether these are being observed after fixing
+the regression caused by 854a6ed56839a.
+
+IOW, can we please have a changelog which has a clear and complete
+description of the user-visible effects of the change.
+
+And please Cc Oleg.
