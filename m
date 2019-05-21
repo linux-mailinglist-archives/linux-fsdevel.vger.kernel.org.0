@@ -2,387 +2,521 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E916F24DD6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 13:25:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59F0524E17
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 13:40:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbfEULZg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 07:25:36 -0400
-Received: from mail-wm1-f51.google.com ([209.85.128.51]:33921 "EHLO
-        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbfEULZg (ORCPT
+        id S1728066AbfEULki (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 May 2019 07:40:38 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45527 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728067AbfEULki (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 07:25:36 -0400
-Received: by mail-wm1-f51.google.com with SMTP id j187so2091964wma.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2019 04:25:33 -0700 (PDT)
+        Tue, 21 May 2019 07:40:38 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i21so8446981pgi.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2019 04:40:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=YVtUbiCVJuU9zLov0dx/GMIqSmYQFkP8m1oHN78Ed+w=;
-        b=YtyiBo0xzYWRm93dnXC1IOV1GGSPpuvt9/OD3LMwwWMcRfV50EiOJiKCX/9WJm/kpf
-         jtWkwA4GZn5exV5WuPSaJ9z3RBLGplJE51W941Uzybtdl/7Thd1s7O/zGw/OjXAqI7F2
-         SpwOPx3hxFeDCJqlYct+QNpDPoVLA/aOfuqgsx4NjGRzE+dxIijbcQrh5qd6bMon+PQg
-         E5Srqz+pnSj71+OpqKAdG6E/DmzH+EG+LovsYtduwyaqSRI9E0qYi97m55bLI0W2uxNc
-         1jimuBBRLEz+Ru4sRymbE7KAzIya8pAhfUD/Yhkp6MtMu4aT/8s9XKg7QJsahPI9X/r5
-         +h7A==
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HzBatA9wkX3zSlVcsT5aC4xwVAsySLfbtfS6XlJ7bvU=;
+        b=IGl4P8AFdDKLGxdwZcWhkMUv/MDgWEt3Jkl1myBZsZDrfYVRWSjTplBqpo4/41wnSg
+         5jozrHQIQx7VBGZDtnoGADmOyumpPSO4nu8Tc5+rXRG8znYoawNFYDcV96icK/HF0d39
+         sGk64iOeVHjh7ybT0qA8/4PPNePmtYSBOxerVIhAqQbK11MtzTzK4UG0rlUKn06iYGaC
+         rLp9+tzE+aMD83MmGcxpiP+xr50r2Qadv+uzWx1vOcrnT+NeL5HrfaoohFkR/er3YXge
+         3DCy58j1GsDR4Hwx145UN7/myNqsI8ezICY5FX39AkTZFSD5JXG38HhoR7SSZjsOH6y6
+         tmtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=YVtUbiCVJuU9zLov0dx/GMIqSmYQFkP8m1oHN78Ed+w=;
-        b=Hhy+qJknIfPoDfRR9TgwEQe3haLCWrN/arUugZwFMycqy938iTSPQaQ1Gto4Fb0oym
-         hqVMeOJIoGlOu2G2viMkwg8FnfQ+kXb4OBdK+F9J+kuoyPcDEKAVicSNV29Sjs/vHMcO
-         F/z3yel1rRX/jrXL4dhH+6s0HeRj1abkQAjcRLSXccbntqGxW+M/KwHFo4ejp2/xN3ya
-         EDgNB/7u/GpbvWsjt947+SWvsFlQ5RUo8FwSTiUPnrUdJ+y+rNiWMVB3q0r6u/q4GFPI
-         O1jLfoGP2mirM98fVemx4Lu5k6w9oMwsNG4Wh2D8jcPSOAVqkSXLz42hHy5zRX4jpRNq
-         zkgw==
-X-Gm-Message-State: APjAAAVN54MB06YMQVyPXdReAALZmiiI0nSvuimMtPdbfC9kylX6mZ82
-        FvIgBps5Zhd46fiHOZIQ742RXA==
-X-Google-Smtp-Source: APXvYqzydcEHp+GclU0FJyV63jFC/+K9SjhJch4Wz/JeBBvppx3akP3bwgwHxANEsWHR86K0mYQk4w==
-X-Received: by 2002:a7b:c001:: with SMTP id c1mr3268291wmb.49.1558437932197;
-        Tue, 21 May 2019 04:25:32 -0700 (PDT)
-Received: from [192.168.0.101] ([88.147.35.136])
-        by smtp.gmail.com with ESMTPSA id 20sm3717068wmj.36.2019.05.21.04.25.30
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HzBatA9wkX3zSlVcsT5aC4xwVAsySLfbtfS6XlJ7bvU=;
+        b=a5nPU6OpkKbKftRYwVogCqfJu4R4z47uTrjrq5BjKEinDtGrEpO7lcH/CPjZIknepy
+         gvK4OfwibjjxiC3YzWayVFij5qDKjGgP+GK9GHNOdpZ0avBu2D9QmmzvSXqCEK3gaUKp
+         S2uELk+z3isE4SAHNBLQpPs/toUq9BMX24hRMhdzOj8FGztR1EeZ0gQbWC0bqh1H5ujr
+         3poHMGXOvhXCdT+QP2L04K6k9MzOZNcqDzkVs8MtGYqKkhD6Ly5qwqwWlOy+AxOXph1Y
+         BcoasTVJtmeBZHjXNa+P4p2NDeMi/TfTce2u3GAzpOXZviOUPQxq/IQQsQW1S46ATFbU
+         JKbw==
+X-Gm-Message-State: APjAAAVzSyKyTqUtu5b6blsm9zU0PZdTSQ3UTajU9xYokIZ5Wx+SYmFD
+        gghgXdSqqYwAtV+krS60WbII7A==
+X-Google-Smtp-Source: APXvYqws7fDy6UQYk7Zwqk+EJfPX4HBdClvo7+M9ZavkIl+3mCJEebNi8WNBVaQUEA13k6kYeYsKjw==
+X-Received: by 2002:a63:9d83:: with SMTP id i125mr75660063pgd.229.1558438837129;
+        Tue, 21 May 2019 04:40:37 -0700 (PDT)
+Received: from localhost.localdomain ([208.54.39.182])
+        by smtp.gmail.com with ESMTPSA id s9sm34103515pfa.31.2019.05.21.04.40.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 04:25:31 -0700 (PDT)
-From:   Paolo Valente <paolo.valente@linaro.org>
-Message-Id: <A0DFE635-EFEC-4670-AD70-5D813E170BEE@linaro.org>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_D52538F2-72FE-4CD4-B761-CCE9B24F2A35";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
-Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
- controller
-Date:   Tue, 21 May 2019 13:25:29 +0200
-In-Reply-To: <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        jmoyer@redhat.com, tytso@mit.edu, amakhalov@vmware.com,
-        anishs@vmware.com, srivatsab@vmware.com
-To:     "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
- <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
- <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
- <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
-X-Mailer: Apple Mail (2.3445.104.8)
+        Tue, 21 May 2019 04:40:36 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Cc:     jannh@google.com, fweimer@redhat.com, oleg@redhat.com,
+        tglx@linutronix.de, torvalds@linux-foundation.org, arnd@arndb.de,
+        shuah@kernel.org, dhowells@redhat.com, tkjos@android.com,
+        ldv@altlinux.org, miklos@szeredi.hu, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        x86@kernel.org, Christian Brauner <christian@brauner.io>
+Subject: [PATCH 1/2] open: add close_range()
+Date:   Tue, 21 May 2019 13:34:47 +0200
+Message-Id: <20190521113448.20654-1-christian@brauner.io>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This adds the close_range() syscall. It allows to efficiently close a range
+of file descriptors up to all file descriptors of a calling task.
 
---Apple-Mail=_D52538F2-72FE-4CD4-B761-CCE9B24F2A35
-Content-Type: multipart/mixed;
-	boundary="Apple-Mail=_21B10740-0BE7-4709-B8E2-677D365FE8FA"
+The syscall came up in a recent discussion around the new mount API and
+making new file descriptor types cloexec by default. During this
+discussion, Al suggested the close_range() syscall (cf. [1]). Note, a
+syscall in this manner has been requested by various people over time.
 
+First, it helps to close all file descriptors of an exec()ing task. This
+can be done safely via (quoting Al's example from [1] verbatim):
 
---Apple-Mail=_21B10740-0BE7-4709-B8E2-677D365FE8FA
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+        /* that exec is sensitive */
+        unshare(CLONE_FILES);
+        /* we don't want anything past stderr here */
+        close_range(3, ~0U);
+        execve(....);
 
+The code snippet above is one way of working around the problem that file
+descriptors are not cloexec by default. This is aggravated by the fact that
+we can't just switch them over without massively regressing userspace. For
+a whole class of programs having an in-kernel method of closing all file
+descriptors is very helpful (e.g. demons, service managers, programming
+language standard libraries, container managers etc.).
+(Please note, unshare(CLONE_FILES) should only be needed if the calling
+ task is multi-threaded and shares the file descriptor table with another
+ thread in which case two threads could race with one thread allocating
+ file descriptors and the other one closing them via close_range(). For the
+ general case close_range() before the execve() is sufficient.)
 
+Second, it allows userspace to avoid implementing closing all file
+descriptors by parsing through /proc/<pid>/fd/* and calling close() on each
+file descriptor. From looking at various large(ish) userspace code bases
+this or similar patterns are very common in:
+- service managers (cf. [4])
+- libcs (cf. [6])
+- container runtimes (cf. [5])
+- programming language runtimes/standard libraries
+  - Python (cf. [2])
+  - Rust (cf. [7], [8])
+As Dmitry pointed out there's even a long-standing glibc bug about missing
+kernel support for this task (cf. [3]).
+In addition, the syscall will also work for tasks that do not have procfs
+mounted and on kernels that do not have procfs support compiled in. In such
+situations the only way to make sure that all file descriptors are closed
+is to call close() on each file descriptor up to UINT_MAX or RLIMIT_NOFILE,
+OPEN_MAX trickery (cf. comment [8] on Rust).
 
-> Il giorno 20 mag 2019, alle ore 12:19, Paolo Valente =
-<paolo.valente@linaro.org> ha scritto:
->=20
->=20
->=20
->> Il giorno 18 mag 2019, alle ore 22:50, Srivatsa S. Bhat =
-<srivatsa@csail.mit.edu> ha scritto:
->>=20
->> On 5/18/19 11:39 AM, Paolo Valente wrote:
->>> I've addressed these issues in my last batch of improvements for =
-BFQ,
->>> which landed in the upcoming 5.2. If you give it a try, and still =
-see
->>> the problem, then I'll be glad to reproduce it, and hopefully fix it
->>> for you.
->>>=20
->>=20
->> Hi Paolo,
->>=20
->> Thank you for looking into this!
->>=20
->> I just tried current mainline at commit 72cf0b07, but unfortunately
->> didn't see any improvement:
->>=20
->> dd if=3D/dev/zero of=3D/root/test.img bs=3D512 count=3D10000 =
-oflag=3Ddsync
->>=20
->> With mq-deadline, I get:
->>=20
->> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 3.90981 s, 1.3 MB/s
->>=20
->> With bfq, I get:
->> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 84.8216 s, 60.4 kB/s
->>=20
->=20
-> Hi Srivatsa,
-> thanks for reproducing this on mainline.  I seem to have reproduced a
-> bonsai-tree version of this issue.
+The performance is striking. For good measure, comparing the following
+simple close_all_fds() userspace implementation that is essentially just
+glibc's version in [6]:
 
-Hi again Srivatsa,
-I've analyzed the trace, and I've found the cause of the loss of
-throughput in on my side.  To find out whether it is the same cause as
-on your side, I've prepared a script that executes your test and takes
-a trace during the test.  If ok for you, could you please
-- change the value for the DEVS parameter in the attached script, if
-  needed
-- execute the script
-- send me the trace file that the script will leave in your working
-dir
+static int close_all_fds(void)
+{
+        DIR *dir;
+        struct dirent *direntp;
 
-Looking forward to your trace,
-Paolo
+        dir = opendir("/proc/self/fd");
+        if (!dir)
+                return -1;
 
+        while ((direntp = readdir(dir))) {
+                int fd;
+                if (strcmp(direntp->d_name, ".") == 0)
+                        continue;
+                if (strcmp(direntp->d_name, "..") == 0)
+                        continue;
+                fd = atoi(direntp->d_name);
+                if (fd == 0 || fd == 1 || fd == 2)
+                        continue;
+                close(fd);
+        }
 
---Apple-Mail=_21B10740-0BE7-4709-B8E2-677D365FE8FA
-Content-Disposition: attachment;
-	filename=dsync_test.sh
-Content-Type: application/octet-stream;
-	x-unix-mode=0744;
-	name="dsync_test.sh"
-Content-Transfer-Encoding: 7bit
-
-#!/bin/bash
-
-DEVS=sda # please set this parameter to the dev name for your test drive
-
-SCHED=bfq
-TRACE=1
-
-function init_tracing {
-	if [ "$TRACE" == "1" ] ; then
-		if [ ! -d /sys/kernel/debug/tracing ] ; then
-			mount -t debugfs none /sys/kernel/debug
-		fi
-		echo nop > /sys/kernel/debug/tracing/current_tracer
-		echo 500000 > /sys/kernel/debug/tracing/buffer_size_kb
-		echo "${SCHED}*" "__${SCHED}*" >\
-			/sys/kernel/debug/tracing/set_ftrace_filter
-		echo blk > /sys/kernel/debug/tracing/current_tracer
-	fi
+        closedir(dir); /* cannot fail */
+        return 0;
 }
 
-function set_tracing {
-	if [ "$TRACE" == "1" ] ; then
-	    if [[ -e /sys/kernel/debug/tracing/tracing_enabled && \
-		$(cat /sys/kernel/debug/tracing/tracing_enabled) -ne $1 ]]; then
-			echo "echo $1 > /sys/kernel/debug/tracing/tracing_enabled"
-			echo $1 > /sys/kernel/debug/tracing/tracing_enabled
-		fi
-		dev=$(echo $DEVS | awk '{ print $1 }')
-		if [[ -e /sys/block/$dev/trace/enable && \
-			  $(cat /sys/block/$dev/trace/enable) -ne $1 ]]; then
-		    echo "echo $1 > /sys/block/$dev/trace/enable"
-		    echo $1 > /sys/block/$dev/trace/enable
-		fi
+to close_range() yields:
+1. closing 4 open files:
+   - close_all_fds(): ~280 us
+   - close_range():    ~24 us
 
-		if [ "$1" == 0 ]; then
-		    for cpu_path in /sys/kernel/debug/tracing/per_cpu/cpu?
-		    do
-			stat_file=$cpu_path/stats
-			OVER=$(grep "overrun" $stat_file | \
-			    grep -v "overrun: 0")
-			if [ "$OVER" != "" ]; then
-			    cpu=$(basename $cpu_path)
-			    echo $OVER on $cpu, please increase buffer size!
-			fi
-		    done
-		fi
-	fi
-}
+2. closing 1000 open files:
+   - close_all_fds(): ~5000 us
+   - close_range():   ~800 us
 
-init_tracing
+close_range() is designed to allow for some flexibility. Specifically, it
+does not simply always close all open file descriptors of a task. Instead,
+callers can specify an upper bound.
+This is e.g. useful for scenarios where specific file descriptors are
+created with well-known numbers that are supposed to be excluded from
+getting closed.
+For extra paranoia close_range() comes with a flags argument. This can e.g.
+be used to implement extension. Once can imagine userspace wanting to stop
+at the first error instead of ignoring errors under certain circumstances.
+There might be other valid ideas in the future. In any case, a flag
+argument doesn't hurt and keeps us on the safe side.
 
-mkdir /sys/fs/cgroup/blkio/testgrp
-echo $BASHPID > /sys/fs/cgroup/blkio/testgrp/cgroup.procs
-echo > /sys/kernel/debug/tracing/trace
-set_tracing 1 
-echo bfq > /sys/block/sda/queue/scheduler
-cat /sys/block/sda/queue/scheduler
-echo 0 > /sys/block/sda/queue/iosched/low_latency
-dd if=/dev/zero of=/root/test.img bs=512 count=5000 oflag=dsync
-set_tracing 0
-echo 1 > /sys/block/sda/queue/iosched/low_latency
-cp /sys/kernel/debug/tracing/trace .
-echo $BASHPID > /sys/fs/cgroup/blkio/cgroup.procs 
-rmdir /sys/fs/cgroup/blkio/testgrp
+From an implementation side this is kept rather dumb. It saw some input
+from David and Jann but all nonsense is obviously my own!
+- Errors to close file descriptors are currently ignored. (Could be changed
+  by setting a flag in the future if needed.)
+- __close_range() is a rather simplistic wrapper around __close_fd().
+  My reasoning behind this is based on the nature of how __close_fd() needs
+  to release an fd. But maybe I misunderstood specifics:
+  We take the files_lock and rcu-dereference the fdtable of the calling
+  task, we find the entry in the fdtable, get the file and need to release
+  files_lock before calling filp_close().
+  In the meantime the fdtable might have been altered so we can't just
+  retake the spinlock and keep the old rcu-reference of the fdtable
+  around. Instead we need to grab a fresh reference to the fdtable.
+  If my reasoning is correct then there's really no point in fancyfying
+  __close_range(): We just need to rcu-dereference the fdtable of the
+  calling task once to cap the max_fd value correctly and then go on
+  calling __close_fd() in a loop.
 
---Apple-Mail=_21B10740-0BE7-4709-B8E2-677D365FE8FA
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+/* References */
+[1]: https://lore.kernel.org/lkml/20190516165021.GD17978@ZenIV.linux.org.uk/
+[2]: https://github.com/python/cpython/blob/9e4f2f3a6b8ee995c365e86d976937c141d867f8/Modules/_posixsubprocess.c#L220
+[3]: https://sourceware.org/bugzilla/show_bug.cgi?id=10353#c7
+[4]: https://github.com/systemd/systemd/blob/5238e9575906297608ff802a27e2ff9effa3b338/src/basic/fd-util.c#L217
+[5]: https://github.com/lxc/lxc/blob/ddf4b77e11a4d08f09b7b9cd13e593f8c047edc5/src/lxc/start.c#L236
+[6]: https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/grantpt.c;h=2030e07fa6e652aac32c775b8c6e005844c3c4eb;hb=HEAD#l17
+     Note that this is an internal implementation that is not exported.
+     Currently, libc seems to not provide an exported version of this
+     because of missing kernel support to do this.
+[7]: https://github.com/rust-lang/rust/issues/12148
+[8]: https://github.com/rust-lang/rust/blob/5f47c0613ed4eb46fca3633c1297364c09e5e451/src/libstd/sys/unix/process2.rs#L303-L308
+     Rust's solution is slightly different but is equally unperformant.
+     Rust calls getdtablesize() which is a glibc library function that
+     simply returns the current RLIMIT_NOFILE or OPEN_MAX values. Rust then
+     goes on to call close() on each fd. That's obviously overkill for most
+     tasks. Rarely, tasks - especially non-demons - hit RLIMIT_NOFILE or
+     OPEN_MAX.
+     Let's be nice and assume an unprivileged user with RLIMIT_NOFILE set
+     to 1024. Even in this case, there's a very high chance that in the
+     common case Rust is calling the close() syscall 1021 times pointlessly
+     if the task just has 0, 1, and 2 open.
 
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Christian Brauner <christian@brauner.io>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Jann Horn <jannh@google.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Dmitry V. Levin <ldv@altlinux.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Florian Weimer <fweimer@redhat.com>
+Cc: linux-api@vger.kernel.org
+---
+ arch/alpha/kernel/syscalls/syscall.tbl      |  1 +
+ arch/arm/tools/syscall.tbl                  |  1 +
+ arch/arm64/include/asm/unistd32.h           |  2 ++
+ arch/ia64/kernel/syscalls/syscall.tbl       |  1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |  1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |  1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |  1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |  1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |  1 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |  1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |  1 +
+ arch/s390/kernel/syscalls/syscall.tbl       |  1 +
+ arch/sh/kernel/syscalls/syscall.tbl         |  1 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |  1 +
+ arch/x86/entry/syscalls/syscall_32.tbl      |  1 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |  1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |  1 +
+ fs/file.c                                   | 30 +++++++++++++++++++++
+ fs/open.c                                   | 20 ++++++++++++++
+ include/linux/fdtable.h                     |  2 ++
+ include/linux/syscalls.h                    |  2 ++
+ include/uapi/asm-generic/unistd.h           |  4 ++-
+ 22 files changed, 75 insertions(+), 1 deletion(-)
 
->  Before digging into the block
-> trace, I'd like to ask you for some feedback.
->=20
-> First, in my test, the total throughput of the disk happens to be
-> about 20 times as high as that enjoyed by dd, regardless of the I/O
-> scheduler.  I guess this massive overhead is normal with dsync, but
-> I'd like know whether it is about the same on your side.  This will
-> help me understand whether I'll actually be analyzing about the same
-> problem as yours.
->=20
-> Second, the commands I used follow.  Do they implement your test case
-> correctly?
->=20
-> [root@localhost tmp]# mkdir /sys/fs/cgroup/blkio/testgrp
-> [root@localhost tmp]# echo $BASHPID > =
-/sys/fs/cgroup/blkio/testgrp/cgroup.procs
-> [root@localhost tmp]# cat /sys/block/sda/queue/scheduler
-> [mq-deadline] bfq none
-> [root@localhost tmp]# dd if=3D/dev/zero of=3D/root/test.img bs=3D512 =
-count=3D10000 oflag=3Ddsync
-> 10000+0 record dentro
-> 10000+0 record fuori
-> 5120000 bytes (5,1 MB, 4,9 MiB) copied, 14,6892 s, 349 kB/s
-> [root@localhost tmp]# echo bfq > /sys/block/sda/queue/scheduler
-> [root@localhost tmp]# dd if=3D/dev/zero of=3D/root/test.img bs=3D512 =
-count=3D10000 oflag=3Ddsync
-> 10000+0 record dentro
-> 10000+0 record fuori
-> 5120000 bytes (5,1 MB, 4,9 MiB) copied, 20,1953 s, 254 kB/s
->=20
-> Thanks,
-> Paolo
->=20
->> Please let me know if any more info about my setup might be helpful.
->>=20
->> Thank you!
->>=20
->> Regards,
->> Srivatsa
->> VMware Photon OS
->>=20
->>>=20
->>>> Il giorno 18 mag 2019, alle ore 00:16, Srivatsa S. Bhat =
-<srivatsa@csail.mit.edu> ha scritto:
->>>>=20
->>>>=20
->>>> Hi,
->>>>=20
->>>> One of my colleagues noticed upto 10x - 30x drop in I/O throughput
->>>> running the following command, with the CFQ I/O scheduler:
->>>>=20
->>>> dd if=3D/dev/zero of=3D/root/test.img bs=3D512 count=3D10000 =
-oflags=3Ddsync
->>>>=20
->>>> Throughput with CFQ: 60 KB/s
->>>> Throughput with noop or deadline: 1.5 MB/s - 2 MB/s
->>>>=20
->>>> I spent some time looking into it and found that this is caused by =
-the
->>>> undesirable interaction between 4 different components:
->>>>=20
->>>> - blkio cgroup controller enabled
->>>> - ext4 with the jbd2 kthread running in the root blkio cgroup
->>>> - dd running on ext4, in any other blkio cgroup than that of jbd2
->>>> - CFQ I/O scheduler with defaults for slice_idle and group_idle
->>>>=20
->>>>=20
->>>> When docker is enabled, systemd creates a blkio cgroup called
->>>> system.slice to run system services (and docker) under it, and a
->>>> separate blkio cgroup called user.slice for user processes. So, =
-when
->>>> dd is invoked, it runs under user.slice.
->>>>=20
->>>> The dd command above includes the dsync flag, which performs an
->>>> fdatasync after every write to the output file. Since dd is writing =
-to
->>>> a file on ext4, jbd2 will be active, committing transactions
->>>> corresponding to those fdatasync requests from dd. (In other words, =
-dd
->>>> depends on jdb2, in order to make forward progress). But jdb2 being =
-a
->>>> kernel thread, runs in the root blkio cgroup, as opposed to dd, =
-which
->>>> runs under user.slice.
->>>>=20
->>>> Now, if the I/O scheduler in use for the underlying block device is
->>>> CFQ, then its inter-queue/inter-group idling takes effect (via the
->>>> slice_idle and group_idle parameters, both of which default to =
-8ms).
->>>> Therefore, everytime CFQ switches between processing requests from =
-dd
->>>> vs jbd2, this 8ms idle time is injected, which slows down the =
-overall
->>>> throughput tremendously!
->>>>=20
->>>> To verify this theory, I tried various experiments, and in all =
-cases,
->>>> the 4 pre-conditions mentioned above were necessary to reproduce =
-this
->>>> performance drop. For example, if I used an XFS filesystem (which
->>>> doesn't use a separate kthread like jbd2 for journaling), or if I =
-dd'ed
->>>> directly to a block device, I couldn't reproduce the performance
->>>> issue. Similarly, running dd in the root blkio cgroup (where jbd2
->>>> runs) also gets full performance; as does using the noop or =
-deadline
->>>> I/O schedulers; or even CFQ itself, with slice_idle and group_idle =
-set
->>>> to zero.
->>>>=20
->>>> These results were reproduced on a Linux VM (kernel v4.19) on ESXi,
->>>> both with virtualized storage as well as with disk pass-through,
->>>> backed by a rotational hard disk in both cases. The same problem =
-was
->>>> also seen with the BFQ I/O scheduler in kernel v5.1.
->>>>=20
->>>> Searching for any earlier discussions of this problem, I found an =
-old
->>>> thread on LKML that encountered this behavior [1], as well as a =
-docker
->>>> github issue [2] with similar symptoms (mentioned later in the
->>>> thread).
->>>>=20
->>>> So, I'm curious to know if this is a well-understood problem and if
->>>> anybody has any thoughts on how to fix it.
->>>>=20
->>>> Thank you very much!
->>>>=20
->>>>=20
->>>> [1]. https://lkml.org/lkml/2015/11/19/359
->>>>=20
->>>> [2]. https://github.com/moby/moby/issues/21485
->>>>   https://github.com/moby/moby/issues/21485#issuecomment-222941103
->>>>=20
->>>> Regards,
->>>> Srivatsa
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index 9e7704e44f6d..b55d93af8096 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -473,3 +473,4 @@
+ 541	common	fsconfig			sys_fsconfig
+ 542	common	fsmount				sys_fsmount
+ 543	common	fspick				sys_fspick
++545	common	close_range			sys_close_range
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index aaf479a9e92d..0125c97c75dd 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -447,3 +447,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index c39e90600bb3..9a3270d29b42 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -886,6 +886,8 @@ __SYSCALL(__NR_fsconfig, sys_fsconfig)
+ __SYSCALL(__NR_fsmount, sys_fsmount)
+ #define __NR_fspick 433
+ __SYSCALL(__NR_fspick, sys_fspick)
++#define __NR_close_range 435
++__SYSCALL(__NR_close_range, sys_close_range)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index e01df3f2f80d..1a90b464e96f 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -354,3 +354,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index 7e3d0734b2f3..2dee2050f9ef 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -433,3 +433,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index 26339e417695..923ef69e5a76 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -439,3 +439,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index 0e2dd68ade57..967ed9de51cd 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -372,3 +372,4 @@
+ 431	n32	fsconfig			sys_fsconfig
+ 432	n32	fsmount				sys_fsmount
+ 433	n32	fspick				sys_fspick
++435	n32	close_range			sys_close_range
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index 5eebfa0d155c..71de731102b1 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -348,3 +348,4 @@
+ 431	n64	fsconfig			sys_fsconfig
+ 432	n64	fsmount				sys_fsmount
+ 433	n64	fspick				sys_fspick
++435	n64	close_range			sys_close_range
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index 3cc1374e02d0..5a325ab29f88 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -421,3 +421,4 @@
+ 431	o32	fsconfig			sys_fsconfig
+ 432	o32	fsmount				sys_fsmount
+ 433	o32	fspick				sys_fspick
++435	o32	close_range			sys_close_range
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index c9e377d59232..dcc0a0879139 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -430,3 +430,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index 103655d84b4b..ba2c1f078cbd 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -515,3 +515,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index e822b2964a83..d7c9043d2902 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -436,3 +436,4 @@
+ 431  common	fsconfig		sys_fsconfig			sys_fsconfig
+ 432  common	fsmount			sys_fsmount			sys_fsmount
+ 433  common	fspick			sys_fspick			sys_fspick
++435  common	close_range		sys_close_range			sys_close_range
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index 016a727d4357..9b5e6bf0ce32 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -436,3 +436,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index e047480b1605..8c674a1e0072 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -479,3 +479,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index ad968b7bac72..7f7a89a96707 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -438,3 +438,4 @@
+ 431	i386	fsconfig		sys_fsconfig			__ia32_sys_fsconfig
+ 432	i386	fsmount			sys_fsmount			__ia32_sys_fsmount
+ 433	i386	fspick			sys_fspick			__ia32_sys_fspick
++435	i386	close_range		sys_close_range			__ia32_sys_close_range
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index b4e6f9e6204a..0f7d47ae921c 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -355,6 +355,7 @@
+ 431	common	fsconfig		__x64_sys_fsconfig
+ 432	common	fsmount			__x64_sys_fsmount
+ 433	common	fspick			__x64_sys_fspick
++435	common	close_range		__x64_sys_close_range
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 5fa0ee1c8e00..b489532265d0 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -404,3 +404,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/fs/file.c b/fs/file.c
+index 3da91a112bab..3680977a685a 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -641,6 +641,36 @@ int __close_fd(struct files_struct *files, unsigned fd)
+ }
+ EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
+ 
++/**
++ * __close_range() - Close all file descriptors in a given range.
++ *
++ * @fd:     starting file descriptor to close
++ * @max_fd: last file descriptor to close
++ *
++ * This closes a range of file descriptors. All file descriptors
++ * from @fd up to and including @max_fd are closed.
++ */
++int __close_range(struct files_struct *files, unsigned fd, unsigned max_fd)
++{
++	unsigned int cur_max;
++
++	if (fd > max_fd)
++		return -EINVAL;
++
++	rcu_read_lock();
++	cur_max = files_fdtable(files)->max_fds;
++	rcu_read_unlock();
++
++	/* cap to last valid index into fdtable */
++	if (max_fd >= cur_max)
++		max_fd = cur_max - 1;
++
++	while (fd <= max_fd)
++		__close_fd(files, fd++);
++
++	return 0;
++}
++
+ /*
+  * variant of __close_fd that gets a ref on the file for later fput
+  */
+diff --git a/fs/open.c b/fs/open.c
+index 9c7d724a6f67..c7baaee7aa47 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1174,6 +1174,26 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
+ 	return retval;
+ }
+ 
++/**
++ * close_range() - Close all file descriptors in a given range.
++ *
++ * @fd:     starting file descriptor to close
++ * @max_fd: last file descriptor to close
++ * @flags:  reserved for future extensions
++ *
++ * This closes a range of file descriptors. All file descriptors
++ * from @fd up to and including @max_fd are closed.
++ * Currently, errors to close a given file descriptor are ignored.
++ */
++SYSCALL_DEFINE3(close_range, unsigned int, fd, unsigned int, max_fd,
++		unsigned int, flags)
++{
++	if (flags)
++		return -EINVAL;
++
++	return __close_range(current->files, fd, max_fd);
++}
++
+ /*
+  * This routine simulates a hangup on the tty, to arrange that users
+  * are given clean terminals at login time.
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index f07c55ea0c22..fcd07181a365 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -121,6 +121,8 @@ extern void __fd_install(struct files_struct *files,
+ 		      unsigned int fd, struct file *file);
+ extern int __close_fd(struct files_struct *files,
+ 		      unsigned int fd);
++extern int __close_range(struct files_struct *files, unsigned int fd,
++			 unsigned int max_fd);
+ extern int __close_fd_get_file(unsigned int fd, struct file **res);
+ 
+ extern struct kmem_cache *files_cachep;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index e2870fe1be5b..c0189e223255 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -441,6 +441,8 @@ asmlinkage long sys_fchown(unsigned int fd, uid_t user, gid_t group);
+ asmlinkage long sys_openat(int dfd, const char __user *filename, int flags,
+ 			   umode_t mode);
+ asmlinkage long sys_close(unsigned int fd);
++asmlinkage long sys_close_range(unsigned int fd, unsigned int max_fd,
++				unsigned int flags);
+ asmlinkage long sys_vhangup(void);
+ 
+ /* fs/pipe.c */
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index a87904daf103..3f36c8745d24 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -844,9 +844,11 @@ __SYSCALL(__NR_fsconfig, sys_fsconfig)
+ __SYSCALL(__NR_fsmount, sys_fsmount)
+ #define __NR_fspick 433
+ __SYSCALL(__NR_fspick, sys_fspick)
++#define __NR_close_range 435
++__SYSCALL(__NR_close_range, sys_close_range)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 434
++#define __NR_syscalls 436
+ 
+ /*
+  * 32 bit systems traditionally used different
+-- 
+2.21.0
 
-
---Apple-Mail=_21B10740-0BE7-4709-B8E2-677D365FE8FA--
-
---Apple-Mail=_D52538F2-72FE-4CD4-B761-CCE9B24F2A35
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEpYoduex+OneZyvO8OAkCLQGo9oMFAlzj4CkACgkQOAkCLQGo
-9oNhnw/9FknbSsZTxjcEVqr8AsffId7OcCZ7Rw6q+INMQwaQfs9+omWFzm7hrm3R
-STwhoKDQimEHtpszFDoR1egchU/yKWD62iom+vYoyln+EaSSuFAgxx9wIJlT3G+U
-cJH5ydhQZUNaWN1k4KUH1rKGhTeeOIK/7SqQWYLBLZwbethCP/SxG/3LKbbefPE2
-oWH+tlkl3kEsklEIVEZdQuJsy9EtTY6IiKjJwFSaDD54++25n0jfq2fNwqqZRNzS
-pNmX7pv8QpfutBkICbSgBrfZNiiZl4mhEl1pkKmUF48+C+R+kM8dBpaC8sHlq7rG
-wV/ek3yHfauMeSMUuZpTeMO2sPpdfausH+/snmAftQeMqC6T+e3DtSfY9+NkBvAK
-orMQa+BZUbzjfqmXR/M910/orEGkFvuyyOJKQjt2MaUMTJCrf+1/+y9x42ambCTo
-cPJNv9jcG5G2J8jSX6KUpfwspB/o0ZU+gCszyYehk7lHIYvZQDk11u9+bM4nktpK
-uUEHVUx3zOq251DxNG5P0dAZq7H66CMJCz8S25q6UJJsejN8YnSBUTLg2FVyrGaw
-KTWp5TaVeD40RmfWmpz/kSAxDKCSkCcdH3G1j+6SxiFibMfDE0+0ejenqCY5uH8v
-VPG7HR838Vz4U6qih4GERPZLXI2Oi3rFT8931fRuapT6+gNcVIY=
-=lQSt
------END PGP SIGNATURE-----
-
---Apple-Mail=_D52538F2-72FE-4CD4-B761-CCE9B24F2A35--
