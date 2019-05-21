@@ -2,100 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F43A25A7D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 00:52:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADED525AE3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 01:33:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbfEUWwT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 18:52:19 -0400
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:41586 "EHLO
-        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726218AbfEUWwS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 18:52:18 -0400
-Received: from [4.30.142.84] (helo=srivatsab-a01.vmware.com)
-        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
-        (Exim 4.82)
-        (envelope-from <srivatsa@csail.mit.edu>)
-        id 1hTDbq-0003mv-2S; Tue, 21 May 2019 18:52:13 -0400
-Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
- controller
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        jmoyer@redhat.com, Theodore Ts'o <tytso@mit.edu>,
-        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
-References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
- <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
- <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
- <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
- <A0DFE635-EFEC-4670-AD70-5D813E170BEE@linaro.org>
- <5B6570A2-541A-4CF8-98E0-979EA6E3717D@linaro.org>
- <2CB39B34-21EE-4A95-A073-8633CF2D187C@linaro.org>
- <FC24E25F-4578-454D-AE2B-8D8D352478D8@linaro.org>
-From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Message-ID: <0e3fdf31-70d9-26eb-7b42-2795d4b03722@csail.mit.edu>
-Date:   Tue, 21 May 2019 15:51:46 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        id S1727911AbfEUXdU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 May 2019 19:33:20 -0400
+Received: from dcvr.yhbt.net ([64.71.152.64]:59806 "EHLO dcvr.yhbt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726017AbfEUXdU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 May 2019 19:33:20 -0400
+Received: from localhost (dcvr.yhbt.net [127.0.0.1])
+        by dcvr.yhbt.net (Postfix) with ESMTP id 7D2A61F462;
+        Tue, 21 May 2019 23:33:19 +0000 (UTC)
+Date:   Tue, 21 May 2019 23:33:19 +0000
+From:   Eric Wong <e@80x24.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        arnd@arndb.de, dbueso@suse.de, axboe@kernel.dk, dave@stgolabs.net,
+        jbaron@akamai.com, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, omar.kilani@gmail.com, tglx@linutronix.de,
+        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 1/1] signal: Adjust error codes according to
+ restore_user_sigmask()
+Message-ID: <20190521233319.GA17957@dcvr>
+References: <20190507043954.9020-1-deepa.kernel@gmail.com>
+ <20190521092551.fwtb6recko3tahwj@dcvr>
+ <20190521152748.6b4cd70cf83a1183caa6aae7@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <FC24E25F-4578-454D-AE2B-8D8D352478D8@linaro.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521152748.6b4cd70cf83a1183caa6aae7@linux-foundation.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ Resending this mail with a dropbox link to the traces (instead
-of a file attachment), since it didn't go through the last time. ]
-
-On 5/21/19 10:38 AM, Paolo Valente wrote:
+Andrew Morton <akpm@linux-foundation.org> wrote:
+> On Tue, 21 May 2019 09:25:51 +0000 Eric Wong <e@80x24.org> wrote:
 > 
->> So, instead of only sending me a trace, could you please:
->> 1) apply this new patch on top of the one I attached in my previous email
->> 2) repeat your test and report results
+> > Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> > > For all the syscalls that receive a sigmask from the userland,
+> > > the user sigmask is to be in effect through the syscall execution.
+> > > At the end of syscall, sigmask of the current process is restored
+> > > to what it was before the switch over to user sigmask.
+> > > But, for this to be true in practice, the sigmask should be restored
+> > > only at the the point we change the saved_sigmask. Anything before
+> > > that loses signals. And, anything after is just pointless as the
+> > > signal is already lost by restoring the sigmask.
+> > > 
+> > > The inherent issue was detected because of a regression caused by
+> > > 854a6ed56839a.
+> > > The patch moved the signal_pending() check closer to restoring of the
+> > > user sigmask. But, it failed to update the error code accordingly.
+> > > 
+> > > Detailed issue discussion permalink:
+> > > https://lore.kernel.org/linux-fsdevel/20190427093319.sgicqik2oqkez3wk@dcvr/
+> > > 
+> > > Note that the patch returns interrupted errors (EINTR, ERESTARTNOHAND,
+> > > etc) only when there is no other error. If there is a signal and an error
+> > > like EINVAL, the syscalls return -EINVAL rather than the interrupted
+> > > error codes.
+> > > 
+> > > The sys_io_uring_enter() seems to be returning success when there is
+> > > a signal and the queue is not empty. This seems to be a bug. I will
+> > > follow up with a separate patch for that.
+> > > 
+> > > Reported-by: Eric Wong <e@80x24.org>
+> > > Fixes: 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add restore_user_sigmask()")
+> > > Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> > > Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
 > 
-> One last thing (I swear!): as you can see from my script, I tested the
-> case low_latency=0 so far.  So please, for the moment, do your test
-> with low_latency=0.  You find the whole path to this parameter in,
-> e.g., my script.
+> (top-posting fixed).
 > 
-No problem! :) Thank you for sharing patches for me to test!
+> > It's been 2 weeks and this fix hasn't appeared in mmots / mmotm.
+> > I also noticed it's missing Cc: for stable@ (below)
+> 
+> Why is a -stable backport needed?  I see some talk above about lost
+> signals but it is unclear whether these are being observed after fixing
+> the regression caused by 854a6ed56839a.
 
-I have good news :) Your patch improves the throughput significantly
-when low_latency = 0.
+I guess Deepa's commit messages wasn't clear...
+I suggest prepending this as the first paragraph to Deepa's
+original message:
 
-Without any patch:
+  This fixes a bug introduced with 854a6ed56839a which caused
+  EINTR to not be reported to userspace on epoll_pwait.  Failure
+  to report EINTR to userspace caused problems with user code
+  which relies on EINTR to run signal handlers.
 
-dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflag=dsync
-10000+0 records in
-10000+0 records out
-5120000 bytes (5.1 MB, 4.9 MiB) copied, 58.0915 s, 88.1 kB/s
-
-
-With both patches applied:
-
-dd if=/dev/zero of=/root/test0.img bs=512 count=10000 oflag=dsync
-10000+0 records in
-10000+0 records out
-5120000 bytes (5.1 MB, 4.9 MiB) copied, 3.87487 s, 1.3 MB/s
-
-The performance is still not as good as mq-deadline (which achieves
-1.6 MB/s), but this is a huge improvement for BFQ nonetheless!
-
-A tarball with the trace output from the 2 scenarios you requested,
-one with only the debug patch applied (trace-bfq-add-logs-and-BUG_ONs),
-and another with both patches applied (trace-bfq-boost-injection) is
-available here:
-
-https://www.dropbox.com/s/pdf07vi7afido7e/bfq-traces.tar.gz?dl=0
-
-Thank you!
- 
-Regards,
-Srivatsa
-VMware Photon OS
+> IOW, can we please have a changelog which has a clear and complete
+> description of the user-visible effects of the change.
+> 
+> And please Cc Oleg.
