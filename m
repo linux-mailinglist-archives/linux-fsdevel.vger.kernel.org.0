@@ -2,86 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14CD2250E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 15:44:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6357C250AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 15:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbfEUNoE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 09:44:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51204 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728240AbfEUNoD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 09:44:03 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AF6A26EB84;
-        Tue, 21 May 2019 13:43:53 +0000 (UTC)
-Received: from dhcp201-121.englab.pnq.redhat.com (ovpn-116-97.sin2.redhat.com [10.67.116.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B7C91001F5D;
-        Tue, 21 May 2019 13:43:21 +0000 (UTC)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, dm-devel@redhat.com
-Cc:     dan.j.williams@intel.com, zwisler@kernel.org,
-        vishal.l.verma@intel.com, dave.jiang@intel.com, mst@redhat.com,
-        jasowang@redhat.com, willy@infradead.org, rjw@rjwysocki.net,
-        hch@infradead.org, lenb@kernel.org, jack@suse.cz, tytso@mit.edu,
-        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
-        lcapitulino@redhat.com, kwolf@redhat.com, imammedo@redhat.com,
-        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
-        stefanha@redhat.com, aarcange@redhat.com, david@redhat.com,
-        david@fromorbit.com, cohuck@redhat.com,
-        xiaoguangrong.eric@gmail.com, pagupta@redhat.com,
-        pbonzini@redhat.com, yuval.shaia@oracle.com, kilobyte@angband.pl,
-        jstaron@google.com, rdunlap@infradead.org, snitzer@redhat.com
-Subject: [PATCH v10 7/7] xfs: disable map_sync for async flush
-Date:   Tue, 21 May 2019 19:07:13 +0530
-Message-Id: <20190521133713.31653-8-pagupta@redhat.com>
-In-Reply-To: <20190521133713.31653-1-pagupta@redhat.com>
-References: <20190521133713.31653-1-pagupta@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 21 May 2019 13:44:03 +0000 (UTC)
+        id S1728341AbfEUNj5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 May 2019 09:39:57 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37359 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728212AbfEUNj5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 May 2019 09:39:57 -0400
+Received: by mail-lf1-f66.google.com with SMTP id q17so13144895lfo.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2019 06:39:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=DGZ7ZHyxHghlyk00GjOL+Su8tQVyBxRwxWt505Mwkr8=;
+        b=UUsV50XWdVARTWvdiywE4LnO/Bgl22uVqIvj5DiL4yTqSSX691QJuUM5FH7mGHFNYk
+         Q0+0Bk1dY9Y5jYUMp6VxvQCJ668wo7gKKnk7wKdAbO6uXmyxdHg1D3dyjo/e1Z67HVYz
+         ek1VF3gFyvtiDXkBXE/5DNTwuCl20PqPvKDr8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DGZ7ZHyxHghlyk00GjOL+Su8tQVyBxRwxWt505Mwkr8=;
+        b=SEQksc61Nba+SaDT3nL15VVQ/ZZ+IObeVk7JptdaM73byMUNuZ8zQIoGw2DqA1UZaj
+         DeT7b+cKm+YOeDuIqFQS3V7AL/3GvtRFerciAb4xBUcCNEjFphMFBLy3pQgMFE+miINZ
+         YRQm4/UnT2XiaMfgQgPqdvFXM30l3Bix6Z/Zp4/Yi/yU0WEFM+YfQ1paTescjrDeEp9t
+         EU2P1yBhG8f7U5Xlp5Ui34WPb0uM9+fd63NZJL/aAbSiTA7lHWkd4WZcM/a99yfsCK5a
+         BjN672H5fU8N4/3juGUt7kU7a7E9eb+5+CSt+/lgsDOatPN2ZDMPRQI03k9EKn8/Fno+
+         kV1A==
+X-Gm-Message-State: APjAAAU9t5lW+tmJ7l36IjQfuRzCE0fML56WRXFiHyrtApVTmVUxfxNu
+        XC3Q4yIbbzMIQUXSxfs0jMo3XQ==
+X-Google-Smtp-Source: APXvYqy9VOBSFXKLfNL+Ppcf03Ojn4u3dT2Srf4sf8eVcsyswZbIav8iH9LKu3NFIr4da9Rx00Vw+w==
+X-Received: by 2002:ac2:5490:: with SMTP id t16mr2238952lfk.154.1558445996105;
+        Tue, 21 May 2019 06:39:56 -0700 (PDT)
+Received: from [172.16.11.26] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id r26sm4706723lfa.62.2019.05.21.06.39.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 May 2019 06:39:55 -0700 (PDT)
+Subject: Re: [PATCH 1/2] open: add close_range()
+To:     Christian Brauner <christian@brauner.io>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+References: <20190521113448.20654-1-christian@brauner.io>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <82d34133-e174-efc3-48ed-332304028595@rasmusvillemoes.dk>
+Date:   Tue, 21 May 2019 15:39:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190521113448.20654-1-christian@brauner.io>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dont support 'MAP_SYNC' with non-DAX files and DAX files
-with asynchronous dax_device. Virtio pmem provides
-asynchronous host page cache flush mechanism. We don't
-support 'MAP_SYNC' with virtio pmem and xfs.
+On 21/05/2019 13.34, Christian Brauner wrote:
 
-Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- fs/xfs/xfs_file.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+> The performance is striking. For good measure, comparing the following
+> simple close_all_fds() userspace implementation that is essentially just
+> glibc's version in [6]:
+> 
+> static int close_all_fds(void)
+> {
+>         DIR *dir;
+>         struct dirent *direntp;
+> 
+>         dir = opendir("/proc/self/fd");
+>         if (!dir)
+>                 return -1;
+> 
+>         while ((direntp = readdir(dir))) {
+>                 int fd;
+>                 if (strcmp(direntp->d_name, ".") == 0)
+>                         continue;
+>                 if (strcmp(direntp->d_name, "..") == 0)
+>                         continue;
+>                 fd = atoi(direntp->d_name);
+>                 if (fd == 0 || fd == 1 || fd == 2)
+>                         continue;
+>                 close(fd);
+>         }
+> 
+>         closedir(dir); /* cannot fail */
+>         return 0;
+> }
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index a7ceae90110e..f17652cca5ff 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -1203,11 +1203,14 @@ xfs_file_mmap(
- 	struct file	*filp,
- 	struct vm_area_struct *vma)
- {
-+	struct dax_device 	*dax_dev;
-+
-+	dax_dev = xfs_find_daxdev_for_inode(file_inode(filp));
- 	/*
--	 * We don't support synchronous mappings for non-DAX files. At least
--	 * until someone comes with a sensible use case.
-+	 * We don't support synchronous mappings for non-DAX files and
-+	 * for DAX files if underneath dax_device is not synchronous.
- 	 */
--	if (!IS_DAX(file_inode(filp)) && (vma->vm_flags & VM_SYNC))
-+	if (!daxdev_mapping_supported(vma, dax_dev))
- 		return -EOPNOTSUPP;
- 
- 	file_accessed(filp);
--- 
-2.20.1
+Before anybody copy-pastes this, please note that it lacks a check for
+fd == dirfd(dir). If all of /proc/self/fd is returned in the first
+getdents() syscall one won't notice, but...
 
+Rasmus
