@@ -2,138 +2,435 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BC4B24B34
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 11:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC0A24B69
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 11:25:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbfEUJK3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 05:10:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46344 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726289AbfEUJK3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 05:10:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D5BFBAC0C;
-        Tue, 21 May 2019 09:10:26 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 33C381E3C72; Tue, 21 May 2019 11:10:26 +0200 (CEST)
-Date:   Tue, 21 May 2019 11:10:26 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
-        linux-fsdevel@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        jmoyer@redhat.com, Theodore Ts'o <tytso@mit.edu>,
-        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
-Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
- controller
-Message-ID: <20190521091026.GA17019@quack2.suse.cz>
-References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
- <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
- <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
- <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
- <238e14ff-68d1-3b21-a291-28de4f2d77af@csail.mit.edu>
- <6EB6C9D2-E774-48FA-AC95-BC98D97645D0@linaro.org>
+        id S1727181AbfEUJZx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 May 2019 05:25:53 -0400
+Received: from dcvr.yhbt.net ([64.71.152.64]:51100 "EHLO dcvr.yhbt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726242AbfEUJZx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 May 2019 05:25:53 -0400
+Received: from localhost (dcvr.yhbt.net [127.0.0.1])
+        by dcvr.yhbt.net (Postfix) with ESMTP id 7773F1F462;
+        Tue, 21 May 2019 09:25:51 +0000 (UTC)
+Date:   Tue, 21 May 2019 09:25:51 +0000
+From:   Eric Wong <e@80x24.org>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        arnd@arndb.de, dbueso@suse.de, axboe@kernel.dk, dave@stgolabs.net,
+        jbaron@akamai.com, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, omar.kilani@gmail.com, tglx@linutronix.de,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] signal: Adjust error codes according to
+ restore_user_sigmask()
+Message-ID: <20190521092551.fwtb6recko3tahwj@dcvr>
+References: <20190507043954.9020-1-deepa.kernel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6EB6C9D2-E774-48FA-AC95-BC98D97645D0@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190507043954.9020-1-deepa.kernel@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 21-05-19 08:23:05, Paolo Valente wrote:
-> > Il giorno 21 mag 2019, alle ore 00:45, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
-> > 
-> > On 5/20/19 3:19 AM, Paolo Valente wrote:
-> >> 
-> >> 
-> >>> Il giorno 18 mag 2019, alle ore 22:50, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
-> >>> 
-> >>> On 5/18/19 11:39 AM, Paolo Valente wrote:
-> >>>> I've addressed these issues in my last batch of improvements for BFQ,
-> >>>> which landed in the upcoming 5.2. If you give it a try, and still see
-> >>>> the problem, then I'll be glad to reproduce it, and hopefully fix it
-> >>>> for you.
-> >>>> 
-> >>> 
-> >>> Hi Paolo,
-> >>> 
-> >>> Thank you for looking into this!
-> >>> 
-> >>> I just tried current mainline at commit 72cf0b07, but unfortunately
-> >>> didn't see any improvement:
-> >>> 
-> >>> dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflag=dsync
-> >>> 
-> >>> With mq-deadline, I get:
-> >>> 
-> >>> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 3.90981 s, 1.3 MB/s
-> >>> 
-> >>> With bfq, I get:
-> >>> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 84.8216 s, 60.4 kB/s
-> >>> 
-> >> 
-> >> Hi Srivatsa,
-> >> thanks for reproducing this on mainline.  I seem to have reproduced a
-> >> bonsai-tree version of this issue.  Before digging into the block
-> >> trace, I'd like to ask you for some feedback.
-> >> 
-> >> First, in my test, the total throughput of the disk happens to be
-> >> about 20 times as high as that enjoyed by dd, regardless of the I/O
-> >> scheduler.  I guess this massive overhead is normal with dsync, but
-> >> I'd like know whether it is about the same on your side.  This will
-> >> help me understand whether I'll actually be analyzing about the same
-> >> problem as yours.
-> >> 
-> > 
-> > Do you mean to say the throughput obtained by dd'ing directly to the
-> > block device (bypassing the filesystem)?
-> 
-> No no, I mean simply what follows.
-> 
-> 1) in one terminal:
-> [root@localhost tmp]# dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflag=dsync
-> 10000+0 record dentro
-> 10000+0 record fuori
-> 5120000 bytes (5,1 MB, 4,9 MiB) copied, 14,6892 s, 349 kB/s
-> 
-> 2) In a second terminal, while the dd is in progress in the first
-> terminal:
-> $ iostat -tmd /dev/sda 3
-> Linux 5.1.0+ (localhost.localdomain) 	20/05/2019 	_x86_64_	(2 CPU)
-> 
-> ...
-> 20/05/2019 11:40:17
-> Device             tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
-> sda            2288,00         0,00         9,77          0         29
-> 
-> 20/05/2019 11:40:20
-> Device             tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
-> sda            2325,33         0,00         9,93          0         29
-> 
-> 20/05/2019 11:40:23
-> Device             tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
-> sda            2351,33         0,00        10,05          0         30
-> ...
-> 
-> As you can see, the overall throughput (~10 MB/s) is more than 20
-> times as high as the dd throughput (~350 KB/s).  But the dd is the
-> only source of I/O.
+It's been 2 weeks and this fix hasn't appeared in mmots / mmotm.
+I also noticed it's missing Cc: for stable@ (below)
 
-Yes and that's expected. It just shows how inefficient small synchronous IO
-is. Look, dd(1) writes 512-bytes. From FS point of view we have to write:
-full fs block with data (+4KB), inode to journal (+4KB), journal descriptor
-block (+4KB), journal superblock (+4KB), transaction commit block (+4KB) -
-so that's 20KB just from top of my head to write 512 bytes...
+Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> For all the syscalls that receive a sigmask from the userland,
+> the user sigmask is to be in effect through the syscall execution.
+> At the end of syscall, sigmask of the current process is restored
+> to what it was before the switch over to user sigmask.
+> But, for this to be true in practice, the sigmask should be restored
+> only at the the point we change the saved_sigmask. Anything before
+> that loses signals. And, anything after is just pointless as the
+> signal is already lost by restoring the sigmask.
+> 
+> The inherent issue was detected because of a regression caused by
+> 854a6ed56839a.
+> The patch moved the signal_pending() check closer to restoring of the
+> user sigmask. But, it failed to update the error code accordingly.
+> 
+> Detailed issue discussion permalink:
+> https://lore.kernel.org/linux-fsdevel/20190427093319.sgicqik2oqkez3wk@dcvr/
+> 
+> Note that the patch returns interrupted errors (EINTR, ERESTARTNOHAND,
+> etc) only when there is no other error. If there is a signal and an error
+> like EINVAL, the syscalls return -EINVAL rather than the interrupted
+> error codes.
+> 
+> The sys_io_uring_enter() seems to be returning success when there is
+> a signal and the queue is not empty. This seems to be a bug. I will
+> follow up with a separate patch for that.
+> 
+> Reported-by: Eric Wong <e@80x24.org>
+> Fixes: 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add restore_user_sigmask()")
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
 
-								Honza
+Cc: <stable@vger.kernel.org> # 5.0.x
+Cc: <stable@vger.kernel.org> # 5.1.x
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> ---
+> 
+>  fs/aio.c               | 24 ++++++++++++------------
+>  fs/eventpoll.c         | 14 ++++++++++----
+>  fs/io_uring.c          |  9 ++++++---
+>  fs/select.c            | 37 +++++++++++++++++++++----------------
+>  include/linux/signal.h |  2 +-
+>  kernel/signal.c        | 13 ++++++++++---
+>  6 files changed, 60 insertions(+), 39 deletions(-)
+> 
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 3490d1fa0e16..ebd2b1980161 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -2095,7 +2095,7 @@ SYSCALL_DEFINE6(io_pgetevents,
+>  	struct __aio_sigset	ksig = { NULL, };
+>  	sigset_t		ksigmask, sigsaved;
+>  	struct timespec64	ts;
+> -	int ret;
+> +	int ret, signal_detected;
+>  
+>  	if (timeout && unlikely(get_timespec64(&ts, timeout)))
+>  		return -EFAULT;
+> @@ -2108,8 +2108,8 @@ SYSCALL_DEFINE6(io_pgetevents,
+>  		return ret;
+>  
+>  	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
+> -	restore_user_sigmask(ksig.sigmask, &sigsaved);
+> -	if (signal_pending(current) && !ret)
+> +	signal_detected = restore_user_sigmask(ksig.sigmask, &sigsaved);
+> +	if (signal_detected && !ret)
+>  		ret = -ERESTARTNOHAND;
+>  
+>  	return ret;
+> @@ -2128,7 +2128,7 @@ SYSCALL_DEFINE6(io_pgetevents_time32,
+>  	struct __aio_sigset	ksig = { NULL, };
+>  	sigset_t		ksigmask, sigsaved;
+>  	struct timespec64	ts;
+> -	int ret;
+> +	int ret, signal_detected;
+>  
+>  	if (timeout && unlikely(get_old_timespec32(&ts, timeout)))
+>  		return -EFAULT;
+> @@ -2142,8 +2142,8 @@ SYSCALL_DEFINE6(io_pgetevents_time32,
+>  		return ret;
+>  
+>  	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
+> -	restore_user_sigmask(ksig.sigmask, &sigsaved);
+> -	if (signal_pending(current) && !ret)
+> +	signal_detected = restore_user_sigmask(ksig.sigmask, &sigsaved);
+> +	if (signal_detected && !ret)
+>  		ret = -ERESTARTNOHAND;
+>  
+>  	return ret;
+> @@ -2193,7 +2193,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
+>  	struct __compat_aio_sigset ksig = { NULL, };
+>  	sigset_t ksigmask, sigsaved;
+>  	struct timespec64 t;
+> -	int ret;
+> +	int ret, signal_detected;
+>  
+>  	if (timeout && get_old_timespec32(&t, timeout))
+>  		return -EFAULT;
+> @@ -2206,8 +2206,8 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
+>  		return ret;
+>  
+>  	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &t : NULL);
+> -	restore_user_sigmask(ksig.sigmask, &sigsaved);
+> -	if (signal_pending(current) && !ret)
+> +	signal_detected = restore_user_sigmask(ksig.sigmask, &sigsaved);
+> +	if (signal_detected && !ret)
+>  		ret = -ERESTARTNOHAND;
+>  
+>  	return ret;
+> @@ -2226,7 +2226,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
+>  	struct __compat_aio_sigset ksig = { NULL, };
+>  	sigset_t ksigmask, sigsaved;
+>  	struct timespec64 t;
+> -	int ret;
+> +	int ret, signal_detected;
+>  
+>  	if (timeout && get_timespec64(&t, timeout))
+>  		return -EFAULT;
+> @@ -2239,8 +2239,8 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
+>  		return ret;
+>  
+>  	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &t : NULL);
+> -	restore_user_sigmask(ksig.sigmask, &sigsaved);
+> -	if (signal_pending(current) && !ret)
+> +	signal_detected = restore_user_sigmask(ksig.sigmask, &sigsaved);
+> +	if (signal_detected && !ret)
+>  		ret = -ERESTARTNOHAND;
+>  
+>  	return ret;
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 4a0e98d87fcc..fe5a0724b417 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -2317,7 +2317,7 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct epoll_event __user *, events,
+>  		int, maxevents, int, timeout, const sigset_t __user *, sigmask,
+>  		size_t, sigsetsize)
+>  {
+> -	int error;
+> +	int error, signal_detected;
+>  	sigset_t ksigmask, sigsaved;
+>  
+>  	/*
+> @@ -2330,7 +2330,10 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct epoll_event __user *, events,
+>  
+>  	error = do_epoll_wait(epfd, events, maxevents, timeout);
+>  
+> -	restore_user_sigmask(sigmask, &sigsaved);
+> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
+> +
+> +	if (signal_detected && !error)
+> +		error = -EINTR;
+>  
+>  	return error;
+>  }
+> @@ -2342,7 +2345,7 @@ COMPAT_SYSCALL_DEFINE6(epoll_pwait, int, epfd,
+>  			const compat_sigset_t __user *, sigmask,
+>  			compat_size_t, sigsetsize)
+>  {
+> -	long err;
+> +	long err, signal_detected;
+>  	sigset_t ksigmask, sigsaved;
+>  
+>  	/*
+> @@ -2355,7 +2358,10 @@ COMPAT_SYSCALL_DEFINE6(epoll_pwait, int, epfd,
+>  
+>  	err = do_epoll_wait(epfd, events, maxevents, timeout);
+>  
+> -	restore_user_sigmask(sigmask, &sigsaved);
+> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
+> +
+> +	if (signal_detected && !err)
+> +		err = -EINTR;
+>  
+>  	return err;
+>  }
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 452e35357865..8fd4710f371d 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2195,7 +2195,7 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>  	struct io_cq_ring *ring = ctx->cq_ring;
+>  	sigset_t ksigmask, sigsaved;
+>  	DEFINE_WAIT(wait);
+> -	int ret;
+> +	int ret, signal_detected;
+>  
+>  	/* See comment at the top of this file */
+>  	smp_rmb();
+> @@ -2234,8 +2234,11 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>  
+>  	finish_wait(&ctx->wait, &wait);
+>  
+> -	if (sig)
+> -		restore_user_sigmask(sig, &sigsaved);
+> +	if (sig) {
+> +		signal_detected = restore_user_sigmask(sig, &sigsaved);
+> +		if (signal_detected && !ret)
+> +			ret  = -EINTR;
+> +	}
+>  
+>  	return READ_ONCE(ring->r.head) == READ_ONCE(ring->r.tail) ? ret : 0;
+>  }
+> diff --git a/fs/select.c b/fs/select.c
+> index 6cbc9ff56ba0..da9cfea35159 100644
+> --- a/fs/select.c
+> +++ b/fs/select.c
+> @@ -732,7 +732,7 @@ static long do_pselect(int n, fd_set __user *inp, fd_set __user *outp,
+>  {
+>  	sigset_t ksigmask, sigsaved;
+>  	struct timespec64 ts, end_time, *to = NULL;
+> -	int ret;
+> +	int ret, signal_detected;
+>  
+>  	if (tsp) {
+>  		switch (type) {
+> @@ -760,7 +760,9 @@ static long do_pselect(int n, fd_set __user *inp, fd_set __user *outp,
+>  	ret = core_sys_select(n, inp, outp, exp, to);
+>  	ret = poll_select_copy_remaining(&end_time, tsp, type, ret);
+>  
+> -	restore_user_sigmask(sigmask, &sigsaved);
+> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
+> +	if (signal_detected && !ret)
+> +		ret = -EINTR;
+>  
+>  	return ret;
+>  }
+> @@ -1089,7 +1091,7 @@ SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
+>  {
+>  	sigset_t ksigmask, sigsaved;
+>  	struct timespec64 ts, end_time, *to = NULL;
+> -	int ret;
+> +	int ret, signal_detected;
+>  
+>  	if (tsp) {
+>  		if (get_timespec64(&ts, tsp))
+> @@ -1106,10 +1108,10 @@ SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
+>  
+>  	ret = do_sys_poll(ufds, nfds, to);
+>  
+> -	restore_user_sigmask(sigmask, &sigsaved);
+> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
+>  
+>  	/* We can restart this syscall, usually */
+> -	if (ret == -EINTR)
+> +	if (ret == -EINTR || (signal_detected && !ret))
+>  		ret = -ERESTARTNOHAND;
+>  
+>  	ret = poll_select_copy_remaining(&end_time, tsp, PT_TIMESPEC, ret);
+> @@ -1125,7 +1127,7 @@ SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds, unsigned int, nfds,
+>  {
+>  	sigset_t ksigmask, sigsaved;
+>  	struct timespec64 ts, end_time, *to = NULL;
+> -	int ret;
+> +	int ret, signal_detected;
+>  
+>  	if (tsp) {
+>  		if (get_old_timespec32(&ts, tsp))
+> @@ -1142,10 +1144,10 @@ SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds, unsigned int, nfds,
+>  
+>  	ret = do_sys_poll(ufds, nfds, to);
+>  
+> -	restore_user_sigmask(sigmask, &sigsaved);
+> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
+>  
+>  	/* We can restart this syscall, usually */
+> -	if (ret == -EINTR)
+> +	if (ret == -EINTR || (signal_detected && !ret))
+>  		ret = -ERESTARTNOHAND;
+>  
+>  	ret = poll_select_copy_remaining(&end_time, tsp, PT_OLD_TIMESPEC, ret);
+> @@ -1324,7 +1326,7 @@ static long do_compat_pselect(int n, compat_ulong_t __user *inp,
+>  {
+>  	sigset_t ksigmask, sigsaved;
+>  	struct timespec64 ts, end_time, *to = NULL;
+> -	int ret;
+> +	int ret, signal_detected;
+>  
+>  	if (tsp) {
+>  		switch (type) {
+> @@ -1352,7 +1354,10 @@ static long do_compat_pselect(int n, compat_ulong_t __user *inp,
+>  	ret = compat_core_sys_select(n, inp, outp, exp, to);
+>  	ret = poll_select_copy_remaining(&end_time, tsp, type, ret);
+>  
+> -	restore_user_sigmask(sigmask, &sigsaved);
+> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
+> +
+> +	if (signal_detected && !ret)
+> +		ret = -EINTR;
+>  
+>  	return ret;
+>  }
+> @@ -1408,7 +1413,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds,
+>  {
+>  	sigset_t ksigmask, sigsaved;
+>  	struct timespec64 ts, end_time, *to = NULL;
+> -	int ret;
+> +	int ret, signal_detected;
+>  
+>  	if (tsp) {
+>  		if (get_old_timespec32(&ts, tsp))
+> @@ -1425,10 +1430,10 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds,
+>  
+>  	ret = do_sys_poll(ufds, nfds, to);
+>  
+> -	restore_user_sigmask(sigmask, &sigsaved);
+> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
+>  
+>  	/* We can restart this syscall, usually */
+> -	if (ret == -EINTR)
+> +	if (ret == -EINTR || (signal_detected && !ret))
+>  		ret = -ERESTARTNOHAND;
+>  
+>  	ret = poll_select_copy_remaining(&end_time, tsp, PT_OLD_TIMESPEC, ret);
+> @@ -1444,7 +1449,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time64, struct pollfd __user *, ufds,
+>  {
+>  	sigset_t ksigmask, sigsaved;
+>  	struct timespec64 ts, end_time, *to = NULL;
+> -	int ret;
+> +	int ret, signal_detected;
+>  
+>  	if (tsp) {
+>  		if (get_timespec64(&ts, tsp))
+> @@ -1461,10 +1466,10 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time64, struct pollfd __user *, ufds,
+>  
+>  	ret = do_sys_poll(ufds, nfds, to);
+>  
+> -	restore_user_sigmask(sigmask, &sigsaved);
+> +	signal_detected = restore_user_sigmask(sigmask, &sigsaved);
+>  
+>  	/* We can restart this syscall, usually */
+> -	if (ret == -EINTR)
+> +	if (ret == -EINTR || (signal_detected && !ret))
+>  		ret = -ERESTARTNOHAND;
+>  
+>  	ret = poll_select_copy_remaining(&end_time, tsp, PT_TIMESPEC, ret);
+> diff --git a/include/linux/signal.h b/include/linux/signal.h
+> index 9702016734b1..1d36e8629edf 100644
+> --- a/include/linux/signal.h
+> +++ b/include/linux/signal.h
+> @@ -275,7 +275,7 @@ extern int __group_send_sig_info(int, struct kernel_siginfo *, struct task_struc
+>  extern int sigprocmask(int, sigset_t *, sigset_t *);
+>  extern int set_user_sigmask(const sigset_t __user *usigmask, sigset_t *set,
+>  	sigset_t *oldset, size_t sigsetsize);
+> -extern void restore_user_sigmask(const void __user *usigmask,
+> +extern int restore_user_sigmask(const void __user *usigmask,
+>  				 sigset_t *sigsaved);
+>  extern void set_current_blocked(sigset_t *);
+>  extern void __set_current_blocked(const sigset_t *);
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index e46d527ff467..ea0321b70315 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2906,15 +2906,21 @@ EXPORT_SYMBOL(set_compat_user_sigmask);
+>   * usigmask: sigmask passed in from userland.
+>   * sigsaved: saved sigmask when the syscall started and changed the sigmask to
+>   *           usigmask.
+> + * returns 1 in case a pending signal is detected.
+> + *
+> + * Users of the api need to adjust their return values based on whether the
+> + * signal was detected here. If a signal is detected, it is delivered to the
+> + * userspace. So without an error like -EINTR, userspace might fail to
+> + * adjust the flow of execution.
+>   *
+>   * This is useful for syscalls such as ppoll, pselect, io_pgetevents and
+>   * epoll_pwait where a new sigmask is passed in from userland for the syscalls.
+>   */
+> -void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
+> +int restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
+>  {
+>  
+>  	if (!usigmask)
+> -		return;
+> +		return 0;
+>  	/*
+>  	 * When signals are pending, do not restore them here.
+>  	 * Restoring sigmask here can lead to delivering signals that the above
+> @@ -2923,7 +2929,7 @@ void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
+>  	if (signal_pending(current)) {
+>  		current->saved_sigmask = *sigsaved;
+>  		set_restore_sigmask();
+> -		return;
+> +		return 1;
+>  	}
+>  
+>  	/*
+> @@ -2931,6 +2937,7 @@ void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
+>  	 * saved_sigmask when signals are not pending.
+>  	 */
+>  	set_current_blocked(sigsaved);
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(restore_user_sigmask);
+>  
+> -- 
+> 2.17.1
