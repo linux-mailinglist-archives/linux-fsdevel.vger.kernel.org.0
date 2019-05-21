@@ -2,123 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7974255D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 18:41:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A48D25602
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 May 2019 18:49:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728510AbfEUQlr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 12:41:47 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37479 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728099AbfEUQlr (ORCPT
+        id S1728283AbfEUQtS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 May 2019 12:49:18 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47396 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727817AbfEUQtS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 12:41:47 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 7so3585142wmo.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 May 2019 09:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QRw4dWFrlFKNeC2Hv6jFCNR7pmJ9ZVloUzzaJsWHe3k=;
-        b=DrUfMEDjMCX/F/kpAns9Xje6tAglSh3UhG5Ut0HpXQH/i/WF067F5FUZoHtyFcz92J
-         B9zO7Q3xmWBLCoBBlKTKoCtUiQsaTMx3Npeppmj4pHHAb15DBLIi9tECGzeTa0qz68HY
-         5SJCekbjPP909njq82OecOWv07W5VLYr5VkHE6sbSe+2o5Mw73nXEvvOijdE8vUJH9BM
-         uSenbJ2wN1Uv1xiE6qAy9CpI8LAAlCfwF/dLDfgYTm5Xge0CjqlWt1lxcYk7Ou9/XL7L
-         lIMEXS/i0lcGD5hbzAqtPxjiA1/NY2p62maSbnW0JtvlH3GgYQ9nmlSCeM60N0klvzp1
-         geRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QRw4dWFrlFKNeC2Hv6jFCNR7pmJ9ZVloUzzaJsWHe3k=;
-        b=G2fjd0CrOX0cBupWT5LfI+JKphI3nBI5g4qvLq4ZT8iEH+oMsfCq1mcAQH2ZoRvcoL
-         +sljo4rfvHiBQvyjeNmtMV8+xLaLkgz62vfMP0BDSokra8uf2l/PPyWSk8oBHPpB+Gei
-         Pqp/s3mr5RV9MdnAm+cf4AxtFZerisbNO6a337kl61xtdCy5TnmJqXh+wOywwnjLxPuG
-         Y3WXWx7rh5o88AoSWKk6REtTKjO+eHUxticJJd1LEw7BqZDMXDgZtfUUgpT1gaK047/J
-         gvk18AYSC37SVrJ3o8CQCUFxdcslTLtB7p0E1NuLee8QjxpmP/J3VNEFpCJwoCGRkDAa
-         LFzw==
-X-Gm-Message-State: APjAAAWGAQ8IG2q9w7sDTSUBTr2DJkcMtpLoodu0OUDrkMaIuX84xykt
-        NIhQIMyUUI96tAjWvAlTFM78pQ==
-X-Google-Smtp-Source: APXvYqy9lGE6AuIM688BrnvZ7pn7z99PmptY1DxlEejau1I+HdIPSmSJeaZzuDaCQae7Ot/VplE6/A==
-X-Received: by 2002:a7b:c40e:: with SMTP id k14mr3957899wmi.114.1558456904711;
-        Tue, 21 May 2019 09:41:44 -0700 (PDT)
-Received: from brauner.io ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id q14sm7089531wrx.86.2019.05.21.09.41.43
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 21 May 2019 09:41:44 -0700 (PDT)
-Date:   Tue, 21 May 2019 18:41:42 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        jannh@google.com, fweimer@redhat.com, oleg@redhat.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org, arnd@arndb.de,
-        shuah@kernel.org, tkjos@android.com, ldv@altlinux.org,
-        miklos@szeredi.hu, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH 1/2] open: add close_range()
-Message-ID: <20190521164141.rbehqnghiej3gfua@brauner.io>
-References: <20190521150006.GJ17978@ZenIV.linux.org.uk>
- <20190521113448.20654-1-christian@brauner.io>
- <28114.1558456227@warthog.procyon.org.uk>
+        Tue, 21 May 2019 12:49:18 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4LGmFdg004334
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 May 2019 12:48:16 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 184C4420481; Tue, 21 May 2019 12:48:15 -0400 (EDT)
+Date:   Tue, 21 May 2019 12:48:14 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
+        linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, axboe@kernel.dk, jmoyer@redhat.com,
+        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+Message-ID: <20190521164814.GC2591@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
+        linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, axboe@kernel.dk, jmoyer@redhat.com,
+        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
+ <20190518192847.GB14277@mit.edu>
+ <20190520091558.GC2172@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <28114.1558456227@warthog.procyon.org.uk>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190520091558.GC2172@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 21, 2019 at 05:30:27PM +0100, David Howells wrote:
-> Al Viro <viro@zeniv.linux.org.uk> wrote:
-> 
-> > Umm...  That's going to be very painful if you dup2() something to MAX_INT and
-> > then run that; roughly 2G iterations of bouncing ->file_lock up and down,
-> > without anything that would yield CPU in process.
-> > 
-> > If anything, I would suggest something like
-> > 
-> > 	fd = *start_fd;
-> > 	grab the lock
-> >         fdt = files_fdtable(files);
-> > more:
-> > 	look for the next eviction candidate in ->open_fds, starting at fd
-> > 	if there's none up to max_fd
-> > 		drop the lock
-> > 		return NULL
-> > 	*start_fd = fd + 1;
-> > 	if the fscker is really opened and not just reserved
-> > 		rcu_assign_pointer(fdt->fd[fd], NULL);
-> > 		__put_unused_fd(files, fd);
-> > 		drop the lock
-> > 		return the file we'd got
-> > 	if (unlikely(need_resched()))
-> > 		drop lock
-> > 		cond_resched();
-> > 		grab lock
-> > 		fdt = files_fdtable(files);
-> > 	goto more;
-> > 
-> > with the main loop being basically
-> > 	while ((file = pick_next(files, &start_fd, max_fd)) != NULL)
-> > 		filp_close(file, files);
-> 
-> If we can live with close_from(int first) rather than close_range(), then this
-> can perhaps be done a lot more efficiently by:
+On Mon, May 20, 2019 at 11:15:58AM +0200, Jan Kara wrote:
+> But this makes priority-inversion problems with ext4 journal worse, doesn't
+> it? If we submit journal commit in blkio cgroup of some random process, it
+> may get throttled which then effectively blocks the whole filesystem. Or do
+> you want to implement a more complex back-pressure mechanism where you'd
+> just account to different blkio cgroup during journal commit and then
+> throttle as different point where you are not blocking other tasks from
+> progress?
 
-Yeah, you mentioned this before. I do like being able to specify an
-upper bound to have the ability to place fds strategically after said
-upper bound.
-I have used this quite a few times where I know that given task may have
-inherited up to m fds and I want to inherit a specific pipe who's fd I
-know. Then I'd dup2(pipe_fd, <upper_bound + 1>) and then close all
-other fds. Is that too much of a corner case?
+Good point, yes, it can.  It depends in what cgroup the file system is
+mounted (and hence what cgroup the jbd2 kernel thread is on).  If it
+was mounted in the root cgroup, then jbd2 thread is going to be
+completely unthrottled (except for the data=ordered writebacks, which
+will be charged to the cgroup which write those pages) so the only
+thing which is nuking us will be the slice_idle timeout --- both for
+the writebacks (which could get charged to N different cgroups, with
+disastrous effects --- and this is going to be true for any file
+system on a syncfs(2) call as well) and switching between the jbd2
+thread's cgroup and the writeback cgroup.
 
-Christian
+One thing the I/O scheduler could do is use the synchronous flag as a
+hint that it should ix-nay on the idle-way.  Or maybe we need to have
+a different way to signal this to the jbd2 thread, since I do
+recognize that this issue is ext4-specific, *because* we do the
+transaction handling in a separate thread, and because of the
+data=ordered scheme, both of which are unique to ext4.  So exempting
+synchronous writes from cgroup control doesn't make sense for other
+file systems.
+
+So maybe a special flag meaning "entangled writes", where the
+sched_idle hacks should get suppressed for the data=ordered
+writebacks, but we still charge the block I/O to the relevant CSS's?
+
+I could also imagine if there was some way that file system could
+track whether all of the file system modifications were charged to a
+single cgroup, we could in that case charge it to that cgroup?
+
+> Yeah. At least in some cases, we know there won't be any more IO from a
+> particular cgroup in the near future (e.g. transaction commit completing,
+> or when the layers above IO scheduler already know which IO they are going
+> to submit next) and in that case idling is just a waste of time. But so far
+> I haven't decided how should look a reasonably clean interface for this
+> that isn't specific to a particular IO scheduler implementation.
+
+The best I've come up with is some way of signalling that all of the
+writes coming from the jbd2 commit are entangled, probably via a bio
+flag.
+
+If we don't have cgroup support, the other thing we could do is assume
+that the jbd2 thread should always be in the root (unconstrained)
+cgroup, and then force all writes, include data=ordered writebacks, to
+be in the jbd2's cgroup.  But that would make the block cgroup
+controls trivially bypassable by an application, which could just be
+fsync-happy and exempt all of its buffered I/O writes from cgroup
+control.  So that's probably not a great way to go --- but it would at
+least fix this particular performance issue.  :-/
+
+						- Ted
