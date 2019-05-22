@@ -2,134 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3634326FF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 22:00:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1301B270A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 22:14:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730974AbfEVUAh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 16:00:37 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:45481 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730417AbfEVUAg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 16:00:36 -0400
-Received: by mail-yb1-f194.google.com with SMTP id e128so1331355ybc.12;
-        Wed, 22 May 2019 13:00:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C0nqHgtmLn6G5z3RJOs6vtscGJVqhj3bMBlmrel04/w=;
-        b=UwrWn/u8rZGHhLI1P6V35RgRkAPjVS/PxkAM7CyXBT57jgKfWPjOpICtY0LSDJ69R5
-         BR1pjI85gspBLojZnrGuHIoT7C1QYhMFQ8AzeX5PQxmtBJwl53tIIfhleT7WoP6SGPW3
-         jPdv59bh5Sa2ThqPAQ4OBK6GDwS6g8LbujSzQM3Tuw0ktnD94bnRHaBYgMKwC2kKWQQ6
-         5kzL/+N3o/Ng1GSLrlzTGO3gpwnvWtcdyUy9AFrcbALi0/YbADrfxNK2CgiEaggfncgI
-         tXzBRPf8wMX+N0XQhCjZ8BSZ0iVGeiFVdqV5bElUz8JFoV2ZwwYG9j8045SyZEvu8bbm
-         X2wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C0nqHgtmLn6G5z3RJOs6vtscGJVqhj3bMBlmrel04/w=;
-        b=OS6lK7/kXFyxq3Ltpi1R3wYqOD8HRQGktQYRmsLpm8PK5veUAP+7c6kgqgTq5iFzX/
-         EQA8/B1XAlHUX359aLo5JSZ4xe++Jc1Vsizj6XiHHSTmrCLy35PdnfFOYaP7fMTIlvKG
-         RU7ntNsgLyxx0JNOhw3gUpuFbqoiqJneOmMyQ8jil5QyQkacdkuczX+XgI7AJd0dxo7j
-         J3PWhgevfmzZbmOUG0h5rQC+58UiFxLa11BfbPUW+lZ56q8HBmtzeRAz03vQTEVGHtUE
-         MGbhlYTuWynjRkX6xC+7BaK5FlWEZK1jKK4MJ0cnJrj6om2hWfA+ZziNvAwrjnDNe/C5
-         Ji5A==
-X-Gm-Message-State: APjAAAUd8LYFYKlq/vy8TuSVKMja1eyo/RIbje4Ancdvu5wrmeoSTfVh
-        WtbG84EWh8hl/V0D2zd6elwMVnFETXjHfcplciRaehUE
-X-Google-Smtp-Source: APXvYqwdAn8/163JIv01+5q5jhQOxY8oXTq/RXsrw1M8Va4VH8MacySFCdZpVj8OETAqO7j5G2cNQQLwLLLgipcKhts=
-X-Received: by 2002:a25:7a41:: with SMTP id v62mr19992787ybc.14.1558555235261;
- Wed, 22 May 2019 13:00:35 -0700 (PDT)
+        id S1729877AbfEVUOv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 16:14:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49280 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729483AbfEVUOv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 May 2019 16:14:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 570F7AECB;
+        Wed, 22 May 2019 20:14:49 +0000 (UTC)
+Date:   Wed, 22 May 2019 15:14:47 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-btrfs@vger.kernel.org, kilobyte@angband.pl,
+        linux-fsdevel@vger.kernel.org, jack@suse.cz, david@fromorbit.com,
+        willy@infradead.org, hch@lst.de, dsterba@suse.cz,
+        nborisov@suse.com, linux-nvdimm@lists.01.org
+Subject: Re: [PATCH 04/18] dax: Introduce IOMAP_DAX_COW to CoW edges during
+ writes
+Message-ID: <20190522201446.tc4zbxdevjm5dofe@fiona>
+References: <20190429172649.8288-1-rgoldwyn@suse.de>
+ <20190429172649.8288-5-rgoldwyn@suse.de>
+ <20190521165158.GB5125@magnolia>
 MIME-Version: 1.0
-References: <20190522163150.16849-1-christian@brauner.io> <CAOQ4uxjV=7=FXuyccBK9Pu1B7o-w-pbc1FQXJxY4q6z8E93KOg@mail.gmail.com>
- <EB97EF04-D44F-4320-ACDC-C536EED03BA4@brauner.io>
-In-Reply-To: <EB97EF04-D44F-4320-ACDC-C536EED03BA4@brauner.io>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 22 May 2019 23:00:22 +0300
-Message-ID: <CAOQ4uxhodqVw0DVfcvXYH5vBf4LKcv7t388ZwXeZPBTcEMzGSw@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: remove redundant capable(CAP_SYS_ADMIN)s
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521165158.GB5125@magnolia>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 22, 2019 at 9:57 PM Christian Brauner <christian@brauner.io> wrote:
->
-> On May 22, 2019 8:29:37 PM GMT+02:00, Amir Goldstein <amir73il@gmail.com> wrote:
-> >On Wed, May 22, 2019 at 7:32 PM Christian Brauner
-> ><christian@brauner.io> wrote:
-> >>
-> >> This removes two redundant capable(CAP_SYS_ADMIN) checks from
-> >> fanotify_init().
-> >> fanotify_init() guards the whole syscall with capable(CAP_SYS_ADMIN)
-> >at the
-> >> beginning. So the other two capable(CAP_SYS_ADMIN) checks are not
-> >needed.
-> >
-> >It's intentional:
-> >
-> >commit e7099d8a5a34d2876908a9fab4952dabdcfc5909
-> >Author: Eric Paris <eparis@redhat.com>
-> >Date:   Thu Oct 28 17:21:57 2010 -0400
-> >
-> >    fanotify: limit the number of marks in a single fanotify group
-> >
-> >There is currently no limit on the number of marks a given fanotify
-> >group
-> >can have.  Since fanotify is gated on CAP_SYS_ADMIN this was not seen
-> >as
-> >a serious DoS threat.  This patch implements a default of 8192, the
-> >same as
-> >inotify to work towards removing the CAP_SYS_ADMIN gating and
-> >eliminating
-> >    the default DoS'able status.
-> >
-> >    Signed-off-by: Eric Paris <eparis@redhat.com>
-> >
-> >There idea is to eventually remove the gated CAP_SYS_ADMIN.
-> >There is no reason that fanotify could not be used by unprivileged
-> >users
-> >to setup inotify style watch on an inode or directories children, see:
-> >https://patchwork.kernel.org/patch/10668299/
-> >
-> >>
-> >> Fixes: 5dd03f55fd2 ("fanotify: allow userspace to override max queue
-> >depth")
-> >> Fixes: ac7e22dcfaf ("fanotify: allow userspace to override max
-> >marks")
-> >
-> >Fixes is used to tag bug fixes for stable.
-> >There is no bug.
-> >
-> >Thanks,
-> >Amir.
->
-> Interesting. When do you think the gate can be removed?
+On  9:51 21/05, Darrick J. Wong wrote:
+> On Mon, Apr 29, 2019 at 12:26:35PM -0500, Goldwyn Rodrigues wrote:
+> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > 
+> > The IOMAP_DAX_COW is a iomap type which performs copy of
+> > edges of data while performing a write if start/end are
+> > not page aligned. The source address is expected in
+> > iomap->inline_data.
+> > 
+> > dax_copy_edges() is a helper functions performs a copy from
+> > one part of the device to another for data not page aligned.
+> > If iomap->inline_data is NULL, it memset's the area to zero.
+> > 
+> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > ---
+> >  fs/dax.c              | 46 +++++++++++++++++++++++++++++++++++++++++++++-
+> >  include/linux/iomap.h |  1 +
+> >  2 files changed, 46 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/dax.c b/fs/dax.c
+> > index e5e54da1715f..610bfa861a28 100644
+> > --- a/fs/dax.c
+> > +++ b/fs/dax.c
+> > @@ -1084,6 +1084,42 @@ int __dax_zero_page_range(struct block_device *bdev,
+> >  }
+> >  EXPORT_SYMBOL_GPL(__dax_zero_page_range);
+> >  
+> > +/*
+> > + * dax_copy_edges - Copies the part of the pages not included in
+> > + * 		    the write, but required for CoW because
+> > + * 		    offset/offset+length are not page aligned.
+> > + */
+> > +static int dax_copy_edges(struct inode *inode, loff_t pos, loff_t length,
+> > +			   struct iomap *iomap, void *daddr)
+> > +{
+> > +	unsigned offset = pos & (PAGE_SIZE - 1);
+> > +	loff_t end = pos + length;
+> > +	loff_t pg_end = round_up(end, PAGE_SIZE);
+> > +	void *saddr = iomap->inline_data;
+> > +	int ret = 0;
+> > +	/*
+> > +	 * Copy the first part of the page
+> > +	 * Note: we pass offset as length
+> > +	 */
+> > +	if (offset) {
+> > +		if (saddr)
+> > +			ret = memcpy_mcsafe(daddr, saddr, offset);
+> > +		else
+> > +			memset(daddr, 0, offset);
+> > +	}
+> > +
+> > +	/* Copy the last part of the range */
+> > +	if (end < pg_end) {
+> > +		if (saddr)
+> > +			ret = memcpy_mcsafe(daddr + offset + length,
+> > +			       saddr + offset + length,	pg_end - end);
+> > +		else
+> > +			memset(daddr + offset + length, 0,
+> > +					pg_end - end);
+> > +	}
+> > +	return ret;
+> > +}
+> > +
+> >  static loff_t
+> >  dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> >  		struct iomap *iomap)
+> > @@ -1105,9 +1141,11 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> >  			return iov_iter_zero(min(length, end - pos), iter);
+> >  	}
+> >  
+> > -	if (WARN_ON_ONCE(iomap->type != IOMAP_MAPPED))
+> > +	if (WARN_ON_ONCE(iomap->type != IOMAP_MAPPED
+> > +			 && iomap->type != IOMAP_DAX_COW))
+> 
+> I reiterate (from V3) that the && goes on the previous line...
+> 
+> 	if (WARN_ON_ONCE(iomap->type != IOMAP_MAPPED &&
+> 			 iomap->type != IOMAP_DAX_COW))
+> 
+> >  		return -EIO;
+> >  
+> > +
+> >  	/*
+> >  	 * Write can allocate block for an area which has a hole page mapped
+> >  	 * into page tables. We have to tear down these mappings so that data
+> > @@ -1144,6 +1182,12 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> >  			break;
+> >  		}
+> >  
+> > +		if (iomap->type == IOMAP_DAX_COW) {
+> > +			ret = dax_copy_edges(inode, pos, length, iomap, kaddr);
+> > +			if (ret)
+> > +				break;
+> > +		}
+> > +
+> >  		map_len = PFN_PHYS(map_len);
+> >  		kaddr += offset;
+> >  		map_len -= offset;
+> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> > index 0fefb5455bda..6e885c5a38a3 100644
+> > --- a/include/linux/iomap.h
+> > +++ b/include/linux/iomap.h
+> > @@ -25,6 +25,7 @@ struct vm_fault;
+> >  #define IOMAP_MAPPED	0x03	/* blocks allocated at @addr */
+> >  #define IOMAP_UNWRITTEN	0x04	/* blocks allocated at @addr in unwritten state */
+> >  #define IOMAP_INLINE	0x05	/* data inline in the inode */
+> 
+> > +#define IOMAP_DAX_COW	0x06
+> 
+> DAX isn't going to be the only scenario where we need a way to
+> communicate to iomap actors the need to implement copy on write.
+> 
+> XFS also uses struct iomap to hand out file leases to clients.  The
+> lease code /currently/ doesn't support files with shared blocks (because
+> the only user is pNFS) but one could easily imagine a future where some
+> client wants to lease a file with shared blocks, in which case XFS will
+> want to convey the COW details to the lessee.
+> 
+> > +/* Copy data pointed by inline_data before write*/
+> 
+> A month ago during the V3 patchset review, I wrote (possibly in an other
+> thread, sorry) about something that I'm putting my foot down about now
+> for the V4 patchset, which is the {re,ab}use of @inline_data for the
+> data source address.
 
-Nobody is working on this AFAIK.
-What I posted was a simple POC, but I have no use case for this.
-In the patchwork link above, Jan has listed the prerequisites for
-removing the gate.
+Looks like I missed this.
+> 
+> We cannot use @inline_data to convey the source address.  @inline_data
+> (so far) is used to point to the in-memory representation of the storage
+> described by @addr.  For data writes, @addr is the location of the write
+> on disk and @inline_data is the location of the write in memory.
+> 
+> Reusing @inline_data here to point to the location of the source data in
+> memory is a totally different thing and will likely result in confusion.
+> On a practical level, this also means that we cannot support the case of
+> COW && INLINE because the type codes collide and so would the users of
+> @inline_data.  This isn't required *right now*, but if you had a pmem
+> filesystem that stages inode updates in memory and flips a pointer to
+> commit changes then the ->iomap_begin function will need to convey two
+> pointers at once.
+> 
+> So this brings us back to Dave's suggestion during the V1 patchset
+> review that instead of adding more iomap flags/types and overloading
+> fields, we simply pass two struct iomaps into ->iomap_begin:
 
-One of the prerequisites is FAN_REPORT_FID, which is now merged.
-When events gets reported with fid instead of fd, unprivileged user
-(hopefully) cannot use fid for privilege escalation.
+Actually, Dave is the one who suggested to perform it this way.
+https://patchwork.kernel.org/comment/22562195/
 
-> I was looking into switching from inotify to fanotify but since it's not usable from
-> non-initial userns it's a no-no
-> since we support nested workloads.
+> 
+>  - Change iomap_apply() to "struct iomap iomap[2] = 0;" and pass
+>    &iomap[0] into the ->iomap_begin and ->iomap_end functions.  The
+>    first iomap will be filled in with the destination for the write (as
+>    all implementations do now), and the second iomap can be filled in
+>    with the source information for a COW operation.
+> 
+>  - If the ->iomap_begin implementation decides that COW is necessary for
+>    the requested operation, then it should fill out that second iomap
+>    with information about the extent that the actor must copied before
+>    returning.  The second iomap's offset and length must match the
+>    first.  If COW isn't necessary, the ->iomap_begin implementation
+>    ignores it, and the second iomap retains type == 0 (i.e. invalid
+>    mapping).
+> 
+> Proceeding along these lines will (AFAICT) still allow you to enable all
+> the btrfs functionality in the rest of this patchset while making the
+> task of wiring up XFS fairly simple.  No overloaded fields and no new
+> flags.
+> 
+> This is how I'd like to see this patchset should proceed to V5.  Does
+> that make sense?
 
-One of Jan's questions was what is the benefit of using inotify-compatible
-fanotify vs. using inotify.
-So what was the reason you were looking into switching from inotify to fanotify?
-Is it because of mount/filesystem watch? Because making those available for
-unprivileged user sounds risky...
 
-Thanks,
-Amir.
+Yes, I think this would be a more flexible design as well if we ever
+decide to extend it beyond dax.
+We would still need a IOMAP_COW type set in iomap[0].
+
+-- 
+Goldwyn
