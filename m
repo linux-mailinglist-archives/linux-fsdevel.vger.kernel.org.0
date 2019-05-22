@@ -2,88 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE8B26147
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 12:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D991A261B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 12:25:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbfEVKCc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 06:02:32 -0400
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:48310 "EHLO
-        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728602AbfEVKCc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 06:02:32 -0400
-Received: from c-73-193-85-113.hsd1.wa.comcast.net ([73.193.85.113] helo=srivatsab-a01.vmware.com)
-        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
-        (Exim 4.82)
-        (envelope-from <srivatsa@csail.mit.edu>)
-        id 1hTO4p-000DVo-GO; Wed, 22 May 2019 06:02:27 -0400
-Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
- controller
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        jmoyer@redhat.com, Theodore Ts'o <tytso@mit.edu>,
-        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
-References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
- <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
- <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
- <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
- <A0DFE635-EFEC-4670-AD70-5D813E170BEE@linaro.org>
- <5B6570A2-541A-4CF8-98E0-979EA6E3717D@linaro.org>
- <2CB39B34-21EE-4A95-A073-8633CF2D187C@linaro.org>
- <FC24E25F-4578-454D-AE2B-8D8D352478D8@linaro.org>
- <0e3fdf31-70d9-26eb-7b42-2795d4b03722@csail.mit.edu>
- <F5E29C98-6CC4-43B8-994D-0B5354EECBF3@linaro.org>
- <f4b11315-144c-c67d-5143-50b5be950ede@csail.mit.edu>
- <9E95BE27-2167-430F-9C7F-6D4A0E255FF3@linaro.org>
-From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Message-ID: <ebe43a35-87d3-11c6-5928-3f90055367ed@csail.mit.edu>
-Date:   Wed, 22 May 2019 03:02:25 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        id S1728869AbfEVKZd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 06:25:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60474 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727464AbfEVKZc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 May 2019 06:25:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 35A53AEB6;
+        Wed, 22 May 2019 10:25:31 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 804F91E3C5F; Wed, 22 May 2019 12:25:30 +0200 (CEST)
+Date:   Wed, 22 May 2019 12:25:30 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     'Christoph Hellwig' <hch@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, kanchan <joshi.k@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, prakash.v@samsung.com,
+        anshul@samsung.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH v5 0/7] Extend write-hint framework, and add write-hint
+ for Ext4 journal
+Message-ID: <20190522102530.GK17019@quack2.suse.cz>
+References: <CGME20190425112347epcas2p1f7be48b8f0d2203252b8c9dd510c1b61@epcas2p1.samsung.com>
+ <1556191202-3245-1-git-send-email-joshi.k@samsung.com>
+ <20190510170249.GA26907@infradead.org>
+ <00fb01d50c71$dd358e50$97a0aaf0$@samsung.com>
+ <20190520142719.GA15705@infradead.org>
+ <20190521082528.GA17709@quack2.suse.cz>
+ <20190521082846.GA11024@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <9E95BE27-2167-430F-9C7F-6D4A0E255FF3@linaro.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521082846.GA11024@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/22/19 2:12 AM, Paolo Valente wrote:
+On Tue 21-05-19 01:28:46, 'Christoph Hellwig' wrote:
+> On Tue, May 21, 2019 at 10:25:28AM +0200, Jan Kara wrote:
+> > performance benefits for some drives. After all you can just think about it
+> > like RWH_WRITE_LIFE_JOURNAL type of hint available for the kernel...
 > 
->> Il giorno 22 mag 2019, alle ore 11:02, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
->>
->>
->> Let's continue here on LKML itself.
+> Except that it actuallys adds a parallel insfrastructure.  A
+> RWH_WRITE_LIFE_JOURNAL would be much more palatable, but someone needs
+> to explain how that is:
 > 
-> Just done :)
-> 
->> The only reason I created the
->> bugzilla entry is to attach the tarball of the traces, assuming
->> that it would allow me to upload a 20 MB file (since email attachment
->> didn't work). But bugzilla's file restriction is much smaller than
->> that, so it didn't work out either, and I resorted to using dropbox.
->> So we don't need the bugzilla entry anymore; I might as well close it
->> to avoid confusion.
->>
-> 
-> No no, don't close it: it can reach people that don't use LKML.  We
-> just have to remember to report back at the end of this.
+>  a) different from RWH_WRITE_LIFE_SHORT
 
-Ah, good point!
+The problem I have with this is: What does "short" mean? What if
+userspace's notion of short differs from the kernel notion? Also the
+journal block lifetime is somewhat hard to predict. It depends on the size
+of the journal and metadata load on the filesystem so there's big variance.
+So all we really know is that all journal blocks are the same.
 
->  BTW, I also
-> think that the bug is incorrectly filed against 5.1, while all these
-> tests and results concern 5.2-rcX.
-> 
+>  b) would not apply to a log/journal maintained in userspace that works
+>     exactly the same
 
-Fixed now, thank you for pointing out!
- 
-Regards,
-Srivatsa
-VMware Photon OS
+Lifetime of userspace journal/log may be significantly different from the
+lifetime of the filesystem journal. So using the same hint for them does
+not look like a great idea?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
