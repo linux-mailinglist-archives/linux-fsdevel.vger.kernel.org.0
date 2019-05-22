@@ -2,105 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F68B260A1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 11:42:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2894926132
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 12:02:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbfEVJmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 05:42:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52882 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728609AbfEVJmC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 05:42:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 50B87AE65;
-        Wed, 22 May 2019 09:42:01 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 217AA1E3C69; Wed, 22 May 2019 11:42:01 +0200 (CEST)
-Date:   Wed, 22 May 2019 11:42:01 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] fanotify: Disallow permission events for proc filesystem
-Message-ID: <20190522094201.GF17019@quack2.suse.cz>
-References: <20190515193337.11167-1-jack@suse.cz>
- <CAOQ4uxhKV9qXGDA6PuCKrbBjM_f2ed_XScY3KkWVX8PXzwCwCA@mail.gmail.com>
- <20190516083632.GC13274@quack2.suse.cz>
- <20190521215716.GB20383@neo>
+        id S1729435AbfEVKBf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 06:01:35 -0400
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:48279 "EHLO
+        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729414AbfEVKBe (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 May 2019 06:01:34 -0400
+Received: from c-73-193-85-113.hsd1.wa.comcast.net ([73.193.85.113] helo=srivatsab-a01.vmware.com)
+        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
+        (Exim 4.82)
+        (envelope-from <srivatsa@csail.mit.edu>)
+        id 1hTO3s-000DFW-EO; Wed, 22 May 2019 06:01:28 -0400
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        jmoyer@redhat.com, Theodore Ts'o <tytso@mit.edu>,
+        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
+ <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
+ <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
+ <A0DFE635-EFEC-4670-AD70-5D813E170BEE@linaro.org>
+ <5B6570A2-541A-4CF8-98E0-979EA6E3717D@linaro.org>
+ <2CB39B34-21EE-4A95-A073-8633CF2D187C@linaro.org>
+ <FC24E25F-4578-454D-AE2B-8D8D352478D8@linaro.org>
+ <0e3fdf31-70d9-26eb-7b42-2795d4b03722@csail.mit.edu>
+ <F5E29C98-6CC4-43B8-994D-0B5354EECBF3@linaro.org>
+ <686D6469-9DE7-4738-B92A-002144C3E63E@linaro.org>
+From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Message-ID: <01d55216-5718-767a-e1e6-aadc67b632f4@csail.mit.edu>
+Date:   Wed, 22 May 2019 03:01:24 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521215716.GB20383@neo>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <686D6469-9DE7-4738-B92A-002144C3E63E@linaro.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 22-05-19 07:57:18, Matthew Bobrowski wrote:
-> On Thu, May 16, 2019 at 10:36:32AM +0200, Jan Kara wrote:
-> > On Thu 16-05-19 08:54:37, Amir Goldstein wrote:
-> > > > Signed-off-by: Jan Kara <jack@suse.cz>
-> > > > ---
-> > > >  fs/notify/fanotify/fanotify_user.c | 20 ++++++++++++++++++++
-> > > >  1 file changed, 20 insertions(+)
-> > > >
-> > > > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > > > index a90bb19dcfa2..73719949faa6 100644
-> > > > --- a/fs/notify/fanotify/fanotify_user.c
-> > > > +++ b/fs/notify/fanotify/fanotify_user.c
-> > > > @@ -920,6 +920,20 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
-> > > >         return 0;
-> > > >  }
-> > > >
-> > > > +static int fanotify_events_supported(struct path *path, __u64 mask)
-> > > > +{
-> > > > +       /*
-> > > > +        * Proc is special and various files have special locking rules so
-> > > > +        * fanotify permission events have high chances of deadlocking the
-> > > > +        * system. Just disallow them.
-> > > > +        */
-> > > > +       if (mask & FANOTIFY_PERM_EVENTS &&
-> > > > +           !strcmp(path->mnt->mnt_sb->s_type->name, "proc")) {
-> > > 
-> > > Better use an SB_I_ flag to forbid permission events on fs?
-> > 
-> > So checking s_type->name indeed felt dirty. I don't think we need a
-> > superblock flag though. I'll probably just go with FS_XXX flag in
-> > file_system_type.
+On 5/22/19 2:09 AM, Paolo Valente wrote:
 > 
-> Would the same apply for some files that backed by sysfs and reside in
-> /sys?
-
-So far I'm not aware of similar easy to trigger deadlocks with sysfs. So I
-opted for a cautious path and disabled permission events only for proc.
-We'll see how that fares.
-
-> > > > +               return -EOPNOTSUPP;
-> > > 
-> > > I would go with EINVAL following precedent of per filesystem flags
-> > > check on rename(2), but not insisting.
-> > 
-> > I was undecided between EOPNOTSUPP and EINVAL. So let's go with EINVAL.
+> First, thank you very much for testing my patches, and, above all, for
+> sharing those huge traces!
 > 
-> I was also thinking that EINVAL makes more sense in this particular
-> case.
-
-Good, that's what I used in v2.
-
-> > > Anyway, following Matthew's man page update for FAN_REPORT_FID,
-> > > we should also add this as reason for EOPNOTSUPP/EINVAL.
-> > 
-> > Good point.
+> According to the your traces, the residual 20% lower throughput that you
+> record is due to the fact that the BFQ injection mechanism takes a few
+> hundredths of seconds to stabilize, at the beginning of the workload.
+> During that setup time, the throughput is equal to the dreadful ~60-90 KB/s
+> that you see without this new patch.  After that time, there
+> seems to be no loss according to the trace.
 > 
-> I've followed up Michael in regards to the FAN_REPORT_FID patch series,
-> but no response as of yet. I'm happy to write the changes for this one
-> if you like?
+> The problem is that a loss lasting only a few hundredths of seconds is
+> however not negligible for a write workload that lasts only 3-4
+> seconds.  Could you please try writing a larger file?
+> 
 
-If you had time for that, that would be nice. Thanks!
+I tried running dd for longer (about 100 seconds), but still saw around
+1.4 MB/s throughput with BFQ, and between 1.5 MB/s - 1.6 MB/s with
+mq-deadline and noop. But I'm not too worried about that difference.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> In addition, I wanted to ask you whether you measured BFQ throughput
+> with traces disabled.  This may make a difference.
+> 
+
+The above result (1.4 MB/s) was obtained with traces disabled.
+
+> After trying writing a larger file, you can try with low_latency on.
+> On my side, it causes results to become a little unstable across
+> repetitions (which is expected).
+> 
+With low_latency on, I get between 60 KB/s - 100 KB/s.
+
+Regards,
+Srivatsa
+VMware Photon OS
