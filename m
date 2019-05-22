@@ -2,480 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FBBE25C50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 05:48:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F209625EFF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 10:05:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbfEVDr4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 May 2019 23:47:56 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58302 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727733AbfEVDrz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 May 2019 23:47:55 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1135721428D5CDF964;
-        Wed, 22 May 2019 11:47:51 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 22 May 2019
- 11:47:43 +0800
-From:   sunqiuyang <sunqiuyang@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <yuchao0@huawei.com>, <sunqiuyang@huawei.com>
-Subject: [PATCH v4 1/1] f2fs: ioctl for removing a range from F2FS
-Date:   Wed, 22 May 2019 12:05:30 +0800
-Message-ID: <20190522040530.37886-1-sunqiuyang@huawei.com>
-X-Mailer: git-send-email 2.17.2
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+        id S1728766AbfEVIFw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 04:05:52 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40887 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728747AbfEVIFv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 May 2019 04:05:51 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f10so1135270wre.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2019 01:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=5IBIrmvVf6ccQNtdeu2yWc9LBHhhxGRdGfBVh0+028w=;
+        b=nWl3XtfGIqveSLzPdyEuAYRuA8O7EYCM0ZtEgQ98DXJsA2zQzynY9G9rSYeseu7ci5
+         5KOe7ue5VJv9/oJvslVlbwxovozJmUJVdfdiAwatZRNHOLWB605HT9Bht1bQhsJFoZ0h
+         O8Ew1carVKdmMVmYPwgVk523ad6Oonl8yVKfoZj1tw1DeQRbFyLA1HoOYSfd/eKsgKzQ
+         7RWbiLmAIak6Lu72/j5jH1NFhinktak81lGqNLQYBCAZxVHvcKAU457C1n52KVEAOBGV
+         B+iC9uipo0uWSS+ouPP7hYuVIetP/gSu/agvrI0QXpzU1JYl9nLLdXzXZEJDmP0Av+gV
+         LGFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=5IBIrmvVf6ccQNtdeu2yWc9LBHhhxGRdGfBVh0+028w=;
+        b=DUrABx9UhYEqTiY1MZBXpevn2N+0MlxL8EFRtYa/cbblDNIJN8y3ooYHtisB2I0tG8
+         kqh1UowLbzLEy/485f6fwEwWK69vpyj7DF5+DK8zcSg3rzaRoBl+dCgjtqHa4bGEUXd5
+         qL48s7huXKkK9CBk4aiCAt9B6PipECx1v7G2Vo5mRloSBHDTuLsPcv/GVsP6nHQkEKu/
+         mEmQZ9cFuLoyE59s+i7xeTiI49eM96f2Ev3Bt6F83vNdT82xkr5DxiHyoDiHEleCVl16
+         6Pta5MyepghKTdGRTWRtFN96eebSkkYI1Rf9OdhMeqxYw1NFgrVcTzEZ41MfniW787IP
+         ukLQ==
+X-Gm-Message-State: APjAAAXIueiz6OKTiD25ETpDYgaN7R8Rr3yEkZAdqLykF6EcQIykPPa4
+        ufUflG01d0+v80u0JQsr1/LDtw==
+X-Google-Smtp-Source: APXvYqyp3cwbjBT2OIymk4j5HSd2Mnu+CvGqClw/DIwkORgLNVvAuawEHWU5ZpivC/01GynCrEiJXQ==
+X-Received: by 2002:adf:f9c3:: with SMTP id w3mr6562625wrr.271.1558512349291;
+        Wed, 22 May 2019 01:05:49 -0700 (PDT)
+Received: from [192.168.0.100] (88-147-40-42.dyn.eolo.it. [88.147.40.42])
+        by smtp.gmail.com with ESMTPSA id 34sm42104331wre.32.2019.05.22.01.05.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 May 2019 01:05:48 -0700 (PDT)
+From:   Paolo Valente <paolo.valente@linaro.org>
+Message-Id: <F5E29C98-6CC4-43B8-994D-0B5354EECBF3@linaro.org>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_D125924D-1FFE-4DC1-9485-B31EC5A3E5A7";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+Date:   Wed, 22 May 2019 10:05:46 +0200
+In-Reply-To: <0e3fdf31-70d9-26eb-7b42-2795d4b03722@csail.mit.edu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        jmoyer@redhat.com, Theodore Ts'o <tytso@mit.edu>,
+        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
+To:     "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
+ <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
+ <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
+ <A0DFE635-EFEC-4670-AD70-5D813E170BEE@linaro.org>
+ <5B6570A2-541A-4CF8-98E0-979EA6E3717D@linaro.org>
+ <2CB39B34-21EE-4A95-A073-8633CF2D187C@linaro.org>
+ <FC24E25F-4578-454D-AE2B-8D8D352478D8@linaro.org>
+ <0e3fdf31-70d9-26eb-7b42-2795d4b03722@csail.mit.edu>
+X-Mailer: Apple Mail (2.3445.104.8)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Qiuyang Sun <sunqiuyang@huawei.com>
 
-This ioctl shrinks a given length (aligned to sections) from end of the
-main area. Any cursegs and valid blocks will be moved out before
-invalidating the range.
+--Apple-Mail=_D125924D-1FFE-4DC1-9485-B31EC5A3E5A7
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-This feature can be used for adjusting partition sizes online.
---
-Changlog v1 ==> v2:
 
-Sahitya Tummala:
- - Add this ioctl for f2fs_compat_ioctl() as well.
- - Fix debugfs status to reflect the online resize changes.
- - Fix potential race between online resize path and allocate new data
-   block path or gc path.
 
-Others:
- - Rename some identifiers.
- - Add some error handling branches.
- - Clear sbi->next_victim_seg[BG_GC/FG_GC] in shrinking range.
---
-Changelog v2 ==> v3:
-Implement this interface as ext4's, and change the parameter from shrunk
-bytes to new block count of F2FS.
---
-Changelog v3 ==> v4:
- - During resizing, force to empty sit_journal and forbid adding new
-   entries to it, in order to avoid invalid segno in journal after resize.
- - Reduce sbi->user_block_count before resize starts.
- - Commit the updated superblock first, and then update in-memory metadata
-   only when the former succeeds.
- - Target block count must align to sections.
+> Il giorno 22 mag 2019, alle ore 00:51, Srivatsa S. Bhat =
+<srivatsa@csail.mit.edu> ha scritto:
+>=20
+> [ Resending this mail with a dropbox link to the traces (instead
+> of a file attachment), since it didn't go through the last time. ]
+>=20
+> On 5/21/19 10:38 AM, Paolo Valente wrote:
+>>=20
+>>> So, instead of only sending me a trace, could you please:
+>>> 1) apply this new patch on top of the one I attached in my previous =
+email
+>>> 2) repeat your test and report results
+>>=20
+>> One last thing (I swear!): as you can see from my script, I tested =
+the
+>> case low_latency=3D0 so far.  So please, for the moment, do your test
+>> with low_latency=3D0.  You find the whole path to this parameter in,
+>> e.g., my script.
+>>=20
+> No problem! :) Thank you for sharing patches for me to test!
+>=20
+> I have good news :) Your patch improves the throughput significantly
+> when low_latency =3D 0.
+>=20
+> Without any patch:
+>=20
+> dd if=3D/dev/zero of=3D/root/test.img bs=3D512 count=3D10000 =
+oflag=3Ddsync
+> 10000+0 records in
+> 10000+0 records out
+> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 58.0915 s, 88.1 kB/s
+>=20
+>=20
+> With both patches applied:
+>=20
+> dd if=3D/dev/zero of=3D/root/test0.img bs=3D512 count=3D10000 =
+oflag=3Ddsync
+> 10000+0 records in
+> 10000+0 records out
+> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 3.87487 s, 1.3 MB/s
+>=20
+> The performance is still not as good as mq-deadline (which achieves
+> 1.6 MB/s), but this is a huge improvement for BFQ nonetheless!
+>=20
+> A tarball with the trace output from the 2 scenarios you requested,
+> one with only the debug patch applied =
+(trace-bfq-add-logs-and-BUG_ONs),
+> and another with both patches applied (trace-bfq-boost-injection) is
+> available here:
+>=20
+> https://www.dropbox.com/s/pdf07vi7afido7e/bfq-traces.tar.gz?dl=3D0
+>=20
 
-Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
----
- fs/f2fs/debug.c   |   7 +++
- fs/f2fs/f2fs.h    |   6 +++
- fs/f2fs/file.c    |  28 +++++++++++
- fs/f2fs/gc.c      | 137 +++++++++++++++++++++++++++++++++++++++++++++++++++++-
- fs/f2fs/segment.c |  43 +++++++++++++----
- fs/f2fs/segment.h |   1 +
- fs/f2fs/super.c   |   3 ++
- 7 files changed, 214 insertions(+), 11 deletions(-)
+Hi Srivatsa,
+I've seen the bugzilla you've created.  I'm a little confused on how
+to better proceed.  Shall we move this discussion to the bugzilla, or
+should we continue this discussion here, where it has started, and
+then update the bugzilla?
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 99e9a5c..7706049 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -27,8 +27,15 @@
- static void update_general_status(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_stat_info *si = F2FS_STAT(sbi);
-+	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
- 	int i;
- 
-+	/* these will be changed if online resize is done */
-+	si->main_area_segs = le32_to_cpu(raw_super->segment_count_main);
-+	si->main_area_sections = le32_to_cpu(raw_super->section_count);
-+	si->main_area_zones = si->main_area_sections /
-+				le32_to_cpu(raw_super->secs_per_zone);
-+
- 	/* validation check of the segment numbers */
- 	si->hit_largest = atomic64_read(&sbi->read_hit_largest);
- 	si->hit_cached = atomic64_read(&sbi->read_hit_cached);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a205d4d..fc53d37 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -423,6 +423,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
- #define F2FS_IOC_SET_PIN_FILE		_IOW(F2FS_IOCTL_MAGIC, 13, __u32)
- #define F2FS_IOC_GET_PIN_FILE		_IOR(F2FS_IOCTL_MAGIC, 14, __u32)
- #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
-+#define F2FS_IOC_RESIZE_FS		_IOW(F2FS_IOCTL_MAGIC, 16, __u64)
- 
- #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
- #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
-@@ -1309,6 +1310,9 @@ struct f2fs_sb_info {
- 	unsigned int segs_per_sec;		/* segments per section */
- 	unsigned int secs_per_zone;		/* sections per zone */
- 	unsigned int total_sections;		/* total section count */
-+	unsigned int current_total_sections;	/* for shrink resize */
-+	bool resizing;
-+	struct mutex resize_mutex;
- 	unsigned int total_node_count;		/* total node block count */
- 	unsigned int total_valid_node_count;	/* valid node block count */
- 	loff_t max_file_blocks;			/* max block index of file */
-@@ -3175,6 +3179,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- int f2fs_disable_cp_again(struct f2fs_sb_info *sbi, block_t unusable);
- void f2fs_release_discard_addrs(struct f2fs_sb_info *sbi);
- int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
-+void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type);
- void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi);
- int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range);
- bool f2fs_exist_trim_candidates(struct f2fs_sb_info *sbi,
-@@ -3318,6 +3323,7 @@ int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
- int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
- 			unsigned int segno);
- void f2fs_build_gc_manager(struct f2fs_sb_info *sbi);
-+int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count);
- 
- /*
-  * recovery.c
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d05ac21..a37a0d4 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3013,6 +3013,31 @@ static int f2fs_ioc_precache_extents(struct file *filp, unsigned long arg)
- 	return f2fs_precache_extents(file_inode(filp));
- }
- 
-+static int f2fs_ioc_resize_fs(struct file *filp, unsigned long arg)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(filp));
-+	__u64 block_count;
-+	int ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (f2fs_readonly(sbi->sb))
-+		return -EROFS;
-+
-+	if (copy_from_user(&block_count, (__u64 __user *)arg, sizeof(__u64)))
-+		return -EFAULT;
-+
-+	ret = mnt_want_write_file(filp);
-+	if (ret)
-+		return ret;
-+
-+	ret = f2fs_resize_fs(sbi, block_count);
-+	mnt_drop_write_file(filp);
-+
-+	return ret;
-+}
-+
- long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
-@@ -3069,6 +3094,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_set_pin_file(filp, arg);
- 	case F2FS_IOC_PRECACHE_EXTENTS:
- 		return f2fs_ioc_precache_extents(filp, arg);
-+	case F2FS_IOC_RESIZE_FS:
-+		return f2fs_ioc_resize_fs(filp, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-@@ -3182,6 +3209,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case F2FS_IOC_GET_PIN_FILE:
- 	case F2FS_IOC_SET_PIN_FILE:
- 	case F2FS_IOC_PRECACHE_EXTENTS:
-+	case F2FS_IOC_RESIZE_FS:
- 		break;
- 	default:
- 		return -ENOIOCTLCMD;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 963fb45..273ca08 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -311,10 +311,11 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 	struct sit_info *sm = SIT_I(sbi);
- 	struct victim_sel_policy p;
- 	unsigned int secno, last_victim;
--	unsigned int last_segment = MAIN_SEGS(sbi);
-+	unsigned int last_segment;
- 	unsigned int nsearched = 0;
- 
- 	mutex_lock(&dirty_i->seglist_lock);
-+	last_segment = CUR_MAIN_SECS(sbi) * sbi->segs_per_sec;
- 
- 	p.alloc_mode = alloc_mode;
- 	select_policy(sbi, gc_type, type, &p);
-@@ -404,7 +405,8 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 				sm->last_victim[p.gc_mode] = last_victim + 1;
- 			else
- 				sm->last_victim[p.gc_mode] = segno + 1;
--			sm->last_victim[p.gc_mode] %= MAIN_SEGS(sbi);
-+			sm->last_victim[p.gc_mode] %=
-+				(CUR_MAIN_SECS(sbi) * sbi->segs_per_sec);
- 			break;
- 		}
- 	}
-@@ -1360,3 +1362,134 @@ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
- 		SIT_I(sbi)->last_victim[ALLOC_NEXT] =
- 				GET_SEGNO(sbi, FDEV(0).end_blk) + 1;
- }
-+
-+static int free_segment_range(struct f2fs_sb_info *sbi, unsigned int start,
-+							unsigned int end)
-+{
-+	int type;
-+	unsigned int segno, next_inuse;
-+	struct gc_inode_list gc_list = {
-+		.ilist = LIST_HEAD_INIT(gc_list.ilist),
-+		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
-+	};
-+	int err = 0;
-+
-+	/* Move out cursegs from the target range */
-+	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_TYPE; type++) {
-+		segno = CURSEG_I(sbi, type)->segno;
-+		if (segno >= start && segno <= end)
-+			allocate_segment_for_resize(sbi, type);
-+	}
-+
-+	/* do GC to move out valid blocks in the range */
-+	mutex_lock(&sbi->gc_mutex);
-+	for (segno = start; segno <= end; segno += sbi->segs_per_sec) {
-+		do_garbage_collect(sbi, segno, &gc_list, FG_GC);
-+		if (get_valid_blocks(sbi, segno, true)) {
-+			err = -EAGAIN;
-+			break;
-+		}
-+	}
-+
-+	mutex_unlock(&sbi->gc_mutex);
-+	put_gc_inode(&gc_list);
-+
-+	if (err)
-+		return err;
-+
-+	err = f2fs_sync_fs(sbi->sb, 1);
-+	if (err)
-+		return err;
-+
-+	next_inuse = find_next_inuse(FREE_I(sbi), end + 1, start);
-+	if (next_inuse <= end) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"segno %u should be free but still inuse!", next_inuse);
-+		f2fs_bug_on(sbi, 1);
-+	}
-+	return err;
-+}
-+
-+int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
-+{
-+	__u64 old_block_count, shrunk_blocks;
-+	unsigned int secs;
-+	int gc_mode, gc_type;
-+	int err = 0;
-+
-+	old_block_count = le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
-+	if (block_count > old_block_count)
-+		return -EINVAL;
-+
-+	/* new fs size should align to section size */
-+	if (block_count % BLKS_PER_SEC(sbi))
-+		return -EINVAL;
-+
-+	if (block_count == old_block_count)
-+		return 0;
-+
-+	shrunk_blocks = old_block_count - block_count;
-+	secs = shrunk_blocks / BLKS_PER_SEC(sbi);
-+	spin_lock(&sbi->stat_lock);
-+	if (shrunk_blocks + valid_user_blocks(sbi) +
-+		sbi->current_reserved_blocks + sbi->unusable_block_count +
-+		F2FS_OPTION(sbi).root_reserved_blocks > sbi->user_block_count)
-+		err = -ENOSPC;
-+	else
-+		sbi->user_block_count -= shrunk_blocks;
-+	spin_unlock(&sbi->stat_lock);
-+	if (err)
-+		return err;
-+
-+	mutex_lock(&sbi->resize_mutex);
-+	sbi->resizing = true;
-+	mutex_lock(&DIRTY_I(sbi)->seglist_lock);
-+	CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi) - secs;
-+	for (gc_mode = 0; gc_mode < MAX_GC_POLICY; gc_mode++)
-+		if (SIT_I(sbi)->last_victim[gc_mode] >=
-+					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec)
-+			SIT_I(sbi)->last_victim[gc_mode] = 0;
-+	for (gc_type = BG_GC; gc_type <= FG_GC; gc_type++)
-+		if (sbi->next_victim_seg[gc_type] >=
-+					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec)
-+			sbi->next_victim_seg[gc_type] = NULL_SEGNO;
-+	mutex_unlock(&DIRTY_I(sbi)->seglist_lock);
-+
-+	err = free_segment_range(sbi, CUR_MAIN_SECS(sbi) * sbi->segs_per_sec,
-+			MAIN_SEGS(sbi) - 1);
-+	if (err) {
-+		CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi);
-+		sbi->user_block_count += shrunk_blocks;
-+		goto out;
-+	}
-+
-+	/* Update superblock */
-+	F2FS_RAW_SUPER(sbi)->section_count = cpu_to_le32(CUR_MAIN_SECS(sbi));
-+	F2FS_RAW_SUPER(sbi)->segment_count = cpu_to_le32(le32_to_cpu(
-+		F2FS_RAW_SUPER(sbi)->segment_count) - secs * sbi->segs_per_sec);
-+	F2FS_RAW_SUPER(sbi)->segment_count_main = cpu_to_le32(
-+					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec);
-+	F2FS_RAW_SUPER(sbi)->block_count =
-+				cpu_to_le64(old_block_count - shrunk_blocks);
-+	mutex_lock(&sbi->gc_mutex);
-+	err = f2fs_commit_super(sbi, false);
-+	mutex_unlock(&sbi->gc_mutex);
-+	if (err) {
-+		CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi);
-+		sbi->user_block_count += shrunk_blocks;
-+		goto out;
-+	}
-+
-+	/* Update FS metadata */
-+	SM_I(sbi)->segment_count -= secs * sbi->segs_per_sec;
-+	MAIN_SECS(sbi) = CUR_MAIN_SECS(sbi);
-+	MAIN_SEGS(sbi) = MAIN_SECS(sbi) * sbi->segs_per_sec;
-+	F2FS_CKPT(sbi)->user_block_count = cpu_to_le64(sbi->user_block_count);
-+	FREE_I(sbi)->free_sections -= secs;
-+	FREE_I(sbi)->free_segments -= secs * sbi->segs_per_sec;
-+
-+out:
-+	sbi->resizing = false;
-+	mutex_unlock(&sbi->resize_mutex);
-+	return err;
-+}
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 07e9235..2857465 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2360,7 +2360,7 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- {
- 	struct free_segmap_info *free_i = FREE_I(sbi);
- 	unsigned int segno, secno, zoneno;
--	unsigned int total_zones = MAIN_SECS(sbi) / sbi->secs_per_zone;
-+	unsigned int total_zones = CUR_MAIN_SECS(sbi) / sbi->secs_per_zone;
- 	unsigned int hint = GET_SEC_FROM_SEG(sbi, *newseg);
- 	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
- 	unsigned int left_start = hint;
-@@ -2377,12 +2377,13 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- 			goto got_it;
- 	}
- find_other_zone:
--	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
--	if (secno >= MAIN_SECS(sbi)) {
-+	secno = find_next_zero_bit(free_i->free_secmap, CUR_MAIN_SECS(sbi),
-+									hint);
-+	if (secno >= CUR_MAIN_SECS(sbi)) {
- 		if (dir == ALLOC_RIGHT) {
- 			secno = find_next_zero_bit(free_i->free_secmap,
--							MAIN_SECS(sbi), 0);
--			f2fs_bug_on(sbi, secno >= MAIN_SECS(sbi));
-+							CUR_MAIN_SECS(sbi), 0);
-+			f2fs_bug_on(sbi, secno >= CUR_MAIN_SECS(sbi));
- 		} else {
- 			go_left = 1;
- 			left_start = hint - 1;
-@@ -2397,8 +2398,8 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- 			continue;
- 		}
- 		left_start = find_next_zero_bit(free_i->free_secmap,
--							MAIN_SECS(sbi), 0);
--		f2fs_bug_on(sbi, left_start >= MAIN_SECS(sbi));
-+							CUR_MAIN_SECS(sbi), 0);
-+		f2fs_bug_on(sbi, left_start >= CUR_MAIN_SECS(sbi));
- 		break;
- 	}
- 	secno = left_start;
-@@ -2651,6 +2652,29 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
- 	stat_inc_seg_type(sbi, curseg);
- }
- 
-+void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type)
-+{
-+	struct curseg_info *curseg = CURSEG_I(sbi, type);
-+	unsigned int old_segno = curseg->segno;
-+
-+	down_read(&SM_I(sbi)->curseg_lock);
-+	mutex_lock(&curseg->curseg_mutex);
-+	if (f2fs_need_SSR(sbi) && get_ssr_segment(sbi, type))
-+		change_curseg(sbi, type);
-+	else
-+		new_curseg(sbi, type, true);
-+
-+	stat_inc_seg_type(sbi, curseg);
-+	mutex_unlock(&curseg->curseg_mutex);
-+	up_read(&SM_I(sbi)->curseg_lock);
-+
-+	if (get_valid_blocks(sbi, old_segno, false) == 0)
-+		__set_test_and_free(sbi, old_segno);
-+	f2fs_msg(sbi->sb, KERN_NOTICE,
-+		"For resize: curseg of type %d: %u ==> %u",
-+		type, old_segno, curseg->segno);
-+}
-+
- void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
- {
- 	struct curseg_info *curseg;
-@@ -3774,7 +3798,7 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	struct f2fs_journal *journal = curseg->journal;
- 	struct sit_entry_set *ses, *tmp;
- 	struct list_head *head = &SM_I(sbi)->sit_entry_set;
--	bool to_journal = true;
-+	bool to_journal = !sbi->resizing;
- 	struct seg_entry *se;
- 
- 	down_write(&sit_i->sentry_lock);
-@@ -3793,7 +3817,8 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	 * entries, remove all entries from journal and add and account
- 	 * them in sit entry set.
- 	 */
--	if (!__has_cursum_space(journal, sit_i->dirty_sentries, SIT_JOURNAL))
-+	if (!__has_cursum_space(journal, sit_i->dirty_sentries, SIT_JOURNAL) ||
-+								sbi->resizing)
- 		remove_sits_in_journal(sbi);
- 
- 	/*
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 429007b..eaa9782 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -59,6 +59,7 @@
- 
- #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
- #define MAIN_SECS(sbi)	((sbi)->total_sections)
-+#define CUR_MAIN_SECS(sbi)	((sbi)->current_total_sections)
- 
- #define TOTAL_SEGS(sbi)							\
- 	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1f581f0..c6201f0 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2843,6 +2843,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
- 	sbi->secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
- 	sbi->total_sections = le32_to_cpu(raw_super->section_count);
-+	sbi->current_total_sections = sbi->total_sections;
-+	sbi->resizing = false;
- 	sbi->total_node_count =
- 		(le32_to_cpu(raw_super->segment_count_nat) / 2)
- 			* sbi->blocks_per_seg * NAT_ENTRY_PER_BLOCK;
-@@ -3296,6 +3298,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	mutex_init(&sbi->gc_mutex);
- 	mutex_init(&sbi->writepages);
- 	mutex_init(&sbi->cp_mutex);
-+	mutex_init(&sbi->resize_mutex);
- 	init_rwsem(&sbi->node_write);
- 	init_rwsem(&sbi->node_change);
- 
--- 
-1.8.3.1
+Let me know,
+Paolo
 
+> Thank you!
+>=20
+> Regards,
+> Srivatsa
+> VMware Photon OS
+
+
+--Apple-Mail=_D125924D-1FFE-4DC1-9485-B31EC5A3E5A7
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEpYoduex+OneZyvO8OAkCLQGo9oMFAlzlAtoACgkQOAkCLQGo
+9oMOew//baPEoy03FXyfpwRm+aDYCXZracwMcV8EWCYLxsc9h+OSDu7YSL3VY+ld
+2SyrH2br9GjVHPnM218Moh1g2pTGr9C2BtEzWT72DnGFmZqEYFOS3+KJ6D4FEK/l
+6qOtaYyYZDABc5D+wW1B+wouBFeDFH/V4QWpIgyAjKPHi+rTeerEFNzNmsx2SngT
+mn+AG8kUfecpNhThxEEJxPZN0Edso3t6vet2vsJ7FEmpxD+AW4V6h5oxRBMMlzks
+JeDs0/gvOV0wiRSAwlmQSecNSssSLLSeouHlLu3+ara3YxdNstDjBd7ODXiabUdX
+4NPn9U5baJ8XsC4s6ukMOm1Bc7Q97ZFS4cM5b9FoqTYgWuwL32vbHFPffe/0Ld2g
+hJcXoI7HmDyGvH4jAvlSQ4hDDkuLRjf0450Y75onK8uq/g6r0VhGXgntHl+ghMvI
+ykkrXo8cPp9Ii4MiOAbH4FaVj1/1yinJdiIbR7bCdj3kODB8wzLunSAB3GDVTqYr
+qqFfl6MYNxJi6mUpERhdFa8JsohkU9f/PK+hYh4HYjZNveV1YcSJfcuoCu2t1/yA
+04KNr+WG1JFQrrXe+iqXtu5EMD/K6QlH9iBXabq8V/JJ1TR/X3WXo2iPRhDfpKc7
++kRGBjEtU+WJvdECyd4AfTpVuKBK8tUewLIBr7WchCBggJ/4sFg=
+=q2Kr
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_D125924D-1FFE-4DC1-9485-B31EC5A3E5A7--
