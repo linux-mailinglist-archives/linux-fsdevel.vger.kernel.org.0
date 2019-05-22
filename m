@@ -2,155 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E54A0267D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 18:14:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7220C267E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 18:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729880AbfEVQOV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 12:14:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34760 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729603AbfEVQOV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 12:14:21 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2197985539;
-        Wed, 22 May 2019 16:14:15 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2FCAF5DE68;
-        Wed, 22 May 2019 16:14:10 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed, 22 May 2019 18:14:13 +0200 (CEST)
-Date:   Wed, 22 May 2019 18:14:07 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S1730046AbfEVQQd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 12:16:33 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:37447 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730028AbfEVQQc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 May 2019 12:16:32 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <jlu@pengutronix.de>)
+        id 1hTTum-00021Z-0g; Wed, 22 May 2019 18:16:28 +0200
+Received: from jlu by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <jlu@pengutronix.de>)
+        id 1hTTul-0000As-83; Wed, 22 May 2019 18:16:27 +0200
+From:   Jan Luebbe <jlu@pengutronix.de>
+To:     Alexey Dobriyan <adobriyan@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, dbueso@suse.de, axboe@kernel.dk,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] signal: Adjust error codes according to
- restore_user_sigmask()
-Message-ID: <20190522161407.GB4915@redhat.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190522150505.GA4915@redhat.com>
- <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 22 May 2019 16:14:20 +0000 (UTC)
+        John Ogness <john.ogness@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jan Luebbe <jlu@pengutronix.de>
+Subject: [PATCH] proc: report eip and esp for all threads when coredumping
+Date:   Wed, 22 May 2019 18:16:14 +0200
+Message-Id: <20190522161614.628-1-jlu@pengutronix.de>
+X-Mailer: git-send-email 2.11.0
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: jlu@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05/22, Deepa Dinamani wrote:
->
-> -Deepa
->
-> > On May 22, 2019, at 8:05 AM, Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> >> On 05/21, Deepa Dinamani wrote:
-> >>
-> >> Note that this patch returns interrupted errors (EINTR, ERESTARTNOHAND,
-> >> etc) only when there is no other error. If there is a signal and an error
-> >> like EINVAL, the syscalls return -EINVAL rather than the interrupted
-> >> error codes.
-> >
-> > Ugh. I need to re-check, but at first glance I really dislike this change.
-> >
-> > I think we can fix the problem _and_ simplify the code. Something like below.
-> > The patch is obviously incomplete, it changes only only one caller of
-> > set_user_sigmask(), epoll_pwait() to explain what I mean.
-> > restore_user_sigmask() should simply die. Although perhaps another helper
-> > makes sense to add WARN_ON(test_tsk_restore_sigmask() && !signal_pending).
->
-> restore_user_sigmask() was added because of all the variants of these
-> syscalls we added because of y2038 as noted in commit message:
->
->   signal: Add restore_user_sigmask()
->
->     Refactor the logic to restore the sigmask before the syscall
->     returns into an api.
->     This is useful for versions of syscalls that pass in the
->     sigmask and expect the current->sigmask to be changed during
->     the execution and restored after the execution of the syscall.
->
->     With the advent of new y2038 syscalls in the subsequent patches,
->     we add two more new versions of the syscalls (for pselect, ppoll
->     and io_pgetevents) in addition to the existing native and compat
->     versions. Adding such an api reduces the logic that would need to
->     be replicated otherwise.
+Commit 0a1eb2d474ed ("fs/proc: Stop reporting eip and esp in
+/proc/PID/stat") stopped reporting eip/esp and commit fd7d56270b52
+("fs/proc: Report eip/esp in /prod/PID/stat for coredumping")
+reintroduced the feature to fix a regression with userspace core dump
+handlers (such as minicoredumper).
 
-Again, I need to re-check, will continue tomorrow. But so far I am not sure
-this helper can actually help.
+Because PF_DUMPCORE is only set for the primary thread, this didn't fix
+the original problem for secondary threads. This commit checks
+mm->core_state instead, as already done for /proc/<pid>/status in
+task_core_dumping(). As we have a mm_struct available here anyway, this
+seems to be a clean solution.
 
-> > --- a/fs/eventpoll.c
-> > +++ b/fs/eventpoll.c
-> > @@ -2318,19 +2318,19 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct epoll_event __user *, events,
-> >        size_t, sigsetsize)
-> > {
-> >    int error;
-> > -    sigset_t ksigmask, sigsaved;
-> >
-> >    /*
-> >     * If the caller wants a certain signal mask to be set during the wait,
-> >     * we apply it here.
-> >     */
-> > -    error = set_user_sigmask(sigmask, &ksigmask, &sigsaved, sigsetsize);
-> > +    error = set_user_sigmask(sigmask, sigsetsize);
-> >    if (error)
-> >        return error;
-> >
-> >    error = do_epoll_wait(epfd, events, maxevents, timeout);
-> >
-> > -    restore_user_sigmask(sigmask, &sigsaved);
-> > +    if (error != -EINTR)
->
-> As you address all the other syscalls this condition becomes more and
-> more complicated.
+Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
+---
+ fs/proc/array.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-May be.
-
-> > --- a/include/linux/sched/signal.h
-> > +++ b/include/linux/sched/signal.h
-> > @@ -416,7 +416,6 @@ void task_join_group_stop(struct task_struct *task);
-> > static inline void set_restore_sigmask(void)
-> > {
-> >    set_thread_flag(TIF_RESTORE_SIGMASK);
-> > -    WARN_ON(!test_thread_flag(TIF_SIGPENDING));
->
-> So you always want do_signal() to be called?
-
-Why do you think so? No. This is just to avoid the warning, because with the
-patch I sent set_restore_sigmask() is called "in advance".
-
-> You will have to check each architecture's implementation of
-> do_signal() to check if that has any side effects.
-
-I don't think so.
-
-> Although this is not what the patch is solving.
-
-Sure. But you know, after I tried to read the changelog, I am not sure
-I understand what exactly you are trying to fix. Could you please explain
-this part
-
-	The behavior
-	before 854a6ed56839a was that the signals were dropped after the error
-	code was decided. This resulted in lost signals but the userspace did not
-	notice it
-
-? I fail to understand it, sorry. It looks as if the code was already buggy before
-that commit and it could miss a signal or something like this, but I do not see how.
-
-Oleg.
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 2edbb657f859..b76b1e29fc36 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -462,7 +462,7 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+ 		 * a program is not able to use ptrace(2) in that case. It is
+ 		 * safe because the task has stopped executing permanently.
+ 		 */
+-		if (permitted && (task->flags & PF_DUMPCORE)) {
++		if (permitted && (!!mm->core_state)) {
+ 			if (try_get_task_stack(task)) {
+ 				eip = KSTK_EIP(task);
+ 				esp = KSTK_ESP(task);
+-- 
+2.11.0
 
