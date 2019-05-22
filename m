@@ -2,78 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3D2C2689D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 18:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 187A2268B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 18:58:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730153AbfEVQtT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 12:49:19 -0400
-Received: from mail-io1-f41.google.com ([209.85.166.41]:37813 "EHLO
-        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729447AbfEVQtT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 12:49:19 -0400
-Received: by mail-io1-f41.google.com with SMTP id u2so2430217ioc.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2019 09:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wqvHroNFT1gOZ3Zyfegi5iTs0FDqPzcDe+bySanTD08=;
-        b=siFv7ttoTiOxI6+mmiqV7/jCQeh/O2EKIYpvFXjM4NG0V6qxKScpoH6sK3u8Pw6CXw
-         fCRol220RSti6/HNpj6rKNU2LGPaRBaqzVV5iltmtmhLteXx3rlEDnyR+Lw7vtQQtHpf
-         0Sf6M1IM8GzG1vtn3oNDiRhsKyZb7eBtyh8BOiHYFVdpz6vxJvGgYJMp8GwB/qLN7NtH
-         1TsGd52Ngmi/GAxsypK88dz+dH3uLtn4Vp3Uq3ra+weLG1S3X1nHF2sUBR9cM8mE1Y4Y
-         ebIISwGu4zIGSRkSZWSf4JaiTpqLZsqvN3UJiW9R+oDE/twCEKi5ZzJ28xG3Jq3fxRQ7
-         T/BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wqvHroNFT1gOZ3Zyfegi5iTs0FDqPzcDe+bySanTD08=;
-        b=adYa/CL+wsg+3THgKoP/IRYuFIFDNuwMqFUddsHHkxYafShNCL9eCS+XSNDTNngN6y
-         hLcTSvTIhI/fwWnvAJ3Wt1XAhuS3rZ542+2qgwENTs0Kjv4RCOVIzxaD/K+6zHozdDR0
-         oXAvex6dO1W0fnQy9QZX1LByBfKs9JrQsfo4ZhH6YqgNqhUdbimt1fC9pQS+Y0NK26X0
-         VGI/wZ9GPOm95SfMkICzvj0w6ESstkYJeGIbNKN4ZVjYNzSj/HRDRLWIQBrefWzGwMMf
-         +WiyO/APJV8za1mn5ts0lU7bxP1ovFgRcEVmgg4MaMQ4uelHmzPEOwvr7daYWYFIr8CF
-         4smg==
-X-Gm-Message-State: APjAAAWzEz3fdTtbYV2xxZss9JfDY7vp+1B2o7bui+jl2wJfNLhvTqAh
-        GNrNxuo0F1MC/vsHPli7irsXkg==
-X-Google-Smtp-Source: APXvYqz/YVQtZHP5dO+j+VRPGz0FoxW8zh1HmC4KgQTZbl3raYGN+D++sYjHCHYrCYlcLMp12gUgnA==
-X-Received: by 2002:a6b:18a:: with SMTP id 132mr11602379iob.225.1558543758403;
-        Wed, 22 May 2019 09:49:18 -0700 (PDT)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id w139sm3512487ita.43.2019.05.22.09.49.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 09:49:17 -0700 (PDT)
-Subject: Re: [PATCHSET 0/3] io_uring: support for linked SQEs
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        viro@zeniv.linux.org.uk
-References: <20190517214131.5925-1-axboe@kernel.dk>
- <20190522163405.GA27743@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <96221d93-9428-cf68-8837-2f2b40e0c89e@kernel.dk>
-Date:   Wed, 22 May 2019 10:49:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1730219AbfEVQ6T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 12:58:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42698 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729641AbfEVQ6S (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 May 2019 12:58:18 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 494B93053878;
+        Wed, 22 May 2019 16:57:52 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 69B5560BE5;
+        Wed, 22 May 2019 16:57:40 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 22 May 2019 18:57:50 +0200 (CEST)
+Date:   Wed, 22 May 2019 18:57:37 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        torvalds@linux-foundation.org, fweimer@redhat.com,
+        jannh@google.com, tglx@linutronix.de, arnd@arndb.de,
+        shuah@kernel.org, dhowells@redhat.com, tkjos@android.com,
+        ldv@altlinux.org, miklos@szeredi.hu, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [PATCH v1 1/2] open: add close_range()
+Message-ID: <20190522165737.GC4915@redhat.com>
+References: <20190522155259.11174-1-christian@brauner.io>
 MIME-Version: 1.0
-In-Reply-To: <20190522163405.GA27743@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190522155259.11174-1-christian@brauner.io>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 22 May 2019 16:58:18 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/22/19 10:34 AM, Christoph Hellwig wrote:
-> This just apparead in your for-linus tree.  I don't think queueing
-> up unreviewed features after -rc1 is acceptable..
+On 05/22, Christian Brauner wrote:
+>
+> +static struct file *pick_file(struct files_struct *files, unsigned fd)
+>  {
+> -	struct file *file;
+> +	struct file *file = NULL;
+>  	struct fdtable *fdt;
+>  
+>  	spin_lock(&files->file_lock);
+> @@ -632,15 +629,65 @@ int __close_fd(struct files_struct *files, unsigned fd)
+>  		goto out_unlock;
+>  	rcu_assign_pointer(fdt->fd[fd], NULL);
+>  	__put_unused_fd(files, fd);
+> -	spin_unlock(&files->file_lock);
+> -	return filp_close(file, files);
+>  
+>  out_unlock:
+>  	spin_unlock(&files->file_lock);
+> -	return -EBADF;
+> +	return file;
 
-I'm not pushing it for 5.2, nor was it my intent. I think I messed
-up the branching, those bits will end up in for-5.3/io_uring.
+...
 
--- 
-Jens Axboe
+> +int __close_range(struct files_struct *files, unsigned fd, unsigned max_fd)
+> +{
+> +	unsigned int cur_max;
+> +
+> +	if (fd > max_fd)
+> +		return -EINVAL;
+> +
+> +	rcu_read_lock();
+> +	cur_max = files_fdtable(files)->max_fds;
+> +	rcu_read_unlock();
+> +
+> +	/* cap to last valid index into fdtable */
+> +	if (max_fd >= cur_max)
+> +		max_fd = cur_max - 1;
+> +
+> +	while (fd <= max_fd) {
+> +		struct file *file;
+> +
+> +		file = pick_file(files, fd++);
+
+Well, how about something like
+
+	static unsigned int find_next_opened_fd(struct fdtable *fdt, unsigned start)
+	{
+		unsigned int maxfd = fdt->max_fds;
+		unsigned int maxbit = maxfd / BITS_PER_LONG;
+		unsigned int bitbit = start / BITS_PER_LONG;
+
+		bitbit = find_next_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
+		if (bitbit > maxfd)
+			return maxfd;
+		if (bitbit > start)
+			start = bitbit;
+		return find_next_bit(fdt->open_fds, maxfd, start);
+	}
+
+	unsigned close_next_fd(struct files_struct *files, unsigned start, unsigned maxfd)
+	{
+		unsigned fd;
+		struct file *file;
+		struct fdtable *fdt;
+	
+		spin_lock(&files->file_lock);
+		fdt = files_fdtable(files);
+		fd = find_next_opened_fd(fdt, start);
+		if (fd >= fdt->max_fds || fd > maxfd) {
+			fd = -1;
+			goto out;
+		}
+
+		file = fdt->fd[fd];
+		rcu_assign_pointer(fdt->fd[fd], NULL);
+		__put_unused_fd(files, fd);
+	out:
+		spin_unlock(&files->file_lock);
+
+		if (fd == -1u)
+			return fd;
+
+		filp_close(file, files);
+		return fd + 1;
+	}
+
+?
+
+Then close_range() can do
+
+	while (fd < max_fd)
+		fd = close_next_fd(fd, maxfd);
+
+Oleg.
 
