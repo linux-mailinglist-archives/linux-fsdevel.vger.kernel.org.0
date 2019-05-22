@@ -2,115 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE155267F3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 18:19:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0244626842
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 18:29:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730012AbfEVQSz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 12:18:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59405 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728638AbfEVQSz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 12:18:55 -0400
-Received: from [IPv6:2607:fb90:3635:972:9c5a:d1ae:8e8f:2fe7] ([IPv6:2607:fb90:3635:972:9c5a:d1ae:8e8f:2fe7])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x4MGIdpA3692384
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Wed, 22 May 2019 09:18:40 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x4MGIdpA3692384
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1558541921;
-        bh=luHnu8/JMpI0wULaC++B/hvrgAGxTmtVWSgg46F+QLk=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=xs/vEushcxReVdh/8g68Ic5EU0WidpTQJoNKzhKXTrehDSUxqizAS16k/S4DuKB1E
-         IIHyOkuW1wZfO09+WE/+XDKVAYVNgKzmzYsRiBPvP5ee//WRZhhTEGa/fhMhtRhWPW
-         kMuvzHcRcrKLGJ/HCparWiKhvDJ43vD4x+x71+8gj78HgvtqfOhFs5jtJkViqnyDNV
-         EmWwfqu/gQXCyD7SEqyfRavhklH+YjMptpT5RuCONJIjjV77bncOv+K3eFjyEZUvsg
-         QTEwDixFxXfgNGsPNMtmxIISM9jACHD2Uwyzh5Ga7+M5CtoqIM6MrVgW1pEqAcxz5E
-         owufomrAHnACQ==
-Date:   Wed, 22 May 2019 09:18:36 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <a0afd58f-c682-66b5-7478-c405a179d72a@landley.net>
-References: <20190517165519.11507-1-roberto.sassu@huawei.com> <20190517165519.11507-3-roberto.sassu@huawei.com> <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com> <69ef1f55-9fc1-7ee0-371f-3dbc77551dc0@zytor.com> <a0afd58f-c682-66b5-7478-c405a179d72a@landley.net>
+        id S1729986AbfEVQ3s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 12:29:48 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53266 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729475AbfEVQ3s (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 May 2019 12:29:48 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hTU7e-0002Ad-40; Wed, 22 May 2019 16:29:46 +0000
+Date:   Wed, 22 May 2019 17:29:46 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Vicente Bergas <vicencb@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: d_lookup: Unable to handle kernel paging request
+Message-ID: <20190522162945.GN17978@ZenIV.linux.org.uk>
+References: <23950bcb-81b0-4e07-8dc8-8740eb53d7fd@gmail.com>
+ <20190522135331.GM17978@ZenIV.linux.org.uk>
+ <bdc8b245-afca-4662-99e2-a082f25fc927@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-To:     Rob Landley <rob@landley.net>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        viro@zeniv.linux.org.uk
-CC:     linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, arnd@arndb.de,
-        james.w.mcmechan@gmail.com, niveditas98@gmail.com
-From:   hpa@zytor.com
-Message-ID: <FAF78781-2684-4482-9D4D-445B91C15E97@zytor.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bdc8b245-afca-4662-99e2-a082f25fc927@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On May 17, 2019 7:16:04 PM PDT, Rob Landley <rob@landley=2Enet> wrote:
->On 5/17/19 4:41 PM, H=2E Peter Anvin wrote:
->> On 5/17/19 1:18 PM, hpa@zytor=2Ecom wrote:
->>>
->>> Ok=2E=2E=2E I just realized this does not work for a modular initramfs=
-,
->composed at load time from multiple files, which is a very real
->problem=2E Should be easy enough to deal with: instead of one large file,
->use one companion file per source file, perhaps something like
->filename=2E=2Exattrs (suggesting double dots to make it less likely to
->conflict with a "real" file=2E) No leading dot, as it makes it more
->likely that archivers will sort them before the file proper=2E
->>>
->>> A side benefit is that the format can be simpler as there is no need
->to encode the filename=2E
->>>
->>> A technically cleaner solution still, but which would need archiver
->modifications, would be to encode the xattrs as an optionally nameless
->file (just an empty string) with a new file mode value, immediately
->following the original file=2E The advantage there is that the archiver
->itself could support xattrs and other extended metadata (which has been
->requested elsewhere); the disadvantage obviously is that that it
->requires new support in the archiver=2E However, at least it ought to be
->simpler since it is still a higher protocol level than the cpio archive
->itself=2E
->>>
->>> There's already one special case in cpio, which is the
->"!!!TRAILER!!!" filename; although I don't think it is part of the
->formal spec, to the extent there is one, I would expect that in
->practice it is always encoded with a mode of 0, which incidentally
->could be used to unbreak the case where such a filename actually
->exists=2E So one way to support such extended metadata would be to set
->mode to 0 and use the filename to encode the type of metadata=2E I wonder
->how existing GNU or BSD cpio (the BSD one is better maintained these
->days) would deal with reading such a file; it would at least not be a
->regression if it just read it still, possibly with warnings=2E It could
->also be possible to use bits 17:16 in the mode, which are traditionally
->always zero (mode_t being 16 bits), but I believe are present in most
->or all of the cpio formats for historical reasons=2E It might be accepted
->better by existing implementations to use one of these high bits
->combined with S_IFREG, I dont know=2E
->>
->>=20
->> Correction: it's just !!!TRAILER!!!=2E
->
->We documented it as "TRAILER!!!" without leading !!!, and that its
->purpose is to
->flush hardlinks:
->
->https://www=2Ekernel=2Eorg/doc/Documentation/early-userspace/buffer-forma=
-t=2Etxt
->
->That's what toybox cpio has been producing=2E Kernel consumes it just
->fine=2E Just
->checked busybox cpio and that's what they're producing as well=2E=2E=2E
->
->Rob
+On Wed, May 22, 2019 at 05:44:30PM +0200, Vicente Bergas wrote:
 
-Yes, TRAILER!!! is correct=2E Somehow I managed to get it wrong twice=2E
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+>    2d30:	f8617893 	ldr	x19, [x4, x1, lsl #3]
+>    2d34:	f27ffa73 	ands	x19, x19, #0xfffffffffffffffe
+>    2d38:	54000920 	b.eq	2e5c <__d_lookup_rcu+0x15c>  // b.none
+>    2d3c:	aa0003f5 	mov	x21, x0
+>    2d40:	d360feda 	lsr	x26, x22, #32
+>    2d44:	a90363f7 	stp	x23, x24, [sp, #48]
+>    2d48:	aa0203f8 	mov	x24, x2
+>    2d4c:	d3608ad7 	ubfx	x23, x22, #32, #3
+>    2d50:	a90573fb 	stp	x27, x28, [sp, #80]
+>    2d54:	2a1603fc 	mov	w28, w22
+>    2d58:	9280001b 	mov	x27, #0xffffffffffffffff    	// #-1
+>    2d5c:	14000003 	b	2d68 <__d_lookup_rcu+0x68>
+>    2d60:	f9400273 	ldr	x19, [x19]
+>    2d64:	b4000793 	cbz	x19, 2e54 <__d_lookup_rcu+0x154>
+
+OK, that looks like
+	hlist_bl_for_each_entry_rcu(dentry, node, b, d_hash)
+in there, x19 being 'node'.
+
+>    2d68:	b85fc265 	ldur	w5, [x19, #-4]
+>    2d6c:	d50339bf 	dmb	ishld
+
+... and that's seq = raw_seqcount_begin(&dentry->d_seq), with
+->d_seq being 4 bytes before ->d_hash.  So that one has stepped into
+0x1000000 (i.e. 1<<24) in hlist forward pointer (or head - either is
+possible).
+
+> 0000000000002e98 <__d_lookup>:
+
+>    2ed0:	f8607833 	ldr	x19, [x1, x0, lsl #3]
+>    2ed4:	f27ffa73 	ands	x19, x19, #0xfffffffffffffffe
+>    2ed8:	54000320 	b.eq	2f3c <__d_lookup+0xa4>  // b.none
+>    2edc:	5280001b 	mov	w27, #0x0                   	// #0
+>    2ee0:	92800018 	mov	x24, #0xffffffffffffffff    	// #-1
+>    2ee4:	a9025bf5 	stp	x21, x22, [sp, #32]
+>    2ee8:	d2800016 	mov	x22, #0x0                   	// #0
+>    2eec:	52800035 	mov	w21, #0x1                   	// #1
+
+That's
+        hlist_bl_for_each_entry_rcu(dentry, node, b, d_hash) {
+
+>    2ef0:	b9401a62 	ldr	w2, [x19, #24]
+
+... and fetching dentry->d_name.hash for subsequent
+                if (dentry->d_name.hash != hash)
+                        continue;
+
+>    2ef4:	d1002274 	sub	x20, x19, #0x8
+>    2ef8:	6b17005f 	cmp	w2, w23
+>    2efc:	540001a1 	b.ne	2f30 <__d_lookup+0x98>  // b.any
+
+IOW, here we have also run into bogus hlist forward pointer or head -
+same 0x1000000 in one case and 0x0000880001000000 in two others.
+
+Have you tried to see if KASAN catches anything on those loads?
+Use-after-free, for example...  Another thing to try: slap
+	WARN_ON(entry->d_flags & DCACHE_NORCU);
+in __d_rehash() and see if it triggers.
