@@ -2,237 +2,297 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FBDD269A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 20:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ACB8269AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 20:13:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbfEVSNn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 14:13:43 -0400
-Received: from mail-yb1-f201.google.com ([209.85.219.201]:42207 "EHLO
-        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729506AbfEVSNn (ORCPT
+        id S1729536AbfEVSNq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 14:13:46 -0400
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:45867 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729519AbfEVSNq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 14:13:43 -0400
-Received: by mail-yb1-f201.google.com with SMTP id v22so2847676ybb.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2019 11:13:42 -0700 (PDT)
+        Wed, 22 May 2019 14:13:46 -0400
+Received: by mail-vk1-f201.google.com with SMTP id z6so1246731vkd.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2019 11:13:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=+IAS24bvoT6KCKSZJBMAHwUwLFDiYhVfFPEcOO2vYVU=;
-        b=K+Tv4+2eWCBG6jteYwWoWD112XnDeiwE74I2pfmVgpjqDREXF/cwC08ChiXR9XB2uD
-         n4yesW5u9RR+oRKmBKHMRhYhRe8IhgtGLjmrY0bqb+w+Ij21Ixiqs2AfHtrnB7W+2+ZY
-         eMv7rj6gmXkO5s0hOF3gHT5VzwrVabwAlJabccJ3WmGDkvK8JNH/4FWnsO1/yIUsuXr/
-         7OtOnsiih+4MLXJvIfZsmng7eK6vVQTtYpVJ7QygC/eJ15l+FpOZWp/QNEGCdKDNKVVA
-         SYL2BaeyVb/UEUvk8bQNVrpFtNjPlfcuUxpMBUe1i2c9C0vKHl6p58a5lHr/NTzS7woI
-         lscw==
+        bh=1Alsu9xQddUZwK4MUO0Ms0F6c5A3p78CyoojTq2bN0g=;
+        b=QeYvLb7V1IFnmx2qy7BdWOi0slKXBSnW0pOrIKUHrD0ocLNAyDL271LceAzvZmxJ01
+         YXO5PTdwpXkONhW3IMzwW2cDtLaijEffYUE2JHnYGFs8W+xQl0CZ6CaZjCfeS8o2FhVl
+         vW9Y4eJkuu6j1gFcqCrPq0Ej9cKvYAjsx0lFOp63YxiSNxChkLtMPEHtuxBDj6yYt7mc
+         I+336lhFkkd2zgwwFvuaffsWV0EiXw1rqbtd54D8o1CDw4pEadV7SUxMfj79cBzLBn7i
+         xXwVdBAuPuNHHBj64E4AjfQR3A4BsOamTtqsHo8JCv1rWUBflMAl3QMFWPCzvFvt8IQV
+         P4sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=+IAS24bvoT6KCKSZJBMAHwUwLFDiYhVfFPEcOO2vYVU=;
-        b=RNK/1QAJ7qKoNPID+kmK9duyCDiYYt6lrtucnV/w6415qiXUrXXkW7XjWgJONKwxKr
-         TfO1mM1q9e4jft4s391XHLnOI99FClUUpVZxl2RCcEGH0qzlkb8MhwypxLZNhQGzL5Su
-         cE6DT7MnMxAEgJmqUYJI4Fz768GzP2KREji3rc8RiJGwvBqmi0Oxk646xtLuC9pCO+bG
-         8Jsa45MkxNP0Vc4nz8bTl29/abyOB1qfXx6Kr5etL4QsnEhnHvVxapcydhxBRvHpGUw+
-         NIluevozEJMW4Tf3n1EepWN4sO+PyO1oNowSGVxfyQTsVZlKvd1o2n7b3zIPAkaa1E3x
-         Dhlw==
-X-Gm-Message-State: APjAAAU+xC7vGiONO36uA7GEOh3N1k9tMpzGqgti+ohjl17hHL3N9YZc
-        n99FrorAqPjiY+lLHLElOMC4cSTKsOwgklq1IT2jew==
-X-Google-Smtp-Source: APXvYqwihKKb/sLg0LH6caYO15TawZZFk1N9W6Uo6d7ym4JR4ny6W0RaIpB8x69+AxEQAK0LVSYmImgu9uyVR7/CvSj7qg==
-X-Received: by 2002:a81:59c2:: with SMTP id n185mr41299555ywb.21.1558548822021;
- Wed, 22 May 2019 11:13:42 -0700 (PDT)
-Date:   Wed, 22 May 2019 11:13:26 -0700
+        bh=1Alsu9xQddUZwK4MUO0Ms0F6c5A3p78CyoojTq2bN0g=;
+        b=mlRghZwaRwjm96YwZ1WQtTiXVIO5LT709VoBDJ0MEcurjafhHHRyUrLzEXEdylOQ2Y
+         czu2Nv+co5rEm8GxxEzCvOO0kzsWT6fPtlAdV+qX93zAx176ZcC60l3B2wl7cGEe1u5H
+         dn/15XpkKi6bVanVDbzIEe5Q5R6ZYfSI5p7l7PrFbfc+5HytJv5NdXcsWb3UnVxAB6E6
+         qvF+capHpHjkpR9eFK4yJ+AzWDjIYp8yYzVP6z7glqxq8eh9Xd9TnZrl27ENu8Fo+qWU
+         JKALhU3ZBo8Xl8w3CrmReak28AY1lzLFj+L5NPUMGPzXM5VQSuDmyFLlJZBzWdqQ02lV
+         r1rg==
+X-Gm-Message-State: APjAAAUgJa1Vv4fKABmTsfejYYMds76oa3rWpoDttZFoDEuYzMt1IWbR
+        LnNd8t21cfEfBxUNBsUfr20rospUDgxipAcCyTo+TQ==
+X-Google-Smtp-Source: APXvYqxZwXiXefVAFyWja8aGzYttQxCkJJ7UNJaoGUxZzb/3Dfe44mM8N/KT05DIZJ9zwmN1LsbD3C44HTLhj+s+7tAvXg==
+X-Received: by 2002:ab0:448:: with SMTP id 66mr21610101uav.29.1558548824430;
+ Wed, 22 May 2019 11:13:44 -0700 (PDT)
+Date:   Wed, 22 May 2019 11:13:27 -0700
 In-Reply-To: <20190522181327.71980-1-matthewgarrett@google.com>
-Message-Id: <20190522181327.71980-5-matthewgarrett@google.com>
+Message-Id: <20190522181327.71980-6-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190522181327.71980-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [PATCH V4 4/5] FUSE: Allow filesystems to provide gethash methods
+Subject: [PATCH V4 5/5] IMA: Add a ima-vfs-sig measurement template
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com,
         miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, Matthew Garrett <mjg59@google.com>
+        viro@zeniv.linux.org.uk,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Matthew Garrett <mjg59@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Matthew Garrett <mjg59@google.com>
-
-FUSE implementations may have a secure way to provide file hashes (eg,
-they're a front-end to a remote store that ties files to their hashes).
-Allow filesystems to expose this information, but require an option to
-be provided before it can be used. This is to avoid malicious users
-being able to mount an unprivileged FUSE filesystem that provides
-incorrect hashes.
-
-A sufficiently malicious FUSE filesystem may still simply swap out its
-contents after the hash has been obtained - this patchset does nothing
-to change that, and sysadmins should have appropriate policy in place to
-protect against that.
+Admins may wish to know whether measurements were sourced from the VFS
+or calculated by IMA, so we should provide an additional tag to indicate
+that. However, doing this by default would potentially break existing
+log parsing pipelines, so add a new template type rather than changing
+the default behaviour.
 
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 ---
- fs/fuse/file.c            | 33 +++++++++++++++++++++++++++++++++
- fs/fuse/fuse_i.h          |  7 +++++++
- fs/fuse/inode.c           | 15 +++++++++++++++
- include/uapi/linux/fuse.h |  6 ++++++
- 4 files changed, 61 insertions(+)
+ security/integrity/ima/Kconfig            |  7 ++++-
+ security/integrity/ima/ima.h              |  2 +-
+ security/integrity/ima/ima_api.c          |  6 +++-
+ security/integrity/ima/ima_crypto.c       |  7 +++--
+ security/integrity/ima/ima_template.c     |  3 ++
+ security/integrity/ima/ima_template_lib.c | 37 +++++++++++++++++++++--
+ security/integrity/ima/ima_template_lib.h |  2 ++
+ security/integrity/integrity.h            |  1 +
+ 8 files changed, 57 insertions(+), 8 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 3959f08279e6..a89ace030d1c 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3170,6 +3170,38 @@ static ssize_t fuse_copy_file_range(struct file *file_in, loff_t pos_in,
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index a18f8c6d13b5..d2c7623d1dde 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -69,12 +69,16 @@ choice
+ 	  hash, defined as 20 bytes, and a null terminated pathname,
+ 	  limited to 255 characters.  The 'ima-ng' measurement list
+ 	  template permits both larger hash digests and longer
+-	  pathnames.
++	  pathnames. The 'ima-vfs-ng' measurement list template includes
++	  an additional vfs: tag if the measurement was sourced directly
++	  from the filesystem.
  
- 	inode_unlock(inode_out);
+ 	config IMA_TEMPLATE
+ 		bool "ima"
+ 	config IMA_NG_TEMPLATE
+ 		bool "ima-ng (default)"
++	config IMA_VFS_NG_TEMPLATE
++	        bool "ima-vfs-ng"
+ 	config IMA_SIG_TEMPLATE
+ 		bool "ima-sig"
+ endchoice
+@@ -85,6 +89,7 @@ config IMA_DEFAULT_TEMPLATE
+ 	default "ima" if IMA_TEMPLATE
+ 	default "ima-ng" if IMA_NG_TEMPLATE
+ 	default "ima-sig" if IMA_SIG_TEMPLATE
++	default "ima-vfs-ng" if IMA_VFS_NG_TEMPLATE
  
-+	return err;
-+};
+ choice
+ 	prompt "Default integrity hash algorithm"
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index cdaffe6c8a8d..d99b867bdc53 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -134,7 +134,7 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
+ 			   const char *op, struct inode *inode,
+ 			   const unsigned char *filename);
+ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash,
+-		       bool trust_vfs);
++		       bool *trust_vfs);
+ int ima_calc_buffer_hash(const void *buf, loff_t len,
+ 			 struct ima_digest_data *hash);
+ int ima_calc_field_array_hash(struct ima_field_data *field_data,
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 0def9cf43549..55bafce3d9c0 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -231,7 +231,7 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 	if (buf)
+ 		result = ima_calc_buffer_hash(buf, size, &hash.hdr);
+ 	else
+-		result = ima_calc_file_hash(file, &hash.hdr, trust_vfs);
++		result = ima_calc_file_hash(file, &hash.hdr, &trust_vfs);
+ 
+ 	if (result && result != -EBADF && result != -EINVAL)
+ 		goto out;
+@@ -247,6 +247,10 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 	memcpy(iint->ima_hash, &hash, length);
+ 	iint->version = i_version;
+ 
++	/* Record whether we got this measurement from the VFS or not */
++	if (trust_vfs)
++		set_bit(IMA_TRUSTED_VFS, &iint->atomic_flags);
 +
-+static int fuse_file_get_hash(struct file *file, enum hash_algo hash,
-+			      uint8_t *buf, size_t size)
-+{
-+	struct fuse_file *ff = file->private_data;
-+	struct fuse_conn *fc = ff->fc;
-+	FUSE_ARGS(args);
-+	struct fuse_gethash_in inarg;
-+	int err = 0;
+ 	/* Possibly temporary failure due to type of read (eg. O_DIRECT) */
+ 	if (!result)
+ 		iint->flags |= IMA_COLLECTED;
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 1c83d23d21a6..209c1bf836c1 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -406,7 +406,7 @@ static int ima_calc_file_shash(struct file *file, struct ima_digest_data *hash)
+  * shash.
+  */
+ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash,
+-		       bool trust_vfs)
++		       bool *trust_vfs)
+ {
+ 	loff_t i_size;
+ 	int rc;
+@@ -431,7 +431,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash,
+ 	 * filesystem is trusted, ask the VFS if it can obtain the
+ 	 * hash without us having to calculate it ourself.
+ 	 */
+-	if (trust_vfs && !ima_force_hash &&
++	if (*trust_vfs == true && !ima_force_hash &&
+ 	    !(inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER)) {
+ 		hash->length = hash_digest_size[hash->algo];
+ 		rc = vfs_get_hash(file, hash->algo, hash->digest, hash->length);
+@@ -439,6 +439,9 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash,
+ 			return 0;
+ 	}
+ 
++	/* If we're here then we're not using the VFS to obtain the hash */
++	*trust_vfs = false;
 +
-+	if (!fc->allow_gethash)
-+		return -EOPNOTSUPP;
-+
-+	memset(&inarg, 0, sizeof(inarg));
-+	inarg.size = size;
-+	inarg.hash = hash;
-+	args.in.h.opcode = FUSE_GETHASH;
-+	args.in.h.nodeid = ff->nodeid;
-+	args.in.numargs = 1;
-+	args.in.args[0].size = sizeof(inarg);
-+	args.in.args[0].value = &inarg;
-+	args.out.numargs = 1;
-+	args.out.args[0].size = size;
-+	args.out.args[0].value = buf;
-+
-+	err = fuse_simple_request(fc, &args);
-+
-+	if (err == -ENOSYS)
-+		err = -EOPNOTSUPP;
-+
- 	return err;
+ 	/* Open a new file instance in O_RDONLY if we cannot read */
+ 	if (!(file->f_mode & FMODE_READ)) {
+ 		int flags = file->f_flags & ~(O_WRONLY | O_APPEND |
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index b631b8bc7624..78bd8fea8b35 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -25,6 +25,7 @@ enum header_fields { HDR_PCR, HDR_DIGEST, HDR_TEMPLATE_NAME,
+ static struct ima_template_desc builtin_templates[] = {
+ 	{.name = IMA_TEMPLATE_IMA_NAME, .fmt = IMA_TEMPLATE_IMA_FMT},
+ 	{.name = "ima-ng", .fmt = "d-ng|n-ng"},
++	{.name = "ima-vfs-ng", .fmt = "d-vng|n-ng"},
+ 	{.name = "ima-sig", .fmt = "d-ng|n-ng|sig"},
+ 	{.name = "", .fmt = ""},	/* placeholder for a custom format */
+ };
+@@ -41,6 +42,8 @@ static const struct ima_template_field supported_fields[] = {
+ 	 .field_show = ima_show_template_digest_ng},
+ 	{.field_id = "n-ng", .field_init = ima_eventname_ng_init,
+ 	 .field_show = ima_show_template_string},
++	{.field_id = "d-vng", .field_init = ima_eventdigest_vfs_ng_init,
++	 .field_show = ima_show_template_digest_ng},
+ 	{.field_id = "sig", .field_init = ima_eventsig_init,
+ 	 .field_show = ima_show_template_sig},
+ };
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 26f71c5805f0..6defb0620f8d 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -224,7 +224,9 @@ int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
  }
  
-@@ -3191,6 +3223,7 @@ static const struct file_operations fuse_file_operations = {
- 	.poll		= fuse_file_poll,
- 	.fallocate	= fuse_file_fallocate,
- 	.copy_file_range = fuse_copy_file_range,
-+	.get_hash	= fuse_file_get_hash,
- };
+ static int ima_eventdigest_init_common(u8 *digest, u32 digestsize, u8 hash_algo,
+-				       struct ima_field_data *field_data)
++				       struct ima_event_data *event_data,
++				       struct ima_field_data *field_data,
++				       bool from_vfs)
+ {
+ 	/*
+ 	 * digest formats:
+@@ -237,6 +239,9 @@ static int ima_eventdigest_init_common(u8 *digest, u32 digestsize, u8 hash_algo,
+ 	enum data_formats fmt = DATA_FMT_DIGEST;
+ 	u32 offset = 0;
  
- static const struct address_space_operations fuse_file_aops  = {
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 24dbca777775..06c8d396cc74 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -721,6 +721,13 @@ struct fuse_conn {
- 	/** Does the filesystem support copy_file_range? */
- 	unsigned no_copy_file_range:1;
- 
-+	/*
-+	 * Allow the underlying filesystem to the hash of a file. This is
-+	 * used by IMA to avoid needing to calculate the hash on every
-+	 * measurement
-+	 */
-+	unsigned allow_gethash:1;
++	if (from_vfs)
++		offset += snprintf(buffer, 5, "vfs:");
 +
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
+ 	if (hash_algo < HASH_ALGO__LAST) {
+ 		fmt = DATA_FMT_DIGEST_WITH_ALGO;
+ 		offset += snprintf(buffer, CRYPTO_MAX_ALG_NAME + 1, "%s",
+@@ -302,7 +307,7 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
+ 	cur_digestsize = hash.hdr.length;
+ out:
+ 	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
+-					   HASH_ALGO__LAST, field_data);
++			       HASH_ALGO__LAST, event_data, field_data, false);
+ }
  
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 4bb885b0f032..ef7f408ac69c 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -70,6 +70,7 @@ struct fuse_mount_data {
- 	unsigned group_id_present:1;
- 	unsigned default_permissions:1;
- 	unsigned allow_other:1;
-+	unsigned allow_gethash:1;
- 	unsigned max_read;
- 	unsigned blksize;
- };
-@@ -451,6 +452,7 @@ enum {
- 	OPT_ALLOW_OTHER,
- 	OPT_MAX_READ,
- 	OPT_BLKSIZE,
-+	OPT_ALLOW_GETHASH,
- 	OPT_ERR
- };
- 
-@@ -463,6 +465,7 @@ static const match_table_t tokens = {
- 	{OPT_ALLOW_OTHER,		"allow_other"},
- 	{OPT_MAX_READ,			"max_read=%u"},
- 	{OPT_BLKSIZE,			"blksize=%u"},
-+	{OPT_ALLOW_GETHASH,		"allow_gethash"},
- 	{OPT_ERR,			NULL}
- };
- 
-@@ -549,6 +552,15 @@ static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev,
- 			d->blksize = value;
- 			break;
- 
-+		case OPT_ALLOW_GETHASH:
-+			/*
-+			 * This is relevant to security decisions made in
-+			 * the root namespace, so restrict it more strongly
-+			 */
-+			if (capable(CAP_SYS_ADMIN))
-+				d->allow_gethash = 1;
-+			break;
+ /*
+@@ -323,7 +328,33 @@ int ima_eventdigest_ng_init(struct ima_event_data *event_data,
+ 	hash_algo = event_data->iint->ima_hash->algo;
+ out:
+ 	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
+-					   hash_algo, field_data);
++				     hash_algo, event_data, field_data, false);
++}
 +
- 		default:
- 			return 0;
- 		}
-@@ -572,6 +584,8 @@ static int fuse_show_options(struct seq_file *m, struct dentry *root)
- 		seq_puts(m, ",default_permissions");
- 	if (fc->allow_other)
- 		seq_puts(m, ",allow_other");
-+	if (fc->allow_gethash)
-+		seq_puts(m, ",allow_gethash");
- 	if (fc->max_read != ~0)
- 		seq_printf(m, ",max_read=%u", fc->max_read);
- 	if (sb->s_bdev && sb->s_blocksize != FUSE_DEFAULT_BLKSIZE)
-@@ -1164,6 +1178,7 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
- 	fc->user_id = d.user_id;
- 	fc->group_id = d.group_id;
- 	fc->max_read = max_t(unsigned, 4096, d.max_read);
-+	fc->allow_gethash = d.allow_gethash;
- 
- 	/* Used by get_root_inode() */
- 	sb->s_fs_info = fc;
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 19fb55e3c73e..2487e2c3a4ba 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -417,6 +417,7 @@ enum fuse_opcode {
- 	FUSE_RENAME2		= 45,
- 	FUSE_LSEEK		= 46,
- 	FUSE_COPY_FILE_RANGE	= 47,
-+	FUSE_GETHASH		= 48,
- 
- 	/* CUSE specific operations */
- 	CUSE_INIT		= 4096,
-@@ -840,4 +841,9 @@ struct fuse_copy_file_range_in {
- 	uint64_t	flags;
- };
- 
-+struct fuse_gethash_in {
-+	uint32_t	size;
-+	uint32_t	hash;
-+};
++/*
++ * This function is identical to ima_eventdigest_ng_init but tags events whose
++ * digest came from the VFS
++ */
++int ima_eventdigest_vfs_ng_init(struct ima_event_data *event_data,
++				struct ima_field_data *field_data)
++{
++	u8 *cur_digest = NULL, hash_algo = HASH_ALGO_SHA1;
++	u32 cur_digestsize = 0;
++	bool vfs = false;
 +
- #endif /* _LINUX_FUSE_H */
++	if (test_bit(IMA_TRUSTED_VFS, &event_data->iint->atomic_flags))
++		vfs = true;
++
++	if (event_data->violation)	/* recording a violation. */
++		goto out;
++
++	cur_digest = event_data->iint->ima_hash->digest;
++	cur_digestsize = event_data->iint->ima_hash->length;
++
++	hash_algo = event_data->iint->ima_hash->algo;
++out:
++	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
++				       hash_algo, event_data, field_data, vfs);
+ }
+ 
+ static int ima_eventname_init_common(struct ima_event_data *event_data,
+diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
+index 6a3d8b831deb..3f320299e0a0 100644
+--- a/security/integrity/ima/ima_template_lib.h
++++ b/security/integrity/ima/ima_template_lib.h
+@@ -38,6 +38,8 @@ int ima_eventname_init(struct ima_event_data *event_data,
+ 		       struct ima_field_data *field_data);
+ int ima_eventdigest_ng_init(struct ima_event_data *event_data,
+ 			    struct ima_field_data *field_data);
++int ima_eventdigest_vfs_ng_init(struct ima_event_data *event_data,
++				struct ima_field_data *field_data);
+ int ima_eventname_ng_init(struct ima_event_data *event_data,
+ 			  struct ima_field_data *field_data);
+ int ima_eventsig_init(struct ima_event_data *event_data,
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index a03f859c1602..9d74119bcdfd 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -68,6 +68,7 @@
+ #define IMA_CHANGE_ATTR		2
+ #define IMA_DIGSIG		3
+ #define IMA_MUST_MEASURE	4
++#define IMA_TRUSTED_VFS		5
+ 
+ enum evm_ima_xattr_type {
+ 	IMA_XATTR_DIGEST = 0x01,
 -- 
 2.21.0.1020.gf2820cf01a-goog
 
