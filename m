@@ -2,198 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D18BC26901
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 19:23:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1F62690C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 19:25:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730012AbfEVRWj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 13:22:39 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32961 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727365AbfEVRWj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 13:22:39 -0400
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 05CF417966E92720806F;
-        Wed, 22 May 2019 18:22:37 +0100 (IST)
-Received: from [10.204.65.201] (10.204.65.201) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 22 May
- 2019 18:22:31 +0100
-Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-To:     <hpa@zytor.com>, Arvind Sankar <nivedita@alum.mit.edu>
-CC:     <viro@zeniv.linux.org.uk>, <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <zohar@linux.vnet.ibm.com>,
-        <silviu.vlasceanu@huawei.com>, <dmitry.kasatkin@huawei.com>,
-        <takondra@cisco.com>, <kamensky@cisco.com>, <arnd@arndb.de>,
-        <rob@landley.net>, <james.w.mcmechan@gmail.com>,
-        <niveditas98@gmail.com>
-References: <20190517165519.11507-1-roberto.sassu@huawei.com>
- <20190517165519.11507-3-roberto.sassu@huawei.com>
- <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
- <20190517210219.GA5998@rani.riverdale.lan>
- <d48f35a1-aab1-2f20-2e91-5e81a84b107f@zytor.com>
- <20190517221731.GA11358@rani.riverdale.lan>
- <7bdca169-7a01-8c55-40e4-a832e876a0e5@huawei.com>
- <9C5B9F98-2067-43D3-B149-57613F38DCD4@zytor.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <2ceb1f01-88fb-d383-daee-e38348a2f075@huawei.com>
-Date:   Wed, 22 May 2019 19:22:37 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1729657AbfEVRZU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 13:25:20 -0400
+Received: from mail-lf1-f42.google.com ([209.85.167.42]:37129 "EHLO
+        mail-lf1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727975AbfEVRZU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 May 2019 13:25:20 -0400
+Received: by mail-lf1-f42.google.com with SMTP id m15so1681385lfh.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2019 10:25:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U7Rirt74S1yD4yP+J2ZudOTJniWaSa0DpfPmuZp5N3E=;
+        b=XFgwzL9Czq/fUxRs5wHgvyNhi48yDGB+xxuz4WmxU2bfW8cmFdsEuI5Ki6hbzd/a4B
+         MrkJ1ez2xmHk7U6faB0FgfHgq7r+CSeQMoXnl94dt6Fyvi7wTpNbTiyOWJJ3MdFjeEjL
+         3+wMZFMdBxq7kxREhPScxqLrw9FYA+05kZQOmVnk9ajF3rjARVRmQWfCqfc8L49ETUsp
+         iEFEZbHQGM+oOBdJcCuFa4PfRrPTGn0d17ZiTmwUBSzha+Q8UFL5VJnGYCtbKPhkTM/4
+         qIYq9LWStYMzriPDLqxFEkaVZc/B885dMgfOpN0WXQTMgehjnvjSoJdIyjVvflEN7mRn
+         Ej6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U7Rirt74S1yD4yP+J2ZudOTJniWaSa0DpfPmuZp5N3E=;
+        b=JtMM05vbhGOM2gedS8GmEiIzuBIQvmNdSsiCFFDdyFOE9B5OW3UJLYIg5PpBLb2tSt
+         s+JrY+YxWI8rO9bDvSaGmavXSsuuNaZxnFf3X+1KR95GC1cu1w6Dph77VdF6UuRVSbaN
+         n3CXFDTWcRdUFrqcJ7lzYuAN+NAaEasbdAfryV3NE3wxAe0UCMsOQXKc3eMUSzMGroIK
+         EOIcW2PtUEO96upYaZ2Tu8uLUDuX5cqAYrfIaSOmT2vkkfVSc6VXswy+SEoqlElRfdF4
+         qsCkdlpIo6+hcSdTpFTPVT24r8Ti1w6hoVLuyC4CZkYbG5u4nqPCBx/T8yLW9FgCEzyk
+         tcpg==
+X-Gm-Message-State: APjAAAWzpy+xzJVM20f4ijD2LSWv6KGBfmGh+jobNVHZaoYxQ1k+abIu
+        8TqlRCmt/6Tz3R+97aFPQxOn3Sg0acOGhq7Ngo6k/Q==
+X-Google-Smtp-Source: APXvYqxdFfXLG78m2vTeD305QxiaBew4ujuFAwdoEZuXGRQDa4VxSsSzGydy8lR/NKz6uA1dQX+d96aJ2p6nduX9IDE=
+X-Received: by 2002:ac2:43c2:: with SMTP id u2mr37020653lfl.159.1558545917089;
+ Wed, 22 May 2019 10:25:17 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <9C5B9F98-2067-43D3-B149-57613F38DCD4@zytor.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.201]
-X-CFilter-Loop: Reflected
+References: <20190502040331.81196-1-ezemtsov@google.com> <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
+ <20190502131034.GA25007@mit.edu> <20190502132623.GU23075@ZenIV.linux.org.uk>
+ <CAK8JDrFZW1jwOmhq+YVDPJi9jWWrCRkwpqQ085EouVSyzw-1cg@mail.gmail.com>
+ <CAOQ4uxhDYvBOLBkyYXRC6aS_me+Q=1sBAtzOSkdqbo+N-Rtx=Q@mail.gmail.com>
+ <CAK8JDrGRzA+yphpuX+GQ0syRwF_p2Fora+roGCnYqB5E1eOmXA@mail.gmail.com>
+ <CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=w_AeM6YM=zVixsUfQ@mail.gmail.com>
+ <CAK8JDrEQnXTcCtAPkb+S4r4hORiKh_yX=0A0A=LYSVKUo_n4OA@mail.gmail.com>
+ <CAJeUaNCvr=X-cc+B3rsunKcdC6yHSGGa4G+8X+n8OxGKHeE3zQ@mail.gmail.com> <CAJfpegvmFJ63F2h_gFVPJeEgWS8UmxAYCUgA-4=j9iCNXaXARA@mail.gmail.com>
+In-Reply-To: <CAJfpegvmFJ63F2h_gFVPJeEgWS8UmxAYCUgA-4=j9iCNXaXARA@mail.gmail.com>
+From:   Yurii Zubrytskyi <zyy@google.com>
+Date:   Wed, 22 May 2019 10:25:05 -0700
+Message-ID: <CAJeUaNC5rXuNsoKmJjJN74iH9YNp94L450gcpxyc_dG=D8CCjA@mail.gmail.com>
+Subject: Re: Initial patches for Incremental FS
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Eugene Zemtsov <ezemtsov@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/22/2019 6:17 PM, hpa@zytor.com wrote:
-> On May 20, 2019 2:39:46 AM PDT, Roberto Sassu <roberto.sassu@huawei.com> wrote:
->> On 5/18/2019 12:17 AM, Arvind Sankar wrote:
->>> On Fri, May 17, 2019 at 02:47:31PM -0700, H. Peter Anvin wrote:
->>>> On 5/17/19 2:02 PM, Arvind Sankar wrote:
->>>>> On Fri, May 17, 2019 at 01:18:11PM -0700, hpa@zytor.com wrote:
->>>>>>
->>>>>> Ok... I just realized this does not work for a modular initramfs,
->> composed at load time from multiple files, which is a very real
->> problem. Should be easy enough to deal with: instead of one large file,
->> use one companion file per source file, perhaps something like
->> filename..xattrs (suggesting double dots to make it less likely to
->> conflict with a "real" file.) No leading dot, as it makes it more
->> likely that archivers will sort them before the file proper.
->>>>> This version of the patch was changed from the previous one exactly
->> to deal with this case --
->>>>> it allows for the bootloader to load multiple initramfs archives,
->> each
->>>>> with its own .xattr-list file, and to have that work properly.
->>>>> Could you elaborate on the issue that you see?
->>>>>
->>>>
->>>> Well, for one thing, how do you define "cpio archive", each with its
->> own
->>>> .xattr-list file? Second, that would seem to depend on the ordering,
->> no,
->>>> in which case you depend critically on .xattr-list file following
->> the
->>>> files, which most archivers won't do.
->>>>
->>>> Either way it seems cleaner to have this per file; especially if/as
->> it
->>>> can be done without actually mucking up the format.
->>>>
->>>> I need to run, but I'll post a more detailed explanation of what I
->> did
->>>> in a little bit.
->>>>
->>>> 	-hpa
->>>>
->>> Not sure what you mean by how do I define it? Each cpio archive will
->>> contain its own .xattr-list file with signatures for the files within
->>> it, that was the idea.
->>>
->>> You need to review the code more closely I think -- it does not
->> depend
->>> on the .xattr-list file following the files to which it applies.
->>>
->>> The code first extracts .xattr-list as though it was a regular file.
->> If
->>> a later dupe shows up (presumably from a second archive, although the
->>> patch will actually allow a second one in the same archive), it will
->>> then process the existing .xattr-list file and apply the attributes
->>> listed within it. It then will proceed to read the second one and
->>> overwrite the first one with it (this is the normal behaviour in the
->>> kernel cpio parser). At the end once all the archives have been
->>> extracted, if there is an .xattr-list file in the rootfs it will be
->>> parsed (it would've been the last one encountered, which hasn't been
->>> parsed yet, just extracted).
->>>
->>> Regarding the idea to use the high 16 bits of the mode field in
->>> the header that's another possibility. It would just require
->> additional
->>> support in the program that actually creates the archive though,
->> which
->>> the current patch doesn't.
->>
->> Yes, for adding signatures for a subset of files, no changes to the ram
->> disk generator are necessary. Everything is done by a custom module. To
->> support a generic use case, it would be necessary to modify the
->> generator to execute getfattr and the awk script after files have been
->> placed in the temporary directory.
->>
->> If I understood the new proposal correctly, it would be task for cpio
->> to
->> read file metadata after the content and create a new record for each
->> file with mode 0x18000, type of metadata encoded in the file name and
->> metadata as file content. I don't know how easy it would be to modify
->> cpio. Probably the amount of changes would be reasonable.
->>
->> The kernel will behave in a similar way. It will call do_readxattrs()
->> in
->> do_copy() for each file. Since the only difference between the current
->> and the new proposal would be two additional calls to do_readxattrs()
->> in
->> do_name() and unpack_to_rootfs(), maybe we could support both.
->>
->> Roberto
-> 
-> The nice thing with explicit metadata is that it doesn't have to contain the filename per se, and each file is self-contained. There is a reason why each cpio header starts with the magic number: each cpio record is formally independent and can be processed in isolation.  The TRAILER!!! thing is a huge wart in the format, although in practice TRAILER!!! always has a mode of 0 and so can be distinguished from an actual file.
-> 
-> The use of mode 0x18000 for metadata allows for optional backwards compatibility for extraction; for encoding this can be handled with very simple postprocessing.
-> 
-> So my suggestion would be to have mode 0x18000 indicate extended file metadata, with the filename of the form:
-> 
-> optional_filename!XXXXX!
-> 
-> ... where XXXXX indicates the type of metadata (e.g. !XATTR!). The optional_filename prefix allows an unaware decoder to extract to a well-defined name; simple postprocessing would be able to either remove (for size) or add (for compatibility) this prefix. It would be an error for this prefix, if present, to not match the name of the previous file.
+> Hang on, fuse does use caches in the kernel (page cache,
+> dcache/icache).  The issue is probably not lack of cache, it's how the
+> caches are primed and used.  Did you disable these caches?  Did you
+> not disable invalidation for data, metadata and dcache?  In recent
+> kernels we added caching readdir as well.  The only objects not cached
+> are (non-acl) xattrs.   Do you have those?
+Android (which is our primary use case) is constantly under memory
+pressure, so caches
+don't actually last long. Our experience with FOPEN_KEEP_CACHE has
+shown that pages are
+evicted more often than the files are getting reopened, so it doesn't
+help. FUSE has to re-read
+the data from the backing store all the time.
+We didn't use xattrs for the FUSE-based implementation, but ended up
+requiring a similar thing in
+the Incremental FS, so the final design would have to include them.
 
-Actually, I defined '..metadata..' as special name to indicate that the
-file contains metadata. Then, the content of the file is a set of:
+> Re prefetching data:
+> there's the NOTIFY_STORE message.
+To add to the previous point, we do not have the data for prefetching,
+as we're loading it page-by-page
+from the host. We had to disable readahead for FUSE completely,
+otherwise even USB3 isn't fast enough
+to deliver data in that big chunks in time, and applications keep
+hanging on page faults.
 
-struct metadata_hdr {
-         char c_size[8];     /* total size including c_size field */
-         char c_version;     /* header version */
-         char c_type;        /* metadata type */
-         char c_metadata[];  /* metadata */
-} __packed;
-
-init/initramfs.c now has a specific parser for c_type. Currently, I
-implemented a parser for xattrs, which expects data in the format:
-
-<xattr #N name>\0<xattr #N value>
-
-I checked if it is possible to use bit 17:16 to identify files with
-metadata, but both the cpio and the kernel use unsigned short.
-
-I already modified gen_init_cpio and cpio. I modify at run-time the list
-of files to be included in the image by adding a temporary file, that
-each time is set with the xattrs of the previously processed file.
-
-The output of cpio -t looks like:
-
---
-.
-..metadata..
-bin
-..metadata..
-dev
-..metadata..
-dev/console
-..metadata..
---
-
-Would it be ok? If you prefer that I add the format to the file name or
-you/anyone has a comment about this proposal, please let me know so that
-I make the changes before sending a new version of the patch set.
-
-Thanks
-
-Roberto
+Overall, better caching doesn't save much *on Android*; what would
+work is a full-blown data storage system inside
+FUSE kernel code, that can intercept requests before they go into user
+mode and process them completely. That's how
+we could keep the data out of RAM but still get rid of that extra
+context switch and kernel-user transition.
+But this also means that FUSE becomes damn too much aware of the
+specific storage format and all its features, and
+basically gets specialized implementation of one of its filesystem
+inside the generic FUSE code.
+Even if we separate that out, the kernel API between the storage and
+FUSE ended up being complete VFS API copy,
+with some additions to send data blocks and Merkle tree blocks in. The
+code is truly if we stuff the Incremental FS into
+FUSE instead of mounting it directly.
 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Thanks, Yurii
