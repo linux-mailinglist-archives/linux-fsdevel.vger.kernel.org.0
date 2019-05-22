@@ -2,193 +2,259 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF061270CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 22:28:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 312E1271C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 23:39:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729734AbfEVU2L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 16:28:11 -0400
-Received: from alln-iport-7.cisco.com ([173.37.142.94]:60032 "EHLO
-        alln-iport-7.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728761AbfEVU2K (ORCPT
+        id S1730419AbfEVVjD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 17:39:03 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:46729 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730333AbfEVVjC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 16:28:10 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 May 2019 16:28:09 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=5573; q=dns/txt; s=iport;
-  t=1558556889; x=1559766489;
-  h=mime-version:content-transfer-encoding:to:from:
-   in-reply-to:cc:references:message-id:subject:date;
-  bh=5ZVlBUw1vSKJZaYc/jBoJa7SC61n5XMCpHwyOOfomTQ=;
-  b=DTcF023b2YqWzj+cGnhQVeqLAT5ehX0PvJ+ox6pEqTTNMzULRYZiJxsQ
-   vNHKvjRr5/9yQvBO6EXKvbw+2MF9BOXMm9+8dYkfyV+Ozka2yROrrYn1C
-   Sv98hrdeHvQkKrZyAPXnlx3540njlcrUMImzhw+RBYK9zqedQBDqcRS7k
-   4=;
-X-IronPort-AV: E=Sophos;i="5.60,500,1549929600"; 
-   d="scan'208";a="274622354"
-Received: from rcdn-core-4.cisco.com ([173.37.93.155])
-  by alln-iport-7.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 22 May 2019 20:21:02 +0000
-Received: from localhost ([10.156.154.45])
-        by rcdn-core-4.cisco.com (8.15.2/8.15.2) with ESMTP id x4MKL2YY023597;
-        Wed, 22 May 2019 20:21:02 GMT
-Content-Type: text/plain; charset="utf-8"
+        Wed, 22 May 2019 17:39:02 -0400
+Received: by mail-oi1-f193.google.com with SMTP id 203so2781134oid.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2019 14:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X8iUa3mR7n1QUqI0vPloid9MGvfKcIGgUfFxnULZ5+U=;
+        b=GDelsoqQolX8vZ500TJnYRTrvx7UvzJ51bjddO3LDssDGEV/KLjn45OPSK1LoHb+pt
+         vMc4fO10d8rFO9cUXhUOasQS1z00mtA/aaww0itHgEjxtv6/EtX/A5C4yrS8r08gyITU
+         TA04J0efipr8o8Xl0BPEGjp/KEY0bIEgjzBYUxRrb7zqAvNHGycq9491MnB/928cEorF
+         vcRKUxoGSumKvZMwAn4LVEhN0I/8thaBrCFiTKXFw9vQen81eDnsqy70p43bZYFnR6bP
+         AEdEBccKUY3heoXvT17IcKdkpcaihfJ0EloODJeeR+bHCXp13wWqqLlXuKmTMbFs7kR8
+         kJzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X8iUa3mR7n1QUqI0vPloid9MGvfKcIGgUfFxnULZ5+U=;
+        b=DXwDWS9V/LPn7i3bfSEUA236wbbzdwgjtAXHIDUYORuoE/G8U1yCDC+aQb8aYsqqX/
+         K0O0YgNolpXxnS5ld2uOlBcj5NbUZI2goKee7AzhnfDFzmX/1rgPtHNcAHp/iifEogAq
+         dVzk9Jnq44lKLYmBdVC473EikkVCpI2s5seIoq9CfKFyoHVZIhRY1BNz1HhekFIR6211
+         Sogt/2jIS6h//Sk5HmV5Jrw/uCyjJ0PXeViCrLZJR00m0HJNijQhK0vbOEL3p0FVA9nh
+         m5c90GPP+Af40sXFQrQQcNSH2qVsPDoIPx0vqw+l2AI+m4CHnylSu/UGBh0DYshJTLP3
+         PQqQ==
+X-Gm-Message-State: APjAAAXz4OX6Z3z3Ln1XOrFqvXERyVQFMYIJWfjhFXAf7dTicP2Fsbft
+        r7VyJ+LtoDVLd24RoCH5mLaThf6P++uurLP9ydnnkw==
+X-Google-Smtp-Source: APXvYqwhyT9IyVUG9lkFu5kWtgvlKVPb/Q03tyBe4vbXVaiSv8N9Jry7yPQvyfivwOs/aXwiHN39BhvkHSSieLsYpPE=
+X-Received: by 2002:aca:55d6:: with SMTP id j205mr565451oib.137.1558561141083;
+ Wed, 22 May 2019 14:39:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Rob Landley <rob@landley.net>,
-        Roberto Sassu <roberto.sassu@huawei.com>, hpa@zytor.com
-From:   Taras Kondratiuk <takondra@cisco.com>
-In-Reply-To: <3839583c-5466-6573-3048-0da7e6778c88@landley.net>
-Cc:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        kamensky@cisco.com, arnd@arndb.de, james.w.mcmechan@gmail.com,
-        niveditas98@gmail.com
-References: <20190517165519.11507-1-roberto.sassu@huawei.com>
- <20190517165519.11507-3-roberto.sassu@huawei.com>
- <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
- <20190517210219.GA5998@rani.riverdale.lan>
- <d48f35a1-aab1-2f20-2e91-5e81a84b107f@zytor.com>
- <20190517221731.GA11358@rani.riverdale.lan>
- <7bdca169-7a01-8c55-40e4-a832e876a0e5@huawei.com>
- <9C5B9F98-2067-43D3-B149-57613F38DCD4@zytor.com>
- <3839583c-5466-6573-3048-0da7e6778c88@landley.net>
-Message-ID: <155855646075.4574.2642646033980450856@takondra-t460s>
-User-Agent: alot/0.6
-Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-Date:   Wed, 22 May 2019 13:21:00 -0700
-X-Outbound-SMTP-Client: 10.156.154.45, [10.156.154.45]
-X-Outbound-Node: rcdn-core-4.cisco.com
+References: <20190509133551.GD29703@mit.edu> <ECADFF3FD767C149AD96A924E7EA6EAF9770D591@USCULXMSG01.am.sony.com>
+ <875c546d-9713-bb59-47e4-77a1d2c69a6d@gmail.com> <20190509214233.GA20877@mit.edu>
+ <80c72e64-2665-bd51-f78c-97f50f9a53ba@gmail.com> <20190511173344.GA8507@mit.edu>
+ <20190513144451.GQ17751@phenom.ffwll.local> <20190514060433.GA181462@google.com>
+ <CAKMK7uHqtSF_sazJTbFL+xmQJRk4iwukCKZHoDHhsKkLXk=ECQ@mail.gmail.com>
+ <20190514183618.GC109557@google.com> <20190515074141.GY17751@phenom.ffwll.local>
+In-Reply-To: <20190515074141.GY17751@phenom.ffwll.local>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Wed, 22 May 2019 14:38:48 -0700
+Message-ID: <CAFd5g476Hc+6jL5sV=VJamXCbqGebwHqqN9N9RppQYMCoo052Q@mail.gmail.com>
+Subject: Re: [PATCH v2 00/17] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jeff Dike <jdike@addtoit.com>, Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quoting Rob Landley (2019-05-22 12:26:43)
-> =
++Bjorn Helgaas
 
-> =
+On Wed, May 15, 2019 at 12:41 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+> On Tue, May 14, 2019 at 11:36:18AM -0700, Brendan Higgins wrote:
+> > On Tue, May 14, 2019 at 02:05:05PM +0200, Daniel Vetter wrote:
+> > > On Tue, May 14, 2019 at 8:04 AM Brendan Higgins
+> > > <brendanhiggins@google.com> wrote:
+> > > >
+> > > > On Mon, May 13, 2019 at 04:44:51PM +0200, Daniel Vetter wrote:
+> > > > > On Sat, May 11, 2019 at 01:33:44PM -0400, Theodore Ts'o wrote:
+> > > > > > On Fri, May 10, 2019 at 02:12:40PM -0700, Frank Rowand wrote:
+> > > > > > > However, the reply is incorrect.  Kselftest in-kernel tests (which
+> > > > > > > is the context here) can be configured as built in instead of as
+> > > > > > > a module, and built in a UML kernel.  The UML kernel can boot,
+> > > > > > > running the in-kernel tests before UML attempts to invoke the
+> > > > > > > init process.
+> > > > > >
+> > > > > > Um, Citation needed?
+> > > > > >
+> > > > > > I don't see any evidence for this in the kselftest documentation, nor
+> > > > > > do I see any evidence of this in the kselftest Makefiles.
+> > > > > >
+> > > > > > There exists test modules in the kernel that run before the init
+> > > > > > scripts run --- but that's not strictly speaking part of kselftests,
+> > > > > > and do not have any kind of infrastructure.  As noted, the
+> > > > > > kselftests_harness header file fundamentally assumes that you are
+> > > > > > running test code in userspace.
+> > > > >
+> > > > > Yeah I really like the "no userspace required at all" design of kunit,
+> > > > > while still collecting results in a well-defined way (unless the current
+> > > > > self-test that just run when you load the module, with maybe some
+> > > > > kselftest ad-hoc wrapper around to collect the results).
+> > > > >
+> > > > > What I want to do long-term is to run these kernel unit tests as part of
+> > > > > the build-testing, most likely in gitlab (sooner or later, for drm.git
+> > > >
+> > > > Totally! This is part of the reason I have been insisting on a minimum
+> > > > of UML compatibility for all unit tests. If you can suffiently constrain
+> > > > the environment that is required for tests to run in, it makes it much
+> > > > easier not only for a human to run your tests, but it also makes it a
+> > > > lot easier for an automated service to be able to run your tests.
+> > > >
+> > > > I actually have a prototype presubmit already working on my
+> > > > "stable/non-upstream" branch. You can checkout what presubmit results
+> > > > look like here[1][2].
+> > >
+> > > ug gerrit :-)
+> >
+> > Yeah, yeah, I know, but it is a lot easier for me to get a project set
+> > up here using Gerrit, when we already use that for a lot of other
+> > projects.
+> >
+> > Also, Gerrit has gotten a lot better over the last two years or so. Two
+> > years ago, I wouldn't touch it with a ten foot pole. It's not so bad
+> > anymore, at least if you are used to using a web UI to review code.
+>
+> I was somewhat joking, I'm just not used to gerrit ... And seems to indeed
+> be a lot more polished than last time I looked at it seriously.
 
-> On 5/22/19 11:17 AM, hpa@zytor.com wrote:
-> > On May 20, 2019 2:39:46 AM PDT, Roberto Sassu <roberto.sassu@huawei.com=
-> wrote:
-> >> On 5/18/2019 12:17 AM, Arvind Sankar wrote:
-> >>> On Fri, May 17, 2019 at 02:47:31PM -0700, H. Peter Anvin wrote:
-> >>>> On 5/17/19 2:02 PM, Arvind Sankar wrote:
-> >>>>> On Fri, May 17, 2019 at 01:18:11PM -0700, hpa@zytor.com wrote:
-> >>>>>>
-> >>>>>> Ok... I just realized this does not work for a modular initramfs,
-> >> composed at load time from multiple files, which is a very real
-> >> problem. Should be easy enough to deal with: instead of one large file,
-> >> use one companion file per source file, perhaps something like
-> >> filename..xattrs (suggesting double dots to make it less likely to
-> >> conflict with a "real" file.) No leading dot, as it makes it more
-> >> likely that archivers will sort them before the file proper.
-> >>>>> This version of the patch was changed from the previous one exactly
-> >> to deal with this case --
-> >>>>> it allows for the bootloader to load multiple initramfs archives,
-> >> each
-> >>>>> with its own .xattr-list file, and to have that work properly.
-> >>>>> Could you elaborate on the issue that you see?
-> >>>>>
-> >>>>
-> >>>> Well, for one thing, how do you define "cpio archive", each with its
-> >> own
-> >>>> .xattr-list file? Second, that would seem to depend on the ordering,
-> >> no,
-> >>>> in which case you depend critically on .xattr-list file following
-> >> the
-> >>>> files, which most archivers won't do.
-> >>>>
-> >>>> Either way it seems cleaner to have this per file; especially if/as
-> >> it
-> >>>> can be done without actually mucking up the format.
-> >>>>
-> >>>> I need to run, but I'll post a more detailed explanation of what I
-> >> did
-> >>>> in a little bit.
-> >>>>
-> >>>>    -hpa
-> >>>>
-> >>> Not sure what you mean by how do I define it? Each cpio archive will
-> >>> contain its own .xattr-list file with signatures for the files within
-> >>> it, that was the idea.
-> >>>
-> >>> You need to review the code more closely I think -- it does not
-> >> depend
-> >>> on the .xattr-list file following the files to which it applies.
-> >>>
-> >>> The code first extracts .xattr-list as though it was a regular file.
-> >> If
-> >>> a later dupe shows up (presumably from a second archive, although the
-> >>> patch will actually allow a second one in the same archive), it will
-> >>> then process the existing .xattr-list file and apply the attributes
-> >>> listed within it. It then will proceed to read the second one and
-> >>> overwrite the first one with it (this is the normal behaviour in the
-> >>> kernel cpio parser). At the end once all the archives have been
-> >>> extracted, if there is an .xattr-list file in the rootfs it will be
-> >>> parsed (it would've been the last one encountered, which hasn't been
-> >>> parsed yet, just extracted).
-> >>>
-> >>> Regarding the idea to use the high 16 bits of the mode field in
-> >>> the header that's another possibility. It would just require
-> >> additional
-> >>> support in the program that actually creates the archive though,
-> >> which
-> >>> the current patch doesn't.
-> >>
-> >> Yes, for adding signatures for a subset of files, no changes to the ram
-> >> disk generator are necessary. Everything is done by a custom module. To
-> >> support a generic use case, it would be necessary to modify the
-> >> generator to execute getfattr and the awk script after files have been
-> >> placed in the temporary directory.
-> >>
-> >> If I understood the new proposal correctly, it would be task for cpio
-> >> to
-> >> read file metadata after the content and create a new record for each
-> >> file with mode 0x18000, type of metadata encoded in the file name and
-> >> metadata as file content. I don't know how easy it would be to modify
-> >> cpio. Probably the amount of changes would be reasonable.
-> =
+I mean, it is still not perfect, but I think it has finally gotten to
+the point where I prefer it over reviewing by email for high context
+patches where you don't expect a lot of deep discussion.
 
-> I could make toybox cpio do it in a weekend, and could probably throw a p=
-atch at
-> usr/gen_init_cpio.c while I'm at it. I prototyped something like that a c=
-ouple
-> years ago, it's not hard.
-> =
+Still not great for patches where you want to have a lot of discussion.
 
-> The real question is scripts/gen_initramfs_list.sh and the text format it
-> produces. We can currently generate cpio files with different ownership a=
-nd
-> permissions than the host system can represent (when not building as root=
-, on a
-> filesystem that may not support xattrs or would get unhappy about conflic=
-ting
-> selinux annotations). We work around it by having the metadata represented
-> textually in the initramfs_list file gen_initramfs_list.sh produces and
-> gen_init_cpio.c consumes.
-> =
+> > > > > only ofc). So that people get their pull requests (and patch series, we
+> > > > > have some ideas to tie this into patchwork) automatically tested for this
+> > > >
+> > > > Might that be Snowpatch[3]? I talked to Russell, the creator of Snowpatch,
+> > > > and he seemed pretty open to collaboration.
+> > > >
+> > > > Before I heard about Snowpatch, I had an intern write a translation
+> > > > layer that made Prow (the presubmit service that I used in the prototype
+> > > > above) work with LKML[4].
+> > >
+> > > There's about 3-4 forks/clones of patchwork. snowpatch is one, we have
+> > > a different one on freedesktop.org. It's a bit a mess :-/
 
-> xattrs are a terrible idea the Macintosh invented so Finder could remembe=
-r where
-> you moved a file's icon in its folder without having to modify the file, =
-and
-> then things like OS/2 copied it and Windows picked it up from there and w=
-ent "Of
-> course, this is a security mechanism!" and... sigh.
-> =
+I think Snowpatch is an ozlabs project; at least the maintainer works at IBM.
 
-> This is "data that is not data", it's metadata of unbounded size. It seem=
-s like
-> it should go in gen_initramfs_list.sh but as what, keyword=3Dvalue pairs =
-that
-> might have embedded newlines in them? A base64 encoding? Something else?
+Patchwork originally was a ozlabs project, right?
 
-I the previous try to add xattrs to cpio I've used hex encoding in
-gen_initramfs_list.sh:
-https://lkml.org/lkml/2018/1/24/851 - gen_init_cpio: set extended attribute=
-s for newcx format
-https://lkml.org/lkml/2018/1/24/852 - gen_initramfs_list.sh: add -x option =
-to enable newcx format
+Has any discussion taken place trying to consolidate some of the forks?
+
+Presubmit clearly seems like a feature that a number of people want.
+
+> > Oh, I didn't realize that. I found your patchwork instance here[5], but
+> > do you have a place where I can see the changes you have added to
+> > support presubmit?
+>
+> Ok here's a few links. Aside from the usual patch view we've also added a
+> series view:
+>
+> https://patchwork.freedesktop.org/project/intel-gfx/series/?ordering=-last_updated
+>
+> This ties the patches + cover letter together, and it even (tries to at
+> least) track revisions. Here's an example which is currently at revision
+> 9:
+>
+> https://patchwork.freedesktop.org/series/57232/
+
+Oooh, nice! That looks awesome! Looks like you have a number of presubmits too.
+
+> Below the patch list for each revision we also have the test result list.
+> If you click on the grey bar it'll expand with the summary from CI, the
+> "See full logs" is link to the full results from our CI. This is driven
+> with some REST api from our jenkins.
+>
+> Patchwork also sends out mails for these results.
+
+Nice! There are obviously a lot of other bots on various kernel
+mailing lists. Do you think people would object to sending presubmit
+results to the mailing lists by default?
+
+> Source is on gitlab: https://gitlab.freedesktop.org/patchwork-fdo
+
+Err, looks like you forked from the ozlab's repo a good while ago.
+
+Still, this all looks great!
+
+> > > > I am not married to either approach, but I think between the two of
+> > > > them, most of the initial legwork has been done to make presubmit on
+> > > > LKML a reality.
+> > >
+> > > We do have presubmit CI working already with our freedesktop.org
+> > > patchwork. The missing glue is just tying that into gitlab CI somehow
+> > > (since we want to unify build testing more and make it easier for
+> > > contributors to adjust things).
+> >
+> > I checked out a couple of your projects on your patchwork instance: AMD
+> > X.Org drivers, DRI devel, and Wayland. I saw the tab you added for
+> > tests, but none of them actually had any test results. Can you point me
+> > at one that does?
+>
+> Atm we use the CI stuff only on intel-gfx, with the our gpu CI farm, see
+> links above.
+>
+> Cheers, Daniel
+>
+> >
+> > Cheers!
+> >
+> > [5] https://patchwork.freedesktop.org/
+> >
+> > > > > super basic stuff.
+> > > >
+> > > > I am really excited to hear back on what you think!
+> > > >
+> > > > Cheers!
+> > > >
+> > > > [1] https://kunit-review.googlesource.com/c/linux/+/1509/10#message-7bfa40efb132e15c8388755c273837559911425c
+> > > > [2] https://kunit-review.googlesource.com/c/linux/+/1509/10#message-a6784496eafff442ac98fb068bf1a0f36ee73509
+> > > > [3] https://developer.ibm.com/open/projects/snowpatch/
+> > > > [4] https://kunit.googlesource.com/prow-lkml/
+> > > > _______________________________________________
+> > > > dri-devel mailing list
+> > > > dri-devel@lists.freedesktop.org
+> > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+Cheers!
