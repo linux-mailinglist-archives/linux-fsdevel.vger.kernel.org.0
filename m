@@ -2,394 +2,576 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB89526718
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 17:44:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C2A2676E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 17:54:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729655AbfEVPog (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 11:44:36 -0400
-Received: from mail-wr1-f44.google.com ([209.85.221.44]:41723 "EHLO
-        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729402AbfEVPog (ORCPT
+        id S1729636AbfEVPxs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 11:53:48 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38056 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729748AbfEVPxg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 11:44:36 -0400
-Received: by mail-wr1-f44.google.com with SMTP id g12so2842652wro.8;
-        Wed, 22 May 2019 08:44:34 -0700 (PDT)
+        Wed, 22 May 2019 11:53:36 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d18so2896146wrs.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2019 08:53:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:mime-version:message-id:in-reply-to
-         :references:user-agent:content-transfer-encoding;
-        bh=6jjL0znXnwSuURgJ8fuD35oqpjPwIp3saZIRbM6CfaU=;
-        b=ZYVBQZw/0mDjsZmSCOLnZaohVXKUp9Wr1F3BPkuJDbdPGu4EDLRKtEuaNuagEDSfqB
-         pHa5eR+gALHMFj1pEsRrffl8+QbqRjtf5mxKa8Xgq79J8oHCJB2moZK3/cGEklOCKkRj
-         F+UPpoMdsIn05K547s7V/fWxnQLI8sSY6WlKpLCiqrd9VVq5wvsuyc0qt9sLzmRz7Ewo
-         Ro7xyZJp23kN8zrZzxE4PTP5Nbwn3L60vW9AjiZgjc6PBVqWSlLs2OhPyyEMA2dEY+Pm
-         w9G67lz370ZGLiKRZistJpY76f33lSzCoK3YU5EZj8rbaXsZzQlb3RuJhvoRjLymfxpu
-         1ibw==
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=S8UeXBVh2enxi8b2UKrEtBDsgoiSzVSjxdpker/xUYY=;
+        b=O+XO3UigSWsqbs5j6sZsXPe731G/OhyVatPo1YQD4bYT9tFYPlESgQl4q3Yyk9sIli
+         vE8+RWWHveXi8xi9xYgFGmw6bkbIPsH6IxMqY0gPV7G9VHnqTj/OCHYFHk5J7H6YA0xJ
+         3IdslwoYIGDHDDDF6+zY0IAQV3JzNTutImE2IEgMBbpGwXNMfViETYV0tRfUbacaGj9U
+         OiP8ctD0B1QMEk68Xeh0lvYJw1FSkJrJ2cyzH1gipDUp+/V/5q2ySrzHTOdguwgPCXjX
+         oC0aPgxfoGHqJO/4nqWVLvegG6cQlTZ/bWYdqOsmhhf8XBLe+LRwA3J1yIAPT2B2fe5F
+         tnVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:mime-version:message-id
-         :in-reply-to:references:user-agent:content-transfer-encoding;
-        bh=6jjL0znXnwSuURgJ8fuD35oqpjPwIp3saZIRbM6CfaU=;
-        b=qHsQaCrufc2ILx83cQ7zjIVjeJxFu3CQJ1UD0b8TNg7WSk1bTjRW1lHEs272dvaOMU
-         uAiMCjmfNsidWL81lRBi4faiNwn5Vy+BiI80PdYYREFQws64a5/3ZCm5mEF37MLJTGE8
-         s4M3Aq6IcEv1mEsbSkMLD2lNMPzsP0PCemaGa8X2R/mfbkciHqfZEPQqBkjLE2/DcjAp
-         xrtYerDS0WpRAzhgVf32WETSgcBaYrZwWCwrbRELRCYx9a4uvBfuQJ4U2hCo5AcHSmKg
-         0cwV81B59LGW5KDYWsinOF3zyzg75khK8/s86yc7YghHrLK+Thr3MbdNR0yKF/k4uDg6
-         zs9g==
-X-Gm-Message-State: APjAAAVm/cR9tLwJDEBUz8AnvzlAB7HwV6C0pZrgaKC+ajbQHTHmYYBK
-        bXPIcJqu1HKv09MZYPDtAoUb21Zhnds=
-X-Google-Smtp-Source: APXvYqzFUhrO6go0z47HrTYcUO4D5Vvss67KExFatNELqpi2y6A+63eoV0QnsrXFMXhtD54xYECYCA==
-X-Received: by 2002:a5d:4002:: with SMTP id n2mr340944wrp.187.1558539873323;
-        Wed, 22 May 2019 08:44:33 -0700 (PDT)
-Received: from localhost ([92.59.185.54])
-        by smtp.gmail.com with ESMTPSA id s127sm7755333wmf.48.2019.05.22.08.44.31
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 22 May 2019 08:44:32 -0700 (PDT)
-From:   Vicente Bergas <vicencb@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: =?iso-8859-1?Q?d=5Flookup:_Unable_to_handle_kernel_paging_request?=
-Date:   Wed, 22 May 2019 17:44:30 +0200
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=S8UeXBVh2enxi8b2UKrEtBDsgoiSzVSjxdpker/xUYY=;
+        b=rmzoCMz/h6u6moHID09g2/efwsK4Nyz1o5IBM4meJnZ5xgn/gFpOSMooxqOWbsKFhY
+         2FJkx3FK8GYb1ZKwzfLERBJWN5Vq6WXf7vW9C/HbdvlSII0tvFXalYwGjIpUh0FUywOE
+         qpQn/r/mllJqZ3tEcZWAYINVELnWh3K7J5lJhaesyECT5kYTU1yxsNau9XNJPvrxN+gw
+         KRpVAKsl+WITpuZEfLhhsoFeeDnlszWH47PVjG0ziibU90HjQBa9fwIqHOJUYYti9O/Z
+         /a33kMK6cbZ9M+SZw1VjLnmCfEJ5IjqJ0hYVYzXsoP7Xdf3FKzGOh5sVWRgQ2XLh4sIG
+         1SzQ==
+X-Gm-Message-State: APjAAAUyR9hD6DtEpxuK+GBpmUGepS3qkMD8qCJYQS2wZBxndlPJfyU+
+        OO9g2o8Tv6W5ibP2qzXMFEHFGw==
+X-Google-Smtp-Source: APXvYqwK7WfL4+CYT1pk5nuCfg3hR6cOpQFBnTvkGuiCvFKRl0oxIMIm9MRZBxnP507MX79iKHD6Pg==
+X-Received: by 2002:a5d:4d92:: with SMTP id b18mr54858534wru.212.1558540413515;
+        Wed, 22 May 2019 08:53:33 -0700 (PDT)
+Received: from localhost.localdomain ([185.197.132.10])
+        by smtp.gmail.com with ESMTPSA id t12sm15677263wro.2.2019.05.22.08.53.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 May 2019 08:53:32 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        torvalds@linux-foundation.org, fweimer@redhat.com
+Cc:     jannh@google.com, oleg@redhat.com, tglx@linutronix.de,
+        arnd@arndb.de, shuah@kernel.org, dhowells@redhat.com,
+        tkjos@android.com, ldv@altlinux.org, miklos@szeredi.hu,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, x86@kernel.org,
+        Christian Brauner <christian@brauner.io>
+Subject: [PATCH v1 1/2] open: add close_range()
+Date:   Wed, 22 May 2019 17:52:58 +0200
+Message-Id: <20190522155259.11174-1-christian@brauner.io>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Message-ID: <bdc8b245-afca-4662-99e2-a082f25fc927@gmail.com>
-In-Reply-To: <20190522135331.GM17978@ZenIV.linux.org.uk>
-References: <23950bcb-81b0-4e07-8dc8-8740eb53d7fd@gmail.com>
- <20190522135331.GM17978@ZenIV.linux.org.uk>
-User-Agent: Trojita
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al,
+This adds the close_range() syscall. It allows to efficiently close a range
+of file descriptors up to all file descriptors of a calling task.
 
-On Wednesday, May 22, 2019 3:53:31 PM CEST, Al Viro wrote:
-> On Wed, May 22, 2019 at 12:40:55PM +0200, Vicente Bergas wrote:
->> Hi,
->> since a recent update the kernel is reporting d_lookup errors.
->> They appear randomly and after each error the affected file or directory
->> is no longer accessible.
->> The kernel is built with GCC 9.1.0 on ARM64.
->> Four traces from different workloads follow.
->
-> Interesting...  bisection would be useful.
+The syscall came up in a recent discussion around the new mount API and
+making new file descriptor types cloexec by default. During this
+discussion, Al suggested the close_range() syscall (cf. [1]). Note, a
+syscall in this manner has been requested by various people over time.
 
-Agreed, but that would be difficult because of the randomness.
-I have been running days with no issues with a known-bad kernel.
-The issue could also be related to the upgrade to GCC 9.
+First, it helps to close all file descriptors of an exec()ing task. This
+can be done safely via (quoting Al's example from [1] verbatim):
 
->> This trace is from v5.1-12511-g72cf0b07418a while untaring into a tmpfs
->> filesystem:
->>=20
->> Unable to handle kernel paging request at virtual address 0000880001000018=
+        /* that exec is sensitive */
+        unshare(CLONE_FILES);
+        /* we don't want anything past stderr here */
+        close_range(3, ~0U);
+        execve(....);
 
->> user pgtable: 4k pages, 48-bit VAs, pgdp =3D 000000007ccc6c7d
->> [0000880001000018] pgd=3D0000000000000000
->
-> Attempt to dereference 0x0000880001000018, which is not mapped at all?
->
->> pc : __d_lookup+0x58/0x198
->
-> ... and so would objdump of the function in question.
+The code snippet above is one way of working around the problem that file
+descriptors are not cloexec by default. This is aggravated by the fact that
+we can't just switch them over without massively regressing userspace. For
+a whole class of programs having an in-kernel method of closing all file
+descriptors is very helpful (e.g. demons, service managers, programming
+language standard libraries, container managers etc.).
+(Please note, unshare(CLONE_FILES) should only be needed if the calling
+ task is multi-threaded and shares the file descriptor table with another
+ thread in which case two threads could race with one thread allocating
+ file descriptors and the other one closing them via close_range(). For the
+ general case close_range() before the execve() is sufficient.)
 
-Here is the dump from another build of the exact
-same version (the build is reproducible).
+Second, it allows userspace to avoid implementing closing all file
+descriptors by parsing through /proc/<pid>/fd/* and calling close() on each
+file descriptor. From looking at various large(ish) userspace code bases
+this or similar patterns are very common in:
+- service managers (cf. [4])
+- libcs (cf. [6])
+- container runtimes (cf. [5])
+- programming language runtimes/standard libraries
+  - Python (cf. [2])
+  - Rust (cf. [7], [8])
+As Dmitry pointed out there's even a long-standing glibc bug about missing
+kernel support for this task (cf. [3]).
+In addition, the syscall will also work for tasks that do not have procfs
+mounted and on kernels that do not have procfs support compiled in. In such
+situations the only way to make sure that all file descriptors are closed
+is to call close() on each file descriptor up to UINT_MAX or RLIMIT_NOFILE,
+OPEN_MAX trickery (cf. comment [8] on Rust).
 
-objdump -x -S fs/dcache.o
+The performance is striking. For good measure, comparing the following
+simple close_all_fds() userspace implementation that is essentially just
+glibc's version in [6]:
 
-...
-0000000000002d00 <__d_lookup_rcu>:
-    2d00:=09a9b97bfd =09stp=09x29, x30, [sp, #-112]!
-    2d04:=09aa0103e3 =09mov=09x3, x1
-    2d08:=0990000004 =09adrp=09x4, 0 <find_submount>
-=09=09=092d08: R_AARCH64_ADR_PREL_PG_HI21=09.data..read_mostly
-    2d0c:=09910003fd =09mov=09x29, sp
-    2d10:=09a90153f3 =09stp=09x19, x20, [sp, #16]
-    2d14:=0991000081 =09add=09x1, x4, #0x0
-=09=09=092d14: R_AARCH64_ADD_ABS_LO12_NC=09.data..read_mostly
-    2d18:=09a9025bf5 =09stp=09x21, x22, [sp, #32]
-    2d1c:=09a9046bf9 =09stp=09x25, x26, [sp, #64]
-    2d20:=09a9406476 =09ldp=09x22, x25, [x3]
-    2d24:=09b9400821 =09ldr=09w1, [x1, #8]
-    2d28:=09f9400084 =09ldr=09x4, [x4]
-=09=09=092d28: R_AARCH64_LDST64_ABS_LO12_NC=09.data..read_mostly
-    2d2c:=091ac126c1 =09lsr=09w1, w22, w1
-    2d30:=09f8617893 =09ldr=09x19, [x4, x1, lsl #3]
-    2d34:=09f27ffa73 =09ands=09x19, x19, #0xfffffffffffffffe
-    2d38:=0954000920 =09b.eq=092e5c <__d_lookup_rcu+0x15c>  // b.none
-    2d3c:=09aa0003f5 =09mov=09x21, x0
-    2d40:=09d360feda =09lsr=09x26, x22, #32
-    2d44:=09a90363f7 =09stp=09x23, x24, [sp, #48]
-    2d48:=09aa0203f8 =09mov=09x24, x2
-    2d4c:=09d3608ad7 =09ubfx=09x23, x22, #32, #3
-    2d50:=09a90573fb =09stp=09x27, x28, [sp, #80]
-    2d54:=092a1603fc =09mov=09w28, w22
-    2d58:=099280001b =09mov=09x27, #0xffffffffffffffff    =09// #-1
-    2d5c:=0914000003 =09b=092d68 <__d_lookup_rcu+0x68>
-    2d60:=09f9400273 =09ldr=09x19, [x19]
-    2d64:=09b4000793 =09cbz=09x19, 2e54 <__d_lookup_rcu+0x154>
-    2d68:=09b85fc265 =09ldur=09w5, [x19, #-4]
-    2d6c:=09d50339bf =09dmb=09ishld
-    2d70:=09f9400a64 =09ldr=09x4, [x19, #16]
-    2d74:=09d1002260 =09sub=09x0, x19, #0x8
-    2d78:=09eb0402bf =09cmp=09x21, x4
-    2d7c:=0954ffff21 =09b.ne=092d60 <__d_lookup_rcu+0x60>  // b.any
-    2d80:=09121f78b4 =09and=09w20, w5, #0xfffffffe
-    2d84:=09aa0003e9 =09mov=09x9, x0
-    2d88:=09f9400664 =09ldr=09x4, [x19, #8]
-    2d8c:=09b4fffea4 =09cbz=09x4, 2d60 <__d_lookup_rcu+0x60>
-    2d90:=09b94002a4 =09ldr=09w4, [x21]
-    2d94:=0937080404 =09tbnz=09w4, #1, 2e14 <__d_lookup_rcu+0x114>
-    2d98:=09f9401000 =09ldr=09x0, [x0, #32]
-    2d9c:=09eb16001f =09cmp=09x0, x22
-    2da0:=0954fffe01 =09b.ne=092d60 <__d_lookup_rcu+0x60>  // b.any
-    2da4:=09f9401265 =09ldr=09x5, [x19, #32]
-    2da8:=092a1a03e6 =09mov=09w6, w26
-    2dac:=09cb050328 =09sub=09x8, x25, x5
-    2db0:=0914000006 =09b=092dc8 <__d_lookup_rcu+0xc8>
-    2db4:=09910020a5 =09add=09x5, x5, #0x8
-    2db8:=09eb07001f =09cmp=09x0, x7
-    2dbc:=0954fffd21 =09b.ne=092d60 <__d_lookup_rcu+0x60>  // b.any
-    2dc0:=09710020c6 =09subs=09w6, w6, #0x8
-    2dc4:=0954000160 =09b.eq=092df0 <__d_lookup_rcu+0xf0>  // b.none
-    2dc8:=098b0800a4 =09add=09x4, x5, x8
-    2dcc:=096b1700df =09cmp=09w6, w23
-    2dd0:=09f9400087 =09ldr=09x7, [x4]
-    2dd4:=09f94000a0 =09ldr=09x0, [x5]
-    2dd8:=0954fffee1 =09b.ne=092db4 <__d_lookup_rcu+0xb4>  // b.any
-    2ddc:=09531d72e1 =09lsl=09w1, w23, #3
-    2de0:=09ca070000 =09eor=09x0, x0, x7
-    2de4:=099ac12361 =09lsl=09x1, x27, x1
-    2de8:=09ea21001f =09bics=09xzr, x0, x1
-    2dec:=0954fffba1 =09b.ne=092d60 <__d_lookup_rcu+0x60>  // b.any
-    2df0:=09b9000314 =09str=09w20, [x24]
-    2df4:=09aa0903e0 =09mov=09x0, x9
-    2df8:=09a94153f3 =09ldp=09x19, x20, [sp, #16]
-    2dfc:=09a9425bf5 =09ldp=09x21, x22, [sp, #32]
-    2e00:=09a94363f7 =09ldp=09x23, x24, [sp, #48]
-    2e04:=09a9446bf9 =09ldp=09x25, x26, [sp, #64]
-    2e08:=09a94573fb =09ldp=09x27, x28, [sp, #80]
-    2e0c:=09a8c77bfd =09ldp=09x29, x30, [sp], #112
-    2e10:=09d65f03c0 =09ret
-    2e14:=09b9402001 =09ldr=09w1, [x0, #32]
-    2e18:=096b01039f =09cmp=09w28, w1
-    2e1c:=0954fffa21 =09b.ne=092d60 <__d_lookup_rcu+0x60>  // b.any
-    2e20:=09b9402401 =09ldr=09w1, [x0, #36]
-    2e24:=09f9401402 =09ldr=09x2, [x0, #40]
-    2e28:=09d50339bf =09dmb=09ishld
-    2e2c:=09b85fc264 =09ldur=09w4, [x19, #-4]
-    2e30:=096b04029f =09cmp=09w20, w4
-    2e34:=0954000221 =09b.ne=092e78 <__d_lookup_rcu+0x178>  // b.any
-    2e38:=09f94032a4 =09ldr=09x4, [x21, #96]
-    2e3c:=09a90627e3 =09stp=09x3, x9, [sp, #96]
-    2e40:=09f9400c84 =09ldr=09x4, [x4, #24]
-    2e44:=09d63f0080 =09blr=09x4
-    2e48:=09a94627e3 =09ldp=09x3, x9, [sp, #96]
-    2e4c:=0934fffd20 =09cbz=09w0, 2df0 <__d_lookup_rcu+0xf0>
-    2e50:=0917ffffc4 =09b=092d60 <__d_lookup_rcu+0x60>
-    2e54:=09a94363f7 =09ldp=09x23, x24, [sp, #48]
-    2e58:=09a94573fb =09ldp=09x27, x28, [sp, #80]
-    2e5c:=09d2800009 =09mov=09x9, #0x0                   =09// #0
-    2e60:=09aa0903e0 =09mov=09x0, x9
-    2e64:=09a94153f3 =09ldp=09x19, x20, [sp, #16]
-    2e68:=09a9425bf5 =09ldp=09x21, x22, [sp, #32]
-    2e6c:=09a9446bf9 =09ldp=09x25, x26, [sp, #64]
-    2e70:=09a8c77bfd =09ldp=09x29, x30, [sp], #112
-    2e74:=09d65f03c0 =09ret
-    2e78:=09d503203f =09yield
-    2e7c:=09b85fc265 =09ldur=09w5, [x19, #-4]
-    2e80:=09d50339bf =09dmb=09ishld
-    2e84:=09f9400c01 =09ldr=09x1, [x0, #24]
-    2e88:=09121f78b4 =09and=09w20, w5, #0xfffffffe
-    2e8c:=09eb15003f =09cmp=09x1, x21
-    2e90:=0954fff681 =09b.ne=092d60 <__d_lookup_rcu+0x60>  // b.any
-    2e94:=0917ffffbd =09b=092d88 <__d_lookup_rcu+0x88>
+static int close_all_fds(void)
+{
+        int dir_fd;
+        DIR *dir;
+        struct dirent *direntp;
 
-0000000000002e98 <__d_lookup>:
-    2e98:=09a9b97bfd =09stp=09x29, x30, [sp, #-112]!
-    2e9c:=0990000002 =09adrp=09x2, 0 <find_submount>
-=09=09=092e9c: R_AARCH64_ADR_PREL_PG_HI21=09.data..read_mostly
-    2ea0:=0991000043 =09add=09x3, x2, #0x0
-=09=09=092ea0: R_AARCH64_ADD_ABS_LO12_NC=09.data..read_mostly
-    2ea4:=09910003fd =09mov=09x29, sp
-    2ea8:=09a90573fb =09stp=09x27, x28, [sp, #80]
-    2eac:=09aa0103fc =09mov=09x28, x1
-    2eb0:=09a90153f3 =09stp=09x19, x20, [sp, #16]
-    2eb4:=09a90363f7 =09stp=09x23, x24, [sp, #48]
-    2eb8:=09a9046bf9 =09stp=09x25, x26, [sp, #64]
-    2ebc:=09aa0003fa =09mov=09x26, x0
-    2ec0:=09b9400397 =09ldr=09w23, [x28]
-    2ec4:=09b9400860 =09ldr=09w0, [x3, #8]
-    2ec8:=09f9400041 =09ldr=09x1, [x2]
-=09=09=092ec8: R_AARCH64_LDST64_ABS_LO12_NC=09.data..read_mostly
-    2ecc:=091ac026e0 =09lsr=09w0, w23, w0
-    2ed0:=09f8607833 =09ldr=09x19, [x1, x0, lsl #3]
-    2ed4:=09f27ffa73 =09ands=09x19, x19, #0xfffffffffffffffe
-    2ed8:=0954000320 =09b.eq=092f3c <__d_lookup+0xa4>  // b.none
-    2edc:=095280001b =09mov=09w27, #0x0                   =09// #0
-    2ee0:=0992800018 =09mov=09x24, #0xffffffffffffffff    =09// #-1
-    2ee4:=09a9025bf5 =09stp=09x21, x22, [sp, #32]
-    2ee8:=09d2800016 =09mov=09x22, #0x0                   =09// #0
-    2eec:=0952800035 =09mov=09w21, #0x1                   =09// #1
-    2ef0:=09b9401a62 =09ldr=09w2, [x19, #24]
-    2ef4:=09d1002274 =09sub=09x20, x19, #0x8
-    2ef8:=096b17005f =09cmp=09w2, w23
-    2efc:=09540001a1 =09b.ne=092f30 <__d_lookup+0x98>  // b.any
-    2f00:=0991014279 =09add=09x25, x19, #0x50
-    2f04:=09f9800331 =09prfm=09pstl1strm, [x25]
-    2f08:=09885fff21 =09ldaxr=09w1, [x25]
-    2f0c:=094a160020 =09eor=09w0, w1, w22
-    2f10:=0935000060 =09cbnz=09w0, 2f1c <__d_lookup+0x84>
-    2f14:=0988007f35 =09stxr=09w0, w21, [x25]
-    2f18:=0935ffff80 =09cbnz=09w0, 2f08 <__d_lookup+0x70>
-    2f1c:=0935000521 =09cbnz=09w1, 2fc0 <__d_lookup+0x128>
-    2f20:=09f9400e82 =09ldr=09x2, [x20, #24]
-    2f24:=09eb1a005f =09cmp=09x2, x26
-    2f28:=09540001a0 =09b.eq=092f5c <__d_lookup+0xc4>  // b.none
-    2f2c:=09089fff3b =09stlrb=09w27, [x25]
-    2f30:=09f9400273 =09ldr=09x19, [x19]
-    2f34:=09b5fffdf3 =09cbnz=09x19, 2ef0 <__d_lookup+0x58>
-    2f38:=09a9425bf5 =09ldp=09x21, x22, [sp, #32]
-    2f3c:=09d2800008 =09mov=09x8, #0x0                   =09// #0
-    2f40:=09aa0803e0 =09mov=09x0, x8
-    2f44:=09a94153f3 =09ldp=09x19, x20, [sp, #16]
-    2f48:=09a94363f7 =09ldp=09x23, x24, [sp, #48]
-    2f4c:=09a9446bf9 =09ldp=09x25, x26, [sp, #64]
-    2f50:=09a94573fb =09ldp=09x27, x28, [sp, #80]
-    2f54:=09a8c77bfd =09ldp=09x29, x30, [sp], #112
-    2f58:=09d65f03c0 =09ret
-    2f5c:=09f9400660 =09ldr=09x0, [x19, #8]
-    2f60:=09b4fffe60 =09cbz=09x0, 2f2c <__d_lookup+0x94>
-    2f64:=09b9400340 =09ldr=09w0, [x26]
-    2f68:=09aa1403e8 =09mov=09x8, x20
-    2f6c:=09b9402681 =09ldr=09w1, [x20, #36]
-    2f70:=09370802e0 =09tbnz=09w0, #1, 2fcc <__d_lookup+0x134>
-    2f74:=09b9400784 =09ldr=09w4, [x28, #4]
-    2f78:=096b04003f =09cmp=09w1, w4
-    2f7c:=0954fffd81 =09b.ne=092f2c <__d_lookup+0x94>  // b.any
-    2f80:=09f9400787 =09ldr=09x7, [x28, #8]
-    2f84:=0912000881 =09and=09w1, w4, #0x7
-    2f88:=09f9401265 =09ldr=09x5, [x19, #32]
-    2f8c:=09cb0500e7 =09sub=09x7, x7, x5
-    2f90:=0914000003 =09b=092f9c <__d_lookup+0x104>
-    2f94:=0971002084 =09subs=09w4, w4, #0x8
-    2f98:=0954000300 =09b.eq=092ff8 <__d_lookup+0x160>  // b.none
-    2f9c:=098b0700a2 =09add=09x2, x5, x7
-    2fa0:=096b04003f =09cmp=09w1, w4
-    2fa4:=09f9400046 =09ldr=09x6, [x2]
-    2fa8:=09f94000a0 =09ldr=09x0, [x5]
-    2fac:=0954000340 =09b.eq=093014 <__d_lookup+0x17c>  // b.none
-    2fb0:=09910020a5 =09add=09x5, x5, #0x8
-    2fb4:=09eb06001f =09cmp=09x0, x6
-    2fb8:=0954fffee0 =09b.eq=092f94 <__d_lookup+0xfc>  // b.none
-    2fbc:=0917ffffdc =09b=092f2c <__d_lookup+0x94>
-    2fc0:=09aa1903e0 =09mov=09x0, x25
-    2fc4:=0994000000 =09bl=090 <queued_spin_lock_slowpath>
-=09=09=092fc4: R_AARCH64_CALL26=09queued_spin_lock_slowpath
-    2fc8:=0917ffffd6 =09b=092f20 <__d_lookup+0x88>
-    2fcc:=09f9403340 =09ldr=09x0, [x26, #96]
-    2fd0:=09aa1c03e3 =09mov=09x3, x28
-    2fd4:=09f9401682 =09ldr=09x2, [x20, #40]
-    2fd8:=09f90037f4 =09str=09x20, [sp, #104]
-    2fdc:=09f9400c04 =09ldr=09x4, [x0, #24]
-    2fe0:=09aa1403e0 =09mov=09x0, x20
-    2fe4:=09d63f0080 =09blr=09x4
-    2fe8:=097100001f =09cmp=09w0, #0x0
-    2fec:=091a9f17e0 =09cset=09w0, eq  // eq =3D none
-    2ff0:=09f94037e8 =09ldr=09x8, [sp, #104]
-    2ff4:=0934fff9c0 =09cbz=09w0, 2f2c <__d_lookup+0x94>
-    2ff8:=09b9405e80 =09ldr=09w0, [x20, #92]
-    2ffc:=0952800001 =09mov=09w1, #0x0                   =09// #0
-    3000:=0911000400 =09add=09w0, w0, #0x1
-    3004:=09b9005e80 =09str=09w0, [x20, #92]
-    3008:=09089fff21 =09stlrb=09w1, [x25]
-    300c:=09a9425bf5 =09ldp=09x21, x22, [sp, #32]
-    3010:=0917ffffcc =09b=092f40 <__d_lookup+0xa8>
-    3014:=09531d7021 =09lsl=09w1, w1, #3
-    3018:=09ca060000 =09eor=09x0, x0, x6
-    301c:=099ac12301 =09lsl=09x1, x24, x1
-    3020:=09ea21001f =09bics=09xzr, x0, x1
-    3024:=091a9f17e0 =09cset=09w0, eq  // eq =3D none
-    3028:=0934fff820 =09cbz=09w0, 2f2c <__d_lookup+0x94>
-    302c:=0917fffff3 =09b=092ff8 <__d_lookup+0x160>
+        dir = opendir("/proc/self/fd");
+        if (!dir)
+                return -1;
+        dir_fd = dirfd(dir);
+        while ((direntp = readdir(dir))) {
+                int fd;
+                if (strcmp(direntp->d_name, ".") == 0)
+                        continue;
+                if (strcmp(direntp->d_name, "..") == 0)
+                        continue;
+                fd = atoi(direntp->d_name);
+                if (fd == dir_fd || fd == 0 || fd == 1 || fd == 2)
+                        continue;
+                close(fd);
+        }
+        closedir(dir);
+        return 0;
+}
 
-0000000000003030 <d_lookup>:
-    3030:=09a9bd7bfd =09stp=09x29, x30, [sp, #-48]!
-    3034:=09910003fd =09mov=09x29, sp
-    3038:=09a90153f3 =09stp=09x19, x20, [sp, #16]
-    303c:=0990000013 =09adrp=09x19, 0 <find_submount>
-=09=09=09303c: R_AARCH64_ADR_PREL_PG_HI21=09.data..cacheline_aligned
-    3040:=09aa0103f4 =09mov=09x20, x1
-    3044:=0991000273 =09add=09x19, x19, #0x0
-=09=09=093044: R_AARCH64_ADD_ABS_LO12_NC=09.data..cacheline_aligned
-    3048:=09a9025bf5 =09stp=09x21, x22, [sp, #32]
-    304c:=09aa0003f5 =09mov=09x21, x0
-    3050:=09b9400276 =09ldr=09w22, [x19]
-    3054:=09370001d6 =09tbnz=09w22, #0, 308c <d_lookup+0x5c>
-    3058:=09d50339bf =09dmb=09ishld
-    305c:=09aa1403e1 =09mov=09x1, x20
-    3060:=09aa1503e0 =09mov=09x0, x21
-    3064:=0994000000 =09bl=092e98 <__d_lookup>
-=09=09=093064: R_AARCH64_CALL26=09__d_lookup
-    3068:=09b50000a0 =09cbnz=09x0, 307c <d_lookup+0x4c>
-    306c:=09d50339bf =09dmb=09ishld
-    3070:=09b9400261 =09ldr=09w1, [x19]
-    3074:=096b16003f =09cmp=09w1, w22
-    3078:=0954fffec1 =09b.ne=093050 <d_lookup+0x20>  // b.any
-    307c:=09a94153f3 =09ldp=09x19, x20, [sp, #16]
-    3080:=09a9425bf5 =09ldp=09x21, x22, [sp, #32]
-    3084:=09a8c37bfd =09ldp=09x29, x30, [sp], #48
-    3088:=09d65f03c0 =09ret
-    308c:=09d503203f =09yield
-    3090:=0917fffff0 =09b=093050 <d_lookup+0x20>
-    3094:=09d503201f =09nop
-...
+to close_range() yields:
+1. closing 4 open files:
+   - close_all_fds(): ~280 us
+   - close_range():    ~24 us
 
->> This trace is from v5.2.0-rc1:
->> Unable to handle kernel paging request at virtual address 0000880001000018=
+2. closing 1000 open files:
+   - close_all_fds(): ~5000 us
+   - close_range():   ~800 us
 
-> [apparently identical oops, modulo the call chain to=20
-> d_lookup(); since that's
-> almost certainly buggered data structures encountered during=20
-> the hash lookup,
-> exact callchain doesn't matter all that much; procfs is the=20
-> filesystem involved]
->
->> This trace is from v5.2.0-rc1 while executing 'git pull -r' from f2fs. It
->> got repeated several times:
->>=20
->> Unable to handle kernel paging request at virtual address 0000000000fffffc=
+close_range() is designed to allow for some flexibility. Specifically, it
+does not simply always close all open file descriptors of a task. Instead,
+callers can specify an upper bound.
+This is e.g. useful for scenarios where specific file descriptors are
+created with well-known numbers that are supposed to be excluded from
+getting closed.
+For extra paranoia close_range() comes with a flags argument. This can e.g.
+be used to implement extension. Once can imagine userspace wanting to stop
+at the first error instead of ignoring errors under certain circumstances.
+There might be other valid ideas in the future. In any case, a flag
+argument doesn't hurt and keeps us on the safe side.
 
->> user pgtable: 4k pages, 48-bit VAs, pgdp =3D 0000000092bdb9cd
->> [0000000000fffffc] pgd=3D0000000000000000
->> pc : __d_lookup_rcu+0x68/0x198
->
->> This trace is from v5.2.0-rc1 while executing 'rm -rf' the directory
->> affected from the previous trace:
->>=20
->> Unable to handle kernel paging request at virtual address 0000000001000018=
+From an implementation side this is kept rather dumb. It saw some input
+from David and Jann but all nonsense is obviously my own!
+- Errors to close file descriptors are currently ignored. (Could be changed
+  by setting a flag in the future if needed.)
+- __close_range() is a rather simplistic wrapper around __close_fd().
+  My reasoning behind this is based on the nature of how __close_fd() needs
+  to release an fd. But maybe I misunderstood specifics:
+  We take the files_lock and rcu-dereference the fdtable of the calling
+  task, we find the entry in the fdtable, get the file and need to release
+  files_lock before calling filp_close().
+  In the meantime the fdtable might have been altered so we can't just
+  retake the spinlock and keep the old rcu-reference of the fdtable
+  around. Instead we need to grab a fresh reference to the fdtable.
+  If my reasoning is correct then there's really no point in fancyfying
+  __close_range(): We just need to rcu-dereference the fdtable of the
+  calling task once to cap the max_fd value correctly and then go on
+  calling __close_fd() in a loop.
 
->
-> ... and addresses involved are
->
-> 0000880001000018
-> 0000000000fffffc
-> 0000000001000018
->
-> AFAICS, the only registers with the value in the vicinity of those addresse=
-s
-> had been (in all cases so far) x19 - 0000880001000000 in the=20
-> first two traces,
-> 0000000001000000 in the last two...
->
-> I'd really like to see the disassembly of the functions involved (as well a=
-s
-> .config in question).
+/* References */
+[1]: https://lore.kernel.org/lkml/20190516165021.GD17978@ZenIV.linux.org.uk/
+[2]: https://github.com/python/cpython/blob/9e4f2f3a6b8ee995c365e86d976937c141d867f8/Modules/_posixsubprocess.c#L220
+[3]: https://sourceware.org/bugzilla/show_bug.cgi?id=10353#c7
+[4]: https://github.com/systemd/systemd/blob/5238e9575906297608ff802a27e2ff9effa3b338/src/basic/fd-util.c#L217
+[5]: https://github.com/lxc/lxc/blob/ddf4b77e11a4d08f09b7b9cd13e593f8c047edc5/src/lxc/start.c#L236
+[6]: https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/grantpt.c;h=2030e07fa6e652aac32c775b8c6e005844c3c4eb;hb=HEAD#l17
+     Note that this is an internal implementation that is not exported.
+     Currently, libc seems to not provide an exported version of this
+     because of missing kernel support to do this.
+[7]: https://github.com/rust-lang/rust/issues/12148
+[8]: https://github.com/rust-lang/rust/blob/5f47c0613ed4eb46fca3633c1297364c09e5e451/src/libstd/sys/unix/process2.rs#L303-L308
+     Rust's solution is slightly different but is equally unperformant.
+     Rust calls getdtablesize() which is a glibc library function that
+     simply returns the current RLIMIT_NOFILE or OPEN_MAX values. Rust then
+     goes on to call close() on each fd. That's obviously overkill for most
+     tasks. Rarely, tasks - especially non-demons - hit RLIMIT_NOFILE or
+     OPEN_MAX.
+     Let's be nice and assume an unprivileged user with RLIMIT_NOFILE set
+     to 1024. Even in this case, there's a very high chance that in the
+     common case Rust is calling the close() syscall 1021 times pointlessly
+     if the task just has 0, 1, and 2 open.
 
-Here is the .config: https://paste.debian.net/1082689
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Christian Brauner <christian@brauner.io>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Jann Horn <jannh@google.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Dmitry V. Levin <ldv@altlinux.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Florian Weimer <fweimer@redhat.com>
+Cc: linux-api@vger.kernel.org
+---
+v1:
+- Linus Torvalds <torvalds@linux-foundation.org>:
+  - add cond_resched() to yield cpu when closing a lot of file descriptors
+- Al Viro <viro@zeniv.linux.org.uk>:
+  - add cond_resched() to yield cpu when closing a lot of file descriptors
+---
+ arch/alpha/kernel/syscalls/syscall.tbl      |  1 +
+ arch/arm/tools/syscall.tbl                  |  1 +
+ arch/arm64/include/asm/unistd32.h           |  2 +
+ arch/ia64/kernel/syscalls/syscall.tbl       |  1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |  1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |  1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |  1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |  1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |  1 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |  1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |  1 +
+ arch/s390/kernel/syscalls/syscall.tbl       |  1 +
+ arch/sh/kernel/syscalls/syscall.tbl         |  1 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |  1 +
+ arch/x86/entry/syscalls/syscall_32.tbl      |  1 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |  1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |  1 +
+ fs/file.c                                   | 63 ++++++++++++++++++---
+ fs/open.c                                   | 20 +++++++
+ include/linux/fdtable.h                     |  2 +
+ include/linux/syscalls.h                    |  2 +
+ include/uapi/asm-generic/unistd.h           |  4 +-
+ 22 files changed, 100 insertions(+), 9 deletions(-)
 
-Regards,
-  Vicen=C3=A7.
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index 9e7704e44f6d..b55d93af8096 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -473,3 +473,4 @@
+ 541	common	fsconfig			sys_fsconfig
+ 542	common	fsmount				sys_fsmount
+ 543	common	fspick				sys_fspick
++545	common	close_range			sys_close_range
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index aaf479a9e92d..0125c97c75dd 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -447,3 +447,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index c39e90600bb3..9a3270d29b42 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -886,6 +886,8 @@ __SYSCALL(__NR_fsconfig, sys_fsconfig)
+ __SYSCALL(__NR_fsmount, sys_fsmount)
+ #define __NR_fspick 433
+ __SYSCALL(__NR_fspick, sys_fspick)
++#define __NR_close_range 435
++__SYSCALL(__NR_close_range, sys_close_range)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index e01df3f2f80d..1a90b464e96f 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -354,3 +354,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index 7e3d0734b2f3..2dee2050f9ef 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -433,3 +433,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index 26339e417695..923ef69e5a76 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -439,3 +439,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index 0e2dd68ade57..967ed9de51cd 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -372,3 +372,4 @@
+ 431	n32	fsconfig			sys_fsconfig
+ 432	n32	fsmount				sys_fsmount
+ 433	n32	fspick				sys_fspick
++435	n32	close_range			sys_close_range
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index 5eebfa0d155c..71de731102b1 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -348,3 +348,4 @@
+ 431	n64	fsconfig			sys_fsconfig
+ 432	n64	fsmount				sys_fsmount
+ 433	n64	fspick				sys_fspick
++435	n64	close_range			sys_close_range
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index 3cc1374e02d0..5a325ab29f88 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -421,3 +421,4 @@
+ 431	o32	fsconfig			sys_fsconfig
+ 432	o32	fsmount				sys_fsmount
+ 433	o32	fspick				sys_fspick
++435	o32	close_range			sys_close_range
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index c9e377d59232..dcc0a0879139 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -430,3 +430,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index 103655d84b4b..ba2c1f078cbd 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -515,3 +515,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index e822b2964a83..d7c9043d2902 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -436,3 +436,4 @@
+ 431  common	fsconfig		sys_fsconfig			sys_fsconfig
+ 432  common	fsmount			sys_fsmount			sys_fsmount
+ 433  common	fspick			sys_fspick			sys_fspick
++435  common	close_range		sys_close_range			sys_close_range
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index 016a727d4357..9b5e6bf0ce32 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -436,3 +436,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index e047480b1605..8c674a1e0072 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -479,3 +479,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index ad968b7bac72..7f7a89a96707 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -438,3 +438,4 @@
+ 431	i386	fsconfig		sys_fsconfig			__ia32_sys_fsconfig
+ 432	i386	fsmount			sys_fsmount			__ia32_sys_fsmount
+ 433	i386	fspick			sys_fspick			__ia32_sys_fspick
++435	i386	close_range		sys_close_range			__ia32_sys_close_range
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index b4e6f9e6204a..0f7d47ae921c 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -355,6 +355,7 @@
+ 431	common	fsconfig		__x64_sys_fsconfig
+ 432	common	fsmount			__x64_sys_fsmount
+ 433	common	fspick			__x64_sys_fspick
++435	common	close_range		__x64_sys_close_range
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 5fa0ee1c8e00..b489532265d0 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -404,3 +404,4 @@
+ 431	common	fsconfig			sys_fsconfig
+ 432	common	fsmount				sys_fsmount
+ 433	common	fspick				sys_fspick
++435	common	close_range			sys_close_range
+diff --git a/fs/file.c b/fs/file.c
+index 3da91a112bab..54945efa046e 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -615,12 +615,9 @@ void fd_install(unsigned int fd, struct file *file)
+ 
+ EXPORT_SYMBOL(fd_install);
+ 
+-/*
+- * The same warnings as for __alloc_fd()/__fd_install() apply here...
+- */
+-int __close_fd(struct files_struct *files, unsigned fd)
++static struct file *pick_file(struct files_struct *files, unsigned fd)
+ {
+-	struct file *file;
++	struct file *file = NULL;
+ 	struct fdtable *fdt;
+ 
+ 	spin_lock(&files->file_lock);
+@@ -632,15 +629,65 @@ int __close_fd(struct files_struct *files, unsigned fd)
+ 		goto out_unlock;
+ 	rcu_assign_pointer(fdt->fd[fd], NULL);
+ 	__put_unused_fd(files, fd);
+-	spin_unlock(&files->file_lock);
+-	return filp_close(file, files);
+ 
+ out_unlock:
+ 	spin_unlock(&files->file_lock);
+-	return -EBADF;
++	return file;
++}
++
++/*
++ * The same warnings as for __alloc_fd()/__fd_install() apply here...
++ */
++int __close_fd(struct files_struct *files, unsigned fd)
++{
++	struct file *file;
++
++	file = pick_file(files, fd);
++	if (!file)
++		return -EBADF;
++
++	return filp_close(file, files);
+ }
+ EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
+ 
++/**
++ * __close_range() - Close all file descriptors in a given range.
++ *
++ * @fd:     starting file descriptor to close
++ * @max_fd: last file descriptor to close
++ *
++ * This closes a range of file descriptors. All file descriptors
++ * from @fd up to and including @max_fd are closed.
++ */
++int __close_range(struct files_struct *files, unsigned fd, unsigned max_fd)
++{
++	unsigned int cur_max;
++
++	if (fd > max_fd)
++		return -EINVAL;
++
++	rcu_read_lock();
++	cur_max = files_fdtable(files)->max_fds;
++	rcu_read_unlock();
++
++	/* cap to last valid index into fdtable */
++	if (max_fd >= cur_max)
++		max_fd = cur_max - 1;
++
++	while (fd <= max_fd) {
++		struct file *file;
++
++		file = pick_file(files, fd++);
++		if (!file)
++			continue;
++
++		filp_close(file, files);
++		cond_resched();
++	}
++
++	return 0;
++}
++
+ /*
+  * variant of __close_fd that gets a ref on the file for later fput
+  */
+diff --git a/fs/open.c b/fs/open.c
+index 9c7d724a6f67..c7baaee7aa47 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1174,6 +1174,26 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
+ 	return retval;
+ }
+ 
++/**
++ * close_range() - Close all file descriptors in a given range.
++ *
++ * @fd:     starting file descriptor to close
++ * @max_fd: last file descriptor to close
++ * @flags:  reserved for future extensions
++ *
++ * This closes a range of file descriptors. All file descriptors
++ * from @fd up to and including @max_fd are closed.
++ * Currently, errors to close a given file descriptor are ignored.
++ */
++SYSCALL_DEFINE3(close_range, unsigned int, fd, unsigned int, max_fd,
++		unsigned int, flags)
++{
++	if (flags)
++		return -EINVAL;
++
++	return __close_range(current->files, fd, max_fd);
++}
++
+ /*
+  * This routine simulates a hangup on the tty, to arrange that users
+  * are given clean terminals at login time.
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index f07c55ea0c22..fcd07181a365 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -121,6 +121,8 @@ extern void __fd_install(struct files_struct *files,
+ 		      unsigned int fd, struct file *file);
+ extern int __close_fd(struct files_struct *files,
+ 		      unsigned int fd);
++extern int __close_range(struct files_struct *files, unsigned int fd,
++			 unsigned int max_fd);
+ extern int __close_fd_get_file(unsigned int fd, struct file **res);
+ 
+ extern struct kmem_cache *files_cachep;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index e2870fe1be5b..c0189e223255 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -441,6 +441,8 @@ asmlinkage long sys_fchown(unsigned int fd, uid_t user, gid_t group);
+ asmlinkage long sys_openat(int dfd, const char __user *filename, int flags,
+ 			   umode_t mode);
+ asmlinkage long sys_close(unsigned int fd);
++asmlinkage long sys_close_range(unsigned int fd, unsigned int max_fd,
++				unsigned int flags);
+ asmlinkage long sys_vhangup(void);
+ 
+ /* fs/pipe.c */
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index a87904daf103..3f36c8745d24 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -844,9 +844,11 @@ __SYSCALL(__NR_fsconfig, sys_fsconfig)
+ __SYSCALL(__NR_fsmount, sys_fsmount)
+ #define __NR_fspick 433
+ __SYSCALL(__NR_fspick, sys_fspick)
++#define __NR_close_range 435
++__SYSCALL(__NR_close_range, sys_close_range)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 434
++#define __NR_syscalls 436
+ 
+ /*
+  * 32 bit systems traditionally used different
+-- 
+2.21.0
 
