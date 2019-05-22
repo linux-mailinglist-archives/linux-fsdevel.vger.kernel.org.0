@@ -2,96 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2408269D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 20:29:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68E95269F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 May 2019 20:36:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbfEVS3u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 14:29:50 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:44402 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728272AbfEVS3u (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 14:29:50 -0400
-Received: by mail-yb1-f195.google.com with SMTP id x187so1223935ybc.11;
-        Wed, 22 May 2019 11:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mNNHt7Z7ll37muKTAxbqGIESLdms47B625sz6OwZ88M=;
-        b=gS+RIag0j1EGY4wDhlTvibyOVNteJNKXBPtsOrOJesByGKR2Fuq4X6RhDbSo7QH9G7
-         KRnjke+GG3lc/4hxqh+KFtbvDMsLtpoByk3G9G8bwzcCfXJ2oCg77JRACh+DJK9pNMMk
-         RLYATRv8sU5DYSau9IUY3RI9CJ39VKRVdaLY2VsFEK9DBxvGidv7KL+DMtB/ZMPcVk9s
-         QZYPOM95xYbSo4RUkc8DpcXZ0tMFqnwQA5omAqkTeBvxW1wUTSS36oS6w8xdvbIVtv6u
-         Wc/2FDQqA02lI2Q288EkKNN1QjLX2K/gxQu326Gp+Fytagqqoe7JZko5HPTqeKZYUrrY
-         SMQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mNNHt7Z7ll37muKTAxbqGIESLdms47B625sz6OwZ88M=;
-        b=ZZ1EVHgKZ71q2KiuMpLGemlyUCyWWhD1k6/7Y/kVr5GDR0aLcaAA4yK8/x/Z5uHzO+
-         70emQQWl0ALBLev/Hf5LIHHbLKmWO2SSs2s28JKpu7p3akkcpIOI4IT88n9yghpEraBO
-         VQpDXBm1h0Z3VkDRxEuf+zp4XorBA0QkQup73XftlfoeGywy3GSetm0V0Y1OyLR2HKMq
-         exlChj6YmSLcY7RpCIUJWyjrL9BaDrYn9shGkb9Z6/GMxmZGucDl00MrWeuzFLQgJUky
-         qXAY+kKhsRJzQDECHdeg3eKa/9UyQt5qGyJazV9AWyxViqPROQPNEw7offO15NuYckII
-         4XqQ==
-X-Gm-Message-State: APjAAAXsvPeEorRiNQNx9fUynwoM+y1nvTeuHa0g2CQXD7Flfq9hwKRP
-        0hnYaWtdJwNjPDUD0OUt7kIbDt+wC0/aQPc3XvkpPCfx
-X-Google-Smtp-Source: APXvYqwsTkDSAsunnEIlGONN4y6SZSOWtqPzl+D0bsrRFAxyHTFt36u4qhuOcQFbp+BFEDxOaiKXidJf8gQKIuEp7oM=
-X-Received: by 2002:a25:a081:: with SMTP id y1mr15975318ybh.428.1558549789253;
- Wed, 22 May 2019 11:29:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190522163150.16849-1-christian@brauner.io>
-In-Reply-To: <20190522163150.16849-1-christian@brauner.io>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 22 May 2019 21:29:37 +0300
-Message-ID: <CAOQ4uxjV=7=FXuyccBK9Pu1B7o-w-pbc1FQXJxY4q6z8E93KOg@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: remove redundant capable(CAP_SYS_ADMIN)s
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729018AbfEVSgM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 14:36:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52920 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728272AbfEVSgM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 May 2019 14:36:12 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65ADE21473;
+        Wed, 22 May 2019 18:36:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558550171;
+        bh=643w0e1RwXyPDz2yZkL2WWaU1kzeYkYsjBXV9gFNFsg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=wGAaee798ILL90HhT88AZgysvLeH4EcomUxmt5iB1XdPXL2FocEbRluGwflT7Qc92
+         pw7NVvgY6UyvOaHgVZzydkvQ5sxFUppGwvwRfWqStn8WdWEYLfrMOyKZCJIm3ZefUI
+         ialtzgtuEU0eh5yXJkbk6VCH/nGc2AVcUciFEf+8=
+Date:   Wed, 22 May 2019 11:36:10 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Roman Penyaev <rpenyaev@suse.de>, Azat Khuzhin <azat@libevent.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 13/13] epoll: implement epoll_create2() syscall
+Message-Id: <20190522113610.51d13f168d70f19a950540b4@linux-foundation.org>
+In-Reply-To: <CAK8P3a3GWVNraxowtPmdZnF3moJ8=zkkD6F_1-885614HiVP3g@mail.gmail.com>
+References: <20190516085810.31077-1-rpenyaev@suse.de>
+        <20190516085810.31077-14-rpenyaev@suse.de>
+        <CAK8P3a2-fN_BHEnEHvf4X9Ysy4t0_SnJetQLvFU1kFa3OtM0fQ@mail.gmail.com>
+        <41b847c48ccbe0c406bd54c16fbc1bf0@suse.de>
+        <20190521193312.42a3fdda1774b1922730e459@linux-foundation.org>
+        <CAK8P3a3GWVNraxowtPmdZnF3moJ8=zkkD6F_1-885614HiVP3g@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 22, 2019 at 7:32 PM Christian Brauner <christian@brauner.io> wrote:
+On Wed, 22 May 2019 13:14:41 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+
+> > I thought the preferred approach was to wire up the architectures on
+> > which the submitter has tested the syscall, then allow the arch
+> > maintainers to enable the syscall independently?
+> 
+> I'm hoping to change that practice now, as it has not worked well
+> in the past:
+> 
+> - half the architectures now use asm-generic/unistd.h, so they are
+>   already wired up at the same time, regardless of testing
+> - in the other half, not adding them at the same time actually
+>   made it harder to test, as it was significantly harder to figure
+>   out how to build a modified kernel for a given architecture
+>   than to run the test case
+> - Not having all architectures add a new call at the same time caused
+>   the architectures to get out of sync when some got added and others
+>   did not. Now that we use the same numbers across all architectures,
+>   that would be even more confusing.
 >
-> This removes two redundant capable(CAP_SYS_ADMIN) checks from
-> fanotify_init().
-> fanotify_init() guards the whole syscall with capable(CAP_SYS_ADMIN) at the
-> beginning. So the other two capable(CAP_SYS_ADMIN) checks are not needed.
+> My plan for the long run is to only have one file to which new
+> system calls get added in the future.
 
-It's intentional:
+Fair enough.  We're adding code to architectures without having tested
+it on those architectures but we do that all the time anyway - I guess
+there's not a lot of point in special-casing new syscalls.
 
-commit e7099d8a5a34d2876908a9fab4952dabdcfc5909
-Author: Eric Paris <eparis@redhat.com>
-Date:   Thu Oct 28 17:21:57 2010 -0400
-
-    fanotify: limit the number of marks in a single fanotify group
-
-    There is currently no limit on the number of marks a given fanotify group
-    can have.  Since fanotify is gated on CAP_SYS_ADMIN this was not seen as
-    a serious DoS threat.  This patch implements a default of 8192, the same as
-    inotify to work towards removing the CAP_SYS_ADMIN gating and eliminating
-    the default DoS'able status.
-
-    Signed-off-by: Eric Paris <eparis@redhat.com>
-
-There idea is to eventually remove the gated CAP_SYS_ADMIN.
-There is no reason that fanotify could not be used by unprivileged users
-to setup inotify style watch on an inode or directories children, see:
-https://patchwork.kernel.org/patch/10668299/
-
->
-> Fixes: 5dd03f55fd2 ("fanotify: allow userspace to override max queue depth")
-> Fixes: ac7e22dcfaf ("fanotify: allow userspace to override max marks")
-
-Fixes is used to tag bug fixes for stable.
-There is no bug.
-
-Thanks,
-Amir.
