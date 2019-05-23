@@ -2,130 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 465E528746
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 21:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B9CB28993
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 21:43:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389462AbfEWTRh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 15:17:37 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44961 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389452AbfEWTRh (ORCPT
+        id S2390247AbfEWTVV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 15:21:21 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43312 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390243AbfEWTVV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 15:17:37 -0400
-Received: by mail-qt1-f194.google.com with SMTP id f24so8074092qtk.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 May 2019 12:17:36 -0700 (PDT)
+        Thu, 23 May 2019 15:21:21 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f25so3621176pgv.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 May 2019 12:21:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Pm+Vx0dhObnzybiaJozRDpH0LoNYUiVOhc6EGMjBZwU=;
-        b=O0RCPEGvWXVRXRZ7y88skUaFHv3isN4h6Tr6VLsss0em/c8A1IncniPr014w2Ci4io
-         9rBOKNHmm68kYI6ygpwlm+QtR16oXFPy2bhxS9CwKHFqrIfMtEWctvqEZ4eVLH4Cn7TJ
-         HOeZtmCGjBcvBSU18syidFL3Um1gGyCpWXeJsZC2Nvpz7PwdjRmaH9U2HY3sw2gtM83U
-         WGdsqtqNuVbxSdeTfdP4MztNl8z1hsbkujcQdJiIBLEMbySogRMR8przLBmtfBbirVh8
-         fc9baIPJgppq8UkcxW/nJPwGb+5dwFFa4fUBYQGfezP1UVVzSkaq/4vRP8kXOph9tKhv
-         tF2w==
+        bh=lL8Te4jWRFgZjfe9/dkqTtpuaDV38VTY4jurjNdU+eQ=;
+        b=nybCDTO7aDXRp6lHK7Rp/GekCdBec5nSv1vGPL7AsV7BWGRmMpr8oMX+SWJ6tqCnxp
+         jt/EQgZyLg/K/j88u5FLG64/VrSYEosF8XbzFGIvlQJCMjRf0M8DXdqVQ0oUX3nK364w
+         suGKmmBrQv6I+Xu5NLhb2xkCUBExbI9Af8wkA7jprY9/X+blZhxGA4E28OjASTZk8GlE
+         Iahzb/L+uDs18U0kDAkmUp8qhJLYZ5F4/1UjoTtbJKk0g1iO165I9P6yIWQcw2GkvCbc
+         fC/I9mmKEN1y/R3Bfw+KQcW7sGZmQYK5tAWCko8OOqiS3XuYAeb6IO5tzxQ3JFMAX/Md
+         bKIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pm+Vx0dhObnzybiaJozRDpH0LoNYUiVOhc6EGMjBZwU=;
-        b=pOtG1dbNRvI4knXuteUqzPJXlLwdYRylAcu7ojRFuxJuIAcfcMzUC6HYegZVRqb+nd
-         cMTQ85WV4SWyiF2XiI3fz9scyf8CC2EK+vwmyZPPK6KIHr8rmnBATxpKVKlbYdpNfvpb
-         hGlqN28QHdMTTT2L1ASw8ER/uIVz80fPR9kZOxM3O1CxPB8Gr3oZnykZgbj9qrlfrgWt
-         uoixGYiD2dS7Hz3UAP1vN0ZrL71ssj0w+kBSmqYeYL5AKsohCwcxscPRNA3z7/d9L7An
-         k43hGHXDh2Sy6qBgTF+xqasnSf/bo0vOWM8S2SEvphjZvMOwjRUlWRaA6z4y5y/hHIIu
-         gg3w==
-X-Gm-Message-State: APjAAAUvx1MPuNWDoN+Uv1gC5ffCBhT3CWNOhf6IhvulDyVlNDEv+Vbd
-        G/5B6EmYrZgRzLiAeKHLH6QKTA==
-X-Google-Smtp-Source: APXvYqyby6SPIf9lPMNL5yZPBW7JhGUYjZjNDXWEHEzHk702uXmsFYcPFIXfDXhIH78qusR4hcmSJg==
-X-Received: by 2002:a0c:9acb:: with SMTP id k11mr59015856qvf.85.1558639055850;
-        Thu, 23 May 2019 12:17:35 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-49-251.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.49.251])
-        by smtp.gmail.com with ESMTPSA id q24sm139016qtq.58.2019.05.23.12.17.35
+        bh=lL8Te4jWRFgZjfe9/dkqTtpuaDV38VTY4jurjNdU+eQ=;
+        b=I4+jAS67ZiHF5tvlucRZKSRRn5d9Fd6uhOVPSf3i7iYHO+wVWSMs2bK24QbjUIx0D+
+         zUhBQ1mFSOfmZjiTfYi7hMVAp3nUN5/G/rLuVz9PkIsm0kBcfjr9OJDaweVNAqlYxyyc
+         xRhOruAOWO0oaW/e2sNWcmdDWpsKOVNdChBuQIZV1QyWIgMo9xAU/S/q9EQJa+qVVX+c
+         NIXfBULXGEUVOSBvsRopNxmQqcNJN63nIWRqJ8dfSqRsjPN7ilve/WIBW3kxsMN+8Fdv
+         jVHFtHX8k8IZvjVt/xtbgMBO9XZ+pCj89afuDouxNv0L9kelGRrphodc/ZW215gcEMfs
+         oGeA==
+X-Gm-Message-State: APjAAAVhG5WmAAtC3v9B/4GdIjQ1KvMrIpD2Z9ibDyH4Xy57hFegD+fW
+        O0f4fNQjkAYgmsL8+8syNQMX4g==
+X-Google-Smtp-Source: APXvYqzolr8W2Iv7H9NAdQP2LJzWG37v1LpW8TB3ML8vd7Zcc11Bv520V10CfeBPfFfhU5kPqIXneQ==
+X-Received: by 2002:a63:1160:: with SMTP id 32mr100783894pgr.106.1558639280337;
+        Thu, 23 May 2019 12:21:20 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::ece])
+        by smtp.gmail.com with ESMTPSA id u6sm229294pfa.1.2019.05.23.12.21.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 May 2019 12:17:35 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hTtDa-0000kS-RM; Thu, 23 May 2019 16:17:34 -0300
-Date:   Thu, 23 May 2019 16:17:34 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        "john.hubbard@gmail.com" <john.hubbard@gmail.com>,
+        Thu, 23 May 2019 12:21:19 -0700 (PDT)
+Date:   Thu, 23 May 2019 15:21:17 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Shakeel Butt <shakeelb@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Christian Benvenuti <benve@cisco.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 1/1] infiniband/mm: convert put_page() to put_user_page*()
-Message-ID: <20190523191734.GH12159@ziepe.ca>
-References: <20190523072537.31940-1-jhubbard@nvidia.com>
- <20190523072537.31940-2-jhubbard@nvidia.com>
- <20190523172852.GA27175@iweiny-DESK2.sc.intel.com>
- <20190523173222.GH12145@mellanox.com>
- <fa6d7d7c-13a3-0586-6384-768ebb7f0561@nvidia.com>
+        Kernel Team <kernel-team@fb.com>
+Subject: Re: xarray breaks thrashing detection and cgroup isolation
+Message-ID: <20190523192117.GA5723@cmpxchg.org>
+References: <20190523174349.GA10939@cmpxchg.org>
+ <20190523183713.GA14517@bombadil.infradead.org>
+ <CALvZod4o0sA8CM961ZCCp-Vv+i6awFY0U07oJfXFDiVfFiaZfg@mail.gmail.com>
+ <20190523190032.GA7873@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fa6d7d7c-13a3-0586-6384-768ebb7f0561@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190523190032.GA7873@bombadil.infradead.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 10:46:38AM -0700, John Hubbard wrote:
-> On 5/23/19 10:32 AM, Jason Gunthorpe wrote:
-> > On Thu, May 23, 2019 at 10:28:52AM -0700, Ira Weiny wrote:
-> > > > @@ -686,8 +686,8 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
-> > > >   			 * ib_umem_odp_map_dma_single_page().
-> > > >   			 */
-> > > >   			if (npages - (j + 1) > 0)
-> > > > -				release_pages(&local_page_list[j+1],
-> > > > -					      npages - (j + 1));
-> > > > +				put_user_pages(&local_page_list[j+1],
-> > > > +					       npages - (j + 1));
-> > > 
-> > > I don't know if we discussed this before but it looks like the use of
-> > > release_pages() was not entirely correct (or at least not necessary) here.  So
-> > > I think this is ok.
+On Thu, May 23, 2019 at 12:00:32PM -0700, Matthew Wilcox wrote:
+> On Thu, May 23, 2019 at 11:49:41AM -0700, Shakeel Butt wrote:
+> > On Thu, May 23, 2019 at 11:37 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > >
+> > > On Thu, May 23, 2019 at 01:43:49PM -0400, Johannes Weiner wrote:
+> > > > I noticed that recent upstream kernels don't account the xarray nodes
+> > > > of the page cache to the allocating cgroup, like we used to do for the
+> > > > radix tree nodes.
+> > > >
+> > > > This results in broken isolation for cgrouped apps, allowing them to
+> > > > escape their containment and harm other cgroups and the system with an
+> > > > excessive build-up of nonresident information.
+> > > >
+> > > > It also breaks thrashing/refault detection because the page cache
+> > > > lives in a different domain than the xarray nodes, and so the shadow
+> > > > shrinker can reclaim nonresident information way too early when there
+> > > > isn't much cache in the root cgroup.
+> > > >
+> > > > I'm not quite sure how to fix this, since the xarray code doesn't seem
+> > > > to have per-tree gfp flags anymore like the radix tree did. We cannot
+> > > > add SLAB_ACCOUNT to the radix_tree_node_cachep slab cache. And the
+> > > > xarray api doesn't seem to really support gfp flags, either (xas_nomem
+> > > > does, but the optimistic internal allocations have fixed gfp flags).
+> > >
+> > > Would it be a problem to always add __GFP_ACCOUNT to the fixed flags?
+> > > I don't really understand cgroups.
 > > 
-> > Oh? John switched it from a put_pages loop to release_pages() here:
+> > Does xarray cache allocated nodes, something like radix tree's:
 > > 
-> > commit 75a3e6a3c129cddcc683538d8702c6ef998ec589
-> > Author: John Hubbard <jhubbard@nvidia.com>
-> > Date:   Mon Mar 4 11:46:45 2019 -0800
+> > static DEFINE_PER_CPU(struct radix_tree_preload, radix_tree_preloads) = { 0, };
 > > 
-> >      RDMA/umem: minor bug fix in error handling path
-> >      1. Bug fix: fix an off by one error in the code that cleans up if it fails
-> >         to dma-map a page, after having done a get_user_pages_remote() on a
-> >         range of pages.
-> >      2. Refinement: for that same cleanup code, release_pages() is better than
-> >         put_page() in a loop.
-> > 
-> > And now we are going to back something called put_pages() that
-> > implements the same for loop the above removed?
-> > 
-> > Seems like we are going in circles?? John?
-> > 
+> > For the cached one, no __GFP_ACCOUNT flag.
 > 
-> put_user_pages() is meant to be a drop-in replacement for release_pages(),
-> so I made the above change as an interim step in moving the callsite from
-> a loop, to a single call.
+> No.  That was the point of the XArray conversion; no cached nodes.
 > 
-> And at some point, it may be possible to find a way to optimize put_user_pages()
-> in a similar way to the batching that release_pages() does, that was part
-> of the plan for this.
+> > Also some users of xarray may not want __GFP_ACCOUNT. That's the
+> > reason we had __GFP_ACCOUNT for page cache instead of hard coding it
+> > in radix tree.
 > 
-> But I do see what you mean: in the interim, maybe put_user_pages() should
-> just be calling release_pages(), how does that change sound?
+> This is what I don't understand -- why would someone not want
+> __GFP_ACCOUNT?  For a shared resource?  But the page cache is a shared
+> resource.  So what is a good example of a time when an allocation should
+> _not_ be accounted to the cgroup?
 
-It would have made it more consistent.. But it seems this isn't a
-functional problem in this patch
+We used to cgroup-account every slab charge to cgroups per default,
+until we changed it to a whitelist behavior:
 
-Jason
+commit b2a209ffa605994cbe3c259c8584ba1576d3310c
+Author: Vladimir Davydov <vdavydov@virtuozzo.com>
+Date:   Thu Jan 14 15:18:05 2016 -0800
+
+    Revert "kernfs: do not account ino_ida allocations to memcg"
+    
+    Currently, all kmem allocations (namely every kmem_cache_alloc, kmalloc,
+    alloc_kmem_pages call) are accounted to memory cgroup automatically.
+    Callers have to explicitly opt out if they don't want/need accounting
+    for some reason.  Such a design decision leads to several problems:
+    
+     - kmalloc users are highly sensitive to failures, many of them
+       implicitly rely on the fact that kmalloc never fails, while memcg
+       makes failures quite plausible.
+    
+     - A lot of objects are shared among different containers by design.
+       Accounting such objects to one of containers is just unfair.
+       Moreover, it might lead to pinning a dead memcg along with its kmem
+       caches, which aren't tiny, which might result in noticeable increase
+       in memory consumption for no apparent reason in the long run.
+    
+     - There are tons of short-lived objects. Accounting them to memcg will
+       only result in slight noise and won't change the overall picture, but
+       we still have to pay accounting overhead.
+    
+    For more info, see
+    
+     - http://lkml.kernel.org/r/20151105144002.GB15111%40dhcp22.suse.cz
+     - http://lkml.kernel.org/r/20151106090555.GK29259@esperanza
+    
+    Therefore this patchset switches to the white list policy.  Now kmalloc
+    users have to explicitly opt in by passing __GFP_ACCOUNT flag.
+    
+    Currently, the list of accounted objects is quite limited and only
+    includes those allocations that (1) are known to be easily triggered
+    from userspace and (2) can fail gracefully (for the full list see patch
+    no.  6) and it still misses many object types.  However, accounting only
+    those objects should be a satisfactory approximation of the behavior we
+    used to have for most sane workloads.
+
+The arguments would be the same here. Additional allocation overhead,
+memory allocated on behalf of a shared facility, long-lived objects
+pinning random, unrelated cgroups indefinitely.
+
+The page cache is a sufficiently big user whose size can be directly
+attributed to workload behavior, and can be controlled / reclaimed
+under memory pressure. That's why it's accounted.
+
+The same isn't true for random drivers using xarray, ida etc. It
+shouldn't be implicit in the xarray semantics.
