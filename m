@@ -2,103 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5537427C73
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 14:10:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99FF627CA0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 14:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730492AbfEWMKK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 08:10:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60136 "EHLO mx1.suse.de"
+        id S1730493AbfEWMVZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 08:21:25 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32962 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728309AbfEWMKK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 08:10:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C9B79AF3E;
-        Thu, 23 May 2019 12:10:08 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 62FA31E3C4B; Thu, 23 May 2019 14:10:08 +0200 (CEST)
-Date:   Thu, 23 May 2019 14:10:08 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org,
-        kilobyte@angband.pl, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        david@fromorbit.com, willy@infradead.org, hch@lst.de,
-        dsterba@suse.cz, nborisov@suse.com, linux-nvdimm@lists.01.org,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 08/18] dax: memcpy page in case of IOMAP_DAX_COW for mmap
- faults
-Message-ID: <20190523121008.GA2949@quack2.suse.cz>
-References: <20190429172649.8288-1-rgoldwyn@suse.de>
- <20190429172649.8288-9-rgoldwyn@suse.de>
- <20190521174625.GF5125@magnolia>
+        id S1728309AbfEWMVZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 08:21:25 -0400
+Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id DF1343C60C1E20BF93B0;
+        Thu, 23 May 2019 13:21:22 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.46) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 23 May 2019 13:21:11 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
+        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
+        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
+        <kamensky@cisco.com>, <hpa@zytor.com>, <arnd@arndb.de>,
+        <rob@landley.net>, <james.w.mcmechan@gmail.com>,
+        <niveditas98@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v4 0/3] initramfs: add support for xattrs in the initial ram disk
+Date:   Thu, 23 May 2019 14:18:00 +0200
+Message-ID: <20190523121803.21638-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521174625.GF5125@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 21-05-19 10:46:25, Darrick J. Wong wrote:
-> On Mon, Apr 29, 2019 at 12:26:39PM -0500, Goldwyn Rodrigues wrote:
-> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > 
-> > Change dax_iomap_pfn to return the address as well in order to
-> > use it for performing a memcpy in case the type is IOMAP_DAX_COW.
-> > We don't handle PMD because btrfs does not support hugepages.
-> > 
-> > Question:
-> > The sequence of bdev_dax_pgoff() and dax_direct_access() is
-> > used multiple times to calculate address and pfn's. Would it make
-> > sense to call it while calculating address as well to reduce code?
-> > 
-> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > ---
-> >  fs/dax.c | 19 +++++++++++++++----
-> >  1 file changed, 15 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/fs/dax.c b/fs/dax.c
-> > index 610bfa861a28..718b1632a39d 100644
-> > --- a/fs/dax.c
-> > +++ b/fs/dax.c
-> > @@ -984,7 +984,7 @@ static sector_t dax_iomap_sector(struct iomap *iomap, loff_t pos)
-> >  }
-> >  
-> >  static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
-> > -			 pfn_t *pfnp)
-> > +			 pfn_t *pfnp, void **addr)
-> >  {
-> >  	const sector_t sector = dax_iomap_sector(iomap, pos);
-> >  	pgoff_t pgoff;
-> > @@ -996,7 +996,7 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
-> >  		return rc;
-> >  	id = dax_read_lock();
-> >  	length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
-> > -				   NULL, pfnp);
-> > +				   addr, pfnp);
-> >  	if (length < 0) {
-> >  		rc = length;
-> >  		goto out;
-> > @@ -1286,6 +1286,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
-> >  	XA_STATE(xas, &mapping->i_pages, vmf->pgoff);
-> >  	struct inode *inode = mapping->host;
-> >  	unsigned long vaddr = vmf->address;
-> > +	void *addr;
-> >  	loff_t pos = (loff_t)vmf->pgoff << PAGE_SHIFT;
-> >  	struct iomap iomap = { 0 };
-> 
-> Ugh, I had forgotten that fs/dax.c open-codes iomap_apply, probably
-> because the actor returns vm_fault_t, not bytes copied.  I guess that
-> makes it a tiny bit more complicated to pass in two (struct iomap *) to
-> the iomap_begin function...
+This patch set aims at solving the following use case: appraise files from
+the initial ram disk. To do that, IMA checks the signature/hash from the
+security.ima xattr. Unfortunately, this use case cannot be implemented
+currently, as the CPIO format does not support xattrs.
 
-Hum, right. We could actually reimplement dax_iomap_{pte|pmd}_fault() using
-iomap_apply(). We would just need to propagate error code out of our
-'actor' inside the structure pointed to by 'data'. But that's doable.
+This proposal consists in including file metadata as additional files named
+METADATA!!!, for each file added to the ram disk. The CPIO parser in the
+kernel recognizes these special files from the file name, and calls the
+appropriate parser to add metadata to the previously extracted file. It has
+been proposed to use bit 17:16 of the file mode as a way to recognize files
+with metadata, but both the kernel and the cpio tool declare the file mode
+as unsigned short.
 
-								Honza
+The difference from v2, v3 (https://lkml.org/lkml/2019/5/9/230,
+https://lkml.org/lkml/2019/5/17/466) is that file metadata are stored in
+separate files instead of a single file. Given that files with metadata
+must immediately follow the files metadata will be added to, image
+generators have to be modified in this version.
+
+The difference from v1 (https://lkml.org/lkml/2018/11/22/1182) is that
+all files have the same name. The file metadata are added to is always the
+previous one, and the image generator in user space will make sure that
+files are in the correct sequence.
+
+The difference with another proposal
+(https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+included in an image without changing the image format. Files with metadata
+will appear as regular files. It will be task of the parser in the kernel
+to process them.
+
+This patch set extends the format of data defined in patch 9/15 of the last
+proposal. It adds header version and type, so that new formats can be
+defined and arbitrary metadata types can be processed.
+
+The changes introduced by this patch set don't cause any compatibility
+issue: kernels without the metadata parser simply extract the special files
+and don't process metadata; kernels with the metadata parser don't process
+metadata if the special files are not included in the image.
+
+From the kernel space perspective, backporting this functionality to older
+kernels should be very easy. It is sufficient to add two calls to the new
+function do_process_metadata() in do_copy(), and to check the file name in
+do_name(). From the user space perspective, unlike the previous version of
+the patch set, it is required to modify the image generators in order to
+include metadata as separate files.
+
+Changelog
+
+v3:
+- include file metadata as separate files named METADATA!!!
+- add the possibility to include in the ram disk arbitrary metadata types
+
+v2:
+- replace ksys_lsetxattr() with kern_path() and vfs_setxattr()
+  (suggested by Jann Horn)
+- replace ksys_open()/ksys_read()/ksys_close() with
+  filp_open()/kernel_read()/fput()
+  (suggested by Jann Horn)
+- use path variable instead of name_buf in do_readxattrs()
+- set last byte of str to 0 in do_readxattrs()
+- call do_readxattrs() in do_name() before replacing an existing
+  .xattr-list
+- pass pathname to do_setxattrs()
+
+v1:
+- move xattr unmarshaling to CPIO parser
+
+
+Mimi Zohar (1):
+  initramfs: add file metadata
+
+Roberto Sassu (2):
+  initramfs: read metadata from special file METADATA!!!
+  gen_init_cpio: add support for file metadata
+
+ include/linux/initramfs.h |  21 ++++++
+ init/initramfs.c          | 137 +++++++++++++++++++++++++++++++++++++-
+ usr/Kconfig               |   8 +++
+ usr/Makefile              |   4 +-
+ usr/gen_init_cpio.c       | 137 ++++++++++++++++++++++++++++++++++++--
+ usr/gen_initramfs_list.sh |  10 ++-
+ 6 files changed, 305 insertions(+), 12 deletions(-)
+ create mode 100644 include/linux/initramfs.h
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.17.1
+
