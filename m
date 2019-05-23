@@ -2,258 +2,451 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AA8827E37
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 15:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91EC727E5B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 15:41:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730643AbfEWNf0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 09:35:26 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33423 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728309AbfEWNf0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 09:35:26 -0400
-Received: by mail-io1-f65.google.com with SMTP id z4so4886599iol.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 May 2019 06:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/7i3oLt0uS0U3BJ8Vo+88z1lvdyu8OdJPDSaCcWNFRM=;
-        b=V+asts04UroP8pLt1ozor3qRC0irU7J0A+4TMxexQ80A0l6lfDsxYgTfZt0CrrD3cP
-         qrbURWRGYBT5Lol1AGQSXiuzMpAcZ4nzoFt0VRGmm0S1Cm48kHuUD/U5bDj6QtqoXXD5
-         e8gmpeQrO65Otwff+wZD1DzoI8yDVtzGUMcqQfNYji+GfdrQwfk/EUzmdOvJtmYUx1pK
-         uCnqjydTeUZNCD/H+yJoPuFyGp9xuGxMQeux7YSwCNNCsGvoroTsAs1+wPjdIo8IYtdR
-         yPfHXcIMXV0BZ88QX+Y1k8TupYOXREwDayuO1t5VvtFT8y7W8wGGJ0RoIgjD5jh+coDS
-         e6ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/7i3oLt0uS0U3BJ8Vo+88z1lvdyu8OdJPDSaCcWNFRM=;
-        b=o/R1SMY15kH6JZtkC/HYIqvTdWiTb9SX2OMRkmXPaho+Bc6cfMdwqyvcOhj+IoogRZ
-         3o/YNHhQ6qgqxm0SoQgVnz40niu6ZlxwHgm2enTMeQ2KZRLNd+cdXIVPtIr7H49Walsc
-         N6QHFxfvb25TROSF9J7klfBl6JqCCx2MVNO5bPjRd+BEeEhYmHKz+M0aEtQVj70tNLqc
-         5ORv3ACW0KT0EysHe8sXmWB318/oaUFLIGg6YKXM4nn73G+N8PqJgdzU6fIKv8T+onIR
-         gE4SNQ5jGO2bh/Dxvp+vckRLGIuSmGrcLBuTilatY9yIfpEaRo8Gs9+7cYCGwZMImAzt
-         4iJg==
-X-Gm-Message-State: APjAAAWPFj/NTZtbWxkCjTVi4redGRAkNwz4TX/eb4/9aid+HJxK2S/C
-        NunZ/J0rq/f0pg5WbxOf6fK+A5g+i4/TFA==
-X-Google-Smtp-Source: APXvYqxTtRpfut/Z/ru2oeRxDNg2iC/phXp9o2eWaAR27h25vEHFlNyxkuOvngkzWq5trQQ1vn74qw==
-X-Received: by 2002:a6b:8ec4:: with SMTP id q187mr26014832iod.280.1558618525068;
-        Thu, 23 May 2019 06:35:25 -0700 (PDT)
-Received: from brauner.io ([172.56.12.187])
-        by smtp.gmail.com with ESMTPSA id h20sm5373723iog.6.2019.05.23.06.35.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 23 May 2019 06:35:23 -0700 (PDT)
-Date:   Thu, 23 May 2019 15:35:18 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: Re: [PATCH] fanotify: remove redundant capable(CAP_SYS_ADMIN)s
-Message-ID: <20190523133516.6734wclswqr6vpeg@brauner.io>
-References: <20190522163150.16849-1-christian@brauner.io>
- <CAOQ4uxjV=7=FXuyccBK9Pu1B7o-w-pbc1FQXJxY4q6z8E93KOg@mail.gmail.com>
- <EB97EF04-D44F-4320-ACDC-C536EED03BA4@brauner.io>
- <CAOQ4uxhodqVw0DVfcvXYH5vBf4LKcv7t388ZwXeZPBTcEMzGSw@mail.gmail.com>
- <20190523095506.nyei5nogvv63lm4a@brauner.io>
- <CAOQ4uxiBeAzsE+b=tE7+9=25-qS7ohuTdEswYOt8DrCp6eAMuw@mail.gmail.com>
- <20190523104239.u63u2uth4yyuuufs@brauner.io>
- <CAOQ4uxji4jRvJnLvXe0yR4Ls7VxM_tjAypX1TqBe5FYr_7GnXw@mail.gmail.com>
- <20190523115845.w7neydaka5xivwyi@brauner.io>
- <CAOQ4uxgJXLyZe0Bs=q60=+pHpdGtnCdKKZKdr-3iTbygKCryRA@mail.gmail.com>
+        id S1730553AbfEWNlt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 09:41:49 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32966 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729698AbfEWNlt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 09:41:49 -0400
+Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 6F7EF4F3DADC617547CA;
+        Thu, 23 May 2019 14:41:46 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.46) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 23 May 2019 14:41:34 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
+        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
+        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
+        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
+        <kamensky@cisco.com>, <hpa@zytor.com>, <arnd@arndb.de>,
+        <rob@landley.net>, <james.w.mcmechan@gmail.com>,
+        <niveditas98@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [USER][PATCH] cpio: add option to add file metadata in copy-out mode
+Date:   Thu, 23 May 2019 15:38:24 +0200
+Message-ID: <20190523133824.710-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgJXLyZe0Bs=q60=+pHpdGtnCdKKZKdr-3iTbygKCryRA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 04:16:24PM +0300, Amir Goldstein wrote:
-> On Thu, May 23, 2019 at 2:58 PM Christian Brauner <christian@brauner.io> wrote:
-> >
-> > On Thu, May 23, 2019 at 02:40:39PM +0300, Amir Goldstein wrote:
-> > > On Thu, May 23, 2019 at 1:42 PM Christian Brauner <christian@brauner.io> wrote:
-> > > >
-> > > > On Thu, May 23, 2019 at 01:25:08PM +0300, Amir Goldstein wrote:
-> > > > > On Thu, May 23, 2019 at 12:55 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > >
-> > > > > > On Wed, May 22, 2019 at 11:00:22PM +0300, Amir Goldstein wrote:
-> > > > > > > On Wed, May 22, 2019 at 9:57 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > > > >
-> > > > > > > > On May 22, 2019 8:29:37 PM GMT+02:00, Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > > > > > >On Wed, May 22, 2019 at 7:32 PM Christian Brauner
-> > > > > > > > ><christian@brauner.io> wrote:
-> > > > > > > > >>
-> > > > > > > > >> This removes two redundant capable(CAP_SYS_ADMIN) checks from
-> > > > > > > > >> fanotify_init().
-> > > > > > > > >> fanotify_init() guards the whole syscall with capable(CAP_SYS_ADMIN)
-> > > > > > > > >at the
-> > > > > > > > >> beginning. So the other two capable(CAP_SYS_ADMIN) checks are not
-> > > > > > > > >needed.
-> > > > > > > > >
-> > > > > > > > >It's intentional:
-> > > > > > > > >
-> > > > > > > > >commit e7099d8a5a34d2876908a9fab4952dabdcfc5909
-> > > > > > > > >Author: Eric Paris <eparis@redhat.com>
-> > > > > > > > >Date:   Thu Oct 28 17:21:57 2010 -0400
-> > > > > > > > >
-> > > > > > > > >    fanotify: limit the number of marks in a single fanotify group
-> > > > > > > > >
-> > > > > > > > >There is currently no limit on the number of marks a given fanotify
-> > > > > > > > >group
-> > > > > > > > >can have.  Since fanotify is gated on CAP_SYS_ADMIN this was not seen
-> > > > > > > > >as
-> > > > > > > > >a serious DoS threat.  This patch implements a default of 8192, the
-> > > > > > > > >same as
-> > > > > > > > >inotify to work towards removing the CAP_SYS_ADMIN gating and
-> > > > > > > > >eliminating
-> > > > > > > > >    the default DoS'able status.
-> > > > > > > > >
-> > > > > > > > >    Signed-off-by: Eric Paris <eparis@redhat.com>
-> > > > > > > > >
-> > > > > > > > >There idea is to eventually remove the gated CAP_SYS_ADMIN.
-> > > > > > > > >There is no reason that fanotify could not be used by unprivileged
-> > > > > > > > >users
-> > > > > > > > >to setup inotify style watch on an inode or directories children, see:
-> > > > > > > > >https://patchwork.kernel.org/patch/10668299/
-> > > > > > > > >
-> > > > > > > > >>
-> > > > > > > > >> Fixes: 5dd03f55fd2 ("fanotify: allow userspace to override max queue
-> > > > > > > > >depth")
-> > > > > > > > >> Fixes: ac7e22dcfaf ("fanotify: allow userspace to override max
-> > > > > > > > >marks")
-> > > > > > > > >
-> > > > > > > > >Fixes is used to tag bug fixes for stable.
-> > > > > > > > >There is no bug.
-> > > > > > > > >
-> > > > > > > > >Thanks,
-> > > > > > > > >Amir.
-> > > > > > > >
-> > > > > > > > Interesting. When do you think the gate can be removed?
-> > > > > > >
-> > > > > > > Nobody is working on this AFAIK.
-> > > > > > > What I posted was a simple POC, but I have no use case for this.
-> > > > > > > In the patchwork link above, Jan has listed the prerequisites for
-> > > > > > > removing the gate.
-> > > > > > >
-> > > > > > > One of the prerequisites is FAN_REPORT_FID, which is now merged.
-> > > > > > > When events gets reported with fid instead of fd, unprivileged user
-> > > > > > > (hopefully) cannot use fid for privilege escalation.
-> > > > > > >
-> > > > > > > > I was looking into switching from inotify to fanotify but since it's not usable from
-> > > > > > > > non-initial userns it's a no-no
-> > > > > > > > since we support nested workloads.
-> > > > > > >
-> > > > > > > One of Jan's questions was what is the benefit of using inotify-compatible
-> > > > > > > fanotify vs. using inotify.
-> > > > > > > So what was the reason you were looking into switching from inotify to fanotify?
-> > > > > > > Is it because of mount/filesystem watch? Because making those available for
-> > > > > >
-> > > > > > Yeah. Well, I would need to look but you could probably do it safely for
-> > > > > > filesystems mountable in user namespaces (which are few).
-> > > > > > Can you do a bind-mount and then place a watch on the bind-mount or is
-> > > > > > this superblock based?
-> > > > > >
-> > > > >
-> > > > > Either.
-> > > > > FAN_MARK_MOUNT was there from day 1 of fanotify.
-> > > > > FAN_MARK_FILESYSTEM was merged to Linux Linux 4.20.
-> > > > >
-> > > > > But directory modification events that are supported since v5.1 are
-> > > > > not available
-> > > > > with FAN_MARK_MOUNT, see:
-> > > >
-> > > > Because you're worried about unprivileged users spying on events? Or
-> > > > something else?
-> > >
-> > > Something else. The current fsnotify_move/create/delete() VFS hooks
-> > > have no path/mount information, so it is not possible to filter them by
-> > > mount only by inode/sb.
-> > > Fixing that would not be trivial, but first a strong use case would need
-> > > to be presented.
-> > >
-> > > > Because if you can do a bind-mount there's nothing preventing an
-> > > > unprivileged user to do a hand-rolled recursive inotify that would
-> > > > amount to the same thing anyway.
-> > >
-> > > There is. unprivileged user cannot traverse into directories it is not
-> > > allowed to read/search.
-> >
-> > Right, I should've mentioned: when you're userns root and you have
-> > access to all files. The part that is interesting to me is getting rid
-> > of capable(CAP_SYS_ADMIN).
-> 
-> Indeed. so part of removing the gated capable(CAP_SYS_ADMIN)
-> is figuring out the permission checks needed for individual features.
-> I agree that for FAN_MARK_MOUNT/FILESYSTEM,
-> capabale(CAP_SYS_ADMIN) is too strong.
-> ns_capable(sb->s_user_ns, CAP_DAC_READ_SEARCH)
-> is probably enough.
-> 
-> >
-> > >
-> > > > (And btw, v5.1 really is a major step forward and I would really like to
-> > > >  use this api tbh.)
-> > > >
-> > >
-> > > You haven't answered my question. What is the reason you are interested
-> > > in the new API? What does it provide that the old API does not?
-> > > I know the 2 APIs differ. I just want to know which difference interests *you*,
-> > > because without a strong use case, it will be hard for me to make progress
-> > > upstream.
-> > >
-> > > Is what you want really a "bind-mount" watch or a "subtree watch"?
-> > > The distinction is important. I am thinking about solutions for the latter,
-> > > although there is no immediate solution in the horizon - only ideas.
-> >
-> > Both cases would be interesting. But subtree watch is what would
-> > probably help a lot already. So let me explain.
-> > For LXD - not sure if you know what that is -
-> I do
-> 
-> >  we allow user to "hotplug"
-> > mounts or certain whitelisted devices into a user namespace container.
-> > One of the nifty features is that we let users specify a "required"
-> > property. When "required" is "false" the user can give us a path, e.g.
-> > /bla/bla/bla/target and then we place a watch on the closest existing
-> > ancestor of my-device. When the target shows up we hotplug it for the
-> > user. Now, as you imagine maintaining that cache until "target" shows up
-> > is a royal pain.
-> 
-> You lost me there. Are you looking for notifications when device files appear?
+This patch adds the -e <type> option to include file metadata in the image.
+At the moment, only the xattr type is supported.
 
-Just when that file is created. fanotify doesn't need to do anything
-special for device files. As long as a file (device or
-otherwise) and directory creation/deletion triggers an event we're good.
-I can then just stat the file and check that it's the device I expect.
+If the xattr type is selected, the patch includes an additional file for
+each file passed to stdin, with special name 'METADATA!!!'. The additional
+file might contain multiple metadata records. The format of each record is:
 
-> When directory is created? Please give a concrete example.
-> What part of /bla/bla/bla/target appears, when and how.
+<metadata len (ASCII, 8 chars)><version><type><metadata>
 
-So let's say the user tells me:
-- When the "/A/B/C/target" file appears on the host filesystem,
-  please give me access to "target" in the container at a path I tell
-  you.
-What I do right now is listen for the creation of the "target" file.
-But at the time the user gives me instructions to listen for
-"/A/B/C/target" only /A might exist and so I currently add a watch on A/
-and then wait for the creation of B/, then wait for the creation of C/
-and finally for the creation of "target" (Of course, I also need to
-handle B/ and C/ being removed again an recreated and so on.). It would
-be helpful, if I could specify, give me notifications, recursively for
-e.g. A/ without me having to place extra watches on B/ and C/ when they
-appear. Maybe that's out of scope...
+The format of metadata for the xattr type is:
 
-> fanotify does not give notifications when mounts are mounted.
-> I have seen a proposal by David Howells for mount change notifications.
+<xattr name>\0<xattr value>
 
-David's going to send this out soon, I think.
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ doc/cpio.texi   |   3 ++
+ src/copyout.c   | 136 ++++++++++++++++++++++++++++++++++++++++++++++--
+ src/dstring.c   |  26 +++++++--
+ src/dstring.h   |   1 +
+ src/extern.h    |   2 +
+ src/global.c    |   2 +
+ src/initramfs.h |  21 ++++++++
+ src/main.c      |  22 ++++++++
+ 8 files changed, 206 insertions(+), 7 deletions(-)
+ create mode 100644 src/initramfs.h
 
-Thanks!
-Christian
+diff --git a/doc/cpio.texi b/doc/cpio.texi
+index e667b48..d7b311f 100644
+--- a/doc/cpio.texi
++++ b/doc/cpio.texi
+@@ -275,6 +275,9 @@ Set the I/O block size to the given @var{number} of bytes.
+ @item -D @var{dir}
+ @itemx --directory=@var{dir}
+ Change to directory @var{dir}
++@item -e @var{type}
++@itemx --file-metadata=@var{type}
++Include in the image file metadata with the specified type.
+ @item --force-local
+ Treat the archive file as local, even if its name contains colons.
+ @item -F [[@var{user}@@]@var{host}:]@var{archive-file}
+diff --git a/src/copyout.c b/src/copyout.c
+index 7532dac..f0e512a 100644
+--- a/src/copyout.c
++++ b/src/copyout.c
+@@ -22,6 +22,7 @@
+ #include <stdio.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <sys/xattr.h>
+ #include "filetypes.h"
+ #include "cpiohdr.h"
+ #include "dstring.h"
+@@ -578,6 +579,92 @@ assign_string (char **pvar, char *value)
+   *pvar = p;
+ }
+ 
++static int
++write_xattrs (int metadata_fd, char *path)
++{
++  struct metadata_hdr hdr = { .c_version = 1, .c_type = TYPE_XATTR };
++  char str[sizeof(hdr.c_size) + 1];
++  char *xattr_list, *list_ptr, *xattr_value;
++  ssize_t list_len, name_len, value_len, len;
++  int ret = -EINVAL;
++
++  if (metadata_fd < 0)
++    return 0;
++
++  list_len = llistxattr(path, NULL, 0);
++  if (list_len <= 0)
++    return -ENOENT;
++
++  list_ptr = xattr_list = malloc(list_len);
++  if (!list_ptr) {
++    error (0, 0, _("out of memory"));
++    return ret;
++  }
++
++  len = llistxattr(path, xattr_list, list_len);
++  if (len != list_len)
++    goto out;
++
++  if (ftruncate(metadata_fd, 0))
++    goto out;
++
++  lseek(metadata_fd, 0, SEEK_SET);
++
++  while (list_ptr < xattr_list + list_len) {
++    name_len = strlen(list_ptr);
++
++    value_len = lgetxattr(path, list_ptr, NULL, 0);
++    if (value_len < 0) {
++      error (0, 0, _("cannot get xattrs"));
++      break;
++    }
++
++    if (value_len) {
++      xattr_value = malloc(value_len);
++      if (!xattr_value) {
++	error (0, 0, _("out of memory"));
++	break;
++      }
++    } else {
++      xattr_value = NULL;
++    }
++
++    len = lgetxattr(path, list_ptr, xattr_value, value_len);
++    if (len != value_len)
++      break;
++
++    snprintf(str, sizeof(str), "%.8lx",
++	     sizeof(hdr) + name_len + 1 + value_len);
++
++    memcpy(hdr.c_size, str, sizeof(hdr.c_size));
++
++    if (write(metadata_fd, &hdr, sizeof(hdr)) != sizeof(hdr))
++      break;
++
++    if (write(metadata_fd, list_ptr, name_len + 1) != name_len + 1)
++      break;
++
++    if (write(metadata_fd, xattr_value, value_len) != value_len)
++      break;
++
++    if (fsync(metadata_fd))
++      break;
++
++    list_ptr += name_len + 1;
++    free(xattr_value);
++    xattr_value = NULL;
++  }
++
++  free(xattr_value);
++out:
++  free(xattr_list);
++
++  if (list_ptr != xattr_list + list_len)
++    return ret;
++
++  return 0;
++}
++
+ /* Read a list of file names from the standard input
+    and write a cpio collection on the standard output.
+    The format of the header depends on the compatibility (-c) flag.  */
+@@ -591,6 +678,8 @@ process_copy_out ()
+   int in_file_des;		/* Source file descriptor.  */
+   int out_file_des;		/* Output file descriptor.  */
+   char *orig_file_name = NULL;
++  char template[] = "/tmp/cpio-metadata-XXXXXX";
++  int ret, metadata_fd, metadata = 0, old_metadata;
+ 
+   /* Initialize the copy out.  */
+   ds_init (&input_name, 128);
+@@ -623,9 +712,36 @@ process_copy_out ()
+       prepare_append (out_file_des);
+     }
+ 
++  /* Create a temporary file to store file metadata */
++  if (metadata_type != TYPE_NONE) {
++    metadata_fd = mkstemp(template);
++    if (metadata_fd < 0) {
++      error (0, 0, _("cannot create temporary file"));
++      return;
++    }
++  }
++
+   /* Copy files with names read from stdin.  */
+-  while (ds_fgetstr (stdin, &input_name, name_end) != NULL)
++  while ((metadata_type != TYPE_NONE && metadata) ||
++	 ds_fgetstr (stdin, &input_name, name_end) != NULL)
+     {
++      old_metadata = metadata;
++
++      if (metadata) {
++	metadata = 0;
++
++        if (metadata_type != TYPE_XATTR) {
++	  error (0, 0, _("metadata type not supported"));
++	  continue;
++	}
++
++	ret = write_xattrs(metadata_fd, orig_file_name);
++	if (ret < 0)
++	  continue;
++
++	ds_sgetstr (template, &input_name, name_end);
++      }
++
+       /* Check for blank line.  */
+       if (input_name.ds_string[0] == 0)
+ 	{
+@@ -655,8 +771,15 @@ process_copy_out ()
+ 		    }
+ 		}
+ 	    }
+-	  
+-	  assign_string (&orig_file_name, input_name.ds_string);
++
++	  if (old_metadata) {
++	    assign_string (&orig_file_name, template);
++	    ds_sgetstr (METADATA_FILENAME, &input_name, name_end);
++	    file_hdr.c_mode |= 0x10000;
++	  } else {
++	    assign_string (&orig_file_name, input_name.ds_string);
++	  }
++
+ 	  cpio_safer_name_suffix (input_name.ds_string, false,
+ 				  !no_abs_paths_flag, true);
+ #ifndef HPUX_CDF
+@@ -844,6 +967,8 @@ process_copy_out ()
+ 	    fprintf (stderr, "%s\n", orig_file_name);
+ 	  if (dot_flag)
+ 	    fputc ('.', stderr);
++	  if (metadata_type != TYPE_NONE && !old_metadata)
++	    metadata = 1;
+ 	}
+     }
+ 
+@@ -882,6 +1007,11 @@ process_copy_out ()
+ 	       ngettext ("%lu block\n", "%lu blocks\n",
+ 			 (unsigned long) blocks), (unsigned long) blocks);
+     }
++
++  if (metadata_type != TYPE_NONE) {
++    close(metadata_fd);
++    unlink(template);
++  }
+ }
+ 
+ 
+diff --git a/src/dstring.c b/src/dstring.c
+index ddad4c8..fe3cfaf 100644
+--- a/src/dstring.c
++++ b/src/dstring.c
+@@ -60,8 +60,8 @@ ds_resize (dynamic_string *string, int size)
+    Return NULL if end of file is detected.  Otherwise,
+    Return a pointer to the null-terminated string in S.  */
+ 
+-char *
+-ds_fgetstr (FILE *f, dynamic_string *s, char eos)
++static char *
++ds_fgetstr_common (FILE *f, char *input_string, dynamic_string *s, char eos)
+ {
+   int insize;			/* Amount needed for line.  */
+   int strsize;			/* Amount allocated for S.  */
+@@ -72,7 +72,10 @@ ds_fgetstr (FILE *f, dynamic_string *s, char eos)
+   strsize = s->ds_length;
+ 
+   /* Read the input string.  */
+-  next_ch = getc (f);
++  if (input_string)
++    next_ch = *input_string++;
++  else
++    next_ch = getc (f);
+   while (next_ch != eos && next_ch != EOF)
+     {
+       if (insize >= strsize - 1)
+@@ -81,7 +84,10 @@ ds_fgetstr (FILE *f, dynamic_string *s, char eos)
+ 	  strsize = s->ds_length;
+ 	}
+       s->ds_string[insize++] = next_ch;
+-      next_ch = getc (f);
++      if (input_string)
++	next_ch = *input_string++;
++      else
++	next_ch = getc (f);
+     }
+   s->ds_string[insize++] = '\0';
+ 
+@@ -91,6 +97,12 @@ ds_fgetstr (FILE *f, dynamic_string *s, char eos)
+     return s->ds_string;
+ }
+ 
++char *
++ds_fgetstr (FILE *f, dynamic_string *s, char eos)
++{
++  return ds_fgetstr_common (f, NULL, s, eos);
++}
++
+ char *
+ ds_fgets (FILE *f, dynamic_string *s)
+ {
+@@ -102,3 +114,9 @@ ds_fgetname (FILE *f, dynamic_string *s)
+ {
+   return ds_fgetstr (f, s, '\0');
+ }
++
++char *
++ds_sgetstr (char *input_string, dynamic_string *s, char eos)
++{
++  return ds_fgetstr_common (NULL, input_string, s, eos);
++}
+diff --git a/src/dstring.h b/src/dstring.h
+index b5135fe..f5f95ec 100644
+--- a/src/dstring.h
++++ b/src/dstring.h
+@@ -49,3 +49,4 @@ void ds_resize (dynamic_string *string, int size);
+ char *ds_fgetname (FILE *f, dynamic_string *s);
+ char *ds_fgets (FILE *f, dynamic_string *s);
+ char *ds_fgetstr (FILE *f, dynamic_string *s, char eos);
++char *ds_sgetstr (char *input_string, dynamic_string *s, char eos);
+diff --git a/src/extern.h b/src/extern.h
+index 6fa2089..4c34404 100644
+--- a/src/extern.h
++++ b/src/extern.h
+@@ -19,6 +19,7 @@
+ 
+ #include "paxlib.h"
+ #include "quotearg.h"
++#include "initramfs.h"
+ #include "quote.h"
+ 
+ enum archive_format
+@@ -99,6 +100,7 @@ extern char output_is_seekable;
+ extern int (*xstat) ();
+ extern void (*copy_function) ();
+ extern char *change_directory_option;
++extern enum metadata_types metadata_type;
+ 
+ 
+ /* copyin.c */
+diff --git a/src/global.c b/src/global.c
+index fb3abe9..0c40be0 100644
+--- a/src/global.c
++++ b/src/global.c
+@@ -199,3 +199,5 @@ char *change_directory_option;
+ int renumber_inodes_option;
+ int ignore_devno_option;
+ 
++/* include file metadata into the image */
++enum metadata_types metadata_type = TYPE_NONE;
+diff --git a/src/initramfs.h b/src/initramfs.h
+new file mode 100644
+index 0000000..d13fc39
+--- /dev/null
++++ b/src/initramfs.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * include/linux/initramfs.h
++ *
++ * Include file for file metadata in the initial ram disk.
++ */
++#ifndef _LINUX_INITRAMFS_H
++#define _LINUX_INITRAMFS_H
++
++#define METADATA_FILENAME "METADATA!!!"
++
++enum metadata_types { TYPE_NONE, TYPE_XATTR, TYPE__LAST };
++
++struct metadata_hdr {
++	char c_size[8];     /* total size including c_size field */
++	char c_version;     /* header version */
++	char c_type;        /* metadata type */
++	char c_metadata[];  /* metadata */
++} __attribute__((packed));
++
++#endif /*_LINUX_INITRAMFS_H*/
+diff --git a/src/main.c b/src/main.c
+index c68aba9..af1fa52 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -200,6 +200,8 @@ static struct argp_option options[] = {
+   {"device-independent", DEVICE_INDEPENDENT_OPTION, NULL, 0,
+    N_("Create device-independent (reproducible) archives") },
+   {"reproducible", 0, NULL, OPTION_ALIAS },
++  {"file-metadata", 'e', N_("TYPE"), 0,
++   N_("Include file metadata"), GRID+1 },
+ #undef GRID
+   
+   /* ********** */
+@@ -293,6 +295,22 @@ warn_control (char *arg)
+   return 1;
+ }
+ 
++static enum metadata_types
++parse_metadata_type(char *arg)
++{
++  static char *metadata_type_str[TYPE__LAST] = {
++    [TYPE_NONE] = "none",
++    [TYPE_XATTR] = "xattr",
++  };
++  int i;
++
++  for (i = 0; i < TYPE__LAST; i++)
++    if (!strcmp (metadata_type_str[i], arg))
++      return i;
++
++  return TYPE_NONE;
++}
++
+ static error_t
+ parse_opt (int key, char *arg, struct argp_state *state)
+ {
+@@ -354,6 +372,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
+       copy_matching_files = false;
+       break;
+ 
++    case 'e':		/* Metadata type.  */
++      metadata_type = parse_metadata_type(arg);
++      break;
++
+     case 'E':		/* Pattern file name.  */
+       pattern_file_name = arg;
+       break;
+-- 
+2.17.1
+
