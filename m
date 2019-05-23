@@ -2,218 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 133782829A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 18:18:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B83C3282E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 18:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731293AbfEWQSF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 12:18:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37042 "EHLO mx1.redhat.com"
+        id S1731388AbfEWQUj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 12:20:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730860AbfEWQSE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 12:18:04 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1731256AbfEWQUh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 12:20:37 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1AC6F308A104;
-        Thu, 23 May 2019 16:18:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-142.rdu2.redhat.com [10.10.121.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 96C5317162;
-        Thu, 23 May 2019 16:18:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 15/23] nfs: get rid of ->set_security()
-From:   David Howells <dhowells@redhat.com>
-To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 23 May 2019 17:18:01 +0100
-Message-ID: <155862828182.26654.5120276809942525177.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155862813755.26654.563679411147031501.stgit@warthog.procyon.org.uk>
-References: <155862813755.26654.563679411147031501.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        by mail.kernel.org (Postfix) with ESMTPSA id 8706621851;
+        Thu, 23 May 2019 16:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558628436;
+        bh=C17dyOau37zrZLZTeV3mA3ct+U5o1QsEkKdRsXekeqk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=d8gQnln0Ww3DisvqyUmO8TXiRMHm4aiiJrKujXjGZ33sNlEFZ+eujPYcLEUE0igO/
+         S2e9w9lJBlMpDCXWCKoNMsv/9TIHnd5Nn2jf9QsOt/lI9Qk6F1JzUtpBdw1o9AmaVU
+         FY/E3pcsKrcVqgnZ4Q/CI+rExvgeIPLjruYs5N0w=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-api@vger.kernel.org,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>
+Subject: [PATCH v3 05/15] fs-verity: add inode and superblock fields
+Date:   Thu, 23 May 2019 09:18:01 -0700
+Message-Id: <20190523161811.6259-6-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190523161811.6259-1-ebiggers@kernel.org>
+References: <20190523161811.6259-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 23 May 2019 16:18:04 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Eric Biggers <ebiggers@google.com>
 
-it's always either nfs_set_sb_security() or nfs_clone_sb_security(),
-the choice being controlled by mount_info->cloned != NULL.  No need
-to add methods, especially when both instances live right next to
-the caller and are never accessed anywhere else.
+Analogous to fs/crypto/, add fields to the VFS inode and superblock for
+use by the fs/verity/ support layer:
 
-Reviewed-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+- ->s_vop: points to the fsverity_operations if the filesystem supports
+  fs-verity, otherwise is NULL.
+
+- ->i_verity_info: points to cached fs-verity information for the inode
+  after someone opens it, otherwise is NULL.
+
+- S_VERITY: bit in ->i_flags that identifies verity inodes, even when
+  they haven't been opened yet and thus still have NULL ->i_verity_info.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
+ include/linux/fs.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
- fs/nfs/internal.h  |    3 --
- fs/nfs/namespace.c |    1 -
- fs/nfs/nfs4super.c |    3 --
- fs/nfs/super.c     |   69 ++++++++++++++++------------------------------------
- 4 files changed, 21 insertions(+), 55 deletions(-)
-
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index 61a480c06a76..1665e0935241 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -144,7 +144,6 @@ struct nfs_mount_request {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f7fdfe93e25d3..a80a192cdcf28 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -64,6 +64,8 @@ struct workqueue_struct;
+ struct iov_iter;
+ struct fscrypt_info;
+ struct fscrypt_operations;
++struct fsverity_info;
++struct fsverity_operations;
+ struct fs_context;
+ struct fs_parameter_description;
  
- struct nfs_mount_info {
- 	unsigned int inherited_bsize;
--	int (*set_security)(struct super_block *, struct dentry *, struct nfs_mount_info *);
- 	struct nfs_parsed_mount_data *parsed;
- 	struct nfs_clone_mount *cloned;
- 	struct nfs_server *server;
-@@ -398,8 +397,6 @@ extern struct file_system_type nfs4_referral_fs_type;
- #endif
- bool nfs_auth_info_match(const struct nfs_auth_info *, rpc_authflavor_t);
- struct dentry *nfs_try_mount(int, const char *, struct nfs_mount_info *);
--int nfs_set_sb_security(struct super_block *, struct dentry *, struct nfs_mount_info *);
--int nfs_clone_sb_security(struct super_block *, struct dentry *, struct nfs_mount_info *);
- struct dentry *nfs_fs_mount(struct file_system_type *, int, const char *, void *);
- void nfs_kill_super(struct super_block *);
- 
-diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
-index 26f99ac5f5be..1c4cb8914b20 100644
---- a/fs/nfs/namespace.c
-+++ b/fs/nfs/namespace.c
-@@ -229,7 +229,6 @@ struct vfsmount *nfs_do_submount(struct dentry *dentry, struct nfs_fh *fh,
- 	};
- 	struct nfs_mount_info mount_info = {
- 		.inherited_bsize = sb->s_blocksize_bits,
--		.set_security = nfs_clone_sb_security,
- 		.cloned = &mountdata,
- 		.mntfh = fh,
- 		.nfs_mod = NFS_SB(sb)->nfs_client->cl_nfs_mod,
-diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
-index aaae3b6f93b6..513861b38b72 100644
---- a/fs/nfs/nfs4super.c
-+++ b/fs/nfs/nfs4super.c
-@@ -200,8 +200,6 @@ struct dentry *nfs4_try_mount(int flags, const char *dev_name,
- 	struct nfs_parsed_mount_data *data = mount_info->parsed;
- 	struct dentry *res;
- 
--	mount_info->set_security = nfs_set_sb_security;
--
- 	dfprintk(MOUNT, "--> nfs4_try_mount()\n");
- 
- 	res = do_nfs4_mount(nfs4_create_server(mount_info),
-@@ -223,7 +221,6 @@ static struct dentry *nfs4_referral_mount(struct file_system_type *fs_type,
- {
- 	struct nfs_clone_mount *data = raw_data;
- 	struct nfs_mount_info mount_info = {
--		.set_security = nfs_clone_sb_security,
- 		.cloned = data,
- 		.nfs_mod = &nfs_v4,
- 	};
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index a78f409e7634..37e922324e99 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2518,52 +2518,6 @@ static void nfs_get_cache_cookie(struct super_block *sb,
- }
+@@ -723,6 +725,10 @@ struct inode {
+ 	struct fscrypt_info	*i_crypt_info;
  #endif
  
--int nfs_set_sb_security(struct super_block *s, struct dentry *mntroot,
--			struct nfs_mount_info *mount_info)
--{
--	int error;
--	unsigned long kflags = 0, kflags_out = 0;
--	if (NFS_SB(s)->caps & NFS_CAP_SECURITY_LABEL)
--		kflags |= SECURITY_LSM_NATIVE_LABELS;
--
--	error = security_sb_set_mnt_opts(s, mount_info->parsed->lsm_opts,
--						kflags, &kflags_out);
--	if (error)
--		goto err;
--
--	if (NFS_SB(s)->caps & NFS_CAP_SECURITY_LABEL &&
--		!(kflags_out & SECURITY_LSM_NATIVE_LABELS))
--		NFS_SB(s)->caps &= ~NFS_CAP_SECURITY_LABEL;
--err:
--	return error;
--}
--EXPORT_SYMBOL_GPL(nfs_set_sb_security);
--
--int nfs_clone_sb_security(struct super_block *s, struct dentry *mntroot,
--			  struct nfs_mount_info *mount_info)
--{
--	int error;
--	unsigned long kflags = 0, kflags_out = 0;
--
--	/* clone any lsm security options from the parent to the new sb */
--	if (d_inode(mntroot)->i_fop != &nfs_dir_operations)
--		return -ESTALE;
--
--	if (NFS_SB(s)->caps & NFS_CAP_SECURITY_LABEL)
--		kflags |= SECURITY_LSM_NATIVE_LABELS;
--
--	error = security_sb_clone_mnt_opts(mount_info->cloned->sb, s, kflags,
--			&kflags_out);
--	if (error)
--		return error;
--
--	if (NFS_SB(s)->caps & NFS_CAP_SECURITY_LABEL &&
--		!(kflags_out & SECURITY_LSM_NATIVE_LABELS))
--		NFS_SB(s)->caps &= ~NFS_CAP_SECURITY_LABEL;
--	return 0;
--}
--EXPORT_SYMBOL_GPL(nfs_clone_sb_security);
--
- static struct dentry *nfs_fs_mount_common(int flags, const char *dev_name,
- 				   struct nfs_mount_info *mount_info)
- {
-@@ -2571,6 +2525,7 @@ static struct dentry *nfs_fs_mount_common(int flags, const char *dev_name,
- 	struct dentry *mntroot = ERR_PTR(-ENOMEM);
- 	int (*compare_super)(struct super_block *, void *) = nfs_compare_super;
- 	struct nfs_server *server = mount_info->server;
-+	unsigned long kflags = 0, kflags_out = 0;
- 	struct nfs_sb_mountdata sb_mntdata = {
- 		.mntflags = flags,
- 		.server = server,
-@@ -2631,7 +2586,26 @@ static struct dentry *nfs_fs_mount_common(int flags, const char *dev_name,
- 	if (IS_ERR(mntroot))
- 		goto error_splat_super;
- 
--	error = mount_info->set_security(s, mntroot, mount_info);
++#ifdef CONFIG_FS_VERITY
++	struct fsverity_info	*i_verity_info;
++#endif
 +
-+	if (NFS_SB(s)->caps & NFS_CAP_SECURITY_LABEL)
-+		kflags |= SECURITY_LSM_NATIVE_LABELS;
-+	if (mount_info->cloned) {
-+		if (d_inode(mntroot)->i_fop != &nfs_dir_operations) {
-+			error = -ESTALE;
-+			goto error_splat_root;
-+		}
-+		/* clone any lsm security options from the parent to the new sb */
-+		error = security_sb_clone_mnt_opts(mount_info->cloned->sb, s, kflags,
-+				&kflags_out);
-+	} else {
-+		error = security_sb_set_mnt_opts(s, mount_info->parsed->lsm_opts,
-+							kflags, &kflags_out);
-+	}
-+	if (error)
-+		goto error_splat_root;
-+	if (NFS_SB(s)->caps & NFS_CAP_SECURITY_LABEL &&
-+		!(kflags_out & SECURITY_LSM_NATIVE_LABELS))
-+		NFS_SB(s)->caps &= ~NFS_CAP_SECURITY_LABEL;
- 	if (error)
- 		goto error_splat_root;
+ 	void			*i_private; /* fs or device private pointer */
+ } __randomize_layout;
  
-@@ -2656,7 +2630,6 @@ struct dentry *nfs_fs_mount(struct file_system_type *fs_type,
- 	int flags, const char *dev_name, void *raw_data)
- {
- 	struct nfs_mount_info mount_info = {
--		.set_security = nfs_set_sb_security,
- 	};
- 	struct dentry *mntroot = ERR_PTR(-ENOMEM);
- 	struct nfs_subversion *nfs_mod;
+@@ -1429,6 +1435,9 @@ struct super_block {
+ 	const struct xattr_handler **s_xattr;
+ #ifdef CONFIG_FS_ENCRYPTION
+ 	const struct fscrypt_operations	*s_cop;
++#endif
++#ifdef CONFIG_FS_VERITY
++	const struct fsverity_operations *s_vop;
+ #endif
+ 	struct hlist_bl_head	s_roots;	/* alternate root dentries for NFS */
+ 	struct list_head	s_mounts;	/* list of mounts; _not_ for fs use */
+@@ -1964,6 +1973,7 @@ struct super_operations {
+ #endif
+ #define S_ENCRYPTED	16384	/* Encrypted file (using fs/crypto/) */
+ #define S_CASEFOLD	32768	/* Casefolded file */
++#define S_VERITY	65536	/* Verity file (using fs/verity/) */
+ 
+ /*
+  * Note that nosuid etc flags are inode-specific: setting some file-system
+@@ -2005,6 +2015,7 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
+ #define IS_DAX(inode)		((inode)->i_flags & S_DAX)
+ #define IS_ENCRYPTED(inode)	((inode)->i_flags & S_ENCRYPTED)
+ #define IS_CASEFOLDED(inode)	((inode)->i_flags & S_CASEFOLD)
++#define IS_VERITY(inode)	((inode)->i_flags & S_VERITY)
+ 
+ #define IS_WHITEOUT(inode)	(S_ISCHR(inode->i_mode) && \
+ 				 (inode)->i_rdev == WHITEOUT_DEV)
+-- 
+2.21.0
 
