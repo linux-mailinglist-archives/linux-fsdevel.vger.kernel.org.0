@@ -2,129 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 250222813C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 17:32:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62242281A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 17:49:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731086AbfEWPb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 11:31:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46924 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730859AbfEWPb6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 11:31:58 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A6B89C05B038;
-        Thu, 23 May 2019 15:31:39 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 461DB79599;
-        Thu, 23 May 2019 15:31:35 +0000 (UTC)
-Date:   Thu, 23 May 2019 11:31:33 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     john.hubbard@gmail.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Christian Benvenuti <benve@cisco.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH 1/1] infiniband/mm: convert put_page() to put_user_page*()
-Message-ID: <20190523153133.GB5104@redhat.com>
-References: <20190523072537.31940-1-jhubbard@nvidia.com>
- <20190523072537.31940-2-jhubbard@nvidia.com>
+        id S1731112AbfEWPs7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 11:48:59 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:51010 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731066AbfEWPs6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 11:48:58 -0400
+Received: by mail-it1-f194.google.com with SMTP id a186so640362itg.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 May 2019 08:48:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qdhvyBV5eCUYlrhtprSXvsuKWr+yBvkV1a8SbE6AS60=;
+        b=PHFjvm23caZGYr4uiNYmJAibVBzXG/G68GWrR3KEL+4ubMa1yG52PY5KbD5HgQ94DS
+         UYyKxymb5fEjGeKdBKbPovN4lf1X37+9FR6/IKpeONALi6Pb6Ba6dCiyKGGLwyh/Thfo
+         TBBGEFZCAqITH+9ysPxJvr8e5RDKlYMuQAQ4Vb/7fDfahu0Q9wvBEskpiiSkZAzXwDg0
+         HO3ghqNF44h7BZNoCoOH48Br+sXnnPudMYWxblMnUowckCT/7+BYIAVlMi8aQoMmK9+g
+         efMaCVYPokznZ4LdQiFStyRq1hGeIabBZ6GksyGUTQGFowjocl7wKgtLYpmWvu2C2iki
+         T5Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qdhvyBV5eCUYlrhtprSXvsuKWr+yBvkV1a8SbE6AS60=;
+        b=fS7BhPmSXhGBxv0MechiN9lzbXluRHi3lrGUAt2nrAUyLl/XLr/EtvgW6KBynVG5IO
+         xi453Tk60q4wTvw8B8T03/Ph9qwWYtv+WbiC0cOKh+knWnR9mxytkIXN3X7CCePqdtbs
+         BG5atjmkp77IdV3HOwbL0NCt5lTO15XkshBtl4nVvi4bHGmse46sh2SmWpkn/NMUjlx6
+         YU0oMiTG0JPsGLFlPqAtnPTZ7v9V8yvLmC2aVVGCVCXUyWr216t09t4fsUbEGwHkef66
+         gG7M9wASPwyWYq6ppAxEuo/VX+WWPz+wZDdusCxbvv2bqVWoxjri7IztC5M/u8wfoA7y
+         ckPQ==
+X-Gm-Message-State: APjAAAUqvVxHnA/C5eGxbvDRRftT+XUhDecUFk5MdcmbFJK5QfQVTaiD
+        HTYGsR66XlqyiNEogxymuKMBrA==
+X-Google-Smtp-Source: APXvYqys6QK/iakUDj+Sh+Ogl2zyh29ySOoi4FUzRp4yc77NrnF9Vcc9AkfEItA9paeABX2UyF+z5Q==
+X-Received: by 2002:a24:6212:: with SMTP id d18mr13266189itc.2.1558626537435;
+        Thu, 23 May 2019 08:48:57 -0700 (PDT)
+Received: from localhost.localdomain ([172.56.12.187])
+        by smtp.gmail.com with ESMTPSA id v1sm9124939iob.56.2019.05.23.08.48.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 08:48:56 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        torvalds@linux-foundation.org, fweimer@redhat.com
+Cc:     jannh@google.com, oleg@redhat.com, tglx@linutronix.de,
+        arnd@arndb.de, shuah@kernel.org, dhowells@redhat.com,
+        tkjos@android.com, ldv@altlinux.org, miklos@szeredi.hu,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, x86@kernel.org,
+        Christian Brauner <christian@brauner.io>
+Subject: [PATCH v2 0/2] close_range()
+Date:   Thu, 23 May 2019 17:47:45 +0200
+Message-Id: <20190523154747.15162-1-christian@brauner.io>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190523072537.31940-2-jhubbard@nvidia.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 23 May 2019 15:31:58 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 12:25:37AM -0700, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
-> 
-> For infiniband code that retains pages via get_user_pages*(),
-> release those pages via the new put_user_page(), or
-> put_user_pages*(), instead of put_page()
-> 
-> This is a tiny part of the second step of fixing the problem described
-> in [1]. The steps are:
-> 
-> 1) Provide put_user_page*() routines, intended to be used
->    for releasing pages that were pinned via get_user_pages*().
-> 
-> 2) Convert all of the call sites for get_user_pages*(), to
->    invoke put_user_page*(), instead of put_page(). This involves dozens of
->    call sites, and will take some time.
-> 
-> 3) After (2) is complete, use get_user_pages*() and put_user_page*() to
->    implement tracking of these pages. This tracking will be separate from
->    the existing struct page refcounting.
-> 
-> 4) Use the tracking and identification of these pages, to implement
->    special handling (especially in writeback paths) when the pages are
->    backed by a filesystem. Again, [1] provides details as to why that is
->    desirable.
-> 
-> [1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
-> 
-> Cc: Doug Ledford <dledford@redhat.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
-> Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
-> Cc: Christian Benvenuti <benve@cisco.com>
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-> Acked-by: Jason Gunthorpe <jgg@mellanox.com>
-> Tested-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Hey,
 
-Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+This is v2 of this patchset.
 
-Between i have a wishlist see below
+In accordance with some comments There's a cond_resched() added to the
+close loop similar to what is done for close_files().
+A common helper pick_file() for __close_fd() and __close_range() has
+been split out. This allows to only make a cond_resched() call when
+filp_close() has been called similar to what is done in close_files().
+Maybe that's not worth it. Jann mentioned that cond_resched() looks
+rather cheap.
+So it maybe that we could simply do:
 
+while (fd <= max_fd) {
+       __close(files, fd++);
+       cond_resched();
+}
 
-> ---
->  drivers/infiniband/core/umem.c              |  7 ++++---
->  drivers/infiniband/core/umem_odp.c          | 10 +++++-----
->  drivers/infiniband/hw/hfi1/user_pages.c     | 11 ++++-------
->  drivers/infiniband/hw/mthca/mthca_memfree.c |  6 +++---
->  drivers/infiniband/hw/qib/qib_user_pages.c  | 11 ++++-------
->  drivers/infiniband/hw/qib/qib_user_sdma.c   |  6 +++---
->  drivers/infiniband/hw/usnic/usnic_uiom.c    |  7 ++++---
->  7 files changed, 27 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
-> index e7ea819fcb11..673f0d240b3e 100644
-> --- a/drivers/infiniband/core/umem.c
-> +++ b/drivers/infiniband/core/umem.c
-> @@ -54,9 +54,10 @@ static void __ib_umem_release(struct ib_device *dev, struct ib_umem *umem, int d
->  
->  	for_each_sg_page(umem->sg_head.sgl, &sg_iter, umem->sg_nents, 0) {
->  		page = sg_page_iter_page(&sg_iter);
-> -		if (!PageDirty(page) && umem->writable && dirty)
-> -			set_page_dirty_lock(page);
-> -		put_page(page);
-> +		if (umem->writable && dirty)
-> +			put_user_pages_dirty_lock(&page, 1);
-> +		else
-> +			put_user_page(page);
+I also added a missing test for close_range(fd, fd, 0).
 
-Can we get a put_user_page_dirty(struct page 8*pages, bool dirty, npages) ?
+Thanks!
+Christian
 
-It is a common pattern that we might have to conditionaly dirty the pages
-and i feel it would look cleaner if we could move the branch within the
-put_user_page*() function.
+Christian Brauner (2):
+  open: add close_range()
+  tests: add close_range() tests
 
-Cheers,
-Jérôme
+ arch/alpha/kernel/syscalls/syscall.tbl        |   1 +
+ arch/arm/tools/syscall.tbl                    |   1 +
+ arch/arm64/include/asm/unistd32.h             |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |   1 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   1 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   1 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   1 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   1 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   1 +
+ fs/file.c                                     |  62 +++++++-
+ fs/open.c                                     |  20 +++
+ include/linux/fdtable.h                       |   2 +
+ include/linux/syscalls.h                      |   2 +
+ include/uapi/asm-generic/unistd.h             |   4 +-
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/core/.gitignore       |   1 +
+ tools/testing/selftests/core/Makefile         |   6 +
+ .../testing/selftests/core/close_range_test.c | 142 ++++++++++++++++++
+ 26 files changed, 249 insertions(+), 9 deletions(-)
+ create mode 100644 tools/testing/selftests/core/.gitignore
+ create mode 100644 tools/testing/selftests/core/Makefile
+ create mode 100644 tools/testing/selftests/core/close_range_test.c
+
+-- 
+2.21.0
+
