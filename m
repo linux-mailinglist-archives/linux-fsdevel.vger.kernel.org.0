@@ -2,110 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2C9F280C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 17:16:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15DD8280CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 17:17:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730796AbfEWPPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 11:15:52 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:40673 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730709AbfEWPPw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 11:15:52 -0400
-Received: by mail-yb1-f193.google.com with SMTP id g62so2399700ybg.7;
-        Thu, 23 May 2019 08:15:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7C1w/R/OVTf4arN5cUtfYsrYHtgapRpkZjh95wSXEAk=;
-        b=tcOc5YsXCSi1Yb1sUWJZtzMcDdpA71BN7GYZHf4blrMX615X5vBq+DE1b4F0SoDzJx
-         tuUas/HuW1yWtemL5riFUXptbnfm2rD/o2hdhPUyz3YVRdkEZKbSP7ayL2tFE6AaiJJi
-         8jfe4FKX7Q3K6XOI2RyLL0S/pM2XeRfgu4JHyf5O2+VRKWAISL8w8ASHOrNM9g9f0TCE
-         yXAnzU6rQOTiXtnjtOLUYvgtQCm6lYlx9plQ55yr1gLJ9ls8mRGIU3EFqa3HepqRQvbM
-         f03ni8BWmldzeuB8i+7T25VldToaMWLarkS99f/2t/kBJCf0ThLb3PHZExDGGXybNxd2
-         UtqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7C1w/R/OVTf4arN5cUtfYsrYHtgapRpkZjh95wSXEAk=;
-        b=Sy12gfgWVqzkPranXQlSYWC3NwJoasi8PviT4et88+JDv+Lk5SbSXRRHYmtSOWL259
-         AwSCTTNY2Auv8BzFiOR1IzIvmqX/9DRZyT6co+4zjmSXkcJk4T6BWFGoobJxh/OSB89I
-         NkkP+1lnEy6Lve6hxTGlFjiGNzM/rGHSvXkYsWUN3j7s5BbY0WYZAvqouksxxnpgukP8
-         ruBD4gaBuLcw4bWyc9eBCwJoxxPmOEoFQA2wEA2JaAdNE0ciX4vVa1CLmTdF7UDmKvZI
-         X253+o8bJgzxLEPEUBXr9+KaV849a8HMsKPX9pcCjJ35C4OKQ7xXXaYKlB7e4gu6MBHb
-         iysQ==
-X-Gm-Message-State: APjAAAVQdeo0me8fwZHYflcnehrwBHJu1hgBXRMrk/h/DMBEf/QPmjYo
-        yidvdb4yEDiYCnZRwnGAXAsE/7vBLHcvt/V7v30=
-X-Google-Smtp-Source: APXvYqyIlXnuW1PFvP2f8GN1hDcVzuoKOug9nygfLYxgELZIHvOTTZNefJEz7WsS+r2MYSJdvccFxF3bmDnflawCokM=
-X-Received: by 2002:a25:cb0c:: with SMTP id b12mr21649228ybg.144.1558624551110;
- Thu, 23 May 2019 08:15:51 -0700 (PDT)
+        id S1730867AbfEWPR5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 11:17:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51684 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730756AbfEWPR5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 11:17:57 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7AFBB63162;
+        Thu, 23 May 2019 15:17:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-142.rdu2.redhat.com [10.10.121.142])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A9CDA1001E82;
+        Thu, 23 May 2019 15:17:48 +0000 (UTC)
+Subject: [PATCH 0/9] keys: Namespacing [ver #3]
+From:   David Howells <dhowells@redhat.com>
+To:     ebiederm@xmission.com
+Cc:     linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        Jann Horn <jannh@google.com>, dhowells@redhat.com,
+        dwalsh@redhat.com, vgoyal@redhat.com, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 23 May 2019 16:17:47 +0100
+Message-ID: <155862466770.15244.16038372267332150004.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <CAOQ4uxjV=7=FXuyccBK9Pu1B7o-w-pbc1FQXJxY4q6z8E93KOg@mail.gmail.com>
- <EB97EF04-D44F-4320-ACDC-C536EED03BA4@brauner.io> <CAOQ4uxhodqVw0DVfcvXYH5vBf4LKcv7t388ZwXeZPBTcEMzGSw@mail.gmail.com>
- <20190523095506.nyei5nogvv63lm4a@brauner.io> <CAOQ4uxiBeAzsE+b=tE7+9=25-qS7ohuTdEswYOt8DrCp6eAMuw@mail.gmail.com>
- <20190523104239.u63u2uth4yyuuufs@brauner.io> <CAOQ4uxji4jRvJnLvXe0yR4Ls7VxM_tjAypX1TqBe5FYr_7GnXw@mail.gmail.com>
- <20190523115845.w7neydaka5xivwyi@brauner.io> <CAOQ4uxgJXLyZe0Bs=q60=+pHpdGtnCdKKZKdr-3iTbygKCryRA@mail.gmail.com>
- <20190523133516.6734wclswqr6vpeg@brauner.io> <20190523144050.GE2949@quack2.suse.cz>
-In-Reply-To: <20190523144050.GE2949@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 23 May 2019 18:15:39 +0300
-Message-ID: <CAOQ4uxhF4WLZRcQcBYGvy+J+cmkUvNLfjGrwvqfBqyfPEHAdhw@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: remove redundant capable(CAP_SYS_ADMIN)s
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <christian@brauner.io>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 23 May 2019 15:17:56 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 5:40 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 23-05-19 15:35:18, Christian Brauner wrote:
-> > So let's say the user tells me:
-> > - When the "/A/B/C/target" file appears on the host filesystem,
-> >   please give me access to "target" in the container at a path I tell
-> >   you.
-> > What I do right now is listen for the creation of the "target" file.
-> > But at the time the user gives me instructions to listen for
-> > "/A/B/C/target" only /A might exist and so I currently add a watch on A/
-> > and then wait for the creation of B/, then wait for the creation of C/
-> > and finally for the creation of "target" (Of course, I also need to
-> > handle B/ and C/ being removed again an recreated and so on.). It would
-> > be helpful, if I could specify, give me notifications, recursively for
-> > e.g. A/ without me having to place extra watches on B/ and C/ when they
-> > appear. Maybe that's out of scope...
->
-> I see. But this is going to be painful whatever you do. Consider for
-> example situation like:
->
-> mkdir -p BAR/B/C/
-> touch BAR/B/C/target
-> mv BAR A
->
-> Or even situation where several renames race so that the end result creates
-> the name (or does not create it depending on how renames race). And by the
-> time you decide A/B/C/target exists, it doesn't need to exist anymore.
-> Honestly I don't see how you want to implement *any* solution in a sane
-> way. About the most reliable+simple would seem to be stat "A/B/C/target"
-> once per second as dumb as it is.
->
 
-Just wanted to point out that while looking at possible solutions for
-"path based rules" for fanotify (i.e. subtree filter) I realized that the audit
-subsystem already has a quite sophisticated mechanism to maintain
-and enforce path based filesystem rules.
+Here are some patches to make keys and keyrings more namespace aware.  Note
+that the branch is dependent on security/next-general.
 
-I do not love that code at all, I can hardly follow it, but if someone would
-have wanted a way to be notified when an object of a given path name
-appears or disappears from the namespace, it seems like something in
-the kernel is already going to a great deal of effort to do that already.
-Or maybe I am misunderstanding what this code does.
+Firstly some miscellaneous patches to make the process easier:
 
-Thanks,
-Amir.
+ (1) Simplify key index_key handling so that the word-sized chunks
+     assoc_array requires don't have to be shifted about, making it easier
+     to add more bits into the key.
+
+ (2) Cache the hash value in the key so that we don't have to calculate on
+     every key we examine during a search (it involves a bunch of
+     multiplications).
+
+ (3) Allow keying_search() to search non-recursively.
+
+Then the main patches:
+
+ (4) Make it so that keyring names are per-user_namespace from the point of
+     view of KEYCTL_JOIN_SESSION_KEYRING so that they're not accessible
+     cross-user_namespace.
+
+ (5) Move the user and user-session keyrings to the user_namespace rather
+     than the user_struct.  This prevents them propagating directly across
+     user_namespaces boundaries (ie. the KEY_SPEC_* flags will only pick
+     from the current user_namespace).
+
+ (6) Make it possible to include the target namespace in which the key shall
+     operate in the index_key.  This will allow the possibility of multiple
+     keys with the same description, but different target domains to be held
+     in the same keyring.
+
+ (7) Make it so that keys are implicitly invalidated by removal of a domain
+     tag, causing them to be garbage collected.
+
+ (8) Institute a network namespace domain tag that allows keys to be
+     differentiated by the network namespace in which they operate.  New keys
+     that are of a type marked 'KEY_TYPE_NET_DOMAIN' are assigned the network
+     domain in force when they are created.
+
+ (9) Make it so that the desired network namespace can be handed down into the
+     request_key() mechanism.  This allows AFS, NFS, etc. to request keys
+     specific to the network namespace of the superblock.
+
+     This also means that the keys in the DNS record cache are thenceforth
+     namespaced, provided network filesystems pass the appropriate network
+     namespace down into dns_query().
+
+     For DNS, AFS and NFS are good; CIFS and Ceph are not.  Other cache
+     keyrings, such as idmapper keyrings, also need to set the domain tag -
+     for which they need access to the network namespace of the superblock.
+
+The patches can be found on the following branch:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-namespace
+
+David
+---
+David Howells (9):
+      keys: Simplify key description management
+      keys: Cache the hash value to avoid lots of recalculation
+      keys: Add a 'recurse' flag for keyring searches
+      keys: Namespace keyring names
+      keys: Move the user and user-session keyrings to the user_namespace
+      keys: Include target namespace in match criteria
+      keys: Garbage collect keys for which the domain has been removed
+      keys: Network namespace domain tag
+      keys: Pass the network namespace into request_key mechanism
+
+
+ Documentation/security/keys/core.rst        |   38 +++-
+ Documentation/security/keys/request-key.rst |   29 ++-
+ certs/blacklist.c                           |    2 
+ crypto/asymmetric_keys/asymmetric_type.c    |    2 
+ fs/afs/addr_list.c                          |    4 
+ fs/afs/dynroot.c                            |    8 +
+ fs/cifs/dns_resolve.c                       |    3 
+ fs/nfs/dns_resolve.c                        |    3 
+ fs/nfs/nfs4idmap.c                          |    2 
+ include/linux/dns_resolver.h                |    3 
+ include/linux/key-type.h                    |    3 
+ include/linux/key.h                         |   81 ++++++++
+ include/linux/sched/user.h                  |   14 -
+ include/linux/user_namespace.h              |   12 +
+ include/net/net_namespace.h                 |    3 
+ kernel/user.c                               |    8 -
+ kernel/user_namespace.c                     |    9 -
+ lib/digsig.c                                |    2 
+ net/ceph/messenger.c                        |    3 
+ net/core/net_namespace.c                    |   19 ++
+ net/dns_resolver/dns_key.c                  |    1 
+ net/dns_resolver/dns_query.c                |    7 +
+ net/rxrpc/key.c                             |    6 -
+ net/rxrpc/security.c                        |    2 
+ security/integrity/digsig_asymmetric.c      |    4 
+ security/keys/gc.c                          |    2 
+ security/keys/internal.h                    |   10 +
+ security/keys/key.c                         |    5 -
+ security/keys/keyctl.c                      |    4 
+ security/keys/keyring.c                     |  263 +++++++++++++++------------
+ security/keys/persistent.c                  |   10 +
+ security/keys/proc.c                        |    3 
+ security/keys/process_keys.c                |  262 +++++++++++++++++----------
+ security/keys/request_key.c                 |   62 ++++--
+ security/keys/request_key_auth.c            |    3 
+ 35 files changed, 583 insertions(+), 309 deletions(-)
+
