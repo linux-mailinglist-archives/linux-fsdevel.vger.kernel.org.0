@@ -2,131 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4ED2284FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 19:32:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B4E82852F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 19:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731256AbfEWRcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 13:32:33 -0400
-Received: from mail-eopbgr40053.outbound.protection.outlook.com ([40.107.4.53]:9217
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731176AbfEWRcc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 13:32:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZU5LBTrwCvNrvkm2YReQkzqZCYnCCl80NBAzedXHgg4=;
- b=iuld8F/niZvmi78ivdyLqtR5ok0lvOdsDscoHx+/AkY1ZErPPJc0kQnE0z0Tvnp+h2KYU7J9kJfu2RCrOh8IsuKeNocPa7v7ZVZxLCo0XGDJ+oUy9vQaY1iQ0Cobu6gLZgLeVzw33QMWU7El2kTPhN1Cr12OGaMj0kjG5l/G3l0=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB5376.eurprd05.prod.outlook.com (20.178.8.81) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.17; Thu, 23 May 2019 17:32:26 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::c16d:129:4a40:9ba1]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::c16d:129:4a40:9ba1%6]) with mapi id 15.20.1922.018; Thu, 23 May 2019
- 17:32:26 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-CC:     "john.hubbard@gmail.com" <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Christian Benvenuti <benve@cisco.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 1/1] infiniband/mm: convert put_page() to put_user_page*()
-Thread-Topic: [PATCH 1/1] infiniband/mm: convert put_page() to
- put_user_page*()
-Thread-Index: AQHVETjmp9NWw1+o9kWPqEfRe8aqV6Z494gAgAAA+wA=
-Date:   Thu, 23 May 2019 17:32:26 +0000
-Message-ID: <20190523173222.GH12145@mellanox.com>
-References: <20190523072537.31940-1-jhubbard@nvidia.com>
- <20190523072537.31940-2-jhubbard@nvidia.com>
- <20190523172852.GA27175@iweiny-DESK2.sc.intel.com>
-In-Reply-To: <20190523172852.GA27175@iweiny-DESK2.sc.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MN2PR10CA0030.namprd10.prod.outlook.com
- (2603:10b6:208:120::43) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.49.251]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3c52dada-5175-404b-e3a3-08d6dfa49f7b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB5376;
-x-ms-traffictypediagnostic: VI1PR05MB5376:
-x-microsoft-antispam-prvs: <VI1PR05MB5376D5618C2E76DDE621E336CF010@VI1PR05MB5376.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2958;
-x-forefront-prvs: 00462943DE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(396003)(39860400002)(136003)(376002)(189003)(199004)(186003)(25786009)(486006)(73956011)(66946007)(36756003)(5660300002)(102836004)(4326008)(6512007)(86362001)(26005)(476003)(66066001)(446003)(11346002)(2616005)(71190400001)(71200400001)(1076003)(3846002)(6116002)(256004)(6436002)(54906003)(6916009)(6486002)(68736007)(33656002)(8676002)(81156014)(14454004)(386003)(8936002)(478600001)(7416002)(76176011)(6506007)(64756008)(66446008)(6246003)(305945005)(66556008)(81166006)(99286004)(52116002)(53936002)(316002)(66476007)(229853002)(7736002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5376;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: VvJkrk5B5LxbnQ2vrRxnSIUM6BFVbjJjPHyXveUIsGzjTNKZzI7CV2YqDdGD/0WoReRD/0A4sSqRIvvmUZBQ4Wa+avwJhId8QA3xo8MF8SV2lpNEPBPEtEm/8Ap/yuKlc/35ik9RdkyIduaTXYzyLYlrnIGGb91ZHG0qGv1kLLvoDmES+OVRrZIyPRaHRtsJP5iLykC71brlqgod3Dx7EdCwdJWqNNoR4CQOJZSTmWxDxa+N+xePj0sFnrTs3bijiEtuK7OYZOrZGTCUOqgIC51D/oFK76soL1VrlISWpO+KP7qZSy4iXvtB9plpccuGh0dlKaulECYCb2kU9Xo5nYF99aG74w7Iro4D0W34v0GhjF2kbsuJv/JTgpOLzc9NhLoYevAgZlYfTtQ7gatDjrmRLmZXKEnMUhzEq8KXcKM=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <FACFD97BF1EB824FBEE5790F977C0B3C@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1731316AbfEWRnw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 13:43:52 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35666 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731093AbfEWRnw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 13:43:52 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t1so3512546pgc.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 May 2019 10:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=GPbTqA3sKULGXvYjOTM7gfPZ7s4y9WwkUm1EREZ84Ec=;
+        b=0KPNMSd1e/ZShlAg1C25np34O9KMTbLFWMGEN4hhgcEhVyzmdg5tjbCMiFs1aybHC6
+         Qpem7qqPH7wZ4Y1fpd/on//UTqYR/TJz2wC3p8mAuf4EPSJ+zqxXdvq+cUPYsMcx/dRk
+         EJrnBOUKqsEexPUnDc9t4pjTsVMOc/DoL+jt8v9Wyf/nNMNpk+KmMOurhckcCiuYo8aP
+         tWxIVyTzlRevLlnAIJgCTLQ7i0JTkhGkeIzFcoQPfXmExNfoNOaGDETbyV6xKsyeqkXF
+         EHjzKM3rmL85wy3SZurcNLO0/Vg8m4xth9v1V0hD2M/S/tFuQf+P5py04XOUCNByiOKB
+         7fwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=GPbTqA3sKULGXvYjOTM7gfPZ7s4y9WwkUm1EREZ84Ec=;
+        b=qTfLzAu6Sx4VyrvqgvIxHsfM4cS777VqqyTlzRzQ4dKqf3FBFjQNKJrVR0slG1phoj
+         nZZYDv164osoKIx/gmgYzVlG7yusdsl/nxvDXLHJjLTz5XEGPCp1POqpXG4cUPMYCbet
+         gLbgKE3jIJjMacYhUh7yoArrj8CZA8UCJtZqhMSD1EqnN4U4nLcf/uZT+5juoeqwDra2
+         uqLgGS8lxuzpqvGkUWBfRSsiUPbZzmioWcYamrl1oD+CCzgCSwuEXYUVbUxHnzVOMCk1
+         RC3cGW49OWZxc2rQHLf9C7zvCvQb62c7AqFXCtvyl/wUUOYpcL2DpPLPSKGraBtXcmu5
+         /O9A==
+X-Gm-Message-State: APjAAAWlbrl5yS15ngpXGT8KB8cCJMLkKcW9CTnmelj2OHFPkRN8Garj
+        TXCUe4pyql4E1Lysf8K3VpobQw==
+X-Google-Smtp-Source: APXvYqxxNUBl2ALbzC/oRGpRc2/4PfBhkyFvL2USl2iASHWmjwWhqOT4E5ch4yBkBNmaWJBlon5wXQ==
+X-Received: by 2002:a62:4118:: with SMTP id o24mr74875817pfa.17.1558633431910;
+        Thu, 23 May 2019 10:43:51 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:a988])
+        by smtp.gmail.com with ESMTPSA id h18sm13255pgv.38.2019.05.23.10.43.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 May 2019 10:43:50 -0700 (PDT)
+Date:   Thu, 23 May 2019 13:43:49 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: xarray breaks thrashing detection and cgroup isolation
+Message-ID: <20190523174349.GA10939@cmpxchg.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c52dada-5175-404b-e3a3-08d6dfa49f7b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 May 2019 17:32:26.5249
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5376
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 10:28:52AM -0700, Ira Weiny wrote:
-> > =20
-> > @@ -686,8 +686,8 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *u=
-mem_odp, u64 user_virt,
-> >  			 * ib_umem_odp_map_dma_single_page().
-> >  			 */
-> >  			if (npages - (j + 1) > 0)
-> > -				release_pages(&local_page_list[j+1],
-> > -					      npages - (j + 1));
-> > +				put_user_pages(&local_page_list[j+1],
-> > +					       npages - (j + 1));
->=20
-> I don't know if we discussed this before but it looks like the use of
-> release_pages() was not entirely correct (or at least not necessary) here=
-.  So
-> I think this is ok.
+Hello,
 
-Oh? John switched it from a put_pages loop to release_pages() here:
+I noticed that recent upstream kernels don't account the xarray nodes
+of the page cache to the allocating cgroup, like we used to do for the
+radix tree nodes.
 
-commit 75a3e6a3c129cddcc683538d8702c6ef998ec589
-Author: John Hubbard <jhubbard@nvidia.com>
-Date:   Mon Mar 4 11:46:45 2019 -0800
+This results in broken isolation for cgrouped apps, allowing them to
+escape their containment and harm other cgroups and the system with an
+excessive build-up of nonresident information.
 
-    RDMA/umem: minor bug fix in error handling path
-   =20
-    1. Bug fix: fix an off by one error in the code that cleans up if it fa=
-ils
-       to dma-map a page, after having done a get_user_pages_remote() on a
-       range of pages.
-   =20
-    2. Refinement: for that same cleanup code, release_pages() is better th=
-an
-       put_page() in a loop.
-   =20
+It also breaks thrashing/refault detection because the page cache
+lives in a different domain than the xarray nodes, and so the shadow
+shrinker can reclaim nonresident information way too early when there
+isn't much cache in the root cgroup.
 
-And now we are going to back something called put_pages() that
-implements the same for loop the above removed?
+This appears to be the culprit:
 
-Seems like we are going in circles?? John?
+commit a28334862993b5c6a8766f6963ee69048403817c
+Author: Matthew Wilcox <willy@infradead.org>
+Date:   Tue Dec 5 19:04:20 2017 -0500
 
-Jason
+    page cache: Finish XArray conversion
+    
+    With no more radix tree API users left, we can drop the GFP flags
+    and use xa_init() instead of INIT_RADIX_TREE().
+    
+    Signed-off-by: Matthew Wilcox <willy@infradead.org>
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 42f6d25f32a5..9b808986d440 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -349,7 +349,7 @@ EXPORT_SYMBOL(inc_nlink);
+ 
+ static void __address_space_init_once(struct address_space *mapping)
+ {
+-       INIT_RADIX_TREE(&mapping->i_pages, GFP_ATOMIC | __GFP_ACCOUNT);
++       xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ);
+        init_rwsem(&mapping->i_mmap_rwsem);
+        INIT_LIST_HEAD(&mapping->private_list);
+        spin_lock_init(&mapping->private_lock);
+
+It fairly blatantly drops __GFP_ACCOUNT.
+
+I'm not quite sure how to fix this, since the xarray code doesn't seem
+to have per-tree gfp flags anymore like the radix tree did. We cannot
+add SLAB_ACCOUNT to the radix_tree_node_cachep slab cache. And the
+xarray api doesn't seem to really support gfp flags, either (xas_nomem
+does, but the optimistic internal allocations have fixed gfp flags).
