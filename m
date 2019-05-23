@@ -2,100 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCAD0283C8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 18:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E50A7283D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 18:36:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731337AbfEWQey (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 12:34:54 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36035 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731288AbfEWQey (ORCPT
+        id S1731347AbfEWQgG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 12:36:06 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36591 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731117AbfEWQgG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 12:34:54 -0400
-Received: by mail-io1-f65.google.com with SMTP id e19so5384676iob.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 May 2019 09:34:53 -0700 (PDT)
+        Thu, 23 May 2019 12:36:06 -0400
+Received: by mail-pl1-f196.google.com with SMTP id d21so2977501plr.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 May 2019 09:36:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Iz31yxamDJ4SLEgYHA+H3kjkT5XCb4Zp6/gfezC2Qt0=;
-        b=br9pbADirR+994GWUgAiKh+WIakMAmwjJW/UntS6Vn0UL+m+lo1dO/FTn+atO0TVUF
-         WdA8FOmw4uGU2Bt+yb06vyTwDWlE5VoB/+44IeS//dPUmBtjE65Z0H9wy+5UAvWjM+bU
-         m+bJeRTuOymmNkxLknco9nJkzLY7TqLdw6esosEZQQvPH6sHVcKReo2wvVHJQn0pMBUf
-         OX51ptx8FqYA5dBO+dTICUUbyHUOH7QuXKfV6eA1u0UfOiAAh+Mf72MaHLSqmppeHekG
-         sh6nJDFdLtpjiUyCOrk9t/mGk5+b5qcprSS2UKQvflivDDj11xTdb5tgLHk7Hl+UCr+t
-         3OUA==
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=ZHrK+VEAX/VhtgbnGngaaCqD5utZFEMM219guRaxE+E=;
+        b=GorN/Qui+MVXqMMHGzBJqclGX9G6qBILF4AZy7hy0J2Jkz9bJv5a/lgqT77AO7krgL
+         t5pCAjjuJBDRMa2gSHydXKIZze53hCW2b2ix5/3EWQv556/nTMUaIHDAr2/emt1R90rs
+         dXn0pYf1PUHGFpkIoQWqHfXwJwBLb1vxtNl4M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Iz31yxamDJ4SLEgYHA+H3kjkT5XCb4Zp6/gfezC2Qt0=;
-        b=L9F1flfH1eP76mUPMdHQvUHJSzGK0B2a+uT+VvjDYZw8x16U3RCk3KcBTHZ1l5hNat
-         WAdzzNvVx4emlMdF7YPOWYo07eiFv86xmDeHstgoQhLS1qneyxTNGa+/Izq8SmyqmtXt
-         /qW3uizzVxC6MTgXVZFHzBGdl9DuhSK/uIhgj/pcfyg8JLPAhvGPMePgQuk3Q2WdwNIQ
-         JtvO8RIe7Ff0g0SSrNxRxSV2IMhHIlTlzIU0H8UtYBO3p2q6+uP/rd5ydShkk/NkTT/T
-         /C1I0SuRa8+YirLD2Z7VnZg1F4yFf3YtK34nIy2dhvOFwOG5yjwbQLEwmV48FhF6ro9h
-         k3Rw==
-X-Gm-Message-State: APjAAAUk7j78+448OOJwp3e8yNLFC3ICXpJjtSud0TeLWS4W/E5/MGyh
-        2S/QlPMqkSk7rElK7KrogxFMzA==
-X-Google-Smtp-Source: APXvYqxbigL0wIoR0wevysC4IvW0XTy55FvFJYU3fuOueOdFBp/HEFetU0vD2YZ0NHaH83jARAO6OQ==
-X-Received: by 2002:a5e:8e4d:: with SMTP id r13mr57452598ioo.300.1558629293065;
-        Thu, 23 May 2019 09:34:53 -0700 (PDT)
-Received: from brauner.io ([172.56.12.187])
-        by smtp.gmail.com with ESMTPSA id i25sm8797750ioi.42.2019.05.23.09.34.43
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 23 May 2019 09:34:52 -0700 (PDT)
-Date:   Thu, 23 May 2019 18:34:41 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        torvalds@linux-foundation.org, fweimer@redhat.com,
-        jannh@google.com, tglx@linutronix.de, arnd@arndb.de,
-        shuah@kernel.org, dhowells@redhat.com, tkjos@android.com,
-        ldv@altlinux.org, miklos@szeredi.hu, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH v2 1/2] open: add close_range()
-Message-ID: <20190523163439.56ucetlt6duvnhdj@brauner.io>
-References: <20190523154747.15162-1-christian@brauner.io>
- <20190523154747.15162-2-christian@brauner.io>
- <20190523162004.GC23070@redhat.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=ZHrK+VEAX/VhtgbnGngaaCqD5utZFEMM219guRaxE+E=;
+        b=G0ijs7MmoBQpcdbG9AGXmLO2Aunki5p/kWtZwhlb1bVuTGxsxtXkx/CiinEfMdyIn3
+         BHZ8SZkd0XpLDauDuKUGSBoVxbRbjS4759zElXg2Ud6e4M1uEzeJelv9HxAYOs2H67FG
+         7TWvhJ9wPVTvogWbbY37Pj8LVbCwUIh43J98tUaEgBzueKE8JCQG7GIZZRQU4PiNL5tW
+         9eRfYLEiCwud5cn17PKlK5g6mflNgDoYtJzd3x+Te7xBQeFzVSPh9dGJJjMeAW3mFktX
+         +qHg5L0geQRLIS1YKd8ObNGux4aTcs6PHBLW/H0f82Q8HgICjOZbN2m1jK65Lyb4v1aa
+         r6fg==
+X-Gm-Message-State: APjAAAU7xveQ8PqV7505IV1mcVvN5Yf5sggmT2ffF0aFMNZsizLJLkwi
+        JXcdsmMUbtl+zCfgTBJaKKA4nw==
+X-Google-Smtp-Source: APXvYqxzC+ORWnTrrOuRAOV5GhS5hVztdWBZSW4dRBg2tKPt3YliHLug2gmkP3GPmyVy614jfIqcmg==
+X-Received: by 2002:a17:902:bd94:: with SMTP id q20mr77186915pls.146.1558629365385;
+        Thu, 23 May 2019 09:36:05 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id q75sm41467250pfa.175.2019.05.23.09.36.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 09:36:04 -0700 (PDT)
+Subject: Re: [PATCH 2/3] firmware: add offset to request_firmware_into_buf
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>
+References: <20190523025113.4605-1-scott.branden@broadcom.com>
+ <20190523025113.4605-3-scott.branden@broadcom.com>
+ <20190523055233.GB22946@kroah.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <15c47e4d-e70d-26bb-9747-0ad0aa81597b@broadcom.com>
+Date:   Thu, 23 May 2019 09:36:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190523162004.GC23070@redhat.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190523055233.GB22946@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 06:20:05PM +0200, Oleg Nesterov wrote:
-> On 05/23, Christian Brauner wrote:
-> >
-> > +int __close_range(struct files_struct *files, unsigned fd, unsigned max_fd)
-> > +{
-> > +	unsigned int cur_max;
-> > +
-> > +	if (fd > max_fd)
-> > +		return -EINVAL;
-> > +
-> > +	rcu_read_lock();
-> > +	cur_max = files_fdtable(files)->max_fds;
-> > +	rcu_read_unlock();
-> > +
-> > +	/* cap to last valid index into fdtable */
-> > +	max_fd = max(max_fd, (cur_max - 1));
->                  ^^^
-> 
-> Hmm. min() ?
+Hi Greg,
 
-Yes, thanks! Massive brainf*rt on my end, sorry.
+On 2019-05-22 10:52 p.m., Greg Kroah-Hartman wrote:
+> On Wed, May 22, 2019 at 07:51:12PM -0700, Scott Branden wrote:
+>> Add offset to request_firmware_into_buf to allow for portions
+>> of firmware file to be read into a buffer.  Necessary where firmware
+>> needs to be loaded in portions from file in memory constrained systems.
+>>
+>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+>> ---
+>>   drivers/base/firmware_loader/firmware.h |  5 +++
+>>   drivers/base/firmware_loader/main.c     | 49 +++++++++++++++++--------
+>>   include/linux/firmware.h                |  8 +++-
+>>   3 files changed, 45 insertions(+), 17 deletions(-)
+> No new firmware test for this new option?  How do we know it even works?
 
-Christian
+I was unaware there are existing firmware tests.  Please let me know 
+where these tests exists and I can add a test for this new option.
+
+We have tested this with a new driver in development which requires the 
+firmware file to be read in portions into memory.  I can add my 
+tested-by and others to the commit message if desired.
+
+> :)
+>
+> thanks,
+>
+> greg k-h
+
+Regards,
+
+Scott
+
