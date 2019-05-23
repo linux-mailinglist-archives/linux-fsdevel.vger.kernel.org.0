@@ -2,229 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42D09282B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 18:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A717F282B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 18:19:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731579AbfEWQSx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 12:18:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52812 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731107AbfEWQSx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 12:18:53 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 71540308FBA9;
-        Thu, 23 May 2019 16:18:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-142.rdu2.redhat.com [10.10.121.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D6568604CC;
-        Thu, 23 May 2019 16:18:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 21/23] NFS: Add a small buffer in nfs_fs_context to avoid
- string dup
-From:   David Howells <dhowells@redhat.com>
-To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 23 May 2019 17:18:50 +0100
-Message-ID: <155862832993.26654.13644247168126569903.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155862813755.26654.563679411147031501.stgit@warthog.procyon.org.uk>
-References: <155862813755.26654.563679411147031501.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1731176AbfEWQS5 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 12:18:57 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:24045 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731374AbfEWQS5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 12:18:57 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-206-NxgE-QeqMLGOVa7vAw4lcw-1; Thu, 23 May 2019 17:18:52 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 23 May 2019 17:18:52 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 23 May 2019 17:18:52 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Oleg Nesterov' <oleg@redhat.com>
+CC:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Thread-Topic: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Thread-Index: AQHVELwtsgR+BAQFXk2JV68Wk/7LjKZ4aINAgABVkoCAAB2x0A==
+Date:   Thu, 23 May 2019 16:18:52 +0000
+Message-ID: <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190522150505.GA4915@redhat.com>
+ <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
+ <20190522161407.GB4915@redhat.com>
+ <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+ <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
+ <20190523145944.GB23070@redhat.com>
+In-Reply-To: <20190523145944.GB23070@redhat.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 23 May 2019 16:18:52 +0000 (UTC)
+X-MC-Unique: NxgE-QeqMLGOVa7vAw4lcw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a small buffer in nfs_fs_context to avoid string duplication when
-parsing numbers.  Also make the parsing function wrapper place the parsed
-integer directly in the appropriate nfs_fs_context struct member.
+From: Oleg Nesterov
+> On 05/23, David Laight wrote:
+> >
+> > I'm confused...
+> 
+> Me too. To clarify, the current code is obviously buggy, pselect/whatever
+> shouldn't return 0 (or anything else) if it was interrupted and we are going
+> to deliver the signal.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
+If it was interrupted the return value has to be EINTR.
+Whether any signal handlers are called is a separate matter.
 
- fs/nfs/fs_context.c |   82 +++++++++++++++++++--------------------------------
- fs/nfs/internal.h   |    2 +
- 2 files changed, 32 insertions(+), 52 deletions(-)
+> But it seems that Deepa has other concerns which I do not understand at all.
+> 
+> In any case, the signal_pending() check _inside_ restore_user_sigmask() can't
+> be right, with or without this patch. If nothing else, a signal can come right
+> after the check.
+> 
+> > So epoll() can return 'success' or 'timeout' (etc) and the handler for SIG_URG
+> > should still be called.
+> 
+> Not sure I understand... OK, suppose that you do
+> 
+> 	block-all-signals;
+> 	ret = pselect(..., sigmask(SIG_URG));
+> 
+> if it returns success/timeout then the handler for SIG_URG should not be called?
 
-diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
-index c7796fb76732..5ba534127c0b 100644
---- a/fs/nfs/fs_context.c
-+++ b/fs/nfs/fs_context.c
-@@ -467,27 +467,22 @@ static int nfs_get_option_str(substring_t args[], char **option)
- 	return !*option;
- }
- 
--static int nfs_get_option_ul(substring_t args[], unsigned long *option)
-+static int nfs_get_option_ui(struct nfs_fs_context *ctx,
-+			     substring_t args[], unsigned int *option)
- {
--	int rc;
--	char *string;
+Ugg...
+Posix probably allows the signal handler be called at the point the event
+happens rather than being deferred until the system call completes.
+Queueing up the signal handler to be run at a later time (syscall exit)
+certainly makes sense.
+Definitely safest to call the signal handler even if success/timeout
+is returned.
+pselect() exists to stop the entry race, not the exit one.
+
+
+> or I am totally confused...
+
+The pselect(2) man page says that the signal handler for a signal that is
+enabled for the duration should run.
+Clearly it is also valid to call the signal handlers for any signals that
+are allowed on entry/exit (they could happen just after the return).
+Also remember that pselect() can also be used to disable signals.
+
+So ISTM that signal handlers allowed by either signal mask
+should be called during syscall exit.
+
+	David
+
 -
--	string = match_strdup(args);
--	if (string == NULL)
--		return -ENOMEM;
--	rc = kstrtoul(string, 10, option);
--	kfree(string);
--
--	return rc;
-+	match_strlcpy(ctx->buf, args, sizeof(ctx->buf));
-+	return kstrtouint(ctx->buf, 10, option);
- }
- 
--static int nfs_get_option_ul_bound(substring_t args[], unsigned long *option,
--		unsigned long l_bound, unsigned long u_bound)
-+static int nfs_get_option_ui_bound(struct nfs_fs_context *ctx,
-+				   substring_t args[], unsigned int *option,
-+				   unsigned int l_bound, unsigned u_bound)
- {
- 	int ret;
- 
--	ret = nfs_get_option_ul(args, option);
--	if (ret != 0)
-+	match_strlcpy(ctx->buf, args, sizeof(ctx->buf));
-+	ret = kstrtouint(ctx->buf, 10, option);
-+	if (ret < 0)
- 		return ret;
- 	if (*option < l_bound || *option > u_bound)
- 		return -ERANGE;
-@@ -500,7 +495,6 @@ static int nfs_get_option_ul_bound(substring_t args[], unsigned long *option,
- static int nfs_fs_context_parse_option(struct nfs_fs_context *ctx, char *p)
- {
- 	substring_t args[MAX_OPT_ARGS];
--	unsigned long option;
- 	char *string;
- 	int token, rc;
- 
-@@ -608,86 +602,70 @@ static int nfs_fs_context_parse_option(struct nfs_fs_context *ctx, char *p)
- 		 * options that take numeric values
- 		 */
- 	case Opt_port:
--		if (nfs_get_option_ul(args, &option) ||
--		    option > USHRT_MAX)
-+		if (nfs_get_option_ui_bound(ctx, args, &ctx->nfs_server.port,
-+					    0, USHRT_MAX))
- 			goto out_invalid_value;
--		ctx->nfs_server.port = option;
- 		break;
- 	case Opt_rsize:
--		if (nfs_get_option_ul(args, &option))
-+		if (nfs_get_option_ui(ctx, args, &ctx->rsize))
- 			goto out_invalid_value;
--		ctx->rsize = option;
- 		break;
- 	case Opt_wsize:
--		if (nfs_get_option_ul(args, &option))
-+		if (nfs_get_option_ui(ctx, args, &ctx->wsize))
- 			goto out_invalid_value;
--		ctx->wsize = option;
- 		break;
- 	case Opt_bsize:
--		if (nfs_get_option_ul(args, &option))
-+		if (nfs_get_option_ui(ctx, args, &ctx->bsize))
- 			goto out_invalid_value;
--		ctx->bsize = option;
- 		break;
- 	case Opt_timeo:
--		if (nfs_get_option_ul_bound(args, &option, 1, INT_MAX))
-+		if (nfs_get_option_ui_bound(ctx, args, &ctx->timeo, 1, INT_MAX))
- 			goto out_invalid_value;
--		ctx->timeo = option;
- 		break;
- 	case Opt_retrans:
--		if (nfs_get_option_ul_bound(args, &option, 0, INT_MAX))
-+		if (nfs_get_option_ui_bound(ctx, args, &ctx->retrans, 0, INT_MAX))
- 			goto out_invalid_value;
--		ctx->retrans = option;
- 		break;
- 	case Opt_acregmin:
--		if (nfs_get_option_ul(args, &option))
-+		if (nfs_get_option_ui(ctx, args, &ctx->acregmin))
- 			goto out_invalid_value;
--		ctx->acregmin = option;
- 		break;
- 	case Opt_acregmax:
--		if (nfs_get_option_ul(args, &option))
-+		if (nfs_get_option_ui(ctx, args, &ctx->acregmax))
- 			goto out_invalid_value;
--		ctx->acregmax = option;
- 		break;
- 	case Opt_acdirmin:
--		if (nfs_get_option_ul(args, &option))
-+		if (nfs_get_option_ui(ctx, args, &ctx->acdirmin))
- 			goto out_invalid_value;
--		ctx->acdirmin = option;
- 		break;
- 	case Opt_acdirmax:
--		if (nfs_get_option_ul(args, &option))
-+		if (nfs_get_option_ui(ctx, args, &ctx->acdirmax))
- 			goto out_invalid_value;
--		ctx->acdirmax = option;
- 		break;
- 	case Opt_actimeo:
--		if (nfs_get_option_ul(args, &option))
-+		if (nfs_get_option_ui(ctx, args, &ctx->acdirmax))
- 			goto out_invalid_value;
- 		ctx->acregmin = ctx->acregmax =
--			ctx->acdirmin = ctx->acdirmax = option;
-+			ctx->acdirmin = ctx->acdirmax;
- 		break;
- 	case Opt_namelen:
--		if (nfs_get_option_ul(args, &option))
-+		if (nfs_get_option_ui(ctx, args, &ctx->namlen))
- 			goto out_invalid_value;
--		ctx->namlen = option;
- 		break;
- 	case Opt_mountport:
--		if (nfs_get_option_ul(args, &option) ||
--		    option > USHRT_MAX)
-+		if (nfs_get_option_ui_bound(ctx, args, &ctx->mount_server.port,
-+					    0, USHRT_MAX))
- 			goto out_invalid_value;
--		ctx->mount_server.port = option;
- 		break;
- 	case Opt_mountvers:
--		if (nfs_get_option_ul(args, &option) ||
--		    option < NFS_MNT_VERSION ||
--		    option > NFS_MNT3_VERSION)
-+		if (nfs_get_option_ui_bound(ctx, args, &ctx->mount_server.version,
-+					    NFS_MNT_VERSION, NFS_MNT3_VERSION))
- 			goto out_invalid_value;
--		ctx->mount_server.version = option;
- 		break;
- 	case Opt_minorversion:
--		if (nfs_get_option_ul(args, &option))
--			goto out_invalid_value;
--		if (option > NFS4_MAX_MINOR_VERSION)
-+		if (nfs_get_option_ui_bound(ctx, args, &ctx->minorversion,
-+					    0, NFS4_MAX_MINOR_VERSION))
- 			goto out_invalid_value;
--		ctx->minorversion = option;
- 		break;
- 
- 		/*
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index c4a1203163ba..6efdbedeeee8 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -129,6 +129,8 @@ struct nfs_fs_context {
- 
- 	void			*lsm_opts;
- 	struct net		*net;
-+
-+	char			buf[32];	/* Parse buffer */
- };
- 
- /* mount_clnt.c */
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
