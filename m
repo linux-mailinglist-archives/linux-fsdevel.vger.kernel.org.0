@@ -2,124 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D97F828596
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 20:06:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9445B285C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 20:22:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731336AbfEWSGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 14:06:49 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45548 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731093AbfEWSGt (ORCPT
+        id S1731320AbfEWSV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 14:21:57 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37989 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731107AbfEWSV5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 14:06:49 -0400
-Received: by mail-io1-f66.google.com with SMTP id b3so228796iob.12;
-        Thu, 23 May 2019 11:06:48 -0700 (PDT)
+        Thu, 23 May 2019 14:21:57 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d18so7324418wrs.5;
+        Thu, 23 May 2019 11:21:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XdOS1jq8b2ZAmKzwdek6sp8pOeqK25qgZhjMRx+3kPc=;
-        b=NWtL07zFOCFP4lBu8Iphuhtalv/5o3pmtac06X4fCcWHWCwJ66NC+/eZo76l5v4fzJ
-         /8EOn/fQ7zeG+DPayQVmNufQw84O/o9H1oOCw0fQfaLZ3sxud2tVSPtfN7Q/HEw7lmxX
-         ouLciFoIAhTvk+ZpGNrpd0iDMLKtjqmCnryYJdyjMrDjqEm5VbOzB5Kc4RsmvChBgu7Y
-         lbD6+axWrJgt+FmL44NWrR2x6diOBV1cHanRkGbk8DpyJJOyMv326+sSpAp4fOxHOESR
-         E3j9rND/5Bml3JxdmQHl5AWGJG69qz+8idDIEcMfQCvBxbKt8bYBJlfTonsCRISMqiz3
-         PcIA==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=qEk0GS4FXU16v/PK8eee13x88Us6k5oXp2zq/Nd4me0=;
+        b=vGg0mfIrIu1QIFKMxEH6OB8L7+xDFF+s0o60XTox3LKUX3+5OVaPxZpP/oqDGzryJc
+         vI7t72/NMZVKPg7LeuNbtLbkGGOXecCeui6yGY0+F7UmqwWCS6ASFIBZYvjeUdtDs7ZK
+         t4xwbJUS1aApbMwmj+0zIB4XsgM88LRBkpCcjW5tbxtuAHl9N8062HkVAPcGh5d73L9g
+         lAheQifG2mr2SytlzQKcM0OUzgFxq2zGI+DOMh+BflHaJS/sBb3NetoSSJSbevXtEDp4
+         fj+IIBNjF0qw9j4mQ0W7jlxOfi8W3sXxR+tWKvMQNO17Xdy0vM6BfW/aDM5JRhj3iPZw
+         fPGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XdOS1jq8b2ZAmKzwdek6sp8pOeqK25qgZhjMRx+3kPc=;
-        b=ZNNI5zfvoh7rqkoGsYMz4q6pRzdD/FF+vCU4Xhv19AR/lXo0UQzKQFxMOk17J3+TFk
-         xB9JcCtG56MsClZZHYnZpWHeSOaGN1qva0Yk44Vg5M2bQpB17di3yULCHiKF8iY1m/em
-         DkjOZ1Im+vWOscwSrDSAOJkCEYGwTA8HGoIsP0OL3AgwmlzgTMa8F6jJYalpx1Jt/i/Q
-         MiISGoTu4Re/jci818uEXxVYFqwvEXv3FbkfxxxXPFvR7r2NLkYIi8SFIzFCIJw/ZFvX
-         4eSFImCclbjVGaciUcjzlAE3omL6bOZEhFeGuFiUbTosHeUM9xF3W4+EO6KxrHJalS4X
-         gsJA==
-X-Gm-Message-State: APjAAAUmmCbG8ORP/VO2G41IUYNNcqIzOcHttOlPJeF/j58NaMBB9cSQ
-        FKK+k/sA3UPwODraimJpcph4i7CyIeUWVk1dWGQ=
-X-Google-Smtp-Source: APXvYqyXvLulnivo5Zhy2pYfrQZo94/GrgWZbNEIX2qy7Qee+RUyI7AyGkRhqzwfHnEEtS/npGnzsNF16tkWzAUuAgQ=
-X-Received: by 2002:a6b:c411:: with SMTP id y17mr4123111ioa.265.1558634808133;
- Thu, 23 May 2019 11:06:48 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=qEk0GS4FXU16v/PK8eee13x88Us6k5oXp2zq/Nd4me0=;
+        b=IncBA2KnSOLfFRAQriF05fz/sLbqtex9FsSg3DwVXl9lUk2k9z5T3vitjVUfmarTG7
+         JxFKyrGUx6jF3OBMRtDoamXqhUAK1l4defZ6iqfiUnv/veRiWeUXg2aZGXsuPTpJWhwW
+         CKXIE5Nk92mO8cla6rKWzo3mra/u0+e01UHtkpqhHc6REzgvDw4UbC5dqg9aXgEng4Vl
+         ZRH4+O4riYbMjt5E0f5PDNPNc4gPrEsos7D7FNL3yJdza2qYA1Vtak/P63G14t6V9the
+         +0Wtsqj/da70Mr1re5i9+ynGshWIDQk6pih+lUcQrkzkZapcS/daaOvNra6aA2+12vh5
+         pNeA==
+X-Gm-Message-State: APjAAAXMXOaBtWRGtkjSPrgXVO7OnnQdnHe13JG01cIJWhqRama5pG83
+        0qcbCA11ITEqLAvjGFAVJrTt+sc=
+X-Google-Smtp-Source: APXvYqzp/dIg1ag8A/2uxeqIaj7tjPL/nDS4pJP8G3jPotwtjtqJQjc8kp3hm7vSTnMfZYlRbh/45A==
+X-Received: by 2002:adf:8307:: with SMTP id 7mr49716836wrd.86.1558635715290;
+        Thu, 23 May 2019 11:21:55 -0700 (PDT)
+Received: from avx2 ([46.53.252.55])
+        by smtp.gmail.com with ESMTPSA id a14sm21689wrv.3.2019.05.23.11.21.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 11:21:54 -0700 (PDT)
+Date:   Thu, 23 May 2019 21:21:52 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     christian@brauner.io
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] close_range()
+Message-ID: <20190523182152.GA6875@avx2>
 MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190522150505.GA4915@redhat.com> <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
- <20190522161407.GB4915@redhat.com> <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
- <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com> <20190523145944.GB23070@redhat.com>
- <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com> <20190523163604.GE23070@redhat.com>
- <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
-In-Reply-To: <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Thu, 23 May 2019 11:06:37 -0700
-Message-ID: <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
-Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ok, since there has been quite a bit of argument here, I will
-backtrack a little bit and maybe it will help us understand what's
-happening here.
-There are many scenarios being discussed on this thread:
-a. State of code before 854a6ed56839a
-b. State after 854a6ed56839a
-c. Proposed fix as per the patchset in question.
+> This is v2 of this patchset.
 
-Oleg, I will discuss these first and then we can discuss the
-additional changes you suggested.
+We've sent fdmap(2) back in the day:
+https://marc.info/?l=linux-kernel&m=150628359803324&w=4
 
-Some background on why we have these syscalls that take sigmask as an
-argument. This is just for the sake of completeness of the argument.
+It can do everything close_range() does and potentially more.
 
-These are particularly meant for a scenario(d) such as below:
+If people ask for it I can rebase it and resend.
 
-1. block the signals you don't care about.
-2. syscall()
-3. unblock the signals blocked in 1.
-
-The problem here is that if there is a signal that is not blocked by 1
-and such a signal is delivered between 1 and 2(since they are not
-atomic), the syscall in 2 might block forever as it never found out
-about the signal.
-
-As per [a] and let's consider the case of epoll_pwait only first for simplicity.
-
-As I said before, ep_poll() is what checks for signal_pending() and is
-responsible for setting errno to -EINTR when there is a signal.
-
-So if a signal is received after ep_poll() and ep_poll() returns
-success, it is never noticed by the syscall during execution.
-So the question is does the userspace have to know about this signal
-or not. From scenario [d] above, I would say it should, even if all
-the fd's completed successfully.
-This does not happen in [a]. So this is what I said was already broken.
-
-What [b] does is to move the signal check closer to the restoration of
-the signal. This way it is good. So, if there is a signal after
-ep_poll() returns success, it is noticed and the signal is delivered
-when the syscall exits. But, the syscall error status itself is 0.
-
-So now [c] is adjusting the return values based on whether extra
-signals were detected after ep_poll(). This part was needed even for
-[a].
-
-Let me know if this clarifies things a bit.
-
--Deepa
+P.S.: you are 2 steps behind :-)
+https://lwn.net/Articles/490224/
