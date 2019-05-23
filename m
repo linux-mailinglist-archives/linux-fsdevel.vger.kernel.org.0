@@ -2,155 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF041274E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 06:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63FA527530
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 06:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbfEWECy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 00:02:54 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:32862 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725792AbfEWECy (ORCPT
+        id S1725806AbfEWEZd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 00:25:33 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:53270 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725786AbfEWEZd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 00:02:54 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4N3sLwU086500;
-        Thu, 23 May 2019 04:02:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=SpnlCnP/O9ZkZqlUX+vUBOkfGqSOfQHrVg1yrZjTXDs=;
- b=oTE2W0bRi34AyZgfWmQVQXAA9VcxLbzdRVkX62uTll9zZaiizxf3pTqA/8pLxO6Bvtm1
- 5G8ay60GkxkeA1qKuLHSprf6I5n3tgxMFgPgo/29ornRWhXDrhhDFhuw2m21q/8zk8aV
- jOwz2AcWjgaW5wsZMfKZcS2DsyTozukLooud+NA4zAaR/E/kBf/WKN4AHl3bM2H8fI8e
- 4qa2CDDPJkrs/jWOUgZusfpcr/15TJjGuz1Bn00/R7PhQg8W3xFSuJ7s+DDwURpzNlgJ
- 7K1ebwmAMxYGh317Cx0kswnL+dEzOwdZVP3lNYXU06Y9mvMCb0vn80xYwnM292TdCVTA Rg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 2smsk5fnm1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 May 2019 04:02:15 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4N41YAS070556;
-        Thu, 23 May 2019 04:02:15 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2smsgt0ae9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 May 2019 04:02:15 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4N424Jj030507;
-        Thu, 23 May 2019 04:02:04 GMT
-Received: from localhost (/10.159.244.226)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 23 May 2019 04:02:03 +0000
-Date:   Wed, 22 May 2019 21:02:02 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     linux-btrfs@vger.kernel.org, kilobyte@angband.pl,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz, david@fromorbit.com,
-        willy@infradead.org, hch@lst.de, dsterba@suse.cz,
-        nborisov@suse.com, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH 08/18] dax: memcpy page in case of IOMAP_DAX_COW for mmap
- faults
-Message-ID: <20190523040202.GH5125@magnolia>
-References: <20190429172649.8288-1-rgoldwyn@suse.de>
- <20190429172649.8288-9-rgoldwyn@suse.de>
- <20190521174625.GF5125@magnolia>
- <20190522191139.62v2rgby5ptjhzcd@fiona>
+        Thu, 23 May 2019 00:25:33 -0400
+Received: by mail-it1-f193.google.com with SMTP id m141so7449108ita.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2019 21:25:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RPKik6HmIGmg8hObsFgp5iJFVVMnEU4PUKI7gQr54gc=;
+        b=RN28E7D3coVAl0eUUzAv2e2sXZxi40ZTq+J3moDkhTkcq8ROMYSlyLT/WFl5QfdIu0
+         YdINrsdWB6zg6+3d7YcNgtV+yZfmKtDZiABXpgfVHPedrPE/jfUYb001O1WFjwc4jinW
+         ZHR301IB9nzZUDKu29WXPyEYwBRKmcml2H9FI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RPKik6HmIGmg8hObsFgp5iJFVVMnEU4PUKI7gQr54gc=;
+        b=AiCTH27jfyS1VPlQI17lvwPpe40GN4vX+yMhND1VeOuTyslqYbB9eDeh1X6nd2ZO3J
+         fjoNUPmmlGSLmRwu6yDsCxO8hsLUkIm7xh4cvzlGdnhWyLx5DICdfjp8uDOUQaX/gnc0
+         mX5zcY+zhr3hVcudb+eZ0UerfhgB2E/6e921xn6/wft4DEvTre/ViJmDooGzoSzn4iBQ
+         dcSfdQ0iC44X2k9BOVEbkM+cvz+94Wm7Zpv9Q9RNnTlii/sOZt79U0K+OKZ3c+8CVny+
+         F+Vxj0WntKrELdxlhbpOpGtm0Qh+xj/A6IYk8YSlx87MxLtOurFS41dCUn2g2zKtPtLi
+         iLsw==
+X-Gm-Message-State: APjAAAWnr02+tWJuhWqWyE621TqoVEzc45vQwfAtlEiJkBq7346uqYMj
+        GUAlirIquqFCjbXvjwdgBTyBKpV6cp7tbXkOsW85yw==
+X-Google-Smtp-Source: APXvYqzNgzfllSbqeNItwfTQqpnfIDbUbhgociSm/lTY0454s3TQLER3zxB273vVJk+wn0Ea6nmgn+C13/oAZRHBn9I=
+X-Received: by 2002:a02:7f96:: with SMTP id r144mr21920294jac.77.1558585532395;
+ Wed, 22 May 2019 21:25:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190522191139.62v2rgby5ptjhzcd@fiona>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9265 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905230026
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9265 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905230026
+References: <20190502040331.81196-1-ezemtsov@google.com> <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
+ <20190502131034.GA25007@mit.edu> <20190502132623.GU23075@ZenIV.linux.org.uk>
+ <CAK8JDrFZW1jwOmhq+YVDPJi9jWWrCRkwpqQ085EouVSyzw-1cg@mail.gmail.com>
+ <CAOQ4uxhDYvBOLBkyYXRC6aS_me+Q=1sBAtzOSkdqbo+N-Rtx=Q@mail.gmail.com>
+ <CAK8JDrGRzA+yphpuX+GQ0syRwF_p2Fora+roGCnYqB5E1eOmXA@mail.gmail.com>
+ <CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=w_AeM6YM=zVixsUfQ@mail.gmail.com>
+ <CAK8JDrEQnXTcCtAPkb+S4r4hORiKh_yX=0A0A=LYSVKUo_n4OA@mail.gmail.com>
+ <CAJeUaNCvr=X-cc+B3rsunKcdC6yHSGGa4G+8X+n8OxGKHeE3zQ@mail.gmail.com>
+ <CAJfpegvmFJ63F2h_gFVPJeEgWS8UmxAYCUgA-4=j9iCNXaXARA@mail.gmail.com> <CAJeUaNC5rXuNsoKmJjJN74iH9YNp94L450gcpxyc_dG=D8CCjA@mail.gmail.com>
+In-Reply-To: <CAJeUaNC5rXuNsoKmJjJN74iH9YNp94L450gcpxyc_dG=D8CCjA@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 23 May 2019 06:25:21 +0200
+Message-ID: <CAJfpegs=4jMo20Wp8NEjREQpqYjqJ22vc680w1E-w6o-dU1brg@mail.gmail.com>
+Subject: Re: Initial patches for Incremental FS
+To:     Yurii Zubrytskyi <zyy@google.com>
+Cc:     Eugene Zemtsov <ezemtsov@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 22, 2019 at 02:11:39PM -0500, Goldwyn Rodrigues wrote:
-> On 10:46 21/05, Darrick J. Wong wrote:
-> > On Mon, Apr 29, 2019 at 12:26:39PM -0500, Goldwyn Rodrigues wrote:
-> > > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > > 
-> > > Change dax_iomap_pfn to return the address as well in order to
-> > > use it for performing a memcpy in case the type is IOMAP_DAX_COW.
-> > > We don't handle PMD because btrfs does not support hugepages.
-> > > 
-> > > Question:
-> > > The sequence of bdev_dax_pgoff() and dax_direct_access() is
-> > > used multiple times to calculate address and pfn's. Would it make
-> > > sense to call it while calculating address as well to reduce code?
-> > > 
-> > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > > ---
-> > >  fs/dax.c | 19 +++++++++++++++----
-> > >  1 file changed, 15 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/fs/dax.c b/fs/dax.c
-> > > index 610bfa861a28..718b1632a39d 100644
-> > > --- a/fs/dax.c
-> > > +++ b/fs/dax.c
-> > > @@ -984,7 +984,7 @@ static sector_t dax_iomap_sector(struct iomap *iomap, loff_t pos)
-> > >  }
-> > >  
-> > >  static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
-> > > -			 pfn_t *pfnp)
-> > > +			 pfn_t *pfnp, void **addr)
-> > >  {
-> > >  	const sector_t sector = dax_iomap_sector(iomap, pos);
-> > >  	pgoff_t pgoff;
-> > > @@ -996,7 +996,7 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
-> > >  		return rc;
-> > >  	id = dax_read_lock();
-> > >  	length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
-> > > -				   NULL, pfnp);
-> > > +				   addr, pfnp);
-> > >  	if (length < 0) {
-> > >  		rc = length;
-> > >  		goto out;
-> > > @@ -1286,6 +1286,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
-> > >  	XA_STATE(xas, &mapping->i_pages, vmf->pgoff);
-> > >  	struct inode *inode = mapping->host;
-> > >  	unsigned long vaddr = vmf->address;
-> > > +	void *addr;
-> > >  	loff_t pos = (loff_t)vmf->pgoff << PAGE_SHIFT;
-> > >  	struct iomap iomap = { 0 };
-> > 
-> > Ugh, I had forgotten that fs/dax.c open-codes iomap_apply, probably
-> > because the actor returns vm_fault_t, not bytes copied.  I guess that
-> > makes it a tiny bit more complicated to pass in two (struct iomap *) to
-> > the iomap_begin function...
-> 
-> I am not sure I understand this. We do not use iomap_apply() in
-> the fault path: dax_iomap_pte_fault(). We just use iomap_begin()
-> and iomap_end(). So, why can we not implement your idea of using two
-> iomaps?
+On Wed, May 22, 2019 at 7:25 PM Yurii Zubrytskyi <zyy@google.com> wrote:
+>
+> > Hang on, fuse does use caches in the kernel (page cache,
+> > dcache/icache).  The issue is probably not lack of cache, it's how the
+> > caches are primed and used.  Did you disable these caches?  Did you
+> > not disable invalidation for data, metadata and dcache?  In recent
+> > kernels we added caching readdir as well.  The only objects not cached
+> > are (non-acl) xattrs.   Do you have those?
+> Android (which is our primary use case) is constantly under memory
+> pressure, so caches
+> don't actually last long. Our experience with FOPEN_KEEP_CACHE has
+> shown that pages are
+> evicted more often than the files are getting reopened, so it doesn't
+> help. FUSE has to re-read
+> the data from the backing store all the time.
 
-Oh, sorry, I wasn't trying to say that calling ->iomap_begin made it
-*impossible* to implement.  I was merely complaining about the increased
-maintenance burden that results from open coding -- now there are three
-places where we have to change a struct iomap declaration, not one
-(iomap_apply) as I had originally thought.
+What would benefit many fuse applications is to let the kernel
+transfer data to/from a given location (i.e. offset within a file).
+So instead of transferring data directly in the READ/WRITE messages,
+there would be a MAP message that would return information about where
+the data resides (list of extents+extra parameters for
+compression/encryption).  The returned information could be generic
+enough for your needs, I think.  The fuse kernel module would cache
+this mapping, and could keep the mapping around for possibly much
+longer than the data itself, since it would require orders of
+magnitude less memory. This would not only be saving memory copies,
+but also the number of round trips to userspace.
 
-> What does open-coding iomap-apply mean?
+There's also work currently ongoing in optimizing the overhead of
+userspace roundtrip.  The most promising thing appears to be matching
+up the CPU for the userspace server with that of the task doing the
+request.  This can apparently result in  60-500% speed improvement.
 
-Any function that calls (1) ->iomap_begin; (2) performs an action on the
-returned iomap; and (3) then calls calling ->iomap_end.  That's what
-iomap_apply() does.
+> We didn't use xattrs for the FUSE-based implementation, but ended up
+> requiring a similar thing in
+> the Incremental FS, so the final design would have to include them.
+>
+> > Re prefetching data:
+> > there's the NOTIFY_STORE message.
+> To add to the previous point, we do not have the data for prefetching,
+> as we're loading it page-by-page
+> from the host. We had to disable readahead for FUSE completely,
+> otherwise even USB3 isn't fast enough
 
-Really I'm just being maintainer-cranky.  Ignore me for now. :)
+Understood.  Did you re-enable readahead for the case when the file
+has been fully downloaded?
 
---D
-
-> 
-> -- 
-> Goldwyn
+Thanks,
+Miklos
