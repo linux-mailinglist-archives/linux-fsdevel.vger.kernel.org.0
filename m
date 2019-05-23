@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF3728446
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 18:54:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 756D828451
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 18:56:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbfEWQy2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 12:54:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37228 "EHLO mail.kernel.org"
+        id S1731061AbfEWQ4J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 12:56:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730790AbfEWQy1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 12:54:27 -0400
+        id S1730790AbfEWQ4J (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 12:56:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C1E12133D;
-        Thu, 23 May 2019 16:54:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F2C72133D;
+        Thu, 23 May 2019 16:56:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558630466;
-        bh=gFMSCvOoFs6DdCkevFbuQW1+KGO3T+X8fVWaMcoMs2Q=;
+        s=default; t=1558630567;
+        bh=NxEqmz70QWzEjbS+pf4ify9tPSuURZA6s5RVayaoBJw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BdRtwwLHom73mP48vZGqdwC5nVKgUXI53YjFzBTB71Uh3f5OQL2zQ43rNfTAtC+cj
-         jxxuRgNp1e4HeuLNRLNqUnAnROtcgfa7Zqb7eUJeAafTMXtGZsGJF3kvCsK7JT6SZD
-         vtinHCcVib/eLnkmonHo0UdIQ0c/2PA4E4E1yPys=
-Date:   Thu, 23 May 2019 18:54:24 +0200
+        b=NDV86IuVu1EYXQEYNcVDDQnio+t0hmbUuHgESpY3OPxFXYasZ4OgE82w6OBV/f0nr
+         faw75AZCiqvGr0QNfzIYDrbVR7ZR2N6K1qmyRIGCaJBQwS398anbj9sy1r8kVgoJuW
+         l6pqQscW0wKtkQDfYv2fLxEmAw2fReHdH44jENQw=
+Date:   Thu, 23 May 2019 18:56:05 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Scott Branden <scott.branden@broadcom.com>
 Cc:     Luis Chamberlain <mcgrof@kernel.org>,
@@ -35,50 +35,80 @@ Cc:     Luis Chamberlain <mcgrof@kernel.org>,
         linux-fsdevel@vger.kernel.org,
         BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
         Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 2/3] firmware: add offset to request_firmware_into_buf
-Message-ID: <20190523165424.GA21048@kroah.com>
+Subject: Re: [PATCH 3/3] soc: qcom: mdt_loader: add offset to
+ request_firmware_into_buf
+Message-ID: <20190523165605.GB21048@kroah.com>
 References: <20190523025113.4605-1-scott.branden@broadcom.com>
- <20190523025113.4605-3-scott.branden@broadcom.com>
- <20190523055233.GB22946@kroah.com>
- <15c47e4d-e70d-26bb-9747-0ad0aa81597b@broadcom.com>
+ <20190523025113.4605-4-scott.branden@broadcom.com>
+ <20190523055212.GA22946@kroah.com>
+ <c12872f5-4dc3-9bc4-f89b-27037dc0b6ff@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <15c47e4d-e70d-26bb-9747-0ad0aa81597b@broadcom.com>
+In-Reply-To: <c12872f5-4dc3-9bc4-f89b-27037dc0b6ff@broadcom.com>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 09:36:02AM -0700, Scott Branden wrote:
+On Thu, May 23, 2019 at 09:41:49AM -0700, Scott Branden wrote:
 > Hi Greg,
 > 
 > On 2019-05-22 10:52 p.m., Greg Kroah-Hartman wrote:
-> > On Wed, May 22, 2019 at 07:51:12PM -0700, Scott Branden wrote:
-> > > Add offset to request_firmware_into_buf to allow for portions
-> > > of firmware file to be read into a buffer.  Necessary where firmware
-> > > needs to be loaded in portions from file in memory constrained systems.
+> > On Wed, May 22, 2019 at 07:51:13PM -0700, Scott Branden wrote:
+> > > Adjust request_firmware_into_buf API to allow for portions
+> > > of firmware file to be read into a buffer.  mdt_loader still
+> > > retricts request fo whole file read into buffer.
 > > > 
 > > > Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 > > > ---
-> > >   drivers/base/firmware_loader/firmware.h |  5 +++
-> > >   drivers/base/firmware_loader/main.c     | 49 +++++++++++++++++--------
-> > >   include/linux/firmware.h                |  8 +++-
-> > >   3 files changed, 45 insertions(+), 17 deletions(-)
-> > No new firmware test for this new option?  How do we know it even works?
+> > >   drivers/soc/qcom/mdt_loader.c | 7 +++++--
+> > >   1 file changed, 5 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+> > > index 1c488024c698..ad20d159699c 100644
+> > > --- a/drivers/soc/qcom/mdt_loader.c
+> > > +++ b/drivers/soc/qcom/mdt_loader.c
+> > > @@ -172,8 +172,11 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
+> > >   		if (phdr->p_filesz) {
+> > >   			sprintf(fw_name + fw_name_len - 3, "b%02d", i);
+> > > -			ret = request_firmware_into_buf(&seg_fw, fw_name, dev,
+> > > -							ptr, phdr->p_filesz);
+> > > +			ret = request_firmware_into_buf
+> > > +						(&seg_fw, fw_name, dev,
+> > > +						 ptr, phdr->p_filesz,
+> > > +						 0,
+> > > +						 KERNEL_PREAD_FLAG_WHOLE);
+> > So, all that work in the first 2 patches for no real change at all?  Why
+> > are these changes even needed?
 > 
-> I was unaware there are existing firmware tests.  Please let me know where
-> these tests exists and I can add a test for this new option.
+> The first two patches allow partial read of files into memory.
+> 
+> Existing kernel drivers haven't need such functionality so, yes, there
+> should be no real change
+> 
+> with first two patches other than adding such partial file read support.
+> 
+> We have a new driver in development which needs partial read of files
+> supported in the kernel.
 
-tools/testing/selftests/firmware/
+As I said before, I can not take new apis without any in-kernel user.
+So let's wait for your new code that thinks it needs this, and then we
+will be glad to evaluate all of this at that point in time.
 
-> We have tested this with a new driver in development which requires the
-> firmware file to be read in portions into memory.  I can add my tested-by
-> and others to the commit message if desired.
+To do so otherwise is to have loads of unused "features" aquiring cruft
+in the kernel source, and you do not want that.
 
-I can't take new apis without an in-kernel user, you all know this...
+> > And didn't you break this driver in patch 2/3?  You can't fix it up
+> > later here, you need to also resolve that in the 2nd patch.
+> 
+> I thought the driver changes needs to be in a different patch. If required I
+> can squash this
+
+You can NEVER break the build with any individual kernel patch, that
+should be well known by now as we have been doing this for over a
+decade.
 
 thanks,
 
