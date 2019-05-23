@@ -2,174 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E48C2745F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 04:30:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A38C27494
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 04:52:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbfEWCa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 May 2019 22:30:27 -0400
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:36078 "EHLO
-        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728022AbfEWCa1 (ORCPT
+        id S1729836AbfEWCv0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 May 2019 22:51:26 -0400
+Received: from mail-pg1-f179.google.com ([209.85.215.179]:37153 "EHLO
+        mail-pg1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727802AbfEWCv0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 May 2019 22:30:27 -0400
-Received: from [4.30.142.84] (helo=srivatsab-a01.vmware.com)
-        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
-        (Exim 4.82)
-        (envelope-from <srivatsa@csail.mit.edu>)
-        id 1hTdUn-000CNl-Vx; Wed, 22 May 2019 22:30:18 -0400
-Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
- controller
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        jmoyer@redhat.com, Theodore Ts'o <tytso@mit.edu>,
-        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
-References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
- <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
- <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
- <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
- <A0DFE635-EFEC-4670-AD70-5D813E170BEE@linaro.org>
- <5B6570A2-541A-4CF8-98E0-979EA6E3717D@linaro.org>
- <2CB39B34-21EE-4A95-A073-8633CF2D187C@linaro.org>
- <FC24E25F-4578-454D-AE2B-8D8D352478D8@linaro.org>
- <0e3fdf31-70d9-26eb-7b42-2795d4b03722@csail.mit.edu>
- <F5E29C98-6CC4-43B8-994D-0B5354EECBF3@linaro.org>
- <686D6469-9DE7-4738-B92A-002144C3E63E@linaro.org>
- <01d55216-5718-767a-e1e6-aadc67b632f4@csail.mit.edu>
- <CA8A23E2-6F22-4444-9A20-E052A94CAA9B@linaro.org>
-From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Message-ID: <cc148388-3c82-d7c0-f9ff-8c31bb5dc77d@csail.mit.edu>
-Date:   Wed, 22 May 2019 19:30:14 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CA8A23E2-6F22-4444-9A20-E052A94CAA9B@linaro.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 22 May 2019 22:51:26 -0400
+Received: by mail-pg1-f179.google.com with SMTP id n27so2307661pgm.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 May 2019 19:51:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=eelYOl+auCZwPeaiF2iZqxUedYahMzn49UDx8OOb2N8=;
+        b=BrT/LmvVnhqjaKLk/W1wvw0WfcNXPvWG0i0rFsiMvmJpNRkOSM5XIMzQrTEyryQqNg
+         RS8iiVSCimgKdPtY9di7vvJXbDUGY8aW4/uDwh9dw6FgZaxXDgrOXbV2BJW4Pv52ZS0A
+         eRK1jYeKKSnZhbMeqtbVAPScLf/iDf23GCJdY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eelYOl+auCZwPeaiF2iZqxUedYahMzn49UDx8OOb2N8=;
+        b=CXuBFL9fvZKStCCquLQjqFIREtmBLHB8S5imrdbnQ4Hp5Q9403Dkri1ufN3D6U/3xe
+         KLC8bMUjjy57qRczcPRxy8eZEdpfw/cO1nofifMv/pCSpeDbAT2k9OGuj2pP0LL76n/e
+         pqQEX7z/ItXAliI12WEqotBmWH/o67h1T8lRPjjL8efbwiK+AyA1FaeYQtWLc8qu4jlk
+         Agke9+1HrMy7Wh9VVJFyxxpNXoRB6SI8RlhdAwlGBslF71PeQjw+5hAinOGSU3p63dl7
+         iySs1Hl1YsbzyGhCi/So2zC6h6UZ3QLyAS1s8UeBNg9t/W/kx7+hLr1r8GBk9+/SgfBz
+         0sOQ==
+X-Gm-Message-State: APjAAAVIe4A29qQzPR3nILgf5bsf8X2Lh2TEVWi4tv93QP9HrYZbtrVA
+        VH5AzjSDPQDcwnmcsW6o7Jss2w==
+X-Google-Smtp-Source: APXvYqyryGsGQdDT/y24ZM5GRt90QMDl4IIoLoKgwlwT7BtX21xYS/KWrf+aebtyaSorYCB4oWXgrQ==
+X-Received: by 2002:a65:52c3:: with SMTP id z3mr41505682pgp.56.1558579885890;
+        Wed, 22 May 2019 19:51:25 -0700 (PDT)
+Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id q19sm42812174pff.96.2019.05.22.19.51.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 May 2019 19:51:24 -0700 (PDT)
+From:   Scott Branden <scott.branden@broadcom.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH 0/3] fs: add partial file read support
+Date:   Wed, 22 May 2019 19:51:10 -0700
+Message-Id: <20190523025113.4605-1-scott.branden@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/22/19 3:54 AM, Paolo Valente wrote:
-> 
-> 
->> Il giorno 22 mag 2019, alle ore 12:01, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
->>
->> On 5/22/19 2:09 AM, Paolo Valente wrote:
->>>
->>> First, thank you very much for testing my patches, and, above all, for
->>> sharing those huge traces!
->>>
->>> According to the your traces, the residual 20% lower throughput that you
->>> record is due to the fact that the BFQ injection mechanism takes a few
->>> hundredths of seconds to stabilize, at the beginning of the workload.
->>> During that setup time, the throughput is equal to the dreadful ~60-90 KB/s
->>> that you see without this new patch.  After that time, there
->>> seems to be no loss according to the trace.
->>>
->>> The problem is that a loss lasting only a few hundredths of seconds is
->>> however not negligible for a write workload that lasts only 3-4
->>> seconds.  Could you please try writing a larger file?
->>>
->>
->> I tried running dd for longer (about 100 seconds), but still saw around
->> 1.4 MB/s throughput with BFQ, and between 1.5 MB/s - 1.6 MB/s with
->> mq-deadline and noop.
-> 
-> Ok, then now the cause is the periodic reset of the mechanism.
-> 
-> It would be super easy to fill this gap, by just gearing the mechanism
-> toward a very aggressive injection.  The problem is maintaining
-> control.  As you can imagine from the performance gap between CFQ (or
-> BFQ with malfunctioning injection) and BFQ with this fix, it is very
-> hard to succeed in maximizing the throughput while at the same time
-> preserving control on per-group I/O.
-> 
+This patch series adds partial file read support to the kernel via
+kernel_pread_file functions.  request_firmware_into_buf function
+enhanced to allow partial file read support and single qcom driver
+using existing function updated.
+Change to core kernel file support allows new drivers to read partial
+file to memory as necessary in memory constrained systems.
 
-Ah, I see. Just to make sure that this fix doesn't overly optimize for
-total throughput (because of the testcase we've been using) and end up
-causing regressions in per-group I/O control, I ran a test with
-multiple simultaneous dd instances, each writing to a different
-portion of the filesystem (well separated, to induce seeks), and each
-dd task bound to its own blkio cgroup. I saw similar results with and
-without this patch, and the throughput was equally distributed among
-all the dd tasks.
+Scott Branden (3):
+  fs: introduce kernel_pread_file* support
+  firmware: add offset to request_firmware_into_buf
+  soc: qcom: mdt_loader: add offset to request_firmware_into_buf
 
-> On the bright side, you might be interested in one of the benefits
-> that BFQ gives in return for this ~10% loss of throughput, in a
-> scenario that may be important for you (according to affiliation you
-> report): from ~500% to ~1000% higher throughput when you have to serve
-> the I/O of multiple VMs, and to guarantee at least no starvation to
-> any VM [1].  The same holds with multiple clients or containers, and
-> in general with any set of entities that may compete for storage.
-> 
-> [1] https://www.linaro.org/blog/io-bandwidth-management-for-production-quality-services/
-> 
+ drivers/base/firmware_loader/firmware.h |  5 ++
+ drivers/base/firmware_loader/main.c     | 49 +++++++++++-----
+ drivers/soc/qcom/mdt_loader.c           |  7 ++-
+ fs/exec.c                               | 77 +++++++++++++++++++------
+ include/linux/firmware.h                |  8 ++-
+ include/linux/fs.h                      | 15 +++++
+ 6 files changed, 125 insertions(+), 36 deletions(-)
 
-Great article! :) Thank you for sharing it!
+-- 
+2.17.1
 
->> But I'm not too worried about that difference.
->>
->>> In addition, I wanted to ask you whether you measured BFQ throughput
->>> with traces disabled.  This may make a difference.
->>>
->>
->> The above result (1.4 MB/s) was obtained with traces disabled.
->>
->>> After trying writing a larger file, you can try with low_latency on.
->>> On my side, it causes results to become a little unstable across
->>> repetitions (which is expected).
->>>
->> With low_latency on, I get between 60 KB/s - 100 KB/s.
->>
-> 
-> Gosh, full regression.  Fortunately, it is simply meaningless to use
-> low_latency in a scenario where the goal is to guarantee per-group
-> bandwidths.  Low-latency heuristics, to reach their (low-latency)
-> goals, modify the I/O schedule compared to the best schedule for
-> honoring group weights and boosting throughput.  So, as recommended in
-> BFQ documentation, just switch low_latency off if you want to control
-> I/O with groups.  It may still make sense to leave low_latency on
-> in some specific case, which I don't want to bother you about.
-> 
-
-My main concern here is about Linux's I/O performance out-of-the-box,
-i.e., with all default settings, which are:
-
-- cgroups and blkio enabled (systemd default)
-- blkio non-root cgroups in use (this is the implicit systemd behavior
-  if docker is installed; i.e., it runs tasks under user.slice)
-- I/O scheduler with blkio group sched support: bfq
-- bfq default configuration: low_latency = 1
-
-If this yields a throughput that is 10x-30x slower than what is
-achievable, I think we should either fix the code (if possible) or
-change the defaults such that they don't lead to this performance
-collapse (perhaps default low_latency to 0 if bfq group scheduling
-is in use?)
-
-> However, I feel bad with such a low throughput :)  Would you be so
-> kind to provide me with a trace?
-> 
-Certainly! Short runs of dd resulted in a lot of variation in the
-throughput (between 60 KB/s - 1 MB/s), so I increased dd's runtime
-to get repeatable numbers (~70 KB/s). As a result, the trace file
-(trace-bfq-boost-injection-low-latency-71KBps) is quite large, and
-is available here:
-
-https://www.dropbox.com/s/svqfbv0idcg17pn/bfq-traces.tar.gz?dl=0
-
-Also, I'm very happy to run additional tests or experiments to help
-track down this issue. So, please don't hesitate to let me know if
-you'd like me to try anything else or get you additional traces etc. :)
-
-Thank you!
-
-Regards,
-Srivatsa
-VMware Photon OS
