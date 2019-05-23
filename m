@@ -2,38 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D168328D43
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 00:36:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F210728D6D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 00:50:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388622AbfEWWgJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 18:36:09 -0400
-Received: from mga04.intel.com ([192.55.52.120]:10352 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387735AbfEWWgI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 18:36:08 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 May 2019 15:36:07 -0700
-X-ExtLoop1: 1
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga008.fm.intel.com with ESMTP; 23 May 2019 15:36:07 -0700
-Date:   Thu, 23 May 2019 15:37:01 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
+        id S2388496AbfEWWuV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 18:50:21 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:9797 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387546AbfEWWuV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 18:50:21 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ce723ac0005>; Thu, 23 May 2019 15:50:20 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 23 May 2019 15:50:19 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 23 May 2019 15:50:19 -0700
+Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 23 May
+ 2019 22:50:14 +0000
+Subject: Re: [PATCH 1/1] infiniband/mm: convert put_page() to put_user_page*()
+To:     Ira Weiny <ira.weiny@intel.com>
+CC:     Jason Gunthorpe <jgg@mellanox.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
         LKML <linux-kernel@vger.kernel.org>,
         "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        "Mike Marciniszyn" <mike.marciniszyn@intel.com>,
         Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Christian Benvenuti <benve@cisco.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 1/1] infiniband/mm: convert put_page() to put_user_page*()
-Message-ID: <20190523223701.GA15048@iweiny-DESK2.sc.intel.com>
+        Christian Benvenuti <benve@cisco.com>,
+        "Jan Kara" <jack@suse.cz>
 References: <20190523072537.31940-1-jhubbard@nvidia.com>
  <20190523072537.31940-2-jhubbard@nvidia.com>
  <20190523172852.GA27175@iweiny-DESK2.sc.intel.com>
@@ -41,164 +42,93 @@ References: <20190523072537.31940-1-jhubbard@nvidia.com>
  <fa6d7d7c-13a3-0586-6384-768ebb7f0561@nvidia.com>
  <20190523190423.GA19578@iweiny-DESK2.sc.intel.com>
  <0bd9859f-8eb0-9148-6209-08ae42665626@nvidia.com>
+ <20190523223701.GA15048@iweiny-DESK2.sc.intel.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <050f56d0-1dda-036e-e508-3a7255ac7b59@nvidia.com>
+Date:   Thu, 23 May 2019 15:50:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0bd9859f-8eb0-9148-6209-08ae42665626@nvidia.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20190523223701.GA15048@iweiny-DESK2.sc.intel.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1558651820; bh=pnD2mPom1537ot4zdnaJYiSqU3krtz3ITZMHoUjrO54=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=PL1hqSFGAyha/HZ79WcNqF63aQObWkwaPlneBIGP0b7M7mgvTnxDuamjPTAyGfKF1
+         yHMeLk26WEhfP2v931D1xU4W3M3kiwYQmBfLraEzR5YZXcfsobgtoJPyyLH4+6FTSu
+         jnQhcgabwqiWxG7558a5TO0DHh6plvrU70wZ6snBovpECiJdOYn4l86CCwmo3NDu3O
+         3UXNZap6nUALoyxA2W+ylo2ndYIsR8f9oF+z0OhfOamlbdOLOBUEnQFBZGiQWt1HUc
+         6E7eSVdsS34aUe5ZN9gIcZVR9Y/B0Sxsb590oa3FJ9NZuUjjM8XRY+0vmapyQQB2fM
+         PPK57wDeZu70A==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 12:13:59PM -0700, John Hubbard wrote:
-> On 5/23/19 12:04 PM, Ira Weiny wrote:
-> > On Thu, May 23, 2019 at 10:46:38AM -0700, John Hubbard wrote:
-> > > On 5/23/19 10:32 AM, Jason Gunthorpe wrote:
-> > > > On Thu, May 23, 2019 at 10:28:52AM -0700, Ira Weiny wrote:
-> > > > > > @@ -686,8 +686,8 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
-> > > > > >    			 * ib_umem_odp_map_dma_single_page().
-> > > > > >    			 */
-> > > > > >    			if (npages - (j + 1) > 0)
-> > > > > > -				release_pages(&local_page_list[j+1],
-> > > > > > -					      npages - (j + 1));
-> > > > > > +				put_user_pages(&local_page_list[j+1],
-> > > > > > +					       npages - (j + 1));
-> > > > > 
-> > > > > I don't know if we discussed this before but it looks like the use of
-> > > > > release_pages() was not entirely correct (or at least not necessary) here.  So
-> > > > > I think this is ok.
-> > > > 
-> > > > Oh? John switched it from a put_pages loop to release_pages() here:
-> > > > 
-> > > > commit 75a3e6a3c129cddcc683538d8702c6ef998ec589
-> > > > Author: John Hubbard <jhubbard@nvidia.com>
-> > > > Date:   Mon Mar 4 11:46:45 2019 -0800
-> > > > 
-> > > >       RDMA/umem: minor bug fix in error handling path
-> > > >       1. Bug fix: fix an off by one error in the code that cleans up if it fails
-> > > >          to dma-map a page, after having done a get_user_pages_remote() on a
-> > > >          range of pages.
-> > > >       2. Refinement: for that same cleanup code, release_pages() is better than
-> > > >          put_page() in a loop.
-> > > > 
-> > > > And now we are going to back something called put_pages() that
-> > > > implements the same for loop the above removed?
-> > > > 
-> > > > Seems like we are going in circles?? John?
-> > > > 
-> > > 
-> > > put_user_pages() is meant to be a drop-in replacement for release_pages(),
-> > > so I made the above change as an interim step in moving the callsite from
-> > > a loop, to a single call.
-> > > 
-> > > And at some point, it may be possible to find a way to optimize put_user_pages()
-> > > in a similar way to the batching that release_pages() does, that was part
-> > > of the plan for this.
-> > > 
-> > > But I do see what you mean: in the interim, maybe put_user_pages() should
-> > > just be calling release_pages(), how does that change sound?
-> > 
-> > I'm certainly not the expert here but FWICT release_pages() was originally
-> > designed to work with the page cache.
-> > 
-> > aabfb57296e3  mm: memcontrol: do not kill uncharge batching in free_pages_and_swap_cache
-> > 
-> > But at some point it was changed to be more general?
-> > 
-> > ea1754a08476 mm, fs: remove remaining PAGE_CACHE_* and page_cache_{get,release} usage
-> > 
-> > ... and it is exported and used outside of the swapping code... and used at
-> > lease 1 place to directly "put" pages gotten from get_user_pages_fast()
-> > [arch/x86/kvm/svm.c]
-> > 
-> >  From that it seems like it is safe.
-> > 
-> > But I don't see where release_page() actually calls put_page() anywhere?  What
-> > am I missing?
-> > 
+On 5/23/19 3:37 PM, Ira Weiny wrote:
+[...] 
+> I've dug in further and I see now that release_pages() implements (almost the
+> same thing, see below) as put_page().
 > 
-> For that question, I recall having to look closely at this function, as well:
+> However, I think we need to be careful here because put_page_testzero() calls
 > 
-> void release_pages(struct page **pages, int nr)
-> {
-> 	int i;
-> 	LIST_HEAD(pages_to_free);
-> 	struct pglist_data *locked_pgdat = NULL;
-> 	struct lruvec *lruvec;
-> 	unsigned long uninitialized_var(flags);
-> 	unsigned int uninitialized_var(lock_batch);
+> 	page_ref_dec_and_test(page);
 > 
-> 	for (i = 0; i < nr; i++) {
-> 		struct page *page = pages[i];
+> ... and after your changes it will need to call ...
 > 
-> 		/*
-> 		 * Make sure the IRQ-safe lock-holding time does not get
-> 		 * excessive with a continuous string of pages from the
-> 		 * same pgdat. The lock is held only if pgdat != NULL.
-> 		 */
-> 		if (locked_pgdat && ++lock_batch == SWAP_CLUSTER_MAX) {
-> 			spin_unlock_irqrestore(&locked_pgdat->lru_lock, flags);
-> 			locked_pgdat = NULL;
-> 		}
+> 	page_ref_sub_return(page, GUP_PIN_COUNTING_BIAS);
 > 
-> 		if (is_huge_zero_page(page))
-> 			continue;
+> ... on a GUP page:
 > 
-> 		/* Device public page can not be huge page */
-> 		if (is_device_public_page(page)) {
-> 			if (locked_pgdat) {
-> 				spin_unlock_irqrestore(&locked_pgdat->lru_lock,
-> 						       flags);
-> 				locked_pgdat = NULL;
-> 			}
-> 			put_devmap_managed_page(page);
-> 			continue;
-> 		}
+> So how do you propose calling release_pages() from within put_user_pages()?  Or
+> were you thinking this would be temporary?
+
+I was thinking of it as a temporary measure, only up until, but not including the
+point where put_user_pages() becomes active. That is, the point when put_user_pages
+starts decrementing GUP_PIN_COUNTING_BIAS, instead of just forwarding to put_page().
+
+(For other readers, that's this patch:
+
+    "mm/gup: debug tracking of get_user_pages() references"
+
+...in https://github.com/johnhubbard/linux/tree/gup_dma_core )
+
 > 
-> 		page = compound_head(page);
-> 		if (!put_page_testzero(page))
+> That said, there are 2 differences I see between release_pages() and put_page()
 > 
-> 		     ^here is where it does the put_page() call, is that what
-> 			you were looking for?
+> 1) release_pages() will only work for a MEMORY_DEVICE_PUBLIC page and not all
+>    devmem pages...
+>    I think this is a bug, patch to follow shortly.
+> 
+> 2) release_pages() calls __ClearPageActive() while put_page() does not
+> 
+> I have no idea if the second difference is a bug or not.  But it smells of
+> one...
+> 
+> It would be nice to know if the open coding of put_page is really a performance
+> benefit or not.  It seems like an attempt to optimize the taking of the page
+> data lock.
+> 
+> Does anyone have any information about the performance advantage here?
+> 
+> Given the changes above it seems like it would be a benefit to merge the 2 call
+> paths more closely to make sure we do the right thing.
+> 
 
-Yes I saw that...
+Yes, it does. Maybe best to not do the temporary measure, then, while this stuff
+gets improved. I'll look at your other patch...
 
-I've dug in further and I see now that release_pages() implements (almost the
-same thing, see below) as put_page().
 
-However, I think we need to be careful here because put_page_testzero() calls
-
-	page_ref_dec_and_test(page);
-
-... and after your changes it will need to call ...
-
-	page_ref_sub_return(page, GUP_PIN_COUNTING_BIAS);
-
-... on a GUP page:
-
-So how do you propose calling release_pages() from within put_user_pages()?  Or
-were you thinking this would be temporary?
-
-That said, there are 2 differences I see between release_pages() and put_page()
-
-1) release_pages() will only work for a MEMORY_DEVICE_PUBLIC page and not all
-   devmem pages...
-   I think this is a bug, patch to follow shortly.
-
-2) release_pages() calls __ClearPageActive() while put_page() does not
-
-I have no idea if the second difference is a bug or not.  But it smells of
-one...
-
-It would be nice to know if the open coding of put_page is really a performance
-benefit or not.  It seems like an attempt to optimize the taking of the page
-data lock.
-
-Does anyone have any information about the performance advantage here?
-
-Given the changes above it seems like it would be a benefit to merge the 2 call
-paths more closely to make sure we do the right thing.
-
-Ira
-
+thanks,
+-- 
+John Hubbard
+NVIDIA
