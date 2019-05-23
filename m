@@ -2,108 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E316C28C0F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 23:07:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72EAB28C48
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 23:22:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731562AbfEWVG6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 17:06:58 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52666 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731537AbfEWVG6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 17:06:58 -0400
-Received: by mail-it1-f193.google.com with SMTP id t184so12283158itf.2;
-        Thu, 23 May 2019 14:06:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qdKz+TOs1wCAyZUw0giltCYWrjHfuqYDcD0Y730vB18=;
-        b=X1/pu0J+wGbtPR2O2S+IZYCGPHacIpZIWlZOFWyrcdChosOCsJjjuHh8Pmjbpcd/iR
-         v93QHkkPBOa+2R+cA7xBGf3GJGK02mE+fvVDdEqB4GgsTipeTPJ6UQCrvJq1kJdFsskk
-         Hf68qhuoJF1y72HyQhy9UTR3pwbJ0O9GFSXpJUdO0NLDRyZ927qoRsk/ndLeG80c6yon
-         KvRUWEcuvxzy08YY3EsZPEefJ9KlXLSN7/HrXAx4ZcfMc7utGhKD2QaS4QFHFQqcxvSq
-         u6HahTlnlzCTKgxbW3PKFhDSjhK486kZuopYnyXvidTzXDyRLyYdnh+FR0DcMA72iFhD
-         4IYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qdKz+TOs1wCAyZUw0giltCYWrjHfuqYDcD0Y730vB18=;
-        b=q2kjOeNLaruz5fmvyfCne3jSuaf8mYtxhxjfy9NBJ93DP26a1Vvo8X7opb6xajTwim
-         FCI62uCmeKsDyt2cZg8pfzRwLnnacCw+jPyu/IYG9U8wuJGTvPXItHAgkrybYyuyqUT4
-         vnTAjdiFhc6WaTYKpA3FaFmgJSuKfUjZAMhPxPaTEGgAFQ4orpiqMmoysuq6or1cBy7/
-         bsaLC4BIt6WGkrpLML+ZMm/9vEH2RGINbZE8+oY9mFSf5BHYc7u+/OZx9nS2647nyZst
-         Hn1iRkgaH5VqN9A+OgTWhjvDIkGvi2ZVVESXwdbckqefRbDZo0gGZgptXBDtNiCVh4bL
-         AWIw==
-X-Gm-Message-State: APjAAAXwSo24peNtu5zbjbvwO5v/O/2uhWZkuxb5OX1x8NvFDwHzS+Kr
-        Ux0X58s5HblrdCFv+f9JTDezwAjui48HM5sGZ1Y=
-X-Google-Smtp-Source: APXvYqw39Es/1/4zjenOfZ0CdT39/+9yH2SVWfYxIvNq4CN3m21LbaDD6pNQgMJJnPBaS4n8+lARacqZ1hZGTol3H8M=
-X-Received: by 2002:a24:e084:: with SMTP id c126mr14417307ith.124.1558645617016;
- Thu, 23 May 2019 14:06:57 -0700 (PDT)
+        id S2387531AbfEWVWn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 17:22:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35356 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729797AbfEWVWn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 17:22:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AE7FBAF08;
+        Thu, 23 May 2019 21:22:41 +0000 (UTC)
+Date:   Thu, 23 May 2019 16:22:39 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-btrfs@vger.kernel.org, kilobyte@angband.pl,
+        linux-fsdevel@vger.kernel.org, david@fromorbit.com,
+        willy@infradead.org, hch@lst.de, darrick.wong@oracle.com,
+        dsterba@suse.cz, nborisov@suse.com, linux-nvdimm@lists.01.org
+Subject: Re: [PATCH 16/18] btrfs: Writeprotect mmap pages on snapshot
+Message-ID: <20190523212239.j7jxv6amqohb2ixd@fiona>
+References: <20190429172649.8288-1-rgoldwyn@suse.de>
+ <20190429172649.8288-17-rgoldwyn@suse.de>
+ <20190523140445.GD2949@quack2.suse.cz>
+ <20190523152722.ybo5xuhej3yonvgt@fiona>
+ <20190523190755.GA26522@quack2.suse.cz>
 MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190522150505.GA4915@redhat.com> <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
- <20190522161407.GB4915@redhat.com> <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
- <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com> <20190523145944.GB23070@redhat.com>
- <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com> <20190523163604.GE23070@redhat.com>
- <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com> <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
- <CABeXuvo5Y0aHgo-xMzmW7V02g+ysGqAkdoCAkW7L6LkukdvAcg@mail.gmail.com>
-In-Reply-To: <CABeXuvo5Y0aHgo-xMzmW7V02g+ysGqAkdoCAkW7L6LkukdvAcg@mail.gmail.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Thu, 23 May 2019 14:06:45 -0700
-Message-ID: <CABeXuvrKAz3epJjc9J21K-dET1Om9C=3gaDOUiQ96C39x4MAVg@mail.gmail.com>
-Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190523190755.GA26522@quack2.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Just adding a little more clarification, there is an additional change
-> between [a] and [b].
-> As per [a] we would just restore the signal instead of changing the
-> saved_sigmask and the signal could get delivered right then. [b]
-> changes this to happen at syscall exit:
+On 21:07 23/05, Jan Kara wrote:
+> On Thu 23-05-19 10:27:22, Goldwyn Rodrigues wrote:
+> > On 16:04 23/05, Jan Kara wrote:
+> > > On Mon 29-04-19 12:26:47, Goldwyn Rodrigues wrote:
+> > > > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > > > 
+> > > > Inorder to make sure mmap'd files don't change after snapshot,
+> > > > writeprotect the mmap pages on snapshot. This is done by performing
+> > > > a data writeback on the pages (which simply mark the pages are
+> > > > wrprotected). This way if the user process tries to access the memory
+> > > > we will get another fault and we can perform a CoW.
+> > > > 
+> > > > In order to accomplish this, we tag all CoW pages as
+> > > > PAGECACHE_TAG_TOWRITE, and add the mmapd inode in delalloc_inodes.
+> > > > During snapshot, it starts writeback of all delalloc'd inodes and
+> > > > here we perform a data writeback. We don't want to keep the inodes
+> > > > in delalloc_inodes until it umount (WARN_ON), so we remove it
+> > > > during inode evictions.
+> > > > 
+> > > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > > 
+> > > OK, so here you use PAGECACHE_TAG_TOWRITE. But why is not
+> > > PAGECACHE_TAG_DIRTY enough for you? Also why isn't the same needed also for
+> > > normal non-DAX inodes? There you also need to trigger CoW on mmap write so
+> > > I just don't see the difference...
+> > 
+> > Because dax_writeback_mapping_range() writebacks pages marked 
+> > PAGECACHE_TAG_TOWRITE and not PAGECACHE_TAG_DIRTY. Should it
+> > writeback pages marked as PAGECACHE_TAG_DIRTY as well?
+> 
+> It does writeback PAGECACHE_TAG_DIRTY pages - tag_pages_for_writeback()
+> moves PAGECACHE_TAG_DIRTY to PAGECACHE_TAG_TOWRITE...
 
-Rewording above, as there seems to be a few misrepresentations:
+Yes, I missed that. It just needs a writeback with WB_SYNC_ALL.
+Thanks!
 
-Just adding a little more clarification, there is an additional change
-between [a] and [b].
-As per [a] we would just restore the signal mask instead of changing
-the saved_sigmask and the even the blocked signals could get delivered
-right then. [b] changes the restoration to happen at syscall exit:
-
-> void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
-> {
->
->            <snip>
->
->           /*
->            * When signals are pending, do not restore them here.
->            * Restoring sigmask here can lead to delivering signals
-> that the above
->            * syscalls are intended to block because of the sigmask passed in.
->            */
->            if (signal_pending(current)) {
->            current->saved_sigmask = *sigsaved;
->            set_restore_sigmask();
->            return;
-> }
-
- -Deepa
+-- 
+Goldwyn
