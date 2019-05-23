@@ -2,163 +2,256 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F51B278B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 11:03:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B87A278C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 11:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729962AbfEWJDe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 05:03:34 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:45333 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725814AbfEWJDe (ORCPT
+        id S1728184AbfEWJFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 05:05:09 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:55456 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726429AbfEWJFJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 05:03:34 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-109-QAnUYR_ZPWu03W_8XUVOfg-1; Thu, 23 May 2019 10:03:30 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 23 May 2019 10:03:29 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 23 May 2019 10:03:29 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Arnd Bergmann" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        "Linux FS-devel Mailing List" <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v2] signal: Adjust error codes according to
- restore_user_sigmask()
-Thread-Topic: [PATCH v2] signal: Adjust error codes according to
- restore_user_sigmask()
-Thread-Index: AQHVELwtsgR+BAQFXk2JV68Wk/7LjKZ4aINA
-Date:   Thu, 23 May 2019 09:03:29 +0000
-Message-ID: <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190522150505.GA4915@redhat.com>
- <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
- <20190522161407.GB4915@redhat.com>
- <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
-In-Reply-To: <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 23 May 2019 05:05:09 -0400
+X-IronPort-AV: E=Sophos;i="5.60,502,1549900800"; 
+   d="scan'208";a="64296444"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 23 May 2019 17:05:07 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 584F74CDB1E9;
+        Thu, 23 May 2019 17:05:05 +0800 (CST)
+Received: from [10.167.225.140] (10.167.225.140) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.439.0; Thu, 23 May 2019 17:05:15 +0800
+From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH 04/18] dax: Introduce IOMAP_DAX_COW to CoW edges during
+ writes
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>
+CC:     <linux-btrfs@vger.kernel.org>, <kilobyte@angband.pl>,
+        <linux-fsdevel@vger.kernel.org>, <jack@suse.cz>,
+        <david@fromorbit.com>, <willy@infradead.org>, <hch@lst.de>,
+        <dsterba@suse.cz>, <nborisov@suse.com>,
+        <linux-nvdimm@lists.01.org>, Goldwyn Rodrigues <rgoldwyn@suse.com>
+References: <20190429172649.8288-1-rgoldwyn@suse.de>
+ <20190429172649.8288-5-rgoldwyn@suse.de> <20190521165158.GB5125@magnolia>
+Message-ID: <1e9951c1-d320-e480-3130-dc1f4b81ef2c@cn.fujitsu.com>
+Date:   Thu, 23 May 2019 17:05:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-MC-Unique: QAnUYR_ZPWu03W_8XUVOfg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+In-Reply-To: <20190521165158.GB5125@magnolia>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.225.140]
+X-yoursite-MailScanner-ID: 584F74CDB1E9.AD902
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogRGVlcGEgRGluYW1hbmkNCj4gU2VudDogMjIgTWF5IDIwMTkgMTc6MzQNCj4gT24gV2Vk
-LCBNYXkgMjIsIDIwMTkgYXQgOToxNCBBTSBPbGVnIE5lc3Rlcm92IDxvbGVnQHJlZGhhdC5jb20+
-IHdyb3RlOg0KPiA+DQo+ID4gT24gMDUvMjIsIERlZXBhIERpbmFtYW5pIHdyb3RlOg0KPiA+ID4N
-Cj4gPiA+IC1EZWVwYQ0KPiA+ID4NCj4gPiA+ID4gT24gTWF5IDIyLCAyMDE5LCBhdCA4OjA1IEFN
-LCBPbGVnIE5lc3Rlcm92IDxvbGVnQHJlZGhhdC5jb20+IHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4g
-Pj4gT24gMDUvMjEsIERlZXBhIERpbmFtYW5pIHdyb3RlOg0KPiA+ID4gPj4NCj4gPiA+ID4+IE5v
-dGUgdGhhdCB0aGlzIHBhdGNoIHJldHVybnMgaW50ZXJydXB0ZWQgZXJyb3JzIChFSU5UUiwgRVJF
-U1RBUlROT0hBTkQsDQo+ID4gPiA+PiBldGMpIG9ubHkgd2hlbiB0aGVyZSBpcyBubyBvdGhlciBl
-cnJvci4gSWYgdGhlcmUgaXMgYSBzaWduYWwgYW5kIGFuIGVycm9yDQo+ID4gPiA+PiBsaWtlIEVJ
-TlZBTCwgdGhlIHN5c2NhbGxzIHJldHVybiAtRUlOVkFMIHJhdGhlciB0aGFuIHRoZSBpbnRlcnJ1
-cHRlZA0KPiA+ID4gPj4gZXJyb3IgY29kZXMuDQo+ID4gPiA+DQo+ID4gPiA+IFVnaC4gSSBuZWVk
-IHRvIHJlLWNoZWNrLCBidXQgYXQgZmlyc3QgZ2xhbmNlIEkgcmVhbGx5IGRpc2xpa2UgdGhpcyBj
-aGFuZ2UuDQo+ID4gPiA+DQo+ID4gPiA+IEkgdGhpbmsgd2UgY2FuIGZpeCB0aGUgcHJvYmxlbSBf
-YW5kXyBzaW1wbGlmeSB0aGUgY29kZS4gU29tZXRoaW5nIGxpa2UgYmVsb3cuDQo+ID4gPiA+IFRo
-ZSBwYXRjaCBpcyBvYnZpb3VzbHkgaW5jb21wbGV0ZSwgaXQgY2hhbmdlcyBvbmx5IG9ubHkgb25l
-IGNhbGxlciBvZg0KPiA+ID4gPiBzZXRfdXNlcl9zaWdtYXNrKCksIGVwb2xsX3B3YWl0KCkgdG8g
-ZXhwbGFpbiB3aGF0IEkgbWVhbi4NCj4gPiA+ID4gcmVzdG9yZV91c2VyX3NpZ21hc2soKSBzaG91
-bGQgc2ltcGx5IGRpZS4gQWx0aG91Z2ggcGVyaGFwcyBhbm90aGVyIGhlbHBlcg0KPiA+ID4gPiBt
-YWtlcyBzZW5zZSB0byBhZGQgV0FSTl9PTih0ZXN0X3Rza19yZXN0b3JlX3NpZ21hc2soKSAmJiAh
-c2lnbmFsX3BlbmRpbmcpLg0KPiA+ID4NCj4gPiA+IHJlc3RvcmVfdXNlcl9zaWdtYXNrKCkgd2Fz
-IGFkZGVkIGJlY2F1c2Ugb2YgYWxsIHRoZSB2YXJpYW50cyBvZiB0aGVzZQ0KPiA+ID4gc3lzY2Fs
-bHMgd2UgYWRkZWQgYmVjYXVzZSBvZiB5MjAzOCBhcyBub3RlZCBpbiBjb21taXQgbWVzc2FnZToN
-Cj4gPiA+DQo+ID4gPiAgIHNpZ25hbDogQWRkIHJlc3RvcmVfdXNlcl9zaWdtYXNrKCkNCj4gPiA+
-DQo+ID4gPiAgICAgUmVmYWN0b3IgdGhlIGxvZ2ljIHRvIHJlc3RvcmUgdGhlIHNpZ21hc2sgYmVm
-b3JlIHRoZSBzeXNjYWxsDQo+ID4gPiAgICAgcmV0dXJucyBpbnRvIGFuIGFwaS4NCj4gPiA+ICAg
-ICBUaGlzIGlzIHVzZWZ1bCBmb3IgdmVyc2lvbnMgb2Ygc3lzY2FsbHMgdGhhdCBwYXNzIGluIHRo
-ZQ0KPiA+ID4gICAgIHNpZ21hc2sgYW5kIGV4cGVjdCB0aGUgY3VycmVudC0+c2lnbWFzayB0byBi
-ZSBjaGFuZ2VkIGR1cmluZw0KPiA+ID4gICAgIHRoZSBleGVjdXRpb24gYW5kIHJlc3RvcmVkIGFm
-dGVyIHRoZSBleGVjdXRpb24gb2YgdGhlIHN5c2NhbGwuDQo+ID4gPg0KPiA+ID4gICAgIFdpdGgg
-dGhlIGFkdmVudCBvZiBuZXcgeTIwMzggc3lzY2FsbHMgaW4gdGhlIHN1YnNlcXVlbnQgcGF0Y2hl
-cywNCj4gPiA+ICAgICB3ZSBhZGQgdHdvIG1vcmUgbmV3IHZlcnNpb25zIG9mIHRoZSBzeXNjYWxs
-cyAoZm9yIHBzZWxlY3QsIHBwb2xsDQo+ID4gPiAgICAgYW5kIGlvX3BnZXRldmVudHMpIGluIGFk
-ZGl0aW9uIHRvIHRoZSBleGlzdGluZyBuYXRpdmUgYW5kIGNvbXBhdA0KPiA+ID4gICAgIHZlcnNp
-b25zLiBBZGRpbmcgc3VjaCBhbiBhcGkgcmVkdWNlcyB0aGUgbG9naWMgdGhhdCB3b3VsZCBuZWVk
-IHRvDQo+ID4gPiAgICAgYmUgcmVwbGljYXRlZCBvdGhlcndpc2UuDQo+ID4NCj4gPiBBZ2Fpbiwg
-SSBuZWVkIHRvIHJlLWNoZWNrLCB3aWxsIGNvbnRpbnVlIHRvbW9ycm93LiBCdXQgc28gZmFyIEkg
-YW0gbm90IHN1cmUNCj4gPiB0aGlzIGhlbHBlciBjYW4gYWN0dWFsbHkgaGVscC4NCj4gPg0KPiA+
-ID4gPiAtLS0gYS9mcy9ldmVudHBvbGwuYw0KPiA+ID4gPiArKysgYi9mcy9ldmVudHBvbGwuYw0K
-PiA+ID4gPiBAQCAtMjMxOCwxOSArMjMxOCwxOSBAQCBTWVNDQUxMX0RFRklORTYoZXBvbGxfcHdh
-aXQsIGludCwgZXBmZCwgc3RydWN0IGVwb2xsX2V2ZW50IF9fdXNlciAqLA0KPiBldmVudHMsDQo+
-ID4gPiA+ICAgICAgICBzaXplX3QsIHNpZ3NldHNpemUpDQo+ID4gPiA+IHsNCj4gPiA+ID4gICAg
-aW50IGVycm9yOw0KPiA+ID4gPiAtICAgIHNpZ3NldF90IGtzaWdtYXNrLCBzaWdzYXZlZDsNCj4g
-PiA+ID4NCj4gPiA+ID4gICAgLyoNCj4gPiA+ID4gICAgICogSWYgdGhlIGNhbGxlciB3YW50cyBh
-IGNlcnRhaW4gc2lnbmFsIG1hc2sgdG8gYmUgc2V0IGR1cmluZyB0aGUgd2FpdCwNCj4gPiA+ID4g
-ICAgICogd2UgYXBwbHkgaXQgaGVyZS4NCj4gPiA+ID4gICAgICovDQo+ID4gPiA+IC0gICAgZXJy
-b3IgPSBzZXRfdXNlcl9zaWdtYXNrKHNpZ21hc2ssICZrc2lnbWFzaywgJnNpZ3NhdmVkLCBzaWdz
-ZXRzaXplKTsNCj4gPiA+ID4gKyAgICBlcnJvciA9IHNldF91c2VyX3NpZ21hc2soc2lnbWFzaywg
-c2lnc2V0c2l6ZSk7DQo+ID4gPiA+ICAgIGlmIChlcnJvcikNCj4gPiA+ID4gICAgICAgIHJldHVy
-biBlcnJvcjsNCj4gPiA+ID4NCj4gPiA+ID4gICAgZXJyb3IgPSBkb19lcG9sbF93YWl0KGVwZmQs
-IGV2ZW50cywgbWF4ZXZlbnRzLCB0aW1lb3V0KTsNCj4gPiA+ID4NCj4gPiA+ID4gLSAgICByZXN0
-b3JlX3VzZXJfc2lnbWFzayhzaWdtYXNrLCAmc2lnc2F2ZWQpOw0KPiA+ID4gPiArICAgIGlmIChl
-cnJvciAhPSAtRUlOVFIpDQo+ID4gPg0KPiA+ID4gQXMgeW91IGFkZHJlc3MgYWxsIHRoZSBvdGhl
-ciBzeXNjYWxscyB0aGlzIGNvbmRpdGlvbiBiZWNvbWVzIG1vcmUgYW5kDQo+ID4gPiBtb3JlIGNv
-bXBsaWNhdGVkLg0KPiA+DQo+ID4gTWF5IGJlLg0KPiA+DQo+ID4gPiA+IC0tLSBhL2luY2x1ZGUv
-bGludXgvc2NoZWQvc2lnbmFsLmgNCj4gPiA+ID4gKysrIGIvaW5jbHVkZS9saW51eC9zY2hlZC9z
-aWduYWwuaA0KPiA+ID4gPiBAQCAtNDE2LDcgKzQxNiw2IEBAIHZvaWQgdGFza19qb2luX2dyb3Vw
-X3N0b3Aoc3RydWN0IHRhc2tfc3RydWN0ICp0YXNrKTsNCj4gPiA+ID4gc3RhdGljIGlubGluZSB2
-b2lkIHNldF9yZXN0b3JlX3NpZ21hc2sodm9pZCkNCj4gPiA+ID4gew0KPiA+ID4gPiAgICBzZXRf
-dGhyZWFkX2ZsYWcoVElGX1JFU1RPUkVfU0lHTUFTSyk7DQo+ID4gPiA+IC0gICAgV0FSTl9PTigh
-dGVzdF90aHJlYWRfZmxhZyhUSUZfU0lHUEVORElORykpOw0KPiA+ID4NCj4gPiA+IFNvIHlvdSBh
-bHdheXMgd2FudCBkb19zaWduYWwoKSB0byBiZSBjYWxsZWQ/DQo+ID4NCj4gPiBXaHkgZG8geW91
-IHRoaW5rIHNvPyBOby4gVGhpcyBpcyBqdXN0IHRvIGF2b2lkIHRoZSB3YXJuaW5nLCBiZWNhdXNl
-IHdpdGggdGhlDQo+ID4gcGF0Y2ggSSBzZW50IHNldF9yZXN0b3JlX3NpZ21hc2soKSBpcyBjYWxs
-ZWQgImluIGFkdmFuY2UiLg0KPiA+DQo+ID4gPiBZb3Ugd2lsbCBoYXZlIHRvIGNoZWNrIGVhY2gg
-YXJjaGl0ZWN0dXJlJ3MgaW1wbGVtZW50YXRpb24gb2YNCj4gPiA+IGRvX3NpZ25hbCgpIHRvIGNo
-ZWNrIGlmIHRoYXQgaGFzIGFueSBzaWRlIGVmZmVjdHMuDQo+ID4NCj4gPiBJIGRvbid0IHRoaW5r
-IHNvLg0KPiANCj4gV2h5IG5vdD8NCj4gDQo+ID4gPiBBbHRob3VnaCB0aGlzIGlzIG5vdCB3aGF0
-IHRoZSBwYXRjaCBpcyBzb2x2aW5nLg0KPiA+DQo+ID4gU3VyZS4gQnV0IHlvdSBrbm93LCBhZnRl
-ciBJIHRyaWVkIHRvIHJlYWQgdGhlIGNoYW5nZWxvZywgSSBhbSBub3Qgc3VyZQ0KPiA+IEkgdW5k
-ZXJzdGFuZCB3aGF0IGV4YWN0bHkgeW91IGFyZSB0cnlpbmcgdG8gZml4LiBDb3VsZCB5b3UgcGxl
-YXNlIGV4cGxhaW4NCj4gPiB0aGlzIHBhcnQNCj4gPg0KPiA+ICAgICAgICAgVGhlIGJlaGF2aW9y
-DQo+ID4gICAgICAgICBiZWZvcmUgODU0YTZlZDU2ODM5YSB3YXMgdGhhdCB0aGUgc2lnbmFscyB3
-ZXJlIGRyb3BwZWQgYWZ0ZXIgdGhlIGVycm9yDQo+ID4gICAgICAgICBjb2RlIHdhcyBkZWNpZGVk
-LiBUaGlzIHJlc3VsdGVkIGluIGxvc3Qgc2lnbmFscyBidXQgdGhlIHVzZXJzcGFjZSBkaWQgbm90
-DQo+ID4gICAgICAgICBub3RpY2UgaXQNCj4gPg0KPiA+ID8gSSBmYWlsIHRvIHVuZGVyc3RhbmQg
-aXQsIHNvcnJ5LiBJdCBsb29rcyBhcyBpZiB0aGUgY29kZSB3YXMgYWxyZWFkeSBidWdneSBiZWZv
-cmUNCj4gPiB0aGF0IGNvbW1pdCBhbmQgaXQgY291bGQgbWlzcyBhIHNpZ25hbCBvciBzb21ldGhp
-bmcgbGlrZSB0aGlzLCBidXQgSSBkbyBub3Qgc2VlIGhvdy4NCj4gDQo+IERpZCB5b3UgcmVhZCB0
-aGUgZXhwbGFuYXRpb24gcG9pbnRlZCB0byBpbiB0aGUgY29tbWl0IHRleHQ/IDoNCj4gDQo+IGh0
-dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LWZzZGV2ZWwvMjAxOTA0MjcwOTMzMTkuc2dpY3Fp
-azJvcWtlejN3a0BkY3ZyLw0KPiANCj4gTGV0IG1lIGtub3cgd2hhdCBwYXJ0IHlvdSBkb24ndCB1
-bmRlcnN0YW5kIGFuZCBJIGNhbiBleHBsYWluIG1vcmUuDQo+IA0KPiBJdCB3b3VsZCBiZSBiZXR0
-ZXIgdG8gdW5kZXJzdGFuZCB0aGUgaXNzc3VlIGJlZm9yZSB3ZSBzdGFydCBkaXNjdXNzaW5nIHRo
-ZSBmaXguDQoNCg0KSSdtIGNvbmZ1c2VkLi4uDQpJIHRob3VnaHQ6DQoNCkVJTlRSIHNob3VsZCBv
-bmx5IGJlIHJldHVybmVkIGlmIGEgYmxvY2tpbmcgc2xlZXAgKGVnIGluIGRvX2Vwb2xsX3dhaXQo
-KSBpdHNlbGYpDQp3YXMgaW50ZXJydXB0ZWQgYnkgYSBzaWduYWwgdGhhdCB3YXMgZW5hYmxlZCBh
-dCB0aGUgdGltZSBvZiB0aGUgc2xlZXAuDQoNClRoZSBoYW5kbGVycyBmb3IgYWxsIHVuYmxvY2tl
-ZCBzaWduYWxzIHNob3VsZCBiZSBydW4gb24gcmV0dXJuIHRvIHVzZXIuDQpUaGlzIGlzIGFmdGVy
-IHRoZSBtYXNrIGhhcyBiZWVuIHJlc3RvcmVkIGFuZCByZWdhcmRsZXNzIG9mIHRoZSBlcnJvciBj
-b2RlLg0KDQpTbyBlcG9sbCgpIGNhbiByZXR1cm4gJ3N1Y2Nlc3MnIG9yICd0aW1lb3V0JyAoZXRj
-KSBhbmQgdGhlIGhhbmRsZXIgZm9yIFNJR19VUkcNCnNob3VsZCBzdGlsbCBiZSBjYWxsZWQuDQpU
-aGlzIGlzIGV4YWN0bHkgZXF1aXZhbGVudCB0byB0aGUgaW50ZXJydXB0IHRoYXQgZ2VuZXJhdGVz
-IHRoZSBzaWduYWwgaGFwcGVuaW5nDQpqdXN0IGFmdGVyIHRoZSAncmV0dXJuIHRvIHVzZXInIG9m
-IHRoZSBzeXN0ZW0gY2FsbC4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtl
-c2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBV
-Sw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+
+
+On 5/22/19 12:51 AM, Darrick J. Wong wrote:
+> On Mon, Apr 29, 2019 at 12:26:35PM -0500, Goldwyn Rodrigues wrote:
+>> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+>>
+>> The IOMAP_DAX_COW is a iomap type which performs copy of
+>> edges of data while performing a write if start/end are
+>> not page aligned. The source address is expected in
+>> iomap->inline_data.
+>>
+>> dax_copy_edges() is a helper functions performs a copy from
+>> one part of the device to another for data not page aligned.
+>> If iomap->inline_data is NULL, it memset's the area to zero.
+>>
+>> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+>> ---
+>>   fs/dax.c              | 46 +++++++++++++++++++++++++++++++++++++++++++++-
+>>   include/linux/iomap.h |  1 +
+>>   2 files changed, 46 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/dax.c b/fs/dax.c
+>> index e5e54da1715f..610bfa861a28 100644
+>> --- a/fs/dax.c
+>> +++ b/fs/dax.c
+>> @@ -1084,6 +1084,42 @@ int __dax_zero_page_range(struct block_device *bdev,
+>>   }
+>>   EXPORT_SYMBOL_GPL(__dax_zero_page_range);
+>>   
+>> +/*
+>> + * dax_copy_edges - Copies the part of the pages not included in
+>> + * 		    the write, but required for CoW because
+>> + * 		    offset/offset+length are not page aligned.
+>> + */
+>> +static int dax_copy_edges(struct inode *inode, loff_t pos, loff_t length,
+>> +			   struct iomap *iomap, void *daddr)
+>> +{
+>> +	unsigned offset = pos & (PAGE_SIZE - 1);
+>> +	loff_t end = pos + length;
+>> +	loff_t pg_end = round_up(end, PAGE_SIZE);
+>> +	void *saddr = iomap->inline_data;
+>> +	int ret = 0;
+>> +	/*
+>> +	 * Copy the first part of the page
+>> +	 * Note: we pass offset as length
+>> +	 */
+>> +	if (offset) {
+>> +		if (saddr)
+>> +			ret = memcpy_mcsafe(daddr, saddr, offset);
+>> +		else
+>> +			memset(daddr, 0, offset);
+>> +	}
+>> +
+>> +	/* Copy the last part of the range */
+>> +	if (end < pg_end) {
+>> +		if (saddr)
+>> +			ret = memcpy_mcsafe(daddr + offset + length,
+>> +			       saddr + offset + length,	pg_end - end);
+>> +		else
+>> +			memset(daddr + offset + length, 0,
+>> +					pg_end - end);
+>> +	}
+>> +	return ret;
+>> +}
+>> +
+>>   static loff_t
+>>   dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>>   		struct iomap *iomap)
+>> @@ -1105,9 +1141,11 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>>   			return iov_iter_zero(min(length, end - pos), iter);
+>>   	}
+>>   
+>> -	if (WARN_ON_ONCE(iomap->type != IOMAP_MAPPED))
+>> +	if (WARN_ON_ONCE(iomap->type != IOMAP_MAPPED
+>> +			 && iomap->type != IOMAP_DAX_COW))
+> 
+> I reiterate (from V3) that the && goes on the previous line...
+> 
+> 	if (WARN_ON_ONCE(iomap->type != IOMAP_MAPPED &&
+> 			 iomap->type != IOMAP_DAX_COW))
+> 
+>>   		return -EIO;
+>>   
+>> +
+>>   	/*
+>>   	 * Write can allocate block for an area which has a hole page mapped
+>>   	 * into page tables. We have to tear down these mappings so that data
+>> @@ -1144,6 +1182,12 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>>   			break;
+>>   		}
+>>   
+>> +		if (iomap->type == IOMAP_DAX_COW) {
+>> +			ret = dax_copy_edges(inode, pos, length, iomap, kaddr);
+>> +			if (ret)
+>> +				break;
+>> +		}
+>> +
+>>   		map_len = PFN_PHYS(map_len);
+>>   		kaddr += offset;
+>>   		map_len -= offset;
+>> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+>> index 0fefb5455bda..6e885c5a38a3 100644
+>> --- a/include/linux/iomap.h
+>> +++ b/include/linux/iomap.h
+>> @@ -25,6 +25,7 @@ struct vm_fault;
+>>   #define IOMAP_MAPPED	0x03	/* blocks allocated at @addr */
+>>   #define IOMAP_UNWRITTEN	0x04	/* blocks allocated at @addr in unwritten state */
+>>   #define IOMAP_INLINE	0x05	/* data inline in the inode */
+> 
+>> +#define IOMAP_DAX_COW	0x06
+> 
+> DAX isn't going to be the only scenario where we need a way to
+> communicate to iomap actors the need to implement copy on write.
+> 
+> XFS also uses struct iomap to hand out file leases to clients.  The
+> lease code /currently/ doesn't support files with shared blocks (because
+> the only user is pNFS) but one could easily imagine a future where some
+> client wants to lease a file with shared blocks, in which case XFS will
+> want to convey the COW details to the lessee.
+> 
+>> +/* Copy data pointed by inline_data before write*/
+> 
+> A month ago during the V3 patchset review, I wrote (possibly in an other
+> thread, sorry) about something that I'm putting my foot down about now
+> for the V4 patchset, which is the {re,ab}use of @inline_data for the
+> data source address.
+> 
+> We cannot use @inline_data to convey the source address.  @inline_data
+> (so far) is used to point to the in-memory representation of the storage
+> described by @addr.  For data writes, @addr is the location of the write
+> on disk and @inline_data is the location of the write in memory.
+> 
+> Reusing @inline_data here to point to the location of the source data in
+> memory is a totally different thing and will likely result in confusion.
+> On a practical level, this also means that we cannot support the case of
+> COW && INLINE because the type codes collide and so would the users of
+> @inline_data.  This isn't required *right now*, but if you had a pmem
+> filesystem that stages inode updates in memory and flips a pointer to
+> commit changes then the ->iomap_begin function will need to convey two
+> pointers at once.
+> 
+> So this brings us back to Dave's suggestion during the V1 patchset
+> review that instead of adding more iomap flags/types and overloading
+> fields, we simply pass two struct iomaps into ->iomap_begin:
+> 
+>   - Change iomap_apply() to "struct iomap iomap[2] = 0;" and pass
+>     &iomap[0] into the ->iomap_begin and ->iomap_end functions.  The
+>     first iomap will be filled in with the destination for the write (as
+>     all implementations do now), and the second iomap can be filled in
+>     with the source information for a COW operation.
+> 
+>   - If the ->iomap_begin implementation decides that COW is necessary for
+>     the requested operation, then it should fill out that second iomap
+>     with information about the extent that the actor must copied before
+>     returning.  The second iomap's offset and length must match the
+>     first.  If COW isn't necessary, the ->iomap_begin implementation
+
+Hi,
+
+I'm working on reflink & dax in XFS, here are some thoughts on this:
+
+As mentioned above: the second iomap's offset and length must match the 
+first.  I thought so at the beginning, but later found that the only 
+difference between these two iomaps is @addr.  So, what about adding a 
+@saddr, which means the source address of COW extent, into the struct 
+iomap.  The ->iomap_begin() fills @saddr if the extent is COW, and 0 if 
+not.  Then handle this @saddr in each ->actor().  No more modifications 
+in other functions.
+
+My RFC patchset[1] is implemented in this way and works for me, though 
+it is far away from perfectness.
+
+[1]: https://patchwork.kernel.org/cover/10904307/
+
+
+-- 
+Thanks,
+Shiyang Ruan.
+
+>     ignores it, and the second iomap retains type == 0 (i.e. invalid
+>     mapping).
+> 
+> Proceeding along these lines will (AFAICT) still allow you to enable all
+> the btrfs functionality in the rest of this patchset while making the
+> task of wiring up XFS fairly simple.  No overloaded fields and no new
+> flags.
+> 
+> This is how I'd like to see this patchset should proceed to V5.  Does
+> that make sense?
+> 
+> --D
+> 
+>>   
+>>   /*
+>>    * Flags for all iomap mappings:
+>> -- 
+>> 2.16.4
+>>
+> 
+> 
+
 
