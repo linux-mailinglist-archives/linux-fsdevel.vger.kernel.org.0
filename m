@@ -2,160 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB00228B29
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 22:01:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1F4F28B9F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 22:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387940AbfEWT7j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 15:59:39 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44471 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbfEWT7g (ORCPT
+        id S2387667AbfEWUl3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 16:41:29 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43547 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387533AbfEWUl3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 15:59:36 -0400
-Received: by mail-pf1-f193.google.com with SMTP id g9so3817772pfo.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 May 2019 12:59:35 -0700 (PDT)
+        Thu, 23 May 2019 16:41:29 -0400
+Received: by mail-io1-f68.google.com with SMTP id v7so5983263iob.10;
+        Thu, 23 May 2019 13:41:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QSvXlqZh92CDrRCYBDGQx4eYSubpSF2EcFX3zDPt80M=;
-        b=pryOJBhyiO7VVwM16n1AKnkekdqfQoNbkE8NZkY8PJq5vw+4UsAvzQdtHQdwJq3EE9
-         10TBJcHMjcAABWwN7zkuAe9PMoZJ5y1QDgyK2OSO8mZUeaSkr4W9a8GSwfeoTKbO6PGe
-         O5/TpXqS4HdhgD6kTBfj9Fg40LnkDQF2hPsRN/uVaxFgSwSEv9ad4uJTmQgxT4KWXHxn
-         UVYru/3Yh1e2bZDk2vLnVUixYqqq0oGOiuiLgSGdxEImjH2Yx57mfmQ/zfZVgrZvCxXA
-         yOpN9Ki2QEzd51yxnisPMvCkL3AHQ47kRLVcURAAOyGrYW7AJL+2r0eQkhzqJDZR/zj5
-         vioA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RIktXmsvo5WeogzuSAj6+oDuP7plh2sTZtJRWQFt6ug=;
+        b=dPufqnuehyMrtZdGMJMje631CgWkoo4SYi03r1LoKlrNFi7pECzlXfviVjwgdwt6qr
+         +0Va5D/ErNExW6RowUCW0ND57vVQn6ITR4sf6P890Tqhz7Y786dRhVOx5Pg0eAnS7A03
+         +OUZCte2B3TYRxxwY4M/nWN4Tu9zlwquT2eEn0u4HGTP0PTzVil0VOTj2k2q7ppbyr73
+         9+makKUyYdkDFQAlLzkQFN7BNedXjkVQqfESJP8vH+Bpr08s6PnZM7gdJJLGwjZjn4Fy
+         QZztAOBYVwtso5wLUbSnyxSUmfFg3xgCt3k6aNetkQzuoQPAMiuSHqHNnOZKXq2BAdAP
+         3HLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QSvXlqZh92CDrRCYBDGQx4eYSubpSF2EcFX3zDPt80M=;
-        b=O0lqOrVTMKFs4moTDJx2Wkvere/D6+rmPLPa6QnnO1ICt8eWfTafGWVAppWa8xFqGO
-         907XiZrg5lhii6liZYaayxXPt0Rk4rbU2UX/9CJNkJMunVTmhUkFPabEFt4jWlB2/XCe
-         tcIN4frhlZjmcg1qRd7lUlJZFYTxuErlNPsnTW0cwLdbbu4rizfO7A8J1DvMXpfMaHXC
-         lYQeIYyFBxlxoqCphDgx+2cRnQnAH6hE1g/Cb93Y49SvpO4QIRPcMGlNlRhzUWOGCByz
-         3CyWUdy9z9hNb2ZMN31D+J76hjLOM+MN7lO016I27j6JzzGL4fpvzWBbpqWxttfhxIUB
-         BnYw==
-X-Gm-Message-State: APjAAAVZUAzdllITIh4bEm2UfwDka/WAAFDNjSOmX3EhOZ/YkicmU5xI
-        srQK0tXGEgCLondx84mWt1LK4g==
-X-Google-Smtp-Source: APXvYqxFNkJsMbFheL6ancg7wuEV7qoqvVC2Mn2u/kKsu0xAMk+ClLVXVY6G3K63f6CxnzjRFJx4Dw==
-X-Received: by 2002:a17:90a:7f02:: with SMTP id k2mr3830549pjl.78.1558641575274;
-        Thu, 23 May 2019 12:59:35 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::4958])
-        by smtp.gmail.com with ESMTPSA id h32sm164706pgi.55.2019.05.23.12.59.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 May 2019 12:59:34 -0700 (PDT)
-Date:   Thu, 23 May 2019 15:59:33 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: xarray breaks thrashing detection and cgroup isolation
-Message-ID: <20190523195933.GA6404@cmpxchg.org>
-References: <20190523174349.GA10939@cmpxchg.org>
- <20190523183713.GA14517@bombadil.infradead.org>
- <CALvZod4o0sA8CM961ZCCp-Vv+i6awFY0U07oJfXFDiVfFiaZfg@mail.gmail.com>
- <20190523190032.GA7873@bombadil.infradead.org>
- <20190523192117.GA5723@cmpxchg.org>
- <20190523194130.GA4598@bombadil.infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RIktXmsvo5WeogzuSAj6+oDuP7plh2sTZtJRWQFt6ug=;
+        b=f5kcP7LRxfKr1KSZM4VwuwSKUlERgvOWiSSsrfKXgFcunvYlPm8ZtbC53FJzKLyOl7
+         PTcG6DeaViSna6kjdOZvxUGWVvn5ZNcUpQBtOCbiDqzMWl6wghHgqIml3tONmz/FSNk+
+         D8ybVn3nAsnNoY+q7FqG6wc26UKcPBHYSnEDoNE9cYcWS+KNA2AASGEKikaj1TtKtp9/
+         +d3yqHukk84IJvSr60eWpb/m8HFAcw0GD82P5As2zKnBkx5fSKPVISzQL/B3Zf1ZUAXW
+         1WnW7VNcZTseAjtNu1AcpATgYoScUmviRSNnV7+og8NSe+OPOF8sAhz5n3i22E5fQ35a
+         q9SQ==
+X-Gm-Message-State: APjAAAWcyuUJHzAfWVdP/vpW6lCzu+5VMglrd7T+zFdxwZS9rVbGrGAH
+        VNlvmzb/u0OACbCMdibOPJWkcJ5W9ztXkl8PmEW/OW95
+X-Google-Smtp-Source: APXvYqxSRGm6r6onYkeAL6+ZAdjWQ9BrX9WJmnzdsWUIvnq+aNXOjwLElz/r07/BYQuWzF5aUUlZeEQQ7S8RNL0pxUI=
+X-Received: by 2002:a6b:b843:: with SMTP id i64mr30640iof.81.1558644088494;
+ Thu, 23 May 2019 13:41:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190523194130.GA4598@bombadil.infradead.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190522150505.GA4915@redhat.com> <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
+ <20190522161407.GB4915@redhat.com> <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+ <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com> <20190523145944.GB23070@redhat.com>
+ <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com> <20190523163604.GE23070@redhat.com>
+ <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com> <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
+In-Reply-To: <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Thu, 23 May 2019 13:41:17 -0700
+Message-ID: <CABeXuvo5Y0aHgo-xMzmW7V02g+ysGqAkdoCAkW7L6LkukdvAcg@mail.gmail.com>
+Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 12:41:30PM -0700, Matthew Wilcox wrote:
-> On Thu, May 23, 2019 at 03:21:17PM -0400, Johannes Weiner wrote:
-> > On Thu, May 23, 2019 at 12:00:32PM -0700, Matthew Wilcox wrote:
-> > > On Thu, May 23, 2019 at 11:49:41AM -0700, Shakeel Butt wrote:
-> > > > On Thu, May 23, 2019 at 11:37 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > > On Thu, May 23, 2019 at 01:43:49PM -0400, Johannes Weiner wrote:
-> > > > > > I noticed that recent upstream kernels don't account the xarray nodes
-> > > > > > of the page cache to the allocating cgroup, like we used to do for the
-> > > > > > radix tree nodes.
-> > > > > >
-> > > > > > This results in broken isolation for cgrouped apps, allowing them to
-> > > > > > escape their containment and harm other cgroups and the system with an
-> > > > > > excessive build-up of nonresident information.
-> > > > > >
-> > > > > > It also breaks thrashing/refault detection because the page cache
-> > > > > > lives in a different domain than the xarray nodes, and so the shadow
-> > > > > > shrinker can reclaim nonresident information way too early when there
-> > > > > > isn't much cache in the root cgroup.
-> > > > > >
-> > > > > > I'm not quite sure how to fix this, since the xarray code doesn't seem
-> > > > > > to have per-tree gfp flags anymore like the radix tree did. We cannot
-> > > > > > add SLAB_ACCOUNT to the radix_tree_node_cachep slab cache. And the
-> > > > > > xarray api doesn't seem to really support gfp flags, either (xas_nomem
-> > > > > > does, but the optimistic internal allocations have fixed gfp flags).
-> > > > >
-> > > > > Would it be a problem to always add __GFP_ACCOUNT to the fixed flags?
-> > > > > I don't really understand cgroups.
-> > > 
-> > > > Also some users of xarray may not want __GFP_ACCOUNT. That's the
-> > > > reason we had __GFP_ACCOUNT for page cache instead of hard coding it
-> > > > in radix tree.
-> > > 
-> > > This is what I don't understand -- why would someone not want
-> > > __GFP_ACCOUNT?  For a shared resource?  But the page cache is a shared
-> > > resource.  So what is a good example of a time when an allocation should
-> > > _not_ be accounted to the cgroup?
-> > 
-> > We used to cgroup-account every slab charge to cgroups per default,
-> > until we changed it to a whitelist behavior:
-> > 
-> > commit b2a209ffa605994cbe3c259c8584ba1576d3310c
-> > Author: Vladimir Davydov <vdavydov@virtuozzo.com>
-> > Date:   Thu Jan 14 15:18:05 2016 -0800
-> > 
-> >     Revert "kernfs: do not account ino_ida allocations to memcg"
-> >     
-> >     Currently, all kmem allocations (namely every kmem_cache_alloc, kmalloc,
-> >     alloc_kmem_pages call) are accounted to memory cgroup automatically.
-> >     Callers have to explicitly opt out if they don't want/need accounting
-> >     for some reason.  Such a design decision leads to several problems:
-> >     
-> >      - kmalloc users are highly sensitive to failures, many of them
-> >        implicitly rely on the fact that kmalloc never fails, while memcg
-> >        makes failures quite plausible.
-> 
-> Doesn't apply here.  The allocation under spinlock is expected to fail,
-> and then we'll use xas_nomem() with the caller's specified GFP flags
-> which may or may not include __GFP_ACCOUNT.
-> 
-> >      - A lot of objects are shared among different containers by design.
-> >        Accounting such objects to one of containers is just unfair.
-> >        Moreover, it might lead to pinning a dead memcg along with its kmem
-> >        caches, which aren't tiny, which might result in noticeable increase
-> >        in memory consumption for no apparent reason in the long run.
-> 
-> These objects are in the slab of radix_tree_nodes, and we'll already be
-> accounting page cache nodes to the cgroup, so accounting random XArray
-> nodes to the cgroups isn't going to make the problem worse.
+On Thu, May 23, 2019 at 11:06 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>
+> Ok, since there has been quite a bit of argument here, I will
+> backtrack a little bit and maybe it will help us understand what's
+> happening here.
+> There are many scenarios being discussed on this thread:
+> a. State of code before 854a6ed56839a
+> b. State after 854a6ed56839a
+> c. Proposed fix as per the patchset in question.
+>
+> Oleg, I will discuss these first and then we can discuss the
+> additional changes you suggested.
+>
+> Some background on why we have these syscalls that take sigmask as an
+> argument. This is just for the sake of completeness of the argument.
+>
+> These are particularly meant for a scenario(d) such as below:
+>
+> 1. block the signals you don't care about.
+> 2. syscall()
+> 3. unblock the signals blocked in 1.
+>
+> The problem here is that if there is a signal that is not blocked by 1
+> and such a signal is delivered between 1 and 2(since they are not
+> atomic), the syscall in 2 might block forever as it never found out
+> about the signal.
+>
+> As per [a] and let's consider the case of epoll_pwait only first for simplicity.
+>
+> As I said before, ep_poll() is what checks for signal_pending() and is
+> responsible for setting errno to -EINTR when there is a signal.
+>
+> So if a signal is received after ep_poll() and ep_poll() returns
+> success, it is never noticed by the syscall during execution.
+> So the question is does the userspace have to know about this signal
+> or not. From scenario [d] above, I would say it should, even if all
+> the fd's completed successfully.
+> This does not happen in [a]. So this is what I said was already broken.
+>
+> What [b] does is to move the signal check closer to the restoration of
+> the signal. This way it is good. So, if there is a signal after
+> ep_poll() returns success, it is noticed and the signal is delivered
+> when the syscall exits. But, the syscall error status itself is 0.
+>
+> So now [c] is adjusting the return values based on whether extra
+> signals were detected after ep_poll(). This part was needed even for
+> [a].
+>
+> Let me know if this clarifies things a bit.
 
-There is no single radix_tree_nodes cache. When cgroup accounting is
-requested, we clone per-cgroup instances of the slab cache each with
-their own object slabs. The reclaimable page cache / shadow nodes do
-not share slab pages with other radix tree users.
+Just adding a little more clarification, there is an additional change
+between [a] and [b].
+As per [a] we would just restore the signal instead of changing the
+saved_sigmask and the signal could get delivered right then. [b]
+changes this to happen at syscall exit:
 
-> >      - There are tons of short-lived objects. Accounting them to memcg will
-> >        only result in slight noise and won't change the overall picture, but
-> >        we still have to pay accounting overhead.
-> 
-> XArray nodes are generally not short-lived objects.
+void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
+{
 
-I'm not exactly sure what you're trying to argue.
+           <snip>
 
-My point is that we cannot have random drivers' internal data
-structures charge to and pin cgroups indefinitely just because they
-happen to do the modprobing or otherwise interact with the driver.
+          /*
+           * When signals are pending, do not restore them here.
+           * Restoring sigmask here can lead to delivering signals
+that the above
+           * syscalls are intended to block because of the sigmask passed in.
+           */
+           if (signal_pending(current)) {
+           current->saved_sigmask = *sigsaved;
+           set_restore_sigmask();
+           return;
+}
 
-It makes no sense in terms of performance or cgroup semantics.
+-Deepa
