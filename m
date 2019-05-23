@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AB1327CA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 14:22:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BA8027CAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 14:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730284AbfEWMVz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 08:21:55 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32963 "EHLO huawei.com"
+        id S1730631AbfEWMW2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 08:22:28 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32964 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728309AbfEWMVz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 08:21:55 -0400
+        id S1728309AbfEWMW2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 08:22:28 -0400
 Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 1393C3ED738B108B2461;
-        Thu, 23 May 2019 13:21:51 +0100 (IST)
+        by Forcepoint Email with ESMTP id A78CDBB7CA354BF85882;
+        Thu, 23 May 2019 13:22:26 +0100 (IST)
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
  by smtpsuk.huawei.com (10.201.108.46) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 23 May 2019 13:21:43 +0100
+ 14.3.408.0; Thu, 23 May 2019 13:22:18 +0100
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <viro@zeniv.linux.org.uk>
 CC:     <linux-security-module@vger.kernel.org>,
@@ -28,9 +28,9 @@ CC:     <linux-security-module@vger.kernel.org>,
         <kamensky@cisco.com>, <hpa@zytor.com>, <arnd@arndb.de>,
         <rob@landley.net>, <james.w.mcmechan@gmail.com>,
         <niveditas98@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 1/3] initramfs: add file metadata
-Date:   Thu, 23 May 2019 14:18:01 +0200
-Message-ID: <20190523121803.21638-2-roberto.sassu@huawei.com>
+Subject: [PATCH v4 2/3] initramfs: read metadata from special file METADATA!!!
+Date:   Thu, 23 May 2019 14:18:02 +0200
+Message-ID: <20190523121803.21638-3-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190523121803.21638-1-roberto.sassu@huawei.com>
 References: <20190523121803.21638-1-roberto.sassu@huawei.com>
@@ -43,184 +43,135 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Instead of changing the CPIO format, metadata are parsed from regular files
+with special name 'METADATA!!!'. This file immediately follows the file
+metadata are added to.
 
-This patch adds metadata to a file from a supplied buffer. The buffer might
-contains multiple metadata records. The format of each record is:
+This patch checks if the file being extracted has the special name and, if
+yes, creates a buffer with the content of that file and calls
+do_parse_metadata() to parse metadata from the buffer.
 
-<metadata len (ASCII, 8 chars)><version><type><metadata>
-
-For now, only the TYPE_XATTR metadata type is supported. The specific
-format of this metadata type is:
-
-<xattr #N name>\0<xattr #N value>
-
-[kamensky: fixed restoring of xattrs for symbolic links by using
-           sys_lsetxattr() instead of sys_setxattr()]
-
-[sassu: removed state management, kept only do_setxattrs(), added support
-        for generic file metadata, replaced sys_lsetxattr() with
-        vfs_setxattr(), added check for entry_size, added check for
-        hdr->c_size, replaced strlen() with strnlen(); moved do_setxattrs()
-        before do_name()]
-
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
-Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reported-by: kbuild test robot <lkp@intel.com>
 ---
- include/linux/initramfs.h | 21 ++++++++++
- init/initramfs.c          | 88 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 107 insertions(+), 2 deletions(-)
- create mode 100644 include/linux/initramfs.h
+ init/initramfs.c | 49 +++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 48 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/initramfs.h b/include/linux/initramfs.h
-new file mode 100644
-index 000000000000..2f8cee441236
---- /dev/null
-+++ b/include/linux/initramfs.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * include/linux/initramfs.h
-+ *
-+ * Include file for file metadata in the initial ram disk.
-+ */
-+#ifndef _LINUX_INITRAMFS_H
-+#define _LINUX_INITRAMFS_H
-+
-+#define METADATA_FILENAME "METADATA!!!"
-+
-+enum metadata_types { TYPE_NONE, TYPE_XATTR, TYPE__LAST };
-+
-+struct metadata_hdr {
-+	char c_size[8];     /* total size including c_size field */
-+	char c_version;     /* header version */
-+	char c_type;        /* metadata type */
-+	char c_metadata[];  /* metadata */
-+} __packed;
-+
-+#endif /*LINUX_INITRAMFS_H*/
 diff --git a/init/initramfs.c b/init/initramfs.c
-index 178130fd61c2..5de396a6aac0 100644
+index 5de396a6aac0..862c03123de8 100644
 --- a/init/initramfs.c
 +++ b/init/initramfs.c
-@@ -10,6 +10,9 @@
- #include <linux/syscalls.h>
- #include <linux/utime.h>
- #include <linux/file.h>
-+#include <linux/namei.h>
-+#include <linux/xattr.h>
-+#include <linux/initramfs.h>
- 
- static ssize_t __init xwrite(int fd, const char *p, size_t count)
- {
-@@ -146,7 +149,7 @@ static __initdata time64_t mtime;
- 
- static __initdata unsigned long ino, major, minor, nlink;
- static __initdata umode_t mode;
--static __initdata unsigned long body_len, name_len;
-+static __initdata unsigned long body_len, name_len, metadata_len;
- static __initdata uid_t uid;
- static __initdata gid_t gid;
- static __initdata unsigned rdev;
-@@ -218,7 +221,7 @@ static void __init read_into(char *buf, unsigned size, enum state next)
- 	}
+@@ -222,6 +222,7 @@ static void __init read_into(char *buf, unsigned size, enum state next)
  }
  
--static __initdata char *header_buf, *symlink_buf, *name_buf;
-+static __initdata char *header_buf, *symlink_buf, *name_buf, *metadata_buf;
+ static __initdata char *header_buf, *symlink_buf, *name_buf, *metadata_buf;
++static __initdata char *metadata_buf_ptr, *previous_name_buf;
  
  static int __init do_start(void)
  {
-@@ -315,6 +318,87 @@ static int __init maybe_link(void)
+@@ -400,6 +401,7 @@ static int __init __maybe_unused do_parse_metadata(char *pathname)
+ }
+ 
+ static __initdata int wfd;
++static __initdata int metadata;
+ 
+ static int __init do_name(void)
+ {
+@@ -408,6 +410,10 @@ static int __init do_name(void)
+ 	if (strcmp(collected, "TRAILER!!!") == 0) {
+ 		free_hash();
+ 		return 0;
++	} else if (strcmp(collected, METADATA_FILENAME) == 0) {
++		metadata = 1;
++	} else {
++		memcpy(previous_name_buf, collected, strlen(collected) + 1);
+ 	}
+ 	clean_path(collected, mode);
+ 	if (S_ISREG(mode)) {
+@@ -444,11 +450,47 @@ static int __init do_name(void)
  	return 0;
  }
  
-+static int __init do_setxattrs(char *pathname, char *buf, size_t size)
++static int __init do_process_metadata(char *buf, int len, bool last)
 +{
-+	struct path path;
-+	char *xattr_name, *xattr_value;
-+	size_t xattr_name_size, xattr_value_size;
-+	int ret;
++	int ret = 0;
 +
-+	xattr_name = buf;
-+	xattr_name_size = strnlen(xattr_name, size);
-+	if (xattr_name_size == size) {
-+		error("malformed xattrs");
-+		return -EINVAL;
++	if (!metadata_buf) {
++		metadata_buf_ptr = metadata_buf = kmalloc(body_len, GFP_KERNEL);
++		if (!metadata_buf_ptr) {
++			ret = -ENOMEM;
++			goto out;
++		}
++
++		metadata_len = body_len;
 +	}
 +
-+	xattr_value = xattr_name + xattr_name_size + 1;
-+	xattr_value_size = buf + size - xattr_value;
-+
-+	ret = kern_path(pathname, 0, &path);
-+	if (!ret) {
-+		ret = vfs_setxattr(path.dentry, xattr_name, xattr_value,
-+				   xattr_value_size, 0);
-+
-+		path_put(&path);
++	if (metadata_buf_ptr + len > metadata_buf + metadata_len) {
++		ret = -EINVAL;
++		goto out;
 +	}
 +
-+	pr_debug("%s: %s size: %lu val: %s (ret: %d)\n", pathname,
-+		 xattr_name, xattr_value_size, xattr_value, ret);
++	memcpy(metadata_buf_ptr, buf, len);
++	metadata_buf_ptr += len;
++
++	if (last)
++		do_parse_metadata(previous_name_buf);
++out:
++	if (ret < 0 || last) {
++		kfree(metadata_buf);
++		metadata_buf = NULL;
++		metadata = 0;
++	}
 +
 +	return ret;
 +}
 +
-+static int __init __maybe_unused do_parse_metadata(char *pathname)
-+{
-+	char *buf = metadata_buf;
-+	char *bufend = metadata_buf + metadata_len;
-+	struct metadata_hdr *hdr;
-+	char str[sizeof(hdr->c_size) + 1];
-+	size_t entry_size;
-+
-+	if (!metadata_len)
-+		return 0;
-+
-+	str[sizeof(hdr->c_size)] = 0;
-+
-+	while (buf < bufend) {
-+		int ret;
-+
-+		if (buf + sizeof(*hdr) > bufend) {
-+			error("malformed metadata");
-+			break;
-+		}
-+
-+		hdr = (struct metadata_hdr *)buf;
-+		if (hdr->c_version != 1) {
-+			pr_debug("Unsupported header version\n");
-+			break;
-+		}
-+
-+		memcpy(str, hdr->c_size, sizeof(hdr->c_size));
-+		ret = kstrtoul(str, 16, &entry_size);
-+		if (ret || buf + entry_size > bufend || !entry_size) {
-+			error("malformed xattrs");
-+			break;
-+		}
-+
-+		switch (hdr->c_type) {
-+		case TYPE_XATTR:
-+			do_setxattrs(pathname, buf + sizeof(*hdr),
-+				     entry_size - sizeof(*hdr));
-+			break;
-+		default:
-+			pr_debug("Unsupported metadata type\n");
-+			break;
-+		}
-+
-+		buf += entry_size;
-+	}
-+
-+	return 0;
-+}
-+
- static __initdata int wfd;
+ static int __init do_copy(void)
+ {
+ 	if (byte_count >= body_len) {
+ 		if (xwrite(wfd, victim, body_len) != body_len)
+ 			error("write error");
++		if (metadata)
++			do_process_metadata(victim, body_len, true);
+ 		ksys_close(wfd);
+ 		do_utime(vcollected, mtime);
+ 		kfree(vcollected);
+@@ -458,6 +500,8 @@ static int __init do_copy(void)
+ 	} else {
+ 		if (xwrite(wfd, victim, byte_count) != byte_count)
+ 			error("write error");
++		if (metadata)
++			do_process_metadata(victim, byte_count, false);
+ 		body_len -= byte_count;
+ 		eat(byte_count);
+ 		return 1;
+@@ -467,6 +511,7 @@ static int __init do_copy(void)
+ static int __init do_symlink(void)
+ {
+ 	collected[N_ALIGN(name_len) + body_len] = '\0';
++	memcpy(previous_name_buf, collected, strlen(collected) + 1);
+ 	clean_path(collected, 0);
+ 	ksys_symlink(collected + N_ALIGN(name_len), collected);
+ 	ksys_lchown(collected, uid, gid);
+@@ -534,8 +579,9 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 	header_buf = kmalloc(110, GFP_KERNEL);
+ 	symlink_buf = kmalloc(PATH_MAX + N_ALIGN(PATH_MAX) + 1, GFP_KERNEL);
+ 	name_buf = kmalloc(N_ALIGN(PATH_MAX), GFP_KERNEL);
++	previous_name_buf = kmalloc(N_ALIGN(PATH_MAX), GFP_KERNEL);
  
- static int __init do_name(void)
+-	if (!header_buf || !symlink_buf || !name_buf)
++	if (!header_buf || !symlink_buf || !name_buf || !previous_name_buf)
+ 		panic("can't allocate buffers");
+ 
+ 	state = Start;
+@@ -580,6 +626,7 @@ static char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 		len -= my_inptr;
+ 	}
+ 	dir_utime();
++	kfree(previous_name_buf);
+ 	kfree(name_buf);
+ 	kfree(symlink_buf);
+ 	kfree(header_buf);
 -- 
 2.17.1
 
