@@ -2,107 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57EB728261
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 18:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0BE528264
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 May 2019 18:16:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731083AbfEWQPu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 12:15:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58514 "EHLO mx1.redhat.com"
+        id S1731168AbfEWQP7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 12:15:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38908 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730790AbfEWQPu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 12:15:50 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1731073AbfEWQP6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 12:15:58 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3899AC0568FC;
-        Thu, 23 May 2019 16:15:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id BEAC73001749;
+        Thu, 23 May 2019 16:15:55 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-142.rdu2.redhat.com [10.10.121.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9423A17AC7;
-        Thu, 23 May 2019 16:15:38 +0000 (UTC)
-Subject: [PATCH 00/23] nfs: Mount API conversion
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F31668365;
+        Thu, 23 May 2019 16:15:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 01/23] saner calling conventions for nfs_fs_mount_common()
 From:   David Howells <dhowells@redhat.com>
 To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, dhowells@redhat.com,
         viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 23 May 2019 17:15:37 +0100
-Message-ID: <155862813755.26654.563679411147031501.stgit@warthog.procyon.org.uk>
+Date:   Thu, 23 May 2019 17:15:50 +0100
+Message-ID: <155862815043.26654.10359128329402412912.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155862813755.26654.563679411147031501.stgit@warthog.procyon.org.uk>
+References: <155862813755.26654.563679411147031501.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 23 May 2019 16:15:50 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 23 May 2019 16:15:58 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Hi Trond, Anna,
+Allow it to take ERR_PTR() for server and return ERR_CAST() of it in
+such case.  All callers used to open-code that...
 
-Here's a set of patches that converts NFS to use the mount API.  Note that
-there are a lot of preliminary patches, some from me and some from Al.  The
-actual conversion is done by the final patch.
-
-I've rebased them on 5.2-rc1.  Do you want them basing on something else?
-
-The patches can be found here also:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
-
-on branch:
-
-	mount-api-nfs
-
-David
+Reviewed-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
-Al Viro (15):
-      saner calling conventions for nfs_fs_mount_common()
-      nfs: stash server into struct nfs_mount_info
-      nfs: lift setting mount_info from nfs4_remote{,_referral}_mount
-      nfs: fold nfs4_remote_fs_type and nfs4_remote_referral_fs_type
-      nfs: don't bother setting/restoring export_path around do_nfs_root_mount()
-      nfs4: fold nfs_do_root_mount/nfs_follow_remote_path
-      nfs: lift setting mount_info from nfs_xdev_mount()
-      nfs: stash nfs_subversion reference into nfs_mount_info
-      nfs: don't bother passing nfs_subversion to ->try_mount() and nfs_fs_mount_common()
-      nfs: merge xdev and remote file_system_type
-      nfs: unexport nfs_fs_mount_common()
-      nfs: don't pass nfs_subversion to ->create_server()
-      nfs: get rid of mount_info ->fill_super()
-      nfs_clone_sb_security(): simplify the check for server bogosity
-      nfs: get rid of ->set_security()
 
-David Howells (8):
-      NFS: Move mount parameterisation bits into their own file
-      NFS: Constify mount argument match tables
-      NFS: Rename struct nfs_parsed_mount_data to struct nfs_fs_context
-      NFS: Split nfs_parse_mount_options()
-      NFS: Deindent nfs_fs_context_parse_option()
-      NFS: Add a small buffer in nfs_fs_context to avoid string dup
-      NFS: Do some tidying of the parsing code
-      NFS: Add fs_context support.
+ fs/nfs/nfs4super.c |   16 +---------------
+ fs/nfs/super.c     |   11 ++++-------
+ 2 files changed, 5 insertions(+), 22 deletions(-)
 
-
- fs/nfs/Makefile         |    3 
- fs/nfs/client.c         |   78 +-
- fs/nfs/fs_context.c     | 1409 ++++++++++++++++++++++++++++++++++
- fs/nfs/fscache.c        |    2 
- fs/nfs/getroot.c        |   73 +-
- fs/nfs/internal.h       |  132 ++-
- fs/nfs/namespace.c      |  144 ++-
- fs/nfs/nfs3_fs.h        |    2 
- fs/nfs/nfs3client.c     |    6 
- fs/nfs/nfs3proc.c       |    2 
- fs/nfs/nfs4_fs.h        |    9 
- fs/nfs/nfs4client.c     |   97 +-
- fs/nfs/nfs4namespace.c  |  285 ++++---
- fs/nfs/nfs4proc.c       |    2 
- fs/nfs/nfs4super.c      |  257 ++----
- fs/nfs/proc.c           |    2 
- fs/nfs/super.c          | 1950 ++++-------------------------------------------
- include/linux/nfs_xdr.h |    9 
- 18 files changed, 2138 insertions(+), 2324 deletions(-)
- create mode 100644 fs/nfs/fs_context.c
+diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
+index 689977e148cb..a392e9454287 100644
+--- a/fs/nfs/nfs4super.c
++++ b/fs/nfs/nfs4super.c
+@@ -109,21 +109,12 @@ nfs4_remote_mount(struct file_system_type *fs_type, int flags,
+ {
+ 	struct nfs_mount_info *mount_info = info;
+ 	struct nfs_server *server;
+-	struct dentry *mntroot = ERR_PTR(-ENOMEM);
+ 
+ 	mount_info->set_security = nfs_set_sb_security;
+ 
+ 	/* Get a volume representation */
+ 	server = nfs4_create_server(mount_info, &nfs_v4);
+-	if (IS_ERR(server)) {
+-		mntroot = ERR_CAST(server);
+-		goto out;
+-	}
+-
+-	mntroot = nfs_fs_mount_common(server, flags, dev_name, mount_info, &nfs_v4);
+-
+-out:
+-	return mntroot;
++	return nfs_fs_mount_common(server, flags, dev_name, mount_info, &nfs_v4);
+ }
+ 
+ static struct vfsmount *nfs_do_root_mount(struct file_system_type *fs_type,
+@@ -279,11 +270,6 @@ nfs4_remote_referral_mount(struct file_system_type *fs_type, int flags,
+ 
+ 	/* create a new volume representation */
+ 	server = nfs4_create_referral_server(mount_info.cloned, mount_info.mntfh);
+-	if (IS_ERR(server)) {
+-		mntroot = ERR_CAST(server);
+-		goto out;
+-	}
+-
+ 	mntroot = nfs_fs_mount_common(server, flags, dev_name, &mount_info, &nfs_v4);
+ out:
+ 	nfs_free_fhandle(mount_info.mntfh);
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index d6c687419a81..e4108e20af0f 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1881,9 +1881,6 @@ struct dentry *nfs_try_mount(int flags, const char *dev_name,
+ 	else
+ 		server = nfs_mod->rpc_ops->create_server(mount_info, nfs_mod);
+ 
+-	if (IS_ERR(server))
+-		return ERR_CAST(server);
+-
+ 	return nfs_fs_mount_common(server, flags, dev_name, mount_info, nfs_mod);
+ }
+ EXPORT_SYMBOL_GPL(nfs_try_mount);
+@@ -2618,6 +2615,9 @@ struct dentry *nfs_fs_mount_common(struct nfs_server *server,
+ 	};
+ 	int error;
+ 
++	if (IS_ERR(server))
++		return ERR_CAST(server);
++
+ 	if (server->flags & NFS_MOUNT_UNSHARED)
+ 		compare_super = NULL;
+ 
+@@ -2766,10 +2766,7 @@ nfs_xdev_mount(struct file_system_type *fs_type, int flags,
+ 	/* create a new volume representation */
+ 	server = nfs_mod->rpc_ops->clone_server(NFS_SB(data->sb), data->fh, data->fattr, data->authflavor);
+ 
+-	if (IS_ERR(server))
+-		mntroot = ERR_CAST(server);
+-	else
+-		mntroot = nfs_fs_mount_common(server, flags,
++	mntroot = nfs_fs_mount_common(server, flags,
+ 				dev_name, &mount_info, nfs_mod);
+ 
+ 	dprintk("<-- nfs_xdev_mount() = %ld\n",
 
