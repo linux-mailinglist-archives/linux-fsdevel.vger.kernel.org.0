@@ -2,287 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 944BB296C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 13:12:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 808FA298F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 15:29:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391017AbfEXLLd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 May 2019 07:11:33 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:38673 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391007AbfEXLLZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 May 2019 07:11:25 -0400
-Received: by mail-it1-f193.google.com with SMTP id i63so13211905ita.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2019 04:11:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nuilRgGUYviZJo16cdF7vgoam1Y3XVG2+yfRV0kCp44=;
-        b=R+t/15ExfNAlDmS3T8/nYVgxjZsPbXAkCbY/B3M2JMRsaFaURV0Zvwo0dvOoA8j1Hm
-         pYCK1zBbhCgnKR+XhqVnk7+ApqJfnA2u7suNZ83jbrV4R6vPW6qeJf7gbtLWsp8NPh5C
-         7QGuX9muWb4qK2c7arcSFCR/ETv8/zM12NWPgcweja2NzxE0Nb6gWV3ACS2uOuwyElHV
-         mivWTrs4gdGOskQm1ccR4N4oruKpjx/ClJz9t2u6Li4RA51pbfSX1I+7TFfDNr/PD8QU
-         BbPiZbClYmIgJVXnBXzJUBI/f+bo1JTfUguXL47Z1WJ3MaS6fvhxARml1t5MsSBiA5gB
-         mG/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nuilRgGUYviZJo16cdF7vgoam1Y3XVG2+yfRV0kCp44=;
-        b=YmnV2kvW4L+/t6sz3TLfvplwUkxpuDlPkxf8CFVMeY1L/GqYAORNP+SCye+wN35FZo
-         siTGLa6HbHSh64Xvlu0vGC6OtjgK0gr5zTJjG8iaX2Y8rTNPG0LOR15HbFI1pXs1zcCV
-         kAC3A77Mw2TWwhnCP2mfVFenpGov1QE0LqmlDD4x6GTm7r09+O0BTEr1mc0gt0dkL4vK
-         nuLT4VvRrTXt3UYe7FZ+vu9AcSZY7PLmZFOshe93yIfnsaLbAbvo7LOmnNKlcY8UGysJ
-         D6SisKleRKPWtlCDkkiFDqfXEhR03snBnw3pbdN4sALKxX0ZKRjTHWZj9eJ1qNQGB6Yd
-         Tudg==
-X-Gm-Message-State: APjAAAWLKLwigMDPwdbDv4Trzefw+Jp6w9z7y2mvGQ2w79P93gMqpIeh
-        y/g4/VyaXF6RFLp3zrcqvWuVYQ==
-X-Google-Smtp-Source: APXvYqxBWUfU8Pv7v2XH7gr4LqA1seYEni45lAXHr6lzqG9t83zM0qgC2zZvMzAwxI3Sa3ujZjPIVg==
-X-Received: by 2002:a24:7c97:: with SMTP id a145mr12709178itd.117.1558696284466;
-        Fri, 24 May 2019 04:11:24 -0700 (PDT)
-Received: from localhost.localdomain ([172.56.12.37])
-        by smtp.gmail.com with ESMTPSA id y194sm1024771itb.34.2019.05.24.04.11.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 04:11:23 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        fweimer@redhat.com
-Cc:     jannh@google.com, oleg@redhat.com, tglx@linutronix.de,
-        arnd@arndb.de, shuah@kernel.org, dhowells@redhat.com,
-        tkjos@android.com, ldv@altlinux.org, miklos@szeredi.hu,
-        Christian Brauner <christian@brauner.io>,
-        linux-api@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH v3 3/3] tests: add close_range() tests
-Date:   Fri, 24 May 2019 13:10:47 +0200
-Message-Id: <20190524111047.6892-4-christian@brauner.io>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190524111047.6892-1-christian@brauner.io>
-References: <20190524111047.6892-1-christian@brauner.io>
+        id S2403804AbfEXN3c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 May 2019 09:29:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39764 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403799AbfEXN3c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 May 2019 09:29:32 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7482930ADC75;
+        Fri, 24 May 2019 13:29:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2A8382E024;
+        Fri, 24 May 2019 13:29:12 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 24 May 2019 15:29:21 +0200 (CEST)
+Date:   Fri, 24 May 2019 15:29:12 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Message-ID: <20190524132911.GA2655@redhat.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190522150505.GA4915@redhat.com>
+ <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
+ <20190522161407.GB4915@redhat.com>
+ <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+ <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
+ <20190523145944.GB23070@redhat.com>
+ <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
+ <20190523163604.GE23070@redhat.com>
+ <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 24 May 2019 13:29:31 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds basic tests for the new close_range() syscall.
-- test that no invalid flags can be passed
-- test that a range of file descriptors is correctly closed
-- test that a range of file descriptors is correctly closed if there there
-  are already closed file descriptors in the range
-- test that max_fd is correctly capped to the current fdtable maximum
+It seems that we all are just trying to confuse each other. I got lost.
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Jann Horn <jannh@google.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Dmitry V. Levin <ldv@altlinux.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Florian Weimer <fweimer@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-api@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
----
-v1: unchanged
-v2:
-- Christian Brauner <christian@brauner.io>:
-  - verify that close_range() correctly closes a single file descriptor
-v3:
-- Christian Brauner <christian@brauner.io>:
-  - add missing Cc for Shuah
-  - add missing Cc for linux-kselftest
----
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/core/.gitignore       |   1 +
- tools/testing/selftests/core/Makefile         |   6 +
- .../testing/selftests/core/close_range_test.c | 142 ++++++++++++++++++
- 4 files changed, 150 insertions(+)
- create mode 100644 tools/testing/selftests/core/.gitignore
- create mode 100644 tools/testing/selftests/core/Makefile
- create mode 100644 tools/testing/selftests/core/close_range_test.c
+On 05/23, David Laight wrote:
+>
+> From: Oleg Nesterov
+> > Sent: 23 May 2019 17:36
+> > On 05/23, David Laight wrote:
+> > >
+> > > From: Oleg Nesterov
+> > > > On 05/23, David Laight wrote:
+> ...
+> > > > Not sure I understand... OK, suppose that you do
+> > > >
+> > > > 	block-all-signals;
+> > > > 	ret = pselect(..., sigmask(SIG_URG));
+> > > >
+> > > > if it returns success/timeout then the handler for SIG_URG should not be called?
+> > >
+> > > Ugg...
+> > > Posix probably allows the signal handler be called at the point the event
+> > > happens rather than being deferred until the system call completes.
+> > > Queueing up the signal handler to be run at a later time (syscall exit)
+> > > certainly makes sense.
+> > > Definitely safest to call the signal handler even if success/timeout
+> > > is returned.
+> >
+> > Why?
+> >
+> > > pselect() exists to stop the entry race, not the exit one.
+> >
+> > pselect() has to block SIG_URG again before it returns to user-mode, right?
+>
+> Yep.
+> So the signal handler can't be called for a signal that happens after
+> pselect() returns.
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 9781ca79794a..06e57fabbff9 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -4,6 +4,7 @@ TARGETS += bpf
- TARGETS += breakpoints
- TARGETS += capabilities
- TARGETS += cgroup
-+TARGETS += core
- TARGETS += cpufreq
- TARGETS += cpu-hotplug
- TARGETS += drivers/dma-buf
-diff --git a/tools/testing/selftests/core/.gitignore b/tools/testing/selftests/core/.gitignore
-new file mode 100644
-index 000000000000..6e6712ce5817
---- /dev/null
-+++ b/tools/testing/selftests/core/.gitignore
-@@ -0,0 +1 @@
-+close_range_test
-diff --git a/tools/testing/selftests/core/Makefile b/tools/testing/selftests/core/Makefile
-new file mode 100644
-index 000000000000..de3ae68aa345
---- /dev/null
-+++ b/tools/testing/selftests/core/Makefile
-@@ -0,0 +1,6 @@
-+CFLAGS += -g -I../../../../usr/include/ -I../../../../include
-+
-+TEST_GEN_PROGS := close_range_test
-+
-+include ../lib.mk
-+
-diff --git a/tools/testing/selftests/core/close_range_test.c b/tools/testing/selftests/core/close_range_test.c
-new file mode 100644
-index 000000000000..d6e6079d3d53
---- /dev/null
-+++ b/tools/testing/selftests/core/close_range_test.c
-@@ -0,0 +1,142 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <linux/kernel.h>
-+#include <limits.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <unistd.h>
-+
-+#include "../kselftest.h"
-+
-+static inline int sys_close_range(unsigned int fd, unsigned int max_fd,
-+				  unsigned int flags)
-+{
-+	return syscall(__NR_close_range, fd, max_fd, flags);
-+}
-+
-+#ifndef ARRAY_SIZE
-+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-+#endif
-+
-+int main(int argc, char **argv)
-+{
-+	const char *test_name = "close_range";
-+	int i, ret;
-+	int open_fds[101];
-+	int fd_max, fd_mid, fd_min;
-+
-+	ksft_set_plan(9);
-+
-+	for (i = 0; i < ARRAY_SIZE(open_fds); i++) {
-+		int fd;
-+
-+		fd = open("/dev/null", O_RDONLY | O_CLOEXEC);
-+		if (fd < 0) {
-+			if (errno == ENOENT)
-+				ksft_exit_skip(
-+					"%s test: skipping test since /dev/null does not exist\n",
-+					test_name);
-+
-+			ksft_exit_fail_msg(
-+				"%s test: %s - failed to open /dev/null\n",
-+				strerror(errno), test_name);
-+		}
-+
-+		open_fds[i] = fd;
-+	}
-+
-+	fd_min = open_fds[0];
-+	fd_max = open_fds[99];
-+
-+	ret = sys_close_range(fd_min, fd_max, 1);
-+	if (!ret)
-+		ksft_exit_fail_msg(
-+			"%s test: managed to pass invalid flag value\n",
-+			test_name);
-+	ksft_test_result_pass("do not allow invalid flag values for close_range()\n");
-+
-+	fd_mid = open_fds[50];
-+	ret = sys_close_range(fd_min, fd_mid, 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close range of file descriptors from %d to %d\n",
-+			test_name, fd_min, fd_mid);
-+	ksft_test_result_pass("close_range() from %d to %d\n", fd_min, fd_mid);
-+
-+	for (i = 0; i <= 50; i++) {
-+		ret = fcntl(open_fds[i], F_GETFL);
-+		if (ret >= 0)
-+			ksft_exit_fail_msg(
-+				"%s test: Failed to close range of file descriptors from %d to %d\n",
-+				test_name, fd_min, fd_mid);
-+	}
-+	ksft_test_result_pass("fcntl() verify closed range from %d to %d\n", fd_min, fd_mid);
-+
-+	/* create a couple of gaps */
-+	close(57);
-+	close(78);
-+	close(81);
-+	close(82);
-+	close(84);
-+	close(90);
-+
-+	fd_mid = open_fds[51];
-+	/* Choose slightly lower limit and leave some fds for a later test */
-+	fd_max = open_fds[92];
-+	ret = sys_close_range(fd_mid, fd_max, 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+			test_name);
-+	ksft_test_result_pass("close_range() from %d to %d\n", fd_mid, fd_max);
-+
-+	for (i = 51; i <= 92; i++) {
-+		ret = fcntl(open_fds[i], F_GETFL);
-+		if (ret >= 0)
-+			ksft_exit_fail_msg(
-+				"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+				test_name);
-+	}
-+	ksft_test_result_pass("fcntl() verify closed range from %d to %d\n", fd_mid, fd_max);
-+
-+	fd_mid = open_fds[93];
-+	fd_max = open_fds[99];
-+	/* test that the kernel caps and still closes all fds */
-+	ret = sys_close_range(fd_mid, UINT_MAX, 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+			test_name);
-+	ksft_test_result_pass("close_range() from %d to %d\n", fd_mid, fd_max);
-+
-+	for (i = 93; i < 100; i++) {
-+		ret = fcntl(open_fds[i], F_GETFL);
-+		if (ret >= 0)
-+			ksft_exit_fail_msg(
-+				"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+				test_name);
-+	}
-+	ksft_test_result_pass("fcntl() verify closed range from %d to %d\n", fd_mid, fd_max);
-+
-+	ret = sys_close_range(open_fds[100], open_fds[100], 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close single file descriptor\n",
-+			test_name);
-+	ksft_test_result_pass("close_range() closed single file descriptor\n");
-+
-+	ret = fcntl(open_fds[100], F_GETFL);
-+	if (ret >= 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close single file descriptor\n",
-+			test_name);
-+	ksft_test_result_pass("fcntl() verify closed single file descriptor\n");
-+
-+	return ksft_exit_pass();
-+}
--- 
-2.21.0
+Yes. And "after pselect() returns" actually means "after pselect() restores
+the old sigmask while it returns to user mode".
+
+> > Suppose pselect() finds a ready fd, and this races with SIG_URG.
+>
+> You mean if SIG_URG is raised after a ready fd is found (or even timeout)?
+> So the return value isn't EINTR.
+
+Yes.
+
+> (If an fd is readable on entry, the SIG_URG could have happened much earlier.)
+
+Why not? See the pseudo code above. It was blocked before pselect() was called.
+So SIG_URG can be already pending when pselect() is called but since an fd is
+already ready on entry pselect() restores the old sigmask (and thus blocks SIG_URG
+again) and returns success. The handler is not called.
+
+However, if there is no a ready fd, pselect won't block. It will notice SIG_URG,
+deliver this signal, and return -EINTR.
+
+
+> > Why do you think the handler should run?
+>
+> Think of the application code loop.
+> Consider what happens if the signal is SIG_INT - to request the program
+> stop.
+
+SIG_INT or SIG_URG ? Again, please look at the pseudo code above. SIG_INT is
+blocked and never unblocked.
+
+> After every pselect() call the application looks to see if the handler
+> has been called.
+> If one of the fds is always readable pselect() will never return EINTR
+> but you want the SIG_INT handler run so that the loop gets terminated.
+> If you only call the signal handler when EINTR is returned the process
+> will never stop.
+> So you need to call the handler even when pselect() succeeds/time out.
+
+Then do not block SIG_INT ?
+
+	block-all-signals-except-SIG_INT;
+	ret = pselect(..., sigmask{SIG_URG, SIG_INT});
+
+
+> > What if SIG_URG comes right after pselect() blocks SIG_URG again? I mean,
+> > how this differs the case when it comes before, but a ready fd was already
+> > found?
+>
+> I suspect you need to defer the re-instatement of the original mask
+> to the code that calls the signal handlers (which probably should
+> be called with the programs signal mask).
+
+This is what the kernel does when the signal is delivered, the original mask
+is restored after the signal handler runs.
+
+> So that particular window doesn't exist.
+
+Which window???
+
+Oleg.
 
