@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 808FA298F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 15:29:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6814A299CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 16:11:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403804AbfEXN3c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 May 2019 09:29:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39764 "EHLO mx1.redhat.com"
+        id S2404033AbfEXOLB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 May 2019 10:11:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43162 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403799AbfEXN3c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 May 2019 09:29:32 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S2403895AbfEXOLB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 May 2019 10:11:01 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7482930ADC75;
-        Fri, 24 May 2019 13:29:21 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 96E3281126;
+        Fri, 24 May 2019 14:11:00 +0000 (UTC)
 Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2A8382E024;
-        Fri, 24 May 2019 13:29:12 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with SMTP id 8E55B1835C;
+        Fri, 24 May 2019 14:10:55 +0000 (UTC)
 Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 24 May 2019 15:29:21 +0200 (CEST)
-Date:   Fri, 24 May 2019 15:29:12 +0200
+        oleg@redhat.com; Fri, 24 May 2019 16:11:00 +0200 (CEST)
+Date:   Fri, 24 May 2019 16:10:54 +0200
 From:   Oleg Nesterov <oleg@redhat.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     David Laight <David.Laight@aculab.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -40,9 +40,8 @@ Cc:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
 Subject: Re: [PATCH v2] signal: Adjust error codes according to
  restore_user_sigmask()
-Message-ID: <20190524132911.GA2655@redhat.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190522150505.GA4915@redhat.com>
+Message-ID: <20190524141054.GB2655@redhat.com>
+References: <20190522150505.GA4915@redhat.com>
  <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
  <20190522161407.GB4915@redhat.com>
  <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
@@ -51,112 +50,94 @@ References: <20190522032144.10995-1-deepa.kernel@gmail.com>
  <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
  <20190523163604.GE23070@redhat.com>
  <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+ <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+In-Reply-To: <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 24 May 2019 13:29:31 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 24 May 2019 14:11:00 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It seems that we all are just trying to confuse each other. I got lost.
-
-On 05/23, David Laight wrote:
+On 05/23, Deepa Dinamani wrote:
 >
-> From: Oleg Nesterov
-> > Sent: 23 May 2019 17:36
-> > On 05/23, David Laight wrote:
-> > >
-> > > From: Oleg Nesterov
-> > > > On 05/23, David Laight wrote:
-> ...
-> > > > Not sure I understand... OK, suppose that you do
-> > > >
-> > > > 	block-all-signals;
-> > > > 	ret = pselect(..., sigmask(SIG_URG));
-> > > >
-> > > > if it returns success/timeout then the handler for SIG_URG should not be called?
-> > >
-> > > Ugg...
-> > > Posix probably allows the signal handler be called at the point the event
-> > > happens rather than being deferred until the system call completes.
-> > > Queueing up the signal handler to be run at a later time (syscall exit)
-> > > certainly makes sense.
-> > > Definitely safest to call the signal handler even if success/timeout
-> > > is returned.
-> >
-> > Why?
-> >
-> > > pselect() exists to stop the entry race, not the exit one.
-> >
-> > pselect() has to block SIG_URG again before it returns to user-mode, right?
+> Ok, since there has been quite a bit of argument here, I will
+> backtrack a little bit and maybe it will help us understand what's
+> happening here.
+> There are many scenarios being discussed on this thread:
+> a. State of code before 854a6ed56839a
+
+I think everything was correct,
+
+> b. State after 854a6ed56839a
+
+obviously buggy,
+
+> c. Proposed fix as per the patchset in question.
+
+Nack, sorry. I'll try to finish my patch on Monday. It will restore the state
+before 854a6ed56839a and (imo) cleanup/simplify this code.
+
+At leat this is what I think right now. May be I will have to change my mind
+after this discussion. But in any case I can't believe I will ever agree with
+your fix ;)
+
+> These are particularly meant for a scenario(d) such as below:
 >
-> Yep.
-> So the signal handler can't be called for a signal that happens after
-> pselect() returns.
-
-Yes. And "after pselect() returns" actually means "after pselect() restores
-the old sigmask while it returns to user mode".
-
-> > Suppose pselect() finds a ready fd, and this races with SIG_URG.
+> 1. block the signals you don't care about.
+> 2. syscall()
+> 3. unblock the signals blocked in 1.
 >
-> You mean if SIG_URG is raised after a ready fd is found (or even timeout)?
-> So the return value isn't EINTR.
+> The problem here is that if there is a signal that is not blocked by 1
+> and such a signal is delivered between 1 and 2(since they are not
+> atomic), the syscall in 2 might block forever as it never found out
+> about the signal.
 
-Yes.
+and that is why we have pselect/etc to make this sequence "atomic".
 
-> (If an fd is readable on entry, the SIG_URG could have happened much earlier.)
-
-Why not? See the pseudo code above. It was blocked before pselect() was called.
-So SIG_URG can be already pending when pselect() is called but since an fd is
-already ready on entry pselect() restores the old sigmask (and thus blocks SIG_URG
-again) and returns success. The handler is not called.
-
-However, if there is no a ready fd, pselect won't block. It will notice SIG_URG,
-deliver this signal, and return -EINTR.
-
-
-> > Why do you think the handler should run?
+> As per [a] and let's consider the case of epoll_pwait only first for simplicity.
 >
-> Think of the application code loop.
-> Consider what happens if the signal is SIG_INT - to request the program
-> stop.
+> As I said before, ep_poll() is what checks for signal_pending() and is
+> responsible for setting errno to -EINTR when there is a signal.
 
-SIG_INT or SIG_URG ? Again, please look at the pseudo code above. SIG_INT is
-blocked and never unblocked.
+To clarify, if do_epoll_wait() return -EINTR then signal_pending() is true,
+right?
 
-> After every pselect() call the application looks to see if the handler
-> has been called.
-> If one of the fds is always readable pselect() will never return EINTR
-> but you want the SIG_INT handler run so that the loop gets terminated.
-> If you only call the signal handler when EINTR is returned the process
-> will never stop.
-> So you need to call the handler even when pselect() succeeds/time out.
+> So if a signal is received after ep_poll() and ep_poll() returns
+> success, it is never noticed by the syscall during execution.
 
-Then do not block SIG_INT ?
+What you are saying looks very confusing to me, I will assume that you
+meant something like
 
-	block-all-signals-except-SIG_INT;
-	ret = pselect(..., sigmask{SIG_URG, SIG_INT});
+	- a signal SIG_XXX was blocked before sys_epoll_pwait() was called
 
+	- sys_epoll_pwait(sigmask) unblocks SIG_XXX according to sigmask
 
-> > What if SIG_URG comes right after pselect() blocks SIG_URG again? I mean,
-> > how this differs the case when it comes before, but a ready fd was already
-> > found?
->
-> I suspect you need to defer the re-instatement of the original mask
-> to the code that calls the signal handlers (which probably should
-> be called with the programs signal mask).
+	- sys_epoll_pwait() calls do_epoll_wait() which returns success
 
-This is what the kernel does when the signal is delivered, the original mask
-is restored after the signal handler runs.
+	- SIG_XXX comes after that and it is "never noticed"
 
-> So that particular window doesn't exist.
+Yes. Everything is correct. And see my reply to David, SIG_XXX can even
+come _before_ sys_epoll_pwait() was called.
 
-Which window???
+> So the question is does the userspace have to know about this signal
+> or not.
+
+If userspace needs to know about SIG_XXX it should not block it, that is all.
+
+> What [b] does is to move the signal check closer to the restoration of
+> the signal.
+
+FOR NO REASON, afaics (to simplify, lets forget the problem with the wrong
+return value you are trying to fix).
+
+And even if there were ANY reason to do this, note that (with or without this
+fix) the signal_pending() check inside restore_user_sigmask() can NOT help,
+simply because SIG_XXX can come right after this check.
 
 Oleg.
 
