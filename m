@@ -2,92 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7EC02A118
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2019 00:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E50A2A16C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2019 00:59:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404344AbfEXWVP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 May 2019 18:21:15 -0400
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:44298 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404332AbfEXWVP (ORCPT
+        id S1730187AbfEXW7l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 May 2019 18:59:41 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45090 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbfEXW7l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 May 2019 18:21:15 -0400
-Received: by mail-wr1-f48.google.com with SMTP id w13so3015447wru.11;
-        Fri, 24 May 2019 15:21:13 -0700 (PDT)
+        Fri, 24 May 2019 18:59:41 -0400
+Received: by mail-lj1-f193.google.com with SMTP id r76so4534300lja.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2019 15:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:mime-version:message-id:in-reply-to
-         :references:user-agent:content-transfer-encoding;
-        bh=kV6iJR4xfy9BRC6MyG7RFLVo/Wi9XJHicoj8GiJ50zE=;
-        b=RQPcqx6ozrqP8a1MxQY745UDH4f80SGRWFECqSzzyeASqseyw2aQlzRzIn1wiM81sg
-         xsbUtqjNLpiZTDR/k11/K9wPe+t70ZSe1+78iAG390Y/HLpNbDtocRJNNPfHN4GRQG/G
-         AvmvGxT33F/Nounqxq/tVmwfrkbNL2OspUTiWl/KPhxixJkuhxaArg2hRwQ2s4oey+ZJ
-         NXsVa6G+37JjbFSaKF2s6IHQnDl4KXaesPaA5Y9yaTT6QReo1UvSaCciJixjZiMNOaXw
-         z0WWhoz3l/w4vT5on4FVVwrbCe5qkPePBrHdGNYWF/jRUpSTOzW9ACEU42qBBEMl+fXy
-         B1jA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pQINizPFkNPnto59K0HZACSWR9ngvO3M7aOeMX8dPW8=;
+        b=GmxgEiG+jMRxi4LmBi9k7J2C8n7RpiC2NBCZ3DLX08K85gcoyywZ4tl+P32/mMwcqG
+         O4Y184LyNs6/HdVttJYg26SnTEZenmTPwRlWi8OYmFedIXmlG1SXqhBugOdxMaqrphSg
+         0/iJn6C0x9KeeqMxCK7RF+v4pYfhlNizqxwtc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:mime-version:message-id
-         :in-reply-to:references:user-agent:content-transfer-encoding;
-        bh=kV6iJR4xfy9BRC6MyG7RFLVo/Wi9XJHicoj8GiJ50zE=;
-        b=qELDDdwBLBUhiZSa1qgmtr1csFhSTo6VmOy3nw4vY6YY9Fn7zdpgsSqAreN1kXJ7x9
-         Qeeaj/jjJhd4bQpVdD7GGiV8KmRYExc26AysXeUqa1g/ZFxq90y6pDUiWvQ37sS6gBA9
-         GUxHH6hvf4BZ7B9Cy5Cl0i8Vl8am0rEsq9LbCHzvqn2uMhIVYUNx8p8ss/4L58zskMHX
-         1MCyjaMU99dtzAhRTpT6oZZOzFLSpZr01SLhVzhFMUr+eWUsbfu3D+HV4PhSsWqpVzn5
-         1ZMRN7jdWMs6ZUcZIatXKfbY2IFArdj6gWlA9KW90upIVA82rY8rWboNiIDAD8sR52wS
-         Mgqw==
-X-Gm-Message-State: APjAAAVQR0YQ73I02Er2Zd1yToNDgBEhVyD5kXW8DG/+1qWjPM3W7NEl
-        +IzXlGqteEKkrpvghNr3CMSYq3qTSCP5Bg==
-X-Google-Smtp-Source: APXvYqyiO9AqF/rXwvpnWtzQtWh6QNPh6n/g/DmOpGzsA7BmBQUI/Z91rD8hQzpSoz5Dwi9toVKNZg==
-X-Received: by 2002:a5d:628d:: with SMTP id k13mr7050635wru.319.1558736473197;
-        Fri, 24 May 2019 15:21:13 -0700 (PDT)
-Received: from localhost ([92.59.185.54])
-        by smtp.gmail.com with ESMTPSA id l18sm3880043wrv.38.2019.05.24.15.21.11
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 24 May 2019 15:21:12 -0700 (PDT)
-From:   Vicente Bergas <vicencb@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: =?iso-8859-1?Q?d=5Flookup:_Unable_to_handle_kernel_paging_request?=
-Date:   Sat, 25 May 2019 00:21:11 +0200
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pQINizPFkNPnto59K0HZACSWR9ngvO3M7aOeMX8dPW8=;
+        b=Ew5Xxbz+PpN9iS5jNpCprSkaTqGToBtBsLN99DM43neoXBytEu3smZPv8k4+lYBXc1
+         7Ir0oqYYNP4qELaip7rqBBrqqWsDKYS+iK5CSEDx24R+zuVbz0SbmUVnUiJt5HsleXra
+         LzX9Q6TnJH17SPSBIpDYIah0jRsbtV0kmQdCVi0vbmZG/RxDkFKBB7f/7zxBSnJgyK+R
+         xdec032fGTt36NDGem0rRN0b4T4ORcBQzMWUQTf92t8+2FydXPaLWKr0BNlQFrTx7eEO
+         +mqyssm7kkmGW6L7skFG/wAyUblOnTkCxpleuaPC1/dQBMAtEABtlOLc0kR2+uShZ53C
+         f7Fw==
+X-Gm-Message-State: APjAAAXPFurmVJGgPKXTQTSoGl4vmszWhr1TWjzD7sHKdMVlYJmSKqRs
+        +CBWqy6C7fOoB5sl8lmSdDU9JhD2hpg=
+X-Google-Smtp-Source: APXvYqzfhaKNJ4mXS8RzmTEHzcfRsXzt600pgw3JidKJ33+ucb6bPOiIaatQWpEOXHhXCRHmwZqcmA==
+X-Received: by 2002:a2e:8644:: with SMTP id i4mr12096306ljj.0.1558738778127;
+        Fri, 24 May 2019 15:59:38 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id w19sm807279lfk.56.2019.05.24.15.59.35
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 15:59:35 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id r76so4534236lja.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2019 15:59:35 -0700 (PDT)
+X-Received: by 2002:a2e:97d8:: with SMTP id m24mr44440219ljj.52.1558738775052;
+ Fri, 24 May 2019 15:59:35 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <b1f6ba08-6774-4be9-9e96-563f95e9ccdf@gmail.com>
-In-Reply-To: <20190522162945.GN17978@ZenIV.linux.org.uk>
-References: <23950bcb-81b0-4e07-8dc8-8740eb53d7fd@gmail.com>
- <20190522135331.GM17978@ZenIV.linux.org.uk>
- <bdc8b245-afca-4662-99e2-a082f25fc927@gmail.com>
- <20190522162945.GN17978@ZenIV.linux.org.uk>
-User-Agent: Trojita
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+References: <20190507164317.13562-1-cyphar@cyphar.com> <20190507164317.13562-6-cyphar@cyphar.com>
+In-Reply-To: <20190507164317.13562-6-cyphar@cyphar.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 24 May 2019 15:59:19 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whbFMg4+HuWOBuHpvDNiAyowX2HUowv3+pt8vPWk5W-YQ@mail.gmail.com>
+Message-ID: <CAHk-=whbFMg4+HuWOBuHpvDNiAyowX2HUowv3+pt8vPWk5W-YQ@mail.gmail.com>
+Subject: Re: [PATCH v7 5/5] namei: resolveat(2) syscall
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wednesday, May 22, 2019 6:29:46 PM CEST, Al Viro wrote:
-> On Wed, May 22, 2019 at 05:44:30PM +0200, Vicente Bergas wrote:
-> ...
-> IOW, here we have also run into bogus hlist forward pointer or head -
-> same 0x1000000 in one case and 0x0000880001000000 in two others.
+On Tue, May 7, 2019 at 9:44 AM Aleksa Sarai <cyphar@cyphar.com> wrote:
 >
-> Have you tried to see if KASAN catches anything on those loads?
-> Use-after-free, for example...  Another thing to try: slap
-> =09WARN_ON(entry->d_flags & DCACHE_NORCU);
-> in __d_rehash() and see if it triggers.
+> The most obvious syscall to add support for the new LOOKUP_* scoping
+> flags would be openat(2) (along with the required execveat(2) change
+> included in this series). However, there are a few reasons to not do
+> this:
 
-Hi,
-i have been running 3 days with KASAN enabled and also with
-diff a/fs/dcache.c b/fs/dcache.c
-@@ -2395,3 +2395,4 @@ static void __d_rehash(struct dentry *entry)
- =09struct hlist_bl_head *b =3D d_hash(entry->d_name.hash);
-=20
-+=09WARN_ON(entry->d_flags & DCACHE_NORCU);
- =09hlist_bl_lock(b);
-but the issue has not appeared again.
-Next week i will try -rc2 without KASAN and with WARN_ON and see if it
-triggers.
+So honestly, this last patch is what turns me off the whole thing.
 
-Regards,
-  Vicen=C3=A7.
+It goes from a nice new feature ("you can use O_NOSYMLINKS to disallow
+symlink traversal") to a special-case joke that isn't worth it any
+more. You get a useless path descrptor back from s special hacky
+system call, you don't actually get the useful data that you probably
+*want* the open to get you.
 
+Sure, you could eventually then use a *second* system call (openat
+with O_EMPTYPATH) to actually get something you can *use*, but at this
+point you've just wasted everybodys time and effort with a pointless
+second system call.
+
+So I really don't see the point of this whole thing. Why even bother.
+Nobody sane will ever use that odd two-systemcall model, and even if
+they did, it would be slower and inconvenient.
+
+The whole and only point of this seems to be the two lines that say
+
+       if (flags & ~VALID_RESOLVE_FLAGS)
+              return -EINVAL;
+
+but that adds absolutely zero value to anything.  The argument is that
+"we can't add it to existing flags, because old kernels won't honor
+it", but that's a completely BS argument, since the user has to have a
+fallback anyway for the old kernel case - so we literally could much
+more conveniently just expose it as a prctl() or something to _ask_
+the kernel what flags it honors.
+
+So to me, this whole argument means that "Oh, we'll make it really
+inconvenient to actually use this".
+
+If we want to introduce a new system call that allows cool new
+features, it should have *more* powerful semantics than the existing
+ones, not be clearly weaker and less useful.
+
+So how about making the new system call be something that is a
+*superset* of "openat()" so that people can use that, and then if it
+fails, just fall back to openat(). But if it succeeds, it just
+succeeds, and you don't need to then do other system calls to actually
+make it useful.
+
+Make the new system call something people *want* to use because it's
+useful, not a crippled useless thing that has some special case use
+for some limited thing and just wastes system call space.
+
+Example *useful* system call attributes:
+
+ - make it like openat(), but have another argument with the "limit flags"
+
+ - maybe return more status of the resulting file. People very
+commonly do "open->fstat" just to get the size for mmap or to check
+some other detail of the file before use.
+
+In other words, make the new system call *useful*. Not some castrated
+"not useful on its own" thing.
+
+So I still support the whole "let's make it easy to limit path lookup
+in sane ways", but this model of then limiting using the result sanely
+just makes me a sad panda.
+
+                     Linus
