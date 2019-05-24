@@ -2,173 +2,532 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 429A428DFC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 01:43:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE8328ED8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 03:38:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388607AbfEWXn3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 May 2019 19:43:29 -0400
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:50927 "EHLO
-        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388297AbfEWXn3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 May 2019 19:43:29 -0400
-Received: from [4.30.142.84] (helo=srivatsab-a01.vmware.com)
-        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
-        (Exim 4.82)
-        (envelope-from <srivatsa@csail.mit.edu>)
-        id 1hTxMo-000QQB-NK; Thu, 23 May 2019 19:43:22 -0400
-Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
- controller
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        jmoyer@redhat.com, Theodore Ts'o <tytso@mit.edu>,
-        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
-References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
- <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
- <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
- <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
- <A0DFE635-EFEC-4670-AD70-5D813E170BEE@linaro.org>
- <5B6570A2-541A-4CF8-98E0-979EA6E3717D@linaro.org>
- <2CB39B34-21EE-4A95-A073-8633CF2D187C@linaro.org>
- <FC24E25F-4578-454D-AE2B-8D8D352478D8@linaro.org>
- <0e3fdf31-70d9-26eb-7b42-2795d4b03722@csail.mit.edu>
- <F5E29C98-6CC4-43B8-994D-0B5354EECBF3@linaro.org>
- <686D6469-9DE7-4738-B92A-002144C3E63E@linaro.org>
- <01d55216-5718-767a-e1e6-aadc67b632f4@csail.mit.edu>
- <CA8A23E2-6F22-4444-9A20-E052A94CAA9B@linaro.org>
- <cc148388-3c82-d7c0-f9ff-8c31bb5dc77d@csail.mit.edu>
- <6FE0A98F-1E3D-4EF6-8B38-2C85741924A4@linaro.org>
- <2A58C239-EF3F-422B-8D87-E7A3B500C57C@linaro.org>
-From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Message-ID: <a04368ba-f1d5-8f2c-1279-a685a137d024@csail.mit.edu>
-Date:   Thu, 23 May 2019 16:43:20 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        id S2388106AbfEXBiV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 May 2019 21:38:21 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17555 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726769AbfEXBiV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 May 2019 21:38:21 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 4EF34CD0E161AA024870;
+        Fri, 24 May 2019 09:38:18 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 24 May 2019
+ 09:38:11 +0800
+From:   sunqiuyang <sunqiuyang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+CC:     <yuchao0@huawei.com>, <sunqiuyang@huawei.com>
+Subject: [PATCH v6 1/1] f2fs: ioctl for removing a range from F2FS
+Date:   Fri, 24 May 2019 09:55:55 +0800
+Message-ID: <20190524015555.12622-1-sunqiuyang@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-In-Reply-To: <2A58C239-EF3F-422B-8D87-E7A3B500C57C@linaro.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/23/19 10:22 AM, Paolo Valente wrote:
-> 
->> Il giorno 23 mag 2019, alle ore 11:19, Paolo Valente <paolo.valente@linaro.org> ha scritto:
->>
->>> Il giorno 23 mag 2019, alle ore 04:30, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
->>>
-[...]
->>> Also, I'm very happy to run additional tests or experiments to help
->>> track down this issue. So, please don't hesitate to let me know if
->>> you'd like me to try anything else or get you additional traces etc. :)
->>>
->>
->> Here's to you!  :) I've attached a new small improvement that may
->> reduce fluctuations (path to apply on top of the others, of course).
->> Unfortunately, I don't expect this change to boost the throughput
->> though.
->>
->> In contrast, I've thought of a solution that might be rather
->> effective: making BFQ aware (heuristically) of trivial
->> synchronizations between processes in different groups.  This will
->> require a little more work and time.
->>
-> 
-> Hi Srivatsa,
-> I'm back :)
-> 
-> First, there was a mistake in the last patch I sent you, namely in
-> 0001-block-bfq-re-sample-req-service-times-when-possible.patch.
-> Please don't apply that patch at all.
-> 
-> I've attached a new series of patches instead.  The first patch in this
-> series is a fixed version of the faulty patch above (if I'm creating too
-> much confusion, I'll send you again all patches to apply on top of
-> mainline).
-> 
+From: Qiuyang Sun <sunqiuyang@huawei.com>
 
-No problem, I got it :)
+This ioctl shrinks a given length (aligned to sections) from end of the
+main area. Any cursegs and valid blocks will be moved out before
+invalidating the range.
 
-> This series also implements the more effective idea I told you a few
-> hours ago.  In my system, the loss is now around only 10%, even with
-> low_latency on.
-> 
+This feature can be used for adjusting partition sizes online.
+--
+Changlog v1 ==> v2:
 
-When trying to run multiple dd tasks simultaneously, I get the kernel
-panic shown below (mainline is fine, without these patches).
+Sahitya Tummala:
+ - Add this ioctl for f2fs_compat_ioctl() as well.
+ - Fix debugfs status to reflect the online resize changes.
+ - Fix potential race between online resize path and allocate new data
+   block path or gc path.
 
-[  568.232231] BUG: kernel NULL pointer dereference, address: 0000000000000024
-[  568.232257] #PF: supervisor read access in kernel mode
-[  568.232273] #PF: error_code(0x0000) - not-present page
-[  568.232289] PGD 0 P4D 0
-[  568.232299] Oops: 0000 [#1] SMP PTI
-[  568.232312] CPU: 0 PID: 1029 Comm: dd Tainted: G            E     5.1.0-io-dbg-4+ #6
-[  568.232334] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 04/05/2016
-[  568.232388] RIP: 0010:bfq_serv_to_charge+0x21/0x50
-[  568.232404] Code: ff e8 c3 5e bc ff 0f 1f 00 0f 1f 44 00 00 48 8b 86 20 01 00 00 55 48 89 e5 53 48 89 fb a8 40 75 09 83 be a0 01 00 00 01 76 09 <8b> 43 24 c1 e8 09 5b 5d c3 48 8b 7e 08 e8 5d fd ff ff 84 c0 75 ea
-[  568.232473] RSP: 0018:ffffa73a42dab750 EFLAGS: 00010002
-[  568.232489] RAX: 0000000000001052 RBX: 0000000000000000 RCX: ffffa73a42dab7a0
-[  568.232510] RDX: ffffa73a42dab657 RSI: ffff8b7b6ba2ab70 RDI: 0000000000000000
-[  568.232530] RBP: ffffa73a42dab758 R08: 0000000000000000 R09: 0000000000000001
-[  568.232551] R10: 0000000000000000 R11: ffffa73a42dab7a0 R12: ffff8b7b6aed3800
-[  568.232571] R13: 0000000000000000 R14: 0000000000000000 R15: ffff8b7b6aed3800
-[  568.232592] FS:  00007fb5b0724540(0000) GS:ffff8b7b6f800000(0000) knlGS:0000000000000000
-[  568.232615] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  568.232632] CR2: 0000000000000024 CR3: 00000004266be002 CR4: 00000000001606f0
-[  568.232690] Call Trace:
-[  568.232703]  bfq_select_queue+0x781/0x1000
-[  568.232717]  bfq_dispatch_request+0x1d7/0xd60
-[  568.232731]  ? bfq_bfqq_handle_idle_busy_switch.isra.36+0x2cd/0xb20
-[  568.232751]  blk_mq_do_dispatch_sched+0xa8/0xe0
-[  568.232765]  blk_mq_sched_dispatch_requests+0xe3/0x150
-[  568.232783]  __blk_mq_run_hw_queue+0x56/0x100
-[  568.232798]  __blk_mq_delay_run_hw_queue+0x107/0x160
-[  568.232814]  blk_mq_run_hw_queue+0x75/0x190
-[  568.232828]  blk_mq_sched_insert_requests+0x7a/0x100
-[  568.232844]  blk_mq_flush_plug_list+0x1d7/0x280
-[  568.232859]  blk_flush_plug_list+0xc2/0xe0
-[  568.232872]  blk_finish_plug+0x2c/0x40
-[  568.232886]  ext4_writepages+0x592/0xe60
-[  568.233381]  ? ext4_mark_iloc_dirty+0x52b/0x860
-[  568.233851]  do_writepages+0x3c/0xd0
-[  568.234304]  ? ext4_mark_inode_dirty+0x1a0/0x1a0
-[  568.234748]  ? do_writepages+0x3c/0xd0
-[  568.235197]  ? __generic_write_end+0x4e/0x80
-[  568.235644]  __filemap_fdatawrite_range+0xa5/0xe0
-[  568.236089]  ? __filemap_fdatawrite_range+0xa5/0xe0
-[  568.236533]  ? ext4_da_write_end+0x13c/0x280
-[  568.236983]  file_write_and_wait_range+0x5a/0xb0
-[  568.237407]  ext4_sync_file+0x11e/0x3e0
-[  568.237819]  vfs_fsync_range+0x48/0x80
-[  568.238217]  ext4_file_write_iter+0x234/0x3d0
-[  568.238610]  ? _cond_resched+0x19/0x40
-[  568.238982]  new_sync_write+0x112/0x190
-[  568.239347]  __vfs_write+0x29/0x40
-[  568.239705]  vfs_write+0xb1/0x1a0
-[  568.240078]  ksys_write+0x89/0xc0
-[  568.240428]  __x64_sys_write+0x1a/0x20
-[  568.240771]  do_syscall_64+0x5b/0x140
-[  568.241115]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  568.241456] RIP: 0033:0x7fb5b02325f4
-[  568.241787] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 00 48 8d 05 09 11 2d 00 8b 00 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 41 54 55 49 89 d4 53 48 89 f5
-[  568.242842] RSP: 002b:00007ffcb12e2968 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[  568.243220] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb5b02325f4
-[  568.243616] RDX: 0000000000000200 RSI: 000055698f2ad000 RDI: 0000000000000001
-[  568.244026] RBP: 0000000000000200 R08: 0000000000000004 R09: 0000000000000003
-[  568.244401] R10: 00007fb5b04feca0 R11: 0000000000000246 R12: 000055698f2ad000
-[  568.244775] R13: 0000000000000000 R14: 0000000000000000 R15: 000055698f2ad000
-[  568.245154] Modules linked in: xt_MASQUERADE(E) nf_conntrack_netlink(E) nfnetlink(E) xfrm_user(E) xfrm_algo(E) xt_addrtype(E) br_netfilter(E) bridge(E) stp(E) llc(E) overlay(E) vmw_vsock_vmci_transport(E) vsock(E) ip6table_filter(E) ip6_tables(E) xt_conntrack(E) iptable_mangle(E) iptable_nat(E) nf_nat(E) iptable_filter
-[  568.248651] CR2: 0000000000000024
-[  568.249142] ---[ end trace 0ddd315e0a5bdfba ]---
+Others:
+ - Rename some identifiers.
+ - Add some error handling branches.
+ - Clear sbi->next_victim_seg[BG_GC/FG_GC] in shrinking range.
+--
+Changelog v2 ==> v3:
+Implement this interface as ext4's, and change the parameter from shrunk
+bytes to new block count of F2FS.
+--
+Changelog v3 ==> v4:
+ - During resizing, force to empty sit_journal and forbid adding new
+   entries to it, in order to avoid invalid segno in journal after resize.
+ - Reduce sbi->user_block_count before resize starts.
+ - Commit the updated superblock first, and then update in-memory metadata
+   only when the former succeeds.
+ - Target block count must align to sections.
+--
+Changelog v4 ==> v5:
+Write checkpoint before and after committing the new superblock, w/o
+CP_FSCK_FLAG respectively, so that the FS can be fixed by fsck even if
+resize fails after the new superblock is committed.
+--
+Changelog v5 ==> v6:
+ - In free_segment_range(), reduce granularity of gc_mutex.
+ - Add protection on curseg migration.
 
+Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+---
+ fs/f2fs/checkpoint.c |   5 +-
+ fs/f2fs/debug.c      |   7 +++
+ fs/f2fs/f2fs.h       |   7 +++
+ fs/f2fs/file.c       |  28 +++++++++++
+ fs/f2fs/gc.c         | 134 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ fs/f2fs/segment.c    |  54 +++++++++++++++++----
+ fs/f2fs/segment.h    |   1 +
+ fs/f2fs/super.c      |   4 ++
+ 8 files changed, 228 insertions(+), 12 deletions(-)
 
-Regards,
-Srivatsa
-VMware Photon OS
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index ed70b68..4706d0a 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1313,8 +1313,11 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	else
+ 		__clear_ckpt_flags(ckpt, CP_ORPHAN_PRESENT_FLAG);
+ 
+-	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
++	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK) ||
++		is_sbi_flag_set(sbi, SBI_IS_RESIZEFS))
+ 		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
++	else
++		__clear_ckpt_flags(ckpt, CP_FSCK_FLAG);
+ 
+ 	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED))
+ 		__set_ckpt_flags(ckpt, CP_DISABLED_FLAG);
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 99e9a5c..7706049 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -27,8 +27,15 @@
+ static void update_general_status(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_stat_info *si = F2FS_STAT(sbi);
++	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
+ 	int i;
+ 
++	/* these will be changed if online resize is done */
++	si->main_area_segs = le32_to_cpu(raw_super->segment_count_main);
++	si->main_area_sections = le32_to_cpu(raw_super->section_count);
++	si->main_area_zones = si->main_area_sections /
++				le32_to_cpu(raw_super->secs_per_zone);
++
+ 	/* validation check of the segment numbers */
+ 	si->hit_largest = atomic64_read(&sbi->read_hit_largest);
+ 	si->hit_cached = atomic64_read(&sbi->read_hit_cached);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a205d4d..345ccb0 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -423,6 +423,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+ #define F2FS_IOC_SET_PIN_FILE		_IOW(F2FS_IOCTL_MAGIC, 13, __u32)
+ #define F2FS_IOC_GET_PIN_FILE		_IOR(F2FS_IOCTL_MAGIC, 14, __u32)
+ #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
++#define F2FS_IOC_RESIZE_FS		_IOW(F2FS_IOCTL_MAGIC, 16, __u64)
+ 
+ #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
+ #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
+@@ -1130,6 +1131,7 @@ enum {
+ 	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
+ 	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
+ 	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
++	SBI_IS_RESIZEFS,			/* resizefs is in process */
+ };
+ 
+ enum {
+@@ -1309,6 +1311,8 @@ struct f2fs_sb_info {
+ 	unsigned int segs_per_sec;		/* segments per section */
+ 	unsigned int secs_per_zone;		/* sections per zone */
+ 	unsigned int total_sections;		/* total section count */
++	unsigned int current_total_sections;	/* for shrink resize */
++	struct mutex resize_mutex;		/* for resize exclusion */
+ 	unsigned int total_node_count;		/* total node block count */
+ 	unsigned int total_valid_node_count;	/* valid node block count */
+ 	loff_t max_file_blocks;			/* max block index of file */
+@@ -3175,6 +3179,8 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ int f2fs_disable_cp_again(struct f2fs_sb_info *sbi, block_t unusable);
+ void f2fs_release_discard_addrs(struct f2fs_sb_info *sbi);
+ int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
++void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
++					unsigned int start, unsigned int end);
+ void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi);
+ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range);
+ bool f2fs_exist_trim_candidates(struct f2fs_sb_info *sbi,
+@@ -3318,6 +3324,7 @@ int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
+ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
+ 			unsigned int segno);
+ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi);
++int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count);
+ 
+ /*
+  * recovery.c
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index d05ac21..6d00def 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3013,6 +3013,31 @@ static int f2fs_ioc_precache_extents(struct file *filp, unsigned long arg)
+ 	return f2fs_precache_extents(file_inode(filp));
+ }
+ 
++static int f2fs_ioc_resize_fs(struct file *filp, unsigned long arg)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(filp));
++	__u64 block_count;
++	int ret;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	if (f2fs_readonly(sbi->sb))
++		return -EROFS;
++
++	if (get_user(block_count, (__u64 __user *)arg))
++		return -EFAULT;
++
++	ret = mnt_want_write_file(filp);
++	if (ret)
++		return ret;
++
++	ret = f2fs_resize_fs(sbi, block_count);
++	mnt_drop_write_file(filp);
++
++	return ret;
++}
++
+ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
+@@ -3069,6 +3094,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_ioc_set_pin_file(filp, arg);
+ 	case F2FS_IOC_PRECACHE_EXTENTS:
+ 		return f2fs_ioc_precache_extents(filp, arg);
++	case F2FS_IOC_RESIZE_FS:
++		return f2fs_ioc_resize_fs(filp, arg);
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -3182,6 +3209,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case F2FS_IOC_GET_PIN_FILE:
+ 	case F2FS_IOC_SET_PIN_FILE:
+ 	case F2FS_IOC_PRECACHE_EXTENTS:
++	case F2FS_IOC_RESIZE_FS:
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 963fb45..9b3af4d 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -311,10 +311,11 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 	struct sit_info *sm = SIT_I(sbi);
+ 	struct victim_sel_policy p;
+ 	unsigned int secno, last_victim;
+-	unsigned int last_segment = MAIN_SEGS(sbi);
++	unsigned int last_segment;
+ 	unsigned int nsearched = 0;
+ 
+ 	mutex_lock(&dirty_i->seglist_lock);
++	last_segment = CUR_MAIN_SECS(sbi) * sbi->segs_per_sec;
+ 
+ 	p.alloc_mode = alloc_mode;
+ 	select_policy(sbi, gc_type, type, &p);
+@@ -404,7 +405,8 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 				sm->last_victim[p.gc_mode] = last_victim + 1;
+ 			else
+ 				sm->last_victim[p.gc_mode] = segno + 1;
+-			sm->last_victim[p.gc_mode] %= MAIN_SEGS(sbi);
++			sm->last_victim[p.gc_mode] %=
++				(CUR_MAIN_SECS(sbi) * sbi->segs_per_sec);
+ 			break;
+ 		}
+ 	}
+@@ -1360,3 +1362,131 @@ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
+ 		SIT_I(sbi)->last_victim[ALLOC_NEXT] =
+ 				GET_SEGNO(sbi, FDEV(0).end_blk) + 1;
+ }
++
++static int free_segment_range(struct f2fs_sb_info *sbi, unsigned int start,
++							unsigned int end)
++{
++	int type;
++	unsigned int segno, next_inuse;
++	int err = 0;
++
++	/* Move out cursegs from the target range */
++	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_TYPE; type++)
++		allocate_segment_for_resize(sbi, type, start, end);
++
++	/* do GC to move out valid blocks in the range */
++	for (segno = start; segno <= end; segno += sbi->segs_per_sec) {
++		struct gc_inode_list gc_list = {
++			.ilist = LIST_HEAD_INIT(gc_list.ilist),
++			.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
++		};
++
++		mutex_lock(&sbi->gc_mutex);
++		do_garbage_collect(sbi, segno, &gc_list, FG_GC);
++		mutex_unlock(&sbi->gc_mutex);
++		put_gc_inode(&gc_list);
++
++		if (get_valid_blocks(sbi, segno, true))
++			return -EAGAIN;
++	}
++
++	err = f2fs_sync_fs(sbi->sb, 1);
++	if (err)
++		return err;
++
++	next_inuse = find_next_inuse(FREE_I(sbi), end + 1, start);
++	if (next_inuse <= end) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++			"segno %u should be free but still inuse!", next_inuse);
++		f2fs_bug_on(sbi, 1);
++	}
++	return err;
++}
++
++int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
++{
++	__u64 old_block_count, shrunk_blocks;
++	unsigned int secs;
++	int gc_mode, gc_type;
++	int err = 0;
++
++	old_block_count = le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
++	if (block_count > old_block_count)
++		return -EINVAL;
++
++	/* new fs size should align to section size */
++	if (block_count % BLKS_PER_SEC(sbi))
++		return -EINVAL;
++
++	if (block_count == old_block_count)
++		return 0;
++
++	shrunk_blocks = old_block_count - block_count;
++	secs = shrunk_blocks / BLKS_PER_SEC(sbi);
++	spin_lock(&sbi->stat_lock);
++	if (shrunk_blocks + valid_user_blocks(sbi) +
++		sbi->current_reserved_blocks + sbi->unusable_block_count +
++		F2FS_OPTION(sbi).root_reserved_blocks > sbi->user_block_count)
++		err = -ENOSPC;
++	else
++		sbi->user_block_count -= shrunk_blocks;
++	spin_unlock(&sbi->stat_lock);
++	if (err)
++		return err;
++
++	mutex_lock(&sbi->resize_mutex);
++	set_sbi_flag(sbi, SBI_IS_RESIZEFS);
++	mutex_lock(&DIRTY_I(sbi)->seglist_lock);
++	CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi) - secs;
++	for (gc_mode = 0; gc_mode < MAX_GC_POLICY; gc_mode++)
++		if (SIT_I(sbi)->last_victim[gc_mode] >=
++					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec)
++			SIT_I(sbi)->last_victim[gc_mode] = 0;
++	for (gc_type = BG_GC; gc_type <= FG_GC; gc_type++)
++		if (sbi->next_victim_seg[gc_type] >=
++					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec)
++			sbi->next_victim_seg[gc_type] = NULL_SEGNO;
++	mutex_unlock(&DIRTY_I(sbi)->seglist_lock);
++
++	err = free_segment_range(sbi, CUR_MAIN_SECS(sbi) * sbi->segs_per_sec,
++			MAIN_SEGS(sbi) - 1);
++	if (err)
++		goto out;
++
++	/* Update superblock */
++	F2FS_RAW_SUPER(sbi)->section_count = cpu_to_le32(CUR_MAIN_SECS(sbi));
++	F2FS_RAW_SUPER(sbi)->segment_count = cpu_to_le32(le32_to_cpu(
++		F2FS_RAW_SUPER(sbi)->segment_count) - secs * sbi->segs_per_sec);
++	F2FS_RAW_SUPER(sbi)->segment_count_main = cpu_to_le32(
++					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec);
++	F2FS_RAW_SUPER(sbi)->block_count = cpu_to_le64(block_count);
++
++	err = f2fs_commit_super(sbi, false);
++	if (err)
++		goto out;
++
++	/* Update FS metadata */
++	SM_I(sbi)->segment_count -= secs * sbi->segs_per_sec;
++	MAIN_SECS(sbi) = CUR_MAIN_SECS(sbi);
++	MAIN_SEGS(sbi) = MAIN_SECS(sbi) * sbi->segs_per_sec;
++	F2FS_CKPT(sbi)->user_block_count = cpu_to_le64(sbi->user_block_count);
++	FREE_I(sbi)->free_sections -= secs;
++	FREE_I(sbi)->free_segments -= secs * sbi->segs_per_sec;
++
++	clear_sbi_flag(sbi, SBI_IS_RESIZEFS);
++	err = f2fs_sync_fs(sbi->sb, 1);
++out:
++	if (err) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		f2fs_msg(sbi->sb, KERN_ERR,
++				"resize_fs failed, should run fsck to repair!");
++
++		CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi);
++		spin_lock(&sbi->stat_lock);
++		sbi->user_block_count += shrunk_blocks;
++		spin_unlock(&sbi->stat_lock);
++	}
++	clear_sbi_flag(sbi, SBI_IS_RESIZEFS);
++	mutex_unlock(&sbi->resize_mutex);
++	return err;
++}
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 07e9235..c70daa5 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2360,7 +2360,7 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+ {
+ 	struct free_segmap_info *free_i = FREE_I(sbi);
+ 	unsigned int segno, secno, zoneno;
+-	unsigned int total_zones = MAIN_SECS(sbi) / sbi->secs_per_zone;
++	unsigned int total_zones = CUR_MAIN_SECS(sbi) / sbi->secs_per_zone;
+ 	unsigned int hint = GET_SEC_FROM_SEG(sbi, *newseg);
+ 	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
+ 	unsigned int left_start = hint;
+@@ -2377,12 +2377,13 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+ 			goto got_it;
+ 	}
+ find_other_zone:
+-	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
+-	if (secno >= MAIN_SECS(sbi)) {
++	secno = find_next_zero_bit(free_i->free_secmap, CUR_MAIN_SECS(sbi),
++									hint);
++	if (secno >= CUR_MAIN_SECS(sbi)) {
+ 		if (dir == ALLOC_RIGHT) {
+ 			secno = find_next_zero_bit(free_i->free_secmap,
+-							MAIN_SECS(sbi), 0);
+-			f2fs_bug_on(sbi, secno >= MAIN_SECS(sbi));
++							CUR_MAIN_SECS(sbi), 0);
++			f2fs_bug_on(sbi, secno >= CUR_MAIN_SECS(sbi));
+ 		} else {
+ 			go_left = 1;
+ 			left_start = hint - 1;
+@@ -2397,8 +2398,8 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+ 			continue;
+ 		}
+ 		left_start = find_next_zero_bit(free_i->free_secmap,
+-							MAIN_SECS(sbi), 0);
+-		f2fs_bug_on(sbi, left_start >= MAIN_SECS(sbi));
++							CUR_MAIN_SECS(sbi), 0);
++		f2fs_bug_on(sbi, left_start >= CUR_MAIN_SECS(sbi));
+ 		break;
+ 	}
+ 	secno = left_start;
+@@ -2651,6 +2652,40 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
+ 	stat_inc_seg_type(sbi, curseg);
+ }
+ 
++void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
++					unsigned int start, unsigned int end)
++{
++	struct curseg_info *curseg = CURSEG_I(sbi, type);
++	unsigned int segno;
++
++	down_read(&SM_I(sbi)->curseg_lock);
++	mutex_lock(&curseg->curseg_mutex);
++	down_write(&SIT_I(sbi)->sentry_lock);
++
++	segno = CURSEG_I(sbi, type)->segno;
++	if (segno < start || segno > end)
++		goto unlock;
++
++	if (f2fs_need_SSR(sbi) && get_ssr_segment(sbi, type))
++		change_curseg(sbi, type);
++	else
++		new_curseg(sbi, type, true);
++
++	stat_inc_seg_type(sbi, curseg);
++
++	locate_dirty_segment(sbi, segno);
++unlock:
++	up_write(&SIT_I(sbi)->sentry_lock);
++
++	if (segno != curseg->segno)
++		f2fs_msg(sbi->sb, KERN_NOTICE,
++			"For resize: curseg of type %d: %u ==> %u",
++			type, segno, curseg->segno);
++
++	mutex_unlock(&curseg->curseg_mutex);
++	up_read(&SM_I(sbi)->curseg_lock);
++}
++
+ void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
+ {
+ 	struct curseg_info *curseg;
+@@ -3774,7 +3809,7 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	struct f2fs_journal *journal = curseg->journal;
+ 	struct sit_entry_set *ses, *tmp;
+ 	struct list_head *head = &SM_I(sbi)->sit_entry_set;
+-	bool to_journal = true;
++	bool to_journal = !is_sbi_flag_set(sbi, SBI_IS_RESIZEFS);
+ 	struct seg_entry *se;
+ 
+ 	down_write(&sit_i->sentry_lock);
+@@ -3793,7 +3828,8 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	 * entries, remove all entries from journal and add and account
+ 	 * them in sit entry set.
+ 	 */
+-	if (!__has_cursum_space(journal, sit_i->dirty_sentries, SIT_JOURNAL))
++	if (!__has_cursum_space(journal, sit_i->dirty_sentries, SIT_JOURNAL) ||
++								!to_journal)
+ 		remove_sits_in_journal(sbi);
+ 
+ 	/*
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 429007b..eaa9782 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -59,6 +59,7 @@
+ 
+ #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
+ #define MAIN_SECS(sbi)	((sbi)->total_sections)
++#define CUR_MAIN_SECS(sbi)	((sbi)->current_total_sections)
+ 
+ #define TOTAL_SEGS(sbi)							\
+ 	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1f581f0..166a97e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2843,6 +2843,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 	sbi->segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
+ 	sbi->secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
+ 	sbi->total_sections = le32_to_cpu(raw_super->section_count);
++	sbi->current_total_sections = sbi->total_sections;
+ 	sbi->total_node_count =
+ 		(le32_to_cpu(raw_super->segment_count_nat) / 2)
+ 			* sbi->blocks_per_seg * NAT_ENTRY_PER_BLOCK;
+@@ -3296,6 +3297,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	mutex_init(&sbi->gc_mutex);
+ 	mutex_init(&sbi->writepages);
+ 	mutex_init(&sbi->cp_mutex);
++	mutex_init(&sbi->resize_mutex);
+ 	init_rwsem(&sbi->node_write);
+ 	init_rwsem(&sbi->node_change);
+ 
+@@ -3367,6 +3369,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		set_sbi_flag(sbi, SBI_CP_DISABLED_QUICK);
+ 		sbi->interval_time[DISABLE_TIME] = DEF_DISABLE_QUICK_INTERVAL;
+ 	}
++	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_FSCK_FLAG))
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 
+ 	/* Initialize device list */
+ 	err = f2fs_scan_devices(sbi);
+-- 
+1.8.3.1
+
