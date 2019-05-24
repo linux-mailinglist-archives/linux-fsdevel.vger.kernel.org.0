@@ -2,67 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2068F29BE1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 18:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D951829C60
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 18:33:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390731AbfEXQLu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 May 2019 12:11:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35060 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390411AbfEXQLu (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 May 2019 12:11:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=XMpCB89ytjbHczxqQZJ1ZkGk4p/wzfOhXhEuznTtcMU=; b=VdgAfLUXLCJlXG5l/7G3EXePj
-        SSJwDOnYPi2jv9q8sjeH/rp5wl1hTE0k/mlDMPdly9vpf0znyQWHE8P/xVkTzmwchhL3NdHUR7Zut
-        n0dGIxrqop8fek0MoEG+PplDVqzElFrd1g2zn+17UZgMLiGSfdYN5pHxWDRasOM76wm59MNcuHm3e
-        W+jzXozQbR427BFuT7WuqXHdnjX8+XTo6y+4gsoqt+cCg+b1HDipQVf4KCcyy1Fnn8fUmaDw9HUBS
-        80J/IN9BUnKAmEqEy0gKcjABkN60UlsvYuSKfiBxJEEcLE4HITTrK43TTI0zj2SL340n2TrIdrYna
-        rs1KInx3w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hUCnK-00037T-RC; Fri, 24 May 2019 16:11:46 +0000
-Date:   Fri, 24 May 2019 09:11:46 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Shakeel Butt <shakeelb@google.com>,
+        id S2390804AbfEXQdd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 May 2019 12:33:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52266 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390021AbfEXQdc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 May 2019 12:33:32 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B100D309704F;
+        Fri, 24 May 2019 16:33:16 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id A78C8608CD;
+        Fri, 24 May 2019 16:33:11 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 24 May 2019 18:33:16 +0200 (CEST)
+Date:   Fri, 24 May 2019 18:33:10 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: xarray breaks thrashing detection and cgroup isolation
-Message-ID: <20190524161146.GC1075@bombadil.infradead.org>
-References: <20190523174349.GA10939@cmpxchg.org>
- <20190523183713.GA14517@bombadil.infradead.org>
- <CALvZod4o0sA8CM961ZCCp-Vv+i6awFY0U07oJfXFDiVfFiaZfg@mail.gmail.com>
- <20190523190032.GA7873@bombadil.infradead.org>
- <20190523192117.GA5723@cmpxchg.org>
- <20190523194130.GA4598@bombadil.infradead.org>
- <20190523195933.GA6404@cmpxchg.org>
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Message-ID: <20190524163310.GG2655@redhat.com>
+References: <20190522161407.GB4915@redhat.com>
+ <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+ <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
+ <20190523145944.GB23070@redhat.com>
+ <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
+ <20190523163604.GE23070@redhat.com>
+ <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+ <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
+ <20190524141054.GB2655@redhat.com>
+ <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190523195933.GA6404@cmpxchg.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 24 May 2019 16:33:32 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 03:59:33PM -0400, Johannes Weiner wrote:
-> My point is that we cannot have random drivers' internal data
-> structures charge to and pin cgroups indefinitely just because they
-> happen to do the modprobing or otherwise interact with the driver.
-> 
-> It makes no sense in terms of performance or cgroup semantics.
+On 05/24, Deepa Dinamani wrote:
+>
+> On Fri, May 24, 2019 at 7:11 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > On 05/23, Deepa Dinamani wrote:
+> > >
+> > > Ok, since there has been quite a bit of argument here, I will
+> > > backtrack a little bit and maybe it will help us understand what's
+> > > happening here.
+> > > There are many scenarios being discussed on this thread:
+> > > a. State of code before 854a6ed56839a
+> >
+> > I think everything was correct,
+>
+> There were 2 things that were wrong:
+>
+> 1. If an unblocked signal was received, after the ep_poll(), then the
+> return status did not indicate that.
 
-But according to Roman, you already have that problem with the page
-cache.
-https://lore.kernel.org/linux-mm/20190522222254.GA5700@castle/T/
+Yes,
 
-So this argument doesn't make sense to me.
+> This is expected behavior
+> according to man page. If this is indeed what is expected then the man
+> page should note that signal will be delivered in this case and return
+> code will still be 0.
+>
+> "EINTR
+> The call was interrupted by a signal handler before either any of the
+> requested events occurred or the timeout expired; see signal(7)."
+
+and what do you think the man page could say?
+
+This is obviously possible for any syscall, and we can't avoid this. A signal
+can come right after syscall insn completes. The signal handler will be called
+but this won't change $rax, user-space can see return code == 0 or anything else.
+
+And this doesn't differ from the case when the signal comes before syscall returns.
+
+> 2. The restoring of the sigmask is done right in the syscall part and
+> not while exiting the syscall and if you get a blocked signal here,
+> you will deliver this to userspace.
+
+So I assume that this time you are talking about epoll_pwait() and not epoll_wait()...
+
+And I simply can't understand you. But yes, if the original mask doesn't include
+the pending signal it will be delivered while the syscall can return success/timout
+or -EFAULT or anything.
+
+This is correct, see above.
+
+> > > b. State after 854a6ed56839a
+> >
+> > obviously buggy,
+>
+> Ok, then can you point out what specifically was wrong with
+> 854a6ed56839a?
+
+Cough. If nothing else the lost -EINTR?
+
+> And, not how it could be more simple?
+
+Well, I already sent the patch and after that I even showed you the code with the
+patch applied. See https://lore.kernel.org/lkml/20190523143340.GA23070@redhat.com/
+
+> > What you are saying looks very confusing to me, I will assume that you
+> > meant something like
+> >
+> >         - a signal SIG_XXX was blocked before sys_epoll_pwait() was called
+> >
+> >         - sys_epoll_pwait(sigmask) unblocks SIG_XXX according to sigmask
+> >
+> >         - sys_epoll_pwait() calls do_epoll_wait() which returns success
+> >
+> >         - SIG_XXX comes after that and it is "never noticed"
+> >
+> > Yes. Everything is correct. And see my reply to David, SIG_XXX can even
+> > come _before_ sys_epoll_pwait() was called.
+>
+> No, I'm talking about a signal that was not blocked.
+
+OK, see above.
+
+> > > So the question is does the userspace have to know about this signal
+> > > or not.
+> >
+> > If userspace needs to know about SIG_XXX it should not block it, that is all.
+>
+> What should be the return value if a signal is detected after a fd completed?
+
+Did you mean "if a signal is detected after a ready fd was already found" ?
+
+In this case the return value should report success. But I have already lost,
+this all looks irrelevant wrt to fix we need.
+
+> > > What [b] does is to move the signal check closer to the restoration of
+> > > the signal.
+> >
+> > FOR NO REASON, afaics (to simplify, lets forget the problem with the wrong
+> > return value you are trying to fix).
+>
+> As I already pointed out, the restoring of the sigmask is done during
+> the syscall and not while exiting the syscall and if you get a blocked
+> signal here, you will deliver this to userspace.
+>
+> > And even if there were ANY reason to do this, note that (with or without this
+> > fix) the signal_pending() check inside restore_user_sigmask() can NOT help,
+> > simply because SIG_XXX can come right after this check.
+>
+> This I pointed out already that we should probably make this sequence atomic.
+
+See above.
+
+Oleg.
+
