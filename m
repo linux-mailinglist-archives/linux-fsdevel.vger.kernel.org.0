@@ -2,108 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33C3629E39
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 20:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80C1229E8D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 20:56:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391575AbfEXSjK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 May 2019 14:39:10 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53754 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391503AbfEXSjJ (ORCPT
+        id S2391723AbfEXS4E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 May 2019 14:56:04 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42205 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391712AbfEXS4D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 May 2019 14:39:09 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 198so10335086wme.3;
-        Fri, 24 May 2019 11:39:07 -0700 (PDT)
+        Fri, 24 May 2019 14:56:03 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 188so9541326ljf.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2019 11:56:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XPIocXIouKTkDsq9ddFn0FmCiChIBO5fjAM9DzsJTdI=;
-        b=JR5MiP/3E9KQlEPkbf3bVjuNDWCTim/dDnUDdeHtj2t23smeutLwGwSM82p0foiJjC
-         zd1+4hVWxyUapvHWgRprJF5R53gBjY1sgDNyHM/hX/4tJ+/qlYVANvxOc1cz7zj8vR0H
-         iuJXjY4cP56w8cXy3zZ/DdHqqvu7MAtiov6k2uZNqAgoV1tjiBn1MjYwq4sxDNU+28Fp
-         isNJ5YtPNkpf/RiavhKB/dnqbbXxALqkSyanZBYu8MrX5oaw284o9tttcvcslU8v/12U
-         4mm/zz69dt/Q/quPJBgQm+K1FKEi0pgn1qTmn6+1o7YSBkd64aJ8NCPgPFndCrrbVSGp
-         uAEw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=csmB0SVtlpuGlEdBBr9KglbwXGniIuOaWROmVBN2nig=;
+        b=BDFiVmjeU9znvacKUoSeXzX6qILwjm/Koo/XJlf9jEsNo3fWFjyqRx6KkAqAlbbhaa
+         D3mTInlmrbdbdoCf3qsYio4ivCLh38fXEFGzOYPndAsHXOGkLuikM8ojUqHIc1ii5QFu
+         jbhG67yHeawfxde2WC1KkJlI96daxBp+KkPH4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XPIocXIouKTkDsq9ddFn0FmCiChIBO5fjAM9DzsJTdI=;
-        b=nt40z6z/hJOHQpb07nJJEL5NxsMh9t02uHVzaz8eXGfEZvMNjkTpQF7/75rBUqjDjJ
-         9G7TA1Jyv95lkKL1jPbVm4VKyHOIC72W44Qo2eB6KKmA6s5YyM1k/N8vV9BPqnlnlfG/
-         OIscNSehDP0flqohmqZqDXEo3Tmk16X6Vnvrx+qmjvGCBEduffjcor5VCj2e5FvodqeM
-         qLemgx55R/pEYlHOLdqJO2wpduwvnoKiZioytTIBD6ZZy2/z5BlOZx/35grFSd4OJEld
-         cjxtFz5h8Bw2Kbk3bbDxIiZ7UqCORhFpa/2eMXPGvRmJD2nX16TI0Hxw+Wjuf58esOUJ
-         46Cg==
-X-Gm-Message-State: APjAAAWXqn9iNSMgQOLmKc99KTpprfAncsmHl0uPOA/DzZcVPG8jNjHz
-        GfWtGtyi/s91iK9bBf7CYfLB84I=
-X-Google-Smtp-Source: APXvYqzabLjPZ3fgjYT9Ndl6TZFvmbx3G+FBLsYHbNLV3ZwNQt2+22w9Cnb2H9ePWUaT5qnzR/Hf/Q==
-X-Received: by 2002:a1c:f606:: with SMTP id w6mr974343wmc.130.1558723147084;
-        Fri, 24 May 2019 11:39:07 -0700 (PDT)
-Received: from avx2 ([46.53.250.220])
-        by smtp.gmail.com with ESMTPSA id u2sm7748190wra.82.2019.05.24.11.39.05
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=csmB0SVtlpuGlEdBBr9KglbwXGniIuOaWROmVBN2nig=;
+        b=F+3FTuu7h7GKXAWkemZ8Daf/w+ju1oNkw+sl9ZPkthO8r0QeZR2ehGJO/1uxdwXLt1
+         //bhi8TPtEP+8qp+mF2QVuWls2SbwW6Rz65/JJt9r9uyyC2Zp3J+lc58WY6Mf6kVmGer
+         HgNsbO7/P8Pr+/GfEx7Dy0WPPLSuX/vbcWuNpOeSN8L1ThQxubNNPVPEHFS0d+DR3EvA
+         N9/Enn+iQrDuN6mrO246D4dz3G4dpNsvlU3eWvOPjyDTIRCbCOt7cYHDtQHbQS6CLm0M
+         fxGTXz4T5+xFcTFU8+p0qjCkpuoUATl+dFdAfdgwa48WASWrPk9qulX9aybBDj4qonhB
+         GKHg==
+X-Gm-Message-State: APjAAAWVhRhPhrD3ReiRCamjACdULBBGgoQ9BR3rDvpqZsnl+al+lqr6
+        o+c+4v951gyuAY4tvFK3xxAoFCE46zM=
+X-Google-Smtp-Source: APXvYqxM3SR+gPO1Flbcgu9sDs1NgvSbpvt+f79A3ZyHIyn8OWT+bpHmMcgBN2b2snNOCHVMDsiNIA==
+X-Received: by 2002:a2e:321a:: with SMTP id y26mr56073545ljy.109.1558724161360;
+        Fri, 24 May 2019 11:56:01 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id w2sm827596ljh.54.2019.05.24.11.56.00
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 11:39:06 -0700 (PDT)
-Date:   Fri, 24 May 2019 21:39:03 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Fri, 24 May 2019 11:56:00 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id q62so9555537ljq.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2019 11:56:00 -0700 (PDT)
+X-Received: by 2002:a2e:4246:: with SMTP id p67mr40005336lja.44.1558724160052;
+ Fri, 24 May 2019 11:56:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190523182152.GA6875@avx2> <CAHk-=wj5YZQ=ox+T1kc4RWp3KP+4VvXzvr8vOBbqcht6cOXufw@mail.gmail.com>
+ <20190524183903.GB2658@avx2>
+In-Reply-To: <20190524183903.GB2658@avx2>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 24 May 2019 11:55:44 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjaCygWXyGP-D2=ER0x8UbwdvyifH2Jfnf1KHUwR3sedw@mail.gmail.com>
+Message-ID: <CAHk-=wjaCygWXyGP-D2=ER0x8UbwdvyifH2Jfnf1KHUwR3sedw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] close_range()
+To:     Alexey Dobriyan <adobriyan@gmail.com>
 Cc:     Christian Brauner <christian@brauner.io>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] close_range()
-Message-ID: <20190524183903.GB2658@avx2>
-References: <20190523182152.GA6875@avx2>
- <CAHk-=wj5YZQ=ox+T1kc4RWp3KP+4VvXzvr8vOBbqcht6cOXufw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj5YZQ=ox+T1kc4RWp3KP+4VvXzvr8vOBbqcht6cOXufw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 02:34:31PM -0700, Linus Torvalds wrote:
-> On Thu, May 23, 2019 at 11:22 AM Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> >
-> > > This is v2 of this patchset.
-> >
-> > We've sent fdmap(2) back in the day:
-> 
-> Well, if the main point of the exercise is performance, then fdmap()
-> is clearly inferior.
+On Fri, May 24, 2019 at 11:39 AM Alexey Dobriyan <adobriyan@gmail.com> wrote:
+>
+> > Would there ever be any other reason to traverse unknown open files
+> > than to close them?
+>
+> This is what lsof(1) does:
 
-This is not true because there are other usecases.
+I repeat: Would there ever be any other reason to traverse unknown
+open files than to close them?
 
-Current equivalent is readdir() where getdents is essentially bulk fdmap()
-with pretty-printing. glibc does getdents into 32KB buffer.
+lsof is not AT ALL a relevant argument.
 
-There was a bulk taskstats patch long before meltdown fiasco.
+lsof fundamentally wants /proc, because lsof looks at *other*
+processes. That has absolutely zero to do with fdmap. lsof does *not*
+want fdmap at all. It wants "list other processes files". Which is
+very much what /proc is all about.
 
-Unfortunately closerange() only closes ranges.
-This is why I didn't even tried to send closefrom(2) from OpenBSD.
+So your argument that "fdmap is more generic" is bogus.
 
-> Sadly, with all the HW security mitigation, system calls are no longer cheap.
-> 
-> Would there ever be any other reason to traverse unknown open files
-> than to close them?
+fdmap is entirely pointless unless you can show a real and relevant
+(to performance) use of it.
 
-This is what lsof(1) does:
+When you would *possibly* have a "let me get a list of all the file
+descriptors I have open, because I didn't track them myself"
+situation?  That makes no sense. Particularly from a performance
+standpoint.
 
-3140  openat(AT_FDCWD, "/proc/29499/fd", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 4
-3140  fstat(4, {st_mode=S_IFDIR|0500, st_size=0, ...}) = 0
-3140  getdents(4, /* 6 entries */, 32768) = 144
-3140  readlink("/proc/29499/fd/0", "/dev/pts/4", 4096) = 10
-3140  lstat("/proc/29499/fd/0", {st_mode=S_IFLNK|0700, st_size=64, ...}) = 0
-3140  stat("/proc/29499/fd/0", {st_mode=S_IFCHR|0600, st_rdev=makedev(136, 4), ...}) = 0
-3140  openat(AT_FDCWD, "/proc/29499/fdinfo/0", O_RDONLY) = 7
-3140  fstat(7, {st_mode=S_IFREG|0400, st_size=0, ...}) = 0
-3140  read(7, "pos:\t0\nflags:\t02002\nmnt_id:\t24\n", 1024) = 31
-3140  read(7, "", 1024)                 = 0
-3140  close(7)
-	...
+In contrast, "close_range()" makes sense as an operation. I can
+explain exactly when it would be used, and I can easily see a
+situation where "I've opened a ton of files, now I want to release
+them" is a valid model of operation. And it's a valid optimization to
+do a bulk operation like that.
 
-Once fdmap(2) or equivalent is in, more bulk system calls operating on
-descriptors can pop up. But closefrom() will remain closefrom().
+IOW, close_range() makes sense as an operation even if you could just
+say "ok, I know exactly what files I have open". But it also makes
+sense as an operation for the case of "I don't even care what files I
+have open, I just want to close them".
+
+In contrast, the "I have opened a ton of files, and I don't even know
+what the hell I did, so can you list them for me" makes no sense.
+
+Because outside of "close them", there's no bulk operation that makes
+sense on random file handles that you don't know what they are. Unless
+you iterate over them and do the stat thing or whatever to figure it
+out - which is lsof, but as mentioned, it's about *other* peoples
+files.
+
+               Linus
