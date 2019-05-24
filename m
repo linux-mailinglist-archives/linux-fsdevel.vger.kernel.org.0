@@ -2,101 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E4E129CC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 19:18:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33C3629E39
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 20:39:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731882AbfEXRSR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 May 2019 13:18:17 -0400
-Received: from mail-yw1-f47.google.com ([209.85.161.47]:46331 "EHLO
-        mail-yw1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725777AbfEXRSR (ORCPT
+        id S2391575AbfEXSjK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 May 2019 14:39:10 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53754 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391503AbfEXSjJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 May 2019 13:18:17 -0400
-Received: by mail-yw1-f47.google.com with SMTP id a130so3896005ywe.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2019 10:18:16 -0700 (PDT)
+        Fri, 24 May 2019 14:39:09 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 198so10335086wme.3;
+        Fri, 24 May 2019 11:39:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7fjzoEk7VHLdIfi/lCjGQJd6xWD7AQcbop/UJoQp2cg=;
-        b=a/c5aNCzXO7PLBa6Ssaqn9PV4rrkGxnsM1xHZvBruNhViUf57ByhvKw3LDYheK9AVn
-         7xJweo6a0bX6nCiUyOF7CyQkSOrwCnrRYJodZ7ZURffExgzgfwIZtij7VsdWYDlFMm4J
-         CeQpx3k3MuKNFnJsl8HBdrM9eCTBqU2bjRihv6CICpP+ObFN3uYNQbM08yATD9rZYezo
-         piWyxLCsiAi33onCQZ2vc9k53xG1v6VSYYloF6+HRn+tDtjZuHI2YULEcjbfU8sP7s9a
-         LQDhUD/jirMOuLBVgP1pGxJ/WeylORNTxm5AX/+Ce1SLL+O7QVCsp/KxF6araNp75DBt
-         JthQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XPIocXIouKTkDsq9ddFn0FmCiChIBO5fjAM9DzsJTdI=;
+        b=JR5MiP/3E9KQlEPkbf3bVjuNDWCTim/dDnUDdeHtj2t23smeutLwGwSM82p0foiJjC
+         zd1+4hVWxyUapvHWgRprJF5R53gBjY1sgDNyHM/hX/4tJ+/qlYVANvxOc1cz7zj8vR0H
+         iuJXjY4cP56w8cXy3zZ/DdHqqvu7MAtiov6k2uZNqAgoV1tjiBn1MjYwq4sxDNU+28Fp
+         isNJ5YtPNkpf/RiavhKB/dnqbbXxALqkSyanZBYu8MrX5oaw284o9tttcvcslU8v/12U
+         4mm/zz69dt/Q/quPJBgQm+K1FKEi0pgn1qTmn6+1o7YSBkd64aJ8NCPgPFndCrrbVSGp
+         uAEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7fjzoEk7VHLdIfi/lCjGQJd6xWD7AQcbop/UJoQp2cg=;
-        b=Tvgl6IwtCpjCPfXJWvWH7kJQp2WQyP/9hPHxsokVAtcOHN8p4uVLqi07JCS6AaosSB
-         XzREidzcsRt3uv8Xg+cDmLsUDj7Fx6RJ5k9ufnsQPWjdYh5+uYSET3CCdPlSX7ICZEG4
-         qhg3hEetrIXFdNJESJxF+6+Uih46tqpg8D0FouNrUsOxRD0fBIiRXqyZLDspkLWeRbs6
-         GgRWPkTzb0w7k3GKAsOu0shm6bu5tBIXOZfJfVv1Ijo6LqxRJZ72BcphxenFQq8PzWf6
-         Dtz7di8TyrdBgEuj3226wIau9Z4RTFc3myV69Cyy5B+61J0qsgYegnUE7y7246Pkk5GZ
-         8s6w==
-X-Gm-Message-State: APjAAAVkclJQeY2fuKDu6E9u07M65EVAqGlV8kfB7Znd3g53qCZBntdZ
-        2gcEtYgBaSzdQmapR0X8ZVv3aV9ysx4xNVTLrPHI5g==
-X-Google-Smtp-Source: APXvYqzyCi24bS0zt4t5z9+kM3048deoltYoGq6J2shC7KVjEfqjZWrRksXqNV+c9NbCgXa7Mb/kKqN3XyJrvZZBLfc=
-X-Received: by 2002:a81:7cc2:: with SMTP id x185mr11843465ywc.10.1558718295643;
- Fri, 24 May 2019 10:18:15 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XPIocXIouKTkDsq9ddFn0FmCiChIBO5fjAM9DzsJTdI=;
+        b=nt40z6z/hJOHQpb07nJJEL5NxsMh9t02uHVzaz8eXGfEZvMNjkTpQF7/75rBUqjDjJ
+         9G7TA1Jyv95lkKL1jPbVm4VKyHOIC72W44Qo2eB6KKmA6s5YyM1k/N8vV9BPqnlnlfG/
+         OIscNSehDP0flqohmqZqDXEo3Tmk16X6Vnvrx+qmjvGCBEduffjcor5VCj2e5FvodqeM
+         qLemgx55R/pEYlHOLdqJO2wpduwvnoKiZioytTIBD6ZZy2/z5BlOZx/35grFSd4OJEld
+         cjxtFz5h8Bw2Kbk3bbDxIiZ7UqCORhFpa/2eMXPGvRmJD2nX16TI0Hxw+Wjuf58esOUJ
+         46Cg==
+X-Gm-Message-State: APjAAAWXqn9iNSMgQOLmKc99KTpprfAncsmHl0uPOA/DzZcVPG8jNjHz
+        GfWtGtyi/s91iK9bBf7CYfLB84I=
+X-Google-Smtp-Source: APXvYqzabLjPZ3fgjYT9Ndl6TZFvmbx3G+FBLsYHbNLV3ZwNQt2+22w9Cnb2H9ePWUaT5qnzR/Hf/Q==
+X-Received: by 2002:a1c:f606:: with SMTP id w6mr974343wmc.130.1558723147084;
+        Fri, 24 May 2019 11:39:07 -0700 (PDT)
+Received: from avx2 ([46.53.250.220])
+        by smtp.gmail.com with ESMTPSA id u2sm7748190wra.82.2019.05.24.11.39.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 11:39:06 -0700 (PDT)
+Date:   Fri, 24 May 2019 21:39:03 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christian Brauner <christian@brauner.io>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] close_range()
+Message-ID: <20190524183903.GB2658@avx2>
+References: <20190523182152.GA6875@avx2>
+ <CAHk-=wj5YZQ=ox+T1kc4RWp3KP+4VvXzvr8vOBbqcht6cOXufw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190523174349.GA10939@cmpxchg.org> <20190523183713.GA14517@bombadil.infradead.org>
- <CALvZod4o0sA8CM961ZCCp-Vv+i6awFY0U07oJfXFDiVfFiaZfg@mail.gmail.com>
- <20190523190032.GA7873@bombadil.infradead.org> <20190523192117.GA5723@cmpxchg.org>
- <20190523194130.GA4598@bombadil.infradead.org> <20190523195933.GA6404@cmpxchg.org>
- <20190524161146.GC1075@bombadil.infradead.org> <20190524170642.GA20546@cmpxchg.org>
-In-Reply-To: <20190524170642.GA20546@cmpxchg.org>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Fri, 24 May 2019 10:18:04 -0700
-Message-ID: <CALvZod5=N_hwGLFzCZY=DG0RfwzSt2sjJDcPZtCRy-NcBsLL+w@mail.gmail.com>
-Subject: Re: xarray breaks thrashing detection and cgroup isolation
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj5YZQ=ox+T1kc4RWp3KP+4VvXzvr8vOBbqcht6cOXufw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 24, 2019 at 10:06 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> On Fri, May 24, 2019 at 09:11:46AM -0700, Matthew Wilcox wrote:
-> > On Thu, May 23, 2019 at 03:59:33PM -0400, Johannes Weiner wrote:
-> > > My point is that we cannot have random drivers' internal data
-> > > structures charge to and pin cgroups indefinitely just because they
-> > > happen to do the modprobing or otherwise interact with the driver.
-> > >
-> > > It makes no sense in terms of performance or cgroup semantics.
+On Thu, May 23, 2019 at 02:34:31PM -0700, Linus Torvalds wrote:
+> On Thu, May 23, 2019 at 11:22 AM Alexey Dobriyan <adobriyan@gmail.com> wrote:
 > >
-> > But according to Roman, you already have that problem with the page
-> > cache.
-> > https://lore.kernel.org/linux-mm/20190522222254.GA5700@castle/T/
+> > > This is v2 of this patchset.
 > >
-> > So this argument doesn't make sense to me.
->
-> You haven't addressed the rest of the argument though: why every user
-> of the xarray, and data structures based on it, should incur the
-> performance cost of charging memory to a cgroup, even when we have no
-> interest in tracking those allocations on behalf of a cgroup.
->
-> Which brings me to repeating the semantics argument: it doesn't make
-> sense to charge e.g. driver memory, which is arguably a shared system
-> resource, to whoever cgroup happens to do the modprobe / ioctl etc.
->
-> Anyway, this seems like a fairly serious regression, and it would make
-> sense to find a self-contained, backportable fix instead of something
-> that has subtle implications for every user of the xarray / ida code.
+> > We've sent fdmap(2) back in the day:
+> 
+> Well, if the main point of the exercise is performance, then fdmap()
+> is clearly inferior.
 
-Adding to Johannes point, one concrete example of xarray we don't want
-to charge is swapper_spaces. Swap is a system level resource. It does
-not make any sense to charge the swap overhead to a job and also it
-will have negative consequences like pinning zombies.
+This is not true because there are other usecases.
 
-Shakeel
+Current equivalent is readdir() where getdents is essentially bulk fdmap()
+with pretty-printing. glibc does getdents into 32KB buffer.
+
+There was a bulk taskstats patch long before meltdown fiasco.
+
+Unfortunately closerange() only closes ranges.
+This is why I didn't even tried to send closefrom(2) from OpenBSD.
+
+> Sadly, with all the HW security mitigation, system calls are no longer cheap.
+> 
+> Would there ever be any other reason to traverse unknown open files
+> than to close them?
+
+This is what lsof(1) does:
+
+3140  openat(AT_FDCWD, "/proc/29499/fd", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 4
+3140  fstat(4, {st_mode=S_IFDIR|0500, st_size=0, ...}) = 0
+3140  getdents(4, /* 6 entries */, 32768) = 144
+3140  readlink("/proc/29499/fd/0", "/dev/pts/4", 4096) = 10
+3140  lstat("/proc/29499/fd/0", {st_mode=S_IFLNK|0700, st_size=64, ...}) = 0
+3140  stat("/proc/29499/fd/0", {st_mode=S_IFCHR|0600, st_rdev=makedev(136, 4), ...}) = 0
+3140  openat(AT_FDCWD, "/proc/29499/fdinfo/0", O_RDONLY) = 7
+3140  fstat(7, {st_mode=S_IFREG|0400, st_size=0, ...}) = 0
+3140  read(7, "pos:\t0\nflags:\t02002\nmnt_id:\t24\n", 1024) = 31
+3140  read(7, "", 1024)                 = 0
+3140  close(7)
+	...
+
+Once fdmap(2) or equivalent is in, more bulk system calls operating on
+descriptors can pop up. But closefrom() will remain closefrom().
