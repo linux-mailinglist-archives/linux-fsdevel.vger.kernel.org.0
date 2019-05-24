@@ -2,143 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83E9A2A05F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 23:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7EC02A118
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2019 00:21:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404263AbfEXV1q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 May 2019 17:27:46 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53174 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404163AbfEXV1p (ORCPT
+        id S2404344AbfEXWVP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 May 2019 18:21:15 -0400
+Received: from mail-wr1-f48.google.com ([209.85.221.48]:44298 "EHLO
+        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404332AbfEXWVP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 May 2019 17:27:45 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y3so10709951wmm.2;
-        Fri, 24 May 2019 14:27:44 -0700 (PDT)
+        Fri, 24 May 2019 18:21:15 -0400
+Received: by mail-wr1-f48.google.com with SMTP id w13so3015447wru.11;
+        Fri, 24 May 2019 15:21:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=y9ux/6s5mqKpo3SGmaASVq5a3/znJngTKz9dxsY6Ors=;
-        b=omEJrnMwXjBomP4BtaaCk/eahP4koX6r9N/1FRZFbAIeIEejhvE2xj11PA1ZGUmirI
-         P1LAT+/s4Rfq71eZQ/EX0iXP+V8Hfrs6mDbooVcuextI7ReAKBae9Lyw6fmipHr3iZ8F
-         Yn+jYqg8fnQuHMF/YhMnjgUZShVc/DqDuWGyAUcK0XNIzO/aSTv4Pc+QlK2PDBllUX1+
-         Sk1tbDsdU87eYGD6n6E9jIQJdoR8X3BZsx1owMCdIv5cj8CCZbMEJoL47ABToHMmYDV9
-         W6fLBNA/j+oOorGBbQtIBrMiI+yCs90gT/VlKkPj+2gz0PuF/aQf/R7AGGTM4eEJGEFQ
-         8Y3Q==
+        h=from:to:cc:subject:date:mime-version:message-id:in-reply-to
+         :references:user-agent:content-transfer-encoding;
+        bh=kV6iJR4xfy9BRC6MyG7RFLVo/Wi9XJHicoj8GiJ50zE=;
+        b=RQPcqx6ozrqP8a1MxQY745UDH4f80SGRWFECqSzzyeASqseyw2aQlzRzIn1wiM81sg
+         xsbUtqjNLpiZTDR/k11/K9wPe+t70ZSe1+78iAG390Y/HLpNbDtocRJNNPfHN4GRQG/G
+         AvmvGxT33F/Nounqxq/tVmwfrkbNL2OspUTiWl/KPhxixJkuhxaArg2hRwQ2s4oey+ZJ
+         NXsVa6G+37JjbFSaKF2s6IHQnDl4KXaesPaA5Y9yaTT6QReo1UvSaCciJixjZiMNOaXw
+         z0WWhoz3l/w4vT5on4FVVwrbCe5qkPePBrHdGNYWF/jRUpSTOzW9ACEU42qBBEMl+fXy
+         B1jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y9ux/6s5mqKpo3SGmaASVq5a3/znJngTKz9dxsY6Ors=;
-        b=ib+5oKIPNfbxUApWGsnXQo+LuFf9JgQlv+E6JLlvFdPHD3nvtUoAofiuKZl+P77inY
-         heCdJALOK/kWv7IqxPgKGTDtZKAaxyoL9gZ5hxO7o1t+kTiozLUR32a2RtUnZMgwzHt1
-         pPM1iCZXhYiXgh5FXXSlJPsk6mXTiOEJxzTcp2lqrPuCh0MRPK7erMMXric/JTL39GRK
-         BpMsvs7bBsI3ey6LlMusR0Upf0zWswLLoSn2/J6ZfJRPnDSX5DdFcskQpDOmcovrTNkV
-         mUrnFscTtMa5phl3RkrQGAm/hcmfqhrUbh0WZZUSNSbb+wpcPp71oEq2f6xdKIYM0ACU
-         9snw==
-X-Gm-Message-State: APjAAAX7fckNvEw3TzLwIb5eQ1OOKYmUHjKlIPLTdWdJAZPoRYaSPCRr
-        +i4M1xmPRGAi94kQmP4UNq5PEzs=
-X-Google-Smtp-Source: APXvYqyK2ayCbgVB5WtHhnVxNe6zHQgykGJ0C9c2YZvQtzxbgh+2+uSTMs+0rCT1FVbeCl9VyZ9/UA==
-X-Received: by 2002:a05:600c:2289:: with SMTP id 9mr18657802wmf.106.1558733263578;
-        Fri, 24 May 2019 14:27:43 -0700 (PDT)
-Received: from avx2 ([46.53.253.112])
-        by smtp.gmail.com with ESMTPSA id b2sm3371534wrt.20.2019.05.24.14.27.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 14:27:42 -0700 (PDT)
-Date:   Sat, 25 May 2019 00:27:40 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <christian@brauner.io>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] close_range()
-Message-ID: <20190524212740.GA7165@avx2>
-References: <20190523182152.GA6875@avx2>
- <CAHk-=wj5YZQ=ox+T1kc4RWp3KP+4VvXzvr8vOBbqcht6cOXufw@mail.gmail.com>
- <20190524183903.GB2658@avx2>
- <CAHk-=wjaCygWXyGP-D2=ER0x8UbwdvyifH2Jfnf1KHUwR3sedw@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:mime-version:message-id
+         :in-reply-to:references:user-agent:content-transfer-encoding;
+        bh=kV6iJR4xfy9BRC6MyG7RFLVo/Wi9XJHicoj8GiJ50zE=;
+        b=qELDDdwBLBUhiZSa1qgmtr1csFhSTo6VmOy3nw4vY6YY9Fn7zdpgsSqAreN1kXJ7x9
+         Qeeaj/jjJhd4bQpVdD7GGiV8KmRYExc26AysXeUqa1g/ZFxq90y6pDUiWvQ37sS6gBA9
+         GUxHH6hvf4BZ7B9Cy5Cl0i8Vl8am0rEsq9LbCHzvqn2uMhIVYUNx8p8ss/4L58zskMHX
+         1MCyjaMU99dtzAhRTpT6oZZOzFLSpZr01SLhVzhFMUr+eWUsbfu3D+HV4PhSsWqpVzn5
+         1ZMRN7jdWMs6ZUcZIatXKfbY2IFArdj6gWlA9KW90upIVA82rY8rWboNiIDAD8sR52wS
+         Mgqw==
+X-Gm-Message-State: APjAAAVQR0YQ73I02Er2Zd1yToNDgBEhVyD5kXW8DG/+1qWjPM3W7NEl
+        +IzXlGqteEKkrpvghNr3CMSYq3qTSCP5Bg==
+X-Google-Smtp-Source: APXvYqyiO9AqF/rXwvpnWtzQtWh6QNPh6n/g/DmOpGzsA7BmBQUI/Z91rD8hQzpSoz5Dwi9toVKNZg==
+X-Received: by 2002:a5d:628d:: with SMTP id k13mr7050635wru.319.1558736473197;
+        Fri, 24 May 2019 15:21:13 -0700 (PDT)
+Received: from localhost ([92.59.185.54])
+        by smtp.gmail.com with ESMTPSA id l18sm3880043wrv.38.2019.05.24.15.21.11
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 24 May 2019 15:21:12 -0700 (PDT)
+From:   Vicente Bergas <vicencb@gmail.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: =?iso-8859-1?Q?d=5Flookup:_Unable_to_handle_kernel_paging_request?=
+Date:   Sat, 25 May 2019 00:21:11 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjaCygWXyGP-D2=ER0x8UbwdvyifH2Jfnf1KHUwR3sedw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <b1f6ba08-6774-4be9-9e96-563f95e9ccdf@gmail.com>
+In-Reply-To: <20190522162945.GN17978@ZenIV.linux.org.uk>
+References: <23950bcb-81b0-4e07-8dc8-8740eb53d7fd@gmail.com>
+ <20190522135331.GM17978@ZenIV.linux.org.uk>
+ <bdc8b245-afca-4662-99e2-a082f25fc927@gmail.com>
+ <20190522162945.GN17978@ZenIV.linux.org.uk>
+User-Agent: Trojita
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 24, 2019 at 11:55:44AM -0700, Linus Torvalds wrote:
-> On Fri, May 24, 2019 at 11:39 AM Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> >
-> > > Would there ever be any other reason to traverse unknown open files
-> > > than to close them?
-> >
-> > This is what lsof(1) does:
-> 
-> I repeat: Would there ever be any other reason to traverse unknown
-> open files than to close them?
-> 
-> lsof is not AT ALL a relevant argument.
-> 
-> lsof fundamentally wants /proc, because lsof looks at *other*
-> processes. That has absolutely zero to do with fdmap. lsof does *not*
-> want fdmap at all. It wants "list other processes files". Which is
-> very much what /proc is all about.
-> 
-> So your argument that "fdmap is more generic" is bogus.
-> 
-> fdmap is entirely pointless unless you can show a real and relevant
-> (to performance) use of it.
-> 
-> When you would *possibly* have a "let me get a list of all the file
-> descriptors I have open, because I didn't track them myself"
-> situation?  That makes no sense. Particularly from a performance
-> standpoint.
-> 
-> In contrast, "close_range()" makes sense as an operation.
+On Wednesday, May 22, 2019 6:29:46 PM CEST, Al Viro wrote:
+> On Wed, May 22, 2019 at 05:44:30PM +0200, Vicente Bergas wrote:
+> ...
+> IOW, here we have also run into bogus hlist forward pointer or head -
+> same 0x1000000 in one case and 0x0000880001000000 in two others.
+>
+> Have you tried to see if KASAN catches anything on those loads?
+> Use-after-free, for example...  Another thing to try: slap
+> =09WARN_ON(entry->d_flags & DCACHE_NORCU);
+> in __d_rehash() and see if it triggers.
 
-What about orthogonality of interfaces?
+Hi,
+i have been running 3 days with KASAN enabled and also with
+diff a/fs/dcache.c b/fs/dcache.c
+@@ -2395,3 +2395,4 @@ static void __d_rehash(struct dentry *entry)
+ =09struct hlist_bl_head *b =3D d_hash(entry->d_name.hash);
+=20
++=09WARN_ON(entry->d_flags & DCACHE_NORCU);
+ =09hlist_bl_lock(b);
+but the issue has not appeared again.
+Next week i will try -rc2 without KASAN and with WARN_ON and see if it
+triggers.
 
-	fdmap()
-	bulk_close()
+Regards,
+  Vicen=C3=A7.
 
-Now fdmap() can be reused for lsof/criu and it is only 2 system calls
-for close-everything usecase which is OK because readdir is 4(!) minimum:
-
-	open
-	getdents
-	getdents() = 0
-	close
-
-Writing all of this I understood how fdmap can be made more faster which
-neither getdents() nor even read() have the luxury of: it can return
-a flag if more data is available so that application would do next fdmap()
-only if truly necessary.
-
-> I can
-> explain exactly when it would be used, and I can easily see a
-> situation where "I've opened a ton of files, now I want to release
-> them" is a valid model of operation. And it's a valid optimization to
-> do a bulk operation like that.
-> 
-> IOW, close_range() makes sense as an operation even if you could just
-> say "ok, I know exactly what files I have open". But it also makes
-> sense as an operation for the case of "I don't even care what files I
-> have open, I just want to close them".
-> 
-> In contrast, the "I have opened a ton of files, and I don't even know
-> what the hell I did, so can you list them for me" makes no sense.
-> 
-> Because outside of "close them", there's no bulk operation that makes
-> sense on random file handles that you don't know what they are. Unless
-> you iterate over them and do the stat thing or whatever to figure it
-> out - which is lsof, but as mentioned, it's about *other* peoples
-> files.
-
-What you're doing is making exactly one usecase take exactly one system
-call and leaving everything else deal with /proc. Stracing lsof shows
-very clearly how stupid and how wasteful it is. Especially now that
-we're post-meltdown era caring about system call costs (yeah suure).
-
-I'm suggesting make close-universe usecase take only 2 system calls.
-which is still better than anything /proc can offer.
