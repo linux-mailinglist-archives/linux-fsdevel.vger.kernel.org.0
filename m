@@ -2,139 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D71E29FB0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 22:18:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83E9A2A05F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 23:27:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403967AbfEXUSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 May 2019 16:18:40 -0400
-Received: from mail-oi1-f201.google.com ([209.85.167.201]:57219 "EHLO
-        mail-oi1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403773AbfEXUSj (ORCPT
+        id S2404263AbfEXV1q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 May 2019 17:27:46 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53174 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404163AbfEXV1p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 May 2019 16:18:39 -0400
-Received: by mail-oi1-f201.google.com with SMTP id b10so4046583oie.23
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2019 13:18:39 -0700 (PDT)
+        Fri, 24 May 2019 17:27:45 -0400
+Received: by mail-wm1-f66.google.com with SMTP id y3so10709951wmm.2;
+        Fri, 24 May 2019 14:27:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=kiqJqxPa9FMe/un09kYlU9XPk6LJGKycCrLcq9tmZfQ=;
-        b=Anfhow4oytGvhechQ9zPhynVUXijYqC90xGhkZDEgzZrQtziN47vmJAFkY94UCCIlA
-         E3qo07I2DuK8VltI8krl/Mr380pl9cVobAYKmPCQ8fX8j1oOllILv+h8K5OlKVThjhQF
-         TYSW7SHHMtlyDYgMrLILBQWOFLnGHQqi59qGRQlissn8Zrdz1UcQTFNRTRMWTzhda2kY
-         jhmhOf2/lrgpO2q1kI6LDYQ42Y1PjL1IOMK1qscDlGQghyyI22DkZpOb+IdpvJWvkhHt
-         aZVl3QpJRqrdcWDJ+9apVpJxVpnt7P5DLhApX2wc2H+XwVkS1Ap2zKuruVCdYtnN/Yas
-         ptng==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=y9ux/6s5mqKpo3SGmaASVq5a3/znJngTKz9dxsY6Ors=;
+        b=omEJrnMwXjBomP4BtaaCk/eahP4koX6r9N/1FRZFbAIeIEejhvE2xj11PA1ZGUmirI
+         P1LAT+/s4Rfq71eZQ/EX0iXP+V8Hfrs6mDbooVcuextI7ReAKBae9Lyw6fmipHr3iZ8F
+         Yn+jYqg8fnQuHMF/YhMnjgUZShVc/DqDuWGyAUcK0XNIzO/aSTv4Pc+QlK2PDBllUX1+
+         Sk1tbDsdU87eYGD6n6E9jIQJdoR8X3BZsx1owMCdIv5cj8CCZbMEJoL47ABToHMmYDV9
+         W6fLBNA/j+oOorGBbQtIBrMiI+yCs90gT/VlKkPj+2gz0PuF/aQf/R7AGGTM4eEJGEFQ
+         8Y3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=kiqJqxPa9FMe/un09kYlU9XPk6LJGKycCrLcq9tmZfQ=;
-        b=E74vhLx5uy3fY6eFk/rSk7XBaG0ugjpQF6TA2atdSyP2vU0t7oRXqSD5WrNDDO3SRX
-         pL0wL+VlkB4BCqhg59BFGuNdyyq9PJ5JJ01w+aFbmp52kETsDuevYs6ob8SsaRMjirJH
-         S1QAm4gjHmSj5i1h7CMH3+4yTRE5Wh/MKX6I0OMqTa+5E9foDXE2nzeOo6Kaq/nGQbtM
-         JIr1bWzjrvBjFJDsTT9yBCEWtk9cT6LeKGXV8iialVWRuh1nICgEe0CJ2xGLZibhtsSh
-         7pcgr3+U91odloQqyeKqoXdDbTGKDIb4CuPzFCr1K38oWInhIH74VdAavOALDiXP31X4
-         tQrw==
-X-Gm-Message-State: APjAAAVwR7olzbEuKTmHzV+CNYbyQHvFF81ycERhq6vGLorswkQd7jjj
-        aFt00cd1YpKkX3T7H2wHQWzV7k8pYg==
-X-Google-Smtp-Source: APXvYqyxUrB2uWTPtatgkJdyTUHWio2wNv9xxBoB86a//J6xgGeH5e//FZbxRkGNMNApVpTcG5ZuCsGfTQ==
-X-Received: by 2002:a9d:7987:: with SMTP id h7mr2154729otm.284.1558729118905;
- Fri, 24 May 2019 13:18:38 -0700 (PDT)
-Date:   Fri, 24 May 2019 22:18:17 +0200
-Message-Id: <20190524201817.16509-1-jannh@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
-Subject: [PATCH] binfmt_flat: make load_flat_shared_library() work
-From:   Jann Horn <jannh@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>, jannh@google.com
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=y9ux/6s5mqKpo3SGmaASVq5a3/znJngTKz9dxsY6Ors=;
+        b=ib+5oKIPNfbxUApWGsnXQo+LuFf9JgQlv+E6JLlvFdPHD3nvtUoAofiuKZl+P77inY
+         heCdJALOK/kWv7IqxPgKGTDtZKAaxyoL9gZ5hxO7o1t+kTiozLUR32a2RtUnZMgwzHt1
+         pPM1iCZXhYiXgh5FXXSlJPsk6mXTiOEJxzTcp2lqrPuCh0MRPK7erMMXric/JTL39GRK
+         BpMsvs7bBsI3ey6LlMusR0Upf0zWswLLoSn2/J6ZfJRPnDSX5DdFcskQpDOmcovrTNkV
+         mUrnFscTtMa5phl3RkrQGAm/hcmfqhrUbh0WZZUSNSbb+wpcPp71oEq2f6xdKIYM0ACU
+         9snw==
+X-Gm-Message-State: APjAAAX7fckNvEw3TzLwIb5eQ1OOKYmUHjKlIPLTdWdJAZPoRYaSPCRr
+        +i4M1xmPRGAi94kQmP4UNq5PEzs=
+X-Google-Smtp-Source: APXvYqyK2ayCbgVB5WtHhnVxNe6zHQgykGJ0C9c2YZvQtzxbgh+2+uSTMs+0rCT1FVbeCl9VyZ9/UA==
+X-Received: by 2002:a05:600c:2289:: with SMTP id 9mr18657802wmf.106.1558733263578;
+        Fri, 24 May 2019 14:27:43 -0700 (PDT)
+Received: from avx2 ([46.53.253.112])
+        by smtp.gmail.com with ESMTPSA id b2sm3371534wrt.20.2019.05.24.14.27.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 14:27:42 -0700 (PDT)
+Date:   Sat, 25 May 2019 00:27:40 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christian Brauner <christian@brauner.io>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] close_range()
+Message-ID: <20190524212740.GA7165@avx2>
+References: <20190523182152.GA6875@avx2>
+ <CAHk-=wj5YZQ=ox+T1kc4RWp3KP+4VvXzvr8vOBbqcht6cOXufw@mail.gmail.com>
+ <20190524183903.GB2658@avx2>
+ <CAHk-=wjaCygWXyGP-D2=ER0x8UbwdvyifH2Jfnf1KHUwR3sedw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjaCygWXyGP-D2=ER0x8UbwdvyifH2Jfnf1KHUwR3sedw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-load_flat_shared_library() is broken: It only calls load_flat_file() if
-prepare_binprm() returns zero, but prepare_binprm() returns the number of
-bytes read - so this only happens if the file is empty.
+On Fri, May 24, 2019 at 11:55:44AM -0700, Linus Torvalds wrote:
+> On Fri, May 24, 2019 at 11:39 AM Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> >
+> > > Would there ever be any other reason to traverse unknown open files
+> > > than to close them?
+> >
+> > This is what lsof(1) does:
+> 
+> I repeat: Would there ever be any other reason to traverse unknown
+> open files than to close them?
+> 
+> lsof is not AT ALL a relevant argument.
+> 
+> lsof fundamentally wants /proc, because lsof looks at *other*
+> processes. That has absolutely zero to do with fdmap. lsof does *not*
+> want fdmap at all. It wants "list other processes files". Which is
+> very much what /proc is all about.
+> 
+> So your argument that "fdmap is more generic" is bogus.
+> 
+> fdmap is entirely pointless unless you can show a real and relevant
+> (to performance) use of it.
+> 
+> When you would *possibly* have a "let me get a list of all the file
+> descriptors I have open, because I didn't track them myself"
+> situation?  That makes no sense. Particularly from a performance
+> standpoint.
+> 
+> In contrast, "close_range()" makes sense as an operation.
 
-Instead, call into load_flat_file() if the number of bytes read is
-non-negative. (Even if the number of bytes is zero - in that case,
-load_flat_file() will see nullbytes and return a nice -ENOEXEC.)
+What about orthogonality of interfaces?
 
-In addition, remove the code related to bprm creds and stop using
-prepare_binprm() - this code is loading a library, not a main executable,
-and it only actually uses the members "buf", "file" and "filename" of the
-linux_binprm struct. Instead, call kernel_read() directly.
+	fdmap()
+	bulk_close()
 
-Cc: stable@vger.kernel.org
-Fixes: 287980e49ffc ("remove lots of IS_ERR_VALUE abuses")
-Signed-off-by: Jann Horn <jannh@google.com>
----
-I only found the bug by looking at the code, I have not verified its
-existence at runtime.
-Also, this patch is compile-tested only.
-It would be nice if someone who works with nommu Linux could have a
-look at this patch.
-akpm's tree is the right one for this patch, right?
+Now fdmap() can be reused for lsof/criu and it is only 2 system calls
+for close-everything usecase which is OK because readdir is 4(!) minimum:
 
- fs/binfmt_flat.c | 23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
+	open
+	getdents
+	getdents() = 0
+	close
 
-diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-index 82a48e830018..e4b59e76afb0 100644
---- a/fs/binfmt_flat.c
-+++ b/fs/binfmt_flat.c
-@@ -856,9 +856,14 @@ static int load_flat_file(struct linux_binprm *bprm,
- 
- static int load_flat_shared_library(int id, struct lib_info *libs)
- {
-+	/*
-+	 * This is a fake bprm struct; only the members "buf", "file" and
-+	 * "filename" are actually used.
-+	 */
- 	struct linux_binprm bprm;
- 	int res;
- 	char buf[16];
-+	loff_t pos = 0;
- 
- 	memset(&bprm, 0, sizeof(bprm));
- 
-@@ -872,25 +877,11 @@ static int load_flat_shared_library(int id, struct lib_info *libs)
- 	if (IS_ERR(bprm.file))
- 		return res;
- 
--	bprm.cred = prepare_exec_creds();
--	res = -ENOMEM;
--	if (!bprm.cred)
--		goto out;
--
--	/* We don't really care about recalculating credentials at this point
--	 * as we're past the point of no return and are dealing with shared
--	 * libraries.
--	 */
--	bprm.called_set_creds = 1;
-+	res = kernel_read(bprm.file, bprm.buf, BINPRM_BUF_SIZE, &pos);
- 
--	res = prepare_binprm(&bprm);
--
--	if (!res)
-+	if (res >= 0)
- 		res = load_flat_file(&bprm, libs, id, NULL);
- 
--	abort_creds(bprm.cred);
--
--out:
- 	allow_write_access(bprm.file);
- 	fput(bprm.file);
- 
--- 
-2.22.0.rc1.257.g3120a18244-goog
+Writing all of this I understood how fdmap can be made more faster which
+neither getdents() nor even read() have the luxury of: it can return
+a flag if more data is available so that application would do next fdmap()
+only if truly necessary.
 
+> I can
+> explain exactly when it would be used, and I can easily see a
+> situation where "I've opened a ton of files, now I want to release
+> them" is a valid model of operation. And it's a valid optimization to
+> do a bulk operation like that.
+> 
+> IOW, close_range() makes sense as an operation even if you could just
+> say "ok, I know exactly what files I have open". But it also makes
+> sense as an operation for the case of "I don't even care what files I
+> have open, I just want to close them".
+> 
+> In contrast, the "I have opened a ton of files, and I don't even know
+> what the hell I did, so can you list them for me" makes no sense.
+> 
+> Because outside of "close them", there's no bulk operation that makes
+> sense on random file handles that you don't know what they are. Unless
+> you iterate over them and do the stat thing or whatever to figure it
+> out - which is lsof, but as mentioned, it's about *other* peoples
+> files.
+
+What you're doing is making exactly one usecase take exactly one system
+call and leaving everything else deal with /proc. Stracing lsof shows
+very clearly how stupid and how wasteful it is. Especially now that
+we're post-meltdown era caring about system call costs (yeah suure).
+
+I'm suggesting make close-universe usecase take only 2 system calls.
+which is still better than anything /proc can offer.
