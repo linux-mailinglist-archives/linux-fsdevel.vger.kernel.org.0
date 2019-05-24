@@ -2,59 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4971F29ACD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 17:16:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3837129B66
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 17:44:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389327AbfEXPQk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 May 2019 11:16:40 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52357 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389079AbfEXPQk (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 May 2019 11:16:40 -0400
-Received: by mail-it1-f196.google.com with SMTP id t184so16345783itf.2;
-        Fri, 24 May 2019 08:16:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ue5iAQh3o+RrZq+T4VgTKmLqWN6Wlxd8oVLaY6JmVVo=;
-        b=gCMAYpHJfYJUrKtc5oOniur8lpNW+N8uTuzjZHgP4or1AcKLVGkYZ2hbf2zteQLJ/m
-         jg76i3nOzn+IbZxbv9LoKRkSgtNnVhHve6C+dLnYj7BV8WPhGpddv1RufLS3jhn3r0tU
-         ZM3dUTSV9xcGr0h3RfQKPjNokDHrUTwCofbQJffzfQPs22BUW3cVaDM06QFHsExF4kny
-         X3VBDYAQEbBjGc7PJkT+cNO+4snLWNICiBwGBJTDJOGhoibDfZY5NkUf032uNqT0Yunx
-         OfAfdaueUXCZfV/9fljZSkcppYLcmXdv3Tk/TZQ3ij/EyjMDd6Kftsrv1rDCivBoazpE
-         FnGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ue5iAQh3o+RrZq+T4VgTKmLqWN6Wlxd8oVLaY6JmVVo=;
-        b=KrAUR/3sUqFhS2fCA07BIQfUfTQsa39xhUDOdWsDsyVfdlreBPKV8b9qvhPDDlZ8dW
-         z3z07GBorW1c0TV6bwmTkP17mXuPcLVz7XOALHTFuSQJrS45yRX0PcPdMuBS0voS4QPn
-         ShqBwVQlLros5JjeV+dsT1sQW9wsP1vtRJxn2NOCUPGfGDoO4GJpV7EKvrkGu2A7wJus
-         S5rK1Hgxhl/96VLE81BpkSDy//jfGAi60Jtf7Dch24dM0a5S6u4vL8Ic8c26ddvGTlWc
-         y1ZnreJMpZkyjrUgJRUYXNq9TSgU4i8iycBZQUhZX2qcbOAVwZ5lWozehfvMTkvLM18U
-         JIqw==
-X-Gm-Message-State: APjAAAXDf35vNMhjj7IOuX/1akj+pDcPZra0QqPl32X82aS8nGYnQ6VR
-        qKWy16ckcaX11PNEJXddrBaYgAMLvfeDyoIlp6E=
-X-Google-Smtp-Source: APXvYqxR6m7vbnGIM+BEYmZgfSpPLI1ndiLHiIaQVaa2rr9P87vKtLr6igqahreqyvbvw7yowifJCB5gCbe0P38NhbY=
-X-Received: by 2002:a24:e084:: with SMTP id c126mr17512124ith.124.1558710998913;
- Fri, 24 May 2019 08:16:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190522150505.GA4915@redhat.com> <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
- <20190522161407.GB4915@redhat.com> <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
- <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com> <20190523145944.GB23070@redhat.com>
- <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com> <20190523163604.GE23070@redhat.com>
- <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com> <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
- <20190524141054.GB2655@redhat.com>
-In-Reply-To: <20190524141054.GB2655@redhat.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Fri, 24 May 2019 08:16:23 -0700
-Message-ID: <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
-Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     David Laight <David.Laight@aculab.com>,
+        id S2389927AbfEXPoj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 May 2019 11:44:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36768 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389206AbfEXPoj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 May 2019 11:44:39 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 95F5DC09AD13;
+        Fri, 24 May 2019 15:44:33 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 4A11C63F62;
+        Fri, 24 May 2019 15:44:26 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 24 May 2019 17:44:33 +0200 (CEST)
+Date:   Fri, 24 May 2019 17:44:25 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -68,101 +38,84 @@ Cc:     David Laight <David.Laight@aculab.com>,
         Omar Kilani <omar.kilani@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Message-ID: <20190524154425.GE2655@redhat.com>
+References: <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
+ <20190522161407.GB4915@redhat.com>
+ <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+ <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
+ <20190523145944.GB23070@redhat.com>
+ <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
+ <20190523163604.GE23070@redhat.com>
+ <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+ <20190524132911.GA2655@redhat.com>
+ <766510cbbec640b18fd99f3946b37475@AcuMS.aculab.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <766510cbbec640b18fd99f3946b37475@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 24 May 2019 15:44:38 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 24, 2019 at 7:11 AM Oleg Nesterov <oleg@redhat.com> wrote:
+On 05/24, David Laight wrote:
 >
-> On 05/23, Deepa Dinamani wrote:
+> From: Oleg Nesterov
+> > Sent: 24 May 2019 14:29
+> > It seems that we all are just trying to confuse each other. I got lost.
+>
+> I'm always lost :-)
+
+same here ;)
+
+> To my mind changing the signal mask should be enough to get a masked
+> signal handler called - even if the mask is reset before the syscall exits.
+
+well, the kernel doesn't do this, and on purpose.
+
+> There shouldn't be any need for an interruptible wait to be interrupted.
+
+can't parse ;)
+
+> I suspect that if you send a signal to a process that is looping
+> in userspace (on a different) the signal handler is called on the next
+> exit to userspace regardless as to whether the kernel blocks.
+>
+> epoll and pselect shouldn't be any different.
+
+They differ exactly because they manipulate the blocked mask,
+
+> Having the signal unmasked at any time should be enough to get it called.
+
+No. The sigmask passed to pselect() tells the kernel which signals should
+interrupt the syscall if it blocks. The fact that pselect() actually unblocks
+a signal is just the internal implementation detail.
+
+> > > I suspect you need to defer the re-instatement of the original mask
+> > > to the code that calls the signal handlers (which probably should
+> > > be called with the programs signal mask).
 > >
-> > Ok, since there has been quite a bit of argument here, I will
-> > backtrack a little bit and maybe it will help us understand what's
-> > happening here.
-> > There are many scenarios being discussed on this thread:
-> > a. State of code before 854a6ed56839a
+> > This is what the kernel does when the signal is delivered, the original mask
+> > is restored after the signal handler runs.
 >
-> I think everything was correct,
+> I'd have thought that the original signal mask (all blocked in the examples)
+> should be restored before the signal handler is called.
 
-There were 2 things that were wrong:
+No. And this means that if you have 2 pending signals, they both will be delivered.
+Unless of course sigaction->sa_mask includes the 2nd one.
 
-1. If an unblocked signal was received, after the ep_poll(), then the
-return status did not indicate that. This is expected behavior
-according to man page. If this is indeed what is expected then the man
-page should note that signal will be delivered in this case and return
-code will still be 0.
+> After all the signal handler is allowed to modify the processes signal mask.
 
-"EINTR
-The call was interrupted by a signal handler before either any of the
-requested events occurred or the timeout expired; see signal(7)."
+only untill the handler returns.
 
-2. The restoring of the sigmask is done right in the syscall part and
-not while exiting the syscall and if you get a blocked signal here,
-you will deliver this to userspace.
+> I've had horrid thoughts about SIG_SUSPEND :-)
 
-> > b. State after 854a6ed56839a
->
-> obviously buggy,
+google knows nothing about SIG_SUSPEND, neither me ;)
 
-Ok, then can you point out what specifically was wrong with
-854a6ed56839a? And, not how it could be more simple?
+Oleg.
 
-> > c. Proposed fix as per the patchset in question.
->
-> > As per [a] and let's consider the case of epoll_pwait only first for simplicity.
-> >
-> > As I said before, ep_poll() is what checks for signal_pending() and is
-> > responsible for setting errno to -EINTR when there is a signal.
->
-> To clarify, if do_epoll_wait() return -EINTR then signal_pending() is true,
-> right?
-
-Yes, the case I'm talking about is when do_epoll_wait() returns 0 and
-then you get a signal.
-
-> > So if a signal is received after ep_poll() and ep_poll() returns
-> > success, it is never noticed by the syscall during execution.
->
-> What you are saying looks very confusing to me, I will assume that you
-> meant something like
->
->         - a signal SIG_XXX was blocked before sys_epoll_pwait() was called
->
->         - sys_epoll_pwait(sigmask) unblocks SIG_XXX according to sigmask
->
->         - sys_epoll_pwait() calls do_epoll_wait() which returns success
->
->         - SIG_XXX comes after that and it is "never noticed"
->
-> Yes. Everything is correct. And see my reply to David, SIG_XXX can even
-> come _before_ sys_epoll_pwait() was called.
-
-No, I'm talking about a signal that was not blocked.
-
-> > So the question is does the userspace have to know about this signal
-> > or not.
->
-> If userspace needs to know about SIG_XXX it should not block it, that is all.
-
-What should be the return value if a signal is detected after a fd completed?
-
-> > What [b] does is to move the signal check closer to the restoration of
-> > the signal.
->
-> FOR NO REASON, afaics (to simplify, lets forget the problem with the wrong
-> return value you are trying to fix).
-
-As I already pointed out, the restoring of the sigmask is done during
-the syscall and not while exiting the syscall and if you get a blocked
-signal here, you will deliver this to userspace.
-
-> And even if there were ANY reason to do this, note that (with or without this
-> fix) the signal_pending() check inside restore_user_sigmask() can NOT help,
-> simply because SIG_XXX can come right after this check.
-
-This I pointed out already that we should probably make this sequence atomic.
-
-
--Deepa
