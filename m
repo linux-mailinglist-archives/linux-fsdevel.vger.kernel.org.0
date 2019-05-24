@@ -2,137 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBA5E2954A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 11:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 317EF295C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 May 2019 12:28:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390006AbfEXJ6b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 May 2019 05:58:31 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:42158 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389782AbfEXJ6a (ORCPT
+        id S2390230AbfEXK2F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 May 2019 06:28:05 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:37529 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389616AbfEXK2F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 May 2019 05:58:30 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id uk-mta-4-v0DLxGEwM9yGbvCb2AhJBQ-1;
- Fri, 24 May 2019 10:58:27 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 24 May 2019 10:58:26 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 24 May 2019 10:58:26 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Deepa Dinamani' <deepa.kernel@gmail.com>
-CC:     Oleg Nesterov <oleg@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v2] signal: Adjust error codes according to
- restore_user_sigmask()
-Thread-Topic: [PATCH v2] signal: Adjust error codes according to
- restore_user_sigmask()
-Thread-Index: AQHVELwtsgR+BAQFXk2JV68Wk/7LjKZ4aINAgABVkoCAAB2x0P///TgAgAARdkCAAAfWgIABCrvA
-Date:   Fri, 24 May 2019 09:58:26 +0000
-Message-ID: <761e28606d344963a32eda6195a4e899@AcuMS.aculab.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190522150505.GA4915@redhat.com>
- <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
- <20190522161407.GB4915@redhat.com>
- <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
- <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
- <20190523145944.GB23070@redhat.com>
- <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
- <20190523163604.GE23070@redhat.com>
- <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
- <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
-In-Reply-To: <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 24 May 2019 06:28:05 -0400
+Received: by mail-it1-f193.google.com with SMTP id m140so13060498itg.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 May 2019 03:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lQOFmVbb9NS+iTEPlWwBX0kt6HHZdRsOcnWjM/3njwc=;
+        b=AY0ya/6qCoCKbbiDDvO8+/wWIH6ZztkkxdM0TElnygz8SyZWmaxI+wrxoxh3BteKH5
+         rHrFPHoSXiF6l8Q3mQWdcuFfb5RiQmnw/D4Y/JWCQNk2g3YCQ8a5iVIofknT9r8qPFBm
+         RRiCr8yiYjUNzi+d7o1UyE0cXRoYx5reqlVO2qDUYosU/e+1wx2YJ1ddwDHW2tnHADAF
+         rZbSCnA/ZRUAoQZ/CRlEl8a6IfT9BbmVCR23R9XlmNKC+Kg4WFseuJIjaV5cZv/Xs85G
+         /wxayT1xut3WTT3270zlG0oh8wgP8pkw57Z2/hfOBiusZTlyVfyLjh4TAEVM54IEDqO3
+         lV5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lQOFmVbb9NS+iTEPlWwBX0kt6HHZdRsOcnWjM/3njwc=;
+        b=YnIXw3zNqvjtTQhaX2hiS/gqcYXH+7Agf8c13oouGly0o835p2kxISaEg+nesIBu+e
+         dLbvG9neqwa8oXQGNP/6UONy+2iv7GcQc8reDZSBlk0mPv4P9iqmeDxGgyyszOAJbs5U
+         +q6qrsdCms/hyPHxY5u2pLN9yydtjiTZ6glyAaL6WmN0wIEOypRB4my1XyIhKPSxLsfU
+         m1mbk4BIqKySrh2daP7JI3ytoF5wOAbBSWSkZWfgxYmlxzA8vY8a14lndigCLhElMPk4
+         yKLBpwv2xjw2bRwhvqMlBZHDhKdXfgo8I+oEnpS0Q1z9dq23U0i7A1dtLF34335/SB29
+         ugww==
+X-Gm-Message-State: APjAAAVtkKs1G2IbmkodAkW+RMJTwpMNYewQImh7LEonbmGyPCcOyYse
+        01heUBmBZzIzinuugZxhVsjQ9A==
+X-Google-Smtp-Source: APXvYqy5UzWHJOTniUeCgLuuQNOys0enhqT6SdnrXYCeWiW2VWY/4D4BoL/FC9IekDzSeZqn2H3UYA==
+X-Received: by 2002:a24:3d08:: with SMTP id n8mr17306791itn.56.1558693684484;
+        Fri, 24 May 2019 03:28:04 -0700 (PDT)
+Received: from brauner.io ([172.56.12.37])
+        by smtp.gmail.com with ESMTPSA id g124sm1024044itg.12.2019.05.24.03.28.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 24 May 2019 03:28:03 -0700 (PDT)
+Date:   Fri, 24 May 2019 12:27:58 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>, fweimer@redhat.com,
+        oleg@redhat.com, arnd@arndb.de, viro@zeniv.linux.org.uk,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] close_range()
+Message-ID: <20190524102756.qjsjxukuq2f4t6bo@brauner.io>
+References: <20190523182152.GA6875@avx2>
+ <CAHk-=wj5YZQ=ox+T1kc4RWp3KP+4VvXzvr8vOBbqcht6cOXufw@mail.gmail.com>
 MIME-Version: 1.0
-X-MC-Unique: v0DLxGEwM9yGbvCb2AhJBQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj5YZQ=ox+T1kc4RWp3KP+4VvXzvr8vOBbqcht6cOXufw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogRGVlcGEgRGluYW1hbmkNCj4gU2VudDogMjMgTWF5IDIwMTkgMTk6MDcNCj4gT2ssIHNp
-bmNlIHRoZXJlIGhhcyBiZWVuIHF1aXRlIGEgYml0IG9mIGFyZ3VtZW50IGhlcmUsIEkgd2lsbA0K
-PiBiYWNrdHJhY2sgYSBsaXR0bGUgYml0IGFuZCBtYXliZSBpdCB3aWxsIGhlbHAgdXMgdW5kZXJz
-dGFuZCB3aGF0J3MNCj4gaGFwcGVuaW5nIGhlcmUuDQo+IFRoZXJlIGFyZSBtYW55IHNjZW5hcmlv
-cyBiZWluZyBkaXNjdXNzZWQgb24gdGhpcyB0aHJlYWQ6DQo+IGEuIFN0YXRlIG9mIGNvZGUgYmVm
-b3JlIDg1NGE2ZWQ1NjgzOWENCj4gYi4gU3RhdGUgYWZ0ZXIgODU0YTZlZDU2ODM5YQ0KPiBjLiBQ
-cm9wb3NlZCBmaXggYXMgcGVyIHRoZSBwYXRjaHNldCBpbiBxdWVzdGlvbi4NCj4gDQo+IE9sZWcs
-IEkgd2lsbCBkaXNjdXNzIHRoZXNlIGZpcnN0IGFuZCB0aGVuIHdlIGNhbiBkaXNjdXNzIHRoZQ0K
-PiBhZGRpdGlvbmFsIGNoYW5nZXMgeW91IHN1Z2dlc3RlZC4NCj4gDQo+IFNvbWUgYmFja2dyb3Vu
-ZCBvbiB3aHkgd2UgaGF2ZSB0aGVzZSBzeXNjYWxscyB0aGF0IHRha2Ugc2lnbWFzayBhcyBhbg0K
-PiBhcmd1bWVudC4gVGhpcyBpcyBqdXN0IGZvciB0aGUgc2FrZSBvZiBjb21wbGV0ZW5lc3Mgb2Yg
-dGhlIGFyZ3VtZW50Lg0KPiANCj4gVGhlc2UgYXJlIHBhcnRpY3VsYXJseSBtZWFudCBmb3IgYSBz
-Y2VuYXJpbyhkKSBzdWNoIGFzIGJlbG93Og0KPiANCj4gMS4gYmxvY2sgdGhlIHNpZ25hbHMgeW91
-IGRvbid0IGNhcmUgYWJvdXQuDQo+IDIuIHN5c2NhbGwoKQ0KPiAzLiB1bmJsb2NrIHRoZSBzaWdu
-YWxzIGJsb2NrZWQgaW4gMS4NCj4gDQo+IFRoZSBwcm9ibGVtIGhlcmUgaXMgdGhhdCBpZiB0aGVy
-ZSBpcyBhIHNpZ25hbCB0aGF0IGlzIG5vdCBibG9ja2VkIGJ5IDENCj4gYW5kIHN1Y2ggYSBzaWdu
-YWwgaXMgZGVsaXZlcmVkIGJldHdlZW4gMSBhbmQgMihzaW5jZSB0aGV5IGFyZSBub3QNCj4gYXRv
-bWljKSwgdGhlIHN5c2NhbGwgaW4gMiBtaWdodCBibG9jayBmb3JldmVyIGFzIGl0IG5ldmVyIGZv
-dW5kIG91dA0KPiBhYm91dCB0aGUgc2lnbmFsLg0KDQpJIHRoaW5rIHdlIGFsbCBhZ3JlZSBhYm91
-dCB0aGUgdW5kZXJseWluZyBwcm9ibGVtIHRoZXNlIHN5c3RlbSBjYWxscyBzb2x2ZS4NCg0KPiBB
-cyBwZXIgW2FdIGFuZCBsZXQncyBjb25zaWRlciB0aGUgY2FzZSBvZiBlcG9sbF9wd2FpdCBvbmx5
-IGZpcnN0IGZvciBzaW1wbGljaXR5Lg0KRm9yIHNpbXBsaWNpdHkgeW91IG91Z2h0IHRvIGNvbnNp
-ZGVyIHNpZ3dhaXRpbmZvKCkgOi0pDQoNCj4gQXMgSSBzYWlkIGJlZm9yZSwgZXBfcG9sbCgpIGlz
-IHdoYXQgY2hlY2tzIGZvciBzaWduYWxfcGVuZGluZygpIGFuZCBpcw0KPiByZXNwb25zaWJsZSBm
-b3Igc2V0dGluZyBlcnJubyB0byAtRUlOVFIgd2hlbiB0aGVyZSBpcyBhIHNpZ25hbC4NCg0KQWgs
-IHRoZXJlIGluIGxpZXMgdGhlIHByb2JsZW0gKHdlbGwgb25lIG9mIHRoZW0pLg0KZXBfcG9sbCgp
-IHNob3VsZCBvbmx5IHJldHVybiAtRUlOVFIgaWYgaXRzIHNsZWVwICh3YWl0aW5nIGZvciBhbiBm
-ZCB0bw0KYmUgcmVhZHkpIGlzIGludGVycnVwdGVkLg0KVGhlIHNpZ25hbCBoYW5kbGVyKHMpIHNo
-b3VsZCBzdGlsbCBiZSBjYWxsZWQgdGhvdWdoLg0KSWYgdGhlIHRpbWVvdXQgaXMgMCB0aGVuIGFu
-eSBzaWduYWwgaGFuZGxlciBzaG91bGQgYmUgY2FsbGVkLCBidXQgdGhlDQpyZXR1cm4gdmFsdWUg
-aXMgc3RpbGwgMCAoaWYgbm8gZmQgYXJlICdyZWFkeScpLg0KDQo+IFNvIGlmIGEgc2lnbmFsIGlz
-IHJlY2VpdmVkIGFmdGVyIGVwX3BvbGwoKSBhbmQgZXBfcG9sbCgpIHJldHVybnMNCj4gc3VjY2Vz
-cywgaXQgaXMgbmV2ZXIgbm90aWNlZCBieSB0aGUgc3lzY2FsbCBkdXJpbmcgZXhlY3V0aW9uLg0K
-PiBTbyB0aGUgcXVlc3Rpb24gaXMgZG9lcyB0aGUgdXNlcnNwYWNlIGhhdmUgdG8ga25vdyBhYm91
-dCB0aGlzIHNpZ25hbA0KPiBvciBub3QuIEZyb20gc2NlbmFyaW8gW2RdIGFib3ZlLCBJIHdvdWxk
-IHNheSBpdCBzaG91bGQsIGV2ZW4gaWYgYWxsDQo+IHRoZSBmZCdzIGNvbXBsZXRlZCBzdWNjZXNz
-ZnVsbHkuDQoNCldoYXQgaXMgc2NlbmFyaW8gW2RdPyBZb3UndmUgY29kZSB2ZXJzaW9ucyBhL2Iv
-YyBidXQgbm8gc2NlbmFyaW9zLg0KDQo+IFRoaXMgZG9lcyBub3QgaGFwcGVuIGluIFthXS4gU28g
-dGhpcyBpcyB3aGF0IEkgc2FpZCB3YXMgYWxyZWFkeSBicm9rZW4uDQo+IA0KPiBXaGF0IFtiXSBk
-b2VzIGlzIHRvIG1vdmUgdGhlIHNpZ25hbCBjaGVjayBjbG9zZXIgdG8gdGhlIHJlc3RvcmF0aW9u
-IG9mDQo+IHRoZSBzaWduYWwuIFRoaXMgd2F5IGl0IGlzIGdvb2QuIFNvLCBpZiB0aGVyZSBpcyBh
-IHNpZ25hbCBhZnRlcg0KPiBlcF9wb2xsKCkgcmV0dXJucyBzdWNjZXNzLCBpdCBpcyBub3RpY2Vk
-IGFuZCB0aGUgc2lnbmFsIGlzIGRlbGl2ZXJlZA0KPiB3aGVuIHRoZSBzeXNjYWxsIGV4aXRzLiBC
-dXQsIHRoZSBzeXNjYWxsIGVycm9yIHN0YXR1cyBpdHNlbGYgaXMgMC4NCg0KQnkgMCB5b3UgbWVh
-biA+PSAwID8/DQoNCj4gU28gbm93IFtjXSBpcyBhZGp1c3RpbmcgdGhlIHJldHVybiB2YWx1ZXMg
-YmFzZWQgb24gd2hldGhlciBleHRyYQ0KPiBzaWduYWxzIHdlcmUgZGV0ZWN0ZWQgYWZ0ZXIgZXBf
-cG9sbCgpLiBUaGlzIHBhcnQgd2FzIG5lZWRlZCBldmVuIGZvcg0KPiBbYV0uDQoNCklNSE8gVGhl
-IHJldHVybiB2YWx1ZSBzaG91bGQgbmV2ZXIgYmUgY2hhbmdlZC4NCk11Y2ggbGlrZSB3cml0ZSgp
-IGNhbiByZXR1cm4gYSBwYXJ0aWFsIGxlbmd0aCBpZiBhIHNpZ25hbCBoYXBwZW5zLg0KDQpJU1RN
-IHRoYXQgYSB1c2VyIHNpZ25hbCBoYW5kbGVyIHNob3VsZCBiZSBzY2hlZHVsZWQgdG8gYmUgcnVu
-DQppZiB0aGUgc2lnbmFsIGlzIHBlbmRpbmcgYW5kIG5vdCBtYXNrZWQuDQpPbiByZXR1cm4gdG8g
-dXNlciBhbGwgc2NoZWR1bGVkIHNpZ25hbCBoYW5kbGVycyBhcmUgY2FsbGVkDQoocmVnYXJkbGVz
-cyBhcyB0byB3aGV0aGVyIHRoZSBzaWduYWwgaXMgbWFza2VkIGF0IHRoYXQgdGltZSkuDQpUaGlz
-IG1pZ2h0IG1lYW4gZ2V0dGluZyB0aGUgJ3JldHVybiB0byB1c2VyJyBjb2RlIHRvIHJlc3RvcmUN
-CnRoZSBvcmlnaW5hbCBzaWduYWwgbWFzayBzYXZlZCBmb3IgZXBvbGxfcHdhaXQoKSBhbmQgcHNl
-bGVjdCgpIGV0Yy4NCg0KSWYsIGZvciBzb21lIHBlcnZlcnRlZCByZWFzb24gKGNvbXBhdGliaWxp
-dHkgd2l0aCBicm9rZW4gYXBwcyksDQp5b3UgbmVlZCBlcG9sbF9wd2FpdCgpIHRvIHJldHVybiBF
-SU5UUiBpbnN0ZWFkIG9mIDAgdGhlIHlvdQ0KcHJvYmFibHkgbmVlZCBhIHNwZWNpYWwgJ2tlcm5l
-bCBpbnRlcm5hbCcgZXJybm8gdmFsdWUgdGhhdA0KaXMgYWx3YXlzIGNvbnZlcnRlZCBieSB0aGUg
-c3lzY2FsbCBleGl0IGNvZGUgdG8gRUlOVFIvMA0KKGFuZCBhIHNlY29uZCBvbmUgdGhhdCBpcyBF
-SU5UUi9FQUdBSU4gZXRjKS4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtl
-c2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBV
-Sw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Thu, May 23, 2019 at 02:34:31PM -0700, Linus Torvalds wrote:
+> On Thu, May 23, 2019 at 11:22 AM Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> >
+> > > This is v2 of this patchset.
+> >
+> > We've sent fdmap(2) back in the day:
+> 
+> Well, if the main point of the exercise is performance, then fdmap()
+> is clearly inferior.
+> 
+> Sadly, with all the HW security mitigation, system calls are no longer cheap.
+> 
+> Would there ever be any other reason to traverse unknown open files
+> than to close them?
 
+I have had lively discussions and interestingly worded mails on account
+of all of this. But noone has brought up this scenario. Florian also
+said that it's not needed [1].
+
+If we really want something like that we don't really need a new syscall
+I think. We can just do a prctl() command or fcntl() command that will
+give you back the next open fd.
+
+There's imho crazy ideas out there what people expect a multi-close file
+descriptor solution to look like. Service manager people apparently
+think it would be a great idea to have a syscall that takes an array of
+fds which the kernel is supposed to leave open and close all others,
+basically "close all of the fds only leave out those I tell you".
+I think for such a use-cases they can push for a prctl(PR_GET_NEXTFD, 2)
+or a fcntl(2, F_GET_NEXTFD) and implement that in userspace.
+
+I really only care about having a performant solution to closing a range
+of fds that's a little more flexible than closefrom() without going all
+crazy generic and copying (possibly) large bits of data between kernel-
+and userspace.
+
+close_range() is really something I've picked up on the side because the
+current state has bothered me (and others) a long time whenever I have
+to have my userspace hat on. With Al being in favor of it this seemed
+like we should do it.
+I actually wanted to have Jann's and my clone6() version on the table by
+now since that would unblock larger things like the time namespace
+patchset.
+
+In any case I'll send v3 with my max()/min() braino fixed that Oleg
+thankfully spotted and the split into two patches that Arnd suggested.
+
+[1]: https://lkml.org/lkml/2019/5/21/516
