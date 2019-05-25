@@ -2,215 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F9012A58B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2019 18:55:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 342DE2A5D7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2019 19:38:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbfEYQzM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 May 2019 12:55:12 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35731 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727028AbfEYQzM (ORCPT
+        id S1727325AbfEYRiO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 May 2019 13:38:14 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:33097 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726761AbfEYRiG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 May 2019 12:55:12 -0400
-Received: by mail-lj1-f196.google.com with SMTP id h11so11287434ljb.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 May 2019 09:55:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NBdLovlpt9AZuIiNUZbGP+lZb3Sg/PGshfq8cZbUBd0=;
-        b=amJvf4Mf4+qu8tdwTdbzD3weELsw5ul+SeN2Y2A+KXwri5iCvpoMv3QsDHz5iHYNmb
-         9+v4lc5LTsDIJzQmSUaXGS7dtebcYbd+O0qcSFEqasYPEdaL6AaYnO9V/W0Y3SguqyHp
-         LogCMsi64f4r6N92eF/bc7hFdaM5KrEmZfqoM=
+        Sat, 25 May 2019 13:38:06 -0400
+Received: by mail-io1-f70.google.com with SMTP id s24so10175639iot.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 25 May 2019 10:38:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NBdLovlpt9AZuIiNUZbGP+lZb3Sg/PGshfq8cZbUBd0=;
-        b=ZGIlabUDP7mt1WPxR4x3o9jmUL41sTfVjVRPv4divjz4EcS7fw+pmbepuBl1OLQOxm
-         blwRh1Jxg97c705CMztZ5UnFXvSigftqNCkn7ke3yIlvWBu1nctfTw2wc10ms+CgRAw9
-         vFQRAF04SUrdH4bHJyqEpsy02dLmhxF7jH/TG3iedh40s3lKe2vO0Q/VjlEwBVY6dbgv
-         GhNFoJUI0MnHgm2dqJ1SY6AWLCjUyP4kllpv4Va48l+0pwQpsgT+yaCZgHMBSaXqdwbz
-         DTkDI+3M5STdEAoHRAbA2pQu2NDytQ4ktzMo33TFPzrf4ShLoHw5DcmYz/noTTDxs8zN
-         WlIA==
-X-Gm-Message-State: APjAAAV8WbUJLXfy9ZwmFhPua47+GJz7jd8LdyXEzC7mA33fa+/+o+J9
-        KpaymDWvjWTviZU3gd3u+bd+sYSH4mI=
-X-Google-Smtp-Source: APXvYqz0v7MGWmoArDTtNHDHOWAshMcRe+Bd4+BjFW1M55PJlN3CIOjLEg/NZhOdFZbeCjXioQ81/A==
-X-Received: by 2002:a2e:88ce:: with SMTP id a14mr13225610ljk.122.1558803308316;
-        Sat, 25 May 2019 09:55:08 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id r29sm372567lfn.68.2019.05.25.09.55.06
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 25 May 2019 09:55:06 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id e13so11226597ljl.11
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 May 2019 09:55:06 -0700 (PDT)
-X-Received: by 2002:a2e:97d8:: with SMTP id m24mr46505164ljj.52.1558803305972;
- Sat, 25 May 2019 09:55:05 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=CpgloL8+onz68GPgmg9tXtXXtVgIppru3CwueKNVn1M=;
+        b=dqmQdYoGjILU1MtrrJND8/z1L0QTBWIl3LSj2CUTDZ9N1JFUuS9LM63nBReFBxiolz
+         knvaIoA+0/Eix27cgQaWjZ44UORDzLc8aabY7olTduA0lwVHht0E03WWc8E1Zo7OWBjG
+         9jWgQyAW4T1c13unlF+Fd+NRbwSzMjztJHp4DVZ2kOqWzBOc5lEPegj9i+IaIBoEsrZR
+         z6p7dosPF/BrCKgdOY3WNTZQLhVl3xLhqECqqexztVRdIC5SOMg+HAxlE+gT7sc3DNUi
+         zZxzCICY4s82/0rbm/0jmTSKmgNfscU1eERtvMYjTiOa6j+yfb5yGMAV71PR+HMYjAYt
+         eLmw==
+X-Gm-Message-State: APjAAAXGQNSwQ3pA50BoXX/sBLTgjpGdry9kUR9UlzbKZ/9LuU/Gd9sZ
+        z4Zha/qTOqKaH38vtIoCUeEwgE84qWsfhV8itDKHwPn9G3LX
+X-Google-Smtp-Source: APXvYqyE0Jyhh6VMGfVY8tyiGNU+fB9Yn0ef/lFln7vD4bJPM0xETATwopqivsVpYCTq8b42O1CePf1IV1oBWXPPk/hFfPxiKtCR
 MIME-Version: 1.0
-References: <20190507164317.13562-1-cyphar@cyphar.com> <20190507164317.13562-6-cyphar@cyphar.com>
- <CAHk-=whbFMg4+HuWOBuHpvDNiAyowX2HUowv3+pt8vPWk5W-YQ@mail.gmail.com> <20190525070307.bxbvjh2254sx2z6g@yavin>
-In-Reply-To: <20190525070307.bxbvjh2254sx2z6g@yavin>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 25 May 2019 09:54:49 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiKFi5wi33AmJ4XJmzQaCMHa21-Z-GD_OKPNz=js7R7ig@mail.gmail.com>
-Message-ID: <CAHk-=wiKFi5wi33AmJ4XJmzQaCMHa21-Z-GD_OKPNz=js7R7ig@mail.gmail.com>
-Subject: Re: [PATCH v7 5/5] namei: resolveat(2) syscall
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a5e:9907:: with SMTP id t7mr13326663ioj.24.1558805885897;
+ Sat, 25 May 2019 10:38:05 -0700 (PDT)
+Date:   Sat, 25 May 2019 10:38:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001a546b0589b9c74f@google.com>
+Subject: KASAN: use-after-free Read in class_equal
+From:   syzbot <syzbot+83c135be90fc92db7e13@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 25, 2019 at 12:03 AM Aleksa Sarai <cyphar@cyphar.com> wrote:
->
-> You might not have seen the v8 of this set I sent a few days ago[1]. The
-> new set includes an example of a feature that is possible with
-> resolveat(2) but not with the current openat(O_PATH) interface.
+Hello,
 
-It's the "forced O_PATH" model that makes resolveat() basically
-entirely pointless to me.
+syzbot found the following crash on:
 
-You can do almost nothing with an O_PATH file descriptor. Yes, it's a
-really cool feature, and it's great for what it is, but it's less than
-0.001% of all opens people have.
+HEAD commit:    c50bbf61 Merge tag 'platform-drivers-x86-v5.2-2' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12130c9aa00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc045131472947d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=83c135be90fc92db7e13
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e7d84ca00000
 
-Even among security-conscious users, it's pointless. Yes, an O_PATH
-file descriptor is somewhat more "secure", but it's secure because
-it's mostly USELESS, and has to be converted into something else to be
-used.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+83c135be90fc92db7e13@syzkaller.appspotmail.com
 
-So say you are something like a static web server that actually wants
-to use the "don't traverse '..', don't follow symlinks" features etc.
-What you want to do with the end result is read() it or mmap it, or
-sendpage or whatever.
+==================================================================
+BUG: KASAN: use-after-free in class_equal+0x40/0x50  
+kernel/locking/lockdep.c:1527
+Read of size 8 at addr ffff88807aedf360 by task syz-executor.0/9275
 
-This is why I think resolveat() is entirely pointless. Even with
-O_EMPTYPATH it's pointless - because you shouldn't *need* that extra
-"ok, now get me the actual useful fd" phase.
+CPU: 0 PID: 9275 Comm: syz-executor.0 Not tainted 5.2.0-rc1+ #7
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
 
-In fact, I think resolveat() as a model is fundamentally wrong for yet
-another reason: O_CREAT. If you want to _create_ a new file, and you
-want to still have the path resolution modifiers in place, the
-resolveat() model is broken, because it only gives you path resolution
-for the lookup, and then when you do openat(O_CREAT) for the final
-component, you now don't have any way to limit that last component.
+Allocated by task 9264:
+  save_stack+0x23/0x90 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_kmalloc mm/kasan/common.c:489 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:462
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:497
+  slab_post_alloc_hook mm/slab.h:437 [inline]
+  slab_alloc mm/slab.c:3326 [inline]
+  kmem_cache_alloc+0x11a/0x6f0 mm/slab.c:3488
+  getname_flags fs/namei.c:138 [inline]
+  getname_flags+0xd6/0x5b0 fs/namei.c:128
+  getname+0x1a/0x20 fs/namei.c:209
+  do_sys_open+0x2c9/0x5d0 fs/open.c:1064
+  __do_sys_open fs/open.c:1088 [inline]
+  __se_sys_open fs/open.c:1083 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1083
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Sure,  you can probably effectively hack around it with resolveat() on
-everything but the last component, and then
-openat(O_CREAT|O_EXCL|O_NOFOLLOW) on the last component, because the
-O_EXCL|O_NOFOLLOW should mean that it won't do any of the unsafe
-things. And then (if you didn't actually want the O_EXCL), you handle
-the race between "somebody else got there first" by re-trying etc. So
-I suspect the O_CREAT thing could be worked around with extra
-complexity, but it's an example of how the O_PATH model really screws
-you over.
+Freed by task 9264:
+  save_stack+0x23/0x90 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:451
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
+  __cache_free mm/slab.c:3432 [inline]
+  kmem_cache_free+0x86/0x260 mm/slab.c:3698
+  putname+0xef/0x130 fs/namei.c:259
+  do_sys_open+0x318/0x5d0 fs/open.c:1079
+  __do_sys_open fs/open.c:1088 [inline]
+  __se_sys_open fs/open.c:1083 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1083
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-End result: I really think resolveat() is broken. It absolutely
-*needs* to be a full-fledged "openat()" system call, just with added
-path resolution flags.
+The buggy address belongs to the object at ffff88807aede580
+  which belongs to the cache names_cache of size 4096
+The buggy address is located 3552 bytes inside of
+  4096-byte region [ffff88807aede580, ffff88807aedf580)
+The buggy address belongs to the page:
+page:ffffea0001ebb780 refcount:1 mapcount:0 mapping:ffff8880aa596c40  
+index:0x0 compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea0001ebb708 ffffea0001ebb908 ffff8880aa596c40
+raw: 0000000000000000 ffff88807aede580 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
 
->   openat2(rootfd, "path/to/file", O_PATH, RESOLVE_IN_ROOT, &statbuf);
+Memory state around the buggy address:
+  ffff88807aedf200: 00 00 fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88807aedf280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb f1 f1
+> ffff88807aedf300: f1 f1 00 f2 f2 f2 00 f2 f2 f2 fb fb fb fb 00 00
+                                                        ^
+  ffff88807aedf380: 00 f3 f3 f3 f3 f3 fb fb fb fb fb fb fb fb fb fb
+  ffff88807aedf400: fb fb fb fb fb fb fb fb fb fb fb fb fb 00 00 00
+==================================================================
 
-Note that for O_CREAT, it either needs the 'mode' parameter too, or
-the statbuf would need to be an in-out thing. I think the in-out model
-might be nice (the varargs model with a conditional 'mode' parameter
-is horrid, I think), but at some point it's just bike-shedding.
 
-Also, I'm not absolutely married to the statbuf, but I do think it
-might be a useful extension. A *lot* of users need the size of the
-file for subsequent mmap() calls (or for buffer management for
-read/write interface) or for things like just headers (ie
-"Content-length:" in html etc).
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I'm not sure people actually want a full 'struct stat', but people
-historically also do st_ino/st_dev for indexing into existing
-user-space caches (or to check permissions like that it's on the right
-filesystem, but the resolve flags kind of make that less of an issue).
-And st_mode to verify that it's a proper regular file etc etc.
-
-You can always just leave it as NULL if you don't care, there's almost
-no downside to adding it, and I do think that people who want a "walk
-pathname carefully" model almost always would want to also check the
-end result anyway.
-
-Again, I'm thinking of the most obvious use cases where you want these
-kinds of special pathname traversals: file servers, static web content
-serving etc. They *all* want the file size and type when they open a
-file.
-
-> Is there a large amount of overhead or downside to the current
-> open->fstat way of doing things, or is this more of a "if we're going to
-> add more ways of opening we might as well add more useful things"?
-
-Right now, system calls are sadly very expensive on a lot of hardware.
-We used to be very proud of the fact that Linux system calls were
-fast, but with meltdown and retpoline etc, we're back to "system calls
-can be several thousand cycles each, just in overhead, on commonly
-available hardware".
-
-Is "several thousand cycles" fatal? Not necessarily. But I think that
-if we do add a new system call, particularly a fancy one for special
-security-conscious models, we should look at what people need and use,
-and want. And performance should always be a concern.
-
-I realize that people who come at this from primarily just a security
-issue background may think that security is the primary goal. But no.
-Security always needs to realize that the _primary_ goal is to have
-people _use_ it. Without users, security is entirely pointless. And
-the users part is partly performance, but mostly "it's convenient".
-
-The whole "this is Linux-specific" is a big inconvenience point, but
-aside from that, let's make any new interface as welcoming and simple
-and useful as possible. Not a "you have to do extra work" interface.
-Quite the reverse. Make it something that makes people go "ahh, yes,
-this actually means I don't have to do anything extra, because it
-already does everything I want for opening and checking a pathname".
-
-So the way to sell the path lookup improvements should not be "look,
-here's a secure way to look up paths". No. That's entirely missing the
-point.
-
-No, the way to do path lookup improvements is to say "look, here's a
-_convenient_ way to look up paths, and btw, it's also easy to make
-secure".
-
-Talking about securely opening things - another flag that we may want
-to avoid issues is a "don't open device nodes" flag. Sure, O_NONBLOCK
-plus checking the st_mode of the result is usually sufficient, but
-it's actually fairly easy to get that wrong. Things like /dev/tty and
-/dev/zero often need to be available for various reasons, and have
-been used to screw careless "open and read" users up that missed a
-check.
-
-I also do wonder that if the only actual user-facing interface for the
-resolution flags is a new system call, should we not make the
-*default* value be "don't open anything odd at all".
-
-So instead of saying RESOLVE_XDEV for "don't cross mount points",
-maybe the flags should be the other way around, and say "yes, allow
-mount point crossings", and "yes, explicitly allow device node
-opening", and "yes, allow DOTDOT" etc.
-
-               Linus
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
