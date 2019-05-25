@@ -2,78 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 419222A71F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 May 2019 23:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03B542A74E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2019 01:09:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbfEYVnH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 May 2019 17:43:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59734 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727431AbfEYVnH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 May 2019 17:43:07 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C17D920717;
-        Sat, 25 May 2019 21:43:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558820586;
-        bh=RSkWc9M4HXsc7P5xgZgm2GYbuJuLKG99DNM5QI2xszs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qcH5klgZXiIVY3yzZ3y1eFDh75WpT2Eo69UkgFOvGL+a9UoXR4VQGx/af580/7q6s
-         82dNlsR9lOhsJucrwvrRl7Ily/sxnI/ahZxXajfHcLo2nxsEj+6tuTMw66DZmfXIM3
-         BVS4WSXi3EAYM3JAmPvesPTE7wof+WW4rJKojdm4=
-Date:   Sat, 25 May 2019 14:43:04 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] binfmt_flat: make load_flat_shared_library() work
-Message-Id: <20190525144304.e2b9475a18a1f78a964c5640@linux-foundation.org>
-In-Reply-To: <20190524201817.16509-1-jannh@google.com>
-References: <20190524201817.16509-1-jannh@google.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727399AbfEYXIy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 May 2019 19:08:54 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:58920 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfEYXIy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 25 May 2019 19:08:54 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hUfmQ-0007tt-IP; Sat, 25 May 2019 23:08:46 +0000
+Date:   Sun, 26 May 2019 00:08:46 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 23/23] NFS: Add fs_context support.
+Message-ID: <20190525230846.GP17978@ZenIV.linux.org.uk>
+References: <155862813755.26654.563679411147031501.stgit@warthog.procyon.org.uk>
+ <155862834550.26654.17230477291010963688.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155862834550.26654.17230477291010963688.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 24 May 2019 22:18:17 +0200 Jann Horn <jannh@google.com> wrote:
+On Thu, May 23, 2019 at 05:19:05PM +0100, David Howells wrote:
 
-> load_flat_shared_library() is broken: It only calls load_flat_file() if
-> prepare_binprm() returns zero, but prepare_binprm() returns the number of
-> bytes read - so this only happens if the file is empty.
+>  out_no_data:
+> -	dfprintk(MOUNT, "NFS: mount program didn't pass any mount data\n");
+> -	return -EINVAL;
+> +	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
+> +		ctx->skip_reconfig_option_check = true;
+> +		return 0;
+> +	}
 
-ouch.
+That really ought to be
+	if (fc->root) { /* remount */
+		ctx->skip_reconfig_option_check = true;
+		return 0;
+	}
+and similar in the v4 counterpart.  fc->purpose is a bad idea; it is
+possible to get rid of it.
 
-> Instead, call into load_flat_file() if the number of bytes read is
-> non-negative. (Even if the number of bytes is zero - in that case,
-> load_flat_file() will see nullbytes and return a nice -ENOEXEC.)
-> 
-> In addition, remove the code related to bprm creds and stop using
-> prepare_binprm() - this code is loading a library, not a main executable,
-> and it only actually uses the members "buf", "file" and "filename" of the
-> linux_binprm struct. Instead, call kernel_read() directly.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 287980e49ffc ("remove lots of IS_ERR_VALUE abuses")
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
-> I only found the bug by looking at the code, I have not verified its
-> existence at runtime.
-> Also, this patch is compile-tested only.
-> It would be nice if someone who works with nommu Linux could have a
-> look at this patch.
+Frankly, I'm tempted to add
 
-287980e49ffc was three years ago!  Has it really been broken for all
-that time?  If so, it seems a good source of freed disk space...
+static inline bool is_remount_fc(struct fs_context *fc)
+{
+	return fc->root != NULL;
+}
 
+and just use that in such places...
