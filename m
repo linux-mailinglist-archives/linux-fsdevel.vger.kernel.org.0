@@ -2,390 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E99AA2AA4E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2019 16:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 176542AA3F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2019 16:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfEZOgi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 May 2019 10:36:38 -0400
-Received: from mail.virtlab.unibo.it ([130.136.161.50]:56014 "EHLO
-        mail.virtlab.unibo.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727767AbfEZOgi (ORCPT
+        id S1727840AbfEZOeX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 May 2019 10:34:23 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34682 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727816AbfEZOeX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 May 2019 10:36:38 -0400
-X-Greylist: delayed 656 seconds by postgrey-1.27 at vger.kernel.org; Sun, 26 May 2019 10:36:35 EDT
-Received: from cs.unibo.it (host0.studiodavoli.it [109.234.61.1])
-        by mail.virtlab.unibo.it (Postfix) with ESMTPSA id 94DBE1FF56;
-        Sun, 26 May 2019 16:25:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=cs.unibo.it;
-        s=virtlab; t=1558880738;
-        bh=C+N35ZzXj0U6TNHCXxgyJtcRMzkF1WAh1wwcXUynMic=;
-        h=Date:From:To:Cc:Subject:From;
-        b=BJaFV42a2QEk7d9YIb2049DqKUj1/iwlBGt2h5i/mPZ3mu/pVtQtvqIUsYItyK6vy
-         iJWGaOI7DRpNhuxRIR3EEvyVP5wU4b5nRy+xzknCPLUtArlz+ReG3/UBNCSwwSXkQc
-         HWhXZwyBjrnXd+NtEmBp4LroVv59xkDY0eYWjoco=
-Date:   Sun, 26 May 2019 16:25:21 +0200
-From:   Renzo Davoli <renzo@cs.unibo.it>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Davide Libenzi <davidel@xmailserver.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linux-api@vger.kernel.org
-Subject: [PATCH 1/1] eventfd new tag EFD_VPOLL: generate epoll events
-Message-ID: <20190526142521.GA21842@cs.unibo.it>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sun, 26 May 2019 10:34:23 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f8so14344247wrt.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2019 07:34:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=QCqLUEqmBt5yL1ztx19FzOehF6EwgHnPNx//SH8OfWg=;
+        b=j79iHjU/Be1qUU7wRnEGMj2k5KEFUzJBdMSXdyRBpX/2Ddbthba/EBtb1Z1Y1vYtD9
+         ZhN7AaE8BgY4Q/PgvsU+ZGdxNtT7hGs28hSTGc+g4kzAVW1Ttg8dYVD9NQZWj7/JEV73
+         4COCkJ3NfebhnvZzwewHW7vgJuAd4fjCEG1iktqkWHvD3mZtOVuYqcUTIhbDKveDaqrD
+         US3ujT7056VIjsV4VYE7IWLBAJn2KIUi/lximJY0CCk1Olw/P/FNiEM+1FBaTGguPmfE
+         6Ee7Bsz7vDTv2wxBdfVURFG411BAURwSKcnFufiRIkMK8/R3VPDoRLn0wvAOGTeMBqOw
+         eCMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QCqLUEqmBt5yL1ztx19FzOehF6EwgHnPNx//SH8OfWg=;
+        b=U8lAiRX2/KaRC1mfbxGtfjVekGSvOkuMzipNrkim3H/wspdq4vIsmFDCGPUL3yVjJ9
+         dnMY+m8EZ2d0ry2rwUjrIwGENpI6UjjBN7idXNFBqVS8iQns2co2GXgSmutgulHLTrZE
+         gG6Hc/S4loLT7iF6WaNKkqZw6F67+/fOcMVQz01XslANR+XOzPjbHyVO+ThT2Va8MThy
+         HAMRr5/EtuHnsS5v3IHQBlDJlA31aYpHGVAYLs6rcA52MJbybZr3nvHwPbOUUGyMI7S1
+         4gt5Zc49F+xU1Yug0ctQrJ5EWORyqRGCmQDrTJWIyqc7Cd8a9/qxnTA/6N72uklRFgHZ
+         9DiQ==
+X-Gm-Message-State: APjAAAVcEr6Y6dFXRpmDvP3/nPcPHv1AQPMrmZhB8vkzeUKkt/8JWpw2
+        +rViKKNH3L2Cbjaz1KHI2pg=
+X-Google-Smtp-Source: APXvYqyaKzTAW6zj4XvNwdY3DuiisQEoEjZc4oa5Wp13Iz/MJxntNs703dfAvmlAQxV1BApzoaHAfg==
+X-Received: by 2002:adf:d84e:: with SMTP id k14mr5444742wrl.76.1558881260872;
+        Sun, 26 May 2019 07:34:20 -0700 (PDT)
+Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
+        by smtp.gmail.com with ESMTPSA id t13sm21144146wra.81.2019.05.26.07.34.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 26 May 2019 07:34:20 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     David Sterba <dsterba@suse.com>, Christoph Hellwig <hch@lst.de>,
+        Joel Becker <jlbec@evilplan.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 00/10] Sort out fsnotify_nameremove() mess
+Date:   Sun, 26 May 2019 17:34:01 +0300
+Message-Id: <20190526143411.11244-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch implements an extension of eventfd to define file descriptors 
-whose I/O events can be generated at user level. These file descriptors
-trigger notifications for [p]select/[p]poll/epoll.
+Jan,
 
-This feature is useful for user-level implementations of network stacks
-or virtual device drivers as libraries.
+For v3 I went with a straight forward approach.
+Filesystems that have fsnotify_{create,mkdir} hooks also get
+explicit fsnotify_{unlink,rmdir} hooks.
 
-Development and porting of code often requires to find the way to wait for I/O
-events both coming from file descriptors and generated by user-level code (e.g.
-user-implemented net stacks or drivers).  While it is possible to provide a
-partial support (e.g. using pipes or socketpairs), a clean and complete
-solution is still missing (as far as I have seen); e.g. I have not seen any
-clean way to generate EPOLLPRI, EPOLLERR, etc.
+Hopefully, this approach is orthogonal to whatever changes Al is
+planning for recursive tree remove code, because in many of the
+cases, the hooks are added at the entry point for the recursive
+tree remove.
 
-This proposal is based on a new tag for eventfd2(2): EFD_VPOLL.
+After looking closer at all the filesystems that were converted to
+simple_remove in v2, I decided to exempt another 3 filesystems from
+the fsnotify delete hooks: hypfs,qibfs and aafs.
+hypfs is pure cleanup (*). qibfs and aafs can remove dentry on user
+configuration change, but they do not generate create events, so it
+is less likely that users depend on the delete events.
 
-This statement:
-	fd = eventfd(EPOLLOUT, EFD_VPOLL | EFD_CLOEXEC);
-creates a file descriptor for I/O event generation. In this case EPOLLOUT is
-initially true.
+That leaves configfs the only filesystem that gets the new delete hooks
+even though it does not have create hooks.
 
-Likewise all the other eventfs services, read(2) and write(2) use a 8-byte 
-integer argument.
+The following d_delete() call sites have been audited and will no longer
+generate fsnotify event after this series:
 
-read(2) returns the current state of the pending events.
+arch/s390/hypfs/inode.c:hypfs_remove() - cleanup (*)
+.../usb/gadget/function/f_fs.c:ffs_epfiles_destroy() - no create events
+.../infiniband/hw/qib/qib_fs.c:remove_device_files() - no create events
+fs/ceph/dir.c:ceph_unlink() - from vfs_unlink()
+fs/ceph/inode.c:ceph_fill_trace() - invalidate (**)
+fs/ceph/inode.c:ceph_readdir_prepopulate() - invalidate (**)
+fs/configfs/dir.c:detach_groups() - hooks added, from vfs or cleanup (*)
+fs/configfs/dir.c:configfs_attach_item() - cleanup (*)
+fs/configfs/dir.c:configfs_attach_group() - cleanup (*)
+fs/efivarfs/file.c:efivarfs_file_write() - invalidate (**)
+fs/fuse/dir.c:fuse_reverse_inval_entry() - invalidate (**)
+fs/nfs/dir.c:nfs_dentry_handle_enoent() - invalidate (**)
+fs/nsfs.c:__ns_get_path() - cleanup (*)
+fs/ocfs2/dlmglue.c:ocfs2_dentry_convert_worker() - invalidate (**)
+fs/reiserfs/xattr.c:xattr_{unlink,rmdir}() - hidden xattr inode
+security/apparmor/apparmorfs.c:aafs_remove() - no create events
 
-The argument of write(2) is an or-composition of a control command
-(EFD_VPOLL_ADDEVENTS, EFD_VPOLL_DELEVENTS or EFD_VPOLL_MODEVENTS) and the
-bitmap of events to be added, deleted to the current set of pending events.
-EFD_VPOLL_MODEVENTS completely redefines the set of pending events.
+(*) There are 2 "cleanup" use cases:
+  - Create;init;delete if init failed
+  - Batch delete of files within dir before removing dir
+  Both those cases are not interesting for users that wish to observe
+  configuration changes on pseudo filesystems.  Often, there is already
+  an fsnotify event generated on the directory removal which is what
+  users should find interesting, for example:
+  configfs_unregister_{group,subsystem}().
 
-e.g.:
-	uint64_t request = EFD_VPOLL_ADDEVENTS | EPOLLIN | EPOLLPRI;
-	write(fd, &request, sizeof(request);
-adds EPOLLIN and EPOLLPRI to the set of pending events.
+(**) The different "invalidate" use cases differ, but they all share
+  one thing in common - user is not guarantied to get an event with
+  current kernel.  For example, when a file is deleted remotely on
+  nfs server, nfs client is not guarantied to get an fsnotify delete
+  event.  On current kernel, nfs client could generate an fsnotify
+  delete event if the local entry happens to be in cache and client
+  finds out that entry is deleted on server during another user
+  operation.  Incidentally, this group of use cases is where most of
+  the call sites are with "unstable" d_name, which is the reason for
+  this patch series to begin with.
 
-These are examples of messages asking for a feature like EFD_VPOLL:
-https://stackoverflow.com/questions/909189/simulating-file-descriptor-in-user-space
-https://stackoverflow.com/questions/1648147/running-a-simple-tcp-server-with-poll-how-do-i-trigger-events-artificially
-... and I need it to write networking and device modules for vuos:
-https://github.com/virtualsquare/vuos
-(it is the new codebase of ViewOS, see www.virtualsquare.org).
+Thanks,
+Amir.
 
-EXAMPLE:
-The following program creates an eventfd/EFD_VPOLL file descriptor and then forks
-a child process.  While the parent waits for events using epoll_wait the child
-generates a sequence of events. When the parent receives an event (or a set of events)
-it prints it and disarm it.
-The following shell session shows a sample run of the program:
-	timeout...
-	timeout...
-	GOT event 1
-	timeout...
-	GOT event 1
-	timeout...
-	GOT event 3
-	timeout...
-	GOT event 2
-	timeout...
-	GOT event 4
-	timeout...
-	GOT event 10
+Changes since v2:
+- Drop simple_rename() conversions (add explicit hooks instead)
+- Drop hooks from hypfs/qibfs/aafs
+- Split out debugfs re-factoring patch
 
-Program source:
-#include <sys/eventfd.h>
-#include <sys/epoll.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>             /* Definition of uint64_t */
+Changes since v1:
+- Split up per filesystem patches
+- New hook names fsnotify_{unlink,rmdir}()
+- Simplify fsnotify code in separate final patch
 
-#ifndef EFD_VPOLL
-#define EFD_VPOLL (1 << 1)
-#define EFD_VPOLL_ADDEVENTS (1UL << 32)
-#define EFD_VPOLL_DELEVENTS (2UL << 32)
-#define EFD_VPOLL_MODEVENTS (3UL << 32)
-#endif
+Amir Goldstein (10):
+  fsnotify: add empty fsnotify_{unlink,rmdir}() hooks
+  btrfs: call fsnotify_rmdir() hook
+  rpc_pipefs: call fsnotify_{unlink,rmdir}() hooks
+  tracefs: call fsnotify_{unlink,rmdir}() hooks
+  devpts: call fsnotify_unlink() hook
+  debugfs: simplify __debugfs_remove_file()
+  debugfs: call fsnotify_{unlink,rmdir}() hooks
+  configfs: call fsnotify_rmdir() hook
+  fsnotify: move fsnotify_nameremove() hook out of d_delete()
+  fsnotify: get rid of fsnotify_nameremove()
 
-#define handle_error(msg) \
-	do { perror(msg); exit(EXIT_FAILURE); } while (0)
+ fs/afs/dir_silly.c               |  5 ----
+ fs/btrfs/ioctl.c                 |  4 +++-
+ fs/configfs/dir.c                |  3 +++
+ fs/dcache.c                      |  2 --
+ fs/debugfs/inode.c               | 21 ++++++++--------
+ fs/devpts/inode.c                |  1 +
+ fs/namei.c                       |  2 ++
+ fs/nfs/unlink.c                  |  6 -----
+ fs/notify/fsnotify.c             | 41 --------------------------------
+ fs/tracefs/inode.c               |  3 +++
+ include/linux/fsnotify.h         | 26 ++++++++++++++++++++
+ include/linux/fsnotify_backend.h |  4 ----
+ net/sunrpc/rpc_pipe.c            |  4 ++++
+ 13 files changed, 52 insertions(+), 70 deletions(-)
 
-static void vpoll_ctl(int fd, uint64_t request) {
-	ssize_t s;
-	s = write(fd, &request, sizeof(request));
-	if (s != sizeof(uint64_t))
-		handle_error("write");
-}
-
-int
-main(int argc, char *argv[])
-{
-	int efd, epollfd; 
-	struct epoll_event ev;
-	ev.events = EPOLLIN | EPOLLRDHUP | EPOLLERR | EPOLLOUT | EPOLLHUP | EPOLLPRI;
-	ev.data.u64 = 0;
-
-	efd = eventfd(0, EFD_VPOLL | EFD_CLOEXEC);
-	if (efd == -1)
-		handle_error("eventfd");
-	epollfd = epoll_create1(EPOLL_CLOEXEC);
-	if (efd == -1)
-		handle_error("epoll_create1");
-	if (epoll_ctl(epollfd, EPOLL_CTL_ADD, efd, &ev) == -1) 
-		handle_error("epoll_ctl");
-
-	switch (fork()) {
-		case 0:
-			sleep(3);
-			vpoll_ctl(efd, EFD_VPOLL_ADDEVENTS | EPOLLIN);
-			sleep(2);
-			vpoll_ctl(efd, EFD_VPOLL_ADDEVENTS | EPOLLIN);
-			sleep(2);
-			vpoll_ctl(efd, EFD_VPOLL_ADDEVENTS | EPOLLIN | EPOLLPRI);
-			sleep(2);
-			vpoll_ctl(efd, EFD_VPOLL_ADDEVENTS | EPOLLPRI);
-			sleep(2);
-			vpoll_ctl(efd, EFD_VPOLL_ADDEVENTS | EPOLLOUT);
-			sleep(2);
-			vpoll_ctl(efd, EFD_VPOLL_ADDEVENTS | EPOLLHUP);
-			exit(EXIT_SUCCESS);
-		default:
-			while (1) {
-				int nfds;
-				nfds = epoll_wait(epollfd, &ev, 1, 1000);
-				if (nfds < 0)
-					handle_error("epoll_wait");
-				else if (nfds == 0)
-					printf("timeout...\n");
-				else {
-					printf("GOT event %x\n", ev.events);
-					vpoll_ctl(efd, EFD_VPOLL_DELEVENTS | ev.events);
-					if (ev.events & EPOLLHUP)
-						break;
-				}
-			}
-		case -1:
-			handle_error("fork");
-	}
-	close(epollfd);
-	close(efd);
-	return 0;
-}
-
-Signed-off-by: Renzo Davoli <renzo@cs.unibo.it>
----
- fs/eventfd.c                   | 115 +++++++++++++++++++++++++++++++--
- include/linux/eventfd.h        |   7 +-
- include/uapi/linux/eventpoll.h |   2 +
- 3 files changed, 116 insertions(+), 8 deletions(-)
-
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 8aa0ea8c55e8..f83b7d02307e 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -3,6 +3,7 @@
-  *  fs/eventfd.c
-  *
-  *  Copyright (C) 2007  Davide Libenzi <davidel@xmailserver.org>
-+ *  EFD_VPOLL support: 2019 Renzo Davoli <renzo@cs.unibo.it>
-  *
-  */
- 
-@@ -30,12 +31,24 @@ struct eventfd_ctx {
- 	struct kref kref;
- 	wait_queue_head_t wqh;
- 	/*
--	 * Every time that a write(2) is performed on an eventfd, the
--	 * value of the __u64 being written is added to "count" and a
--	 * wakeup is performed on "wqh". A read(2) will return the "count"
--	 * value to userspace, and will reset "count" to zero. The kernel
--	 * side eventfd_signal() also, adds to the "count" counter and
--	 * issue a wakeup.
-+	 * If the EFD_VPOLL flag was NOT set at eventfd creation:
-+	 *   Every time that a write(2) is performed on an eventfd, the
-+	 *   value of the __u64 being written is added to "count" and a
-+	 *   wakeup is performed on "wqh". A read(2) will return the "count"
-+	 *   value to userspace, and will reset "count" to zero (or decrement
-+	 *   "count" by 1 if the flag EFD_SEMAPHORE has been set). The kernel
-+	 *   side eventfd_signal() also, adds to the "count" counter and
-+	 *   issue a wakeup.
-+	 *
-+	 * If the EFD_VPOLL flag was set at eventfd creation:
-+	 *   count is the set of pending EPOLL events.
-+	 *   read(2) returns the current value of count.
-+	 *   The argument of write(2) is an 8-byte integer:
-+	 *   it is an or-composition of a control command (EFD_VPOLL_ADDEVENTS,
-+	 *   EFD_VPOLL_DELEVENTS or EFD_VPOLL_MODEVENTS) and the bitmap of
-+	 *   events to be added, deleted to the current set of pending events.
-+	 *   (i.e. which bits of "count" must be set or reset).
-+	 *   EFD_VPOLL_MODEVENTS redefines the set of pending events.
- 	 */
- 	__u64 count;
- 	unsigned int flags;
-@@ -295,6 +308,78 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
- 	return res;
- }
- 
-+static __poll_t eventfd_vpoll_poll(struct file *file, poll_table *wait)
-+{
-+	struct eventfd_ctx *ctx = file->private_data;
-+	__poll_t events = 0;
-+	u64 count;
-+
-+	poll_wait(file, &ctx->wqh, wait);
-+
-+	count = READ_ONCE(ctx->count);
-+
-+	events = (count & EPOLLALLMASK);
-+
-+	return events;
-+}
-+
-+static ssize_t eventfd_vpoll_read(struct file *file, char __user *buf,
-+		size_t count, loff_t *ppos)
-+{
-+	struct eventfd_ctx *ctx = file->private_data;
-+	ssize_t res;
-+	__u64 ucnt = 0;
-+
-+	if (count < sizeof(ucnt))
-+		return -EINVAL;
-+	res = sizeof(ucnt);
-+	ucnt = READ_ONCE(ctx->count);
-+	if (put_user(ucnt, (__u64 __user *)buf))
-+		return -EFAULT;
-+
-+	return res;
-+}
-+
-+static ssize_t eventfd_vpoll_write(struct file *file, const char __user *buf,
-+		size_t count, loff_t *ppos)
-+{
-+	struct eventfd_ctx *ctx = file->private_data;
-+	ssize_t res;
-+	__u64 ucnt;
-+	__u32 events;
-+
-+	if (count < sizeof(ucnt))
-+		return -EINVAL;
-+	if (copy_from_user(&ucnt, buf, sizeof(ucnt)))
-+		return -EFAULT;
-+	spin_lock_irq(&ctx->wqh.lock);
-+
-+	events = ucnt & EPOLLALLMASK;
-+	res = sizeof(ucnt);
-+	switch (ucnt & ~((__u64)EPOLLALLMASK)) {
-+	case EFD_VPOLL_ADDEVENTS:
-+		ctx->count |= events;
-+		break;
-+	case EFD_VPOLL_DELEVENTS:
-+		ctx->count &= ~(events);
-+		break;
-+	case EFD_VPOLL_MODEVENTS:
-+		ctx->count = (ctx->count & ~EPOLLALLMASK) | events;
-+		break;
-+	default:
-+		res = -EINVAL;
-+	}
-+
-+	/* wake up waiting threads */
-+	if (res >= 0 && waitqueue_active(&ctx->wqh))
-+		wake_up_locked_poll(&ctx->wqh, res);
-+
-+	spin_unlock_irq(&ctx->wqh.lock);
-+
-+	return res;
-+
-+}
-+
- #ifdef CONFIG_PROC_FS
- static void eventfd_show_fdinfo(struct seq_file *m, struct file *f)
- {
-@@ -319,6 +404,17 @@ static const struct file_operations eventfd_fops = {
- 	.llseek		= noop_llseek,
- };
- 
-+static const struct file_operations eventfd_vpoll_fops = {
-+#ifdef CONFIG_PROC_FS
-+	.show_fdinfo	= eventfd_show_fdinfo,
-+#endif
-+	.release	= eventfd_release,
-+	.poll		= eventfd_vpoll_poll,
-+	.read		= eventfd_vpoll_read,
-+	.write		= eventfd_vpoll_write,
-+	.llseek		= noop_llseek,
-+};
-+
- /**
-  * eventfd_fget - Acquire a reference of an eventfd file descriptor.
-  * @fd: [in] Eventfd file descriptor.
-@@ -391,6 +487,7 @@ EXPORT_SYMBOL_GPL(eventfd_ctx_fileget);
- static int do_eventfd(unsigned int count, int flags)
- {
- 	struct eventfd_ctx *ctx;
-+	const struct file_operations *fops = &eventfd_fops;
- 	int fd;
- 
- 	/* Check the EFD_* constants for consistency.  */
-@@ -410,7 +507,11 @@ static int do_eventfd(unsigned int count, int flags)
- 	ctx->flags = flags;
- 	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
- 
--	fd = anon_inode_getfd("[eventfd]", &eventfd_fops, ctx,
-+	if (flags & EFD_VPOLL) {
-+		fops = &eventfd_vpoll_fops;
-+		ctx->count &= EPOLLALLMASK;
-+	}
-+	fd = anon_inode_getfd("[eventfd]", fops, ctx,
- 			      O_RDWR | (flags & EFD_SHARED_FCNTL_FLAGS));
- 	if (fd < 0)
- 		eventfd_free_ctx(ctx);
-diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
-index ffcc7724ca21..63258cf29344 100644
---- a/include/linux/eventfd.h
-+++ b/include/linux/eventfd.h
-@@ -21,11 +21,16 @@
-  * shared O_* flags.
-  */
- #define EFD_SEMAPHORE (1 << 0)
-+#define EFD_VPOLL (1 << 1)
- #define EFD_CLOEXEC O_CLOEXEC
- #define EFD_NONBLOCK O_NONBLOCK
- 
- #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
--#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
-+#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE | EFD_VPOLL)
-+
-+#define EFD_VPOLL_ADDEVENTS (1UL << 32)
-+#define EFD_VPOLL_DELEVENTS (2UL << 32)
-+#define EFD_VPOLL_MODEVENTS (3UL << 32)
- 
- struct eventfd_ctx;
- struct file;
-diff --git a/include/uapi/linux/eventpoll.h b/include/uapi/linux/eventpoll.h
-index 8a3432d0f0dc..814de6d869c7 100644
---- a/include/uapi/linux/eventpoll.h
-+++ b/include/uapi/linux/eventpoll.h
-@@ -41,6 +41,8 @@
- #define EPOLLMSG	(__force __poll_t)0x00000400
- #define EPOLLRDHUP	(__force __poll_t)0x00002000
- 
-+#define EPOLLALLMASK	((__force __poll_t)0x0fffffff)
-+
- /* Set exclusive wakeup mode for the target file descriptor */
- #define EPOLLEXCLUSIVE	((__force __poll_t)(1U << 28))
- 
 -- 
-2.20.1
+2.17.1
 
