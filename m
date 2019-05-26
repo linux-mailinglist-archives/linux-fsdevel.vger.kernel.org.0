@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50D2F2AA46
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2019 16:34:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B86A22AA47
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2019 16:34:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbfEZOee (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 May 2019 10:34:34 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42958 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbfEZOee (ORCPT
+        id S1727891AbfEZOeg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 May 2019 10:34:36 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33992 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727883AbfEZOeg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 May 2019 10:34:34 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l2so14324631wrb.9
-        for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2019 07:34:33 -0700 (PDT)
+        Sun, 26 May 2019 10:34:36 -0400
+Received: by mail-wm1-f67.google.com with SMTP id e19so5286965wme.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2019 07:34:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=K62MJb0ZaY6QRlPyoVo0DCk3fPJSEXBJYKNVP8bpoVQ=;
-        b=MCMueGQtOj4JgS3XMhaJacHZW58+NLOA3qQL70Uv5I2o1QaK+D9nm5A2Hogc9yhruB
-         U+vj+hHHfpHsBUbXsR4r90j7fv0cgn0EXieNe64zodY3umFZM2CSPKK7H4pZoxoWjRRN
-         WO6vY8r6dRSY/y5AeBo2QqPho1t+K0OLSkykrUaZ+QINnoPP7p6SS261+eYfsBs1nXdV
-         ro4Ue18Wlg6YbRyTXPIwtNPdL/i0vm61CFDNlcfNOznJw06Z2DCjI+28qzcpRW6cOn2Y
-         hdWQWJO+8OHj6kcilBMvipSOvHUr61EgAgX6VWEyAns4+YuA7MsdpsUS0EW3ndNQPiqF
-         eU8A==
+        bh=YNfgOrwd5oLG9pqVP9CmPHnoazZONbT1LB1KR0Zu2bE=;
+        b=IWuwmV9tYKElqzqbb3C+cGStUb7HC74An2r5w1ne62mqblCgdMt5tls0T52CDZpwvi
+         5Fh+Cln7w7ajkN+SFS3qO0PqrJIAd3RN8azVkHQ5uM5I6jIerpRCo/xYOO9ntSCdGVwC
+         5w2kUc+lZ3E88YQq8MSZDoVspNQxFPMK92eNBTygwLyT3oCJV9++VLbieiahW7TaWNVl
+         zc3DNZYEPtIo4OzJBsw4lo/Vvg6LQlRtxV9i/Hwy+arrgoYJhOI59UuCTB2k8MZu8Po4
+         3A2+Z6c05E/dORed7kxbR3w5WikfUG9bEGX/8nfRG+eDuf1XbwQD0SqY+xKxFh8VfM1H
+         qdpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=K62MJb0ZaY6QRlPyoVo0DCk3fPJSEXBJYKNVP8bpoVQ=;
-        b=VTFhv0pzcKAwgPn8I+JUR7wE4gjIOxTUnTZTn9Oh/WYJgXRCHHH2F74g3yXTvY6f6c
-         zZpcqD8JbxCi0zavA6qHM8Uevg2Tw/o5zkcmPtKgaVeGEUBH9CvMADoVZz87geJQrFJD
-         FftZu//G3wgjj4MuoijGJCX0GL2cKdgpZdQ7Or88rczYLzYhAPlyxfGlz0qalcN/SeWQ
-         GwkmG2fisexJlyDxXKAiTY3jGTqLsWao0b+qwP0lF/Bu4XuPITCvQtgjn9pyRHGmgB+F
-         YXQVWyTUJ8rR0sjxSA4h0gDILrcuSsLc/A8KOgLopYRzmuSUMUqxW0+bdDIHdzhXzrxl
-         JdSg==
-X-Gm-Message-State: APjAAAU2cHo2dFjWcnbZ1GV8/n3Kl32m0rod8vaErkGT7XmegWj9yuvO
-        IoEUJvfeQya8TMl492LG+Tw=
-X-Google-Smtp-Source: APXvYqxfocEIn9EYuYCmV+Fkh4AivmFwT5hH0YstIRHH0NZ9A1kMthDGwoU3TK6WpCL5GNHEOocBGA==
-X-Received: by 2002:adf:e590:: with SMTP id l16mr1669367wrm.257.1558881272798;
-        Sun, 26 May 2019 07:34:32 -0700 (PDT)
+        bh=YNfgOrwd5oLG9pqVP9CmPHnoazZONbT1LB1KR0Zu2bE=;
+        b=F/z4xST8FtWri0oGdLqOpl4xA1MAbpJkIEHyY9ILDNVaCEI1uaQIP3GyiGkHj3hCWs
+         eAY6PkbB7PzotjNBjcQ5xGJDkg66MPvEFjy9kTQvlZJah2IsVbLgmmR+oiqtpbGg6E7p
+         Z3LxVAjkq1rM/j80QkifVthcNQtUK/oQXLATynu1rQFUZrQc6OV5LGuWW+lfmTsZsIIt
+         UbEBtm2vDk+PktGVCOIoFr877LCpoFxKorE4vH+ItEybPYn+o2HTddk1HKmWpCy9p4fF
+         2CdUkREjl6R2m7k/8TIBF/3r0uWtYI7CwHoMoCiUN9z9by3UhK3srgoiVlv2iNFtk00b
+         lFwg==
+X-Gm-Message-State: APjAAAUrZf6f61ipFeIEzaoSEARfMiBCuIXezFeuYW9p7pQfImZ3v0Q8
+        2j1aqS5/PbX2/+P3AkkuseI=
+X-Google-Smtp-Source: APXvYqxzg7F7XpArIL8GO/uwyaPe2G7b1Ml15LI2p0Tp/cGUdJAxqhNYxbEUytnhVGvlLTgWDpgMbQ==
+X-Received: by 2002:a1c:f61a:: with SMTP id w26mr22998831wmc.47.1558881274481;
+        Sun, 26 May 2019 07:34:34 -0700 (PDT)
 Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
-        by smtp.gmail.com with ESMTPSA id t13sm21144146wra.81.2019.05.26.07.34.30
+        by smtp.gmail.com with ESMTPSA id t13sm21144146wra.81.2019.05.26.07.34.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 May 2019 07:34:32 -0700 (PDT)
+        Sun, 26 May 2019 07:34:33 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     David Sterba <dsterba@suse.com>, Christoph Hellwig <hch@lst.de>,
@@ -55,9 +55,9 @@ Cc:     David Sterba <dsterba@suse.com>, Christoph Hellwig <hch@lst.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 06/10] debugfs: simplify __debugfs_remove_file()
-Date:   Sun, 26 May 2019 17:34:07 +0300
-Message-Id: <20190526143411.11244-7-amir73il@gmail.com>
+Subject: [PATCH v3 07/10] debugfs: call fsnotify_{unlink,rmdir}() hooks
+Date:   Sun, 26 May 2019 17:34:08 +0300
+Message-Id: <20190526143411.11244-8-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190526143411.11244-1-amir73il@gmail.com>
 References: <20190526143411.11244-1-amir73il@gmail.com>
@@ -66,61 +66,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move simple_unlink()+d_delete() from __debugfs_remove_file() into
-caller __debugfs_remove() and rename helper for post remove file to
-__debugfs_file_removed().
-
-This will simplify adding fsnotify_unlink() hook.
+This will allow generating fsnotify delete events after the
+fsnotify_nameremove() hook is removed from d_delete().
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/debugfs/inode.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ fs/debugfs/inode.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index acef14ad53db..d89874da9791 100644
+index d89874da9791..1e444fe1f778 100644
 --- a/fs/debugfs/inode.c
 +++ b/fs/debugfs/inode.c
-@@ -617,13 +617,10 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
- }
- EXPORT_SYMBOL_GPL(debugfs_create_symlink);
- 
--static void __debugfs_remove_file(struct dentry *dentry, struct dentry *parent)
-+static void __debugfs_file_removed(struct dentry *dentry)
- {
- 	struct debugfs_fsdata *fsd;
- 
--	simple_unlink(d_inode(parent), dentry);
--	d_delete(dentry);
--
- 	/*
- 	 * Paired with the closing smp_mb() implied by a successful
- 	 * cmpxchg() in debugfs_file_get(): either
-@@ -644,16 +641,15 @@ static int __debugfs_remove(struct dentry *dentry, struct dentry *parent)
- 
- 	if (simple_positive(dentry)) {
+@@ -643,8 +643,11 @@ static int __debugfs_remove(struct dentry *dentry, struct dentry *parent)
  		dget(dentry);
--		if (!d_is_reg(dentry)) {
--			if (d_is_dir(dentry))
--				ret = simple_rmdir(d_inode(parent), dentry);
--			else
--				simple_unlink(d_inode(parent), dentry);
--			if (!ret)
--				d_delete(dentry);
-+		if (d_is_dir(dentry)) {
-+			ret = simple_rmdir(d_inode(parent), dentry);
+ 		if (d_is_dir(dentry)) {
+ 			ret = simple_rmdir(d_inode(parent), dentry);
++			if (!ret)
++				fsnotify_rmdir(d_inode(parent), dentry);
  		} else {
--			__debugfs_remove_file(dentry, parent);
-+			simple_unlink(d_inode(parent), dentry);
+ 			simple_unlink(d_inode(parent), dentry);
++			fsnotify_unlink(d_inode(parent), dentry);
  		}
-+		if (!ret)
-+			d_delete(dentry);
-+		if (d_is_reg(dentry))
-+			__debugfs_file_removed(dentry);
- 		dput(dentry);
- 	}
- 	return ret;
+ 		if (!ret)
+ 			d_delete(dentry);
 -- 
 2.17.1
 
