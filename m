@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EF812AA49
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2019 16:34:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C4F52AA4A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2019 16:34:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbfEZOek (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 May 2019 10:34:40 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44067 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbfEZOej (ORCPT
+        id S1727906AbfEZOel (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 May 2019 10:34:41 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45933 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727883AbfEZOel (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 May 2019 10:34:39 -0400
-Received: by mail-wr1-f65.google.com with SMTP id w13so5958015wru.11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2019 07:34:38 -0700 (PDT)
+        Sun, 26 May 2019 10:34:41 -0400
+Received: by mail-wr1-f68.google.com with SMTP id b18so14296240wrq.12
+        for <linux-fsdevel@vger.kernel.org>; Sun, 26 May 2019 07:34:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=b1da2t/IpjGTzefdBJqgGc94GYoq3b1nFZIF4BYVMvY=;
-        b=cfaxlcU2uXBlk3MhRdoSbYL9z46jykz4e8Oi2P3HSrjLy5lM4Zi3YX0peKfNWiFjVy
-         iw0WYirjVvoNjlqdbWr8q1tr5l6DQtaPK9DHlNpMSbCN5sAAIzA3un8/J35f97VZ7Jae
-         v4Xq7yZVRvhTPL9U+QkO1Ac3/kAllHGSDczBVQqxh2Gj3+It4mYJFvDTjUYbKt4289pK
-         79hf/z/XgHmvwpL/TcJ9AI2SiTYwvp9NRFarzf3r1K7oCXnnP3RQVEXaEb72JctvZ8gk
-         JxVPh4Fc6DSVIklA6Dxe4htJdotIGgD4GHDkqbSRxPVH9j2ES3IjKpcsDbclhHup/xOj
-         7z1w==
+        bh=9d358PysRh93Ovn290SWir3DJbBZNRuE7uqJqn8lz2E=;
+        b=V4a1SfQQdakhCawG2VcrqbByDGo0c02K7PHM3qgBOsizWXWITdxED30GpaYCyAIhqc
+         npTL9fgpzrps3Kkzx6qRiFbFS/imxd8fGhWe8cO39xqKGJlMGIq9Nd+lz1/hj9BBtutq
+         CqCQifxlR9d0NrugXMqhKctFnv+ATcH2vFvgn5linfygk5LtJJdgCLk34MGWZe9BGV7D
+         4tfOLHxg+qzdNfHTLLnk/eSzGil/I2+1iun2JVltBj0zeBbIKfhoXzvTBvFaLhL5hdl/
+         vzUZQ6Zr0LCPFYjvNIYyC1361YXbR50v/ZJNeGi5DixwrIw3mlndKncnB8lKrIgvTiXg
+         k/xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=b1da2t/IpjGTzefdBJqgGc94GYoq3b1nFZIF4BYVMvY=;
-        b=W79eHjirudRO7WnZde7sHMXlk5avAIOkpkDNVWHrvRJkBDxyneqK0sm17V80OjlIs5
-         s5VsEzxBW3oWF3wEk14r5ggfRbI+d6Sl5/ehjjnffU0N7RvEDGe4dDZQeXF0tDq/Jh8L
-         Qjnr5FkHgFy46+CH+NQ74DTGQkdFNERLvZXPLCyKoH7X5QHgoDc9q9ErNcSnbYvVvCQT
-         OAnxoPjrzS9ciJl9R/zUCcNKRN+mPFfr9vrD1F86ehYIgRG141BJEUUB90Bm6SCnWPEE
-         U+d5b3+MWiV4TlHCGqYCpKNPoOo745YFbvqDb8dJ+5qYyhjmw2BNjmwlUrgOPupHbvWJ
-         DSuQ==
-X-Gm-Message-State: APjAAAVHrZmCnkmiFsQUkOaPNgt5v+qedt3m30uyaEsT74oONANY4ywe
-        QqEQOn/UEpvKnQV2NzUVaHA=
-X-Google-Smtp-Source: APXvYqzNhBrEL75rizD6eavPzBWXcV5VKLOMf9Pf87WYsQ8HuOrGJeRpygVKmVqvBxXqwnNCbTJbBA==
-X-Received: by 2002:adf:efcd:: with SMTP id i13mr42973406wrp.51.1558881277796;
-        Sun, 26 May 2019 07:34:37 -0700 (PDT)
+        bh=9d358PysRh93Ovn290SWir3DJbBZNRuE7uqJqn8lz2E=;
+        b=rbJg4/ZWA3GlUitT5gdVLcBX34Um10Bl8Dzm0bXmjm4mpGjp4GzjsFG176VjIRjst1
+         82czWIy0ZbuleQOqfTDD3t/WOgVaq/20O9eO4X9sSxj/EdcCCIyjWUWyXCorNcAcpfkM
+         oiqJQIgQ6cl4kSKPWaypdpglL8tpBYrI93alOTt9jSBj4s0QO6/g0M6+bewrHWvM7CAM
+         KI0SzZhwrXJwKyOfttdOD24bG6OqFcmu2V5xxp6vf0Rf99ndwkezy+6hc+86FVL7J2XY
+         yVuQBo+h5y/jv7ZKquh/jCCqEToBULjA8cKcigW9JdxItKe/7JfMImgAVMDuO8yLsyy8
+         eVGg==
+X-Gm-Message-State: APjAAAVweEtpZ7VfRFGv6rYc1GIBOrO85/69hN/vjG5/PDEguKbYJid1
+        X1rtUMQlcfVh+loWcOiyVUs=
+X-Google-Smtp-Source: APXvYqzNnokfNZSi3ZVEHGbqli37swIH5YPILBUpEg51tgQl6hYc9foQHtkHPhlRi9jFTwEog9rFvw==
+X-Received: by 2002:a05:6000:1150:: with SMTP id d16mr15593529wrx.63.1558881279454;
+        Sun, 26 May 2019 07:34:39 -0700 (PDT)
 Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
-        by smtp.gmail.com with ESMTPSA id t13sm21144146wra.81.2019.05.26.07.34.36
+        by smtp.gmail.com with ESMTPSA id t13sm21144146wra.81.2019.05.26.07.34.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 May 2019 07:34:37 -0700 (PDT)
+        Sun, 26 May 2019 07:34:38 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     David Sterba <dsterba@suse.com>, Christoph Hellwig <hch@lst.de>,
@@ -55,9 +55,9 @@ Cc:     David Sterba <dsterba@suse.com>, Christoph Hellwig <hch@lst.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 09/10] fsnotify: move fsnotify_nameremove() hook out of d_delete()
-Date:   Sun, 26 May 2019 17:34:10 +0300
-Message-Id: <20190526143411.11244-10-amir73il@gmail.com>
+Subject: [PATCH v3 10/10] fsnotify: get rid of fsnotify_nameremove()
+Date:   Sun, 26 May 2019 17:34:11 +0300
+Message-Id: <20190526143411.11244-11-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190526143411.11244-1-amir73il@gmail.com>
 References: <20190526143411.11244-1-amir73il@gmail.com>
@@ -66,103 +66,116 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-d_delete() was piggy backed for the fsnotify_nameremove() hook when
-in fact not all callers of d_delete() care about fsnotify events.
-
-For all callers of d_delete() that may be interested in fsnotify events,
-we made sure to call one of fsnotify_{unlink,rmdir}() hooks before
-calling d_delete().
-
-Now we can move the fsnotify_nameremove() call from d_delete() to the
-fsnotify_{unlink,rmdir}() hooks.
-
-Two explicit calls to fsnotify_nameremove() from nfs/afs sillyrename
-are also removed. This will cause a change of behavior - nfs/afs will
-NOT generate an fsnotify delete event when renaming over a positive
-dentry.  This change is desirable, because it is consistent with the
-behavior of all other filesystems.
+For all callers of fsnotify_{unlink,rmdir}(), we made sure that d_parent
+and d_name are stable.  Therefore, fsnotify_{unlink,rmdir}() do not need
+the safety measures in fsnotify_nameremove() to stabilize parent and name.
+We can now simplify those hooks and get rid of fsnotify_nameremove().
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/afs/dir_silly.c       | 5 -----
- fs/dcache.c              | 2 --
- fs/nfs/unlink.c          | 6 ------
- include/linux/fsnotify.h | 2 ++
- 4 files changed, 2 insertions(+), 13 deletions(-)
+ fs/notify/fsnotify.c             | 41 --------------------------------
+ include/linux/fsnotify.h         |  6 ++---
+ include/linux/fsnotify_backend.h |  4 ----
+ 3 files changed, 2 insertions(+), 49 deletions(-)
 
-diff --git a/fs/afs/dir_silly.c b/fs/afs/dir_silly.c
-index 28f4aa015229..312687223170 100644
---- a/fs/afs/dir_silly.c
-+++ b/fs/afs/dir_silly.c
-@@ -64,11 +64,6 @@ static int afs_do_silly_rename(struct afs_vnode *dvnode, struct afs_vnode *vnode
- 		if (test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags))
- 			afs_edit_dir_add(dvnode, &new->d_name,
- 					 &vnode->fid, afs_edit_dir_for_silly_1);
--
--		/* vfs_unlink and the like do not issue this when a file is
--		 * sillyrenamed, so do it here.
--		 */
--		fsnotify_nameremove(old, 0);
- 	}
- 
- 	kfree(scb);
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 8136bda27a1f..ce131339410c 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2371,7 +2371,6 @@ EXPORT_SYMBOL(d_hash_and_lookup);
- void d_delete(struct dentry * dentry)
- {
- 	struct inode *inode = dentry->d_inode;
--	int isdir = d_is_dir(dentry);
- 
- 	spin_lock(&inode->i_lock);
- 	spin_lock(&dentry->d_lock);
-@@ -2386,7 +2385,6 @@ void d_delete(struct dentry * dentry)
- 		spin_unlock(&dentry->d_lock);
- 		spin_unlock(&inode->i_lock);
- 	}
--	fsnotify_nameremove(dentry, isdir);
- }
- EXPORT_SYMBOL(d_delete);
- 
-diff --git a/fs/nfs/unlink.c b/fs/nfs/unlink.c
-index 52d533967485..0effeee28352 100644
---- a/fs/nfs/unlink.c
-+++ b/fs/nfs/unlink.c
-@@ -396,12 +396,6 @@ nfs_complete_sillyrename(struct rpc_task *task, struct nfs_renamedata *data)
- 		nfs_cancel_async_unlink(dentry);
- 		return;
- 	}
--
--	/*
--	 * vfs_unlink and the like do not issue this when a file is
--	 * sillyrenamed, so do it here.
--	 */
--	fsnotify_nameremove(dentry, 0);
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 8c7cbac7183c..5433e37fb0c5 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -107,47 +107,6 @@ void fsnotify_sb_delete(struct super_block *sb)
+ 	fsnotify_clear_marks_by_sb(sb);
  }
  
- #define SILLYNAME_PREFIX ".nfs"
+-/*
+- * fsnotify_nameremove - a filename was removed from a directory
+- *
+- * This is mostly called under parent vfs inode lock so name and
+- * dentry->d_parent should be stable. However there are some corner cases where
+- * inode lock is not held. So to be on the safe side and be reselient to future
+- * callers and out of tree users of d_delete(), we do not assume that d_parent
+- * and d_name are stable and we use dget_parent() and
+- * take_dentry_name_snapshot() to grab stable references.
+- */
+-void fsnotify_nameremove(struct dentry *dentry, int isdir)
+-{
+-	struct dentry *parent;
+-	struct name_snapshot name;
+-	__u32 mask = FS_DELETE;
+-
+-	/* d_delete() of pseudo inode? (e.g. __ns_get_path() playing tricks) */
+-	if (IS_ROOT(dentry))
+-		return;
+-
+-	if (isdir)
+-		mask |= FS_ISDIR;
+-
+-	parent = dget_parent(dentry);
+-	/* Avoid unneeded take_dentry_name_snapshot() */
+-	if (!(d_inode(parent)->i_fsnotify_mask & FS_DELETE) &&
+-	    !(dentry->d_sb->s_fsnotify_mask & FS_DELETE))
+-		goto out_dput;
+-
+-	take_dentry_name_snapshot(&name, dentry);
+-
+-	fsnotify(d_inode(parent), mask, d_inode(dentry), FSNOTIFY_EVENT_INODE,
+-		 &name.name, 0);
+-
+-	release_dentry_name_snapshot(&name);
+-
+-out_dput:
+-	dput(parent);
+-}
+-EXPORT_SYMBOL(fsnotify_nameremove);
+-
+ /*
+  * Given an inode, first check if we care what happens to our children.  Inotify
+  * and dnotify both tell their parents about events.  If we care about any event
 diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index 7f23eddefcd0..0145073c2b42 100644
+index 0145073c2b42..a2d5d175d3c1 100644
 --- a/include/linux/fsnotify.h
 +++ b/include/linux/fsnotify.h
-@@ -199,6 +199,7 @@ static inline void fsnotify_unlink(struct inode *dir, struct dentry *dentry)
+@@ -198,8 +198,7 @@ static inline void fsnotify_unlink(struct inode *dir, struct dentry *dentry)
+ 	/* Expected to be called before d_delete() */
  	WARN_ON_ONCE(d_is_negative(dentry));
  
- 	/* TODO: call fsnotify_dirent() */
-+	fsnotify_nameremove(dentry, 0);
+-	/* TODO: call fsnotify_dirent() */
+-	fsnotify_nameremove(dentry, 0);
++	fsnotify_dirent(dir, dentry, FS_DELETE);
  }
  
  /*
-@@ -222,6 +223,7 @@ static inline void fsnotify_rmdir(struct inode *dir, struct dentry *dentry)
+@@ -222,8 +221,7 @@ static inline void fsnotify_rmdir(struct inode *dir, struct dentry *dentry)
+ 	/* Expected to be called before d_delete() */
  	WARN_ON_ONCE(d_is_negative(dentry));
  
- 	/* TODO: call fsnotify_dirent() */
-+	fsnotify_nameremove(dentry, 1);
+-	/* TODO: call fsnotify_dirent() */
+-	fsnotify_nameremove(dentry, 1);
++	fsnotify_dirent(dir, dentry, FS_DELETE | FS_ISDIR);
  }
  
  /*
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index a9f9dcc1e515..c28f6ed1f59b 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -355,7 +355,6 @@ extern int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u
+ extern void __fsnotify_inode_delete(struct inode *inode);
+ extern void __fsnotify_vfsmount_delete(struct vfsmount *mnt);
+ extern void fsnotify_sb_delete(struct super_block *sb);
+-extern void fsnotify_nameremove(struct dentry *dentry, int isdir);
+ extern u32 fsnotify_get_cookie(void);
+ 
+ static inline int fsnotify_inode_watches_children(struct inode *inode)
+@@ -525,9 +524,6 @@ static inline void __fsnotify_vfsmount_delete(struct vfsmount *mnt)
+ static inline void fsnotify_sb_delete(struct super_block *sb)
+ {}
+ 
+-static inline void fsnotify_nameremove(struct dentry *dentry, int isdir)
+-{}
+-
+ static inline void fsnotify_update_flags(struct dentry *dentry)
+ {}
+ 
 -- 
 2.17.1
 
