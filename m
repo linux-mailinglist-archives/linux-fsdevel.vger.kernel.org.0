@@ -2,190 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B0232A920
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2019 11:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FC122A933
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2019 11:36:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbfEZJLg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 May 2019 05:11:36 -0400
-Received: from mail05-md.ns.itscom.net ([175.177.155.115]:38800 "EHLO
-        mail05-md.ns.itscom.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbfEZJLg (ORCPT
+        id S1727674AbfEZJf7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 May 2019 05:35:59 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43869 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727639AbfEZJf6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 May 2019 05:11:36 -0400
-Received: from cmsa03-mds.s.noc.itscom.net (cmsa03-md.ns.itscom.net [175.177.0.93])
-        by mail05-md-outgoing.ns.itscom.net (Postfix) with ESMTP id 504A26585EF;
-        Sun, 26 May 2019 18:11:34 +0900 (JST)
-Received: from jromail.nowhere ([219.110.50.76])
-        by cmsa-md with ESMTP
-        id UpBmhgn4cFyw2UpBmhybPt; Sun, 26 May 2019 18:11:34 +0900
-Received: from jro by jrobl id 1hUpBm-0004et-1c ; Sun, 26 May 2019 18:11:34 +0900
-From:   "J. R. Okajima" <hooanon05g@gmail.com>
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Sun, 26 May 2019 05:35:58 -0400
+Received: by mail-lj1-f194.google.com with SMTP id z5so12133612lji.10;
+        Sun, 26 May 2019 02:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xlsLGGue5NzaOqNGq4CRCj25EgHuy55qJULT51w7Sg8=;
+        b=kgffFgbWHPphtY5PBVnHsRK2xV+X9po+LErsWTqi3oEEnTWIskEIXVxJyo08fF+lX9
+         LhbXJo91v5iSeJS/BELs2WJ9RFylCAoQ33w3luSxCMvyRn5dtpo1fy+FulNGjI5T1ri6
+         5+VrLjsISiHnvdV0mEYJrDTA4onRE43jeFAkvj16+Gs5huNaAEGFERpI1xKcskUjKdMK
+         dG5fCu4lA0XonnRpAroyIni5r+MorPStfXycPAeXJMMBc8iyhIQXfM/PfYZJQuQK/iI7
+         ywgWzuwS1UoR9NlemvLz1tJIJKD6blqeewVCt3NX/maUT+W3R4XlvwqWO3u9nquDmJrY
+         V7fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xlsLGGue5NzaOqNGq4CRCj25EgHuy55qJULT51w7Sg8=;
+        b=q8TJX0zRBjtwcpNIS5oWc/iLaA/Yu+FiP7VueunK7i2XyweUziGukJ2a7xYLxRvxIB
+         iOmf7j334iXsgKnFOgQv+6A+KYA3jz8wnctlNCsPMG6KWc1Fw+gm1X/7ZltEj7BRnDXb
+         wldeOnOuLKDsOBPJ+iTu4b127Rmg7kIndVZ0RwrMQqzx1j+SlIWIBxRwsT32WcjL9ctL
+         A2dwa7EJcs68/vIa9S61QFACiXf2kNxqDqDZ5fFEg4dD6BM5a1kZG0mfoD+tcv7U4Q1e
+         JYgZlujQjxcd9AIRDPu1EWv3nTvOMKIvu0M+ABKUjD084b3oli0+SR0BZRXkCp3PWh/W
+         7E8w==
+X-Gm-Message-State: APjAAAXS4MpnRwYBHoTEbNDKPhEhZ4snw1PCvkp33qwnyj461jI/1dtu
+        uk35xe28CpCrfL3wv5/xC9A=
+X-Google-Smtp-Source: APXvYqzXI9dUMnt69jPd5UMR3eiQUOvTGInlLgUoTEn/5HuMtyAdh4rh7sxCznDuGSmvz1rVjsqJBg==
+X-Received: by 2002:a2e:1284:: with SMTP id 4mr27143486ljs.138.1558863356611;
+        Sun, 26 May 2019 02:35:56 -0700 (PDT)
+Received: from localhost.localdomain (mm-78-96-44-37.mgts.dynamic.pppoe.byfly.by. [37.44.96.78])
+        by smtp.gmail.com with ESMTPSA id n9sm1563426ljj.10.2019.05.26.02.35.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 26 May 2019 02:35:55 -0700 (PDT)
+From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     kolyshkin@gmail.com
-Subject: [PATCH] concrete /proc/mounts
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH 1/1] io_uring: Fix __io_uring_register() false success
+Date:   Sun, 26 May 2019 12:35:47 +0300
+Message-Id: <f9e0372fd0e52ca276bb307da1271908cab4efb4.1558862678.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17909.1558861894.1@jrobl>
-Date:   Sun, 26 May 2019 18:11:34 +0900
-Message-ID: <17910.1558861894@jrobl>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-commit 1e83f8634c6efe7dd4e6036ee202ca10bdbca0b3
-Author: J. R. Okajima <hooanon05g@gmail.com>
-Date:   Sat May 25 18:35:13 2019 +0900
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-    concrete /proc/mounts
-    
-    When the size of /proc/mounts exceeds PAGE_SIZE, seq_read() has to
-    release namespace_sem via mounts_op.m_stop().  It means if someone else
-    issues mount(2) or umount(2) and the mounts list got changed, then the
-    continuous getmntent(3) calls show the incomplete mounts list and some
-    entries may not appear in it.
-    
-    This patch generates the full mounts list when mounts_op.m_start() is
-    called, and keep it in the seq_file buffer until the file is closed.
-    The size of the buffer increases if necessary.  Other operations m_next,
-    m_stop, m_show become meaningless, but still necessary for the seq_file
-    manner.
-    
-    I don't think the size of the buffer matters because many /proc entries
-    already keep the similar PAGE_SIZE buffer.  Increasing /proc/mounts
-    buffer is to keep the correctness of the mount list.
-    
-    Reported-by: Kirill Kolyshkin <kolyshkin@gmail.com>
-    See-also: https://github.com/kolyshkin/procfs-test
-    Signed-off-by: J. R. Okajima <hooanon05g@gmail.com>
+If io_copy_iov() fails, it will break the loop and report success,
+albeit partially completed operation.
 
-diff --git a/fs/mount.h b/fs/mount.h
-index f39bc9da4d73..1ffd97696ca9 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -131,9 +131,7 @@ struct proc_mounts {
- 	struct mnt_namespace *ns;
- 	struct path root;
- 	int (*show)(struct seq_file *, struct vfsmount *);
--	void *cached_mount;
--	u64 cached_event;
--	loff_t cached_index;
-+	bool filled;
- };
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 310f8d17c53e..0fbb486a320e 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2616,7 +2616,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
  
- extern const struct seq_operations mounts_op;
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d18deb4c410b..2984a48cd40f 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1298,46 +1298,77 @@ struct vfsmount *mnt_clone_internal(const struct path *path)
+ 		ret = io_copy_iov(ctx, &iov, arg, i);
+ 		if (ret)
+-			break;
++			goto err;
  
- #ifdef CONFIG_PROC_FS
- /* iterator; we want it to have access to namespace_sem, thus here... */
--static void *m_start(struct seq_file *m, loff_t *pos)
-+static int m_start_fill(struct seq_file *m)
- {
-+	int err;
-+	size_t last_count;
-+	char *buf;
-+	struct mount *r;
- 	struct proc_mounts *p = m->private;
- 
- 	down_read(&namespace_sem);
--	if (p->cached_event == p->ns->event) {
--		void *v = p->cached_mount;
--		if (*pos == p->cached_index)
--			return v;
--		if (*pos == p->cached_index + 1) {
--			v = seq_list_next(v, &p->ns->list, &p->cached_index);
--			return p->cached_mount = v;
-+	list_for_each_entry(r, &p->ns->list, mnt_list) {
-+		last_count = m->count;
-+		err = p->show(m, &r->mnt);
-+		if (unlikely(err < 0))
-+			break;
-+		if (!seq_has_overflowed(m))
-+			continue;
-+
-+		/* expand the buffer */
-+		buf = kvmalloc(m->size + PAGE_SIZE, GFP_KERNEL);
-+		if (unlikely(!buf)) {
-+			err = -ENOMEM;
-+			break;
-+		}
-+		memcpy(buf, m->buf, last_count);
-+		kvfree(m->buf);
-+		m->buf = buf;
-+		m->size += PAGE_SIZE;
-+		m->count = last_count;
-+
-+		err = p->show(m, &r->mnt);
-+		if (unlikely(err < 0))
-+			break;
-+		else if (unlikely(seq_has_overflowed(m))) {
-+			err = -EFBIG;
-+			break;
- 		}
- 	}
-+	up_read(&namespace_sem);
- 
--	p->cached_event = p->ns->event;
--	p->cached_mount = seq_list_start(&p->ns->list, *pos);
--	p->cached_index = *pos;
--	return p->cached_mount;
-+	if (!err)
-+		p->filled = true;
-+	return err;
- }
- 
--static void *m_next(struct seq_file *m, void *v, loff_t *pos)
-+static void *m_start(struct seq_file *m, loff_t *pos)
- {
-+	int err;
- 	struct proc_mounts *p = m->private;
- 
--	p->cached_mount = seq_list_next(v, &p->ns->list, pos);
--	p->cached_index = *pos;
--	return p->cached_mount;
-+	if (!p->filled) {
-+		err = m_start_fill(m);
-+		if (unlikely(err))
-+			return ERR_PTR(err);
-+	}
-+
-+	return m_start; /* any valid pointer */
-+}
-+
-+static void *m_next(struct seq_file *m, void *v, loff_t *pos)
-+{
-+	return NULL;
- }
- 
- static void m_stop(struct seq_file *m, void *v)
- {
--	up_read(&namespace_sem);
-+	/* empty */
- }
- 
- static int m_show(struct seq_file *m, void *v)
- {
--	struct proc_mounts *p = m->private;
--	struct mount *r = list_entry(v, struct mount, mnt_list);
--	return p->show(m, &r->mnt);
-+	return 0;
- }
- 
- const struct seq_operations mounts_op = {
-diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-index 7626ee11b06c..f8aee5cca1b1 100644
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -279,7 +279,6 @@ static int mounts_open_common(struct inode *inode, struct file *file,
- 	p->ns = ns;
- 	p->root = root;
- 	p->show = show;
--	p->cached_event = ~0ULL;
- 
- 	return 0;
- 
+ 		/*
+ 		 * Don't impose further limits on the size and buffer
+-- 
+2.21.0
+
