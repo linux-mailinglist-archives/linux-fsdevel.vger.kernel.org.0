@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 089A12A8A8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2019 08:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 164E02A8B3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 May 2019 08:11:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbfEZGLX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 May 2019 02:11:23 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42593 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbfEZGLW (ORCPT
+        id S1727674AbfEZGLY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 May 2019 02:11:24 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41862 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbfEZGLX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 May 2019 02:11:22 -0400
-Received: by mail-wr1-f66.google.com with SMTP id l2so13657630wrb.9;
-        Sat, 25 May 2019 23:11:20 -0700 (PDT)
+        Sun, 26 May 2019 02:11:23 -0400
+Received: by mail-wr1-f67.google.com with SMTP id u16so9758466wrn.8;
+        Sat, 25 May 2019 23:11:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zqG9JMtX+vHNyprOzkAJ1KkCxnAmtf74H0q9YGZXDsU=;
-        b=AFjDAiKMr1H2ehfKhZmqJsbwBIjdZzOOdzaRVpj/ndzbe9LmjxjQC+so8If5qVNq1v
-         zC6ehnYK5A24p4T7NVImlQvGmSdeCmv4sAMUvvq1zrWJZ54O5fST3vkj2HwrtUykQJdp
-         Riv0p0XmFgeP7JD872uTSSj5rg1x0fZ1xt2x7AyxK2fQfUXQJp1sHkDixbbWrLli4rpO
-         /CGm05znGrQpEj8a7PXNian05T8qi4Y3q8vQNcYRTsjaRP42cl6zZyjogXHFMm/vsjF6
-         e1032Dhdez+RllJ/5zxuQWeA8tkDVqbb9s7E2MjRFcBCUGnJov2RPlE3mT+E0ADYtvpb
-         v59A==
+        bh=hJpvGqVp0Vug8Mb9iaO6z9l1/zymJ1J3cdRetJYK7Bs=;
+        b=IeDwTgfuxfRv8fbd84IwJcTY9Vp+VW76FKym3uEZDvVdCBni0KrbSiX7Dv0iZNVeVM
+         Nb9l2O9jRVuhHy++ZVNB7UAskPKj3nJ63Q+GT0dVc6r1sJ+okcMB754x6aPrHxMAMvdO
+         tBLNIh66tCfJoToi/6NXxvqF+P95e+j0FJXieWr+o7xfSo05WoOGNAUUX3HYqoAEjjvT
+         yumMhT5vHLclYix4hqMDq8Qj/Emgq42jLLaWYbs6tV3RQjD/eMHD29CEu4Rte9w/KwAG
+         /u24JEKv/lper0CQMYgsG3fxl62EEYpywonbw4QP4HBlNmglldpqpv3laVt/HBTaBvAq
+         7BsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=zqG9JMtX+vHNyprOzkAJ1KkCxnAmtf74H0q9YGZXDsU=;
-        b=V0zXIBu5bAUuYualuDtC1cEhEloBTmfLRZG3/4nXYQgar/bdaJNTKgPQCiL33eCHJV
-         7qge8Y9NvZxMwrlE73H0usrZKiHpPy9GE0Q/cyVL0u+X2QVSuRNUuzzUn3SaBcazljn7
-         T8bA8HqBgkJ01xfXT/GAjIg8rT8X/HGP2zkLuGhNF1JozR4+CxItLxaj9urcuPh5auVW
-         +8lr3XBMEb2Y5Ogjrhoge37hlxe/RKZu4O3djJxWLTIupU/QOwB5dZRbe/KuX5IwBXyN
-         HpfK8WDj/8WltBO/Bv3bFX6r0aJuTho72VJoZcr7/fWKOmHUf074rFNMcKa5CH2m8HUL
-         hhzw==
-X-Gm-Message-State: APjAAAWkvyEncHe16awwnXCYFV36uWo6BbwYg2mcuAmLuJQl0s90sx1C
-        SIKxI1+l8uSIQ50LLLu7v3o=
-X-Google-Smtp-Source: APXvYqxKUzsiHW6Ri7Q/Xuo7SmX7yJv5pmo4Kz5II++OS4wFNt6PMaU/avaZ66pWprXimsWoRbOvuw==
-X-Received: by 2002:adf:dd43:: with SMTP id u3mr5312119wrm.313.1558851079405;
-        Sat, 25 May 2019 23:11:19 -0700 (PDT)
+        bh=hJpvGqVp0Vug8Mb9iaO6z9l1/zymJ1J3cdRetJYK7Bs=;
+        b=NWgIjrCAvXrrGR1+56DSF9A3fUlvHrB2eIH5ZfVLpWhfmuTvjSa29NT4niDwMcozmk
+         GAt2aHzI8gVasI2LO4XwsdLXzzgKtVsnEdmOF9k6At1OHyqAMwApTkMUrCft+UBszgO+
+         1NOdJ/oMKz06GTGqy+hLiSylN4Pmr0DaJnGSP1TpDYR4AKD1vGWX+vcl+FJ2whYCL++1
+         6zUX4gsAWW2OqQwNxgWnDfaH/rJ2AoLvoTj5u1pGGFZsWQ3csIGXIj2rXZcvhTTLzun3
+         i1ojqDOVs9hTQJa+zyMSDgveVytuJfHnZAfZpeBriAVIrMFRLI7eTfSszTdcs8Ysn5vv
+         kObA==
+X-Gm-Message-State: APjAAAX1i9V0iZAkD2gh04y69aMPkbUgEGAj7pp7xVILoW7ezNBA2QEO
+        s5MzVYRNV5JVASkqp8Nijz0=
+X-Google-Smtp-Source: APXvYqwbq/jPIu7D1yhioAjiMprkENPZG1N9iFKs4h3m4EtO0EM6SfViM5nzs7W10hTmaWtq+O2qUg==
+X-Received: by 2002:adf:dc8e:: with SMTP id r14mr55228894wrj.121.1558851081412;
+        Sat, 25 May 2019 23:11:21 -0700 (PDT)
 Received: from localhost.localdomain ([5.102.238.208])
-        by smtp.gmail.com with ESMTPSA id a124sm5302943wmh.3.2019.05.25.23.11.17
+        by smtp.gmail.com with ESMTPSA id a124sm5302943wmh.3.2019.05.25.23.11.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 25 May 2019 23:11:18 -0700 (PDT)
+        Sat, 25 May 2019 23:11:20 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     "Darrick J . Wong" <darrick.wong@oracle.com>
 Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
@@ -54,9 +54,9 @@ Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, linux-api@vger.kernel.org,
         Dave Chinner <dchinner@redhat.com>
-Subject: [PATCH v2 4/8] vfs: add missing checks to copy_file_range
-Date:   Sun, 26 May 2019 09:10:55 +0300
-Message-Id: <20190526061100.21761-5-amir73il@gmail.com>
+Subject: [PATCH v2 5/8] vfs: copy_file_range needs to strip setuid bits
+Date:   Sun, 26 May 2019 09:10:56 +0300
+Message-Id: <20190526061100.21761-6-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190526061100.21761-1-amir73il@gmail.com>
 References: <20190526061100.21761-1-amir73il@gmail.com>
@@ -65,116 +65,175 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Like the clone and dedupe interfaces we've recently fixed, the
-copy_file_range() implementation is missing basic sanity, limits and
-boundary condition tests on the parameters that are passed to it
-from userspace. Create a new "generic_copy_file_checks()" function
-modelled on the generic_remap_checks() function to provide this
-missing functionality.
+The file we are copying data into needs to have its setuid bit
+stripped before we start the data copy so that unprivileged users
+can't copy data into executables that are run with root privs.
 
-[Amir] Shorten copy length instead of checking pos_in limits
-because input file size already abides by the limits.
+[Amir] Introduce the helper generic_copy_file_range_prep() modelled
+after generic_remap_file_range_prep(). Helper is called by filesystem
+before the copy_file_range operation and with output inode locked.
+
+For ceph and for default generic_copy_file_range() implementation there
+is no inode lock held throughout the copy operation, so we do best
+effort and remove setuid bit before copy starts. This does not protect
+suid file from changing if suid bit is set after copy started.
 
 Signed-off-by: Dave Chinner <dchinner@redhat.com>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/read_write.c    |  3 ++-
- include/linux/fs.h |  3 +++
- mm/filemap.c       | 53 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 58 insertions(+), 1 deletion(-)
+ fs/ceph/file.c     |  9 +++++++++
+ fs/cifs/cifsfs.c   |  9 ++++++---
+ fs/fuse/file.c     |  4 ++++
+ fs/nfs/nfs42proc.c |  8 +++++---
+ fs/read_write.c    | 31 +++++++++++++++++++++++++++++++
+ include/linux/fs.h |  2 ++
+ 6 files changed, 57 insertions(+), 6 deletions(-)
 
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index e87f7b2023af..54cfc877a6ef 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1947,6 +1947,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 		goto out;
+ 	}
+ 
++	/* Should inode lock be held throughout the copy operation? */
++	inode_lock(dst_inode);
++	ret = generic_copy_file_range_prep(src_file, dst_file);
++	inode_unlock(dst_inode);
++	if (ret < 0) {
++		dout("failed to copy from src to dst file (%zd)\n", ret);
++		goto out;
++	}
++
+ 	/*
+ 	 * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
+ 	 * clients may have dirty data in their caches.  And OSDs know nothing
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index c65823270313..e103b499aaa8 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -1096,6 +1096,10 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+ 		goto out;
+ 	}
+ 
++	rc = -EOPNOTSUPP;
++	if (!target_tcon->ses->server->ops->copychunk_range)
++		goto out;
++
+ 	/*
+ 	 * Note: cifs case is easier than btrfs since server responsible for
+ 	 * checks for proper open modes and file type and if it wants
+@@ -1107,11 +1111,10 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+ 	/* should we flush first and last page first */
+ 	truncate_inode_pages(&target_inode->i_data, 0);
+ 
+-	if (target_tcon->ses->server->ops->copychunk_range)
++	rc = generic_copy_file_range_prep(src_file, dst_file);
++	if (!rc)
+ 		rc = target_tcon->ses->server->ops->copychunk_range(xid,
+ 			smb_file_src, smb_file_target, off, len, destoff);
+-	else
+-		rc = -EOPNOTSUPP;
+ 
+ 	/* force revalidate of size and timestamps of target file now
+ 	 * that target is updated on the server
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index e03901ae729b..3531d4a3d9ec 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -3128,6 +3128,10 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
+ 
+ 	inode_lock(inode_out);
+ 
++	err = generic_copy_file_range_prep(file_in, file_out);
++	if (err)
++		goto out;
++
+ 	if (fc->writeback_cache) {
+ 		err = filemap_write_and_wait_range(inode_out->i_mapping,
+ 						   pos_out, pos_out + len);
+diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+index 5196bfa7894d..b387951e1d86 100644
+--- a/fs/nfs/nfs42proc.c
++++ b/fs/nfs/nfs42proc.c
+@@ -345,9 +345,11 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
+ 
+ 	do {
+ 		inode_lock(file_inode(dst));
+-		err = _nfs42_proc_copy(src, src_lock,
+-				dst, dst_lock,
+-				&args, &res);
++		err = generic_copy_file_range_prep(src, dst);
++		if (!err)
++			err = _nfs42_proc_copy(src, src_lock,
++					       dst, dst_lock,
++					       &args, &res);
+ 		inode_unlock(file_inode(dst));
+ 
+ 		if (err >= 0)
 diff --git a/fs/read_write.c b/fs/read_write.c
-index f1900bdb3127..b0fb1176b628 100644
+index b0fb1176b628..e16bcafc0da2 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
-@@ -1626,7 +1626,8 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
- 	if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
- 		return -EXDEV;
- 
--	ret = generic_file_rw_checks(file_in, file_out);
-+	ret = generic_copy_file_checks(file_in, pos_in, file_out, pos_out, &len,
-+				       flags);
- 	if (unlikely(ret))
- 		return ret;
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 89b9b73eb581..e4d382c4342a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3050,6 +3050,9 @@ extern int generic_remap_checks(struct file *file_in, loff_t pos_in,
- 				struct file *file_out, loff_t pos_out,
- 				loff_t *count, unsigned int remap_flags);
- extern int generic_file_rw_checks(struct file *file_in, struct file *file_out);
-+extern int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
-+				    struct file *file_out, loff_t pos_out,
-+				    size_t *count, unsigned int flags);
- extern ssize_t generic_file_read_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 798aac92cd76..1852fbf08eeb 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3064,6 +3064,59 @@ int generic_file_rw_checks(struct file *file_in, struct file *file_out)
- 	return 0;
+@@ -1565,6 +1565,28 @@ COMPAT_SYSCALL_DEFINE4(sendfile64, int, out_fd, int, in_fd,
  }
+ #endif
  
 +/*
-+ * Performs necessary checks before doing a file copy
++ * Prepare inodes for copy from @file_in to @file_out.
 + *
-+ * Can adjust amount of bytes to copy
-+ * Returns appropriate error code that caller should return or
-+ * zero in case the copy should be allowed.
++ * Caller must hold output inode lock.
 + */
-+int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
-+			     struct file *file_out, loff_t pos_out,
-+			     size_t *req_count, unsigned int flags)
++int generic_copy_file_range_prep(struct file *file_in, struct file *file_out)
 +{
-+	struct inode *inode_in = file_inode(file_in);
-+	struct inode *inode_out = file_inode(file_out);
-+	uint64_t count = *req_count;
-+	loff_t size_in;
 +	int ret;
 +
-+	ret = generic_file_rw_checks(file_in, file_out);
-+	if (ret)
-+		return ret;
++	WARN_ON_ONCE(!inode_is_locked(file_inode(file_out)));
 +
-+	/* Don't touch certain kinds of inodes */
-+	if (IS_IMMUTABLE(inode_out))
-+		return -EPERM;
++	/*
++	 * Clear the security bits if the process is not being run by root.
++	 * This keeps people from modifying setuid and setgid binaries.
++	 */
++	ret = file_remove_privs(file_out);
 +
-+	if (IS_SWAPFILE(inode_in) || IS_SWAPFILE(inode_out))
-+		return -ETXTBSY;
++	return ret;
 +
-+	/* Ensure offsets don't wrap. */
-+	if (pos_in + count < pos_in || pos_out + count < pos_out)
-+		return -EOVERFLOW;
-+
-+	/* Shorten the copy to EOF */
-+	size_in = i_size_read(inode_in);
-+	if (pos_in >= size_in)
-+		count = 0;
-+	else
-+		count = min(count, size_in - (uint64_t)pos_in);
-+
-+	ret = generic_write_check_limits(file_out, pos_out, &count);
-+	if (ret)
-+		return ret;
-+
-+	/* Don't allow overlapped copying within the same file. */
-+	if (inode_in == inode_out &&
-+	    pos_out + count > pos_in &&
-+	    pos_out < pos_in + count)
-+		return -EINVAL;
-+
-+	*req_count = count;
-+	return 0;
 +}
++EXPORT_SYMBOL(generic_copy_file_range_prep);
 +
- int pagecache_write_begin(struct file *file, struct address_space *mapping,
- 				loff_t pos, unsigned len, unsigned flags,
- 				struct page **pagep, void **fsdata)
+ /**
+  * generic_copy_file_range - copy data between two files
+  * @file_in:	file structure to read from
+@@ -1590,6 +1612,15 @@ ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
+ 				struct file *file_out, loff_t pos_out,
+ 				size_t len, unsigned int flags)
+ {
++	int ret;
++
++	/* Should inode lock be held throughout the copy operation? */
++	inode_lock(file_inode(file_out));
++	ret = generic_copy_file_range_prep(file_in, file_out);
++	inode_unlock(file_inode(file_out));
++	if (ret)
++		return ret;
++
+ 	return do_splice_direct(file_in, &pos_in, file_out, &pos_out,
+ 				len > MAX_RW_COUNT ? MAX_RW_COUNT : len, 0);
+ }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e4d382c4342a..3e03a96d9ab6 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1889,6 +1889,8 @@ extern ssize_t vfs_readv(struct file *, const struct iovec __user *,
+ 		unsigned long, loff_t *, rwf_t);
+ extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
+ 				   loff_t, size_t, unsigned int);
++extern int generic_copy_file_range_prep(struct file *file_in,
++					struct file *file_out);
+ extern ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
+ 				       struct file *file_out, loff_t pos_out,
+ 				       size_t len, unsigned int flags);
 -- 
 2.17.1
 
