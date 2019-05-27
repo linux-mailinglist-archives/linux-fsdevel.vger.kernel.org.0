@@ -2,90 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 063662B822
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2019 17:05:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1A452B85D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2019 17:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726351AbfE0PEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 May 2019 11:04:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52454 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726094AbfE0PEi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 May 2019 11:04:38 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A4CAA5946A;
-        Mon, 27 May 2019 15:04:17 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6D33260BE5;
-        Mon, 27 May 2019 15:04:10 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon, 27 May 2019 17:04:17 +0200 (CEST)
-Date:   Mon, 27 May 2019 17:04:09 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] signal: Adjust error codes according to
- restore_user_sigmask()
-Message-ID: <20190527150409.GA8961@redhat.com>
-References: <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
- <20190523145944.GB23070@redhat.com>
- <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
- <20190523163604.GE23070@redhat.com>
- <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
- <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
- <20190524141054.GB2655@redhat.com>
- <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
- <20190524163310.GG2655@redhat.com>
- <CABeXuvrUKZnECj+NgLdpe5uhKBEmSynrakD-3q9XHqk8Aef5UQ@mail.gmail.com>
+        id S1726636AbfE0PX1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 May 2019 11:23:27 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44686 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbfE0PX0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 May 2019 11:23:26 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4RFIXAb024562;
+        Mon, 27 May 2019 15:23:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=Zcovkmdt49gtmPgW7Q9LuGnoLfdazVdyyvR/BwyXYOo=;
+ b=lip9POTCzkcZEQuXaQzrzrFylJxilyNMXTKqF5PlVNR8D+d3OwFvOICjZ4BcBBWwmEXJ
+ 1hHC2Oh/5vRrB8Rmhuc6sAtqeGHR2QlYUgJ2soXGZcdj1VRLWk2CV4RbWGWjIohWRrAo
+ J5p7VybJxJvQfU9V1yQot3m0t/XMxA7ajHR05sALWl+AmbMG3pjMxABI2dFdOdhs2PeC
+ dqaajxiaodfVOOcfhY8XqvUQoG0v9Y1D/ailzEwAU18zmwYkDe8w7d/+q8ZJ9qB1RQLh
+ 9d904jxSRq66tjj47YQnFMeYsXOqLWnkRmLK7zrYJmAGiOzmvBQhq7CqQuX+WhjX6W1Q 0Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2spxbpxnur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 May 2019 15:23:24 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4RFLkmB184731;
+        Mon, 27 May 2019 15:23:23 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2srbdwdgxc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 May 2019 15:23:23 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4RFNMqM016912;
+        Mon, 27 May 2019 15:23:22 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 27 May 2019 08:23:22 -0700
+Date:   Mon, 27 May 2019 18:23:16 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [bug report] io_uring: add support for sqe links
+Message-ID: <20190527152316.GJ24680@kadam>
+References: <20190527100808.GA31410@mwanda>
+ <e46527f2-44f9-499d-3de9-510fc8f08feb@kernel.dk>
+ <20190527141014.GI24680@kadam>
+ <9b7b794b-26ed-7525-5f81-93cb60e1a005@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CABeXuvrUKZnECj+NgLdpe5uhKBEmSynrakD-3q9XHqk8Aef5UQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 27 May 2019 15:04:38 +0000 (UTC)
+In-Reply-To: <9b7b794b-26ed-7525-5f81-93cb60e1a005@kernel.dk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9269 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905270108
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9269 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905270108
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Deepa,
+On Mon, May 27, 2019 at 08:34:18AM -0600, Jens Axboe wrote:
+> On 5/27/19 8:10 AM, Dan Carpenter wrote:
+> > On Mon, May 27, 2019 at 07:36:22AM -0600, Jens Axboe wrote:
+> >> On 5/27/19 4:08 AM, Dan Carpenter wrote:
+> >>> Hello Jens Axboe,
+> >>>
+> >>> The patch f3fafe4103bd: "io_uring: add support for sqe links" from
+> >>> May 10, 2019, leads to the following static checker warning:
+> >>>
+> >>> 	fs/io_uring.c:623 io_req_link_next()
+> >>> 	error: potential NULL dereference 'nxt'.
+> >>>
+> >>> fs/io_uring.c
+> >>>      614  static void io_req_link_next(struct io_kiocb *req)
+> >>>      615  {
+> >>>      616          struct io_kiocb *nxt;
+> >>>      617
+> >>>      618          nxt = list_first_entry_or_null(&req->link_list, struct io_kiocb, list);
+> >                                                      ^^^^^^^^^^^^^^^
+> > If this list is empty then "nxt" is NULL.
+> 
+> Right...
+> 
+> >>>      619          list_del(&nxt->list);
+> >>>                             ^^^^^^^^^
+> >>> The warning is a false positive but this is a NULL dereference.
+> >>>
+> >>>      620          if (!list_empty(&req->link_list)) {
+> >                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > 
+> > We're checking for list_empty() here.
+> 
+> After deleting an entry from it.
+> 
 
-it seems that we both are saying the same things again and again, and we
-simply can't understand each other.
+Ah...  Right.  Sorry.
 
-I'll try to write another email to restart this discussion. Tomorrow, somehow
-I can't wake up today.
-
-And let me repeat, of course I can be wrong. IOW, it is not that I am trying
-to blame you for all this confusion.
-
-On 05/24, Deepa Dinamani wrote:
->
-> > > Ok, then can you point out what specifically was wrong with
-> > > 854a6ed56839a?
-> >
-> > Cough. If nothing else the lost -EINTR?
->
-> This was my theory. My basis behind the theory was [1](the issue with
-> return value not being updated) above. And, you are saying this is ok.
-
-I agree that "the lost -EINTR" above was not clear. I'll try to clarify
-what I think is not OK.
-
-Oleg.
+regards,
+dan carpenter
 
