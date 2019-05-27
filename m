@@ -2,113 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1A452B85D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2019 17:24:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E20512B96A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2019 19:27:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbfE0PX1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 May 2019 11:23:27 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44686 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbfE0PX0 (ORCPT
+        id S1726971AbfE0R1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 May 2019 13:27:07 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33496 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbfE0R1G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 May 2019 11:23:26 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4RFIXAb024562;
-        Mon, 27 May 2019 15:23:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Zcovkmdt49gtmPgW7Q9LuGnoLfdazVdyyvR/BwyXYOo=;
- b=lip9POTCzkcZEQuXaQzrzrFylJxilyNMXTKqF5PlVNR8D+d3OwFvOICjZ4BcBBWwmEXJ
- 1hHC2Oh/5vRrB8Rmhuc6sAtqeGHR2QlYUgJ2soXGZcdj1VRLWk2CV4RbWGWjIohWRrAo
- J5p7VybJxJvQfU9V1yQot3m0t/XMxA7ajHR05sALWl+AmbMG3pjMxABI2dFdOdhs2PeC
- dqaajxiaodfVOOcfhY8XqvUQoG0v9Y1D/ailzEwAU18zmwYkDe8w7d/+q8ZJ9qB1RQLh
- 9d904jxSRq66tjj47YQnFMeYsXOqLWnkRmLK7zrYJmAGiOzmvBQhq7CqQuX+WhjX6W1Q 0Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2spxbpxnur-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 27 May 2019 15:23:24 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4RFLkmB184731;
-        Mon, 27 May 2019 15:23:23 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2srbdwdgxc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 27 May 2019 15:23:23 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4RFNMqM016912;
-        Mon, 27 May 2019 15:23:22 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 27 May 2019 08:23:22 -0700
-Date:   Mon, 27 May 2019 18:23:16 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: [bug report] io_uring: add support for sqe links
-Message-ID: <20190527152316.GJ24680@kadam>
-References: <20190527100808.GA31410@mwanda>
- <e46527f2-44f9-499d-3de9-510fc8f08feb@kernel.dk>
- <20190527141014.GI24680@kadam>
- <9b7b794b-26ed-7525-5f81-93cb60e1a005@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9b7b794b-26ed-7525-5f81-93cb60e1a005@kernel.dk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9269 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905270108
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9269 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905270108
+        Mon, 27 May 2019 13:27:06 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d9so17533707wrx.0;
+        Mon, 27 May 2019 10:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=9WX0VFYO4FVs44DMQ1hkSFUp4e1UxuztItybOtfTqFU=;
+        b=bMFyDjnJWfw3h9h2ZwPS9hOy1AGomYHeXJCK6ClXR89C0wNpY9a/9Wz5NkiPgSSdeq
+         pGwfYJN2uAykqUFZQczPG550z+bac7GaL6d/tDBnk2/L79gM/05lQq1EOp7+XKfGvrtj
+         Ec9mA9u6IM+ZZX0VApXrZAzp2ufvxPIbgv4DfHir/N3qcBN+BaFjA4Za0YwZUqjEsvYw
+         RsbRzJpc4Xb6CHIVWkPRwmGDMuSDdkkimi0c07OjdHheQbHhEMuC2ghyHkimgeiss2BT
+         vbFLIDmjh25v4vZrQAst4l4rYKub7ATLhxPB7P/fLMxTitj1i8VwXDIRyp3DOwe7kmDz
+         lcPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9WX0VFYO4FVs44DMQ1hkSFUp4e1UxuztItybOtfTqFU=;
+        b=AnejTpGUMYFPV7zRSJKp3GHCaJ4+61MEOA6LXMaIBN550piLi+/OKnNF7+d5Oi8IFD
+         bUOJMQew5AcWDgQOekI5XeGQv/J5h9Yl2tD+Mh7qHqj3ypMp9VFdI5/S7ZP3drGm63vy
+         laQiPobS6XLbM7aY+wUBUleU55hrRZc7vC3kf2BjAFsJPBLu3MclyXdTTFDLDZWjUfGy
+         yngQ8BfBNHGZcqo+vgCa8jOFDRYmlthPgh0HsEhsgNUR0ltHifcmsFb6ag3TRiqIJsLP
+         PCJQjmzvUM4OitH8OXJS0rBAfqvqaxfmOvw1kBP3Zu1VpCkFqTXUo/b5a7SKRXzjljv3
+         1pxQ==
+X-Gm-Message-State: APjAAAVem4OsW0jZiT/jgMBfEgzi/K2t4Kp5mhBL23wT0JTqkL1UnciO
+        U+XG/tmzsnaOK9TkhEbpinc=
+X-Google-Smtp-Source: APXvYqzQM7w/ysae6EMfiq7n42CFJmrcBJPXGbTpco9z9Lrr2GCtadH2djq7ALmpAvtHtPns0pJRDA==
+X-Received: by 2002:a5d:488a:: with SMTP id g10mr11069095wrq.344.1558978024064;
+        Mon, 27 May 2019 10:27:04 -0700 (PDT)
+Received: from localhost.localdomain ([5.102.238.208])
+        by smtp.gmail.com with ESMTPSA id o14sm855129wrp.77.2019.05.27.10.27.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 10:27:02 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>, Chris Mason <clm@fb.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: [RFC][PATCH] link.2: AT_ATOMIC_DATA and AT_ATOMIC_METADATA
+Date:   Mon, 27 May 2019 20:26:55 +0300
+Message-Id: <20190527172655.9287-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 27, 2019 at 08:34:18AM -0600, Jens Axboe wrote:
-> On 5/27/19 8:10 AM, Dan Carpenter wrote:
-> > On Mon, May 27, 2019 at 07:36:22AM -0600, Jens Axboe wrote:
-> >> On 5/27/19 4:08 AM, Dan Carpenter wrote:
-> >>> Hello Jens Axboe,
-> >>>
-> >>> The patch f3fafe4103bd: "io_uring: add support for sqe links" from
-> >>> May 10, 2019, leads to the following static checker warning:
-> >>>
-> >>> 	fs/io_uring.c:623 io_req_link_next()
-> >>> 	error: potential NULL dereference 'nxt'.
-> >>>
-> >>> fs/io_uring.c
-> >>>      614  static void io_req_link_next(struct io_kiocb *req)
-> >>>      615  {
-> >>>      616          struct io_kiocb *nxt;
-> >>>      617
-> >>>      618          nxt = list_first_entry_or_null(&req->link_list, struct io_kiocb, list);
-> >                                                      ^^^^^^^^^^^^^^^
-> > If this list is empty then "nxt" is NULL.
-> 
-> Right...
-> 
-> >>>      619          list_del(&nxt->list);
-> >>>                             ^^^^^^^^^
-> >>> The warning is a false positive but this is a NULL dereference.
-> >>>
-> >>>      620          if (!list_empty(&req->link_list)) {
-> >                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > 
-> > We're checking for list_empty() here.
-> 
-> After deleting an entry from it.
-> 
+New link flags to request "atomic" link.
 
-Ah...  Right.  Sorry.
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-regards,
-dan carpenter
+Hi Guys,
+
+Following our discussions on LSF/MM and beyond [1][2], here is
+an RFC documentation patch.
+
+Ted, I know we discussed limiting the API for linking an O_TMPFILE
+to avert the hardlinks issue, but I decided it would be better to
+document the hardlinks non-guaranty instead. This will allow me to
+replicate the same semantics and documentation to renameat(2).
+Let me know how that works out for you.
+
+I also decided to try out two separate flags for data and metadata.
+I do not find any of those flags very useful without the other, but
+documenting them seprately was easier, because of the fsync/fdatasync
+reference.  In the end, we are trying to solve a social engineering
+problem, so this is the least confusing way I could think of to describe
+the new API.
+
+First implementation of AT_ATOMIC_METADATA is expected to be
+noop for xfs/ext4 and probably fsync for btrfs.
+
+First implementation of AT_ATOMIC_DATA is expected to be
+filemap_write_and_wait() for xfs/ext4 and probably fdatasync for btrfs.
+
+Thoughts?
+
+Amir.
+
+[1] https://lwn.net/Articles/789038/
+[2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com/
+
+ man2/link.2 | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+
+diff --git a/man2/link.2 b/man2/link.2
+index 649ba00c7..15c24703e 100644
+--- a/man2/link.2
++++ b/man2/link.2
+@@ -184,6 +184,57 @@ See
+ .BR openat (2)
+ for an explanation of the need for
+ .BR linkat ().
++.TP
++.BR AT_ATOMIC_METADATA " (since Linux 5.x)"
++By default, a link operation followed by a system crash, may result in the
++new file name being linked with old inode metadata, such as out dated time
++stamps or missing extended attributes.
++One way to prevent this is to call
++.BR fsync (2)
++before linking the inode, but that involves flushing of volatile disk caches.
++
++A filesystem that accepts this flag will guaranty, that old inode metadata
++will not be exposed in the new linked name.
++Some filesystems may internally perform
++.BR fsync (2)
++before linking the inode to provide this guaranty,
++but often, filesystems will have a more efficient method to provide this
++guaranty without flushing volatile disk caches.
++
++A filesystem that accepts this flag does
++.BR NOT
++guaranty that the new file name will exist after a system crash, nor that the
++current inode metadata is persisted to disk.
++Specifically, if a file has hardlinks, the existance of the linked name after
++a system crash does
++.BR NOT
++guaranty that any of the other file names exist, nor that the last observed
++value of
++.I st_nlink
++(see
++.BR stat (2))
++has persisted.
++.TP
++.BR AT_ATOMIC_DATA " (since Linux 5.x)"
++By default, a link operation followed by a system crash, may result in the
++new file name being linked with old data or missing data.
++One way to prevent this is to call
++.BR fdatasync (2)
++before linking the inode, but that involves flushing of volatile disk caches.
++
++A filesystem that accepts this flag will guaranty, that old data
++will not be exposed in the new linked name.
++Some filesystems may internally perform
++.BR fsync (2)
++before linking the inode to provide this guaranty,
++but often, filesystems will have a more efficient method to provide this
++guaranty without flushing volatile disk caches.
++
++A filesystem that accepts this flag does
++.BR NOT
++guaranty that the new file name will exist after a system crash, nor that the
++current inode data is persisted to disk.
++.TP
+ .SH RETURN VALUE
+ On success, zero is returned.
+ On error, \-1 is returned, and
+-- 
+2.17.1
 
