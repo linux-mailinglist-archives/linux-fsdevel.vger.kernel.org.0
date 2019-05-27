@@ -2,133 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CBD62B193
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2019 11:49:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 716F12B1D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 May 2019 12:08:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726063AbfE0Jtg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 May 2019 05:49:36 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:46625 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbfE0Jtg (ORCPT
+        id S1726114AbfE0KI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 May 2019 06:08:26 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:36346 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbfE0KI0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 May 2019 05:49:36 -0400
-Received: by mail-yb1-f196.google.com with SMTP id o81so2213493ybc.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2019 02:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wKkjUv4zO2ZGyCSeKwcrLI2L7wy0xnWXlENnMuYZuHM=;
-        b=LG0j9S0mpyF5RnkO+xV8Rg4KQn9/pT7uGqZHGeZmLimeWbWiY0KgEOWKyOV+04VRF8
-         OmT4aRbMw4JH0XQ/gULpfBA3USANtkckCOlc5j4dAF5ydFZjwHYoeeILy7ZDFk/RPsmn
-         Ec2bcOB0I1YY0OGivk1SN4OUT/VH7m1DvUQTzaFswqeTM5CoJUYUGmv4OxwHh9L/IfqW
-         HWWySu1nrbBKQL5hM+liLDd0cg1WMpqTcHFwc41WY/INZfl9wD2fQhbRLeZ5OURZUx/F
-         WFDqK6IA8n6ZGRyS73fWIUFed2TZMsATL7d8HssGPfnqYTFGBnw/uuCsXnDdbmpoqZAl
-         NlQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wKkjUv4zO2ZGyCSeKwcrLI2L7wy0xnWXlENnMuYZuHM=;
-        b=kq+mLmeNKiZA8Iu3LziLs4VBk+ntF/GxSY/A0w7hvmjFOhAgeQPmUbDYv++Gv3eEmz
-         YIUP208fOdr6r1v6JQXrq7W4nGzIl/7Ou/ZFKyacgTOuhzTV5ln+6YDF8qAbzJWNrJkj
-         E4YLGF7E2zUQnq6IJx+3YtcajbONuFhTfD1X3Fl/Y7w/lmJq6lYEOXTYRzpKmcjvxctM
-         f4jBQEhNvLJ42vd379yV3qH6gOf9o2EBwE0waJo/TNbJ6CuvXiE0jvAgV1j+O+LkRnIK
-         nPbYc/KiV+Nu9DPaDWdYnZQhXE1/2d4ZklbV9fmYheOvUGQaDgqREmECzEb4QX8ox/mQ
-         RfRA==
-X-Gm-Message-State: APjAAAUy/BoTb98iFlij9TwRHUN1RnTOGOd5yZhDFmJzylFjkbn0utZr
-        l06U6ox8lhxQmFovXLSjBCZrtQy2u7zkubc31ew=
-X-Google-Smtp-Source: APXvYqzMXGf0mNoO0j2xL+7fpUvH52fVLTJxRgoQqLhctVihZFmjhCIQS1nZkEONwBqqWeQ4KF2WrsTtF59XmnBJOPs=
-X-Received: by 2002:a25:8109:: with SMTP id o9mr22899857ybk.132.1558950575214;
- Mon, 27 May 2019 02:49:35 -0700 (PDT)
+        Mon, 27 May 2019 06:08:26 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4R9xvfg176866;
+        Mon, 27 May 2019 10:08:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=7AwDZ11tjsv4yyZSMPazjv2aTAUgse+ixjzcawJvK6Q=;
+ b=WPgrpcS1Yd2jjNTLQBdsbhE8wFjY6EqPa1EuLiPNNJRpXyixSy1s+t+gmu/J7+e1mV08
+ UzOLdoaxO59WiKdyRkNAMQKiFR401KJ7I/cddDuKSdJz1/VZ5B8kruMm0i4dHLKqbfxk
+ CnK+c69w2pzFkB4rcWT0UbfmY/GENoiaUCtEB4fmt04B1H13UFckMASgUTVI7dgOE2cv
+ DCCTOk5K8iVH08c4zq85AhUvx7nODut53A33zir69lUsIWeR4U4aDPpuJk4U7sPp6PtH
+ R6ERi1vlNIpSPLfk4RJbGWGN5H92xCrchIE4SYx8mZQYTpqO4eZdwOEFTfTGYu/MIWM9 Ng== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 2spu7d5sem-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 May 2019 10:08:21 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4RA86ER166342;
+        Mon, 27 May 2019 10:08:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2sr31u5w44-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 May 2019 10:08:20 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4RA8JhO021937;
+        Mon, 27 May 2019 10:08:19 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 27 May 2019 03:08:19 -0700
+Date:   Mon, 27 May 2019 13:08:08 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     axboe@kernel.dk
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [bug report] io_uring: add support for sqe links
+Message-ID: <20190527100808.GA31410@mwanda>
 MIME-Version: 1.0
-References: <20190526143411.11244-1-amir73il@gmail.com> <20190527082457.GE21124@kroah.com>
-In-Reply-To: <20190527082457.GE21124@kroah.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 27 May 2019 12:49:23 +0300
-Message-ID: <CAOQ4uxjyg5AVPrcR4bPm4zMY9BKmgV8g7TAuH--cfKNJv8pRYQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] Sort out fsnotify_nameremove() mess
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jan Kara <jack@suse.cz>, David Sterba <dsterba@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Joel Becker <jlbec@evilplan.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9269 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905270072
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9269 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905270071
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 27, 2019 at 11:25 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Sun, May 26, 2019 at 05:34:01PM +0300, Amir Goldstein wrote:
-> > Jan,
-> >
-> > For v3 I went with a straight forward approach.
-> > Filesystems that have fsnotify_{create,mkdir} hooks also get
-> > explicit fsnotify_{unlink,rmdir} hooks.
-> >
-> > Hopefully, this approach is orthogonal to whatever changes Al is
-> > planning for recursive tree remove code, because in many of the
-> > cases, the hooks are added at the entry point for the recursive
-> > tree remove.
-> >
-> > After looking closer at all the filesystems that were converted to
-> > simple_remove in v2, I decided to exempt another 3 filesystems from
-> > the fsnotify delete hooks: hypfs,qibfs and aafs.
-> > hypfs is pure cleanup (*). qibfs and aafs can remove dentry on user
-> > configuration change, but they do not generate create events, so it
-> > is less likely that users depend on the delete events.
-> >
-> > That leaves configfs the only filesystem that gets the new delete hooks
-> > even though it does not have create hooks.
->
-> why doesn't configfs have create hooks? That's what userspace does in
-> configfs, shouldn't it be notified about it?  Keeping it "unequal" seems
-> odd to me.
->
+Hello Jens Axboe,
 
-So it's not exactly that configfs has no create hooks at all.
-For "normal" filesystems mkdir (for example) is only possible
-by mkdir(2) syscall and there is create hook in vfs_mkdir().
+The patch f3fafe4103bd: "io_uring: add support for sqe links" from
+May 10, 2019, leads to the following static checker warning:
 
-The configfs (as well as debugfs/tracefs/etc), there are other code paths
-that create directories, namely: configfs_register_grup/subsystem().
-Those code paths have explicit fsnotify_mkdir() hook in debugfs/tracefs/etc,
-but not in configfs. Why? because nobody put the hooks and no user
-complained.
+	fs/io_uring.c:623 io_req_link_next()
+	error: potential NULL dereference 'nxt'.
 
-Should we add fsnotify_mkdir() hooks in configfs - probably yes.
-I can do it as followup, but this is not the purpose of this patch set.
-The purpose of this patch set (achieved in the last patch) is to simplify
-the implementation of the fsnotify delete hook.
-Today it is overly complicated by the fact that the hooks was placed
-in d_delete() and d_delete() is called from some code paths that have
-no business with fsnotify notifications at all.
+fs/io_uring.c
+   614  static void io_req_link_next(struct io_kiocb *req)
+   615  {
+   616          struct io_kiocb *nxt;
+   617  
+   618          nxt = list_first_entry_or_null(&req->link_list, struct io_kiocb, list);
+   619          list_del(&nxt->list);
+                          ^^^^^^^^^
+The warning is a false positive but this is a NULL dereference.
 
-Once this patch set is done sprinkling fsnotify_rmdir/unlink() hooks
-in "proper" places, it removes the current fsnotify hook from d_delete().
-d_delete() is called from configfs_unregister_group/subsystem(), so if
-we do not add fsnotify delete hooks to configfs we will regress the existing
-"unequal" behavior.
-Maybe there are no users depending on fsnotify delete notifications from
-configfs - I do not know. If we believe that is the case, we can drop the
-configfs patch.
-Maybe there *are* user depending on fsnotify delete notifications from aafs
-(apparmorfs), which I decided to exclude from v3 patch set.
-If we believe that is the case, or if we find out later that in case -
-no problem
-it is simple to add the missing fsnotify hooks in apparmorfs.
+   620          if (!list_empty(&req->link_list)) {
+   621                  INIT_LIST_HEAD(&nxt->link_list);
+                                        ^^^^^
+False positive.
 
-Thought? About inclusion of configfs? About exclusion of apparmorfs?
-Again this is only exclusion/inclusion of hooks from code path that does
-NOT come from vfs syscalls (e.g. aa_remove_profiles()).
+   622                  list_splice(&req->link_list, &nxt->link_list);
+   623                  nxt->flags |= REQ_F_LINK;
+   624          }
+   625  
+   626          INIT_WORK(&nxt->work, io_sq_wq_submit_work);
+                          ^^^^^^^^^^
+   627          queue_work(req->ctx->sqo_wq, &nxt->work);
+                                             ^^^^^^^^^^
+Other bugs.
 
-Thanks,
-Amir.
+   628  }
+
+regards,
+dan carpenter
