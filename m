@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A76A2C51D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 13:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FA9F2C51E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 13:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbfE1LFt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 07:05:49 -0400
-Received: from icp-osb-irony-out6.external.iinet.net.au ([203.59.1.106]:61701
+        id S1726706AbfE1LF7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 07:05:59 -0400
+Received: from icp-osb-irony-out6.external.iinet.net.au ([203.59.1.106]:61742
         "EHLO icp-osb-irony-out6.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726313AbfE1LFt (ORCPT
+        by vger.kernel.org with ESMTP id S1726313AbfE1LF7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 07:05:49 -0400
-X-Greylist: delayed 558 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 May 2019 07:05:47 EDT
+        Tue, 28 May 2019 07:05:59 -0400
+X-Greylist: delayed 556 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 May 2019 07:05:59 EDT
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AoAACTEu1c//aqqnwNWBkBAQEBAQE?=
- =?us-ascii?q?BAQEBAQEHAQEBAQEBgWWEJoQTg3uRH5M/hj4DVAkBAQEBAQEBAQE3AQEBhD8?=
- =?us-ascii?q?CgwE4EwEDAQEBBAEBAQEDAYZgAQEBAyMVQRALGAICJgICVwYBDAYCAQGDHoF?=
- =?us-ascii?q?qAadJcYEvhUeDHIFGgQwoi2qBQD+BOII2NT6HToJYBI1bhgKUHVkJgR5xXo4?=
- =?us-ascii?q?HhCohgh+KZolELYxBmAZXgSEzGh+DQIIYGo4yYI8WAQE?=
-X-IPAS-Result: =?us-ascii?q?A2AoAACTEu1c//aqqnwNWBkBAQEBAQEBAQEBAQEHAQEBA?=
- =?us-ascii?q?QEBgWWEJoQTg3uRH5M/hj4DVAkBAQEBAQEBAQE3AQEBhD8CgwE4EwEDAQEBB?=
- =?us-ascii?q?AEBAQEDAYZgAQEBAyMVQRALGAICJgICVwYBDAYCAQGDHoFqAadJcYEvhUeDH?=
- =?us-ascii?q?IFGgQwoi2qBQD+BOII2NT6HToJYBI1bhgKUHVkJgR5xXo4HhCohgh+KZolEL?=
- =?us-ascii?q?YxBmAZXgSEzGh+DQIIYGo4yYI8WAQE?=
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AsAACTEu1c//aqqnwNWBkBAQEBAQE?=
+ =?us-ascii?q?BAQEBAQEHAQEBAQEBgWWEJoQTk1kBAQEBAQEGgTWJT4lwhj4DVAkBAQEBAQE?=
+ =?us-ascii?q?BAQE3AQEBhD8CgwE4EwEDAQEBBAEBAQEDAYZgAQEBAyMVQRALGAICJgICVwY?=
+ =?us-ascii?q?BDAYCAQGDHoF3pz1xgS+FR4McgUaBDCiLaniBB4E4gjY1PodOglgEjVuGApQ?=
+ =?us-ascii?q?dWQgBgg+OZYQqIYIfimaJRC2MQZgGV4EhMxoIKAiDJ4IYGo4yYI8WAQE?=
+X-IPAS-Result: =?us-ascii?q?A2AsAACTEu1c//aqqnwNWBkBAQEBAQEBAQEBAQEHAQEBA?=
+ =?us-ascii?q?QEBgWWEJoQTk1kBAQEBAQEGgTWJT4lwhj4DVAkBAQEBAQEBAQE3AQEBhD8Cg?=
+ =?us-ascii?q?wE4EwEDAQEBBAEBAQEDAYZgAQEBAyMVQRALGAICJgICVwYBDAYCAQGDHoF3p?=
+ =?us-ascii?q?z1xgS+FR4McgUaBDCiLaniBB4E4gjY1PodOglgEjVuGApQdWQgBgg+OZYQqI?=
+ =?us-ascii?q?YIfimaJRC2MQZgGV4EhMxoIKAiDJ4IYGo4yYI8WAQE?=
 X-IronPort-AV: E=Sophos;i="5.60,521,1549900800"; 
-   d="scan'208";a="163258770"
+   d="scan'208";a="163258800"
 Received: from 124-170-170-246.dyn.iinet.net.au (HELO [192.168.0.106]) ([124.170.170.246])
-  by icp-osb-irony-out6.iinet.net.au with ESMTP; 28 May 2019 18:56:25 +0800
+  by icp-osb-irony-out6.iinet.net.au with ESMTP; 28 May 2019 18:56:39 +0800
 Subject: Re: [PATCH] binfmt_flat: make load_flat_shared_library() work
 To:     Jann Horn <jannh@google.com>,
         Andrew Morton <akpm@linux-foundation.org>
@@ -43,9 +43,9 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
 References: <20190524201817.16509-1-jannh@google.com>
  <20190525144304.e2b9475a18a1f78a964c5640@linux-foundation.org>
  <CAG48ez36xJ9UA8gWef3+1rHQwob5nb8WP3RqnbT8GEOV9Z38jA@mail.gmail.com>
-From:   Greg Ungerer <gregungerer@westnet.com.au>
-Message-ID: <aa7f66ad-dab5-f0b6-ade9-7d3698d509a9@westnet.com.au>
-Date:   Tue, 28 May 2019 20:56:23 +1000
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <6956cfe5-90d4-aad4-48e3-66b0ece91fed@linux-m68k.org>
+Date:   Tue, 28 May 2019 20:56:37 +1000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
