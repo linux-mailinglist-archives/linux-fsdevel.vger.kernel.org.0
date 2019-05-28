@@ -2,113 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A64392D087
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 22:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E6C62D0A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 22:48:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbfE1UiD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 16:38:03 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34932 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbfE1UiD (ORCPT
+        id S1727379AbfE1UsC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 16:48:02 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:40233 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbfE1UsC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 16:38:03 -0400
-Received: by mail-oi1-f194.google.com with SMTP id a132so197041oib.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2019 13:38:03 -0700 (PDT)
+        Tue, 28 May 2019 16:48:02 -0400
+Received: by mail-it1-f196.google.com with SMTP id h11so6208193itf.5;
+        Tue, 28 May 2019 13:48:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=n63V50hJZRQjx0P2uNmb8IMUSND+kw6DMXvON/eCyx4=;
-        b=HgmGJXqlcmdsucWZ5xVcahU5joUSyO7VzbVzDTggcw2Ud/TlQkw5exXEiNgIq8Wl3/
-         4kN4EHhDdQqMgMT8XbGgbdbnIHq/Vnf8poUX9UdXib4jjTZoX5q1nsTiCq2plehuYi51
-         cdgUzgAGJnAoAKGVOBjgvJ8ROi05UA91E2pHHFv8eFGPlERmTK1T/luez1dKZ5tn1c/P
-         0IYY5bMJerOhbjFG2iI+LjJYiWEl2djDa5zb8nTYVBJxtyQABjCzNOlynx7FTo/7R7Bz
-         QTMN0CEynGFL68qFPk9uC19pLvZ+oLPO7lvYApLkzy0FJcLMvsdKsLGyMhXyuNKEbyCt
-         n6/Q==
+        bh=LFTmISDOpToJAYI9xiYodY0/ymmT3aFnC+eXeyWSay0=;
+        b=m+ijoieuI2Q5AoznyEWu7Ah+4dfaAshTJOVihWAKBwpkDxbw3Np5wBgBGNN1TqSNhP
+         v8dmA2qSIOm3pkPK920nRHvFOvF+xAUaq6D/TP1qqICC2mFGnDevbuseJhui0woW80bZ
+         qgnbi2YBfPdokAAFdDMA1f9eN9T3CY3OBDnSO4vy6cZc/EVVrcTMjtyYTULGHVIXc3x2
+         tCcBoozlZJWLoKUzz+WrRLBNyjlSFfsPeYSmuptqufdR4eiKjA6Ejkn5mXut97vUyaq7
+         GcF/lYLbdYW2RGpYFVwDTyNuXXO6zgRF1mmWC8aUvszugl/d2tk/ShyKCMObLsOpq8sh
+         oYSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=n63V50hJZRQjx0P2uNmb8IMUSND+kw6DMXvON/eCyx4=;
-        b=nJ3qORHy4ch1Ip4SViegpy+l1ELPM1LdR/soV5ALEYIrfKBC69vDKq4yn1ANCEHXCj
-         tQTQkfVpm3gezg6mAvME/SxYOCordmOl8ibZQlI1lOun1bZdi223R4ToqG/+JHlTti4+
-         rQFG3SFMc1e8VZlLE4Pe7ITAIU6jGAs6Shcr2ynhNLN0KAooL3IzBwnBIjwjQ7+G3JuW
-         lrJMfP0OJZm9aP42+Nyq09sQ0BolkEPmKVI1+Mdk9FOLDV1QQl61Xhg62nzXjpgXbWNg
-         6vnUoowceUa3vzznRboP2/lJ/Qd+qvhmFj989rDPsfCvHNfs+l43d2F8M3rqb7Zh2z3l
-         D0fw==
-X-Gm-Message-State: APjAAAWWlKb0TlVTm27it/sM3fjZbJmCx4i6Ts8BqsENmed5qE9rRuu+
-        SMAz259yjdqU4sFRXU79ZNYXqmj27VGioCt52imVlg==
-X-Google-Smtp-Source: APXvYqzhacQSKZU30zxCXXRtqKrYjcSNogeLWirzZjg+v7dymplX/CKqxAk5vVlnLSA5obvtuO/lA2Hjt+CyAa1QzGM=
-X-Received: by 2002:aca:c48c:: with SMTP id u134mr3956264oif.39.1559075882712;
- Tue, 28 May 2019 13:38:02 -0700 (PDT)
+        bh=LFTmISDOpToJAYI9xiYodY0/ymmT3aFnC+eXeyWSay0=;
+        b=DO2pszPn359/Fu5/pQunQSTR2CBw/zjnysiz39elDxZ1TVKp8jGKPavmxp5yt0kaUq
+         rJfkku8gnB9jRDki8TNxuE2bVBcvGyJyv8Lh99zALQ49CNi4lQgAhlNFcagEf31SG7X0
+         ZOj8ulk9Oiw8RjVhsgLD8JN5oBkQ+fDP++ojIuctnDBRk0aEAxvH+ScwgEuB8G41GKEd
+         HVhYCoJ+kd3WppUQ/lp1cexNnkqCw8QulB371kyW3C5W8ZO9saM9sCNiYIscJgZNoYxR
+         jiLOw4ERChjXIra8RBviiSnF+UgOiODp2azJhtal3wPppDXZcTsw/290GTijfa5/iUrM
+         ZCJw==
+X-Gm-Message-State: APjAAAWH9Ri3ZPrISxUwu2JoX8226VQb3VfoBLNf7/oX9DZC0MdjTUXQ
+        JddGIGWENpbu9CbCxCplvGNgFUwVxNvKUaw84oM=
+X-Google-Smtp-Source: APXvYqwCstUVHiNHKuq+B8xRc5Ddii2BYUzoNbtcVsxHyYISvQQtSxAjQvX9Y0VQICv+bOsXrBQCwl3alKglk8D5b+c=
+X-Received: by 2002:a24:e084:: with SMTP id c126mr4522175ith.124.1559076481674;
+ Tue, 28 May 2019 13:48:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905935953.7587.11815678364029606128.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155905935953.7587.11815678364029606128.stgit@warthog.procyon.org.uk>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 28 May 2019 22:37:36 +0200
-Message-ID: <CAG48ez0iRCyRdMBRPPkFJP-wuiLN=VcpfHLM9cV_Cvc3z2d=+Q@mail.gmail.com>
-Subject: Re: [PATCH 6/7] block: Add block layer notifications
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
+References: <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
+ <20190523145944.GB23070@redhat.com> <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
+ <20190523163604.GE23070@redhat.com> <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+ <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
+ <20190524141054.GB2655@redhat.com> <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
+ <20190524163310.GG2655@redhat.com> <CABeXuvrUKZnECj+NgLdpe5uhKBEmSynrakD-3q9XHqk8Aef5UQ@mail.gmail.com>
+ <20190527150409.GA8961@redhat.com>
+In-Reply-To: <20190527150409.GA8961@redhat.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Tue, 28 May 2019 13:47:28 -0700
+Message-ID: <CABeXuvouBzZuNarmNcd9JgZgvonL1N_p21gat=O_x0-1hMx=6A@mail.gmail.com>
+Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 28, 2019 at 6:05 PM David Howells <dhowells@redhat.com> wrote:
-> Add a block layer notification mechanism whereby notifications about
-> block-layer events such as I/O errors, can be reported to a monitoring
-> process asynchronously.
-[...]
-> +#ifdef CONFIG_BLK_NOTIFICATIONS
-> +static const enum block_notification_type blk_notifications[] = {
-> +       [BLK_STS_TIMEOUT]       = NOTIFY_BLOCK_ERROR_TIMEOUT,
-> +       [BLK_STS_NOSPC]         = NOTIFY_BLOCK_ERROR_NO_SPACE,
-> +       [BLK_STS_TRANSPORT]     = NOTIFY_BLOCK_ERROR_RECOVERABLE_TRANSPORT,
-> +       [BLK_STS_TARGET]        = NOTIFY_BLOCK_ERROR_CRITICAL_TARGET,
-> +       [BLK_STS_NEXUS]         = NOTIFY_BLOCK_ERROR_CRITICAL_NEXUS,
-> +       [BLK_STS_MEDIUM]        = NOTIFY_BLOCK_ERROR_CRITICAL_MEDIUM,
-> +       [BLK_STS_PROTECTION]    = NOTIFY_BLOCK_ERROR_PROTECTION,
-> +       [BLK_STS_RESOURCE]      = NOTIFY_BLOCK_ERROR_KERNEL_RESOURCE,
-> +       [BLK_STS_DEV_RESOURCE]  = NOTIFY_BLOCK_ERROR_DEVICE_RESOURCE,
-> +       [BLK_STS_IOERR]         = NOTIFY_BLOCK_ERROR_IO,
-> +};
-> +#endif
-> +
->  blk_status_t errno_to_blk_status(int errno)
->  {
->         int i;
-> @@ -179,6 +194,19 @@ static void print_req_error(struct request *req, blk_status_t status)
->                                 req->rq_disk ?  req->rq_disk->disk_name : "?",
->                                 (unsigned long long)blk_rq_pos(req),
->                                 req->cmd_flags);
-> +
-> +#ifdef CONFIG_BLK_NOTIFICATIONS
-> +       if (blk_notifications[idx]) {
+On Mon, May 27, 2019 at 8:04 AM Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> Deepa,
+>
+> it seems that we both are saying the same things again and again, and we
+> simply can't understand each other.
 
-If you have this branch here, that indicates that blk_notifications
-might be sparse - but at the same time, blk_notifications is not
-defined in a way that explicitly ensures that it has as many elements
-as blk_errors. It might make sense to add an explicit length to the
-definition of blk_notifications - something like "static const enum
-block_notification_type blk_notifications[ARRAY_SIZE(blk_errors)]"
-maybe?
+Oleg, I'm sorry for the confusion.  Maybe I should point out what I
+agree with also.
 
-> +               struct block_notification n = {
-> +                       .watch.type     = WATCH_TYPE_BLOCK_NOTIFY,
-> +                       .watch.subtype  = blk_notifications[idx],
-> +                       .watch.info     = sizeof(n),
-> +                       .dev            = req->rq_disk ? disk_devt(req->rq_disk) : 0,
-> +                       .sector         = blk_rq_pos(req),
-> +               };
-> +               post_block_notification(&n);
-> +       }
-> +#endif
->  }
+I agree that signal handller being called and return value not being
+altered is an issue with other syscalls also. I was just wondering if
+some userspace code assumption would be assuming this. This is not a
+kernel bug.
+
+But, I do not think we have an understanding of what was wrong in
+854a6ed56839a anymore since you pointed out that my assumption was not
+correct that the signal handler being called without errno being set
+is wrong.
+
+One open question: this part of epoll_pwait was already broken before
+854a6ed56839a. Do you agree?
+
+if (err == -EINTR) {
+                   memcpy(&current->saved_sigmask, &sigsaved,
+                          sizeof(sigsaved));
+                    set_restore_sigmask();
+  } else
+                   set_current_blocked(&sigsaved);
+
+What to do next?
+We could just see if your optimization patch resolves Eric's issue.
+Or, I could revert the signal_pending() check and provide a fix
+something like below(not a complete patch) since mainline has this
+regression. Eric had tested something like this works also. And, I can
+continue to look at what was wrong with 854a6ed56839a in the first
+place. Let me know what you prefer:
+
+-void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
++int restore_user_sigmask(const void __user *usigmask, sigset_t
+*sigsaved, int sig_pending)
+ {
+
+        if (!usigmask)
+               return;
+
+        /*
+         * When signals are pending, do not restore them here.
+         * Restoring sigmask here can lead to delivering signals that the above
+         * syscalls are intended to block because of the sigmask passed in.
+         */
++       if (sig_pending) {
+                current->saved_sigmask = *sigsaved;
+                set_restore_sigmask();
+               return;
+           }
+
+@@ -2330,7 +2330,8 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct
+epoll_event __user *, events,
+
+        error = do_epoll_wait(epfd, events, maxevents, timeout);
+
+-       restore_user_sigmask(sigmask, &sigsaved);
++       signal_detected = restore_user_sigmask(sigmask, &sigsaved,
+error == -EINTR);
+
+-Deepa
