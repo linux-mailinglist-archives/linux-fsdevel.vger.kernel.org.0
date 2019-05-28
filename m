@@ -2,132 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 230B82BC51
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 01:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7595D2BC8D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 02:50:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbfE0XMn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 May 2019 19:12:43 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:44777 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727050AbfE0XMn (ORCPT
+        id S1727513AbfE1AuP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 May 2019 20:50:15 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:47483 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727313AbfE1AuP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 May 2019 19:12:43 -0400
-Received: by mail-vs1-f66.google.com with SMTP id w124so11546316vsb.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 May 2019 16:12:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=wX6N01CkJjaDlOJ1ros8bm2onANhDW8NXyCYvkrtemg=;
-        b=CZiPuQaEwv3lqb5SZe/gadbr2on0uyWsxhzjtp+toaxSYDJsJ0veJ+MsHzoIX193A5
-         tGyRL3+z39ibqHrkHL4ig8trKDTVq1uE+qiFVL+hYR3cMJo6o4Aspd5k9Fgs+fP8XTOZ
-         EBxJZ1nObd0eaWg5uaSRpy2MVza2dQ+cCF/Qs41qm/fon5bRysCHkLJfqF4gN+OpH5zZ
-         HsFELDr80DLkXDrbWdXyBCpSqjsGY+tiobrH4KQ86PlJi0KLZWAX8yW8dgduwngWgKtU
-         Mr0WcxTALRjcOItn9ozWYXvUi+Rq2hQhmvWnN4sexsY5xyXZZ4wuDkWK4Q22BTIVNblW
-         xkMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=wX6N01CkJjaDlOJ1ros8bm2onANhDW8NXyCYvkrtemg=;
-        b=UvZmVgSNftBPLAN3Pc5blLPtfHralk0zP7jrA4wdltPjUyvhHG2iPvLYwn0HPF0qI4
-         a329zH4dtgDDdlTkeHwNn7jcOrqthdAqhtUjQULW9Qi7nOMF9NJJmo9FjEjg9+0i/Xec
-         Bxl5y7opZLWfeiSXZr/U0nit7JDYHgYDLsmXJdAYntluTaxxTflBlBut0NwAziWCKeuw
-         TCOD8rmtUnSJsHfeHEy2m3ItirjlJmxU9ActTGDDo2kw4mW6M34uT5v9TKGql22s250i
-         XloNTuTOw/T47ajqnf9mqLTiq7nxmHRVAhRKoUK0vm+l34xZuyhpZfVjWV84lUSUzwTY
-         +00Q==
-X-Gm-Message-State: APjAAAWtvxjNB0hjcxbH5pD+qEk/vdQf4LSYC5aWJ66aEcWKBdoCKd5s
-        +mBEA/1GsznwtSsbm/99TJFnCw==
-X-Google-Smtp-Source: APXvYqy4sB3fYsZi2sRGgGcMy7oWE4xaEc4c4gHWtniQFIlK09l6934M+QPzMYcjxy9CgA/oBmrq0Q==
-X-Received: by 2002:a67:fa48:: with SMTP id j8mr50026871vsq.143.1558998761897;
-        Mon, 27 May 2019 16:12:41 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id a95sm5421589uaa.13.2019.05.27.16.12.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 May 2019 16:12:41 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hVOnI-000638-S7; Mon, 27 May 2019 20:12:40 -0300
-Date:   Mon, 27 May 2019 20:12:40 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     john.hubbard@gmail.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Christian Benvenuti <benve@cisco.com>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>
-Subject: Re: [PATCH v2] infiniband/mm: convert put_page() to put_user_page*()
-Message-ID: <20190527231240.GA23224@ziepe.ca>
-References: <20190525014522.8042-1-jhubbard@nvidia.com>
- <20190525014522.8042-2-jhubbard@nvidia.com>
+        Mon, 27 May 2019 20:50:15 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R471e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=24;SR=0;TI=SMTPD_---0TSq1luR_1559004607;
+Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0TSq1luR_1559004607)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 28 May 2019 08:50:07 +0800
+Subject: Re: [PATCH 2/3] mm: remove cleancache.c
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
+References: <20190527103207.13287-1-jgross@suse.com>
+ <20190527103207.13287-3-jgross@suse.com>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <7c75d310-1beb-08f3-d590-b4ff2c42cbcd@linux.alibaba.com>
+Date:   Tue, 28 May 2019 08:50:06 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <20190527103207.13287-3-jgross@suse.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190525014522.8042-2-jhubbard@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 24, 2019 at 06:45:22PM -0700, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
+
+
+On 19/5/27 18:32, Juergen Gross wrote:
+> With the removal of tmem and xen-selfballoon the only user of
+> cleancache is gone. Remove it, too.
 > 
-> For infiniband code that retains pages via get_user_pages*(),
-> release those pages via the new put_user_page(), or
-> put_user_pages*(), instead of put_page()
-> 
-> This is a tiny part of the second step of fixing the problem described
-> in [1]. The steps are:
-> 
-> 1) Provide put_user_page*() routines, intended to be used
->    for releasing pages that were pinned via get_user_pages*().
-> 
-> 2) Convert all of the call sites for get_user_pages*(), to
->    invoke put_user_page*(), instead of put_page(). This involves dozens of
->    call sites, and will take some time.
-> 
-> 3) After (2) is complete, use get_user_pages*() and put_user_page*() to
->    implement tracking of these pages. This tracking will be separate from
->    the existing struct page refcounting.
-> 
-> 4) Use the tracking and identification of these pages, to implement
->    special handling (especially in writeback paths) when the pages are
->    backed by a filesystem. Again, [1] provides details as to why that is
->    desirable.
-> 
-> [1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
-> 
-> Cc: Doug Ledford <dledford@redhat.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
-> Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
-> Cc: Christian Benvenuti <benve@cisco.com>
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
-> Acked-by: Jason Gunthorpe <jgg@mellanox.com>
-> Tested-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> Signed-off-by: Juergen Gross <jgross@suse.com>
 > ---
->  drivers/infiniband/core/umem.c              |  7 ++++---
->  drivers/infiniband/core/umem_odp.c          | 10 +++++-----
->  drivers/infiniband/hw/hfi1/user_pages.c     | 11 ++++-------
->  drivers/infiniband/hw/mthca/mthca_memfree.c |  6 +++---
->  drivers/infiniband/hw/qib/qib_user_pages.c  | 11 ++++-------
->  drivers/infiniband/hw/qib/qib_user_sdma.c   |  6 +++---
->  drivers/infiniband/hw/usnic/usnic_uiom.c    |  7 ++++---
->  7 files changed, 27 insertions(+), 31 deletions(-)
+>  Documentation/vm/cleancache.rst  | 296 ------------------------------------
+>  Documentation/vm/frontswap.rst   |  10 +-
+>  Documentation/vm/index.rst       |   1 -
+>  MAINTAINERS                      |   7 -
+>  drivers/staging/erofs/data.c     |   6 -
+>  drivers/staging/erofs/internal.h |   1 -
+>  fs/block_dev.c                   |   5 -
+>  fs/btrfs/extent_io.c             |   9 --
+>  fs/btrfs/super.c                 |   2 -
+>  fs/ext4/readpage.c               |   6 -
+>  fs/ext4/super.c                  |   2 -
+>  fs/f2fs/data.c                   |   3 +-
+>  fs/mpage.c                       |   7 -
+>  fs/ocfs2/super.c                 |   2 -
 
-Applied to for-next, thanks
+For ocfs2 part,
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 
-Jason
+>  fs/super.c                       |   3 -
+>  include/linux/cleancache.h       | 124 ---------------
+>  include/linux/fs.h               |   5 -
+>  mm/Kconfig                       |  22 ---
+>  mm/Makefile                      |   1 -
+>  mm/cleancache.c                  | 317 ---------------------------------------
+>  mm/filemap.c                     |  11 --
+>  mm/truncate.c                    |  15 +-
