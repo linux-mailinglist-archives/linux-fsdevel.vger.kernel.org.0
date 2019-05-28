@@ -2,187 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68AE02D243
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 01:12:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 282022D253
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 01:17:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfE1XMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 19:12:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56888 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbfE1XMT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 19:12:19 -0400
-Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C41D120989;
-        Tue, 28 May 2019 23:12:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559085138;
-        bh=pjNLO6HMwgocH5xSjKQLwUlCjFQJob9BKQ9cLgKRqF8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=U9wru9EeqNqxQ55HDbDaFy1X8r1iIQV6cCTiFnwqXnq1MYgDZWuLbJ8T8bH8wnEDf
-         hnqb8niEU+eO64TFOy0wj0d9mqg86UsLOf0rL1Jb8SruzFJ0x5BkMQpM6iPgEyASpZ
-         figR5E9sjI8OVijQ/jGmWm//lV6T8I+y2m39lP7w=
-Date:   Tue, 28 May 2019 16:12:18 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
- ring buffer
-Message-ID: <20190528231218.GA28384@kroah.com>
-References: <20190528162603.GA24097@kroah.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
- <4031.1559064620@warthog.procyon.org.uk>
+        id S1727051AbfE1XQy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 19:16:54 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41418 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726824AbfE1XQy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 May 2019 19:16:54 -0400
+Received: by mail-ot1-f68.google.com with SMTP id l25so139621otp.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 May 2019 16:16:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bXl2E+8Ofltdc9I18xpTcw4iLvgqqVUYnnHUQU/GAq8=;
+        b=XRdrVhMlsJz9dk8XMaJIhK71SNkpeN9/QvL1IFjjOGQL/+2erDzADKEgV2Ewf7N9BF
+         cBCn7ujn+0ZSADdUtnYM6bYVxPorxwZmenlFR6nyf9F/usl1rHTU5jsCrmubxLZEOeF7
+         uRjdac8tx++6S7JxCvvB/zFu9U6mVc3a/709+2v6vE/NBRNH2hn7NoBGlSOHT+Q/oVOM
+         k5Cx0qcxzwFTZr1V8SKiSavDEM/adYJcvqzB44X2L5HuR5ZNGPugOczgP0sw2Cfrx284
+         dR12tmV/bA+xqSC+omGlF6HiNYF/bLaYcY4gsz2/oJYnVJIp1XXgxJZqzBh0SHcI77fo
+         4PsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bXl2E+8Ofltdc9I18xpTcw4iLvgqqVUYnnHUQU/GAq8=;
+        b=FzchMSH82jgoR+pasxd/wGujghU5Gjtdrf1VgCpb7xvCMsLmKewnIlVRkTgfvyTuNm
+         DVp4JIdf2Pvts9wvRDHR/F5p6FT33tgOvpJ36dpdvI1F8tN0GLwJj/S5T/0s1VM7J3a7
+         MKDMNKrvLjMOfA5mdOYKUwCCKyPwR66W528uqpw2unTrfBOb3+d4Lz/TUlG2G6UY/3s/
+         KYgBXq68CSdGuT5WXTjQJ+pjavmlqfYhfXImsTgxcfdCVswbxop/cI46EKt1gUNXd25i
+         Qlj0Hq72TngGIE5prjhpilO0braAs0OHsK4Y6bQE/MrVX6ndife5YdSzqKzMM4sRXhOD
+         fsBg==
+X-Gm-Message-State: APjAAAX86bNlDplS89G6THP1uMxQe1DYMWmP71FYv9XetY7OaKVg/lyj
+        3+uoKmT+QwJ9i5+3NvVj4/3MlH5ieqj7TqIIt7YCuUSvw34=
+X-Google-Smtp-Source: APXvYqxAIU+CfyUKrIQH2tqs54n2YHk/dG4f/kR15R8K49NvXBnA+Zac0GblhA3C6ht8PtVupw/K3bwfpeGSx+t1xGU=
+X-Received: by 2002:a9d:6254:: with SMTP id i20mr27881970otk.180.1559085412912;
+ Tue, 28 May 2019 16:16:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4031.1559064620@warthog.procyon.org.uk>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+ <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
+ <CAG48ez3L5KzKyKMxUTaaB=r1E1ZXh=m6e9+CwYcXfRnUSjDvWA@mail.gmail.com> <11466.1559082515@warthog.procyon.org.uk>
+In-Reply-To: <11466.1559082515@warthog.procyon.org.uk>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 29 May 2019 01:16:26 +0200
+Message-ID: <CAG48ez3W=Og7_9P9X6fatkCw4Zwbz-N35wRGFFNK8q9k0qL5iw@mail.gmail.com>
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring buffer
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 28, 2019 at 06:30:20PM +0100, David Howells wrote:
-> Greg KH <gregkh@linuxfoundation.org> wrote:
-> 
-> > > Implement a misc device that implements a general notification queue as a
-> > > ring buffer that can be mmap()'d from userspace.
-> > 
-> > "general" but just for filesystems, right?  :(
-> 
-> Whatever gave you that idea?  You can watch keyrings events, for example -
-> they're not exactly filesystems.  I've added the ability to watch for mount
-> topology changes and superblock events because those are something I've been
-> asked to do.  I've added something for block events because I've recently had
-> a problem with trying to recover data from a dodgy disk in that every time the
-> disk goes offline, the ddrecover goes "wheeeee!" as it just sees a lot of
-> EIO/ENODATA at a great rate of knots because it doesn't know the driver is now
-> ignoring the disk.
-> 
-> I don't know what else people might want to watch, but I've tried to make it
-> as generic as possible so as not to exclude it if possible.
+On Wed, May 29, 2019 at 12:28 AM David Howells <dhowells@redhat.com> wrote:
+> Jann Horn <jannh@google.com> wrote:
+> > I don't see you setting any special properties on the VMA that would
+> > prevent userspace from extending its size via mremap() - no
+> > VM_DONTEXPAND or VM_PFNMAP. So I think you might get an out-of-bounds
+> > access here?
+>
+> Should I just set VM_DONTEXPAND in watch_queue_mmap()?  Like so:
+>
+>         vma->vm_flags |= VM_DONTEXPAND;
 
-Ok, let me try to dig up some older proposals to see if this fits into
-the same model to work with them as well.
+Yeah, that should work.
 
-> > > +	refcount_t		usage;
-> > 
-> > Usage of what, this structure?  Or something else?
-> 
-> This is the number of usages of this struct (references to if you prefer).  I
-> can add a comment to this effect.
+> > > +static void watch_queue_map_pages(struct vm_fault *vmf,
+> > > +                                 pgoff_t start_pgoff, pgoff_t end_pgoff)
+> > ...
+> >
+> > Same as above.
+>
+> Same solution as above?  Or do I need ot check start/end_pgoff too?
 
-I think you answer this later on with the kref comment :)
+Same solution.
 
-> > > +		return -EOPNOTSUPP;
-> > 
-> > -ENOTTY is the correct "not a valid ioctl" error value, right?
-> 
-> fs/ioctl.c does both, but I can switch it if it makes you happier.
-
-It does.
-
-> > > +void put_watch_queue(struct watch_queue *wqueue)
+> > > +static int watch_queue_mmap(struct file *file, struct vm_area_struct *vma)
 > > > +{
-> > > +	if (refcount_dec_and_test(&wqueue->usage))
-> > > +		kfree_rcu(wqueue, rcu);
-> > 
-> > Why not just use a kref?
-> 
-> Why use a kref?  It seems like an effort to be a C++ base class, but without
-> the C++ inheritance bit.  Using kref doesn't seem to gain anything.  It's just
-> a wrapper around refcount_t - so why not just use a refcount_t?
-> 
-> kref_put() could potentially add an unnecessary extra stack frame and would
-> seem to be best avoided, though an optimising compiler ought to be able to
-> inline if it can.
+> > > +       struct watch_queue *wqueue = file->private_data;
+> > > +
+> > > +       if (vma->vm_pgoff != 0 ||
+> > > +           vma->vm_end - vma->vm_start > wqueue->nr_pages * PAGE_SIZE ||
+> > > +           !(pgprot_val(vma->vm_page_prot) & pgprot_val(PAGE_SHARED)))
+> > > +               return -EINVAL;
+> >
+> > This thing should probably have locking against concurrent
+> > watch_queue_set_size()?
+>
+> Yeah.
+>
+>         static int watch_queue_mmap(struct file *file,
+>                                     struct vm_area_struct *vma)
+>         {
+>                 struct watch_queue *wqueue = file->private_data;
+>                 struct inode *inode = file_inode(file);
+>                 u8 nr_pages;
+>
+>                 inode_lock(inode);
+>                 nr_pages = wqueue->nr_pages;
+>                 inode_unlock(inode);
+>
+>                 if (nr_pages == 0 ||
+>                 ...
+>                         return -EINVAL;
 
-If kref_put() is on your fast path, you have worse problems (kfree isn't
-fast, right?)
+Looks reasonable.
 
-Anyway, it's an inline function, how can it add an extra stack frame?
-Don't try to optimize something that isn't needed yet.
+> > > +       smp_store_release(&buf->meta.head, len);
+> >
+> > Why is this an smp_store_release()? The entire buffer should not be visible to
+> > userspace before this setup is complete, right?
+>
+> Yes - if I put the above locking in the mmap handler.  OTOH, it's a one-off
+> barrier...
+>
+> > > +               if (wqueue->buffer)
+> > > +                       return -EBUSY;
+> >
+> > The preceding check occurs without any locks held and therefore has no
+> > reliable effect. It should probably be moved below the
+> > inode_lock(...).
+>
+> Yeah, it can race.  I'll move it into watch_queue_set_size().
 
-> Are you now on the convert all refcounts to krefs path?
+Sounds good.
 
-"now"?  Remember, I wrote kref all those years ago, everyone should use
-it.  It saves us having to audit the same pattern over and over again.
-And, even nicer, it uses a refcount now, and as you are trying to
-reference count an object, it is exactly what this was written for.
+> > > +static void free_watch(struct rcu_head *rcu)
+> > > +{
+> > > +       struct watch *watch = container_of(rcu, struct watch, rcu);
+> > > +
+> > > +       put_watch_queue(rcu_access_pointer(watch->queue));
+> >
+> > This should be rcu_dereference_protected(..., 1).
+>
+> That shouldn't be necessary.  rcu_access_pointer()'s description says:
+>
+>  * It is also permissible to use rcu_access_pointer() when read-side
+>  * access to the pointer was removed at least one grace period ago, as
+>  * is the case in the context of the RCU callback that is freeing up
+>  * the data, ...
+>
+> It's in an rcu callback function, so accessing the __rcu pointers in the RCU'd
+> struct should be fine with rcu_access_pointer().
 
-So yes, I do think it should be used here, unless it is deemed to not
-fit the pattern/usage model.
+Aah, whoops, you're right, I missed that paragraph in the
+documentation of rcu_access_pointer().
 
-> > > +EXPORT_SYMBOL(add_watch_to_object);
-> > 
-> > Naming nit, shouldn't the "prefix" all be the same for these new
-> > functions?
-> > 
-> > watch_queue_add_object()?  watch_queue_put()?  And so on?
-> 
-> Naming is fun.  watch_queue_add_object - that suggests something different to
-> what the function actually does.  I'll think about adjusting the names.
+> > > +       /* We don't need the watch list lock for the next bit as RCU is
+> > > +        * protecting everything from being deallocated.
+> >
+> > Does "everything" mean "the wqueue" or more than that?
+>
+> Actually, just 'wqueue' and its buffer.  'watch' is held by us once we've
+> dequeued it as we now own the ref 'wlist' had on it.  'wlist' and 'wq' must be
+> pinned by the caller.
+>
+> > > +                       if (release) {
+> > > +                               if (wlist->release_watch) {
+> > > +                                       rcu_read_unlock();
+> > > +                                       /* This might need to call dput(), so
+> > > +                                        * we have to drop all the locks.
+> > > +                                        */
+> > > +                                       wlist->release_watch(wlist, watch);
+> >
+> > How are you holding a reference to `wlist` here? You got the reference through
+> > rcu_dereference(), you've dropped the RCU read lock, and I don't see anything
+> > that stabilizes the reference.
+>
+> The watch record must hold a ref on the watched object if the watch_list has a
+> ->release_watch() method.  In the code snippet above, the watch record now
+> belongs to us because we unlinked it under the wlist->lock some lines prior.
 
-Ok, just had to say something.  It's your call, and yes, naming is hard.
+Ah, of course.
 
-> > > +module_exit(watch_queue_exit);
-> > 
-> > module_misc_device()?
-> 
-> 	warthog>git grep module_misc_device -- Documentation/
-> 	warthog1>
+> However, you raise a good point, and I think the thing to do is to cache
+> ->release_watch from it and not pass wlist into (*release_watch)().  We don't
+> need to concern ourselves with cleaning up *wlist as it will be cleaned up
+> when the target object is removed.
+>
+> Keyrings don't have a ->release_watch method and neither does the block-layer
+> notification stuff.
+>
+> > > +       if (wqueue->pages && wqueue->pages[0])
+> > > +               WARN_ON(page_ref_count(wqueue->pages[0]) != 1);
+> >
+> > Is there a reason why there couldn't still be references to the pages
+> > from get_user_pages()/get_user_pages_fast()?
+>
+> I'm not sure.  I'm not sure what to do if there are.  What do you suggest?
 
-Do I have to document all helper macros?  Anyway, it saves you
-boilerplate code, but if built in, it's at the module init level, not
-the fs init level, like you are asking for here.  So that might not
-work, it's your call.
+I would use put_page() instead of manually freeing it; I think that
+should be enough? I'm not entirely sure though.
 
-> > > +		struct {
-> > > +			struct watch_notification watch; /* WATCH_TYPE_SKIP */
-> > > +			volatile __u32	head;		/* Ring head index */
-> > > +			volatile __u32	tail;		/* Ring tail index */
-> > 
-> > A uapi structure that has volatile in it?  Are you _SURE_ this is
-> > correct?
-> > 
-> > That feels wrong to me...  This is not a backing-hardware register, it's
-> > "just memory" and slapping volatile on it shouldn't be the correct
-> > solution for telling the compiler to not to optimize away reads/flushes,
-> > right?  You need a proper memory access type primitive for that to work
-> > correctly everywhere I thought.
-> > 
-> > We only have 2 users of volatile in include/uapi, one for WMI structures
-> > that are backed by firmware (seems correct), and one for DRM which I
-> > have no idea how it works as it claims to be a lock.  Why is this new
-> > addition the correct way to do this that no other ring-buffer that was
-> > mmapped has needed to?
-> 
-> Yeah, I understand your concern with this.
-> 
-> The reason I put the volatiles in is that the kernel may be modifying the head
-> pointer on one CPU simultaneously with userspace modifying the tail pointer on
-> another CPU.
-> 
-> Note that userspace does not need to enter the kernel to find out if there's
-> anything in the buffer or to read stuff out of the buffer.  Userspace only
-> needs to enter the kernel, using poll() or similar, to wait for something to
-> appear in the buffer.
+> > > +       n->info &= (WATCH_INFO_LENGTH | WATCH_INFO_TYPE_FLAGS | WATCH_INFO_ID);
+> >
+> > Should the non-atomic modification of n->info
+>
+> n's an unpublished copy of some userspace data that's local to the function
+> instance.  There shouldn't be any way to race with it at this point.
 
-And how does the tracing and perf ring buffers do this without needing
-volatile?  Why not use the same type of interface they provide, as it's
-always good to share code that has already had all of the nasty corner
-cases worked out.
-
-Anyway, I don't want you to think I don't like this code/idea overall, I
-do.  I just want to see it be something that everyone can use, and use
-easily, as it has been something lots of people have been asking for for
-a long time.
-
-thanks,
-
-greg k-h
+Ah, derp. Yes.
