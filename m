@@ -2,114 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E1C2CC31
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 18:37:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 903242CC3F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 18:39:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfE1QhI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 12:37:08 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:36348 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbfE1QhH (ORCPT
+        id S1726940AbfE1Qjd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 12:39:33 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:49688 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbfE1Qjd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 12:37:07 -0400
-Received: by mail-yb1-f195.google.com with SMTP id y2so5310828ybo.3;
-        Tue, 28 May 2019 09:37:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PYyoMvDm/dXGRe/O4V7JuzdN8o4UlUgeVG3yspmetXo=;
-        b=VGw9h+5SH8G2eQBLA4yzErLGp2JcQz5xkbxQhD17r2EyO4n3JzIrewbU9I6o6WONw+
-         Mugd6wgNJT9XNvgGJT/WIeboXrmaLDPR45HipqdaZbOIVLZcrOLkcglAUq8Kc2QmXlSV
-         s4e7wBZAeV9aFiknfm+jQaohyzMx3FIkXPtYUnMx3UCuonMt/FtPqMBdXuMupYe31rsT
-         MvsTYmpTrm95yu80x68xgVtFk12/7AcIrwnq6iPGNMy8h4BUb9Fo/al5ZshH2YCM5KIU
-         MBHrjChha7QRDMatUFEQhQ2LMObbsKY/AIe7bsF1pqIxjcCsB91CkmJboWNIHzpnS4ew
-         iwPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PYyoMvDm/dXGRe/O4V7JuzdN8o4UlUgeVG3yspmetXo=;
-        b=d/dE1b3H4v6blKnu1qrsoxbbsmsviOI9EFNYjb4Rps2ajHaUXCRFiIAqQwKiYygjji
-         QczPv4xzkJb47T8RfeGhZZAnG5c4KIqr2I3rKECGA694nkexFtl+9SQiKclHUAnAfobF
-         q7skc2ZQDIaKtWxmsJa6NUazOYvcV9tA1RD9gEPTILeSCuj8GeDn4d+qplWydvBJsoLq
-         CnstKHpJeT0i4Q/V8zhqDc16SPHiPtRHvV6LFfQNCK2wFSdS+4AOM8Tn7MI3YXF2BQTQ
-         bAeTE2IGcGrUdcUiEc40yuBdoejUPXO5KzhHE/wZQZQkiMPV+uyiOttqXQ3NieSX7Tom
-         6lTw==
-X-Gm-Message-State: APjAAAXU4AXZRr/Q8WpwbEHoOrD44rav7SHW+jjWKkYGnGDrwqksEdFc
-        s4vUiIAlH4yOX216pmcU5YiJsy7OoQWsDQrp0JM=
-X-Google-Smtp-Source: APXvYqzNmXIBn6/oTpIvfmHhHyE9ZsSfbV4ffVVj9wkSHo/L8B4c8X2QTwsa87MpFpK8M5ofJUZjdRtBA0rjxm3gF1g=
-X-Received: by 2002:a25:d946:: with SMTP id q67mr2138643ybg.126.1559061426538;
- Tue, 28 May 2019 09:37:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190526061100.21761-1-amir73il@gmail.com> <20190526061100.21761-7-amir73il@gmail.com>
- <20190528163020.GF5221@magnolia>
-In-Reply-To: <20190528163020.GF5221@magnolia>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 28 May 2019 19:36:55 +0300
-Message-ID: <CAOQ4uxh1Tk+ZN+hiEJLsSFP8Q=RNPEaJ_FDG_XkzkrtBXBL65A@mail.gmail.com>
-Subject: Re: [PATCH v2 6/8] vfs: copy_file_range should update file timestamps
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+        Tue, 28 May 2019 12:39:33 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4SGYtBE171898;
+        Tue, 28 May 2019 16:39:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=qsNqiTxTjHWC9UYKJ2H7Vx/bDfTKWMkUr8SIkDxm9oY=;
+ b=D77UjDBdpj4/eLkXI9XQLAWQ1c2jsa/OGsCVpRyMyizUDro1etdTkWJ2x2n6rYL81OrL
+ WmsJ1x7wza2G4ab5YikQxqb7O44MTTXbQeQh5weuF2ogBSmLXXXv3s264vCH+j2CcdE+
+ /CUUFqcOHcJly/gDLM6x46ui67WasOGUJzeOSmfQ4g4c0E8F6Rto2LInBpdcZSQ4Pfoo
+ w6sxmmgQfuYLh1xLR48q36SYy/NXxSimhg/HCyVDsm/KdruU12KU4XZSWtzDjuanb44G
+ QeKiQSQ7eU8M3/AunN3z8p94fK7kRvKL9ozYcBJ7njGtb5Daztp4eDq3tHesT1MRA5bV ZA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2spw4tcgf7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 May 2019 16:39:21 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4SGZwBq173077;
+        Tue, 28 May 2019 16:37:21 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2sr31us1rn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 May 2019 16:37:21 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4SGbKNf014893;
+        Tue, 28 May 2019 16:37:20 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 28 May 2019 09:37:20 -0700
+Date:   Tue, 28 May 2019 09:37:18 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Amir Goldstein <amir73il@gmail.com>
 Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
         Olga Kornievskaia <olga.kornievskaia@gmail.com>,
         Luis Henriques <lhenriques@suse.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v2 8/8] vfs: remove redundant checks from
+ generic_remap_checks()
+Message-ID: <20190528163718.GI5221@magnolia>
+References: <20190526061100.21761-1-amir73il@gmail.com>
+ <20190526061100.21761-9-amir73il@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190526061100.21761-9-amir73il@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9270 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905280106
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9270 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905280106
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 28, 2019 at 7:30 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
->
-> On Sun, May 26, 2019 at 09:10:57AM +0300, Amir Goldstein wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> >
-> > Timestamps are not updated right now, so programs looking for
-> > timestamp updates for file modifications (like rsync) will not
-> > detect that files have changed. We are also accessing the source
-> > data when doing a copy (but not when cloning) so we need to update
-> > atime on the source file as well.
-> >
-> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/read_write.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/fs/read_write.c b/fs/read_write.c
-> > index e16bcafc0da2..4b23a86aacd9 100644
-> > --- a/fs/read_write.c
-> > +++ b/fs/read_write.c
-> > @@ -1576,6 +1576,16 @@ int generic_copy_file_range_prep(struct file *file_in, struct file *file_out)
-> >
-> >       WARN_ON_ONCE(!inode_is_locked(file_inode(file_out)));
-> >
-> > +     /* Update source timestamps, because we are accessing file data */
-> > +     file_accessed(file_in);
-> > +
-> > +     /* Update destination timestamps, since we can alter file contents. */
-> > +     if (!(file_out->f_mode & FMODE_NOCMTIME)) {
-> > +             ret = file_update_time(file_out);
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> > +
-> >       /*
-> >        * Clear the security bits if the process is not being run by root.
-> >        * This keeps people from modifying setuid and setgid binaries.
->
-> Should the file_update_time and file_remove_privs calls be factored into
-> a separate small function to be called by generic_{copy,remap}_range_prep?
->
+On Sun, May 26, 2019 at 09:10:59AM +0300, Amir Goldstein wrote:
+> The access limit checks on input file range in generic_remap_checks()
+> are redundant because the input file size is guarantied to be within
 
-Ok. same helper could be called also after copy when inode is not locked
-throughout the copy.
+                                    guaranteed ^^^^^^^^^^
 
-Thanks,
-Amir.
+> limits and pos+len are already checked to be within input file size.
+> 
+> Beyond the fact that the check cannot fail, if it would have failed,
+> it could return -EFBIG for input file range error. There is no precedent
+> for that. -EFBIG is returned in syscalls that would change file length.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  mm/filemap.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 1852fbf08eeb..7e1aa36d57a2 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3000,10 +3000,6 @@ int generic_remap_checks(struct file *file_in, loff_t pos_in,
+>  		return -EINVAL;
+>  	count = min(count, size_in - (uint64_t)pos_in);
+>  
+> -	ret = generic_access_check_limits(file_in, pos_in, &count);
+
+I suspect you could fold generic_access_check_limits into its only
+caller, then...
+
+--D
+
+> -	if (ret)
+> -		return ret;
+> -
+>  	ret = generic_write_check_limits(file_out, pos_out, &count);
+>  	if (ret)
+>  		return ret;
+> -- 
+> 2.17.1
+> 
