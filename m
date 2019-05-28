@@ -2,104 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD6A42C1B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 10:53:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36B3D2C1F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 11:02:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbfE1IxY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 04:53:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42388 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726649AbfE1IxY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 04:53:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3CFCCAF1C;
-        Tue, 28 May 2019 08:53:22 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-api@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH v2 6/8] vfs: copy_file_range should update file timestamps
-References: <20190526061100.21761-1-amir73il@gmail.com>
-        <20190526061100.21761-7-amir73il@gmail.com>
-        <20190527143539.GA14980@hermes.olymp>
-        <20190527220513.GB29573@dread.disaster.area>
-Date:   Tue, 28 May 2019 09:53:20 +0100
-In-Reply-To: <20190527220513.GB29573@dread.disaster.area> (Dave Chinner's
-        message of "Tue, 28 May 2019 08:05:13 +1000")
-Message-ID: <875zpvrmdb.fsf@suse.com>
+        id S1726668AbfE1JCg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 05:02:36 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:34133 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726418AbfE1JCg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 May 2019 05:02:36 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-92-RqQYt7MHN5K4Xjo0lCZlLQ-1; Tue, 28 May 2019 10:02:33 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 28 May 2019 10:02:32 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 28 May 2019 10:02:32 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Arnd Bergmann" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        "Linux FS-devel Mailing List" <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Thread-Topic: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Thread-Index: AQHVELwtsgR+BAQFXk2JV68Wk/7LjKZ4aINAgABVkoCAAB2x0P///TgAgAARdkCAAZjWloAFvmIA
+Date:   Tue, 28 May 2019 09:02:32 +0000
+Message-ID: <72e07794bcba476f9cad948df2723362@AcuMS.aculab.com>
+References: <20190522161407.GB4915@redhat.com>
+ <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+ <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
+ <20190523145944.GB23070@redhat.com>
+ <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
+ <20190523163604.GE23070@redhat.com>
+ <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+ <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
+ <20190524141054.GB2655@redhat.com>
+ <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
+ <20190524163310.GG2655@redhat.com>
+ <CABeXuvrUKZnECj+NgLdpe5uhKBEmSynrakD-3q9XHqk8Aef5UQ@mail.gmail.com>
+In-Reply-To: <CABeXuvrUKZnECj+NgLdpe5uhKBEmSynrakD-3q9XHqk8Aef5UQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MC-Unique: RqQYt7MHN5K4Xjo0lCZlLQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dave Chinner <david@fromorbit.com> writes:
+RnJvbTogRGVlcGEgRGluYW1hbmkNCj4gU2VudDogMjQgTWF5IDIwMTkgMTg6MDINCi4uLg0KPiBN
+YXliZSBhIGNydWRlIHVzZXJzcGFjZSBhcHBsaWNhdGlvbiBjb3VsZCBkbyBzb21ldGhpbmcgbGlr
+ZSB0aGlzOg0KPiANCj4gc2lnX2hhbmRsZXIoKQ0KPiB7DQo+ICAgc2V0IGdsb2JhbCBhYm9ydCA9
+IDENCj4gfQ0KPiANCj4gcG9sbF90aGVfZmRzKCkNCj4gew0KPiAgICAgICAgIHJldCA9IGVwb2xs
+X3B3YWl0KCkNCj4gICAgICAgICBpZiAocmV0KQ0KPiAgICAgICAgICAgICAgICAgcmV0dXJuIHJl
+dA0KPiAgICAgICAgIGlmIChhYm9ydCkNCj4gICAgICAgICAgICAgICAgIC8vIGJ1dCB0aGlzIGFi
+b3J0IHNob3VsZCBiZSBpZ25vcmVkIGlmIHJldCB3YXMgMC4NCj4gICAgICAgICAgICAgICAgIHJl
+dHVybiB0cnlfYWdhaW4NCj4gDQo+IH0NCg0KQXMgYW4gYXBwbGljYXRpb24gd3JpdGVyIEknZCB3
+YW50IHRvIHNlZSAnYWJvcnQgPT0gMScgZXZlbg0KaWYgZXBvbGxfcHdhaXQoKSByZXR1cm5lZCB0
+aGF0IGFuIGZkIHdhcyAncmVhZHknLg0KDQpTbyB0aGUgY29kZSBhYm92ZSBzaG91bGQgcHJvYmFi
+bHkgYmU6DQogICAgd2FpdF9hZ2FpbjoNCiAgICAgICAgcmV0ID0gZXBvbGxfcHdhaXQoKTsNCiAg
+ICAgICAgaWYgKGFib3J0KQ0KICAgICAgICAgICAgcHJvY2Vzc19hYm9ydCgpOw0KICAgICAgICBp
+ZiAocmV0IDw9IDApIHsNCiAgICAgICAgICAgIGlmIChyZXQgPT0gMCkNCiAgICAgICAgICAgICAg
+ICBwcm9jZXNzX3RpbWVvdXQoKTsNCiAgICAgICAgICAgIGlmIChyZXQgPT0gMCB8fCBlcnJubyA9
+PSBFSU5UUikNCiAgICAgICAgICAgICAgICBnb3RvIHdhaXRfYWdhaW47DQogICAgICAgICAgICAv
+LyBTb21ldGhpbmcgd2VudCBob3JyaWJseSB3cm9uZyBpbiBlcG9sbF9wd2FpdCgpDQogICAgICAg
+ICAgICByZXR1cm4gcmV0Ow0KICAgICAgICB9DQogICAgICAgIC8vIHByb2Nlc3MgdGhlICdyZWFk
+eScgZmRzDQoNCkl0IHdvdWxkIGJlIG5vbi11bnJlYXNvbmFibGUgZm9yIHRoZSBhcHBsaWNhdGlv
+biB0byBoYXZlDQphbGwgc2lnbmFscyBibG9ja2VkIGV4Y2VwdCBkdXJpbmcgdGhlIGVwb2xsX3B3
+YWl0KCkuDQpTbyB0aGUgYXBwbGljYXRpb24gbmVlZHMgdGhlIHNpZ25hbCBoYW5kbGVyIGZvciBT
+SUdfSU5UIChldGMpDQp0byBiZSBjYWxsZWQgZXZlbiBpZiBvbmUgb2YgdGhlIGZkIGlzIGFsd2F5
+cyAncmVhZHknLg0KDQogICAgRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRl
+LCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpS
+ZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-> On Mon, May 27, 2019 at 03:35:39PM +0100, Luis Henriques wrote:
->> On Sun, May 26, 2019 at 09:10:57AM +0300, Amir Goldstein wrote:
->> > From: Dave Chinner <dchinner@redhat.com>
->> > 
->> > Timestamps are not updated right now, so programs looking for
->> > timestamp updates for file modifications (like rsync) will not
->> > detect that files have changed. We are also accessing the source
->> > data when doing a copy (but not when cloning) so we need to update
->> > atime on the source file as well.
->> > 
->> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
->> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->> > ---
->> >  fs/read_write.c | 10 ++++++++++
->> >  1 file changed, 10 insertions(+)
->> > 
->> > diff --git a/fs/read_write.c b/fs/read_write.c
->> > index e16bcafc0da2..4b23a86aacd9 100644
->> > --- a/fs/read_write.c
->> > +++ b/fs/read_write.c
->> > @@ -1576,6 +1576,16 @@ int generic_copy_file_range_prep(struct file *file_in, struct file *file_out)
->> >  
->> >  	WARN_ON_ONCE(!inode_is_locked(file_inode(file_out)));
->> >  
->> > +	/* Update source timestamps, because we are accessing file data */
->> > +	file_accessed(file_in);
->> > +
->> > +	/* Update destination timestamps, since we can alter file contents. */
->> > +	if (!(file_out->f_mode & FMODE_NOCMTIME)) {
->> > +		ret = file_update_time(file_out);
->> > +		if (ret)
->> > +			return ret;
->> > +	}
->> > +
->> 
->> Is this the right place for updating the timestamps?  I see that in same
->> cases we may be updating the timestamp even if there was an error and no
->> copy was performed.  For example, if file_remove_privs fails.
->
-> It's the same place we do it for read - file_accessed() is called
-> before we do the IO - and the same place for write -
-> file_update_time() is called before we copy data into the pagecache
-> or do direct IO. As such, it really doesn't matter if it is before
-> or after file_remove_privs() - the IO can still fail for many
-> reasons after we've updated the timestamps and in some of the
-> failure cases (e.g. we failed the sync at the end of an O_DSYNC
-> buffered write) we still want the timestamps to be modified because
-> the data and/or user visible metadata /may/ have been changed.
->
-> cfr operates under the same constraints as read() and write(), so we
-> need to update the timestamps up front regardless of whether the
-> copy ends up succeeding or not....
-
-Great, thanks for explaining it.  It now makes sense, even for
-consistency, to have this operation here.
-
-Cheers,
--- 
-Luis
