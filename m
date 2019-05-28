@@ -2,69 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD782C549
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 13:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C00A72C589
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 13:37:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbfE1LU1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 07:20:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47178 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726313AbfE1LU1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 07:20:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BC855AE3F;
-        Tue, 28 May 2019 11:20:24 +0000 (UTC)
-Date:   Tue, 28 May 2019 13:20:23 +0200
-From:   Cyril Hrubis <chrubis@suse.cz>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Andreas Schwab <schwab@linux-m68k.org>,
-        lkml <linux-kernel@vger.kernel.org>, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, Michal Simek <monstr@monstr.eu>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH] [RFC] Remove bdflush syscall stub
-Message-ID: <20190528112022.GA16683@rei>
-References: <20190528101012.11402-1-chrubis@suse.cz>
- <mvmr28idgfu.fsf@linux-m68k.org>
- <20190528104017.GA11969@rei>
- <87ftoyg7t3.fsf@oldenburg2.str.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ftoyg7t3.fsf@oldenburg2.str.redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726650AbfE1Lht (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 07:37:49 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42115 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726580AbfE1Lht (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 May 2019 07:37:49 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 33so7868816pgv.9;
+        Tue, 28 May 2019 04:37:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Mje4Sqm+Ror3it0+HkeEWilvUO3xfODnH6D7IlgYARg=;
+        b=leTTuzrol5cXVn4UToRdkhDMCU1N1h/DSCdgBsc6Gypt7PCMxf1rb6oUc2MEm02j/j
+         a0P4UluWuPi1mTg5gFDKg2ssKVD2bFzgD4qfjQKGmjcX+TN/9OBhfmPwtojC8hQwGubu
+         Se+O40//DHhIu4Bxqb4i29E0rjnEqxmhWNAIiN6URjejoY8WlInN/I4PfgF4UvY6gXDf
+         H4s8+B7KBc+SwY6EbRsJLKEoKYhJI+XQVHpYA5K+jo47SsxPwoUrGpPH4lH0mydQ5TFW
+         1gAbzV5B9vT1UFVBYBAspEbwKfhuqs+lNzJfCjcKcKrtoUyUwFT+tz7TWMwCbFU7K7cd
+         aSYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Mje4Sqm+Ror3it0+HkeEWilvUO3xfODnH6D7IlgYARg=;
+        b=a90SG42aaBXBpEXfyF5Ygom8CcPJ7dtupA5sAwWl4UE9IjJeA+ez88Bsxu0+uqGqNX
+         YVflVOAbr8o/V6UlWsXdssEZxEJH2o1KkFENAsB/03WGcRJjE31Iocgb/dm+z18sZJXo
+         mIA0OFvuFSsP0KH1RcDsYhPrcguThCmcEDh25/6KFpdGWhrhYKpxXlUf9gsXEbspEzgG
+         IVHpxzI2hlt/WMK/R/DkV5iLBBxmOwBtlky549+TrUy2v3bROC+eIyhiFupSPW9KtdIq
+         5/aT/35/tT6X+RvBmfxaOQegNT+Q4wkVvC7+frrPNK64F+v2Xen7N+lC9iUOSx6owoY9
+         1A/A==
+X-Gm-Message-State: APjAAAUiYXCrNOf0O1gaerMzXD0p/2xWOwIS0/PoA6hJpz7RNueYENsK
+        hsGPwQsazUaTg0sK88u6lFc=
+X-Google-Smtp-Source: APXvYqxJlpHL893t/ouhL8/krnA1DNT9TqKiSJUsi7IgE1NHIFH8jbwf1puz7oIy1c2loyTD9kUbvg==
+X-Received: by 2002:a65:42ca:: with SMTP id l10mr77858165pgp.181.1559043468390;
+        Tue, 28 May 2019 04:37:48 -0700 (PDT)
+Received: from [192.168.86.32] (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
+        by smtp.gmail.com with ESMTPSA id h11sm14470578pfn.170.2019.05.28.04.37.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 04:37:47 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+X-Mailer: iPhone Mail (16F203)
+In-Reply-To: <ea7a1808990a4c319faa38d5d08d8f19@AcuMS.aculab.com>
+Date:   Tue, 28 May 2019 04:37:46 -0700
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B9F0F146-C687-4D1D-8BFF-1236564631F6@gmail.com>
+References: <20190522161407.GB4915@redhat.com> <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com> <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com> <20190523145944.GB23070@redhat.com> <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com> <20190523163604.GE23070@redhat.com> <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com> <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com> <20190524141054.GB2655@redhat.com> <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com> <20190524163310.GG2655@redhat.com> <CABeXuvrUKZnECj+NgLdpe5uhKBEmSynrakD-3q9XHqk8Aef5UQ@mail.gmail.com> <ea7a1808990a4c319faa38d5d08d8f19@AcuMS.aculab.com>
+To:     David Laight <David.Laight@aculab.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi!
-> >> > I've tested the patch on i386. Before the patch calling bdflush() with
-> >> > attempt to tune a variable returned 0 and after the patch the syscall
-> >> > fails with EINVAL.
-> >> 
-> >> Should be ENOSYS, doesn't it?
-> >
-> > My bad, the LTP syscall wrapper handles ENOSYS and produces skipped
-> > results based on that.
-> >
-> > EINVAL is what you get for not yet implemented syscalls, i.e. new
-> > syscall on old kernel.
-> 
-> EINVAL?  Is that a bdflush-specific thing, test-specific, or is itmore
-> general?
-> 
-> glibc has fallback paths that test for ENOSYS only.  EINVAL will be
-> passed to the application, skipping fallback.  For missing system calls,
-> this is not what we want.
 
-The syscall returns ENOSYS after this change, sorry for the confusion.
 
--- 
-Cyril Hrubis
-chrubis@suse.cz
+> On May 28, 2019, at 2:12 AM, David Laight <David.Laight@aculab.com> wrote:=
+
+>=20
+> From: Deepa Dinamani
+>> Sent: 24 May 2019 18:02
+> ...
+>> Look at the code before 854a6ed56839a:
+>>=20
+>> /*
+>>       * If we changed the signal mask, we need to restore the original on=
+e.
+>>       * In case we've got a signal while waiting, we do not restore the
+>>       * signal mask yet, and we allow do_signal() to deliver the signal o=
+n
+>>       * the way back to userspace, before the signal mask is restored.
+>>       */
+>>      if (sigmask) {
+>>             ####### This err has not been changed since ep_poll()
+>>             ####### So if there is a signal before this point, but
+>> err =3D 0, then we goto else.
+>>              if (err =3D=3D -EINTR) {
+>>                      memcpy(&current->saved_sigmask, &sigsaved,
+>>                             sizeof(sigsaved));
+>>                      set_restore_sigmask();
+>>              } else
+>>                    ############ This is a problem if there is signal
+>> pending that is sigmask should block.
+>>                    ########### This is the whole reason we have
+>> current->saved_sigmask?
+>>                      set_current_blocked(&sigsaved);
+>>      }
+>=20
+> What happens if all that crap is just deleted (I presume from the
+> bottom of ep_wait()) ?
+
+Hmm, you have to update the saved_sigmask or the sigmask.
+
+> I'm guessing that on the way back to userspace signal handlers for
+> signals enabled in the process's current mask (the one specified
+> to epoll_pwait) get called.
+> Then the signal mask is loaded from current->saved_sigmask and
+> and enabled signal handlers are called again.
+
+Who is saving this saved_sigmask that is being restored on the way back?
+
+> No special code there that depends on the syscall result, errno
+> of the syscall number.
+
+I didn=E2=80=99t say this has anything to do with errno.
+
+-Deepa=20
+
