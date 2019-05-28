@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72B1A2CA02
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 17:14:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 366692CA0B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 17:14:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbfE1PNw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 11:13:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42722 "EHLO mx1.redhat.com"
+        id S1727631AbfE1POA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 11:14:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36922 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726497AbfE1PNw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 11:13:52 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1726497AbfE1PN7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 May 2019 11:13:59 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DA751307D96F;
-        Tue, 28 May 2019 15:13:51 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2F119D4015;
+        Tue, 28 May 2019 15:13:59 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-125-65.rdu2.redhat.com [10.10.125.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7F3F5173B0;
-        Tue, 28 May 2019 15:13:50 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CAE18112A283;
+        Tue, 28 May 2019 15:13:57 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 19/25] fsinfo: proc - add sb operation fsinfo() [ver #13]
+Subject: [PATCH 20/25] fsinfo: devpts - add sb operation fsinfo() [ver #13]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, raven@themaw.net, linux-api@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         mszeredi@redhat.com
-Date:   Tue, 28 May 2019 16:13:49 +0100
-Message-ID: <155905642971.1662.2801058772112807295.stgit@warthog.procyon.org.uk>
+Date:   Tue, 28 May 2019 16:13:57 +0100
+Message-ID: <155905643707.1662.9338994077777129914.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk>
 References: <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 28 May 2019 15:13:51 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 28 May 2019 15:13:59 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -61,22 +61,22 @@ Signed-off-by: Ian Kent <raven@themaw.net>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/proc/inode.c |   36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ fs/devpts/inode.c |   42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 5f8d215b3fd0..0f6c122d22f0 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -24,6 +24,7 @@
+diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
+index 3aa73a2ec2f1..12fece8913d2 100644
+--- a/fs/devpts/inode.c
++++ b/fs/devpts/inode.c
+@@ -28,6 +28,7 @@
+ #include <linux/devpts_fs.h>
+ #include <linux/fsnotify.h>
  #include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/mount.h>
 +#include <linux/fsinfo.h>
  
- #include <linux/uaccess.h>
- 
-@@ -115,6 +116,38 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ #define DEVPTS_DEFAULT_MODE 0600
+ /*
+@@ -401,9 +402,50 @@ static int devpts_show_options(struct seq_file *seq, struct dentry *root)
  	return 0;
  }
  
@@ -84,10 +84,10 @@ index 5f8d215b3fd0..0f6c122d22f0 100644
 +/*
 + * Get filesystem information.
 + */
-+static int proc_fsinfo(struct path *path, struct fsinfo_kparams *params)
++static int devpts_fsinfo(struct path *path, struct fsinfo_kparams *params)
 +{
-+	struct super_block *sb = path->dentry->d_sb;
-+	struct pid_namespace *pid = sb->s_fs_info;
++	struct pts_fs_info *fsi = DEVPTS_SB(path->dentry->d_sb);
++	struct pts_mount_opts *opts = &fsi->mount_opts;
 +	struct fsinfo_capabilities *caps;
 +
 +	switch (params->request) {
@@ -95,15 +95,21 @@ index 5f8d215b3fd0..0f6c122d22f0 100644
 +		caps = params->buffer;
 +		fsinfo_set_cap(caps, FSINFO_CAP_IS_KERNEL_FS);
 +		fsinfo_set_cap(caps, FSINFO_CAP_NOT_PERSISTENT);
++		fsinfo_set_cap(caps, FSINFO_CAP_UIDS);
++		fsinfo_set_cap(caps, FSINFO_CAP_GIDS);
 +		return sizeof(*caps);
 +
 +	case FSINFO_ATTR_PARAMETERS:
-+		if (!gid_eq(pid->pid_gid, GLOBAL_ROOT_GID))
++		if (opts->setuid)
++			fsinfo_note_paramf(params, "uid", "%u",
++				from_kuid_munged(&init_user_ns, opts->uid));
++		if (opts->setgid)
 +			fsinfo_note_paramf(params, "gid", "%u",
-+				from_kgid_munged(&init_user_ns, pid->pid_gid));
-+		if (pid->hide_pid != HIDEPID_OFF)
-+			fsinfo_note_paramf(params, "hidepid",
-+					  "%u", pid->hide_pid);
++				from_kgid_munged(&init_user_ns, opts->gid));
++		fsinfo_note_paramf(params, "mode", "%03o", opts->mode);
++		fsinfo_note_paramf(params, "ptmxmode", "%03o", opts->ptmxmode);
++		if (opts->max < NR_UNIX98_PTY_MAX)
++			fsinfo_note_paramf(params, "max", "%d", opts->max);
 +		return params->usage;
 +
 +	default:
@@ -112,17 +118,13 @@ index 5f8d215b3fd0..0f6c122d22f0 100644
 +}
 +#endif /* CONFIG_FSINFO */
 +
- const struct super_operations proc_sops = {
- 	.alloc_inode	= proc_alloc_inode,
- 	.free_inode	= proc_free_inode,
-@@ -122,6 +155,9 @@ const struct super_operations proc_sops = {
- 	.evict_inode	= proc_evict_inode,
+ static const struct super_operations devpts_sops = {
  	.statfs		= simple_statfs,
- 	.show_options	= proc_show_options,
+ 	.show_options	= devpts_show_options,
 +#ifdef CONFIG_FSINFO
-+	.fsinfo		= proc_fsinfo,
++	.fsinfo		= devpts_fsinfo,
 +#endif
  };
  
- enum {BIAS = -1U<<31};
+ static int devpts_fill_super(struct super_block *s, struct fs_context *fc)
 
