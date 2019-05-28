@@ -2,143 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E6C62D0A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 22:48:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C16432D13D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 23:54:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbfE1UsC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 16:48:02 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:40233 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbfE1UsC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 16:48:02 -0400
-Received: by mail-it1-f196.google.com with SMTP id h11so6208193itf.5;
-        Tue, 28 May 2019 13:48:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LFTmISDOpToJAYI9xiYodY0/ymmT3aFnC+eXeyWSay0=;
-        b=m+ijoieuI2Q5AoznyEWu7Ah+4dfaAshTJOVihWAKBwpkDxbw3Np5wBgBGNN1TqSNhP
-         v8dmA2qSIOm3pkPK920nRHvFOvF+xAUaq6D/TP1qqICC2mFGnDevbuseJhui0woW80bZ
-         qgnbi2YBfPdokAAFdDMA1f9eN9T3CY3OBDnSO4vy6cZc/EVVrcTMjtyYTULGHVIXc3x2
-         tCcBoozlZJWLoKUzz+WrRLBNyjlSFfsPeYSmuptqufdR4eiKjA6Ejkn5mXut97vUyaq7
-         GcF/lYLbdYW2RGpYFVwDTyNuXXO6zgRF1mmWC8aUvszugl/d2tk/ShyKCMObLsOpq8sh
-         oYSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LFTmISDOpToJAYI9xiYodY0/ymmT3aFnC+eXeyWSay0=;
-        b=DO2pszPn359/Fu5/pQunQSTR2CBw/zjnysiz39elDxZ1TVKp8jGKPavmxp5yt0kaUq
-         rJfkku8gnB9jRDki8TNxuE2bVBcvGyJyv8Lh99zALQ49CNi4lQgAhlNFcagEf31SG7X0
-         ZOj8ulk9Oiw8RjVhsgLD8JN5oBkQ+fDP++ojIuctnDBRk0aEAxvH+ScwgEuB8G41GKEd
-         HVhYCoJ+kd3WppUQ/lp1cexNnkqCw8QulB371kyW3C5W8ZO9saM9sCNiYIscJgZNoYxR
-         jiLOw4ERChjXIra8RBviiSnF+UgOiODp2azJhtal3wPppDXZcTsw/290GTijfa5/iUrM
-         ZCJw==
-X-Gm-Message-State: APjAAAWH9Ri3ZPrISxUwu2JoX8226VQb3VfoBLNf7/oX9DZC0MdjTUXQ
-        JddGIGWENpbu9CbCxCplvGNgFUwVxNvKUaw84oM=
-X-Google-Smtp-Source: APXvYqwCstUVHiNHKuq+B8xRc5Ddii2BYUzoNbtcVsxHyYISvQQtSxAjQvX9Y0VQICv+bOsXrBQCwl3alKglk8D5b+c=
-X-Received: by 2002:a24:e084:: with SMTP id c126mr4522175ith.124.1559076481674;
- Tue, 28 May 2019 13:48:01 -0700 (PDT)
+        id S1728069AbfE1VyK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 17:54:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32715 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727695AbfE1VyK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 May 2019 17:54:10 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9D1193087926;
+        Tue, 28 May 2019 21:54:09 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-112-56.rdu2.redhat.com [10.10.112.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4332E1972B;
+        Tue, 28 May 2019 21:53:56 +0000 (UTC)
+Reply-To: dwalsh@redhat.com
+Subject: Re: [PATCH ghak90 V6 00/10] audit: implement container identifier
+To:     Paul Moore <paul@paul-moore.com>,
+        Neil Horman <nhorman@tuxdriver.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        Mrunal Patel <mpatel@redhat.com>
+References: <cover.1554732921.git.rgb@redhat.com>
+ <20190422113810.GA27747@hmswarspite.think-freely.org>
+ <CAHC9VhQYPF2ma_W+hySbQtfTztf=K1LTFnxnyVK0y9VYxj-K=w@mail.gmail.com>
+From:   Daniel Walsh <dwalsh@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dwalsh@redhat.com; prefer-encrypt=mutual; keydata=
+ mQENBFsaqOEBCADBSnZCZpi262vX8m7iL/OdHKP9G9dhS28FR60cjd8nMPqHDNhQJBjLMZra
+ 66L2cCIEhc4HEItail7KU1BckrMc4laFaxL8tLoVTKHZwb74n2OcAJ4FtgzkNNlB1XJvSwC/
+ 909uwt7cpDqwXpJvyP3t17iuklB1OY0EEjTDt9aU4+0QjHzV18L4Cpd9iQ4ksu+EHT+pjlBk
+ DdQB+hKoAjxPl11Eh6pZfrAcrNWpYBBk0A3XE9Jb6ghbmHWltNgVOsCa9GcswJHUEeFiOup6
+ J5DTv6Xzwt0t6QB8nIs+wDJH+VxqAXcrxscnAhViIfGGS2AtxzjnVOz/J+UZPaauIGXTABEB
+ AAG0LERhbmllbCBKIFdhbHNoIChGb3IgR2l0KSA8ZHdhbHNoQHJlZGhhdC5jb20+iQE4BBMB
+ AgAiBQJbGqjhAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRCi35Adq+LAKHuJB/98
+ nZB5RmNjMWua4Ms8q5a1R9XWlDAb3mrST6JeL+uV/M0fa18e2Aw4/hi/WZHjAjoypLmcuaRx
+ GeCbC8iYdpfRDUG79Y956Qq+Vs8c6VfNDMY1mvtfb00eeTaYoOCu0Aa9LDeR9iLKh2g0RI+N
+ Zr3EU45RxZdacIs1v6mU8pGpyUq/FvuTGK9GzR9d1YeVCuSpQKN4ckHNZHJUXyk0vOZft1oO
+ nSgLqM9EDWA+yz1JLmRYwbNsim7IvfVOav5mCgnKzHcL2mLv8qCnMFZjoQV8aGny/W739Z3a
+ YJo1CdOg6zSu5SOvmq9idYrBRkwEtyLXss2oceTVBs0MxqQ/9mLPuQENBFsaqOEBCADDl2hl
+ bUpqJGgwt2eQvs0Z0DCx/7nn0hlLfEn4WAv2HqP25AjIRXUX31Mzu68C4QnsvNtY4zN+FGRC
+ EfUpYsjiL7vBYlRePhIohyMYU4RLp5eXFQKahHO/9Xlhe8mwueQNwYxNBPfMQ65U2AuqxpcS
+ scx4s5w208mhqHoKz6IB2LuKeflhYfH5Y1FNAtVGHfhg22xlcAdupPPcxGuS4fBEW6PD/SDf
+ Y4HT5iUHsyksQKjM0IFalqZ7YuLfXBl07OD2zU7WI9c3W0dwkvwIRjt3aD4iAah544uOLff+
+ BzfxWghXeo80S2a1WCL0S/2qR0NVct/ExaDWboYr/bKpTa/1ABEBAAGJAR8EGAECAAkFAlsa
+ qOECGwwACgkQot+QHaviwCi2hgf/XRvrt+VBmp1ZFxQAR9E6S7AtRT8KSytjFiqEC7TpOx3r
+ 2OZ4gZ3ZiW4TMW8hS7aYRgF1uYpLzl7BbrCfCHfAWEcXZ+uG8vayg8G/mLAcNlLY+JE76ATs
+ 53ziEY9R2Vb/wLMFd2nNBdqfwGcRH9N9VOej9vP76nCP01ZolY8Nms2hE383/+1Quxp5EedU
+ BN5W5l7x9riBJyqCA63hr4u8wNsTuQgrDyhm/U1IvYeLtMopgotjnIR3KiTKOElbppLeXW3w
+ EO/sQTPk+vQ4vcsJYY9Dnf1NlvHE4klj60GHjtjitsBEHzdE7s+J9FOxPmt8l+gMogGumKpN
+ Y4lO0pfTyg==
+Organization: Red Hat
+Message-ID: <509ea6b0-1ac8-b809-98c2-37c34dd98ca3@redhat.com>
+Date:   Tue, 28 May 2019 17:53:55 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
- <20190523145944.GB23070@redhat.com> <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
- <20190523163604.GE23070@redhat.com> <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
- <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
- <20190524141054.GB2655@redhat.com> <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
- <20190524163310.GG2655@redhat.com> <CABeXuvrUKZnECj+NgLdpe5uhKBEmSynrakD-3q9XHqk8Aef5UQ@mail.gmail.com>
- <20190527150409.GA8961@redhat.com>
-In-Reply-To: <20190527150409.GA8961@redhat.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Tue, 28 May 2019 13:47:28 -0700
-Message-ID: <CABeXuvouBzZuNarmNcd9JgZgvonL1N_p21gat=O_x0-1hMx=6A@mail.gmail.com>
-Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHC9VhQYPF2ma_W+hySbQtfTztf=K1LTFnxnyVK0y9VYxj-K=w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 28 May 2019 21:54:10 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 27, 2019 at 8:04 AM Oleg Nesterov <oleg@redhat.com> wrote:
+On 4/22/19 9:49 AM, Paul Moore wrote:
+> On Mon, Apr 22, 2019 at 7:38 AM Neil Horman <nhorman@tuxdriver.com> wrote:
+>> On Mon, Apr 08, 2019 at 11:39:07PM -0400, Richard Guy Briggs wrote:
+>>> Implement kernel audit container identifier.
+>> I'm sorry, I've lost track of this, where have we landed on it? Are we good for
+>> inclusion?
+> I haven't finished going through this latest revision, but unless
+> Richard made any significant changes outside of the feedback from the
+> v5 patchset I'm guessing we are "close".
 >
-> Deepa,
+> Based on discussions Richard and I had some time ago, I have always
+> envisioned the plan as being get the kernel patchset, tests, docs
+> ready (which Richard has been doing) and then run the actual
+> implemented API by the userland container folks, e.g. cri-o/lxc/etc.,
+> to make sure the actual implementation is sane from their perspective.
+> They've already seen the design, so I'm not expecting any real
+> surprises here, but sometimes opinions change when they have actual
+> code in front of them to play with and review.
 >
-> it seems that we both are saying the same things again and again, and we
-> simply can't understand each other.
+> Beyond that, while the cri-o/lxc/etc. folks are looking it over,
+> whatever additional testing we can do would be a big win.  I'm
+> thinking I'll pull it into a separate branch in the audit tree
+> (audit/working-container ?) and include that in my secnext kernels
+> that I build/test on a regular basis; this is also a handy way to keep
+> it based against the current audit/next branch.  If any changes are
+> needed Richard can either chose to base those changes on audit/next or
+> the separate audit container ID branch; that's up to him.  I've done
+> this with other big changes in other trees, e.g. SELinux, and it has
+> worked well to get some extra testing in and keep the patchset "merge
+> ready" while others outside the subsystem look things over.
+>
+Mrunal Patel (maintainer of CRI-O) and I have reviewed the API, and
+believe this is something we can work on in the container runtimes team
+to implement the container auditing code in CRI-O and Podman.
 
-Oleg, I'm sorry for the confusion.  Maybe I should point out what I
-agree with also.
 
-I agree that signal handller being called and return value not being
-altered is an issue with other syscalls also. I was just wondering if
-some userspace code assumption would be assuming this. This is not a
-kernel bug.
-
-But, I do not think we have an understanding of what was wrong in
-854a6ed56839a anymore since you pointed out that my assumption was not
-correct that the signal handler being called without errno being set
-is wrong.
-
-One open question: this part of epoll_pwait was already broken before
-854a6ed56839a. Do you agree?
-
-if (err == -EINTR) {
-                   memcpy(&current->saved_sigmask, &sigsaved,
-                          sizeof(sigsaved));
-                    set_restore_sigmask();
-  } else
-                   set_current_blocked(&sigsaved);
-
-What to do next?
-We could just see if your optimization patch resolves Eric's issue.
-Or, I could revert the signal_pending() check and provide a fix
-something like below(not a complete patch) since mainline has this
-regression. Eric had tested something like this works also. And, I can
-continue to look at what was wrong with 854a6ed56839a in the first
-place. Let me know what you prefer:
-
--void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
-+int restore_user_sigmask(const void __user *usigmask, sigset_t
-*sigsaved, int sig_pending)
- {
-
-        if (!usigmask)
-               return;
-
-        /*
-         * When signals are pending, do not restore them here.
-         * Restoring sigmask here can lead to delivering signals that the above
-         * syscalls are intended to block because of the sigmask passed in.
-         */
-+       if (sig_pending) {
-                current->saved_sigmask = *sigsaved;
-                set_restore_sigmask();
-               return;
-           }
-
-@@ -2330,7 +2330,8 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct
-epoll_event __user *, events,
-
-        error = do_epoll_wait(epfd, events, maxevents, timeout);
-
--       restore_user_sigmask(sigmask, &sigsaved);
-+       signal_detected = restore_user_sigmask(sigmask, &sigsaved,
-error == -EINTR);
-
--Deepa
