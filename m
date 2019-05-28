@@ -2,258 +2,407 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 841E92CBE2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 18:26:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED1172CBF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 18:28:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbfE1Q0s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 12:26:48 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:52752 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbfE1Q0s (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 12:26:48 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4SGDgSS161106;
-        Tue, 28 May 2019 16:25:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=hx2vbgFlPWg0pATA4dyIp86RZ6zf7/0wKbEWhZGmDvo=;
- b=efMbIJfOzK55xuUxc3yaBfW5u6VwnzkWf6wdE//yngZ2fA3fNktEWNxl4sKBd9VtCcY4
- ZvHTegR6hVVZkuZiLe4FuqltjYxxmVXYf50XB+NKVRncfV2Qh6QgOHwbDy0VO5qrBFNE
- p7+s6GtVyRLkX3sNWP/ZgCpaQ5Vs4Zpph1kny7YlYg6snAl935YpNXOgKuyLUb7G2n0g
- J76PqI4qw0U30xgh8zigyTi8lSl8k9bodUrVWdXRd5ptjtRqDrAJDebhaxSxzpYMsfd6
- FOIGWp6tswn90qa6Do9Z3sD6zTSOZEeie1u2BNX5FSMKqUORS8yXJjtQwvaTCoWrRdEI qg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2spxbq4aqx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 May 2019 16:25:57 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4SGPnfU126357;
-        Tue, 28 May 2019 16:25:56 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2srbdww1dp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 May 2019 16:25:56 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4SGPtM2013151;
-        Tue, 28 May 2019 16:25:55 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 28 May 2019 09:25:55 -0700
-Date:   Tue, 28 May 2019 09:25:53 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
-        Luis Henriques <lhenriques@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-api@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH v2 5/8] vfs: copy_file_range needs to strip setuid bits
-Message-ID: <20190528162553.GE5221@magnolia>
-References: <20190526061100.21761-1-amir73il@gmail.com>
- <20190526061100.21761-6-amir73il@gmail.com>
+        id S1726668AbfE1Q2A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 12:28:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48702 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726492AbfE1Q17 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 May 2019 12:27:59 -0400
+Received: from localhost (unknown [8.46.75.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DDE72166E;
+        Tue, 28 May 2019 16:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559060877;
+        bh=6B2pq+78kXu0WXQynMCezCt7AZSWLg+JakQA6Cpehlw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qmkiq6DdRvM7qLor8h/Ld22TsJ9EScRxDowMi/GvB6IcFgxnr7bUvdpYRmOft4RC3
+         a7EHCfPmgwbiPnYVmXyvopGZFXFzpWU/L1ifUF8rj6XlIDetMGg1PsRhbtUTpchvUJ
+         hJ/cHCrbywdyC/Ga2w3litaHfmAChitJ48EmF/o8=
+Date:   Tue, 28 May 2019 18:26:03 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
+ ring buffer
+Message-ID: <20190528162603.GA24097@kroah.com>
+References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+ <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190526061100.21761-6-amir73il@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9270 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905280104
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9270 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905280104
+In-Reply-To: <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 26, 2019 at 09:10:56AM +0300, Amir Goldstein wrote:
-> The file we are copying data into needs to have its setuid bit
-> stripped before we start the data copy so that unprivileged users
-> can't copy data into executables that are run with root privs.
-> 
-> [Amir] Introduce the helper generic_copy_file_range_prep() modelled
-> after generic_remap_file_range_prep(). Helper is called by filesystem
-> before the copy_file_range operation and with output inode locked.
-> 
-> For ceph and for default generic_copy_file_range() implementation there
-> is no inode lock held throughout the copy operation, so we do best
-> effort and remove setuid bit before copy starts. This does not protect
-> suid file from changing if suid bit is set after copy started.
+On Tue, May 28, 2019 at 05:01:55PM +0100, David Howells wrote:
+> Implement a misc device that implements a general notification queue as a
+> ring buffer that can be mmap()'d from userspace.
 
-Maybe we try to remove suid once more at the end of
-generic_copy_file_range if the copy succeeds?  It'd still be racy, but I
-can't (currently, having drank no coffee yet) think of a general way to
-hold both inodes locked during the entire copy operation.
+"general" but just for filesystems, right?  :(
 
---D
-
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/ceph/file.c     |  9 +++++++++
->  fs/cifs/cifsfs.c   |  9 ++++++---
->  fs/fuse/file.c     |  4 ++++
->  fs/nfs/nfs42proc.c |  8 +++++---
->  fs/read_write.c    | 31 +++++++++++++++++++++++++++++++
->  include/linux/fs.h |  2 ++
->  6 files changed, 57 insertions(+), 6 deletions(-)
+> Each entry has a 1-slot header that describes it:
 > 
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index e87f7b2023af..54cfc877a6ef 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1947,6 +1947,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  		goto out;
->  	}
+> 	struct watch_notification {
+> 		__u32	type:24;
+> 		__u32	subtype:8;
+> 		__u32	info;
+> 	};
+
+This doesn't match the structure definition in the documentation, so
+something is out of sync.
+
+> The type indicates the source (eg. mount tree changes, superblock events,
+> keyring changes, block layer events) and the subtype indicates the event
+> type (eg. mount, unmount; EIO, EDQUOT; link, unlink).  The info field
+> indicates a number of things, including the entry length, an ID assigned to
+> a watchpoint contributing to this buffer, type-specific flags and meta
+> flags, such as an overrun indicator.
+> 
+> Supplementary data, such as the key ID that generated an event, are
+> attached in additional slots.
+
+I'm all for a "generic" event system for the kernel (heck, Solaris has
+had one for decades), but it keeps getting shot down every time it comes
+up.  What is different about this one?
+
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -4,6 +4,19 @@
 >  
-> +	/* Should inode lock be held throughout the copy operation? */
-> +	inode_lock(dst_inode);
-> +	ret = generic_copy_file_range_prep(src_file, dst_file);
-> +	inode_unlock(dst_inode);
-> +	if (ret < 0) {
-> +		dout("failed to copy from src to dst file (%zd)\n", ret);
-> +		goto out;
+>  menu "Misc devices"
+>  
+> +config WATCH_QUEUE
+> +	bool "Mappable notification queue"
+> +	default n
+
+Nit, not needed.
+
+> +	depends on MMU
+> +	help
+> +	  This is a general notification queue for the kernel to pass events to
+> +	  userspace through a mmap()'able ring buffer.  It can be used in
+> +	  conjunction with watches for mount topology change notifications,
+> +	  superblock change notifications and key/keyring change notifications.
+> +
+> +	  Note that in theory this should work fine with NOMMU, but I'm not
+> +	  sure how to make that work.
+> +
+>  config SENSORS_LIS3LV02D
+>  	tristate
+>  	depends on INPUT
+> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+> index b9affcdaa3d6..bf16acd9f8cc 100644
+> --- a/drivers/misc/Makefile
+> +++ b/drivers/misc/Makefile
+> @@ -3,6 +3,7 @@
+>  # Makefile for misc devices that really don't fit anywhere else.
+>  #
+>  
+> +obj-$(CONFIG_WATCH_QUEUE)	+= watch_queue.o
+>  obj-$(CONFIG_IBM_ASM)		+= ibmasm/
+>  obj-$(CONFIG_IBMVMC)		+= ibmvmc.o
+>  obj-$(CONFIG_AD525X_DPOT)	+= ad525x_dpot.o
+> diff --git a/drivers/misc/watch_queue.c b/drivers/misc/watch_queue.c
+> new file mode 100644
+> index 000000000000..39a09ea15d97
+> --- /dev/null
+> +++ b/drivers/misc/watch_queue.c
+> @@ -0,0 +1,877 @@
+> +/* User-mappable watch queue
+> + *
+> + * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
+
+You didn't touch the code this year?
+
+> + * Written by David Howells (dhowells@redhat.com)
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public Licence
+> + * as published by the Free Software Foundation; either version
+> + * 2 of the Licence, or (at your option) any later version.
+
+Please drop the boiler plate text and use a SPDX tag, checkpatch should
+have caught this.  I don't want to have to go and change it again.
+
+> + *
+> + * See Documentation/watch_queue.rst
+> + */
+> +
+> +#define pr_fmt(fmt) "watchq: " fmt
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/sched.h>
+> +#include <linux/slab.h>
+> +#include <linux/printk.h>
+> +#include <linux/miscdevice.h>
+> +#include <linux/fs.h>
+> +#include <linux/mm.h>
+> +#include <linux/pagemap.h>
+> +#include <linux/poll.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/vmalloc.h>
+> +#include <linux/file.h>
+> +#include <linux/security.h>
+> +#include <linux/cred.h>
+> +#include <linux/watch_queue.h>
+> +
+> +#define DEBUG_WITH_WRITE /* Allow use of write() to record notifications */
+
+debugging code left in?
+
+> +
+> +MODULE_DESCRIPTION("Watch queue");
+> +MODULE_AUTHOR("Red Hat, Inc.");
+> +MODULE_LICENSE("GPL");
+> +
+> +struct watch_type_filter {
+> +	enum watch_notification_type type;
+> +	__u32		subtype_filter[1];	/* Bitmask of subtypes to filter on */
+> +	__u32		info_filter;		/* Filter on watch_notification::info */
+> +	__u32		info_mask;		/* Mask of relevant bits in info_filter */
+> +};
+> +
+> +struct watch_filter {
+> +	union {
+> +		struct rcu_head	rcu;
+> +		unsigned long	type_filter[2];	/* Bitmask of accepted types */
+> +	};
+> +	u32		nr_filters;		/* Number of filters */
+> +	struct watch_type_filter filters[];
+> +};
+> +
+> +struct watch_queue {
+> +	struct rcu_head		rcu;
+> +	struct address_space	mapping;
+> +	const struct cred	*cred;		/* Creds of the owner of the queue */
+> +	struct watch_filter __rcu *filter;
+> +	wait_queue_head_t	waiters;
+> +	struct hlist_head	watches;	/* Contributory watches */
+> +	refcount_t		usage;
+
+Usage of what, this structure?  Or something else?
+
+> +	spinlock_t		lock;
+> +	bool			defunct;	/* T when queues closed */
+> +	u8			nr_pages;	/* Size of pages[] */
+> +	u8			flag_next;	/* Flag to apply to next item */
+> +#ifdef DEBUG_WITH_WRITE
+> +	u8			debug;
+> +#endif
+> +	u32			size;
+> +	struct watch_queue_buffer *buffer;	/* Pointer to first record */
+> +
+> +	/* The mappable pages.  The zeroth page holds the ring pointers. */
+> +	struct page		**pages;
+> +};
+
+
+> +EXPORT_SYMBOL(__post_watch_notification);
+
+_GPL for new apis?  (I have to ask...)
+
+> +static long watch_queue_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct watch_queue *wqueue = file->private_data;
+> +	struct inode *inode = file_inode(file);
+> +	long ret;
+> +
+> +	switch (cmd) {
+> +	case IOC_WATCH_QUEUE_SET_SIZE:
+> +		if (wqueue->buffer)
+> +			return -EBUSY;
+> +		inode_lock(inode);
+> +		ret = watch_queue_set_size(wqueue, arg);
+> +		inode_unlock(inode);
+> +		return ret;
+> +
+> +	case IOC_WATCH_QUEUE_SET_FILTER:
+> +		inode_lock(inode);
+> +		ret = watch_queue_set_filter(
+> +			inode, wqueue,
+> +			(struct watch_notification_filter __user *)arg);
+> +		inode_unlock(inode);
+> +		return ret;
+> +
+> +	default:
+> +		return -EOPNOTSUPP;
+
+-ENOTTY is the correct "not a valid ioctl" error value, right?
+
+> +	}
+> +}
+
+> +/**
+> + * put_watch_queue - Dispose of a ref on a watchqueue.
+> + * @wqueue: The watch queue to unref.
+> + */
+> +void put_watch_queue(struct watch_queue *wqueue)
+> +{
+> +	if (refcount_dec_and_test(&wqueue->usage))
+> +		kfree_rcu(wqueue, rcu);
+
+Why not just use a kref?
+
+> +}
+> +EXPORT_SYMBOL(put_watch_queue);
+
+
+> +int add_watch_to_object(struct watch *watch, struct watch_list *wlist)
+> +{
+> +	struct watch_queue *wqueue = rcu_access_pointer(watch->queue);
+> +	struct watch *w;
+> +
+> +	hlist_for_each_entry(w, &wlist->watchers, list_node) {
+> +		if (watch->id == w->id)
+> +			return -EBUSY;
 > +	}
 > +
->  	/*
->  	 * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
->  	 * clients may have dirty data in their caches.  And OSDs know nothing
-> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-> index c65823270313..e103b499aaa8 100644
-> --- a/fs/cifs/cifsfs.c
-> +++ b/fs/cifs/cifsfs.c
-> @@ -1096,6 +1096,10 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
->  		goto out;
->  	}
->  
-> +	rc = -EOPNOTSUPP;
-> +	if (!target_tcon->ses->server->ops->copychunk_range)
-> +		goto out;
+> +	rcu_assign_pointer(watch->watch_list, wlist);
 > +
->  	/*
->  	 * Note: cifs case is easier than btrfs since server responsible for
->  	 * checks for proper open modes and file type and if it wants
-> @@ -1107,11 +1111,10 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
->  	/* should we flush first and last page first */
->  	truncate_inode_pages(&target_inode->i_data, 0);
->  
-> -	if (target_tcon->ses->server->ops->copychunk_range)
-> +	rc = generic_copy_file_range_prep(src_file, dst_file);
-> +	if (!rc)
->  		rc = target_tcon->ses->server->ops->copychunk_range(xid,
->  			smb_file_src, smb_file_target, off, len, destoff);
-> -	else
-> -		rc = -EOPNOTSUPP;
->  
->  	/* force revalidate of size and timestamps of target file now
->  	 * that target is updated on the server
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index e03901ae729b..3531d4a3d9ec 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -3128,6 +3128,10 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
->  
->  	inode_lock(inode_out);
->  
-> +	err = generic_copy_file_range_prep(file_in, file_out);
-> +	if (err)
-> +		goto out;
+> +	spin_lock_bh(&wqueue->lock);
+> +	refcount_inc(&wqueue->usage);
+> +	hlist_add_head(&watch->queue_node, &wqueue->watches);
+> +	spin_unlock_bh(&wqueue->lock);
 > +
->  	if (fc->writeback_cache) {
->  		err = filemap_write_and_wait_range(inode_out->i_mapping,
->  						   pos_out, pos_out + len);
-> diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
-> index 5196bfa7894d..b387951e1d86 100644
-> --- a/fs/nfs/nfs42proc.c
-> +++ b/fs/nfs/nfs42proc.c
-> @@ -345,9 +345,11 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
->  
->  	do {
->  		inode_lock(file_inode(dst));
-> -		err = _nfs42_proc_copy(src, src_lock,
-> -				dst, dst_lock,
-> -				&args, &res);
-> +		err = generic_copy_file_range_prep(src, dst);
-> +		if (!err)
-> +			err = _nfs42_proc_copy(src, src_lock,
-> +					       dst, dst_lock,
-> +					       &args, &res);
->  		inode_unlock(file_inode(dst));
->  
->  		if (err >= 0)
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index b0fb1176b628..e16bcafc0da2 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1565,6 +1565,28 @@ COMPAT_SYSCALL_DEFINE4(sendfile64, int, out_fd, int, in_fd,
->  }
->  #endif
->  
-> +/*
-> + * Prepare inodes for copy from @file_in to @file_out.
-> + *
-> + * Caller must hold output inode lock.
-> + */
-> +int generic_copy_file_range_prep(struct file *file_in, struct file *file_out)
+> +	hlist_add_head(&watch->list_node, &wlist->watchers);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(add_watch_to_object);
+
+Naming nit, shouldn't the "prefix" all be the same for these new
+functions?
+
+watch_queue_add_object()?  watch_queue_put()?  And so on?
+
+> +static int __init watch_queue_init(void)
 > +{
 > +	int ret;
 > +
-> +	WARN_ON_ONCE(!inode_is_locked(file_inode(file_out)));
-> +
-> +	/*
-> +	 * Clear the security bits if the process is not being run by root.
-> +	 * This keeps people from modifying setuid and setgid binaries.
-> +	 */
-> +	ret = file_remove_privs(file_out);
-> +
+> +	ret = misc_register(&watch_queue_dev);
+> +	if (ret < 0)
+> +		pr_err("Failed to register %d\n", ret);
 > +	return ret;
-> +
 > +}
-> +EXPORT_SYMBOL(generic_copy_file_range_prep);
+> +fs_initcall(watch_queue_init);
 > +
->  /**
->   * generic_copy_file_range - copy data between two files
->   * @file_in:	file structure to read from
-> @@ -1590,6 +1612,15 @@ ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
->  				struct file *file_out, loff_t pos_out,
->  				size_t len, unsigned int flags)
->  {
-> +	int ret;
+> +static void __exit watch_queue_exit(void)
+> +{
+> +	misc_deregister(&watch_queue_dev);
+> +}
+> +module_exit(watch_queue_exit);
+
+module_misc_device()?
+
+
+> --- /dev/null
+> +++ b/include/linux/watch_queue.h
+> @@ -0,0 +1,86 @@
+> +/* User-mappable watch queue
+> + *
+> + * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public Licence
+> + * as published by the Free Software Foundation; either version
+> + * 2 of the Licence, or (at your option) any later version.
+
+Again, SPDX headers please.
+
+> --- /dev/null
+> +++ b/include/uapi/linux/watch_queue.h
+> @@ -0,0 +1,82 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
+Yeah!!!
+
+No copyright?  :(
+
+> +#ifndef _UAPI_LINUX_WATCH_QUEUE_H
+> +#define _UAPI_LINUX_WATCH_QUEUE_H
 > +
-> +	/* Should inode lock be held throughout the copy operation? */
-> +	inode_lock(file_inode(file_out));
-> +	ret = generic_copy_file_range_prep(file_in, file_out);
-> +	inode_unlock(file_inode(file_out));
-> +	if (ret)
-> +		return ret;
+> +#include <linux/types.h>
+> +#include <linux/ioctl.h>
 > +
->  	return do_splice_direct(file_in, &pos_in, file_out, &pos_out,
->  				len > MAX_RW_COUNT ? MAX_RW_COUNT : len, 0);
->  }
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e4d382c4342a..3e03a96d9ab6 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1889,6 +1889,8 @@ extern ssize_t vfs_readv(struct file *, const struct iovec __user *,
->  		unsigned long, loff_t *, rwf_t);
->  extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
->  				   loff_t, size_t, unsigned int);
-> +extern int generic_copy_file_range_prep(struct file *file_in,
-> +					struct file *file_out);
->  extern ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
->  				       struct file *file_out, loff_t pos_out,
->  				       size_t len, unsigned int flags);
-> -- 
-> 2.17.1
-> 
+> +#define IOC_WATCH_QUEUE_SET_SIZE	_IO('s', 0x01)	/* Set the size in pages */
+> +#define IOC_WATCH_QUEUE_SET_FILTER	_IO('s', 0x02)	/* Set the filter */
+> +
+> +enum watch_notification_type {
+> +	WATCH_TYPE_META		= 0,	/* Special record */
+> +	WATCH_TYPE_MOUNT_NOTIFY	= 1,	/* Mount notification record */
+> +	WATCH_TYPE_SB_NOTIFY	= 2,	/* Superblock notification */
+> +	WATCH_TYPE_KEY_NOTIFY	= 3,	/* Key/keyring change notification */
+> +	WATCH_TYPE_BLOCK_NOTIFY	= 4,	/* Block layer notifications */
+> +#define WATCH_TYPE___NR 5
+> +};
+> +
+> +enum watch_meta_notification_subtype {
+> +	WATCH_META_SKIP_NOTIFICATION	= 0,	/* Just skip this record */
+> +	WATCH_META_REMOVAL_NOTIFICATION	= 1,	/* Watched object was removed */
+> +};
+> +
+> +/*
+> + * Notification record
+> + */
+> +struct watch_notification {
+> +	__u32			type:24;	/* enum watch_notification_type */
+> +	__u32			subtype:8;	/* Type-specific subtype (filterable) */
+> +	__u32			info;
+> +#define WATCH_INFO_OVERRUN	0x00000001	/* Event(s) lost due to overrun */
+> +#define WATCH_INFO_ENOMEM	0x00000002	/* Event(s) lost due to ENOMEM */
+> +#define WATCH_INFO_RECURSIVE	0x00000004	/* Change was recursive */
+> +#define WATCH_INFO_LENGTH	0x000001f8	/* Length of record / sizeof(watch_notification) */
+> +#define WATCH_INFO_IN_SUBTREE	0x00000200	/* Change was not at watched root */
+> +#define WATCH_INFO_TYPE_FLAGS	0x00ff0000	/* Type-specific flags */
+> +#define WATCH_INFO_FLAG_0	0x00010000
+> +#define WATCH_INFO_FLAG_1	0x00020000
+> +#define WATCH_INFO_FLAG_2	0x00040000
+> +#define WATCH_INFO_FLAG_3	0x00080000
+> +#define WATCH_INFO_FLAG_4	0x00100000
+> +#define WATCH_INFO_FLAG_5	0x00200000
+> +#define WATCH_INFO_FLAG_6	0x00400000
+> +#define WATCH_INFO_FLAG_7	0x00800000
+> +#define WATCH_INFO_ID		0xff000000	/* ID of watchpoint */
+> +};
+> +
+> +#define WATCH_LENGTH_SHIFT	3
+> +
+> +struct watch_queue_buffer {
+> +	union {
+> +		/* The first few entries are special, containing the
+> +		 * ring management variables.
+> +		 */
+> +		struct {
+> +			struct watch_notification watch; /* WATCH_TYPE_SKIP */
+> +			volatile __u32	head;		/* Ring head index */
+> +			volatile __u32	tail;		/* Ring tail index */
+
+A uapi structure that has volatile in it?  Are you _SURE_ this is
+correct?
+
+That feels wrong to me...  This is not a backing-hardware register, it's
+"just memory" and slapping volatile on it shouldn't be the correct
+solution for telling the compiler to not to optimize away reads/flushes,
+right?  You need a proper memory access type primitive for that to work
+correctly everywhere I thought.
+
+We only have 2 users of volatile in include/uapi, one for WMI structures
+that are backed by firmware (seems correct), and one for DRM which I
+have no idea how it works as it claims to be a lock.  Why is this new
+addition the correct way to do this that no other ring-buffer that was
+mmapped has needed to?
+
+thanks,
+
+greg k-h
