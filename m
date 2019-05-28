@@ -2,47 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 817F72CA25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 17:17:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72D3F2CABD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 17:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfE1PRA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 11:17:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44104 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbfE1PQ5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 11:16:57 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 676DE64394;
-        Tue, 28 May 2019 15:16:57 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-125-65.rdu2.redhat.com [10.10.125.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 28DA511483C1;
-        Tue, 28 May 2019 15:16:56 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <155905621951.1304.5956310120238620025.stgit@warthog.procyon.org.uk>
-References: <155905621951.1304.5956310120238620025.stgit@warthog.procyon.org.uk>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, raven@themaw.net, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mszeredi@redhat.com
-Subject: Re: [PATCH 0/7] VFS: Introduce filesystem information query syscall [ver #13]
+        id S1726569AbfE1Pyc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 11:54:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54338 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726560AbfE1Pyc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 May 2019 11:54:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B9EF5AF03;
+        Tue, 28 May 2019 15:54:30 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 434411E3F53; Tue, 28 May 2019 17:54:30 +0200 (CEST)
+Date:   Tue, 28 May 2019 17:54:30 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2] fanotify: Disallow permission events for proc
+ filesystem
+Message-ID: <20190528155430.GA27155@quack2.suse.cz>
+References: <20190516115619.18926-1-jack@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3128.1559056615.1@warthog.procyon.org.uk>
-Date:   Tue, 28 May 2019 16:16:55 +0100
-Message-ID: <3129.1559056615@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 28 May 2019 15:16:57 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190516115619.18926-1-jack@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Oops, I posted this on the wrong branch - will repost on the right branch.
+On Thu 16-05-19 13:56:19, Jan Kara wrote:
+> Proc filesystem has special locking rules for various files. Thus
+> fanotify which opens files on event delivery can easily deadlock
+> against another process that waits for fanotify permission event to be
+> handled. Since permission events on /proc have doubtful value anyway,
+> just disallow them.
+> 
+> Link: https://lore.kernel.org/linux-fsdevel/20190320131642.GE9485@quack2.suse.cz/
+> Signed-off-by: Jan Kara <jack@suse.cz>
 
-David
+Amir, ping? What do you think about this version of the patch?
+
+								Honza
+
+> ---
+>  fs/notify/fanotify/fanotify_user.c | 22 ++++++++++++++++++++++
+>  fs/proc/root.c                     |  2 +-
+>  include/linux/fs.h                 |  1 +
+>  3 files changed, 24 insertions(+), 1 deletion(-)
+> 
+> Changes since v1:
+> * use type flag to detect filesystems not supporting permission events
+> * return -EINVAL instead of -EOPNOTSUPP for such filesystems
+> 
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index a90bb19dcfa2..91006f47e420 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -920,6 +920,22 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
+>  	return 0;
+>  }
+>  
+> +static int fanotify_events_supported(struct path *path, __u64 mask)
+> +{
+> +	/*
+> +	 * Some filesystems such as 'proc' acquire unusual locks when opening
+> +	 * files. For them fanotify permission events have high chances of
+> +	 * deadlocking the system - open done when reporting fanotify event
+> +	 * blocks on this "unusual" lock while another process holding the lock
+> +	 * waits for fanotify permission event to be answered. Just disallow
+> +	 * permission events for such filesystems.
+> +	 */
+> +	if (mask & FANOTIFY_PERM_EVENTS &&
+> +	    path->mnt->mnt_sb->s_type->fs_flags & FS_DISALLOW_NOTIFY_PERM)
+> +		return -EINVAL;
+> +	return 0;
+> +}
+> +
+>  static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  			    int dfd, const char  __user *pathname)
+>  {
+> @@ -1018,6 +1034,12 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  	if (ret)
+>  		goto fput_and_out;
+>  
+> +	if (flags & FAN_MARK_ADD) {
+> +		ret = fanotify_events_supported(&path, mask);
+> +		if (ret)
+> +			goto path_put_and_out;
+> +	}
+> +
+>  	if (FAN_GROUP_FLAG(group, FAN_REPORT_FID)) {
+>  		ret = fanotify_test_fid(&path, &__fsid);
+>  		if (ret)
+> diff --git a/fs/proc/root.c b/fs/proc/root.c
+> index 8b145e7b9661..522199e9525e 100644
+> --- a/fs/proc/root.c
+> +++ b/fs/proc/root.c
+> @@ -211,7 +211,7 @@ static struct file_system_type proc_fs_type = {
+>  	.init_fs_context	= proc_init_fs_context,
+>  	.parameters		= &proc_fs_parameters,
+>  	.kill_sb		= proc_kill_sb,
+> -	.fs_flags		= FS_USERNS_MOUNT,
+> +	.fs_flags		= FS_USERNS_MOUNT | FS_DISALLOW_NOTIFY_PERM,
+>  };
+>  
+>  void __init proc_root_init(void)
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index f7fdfe93e25d..c7136c98b5ba 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2184,6 +2184,7 @@ struct file_system_type {
+>  #define FS_BINARY_MOUNTDATA	2
+>  #define FS_HAS_SUBTYPE		4
+>  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
+> +#define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
+>  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+>  	int (*init_fs_context)(struct fs_context *);
+>  	const struct fs_parameter_description *parameters;
+> -- 
+> 2.16.4
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
