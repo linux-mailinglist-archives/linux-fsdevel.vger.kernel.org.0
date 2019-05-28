@@ -2,131 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72D3F2CABD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 17:54:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 180AF2CADE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 18:02:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbfE1Pyc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 11:54:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54338 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726560AbfE1Pyc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 11:54:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B9EF5AF03;
-        Tue, 28 May 2019 15:54:30 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 434411E3F53; Tue, 28 May 2019 17:54:30 +0200 (CEST)
-Date:   Tue, 28 May 2019 17:54:30 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] fanotify: Disallow permission events for proc
- filesystem
-Message-ID: <20190528155430.GA27155@quack2.suse.cz>
-References: <20190516115619.18926-1-jack@suse.cz>
+        id S1726941AbfE1QB4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 12:01:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56360 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726313AbfE1QBz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 May 2019 12:01:55 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CCC94820E2;
+        Tue, 28 May 2019 16:01:49 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E82E88086;
+        Tue, 28 May 2019 16:01:47 +0000 (UTC)
+Subject: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 28 May 2019 17:01:47 +0100
+Message-ID: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190516115619.18926-1-jack@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 28 May 2019 16:01:54 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 16-05-19 13:56:19, Jan Kara wrote:
-> Proc filesystem has special locking rules for various files. Thus
-> fanotify which opens files on event delivery can easily deadlock
-> against another process that waits for fanotify permission event to be
-> handled. Since permission events on /proc have doubtful value anyway,
-> just disallow them.
-> 
-> Link: https://lore.kernel.org/linux-fsdevel/20190320131642.GE9485@quack2.suse.cz/
-> Signed-off-by: Jan Kara <jack@suse.cz>
 
-Amir, ping? What do you think about this version of the patch?
+Hi Al,
 
-								Honza
+Here's a set of patches to add a general variable-length notification queue
+concept and to add sources of events for:
 
-> ---
->  fs/notify/fanotify/fanotify_user.c | 22 ++++++++++++++++++++++
->  fs/proc/root.c                     |  2 +-
->  include/linux/fs.h                 |  1 +
->  3 files changed, 24 insertions(+), 1 deletion(-)
-> 
-> Changes since v1:
-> * use type flag to detect filesystems not supporting permission events
-> * return -EINVAL instead of -EOPNOTSUPP for such filesystems
-> 
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index a90bb19dcfa2..91006f47e420 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -920,6 +920,22 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
->  	return 0;
->  }
->  
-> +static int fanotify_events_supported(struct path *path, __u64 mask)
-> +{
-> +	/*
-> +	 * Some filesystems such as 'proc' acquire unusual locks when opening
-> +	 * files. For them fanotify permission events have high chances of
-> +	 * deadlocking the system - open done when reporting fanotify event
-> +	 * blocks on this "unusual" lock while another process holding the lock
-> +	 * waits for fanotify permission event to be answered. Just disallow
-> +	 * permission events for such filesystems.
-> +	 */
-> +	if (mask & FANOTIFY_PERM_EVENTS &&
-> +	    path->mnt->mnt_sb->s_type->fs_flags & FS_DISALLOW_NOTIFY_PERM)
-> +		return -EINVAL;
-> +	return 0;
-> +}
-> +
->  static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  			    int dfd, const char  __user *pathname)
->  {
-> @@ -1018,6 +1034,12 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  	if (ret)
->  		goto fput_and_out;
->  
-> +	if (flags & FAN_MARK_ADD) {
-> +		ret = fanotify_events_supported(&path, mask);
-> +		if (ret)
-> +			goto path_put_and_out;
-> +	}
-> +
->  	if (FAN_GROUP_FLAG(group, FAN_REPORT_FID)) {
->  		ret = fanotify_test_fid(&path, &__fsid);
->  		if (ret)
-> diff --git a/fs/proc/root.c b/fs/proc/root.c
-> index 8b145e7b9661..522199e9525e 100644
-> --- a/fs/proc/root.c
-> +++ b/fs/proc/root.c
-> @@ -211,7 +211,7 @@ static struct file_system_type proc_fs_type = {
->  	.init_fs_context	= proc_init_fs_context,
->  	.parameters		= &proc_fs_parameters,
->  	.kill_sb		= proc_kill_sb,
-> -	.fs_flags		= FS_USERNS_MOUNT,
-> +	.fs_flags		= FS_USERNS_MOUNT | FS_DISALLOW_NOTIFY_PERM,
->  };
->  
->  void __init proc_root_init(void)
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index f7fdfe93e25d..c7136c98b5ba 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2184,6 +2184,7 @@ struct file_system_type {
->  #define FS_BINARY_MOUNTDATA	2
->  #define FS_HAS_SUBTYPE		4
->  #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
-> +#define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
->  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
->  	int (*init_fs_context)(struct fs_context *);
->  	const struct fs_parameter_description *parameters;
-> -- 
-> 2.16.4
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+ (1) Mount topology events, such as mounting, unmounting, mount expiry,
+     mount reconfiguration.
+
+ (2) Superblock events, such as R/W<->R/O changes, quota overrun and I/O
+     errors (not complete yet).
+
+ (3) Block layer events, such as I/O errors.
+
+ (4) Key/keyring events, such as creating, linking and removal of keys.
+
+One of the reasons for this is so that we can remove the issue of processes
+having to repeatedly and regularly scan /proc/mounts, which has proven to
+be a system performance problem.  To further aid this, the fsinfo() syscall
+on which this patch series depends, provides a way to access superblock and
+mount information in binary form without the need to parse /proc/mounts.
+
+
+Design decisions:
+
+ (1) A misc chardev is used to create and open a ring buffer:
+
+	fd = open("/dev/watch_queue", O_RDWR);
+
+     which is then configured and mmap'd into userspace:
+
+	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE);
+	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
+	buf = mmap(NULL, BUF_SIZE * page_size, PROT_READ | PROT_WRITE,
+		   MAP_SHARED, fd, 0);
+
+     The fd cannot be read or written (though there is a facility to use
+     write to inject records for debugging) and userspace just pulls data
+     directly out of the buffer.
+
+ (2) The ring index pointers are stored inside the ring and are thus
+     accessible to userspace.  Userspace should only update the tail
+     pointer and never the head pointer or risk breaking the buffer.  The
+     kernel checks that the pointers appear valid before trying to use
+     them.  A 'skip' record is maintained around the pointers.
+
+ (3) poll() can be used to wait for data to appear in the buffer.
+
+ (4) Records in the buffer are binary, typed and have a length so that they
+     can be of varying size.
+
+     This means that multiple heterogeneous sources can share a common
+     buffer.  Tags may be specified when a watchpoint is created to help
+     distinguish the sources.
+
+ (5) The queue is reusable as there are 16 million types available, of
+     which I've used 4, so there is scope for others to be used.
+
+ (6) Records are filterable as types have up to 256 subtypes that can be
+     individually filtered.  Other filtration is also available.
+
+ (7) Each time the buffer is opened, a new buffer is created - this means
+     that there's no interference between watchers.
+
+ (8) When recording a notification, the kernel will not sleep, but will
+     rather mark a queue as overrun if there's insufficient space, thereby
+     avoiding userspace causing the kernel to hang.
+
+ (9) The 'watchpoint' should be specific where possible, meaning that you
+     specify the object that you want to watch.
+
+(10) The buffer is created and then watchpoints are attached to it, using
+     one of:
+
+	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
+	mount_notify(AT_FDCWD, "/", 0, fd, 0x02);
+	sb_notify(AT_FDCWD, "/mnt", 0, fd, 0x03);
+
+     where in all three cases, fd indicates the queue and the number after
+     is a tag between 0 and 255.
+
+(11) The watch must be removed if either the watch buffer is destroyed or
+     the watched object is destroyed.
+
+
+Things I want to avoid:
+
+ (1) Introducing features that make the core VFS dependent on the network
+     stack or networking namespaces (ie. usage of netlink).
+
+ (2) Dumping all this stuff into dmesg and having a daemon that sits there
+     parsing the output and distributing it as this then puts the
+     responsibility for security into userspace and makes handling
+     namespaces tricky.  Further, dmesg might not exist or might be
+     inaccessible inside a container.
+
+ (3) Letting users see events they shouldn't be able to see.
+
+
+Further things that could be considered:
+
+ (1) Adding a keyctl call to allow a watch on a keyring to be extended to
+     "children" of that keyring, such that the watch is removed from the
+     child if it is unlinked from the keyring.
+
+ (2) Adding global superblock event queue.
+
+ (3) Propagating watches to child superblock over automounts.
+
+
+The patches can be found here also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
+
+David
+---
+David Howells (7):
+      General notification queue with user mmap()'able ring buffer
+      keys: Add a notification facility
+      vfs: Add a mount-notification facility
+      vfs: Add superblock notifications
+      fsinfo: Export superblock notification counter
+      block: Add block layer notifications
+      Add sample notification program
+
+
+ Documentation/security/keys/core.rst   |   58 ++
+ Documentation/watch_queue.rst          |  311 +++++++++++
+ arch/x86/entry/syscalls/syscall_32.tbl |    3 
+ arch/x86/entry/syscalls/syscall_64.tbl |    3 
+ block/Kconfig                          |    9 
+ block/Makefile                         |    1 
+ block/blk-core.c                       |   28 +
+ block/blk-notify.c                     |   83 +++
+ drivers/misc/Kconfig                   |   13 
+ drivers/misc/Makefile                  |    1 
+ drivers/misc/watch_queue.c             |  877 ++++++++++++++++++++++++++++++++
+ fs/Kconfig                             |   21 +
+ fs/Makefile                            |    1 
+ fs/fsinfo.c                            |   12 
+ fs/mount.h                             |   33 +
+ fs/mount_notify.c                      |  178 ++++++
+ fs/namespace.c                         |    9 
+ fs/super.c                             |  116 ++++
+ include/linux/blkdev.h                 |   10 
+ include/linux/dcache.h                 |    1 
+ include/linux/fs.h                     |   78 +++
+ include/linux/key.h                    |    4 
+ include/linux/lsm_hooks.h              |   15 +
+ include/linux/security.h               |   14 +
+ include/linux/syscalls.h               |    5 
+ include/linux/watch_queue.h            |   86 +++
+ include/uapi/linux/fsinfo.h            |   10 
+ include/uapi/linux/keyctl.h            |    1 
+ include/uapi/linux/watch_queue.h       |  185 +++++++
+ kernel/sys_ni.c                        |    6 
+ mm/interval_tree.c                     |    2 
+ mm/memory.c                            |    1 
+ samples/Kconfig                        |    6 
+ samples/Makefile                       |    1 
+ samples/vfs/test-fsinfo.c              |   13 
+ samples/watch_queue/Makefile           |    9 
+ samples/watch_queue/watch_test.c       |  284 ++++++++++
+ security/keys/Kconfig                  |   10 
+ security/keys/compat.c                 |    2 
+ security/keys/gc.c                     |    5 
+ security/keys/internal.h               |   30 +
+ security/keys/key.c                    |   37 +
+ security/keys/keyctl.c                 |   88 +++
+ security/keys/keyring.c                |   17 -
+ security/keys/request_key.c            |    4 
+ security/security.c                    |    9 
+ 46 files changed, 2652 insertions(+), 38 deletions(-)
+ create mode 100644 Documentation/watch_queue.rst
+ create mode 100644 block/blk-notify.c
+ create mode 100644 drivers/misc/watch_queue.c
+ create mode 100644 fs/mount_notify.c
+ create mode 100644 include/linux/watch_queue.h
+ create mode 100644 include/uapi/linux/watch_queue.h
+ create mode 100644 samples/watch_queue/Makefile
+ create mode 100644 samples/watch_queue/watch_test.c
+
