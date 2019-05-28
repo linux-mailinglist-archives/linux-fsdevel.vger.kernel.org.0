@@ -2,103 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FA9F2C51E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 13:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FFEB2C50E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 May 2019 13:03:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbfE1LF7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 07:05:59 -0400
-Received: from icp-osb-irony-out6.external.iinet.net.au ([203.59.1.106]:61742
-        "EHLO icp-osb-irony-out6.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726313AbfE1LF7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 07:05:59 -0400
-X-Greylist: delayed 556 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 May 2019 07:05:59 EDT
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AsAACTEu1c//aqqnwNWBkBAQEBAQE?=
- =?us-ascii?q?BAQEBAQEHAQEBAQEBgWWEJoQTk1kBAQEBAQEGgTWJT4lwhj4DVAkBAQEBAQE?=
- =?us-ascii?q?BAQE3AQEBhD8CgwE4EwEDAQEBBAEBAQEDAYZgAQEBAyMVQRALGAICJgICVwY?=
- =?us-ascii?q?BDAYCAQGDHoF3pz1xgS+FR4McgUaBDCiLaniBB4E4gjY1PodOglgEjVuGApQ?=
- =?us-ascii?q?dWQgBgg+OZYQqIYIfimaJRC2MQZgGV4EhMxoIKAiDJ4IYGo4yYI8WAQE?=
-X-IPAS-Result: =?us-ascii?q?A2AsAACTEu1c//aqqnwNWBkBAQEBAQEBAQEBAQEHAQEBA?=
- =?us-ascii?q?QEBgWWEJoQTk1kBAQEBAQEGgTWJT4lwhj4DVAkBAQEBAQEBAQE3AQEBhD8Cg?=
- =?us-ascii?q?wE4EwEDAQEBBAEBAQEDAYZgAQEBAyMVQRALGAICJgICVwYBDAYCAQGDHoF3p?=
- =?us-ascii?q?z1xgS+FR4McgUaBDCiLaniBB4E4gjY1PodOglgEjVuGApQdWQgBgg+OZYQqI?=
- =?us-ascii?q?YIfimaJRC2MQZgGV4EhMxoIKAiDJ4IYGo4yYI8WAQE?=
-X-IronPort-AV: E=Sophos;i="5.60,521,1549900800"; 
-   d="scan'208";a="163258800"
-Received: from 124-170-170-246.dyn.iinet.net.au (HELO [192.168.0.106]) ([124.170.170.246])
-  by icp-osb-irony-out6.iinet.net.au with ESMTP; 28 May 2019 18:56:39 +0800
-Subject: Re: [PATCH] binfmt_flat: make load_flat_shared_library() work
-To:     Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-References: <20190524201817.16509-1-jannh@google.com>
- <20190525144304.e2b9475a18a1f78a964c5640@linux-foundation.org>
- <CAG48ez36xJ9UA8gWef3+1rHQwob5nb8WP3RqnbT8GEOV9Z38jA@mail.gmail.com>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <6956cfe5-90d4-aad4-48e3-66b0ece91fed@linux-m68k.org>
-Date:   Tue, 28 May 2019 20:56:37 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726560AbfE1LDZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 May 2019 07:03:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55986 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726400AbfE1LDZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 May 2019 07:03:25 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 44A8E307B963;
+        Tue, 28 May 2019 11:03:25 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-116-154.ams2.redhat.com [10.36.116.154])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C1D0A1B479;
+        Tue, 28 May 2019 11:03:21 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Cyril Hrubis <chrubis@suse.cz>
+Cc:     Andreas Schwab <schwab@linux-m68k.org>,
+        lkml <linux-kernel@vger.kernel.org>, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, Michal Simek <monstr@monstr.eu>,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH] [RFC] Remove bdflush syscall stub
+References: <20190528101012.11402-1-chrubis@suse.cz>
+        <mvmr28idgfu.fsf@linux-m68k.org> <20190528104017.GA11969@rei>
+Date:   Tue, 28 May 2019 13:03:20 +0200
+In-Reply-To: <20190528104017.GA11969@rei> (Cyril Hrubis's message of "Tue, 28
+        May 2019 12:40:18 +0200")
+Message-ID: <87ftoyg7t3.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez36xJ9UA8gWef3+1rHQwob5nb8WP3RqnbT8GEOV9Z38jA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 28 May 2019 11:03:25 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+* Cyril Hrubis:
 
-On 27/5/19 11:38 pm, Jann Horn wrote:
-> On Sat, May 25, 2019 at 11:43 PM Andrew Morton
-> <akpm@linux-foundation.org> wrote:
->> On Fri, 24 May 2019 22:18:17 +0200 Jann Horn <jannh@google.com> wrote:
->>> load_flat_shared_library() is broken: It only calls load_flat_file() if
->>> prepare_binprm() returns zero, but prepare_binprm() returns the number of
->>> bytes read - so this only happens if the file is empty.
->>
->> ouch.
->>
->>> Instead, call into load_flat_file() if the number of bytes read is
->>> non-negative. (Even if the number of bytes is zero - in that case,
->>> load_flat_file() will see nullbytes and return a nice -ENOEXEC.)
->>>
->>> In addition, remove the code related to bprm creds and stop using
->>> prepare_binprm() - this code is loading a library, not a main executable,
->>> and it only actually uses the members "buf", "file" and "filename" of the
->>> linux_binprm struct. Instead, call kernel_read() directly.
->>>
->>> Cc: stable@vger.kernel.org
->>> Fixes: 287980e49ffc ("remove lots of IS_ERR_VALUE abuses")
->>> Signed-off-by: Jann Horn <jannh@google.com>
->>> ---
->>> I only found the bug by looking at the code, I have not verified its
->>> existence at runtime.
->>> Also, this patch is compile-tested only.
->>> It would be nice if someone who works with nommu Linux could have a
->>> look at this patch.
->>
->> 287980e49ffc was three years ago!  Has it really been broken for all
->> that time?  If so, it seems a good source of freed disk space...
-> 
-> Maybe... but I didn't want to rip it out without having one of the
-> maintainers confirm that this really isn't likely to be used anymore.
+> Hi!
+>> > I've tested the patch on i386. Before the patch calling bdflush() with
+>> > attempt to tune a variable returned 0 and after the patch the syscall
+>> > fails with EINVAL.
+>> 
+>> Should be ENOSYS, doesn't it?
+>
+> My bad, the LTP syscall wrapper handles ENOSYS and produces skipped
+> results based on that.
+>
+> EINVAL is what you get for not yet implemented syscalls, i.e. new
+> syscall on old kernel.
 
-I have not used shared libraries on m68k non-mmu setups for
-a very long time. At least 10 years I would think.
+EINVAL?  Is that a bdflush-specific thing, test-specific, or is itmore
+general?
 
-Regards
-Greg
+glibc has fallback paths that test for ENOSYS only.  EINVAL will be
+passed to the application, skipping fallback.  For missing system calls,
+this is not what we want.
 
-
-
+Thanks,
+Florian
