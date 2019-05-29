@@ -2,110 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27B802E43D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 20:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 051D62E467
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 20:24:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbfE2SMO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 14:12:14 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41554 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727195AbfE2SMN (ORCPT
+        id S1727403AbfE2SYD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 14:24:03 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:41622 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbfE2SYD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 14:12:13 -0400
-Received: by mail-ot1-f68.google.com with SMTP id l25so2973642otp.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 11:12:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=G+LiWYxMhAJfHLsG+v7LjjWofEdKFy9soNO63HkV+20=;
-        b=rm6Op6Is2WyS28sYE2LrvmC6hYEVlBfSDkJUVaKtEPXkpkcEEgwFZx9EaFMzxA7QHN
-         jGLyhbIH7d3TLdKtfCeO8OKvbDMjlklbUFMA1y1Fzv7/GietI7aZdu2oEsVBu6nVgRND
-         D8Pg4xBc/mwxRuJEOgG/C4KpUU6MF5i1lnkZLF+zkyEz7Jx20Jz5VQFv40woP8Itc/Vb
-         j9auqkQ5XEeP8zQAuW8EihZdk+7rwfnJdOzqFkabhy2air3lPgExNOXh8nOIvkDc2p7e
-         nwmhXppgGZ1QaQxGpM3UFjxRCl6MxPJt9OTN+C6ag2JF4pxEOtDBt//jHJ1wROrhskj/
-         /LIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=G+LiWYxMhAJfHLsG+v7LjjWofEdKFy9soNO63HkV+20=;
-        b=KRnDEfbkvy0ad1OLJIhwMBJUoxF0XH0oLRSWQGD55IgExmAQrQJusfDs6KFtTLbRfQ
-         1voJArald+5EoKetp5xUeQesMT0olHdkHdjAbolOMCeNgDKRcntawg9MExYPtVMP90wt
-         SWAloEsE9hUoUEs0ydW1tIPqGMHu82SGcRA8E7FG4SPfyALyf45reSzXxl5jc9gNRIi5
-         pLgXljwoVsDb47Wu3A3rmkDGUYrfeCae6AKZQmkrl4WcQYKms5fqBhuRod/b6GIOzt93
-         ONyFV4t2UE/XdCNGou6+Uvnt48WTQ3X+yJnTK/9lJ0hm3I1/61fRFDA4Ed64on1e9+Ji
-         6ODg==
-X-Gm-Message-State: APjAAAV1UA06SOGs00MviBAEETitjR4Bd9gCpFYTYlztXYgbJeHiwNX5
-        aqWZ+12wFvNpRXNF63PfGnZS5EYuHQAZKxyk69Z+dg==
-X-Google-Smtp-Source: APXvYqw+3MUKe4d0cvSOyC631nuMT0M0/zG0ddXI9fhLgtQNKsQ1SVQlwExS86mDMdF/84VeJAo+Iz4GbbdE8HpYvNI=
-X-Received: by 2002:a9d:148:: with SMTP id 66mr30932226otu.32.1559153527342;
- Wed, 29 May 2019 11:12:07 -0700 (PDT)
+        Wed, 29 May 2019 14:24:03 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TIId0B057287;
+        Wed, 29 May 2019 18:23:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=yN96siC97bGXA079KpRQnuL10xuxNSq6s0e4DVZw93g=;
+ b=dm0D6anYXBe3K+MCrPSny+6dBQfMjrQSywoSfiBo+7YRlux+5udixTmWCQU2Kv8Ko5Op
+ lzCZuyWjvRyHPtAyWmSMQgz4OzeVT4gbdTGsf+YhsMGUALgOrVLtR1SuH8SPA21kpd+E
+ 9VEaI1PfsAgINy3s6Iq+euau3Z0KOSpRUIAtwX/Vy+vIzwOoKLlHjnbzMTVP2hXavYFz
+ c/uoqIDLaYFGpOc+iI8twzL/4the59e8ruSQ7EX+Aelv+pxR07Bxm9yrc9Z2y90YqdXX
+ 2z1TIYls/h1xntFYYk54HOUzHTIVMKDLxjSO/G/Ttlk2jNvIwe4ZSm5nu4sFzl3/DcK4 Ww== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 2spu7dky0w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 May 2019 18:23:25 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TIMNnZ014114;
+        Wed, 29 May 2019 18:23:25 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2sqh73vccs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 May 2019 18:23:25 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4TINMLW025084;
+        Wed, 29 May 2019 18:23:22 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 29 May 2019 11:23:22 -0700
+Date:   Wed, 29 May 2019 11:23:19 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs@vger.kernel.org,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Luis Henriques <lhenriques@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org
+Subject: Re: [PATCH v3 04/13] vfs: remove redundant checks from
+ generic_remap_checks()
+Message-ID: <20190529182319.GD5231@magnolia>
+References: <20190529174318.22424-1-amir73il@gmail.com>
+ <20190529174318.22424-5-amir73il@gmail.com>
 MIME-Version: 1.0
-References: <CAG48ez2rRh2_Kq_EGJs5k-ZBNffGs_Q=vkQdinorBgo58tbGpg@mail.gmail.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905933492.7587.6968545866041839538.stgit@warthog.procyon.org.uk>
- <14347.1559127657@warthog.procyon.org.uk> <312a138c-e5b2-4bfb-b50b-40c82c55773f@schaufler-ca.com>
- <4552118F-BE9B-4905-BF0F-A53DC13D5A82@amacapital.net> <058f227c-71ab-a6f4-00bf-b8782b3b2956@schaufler-ca.com>
-In-Reply-To: <058f227c-71ab-a6f4-00bf-b8782b3b2956@schaufler-ca.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 29 May 2019 20:11:40 +0200
-Message-ID: <CAG48ez2S+i2wxpWXVGpEAprgY9gtjxyejLfbZtrqu5YOkQ81Nw@mail.gmail.com>
-Subject: Re: [PATCH 3/7] vfs: Add a mount-notification facility
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190529174318.22424-5-amir73il@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905290118
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905290118
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 29, 2019 at 7:46 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 5/29/2019 10:13 AM, Andy Lutomirski wrote:
-> >> On May 29, 2019, at 8:53 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >>> On 5/29/2019 4:00 AM, David Howells wrote:
-> >>> Jann Horn <jannh@google.com> wrote:
-> >>>
-> >>>>> +void post_mount_notification(struct mount *changed,
-> >>>>> +                            struct mount_notification *notify)
-> >>>>> +{
-> >>>>> +       const struct cred *cred = current_cred();
-> >>>> This current_cred() looks bogus to me. Can't mount topology changes
-> >>>> come from all sorts of places? For example, umount_mnt() from
-> >>>> umount_tree() from dissolve_on_fput() from __fput(), which could
-> >>>> happen pretty much anywhere depending on where the last reference gets
-> >>>> dropped?
-> >>> IIRC, that's what Casey argued is the right thing to do from a security PoV.
-> >>> Casey?
-> >> You need to identify the credential of the subject that triggered
-> >> the event. If it isn't current_cred(), the cred needs to be passed
-> >> in to post_mount_notification(), or derived by some other means.
-> > Taking a step back, why do we care who triggered the event?  It seems to me that we should care whether the event happened and whether the *receiver* is permitted to know that.
->
-> There are two filesystems, "dot" and "dash". I am not allowed
-> to communicate with Fred on the system, and all precautions have
-> been taken to ensure I cannot. Fred asks for notifications on
-> all mount activity. I perform actions that result in notifications
-> on "dot" and "dash". Fred receives notifications and interprets
-> them using Morse code. This is not OK. If Wilma, who *is* allowed
-> to communicate with Fred, does the same actions, he should be
-> allowed to get the messages via Morse.
+On Wed, May 29, 2019 at 08:43:08PM +0300, Amir Goldstein wrote:
+> The access limit checks on input file range in generic_remap_checks()
+> are redundant because the input file size is guaranteied to be within
 
-In other words, a classic covert channel. You can't really prevent two
-cooperating processes from communicating through a covert channel on a
-modern computer. You can transmit information through the scheduler,
-through hyperthread resource sharing, through CPU data caches, through
-disk contention, through page cache state, through RAM contention, and
-probably dozens of other ways that I can't think of right now. There
-have been plenty of papers that demonstrated things like an SSH
-connection between two virtual machines without network access running
-on the same physical host (<https://gruss.cc/files/hello.pdf>),
-communication between a VM and a browser running on the host system,
-and so on.
+"guaranteed"...
+
+> limits and pos+len are already checked to be within input file size.
+> 
+> Beyond the fact that the check cannot fail, if it would have failed,
+> it could return -EFBIG for input file range error. There is no precedent
+> for that. -EFBIG is returned in syscalls that would change file length.
+> 
+> With that call removed, we can fold generic_access_check_limits() into
+> generic_write_check_limits().
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+
+Once the changelog is fixed,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
+> ---
+>  mm/filemap.c | 33 ++++++++++++---------------------
+>  1 file changed, 12 insertions(+), 21 deletions(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index a38619a4a6af..44361928bbb0 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2895,24 +2895,11 @@ EXPORT_SYMBOL(read_cache_page_gfp);
+>   * LFS limits.  If pos is under the limit it becomes a short access.  If it
+>   * exceeds the limit we return -EFBIG.
+>   */
+> -static int generic_access_check_limits(struct file *file, loff_t pos,
+> -				       loff_t *count)
+> -{
+> -	struct inode *inode = file->f_mapping->host;
+> -	loff_t max_size = inode->i_sb->s_maxbytes;
+> -
+> -	if (!(file->f_flags & O_LARGEFILE))
+> -		max_size = MAX_NON_LFS;
+> -
+> -	if (unlikely(pos >= max_size))
+> -		return -EFBIG;
+> -	*count = min(*count, max_size - pos);
+> -	return 0;
+> -}
+> -
+>  static int generic_write_check_limits(struct file *file, loff_t pos,
+>  				      loff_t *count)
+>  {
+> +	struct inode *inode = file->f_mapping->host;
+> +	loff_t max_size = inode->i_sb->s_maxbytes;
+>  	loff_t limit = rlimit(RLIMIT_FSIZE);
+>  
+>  	if (limit != RLIM_INFINITY) {
+> @@ -2923,7 +2910,15 @@ static int generic_write_check_limits(struct file *file, loff_t pos,
+>  		*count = min(*count, limit - pos);
+>  	}
+>  
+> -	return generic_access_check_limits(file, pos, count);
+> +	if (!(file->f_flags & O_LARGEFILE))
+> +		max_size = MAX_NON_LFS;
+> +
+> +	if (unlikely(pos >= max_size))
+> +		return -EFBIG;
+> +
+> +	*count = min(*count, max_size - pos);
+> +
+> +	return 0;
+>  }
+>  
+>  /*
+> @@ -2963,7 +2958,7 @@ EXPORT_SYMBOL(generic_write_checks);
+>  /*
+>   * Performs necessary checks before doing a clone.
+>   *
+> - * Can adjust amount of bytes to clone.
+> + * Can adjust amount of bytes to clone via @req_count argument.
+>   * Returns appropriate error code that caller should return or
+>   * zero in case the clone should be allowed.
+>   */
+> @@ -3001,10 +2996,6 @@ int generic_remap_checks(struct file *file_in, loff_t pos_in,
+>  		return -EINVAL;
+>  	count = min(count, size_in - (uint64_t)pos_in);
+>  
+> -	ret = generic_access_check_limits(file_in, pos_in, &count);
+> -	if (ret)
+> -		return ret;
+> -
+>  	ret = generic_write_check_limits(file_out, pos_out, &count);
+>  	if (ret)
+>  		return ret;
+> -- 
+> 2.17.1
+> 
