@@ -2,72 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28AE22E56D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 21:35:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C9B72E576
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 21:36:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbfE2TfK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 15:35:10 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:37754 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbfE2TfK (ORCPT
+        id S1726224AbfE2Tg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 15:36:29 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:37792 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfE2Tg3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 15:35:10 -0400
-Received: by mail-yb1-f194.google.com with SMTP id l66so1234269ybf.4;
-        Wed, 29 May 2019 12:35:09 -0700 (PDT)
+        Wed, 29 May 2019 15:36:29 -0400
+Received: by mail-yb1-f193.google.com with SMTP id l66so1235631ybf.4;
+        Wed, 29 May 2019 12:36:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tw/in4/0sPsFRAIVvFcpom08CNRPJsSaR96xe+JZPYg=;
-        b=blwqqvIRbfuZTPTkrA3m0cr6Agq3a/vrtFTz1ERWN1amDZwfaEgVfuj4iedPvbA42v
-         hXY7I17xk9dGtECbCcLE+DRtUj98OE8VIXOWZZJ89n7uGvl02UTsYXhE2Tlm+z4mA66t
-         Qr8znFizytl1gVs3YRpa4IGe55fBifJAx+P7MdcJf/FGRT796nzUKFAVXwbanSwqeSBc
-         k8eWIS4U+QS7zlkIgMHYRcUm7bM748E8rXkTWsnuTssYg8or9leX64thXDG7KyMg157w
-         Tp8+JrbDJVw6KEYEkcylxraqQi9OpwjfexR0pUjNuzF8ZougS4wBHcQiN5ZQrG1pxq1K
-         5gCw==
+        bh=7mEjgHYQ04qmca/Pwc7iF7uxZsyWUtmaIoM2mZ31LQc=;
+        b=ZqWrslUQMdbel0zaoDjEn6UvUaq0aUP7KhexsRNdGhbCvxekatAwIPxf356JrUDnOx
+         C09DY60ki0ngftPh+10L/hTshAMMNzEeRbZR+HR9lh7DDk3HTHAkIZdOKBkMQDFchkqC
+         BSrqcVT3r8KKQ9pwKM0YVXOOU0nv55jbtupzPoHq7qHWUZ6IoTj2y0ca3+6XYBeElMT7
+         03LMn0p0gKX1NG7mSOOfFb0wK616PofkM/rP++cD2mKAQ69vRbC8C1ovkzRcM3uWJlua
+         dHj2GlH4/IxhE8ZSch32KCQIrgmeh0cRM3GjCL1souIZ1RnwBafeARtfAIi0MtidEXfX
+         xSjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tw/in4/0sPsFRAIVvFcpom08CNRPJsSaR96xe+JZPYg=;
-        b=AtIQoNtUdTm6uy2G0z6dOm1OvcFt62eqBwgTbYzsExMsEPSFl6xh8QNtkFXNAAlZbe
-         Z+E8b9shO+zmrwrIiFIg4r/UbQ/wAjfWpTuYoagS/MdRcTPoqq6spplbu4LBEnH77AFD
-         06IKk4Iae3DOBJLeARc5+RSYhzhdFcOB3qFEOHDAWdEcfy6B2OUMQGaTRlsznycV7BkY
-         pyQtj0qAumETcRIUPhTnOUs8FVI1ynBpTBDqDbLXAuDbMHHNPweOslzwpaRLeD+y/TvD
-         K7S7v9GCYCH5Ol/i3fdkzZ/IgxGuB6eFsqZ8Mjvqt63iXy7TSrHZ9okxy7Ir1B9LrwjA
-         g2Xw==
-X-Gm-Message-State: APjAAAVf8UmA7DZgaWYUH23TqyFN/QwqpT1aSwkna561ug7cNbyQrbGX
-        IE0uexBsmGUoLhRxauXNS6FCSTt1J1S+foi+1eI=
-X-Google-Smtp-Source: APXvYqzDG065k4a6H1IhjpBR3X395x+Om89FnS31oSjmModtDcEA7x7uaPzMucpSI+MEJvCbOm6lpOYCuxvv13R2nzw=
-X-Received: by 2002:a05:6902:4c3:: with SMTP id v3mr318648ybs.144.1559158509227;
- Wed, 29 May 2019 12:35:09 -0700 (PDT)
+        bh=7mEjgHYQ04qmca/Pwc7iF7uxZsyWUtmaIoM2mZ31LQc=;
+        b=bLqjKAPDQ+m+OeIe8aXUO6BdnIfRtqeP/Tl1eE1wg0oX6Kl1zsxUX1p0eiXjFDdOcR
+         zvQBwnjT45hR10c1hKPxeX6KG8uc0K+XhT1hDCIg1ZBE2RLSY93p8ljAxh6/yeQYi12Z
+         hs4V7xsbov84hG2XUthASsynA6Ghb6rjd8gOvAgp5WrxoToJsZ2aOkI9oC6dXC/lnyab
+         L/K16enQvbeVgU2Ytgn30NxXSrWkEJLZEFI13+cwL5ZxUehBzC/ugF5ydjtKhXCZiY7z
+         E/6GeFiKM/WSBBM6UFo9Lqy2UhmqP/0em1FyMW/Ch7hyXIcBtINx3NTnbFdBkcZie27F
+         1HZQ==
+X-Gm-Message-State: APjAAAWoJ5eqkodIfdP84n/IserMwvplEBdjUpdKZ6XSD3V2ewbp3qYU
+        oCGI1nD2zQHkGE2p35Va1w4n1OqAnIHuiFvSCzISof9p7zQ=
+X-Google-Smtp-Source: APXvYqxUzf10qrPKNmM4si1Ho/xA9MTy04IyA/D+jDEIvhwOY8vzXt+TC/oPfRRIYXfaYVxTBXtn7CAgMBqV6zkX3Qc=
+X-Received: by 2002:a25:b202:: with SMTP id i2mr26730349ybj.439.1559158588100;
+ Wed, 29 May 2019 12:36:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190529174318.22424-1-amir73il@gmail.com> <20190529174318.22424-13-amir73il@gmail.com>
-In-Reply-To: <20190529174318.22424-13-amir73il@gmail.com>
+References: <20190529174318.22424-1-amir73il@gmail.com> <20190529174318.22424-11-amir73il@gmail.com>
+In-Reply-To: <20190529174318.22424-11-amir73il@gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 29 May 2019 22:34:58 +0300
-Message-ID: <CAOQ4uxgYM_eM==uqGQuKiGb+f08qs53=E+DONMMzW=N-Ab5YZA@mail.gmail.com>
-Subject: Re: [PATCH v3 12/13] nfs: copy_file_range needs to strip setuid bits
+Date:   Wed, 29 May 2019 22:36:16 +0300
+Message-ID: <CAOQ4uxiTtZTycTMdvcdJ5nR6YNOjRgQ51pKnXC6M-dO+eNMHRA@mail.gmail.com>
+Subject: Re: [PATCH v3 10/13] cifs: copy_file_range needs to strip setuid bits
  and update timestamps
-To:     Olga Kornievskaia <olga.kornievskaia@gmail.com>,
-        Anna Schumaker <Anna.Schumaker@netapp.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
+To:     Steve French <smfrench@gmail.com>
 Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
         linux-xfs <linux-xfs@vger.kernel.org>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
         Luis Henriques <lhenriques@suse.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-api@vger.kernel.org, ceph-devel@vger.kernel.org,
         Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
+        CIFS <linux-cifs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Olga,Anna,Trond
+Hi Steve,
 
 Could we get an ACK on this patch.
 It is a prerequisite for merging the cross-device copy_file_range work.
@@ -80,35 +79,47 @@ Amir,
 
 On Wed, May 29, 2019 at 8:43 PM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> Like ->write_iter(), we update mtime and strip setuid of dst file before
-> copy and like ->read_iter(), we update atime of src file after copy.
+> cifs has both source and destination inodes locked throughout the copy.
+> Like ->write_iter(), we update mtime and strip setuid bits of destination
+> file before copy and like ->read_iter(), we update atime of source file
+> after copy.
 >
 > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
->  fs/nfs/nfs42proc.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+>  fs/cifs/cifsfs.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
 >
-> diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
-> index 5196bfa7894d..c37a8e5116c6 100644
-> --- a/fs/nfs/nfs42proc.c
-> +++ b/fs/nfs/nfs42proc.c
-> @@ -345,10 +345,13 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
+> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+> index c65823270313..ab6c5c24146d 100644
+> --- a/fs/cifs/cifsfs.c
+> +++ b/fs/cifs/cifsfs.c
+> @@ -1096,6 +1096,10 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+>                 goto out;
+>         }
 >
->         do {
->                 inode_lock(file_inode(dst));
-> -               err = _nfs42_proc_copy(src, src_lock,
-> -                               dst, dst_lock,
-> -                               &args, &res);
-> +               err = file_modified(dst);
-> +               if (!err)
-> +                       err = _nfs42_proc_copy(src, src_lock,
-> +                                              dst, dst_lock,
-> +                                              &args, &res);
->                 inode_unlock(file_inode(dst));
-> +               file_accessed(src);
+> +       rc = -EOPNOTSUPP;
+> +       if (!target_tcon->ses->server->ops->copychunk_range)
+> +               goto out;
+> +
+>         /*
+>          * Note: cifs case is easier than btrfs since server responsible for
+>          * checks for proper open modes and file type and if it wants
+> @@ -1107,11 +1111,12 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+>         /* should we flush first and last page first */
+>         truncate_inode_pages(&target_inode->i_data, 0);
 >
->                 if (err >= 0)
->                         break;
+> -       if (target_tcon->ses->server->ops->copychunk_range)
+> +       rc = file_modified(dst_file);
+> +       if (!rc)
+>                 rc = target_tcon->ses->server->ops->copychunk_range(xid,
+>                         smb_file_src, smb_file_target, off, len, destoff);
+> -       else
+> -               rc = -EOPNOTSUPP;
+> +
+> +       file_accessed(src_file);
+>
+>         /* force revalidate of size and timestamps of target file now
+>          * that target is updated on the server
 > --
 > 2.17.1
 >
