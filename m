@@ -2,103 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2079F2E22D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 18:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2E462E286
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 18:49:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbfE2QUj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 12:20:39 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:42244 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbfE2QUi (ORCPT
+        id S1726613AbfE2Qte (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 12:49:34 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39731 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbfE2Qte (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 12:20:38 -0400
-Received: by mail-yw1-f68.google.com with SMTP id s5so1302966ywd.9;
-        Wed, 29 May 2019 09:20:38 -0700 (PDT)
+        Wed, 29 May 2019 12:49:34 -0400
+Received: by mail-pl1-f196.google.com with SMTP id g9so1297472plm.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 09:49:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qgWFwBbqc/TIeFx+G72gp5eLEUxfA2pK5OKuDEowGKc=;
-        b=jQSFEpXtckdK15GU+zOhWiGnSetf0KAzWuZb58/zupTyFnbmFnkOKY/iSToYuQyN5L
-         MkI6aVdlMmOcfKlg9ISJwKI+z1ZDwj3q5XuMNWjHeIXgiskwej8PInH6I/oXzzsCBq0X
-         QbUBwy1a+RM+qyUmZ3+hCoLNYZVgX+YehA8iiDIrxLJdqHnITrrPL3YC/9ZjncB+SoBO
-         Nk6bungjzgZ15oeBYTgVV/FQhatnWgz1WrbbG7rU6pRlMWg7bIMhim8quPwHVPp4GVxW
-         9qzJHOnagZq48iB2ZR7WXJ1NaV6qWYsbq4NZfDfLWONADgwARn6tkDmxfZLQCSgbrmFg
-         Zt2Q==
+        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=guRhBwE8Jq2pT9gu18nVOUDdNtCFbP3Mz6H0t8cPBts=;
+        b=owoi9xfKHIupf14tvLmBO/xJECPkUet26Ff2rZMpBaDjptawMFz+qLRu/EHAbQ0Bry
+         PSTJb6d4YTQ44rPFgu4JbHunc07WOZX6+H19OBRC5cl2Ve0mWzoQluglgcRvd4DWnbD0
+         mmd7VRP80BBcpKBHftjArVPoBQitU5IyeuKdK8TwUPy7RZ+bWV8i+NsYFXva/hT/SNnZ
+         q0vgJGx1btgIpDd4lQvDiLPhSrsdSBop+NjdfpT6cJ1vv7b9M3h/pwqZalVzAI17+MDb
+         O4SSmvdUVR+V8RJl6zEcuFM1o3dxKOMqmmhkRr4Sa4RG6YsWzfbhAooxMqLjp8EhIw2s
+         pLUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qgWFwBbqc/TIeFx+G72gp5eLEUxfA2pK5OKuDEowGKc=;
-        b=Lqn2X94KepSJd87ksswKtyzwVgccWw7Y0ZkNyo27lHSc4qDB2nbwa65qxVzMtf9i8q
-         ui7cUCm70p1bXExouRJmbtf00MLwwaioZFeZoKzLL2aE5IstHZahK1Wv6wX+fZJy2d+/
-         o4XS4HUvlN3odpqUTrk9LWP6+rIeVXUIsg+tsIrRlO4uLUH2arlvVkUY13DHYaVjh5/p
-         wqSwf7gVuNDKz8e2k3o1Jrm0mQ/DPn8zL+mSCtS2vNzB6Y2Arr+Oa8Cu9Ajn1CvX3XYZ
-         bnrKqaVXecAtBdVLSjAlv38bSNYBf5Qzq8m7IKiam2vmxewV/EBt9XHmOwRePRm45OxU
-         M+yg==
-X-Gm-Message-State: APjAAAVNgpmDxwzXkWdrPY/LzDATgpDEsiD+vqLNlipNWCRMthJIyfT1
-        eOanGB7BEiTCmkK/VGdZogsK7WcL1F4aDpWiiy0=
-X-Google-Smtp-Source: APXvYqzzgbRrTpnULwe/IoxAzcoJVne1h/bBy2qlyUlmguuG3+RHGMFZemo93QUU34JXx68hkctDvcHbDw8oHipDSVE=
-X-Received: by 2002:a81:3797:: with SMTP id e145mr53153276ywa.25.1559146832803;
- Wed, 29 May 2019 09:20:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190526061100.21761-1-amir73il@gmail.com> <20190526061100.21761-10-amir73il@gmail.com>
- <20190528164844.GJ5221@magnolia>
-In-Reply-To: <20190528164844.GJ5221@magnolia>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 29 May 2019 19:20:21 +0300
-Message-ID: <CAOQ4uxiWxkmvtK6qX6T5cOAFeTb3Oo9xocG+yY24RaMftnJ2tQ@mail.gmail.com>
-Subject: Re: [PATCH v2 9/8] man-pages: copy_file_range updates
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
-        Luis Henriques <lhenriques@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=guRhBwE8Jq2pT9gu18nVOUDdNtCFbP3Mz6H0t8cPBts=;
+        b=ot6MUT6jKE/RbeKjQDfB6xuNOrh56WQqdqUNp8dhaG3AO4ymmfOAenr2W9mHQ8Gsej
+         DGA+pvHYpkabrHxfGdQa5X2PXUgCqZ5SszR03L7puBv/XwNp/IO84x2shDWtzgpWC5Pa
+         nVMYHMCcIqoglQDb+TPv8a19k1jQpf1s3Ppg7Rwm0ckXcKOfFsQxANmBxfNnnsxFNbkc
+         B1hLXkKJ4Bh7+NWFz55IaTtYfhuFPtkTMPtQ5czC0hyKM4ScoBzPrUTAWgTPX4P700ni
+         uMkR6RED+B6YuFjQukrYEYyDxzRz/6q5OqHaNlyjHs0rw+I+myVQIfiORJ2CxCyOCvd1
+         ZsFA==
+X-Gm-Message-State: APjAAAVLVet2fG+6hhtKJ0uakkRvxRAoYGSYJL0v3D3cn61N8XoP47KQ
+        RFlP597P3d7kaWnhf0oSfehFr5P8sQNJGw==
+X-Google-Smtp-Source: APXvYqwZgxtLbeCyy/Nl6uW+Awxng+CUJS+RH72nH5ZP7DP/yp4EpvZ8+VGRVPznECG4luF+b7CLFw==
+X-Received: by 2002:a17:902:21:: with SMTP id 30mr125616112pla.302.1559148573721;
+        Wed, 29 May 2019 09:49:33 -0700 (PDT)
+Received: from [192.168.1.136] (c-67-169-41-205.hsd1.ca.comcast.net. [67.169.41.205])
+        by smtp.gmail.com with ESMTPSA id l35sm175651pje.10.2019.05.29.09.49.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 09:49:32 -0700 (PDT)
+Message-ID: <1559148571.2803.73.camel@dubeyko.com>
+Subject: Re: [PATCH] hfsplus: Replace strncpy with memcpy
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+To:     Mathieu Malaterre <malat@debian.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 29 May 2019 09:49:31 -0700
+In-Reply-To: <20190529113341.11972-1-malat@debian.org>
+References: <20190529113341.11972-1-malat@debian.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > +A major rework of the kernel implementation occurred in 5.3. Areas of the API
-> > +that weren't clearly defined were clarified and the API bounds are much more
-> > +strictly checked than on earlier kernels. Applications should target the
-> > +behaviour and requirements of 5.3 kernels.
->
-> Are there any weird cases where a program targetting 5.3 behavior would
-> fail or get stuck in an infinite loop on a 5.2 kernel?
+On Wed, 2019-05-29 at 13:33 +0200, Mathieu Malaterre wrote:
+> Function strncpy was used to copy a fixed size buffer. Since
+> NUL-terminating string is not required here, prefer a memcpy
+> function.
+> The generated code (ppc32) remains the same.
+> 
+> Silence the following warning triggered using W=1:
+> 
+>   fs/hfsplus/xattr.c:410:3: warning: 'strncpy' output truncated
+> before terminating nul copying 4 bytes from a string of the same
+> length [-Wstringop-truncation]
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>  fs/hfsplus/xattr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+> index d5403b4004c9..bb0b27d88e50 100644
+> --- a/fs/hfsplus/xattr.c
+> +++ b/fs/hfsplus/xattr.c
+> @@ -407,7 +407,7 @@ static int copy_name(char *buffer, const char
+> *xattr_name, int name_len)
+>  	int offset = 0;
+>  
+>  	if (!is_known_namespace(xattr_name)) {
+> -		strncpy(buffer, XATTR_MAC_OSX_PREFIX,
+> XATTR_MAC_OSX_PREFIX_LEN);
+> +		memcpy(buffer, XATTR_MAC_OSX_PREFIX,
+> XATTR_MAC_OSX_PREFIX_LEN);
+>  		offset += XATTR_MAC_OSX_PREFIX_LEN;
+>  		len += XATTR_MAC_OSX_PREFIX_LEN;
+>  	}
 
-I don't think so. When Dave wrote this paragraph the behavior was changed
-from short copy to EINVAL. That would have been a problem to maintain
-old vs. new copy loops, but now the behavior  did not change in that respect.
+Looks good. I don't see any troubles here.
 
->
-> Particularly since glibc spat out a copy_file_range fallback for 2.29
-> that tries to emulate the kernel behavior 100%.  It even refuses
-> cross-filesystem copies (because hey, we documented that :() even though
-> that's perfectly fine for a userspace implementation.
->
-> TBH I suspect that we ought to get the glibc developers to remove the
-> "no cross device copies" code from their implementation and then update
-> the manpage to say that cross device copies are supposed to be
-> supported all the time, at least as of glibc 2.(futureversion).
+Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
 
-I don't see a problem with copy_file_range() returning EXDEV.
-That is why I left EXDEV in the man page.
-Tools should know how to deal with EXDEV by now.
-If you are running on a new kernel, you get better likelihood
-for copy_file_range() to do clone or in-kernel copy for you.
+Thanks,
+Vyacheslav Dubeyko.
 
->
-> Anyways, thanks for taking on the c_f_r cleanup! :)
->
-
-Sure, get ready for another round ;-)
-
-Thanks for the review!
-Amir.
