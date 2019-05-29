@@ -2,124 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABC6B2E7E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 00:15:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 288852E7F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 00:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbfE2WOx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 18:14:53 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:39402 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726311AbfE2WOx (ORCPT
+        id S1726741AbfE2WPq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 18:15:46 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34364 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbfE2WPp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 18:14:53 -0400
-Received: from dread.disaster.area (pa49-180-144-61.pa.nsw.optusnet.com.au [49.180.144.61])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4F8A0105FCCE;
-        Thu, 30 May 2019 08:14:47 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hW6qL-0007rJ-5A; Thu, 30 May 2019 08:14:45 +1000
-Date:   Thu, 30 May 2019 08:14:45 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-btrfs@vger.kernel.org, kilobyte@angband.pl,
-        linux-fsdevel@vger.kernel.org, willy@infradead.org, hch@lst.de,
-        dsterba@suse.cz, nborisov@suse.com, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH 04/18] dax: Introduce IOMAP_DAX_COW to CoW edges during
- writes
-Message-ID: <20190529221445.GE16786@dread.disaster.area>
-References: <1e9951c1-d320-e480-3130-dc1f4b81ef2c@cn.fujitsu.com>
- <20190523115109.2o4txdjq2ft7fzzc@fiona>
- <1620c513-4ce2-84b0-33dc-2675246183ea@cn.fujitsu.com>
- <20190528091729.GD9607@quack2.suse.cz>
- <a3a919e6-ecad-bdf6-423c-fc01f9cfa661@cn.fujitsu.com>
- <20190529024749.GC16786@dread.disaster.area>
- <376256fd-dee4-5561-eb4e-546e227303cd@cn.fujitsu.com>
- <20190529040719.GL5221@magnolia>
- <20190529044658.GD16786@dread.disaster.area>
- <20190529134629.GA32147@quack2.suse.cz>
+        Wed, 29 May 2019 18:15:45 -0400
+Received: by mail-lj1-f195.google.com with SMTP id j24so4117224ljg.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 15:15:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=6zFd/+GKbjIaLT3OCgZNCCS2BROhgWZzYWnXfsPDAOI=;
+        b=WAja/FZQE2pFEgnKhl94IfcY8BDGBWqmDZ/K0LwYCwgZZCNgvoTkUHQRuwP3YNgoya
+         z1f4MJuRSEu/GyirKTd7ZxEucg9gwE45Fe167cp9Gbt6SxK1m/9DrrJu7NRrAZY32bla
+         4p+eAFjbcp/9ChooQBY5FdmhiTSlOm5fiQ0RSbq2XomUdeG6vZOenF9TaeHTaq3oDL83
+         qHIT7T9Tcnfjs24oWWuvmRTPwH/ItgW4sLZxfljRcoBxDQ9Bb5BU8OKhEHtCsIEsk1yT
+         MLqbkKb1a/gLfm9HlkJSnjDqX1VSLIKoT+vVxZCZOOatOa32W60AfV4fnv3pVeojRmLW
+         1+wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=6zFd/+GKbjIaLT3OCgZNCCS2BROhgWZzYWnXfsPDAOI=;
+        b=fpBbrr+jViK0h3XFuPQZLgZepIMpzSGzOZw4EAAMijraYsanV6h76VZDE/hLGkjiyW
+         H+zBie3CHN7r6WOuxVAWxAaT5Q5SIToR26hhYScKhvZkzNyM64tj4Nxv513SGiw8aHVO
+         F5/Dvow6QaFs6BNa6c/e2rLWdx+yUkKqMkeZF1Thn1PMu8wPlllGa5696fH4UzYPeSOY
+         2aP039kBC21hKM4SoZJI435uY0iZmhGmuYeycMzoWXyc9vrNVrGVFM+8gvtZDtBpdsU5
+         H4ZgI0+1SOG4+jkgeOOrgJP1Is26sEbPP/tG5gVS50AxuzphxurTbewBB58ewhmvArOR
+         NCXA==
+X-Gm-Message-State: APjAAAUyFst+0TDOxJxxxiufabSsUmJT9fp9XdlFUJUha/hOKyXwK5Dl
+        QVK1eajBpmnT00OwCLEJGvggckoLqLBuvTVy4gFa
+X-Google-Smtp-Source: APXvYqxr7bNBNEWEvitp9VD5magGhpRxnhpJ7GgxKw0cRkL8xChwhJX2izxpfcFyAxd9QA/po4PJvxe1rJlY+6u8D5I=
+X-Received: by 2002:a2e:92cc:: with SMTP id k12mr132567ljh.16.1559168142045;
+ Wed, 29 May 2019 15:15:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529134629.GA32147@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
-        a=8RU0RCro9O0HS2ezTvitPg==:117 a=8RU0RCro9O0HS2ezTvitPg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
-        a=7-415B0cAAAA:8 a=Hin1r9r9Sl89pDOfUGgA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <cover.1554732921.git.rgb@redhat.com> <f4a49f7c949e5df80c339a3fe5c4c2303b12bf23.1554732921.git.rgb@redhat.com>
+In-Reply-To: <f4a49f7c949e5df80c339a3fe5c4c2303b12bf23.1554732921.git.rgb@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 29 May 2019 18:15:30 -0400
+Message-ID: <CAHC9VhRfQp-avV2rcEOvLCAXEz-MDZMp91UxU+BtvPkvWny9fQ@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 04/10] audit: log container info of syscalls
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 29, 2019 at 03:46:29PM +0200, Jan Kara wrote:
-> On Wed 29-05-19 14:46:58, Dave Chinner wrote:
-> >  iomap_apply()
-> > 
-> >  	->iomap_begin()
-> > 		map old data extent that we copy from
-> > 
-> > 		allocate new data extent we copy to in data fork,
-> > 		immediately replacing old data extent
-> > 
-> > 		return transaction handle as private data
+On Mon, Apr 8, 2019 at 11:40 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>
+> Create a new audit record AUDIT_CONTAINER_ID to document the audit
+> container identifier of a process if it is present.
+>
+> Called from audit_log_exit(), syscalls are covered.
+>
+> A sample raw event:
+> type=3DSYSCALL msg=3Daudit(1519924845.499:257): arch=3Dc000003e syscall=
+=3D257 success=3Dyes exit=3D3 a0=3Dffffff9c a1=3D56374e1cef30 a2=3D241 a3=
+=3D1b6 items=3D2 ppid=3D606 pid=3D635 auid=3D0 uid=3D0 gid=3D0 euid=3D0 sui=
+d=3D0 fsuid=3D0 egid=3D0 sgid=3D0 fsgid=3D0 tty=3Dpts0 ses=3D3 comm=3D"bash=
+" exe=3D"/usr/bin/bash" subj=3Dunconfined_u:unconfined_r:unconfined_t:s0-s0=
+:c0.c1023 key=3D"tmpcontainerid"
+> type=3DCWD msg=3Daudit(1519924845.499:257): cwd=3D"/root"
+> type=3DPATH msg=3Daudit(1519924845.499:257): item=3D0 name=3D"/tmp/" inod=
+e=3D13863 dev=3D00:27 mode=3D041777 ouid=3D0 ogid=3D0 rdev=3D00:00 obj=3Dsy=
+stem_u:object_r:tmp_t:s0 nametype=3D PARENT cap_fp=3D0 cap_fi=3D0 cap_fe=3D=
+0 cap_fver=3D0
+> type=3DPATH msg=3Daudit(1519924845.499:257): item=3D1 name=3D"/tmp/tmpcon=
+tainerid" inode=3D17729 dev=3D00:27 mode=3D0100644 ouid=3D0 ogid=3D0 rdev=
+=3D00:00 obj=3Dunconfined_u:object_r:user_tmp_t:s0 nametype=3DCREATE cap_fp=
+=3D0 cap_fi=3D0 cap_fe=3D0 cap_fver=3D0
+> type=3DPROCTITLE msg=3Daudit(1519924845.499:257): proctitle=3D62617368002=
+D6300736C65657020313B206563686F2074657374203E202F746D702F746D70636F6E746169=
+6E65726964
+> type=3DCONTAINER_ID msg=3Daudit(1519924845.499:257): contid=3D123458
+>
+> Please see the github audit kernel issue for the main feature:
+>   https://github.com/linux-audit/audit-kernel/issues/90
+> Please see the github audit userspace issue for supporting additions:
+>   https://github.com/linux-audit/audit-userspace/issues/51
+> Please see the github audit testsuiite issue for the test case:
+>   https://github.com/linux-audit/audit-testsuite/issues/64
+> Please see the github audit wiki for the feature overview:
+>   https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+> Acked-by: Steve Grubb <sgrubb@redhat.com>
+> Acked-by: Neil Horman <nhorman@tuxdriver.com>
+> Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>  include/linux/audit.h      |  5 +++++
+>  include/uapi/linux/audit.h |  1 +
+>  kernel/audit.c             | 20 ++++++++++++++++++++
+>  kernel/auditsc.c           | 20 ++++++++++++++------
+>  4 files changed, 40 insertions(+), 6 deletions(-)
 
-This holds the inode block map locked exclusively across the IO,
-so....
+...
 
-> > 
-> > 	dax_iomap_actor()
-> > 		copies data from old extent to new extent
-> > 
-> > 	->iomap_end
-> > 		commits transaction now data has been copied, making
-> > 		the COW operation atomic with the data copy.
-> > 
-> > 
-> > This, in fact, should be how we do all DAX writes that require
-> > allocation, because then we get rid of the need to zero newly
-> > allocated or unwritten extents before we copy the data into it. i.e.
-> > we only need to write once to newly allocated storage rather than
-> > twice.
-> 
-> You need to be careful though. You need to synchronize with page faults so
-> that they cannot see and expose in page tables blocks you've allocated
-> before their contents is filled.
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 182b0f2c183d..3e0af53f3c4d 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -2127,6 +2127,26 @@ void audit_log_session_info(struct audit_buffer *a=
+b)
+>         audit_log_format(ab, "auid=3D%u ses=3D%u", auid, sessionid);
+>  }
+>
+> +/*
+> + * audit_log_contid - report container info
+> + * @context: task or local context for record
+> + * @contid: container ID to report
+> + */
+> +void audit_log_contid(struct audit_context *context, u64 contid)
+> +{
+> +       struct audit_buffer *ab;
+> +
+> +       if (!audit_contid_valid(contid))
+> +               return;
+> +       /* Generate AUDIT_CONTAINER_ID record with container ID */
+> +       ab =3D audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER_ID);
+> +       if (!ab)
+> +               return;
+> +       audit_log_format(ab, "contid=3D%llu", (unsigned long long)contid)=
+;
 
-... so the page fault will block trying to map the blocks because
-it can't get the xfs_inode->i_ilock until the allocation transaciton
-commits....
+We have a consistency problem regarding how to output the u64 contid
+values; this function uses an explicit cast, others do not.  According
+to Documentation/core-api/printk-formats.rst the recommendation for
+u64 is %llu (or %llx, if you want hex).  Looking quickly through the
+printk code this appears to still be correct.  I suggest we get rid of
+the cast (like it was in v5).
 
-> This race was actually the strongest
-> motivation for pre-zeroing of blocks. OTOH copy_from_iter() in
-> dax_iomap_actor() needs to be able to fault pages to copy from (and these
-> pages may be from the same file you're writing to) so you cannot just block
-> faulting for the file through I_MMAP_LOCK.
+> +       audit_log_end(ab);
+> +}
+> +EXPORT_SYMBOL(audit_log_contid);
 
-Right, it doesn't take the I_MMAP_LOCK, but it would block further
-in. And, really, I'm not caring all this much about this corner
-case. i.e.  anyone using a "mmap()+write() zero copy" pattern on DAX
-within a file is unbeleivably naive - the data still gets copied by
-the CPU in the write() call. It's far simpler and more effcient to
-just mmap() both ranges of the file(s) and memcpy() in userspace....
-
-FWIW, it's to avoid problems with stupid userspace stuff that nobody
-really should be doing that I want range locks for the XFS inode
-locks.  If userspace overlaps the ranges and deadlocks in that case,
-they they get to keep all the broken bits because, IMO, they are
-doing something monumentally stupid. I'd probably be making it
-return EDEADLOCK back out to userspace in the case rather than
-deadlocking but, fundamentally, I think it's broken behaviour that
-we should be rejecting with an error rather than adding complexity
-trying to handle it.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--
+paul moore
+www.paul-moore.com
