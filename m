@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 567D82E3AE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 19:44:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A32F52E3A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 19:43:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbfE2Rn7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 13:43:59 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42154 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727421AbfE2Rnv (ORCPT
+        id S1727462AbfE2Rnx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 13:43:53 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42156 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfE2Rnw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 13:43:51 -0400
-Received: by mail-wr1-f67.google.com with SMTP id l2so2379570wrb.9;
-        Wed, 29 May 2019 10:43:49 -0700 (PDT)
+        Wed, 29 May 2019 13:43:52 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l2so2379619wrb.9;
+        Wed, 29 May 2019 10:43:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iB8gfO01UWVOvIbXC1SgRvasH8gb3p1b2pcn/FSICGQ=;
-        b=b0k7Uhky+yocLh7DQ5oosoZKI7/cqVQKaU4lK18qqSzkTiwbokIBbcPe+8QkWpRXa8
-         /SdwMHVqdJZQqTm1Fq1HdJTbttYNaiTx80cqXKZKTcxiAlH7x47tQiZtgM09gOqMUU4c
-         dOG8N4gYpx+jTYmeNj39drvhVoHEmrwIeEvk/HncoD+JQ42uuDcCp/FazXiOnmjbmA0y
-         Qyws70g4mdHlzhfgWhGdgY/dMtF8JmkPZiaOrD7l5uW8qrY61bJjm1qranskdKzNJQKa
-         7EVtbBYF9DG+lINa//bbPNSWhu3w6ZQMnKrFNN3ZOzT9LC9pbEW5SVAV44T0KHYzwOYb
-         DcMA==
+        bh=HN28jzdWIDmYfqKHB1OqlcDa2tkQLMvz+g74LeD+kio=;
+        b=JUf3gpx4X+xBASgixo3psABkDGhXiKV7Lv6aCmi3cIY5g3UvcqkbbvIo4LEBHHlOcM
+         47HvlL4K1Cfr3ZCYRlFlQMk169fxuc4V9OE11x9tSy5YsvifN+2+3lazi2lND22my4/4
+         vd26PGS+5Js9jWQid+RCNzQaf/Cxq14XwTGKpzF/Q1Bka7r0NBU4GOkAB1YemhBS82Bd
+         Lb9aAjs9AjZ7/j02/iDPiRAipCy9DyKOAKm748nAnJr525j6GQIkn1vJLKJPSxueSVCR
+         /PoGsscocZt9StBbSuN5VS082vCWGMzYH/2Eb9v2UTVF6paGYYjXEs0W0yHzHIGdVPtu
+         C46w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iB8gfO01UWVOvIbXC1SgRvasH8gb3p1b2pcn/FSICGQ=;
-        b=kpnlOT/7+5r0Ewo6ThMmk0KjjbrF64+XosP/4yYxy3MBcwI84b3ojsus4EwSTuEwpP
-         u1bnVn7Dl4nqJ7sdB+l304rHwjschwt050RVBblQ//7f7gOts9YezS/VleehbElM8eXL
-         xASgZr/grByxK8LcSJrec+Mcked0v0S+7OB1g4GAPT/BtJRS4t/U/t+cjAbcy8JG/JJE
-         sCqQN5H4uOP5w3BMfWIpSkywjYdmyC7uPUTTjUJLxrh3oWuYVzGvnKcaznLhUc7mkTKp
-         azaA0EdL9HTONDlFnGPiFnuBYUb3/jBPJDDqGWTa7amD7ozMBR/ENlNJzhwZ2bTD+w/l
-         yohQ==
-X-Gm-Message-State: APjAAAXy8y1Bpvj7ngqIYQ6Y7ynqh8C1p58NCZRHh8QZR8B8ewbe1eFE
-        PSKrGi0A09pA+DWVIglHdoc=
-X-Google-Smtp-Source: APXvYqwJOJ4izTFnolZmkhfQaBuL6JfpKe4IKnghtgloYRwVTP4nUzDRTpo9aL+/5u/O6Q118FCXnA==
-X-Received: by 2002:adf:db4c:: with SMTP id f12mr4020367wrj.243.1559151829055;
-        Wed, 29 May 2019 10:43:49 -0700 (PDT)
+        bh=HN28jzdWIDmYfqKHB1OqlcDa2tkQLMvz+g74LeD+kio=;
+        b=MS3J53CKNFFz2rSBpksU06XDAGDj5zEwBl97iWik1SdEGEpAu2hHiKo+yeEmArIUdH
+         lVEdbH+QoprW0X1IMQcPfUtTLbUfKvZEyepItdQ6QjxR6pUsEu0l0We+CMDP4UeQeOxb
+         kTHBgPvlK9+tKT5LA4QixKCRxlZNGa6TjE4ZXh7uVD+wiALxQLko4Dde1GHWKU7lx/vp
+         WhMoxl6fMWMFPIveljlgAIdfjq2zvi8GpNgM/V0ksTdqUzcixcWRMogRtSZl0/SOYpPI
+         gAf8s+A2QWO4oqNnn/WLPUeXtLXSkF+RtITh+807gT7Pfn16DXb+jUsKAvb1bvl0TlRT
+         0bsA==
+X-Gm-Message-State: APjAAAVTvoCspflraceM8mhM/vJyv87EVG6nZE5hambx2Ehn6+94HYzl
+        B60kVO5j7/HCi8OZDQrjpBk=
+X-Google-Smtp-Source: APXvYqy4vphWl+uJOQFfpvp7RUdNvXC3EMyYKCKKMmpEfRH0EaEwUWjRn9WIuethzwglftoWN3AHHA==
+X-Received: by 2002:a5d:54cc:: with SMTP id x12mr35442527wrv.303.1559151830843;
+        Wed, 29 May 2019 10:43:50 -0700 (PDT)
 Received: from localhost.localdomain ([5.102.238.208])
-        by smtp.gmail.com with ESMTPSA id k125sm31702wmb.34.2019.05.29.10.43.47
+        by smtp.gmail.com with ESMTPSA id k125sm31702wmb.34.2019.05.29.10.43.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 10:43:48 -0700 (PDT)
+        Wed, 29 May 2019 10:43:50 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     "Darrick J . Wong" <darrick.wong@oracle.com>
 Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
@@ -54,9 +54,9 @@ Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-cifs@vger.kernel.org
-Subject: [PATCH v3 11/13] fuse: copy_file_range needs to strip setuid bits and update timestamps
-Date:   Wed, 29 May 2019 20:43:15 +0300
-Message-Id: <20190529174318.22424-12-amir73il@gmail.com>
+Subject: [PATCH v3 12/13] nfs: copy_file_range needs to strip setuid bits and update timestamps
+Date:   Wed, 29 May 2019 20:43:16 +0300
+Message-Id: <20190529174318.22424-13-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190529174318.22424-1-amir73il@gmail.com>
 References: <20190529174318.22424-1-amir73il@gmail.com>
@@ -70,32 +70,30 @@ copy and like ->read_iter(), we update atime of src file after copy.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/fuse/file.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/nfs/nfs42proc.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index e03901ae729b..7f33d68f66d9 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3128,6 +3128,10 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
+diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+index 5196bfa7894d..c37a8e5116c6 100644
+--- a/fs/nfs/nfs42proc.c
++++ b/fs/nfs/nfs42proc.c
+@@ -345,10 +345,13 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
  
- 	inode_lock(inode_out);
+ 	do {
+ 		inode_lock(file_inode(dst));
+-		err = _nfs42_proc_copy(src, src_lock,
+-				dst, dst_lock,
+-				&args, &res);
++		err = file_modified(dst);
++		if (!err)
++			err = _nfs42_proc_copy(src, src_lock,
++					       dst, dst_lock,
++					       &args, &res);
+ 		inode_unlock(file_inode(dst));
++		file_accessed(src);
  
-+	err = file_modified(file_out);
-+	if (err)
-+		goto out;
-+
- 	if (fc->writeback_cache) {
- 		err = filemap_write_and_wait_range(inode_out->i_mapping,
- 						   pos_out, pos_out + len);
-@@ -3169,6 +3173,7 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
- 		clear_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
- 
- 	inode_unlock(inode_out);
-+	file_accessed(file_in);
- 
- 	return err;
- }
+ 		if (err >= 0)
+ 			break;
 -- 
 2.17.1
 
