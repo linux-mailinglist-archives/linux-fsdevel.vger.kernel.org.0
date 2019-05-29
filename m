@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4336F2E756
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 23:21:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 106B12E757
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 23:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbfE2VVE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 17:21:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50528 "EHLO mail.kernel.org"
+        id S1726461AbfE2VVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 17:21:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726326AbfE2VVE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 17:21:04 -0400
+        id S1726189AbfE2VVL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 May 2019 17:21:11 -0400
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECD3F241F8;
-        Wed, 29 May 2019 21:21:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD5C0241F7;
+        Wed, 29 May 2019 21:21:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559164864;
-        bh=EZsbpWPJYoAn6xYCicS/qMrHZDPRTvsGsB4LB5FMfBI=;
+        s=default; t=1559164870;
+        bh=znwOEyKrenrVT41woZsMo3otFpoghvAVdCrMasSE+5k=;
         h=From:To:Subject:Date:From;
-        b=sPyfeSwqQhffurBDkaxdQaqtfs/cQJaSHeonxLOFgXcZv+NfFMwcjAGdxKhOOMpdT
-         Rpjr2cQUwuV4zxOpPEXtNRQKLVNgjz22P3KNwmrA236xTsVXDsZ2Qt8agPJ7kMeWS2
-         ZIll328Rdt440XHJ3AG+7/9lJ53rkoBgpkFinPC0=
+        b=Unj8WHaGUClC4zkOGx9fQTFQuWWyNX0td1QP51cYApPSh/7dDDZON885n+p1n+uoU
+         Jm6DXYxzHzS3nNIBfRjyWXIo8DuLGfEA66qT3jUgNz7YHRuoLTWGfpJrmF8hdSSTuy
+         9eI511mnrG2sDJmEopvBoZVmxMBObmgLeoPT8/mQ=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fsdevel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] fs/direct-io.c: include fs/internal.h for missing prototype
-Date:   Wed, 29 May 2019 14:21:00 -0700
-Message-Id: <20190529212100.164185-1-ebiggers@kernel.org>
+Subject: [PATCH] fs/namespace.c: make to_mnt_ns() static
+Date:   Wed, 29 May 2019 14:21:08 -0700
+Message-Id: <20190529212108.164246-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,28 +39,28 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Include fs/internal.h to address the following 'sparse' warning:
+Make to_mnt_ns() static to address the following 'sparse' warning:
 
-    fs/direct-io.c:622:5: warning: symbol 'sb_init_dio_done_wq' was not declared. Should it be static?
+    fs/namespace.c:1736:22: warning: symbol 'to_mnt_ns' was not declared. Should it be static?
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/direct-io.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index ac7fb19b6ade5..601b402829239 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -39,6 +39,8 @@
- #include <linux/atomic.h>
- #include <linux/prefetch.h>
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ffb13f0562b07..0de85376c0c24 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1733,7 +1733,7 @@ static bool is_mnt_ns_file(struct dentry *dentry)
+ 	       dentry->d_fsdata == &mntns_operations;
+ }
  
-+#include "internal.h"
-+
- /*
-  * How many user pages to map in one call to get_user_pages().  This determines
-  * the size of a structure in the slab cache
+-struct mnt_namespace *to_mnt_ns(struct ns_common *ns)
++static struct mnt_namespace *to_mnt_ns(struct ns_common *ns)
+ {
+ 	return container_of(ns, struct mnt_namespace, ns);
+ }
 -- 
 2.22.0.rc1.257.g3120a18244-goog
 
