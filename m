@@ -2,235 +2,361 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B3592E5C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 22:09:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6A412E5C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 22:10:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbfE2UJy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 16:09:54 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:43975 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbfE2UJy (ORCPT
+        id S1726155AbfE2UKi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 16:10:38 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35831 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfE2UKh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 16:09:54 -0400
-Received: by mail-ua1-f68.google.com with SMTP id u4so1551954uau.10;
-        Wed, 29 May 2019 13:09:52 -0700 (PDT)
+        Wed, 29 May 2019 16:10:37 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t1so543615pgc.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 13:10:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GHwKtqceBBr/yqI+wEQILh1qW4XYhHnsY7m4PVW1xuc=;
-        b=Q7P/Cjl+nLJwsD4scpNBQDlEOutJHhfsga6muCosGdFaJXVYKdZboJuYjgfP3Kh4kG
-         JFOmQBoZR/KLcEiGhHCHuBw2J+TWb+6xz02ui+lTW/tf4+rX0mLlu4cPkT1Tw8XlU8zx
-         xV7bvJvNo8SGWncFaLInHm876sTtgULjXhgM473vqeR0WBWXnxi42xtl3EZS0zwTwEv9
-         fOVrV2bZs7nHAcwjsZpwCPJVDWFPdEL8udi7B3+QeSbmt/E+ECsXRbvr6NY6rTLBkXZv
-         QTaokDDxbEIBsdjIyOAUuxiH7+O/yxn2KJOFdt2JZfafVByf3kPXIzpCCa2lNwrRsfXo
-         H/zA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4tO49DCZiMUuRTyd+RB4sj1Pf9UNQPKfv9m6vwCN9bU=;
+        b=lZClLD4C5PJCN/fAXazHH9tFux7V7osICYTD415D0JHAHk0wYmLL0BNiWP2GXwT2jO
+         iJp3k2hMYmE015ugulaI/SgLfdBc+b7Ih3aLb8qGzEGNW1C7RUJZUITdm8wIg0lnn62N
+         UjssZpDlWyvPgk7k0JOYPvkBQgpbe6QGWgOn0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GHwKtqceBBr/yqI+wEQILh1qW4XYhHnsY7m4PVW1xuc=;
-        b=a4EsccLF6VKs0AAE5Z3YOgLPvQPMH3dI68Iroj+Z8IIE+g99Khi6gqUFqONWxSGrvf
-         7PoUmH0VWOk3dYit8vf30ml5Pwh8Yy1kTlL/B7SDa6gWqUWo0aDVhyehYkH7r/xx2dKo
-         DvNdpxfGIvVLfe5H51a6UENAk/6ZAqgFHKkTbRvcj2rB/Bz9MGhUGxyoGtQwApv/sFE/
-         eWwfKGPOQ/q/f7+pNabpfWypu12tzJ1V3IbnXJUbEqBnsRdEST7Vggdl8bRNPX6Q1sks
-         SzkWeV/6kOkQPsjF7XrKyiHHqI0bP11RO2gWo/GYn88g+QUr2HTLYtoUd1LsKFCu0Un2
-         krbw==
-X-Gm-Message-State: APjAAAVVwIE9TdnKT4hyzMowOXLYGYRbnFIvIHmjQS/WCvBN32+C5Cow
-        DCzS/0yik+MF8vbvul+olFBV2NgOzD6yqlBzCC8=
-X-Google-Smtp-Source: APXvYqza33PIhJ9xYE1TchGosrk8iHCvwzRtgxBsjhKjsO3ExedJvKzxiYN98aOpiP7xQFccLo20z8qnElMm9y6L5cQ=
-X-Received: by 2002:a9f:3381:: with SMTP id p1mr9840036uab.40.1559160592432;
- Wed, 29 May 2019 13:09:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190529174318.22424-1-amir73il@gmail.com> <20190529174318.22424-14-amir73il@gmail.com>
-In-Reply-To: <20190529174318.22424-14-amir73il@gmail.com>
-From:   Olga Kornievskaia <olga.kornievskaia@gmail.com>
-Date:   Wed, 29 May 2019 16:09:41 -0400
-Message-ID: <CAN-5tyF9OnRsF_dgtx8aUGFB5tUUs=JK1wzXvRGo3za8jfpJdQ@mail.gmail.com>
-Subject: Re: [PATCH v3 13/13] vfs: allow copy_file_range to copy across devices
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4tO49DCZiMUuRTyd+RB4sj1Pf9UNQPKfv9m6vwCN9bU=;
+        b=mdAYRpg8mjt4Ks/FrxpLQFHM6rHldF2DUtWF3I06veTqJSuIZN1WyY46S9Oue+k+CA
+         uQXeAAwyH5lN6yEEKX8+UAfWb1ntqTL/K9AqOa83iBPn7Llw8+zI1MJnZPhNrEGVcV/f
+         qGSI8B6ER/siJy9ZGml0G0EvCPWrjVtc7J0sqxSv4KXfRNsUaaOahG+0Z+m006Hon25O
+         f+nLYj0NwmnOZ6WZvkyvrEUA3ia1rK5f2bmQu1x1S0SC3+OI5SVl8u+zKkwmq9/LEr9z
+         ZUxiziimIz4DRIQbLKANSJRJvlsbZ5JAxhRgkJ4XwI6KZDrrGyIootr5JJjeCwa68UUL
+         B9Eg==
+X-Gm-Message-State: APjAAAVih5gCm1rwiolNoPj0YRg+F0Wzutk5g1WpJQD0eySjJtDbir1u
+        j1Ww3gwiYSpE80rdSkoBb4+5dg==
+X-Google-Smtp-Source: APXvYqzGkzotfqRqlViLgd17DR1DtrVmfgKSVcRWSDYtwWcN+yj4Gv1oMUrd81n+gHG7RpUcJbaPsA==
+X-Received: by 2002:a63:9d8d:: with SMTP id i135mr140578933pgd.245.1559160636677;
+        Wed, 29 May 2019 13:10:36 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id g8sm432758pjp.17.2019.05.29.13.10.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 May 2019 13:10:35 -0700 (PDT)
+Date:   Wed, 29 May 2019 13:10:34 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexandre Ghiti <alex@ghiti.fr>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Christoph Hellwig <hch@lst.de>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Luis Henriques <lhenriques@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        ceph-devel@vger.kernel.org, linux-nfs <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Steve French <stfrench@microsoft.com>,
-        Dave Chinner <dchinner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v4 04/14] arm64, mm: Move generic mmap layout functions
+ to mm
+Message-ID: <201905291310.D7E954C95B@keescook>
+References: <20190526134746.9315-1-alex@ghiti.fr>
+ <20190526134746.9315-5-alex@ghiti.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190526134746.9315-5-alex@ghiti.fr>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 29, 2019 at 1:43 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> We want to enable cross-filesystem copy_file_range functionality
-> where possible, so push the "same superblock only" checks down to
-> the individual filesystem callouts so they can make their own
-> decisions about cross-superblock copy offload and fallack to
-> generic_copy_file_range() for cross-superblock copy.
->
-> [Amir] We do not call ->remap_file_range() in case the inodes are not
-> on the same sb and do not call ->copy_file_range() in case the inodes
-> are not on the same filesystem type.
->
-> This changes behavior of the copy_file_range(2) syscall, which will
-> now allow cross filesystem in-kernel copy.  CIFS already supports
-> cross-superblock copy, between two shares to the same server. This
-> functionality will now be available via the copy_file_range(2) syscall.
->
-> Cc: Steve French <stfrench@microsoft.com>
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+On Sun, May 26, 2019 at 09:47:36AM -0400, Alexandre Ghiti wrote:
+> arm64 handles top-down mmap layout in a way that can be easily reused
+> by other architectures, so make it available in mm.
+> It then introduces a new config ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
+> that can be set by other architectures to benefit from those functions.
+> Note that this new config depends on MMU being enabled, if selected
+> without MMU support, a warning will be thrown.
+> 
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
 > ---
->  fs/ceph/file.c    |  4 +++-
->  fs/cifs/cifsfs.c  |  2 +-
->  fs/fuse/file.c    |  5 ++++-
->  fs/nfs/nfs4file.c |  5 ++++-
->  fs/read_write.c   | 20 ++++++++++++++------
->  5 files changed, 26 insertions(+), 10 deletions(-)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 8a70708e1aca..e9614d686301 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1909,6 +1909,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->
->         if (src_inode == dst_inode)
->                 return -EINVAL;
-> +       if (src_inode->i_sb != dst_inode->i_sb)
-> +               return -EXDEV;
->         if (ceph_snap(dst_inode) != CEPH_NOSNAP)
->                 return -EROFS;
->
-> @@ -2126,7 +2128,7 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
->         ret = __ceph_copy_file_range(src_file, src_off, dst_file, dst_off,
->                                      len, flags);
->
-> -       if (ret == -EOPNOTSUPP)
-> +       if (ret == -EOPNOTSUPP || ret == -EXDEV)
->                 ret = generic_copy_file_range(src_file, src_off, dst_file,
->                                               dst_off, len, flags);
->         return ret;
-> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-> index ab6c5c24146d..83956452c108 100644
-> --- a/fs/cifs/cifsfs.c
-> +++ b/fs/cifs/cifsfs.c
-> @@ -1154,7 +1154,7 @@ static ssize_t cifs_copy_file_range(struct file *src_file, loff_t off,
->                                         len, flags);
->         free_xid(xid);
->
-> -       if (rc == -EOPNOTSUPP)
-> +       if (rc == -EOPNOTSUPP || rc == -EXDEV)
->                 rc = generic_copy_file_range(src_file, off, dst_file,
->                                              destoff, len, flags);
->         return rc;
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 7f33d68f66d9..eab00cd089e8 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -3126,6 +3126,9 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
->         if (fc->no_copy_file_range)
->                 return -EOPNOTSUPP;
->
-> +       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-> +               return -EXDEV;
+>  arch/Kconfig                       | 10 ++++
+>  arch/arm64/Kconfig                 |  1 +
+>  arch/arm64/include/asm/processor.h |  2 -
+>  arch/arm64/mm/mmap.c               | 76 -----------------------------
+>  kernel/sysctl.c                    |  6 ++-
+>  mm/util.c                          | 78 +++++++++++++++++++++++++++++-
+>  6 files changed, 92 insertions(+), 81 deletions(-)
+> 
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index c47b328eada0..df3ab04270fa 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -701,6 +701,16 @@ config HAVE_ARCH_COMPAT_MMAP_BASES
+>  	  and vice-versa 32-bit applications to call 64-bit mmap().
+>  	  Required for applications doing different bitness syscalls.
+>  
+> +# This allows to use a set of generic functions to determine mmap base
+> +# address by giving priority to top-down scheme only if the process
+> +# is not in legacy mode (compat task, unlimited stack size or
+> +# sysctl_legacy_va_layout).
+> +# Architecture that selects this option can provide its own version of:
+> +# - STACK_RND_MASK
+> +config ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
+> +	bool
+> +	depends on MMU
 > +
->         inode_lock(inode_out);
->
->         err = file_modified(file_out);
-> @@ -3187,7 +3190,7 @@ static ssize_t fuse_copy_file_range(struct file *src_file, loff_t src_off,
->         ret = __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
->                                      len, flags);
->
-> -       if (ret == -EOPNOTSUPP)
-> +       if (ret == -EOPNOTSUPP || ret == -EXDEV)
->                 ret = generic_copy_file_range(src_file, src_off, dst_file,
->                                               dst_off, len, flags);
->         return ret;
-> diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-> index 4842f3ab3161..f4157eb1f69d 100644
-> --- a/fs/nfs/nfs4file.c
-> +++ b/fs/nfs/nfs4file.c
-> @@ -133,6 +133,9 @@ static ssize_t __nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
->                                       struct file *file_out, loff_t pos_out,
->                                       size_t count, unsigned int flags)
->  {
-> +       /* Only offload copy if superblock is the same */
-> +       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-> +               return -EXDEV;
->         if (!nfs_server_capable(file_inode(file_out), NFS_CAP_COPY))
->                 return -EOPNOTSUPP;
->         if (file_inode(file_in) == file_inode(file_out))
-> @@ -148,7 +151,7 @@ static ssize_t nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
->
->         ret = __nfs4_copy_file_range(file_in, pos_in, file_out, pos_out, count,
->                                      flags);
-> -       if (ret == -EOPNOTSUPP)
-> +       if (ret == -EOPNOTSUPP || ret == -EXDEV)
->                 ret = generic_copy_file_range(file_in, pos_in, file_out,
->                                               pos_out, count, flags);
->         return ret;
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 706ea5f276a7..d8930bb735cb 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1618,7 +1618,18 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
->                                   struct file *file_out, loff_t pos_out,
->                                   size_t len, unsigned int flags)
->  {
-> -       if (file_out->f_op->copy_file_range)
-> +       /*
-> +        * Although we now allow filesystems to handle cross sb copy, passing
-> +        * an inode of the wrong filesystem type to filesystem operation can
-> +        * often result in an attempt to dereference the wrong concrete inode
-> +        * struct, so avoid doing that until we really have a good reason.
-> +        * The incentive for passing inode from different sb to filesystem is
-> +        * NFS cross server copy and for that use case, enforcing same
-> +        * filesystem type is acceptable.
-> +        */
-> +       if (file_out->f_op->copy_file_range &&
-> +           file_inode(file_in)->i_sb->s_type ==
-> +           file_inode(file_out)->i_sb->s_type)
-
-While I'm not sure how much I care (vs wanting at least this much of
-cross device copy available) but in NFS there are several NFS
-file_system_type defined which would disallow a copy between them
-(like nfs4_remote_fs_type, nfs4_remote_referral_fs_type, and good old
-nfs4_fs_type).
-
-One idea would be to push the check into the filesystems themselves.
-
->                 return file_out->f_op->copy_file_range(file_in, pos_in,
->                                                        file_out, pos_out,
->                                                        len, flags);
-> @@ -1641,10 +1652,6 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
->         if (flags != 0)
->                 return -EINVAL;
->
-> -       /* this could be relaxed once a method supports cross-fs copies */
-> -       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-> -               return -EXDEV;
+>  config HAVE_COPY_THREAD_TLS
+>  	bool
+>  	help
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 4780eb7af842..3d754c19c11e 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -69,6 +69,7 @@ config ARM64
+>  	select ARCH_SUPPORTS_INT128 if GCC_VERSION >= 50000 || CC_IS_CLANG
+>  	select ARCH_SUPPORTS_NUMA_BALANCING
+>  	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
+> +	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
+>  	select ARCH_WANT_FRAME_POINTERS
+>  	select ARCH_HAS_UBSAN_SANITIZE_ALL
+>  	select ARM_AMBA
+> diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+> index fcd0e691b1ea..3bd818edf319 100644
+> --- a/arch/arm64/include/asm/processor.h
+> +++ b/arch/arm64/include/asm/processor.h
+> @@ -282,8 +282,6 @@ static inline void spin_lock_prefetch(const void *ptr)
+>  		     "nop") : : "p" (ptr));
+>  }
+>  
+> -#define HAVE_ARCH_PICK_MMAP_LAYOUT
 > -
->         ret = generic_copy_file_checks(file_in, pos_in, file_out, pos_out, &len,
->                                        flags);
->         if (unlikely(ret))
-> @@ -1667,7 +1674,8 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
->          * Try cloning first, this is supported by more file systems, and
->          * more efficient if both clone and copy are supported (e.g. NFS).
->          */
-> -       if (file_in->f_op->remap_file_range) {
-> +       if (file_in->f_op->remap_file_range &&
-> +           file_inode(file_in)->i_sb == file_inode(file_out)->i_sb) {
->                 loff_t cloned;
->
->                 cloned = file_in->f_op->remap_file_range(file_in, pos_in,
-> --
-> 2.17.1
->
+>  #endif
+>  
+>  extern unsigned long __ro_after_init signal_minsigstksz; /* sigframe size */
+> diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
+> index ac89686c4af8..c74224421216 100644
+> --- a/arch/arm64/mm/mmap.c
+> +++ b/arch/arm64/mm/mmap.c
+> @@ -31,82 +31,6 @@
+>  
+>  #include <asm/cputype.h>
+>  
+> -/*
+> - * Leave enough space between the mmap area and the stack to honour ulimit in
+> - * the face of randomisation.
+> - */
+> -#define MIN_GAP (SZ_128M)
+> -#define MAX_GAP	(STACK_TOP/6*5)
+> -
+> -static int mmap_is_legacy(struct rlimit *rlim_stack)
+> -{
+> -	if (current->personality & ADDR_COMPAT_LAYOUT)
+> -		return 1;
+> -
+> -	if (rlim_stack->rlim_cur == RLIM_INFINITY)
+> -		return 1;
+> -
+> -	return sysctl_legacy_va_layout;
+> -}
+> -
+> -unsigned long arch_mmap_rnd(void)
+> -{
+> -	unsigned long rnd;
+> -
+> -#ifdef CONFIG_COMPAT
+> -	if (is_compat_task())
+> -		rnd = get_random_long() & ((1UL << mmap_rnd_compat_bits) - 1);
+> -	else
+> -#endif
+> -		rnd = get_random_long() & ((1UL << mmap_rnd_bits) - 1);
+> -	return rnd << PAGE_SHIFT;
+> -}
+> -
+> -static unsigned long mmap_base(unsigned long rnd, struct rlimit *rlim_stack)
+> -{
+> -	unsigned long gap = rlim_stack->rlim_cur;
+> -	unsigned long pad = stack_guard_gap;
+> -
+> -	/* Account for stack randomization if necessary */
+> -	if (current->flags & PF_RANDOMIZE)
+> -		pad += (STACK_RND_MASK << PAGE_SHIFT);
+> -
+> -	/* Values close to RLIM_INFINITY can overflow. */
+> -	if (gap + pad > gap)
+> -		gap += pad;
+> -
+> -	if (gap < MIN_GAP)
+> -		gap = MIN_GAP;
+> -	else if (gap > MAX_GAP)
+> -		gap = MAX_GAP;
+> -
+> -	return PAGE_ALIGN(STACK_TOP - gap - rnd);
+> -}
+> -
+> -/*
+> - * This function, called very early during the creation of a new process VM
+> - * image, sets up which VM layout function to use:
+> - */
+> -void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
+> -{
+> -	unsigned long random_factor = 0UL;
+> -
+> -	if (current->flags & PF_RANDOMIZE)
+> -		random_factor = arch_mmap_rnd();
+> -
+> -	/*
+> -	 * Fall back to the standard layout if the personality bit is set, or
+> -	 * if the expected stack growth is unlimited:
+> -	 */
+> -	if (mmap_is_legacy(rlim_stack)) {
+> -		mm->mmap_base = TASK_UNMAPPED_BASE + random_factor;
+> -		mm->get_unmapped_area = arch_get_unmapped_area;
+> -	} else {
+> -		mm->mmap_base = mmap_base(random_factor, rlim_stack);
+> -		mm->get_unmapped_area = arch_get_unmapped_area_topdown;
+> -	}
+> -}
+> -
+>  /*
+>   * You really shouldn't be using read() or write() on /dev/mem.  This might go
+>   * away in the future.
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 943c89178e3d..aebd03cc4b65 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -271,7 +271,8 @@ extern struct ctl_table epoll_table[];
+>  extern struct ctl_table firmware_config_table[];
+>  #endif
+>  
+> -#ifdef HAVE_ARCH_PICK_MMAP_LAYOUT
+> +#if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
+> +    defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
+>  int sysctl_legacy_va_layout;
+>  #endif
+>  
+> @@ -1566,7 +1567,8 @@ static struct ctl_table vm_table[] = {
+>  		.proc_handler	= proc_dointvec,
+>  		.extra1		= &zero,
+>  	},
+> -#ifdef HAVE_ARCH_PICK_MMAP_LAYOUT
+> +#if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
+> +    defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
+>  	{
+>  		.procname	= "legacy_va_layout",
+>  		.data		= &sysctl_legacy_va_layout,
+> diff --git a/mm/util.c b/mm/util.c
+> index dab33b896146..717f5d75c16e 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -15,7 +15,12 @@
+>  #include <linux/vmalloc.h>
+>  #include <linux/userfaultfd_k.h>
+>  #include <linux/elf.h>
+> +#include <linux/elf-randomize.h>
+> +#include <linux/personality.h>
+>  #include <linux/random.h>
+> +#include <linux/processor.h>
+> +#include <linux/sizes.h>
+> +#include <linux/compat.h>
+>  
+>  #include <linux/uaccess.h>
+>  
+> @@ -313,7 +318,78 @@ unsigned long randomize_stack_top(unsigned long stack_top)
+>  #endif
+>  }
+>  
+> -#if defined(CONFIG_MMU) && !defined(HAVE_ARCH_PICK_MMAP_LAYOUT)
+> +#ifdef CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
+> +#ifdef CONFIG_ARCH_HAS_ELF_RANDOMIZE
+> +unsigned long arch_mmap_rnd(void)
+> +{
+> +	unsigned long rnd;
+> +
+> +#ifdef CONFIG_HAVE_ARCH_MMAP_RND_COMPAT_BITS
+> +	if (is_compat_task())
+> +		rnd = get_random_long() & ((1UL << mmap_rnd_compat_bits) - 1);
+> +	else
+> +#endif /* CONFIG_HAVE_ARCH_MMAP_RND_COMPAT_BITS */
+> +		rnd = get_random_long() & ((1UL << mmap_rnd_bits) - 1);
+> +
+> +	return rnd << PAGE_SHIFT;
+> +}
+> +#endif /* CONFIG_ARCH_HAS_ELF_RANDOMIZE */
+> +
+> +static int mmap_is_legacy(struct rlimit *rlim_stack)
+> +{
+> +	if (current->personality & ADDR_COMPAT_LAYOUT)
+> +		return 1;
+> +
+> +	if (rlim_stack->rlim_cur == RLIM_INFINITY)
+> +		return 1;
+> +
+> +	return sysctl_legacy_va_layout;
+> +}
+> +
+> +/*
+> + * Leave enough space between the mmap area and the stack to honour ulimit in
+> + * the face of randomisation.
+> + */
+> +#define MIN_GAP		(SZ_128M)
+> +#define MAX_GAP		(STACK_TOP / 6 * 5)
+> +
+> +static unsigned long mmap_base(unsigned long rnd, struct rlimit *rlim_stack)
+> +{
+> +	unsigned long gap = rlim_stack->rlim_cur;
+> +	unsigned long pad = stack_guard_gap;
+> +
+> +	/* Account for stack randomization if necessary */
+> +	if (current->flags & PF_RANDOMIZE)
+> +		pad += (STACK_RND_MASK << PAGE_SHIFT);
+> +
+> +	/* Values close to RLIM_INFINITY can overflow. */
+> +	if (gap + pad > gap)
+> +		gap += pad;
+> +
+> +	if (gap < MIN_GAP)
+> +		gap = MIN_GAP;
+> +	else if (gap > MAX_GAP)
+> +		gap = MAX_GAP;
+> +
+> +	return PAGE_ALIGN(STACK_TOP - gap - rnd);
+> +}
+> +
+> +void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
+> +{
+> +	unsigned long random_factor = 0UL;
+> +
+> +	if (current->flags & PF_RANDOMIZE)
+> +		random_factor = arch_mmap_rnd();
+> +
+> +	if (mmap_is_legacy(rlim_stack)) {
+> +		mm->mmap_base = TASK_UNMAPPED_BASE + random_factor;
+> +		mm->get_unmapped_area = arch_get_unmapped_area;
+> +	} else {
+> +		mm->mmap_base = mmap_base(random_factor, rlim_stack);
+> +		mm->get_unmapped_area = arch_get_unmapped_area_topdown;
+> +	}
+> +}
+> +#elif defined(CONFIG_MMU) && !defined(HAVE_ARCH_PICK_MMAP_LAYOUT)
+>  void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
+>  {
+>  	mm->mmap_base = TASK_UNMAPPED_BASE;
+> -- 
+> 2.20.1
+> 
+
+-- 
+Kees Cook
