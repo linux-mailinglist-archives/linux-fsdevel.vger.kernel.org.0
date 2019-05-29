@@ -2,105 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2E462E286
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 18:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D75612E295
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 18:54:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbfE2Qte (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 12:49:34 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39731 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbfE2Qte (ORCPT
+        id S1726652AbfE2Qyp convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 12:54:45 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:21502 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726140AbfE2Qyp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 12:49:34 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g9so1297472plm.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 09:49:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=guRhBwE8Jq2pT9gu18nVOUDdNtCFbP3Mz6H0t8cPBts=;
-        b=owoi9xfKHIupf14tvLmBO/xJECPkUet26Ff2rZMpBaDjptawMFz+qLRu/EHAbQ0Bry
-         PSTJb6d4YTQ44rPFgu4JbHunc07WOZX6+H19OBRC5cl2Ve0mWzoQluglgcRvd4DWnbD0
-         mmd7VRP80BBcpKBHftjArVPoBQitU5IyeuKdK8TwUPy7RZ+bWV8i+NsYFXva/hT/SNnZ
-         q0vgJGx1btgIpDd4lQvDiLPhSrsdSBop+NjdfpT6cJ1vv7b9M3h/pwqZalVzAI17+MDb
-         O4SSmvdUVR+V8RJl6zEcuFM1o3dxKOMqmmhkRr4Sa4RG6YsWzfbhAooxMqLjp8EhIw2s
-         pLUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=guRhBwE8Jq2pT9gu18nVOUDdNtCFbP3Mz6H0t8cPBts=;
-        b=ot6MUT6jKE/RbeKjQDfB6xuNOrh56WQqdqUNp8dhaG3AO4ymmfOAenr2W9mHQ8Gsej
-         DGA+pvHYpkabrHxfGdQa5X2PXUgCqZ5SszR03L7puBv/XwNp/IO84x2shDWtzgpWC5Pa
-         nVMYHMCcIqoglQDb+TPv8a19k1jQpf1s3Ppg7Rwm0ckXcKOfFsQxANmBxfNnnsxFNbkc
-         B1hLXkKJ4Bh7+NWFz55IaTtYfhuFPtkTMPtQ5czC0hyKM4ScoBzPrUTAWgTPX4P700ni
-         uMkR6RED+B6YuFjQukrYEYyDxzRz/6q5OqHaNlyjHs0rw+I+myVQIfiORJ2CxCyOCvd1
-         ZsFA==
-X-Gm-Message-State: APjAAAVLVet2fG+6hhtKJ0uakkRvxRAoYGSYJL0v3D3cn61N8XoP47KQ
-        RFlP597P3d7kaWnhf0oSfehFr5P8sQNJGw==
-X-Google-Smtp-Source: APXvYqwZgxtLbeCyy/Nl6uW+Awxng+CUJS+RH72nH5ZP7DP/yp4EpvZ8+VGRVPznECG4luF+b7CLFw==
-X-Received: by 2002:a17:902:21:: with SMTP id 30mr125616112pla.302.1559148573721;
-        Wed, 29 May 2019 09:49:33 -0700 (PDT)
-Received: from [192.168.1.136] (c-67-169-41-205.hsd1.ca.comcast.net. [67.169.41.205])
-        by smtp.gmail.com with ESMTPSA id l35sm175651pje.10.2019.05.29.09.49.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 09:49:32 -0700 (PDT)
-Message-ID: <1559148571.2803.73.camel@dubeyko.com>
-Subject: Re: [PATCH] hfsplus: Replace strncpy with memcpy
-From:   Viacheslav Dubeyko <slava@dubeyko.com>
-To:     Mathieu Malaterre <malat@debian.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 29 May 2019 09:49:31 -0700
-In-Reply-To: <20190529113341.11972-1-malat@debian.org>
-References: <20190529113341.11972-1-malat@debian.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 29 May 2019 12:54:45 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-148-Bqtj4QOpPZGUSdn79nts1w-1; Wed, 29 May 2019 17:54:41 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 29 May 2019 17:54:40 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 29 May 2019 17:54:40 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Oleg Nesterov' <oleg@redhat.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "dave@stgolabs.net" <dave@stgolabs.net>,
+        "e@80x24.org" <e@80x24.org>,
+        "jbaron@akamai.com" <jbaron@akamai.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error codes
+ according to restore_user_sigmask())
+Thread-Topic: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error
+ codes according to restore_user_sigmask())
+Thread-Index: AQHVFjlRjDlHH6TU60ajIVKPNNmjrqaCR7xw
+Date:   Wed, 29 May 2019 16:54:40 +0000
+Message-ID: <b05cec7f9e8f457281e689576a7a360f@AcuMS.aculab.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com>
+In-Reply-To: <20190529161157.GA27659@redhat.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: Bqtj4QOpPZGUSdn79nts1w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2019-05-29 at 13:33 +0200, Mathieu Malaterre wrote:
-> Function strncpy was used to copy a fixed size buffer. Since
-> NUL-terminating string is not required here, prefer a memcpy
-> function.
-> The generated code (ppc32) remains the same.
+From: Oleg Nesterov
+> Sent: 29 May 2019 17:12
+> Al, Linus, Eric, please help.
 > 
-> Silence the following warning triggered using W=1:
+> The previous discussion was very confusing, we simply can not understand each
+> other.
 > 
->   fs/hfsplus/xattr.c:410:3: warning: 'strncpy' output truncated
-> before terminating nul copying 4 bytes from a string of the same
-> length [-Wstringop-truncation]
+> To me everything looks very simple and clear, but perhaps I missed something
+> obvious? Please correct me.
 > 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->  fs/hfsplus/xattr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> I think that the following code is correct
 > 
-> diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-> index d5403b4004c9..bb0b27d88e50 100644
-> --- a/fs/hfsplus/xattr.c
-> +++ b/fs/hfsplus/xattr.c
-> @@ -407,7 +407,7 @@ static int copy_name(char *buffer, const char
-> *xattr_name, int name_len)
->  	int offset = 0;
->  
->  	if (!is_known_namespace(xattr_name)) {
-> -		strncpy(buffer, XATTR_MAC_OSX_PREFIX,
-> XATTR_MAC_OSX_PREFIX_LEN);
-> +		memcpy(buffer, XATTR_MAC_OSX_PREFIX,
-> XATTR_MAC_OSX_PREFIX_LEN);
->  		offset += XATTR_MAC_OSX_PREFIX_LEN;
->  		len += XATTR_MAC_OSX_PREFIX_LEN;
->  	}
+> 	int interrupted = 0;
+> 
+> 	void sigint_handler(int sig)
+> 	{
+> 		interrupted = 1;
+> 	}
+> 
+> 	int main(void)
+> 	{
+> 		sigset_t sigint, empty;
+> 
+> 		sigemptyset(&sigint);
+> 		sigaddset(&sigint, SIGINT);
+> 		sigprocmask(SIG_BLOCK, &sigint, NULL);
+> 
+> 		signal(SIGINT, sigint_handler);
+> 
+> 		sigemptyset(&empty);	// so pselect() unblocks SIGINT
+> 
+> 		ret = pselect(..., &empty);
+                                ^^^^^ sigint
+> 
+> 		if (ret >= 0)		// sucess or timeout
+> 			assert(!interrupted);
+> 
+> 		if (interrupted)
+> 			assert(ret == -EINTR);
+> 	}
+> 
+> IOW, if pselect(sigmask) temporary unblocks SIGINT according to sigmask, this
+> signal should not be delivered if a ready fd was found or timeout. The signal
+> handle should only run if ret == -EINTR.
 
-Looks good. I don't see any troubles here.
+Personally I think that is wrong.
+Given code like the above that has:
+		while (!interrupted) {
+			pselect(..., &sigint);
+			// process available data
+		}
 
-Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
+You want the signal handler to be executed even if one of the fds
+always has available data.
+Otherwise you can't interrupt a process that is always busy.
 
-Thanks,
-Vyacheslav Dubeyko.
+One option is to return -EINTR if a signal is pending when the mask
+is updated - before even looking at anything else.
+Signals that happen later on (eg after a timeout) need not be reported
+(until the next time around the loop).
+
+> (pselect() can be interrupted by any other signal which has a handler. In this
+>  case the handler can be called even if ret >= 0. This is correct, I fail to
+>  understand why some people think this is wrong, and in any case we simply can't
+>  avoid this).
+
+You mean any signal that isn't blocked when pselect() is called....
+
+> This was true until 854a6ed56839a ("signal: Add restore_user_sigmask()"),
+> now this is broken by the signal_pending() check in restore_user_sigmask().
+> 
+> This patch https://lore.kernel.org/lkml/20190522032144.10995-1-deepa.kernel@gmail.com/
+> turns 0 into -EINTR if signal_pending(), but I think we should simply restore
+> the old behaviour and simplify the code.
+> 
+> See the compile-tested patch at the end. Of course, the new _xxx() helpers
+> should be renamed somehow. fs/aio.c doesn't look right with or without this
+> patch, but iiuc this is what it did before 854a6ed56839a.
+> 
+> Let me show the code with the patch applied. I am using epoll_pwait() as an
+> example because it looks very simple.
+> 
+> 
+> 	static inline void set_restore_sigmask(void)
+> 	{
+> // WARN_ON(!TIF_SIGPENDING) was removed by this patch
+> 		current->restore_sigmask = true;
+> 	}
+> 
+> 	int set_xxx(const sigset_t __user *umask, size_t sigsetsize)
+> 	{
+> 		sigset_t *kmask;
+                     ^ no '*' here, add & before uses.
+> 
+> 		if (!umask)
+> 			return 0;
+> 		if (sigsetsize != sizeof(sigset_t))
+> 			return -EINVAL;
+> 		if (copy_from_user(kmask, umask, sizeof(sigset_t)))
+> 			return -EFAULT;
+> 
+> // we can safely modify ->saved_sigmask/restore_sigmask, they has no meaning
+> // until the syscall returns.
+> 		set_restore_sigmask();
+> 		current->saved_sigmask = current->blocked;
+> 		set_current_blocked(kmask);
+> 
+> 		return 0;
+> 	}
+> 
+> 
+> 	void update_xxx(bool interrupted)
+> 	{
+> // the main reason for this helper is WARN_ON(!TIF_SIGPENDING) which was "moved"
+> // from set_restore_sigmask() above.
+> 		if (interrupted)
+> 			WARN_ON(!test_thread_flag(TIF_SIGPENDING));
+> 		else
+> 			restore_saved_sigmask();
+> 	}
+
+I looked at the code earlier, but failed to find the code that actually
+delivers the signals.
+It may be 'racy' with update_xxx() regardless of whether that is
+looking for -EINTR or just a pending signal.
+
+I assume that TIF_SIGPENGING is used to (not) short-circuit the
+system call return path so that signals get delivered.
+So that it is important that update_xxx() calls restore_saved_sigmask()
+if there is no signal pending.
+(Although a signal can happen after the test - which can/will be ignored
+until the signal is enabled again.)
+
+restore_saved_sigmask() must itself be able to set TIF_SIGPENDING
+(the inner sigmask could be more restrictive!).
+
+If restore_saved_sigmask() isn't called here, the syscall return
+path must do it after calling all the handlers and after clearing
+TIF_SIGPENDING, and then call unmasked handlers again.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
