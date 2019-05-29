@@ -2,195 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B6992E1B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 17:54:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B33D02E1D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 18:04:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbfE2Pxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 11:53:54 -0400
-Received: from sonic303-8.consmr.mail.bf2.yahoo.com ([74.6.131.47]:33479 "EHLO
-        sonic303-8.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727015AbfE2Pxx (ORCPT
+        id S1726062AbfE2QEN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 12:04:13 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46057 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbfE2QEN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 11:53:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559145231; bh=Mhbbs/5zWDmSATWlWIaWSZbJKp7jJqyJaP5TnNMG0Cw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=qADd6C9dYyk8KS/JPMsgMG4dSY02lpjCx3eUrn3i8pPoaQZwpwXVOaljGU9u5kB8KHIYPQa9JunT+waccGB55AKFbHuWiQXTLZPfIlOsadSGQWce4R8t5X7yVT3Rxip9j60HgY+G4hVU3/ptICnzlwewJdUkeCaLXNcJJudrHcriKspDKrN/fRDCSfJZJxcWAlh2zFp/FbyZWxtxga81R18kPHV40pfSas4Eu3B2eQXvV/+WBdnIHxzmM02R7fh3D6S+Vo5PtUv1AXp9otJfWz/Kq6PtblUogqiSycCv9a6L69ORe4P0PEPC8X9UQ7t3AGD64udX3VEdir3jGwPH7Q==
-X-YMail-OSG: un8.J_sVM1kuGbHsYEm81uJHc1EgIo3WEUPpoKRMD88B4ckPYjIHzzu3KeSb98x
- Y5EsfcoCL8aaVWM26Xw4_KyP7tHf4ADBTaZPve5fZb2A91v0VuJ2Kk69t_rEFAk0iOMX7Z__Nyqt
- qAYNOQ7nhEXahnndv8QX45sGkCWwQpISHuw5nseb9UJMLc.FZHo6lVuMzEa.z41Yc.nlOfeF9LFT
- iG.NFhIMHl8fUhT9rxrvPwQWvJng0prtB920ojYer9ZUQwbpkhxa6BAATZubuY_BsqHtWi36waxq
- xfLOnA2RQ5x6Xd54IUTW8SOY8NPAegET5HYrnH2IrO89lYEpDlyDTPW2AMMabjzLVO_J5Mlzq99L
- I5vSBMEVOg9pJ4V.1sFjb0duC3SlbU5vTrQBDfVWWYjgUtwP1SRhCDyjKFxUQ2YxOBEh.XwyxYfU
- BKM41k33feB1SUQ4024vbWRSpTnCjx63UtxLNIdrlxv23VsO4SGgzX28APdEzu6XLw4.hQ0WD1WC
- mDswysk_zaD0uWc3z_Ff6jgCgyL.BgAUSEZs59scWzUdY0bYejhQYRc9nw43sNuKmtowK1C.rSUA
- BgAdyCN008k0cKyycfH0l91VvYMu6SixXnrLGlxnnwzx1AEpu9PFlfreiAP52iEzC9Rq53BAMZPm
- W6wiIe6hxOQ9KtA9HTqpHBaqj6wB_aF3KadJUr96rma1EARmY2b5L2oRG65h_E5HzGXM0ZblRc6J
- UW4h12ANx4CbV6mKSI_2cc0VV.y.TmAZe5VMG8pwIhYahKotMruLPZpfC.iw7BeReEsyTxzjpykW
- iC0bWqgm6tPwgbFHwiwm5mvH9z1GAMwdKYevY2GsZHqul2auRN5sYDzHp84kOK1WI7XpTndmJWWe
- KZOFTdqexV20nvXFEQ8PE0LeK.bjAmHvNwVoKuIiK.PV14pYo_G2SuNRSvYLJ3nhOwW.Y2hx6iZL
- uIkmj9ZaCEHEdFh0EZHvnY7BoZFTkC2_Dw4mQZ5JDZ_GXOpzoUqK1E0n8NufYZIJ0iB7GMHHS7tW
- Dp8KhOPlS9WCtb_vXu0v7GLez3rS9Qv8W14odbSUUBpPbCmTBY5hqlaY3kPwBCK5uBzxN5C3wly2
- Sl75ILGM34._zWV818b0wwUVtYf692GLllUWrHdN1WZf.Ad3NxwLrBv8kAeRnUCjohfWVyxZqe93
- Yj5UeurORKiMUBmXBc2Wja6QWyR0bvHk5BbvMIwgY7A0C._nmVF9mZxJH9tT3jpJwIjPFfQOhM18
- mJOFCgs_8nJ2ch1wn6DSN4AE1IiERihrII.S3iQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Wed, 29 May 2019 15:53:51 +0000
-Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp410.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 9da4e0a2a8856f6c7fc42e042e64d391;
-          Wed, 29 May 2019 15:53:47 +0000 (UTC)
-Subject: Re: [PATCH 3/7] vfs: Add a mount-notification facility
-To:     David Howells <dhowells@redhat.com>, Jann Horn <jannh@google.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-References: <CAG48ez2rRh2_Kq_EGJs5k-ZBNffGs_Q=vkQdinorBgo58tbGpg@mail.gmail.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905933492.7587.6968545866041839538.stgit@warthog.procyon.org.uk>
- <14347.1559127657@warthog.procyon.org.uk>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <312a138c-e5b2-4bfb-b50b-40c82c55773f@schaufler-ca.com>
-Date:   Wed, 29 May 2019 08:53:34 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 29 May 2019 12:04:13 -0400
+Received: by mail-lf1-f65.google.com with SMTP id m14so2518661lfp.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 09:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fB+cE1ut8lOVdr24ZDohYBT90Ji3/h8bhXQdn1faj1w=;
+        b=C5m+Zu7u/SeSHtGLhmMKET9XoxgFL4mD6irfr1OzHmPMiWJG4UfEnieyQSYkdsDMbz
+         NztjNr31dmPXfzZ3lzJfnhB89ckJVnCG+7h6ahdNAD3nNBS4e5GBGT7Q1FfvYy9A/d2t
+         0el6ltxCkWdty489akWnO7C/D56fRp/QK9Gq1MjwNH7leTwcZQjo+IlSUGIig8cFaTMj
+         0L15j3WZSxzF3+3o5zoKI9TCExfFDg6cBQTBs9JTWpIB8kHa3JpZKusP6gcb+AMIQUQC
+         eUDOdkdjk2raExQ1k92WIgMi99ke3kB6JhKgkKl6aj9SVPgmPG4HF7X1pZT7PQ+Y3nOE
+         WAIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fB+cE1ut8lOVdr24ZDohYBT90Ji3/h8bhXQdn1faj1w=;
+        b=DlIqe87BaVOi7ZrSHx6hIF8IERCNjxz+pLZQzapw0o++drz0GHcbVOjOngrII+yU/9
+         jpXzvs2ecBsA6MU+8Uu0EG4aiK39A1Wt2u4ODpvPq92U/0jVWVGAsIGZqRepMnClPwjh
+         B70kQvGFIcVmH0dKh6XzLsjV4LEBXBK8Rs73BYWiQbgPKmThu8Ki4zrF6uFKuGBwNH/+
+         dGflQ8ar0SnzviARw8VsTkAlMy1c89MdhABfV5MDm8i3OKL2pa5ceEVG20E+r5wKC9jc
+         ivG0q4fOqFHdFqD8u3RrdhdtwwvkLGHxD7WcOsQ0ciegy5uIM4Fw0nkjVRmQ18auONho
+         YY4Q==
+X-Gm-Message-State: APjAAAULMhxmA1SjGZ2qFt6XzrRKhSJ239A7btwtdptoeJXC3+oQS22r
+        1egrAgk44eS8pBkNQj6tH4A28PfIWNq0gSvyUpzq
+X-Google-Smtp-Source: APXvYqyArKmcXTpF9obffp6rqvd9jlGrddtztE9fceghduTlG/S8zQkl5yFpMpSrjd7E8vT35Mvy/bolgsx3MCM9V/0=
+X-Received: by 2002:a19:c301:: with SMTP id t1mr4444303lff.137.1559145850119;
+ Wed, 29 May 2019 09:04:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <14347.1559127657@warthog.procyon.org.uk>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="cNkJJFaLGPzGj0MrH4stT0km9ovmzGP9Z"
+References: <cover.1554732921.git.rgb@redhat.com> <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
+ <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+ <20190529153427.GB8959@cisco>
+In-Reply-To: <20190529153427.GB8959@cisco>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 29 May 2019 12:03:58 -0400
+Message-ID: <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---cNkJJFaLGPzGj0MrH4stT0km9ovmzGP9Z
-Content-Type: multipart/mixed; boundary="CGJ0IeN7E9pxspTs8jkc4kNwow51RM68Y";
- protected-headers="v1"
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: David Howells <dhowells@redhat.com>, Jann Horn <jannh@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Linux API <linux-api@vger.kernel.org>, linux-block@vger.kernel.org,
- keyrings@vger.kernel.org,
- linux-security-module <linux-security-module@vger.kernel.org>,
- kernel list <linux-kernel@vger.kernel.org>
-Message-ID: <312a138c-e5b2-4bfb-b50b-40c82c55773f@schaufler-ca.com>
-Subject: Re: [PATCH 3/7] vfs: Add a mount-notification facility
-References: <CAG48ez2rRh2_Kq_EGJs5k-ZBNffGs_Q=vkQdinorBgo58tbGpg@mail.gmail.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905933492.7587.6968545866041839538.stgit@warthog.procyon.org.uk>
- <14347.1559127657@warthog.procyon.org.uk>
-In-Reply-To: <14347.1559127657@warthog.procyon.org.uk>
-
---CGJ0IeN7E9pxspTs8jkc4kNwow51RM68Y
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-
-On 5/29/2019 4:00 AM, David Howells wrote:
-> Jann Horn <jannh@google.com> wrote:
+On Wed, May 29, 2019 at 11:34 AM Tycho Andersen <tycho@tycho.ws> wrote:
 >
->>> +void post_mount_notification(struct mount *changed,
->>> +                            struct mount_notification *notify)
->>> +{
->>> +       const struct cred *cred =3D current_cred();
->> This current_cred() looks bogus to me. Can't mount topology changes
->> come from all sorts of places? For example, umount_mnt() from
->> umount_tree() from dissolve_on_fput() from __fput(), which could
->> happen pretty much anywhere depending on where the last reference gets=
-
->> dropped?
-> IIRC, that's what Casey argued is the right thing to do from a security=
- PoV.
-> Casey?
-
-You need to identify the credential of the subject that triggered
-the event. If it isn't current_cred(), the cred needs to be passed
-in to post_mount_notification(), or derived by some other means.
-
-> Maybe I should pass in NULL creds in the case that an event is being ge=
-nerated
-> because an object is being destroyed due to the last usage[*] being rem=
-oved.
-
-You should pass the cred of the process that removed the
-last usage. If the last usage was removed by something like
-the power being turned off on a disk drive a system cred
-should be used. Someone or something caused the event. It can
-be important who it was.
-
->  [*] Usage, not ref - Superblocks are a bit weird in their accounting.
+> On Wed, May 29, 2019 at 11:29:05AM -0400, Paul Moore wrote:
+> > On Wed, May 29, 2019 at 10:57 AM Tycho Andersen <tycho@tycho.ws> wrote:
+> > >
+> > > On Mon, Apr 08, 2019 at 11:39:09PM -0400, Richard Guy Briggs wrote:
+> > > > It is not permitted to unset the audit container identifier.
+> > > > A child inherits its parent's audit container identifier.
+> > >
+> > > ...
+> > >
+> > > >  /**
+> > > > + * audit_set_contid - set current task's audit contid
+> > > > + * @contid: contid value
+> > > > + *
+> > > > + * Returns 0 on success, -EPERM on permission failure.
+> > > > + *
+> > > > + * Called (set) from fs/proc/base.c::proc_contid_write().
+> > > > + */
+> > > > +int audit_set_contid(struct task_struct *task, u64 contid)
+> > > > +{
+> > > > +     u64 oldcontid;
+> > > > +     int rc = 0;
+> > > > +     struct audit_buffer *ab;
+> > > > +     uid_t uid;
+> > > > +     struct tty_struct *tty;
+> > > > +     char comm[sizeof(current->comm)];
+> > > > +
+> > > > +     task_lock(task);
+> > > > +     /* Can't set if audit disabled */
+> > > > +     if (!task->audit) {
+> > > > +             task_unlock(task);
+> > > > +             return -ENOPROTOOPT;
+> > > > +     }
+> > > > +     oldcontid = audit_get_contid(task);
+> > > > +     read_lock(&tasklist_lock);
+> > > > +     /* Don't allow the audit containerid to be unset */
+> > > > +     if (!audit_contid_valid(contid))
+> > > > +             rc = -EINVAL;
+> > > > +     /* if we don't have caps, reject */
+> > > > +     else if (!capable(CAP_AUDIT_CONTROL))
+> > > > +             rc = -EPERM;
+> > > > +     /* if task has children or is not single-threaded, deny */
+> > > > +     else if (!list_empty(&task->children))
+> > > > +             rc = -EBUSY;
+> > > > +     else if (!(thread_group_leader(task) && thread_group_empty(task)))
+> > > > +             rc = -EALREADY;
+> > > > +     read_unlock(&tasklist_lock);
+> > > > +     if (!rc)
+> > > > +             task->audit->contid = contid;
+> > > > +     task_unlock(task);
+> > > > +
+> > > > +     if (!audit_enabled)
+> > > > +             return rc;
+> > >
+> > > ...but it is allowed to change it (assuming
+> > > capable(CAP_AUDIT_CONTROL), of course)? Seems like this might be more
+> > > immediately useful since we still live in the world of majority
+> > > privileged containers if we didn't allow changing it, in addition to
+> > > un-setting it.
+> >
+> > The idea is that only container orchestrators should be able to
+> > set/modify the audit container ID, and since setting the audit
+> > container ID can have a significant effect on the records captured
+> > (and their routing to multiple daemons when we get there) modifying
+> > the audit container ID is akin to modifying the audit configuration
+> > which is why it is gated by CAP_AUDIT_CONTROL.  The current thinking
+> > is that you would only change the audit container ID from one
+> > set/inherited value to another if you were nesting containers, in
+> > which case the nested container orchestrator would need to be granted
+> > CAP_AUDIT_CONTROL (which everyone to date seems to agree is a workable
+> > compromise).
 >
-> David
+> But then don't you want some kind of ns_capable() instead (probably
+> not the obvious one, though...)? With capable(), you can't really nest
+> using the audit-id and user namespaces together.
 
+You want capable() and not ns_capable() because you want to ensure
+that the orchestrator has the rights in the init_ns as changes to the
+audit container ID could have an auditing impact that spans the entire
+system.  Setting the audit container ID is equivalent to munging the
+kernel's audit configuration, and the audit configuration is not
+"namespaced" in any way.  The audit container ID work is about
+providing the right "container context" (as defined by userspace) with
+the audit records so that admins have a better understanding about
+what is going on in the system; it is very explicitly not creating an
+audit namespace.
 
---CGJ0IeN7E9pxspTs8jkc4kNwow51RM68Y--
+At some point in the future we will want to support running multiple
+audit daemons, and have a configurable way of routing audit records
+based on the audit container ID, which will blur the line regarding
+audit namespaces, but even then I would argue we are not creating an
+audit namespace.
 
---cNkJJFaLGPzGj0MrH4stT0km9ovmzGP9Z
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEC+9tH1YyUwIQzUIeOKUVfIxDyBEFAlzuqwkACgkQOKUVfIxD
-yBEWag//SJA6JpQHXqyOeXOtCod82vVguKxz7q2fheSMMS+T8bB0rX2XTO4rho9D
-t5wUt9c1+HtGk8HBvbS7vOnjhXso6RshvI2uUEfE0MOQ/Y1FBIqXwrTzpSs8/FVE
-tv3YFqCWlcaLOfnh/Gl0GvK+o5DGMVFDVsv0j3ke5VihJ4enHnn18AncowE5nVu3
-n9GahTQcWaRIgYIHJ9Wr0olwAQsa2TQpj/0wJR3I5ni1hY10wknm9jCIw2L612xU
-l5rZ73EqvgIjqsq9m1rgZqjH3QypYvTgdDCd9I/AdZmAI8QJ3JISRzZlKGw2o6GL
-ZIExEzQCVMzGyqEDkTxQQlXjczfF7jHCWQ9+iyyz747JMRrx1Kr6LqZlTJsfQCc0
-F+Ytx0D8RVkwkpkrzIQz5eS/R2ib2lYH7Jtk9RhreDagrzkieeyZ3A3Y0feYqIb3
-O7tGYBfQVWx5dVjB5nZ7v/aUw7Wc929yiONfiHLxSg8U4xlj0mFSa0HFOYC4DzaG
-C0NSVb7xvoDfpyt6m9Wv1mF7cJKkLFffeMfqUREZAcNEdiYrg90Ho6cJ5tZVreSu
-rVgR81R7SSVANygbfauj9X3N3D4fsWxu+D81zz0B9CBgy8GP+p/kWrL45hRC4CLN
-hG3yC60hUm54xq2H3YT775eyGBcDixyPsh5qmTXQ21MtLLm3W1c=
-=qEff
------END PGP SIGNATURE-----
-
---cNkJJFaLGPzGj0MrH4stT0km9ovmzGP9Z--
+-- 
+paul moore
+www.paul-moore.com
