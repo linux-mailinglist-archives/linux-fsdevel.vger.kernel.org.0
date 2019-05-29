@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5C902E7FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 00:17:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB4352E821
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 00:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbfE2WRW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 18:17:22 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39046 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbfE2WRV (ORCPT
+        id S1726547AbfE2W0Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 18:26:25 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42399 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbfE2W0Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 18:17:21 -0400
-Received: by mail-lf1-f67.google.com with SMTP id f1so3360600lfl.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 15:17:20 -0700 (PDT)
+        Wed, 29 May 2019 18:26:25 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y15so889796ljd.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 15:26:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fIvU+ha0PviU/sibSkvPHyTumVcfp/XuVnG8TGWl1tg=;
-        b=IhDJTlpcamR/KqtIXXIXgJdfXAsLI2C+ZEXAuUNYlKWGn6wHjE6fpIPNIeDhT7ycQ8
-         57igNJrmJ5BNTBnviUUG/OZd+IF7VgnoVis5ZCCvJxb17ZrBByYBXhXN+ZRYNnc3FRIy
-         brSYU1jvKSGa+TNQ8WETswSfhGeqztSbfJ7L/bGXevP+zB/TZdI4CXbRsu2J41G+yDwo
-         qMRxFM1D7xND12GCJwbw+whugNAe6MnXELtdl7/PWacMAbHfg0mkPJsrxG4ICI+/4Bgd
-         Umpf4FN+xj/KrTwt5uEEEDaa00hFCmx8k3DNIvdAxi+WqGo7sS1kO5oJBoew7DOwAn5i
-         7ioA==
+        bh=t49dJmETs8La1f+MwRhpaeRXNs8pwfNjtCbfGrPUmGI=;
+        b=Ro1lwjJVVG+qfv2hVkkiiCmqyVjNxXb0ZoITXQy+P1f2GZdZ9qhO4d3e/bDxnsB4zf
+         VG6lk1pc3YIXT+6MuBmXXRlQuiBjsm+UOieluWIzA1MVSrAXdvoECvq7uk6Ub9GjZF0B
+         tVGRBNgcuJHEDdGzb+K4IrF0euqoyMFEdmTrJ2Q1yuusoIvJmvk9lwEm+0zz5SIuXOku
+         jMMynjoocJl0WscdyzinFI3DjKPXAUNduIc5aIEfzMKre4ttNj5pz1w0j7LuWT9yXexH
+         bwP0U65ZujtqZ8lmY/Xslf1D4oCvvWTWj42wkFXwRNsxqua0u6w+SRvpcMroFwi3QrQa
+         JRjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fIvU+ha0PviU/sibSkvPHyTumVcfp/XuVnG8TGWl1tg=;
-        b=pD5NUYCLu/Ds3AKSB8H8aDKsTbpSggYFOGQJSkiGaFeVn0vJbJAgCCSRBD5cu5uILt
-         AsP70uUItsvkMBNNeghrOqAgK57GPkF//bF2z4e+TJR0P4pdab+uuv+rWS3/7vT9PKBU
-         3OAHstpzmTVNDsQFHT13Fc2Mt2ri/8G9bfVQvJ/Q0RQqU9P9koZdcUEsjJ+BCzbnC0E+
-         dc2ZMut9O53W4Aky7eHZrQDfgaIXpQch+ndaS9ShrQpcjKGnJIF4WGBa39bhRvatqTHI
-         86IyMaA9P9tnb9gSEVsDUEyi55YZP7l0a1e729ZRDBi7ealbj6BCpaDLYdEOW55q4vYx
-         XaFg==
-X-Gm-Message-State: APjAAAXxYIgYtHTQ1d1Eygfe75Kzko005+hNr+BzxuiSXo99qOeBDj/f
-        EZ38sCQnHuwgfjCv2VRoD8FRjdtDoYzLxas0FtAs
-X-Google-Smtp-Source: APXvYqyxrQhJxL6YTK1IQrRGp/CVZ4FR/LfHLvH12rSsobg2OWRzTR6O4bHJaXr5UpPyFchEPI025JnE2t3cIS5I/r8=
-X-Received: by 2002:a19:c301:: with SMTP id t1mr140375lff.137.1559168239261;
- Wed, 29 May 2019 15:17:19 -0700 (PDT)
+        bh=t49dJmETs8La1f+MwRhpaeRXNs8pwfNjtCbfGrPUmGI=;
+        b=AYe8d0YtVZSBMiZyuRZ4QObEgZ4nkBt0IPeKFARDsN7xIujhDxCbR7RoHrvdv774h4
+         PXaIpPgyPLadN50VD1qWgirrj9VMLvr55A0FNqetyr6v+W91mxvvPTUO74e8gZZnd3LA
+         bRWK1Rj8Kv+XXr6N/Gorwy1pl+pZ3HORUlqb0dccxb+yX5MFb1N1uGX0ISnUKl+ctzmb
+         rUeG+7lLUZiLkcaJmNl3pkfrk+KGrOXxLUC74tQiFq7DnGnw5m9x1R7dOFqNQwYz7/DW
+         aaHnV7jTtexHysswVmNQrFSG4cNbmy21MKh47z8Iv68pgWZqZ+CDPtQ8RHNYUww/ROR/
+         v9HA==
+X-Gm-Message-State: APjAAAU2m2zw64RA95ALXKq7xfG7Hu/MaCWTDjq4MFkPE9h5b/dGAAwe
+        5PbJS8OuCg2vTQMGEiQ1hCRrgJ1t2hRVGYlmKXGFRyE=
+X-Google-Smtp-Source: APXvYqzXoX5W/MSRe7ZM1UFVUXZ7hVlI4/qUTd+yNc10f5h38uBnQFKctQEahIj0puMuN+Akyog1+YJ/gUbmGgqoReo=
+X-Received: by 2002:a2e:9106:: with SMTP id m6mr145593ljg.164.1559168783453;
+ Wed, 29 May 2019 15:26:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1554732921.git.rgb@redhat.com> <423ed5e5c5e4ed7c3e26ac7d2bd7c267aaae777c.1554732921.git.rgb@redhat.com>
-In-Reply-To: <423ed5e5c5e4ed7c3e26ac7d2bd7c267aaae777c.1554732921.git.rgb@redhat.com>
+References: <cover.1554732921.git.rgb@redhat.com> <20190422113810.GA27747@hmswarspite.think-freely.org>
+ <CAHC9VhQYPF2ma_W+hySbQtfTztf=K1LTFnxnyVK0y9VYxj-K=w@mail.gmail.com>
+In-Reply-To: <CAHC9VhQYPF2ma_W+hySbQtfTztf=K1LTFnxnyVK0y9VYxj-K=w@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 29 May 2019 18:17:08 -0400
-Message-ID: <CAHC9VhQ9t-mvJGNCzArjg+MTGNXcZbVrWV4=RUD5ML_bHqua1Q@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V6 09/10] audit: add support for containerid to
- network namespaces
+Date:   Wed, 29 May 2019 18:26:12 -0400
+Message-ID: <CAHC9VhTQ0gDZoWUh1QB4b7h3AgbpkhS40jrPVpCfJb11GT_FzQ@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 00/10] audit: implement container identifier
 To:     Richard Guy Briggs <rgb@redhat.com>
 Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
         Linux-Audit Mailing List <linux-audit@redhat.com>,
@@ -57,93 +57,63 @@ Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
         sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
         simo@redhat.com, Eric Paris <eparis@parisplace.org>,
         Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com
+        Neil Horman <nhorman@tuxdriver.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 8, 2019 at 11:41 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+On Mon, Apr 22, 2019 at 9:49 AM Paul Moore <paul@paul-moore.com> wrote:
+> On Mon, Apr 22, 2019 at 7:38 AM Neil Horman <nhorman@tuxdriver.com> wrote:
+> > On Mon, Apr 08, 2019 at 11:39:07PM -0400, Richard Guy Briggs wrote:
+> > > Implement kernel audit container identifier.
+> >
+> > I'm sorry, I've lost track of this, where have we landed on it? Are we good for
+> > inclusion?
 >
-> Audit events could happen in a network namespace outside of a task
-> context due to packets received from the net that trigger an auditing
-> rule prior to being associated with a running task.  The network
-> namespace could be in use by multiple containers by association to the
-> tasks in that network namespace.  We still want a way to attribute
-> these events to any potential containers.  Keep a list per network
-> namespace to track these audit container identifiiers.
+> I haven't finished going through this latest revision, but unless
+> Richard made any significant changes outside of the feedback from the
+> v5 patchset I'm guessing we are "close".
 >
-> Add/increment the audit container identifier on:
-> - initial setting of the audit container identifier via /proc
-> - clone/fork call that inherits an audit container identifier
-> - unshare call that inherits an audit container identifier
-> - setns call that inherits an audit container identifier
-> Delete/decrement the audit container identifier on:
-> - an inherited audit container identifier dropped when child set
-> - process exit
-> - unshare call that drops a net namespace
-> - setns call that drops a net namespace
+> Based on discussions Richard and I had some time ago, I have always
+> envisioned the plan as being get the kernel patchset, tests, docs
+> ready (which Richard has been doing) and then run the actual
+> implemented API by the userland container folks, e.g. cri-o/lxc/etc.,
+> to make sure the actual implementation is sane from their perspective.
+> They've already seen the design, so I'm not expecting any real
+> surprises here, but sometimes opinions change when they have actual
+> code in front of them to play with and review.
 >
-> Please see the github audit kernel issue for contid net support:
->   https://github.com/linux-audit/audit-kernel/issues/92
-> Please see the github audit testsuiite issue for the test case:
->   https://github.com/linux-audit/audit-testsuite/issues/64
-> Please see the github audit wiki for the feature overview:
->   https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> Acked-by: Neil Horman <nhorman@tuxdriver.com>
-> Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->  include/linux/audit.h | 19 +++++++++++
->  kernel/audit.c        | 88 +++++++++++++++++++++++++++++++++++++++++++++++++--
->  kernel/nsproxy.c      |  4 +++
->  3 files changed, 108 insertions(+), 3 deletions(-)
+> Beyond that, while the cri-o/lxc/etc. folks are looking it over,
+> whatever additional testing we can do would be a big win.  I'm
+> thinking I'll pull it into a separate branch in the audit tree
+> (audit/working-container ?) and include that in my secnext kernels
+> that I build/test on a regular basis; this is also a handy way to keep
+> it based against the current audit/next branch.  If any changes are
+> needed Richard can either chose to base those changes on audit/next or
+> the separate audit container ID branch; that's up to him.  I've done
+> this with other big changes in other trees, e.g. SELinux, and it has
+> worked well to get some extra testing in and keep the patchset "merge
+> ready" while others outside the subsystem look things over.
 
-...
+I just sent my feedback on the v6 patchset, and it's small: basically
+three patches with "one-liner" changes needed.
 
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 6c742da66b32..996213591617 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -376,6 +384,75 @@ static struct sock *audit_get_sk(const struct net *net)
->         return aunet->sk;
->  }
->
-> +void audit_netns_contid_add(struct net *net, u64 contid)
-> +{
-> +       struct audit_net *aunet;
-> +       struct list_head *contid_list;
-> +       struct audit_contid *cont;
-> +
-> +       if (!net)
-> +               return;
-> +       if (!audit_contid_valid(contid))
-> +               return;
-> +       aunet = net_generic(net, audit_net_id);
-> +       if (!aunet)
-> +               return;
-> +       contid_list = &aunet->contid_list;
-> +       spin_lock(&aunet->contid_list_lock);
-> +       list_for_each_entry_rcu(cont, contid_list, list)
-> +               if (cont->id == contid) {
-> +                       refcount_inc(&cont->refcount);
-> +                       goto out;
-> +               }
-> +       cont = kmalloc(sizeof(struct audit_contid), GFP_ATOMIC);
-> +       if (cont) {
-> +               INIT_LIST_HEAD(&cont->list);
+Richard, it's your call on how you want to proceed from here.  You can
+post a v7 incorporating the feedback, or since the tweaks are so
+minor, you can post fixup patches; the former being more
+comprehensive, the later being quicker to review and digest.
+Regardless of that, while we are waiting on a prototype from the
+container folks, I think it would be good to pull this into a working
+branch in the audit repo (as mentioned above), unless you would prefer
+to keep it as a patchset on the mailing list?  If you want to go with
+the working branch approach, I'll keep the branch fresh and (re)based
+against audit/next and if we notice any problems you can just submit
+fixes against that branch (depending on the issue they can be fixup
+patches, or proper patches).  My hope is that this will enable the
+process to move quicker as we get near the finish line.
 
-I thought you were going to get rid of this INIT_LIST_HEAD() call?
-
-> +               cont->id = contid;
-> +               refcount_set(&cont->refcount, 1);
-> +               list_add_rcu(&cont->list, contid_list);
-> +       }
-> +out:
-> +       spin_unlock(&aunet->contid_list_lock);
-> +}
-
---
+-- 
 paul moore
 www.paul-moore.com
