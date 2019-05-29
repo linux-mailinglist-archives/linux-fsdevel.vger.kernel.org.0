@@ -2,70 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3C0A2E0A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 17:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 649AD2E112
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 17:29:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbfE2PKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 11:10:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726489AbfE2PKz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 11:10:55 -0400
-Received: from localhost (unknown [207.225.69.115])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BD4C23B8C;
-        Wed, 29 May 2019 15:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559142654;
-        bh=Mr53O7RleTzao/dC3tr4uYgD841gD6k8Bfp9NeUAZNk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cyZDYlLhz99DlaSRHVOISk3X1d11X1h9Fiz3jTrszIeyByTGLo2bl0E7oNhgidbW/
-         VJ8N+GNkh9ZZy3qTa+Vmy92q5T2mmnFSfExvTgnpUfERO9Qe7mgd5l1GOtalC9z9xE
-         RTTffwT/PNMfhmHHx+8OlwnVhmiphlqO2+oGPpvk=
-Date:   Wed, 29 May 2019 08:10:53 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
-Message-ID: <20190529151053.GA10231@kroah.com>
-References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <CAOQ4uxjC1M7jwjd9zSaSa6UW2dbEjc+ZbFSo7j9F1YHAQxQ8LQ@mail.gmail.com>
- <20190529142504.GC32147@quack2.suse.cz>
+        id S1726396AbfE2P3T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 11:29:19 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42717 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfE2P3T (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 May 2019 11:29:19 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y15so457705ljd.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 08:29:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zGaoYWpZqQThaCeamoLFUvuaep53rUnIcLcyCp5w/vg=;
+        b=K16i45JTnOhNMfVGcEM3dEc/HE4jxUF98k+I1d4LAg3DOuRJvQylZri7olnMGkge0H
+         4u/1DHCKb96WcllkEwg/MgRcL7L1CCWB/hO2xL6zPqW540FOdvpqq8ULGBnZRtoyr3fP
+         /dGrfil607dUvRtiW7bu8V4ywrGKbWRLqU6mf6azB7C8mCUui5dBAoSANEn7un7OuRYk
+         IqepsvKsbnqV/1oKEERjHclI3LARwVOrafGfm/8g8m245GMvIADoi+bQuHeE9itYkX84
+         p6l1akwBNRSzQLd+wftooHrEfiVN9zwWBxGF+rHhkqPeWkDXyPffgp3T4WNSYiCr0lTu
+         +NzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zGaoYWpZqQThaCeamoLFUvuaep53rUnIcLcyCp5w/vg=;
+        b=Ixnq+kTEWy9Xg0N1WM+HQY82ZVoyPY1h8AAZfqadEvzuHca9xuaIJRGPUQn7ID9rR0
+         hpedF4ldVTHpMWIh5wi0cSUcJfs4ngWAgN/djbl9mYK0Fu5j2ZvY59UHLjiNb4MU12wU
+         FSLwjHddG5zoL4woMWyaegL+D8jMGDQBXzt+yt2FwyFrdxzEnVELKnL5mVtwW6tYQts5
+         gprPUCcE93uWHZ484TTMfD4QVg21pr9gLi4ZOUN5/uuVpC3QjE0CjIgfJyLa1XIEgnh8
+         JP/DZtd9MFQufjLZEM9U1ipbiZsvIqKsJpWDwroawSj7LGnKeL+7wpYUfjAe2sESnAK+
+         n91g==
+X-Gm-Message-State: APjAAAVHgvozdD8sRtev5zgt4mgqDyEV0MCAleVMAcB4CYY2xvb1HazY
+        5EEQTT47yegNy3MyJvamSAd6jMHAEcDiCOOesSQg
+X-Google-Smtp-Source: APXvYqzA1he5CqqTYdGxCaEGH42J2+OT0TC3I1+seVKjcqbN4107AbF/Fb/yxBclhcMIQ95Q2dNrHCvd5kXZOEP8NA8=
+X-Received: by 2002:a2e:92cc:: with SMTP id k12mr2501807ljh.16.1559143756865;
+ Wed, 29 May 2019 08:29:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529142504.GC32147@quack2.suse.cz>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <cover.1554732921.git.rgb@redhat.com> <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
+ <20190529145742.GA8959@cisco>
+In-Reply-To: <20190529145742.GA8959@cisco>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 29 May 2019 11:29:05 -0400
+Message-ID: <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 29, 2019 at 04:25:04PM +0200, Jan Kara wrote:
-> > I am not asking that you implement fs_notify() before merging sb_notify()
-> > and I understand that you have a use case for sb_notify().
-> > I am asking that you show me the path towards a unified API (how a
-> > typical program would look like), so that we know before merging your
-> > new API that it could be extended to accommodate fsnotify events
-> > where the final result will look wholesome to users.
-> 
-> Are you sure we want to combine notification about file changes etc. with
-> administrator-type notifications about the filesystem? To me these two
-> sound like rather different (although sometimes related) things.
+On Wed, May 29, 2019 at 10:57 AM Tycho Andersen <tycho@tycho.ws> wrote:
+>
+> On Mon, Apr 08, 2019 at 11:39:09PM -0400, Richard Guy Briggs wrote:
+> > It is not permitted to unset the audit container identifier.
+> > A child inherits its parent's audit container identifier.
+>
+> ...
+>
+> >  /**
+> > + * audit_set_contid - set current task's audit contid
+> > + * @contid: contid value
+> > + *
+> > + * Returns 0 on success, -EPERM on permission failure.
+> > + *
+> > + * Called (set) from fs/proc/base.c::proc_contid_write().
+> > + */
+> > +int audit_set_contid(struct task_struct *task, u64 contid)
+> > +{
+> > +     u64 oldcontid;
+> > +     int rc = 0;
+> > +     struct audit_buffer *ab;
+> > +     uid_t uid;
+> > +     struct tty_struct *tty;
+> > +     char comm[sizeof(current->comm)];
+> > +
+> > +     task_lock(task);
+> > +     /* Can't set if audit disabled */
+> > +     if (!task->audit) {
+> > +             task_unlock(task);
+> > +             return -ENOPROTOOPT;
+> > +     }
+> > +     oldcontid = audit_get_contid(task);
+> > +     read_lock(&tasklist_lock);
+> > +     /* Don't allow the audit containerid to be unset */
+> > +     if (!audit_contid_valid(contid))
+> > +             rc = -EINVAL;
+> > +     /* if we don't have caps, reject */
+> > +     else if (!capable(CAP_AUDIT_CONTROL))
+> > +             rc = -EPERM;
+> > +     /* if task has children or is not single-threaded, deny */
+> > +     else if (!list_empty(&task->children))
+> > +             rc = -EBUSY;
+> > +     else if (!(thread_group_leader(task) && thread_group_empty(task)))
+> > +             rc = -EALREADY;
+> > +     read_unlock(&tasklist_lock);
+> > +     if (!rc)
+> > +             task->audit->contid = contid;
+> > +     task_unlock(task);
+> > +
+> > +     if (!audit_enabled)
+> > +             return rc;
+>
+> ...but it is allowed to change it (assuming
+> capable(CAP_AUDIT_CONTROL), of course)? Seems like this might be more
+> immediately useful since we still live in the world of majority
+> privileged containers if we didn't allow changing it, in addition to
+> un-setting it.
 
-This patchset is looking to create a "generic" kernel notification
-system, so I think the question is valid.  It's up to the requestor to
-ask for the specific type of notification.
+The idea is that only container orchestrators should be able to
+set/modify the audit container ID, and since setting the audit
+container ID can have a significant effect on the records captured
+(and their routing to multiple daemons when we get there) modifying
+the audit container ID is akin to modifying the audit configuration
+which is why it is gated by CAP_AUDIT_CONTROL.  The current thinking
+is that you would only change the audit container ID from one
+set/inherited value to another if you were nesting containers, in
+which case the nested container orchestrator would need to be granted
+CAP_AUDIT_CONTROL (which everyone to date seems to agree is a workable
+compromise).  We did consider allowing for a chain of nested audit
+container IDs, but the implications of doing so are significant
+(implementation mess, runtime cost, etc.) so we are leaving that out
+of this effort.
 
-thanks,
+From a practical perspective, un-setting the audit container ID is
+pretty much the same as changing it from one set value to another so
+most of the above applies to that case as well.
 
-greg k-h
+-- 
+paul moore
+www.paul-moore.com
