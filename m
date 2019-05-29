@@ -2,131 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4766E2DF6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 16:16:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D5A2DFAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 16:25:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfE2OQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 10:16:43 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43765 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbfE2OQm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 10:16:42 -0400
-Received: by mail-ot1-f68.google.com with SMTP id i8so2149200oth.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 07:16:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LPIxbFckpmqavIl60mnhGb6C8rcrkiaOP2OfEidBo5E=;
-        b=PRVorFm2Okq9hP5kqFH4ZiGr/E/Zu5eJY3MGXXFHxfdpmEdO3GutJJMHvfi09HYlYk
-         SnDTz9Jq0D6SvbjJsXUxw5SPAGf64dGBdkqzG7gBAtOGooyMlAvl8mmczoLi90evYR0A
-         PoHHqSU1LxoqR2wdSfJkTL18f/IZSr+Mc0D+armTgiJNv2KbxIbIGzPnKannBmXr5ZoL
-         onXscwCND5pzd7qsQ+4DRiaG4VALoZaDIZlGVD+Au9+DrLehAtdeFUdLTVj+n3sjvpTd
-         19cYxGogHm6iK4AXItVQ8hkyokyg4Cjwng+d2g0cb8MTYxZRlHB62qmC+BHhUJPQbJyg
-         MxTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LPIxbFckpmqavIl60mnhGb6C8rcrkiaOP2OfEidBo5E=;
-        b=NXQv0JcNqXi1h67kggsPaded4Xh6ntaVaE3ES1i5XqDyJHIkvWxqEFl0QSIRcl1Fah
-         j/XdC0weWVB0QSpmFgH232owx9MD0iZQmBVAeH78FxJCwYRRV00VwxcetH3gHlRcDwPL
-         yKVbhkOcT7+uq4kj/Js8Jo/BrcWfqZc9iPVb20rwMxDCYV34xn9nohj/nY17GizcWovK
-         TuIUG9nAwotlJknsexsRK7tdH3pfyBBI5e+d5y9Vy8ZHKT0AKdnCgyVIGM5D4yBIW9Xe
-         gYU7tt3BD5BeWgHYgX+GiVfKEbwh14vZXM/UZHKRxOUsbrV0Uz8qy0me3W6Y8TwmhtkY
-         ZXxg==
-X-Gm-Message-State: APjAAAW/p/KpBHcWiZ2bIf95FU9WUhTaCd8Lpfq8mezHzbxyVqDY++n8
-        1gD51Lmzo3n4hbjXdYakYE8WMnszYnrLF/l9zBWnzQ==
-X-Google-Smtp-Source: APXvYqwFTJrhrhEsjfOGtxnb29he2Fqyf9z7Tcu+GzobGgP0NfT3JF16fdsQq+/5jwCnLYlKlqDC3v5fUc8xIPyeFeo=
-X-Received: by 2002:a9d:7f8b:: with SMTP id t11mr37188otp.110.1559139396903;
- Wed, 29 May 2019 07:16:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905934373.7587.10824503964531598726.stgit@warthog.procyon.org.uk>
- <CAG48ez2o1egR13FDd3=CgdXP_MbBsZM4SX=+aqvR6eheWddhFg@mail.gmail.com> <24577.1559134719@warthog.procyon.org.uk>
-In-Reply-To: <24577.1559134719@warthog.procyon.org.uk>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 29 May 2019 16:16:10 +0200
-Message-ID: <CAG48ez0Ugv=cfj-v6DaYma0HgyiBjpykSkCr7mCAcMx13LEncg@mail.gmail.com>
-Subject: Re: [PATCH 4/7] vfs: Add superblock notifications
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        id S1726843AbfE2OZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 10:25:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41902 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726118AbfE2OZH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 May 2019 10:25:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 10E91AF42;
+        Wed, 29 May 2019 14:25:05 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8E7301E3F53; Wed, 29 May 2019 16:25:04 +0200 (CEST)
+Date:   Wed, 29 May 2019 16:25:04 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-api@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
+Message-ID: <20190529142504.GC32147@quack2.suse.cz>
+References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+ <CAOQ4uxjC1M7jwjd9zSaSa6UW2dbEjc+ZbFSo7j9F1YHAQxQ8LQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjC1M7jwjd9zSaSa6UW2dbEjc+ZbFSo7j9F1YHAQxQ8LQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 29, 2019 at 2:58 PM David Howells <dhowells@redhat.com> wrote:
-> Jann Horn <jannh@google.com> wrote:
-> > It might make sense to require that the path points to the root inode
-> > of the superblock? That way you wouldn't be able to do this on a bind
-> > mount that exposes part of a shared filesystem to a container.
->
-> Why prevent that?  It doesn't prevent the container denizen from watching a
-> bind mount that exposes the root of a shared filesystem into a container.
-
-Well, yes, but if you expose the root of the shared filesystem to the
-container, the container is probably meant to have a higher level of
-access than if only a bind mount is exposed? But I don't know.
-
-> It probably makes sense to permit the LSM to rule on whether a watch may be
-> emplaced, however.
-
-We should have some sort of reasonable policy outside of LSM code
-though - the kernel should still be secure even if no LSMs are built
-into it.
-
-> > > +                       }
-> > > +               }
-> > > +               up_write(&s->s_umount);
-> > > +               if (ret < 0)
-> > > +                       kfree(watch);
-> > > +       } else if (s->s_watchers) {
+On Wed 29-05-19 09:33:35, Amir Goldstein wrote:
+> On Tue, May 28, 2019 at 7:03 PM David Howells <dhowells@redhat.com> wrote:
 > >
-> > This should probably have something like a READ_ONCE() for clarity?
->
-> Note that I think I'll rearrange this to:
->
->         } else {
->                 ret = -EBADSLT;
->                 if (s->s_watchers) {
->                         down_write(&s->s_umount);
->                         ret = remove_watch_from_object(s->s_watchers, wqueue,
->                                                        s->s_unique_id, false);
->                         up_write(&s->s_umount);
->                 }
->         }
->
-> I'm not sure READ_ONCE() is necessary, since s_watchers can only be
-> instantiated once and the watch list then persists until the superblock is
-> deactivated.  Furthermore, by the time deactivate_locked_super() is called, we
-> can't be calling sb_notify() on it as it's become inaccessible.
->
-> So if we see s->s_watchers as non-NULL, we should not see anything different
-> inside the lock.  In fact, I should be able to rewrite the above to:
->
->         } else {
->                 ret = -EBADSLT;
->                 wlist = s->s_watchers;
->                 if (wlist) {
->                         down_write(&s->s_umount);
->                         ret = remove_watch_from_object(wlist, wqueue,
->                                                        s->s_unique_id, false);
->                         up_write(&s->s_umount);
->                 }
->         }
+> >
+> > Hi Al,
+> >
+> > Here's a set of patches to add a general variable-length notification queue
+> > concept and to add sources of events for:
+> >
+> >  (1) Mount topology events, such as mounting, unmounting, mount expiry,
+> >      mount reconfiguration.
+> >
+> >  (2) Superblock events, such as R/W<->R/O changes, quota overrun and I/O
+> >      errors (not complete yet).
+> >
+> >  (3) Block layer events, such as I/O errors.
+> >
+> >  (4) Key/keyring events, such as creating, linking and removal of keys.
+> >
+> > One of the reasons for this is so that we can remove the issue of processes
+> > having to repeatedly and regularly scan /proc/mounts, which has proven to
+> > be a system performance problem.  To further aid this, the fsinfo() syscall
+> > on which this patch series depends, provides a way to access superblock and
+> > mount information in binary form without the need to parse /proc/mounts.
+> >
+> >
+> > Design decisions:
+> >
+> >  (1) A misc chardev is used to create and open a ring buffer:
+> >
+> >         fd = open("/dev/watch_queue", O_RDWR);
+> >
+> >      which is then configured and mmap'd into userspace:
+> >
+> >         ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE);
+> >         ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
+> >         buf = mmap(NULL, BUF_SIZE * page_size, PROT_READ | PROT_WRITE,
+> >                    MAP_SHARED, fd, 0);
+> >
+> >      The fd cannot be read or written (though there is a facility to use
+> >      write to inject records for debugging) and userspace just pulls data
+> >      directly out of the buffer.
+> >
+> >  (2) The ring index pointers are stored inside the ring and are thus
+> >      accessible to userspace.  Userspace should only update the tail
+> >      pointer and never the head pointer or risk breaking the buffer.  The
+> >      kernel checks that the pointers appear valid before trying to use
+> >      them.  A 'skip' record is maintained around the pointers.
+> >
+> >  (3) poll() can be used to wait for data to appear in the buffer.
+> >
+> >  (4) Records in the buffer are binary, typed and have a length so that they
+> >      can be of varying size.
+> >
+> >      This means that multiple heterogeneous sources can share a common
+> >      buffer.  Tags may be specified when a watchpoint is created to help
+> >      distinguish the sources.
+> >
+> >  (5) The queue is reusable as there are 16 million types available, of
+> >      which I've used 4, so there is scope for others to be used.
+> >
+> >  (6) Records are filterable as types have up to 256 subtypes that can be
+> >      individually filtered.  Other filtration is also available.
+> >
+> >  (7) Each time the buffer is opened, a new buffer is created - this means
+> >      that there's no interference between watchers.
+> >
+> >  (8) When recording a notification, the kernel will not sleep, but will
+> >      rather mark a queue as overrun if there's insufficient space, thereby
+> >      avoiding userspace causing the kernel to hang.
+> >
+> >  (9) The 'watchpoint' should be specific where possible, meaning that you
+> >      specify the object that you want to watch.
+> >
+> > (10) The buffer is created and then watchpoints are attached to it, using
+> >      one of:
+> >
+> >         keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
+> >         mount_notify(AT_FDCWD, "/", 0, fd, 0x02);
+> >         sb_notify(AT_FDCWD, "/mnt", 0, fd, 0x03);
+> >
+> >      where in all three cases, fd indicates the queue and the number after
+> >      is a tag between 0 and 255.
+> >
+> > (11) The watch must be removed if either the watch buffer is destroyed or
+> >      the watched object is destroyed.
+> >
+> >
+> > Things I want to avoid:
+> >
+> >  (1) Introducing features that make the core VFS dependent on the network
+> >      stack or networking namespaces (ie. usage of netlink).
+> >
+> >  (2) Dumping all this stuff into dmesg and having a daemon that sits there
+> >      parsing the output and distributing it as this then puts the
+> >      responsibility for security into userspace and makes handling
+> >      namespaces tricky.  Further, dmesg might not exist or might be
+> >      inaccessible inside a container.
+> >
+> >  (3) Letting users see events they shouldn't be able to see.
+> >
+> >
+> > Further things that could be considered:
+> >
+> >  (1) Adding a keyctl call to allow a watch on a keyring to be extended to
+> >      "children" of that keyring, such that the watch is removed from the
+> >      child if it is unlinked from the keyring.
+> >
+> >  (2) Adding global superblock event queue.
+> >
+> >  (3) Propagating watches to child superblock over automounts.
+> >
+> 
+> David,
+> 
+> I am interested to know how you envision filesystem notifications would
+> look with this interface.
+> 
+> fanotify can certainly benefit from providing a ring buffer interface to read
+> events.
+> 
+> From what I have seen, a common practice of users is to monitor mounts
+> (somehow) and place FAN_MARK_MOUNT fanotify watches dynamically.
+> It'd be good if those users can use a single watch mechanism/API for
+> watching the mount namespace and filesystem events within mounts.
+> 
+> A similar usability concern is with sb_notify and FAN_MARK_FILESYSTEM.
+> It provides users with two complete different mechanisms to watch error
+> and filesystem events. That is generally not a good thing to have.
+> 
+> I am not asking that you implement fs_notify() before merging sb_notify()
+> and I understand that you have a use case for sb_notify().
+> I am asking that you show me the path towards a unified API (how a
+> typical program would look like), so that we know before merging your
+> new API that it could be extended to accommodate fsnotify events
+> where the final result will look wholesome to users.
 
-I'm extremely twitchy when it comes to code like this because AFAIK
-gcc at least used to sometimes turn code that read a value from memory
-and then used it multiple times into something with multiple memory
-reads, leading to critical security vulnerabilities; see e.g. slide 36
-of <https://www.blackhat.com/docs/us-16/materials/us-16-Wilhelm-Xenpwn-Breaking-Paravirtualized-Devices.pdf>.
-I am not aware of any spec that requires the compiler to only perform
-one read from the memory location in code like this.
+Are you sure we want to combine notification about file changes etc. with
+administrator-type notifications about the filesystem? To me these two
+sound like rather different (although sometimes related) things.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
