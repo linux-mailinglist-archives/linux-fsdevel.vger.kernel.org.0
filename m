@@ -2,55 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B2A42D522
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 07:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 538882D54B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 07:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbfE2FjC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 01:39:02 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:45716 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbfE2FjB (ORCPT
+        id S1726253AbfE2F6W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 01:58:22 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:38715 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbfE2F6V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 01:39:01 -0400
-Received: by mail-yb1-f195.google.com with SMTP id e128so327076ybc.12;
-        Tue, 28 May 2019 22:39:01 -0700 (PDT)
+        Wed, 29 May 2019 01:58:21 -0400
+Received: by mail-yw1-f66.google.com with SMTP id b74so558921ywe.5;
+        Tue, 28 May 2019 22:58:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vXawYOoYL3iVXFsDCoGpoazEsaewREIFtZ87X0NznBo=;
-        b=UOFBRy2khHWgEKicbD1a2E+aZAQGkNify5UGBgYZa3y+sdQzXJ3Yyi0HX5hO4Da8PQ
-         2APyB3WrMNTWjkYSDhODjmiUNivOY8ESI5ydrxy4WLkFlIjpbpE0YPS1xUYgn+8tg+Tz
-         +3cZtZRoTU9CwJ2Vt4N2xIpXHAqBvj8F9UDfT3DD+Fk6fX4xIvKyIco2JcWai3rc2nGp
-         poXBKSbQ4oJ8FsFlGv5Pv+xScvrn6QEJEAcQHlmV0Y0bIqmpZw8nOHRf2SG+GoFkotNf
-         RjpVGrsOGEXAnFqIgIiOlqEF0rhZ3D1gIMnocfEDPk0lW6h/lNhrAuBBRKBQhHMuv9Wu
-         T1CQ==
+        bh=a6nWKM07XCTQG/jfZDs9epRQaNFVvzTBWML5ZHkbuZw=;
+        b=A2C1071RXs3ZnZFiz4+/N4wTKcNvDdPJLbUb0TAOcCSExMUOU0vJkws3W8UBuKFXJK
+         DQYos90pa3qhlOzf9QdV8jpPV3w6caXq9Z5SF6c5Yd2KFWaf5qzXzQ2BDN4ifGyZm0d6
+         DTQbQ5k4lq9u5oMjPtxM1Og6YUXpPJEcJrzyqI1eg8XuwOON5Bf70Mr8cfVb7V+ZKVSt
+         eGk+Rhy9X77XNrNW/fIyQeQcBZ8aSptJYLkkBruwp0Nash6DVh3WHRQ2Z3adqhkLVzRB
+         tcKEfFr170QG/HzEvGMGkIp5ASzcgqG4Kpm3woXcLTsYvw/rW8KfTfap5hMeA/clngd0
+         N1wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vXawYOoYL3iVXFsDCoGpoazEsaewREIFtZ87X0NznBo=;
-        b=dusDDpiTB6sQOPQ0jg8S/K3C/7NAVnJkBdx0ygZmMiSIVkkMPvSME6E4bxMtCFS9ir
-         J3UT8/4cSf1WnIIOl1BFEqHfUGlTX4oDmTkO42RyJ+TFrFpu4tzyFeNMA4Sv+C53aL2w
-         CLEomFpU5gSTKQrrSC5+jmrT9n43EFC9X6F6YlivO9Ts6Dknc2W9KhpfzFQ7EG5mL0yX
-         DOMBlD43sWEkhTDBktjGCIMP3x1jGX9081oxjl8catjNAXwsh8I30tGsKr4chIx87Jz8
-         VkHBTX/+k7UBdJOd/k0/iFOfabpaLbxqokIBz/hQ6qwDbbKpRsouDUgSQ5rkAJkygTF0
-         Q8Cg==
-X-Gm-Message-State: APjAAAWog2cToNaA899H1orSWdBiCyq1IkLPGsfQqXaAIfOG9SRgXg3a
-        19rzQkeNLfzDg8yuVCrY50NvOIl2gQuM/B3DIoY=
-X-Google-Smtp-Source: APXvYqxedQWc5ndnnoOxgtJO+TWkV1HPjz/HUq1qcE4fouHr3mtFf6yvJ3r27cgAVJe+Bai7FhvdiKsNYVjx8IGuwXs=
-X-Received: by 2002:a25:d946:: with SMTP id q67mr3637755ybg.126.1559108340796;
- Tue, 28 May 2019 22:39:00 -0700 (PDT)
+        bh=a6nWKM07XCTQG/jfZDs9epRQaNFVvzTBWML5ZHkbuZw=;
+        b=YGMFLKuyLkDjSlhk/jf3LW2fUiVVYAm89EpEUsRJFj2zZiw/piGR0xWv3KuLD21Fel
+         hX454flacYF21d2Ln+8k31AmVNku0p1LbUy/3vP10vFfWtjng/O3jBCHbXp42TUiZ3hf
+         4OXaIissRLfFBhuFUX2UXz+aGjHnjPgo8IFPOmZqLPgtZEerxZ1XvP7ENYT8VgVzjzen
+         X6x6WnhE0bXCiolC/l1eoFVQwFZCnu01yTo7z8RUnwsjWO+f9uF9G62fvjAZX1qoDUKr
+         /ZjKWKpxOz+zj8GVOM0aVDo2Dl0xvV2keVFRyFqU+lIcr1mkCZRst07IHZ3jBvy2BqP1
+         /bIQ==
+X-Gm-Message-State: APjAAAVOWs8yCgcdML+NPT0lNwckr7GT22Po59zDXJY8a1aFtmza/UOu
+        hwWnwtpnhmSkgTnjtGr+Fe2RxdH4atvDK8QIpR0=
+X-Google-Smtp-Source: APXvYqwOYL6l/1Lb+X/MmTJtqY36StiIa0PKZ+W9pnloEyELi6wxlXec1BgwoTyrnIQmVl1lph0TPhcoazHCkPM1AuM=
+X-Received: by 2002:a81:4ecc:: with SMTP id c195mr60862161ywb.31.1559109500665;
+ Tue, 28 May 2019 22:58:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190527172655.9287-1-amir73il@gmail.com> <20190528202659.GA12412@mit.edu>
-In-Reply-To: <20190528202659.GA12412@mit.edu>
+References: <20190527172655.9287-1-amir73il@gmail.com> <20190528200659.GK5221@magnolia>
+In-Reply-To: <20190528200659.GK5221@magnolia>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 29 May 2019 08:38:49 +0300
-Message-ID: <CAOQ4uxgo5jmwQbLAKQre9=7pLQw=CwMgDaWPaJxi-5NGnPEVPQ@mail.gmail.com>
+Date:   Wed, 29 May 2019 08:58:09 +0300
+Message-ID: <CAOQ4uxgq-A7qpi8Mj-N2f2TC1fCHZ45yBc0_KfA9CygwqLMNHw@mail.gmail.com>
 Subject: Re: [RFC][PATCH] link.2: AT_ATOMIC_DATA and AT_ATOMIC_METADATA
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Jan Kara <jack@suse.cz>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         Dave Chinner <david@fromorbit.com>, Chris Mason <clm@fb.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -64,9 +63,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 28, 2019 at 11:27 PM Theodore Ts'o <tytso@mit.edu> wrote:
+On Tue, May 28, 2019 at 11:07 PM Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
 >
 > On Mon, May 27, 2019 at 08:26:55PM +0300, Amir Goldstein wrote:
+> > New link flags to request "atomic" link.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >
+> > Hi Guys,
 > >
 > > Following our discussions on LSF/MM and beyond [1][2], here is
 > > an RFC documentation patch.
@@ -83,46 +89,100 @@ On Tue, May 28, 2019 at 11:27 PM Theodore Ts'o <tytso@mit.edu> wrote:
 > > reference.  In the end, we are trying to solve a social engineering
 > > problem, so this is the least confusing way I could think of to describe
 > > the new API.
+> >
+> > First implementation of AT_ATOMIC_METADATA is expected to be
+> > noop for xfs/ext4 and probably fsync for btrfs.
+> >
+> > First implementation of AT_ATOMIC_DATA is expected to be
+> > filemap_write_and_wait() for xfs/ext4 and probably fdatasync for btrfs.
+> >
+> > Thoughts?
+> >
+> > Amir.
+> >
+> > [1] https://lwn.net/Articles/789038/
+> > [2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com/
+> >
+> >  man2/link.2 | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 51 insertions(+)
+> >
+> > diff --git a/man2/link.2 b/man2/link.2
+> > index 649ba00c7..15c24703e 100644
+> > --- a/man2/link.2
+> > +++ b/man2/link.2
+> > @@ -184,6 +184,57 @@ See
+> >  .BR openat (2)
+> >  for an explanation of the need for
+> >  .BR linkat ().
+> > +.TP
+> > +.BR AT_ATOMIC_METADATA " (since Linux 5.x)"
+> > +By default, a link operation followed by a system crash, may result in the
+> > +new file name being linked with old inode metadata, such as out dated time
+> > +stamps or missing extended attributes.
+> > +.BR fsync (2)
+> > +before linking the inode, but that involves flushing of volatile disk caches.
+> > +
+> > +A filesystem that accepts this flag will guaranty, that old inode metadata
+> > +will not be exposed in the new linked name.
+> > +Some filesystems may internally perform
+> > +.BR fsync (2)
+> > +before linking the inode to provide this guaranty,
+> > +but often, filesystems will have a more efficient method to provide this
+> > +guaranty without flushing volatile disk caches.
+> > +
+> > +A filesystem that accepts this flag does
+> > +.BR NOT
+> > +guaranty that the new file name will exist after a system crash, nor that the
+> > +current inode metadata is persisted to disk.
 >
-> The way you have stated thigs is very confusing, and prone to be
-> misunderstood.  I think it would be helpful to state things in the
-> positive, instead of the negative.
+> Hmmm.  I think it would be much clearer to state the two expectations in
+> the same place, e.g.:
 >
-> Let's review what you had wanted:
->
->         *If* the filename is visible in the directory after the crash,
->         *then* all of the metadata/data that had been written to the file
->         before the linkat(2) would be visible.
->
->         HOWEVER, you did not want to necessarily force an fsync(2) in
->         order to provide that guarantee.  That is, the filename would
->         not necessarily be guaranteed to be visible after a crash when
->         linkat(2) returns, but if the existence of the filename is
->         persisted, then the data would be too.
->
->         Also, at least initially we talked about this only making
->         sense for O_TMPFILE file desacriptors.  I believe you were
->         trying to generalize things so it wouldn't necessarily have to
->         be a file created using O_TMPFILE.  Is that correct?
+> "A filesystem that accepts this flag guarantees that after a successful
+> call completion, the filesystem will return either (a) the version of
+> the metadata that was on disk at the time the call completed; (b) a
+> newer version of that metadata; or (c) -ENOENT.  In other words, a
+> subsequent access of the file path will never return metadata that was
+> obsolete at the time that the call completed, even if the system crashes
+> immediately afterwards."
 
-That is correct. I felt we were limiting ourselves only to avert the
-hardlinks issue, so decided its better to explain that "nlink is not
-part of the inode metadata" that this guarantee refers to.
-I would be happy to get your feedback about the hardlink disclaimer
-since you brought up the concern. It the disclaimer enough?
-Not needed at all?
+Your feedback is along the same line as Ted's feedback.
+I will try out the phrasing that Ted proposed, will see how that goes...
 
 >
-> So instead of saying "A filesystem that accepts this flag will
-> guaranty, that old inode data will not be exposed in the new linked
-> name."  It's much clearer to state this in the affirmative:
+> Did I get that right?  I /think/ this means that one could implement Ye
+> Olde Write And Rename as:
 >
->         A filesystem which accepts this flag will guarantee that if
->         the new pathname exists after a crash, all of the data written
->         to the file at the time of the linkat(2) call will be visible.
+> fd = open(".", O_TMPFILE...);
+> write(fd);
+> fsync(fd);
+
+Certainly not fsync(), that what my "counter-fsync()" phrasing was trying to
+convey. The flags are meant as a "cheaper" replacement for that fsync().
+
+> snprintf(path, PATH_MAX, "/proc/self/fd/%d", fd);
+> linkat(AT_FDCWD, path, AT_FDCWD, "file.txt",
+>         AT_EMPTY_PATH | AT_ATOMIC_DATA | AT_ATOMIC_METADATA);
+>
+> (Still struggling to figure out what userspace programs would use this
+> for...)
 >
 
-Sounds good to me. I will take a swing at another patch.
+There are generally two use cases:
 
-Thanks for the review!
+1. Flushing volatile disk caches is very expensive.
+In this case sync_file_range(SYNC_FILE_RANGE_WRITE_AND_WAIT)
+is cheaper than fdatasync() for a preallocated file and obviously a noop
+for AT_ATOMIC_METADATA in "S.O.M.C" filesystem is cheaper than
+a journal commit.
+
+2. Highly concurrent metadata workloads
+Many users running  AT_ATOMIC_METADATA concurrently are much
+less likely to interfere each other than many users running fsync concurrently.
+
+IWO, when I'm using fsync() to provide the AT_ATOMIC_METADATA guarantee
+on a single journal fs, other users pay the penalty for a guaranty that I didn't
+ask for (i.e. persistency).
+
+Thanks,
 Amir.
