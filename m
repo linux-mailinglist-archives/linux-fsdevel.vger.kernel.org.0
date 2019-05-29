@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF3662E39D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 19:43:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 567D82E3AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 19:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbfE2Rnv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 13:43:51 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51785 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727345AbfE2Rnu (ORCPT
+        id S1727512AbfE2Rn7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 13:43:59 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42154 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727421AbfE2Rnv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 13:43:50 -0400
-Received: by mail-wm1-f65.google.com with SMTP id f10so2260117wmb.1;
-        Wed, 29 May 2019 10:43:48 -0700 (PDT)
+        Wed, 29 May 2019 13:43:51 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l2so2379570wrb.9;
+        Wed, 29 May 2019 10:43:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LuX5OE/4xeK/rXyfFoIQSO2O4Y7R4fvZmK/kzW/AyOc=;
-        b=QHweU0W6vis1g3FWDAwkvTc+uYcEbVGnabnUr7ydLPiaQ3VrO88OCdIzY5BuI3zQoG
-         LlTWKvE2bVVaHzwMESE8R+eWV49mdBnzRpu3tpoknpTd2dNdkmUPS5XIgA5DzCU1Jr0F
-         z53LCTl/JAES+/k0/yaedPqY29A3bBCwhnnhYM8MyWD4c9T0x34U3HEIr4F0olVyCOTv
-         v77+R6+7M3jiLcAW0VAXG0qjm9J3aL63EY7HqcxAbHCk2WTIKfFC0lZ4vG1RkfzwKBCf
-         kDG90wvjrRHn6eUW72BWo6Rd7gCydWt6cPZiQwyLRa6I+X/BHVUsBljW3xIctCi34JQn
-         CAOg==
+        bh=iB8gfO01UWVOvIbXC1SgRvasH8gb3p1b2pcn/FSICGQ=;
+        b=b0k7Uhky+yocLh7DQ5oosoZKI7/cqVQKaU4lK18qqSzkTiwbokIBbcPe+8QkWpRXa8
+         /SdwMHVqdJZQqTm1Fq1HdJTbttYNaiTx80cqXKZKTcxiAlH7x47tQiZtgM09gOqMUU4c
+         dOG8N4gYpx+jTYmeNj39drvhVoHEmrwIeEvk/HncoD+JQ42uuDcCp/FazXiOnmjbmA0y
+         Qyws70g4mdHlzhfgWhGdgY/dMtF8JmkPZiaOrD7l5uW8qrY61bJjm1qranskdKzNJQKa
+         7EVtbBYF9DG+lINa//bbPNSWhu3w6ZQMnKrFNN3ZOzT9LC9pbEW5SVAV44T0KHYzwOYb
+         DcMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LuX5OE/4xeK/rXyfFoIQSO2O4Y7R4fvZmK/kzW/AyOc=;
-        b=Acg6sMW8W6Dews3VO6/A+AyqB38Cd3m7Aq9mgkPyjGsmmpMwva5MSX4LH7+8HT0sn9
-         kUEF09TADT2M9PQxvGREqMG2YS47tAYLR88Ak1jwnm1CuWH+voSEF2yABOR9l5yC8roL
-         o1Hd+yVh7RKx6c4wXG//CycjccgmlsRb2Zj6rHApbmIpqyEmgCmr/LkqR1lcvnrCbRFN
-         K2mRFBD4X+I4nCBF37mgOE+/9Tw8VL0P6YvqLc6y6BfIc30xx1om31K7/xrkNKPUx+w4
-         9RiCvcbkrbNQRtYQshJWimskIDYZXpCLvF7yU6k8N04APkewCRfGXD3RbjDTWabZD7bK
-         xMtA==
-X-Gm-Message-State: APjAAAWncXOTdnFpR8r6Ql7VJL9Rfb4R3FOmcvHqmMJq3qfLYZw4Z5zU
-        zSZ96ZIgRvQ1v2IGEnOBrzI=
-X-Google-Smtp-Source: APXvYqxMVTsGcUrsWM2pHjICaDWZ1YGun6kQavpkUgEVYAdBg5XpQfH588VNTDt/ZqGP9JxDTC8tTA==
-X-Received: by 2002:a1c:9904:: with SMTP id b4mr7585387wme.1.1559151827378;
-        Wed, 29 May 2019 10:43:47 -0700 (PDT)
+        bh=iB8gfO01UWVOvIbXC1SgRvasH8gb3p1b2pcn/FSICGQ=;
+        b=kpnlOT/7+5r0Ewo6ThMmk0KjjbrF64+XosP/4yYxy3MBcwI84b3ojsus4EwSTuEwpP
+         u1bnVn7Dl4nqJ7sdB+l304rHwjschwt050RVBblQ//7f7gOts9YezS/VleehbElM8eXL
+         xASgZr/grByxK8LcSJrec+Mcked0v0S+7OB1g4GAPT/BtJRS4t/U/t+cjAbcy8JG/JJE
+         sCqQN5H4uOP5w3BMfWIpSkywjYdmyC7uPUTTjUJLxrh3oWuYVzGvnKcaznLhUc7mkTKp
+         azaA0EdL9HTONDlFnGPiFnuBYUb3/jBPJDDqGWTa7amD7ozMBR/ENlNJzhwZ2bTD+w/l
+         yohQ==
+X-Gm-Message-State: APjAAAXy8y1Bpvj7ngqIYQ6Y7ynqh8C1p58NCZRHh8QZR8B8ewbe1eFE
+        PSKrGi0A09pA+DWVIglHdoc=
+X-Google-Smtp-Source: APXvYqwJOJ4izTFnolZmkhfQaBuL6JfpKe4IKnghtgloYRwVTP4nUzDRTpo9aL+/5u/O6Q118FCXnA==
+X-Received: by 2002:adf:db4c:: with SMTP id f12mr4020367wrj.243.1559151829055;
+        Wed, 29 May 2019 10:43:49 -0700 (PDT)
 Received: from localhost.localdomain ([5.102.238.208])
-        by smtp.gmail.com with ESMTPSA id k125sm31702wmb.34.2019.05.29.10.43.45
+        by smtp.gmail.com with ESMTPSA id k125sm31702wmb.34.2019.05.29.10.43.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 10:43:46 -0700 (PDT)
+        Wed, 29 May 2019 10:43:48 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     "Darrick J . Wong" <darrick.wong@oracle.com>
 Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
@@ -54,9 +54,9 @@ Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-cifs@vger.kernel.org
-Subject: [PATCH v3 10/13] cifs: copy_file_range needs to strip setuid bits and update timestamps
-Date:   Wed, 29 May 2019 20:43:14 +0300
-Message-Id: <20190529174318.22424-11-amir73il@gmail.com>
+Subject: [PATCH v3 11/13] fuse: copy_file_range needs to strip setuid bits and update timestamps
+Date:   Wed, 29 May 2019 20:43:15 +0300
+Message-Id: <20190529174318.22424-12-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190529174318.22424-1-amir73il@gmail.com>
 References: <20190529174318.22424-1-amir73il@gmail.com>
@@ -65,47 +65,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-cifs has both source and destination inodes locked throughout the copy.
-Like ->write_iter(), we update mtime and strip setuid bits of destination
-file before copy and like ->read_iter(), we update atime of source file
-after copy.
+Like ->write_iter(), we update mtime and strip setuid of dst file before
+copy and like ->read_iter(), we update atime of src file after copy.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/cifs/cifsfs.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ fs/fuse/file.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index c65823270313..ab6c5c24146d 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -1096,6 +1096,10 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
- 		goto out;
- 	}
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index e03901ae729b..7f33d68f66d9 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -3128,6 +3128,10 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
  
-+	rc = -EOPNOTSUPP;
-+	if (!target_tcon->ses->server->ops->copychunk_range)
+ 	inode_lock(inode_out);
+ 
++	err = file_modified(file_out);
++	if (err)
 +		goto out;
 +
- 	/*
- 	 * Note: cifs case is easier than btrfs since server responsible for
- 	 * checks for proper open modes and file type and if it wants
-@@ -1107,11 +1111,12 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
- 	/* should we flush first and last page first */
- 	truncate_inode_pages(&target_inode->i_data, 0);
+ 	if (fc->writeback_cache) {
+ 		err = filemap_write_and_wait_range(inode_out->i_mapping,
+ 						   pos_out, pos_out + len);
+@@ -3169,6 +3173,7 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
+ 		clear_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
  
--	if (target_tcon->ses->server->ops->copychunk_range)
-+	rc = file_modified(dst_file);
-+	if (!rc)
- 		rc = target_tcon->ses->server->ops->copychunk_range(xid,
- 			smb_file_src, smb_file_target, off, len, destoff);
--	else
--		rc = -EOPNOTSUPP;
-+
-+	file_accessed(src_file);
+ 	inode_unlock(inode_out);
++	file_accessed(file_in);
  
- 	/* force revalidate of size and timestamps of target file now
- 	 * that target is updated on the server
+ 	return err;
+ }
 -- 
 2.17.1
 
