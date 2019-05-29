@@ -2,61 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52DC92DB85
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 13:16:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 675262DBF5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 13:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfE2LQa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 07:16:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45834 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726787AbfE2LQa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 07:16:30 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0C786300CA98;
-        Wed, 29 May 2019 11:16:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D7B55D756;
-        Wed, 29 May 2019 11:16:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAG48ez2SAKbPeChAf06GMazMPPThFM+OR00abRZafAP7v+ptKw@mail.gmail.com>
-References: <CAG48ez2SAKbPeChAf06GMazMPPThFM+OR00abRZafAP7v+ptKw@mail.gmail.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905933492.7587.6968545866041839538.stgit@warthog.procyon.org.uk> <CAG48ez2rRh2_Kq_EGJs5k-ZBNffGs_Q=vkQdinorBgo58tbGpg@mail.gmail.com> <10418.1559084686@warthog.procyon.org.uk>
-To:     Jann Horn <jannh@google.com>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        raven@themaw.net, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/7] vfs: Add a mount-notification facility
+        id S1726581AbfE2Le2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 07:34:28 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35766 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfE2Le2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 May 2019 07:34:28 -0400
+Received: by mail-wm1-f65.google.com with SMTP id w9so1368003wmi.0;
+        Wed, 29 May 2019 04:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lv+811UxRTiA1eeuITfBrlSYFc5i58j28rlvkjD03rM=;
+        b=U3liTC6ZJCIAPgF5ohxRWUtSnwmEiVfVxH123hEmKBAPGu1Y5oKRc8WphyyDe/PIM7
+         gGvxiCoFK+cdsXt9S2AV+ajjs3bFZeHbHZqG/y9gcDj/XxFQKm6bmDbmhjhcbqkBqyZW
+         EjAPYDtVXjDf2B2lWTE2T/vmI53a4MF2JoxInqrV2Z0zkV6fRqDxpQQvEmPwneoYFGB0
+         GzfZOG7hrw/pQQSMolG5O/ycikS1Vttz3N+wH0zjpJ+6dGd9kAFx+HZPlhoVFXovljBZ
+         Eb8VLEwZ1pVb5/V+NOOh5UcdlFxRePuLcNDv6BEB1zAKFbPPUqAYUhxa0v3PYs9yx1TE
+         xORQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=lv+811UxRTiA1eeuITfBrlSYFc5i58j28rlvkjD03rM=;
+        b=PktOTs23TbjR8NCGwjVMt+F18vuWN1994TpJAoE0pVoPY9Cw/2oYEfauSs0l9jUCZF
+         CZtdAC+M7dDpI8N5ksYisqbRGvI07+4gXS/d6S4010K9vHP6wZI4izeREY3WdInx9uGn
+         SjawFBh9wM2270PNaf69lu/sE+dATszeS10xE0aP455tgP1kmj9vaQZ/cbKWyp7VdJZ9
+         XNRphED9hAGeu6PWbT8x2HslJRXd+7AbG93pj9QIs2xNwRCcLMoXhxSSjqpvEj3V0Ikt
+         269IYFZeI9rKkvfKdjwA+FYJqh5l8KPHkvTpLcaeFMaXUxzXSvXvUyyXXKGQkTjPJU0R
+         lj4A==
+X-Gm-Message-State: APjAAAW/dpglNOoXMUtBOvij6Yt7fmKRem54i1UHQv8MbVvc1/+JT3/2
+        1F+jafLmYsa000k//jzRjpE=
+X-Google-Smtp-Source: APXvYqxnCd912qjQWgtXe92WAl/vOIzwax4AWMMD54q443N3LcvMovQ4/4Lre+VsMfb/2oFNQMFFXA==
+X-Received: by 2002:a1c:487:: with SMTP id 129mr5896823wme.143.1559129666196;
+        Wed, 29 May 2019 04:34:26 -0700 (PDT)
+Received: from macbookpro.malat.net ([2a01:e34:ee1e:860:6f23:82e6:aa2d:bbd1])
+        by smtp.gmail.com with ESMTPSA id d9sm15219388wro.26.2019.05.29.04.34.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 May 2019 04:34:25 -0700 (PDT)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 6A99211415A8; Wed, 29 May 2019 13:34:19 +0200 (CEST)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hfsplus: Replace strncpy with memcpy
+Date:   Wed, 29 May 2019 13:33:41 +0200
+Message-Id: <20190529113341.11972-1-malat@debian.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <15838.1559128587.1@warthog.procyon.org.uk>
-Date:   Wed, 29 May 2019 12:16:27 +0100
-Message-ID: <15839.1559128587@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 29 May 2019 11:16:30 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jann Horn <jannh@google.com> wrote:
+Function strncpy was used to copy a fixed size buffer. Since
+NUL-terminating string is not required here, prefer a memcpy function.
+The generated code (ppc32) remains the same.
 
-> I don't really know. I guess it depends on how it's being used? If
-> someone decides to e.g. make a file browser that installs watches for
-> a bunch of mountpoints for some fancy sidebar showing the device
-> mounts on the system, or something like that, that probably shouldn't
-> inhibit unmounting... I don't know if that's a realistic use case.
+Silence the following warning triggered using W=1:
 
-In such a use case, I would envision the browser putting a watch on "/".  A
-watch sees all events in the subtree rooted at that point and you must apply a
-filter that filters them out if you're not interested (filter on
-WATCH_INFO_IN_SUBTREE using info_filter and info_mask).
+  fs/hfsplus/xattr.c:410:3: warning: 'strncpy' output truncated before terminating nul copying 4 bytes from a string of the same length [-Wstringop-truncation]
 
-David
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ fs/hfsplus/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index d5403b4004c9..bb0b27d88e50 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -407,7 +407,7 @@ static int copy_name(char *buffer, const char *xattr_name, int name_len)
+ 	int offset = 0;
+ 
+ 	if (!is_known_namespace(xattr_name)) {
+-		strncpy(buffer, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN);
++		memcpy(buffer, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN);
+ 		offset += XATTR_MAC_OSX_PREFIX_LEN;
+ 		len += XATTR_MAC_OSX_PREFIX_LEN;
+ 	}
+-- 
+2.20.1
+
