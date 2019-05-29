@@ -2,164 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF052D45C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 05:55:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADB242D462
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 06:02:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbfE2Dyw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 May 2019 23:54:52 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:35683 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725832AbfE2Dyw (ORCPT
+        id S1725840AbfE2ECr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 00:02:47 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:55516 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725773AbfE2ECr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 May 2019 23:54:52 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id D6E1D2412;
-        Tue, 28 May 2019 23:54:50 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 28 May 2019 23:54:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=C/3/rW+cjxuts9eVyQG2YcqoLaE
-        6ta6yRwttYTGwP58=; b=RMh4cRIsKgvvRcIMot+ceI2cTTlj13kxgcoWm6kZIPH
-        WjcYyrakjoXyJiU+GEGzkS5eGbRQvxvJZRDZGYWjh5gMXojfocIQ2RX9fi05CilS
-        fGpXxY3VxjS9MY/cl4h+iV9f1sF0kGt8UaNDTYhmtzIX7dBcKELY4/nb3MVEDBUz
-        XmTPyA04wGUcTiwE6aNJ/6pfj51DdSSXu5gl7UeVCulxSEVgct7ST1qOZxHR7uX3
-        kKMYk5/2b5eFAaBhPiPGs5Tu+eERe2tF7s0/F/PZXfFXowwwXTgGveU40uh86YmB
-        K4+15yYcpmWiP85wqAbPtVI9Kuqkqu+7yJn6r6DCYIA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=C/3/rW
-        +cjxuts9eVyQG2YcqoLaE6ta6yRwttYTGwP58=; b=B2/amyXQNQrAt5O5X5wA2c
-        kQXkfC58JIoqnldg4y5haXy4B4EFmzbG3+1KIj5gOBUvWpHjeTCCq/gNQ3IV3B1s
-        tbTgzXWtlzXOEBvKIebJ3Pm+R16stKjtlyY1FKv/pvgM7vOsQylV9gR+Y2BmB+89
-        4pD1C1LDtxu4hAN6sNGli0641uDLZZLA6WasO2Op9wUPfkJ5j9so+haCKKEcyxAV
-        MO2PSO+XiT3dRZ4jYAHKJb0J5bz9YfV10NlNyty9WGWdW0ZxbE0KdavYrMSJcqDu
-        kval6nTSZ6MuQTF0HBrMCWTts35keQ96t34e1ylhxqzUh3Qli+VYYwDDTMfY9Y4Q
-        ==
-X-ME-Sender: <xms:hwLuXKhJ8RpwWx5tIqyI_Ce6OXOUXeGfNro2shZbSc5OvKV6bltjcw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddviedgjeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    gfrhhlucfvnfffucdlfedtmdenucfjughrpeffhffvuffkfhggtggujgfofgesthdtredt
-    ofervdenucfhrhhomhepfdfvohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtoh
-    gsihhnrdgttgeqnecukfhppeduvdegrddujedurdefuddrudeggeenucfrrghrrghmpehm
-    rghilhhfrhhomhepmhgvsehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:hwLuXH8KVmtakAESo4imAubhYDVFiySgffEyqi2XkhhLUrCHFCkkgQ>
-    <xmx:hwLuXNuvDUVOUc2IMg1Dy7fucpBptyRh4Y3lwSRsycK7zi5wEtEZvA>
-    <xmx:hwLuXLow9eJpDk2WF-cm25BgUIWZXSjzV1SdCSLbUdNbKL63Hlv5DQ>
-    <xmx:igLuXPl89IlGmwN4RVkrZqHseV-vqGJpKBqMU-IptL3Qun9Rde6_0g>
-Received: from localhost (124-171-31-144.dyn.iinet.net.au [124.171.31.144])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A7A6E80064;
-        Tue, 28 May 2019 23:54:46 -0400 (EDT)
-Date:   Wed, 29 May 2019 13:54:06 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@ftp.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Pekka Enberg <penberg@cs.helsinki.fi>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Christopher Lameter <cl@linux.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Waiman Long <longman@redhat.com>,
-        Tycho Andersen <tycho@tycho.ws>, Theodore Ts'o <tytso@mit.edu>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Chinner <david@fromorbit.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Rik van Riel <riel@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v5 16/16] dcache: Add CONFIG_DCACHE_SMO
-Message-ID: <20190529035406.GA23181@eros.localdomain>
-References: <20190520054017.32299-1-tobin@kernel.org>
- <20190520054017.32299-17-tobin@kernel.org>
- <20190521005740.GA9552@tower.DHCP.thefacebook.com>
- <20190521013118.GB25898@eros.localdomain>
- <20190521020530.GA18287@tower.DHCP.thefacebook.com>
+        Wed, 29 May 2019 00:02:47 -0400
+X-IronPort-AV: E=Sophos;i="5.60,525,1549900800"; 
+   d="scan'208";a="65026033"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 29 May 2019 12:02:44 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 276F94CDC834;
+        Wed, 29 May 2019 12:02:43 +0800 (CST)
+Received: from [10.167.225.140] (10.167.225.140) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.439.0; Wed, 29 May 2019 12:02:52 +0800
+Subject: Re: [PATCH 04/18] dax: Introduce IOMAP_DAX_COW to CoW edges during
+ writes
+To:     Dave Chinner <david@fromorbit.com>
+CC:     Jan Kara <jack@suse.cz>, Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        <linux-btrfs@vger.kernel.org>, <kilobyte@angband.pl>,
+        <linux-fsdevel@vger.kernel.org>, <willy@infradead.org>,
+        <hch@lst.de>, <dsterba@suse.cz>, <nborisov@suse.com>,
+        <linux-nvdimm@lists.01.org>
+References: <20190429172649.8288-1-rgoldwyn@suse.de>
+ <20190429172649.8288-5-rgoldwyn@suse.de> <20190521165158.GB5125@magnolia>
+ <1e9951c1-d320-e480-3130-dc1f4b81ef2c@cn.fujitsu.com>
+ <20190523115109.2o4txdjq2ft7fzzc@fiona>
+ <1620c513-4ce2-84b0-33dc-2675246183ea@cn.fujitsu.com>
+ <20190528091729.GD9607@quack2.suse.cz>
+ <a3a919e6-ecad-bdf6-423c-fc01f9cfa661@cn.fujitsu.com>
+ <20190529024749.GC16786@dread.disaster.area>
+From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+Message-ID: <376256fd-dee4-5561-eb4e-546e227303cd@cn.fujitsu.com>
+Date:   Wed, 29 May 2019 12:02:40 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521020530.GA18287@tower.DHCP.thefacebook.com>
-X-Mailer: Mutt 1.12.0 (2019-05-25)
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190529024749.GC16786@dread.disaster.area>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.225.140]
+X-yoursite-MailScanner-ID: 276F94CDC834.AA7BD
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 21, 2019 at 02:05:38AM +0000, Roman Gushchin wrote:
-> On Tue, May 21, 2019 at 11:31:18AM +1000, Tobin C. Harding wrote:
-> > On Tue, May 21, 2019 at 12:57:47AM +0000, Roman Gushchin wrote:
-> > > On Mon, May 20, 2019 at 03:40:17PM +1000, Tobin C. Harding wrote:
-> > > > In an attempt to make the SMO patchset as non-invasive as possible add a
-> > > > config option CONFIG_DCACHE_SMO (under "Memory Management options") for
-> > > > enabling SMO for the DCACHE.  Whithout this option dcache constructor is
-> > > > used but no other code is built in, with this option enabled slab
-> > > > mobility is enabled and the isolate/migrate functions are built in.
-> > > > 
-> > > > Add CONFIG_DCACHE_SMO to guard the partial shrinking of the dcache via
-> > > > Slab Movable Objects infrastructure.
-> > > 
-> > > Hm, isn't it better to make it a static branch? Or basically anything
-> > > that allows switching on the fly?
-> > 
-> > If that is wanted, turning SMO on and off per cache, we can probably do
-> > this in the SMO code in SLUB.
+
+
+On 5/29/19 10:47 AM, Dave Chinner wrote:
+> On Wed, May 29, 2019 at 10:01:58AM +0800, Shiyang Ruan wrote:
+>>
+>> On 5/28/19 5:17 PM, Jan Kara wrote:
+>>> On Mon 27-05-19 16:25:41, Shiyang Ruan wrote:
+>>>> On 5/23/19 7:51 PM, Goldwyn Rodrigues wrote:
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> I'm working on reflink & dax in XFS, here are some thoughts on this:
+>>>>>>
+>>>>>> As mentioned above: the second iomap's offset and length must match the
+>>>>>> first.  I thought so at the beginning, but later found that the only
+>>>>>> difference between these two iomaps is @addr.  So, what about adding a
+>>>>>> @saddr, which means the source address of COW extent, into the struct iomap.
+>>>>>> The ->iomap_begin() fills @saddr if the extent is COW, and 0 if not.  Then
+>>>>>> handle this @saddr in each ->actor().  No more modifications in other
+>>>>>> functions.
+>>>>>
+>>>>> Yes, I started of with the exact idea before being recommended this by Dave.
+>>>>> I used two fields instead of one namely cow_pos and cow_addr which defined
+>>>>> the source details. I had put it as a iomap flag as opposed to a type
+>>>>> which of course did not appeal well.
+>>>>>
+>>>>> We may want to use iomaps for cases where two inodes are involved.
+>>>>> An example of the other scenario where offset may be different is file
+>>>>> comparison for dedup: vfs_dedup_file_range_compare(). However, it would
+>>>>> need two inodes in iomap as well.
+>>>>>
+>>>> Yes, it is reasonable.  Thanks for your explanation.
+>>>>
+>>>> One more thing RFC:
+>>>> I'd like to add an end-io callback argument in ->dax_iomap_actor() to update
+>>>> the metadata after one whole COW operation is completed.  The end-io can
+>>>> also be called in ->iomap_end().  But one COW operation may call
+>>>> ->iomap_apply() many times, and so does the end-io.  Thus, I think it would
+>>>> be nice to move it to the bottom of ->dax_iomap_actor(), called just once in
+>>>> each COW operation.
+>>>
+>>> I'm sorry but I don't follow what you suggest. One COW operation is a call
+>>> to dax_iomap_rw(), isn't it? That may call iomap_apply() several times,
+>>> each invocation calls ->iomap_begin(), ->actor() (dax_iomap_actor()),
+>>> ->iomap_end() once. So I don't see a difference between doing something in
+>>> ->actor() and ->iomap_end() (besides the passed arguments but that does not
+>>> seem to be your concern). So what do you exactly want to do?
+>>
+>> Hi Jan,
+>>
+>> Thanks for pointing out, and I'm sorry for my mistake.  It's
+>> ->dax_iomap_rw(), not ->dax_iomap_actor().
+>>
+>> I want to call the callback function at the end of ->dax_iomap_rw().
+>>
+>> Like this:
+>> dax_iomap_rw(..., callback) {
+>>
+>>      ...
+>>      while (...) {
+>>          iomap_apply(...);
+>>      }
+>>
+>>      if (callback != null) {
+>>          callback();
+>>      }
+>>      return ...;
+>> }
 > 
-> Not necessarily per cache, but without recompiling the kernel.
-> > 
-> > > It seems that the cost of just building it in shouldn't be that high.
-> > > And the question if the defragmentation worth the trouble is so much
-> > > easier to answer if it's possible to turn it on and off without rebooting.
-> > 
-> > If the question is 'is defragmentation worth the trouble for the
-> > dcache', I'm not sure having SMO turned off helps answer that question.
-> > If one doesn't shrink the dentry cache there should be very little
-> > overhead in having SMO enabled.  So if one wants to explore this
-> > question then they can turn on the config option.  Please correct me if
-> > I'm wrong.
+> Why does this need to be in dax_iomap_rw()?
 > 
-> The problem with a config option is that it's hard to switch over.
+> We already do post-dax_iomap_rw() "io-end callbacks" directly in
+> xfs_file_dax_write() to update the file size....
+
+Yes, but we also need to call ->xfs_reflink_end_cow() after a COW 
+operation.  And an is-cow flag(from iomap) is also needed to determine 
+if we call it.  I think it would be better to put this into 
+->dax_iomap_rw() as a callback function.
+
+So sorry for my poor expression.
+
 > 
-> So just to test your changes in production a new kernel should be built,
-> tested and rolled out to a representative set of machines (which can be
-> measured in thousands of machines). Then if results are questionable,
-> it should be rolled back.
+> Cheers,
 > 
-> What you're actually guarding is the kmem_cache_setup_mobility() call,
-> which can be perfectly avoided using a boot option, for example. Turning
-> it on and off completely dynamic isn't that hard too.
+> Dave.
+> 
 
-Hi Roman,
+-- 
+Thanks,
+Shiyang Ruan.
 
-I've added a boot parameter to SLUB so that admins can enable/disable
-SMO at boot time system wide.  Then for each object that implements SMO
-(currently XArray and dcache) I've also added a boot parameter to
-enable/disable SMO for that cache specifically (these depend on SMO
-being enabled system wide).
 
-All three boot parameters default to 'off', I've added a config option
-to default each to 'on'.
-
-I've got a little more testing to do on another part of the set then the
-PATCH version is coming at you :)
-
-This is more a courtesy email than a request for comment, but please
-feel free to shout if you don't like the method outlined above.
-
-Fully dynamic config is not currently possible because currently the SMO
-implementation does not support disabling mobility for a cache once it
-is turned on, a bit of extra logic would need to be added and some state
-stored - I'm not sure it warrants it ATM but that can be easily added
-later if wanted.  Maybe Christoph will give his opinion on this.
-
-thanks,
-Tobin.
