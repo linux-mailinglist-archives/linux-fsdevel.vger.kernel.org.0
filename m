@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 288852E7F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 00:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 817EF2E7F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 00:16:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbfE2WPq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 18:15:46 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34364 "EHLO
+        id S1726806AbfE2WQb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 18:16:31 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46367 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbfE2WPp (ORCPT
+        with ESMTP id S1726779AbfE2WQb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 18:15:45 -0400
-Received: by mail-lj1-f195.google.com with SMTP id j24so4117224ljg.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 15:15:43 -0700 (PDT)
+        Wed, 29 May 2019 18:16:31 -0400
+Received: by mail-lj1-f195.google.com with SMTP id m15so4048909ljg.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 15:16:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6zFd/+GKbjIaLT3OCgZNCCS2BROhgWZzYWnXfsPDAOI=;
-        b=WAja/FZQE2pFEgnKhl94IfcY8BDGBWqmDZ/K0LwYCwgZZCNgvoTkUHQRuwP3YNgoya
-         z1f4MJuRSEu/GyirKTd7ZxEucg9gwE45Fe167cp9Gbt6SxK1m/9DrrJu7NRrAZY32bla
-         4p+eAFjbcp/9ChooQBY5FdmhiTSlOm5fiQ0RSbq2XomUdeG6vZOenF9TaeHTaq3oDL83
-         qHIT7T9Tcnfjs24oWWuvmRTPwH/ItgW4sLZxfljRcoBxDQ9Bb5BU8OKhEHtCsIEsk1yT
-         MLqbkKb1a/gLfm9HlkJSnjDqX1VSLIKoT+vVxZCZOOatOa32W60AfV4fnv3pVeojRmLW
-         1+wQ==
+         :cc;
+        bh=Oz7cGsD/P4AYjrQuzbhSqhrqwPvDYoZyUjrCxUd5apo=;
+        b=W488NziPak7bX8NLwk8X91sVgaISEiHHggxPCEy5FTn4IJfjT1bBLLNUdZubDFWtPH
+         7KoVKeHGWUJXYe/3LbLZBn7H5JwyXSUSceIdUccTOeecjr9Rha/esMd2v5J0QgIJpV+r
+         w04dPFkQRPrhrAhVz6CVOLfdZR28+WrUYuPXRMr/nyIluc9YhOFeRWVGdDt44wALPWrq
+         PIABiusmnwb5q3e6jTuVcyQq9WGF/T14PHNRDSG8TQJ0AL3qJIxSz6hon1W/8m1HgZoD
+         RpTG7XBD0QK5YboiITTVwFV0joTjp8gpqwSWpkPmVhJkcpSP6IsYCYIr59Rl1ujOgBWb
+         A8AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6zFd/+GKbjIaLT3OCgZNCCS2BROhgWZzYWnXfsPDAOI=;
-        b=fpBbrr+jViK0h3XFuPQZLgZepIMpzSGzOZw4EAAMijraYsanV6h76VZDE/hLGkjiyW
-         H+zBie3CHN7r6WOuxVAWxAaT5Q5SIToR26hhYScKhvZkzNyM64tj4Nxv513SGiw8aHVO
-         F5/Dvow6QaFs6BNa6c/e2rLWdx+yUkKqMkeZF1Thn1PMu8wPlllGa5696fH4UzYPeSOY
-         2aP039kBC21hKM4SoZJI435uY0iZmhGmuYeycMzoWXyc9vrNVrGVFM+8gvtZDtBpdsU5
-         H4ZgI0+1SOG4+jkgeOOrgJP1Is26sEbPP/tG5gVS50AxuzphxurTbewBB58ewhmvArOR
-         NCXA==
-X-Gm-Message-State: APjAAAUyFst+0TDOxJxxxiufabSsUmJT9fp9XdlFUJUha/hOKyXwK5Dl
-        QVK1eajBpmnT00OwCLEJGvggckoLqLBuvTVy4gFa
-X-Google-Smtp-Source: APXvYqxr7bNBNEWEvitp9VD5magGhpRxnhpJ7GgxKw0cRkL8xChwhJX2izxpfcFyAxd9QA/po4PJvxe1rJlY+6u8D5I=
-X-Received: by 2002:a2e:92cc:: with SMTP id k12mr132567ljh.16.1559168142045;
- Wed, 29 May 2019 15:15:42 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=Oz7cGsD/P4AYjrQuzbhSqhrqwPvDYoZyUjrCxUd5apo=;
+        b=ivNSYHiSasYh3cBbH9QZFfQvgF/yJ+zGYlLCZOAz1EHJtxCIj1snYRUpJUAoDs97Ig
+         s/7DtkqY2sgemNbzNU8MoXjLjAaKtgYB1nJvI7GaB6CHKxr51hMpOARliiGfviFjpHXQ
+         6uCw30afe++SuzGFgVovXpqdBWdqg44TZNiB8PTI78TiJjpoUXIG17q0sS9BeHGCLRrD
+         wIl3BhHtNDKJWvSXeI+Kkut212maRcIWkS4zVoDg/S5FXC+8rMDeJJCKvfSvy9wVtQ1c
+         TDXXJWNXPSpvcYhRx5SDVnLdsR9LwV8LfWei2/bC8fOgpLy7sHjffhD9UHlZgDwLLVf2
+         UYCQ==
+X-Gm-Message-State: APjAAAXakXaQUh+EpVC1JoCxnBTq6sOwvwf0QmihiOjFfLVqE8feNJMM
+        9vYYGqYlHBEHonF89NsT057Nmp0YvXOHoYEtGd8h
+X-Google-Smtp-Source: APXvYqzfNdl8873L36TO9hSNPPYmytZePE3WW4+a9ltLKODcsNQS6Y9bUNbWImIKz7mxDt4DEezNtHhuOjvLWIqNvZM=
+X-Received: by 2002:a2e:3e14:: with SMTP id l20mr137436lja.40.1559168188869;
+ Wed, 29 May 2019 15:16:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1554732921.git.rgb@redhat.com> <f4a49f7c949e5df80c339a3fe5c4c2303b12bf23.1554732921.git.rgb@redhat.com>
-In-Reply-To: <f4a49f7c949e5df80c339a3fe5c4c2303b12bf23.1554732921.git.rgb@redhat.com>
+References: <cover.1554732921.git.rgb@redhat.com> <0785ee2644804f3ec6af1243cc0dcf89709c1fd4.1554732921.git.rgb@redhat.com>
+In-Reply-To: <0785ee2644804f3ec6af1243cc0dcf89709c1fd4.1554732921.git.rgb@redhat.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 29 May 2019 18:15:30 -0400
-Message-ID: <CAHC9VhRfQp-avV2rcEOvLCAXEz-MDZMp91UxU+BtvPkvWny9fQ@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V6 04/10] audit: log container info of syscalls
+Date:   Wed, 29 May 2019 18:16:18 -0400
+Message-ID: <CAHC9VhRV-0LSEcRvPO1uXtKdpEQsaLZnBV3T=zcMTZPN5ugz5w@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 08/10] audit: add containerid filtering
 To:     Richard Guy Briggs <rgb@redhat.com>
 Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
         Linux-Audit Mailing List <linux-audit@redhat.com>,
@@ -58,99 +58,87 @@ Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
         Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
         nhorman@tuxdriver.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 8, 2019 at 11:40 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+On Mon, Apr 8, 2019 at 11:41 PM Richard Guy Briggs <rgb@redhat.com> wrote:
 >
-> Create a new audit record AUDIT_CONTAINER_ID to document the audit
-> container identifier of a process if it is present.
+> Implement audit container identifier filtering using the AUDIT_CONTID
+> field name to send an 8-character string representing a u64 since the
+> value field is only u32.
 >
-> Called from audit_log_exit(), syscalls are covered.
+> Sending it as two u32 was considered, but gathering and comparing two
+> fields was more complex.
 >
-> A sample raw event:
-> type=3DSYSCALL msg=3Daudit(1519924845.499:257): arch=3Dc000003e syscall=
-=3D257 success=3Dyes exit=3D3 a0=3Dffffff9c a1=3D56374e1cef30 a2=3D241 a3=
-=3D1b6 items=3D2 ppid=3D606 pid=3D635 auid=3D0 uid=3D0 gid=3D0 euid=3D0 sui=
-d=3D0 fsuid=3D0 egid=3D0 sgid=3D0 fsgid=3D0 tty=3Dpts0 ses=3D3 comm=3D"bash=
-" exe=3D"/usr/bin/bash" subj=3Dunconfined_u:unconfined_r:unconfined_t:s0-s0=
-:c0.c1023 key=3D"tmpcontainerid"
-> type=3DCWD msg=3Daudit(1519924845.499:257): cwd=3D"/root"
-> type=3DPATH msg=3Daudit(1519924845.499:257): item=3D0 name=3D"/tmp/" inod=
-e=3D13863 dev=3D00:27 mode=3D041777 ouid=3D0 ogid=3D0 rdev=3D00:00 obj=3Dsy=
-stem_u:object_r:tmp_t:s0 nametype=3D PARENT cap_fp=3D0 cap_fi=3D0 cap_fe=3D=
-0 cap_fver=3D0
-> type=3DPATH msg=3Daudit(1519924845.499:257): item=3D1 name=3D"/tmp/tmpcon=
-tainerid" inode=3D17729 dev=3D00:27 mode=3D0100644 ouid=3D0 ogid=3D0 rdev=
-=3D00:00 obj=3Dunconfined_u:object_r:user_tmp_t:s0 nametype=3DCREATE cap_fp=
-=3D0 cap_fi=3D0 cap_fe=3D0 cap_fver=3D0
-> type=3DPROCTITLE msg=3Daudit(1519924845.499:257): proctitle=3D62617368002=
-D6300736C65657020313B206563686F2074657374203E202F746D702F746D70636F6E746169=
-6E65726964
-> type=3DCONTAINER_ID msg=3Daudit(1519924845.499:257): contid=3D123458
+> The feature indicator is AUDIT_FEATURE_BITMAP_CONTAINERID.
 >
-> Please see the github audit kernel issue for the main feature:
->   https://github.com/linux-audit/audit-kernel/issues/90
-> Please see the github audit userspace issue for supporting additions:
->   https://github.com/linux-audit/audit-userspace/issues/51
+> Please see the github audit kernel issue for the contid filter feature:
+>   https://github.com/linux-audit/audit-kernel/issues/91
+> Please see the github audit userspace issue for filter additions:
+>   https://github.com/linux-audit/audit-userspace/issues/40
 > Please see the github audit testsuiite issue for the test case:
 >   https://github.com/linux-audit/audit-testsuite/issues/64
 > Please see the github audit wiki for the feature overview:
 >   https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
 > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 > Acked-by: Serge Hallyn <serge@hallyn.com>
-> Acked-by: Steve Grubb <sgrubb@redhat.com>
 > Acked-by: Neil Horman <nhorman@tuxdriver.com>
 > Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
 > ---
->  include/linux/audit.h      |  5 +++++
->  include/uapi/linux/audit.h |  1 +
->  kernel/audit.c             | 20 ++++++++++++++++++++
->  kernel/auditsc.c           | 20 ++++++++++++++------
->  4 files changed, 40 insertions(+), 6 deletions(-)
+>  include/linux/audit.h      |  1 +
+>  include/uapi/linux/audit.h |  5 ++++-
+>  kernel/audit.h             |  1 +
+>  kernel/auditfilter.c       | 47 ++++++++++++++++++++++++++++++++++++++++++++++
+>  kernel/auditsc.c           |  4 ++++
+>  5 files changed, 57 insertions(+), 1 deletion(-)
 
 ...
 
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 182b0f2c183d..3e0af53f3c4d 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -2127,6 +2127,26 @@ void audit_log_session_info(struct audit_buffer *a=
-b)
->         audit_log_format(ab, "auid=3D%u ses=3D%u", auid, sessionid);
+> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+> index 63f8b3f26fab..407b5bb3b4c6 100644
+> --- a/kernel/auditfilter.c
+> +++ b/kernel/auditfilter.c
+> @@ -1206,6 +1224,31 @@ int audit_comparator(u32 left, u32 op, u32 right)
+>         }
 >  }
 >
-> +/*
-> + * audit_log_contid - report container info
-> + * @context: task or local context for record
-> + * @contid: container ID to report
-> + */
-> +void audit_log_contid(struct audit_context *context, u64 contid)
+> +int audit_comparator64(u64 left, u32 op, u64 right)
 > +{
-> +       struct audit_buffer *ab;
-> +
-> +       if (!audit_contid_valid(contid))
-> +               return;
-> +       /* Generate AUDIT_CONTAINER_ID record with container ID */
-> +       ab =3D audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER_ID);
-> +       if (!ab)
-> +               return;
-> +       audit_log_format(ab, "contid=3D%llu", (unsigned long long)contid)=
-;
+> +       switch (op) {
+> +       case Audit_equal:
+> +               return (left == right);
+> +       case Audit_not_equal:
+> +               return (left != right);
+> +       case Audit_lt:
+> +               return (left < right);
+> +       case Audit_le:
+> +               return (left <= right);
+> +       case Audit_gt:
+> +               return (left > right);
+> +       case Audit_ge:
+> +               return (left >= right);
+> +       case Audit_bitmask:
+> +               return (left & right);
+> +       case Audit_bittest:
+> +               return ((left & right) == right);
+> +       default:
+> +               BUG();
 
-We have a consistency problem regarding how to output the u64 contid
-values; this function uses an explicit cast, others do not.  According
-to Documentation/core-api/printk-formats.rst the recommendation for
-u64 is %llu (or %llx, if you want hex).  Looking quickly through the
-printk code this appears to still be correct.  I suggest we get rid of
-the cast (like it was in v5).
+A little birdy mentioned the BUG() here as a potential issue and while
+I had ignored it in earlier patches because this is likely a
+cut-n-paste from another audit comparator function, I took a closer
+look this time.  It appears as though we will never have an invalid op
+value as audit_data_to_entry()/audit_to_op() ensure that the op value
+is a a known good value.  Removing the BUG() from all the audit
+comparators is a separate issue, but I think it would be good to
+remove it from this newly added comparator; keeping it so that we
+return "0" in the default case seems reasoanble.
 
-> +       audit_log_end(ab);
+> +               return 0;
+> +       }
 > +}
-> +EXPORT_SYMBOL(audit_log_contid);
 
 --
 paul moore
