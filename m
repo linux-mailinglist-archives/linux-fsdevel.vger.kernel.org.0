@@ -2,92 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 675262DBF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 13:34:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD4672DC36
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 13:52:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726581AbfE2Le2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 07:34:28 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35766 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbfE2Le2 (ORCPT
+        id S1726896AbfE2LwU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 07:52:20 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35274 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbfE2LwU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 07:34:28 -0400
-Received: by mail-wm1-f65.google.com with SMTP id w9so1368003wmi.0;
-        Wed, 29 May 2019 04:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lv+811UxRTiA1eeuITfBrlSYFc5i58j28rlvkjD03rM=;
-        b=U3liTC6ZJCIAPgF5ohxRWUtSnwmEiVfVxH123hEmKBAPGu1Y5oKRc8WphyyDe/PIM7
-         gGvxiCoFK+cdsXt9S2AV+ajjs3bFZeHbHZqG/y9gcDj/XxFQKm6bmDbmhjhcbqkBqyZW
-         EjAPYDtVXjDf2B2lWTE2T/vmI53a4MF2JoxInqrV2Z0zkV6fRqDxpQQvEmPwneoYFGB0
-         GzfZOG7hrw/pQQSMolG5O/ycikS1Vttz3N+wH0zjpJ+6dGd9kAFx+HZPlhoVFXovljBZ
-         Eb8VLEwZ1pVb5/V+NOOh5UcdlFxRePuLcNDv6BEB1zAKFbPPUqAYUhxa0v3PYs9yx1TE
-         xORQ==
+        Wed, 29 May 2019 07:52:20 -0400
+Received: by mail-qk1-f196.google.com with SMTP id l128so1235315qke.2;
+        Wed, 29 May 2019 04:52:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=lv+811UxRTiA1eeuITfBrlSYFc5i58j28rlvkjD03rM=;
-        b=PktOTs23TbjR8NCGwjVMt+F18vuWN1994TpJAoE0pVoPY9Cw/2oYEfauSs0l9jUCZF
-         CZtdAC+M7dDpI8N5ksYisqbRGvI07+4gXS/d6S4010K9vHP6wZI4izeREY3WdInx9uGn
-         SjawFBh9wM2270PNaf69lu/sE+dATszeS10xE0aP455tgP1kmj9vaQZ/cbKWyp7VdJZ9
-         XNRphED9hAGeu6PWbT8x2HslJRXd+7AbG93pj9QIs2xNwRCcLMoXhxSSjqpvEj3V0Ikt
-         269IYFZeI9rKkvfKdjwA+FYJqh5l8KPHkvTpLcaeFMaXUxzXSvXvUyyXXKGQkTjPJU0R
-         lj4A==
-X-Gm-Message-State: APjAAAW/dpglNOoXMUtBOvij6Yt7fmKRem54i1UHQv8MbVvc1/+JT3/2
-        1F+jafLmYsa000k//jzRjpE=
-X-Google-Smtp-Source: APXvYqxnCd912qjQWgtXe92WAl/vOIzwax4AWMMD54q443N3LcvMovQ4/4Lre+VsMfb/2oFNQMFFXA==
-X-Received: by 2002:a1c:487:: with SMTP id 129mr5896823wme.143.1559129666196;
-        Wed, 29 May 2019 04:34:26 -0700 (PDT)
-Received: from macbookpro.malat.net ([2a01:e34:ee1e:860:6f23:82e6:aa2d:bbd1])
-        by smtp.gmail.com with ESMTPSA id d9sm15219388wro.26.2019.05.29.04.34.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 04:34:25 -0700 (PDT)
-Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 6A99211415A8; Wed, 29 May 2019 13:34:19 +0200 (CEST)
-From:   Mathieu Malaterre <malat@debian.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hfsplus: Replace strncpy with memcpy
-Date:   Wed, 29 May 2019 13:33:41 +0200
-Message-Id: <20190529113341.11972-1-malat@debian.org>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TdAznkRxrKE17L8clQuRvpoCe6A9H8ATfOCcLEenWWI=;
+        b=s0778B/4PRJRV9CHP8Na6IFf77DRRrjYvnHi2Ijrigok937pUAnGjgZrBN0AJlbyQw
+         ALs5JTxaeiWGsHVmFccnlIJca5vkxz9tVKMiv8aMDWkkjsmf1mFaYZDMe2OhGWE/H9NF
+         4A+PdgvfmUPMxgumo6xz3+rGQsM4OOhsYg5ox9Ua1r9ftcR3Si2Jn+rceTEZILu1KBRG
+         2pmR4YRHcGCdzmOGya6b0suS0e+hGVHP3PFngeaYW/HcwT+eXVKXZk9p/qHknpEI9R4u
+         YNu/I+7Pme4clYwYpCiiujSoogHlaAwvbCMjivm+nc/285DrMguCE3ZVkIX2ykrIvVNN
+         fNUA==
+X-Gm-Message-State: APjAAAWaXxHw2poBQLbjUXCnIHjGt565pHQ+68cmOKh1ypgY3oFItZvz
+        r9Mo+XsQ5YuVp7tEG70xNclGdRUmS8gaIal1YwE=
+X-Google-Smtp-Source: APXvYqzg32MH5decqHjgAwz1/0NlrkGcjLsvjWutrE0FtLUETA9tge85aPqT4FbVImIWliuZ7t/XSkbxBIATrB3QgH4=
+X-Received: by 2002:a37:bb85:: with SMTP id l127mr27927380qkf.285.1559130738893;
+ Wed, 29 May 2019 04:52:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190524201817.16509-1-jannh@google.com> <20190525144304.e2b9475a18a1f78a964c5640@linux-foundation.org>
+ <CAG48ez36xJ9UA8gWef3+1rHQwob5nb8WP3RqnbT8GEOV9Z38jA@mail.gmail.com> <aa7f66ad-dab5-f0b6-ade9-7d3698d509a9@westnet.com.au>
+In-Reply-To: <aa7f66ad-dab5-f0b6-ade9-7d3698d509a9@westnet.com.au>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 29 May 2019 13:52:02 +0200
+Message-ID: <CAK8P3a2wA4R-V-W1+pPTaqVP7Dr=170G2a76AzASpx1xtRWj0Q@mail.gmail.com>
+Subject: Re: [PATCH] binfmt_flat: make load_flat_shared_library() work
+To:     Greg Ungerer <gregungerer@westnet.com.au>
+Cc:     Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Linux/m68k" <linux-m68k@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Function strncpy was used to copy a fixed size buffer. Since
-NUL-terminating string is not required here, prefer a memcpy function.
-The generated code (ppc32) remains the same.
-
-Silence the following warning triggered using W=1:
-
-  fs/hfsplus/xattr.c:410:3: warning: 'strncpy' output truncated before terminating nul copying 4 bytes from a string of the same length [-Wstringop-truncation]
-
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- fs/hfsplus/xattr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index d5403b4004c9..bb0b27d88e50 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -407,7 +407,7 @@ static int copy_name(char *buffer, const char *xattr_name, int name_len)
- 	int offset = 0;
- 
- 	if (!is_known_namespace(xattr_name)) {
--		strncpy(buffer, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN);
-+		memcpy(buffer, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN);
- 		offset += XATTR_MAC_OSX_PREFIX_LEN;
- 		len += XATTR_MAC_OSX_PREFIX_LEN;
- 	}
--- 
-2.20.1
-
+On Tue, May 28, 2019 at 12:56 PM Greg Ungerer
+<gregungerer@westnet.com.au> wrote:
+> On 27/5/19 11:38 pm, Jann Horn wrote:
+> > On Sat, May 25, 2019 at 11:43 PM Andrew Morton
+> > <akpm@linux-foundation.org> wrote:
+> >> On Fri, 24 May 2019 22:18:17 +0200 Jann Horn <jannh@google.com> wrote:
+> >>> load_flat_shared_library() is broken: It only calls load_flat_file() if
+> >>> prepare_binprm() returns zero, but prepare_binprm() returns the number of
+> >>> bytes read - so this only happens if the file is empty.
+> >>
+> >>> Instead, call into load_flat_file() if the number of bytes read is
+> >>> non-negative. (Even if the number of bytes is zero - in that case,
+> >>> load_flat_file() will see nullbytes and return a nice -ENOEXEC.)
+> >>>
+> >>> In addition, remove the code related to bprm creds and stop using
+> >>> prepare_binprm() - this code is loading a library, not a main executable,
+> >>> and it only actually uses the members "buf", "file" and "filename" of the
+> >>> linux_binprm struct. Instead, call kernel_read() directly.
+> >>>
+> >>> Cc: stable@vger.kernel.org
+> >>> Fixes: 287980e49ffc ("remove lots of IS_ERR_VALUE abuses")
+> >>> Signed-off-by: Jann Horn <jannh@google.com>
+> >>> ---
+> >>> I only found the bug by looking at the code, I have not verified its
+> >>> existence at runtime.
+> >>> Also, this patch is compile-tested only.
+> >>> It would be nice if someone who works with nommu Linux could have a
+> >>> look at this patch.
+> >>
+> >> 287980e49ffc was three years ago!  Has it really been broken for all
+> >> that time?  If so, it seems a good source of freed disk space...
+> >
+> > Maybe... but I didn't want to rip it out without having one of the
+> > maintainers confirm that this really isn't likely to be used anymore.
+>
+> I have not used shared libraries on m68k non-mmu setups for
+> a very long time. At least 10 years I would think.
+>
+> Regards
+> Greg
+>
+>
+>
