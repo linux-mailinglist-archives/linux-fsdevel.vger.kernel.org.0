@@ -2,283 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 659C62E4D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 20:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 953C22E50C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 21:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726238AbfE2Syx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 14:54:53 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54630 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbfE2Syw (ORCPT
+        id S1726728AbfE2TI5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 15:08:57 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:40938 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbfE2TI5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 14:54:52 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 114A127FDAE
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     tytso@mit.edu
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH] ext4: Optimize case-insensitive lookups
-Date:   Wed, 29 May 2019 14:54:46 -0400
-Message-Id: <20190529185446.22757-1-krisman@collabora.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 29 May 2019 15:08:57 -0400
+Received: by mail-yb1-f195.google.com with SMTP id g62so1198844ybg.7;
+        Wed, 29 May 2019 12:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3OGwXMfFFQztZM039mI0WMSn1MvrOmZGR4oYkysJC3w=;
+        b=SDTngy90DbeR+MzZDVKcRdkaLP1+vir+e/4EefAKUMh01+y3AxKsaTOgp8UXv9u/kE
+         egvD3XMOaKIO6mAc28kewQPQfnR83nClWMseWJaKp6CGzxyo/3PIg6zwwDWixnB/rYvH
+         TcQ4nbmzhMoJhgDROtSC68zFbYomgFQ+GGp/aBW2MLFRaJHBiLgo2XwXk5Fy5cLJxctl
+         MhVPs2nmEpM6VLxLWpNAmlhW6wThw4YTXdQlFp6qXiHtXlnA7i6fuL3Oljw97t2qYByJ
+         q61wR5WFYO+WhuKLMDDSg2TCWuoFvAzc4R6x2qrUWUFk+LqKNw55xJcOPmUqSsmGDzot
+         5dAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3OGwXMfFFQztZM039mI0WMSn1MvrOmZGR4oYkysJC3w=;
+        b=tepq9LwD9Q65AtPHy2K92Beyy2IpUQkMCou9NP4F9Cen5KkIwN9j0c1ZTc4YGtKIUy
+         bC6Wjj+hbq0tXmN6MT+rW0OmTAKf/yltwpGqiPF5s6nK5Zb4/Cy6dUWzQhys1Xy+/xdw
+         uIzgqTSGMvZ7byukaRgM7cyqWEVcHpwvzYnLmiH8z7tC6uehLEYMy9QhLhx4ED8NdCwu
+         ZYqLp5oa8gcBS9avMtk8f6CmIIJEViV4yV//k4PSjyDsNbl1gRfz/oL+1f5tHvMJEfdY
+         peovjMeBBk3B1X4mKw/Q09jd37jc8MeXfjePLJQ/8H/pes4RLwv84STHQ3iwUdM/grGX
+         F44g==
+X-Gm-Message-State: APjAAAWNgHqyv9WAHhwOXBzfGxKbmjAnyL6+jNqXfbeA56iuXQk4tMUg
+        gMhpDbCfOXYOu/SkXOpMWYmFsfSqlbSIoZsGtNQ=
+X-Google-Smtp-Source: APXvYqzloFzwd2llHYpp5ChMwkSfcbQRwyvB23IwdGNr0fVkGV5pXryNtFvsN+98UPJjSgKSdR/vdNglJk06q9T/qDc=
+X-Received: by 2002:a05:6902:4c3:: with SMTP id v3mr247877ybs.144.1559156935937;
+ Wed, 29 May 2019 12:08:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190529174318.22424-1-amir73il@gmail.com> <20190529174318.22424-7-amir73il@gmail.com>
+ <20190529182748.GF5231@magnolia>
+In-Reply-To: <20190529182748.GF5231@magnolia>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 29 May 2019 22:08:44 +0300
+Message-ID: <CAOQ4uxgsMLTPtYaQwwNHo3NrzXz9u=YGc2v6Pg8TSo7-xFrqQQ@mail.gmail.com>
+Subject: Re: [PATCH v3 06/13] vfs: introduce file_modified() helper
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Luis Henriques <lhenriques@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org, ceph-devel@vger.kernel.org,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Temporarily cache a casefolded version of the file name under lookup in
-ext4_filename, to avoid repeatedly casefolding it.
+On Wed, May 29, 2019 at 9:27 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+>
+> On Wed, May 29, 2019 at 08:43:10PM +0300, Amir Goldstein wrote:
+> > The combination of file_remove_privs() and file_update_mtime() is
+> > quite common in filesystem ->write_iter() methods.
+> >
+> > Modelled after the helper file_accessed(), introduce file_modified()
+> > and use it from generic_remap_file_range_prep().
+> >
+> > Note that the order of calling file_remove_privs() before
+> > file_update_mtime() in the helper was matched to the more common order by
+> > filesystems and not the current order in generic_remap_file_range_prep().
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  fs/inode.c         | 20 ++++++++++++++++++++
+> >  fs/read_write.c    | 21 +++------------------
+> >  include/linux/fs.h |  2 ++
+> >  3 files changed, 25 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index df6542ec3b88..2885f2f2c7a5 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -1899,6 +1899,26 @@ int file_update_time(struct file *file)
+> >  }
+> >  EXPORT_SYMBOL(file_update_time);
+> >
+> > +/* Caller must hold the file's inode lock */
+> > +int file_modified(struct file *file)
+> > +{
+> > +     int err;
+> > +
+> > +     /*
+> > +      * Clear the security bits if the process is not being run by root.
+> > +      * This keeps people from modifying setuid and setgid binaries.
+> > +      */
+> > +     err = file_remove_privs(file);
+> > +     if (err)
+> > +             return err;
+> > +
+> > +     if (likely(file->f_mode & FMODE_NOCMTIME))
+>
+> I would not have thought NOCMTIME is likely?
+>
+> Maybe it is for io requests coming from overlayfs, but for regular uses
+> I don't think that's true.
 
-This gives me some performance gains on the lookup patch, when
-performing cold dcache case-insensitive lookups on directories with a
-high number of entries.
+Nope that's a typo. Good spotting.
+Overlayfs doesn't set FMODE_NOCMTIME (yet). Only xfs does from
+XFS_IOC_OPEN_BY_HANDLE, but I think Dave said that is a deprecated
+API. so should have been very_unlikely().
 
-Below is a measure of average speedup of several runs with the patch
-applied; where the baseline is the currently ext4 code, and the rows are
-for different number of directory entries/number of lookup performed.
-The speedup is not linear with the number of dentries, which I believe
-is because of the changing format of the htree.
-
-| entries | avg speedup |
-| 1000    |  1.15	|
-| 10000   |  1.19	|
-| 50000   |  1.25	|
-| 70000   |  1.20	|
-| 100000  |  1.13	|
-
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- fs/ext4/dir.c           |  2 +-
- fs/ext4/ext4.h          | 32 +++++++++++++++++++++++++++++---
- fs/ext4/namei.c         | 41 +++++++++++++++++++++++++++++++++++------
- fs/unicode/utf8-core.c  | 25 +++++++++++++++++++++++++
- include/linux/unicode.h |  3 +++
- 5 files changed, 93 insertions(+), 10 deletions(-)
-
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index c7843b149a1e..0a427e18584a 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -674,7 +674,7 @@ static int ext4_d_compare(const struct dentry *dentry, unsigned int len,
- 		return memcmp(str, name->name, len);
- 	}
- 
--	return ext4_ci_compare(dentry->d_parent->d_inode, name, &qstr);
-+	return ext4_ci_compare(dentry->d_parent->d_inode, name, &qstr, false);
- }
- 
- static int ext4_d_hash(const struct dentry *dentry, struct qstr *str)
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index c18ab748d20d..e3809cfda9f4 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2078,6 +2078,10 @@ struct ext4_filename {
- #ifdef CONFIG_FS_ENCRYPTION
- 	struct fscrypt_str crypto_buf;
- #endif
-+#ifdef CONFIG_UNICODE
-+	int cf_len;
-+	unsigned char cf_name[EXT4_NAME_LEN];
-+#endif
- };
- 
- #define fname_name(p) ((p)->disk_name.name)
-@@ -2303,6 +2307,12 @@ extern unsigned ext4_free_clusters_after_init(struct super_block *sb,
- 					      struct ext4_group_desc *gdp);
- ext4_fsblk_t ext4_inode_to_goal_block(struct inode *);
- 
-+#ifdef CONFIG_UNICODE
-+extern void ext4_setup_ci_filename(struct inode *dir,
-+				   const struct qstr *iname,
-+				   struct ext4_filename *fname);
-+#endif
-+
- #ifdef CONFIG_FS_ENCRYPTION
- static inline int ext4_fname_setup_filename(struct inode *dir,
- 			const struct qstr *iname,
-@@ -2313,6 +2323,9 @@ static inline int ext4_fname_setup_filename(struct inode *dir,
- 
- 	memset(fname, 0, sizeof(struct ext4_filename));
- 
-+#ifdef CONFIG_UNICODE
-+	ext4_setup_ci_filename(dir, iname, fname);
-+#endif
- 	err = fscrypt_setup_filename(dir, iname, lookup, &name);
- 
- 	fname->usr_fname = name.usr_fname;
-@@ -2333,18 +2346,31 @@ static inline void ext4_fname_free_filename(struct ext4_filename *fname)
- 	fname->crypto_buf.name = NULL;
- 	fname->usr_fname = NULL;
- 	fname->disk_name.name = NULL;
-+#ifdef CONFIG_UNICODE
-+	fname->cf_len = 0;
-+#endif
- }
- #else
- static inline int ext4_fname_setup_filename(struct inode *dir,
- 		const struct qstr *iname,
- 		int lookup, struct ext4_filename *fname)
- {
-+
-+#ifdef CONFIG_UNICODE
-+	ext4_setup_ci_filename(dir, iname, fname);
-+#endif
- 	fname->usr_fname = iname;
- 	fname->disk_name.name = (unsigned char *) iname->name;
- 	fname->disk_name.len = iname->len;
- 	return 0;
- }
--static inline void ext4_fname_free_filename(struct ext4_filename *fname) { }
-+
-+static inline void ext4_fname_free_filename(struct ext4_filename *fname)
-+{
-+#ifdef CONFIG_UNICODE
-+	fname->cf_len = 0;
-+#endif
-+}
- 
- #endif
- 
-@@ -3088,8 +3114,8 @@ extern int ext4_handle_dirty_dirent_node(handle_t *handle,
- 					 struct inode *inode,
- 					 struct buffer_head *bh);
- extern int ext4_ci_compare(const struct inode *parent,
--			   const struct qstr *name,
--			   const struct qstr *entry);
-+			   const struct qstr *fname,
-+			   const struct qstr *entry, bool quick);
- 
- #define S_SHIFT 12
- static const unsigned char ext4_type_by_mode[(S_IFMT >> S_SHIFT) + 1] = {
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index ac7457fef9e6..082f941520f3 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1259,19 +1259,25 @@ static void dx_insert_block(struct dx_frame *frame, u32 hash, ext4_lblk_t block)
- #ifdef CONFIG_UNICODE
- /*
-  * Test whether a case-insensitive directory entry matches the filename
-- * being searched for.
-+ * being searched for.  If quick is set, assume the name being looked up
-+ * is already in the casefolded form.
-  *
-  * Returns: 0 if the directory entry matches, more than 0 if it
-  * doesn't match or less than zero on error.
-  */
--int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
--		    const struct qstr *entry)
-+int ext4_ci_compare(const struct inode *parent,
-+		    const struct qstr *name,
-+		    const struct qstr *entry, bool quick)
- {
- 	const struct ext4_sb_info *sbi = EXT4_SB(parent->i_sb);
- 	const struct unicode_map *um = sbi->s_encoding;
- 	int ret;
- 
--	ret = utf8_strncasecmp(um, name, entry);
-+	if (quick)
-+		ret = utf8_strncasecmp_folded(um, name, entry);
-+	else
-+		ret = utf8_strncasecmp(um, name, entry);
-+
- 	if (ret < 0) {
- 		/* Handle invalid character sequence as either an error
- 		 * or as an opaque byte sequence.
-@@ -1287,6 +1293,21 @@ int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
- 
- 	return ret;
- }
-+
-+void ext4_setup_ci_filename(struct inode *dir,
-+			    const struct qstr *iname,
-+			    struct ext4_filename *fname)
-+{
-+	int len = EXT4_NAME_LEN;
-+
-+	fname->cf_len = 0;
-+	if (IS_CASEFOLDED(dir)) {
-+		len = utf8_casefold(EXT4_SB(dir->i_sb)->s_encoding,
-+				    iname, fname->cf_name, len);
-+		if (len >= 0)
-+			fname->cf_len = len;
-+	}
-+}
- #endif
- 
- /*
-@@ -1313,8 +1334,16 @@ static inline bool ext4_match(const struct inode *parent,
- #endif
- 
- #ifdef CONFIG_UNICODE
--	if (EXT4_SB(parent->i_sb)->s_encoding && IS_CASEFOLDED(parent))
--		return (ext4_ci_compare(parent, fname->usr_fname, &entry) == 0);
-+	if (EXT4_SB(parent->i_sb)->s_encoding && IS_CASEFOLDED(parent)) {
-+		if (fname->cf_len) {
-+			struct qstr cf = {.name = fname->cf_name,
-+					  .len = fname->cf_len};
-+			return !ext4_ci_compare(parent, &cf,
-+						&entry, true);
-+		}
-+		return !ext4_ci_compare(parent, fname->usr_fname,
-+						&entry, false);
-+	}
- #endif
- 
- 	return fscrypt_match_name(&f, de->name, de->name_len);
-diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
-index 6afab4fdce90..1d74de2778e9 100644
---- a/fs/unicode/utf8-core.c
-+++ b/fs/unicode/utf8-core.c
-@@ -73,6 +73,31 @@ int utf8_strncasecmp(const struct unicode_map *um,
- }
- EXPORT_SYMBOL(utf8_strncasecmp);
- 
-+int utf8_strncasecmp_folded(const struct unicode_map *um,
-+			    const struct qstr *normalized,
-+			    const struct qstr *s1)
-+{
-+	const struct utf8data *data = utf8nfdicf(um->version);
-+	struct utf8cursor cur1;
-+	int c1, c2;
-+	int i = 0;
-+
-+	if (utf8ncursor(&cur1, data, s1->name, s1->len) < 0)
-+		return -EINVAL;
-+
-+	do {
-+		c1 = utf8byte(&cur1);
-+		c2 = normalized->name[i++];
-+		if (c1 < 0)
-+			return -EINVAL;
-+		if (c1 != c2)
-+			return 1;
-+	} while (c1);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(utf8_strncasecmp_folded);
-+
- int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
- 		  unsigned char *dest, size_t dlen)
- {
-diff --git a/include/linux/unicode.h b/include/linux/unicode.h
-index aec2c6d800aa..e89bf3ecef21 100644
---- a/include/linux/unicode.h
-+++ b/include/linux/unicode.h
-@@ -17,6 +17,9 @@ int utf8_strncmp(const struct unicode_map *um,
- 
- int utf8_strncasecmp(const struct unicode_map *um,
- 		 const struct qstr *s1, const struct qstr *s2);
-+int utf8_strncasecmp_folded(const struct unicode_map *um,
-+			    const struct qstr *normalized,
-+			    const struct qstr *s1);
- 
- int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
- 		   unsigned char *dest, size_t dlen);
--- 
-2.20.1
-
+Thanks,
+Amir.
