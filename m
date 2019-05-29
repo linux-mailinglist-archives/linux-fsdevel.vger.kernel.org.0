@@ -2,95 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B9282E5F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 22:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0423A2E62A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 22:29:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbfE2UQN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 16:16:13 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44717 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbfE2UQM (ORCPT
+        id S1726438AbfE2U3x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 16:29:53 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37753 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbfE2U3x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 16:16:12 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n2so522661pgp.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 13:16:11 -0700 (PDT)
+        Wed, 29 May 2019 16:29:53 -0400
+Received: by mail-io1-f66.google.com with SMTP id e5so3072105iok.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 13:29:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=byH71jcEnWiZocWjFrPDlTMOE7pd8EPRHoYGyukaY04=;
-        b=bwKrSUcAFY5li8JHROxevBRkVdZvfftmbN2jvX4D8l/n4Q/b0ePv+zprqpG2KluSLn
-         rSYJBFUhtygfnfgM4xMNPYR/Vp/NGpVKFovwEIHmtk8emThGP6iRNZH+rg7exn2dW3QV
-         qTeu7YoFimL+W4CSITeRLNxas0G8YpYTWwbHw=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id;
+        bh=UtbQPUgFNUmhmXEEatwgf5ugaH/Cm/lRbF8Ni8Oe5vI=;
+        b=vC5r3d8quVXIgCrX8UOiVWJOzPKMpiOhCBUYVGA9G7/ZiaZP9WivbLSVYN86tf43eE
+         4mK7FuHcFi9N7VAc92vZB8qJzZqd8T5dH6FZsQfscRKmshfRwVNggUt/kHpss/JXGAe0
+         IUAWHRdhlwq41ON3nFw9gPYr6c25uRTaeIKfKArpivB4L60O2d0/vf56TUlyKNo2i4ky
+         djUXffm6EJxiRjRNhQGBucc4aU7To+7VqSXbDcpRKspdFe70C3retyMu1yVnHPiCtVIr
+         /8LNzzixzIup+X4C29HQqYY6cAzcJ2Nz3nyFL8CZNDbkEYuzQAMF5OepQCY6aEij49n1
+         NhcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=byH71jcEnWiZocWjFrPDlTMOE7pd8EPRHoYGyukaY04=;
-        b=ivFnJyfNBBoiAk9JEhVysLwOe26fDQzYZA9S0FaDc+x4WQGGSbmYEp2JqDVUBljc9O
-         YS1xuA4V2UPD43BSM330Gx113rDtHdpD23lOQSSA6vnAHfGJwcV4tTzxvH5hYoB5cBaG
-         QpqUHKSnUd5ny4Dfksn04FnpC4jh6GeQusBnttPW504NzuYsQ71G/WY7rnhYykkurSbW
-         4MKGWdRmRZ7ZiASj9hatfXhe7P8/MdeelAQoxGvdNWWWwyj4/Yiq2hQ/cmXeoQ0Nx9jb
-         EtLfr+O4j0ECLM5TkPnn0IgcY/eOd4ytp0cCH3FSz5Inxl8V+fXzzQ4gDLGxbjlei2PT
-         eGbQ==
-X-Gm-Message-State: APjAAAW7YXKUQWlI/GQ4knra5Hd0X92H43mmLfBn72ui+2yB3iqqLNzG
-        e+QLchiNOoRABrw5nXlZYk35pw==
-X-Google-Smtp-Source: APXvYqwOtLbXvQF12v2iQzcTzlTPHXYwr/VbPiH/+9zX0lzSfnaAmA5ZoEnSGfNESsFHQ7AnnjhQoA==
-X-Received: by 2002:a63:f44b:: with SMTP id p11mr139393871pgk.225.1559160971649;
-        Wed, 29 May 2019 13:16:11 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u6sm227693pgm.22.2019.05.29.13.16.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 13:16:10 -0700 (PDT)
-Date:   Wed, 29 May 2019 13:16:09 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Alexandre Ghiti <alex@ghiti.fr>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 00/14] Provide generic top-down mmap layout functions
-Message-ID: <201905291313.1E6BD2DFB@keescook>
-References: <20190526134746.9315-1-alex@ghiti.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190526134746.9315-1-alex@ghiti.fr>
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=UtbQPUgFNUmhmXEEatwgf5ugaH/Cm/lRbF8Ni8Oe5vI=;
+        b=fOi088E9lp7xIQdQfnIt0EBM+TviyBEGyvnWfFU/qozg3S0q4QB9TZipk6YTpVBxHS
+         7Mw8aIQqLX8YOk0yW+7cp4RMP+AY+jYMvOsZ8iUzBmn/Eqvb5GPA325RRIZSN6zMzboK
+         /KpedqT4MchLvxzAdPdlnXnBOXY5WChxh1DAtXjkoB0S3geggqotekS7JH19dioavVeE
+         fuKOZTlQ8o/uaGbSXjdndhVMxr3+8h2beKUEkoXEsgf6HAHOG6Znm4fUgVTW5/P59+Yu
+         4mHY1H+EpheULCgqU3VIIsIHr6VF/pAg+cuC0nqDUJexzYaDRblvJQTs3AN8B0AML4S/
+         G09w==
+X-Gm-Message-State: APjAAAUgLXcKoj07lrj9hS7tOekLpHGJNYDMb7kyUJYbcBTgPggX1ATi
+        iFBhFfFQe/aWk7oCCmGOOWPUU7K6zcp/Yg==
+X-Google-Smtp-Source: APXvYqy0uMJD9fhurgFqHv2vg8ochqIKRAl1p+TX6vKoSNCoNwiQBYZC5Y3pyCnIpRMdiktNJEkLPQ==
+X-Received: by 2002:a5e:c70c:: with SMTP id f12mr14174865iop.293.1559161791850;
+        Wed, 29 May 2019 13:29:51 -0700 (PDT)
+Received: from localhost.localdomain ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id k76sm179105ita.6.2019.05.29.13.29.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 13:29:51 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: [PATCHSET v2 0/3] io_uring: support for linked SQEs
+Date:   Wed, 29 May 2019 14:29:45 -0600
+Message-Id: <20190529202948.20833-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 26, 2019 at 09:47:32AM -0400, Alexandre Ghiti wrote:
-> This series introduces generic functions to make top-down mmap layout
-> easily accessible to architectures, in particular riscv which was
-> the initial goal of this series.
-> The generic implementation was taken from arm64 and used successively
-> by arm, mips and finally riscv.
+Here's v2 of the linked SQE patchset. For a full description of this
+feature, please refer to the v1 posting:
 
-As I've mentioned before, I think this is really great. Making this
-common has long been on my TODO list. Thank you for the work! (I've sent
-separate review emails for individual patches where my ack wasn't
-already present...)
+https://lore.kernel.org/linux-block/20190517214131.5925-1-axboe@kernel.dk/
 
->   - There is no common API to determine if a process is 32b, so I came up with
->     !IS_ENABLED(CONFIG_64BIT) || is_compat_task() in [PATCH v4 12/14].
+Changes since v1 are just fixes, and nothing major at that. Some of the
+v1 error handling wasn't quite correct, this should be. The liburing
+repo contains the link-cp copy implementation using linked SQEs, and
+also has a test case that exercises a few of the link combinations.
 
-Do we need a common helper for this idiom? (Note that I don't think it's
-worth blocking the series for this.)
+Patches are against my for-linus branch, but should apply to Linus
+master just fine as well.
 
--Kees
+ block/blk-core.c              |  74 +++++++++-
+ block/blk-sysfs.c             |  47 ++----
+ block/blk.h                   |   1 +
+ drivers/block/loop.c          |  18 +--
+ fs/aio.c                      |   9 +-
+ fs/block_dev.c                |  25 ++--
+ fs/io_uring.c                 | 268 ++++++++++++++++++++++++++--------
+ fs/splice.c                   |   8 +-
+ include/linux/uio.h           |   4 +-
+ include/uapi/linux/io_uring.h |   1 +
+ lib/iov_iter.c                |  15 +-
+ net/compat.c                  |   3 +-
+ net/socket.c                  |   3 +-
+ 13 files changed, 329 insertions(+), 147 deletions(-)
 
 -- 
-Kees Cook
+Jens Axboe
+
+
