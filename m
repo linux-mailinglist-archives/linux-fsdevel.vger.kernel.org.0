@@ -2,164 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 925442DC5A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 14:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF95D2DC68
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 14:05:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbfE2MDQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 08:03:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48080 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725894AbfE2MDQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 08:03:16 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7C04F3087926;
-        Wed, 29 May 2019 12:03:02 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.18.25.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 166216149A;
-        Wed, 29 May 2019 12:02:44 +0000 (UTC)
-Reply-To: dwalsh@redhat.com
-Subject: Re: [PATCH ghak90 V6 00/10] audit: implement container identifier
-To:     Richard Guy Briggs <rgb@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        omosnace@redhat.com, dhowells@redhat.com, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        Mrunal Patel <mpatel@redhat.com>
-References: <cover.1554732921.git.rgb@redhat.com>
- <509ea6b0-1ac8-b809-98c2-37c34dd98ca3@redhat.com>
- <CAHC9VhRW9f6GbhvvfifbOzd9p=PgdB2gq1E7tACcaqvfb85Y8A@mail.gmail.com>
- <3299293.RYyUlNkVNy@x2>
- <20190529004352.vvicec7nnk6pvkwt@madcap2.tricolour.ca>
-From:   Daniel Walsh <dwalsh@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dwalsh@redhat.com; prefer-encrypt=mutual; keydata=
- mQENBFsaqOEBCADBSnZCZpi262vX8m7iL/OdHKP9G9dhS28FR60cjd8nMPqHDNhQJBjLMZra
- 66L2cCIEhc4HEItail7KU1BckrMc4laFaxL8tLoVTKHZwb74n2OcAJ4FtgzkNNlB1XJvSwC/
- 909uwt7cpDqwXpJvyP3t17iuklB1OY0EEjTDt9aU4+0QjHzV18L4Cpd9iQ4ksu+EHT+pjlBk
- DdQB+hKoAjxPl11Eh6pZfrAcrNWpYBBk0A3XE9Jb6ghbmHWltNgVOsCa9GcswJHUEeFiOup6
- J5DTv6Xzwt0t6QB8nIs+wDJH+VxqAXcrxscnAhViIfGGS2AtxzjnVOz/J+UZPaauIGXTABEB
- AAG0LERhbmllbCBKIFdhbHNoIChGb3IgR2l0KSA8ZHdhbHNoQHJlZGhhdC5jb20+iQE4BBMB
- AgAiBQJbGqjhAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRCi35Adq+LAKHuJB/98
- nZB5RmNjMWua4Ms8q5a1R9XWlDAb3mrST6JeL+uV/M0fa18e2Aw4/hi/WZHjAjoypLmcuaRx
- GeCbC8iYdpfRDUG79Y956Qq+Vs8c6VfNDMY1mvtfb00eeTaYoOCu0Aa9LDeR9iLKh2g0RI+N
- Zr3EU45RxZdacIs1v6mU8pGpyUq/FvuTGK9GzR9d1YeVCuSpQKN4ckHNZHJUXyk0vOZft1oO
- nSgLqM9EDWA+yz1JLmRYwbNsim7IvfVOav5mCgnKzHcL2mLv8qCnMFZjoQV8aGny/W739Z3a
- YJo1CdOg6zSu5SOvmq9idYrBRkwEtyLXss2oceTVBs0MxqQ/9mLPuQENBFsaqOEBCADDl2hl
- bUpqJGgwt2eQvs0Z0DCx/7nn0hlLfEn4WAv2HqP25AjIRXUX31Mzu68C4QnsvNtY4zN+FGRC
- EfUpYsjiL7vBYlRePhIohyMYU4RLp5eXFQKahHO/9Xlhe8mwueQNwYxNBPfMQ65U2AuqxpcS
- scx4s5w208mhqHoKz6IB2LuKeflhYfH5Y1FNAtVGHfhg22xlcAdupPPcxGuS4fBEW6PD/SDf
- Y4HT5iUHsyksQKjM0IFalqZ7YuLfXBl07OD2zU7WI9c3W0dwkvwIRjt3aD4iAah544uOLff+
- BzfxWghXeo80S2a1WCL0S/2qR0NVct/ExaDWboYr/bKpTa/1ABEBAAGJAR8EGAECAAkFAlsa
- qOECGwwACgkQot+QHaviwCi2hgf/XRvrt+VBmp1ZFxQAR9E6S7AtRT8KSytjFiqEC7TpOx3r
- 2OZ4gZ3ZiW4TMW8hS7aYRgF1uYpLzl7BbrCfCHfAWEcXZ+uG8vayg8G/mLAcNlLY+JE76ATs
- 53ziEY9R2Vb/wLMFd2nNBdqfwGcRH9N9VOej9vP76nCP01ZolY8Nms2hE383/+1Quxp5EedU
- BN5W5l7x9riBJyqCA63hr4u8wNsTuQgrDyhm/U1IvYeLtMopgotjnIR3KiTKOElbppLeXW3w
- EO/sQTPk+vQ4vcsJYY9Dnf1NlvHE4klj60GHjtjitsBEHzdE7s+J9FOxPmt8l+gMogGumKpN
- Y4lO0pfTyg==
-Organization: Red Hat
-Message-ID: <31804653-7518-1a9c-83af-f6ce6a6ce408@redhat.com>
-Date:   Wed, 29 May 2019 08:02:43 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726581AbfE2MFj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 08:05:39 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41627 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbfE2MFi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 May 2019 08:05:38 -0400
+Received: by mail-qk1-f194.google.com with SMTP id m18so1225204qki.8;
+        Wed, 29 May 2019 05:05:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uptjHgaBaplGgf+wVSZU2eUIoKk2cN8EqiU/ukCqtno=;
+        b=bVru2BYig38DgvLxps014WcqhT79gXuca2bK5YYvsZX6/pCoiF7T1M8KG+54g1GgRL
+         hQ0oNIofY0Gbta4HzbzhsdohwMrktKK7svU/HIKpWqDXrof/fWkKZZHI66oi1DqDMQg5
+         NB8WcqSYg1xcppR+jNWmNVDrEce6do2vQZJ5Nr7KW+wKe3F/AblZPRQzcqFyVwKaSSO2
+         kTSiq8lbGzIrOUyrYSJkl6zT0uCMGemojqtWR/amdEUbXcf2UgXiFNaVlfh3zTd9SUa5
+         mXsldNqN8pFQn+pLkwwwY8MA1i1shNTDENVRbNpm6kv0yluRrwi8cWE77677njpdVzkN
+         p+KQ==
+X-Gm-Message-State: APjAAAWZn+XYGCw+YL5NL9zlPbseU+lCQfI2zoFJclDHvZZmkybNeXbL
+        qFFCFM6UG4tV0waJ2QuQ0t1qvxY7h/2cq94Skuw=
+X-Google-Smtp-Source: APXvYqyekV82e1W5v+9f5Zmh22yFEE89mido7w9iaejsZbo7/EiB96l90U3/3zjongBQz+oYmXVaIj2lHXggVe4sbas=
+X-Received: by 2002:a05:620a:1085:: with SMTP id g5mr80432085qkk.182.1559131537731;
+ Wed, 29 May 2019 05:05:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190529004352.vvicec7nnk6pvkwt@madcap2.tricolour.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 29 May 2019 12:03:15 +0000 (UTC)
+References: <20190524201817.16509-1-jannh@google.com> <20190525144304.e2b9475a18a1f78a964c5640@linux-foundation.org>
+ <CAG48ez36xJ9UA8gWef3+1rHQwob5nb8WP3RqnbT8GEOV9Z38jA@mail.gmail.com> <6956cfe5-90d4-aad4-48e3-66b0ece91fed@linux-m68k.org>
+In-Reply-To: <6956cfe5-90d4-aad4-48e3-66b0ece91fed@linux-m68k.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 29 May 2019 14:05:21 +0200
+Message-ID: <CAK8P3a0b7MBn+84jh0Y2zhFLLAqZ2tMvFDFF9Kw=breRLH4Utg@mail.gmail.com>
+Subject: Re: [PATCH] binfmt_flat: make load_flat_shared_library() work
+To:     Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Linux/m68k" <linux-m68k@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Sergei Poselenov <sposelenov@emcraft.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/28/19 8:43 PM, Richard Guy Briggs wrote:
-> On 2019-05-28 19:00, Steve Grubb wrote:
->> On Tuesday, May 28, 2019 6:26:47 PM EDT Paul Moore wrote:
->>> On Tue, May 28, 2019 at 5:54 PM Daniel Walsh <dwalsh@redhat.com> wrote:
->>>> On 4/22/19 9:49 AM, Paul Moore wrote:
->>>>> On Mon, Apr 22, 2019 at 7:38 AM Neil Horman <nhorman@tuxdriver.com> 
->> wrote:
->>>>>> On Mon, Apr 08, 2019 at 11:39:07PM -0400, Richard Guy Briggs wrote:
->>>>>>> Implement kernel audit container identifier.
->>>>>> I'm sorry, I've lost track of this, where have we landed on it? Are we
->>>>>> good for inclusion?
->>>>> I haven't finished going through this latest revision, but unless
->>>>> Richard made any significant changes outside of the feedback from the
->>>>> v5 patchset I'm guessing we are "close".
->>>>>
->>>>> Based on discussions Richard and I had some time ago, I have always
->>>>> envisioned the plan as being get the kernel patchset, tests, docs
->>>>> ready (which Richard has been doing) and then run the actual
->>>>> implemented API by the userland container folks, e.g. cri-o/lxc/etc.,
->>>>> to make sure the actual implementation is sane from their perspective.
->>>>> They've already seen the design, so I'm not expecting any real
->>>>> surprises here, but sometimes opinions change when they have actual
->>>>> code in front of them to play with and review.
->>>>>
->>>>> Beyond that, while the cri-o/lxc/etc. folks are looking it over,
->>>>> whatever additional testing we can do would be a big win.  I'm
->>>>> thinking I'll pull it into a separate branch in the audit tree
->>>>> (audit/working-container ?) and include that in my secnext kernels
->>>>> that I build/test on a regular basis; this is also a handy way to keep
->>>>> it based against the current audit/next branch.  If any changes are
->>>>> needed Richard can either chose to base those changes on audit/next or
->>>>> the separate audit container ID branch; that's up to him.  I've done
->>>>> this with other big changes in other trees, e.g. SELinux, and it has
->>>>> worked well to get some extra testing in and keep the patchset "merge
->>>>> ready" while others outside the subsystem look things over.
->>>> Mrunal Patel (maintainer of CRI-O) and I have reviewed the API, and
->>>> believe this is something we can work on in the container runtimes team
->>>> to implement the container auditing code in CRI-O and Podman.
->>> Thanks Dan.  If I pulled this into a branch and built you some test
->>> kernels to play with, any idea how long it might take to get a proof
->>> of concept working on the cri-o side?
->> We'd need to merge user space patches and let them use that instead of the 
->> raw interface. I'm not going to merge user space until we are pretty sure the 
->> patch is going into the kernel.
-> I have an f29 test rpm of the userspace bits if that helps for testing:
-> 	http://people.redhat.com/~rbriggs/ghak90/git-1db7e21/
+On Tue, May 28, 2019 at 12:56 PM Greg Ungerer <gerg@linux-m68k.org> wrote:
+> On 27/5/19 11:38 pm, Jann Horn wrote:
+> > On Sat, May 25, 2019 at 11:43 PM Andrew Morton
+> > <akpm@linux-foundation.org> wrote:
+> >> On Fri, 24 May 2019 22:18:17 +0200 Jann Horn <jannh@google.com> wrote:
+> >>> load_flat_shared_library() is broken: It only calls load_flat_file() if
+> >>> prepare_binprm() returns zero, but prepare_binprm() returns the number of
+> >>> bytes read - so this only happens if the file is empty.
+> >>
+> >> ouch.
+> >>
+> >>> Instead, call into load_flat_file() if the number of bytes read is
+> >>> non-negative. (Even if the number of bytes is zero - in that case,
+> >>> load_flat_file() will see nullbytes and return a nice -ENOEXEC.)
+> >>>
+> >>> In addition, remove the code related to bprm creds and stop using
+> >>> prepare_binprm() - this code is loading a library, not a main executable,
+> >>> and it only actually uses the members "buf", "file" and "filename" of the
+> >>> linux_binprm struct. Instead, call kernel_read() directly.
+> >>>
+> >>> Cc: stable@vger.kernel.org
+> >>> Fixes: 287980e49ffc ("remove lots of IS_ERR_VALUE abuses")
+> >>> Signed-off-by: Jann Horn <jannh@google.com>
+> >>> ---
+> >>> I only found the bug by looking at the code, I have not verified its
+> >>> existence at runtime.
+> >>> Also, this patch is compile-tested only.
+> >>> It would be nice if someone who works with nommu Linux could have a
+> >>> look at this patch.
+> >>
+> >> 287980e49ffc was three years ago!  Has it really been broken for all
+> >> that time?  If so, it seems a good source of freed disk space...
+> >
+> > Maybe... but I didn't want to rip it out without having one of the
+> > maintainers confirm that this really isn't likely to be used anymore.
 >
-> Here's what it contains (minus the last patch):
-> 	https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghau40-containerid-filter.v7.0
->
->> -Steve
->>
->>> FWIW, I've also reached out to some of the LXC folks I know to get
->>> their take on the API.  I think if we can get two different container
->>> runtimes to give the API a thumbs-up then I think we are in good shape
->>> with respect to the userspace interface.
->>>
->>> I just finished looking over the last of the pending audit kernel
->>> patches that were queued waiting for the merge window to open so this
->>> is next on my list to look at.  I plan to start doing that
->>> tonight/tomorrow, and as long as the changes between v5/v6 are not
->>> that big, it shouldn't take too long.
-> - RGB
->
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
+> I have not used shared libraries on m68k non-mmu setups for
+> a very long time. At least 10 years I would think.
 
-Our current thoughts are to put the setting of the ID inside of conmon,
-and then launching the OCI Runtime.  In a perfect world this would
-happen in the OCI Runtime, but we have no controls over different OCI
-Runtimes. 
+I think Emcraft have a significant customer base running ARM NOMMU
+Linux, I wonder whether they would have run into this (adding
+Sergei to Cc).
+My suspicion is that they use only binfmt-elf-fdpic, not binfmt-flat.
 
-By putting it into conmon, then CRI-O and Podman will automatically get
-the container id support.  After we have this we have to plumb it back
-up through the contianer engines to be able to easily report the link
-between the Container UUID and The Kernel Container Audit ID.
+The only architectures I see that enable binfmt-flat are sh, xtensa
+and h8300, but only arch/sh uses CONFIG_BINFMT_SHARED_FLAT
+for a few machine specific configurations, and I'm in turn fairly sure
+those machines have not run a recent kernel in many years.
 
+The one SH nommu platform likely to have users is j2, and that is
+probably always used with musl-libc with elf-fdpic (given that
+Rich Felker maintains both the kernel port and the library).
 
+      Arnd
