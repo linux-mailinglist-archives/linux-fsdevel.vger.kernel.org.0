@@ -2,187 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 538882D54B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 07:58:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18F1A2D58F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 May 2019 08:33:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbfE2F6W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 May 2019 01:58:22 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:38715 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbfE2F6V (ORCPT
+        id S1726147AbfE2Gds (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 May 2019 02:33:48 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:43629 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbfE2Gdr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 May 2019 01:58:21 -0400
-Received: by mail-yw1-f66.google.com with SMTP id b74so558921ywe.5;
-        Tue, 28 May 2019 22:58:21 -0700 (PDT)
+        Wed, 29 May 2019 02:33:47 -0400
+Received: by mail-yb1-f194.google.com with SMTP id n145so372589ybg.10;
+        Tue, 28 May 2019 23:33:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=a6nWKM07XCTQG/jfZDs9epRQaNFVvzTBWML5ZHkbuZw=;
-        b=A2C1071RXs3ZnZFiz4+/N4wTKcNvDdPJLbUb0TAOcCSExMUOU0vJkws3W8UBuKFXJK
-         DQYos90pa3qhlOzf9QdV8jpPV3w6caXq9Z5SF6c5Yd2KFWaf5qzXzQ2BDN4ifGyZm0d6
-         DTQbQ5k4lq9u5oMjPtxM1Og6YUXpPJEcJrzyqI1eg8XuwOON5Bf70Mr8cfVb7V+ZKVSt
-         eGk+Rhy9X77XNrNW/fIyQeQcBZ8aSptJYLkkBruwp0Nash6DVh3WHRQ2Z3adqhkLVzRB
-         tcKEfFr170QG/HzEvGMGkIp5ASzcgqG4Kpm3woXcLTsYvw/rW8KfTfap5hMeA/clngd0
-         N1wA==
+        bh=yENNg7cJ89dNJXBOI0oAIdYRt7Ra6atK2tYz8p0gMCg=;
+        b=gSd6RavHCdQA6U4PmK50WU7ujwJFo5fxoJGlDl+i6xOvDAKDtBpghDDm0UIcMJ1ZlU
+         /aFHtGuF1bHEqxQJVd15Budgd3S9h4YJFeiyLo45rxhzARoBSJebbdrzA0YZpTTVqEYb
+         lSF2E9NzXeBFPdV8Lx+IBYhxY511yYJgLeJOOqjg9mmcuWw8GR6BzqMA0kxhJIjhC/7a
+         80JkV/Di3vv9PZtwM/LWYu4EkvfW28oVckVL8hJ8W0KEj1QRFONAs3K5vyC0Z6OVuZmL
+         cO3Art9UkR+Pe6p6QueAGoQSVAJZWkE8ESlqRnuiuYQUG8jRt4SdqwWPcwwnynIV7yxX
+         4yAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=a6nWKM07XCTQG/jfZDs9epRQaNFVvzTBWML5ZHkbuZw=;
-        b=YGMFLKuyLkDjSlhk/jf3LW2fUiVVYAm89EpEUsRJFj2zZiw/piGR0xWv3KuLD21Fel
-         hX454flacYF21d2Ln+8k31AmVNku0p1LbUy/3vP10vFfWtjng/O3jBCHbXp42TUiZ3hf
-         4OXaIissRLfFBhuFUX2UXz+aGjHnjPgo8IFPOmZqLPgtZEerxZ1XvP7ENYT8VgVzjzen
-         X6x6WnhE0bXCiolC/l1eoFVQwFZCnu01yTo7z8RUnwsjWO+f9uF9G62fvjAZX1qoDUKr
-         /ZjKWKpxOz+zj8GVOM0aVDo2Dl0xvV2keVFRyFqU+lIcr1mkCZRst07IHZ3jBvy2BqP1
-         /bIQ==
-X-Gm-Message-State: APjAAAVOWs8yCgcdML+NPT0lNwckr7GT22Po59zDXJY8a1aFtmza/UOu
-        hwWnwtpnhmSkgTnjtGr+Fe2RxdH4atvDK8QIpR0=
-X-Google-Smtp-Source: APXvYqwOYL6l/1Lb+X/MmTJtqY36StiIa0PKZ+W9pnloEyELi6wxlXec1BgwoTyrnIQmVl1lph0TPhcoazHCkPM1AuM=
-X-Received: by 2002:a81:4ecc:: with SMTP id c195mr60862161ywb.31.1559109500665;
- Tue, 28 May 2019 22:58:20 -0700 (PDT)
+        bh=yENNg7cJ89dNJXBOI0oAIdYRt7Ra6atK2tYz8p0gMCg=;
+        b=p0k8OEzNgbMmJwHut6h3wTLGgZWUCQEujQQ9riWJ1gURsUgoFJqAzFADXNrKkZvLYq
+         tCzVR0KDRz+B7jXNk67rWqasc6F0RAWPhGylEznFkB//XMaaFajQ+KlpPtZsKgBu5BqW
+         7wOVc/qzEUtrF0hu/yokN6HdqMGlZfxSjXZm9QErbrNyMZMRYimZkoAB3SAh+qYaCwkB
+         xs29sTpbUxFadaSGKktoDlibIH1nYtVNt+NYKYigeRwJ18+Rn0hnVTEDxPPsV9ln+8W/
+         AiRx3ms9uqdABcBAD9cRMExzKSjFe75rhRUDW7jtXSgo+zfYKI4Q1Es4R8NOzW1CqTY4
+         FU5w==
+X-Gm-Message-State: APjAAAUizDDwygy6YqyCsbw5RXndhLkMTC+4xo6FgYUOTHg8XzKa45oL
+        2FZvhEBjYyzMALoW9GLw0mTt0OYtZbWqeH2vvaU=
+X-Google-Smtp-Source: APXvYqw6mhDaSRkRnU+dl3Ic5kIIYX8fjw8ZnGYUgNxTD9y/LjYm69ByqIvjP7UucT+m0cDy12RZjAOWaXE0FMJVtOo=
+X-Received: by 2002:a25:8109:: with SMTP id o9mr28076017ybk.132.1559111626228;
+ Tue, 28 May 2019 23:33:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190527172655.9287-1-amir73il@gmail.com> <20190528200659.GK5221@magnolia>
-In-Reply-To: <20190528200659.GK5221@magnolia>
+References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 29 May 2019 08:58:09 +0300
-Message-ID: <CAOQ4uxgq-A7qpi8Mj-N2f2TC1fCHZ45yBc0_KfA9CygwqLMNHw@mail.gmail.com>
-Subject: Re: [RFC][PATCH] link.2: AT_ATOMIC_DATA and AT_ATOMIC_METADATA
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>, Chris Mason <clm@fb.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+Date:   Wed, 29 May 2019 09:33:35 +0300
+Message-ID: <CAOQ4uxjC1M7jwjd9zSaSa6UW2dbEjc+ZbFSo7j9F1YHAQxQ8LQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>,
-        Linux Btrfs <linux-btrfs@vger.kernel.org>,
-        linux-api@vger.kernel.org
+        linux-api@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 28, 2019 at 11:07 PM Darrick J. Wong
-<darrick.wong@oracle.com> wrote:
+On Tue, May 28, 2019 at 7:03 PM David Howells <dhowells@redhat.com> wrote:
 >
-> On Mon, May 27, 2019 at 08:26:55PM +0300, Amir Goldstein wrote:
-> > New link flags to request "atomic" link.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >
-> > Hi Guys,
-> >
-> > Following our discussions on LSF/MM and beyond [1][2], here is
-> > an RFC documentation patch.
-> >
-> > Ted, I know we discussed limiting the API for linking an O_TMPFILE
-> > to avert the hardlinks issue, but I decided it would be better to
-> > document the hardlinks non-guaranty instead. This will allow me to
-> > replicate the same semantics and documentation to renameat(2).
-> > Let me know how that works out for you.
-> >
-> > I also decided to try out two separate flags for data and metadata.
-> > I do not find any of those flags very useful without the other, but
-> > documenting them seprately was easier, because of the fsync/fdatasync
-> > reference.  In the end, we are trying to solve a social engineering
-> > problem, so this is the least confusing way I could think of to describe
-> > the new API.
-> >
-> > First implementation of AT_ATOMIC_METADATA is expected to be
-> > noop for xfs/ext4 and probably fsync for btrfs.
-> >
-> > First implementation of AT_ATOMIC_DATA is expected to be
-> > filemap_write_and_wait() for xfs/ext4 and probably fdatasync for btrfs.
-> >
-> > Thoughts?
-> >
-> > Amir.
-> >
-> > [1] https://lwn.net/Articles/789038/
-> > [2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjZm6E2TmCv8JOyQr7f-2VB0uFRy7XEp8HBHQmMdQg+6w@mail.gmail.com/
-> >
-> >  man2/link.2 | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 51 insertions(+)
-> >
-> > diff --git a/man2/link.2 b/man2/link.2
-> > index 649ba00c7..15c24703e 100644
-> > --- a/man2/link.2
-> > +++ b/man2/link.2
-> > @@ -184,6 +184,57 @@ See
-> >  .BR openat (2)
-> >  for an explanation of the need for
-> >  .BR linkat ().
-> > +.TP
-> > +.BR AT_ATOMIC_METADATA " (since Linux 5.x)"
-> > +By default, a link operation followed by a system crash, may result in the
-> > +new file name being linked with old inode metadata, such as out dated time
-> > +stamps or missing extended attributes.
-> > +.BR fsync (2)
-> > +before linking the inode, but that involves flushing of volatile disk caches.
-> > +
-> > +A filesystem that accepts this flag will guaranty, that old inode metadata
-> > +will not be exposed in the new linked name.
-> > +Some filesystems may internally perform
-> > +.BR fsync (2)
-> > +before linking the inode to provide this guaranty,
-> > +but often, filesystems will have a more efficient method to provide this
-> > +guaranty without flushing volatile disk caches.
-> > +
-> > +A filesystem that accepts this flag does
-> > +.BR NOT
-> > +guaranty that the new file name will exist after a system crash, nor that the
-> > +current inode metadata is persisted to disk.
 >
-> Hmmm.  I think it would be much clearer to state the two expectations in
-> the same place, e.g.:
+> Hi Al,
 >
-> "A filesystem that accepts this flag guarantees that after a successful
-> call completion, the filesystem will return either (a) the version of
-> the metadata that was on disk at the time the call completed; (b) a
-> newer version of that metadata; or (c) -ENOENT.  In other words, a
-> subsequent access of the file path will never return metadata that was
-> obsolete at the time that the call completed, even if the system crashes
-> immediately afterwards."
-
-Your feedback is along the same line as Ted's feedback.
-I will try out the phrasing that Ted proposed, will see how that goes...
-
+> Here's a set of patches to add a general variable-length notification queue
+> concept and to add sources of events for:
 >
-> Did I get that right?  I /think/ this means that one could implement Ye
-> Olde Write And Rename as:
+>  (1) Mount topology events, such as mounting, unmounting, mount expiry,
+>      mount reconfiguration.
 >
-> fd = open(".", O_TMPFILE...);
-> write(fd);
-> fsync(fd);
-
-Certainly not fsync(), that what my "counter-fsync()" phrasing was trying to
-convey. The flags are meant as a "cheaper" replacement for that fsync().
-
-> snprintf(path, PATH_MAX, "/proc/self/fd/%d", fd);
-> linkat(AT_FDCWD, path, AT_FDCWD, "file.txt",
->         AT_EMPTY_PATH | AT_ATOMIC_DATA | AT_ATOMIC_METADATA);
+>  (2) Superblock events, such as R/W<->R/O changes, quota overrun and I/O
+>      errors (not complete yet).
 >
-> (Still struggling to figure out what userspace programs would use this
-> for...)
+>  (3) Block layer events, such as I/O errors.
+>
+>  (4) Key/keyring events, such as creating, linking and removal of keys.
+>
+> One of the reasons for this is so that we can remove the issue of processes
+> having to repeatedly and regularly scan /proc/mounts, which has proven to
+> be a system performance problem.  To further aid this, the fsinfo() syscall
+> on which this patch series depends, provides a way to access superblock and
+> mount information in binary form without the need to parse /proc/mounts.
+>
+>
+> Design decisions:
+>
+>  (1) A misc chardev is used to create and open a ring buffer:
+>
+>         fd = open("/dev/watch_queue", O_RDWR);
+>
+>      which is then configured and mmap'd into userspace:
+>
+>         ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE);
+>         ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
+>         buf = mmap(NULL, BUF_SIZE * page_size, PROT_READ | PROT_WRITE,
+>                    MAP_SHARED, fd, 0);
+>
+>      The fd cannot be read or written (though there is a facility to use
+>      write to inject records for debugging) and userspace just pulls data
+>      directly out of the buffer.
+>
+>  (2) The ring index pointers are stored inside the ring and are thus
+>      accessible to userspace.  Userspace should only update the tail
+>      pointer and never the head pointer or risk breaking the buffer.  The
+>      kernel checks that the pointers appear valid before trying to use
+>      them.  A 'skip' record is maintained around the pointers.
+>
+>  (3) poll() can be used to wait for data to appear in the buffer.
+>
+>  (4) Records in the buffer are binary, typed and have a length so that they
+>      can be of varying size.
+>
+>      This means that multiple heterogeneous sources can share a common
+>      buffer.  Tags may be specified when a watchpoint is created to help
+>      distinguish the sources.
+>
+>  (5) The queue is reusable as there are 16 million types available, of
+>      which I've used 4, so there is scope for others to be used.
+>
+>  (6) Records are filterable as types have up to 256 subtypes that can be
+>      individually filtered.  Other filtration is also available.
+>
+>  (7) Each time the buffer is opened, a new buffer is created - this means
+>      that there's no interference between watchers.
+>
+>  (8) When recording a notification, the kernel will not sleep, but will
+>      rather mark a queue as overrun if there's insufficient space, thereby
+>      avoiding userspace causing the kernel to hang.
+>
+>  (9) The 'watchpoint' should be specific where possible, meaning that you
+>      specify the object that you want to watch.
+>
+> (10) The buffer is created and then watchpoints are attached to it, using
+>      one of:
+>
+>         keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
+>         mount_notify(AT_FDCWD, "/", 0, fd, 0x02);
+>         sb_notify(AT_FDCWD, "/mnt", 0, fd, 0x03);
+>
+>      where in all three cases, fd indicates the queue and the number after
+>      is a tag between 0 and 255.
+>
+> (11) The watch must be removed if either the watch buffer is destroyed or
+>      the watched object is destroyed.
+>
+>
+> Things I want to avoid:
+>
+>  (1) Introducing features that make the core VFS dependent on the network
+>      stack or networking namespaces (ie. usage of netlink).
+>
+>  (2) Dumping all this stuff into dmesg and having a daemon that sits there
+>      parsing the output and distributing it as this then puts the
+>      responsibility for security into userspace and makes handling
+>      namespaces tricky.  Further, dmesg might not exist or might be
+>      inaccessible inside a container.
+>
+>  (3) Letting users see events they shouldn't be able to see.
+>
+>
+> Further things that could be considered:
+>
+>  (1) Adding a keyctl call to allow a watch on a keyring to be extended to
+>      "children" of that keyring, such that the watch is removed from the
+>      child if it is unlinked from the keyring.
+>
+>  (2) Adding global superblock event queue.
+>
+>  (3) Propagating watches to child superblock over automounts.
 >
 
-There are generally two use cases:
+David,
 
-1. Flushing volatile disk caches is very expensive.
-In this case sync_file_range(SYNC_FILE_RANGE_WRITE_AND_WAIT)
-is cheaper than fdatasync() for a preallocated file and obviously a noop
-for AT_ATOMIC_METADATA in "S.O.M.C" filesystem is cheaper than
-a journal commit.
+I am interested to know how you envision filesystem notifications would
+look with this interface.
 
-2. Highly concurrent metadata workloads
-Many users running  AT_ATOMIC_METADATA concurrently are much
-less likely to interfere each other than many users running fsync concurrently.
+fanotify can certainly benefit from providing a ring buffer interface to read
+events.
 
-IWO, when I'm using fsync() to provide the AT_ATOMIC_METADATA guarantee
-on a single journal fs, other users pay the penalty for a guaranty that I didn't
-ask for (i.e. persistency).
+From what I have seen, a common practice of users is to monitor mounts
+(somehow) and place FAN_MARK_MOUNT fanotify watches dynamically.
+It'd be good if those users can use a single watch mechanism/API for
+watching the mount namespace and filesystem events within mounts.
+
+A similar usability concern is with sb_notify and FAN_MARK_FILESYSTEM.
+It provides users with two complete different mechanisms to watch error
+and filesystem events. That is generally not a good thing to have.
+
+I am not asking that you implement fs_notify() before merging sb_notify()
+and I understand that you have a use case for sb_notify().
+I am asking that you show me the path towards a unified API (how a
+typical program would look like), so that we know before merging your
+new API that it could be extended to accommodate fsnotify events
+where the final result will look wholesome to users.
 
 Thanks,
 Amir.
