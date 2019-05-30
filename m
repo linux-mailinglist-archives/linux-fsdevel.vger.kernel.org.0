@@ -2,125 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCB6304DE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 00:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7D0630515
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 00:59:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726326AbfE3Wp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 18:45:56 -0400
-Received: from mail-lj1-f178.google.com ([209.85.208.178]:34980 "EHLO
-        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbfE3Wp4 (ORCPT
+        id S1726454AbfE3W7f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 18:59:35 -0400
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:50147 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726326AbfE3W7e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 18:45:56 -0400
-Received: by mail-lj1-f178.google.com with SMTP id h11so7702446ljb.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2019 15:45:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z/mhNnTAOsJLEZHyKQjw/9NCHJUOEGHQw19Cx/4jcO4=;
-        b=rDK7wvSro0FEjQwKzXFAZoXU+zA7CQ8tauuAidU1OyJdpvDQmgQQg2QoL0I+7hABEB
-         zWhWhjniUI2ciyRj37qwz23E9nH52zdwtzjRbNFL1XNrGxpcSOvDXsl+9YZ0zZmpr2hO
-         Izuco+oTW90piH7FY4aay8XKDGLVuP0jR1pypSKab6kTqOKvf1J64RQ1gwopC4MFY8wH
-         VcNakrYC8zZDSGhSftU/Ye6YCML+jLFw3X/a0Rb2YNeRrGG0QRyuCbH/2TEUkqfUpxJ+
-         /kYiIMgcbpGOiY2aiV29lgE9nvPgQZPyZ/ZtOWoar6Rmhc/a935aKvBV8k6dXuarMIgF
-         2rMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z/mhNnTAOsJLEZHyKQjw/9NCHJUOEGHQw19Cx/4jcO4=;
-        b=fxfuJyQPENzXphAHeFD6M347E9c0Ff66cLoRa11cnie0sJ5FrwOZYbUshUt7bJbUbt
-         ahSfxf6jxycbEb0G4oP0JV7V2VkOVeQu2NU8M9pOEGZ678phARkeWkAQEORoTt+DIPCq
-         Xz7FnsHZAPXSFYUvdug3mnV2CzcH4W/LUHmeJCWEkPmXY4QPSPL9T7d9+AW2apj/NHRJ
-         vnX1KPL1JioKpqx+5aUw0XYTZAaja+vMriEZkc2o6LIkVlTkba8Gp4CM7Nw/+GkMxIC2
-         BMS0DKIPFLUlSSeIIU1voIHnxQ74LP2FNqCLnMB2HjGYVKYCjAV5R5UFNuMUCj+wO0Oc
-         1KcQ==
-X-Gm-Message-State: APjAAAVH2R59Ku38yNidFKqUWAriJEwxhQiQm/iwbynVs2knP0Z2mZQB
-        hNBmKsF8qwmrSrkYY8L8tB/d5h3ZnpQgX0gDI8tUbQ==
-X-Google-Smtp-Source: APXvYqx16U5v6+bC1bWyWxdock3D0aaJh8w5cK3wMUydhh8SE4UIUyh0jp6Z+IHGm2TxDyfSMeT/uDgU8yqKvygWkzo=
-X-Received: by 2002:a2e:5d9c:: with SMTP id v28mr3643226lje.32.1559256353596;
- Thu, 30 May 2019 15:45:53 -0700 (PDT)
+        Thu, 30 May 2019 18:59:34 -0400
+Received: from dread.disaster.area (pa49-180-144-61.pa.nsw.optusnet.com.au [49.180.144.61])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 236DD3DC5A0;
+        Fri, 31 May 2019 08:59:28 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hWU17-0000OZ-Vz; Fri, 31 May 2019 08:59:25 +1000
+Date:   Fri, 31 May 2019 08:59:25 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-btrfs@vger.kernel.org, kilobyte@angband.pl,
+        linux-fsdevel@vger.kernel.org, willy@infradead.org, hch@lst.de,
+        dsterba@suse.cz, nborisov@suse.com, linux-nvdimm@lists.01.org
+Subject: Re: [PATCH 04/18] dax: Introduce IOMAP_DAX_COW to CoW edges during
+ writes
+Message-ID: <20190530225925.GG16786@dread.disaster.area>
+References: <1620c513-4ce2-84b0-33dc-2675246183ea@cn.fujitsu.com>
+ <20190528091729.GD9607@quack2.suse.cz>
+ <a3a919e6-ecad-bdf6-423c-fc01f9cfa661@cn.fujitsu.com>
+ <20190529024749.GC16786@dread.disaster.area>
+ <376256fd-dee4-5561-eb4e-546e227303cd@cn.fujitsu.com>
+ <20190529040719.GL5221@magnolia>
+ <20190529044658.GD16786@dread.disaster.area>
+ <20190529134629.GA32147@quack2.suse.cz>
+ <20190529221445.GE16786@dread.disaster.area>
+ <20190530111605.GC29237@quack2.suse.cz>
 MIME-Version: 1.0
-References: <20190502040331.81196-1-ezemtsov@google.com> <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
- <20190502131034.GA25007@mit.edu> <20190502132623.GU23075@ZenIV.linux.org.uk>
- <CAK8JDrFZW1jwOmhq+YVDPJi9jWWrCRkwpqQ085EouVSyzw-1cg@mail.gmail.com>
- <CAOQ4uxhDYvBOLBkyYXRC6aS_me+Q=1sBAtzOSkdqbo+N-Rtx=Q@mail.gmail.com>
- <CAK8JDrGRzA+yphpuX+GQ0syRwF_p2Fora+roGCnYqB5E1eOmXA@mail.gmail.com>
- <CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=w_AeM6YM=zVixsUfQ@mail.gmail.com>
- <CAK8JDrEQnXTcCtAPkb+S4r4hORiKh_yX=0A0A=LYSVKUo_n4OA@mail.gmail.com>
- <CAJeUaNCvr=X-cc+B3rsunKcdC6yHSGGa4G+8X+n8OxGKHeE3zQ@mail.gmail.com>
- <CAJfpegvmFJ63F2h_gFVPJeEgWS8UmxAYCUgA-4=j9iCNXaXARA@mail.gmail.com>
- <CAJeUaNC5rXuNsoKmJjJN74iH9YNp94L450gcpxyc_dG=D8CCjA@mail.gmail.com>
- <CAJfpegs=4jMo20Wp8NEjREQpqYjqJ22vc680w1E-w6o-dU1brg@mail.gmail.com>
- <CAJeUaNBn0gA6eApgOu=n2uoy+6PbOR_xjTdVvc+StvOKGA-i=Q@mail.gmail.com> <CAJfpeguys2P9q5EpE3GzKHcOS9GVLO9Fj9HB3JBLw36eax+NkQ@mail.gmail.com>
-In-Reply-To: <CAJfpeguys2P9q5EpE3GzKHcOS9GVLO9Fj9HB3JBLw36eax+NkQ@mail.gmail.com>
-From:   Yurii Zubrytskyi <zyy@google.com>
-Date:   Thu, 30 May 2019 15:45:42 -0700
-Message-ID: <CAJeUaNAcZXfX-7Ws0q7SnaWrD+nzK3hxPwoW-NYvjAL0b=8M9g@mail.gmail.com>
-Subject: Re: Initial patches for Incremental FS
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Eugene Zemtsov <ezemtsov@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530111605.GC29237@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
+        a=8RU0RCro9O0HS2ezTvitPg==:117 a=8RU0RCro9O0HS2ezTvitPg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
+        a=7-415B0cAAAA:8 a=b_IONgiTaRX6Mws2oq4A:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> With the proposed FUSE solution the following sequences would occur:
->
-> kernel: if index for given block is missing, send MAP message
->   userspace: if data/hash is missing for given block then download data/hash
->   userspace: send MAP reply
-> kernel: decompress data and verify hash based on index
->
-> The kernel would not be involved in either streaming data or hash, it
-> would only work with data/hash that has already been downloaded.
-> Right?
->
-> Or is your implementation doing streamed decompress/hash or partial blocks?
-> ...
-> Why does the kernel have to know the on-disk format to be able to load
-> and discard parts of the index on-demand?  It only needs to know which
-> blocks were accessed recently and which not so recently.
->
-(1) You're correct, only the userspace deals with all streaming.
-Kernel then sees full blocks of data (usually LZ4-compressed) and
-blocks of hashes
-We'd need to give the location of the hash tree instead of the
-individual hash here though - verification has to go all the way to
-the top and even check the signature there. And the same 5 GB file
-would have over 40 MB of hashes (32 bytes of SHA2 for each 4K block),
-so those have to be read from disk as well.
-Overall, let's just imagine a phone with 100 apps, 100MB each,
-installed this way. That ends up being ~10GB of data, so we'd need _at
-least_ 40 MB for the index and 80 MB for hashes *in kernel*. Android
-now fights for each megabyte of RAM used in the system services, so
-FUSE won't be able to cache that, going back to the user mode for
-almost all reads again.
-(1 and 2) ... If FUSE were to know the on-disk format it would be able
-to simply parse and read it when needed, with as little memory
-footprint as it can. Requesting this data from the usermode every time
-with little caching defeats the whole purpose of the change.
+On Thu, May 30, 2019 at 01:16:05PM +0200, Jan Kara wrote:
+> On Thu 30-05-19 08:14:45, Dave Chinner wrote:
+> > On Wed, May 29, 2019 at 03:46:29PM +0200, Jan Kara wrote:
+> > > On Wed 29-05-19 14:46:58, Dave Chinner wrote:
+> > > >  iomap_apply()
+> > > > 
+> > > >  	->iomap_begin()
+> > > > 		map old data extent that we copy from
+> > > > 
+> > > > 		allocate new data extent we copy to in data fork,
+> > > > 		immediately replacing old data extent
+> > > > 
+> > > > 		return transaction handle as private data
+> > 
+> > This holds the inode block map locked exclusively across the IO,
+> > so....
+> 
+> Does it? We do hold XFS_IOLOCK_EXCL during the whole dax write.
 
-> BTW, which interface does your fuse filesystem use?  Libfuse?  Raw device?
-Yes, our code interacts with the raw FUSE fd via poll/read/write
-calls. We have tried the multithreaded approach via duping the control
-fd and FUSE_DEV_IOC_CLONE, but it didn't give much improvement -
-Android apps aren't usually use multithreaded, so there's at most two
-pending reads at once. I've seen 10 once, but that was some kind of
-miractle
+I forgot about that, I keep thinking that we use shared locking for
+DAX like we do for direct IO. There's another reason for range
+locks - allowing concurrent DAX read/write IO - but that's
+orthogonal to the issue here.
 
-And again, we have not even looked at the directory structure and stat
-caching yet, neither interface nor memory usage. For a general case we
-have to make direct disk reads from kernel and this forces even bigger
-part of the disk format to be defined there. The end result is what
-we've got when researching FUSE - a huge chunk of FUSE gets
-overspecialized to handle our own way of using it end to end, with no
-real configurability (because making it configurable makes that code
-even bigger and more complex)
+> But
+> xfs_file_iomap_begin() does release XFS_ILOCK_* on exit AFAICS. So I don't
+> see anything that would prevent page fault from mapping blocks into page
+> tables just after xfs_file_iomap_begin() returns.
 
---
-Thanks, Yurii
+Right, holding the IOLOCK doesn't stop concurrent page faults from
+mapping the page we are trying to write, and that leaves a window
+where stale data can be exposed if we don't initialise the newly
+allocated range whilst in the allocation transaction holding the
+ILOCK. That's what the XFS_BMAPI_ZERO flag does in the DAX block
+allocation path.
+
+So the idea of holding the allocation transaction across the data
+copy means that ILOCK is then held until the data blocks are fully
+initialised with valid data, meaning we can greatly reduce the scope
+of the XFS_BMAPI_ZERO flag and possible get rid of it altogether.
+
+> > > This race was actually the strongest
+> > > motivation for pre-zeroing of blocks. OTOH copy_from_iter() in
+> > > dax_iomap_actor() needs to be able to fault pages to copy from (and these
+> > > pages may be from the same file you're writing to) so you cannot just block
+> > > faulting for the file through I_MMAP_LOCK.
+> > 
+> > Right, it doesn't take the I_MMAP_LOCK, but it would block further
+> > in. And, really, I'm not caring all this much about this corner
+> > case. i.e.  anyone using a "mmap()+write() zero copy" pattern on DAX
+> > within a file is unbeleivably naive - the data still gets copied by
+> > the CPU in the write() call. It's far simpler and more effcient to
+> > just mmap() both ranges of the file(s) and memcpy() in userspace....
+> > 
+> > FWIW, it's to avoid problems with stupid userspace stuff that nobody
+> > really should be doing that I want range locks for the XFS inode
+> > locks.  If userspace overlaps the ranges and deadlocks in that case,
+> > they they get to keep all the broken bits because, IMO, they are
+> > doing something monumentally stupid. I'd probably be making it
+> > return EDEADLOCK back out to userspace in the case rather than
+> > deadlocking but, fundamentally, I think it's broken behaviour that
+> > we should be rejecting with an error rather than adding complexity
+> > trying to handle it.
+> 
+> I agree with this. We must just prevent user from taking the kernel down
+> with maliciously created IOs...
+
+Noted. :)
+
+I'm still working to scale the range locks effectively for direct
+IO; I've got to work out why sometimes they give identical
+performance to rwsems out to 16 threads, and other times they run
+20% slower or worse at 8+ threads. I'm way ahead of the original
+mutex protected tree implementation that I have, but still got work
+to do to get consistently close to rwsem performance for pure shared
+locking workloads like direct IO.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
