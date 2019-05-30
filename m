@@ -2,207 +2,578 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BAFF2FFC3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 17:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2182FFDD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 18:06:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfE3P7d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 11:59:33 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44710 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726250AbfE3P7c (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 11:59:32 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4UFwRdT062994;
-        Thu, 30 May 2019 15:58:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=uc+UXzmyPv/D6QTYV3WBqRHnc34bk0BoVJelHBRrxEY=;
- b=g4SFiEg7+6ARWlAP18PYeQaguCtnJ1oiJ1ZUQMZVzGJjc1+xIKWGNTpLdW7vd6zBR8ro
- p4daXSHTZqiPW3zaZzWOfFVGCGcJe+UQQMMxfJ43dSDYm6EQfkDZupn8Ppoq358X+CYw
- 93itavr5Nv69+cOmLvyEb/NxR3xVanHek3GgNcnYNKk2uZOueOL9pPzLCySE3z4Qm7AL
- Wzd8ZtKoJsT9vrThAWtKHj+XtEMGkpJPzBUzFhhB+dCYnyQgCTYl0OPgMBlrEM7r1I7Z
- hwHunBmKqbLJhzbRE+Mrtxcl1w/gWc544wmMRRZaxd5RUNvxMCVRaBM/NnkS7XGQWi2d 3A== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2spxbqgyve-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 May 2019 15:58:56 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4UFwFx1146681;
-        Thu, 30 May 2019 15:58:56 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2srbdy34a3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 May 2019 15:58:56 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4UFwtrm015760;
-        Thu, 30 May 2019 15:58:55 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 30 May 2019 08:58:54 -0700
-Date:   Thu, 30 May 2019 08:58:51 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     sfrench@samba.org, anna.schumaker@netapp.com,
-        trond.myklebust@hammerspace.com, fengxiaoli0714@gmail.com
-Cc:     fstests@vger.kernel.org, Murphy Zhou <xzhou@redhat.com>,
-        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: NFS & CIFS support dedupe now?? Was: Re: [PATCH] generic/517: notrun
- on NFS due to unaligned dedupe in test
-Message-ID: <20190530155851.GB5383@magnolia>
-References: <20190530094147.14512-1-xzhou@redhat.com>
- <20190530152606.GA5383@magnolia>
+        id S1726375AbfE3QG3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 12:06:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726045AbfE3QG3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 May 2019 12:06:29 -0400
+Received: from localhost (unknown [104.132.1.68])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31C3725D4E;
+        Thu, 30 May 2019 16:06:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559232387;
+        bh=TJbodcLEri52SIwQ9/cmtBfsbBRqrCWkw4RPMvaBfhc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rm8AK2jPdZtVhaLskmxIwZ/QQyBsO+pLORdLJ2MvLTbgX4hFCExXCzoYCLGK597KM
+         kcEkNrpsm4D0m3l+JHnYr/ptxgkEHF7dqw84H25+c6lxmahftr2DmLLlvkBErFBOsy
+         q1ncRi8C2fZzDXvKKfBkN2jqYnkieYnTDiZ/KoE4=
+Date:   Thu, 30 May 2019 09:06:26 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     sunqiuyang <sunqiuyang@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, yuchao0@huawei.com
+Subject: Re: [PATCH v6 1/1] f2fs: ioctl for removing a range from F2FS
+Message-ID: <20190530160626.GA28719@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190524015555.12622-1-sunqiuyang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190530152606.GA5383@magnolia>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905300113
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905300113
+In-Reply-To: <20190524015555.12622-1-sunqiuyang@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi everyone,
-
-Murphy Zhou sent a patch to generic/517 in fstests to fix a dedupe
-failure he was seeing on NFS:
-
-On Thu, May 30, 2019 at 05:41:47PM +0800, Murphy Zhou wrote:
-> NFSv4.2 could pass _require_scratch_dedupe, since the test offset and
-> size are aligned, while generic/517 is performing unaligned dedupe.
-> NFS does not support unaligned dedupe now, returns EINVAL.
+On 05/24, sunqiuyang wrote:
+> From: Qiuyang Sun <sunqiuyang@huawei.com>
 > 
-> Signed-off-by: Murphy Zhou <xzhou@redhat.com>
+> This ioctl shrinks a given length (aligned to sections) from end of the
+> main area. Any cursegs and valid blocks will be moved out before
+> invalidating the range.
+> 
+> This feature can be used for adjusting partition sizes online.
+> --
+> Changlog v1 ==> v2:
+> 
+> Sahitya Tummala:
+>  - Add this ioctl for f2fs_compat_ioctl() as well.
+>  - Fix debugfs status to reflect the online resize changes.
+>  - Fix potential race between online resize path and allocate new data
+>    block path or gc path.
+> 
+> Others:
+>  - Rename some identifiers.
+>  - Add some error handling branches.
+>  - Clear sbi->next_victim_seg[BG_GC/FG_GC] in shrinking range.
+> --
+> Changelog v2 ==> v3:
+> Implement this interface as ext4's, and change the parameter from shrunk
+> bytes to new block count of F2FS.
+> --
+> Changelog v3 ==> v4:
+>  - During resizing, force to empty sit_journal and forbid adding new
+>    entries to it, in order to avoid invalid segno in journal after resize.
+>  - Reduce sbi->user_block_count before resize starts.
+>  - Commit the updated superblock first, and then update in-memory metadata
+>    only when the former succeeds.
+>  - Target block count must align to sections.
+> --
+> Changelog v4 ==> v5:
+> Write checkpoint before and after committing the new superblock, w/o
+> CP_FSCK_FLAG respectively, so that the FS can be fixed by fsck even if
+> resize fails after the new superblock is committed.
+> --
+> Changelog v5 ==> v6:
+>  - In free_segment_range(), reduce granularity of gc_mutex.
+>  - Add protection on curseg migration.
+> 
+> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 > ---
->  tests/generic/517 | 1 +
->  1 file changed, 1 insertion(+)
+>  fs/f2fs/checkpoint.c |   5 +-
+>  fs/f2fs/debug.c      |   7 +++
+>  fs/f2fs/f2fs.h       |   7 +++
+>  fs/f2fs/file.c       |  28 +++++++++++
+>  fs/f2fs/gc.c         | 134 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  fs/f2fs/segment.c    |  54 +++++++++++++++++----
+>  fs/f2fs/segment.h    |   1 +
+>  fs/f2fs/super.c      |   4 ++
+>  8 files changed, 228 insertions(+), 12 deletions(-)
 > 
-> diff --git a/tests/generic/517 b/tests/generic/517
-> index 601bb24e..23665782 100755
-> --- a/tests/generic/517
-> +++ b/tests/generic/517
-> @@ -30,6 +30,7 @@ _cleanup()
->  _supported_fs generic
->  _supported_os Linux
->  _require_scratch_dedupe
-> +$FSTYP == "nfs"  && _notrun "NFS can't handle unaligned deduplication"
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index ed70b68..4706d0a 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1313,8 +1313,11 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	else
+>  		__clear_ckpt_flags(ckpt, CP_ORPHAN_PRESENT_FLAG);
+>  
+> -	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+> +	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK) ||
+> +		is_sbi_flag_set(sbi, SBI_IS_RESIZEFS))
+>  		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
+> +	else
+> +		__clear_ckpt_flags(ckpt, CP_FSCK_FLAG);
 
-I was surprised to see a dedupe fix for NFS since (at least to my
-knowledge) neither of these two network filesystems actually support
-server-side deduplication commands, and therefore the
-_require_scratch_dedupe should have _notrun the test.
+We don't need to clear this flag.
 
-Then I looked at fs/nfs/nfs4file.c:
+>  
+>  	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED))
+>  		__set_ckpt_flags(ckpt, CP_DISABLED_FLAG);
+> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+> index 99e9a5c..7706049 100644
+> --- a/fs/f2fs/debug.c
+> +++ b/fs/f2fs/debug.c
+> @@ -27,8 +27,15 @@
+>  static void update_general_status(struct f2fs_sb_info *sbi)
+>  {
+>  	struct f2fs_stat_info *si = F2FS_STAT(sbi);
+> +	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
+>  	int i;
+>  
+> +	/* these will be changed if online resize is done */
+> +	si->main_area_segs = le32_to_cpu(raw_super->segment_count_main);
+> +	si->main_area_sections = le32_to_cpu(raw_super->section_count);
+> +	si->main_area_zones = si->main_area_sections /
+> +				le32_to_cpu(raw_super->secs_per_zone);
+> +
+>  	/* validation check of the segment numbers */
+>  	si->hit_largest = atomic64_read(&sbi->read_hit_largest);
+>  	si->hit_cached = atomic64_read(&sbi->read_hit_cached);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index a205d4d..345ccb0 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -423,6 +423,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+>  #define F2FS_IOC_SET_PIN_FILE		_IOW(F2FS_IOCTL_MAGIC, 13, __u32)
+>  #define F2FS_IOC_GET_PIN_FILE		_IOR(F2FS_IOCTL_MAGIC, 14, __u32)
+>  #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
+> +#define F2FS_IOC_RESIZE_FS		_IOW(F2FS_IOCTL_MAGIC, 16, __u64)
+>  
+>  #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
+>  #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
+> @@ -1130,6 +1131,7 @@ enum {
+>  	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
+>  	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
+>  	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
+> +	SBI_IS_RESIZEFS,			/* resizefs is in process */
+>  };
+>  
+>  enum {
+> @@ -1309,6 +1311,8 @@ struct f2fs_sb_info {
+>  	unsigned int segs_per_sec;		/* segments per section */
+>  	unsigned int secs_per_zone;		/* sections per zone */
+>  	unsigned int total_sections;		/* total section count */
+> +	unsigned int current_total_sections;	/* for shrink resize */
+> +	struct mutex resize_mutex;		/* for resize exclusion */
+>  	unsigned int total_node_count;		/* total node block count */
+>  	unsigned int total_valid_node_count;	/* valid node block count */
+>  	loff_t max_file_blocks;			/* max block index of file */
+> @@ -3175,6 +3179,8 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+>  int f2fs_disable_cp_again(struct f2fs_sb_info *sbi, block_t unusable);
+>  void f2fs_release_discard_addrs(struct f2fs_sb_info *sbi);
+>  int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
+> +void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
+> +					unsigned int start, unsigned int end);
+>  void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi);
+>  int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range);
+>  bool f2fs_exist_trim_candidates(struct f2fs_sb_info *sbi,
+> @@ -3318,6 +3324,7 @@ int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
+>  int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
+>  			unsigned int segno);
+>  void f2fs_build_gc_manager(struct f2fs_sb_info *sbi);
+> +int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count);
+>  
+>  /*
+>   * recovery.c
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index d05ac21..6d00def 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -3013,6 +3013,31 @@ static int f2fs_ioc_precache_extents(struct file *filp, unsigned long arg)
+>  	return f2fs_precache_extents(file_inode(filp));
+>  }
+>  
+> +static int f2fs_ioc_resize_fs(struct file *filp, unsigned long arg)
+> +{
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(filp));
+> +	__u64 block_count;
+> +	int ret;
+> +
+> +	if (!capable(CAP_SYS_ADMIN))
+> +		return -EPERM;
+> +
+> +	if (f2fs_readonly(sbi->sb))
+> +		return -EROFS;
+> +
+> +	if (get_user(block_count, (__u64 __user *)arg))
+> +		return -EFAULT;
+> +
+> +	ret = mnt_want_write_file(filp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = f2fs_resize_fs(sbi, block_count);
+> +	mnt_drop_write_file(filp);
+> +
+> +	return ret;
+> +}
+> +
+>  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  {
+>  	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
+> @@ -3069,6 +3094,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  		return f2fs_ioc_set_pin_file(filp, arg);
+>  	case F2FS_IOC_PRECACHE_EXTENTS:
+>  		return f2fs_ioc_precache_extents(filp, arg);
+> +	case F2FS_IOC_RESIZE_FS:
+> +		return f2fs_ioc_resize_fs(filp, arg);
+>  	default:
+>  		return -ENOTTY;
+>  	}
+> @@ -3182,6 +3209,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  	case F2FS_IOC_GET_PIN_FILE:
+>  	case F2FS_IOC_SET_PIN_FILE:
+>  	case F2FS_IOC_PRECACHE_EXTENTS:
+> +	case F2FS_IOC_RESIZE_FS:
+>  		break;
+>  	default:
+>  		return -ENOIOCTLCMD;
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 963fb45..9b3af4d 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -311,10 +311,11 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>  	struct sit_info *sm = SIT_I(sbi);
+>  	struct victim_sel_policy p;
+>  	unsigned int secno, last_victim;
+> -	unsigned int last_segment = MAIN_SEGS(sbi);
+> +	unsigned int last_segment;
+>  	unsigned int nsearched = 0;
+>  
+>  	mutex_lock(&dirty_i->seglist_lock);
+> +	last_segment = CUR_MAIN_SECS(sbi) * sbi->segs_per_sec;
+>  
+>  	p.alloc_mode = alloc_mode;
+>  	select_policy(sbi, gc_type, type, &p);
+> @@ -404,7 +405,8 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>  				sm->last_victim[p.gc_mode] = last_victim + 1;
+>  			else
+>  				sm->last_victim[p.gc_mode] = segno + 1;
+> -			sm->last_victim[p.gc_mode] %= MAIN_SEGS(sbi);
+> +			sm->last_victim[p.gc_mode] %=
+> +				(CUR_MAIN_SECS(sbi) * sbi->segs_per_sec);
+>  			break;
+>  		}
+>  	}
+> @@ -1360,3 +1362,131 @@ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
+>  		SIT_I(sbi)->last_victim[ALLOC_NEXT] =
+>  				GET_SEGNO(sbi, FDEV(0).end_blk) + 1;
+>  }
+> +
+> +static int free_segment_range(struct f2fs_sb_info *sbi, unsigned int start,
+> +							unsigned int end)
+> +{
+> +	int type;
+> +	unsigned int segno, next_inuse;
+> +	int err = 0;
+> +
+> +	/* Move out cursegs from the target range */
+> +	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_TYPE; type++)
+> +		allocate_segment_for_resize(sbi, type, start, end);
+> +
+> +	/* do GC to move out valid blocks in the range */
+> +	for (segno = start; segno <= end; segno += sbi->segs_per_sec) {
+> +		struct gc_inode_list gc_list = {
+> +			.ilist = LIST_HEAD_INIT(gc_list.ilist),
+> +			.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
+> +		};
+> +
+> +		mutex_lock(&sbi->gc_mutex);
+> +		do_garbage_collect(sbi, segno, &gc_list, FG_GC);
+> +		mutex_unlock(&sbi->gc_mutex);
+> +		put_gc_inode(&gc_list);
+> +
+> +		if (get_valid_blocks(sbi, segno, true))
+> +			return -EAGAIN;
+> +	}
+> +
+> +	err = f2fs_sync_fs(sbi->sb, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	next_inuse = find_next_inuse(FREE_I(sbi), end + 1, start);
+> +	if (next_inuse <= end) {
+> +		f2fs_msg(sbi->sb, KERN_ERR,
+> +			"segno %u should be free but still inuse!", next_inuse);
+> +		f2fs_bug_on(sbi, 1);
+> +	}
+> +	return err;
+> +}
+> +
+> +int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+> +{
+> +	__u64 old_block_count, shrunk_blocks;
+> +	unsigned int secs;
+> +	int gc_mode, gc_type;
+> +	int err = 0;
+> +
+> +	old_block_count = le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
+> +	if (block_count > old_block_count)
+> +		return -EINVAL;
+> +
+> +	/* new fs size should align to section size */
+> +	if (block_count % BLKS_PER_SEC(sbi))
+> +		return -EINVAL;
+> +
+> +	if (block_count == old_block_count)
+> +		return 0;
 
-static loff_t nfs42_remap_file_range(struct file *src_file, loff_t src_off,
-		struct file *dst_file, loff_t dst_off, loff_t count,
-		unsigned int remap_flags)
-{
-	<local variable declarations>
-
-	if (remap_flags & ~(REMAP_FILE_DEDUP | REMAP_FILE_ADVISORY))
+	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK)) {
+		f2fs_msg(sbi->sb, KERN_ERR,
+				"Should run fsck to repair first.");
 		return -EINVAL;
+	}
 
-	<check alignment, lock inodes, flush pending writes>
-
-	ret = nfs42_proc_clone(src_file, dst_file, src_off, dst_off, count);
-
-The NFS client code will accept REMAP_FILE_DEDUP through remap_flags,
-which is how dedupe requests are sent to filesystems nowadays.  The nfs
-client code does not itself compare the file contents, but it does issue
-a CLONE command to the NFS server.  The end result, AFAICT, is that a
-user program can write 'A's to file1, 'B's to file2, issue a dedup
-ioctl to the kernel, and have a block of 'B's mapped into file1.  That's
-broken behavior, according to the dedup ioctl manpage.
-
-Notice how remap_flags is checked but is not included in the
-nfs42_proc_clone call?  That's how I conclude that the NFS client cannot
-possibly be sending the dedup request to the server.
-
-The same goes for fs/cifs/cifsfs.c:
-
-static loff_t cifs_remap_file_range(struct file *src_file, loff_t off,
-		struct file *dst_file, loff_t destoff, loff_t len,
-		unsigned int remap_flags)
-{
-	<local variable declarations>
-
-	if (remap_flags & ~(REMAP_FILE_DEDUP | REMAP_FILE_ADVISORY))
+	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
+		f2fs_msg(sbi->sb, KERN_ERR,
+				"Checkpoint should be enabled.");
 		return -EINVAL;
+	}
 
-	<check files, lock inodes, flush pages>
+Do we need to freeze_bdev and thaw_bdev for this?
 
-	if (target_tcon->ses->server->ops->duplicate_extents)
-		rc = target_tcon->ses->server->ops->duplicate_extents(xid,
-			smb_file_src, smb_file_target, off, len, destoff);
-	else
-		rc = -EOPNOTSUPP;
+> +
+> +	shrunk_blocks = old_block_count - block_count;
+> +	secs = shrunk_blocks / BLKS_PER_SEC(sbi);
+> +	spin_lock(&sbi->stat_lock);
+> +	if (shrunk_blocks + valid_user_blocks(sbi) +
+> +		sbi->current_reserved_blocks + sbi->unusable_block_count +
+> +		F2FS_OPTION(sbi).root_reserved_blocks > sbi->user_block_count)
+> +		err = -ENOSPC;
+> +	else
+> +		sbi->user_block_count -= shrunk_blocks;
+> +	spin_unlock(&sbi->stat_lock);
+> +	if (err)
+> +		return err;
+> +
+> +	mutex_lock(&sbi->resize_mutex);
+> +	set_sbi_flag(sbi, SBI_IS_RESIZEFS);
+> +	mutex_lock(&DIRTY_I(sbi)->seglist_lock);
+> +	CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi) - secs;
 
-Again, remap_flags is checked here but it has no influence over the
-->duplicate_extents call.
+	OLD_MAIN_SECS(sbi) = MAIN_SECS(sbi);
+	MAIN_SECS(sbi) -= secs;
 
-Next I got to thinking that when I reworked the clone/dedupe code last
-year, I didn't include REMAP_FILE_DEDUP support for cifs or nfs, because
-as far as I knew, neither protocol supports a verb for deduplication.
-The remap_flags checks were modified to allow REMAP_FILE_DEDUP in
-commits ce96e888fe48e (NFS) and b073a08016a10 (CIFS) with this
-justification (the cifs commit has a similar message):
+> +	for (gc_mode = 0; gc_mode < MAX_GC_POLICY; gc_mode++)
+> +		if (SIT_I(sbi)->last_victim[gc_mode] >=
+> +					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec)
+> +			SIT_I(sbi)->last_victim[gc_mode] = 0;
+> +	for (gc_type = BG_GC; gc_type <= FG_GC; gc_type++)
+> +		if (sbi->next_victim_seg[gc_type] >=
+> +					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec)
+> +			sbi->next_victim_seg[gc_type] = NULL_SEGNO;
+> +	mutex_unlock(&DIRTY_I(sbi)->seglist_lock);
+> +
+> +	err = free_segment_range(sbi, CUR_MAIN_SECS(sbi) * sbi->segs_per_sec,
+> +			MAIN_SEGS(sbi) - 1);
+> +	if (err)
+> +		goto out;
+> +
+> +	/* Update superblock */
+> +	F2FS_RAW_SUPER(sbi)->section_count = cpu_to_le32(CUR_MAIN_SECS(sbi));
+> +	F2FS_RAW_SUPER(sbi)->segment_count = cpu_to_le32(le32_to_cpu(
+> +		F2FS_RAW_SUPER(sbi)->segment_count) - secs * sbi->segs_per_sec);
+> +	F2FS_RAW_SUPER(sbi)->segment_count_main = cpu_to_le32(
+> +					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec);
+> +	F2FS_RAW_SUPER(sbi)->block_count = cpu_to_le64(block_count);
+> +
+> +	err = f2fs_commit_super(sbi, false);
+> +	if (err)
+> +		goto out;
+> +
+> +	/* Update FS metadata */
+> +	SM_I(sbi)->segment_count -= secs * sbi->segs_per_sec;
+> +	MAIN_SECS(sbi) = CUR_MAIN_SECS(sbi);
+> +	MAIN_SEGS(sbi) = MAIN_SECS(sbi) * sbi->segs_per_sec;
+> +	F2FS_CKPT(sbi)->user_block_count = cpu_to_le64(sbi->user_block_count);
+> +	FREE_I(sbi)->free_sections -= secs;
+> +	FREE_I(sbi)->free_segments -= secs * sbi->segs_per_sec;
+> +
+> +	clear_sbi_flag(sbi, SBI_IS_RESIZEFS);
+> +	err = f2fs_sync_fs(sbi->sb, 1);
+> +out:
+> +	if (err) {
+> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+> +		f2fs_msg(sbi->sb, KERN_ERR,
+> +				"resize_fs failed, should run fsck to repair!");
+> +
+> +		CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi);
 
-"Subject: Fix nfs4.2 return -EINVAL when do dedupe operation
+		MAIN_SECS(sbi) = OLD_MAIN_SECS(sbi);
 
-"dedupe_file_range operations is combiled into remap_file_range.
-"    But in nfs42_remap_file_range, it's skiped for dedupe operations.
-"    Before this patch:
-"      # dd if=/dev/zero of=nfs/file bs=1M count=1
-"      # xfs_io -c "dedupe nfs/file 4k 64k 4k" nfs/file
-"      XFS_IOC_FILE_EXTENT_SAME: Invalid argument
-"    After this patch:
-"      # dd if=/dev/zero of=nfs/file bs=1M count=1
-"      # xfs_io -c "dedupe nfs/file 4k 64k 4k" nfs/file
-"      deduped 4096/4096 bytes at offset 65536
-"      4 KiB, 1 ops; 0.0046 sec (865.988 KiB/sec and 216.4971 ops/sec)"
+> +		spin_lock(&sbi->stat_lock);
+> +		sbi->user_block_count += shrunk_blocks;
+> +		spin_unlock(&sbi->stat_lock);
 
-This sort of looks like monkeypatching to make an error message go away.
-One could argue that this ought to return EOPNOSUPP instead of EINVAL,
-and maybe that's what should've happened.
+		Should we recover super_block and FS metadata?
 
-So, uh, do NFS and CIFS both support server-side dedupe now, or are
-these patches just plain wrong?
+> +	}
 
-No, they're just wrong, because I can corrupt files like so on NFS:
+	if (!err)
+		Need to shrink bitmaps?
 
-$ rm -rf urk moo
-$ xfs_io -f -c "pwrite -S 0x58 0 31048" urk
-wrote 31048/31048 bytes at offset 0
-30 KiB, 8 ops; 0.0000 sec (569.417 MiB/sec and 153846.1538 ops/sec)
-$ xfs_io -f -c "pwrite -S 0x59 0 31048" moo
-wrote 31048/31048 bytes at offset 0
-30 KiB, 8 ops; 0.0001 sec (177.303 MiB/sec and 47904.1916 ops/sec)
-$ md5sum urk moo
-37d3713e5f9c4fe0f8a1f813b27cb284  urk
-a5b6f953f27aa17e42450ff4674fa2df  moo
-$ xfs_io -c "dedupe urk 0 0 4096" moo
-deduped 4096/4096 bytes at offset 0
-4 KiB, 1 ops; 0.0012 sec (3.054 MiB/sec and 781.8608 ops/sec)
-$ md5sum urk moo
-37d3713e5f9c4fe0f8a1f813b27cb284  urk
-2c992d70131c489da954f1d96d8c456e  moo
+> +	clear_sbi_flag(sbi, SBI_IS_RESIZEFS);
+> +	mutex_unlock(&sbi->resize_mutex);
+> +	return err;
+> +}
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 07e9235..c70daa5 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -2360,7 +2360,7 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+>  {
+>  	struct free_segmap_info *free_i = FREE_I(sbi);
+>  	unsigned int segno, secno, zoneno;
+> -	unsigned int total_zones = MAIN_SECS(sbi) / sbi->secs_per_zone;
+> +	unsigned int total_zones = CUR_MAIN_SECS(sbi) / sbi->secs_per_zone;
 
-(Not sure about cifs, since I don't have a Windows Server handy)
+These are unnecessary changes. Please remain MAIN_SECS() and modify resize_fs
+to use that.
 
-I'm not an expert in CIFS or NFS, so I'm asking: do either support
-dedupe or is this a kernel bug?
+>  	unsigned int hint = GET_SEC_FROM_SEG(sbi, *newseg);
+>  	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
+>  	unsigned int left_start = hint;
+> @@ -2377,12 +2377,13 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+>  			goto got_it;
+>  	}
+>  find_other_zone:
+> -	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
+> -	if (secno >= MAIN_SECS(sbi)) {
+> +	secno = find_next_zero_bit(free_i->free_secmap, CUR_MAIN_SECS(sbi),
+> +									hint);
+> +	if (secno >= CUR_MAIN_SECS(sbi)) {
+>  		if (dir == ALLOC_RIGHT) {
+>  			secno = find_next_zero_bit(free_i->free_secmap,
+> -							MAIN_SECS(sbi), 0);
+> -			f2fs_bug_on(sbi, secno >= MAIN_SECS(sbi));
+> +							CUR_MAIN_SECS(sbi), 0);
+> +			f2fs_bug_on(sbi, secno >= CUR_MAIN_SECS(sbi));
+>  		} else {
+>  			go_left = 1;
+>  			left_start = hint - 1;
+> @@ -2397,8 +2398,8 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+>  			continue;
+>  		}
+>  		left_start = find_next_zero_bit(free_i->free_secmap,
+> -							MAIN_SECS(sbi), 0);
+> -		f2fs_bug_on(sbi, left_start >= MAIN_SECS(sbi));
+> +							CUR_MAIN_SECS(sbi), 0);
+> +		f2fs_bug_on(sbi, left_start >= CUR_MAIN_SECS(sbi));
+>  		break;
+>  	}
+>  	secno = left_start;
+> @@ -2651,6 +2652,40 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
+>  	stat_inc_seg_type(sbi, curseg);
+>  }
+>  
+> +void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
+> +					unsigned int start, unsigned int end)
+> +{
+> +	struct curseg_info *curseg = CURSEG_I(sbi, type);
+> +	unsigned int segno;
+> +
+> +	down_read(&SM_I(sbi)->curseg_lock);
+> +	mutex_lock(&curseg->curseg_mutex);
+> +	down_write(&SIT_I(sbi)->sentry_lock);
+> +
+> +	segno = CURSEG_I(sbi, type)->segno;
+> +	if (segno < start || segno > end)
+> +		goto unlock;
+> +
+> +	if (f2fs_need_SSR(sbi) && get_ssr_segment(sbi, type))
+> +		change_curseg(sbi, type);
+> +	else
+> +		new_curseg(sbi, type, true);
+> +
+> +	stat_inc_seg_type(sbi, curseg);
+> +
+> +	locate_dirty_segment(sbi, segno);
+> +unlock:
+> +	up_write(&SIT_I(sbi)->sentry_lock);
+> +
+> +	if (segno != curseg->segno)
+> +		f2fs_msg(sbi->sb, KERN_NOTICE,
+> +			"For resize: curseg of type %d: %u ==> %u",
+> +			type, segno, curseg->segno);
+> +
+> +	mutex_unlock(&curseg->curseg_mutex);
+> +	up_read(&SM_I(sbi)->curseg_lock);
+> +}
+> +
+>  void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
+>  {
+>  	struct curseg_info *curseg;
+> @@ -3774,7 +3809,7 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	struct f2fs_journal *journal = curseg->journal;
+>  	struct sit_entry_set *ses, *tmp;
+>  	struct list_head *head = &SM_I(sbi)->sit_entry_set;
+> -	bool to_journal = true;
+> +	bool to_journal = !is_sbi_flag_set(sbi, SBI_IS_RESIZEFS);
+>  	struct seg_entry *se;
+>  
+>  	down_write(&sit_i->sentry_lock);
+> @@ -3793,7 +3828,8 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	 * entries, remove all entries from journal and add and account
+>  	 * them in sit entry set.
+>  	 */
+> -	if (!__has_cursum_space(journal, sit_i->dirty_sentries, SIT_JOURNAL))
+> +	if (!__has_cursum_space(journal, sit_i->dirty_sentries, SIT_JOURNAL) ||
+> +								!to_journal)
+>  		remove_sits_in_journal(sbi);
+>  
+>  	/*
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 429007b..eaa9782 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -59,6 +59,7 @@
+>  
+>  #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
+>  #define MAIN_SECS(sbi)	((sbi)->total_sections)
+> +#define CUR_MAIN_SECS(sbi)	((sbi)->current_total_sections)
+>  
+>  #define TOTAL_SEGS(sbi)							\
+>  	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 1f581f0..166a97e 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2843,6 +2843,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+>  	sbi->segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
+>  	sbi->secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
+>  	sbi->total_sections = le32_to_cpu(raw_super->section_count);
+> +	sbi->current_total_sections = sbi->total_sections;
+>  	sbi->total_node_count =
+>  		(le32_to_cpu(raw_super->segment_count_nat) / 2)
+>  			* sbi->blocks_per_seg * NAT_ENTRY_PER_BLOCK;
+> @@ -3296,6 +3297,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	mutex_init(&sbi->gc_mutex);
+>  	mutex_init(&sbi->writepages);
+>  	mutex_init(&sbi->cp_mutex);
+> +	mutex_init(&sbi->resize_mutex);
+>  	init_rwsem(&sbi->node_write);
+>  	init_rwsem(&sbi->node_change);
+>  
+> @@ -3367,6 +3369,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  		set_sbi_flag(sbi, SBI_CP_DISABLED_QUICK);
+>  		sbi->interval_time[DISABLE_TIME] = DEF_DISABLE_QUICK_INTERVAL;
+>  	}
+> +	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_FSCK_FLAG))
+> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>  
 
---D
+Then, we don't need to remove this in init_sb_info().
+
+>  	/* Initialize device list */
+>  	err = f2fs_scan_devices(sbi);
+> -- 
+> 1.8.3.1
