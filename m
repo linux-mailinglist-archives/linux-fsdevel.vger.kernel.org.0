@@ -2,148 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E14E2FDF5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 16:35:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B7DE2FE0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 16:41:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfE3OfI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 10:35:08 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41744 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfE3OfD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 10:35:03 -0400
-Received: by mail-lf1-f68.google.com with SMTP id 136so5212970lfa.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2019 07:35:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BnDbzkkNEs3+qCAYM6PlcBSJ9muruAbc6zh0yrmMscI=;
-        b=GWJCSp8Ea5nLSw4PQsmUexLPU9ilEqisyppKzq55gGe0EXTU1gK81I2OupZcNpEfBp
-         FEt6cP3ID92EWi+7AOnBYGA0Ks7kMMHmIwuCOXSTnoWyt9G0QUg/qPKTyCr++U1Vj81z
-         OBD9bVbRccfpHrJSutlT+QxN7HGtO6iu7CDa5SLnoPR89ac3mi2LAiNOoxPv0PDN/hp4
-         l40+0DaiA/QQzBIUYu0FZHnaSsQni3VmtD1j1Ni4uJrquQC2ecy5KN+HQxdP9IoLrIqB
-         NQaPK9NrzK6KSr1mQCUVyOMXunHba1wxDCzenzD+grV8InLlZw+DV7yqW3qc0uFM5f2z
-         aTnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BnDbzkkNEs3+qCAYM6PlcBSJ9muruAbc6zh0yrmMscI=;
-        b=fZz5Co9EEEKoCzDDQLfQ5rJjH0EQHf2nxlgGl5qNp59dQxtPitFXmDJTt2x7PcXnj9
-         5wnOXWhvXk1I4pGD4MvFr8+1RcM3mmWNb/9SY4EOCpUHUOEb8A2Y7YqEGoxLZ+Uokv0E
-         /QJ7W6JfU50ZkGQ6a8tUMXUijOt/kJ8VT5dMaW4tPPUv/TshQO9+I6tGsDiF4R4eh/db
-         2BJNL0/KQmL378hO3OhyJDBLN3+qK8gsKTp35sVzH1lHSdE8SQm07dzFJu02sYFsUW96
-         9hL/pRI+t9aIqmNuziKqJCU8cqJiJJ4juP7ul6C2A6+c6I53V8tOmZC7Vwcue/wlikW+
-         aoiA==
-X-Gm-Message-State: APjAAAVRXj5hl5G3bEdzluliYdCYJEAqvd7f8pvVl7cQffPqhhUm6lz5
-        mfSb6OppquBBeDGuuzgXa/YnumTUt3MZqsiVKTw9
-X-Google-Smtp-Source: APXvYqwHC8RbjMH6lxvVIhsAzDm3HE9/Eadxhwf+Gs4Sub/2cYfUPJHXYxbbG9TWyQTvzlhVlUcV6s1iN4J/NfvvlRg=
-X-Received: by 2002:ac2:410a:: with SMTP id b10mr2250887lfi.175.1559226900658;
- Thu, 30 May 2019 07:35:00 -0700 (PDT)
+        id S1726549AbfE3Ok6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 10:40:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38970 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725961AbfE3Ok6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 May 2019 10:40:58 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AF0D5C04FFF6;
+        Thu, 30 May 2019 14:40:51 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 655AE611A1;
+        Thu, 30 May 2019 14:40:46 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 30 May 2019 16:40:51 +0200 (CEST)
+Date:   Thu, 30 May 2019 16:40:45 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, dbueso@suse.de,
+        Jens Axboe <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, e@80x24.org,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>, omar.kilani@gmail.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "# 3.4.x" <stable@vger.kernel.org>
+Subject: Re: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error
+ codes according to restore_user_sigmask())
+Message-ID: <20190530144044.GG22536@redhat.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com>
+ <CAK8P3a1fsrz6kAB1z-mqcaNvXL4Hf3XMiN=Q5rzAJ3rLGPK_Yg@mail.gmail.com>
 MIME-Version: 1.0
-References: <cover.1554732921.git.rgb@redhat.com> <0785ee2644804f3ec6af1243cc0dcf89709c1fd4.1554732921.git.rgb@redhat.com>
- <CAHC9VhRV-0LSEcRvPO1uXtKdpEQsaLZnBV3T=zcMTZPN5ugz5w@mail.gmail.com> <20190530141951.iofimovrndap4npq@madcap2.tricolour.ca>
-In-Reply-To: <20190530141951.iofimovrndap4npq@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 30 May 2019 10:34:49 -0400
-Message-ID: <CAHC9VhQhkzCtVOXhPL7BzaqvF0y+8gBQwhOo1EQDS2OUyZbV5g@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V6 08/10] audit: add containerid filtering
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1fsrz6kAB1z-mqcaNvXL4Hf3XMiN=Q5rzAJ3rLGPK_Yg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 30 May 2019 14:40:57 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 30, 2019 at 10:20 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+On 05/30, Arnd Bergmann wrote:
 >
-> On 2019-05-29 18:16, Paul Moore wrote:
-> > On Mon, Apr 8, 2019 at 11:41 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > >
-> > > Implement audit container identifier filtering using the AUDIT_CONTID
-> > > field name to send an 8-character string representing a u64 since the
-> > > value field is only u32.
-> > >
-> > > Sending it as two u32 was considered, but gathering and comparing two
-> > > fields was more complex.
-> > >
-> > > The feature indicator is AUDIT_FEATURE_BITMAP_CONTAINERID.
-> > >
-> > > Please see the github audit kernel issue for the contid filter feature:
-> > >   https://github.com/linux-audit/audit-kernel/issues/91
-> > > Please see the github audit userspace issue for filter additions:
-> > >   https://github.com/linux-audit/audit-userspace/issues/40
-> > > Please see the github audit testsuiite issue for the test case:
-> > >   https://github.com/linux-audit/audit-testsuite/issues/64
-> > > Please see the github audit wiki for the feature overview:
-> > >   https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > Acked-by: Serge Hallyn <serge@hallyn.com>
-> > > Acked-by: Neil Horman <nhorman@tuxdriver.com>
-> > > Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > ---
-> > >  include/linux/audit.h      |  1 +
-> > >  include/uapi/linux/audit.h |  5 ++++-
-> > >  kernel/audit.h             |  1 +
-> > >  kernel/auditfilter.c       | 47 ++++++++++++++++++++++++++++++++++++++++++++++
-> > >  kernel/auditsc.c           |  4 ++++
-> > >  5 files changed, 57 insertions(+), 1 deletion(-)
+> I think this is a nice simplification, but it would help not to mix up the
+> minimal regression fix with the rewrite of those functions.
+
+Yes, yes, agreed.
+
+Plus every file touched by this patch asks for more cleanups. Say, do_poll()
+should return -ERESTARTNOHAND, not -EINTR, after that we can remove the ugly
+EINTR->ERESTARTNOHAND in its callers. And more.
+
+> For the stable
+> kernels, I think we want just the addition of the 'bool interrupted' argument
+> to restore_user_sigmask()
+
+or simply revert this patch. I will check if this is possible today... At first
+glance 854a6ed56839a40f6 fixed another bug by accident, do_pselect() did
+"ret == -ERESTARTNOHAND" after "ret = poll_select_copy_remaining()" which can
+turn ERESTARTNOHAND into EINTR, but this is simple. I'll check tomorrow.
+
+
+> > -       ret = set_user_sigmask(ksig.sigmask, &ksigmask, &sigsaved, ksig.sigsetsize);
+> > +       ret = set_xxx(ksig.sigmask, ksig.sigsetsize);
+> >         if (ret)
+> >                 return ret;
 > >
-> > ...
-> >
-> > > diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> > > index 63f8b3f26fab..407b5bb3b4c6 100644
-> > > --- a/kernel/auditfilter.c
-> > > +++ b/kernel/auditfilter.c
-> > > @@ -1206,6 +1224,31 @@ int audit_comparator(u32 left, u32 op, u32 right)
-> > >         }
-> > >  }
-> > >
-> > > +int audit_comparator64(u64 left, u32 op, u64 right)
-> > > +{
-> > > +       switch (op) {
-> > > +       case Audit_equal:
-> > > +               return (left == right);
-> > > +       case Audit_not_equal:
-> > > +               return (left != right);
-> > > +       case Audit_lt:
-> > > +               return (left < right);
-> > > +       case Audit_le:
-> > > +               return (left <= right);
-> > > +       case Audit_gt:
-> > > +               return (left > right);
-> > > +       case Audit_ge:
-> > > +               return (left >= right);
-> > > +       case Audit_bitmask:
-> > > +               return (left & right);
-> > > +       case Audit_bittest:
-> > > +               return ((left & right) == right);
-> > > +       default:
-> > > +               BUG();
-> >
-> > A little birdy mentioned the BUG() here as a potential issue and while
-> > I had ignored it in earlier patches because this is likely a
-> > cut-n-paste from another audit comparator function, I took a closer
-> > look this time.  It appears as though we will never have an invalid op
-> > value as audit_data_to_entry()/audit_to_op() ensure that the op value
-> > is a a known good value.  Removing the BUG() from all the audit
-> > comparators is a separate issue, but I think it would be good to
-> > remove it from this newly added comparator; keeping it so that we
-> > return "0" in the default case seems reasoanble.
+> >         ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
+> > -       restore_user_sigmask(ksig.sigmask, &sigsaved);
+> > -       if (signal_pending(current) && !ret)
+> > +
+> > +       interrupted = signal_pending(current);
+> > +       update_xxx(interrupted);
 >
-> Fair enough.  That BUG(); can be removed.
+> Maybe name this
+>
+>            restore_saved_sigmask_if(!interrupted);
 
-Please send a fixup patch for this.
+Yes, I thought about restore_if(), but to me
 
--- 
-paul moore
-www.paul-moore.com
+		restore_saved_sigmask_if(ret != -EINTR);
+
+doesn't look readable... May be
+
+		restore_saved_sigmask_unless(ret == -EINTR);
+
+? but actually I agree with any naming.
+
+> and make restore_saved_sigmask_if() an inline function
+> next to restore_saved_sigmask()?
+
+agreed,
+
+> With some of the recent discussions about compat syscall handling,
+> I now think that we want to just fold set_compat_user_sigmask()
+> into set_user_sigmask()
+
+agreed, and I thought about this too. But again, I'd prefer to do this
+and other cleanups later, on top of this patch.
+
+Oleg.
+
