@@ -2,133 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6CC62F746
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 07:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F54C2F757
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 08:01:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfE3FuF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 01:50:05 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:46935 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfE3FuE (ORCPT
+        id S1726797AbfE3GBi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 02:01:38 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:39903 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725961AbfE3GBh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 01:50:04 -0400
-Received: by mail-yb1-f194.google.com with SMTP id p8so1712502ybo.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 22:50:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vMHz6/NV3TXzmw/zAXxEDIRdlAbXhZsHnbbqJgV5ujw=;
-        b=q9XsQJVW/cLdVQi6ZnXr+v6lVYFLOYn4WIebOXWp2pXcLR+KZD9ECKgSX6WXq+EnlB
-         p0iwsVwuywutCewPhT+04eYIuQBf5HE21eNLzAMdQ+W4voMuGoOANCYem/CQfnYf819I
-         pe3lmgeu3zE1QsdDBM7LYCRWXPF/OR8/K3kKZRA+PDQplRF/ET/KM7tySlFyxnkiI3q4
-         fD1mHzNV5P65FBSmsRfrJ+05u1DHDNcpZIWZ+d9Edtg+NwwsOxItoq7QVGdmFY00KTxC
-         7de9rzM5BDEktPWE16z3s+1SNiJGQZ0v9U0aUItmK7/5kc0YcDt9GjK1zY5XNIr6Qz6t
-         Ahuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vMHz6/NV3TXzmw/zAXxEDIRdlAbXhZsHnbbqJgV5ujw=;
-        b=s72N/Y3KX/nusrFJ8hmVOTHR1JiQgYOdntqr3OW/jS20wq45lZb1mx1+S9NcZIvqR9
-         8+0BWsHO/i1Ng3bL7r1vIslxxJcvgMBLjc8hmmcgttwiu6sPQFfqrf4AYhMgcLWgWLlv
-         YTr36E8HsewzoILxqaDa7Kj4iQHiH2tf5FfrrVVZ8nvJBJ96nOZHzRM1FpOvNv+mXJdq
-         yndgNUJVI+nqZ7yyYk7NZHoLdNS0m41RN7nscBL0tM8xx65FPjQOEpq+2U2Wh4woEwJl
-         WqN6k0OjEh1YRz0QXQQg1mQJZ86mzgRqcqBh6jL6Y1S8GHvGMDp0U9NepYExL7qdfi+o
-         QJKw==
-X-Gm-Message-State: APjAAAW7tM5u8//OOtof8G4fNKto1yoWovzXK2unMj6umGXG3qfOX2XN
-        qUjpJDibujCiMy2P5/J2iheTwI9wiDZLiQ42U1I=
-X-Google-Smtp-Source: APXvYqy0TLmX5q9lwsl/sV08s2+FEOVWNQV2G/uvP6Nhc9ioepMkb+C4G0vXH2UFqGO6/+yvVFNDm+FRaT+E8jMjGGA=
-X-Received: by 2002:a05:6902:4c3:: with SMTP id v3mr701385ybs.144.1559195403920;
- Wed, 29 May 2019 22:50:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190526143411.11244-1-amir73il@gmail.com> <20190526143411.11244-7-amir73il@gmail.com>
-In-Reply-To: <20190526143411.11244-7-amir73il@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 30 May 2019 08:49:52 +0300
-Message-ID: <CAOQ4uxjr50juBR=48c8BqnRhZv0yBri4k_zF9ap2Rsypd36EoA@mail.gmail.com>
-Subject: Re: [PATCH v3 06/10] debugfs: simplify __debugfs_remove_file()
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     David Sterba <dsterba@suse.com>, Christoph Hellwig <hch@lst.de>,
-        Joel Becker <jlbec@evilplan.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        Thu, 30 May 2019 02:01:37 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id B2ABE220C3;
+        Thu, 30 May 2019 02:01:36 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 30 May 2019 02:01:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=eCakL384zMTCpVZkURCZ5qsUo9h
+        k+pUOlpeRS6gbT+U=; b=TN/YiQjQWUsoQU0Ha08Nx01TZQhDPqY4mOo08RR3wKL
+        14s9bOMTOOAUcLSR9X5MNwkhrucp921SgYt8eKIlPpvoARbRjLSQfencP+c0Kv0e
+        HTfP1aMUZggm4zPrbd3Qyli58WikqV8Dsu+MqIE5Xd8481jUx/4eNaDaejPdIvM7
+        /HL2GzL6nZWp6nr2lWe5GfmgK3S0YV2LiIH7naZcf3pr+BxJ5Qv2cqEYHNtlVunn
+        7rc0+BaePmGZyY7E68wVYJBnCOEa/PqbrzSxz2KIyEgMpJgX7qPRFZUt7dnZCYGo
+        Xcd7YeB1k2tIWZRN4mITb61wny8b90bZtt2uXCuFgaw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=eCakL3
+        84zMTCpVZkURCZ5qsUo9hk+pUOlpeRS6gbT+U=; b=py0C4DD0GGD8+o80IIh4uo
+        IgLnWHuzqpiNJWiZICIAW/ZZ3LLUnCYeiM8zsxwItBc7/+7sxcKQmbms64CFzmka
+        X0SCSUk/NAE1f8a01KMjYsDKIGDlWIsYg5qN4Dfv860bmA2D1jtZqxF/U/AQjo9a
+        kc7RsDDXoVSoNveVRKPsHS+f8Hplv52aQx2a0ZGp4SyJCne5pKjBI3unScFwkZut
+        FFySNOtUd20q3OL/QxosrODigq35dClXGSqhmIX55Aql+CQjBvIPBLEiG3nIIxxq
+        F0pSix0+p/pQnIWC/ZV/K0UKVZ8oePtzePDrFJhkFMEMWvLYKFGNSkvPYNuLPL4w
+        ==
+X-ME-Sender: <xms:v3HvXKLfe7nhbx7utOcf5lvo3wQXgHRhBPyJT-pv_1vGXu_S-r1MzQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddvkedguddtudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enfghrlhcuvffnffculdduhedmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttder
+    tdforedvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesth
+    hosghinhdrtggtqeenucfkphepuddvgedrudejuddrfedurddugeegnecurfgrrhgrmhep
+    mhgrihhlfhhrohhmpehmvgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:v3HvXKQBKsR03OmxOLM97vnrKFC1ITG7c-hWGZLSDhhCVoFZsR6oIg>
+    <xmx:v3HvXDRuJsPWMYIjrpe62IUEgbLL2WCT-qkS5EmxkEsOaF00rv-OrQ>
+    <xmx:v3HvXK4cRJ1jMdSJTqBJEUKXuiViDyLuEFXcU4c56N5sOLvJSb2VYQ>
+    <xmx:wHHvXAnGM5HD9n3U86goR9McOHwIl9nJwZzGvyQ-7Rrjd7fXa2Y6-w>
+Received: from localhost (124-171-31-144.dyn.iinet.net.au [124.171.31.144])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4EF6F8005B;
+        Thu, 30 May 2019 02:01:34 -0400 (EDT)
+Date:   Thu, 30 May 2019 16:01:30 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Neil Brown <neilb@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/9] docs: Convert VFS doc to RST
+Message-ID: <20190530060130.GB11021@caerus>
+References: <20190515002913.12586-1-tobin@kernel.org>
+ <20190529163052.6ce91581@lwn.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190529163052.6ce91581@lwn.net>
+X-Mailer: Mutt 1.9.4 (2018-02-28)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 26, 2019 at 5:34 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> Move simple_unlink()+d_delete() from __debugfs_remove_file() into
-> caller __debugfs_remove() and rename helper for post remove file to
-> __debugfs_file_removed().
->
-> This will simplify adding fsnotify_unlink() hook.
->
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On Wed, May 29, 2019 at 04:30:52PM -0600, Jonathan Corbet wrote:
+> On Wed, 15 May 2019 10:29:04 +1000
+> "Tobin C. Harding" <tobin@kernel.org> wrote:
+> 
+> > Here is an updated version of the VFS doc conversion.  This series in no
+> > way represents a final point for the VFS documentation rather it is a
+> > small step towards getting VFS docs updated.  This series does not
+> > update the content of vfs.txt, only does formatting.
+> 
+> I've finally gotten to this, sorry for taking so long.  Applying it to
+> docs-next turned out to be a bit of a chore; there have been intervening
+> changes to vfs.txt that we didn't want to lose.  But I did it.
+> 
+> Unfortunately, there's still a remaining issue.  You did a lot of list
+> conversions like this:
+> 
+> > -  struct file_system_type *fs_type: describes the filesystem, partly initialized
+> > +``struct file_system_type *fs_type``: describes the filesystem, partly initialized
+> >  	by the specific filesystem code
+> 
+> but that does not render the way you would like, trust me.  You really
+> want to use the list format, something like:
+> 
+>     ``struct file_system_type *fs_type``
+> 	 describes the filesystem, partly initialized by the specific
+> 	 filesystem code
 
-Hi Greg,
+Ouch!  Yes I knew this was sub-optimal, I thought the HTML looked ok.
+I'll fix them up as suggested.
 
-Will be you be able to provide an ACK on this debugfs patch and the next one.
+> There are, unfortunately, a lot of these to fix...  I bet it could be done
+> with an elisp function, but I don't have time to beat my head against that
+> wall right now.
 
-Thanks,
-Amir.
+oh really?  That would actually make doing this much more enticing, I've
+already done all these multiple times manually - learning nothing, some
+elisp games would actually teach me something.  Cheers.
 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/debugfs/inode.c | 20 ++++++++------------
->  1 file changed, 8 insertions(+), 12 deletions(-)
->
-> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> index acef14ad53db..d89874da9791 100644
-> --- a/fs/debugfs/inode.c
-> +++ b/fs/debugfs/inode.c
-> @@ -617,13 +617,10 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
->  }
->  EXPORT_SYMBOL_GPL(debugfs_create_symlink);
->
-> -static void __debugfs_remove_file(struct dentry *dentry, struct dentry *parent)
-> +static void __debugfs_file_removed(struct dentry *dentry)
->  {
->         struct debugfs_fsdata *fsd;
->
-> -       simple_unlink(d_inode(parent), dentry);
-> -       d_delete(dentry);
-> -
->         /*
->          * Paired with the closing smp_mb() implied by a successful
->          * cmpxchg() in debugfs_file_get(): either
-> @@ -644,16 +641,15 @@ static int __debugfs_remove(struct dentry *dentry, struct dentry *parent)
->
->         if (simple_positive(dentry)) {
->                 dget(dentry);
-> -               if (!d_is_reg(dentry)) {
-> -                       if (d_is_dir(dentry))
-> -                               ret = simple_rmdir(d_inode(parent), dentry);
-> -                       else
-> -                               simple_unlink(d_inode(parent), dentry);
-> -                       if (!ret)
-> -                               d_delete(dentry);
-> +               if (d_is_dir(dentry)) {
-> +                       ret = simple_rmdir(d_inode(parent), dentry);
->                 } else {
-> -                       __debugfs_remove_file(dentry, parent);
-> +                       simple_unlink(d_inode(parent), dentry);
->                 }
-> +               if (!ret)
-> +                       d_delete(dentry);
-> +               if (d_is_reg(dentry))
-> +                       __debugfs_file_removed(dentry);
->                 dput(dentry);
->         }
->         return ret;
-> --
-> 2.17.1
->
+> Any chance you would have time to send me a followup patch fixing these
+> up?  I'll keep my branch with this set for now so there's no need to
+> rebase those.
+
+Sure thing, patches to come.
+
+Cheers,
+Tobin.
