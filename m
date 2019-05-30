@@ -2,88 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B131D304C7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 00:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DCB6304DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 00:45:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726328AbfE3W2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 18:28:53 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55038 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbfE3W2x (ORCPT
+        id S1726326AbfE3Wp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 18:45:56 -0400
+Received: from mail-lj1-f178.google.com ([209.85.208.178]:34980 "EHLO
+        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbfE3Wp4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 18:28:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=0VN5c421RywifIF8i/3tvMhN6mXfzQVaKnVDur62RGU=; b=KHCp4Wiwwi+f9S4LXp2IJWa5zG
-        SxnfG52Z9HxmHDW4gg74ulMSbpX0CDQGMZwMd+W5Zj+3lr0uW1f1hHekCH/7sjHKruEstLuNKJWji
-        olk3QfhPAS/s/B3FHzbOEj2ynup7ZWk48Me/GhtfyzAVBus//uBGdH+fLD4xK6DtTkJ6b3VRkyThS
-        4SKYhXskAK0TnZVr53SjW5ArJZZiNr6g6vNNrZqkCWt9zCwUk47K4GQVfBrUgqtecIi/gLuFzxFOt
-        gnPfHcQ5hIyijGQfOj0LZgCOctO4GZSAJb0BvI+seY1CoYVj/KtS7DdWCZlqkY2ELPdulpDWaLiFR
-        yLh9IG1Q==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWTXV-0003kU-A0; Thu, 30 May 2019 22:28:49 +0000
-Subject: Re: mmotm 2019-05-29-20-52 uploaded (mpls)
-To:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-References: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5a9fc4e5-eb29-99a9-dff6-2d4fdd5eb748@infradead.org>
-Date:   Thu, 30 May 2019 15:28:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 30 May 2019 18:45:56 -0400
+Received: by mail-lj1-f178.google.com with SMTP id h11so7702446ljb.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2019 15:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z/mhNnTAOsJLEZHyKQjw/9NCHJUOEGHQw19Cx/4jcO4=;
+        b=rDK7wvSro0FEjQwKzXFAZoXU+zA7CQ8tauuAidU1OyJdpvDQmgQQg2QoL0I+7hABEB
+         zWhWhjniUI2ciyRj37qwz23E9nH52zdwtzjRbNFL1XNrGxpcSOvDXsl+9YZ0zZmpr2hO
+         Izuco+oTW90piH7FY4aay8XKDGLVuP0jR1pypSKab6kTqOKvf1J64RQ1gwopC4MFY8wH
+         VcNakrYC8zZDSGhSftU/Ye6YCML+jLFw3X/a0Rb2YNeRrGG0QRyuCbH/2TEUkqfUpxJ+
+         /kYiIMgcbpGOiY2aiV29lgE9nvPgQZPyZ/ZtOWoar6Rmhc/a935aKvBV8k6dXuarMIgF
+         2rMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z/mhNnTAOsJLEZHyKQjw/9NCHJUOEGHQw19Cx/4jcO4=;
+        b=fxfuJyQPENzXphAHeFD6M347E9c0Ff66cLoRa11cnie0sJ5FrwOZYbUshUt7bJbUbt
+         ahSfxf6jxycbEb0G4oP0JV7V2VkOVeQu2NU8M9pOEGZ678phARkeWkAQEORoTt+DIPCq
+         Xz7FnsHZAPXSFYUvdug3mnV2CzcH4W/LUHmeJCWEkPmXY4QPSPL9T7d9+AW2apj/NHRJ
+         vnX1KPL1JioKpqx+5aUw0XYTZAaja+vMriEZkc2o6LIkVlTkba8Gp4CM7Nw/+GkMxIC2
+         BMS0DKIPFLUlSSeIIU1voIHnxQ74LP2FNqCLnMB2HjGYVKYCjAV5R5UFNuMUCj+wO0Oc
+         1KcQ==
+X-Gm-Message-State: APjAAAVH2R59Ku38yNidFKqUWAriJEwxhQiQm/iwbynVs2knP0Z2mZQB
+        hNBmKsF8qwmrSrkYY8L8tB/d5h3ZnpQgX0gDI8tUbQ==
+X-Google-Smtp-Source: APXvYqx16U5v6+bC1bWyWxdock3D0aaJh8w5cK3wMUydhh8SE4UIUyh0jp6Z+IHGm2TxDyfSMeT/uDgU8yqKvygWkzo=
+X-Received: by 2002:a2e:5d9c:: with SMTP id v28mr3643226lje.32.1559256353596;
+ Thu, 30 May 2019 15:45:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190502040331.81196-1-ezemtsov@google.com> <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
+ <20190502131034.GA25007@mit.edu> <20190502132623.GU23075@ZenIV.linux.org.uk>
+ <CAK8JDrFZW1jwOmhq+YVDPJi9jWWrCRkwpqQ085EouVSyzw-1cg@mail.gmail.com>
+ <CAOQ4uxhDYvBOLBkyYXRC6aS_me+Q=1sBAtzOSkdqbo+N-Rtx=Q@mail.gmail.com>
+ <CAK8JDrGRzA+yphpuX+GQ0syRwF_p2Fora+roGCnYqB5E1eOmXA@mail.gmail.com>
+ <CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=w_AeM6YM=zVixsUfQ@mail.gmail.com>
+ <CAK8JDrEQnXTcCtAPkb+S4r4hORiKh_yX=0A0A=LYSVKUo_n4OA@mail.gmail.com>
+ <CAJeUaNCvr=X-cc+B3rsunKcdC6yHSGGa4G+8X+n8OxGKHeE3zQ@mail.gmail.com>
+ <CAJfpegvmFJ63F2h_gFVPJeEgWS8UmxAYCUgA-4=j9iCNXaXARA@mail.gmail.com>
+ <CAJeUaNC5rXuNsoKmJjJN74iH9YNp94L450gcpxyc_dG=D8CCjA@mail.gmail.com>
+ <CAJfpegs=4jMo20Wp8NEjREQpqYjqJ22vc680w1E-w6o-dU1brg@mail.gmail.com>
+ <CAJeUaNBn0gA6eApgOu=n2uoy+6PbOR_xjTdVvc+StvOKGA-i=Q@mail.gmail.com> <CAJfpeguys2P9q5EpE3GzKHcOS9GVLO9Fj9HB3JBLw36eax+NkQ@mail.gmail.com>
+In-Reply-To: <CAJfpeguys2P9q5EpE3GzKHcOS9GVLO9Fj9HB3JBLw36eax+NkQ@mail.gmail.com>
+From:   Yurii Zubrytskyi <zyy@google.com>
+Date:   Thu, 30 May 2019 15:45:42 -0700
+Message-ID: <CAJeUaNAcZXfX-7Ws0q7SnaWrD+nzK3hxPwoW-NYvjAL0b=8M9g@mail.gmail.com>
+Subject: Re: Initial patches for Incremental FS
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Eugene Zemtsov <ezemtsov@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/29/19 8:53 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2019-05-29-20-52 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (5.x
-> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
-> 
+> With the proposed FUSE solution the following sequences would occur:
+>
+> kernel: if index for given block is missing, send MAP message
+>   userspace: if data/hash is missing for given block then download data/hash
+>   userspace: send MAP reply
+> kernel: decompress data and verify hash based on index
+>
+> The kernel would not be involved in either streaming data or hash, it
+> would only work with data/hash that has already been downloaded.
+> Right?
+>
+> Or is your implementation doing streamed decompress/hash or partial blocks?
+> ...
+> Why does the kernel have to know the on-disk format to be able to load
+> and discard parts of the index on-demand?  It only needs to know which
+> blocks were accessed recently and which not so recently.
+>
+(1) You're correct, only the userspace deals with all streaming.
+Kernel then sees full blocks of data (usually LZ4-compressed) and
+blocks of hashes
+We'd need to give the location of the hash tree instead of the
+individual hash here though - verification has to go all the way to
+the top and even check the signature there. And the same 5 GB file
+would have over 40 MB of hashes (32 bytes of SHA2 for each 4K block),
+so those have to be read from disk as well.
+Overall, let's just imagine a phone with 100 apps, 100MB each,
+installed this way. That ends up being ~10GB of data, so we'd need _at
+least_ 40 MB for the index and 80 MB for hashes *in kernel*. Android
+now fights for each megabyte of RAM used in the system services, so
+FUSE won't be able to cache that, going back to the user mode for
+almost all reads again.
+(1 and 2) ... If FUSE were to know the on-disk format it would be able
+to simply parse and read it when needed, with as little memory
+footprint as it can. Requesting this data from the usermode every time
+with little caching defeats the whole purpose of the change.
 
-on i386 or x86_64:
+> BTW, which interface does your fuse filesystem use?  Libfuse?  Raw device?
+Yes, our code interacts with the raw FUSE fd via poll/read/write
+calls. We have tried the multithreaded approach via duping the control
+fd and FUSE_DEV_IOC_CLONE, but it didn't give much improvement -
+Android apps aren't usually use multithreaded, so there's at most two
+pending reads at once. I've seen 10 once, but that was some kind of
+miractle
 
-when CONFIG_PROC_SYSCTL is not set/enabled:
+And again, we have not even looked at the directory structure and stat
+caching yet, neither interface nor memory usage. For a general case we
+have to make direct disk reads from kernel and this forces even bigger
+part of the disk format to be defined there. The end result is what
+we've got when researching FUSE - a huge chunk of FUSE gets
+overspecialized to handle our own way of using it end to end, with no
+real configurability (because making it configurable makes that code
+even bigger and more complex)
 
-ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
-af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
-ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
-ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
-ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
-
-
-
--- 
-~Randy
+--
+Thanks, Yurii
