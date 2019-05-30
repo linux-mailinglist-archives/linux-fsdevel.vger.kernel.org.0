@@ -2,125 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 049DF2F953
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 11:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 436152F985
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 11:35:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfE3JXH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 05:23:07 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:56286 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbfE3JXG (ORCPT
+        id S1727576AbfE3Je7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 05:34:59 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:57562 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726985AbfE3Je6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 05:23:06 -0400
-Received: by mail-it1-f195.google.com with SMTP id g24so8733071iti.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2019 02:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a+5aEhVutop7tTeywzU7pWYUCUGkPUoyIEB0oJC3s4w=;
-        b=X2KxT+ZWbhdBIXQIbPAxqr3e7c2pnXc5lo5pEwP58+veIa2y/EfnZ7yFBLnq13R/QM
-         EPynTGlLEeMAKOg3EH91ZeTSSRzmoyMHy7AOQ0yFNmgNJpiF0MPqx3v1E3D5FkB4ZNAd
-         A2D98ATFoOu3bq5VDVvNp46ULKYcwlIUX8SvA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a+5aEhVutop7tTeywzU7pWYUCUGkPUoyIEB0oJC3s4w=;
-        b=qT4A5oPBY0MC3Vi1sltBoeKzdlfEhIVmvzGIB/U0p4PtnMwqQ8ibVRya8Sbm++bXz+
-         OeCNLtbBOTQdaClFkHhszrLci42hfa2GmE6N7zFlYy/vvwJ/Q+gfpxDsekwbfT3aV7Yj
-         3LD5DDvDFY3kACh62P+jwKJ9xu7aVnKP6bOMB6c9NZK+720poVYZJp50U4KH/Qbb2RbS
-         x37vbqE09m4WvNw11zWO9z+hahDGYyD2ki5UxvFpPDU1vN8JW1j/Z7NUdTQJdQvLXsMg
-         12UDhyAv/GB8CdvEpJr3tzFTLf5oqP0uXJD4+MKeoGpf73f+CHpqe8ok6B9bALTPKasb
-         RM+A==
-X-Gm-Message-State: APjAAAXZnLHGmp/g+e5cXGc8b2bzWHnQzp5USzBYxu1rkqOSMGQKAMsh
-        Ihe3n1C/mm7/k8qEO8amwS32Nn5wWpRs1fzaTAJN+A==
-X-Google-Smtp-Source: APXvYqxGtgaxGvZRnxZZeT7U0mE9T7MAFKM92+yT+LMximCAZ/y+JjinSYPIBOIjEaFSaGKNREat1XifEPO8Sd6x50A=
-X-Received: by 2002:a24:1acc:: with SMTP id 195mr1367036iti.118.1559208185554;
- Thu, 30 May 2019 02:23:05 -0700 (PDT)
+        Thu, 30 May 2019 05:34:58 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-43-7gh7PonmMjqzmTiRGe_CfA-1; Thu, 30 May 2019 10:34:54 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 30 May 2019 10:34:53 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 30 May 2019 10:34:53 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Eric Wong' <e@80x24.org>
+CC:     'Oleg Nesterov' <oleg@redhat.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "dave@stgolabs.net" <dave@stgolabs.net>,
+        "jbaron@akamai.com" <jbaron@akamai.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error codes
+ according to restore_user_sigmask())
+Thread-Topic: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error
+ codes according to restore_user_sigmask())
+Thread-Index: AQHVFjlRjDlHH6TU60ajIVKPNNmjrqaCR7xwgAAZvgCAAP1NYA==
+Date:   Thu, 30 May 2019 09:34:53 +0000
+Message-ID: <a703239f468d44d3b3e7d71b40289072@AcuMS.aculab.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com>
+ <b05cec7f9e8f457281e689576a7a360f@AcuMS.aculab.com>
+ <20190529185012.qqeqq4fsolprknrz@dcvr>
+In-Reply-To: <20190529185012.qqeqq4fsolprknrz@dcvr>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <20190502040331.81196-1-ezemtsov@google.com> <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
- <20190502131034.GA25007@mit.edu> <20190502132623.GU23075@ZenIV.linux.org.uk>
- <CAK8JDrFZW1jwOmhq+YVDPJi9jWWrCRkwpqQ085EouVSyzw-1cg@mail.gmail.com>
- <CAOQ4uxhDYvBOLBkyYXRC6aS_me+Q=1sBAtzOSkdqbo+N-Rtx=Q@mail.gmail.com>
- <CAK8JDrGRzA+yphpuX+GQ0syRwF_p2Fora+roGCnYqB5E1eOmXA@mail.gmail.com>
- <CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=w_AeM6YM=zVixsUfQ@mail.gmail.com>
- <CAK8JDrEQnXTcCtAPkb+S4r4hORiKh_yX=0A0A=LYSVKUo_n4OA@mail.gmail.com>
- <CAJeUaNCvr=X-cc+B3rsunKcdC6yHSGGa4G+8X+n8OxGKHeE3zQ@mail.gmail.com>
- <CAJfpegvmFJ63F2h_gFVPJeEgWS8UmxAYCUgA-4=j9iCNXaXARA@mail.gmail.com>
- <CAJeUaNC5rXuNsoKmJjJN74iH9YNp94L450gcpxyc_dG=D8CCjA@mail.gmail.com>
- <CAJfpegs=4jMo20Wp8NEjREQpqYjqJ22vc680w1E-w6o-dU1brg@mail.gmail.com> <CAJeUaNBn0gA6eApgOu=n2uoy+6PbOR_xjTdVvc+StvOKGA-i=Q@mail.gmail.com>
-In-Reply-To: <CAJeUaNBn0gA6eApgOu=n2uoy+6PbOR_xjTdVvc+StvOKGA-i=Q@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 30 May 2019 11:22:54 +0200
-Message-ID: <CAJfpeguys2P9q5EpE3GzKHcOS9GVLO9Fj9HB3JBLw36eax+NkQ@mail.gmail.com>
-Subject: Re: Initial patches for Incremental FS
-To:     Yurii Zubrytskyi <zyy@google.com>
-Cc:     Eugene Zemtsov <ezemtsov@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MC-Unique: 7gh7PonmMjqzmTiRGe_CfA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 29, 2019 at 11:06 PM Yurii Zubrytskyi <zyy@google.com> wrote:
+RnJvbTogRXJpYyBXb25nDQo+IFNlbnQ6IDI5IE1heSAyMDE5IDE5OjUwDQouLi4NCj4gPiBQZXJz
+b25hbGx5IEkgdGhpbmsgdGhhdCBpcyB3cm9uZy4NCj4gPiBHaXZlbiBjb2RlIGxpa2UgdGhlIGFi
+b3ZlIHRoYXQgaGFzOg0KPiA+IAkJd2hpbGUgKCFpbnRlcnJ1cHRlZCkgew0KPiA+IAkJCXBzZWxl
+Y3QoLi4uLCAmc2lnaW50KTsNCj4gPiAJCQkvLyBwcm9jZXNzIGF2YWlsYWJsZSBkYXRhDQo+ID4g
+CQl9DQo+ID4NCj4gPiBZb3Ugd2FudCB0aGUgc2lnbmFsIGhhbmRsZXIgdG8gYmUgZXhlY3V0ZWQg
+ZXZlbiBpZiBvbmUgb2YgdGhlIGZkcw0KPiA+IGFsd2F5cyBoYXMgYXZhaWxhYmxlIGRhdGEuDQo+
+ID4gT3RoZXJ3aXNlIHlvdSBjYW4ndCBpbnRlcnJ1cHQgYSBwcm9jZXNzIHRoYXQgaXMgYWx3YXlz
+IGJ1c3kuDQoNCkZXSVcgaW4gdGhlIHBhc3QgSSd2ZSBzZWVuIGEgcHJvY2VzcyB0aGF0IGxvb3Bz
+IHNlbGVjdC1hY2NlcHQtZm9yay1leGVjDQpnZXQgaXRzIHByaW9yaXR5IHJlZHVjZWQgdG8gdGhl
+IHBvaW50IHdoZXJlIGl0IG5ldmVyIGJsb2NrZWQNCmluIHNlbGVjdC4gVGhlIGNsaWVudCBzaWRl
+IHJldHJpZXMgbWFkZSBpdCBnbyBiYWRseSB3cm9uZyENCklmIGl0IGhhZCBsaW1pdGVkIHdoZW4g
+U0lHX0lOVCB3YXMgZGV0ZWN0ZWQgaXQgd291bGQgaGF2ZSBiZWVuDQphIGxpdHRsZSBtb3JlIGRp
+ZmZpY3VsdCB0byBraWxsLg0KDQo+IEFncmVlZC4uLiAgSSBiZWxpZXZlIGNtb2dzdG9yZWQgaGFz
+IGFsd2F5cyBoYWQgYSBidWcgaW4gdGhlIHdheQ0KPiBpdCB1c2VzIGVwb2xsX3B3YWl0IGJlY2F1
+c2UgaXQgZmFpbGVkIHRvIGNoZWNrIGludGVycnVwdHMgaWY6DQo+IA0KPiBhKSBhbiBGRCBpcyBy
+ZWFkeSArIGludGVycnVwdA0KPiBiKSBlcG9sbF9wd2FpdCByZXR1cm5zIDAgb24gaW50ZXJydXB0
+DQoNCkJ1dCB0aGUga2VybmVsIGNvZGUgc2VlbXMgdG8gb25seSBjYWxsIHRoZSBzaWduYWwgaGFu
+ZGxlcg0KKGZvciBzaWduYWxzIHRoYXQgYXJlIGVuYWJsZWQgZHVyaW5nIHBzZWxlY3QoKSAoZXRj
+KSkgaWYNCnRoZSB1bmRlcmx5aW5nIHdhaXQgaXMgaW50ZXJydXB0ZWQuDQoNCj4gVGhlIGJ1ZyBy
+ZW1haW5zIGluIHVzZXJzcGFjZSBmb3IgYSksIHdoaWNoIEkgd2lsbCBmaXggYnkgYWRkaW5nDQo+
+IGFuIGludGVycnVwdCBjaGVjayB3aGVuIGFuIEZEIGlzIHJlYWR5LiAgVGhlIHdpbmRvdyBpcyB2
+ZXJ5DQo+IHNtYWxsIGZvciBhKSBhbmQgZGlmZmljdWx0IHRvIHRyaWdnZXIsIGFuZCBhbHNvIGlu
+IGEgcmFyZSBjb2RlDQo+IHBhdGguDQo+IA0KPiBUaGUgYikgY2FzZSBpcyB0aGUga2VybmVsIGJ1
+ZyBpbnRyb2R1Y2VkIGluIDg1NGE2ZWQ1NjgzOWE0MGYNCj4gKCJzaWduYWw6IEFkZCByZXN0b3Jl
+X3VzZXJfc2lnbWFzaygpIikuDQo+IA0KPiBJIGRvbid0IHRoaW5rIHRoZXJlJ3MgYW55IGRpc2Fn
+cmVlbWVudCB0aGF0IGIpIGlzIGEga2VybmVsIGJ1Zy4NCg0KSWYgdGhlIHNpZ25hbCBpcyByYWlz
+ZWQgYWZ0ZXIgdGhlIHdhaXQgaGFzIHRpbWVkIG91dCBidXQgYmVmb3JlDQp0aGUgc2lnbmFsIG1h
+c2sgaXMgcmVzdG9yZWQuDQoNCj4gU28gdGhlIGNvbmZ1c2lvbiBpcyBmb3IgYSksIGFuZCBQT1NJ
+WCBpcyBub3QgY2xlYXIgdy5yLnQuIGhvdw0KPiBwc2VsZWN0L3BvbGwgd29ya3Mgd2hlbiB0aGVy
+ZSdzIGJvdGggRkQgcmVhZGluZXNzIGFuZCBhbg0KPiBpbnRlcnJ1cHQuDQo+IA0KPiBUaHVzIEkn
+bSBpbmNsaW5lZCB0byBiZWxpZXZlICpzZWxlY3QvKnBvbGwvZXBvbGxfKndhaXQgc2hvdWxkDQo+
+IGZvbGxvdyBQT1NJWCByZWFkKCkgc2VtYW50aWNzOg0KPiANCj4gICAgICAgIElmIGEgcmVhZCgp
+IGlzIGludGVycnVwdGVkIGJ5IGEgc2lnbmFsIGJlZm9yZSBpdCByZWFkcyBhbnkgZGF0YSwgaXQg
+c2hhbGwNCj4gICAgICAgIHJldHVybiDiiJIxIHdpdGggZXJybm8gc2V0IHRvIFtFSU5UUl0uDQo+
+IA0KPiAgICAgICAgSWYgIGEgIHJlYWQoKSAgaXMgIGludGVycnVwdGVkIGJ5IGEgc2lnbmFsIGFm
+dGVyIGl0IGhhcyBzdWNjZXNzZnVsbHkgcmVhZA0KPiAgICAgICAgc29tZSBkYXRhLCBpdCBzaGFs
+bCByZXR1cm4gdGhlIG51bWJlciBvZiBieXRlcyByZWFkLg0KDQpFeGNlcHQgdGhhdCBhYm92ZSB5
+b3Ugd2FudCBkaWZmZXJlbnQgc2VtYW50aWNzIDotKQ0KRm9yIHJlYWQoKSBhbnkgc2lnbmFsIGhh
+bmRsZXIgaXMgYWx3YXlzIGNhbGxlZC4NCkFuZCB0aGUgcmV0dXJuIHZhbHVlIG9mIGEgbm9uLWJs
+b2NraW5nIHJlYWQgdGhhdCByZXR1cm5zIG5vIGRhdGENCmlzIG5vdCBhZmZlY3RlZCBieSBhbnkg
+cGVuZGluZyBzaWduYWxzLg0KDQpGb3IgcHNlbGVjdCgpIHRoYXQgd291bGQgbWVhbiB0aGF0IGlm
+IHRoZSB3YWl0IHRpbWVkIG91dCAocmVzdWx0IDApDQphbmQgdGhlbiBhIHNpZ25hbCB3YXMgcmFp
+c2VkIChiZWZvcmUgdGhlIG1hc2sgZ290IGNoYW5nZWQgYmFjaykgdGhlbg0KdGhlIHJldHVybiB2
+YWx1ZSB3b3VsZCBiZSB6ZXJvIGFuZCB0aGUgc2lnbmFsIGhhbmRsZXIgd291bGQgYmUgY2FsbGVk
+Lg0KU28geW91ciAoYikgYWJvdmUgaXMgbm90IGEgYnVnLg0KRXZlbiBzZWxlY3QoKSBjYW4gcmV0
+dXJuICd0aW1lb3V0JyBhbmQgaGF2ZSBhIHNpZ25hbCBoYW5kbGVyIGNhbGxlZC4NCg0KVGhlcmUg
+YXJlIHJlYWxseSB0d28gc2VwYXJhdGUgaXNzdWVzOg0KMSkgU2lnbmFscyB0aGF0IGFyZSBwZW5k
+aW5nIHdoZW4gdGhlIG5ldyBtYXNrIGlzIGFwcGxpZWQuDQoyKSBTaWduYWxzIHRoYXQgYXJlIHJh
+aXNlZCBhZnRlciB0aGUgd2FpdCB0ZXJtaW5hdGVzIChzdWNjZXNzIG9yIHRpbWVvdXQpLg0KSWYg
+dGhlIHNpZ25hbCBoYW5kbGVycyBmb3IgKDIpIGFyZSBub3QgY2FsbGVkIHRoZW4gdGhleSBiZWNv
+bWUgKDEpDQpuZXh0IHRpbWUgYXJvdW5kIHRoZSBhcHBsaWNhdGlvbiBsb29wLg0KDQpNYXliZSB0
+aGUgJ3Jlc3RvcmUgc2lnbWFzaycgZnVuY3Rpb24gc2hvdWxkIGJlIHBhc3NlZCBhbiBpbmRpY2F0
+aW9uDQpvZiB3aGV0aGVyIGl0IGlzIGFsbG93ZWQgdG8gbGV0IHNpZ25hbCBoYW5kbGVyIGJlIGNh
+bGxlZCBhbmQgcmV0dXJuDQp3aGV0aGVyIHRoZXkgd291bGQgYmUgY2FsbGVkIChpZSB3aGV0aGVy
+IGl0IHJlc3RvcmVkIHRoZSBzaWduYWwgbWFzaw0Kb3IgbGVmdCBpdCBmb3IgdGhlIHN5c2NhbGwg
+ZXhpdCBjb2RlIHRvIGRvIGFmdGVyIGNhbGxpbmcgdGhlIHNpZ25hbA0KaGFuZGxlcnMpLg0KDQpU
+aGF0IHdvdWxkIGFsbG93IGVwb2xsKCkgdG8gY29udmVydCB0aW1lb3V0K3BlbmRpbmcgc2lnbmFs
+IHRvIEVJTlRSLA0Kb3IgdG8gYWxsb3cgYWxsIGhhbmRsZXJzIGJlIGNhbGxlZCByZWdhcmRsZXNz
+IG9mIHRoZSByZXR1cm4gdmFsdWUuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3Mg
+TGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQ
+VCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
-> Yes, and this was _exactly_ our first plan, and it mitigates the read
-> performance
-> issue. The reasons why we didn't move forward with it are that we figured out
-> all other requirements, and fixing each of those needs another change in
-> FUSE, up to the level when FUSE interface becomes 50% dedicated to
-> our specific goal:
-> 1. MAP message would have to support data compression (with different
-> algorithms), hash verification (same thing) with hash streaming (because
-> even the Merkle tree for a 5GB file is huge, and can't be preloaded
-> at once)
-
-With the proposed FUSE solution the following sequences would occur:
-
-kernel: if index for given block is missing, send MAP message
-  userspace: if data/hash is missing for given block then download data/hash
-  userspace: send MAP reply
-kernel: decompress data and verify hash based on index
-
-The kernel would not be involved in either streaming data or hash, it
-would only work with data/hash that has already been downloaded.
-Right?
-
-Or is your implementation doing streamed decompress/hash or partial blocks?
-
->   1.1. Mapping memory usage can get out of hands pretty quickly: it has to
-> be at least (offset + size + compression type + hash location + hash size +
-> hash kind) per each block. I'm not even thinking about multiple storage files
-> here. For that 5GB file (that's a debug APK for some Android game we're
-> targeting) we have 1.3M blocks, so ~16 bytes *1.3M = 20M of index only,
-> without actual overhead for the lookup table.
-> If the kernel code owns and manages its own on-disk data store and the
-> format, this index can be loaded and discarded on demand there.
-
-Why does the kernel have to know the on-disk format to be able to load
-and discard parts of the index on-demand?  It only needs to know which
-blocks were accessed recently and which not so recently.
-
-> > There's also work currently ongoing in optimizing the overhead of
-> > userspace roundtrip.  The most promising thing appears to be matching
-> > up the CPU for the userspace server with that of the task doing the
-> > request.  This can apparently result in  60-500% speed improvement.
->
-> That sounds almost too good to be true, and will be really cool.
-> Do you have any patches or git remote available in any compilable state to
-> try the optimization out? Android has quite complicated hardware config
-> and I want to see how this works, especially with our model where
-> several processes may send requests into the same filesystem FD.
-
-Currently it's only a bunch of hacks, no proper interfaces yet.
-
-I'll let you know once there's something useful for testing with a
-real filesystem.
-
-BTW, which interface does your fuse filesystem use?  Libfuse?  Raw device?
-
-Thanks,
-Miklos
