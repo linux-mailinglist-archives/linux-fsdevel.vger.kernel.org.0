@@ -2,171 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3264F3008C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 19:09:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70CF1300E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 19:22:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfE3RJR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 13:09:17 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:50574 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfE3RJR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 13:09:17 -0400
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 3568262D; Thu, 30 May 2019 12:09:13 -0500 (CDT)
-Date:   Thu, 30 May 2019 12:09:13 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-Message-ID: <20190530170913.GA16722@mail.hallyn.com>
-References: <cover.1554732921.git.rgb@redhat.com>
- <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
- <20190529145742.GA8959@cisco>
- <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
- <20190529153427.GB8959@cisco>
- <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
- <20190529222835.GD8959@cisco>
- <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
+        id S1726798AbfE3RVw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 13:21:52 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:53606 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725961AbfE3RVw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 May 2019 13:21:52 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hWOkN-0000K1-Ck; Thu, 30 May 2019 11:21:47 -0600
+Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hWOkM-0005Yj-Id; Thu, 30 May 2019 11:21:47 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        arnd@arndb.de, dbueso@suse.de, axboe@kernel.dk, dave@stgolabs.net,
+        e@80x24.org, jbaron@akamai.com, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, omar.kilani@gmail.com, tglx@linutronix.de,
+        stable@vger.kernel.org
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+        <20190529161157.GA27659@redhat.com> <87woi8rt96.fsf@xmission.com>
+        <871s0grlzo.fsf@xmission.com> <20190530160823.GI22536@redhat.com>
+Date:   Thu, 30 May 2019 12:20:52 -0500
+In-Reply-To: <20190530160823.GI22536@redhat.com> (Oleg Nesterov's message of
+        "Thu, 30 May 2019 18:08:24 +0200")
+Message-ID: <87lfynrh8r.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-XM-SPF: eid=1hWOkM-0005Yj-Id;;;mid=<87lfynrh8r.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1895Z1ierl2kaF3bw8R919nMbS+HF5Tt3c=
+X-SA-Exim-Connect-IP: 72.206.97.68
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Oleg Nesterov <oleg@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 325 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 4.1 (1.3%), b_tie_ro: 3.0 (0.9%), parse: 1.33
+        (0.4%), extract_message_metadata: 17 (5.2%), get_uri_detail_list: 1.50
+        (0.5%), tests_pri_-1000: 28 (8.5%), tests_pri_-950: 3.2 (1.0%),
+        tests_pri_-900: 2.1 (0.7%), tests_pri_-90: 34 (10.5%), check_bayes: 31
+        (9.6%), b_tokenize: 14 (4.2%), b_tok_get_all: 8 (2.3%), b_comp_prob:
+        4.3 (1.3%), b_tok_touch_all: 2.5 (0.8%), b_finish: 0.95 (0.3%),
+        tests_pri_0: 214 (65.7%), check_dkim_signature: 0.68 (0.2%),
+        check_dkim_adsp: 2.7 (0.8%), poll_dns_idle: 0.43 (0.1%), tests_pri_10:
+        2.3 (0.7%), tests_pri_500: 11 (3.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: pselect/etc semantics
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 29, 2019 at 06:39:48PM -0400, Paul Moore wrote:
-> On Wed, May 29, 2019 at 6:28 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > On Wed, May 29, 2019 at 12:03:58PM -0400, Paul Moore wrote:
-> > > On Wed, May 29, 2019 at 11:34 AM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > >
-> > > > On Wed, May 29, 2019 at 11:29:05AM -0400, Paul Moore wrote:
-> > > > > On Wed, May 29, 2019 at 10:57 AM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > > > >
-> > > > > > On Mon, Apr 08, 2019 at 11:39:09PM -0400, Richard Guy Briggs wrote:
-> > > > > > > It is not permitted to unset the audit container identifier.
-> > > > > > > A child inherits its parent's audit container identifier.
-> > > > > >
-> > > > > > ...
-> > > > > >
-> > > > > > >  /**
-> > > > > > > + * audit_set_contid - set current task's audit contid
-> > > > > > > + * @contid: contid value
-> > > > > > > + *
-> > > > > > > + * Returns 0 on success, -EPERM on permission failure.
-> > > > > > > + *
-> > > > > > > + * Called (set) from fs/proc/base.c::proc_contid_write().
-> > > > > > > + */
-> > > > > > > +int audit_set_contid(struct task_struct *task, u64 contid)
-> > > > > > > +{
-> > > > > > > +     u64 oldcontid;
-> > > > > > > +     int rc = 0;
-> > > > > > > +     struct audit_buffer *ab;
-> > > > > > > +     uid_t uid;
-> > > > > > > +     struct tty_struct *tty;
-> > > > > > > +     char comm[sizeof(current->comm)];
-> > > > > > > +
-> > > > > > > +     task_lock(task);
-> > > > > > > +     /* Can't set if audit disabled */
-> > > > > > > +     if (!task->audit) {
-> > > > > > > +             task_unlock(task);
-> > > > > > > +             return -ENOPROTOOPT;
-> > > > > > > +     }
-> > > > > > > +     oldcontid = audit_get_contid(task);
-> > > > > > > +     read_lock(&tasklist_lock);
-> > > > > > > +     /* Don't allow the audit containerid to be unset */
-> > > > > > > +     if (!audit_contid_valid(contid))
-> > > > > > > +             rc = -EINVAL;
-> > > > > > > +     /* if we don't have caps, reject */
-> > > > > > > +     else if (!capable(CAP_AUDIT_CONTROL))
-> > > > > > > +             rc = -EPERM;
-> > > > > > > +     /* if task has children or is not single-threaded, deny */
-> > > > > > > +     else if (!list_empty(&task->children))
-> > > > > > > +             rc = -EBUSY;
-> > > > > > > +     else if (!(thread_group_leader(task) && thread_group_empty(task)))
-> > > > > > > +             rc = -EALREADY;
-> > > > > > > +     read_unlock(&tasklist_lock);
-> > > > > > > +     if (!rc)
-> > > > > > > +             task->audit->contid = contid;
-> > > > > > > +     task_unlock(task);
-> > > > > > > +
-> > > > > > > +     if (!audit_enabled)
-> > > > > > > +             return rc;
-> > > > > >
-> > > > > > ...but it is allowed to change it (assuming
-> > > > > > capable(CAP_AUDIT_CONTROL), of course)? Seems like this might be more
-> > > > > > immediately useful since we still live in the world of majority
-> > > > > > privileged containers if we didn't allow changing it, in addition to
-> > > > > > un-setting it.
-> > > > >
-> > > > > The idea is that only container orchestrators should be able to
-> > > > > set/modify the audit container ID, and since setting the audit
-> > > > > container ID can have a significant effect on the records captured
-> > > > > (and their routing to multiple daemons when we get there) modifying
-> > > > > the audit container ID is akin to modifying the audit configuration
-> > > > > which is why it is gated by CAP_AUDIT_CONTROL.  The current thinking
-> > > > > is that you would only change the audit container ID from one
-> > > > > set/inherited value to another if you were nesting containers, in
-> > > > > which case the nested container orchestrator would need to be granted
-> > > > > CAP_AUDIT_CONTROL (which everyone to date seems to agree is a workable
-> > > > > compromise).
-> > > >
-> > > > But then don't you want some kind of ns_capable() instead (probably
-> > > > not the obvious one, though...)? With capable(), you can't really nest
-> > > > using the audit-id and user namespaces together.
-> > >
-> > > You want capable() and not ns_capable() because you want to ensure
-> > > that the orchestrator has the rights in the init_ns as changes to the
-> > > audit container ID could have an auditing impact that spans the entire
-> > > system.
-> >
-> > Ok but,
-> >
-> > > > > The current thinking
-> > > > > is that you would only change the audit container ID from one
-> > > > > set/inherited value to another if you were nesting containers, in
-> > > > > which case the nested container orchestrator would need to be granted
-> > > > > CAP_AUDIT_CONTROL (which everyone to date seems to agree is a workable
-> > > > > compromise).
-> >
-> > won't work in user namespaced containers, because they will never be
-> > capable(CAP_AUDIT_CONTROL); so I don't think this will work for
-> > nesting as is. But maybe nobody cares :)
-> 
-> That's fun :)
-> 
-> To be honest, I've never been a big fan of supporting nested
-> containers from an audit perspective, so I'm not really too upset
-> about this.  The k8s/cri-o folks seem okay with this, or at least I
-> haven't heard any objections; lxc folks, what do you have to say?
+Oleg Nesterov <oleg@redhat.com> writes:
 
-I actually thought the answer to this (when last I looked, "some time" ago)
-was that userspace should track an audit message saying "task X in
-container Y is changing its auditid to Z", and then decide to also track Z.
-This should be doable, but a lot of extra work in userspace.
+> On 05/30, Eric W. Biederman wrote:
+>>
+>> ebiederm@xmission.com (Eric W. Biederman) writes:
+>>
+>> > Which means I believe we have a semantically valid change in behavior
+>> > that is causing a regression.
+>>
+>> I haven't made a survey of all of the functions yet but
+>> fucntions return -ENORESTARTNOHAND will never return -EINTR and are
+>> immune from this problem.
+>
+> Hmm. handle_signal:
+>
+> 		case -ERESTARTNOHAND:
+> 			regs->ax = -EINTR;
+> 			break;
+>
+> but I am not sure I understand which problem do you mean..
 
-Per-userns containerids would also work.  So task X1 is in containerid
-1 on the host and creates a new task Y in new userns;  it continues to
-be reported in init_user_ns as containerid 1 forever;  but in its own
-userns it can request to be known as some other containerid.  Audit
-socks would be per-userns, allowing root in a container to watch for
-audit events in its own (and descendent) namespaces.
+Yes.  My mistake.  I looked at the transparent restart case for when a
+signal is not pending and failed to look at what happens when a signal
+is delivered.
 
-But again I'm sure we've gone over all this in the last few years.
+So yes.  Everything changed does appear to have a behavioral difference
+where they can now succeed and not return -EINTR.
 
-I suppose we can look at this as a "first step", and talk about
-making it user-ns-nestable later.  But agreed it's not useful in a
-lot of situations as is.
-
--serge
+Eric
