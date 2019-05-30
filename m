@@ -2,166 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53E8B3037F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 22:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB18A3039B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 22:54:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfE3Upo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 16:45:44 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40205 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbfE3Upn (ORCPT
+        id S1726308AbfE3Uyc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 16:54:32 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:54950 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725961AbfE3Uyc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 16:45:43 -0400
-Received: by mail-lf1-f66.google.com with SMTP id a9so4687139lff.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2019 13:45:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EhDqOLrNL+Ls6g+jJlH1kHSTN+6mKWoVpwhK7g7g/0o=;
-        b=xlyV3ThJjdhKcZhreP5PbaxjF4yCg2iuc+K7UzQP6tLJWwrREj0I5yVvPo3B3jh7iK
-         jh1rsg4jyI3plqbkkIs9e7MgP53igOczr5L4MydDQ87MWflfgTeiR7tPUVxTFoKpmcm4
-         6sepnRi8IUd5YcXQYTYWT9BEkanR1k/eUovXIZ4CYEx4LttHAIlePcabZEyckUcOfwA+
-         ld4cKn0kM4Vfx29ADhSIicvea8BSndd/KrqWITOd8GFDTydQiWEJoSMQKugjZoDNrglv
-         RFE65J9Z1q+k0M/9D9082A8PAYYyDpKeO4/3eIRTiQyhsN5cVxluVIS5g72M/cFmB4vp
-         uEtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EhDqOLrNL+Ls6g+jJlH1kHSTN+6mKWoVpwhK7g7g/0o=;
-        b=jeFBvdKmo43ss0Unr1UXkfY+/WaIdHqf55yTdPWBNj4T9gYvYz4yiPBVgY/o1H0pP6
-         F8BPTJP2t7ukQuroy/f3B3PCeI2bSxW4npKr47HZQgqtePo03+aiW9jf2ChJLpagNFxk
-         X1fnL0VLxT1l8p7vsTIPtzwcudKia54p/Uo7Qx1XVcp9JRnUTr0JWhenVjSQX9mqfvaJ
-         6T2QSB1iYDs/edpzVm196VSv9PBEExRXm3z3AVycm+bbh7QpxzpgYNEPRD/XS6TlHsBZ
-         zCdNDT5mdP5Rzex+bqduliDWp+Y8gVWPzLQh+/817YPvS2xZvDEUAI+AHVHLbBgkF43Y
-         r0iw==
-X-Gm-Message-State: APjAAAWCTIwO4a5zon+jnwXneTVdZ3hcyvPl+FLBE7r7pN2hzcBORrE/
-        y9g53vkM78VhY4YTYifnk27glfhvo68tj0ABz7w8
-X-Google-Smtp-Source: APXvYqxCLcpJGQ9X7hllnM/E88Y7wiOxHiqGV+F77SwcvQq/KmkEMFzXAp+UwedDTn7SR4CSxAW2AxSMb9dduBaWcmQ=
-X-Received: by 2002:ac2:410a:: with SMTP id b10mr3157662lfi.175.1559249140261;
- Thu, 30 May 2019 13:45:40 -0700 (PDT)
+        Thu, 30 May 2019 16:54:32 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4UKsBcM108403;
+        Thu, 30 May 2019 20:54:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : cc : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=ODypozAerLNV/qGeHJPqtJFJozABAAaZHRXDF3WkeeE=;
+ b=H1VqQ8Mbp0VXzmkHQ4b5+kN0x7UMsTziL9j2TPr4OvwEe5RtZIrLNRWCBAzhPDrmvtY+
+ LneSmuhyriW7u/fRnYl07QeEdAWpU9X2J6ZnqXAimhArpziTJa6LxS18sVe3SIcjFZly
+ 1lB8qnkhxFsp40rO2F2O6ix/gBh3o9xFTX5Qb9JvKeT6Ut/6zATvBAn1jj7OCtNH5cP/
+ nZGwjLFPV0MViT9cUc7ylXDiMfNRbrh9iO+PKBgnegFkPpC8vhw3zQfeKSMl9aAc39D2
+ HNWbf6jcazqGJkuIGdURnF3W841tAIFanqF+0omrr8820kRMMn3UnOWnTzokauspVqiK EQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2spw4ttnyh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 May 2019 20:54:11 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4UKs4aL156896;
+        Thu, 30 May 2019 20:54:11 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2sr31w3qbq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 May 2019 20:54:10 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4UKs9TR011670;
+        Thu, 30 May 2019 20:54:09 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 30 May 2019 13:54:08 -0700
+Subject: Re: mmotm 2019-05-29-20-52 uploaded
+To:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+References: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
+Cc:     Huang Ying <ying.huang@intel.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <fac5f029-ef20-282e-b0d2-2357589839e8@oracle.com>
+Date:   Thu, 30 May 2019 13:54:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <cover.1554732921.git.rgb@redhat.com> <0785ee2644804f3ec6af1243cc0dcf89709c1fd4.1554732921.git.rgb@redhat.com>
- <CAHC9VhRV-0LSEcRvPO1uXtKdpEQsaLZnBV3T=zcMTZPN5ugz5w@mail.gmail.com>
- <20190530141951.iofimovrndap4npq@madcap2.tricolour.ca> <CAHC9VhQhkzCtVOXhPL7BzaqvF0y+8gBQwhOo1EQDS2OUyZbV5g@mail.gmail.com>
- <20190530203702.fibsrazabbiifjvf@madcap2.tricolour.ca>
-In-Reply-To: <20190530203702.fibsrazabbiifjvf@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 30 May 2019 16:45:28 -0400
-Message-ID: <CAHC9VhR6oqKer_p6Xsu6oO2j3bMZGPXWHnGchZOqUoMx9yJFwQ@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V6 08/10] audit: add containerid filtering
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9273 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=703
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905300148
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9273 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=729 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905300148
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 30, 2019 at 4:37 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-05-30 10:34, Paul Moore wrote:
-> > On Thu, May 30, 2019 at 10:20 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > >
-> > > On 2019-05-29 18:16, Paul Moore wrote:
-> > > > On Mon, Apr 8, 2019 at 11:41 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > >
-> > > > > Implement audit container identifier filtering using the AUDIT_CONTID
-> > > > > field name to send an 8-character string representing a u64 since the
-> > > > > value field is only u32.
-> > > > >
-> > > > > Sending it as two u32 was considered, but gathering and comparing two
-> > > > > fields was more complex.
-> > > > >
-> > > > > The feature indicator is AUDIT_FEATURE_BITMAP_CONTAINERID.
-> > > > >
-> > > > > Please see the github audit kernel issue for the contid filter feature:
-> > > > >   https://github.com/linux-audit/audit-kernel/issues/91
-> > > > > Please see the github audit userspace issue for filter additions:
-> > > > >   https://github.com/linux-audit/audit-userspace/issues/40
-> > > > > Please see the github audit testsuiite issue for the test case:
-> > > > >   https://github.com/linux-audit/audit-testsuite/issues/64
-> > > > > Please see the github audit wiki for the feature overview:
-> > > > >   https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-> > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > > Acked-by: Serge Hallyn <serge@hallyn.com>
-> > > > > Acked-by: Neil Horman <nhorman@tuxdriver.com>
-> > > > > Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > > > ---
-> > > > >  include/linux/audit.h      |  1 +
-> > > > >  include/uapi/linux/audit.h |  5 ++++-
-> > > > >  kernel/audit.h             |  1 +
-> > > > >  kernel/auditfilter.c       | 47 ++++++++++++++++++++++++++++++++++++++++++++++
-> > > > >  kernel/auditsc.c           |  4 ++++
-> > > > >  5 files changed, 57 insertions(+), 1 deletion(-)
-> > > >
-> > > > ...
-> > > >
-> > > > > diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> > > > > index 63f8b3f26fab..407b5bb3b4c6 100644
-> > > > > --- a/kernel/auditfilter.c
-> > > > > +++ b/kernel/auditfilter.c
-> > > > > @@ -1206,6 +1224,31 @@ int audit_comparator(u32 left, u32 op, u32 right)
-> > > > >         }
-> > > > >  }
-> > > > >
-> > > > > +int audit_comparator64(u64 left, u32 op, u64 right)
-> > > > > +{
-> > > > > +       switch (op) {
-> > > > > +       case Audit_equal:
-> > > > > +               return (left == right);
-> > > > > +       case Audit_not_equal:
-> > > > > +               return (left != right);
-> > > > > +       case Audit_lt:
-> > > > > +               return (left < right);
-> > > > > +       case Audit_le:
-> > > > > +               return (left <= right);
-> > > > > +       case Audit_gt:
-> > > > > +               return (left > right);
-> > > > > +       case Audit_ge:
-> > > > > +               return (left >= right);
-> > > > > +       case Audit_bitmask:
-> > > > > +               return (left & right);
-> > > > > +       case Audit_bittest:
-> > > > > +               return ((left & right) == right);
-> > > > > +       default:
-> > > > > +               BUG();
-> > > >
-> > > > A little birdy mentioned the BUG() here as a potential issue and while
-> > > > I had ignored it in earlier patches because this is likely a
-> > > > cut-n-paste from another audit comparator function, I took a closer
-> > > > look this time.  It appears as though we will never have an invalid op
-> > > > value as audit_data_to_entry()/audit_to_op() ensure that the op value
-> > > > is a a known good value.  Removing the BUG() from all the audit
-> > > > comparators is a separate issue, but I think it would be good to
-> > > > remove it from this newly added comparator; keeping it so that we
-> > > > return "0" in the default case seems reasoanble.
-> > >
-> > > Fair enough.  That BUG(); can be removed.
-> >
-> > Please send a fixup patch for this.
->
-> The fixup patch is trivial.
+On 5/29/19 8:53 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2019-05-29-20-52 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
 
-Yes, I know.
+With this kernel, I seem to get many messages such as:
 
-> The rebase to v5.2-rc1 audit/next had merge
-> conflicts with four recent patchsets.  It may be simpler to submit a new
-> patchset and look at a diff of the two sets.  I'm testing the rebase
-> now.
+get_swap_device: Bad swap file entry 1400000000000001
 
-Great thanks.  Although you might want to hold off a bit on posting
-the next revision until we sort out the discussion which is happening
-in patch 02/10; unfortunately I fear we may need to change some of the
-logic.
+It would seem to be related to commit 3e2c19f9bef7e
+> * mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
 
---
-paul moore
-www.paul-moore.com
+-- 
+Mike Kravetz
