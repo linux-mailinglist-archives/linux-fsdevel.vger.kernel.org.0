@@ -2,56 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20EFD3025F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 20:54:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F177F302C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 21:29:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbfE3SyS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 14:54:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfE3SyS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 14:54:18 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C5F224B6B;
-        Thu, 30 May 2019 18:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559242457;
-        bh=q7K4pmGHUUBq3OOvKhZCDju5Yhxagmu1zFTfewcL3go=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dgpHrPpDfHfIKA83rjSp+ZqoKqKF9T0ncaTjYqKDrq0fEQLiRsrs1HHaz7osaMdge
-         pqY3/OtH1zbLDA7nucMMijqsUXCYYBiapFM3Au60t/A0QrKOMGwxRssgOp+RDpcHFu
-         wgDTyqudW+CCkNhybf2IbvoW0NMaCJVehv/Ek+Es=
-Date:   Thu, 30 May 2019 11:54:15 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     "Theodore Y . Ts'o" <tytso@mit.edu>, linux-api@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Victor Hsieh <victorhsieh@google.com>
-Subject: Re: [PATCH v3 00/15] fs-verity: read-only file-based authenticity
- protection
-Message-ID: <20190530185414.GD70051@gmail.com>
-References: <20190523161811.6259-1-ebiggers@kernel.org>
+        id S1726489AbfE3T3s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 15:29:48 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35324 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbfE3T3s (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 May 2019 15:29:48 -0400
+Received: by mail-lj1-f193.google.com with SMTP id h11so7239852ljb.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2019 12:29:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iVk/NFNgHVBFx7MhewVcDHKeuh0/y8uv27n+wctjBBw=;
+        b=iUJd3oa19CugyfCed6zmPxPNuarTP/1imCFXfhjAKXmDQBo5jZe7ZBR5RJOq+hx6br
+         tfQzOOPQSqboRyGxFLT3oSfQ+JEgq29U2q60jo8Rr2CFQTVVxATpRL8XEc0KJdCPnkC0
+         SbiJiRSFkAq8oO5wi8mEi96cPVRUr9w8MIZ/OWqOCcFnsB6CPb5tpIu+P0Ghso3X245/
+         NCySiboUIcKL8ug8JS2mDcOFFPLquJEQpPTys/6K9z3FovVwTZAdFmLqlzNlKDrXytw1
+         cQv+DRz6iJnKKRbUgD8k65be4+HNaacB+tw7zitbPLmamQffqA0s+u7+l5fj7cD+yxkk
+         BtIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iVk/NFNgHVBFx7MhewVcDHKeuh0/y8uv27n+wctjBBw=;
+        b=EWunIrFeTqL5kxqsDaT8Wqn7wMaLduVyZH0ckkDuYkxQGsliRaNTfr5Uz59CyAw3Yt
+         6NEELQKr1uc2yVf27DB1YJbTS2Owz3R13HNEYSbLt5b8NBYjtgaGfcH1jhRnVjDEMRMb
+         hepJIEJK1CeONtNyJaRq3PesSGrhI3NfD4wxuDdQIm87bk1LDidkcDlzmQORiun0gGwS
+         q0aDTRIOngZPbfmdgbVhsgbuZvucvDOL7eKOBIOpL11/S+qiMqUHtmPbmz7s9cTAvM/H
+         FXzZuSicd0PW+2OZ3jRQWyjem61VSusCCQ+6+WNGmkMLEkJlhpe9UfaGQVgXnZapQDpA
+         25VA==
+X-Gm-Message-State: APjAAAWiIECX0KwbPH9PDHDv2rsaKZYtxE/qBWZO7obFTo2WDwRMGnXD
+        JIKah/UBx/Ee4BvSELuoLRM1o7wdua0FyIfnjEUU
+X-Google-Smtp-Source: APXvYqy4oT9/ncpEwgceU+Uxm1SPfMQyT6tfoJxHZH5OZOJlX84DZdkuPn8yylZ7C5804jX66KJvTV8Txj+BX2224oo=
+X-Received: by 2002:a2e:9bc5:: with SMTP id w5mr3279775ljj.87.1559244585165;
+ Thu, 30 May 2019 12:29:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190523161811.6259-1-ebiggers@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1554732921.git.rgb@redhat.com> <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
+ <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+ <20190529153427.GB8959@cisco> <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
+ <20190529222835.GD8959@cisco> <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
+ <20190530170913.GA16722@mail.hallyn.com>
+In-Reply-To: <20190530170913.GA16722@mail.hallyn.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 30 May 2019 15:29:32 -0400
+Message-ID: <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        ebiederm@xmission.com, nhorman@tuxdriver.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 09:17:56AM -0700, Eric Biggers wrote:
-> Hello,
-> 
-> This is a redesigned version of the fs-verity patchset, implementing
-> Ted's suggestion to build the Merkle tree in the kernel
-> (https://lore.kernel.org/linux-fsdevel/20190207031101.GA7387@mit.edu/).
+On Thu, May 30, 2019 at 1:09 PM Serge E. Hallyn <serge@hallyn.com> wrote:
+> On Wed, May 29, 2019 at 06:39:48PM -0400, Paul Moore wrote:
+> > On Wed, May 29, 2019 at 6:28 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > > On Wed, May 29, 2019 at 12:03:58PM -0400, Paul Moore wrote:
+> > > > On Wed, May 29, 2019 at 11:34 AM Tycho Andersen <tycho@tycho.ws> wrote:
+> > > > > On Wed, May 29, 2019 at 11:29:05AM -0400, Paul Moore wrote:
+> > > > > > On Wed, May 29, 2019 at 10:57 AM Tycho Andersen <tycho@tycho.ws> wrote:
+> > > > > > > On Mon, Apr 08, 2019 at 11:39:09PM -0400, Richard Guy Briggs wrote:
 
-Does anyone have any comments on this patchset?
+...
 
-- Eric
+> > > > > > The current thinking
+> > > > > > is that you would only change the audit container ID from one
+> > > > > > set/inherited value to another if you were nesting containers, in
+> > > > > > which case the nested container orchestrator would need to be granted
+> > > > > > CAP_AUDIT_CONTROL (which everyone to date seems to agree is a workable
+> > > > > > compromise).
+> > >
+> > > won't work in user namespaced containers, because they will never be
+> > > capable(CAP_AUDIT_CONTROL); so I don't think this will work for
+> > > nesting as is. But maybe nobody cares :)
+> >
+> > That's fun :)
+> >
+> > To be honest, I've never been a big fan of supporting nested
+> > containers from an audit perspective, so I'm not really too upset
+> > about this.  The k8s/cri-o folks seem okay with this, or at least I
+> > haven't heard any objections; lxc folks, what do you have to say?
+>
+> I actually thought the answer to this (when last I looked, "some time" ago)
+> was that userspace should track an audit message saying "task X in
+> container Y is changing its auditid to Z", and then decide to also track Z.
+> This should be doable, but a lot of extra work in userspace.
+>
+> Per-userns containerids would also work.  So task X1 is in containerid
+> 1 on the host and creates a new task Y in new userns;  it continues to
+> be reported in init_user_ns as containerid 1 forever;  but in its own
+> userns it can request to be known as some other containerid.  Audit
+> socks would be per-userns, allowing root in a container to watch for
+> audit events in its own (and descendent) namespaces.
+>
+> But again I'm sure we've gone over all this in the last few years.
+>
+> I suppose we can look at this as a "first step", and talk about
+> making it user-ns-nestable later.  But agreed it's not useful in a
+> lot of situations as is.
+
+[REMINDER: It is an "*audit* container ID" and not a general
+"container ID" ;)  Smiley aside, I'm not kidding about that part.]
+
+I'm not interested in supporting/merging something that isn't useful;
+if this doesn't work for your use case then we need to figure out what
+would work.  It sounds like nested containers are much more common in
+the lxc world, can you elaborate a bit more on this?
+
+As far as the possible solutions you mention above, I'm not sure I
+like the per-userns audit container IDs, I'd much rather just emit the
+necessary tracking information via the audit record stream and let the
+log analysis tools figure it out.  However, the bigger question is how
+to limit (re)setting the audit container ID when you are in a non-init
+userns.  For reasons already mentioned, using capable() is a non
+starter for everything but the initial userns, and using ns_capable()
+is equally poor as it essentially allows any userns the ability to
+munge it's audit container ID (obviously not good).  It appears we
+need a different method for controlling access to the audit container
+ID.
+
+Punting this to a LSM hook is an obvious thing to do, and something we
+might want to do anyway, but currently audit doesn't rely on the LSM
+for proper/safe operation and I'm not sure I want to change that now.
+
+The next obvious thing is to create some sort of access control knob
+in audit itself.  Perhaps an auditctl operation that would allow the
+administrator to specify which containers, via their corresponding
+audit container IDs, are allowed to change their audit container ID?
+The permission granting would need to be done in the init userns, but
+it would allow containers with a non-init userns the ability to change
+their audit container ID.  We would probably still want a
+ns_capable(CAP_AUDIT_CONTROL) restriction in this case.
+
+Does anyone else have any other ideas?
+
+-- 
+paul moore
+www.paul-moore.com
