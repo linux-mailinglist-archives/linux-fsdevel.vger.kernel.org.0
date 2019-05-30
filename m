@@ -2,140 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7D0630515
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 00:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1934E30572
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 01:27:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfE3W7f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 18:59:35 -0400
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:50147 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726326AbfE3W7e (ORCPT
+        id S1726543AbfE3X1I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 19:27:08 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33647 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfE3X1I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 18:59:34 -0400
-Received: from dread.disaster.area (pa49-180-144-61.pa.nsw.optusnet.com.au [49.180.144.61])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 236DD3DC5A0;
-        Fri, 31 May 2019 08:59:28 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hWU17-0000OZ-Vz; Fri, 31 May 2019 08:59:25 +1000
-Date:   Fri, 31 May 2019 08:59:25 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-btrfs@vger.kernel.org, kilobyte@angband.pl,
-        linux-fsdevel@vger.kernel.org, willy@infradead.org, hch@lst.de,
-        dsterba@suse.cz, nborisov@suse.com, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH 04/18] dax: Introduce IOMAP_DAX_COW to CoW edges during
- writes
-Message-ID: <20190530225925.GG16786@dread.disaster.area>
-References: <1620c513-4ce2-84b0-33dc-2675246183ea@cn.fujitsu.com>
- <20190528091729.GD9607@quack2.suse.cz>
- <a3a919e6-ecad-bdf6-423c-fc01f9cfa661@cn.fujitsu.com>
- <20190529024749.GC16786@dread.disaster.area>
- <376256fd-dee4-5561-eb4e-546e227303cd@cn.fujitsu.com>
- <20190529040719.GL5221@magnolia>
- <20190529044658.GD16786@dread.disaster.area>
- <20190529134629.GA32147@quack2.suse.cz>
- <20190529221445.GE16786@dread.disaster.area>
- <20190530111605.GC29237@quack2.suse.cz>
+        Thu, 30 May 2019 19:27:08 -0400
+Received: by mail-lj1-f193.google.com with SMTP id w1so7788635ljw.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2019 16:27:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0yVW5j/diaIQvY1yMq0bFKbS6dKMLujpejPsf0pKXzk=;
+        b=PDYHHACOR7Nb4rkc+hTNYNd9Z9ljJBGEUsdJtZ3zYXhuFJn2Au8AvhNiTIMJ/6T/Fn
+         c/D22cn2dH4cMZHNwFt4opSG7JIOnznRdCb3xLIBZVcKRgJTPmIQ7+CeSiiIMgNEDZVf
+         xzN/juwui1M2GF3roXcCcidTOA6eecFUtKm7I9zkiECCwi3D9V8bX9tUd/meku2kKmQd
+         4veGjMVnDw03FlfPZ2S7igYflq3MT8QzuXPu9Q9ft9Ji/G0FGdkBfVhAB1hrXEfVmHjw
+         Ko2YdU2Icxzjbwyj4jfiTc62HZBkxNv7p9sqA4vMZb7uVVMOj1OKkS+IPDKVOcw8epCZ
+         /n1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0yVW5j/diaIQvY1yMq0bFKbS6dKMLujpejPsf0pKXzk=;
+        b=t2n5bGVblLX439Sf8myrQlSgm1NfF4zLc+juthEgiCHaN+xfmgj0Y3Hcs/alSDgWlL
+         k46W3pUo1RPeqjt5mWTWlXgzCdD9XxosJtmJVPB7XEGn4F2qj8BfsK07kqXz176VjmdW
+         yTHvIBrary5PjNRlAY+zQkI+CdrdOh3Qszbq/ALip8qWC2jh/iqK0vuQQX5wp9+iDEkR
+         imlPYoXekETWffCgV95DAFsHYUUqpi+K5Ggm0Q7vFHw2uByAzLVH2yvwAdstvLcLmBNs
+         gWYloIGtyMWJHxMA1ay6C8Wg63mhKyQhV1PDl7HhvETy8HvD6hBg4EUiuB0JOY7pXVra
+         DaLg==
+X-Gm-Message-State: APjAAAXtLJ8lBABOILsxr4Tcwd+uFDMxWGrPQe7aQiT9Y9TjfsSseQ3F
+        D3HTxk9reeBB4GqQc2ZVnzYZlJhN1qVfvWHhjDUZ
+X-Google-Smtp-Source: APXvYqxQwMfwBHtKTZVpaUy34rEeZb9cxTXpFPOa8NAHPaaUw+HLvxk3mMmLvtbklMJfIdjsY0xCdhx+76lF45SIdcE=
+X-Received: by 2002:a2e:9a97:: with SMTP id p23mr3811340lji.160.1559258825495;
+ Thu, 30 May 2019 16:27:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530111605.GC29237@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
-        a=8RU0RCro9O0HS2ezTvitPg==:117 a=8RU0RCro9O0HS2ezTvitPg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=E5NmQfObTbMA:10
-        a=7-415B0cAAAA:8 a=b_IONgiTaRX6Mws2oq4A:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <cover.1554732921.git.rgb@redhat.com> <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
+ <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+ <20190529153427.GB8959@cisco> <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
+ <20190529222835.GD8959@cisco> <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
+ <20190530170913.GA16722@mail.hallyn.com> <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
+ <20190530212900.GC5739@cisco>
+In-Reply-To: <20190530212900.GC5739@cisco>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 30 May 2019 19:26:54 -0400
+Message-ID: <CAHC9VhT5HPt9rCJoDutdvA3r1Y1GOHfpXe2eJ54atNC1=Vd8LA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        ebiederm@xmission.com, nhorman@tuxdriver.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 30, 2019 at 01:16:05PM +0200, Jan Kara wrote:
-> On Thu 30-05-19 08:14:45, Dave Chinner wrote:
-> > On Wed, May 29, 2019 at 03:46:29PM +0200, Jan Kara wrote:
-> > > On Wed 29-05-19 14:46:58, Dave Chinner wrote:
-> > > >  iomap_apply()
-> > > > 
-> > > >  	->iomap_begin()
-> > > > 		map old data extent that we copy from
-> > > > 
-> > > > 		allocate new data extent we copy to in data fork,
-> > > > 		immediately replacing old data extent
-> > > > 
-> > > > 		return transaction handle as private data
-> > 
-> > This holds the inode block map locked exclusively across the IO,
-> > so....
-> 
-> Does it? We do hold XFS_IOLOCK_EXCL during the whole dax write.
+On Thu, May 30, 2019 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> On Thu, May 30, 2019 at 03:29:32PM -0400, Paul Moore wrote:
+> >
+> > [REMINDER: It is an "*audit* container ID" and not a general
+> > "container ID" ;)  Smiley aside, I'm not kidding about that part.]
+>
+> This sort of seems like a distinction without a difference; presumably
+> audit is going to want to differentiate between everything that people
+> in userspace call a container. So you'll have to support all this
+> insanity anyway, even if it's "not a container ID".
 
-I forgot about that, I keep thinking that we use shared locking for
-DAX like we do for direct IO. There's another reason for range
-locks - allowing concurrent DAX read/write IO - but that's
-orthogonal to the issue here.
+That's not quite right.  Audit doesn't care about what a container is,
+or is not, it also doesn't care if the "audit container ID" actually
+matches the ID used by the container engine in userspace and I think
+that is a very important line to draw.  Audit is simply given a value
+which it calls the "audit container ID", it ensures that the value is
+inherited appropriately (e.g. children inherit their parent's audit
+container ID), and it uses the value in audit records to provide some
+additional context for log analysis.  The distinction isn't limited to
+the value itself, but also to how it is used; it is an "audit
+container ID" and not a "container ID" because this value is
+exclusively for use by the audit subsystem.  We are very intentionally
+not adding a generic container ID to the kernel.  If the kernel does
+ever grow a general purpose container ID we will be one of the first
+ones in line to make use of it, but we are not going to be the ones to
+generically add containers to the kernel.  Enough people already hate
+audit ;)
 
-> But
-> xfs_file_iomap_begin() does release XFS_ILOCK_* on exit AFAICS. So I don't
-> see anything that would prevent page fault from mapping blocks into page
-> tables just after xfs_file_iomap_begin() returns.
+> > I'm not interested in supporting/merging something that isn't useful;
+> > if this doesn't work for your use case then we need to figure out what
+> > would work.  It sounds like nested containers are much more common in
+> > the lxc world, can you elaborate a bit more on this?
+> >
+> > As far as the possible solutions you mention above, I'm not sure I
+> > like the per-userns audit container IDs, I'd much rather just emit the
+> > necessary tracking information via the audit record stream and let the
+> > log analysis tools figure it out.  However, the bigger question is how
+> > to limit (re)setting the audit container ID when you are in a non-init
+> > userns.  For reasons already mentioned, using capable() is a non
+> > starter for everything but the initial userns, and using ns_capable()
+> > is equally poor as it essentially allows any userns the ability to
+> > munge it's audit container ID (obviously not good).  It appears we
+> > need a different method for controlling access to the audit container
+> > ID.
+>
+> One option would be to make it a string, and have it be append only.
+> That should be safe with no checks.
+>
+> I know there was a long thread about what type to make this thing. I
+> think you could accomplish the append-only-ness with a u64 if you had
+> some rule about only allowing setting lower order bits than those that
+> are already set. With 4 bits for simplicity:
+>
+> 1100         # initial container id
+> 1100 -> 1011 # not allowed
+> 1100 -> 1101 # allowed, but now 1101 is set in stone since there are
+>              # no lower order bits left
+>
+> There are probably fancier ways to do it if you actually understand
+> math :)
 
-Right, holding the IOLOCK doesn't stop concurrent page faults from
-mapping the page we are trying to write, and that leaves a window
-where stale data can be exposed if we don't initialise the newly
-allocated range whilst in the allocation transaction holding the
-ILOCK. That's what the XFS_BMAPI_ZERO flag does in the DAX block
-allocation path.
+ ;)
 
-So the idea of holding the allocation transaction across the data
-copy means that ILOCK is then held until the data blocks are fully
-initialised with valid data, meaning we can greatly reduce the scope
-of the XFS_BMAPI_ZERO flag and possible get rid of it altogether.
+> Since userns nesting is limited to 32 levels (right now, IIRC), and
+> you have 64 bits, this might be reasonable. You could just teach
+> container engines to use the first say N bits for themselves, with a 1
+> bit for the barrier at the end.
 
-> > > This race was actually the strongest
-> > > motivation for pre-zeroing of blocks. OTOH copy_from_iter() in
-> > > dax_iomap_actor() needs to be able to fault pages to copy from (and these
-> > > pages may be from the same file you're writing to) so you cannot just block
-> > > faulting for the file through I_MMAP_LOCK.
-> > 
-> > Right, it doesn't take the I_MMAP_LOCK, but it would block further
-> > in. And, really, I'm not caring all this much about this corner
-> > case. i.e.  anyone using a "mmap()+write() zero copy" pattern on DAX
-> > within a file is unbeleivably naive - the data still gets copied by
-> > the CPU in the write() call. It's far simpler and more effcient to
-> > just mmap() both ranges of the file(s) and memcpy() in userspace....
-> > 
-> > FWIW, it's to avoid problems with stupid userspace stuff that nobody
-> > really should be doing that I want range locks for the XFS inode
-> > locks.  If userspace overlaps the ranges and deadlocks in that case,
-> > they they get to keep all the broken bits because, IMO, they are
-> > doing something monumentally stupid. I'd probably be making it
-> > return EDEADLOCK back out to userspace in the case rather than
-> > deadlocking but, fundamentally, I think it's broken behaviour that
-> > we should be rejecting with an error rather than adding complexity
-> > trying to handle it.
-> 
-> I agree with this. We must just prevent user from taking the kernel down
-> with maliciously created IOs...
+I like the creativity, but I worry that at some point these
+limitations are going to be raised (limits have a funny way of doing
+that over time) and we will be in trouble.  I say "trouble" because I
+want to be able to quickly do an audit container ID comparison and
+we're going to pay a penalty for these larger values (we'll need this
+when we add multiple auditd support and the requisite record routing).
 
-Noted. :)
+Thinking about this makes me also realize we probably need to think a
+bit longer about audit container ID conflicts between orchestrators.
+Right now we just take the value that is given to us by the
+orchestrator, but if we want to allow multiple container orchestrators
+to work without some form of cooperation in userspace (I think we have
+to assume the orchestrators will not talk to each other) we likely
+need to have some way to block reuse of an audit container ID.  We
+would either need to prevent the orchestrator from explicitly setting
+an audit container ID to a currently in use value, or instead generate
+the audit container ID in the kernel upon an event triggered by the
+orchestrator (e.g. a write to a /proc file).  I suspect we should
+start looking at the idr code, I think we will need to make use of it.
 
-I'm still working to scale the range locks effectively for direct
-IO; I've got to work out why sometimes they give identical
-performance to rwsems out to 16 threads, and other times they run
-20% slower or worse at 8+ threads. I'm way ahead of the original
-mutex protected tree implementation that I have, but still got work
-to do to get consistently close to rwsem performance for pure shared
-locking workloads like direct IO.
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+paul moore
+www.paul-moore.com
