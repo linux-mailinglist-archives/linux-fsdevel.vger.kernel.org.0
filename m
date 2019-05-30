@@ -2,117 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B7DE2FE0B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 16:41:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 993032FF46
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 17:20:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbfE3Ok6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 10:40:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38970 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfE3Ok6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 10:40:58 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AF0D5C04FFF6;
-        Thu, 30 May 2019 14:40:51 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 655AE611A1;
-        Thu, 30 May 2019 14:40:46 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 30 May 2019 16:40:51 +0200 (CEST)
-Date:   Thu, 30 May 2019 16:40:45 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        id S1727858AbfE3PS0 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 11:18:26 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:44443 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727850AbfE3PSZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 May 2019 11:18:25 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-82-RoxVEz8lP36untm5FoSrBA-1; Thu, 30 May 2019 16:18:22 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 30 May 2019 16:18:21 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 30 May 2019 16:18:21 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+CC:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, dbueso@suse.de,
-        Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, e@80x24.org,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, omar.kilani@gmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "# 3.4.x" <stable@vger.kernel.org>
-Subject: Re: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error
- codes according to restore_user_sigmask())
-Message-ID: <20190530144044.GG22536@redhat.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "dave@stgolabs.net" <dave@stgolabs.net>,
+        "e@80x24.org" <e@80x24.org>,
+        "jbaron@akamai.com" <jbaron@akamai.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: pselect/etc semantics
+Thread-Topic: pselect/etc semantics
+Thread-Index: AQHVFufSWpjj98PrdUiaI6VbWN/dmKaDr0MA
+Date:   Thu, 30 May 2019 15:18:21 +0000
+Message-ID: <9150b8cb8123426492a82e193f45229e@AcuMS.aculab.com>
 References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com>
- <CAK8P3a1fsrz6kAB1z-mqcaNvXL4Hf3XMiN=Q5rzAJ3rLGPK_Yg@mail.gmail.com>
+        <20190529161157.GA27659@redhat.com> <87woi8rt96.fsf@xmission.com>
+In-Reply-To: <87woi8rt96.fsf@xmission.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1fsrz6kAB1z-mqcaNvXL4Hf3XMiN=Q5rzAJ3rLGPK_Yg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 30 May 2019 14:40:57 +0000 (UTC)
+X-MC-Unique: RoxVEz8lP36untm5FoSrBA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05/30, Arnd Bergmann wrote:
->
-> I think this is a nice simplification, but it would help not to mix up the
-> minimal regression fix with the rewrite of those functions.
-
-Yes, yes, agreed.
-
-Plus every file touched by this patch asks for more cleanups. Say, do_poll()
-should return -ERESTARTNOHAND, not -EINTR, after that we can remove the ugly
-EINTR->ERESTARTNOHAND in its callers. And more.
-
-> For the stable
-> kernels, I think we want just the addition of the 'bool interrupted' argument
-> to restore_user_sigmask()
-
-or simply revert this patch. I will check if this is possible today... At first
-glance 854a6ed56839a40f6 fixed another bug by accident, do_pselect() did
-"ret == -ERESTARTNOHAND" after "ret = poll_select_copy_remaining()" which can
-turn ERESTARTNOHAND into EINTR, but this is simple. I'll check tomorrow.
-
-
-> > -       ret = set_user_sigmask(ksig.sigmask, &ksigmask, &sigsaved, ksig.sigsetsize);
-> > +       ret = set_xxx(ksig.sigmask, ksig.sigsetsize);
-> >         if (ret)
-> >                 return ret;
+From: Eric W. Biederman
+> Sent: 30 May 2019 14:01
+> Oleg Nesterov <oleg@redhat.com> writes:
+> 
+> > Al, Linus, Eric, please help.
 > >
-> >         ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
-> > -       restore_user_sigmask(ksig.sigmask, &sigsaved);
-> > -       if (signal_pending(current) && !ret)
-> > +
-> > +       interrupted = signal_pending(current);
-> > +       update_xxx(interrupted);
->
-> Maybe name this
->
->            restore_saved_sigmask_if(!interrupted);
+> > The previous discussion was very confusing, we simply can not understand each
+> > other.
+> >
+> > To me everything looks very simple and clear, but perhaps I missed something
+> > obvious? Please correct me.
+> 
+> If I have read this thread correctly the core issue is that ther is a
+> program that used to work and that fails now.  The question is why.
+> 
+> There are two ways the semantics for a sigmask changing system call
+> can be defined.  The naive way and by reading posix.  I will pick
+> on pselect.
+> 
+> The naive way:
+> int pselect(int nfds, fd_set *readfds, fd_set *writefds,
+>             fd_set *exceptfds, const struct timespec *timeout,
+>             const sigset_t *sigmask)
+> {
+>     sigset_t oldmask;
+> 	int ret;
+> 
+>     if (sigmask)
+> 		sigprocmask(SIG_SETMASK, sigmask, &oldmask);
+> 
+> 	ret = select(nfds, readfds, writefds, exceptfds, timeout);
+> 
+> 	if (sigmask)
+> 		sigprocmask(SIG_SETMASK, &oldmask, NULL);
+> 
+>     return ret;
+> }
+> 
+> The standard for pselect behavior at
+> https://pubs.opengroup.org/onlinepubs/009695399/functions/pselect.html
+> says:
+> > If sigmask is not a null pointer, then the pselect() function shall
+> > replace the signal mask of the caller by the set of signals pointed to
+> > by sigmask before examining the descriptors, and shall restore the
+> > signal mask of the calling thread before returning.
 
-Yes, I thought about restore_if(), but to me
+Right, but that bit says nothing about when signals are 'delivered'.
+Section 2.4 of http://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap02.html 
+isn't very enlightening either - well, pretty impenetrable really. 
+But since the ToG specs don't require a user-kernel boundary I believe
+that the signal handler is expected to be called as soon as it is unmasked.
 
-		restore_saved_sigmask_if(ret != -EINTR);
+Now, for async signals, the kernel can always pretend that they happened
+slightly later than they actually did.
+So signal delivery is delayed until 'return to user'.
+In some cases system calls are restarted to make the whole thing transparent.
 
-doesn't look readable... May be
+For pselect() etc I think this means:
 
-		restore_saved_sigmask_unless(ret == -EINTR);
+1) Signal handlers can only be called if EINTR is returned.
+2) If a signal is deliverable after the mask is changed
+   then the signal hander must be called.
+   This means EINTR must be returned.
+   ie this must be detected before checking anything else.
+3) A signal that is raised after the wait completes can be
+   'deemed' to have happened after the mask is restored
+   and left masked until the applications next pselect() call.
+4) As an optimisation a signal that arrives after the timer
+   expires, but before the mask is restored can be 'deemed'
+   to have happened before the timeout expired and EINTR
+   returned.
 
-? but actually I agree with any naming.
+Now not all system calls that use a temporary mask may want to
+work that way.
+In particular they may want to return 'success' and have the
+signal handlers called.
 
-> and make restore_saved_sigmask_if() an inline function
-> next to restore_saved_sigmask()?
+So maybe the set_xxx() function that installs to user's mask
+should return:
+   -ve:   errno value
+     0:   no signal pending
+     1:   signal pending.
 
-agreed,
+And the update_xxx() function that restores the saved mask
+should take a parameter to indicate whether signal handlers
+should be called maybe 'bool call_handlers' and return 0/1
+depending on whether signals were pending.
 
-> With some of the recent discussions about compat syscall handling,
-> I now think that we want to just fold set_compat_user_sigmask()
-> into set_user_sigmask()
+pselect() then contains:
+	rval = set_xxx();
+	if (rval) {
+		if (rval < 0)
+			return rval;
+		update_xxx(true);
+		return -EINTR:
+	}
 
-agreed, and I thought about this too. But again, I'd prefer to do this
-and other cleanups later, on top of this patch.
+	rval = wait....();
 
-Oleg.
+#if 0  // don't report late signals
+	update_xxx(rval == -EINTR);
+#else  // report signals after timeout
+	if (update_xxx(!rval || rval == -EINTR))
+		rval == -EINTR;
+#endif
+
+	return rval;
+}
+
+    David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
