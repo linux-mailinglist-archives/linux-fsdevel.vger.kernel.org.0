@@ -2,104 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A372FF96
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 17:48:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E5CF2FFB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 17:57:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfE3PsY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 11:48:24 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44771 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfE3PsY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 11:48:24 -0400
-Received: by mail-io1-f68.google.com with SMTP id f22so5429881iol.11;
-        Thu, 30 May 2019 08:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=3olQvP45h39vAZdvBqNRdDIW/OYVYSxl9B+1Z8goMDM=;
-        b=OSlz9oSP57X73P9v8T1SGzdHu+TSRK0BQfHQ52vHbEKVUXF1//MODLfSiNzRLny+3w
-         rleqXIdXCv5T7ezYqzKxFLxTnkfIlrGvuW1dB1cp1I7dk0q1VYaM0uiZzzjbCiCOeWI1
-         U03eULXCOm5eGLcqRwiRqk4gGdHjoSYCMXAU1NgyUlCVaXVZ5QwTXJoJnErzm1hbpCtN
-         eMLG/tSelV6Xkn/jzRCBsAeXCK7On/ITxYk/U/j/hpGMiwH+kqIsxQn+d58L7pwCPLSb
-         RFBx2v/K8WSSuhU0Dx32A4ha5ulOFuxygaptgd3Dwoziw1QyfU3cJlVzVZqPYrfuTyQP
-         M6gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3olQvP45h39vAZdvBqNRdDIW/OYVYSxl9B+1Z8goMDM=;
-        b=JHnGNIVGudtTrDWDnA7CFDQCrDQAh75hIJfyuGgAk/xTv53JjZ/DWLQRE2UMw6vfzH
-         FConwWdLVuLMnN8AvFcExXT5gqmDeknEFWtPhVYpLReGDTK9fX7xmo2NE5x/9H6IK6EZ
-         UiClImY58UKpVRiLOB0sfzr443M6ZjXb+ZLyit8NE+pyoqieWGERtrDw/VOZ8AHJ5BTY
-         bxbn67QycyB+fSNhuoaoWyMj617jmrjsLv1hby54uKEtAZ8xuG+FTHxhSQZ0Y/p3m8/y
-         pqUA/7awtkPICzsy1HvmTzLmuqR+CoIoesrNE8b8ocZ+HSPt+hFSqV+xDhNveloIOZzC
-         Hoxw==
-X-Gm-Message-State: APjAAAXJXybq2HoscdvpX50AgB+skq4XNxBeUpDIVbsrJKfZreD/EdlB
-        9lJIziu4cI2a26ffzPgt2Iqr/XTPuOETicZqlU4=
-X-Google-Smtp-Source: APXvYqzxYpkdxpKc35hfYTazS7WePXHFReDy++1I+d8I5tTo+pAFe1tbs+Nn+yj5IJpa57U4mzBaSaT7/6aUGiL3P4U=
-X-Received: by 2002:a6b:6217:: with SMTP id f23mr3170264iog.110.1559231303258;
- Thu, 30 May 2019 08:48:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com> <87woi8rt96.fsf@xmission.com> <871s0grlzo.fsf@xmission.com>
-In-Reply-To: <871s0grlzo.fsf@xmission.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Thu, 30 May 2019 08:48:12 -0700
-Message-ID: <CABeXuvoRmWXVk3KTKO3MLoLxxw7TU2G1YQVOe_ATAqBkjcROsA@mail.gmail.com>
-Subject: Re: pselect/etc semantics
+        id S1726355AbfE3P5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 11:57:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52440 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726045AbfE3P5p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 May 2019 11:57:45 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ABA9830C1FEB;
+        Thu, 30 May 2019 15:57:22 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 4847E7A026;
+        Thu, 30 May 2019 15:57:17 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 30 May 2019 17:57:22 +0200 (CEST)
+Date:   Thu, 30 May 2019 17:57:16 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
 To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>,
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, dbueso@suse.de, axboe@kernel.dk,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        arnd@arndb.de, dbueso@suse.de, axboe@kernel.dk, dave@stgolabs.net,
+        e@80x24.org, jbaron@akamai.com, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, omar.kilani@gmail.com, tglx@linutronix.de,
+        stable@vger.kernel.org
+Subject: Re: pselect/etc semantics
+Message-ID: <20190530155715.GH22536@redhat.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com>
+ <87woi8rt96.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87woi8rt96.fsf@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 30 May 2019 15:57:45 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On May 30, 2019, at 8:38 AM, Eric W. Biederman <ebiederm@xmission.com> wr=
-ote:
+On 05/30, Eric W. Biederman wrote:
 >
-> ebiederm@xmission.com (Eric W. Biederman) writes:
+> Oleg Nesterov <oleg@redhat.com> writes:
 >
->> Which means I believe we have a semantically valid change in behavior
->> that is causing a regression.
+> > Al, Linus, Eric, please help.
+> >
+> > The previous discussion was very confusing, we simply can not understand each
+> > other.
+> >
+> > To me everything looks very simple and clear, but perhaps I missed something
+> > obvious? Please correct me.
 >
-> I haven't made a survey of all of the functions yet but
-> fucntions return -ENORESTARTNOHAND will never return -EINTR and are
-> immune from this problem.
+> If I have read this thread correctly the core issue is that ther is a
+> program that used to work and that fails now.  The question is why.
+
+I didn't even try to investigate, I wasn't cc'ed initially and I then I had
+enough confusion when I started to look at the patch.
+
+However, 854a6ed56839a40f6 obviously introduced the user-visible change so
+I am not surprised it breaks something. And yes, personally I think this
+change is not right.
+
+> Which means I believe we have a semantically valid change in behavior
+> that is causing a regression.
+
+See below,
+
+> void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
+> {
 >
-> AKA pselect is fine.  While epoll_pwait can be affected.
+> 	if (!usigmask)
+> 		return;
+> 	/*
+> 	 * When signals are pending, do not restore them here.
+> 	 * Restoring sigmask here can lead to delivering signals that the above
+> 	 * syscalls are intended to block because of the sigmask passed in.
+> 	 */
+> 	if (signal_pending(current)) {
+> 		current->saved_sigmask = *sigsaved;
+> 		set_restore_sigmask();
+> 		return;
+> 	}
+>
+> 	/*
+> 	 * This is needed because the fast syscall return path does not restore
+> 	 * saved_sigmask when signals are not pending.
+> 	 */
+> 	set_current_blocked(sigsaved);
+> }
+>
+> Which has been reported results in a return value of 0,
 
-This was my understanding as well.
+0 or success
 
-> Has anyone contacted Omar Kilani to see if that is his issue?
-> https://lore.kernel.org/lkml/CA+8F9hicnF=3DkvjXPZFQy=3DPa2HJUS3JS+G9VswFH=
-NQQynPMHGVQ@mail.gmail.com/
+> and a signal
+> delivered, where previously that did not happen.
 
-Omar was cc-ed when this regression was reported. I did cc him on fix
-and asked if he could try it. We have not heard from him.
+Yes.
 
-> So far the only regression report I am seeing is from Eric Wong.
-> AKA https://lore.kernel.org/lkml/20190501021405.hfvd7ps623liu25i@dcvr/
-> Are there any others?  How did we get to be talking about more
-> than just epoll_pwait?
+And to me this doesn't look right. OK, OK, probably this is because I never
+read the docs, only the source code in fs/select.c. But to me pselect() should
+either return success/timeout or deliver a signal. Not both. Even if the signal
+was already pending before pselect() was called.
 
-This is the only report that I know of. I=E2=80=99m not sure why people
-started talking about pselect. I was also confused why instead of
-reviewing the patch and discussing the fix, we ended up talking about
-how to simplify the code. We have deviated much from what should have
-been a code review.
+To clarify, "a signal" means a signal which was blocked before pselect(sigmask)
+and temporary unblocked in this syscall.
 
--Deepa
+And even if this doesn't violate posix, I see no reason to change the historic
+behaviour. And this regression probably means we can't ;)
+
+Oleg.
+
