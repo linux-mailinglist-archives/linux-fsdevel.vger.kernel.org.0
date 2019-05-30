@@ -2,129 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C851B30460
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 23:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B131D304C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 00:29:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbfE3V6R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 17:58:17 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33969 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726483AbfE3V6Q (ORCPT
+        id S1726328AbfE3W2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 18:28:53 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55038 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfE3W2x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 17:58:16 -0400
-Received: by mail-qt1-f195.google.com with SMTP id h1so9006118qtp.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2019 14:58:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xUrEWzZQfNW3Ko2ZWNLxImFggBKxzmBgkihSD1gWgW0=;
-        b=Is1zd4SDvd6ZWvtvAYJ67dlcwr8V/61dT3N1tlUOkcZwnsfMcEtreN/4wMWHgkijuJ
-         fehIbSV7QgKzRoi8VwUd0W3WoXvOqExCo54m3DUWvZUS4I4JGGA9nNtGyMoFCaqPHUhd
-         VxlWr6suY3YYkFaNBvaCCLAgcx4fsNiUjFNkmboSgvURicz+xVee3x2fjbJ/RZaI0fXc
-         di/c6A8CiJ9tE3erznkf1k+x25DEYKFnKRAqv7OCt9cZkE4Yo9/znC9IX8mfIklKs7yd
-         Gkn4IjHNQ5rZvpyrDAC5jDFha3I65uww7VBZkCmusfLq9q94+NHvcaB9Kal9s6v3VSuv
-         Rtdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xUrEWzZQfNW3Ko2ZWNLxImFggBKxzmBgkihSD1gWgW0=;
-        b=eukUKvwVR1vPSGAPMXuCs/forB3qXaHntQYn5pB9+Dsvsy82H6trfNUEx6ZFPoKUCD
-         /A4JIISbQEyEz+rCdhU2V3liMZT/IcJyTuNWY7HgIuIqwqEO2xc9Va6le/0mMqQxEQVq
-         Q4nG8P3pUDqdYBCzzNJET55g9sMD4WaQL89dXIk4p1gSbCoqQpQNeUmJXZGwaFzD4rDZ
-         gMyg2yi1j2AdCU9kffVulvxIe1AMy2tlXmYMVO2GXHenyHi7gX2tkvI5Z+03vrVsiKna
-         I6t86DqUW4ma1wwS7dEfI2nn/D8GQZPqvsMyxn5yzy8nOY5KLsuPbl0D/lnDxGXaJmbu
-         /F8Q==
-X-Gm-Message-State: APjAAAUHyCWWLvbckEmxx6XUnamBb17womgCUIZxv3A9SVUPELqAMzsX
-        jxw6FqHlV9WRGV0qzD8fc1AvrQ==
-X-Google-Smtp-Source: APXvYqw3Gbiesdzd/yRAh8ImxVsYAztosD/Dz/fx+HhBvOt45z0S/5LhH2Nn++H9E2AwV5xsyZZVcQ==
-X-Received: by 2002:aed:39e5:: with SMTP id m92mr5818400qte.106.1559251744607;
-        Thu, 30 May 2019 14:29:04 -0700 (PDT)
-Received: from cisco ([2601:280:6:ca14:840:fa90:7243:7032])
-        by smtp.gmail.com with ESMTPSA id d5sm1904111qtj.3.2019.05.30.14.29.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 May 2019 14:29:03 -0700 (PDT)
-Date:   Thu, 30 May 2019 15:29:00 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        ebiederm@xmission.com, nhorman@tuxdriver.com
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-Message-ID: <20190530212900.GC5739@cisco>
-References: <cover.1554732921.git.rgb@redhat.com>
- <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
- <20190529145742.GA8959@cisco>
- <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
- <20190529153427.GB8959@cisco>
- <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
- <20190529222835.GD8959@cisco>
- <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
- <20190530170913.GA16722@mail.hallyn.com>
- <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
+        Thu, 30 May 2019 18:28:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=0VN5c421RywifIF8i/3tvMhN6mXfzQVaKnVDur62RGU=; b=KHCp4Wiwwi+f9S4LXp2IJWa5zG
+        SxnfG52Z9HxmHDW4gg74ulMSbpX0CDQGMZwMd+W5Zj+3lr0uW1f1hHekCH/7sjHKruEstLuNKJWji
+        olk3QfhPAS/s/B3FHzbOEj2ynup7ZWk48Me/GhtfyzAVBus//uBGdH+fLD4xK6DtTkJ6b3VRkyThS
+        4SKYhXskAK0TnZVr53SjW5ArJZZiNr6g6vNNrZqkCWt9zCwUk47K4GQVfBrUgqtecIi/gLuFzxFOt
+        gnPfHcQ5hIyijGQfOj0LZgCOctO4GZSAJb0BvI+seY1CoYVj/KtS7DdWCZlqkY2ELPdulpDWaLiFR
+        yLh9IG1Q==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hWTXV-0003kU-A0; Thu, 30 May 2019 22:28:49 +0000
+Subject: Re: mmotm 2019-05-29-20-52 uploaded (mpls)
+To:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <5a9fc4e5-eb29-99a9-dff6-2d4fdd5eb748@infradead.org>
+Date:   Thu, 30 May 2019 15:28:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 30, 2019 at 03:29:32PM -0400, Paul Moore wrote:
+On 5/29/19 8:53 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2019-05-29-20-52 has been uploaded to
 > 
-> [REMINDER: It is an "*audit* container ID" and not a general
-> "container ID" ;)  Smiley aside, I'm not kidding about that part.]
-
-This sort of seems like a distinction without a difference; presumably
-audit is going to want to differentiate between everything that people
-in userspace call a container. So you'll have to support all this
-insanity anyway, even if it's "not a container ID".
-
-> I'm not interested in supporting/merging something that isn't useful;
-> if this doesn't work for your use case then we need to figure out what
-> would work.  It sounds like nested containers are much more common in
-> the lxc world, can you elaborate a bit more on this?
+>    http://www.ozlabs.org/~akpm/mmotm/
 > 
-> As far as the possible solutions you mention above, I'm not sure I
-> like the per-userns audit container IDs, I'd much rather just emit the
-> necessary tracking information via the audit record stream and let the
-> log analysis tools figure it out.  However, the bigger question is how
-> to limit (re)setting the audit container ID when you are in a non-init
-> userns.  For reasons already mentioned, using capable() is a non
-> starter for everything but the initial userns, and using ns_capable()
-> is equally poor as it essentially allows any userns the ability to
-> munge it's audit container ID (obviously not good).  It appears we
-> need a different method for controlling access to the audit container
-> ID.
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
+> 
 
-One option would be to make it a string, and have it be append only.
-That should be safe with no checks.
+on i386 or x86_64:
 
-I know there was a long thread about what type to make this thing. I
-think you could accomplish the append-only-ness with a u64 if you had
-some rule about only allowing setting lower order bits than those that
-are already set. With 4 bits for simplicity:
+when CONFIG_PROC_SYSCTL is not set/enabled:
 
-1100         # initial container id
-1100 -> 1011 # not allowed
-1100 -> 1101 # allowed, but now 1101 is set in stone since there are
-             # no lower order bits left
+ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
+af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
+ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
+ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
+ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
 
-There are probably fancier ways to do it if you actually understand
-math :)
 
-Since userns nesting is limited to 32 levels (right now, IIRC), and
-you have 64 bits, this might be reasonable. You could just teach
-container engines to use the first say N bits for themselves, with a 1
-bit for the barrier at the end.
 
-Tycho
+-- 
+~Randy
