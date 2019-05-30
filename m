@@ -2,130 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 436152F985
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 11:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7668B2F9DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 11:50:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbfE3Je7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 05:34:59 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:57562 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726985AbfE3Je6 (ORCPT
+        id S1727746AbfE3Juw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 05:50:52 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40693 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727418AbfE3Juw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 05:34:58 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-43-7gh7PonmMjqzmTiRGe_CfA-1; Thu, 30 May 2019 10:34:54 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 30 May 2019 10:34:53 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 30 May 2019 10:34:53 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Eric Wong' <e@80x24.org>
-CC:     'Oleg Nesterov' <oleg@redhat.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "dave@stgolabs.net" <dave@stgolabs.net>,
-        "jbaron@akamai.com" <jbaron@akamai.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error codes
- according to restore_user_sigmask())
-Thread-Topic: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error
- codes according to restore_user_sigmask())
-Thread-Index: AQHVFjlRjDlHH6TU60ajIVKPNNmjrqaCR7xwgAAZvgCAAP1NYA==
-Date:   Thu, 30 May 2019 09:34:53 +0000
-Message-ID: <a703239f468d44d3b3e7d71b40289072@AcuMS.aculab.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com>
- <b05cec7f9e8f457281e689576a7a360f@AcuMS.aculab.com>
- <20190529185012.qqeqq4fsolprknrz@dcvr>
-In-Reply-To: <20190529185012.qqeqq4fsolprknrz@dcvr>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 30 May 2019 05:50:52 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 15so3403475wmg.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2019 02:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iSdK26IrmOEc/B9VC/Q0XsQRMEkKcuvxsa2POFBAfWg=;
+        b=LCpbGaIPpV5r99H6iR6FLlmoZ3ctc0Wo0tAaXSBSHw6z4REiqnyT7PkFbOzd+UPe5l
+         sK0Z4FkJ1KPKDQ/Wssfmzm5JrLnfiFJaVvCUvp7coOL1SGorMfV3kiLVeRVzWKiJzycw
+         lGaUA5D/+pAfiiopfPIWvDalUZjZWblLTfOZg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iSdK26IrmOEc/B9VC/Q0XsQRMEkKcuvxsa2POFBAfWg=;
+        b=gcKfOZ61iuF25SBs10bwq0dkQjr0hYoPSQIEZUvPNqee7KsIA334AK98er3UXFKs+2
+         f/d2Yj4eV5RUHr5GIjvPKJDtHyJOv058nJxapNufeEojg8ol9P8CRjvWnjlhk0sg2C+5
+         xJSIr58Ei4D3ETfSOJgbby/pnKQeXJgI7nlBsTnwNfA2H21iK/Xy6iUqTsF3HI4pjdhp
+         lpjNKypXuQBXIA4RFfuPVNWEQZolPgpPxy/W1m95rCIDHKtprS5KRyot3cR+jgvi2DlS
+         CNHMdKEkiNUjPHffssddHLHUCY+VyQlxKLCatTOzBHV5Ye4UyZlrg/Oc89VNG3HzJu6N
+         sAFQ==
+X-Gm-Message-State: APjAAAUhL90yOep/h/QzzKXqbuSt+jt9j7HCk+WwzZPpAtJ/M4bK/iCd
+        dCJqMWLea9xWxIQct2f32hWjgg==
+X-Google-Smtp-Source: APXvYqw3JemapasX1/My3YJlram8J8fq6dLm3PSfYNtI5KnSufTCDzzS1B4NA4dYJrfzNDS+QjZaeA==
+X-Received: by 2002:a1c:ca01:: with SMTP id a1mr1700893wmg.30.1559209849831;
+        Thu, 30 May 2019 02:50:49 -0700 (PDT)
+Received: from andrea (86.100.broadband17.iol.cz. [109.80.100.86])
+        by smtp.gmail.com with ESMTPSA id x68sm2239214wmf.13.2019.05.30.02.50.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 May 2019 02:50:48 -0700 (PDT)
+Date:   Thu, 30 May 2019 11:50:39 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        raven@themaw.net, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-block@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
+ ring buffer
+Message-ID: <20190530095039.GA5137@andrea>
+References: <20190528231218.GA28384@kroah.com>
+ <20190528162603.GA24097@kroah.com>
+ <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+ <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
+ <4031.1559064620@warthog.procyon.org.uk>
+ <31936.1559146000@warthog.procyon.org.uk>
+ <20190529231112.GB3164@kroah.com>
 MIME-Version: 1.0
-X-MC-Unique: 7gh7PonmMjqzmTiRGe_CfA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190529231112.GB3164@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogRXJpYyBXb25nDQo+IFNlbnQ6IDI5IE1heSAyMDE5IDE5OjUwDQouLi4NCj4gPiBQZXJz
-b25hbGx5IEkgdGhpbmsgdGhhdCBpcyB3cm9uZy4NCj4gPiBHaXZlbiBjb2RlIGxpa2UgdGhlIGFi
-b3ZlIHRoYXQgaGFzOg0KPiA+IAkJd2hpbGUgKCFpbnRlcnJ1cHRlZCkgew0KPiA+IAkJCXBzZWxl
-Y3QoLi4uLCAmc2lnaW50KTsNCj4gPiAJCQkvLyBwcm9jZXNzIGF2YWlsYWJsZSBkYXRhDQo+ID4g
-CQl9DQo+ID4NCj4gPiBZb3Ugd2FudCB0aGUgc2lnbmFsIGhhbmRsZXIgdG8gYmUgZXhlY3V0ZWQg
-ZXZlbiBpZiBvbmUgb2YgdGhlIGZkcw0KPiA+IGFsd2F5cyBoYXMgYXZhaWxhYmxlIGRhdGEuDQo+
-ID4gT3RoZXJ3aXNlIHlvdSBjYW4ndCBpbnRlcnJ1cHQgYSBwcm9jZXNzIHRoYXQgaXMgYWx3YXlz
-IGJ1c3kuDQoNCkZXSVcgaW4gdGhlIHBhc3QgSSd2ZSBzZWVuIGEgcHJvY2VzcyB0aGF0IGxvb3Bz
-IHNlbGVjdC1hY2NlcHQtZm9yay1leGVjDQpnZXQgaXRzIHByaW9yaXR5IHJlZHVjZWQgdG8gdGhl
-IHBvaW50IHdoZXJlIGl0IG5ldmVyIGJsb2NrZWQNCmluIHNlbGVjdC4gVGhlIGNsaWVudCBzaWRl
-IHJldHJpZXMgbWFkZSBpdCBnbyBiYWRseSB3cm9uZyENCklmIGl0IGhhZCBsaW1pdGVkIHdoZW4g
-U0lHX0lOVCB3YXMgZGV0ZWN0ZWQgaXQgd291bGQgaGF2ZSBiZWVuDQphIGxpdHRsZSBtb3JlIGRp
-ZmZpY3VsdCB0byBraWxsLg0KDQo+IEFncmVlZC4uLiAgSSBiZWxpZXZlIGNtb2dzdG9yZWQgaGFz
-IGFsd2F5cyBoYWQgYSBidWcgaW4gdGhlIHdheQ0KPiBpdCB1c2VzIGVwb2xsX3B3YWl0IGJlY2F1
-c2UgaXQgZmFpbGVkIHRvIGNoZWNrIGludGVycnVwdHMgaWY6DQo+IA0KPiBhKSBhbiBGRCBpcyBy
-ZWFkeSArIGludGVycnVwdA0KPiBiKSBlcG9sbF9wd2FpdCByZXR1cm5zIDAgb24gaW50ZXJydXB0
-DQoNCkJ1dCB0aGUga2VybmVsIGNvZGUgc2VlbXMgdG8gb25seSBjYWxsIHRoZSBzaWduYWwgaGFu
-ZGxlcg0KKGZvciBzaWduYWxzIHRoYXQgYXJlIGVuYWJsZWQgZHVyaW5nIHBzZWxlY3QoKSAoZXRj
-KSkgaWYNCnRoZSB1bmRlcmx5aW5nIHdhaXQgaXMgaW50ZXJydXB0ZWQuDQoNCj4gVGhlIGJ1ZyBy
-ZW1haW5zIGluIHVzZXJzcGFjZSBmb3IgYSksIHdoaWNoIEkgd2lsbCBmaXggYnkgYWRkaW5nDQo+
-IGFuIGludGVycnVwdCBjaGVjayB3aGVuIGFuIEZEIGlzIHJlYWR5LiAgVGhlIHdpbmRvdyBpcyB2
-ZXJ5DQo+IHNtYWxsIGZvciBhKSBhbmQgZGlmZmljdWx0IHRvIHRyaWdnZXIsIGFuZCBhbHNvIGlu
-IGEgcmFyZSBjb2RlDQo+IHBhdGguDQo+IA0KPiBUaGUgYikgY2FzZSBpcyB0aGUga2VybmVsIGJ1
-ZyBpbnRyb2R1Y2VkIGluIDg1NGE2ZWQ1NjgzOWE0MGYNCj4gKCJzaWduYWw6IEFkZCByZXN0b3Jl
-X3VzZXJfc2lnbWFzaygpIikuDQo+IA0KPiBJIGRvbid0IHRoaW5rIHRoZXJlJ3MgYW55IGRpc2Fn
-cmVlbWVudCB0aGF0IGIpIGlzIGEga2VybmVsIGJ1Zy4NCg0KSWYgdGhlIHNpZ25hbCBpcyByYWlz
-ZWQgYWZ0ZXIgdGhlIHdhaXQgaGFzIHRpbWVkIG91dCBidXQgYmVmb3JlDQp0aGUgc2lnbmFsIG1h
-c2sgaXMgcmVzdG9yZWQuDQoNCj4gU28gdGhlIGNvbmZ1c2lvbiBpcyBmb3IgYSksIGFuZCBQT1NJ
-WCBpcyBub3QgY2xlYXIgdy5yLnQuIGhvdw0KPiBwc2VsZWN0L3BvbGwgd29ya3Mgd2hlbiB0aGVy
-ZSdzIGJvdGggRkQgcmVhZGluZXNzIGFuZCBhbg0KPiBpbnRlcnJ1cHQuDQo+IA0KPiBUaHVzIEkn
-bSBpbmNsaW5lZCB0byBiZWxpZXZlICpzZWxlY3QvKnBvbGwvZXBvbGxfKndhaXQgc2hvdWxkDQo+
-IGZvbGxvdyBQT1NJWCByZWFkKCkgc2VtYW50aWNzOg0KPiANCj4gICAgICAgIElmIGEgcmVhZCgp
-IGlzIGludGVycnVwdGVkIGJ5IGEgc2lnbmFsIGJlZm9yZSBpdCByZWFkcyBhbnkgZGF0YSwgaXQg
-c2hhbGwNCj4gICAgICAgIHJldHVybiDiiJIxIHdpdGggZXJybm8gc2V0IHRvIFtFSU5UUl0uDQo+
-IA0KPiAgICAgICAgSWYgIGEgIHJlYWQoKSAgaXMgIGludGVycnVwdGVkIGJ5IGEgc2lnbmFsIGFm
-dGVyIGl0IGhhcyBzdWNjZXNzZnVsbHkgcmVhZA0KPiAgICAgICAgc29tZSBkYXRhLCBpdCBzaGFs
-bCByZXR1cm4gdGhlIG51bWJlciBvZiBieXRlcyByZWFkLg0KDQpFeGNlcHQgdGhhdCBhYm92ZSB5
-b3Ugd2FudCBkaWZmZXJlbnQgc2VtYW50aWNzIDotKQ0KRm9yIHJlYWQoKSBhbnkgc2lnbmFsIGhh
-bmRsZXIgaXMgYWx3YXlzIGNhbGxlZC4NCkFuZCB0aGUgcmV0dXJuIHZhbHVlIG9mIGEgbm9uLWJs
-b2NraW5nIHJlYWQgdGhhdCByZXR1cm5zIG5vIGRhdGENCmlzIG5vdCBhZmZlY3RlZCBieSBhbnkg
-cGVuZGluZyBzaWduYWxzLg0KDQpGb3IgcHNlbGVjdCgpIHRoYXQgd291bGQgbWVhbiB0aGF0IGlm
-IHRoZSB3YWl0IHRpbWVkIG91dCAocmVzdWx0IDApDQphbmQgdGhlbiBhIHNpZ25hbCB3YXMgcmFp
-c2VkIChiZWZvcmUgdGhlIG1hc2sgZ290IGNoYW5nZWQgYmFjaykgdGhlbg0KdGhlIHJldHVybiB2
-YWx1ZSB3b3VsZCBiZSB6ZXJvIGFuZCB0aGUgc2lnbmFsIGhhbmRsZXIgd291bGQgYmUgY2FsbGVk
-Lg0KU28geW91ciAoYikgYWJvdmUgaXMgbm90IGEgYnVnLg0KRXZlbiBzZWxlY3QoKSBjYW4gcmV0
-dXJuICd0aW1lb3V0JyBhbmQgaGF2ZSBhIHNpZ25hbCBoYW5kbGVyIGNhbGxlZC4NCg0KVGhlcmUg
-YXJlIHJlYWxseSB0d28gc2VwYXJhdGUgaXNzdWVzOg0KMSkgU2lnbmFscyB0aGF0IGFyZSBwZW5k
-aW5nIHdoZW4gdGhlIG5ldyBtYXNrIGlzIGFwcGxpZWQuDQoyKSBTaWduYWxzIHRoYXQgYXJlIHJh
-aXNlZCBhZnRlciB0aGUgd2FpdCB0ZXJtaW5hdGVzIChzdWNjZXNzIG9yIHRpbWVvdXQpLg0KSWYg
-dGhlIHNpZ25hbCBoYW5kbGVycyBmb3IgKDIpIGFyZSBub3QgY2FsbGVkIHRoZW4gdGhleSBiZWNv
-bWUgKDEpDQpuZXh0IHRpbWUgYXJvdW5kIHRoZSBhcHBsaWNhdGlvbiBsb29wLg0KDQpNYXliZSB0
-aGUgJ3Jlc3RvcmUgc2lnbWFzaycgZnVuY3Rpb24gc2hvdWxkIGJlIHBhc3NlZCBhbiBpbmRpY2F0
-aW9uDQpvZiB3aGV0aGVyIGl0IGlzIGFsbG93ZWQgdG8gbGV0IHNpZ25hbCBoYW5kbGVyIGJlIGNh
-bGxlZCBhbmQgcmV0dXJuDQp3aGV0aGVyIHRoZXkgd291bGQgYmUgY2FsbGVkIChpZSB3aGV0aGVy
-IGl0IHJlc3RvcmVkIHRoZSBzaWduYWwgbWFzaw0Kb3IgbGVmdCBpdCBmb3IgdGhlIHN5c2NhbGwg
-ZXhpdCBjb2RlIHRvIGRvIGFmdGVyIGNhbGxpbmcgdGhlIHNpZ25hbA0KaGFuZGxlcnMpLg0KDQpU
-aGF0IHdvdWxkIGFsbG93IGVwb2xsKCkgdG8gY29udmVydCB0aW1lb3V0K3BlbmRpbmcgc2lnbmFs
-IHRvIEVJTlRSLA0Kb3IgdG8gYWxsb3cgYWxsIGhhbmRsZXJzIGJlIGNhbGxlZCByZWdhcmRsZXNz
-IG9mIHRoZSByZXR1cm4gdmFsdWUuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3Mg
-TGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQ
-VCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+> > Looking at the perf ring buffer, there appears to be a missing barrier in
+> > perf_aux_output_end():
+> > 
+> > 	rb->user_page->aux_head = rb->aux_head;
+> > 
+> > should be:
+> > 
+> > 	smp_store_release(&rb->user_page->aux_head, rb->aux_head);
+> > 
+> > It should also be using smp_load_acquire().  See
+> > Documentation/core-api/circular-buffers.rst
+> > 
+> > And a (partial) patch has been proposed: https://lkml.org/lkml/2018/5/10/249
+> 
+> So, if that's all that needs to be fixed, can you use the same
+> buffer/code if that patch is merged?
 
+That's about one year old...: let me add the usual suspects in Cc:  ;-)
+since I'm not sure what the plan was (or if I'm missing something) ...
+
+Speaking of ring buffer implementations (and relatively "old" patches),
+here's another quite interesting:
+
+  https://lkml.kernel.org/r/20181211034032.32338-1-yuleixzhang@tencent.com
+
+Thanks,
+  Andrea
