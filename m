@@ -2,109 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70CF1300E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 19:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C45C3301F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 20:29:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfE3RVw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 13:21:52 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:53606 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfE3RVw (ORCPT
+        id S1726518AbfE3S2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 14:28:42 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33904 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbfE3S2m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 13:21:52 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hWOkN-0000K1-Ck; Thu, 30 May 2019 11:21:47 -0600
-Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hWOkM-0005Yj-Id; Thu, 30 May 2019 11:21:47 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        arnd@arndb.de, dbueso@suse.de, axboe@kernel.dk, dave@stgolabs.net,
-        e@80x24.org, jbaron@akamai.com, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, omar.kilani@gmail.com, tglx@linutronix.de,
-        stable@vger.kernel.org
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
-        <20190529161157.GA27659@redhat.com> <87woi8rt96.fsf@xmission.com>
-        <871s0grlzo.fsf@xmission.com> <20190530160823.GI22536@redhat.com>
-Date:   Thu, 30 May 2019 12:20:52 -0500
-In-Reply-To: <20190530160823.GI22536@redhat.com> (Oleg Nesterov's message of
-        "Thu, 30 May 2019 18:08:24 +0200")
-Message-ID: <87lfynrh8r.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 30 May 2019 14:28:42 -0400
+Received: by mail-qt1-f196.google.com with SMTP id h1so8228571qtp.1;
+        Thu, 30 May 2019 11:28:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y/lAesORefc6bhlBeQ2Gn091+SjcoN/8Ir1iuEsW99A=;
+        b=QhzkmGMypMm9pHr7YV2l2l3kwhSgGYYTPo9Ui6fbzivhiUmeUEkLQ+vWUflEDcxswU
+         oA0/XS7gEIH+kWhfS5fMV/BCdkBLwHz3vTTiJtRN99dVRlesKrkmqCkexsucoxBoZFoE
+         oCmzavHc9QEHTQaJ69U3obalRJYxv70kjk+dPlYQ95ddEcJWesAwE8TZMscNVoYhsRHi
+         b9MKVDvFmLuXmU3CoBjklRpQSAfg6YQgPXQ2w7723BT44YUz2eAtlzz81JAL027vcA3X
+         qbFYtb2Ik54tPoS3BdPn8ql5ZmfF5t3yxzr3ZMqZYB6oPkLy7WhW0RlAgKm3jK7njIm6
+         f6Vg==
+X-Gm-Message-State: APjAAAWFz66nDB82toN9GYf+rVzYGpUKEH5O/wPHkVTxjyppzcFnMoLt
+        YbzTcybHjqhqlC6bvformNebIY/+n60nujpxPuA=
+X-Google-Smtp-Source: APXvYqwJZtIYaMrmM7kBP31g8e8y4dFZ6guBPLQBIpcazgz32TcKxbacQZ3BiQaq4nHfJv7EzcWESGiPWz6vCSB3pMY=
+X-Received: by 2002:ac8:2433:: with SMTP id c48mr4854798qtc.18.1559240921162;
+ Thu, 30 May 2019 11:28:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1hWOkM-0005Yj-Id;;;mid=<87lfynrh8r.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1895Z1ierl2kaF3bw8R919nMbS+HF5Tt3c=
-X-SA-Exim-Connect-IP: 72.206.97.68
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Oleg Nesterov <oleg@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 325 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 4.1 (1.3%), b_tie_ro: 3.0 (0.9%), parse: 1.33
-        (0.4%), extract_message_metadata: 17 (5.2%), get_uri_detail_list: 1.50
-        (0.5%), tests_pri_-1000: 28 (8.5%), tests_pri_-950: 3.2 (1.0%),
-        tests_pri_-900: 2.1 (0.7%), tests_pri_-90: 34 (10.5%), check_bayes: 31
-        (9.6%), b_tokenize: 14 (4.2%), b_tok_get_all: 8 (2.3%), b_comp_prob:
-        4.3 (1.3%), b_tok_touch_all: 2.5 (0.8%), b_finish: 0.95 (0.3%),
-        tests_pri_0: 214 (65.7%), check_dkim_signature: 0.68 (0.2%),
-        check_dkim_adsp: 2.7 (0.8%), poll_dns_idle: 0.43 (0.1%), tests_pri_10:
-        2.3 (0.7%), tests_pri_500: 11 (3.5%), rewrite_mail: 0.00 (0.0%)
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com> <CAK8P3a1fsrz6kAB1z-mqcaNvXL4Hf3XMiN=Q5rzAJ3rLGPK_Yg@mail.gmail.com>
+ <874l5czozi.fsf@xmission.com>
+In-Reply-To: <874l5czozi.fsf@xmission.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 30 May 2019 20:28:24 +0200
+Message-ID: <CAK8P3a3BkgrT2vvX8NhZ8y1G_1tyefb8LPSk+EZKBrHqPuXoqQ@mail.gmail.com>
 Subject: Re: pselect/etc semantics
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, dbueso@suse.de,
+        Jens Axboe <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, e@80x24.org,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>, omar.kilani@gmail.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "# 3.4.x" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
+On Thu, May 30, 2019 at 3:54 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> Arnd Bergmann <arnd@arndb.de> writes:
+> > On Wed, May 29, 2019 at 6:12 PM Oleg Nesterov <oleg@redhat.com> wrote:
 
-> On 05/30, Eric W. Biederman wrote:
->>
->> ebiederm@xmission.com (Eric W. Biederman) writes:
->>
->> > Which means I believe we have a semantically valid change in behavior
->> > that is causing a regression.
->>
->> I haven't made a survey of all of the functions yet but
->> fucntions return -ENORESTARTNOHAND will never return -EINTR and are
->> immune from this problem.
+> >
+> > Not sure about the order of the cleanups, but probably something like
+> > this would work:
+> >
+> > 1. fix the race (to be backported)
+> > 2. unify set_compat_user_sigmask/set_user_sigmask
+> > 3. remove unneeded compat handlers
+> > 4. replace restore_user_sigmask with restore_saved_sigmask_if()
+> > 5. also unify compat_get_fd_set()/get_fd_set() and kill off
+> >     compat select() variants.
 >
-> Hmm. handle_signal:
->
-> 		case -ERESTARTNOHAND:
-> 			regs->ax = -EINTR;
-> 			break;
->
-> but I am not sure I understand which problem do you mean..
+> Are new system calls added preventing a revert of the patch in question
+> for stable kernels?
 
-Yes.  My mistake.  I looked at the transparent restart case for when a
-signal is not pending and failed to look at what happens when a signal
-is delivered.
+Yes, a straight revert would not work, as it was done as a cleanup in
+order to simplify the following conversion. I suppose one could undo
+the cleanup in both the time32 and time64 versions of each syscall,
+but I would consider that a more risky change than just fixing the
+bug that was reported.
 
-So yes.  Everything changed does appear to have a behavioral difference
-where they can now succeed and not return -EINTR.
-
-Eric
+       Arnd
