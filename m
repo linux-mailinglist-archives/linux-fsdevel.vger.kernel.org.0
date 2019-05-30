@@ -2,150 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D11C2F75F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 08:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B0792F887
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 10:29:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfE3GGf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 02:06:35 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:33952 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfE3GGe (ORCPT
+        id S1726719AbfE3I3d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 04:29:33 -0400
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:56488 "EHLO
+        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726439AbfE3I3c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 02:06:34 -0400
-Received: by mail-yb1-f193.google.com with SMTP id x32so1755965ybh.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 May 2019 23:06:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GAf8SH7b3stuTdNYPUq639K5r4H3CO1j4iU/DKt0eNw=;
-        b=ewpu1A6CXzK5A4J3dvQ/CPsIXW73BMT1v11jmo2f8MwMvb+FQs8pJAUFflw7MkygrV
-         xS9OoxFgCE+U/cfMSNE/k2Ld/kBsvmHAV7N2CE8phyfoFIll1j03LnN1bFy3F09+z3Ks
-         Nx31MQ6jxLryakjiAFfjz5CTXyVxHQQvyM5/q0pb1tRx4DizUiXCFVhEbshRQsU9b3h1
-         yuDmDCH3ziMdfQVBBDJSn4trybp6HMLlakmTCupVp7vkHYw+n4GvxhFVpucjEF7sg5Bq
-         NKgwA/evl5zkiViVv8jkgB9mEBE7zzvsNZBNGTyD0TiJ9cLDPxA+uOJ1mkymY8+EL8yg
-         KH+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GAf8SH7b3stuTdNYPUq639K5r4H3CO1j4iU/DKt0eNw=;
-        b=FncU/aS5XrsVF1ccAET+MbQDhfno3myoad12MkD0baOcO2fWPizE6Te6F8bHOSy3FH
-         6a+Q+h6BQRxKrDg2k3GEfWuutRBfBBLdquKsGlczTSZ8B9GOvVlaNAabGGctz4Y62WFI
-         Oc6B75veEIyvqVJ5kJWSYl6zD3565nCW4Dfh5RmvoDsx29BdH/+YpW/dPN7K1GQ14BUx
-         VhF29UL2feujcC2+2thYJ7IsNLck5AVlKah46ZuywwVV9sgy+wWJnqWbBAEHRxwo7sij
-         PoRIGJqtN/vNAPv5eS+L3E9qszbFI0dEEtljyKgcx/1c278fZ4Qt+RW/16JdYe/PYALK
-         DGAg==
-X-Gm-Message-State: APjAAAVDHWuLa0/f8rmUrQpQMi6yWyOanODNi77sUUbyxrXETi8e84i2
-        9Dvd75QXdpuJI/yWrYrfOInZAIqu451X5sAQBwE=
-X-Google-Smtp-Source: APXvYqwWNbXDTf7sRGu6CKqQm3sUdruEg8gUmPIzHPwRmPsAAOM9RBuAEtMWepFEp80ynVnMZ84VNXvMKj/nNvGfMBI=
-X-Received: by 2002:a25:4489:: with SMTP id r131mr732253yba.14.1559196394022;
- Wed, 29 May 2019 23:06:34 -0700 (PDT)
+        Thu, 30 May 2019 04:29:32 -0400
+Received: from c-73-193-85-113.hsd1.wa.comcast.net ([73.193.85.113] helo=srivatsab-a01.vmware.com)
+        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
+        (Exim 4.82)
+        (envelope-from <srivatsa@csail.mit.edu>)
+        id 1hWGRC-000QA7-QF; Thu, 30 May 2019 04:29:26 -0400
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        jmoyer@redhat.com, Theodore Ts'o <tytso@mit.edu>,
+        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
+ <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
+ <A0DFE635-EFEC-4670-AD70-5D813E170BEE@linaro.org>
+ <5B6570A2-541A-4CF8-98E0-979EA6E3717D@linaro.org>
+ <2CB39B34-21EE-4A95-A073-8633CF2D187C@linaro.org>
+ <FC24E25F-4578-454D-AE2B-8D8D352478D8@linaro.org>
+ <0e3fdf31-70d9-26eb-7b42-2795d4b03722@csail.mit.edu>
+ <F5E29C98-6CC4-43B8-994D-0B5354EECBF3@linaro.org>
+ <686D6469-9DE7-4738-B92A-002144C3E63E@linaro.org>
+ <01d55216-5718-767a-e1e6-aadc67b632f4@csail.mit.edu>
+ <CA8A23E2-6F22-4444-9A20-E052A94CAA9B@linaro.org>
+ <cc148388-3c82-d7c0-f9ff-8c31bb5dc77d@csail.mit.edu>
+ <6FE0A98F-1E3D-4EF6-8B38-2C85741924A4@linaro.org>
+ <2A58C239-EF3F-422B-8D87-E7A3B500C57C@linaro.org>
+ <a04368ba-f1d5-8f2c-1279-a685a137d024@csail.mit.edu>
+ <E270AD92-943E-4529-8158-AB480D6D9DF8@linaro.org>
+ <5b71028c-72f0-73dd-0cd5-f28ff298a0a3@csail.mit.edu>
+ <FFA44D26-75FF-4A8E-A331-495349BE5FFC@linaro.org>
+From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Message-ID: <0d6e3c02-1952-2177-02d7-10ebeb133940@csail.mit.edu>
+Date:   Thu, 30 May 2019 01:29:23 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190526143411.11244-1-amir73il@gmail.com> <20190526143411.11244-9-amir73il@gmail.com>
-In-Reply-To: <20190526143411.11244-9-amir73il@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 30 May 2019 09:06:22 +0300
-Message-ID: <CAOQ4uxi+1xQW5eoH7r18DHjvQQyKeMGq2Qtbe1hcxtcmqA_hAg@mail.gmail.com>
-Subject: Re: [PATCH v3 08/10] configfs: call fsnotify_rmdir() hook
-To:     Christoph Hellwig <hch@lst.de>, Joel Becker <jlbec@evilplan.org>
-Cc:     David Sterba <dsterba@suse.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <FFA44D26-75FF-4A8E-A331-495349BE5FFC@linaro.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 26, 2019 at 5:34 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> This will allow generating fsnotify delete events on unregister
-> of group/subsystem after the fsnotify_nameremove() hook is removed
-> from d_delete().
->
-> The rest of the d_delete() calls from this filesystem are either
-> called recursively from within debugfs_unregister_{group,subsystem},
-> called from a vfs function that already has delete hooks or are
-> called from shutdown/cleanup code.
->
-> Cc: Joel Becker <jlbec@evilplan.org>
-> Cc: Christoph Hellwig <hch@lst.de>
+On 5/29/19 12:41 AM, Paolo Valente wrote:
+> 
+> 
+>> Il giorno 29 mag 2019, alle ore 03:09, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
+>>
+>> On 5/23/19 11:51 PM, Paolo Valente wrote:
+>>>
+>>>> Il giorno 24 mag 2019, alle ore 01:43, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
+>>>>
+>>>> When trying to run multiple dd tasks simultaneously, I get the kernel
+>>>> panic shown below (mainline is fine, without these patches).
+>>>>
+>>>
+>>> Could you please provide me somehow with a list *(bfq_serv_to_charge+0x21) ?
+>>>
+>>
+>> Hi Paolo,
+>>
+>> Sorry for the delay! Here you go:
+>>
+>> (gdb) list *(bfq_serv_to_charge+0x21)
+>> 0xffffffff814bad91 is in bfq_serv_to_charge (./include/linux/blkdev.h:919).
+>> 914
+>> 915	extern unsigned int blk_rq_err_bytes(const struct request *rq);
+>> 916
+>> 917	static inline unsigned int blk_rq_sectors(const struct request *rq)
+>> 918	{
+>> 919		return blk_rq_bytes(rq) >> SECTOR_SHIFT;
+>> 920	}
+>> 921
+>> 922	static inline unsigned int blk_rq_cur_sectors(const struct request *rq)
+>> 923	{
+>> (gdb)
+>>
+>>
+>> For some reason, I've not been able to reproduce this issue after
+>> reporting it here. (Perhaps I got lucky when I hit the kernel panic
+>> a bunch of times last week).
+>>
+>> I'll test with your fix applied and see how it goes.
+>>
+> 
+> Great!  the offending line above gives me hope that my fix is correct.
+> If no more failures occur, then I'm eager (and a little worried ...)
+> to see how it goes with throughput :)
+> 
 
-Hi Christoph and Joel,
+Your fix held up well under my testing :)
 
-Per Christoph's request, I cc'ed you guys on the entire patch series
-for context,
-so my discussion with Greg [1] about the special status of configfs in
-this patch set
-should already be somewhere in your mailboxes...
+As for throughput, with low_latency = 1, I get around 1.4 MB/s with
+bfq (vs 1.6 MB/s with mq-deadline). This is a huge improvement
+compared to what it was before (70 KB/s).
 
-Could I ask you to provide an ACK on this patch and on the chosen
-policy. To recap:
-Before patch set:
-1. User gets create/delete events when files/dirs created/removed via vfs_*()
-2. User does *not* get create events when files/dirs created via
-debugfs_register_*()
-3. User *does* get delete events when files/dirs removed via
-debugfs_unregister_*()
+With tracing on, the throughput is a bit lower (as expected I guess),
+about 1 MB/s, and the corresponding trace file
+(trace-waker-detection-1MBps) is available at:
 
-After patch set:
-1. No change
-2. No change
-3. User will get delete events only on the root group/subsystem dir
-when tree is removed via debugfs_unregister_*()
+https://www.dropbox.com/s/3roycp1zwk372zo/bfq-traces.tar.gz?dl=0
 
-For symmetry, we could also add create events for  root group/subsystem dir
-when tree is created via debugfs_unregister_*(), but that would be a
-followup patch.
-For users though, it may be that delete events are more important than
-create events
-(i.e. for user cleanup tasks).
+Thank you so much for your tireless efforts in fixing this issue!
 
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjyg5AVPrcR4bPm4zMY9BKmgV8g7TAuH--cfKNJv8pRYQ@mail.gmail.com/
-
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/configfs/dir.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
-> index 5e7932d668ab..ba17881a8d84 100644
-> --- a/fs/configfs/dir.c
-> +++ b/fs/configfs/dir.c
-> @@ -27,6 +27,7 @@
->  #undef DEBUG
->
->  #include <linux/fs.h>
-> +#include <linux/fsnotify.h>
->  #include <linux/mount.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
-> @@ -1804,6 +1805,7 @@ void configfs_unregister_group(struct config_group *group)
->         configfs_detach_group(&group->cg_item);
->         d_inode(dentry)->i_flags |= S_DEAD;
->         dont_mount(dentry);
-> +       fsnotify_rmdir(d_inode(parent), dentry);
->         d_delete(dentry);
->         inode_unlock(d_inode(parent));
->
-> @@ -1932,6 +1934,7 @@ void configfs_unregister_subsystem(struct configfs_subsystem *subsys)
->         configfs_detach_group(&group->cg_item);
->         d_inode(dentry)->i_flags |= S_DEAD;
->         dont_mount(dentry);
-> +       fsnotify_rmdir(d_inode(root), dentry);
->         inode_unlock(d_inode(dentry));
->
->         d_delete(dentry);
-> --
-> 2.17.1
->
+Regards,
+Srivatsa
+VMware Photon OS
