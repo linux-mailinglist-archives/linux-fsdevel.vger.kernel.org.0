@@ -2,116 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 611DD2FBE8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 15:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 559182FBF3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 15:08:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfE3NE7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 09:04:59 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:40444 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfE3NE7 (ORCPT
+        id S1726925AbfE3NIT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 09:08:19 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:35761 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726743AbfE3NIT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 09:04:59 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hWKjq-0001o6-J4; Thu, 30 May 2019 07:04:58 -0600
-Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hWKjp-0006KM-2L; Thu, 30 May 2019 07:04:58 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Eric Wong <e@80x24.org>
-Cc:     David Laight <David.Laight@ACULAB.COM>,
-        'Oleg Nesterov' <oleg@redhat.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm\@linux-foundation.org" <akpm@linux-foundation.org>,
-        "arnd\@arndb.de" <arnd@arndb.de>,
-        "dbueso\@suse.de" <dbueso@suse.de>,
-        "axboe\@kernel.dk" <axboe@kernel.dk>,
-        "dave\@stgolabs.net" <dave@stgolabs.net>,
-        "jbaron\@akamai.com" <jbaron@akamai.com>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio\@kvack.org" <linux-aio@kvack.org>,
-        "omar.kilani\@gmail.com" <omar.kilani@gmail.com>,
-        "tglx\@linutronix.de" <tglx@linutronix.de>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
-        <20190529161157.GA27659@redhat.com>
-        <b05cec7f9e8f457281e689576a7a360f@AcuMS.aculab.com>
-        <20190529185012.qqeqq4fsolprknrz@dcvr>
-Date:   Thu, 30 May 2019 08:04:50 -0500
-In-Reply-To: <20190529185012.qqeqq4fsolprknrz@dcvr> (Eric Wong's message of
-        "Wed, 29 May 2019 18:50:12 +0000")
-Message-ID: <87ef4grt3h.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 30 May 2019 09:08:19 -0400
+Received: by mail-oi1-f194.google.com with SMTP id y6so1246689oix.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2019 06:08:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qS3Q/hz5cO93oEIRYjaW7Sr8hav+cFNgiudkzNoMj8w=;
+        b=LvWGzlMGYRRjRdPHvITbAqL4TUkeRndCXuAogq06cn7jmeCKu+x2YhopKLsc9g4PQK
+         PR2pKSxqA49V1aZivEyVe5ly4ecdB1373u9XK3rqTmdxqa8wDEn6hTfWcinGrcWHef+y
+         GpzUfRMkTqfugyAF6gher6vXO0NVKmbE3uDKtoizcLaLX3myUsTpd4O4SUHl/ngOE6Wu
+         pZWmbjsUhq+eQO+9Wka7xYVVsyUR8tRJIoZEqdtfB+XFPxnapIcZSGwuZlBdvpc/dKg3
+         CdJU+h1tp7yXMimSfZBScUILI43cabpvbQQ+p7Vz/lW0lcvPHAdpPSKeHhgWxMyZC4it
+         O/4Q==
+X-Gm-Message-State: APjAAAXyPtUv71PWfKRPUu5HyyQruzXcB0oBt6xWAAetDsnpLO2UzFtY
+        L16HzYsP+HLdRxbS+16H3JkgfdIURWmdUn0UeLCgYQ==
+X-Google-Smtp-Source: APXvYqxRNQdu8FXZJDPynHtWRxoDcqnlrWbPcgP874hkqSkQlayP5hnOUfRLSzP0TLiIV+sPYeCjXTJG6BZ8bL0SPWw=
+X-Received: by 2002:aca:300d:: with SMTP id w13mr2391467oiw.26.1559221697952;
+ Thu, 30 May 2019 06:08:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1hWKjp-0006KM-2L;;;mid=<87ef4grt3h.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+tK8wFikScRQNziP7B/XxiQEAJ+eiy2zc=
-X-SA-Exim-Connect-IP: 72.206.97.68
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Eric Wong <e@80x24.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1118 ms - load_scoreonly_sql: 0.12 (0.0%),
-        signal_user_changed: 8 (0.7%), b_tie_ro: 7 (0.6%), parse: 1.57 (0.1%),
-        extract_message_metadata: 45 (4.0%), get_uri_detail_list: 3.0 (0.3%),
-        tests_pri_-1000: 29 (2.6%), tests_pri_-950: 2.0 (0.2%),
-        tests_pri_-900: 1.63 (0.1%), tests_pri_-90: 151 (13.5%), check_bayes:
-        149 (13.3%), b_tokenize: 120 (10.7%), b_tok_get_all: 6 (0.6%),
-        b_comp_prob: 3.0 (0.3%), b_tok_touch_all: 2.6 (0.2%), b_finish: 0.68
-        (0.1%), tests_pri_0: 816 (73.0%), check_dkim_signature: 0.66 (0.1%),
-        check_dkim_adsp: 7 (0.7%), poll_dns_idle: 5 (0.5%), tests_pri_10: 4.5
-        (0.4%), tests_pri_500: 19 (1.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: pselect/etc semantics
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <cover.1554732921.git.rgb@redhat.com> <f4a49f7c949e5df80c339a3fe5c4c2303b12bf23.1554732921.git.rgb@redhat.com>
+ <CAHC9VhRfQp-avV2rcEOvLCAXEz-MDZMp91UxU+BtvPkvWny9fQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRfQp-avV2rcEOvLCAXEz-MDZMp91UxU+BtvPkvWny9fQ@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Thu, 30 May 2019 15:08:07 +0200
+Message-ID: <CAFqZXNsK6M_L_0dFzkEgh_QVP-fyb+fE0MMRsJ2kXxtKM3VUKA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 04/10] audit: log container info of syscalls
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        Steve Grubb <sgrubb@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Simo Sorce <simo@redhat.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Neil Horman <nhorman@tuxdriver.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Wong <e@80x24.org> writes:
-
-> Agreed...  I believe cmogstored has always had a bug in the way
-> it uses epoll_pwait because it failed to check interrupts if:
+On Thu, May 30, 2019 at 12:16 AM Paul Moore <paul@paul-moore.com> wrote:
+> On Mon, Apr 8, 2019 at 11:40 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> >
+> > Create a new audit record AUDIT_CONTAINER_ID to document the audit
+> > container identifier of a process if it is present.
+> >
+> > Called from audit_log_exit(), syscalls are covered.
+> >
+> > A sample raw event:
+> > type=SYSCALL msg=audit(1519924845.499:257): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=56374e1cef30 a2=241 a3=1b6 items=2 ppid=606 pid=635 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=3 comm="bash" exe="/usr/bin/bash" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="tmpcontainerid"
+> > type=CWD msg=audit(1519924845.499:257): cwd="/root"
+> > type=PATH msg=audit(1519924845.499:257): item=0 name="/tmp/" inode=13863 dev=00:27 mode=041777 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype= PARENT cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0
+> > type=PATH msg=audit(1519924845.499:257): item=1 name="/tmp/tmpcontainerid" inode=17729 dev=00:27 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0
+> > type=PROCTITLE msg=audit(1519924845.499:257): proctitle=62617368002D6300736C65657020313B206563686F2074657374203E202F746D702F746D70636F6E7461696E65726964
+> > type=CONTAINER_ID msg=audit(1519924845.499:257): contid=123458
+> >
+> > Please see the github audit kernel issue for the main feature:
+> >   https://github.com/linux-audit/audit-kernel/issues/90
+> > Please see the github audit userspace issue for supporting additions:
+> >   https://github.com/linux-audit/audit-userspace/issues/51
+> > Please see the github audit testsuiite issue for the test case:
+> >   https://github.com/linux-audit/audit-testsuite/issues/64
+> > Please see the github audit wiki for the feature overview:
+> >   https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > Acked-by: Serge Hallyn <serge@hallyn.com>
+> > Acked-by: Steve Grubb <sgrubb@redhat.com>
+> > Acked-by: Neil Horman <nhorman@tuxdriver.com>
+> > Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > ---
+> >  include/linux/audit.h      |  5 +++++
+> >  include/uapi/linux/audit.h |  1 +
+> >  kernel/audit.c             | 20 ++++++++++++++++++++
+> >  kernel/auditsc.c           | 20 ++++++++++++++------
+> >  4 files changed, 40 insertions(+), 6 deletions(-)
 >
-> a) an FD is ready + interrupt
-> b) epoll_pwait returns 0 on interrupt
+> ...
 >
-> The bug remains in userspace for a), which I will fix by adding
-> an interrupt check when an FD is ready.  The window is very
-> small for a) and difficult to trigger, and also in a rare code
-> path.
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index 182b0f2c183d..3e0af53f3c4d 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> > @@ -2127,6 +2127,26 @@ void audit_log_session_info(struct audit_buffer *ab)
+> >         audit_log_format(ab, "auid=%u ses=%u", auid, sessionid);
+> >  }
+> >
+> > +/*
+> > + * audit_log_contid - report container info
+> > + * @context: task or local context for record
+> > + * @contid: container ID to report
+> > + */
+> > +void audit_log_contid(struct audit_context *context, u64 contid)
+> > +{
+> > +       struct audit_buffer *ab;
+> > +
+> > +       if (!audit_contid_valid(contid))
+> > +               return;
+> > +       /* Generate AUDIT_CONTAINER_ID record with container ID */
+> > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER_ID);
+> > +       if (!ab)
+> > +               return;
+> > +       audit_log_format(ab, "contid=%llu", (unsigned long long)contid);
 >
-> The b) case is the kernel bug introduced in 854a6ed56839a40f
-> ("signal: Add restore_user_sigmask()").
+> We have a consistency problem regarding how to output the u64 contid
+> values; this function uses an explicit cast, others do not.  According
+> to Documentation/core-api/printk-formats.rst the recommendation for
+> u64 is %llu (or %llx, if you want hex).  Looking quickly through the
+> printk code this appears to still be correct.  I suggest we get rid of
+> the cast (like it was in v5).
+
+IIRC it was me who suggested to add the casts. I didn't realize that
+the kernel actually guarantees that "%llu" will always work with u64.
+Taking that into account I rescind my request to add the cast. Sorry
+for the false alarm.
+
 >
-> I don't think there's any disagreement that b) is a kernel bug.
+> > +       audit_log_end(ab);
+> > +}
+> > +EXPORT_SYMBOL(audit_log_contid);
+>
+> --
+> paul moore
+> www.paul-moore.com
 
-See my reply to Oleg.  I think (b) is a regression that needs to be
-fixed.  I do not think that (b) is a kernel bug.  Both versions of the
-of what sigmask means posix and naive will allow (b).
-
-Because fundamentally the sigmask is restored after the rest of the
-system call happens.
-
-Eric
+--
+Ondrej Mosnacek <omosnace at redhat dot com>
+Software Engineer, Security Technologies
+Red Hat, Inc.
