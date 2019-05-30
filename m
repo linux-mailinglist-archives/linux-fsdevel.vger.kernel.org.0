@@ -2,68 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AABE2F8C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 10:53:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 049DF2F953
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 11:23:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbfE3Ix3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 04:53:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45162 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726753AbfE3Ix3 (ORCPT
+        id S1726965AbfE3JXH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 05:23:07 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:56286 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbfE3JXG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 04:53:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=7aH335K8bkoHEjqmekfUR/dxSx+60OHumVq1hGf49IM=; b=dQ4HCu1qVgISjGAbLPD/Q3rw8v
-        1foKw4rPUo8IVyIavrr82ZM8Z//0KK+u3uEp7R1+o6P8b9DIpr9mXpyYgdRuT/KMvuG/DxNnEG5o2
-        AwI1mmuVei2+4lTWig4t4cbY40g/AR/A42JqFdVkZRC1S4imIWKR91C0Rfpd0N4faVUvhTy2WAQC2
-        sxc5Qo9A3V3TUyG1Vgp6fglA6LE/DpeXRovD2++zTKiqSO23a27Rid5l34b5jfalO5y5/IW9yYaZA
-        uYzOoV/0bu0TIboplGAVRAayDwpRVRXAgXejY9+5b2+ROH9ztyUWOetv/V6YewC/kHoo3jcphtnu4
-        br8X/bvQ==;
-Received: from 089144193064.atnat0002.highway.a1.net ([89.144.193.64] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWGoO-0002lZ-N8; Thu, 30 May 2019 08:53:25 +0000
-Date:   Thu, 30 May 2019 10:53:21 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Joel Becker <jlbec@evilplan.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] configfs fix for 5.2
-Message-ID: <20190530085321.GA24647@infradead.org>
+        Thu, 30 May 2019 05:23:06 -0400
+Received: by mail-it1-f195.google.com with SMTP id g24so8733071iti.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 May 2019 02:23:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a+5aEhVutop7tTeywzU7pWYUCUGkPUoyIEB0oJC3s4w=;
+        b=X2KxT+ZWbhdBIXQIbPAxqr3e7c2pnXc5lo5pEwP58+veIa2y/EfnZ7yFBLnq13R/QM
+         EPynTGlLEeMAKOg3EH91ZeTSSRzmoyMHy7AOQ0yFNmgNJpiF0MPqx3v1E3D5FkB4ZNAd
+         A2D98ATFoOu3bq5VDVvNp46ULKYcwlIUX8SvA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a+5aEhVutop7tTeywzU7pWYUCUGkPUoyIEB0oJC3s4w=;
+        b=qT4A5oPBY0MC3Vi1sltBoeKzdlfEhIVmvzGIB/U0p4PtnMwqQ8ibVRya8Sbm++bXz+
+         OeCNLtbBOTQdaClFkHhszrLci42hfa2GmE6N7zFlYy/vvwJ/Q+gfpxDsekwbfT3aV7Yj
+         3LD5DDvDFY3kACh62P+jwKJ9xu7aVnKP6bOMB6c9NZK+720poVYZJp50U4KH/Qbb2RbS
+         x37vbqE09m4WvNw11zWO9z+hahDGYyD2ki5UxvFpPDU1vN8JW1j/Z7NUdTQJdQvLXsMg
+         12UDhyAv/GB8CdvEpJr3tzFTLf5oqP0uXJD4+MKeoGpf73f+CHpqe8ok6B9bALTPKasb
+         RM+A==
+X-Gm-Message-State: APjAAAXZnLHGmp/g+e5cXGc8b2bzWHnQzp5USzBYxu1rkqOSMGQKAMsh
+        Ihe3n1C/mm7/k8qEO8amwS32Nn5wWpRs1fzaTAJN+A==
+X-Google-Smtp-Source: APXvYqxGtgaxGvZRnxZZeT7U0mE9T7MAFKM92+yT+LMximCAZ/y+JjinSYPIBOIjEaFSaGKNREat1XifEPO8Sd6x50A=
+X-Received: by 2002:a24:1acc:: with SMTP id 195mr1367036iti.118.1559208185554;
+ Thu, 30 May 2019 02:23:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190502040331.81196-1-ezemtsov@google.com> <CAOQ4uxhmDjYY5_UVWYAWXPtD1jFh3H5Bqn1qn6Fam0KZZjyprw@mail.gmail.com>
+ <20190502131034.GA25007@mit.edu> <20190502132623.GU23075@ZenIV.linux.org.uk>
+ <CAK8JDrFZW1jwOmhq+YVDPJi9jWWrCRkwpqQ085EouVSyzw-1cg@mail.gmail.com>
+ <CAOQ4uxhDYvBOLBkyYXRC6aS_me+Q=1sBAtzOSkdqbo+N-Rtx=Q@mail.gmail.com>
+ <CAK8JDrGRzA+yphpuX+GQ0syRwF_p2Fora+roGCnYqB5E1eOmXA@mail.gmail.com>
+ <CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=w_AeM6YM=zVixsUfQ@mail.gmail.com>
+ <CAK8JDrEQnXTcCtAPkb+S4r4hORiKh_yX=0A0A=LYSVKUo_n4OA@mail.gmail.com>
+ <CAJeUaNCvr=X-cc+B3rsunKcdC6yHSGGa4G+8X+n8OxGKHeE3zQ@mail.gmail.com>
+ <CAJfpegvmFJ63F2h_gFVPJeEgWS8UmxAYCUgA-4=j9iCNXaXARA@mail.gmail.com>
+ <CAJeUaNC5rXuNsoKmJjJN74iH9YNp94L450gcpxyc_dG=D8CCjA@mail.gmail.com>
+ <CAJfpegs=4jMo20Wp8NEjREQpqYjqJ22vc680w1E-w6o-dU1brg@mail.gmail.com> <CAJeUaNBn0gA6eApgOu=n2uoy+6PbOR_xjTdVvc+StvOKGA-i=Q@mail.gmail.com>
+In-Reply-To: <CAJeUaNBn0gA6eApgOu=n2uoy+6PbOR_xjTdVvc+StvOKGA-i=Q@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 30 May 2019 11:22:54 +0200
+Message-ID: <CAJfpeguys2P9q5EpE3GzKHcOS9GVLO9Fj9HB3JBLw36eax+NkQ@mail.gmail.com>
+Subject: Re: Initial patches for Incremental FS
+To:     Yurii Zubrytskyi <zyy@google.com>
+Cc:     Eugene Zemtsov <ezemtsov@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit cd6c84d8f0cdc911df435bb075ba22ce3c605b07:
+On Wed, May 29, 2019 at 11:06 PM Yurii Zubrytskyi <zyy@google.com> wrote:
 
-  Linux 5.2-rc2 (2019-05-26 16:49:19 -0700)
+> Yes, and this was _exactly_ our first plan, and it mitigates the read
+> performance
+> issue. The reasons why we didn't move forward with it are that we figured out
+> all other requirements, and fixing each of those needs another change in
+> FUSE, up to the level when FUSE interface becomes 50% dedicated to
+> our specific goal:
+> 1. MAP message would have to support data compression (with different
+> algorithms), hash verification (same thing) with hash streaming (because
+> even the Merkle tree for a 5GB file is huge, and can't be preloaded
+> at once)
 
-are available in the Git repository at:
+With the proposed FUSE solution the following sequences would occur:
 
-  git://git.infradead.org/users/hch/configfs.git tags/configfs-for-5.2-2
+kernel: if index for given block is missing, send MAP message
+  userspace: if data/hash is missing for given block then download data/hash
+  userspace: send MAP reply
+kernel: decompress data and verify hash based on index
 
-for you to fetch changes up to f6122ed2a4f9c9c1c073ddf6308d1b2ac10e0781:
+The kernel would not be involved in either streaming data or hash, it
+would only work with data/hash that has already been downloaded.
+Right?
 
-  configfs: Fix use-after-free when accessing sd->s_dentry (2019-05-28 08:11:58 +0200)
+Or is your implementation doing streamed decompress/hash or partial blocks?
 
-----------------------------------------------------------------
-configs fix for 5.2
+>   1.1. Mapping memory usage can get out of hands pretty quickly: it has to
+> be at least (offset + size + compression type + hash location + hash size +
+> hash kind) per each block. I'm not even thinking about multiple storage files
+> here. For that 5GB file (that's a debug APK for some Android game we're
+> targeting) we have 1.3M blocks, so ~16 bytes *1.3M = 20M of index only,
+> without actual overhead for the lookup table.
+> If the kernel code owns and manages its own on-disk data store and the
+> format, this index can be loaded and discarded on demand there.
 
- - fix a use after free in configfs_d_iput (Sahitya Tummala)
+Why does the kernel have to know the on-disk format to be able to load
+and discard parts of the index on-demand?  It only needs to know which
+blocks were accessed recently and which not so recently.
 
-----------------------------------------------------------------
-Sahitya Tummala (1):
-      configfs: Fix use-after-free when accessing sd->s_dentry
+> > There's also work currently ongoing in optimizing the overhead of
+> > userspace roundtrip.  The most promising thing appears to be matching
+> > up the CPU for the userspace server with that of the task doing the
+> > request.  This can apparently result in  60-500% speed improvement.
+>
+> That sounds almost too good to be true, and will be really cool.
+> Do you have any patches or git remote available in any compilable state to
+> try the optimization out? Android has quite complicated hardware config
+> and I want to see how this works, especially with our model where
+> several processes may send requests into the same filesystem FD.
 
- fs/configfs/dir.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+Currently it's only a bunch of hacks, no proper interfaces yet.
+
+I'll let you know once there's something useful for testing with a
+real filesystem.
+
+BTW, which interface does your fuse filesystem use?  Libfuse?  Raw device?
+
+Thanks,
+Miklos
