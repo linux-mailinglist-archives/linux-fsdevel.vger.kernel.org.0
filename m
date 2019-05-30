@@ -2,100 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B88D830022
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 18:23:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1EFC3007E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 May 2019 18:59:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfE3QWq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 May 2019 12:22:46 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:56182 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727141AbfE3QWj (ORCPT
+        id S1727780AbfE3Q7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 May 2019 12:59:20 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51836 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725961AbfE3Q7T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 May 2019 12:22:39 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-178-hOyN1okSMISZ_H4QMpI_WQ-1; Thu, 30 May 2019 17:22:36 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 30 May 2019 17:22:35 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 30 May 2019 17:22:35 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-CC:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "dave@stgolabs.net" <dave@stgolabs.net>,
-        "e@80x24.org" <e@80x24.org>,
-        "jbaron@akamai.com" <jbaron@akamai.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: pselect/etc semantics
-Thread-Topic: pselect/etc semantics
-Thread-Index: AQHVFv20Wpjj98PrdUiaI6VbWN/dmKaD1ZRg
-Date:   Thu, 30 May 2019 16:22:35 +0000
-Message-ID: <21c751a08bae4f7ea25b0ba278594336@AcuMS.aculab.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
-        <20190529161157.GA27659@redhat.com> <87woi8rt96.fsf@xmission.com>
- <871s0grlzo.fsf@xmission.com>
-In-Reply-To: <871s0grlzo.fsf@xmission.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 30 May 2019 12:59:19 -0400
+Received: by mail-it1-f195.google.com with SMTP id m3so11099500itl.1;
+        Thu, 30 May 2019 09:59:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Pnobng2gi3rGJg7lXjPJmItCYfW7DKyQeE9acJ+cdtU=;
+        b=stBVtq2ifj+amgGeFGtMkDBmRyAt4VYbME5ABSMYsmEEUGPwQRZUs0Lq02rdfc/ARr
+         QlJ//UHU2yERD9GqwdwV4Kg0Ehts8XeFoXusWp9nPNVWp6e0k+556ZqRhdOWQtkiN6gS
+         v+SZpdzk14Ja+j4/fPjIzuQ3MeC8BqH6k2+0WRltWQ7CodeiTuPIvMQsOBf4Ee6806K/
+         b10b+vo1cuk93M3HBsiVxsOBvIg1zOUX6Q08aSsJq3hHD7YZUtZYyu8bQ6Rcdst2Mkjp
+         zjUADoH/veZOtEg7UqvSxSpjPOqEeKi/AlfJZZrY9/o3hUJejeI6hIU8gMQNsunvxbwo
+         JNTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Pnobng2gi3rGJg7lXjPJmItCYfW7DKyQeE9acJ+cdtU=;
+        b=rEF6ReIBI32UR/Opqs7YjXjuBexsgw8HysCIo1z2PmOFtiLeTyWnpYhLA3H6f9g4+X
+         LbrFGZAZvlQVLs3hLq6VDwxpz6FTpoZmHeTgUeXuus8RXvkeCDl/GoPkuaQ+aw0g78Ff
+         whKmpsT+HRWpwPCxYE8+1zsiTOZWWVzEH8NWoFbOrUzjX2a0OHPkZ25YPo7mEiM/dl+9
+         xzd0DJEvZ3U/RnK4AXU4A5d2TzYJCqSLAinbM5lEOFa5WJ6tx2YrL3g70p/zffoXeYH2
+         0mJ80ZA0ojKUOrj069zgrKSl+esizGgau5137+leqX3S9Cl5i2R7D6tdVnCltdPjvL/A
+         Ax6A==
+X-Gm-Message-State: APjAAAUEbPvhl0hpSh5+1y+4zyuOSklBR6Y76eYZ6EmsMNGZ4tR7nRVJ
+        BC6qVbhITaTF+mC1SkrMxJppoVE2ayuBzR0/WV8=
+X-Google-Smtp-Source: APXvYqxjoDHIfEGfCFMFLMpPgv+YNiv3xf18azNUb7eYdVVXA2udc6ppfyaqiDURJX8QX96FxMl5W2yWNB0YB1Bee2Y=
+X-Received: by 2002:a02:bb83:: with SMTP id g3mr3158555jan.139.1559235558647;
+ Thu, 30 May 2019 09:59:18 -0700 (PDT)
 MIME-Version: 1.0
-X-MC-Unique: hOyN1okSMISZ_H4QMpI_WQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com> <87woi8rt96.fsf@xmission.com>
+ <871s0grlzo.fsf@xmission.com> <CABeXuvoRmWXVk3KTKO3MLoLxxw7TU2G1YQVOe_ATAqBkjcROsA@mail.gmail.com>
+In-Reply-To: <CABeXuvoRmWXVk3KTKO3MLoLxxw7TU2G1YQVOe_ATAqBkjcROsA@mail.gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Thu, 30 May 2019 09:59:08 -0700
+Message-ID: <CABeXuvq12z3PFYpNXjNPSCp7pYmoT90pC0BdugPiw-0k22J4NQ@mail.gmail.com>
+Subject: Re: pselect/etc semantics
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, dbueso@suse.de, axboe@kernel.dk,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric W. Biederman
-> Sent: 30 May 2019 16:38
-> ebiederm@xmission.com (Eric W. Biederman) writes:
-> 
-> > Which means I believe we have a semantically valid change in behavior
-> > that is causing a regression.
-> 
-> I haven't made a survey of all of the functions yet but
-> fucntions return -ENORESTARTNOHAND will never return -EINTR and are
-> immune from this problem.
+On Thu, May 30, 2019 at 8:48 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>
+> > On May 30, 2019, at 8:38 AM, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >
+> > ebiederm@xmission.com (Eric W. Biederman) writes:
+> >
+> >> Which means I believe we have a semantically valid change in behavior
+> >> that is causing a regression.
+> >
+> > I haven't made a survey of all of the functions yet but
+> > fucntions return -ENORESTARTNOHAND will never return -EINTR and are
+> > immune from this problem.
+> >
+> > AKA pselect is fine.  While epoll_pwait can be affected.
+>
+> This was my understanding as well.
 
-Eh?
-ERESTARTNOHAND just makes the system call restart if there is no
-signal handler, EINTR should still be returned if there is a handler.
+I think I was misremembered here. I had noted this before:
+https://lore.kernel.org/linux-fsdevel/CABeXuvq7gCV2qPOo+Q8jvNyRaTvhkRLRbnL_oJ-AuK7Sp=P3QQ@mail.gmail.com/
 
-All the functions that have a temporary signal mask are likely
-to be expected to work the same way and thus have the same bugs.
+"sys_io_pgetevents() does not seem to have this problem as we are still
+checking signal_pending() here.
+sys_pselect6() seems to have a similar problem. The changes to
+sys_pselect6() also impact sys_select() as the changes are in the
+common code path."
 
-http://pubs.opengroup.org/onlinepubs/9699919799/functions/pselect.html#
-isn't overly helpful.
-But I think it should return EINTR even if there is no handler unless
-SA_RESTART is set:
+This was the code replaced for io_pgetevents by 854a6ed56839a40f6b is as below.
+No matter what events completed, there was signal_pending() check
+after the return from do_io_getevents().
 
-[EINTR]
-    The function was interrupted while blocked waiting for any of the selected descriptors to become ready and before the timeout interval expired.
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -2110,18 +2110,9 @@ SYSCALL_DEFINE6(io_pgetevents,
+                return ret;
 
-    If SA_RESTART has been set for the interrupting signal, it is implementation-defined whether the function restarts or returns with [EINTR].
-
-	David
-
+        ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
+-       if (signal_pending(current)) {
+-               if (ksig.sigmask) {
+-                       current->saved_sigmask = sigsaved;
+-                       set_restore_sigmask();
+-               }
 -
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+-               if (!ret)
+-                       ret = -ERESTARTNOHAND;
+-       } else {
+-               if (ksig.sigmask)
+-                       sigprocmask(SIG_SETMASK, &sigsaved, NULL);
+-       }
++       restore_user_sigmask(ksig.sigmask, &sigsaved);
++       if (signal_pending(current) && !ret)
++               ret = -ERESTARTNOHAND;
 
+Can I ask a simple question for my understanding?
+
+man page for epoll_pwait says
+
+EINTR
+The call was interrupted by a signal handler before either any of the
+requested events occurred or the timeout expired; see signal(7).
+
+But it is not clear to me if we can figure out(without race) the
+chronological order if one of the requested events are completed or a
+signal came first.
+Is this a correct exectation?
+
+Also like pointed out above, this behavior is not consistent for all
+such syscalls(io_pgetevents). Was this also by design?
+
+-Deepa
