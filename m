@@ -2,86 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3441D310A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 16:55:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCC3E310D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 17:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfEaOzM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 10:55:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40650 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726531AbfEaOzM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 10:55:12 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 47CAFC0AD2B7;
-        Fri, 31 May 2019 14:55:12 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 44FF41001E6F;
-        Fri, 31 May 2019 14:55:09 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190529231112.GB3164@kroah.com>
-References: <20190529231112.GB3164@kroah.com> <20190528231218.GA28384@kroah.com> <20190528162603.GA24097@kroah.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk> <4031.1559064620@warthog.procyon.org.uk> <31936.1559146000@warthog.procyon.org.uk>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring buffer
+        id S1726676AbfEaPFR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 11:05:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39034 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726037AbfEaPFR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 May 2019 11:05:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4236DAD9C;
+        Fri, 31 May 2019 15:05:16 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3762.1559314508.1@warthog.procyon.org.uk>
-Date:   Fri, 31 May 2019 15:55:08 +0100
-Message-ID: <3763.1559314508@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 31 May 2019 14:55:12 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 31 May 2019 17:05:16 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     azat@libevent.org, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 07/13] epoll: call ep_add_event_to_uring() from
+ ep_poll_callback()
+In-Reply-To: <20190531130516.GA2606@hirez.programming.kicks-ass.net>
+References: <20190516085810.31077-1-rpenyaev@suse.de>
+ <20190516085810.31077-8-rpenyaev@suse.de>
+ <20190531095616.GD17637@hirez.programming.kicks-ass.net>
+ <98971429dc36e8a2e3417af1744de2b2@suse.de>
+ <20190531130516.GA2606@hirez.programming.kicks-ass.net>
+Message-ID: <8dc64c770b693aeb2040cca7ec697a7a@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Greg KH <gregkh@linuxfoundation.org> wrote:
+On 2019-05-31 15:05, Peter Zijlstra wrote:
+> On Fri, May 31, 2019 at 01:22:54PM +0200, Roman Penyaev wrote:
+>> On 2019-05-31 11:56, Peter Zijlstra wrote:
+>> > On Thu, May 16, 2019 at 10:58:04AM +0200, Roman Penyaev wrote:
+> 
+>> > > +static inline bool ep_clear_public_event_bits(struct epitem *epi)
+>> > > +{
+>> > > +	__poll_t old, flags;
+>> > > +
+>> > > +	/*
+>> > > +	 * Here we race with ourselves and with ep_modify(), which can
+>> > > +	 * change the event bits.  In order not to override events updated
+>> > > +	 * by ep_modify() we have to do cmpxchg.
+>> > > +	 */
+>> > > +
+>> > > +	old = epi->event.events;
+>> > > +	do {
+>> > > +		flags = old;
+>> > > +	} while ((old = cmpxchg(&epi->event.events, flags,
+>> > > +				flags & EP_PRIVATE_BITS)) != flags);
+>> > > +
+>> > > +	return flags & ~EP_PRIVATE_BITS;
+>> > > +}
+>> >
+>> > AFAICT epi->event.events also has normal writes to it, eg. in
+>> > ep_modify(). A number of architectures cannot handle concurrent normal
+>> > writes and cmpxchg() to the same variable.
+>> 
+>> Yes, we race with the current function and with ep_modify().  Then,
+>> ep_modify()
+>> should do something as the following:
+>> 
+>> -	epi->event.events = event->events
+>> +	xchg(&epi->event.events, event->events);
+>> 
+>> Is that ok?
+> 
+> That should be correct, but at that point I think we should also always
+> read the thing with READ_ONCE() to avoid load-tearing. And I suspect it
+> then becomes sensible to change the type to atomic_t.
 
-> So, if that's all that needs to be fixed, can you use the same
-> buffer/code if that patch is merged?
+But it seems if we afraid of load tearing that should be fixed 
+separately,
+independently of this patchset, because epi->event.events is updated
+in ep_modify() and races with ep_poll_callback(), which reads the value
+in couple of places.
 
-I really don't know.  The perf code is complex, partially in hardware drivers
-and is tricky to understand - though a chunk of that is the "aux" buffer part;
-PeterZ used words like "special" and "magic" and the comments in the code talk
-about the hardware writing into the buffer.
+Probably nothing terrible will happen, because eventually event comes
+or just ignored.
 
-__perf_output_begin() does not appear to be SMP safe.  It uses local_cmpxchg()
-and local_add() which on x86 lack the LOCK prefix.
 
-stracing the perf command on my test machine, it calls perf_event_open(2) four
-times and mmap's each fd it gets back.  I'm guessing that each one maps a
-separate buffer for each CPU.
+> atomic_set() vs atomic_cmpxchg() only carries the extra overhead on
+> those 'dodgy' platforms.
+> 
+>> Just curious: what are these archs?
+> 
+> Oh, lovely stuff like parisc, sparc32 and arc-eznps. See
+> arch/parisc/lib/bitops.c:__cmpxchg_*() for example :/ Those systems 
+> only
+> have a single truly atomic op (something from the xchg / test-and-set
+> family) and the rest is fudged on top of that.
 
-So to use watch_queue based on perf's buffering, you would have to have a
-(2^N)+1 pages-sized buffer for each CPU.  So that would be a minimum of 64K of
-unswappable memory for my desktop machine, say).  Multiply that by each
-process that wants to listen for events...
+Locks, nice.
 
-What I'm aiming for is something that has a single buffer used by all CPUs for
-each instance of /dev/watch_queue opened and I'd also like to avoid having to
-allocate the metadata page and the aux buffer to save space.  This is locked
-memory and cannot be swapped.
+--
+Roman
 
-Also, perf has to leave a gap in the ring because it uses CIRC_SPACE(), though
-that's a minor detail that I guess can't be fixed now.
 
-I'm also slightly concerned that __perf_output_begin() doesn't check if
-rb->user->tail has got ahead of rb->user->head or that it's lagging too far
-behind.  I doubt it's a serious problem for the kernel since it won't write
-outside of the buffer, but userspace might screw up.  I think the worst that
-will happen is that userspace will get confused.
-
-One thing I would like is to waive the 2^N size requirement.  I understand
-*why* we do that, but I wonder how expensive DIV instructions are for
-relatively small divisors.
-
-David
