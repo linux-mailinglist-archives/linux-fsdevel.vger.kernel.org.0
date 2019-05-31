@@ -2,76 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05095315B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 21:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6C4C31665
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 23:06:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbfEaT44 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 15:56:56 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37023 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727147AbfEaT44 (ORCPT
+        id S1727646AbfEaVGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 17:06:52 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:41574 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727578AbfEaVGw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 15:56:56 -0400
-Received: by mail-qt1-f193.google.com with SMTP id y57so2408226qtk.4;
-        Fri, 31 May 2019 12:56:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y/rGGdWu5XycD5C8N2GrP1YfPaYIiEt1+UzdCzQQwTA=;
-        b=IRDgGMYuAvaE1GSIOI3o/tLy6QghUC/gn59W8EGZYnnrf9ygntjzbieiQ3dlEsllbU
-         ztyyIguVbB2eHpmI9PkEJ2BwAS9VlMhKzI+fhGp2Lgr6qdZSii2rAWmai/dO1jFO5bxB
-         cVXi/mZFGbSbMsIAvroXJO/nn9LYuVE7T9DyKs4KHkS08aDguFsrE07Ml8RNFFXZ+X5G
-         svudypRSxUBdUObaug++K1UclxUiicg5g+AnqXx5puXnX8UkMleopia6girdXGU8pZcl
-         pfT6fHEXuCzscjxIpLM04Vewl7J3jbV0wGGhX+nv5qLlnJHgkDn9NqEepMNlBbte9z++
-         nkvw==
-X-Gm-Message-State: APjAAAVtQFKrl/qfDJBgj/1KCyOFg3tHCbU4gYtI8oWsyc+lJhSUS3W9
-        1U8LurkPcqIvnSneESH1GxXBaWFmkXz/x/3ap9g=
-X-Google-Smtp-Source: APXvYqz07GsQb18PQEuYoOrVPB5qWAwO/Z2Je+evEIb3JjUC/80MFu0dsduMvyyuzYa7wz7Pj3pRLV9pSmAglB0lGPc=
-X-Received: by 2002:a0c:b78a:: with SMTP id l10mr10482109qve.62.1559332615542;
- Fri, 31 May 2019 12:56:55 -0700 (PDT)
+        Fri, 31 May 2019 17:06:52 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4VL3bqp051634;
+        Fri, 31 May 2019 21:06:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=xeSRW3D8U1fPvu73DjNMkhW51M5eX50iQzGLjyvUe8I=;
+ b=Hp2/1r6K52gYO3LO7Vuk6P5VaR2wsMxJ8Kjq20/yiaiyHKCdKFR1RU4Em8IP4fqcW17d
+ N5G/UfIBAtAkETwxqWvK3TP9Y/8DwLgBEU9SkV/b4pi0/BByowO4JQjX9vQung4f+Q6D
+ L0iqnd2mPMjyIKsQeNlO0S7HFOzTF74hg8DR7uOZNuXXmzD3sfkHIsPVF1G5C55dM3rU
+ xopWoQJyHRFEjQW1W9vZ3LanTKgsrfrLywEmbhElhvKSCY7ey6Jhu7ZPZ3awXhKWdbZu
+ 2esgw2euVJPfHE8xqv1A3+kRk3IjTOKKAI4gn7pNlPFFN8/W4Veui135n33pQ9MQIqLE ug== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2spxbqrnc6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 31 May 2019 21:06:13 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4VL5SWY109080;
+        Fri, 31 May 2019 21:06:13 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2ss1fpvgs1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 31 May 2019 21:06:12 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4VL66Q4030638;
+        Fri, 31 May 2019 21:06:07 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 31 May 2019 14:06:06 -0700
+Date:   Fri, 31 May 2019 14:06:05 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com
+Cc:     fstests@vger.kernel.org, Murphy Zhou <xzhou@redhat.com>,
+        linux-nfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        fengxiaoli0714@gmail.com
+Subject: [PATCH] nfs: disable client side deduplication
+Message-ID: <20190531210605.GA5381@magnolia>
 MIME-Version: 1.0
-References: <20190531191204.4044-1-palmer@sifive.com> <20190531191204.4044-4-palmer@sifive.com>
-In-Reply-To: <20190531191204.4044-4-palmer@sifive.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 31 May 2019 21:56:39 +0200
-Message-ID: <CAK8P3a2=xko56LbwV4tyhyyyX+tw+EV-NGavYEYj0q61t=mnwg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] asm-generic: Register fchmodat4 as syscall 428
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9274 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=778
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905310128
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9274 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=813 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905310128
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 31, 2019 at 9:23 PM Palmer Dabbelt <palmer@sifive.com> wrote:
->
-> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-As usual, each patch needs a changelog text. I would prefer having a single
-patch here that changes /all/ system call tables at once, rather than doing one
-at a time like we used to.
+The NFS protocol doesn't support deduplication, so turn it off again.
 
-In linux-next, we are at number 434 now, and there are a couple of other
-new system calls being proposed right now (more than usual), so you may
-have to change the number a few times.
+Fixes: ce96e888fe48e ("Fix nfs4.2 return -EINVAL when do dedupe operation")
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+---
+ fs/nfs/nfs4file.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Note: most architectures use .tbl files now, the exceptions are
-include/uapi/asm-generic/unistd.h and arch/arm64/include/asm/unistd32.h,
-and the latter also requires changing __NR_compat_syscalls in asm/unistd.h.
-
-Numbers should now be the same across architectures, except for alpha,
-which has a +110 offset. We have discussed ways to have a single
-file to modify for a new call on all architectures, but no patches yet.
-
-     Arnd
+diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+index cf42a8b939e3..1915f24bba85 100644
+--- a/fs/nfs/nfs4file.c
++++ b/fs/nfs/nfs4file.c
+@@ -187,7 +187,11 @@ static loff_t nfs42_remap_file_range(struct file *src_file, loff_t src_off,
+ 	bool same_inode = false;
+ 	int ret;
+ 
+-	if (remap_flags & ~(REMAP_FILE_DEDUP | REMAP_FILE_ADVISORY))
++	/* NFS does not support deduplication. */
++	if (remap_flags & REMAP_FILE_DEDUP)
++		return -EOPNOTSUPP;
++
++	if (remap_flags & ~REMAP_FILE_ADVISORY)
+ 		return -EINVAL;
+ 
+ 	/* check alignment w.r.t. clone_blksize */
