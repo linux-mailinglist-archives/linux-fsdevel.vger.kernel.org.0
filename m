@@ -2,135 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E4C230D7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 13:48:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34D5830DB4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 14:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbfEaLsm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 07:48:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55768 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726403AbfEaLsm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 07:48:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F1702AD4E;
-        Fri, 31 May 2019 11:48:39 +0000 (UTC)
+        id S1726518AbfEaMCb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 08:02:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34542 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726330AbfEaMCa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 May 2019 08:02:30 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AD5363001789;
+        Fri, 31 May 2019 12:02:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1F522176B4;
+        Fri, 31 May 2019 12:02:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190531111445.GO2677@hirez.programming.kicks-ass.net>
+References: <20190531111445.GO2677@hirez.programming.kicks-ass.net> <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com> <20190528162603.GA24097@kroah.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk> <4031.1559064620@warthog.procyon.org.uk> <20190528231218.GA28384@kroah.com> <31936.1559146000@warthog.procyon.org.uk> <16193.1559163763@warthog.procyon.org.uk>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     dhowells@redhat.com, Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring buffer
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 31 May 2019 13:48:39 +0200
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Renzo Davoli <renzo@cs.unibo.it>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Davide Libenzi <davidel@xmailserver.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH 1/1] eventfd new tag EFD_VPOLL: generate epoll events
-In-Reply-To: <20190531104502.GE3661@cs.unibo.it>
-References: <20190526142521.GA21842@cs.unibo.it>
- <20190527073332.GA13782@kroah.com> <20190527133621.GC26073@cs.unibo.it>
- <480f1bda66b67f740f5da89189bbfca3@suse.de>
- <20190531104502.GE3661@cs.unibo.it>
-Message-ID: <cd20672aaf13f939b4f798d0839d2438@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <21941.1559304135.1@warthog.procyon.org.uk>
+Date:   Fri, 31 May 2019 13:02:15 +0100
+Message-ID: <21942.1559304135@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 31 May 2019 12:02:30 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-05-31 12:45, Renzo Davoli wrote:
-> HI Roman,
-> 
-> On Fri, May 31, 2019 at 11:34:08AM +0200, Roman Penyaev wrote:
->> On 2019-05-27 15:36, Renzo Davoli wrote:
->> > Unfortunately this approach cannot be applied to
->> > poll/select/ppoll/pselect/epoll.
->> 
->> If you have to override other systemcalls, what is the problem to 
->> override
->> poll family?  It will add, let's say, 50 extra code lines complexity 
->> to your
->> userspace code.  All you need is to be woken up by *any* event and 
->> check
->> one mask variable, in order to understand what you need to do: read or
->> write,
->> basically exactly what you do in your eventfd modification, but only 
->> in
->> userspace.
-> 
-> This approach would not scale. If I want to use both a (user-space)
-> network stack
-> and a (emulated) device (or more stacks and devices) which
-> (overridden) poll would I use?
-> 
-> The poll of the first stack is not able to to deal with the third 
-> device.
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Since each such a stack has a set of read/write/etc functions you always
-can extend you stack with another call which returns you event mask,
-specifying what exactly you have to do, e.g.:
+> Can you re-iterate the exact problem? I konw we talked about this in the
+> past, but I seem to have misplaced those memories :/
 
-     nfds = epoll_wait(epollfd, events, MAX_EVENTS, -1);
-     for (n = 0; n < nfds; ++n) {
-          struct sock *sock;
+Take this for example:
 
-          sock = events[n].data.ptr;
-          events = sock->get_events(sock, &events[n]);
+	void afs_put_call(struct afs_call *call)
+	{
+		struct afs_net *net = call->net;
+		int n = atomic_dec_return(&call->usage);
+		int o = atomic_read(&net->nr_outstanding_calls);
 
-          if (events & EPOLLIN)
-              sock->read(sock);
-          if (events & EPOLLOUT)
-              sock->write(sock);
-     }
+		trace_afs_call(call, afs_call_trace_put, n + 1, o,
+			       __builtin_return_address(0));
 
+		ASSERTCMP(n, >=, 0);
+		if (n == 0) {
+			...
+		}
+	}
 
-With such a virtual table you can mix all userspace stacks and even
-with normal sockets, for which 'get_events' function can be declared as
+I am printing the usage count in the afs_call tracepoint so that I can use it
+to debug refcount bugs.  If I do it like this:
 
-static poll_t kernel_sock_get_events(struct sock *sock, struct 
-epoll_event *ev)
-{
-     return ev->events;
-}
+	void afs_put_call(struct afs_call *call)
+	{
+		int n = refcount_read(&call->usage);
+		int o = atomic_read(&net->nr_outstanding_calls);
 
-Do I miss something?
+		trace_afs_call(call, afs_call_trace_put, n, o,
+			       __builtin_return_address(0));
 
+		if (refcount_dec_and_test(&call->usage)) {
+			...
+		}
+	}
 
->> > > Why can it not be less than 64?
->> > This is the imeplementation of 'write'. The 64 bits include the
->> > 'command'
->> > EFD_VPOLL_ADDEVENTS, EFD_VPOLL_DELEVENTS or EFD_VPOLL_MODEVENTS (in the
->> > most
->> > significant 32 bits) and the set of events (in the lowest 32 bits).
->> 
->> Do you really need add/del/mod semantics?  Userspace still has to keep 
->> mask
->> somewhere, so you can have one simple command, which does:
->>    ctx->count = events;
->> in kernel, so no masks and this games with bits are needed.  That will
->> simplify API.
-> 
-> It is true, at the price to have more complex code in user space.
-> Other system calls could have beeen implemented as "set the value",
-> instead there are
-> ADD/DEL modification flags.
-> I mean for example sigprocmask (SIG_BLOCK, SIG_UNBLOCK, SIG_SETMASK),
-> or even epoll_ctl.
-> While poll requires the program to keep the struct pollfd array stored
-> somewhere,
-> epoll is more powerful and flexible as different file descriptors can 
-> be added
-> and deleted by different modules/components.
-> 
-> If I have two threads implementing the send and receive path of a
-> socket in a user-space
+then there's a temporal gap between the usage count being read and the actual
+atomic decrement in which another CPU can alter the count.  This can be
+exacerbated by an interrupt occurring, a softirq occurring or someone enabling
+the tracepoint.
 
-Eventually you come up with such a lock to protect your tcp or whatever
-state machine.  Or you have a real example where read and write paths
-can work completely independently?
+I can't do the tracepoint after the decrement if refcount_dec_and_test()
+returns false unless I save all the values from the object that I might need
+as the object could be destroyed any time from that point on.  In this
+particular case, that's just call->debug_id, but it could be other things in
+other cases.
 
---
-Roman
+Note that I also can't touch the afs_net object in that situation either, and
+the outstanding calls count that I record will potentially be out of date -
+but there's not a lot I can do about that.
+
+David
