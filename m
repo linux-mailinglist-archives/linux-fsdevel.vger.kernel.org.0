@@ -2,96 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3306314A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 20:29:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09F4D314F0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 20:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbfEaS3J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 14:29:09 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41702 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbfEaS3I (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 14:29:08 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 7056B261164
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org
-Subject: Re: [PATCH] ext4: Optimize case-insensitive lookups
-Organization: Collabora
-References: <20190529185446.22757-1-krisman@collabora.com>
-        <20190530210156.GI2998@mit.edu>
-Date:   Fri, 31 May 2019 14:29:04 -0400
-In-Reply-To: <20190530210156.GI2998@mit.edu> (Theodore Ts'o's message of "Thu,
-        30 May 2019 17:01:56 -0400")
-Message-ID: <851s0eiikv.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        id S1727119AbfEaSuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 14:50:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48200 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726589AbfEaSup (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 May 2019 14:50:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7375AAD3B;
+        Fri, 31 May 2019 18:50:44 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 31 May 2019 20:50:44 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     azat@libevent.org, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/13] epoll: support pollable epoll from userspace
+In-Reply-To: <20190531163312.GW2650@hirez.programming.kicks-ass.net>
+References: <20190516085810.31077-1-rpenyaev@suse.de>
+ <20190531163312.GW2650@hirez.programming.kicks-ass.net>
+Message-ID: <327c990a4418b3d9c5c94787a37350bb@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Theodore Ts'o" <tytso@mit.edu> writes:
+On 2019-05-31 18:33, Peter Zijlstra wrote:
+> On Thu, May 16, 2019 at 10:57:57AM +0200, Roman Penyaev wrote:
+>> When new event comes for some epoll item kernel does the following:
+>> 
+>>  struct epoll_uitem *uitem;
+>> 
+>>  /* Each item has a bit (index in user items array), discussed later 
+>> */
+>>  uitem = user_header->items[epi->bit];
+>> 
+>>  if (!atomic_fetch_or(uitem->ready_events, pollflags)) {
+>>      i = atomic_add(&ep->user_header->tail, 1);
+> 
+> So this is where you increment tail
+> 
+>> 
+>>      item_idx = &user_index[i & index_mask];
+>> 
+>>      /* Signal with a bit, user spins on index expecting value > 0 */
+>>      *item_idx = idx + 1;
+> 
+> IUC, this is where you write the idx into shared memory, which is
+> _after_ tail has already been incremented.
+> 
+>>  }
+>> 
+>> Important thing here is that ring can't infinitely grow and corrupt 
+>> other
+>> elements, because kernel always checks that item was marked as ready, 
+>> so
+>> userspace has to clear ready_events field.
+>> 
+>> On userside events the following code should be used in order to 
+>> consume
+>> events:
+>> 
+>>  tail = READ_ONCE(header->tail);
+>>  for (i = 0; header->head != tail; header->head++) {
+>>      item_idx_ptr = &index[idx & indeces_mask];
+>> 
+>>      /*
+>>       * Spin here till we see valid index
+>>       */
+>>      while (!(idx = __atomic_load_n(item_idx_ptr, __ATOMIC_ACQUIRE)))
+>>          ;
+> 
+> Which you then try and fix up by busy waiting for @idx to become !0 ?!
+> 
+> Why not write the idx first, then increment the ->tail, such that when
+> we see ->tail, we already know idx must be correct?
+> 
+>> 
+>>      item = &header->items[idx - 1];
+>> 
+>>      /*
+>>       * Mark index as invalid, that is for userspace only, kernel does 
+>> not care
+>>       * and will refill this pointer only when observes that event is 
+>> cleared,
+>>       * which happens below.
+>>       */
+>>      *item_idx_ptr = 0;
+> 
+> That avoids this store too.
+> 
+>> 
+>>      /*
+>>       * Fetch data first, if event is cleared by the kernel we drop 
+>> the data
+>>       * returning false.
+>>       */
+>>      event->data = item->event.data;
+>>      event->events = __atomic_exchange_n(&item->ready_events, 0,
+>>                          __ATOMIC_RELEASE);
+>> 
+>>  }
+> 
+> Aside from that, you have to READ/WRITE_ONCE() on ->head, to avoid
+> load/store tearing.
 
-> On Wed, May 29, 2019 at 02:54:46PM -0400, Gabriel Krisman Bertazi wrote:
->> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
->> index c18ab748d20d..e3809cfda9f4 100644
->> --- a/fs/ext4/ext4.h
->> +++ b/fs/ext4/ext4.h
->> @@ -2078,6 +2078,10 @@ struct ext4_filename {
->>  #ifdef CONFIG_FS_ENCRYPTION
->>  	struct fscrypt_str crypto_buf;
->>  #endif
->> +#ifdef CONFIG_UNICODE
->> +	int cf_len;
->> +	unsigned char cf_name[EXT4_NAME_LEN];
->> +#endif
->>  };
->>  
->>  #define fname_name(p) ((p)->disk_name.name)
->
-> EXT4_NAME_LEN is 256, and struct ext4_filename is allocated on the
-> stack.  So this is going to increase the stack usage by 258 bytes.
-> Perhaps should we just kmalloc the temporary buffer when it's needed?
+Yes, clear. Thanks.
 
-I wanted to avoid adding an allocation to this path, but maybe that was
-misguided, since this is out of the dcache critical path.  I also wanted
-to remove the allocation from d_hash, but we'd require a similar size
-allocation in the stack. Is that a good idea?
+> 
+> 
+> That would give something like:
+> 
+> kernel:
+> 
+> 	slot = atomic_fetch_inc(&ep->slot);
+> 	item_idx = &user_index[slot & idx_mask];
+> 	WRITE_ONCE(*item_idx, idx);
+> 	smp_store_release(&ep->user_header->tail, slot);
 
-> The other thing that this patch reminds me is that there is great
-> interest in supporting case folded directories and fscrypt at the same
-> time.  Today fscrypt works by encrypting the filename, and stashes it
-> in fname->crypto_buf, and this allows for a byte-for-byte comparison
-> of the encrypted name.  To support fscrypt && casefold, what we would
-> need to do is to change the htree hash so that the hash is caluclated
-> on the normalized form, and then we'll have to decrypt each filename
-> in the directory block and then compare it against the normalized form
-> that stashed in cf_name.  So that means we'll never need to allocate
-> memory for cf_name and crypto_buf at the same time.
+This can't be called from many cpus,  tail can be overwritten with "old"
+value.  That what I try to solve.
 
-fscrypt and case-insensitive is getting to the top of my to-do list,
-i'll something there early next week.  Thanks for the explanation on
-it.
+--
+Roman
 
->
-> We can also use struct fscrypt_str for cf_name; it's defined as a
-> combined unsighed char *name and u32 len.  We already use fscrypt_str
-> even the !CONFIG_FS_ENCRYPTION case, since it's a convenient way of
-> handling a non-NULL terminated filename blob.  And this will hopefully
-> make it simpler to deal with integrating casefolding and fscrypt in
-> the future.
-
-I will send a v2 with this change already, to simplify
-fscrypt+casefolding support.
->
-> Cheers,
->
-> 					- Ted
-
--- 
-Gabriel Krisman Bertazi
