@@ -2,188 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EEFE30E41
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 14:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E684030E66
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 14:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfEaMpA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 08:45:00 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44194 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbfEaMo7 (ORCPT
+        id S1727318AbfEaMx2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 08:53:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38640 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbfEaMx2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 08:44:59 -0400
-Received: by mail-lj1-f195.google.com with SMTP id e13so9439814ljl.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2019 05:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZXDOKwkAEMBmiYSeMHCXxPtDvLwnxyJqoeUB0a+jAg8=;
-        b=Oh5evWeBS0FQ5+SDSVIYDoDosmFdUraAVQSeP13wAG0FfkUCyvKQpzKYfoQx/Fc9jG
-         lSaXqIOqwzoUzI3o8vBwZqtrK4OfHuaXvwJgEezHSUYUzDIRs8JkI5NH1zlR4cxWyQme
-         Jfit8Diw2UqqiuTc+FH74c11TZCrrrdmpj/o5+9/QDcaiVnDEyYq21nnWSIA465u/MU4
-         +qSUnOUm6rmASeEsGsXm0RP0/aMO/Wsm45X36MGxa7H5G8PkA5ZCJKY5x4qvxmWuxnO8
-         Qn1PWZvVAf7u20A+XXfB5qKWG2QcdBuOAtm661NoEzPCdGshFZqYQtHFr/60ieylKxGT
-         GHFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZXDOKwkAEMBmiYSeMHCXxPtDvLwnxyJqoeUB0a+jAg8=;
-        b=ugOh63soNyO4b11OBb9f2+xRR3yLL7aVxYt6EPJ+vK2dHY0954a1LPxVjyGbQNPeyx
-         WyI7YkDVDSLJ17CEEkN5u1/0hNuztEaOsek8nVNwYheHyfhic/09JDDLnza+91sj8lgK
-         vWkO2v5D1UmT5adV0QlWonNOdnxtObUNCnvytV63qAs5qUC0UhHnY5R0QFEJibkDjp+q
-         cKc7tNShTLc6Re8BD8sP7z3lPjFdnPusiiTcV6U7qdN9N5ZZ1NXe+rEOZPN2TYiDMat8
-         8ZSrco7wg5+rt1+F4lH2B/2GIIDVTaryDKnX1egRIXfIgboFv9T/JLFu/rRNmv3rjiLV
-         87hg==
-X-Gm-Message-State: APjAAAUWdxhyt18/0+hfwWeOgDGYz4kNewvhlO5IfgUdFknrFMipfgyj
-        c2fSv6T1b4k4HCSOjG+3Y0Z6qb4z9GSSKi4zKzhK
-X-Google-Smtp-Source: APXvYqwRVVnGpDVdSGCj6R4r22cAjZvnCnlNYusSiD/sCSGkEdAyXXFr+krFA2m6K8I0tlJghON4fRG9yXZG4071sxQ=
-X-Received: by 2002:a2e:3e14:: with SMTP id l20mr5891599lja.40.1559306696964;
- Fri, 31 May 2019 05:44:56 -0700 (PDT)
+        Fri, 31 May 2019 08:53:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DlL4wtoEGkM4QG59LQfepPzxOPYXU06TZvlBD/LeQrE=; b=fu7jv48TN/LLMHW7NxBKy9n6V
+        oa90QMWRwGSIAA+Ez7MUsd/icARLqJbeKfE8YkpDmkkNjcci5ianBURtaFBWs7I3xc5Zifzoc/b4E
+        ayO8XhPVrk1fznnqjxmHi7TeLlyFKtZaSeV1coUmLhJOVSvxgzlZnx1S+Mzp+QnjMWPYtxkIQJxez
+        IIukJ084dlZvyjvoBsVf/k0LMXaM4S7RgfA8Xs7LJ5c5SMrDajFa3HrzHe/zuSZH04udJ2Z2EbhmJ
+        TBC6INGpKn7+yIV7PqVgXGsEC19R4q/T6IprHUrEoksjrNZKZCcm0dts8aFnfpAT++x+pzT0hNNEc
+        6xUUNIWrQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hWh2C-0003Mk-NZ; Fri, 31 May 2019 12:53:24 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 64ABA20274AFF; Fri, 31 May 2019 14:53:22 +0200 (CEST)
+Date:   Fri, 31 May 2019 14:53:22 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Roman Penyaev <rpenyaev@suse.de>
+Cc:     azat@libevent.org, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 06/13] epoll: introduce helpers for adding/removing
+ events to uring
+Message-ID: <20190531125322.GY2606@hirez.programming.kicks-ass.net>
+References: <20190516085810.31077-1-rpenyaev@suse.de>
+ <20190516085810.31077-7-rpenyaev@suse.de>
+ <20190531095607.GC17637@hirez.programming.kicks-ass.net>
+ <274e29d102133f3be1f309c66cb0af36@suse.de>
 MIME-Version: 1.0
-References: <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
- <20190529153427.GB8959@cisco> <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
- <20190529222835.GD8959@cisco> <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
- <20190530170913.GA16722@mail.hallyn.com> <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
- <20190530212900.GC5739@cisco> <CAHC9VhT5HPt9rCJoDutdvA3r1Y1GOHfpXe2eJ54atNC1=Vd8LA@mail.gmail.com>
- <20190531002058.tsddah4edcazkuzs@madcap2.tricolour.ca>
-In-Reply-To: <20190531002058.tsddah4edcazkuzs@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 31 May 2019 08:44:45 -0400
-Message-ID: <CAHC9VhTrM1op_EH=YAn9pU8dMOr=jB-Ph4SxFeqGFskwLmFnCA@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        ebiederm@xmission.com, nhorman@tuxdriver.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <274e29d102133f3be1f309c66cb0af36@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 30, 2019 at 8:21 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-05-30 19:26, Paul Moore wrote:
-> > On Thu, May 30, 2019 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > On Thu, May 30, 2019 at 03:29:32PM -0400, Paul Moore wrote:
-> > > >
-> > > > [REMINDER: It is an "*audit* container ID" and not a general
-> > > > "container ID" ;)  Smiley aside, I'm not kidding about that part.]
-> > >
-> > > This sort of seems like a distinction without a difference; presumably
-> > > audit is going to want to differentiate between everything that people
-> > > in userspace call a container. So you'll have to support all this
-> > > insanity anyway, even if it's "not a container ID".
-> >
-> > That's not quite right.  Audit doesn't care about what a container is,
-> > or is not, it also doesn't care if the "audit container ID" actually
-> > matches the ID used by the container engine in userspace and I think
-> > that is a very important line to draw.  Audit is simply given a value
-> > which it calls the "audit container ID", it ensures that the value is
-> > inherited appropriately (e.g. children inherit their parent's audit
-> > container ID), and it uses the value in audit records to provide some
-> > additional context for log analysis.  The distinction isn't limited to
-> > the value itself, but also to how it is used; it is an "audit
-> > container ID" and not a "container ID" because this value is
-> > exclusively for use by the audit subsystem.  We are very intentionally
-> > not adding a generic container ID to the kernel.  If the kernel does
-> > ever grow a general purpose container ID we will be one of the first
-> > ones in line to make use of it, but we are not going to be the ones to
-> > generically add containers to the kernel.  Enough people already hate
-> > audit ;)
-> >
-> > > > I'm not interested in supporting/merging something that isn't useful;
-> > > > if this doesn't work for your use case then we need to figure out what
-> > > > would work.  It sounds like nested containers are much more common in
-> > > > the lxc world, can you elaborate a bit more on this?
-> > > >
-> > > > As far as the possible solutions you mention above, I'm not sure I
-> > > > like the per-userns audit container IDs, I'd much rather just emit the
-> > > > necessary tracking information via the audit record stream and let the
-> > > > log analysis tools figure it out.  However, the bigger question is how
-> > > > to limit (re)setting the audit container ID when you are in a non-init
-> > > > userns.  For reasons already mentioned, using capable() is a non
-> > > > starter for everything but the initial userns, and using ns_capable()
-> > > > is equally poor as it essentially allows any userns the ability to
-> > > > munge it's audit container ID (obviously not good).  It appears we
-> > > > need a different method for controlling access to the audit container
-> > > > ID.
-> > >
-> > > One option would be to make it a string, and have it be append only.
-> > > That should be safe with no checks.
-> > >
-> > > I know there was a long thread about what type to make this thing. I
-> > > think you could accomplish the append-only-ness with a u64 if you had
-> > > some rule about only allowing setting lower order bits than those that
-> > > are already set. With 4 bits for simplicity:
-> > >
-> > > 1100         # initial container id
-> > > 1100 -> 1011 # not allowed
-> > > 1100 -> 1101 # allowed, but now 1101 is set in stone since there are
-> > >              # no lower order bits left
-> > >
-> > > There are probably fancier ways to do it if you actually understand
-> > > math :)
-> >
-> >  ;)
-> >
-> > > Since userns nesting is limited to 32 levels (right now, IIRC), and
-> > > you have 64 bits, this might be reasonable. You could just teach
-> > > container engines to use the first say N bits for themselves, with a 1
-> > > bit for the barrier at the end.
-> >
-> > I like the creativity, but I worry that at some point these
-> > limitations are going to be raised (limits have a funny way of doing
-> > that over time) and we will be in trouble.  I say "trouble" because I
-> > want to be able to quickly do an audit container ID comparison and
-> > we're going to pay a penalty for these larger values (we'll need this
-> > when we add multiple auditd support and the requisite record routing).
-> >
-> > Thinking about this makes me also realize we probably need to think a
-> > bit longer about audit container ID conflicts between orchestrators.
-> > Right now we just take the value that is given to us by the
-> > orchestrator, but if we want to allow multiple container orchestrators
-> > to work without some form of cooperation in userspace (I think we have
-> > to assume the orchestrators will not talk to each other) we likely
-> > need to have some way to block reuse of an audit container ID.  We
-> > would either need to prevent the orchestrator from explicitly setting
-> > an audit container ID to a currently in use value, or instead generate
-> > the audit container ID in the kernel upon an event triggered by the
-> > orchestrator (e.g. a write to a /proc file).  I suspect we should
-> > start looking at the idr code, I think we will need to make use of it.
->
-> My first reaction to using the IDR code is that once an idr is given up,
-> it can be reused.  I suppose we request IDRs and then never give them up
-> to avoid reuse...
+On Fri, May 31, 2019 at 01:15:21PM +0200, Roman Penyaev wrote:
+> On 2019-05-31 11:56, Peter Zijlstra wrote:
+> > On Thu, May 16, 2019 at 10:58:03AM +0200, Roman Penyaev wrote:
 
-I'm not sure we ever what to guarantee that an audit container ID
-won't be reused during the lifetime of the system, it is a discrete
-integer after all.  What I think we do want to guarantee is that we
-won't allow an unintentional audit container ID collision between
-different orchestrators; if a single orchestrator wants to reuse an
-audit container ID then that is its choice.
+> > > +		i = __atomic_fetch_add(&ep->user_header->tail, 1,
+> > > +				       __ATOMIC_ACQUIRE);
+> > 
+> > afaict __atomic_fetch_add() does not exist.
+> 
+> That is gcc extension.  I did not find any API just to increment
+> the variable atomically without using/casting to atomic.  What
+> is a proper way to achieve that?
 
-> I already had some ideas of preventing an existing ID from being reused,
+That's C11 atomics, and those shall not be used in the kernel. For one
+they're not available in the minimally required GCC version (4.6).
 
-Cool.  I only made the idr suggestion since it is used for PIDs and
-solves a very similar problem.
+The proper and only way is to use atomic_t, but also you cannot share
+atomic_t with userspace.
 
-> but that makes the practice of some container engines injecting
-> processes into existing containers difficult if not impossible.
-
-Yes, we'll need some provision to indicate which orchestrator
-"controls" that particular audit container ID, and allow that
-orchestrator to reuse that particular audit container ID (until all
-those containers disappear and the audit container ID is given back to
-the pool).
-
--- 
-paul moore
-www.paul-moore.com
+The normal way of doing something like this is to have a kernel private
+atomic_t and copy the value out to userspace using smp_store_release().
