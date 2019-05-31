@@ -2,82 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2BC531201
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 18:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BE7F311E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 18:02:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfEaQLg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 12:11:36 -0400
-Received: from smtprz15.163.net ([106.3.154.248]:36481 "EHLO smtp.tom.com"
+        id S1726819AbfEaQCP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 12:02:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50474 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726518AbfEaQLf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 12:11:35 -0400
-Received: from my-app01.tom.com (my-app01.tom.com [127.0.0.1])
-        by freemail01.tom.com (Postfix) with ESMTP id 38ABE1C81BCC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2019 23:50:59 +0800 (CST)
-Received: from my-app01.tom.com (HELO smtp.tom.com) ([127.0.0.1])
-          by my-app01 (TOM SMTP Server) with SMTP ID -1988830583
-          for <linux-fsdevel@vger.kernel.org>;
-          Fri, 31 May 2019 23:50:59 +0800 (CST)
-Received: from antispam1.tom.com (unknown [172.25.16.55])
-        by freemail01.tom.com (Postfix) with ESMTP id 5B1C51C81B53
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2019 23:50:58 +0800 (CST)
-Received: from antispam1.tom.com (antispam1.tom.com [127.0.0.1])
-        by antispam1.tom.com (Postfix) with ESMTP id 5716A10018A4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2019 23:50:58 +0800 (CST)
-X-Virus-Scanned: Debian amavisd-new at antispam1.tom.com
-Received: from antispam1.tom.com ([127.0.0.1])
-        by antispam1.tom.com (antispam1.tom.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id HqN98P59o-BY for <linux-fsdevel@vger.kernel.org>;
-        Fri, 31 May 2019 23:50:57 +0800 (CST)
-Received: from localhost (unknown [222.209.18.96])
-        by antispam1.tom.com (Postfix) with ESMTPA id 317E3100112A;
-        Fri, 31 May 2019 23:50:57 +0800 (CST)
-From:   Liu Xiang <liu.xiang6@zte.com.cn>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liuxiang_1999@126.com, Liu Xiang <liu.xiang6@zte.com.cn>
-Subject: [PATCH v2] fs: buffer: fix fully_mapped reset in block_read_full_page()
-Date:   Fri, 31 May 2019 23:50:51 +0800
-Message-Id: <1559317851-3861-1-git-send-email-liu.xiang6@zte.com.cn>
-X-Mailer: git-send-email 1.9.1
+        id S1726037AbfEaQCO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 May 2019 12:02:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 80981B00B;
+        Fri, 31 May 2019 16:02:13 +0000 (UTC)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 31 May 2019 18:02:13 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Azat Khuzhin <azat@libevent.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/13] epoll: support pollable epoll from userspace
+In-Reply-To: <a2a88f4f-d104-f565-4d6e-1dddc7f79a05@kernel.dk>
+References: <20190516085810.31077-1-rpenyaev@suse.de>
+ <a2a88f4f-d104-f565-4d6e-1dddc7f79a05@kernel.dk>
+Message-ID: <1d47ee76735f25ae5e91e691195f7aa5@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Because get_block() might set the buffer mapped, fully_mapped reset 
-should be done according to the result of buffer_mapped(bh) 
-which check the buffer mapped attribute again after get_block().
+On 2019-05-31 16:48, Jens Axboe wrote:
+> On 5/16/19 2:57 AM, Roman Penyaev wrote:
+>> Hi all,
+>> 
+>> This is v3 which introduces pollable epoll from userspace.
+>> 
+>> v3:
+>>   - Measurements made, represented below.
+>> 
+>>   - Fix alignment for epoll_uitem structure on all 64-bit archs except
+>>     x86-64. epoll_uitem should be always 16 bit, proper BUILD_BUG_ON
+>>     is added. (Linus)
+>> 
+>>   - Check pollflags explicitly on 0 inside work callback, and do 
+>> nothing
+>>     if 0.
+>> 
+>> v2:
+>>   - No reallocations, the max number of items (thus size of the user 
+>> ring)
+>>     is specified by the caller.
+>> 
+>>   - Interface is simplified: -ENOSPC is returned on attempt to add a 
+>> new
+>>     epoll item if number is reached the max, nothing more.
+>> 
+>>   - Alloced pages are accounted using user->locked_vm and limited to
+>>     RLIMIT_MEMLOCK value.
+>> 
+>>   - EPOLLONESHOT is handled.
+>> 
+>> This series introduces pollable epoll from userspace, i.e. user 
+>> creates
+>> epfd with a new EPOLL_USERPOLL flag, mmaps epoll descriptor, gets 
+>> header
+>> and ring pointers and then consumes ready events from a ring, avoiding
+>> epoll_wait() call.  When ring is empty, user has to call epoll_wait()
+>> in order to wait for new events.  epoll_wait() returns -ESTALE if user
+>> ring has events in the ring (kind of indication, that user has to 
+>> consume
+>> events from the user ring first, I could not invent anything better 
+>> than
+>> returning -ESTALE).
+>> 
+>> For user header and user ring allocation I used vmalloc_user().  I 
+>> found
+>> that it is much easy to reuse remap_vmalloc_range_partial() instead of
+>> dealing with page cache (like aio.c does).  What is also nice is that
+>> virtual address is properly aligned on SHMLBA, thus there should not 
+>> be
+>> any d-cache aliasing problems on archs with vivt or vipt caches.
+> 
+> Why aren't we just adding support to io_uring for this instead? Then we
+> don't need yet another entirely new ring, that's is just a little
+> different from what we have.
+> 
+> I haven't looked into the details of your implementation, just curious
+> if there's anything that makes using io_uring a non-starter for this
+> purpose?
 
-Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
----
+Afaict the main difference is that you do not need to recharge an fd
+(submit new poll request in terms of io_uring): once fd has been added 
+to
+epoll with epoll_ctl() - we get events.  When you have thousands of fds 
+-
+that should matter.
 
-Changes in v2:
- change comment
+Also interesting question is how difficult to modify existing event 
+loops
+in event libraries in order to support recharging (EPOLLONESHOT in terms
+of epoll).
 
- fs/buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Maybe Azat who maintains libevent can shed light on this (currently I 
+see
+that libevent does not support "EPOLLONESHOT" logic).
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index e450c55..987aadb 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2243,7 +2243,6 @@ int block_read_full_page(struct page *page, get_block_t *get_block)
- 		if (!buffer_mapped(bh)) {
- 			int err = 0;
- 
--			fully_mapped = 0;
- 			if (iblock < lblock) {
- 				WARN_ON(bh->b_size != blocksize);
- 				err = get_block(inode, iblock, bh, 0);
-@@ -2251,6 +2250,7 @@ int block_read_full_page(struct page *page, get_block_t *get_block)
- 					SetPageError(page);
- 			}
- 			if (!buffer_mapped(bh)) {
-+				fully_mapped = 0;
- 				zero_user(page, i * blocksize, blocksize);
- 				if (!err)
- 					set_buffer_uptodate(bh);
--- 
-1.9.1
+
+--
+Roman
+
 
