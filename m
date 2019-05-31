@@ -2,136 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01FDF30E39
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 14:42:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EEFE30E41
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 14:45:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfEaMmd convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 08:42:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:24302 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726330AbfEaMmc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 08:42:32 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DCFCF3179B6E;
-        Fri, 31 May 2019 12:42:31 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 211B85C21A;
-        Fri, 31 May 2019 12:42:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190529230954.GA3164@kroah.com>
-References: <20190529230954.GA3164@kroah.com> <20190528231218.GA28384@kroah.com> <20190528162603.GA24097@kroah.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk> <4031.1559064620@warthog.procyon.org.uk> <31936.1559146000@warthog.procyon.org.uk>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring buffer
+        id S1726826AbfEaMpA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 08:45:00 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44194 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbfEaMo7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 May 2019 08:44:59 -0400
+Received: by mail-lj1-f195.google.com with SMTP id e13so9439814ljl.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2019 05:44:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZXDOKwkAEMBmiYSeMHCXxPtDvLwnxyJqoeUB0a+jAg8=;
+        b=Oh5evWeBS0FQ5+SDSVIYDoDosmFdUraAVQSeP13wAG0FfkUCyvKQpzKYfoQx/Fc9jG
+         lSaXqIOqwzoUzI3o8vBwZqtrK4OfHuaXvwJgEezHSUYUzDIRs8JkI5NH1zlR4cxWyQme
+         Jfit8Diw2UqqiuTc+FH74c11TZCrrrdmpj/o5+9/QDcaiVnDEyYq21nnWSIA465u/MU4
+         +qSUnOUm6rmASeEsGsXm0RP0/aMO/Wsm45X36MGxa7H5G8PkA5ZCJKY5x4qvxmWuxnO8
+         Qn1PWZvVAf7u20A+XXfB5qKWG2QcdBuOAtm661NoEzPCdGshFZqYQtHFr/60ieylKxGT
+         GHFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZXDOKwkAEMBmiYSeMHCXxPtDvLwnxyJqoeUB0a+jAg8=;
+        b=ugOh63soNyO4b11OBb9f2+xRR3yLL7aVxYt6EPJ+vK2dHY0954a1LPxVjyGbQNPeyx
+         WyI7YkDVDSLJ17CEEkN5u1/0hNuztEaOsek8nVNwYheHyfhic/09JDDLnza+91sj8lgK
+         vWkO2v5D1UmT5adV0QlWonNOdnxtObUNCnvytV63qAs5qUC0UhHnY5R0QFEJibkDjp+q
+         cKc7tNShTLc6Re8BD8sP7z3lPjFdnPusiiTcV6U7qdN9N5ZZ1NXe+rEOZPN2TYiDMat8
+         8ZSrco7wg5+rt1+F4lH2B/2GIIDVTaryDKnX1egRIXfIgboFv9T/JLFu/rRNmv3rjiLV
+         87hg==
+X-Gm-Message-State: APjAAAUWdxhyt18/0+hfwWeOgDGYz4kNewvhlO5IfgUdFknrFMipfgyj
+        c2fSv6T1b4k4HCSOjG+3Y0Z6qb4z9GSSKi4zKzhK
+X-Google-Smtp-Source: APXvYqwRVVnGpDVdSGCj6R4r22cAjZvnCnlNYusSiD/sCSGkEdAyXXFr+krFA2m6K8I0tlJghON4fRG9yXZG4071sxQ=
+X-Received: by 2002:a2e:3e14:: with SMTP id l20mr5891599lja.40.1559306696964;
+ Fri, 31 May 2019 05:44:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <24719.1559306541.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Fri, 31 May 2019 13:42:21 +0100
-Message-ID: <24720.1559306541@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 31 May 2019 12:42:32 +0000 (UTC)
+References: <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+ <20190529153427.GB8959@cisco> <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
+ <20190529222835.GD8959@cisco> <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
+ <20190530170913.GA16722@mail.hallyn.com> <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
+ <20190530212900.GC5739@cisco> <CAHC9VhT5HPt9rCJoDutdvA3r1Y1GOHfpXe2eJ54atNC1=Vd8LA@mail.gmail.com>
+ <20190531002058.tsddah4edcazkuzs@madcap2.tricolour.ca>
+In-Reply-To: <20190531002058.tsddah4edcazkuzs@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 31 May 2019 08:44:45 -0400
+Message-ID: <CAHC9VhTrM1op_EH=YAn9pU8dMOr=jB-Ph4SxFeqGFskwLmFnCA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        ebiederm@xmission.com, nhorman@tuxdriver.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Greg KH <gregkh@linuxfoundation.org> wrote:
-
-> > kref_put() enforces a very specific destructor signature.  I know of places
-> > where that doesn't work because the destructor takes more than one argument
-> > (granted that this is not the case here).  So why does kref_put() exist at
-> > all?  Why not kref_dec_and_test()?
+On Thu, May 30, 2019 at 8:21 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2019-05-30 19:26, Paul Moore wrote:
+> > On Thu, May 30, 2019 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > > On Thu, May 30, 2019 at 03:29:32PM -0400, Paul Moore wrote:
+> > > >
+> > > > [REMINDER: It is an "*audit* container ID" and not a general
+> > > > "container ID" ;)  Smiley aside, I'm not kidding about that part.]
+> > >
+> > > This sort of seems like a distinction without a difference; presumably
+> > > audit is going to want to differentiate between everything that people
+> > > in userspace call a container. So you'll have to support all this
+> > > insanity anyway, even if it's "not a container ID".
+> >
+> > That's not quite right.  Audit doesn't care about what a container is,
+> > or is not, it also doesn't care if the "audit container ID" actually
+> > matches the ID used by the container engine in userspace and I think
+> > that is a very important line to draw.  Audit is simply given a value
+> > which it calls the "audit container ID", it ensures that the value is
+> > inherited appropriately (e.g. children inherit their parent's audit
+> > container ID), and it uses the value in audit records to provide some
+> > additional context for log analysis.  The distinction isn't limited to
+> > the value itself, but also to how it is used; it is an "audit
+> > container ID" and not a "container ID" because this value is
+> > exclusively for use by the audit subsystem.  We are very intentionally
+> > not adding a generic container ID to the kernel.  If the kernel does
+> > ever grow a general purpose container ID we will be one of the first
+> > ones in line to make use of it, but we are not going to be the ones to
+> > generically add containers to the kernel.  Enough people already hate
+> > audit ;)
+> >
+> > > > I'm not interested in supporting/merging something that isn't useful;
+> > > > if this doesn't work for your use case then we need to figure out what
+> > > > would work.  It sounds like nested containers are much more common in
+> > > > the lxc world, can you elaborate a bit more on this?
+> > > >
+> > > > As far as the possible solutions you mention above, I'm not sure I
+> > > > like the per-userns audit container IDs, I'd much rather just emit the
+> > > > necessary tracking information via the audit record stream and let the
+> > > > log analysis tools figure it out.  However, the bigger question is how
+> > > > to limit (re)setting the audit container ID when you are in a non-init
+> > > > userns.  For reasons already mentioned, using capable() is a non
+> > > > starter for everything but the initial userns, and using ns_capable()
+> > > > is equally poor as it essentially allows any userns the ability to
+> > > > munge it's audit container ID (obviously not good).  It appears we
+> > > > need a different method for controlling access to the audit container
+> > > > ID.
+> > >
+> > > One option would be to make it a string, and have it be append only.
+> > > That should be safe with no checks.
+> > >
+> > > I know there was a long thread about what type to make this thing. I
+> > > think you could accomplish the append-only-ness with a u64 if you had
+> > > some rule about only allowing setting lower order bits than those that
+> > > are already set. With 4 bits for simplicity:
+> > >
+> > > 1100         # initial container id
+> > > 1100 -> 1011 # not allowed
+> > > 1100 -> 1101 # allowed, but now 1101 is set in stone since there are
+> > >              # no lower order bits left
+> > >
+> > > There are probably fancier ways to do it if you actually understand
+> > > math :)
+> >
+> >  ;)
+> >
+> > > Since userns nesting is limited to 32 levels (right now, IIRC), and
+> > > you have 64 bits, this might be reasonable. You could just teach
+> > > container engines to use the first say N bits for themselves, with a 1
+> > > bit for the barrier at the end.
+> >
+> > I like the creativity, but I worry that at some point these
+> > limitations are going to be raised (limits have a funny way of doing
+> > that over time) and we will be in trouble.  I say "trouble" because I
+> > want to be able to quickly do an audit container ID comparison and
+> > we're going to pay a penalty for these larger values (we'll need this
+> > when we add multiple auditd support and the requisite record routing).
+> >
+> > Thinking about this makes me also realize we probably need to think a
+> > bit longer about audit container ID conflicts between orchestrators.
+> > Right now we just take the value that is given to us by the
+> > orchestrator, but if we want to allow multiple container orchestrators
+> > to work without some form of cooperation in userspace (I think we have
+> > to assume the orchestrators will not talk to each other) we likely
+> > need to have some way to block reuse of an audit container ID.  We
+> > would either need to prevent the orchestrator from explicitly setting
+> > an audit container ID to a currently in use value, or instead generate
+> > the audit container ID in the kernel upon an event triggered by the
+> > orchestrator (e.g. a write to a /proc file).  I suspect we should
+> > start looking at the idr code, I think we will need to make use of it.
 >
-> The destructor only takes one object pointer as you are finally freeing
-> that object.  What more do you need/want to "know" at that point in
-> time?
+> My first reaction to using the IDR code is that once an idr is given up,
+> it can be reused.  I suppose we request IDRs and then never give them up
+> to avoid reuse...
 
-Imagine that I have an object that's on a list rooted in a namespace and that
-I have a lot of these objects.  Imagine further that any time I want to put a
-ref on one of these objects, it's in a context that has the namespace pinned.
-I therefore don't need to store a pointer to the namespace in every object
-because I can pass that in to the put function
+I'm not sure we ever what to guarantee that an audit container ID
+won't be reused during the lifetime of the system, it is a discrete
+integer after all.  What I think we do want to guarantee is that we
+won't allow an unintentional audit container ID collision between
+different orchestrators; if a single orchestrator wants to reuse an
+audit container ID then that is its choice.
 
-Indeed, I can still access the namespace even after the decrement didn't
-reduce the usage count to 0 - say for doing statistics.
+> I already had some ideas of preventing an existing ID from being reused,
 
-> What would kref_dec_and_test() be needed for?
+Cool.  I only made the idr suggestion since it is used for PIDs and
+solves a very similar problem.
 
-Why do you need kref_put() to take a destructor function pointer?  Why cannot
-that be replaced with, say:
+> but that makes the practice of some container engines injecting
+> processes into existing containers difficult if not impossible.
 
-	static inline bool __kref_put(struct kref *k)
-	{
-		return refcount_dec_and_test(&k->refcount);
-	}
+Yes, we'll need some provision to indicate which orchestrator
+"controls" that particular audit container ID, and allow that
+orchestrator to reuse that particular audit container ID (until all
+those containers disappear and the audit container ID is given back to
+the pool).
 
-and then one could do:
-
-	void put_foo(struct foo_net *ns, struct foo *f)
-	{
-		if (__kref_put(&f->refcount)) {
-			// destroy foo
-		}
-	}
-
-that way the destruction code does not have to be offloaded into its own
-function and you still have your pattern to look for.
-
-For tracing purposes, I could live with something like:
-
-	static inline
-	bool __kref_put_return(struct kref *k, unsigned int *_usage)
-	{
-		return refcount_dec_and_test_return(&k->refcount, _usage);
-	}
-
-and then I could do:
-
-	void put_foo(struct foo_net *ns, struct foo *f)
-	{
-		unsigned int u;
-		bool is_zero = __kref_put_return(&f->refcount, &u);
-
-		trace_foo_refcount(f, u);
-		if (is_zero) {
-			// destroy foo
-		}
-	}
-
-then it could be made such that you can disable the ability of
-refcount_dec_and_test_return() to pass back a useful refcount value if you
-want a bit of extra speed.
-
-Or even if refcount_dec_return() is guaranteed to return 0 if the count hits
-the floor and non-zero otherwise and there's a config switch to impose a
-stronger guarantee that it will return a value that's appropriately
-transformed to look as if I was using atomic_dec_return().
-
-Similarly for refcount_inc_return() - it could just return gibberish unless
-the same config switch is enabled.
-
-Question for AMD/Intel guys: I'm curious if LOCK DECL faster than LOCK XADD -1
-on x86_64?
-
-> > Why doesn't refcount_t get merged into kref, or vice versa?  Having both
-> > would seem redundant.
->
-> kref uses refcount_t and provides a different functionality on top of
-> it.  Not all uses of a refcount in the kernel is for object lifecycle
-> reference counting, as you know :)
-
-I do?  I can't think of one offhand.  Not that I'm saying you're wrong on
-that - there's an awful lot of kernel.
-
-David
+-- 
+paul moore
+www.paul-moore.com
