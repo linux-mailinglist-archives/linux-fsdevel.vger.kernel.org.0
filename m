@@ -2,100 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA87B31131
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 17:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA7C03113C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 17:24:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfEaPV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 11:21:57 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:33810 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbfEaPV5 (ORCPT
+        id S1726550AbfEaPYz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 11:24:55 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:38831 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfEaPYz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 11:21:57 -0400
-Received: by mail-yw1-f68.google.com with SMTP id n76so4287627ywd.1;
-        Fri, 31 May 2019 08:21:56 -0700 (PDT)
+        Fri, 31 May 2019 11:24:55 -0400
+Received: by mail-vk1-f194.google.com with SMTP id p24so1574051vki.5;
+        Fri, 31 May 2019 08:24:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=umich.edu; s=google-2016-06-03;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hVB+3wva8lYYaR85t5N42o/6t3+e71DhQnwd4VnHZ2s=;
-        b=cauG1fiQiQ8aQQCenQLcHSPvx0I4gcwkiAsElwldIFkEwXd6bYpDga4KE1UvqPxFYC
-         C8/0vrf8SnlO5U59qZrpnpGjhw5zk8B7tlhZVZRPNe5eBn8+dsEMlymmRjxE6XAUo8Rw
-         89R6HOiMiLK/x6SZZLku+9dBLsBrO0EkuRiGBtzTpuZ9T8+dsuYh+F8koLzFKFj9gxLV
-         rSNEGiJfEK1+a7Ch9m7iB8v80YQyb7g3nwL86B6ImAWB8wkibU6jLHFhJZt0rhlwAYfe
-         VZa78TlWWnngrFEhPzRJrqciRm+n6AvzQdvQckUGzVxmq3lL+wpgUSSQAn2bGqKQRwEe
-         t82w==
+        bh=SEg8poyqwYtnWx2YPi+YoDckEuCKhMrzMAk4Xl/FumE=;
+        b=lT63YJCOZNkcwxEJKsc1pEtErLXcqZ+AVzqOMqZMD57GWVmL+A3dQGkSkuLaTmBN9Q
+         vjsSpRN2yUjVDrH4QPU6XcggEO/9hoZYvcXsG8sP38qVmwHUmemsCJOUb2Q6h0CsKMYb
+         XxUF9OaXolW7uWc1mYZhh4HlTuFh5roW+ydNW4cbQu2H8DlVUb+JgRLpy+K0igEmdL47
+         7z1LDyIY+G6kpFh4Loat0jtT0dzTDMDIVi6mRkpEXHqz8AeOBIm1UoTeO+4LXhDDV4u0
+         nOV7Af+pBlO/CoL2BI87A0SAXN7yeeIKBOo2UW96naankv4VNcBrSiWwVgE8D+AfRAVA
+         Fzqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hVB+3wva8lYYaR85t5N42o/6t3+e71DhQnwd4VnHZ2s=;
-        b=H72TB05u5pYQneDC07Bvl1/fvkhke8w1+dqcJa64WBg0Z8uD5Lghd1F8qIXdRT1LAa
-         gZr20WdGv184b0Ce6F8v/+Jd5BdfkHzvFgStUUyIIfwf7Y+7E5L1JYtvQ9m9V3iALTFh
-         YSU7sF/1el3tnswVj8A7Pz10vgysfL604fif/owBMaBTOSpMg12Z+a0os9UX9xu+0A3o
-         EG63JExlaaA821n1v1nDzvfg0508CSIG4jmEH9ebOTTmefIDCeN6NnmklOQtxv2mepYu
-         0AhtpjetvZMRooUgAnRhWOlP+kThhPF0PXZvWHrpHogXR8zDdaXTWIuy87TA6wzNbUe5
-         8MjQ==
-X-Gm-Message-State: APjAAAXgALxsnD6DPRzB7h+wj8Uxl77P20VpCdsUL8Fq9MyJiSHu/M+I
-        AhM00izP88U5skJjcgOoXSIv3lJqjEN/QH1aYtA=
-X-Google-Smtp-Source: APXvYqzweoHJN024aJFPsVRMFJeZ7erwv8ogr3cR1VHrvMTSMSfOoUXoORxVBwUVuv3Wftm9yea1zNU3KdGTZeHMwbg=
-X-Received: by 2002:a81:7096:: with SMTP id l144mr6198986ywc.294.1559316116397;
- Fri, 31 May 2019 08:21:56 -0700 (PDT)
+        bh=SEg8poyqwYtnWx2YPi+YoDckEuCKhMrzMAk4Xl/FumE=;
+        b=TJHVsrh3y7z58FYt3ixpozUR92nUPDxGenAQwYjbtwKtw6vWqUUmzbUIbiPYDbGuD/
+         6VF10PrmjFQTr++Z2IGt1dfKYcTbhFoJvOExCemDIDfrKUSfS2WSdHtRP7QvJKsDcOwC
+         EDoLrGBnVAI4wv3EFFSrmj9wOL7zxTXgDUIgsjO5DJJIZnc2pdIW7IOiXWUc7+/LkFVD
+         qKiluUI3i/85eMbcIP+8YCKSjFmfiC0koK+Ah4WjMZp044YMBroF1edv1jtThlrBsbEb
+         4iMLgfpLASC/cwQU+unJKvGJ0JzAhGI3QZTh17wy2vO5hOTgEtod4Qd3hz1aJ7W25yEl
+         EKLw==
+X-Gm-Message-State: APjAAAVvn458jx4ranqRuUqQ0EYanvrbQz0v4+QTq9SGuCCm4qPmLuA7
+        WZmeUx1UOQ3m0zdKE433sCT8B97u3zdEwe70yI0=
+X-Google-Smtp-Source: APXvYqzqrgUiCgeYr7DGvNL0vJ+We13UA9n6YH6XQRRk7isT/EMt/dUXVWSZXYRRWV+uWpUmhhsBsCLwhOh1Wzhrfwk=
+X-Received: by 2002:a1f:888e:: with SMTP id k136mr4153011vkd.33.1559316293985;
+ Fri, 31 May 2019 08:24:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190527172655.9287-1-amir73il@gmail.com> <20190528202659.GA12412@mit.edu>
- <CAOQ4uxgo5jmwQbLAKQre9=7pLQw=CwMgDaWPaJxi-5NGnPEVPQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgo5jmwQbLAKQre9=7pLQw=CwMgDaWPaJxi-5NGnPEVPQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 31 May 2019 18:21:45 +0300
-Message-ID: <CAOQ4uxgj94WR82iHE4PDGSD0UDxG5sCtr+Sv+t1sOHHmnXFYzQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH] link.2: AT_ATOMIC_DATA and AT_ATOMIC_METADATA
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Jan Kara <jack@suse.cz>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>, Chris Mason <clm@fb.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>,
-        Linux Btrfs <linux-btrfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
+References: <20190530094147.14512-1-xzhou@redhat.com> <20190530152606.GA5383@magnolia>
+ <20190530155851.GB5383@magnolia>
+In-Reply-To: <20190530155851.GB5383@magnolia>
+From:   Olga Kornievskaia <aglo@umich.edu>
+Date:   Fri, 31 May 2019 11:24:42 -0400
+Message-ID: <CAN-5tyFoNJrQTn1ZkNsmaBd=yn2kWpZObGe8ka6CDFxcHaXP6w@mail.gmail.com>
+Subject: Re: NFS & CIFS support dedupe now?? Was: Re: [PATCH] generic/517:
+ notrun on NFS due to unaligned dedupe in test
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     sfrench@samba.org, Anna Schumaker <anna.schumaker@netapp.com>,
+        trond.myklebust@hammerspace.com, fengxiaoli0714@gmail.com,
+        fstests@vger.kernel.org, Murphy Zhou <xzhou@redhat.com>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> >
-> > So instead of saying "A filesystem that accepts this flag will
-> > guaranty, that old inode data will not be exposed in the new linked
-> > name."  It's much clearer to state this in the affirmative:
-> >
-> >         A filesystem which accepts this flag will guarantee that if
-> >         the new pathname exists after a crash, all of the data written
-> >         to the file at the time of the linkat(2) call will be visible.
-> >
+On Thu, May 30, 2019 at 12:02 PM Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
 >
-> Sounds good to me. I will take a swing at another patch.
+> Hi everyone,
 >
+> Murphy Zhou sent a patch to generic/517 in fstests to fix a dedupe
+> failure he was seeing on NFS:
+>
+> On Thu, May 30, 2019 at 05:41:47PM +0800, Murphy Zhou wrote:
+> > NFSv4.2 could pass _require_scratch_dedupe, since the test offset and
+> > size are aligned, while generic/517 is performing unaligned dedupe.
+> > NFS does not support unaligned dedupe now, returns EINVAL.
+> >
+> > Signed-off-by: Murphy Zhou <xzhou@redhat.com>
+> > ---
+> >  tests/generic/517 | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/tests/generic/517 b/tests/generic/517
+> > index 601bb24e..23665782 100755
+> > --- a/tests/generic/517
+> > +++ b/tests/generic/517
+> > @@ -30,6 +30,7 @@ _cleanup()
+> >  _supported_fs generic
+> >  _supported_os Linux
+> >  _require_scratch_dedupe
+> > +$FSTYP == "nfs"  && _notrun "NFS can't handle unaligned deduplication"
+>
+> I was surprised to see a dedupe fix for NFS since (at least to my
+> knowledge) neither of these two network filesystems actually support
+> server-side deduplication commands, and therefore the
+> _require_scratch_dedupe should have _notrun the test.
+>
+> Then I looked at fs/nfs/nfs4file.c:
+>
+> static loff_t nfs42_remap_file_range(struct file *src_file, loff_t src_off,
+>                 struct file *dst_file, loff_t dst_off, loff_t count,
+>                 unsigned int remap_flags)
+> {
+>         <local variable declarations>
+>
+>         if (remap_flags & ~(REMAP_FILE_DEDUP | REMAP_FILE_ADVISORY))
+>                 return -EINVAL;
+>
+>         <check alignment, lock inodes, flush pending writes>
+>
+>         ret = nfs42_proc_clone(src_file, dst_file, src_off, dst_off, count);
+>
+> The NFS client code will accept REMAP_FILE_DEDUP through remap_flags,
+> which is how dedupe requests are sent to filesystems nowadays.  The nfs
+> client code does not itself compare the file contents, but it does issue
+> a CLONE command to the NFS server.  The end result, AFAICT, is that a
+> user program can write 'A's to file1, 'B's to file2, issue a dedup
+> ioctl to the kernel, and have a block of 'B's mapped into file1.  That's
+> broken behavior, according to the dedup ioctl manpage.
+>
+> Notice how remap_flags is checked but is not included in the
+> nfs42_proc_clone call?  That's how I conclude that the NFS client cannot
+> possibly be sending the dedup request to the server.
+>
+> The same goes for fs/cifs/cifsfs.c:
+>
+> static loff_t cifs_remap_file_range(struct file *src_file, loff_t off,
+>                 struct file *dst_file, loff_t destoff, loff_t len,
+>                 unsigned int remap_flags)
+> {
+>         <local variable declarations>
+>
+>         if (remap_flags & ~(REMAP_FILE_DEDUP | REMAP_FILE_ADVISORY))
+>                 return -EINVAL;
+>
+>         <check files, lock inodes, flush pages>
+>
+>         if (target_tcon->ses->server->ops->duplicate_extents)
+>                 rc = target_tcon->ses->server->ops->duplicate_extents(xid,
+>                         smb_file_src, smb_file_target, off, len, destoff);
+>         else
+>                 rc = -EOPNOTSUPP;
+>
+> Again, remap_flags is checked here but it has no influence over the
+> ->duplicate_extents call.
+>
+> Next I got to thinking that when I reworked the clone/dedupe code last
+> year, I didn't include REMAP_FILE_DEDUP support for cifs or nfs, because
+> as far as I knew, neither protocol supports a verb for deduplication.
+> The remap_flags checks were modified to allow REMAP_FILE_DEDUP in
+> commits ce96e888fe48e (NFS) and b073a08016a10 (CIFS) with this
+> justification (the cifs commit has a similar message):
+>
+> "Subject: Fix nfs4.2 return -EINVAL when do dedupe operation
+>
+> "dedupe_file_range operations is combiled into remap_file_range.
+> "    But in nfs42_remap_file_range, it's skiped for dedupe operations.
+> "    Before this patch:
+> "      # dd if=/dev/zero of=nfs/file bs=1M count=1
+> "      # xfs_io -c "dedupe nfs/file 4k 64k 4k" nfs/file
+> "      XFS_IOC_FILE_EXTENT_SAME: Invalid argument
+> "    After this patch:
+> "      # dd if=/dev/zero of=nfs/file bs=1M count=1
+> "      # xfs_io -c "dedupe nfs/file 4k 64k 4k" nfs/file
+> "      deduped 4096/4096 bytes at offset 65536
+> "      4 KiB, 1 ops; 0.0046 sec (865.988 KiB/sec and 216.4971 ops/sec)"
+>
+> This sort of looks like monkeypatching to make an error message go away.
+> One could argue that this ought to return EOPNOSUPP instead of EINVAL,
+> and maybe that's what should've happened.
+>
+> So, uh, do NFS and CIFS both support server-side dedupe now, or are
+> these patches just plain wrong?
+>
+> No, they're just wrong, because I can corrupt files like so on NFS:
+>
+> $ rm -rf urk moo
+> $ xfs_io -f -c "pwrite -S 0x58 0 31048" urk
+> wrote 31048/31048 bytes at offset 0
+> 30 KiB, 8 ops; 0.0000 sec (569.417 MiB/sec and 153846.1538 ops/sec)
+> $ xfs_io -f -c "pwrite -S 0x59 0 31048" moo
+> wrote 31048/31048 bytes at offset 0
+> 30 KiB, 8 ops; 0.0001 sec (177.303 MiB/sec and 47904.1916 ops/sec)
+> $ md5sum urk moo
+> 37d3713e5f9c4fe0f8a1f813b27cb284  urk
+> a5b6f953f27aa17e42450ff4674fa2df  moo
+> $ xfs_io -c "dedupe urk 0 0 4096" moo
+> deduped 4096/4096 bytes at offset 0
+> 4 KiB, 1 ops; 0.0012 sec (3.054 MiB/sec and 781.8608 ops/sec)
+> $ md5sum urk moo
+> 37d3713e5f9c4fe0f8a1f813b27cb284  urk
+> 2c992d70131c489da954f1d96d8c456e  moo
+>
+> (Not sure about cifs, since I don't have a Windows Server handy)
+>
+> I'm not an expert in CIFS or NFS, so I'm asking: do either support
+> dedupe or is this a kernel bug?
 
-So I am down to single flag documented with 3 tweets ;-)
-
-What do you think of:
-
-"AT_ATOMIC_DATA (since Linux 5.x)
-A filesystem which accepts this flag will guarantee that if the linked file
-name exists after a system crash, then all of the data written to the file
-and all of the file's metadata at the time of the linkat(2) call will be
-visible.
-
-The way to achieve this guarantee on old kernels is to call fsync (2)
-before linking the file, but doing so will also results in flushing of
-volatile disk caches.
-
-A filesystem which accepts this flag does NOT
-guarantee that any of the file hardlinks will exist after a system crash,
-nor that the last observed value of st_nlink (see stat (2)) will persist."
-
-
-Thanks,
-Amir.
+NFS does not support dedupe and only supports cloning (whole) files.
