@@ -2,123 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E7FA3108F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 16:49:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3441D310A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 16:55:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfEaOs6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 10:48:58 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46622 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbfEaOs6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 10:48:58 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y11so6324120pfm.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 May 2019 07:48:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/Z5bSUHwSp4kpRmBsObia1lPUPGkJpwlRslF3MX8yr4=;
-        b=dstu5uV6I8AZe1524Xs0LsRfPvVcQuuv2QrR+O6sWM+CesRTgkjlrgYji8Ex3/oTlQ
-         I5Hbtxk91nrpksAsXjsYs5ldKMmfxdd2GI3Fo7AzkVj/Z6uN+CbGN4XJxqjaciRJLfwk
-         YQbMnw02uYLEkHOUcjgJYHojn7/LBppxV9nq10ta/kF5QQnRkdoTmngZFdeHrxDJAJJW
-         ZzGoJD+4B8fUJ9BHDUSMskIHWlgySUg2ma5SWe9QNt+3mWfzT9rZwYPNP6Vmb4zUIlv3
-         GJkyqJZtS58jDZSsAsN5XjxjsldHj92SYzQKBIyLhnymsmQZrGXsXwspCkGPXVVeUB/p
-         /7Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/Z5bSUHwSp4kpRmBsObia1lPUPGkJpwlRslF3MX8yr4=;
-        b=FOTNnrxl+UX8rsyhVMrCW4DOwDP0VfWUbbp3kWDOM8bEfqLJefVMbFH+fABRGh6mHq
-         Opr9qqNhRFr3Ck94RBDdGitURSLr+rV0Se+cRXdVjfJDY8w3cKORk0juyN4YbIgGhuyM
-         hc6KyekKPnBI7iDos5YUxnuZZj5qKWIrFaRgQZNipHbOIpoU55hAxRzfSJGw/LLG0ICw
-         cee72M1kaBgJPGTBXROwecP1vre68XU68VULlVGZ0nyEpkGDg50G9o0E/nWnOFAZ7pyz
-         4Yz4oc8yCzcf0n3aiqEiJzFTLzHUhcPZav1hDIKRS6LIriS5w9Nm6MP/u4rQf1k8Iole
-         fBng==
-X-Gm-Message-State: APjAAAWUk3LYzD/++74y/PfE8152YKe+/50XiuTn2EMZAhJLuZgBGrJR
-        lEPw2LgxzuPzXGJ5NKX4EOvrKA==
-X-Google-Smtp-Source: APXvYqz43tBFILk/WNZBIPGBMolxWR2qz6wU98xoMLQPkqwbymeGztI5Belv8i1MUcfaLTEOWZdsOQ==
-X-Received: by 2002:a63:cc4b:: with SMTP id q11mr9747244pgi.43.1559314137820;
-        Fri, 31 May 2019 07:48:57 -0700 (PDT)
-Received: from [192.168.1.158] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id k2sm5746164pjl.23.2019.05.31.07.48.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 May 2019 07:48:56 -0700 (PDT)
-Subject: Re: [PATCH v3 00/13] epoll: support pollable epoll from userspace
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     Azat Khuzhin <azat@libevent.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190516085810.31077-1-rpenyaev@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a2a88f4f-d104-f565-4d6e-1dddc7f79a05@kernel.dk>
-Date:   Fri, 31 May 2019 08:48:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726784AbfEaOzM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 10:55:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40650 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726531AbfEaOzM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 May 2019 10:55:12 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 47CAFC0AD2B7;
+        Fri, 31 May 2019 14:55:12 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 44FF41001E6F;
+        Fri, 31 May 2019 14:55:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190529231112.GB3164@kroah.com>
+References: <20190529231112.GB3164@kroah.com> <20190528231218.GA28384@kroah.com> <20190528162603.GA24097@kroah.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk> <4031.1559064620@warthog.procyon.org.uk> <31936.1559146000@warthog.procyon.org.uk>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring buffer
 MIME-Version: 1.0
-In-Reply-To: <20190516085810.31077-1-rpenyaev@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3762.1559314508.1@warthog.procyon.org.uk>
+Date:   Fri, 31 May 2019 15:55:08 +0100
+Message-ID: <3763.1559314508@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 31 May 2019 14:55:12 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/16/19 2:57 AM, Roman Penyaev wrote:
-> Hi all,
-> 
-> This is v3 which introduces pollable epoll from userspace.
-> 
-> v3:
->   - Measurements made, represented below.
-> 
->   - Fix alignment for epoll_uitem structure on all 64-bit archs except
->     x86-64. epoll_uitem should be always 16 bit, proper BUILD_BUG_ON
->     is added. (Linus)
-> 
->   - Check pollflags explicitly on 0 inside work callback, and do nothing
->     if 0.
-> 
-> v2:
->   - No reallocations, the max number of items (thus size of the user ring)
->     is specified by the caller.
-> 
->   - Interface is simplified: -ENOSPC is returned on attempt to add a new
->     epoll item if number is reached the max, nothing more.
-> 
->   - Alloced pages are accounted using user->locked_vm and limited to
->     RLIMIT_MEMLOCK value.
-> 
->   - EPOLLONESHOT is handled.
-> 
-> This series introduces pollable epoll from userspace, i.e. user creates
-> epfd with a new EPOLL_USERPOLL flag, mmaps epoll descriptor, gets header
-> and ring pointers and then consumes ready events from a ring, avoiding
-> epoll_wait() call.  When ring is empty, user has to call epoll_wait()
-> in order to wait for new events.  epoll_wait() returns -ESTALE if user
-> ring has events in the ring (kind of indication, that user has to consume
-> events from the user ring first, I could not invent anything better than
-> returning -ESTALE).
-> 
-> For user header and user ring allocation I used vmalloc_user().  I found
-> that it is much easy to reuse remap_vmalloc_range_partial() instead of
-> dealing with page cache (like aio.c does).  What is also nice is that
-> virtual address is properly aligned on SHMLBA, thus there should not be
-> any d-cache aliasing problems on archs with vivt or vipt caches.
+Greg KH <gregkh@linuxfoundation.org> wrote:
 
-Why aren't we just adding support to io_uring for this instead? Then we
-don't need yet another entirely new ring, that's is just a little
-different from what we have.
+> So, if that's all that needs to be fixed, can you use the same
+> buffer/code if that patch is merged?
 
-I haven't looked into the details of your implementation, just curious
-if there's anything that makes using io_uring a non-starter for this
-purpose?
+I really don't know.  The perf code is complex, partially in hardware drivers
+and is tricky to understand - though a chunk of that is the "aux" buffer part;
+PeterZ used words like "special" and "magic" and the comments in the code talk
+about the hardware writing into the buffer.
 
--- 
-Jens Axboe
+__perf_output_begin() does not appear to be SMP safe.  It uses local_cmpxchg()
+and local_add() which on x86 lack the LOCK prefix.
 
+stracing the perf command on my test machine, it calls perf_event_open(2) four
+times and mmap's each fd it gets back.  I'm guessing that each one maps a
+separate buffer for each CPU.
+
+So to use watch_queue based on perf's buffering, you would have to have a
+(2^N)+1 pages-sized buffer for each CPU.  So that would be a minimum of 64K of
+unswappable memory for my desktop machine, say).  Multiply that by each
+process that wants to listen for events...
+
+What I'm aiming for is something that has a single buffer used by all CPUs for
+each instance of /dev/watch_queue opened and I'd also like to avoid having to
+allocate the metadata page and the aux buffer to save space.  This is locked
+memory and cannot be swapped.
+
+Also, perf has to leave a gap in the ring because it uses CIRC_SPACE(), though
+that's a minor detail that I guess can't be fixed now.
+
+I'm also slightly concerned that __perf_output_begin() doesn't check if
+rb->user->tail has got ahead of rb->user->head or that it's lagging too far
+behind.  I doubt it's a serious problem for the kernel since it won't write
+outside of the buffer, but userspace might screw up.  I think the worst that
+will happen is that userspace will get confused.
+
+One thing I would like is to waive the 2^N size requirement.  I understand
+*why* we do that, but I wonder how expensive DIV instructions are for
+relatively small divisors.
+
+David
