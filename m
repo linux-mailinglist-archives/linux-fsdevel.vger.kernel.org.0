@@ -2,143 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A845B31270
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 18:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA7953129A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 18:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfEaQdV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 12:33:21 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34174 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbfEaQdV (ORCPT
+        id S1726716AbfEaQlw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 12:41:52 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:43915 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726531AbfEaQlv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 12:33:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KV0jjAa5lUPCjWIg0Oa5mDgaofJfRMrPmuwua04KAn8=; b=CC3+ByM0wwBCFhXK6eduay6nx
-        n8flDWadU4FWbC+r4dmlcdWyt2bqdVJ1RtMrKL8I/Y7yHXk85GlXCacwxu+jHc71i6Er59HfnNdJH
-        Il+MX1qVMsis7S0ZmMK4I4Z+kbhJadskUrG19lD6bSHKyE6eHhaRPJLVF1QOEHrQxx5dZZ9sLh4nG
-        2BUwMch14n4MbxSHz//hIewFmnKmmwEkFOWUYnGo4U4AEPmQUspc5OAjM5pPl/LUBZsnazk/lFeJS
-        rEDN7oh95LxqLH3wD9nOls0bokD9yOwIoYr4NKz2YTctuop4znaws7UTRreJbkFRPWLa+CvvYBTVN
-        5+sQn6+zA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWkSw-0001dM-T3; Fri, 31 May 2019 16:33:15 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0FC89201CF1CB; Fri, 31 May 2019 18:33:12 +0200 (CEST)
-Date:   Fri, 31 May 2019 18:33:12 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     azat@libevent.org, rpenyaev@suse.de, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/13] epoll: support pollable epoll from userspace
-Message-ID: <20190531163312.GW2650@hirez.programming.kicks-ass.net>
-References: <20190516085810.31077-1-rpenyaev@suse.de>
+        Fri, 31 May 2019 12:41:51 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4VGfbdW014324
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 31 May 2019 12:41:38 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 0FB29420481; Fri, 31 May 2019 12:41:37 -0400 (EDT)
+Date:   Fri, 31 May 2019 12:41:36 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>, Chris Mason <clm@fb.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [RFC][PATCH] link.2: AT_ATOMIC_DATA and AT_ATOMIC_METADATA
+Message-ID: <20190531164136.GA3066@mit.edu>
+References: <20190527172655.9287-1-amir73il@gmail.com>
+ <20190528202659.GA12412@mit.edu>
+ <CAOQ4uxgo5jmwQbLAKQre9=7pLQw=CwMgDaWPaJxi-5NGnPEVPQ@mail.gmail.com>
+ <CAOQ4uxgj94WR82iHE4PDGSD0UDxG5sCtr+Sv+t1sOHHmnXFYzQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190516085810.31077-1-rpenyaev@suse.de>
+In-Reply-To: <CAOQ4uxgj94WR82iHE4PDGSD0UDxG5sCtr+Sv+t1sOHHmnXFYzQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 16, 2019 at 10:57:57AM +0200, Roman Penyaev wrote:
-> When new event comes for some epoll item kernel does the following:
+On Fri, May 31, 2019 at 06:21:45PM +0300, Amir Goldstein wrote:
+> What do you think of:
 > 
->  struct epoll_uitem *uitem;
+> "AT_ATOMIC_DATA (since Linux 5.x)
+> A filesystem which accepts this flag will guarantee that if the linked file
+> name exists after a system crash, then all of the data written to the file
+> and all of the file's metadata at the time of the linkat(2) call will be
+> visible.
+
+".... will be visible after the the file system is remounted".  (Never
+hurts to be explicit.)
+
+> The way to achieve this guarantee on old kernels is to call fsync (2)
+> before linking the file, but doing so will also results in flushing of
+> volatile disk caches.
+>
+> A filesystem which accepts this flag does NOT
+> guarantee that any of the file hardlinks will exist after a system crash,
+> nor that the last observed value of st_nlink (see stat (2)) will persist."
 > 
->  /* Each item has a bit (index in user items array), discussed later */
->  uitem = user_header->items[epi->bit];
-> 
->  if (!atomic_fetch_or(uitem->ready_events, pollflags)) {
->      i = atomic_add(&ep->user_header->tail, 1);
 
-So this is where you increment tail
+This is I think more precise:
 
-> 
->      item_idx = &user_index[i & index_mask];
-> 
->      /* Signal with a bit, user spins on index expecting value > 0 */
->      *item_idx = idx + 1;
+    This guarantee can be achieved by calling fsync(2) before linking
+    the file, but there may be more performant ways to provide these
+    semantics.  In particular, note that the use of the AT_ATOMIC_DATA
+    flag does *not* guarantee that the new link created by linkat(2)
+    will be persisted after a crash.
 
-IUC, this is where you write the idx into shared memory, which is
-_after_ tail has already been incremented.
+We should also document that a file system which does not implement
+this flag MUST return EINVAL if it is passed this flag to linkat(2).
 
->  }
-> 
-> Important thing here is that ring can't infinitely grow and corrupt other
-> elements, because kernel always checks that item was marked as ready, so
-> userspace has to clear ready_events field.
-> 
-> On userside events the following code should be used in order to consume
-> events:
-> 
->  tail = READ_ONCE(header->tail);
->  for (i = 0; header->head != tail; header->head++) {
->      item_idx_ptr = &index[idx & indeces_mask];
-> 
->      /*
->       * Spin here till we see valid index
->       */
->      while (!(idx = __atomic_load_n(item_idx_ptr, __ATOMIC_ACQUIRE)))
->          ;
-
-Which you then try and fix up by busy waiting for @idx to become !0 ?!
-
-Why not write the idx first, then increment the ->tail, such that when
-we see ->tail, we already know idx must be correct?
-
-> 
->      item = &header->items[idx - 1];
-> 
->      /*
->       * Mark index as invalid, that is for userspace only, kernel does not care
->       * and will refill this pointer only when observes that event is cleared,
->       * which happens below.
->       */
->      *item_idx_ptr = 0;
-
-That avoids this store too.
-
-> 
->      /*
->       * Fetch data first, if event is cleared by the kernel we drop the data
->       * returning false.
->       */
->      event->data = item->event.data;
->      event->events = __atomic_exchange_n(&item->ready_events, 0,
->                          __ATOMIC_RELEASE);
-> 
->  }
-
-Aside from that, you have to READ/WRITE_ONCE() on ->head, to avoid
-load/store tearing.
-
-
-That would give something like:
-
-kernel:
-
-	slot = atomic_fetch_inc(&ep->slot);
-	item_idx = &user_index[slot & idx_mask];
-	WRITE_ONCE(*item_idx, idx);
-	smp_store_release(&ep->user_header->tail, slot);
-
-userspace:
-
-	tail = smp_load_acquire(&header->tail);
-	for (head = READ_ONCE(header->head); head != tail; head++) {
-		idx = READ_ONCE(index[head & idx_mask]);
-		itemp = &header->items[idx];
-
-		...
-	}
-	smp_store_release(&header->head, head);
-
-
+     	       	      	     	      - Ted
