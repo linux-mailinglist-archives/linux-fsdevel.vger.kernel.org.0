@@ -2,34 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09F4D314F0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 20:50:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5278331505
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 20:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfEaSuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 14:50:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48200 "EHLO mx1.suse.de"
+        id S1726683AbfEaS6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 14:58:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49128 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726589AbfEaSup (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 14:50:45 -0400
+        id S1726439AbfEaS6U (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 May 2019 14:58:20 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7375AAD3B;
-        Fri, 31 May 2019 18:50:44 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 8C600AEA3;
+        Fri, 31 May 2019 18:58:19 +0000 (UTC)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 31 May 2019 20:50:44 +0200
+Date:   Fri, 31 May 2019 20:58:19 +0200
 From:   Roman Penyaev <rpenyaev@suse.de>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     azat@libevent.org, akpm@linux-foundation.org,
         viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/13] epoll: support pollable epoll from userspace
-In-Reply-To: <20190531163312.GW2650@hirez.programming.kicks-ass.net>
+Subject: Re: [PATCH v3 06/13] epoll: introduce helpers for adding/removing
+ events to uring
+In-Reply-To: <20190531165144.GE2606@hirez.programming.kicks-ass.net>
 References: <20190516085810.31077-1-rpenyaev@suse.de>
- <20190531163312.GW2650@hirez.programming.kicks-ass.net>
-Message-ID: <327c990a4418b3d9c5c94787a37350bb@suse.de>
+ <20190516085810.31077-7-rpenyaev@suse.de>
+ <20190531095607.GC17637@hirez.programming.kicks-ass.net>
+ <274e29d102133f3be1f309c66cb0af36@suse.de>
+ <20190531125636.GZ2606@hirez.programming.kicks-ass.net>
+ <98e74ceeefdffc9b50fb33e597d270f7@suse.de>
+ <20190531165144.GE2606@hirez.programming.kicks-ass.net>
+Message-ID: <9e13f80872e5b6c96e9cd3343e27b1f1@suse.de>
 X-Sender: rpenyaev@suse.de
 User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -37,102 +43,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-05-31 18:33, Peter Zijlstra wrote:
-> On Thu, May 16, 2019 at 10:57:57AM +0200, Roman Penyaev wrote:
->> When new event comes for some epoll item kernel does the following:
->> 
->>  struct epoll_uitem *uitem;
->> 
->>  /* Each item has a bit (index in user items array), discussed later 
->> */
->>  uitem = user_header->items[epi->bit];
->> 
->>  if (!atomic_fetch_or(uitem->ready_events, pollflags)) {
->>      i = atomic_add(&ep->user_header->tail, 1);
+On 2019-05-31 18:51, Peter Zijlstra wrote:
+> On Fri, May 31, 2019 at 04:21:30PM +0200, Roman Penyaev wrote:
 > 
-> So this is where you increment tail
+>> The ep_add_event_to_uring() is lockless, thus I can't increase tail 
+>> after,
+>> I need to reserve the index slot, where to write to.  I can use shadow 
+>> tail,
+>> which is not seen by userspace, but I have to guarantee that tail is 
+>> updated
+>> with shadow tail *after* all callers of ep_add_event_to_uring() are 
+>> left.
+>> That is possible, please see the code below, but it adds more 
+>> complexity:
+>> 
+>> (code was tested on user side, thus has c11 atomics)
+>> 
+>> static inline void add_event__kernel(struct ring *ring, unsigned bit)
+>> {
+>>         unsigned i, cntr, commit_cntr, *item_idx, tail, old;
+>> 
+>>         i = __atomic_fetch_add(&ring->cntr, 1, __ATOMIC_ACQUIRE);
+>>         item_idx = &ring->user_itemsindex[i % ring->nr];
+>> 
+>>         /* Update data */
+>>         *item_idx = bit;
+>> 
+>>         commit_cntr = __atomic_add_fetch(&ring->commit_cntr, 1,
+>> __ATOMIC_RELEASE);
+>> 
+>>         tail = ring->user_header->tail;
+>>         rmb();
+>>         do {
+>>                 cntr = ring->cntr;
+>>                 if (cntr != commit_cntr)
+>>                         /* Someone else will advance tail */
+>>                         break;
+>> 
+>>                 old = tail;
+>> 
+>>         } while ((tail =
+>> __sync_val_compare_and_swap(&ring->user_header->tail, old, cntr)) != 
+>> old);
+>> }
 > 
->> 
->>      item_idx = &user_index[i & index_mask];
->> 
->>      /* Signal with a bit, user spins on index expecting value > 0 */
->>      *item_idx = idx + 1;
-> 
-> IUC, this is where you write the idx into shared memory, which is
-> _after_ tail has already been incremented.
-> 
->>  }
->> 
->> Important thing here is that ring can't infinitely grow and corrupt 
->> other
->> elements, because kernel always checks that item was marked as ready, 
->> so
->> userspace has to clear ready_events field.
->> 
->> On userside events the following code should be used in order to 
->> consume
->> events:
->> 
->>  tail = READ_ONCE(header->tail);
->>  for (i = 0; header->head != tail; header->head++) {
->>      item_idx_ptr = &index[idx & indeces_mask];
->> 
->>      /*
->>       * Spin here till we see valid index
->>       */
->>      while (!(idx = __atomic_load_n(item_idx_ptr, __ATOMIC_ACQUIRE)))
->>          ;
-> 
-> Which you then try and fix up by busy waiting for @idx to become !0 ?!
-> 
-> Why not write the idx first, then increment the ->tail, such that when
-> we see ->tail, we already know idx must be correct?
-> 
->> 
->>      item = &header->items[idx - 1];
->> 
->>      /*
->>       * Mark index as invalid, that is for userspace only, kernel does 
->> not care
->>       * and will refill this pointer only when observes that event is 
->> cleared,
->>       * which happens below.
->>       */
->>      *item_idx_ptr = 0;
-> 
-> That avoids this store too.
-> 
->> 
->>      /*
->>       * Fetch data first, if event is cleared by the kernel we drop 
->> the data
->>       * returning false.
->>       */
->>      event->data = item->event.data;
->>      event->events = __atomic_exchange_n(&item->ready_events, 0,
->>                          __ATOMIC_RELEASE);
->> 
->>  }
-> 
-> Aside from that, you have to READ/WRITE_ONCE() on ->head, to avoid
-> load/store tearing.
+> Yes, I'm well aware of that particular problem (see
+> kernel/events/ring_buffer.c:perf_output_put_handle for instance).
 
-Yes, clear. Thanks.
+I'll take a look, thanks.
 
-> 
-> 
-> That would give something like:
-> 
-> kernel:
-> 
-> 	slot = atomic_fetch_inc(&ep->slot);
-> 	item_idx = &user_index[slot & idx_mask];
-> 	WRITE_ONCE(*item_idx, idx);
-> 	smp_store_release(&ep->user_header->tail, slot);
+> But like you show, it can be done. It also makes the thing wait-free, 
+> as
+> opposed to merely lockless.
 
-This can't be called from many cpus,  tail can be overwritten with "old"
-value.  That what I try to solve.
+You think it's better?  I did not like this variant from the very
+beginning because of the unnecessary complexity.  But maybe you're
+right.  No busy loops on user side makes it wait-free.  And also
+I can avoid c11 in kernel using cmpxchg along with atomic_t.
 
 --
 Roman
+
 
