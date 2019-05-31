@@ -2,227 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 561D031568
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 21:34:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A380031592
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 21:45:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbfEaTeZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 15:34:25 -0400
-Received: from fieldses.org ([173.255.197.46]:42478 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727199AbfEaTeY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 15:34:24 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 006861E29; Fri, 31 May 2019 15:34:23 -0400 (EDT)
-Date:   Fri, 31 May 2019 15:34:23 -0400
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
-        Luis Henriques <lhenriques@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-api@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH v2 5/8] vfs: copy_file_range needs to strip setuid bits
-Message-ID: <20190531193423.GA3812@fieldses.org>
-References: <20190526061100.21761-1-amir73il@gmail.com>
- <20190526061100.21761-6-amir73il@gmail.com>
+        id S1727438AbfEaTpF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 15:45:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55000 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727147AbfEaTpF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 May 2019 15:45:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D2426AE76;
+        Fri, 31 May 2019 19:45:02 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190526061100.21761-6-amir73il@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 31 May 2019 21:45:02 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Azat Khuzhin <azat@libevent.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/13] epoll: support pollable epoll from userspace
+In-Reply-To: <e552262b-2069-075e-f7db-cec19a12a363@kernel.dk>
+References: <20190516085810.31077-1-rpenyaev@suse.de>
+ <a2a88f4f-d104-f565-4d6e-1dddc7f79a05@kernel.dk>
+ <1d47ee76735f25ae5e91e691195f7aa5@suse.de>
+ <e552262b-2069-075e-f7db-cec19a12a363@kernel.dk>
+Message-ID: <8b3bade3c5fffdd8f1ab24940258d4e1@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 26, 2019 at 09:10:56AM +0300, Amir Goldstein wrote:
-> The file we are copying data into needs to have its setuid bit
-> stripped before we start the data copy so that unprivileged users
-> can't copy data into executables that are run with root privs.
+On 2019-05-31 18:54, Jens Axboe wrote:
+> On 5/31/19 10:02 AM, Roman Penyaev wrote:
+>> On 2019-05-31 16:48, Jens Axboe wrote:
+>>> On 5/16/19 2:57 AM, Roman Penyaev wrote:
+>>>> Hi all,
+>>>> 
+>>>> This is v3 which introduces pollable epoll from userspace.
+>>>> 
+>>>> v3:
+>>>>    - Measurements made, represented below.
+>>>> 
+>>>>    - Fix alignment for epoll_uitem structure on all 64-bit archs 
+>>>> except
+>>>>      x86-64. epoll_uitem should be always 16 bit, proper 
+>>>> BUILD_BUG_ON
+>>>>      is added. (Linus)
+>>>> 
+>>>>    - Check pollflags explicitly on 0 inside work callback, and do
+>>>> nothing
+>>>>      if 0.
+>>>> 
+>>>> v2:
+>>>>    - No reallocations, the max number of items (thus size of the 
+>>>> user
+>>>> ring)
+>>>>      is specified by the caller.
+>>>> 
+>>>>    - Interface is simplified: -ENOSPC is returned on attempt to add 
+>>>> a
+>>>> new
+>>>>      epoll item if number is reached the max, nothing more.
+>>>> 
+>>>>    - Alloced pages are accounted using user->locked_vm and limited 
+>>>> to
+>>>>      RLIMIT_MEMLOCK value.
+>>>> 
+>>>>    - EPOLLONESHOT is handled.
+>>>> 
+>>>> This series introduces pollable epoll from userspace, i.e. user
+>>>> creates
+>>>> epfd with a new EPOLL_USERPOLL flag, mmaps epoll descriptor, gets
+>>>> header
+>>>> and ring pointers and then consumes ready events from a ring, 
+>>>> avoiding
+>>>> epoll_wait() call.  When ring is empty, user has to call 
+>>>> epoll_wait()
+>>>> in order to wait for new events.  epoll_wait() returns -ESTALE if 
+>>>> user
+>>>> ring has events in the ring (kind of indication, that user has to
+>>>> consume
+>>>> events from the user ring first, I could not invent anything better
+>>>> than
+>>>> returning -ESTALE).
+>>>> 
+>>>> For user header and user ring allocation I used vmalloc_user().  I
+>>>> found
+>>>> that it is much easy to reuse remap_vmalloc_range_partial() instead 
+>>>> of
+>>>> dealing with page cache (like aio.c does).  What is also nice is 
+>>>> that
+>>>> virtual address is properly aligned on SHMLBA, thus there should not
+>>>> be
+>>>> any d-cache aliasing problems on archs with vivt or vipt caches.
+>>> 
+>>> Why aren't we just adding support to io_uring for this instead? Then 
+>>> we
+>>> don't need yet another entirely new ring, that's is just a little
+>>> different from what we have.
+>>> 
+>>> I haven't looked into the details of your implementation, just 
+>>> curious
+>>> if there's anything that makes using io_uring a non-starter for this
+>>> purpose?
+>> 
+>> Afaict the main difference is that you do not need to recharge an fd
+>> (submit new poll request in terms of io_uring): once fd has been added
+>> to
+>> epoll with epoll_ctl() - we get events.  When you have thousands of 
+>> fds
+>> -
+>> that should matter.
+>> 
+>> Also interesting question is how difficult to modify existing event
+>> loops
+>> in event libraries in order to support recharging (EPOLLONESHOT in 
+>> terms
+>> of epoll).
+>> 
+>> Maybe Azat who maintains libevent can shed light on this (currently I
+>> see
+>> that libevent does not support "EPOLLONESHOT" logic).
 > 
-> [Amir] Introduce the helper generic_copy_file_range_prep() modelled
-> after generic_remap_file_range_prep(). Helper is called by filesystem
-> before the copy_file_range operation and with output inode locked.
-> 
-> For ceph and for default generic_copy_file_range() implementation there
-> is no inode lock held throughout the copy operation, so we do best
-> effort and remove setuid bit before copy starts. This does not protect
-> suid file from changing if suid bit is set after copy started.
+> In terms of existing io_uring poll support, which is what I'm guessing
+> you're referring to, it is indeed just one-shot.
 
-I'm not sure what it would accomplish to make setuid-clearing atomic
-with the write.
+Yes, yes.
 
-If an attacker could write concurrently with your setting the setuid
-bit, then they could probably also perform the write just before you set
-the setuid bit.
+> But there's no reason  why we can't have it persist until explicitly
+> canceled with POLL_REMOVE.
 
-I think clearing it at the start is all that's necessary, unless I'm
-missing something.
+It seems not so easy.  The main problem is that with only a ring it is
+impossible to figure out on kernel side what event bits have been 
+already
+seen by the userspace and what bits are new.  So every new cqe has to
+be added to a completion ring on each wake_up_interruptible() call.
+(I mean when fd wants to report that something is ready).
 
---b.
+IMO that can lead to many duplicate events (tens? hundreds? honestly no
+idea), which userspace has to handle with subsequent read/write calls.
+It can kill all performance benefits of a uring.
 
+In uepoll this is solved with another piece of shared memory, where
+userspace atomically clears bits and kernel side sets bits.  If kernel
+observes that bits were set (i.e. userspace has not seen this event)
+- new index is added to a ring.
 
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/ceph/file.c     |  9 +++++++++
->  fs/cifs/cifsfs.c   |  9 ++++++---
->  fs/fuse/file.c     |  4 ++++
->  fs/nfs/nfs42proc.c |  8 +++++---
->  fs/read_write.c    | 31 +++++++++++++++++++++++++++++++
->  include/linux/fs.h |  2 ++
->  6 files changed, 57 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index e87f7b2023af..54cfc877a6ef 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1947,6 +1947,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  		goto out;
->  	}
->  
-> +	/* Should inode lock be held throughout the copy operation? */
-> +	inode_lock(dst_inode);
-> +	ret = generic_copy_file_range_prep(src_file, dst_file);
-> +	inode_unlock(dst_inode);
-> +	if (ret < 0) {
-> +		dout("failed to copy from src to dst file (%zd)\n", ret);
-> +		goto out;
-> +	}
-> +
->  	/*
->  	 * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
->  	 * clients may have dirty data in their caches.  And OSDs know nothing
-> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-> index c65823270313..e103b499aaa8 100644
-> --- a/fs/cifs/cifsfs.c
-> +++ b/fs/cifs/cifsfs.c
-> @@ -1096,6 +1096,10 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
->  		goto out;
->  	}
->  
-> +	rc = -EOPNOTSUPP;
-> +	if (!target_tcon->ses->server->ops->copychunk_range)
-> +		goto out;
-> +
->  	/*
->  	 * Note: cifs case is easier than btrfs since server responsible for
->  	 * checks for proper open modes and file type and if it wants
-> @@ -1107,11 +1111,10 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
->  	/* should we flush first and last page first */
->  	truncate_inode_pages(&target_inode->i_data, 0);
->  
-> -	if (target_tcon->ses->server->ops->copychunk_range)
-> +	rc = generic_copy_file_range_prep(src_file, dst_file);
-> +	if (!rc)
->  		rc = target_tcon->ses->server->ops->copychunk_range(xid,
->  			smb_file_src, smb_file_target, off, len, destoff);
-> -	else
-> -		rc = -EOPNOTSUPP;
->  
->  	/* force revalidate of size and timestamps of target file now
->  	 * that target is updated on the server
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index e03901ae729b..3531d4a3d9ec 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -3128,6 +3128,10 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
->  
->  	inode_lock(inode_out);
->  
-> +	err = generic_copy_file_range_prep(file_in, file_out);
-> +	if (err)
-> +		goto out;
-> +
->  	if (fc->writeback_cache) {
->  		err = filemap_write_and_wait_range(inode_out->i_mapping,
->  						   pos_out, pos_out + len);
-> diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
-> index 5196bfa7894d..b387951e1d86 100644
-> --- a/fs/nfs/nfs42proc.c
-> +++ b/fs/nfs/nfs42proc.c
-> @@ -345,9 +345,11 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
->  
->  	do {
->  		inode_lock(file_inode(dst));
-> -		err = _nfs42_proc_copy(src, src_lock,
-> -				dst, dst_lock,
-> -				&args, &res);
-> +		err = generic_copy_file_range_prep(src, dst);
-> +		if (!err)
-> +			err = _nfs42_proc_copy(src, src_lock,
-> +					       dst, dst_lock,
-> +					       &args, &res);
->  		inode_unlock(file_inode(dst));
->  
->  		if (err >= 0)
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index b0fb1176b628..e16bcafc0da2 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1565,6 +1565,28 @@ COMPAT_SYSCALL_DEFINE4(sendfile64, int, out_fd, int, in_fd,
->  }
->  #endif
->  
-> +/*
-> + * Prepare inodes for copy from @file_in to @file_out.
-> + *
-> + * Caller must hold output inode lock.
-> + */
-> +int generic_copy_file_range_prep(struct file *file_in, struct file *file_out)
-> +{
-> +	int ret;
-> +
-> +	WARN_ON_ONCE(!inode_is_locked(file_inode(file_out)));
-> +
-> +	/*
-> +	 * Clear the security bits if the process is not being run by root.
-> +	 * This keeps people from modifying setuid and setgid binaries.
-> +	 */
-> +	ret = file_remove_privs(file_out);
-> +
-> +	return ret;
-> +
-> +}
-> +EXPORT_SYMBOL(generic_copy_file_range_prep);
-> +
->  /**
->   * generic_copy_file_range - copy data between two files
->   * @file_in:	file structure to read from
-> @@ -1590,6 +1612,15 @@ ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
->  				struct file *file_out, loff_t pos_out,
->  				size_t len, unsigned int flags)
->  {
-> +	int ret;
-> +
-> +	/* Should inode lock be held throughout the copy operation? */
-> +	inode_lock(file_inode(file_out));
-> +	ret = generic_copy_file_range_prep(file_in, file_out);
-> +	inode_unlock(file_inode(file_out));
-> +	if (ret)
-> +		return ret;
-> +
->  	return do_splice_direct(file_in, &pos_in, file_out, &pos_out,
->  				len > MAX_RW_COUNT ? MAX_RW_COUNT : len, 0);
->  }
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e4d382c4342a..3e03a96d9ab6 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1889,6 +1889,8 @@ extern ssize_t vfs_readv(struct file *, const struct iovec __user *,
->  		unsigned long, loff_t *, rwf_t);
->  extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
->  				   loff_t, size_t, unsigned int);
-> +extern int generic_copy_file_range_prep(struct file *file_in,
-> +					struct file *file_out);
->  extern ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
->  				       struct file *file_out, loff_t pos_out,
->  				       size_t len, unsigned int flags);
-> -- 
-> 2.17.1
+Can we extend the io_uring API to support this behavior?  Also would
+be great if we can make event path lockless.  On a big number of fds
+and frequent events - this matters, please take a look, recently I
+did some measurements:  https://lkml.org/lkml/2018/12/12/305
+
+--
+Roman
+
