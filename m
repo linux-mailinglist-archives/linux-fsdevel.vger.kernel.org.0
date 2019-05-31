@@ -2,115 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F83C30C24
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 11:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6254330C25
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 11:56:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbfEaJ4N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 05:56:13 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59418 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfEaJ4N (ORCPT
+        id S1727196AbfEaJ4W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 05:56:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44530 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbfEaJ4V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 05:56:13 -0400
+        Fri, 31 May 2019 05:56:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=newM6axnRsLPzVidNzZIs9UXkF30YKMRSAFuj0fIORw=; b=LGsWfVxndsoPcaqAe86E0fcjm
-        ACd9wShqg+zN82Gj4OjPnSa1T9+a1I0dGBEIxVp1ACCo+eRXDyZu1wc5PyZoHull9NBCNoMMhSzqE
-        Ltp/mVblBHO9eA6MF+5WeRoGTf0JGdxOF9/N3hwK8006xqQWZCiVd6h8jU9j6iTP/fNQ9uCMGQwJG
-        R/G7lYCFuHLfWAJj9q7bgmhoVvG7Gcd6mWO2n2toyEqVMTtBr5oqsuQAl8h/o+RKf545ZXH6YiUuX
-        YY+ZZ4ADIcugpA3QCuJcKPsQx8OiV9WSKM/hFeDkdV8DgISAzi86B1Y/ytfaEyoqDE5nFiKicdH4x
-        KpAt9uuXQ==;
+         bh=T/f6xtXjUGNf45hEkflxN0bquHarry9NS4GCdXw6I0M=; b=GVEIhX3ihMVMz7nHk3GGeL09f
+        HpIxgJJZhhrAKwMZ4dijsJ8DMeE6iK95J1jTSmWa5qSQIlILadqiYaMe4n8iGKQpz/HMnaEw3+AtV
+        1ayEHsRH7QaTKuAaqUbkq2r18KHKCbI+BzcKF6M5oQDvRWeDd9zHfeWdOMA7Ug4bMUK2nZwEUFfyb
+        Cm577lhPr/B+QDoV6qDDG5JjstK9TmJRXpgp4TcStnBmAXKYvLPRmcU2Cnnxdl8OxfyDHwM3Ct6nJ
+        zm6fAlJckmI4XHnZZfgWA3WXjTbI0g+LSb6Vu16/NbAXRuqL8P0eg2CH7iJRf1aKUg7I/vY0+d9RY
+        cOuWieZ1w==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWeGf-0003jo-5Y; Fri, 31 May 2019 09:56:09 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hWeGo-0002Vc-O9; Fri, 31 May 2019 09:56:18 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EAE96201D5AB1; Fri, 31 May 2019 11:56:07 +0200 (CEST)
-Date:   Fri, 31 May 2019 11:56:07 +0200
+        id 511FA201D5AB1; Fri, 31 May 2019 11:56:16 +0200 (CEST)
+Date:   Fri, 31 May 2019 11:56:16 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Roman Penyaev <rpenyaev@suse.de>
 Cc:     azat@libevent.org, akpm@linux-foundation.org,
         viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 06/13] epoll: introduce helpers for adding/removing
- events to uring
-Message-ID: <20190531095607.GC17637@hirez.programming.kicks-ass.net>
+Subject: Re: [PATCH v3 07/13] epoll: call ep_add_event_to_uring() from
+ ep_poll_callback()
+Message-ID: <20190531095616.GD17637@hirez.programming.kicks-ass.net>
 References: <20190516085810.31077-1-rpenyaev@suse.de>
- <20190516085810.31077-7-rpenyaev@suse.de>
+ <20190516085810.31077-8-rpenyaev@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190516085810.31077-7-rpenyaev@suse.de>
+In-Reply-To: <20190516085810.31077-8-rpenyaev@suse.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 16, 2019 at 10:58:03AM +0200, Roman Penyaev wrote:
-> +static inline bool ep_add_event_to_uring(struct epitem *epi, __poll_t pollflags)
+On Thu, May 16, 2019 at 10:58:04AM +0200, Roman Penyaev wrote:
+> Each ep_poll_callback() is called when fd calls wakeup() on epfd.
+> So account new event in user ring.
+> 
+> The tricky part here is EPOLLONESHOT.  Since we are lockless we
+> have to be deal with ep_poll_callbacks() called in paralle, thus
+> use cmpxchg to clear public event bits and filter out concurrent
+> call from another cpu.
+> 
+> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 2f551c005640..55612da9651e 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -1407,6 +1407,29 @@ struct file *get_epoll_tfile_raw_ptr(struct file *file, int tfd,
+>  }
+>  #endif /* CONFIG_CHECKPOINT_RESTORE */
+>  
+> +/**
+> + * Atomically clear public event bits and return %true if the old value has
+> + * public event bits set.
+> + */
+> +static inline bool ep_clear_public_event_bits(struct epitem *epi)
 > +{
-> +	struct eventpoll *ep = epi->ep;
-> +	struct epoll_uitem *uitem;
-> +	bool added = false;
+> +	__poll_t old, flags;
 > +
-> +	if (WARN_ON(!pollflags))
-> +		return false;
-> +
-> +	uitem = &ep->user_header->items[epi->bit];
 > +	/*
-> +	 * Can be represented as:
-> +	 *
-> +	 *    was_ready = uitem->ready_events;
-> +	 *    uitem->ready_events &= ~EPOLLREMOVED;
-> +	 *    uitem->ready_events |= pollflags;
-> +	 *    if (!was_ready) {
-> +	 *         // create index entry
-> +	 *    }
-> +	 *
-> +	 * See the big comment inside ep_remove_user_item(), why it is
-> +	 * important to mask EPOLLREMOVED.
+> +	 * Here we race with ourselves and with ep_modify(), which can
+> +	 * change the event bits.  In order not to override events updated
+> +	 * by ep_modify() we have to do cmpxchg.
 > +	 */
-> +	if (!atomic_or_with_mask(&uitem->ready_events,
-> +				 pollflags, EPOLLREMOVED)) {
-> +		unsigned int i, *item_idx, index_mask;
 > +
-> +		/*
-> +		 * Item was not ready before, thus we have to insert
-> +		 * new index to the ring.
-> +		 */
+> +	old = epi->event.events;
+> +	do {
+> +		flags = old;
+> +	} while ((old = cmpxchg(&epi->event.events, flags,
+> +				flags & EP_PRIVATE_BITS)) != flags);
 > +
-> +		index_mask = ep_max_index_nr(ep) - 1;
-> +		i = __atomic_fetch_add(&ep->user_header->tail, 1,
-> +				       __ATOMIC_ACQUIRE);
-
-afaict __atomic_fetch_add() does not exist.
-
-> +		item_idx = &ep->user_index[i & index_mask];
-> +
-> +		/* Signal with a bit, which is > 0 */
-> +		*item_idx = epi->bit + 1;
-
-Did you just increment the user visible tail pointer before you filled
-the data? That is, can the concurrent userspace observe the increment
-before you put credible data in its place?
-
-> +
-> +		/*
-> +		 * Want index update be flushed from CPU write buffer and
-> +		 * immediately visible on userspace side to avoid long busy
-> +		 * loops.
-> +		 */
-> +		smp_wmb();
-
-That's still complete nonsense.
-
-> +
-> +		added = true;
-> +	}
-> +
-> +	return added;
+> +	return flags & ~EP_PRIVATE_BITS;
 > +}
+
+AFAICT epi->event.events also has normal writes to it, eg. in
+ep_modify(). A number of architectures cannot handle concurrent normal
+writes and cmpxchg() to the same variable.
+
