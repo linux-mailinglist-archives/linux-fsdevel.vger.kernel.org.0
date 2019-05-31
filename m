@@ -2,110 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC3E310D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 17:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA87B31131
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 17:22:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfEaPFR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 11:05:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39034 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726037AbfEaPFR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 11:05:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4236DAD9C;
-        Fri, 31 May 2019 15:05:16 +0000 (UTC)
+        id S1726721AbfEaPV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 11:21:57 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:33810 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbfEaPV5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 May 2019 11:21:57 -0400
+Received: by mail-yw1-f68.google.com with SMTP id n76so4287627ywd.1;
+        Fri, 31 May 2019 08:21:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hVB+3wva8lYYaR85t5N42o/6t3+e71DhQnwd4VnHZ2s=;
+        b=cauG1fiQiQ8aQQCenQLcHSPvx0I4gcwkiAsElwldIFkEwXd6bYpDga4KE1UvqPxFYC
+         C8/0vrf8SnlO5U59qZrpnpGjhw5zk8B7tlhZVZRPNe5eBn8+dsEMlymmRjxE6XAUo8Rw
+         89R6HOiMiLK/x6SZZLku+9dBLsBrO0EkuRiGBtzTpuZ9T8+dsuYh+F8koLzFKFj9gxLV
+         rSNEGiJfEK1+a7Ch9m7iB8v80YQyb7g3nwL86B6ImAWB8wkibU6jLHFhJZt0rhlwAYfe
+         VZa78TlWWnngrFEhPzRJrqciRm+n6AvzQdvQckUGzVxmq3lL+wpgUSSQAn2bGqKQRwEe
+         t82w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hVB+3wva8lYYaR85t5N42o/6t3+e71DhQnwd4VnHZ2s=;
+        b=H72TB05u5pYQneDC07Bvl1/fvkhke8w1+dqcJa64WBg0Z8uD5Lghd1F8qIXdRT1LAa
+         gZr20WdGv184b0Ce6F8v/+Jd5BdfkHzvFgStUUyIIfwf7Y+7E5L1JYtvQ9m9V3iALTFh
+         YSU7sF/1el3tnswVj8A7Pz10vgysfL604fif/owBMaBTOSpMg12Z+a0os9UX9xu+0A3o
+         EG63JExlaaA821n1v1nDzvfg0508CSIG4jmEH9ebOTTmefIDCeN6NnmklOQtxv2mepYu
+         0AhtpjetvZMRooUgAnRhWOlP+kThhPF0PXZvWHrpHogXR8zDdaXTWIuy87TA6wzNbUe5
+         8MjQ==
+X-Gm-Message-State: APjAAAXgALxsnD6DPRzB7h+wj8Uxl77P20VpCdsUL8Fq9MyJiSHu/M+I
+        AhM00izP88U5skJjcgOoXSIv3lJqjEN/QH1aYtA=
+X-Google-Smtp-Source: APXvYqzweoHJN024aJFPsVRMFJeZ7erwv8ogr3cR1VHrvMTSMSfOoUXoORxVBwUVuv3Wftm9yea1zNU3KdGTZeHMwbg=
+X-Received: by 2002:a81:7096:: with SMTP id l144mr6198986ywc.294.1559316116397;
+ Fri, 31 May 2019 08:21:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 31 May 2019 17:05:16 +0200
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     azat@libevent.org, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/13] epoll: call ep_add_event_to_uring() from
- ep_poll_callback()
-In-Reply-To: <20190531130516.GA2606@hirez.programming.kicks-ass.net>
-References: <20190516085810.31077-1-rpenyaev@suse.de>
- <20190516085810.31077-8-rpenyaev@suse.de>
- <20190531095616.GD17637@hirez.programming.kicks-ass.net>
- <98971429dc36e8a2e3417af1744de2b2@suse.de>
- <20190531130516.GA2606@hirez.programming.kicks-ass.net>
-Message-ID: <8dc64c770b693aeb2040cca7ec697a7a@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+References: <20190527172655.9287-1-amir73il@gmail.com> <20190528202659.GA12412@mit.edu>
+ <CAOQ4uxgo5jmwQbLAKQre9=7pLQw=CwMgDaWPaJxi-5NGnPEVPQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgo5jmwQbLAKQre9=7pLQw=CwMgDaWPaJxi-5NGnPEVPQ@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 31 May 2019 18:21:45 +0300
+Message-ID: <CAOQ4uxgj94WR82iHE4PDGSD0UDxG5sCtr+Sv+t1sOHHmnXFYzQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH] link.2: AT_ATOMIC_DATA and AT_ATOMIC_METADATA
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Jan Kara <jack@suse.cz>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>, Chris Mason <clm@fb.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-05-31 15:05, Peter Zijlstra wrote:
-> On Fri, May 31, 2019 at 01:22:54PM +0200, Roman Penyaev wrote:
->> On 2019-05-31 11:56, Peter Zijlstra wrote:
->> > On Thu, May 16, 2019 at 10:58:04AM +0200, Roman Penyaev wrote:
-> 
->> > > +static inline bool ep_clear_public_event_bits(struct epitem *epi)
->> > > +{
->> > > +	__poll_t old, flags;
->> > > +
->> > > +	/*
->> > > +	 * Here we race with ourselves and with ep_modify(), which can
->> > > +	 * change the event bits.  In order not to override events updated
->> > > +	 * by ep_modify() we have to do cmpxchg.
->> > > +	 */
->> > > +
->> > > +	old = epi->event.events;
->> > > +	do {
->> > > +		flags = old;
->> > > +	} while ((old = cmpxchg(&epi->event.events, flags,
->> > > +				flags & EP_PRIVATE_BITS)) != flags);
->> > > +
->> > > +	return flags & ~EP_PRIVATE_BITS;
->> > > +}
->> >
->> > AFAICT epi->event.events also has normal writes to it, eg. in
->> > ep_modify(). A number of architectures cannot handle concurrent normal
->> > writes and cmpxchg() to the same variable.
->> 
->> Yes, we race with the current function and with ep_modify().  Then,
->> ep_modify()
->> should do something as the following:
->> 
->> -	epi->event.events = event->events
->> +	xchg(&epi->event.events, event->events);
->> 
->> Is that ok?
-> 
-> That should be correct, but at that point I think we should also always
-> read the thing with READ_ONCE() to avoid load-tearing. And I suspect it
-> then becomes sensible to change the type to atomic_t.
+> >
+> > So instead of saying "A filesystem that accepts this flag will
+> > guaranty, that old inode data will not be exposed in the new linked
+> > name."  It's much clearer to state this in the affirmative:
+> >
+> >         A filesystem which accepts this flag will guarantee that if
+> >         the new pathname exists after a crash, all of the data written
+> >         to the file at the time of the linkat(2) call will be visible.
+> >
+>
+> Sounds good to me. I will take a swing at another patch.
+>
 
-But it seems if we afraid of load tearing that should be fixed 
-separately,
-independently of this patchset, because epi->event.events is updated
-in ep_modify() and races with ep_poll_callback(), which reads the value
-in couple of places.
+So I am down to single flag documented with 3 tweets ;-)
 
-Probably nothing terrible will happen, because eventually event comes
-or just ignored.
+What do you think of:
+
+"AT_ATOMIC_DATA (since Linux 5.x)
+A filesystem which accepts this flag will guarantee that if the linked file
+name exists after a system crash, then all of the data written to the file
+and all of the file's metadata at the time of the linkat(2) call will be
+visible.
+
+The way to achieve this guarantee on old kernels is to call fsync (2)
+before linking the file, but doing so will also results in flushing of
+volatile disk caches.
+
+A filesystem which accepts this flag does NOT
+guarantee that any of the file hardlinks will exist after a system crash,
+nor that the last observed value of st_nlink (see stat (2)) will persist."
 
 
-> atomic_set() vs atomic_cmpxchg() only carries the extra overhead on
-> those 'dodgy' platforms.
-> 
->> Just curious: what are these archs?
-> 
-> Oh, lovely stuff like parisc, sparc32 and arc-eznps. See
-> arch/parisc/lib/bitops.c:__cmpxchg_*() for example :/ Those systems 
-> only
-> have a single truly atomic op (something from the xchg / test-and-set
-> family) and the rest is fudged on top of that.
-
-Locks, nice.
-
---
-Roman
-
-
+Thanks,
+Amir.
