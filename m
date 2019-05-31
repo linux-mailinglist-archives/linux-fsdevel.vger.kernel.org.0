@@ -2,127 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D14C230ED2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 15:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D276A30EDD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 15:28:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbfEaN0r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 09:26:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:60612 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbfEaN0q (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 09:26:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8n09TENg//rbgbzsGXRPd289l+d2UZWCH+fGg2NaHa4=; b=oMieT2howrG7WS9bOvNKdCmiR
-        jX6TmxtTHoTJ6p19NQ7BG0HE7FY04HsI5/nyRw+Aq42dtfLxVH85f/Oo1wrKHZiXHSYILXb6bYx6K
-        yhA1rgynmCx8lfqGcZssXNV6HHnn7atgrynyvL/+8MltoPvEPtws/8cz6hOIaknzrE3S4stP3RQCA
-        +MPBd2PAi7l2iU3fhSRgYTaCLKkRqUgtXi6eiRPa1g0WJHp8m2WPOXwF9+0/y9HLU+804TTCeG+yR
-        KtRFcgaXX9U1NowGmovnO8AyDivrrgn/IpW9UKTGwPivpjuRU9V2uX1aDiIUIutXoeABwDttquviR
-        2s09w9mqg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWhY5-0007pO-9M; Fri, 31 May 2019 13:26:21 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 158FF201822CC; Fri, 31 May 2019 15:26:20 +0200 (CEST)
-Date:   Fri, 31 May 2019 15:26:20 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jann Horn <jannh@google.com>, Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
- ring buffer
-Message-ID: <20190531132620.GC2606@hirez.programming.kicks-ass.net>
-References: <20190531111445.GO2677@hirez.programming.kicks-ass.net>
- <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com>
- <20190528162603.GA24097@kroah.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
- <4031.1559064620@warthog.procyon.org.uk>
- <20190528231218.GA28384@kroah.com>
- <31936.1559146000@warthog.procyon.org.uk>
- <16193.1559163763@warthog.procyon.org.uk>
- <21942.1559304135@warthog.procyon.org.uk>
+        id S1726700AbfEaN2R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 09:28:17 -0400
+Received: from mail-eopbgr740119.outbound.protection.outlook.com ([40.107.74.119]:49984
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726587AbfEaN2R (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 May 2019 09:28:17 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
+ b=E3KBpTd0xyMdNaxJXIJZVITxjn9NIeZmmDyfBTEkvN6FjBjyQm3Lu7Xue+aeUlJzb8p7yq9miSOZdmecJKgfBjfW9spTaxDXwg8h3fyaOk2EMusosAzwkk5i64QaIn6kt63k8gxSTKkqu3sEeNKwZjCHCF792cOU/0SPLfADSy0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=testarcselector01;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DdOb6rzHgBDxtjL/AiaXUe+r8vXl1OiHRjXF/0vzntM=;
+ b=SrybtDiuewZ+aOfGkOlSeMtlYNjZ1g6Tk5o4c9H/z1UN86yMYmCTKLM2O1HpRHDruSKBaNihrTVsV5bO0f4YlV9YOuZ9jONY7R+vlKbed45JMZlRUyaiFGfSS916Tg/iwyxJov3wGD/0F3ePKWlRK6Owx1ZDohahw3/WC+Aqpz0=
+ARC-Authentication-Results: i=1; test.office365.com
+ 1;spf=none;dmarc=none;dkim=none;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DdOb6rzHgBDxtjL/AiaXUe+r8vXl1OiHRjXF/0vzntM=;
+ b=DolljYr4MxaQOxOF4Sm3L/FEkcaUG6MmXhVj0FiDwtO8yJNm87aAViNv0WBTGcYtZ0woOFT+pGobqY2wrD/swvIjRXzqkqh4SU8l7Q/Knf4YrEG13DmCiTi+aqUjAA8RBODJwR2tM5UKZS3lCNidfLiINVGMGtqJfOpvSWjxXjg=
+Received: from CY4PR21MB0149.namprd21.prod.outlook.com (2603:10b6:903:b2::19)
+ by CY4PR21MB0149.namprd21.prod.outlook.com (2603:10b6:903:b2::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1965.2; Fri, 31 May
+ 2019 13:28:13 +0000
+Received: from CY4PR21MB0149.namprd21.prod.outlook.com
+ ([fe80::e1c7:3b83:c1b6:5e0]) by CY4PR21MB0149.namprd21.prod.outlook.com
+ ([fe80::e1c7:3b83:c1b6:5e0%6]) with mapi id 15.20.1965.003; Fri, 31 May 2019
+ 13:28:13 +0000
+From:   Tom Talpey <ttalpey@microsoft.com>
+To:     =?utf-8?B?QXVyw6lsaWVuIEFwdGVs?= <aaptel@suse.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "sfrench@samba.org" <sfrench@samba.org>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>,
+        "fengxiaoli0714@gmail.com" <fengxiaoli0714@gmail.com>
+CC:     "fstests@vger.kernel.org" <fstests@vger.kernel.org>,
+        Murphy Zhou <xzhou@redhat.com>,
+        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: RE: NFS & CIFS support dedupe now?? Was: Re: [PATCH] generic/517:
+ notrun on NFS due to unaligned dedupe in test
+Thread-Topic: NFS & CIFS support dedupe now?? Was: Re: [PATCH] generic/517:
+ notrun on NFS due to unaligned dedupe in test
+Thread-Index: AQHVFwCtNpComz/EyU6n3bhBoiUdJaaFDs8AgAAq4hA=
+Date:   Fri, 31 May 2019 13:28:12 +0000
+Message-ID: <CY4PR21MB0149348B4B4049D9C87BAA39A0190@CY4PR21MB0149.namprd21.prod.outlook.com>
+References: <20190530094147.14512-1-xzhou@redhat.com>
+ <20190530152606.GA5383@magnolia> <20190530155851.GB5383@magnolia>
+ <87woi6yk53.fsf@suse.com>
+In-Reply-To: <87woi6yk53.fsf@suse.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=ttalpey@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-05-31T13:28:11.1679427Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=0d1ccff3-8f24-4005-b357-693d867128eb;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ttalpey@microsoft.com; 
+x-originating-ip: [2601:18f:902:71e2::1008]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b49af1a4-3e4d-4889-477a-08d6e5cbd4cd
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CY4PR21MB0149;
+x-ms-traffictypediagnostic: CY4PR21MB0149:
+x-microsoft-antispam-prvs: <CY4PR21MB01498745DAF1E12665F41932A0190@CY4PR21MB0149.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4502;
+x-forefront-prvs: 00540983E2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(39860400002)(366004)(346002)(396003)(199004)(189003)(13464003)(478600001)(186003)(8936002)(46003)(5660300002)(81156014)(305945005)(14444005)(52536014)(66574012)(110136005)(10290500003)(53546011)(54906003)(6246003)(446003)(256004)(102836004)(81166006)(8676002)(25786009)(476003)(11346002)(2906002)(486006)(2501003)(76116006)(7736002)(55016002)(6506007)(229853002)(66556008)(6116002)(74316002)(7416002)(53936002)(2201001)(64756008)(8990500004)(14454004)(66446008)(33656002)(76176011)(99286004)(4326008)(71190400001)(7696005)(73956011)(68736007)(71200400001)(10090500001)(6436002)(86362001)(66946007)(9686003)(316002)(66476007)(22452003)(52396003)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0149;H:CY4PR21MB0149.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 52oYiHYaqGiK+7tkHQG3RcdZCq/R8vlAwgtB7sKTMZDz0g1iOHXpCl8K0ZNq8X77FKte1eErct8/Nft0ePfoog2+tDNoOyHkt/iYiQaypmBB4db97o3nqgnP0Gcs4f5hxhiNfqG9uzV4TVTl9N3bP/OrW6P8tyg5npVmuBbbk4Hp1bZEX3hDWkOZ+Vh9syDIxtlcIoomrQ+YnmtT8Hyzb1LwFkLMVcQpgjBD0RZMPMfE5mPZwz41hNKMttqjbOkeKdloWyxvB752jEGfhOOtuE395YUG7LLdiz2GsxCs5hdsahPn/L32HS68YRrshDcWUCEFr2We+XBnH7tW+YV7OkfagDV83AG6uGXmMpit/v7+jkNzE0689K0ik+b22UhdCcaxcD/4zoxfF+O/WwVFPCmBexf5HZt/1qJ0cU0yD58=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21942.1559304135@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b49af1a4-3e4d-4889-477a-08d6e5cbd4cd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 May 2019 13:28:12.9447
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ttalpey@microsoft.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0149
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 31, 2019 at 01:02:15PM +0100, David Howells wrote:
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > Can you re-iterate the exact problem? I konw we talked about this in the
-> > past, but I seem to have misplaced those memories :/
-> 
-> Take this for example:
-> 
-> 	void afs_put_call(struct afs_call *call)
-> 	{
-> 		struct afs_net *net = call->net;
-> 		int n = atomic_dec_return(&call->usage);
-> 		int o = atomic_read(&net->nr_outstanding_calls);
-> 
-> 		trace_afs_call(call, afs_call_trace_put, n + 1, o,
-> 			       __builtin_return_address(0));
-> 
-> 		ASSERTCMP(n, >=, 0);
-> 		if (n == 0) {
-> 			...
-> 		}
-> 	}
-> 
-> I am printing the usage count in the afs_call tracepoint so that I can use it
-> to debug refcount bugs.  If I do it like this:
-> 
-> 	void afs_put_call(struct afs_call *call)
-> 	{
-> 		int n = refcount_read(&call->usage);
-> 		int o = atomic_read(&net->nr_outstanding_calls);
-> 
-> 		trace_afs_call(call, afs_call_trace_put, n, o,
-> 			       __builtin_return_address(0));
-> 
-> 		if (refcount_dec_and_test(&call->usage)) {
-> 			...
-> 		}
-> 	}
-> 
-> then there's a temporal gap between the usage count being read and the actual
-> atomic decrement in which another CPU can alter the count.  This can be
-> exacerbated by an interrupt occurring, a softirq occurring or someone enabling
-> the tracepoint.
-> 
-> I can't do the tracepoint after the decrement if refcount_dec_and_test()
-> returns false unless I save all the values from the object that I might need
-> as the object could be destroyed any time from that point on.
-
-Is it not the responsibility of the task that affects the 1->0
-transition to actually free the memory?
-
-That is, I'm expecting the '...' in both cases above the include the
-actual freeing of the object. If this is not the case, then @usage is
-not a reference count.
-
-(and it has already been established that refcount_t doesn't work for
-usage count scenarios)
-
-Aside from that, is the problem that refcount_dec_and_test() returns a
-boolean (true - last put, false - not last) instead of the refcount
-value? This does indeed make it hard to print the exact count value for
-the event.
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1jaWZzLW93bmVyQHZn
+ZXIua2VybmVsLm9yZyA8bGludXgtY2lmcy1vd25lckB2Z2VyLmtlcm5lbC5vcmc+IE9uDQo+IEJl
+aGFsZiBPZiBBdXLDqWxpZW4gQXB0ZWwNCj4gU2VudDogRnJpZGF5LCBNYXkgMzEsIDIwMTkgNjo0
+OSBBTQ0KPiBUbzogRGFycmljayBKLiBXb25nIDxkYXJyaWNrLndvbmdAb3JhY2xlLmNvbT47IHNm
+cmVuY2hAc2FtYmEub3JnOw0KPiBhbm5hLnNjaHVtYWtlckBuZXRhcHAuY29tOyB0cm9uZC5teWts
+ZWJ1c3RAaGFtbWVyc3BhY2UuY29tOw0KPiBmZW5neGlhb2xpMDcxNEBnbWFpbC5jb20NCj4gQ2M6
+IGZzdGVzdHNAdmdlci5rZXJuZWwub3JnOyBNdXJwaHkgWmhvdSA8eHpob3VAcmVkaGF0LmNvbT47
+IGxpbnV4LQ0KPiBjaWZzQHZnZXIua2VybmVsLm9yZzsgbGludXgtbmZzQHZnZXIua2VybmVsLm9y
+ZzsgbGludXgtZnNkZXZlbCA8bGludXgtDQo+IGZzZGV2ZWxAdmdlci5rZXJuZWwub3JnPg0KPiBT
+dWJqZWN0OiBSZTogTkZTICYgQ0lGUyBzdXBwb3J0IGRlZHVwZSBub3c/PyBXYXM6IFJlOiBbUEFU
+Q0hdIGdlbmVyaWMvNTE3Og0KPiBub3RydW4gb24gTkZTIGR1ZSB0byB1bmFsaWduZWQgZGVkdXBl
+IGluIHRlc3QNCj4gDQo+ICJEYXJyaWNrIEouIFdvbmciIDxkYXJyaWNrLndvbmdAb3JhY2xlLmNv
+bT4gd3JpdGVzOg0KPiA+IChOb3Qgc3VyZSBhYm91dCBjaWZzLCBzaW5jZSBJIGRvbid0IGhhdmUg
+YSBXaW5kb3dzIFNlcnZlciBoYW5keSkNCj4gPg0KPiA+IEknbSBub3QgYW4gZXhwZXJ0IGluIENJ
+RlMgb3IgTkZTLCBzbyBJJ20gYXNraW5nOiBkbyBlaXRoZXIgc3VwcG9ydA0KPiA+IGRlZHVwZSBv
+ciBpcyB0aGlzIGEga2VybmVsIGJ1Zz8NCj4gDQo+IEFGQUlLLCB0aGUgU01CIHByb3RvY29sIGhh
+cyAyIGlvY3RsIHRvIGRvIHNlcnZlciBzaWRlIGNvcGllczoNCj4gLSBGU0NUTF9TUlZfQ09QWUNI
+VU5LIFsxXSBnZW5lcmljDQo+IC0gRlNDVExfRFVQTElDQVRFX0VYVEVOVFNfVE9fRklMRSBbMl0s
+IG9ubHkgc3VwcG9ydGVkIG9uIHdpbmRvd3MgIm5ldyINCj4gQ29XDQo+ICAgZmlsZXN5c3RlbSBS
+ZUZTDQoNCldpbmRvd3MgYWxzbyBzdXBwb3J0cyB0aGUgVDEwIGNvcHkgb2ZmbG9hZCwgd2hlbiB0
+aGUgYmFja2VuZCBzdG9yYWdlIChlLmcuIGEgU0FOKSBzdXBwb3J0cyBpdC4NCg0KVGhlcmUgaXMg
+bm8gZXhwbGljaXQgc3VwcG9ydCBmb3IgZGVkdXAgaW4gU01CLCB0aGF0IGlzIGNvbnNpZGVyZWQg
+YSBiYWNrZW5kIHN0b3JhZ2UgZnVuY3Rpb24gYW5kIGlzIG5vdCBzdXJmYWNlZCBpbiB0aGUgcHJv
+dG9jb2wuIFRoZXJlIGFyZSwgaG93ZXZlciwgc29tZSBhdHRyaWJ1dGVzIHJlbGV2YW50IHRvIGRl
+ZHVwIHdoaWNoIGFyZSBwYXNzZWQgdGhyb3VnaC4NCg0KVG9tLg0KDQo=
