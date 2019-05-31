@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84082315A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 21:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05095315B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 21:57:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbfEaTvS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 15:51:18 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43802 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727199AbfEaTvR (ORCPT
+        id S1727437AbfEaT44 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 15:56:56 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37023 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727147AbfEaT44 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 15:51:17 -0400
-Received: by mail-qt1-f196.google.com with SMTP id z24so2332567qtj.10;
-        Fri, 31 May 2019 12:51:17 -0700 (PDT)
+        Fri, 31 May 2019 15:56:56 -0400
+Received: by mail-qt1-f193.google.com with SMTP id y57so2408226qtk.4;
+        Fri, 31 May 2019 12:56:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Xsy7KltLXxbW0BgIu9F6NiZrWo9L3TAjqu6dUK3uAPQ=;
-        b=HKiKcAe9NTvT7jlqURubrv6AeE+r3LE2+ofsKjOLjlU0ld0Pi3r+5W07WAc3VTxYm/
-         5wrIZtFRKGTy2rH60ru5gu6eOl/YzHfcZSENVMsY8hGuobbDe4O1sp/TxLr5Xtsr4Dl0
-         dwdKN9ROAl13qXJcOMT007U4IWvdTWmffPs1e/NuDc2RCbGRUSJHKyvb2Ua41NmLi8G1
-         EhPapRhPY4RVQXaXXLgkI1YZG/BcMmh5QvS0t30z3V25fLVbsq6/fspHUsKpvJ5a4hme
-         +UQJfWQiDpAbWQZ3HSdJDulMjntf/kxRd4eh+RUPfIwyjA0FaD9D0kqAasz8h5U5CYIq
-         Ph5g==
-X-Gm-Message-State: APjAAAUm+OEZ/7YxeQJx+zOKF7n1s+UtucC9RQHHqU7lyIRYoURhthq4
-        lFcldEooRRjhXGvtLlCoJhz/ZuU5uw2YIIyBzTU=
-X-Google-Smtp-Source: APXvYqy5TLpyp1w9fDgzU51O06QTfSxUvNh0UTj3TiR4JGC7+S/GTS9DUNmT2pYJmAL1ZIsCzMU5oyvll93f7R/CrRg=
-X-Received: by 2002:a0c:e78b:: with SMTP id x11mr6666549qvn.93.1559332276507;
- Fri, 31 May 2019 12:51:16 -0700 (PDT)
+        bh=Y/rGGdWu5XycD5C8N2GrP1YfPaYIiEt1+UzdCzQQwTA=;
+        b=IRDgGMYuAvaE1GSIOI3o/tLy6QghUC/gn59W8EGZYnnrf9ygntjzbieiQ3dlEsllbU
+         ztyyIguVbB2eHpmI9PkEJ2BwAS9VlMhKzI+fhGp2Lgr6qdZSii2rAWmai/dO1jFO5bxB
+         cVXi/mZFGbSbMsIAvroXJO/nn9LYuVE7T9DyKs4KHkS08aDguFsrE07Ml8RNFFXZ+X5G
+         svudypRSxUBdUObaug++K1UclxUiicg5g+AnqXx5puXnX8UkMleopia6girdXGU8pZcl
+         pfT6fHEXuCzscjxIpLM04Vewl7J3jbV0wGGhX+nv5qLlnJHgkDn9NqEepMNlBbte9z++
+         nkvw==
+X-Gm-Message-State: APjAAAVtQFKrl/qfDJBgj/1KCyOFg3tHCbU4gYtI8oWsyc+lJhSUS3W9
+        1U8LurkPcqIvnSneESH1GxXBaWFmkXz/x/3ap9g=
+X-Google-Smtp-Source: APXvYqz07GsQb18PQEuYoOrVPB5qWAwO/Z2Je+evEIb3JjUC/80MFu0dsduMvyyuzYa7wz7Pj3pRLV9pSmAglB0lGPc=
+X-Received: by 2002:a0c:b78a:: with SMTP id l10mr10482109qve.62.1559332615542;
+ Fri, 31 May 2019 12:56:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190531191204.4044-1-palmer@sifive.com> <20190531191204.4044-3-palmer@sifive.com>
-In-Reply-To: <20190531191204.4044-3-palmer@sifive.com>
+References: <20190531191204.4044-1-palmer@sifive.com> <20190531191204.4044-4-palmer@sifive.com>
+In-Reply-To: <20190531191204.4044-4-palmer@sifive.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 31 May 2019 21:51:00 +0200
-Message-ID: <CAK8P3a3HPeVq29k3Zk5rSk4bddiUQFrdEgDZUgdNnYZK+8QpGw@mail.gmail.com>
-Subject: Re: [PATCH 2/5] Add fchmodat4(), a new syscall
+Date:   Fri, 31 May 2019 21:56:39 +0200
+Message-ID: <CAK8P3a2=xko56LbwV4tyhyyyX+tw+EV-NGavYEYj0q61t=mnwg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] asm-generic: Register fchmodat4 as syscall 428
 To:     Palmer Dabbelt <palmer@sifive.com>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -56,40 +56,22 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Fri, May 31, 2019 at 9:23 PM Palmer Dabbelt <palmer@sifive.com> wrote:
 >
-> man 3p says that fchmodat() takes a flags argument, but the Linux
-> syscall does not.  There doesn't appear to be a good userspace
-> workaround for this issue but the implementation in the kernel is pretty
-> straight-forward.  The specific use case where the missing flags came up
-> was WRT a fuse filesystem implemenation, but the functionality is pretty
-> generic so I'm assuming there would be other use cases.
->
 > Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-> ---
->  fs/open.c                | 21 +++++++++++++++++++--
->  include/linux/syscalls.h |  5 +++++
->  2 files changed, 24 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/open.c b/fs/open.c
-> index a00350018a47..cfad7684e8d3 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -568,11 +568,17 @@ SYSCALL_DEFINE2(fchmod, unsigned int, fd, umode_t, mode)
->         return ksys_fchmod(fd, mode);
->  }
->
-> -int do_fchmodat(int dfd, const char __user *filename, umode_t mode)
-> +int do_fchmodat4(int dfd, const char __user *filename, umode_t mode, int flags)
-...
-> +
-> +int do_fchmodat(int dfd, const char __user *filename, umode_t mode)
-> +{
-> +       return do_fchmodat4(dfd, filename, mode, 0);
-> +}
-> +
 
-There is only one external caller of do_fchmodat(), so just change that
-to pass the extra argument here, and keep a single do_fchmodat()
-function used by the sys_fchmod(), sys_fchmod4(), sys_chmod()
-and ksys_chmod().
+As usual, each patch needs a changelog text. I would prefer having a single
+patch here that changes /all/ system call tables at once, rather than doing one
+at a time like we used to.
 
-        Arnd
+In linux-next, we are at number 434 now, and there are a couple of other
+new system calls being proposed right now (more than usual), so you may
+have to change the number a few times.
+
+Note: most architectures use .tbl files now, the exceptions are
+include/uapi/asm-generic/unistd.h and arch/arm64/include/asm/unistd32.h,
+and the latter also requires changing __NR_compat_syscalls in asm/unistd.h.
+
+Numbers should now be the same across architectures, except for alpha,
+which has a +110 offset. We have discussed ways to have a single
+file to modify for a new call on all architectures, but no patches yet.
+
+     Arnd
