@@ -2,102 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6254330C25
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 11:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02BA230CCC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 May 2019 12:45:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbfEaJ4W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 May 2019 05:56:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44530 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfEaJ4V (ORCPT
+        id S1726331AbfEaKpI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 May 2019 06:45:08 -0400
+Received: from mail.virtlab.unibo.it ([130.136.161.50]:43110 "EHLO
+        mail.virtlab.unibo.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfEaKpI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 May 2019 05:56:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=T/f6xtXjUGNf45hEkflxN0bquHarry9NS4GCdXw6I0M=; b=GVEIhX3ihMVMz7nHk3GGeL09f
-        HpIxgJJZhhrAKwMZ4dijsJ8DMeE6iK95J1jTSmWa5qSQIlILadqiYaMe4n8iGKQpz/HMnaEw3+AtV
-        1ayEHsRH7QaTKuAaqUbkq2r18KHKCbI+BzcKF6M5oQDvRWeDd9zHfeWdOMA7Ug4bMUK2nZwEUFfyb
-        Cm577lhPr/B+QDoV6qDDG5JjstK9TmJRXpgp4TcStnBmAXKYvLPRmcU2Cnnxdl8OxfyDHwM3Ct6nJ
-        zm6fAlJckmI4XHnZZfgWA3WXjTbI0g+LSb6Vu16/NbAXRuqL8P0eg2CH7iJRf1aKUg7I/vY0+d9RY
-        cOuWieZ1w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWeGo-0002Vc-O9; Fri, 31 May 2019 09:56:18 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 511FA201D5AB1; Fri, 31 May 2019 11:56:16 +0200 (CEST)
-Date:   Fri, 31 May 2019 11:56:16 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
+        Fri, 31 May 2019 06:45:08 -0400
+Received: from cs.unibo.it (host5.studiodavoli.it [109.234.61.227])
+        by mail.virtlab.unibo.it (Postfix) with ESMTPSA id 3F13F1FF56;
+        Fri, 31 May 2019 12:45:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=cs.unibo.it;
+        s=virtlab; t=1559299504;
+        bh=s4G4mm0cVlJxxyR750Hz6JmulktaIEHy2Bt1ua5aYVU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CAKhQHBm8yDt+YFRTa0N3chhhC+ygsozaglGaLMMQgRfeA720bE0+p55Z9myJ2qdE
+         v+O+Y9/zx3J/zBtByHSNb0jZQuYIsE8gLVNkbIyEySIS8cDYkU65hsPiIQBQJMKZlp
+         tzfdFhaLGei9bCsCSP9xfq4yE5rsajcjm1xnT5RA=
+Date:   Fri, 31 May 2019 12:45:02 +0200
+From:   Renzo Davoli <renzo@cs.unibo.it>
 To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     azat@libevent.org, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/13] epoll: call ep_add_event_to_uring() from
- ep_poll_callback()
-Message-ID: <20190531095616.GD17637@hirez.programming.kicks-ass.net>
-References: <20190516085810.31077-1-rpenyaev@suse.de>
- <20190516085810.31077-8-rpenyaev@suse.de>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Davide Libenzi <davidel@xmailserver.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH 1/1] eventfd new tag EFD_VPOLL: generate epoll events
+Message-ID: <20190531104502.GE3661@cs.unibo.it>
+References: <20190526142521.GA21842@cs.unibo.it>
+ <20190527073332.GA13782@kroah.com>
+ <20190527133621.GC26073@cs.unibo.it>
+ <480f1bda66b67f740f5da89189bbfca3@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190516085810.31077-8-rpenyaev@suse.de>
+In-Reply-To: <480f1bda66b67f740f5da89189bbfca3@suse.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 16, 2019 at 10:58:04AM +0200, Roman Penyaev wrote:
-> Each ep_poll_callback() is called when fd calls wakeup() on epfd.
-> So account new event in user ring.
-> 
-> The tricky part here is EPOLLONESHOT.  Since we are lockless we
-> have to be deal with ep_poll_callbacks() called in paralle, thus
-> use cmpxchg to clear public event bits and filter out concurrent
-> call from another cpu.
-> 
-> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 2f551c005640..55612da9651e 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -1407,6 +1407,29 @@ struct file *get_epoll_tfile_raw_ptr(struct file *file, int tfd,
->  }
->  #endif /* CONFIG_CHECKPOINT_RESTORE */
->  
-> +/**
-> + * Atomically clear public event bits and return %true if the old value has
-> + * public event bits set.
-> + */
-> +static inline bool ep_clear_public_event_bits(struct epitem *epi)
-> +{
-> +	__poll_t old, flags;
-> +
-> +	/*
-> +	 * Here we race with ourselves and with ep_modify(), which can
-> +	 * change the event bits.  In order not to override events updated
-> +	 * by ep_modify() we have to do cmpxchg.
-> +	 */
-> +
-> +	old = epi->event.events;
-> +	do {
-> +		flags = old;
-> +	} while ((old = cmpxchg(&epi->event.events, flags,
-> +				flags & EP_PRIVATE_BITS)) != flags);
-> +
-> +	return flags & ~EP_PRIVATE_BITS;
-> +}
+HI Roman,
 
-AFAICT epi->event.events also has normal writes to it, eg. in
-ep_modify(). A number of architectures cannot handle concurrent normal
-writes and cmpxchg() to the same variable.
+On Fri, May 31, 2019 at 11:34:08AM +0200, Roman Penyaev wrote:
+> On 2019-05-27 15:36, Renzo Davoli wrote:
+> > Unfortunately this approach cannot be applied to
+> > poll/select/ppoll/pselect/epoll.
+> 
+> If you have to override other systemcalls, what is the problem to override
+> poll family?  It will add, let's say, 50 extra code lines complexity to your
+> userspace code.  All you need is to be woken up by *any* event and check
+> one mask variable, in order to understand what you need to do: read or
+> write,
+> basically exactly what you do in your eventfd modification, but only in
+> userspace.
 
+This approach would not scale. If I want to use both a (user-space) network stack
+and a (emulated) device (or more stacks and devices) which (overridden) poll would I use?
+
+The poll of the first stack is not able to to deal with the third device.
+
+> 
+> 
+> > > Why can it not be less than 64?
+> > This is the imeplementation of 'write'. The 64 bits include the
+> > 'command'
+> > EFD_VPOLL_ADDEVENTS, EFD_VPOLL_DELEVENTS or EFD_VPOLL_MODEVENTS (in the
+> > most
+> > significant 32 bits) and the set of events (in the lowest 32 bits).
+> 
+> Do you really need add/del/mod semantics?  Userspace still has to keep mask
+> somewhere, so you can have one simple command, which does:
+>    ctx->count = events;
+> in kernel, so no masks and this games with bits are needed.  That will
+> simplify API.
+
+It is true, at the price to have more complex code in user space.
+Other system calls could have beeen implemented as "set the value", instead there are
+ADD/DEL modification flags.
+I mean for example sigprocmask (SIG_BLOCK, SIG_UNBLOCK, SIG_SETMASK), or even epoll_ctl.
+While poll requires the program to keep the struct pollfd array stored somewhere,
+epoll is more powerful and flexible as different file descriptors can be added
+and deleted by different modules/components.
+
+If I have two threads implementing the send and receive path of a socket in a user-space
+network stack implementation the epoll pending bitmap is shared so I have to create
+critical sections like the following one any time I need to set or reset a bit.
+	pthread_mutex_lock(mylock)
+	events |= EPOLLIN
+	write(efd, &events, sizeof(events));
+	pthread_mutex_unlock(mylock)
+Using add/del semantics locking is not required as the send path thread deals with EPOLLOUT while
+its siblings receive thread uses EPOLLIN or EPOLLPRI
+
+I would prefer the add/del/mod semantics, but if this is generally perceived as a unnecessary 
+complexity in the kernel code I can update my patch.  
+
+Thank you Roman,
+			
+			renzo
