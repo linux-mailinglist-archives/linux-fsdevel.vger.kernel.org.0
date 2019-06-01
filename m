@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4260731A07
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2019 09:22:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97AF831A71
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2019 10:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbfFAHWD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Jun 2019 03:22:03 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:36677 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbfFAHWD (ORCPT
+        id S1726180AbfFAIBz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Jun 2019 04:01:55 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:45805 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbfFAIBz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Jun 2019 03:22:03 -0400
-Received: by mail-yb1-f195.google.com with SMTP id y2so4520838ybo.3;
-        Sat, 01 Jun 2019 00:22:01 -0700 (PDT)
+        Sat, 1 Jun 2019 04:01:55 -0400
+Received: by mail-yb1-f194.google.com with SMTP id v1so1755131ybi.12;
+        Sat, 01 Jun 2019 01:01:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eK3RUPlfG8RZUzkSszXzsM4RVb9xYeD1FoLiIv9fPTw=;
-        b=CvTTzK8izg+oML32UowEdMvOxWOKiM8AGVdZTsmzRuc9TaP2GTIJRhfXr7oQ5anQrs
-         WiVfdg7n82Z2+BK7lhcnFALQkXLFwaBVVrA1D+O2hZPE0v7UWpXDWBf0aAqfAgOEjBcu
-         3qhOuqmvY9VmlQi1gobAnz42m+5H0UePdFbdyYAMB/+keRGlot0UcsVXQble3HB51h4/
-         Obu6mupxiTgamyP1VlOiOaUvy3QqqlqmuJKIhl8Qh9fNo0VM5m6To40dFr+reomFCClx
-         obyuvVvvqxlUWg92CdFm52LhD3U3+nQc4ufZvrzIpIkhjXIdqM25XStaQxo5/RxpUsPN
-         v5yg==
+        bh=IDmUdYrg9m0qcChSj+6fWlPUSW2T+Ou4D7qok42q+lI=;
+        b=Q8onXTG6YYdAM90JznYzTaLl+23Fv06aSDtcxn/20VQRAsxpKzkF3P/cP8zuSzgf6z
+         zYCcn1xzObUeu/tyIRmSi4q+82cppuJQB6uauq0RNDsegzRKSVkTdtINDo3qjLFp8XgO
+         Lu+7eID26mmkxQlPyYw81IIuVYDTP27gSC1HcYlR4yBnib0BetwROb7Ez16UCxdhE2FB
+         85xpaDU+X77Er7QfDc+BrbAud5vcoyXVgZzfmvXqwv4tzn6TyJt5q+t7XddsW4p/YkSV
+         t/t07H4BLKGxWAZ610L+Jfjqde9PnJlijvXRXULOl8E4dmwcu6PUesgM1+tCFSPuKsqd
+         1SiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eK3RUPlfG8RZUzkSszXzsM4RVb9xYeD1FoLiIv9fPTw=;
-        b=UuKmku8HhVkD1jt8Vz0GW5eVhwV/Kg46Yn+PRkhX180EBE9v+wl/X6ioVFiSvXBT7z
-         uYH9mfz/3kY6JKt71776atnfpxaWiV5PHujN+kyRNscCM09J4XZ1MCfpogQpz8sIw1/4
-         oqBjpnqn/qQcvKdOf9n79wNuFJe+jPUlE21sb7ZN3J4BSfpsjjbEOK3ukOhR2iNLhRJt
-         NJL8caAp9dBUjCMpVKP0pPMVeqQ6spNeJFOuo9aduVUqagZADgCl8RDQRKSuJDUcf46O
-         gvFdOcCcLvZPJtGH4KG3ogBK5M4+1vbO1LlgqTsOTuviYimvj7tR2Olr8HQGcddGy5PI
-         NrqA==
-X-Gm-Message-State: APjAAAUH5dm7n1u1JANL19sE8zclxXnyaeD+gvq+QxGiQsnJcwVY+eAA
-        t7BJDNLbUuxoO2os7gGZeBUoDIsV9/vCmndHjnQ=
-X-Google-Smtp-Source: APXvYqzMHREZD+rkeGcCRwcs0OriuzNy8z8/GjgpQOS1zUt0AuVe4vbsOVZHuz4n54WKpFfg3l+bJMDA35CavTB4rWo=
-X-Received: by 2002:a05:6902:4c3:: with SMTP id v3mr7044274ybs.144.1559373721370;
- Sat, 01 Jun 2019 00:22:01 -0700 (PDT)
+        bh=IDmUdYrg9m0qcChSj+6fWlPUSW2T+Ou4D7qok42q+lI=;
+        b=eYxqi7iMyJbcnSeus3OUl0GePUyASNImAzNgL4Kro4+oua6SUe2ehWx35tfK8yEBAx
+         D1xLe55t23qXHBiVNLPggqkj9ujqMw0rwbDcEhB6sSQYriiHfM37y5TUMweVuifxPd77
+         X42mFr89bENSTsQoA7mQMWsb5u/EVct91UCqdrBJRtSYEdUkrMDzrxU8GkZ7ayDuZTnT
+         b1aHzAtSBOvH4+5OpAU23T2+FG3ykQ7PzlRqWQjqFVtsuqlHIsGWfUvNxMf1PI0eiNOJ
+         TZS5u5bMACT77AIKPjhjn5ROliC118N3ryM5Mzlmlx1dCnxshrGXfFIlFPFS+073KK6v
+         t8cQ==
+X-Gm-Message-State: APjAAAXTSfWhgYTLzWoKqXnUaiAYmM76oH4WumY3vy+jZyYDlI0BbwVM
+        fa6iFBuBe/9WnywFuobbNrtDvesK8+JLMl08Ykw=
+X-Google-Smtp-Source: APXvYqxltf2hrkqpRMZ8ZR2gGFxjXut4v75QGUWZF3/+eqmqNAyl47GNGLOBkHAxsczxQP8XNYLqwvwbuGUZyN2/lwA=
+X-Received: by 2002:a25:4489:: with SMTP id r131mr7095732yba.14.1559376113788;
+ Sat, 01 Jun 2019 01:01:53 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190527172655.9287-1-amir73il@gmail.com> <20190528202659.GA12412@mit.edu>
  <CAOQ4uxgo5jmwQbLAKQre9=7pLQw=CwMgDaWPaJxi-5NGnPEVPQ@mail.gmail.com>
  <CAOQ4uxgj94WR82iHE4PDGSD0UDxG5sCtr+Sv+t1sOHHmnXFYzQ@mail.gmail.com>
- <20190531164136.GA3066@mit.edu> <20190531224549.GF29573@dread.disaster.area>
-In-Reply-To: <20190531224549.GF29573@dread.disaster.area>
+ <20190531164136.GA3066@mit.edu> <20190531224549.GF29573@dread.disaster.area> <20190531232852.GG29573@dread.disaster.area>
+In-Reply-To: <20190531232852.GG29573@dread.disaster.area>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 1 Jun 2019 10:21:49 +0300
-Message-ID: <CAOQ4uxjeGxNsjT9N_X6W+mVbvn2kTaoeLE-tXVYq0-3MwC_+Xg@mail.gmail.com>
+Date:   Sat, 1 Jun 2019 11:01:42 +0300
+Message-ID: <CAOQ4uxi99NDYMrz-Q7xKta4beQiYFX3-MipZ_RxFNktFTA=vMA@mail.gmail.com>
 Subject: Re: [RFC][PATCH] link.2: AT_ATOMIC_DATA and AT_ATOMIC_METADATA
 To:     Dave Chinner <david@fromorbit.com>
 Cc:     "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
@@ -59,116 +59,82 @@ Cc:     "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         linux-xfs <linux-xfs@vger.kernel.org>,
         Ext4 <linux-ext4@vger.kernel.org>,
         Linux Btrfs <linux-btrfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ric Wheeler <rwheeler@redhat.com>
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 1, 2019 at 1:46 AM Dave Chinner <david@fromorbit.com> wrote:
+On Sat, Jun 1, 2019 at 2:28 AM Dave Chinner <david@fromorbit.com> wrote:
 >
-> On Fri, May 31, 2019 at 12:41:36PM -0400, Theodore Ts'o wrote:
-> > On Fri, May 31, 2019 at 06:21:45PM +0300, Amir Goldstein wrote:
-> > > What do you think of:
-> > >
-> > > "AT_ATOMIC_DATA (since Linux 5.x)
-> > > A filesystem which accepts this flag will guarantee that if the linked file
-> > > name exists after a system crash, then all of the data written to the file
-> > > and all of the file's metadata at the time of the linkat(2) call will be
-> > > visible.
-> >
-> > ".... will be visible after the the file system is remounted".  (Never
-> > hurts to be explicit.)
-> >
-> > > The way to achieve this guarantee on old kernels is to call fsync (2)
-> > > before linking the file, but doing so will also results in flushing of
-> > > volatile disk caches.
-> > >
-> > > A filesystem which accepts this flag does NOT
-> > > guarantee that any of the file hardlinks will exist after a system crash,
-> > > nor that the last observed value of st_nlink (see stat (2)) will persist."
-> > >
-> >
-> > This is I think more precise:
-> >
-> >     This guarantee can be achieved by calling fsync(2) before linking
-> >     the file, but there may be more performant ways to provide these
-> >     semantics.  In particular, note that the use of the AT_ATOMIC_DATA
-> >     flag does *not* guarantee that the new link created by linkat(2)
-> >     will be persisted after a crash.
+> On Sat, Jun 01, 2019 at 08:45:49AM +1000, Dave Chinner wrote:
+> > Given that we can already use AIO to provide this sort of ordering,
+> > and AIO is vastly faster than synchronous IO, I don't see any point
+> > in adding complex barrier interfaces that can be /easily implemented
+> > in userspace/ using existing AIO primitives. You should start
+> > thinking about expanding libaio with stuff like
+> > "link_after_fdatasync()" and suddenly the whole problem of
+> > filesystem data vs metadata ordering goes away because the
+> > application directly controls all ordering without blocking and
+> > doesn't need to care what the filesystem under it does....
 >
-> So here's the *implementation* problem I see with this definition of
-> AT_ATOMIC_DATA. After linkat(dirfd, name, AT_ATOMIC_DATA), there is
-> no guarantee that the data is on disk or that the link is present.
->
-> However:
->
->         linkat(dirfd, name, AT_ATOMIC_DATA);
->         fsync(dirfd);
->
-> Suddenly changes all that.
->
-> i.e. when we fsync(dirfd) we guarantee that "name" is present in the
-> directory and because we used AT_ATOMIC_DATA it implies that the
-> data pointed to by "name" must be present on disk. IOWs, what was
-> once a pure directory sync operation now *must* fsync all the child
-> inodes that have been linkat(AT_ATOMIC_DATA) since the last time the
-> direct has been made stable.
->
-> IOWs, the described AT_ATOMIC_DATA "we don't have to write the data
-> during linkat() go-fast-get-out-of-gaol-free" behaviour isn't worth
-> the pixels it is written on - it just moves all the complexity to
-> directory fsync, and that's /already/ a behavioural minefield.
+> And let me point out that this is also how userspace can do an
+> efficient atomic rename - rename_after_fdatasync(). i.e. on
+> completion of the AIO_FSYNC, run the rename. This guarantees that
+> the application will see either the old file of the complete new
+> file, and it *doesn't have to wait for the operation to complete*.
+> Once it is in flight, the file will contain the old data until some
+> point in the near future when will it contain the new data....
 
-Where does it say we don't have to write the data during linkat()?
-I was only talking about avoid FLUSH/FUA caused by fsync().
-I wrote in commit message:
-"First implementation of AT_ATOMIC_DATA is expected to be
-filemap_write_and_wait() for xfs/ext4 and probably fdatasync for btrfs."
-
-I failed to convey the reasoning for this flag to you.
-It is *not* about the latency of the "atomic link" for the calling thread
-It is about not interfering with other workloads running at the same time.
+What I am looking for is a way to isolate the effects of "atomic rename/link"
+from the rest of the users. Sure there is I/O bandwidth and queued
+bios, but at least isolate other threads working on other files or metadata
+from contending with the "atomic rename" thread of journal flushes and
+the like. Actually, one of my use cases is "atomic rename" of files with
+no data (looking for atomicity w.r.t xattr and mtime), so this "atomic rename"
+thread should not be interfering with other workloads at all.
 
 >
-> IMO, the "work-around" of forcing filesystems to write back
-> destination inodes during a link() operation is just nasty and will
-> just end up with really weird performance anomalies occurring in
-> production systems. That's not really a solution, either, especially
-> as it is far, far faster for applications to use AIO_FSYNC and then
-> on the completion callback run a normal linkat() operation...
->
-> Hence, if I've understood these correctly, then I'll be recommending
-> that XFS follows this:
->
-> > We should also document that a file system which does not implement
-> > this flag MUST return EINVAL if it is passed this flag to linkat(2).
->
-> and returns -EINVAL to these flags because we do not have the change
-> tracking infrastructure to handle these directory fsync semantics.
-> I also suspect that, even if we could track this efficiently, we
-> can't do the flushing atomically because of locking order
-> constraints between directories, regular files, pages in the page
-> cache, etc.
+> Seriously, sit down and work out all the "atomic" data vs metadata
+> behaviours you want, and then tell me how many of them cannot be
+> implemented as "AIO_FSYNC w/ completion callback function" in
+> userspace. This mechanism /guarantees ordering/ at the application
+> level, the application does not block waiting for these data
+> integrity operations to complete, and you don't need any new kernel
+> side functionality to implement this.
 
-That is not at all what I had in mind for XFS with the flag.
+So I think what I could have used is AIO_BATCH_FSYNC, an interface
+that was proposed by Ric Wheeler and discussed on LSF:
+https://lwn.net/Articles/789024/
+Ric was looking for a way to efficiently fsync a "bunch of files".
+Submitting several AIO_FSYNC calls is not the efficient way of doing that.
+So it is either a new AIO_BATCH_FSYNC and a kernel implementation
+that flushes the inodes and then calls ->sync_fs(), or a new AIO operation
+that just does the ->sync_fs() bit and using sync_file_range() for the inodes.
+
+To be more accurate, the AIO operation that would emulate my
+proposed API more closely is AIO_WAIT_FOR_SYNCFS, as I do not wish
+to impose excessive journal flushes, I just need a completion callback
+when they happened to perform the rename/link.
 
 >
-> Given that we can already use AIO to provide this sort of ordering,
-> and AIO is vastly faster than synchronous IO, I don't see any point
-> in adding complex barrier interfaces that can be /easily implemented
-> in userspace/ using existing AIO primitives. You should start
-> thinking about expanding libaio with stuff like
-> "link_after_fdatasync()" and suddenly the whole problem of
-> filesystem data vs metadata ordering goes away because the
-> application directly controls all ordering without blocking and
-> doesn't need to care what the filesystem under it does....
->
+> Fundamentally, the assertion that disk cache flushes are not what
+> causes fsync "to be slow" is incorrect. It's the synchronous
 
-OK. I can work with that. It's not that simple, but I will reply on
-your next email, where you wrote more about this alternative.
+Too many double negatives. I am not sure I parsed this correctly.
+But I think by now you understand that I don't care that fsync is "slow".
+I care about frequent fsyncs making the entire system slow down.
+
+Heck, xfs even has a mitigation in place to improve performance
+of too frequent fsyncs, but that mitigation is partly gone since
+47c7d0b19502 xfs: fix incorrect log_flushed on fsync
+
+The situation with frequent fsync on ext4 at the moment is probably
+worse.
+
+I am trying to reduce the number of fsyncs from applications
+and converting fsync to AIO_FSYNC is not going to help with that.
 
 Thanks,
 Amir.
