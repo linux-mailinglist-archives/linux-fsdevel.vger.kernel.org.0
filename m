@@ -2,131 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E2C531B9B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2019 13:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EF0C31F58
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2019 15:44:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbfFALox convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Sat, 1 Jun 2019 07:44:53 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:65379 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726089AbfFALox (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Jun 2019 07:44:53 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 16758757-1500050 
-        for multiple; Sat, 01 Jun 2019 12:44:32 +0100
-Content-Type: text/plain; charset="utf-8"
+        id S1727308AbfFANRK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Jun 2019 09:17:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41864 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726210AbfFANRJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 1 Jun 2019 09:17:09 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B35627256;
+        Sat,  1 Jun 2019 13:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559395028;
+        bh=fkbIABfdfNh+VcYgcRZEDOG8m6KEgaR3fR6nVyY8C/A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=h8n9wnb+0Xt+dbviREXb8+O511iB7dL35pJoMEPot6y4/9WZ7VT0cI4y1gY5W1734
+         w9P9X4aloNqwcFgjWiplWKhHluqTmVtxtrPyuA68582TLLGxn0/EOzYybCDiGmUc7A
+         TL14LXcq62UxUA6ffDWyd9W9Vtf1oCG/Lc1qR2p0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Christian Brauner <christian@brauner.io>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 005/186] sysctl: return -EINVAL if val violates minmax
+Date:   Sat,  1 Jun 2019 09:13:41 -0400
+Message-Id: <20190601131653.24205-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190601131653.24205-1-sashal@kernel.org>
+References: <20190601131653.24205-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <155938118174.22493.11599751119608173366@skylake-alporthouse-com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Song Liu <liu.song.a23@gmail.com>
-References: <20190307153051.18815-1-willy@infradead.org>
- <155938118174.22493.11599751119608173366@skylake-alporthouse-com>
-Message-ID: <155938946857.22493.6955534794168533151@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH v4] page cache: Store only head pages in i_pages
-Date:   Sat, 01 Jun 2019 12:44:28 +0100
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quoting Chris Wilson (2019-06-01 10:26:21)
-> Quoting Matthew Wilcox (2019-03-07 15:30:51)
-> > Transparent Huge Pages are currently stored in i_pages as pointers to
-> > consecutive subpages.  This patch changes that to storing consecutive
-> > pointers to the head page in preparation for storing huge pages more
-> > efficiently in i_pages.
-> > 
-> > Large parts of this are "inspired" by Kirill's patch
-> > https://lore.kernel.org/lkml/20170126115819.58875-2-kirill.shutemov@linux.intel.com/
-> > 
-> > Signed-off-by: Matthew Wilcox <willy@infradead.org>
-> > Acked-by: Jan Kara <jack@suse.cz>
-> > Reviewed-by: Kirill Shutemov <kirill@shutemov.name>
-> > Reviewed-and-tested-by: Song Liu <songliubraving@fb.com>
-> > Tested-by: William Kucharski <william.kucharski@oracle.com>
-> > Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-> 
-> I've bisected some new softlockups under THP mempressure to this patch.
-> They are all rcu stalls that look similar to:
-> [  242.645276] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> [  242.645293] rcu:     Tasks blocked on level-0 rcu_node (CPUs 0-3): P828
-> [  242.645301]  (detected by 1, t=5252 jiffies, g=55501, q=221)
-> [  242.645307] gem_syslatency  R  running task        0   828    815 0x00004000
-> [  242.645315] Call Trace:
-> [  242.645326]  ? __schedule+0x1a0/0x440
-> [  242.645332]  ? preempt_schedule_irq+0x27/0x50
-> [  242.645337]  ? apic_timer_interrupt+0xa/0x20
-> [  242.645342]  ? xas_load+0x3c/0x80
-> [  242.645347]  ? xas_load+0x8/0x80
-> [  242.645353]  ? find_get_entry+0x4f/0x130
-> [  242.645358]  ? pagecache_get_page+0x2b/0x210
-> [  242.645364]  ? lookup_swap_cache+0x42/0x100
-> [  242.645371]  ? do_swap_page+0x6f/0x600
-> [  242.645375]  ? unmap_region+0xc2/0xe0
-> [  242.645380]  ? __handle_mm_fault+0x7a9/0xfa0
-> [  242.645385]  ? handle_mm_fault+0xc2/0x1c0
-> [  242.645393]  ? __do_page_fault+0x198/0x410
-> [  242.645399]  ? page_fault+0x5/0x20
-> [  242.645404]  ? page_fault+0x1b/0x20
-> 
-> Any suggestions as to what information you might want?
+From: Christian Brauner <christian@brauner.io>
 
-Perhaps,
-[   76.175502] page:ffffea00098e0000 count:0 mapcount:0 mapping:0000000000000000 index:0x1
-[   76.175525] flags: 0x8000000000000000()
-[   76.175533] raw: 8000000000000000 ffffea0004a7e988 ffffea000445c3c8 0000000000000000
-[   76.175538] raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
-[   76.175543] page dumped because: VM_BUG_ON_PAGE(entry != page)
-[   76.175560] ------------[ cut here ]------------
-[   76.175564] kernel BUG at mm/swap_state.c:170!
-[   76.175574] invalid opcode: 0000 [#1] PREEMPT SMP
-[   76.175581] CPU: 0 PID: 131 Comm: kswapd0 Tainted: G     U            5.1.0+ #247
-[   76.175586] Hardware name:  /NUC6CAYB, BIOS AYAPLCEL.86A.0029.2016.1124.1625 11/24/2016
-[   76.175598] RIP: 0010:__delete_from_swap_cache+0x22e/0x340
-[   76.175604] Code: e8 b7 3e fd ff 48 01 1d a8 7e 04 01 48 83 c4 30 5b 5d 41 5c 41 5d 41 5e 41 5f c3 48 c7 c6 03 7e bf 81 48 89 c7 e8 92 f8 fd ff <0f> 0b 48 c7 c6 c8 7c bf 81 48 89 df e8 81 f8 fd ff 0f 0b 48 c7 c6
-[   76.175613] RSP: 0000:ffffc900008dba88 EFLAGS: 00010046
-[   76.175619] RAX: 0000000000000032 RBX: ffffea00098e0040 RCX: 0000000000000006
-[   76.175624] RDX: 0000000000000007 RSI: 0000000000000000 RDI: ffffffff81bf6d4c
-[   76.175629] RBP: ffff888265ed8640 R08: 00000000000002c2 R09: 0000000000000000
-[   76.175634] R10: 0000000273a4626d R11: 0000000000000000 R12: 0000000000000001
-[   76.175639] R13: 0000000000000040 R14: 0000000000000000 R15: ffffea00098e0000
-[   76.175645] FS:  0000000000000000(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
-[   76.175651] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   76.175656] CR2: 00007f24e4399000 CR3: 0000000002c09000 CR4: 00000000001406f0
-[   76.175661] Call Trace:
-[   76.175671]  __remove_mapping+0x1c2/0x380
-[   76.175678]  shrink_page_list+0x11db/0x1d10
-[   76.175684]  shrink_inactive_list+0x14b/0x420
-[   76.175690]  shrink_node_memcg+0x20e/0x740
-[   76.175696]  shrink_node+0xba/0x420
-[   76.175702]  balance_pgdat+0x27d/0x4d0
-[   76.175709]  kswapd+0x216/0x300
-[   76.175715]  ? wait_woken+0x80/0x80
-[   76.175721]  ? balance_pgdat+0x4d0/0x4d0
-[   76.175726]  kthread+0x106/0x120
-[   76.175732]  ? kthread_create_on_node+0x40/0x40
-[   76.175739]  ret_from_fork+0x1f/0x30
-[   76.175745] Modules linked in: i915 intel_gtt drm_kms_helper
-[   76.175754] ---[ end trace 8faf2ec849d50724 ]---
-[   76.206689] RIP: 0010:__delete_from_swap_cache+0x22e/0x340
-[   76.206708] Code: e8 b7 3e fd ff 48 01 1d a8 7e 04 01 48 83 c4 30 5b 5d 41 5c 41 5d 41 5e 41 5f c3 48 c7 c6 03 7e bf 81 48 89 c7 e8 92 f8 fd ff <0f> 0b 48 c7 c6 c8 7c bf 81 48 89 df e8 81 f8 fd ff 0f 0b 48 c7 c6
-[   76.206718] RSP: 0000:ffffc900008dba88 EFLAGS: 00010046
-[   76.206723] RAX: 0000000000000032 RBX: ffffea00098e0040 RCX: 0000000000000006
-[   76.206729] RDX: 0000000000000007 RSI: 0000000000000000 RDI: ffffffff81bf6d4c
-[   76.206734] RBP: ffff888265ed8640 R08: 00000000000002c2 R09: 0000000000000000
-[   76.206740] R10: 0000000273a4626d R11: 0000000000000000 R12: 0000000000000001
-[   76.206745] R13: 0000000000000040 R14: 0000000000000000 R15: ffffea00098e0000
-[   76.206750] FS:  0000000000000000(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
-[   76.206757] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
--Chris
+[ Upstream commit e260ad01f0aa9e96b5386d5cd7184afd949dc457 ]
+
+Currently when userspace gives us a values that overflow e.g.  file-max
+and other callers of __do_proc_doulongvec_minmax() we simply ignore the
+new value and leave the current value untouched.
+
+This can be problematic as it gives the illusion that the limit has
+indeed be bumped when in fact it failed.  This commit makes sure to
+return EINVAL when an overflow is detected.  Please note that this is a
+userspace facing change.
+
+Link: http://lkml.kernel.org/r/20190210203943.8227-4-christian@brauner.io
+Signed-off-by: Christian Brauner <christian@brauner.io>
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/sysctl.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index c9ec050bcf461..387efbaf464a7 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2874,8 +2874,10 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+ 			if (neg)
+ 				continue;
+ 			val = convmul * val / convdiv;
+-			if ((min && val < *min) || (max && val > *max))
+-				continue;
++			if ((min && val < *min) || (max && val > *max)) {
++				err = -EINVAL;
++				break;
++			}
+ 			*i = val;
+ 		} else {
+ 			val = convdiv * (*i) / convmul;
+-- 
+2.20.1
+
