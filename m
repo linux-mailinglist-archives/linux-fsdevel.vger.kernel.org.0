@@ -2,44 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 120C831C80
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2019 15:22:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C56131E8B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2019 15:38:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728662AbfFANWF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Jun 2019 09:22:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49510 "EHLO mail.kernel.org"
+        id S1728757AbfFANWg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Jun 2019 09:22:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728112AbfFANWE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Jun 2019 09:22:04 -0400
+        id S1728136AbfFANWf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 1 Jun 2019 09:22:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 314DB27312;
-        Sat,  1 Jun 2019 13:22:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF97126E87;
+        Sat,  1 Jun 2019 13:22:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559395323;
-        bh=BbOwVBE/a0Ts6qr8jzkK8ATWPK9HNWZdFgnN6gM9smM=;
+        s=default; t=1559395354;
+        bh=gOZxUIYQsBEQRv9bk+M8JatOYaVu6PBPjijotTiPsns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mb6ynkiRcuUzTT2BaV4VA5c0Tfxtiq0KY3CZB2zfOSXfx+K3jHdBd9kuJh1pVX62T
-         V73wK0gTkOOnEPzIn1khG3Y+ruD5FxxTzinSNb2xrdRZQv6Ig2e05HfXNnIndGxP3D
-         RlN/+CK0Ii1cWGlcPyxeQCLX5EiozwdbA8VqIv/U=
+        b=wHZUqz32iMTPY1jA7ax4RY3fenLrXNAdaQmzNdANUaF0MH+Fi4Wbf/8ckv3ikjlzu
+         +dIh+cdEP31vBOn84qlvACNtF+M1OInnwSmhPHsvChVfKw9Cw5UdERLv5Vc4lchfq9
+         Iuw1+lrUeqVnQd3Dk8m3pMCZgbFaqveG6y9Glk/4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christian Brauner <christian@brauner.io>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Waiman Long <longman@redhat.com>,
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 003/141] sysctl: return -EINVAL if val violates minmax
-Date:   Sat,  1 Jun 2019 09:19:39 -0400
-Message-Id: <20190601132158.25821-3-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.19 013/141] mm: page_mkclean vs MADV_DONTNEED race
+Date:   Sat,  1 Jun 2019 09:19:49 -0400
+Message-Id: <20190601132158.25821-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190601132158.25821-1-sashal@kernel.org>
 References: <20190601132158.25821-1-sashal@kernel.org>
@@ -52,53 +47,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian@brauner.io>
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
 
-[ Upstream commit e260ad01f0aa9e96b5386d5cd7184afd949dc457 ]
+[ Upstream commit 024eee0e83f0df52317be607ca521e0fc572aa07 ]
 
-Currently when userspace gives us a values that overflow e.g.  file-max
-and other callers of __do_proc_doulongvec_minmax() we simply ignore the
-new value and leave the current value untouched.
+MADV_DONTNEED is handled with mmap_sem taken in read mode.  We call
+page_mkclean without holding mmap_sem.
 
-This can be problematic as it gives the illusion that the limit has
-indeed be bumped when in fact it failed.  This commit makes sure to
-return EINVAL when an overflow is detected.  Please note that this is a
-userspace facing change.
+MADV_DONTNEED implies that pages in the region are unmapped and subsequent
+access to the pages in that range is handled as a new page fault.  This
+implies that if we don't have parallel access to the region when
+MADV_DONTNEED is run we expect those range to be unallocated.
 
-Link: http://lkml.kernel.org/r/20190210203943.8227-4-christian@brauner.io
-Signed-off-by: Christian Brauner <christian@brauner.io>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Waiman Long <longman@redhat.com>
+w.r.t page_mkclean() we need to make sure that we don't break the
+MADV_DONTNEED semantics.  MADV_DONTNEED check for pmd_none without holding
+pmd_lock.  This implies we skip the pmd if we temporarily mark pmd none.
+Avoid doing that while marking the page clean.
+
+Keep the sequence same for dax too even though we don't support
+MADV_DONTNEED for dax mapping
+
+The bug was noticed by code review and I didn't observe any failures w.r.t
+test run.  This is similar to
+
+commit 58ceeb6bec86d9140f9d91d71a710e963523d063
+Author: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Date:   Thu Apr 13 14:56:26 2017 -0700
+
+    thp: fix MADV_DONTNEED vs. MADV_FREE race
+
+commit ced108037c2aa542b3ed8b7afd1576064ad1362a
+Author: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Date:   Thu Apr 13 14:56:20 2017 -0700
+
+    thp: fix MADV_DONTNEED vs. numa balancing race
+
+Link: http://lkml.kernel.org/r/20190321040610.14226-1-aneesh.kumar@linux.ibm.com
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc:"Kirill A . Shutemov" <kirill@shutemov.name>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sysctl.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/dax.c  | 2 +-
+ mm/rmap.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 9a85c7ae73621..f8576509c7bef 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2791,8 +2791,10 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
- 			if (neg)
+diff --git a/fs/dax.c b/fs/dax.c
+index 004c8ac1117c4..75a289c31c7e5 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -908,7 +908,7 @@ static void dax_mapping_entry_mkclean(struct address_space *mapping,
+ 				goto unlock_pmd;
+ 
+ 			flush_cache_page(vma, address, pfn);
+-			pmd = pmdp_huge_clear_flush(vma, address, pmdp);
++			pmd = pmdp_invalidate(vma, address, pmdp);
+ 			pmd = pmd_wrprotect(pmd);
+ 			pmd = pmd_mkclean(pmd);
+ 			set_pmd_at(vma->vm_mm, address, pmdp, pmd);
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 85b7f94233526..f048c2651954b 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -926,7 +926,7 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
  				continue;
- 			val = convmul * val / convdiv;
--			if ((min && val < *min) || (max && val > *max))
--				continue;
-+			if ((min && val < *min) || (max && val > *max)) {
-+				err = -EINVAL;
-+				break;
-+			}
- 			*i = val;
- 		} else {
- 			val = convdiv * (*i) / convmul;
+ 
+ 			flush_cache_page(vma, address, page_to_pfn(page));
+-			entry = pmdp_huge_clear_flush(vma, address, pmd);
++			entry = pmdp_invalidate(vma, address, pmd);
+ 			entry = pmd_wrprotect(entry);
+ 			entry = pmd_mkclean(entry);
+ 			set_pmd_at(vma->vm_mm, address, pmd, entry);
 -- 
 2.20.1
 
