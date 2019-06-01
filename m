@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBDD031E1A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2019 15:34:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 865EE31CE5
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jun 2019 15:26:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfFANeN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Jun 2019 09:34:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53826 "EHLO mail.kernel.org"
+        id S1729412AbfFANZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Jun 2019 09:25:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728171AbfFANXw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Jun 2019 09:23:52 -0400
+        id S1729371AbfFANZH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 1 Jun 2019 09:25:07 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF0D927360;
-        Sat,  1 Jun 2019 13:23:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DC2C27375;
+        Sat,  1 Jun 2019 13:25:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559395431;
-        bh=hmHDqocuR+fOA+hANEpWDXA5DiRouRUxCAjHS6ovgmk=;
+        s=default; t=1559395506;
+        bh=Vn5bjbLClz3xZJlMgYYX06Me+3iLkR/24u4kt7vlo1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jB5GxqqwAXMO+h3YER2OBltyd4Q7QgQGJr9pzu/use9/gZkX97SOduEjxoPrEKuUZ
-         DVLri/E9LQsTr3AhWtcYPu+8eUCtVq/UFaw7w4Bw7DP4rZUgr3KWaw/rde3GsFLyd7
-         eB/odyD6EiTLwqRYITv5E0bUiBQQUXGJOPrRMrjA=
+        b=cdBDL5aMEddVHOXEDpkrt5+pjJbrxuOO/dWBSuoPesALwBv7YeEZoK3jfFO3LhtI5
+         LHPDz9/9sVdyptQSNUyz75JRnjbEBdthLcnug2olrwpKQaGFIo0R3wngpqvn4YBOAL
+         YIfLxtNdQms0QrUmv67rd6iyfpoqGej/2uJ55kd4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Christian Brauner <christian@brauner.io>,
@@ -37,12 +37,12 @@ Cc:     Christian Brauner <christian@brauner.io>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 03/99] sysctl: return -EINVAL if val violates minmax
-Date:   Sat,  1 Jun 2019 09:22:10 -0400
-Message-Id: <20190601132346.26558-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 03/74] sysctl: return -EINVAL if val violates minmax
+Date:   Sat,  1 Jun 2019 09:23:50 -0400
+Message-Id: <20190601132501.27021-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190601132346.26558-1-sashal@kernel.org>
-References: <20190601132346.26558-1-sashal@kernel.org>
+In-Reply-To: <20190601132501.27021-1-sashal@kernel.org>
+References: <20190601132501.27021-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -83,10 +83,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index f13601a616ad6..cfc2c0d1369ab 100644
+index cf0aeaae567e8..6af1ac551ea3a 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -2732,8 +2732,10 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+@@ -2527,8 +2527,10 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
  			if (neg)
  				continue;
  			val = convmul * val / convdiv;
