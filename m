@@ -2,274 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EB003278F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 06:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D00332845
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 08:04:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfFCE3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jun 2019 00:29:25 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:41291 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726221AbfFCE3Z (ORCPT
+        id S1726684AbfFCGEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jun 2019 02:04:38 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33085 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726520AbfFCGEi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jun 2019 00:29:25 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id BF63821FB;
-        Mon,  3 Jun 2019 00:29:23 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 03 Jun 2019 00:29:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=u3v0eiZffY+v2sn8V9SnXJ0gtCWl1JCgJq73oZGa8dI=; b=LPQlwJrO
-        rlkK/aTKLE3ZbR1UfmcfzlAUCyKPw8waLGQpzkYI/A5+0IKEnsjJYFiMUoD8MDkj
-        vrHDs2Ya0zR7ue81LL1ThhvGv8BimaSnUO9o6q1Lwt09kbSu7ZxchL1OQteUlPRR
-        7TuZ+oS/qf3nJ2oT0uqWSGSaPJ0UWQX4UGcbRHdiRq32EQzkgCpOOYZDWaBxbDAm
-        2oIWR+76Jkwz5DjIXVBUpxmSEWbNUMo35tOH7i4WBJgkm4F0MSBJBY9jmNgjC6g4
-        4zsmGirt8UPn1jynaz2Eei9l2/1GU3t43bhb1qgvnFXaPBS5rbUm90UCcp1+u6CA
-        uhWce+zErqC7jQ==
-X-ME-Sender: <xms:I6L0XFEznNRIUkNHx7UbsZfU9uDOw6Pn3cmv7vgfcRGktT7hz75qaw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudefiedgkedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpedfvfhosghi
-    nhcuvedrucfjrghrughinhhgfdcuoehtohgsihhnsehkvghrnhgvlhdrohhrgheqnecukf
-    hppeduvdegrddugeelrdduudefrdefieenucfrrghrrghmpehmrghilhhfrhhomhepthho
-    sghinheskhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:I6L0XD6XFsa_C5ICtjyrrqbuwSuHB4fQ37d1hdpdEfYg2uSW9Xc5Yw>
-    <xmx:I6L0XCn8NLLBcNa-_ERRzkHIJbw9gA4n1PciJj_sPM0vmTB55-vVZw>
-    <xmx:I6L0XJx0SX5f1wjC9N1bHp1dsCmOvgZLpMXtQlnbIRYHpl5D5-Ihgg>
-    <xmx:I6L0XGIvyG0fCyoVfFBSyKm10T_BvgTvEyXvbgoULHTtC5W9qnRIUw>
-Received: from eros.localdomain (124-149-113-36.dyn.iinet.net.au [124.149.113.36])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9CF3C8005B;
-        Mon,  3 Jun 2019 00:29:16 -0400 (EDT)
-From:   "Tobin C. Harding" <tobin@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Roman Gushchin <guro@fb.com>,
-        Alexander Viro <viro@ftp.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Pekka Enberg <penberg@cs.helsinki.fi>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Christopher Lameter <cl@linux.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Waiman Long <longman@redhat.com>,
-        Tycho Andersen <tycho@tycho.ws>, Theodore Ts'o <tytso@mit.edu>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Chinner <david@fromorbit.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Rik van Riel <riel@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 15/15] slub: Enable balancing slabs across nodes
-Date:   Mon,  3 Jun 2019 14:26:37 +1000
-Message-Id: <20190603042637.2018-16-tobin@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603042637.2018-1-tobin@kernel.org>
-References: <20190603042637.2018-1-tobin@kernel.org>
+        Mon, 3 Jun 2019 02:04:38 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x15so150127pfq.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 02 Jun 2019 23:04:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:subject:in-reply-to:references:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yu2/QYdYkxpI0wI0753yJjQV9PtoJnQe1VqNNsVS3bs=;
+        b=aphubUVhsMiGnUOeMnMyI7lxTq+n3noSCUeF8KThf0z1QHyez9071qGf4/J+0AYx2j
+         7EX4qwxxsLfRWNCDGAUOjqeq/8KkSvH1AloNF+LhmFceYYqBZSrKgEQeLr2kL2K/CP1x
+         qubXvy77wbW4kepsLxkwBv1aVGLgjMWZj2QyY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=yu2/QYdYkxpI0wI0753yJjQV9PtoJnQe1VqNNsVS3bs=;
+        b=JrKdt1g94XHchH63sZlvhq2I98AzQ+D+zQv/KcyJpM0JdCBn44DdQgol+fZ9WK44G1
+         jVFyzzZd7e1VX89FB6VUYJzxdgLIgFFk+fDY+8okPTIthH8gVEw4z1Zrwr4GDj139ogq
+         lfRyZBmZljLeJCiNr6bRy57JdI58/AfZsiLhEzCbaLPtiXM0mvacwfbNVa98OD85b+zh
+         +ApqViC0K0c9shAXeOTC+on4A5ad0VmPnwXTnDiFeB85j0HU2K4MsZgBUgXISO1BjF1d
+         taGlVMBEX8iKHQiJQiG5CFJ3dfykHdluV6+g8qlvW2MQjTwVUt/bFveHWwKai0A/9Qiu
+         CqJA==
+X-Gm-Message-State: APjAAAWcorSpbSCHODqZ49TbKgkylbVzzAbIKN6TW/x/ieGYLuZyN0bo
+        5cu3xlVGKWjh9UXPIKOfF7GSannzQAE=
+X-Google-Smtp-Source: APXvYqwT9Vvjbf/NhlVK14zjh2bM51qRa/LyZ6n7vlQ4k8i3JEcJFFi/CRT05Ww3oEry4M4uabCyRQ==
+X-Received: by 2002:a17:90a:ab0c:: with SMTP id m12mr2690037pjq.87.1559541877706;
+        Sun, 02 Jun 2019 23:04:37 -0700 (PDT)
+Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
+        by smtp.gmail.com with ESMTPSA id n7sm4351814pgi.54.2019.06.02.23.04.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 02 Jun 2019 23:04:36 -0700 (PDT)
+From:   Daniel Axtens <dja@axtens.net>
+To:     Nayna <nayna@linux.vnet.ibm.com>, nayna@linux.ibm.com,
+        cclaudio@linux.ibm.com, linux-fsdevel@vger.kernel.org,
+        greg@kroah.com, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [WIP RFC PATCH 0/6] Generic Firmware Variable Filesystem
+In-Reply-To: <316a0865-7e14-b36a-7e49-5113f3dfc35f@linux.vnet.ibm.com>
+References: <20190520062553.14947-1-dja@axtens.net> <316a0865-7e14-b36a-7e49-5113f3dfc35f@linux.vnet.ibm.com>
+Date:   Mon, 03 Jun 2019 16:04:32 +1000
+Message-ID: <87zhmzxkzz.fsf@dja-thinkpad.axtens.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We have just implemented Slab Movable Objects (SMO).  On NUMA systems
-slabs can become unbalanced i.e. many slabs on one node while other
-nodes have few slabs.  Using SMO we can balance the slabs across all
-the nodes.
+Hi Nayna,
 
-The algorithm used is as follows:
+>> As PowerNV moves towards secure boot, we need a place to put secure
+>> variables. One option that has been canvassed is to make our secure
+>> variables look like EFI variables. This is an early sketch of another
+>> approach where we create a generic firmware variable file system,
+>> fwvarfs, and an OPAL Secure Variable backend for it.
+>
+> Is there a need of new filesystem ? I am wondering why can't these be=20
+> exposed via sysfs / securityfs ?
+> Probably, something like... /sys/firmware/secureboot or=20
+> /sys/kernel/security/secureboot/=C2=A0 ?
 
- 1. Move all objects to node 0 (this has the effect of defragmenting the
-    cache).
+I suppose we could put secure variables in sysfs, but I'm not sure
+that's what sysfs was intended for. I understand sysfs as "a
+filesystem-based view of kernel objects" (from
+Documentation/filesystems/configfs/configfs.txt), and I don't think a
+secure variable is really a kernel object in the same way most other
+things in sysfs are... but I'm open to being convinced.
 
- 2. Calculate the desired number of slabs for each node (this is done
-    using the approximation nr_slabs / nr_nodes).
+securityfs seems to be reserved for LSMs, I don't think we can put
+things there.
 
- 3. Loop over the nodes moving the desired number of slabs from node 0
-    to the node.
+My hope with fwvarfs is to provide a generic place for firmware
+variables so that we don't need to expand the list of firmware-specific
+filesystems beyond efivarfs. I am also aiming to make things simple to
+use so that people familiar with firmware don't also have to become
+familiar with filesystem code in order to expose firmware variables to
+userspace.
 
-Feature is conditionally built in with CONFIG_SMO_NODE, this is because
-we need the full list (we enable SLUB_DEBUG to get this).  Future
-version may separate final list out of SLUB_DEBUG.
+> Also, it sounds like this is needed only for secure firmware variables=20
+> and does not include
+> other firmware variables which are not security relevant ? Is that=20
+> correct understanding ?
 
-Expose this functionality to userspace via a sysfs entry.  Add sysfs
-entry:
+The primary use case at the moment - OPAL secure variables - is security
+focused because the current OPAL secure variable design stores and
+manipulates secure variables separately from the rest of nvram. This
+isn't an inherent feature of fwvarfs.
 
-       /sysfs/kernel/slab/<cache>/balance
+fwvarfs can also be used for variables that are not security relevant as
+well. For example, with the EFI backend (patch 3), both secure and
+insecure variables can be read.
 
-Write of '1' to this file triggers balance, no other value accepted.
-
-This feature relies on SMO being enable for the cache, this is done with
-a call to, after the isolate/migrate functions have been defined.
-
-	kmem_cache_setup_mobility(s, isolate, migrate)
-
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
----
- mm/slub.c | 130 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 130 insertions(+)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 23566e5a712b..70e46c4db757 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -4458,6 +4458,119 @@ static unsigned long kmem_cache_move_to_node(struct kmem_cache *s, int node)
- 
- 	return left;
- }
-+
-+/*
-+ * kmem_cache_move_slabs() - Attempt to move @num slabs to target_node,
-+ * @s: The cache we are working on.
-+ * @node: The node to move objects from.
-+ * @target_node: The node to move objects to.
-+ * @num: The number of slabs to move.
-+ *
-+ * Attempts to move @num slabs from @node to @target_node.  This is done
-+ * by migrating objects from slabs on the full_list.
-+ *
-+ * Return: The number of slabs moved or error code.
-+ */
-+static long kmem_cache_move_slabs(struct kmem_cache *s,
-+				  int node, int target_node, long num)
-+{
-+	struct kmem_cache_node *n = get_node(s, node);
-+	LIST_HEAD(move_list);
-+	struct page *page, *page2;
-+	unsigned long flags;
-+	void **scratch;
-+	long done = 0;
-+
-+	if (!s->migrate) {
-+		pr_warn("%s SMO not enabled, cannot move objects\n", s->name);
-+		goto out;
-+	}
-+
-+	if (node == target_node)
-+		return -EINVAL;
-+
-+	scratch = alloc_scratch(s);
-+	if (!scratch)
-+		return -ENOMEM;
-+
-+	spin_lock_irqsave(&n->list_lock, flags);
-+
-+	list_for_each_entry_safe(page, page2, &n->full, lru) {
-+		if (!slab_trylock(page))
-+			/* Busy slab. Get out of the way */
-+			continue;
-+
-+		list_move(&page->lru, &move_list);
-+		page->frozen = 1;
-+		slab_unlock(page);
-+
-+		if (++done >= num)
-+			break;
-+	}
-+	spin_unlock_irqrestore(&n->list_lock, flags);
-+
-+	list_for_each_entry(page, &move_list, lru) {
-+		if (page->inuse)
-+			move_slab_page(page, scratch, target_node);
-+	}
-+	kfree(scratch);
-+
-+	/* Bail here to save taking the list_lock */
-+	if (list_empty(&move_list))
-+		goto out;
-+
-+	/* Inspect results and dispose of pages */
-+	spin_lock_irqsave(&n->list_lock, flags);
-+	list_for_each_entry_safe(page, page2, &move_list, lru) {
-+		list_del(&page->lru);
-+		slab_lock(page);
-+		page->frozen = 0;
-+
-+		if (page->inuse) {
-+			/*
-+			 * This is best effort only, if slab still has
-+			 * objects just put it back on the partial list.
-+			 */
-+			n->nr_partial++;
-+			list_add_tail(&page->lru, &n->partial);
-+			slab_unlock(page);
-+		} else {
-+			slab_unlock(page);
-+			discard_slab(s, page);
-+		}
-+	}
-+	spin_unlock_irqrestore(&n->list_lock, flags);
-+out:
-+	return done;
-+}
-+
-+/*
-+ * kmem_cache_balance_nodes() - Balance slabs across nodes.
-+ * @s: The cache we are working on.
-+ */
-+static void kmem_cache_balance_nodes(struct kmem_cache *s)
-+{
-+	struct kmem_cache_node *n = get_node(s, 0);
-+	unsigned long desired_nr_slabs_per_node;
-+	unsigned long nr_slabs;
-+	int nr_nodes = 0;
-+	int nid;
-+
-+	(void)kmem_cache_move_to_node(s, 0);
-+
-+	for_each_node_state(nid, N_NORMAL_MEMORY)
-+		nr_nodes++;
-+
-+	nr_slabs = atomic_long_read(&n->nr_slabs);
-+	desired_nr_slabs_per_node = nr_slabs / nr_nodes;
-+
-+	for_each_node_state(nid, N_NORMAL_MEMORY) {
-+		if (nid == 0)
-+			continue;
-+
-+		kmem_cache_move_slabs(s, 0, nid, desired_nr_slabs_per_node);
-+	}
-+}
- #endif	/* CONFIG_SLUB_SMO_NODE */
- 
- /*
-@@ -5836,6 +5949,22 @@ static ssize_t move_store(struct kmem_cache *s, const char *buf, size_t length)
- 	return length;
- }
- SLAB_ATTR(move);
-+
-+static ssize_t balance_show(struct kmem_cache *s, char *buf)
-+{
-+	return 0;
-+}
-+
-+static ssize_t balance_store(struct kmem_cache *s,
-+			     const char *buf, size_t length)
-+{
-+	if (buf[0] == '1')
-+		kmem_cache_balance_nodes(s);
-+	else
-+		return -EINVAL;
-+	return length;
-+}
-+SLAB_ATTR(balance);
- #endif	/* CONFIG_SLUB_SMO_NODE */
- 
- #ifdef CONFIG_NUMA
-@@ -5964,6 +6093,7 @@ static struct attribute *slab_attrs[] = {
- 	&shrink_attr.attr,
- #ifdef CONFIG_SLUB_SMO_NODE
- 	&move_attr.attr,
-+	&balance_attr.attr,
- #endif
- 	&slabs_cpu_partial_attr.attr,
- #ifdef CONFIG_SLUB_DEBUG
--- 
-2.21.0
-
+Regards,
+Daniel
