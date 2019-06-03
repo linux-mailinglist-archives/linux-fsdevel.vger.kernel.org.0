@@ -2,185 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E6AB33970
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 22:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A29B8339AE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 22:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbfFCUB3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jun 2019 16:01:29 -0400
-Received: from mail-qt1-f180.google.com ([209.85.160.180]:46920 "EHLO
-        mail-qt1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfFCUB3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jun 2019 16:01:29 -0400
-Received: by mail-qt1-f180.google.com with SMTP id z19so10942520qtz.13;
-        Mon, 03 Jun 2019 13:01:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ILvqKIDYjCxpgvxSit+XD9upXbgaLs7jZQpNNmN0CxQ=;
-        b=UNULN3rtXJXcbUTgupNaj5V1fFWSy3czIsK194k0yNRU9ol6q4gGpSKok9cpORmfUT
-         WuSEUWmFF5pRMVuZwSfp+qNftgiM0eaqxEJqdqumBf0fCZgaoGbd4OE1/paTJl9aGFbH
-         oZRBG4MapPyeE6F52asfuFg/JubfndXr9FMBdW8q2ZvaskwXPmiYn0r2MsmCSJKBIvh7
-         1qyGjH3FcgY0NtNa+T31QFP73fvpyiBY1OFjSV6l1Ba9VsfkkduE/5CZC8ssA4KccuU4
-         Fp6+7uL97TlUOOJGw1euGrCBRbn5rl9fOZ7KFAsBKi2NgJ6nsNzdjYytOVcc7y8Ojsdb
-         3sNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ILvqKIDYjCxpgvxSit+XD9upXbgaLs7jZQpNNmN0CxQ=;
-        b=BpDPfTQGGNxPFB2goR4Ga7IgNPf6iRmDShIvzQmgaMx5CPB8wIyGr/fb7Z7yhhlXZj
-         S+fz+i2OLKdhMQMW82g8Zo/IPSzYcQFXBb6JZKzKxWxivi4gFiFfCHofImasHtI9OQtG
-         1GHxFxHdzkptuLWe8vT+kzK+ENHOOgdLve5LsGyO9JGmLmeX0lJSWkezyj8BVgyyjFOE
-         z56wD8pKJo4+KrutXvn3D6DA7ogW2hnL7/cmWRtZLNWuAJhvPcvU4HGaredcLimVjECE
-         DQlrVTouHMzXVas5VglA4dl1dBAQXl1u6S+NRn7ljegl9HmduFSLIRoS0W5YdpvubJze
-         STXg==
-X-Gm-Message-State: APjAAAU7Yx6xlTsS60Cb17wzCDMa8pxzlm7pRML24+FrdQcKA8jaizlx
-        oxST9UBfCf7EytsgWU0suDs=
-X-Google-Smtp-Source: APXvYqwexNv5DEE4kk1/zdn1iKoFyrU9uwHTZXhBDi3xqD7WU1kcLMxjAXn6lbqxh8ZzvRf7VzT+RQ==
-X-Received: by 2002:ac8:2906:: with SMTP id y6mr4628190qty.138.1559592087503;
-        Mon, 03 Jun 2019 13:01:27 -0700 (PDT)
-Received: from localhost.localdomain ([163.114.130.128])
-        by smtp.gmail.com with ESMTPSA id z12sm678711qkf.20.2019.06.03.13.01.25
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 13:01:26 -0700 (PDT)
-Subject: Re: Testing devices for discard support properly
-To:     Chris Mason <clm@fb.com>, Bryan Gurney <bgurney@redhat.com>
-Cc:     Lukas Czerner <lczerner@redhat.com>, Jan Tulak <jtulak@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Dennis Zhou <dennisz@fb.com>
-References: <4a484c50-ef29-2db9-d581-557c2ea8f494@gmail.com>
- <20190507071021.wtm25mxx2as6babr@work>
- <CACj3i71HdW0ys_YujGFJkobMmZAZtEPo7B2tgZjEY8oP_T9T6g@mail.gmail.com>
- <20190507094015.hb76w3rjzx7shxjp@work>
- <09953ba7-e4f2-36e9-33b7-0ddbbb848257@gmail.com>
- <CAHhmqcT_yabMDY+dZoBAUA28f6tkPe0uH+xtRUS51gvv4p2vuQ@mail.gmail.com>
- <5a02e30d-cb46-a2ab-554f-b8ef4807bd97@gmail.com>
- <CAHhmqcQw69S3Fn=Nej7MezCOZ3_ZNi64p+PFLSV+b91e1gTjZA@mail.gmail.com>
- <31794121-DEDA-4269-8B72-50EB4D0BCABE@fb.com>
-From:   Ric Wheeler <ricwheeler@gmail.com>
-Message-ID: <73f96019-dd58-07ca-ecaf-42519025ed6d@gmail.com>
-Date:   Mon, 3 Jun 2019 16:01:24 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726565AbfFCUYr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jun 2019 16:24:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51268 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725956AbfFCUYq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Jun 2019 16:24:46 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 697D9306E33B;
+        Mon,  3 Jun 2019 20:24:39 +0000 (UTC)
+Received: from x2.localnet (ovpn-122-112.rdu2.redhat.com [10.10.122.112])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DC03E19936;
+        Mon,  3 Jun 2019 20:24:23 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        Tycho Andersen <tycho@tycho.ws>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        omosnace@redhat.com, dhowells@redhat.com, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+Date:   Mon, 03 Jun 2019 16:24:23 -0400
+Message-ID: <97478582.yP93vGJyqj@x2>
+Organization: Red Hat
+In-Reply-To: <CAHC9VhTrM1op_EH=YAn9pU8dMOr=jB-Ph4SxFeqGFskwLmFnCA@mail.gmail.com>
+References: <20190529145742.GA8959@cisco> <20190531002058.tsddah4edcazkuzs@madcap2.tricolour.ca> <CAHC9VhTrM1op_EH=YAn9pU8dMOr=jB-Ph4SxFeqGFskwLmFnCA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <31794121-DEDA-4269-8B72-50EB4D0BCABE@fb.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 03 Jun 2019 20:24:46 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello Paul,
 
+I am curious about this. We seemed to be close to getting this patch pulled 
+in. A lot of people are waiting for it. Can you summarize what you think the 
+patches need and who we think needs to do it? I'm lost. Does LXC people need 
+to propose something? Does Richard? Someone else? Who's got the ball?
 
-On 5/7/19 5:24 PM, Chris Mason wrote:
-> On 7 May 2019, at 16:09, Bryan Gurney wrote:
+Thank,
+-Steve
+
+On Friday, May 31, 2019 8:44:45 AM EDT Paul Moore wrote:
+> On Thu, May 30, 2019 at 8:21 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2019-05-30 19:26, Paul Moore wrote:
+> > > On Thu, May 30, 2019 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > > > On Thu, May 30, 2019 at 03:29:32PM -0400, Paul Moore wrote:
+> > > > > [REMINDER: It is an "*audit* container ID" and not a general
+> > > > > "container ID" ;)  Smiley aside, I'm not kidding about that part.]
+> > > > 
+> > > > This sort of seems like a distinction without a difference;
+> > > > presumably
+> > > > audit is going to want to differentiate between everything that
+> > > > people
+> > > > in userspace call a container. So you'll have to support all this
+> > > > insanity anyway, even if it's "not a container ID".
+> > > 
+> > > That's not quite right.  Audit doesn't care about what a container is,
+> > > or is not, it also doesn't care if the "audit container ID" actually
+> > > matches the ID used by the container engine in userspace and I think
+> > > that is a very important line to draw.  Audit is simply given a value
+> > > which it calls the "audit container ID", it ensures that the value is
+> > > inherited appropriately (e.g. children inherit their parent's audit
+> > > container ID), and it uses the value in audit records to provide some
+> > > additional context for log analysis.  The distinction isn't limited to
+> > > the value itself, but also to how it is used; it is an "audit
+> > > container ID" and not a "container ID" because this value is
+> > > exclusively for use by the audit subsystem.  We are very intentionally
+> > > not adding a generic container ID to the kernel.  If the kernel does
+> > > ever grow a general purpose container ID we will be one of the first
+> > > ones in line to make use of it, but we are not going to be the ones to
+> > > generically add containers to the kernel.  Enough people already hate
+> > > audit ;)
+> > > 
+> > > > > I'm not interested in supporting/merging something that isn't
+> > > > > useful;
+> > > > > if this doesn't work for your use case then we need to figure out
+> > > > > what
+> > > > > would work.  It sounds like nested containers are much more common
+> > > > > in
+> > > > > the lxc world, can you elaborate a bit more on this?
+> > > > > 
+> > > > > As far as the possible solutions you mention above, I'm not sure I
+> > > > > like the per-userns audit container IDs, I'd much rather just emit
+> > > > > the
+> > > > > necessary tracking information via the audit record stream and let
+> > > > > the
+> > > > > log analysis tools figure it out.  However, the bigger question is
+> > > > > how
+> > > > > to limit (re)setting the audit container ID when you are in a
+> > > > > non-init
+> > > > > userns.  For reasons already mentioned, using capable() is a non
+> > > > > starter for everything but the initial userns, and using
+> > > > > ns_capable()
+> > > > > is equally poor as it essentially allows any userns the ability to
+> > > > > munge it's audit container ID (obviously not good).  It appears we
+> > > > > need a different method for controlling access to the audit
+> > > > > container
+> > > > > ID.
+> > > > 
+> > > > One option would be to make it a string, and have it be append only.
+> > > > That should be safe with no checks.
+> > > > 
+> > > > I know there was a long thread about what type to make this thing. I
+> > > > think you could accomplish the append-only-ness with a u64 if you had
+> > > > some rule about only allowing setting lower order bits than those
+> > > > that
+> > > > are already set. With 4 bits for simplicity:
+> > > > 
+> > > > 1100         # initial container id
+> > > > 1100 -> 1011 # not allowed
+> > > > 1100 -> 1101 # allowed, but now 1101 is set in stone since there are
+> > > > 
+> > > >              # no lower order bits left
+> > > > 
+> > > > There are probably fancier ways to do it if you actually understand
+> > > > math :)
+> > >  
+> > >  ;)
+> > >  
+> > > > Since userns nesting is limited to 32 levels (right now, IIRC), and
+> > > > you have 64 bits, this might be reasonable. You could just teach
+> > > > container engines to use the first say N bits for themselves, with a
+> > > > 1
+> > > > bit for the barrier at the end.
+> > > 
+> > > I like the creativity, but I worry that at some point these
+> > > limitations are going to be raised (limits have a funny way of doing
+> > > that over time) and we will be in trouble.  I say "trouble" because I
+> > > want to be able to quickly do an audit container ID comparison and
+> > > we're going to pay a penalty for these larger values (we'll need this
+> > > when we add multiple auditd support and the requisite record routing).
+> > > 
+> > > Thinking about this makes me also realize we probably need to think a
+> > > bit longer about audit container ID conflicts between orchestrators.
+> > > Right now we just take the value that is given to us by the
+> > > orchestrator, but if we want to allow multiple container orchestrators
+> > > to work without some form of cooperation in userspace (I think we have
+> > > to assume the orchestrators will not talk to each other) we likely
+> > > need to have some way to block reuse of an audit container ID.  We
+> > > would either need to prevent the orchestrator from explicitly setting
+> > > an audit container ID to a currently in use value, or instead generate
+> > > the audit container ID in the kernel upon an event triggered by the
+> > > orchestrator (e.g. a write to a /proc file).  I suspect we should
+> > > start looking at the idr code, I think we will need to make use of it.
+> > 
+> > My first reaction to using the IDR code is that once an idr is given up,
+> > it can be reused.  I suppose we request IDRs and then never give them up
+> > to avoid reuse...
 > 
->> I found an example in my trace of the "two bands of latency" behavior.
->> Consider these three segments of trace data during the writes:
->>
+> I'm not sure we ever what to guarantee that an audit container ID
+> won't be reused during the lifetime of the system, it is a discrete
+> integer after all.  What I think we do want to guarantee is that we
+> won't allow an unintentional audit container ID collision between
+> different orchestrators; if a single orchestrator wants to reuse an
+> audit container ID then that is its choice.
 > 
-> [ ... ]
+> > I already had some ideas of preventing an existing ID from being reused,
 > 
->> There's an average latency of 14 milliseconds for these 128 kilobyte
->> writes.  At 0.218288794 seconds, we can see a sudden appearance of 1.7
->> millisecond latency times, much lower than the average.
->>
->> Then we see an alternation of 1.7 millisecond completions and 14
->> millisecond completions, with these two "latency groups" increasing,
->> up to about 14 milliseconds and 25 milliseconds at 0.241287187 seconds
->> into the trace.
->>
->> At 0.317351888 seconds, we see the pattern start again, with a sudden
->> appearance of 1.89 millisecond latency write completions, among 14.7
->> millisecond latency write completions.
->>
->> If you graph it, it looks like a "triangle wave" pulse, with a
->> duration of about 23 milliseconds, that repeats after about 100
->> milliseconds.  In a way, it's like a "heartbeat".  This wouldn't be as
->> easy to detect with a simple "average" or "percentile" reading.
->>
->> This was during a simple sequential write at a queue depth of 32, but
->> what happens with a write after a discard in the same region of
->> sectors?  This behavior could change, depending on different drive
->> models, and/or drive controller algorithms.
->>
+> Cool.  I only made the idr suggestion since it is used for PIDs and
+> solves a very similar problem.
 > 
-> I think these are all really interesting, and definitely support the
-> idea of a series of tests we do to make sure a drive implements discard
-> in the general ways that we expect.
+> > but that makes the practice of some container engines injecting
+> > processes into existing containers difficult if not impossible.
 > 
-> But with that said, I think a more important discussion as filesystem
-> developers is how we protect the rest of the filesystem from high
-> latencies caused by discards.  For reads and writes, we've been doing
-> this for a long time.  IO schedulers have all kinds of checks and
-> balances for REQ_META or REQ_SYNC, and we throttle dirty pages and
-> readahead and dance around request batching etc etc.
-> 
-> But for discards, we just open the floodgates and hope it works out.  At
-> some point we're going to have to figure out how to queue and throttle
-> discards as well as we do reads/writes.  That's kind of tricky because
-> the FS needs to coordinate when we're allowed to discard something and
-> needs to know when the discard is done, and we all have different
-> schemes for keeping track.
-> 
-> -chris
-> 
+> Yes, we'll need some provision to indicate which orchestrator
+> "controls" that particular audit container ID, and allow that
+> orchestrator to reuse that particular audit container ID (until all
+> those containers disappear and the audit container ID is given back to
+> the pool).
 
-Trying to summarize my thoughts here after weeks of other stuff.
 
-We really have two (intertwined) questions:
 
-* does issuing a discard on a device do anything useful - restore 
-flagging performance, enhance the life space of the device, etc?
 
-* what is the performance impact of doing a discard & does it vary based 
-on the size of the region? (Can we use it to discard a whole device, do 
-it for small discards, etc)
-
-To answer the first question, we need a test that can verify that 
-without discards (mount with nodiscard), we see a decline in 
-performance. For example, multiple overwrites of the entire surface of 
-the device (2 -3 full device writes) to make sure all of the spare 
-capacity has been consumed, run the target workload we want to measure, 
-then do discards of the whole space and run that same target workload.
-
-If the discard does something useful, we should see better performance 
-in that second test run.
-
-If discard does not do anything useful, we are "done" with that device - 
-no real need to measure performance of a useless mechanism. (Punting on 
-the device longevity stuff here, seems like that should be left to the 
-hardware vendors).
-
-To answer the second question, we need to measure the performance of the 
-discard implementation.
-
-We still have to work to get any device into a well known state - do 
-multiple, full device writes without discards. 2-3 passes should do it.
-
-Then run our specific discard test workload - measure the performance of 
-large discards (cap the size by the max permitted by the device) and 
-small, single page discards. Important to capture min/max/average times 
-of the discard. I think it would be best to do this on the block device 
-to avoid any file system layer performance impact of deleting 
-files/tweaking extents/etc.
-
-Probably easiest to do separate tests for interesting discard sizes 
-(each time, doing the full device writes to get back to a known state 
-ahead of the test).
-
-This is not meant to be a comprehensive tests/validation, but I think 
-that doing the above would be a way to get a good sense of the 
-effectiveness and performance of the device mechanism.
-
-Make sense? Did I leave something out?
-
-Ric
