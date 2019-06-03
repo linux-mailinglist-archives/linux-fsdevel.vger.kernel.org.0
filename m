@@ -2,106 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D00332845
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 08:04:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC86832861
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 08:17:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfFCGEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jun 2019 02:04:38 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33085 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbfFCGEi (ORCPT
+        id S1726792AbfFCGRc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jun 2019 02:17:32 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:40913 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfFCGRb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jun 2019 02:04:38 -0400
-Received: by mail-pf1-f196.google.com with SMTP id x15so150127pfq.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 02 Jun 2019 23:04:38 -0700 (PDT)
+        Mon, 3 Jun 2019 02:17:31 -0400
+Received: by mail-yb1-f194.google.com with SMTP id g62so6200581ybg.7;
+        Sun, 02 Jun 2019 23:17:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:subject:in-reply-to:references:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yu2/QYdYkxpI0wI0753yJjQV9PtoJnQe1VqNNsVS3bs=;
-        b=aphubUVhsMiGnUOeMnMyI7lxTq+n3noSCUeF8KThf0z1QHyez9071qGf4/J+0AYx2j
-         7EX4qwxxsLfRWNCDGAUOjqeq/8KkSvH1AloNF+LhmFceYYqBZSrKgEQeLr2kL2K/CP1x
-         qubXvy77wbW4kepsLxkwBv1aVGLgjMWZj2QyY=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AzzBr8p6pAFhPQ4nWb4WT925fUHe7nxuKy6xqODD/EU=;
+        b=Xb3ar0Aa0M7FubHFZCK9tCXx/zPB3ksaeJ++pG/3IezUuXmn6WS07+MfTIuQL6T3WQ
+         DCoBxJtq42XP8GhmVdjTVubt2TbMIA7lcjwHzY/1sWCbnZYPYbmx7N4uWVGPA0YhWTTK
+         bquiJlMZXC8ghiTpKGYa3oQPdGWnmo0X2oYF2fXr1HnLtOBoeW4yYjVNWS3/VSQMqJWd
+         c7dKUXrQMwRLQGcs17S3dKmPq6RizEhc8dv3TX9vSZ14DBfZP+t6XKUlQ5TZwO2LK9eK
+         UlDCUjSmXu/1s6NXMLkVgSTD4kn0uoEJTIJ3g/f2O6q/Ffv5iwRp7rpYm8iqkwgJLHrT
+         AqGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:in-reply-to:references:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=yu2/QYdYkxpI0wI0753yJjQV9PtoJnQe1VqNNsVS3bs=;
-        b=JrKdt1g94XHchH63sZlvhq2I98AzQ+D+zQv/KcyJpM0JdCBn44DdQgol+fZ9WK44G1
-         jVFyzzZd7e1VX89FB6VUYJzxdgLIgFFk+fDY+8okPTIthH8gVEw4z1Zrwr4GDj139ogq
-         lfRyZBmZljLeJCiNr6bRy57JdI58/AfZsiLhEzCbaLPtiXM0mvacwfbNVa98OD85b+zh
-         +ApqViC0K0c9shAXeOTC+on4A5ad0VmPnwXTnDiFeB85j0HU2K4MsZgBUgXISO1BjF1d
-         taGlVMBEX8iKHQiJQiG5CFJ3dfykHdluV6+g8qlvW2MQjTwVUt/bFveHWwKai0A/9Qiu
-         CqJA==
-X-Gm-Message-State: APjAAAWcorSpbSCHODqZ49TbKgkylbVzzAbIKN6TW/x/ieGYLuZyN0bo
-        5cu3xlVGKWjh9UXPIKOfF7GSannzQAE=
-X-Google-Smtp-Source: APXvYqwT9Vvjbf/NhlVK14zjh2bM51qRa/LyZ6n7vlQ4k8i3JEcJFFi/CRT05Ww3oEry4M4uabCyRQ==
-X-Received: by 2002:a17:90a:ab0c:: with SMTP id m12mr2690037pjq.87.1559541877706;
-        Sun, 02 Jun 2019 23:04:37 -0700 (PDT)
-Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
-        by smtp.gmail.com with ESMTPSA id n7sm4351814pgi.54.2019.06.02.23.04.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Jun 2019 23:04:36 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Nayna <nayna@linux.vnet.ibm.com>, nayna@linux.ibm.com,
-        cclaudio@linux.ibm.com, linux-fsdevel@vger.kernel.org,
-        greg@kroah.com, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [WIP RFC PATCH 0/6] Generic Firmware Variable Filesystem
-In-Reply-To: <316a0865-7e14-b36a-7e49-5113f3dfc35f@linux.vnet.ibm.com>
-References: <20190520062553.14947-1-dja@axtens.net> <316a0865-7e14-b36a-7e49-5113f3dfc35f@linux.vnet.ibm.com>
-Date:   Mon, 03 Jun 2019 16:04:32 +1000
-Message-ID: <87zhmzxkzz.fsf@dja-thinkpad.axtens.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AzzBr8p6pAFhPQ4nWb4WT925fUHe7nxuKy6xqODD/EU=;
+        b=aBL5BjebUnQ3Dv01hhdCMKGJKG+nlDLLNUwPrdvAXzE3bDXpAOrcjojYRH1TVJysjc
+         5PsXLepny58wAlkB1ZKUqhdAIBNfnHIobdOFCNBEGXmDTXBJJE2HF49tP0FrIo32gDlw
+         nPyfIcSmR4d2UKz2Qt9pWKfVOVc9zcOXnM9H2FzZk5F2MsLVoYy88GyIxAxODxdkmtmu
+         ESksRtKQgIAeug3yiTApsL6pEFzNMdMLC2kti4srBVva2eC+yoeXbGWnAKy7tQBzerFv
+         J6rG59p1V5y/DzFmU4TXT7xq+ON1fmc87MSJpRIW9t8uLGgwEyEWDTgszR9wRge1Wvad
+         zt6g==
+X-Gm-Message-State: APjAAAUDlrJB7TXjSftwjggJdv3fOX9kofj/TusydeECK+zadzCbgnxX
+        12XQKI9eA0R8Hz7+0Do7LR/L8rfXGW8JifvY4R0=
+X-Google-Smtp-Source: APXvYqxUiGPrUIOAaEzrGoQGkNMo/lWx7FazJWFNhcVG5sAgy7dd9/YQJahBlF65ALIqHqZpqTnlgtDDFpDqYugx+zo=
+X-Received: by 2002:a25:c983:: with SMTP id z125mr11338526ybf.45.1559542650351;
+ Sun, 02 Jun 2019 23:17:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20190527172655.9287-1-amir73il@gmail.com> <20190528202659.GA12412@mit.edu>
+ <CAOQ4uxgo5jmwQbLAKQre9=7pLQw=CwMgDaWPaJxi-5NGnPEVPQ@mail.gmail.com>
+ <CAOQ4uxgj94WR82iHE4PDGSD0UDxG5sCtr+Sv+t1sOHHmnXFYzQ@mail.gmail.com>
+ <20190531164136.GA3066@mit.edu> <20190531224549.GF29573@dread.disaster.area>
+ <20190531232852.GG29573@dread.disaster.area> <CAOQ4uxi99NDYMrz-Q7xKta4beQiYFX3-MipZ_RxFNktFTA=vMA@mail.gmail.com>
+ <20190603042540.GH29573@dread.disaster.area>
+In-Reply-To: <20190603042540.GH29573@dread.disaster.area>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 3 Jun 2019 09:17:19 +0300
+Message-ID: <CAOQ4uxhqJJvr=uHmn_vPPPwZDCQoL2GFug30quFScNORT5Fw=w@mail.gmail.com>
+Subject: Re: [RFC][PATCH] link.2: AT_ATOMIC_DATA and AT_ATOMIC_METADATA
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Chris Mason <clm@fb.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Nayna,
-
->> As PowerNV moves towards secure boot, we need a place to put secure
->> variables. One option that has been canvassed is to make our secure
->> variables look like EFI variables. This is an early sketch of another
->> approach where we create a generic firmware variable file system,
->> fwvarfs, and an OPAL Secure Variable backend for it.
+> > Actually, one of my use cases is "atomic rename" of files with
+> > no data (looking for atomicity w.r.t xattr and mtime), so this "atomic rename"
+> > thread should not be interfering with other workloads at all.
 >
-> Is there a need of new filesystem ? I am wondering why can't these be=20
-> exposed via sysfs / securityfs ?
-> Probably, something like... /sys/firmware/secureboot or=20
-> /sys/kernel/security/secureboot/=C2=A0 ?
+> Which should already guaranteed because a) rename is supposed to be
+> atomic, and b) metadata ordering requirements in journalled
+> filesystems. If they lose xattrs across rename, there's something
+> seriously wrong with the filesystem implementation.  I'm really not
+> sure what you think filesystems are actually doing with metadata
+> across rename operations....
+>
 
-I suppose we could put secure variables in sysfs, but I'm not sure
-that's what sysfs was intended for. I understand sysfs as "a
-filesystem-based view of kernel objects" (from
-Documentation/filesystems/configfs/configfs.txt), and I don't think a
-secure variable is really a kernel object in the same way most other
-things in sysfs are... but I'm open to being convinced.
+Dave,
 
-securityfs seems to be reserved for LSMs, I don't think we can put
-things there.
+We are going in circles so much that my head is spinning.
+I don't blame anyone for having a hard time to keep up with the plot, because
+it spans many threads and subjects, so let me re-iterate:
 
-My hope with fwvarfs is to provide a generic place for firmware
-variables so that we don't need to expand the list of firmware-specific
-filesystems beyond efivarfs. I am also aiming to make things simple to
-use so that people familiar with firmware don't also have to become
-familiar with filesystem code in order to expose firmware variables to
-userspace.
+- I *do* know that rename provides me the needed "metadata barrier"
+  w.r.t. xattr on xfs/ext4 today.
+- I *do* know the sync_file_range()+rename() callback provides the
+"data barrier"
+  I need on xfs/ext4 today.
+- I *do* use this internal fs knowledge in my applications
+- I even fixed up sync_file_range() per your suggestion, so I won't need to use
+  the FIEMAP_FLAG_SYNC hack
+- At attempt from CrashMonkey developers to document this behavior was
+  "shot down" for many justified reasons
+- Without any documentation nor explicit API with a clean guarantee, users
+  cannot write efficient applications without being aware of the filesystem
+  underneath and follow that filesystem development to make sure behavior
+  has not changed
+- The most recent proposal I have made in LSF, based on Jan's suggestion is
+  to change nothing in filesystem implementation, but use a new *explicit* verb
+  to communicate the expectation of the application, so that
+filesystems are free
+  the change behavior in the future in the absence of the new verb
 
-> Also, it sounds like this is needed only for secure firmware variables=20
-> and does not include
-> other firmware variables which are not security relevant ? Is that=20
-> correct understanding ?
+Once again, ATOMIC_METADATA is a noop in preset xfs/ext4.
+ATOMIC_DATA is sync_file_range() in present xfs/ext4.
+The APIs I *need* from the kernel *do* exist, but the filesystem developers
+(except xfs) are not willing to document the guarantee that the existing
+interfaces provide in the present.
 
-The primary use case at the moment - OPAL secure variables - is security
-focused because the current OPAL secure variable design stores and
-manipulates secure variables separately from the rest of nvram. This
-isn't an inherent feature of fwvarfs.
+[...]
+> So, in the interests of /informed debate/, please implement what you
+> want using batched AIO_FSYNC + rename/linkat completion callback and
+> measure what it acheives. Then implement a sync_file_range/linkat
+> thread pool that provides the same functionality to the application
+> (i.e. writeback concurrency in userspace) and measure it. Then we
+> can discuss what the relative overhead is with numbers and can
+> perform analysis to determine what the cause of the performance
+> differential actually is.
+>
 
-fwvarfs can also be used for variables that are not security relevant as
-well. For example, with the EFI backend (patch 3), both secure and
-insecure variables can be read.
+Fare enough.
 
-Regards,
-Daniel
+> Neither of these things require kernel modifications, but you need
+> to provide the evidence that existing APIs are insufficient.
+
+APIs are sufficient if I know which filesystem I am running on.
+btrfs needs a different set of syscalls to get the same thing done.
+
+> Indeed, we now have the new async ioring stuff that can run async
+> sync_file_range calls, so you probably need to benchmark replacing
+> AIO_FSYNC with that interface as well. This new API likely does
+> exactly what you want without the journal/device cache flush
+> overhead of AIO_FSYNC....
+>
+
+Indeed, I am keeping a close watch on io_uring.
+
+Thanks,
+Amir.
