@@ -2,72 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD0CE32D62
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 12:02:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3135332DB9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 12:33:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbfFCKCu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jun 2019 06:02:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52992 "EHLO mx1.suse.de"
+        id S1726889AbfFCKdi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jun 2019 06:33:38 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17658 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726270AbfFCKCu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jun 2019 06:02:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B558DAFE1;
-        Mon,  3 Jun 2019 10:02:22 +0000 (UTC)
+        id S1726880AbfFCKdi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Jun 2019 06:33:38 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6AC133B6A349DDDE4E72;
+        Mon,  3 Jun 2019 18:33:35 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 3 Jun 2019
+ 18:33:31 +0800
+Subject: Re: [PATCH v3 1/4] f2fs: Lower threshold for disable_cp_again
+To:     Daniel Rosenberg <drosen@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+CC:     <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <kernel-team@android.com>
+References: <20190530004906.261170-1-drosen@google.com>
+ <20190530004906.261170-2-drosen@google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <1246dcc9-800a-ef0e-7cd0-199a0a6d77d4@huawei.com>
+Date:   Mon, 3 Jun 2019 18:33:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20190530004906.261170-2-drosen@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 03 Jun 2019 12:02:22 +0200
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     azat@libevent.org, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 06/13] epoll: introduce helpers for adding/removing
- events to uring
-In-Reply-To: <20190603090906.GE3436@hirez.programming.kicks-ass.net>
-References: <20190516085810.31077-1-rpenyaev@suse.de>
- <20190516085810.31077-7-rpenyaev@suse.de>
- <20190531095607.GC17637@hirez.programming.kicks-ass.net>
- <274e29d102133f3be1f309c66cb0af36@suse.de>
- <20190531125636.GZ2606@hirez.programming.kicks-ass.net>
- <98e74ceeefdffc9b50fb33e597d270f7@suse.de>
- <20190531165144.GE2606@hirez.programming.kicks-ass.net>
- <9e13f80872e5b6c96e9cd3343e27b1f1@suse.de>
- <20190603090906.GE3436@hirez.programming.kicks-ass.net>
-Message-ID: <904d7aea51552c9be9afb3b19bfac66b@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-06-03 11:09, Peter Zijlstra wrote:
-> On Fri, May 31, 2019 at 08:58:19PM +0200, Roman Penyaev wrote:
->> On 2019-05-31 18:51, Peter Zijlstra wrote:
+On 2019/5/30 8:49, Daniel Rosenberg wrote:
+> The existing threshold for allowable holes at checkpoint=disable time is
+> too high. The OVP space contains reserved segments, which are always in
+> the form of free segments. These must be subtracted from the OVP value.
 > 
->> > But like you show, it can be done. It also makes the thing wait-free, as
->> > opposed to merely lockless.
->> 
->> You think it's better?  I did not like this variant from the very
->> beginning because of the unnecessary complexity.  But maybe you're
->> right.  No busy loops on user side makes it wait-free.  And also
->> I can avoid c11 in kernel using cmpxchg along with atomic_t.
+> The current threshold is meant to be the maximum value of holes of a
+> single type we can have and still guarantee that we can fill the disk
+> without failing to find space for a block of a given type.
 > 
-> Imagine the (v)CPU going for an extended nap right between publishing 
-> the
-> new tail and writing the !0 entry. Then your userspace is stuck burning
-> cycles without getting anything useful done.
+> If the disk is full, ignoring current reserved, which only helps us,
+> the amount of unused blocks is equal to the OVP area. Of that, there
+> are reserved segments, which must be free segments, and the rest of the
+> ovp area, which can come from either free segments or holes. The maximum
+> possible amount of holes is OVP-reserved.
+> 
+> Now, consider the disk when mounting with checkpoint=disable.
+> We must be able to fill all available free space with either data or
+> node blocks. When we start with checkpoint=disable, holes are locked to
+> their current type. Say we have H of one type of hole, and H+X of the
+> other. We can fill H of that space with arbitrary typed blocks via SSR.
+> For the remaining H+X blocks, we may not have any of a given block type
+> left at all. For instance, if we were to fill the disk entirely with
+> blocks of the type with fewer holes, the H+X blocks of the opposite type
+> would not be used. If H+X > OVP-reserved, there would be more holes than
+> could possibly exist, and we would have failed to find a suitable block
+> earlier on, leading to a crash in update_sit_entry.
+> 
+> If H+X <= OVP-reserved, then the holes end up effectively masked by the OVP
+> region in this case.
+> 
+> Signed-off-by: Daniel Rosenberg <drosen@google.com>
 
-Yes, that is absolutely not nice.  That also worries me.  I wanted
-to minimize number of atomic ops on hot path, and of course in that
-respect this busy-loop is more attractive.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-I will polish and switch back to the wait-free variant and resend the
-whole patchset.  Could you please take a look?  Will add you to CC.
-
---
-Roman
+Thanks,
