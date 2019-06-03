@@ -2,133 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C97C5330F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 15:22:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDE3033116
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 15:31:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbfFCNWF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jun 2019 09:22:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40902 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726336AbfFCNWF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:22:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 04D2BAD31;
-        Mon,  3 Jun 2019 13:22:03 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 50CEE1E3C9A; Mon,  3 Jun 2019 15:22:00 +0200 (CEST)
-From:   Jan Kara <jack@suse.cz>
-To:     <linux-ext4@vger.kernel.org>
-Cc:     Ted Tso <tytso@mit.edu>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        stable@vger.kernel.org
-Subject: [PATCH 2/2] ext4: Fix stale data exposure when read races with hole punch
-Date:   Mon,  3 Jun 2019 15:21:55 +0200
-Message-Id: <20190603132155.20600-3-jack@suse.cz>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190603132155.20600-1-jack@suse.cz>
-References: <20190603132155.20600-1-jack@suse.cz>
+        id S1728724AbfFCNbZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jun 2019 09:31:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726842AbfFCNbZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Jun 2019 09:31:25 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44AA327DB3;
+        Mon,  3 Jun 2019 13:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559568684;
+        bh=/jZ8CPirphc3NTxeejPO2up85CvS1kEsbbkCzDT3jGk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=u3ps8LXR96wG5IJvv4FS5U9GPaSAE7Ze5hPnOM8aVbDnhsxXL0tsuV38WF8RGvKdc
+         bN2Nm5CKXvH9xObtTWt57QzBt8FKDuAlX/BnqhJIAB7jiikSFCJBCEQApNhKK/4kwD
+         HBvIJN0AXLMt6TN635Jhejqtk300cr2JGVUksZJk=
+Date:   Mon, 3 Jun 2019 15:31:22 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, David Sterba <dsterba@suse.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Joel Becker <jlbec@evilplan.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 06/10] debugfs: simplify __debugfs_remove_file()
+Message-ID: <20190603133122.GA24574@kroah.com>
+References: <20190526143411.11244-1-amir73il@gmail.com>
+ <20190526143411.11244-7-amir73il@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190526143411.11244-7-amir73il@gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hole puching currently evicts pages from page cache and then goes on to
-remove blocks from the inode. This happens under both i_mmap_sem and
-i_rwsem held exclusively which provides appropriate serialization with
-racing page faults. However there is currently nothing that prevents
-ordinary read(2) from racing with the hole punch and instantiating page
-cache page after hole punching has evicted page cache but before it has
-removed blocks from the inode. This page cache page will be mapping soon
-to be freed block and that can lead to returning stale data to userspace
-or even filesystem corruption.
+On Sun, May 26, 2019 at 05:34:07PM +0300, Amir Goldstein wrote:
+> Move simple_unlink()+d_delete() from __debugfs_remove_file() into
+> caller __debugfs_remove() and rename helper for post remove file to
+> __debugfs_file_removed().
+> 
+> This will simplify adding fsnotify_unlink() hook.
+> 
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/debugfs/inode.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+> index acef14ad53db..d89874da9791 100644
+> --- a/fs/debugfs/inode.c
+> +++ b/fs/debugfs/inode.c
+> @@ -617,13 +617,10 @@ struct dentry *debugfs_create_symlink(const char *name, struct dentry *parent,
+>  }
+>  EXPORT_SYMBOL_GPL(debugfs_create_symlink);
+>  
+> -static void __debugfs_remove_file(struct dentry *dentry, struct dentry *parent)
+> +static void __debugfs_file_removed(struct dentry *dentry)
+>  {
+>  	struct debugfs_fsdata *fsd;
+>  
+> -	simple_unlink(d_inode(parent), dentry);
+> -	d_delete(dentry);
+> -
+>  	/*
+>  	 * Paired with the closing smp_mb() implied by a successful
+>  	 * cmpxchg() in debugfs_file_get(): either
+> @@ -644,16 +641,15 @@ static int __debugfs_remove(struct dentry *dentry, struct dentry *parent)
+>  
+>  	if (simple_positive(dentry)) {
+>  		dget(dentry);
+> -		if (!d_is_reg(dentry)) {
+> -			if (d_is_dir(dentry))
+> -				ret = simple_rmdir(d_inode(parent), dentry);
+> -			else
+> -				simple_unlink(d_inode(parent), dentry);
+> -			if (!ret)
+> -				d_delete(dentry);
+> +		if (d_is_dir(dentry)) {
+> +			ret = simple_rmdir(d_inode(parent), dentry);
+>  		} else {
+> -			__debugfs_remove_file(dentry, parent);
+> +			simple_unlink(d_inode(parent), dentry);
+>  		}
+> +		if (!ret)
+> +			d_delete(dentry);
+> +		if (d_is_reg(dentry))
+> +			__debugfs_file_removed(dentry);
+>  		dput(dentry);
+>  	}
+>  	return ret;
 
-Fix the problem by protecting reads as well as readahead requests with
-i_mmap_sem.
+Ugh, I had to stare at this for a long time.  I _think_ it all looks
+equalivant now, but if this breaks, I know who to blame :)
 
-CC: stable@vger.kernel.org
-Reported-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/ext4/file.c | 35 +++++++++++++++++++++++++++++++----
- 1 file changed, 31 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 2c5baa5e8291..a21fa9f8fb5d 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -34,6 +34,17 @@
- #include "xattr.h"
- #include "acl.h"
- 
-+static ssize_t ext4_file_buffered_read(struct kiocb *iocb, struct iov_iter *to)
-+{
-+	ssize_t ret;
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+
-+	down_read(&EXT4_I(inode)->i_mmap_sem);
-+	ret = generic_file_read_iter(iocb, to);
-+	up_read(&EXT4_I(inode)->i_mmap_sem);
-+	return ret;
-+}
-+
- #ifdef CONFIG_FS_DAX
- static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
- {
-@@ -52,7 +63,7 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	if (!IS_DAX(inode)) {
- 		inode_unlock_shared(inode);
- 		/* Fallback to buffered IO in case we cannot support DAX */
--		return generic_file_read_iter(iocb, to);
-+		return ext4_file_buffered_read(iocb, to);
- 	}
- 	ret = dax_iomap_rw(iocb, to, &ext4_iomap_ops);
- 	inode_unlock_shared(inode);
-@@ -64,17 +75,32 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 
- static ssize_t ext4_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- {
--	if (unlikely(ext4_forced_shutdown(EXT4_SB(file_inode(iocb->ki_filp)->i_sb))))
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+
-+	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
- 		return -EIO;
- 
- 	if (!iov_iter_count(to))
- 		return 0; /* skip atime */
- 
- #ifdef CONFIG_FS_DAX
--	if (IS_DAX(file_inode(iocb->ki_filp)))
-+	if (IS_DAX(inode))
- 		return ext4_dax_read_iter(iocb, to);
- #endif
--	return generic_file_read_iter(iocb, to);
-+	if (iocb->ki_flags & IOCB_DIRECT)
-+		return generic_file_read_iter(iocb, to);
-+	return ext4_file_buffered_read(iocb, to);
-+}
-+
-+static int ext4_readahead(struct file *filp, loff_t start, loff_t end)
-+{
-+	struct inode *inode = file_inode(filp);
-+	int ret;
-+
-+	down_read(&EXT4_I(inode)->i_mmap_sem);
-+	ret = generic_readahead(filp, start, end);
-+	up_read(&EXT4_I(inode)->i_mmap_sem);
-+	return ret;
- }
- 
- /*
-@@ -518,6 +544,7 @@ const struct file_operations ext4_file_operations = {
- 	.splice_read	= generic_file_splice_read,
- 	.splice_write	= iter_file_splice_write,
- 	.fallocate	= ext4_fallocate,
-+	.readahead	= ext4_readahead,
- };
- 
- const struct inode_operations ext4_file_inode_operations = {
--- 
-2.16.4
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
