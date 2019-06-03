@@ -2,190 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A29B8339AE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 22:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 610AC339B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 22:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfFCUYr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jun 2019 16:24:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51268 "EHLO mx1.redhat.com"
+        id S1726163AbfFCU0c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jun 2019 16:26:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbfFCUYq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jun 2019 16:24:46 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726055AbfFCU0c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Jun 2019 16:26:32 -0400
+Received: from localhost (unknown [104.132.1.68])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 697D9306E33B;
-        Mon,  3 Jun 2019 20:24:39 +0000 (UTC)
-Received: from x2.localnet (ovpn-122-112.rdu2.redhat.com [10.10.122.112])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DC03E19936;
-        Mon,  3 Jun 2019 20:24:23 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        omosnace@redhat.com, dhowells@redhat.com, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-Date:   Mon, 03 Jun 2019 16:24:23 -0400
-Message-ID: <97478582.yP93vGJyqj@x2>
-Organization: Red Hat
-In-Reply-To: <CAHC9VhTrM1op_EH=YAn9pU8dMOr=jB-Ph4SxFeqGFskwLmFnCA@mail.gmail.com>
-References: <20190529145742.GA8959@cisco> <20190531002058.tsddah4edcazkuzs@madcap2.tricolour.ca> <CAHC9VhTrM1op_EH=YAn9pU8dMOr=jB-Ph4SxFeqGFskwLmFnCA@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 551A626E5D;
+        Mon,  3 Jun 2019 20:26:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559593591;
+        bh=v9calqM6PHGdBj4mALXAqgtFc8xx6nsYR8rF3Gxiqq0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zSYE0C9l3qM676qHbrmOp5NvQJ7w+P/sokWBCGTmaeHzN6QtS0eN38H8ncd3DClcz
+         DjJALXzTzp4c2qWSFZWGgUjssI7sur8d70+9u1UUURc9nWf9sh2sWM8WHjjM+HwVYQ
+         n/S63kQSg7IiUbcB3uM+zCD9Gf6KamrIGCdJ016w=
+Date:   Mon, 3 Jun 2019 13:26:30 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3 3/4] f2fs: Fix accounting for unusable blocks
+Message-ID: <20190603202630.GB34729@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190530004906.261170-1-drosen@google.com>
+ <20190530004906.261170-4-drosen@google.com>
+ <c99079bd-99e1-e100-08f6-1e8adae5e722@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 03 Jun 2019 20:24:46 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c99079bd-99e1-e100-08f6-1e8adae5e722@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Paul,
-
-I am curious about this. We seemed to be close to getting this patch pulled 
-in. A lot of people are waiting for it. Can you summarize what you think the 
-patches need and who we think needs to do it? I'm lost. Does LXC people need 
-to propose something? Does Richard? Someone else? Who's got the ball?
-
-Thank,
--Steve
-
-On Friday, May 31, 2019 8:44:45 AM EDT Paul Moore wrote:
-> On Thu, May 30, 2019 at 8:21 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2019-05-30 19:26, Paul Moore wrote:
-> > > On Thu, May 30, 2019 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > > On Thu, May 30, 2019 at 03:29:32PM -0400, Paul Moore wrote:
-> > > > > [REMINDER: It is an "*audit* container ID" and not a general
-> > > > > "container ID" ;)  Smiley aside, I'm not kidding about that part.]
-> > > > 
-> > > > This sort of seems like a distinction without a difference;
-> > > > presumably
-> > > > audit is going to want to differentiate between everything that
-> > > > people
-> > > > in userspace call a container. So you'll have to support all this
-> > > > insanity anyway, even if it's "not a container ID".
-> > > 
-> > > That's not quite right.  Audit doesn't care about what a container is,
-> > > or is not, it also doesn't care if the "audit container ID" actually
-> > > matches the ID used by the container engine in userspace and I think
-> > > that is a very important line to draw.  Audit is simply given a value
-> > > which it calls the "audit container ID", it ensures that the value is
-> > > inherited appropriately (e.g. children inherit their parent's audit
-> > > container ID), and it uses the value in audit records to provide some
-> > > additional context for log analysis.  The distinction isn't limited to
-> > > the value itself, but also to how it is used; it is an "audit
-> > > container ID" and not a "container ID" because this value is
-> > > exclusively for use by the audit subsystem.  We are very intentionally
-> > > not adding a generic container ID to the kernel.  If the kernel does
-> > > ever grow a general purpose container ID we will be one of the first
-> > > ones in line to make use of it, but we are not going to be the ones to
-> > > generically add containers to the kernel.  Enough people already hate
-> > > audit ;)
-> > > 
-> > > > > I'm not interested in supporting/merging something that isn't
-> > > > > useful;
-> > > > > if this doesn't work for your use case then we need to figure out
-> > > > > what
-> > > > > would work.  It sounds like nested containers are much more common
-> > > > > in
-> > > > > the lxc world, can you elaborate a bit more on this?
-> > > > > 
-> > > > > As far as the possible solutions you mention above, I'm not sure I
-> > > > > like the per-userns audit container IDs, I'd much rather just emit
-> > > > > the
-> > > > > necessary tracking information via the audit record stream and let
-> > > > > the
-> > > > > log analysis tools figure it out.  However, the bigger question is
-> > > > > how
-> > > > > to limit (re)setting the audit container ID when you are in a
-> > > > > non-init
-> > > > > userns.  For reasons already mentioned, using capable() is a non
-> > > > > starter for everything but the initial userns, and using
-> > > > > ns_capable()
-> > > > > is equally poor as it essentially allows any userns the ability to
-> > > > > munge it's audit container ID (obviously not good).  It appears we
-> > > > > need a different method for controlling access to the audit
-> > > > > container
-> > > > > ID.
-> > > > 
-> > > > One option would be to make it a string, and have it be append only.
-> > > > That should be safe with no checks.
-> > > > 
-> > > > I know there was a long thread about what type to make this thing. I
-> > > > think you could accomplish the append-only-ness with a u64 if you had
-> > > > some rule about only allowing setting lower order bits than those
-> > > > that
-> > > > are already set. With 4 bits for simplicity:
-> > > > 
-> > > > 1100         # initial container id
-> > > > 1100 -> 1011 # not allowed
-> > > > 1100 -> 1101 # allowed, but now 1101 is set in stone since there are
-> > > > 
-> > > >              # no lower order bits left
-> > > > 
-> > > > There are probably fancier ways to do it if you actually understand
-> > > > math :)
-> > >  
-> > >  ;)
-> > >  
-> > > > Since userns nesting is limited to 32 levels (right now, IIRC), and
-> > > > you have 64 bits, this might be reasonable. You could just teach
-> > > > container engines to use the first say N bits for themselves, with a
-> > > > 1
-> > > > bit for the barrier at the end.
-> > > 
-> > > I like the creativity, but I worry that at some point these
-> > > limitations are going to be raised (limits have a funny way of doing
-> > > that over time) and we will be in trouble.  I say "trouble" because I
-> > > want to be able to quickly do an audit container ID comparison and
-> > > we're going to pay a penalty for these larger values (we'll need this
-> > > when we add multiple auditd support and the requisite record routing).
-> > > 
-> > > Thinking about this makes me also realize we probably need to think a
-> > > bit longer about audit container ID conflicts between orchestrators.
-> > > Right now we just take the value that is given to us by the
-> > > orchestrator, but if we want to allow multiple container orchestrators
-> > > to work without some form of cooperation in userspace (I think we have
-> > > to assume the orchestrators will not talk to each other) we likely
-> > > need to have some way to block reuse of an audit container ID.  We
-> > > would either need to prevent the orchestrator from explicitly setting
-> > > an audit container ID to a currently in use value, or instead generate
-> > > the audit container ID in the kernel upon an event triggered by the
-> > > orchestrator (e.g. a write to a /proc file).  I suspect we should
-> > > start looking at the idr code, I think we will need to make use of it.
+On 06/03, Chao Yu wrote:
+> On 2019/5/30 8:49, Daniel Rosenberg wrote:
+> > Fixes possible underflows when dealing with unusable blocks.
 > > 
-> > My first reaction to using the IDR code is that once an idr is given up,
-> > it can be reused.  I suppose we request IDRs and then never give them up
-> > to avoid reuse...
+> > Signed-off-by: Daniel Rosenberg <drosen@google.com>
+> > ---
+> >  fs/f2fs/f2fs.h | 15 ++++++++++-----
+> >  1 file changed, 10 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 9b3d9977cd1ef..a39cc4ffeb4b1 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1769,8 +1769,12 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+> >  
+> >  	if (!__allow_reserved_blocks(sbi, inode, true))
+> >  		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
+> > -	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+> > -		avail_user_block_count -= sbi->unusable_block_count;
+> > +	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+> > +		if (avail_user_block_count > sbi->unusable_block_count)
+> > +			avail_user_block_count = 0;
 > 
-> I'm not sure we ever what to guarantee that an audit container ID
-> won't be reused during the lifetime of the system, it is a discrete
-> integer after all.  What I think we do want to guarantee is that we
-> won't allow an unintentional audit container ID collision between
-> different orchestrators; if a single orchestrator wants to reuse an
-> audit container ID then that is its choice.
+> avail_user_block_count -= sbi->unusable_block_count;
 > 
-> > I already had some ideas of preventing an existing ID from being reused,
+> > +		else
+> > +			avail_user_block_count -= sbi->unusable_block_count;
 > 
-> Cool.  I only made the idr suggestion since it is used for PIDs and
-> solves a very similar problem.
+> avail_user_block_count = 0;
 > 
-> > but that makes the practice of some container engines injecting
-> > processes into existing containers difficult if not impossible.
-> 
-> Yes, we'll need some provision to indicate which orchestrator
-> "controls" that particular audit container ID, and allow that
-> orchestrator to reuse that particular audit container ID (until all
-> those containers disappear and the audit container ID is given back to
-> the pool).
 
+I fixed this.
 
+Thanks,
 
-
+> Thanks,
+> 
+> > +	}
+> >  	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
+> >  		diff = sbi->total_valid_block_count - avail_user_block_count;
+> >  		if (diff > *count)
+> > @@ -1970,7 +1974,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+> >  					struct inode *inode, bool is_inode)
+> >  {
+> >  	block_t	valid_block_count;
+> > -	unsigned int valid_node_count;
+> > +	unsigned int valid_node_count, user_block_count;
+> >  	int err;
+> >  
+> >  	if (is_inode) {
+> > @@ -1997,10 +2001,11 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+> >  
+> >  	if (!__allow_reserved_blocks(sbi, inode, false))
+> >  		valid_block_count += F2FS_OPTION(sbi).root_reserved_blocks;
+> > +	user_block_count = sbi->user_block_count;
+> >  	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+> > -		valid_block_count += sbi->unusable_block_count;
+> > +		user_block_count -= sbi->unusable_block_count;
+> >  
+> > -	if (unlikely(valid_block_count > sbi->user_block_count)) {
+> > +	if (unlikely(valid_block_count > user_block_count)) {
+> >  		spin_unlock(&sbi->stat_lock);
+> >  		goto enospc;
+> >  	}
+> > 
