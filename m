@@ -2,104 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2CF3346D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 18:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F06E334B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jun 2019 18:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728951AbfFCQBh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jun 2019 12:01:37 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44935 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727611AbfFCQBh (ORCPT
+        id S1728167AbfFCQRL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jun 2019 12:17:11 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:35651 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfFCQRL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jun 2019 12:01:37 -0400
-Received: by mail-lf1-f68.google.com with SMTP id r15so14010632lfm.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jun 2019 09:01:36 -0700 (PDT)
+        Mon, 3 Jun 2019 12:17:11 -0400
+Received: by mail-yb1-f194.google.com with SMTP id v17so2468352ybm.2;
+        Mon, 03 Jun 2019 09:17:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wwAb+fjZakb4SE3XBU2vDo+/FsY9YcZ27a86p6XEaAs=;
-        b=RAknaK6HJEQ5zkQCebN0zIeweiFarG87mqZWgTXpU/mJYEt/DEie3H3GUrpMAkizhf
-         DAjrek0lkfPev895ypNRKOioKwTHoHppJhQCGVAq+NcSFX9QQKad4aQE4NgXUszbotod
-         HpqE5XLtyZaVR5/qdNcdgb7ceGwsUQvR666euqtSsqc3OmniQ2styCZ5A6fa8wFzmYab
-         XQWs/R8Zv9uWMeeBYycMepmlBwpgKHulJsqz5096zetgsMifJSoInjVF+zauJ7Lcd+ZK
-         poQFphqqutbXYOSTji0TJpFkZiZboByLaWGvrwJDqBIG4csRSA2uepIebTq5Rhzk3wDG
-         LSOw==
+        bh=4vwn4Z2ztJedleCGX20UEn2VsU1XB4LmwboMJgUz2yo=;
+        b=ZYfS3VNXXEWUABUMQJ/TjINAkdSdp8IBPmagt/GdfF5JqK+Zi0NVsDaQkTM+Qn39aW
+         3Uev1K7wpMO5U5evuaMrhyvOPZHe752h5As+ux1Vd4u6PF2498pnWSsqcWkKcy2QHvMF
+         hNLui/nEQmRzaEpCyBloAWoL/8erPZgPQkjfxkGe+FhidgGF2X61TLK+83xLubiTNJ2A
+         ceMOtBkUuL3GDLyZ9AyTOL8iYPEFv/t8BXfHE0etnqoEfLo1rVXDZ2MpNALp3bVurE9w
+         AnbpReb3sA6vYuD9LWL9davHbsLR3yZBBVqbQw1c5nUfTJ1zUSJozYm+J+fyTmAU8rZN
+         trBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wwAb+fjZakb4SE3XBU2vDo+/FsY9YcZ27a86p6XEaAs=;
-        b=lnr5KeWrPqIZRqA1jdGjYv0ZkltQc0dfuVPozVqxWlH41wqbmNQpePMDWM6U/LMRgx
-         r0sWlY3v3La6XkchJg1pSbr0tXPwPAoZfNv4OHz2BS1KHTgyRr9var24v4C8qQzXLRoj
-         QWG99IeeqPz65kuYogWo6qyGLZT8a7oYwVnRBJUitFBoQugPSD/Ispp94SpYqV/BxVUE
-         5DmQKEOU/nj/l1WX+XH1eOqZSzy/8V+BRT+1U336DEshrnbMUDeiCFr8gKsQg6kKxrad
-         ElzNdc6svMKRZCR8x8aXv88nnoydd6JLd6ZVdO6d4OxAH8nVMYx5JhN7935X1shA9/5o
-         EPhA==
-X-Gm-Message-State: APjAAAV1vrzY4Z1SgXKZk2agY2Gr5p0fPAXLPCwtt01AInud05qJbNuq
-        7lJw0qhuuCSmnHlBiEaWO7qhW1aZISI/UWxThD/f
-X-Google-Smtp-Source: APXvYqzF84jTm/2bsJE8Z7872PStSoK3LKry51awtLL9AllXtZ9eS6eWxt9+Bys/+Qo1UsfILlV7LgRg51RsyxVhV98=
-X-Received: by 2002:ac2:446b:: with SMTP id y11mr9514878lfl.158.1559577695379;
- Mon, 03 Jun 2019 09:01:35 -0700 (PDT)
+        bh=4vwn4Z2ztJedleCGX20UEn2VsU1XB4LmwboMJgUz2yo=;
+        b=W15e1aR8EmWMRUyRnjWfCB7TroCAxrxXSfusQa25CtELfbZXMlurG7TdJ8AZ/JYX+B
+         8GG5UDQwzjRWwq0ueN3y30hkch10bc9yBOYTmrEs4kf1789TJs2FUzsIofS/1yCdg3SD
+         sCgsjlAl4TH1IkhxJnDahjqfVnQt2xxJcjxaPB4sKsWjB3Z4I12xPy4krowMgM5AO0FA
+         ygWCWIhmn5uAKnzsxjMs2IXthL3Ks2L1qU/C/Jhb/Qic8biyhAv6HNIYexjEHNlzKbFr
+         Z2WBQiTB6Z4MXy9VMlEC4yj7PxqdNrwwVCggNQf5joOLN3Hw3v95c4jzcUyCs+q3qdMa
+         q+8w==
+X-Gm-Message-State: APjAAAXHw6BpzX6SnhLhAe3bLLp/yh09CNTeSm+iwSQ8jZndciEDFGjR
+        fRZGbdohyguYRCsrIX2teqZH8zAMMeq8slqrpsc=
+X-Google-Smtp-Source: APXvYqzqL+1Lx2eYJaPhlgbT9M0UeUWaXHu/OpxdA4VNRqNEaWRPgs9CCWtY53KomQTg4/HQKPv5CsrZvecAtsm0Uw8=
+X-Received: by 2002:a05:6902:4c3:: with SMTP id v3mr12322868ybs.144.1559578630535;
+ Mon, 03 Jun 2019 09:17:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <fadb320e38a899441fcc693bbbc822a3b57f1a46.1559239558.git.rgb@redhat.com>
-In-Reply-To: <fadb320e38a899441fcc693bbbc822a3b57f1a46.1559239558.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 3 Jun 2019 12:01:24 -0400
-Message-ID: <CAHC9VhQZuOXiK4yj4xeRwGF_qepeg7qDL02GDdYhwTNRLRdmPA@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V6] fixup! audit: add containerid filtering
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com
+References: <20190603132155.20600-1-jack@suse.cz> <20190603132155.20600-2-jack@suse.cz>
+In-Reply-To: <20190603132155.20600-2-jack@suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 3 Jun 2019 19:16:59 +0300
+Message-ID: <CAOQ4uxibr6_k2T_0BeC7XAOnuX1PHmEmBjFwfzkVJVh17YAqrw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: Add readahead file operation
+To:     Jan Kara <jack@suse.cz>
+Cc:     Ext4 <linux-ext4@vger.kernel.org>, Ted Tso <tytso@mit.edu>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 31, 2019 at 1:54 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+On Mon, Jun 3, 2019 at 4:22 PM Jan Kara <jack@suse.cz> wrote:
 >
-> Remove the BUG() call since we will never have an invalid op value as
-> audit_data_to_entry()/audit_to_op() ensure that the op value is a a
-> known good value.
+> Some filesystems need to acquire locks before pages are read into page
+> cache to protect from races with hole punching. The lock generally
+> cannot be acquired within readpage as it ranks above page lock so we are
+> left with acquiring the lock within filesystem's ->read_iter
+> implementation for normal reads and ->fault implementation during page
+> faults. That however does not cover all paths how pages can be
+> instantiated within page cache - namely explicitely requested readahead.
+> Add new ->readahead file operation which filesystem can use for this.
 >
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> CC: stable@vger.kernel.org # Needed by following ext4 fix
+> Signed-off-by: Jan Kara <jack@suse.cz>
 > ---
->  kernel/auditfilter.c | 1 -
->  1 file changed, 1 deletion(-)
-
-Thanks for sending this out.  However, in light of the discussion in
-the patchset's cover letter it looks like we need to better support
-nested container orchestrators which is likely going to require some
-non-trivial changes to the kernel/userspace API.  Because of this I'm
-going to hold off pulling these patches into a "working" branch,
-hopefully the next revision of these patches will solve the nested
-orchestrator issue enough that we can continue to move forward with
-testing.
-
-> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> index 407b5bb3b4c6..385a114a1254 100644
-> --- a/kernel/auditfilter.c
-> +++ b/kernel/auditfilter.c
-> @@ -1244,7 +1244,6 @@ int audit_comparator64(u64 left, u32 op, u64 right)
->         case Audit_bittest:
->                 return ((left & right) == right);
->         default:
-> -               BUG();
->                 return 0;
->         }
->  }
-> --
-> 1.8.3.1
+>  include/linux/fs.h |  5 +++++
+>  include/linux/mm.h |  3 ---
+>  mm/fadvise.c       | 12 +-----------
+>  mm/madvise.c       |  3 ++-
+>  mm/readahead.c     | 26 ++++++++++++++++++++++++--
+>  5 files changed, 32 insertions(+), 17 deletions(-)
 >
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index f7fdfe93e25d..9968abcd06ea 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1828,6 +1828,7 @@ struct file_operations {
+>                                    struct file *file_out, loff_t pos_out,
+>                                    loff_t len, unsigned int remap_flags);
+>         int (*fadvise)(struct file *, loff_t, loff_t, int);
+> +       int (*readahead)(struct file *, loff_t, loff_t);
 
+The new method is redundant, because it is a subset of fadvise.
+When overlayfs needed to implement both methods, Miklos
+suggested that we unite them into one, hence:
+3d8f7615319b vfs: implement readahead(2) using POSIX_FADV_WILLNEED
 
--- 
-paul moore
-www.paul-moore.com
+So you can accomplish the ext4 fix without the new method.
+All you need extra is implementing madvise_willneed() with vfs_fadvise().
+
+Thanks,
+Amir.
