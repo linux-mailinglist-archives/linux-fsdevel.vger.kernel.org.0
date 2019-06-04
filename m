@@ -2,107 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E71FA352AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 00:24:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B42DF352B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 00:28:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbfFDWYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jun 2019 18:24:42 -0400
-Received: from dcvr.yhbt.net ([64.71.152.64]:38310 "EHLO dcvr.yhbt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbfFDWYm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jun 2019 18:24:42 -0400
-Received: from localhost (dcvr.yhbt.net [127.0.0.1])
-        by dcvr.yhbt.net (Postfix) with ESMTP id 907961F462;
-        Tue,  4 Jun 2019 22:24:41 +0000 (UTC)
-Date:   Tue, 4 Jun 2019 22:24:41 +0000
-From:   Eric Wong <e@80x24.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Jason Baron <jbaron@akamai.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-aio@kvack.org, omar.kilani@gmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        stable <stable@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Laight <David.Laight@aculab.com>
-Subject: Re: [PATCH] signal: remove the wrong signal_pending() check in
- restore_user_sigmask()
-Message-ID: <20190604222441.tndh2rljrfoaytkr@dcvr>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com>
- <20190604134117.GA29963@redhat.com>
- <CAHk-=wjSOh5zmApq2qsNjmY-GMn4CWe9YwdcKPjT+nVoGiDKOQ@mail.gmail.com>
+        id S1726399AbfFDW23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jun 2019 18:28:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43794 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfFDW22 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Jun 2019 18:28:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=9A8itsAphAb/as8ui3xdV6CzJFxywKBTzPtaBp5prAw=; b=xKnpAHQa0UnnwpRa1epErIXLim
+        wF5aEkvyjVUxbMCnqhdWkGGL/rZZ5cf7F5oANx1XJj2yTomOnpCiJg2tfGzR6pvy16H0wm3mIvxvA
+        deTxDJ2HwluuSPJm0yfymqe9pJUuw4eI3L18NynVm/ddTj94JbslLcqrxJM6s4cfIpqbETgJAyxtU
+        FIA+NMuCZEvsoZyRkgNQRuhHkA5UdOXkbvmHaIAtEXNQFxNbnl1GuQXBaZh+c1VrCe9lZN/Nx2Imj
+        A4Ej1f5lFBCRbzrFawHioxY+YTygzpkLh5DhFitayYOTViIIHD740/1pmIaBfDelgCZLvM92ACPqv
+        aDVfc0lQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hYHur-0001CN-LF; Tue, 04 Jun 2019 22:28:26 +0000
+Subject: Re: mmotm 2019-05-29-20-52 uploaded (mpls) +linux-next
+To:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
+ <5a9fc4e5-eb29-99a9-dff6-2d4fdd5eb748@infradead.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <2b1e5628-cc36-5a33-9259-08100a01d579@infradead.org>
+Date:   Tue, 4 Jun 2019 15:28:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <5a9fc4e5-eb29-99a9-dff6-2d4fdd5eb748@infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjSOh5zmApq2qsNjmY-GMn4CWe9YwdcKPjT+nVoGiDKOQ@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> On Tue, Jun 4, 2019 at 6:41 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > This is the minimal fix for stable, I'll send cleanups later.
+On 5/30/19 3:28 PM, Randy Dunlap wrote:
+> On 5/29/19 8:53 PM, akpm@linux-foundation.org wrote:
+>> The mm-of-the-moment snapshot 2019-05-29-20-52 has been uploaded to
+>>
+>>    http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> mmotm-readme.txt says
+>>
+>> README for mm-of-the-moment:
+>>
+>> http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> more than once a week.
+>>
+>> You will need quilt to apply these patches to the latest Linus release (5.x
+>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>> http://ozlabs.org/~akpm/mmotm/series
+>>
+>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>> followed by the base kernel version against which this patch series is to
+>> be applied.
+>>
 > 
-> Ugh. I htink this is correct, but I wish we had a better and more
-> intuitive interface.
-
-I had the same thoughts, but am not a regular kernel hacker,
-so I didn't say anything earlier.
-
-> In particular, since restore_user_sigmask() basically wants to check
-> for "signal_pending()" anyway (to decide if the mask should be
-> restored by signal handling or by that function), I really get the
-> feeling that a lot of these patterns like
+> on i386 or x86_64:
 > 
-> > -       restore_user_sigmask(ksig.sigmask, &sigsaved);
-> > -       if (signal_pending(current) && !ret)
-> > +
-> > +       interrupted = signal_pending(current);
-> > +       restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
-> > +       if (interrupted && !ret)
-> >                 ret = -ERESTARTNOHAND;
+> when CONFIG_PROC_SYSCTL is not set/enabled:
 > 
-> are wrong to begin with, and we really should aim for an interface
-> which says "tell me whether you completed the system call, and I'll
-> give you an error return if not".
+> ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
+> af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
+> ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
+> ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
+> ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
 > 
-> How about we make restore_user_sigmask() take two return codes: the
-> 'ret' we already have, and the return we would get if there is a
-> signal pending and w're currently returning zero.
-> 
-> IOW, I think the above could become
-> 
->         ret = restore_user_sigmask(ksig.sigmask, &sigsaved, ret, -ERESTARTHAND);
-> 
-> instead if we just made the right interface decision.
 
-But that falls down if ret were ever expected to match several
-similar error codes (not sure if it happens)
+Hi,
+This now happens in linux-next 20190604.
 
-When I was considering fixing this on my own a few weeks ago, I
-was looking for an inline that could quickly tell if `ret' was
-any of the EINTR-like error codes; but couldn't find one...
 
-It'd probably end up being switch/case statement so I'm not sure
-if it'd be too big and slow or not...
-
-The caller would just do:
-
-	ret = restore_user_sigmask(ksig.sigmask, &sigsaved, ret);
-
-And restore_user_sigmask would call some "was_interrupted(ret)"
-inline which could return true if `ret' matched any of the
-too-many-to-keep-track-of EINTR-like codes.  But I figured
-there's probably a good reason it did not exist, already *shrug*
-
-/me goes back to the wonderful world of userspace...
+-- 
+~Randy
