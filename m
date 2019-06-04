@@ -2,78 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43D103512E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 22:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EB963513C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 22:42:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbfFDUjt convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Tue, 4 Jun 2019 16:39:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60664 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726033AbfFDUjt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jun 2019 16:39:49 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 946E83001461;
-        Tue,  4 Jun 2019 20:39:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D0C619C69;
-        Tue,  4 Jun 2019 20:39:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
-References: <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com> <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
+        id S1726637AbfFDUmi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jun 2019 16:42:38 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:37007 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfFDUme (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Jun 2019 16:42:34 -0400
+Received: by mail-vs1-f66.google.com with SMTP id o5so14418468vsq.4;
+        Tue, 04 Jun 2019 13:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fbtjRdv0GJ+2D+weFM4f6etIKOiIzXQVJtgOJZJ5iLg=;
+        b=IZKM7gmxCS7o0Zw1kPZ9savketj1qxdMv6m2qkPsCnHmxaOhUgwjRROoPnc2GI6ssY
+         wb8UoK+08uh93uFYsYPvwNWrmfQLHFH5ltkd3UrygfpzgmTUWUYE1P/a8LIHiiYa9XOE
+         U2dEceQyyO6FSMbBUz4cvlVb/WT3l9gfaQP+MS27qwCD/jmN3iEQXuhN8eVsZTYR882T
+         N8u5HtljyAZ+SZVqDwwM8gBQ8MY2yGf08zLT4v66ExoUQ/j9K4qFukoqvS7zIxDh2hi3
+         HoTe63ghYikb6Ev3xir5GJjCBlVfMY6VS6ElHguZxax0qcAZNosKRNKcTCSIKE91a63L
+         xPwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fbtjRdv0GJ+2D+weFM4f6etIKOiIzXQVJtgOJZJ5iLg=;
+        b=Rt9TyW/ku9Pf6CdWkgu77XC7ug/rU+Fo/mFszqYJzD60p+tDptJTam/7KQdkiRrA4Z
+         VCN9gyk38HcThnnup13AkHq9CGVbfGIUgPOM0CBpd/JF64xUgQWkx7jbQwVeACtIt1CL
+         Ijs2XnDk+/AWLHawOcc5xQSRBzENyDaxnz3EeGcqkh19S6TXq+GTuA+MdMVXKZxeLe3G
+         AyfTquiQTY5H4V7EFm2mqqGuH0sLT+eFkSHxlPMAOIxJvvMspd5hmyGi8P9fLbUNTjc8
+         YyKVL7525hnkEDx3NlhU7aiT4ko5Lqn8522/JNxeNMn8a9hZM6vjseHoAwlgxzpouZK+
+         8vkg==
+X-Gm-Message-State: APjAAAWwNpRq/XwTpX+um4QWfYzReB+sBUCh6Q6pMbOpE/LcKSXS/Fpu
+        5ajfUORfa/kuDoAPFKTq7IG+D4Xoduo8UbScZ74=
+X-Google-Smtp-Source: APXvYqx4Z19++9NwRG53ORZiPgGjyDXMAlT0avIaCwBDxjULpGGDW+Ev7+Q+LkLPMq1cPypN2Q6W6eLqUqLVKynvx+8=
+X-Received: by 2002:a05:6102:195:: with SMTP id r21mr3136390vsq.194.1559680952957;
+ Tue, 04 Jun 2019 13:42:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1206.1559680778.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Tue, 04 Jun 2019 21:39:38 +0100
-Message-ID: <1207.1559680778@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 04 Jun 2019 20:39:48 +0000 (UTC)
+References: <20190604135632.1487-1-amir73il@gmail.com>
+In-Reply-To: <20190604135632.1487-1-amir73il@gmail.com>
+From:   Olga Kornievskaia <olga.kornievskaia@gmail.com>
+Date:   Tue, 4 Jun 2019 16:42:21 -0400
+Message-ID: <CAN-5tyFBd4mJ84C2J9dwG_iYeEDN0tX86DjW4oaV7yscj4VR7g@mail.gmail.com>
+Subject: Re: [PATCH v5 8/9] vfs: allow copy_file_range to copy across devices
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Luis Henriques <lhenriques@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        ceph-devel@vger.kernel.org, linux-nfs <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Steve French <stfrench@microsoft.com>,
+        Dave Chinner <dchinner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Andy Lutomirski <luto@kernel.org> wrote:
+On Tue, Jun 4, 2019 at 9:56 AM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> We want to enable cross-filesystem copy_file_range functionality
+> where possible, so push the "same superblock only" checks down to
+> the individual filesystem callouts so they can make their own
+> decisions about cross-superblock copy offload and fallack to
+> generic_copy_file_range() for cross-superblock copy.
+>
+> [Amir] We do not call ->remap_file_range() in case the files are not
+> on the same sb and do not call ->copy_file_range() in case the files
+> do not belong to the same filesystem driver.
+>
+> This changes behavior of the copy_file_range(2) syscall, which will
+> now allow cross filesystem in-kernel copy.  CIFS already supports
+> cross-superblock copy, between two shares to the same server. This
+> functionality will now be available via the copy_file_range(2) syscall.
+>
+> Cc: Steve French <stfrench@microsoft.com>
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>
+> Darrick,
+>
+> Per feedback from Olga, I am sending a modified version of this patch
+> to address cross file_system_type copy issue in nfs.
+>
 
-> > Here's a set of patches to add a general variable-length notification queue
-> > concept and to add sources of events for:
-> 
-> I asked before and didn't see a response, so I'll ask again.  Why are you
-> paying any attention at all to the creds that generate an event?
+Thanks Amir, this works for NFS with referrals.
 
-Casey responded to you.  It's one of his requirements.
-
-I'm not sure of the need, and I particularly don't like trying to make
-indirect destruction events (mount destruction keyed on fput, for instance)
-carry the creds of the triggerer.  Indeed, the trigger can come from all sorts
-of places - including af_unix queue destruction, someone poking around in
-procfs, a variety of processes fputting simultaneously.  Only one of them can
-win, and the LSM needs to handle *all* the possibilities.
-
-However, the LSMs (or at least SELinux) ignore f_cred and use current_cred()
-when checking permissions.  See selinux_revalidate_file_permission() for
-example - it uses current_cred() not file->f_cred to re-evaluate the perms,
-and the fd might be shared between a number of processes with different creds.
-
-> This seems like the wrong approach.  If an LSM wants to prevent covert
-> communication from, say, mount actions, then it shouldn't allow the
-> watch to be set up in the first place.
-
-Yeah, I can agree to that.  Casey?
-
-David
+> For the sake of global warming I am not re-posting the entire patch set.
+> I removed your RVB because of the change.
+>
+> Thanks,
+> Amir.
+>
+> Changes since v4:
+> - Check "same filesystem driver" by comapring ->copy_file_range()
+>   function pointer
+>
+>  fs/ceph/file.c    |  4 +++-
+>  fs/cifs/cifsfs.c  |  2 +-
+>  fs/fuse/file.c    |  5 ++++-
+>  fs/nfs/nfs4file.c |  5 ++++-
+>  fs/read_write.c   | 18 ++++++++++++------
+>  5 files changed, 24 insertions(+), 10 deletions(-)
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index e87f7b2023af..4cd41ed5cc53 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1909,6 +1909,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>
+>         if (src_inode == dst_inode)
+>                 return -EINVAL;
+> +       if (src_inode->i_sb != dst_inode->i_sb)
+> +               return -EXDEV;
+>         if (ceph_snap(dst_inode) != CEPH_NOSNAP)
+>                 return -EROFS;
+>
+> @@ -2109,7 +2111,7 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>         ret = __ceph_copy_file_range(src_file, src_off, dst_file, dst_off,
+>                                      len, flags);
+>
+> -       if (ret == -EOPNOTSUPP)
+> +       if (ret == -EOPNOTSUPP || ret == -EXDEV)
+>                 ret = generic_copy_file_range(src_file, src_off, dst_file,
+>                                               dst_off, len, flags);
+>         return ret;
+> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+> index c65823270313..f11eea6125c1 100644
+> --- a/fs/cifs/cifsfs.c
+> +++ b/fs/cifs/cifsfs.c
+> @@ -1149,7 +1149,7 @@ static ssize_t cifs_copy_file_range(struct file *src_file, loff_t off,
+>                                         len, flags);
+>         free_xid(xid);
+>
+> -       if (rc == -EOPNOTSUPP)
+> +       if (rc == -EOPNOTSUPP || rc == -EXDEV)
+>                 rc = generic_copy_file_range(src_file, off, dst_file,
+>                                              destoff, len, flags);
+>         return rc;
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index e03901ae729b..569baf286835 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -3126,6 +3126,9 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
+>         if (fc->no_copy_file_range)
+>                 return -EOPNOTSUPP;
+>
+> +       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
+> +               return -EXDEV;
+> +
+>         inode_lock(inode_out);
+>
+>         if (fc->writeback_cache) {
+> @@ -3182,7 +3185,7 @@ static ssize_t fuse_copy_file_range(struct file *src_file, loff_t src_off,
+>         ret = __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
+>                                      len, flags);
+>
+> -       if (ret == -EOPNOTSUPP)
+> +       if (ret == -EOPNOTSUPP || ret == -EXDEV)
+>                 ret = generic_copy_file_range(src_file, src_off, dst_file,
+>                                               dst_off, len, flags);
+>         return ret;
+> diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+> index 4842f3ab3161..f4157eb1f69d 100644
+> --- a/fs/nfs/nfs4file.c
+> +++ b/fs/nfs/nfs4file.c
+> @@ -133,6 +133,9 @@ static ssize_t __nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
+>                                       struct file *file_out, loff_t pos_out,
+>                                       size_t count, unsigned int flags)
+>  {
+> +       /* Only offload copy if superblock is the same */
+> +       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
+> +               return -EXDEV;
+>         if (!nfs_server_capable(file_inode(file_out), NFS_CAP_COPY))
+>                 return -EOPNOTSUPP;
+>         if (file_inode(file_in) == file_inode(file_out))
+> @@ -148,7 +151,7 @@ static ssize_t nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
+>
+>         ret = __nfs4_copy_file_range(file_in, pos_in, file_out, pos_out, count,
+>                                      flags);
+> -       if (ret == -EOPNOTSUPP)
+> +       if (ret == -EOPNOTSUPP || ret == -EXDEV)
+>                 ret = generic_copy_file_range(file_in, pos_in, file_out,
+>                                               pos_out, count, flags);
+>         return ret;
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index cec7e7b1f693..bb594c8f4404 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1599,7 +1599,16 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
+>                                   struct file *file_out, loff_t pos_out,
+>                                   size_t len, unsigned int flags)
+>  {
+> -       if (file_out->f_op->copy_file_range)
+> +       /*
+> +        * Although we now allow filesystems to handle cross sb copy, passing
+> +        * a file of the wrong filesystem type to filesystem driver can result
+> +        * in an attempt to dereference the wrong type of ->private_data, so
+> +        * avoid doing that until we really have a good reason.
+> +        * NFS has several different file_system_type's, but they all end up
+> +        * using the same ->copy_file_range() function pointer.
+> +        */
+> +       if (file_out->f_op->copy_file_range &&
+> +           file_out->f_op->copy_file_range == file_in->f_op->copy_file_range)
+>                 return file_out->f_op->copy_file_range(file_in, pos_in,
+>                                                        file_out, pos_out,
+>                                                        len, flags);
+> @@ -1622,10 +1631,6 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+>         if (flags != 0)
+>                 return -EINVAL;
+>
+> -       /* this could be relaxed once a method supports cross-fs copies */
+> -       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
+> -               return -EXDEV;
+> -
+>         ret = generic_copy_file_checks(file_in, pos_in, file_out, pos_out, &len,
+>                                        flags);
+>         if (unlikely(ret))
+> @@ -1648,7 +1653,8 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+>          * Try cloning first, this is supported by more file systems, and
+>          * more efficient if both clone and copy are supported (e.g. NFS).
+>          */
+> -       if (file_in->f_op->remap_file_range) {
+> +       if (file_in->f_op->remap_file_range &&
+> +           file_inode(file_in)->i_sb == file_inode(file_out)->i_sb) {
+>                 loff_t cloned;
+>
+>                 cloned = file_in->f_op->remap_file_range(file_in, pos_in,
+> --
+> 2.17.1
+>
