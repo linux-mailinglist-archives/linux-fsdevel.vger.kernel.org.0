@@ -2,73 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9474E34FAF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 20:15:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B367934FE1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 20:35:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbfFDSP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jun 2019 14:15:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60434 "EHLO mail.kernel.org"
+        id S1726531AbfFDSfY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jun 2019 14:35:24 -0400
+Received: from dcvr.yhbt.net ([64.71.152.64]:59492 "EHLO dcvr.yhbt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726695AbfFDSP2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jun 2019 14:15:28 -0400
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57DB920B1F
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2019 18:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559672127;
-        bh=rJp5OtqEAvAiGS7xlsL6faTP+VzkPZmB2r/CXv2dDMw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mXf48L0bbJsFlXG4RQ5TuxVD4BUsGDkraMg70yTes9Vx0aGRiVCyUI6hB1cNcXT2T
-         EQOTcLwkJrjxfu0oX0teu7kbJBsSOW2daDsKYxp6iPLqEwCk/FAHCvhDbkgSjhsdEG
-         9ydu2jm6dSJLG16MzlOqlVPJ6N/Qq8YHvUFWDAm8=
-Received: by mail-wr1-f53.google.com with SMTP id n9so4410934wru.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2019 11:15:27 -0700 (PDT)
-X-Gm-Message-State: APjAAAUy8Nu61gs2VNUrQWPkbf59LGgZXm70ygLUMJNh6Kbe7u+9I2iK
-        zt6lDI+9FEqejtbJa8oBfBCVMww1d/10iCuG7zEfHQ==
-X-Google-Smtp-Source: APXvYqywAF/20o2S/0PCTLXbG818xHPa7/+6N3ZxOBZHPZZP2pqS8x/IU/xPvp6CPNvySeFLxMfwJUc/1kZXrxBbZUY=
-X-Received: by 2002:adf:cc85:: with SMTP id p5mr7169034wrj.47.1559672125928;
- Tue, 04 Jun 2019 11:15:25 -0700 (PDT)
+        id S1726510AbfFDSfX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Jun 2019 14:35:23 -0400
+Received: from localhost (dcvr.yhbt.net [127.0.0.1])
+        by dcvr.yhbt.net (Postfix) with ESMTP id 4A3DF1F462;
+        Tue,  4 Jun 2019 18:35:23 +0000 (UTC)
+Date:   Tue, 4 Jun 2019 18:35:23 +0000
+From:   Eric Wong <e@80x24.org>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        linux-kernel@vger.kernel.org, arnd@arndb.de, dbueso@suse.de,
+        axboe@kernel.dk, dave@stgolabs.net, jbaron@akamai.com,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        omar.kilani@gmail.com, tglx@linutronix.de, stable@vger.kernel.org,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@ACULAB.COM>
+Subject: Re: [PATCH] signal: remove the wrong signal_pending() check in
+ restore_user_sigmask()
+Message-ID: <20190604183523.kkruvskcgbli2fpu@dcvr>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com>
+ <20190604134117.GA29963@redhat.com>
 MIME-Version: 1.0
-References: <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
- <155966611030.17449.1411028213562548153.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155966611030.17449.1411028213562548153.stgit@warthog.procyon.org.uk>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 4 Jun 2019 11:15:14 -0700
-X-Gmail-Original-Message-ID: <CALCETrXLoowmrHHWWr3OqsOGBkyGsV_x0nADaEyv+_ysGQdM3g@mail.gmail.com>
-Message-ID: <CALCETrXLoowmrHHWWr3OqsOGBkyGsV_x0nADaEyv+_ysGQdM3g@mail.gmail.com>
-Subject: Re: [PATCH 1/8] security: Override creds in __fput() with last
- fputter's creds [ver #2]
-To:     David Howells <dhowells@redhat.com>, Jann Horn <jannh@google.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190604134117.GA29963@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 4, 2019 at 9:35 AM David Howells <dhowells@redhat.com> wrote:
->
-> So that the LSM can see the credentials of the last process to do an fput()
-> on a file object when the file object is being dismantled, do the following
-> steps:
->
->  (1) Cache the current credentials in file->f_fput_cred at the point the
->      file object's reference count reaches zero.
+Oleg Nesterov <oleg@redhat.com> wrote:
+> This is the minimal fix for stable, I'll send cleanups later.
+> 
+> The commit 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add
+> restore_user_sigmask()") introduced the visible change which breaks
+> user-space: a signal temporary unblocked by set_user_sigmask() can
+> be delivered even if the caller returns success or timeout.
+> 
+> Change restore_user_sigmask() to accept the additional "interrupted"
+> argument which should be used instead of signal_pending() check, and
+> update the callers.
+> 
+> Reported-by: Eric Wong <e@80x24.org>
+> Fixes: 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add restore_user_sigmask()")
+> cc: stable@vger.kernel.org (v5.0+)
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 
-I don't think it's valid to capture credentials in close().  This
-sounds very easy to spoof, especially when you consider that you can
-stick an fd in unix socket and aim it at a service that's just going
-to ignore it and close it.
+Thanks, for epoll_pwait on top of Linux v5.1.7 and cmogstored v1.7.0:
 
-IOW I think this is at least as invalid as looking at current_cred()
-in write(), which is a classic bug that gets repeated regularly.
+Tested-by: Eric Wong <e@80x24.org>
 
---Andy
+(cmogstored v1.7.1 already works around this when it sees a 0
+return value (but not >0, yet...))
+
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 0fbb486..1147c5d 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2201,11 +2201,12 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+>  	}
+>  
+>  	ret = wait_event_interruptible(ctx->wait, io_cqring_events(ring) >= min_events);
+> -	if (ret == -ERESTARTSYS)
+> -		ret = -EINTR;
+>  
+>  	if (sig)
+> -		restore_user_sigmask(sig, &sigsaved);
+> +		restore_user_sigmask(sig, &sigsaved, ret == -ERESTARTSYS);
+> +
+> +	if (ret == -ERESTARTSYS)
+> +		ret = -EINTR;
+>  
+>  	return READ_ONCE(ring->r.head) == READ_ONCE(ring->r.tail) ? ret : 0;
+>  }
+
+That io_uring bit didn't apply cleanly to stable,
+since stable is missing fdb288a679cdf6a71f3c1ae6f348ba4dae742681
+("io_uring: use wait_event_interruptible for cq_wait conditional wait")
+and related commits.
+
+In any case, I'm not using io_uring anywhere, yet (and probably
+won't, since I'll still need threads to deal with open/unlink/rename
+on slow JBOD HDDs).
