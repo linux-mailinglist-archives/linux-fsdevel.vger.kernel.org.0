@@ -2,84 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1505F34DCF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 18:38:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2D0334E4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 19:07:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbfFDQho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jun 2019 12:37:44 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36792 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727451AbfFDQho (ORCPT
+        id S1727716AbfFDRHM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jun 2019 13:07:12 -0400
+Received: from gateway23.websitewelcome.com ([192.185.50.164]:15994 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726532AbfFDRHM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:37:44 -0400
-Received: by mail-qk1-f196.google.com with SMTP id g18so3262506qkl.3;
-        Tue, 04 Jun 2019 09:37:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aE1/cHd8DzTD9FjBXgqCGhUsUZ/Ac0/w2Hl806C0EWM=;
-        b=gBZi01V6we8APcZYiBHBU8npGyh1ko7XZA+weiRBOCKEk6+rZUepKd7at1Y1GJUzXI
-         0HjNgHij9va6VYS6Hd7y37zamsi2pCQftku47zA4pPT/IA1BwWv4Jwt8LLbZ9YB1IpeP
-         u2ZWC9zaVaEiLyfYg5WViwQ0zSesnalr2ivIzzNx2EWnkGSjZKf7EWnGPEFihd6L2w9K
-         qr8vfx9F64jUyMeWhJlD3hcqsbYXT5Iq7S2HRGAg3+u53HnbzvE/10nYD66IYTYjGv1S
-         3lsvpvcoCXM0HI7ffmV//7oFe1/R+FM0fuN8xK7J381tTD6uO987VkqT6rVGC9OPNIOx
-         BFww==
-X-Gm-Message-State: APjAAAWkIaBx2izAtaO3FH0O8D+0u4Tng1tKUTJkjsMFa9IE94swWuKQ
-        +l2/L57qr0WMZLcwA9vOJ98P+cWZqg1xB2+3+ho=
-X-Google-Smtp-Source: APXvYqzfmP62dYOeVk1OlzWSMTrM9bPNziXx52FwlTOC/Ho6r8b/7WoZJpMUG9U+NaP2WQiW5cUyXhoGL5f0SB1c034=
-X-Received: by 2002:a37:a4d3:: with SMTP id n202mr27466154qke.84.1559666262799;
- Tue, 04 Jun 2019 09:37:42 -0700 (PDT)
+        Tue, 4 Jun 2019 13:07:12 -0400
+X-Greylist: delayed 1477 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Jun 2019 13:07:12 EDT
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 6B0E5CBF2
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2019 11:42:33 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id YCW9hjp2t2qH7YCW9hwTYE; Tue, 04 Jun 2019 11:42:33 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.127.120] (port=39676 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hYCW8-001WsQ-1y; Tue, 04 Jun 2019 11:42:32 -0500
+Date:   Tue, 4 Jun 2019 11:42:26 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] fs: select: Use struct_size() in kmalloc()
+Message-ID: <20190604164226.GA13823@embeddedor>
 MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com>
-In-Reply-To: <20190604134117.GA29963@redhat.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 4 Jun 2019 18:37:26 +0200
-Message-ID: <CAK8P3a3Dv+hqnQHWU2nG5rB+hGrqbcDC3DUoNGZAzNGJgJwizA@mail.gmail.com>
-Subject: Re: [PATCH] signal: remove the wrong signal_pending() check in restore_user_sigmask()
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dbueso@suse.de, Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, e@80x24.org,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, omar.kilani@gmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "# 3.4.x" <stable@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.120
+X-Source-L: No
+X-Exim-ID: 1hYCW8-001WsQ-1y
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.127.120]:39676
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 4, 2019 at 3:41 PM Oleg Nesterov <oleg@redhat.com> wrote:
->
-> This is the minimal fix for stable, I'll send cleanups later.
->
-> The commit 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add
-> restore_user_sigmask()") introduced the visible change which breaks
-> user-space: a signal temporary unblocked by set_user_sigmask() can
-> be delivered even if the caller returns success or timeout.
->
-> Change restore_user_sigmask() to accept the additional "interrupted"
-> argument which should be used instead of signal_pending() check, and
-> update the callers.
->
-> Reported-by: Eric Wong <e@80x24.org>
-> Fixes: 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add restore_user_sigmask()")
-> cc: stable@vger.kernel.org (v5.0+)
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+struct foo {
+   int stuff;
+   struct boo entry[];
+};
 
-I hope Eric can test this with the original reproducer, or maybe someone
-could create a test case that can be added into LTP.
+size = sizeof(struct foo) + count * sizeof(struct boo);
+instance = kmalloc(size, GFP_KERNEL);
 
-      Arnd
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
+
+Also, notice that variable size is unnecessary, hence it is removed.
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/select.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/select.c b/fs/select.c
+index 6cbc9ff56ba0..2a179ab68c60 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -966,7 +966,7 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
+ 		struct timespec64 *end_time)
+ {
+ 	struct poll_wqueues table;
+- 	int err = -EFAULT, fdcount, len, size;
++	int err = -EFAULT, fdcount, len;
+ 	/* Allocate small arguments on the stack to save memory and be
+ 	   faster - use long to make sure the buffer is aligned properly
+ 	   on 64 bit archs to avoid unaligned access */
+@@ -994,8 +994,8 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
+ 			break;
+ 
+ 		len = min(todo, POLLFD_PER_PAGE);
+-		size = sizeof(struct poll_list) + sizeof(struct pollfd) * len;
+-		walk = walk->next = kmalloc(size, GFP_KERNEL);
++		walk = walk->next = kmalloc(struct_size(walk, entries, len),
++					    GFP_KERNEL);
+ 		if (!walk) {
+ 			err = -ENOMEM;
+ 			goto out_fds;
+-- 
+2.21.0
+
