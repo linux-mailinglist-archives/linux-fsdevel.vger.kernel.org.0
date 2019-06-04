@@ -2,78 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78A1233EEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 08:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CFDE340E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 09:57:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfFDGUs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jun 2019 02:20:48 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35619 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbfFDGUs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jun 2019 02:20:48 -0400
-X-Originating-IP: 79.86.19.127
-Received: from [192.168.0.12] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 49FAD1C0009;
-        Tue,  4 Jun 2019 06:20:38 +0000 (UTC)
-Subject: Re: [PATCH v4 05/14] arm64, mm: Make randomization selected by
- generic topdown mmap layout
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>,
-        Kees Cook <keescook@chromium.org>,
-        James Hogan <jhogan@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Paul Burton <paul.burton@mips.com>,
-        linux-riscv@lists.infradead.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mips@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Luis Chamberlain <mcgrof@kernel.org>
-References: <20190526134746.9315-1-alex@ghiti.fr>
- <20190526134746.9315-6-alex@ghiti.fr>
- <20190603174001.GL63283@arrakis.emea.arm.com>
-From:   Alex Ghiti <alex@ghiti.fr>
-Message-ID: <e8dab94d-679e-8898-033e-3b5dbf0cc044@ghiti.fr>
-Date:   Tue, 4 Jun 2019 02:20:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727101AbfFDH5x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jun 2019 03:57:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60184 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727011AbfFDH5w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Jun 2019 03:57:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 651CDAE21;
+        Tue,  4 Jun 2019 07:57:51 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 0F6A11E3C24; Tue,  4 Jun 2019 09:57:51 +0200 (CEST)
+Date:   Tue, 4 Jun 2019 09:57:51 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Ext4 <linux-ext4@vger.kernel.org>,
+        Ted Tso <tytso@mit.edu>, Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 2/2] ext4: Fix stale data exposure when read races with
+ hole punch
+Message-ID: <20190604075751.GK27933@quack2.suse.cz>
+References: <20190603132155.20600-1-jack@suse.cz>
+ <20190603132155.20600-3-jack@suse.cz>
+ <CAOQ4uxgn7_tY35KVE6c-na2skXtxXhrM8-2wRNUe2CtmYACZrg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190603174001.GL63283@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: sv-FI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgn7_tY35KVE6c-na2skXtxXhrM8-2wRNUe2CtmYACZrg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/3/19 1:40 PM, Catalin Marinas wrote:
-> On Sun, May 26, 2019 at 09:47:37AM -0400, Alexandre Ghiti wrote:
->> This commits selects ARCH_HAS_ELF_RANDOMIZE when an arch uses the generic
->> topdown mmap layout functions so that this security feature is on by
->> default.
->> Note that this commit also removes the possibility for arm64 to have elf
->> randomization and no MMU: without MMU, the security added by randomization
->> is worth nothing.
-> Not planning on this anytime soon ;).
+On Mon 03-06-19 19:33:50, Amir Goldstein wrote:
+> On Mon, Jun 3, 2019 at 4:22 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > Hole puching currently evicts pages from page cache and then goes on to
+> > remove blocks from the inode. This happens under both i_mmap_sem and
+> > i_rwsem held exclusively which provides appropriate serialization with
+> > racing page faults. However there is currently nothing that prevents
+> > ordinary read(2) from racing with the hole punch and instantiating page
+> > cache page after hole punching has evicted page cache but before it has
+> > removed blocks from the inode. This page cache page will be mapping soon
+> > to be freed block and that can lead to returning stale data to userspace
+> > or even filesystem corruption.
+> >
+> > Fix the problem by protecting reads as well as readahead requests with
+> > i_mmap_sem.
+> >
+> 
+> So ->write_iter() does not take  i_mmap_sem right?
+> and therefore mixed randrw workload is not expected to regress heavily
+> because of this change?
 
+Yes. i_mmap_sem is taken in exclusive mode only for truncate, punch hole,
+and similar operations removing blocks from file. So reads will now be more
+serialized with such operations. But not with writes. There may be some
+regression still visible due to the fact that although readers won't block
+one another or with writers, they'll still contend on updating the cacheline
+with i_mmap_sem and that's going to be visible for cache hot readers
+running from multiple NUMA nodes.
 
-Great :) Thanks for your time,
+> Did you test performance diff?
 
-Alex
+No, not really. But I'll queue up some test to see the difference.
 
+> Here [1] I posted results of fio test that did x5 worse in xfs vs.
+> ext4, but I've seen much worse cases.
 
->
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
