@@ -2,84 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2FB334950
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 15:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A686234955
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 15:49:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbfFDNru (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jun 2019 09:47:50 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:40186 "EHLO
+        id S1727343AbfFDNt3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jun 2019 09:49:29 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:40220 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727033AbfFDNru (ORCPT
+        with ESMTP id S1727033AbfFDNt3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jun 2019 09:47:50 -0400
+        Tue, 4 Jun 2019 09:49:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=TOwZdwxBqBfDN/lQ43D0mDUETM7uWGVdcKmFf0HPVA4=; b=kWjk/FVBhJNS6nGcSZlyP/MJ9
-        bAyPveGcWVn7uKLzn6KXAM/dKgFPM5RPgoQK9lzLxCAMaDdWeI7q0pkhg6C3ar2FdJmU4SthBmDGW
-        iRGi38nFUoBD3F6C8LWv2xG7WWsLgPX++jyrLfZRA9KIDuenXHe/yHwTezVdWA11vPa8DmJJ+PCvp
-        1NAiB21CzC9YC/Gr7Fod603xTVUrmOERIP1Q3jZxxiqTNjMu+lP1ADO5TXBFxNEZx3PMaFpzf+AD0
-        k2Txwo/MjzJNI2EF7BHy9tCyIBbX5BcXwK0mozHlnZe2aE+L2W6TicDX7vrQuo/5pVqG5O4Szt3rN
-        qnipLj1Aw==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:56182)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
+        Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
+        In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Eo4Cxu7NKFDGjIub56vp6QM3AHeuBOBBdfoulOsHW1c=; b=EeZVZNxt2pUyZYaa7fJfrakjUp
+        ry1kRCrGkj3dgvNZsYXa21yLtYMB6Bd/HjDZNCq6JZWaAE1GashWOSBnT6IURLnBfEdnqtzoWhRO8
+        baZGhRdtq4UK+VWLkO+IARV5MH0vias74DmzBWvmnoa1EnhdzQtQJqTUhjwwNCfRUHB6IT9rgf7Vf
+        Gg6SToVIAbKquc0KKRshipWGmC6Lbs43RI9L9h/MejCe4tkKrow/+HIVzQOsBvt9PXWTwhmb3OijS
+        TprICtEnao8FBX15pV7P0Z51hRwI0ef7G0tppyCRorfd7O9tMwK9lJghor6dWb92+e/OMmAQ3OmFq
+        3ky+sZTA==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([2001:4d48:ad52:3201:222:68ff:fe15:37dd]:34816 helo=rmk-PC.armlinux.org.uk)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1hY9n1-0001aH-3q; Tue, 04 Jun 2019 14:47:47 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1hY9n0-0001YE-Bj; Tue, 04 Jun 2019 14:47:46 +0100
-Date:   Tue, 4 Jun 2019 14:47:46 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+        (envelope-from <rmk@armlinux.org.uk>)
+        id 1hY9oc-0001at-CW; Tue, 04 Jun 2019 14:49:26 +0100
+Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <rmk@armlinux.org.uk>)
+        id 1hY9ob-00084H-Bg; Tue, 04 Jun 2019 14:49:25 +0100
+In-Reply-To: <20190604111943.GA15281@rmk-PC.armlinux.org.uk>
+References: <20190604111943.GA15281@rmk-PC.armlinux.org.uk>
+From:   Russell King <rmk+kernel@armlinux.org.uk>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 00/12] fs/adfs: miscellaneous updates
-Message-ID: <20190604134746.m7dzefl77ftn4ap2@shell.armlinux.org.uk>
+Subject: [PATCH 01/12] fs/adfs: correct disc record structure
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1hY9ob-00084H-Bg@rmk-PC.armlinux.org.uk>
+Date:   Tue, 04 Jun 2019 14:49:25 +0100
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al,
+Fill in some padding in the disc record structure, and add GCC
+packed and aligned attributes to ensure that it is correctly
+laid out.
 
-The following patch series brings some updates to ADFS:
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+---
+ include/uapi/linux/adfs_fs.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-- Ensure that there is no padding in the on-disc record structure and
-  pack it to ensure correct layout.
-- Add helper to retrieve the disc record structure from the first sector
-  of the disc map.
-- Add helper to get the filesystem size.
-- Directly use format_version from the disc record structure rather than
-  storing it in our superblock structure.
-- Clean up kernel message printing, use %pV to avoid temporary buffers,
-  printing fragment ids with six hex digits.
-- Ensure superblock flags are always set correctly, even on remounts,
-  specifically the noatime and read-only flags.
-- Only update superblock flags on remount if we are returning success.
-- Fix a potential use-after-free bug while parsing the filesystem
-  block size.
-- Limit idlen (length of a fragment identifier in the map) according to
-  the directory type - only big directories support idlen > 16.
-- Add and use some helpers to deal with time stamps and file types.
-
- fs/adfs/adfs.h               |  70 ++++++++++++++++---------
- fs/adfs/dir.c                |  25 ++++-----
- fs/adfs/dir_f.c              |  38 ++++++--------
- fs/adfs/dir_fplus.c          |  21 ++++----
- fs/adfs/inode.c              |  12 ++---
- fs/adfs/map.c                |  15 ++----
- fs/adfs/super.c              | 121 +++++++++++++++++++++++++------------------
- include/uapi/linux/adfs_fs.h |   6 +--
- 8 files changed, 164 insertions(+), 144 deletions(-)
-
+diff --git a/include/uapi/linux/adfs_fs.h b/include/uapi/linux/adfs_fs.h
+index 151d93e27ed4..f1a7d67a7323 100644
+--- a/include/uapi/linux/adfs_fs.h
++++ b/include/uapi/linux/adfs_fs.h
+@@ -29,17 +29,17 @@ struct adfs_discrecord {
+     __u8  log2sharesize:4;
+     __u8  unused40:4;
+     __u8  big_flag:1;
+-    __u8  unused41:1;
++    __u8  unused41:7;
+     __u8  nzones_high;
++    __u8  reserved43;
+     __le32 format_version;
+     __le32 root_size;
+     __u8  unused52[60 - 52];
+-};
++} __attribute__((packed, aligned(4)));
+ 
+ #define ADFS_DISCRECORD		(0xc00)
+ #define ADFS_DR_OFFSET		(0x1c0)
+ #define ADFS_DR_SIZE		 60
+ #define ADFS_DR_SIZE_BITS	(ADFS_DR_SIZE << 3)
+ 
+-
+ #endif /* _UAPI_ADFS_FS_H */
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.7.4
+
