@@ -2,99 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FA5834FA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 20:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9474E34FAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 20:15:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbfFDSOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jun 2019 14:14:40 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:51613 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbfFDSOk (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jun 2019 14:14:40 -0400
-Received: by mail-it1-f194.google.com with SMTP id m3so1680185itl.1;
-        Tue, 04 Jun 2019 11:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HCvwaoibVnjg9rjNg5TC6AzleXlhqUmKRsSL5YCF/MY=;
-        b=AdRxKh1JZAxsWtP2YIms4M+pi5FfqgliDRG/gwm4NRjLcFbwmHOZ/qM7oFWJI1Kpml
-         wbC6uLqRcgDx3wCG3+P5x0fSViBTaBtJxUh/fLJ8wztxCJ3ySDLRybYnqltJZYMBDb7Z
-         6kf3NBaSJLh/fi9jn8WgUEQY4II9Ctg4jGHjAvCNDiUuwI/TE7mEJQb7thbqWS7RImCy
-         JCVvQZ1vd6rGcsksQSQIMvX1pHRRN3cUcYbTZT1otg6W03t6WZKf/IdHMdTq1FVGIin5
-         TaNMX0IiqoMs4W0tv0quyrYT7B5tIffjTQtPXl+AkGq69O6jePwzDp3ohuJyR8OkCH8S
-         ZenA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HCvwaoibVnjg9rjNg5TC6AzleXlhqUmKRsSL5YCF/MY=;
-        b=XbSv7sZb3a+T35UospUJHbwldTXjJ+GRxOp82KZ1HQowEs8YoFOUiDYdp7TUdVYfnk
-         hksm/gRoJ4McZAhN1EU1sqFQfLaJA2pYGcIjzVGacWAHLs654ejIJk6iA7FWIhs1ibFk
-         J/l0DJf3Deg1jwqO637x7t8QzZ9DK4BxXqXAhdv5kC013/HwJ00DWdosWCMosm0HZCFZ
-         NgAay/zlo1M19/GCzlHjl5tshTVuzQq4iiNt7eQiHiTFacnIKfuf/OsxPKNY7XuSeaU1
-         5edoBRfqMTc3Mzg8hDIUxrnCC+ZNtHTIx7q3CayJ+k/0QordBccYd7imuHzYCGF8m9TQ
-         OhKA==
-X-Gm-Message-State: APjAAAVF6Z9I96DSwX9xccZz7XS+7Wr7IP071o7/0QEi+uRfEP7emCX7
-        v3ayLs9088Es4LhyvjlaPWmLnPrjylGIIgZAkPA=
-X-Google-Smtp-Source: APXvYqwV0xjh0/S1wriLBmg1iqt9GRGOckgKE25tw9l5cMgEBO3aUMAmh/VeJfuix7PBi8K0c8yip4jc6vbial5JF7k=
-X-Received: by 2002:a24:8988:: with SMTP id s130mr21613638itd.79.1559672079550;
- Tue, 04 Jun 2019 11:14:39 -0700 (PDT)
+        id S1726707AbfFDSP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jun 2019 14:15:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60434 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726695AbfFDSP2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Jun 2019 14:15:28 -0400
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57DB920B1F
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2019 18:15:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559672127;
+        bh=rJp5OtqEAvAiGS7xlsL6faTP+VzkPZmB2r/CXv2dDMw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mXf48L0bbJsFlXG4RQ5TuxVD4BUsGDkraMg70yTes9Vx0aGRiVCyUI6hB1cNcXT2T
+         EQOTcLwkJrjxfu0oX0teu7kbJBsSOW2daDsKYxp6iPLqEwCk/FAHCvhDbkgSjhsdEG
+         9ydu2jm6dSJLG16MzlOqlVPJ6N/Qq8YHvUFWDAm8=
+Received: by mail-wr1-f53.google.com with SMTP id n9so4410934wru.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2019 11:15:27 -0700 (PDT)
+X-Gm-Message-State: APjAAAUy8Nu61gs2VNUrQWPkbf59LGgZXm70ygLUMJNh6Kbe7u+9I2iK
+        zt6lDI+9FEqejtbJa8oBfBCVMww1d/10iCuG7zEfHQ==
+X-Google-Smtp-Source: APXvYqywAF/20o2S/0PCTLXbG818xHPa7/+6N3ZxOBZHPZZP2pqS8x/IU/xPvp6CPNvySeFLxMfwJUc/1kZXrxBbZUY=
+X-Received: by 2002:adf:cc85:: with SMTP id p5mr7169034wrj.47.1559672125928;
+ Tue, 04 Jun 2019 11:15:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com> <CAK8P3a3Dv+hqnQHWU2nG5rB+hGrqbcDC3DUoNGZAzNGJgJwizA@mail.gmail.com>
-In-Reply-To: <CAK8P3a3Dv+hqnQHWU2nG5rB+hGrqbcDC3DUoNGZAzNGJgJwizA@mail.gmail.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Tue, 4 Jun 2019 11:14:28 -0700
-Message-ID: <CABeXuvp0c+KSimAWPXoV=5GYJGkAfL2s-a71PFZHFDfm4UykzA@mail.gmail.com>
-Subject: Re: [PATCH] signal: remove the wrong signal_pending() check in restore_user_sigmask()
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dbueso@suse.de, Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "# 3.4.x" <stable@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>
+References: <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
+ <155966611030.17449.1411028213562548153.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155966611030.17449.1411028213562548153.stgit@warthog.procyon.org.uk>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 4 Jun 2019 11:15:14 -0700
+X-Gmail-Original-Message-ID: <CALCETrXLoowmrHHWWr3OqsOGBkyGsV_x0nADaEyv+_ysGQdM3g@mail.gmail.com>
+Message-ID: <CALCETrXLoowmrHHWWr3OqsOGBkyGsV_x0nADaEyv+_ysGQdM3g@mail.gmail.com>
+Subject: Re: [PATCH 1/8] security: Override creds in __fput() with last
+ fputter's creds [ver #2]
+To:     David Howells <dhowells@redhat.com>, Jann Horn <jannh@google.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Tue, Jun 4, 2019 at 3:41 PM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > This is the minimal fix for stable, I'll send cleanups later.
-> >
-> > The commit 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add
-> > restore_user_sigmask()") introduced the visible change which breaks
-> > user-space: a signal temporary unblocked by set_user_sigmask() can
-> > be delivered even if the caller returns success or timeout.
-> >
-> > Change restore_user_sigmask() to accept the additional "interrupted"
-> > argument which should be used instead of signal_pending() check, and
-> > update the callers.
-> >
-> > Reported-by: Eric Wong <e@80x24.org>
-> > Fixes: 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add restore_user_sigmask()")
-> > cc: stable@vger.kernel.org (v5.0+)
-> > Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+On Tue, Jun 4, 2019 at 9:35 AM David Howells <dhowells@redhat.com> wrote:
 >
+> So that the LSM can see the credentials of the last process to do an fput()
+> on a file object when the file object is being dismantled, do the following
+> steps:
+>
+>  (1) Cache the current credentials in file->f_fput_cred at the point the
+>      file object's reference count reaches zero.
 
-Acked-by: Deepa Dinamani <deepa.kernel@gmail.com>
+I don't think it's valid to capture credentials in close().  This
+sounds very easy to spoof, especially when you consider that you can
+stick an fd in unix socket and aim it at a service that's just going
+to ignore it and close it.
 
-The original fix posted:
-https://lore.kernel.org/patchwork/patch/1077355/ would also have been
-a correct fix for this problem. But, given the cleanups that are in
-the pipeline, this is a better fix.
+IOW I think this is at least as invalid as looking at current_cred()
+in write(), which is a classic bug that gets repeated regularly.
 
--Deepa
+--Andy
