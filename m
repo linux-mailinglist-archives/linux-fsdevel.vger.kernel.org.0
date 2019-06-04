@@ -2,211 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EF9934965
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 15:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9A513498E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 15:56:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbfFDNu3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jun 2019 09:50:29 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:40298 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727463AbfFDNu2 (ORCPT
+        id S1727663AbfFDN4p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jun 2019 09:56:45 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37157 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727149AbfFDN4o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jun 2019 09:50:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
-        Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
-        In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Fv5YPHpx7o4M73F9pIYJ+qmjR3X2okmwWLT2TQtGKRE=; b=BLPROduzZZq7nTFM3lDIsiMC/L
-        cB2b9P1kkf/7CxmM4+hf8DpZOqwcAtJUo9juCLlq/ApgTg8enhKgXgm1KUfiJNTJ4TSacWuEBfWql
-        Rb3okImH3eMLia3UvKV8QNWWi3qo19lJGBL7cYgIAcsk2eXwvj9jqRI0FKBpiRZ/6AIgmVn/75Yta
-        8LW73qMtTHzegcMc6sXGGQIWgCStqDKg3uJio13A0YperA448DHkiaxY5TE09+g7SySZAnN4CrGkE
-        XlLzNe4vL5To6GpPht/LgIMrUWs2uUeIyQitIg1HrFUffJprPlerhYLJHIvYZ8DDo7cG04hOwmPw7
-        SAUxWRtg==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([2001:4d48:ad52:3201:222:68ff:fe15:37dd]:34840 helo=rmk-PC.armlinux.org.uk)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <rmk@armlinux.org.uk>)
-        id 1hY9pZ-0001cd-Gl; Tue, 04 Jun 2019 14:50:25 +0100
-Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.82_1-5b7a7c0-XX)
-        (envelope-from <rmk@armlinux.org.uk>)
-        id 1hY9pY-00085f-Fj; Tue, 04 Jun 2019 14:50:24 +0100
-In-Reply-To: <20190604111943.GA15281@rmk-PC.armlinux.org.uk>
-References: <20190604111943.GA15281@rmk-PC.armlinux.org.uk>
-From:   Russell King <rmk+kernel@armlinux.org.uk>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 12/12] fs/adfs: add time stamp and file type helpers
-MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1hY9pY-00085f-Fj@rmk-PC.armlinux.org.uk>
-Date:   Tue, 04 Jun 2019 14:50:24 +0100
+        Tue, 4 Jun 2019 09:56:44 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h1so15951087wro.4;
+        Tue, 04 Jun 2019 06:56:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6PI4syosh7EfSJTic+zCwLA0ox1LN6buatDn+DnYF7s=;
+        b=QvQv/x7CcuqCg//VbtrW7YqPtveZoOlQGwlm4LncCJJhPsJO4PC1G+8tTLWPz63kcN
+         xkVqcq1vC6rnvGeHUI56T5ChVNfgRrEqQMxtpC8towmWJ+qnUe8L77yDFLyOQG5msK2B
+         K48JkLH7DXghs+7hsWbdE2zwiP1zf3W5qw6b7kbNpKNbLynkrcTV+0z6d7iH3bFCRPp8
+         PR0lshHsOubwt7nDU1q33jj6rb4JC/LYuF7tVUMzsDbI497HYhmjnSrxO8WyPcsTP64j
+         BhpMekRyuzGeuw+MYQMNOl84QiKl26sO0BR/fBVfar5XEdWOmWHZQE2B5bxwrI+qI52o
+         LsDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6PI4syosh7EfSJTic+zCwLA0ox1LN6buatDn+DnYF7s=;
+        b=N+zGSaxmODMX2IoSIFPITTxvHLv8UTySm1ER5ePExLcuQDEe04Yf8a9xj85VQ100xx
+         IS6m2sFzP0fDpzvxSaDQnowq9Wpp1L9vSAaprcjvvssM33foEqfjFAmgZ4qgm5aY0Znq
+         6OVThyD6IVQjeTuFp7ErRZzHhEYmUmLAJhv6nkjK0KHchE9h3K8dhFv/IO85seWflcSC
+         3wdgejAMYwmlemw+2mDUrB1FwX+ZnkqsKbyXn7AspH1BBTOYcphSD0SMmYNNvYoeGUIw
+         NwlIdfZGpufjMTbecOX4yJ9ld6lm0+FJgJuDMeHnCpsQ0c6eUNpEZ9MId5tOYqU2d2F/
+         Rf6w==
+X-Gm-Message-State: APjAAAV9p1n7vunCJRnKHo1dsSs/1J3jRu9/tjEhKK5fmt9d0N0JT7fs
+        VHYhguke5INjGBClT8bDJmMnOniF2uM=
+X-Google-Smtp-Source: APXvYqyBKQ2KmHYXHoj5Hp05FKV2Yb9nNXsN1fhgDQ/XLRzRUyqraK1Xt90yL22v1baTEKtw0mICcQ==
+X-Received: by 2002:adf:ef0a:: with SMTP id e10mr6337464wro.303.1559656601940;
+        Tue, 04 Jun 2019 06:56:41 -0700 (PDT)
+Received: from localhost.localdomain (p548C66C4.dip0.t-ipconnect.de. [84.140.102.196])
+        by smtp.gmail.com with ESMTPSA id f2sm18282585wrq.48.2019.06.04.06.56.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 06:56:40 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     "Darrick J . Wong" <darrick.wong@oracle.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs@vger.kernel.org,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Luis Henriques <lhenriques@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: [PATCH v5 8/9] vfs: allow copy_file_range to copy across devices
+Date:   Tue,  4 Jun 2019 16:56:32 +0300
+Message-Id: <20190604135632.1487-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add some helpers to check whether the inode has a time stamp and file
-type, and to parse the file type from the load address.
+We want to enable cross-filesystem copy_file_range functionality
+where possible, so push the "same superblock only" checks down to
+the individual filesystem callouts so they can make their own
+decisions about cross-superblock copy offload and fallack to
+generic_copy_file_range() for cross-superblock copy.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+[Amir] We do not call ->remap_file_range() in case the files are not
+on the same sb and do not call ->copy_file_range() in case the files
+do not belong to the same filesystem driver.
+
+This changes behavior of the copy_file_range(2) syscall, which will
+now allow cross filesystem in-kernel copy.  CIFS already supports
+cross-superblock copy, between two shares to the same server. This
+functionality will now be available via the copy_file_range(2) syscall.
+
+Cc: Steve French <stfrench@microsoft.com>
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/adfs/adfs.h  | 29 +++++++++++++++++++----------
- fs/adfs/dir.c   | 16 +++++-----------
- fs/adfs/inode.c |  8 +++-----
- fs/adfs/super.c |  1 -
- 4 files changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/fs/adfs/adfs.h b/fs/adfs/adfs.h
-index 9eb9bea1cef2..b7e844d2f321 100644
---- a/fs/adfs/adfs.h
-+++ b/fs/adfs/adfs.h
-@@ -9,6 +9,15 @@
- #define ADFS_BAD_FRAG		 1
- #define ADFS_ROOT_FRAG		 2
+Darrick,
+
+Per feedback from Olga, I am sending a modified version of this patch
+to address cross file_system_type copy issue in nfs.
+
+For the sake of global warming I am not re-posting the entire patch set.
+I removed your RVB because of the change.
+
+Thanks,
+Amir.
+
+Changes since v4:
+- Check "same filesystem driver" by comapring ->copy_file_range()
+  function pointer
+
+ fs/ceph/file.c    |  4 +++-
+ fs/cifs/cifsfs.c  |  2 +-
+ fs/fuse/file.c    |  5 ++++-
+ fs/nfs/nfs4file.c |  5 ++++-
+ fs/read_write.c   | 18 ++++++++++++------
+ 5 files changed, 24 insertions(+), 10 deletions(-)
+
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index e87f7b2023af..4cd41ed5cc53 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1909,6 +1909,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
  
-+#define ADFS_FILETYPE_NONE	((u16)~0)
+ 	if (src_inode == dst_inode)
+ 		return -EINVAL;
++	if (src_inode->i_sb != dst_inode->i_sb)
++		return -EXDEV;
+ 	if (ceph_snap(dst_inode) != CEPH_NOSNAP)
+ 		return -EROFS;
+ 
+@@ -2109,7 +2111,7 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 	ret = __ceph_copy_file_range(src_file, src_off, dst_file, dst_off,
+ 				     len, flags);
+ 
+-	if (ret == -EOPNOTSUPP)
++	if (ret == -EOPNOTSUPP || ret == -EXDEV)
+ 		ret = generic_copy_file_range(src_file, src_off, dst_file,
+ 					      dst_off, len, flags);
+ 	return ret;
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index c65823270313..f11eea6125c1 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -1149,7 +1149,7 @@ static ssize_t cifs_copy_file_range(struct file *src_file, loff_t off,
+ 					len, flags);
+ 	free_xid(xid);
+ 
+-	if (rc == -EOPNOTSUPP)
++	if (rc == -EOPNOTSUPP || rc == -EXDEV)
+ 		rc = generic_copy_file_range(src_file, off, dst_file,
+ 					     destoff, len, flags);
+ 	return rc;
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index e03901ae729b..569baf286835 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -3126,6 +3126,9 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
+ 	if (fc->no_copy_file_range)
+ 		return -EOPNOTSUPP;
+ 
++	if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
++		return -EXDEV;
 +
-+/* RISC OS 12-bit filetype is stored in load_address[19:8] */
-+static inline u16 adfs_filetype(u32 loadaddr)
-+{
-+	return (loadaddr & 0xfff00000) == 0xfff00000 ?
-+	       (loadaddr >> 8) & 0xfff : ADFS_FILETYPE_NONE;
-+}
-+
- #define ADFS_NDA_OWNER_READ	(1 << 0)
- #define ADFS_NDA_OWNER_WRITE	(1 << 1)
- #define ADFS_NDA_LOCKED		(1 << 2)
-@@ -27,12 +36,20 @@ struct adfs_inode_info {
- 	__u32		parent_id;	/* parent indirect disc address	*/
- 	__u32		loadaddr;	/* RISC OS load address		*/
- 	__u32		execaddr;	/* RISC OS exec address		*/
--	unsigned int	filetype;	/* RISC OS file type		*/
- 	unsigned int	attr;		/* RISC OS permissions		*/
--	unsigned int	stamped:1;	/* RISC OS file has date/time	*/
- 	struct inode vfs_inode;
- };
+ 	inode_lock(inode_out);
  
-+static inline struct adfs_inode_info *ADFS_I(struct inode *inode)
-+{
-+	return container_of(inode, struct adfs_inode_info, vfs_inode);
-+}
-+
-+static inline bool adfs_inode_is_stamped(struct inode *inode)
-+{
-+	return (ADFS_I(inode)->loadaddr & 0xfff00000) == 0xfff00000;
-+}
-+
- /*
-  * Forward-declare this
-  */
-@@ -68,11 +85,6 @@ static inline struct adfs_sb_info *ADFS_SB(struct super_block *sb)
- 	return sb->s_fs_info;
- }
+ 	if (fc->writeback_cache) {
+@@ -3182,7 +3185,7 @@ static ssize_t fuse_copy_file_range(struct file *src_file, loff_t src_off,
+ 	ret = __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
+ 				     len, flags);
  
--static inline struct adfs_inode_info *ADFS_I(struct inode *inode)
--{
--	return container_of(inode, struct adfs_inode_info, vfs_inode);
--}
--
- /*
-  * Directory handling
-  */
-@@ -105,9 +117,6 @@ struct object_info {
- 	__u8		attr;			/* RISC OS attributes	*/
- 	unsigned int	name_len;		/* name length		*/
- 	char		name[ADFS_MAX_NAME_LEN];/* file name		*/
--
--	/* RISC OS file type (12-bit: derived from loadaddr) */
--	__u16		filetype;
- };
- 
- struct adfs_dir_ops {
-diff --git a/fs/adfs/dir.c b/fs/adfs/dir.c
-index 01ffd47c7461..77503d12f7ee 100644
---- a/fs/adfs/dir.c
-+++ b/fs/adfs/dir.c
-@@ -38,20 +38,14 @@ void adfs_object_fixup(struct adfs_dir *dir, struct object_info *obj)
- 	if (obj->name_len <= 2 && dots == obj->name_len)
- 		obj->name[0] = '^';
- 
--	obj->filetype = -1;
--
- 	/*
--	 * object is a file and is filetyped and timestamped?
--	 * RISC OS 12-bit filetype is stored in load_address[19:8]
-+	 * If the object is a file, and the user requested the ,xyz hex
-+	 * filetype suffix to the name, check the filetype and append.
- 	 */
--	if ((0 == (obj->attr & ADFS_NDA_DIRECTORY)) &&
--	    (0xfff00000 == (0xfff00000 & obj->loadaddr))) {
--		obj->filetype = (__u16) ((0x000fff00 & obj->loadaddr) >> 8);
--
--		/* optionally append the ,xyz hex filetype suffix */
--		if (ADFS_SB(dir->sb)->s_ftsuffix) {
--			__u16 filetype = obj->filetype;
-+	if (!(obj->attr & ADFS_NDA_DIRECTORY) && ADFS_SB(dir->sb)->s_ftsuffix) {
-+		u16 filetype = adfs_filetype(obj->loadaddr);
- 
-+		if (filetype != ADFS_FILETYPE_NONE) {
- 			obj->name[obj->name_len++] = ',';
- 			obj->name[obj->name_len++] = hex_asc_lo(filetype >> 8);
- 			obj->name[obj->name_len++] = hex_asc_lo(filetype >> 4);
-diff --git a/fs/adfs/inode.c b/fs/adfs/inode.c
-index 5f5af660b02e..d61c7453a4c3 100644
---- a/fs/adfs/inode.c
-+++ b/fs/adfs/inode.c
-@@ -97,7 +97,7 @@ adfs_atts2mode(struct super_block *sb, struct inode *inode)
- 		return S_IFDIR | S_IXUGO | mode;
- 	}
- 
--	switch (ADFS_I(inode)->filetype) {
-+	switch (adfs_filetype(ADFS_I(inode)->loadaddr)) {
- 	case 0xfc0:	/* LinkFS */
- 		return S_IFLNK|S_IRWXUGO;
- 
-@@ -177,7 +177,7 @@ adfs_adfs2unix_time(struct timespec64 *tv, struct inode *inode)
- 							2208988800000000000LL;
- 	s64 nsec;
- 
--	if (ADFS_I(inode)->stamped == 0)
-+	if (!adfs_inode_is_stamped(inode))
- 		goto cur_time;
- 
- 	high = ADFS_I(inode)->loadaddr & 0xFF; /* top 8 bits of timestamp */
-@@ -216,7 +216,7 @@ adfs_unix2adfs_time(struct inode *inode, unsigned int secs)
+-	if (ret == -EOPNOTSUPP)
++	if (ret == -EOPNOTSUPP || ret == -EXDEV)
+ 		ret = generic_copy_file_range(src_file, src_off, dst_file,
+ 					      dst_off, len, flags);
+ 	return ret;
+diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+index 4842f3ab3161..f4157eb1f69d 100644
+--- a/fs/nfs/nfs4file.c
++++ b/fs/nfs/nfs4file.c
+@@ -133,6 +133,9 @@ static ssize_t __nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
+ 				      struct file *file_out, loff_t pos_out,
+ 				      size_t count, unsigned int flags)
  {
- 	unsigned int high, low;
++	/* Only offload copy if superblock is the same */
++	if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
++		return -EXDEV;
+ 	if (!nfs_server_capable(file_inode(file_out), NFS_CAP_COPY))
+ 		return -EOPNOTSUPP;
+ 	if (file_inode(file_in) == file_inode(file_out))
+@@ -148,7 +151,7 @@ static ssize_t nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
  
--	if (ADFS_I(inode)->stamped) {
-+	if (adfs_inode_is_stamped(inode)) {
- 		/* convert 32-bit seconds to 40-bit centi-seconds */
- 		low  = (secs & 255) * 100;
- 		high = (secs / 256) * 100 + (low >> 8) + 0x336e996a;
-@@ -266,8 +266,6 @@ adfs_iget(struct super_block *sb, struct object_info *obj)
- 	ADFS_I(inode)->loadaddr  = obj->loadaddr;
- 	ADFS_I(inode)->execaddr  = obj->execaddr;
- 	ADFS_I(inode)->attr      = obj->attr;
--	ADFS_I(inode)->filetype  = obj->filetype;
--	ADFS_I(inode)->stamped   = ((obj->loadaddr & 0xfff00000) == 0xfff00000);
+ 	ret = __nfs4_copy_file_range(file_in, pos_in, file_out, pos_out, count,
+ 				     flags);
+-	if (ret == -EOPNOTSUPP)
++	if (ret == -EOPNOTSUPP || ret == -EXDEV)
+ 		ret = generic_copy_file_range(file_in, pos_in, file_out,
+ 					      pos_out, count, flags);
+ 	return ret;
+diff --git a/fs/read_write.c b/fs/read_write.c
+index cec7e7b1f693..bb594c8f4404 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1599,7 +1599,16 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
+ 				  struct file *file_out, loff_t pos_out,
+ 				  size_t len, unsigned int flags)
+ {
+-	if (file_out->f_op->copy_file_range)
++	/*
++	 * Although we now allow filesystems to handle cross sb copy, passing
++	 * a file of the wrong filesystem type to filesystem driver can result
++	 * in an attempt to dereference the wrong type of ->private_data, so
++	 * avoid doing that until we really have a good reason.
++	 * NFS has several different file_system_type's, but they all end up
++	 * using the same ->copy_file_range() function pointer.
++	 */
++	if (file_out->f_op->copy_file_range &&
++	    file_out->f_op->copy_file_range == file_in->f_op->copy_file_range)
+ 		return file_out->f_op->copy_file_range(file_in, pos_in,
+ 						       file_out, pos_out,
+ 						       len, flags);
+@@ -1622,10 +1631,6 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+ 	if (flags != 0)
+ 		return -EINVAL;
  
- 	inode->i_mode	 = adfs_atts2mode(sb, inode);
- 	adfs_adfs2unix_time(&inode->i_mtime, inode);
-diff --git a/fs/adfs/super.c b/fs/adfs/super.c
-index 4529f53b1708..b71476f6e564 100644
---- a/fs/adfs/super.c
-+++ b/fs/adfs/super.c
-@@ -496,7 +496,6 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
- 	root_obj.size	   = ADFS_NEWDIR_SIZE;
- 	root_obj.attr	   = ADFS_NDA_DIRECTORY   | ADFS_NDA_OWNER_READ |
- 			     ADFS_NDA_OWNER_WRITE | ADFS_NDA_PUBLIC_READ;
--	root_obj.filetype  = -1;
+-	/* this could be relaxed once a method supports cross-fs copies */
+-	if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
+-		return -EXDEV;
+-
+ 	ret = generic_copy_file_checks(file_in, pos_in, file_out, pos_out, &len,
+ 				       flags);
+ 	if (unlikely(ret))
+@@ -1648,7 +1653,8 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+ 	 * Try cloning first, this is supported by more file systems, and
+ 	 * more efficient if both clone and copy are supported (e.g. NFS).
+ 	 */
+-	if (file_in->f_op->remap_file_range) {
++	if (file_in->f_op->remap_file_range &&
++	    file_inode(file_in)->i_sb == file_inode(file_out)->i_sb) {
+ 		loff_t cloned;
  
- 	/*
- 	 * If this is a F+ disk with variable length directories,
+ 		cloned = file_in->f_op->remap_file_range(file_in, pos_in,
 -- 
-2.7.4
+2.17.1
 
