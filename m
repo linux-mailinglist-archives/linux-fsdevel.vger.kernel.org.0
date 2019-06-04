@@ -2,313 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FE4334930
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 15:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB29D34947
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 15:46:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbfFDNlw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jun 2019 09:41:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51338 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727129AbfFDNlw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jun 2019 09:41:52 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E2E7330ADC7A;
-        Tue,  4 Jun 2019 13:41:25 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 582FB6199A;
-        Tue,  4 Jun 2019 13:41:18 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue,  4 Jun 2019 15:41:25 +0200 (CEST)
-Date:   Tue, 4 Jun 2019 15:41:17 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de, dbueso@suse.de,
-        axboe@kernel.dk, dave@stgolabs.net, e@80x24.org, jbaron@akamai.com,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        omar.kilani@gmail.com, tglx@linutronix.de, stable@vger.kernel.org,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@ACULAB.COM>
-Subject: [PATCH] signal: remove the wrong signal_pending() check in
- restore_user_sigmask()
-Message-ID: <20190604134117.GA29963@redhat.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com>
+        id S1727327AbfFDNq2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jun 2019 09:46:28 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36091 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727033AbfFDNq2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Jun 2019 09:46:28 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n4so12868055wrs.3;
+        Tue, 04 Jun 2019 06:46:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:cc:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=BdJYLZrrSWJNT4lfUWGV9fqHUaCf6Pcc9zbBPoLUgkk=;
+        b=ibD43TNmQVoGey9FPCc9C1K7dD/Fxum/wxfrphIGryulQ2P44yVWPqFcoRR06Rk1EP
+         FZKXT+F8LcrkIQt+e0g+zZtzYLELnTOUpQTjWdYO8xLM2m+ZzVXDEYvrieEQ5fSqMVJV
+         nI0sWUhiv8fRHUoK8Yxe1yP2SigpKf6Y8RbN9MVBFDJeh0K7nayaaFRtFt/aiGVUQgUX
+         jUhHCaz22i9tIgJodIWRynBfED+y86fXzCsQuiGoAlUfhBKzfAUcRjiZzrQSNSLpYArT
+         7X+7HkEbNEdm6GSgwqXAGh37xYO/PW3KiqD4Hnb7uMKEqO1zMSPGCGnbA3t6A7iuJ45m
+         ayZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:cc:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=BdJYLZrrSWJNT4lfUWGV9fqHUaCf6Pcc9zbBPoLUgkk=;
+        b=rcDjgBl0LKCG86kOu00V5FYJFEd7KGISRBFrwlKYw9DMq6rpbxofGeGF88MDkojoBh
+         5tQXc0a+ROcJwVSUzyoQJPEztrA0sP8hcEHyS8QBa0A05yBIdNSkCwv3ElxfejacBvC0
+         hD1FCbJN5Xw87JQ4jhyxhDMGsRnR+E8sYWDsMen2OyrBetuKdr+krJpgbw4Bxx2LExhJ
+         ncBn+9FTr4qajLHVpoLbo/8XGYSmoY0vWQ1VP9uHy+cetanNrvLNLc2oMfSU/DfSD4mU
+         iGhv5EIfO38WIxO9uk7csNAiaHYu4DoPp8mNRZGDNTjVc/DUFH8QFCOg7vLM8lR222Rg
+         EHEA==
+X-Gm-Message-State: APjAAAXUQzaPWeBj9xxteO3S1F4/FqeP56WyYo8ckYl7qyd1UaY04T/b
+        IAljHzVGFbgRVYMVTxzTihL0t31p
+X-Google-Smtp-Source: APXvYqxdxaFPLf3Lo2yUH5EBfNAqFC8EG2jh/+kRhb3z/97TrAggjd2w5A7D9BgFwpOJniOrgbe89w==
+X-Received: by 2002:a05:6000:10c2:: with SMTP id b2mr7895458wrx.57.1559655986210;
+        Tue, 04 Jun 2019 06:46:26 -0700 (PDT)
+Received: from [172.16.8.139] (host-78-151-217-120.as13285.net. [78.151.217.120])
+        by smtp.gmail.com with ESMTPSA id f20sm13034887wmh.22.2019.06.04.06.46.24
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 06:46:25 -0700 (PDT)
+Subject: Re: understanding xfs vs. ext4 log performance
+To:     Lucas Stach <dev@lynxeye.de>, linux-xfs@vger.kernel.org
+References: <7a642f570980609ccff126a78f1546265ba913e2.camel@lynxeye.de>
+From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Message-ID: <e3721341-2ea0-f13f-ae42-890209736eaa@gmail.com>
+Date:   Tue, 4 Jun 2019 14:46:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529161157.GA27659@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 04 Jun 2019 13:41:51 +0000 (UTC)
+In-Reply-To: <7a642f570980609ccff126a78f1546265ba913e2.camel@lynxeye.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is the minimal fix for stable, I'll send cleanups later.
+On 04/06/2019 10:21, Lucas Stach wrote:
+> Hi all,
+>
+> this question is more out of curiosity and because I want to take the
+> chance to learn something.
+>
+> At work we've stumbled over a workload that seems to hit pathological
+> performance on XFS. Basically the critical part of the workload is a
+> "rm -rf" of a pretty large directory tree, filled with files of mixed
+> size ranging from a few KB to a few MB. The filesystem resides on quite
+> slow spinning rust disks, directly attached to the host, so no
+> controller with a BBU or something like that involved.
+>
+> We've tested the workload with both xfs and ext4, and while the numbers
+> aren't completely accurate due to other factors playing into the
+> runtime, performance difference between XFS and ext4 seems to be an
+> order of magnitude. (Ballpark runtime XFS is 30 mins, while ext4
+> handles the remove in ~3 mins).
+>
+> The XFS performance seems to be completly dominated by log buffer
+> writes, which happen with both REQ_PREFLUSH and REQ_FUA set. It's
+> pretty obvious why this kills performance on slow spinning rust.
+>
+> Now the thing I wonder about is why ext4 seems to get a away without
+> those costly flags for its log writes. At least blktrace shows almost
+> zero PREFLUSH or FUA requests. Is there some fundamental difference in
+> how ext4 handles its logging to avoid the need for this ordering and
+> forced access, or is it ext just living more dangerously with regard to
+> reordered writes?
+>
+> Does XFS really require such a strong ordering on the log buffer
+> writes? I don't understand enough of the XFS transaction code and
+> wonder if it would be possible to do the strongly ordered writes only
+> on transaction commit.
+>
+> Regards,
+> Lucas
 
-The commit 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add
-restore_user_sigmask()") introduced the visible change which breaks
-user-space: a signal temporary unblocked by set_user_sigmask() can
-be delivered even if the caller returns success or timeout.
+Your immediate question sounds like an artefact.  I think both XFS and 
+ext4 flush the cache when writing to the log.  The difference I see is 
+that xlog_sync() writes the log in one IO.  By contrast, 
+jbd2_journal_commit_transaction() has several steps that submit IO. The 
+last IO is a "commit descriptor", and that IO is strictly ordered 
+(PREFLUSH+FUA).
 
-Change restore_user_sigmask() to accept the additional "interrupted"
-argument which should be used instead of signal_pending() check, and
-update the callers.
+Unless you have enabled `journal_async_commit` in ext4.  But I think you 
+would know if you had.  I am not sure whether that feature is now 
+considered mature, but it is not compatible with the default option 
+`data=ordered`.  And this fact is still not in the documentation, so I 
+think it is at least not used very widely :-). 
+https://unix.stackexchange.com/questions/520379/
 
-Reported-by: Eric Wong <e@80x24.org>
-Fixes: 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add restore_user_sigmask()")
-cc: stable@vger.kernel.org (v5.0+)
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- fs/aio.c               | 28 ++++++++++++++++++++--------
- fs/eventpoll.c         |  4 ++--
- fs/io_uring.c          |  7 ++++---
- fs/select.c            | 18 ++++++------------
- include/linux/signal.h |  2 +-
- kernel/signal.c        |  5 +++--
- 6 files changed, 36 insertions(+), 28 deletions(-)
+Maybe XFS is generating much more log IO.  Alternatively, something that 
+you do not expect might be causing calls to xfs_log_force_lsn() / 
+xfs_log_force().
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 3490d1f..c1e581d 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -2095,6 +2095,7 @@ SYSCALL_DEFINE6(io_pgetevents,
- 	struct __aio_sigset	ksig = { NULL, };
- 	sigset_t		ksigmask, sigsaved;
- 	struct timespec64	ts;
-+	bool interrupted;
- 	int ret;
- 
- 	if (timeout && unlikely(get_timespec64(&ts, timeout)))
-@@ -2108,8 +2109,10 @@ SYSCALL_DEFINE6(io_pgetevents,
- 		return ret;
- 
- 	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
--	restore_user_sigmask(ksig.sigmask, &sigsaved);
--	if (signal_pending(current) && !ret)
-+
-+	interrupted = signal_pending(current);
-+	restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
-+	if (interrupted && !ret)
- 		ret = -ERESTARTNOHAND;
- 
- 	return ret;
-@@ -2128,6 +2131,7 @@ SYSCALL_DEFINE6(io_pgetevents_time32,
- 	struct __aio_sigset	ksig = { NULL, };
- 	sigset_t		ksigmask, sigsaved;
- 	struct timespec64	ts;
-+	bool interrupted;
- 	int ret;
- 
- 	if (timeout && unlikely(get_old_timespec32(&ts, timeout)))
-@@ -2142,8 +2146,10 @@ SYSCALL_DEFINE6(io_pgetevents_time32,
- 		return ret;
- 
- 	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
--	restore_user_sigmask(ksig.sigmask, &sigsaved);
--	if (signal_pending(current) && !ret)
-+
-+	interrupted = signal_pending(current);
-+	restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
-+	if (interrupted && !ret)
- 		ret = -ERESTARTNOHAND;
- 
- 	return ret;
-@@ -2193,6 +2199,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
- 	struct __compat_aio_sigset ksig = { NULL, };
- 	sigset_t ksigmask, sigsaved;
- 	struct timespec64 t;
-+	bool interrupted;
- 	int ret;
- 
- 	if (timeout && get_old_timespec32(&t, timeout))
-@@ -2206,8 +2213,10 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
- 		return ret;
- 
- 	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &t : NULL);
--	restore_user_sigmask(ksig.sigmask, &sigsaved);
--	if (signal_pending(current) && !ret)
-+
-+	interrupted = signal_pending(current);
-+	restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
-+	if (interrupted && !ret)
- 		ret = -ERESTARTNOHAND;
- 
- 	return ret;
-@@ -2226,6 +2235,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
- 	struct __compat_aio_sigset ksig = { NULL, };
- 	sigset_t ksigmask, sigsaved;
- 	struct timespec64 t;
-+	bool interrupted;
- 	int ret;
- 
- 	if (timeout && get_timespec64(&t, timeout))
-@@ -2239,8 +2249,10 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
- 		return ret;
- 
- 	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &t : NULL);
--	restore_user_sigmask(ksig.sigmask, &sigsaved);
--	if (signal_pending(current) && !ret)
-+
-+	interrupted = signal_pending(current);
-+	restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
-+	if (interrupted && !ret)
- 		ret = -ERESTARTNOHAND;
- 
- 	return ret;
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index c6f5131..4c74c76 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2325,7 +2325,7 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct epoll_event __user *, events,
- 
- 	error = do_epoll_wait(epfd, events, maxevents, timeout);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
-+	restore_user_sigmask(sigmask, &sigsaved, error == -EINTR);
- 
- 	return error;
- }
-@@ -2350,7 +2350,7 @@ COMPAT_SYSCALL_DEFINE6(epoll_pwait, int, epfd,
- 
- 	err = do_epoll_wait(epfd, events, maxevents, timeout);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
-+	restore_user_sigmask(sigmask, &sigsaved, err == -EINTR);
- 
- 	return err;
- }
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0fbb486..1147c5d 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2201,11 +2201,12 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 	}
- 
- 	ret = wait_event_interruptible(ctx->wait, io_cqring_events(ring) >= min_events);
--	if (ret == -ERESTARTSYS)
--		ret = -EINTR;
- 
- 	if (sig)
--		restore_user_sigmask(sig, &sigsaved);
-+		restore_user_sigmask(sig, &sigsaved, ret == -ERESTARTSYS);
-+
-+	if (ret == -ERESTARTSYS)
-+		ret = -EINTR;
- 
- 	return READ_ONCE(ring->r.head) == READ_ONCE(ring->r.tail) ? ret : 0;
- }
-diff --git a/fs/select.c b/fs/select.c
-index 6cbc9ff..a4d8f6e 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -758,10 +758,9 @@ static long do_pselect(int n, fd_set __user *inp, fd_set __user *outp,
- 		return ret;
- 
- 	ret = core_sys_select(n, inp, outp, exp, to);
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -ERESTARTNOHAND);
- 	ret = poll_select_copy_remaining(&end_time, tsp, type, ret);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
- 	return ret;
- }
- 
-@@ -1106,8 +1105,7 @@ SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
- 
- 	ret = do_sys_poll(ufds, nfds, to);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -EINTR);
- 	/* We can restart this syscall, usually */
- 	if (ret == -EINTR)
- 		ret = -ERESTARTNOHAND;
-@@ -1142,8 +1140,7 @@ SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds, unsigned int, nfds,
- 
- 	ret = do_sys_poll(ufds, nfds, to);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -EINTR);
- 	/* We can restart this syscall, usually */
- 	if (ret == -EINTR)
- 		ret = -ERESTARTNOHAND;
-@@ -1350,10 +1347,9 @@ static long do_compat_pselect(int n, compat_ulong_t __user *inp,
- 		return ret;
- 
- 	ret = compat_core_sys_select(n, inp, outp, exp, to);
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -ERESTARTNOHAND);
- 	ret = poll_select_copy_remaining(&end_time, tsp, type, ret);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
- 	return ret;
- }
- 
-@@ -1425,8 +1421,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds,
- 
- 	ret = do_sys_poll(ufds, nfds, to);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -EINTR);
- 	/* We can restart this syscall, usually */
- 	if (ret == -EINTR)
- 		ret = -ERESTARTNOHAND;
-@@ -1461,8 +1456,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time64, struct pollfd __user *, ufds,
- 
- 	ret = do_sys_poll(ufds, nfds, to);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -EINTR);
- 	/* We can restart this syscall, usually */
- 	if (ret == -EINTR)
- 		ret = -ERESTARTNOHAND;
-diff --git a/include/linux/signal.h b/include/linux/signal.h
-index 9702016..78c2bb3 100644
---- a/include/linux/signal.h
-+++ b/include/linux/signal.h
-@@ -276,7 +276,7 @@ extern int sigprocmask(int, sigset_t *, sigset_t *);
- extern int set_user_sigmask(const sigset_t __user *usigmask, sigset_t *set,
- 	sigset_t *oldset, size_t sigsetsize);
- extern void restore_user_sigmask(const void __user *usigmask,
--				 sigset_t *sigsaved);
-+				 sigset_t *sigsaved, bool interrupted);
- extern void set_current_blocked(sigset_t *);
- extern void __set_current_blocked(const sigset_t *);
- extern int show_unhandled_signals;
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 328a01e..aa6a6f1 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2912,7 +2912,8 @@ EXPORT_SYMBOL(set_compat_user_sigmask);
-  * This is useful for syscalls such as ppoll, pselect, io_pgetevents and
-  * epoll_pwait where a new sigmask is passed in from userland for the syscalls.
-  */
--void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
-+void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved,
-+				bool interrupted)
- {
- 
- 	if (!usigmask)
-@@ -2922,7 +2923,7 @@ void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
- 	 * Restoring sigmask here can lead to delivering signals that the above
- 	 * syscalls are intended to block because of the sigmask passed in.
- 	 */
--	if (signal_pending(current)) {
-+	if (interrupted) {
- 		current->saved_sigmask = *sigsaved;
- 		set_restore_sigmask();
- 		return;
--- 
-2.5.0
+In future, it would be helpful to include details such as the kernel 
+version you tested :-).
 
+Regards
+Alan
+
+
+Google pointed me to xfs_log.c.  There is only one place that submits 
+IO: xlog_sync().  As you observe, this write uses PREFLUSH+FUA.  But I 
+think this is the *only* time we write to the journal.
+
+/*
+* Flush out the in-core log (iclog) to the on-disk log in an asynchronous
+* fashion. ... bp->b_io_length = BTOBB(count); bp->b_log_item = iclog; 
+bp->b_flags &= ~XBF_FLUSH; bp->b_flags |= (XBF_ASYNC | XBF_SYNCIO | 
+XBF_WRITE | XBF_FUA); /* * Flush the data device before flushing the log 
+to make sure all meta * data written back from the AIL actually made it 
+to disk before * stamping the new log tail LSN into the log buffer. For 
+an external * log we need to issue the flush explicitly, and 
+unfortunately * synchronously here; for an internal log we can simply 
+use the block * layer state machine for preflushes. */ if 
+(log->l_mp->m_logdev_targp != log->l_mp->m_ddev_targp) 
+xfs_blkdev_issue_flush(log->l_mp->m_ddev_targp); else bp->b_flags |= 
+XBF_FLUSH; ... error = xlog_bdstrat(bp);
+
+
+Whereas I see at least three steps in 
+jbd2_journal_commit_transaction().  Step 1,  write all the data to the 
+journal without flushes:
+
+	while (commit_transaction->t_buffers) {
+
+		/* Find the next buffer to be journaled... */
+
+                 ...
+
+		/* If there's no more to do, or if the descriptor is full,
+		   let the IO rip! */
+
+		if (bufs == journal->j_wbufsize ||
+		    commit_transaction->t_buffers == NULL ||
+		    space_left < tag_bytes + 16 + csum_size) {
+
+                         ...
+
+			for (i = 0; i < bufs; i++) {
+
+                                 ...
+
+				bh->b_end_io = journal_end_buffer_io_sync;
+				submit_bh(REQ_OP_WRITE, REQ_SYNC, bh);
+			}
+
+Step 2:
+
+	err = journal_finish_inode_data_buffers(journal, commit_transaction);
+	if (err) {
+		printk(KERN_WARNING
+			"JBD2: Detected IO errors while flushing file data "
+		       "on %s\n", journal->j_devname);
+
+Step 3, commit:
+
+	if (!jbd2_has_feature_async_commit(journal)) {
+		err = journal_submit_commit_record(journal, commit_transaction,
+						&cbh, crc32_sum);
+		if (err)
+			__jbd2_journal_abort_hard(journal);
+	}
+	if (cbh)
+		err = journal_wait_on_commit_record(journal, cbh);
+
+
+static int journal_submit_commit_record(journal_t *journal,
+					transaction_t *commit_transaction,
+					struct buffer_head **cbh,
+					__u32 crc32_sum)
+{
+...
+
+	if (journal->j_flags & JBD2_BARRIER &&
+	    !jbd2_has_feature_async_commit(journal))
+		ret = submit_bh(REQ_OP_WRITE,
+			REQ_SYNC | REQ_PREFLUSH | REQ_FUA, bh);
 
