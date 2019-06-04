@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C7FB3517F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 22:57:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 916F93519F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 23:06:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbfFDU5y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jun 2019 16:57:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44200 "EHLO mail.kernel.org"
+        id S1726510AbfFDVGM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jun 2019 17:06:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726465AbfFDU5n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jun 2019 16:57:43 -0400
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+        id S1726269AbfFDVGL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Jun 2019 17:06:11 -0400
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAED420883
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2019 20:57:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 021282075B
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jun 2019 21:06:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559681862;
-        bh=ihQrR3672ZM/DzWjZDVj/EkCVxnHXupxxQEbDR/4vAg=;
+        s=default; t=1559682370;
+        bh=i3+PKArC81hAWWLFbR8rIjiNLUgLS1GNbVkf2UNoyBM=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=I4PRguwk4bMuMypdm5AOXXn53k/m+L5N9pyKwSfTNHLewnh8M65uGMG7NNR3Ebc8l
-         rsRnH3DUUzV1SO4+TidtsVDH9S4H4Orx7UfDX0ta38L+l5LFNUqPzgkVOGyqiElmZe
-         nHeIlBvnyw6Sot3eJ4IIqxcrsiVBsK6rjKdIv0AM=
-Received: by mail-wm1-f45.google.com with SMTP id 22so145479wmg.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2019 13:57:42 -0700 (PDT)
-X-Gm-Message-State: APjAAAUWSEfv20uOfdfZpGHE29LJRSx3wQOkMTadMUyKiTsyRZ/OKZJZ
-        Xrmlqmq8rfTb3psiZqNeb6TL+bGfRwCK2sPRTXfRKQ==
-X-Google-Smtp-Source: APXvYqzjigMmzQseLoEe4mdRuIyW/gpGOaqBUS3DaksOo5KC4LVSwBy+ViDmwuhEPpoWAnb6UhQhHp6vTImgw+QurWo=
-X-Received: by 2002:a7b:c450:: with SMTP id l16mr19833827wmi.0.1559681861171;
- Tue, 04 Jun 2019 13:57:41 -0700 (PDT)
+        b=bKqwlkPKaQ3IQwvOCkKHXE+fzBVNdDjtVlr7a+sbKhSCUKTUtA8ntH7W5HPaRk3cF
+         FQ95lopQQpPwX8nBCY+csk1ilQnGCG2HV2qZbusup4nVUZEXUnUw+k5ieoz+YRTMhC
+         UEVU/VuriAEepnLf0S6xfYHwCp4+ginYnqC93Jyk=
+Received: by mail-wr1-f45.google.com with SMTP id n9so4853348wru.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2019 14:06:09 -0700 (PDT)
+X-Gm-Message-State: APjAAAXsrebM5tXl8jyO1UsfUxtjqJi14hSgFmFBmTgJTy/Ai1YZdqfc
+        83ZrWBsrizmqf0AZ8ERvu0hJcRmvZga0myTnkoABeg==
+X-Google-Smtp-Source: APXvYqwWaDkUBAO/FzwIxCec9v2ublxvSErwSTWwGJ6KpgtnfA1WSa5Vuqk8r+3SOqT0lD87wjaVufgUU2gqVCXk69c=
+X-Received: by 2002:a5d:6207:: with SMTP id y7mr4033435wru.265.1559682368626;
+ Tue, 04 Jun 2019 14:06:08 -0700 (PDT)
 MIME-Version: 1.0
 References: <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
- <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com> <1207.1559680778@warthog.procyon.org.uk>
-In-Reply-To: <1207.1559680778@warthog.procyon.org.uk>
+ <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com> <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com>
+In-Reply-To: <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 4 Jun 2019 13:57:30 -0700
-X-Gmail-Original-Message-ID: <CALCETrXmjpSvVj_GROhgouNtbzLm5U9B4b364wycMaqApqDVNA@mail.gmail.com>
-Message-ID: <CALCETrXmjpSvVj_GROhgouNtbzLm5U9B4b364wycMaqApqDVNA@mail.gmail.com>
+Date:   Tue, 4 Jun 2019 14:05:57 -0700
+X-Gmail-Original-Message-ID: <CALCETrWFBA8H0RiZPikLtEi8xg-cqJLtQgnU2CGTuwByrHN7Dw@mail.gmail.com>
+Message-ID: <CALCETrWFBA8H0RiZPikLtEi8xg-cqJLtQgnU2CGTuwByrHN7Dw@mail.gmail.com>
 Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
-To:     David Howells <dhowells@redhat.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
         linux-block@vger.kernel.org, keyrings@vger.kernel.org,
@@ -54,28 +54,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 4, 2019 at 1:39 PM David Howells <dhowells@redhat.com> wrote:
+On Tue, Jun 4, 2019 at 1:31 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> Andy Lutomirski <luto@kernel.org> wrote:
+> n 6/4/2019 10:43 AM, Andy Lutomirski wrote:
+> > On Tue, Jun 4, 2019 at 9:35 AM David Howells <dhowells@redhat.com> wrote:
+> >>
+> >> Hi Al,
+> >>
+> >> Here's a set of patches to add a general variable-length notification queue
+> >> concept and to add sources of events for:
+> > I asked before and didn't see a response, so I'll ask again.  Why are
+> > you paying any attention at all to the creds that generate an event?
+> > It seems like the resulting security model will be vary hard to
+> > understand and probably buggy.  Can't you define a sensible model in
+> > which only the listener creds matter?
 >
-> > > Here's a set of patches to add a general variable-length notification queue
-> > > concept and to add sources of events for:
-> >
-> > I asked before and didn't see a response, so I'll ask again.  Why are you
-> > paying any attention at all to the creds that generate an event?
+> We've spent the last 18 months reeling from the implications
+> of what can happen when one process has the ability to snoop
+> on another. Introducing yet another mechanism that is trivial
+> to exploit is a very bad idea.
+
+If you're talking about Spectre, etc, this is IMO entirely irrelevant.
+Among other things, setting these watches can and should require some
+degree of privilege.
+
 >
-> Casey responded to you.  It's one of his requirements.
->
+> I will try to explain the problem once again. If process A
+> sends a signal (writes information) to process B the kernel
+> checks that either process A has the same UID as process B
+> or that process A has privilege to override that policy.
+> Process B is passive in this access control decision, while
+> process A is active.
 
-It being a "requirement" doesn't make it okay.
+Are you stating what you see to be a requirement?
 
-> However, the LSMs (or at least SELinux) ignore f_cred and use current_cred()
-> when checking permissions.  See selinux_revalidate_file_permission() for
-> example - it uses current_cred() not file->f_cred to re-evaluate the perms,
-> and the fd might be shared between a number of processes with different creds.
+> Process A must have write access
+> (defined by some policy) to process B's event buffer.
 
-That's a bug.  It's arguably a rather severe bug.  If I ever get
-around to writing the patch I keep thinking of that will warn if we
-use creds from invalid contexts, it will warn.
+No, stop right here.  Process B is monitoring some aspect of the
+system.  Process A is doing something.  Process B should need
+permission to monitor whatever it's monitoring, and process A should
+have permission to do whatever it's doing.  I don't think it makes
+sense to try to ascribe an identity to the actor doing some action to
+decide to omit it from the watch -- this has all kinds of correctness
+issues.
 
-Let's please not repeat this.
+If you're writing a policy and you don't like letting process B spy on
+processes doing various things, then disallow that type of spying.
+
+> To
+> implement such a policy requires A's credential,
+
+You may not design a new mechanism that looks at the credential in a
+context where looking at a credential is invalid unless you have some
+very strong justification for why all of the known reasons that it's a
+bad idea don't apply to what you're doing.
+
+So, without a much stronger justification, NAK.
