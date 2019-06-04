@@ -2,115 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC12351DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jun 2019 23:27:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 374DF3526E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 00:01:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbfFDV1G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jun 2019 17:27:06 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37013 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfFDV1F (ORCPT
+        id S1726341AbfFDWBt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jun 2019 18:01:49 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:42664 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726179AbfFDWBt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jun 2019 17:27:05 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 131so8605131ljf.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2019 14:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fjr6VsCXE/x8E/UigyoFfXOlatfjUvy0HOG/EWEq9/E=;
-        b=AqnHNsD1VskjlimA3YwkF5JNU3DvSRUk55MoR6ni75AS44QkMcJCvxHI3dSdlI6y5J
-         mKW0Es7RWq6sAXJ9MeVUOaPQSf8pexTFCehFbQMkkbeBhb+EWYhswZLPdoe2U/wgnvPd
-         T/eBCFdkAAdh/w7SO0Y9hNdRXoDDz3+5dAwXw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fjr6VsCXE/x8E/UigyoFfXOlatfjUvy0HOG/EWEq9/E=;
-        b=op4iqcgIvstzI3ken0PDXBbzPm1PBuanmdcpT/1gi+N+K/A0hYLWUz76MIyB+lJBM2
-         tcbZId/Fn72uZ1X/PYBpC+xrwf1u1ayVSC1T8e+188z1xKG6IXb5kqhQi85q3aHRB0Bh
-         Y+NFY+3ESHCk5Mbn0WamfalFHLBYjTVkmqEOWiUao8rUdIOyHvyE+2URs3G7e+qskD33
-         M6zkC5OF0lStZK8X9rvX9b7fbqKDClDhGbvG5tk3iHwPFNZDrTyIY35HjXeWVAfk/Nia
-         ClhPEI9FqPzzfRdglnJTCJZujlTFPS+idc2WdcN+Zqf4mFzLpgNCY/V3zbW01Y6OBj3w
-         4tMA==
-X-Gm-Message-State: APjAAAXaAJMKRCNITdT0nA0DFTyU7O9hBXcn3H0pPlmEGBpxcX5NlRpj
-        RGtXNtlQ6cONhc9NtkcpsfFc1tsTlTQ=
-X-Google-Smtp-Source: APXvYqxvhFAqBEmy8i7S1EufB29KqAd5yIon5QTJ8jwZCMNlQ4Jt2cXkg3DbT1pRIAVYETz7qiDAnw==
-X-Received: by 2002:a2e:760c:: with SMTP id r12mr2903406ljc.155.1559683623199;
-        Tue, 04 Jun 2019 14:27:03 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id v14sm3898818lfb.50.2019.06.04.14.26.59
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 14:27:00 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id a9so16123457lff.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jun 2019 14:26:59 -0700 (PDT)
-X-Received: by 2002:a19:ae01:: with SMTP id f1mr17362076lfc.29.1559683618741;
- Tue, 04 Jun 2019 14:26:58 -0700 (PDT)
+        Tue, 4 Jun 2019 18:01:49 -0400
+Received: from dread.disaster.area (pa49-180-144-61.pa.nsw.optusnet.com.au [49.180.144.61])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id F3AC843A4E2;
+        Wed,  5 Jun 2019 08:01:45 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hYHV0-0002Sg-8E; Wed, 05 Jun 2019 08:01:42 +1000
+Date:   Wed, 5 Jun 2019 08:01:42 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Lucas Stach <dev@lynxeye.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: understanding xfs vs. ext4 log performance
+Message-ID: <20190604220142.GY29573@dread.disaster.area>
+References: <7a642f570980609ccff126a78f1546265ba913e2.camel@lynxeye.de>
 MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com>
-In-Reply-To: <20190604134117.GA29963@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 4 Jun 2019 14:26:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjSOh5zmApq2qsNjmY-GMn4CWe9YwdcKPjT+nVoGiDKOQ@mail.gmail.com>
-Message-ID: <CAHk-=wjSOh5zmApq2qsNjmY-GMn4CWe9YwdcKPjT+nVoGiDKOQ@mail.gmail.com>
-Subject: Re: [PATCH] signal: remove the wrong signal_pending() check in restore_user_sigmask()
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, e@80x24.org,
-        Jason Baron <jbaron@akamai.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-aio@kvack.org, omar.kilani@gmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        stable <stable@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Laight <David.Laight@aculab.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7a642f570980609ccff126a78f1546265ba913e2.camel@lynxeye.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
+        a=8RU0RCro9O0HS2ezTvitPg==:117 a=8RU0RCro9O0HS2ezTvitPg==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
+        a=nt1UNTH2AAAA:8 a=7-415B0cAAAA:8 a=cMg6eYb3LdCH74NCmdMA:9
+        a=CjuIK1q_8ugA:10 a=1jnEqRSf4vEA:10 a=7AW3Uk2BEroXwU7YnAE8:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 4, 2019 at 6:41 AM Oleg Nesterov <oleg@redhat.com> wrote:
->
-> This is the minimal fix for stable, I'll send cleanups later.
+On Tue, Jun 04, 2019 at 11:21:15AM +0200, Lucas Stach wrote:
+> Hi all,
+> 
+> this question is more out of curiosity and because I want to take the
+> chance to learn something.
+> 
+> At work we've stumbled over a workload that seems to hit pathological
+> performance on XFS. Basically the critical part of the workload is a
+> "rm -rf" of a pretty large directory tree, filled with files of mixed
+> size ranging from a few KB to a few MB. The filesystem resides on quite
+> slow spinning rust disks, directly attached to the host, so no
+> controller with a BBU or something like that involved.
+> 
+> We've tested the workload with both xfs and ext4, and while the numbers
+> aren't completely accurate due to other factors playing into the
+> runtime, performance difference between XFS and ext4 seems to be an
+> order of magnitude. (Ballpark runtime XFS is 30 mins, while ext4
+> handles the remove in ~3 mins).
 
-Ugh. I htink this is correct, but I wish we had a better and more
-intuitive interface.
+Without knowing exactly what filesystem configurations you are
+testing on, the performance numbers are meaningless:
 
-In particular, since restore_user_sigmask() basically wants to check
-for "signal_pending()" anyway (to decide if the mask should be
-restored by signal handling or by that function), I really get the
-feeling that a lot of these patterns like
+http://xfs.org/index.php/XFS_FAQ#Q:_What_information_should_I_include_when_reporting_a_problem.3F
 
-> -       restore_user_sigmask(ksig.sigmask, &sigsaved);
-> -       if (signal_pending(current) && !ret)
-> +
-> +       interrupted = signal_pending(current);
-> +       restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
-> +       if (interrupted && !ret)
->                 ret = -ERESTARTNOHAND;
+> The XFS performance seems to be completly dominated by log buffer
+> writes, which happen with both REQ_PREFLUSH and REQ_FUA set. It's
+> pretty obvious why this kills performance on slow spinning rust.
 
-are wrong to begin with, and we really should aim for an interface
-which says "tell me whether you completed the system call, and I'll
-give you an error return if not".
+In general, you should see almost no log traffic on a rm -rf
+workload as the eventual result is that all the inodes and metadata
+are marked stale and they don't even get written to the log.
 
-How about we make restore_user_sigmask() take two return codes: the
-'ret' we already have, and the return we would get if there is a
-signal pending and w're currently returning zero.
+If you are seeing lots of log writes, it indicates to me that you
+are testing on very small filesystems and/or filesystems with tiny
+logs, resulting in frequent tail pushing to make space in the log
+for transaction reservations....
 
-IOW, I think the above could become
+> Now the thing I wonder about is why ext4 seems to get a away without
+> those costly flags for its log writes. At least blktrace shows almost
+> zero PREFLUSH or FUA requests. Is there some fundamental difference in
+> how ext4 handles its logging to avoid the need for this ordering and
+> forced access, or is it ext just living more dangerously with regard to
+> reordered writes?
 
-        ret = restore_user_sigmask(ksig.sigmask, &sigsaved, ret, -ERESTARTHAND);
+If ext4 is not doing cache flushes and/or FUA for it's log writes
+then it's broken w.r.t. data integrity. I'm pretty sure that's not
+the case. Fundamentally, ext4 has the same journal write ordering
+requirements as XFS, it's probably just that for the filesystem
+sizes you are testing the ext4 log is larger and fitting the working
+set of operations in it without running out of space and having to
+flush frequently....
 
-instead if we just made the right interface decision.
+> Does XFS really require such a strong ordering on the log buffer
+> writes? I don't understand enough of the XFS transaction code and
+> wonder if it would be possible to do the strongly ordered writes only
+> on transaction commit.
 
-Hmm?
+We don't write anything on transaction commit. We aggregate
+committed transactions in memory and then checkpoint the journal
+when a flush is required. It's all spelled out in detail in
+Documentation/filesystems/xfs-delayed-logging-design.txt in the
+kernel tree. It's a similar checkpointing architecture to what ext4
+uses, with similar performance in most cases.
 
-             Linus
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
