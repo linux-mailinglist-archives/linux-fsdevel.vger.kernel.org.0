@@ -2,122 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 930F135A6A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 12:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7366435C81
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 14:21:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbfFEK0V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jun 2019 06:26:21 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40106 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726502AbfFEK0V (ORCPT
+        id S1727629AbfFEMVp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jun 2019 08:21:45 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41970 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727273AbfFEMVp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jun 2019 06:26:21 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d30so12139697pgm.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2019 03:26:20 -0700 (PDT)
+        Wed, 5 Jun 2019 08:21:45 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c2so19253421wrm.8;
+        Wed, 05 Jun 2019 05:21:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=M1ULtVTBaRjJ1PHd8skCpbTVO6zbbI/pi1e0gXp7yc0=;
-        b=jAQ7fFrGO0TepAjaeIU8cFqLQxHx3KjiTOlpJHN1i0lpGgHHU5xkuYBwY5v31GkgKL
-         pJPivwXOu550agdJIYhlPftZMBzP0X7kfNUgAK1FayYvt8LHGpXhis876t6/AELoj4Ix
-         LteoO3odnsLY/gznyLnkIIRH4x4bn6QYccT5RQmKC05p9Jje9UPyLlgJehd5351xQC5m
-         EK+mjbCGXLppVyRoCHYSC6lUQ61Z63AqXSjp/BCcL7MK3CCKVljkD2p+chMO+3wCNhU/
-         eX7Dv99osaWfMFdlpwiGXyGvPW8KPEZ7RaaNjMwyuc8wLKK+LFyoZXxOZqBqvfiQV3jw
-         U0zw==
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=eMX4q3DpHMhUsdsN4u88JHTPcA/fYwja5qc5UwXeOj0=;
+        b=HkwwqWkbYHshnfYvDhmb8NlPq1PKXNE+NTRxvZwenZ5mdxm93abHvET1ts/6AqvNWM
+         IfefGtgsPVhkwiYXcZgGowa3l3QfD+OKsqASzLS2+wUdHnALs6fu+BOB89zspYmQSBXA
+         ktCUuQYXqnevp2qsxupbzl5wplKboxVDx5VwChJ09eueMX7GNlRFIeQNcX2DpnGBL4nN
+         F/QmyXv+U0ci9q4txpJpnLdJ9gISMBrpAAvVxJVjbX8RWQClrvDeZEPs5VnvQZrc6rsJ
+         FkuQDPfKNkTvAK0TXZRNc0xDGKJkhACetTPcFkPrPUuwDix+0WyWXACGaerBMJEk2+J1
+         XLqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=M1ULtVTBaRjJ1PHd8skCpbTVO6zbbI/pi1e0gXp7yc0=;
-        b=isZ17yHjSY1UnsuYiX+08wli2m91uGuJP/My2q9b6rCrchFuYK324z8SeqkImv+J3W
-         7jlcV+NY8NrtUAQl4dBcpuzA3bJrys6NVqZCwA2FwEPsQjRRIaA8HhWCXLgmfIsM1cQU
-         71lc30OuJ/rfwivuAqbpCyVLSbyhaysc9AdBKadqeka+UOJvB030gnT2gSt2hvkQa4sH
-         r7FiAQN0PRCuDCyQQ5rQgge/qCfEcZw5ZzwzFWByG0xHBoJh39vnzP6ncZ0i/5+gMKFm
-         bh+PZCiGS981pn+g1n0mGVxDNvznFOQrXf0tOMVNY7/AWjzCbZLz2CEsd6DqJCkEUTFy
-         HyFg==
-X-Gm-Message-State: APjAAAUKWr1yz6M4k8pitumPVrRlRJQzfEdKOaDT4UY3cVvbfUVvDZvZ
-        TV2IDOnrm95AOum5fdKUrjHn
-X-Google-Smtp-Source: APXvYqySxD+fahxqn6P/0cG5QKLSgMNAfXkPXSCVU91zFyZzNMLl1HP/nOL6ml0Er8r9V2f2cemjRA==
-X-Received: by 2002:a63:4e07:: with SMTP id c7mr3389206pgb.350.1559730380269;
-        Wed, 05 Jun 2019 03:26:20 -0700 (PDT)
-Received: from poseidon.Home ([114.78.0.167])
-        by smtp.gmail.com with ESMTPSA id i5sm14705123pfk.49.2019.06.05.03.26.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Jun 2019 03:26:19 -0700 (PDT)
-Date:   Wed, 5 Jun 2019 20:26:13 +1000
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christian Brauner <christian@brauner.io>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fanotify: remove redundant capable(CAP_SYS_ADMIN)s
-Message-ID: <20190605102611.GA4546@poseidon.Home>
-References: <20190522163150.16849-1-christian@brauner.io>
- <CAOQ4uxjV=7=FXuyccBK9Pu1B7o-w-pbc1FQXJxY4q6z8E93KOg@mail.gmail.com>
- <EB97EF04-D44F-4320-ACDC-C536EED03BA4@brauner.io>
- <CAOQ4uxhodqVw0DVfcvXYH5vBf4LKcv7t388ZwXeZPBTcEMzGSw@mail.gmail.com>
- <20190523095506.nyei5nogvv63lm4a@brauner.io>
- <CAOQ4uxiBeAzsE+b=tE7+9=25-qS7ohuTdEswYOt8DrCp6eAMuw@mail.gmail.com>
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=eMX4q3DpHMhUsdsN4u88JHTPcA/fYwja5qc5UwXeOj0=;
+        b=mgeLlCdWikl5GFWXnkbvo59T8tx6JhPSSLzJhWfmmpx2ttlJSl4O3Koey3nSCRp1JE
+         AfPL0Mzeh4r7vu2px9BDcK+cV+hCf8BhDHFehN/0HIunLKUbOmip7BZ4SXDjGlapUsKQ
+         KqWeD3t3noYFgY8MoS9cV4dKueQo/QqpWfcU0lrWP+4TaTQkgsZ/sv8ZlYuZNHvnLLVV
+         IDqkCGs7f4gR1Py/SA4bqSa05CzwjNxL0iD8kK2tyhCdjw40GeL6BLHBjqElxibQEaEJ
+         POm4741AA2Km6BvR0SyrCmY9iZvZIOK3PxuF+4Is5cq3AVtKV3+fEw0EoIxE8yCEdx6E
+         XhVg==
+X-Gm-Message-State: APjAAAVYOkOeHyLIP3CCJF+a2ol+05/OtiHrEyuNo+WISHUNj/Fm5zmN
+        cCHSNOphyXD2NDt08Ru3lqA=
+X-Google-Smtp-Source: APXvYqyPHvWdNV9UYQ5tB9zJObQjRgwr7QJNszooXaFDn9ZgdymeSnKyWkZI932VnvkKp8F3fqHtFg==
+X-Received: by 2002:a5d:6406:: with SMTP id z6mr9456223wru.87.1559737303220;
+        Wed, 05 Jun 2019 05:21:43 -0700 (PDT)
+Received: from [172.16.8.139] (host-78-151-217-120.as13285.net. [78.151.217.120])
+        by smtp.gmail.com with ESMTPSA id v67sm4961931wme.24.2019.06.05.05.21.41
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 05:21:42 -0700 (PDT)
+From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Subject: Re: [PATCH 09/25] vfs: Allow mount information to be queried by
+ fsinfo() [ver #13]
+To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
+Cc:     raven@themaw.net, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+References: <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk>
+ <155905633578.1662.8087594848892366318.stgit@warthog.procyon.org.uk>
+Message-ID: <60136f9f-8eb6-a7f4-11c6-daf988274420@gmail.com>
+Date:   Wed, 5 Jun 2019 13:21:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiBeAzsE+b=tE7+9=25-qS7ohuTdEswYOt8DrCp6eAMuw@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <155905633578.1662.8087594848892366318.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 23, 2019 at 01:25:08PM +0300, Amir Goldstein wrote:
+On 28/05/2019 16:12, David Howells wrote:
+> Allow mount information, including information about the topology tree to
+> be queried with the fsinfo() system call.  Usage of AT_FSINFO_MOUNTID_PATH
+> allows overlapping mounts to be queried.
+>
+> To this end, four fsinfo() attributes are provided:
+>
+>   (1) FSINFO_ATTR_MOUNT_INFO.
+>
+>       This is a structure providing information about a mount, including:
+>
+> 	- Mounted superblock ID.
+> 	- Mount ID (as AT_FSINFO_MOUNTID_PATH).
+> 	- Parent mount ID.
+> 	- Mount attributes (eg. R/O, NOEXEC).
+> 	- Number of change notifications generated.
+>
+>       Note that the parent mount ID is overridden to the ID of the queried
+>       mount if the parent lies outside of the chroot or dfd tree.
+>
+>   (2) FSINFO_ATTR_MOUNT_DEVNAME.
+>
+>       This a string providing the device name associated with the mount.
+>
+>       Note that the device name may be a path that lies outside of the root.
+>
+>   (3) FSINFO_ATTR_MOUNT_CHILDREN.
+>
+>       This produces an array of structures, one for each child and capped
+>       with one for the argument mount (checked after listing all the
+>       children).  Each element contains the mount ID and the notification
+>       counter of the respective mount object.
+>
+>   (4) FSINFO_ATTR_MOUNT_SUBMOUNT.
+>
+>       This is a 1D array of strings, indexed with struct fsinfo_params::Nth.
+>       Each string is the relative pathname of the corresponding child
+>       returned by FSINFO_ATTR_MOUNT_CHILD.
 
-...
+FSINFO_ATTR_MOUNT_CHILD -> FSINFO_ATTR_MOUNT_CHILDREN
 
-> > > > Interesting. When do you think the gate can be removed?
-> > >
-> > > Nobody is working on this AFAIK.
-> > > What I posted was a simple POC, but I have no use case for this.
-> > > In the patchwork link above, Jan has listed the prerequisites for
-> > > removing the gate.
-> > >
-> > > One of the prerequisites is FAN_REPORT_FID, which is now merged.
-> > > When events gets reported with fid instead of fd, unprivileged user
-> > > (hopefully) cannot use fid for privilege escalation.
-> > >
-> > > > I was looking into switching from inotify to fanotify but since it's not usable from
-> > > > non-initial userns it's a no-no
-> > > > since we support nested workloads.
-> > >
-> > > One of Jan's questions was what is the benefit of using inotify-compatible
-> > > fanotify vs. using inotify.
-> > > So what was the reason you were looking into switching from inotify to fanotify?
-> > > Is it because of mount/filesystem watch? Because making those available for
-> >
-> > Yeah. Well, I would need to look but you could probably do it safely for
-> > filesystems mountable in user namespaces (which are few).
-> > Can you do a bind-mount and then place a watch on the bind-mount or is
-> > this superblock based?
-> >
-> 
-> Either.
-> FAN_MARK_MOUNT was there from day 1 of fanotify.
-> FAN_MARK_FILESYSTEM was merged to Linux Linux 4.20.
-> 
-> But directory modification events that are supported since v5.1 are
-> not available
-> with FAN_MARK_MOUNT, see:
-> https://github.com/amir73il/man-pages/blob/fanotify_fid/man2/fanotify_init.2#L97
-> 
-> Matthew,
-> 
-> Perhaps this fact is worth a mention in the linked entry for FAN_REPORT_FID
-> in fanotify_init.2 in addition to the comment on the entry for FAN_MARK_MOUNT
-> in fanotify_mark.2.
 
-Sorry, a little late to the party...
+>       Note that paths in the mount at the base of the tree (whether that be
+>       dfd or chroot) are relative to the base of the tree, not the root
+>       directory of that mount.
+>
+> Signed-off-by: David Howells<dhowells@redhat.com>
+> ---
+>
+>   fs/d_path.c                 |    2
+>   fs/fsinfo.c                 |    9 ++
+>   fs/internal.h               |    9 ++
+>   fs/namespace.c              |  175 +++++++++++++++++++++++++++++++++++++++++++
+>   include/uapi/linux/fsinfo.h |   28 +++++++
+>   samples/vfs/test-fsinfo.c   |   47 +++++++++++-
+>   6 files changed, 266 insertions(+), 4 deletions(-)
 
-The fact being that directory modification events that are supported since v5.1
-are not available when used in conjunction with FAN_MARK_MOUNT?
+> +/*
+> + * Information struct for fsinfo(FSINFO_ATTR_MOUNT_INFO).
+> + */
+> +struct fsinfo_mount_info {
+> +	__u64		f_sb_id;	/* Superblock ID */
+> +	__u32		mnt_id;		/* Mount identifier (use with AT_FSINFO_MOUNTID_PATH) */
+> +	__u32		parent_id;	/* Parent mount identifier */
+> +	__u32		group_id;	/* Mount group ID */
+> +	__u32		master_id;	/* Slave master group ID */
+> +	__u32		from_id;	/* Slave propogated from ID */
 
--- 
-Matthew Bobrowski
+propogated -> propagated
+
+> +	__u32		attr;		/* MOUNT_ATTR_* flags */
+> +	__u32		notify_counter;	/* Number of notifications generated. */
+> +	__u32		__reserved[1];
+> +};
+> +
+> +/*
+> + * Information struct element for fsinfo(FSINFO_ATTR_MOUNT_CHILDREN).
+> + * - An extra element is placed on the end representing the parent mount.
+> + */
+> +struct fsinfo_mount_child {
+> +	__u32		mnt_id;		/* Mount identifier (use with AT_FSINFO_MOUNTID_PATH) */
+> +	__u32		notify_counter;	/* Number of notifications generated on mount. */
+> +};
+> +
+>   #endif /* _UAPI_LINUX_FSINFO_H */
