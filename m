@@ -2,105 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C0D1360BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 18:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0248D36120
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 18:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfFEQEX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jun 2019 12:04:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728374AbfFEQEW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jun 2019 12:04:22 -0400
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAE2F208C0
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jun 2019 16:04:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559750661;
-        bh=Lo7tnf9FZTNHvc1tqXK13IgOoz9XYJY+Hs7siRq6iN8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YZNY4+GvVwuo8+BTate/LxNlrzU8IWP+qwjyuims/2o2QKNrEiCHm6B3HLq3ECe6e
-         F7U5qQL2LfnCcvULKZ+uS3+SlVAQOtIToYK8SFt81rKsbj3R+xSTCi7h826D53Wb60
-         j3nopY9tZcC05bLdxhJC0EJHK7p52huhC1fyCfGs=
-Received: by mail-wm1-f46.google.com with SMTP id 22so2876645wmg.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2019 09:04:21 -0700 (PDT)
-X-Gm-Message-State: APjAAAVFX2BdDGfGuaelCQu7qFkWZ4DWvpnNRymCIFnX8S2JXMK/kUzs
-        TZGuwDsq4tGhmU2iDd60PbW2EF9qqDBOlXNEZFMiOg==
-X-Google-Smtp-Source: APXvYqwIrjshcVAwwMvKbnOgH9q2iZcxDjJCMHqdp2gUxGfHHyckcbZBVYnqcPYz05IGUFxNW8Satk5JOWG999hqATM=
-X-Received: by 2002:a7b:cd84:: with SMTP id y4mr11012206wmj.79.1559750660137;
- Wed, 05 Jun 2019 09:04:20 -0700 (PDT)
+        id S1728635AbfFEQWJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jun 2019 12:22:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58560 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726670AbfFEQWI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 Jun 2019 12:22:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 537BDAD81;
+        Wed,  5 Jun 2019 16:22:07 +0000 (UTC)
+Date:   Wed, 5 Jun 2019 11:22:04 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: [Lsf-pc] [LSF/MM TOPIC] The end of the DAX experiment
+Message-ID: <20190605162204.jzou5hry5exly5wx@fiona>
+References: <CAPcyv4jyCDJTpGZB6qVX7_FiaxJfDzWA1cw8dfPjHM2j3j3yqQ@mail.gmail.com>
+ <20190214134622.GG4525@dhcp22.suse.cz>
+ <CAPcyv4gxFKBQ9eVdn+pNEzBXRfw6Qwfmu21H2i5uj-PyFmRAGQ@mail.gmail.com>
+ <20190214191013.GA3420@redhat.com>
+ <CAPcyv4jLTdJyTOy715qvBL_j_deiLoBmu_thkUnFKZKMvZL6hA@mail.gmail.com>
+ <20190214200840.GB12668@bombadil.infradead.org>
+ <CAPcyv4hsDqvrV5yiDq8oWPuWb3WpuCEk_HB4qBxfiDpUwo75QQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com>
- <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
- <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
- <20192.1559724094@warthog.procyon.org.uk> <e4c19d1b-9827-5949-ecb8-6c3cb4648f58@schaufler-ca.com>
-In-Reply-To: <e4c19d1b-9827-5949-ecb8-6c3cb4648f58@schaufler-ca.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 5 Jun 2019 09:04:09 -0700
-X-Gmail-Original-Message-ID: <CALCETrVSBwHEm-1pgBXxth07PZ0XF6FD+7E25=WbiS7jxUe83A@mail.gmail.com>
-Message-ID: <CALCETrVSBwHEm-1pgBXxth07PZ0XF6FD+7E25=WbiS7jxUe83A@mail.gmail.com>
-Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4hsDqvrV5yiDq8oWPuWb3WpuCEk_HB4qBxfiDpUwo75QQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 5, 2019 at 7:51 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 6/5/2019 1:41 AM, David Howells wrote:
-> > Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >
-> >> I will try to explain the problem once again. If process A
-> >> sends a signal (writes information) to process B the kernel
-> >> checks that either process A has the same UID as process B
-> >> or that process A has privilege to override that policy.
-> >> Process B is passive in this access control decision, while
-> >> process A is active. In the event delivery case, process A
-> >> does something (e.g. modifies a keyring) that generates an
-> >> event, which is then sent to process B's event buffer.
-> > I think this might be the core sticking point here.  It looks like two
-> > different situations:
-> >
-> >  (1) A explicitly sends event to B (eg. signalling, sendmsg, etc.)
-> >
-> >  (2) A implicitly and unknowingly sends event to B as a side effect of some
-> >      other action (eg. B has a watch for the event A did).
-> >
-> > The LSM treats them as the same: that is B must have MAC authorisation to send
-> > a message to A.
->
-> YES!
->
-> Threat is about what you can do, not what you intend to do.
->
-> And it would be really great if you put some thought into what
-> a rational model would be for UID based controls, too.
->
-> > But there are problems with not sending the event:
-> >
-> >  (1) B's internal state is then corrupt (or, at least, unknowingly invalid).
->
-> Then B is a badly written program.
+Hi Dan/Jerome,
 
-Either I'm misunderstanding you or I strongly disagree.  If B has
-authority to detect a certain action, and A has authority to perform
-that action, then refusing to notify B because B is somehow missing
-some special authorization to be notified by A is nuts.  This is just
-introducing incorrectness into the design in support of a
-not-actually-helpful security idea.
+On 12:20 14/02, Dan Williams wrote:
+> On Thu, Feb 14, 2019 at 12:09 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Thu, Feb 14, 2019 at 11:31:24AM -0800, Dan Williams wrote:
+> > > On Thu, Feb 14, 2019 at 11:10 AM Jerome Glisse <jglisse@redhat.com> wrote:
+> > > > I am just again working on my struct page mapping patchset as well as
+> > > > the generic page write protection that sits on top. I hope to be able
+> > > > to post the v2 in couple weeks. You can always look at my posting last
+> > > > year to see more details.
+> > >
+> > > Yes, I have that in mind as one of the contenders. However, it's not
+> > > clear to me that its a suitable fit for filesystem-reflink. Others
+> > > have floated the 'page proxy' idea, so it would be good to discuss the
+> > > merits of the general approaches.
+> >
+> > ... and my preferred option of putting pfn entries in the page cache.
+> 
+> Another option to include the discussion.
+> 
+> > Or is that what you meant by "page proxy"?
+> 
+> Page proxy would be an object that a filesystem could allocate to
+> point back to a single physical 'struct page *'. The proxy would
+> contain an override for page->index.
 
-If I can read /proc/self/mounts, I can detect changes to my mount
-namespace.  Giving me a faster and nicer way to do this is fine, AS
-LONG AS IT ACTUALLY WORKS.  "Works" means it needs to detect all
-changes.
+Was there any outcome on this and its implementation? I am specifically
+interested in this for DAX support on btrfs/CoW: The TODO comment on
+top of dax_associate_entry() :)
+
+If there are patches/git tree I could use to base my patches on, it would
+be nice.
+
+-- 
+Goldwyn
