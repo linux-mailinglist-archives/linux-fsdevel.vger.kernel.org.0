@@ -2,178 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81D0836642
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 23:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D9E367F6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 01:28:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbfFEVGT convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 5 Jun 2019 17:06:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35222 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726528AbfFEVGS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jun 2019 17:06:18 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 062F9C1EB1FB;
-        Wed,  5 Jun 2019 21:06:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D9356838D;
-        Wed,  5 Jun 2019 21:06:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <f19dcdb4-f934-34c2-f625-95c2c928d576@schaufler-ca.com>
-References: <f19dcdb4-f934-34c2-f625-95c2c928d576@schaufler-ca.com> <e4c19d1b-9827-5949-ecb8-6c3cb4648f58@schaufler-ca.com> <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com> <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk> <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com> <20192.1559724094@warthog.procyon.org.uk> <18357.1559753807@warthog.procyon.org.uk>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     dhowells@redhat.com, Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Rational model for UID based controls
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <5392.1559768763.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 05 Jun 2019 22:06:03 +0100
-Message-ID: <5393.1559768763@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 05 Jun 2019 21:06:18 +0000 (UTC)
+        id S1726510AbfFEX2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jun 2019 19:28:42 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:54788 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726561AbfFEX2l (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 Jun 2019 19:28:41 -0400
+Received: by mail-pg1-f201.google.com with SMTP id c4so213972pgm.21
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2019 16:28:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=gRO0aIkjYMBsNBc7+DIoU7JX9NOgY+kGQd5/xewYXlk=;
+        b=UjUsYqhMfjCSgtwICU9RcqL+xxeWNLvzgYi4TAJ5I4+IMVG8sbSlWkpZQSp+j4nuQq
+         97fA9gvCpbvVs5BjpH/06h+5CHQfsMA0GeR3A9KlwdxUpYZFJVu6I3oKcNzlXEuRPpwh
+         HQYx91WCnQG84EuhE0DYB9w5B3XQlJ1mN4lKjtPqmOF1IXGgoq06Z6vYhwctzUT6GNcz
+         NL71raZfKYlyZ/oTRi6rtLIOLmWxdVntpcjynPpC8JZRh0QJ+MQpzecIaSF8TamuwwJX
+         Ss8ZvCG8BLDIfrxxjZ8LYkSt5b90qIAHMKhVUYm5Nlyo1YBeMiXm1L3zPtKfBJMUwuk6
+         sNNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=gRO0aIkjYMBsNBc7+DIoU7JX9NOgY+kGQd5/xewYXlk=;
+        b=Sdr3H0yk3+ONhR9DEIxuf4wsjr2n50nD7feSQpTgU9Ycm8p3XXyVi/atmgJqf05w5q
+         P/7CSvcQB2NpOebIPD06+ZiLbrM1QaAamfL5zsfn6liaGcgmjy8J9VJvwYK/d3yzInLe
+         NLKLARaLXJUjZmSwpqXkImMF5qUgfYvRZIqUTP4dZyZDS+BBTLMvSWGThk6+q1romsE2
+         LeN7zX2X25vwk2DJ6NbjEoOaqaQy/EkmpNFlHGl8qBSBeIItginwpbooli5/cuTWwnDE
+         /BOlYH4dG4XXlyT76tejr7sVakSWIvrXYUCrdieFubnWdax8Iju0hOCcSO9KXcFMk7TT
+         koaQ==
+X-Gm-Message-State: APjAAAVQChbADK5p67SjrzEQ2zDLeWIfZaw0chzTmZ3r228WW7gwKi//
+        KJzK5eK39NgOJTac0ysqWy3rP/0do8Q=
+X-Google-Smtp-Source: APXvYqzXuluP1xJXv83KQJmBTl6O5tQhTtSaDuikoPQNfY1VHAjaLmhSxTETZknHp6ujJjRDlasl8HLD5Ew=
+X-Received: by 2002:a63:1663:: with SMTP id 35mr363300pgw.253.1559777320468;
+ Wed, 05 Jun 2019 16:28:40 -0700 (PDT)
+Date:   Wed,  5 Jun 2019 16:28:29 -0700
+Message-Id: <20190605232837.31545-1-satyat@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
+Subject: [RFC PATCH v2 0/8] Inline Encryption Support
+From:   Satya Tangirala <satyat@google.com>
+To:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Parshuram Raju Thombare <pthombar@cadence.com>,
+        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Satya Tangirala <satyat@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+This patch series adds support for Inline Encryption to the block layer,
+UFS, fscrypt and f2fs.
 
-> Right. You're mixing the kind of things that can generate events,
-> and that makes having a single policy difficult.
+Inline Encryption hardware allows software to specify an encryption context
+(an encryption key, crypto algorithm, data unit num, data unit size, etc.)
+along with a data transfer request to a storage device, and the inline
+encryption hardware will use that context to en/decrypt the data. The
+inline encryption hardware is part of the storage device, and it
+conceptually sits on the data path between system memory and the storage
+device. Inline Encryption hardware has become increasingly common, and we
+want to support it in the kernel.
 
-Whilst that's true, the notifications are clearly marked as to type, so it
-should be possible to select different policies for different notification
-types.
+Inline Encryption hardware implementations often function around the
+concept of a limited number of "keyslots", which can hold an encryption
+context each. The storage device can be directed to en/decrypt any
+particular request with the encryption context stored in any particular
+keyslot.
 
-Question for you: what does the LSM *actually* need?  There are a bunch of
-things available, some of which may be the same thing:
+Patch 1 introduces a Keyslot Manager to efficiently manage keyslots.
+The keyslot manager also functions as the interface that blk-crypto
+(introduced in Path 3), will use to program keys into inline encryption
+hardware. For more information on the Keyslot Manager, refer to
+documentation found in block/keyslot-manager.c and linux/keyslot-manager.h.
 
- (1) The creds of the process that created a watch_queue (ie. opened
-     /dev/watch_queue).
+Patch 2 introduces struct bio_crypt_ctx, and a ptr to one in struct bio,
+which allows struct bio to represent an encryption context that can be
+passed down the storage stack from the filesystem layer to the storage
+driver.
 
- (2) The creds of the process that set a watch (ie. called sb_notify,
-     KEYCTL_NOTIFY, ...);
+Patch 3 introduces blk-crypto. Blk-crypto delegates crypto operations to
+inline encryption hardware when available, and also contains a software
+fallback to the kernel crypto API. Blk-crypto also makes it possible for
+layered devices like device mapper to make use of inline encryption
+hardware. Given that blk-crypto works as a software fallback, we are
+considering removing file content en/decryption from fscrypt and simply
+using blk-crypto in a future patch. For more details on blk-crypto, refer
+to Documentation/block/blk-crypto.txt.
 
- (3) The creds of the process that tripped the event (which might be the
-     system).
+Patches 4-6 add support for inline encryption into the UFS driver according
+to the JEDEC UFS HCI v2.1 specification. Inline encryption support for
+other drivers (like eMMC) may be added in the same way - the device driver
+should set up a Keyslot Manager in the device's request_queue (refer to
+the UFS crypto additions in ufshcd-crypto.c and ufshcd.c for an example).
 
- (4) The security attributes of the object on which the watch was set (uid,
-     gid, mode, labels).
+Patches 7 and 8 add support to fscrypt and f2fs, so that we have
+a complete stack that can make use of inline encryption.
 
- (5) The security attributes of the object on which the event was tripped.
+There have been a few patch sets addressing Inline Encryption Support in
+the past. Briefly, this patch set differs from those as follows:
 
- (6) The security attributes of all the objects between the object in (5) and
-     the object in (4), assuming we work from (5) towards (4) if the two
-     aren't coincident (WATCH_INFO_RECURSIVE).
+1) "crypto: qce: ice: Add support for Inline Crypto Engine"
+is specific to certain hardware, while our patch set's Inline
+Encryption support for UFS is implemented according to the JEDEC UFS
+specification.
 
-At the moment, when post_one_notification() wants to write a notification into
-a queue, it calls security_post_notification() to ask if it should be allowed
-to do so.  This is passed (1) and (3) above plus the notification record.
+2) "scsi: ufs: UFS Host Controller crypto changes" registers inline
+encryption support as a kernel crypto algorithm. Our patch views inline
+encryption as being fundamentally different from a generic crypto
+provider (in that inline encryption is tied to a device), and so does
+not use the kernel crypto API to represent inline encryption hardware.
 
-The only problem I really have is that for a destruction message you want to
-get the creds of who did the last put on an object and caused it to be
-destroyed - I think everything else probably gets the right creds, even if
-they aren't even in the same namespaces (mount propagation, yuck).
+3) "scsi: ufs: add real time/inline crypto support to UFS HCD" requires
+the device mapper to work - our patch does not.
 
-However, that one is a biggie because close()/exit() must propagate it to
-deferred-fput, which must propagate it to af_unix-cleanup, and thence back to
-deferred-fput and thence to implicit unmount (dissolve_on_fput()[*]).
+Changes v1 => v2:
+ - Block layer and UFS changes are split into 3 patches each.
+ - We now only have a ptr to a struct bio_crypt_ctx in struct bio, instead
+   of the struct itself.
+ - struct bio_crypt_ctx no longer has flags.
+ - blk-crypto now correctly handles the case when it fails to init
+   (because of insufficient memory), but kernel continues to boot.
+ - ufshcd-crypto now works on big endian cpus.
+ - Many cleanups.
 
-[*] Though it should be noted that if this happens, the subtree cannot be
-    attached to the root of a namespace.
+Satya Tangirala (8):
+  block: Keyslot Manager for Inline Encryption
+  block: Add encryption context to struct bio
+  block: blk-crypto for Inline Encryption
+  scsi: ufs: UFS driver v2.1 spec crypto additions
+  scsi: ufs: UFS crypto API
+  scsi: ufs: Add inline encryption support to UFS
+  fscrypt: wire up fscrypt to use blk-crypto
+  f2fs: Wire up f2fs to use inline encryption via fscrypt
 
-> > In any case, that's what I was referring to when I said I might need to call
-> > inode_permission().  But UIDs don't exist for all filesystems, for example,
-> > and there are no UIDs on superblocks, mount objects or hardware events.
-> 
-> If you open() or stat() a file on those filesystems the UID
-> used in the access control comes from somewhere. Setting a watch
-> on things with UIDs should use the access mode on the file,
-> just like any other filesystem operation.
+ Documentation/block/blk-crypto.txt | 185 ++++++++++
+ block/Kconfig                      |   8 +
+ block/Makefile                     |   2 +
+ block/bio.c                        |  17 +-
+ block/blk-core.c                   |  11 +-
+ block/blk-crypt-ctx.c              |  90 +++++
+ block/blk-crypto.c                 | 557 +++++++++++++++++++++++++++++
+ block/blk-merge.c                  |  34 +-
+ block/bounce.c                     |   9 +-
+ block/keyslot-manager.c            | 315 ++++++++++++++++
+ drivers/md/dm.c                    |  15 +-
+ drivers/scsi/ufs/Kconfig           |  10 +
+ drivers/scsi/ufs/Makefile          |   1 +
+ drivers/scsi/ufs/ufshcd-crypto.c   | 438 +++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd-crypto.h   |  69 ++++
+ drivers/scsi/ufs/ufshcd.c          |  84 ++++-
+ drivers/scsi/ufs/ufshcd.h          |  23 ++
+ drivers/scsi/ufs/ufshci.h          |  67 +++-
+ fs/crypto/Kconfig                  |   7 +
+ fs/crypto/bio.c                    | 159 ++++++--
+ fs/crypto/crypto.c                 |   9 +
+ fs/crypto/fscrypt_private.h        |  10 +
+ fs/crypto/keyinfo.c                |  69 ++--
+ fs/crypto/policy.c                 |  10 +
+ fs/f2fs/data.c                     |  77 +++-
+ fs/f2fs/super.c                    |   1 +
+ include/linux/bio.h                | 180 ++++++++++
+ include/linux/blk-crypto.h         |  40 +++
+ include/linux/blk_types.h          |  39 ++
+ include/linux/blkdev.h             |   9 +
+ include/linux/fscrypt.h            |  64 ++++
+ include/linux/keyslot-manager.h    | 116 ++++++
+ include/uapi/linux/fs.h            |  12 +-
+ 33 files changed, 2668 insertions(+), 69 deletions(-)
+ create mode 100644 Documentation/block/blk-crypto.txt
+ create mode 100644 block/blk-crypt-ctx.c
+ create mode 100644 block/blk-crypto.c
+ create mode 100644 block/keyslot-manager.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
+ create mode 100644 include/linux/blk-crypto.h
+ create mode 100644 include/linux/keyslot-manager.h
 
-Another question for you: Do I need to let the LSM pass judgement on a watch
-that a process is trying to set?  I think I probably do.  This would require
-separate hooks for different object types:
+-- 
+2.22.0.rc1.311.g5d7573a151-goog
 
-	int security_watch_key(struct watch *watch, struct key *key);
-	int security_watch_sb(struct watch *watch, struct path *path);
-	int security_watch_mount(struct watch *watch, struct path *path);
-	int security_watch_devices(struct watch *watch);
-
-so that the LSM can see the object the watch is being placed on (the last has
-a global queue, so there is no object).  
-
-Further, do I need to put a "void *security" pointer in struct watch and
-indicate to the LSM the object bring watched?  The watch could then be passed
-to security_post_notification() instead of the watch queue creds (which I
-could then dispense with).
-
-	security_post_notification(const struct watch *watch,
-				   const struct cred *trigger_cred,
-				   struct watch_notification *n);
-
-
-Also, should I let the LSM audit/edit the filter set by
-IOC_WATCH_QUEUE_SET_FILTER?  Userspace can't retrieve the filter, so the LSM
-could edit it to exclude certain things.  That might be a bit too complicated,
-though.
-
-> Things like superblocks are sticker because we don't generally
-> think of them as objects. If you can do statfs(), you should be
-> able to set a watch on the filesystem metadata.
-> 
-> How would you specify a watch for a hardware event? If you say
-> you have to open /dev/mumble to sent a watch for mumbles, you're
-> good there, too.
-
-That's not how that works at the moment.  There's a global watch list for
-device events.  I've repurposed it to carry any device's events - so it will
-carry blockdev events (I/O errors only at the moment) and usb events
-(add/remove device, add/remove bus, reset device at the moment).
-
-> > Now, I could see that you ignore UIDs on things like keys and
-> > hardware-triggered events, but how does this interact with things like mount
-> > watches that see directories that have UIDs?
-> >
-> > Are you advocating making it such that process B can only see events
-> > triggered by process A if they have the same UID, for example?
-> 
-> It's always seemed arbitrary to me that you can't open your process up to
-> get signals from other users. What about putting mode bits on your ring
-> buffer? By default you could only accept your own events, but you could do a
-> rb_chmod(0222) and let all events through.
-
-Ummm...  This mechanism is pretty much about events generated by others.
-Depend on what you mean by 'you' and 'your own events', it might be considered
-that you would know what events you were directly causing and wouldn't need a
-notification system for it.
-
-> Subject to LSM addition restrictions, of course. That would require the cred
-> of the process that triggered the event or a system cred for "hardware"
-> events.  If you don't like mode bits you could use an ACL for fine
-> granularity or a single "let'em all in" bit for coarse.
-
-I'm not entirely sure how an ACL would help.  If someone creates a watch
-queue, sets an ACL with only a "let everything in" ACE, we're back to the
-situation we're in now.
-
-As I understand it, the issue you have is stopping them getting events that
-they're willing to accept that you think they shouldn't be allowed.
-
-> I'm not against access, I'm against uncontrolled access in conflict with
-> basic system policy.
-
-David
