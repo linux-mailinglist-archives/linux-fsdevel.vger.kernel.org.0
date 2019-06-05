@@ -2,113 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10F6F358D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 10:42:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA5DA358FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 10:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbfFEIlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jun 2019 04:41:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33614 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbfFEIlo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jun 2019 04:41:44 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0AB11B9AD5;
-        Wed,  5 Jun 2019 08:41:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BEF6160576;
-        Wed,  5 Jun 2019 08:41:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com>
-References: <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com> <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk> <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com, Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
+        id S1726715AbfFEIup (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jun 2019 04:50:45 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37690 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbfFEIuo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 Jun 2019 04:50:44 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w13so4661250eds.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2019 01:50:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SPhbPJ47CtSYCBTvHx6NT8w22SsIwvmm0sTowytpOvY=;
+        b=b4hAMc3cyhUVrpfO056HUsqANIDNtOJzNIxYmUjg3kFL6ivJcG9d5x9jYQ6mj/Okqj
+         bYbGDAN5JmEHsYp7cjELKeZ4XDR6lxAIkBEXSRt3YEddmYUAY+rn26HAqwM2FbwDBLn2
+         gDYhRD0HK8PtizAVlZQZTGo6Yidpxb7V0WhoQ0CLOvQG/lPPmPgLnOq2PBdhGSoyVXYX
+         Gz2khrcvdmlOyI/2cv4QmA4ePF8peqN6n82MV9RSpMmio6sIGMCWuITUHjLAM35sb7SE
+         OUhgI9ieiZ5fTTw9kfnlX/qm28JMfuMJWTlWCJXVb3pcslkTfJGODSAt6rOBg3S928+n
+         QAyw==
+X-Gm-Message-State: APjAAAV6CRD4rh0tXU0nucDEpQH2WcHZT2W/gQCtX9iqP+ifcIWcewVe
+        KQ1SCxE3er3fbbXs5ZEk4Ya9HoJBSWw=
+X-Google-Smtp-Source: APXvYqwUPIdyPgk5MNMujXygGEaMPAPqOsDfvm7cUFqVgOw78DlBgsGUutTNtZO9IiuMa08ATzEC3Q==
+X-Received: by 2002:a17:906:7ad8:: with SMTP id k24mr4165175ejo.188.1559724641771;
+        Wed, 05 Jun 2019 01:50:41 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id c10sm1555297edk.80.2019.06.05.01.50.40
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 01:50:41 -0700 (PDT)
+Subject: Re: [PATCH v10] fs: Add VirtualBox guest shared folder (vboxsf)
+ support
+To:     David Howells <dhowells@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+References: <20190418100412.19016-2-hdegoede@redhat.com>
+ <20190418100412.19016-1-hdegoede@redhat.com>
+ <19229.1559051752@warthog.procyon.org.uk>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <8828673a-7107-dfd7-86fb-0837863a510d@redhat.com>
+Date:   Wed, 5 Jun 2019 10:50:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <20191.1559724094.1@warthog.procyon.org.uk>
-Date:   Wed, 05 Jun 2019 09:41:34 +0100
-Message-ID: <20192.1559724094@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 05 Jun 2019 08:41:44 +0000 (UTC)
+In-Reply-To: <19229.1559051752@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+Hi David,
 
-> I will try to explain the problem once again. If process A
-> sends a signal (writes information) to process B the kernel
-> checks that either process A has the same UID as process B
-> or that process A has privilege to override that policy.
-> Process B is passive in this access control decision, while
-> process A is active. In the event delivery case, process A
-> does something (e.g. modifies a keyring) that generates an
-> event, which is then sent to process B's event buffer.
+Thank you for the review.
 
-I think this might be the core sticking point here.  It looks like two
-different situations:
+On 28-05-19 15:55, David Howells wrote:
+> Hans de Goede <hdegoede@redhat.com> wrote:
+> 
+>> +	params.create_flags = 0
+>> +	    | SHFL_CF_DIRECTORY
+>> +	    | SHFL_CF_ACT_OPEN_IF_EXISTS
+>> +	    | SHFL_CF_ACT_FAIL_IF_NEW | SHFL_CF_ACCESS_READ;
+> 
+> The 0 here would seem to be superfluous.  Also, most common practice in the
+> kernel would put the binary operator at the end of the preceding line.
 
- (1) A explicitly sends event to B (eg. signalling, sendmsg, etc.)
+Ack, will fix for the next version.
 
- (2) A implicitly and unknowingly sends event to B as a side effect of some
-     other action (eg. B has a watch for the event A did).
+>> +/**
+>> + * This is called when reference count of [file] goes to zero. Notify
+>> + * the host that it can free whatever is associated with this directory
+>> + * and deallocate our own internal buffers
+>> + * Return: 0 or negative errno value.
+>> + * @inode	inode
+>> + * @file	file
+>> + */
+>> +static int sf_dir_release(struct inode *inode, struct file *file)
+> 
+> I'm pretty certain most of your kdoc comments are invalid, but I could be
+> wrong.  Shouldn't this be:
+> 
+> 	/**
+> 	 * name_of_function - Brief description
+> 	 * @arg1: Summary arg 1
+> 	 * @arg2: Summary arg 2
+> 	 * @arg3: Summary arg 3
+> 	 *
+> 	 * Description...
+> 	 */
+> 	type name_of_function(type arg1, type arg2, type arg3)
+> 	{
+> 		...
+> 	}
 
-The LSM treats them as the same: that is B must have MAC authorisation to send
-a message to A.
+Right, this code is derived from the out of tree vboxsf code from
+VirtualBox upstream, which uses doxygen comments. I did not want to
+just rip the comments out so I've tried to convert them to kerneldoc
+style (note no docs are built from them). But you are right, my
+conversion is incomplete. I will fix this for the next version.
 
-But there are problems with not sending the event:
+>> +static int sf_get_d_type(u32 mode)
+> 
+> unsigned int would be preferable, I think.
 
- (1) B's internal state is then corrupt (or, at least, unknowingly invalid).
+Ack, will fix for the next version.
 
- (2) B can potentially figure out that the event happened by other means.
+>> + * Return: 0 or negative errno value.
+>> ...
+>> +static int sf_getdent(struct file *dir, loff_t pos,
+>> +		      char d_name[NAME_MAX], int *d_type)
+>> ...
+>> +	return 1;
+> 
+> The return value is not concordant with the function description.
+
+Ack, will fix for the next version.
+
+>> + * This is called when vfs wants to populate internal buffers with
+>> + * directory [dir]s contents.
+> 
+> I would say "the directory" rather than "directory [dir]s".  It's fairly
+> obvious what the definite article refers to in this case.
+> 
+>> [opaque] is an argument to the
+>> + * [filldir]. [filldir] magically modifies it's argument - [opaque]
+>> + * and takes following additional arguments (which i in turn get from
+>> + * the host via sf_getdent):
+> 
+> opaque and filldir no longer exist.
+> 
+>> + * name : name of the entry (i must also supply it's length huh?)
+>> + * type : type of the entry (FILE | DIR | etc) (i ellect to use DT_UNKNOWN)
+>> + * pos : position/index of the entry
+>> + * ino : inode number of the entry (i fake those)
+> 
+> I would indent these more (use a tab after the '*' rather than a space).
+
+Right this comment has become a bit stale, will fix.
+
+>> +		/* d_name now contains a valid entry name */
+>> +		sanity = ctx->pos + 0xbeef;
+>> +		fake_ino = sanity;
+>> +		/*
+>> +		 * On 32 bit systems pos is 64 signed, while ino is 32 bit
+>> +		 * unsigned so fake_ino may overflow, check for this.
+>> +		 */
+>> +		if (sanity - fake_ino) {
+> 
+> Ugh.  Why '0xbeef'?  Why not '1'?  I wonder if:
+> 
+> 	if ((ino_t)(ctx->pos + 1) != (unsigned long long)(ctx->pos + 1))
+> 
+> would work.
+
+Yes I believe that that should work fine, will fix.
+
+>> +/* Query mappings changes. */
+>> +#define SHFL_FN_QUERY_MAPPINGS      (1)
+>> +/* Query mappings changes. */
+>> +#define SHFL_FN_QUERY_MAP_NAME      (2)
+>> ...
+> 
+> Enumify?
+
+Ack, will fix.
+
+>> +#define SHFL_ROOT_NIL ((u32)~0)
+> 
+> UINT_MAX?
+> 
+>> +#define SHFL_HANDLE_NIL  ((u64)~0LL)
+> 
+> ULONGLONG_MAX?
+
+ULLONG_MAX, otherwise ack, will fix both.
 
 
-I've implemented four event sources so far:
+>> +/** Shared folder filesystem properties. */
+>> +struct shfl_fsproperties {
+>> ...
+>> +};
+>> +VMMDEV_ASSERT_SIZE(shfl_fsproperties, 12);
+> 
+> Should this be __packed given the size assertion?
 
- (1) Keys/keyrings.  You can only get events on a key you have View permission
-     on and the other process has to have write access to it, so I think this
-     is good enough.
+AFAICT packing it would give it a size of 10, 4 for
+the u32 + 6 bytes for the bools. So I'm keeping this
+as is.
 
- (2) Block layer.  Currently this will only get you hardware error events,
-     which is probably safe.  I'm not sure you can manipulate those without
-     permission to directly access the device files.
+>> +static const match_table_t vboxsf_tokens = {
+>> +	{ opt_nls, "nls=%s" },
+>> +	{ opt_uid, "uid=%u" },
+>> +	{ opt_gid, "gid=%u" },
+>> +	{ opt_ttl, "ttl=%u" },
+>> +	{ opt_dmode, "dmode=%o" },
+>> +	{ opt_fmode, "fmode=%o" },
+>> +	{ opt_dmask, "dmask=%o" },
+>> +	{ opt_fmask, "fmask=%o" },
+>> +	{ opt_error, NULL },
+>> +};
+> 
+> This needs converting to the new mount API.  See:
+> 
+> 	Documentation/filesystems/mount_api.txt
+> 
+>> +	if (options[0] == VBSF_MOUNT_SIGNATURE_BYTE_0 &&
+>> +	    options[1] == VBSF_MOUNT_SIGNATURE_BYTE_1 &&
+>> +	    options[2] == VBSF_MOUNT_SIGNATURE_BYTE_2 &&
+>> +	    options[3] == VBSF_MOUNT_SIGNATURE_BYTE_3) {
+>> +		vbg_err("vboxsf: Old binary mount data not supported, remove obsolete mount.vboxsf and/or update your VBoxService.\n");
+>> +		return -EINVAL;
+>> +	}
+> 
+> This bit should go in your ->parse_monolithic() method.
 
- (3) Superblock.  This is trickier since it can see events that can be
-     manufactured (R/W <-> R/O remounting, EDQUOT) as well as events that
-     can't without hardware control (EIO, network link loss, RF kill).
+Ok, I will start working on converting it to the new mount
+API and once that is done and tested I will post a new version.
 
- (4) Mount topology.  This is the trickiest since it allows you to see events
-     beyond the point at which you placed your watch (in essence, you place a
-     subtree watch).
+Regards,
 
-     The question is what permission checking should I do?  Ideally, I'd
-     emulate a pathwalk between the watchpoint and the eventing object to see
-     if the owner of the watchpoint could reach it.
-
-     I'd need to do a reverse walk, calling inode_permission(MAY_NOT_BLOCK)
-     for each directory between the eventing object and the watchpoint to see
-     if one rejects it - but some filesystems have a permission check that
-     can't be called in this state.
-
-     It would also be necessary to do this separately for each watchpoint in
-     the parental chain.
-
-     Further, each permissions check would generate an audit event and could
-     generate FAN_ACCESS and/or FAN_ACCESS_PERM fanotify events - which could
-     be a problem if fanotify is also trying to post those events to the same
-     watch queue.
-
-David
+Hans
