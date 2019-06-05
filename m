@@ -2,192 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD01B35E7E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 15:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA26F35E67
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 15:54:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbfFEN7B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jun 2019 09:59:01 -0400
-Received: from ucol19pa14.eemsg.mail.mil ([214.24.24.87]:46027 "EHLO
-        ucol19pa14.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbfFEN7B (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:59:01 -0400
-X-Greylist: delayed 651 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jun 2019 09:59:00 EDT
-X-EEMSG-check-017: 712589965|UCOL19PA14_EEMSG_MP12.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.60,550,1549929600"; 
-   d="scan'208";a="712589965"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by ucol19pa14.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 05 Jun 2019 13:48:01 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1559742481; x=1591278481;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=IbC0QjIIeqNUmaNcqRr9rxsTlp++w3u3m5omino7yeo=;
-  b=KhEXLfNvUmH6xoZn+fMWBR51MNdNwOmuDgYWCFbXM9bVavwdR0IrU1x5
-   NT5uOH89s4OGNmHJkNeoK7R0aLblo7SoMx9/KDj9kbMX/K6wzRvsnxET9
-   Hy7fWMBu8n8fGvzB94gZNV1XtMJYUQ4XabEb3qWU99g3aCREKdJhU6sJi
-   OiKo/C6DEk078hwNZlztLuJ0NDTOOJHiUfd6Rmm/9BKuikwwv/NyXcH1s
-   etHY6OxoGMY478mQ983kElTx/B2CKeFJDuKrp4w1bX3QE3L7Q7r2AESPJ
-   8fdODfmphKI0ht/NhBnst2jf+zySiulk9fV88xD6lgnwQAnjN08B3nUbh
-   g==;
-X-IronPort-AV: E=Sophos;i="5.60,550,1549929600"; 
-   d="scan'208";a="24419018"
-IronPort-PHdr: =?us-ascii?q?9a23=3A1yLf9h0XC9sK0c2AsmDT+DRfVm0co7zxezQtwd?=
- =?us-ascii?q?8ZsesQK/nxwZ3uMQTl6Ol3ixeRBMOHsqsC0raM+P6xEUU7or+5+EgYd5JNUx?=
- =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
- =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCegbb9oMRm7ohvdusYXjIZmN6081g?=
- =?us-ascii?q?bHrnxUdupM2GhmP0iTnxHy5sex+J5s7SFdsO8/+sBDTKv3Yb02QaRXAzo6PW?=
- =?us-ascii?q?814tbrtQTYQguU+nQcSGQWnQFWDAXD8Rr3Q43+sir+tup6xSmaIcj7Rq06VD?=
- =?us-ascii?q?i+86tmTgLjhTwZPDAl7m7Yls1wjLpaoB2/oRx/35XUa5yROPZnY6/RYc8WSW?=
- =?us-ascii?q?9HU8lfTSxBBp63YZUJAeQPIO1Uq5Dxq0UKoBe7AwSnGeHhxSJShnLuwKM0ze?=
- =?us-ascii?q?ohHwHF0gIuEd0Bv3bbo8n6OqoJTeC4zrPFwSnfY/5Y2zrw7pXDfBA7ofGLWL?=
- =?us-ascii?q?J9adffyVUxGAPdjlWft4rlNC6I2OQIqWeb6+5gWvyvimU6rAxxuSWgxtw3h4?=
- =?us-ascii?q?nVhoMa1lDE9SJjzIYzPt23UlR3YdGjEJtOriyXMZZ9TMA6Q2xwpSo3xbILtY?=
- =?us-ascii?q?S7cSQX0pgr2RHSZ+Kdf4SV5B/oSfyfLi1ihH1/fbKynxOy8U+9xeLiTsS0y1?=
- =?us-ascii?q?NKrjZdktnLq3ANywTf6siZRft5+UeswSqP2BrJ6uFFPEA0jrDXK4Ihw7Eslp?=
- =?us-ascii?q?oTtl7PHinql0XtkKCabEAk+ums6+j/Y7XmoIGTN5Nshw3jPakjldazDOQlPg?=
- =?us-ascii?q?QUQWSW9vqw2Kf+8UHhRbVFlPw2kq3XsJDAIsQbo7a0AxRI3YY48Bu/Ezen38?=
- =?us-ascii?q?gYnXkANl5FfgmHgJLzN1HBJ/D4E++zg06wnzdz2/DGIrrhD43JLnjejLfheq?=
- =?us-ascii?q?1w601Cxwopy9BQ+ZZUBqsGIPLpVU/7rMbYAQMhMwyo3+bnD81w1pgCWW2RGq?=
- =?us-ascii?q?+ZML3dsVmS6uI0JumDfosVuDLjJPkl/PPugno5lkUcfamtx5cYdHe4HvF+KU?=
- =?us-ascii?q?WDfXXsmssBEXsNvgcmUePqiFqCUDBNaHa2W6I8/So2CJi4AojeRoCimqCB0D?=
- =?us-ascii?q?2nEZ1RY2BMEkqMHmvwd4WYR/cMbzqfItFgkjweUrisUI4g2g+otA/71bprNO?=
- =?us-ascii?q?7U+iwetZL+29l5/erTlQs99TBuEsSd0HmHT3tokWMQWz82wKd/rFRhxViZyq?=
- =?us-ascii?q?h3nfxZGMdI5/xVUgc1L4Pcz+J+C9/sQALNZ8uGR0y8Ttq6BjExS8o7w8USbE?=
- =?us-ascii?q?ZlB9WikhfD0jKwA7APibyEGpo0/7nA33jxOcl9zmzJ1ac7g1kgXMRPKXWshr?=
- =?us-ascii?q?Rj+AjLG47Jj0KZmr6udaQd2i7N6WiCwXOAvEFDTQF/T7vFUm4bZkbNs9T56V?=
- =?us-ascii?q?3NT6W0BbQkLARB08iCJbVOatHzilVGXvjjMszEY22tg2ewGQqIxrSUYYruem?=
- =?us-ascii?q?Ud2jjdCUcdnw8J5XaGNBMzBjmuo23AFjxiD1HvbF328el4tny7SlU4zwaQb0?=
- =?us-ascii?q?1uz7C14AIaheSAS/MP2bIJoCMhqzRyHFag0NPaEsGPpw5mfKpAYtMw+0lH1W?=
- =?us-ascii?q?3HuAxnJJCgLL5thkQYcwtpu0PizRJ3Cp9PkcIytnMl0BJyKb6E0FNGbz6Y3o?=
- =?us-ascii?q?7/O73NKmnz+hCvZLXW10rA0NaZ5KgP8u40q1b9swGzEEot7XFn38NS03uG6Z?=
- =?us-ascii?q?XAFBASXo7pUkYr6xh6oKnXYi0854PSyH1tPrC4siTc1N01Gesl0Begf8tfMa?=
- =?us-ascii?q?+dEQ/yFNAVB9WqKOM0gFWpcB0EM/5I9KIuPMOpaeGG2Ki1M+Zkhj6min5H4I?=
- =?us-ascii?q?9l2EKW6yV8UvLI34oCw/yA2guHVjH8jEqus8zumoBLeysSHmyhxijgH4NReK?=
- =?us-ascii?q?JycpgRCWu0IM242M9+h5jzVH5c7lKjAEkG2MCxcxqIc1P9xRFQ1VgQoXG/gS?=
- =?us-ascii?q?u31SF0kzUyo6qHxiPO3uDieAMCOm5MQ2lil0njLZKogNAdWUj7JzQuwTKj6V?=
- =?us-ascii?q?ey47VHo6F+NXLQQA8cezXqKElhX7G2u77EZNRAvtdgijlaSOSxZxihT7f5px?=
- =?us-ascii?q?YLm3f4A2ZGxD09MSqvs5H9kg1Sh2eULXI1p33cL5Je3xDasefASOZR0zxOfy?=
- =?us-ascii?q?xxjT3aFxDoJNWy1cmFnJfE9OalXiSuUYMFInqj9p+JqCbuvT4iOha4hf3m34?=
- =?us-ascii?q?S9QAU=3D?=
-X-IPAS-Result: =?us-ascii?q?A2CPAADkxvdc/wHyM5BmGgEBAQEBAgEBAQEHAgEBAQGBZ?=
- =?us-ascii?q?YFnKoE3BTIohBSScU4BAQEBBoE1iUIOjyKBZwkBAQEBAQEBAQE0AQIBAYRAA?=
- =?us-ascii?q?oJWIzgTAQMBAQEEAQEBAQMBAWwogjopAYJmAQEBAQIBIwQRPwIFCwsOCgICJ?=
- =?us-ascii?q?gICITYGAQkDBgIBAYJTDD+BawMJBQ+mN34zhUeCNw1dgUaBDCiLWxd4gQeBO?=
- =?us-ascii?q?II9Lj6CGoF3ARIBgymCWASIPYMDgjGGDYEnky0+CYIQghqMaE6DZAYbgiOKe?=
- =?us-ascii?q?YljjQ6Ic49LIWdxKwgCGAghD4MnghsXjjwjAzCBBgEBjEcNFwEGgiUBAQ?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 05 Jun 2019 13:48:00 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x55Dlut7004801;
-        Wed, 5 Jun 2019 09:47:58 -0400
-Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver
- #2]
-To:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <stephen.smalley@gmail.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>
-References: <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
- <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
- <1207.1559680778@warthog.procyon.org.uk>
- <CALCETrXmjpSvVj_GROhgouNtbzLm5U9B4b364wycMaqApqDVNA@mail.gmail.com>
- <CAB9W1A0AgMYOwGx9c-TmAt=1O6Bjsr2P3Nhd=2+QV39dgw0CrA@mail.gmail.com>
- <CALCETrU_5djawkwW-GRyHZXHwOUjaei1Cp7NEJaVFDm_bK6G3w@mail.gmail.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <5a3353d3-3b88-6c0f-147b-6b9e2ac17773@tycho.nsa.gov>
-Date:   Wed, 5 Jun 2019 09:47:56 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728199AbfFENyH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jun 2019 09:54:07 -0400
+Received: from foss.arm.com ([217.140.101.70]:60536 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726442AbfFENyG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 Jun 2019 09:54:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32A8180D;
+        Wed,  5 Jun 2019 06:54:05 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 455D73F246;
+        Wed,  5 Jun 2019 06:54:04 -0700 (PDT)
+Date:   Wed, 5 Jun 2019 14:54:01 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: "Dentry still in use" splats in v5.2-rc3
+Message-ID: <20190605135401.GB30925@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrU_5djawkwW-GRyHZXHwOUjaei1Cp7NEJaVFDm_bK6G3w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/5/19 12:19 AM, Andy Lutomirski wrote:
-> On Tue, Jun 4, 2019 at 6:18 PM Stephen Smalley
-> <stephen.smalley@gmail.com> wrote:
->>
->> On Tue, Jun 4, 2019 at 4:58 PM Andy Lutomirski <luto@kernel.org> wrote:
->>>
->>> On Tue, Jun 4, 2019 at 1:39 PM David Howells <dhowells@redhat.com> wrote:
->>>>
->>>> Andy Lutomirski <luto@kernel.org> wrote:
->>>>
->>>>>> Here's a set of patches to add a general variable-length notification queue
->>>>>> concept and to add sources of events for:
->>>>>
->>>>> I asked before and didn't see a response, so I'll ask again.  Why are you
->>>>> paying any attention at all to the creds that generate an event?
->>>>
->>>> Casey responded to you.  It's one of his requirements.
->>>>
->>>
->>> It being a "requirement" doesn't make it okay.
->>>
->>>> However, the LSMs (or at least SELinux) ignore f_cred and use current_cred()
->>>> when checking permissions.  See selinux_revalidate_file_permission() for
->>>> example - it uses current_cred() not file->f_cred to re-evaluate the perms,
->>>> and the fd might be shared between a number of processes with different creds.
->>>
->>> That's a bug.  It's arguably a rather severe bug.  If I ever get
->>> around to writing the patch I keep thinking of that will warn if we
->>> use creds from invalid contexts, it will warn.
->>
->>
->> No, not a bug.  Working as designed. Initial validation on open, but revalidation upon read/write if something has changed since open (process SID differs from opener, inode SID has changed, policy has changed). Current subject SID should be used for the revalidation. It's a MAC vs DAC difference.
->>
-> 
-> Can you explain how the design is valid, then?  Consider nasty cases like this:
-> 
-> $ sudo -u lotsofgarbage 2>/dev/whatever
+Hi All,
 
-(sorry for the previous html email; gmail or my inability to properly 
-use it strikes again!)
+While fuzzing arm64 v5.2-rc3, Syzkaller started hitting splats of the
+form:
 
-Here we have four (or more) opportunities to say no:
-1) Upon selinux_inode_permission(), when checking write access to 
-/dev/whatever in the context of the shell process,
-2) Upon selinux_file_open(), when checking and caching the open and 
-write access for shell to /dev/whatever in the file security struct,
-3) Upon selinux_bprm_committing_creds() -> flush_unauthorized_files(), 
-when revalidating write access to /dev/whatever in the context of sudo,
-4) Upon selinux_file_permission() -> 
-selinux_revalidate_file_permission(), when revalidating write access to 
-/dev/whatever in the context of sudo.
+    BUG: Dentry (____ptrval____){i=1,n=/}  still in use (2) [unmount of bpf bpf]
 
-If any of those fail, then access is denied, so unless both the shell 
-and sudo are authorized to write to /dev/whatever, it is a no-go.  NB 
-Only the shell context requires open permission here; the sudo context 
-only needs write.
+... which I can reliably reproduce with the following C program
+(partially minimized from what Syzkaller auto-generated).
 
-> It is certainly the case that drivers, fs code, and other core code
-> MUST NOT look at current_cred() in the context of syscalls like
-> open().  Jann, I, and others have found quite a few rootable bugs of
-> this sort.  What makes MAC special here?
+It looks like any filesystem will do. I've seen splats with "bpf",
+"hugetlbfs", "rpc_pipefs", and "tmpfs", and can reproduce the problem
+with any of these.
 
-Do you mean syscalls like write(), not open()?  I think your concern is 
-that they apply some check only during write() and not open() and 
-therefore are susceptible to confused deputy scenario above.  In 
-contrast we are validating access at open, transfer/inherit, and use. If 
-we use file->f_cred instead of current_cred() in 
-selinux_revalidate_file_permission() and the current process SID differs 
-from that of the opener, we'll never apply a check for the actual 
-security context performing the write(), so information can flow in 
-violation of the MAC policy.
+Any ideas?
 
-> I would believe there are cases where auditing write() callers makes
-> some sense, but anyone reading those logs needs to understand that the
-> creds are dubious at best.
+I'm using the config from my fuzzing/5.2-rc3 branch on kernel.org [1].
+
+Thanks,
+Mark.
+
+----
+#include <unistd.h>
+#include <sys/syscall.h>
+
+/*
+ * NOTE: these are the arm64 numbers
+ */
+#ifndef __NR_fsconfig
+#define __NR_fsconfig 431
+#endif
+#ifndef __NR_fsmount
+#define __NR_fsmount 432
+#endif
+#ifndef __NR_fsopen
+#define __NR_fsopen 430
+#endif
+
+int main(void)
+{
+        int fs, mnt;
+
+        fs = syscall(__NR_fsopen, "bpf", 0);
+        syscall(__NR_fsconfig, fs, 6, 0, 0, 0);
+        mnt = syscall(__NR_fsmount, fs, 0, 0);
+        fchdir(mnt);
+
+        close(fs);
+        close(mnt);
+}
+
+----
+
+----
+[   29.746323][  T245] BUG: Dentry (____ptrval____){i=1,n=/}  still in use (2) [unmount of bpf bpf]
+[   29.748645][  T245] WARNING: CPU: 3 PID: 245 at fs/dcache.c:1529 umount_check+0x170/0x1b8
+[   29.750313][  T245] CPU: 3 PID: 245 Comm: repro Not tainted 5.2.0-rc3-00004-gff694e8 #1
+[   29.752165][  T245] Hardware name: linux,dummy-virt (DT)
+[   29.753406][  T245] pstate: 80400005 (Nzcv daif +PAN -UAO)
+[   29.754640][  T245] pc : umount_check+0x170/0x1b8
+[   29.755708][  T245] lr : umount_check+0x170/0x1b8
+[   29.756821][  T245] sp : ffff8000647b7ac0
+[   29.757730][  T245] x29: ffff8000647b7ac0 x28: ffff20001073dc38 
+[   29.759047][  T245] x27: ffff8000666f4788 x26: ffff800064732040 
+[   29.760428][  T245] x25: ffff10000c8e6325 x24: ffff200014f62500 
+[   29.761755][  T245] x23: 0000000000000001 x22: ffff200015041e80 
+[   29.763061][  T245] x21: ffff8000647aec80 x20: 0000000000000002 
+[   29.764441][  T245] x19: ffff8000666f4788 x18: 0000000000000000 
+[   29.765764][  T245] x17: 0000000000000000 x16: 0000000000000000 
+[   29.767064][  T245] x15: 0000000000000000 x14: ffff200014f70788 
+[   29.768445][  T245] x13: 00000000f2000000 x12: ffff10000d566546 
+[   29.769774][  T245] x11: 1ffff0000d566545 x10: ffff10000d566545 
+[   29.771098][  T245] x9 : 1ffff0000d566545 x8 : dfff200000000000 
+[   29.772484][  T245] x7 : ffff10000d566546 x6 : ffff80006ab32a2f 
+[   29.773820][  T245] x5 : ffff10000d566546 x4 : ffff10000d566546 
+[   29.775155][  T245] x3 : 1fffe40002d30afc x2 : 24cbddc7f4015a00 
+[   29.776539][  T245] x1 : 0000000000000000 x0 : 000000000000004c 
+[   29.777868][  T245] Call trace:
+[   29.778598][  T245]  umount_check+0x170/0x1b8
+[   29.779574][  T245]  d_walk.part.2+0x100/0x6a0
+[   29.780610][  T245]  do_one_tree+0x34/0x58
+[   29.781577][  T245]  shrink_dcache_for_umount+0x60/0x110
+[   29.782752][  T245]  generic_shutdown_super+0x68/0x360
+[   29.783913][  T245]  kill_anon_super+0x44/0x70
+[   29.784932][  T245]  kill_litter_super+0x4c/0x60
+[   29.786054][  T245]  deactivate_locked_super+0x8c/0xf0
+[   29.787214][  T245]  deactivate_super+0xd8/0xf8
+[   29.788278][  T245]  cleanup_mnt+0x90/0x128
+[   29.789388][  T245]  __cleanup_mnt+0x1c/0x28
+[   29.790362][  T245]  task_work_run+0x124/0x198
+[   29.791374][  T245]  do_notify_resume+0x664/0x778
+[   29.792440][  T245]  work_pending+0x8/0x14
+[   29.793439][  T245] irq event stamp: 1502
+[   29.794374][  T245] hardirqs last  enabled at (1501): [<ffff2000102afd48>] console_unlock+0x700/0xcc0
+[   29.796424][  T245] hardirqs last disabled at (1502): [<ffff200010082110>] do_debug_exception+0x118/0x438
+[   29.798605][  T245] softirqs last  enabled at (1498): [<ffff200010083574>] __do_softirq+0xbc4/0x10c8
+[   29.800639][  T245] softirqs last disabled at (1443): [<ffff20001019f96c>] irq_exit+0x2c4/0x338
+[   29.802581][  T245] ---[ end trace cd8baed7622b7c8b ]---
+[   29.804034][  T245] VFS: Busy inodes after unmount of bpf. Self-destruct in 5 seconds.  Have a nice day...
+----
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git fuzzing/5.2-rc3
