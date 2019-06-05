@@ -2,149 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF673626B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 19:25:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 536BE362E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 19:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfFERZL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jun 2019 13:25:11 -0400
-Received: from mail-lj1-f169.google.com ([209.85.208.169]:46357 "EHLO
-        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbfFERZL (ORCPT
+        id S1726605AbfFERkf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jun 2019 13:40:35 -0400
+Received: from sonic317-38.consmr.mail.ne1.yahoo.com ([66.163.184.49]:43935
+        "EHLO sonic317-38.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726501AbfFERke (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jun 2019 13:25:11 -0400
-Received: by mail-lj1-f169.google.com with SMTP id m15so15595975ljg.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2019 10:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4dzrfT5QqLGh7VEyZ93DmM/B2JbZO0W27MdQC2tlHrw=;
-        b=FKQTQdRiCtVECI1Ss50LEAri2FoYB4zuECl4MbKr7V1HG+/fgvFHO/XCFc4PclJL0f
-         Wssk8CHwAJzxGg8oxI5A8N0uaT7yA0hPAHDf6vPUxygAINx56WVYQJa7UQsGrz55oPcZ
-         ZbjDGAg20qL59d3Au7EHam6sThq+5CJLZeVEk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4dzrfT5QqLGh7VEyZ93DmM/B2JbZO0W27MdQC2tlHrw=;
-        b=fdm6L95Zm/FB9p/fHVmOdZvGxt/BxdN8/sqX5jHKW7CMFo0vT7DUI3GkcC7CRPG/Tn
-         vcnwP5Fw7IOuTKRyXhmPlM5ETxTQFSTCEgyb2ZuOofuH1FIaf8lxuDW3imPj5ZbircFw
-         aBLcxEixg1Wf/2KUnsCGrhSRlrSwohN41H1hp/VY8P8xMFAv5Omj+BG5adZTsg/Yne1s
-         kQsrSmyiN6vwzGp7p6+fWRuVqORQRhP/p7bG1t31HHjnL1WBWgGFt+UAthgem4Kqc2TX
-         0PN0msM7KOPufhTWpZt6L87qGtoRfMLOCMkfMM7eIzeaFOsPpwFiTCbnbeeDRbWibjUu
-         WHuw==
-X-Gm-Message-State: APjAAAXGHwFW5uWG9Uat/l8LTr2Xwjoju1DJyMDie40OznrbTrKQp0U7
-        BJWM2m9GYWyt/RN8zHmSSfw6xoOOECY=
-X-Google-Smtp-Source: APXvYqxy1WU/sWfhxpEMOZ+hUcV6ZbcYTekHfgqG3AXRvVY4dCRMZpCnBIKSnzRWeEnUkI4l/aCSoA==
-X-Received: by 2002:a2e:9112:: with SMTP id m18mr22646137ljg.181.1559755508549;
-        Wed, 05 Jun 2019 10:25:08 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id z17sm1681801ljc.37.2019.06.05.10.25.04
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 10:25:04 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id r15so19685963lfm.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2019 10:25:04 -0700 (PDT)
-X-Received: by 2002:ac2:5601:: with SMTP id v1mr7944437lfd.106.1559755503740;
- Wed, 05 Jun 2019 10:25:03 -0700 (PDT)
+        Wed, 5 Jun 2019 13:40:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559756433; bh=FS6WCQ6HVfSkh3J0UVH/IQ/2GQPN/OqOn4OrRQ+6OPQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=ufZCMCLYUl6UAUQEZ3KwKtjlvoz9q4r9ng+4eMCv2rEiIYX7oay/xaodRzNTkCifF51hZl8jlW3oN2C6qa7dW3WUHZY+o4Tn66sRSvSympWZOl0sT2XbvAqTpjJ0NyaRW9DJtVgOCyCQlFXTW0S3aGgh5hiITnf77bQodv74HltngK+0ZuRrLTRCwJWfprdbevZCqClhBA35NFosV71oFJ2ChQnh2AmtQ5Jl5nRI2UG+sv5JvHLON+zK5Uskf+/F5z9j8+A74thssvcG//7zVcfTjBt+Uyya6VTzVVeGELyeD8zVR5FP9UngNpVOG8fgrcwsXl03i6IhH7F0vu28fQ==
+X-YMail-OSG: y_9fc_YVM1lWRx7mTBhYhhPz3g4wm.S1hP99Bt9EaKfswcAQnEuiquBxrNScDQG
+ p2sQbtG_v6KJa1C1v51ucqjjAN8TfgChJgQXOOP9gy0sPmLlKU3qYpoCUSI36QJmA4cGm3b7fl9r
+ .mixH0ZIkVz_TxtrwIrx2Tss4s9IPsMtJFrdyvROyhaZ4a5XWYn.6Nu52yRg347j4u4Rof_euj5j
+ eqXFO5zcHk9039gTnArU7rrZuRg6.KL13SBGPHfJstYnRq8ADV0qPbeU.qR7_kJz6ar3_ABxulZ0
+ 8UQzKeeRdQGxadia4tqzIfgTUNKv9kANU3O6q1fQtMDjbMRUpGCwXjBxjOG3sLT0sG8U2jxlu.i1
+ lZNPhrGReRptXcI.O_8wETnAAAogReR0EbYB9X3Do13.1GuU8bWyvo0G88asLXzgVtwJ9b0xTxGx
+ QblRMGFUrjLxlLiNpJYlYple2wTaaAf9d6NsI4_aECmnunj5txvZ3vea5M2CVHn4tOnkT7ibGF_g
+ 5w0yNwSBe9PTAwRSbGeG59dr7zovpy1.aI8gq5AiM3QiQSM5PDKq7oXgbc1IN77kWs.qL6Djc9V9
+ _Z7GbfBoTt3m6B96L0yxQ5g5xZ5iPyjloMHbQGInMdom_3fTOAbRRjWlgclWf7CDutcuVK3X5igZ
+ XLwfT8nR3o3JDrAumIy2R94lfK.EhH92jYgqDKCUD389UbKmnrr4yoomdNyGVvWiIZfDYedhqN26
+ FBT9jNc1h92D52KIX42d46I0hpUNX1ijRWLpVRGbkRF3wHpGXnHMiJCbjGYRw09s2_6TagIG82Fc
+ vD064Y3Sj.i1hrYG1w162kVOJc2KmT9I3nsOtUDOYCDDxmuV55NjxUh6nQIsUXQC65e5GRRp6L7o
+ ZJSFo_.XUPUvI8JsDBKgDWKey6peEnISfa3lVBsy0gY7gVHp0aszlLBu9swVEwZMbPazpG6opbNQ
+ RhHy3geMCHWEu9zI3P741z0iEkLwElmM2pw7lozE0tyxSMJCzxVIU2wtz7LWNEMAPzJHmy0Elj4o
+ JTZDE.y5NvmMPBocirK_YiuXe6KvM7FPIOHnp.OIXRjw8HdYbhAJQyvc4zojoIB7WCdoGaJVjcGC
+ giLAH04fcBd8Fw_ApRn2cL1_7z.nfgsWNEcJE6xMSY3K3oyVmLTNtR87jre5j09PfGTvtfCNmETE
+ mCcfLxQNB1.Ip86KUq2KZMYUpHTNTxi5HKhkvxG2XeltpOnCFyMpavVQpTIF6AJ288BJHUZ32dbh
+ HQWDUXNMYHz_NdY6OR.zl4XUt01HIPkbFkY1xsGQ-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Wed, 5 Jun 2019 17:40:33 +0000
+Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
+          by smtp420.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 28445be5e0da53369f19e049a63ecef3;
+          Wed, 05 Jun 2019 17:40:29 +0000 (UTC)
+Subject: Re: Rational model for UID based controls
+To:     David Howells <dhowells@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, casey@schaufler-ca.com
+References: <e4c19d1b-9827-5949-ecb8-6c3cb4648f58@schaufler-ca.com>
+ <50c2ea19-6ae8-1f42-97ef-ba5c95e40475@schaufler-ca.com>
+ <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
+ <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
+ <20192.1559724094@warthog.procyon.org.uk>
+ <18357.1559753807@warthog.procyon.org.uk>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <f19dcdb4-f934-34c2-f625-95c2c928d576@schaufler-ca.com>
+Date:   Wed, 5 Jun 2019 10:40:28 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com> <20190605155801.GA25165@redhat.com>
-In-Reply-To: <20190605155801.GA25165@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 5 Jun 2019 10:24:47 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjkNx8u4Mcm5dfSQKYQmLQAv1Z1yGLDZvty7BVSj4eqBA@mail.gmail.com>
-Message-ID: <CAHk-=wjkNx8u4Mcm5dfSQKYQmLQAv1Z1yGLDZvty7BVSj4eqBA@mail.gmail.com>
-Subject: Re: [PATCH -mm 0/1] signal: simplify set_user_sigmask/restore_user_sigmask
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, e@80x24.org,
-        Jason Baron <jbaron@akamai.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-aio@kvack.org, omar.kilani@gmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        stable <stable@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Laight <David.Laight@aculab.com>
-Content-Type: multipart/mixed; boundary="000000000000bcd942058a96e0bf"
+In-Reply-To: <18357.1559753807@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000bcd942058a96e0bf
-Content-Type: text/plain; charset="UTF-8"
-
-On Wed, Jun 5, 2019 at 8:58 AM Oleg Nesterov <oleg@redhat.com> wrote:
+On 6/5/2019 9:56 AM, David Howells wrote:
+> Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> To simplify the review, please see the code with this patch applied.
-> I am using epoll_pwait() as an example because it looks very simple.
+>> YES!
+> I'm trying to decide if that's fervour or irritation at this point ;-)
 
-I like it.
+I think I finally got the point that the underlying mechanism,
+direct or indirect, isn't the issue. It's the end result that
+matters. That makes me happier.
 
-However.
+>> And it would be really great if you put some thought into what
+>> a rational model would be for UID based controls, too.
+> I have put some thought into it, but I don't see a single rational mode=
+l.  It
+> depends very much on the situation.
 
-I think I'd like it even more if we just said "we don't need
-restore_saved_sigmask AT ALL".
+Right. You're mixing the kind of things that can generate events,
+and that makes having a single policy difficult.
 
-Which would be fairly easy to do with something like the attached...
+> In any case, that's what I was referring to when I said I might need to=
+ call
+> inode_permission().  But UIDs don't exist for all filesystems, for exam=
+ple,
+> and there are no UIDs on superblocks, mount objects or hardware events.=
 
-(Yes, this only does x86, which is a problem, but I'm bringing this up
-as a RFC..)
 
-Is it worth another TIF flag? This sure would simplify things, and it
-really fits the concept too: this really is a do_signal() issue, and
-fundamentally goes together with TIF_SIGPENDING.
+If you open() or stat() a file on those filesystems the UID
+used in the access control comes from somewhere. Setting a watch
+on things with UIDs should use the access mode on the file,
+just like any other filesystem operation.
 
-                Linus
+Things like superblocks are sticker because we don't generally
+think of them as objects. If you can do statfs(), you should be
+able to set a watch on the filesystem metadata.
 
---000000000000bcd942058a96e0bf
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jwji3ph10>
-X-Attachment-Id: f_jwji3ph10
+How would you specify a watch for a hardware event? If you say
+you have to open /dev/mumble to sent a watch for mumbles, you're
+good there, too.
 
-IGFyY2gveDg2L2VudHJ5L2NvbW1vbi5jICAgICAgICAgICAgfCAyICstCiBhcmNoL3g4Ni9pbmNs
-dWRlL2FzbS90aHJlYWRfaW5mby5oIHwgMiArKwoga2VybmVsL3NpZ25hbC5jICAgICAgICAgICAg
-ICAgICAgICB8IDEgKwogMyBmaWxlcyBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDEgZGVsZXRp
-b24oLSkKCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9lbnRyeS9jb21tb24uYyBiL2FyY2gveDg2L2Vu
-dHJ5L2NvbW1vbi5jCmluZGV4IGE5ODZiM2M4Mjk0Yy4uZWI1MzhlY2Q2NjAzIDEwMDY0NAotLS0g
-YS9hcmNoL3g4Ni9lbnRyeS9jb21tb24uYworKysgYi9hcmNoL3g4Ni9lbnRyeS9jb21tb24uYwpA
-QCAtMTYwLDcgKzE2MCw3IEBAIHN0YXRpYyB2b2lkIGV4aXRfdG9fdXNlcm1vZGVfbG9vcChzdHJ1
-Y3QgcHRfcmVncyAqcmVncywgdTMyIGNhY2hlZF9mbGFncykKIAkJCWtscF91cGRhdGVfcGF0Y2hf
-c3RhdGUoY3VycmVudCk7CiAKIAkJLyogZGVhbCB3aXRoIHBlbmRpbmcgc2lnbmFsIGRlbGl2ZXJ5
-ICovCi0JCWlmIChjYWNoZWRfZmxhZ3MgJiBfVElGX1NJR1BFTkRJTkcpCisJCWlmIChjYWNoZWRf
-ZmxhZ3MgJiAoX1RJRl9TSUdQRU5ESU5HIHwgX1RJRl9SRVNUT1JFX1NJR01BU0spKQogCQkJZG9f
-c2lnbmFsKHJlZ3MpOwogCiAJCWlmIChjYWNoZWRfZmxhZ3MgJiBfVElGX05PVElGWV9SRVNVTUUp
-IHsKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3RocmVhZF9pbmZvLmggYi9hcmNo
-L3g4Ni9pbmNsdWRlL2FzbS90aHJlYWRfaW5mby5oCmluZGV4IGY5NDUzNTM2ZjliYi4uZDc3YTlm
-ODQxNDU1IDEwMDY0NAotLS0gYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS90aHJlYWRfaW5mby5oCisr
-KyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3RocmVhZF9pbmZvLmgKQEAgLTkyLDYgKzkyLDcgQEAg
-c3RydWN0IHRocmVhZF9pbmZvIHsKICNkZWZpbmUgVElGX05PQ1BVSUQJCTE1CS8qIENQVUlEIGlz
-IG5vdCBhY2Nlc3NpYmxlIGluIHVzZXJsYW5kICovCiAjZGVmaW5lIFRJRl9OT1RTQwkJMTYJLyog
-VFNDIGlzIG5vdCBhY2Nlc3NpYmxlIGluIHVzZXJsYW5kICovCiAjZGVmaW5lIFRJRl9JQTMyCQkx
-NwkvKiBJQTMyIGNvbXBhdGliaWxpdHkgcHJvY2VzcyAqLworI2RlZmluZSBUSUZfUkVTVE9SRV9T
-SUdNQVNLCTE4CS8qIFJlc3RvcmUgc2F2ZWQgc2lnbWFzayBvbiByZXR1cm4gdG8gdXNlciBzcGFj
-ZSAqLwogI2RlZmluZSBUSUZfTk9IWgkJMTkJLyogaW4gYWRhcHRpdmUgbm9oeiBtb2RlICovCiAj
-ZGVmaW5lIFRJRl9NRU1ESUUJCTIwCS8qIGlzIHRlcm1pbmF0aW5nIGR1ZSB0byBPT00ga2lsbGVy
-ICovCiAjZGVmaW5lIFRJRl9QT0xMSU5HX05SRkxBRwkyMQkvKiBpZGxlIGlzIHBvbGxpbmcgZm9y
-IFRJRl9ORUVEX1JFU0NIRUQgKi8KQEAgLTEyMiw2ICsxMjMsNyBAQCBzdHJ1Y3QgdGhyZWFkX2lu
-Zm8gewogI2RlZmluZSBfVElGX05PQ1BVSUQJCSgxIDw8IFRJRl9OT0NQVUlEKQogI2RlZmluZSBf
-VElGX05PVFNDCQkoMSA8PCBUSUZfTk9UU0MpCiAjZGVmaW5lIF9USUZfSUEzMgkJKDEgPDwgVElG
-X0lBMzIpCisjZGVmaW5lIF9USUZfUkVTVE9SRV9TSUdNQVNLCSgxIDw8IFRJRl9SRVNUT1JFX1NJ
-R01BU0spCiAjZGVmaW5lIF9USUZfTk9IWgkJKDEgPDwgVElGX05PSFopCiAjZGVmaW5lIF9USUZf
-UE9MTElOR19OUkZMQUcJKDEgPDwgVElGX1BPTExJTkdfTlJGTEFHKQogI2RlZmluZSBfVElGX0lP
-X0JJVE1BUAkJKDEgPDwgVElGX0lPX0JJVE1BUCkKZGlmZiAtLWdpdCBhL2tlcm5lbC9zaWduYWwu
-YyBiL2tlcm5lbC9zaWduYWwuYwppbmRleCAzMjhhMDFlMWEyZjAuLmEzMzQ2ZGExYTRmNSAxMDA2
-NDQKLS0tIGEva2VybmVsL3NpZ25hbC5jCisrKyBiL2tlcm5lbC9zaWduYWwuYwpAQCAtMjg3Nyw2
-ICsyODc3LDcgQEAgaW50IHNldF91c2VyX3NpZ21hc2soY29uc3Qgc2lnc2V0X3QgX191c2VyICp1
-c2lnbWFzaywgc2lnc2V0X3QgKnNldCwKIAogCSpvbGRzZXQgPSBjdXJyZW50LT5ibG9ja2VkOwog
-CXNldF9jdXJyZW50X2Jsb2NrZWQoc2V0KTsKKwlzZXRfdGhyZWFkX2ZsYWcoVElGX1JFU1RPUkVf
-U0lHTUFTSyk7CiAKIAlyZXR1cm4gMDsKIH0K
---000000000000bcd942058a96e0bf--
+> Now, I could see that you ignore UIDs on things like keys and
+> hardware-triggered events, but how does this interact with things like =
+mount
+> watches that see directories that have UIDs?
+>
+> Are you advocating making it such that process B can only see events tr=
+iggered
+> by process A if they have the same UID, for example?
+
+It's always seemed arbitrary to me that you can't open
+your process up to get signals from other users. What about
+putting mode bits on your ring buffer? By default you could
+only accept your own events, but you could do a rb_chmod(0222)
+and let all events through. Subject to LSM addition restrictions,
+of course. That would require the cred of the process that
+triggered the event or a system cred for "hardware" events.
+If you don't like mode bits you could use an ACL for fine
+granularity or a single "let'em all in" bit for coarse.
+
+I'm not against access, I'm against uncontrolled access
+in conflict with basic system policy.
+
+> David
+
