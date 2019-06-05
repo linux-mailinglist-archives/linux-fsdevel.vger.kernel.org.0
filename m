@@ -2,106 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE2E935A08
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 11:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 930F135A6A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jun 2019 12:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbfFEJ6a convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 5 Jun 2019 05:58:30 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:42217 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727051AbfFEJ6a (ORCPT
+        id S1727193AbfFEK0V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jun 2019 06:26:21 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40106 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726502AbfFEK0V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jun 2019 05:58:30 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id uk-mta-7-CFkA386iP16q3G7kxRKBCw-1;
- Wed, 05 Jun 2019 10:58:25 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
- 5 Jun 2019 10:58:25 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 5 Jun 2019 10:58:25 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Oleg Nesterov' <oleg@redhat.com>
-CC:     'Linus Torvalds' <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Linux List Kernel Mailing" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "e@80x24.org" <e@80x24.org>, Jason Baron <jbaron@akamai.com>,
+        Wed, 5 Jun 2019 06:26:21 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d30so12139697pgm.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jun 2019 03:26:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=M1ULtVTBaRjJ1PHd8skCpbTVO6zbbI/pi1e0gXp7yc0=;
+        b=jAQ7fFrGO0TepAjaeIU8cFqLQxHx3KjiTOlpJHN1i0lpGgHHU5xkuYBwY5v31GkgKL
+         pJPivwXOu550agdJIYhlPftZMBzP0X7kfNUgAK1FayYvt8LHGpXhis876t6/AELoj4Ix
+         LteoO3odnsLY/gznyLnkIIRH4x4bn6QYccT5RQmKC05p9Jje9UPyLlgJehd5351xQC5m
+         EK+mjbCGXLppVyRoCHYSC6lUQ61Z63AqXSjp/BCcL7MK3CCKVljkD2p+chMO+3wCNhU/
+         eX7Dv99osaWfMFdlpwiGXyGvPW8KPEZ7RaaNjMwyuc8wLKK+LFyoZXxOZqBqvfiQV3jw
+         U0zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=M1ULtVTBaRjJ1PHd8skCpbTVO6zbbI/pi1e0gXp7yc0=;
+        b=isZ17yHjSY1UnsuYiX+08wli2m91uGuJP/My2q9b6rCrchFuYK324z8SeqkImv+J3W
+         7jlcV+NY8NrtUAQl4dBcpuzA3bJrys6NVqZCwA2FwEPsQjRRIaA8HhWCXLgmfIsM1cQU
+         71lc30OuJ/rfwivuAqbpCyVLSbyhaysc9AdBKadqeka+UOJvB030gnT2gSt2hvkQa4sH
+         r7FiAQN0PRCuDCyQQ5rQgge/qCfEcZw5ZzwzFWByG0xHBoJh39vnzP6ncZ0i/5+gMKFm
+         bh+PZCiGS981pn+g1n0mGVxDNvznFOQrXf0tOMVNY7/AWjzCbZLz2CEsd6DqJCkEUTFy
+         HyFg==
+X-Gm-Message-State: APjAAAUKWr1yz6M4k8pitumPVrRlRJQzfEdKOaDT4UY3cVvbfUVvDZvZ
+        TV2IDOnrm95AOum5fdKUrjHn
+X-Google-Smtp-Source: APXvYqySxD+fahxqn6P/0cG5QKLSgMNAfXkPXSCVU91zFyZzNMLl1HP/nOL6ml0Er8r9V2f2cemjRA==
+X-Received: by 2002:a63:4e07:: with SMTP id c7mr3389206pgb.350.1559730380269;
+        Wed, 05 Jun 2019 03:26:20 -0700 (PDT)
+Received: from poseidon.Home ([114.78.0.167])
+        by smtp.gmail.com with ESMTPSA id i5sm14705123pfk.49.2019.06.05.03.26.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Jun 2019 03:26:19 -0700 (PDT)
+Date:   Wed, 5 Jun 2019 20:26:13 +1000
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Christian Brauner <christian@brauner.io>, Jan Kara <jack@suse.cz>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        stable <stable@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: RE: [PATCH] signal: remove the wrong signal_pending() check in
- restore_user_sigmask()
-Thread-Topic: [PATCH] signal: remove the wrong signal_pending() check in
- restore_user_sigmask()
-Thread-Index: AQHVGxwzwFf0q/qAAkiR7PRGfFAGAqaMwPEw///5P4CAABTbsA==
-Date:   Wed, 5 Jun 2019 09:58:25 +0000
-Message-ID: <29dd2937475b4407b617e2516f9cdd05@AcuMS.aculab.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com>
- <CAHk-=wjSOh5zmApq2qsNjmY-GMn4CWe9YwdcKPjT+nVoGiDKOQ@mail.gmail.com>
- <263d0e478ee447d9aa10baab0d8673a5@AcuMS.aculab.com>
- <20190605092516.GC32406@redhat.com>
-In-Reply-To: <20190605092516.GC32406@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] fanotify: remove redundant capable(CAP_SYS_ADMIN)s
+Message-ID: <20190605102611.GA4546@poseidon.Home>
+References: <20190522163150.16849-1-christian@brauner.io>
+ <CAOQ4uxjV=7=FXuyccBK9Pu1B7o-w-pbc1FQXJxY4q6z8E93KOg@mail.gmail.com>
+ <EB97EF04-D44F-4320-ACDC-C536EED03BA4@brauner.io>
+ <CAOQ4uxhodqVw0DVfcvXYH5vBf4LKcv7t388ZwXeZPBTcEMzGSw@mail.gmail.com>
+ <20190523095506.nyei5nogvv63lm4a@brauner.io>
+ <CAOQ4uxiBeAzsE+b=tE7+9=25-qS7ohuTdEswYOt8DrCp6eAMuw@mail.gmail.com>
 MIME-Version: 1.0
-X-MC-Unique: CFkA386iP16q3G7kxRKBCw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxiBeAzsE+b=tE7+9=25-qS7ohuTdEswYOt8DrCp6eAMuw@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Oleg Nesterov [mailto:oleg@redhat.com]
-> Sent: 05 June 2019 10:25
-> On 06/05, David Laight wrote:
+On Thu, May 23, 2019 at 01:25:08PM +0300, Amir Goldstein wrote:
+
+...
+
+> > > > Interesting. When do you think the gate can be removed?
+> > >
+> > > Nobody is working on this AFAIK.
+> > > What I posted was a simple POC, but I have no use case for this.
+> > > In the patchwork link above, Jan has listed the prerequisites for
+> > > removing the gate.
+> > >
+> > > One of the prerequisites is FAN_REPORT_FID, which is now merged.
+> > > When events gets reported with fid instead of fd, unprivileged user
+> > > (hopefully) cannot use fid for privilege escalation.
+> > >
+> > > > I was looking into switching from inotify to fanotify but since it's not usable from
+> > > > non-initial userns it's a no-no
+> > > > since we support nested workloads.
+> > >
+> > > One of Jan's questions was what is the benefit of using inotify-compatible
+> > > fanotify vs. using inotify.
+> > > So what was the reason you were looking into switching from inotify to fanotify?
+> > > Is it because of mount/filesystem watch? Because making those available for
 > >
-> > epoll() would have:
-> > 	if (restore_user_sigmask(xxx.sigmask, &sigsaved, !ret || ret == -EINTR))
-> > 		ret = -EINTR;
+> > Yeah. Well, I would need to look but you could probably do it safely for
+> > filesystems mountable in user namespaces (which are few).
+> > Can you do a bind-mount and then place a watch on the bind-mount or is
+> > this superblock based?
+> >
 > 
-> I don't think so but lets discuss this later.
-
-I certainly think there should be some comments at least
-about when/whether signal handlers get called and that
-being separate from the return value.
-
-The system call restart stuff does seem strange.
-ISTR that was originally added for SIG_SUSPEND (^Z) so that those
-signals wouldn't be seen by the appication.
-But that makes it a property of the signal, not the system call.
-
-> > I also think it could be simplified if code that loaded the 'user sigmask'
-> > saved the old one in 'current->saved_sigmask' (and saved that it had done it).
-> > You'd not need 'sigsaved' nor pass the user sigmask address into
-> > the restore function.
+> Either.
+> FAN_MARK_MOUNT was there from day 1 of fanotify.
+> FAN_MARK_FILESYSTEM was merged to Linux Linux 4.20.
 > 
-> Heh. apparently you do not read my emails ;)
+> But directory modification events that are supported since v5.1 are
+> not available
+> with FAN_MARK_MOUNT, see:
+> https://github.com/amir73il/man-pages/blob/fanotify_fid/man2/fanotify_init.2#L97
 > 
-> This is what I proposed in my very 1st email, and I even showed the patch
-> and the code with the patch applied twice. Let me do this again.
+> Matthew,
+> 
+> Perhaps this fact is worth a mention in the linked entry for FAN_REPORT_FID
+> in fanotify_init.2 in addition to the comment on the entry for FAN_MARK_MOUNT
+> in fanotify_mark.2.
 
-I did read that one, I've even quoted it in the past :-)
-It's just not been mentioned recently.
+Sorry, a little late to the party...
 
-	David
+The fact being that directory modification events that are supported since v5.1
+are not available when used in conjunction with FAN_MARK_MOUNT?
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+-- 
+Matthew Bobrowski
