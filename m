@@ -2,217 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 723F3374E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 15:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFD0D37500
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 15:17:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbfFFNKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jun 2019 09:10:55 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50524 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbfFFNKy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jun 2019 09:10:54 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f204so2409925wme.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2019 06:10:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/2FitUWKVKV8mjyDwh1uba5xd/jN5daEj8Rd7jaIslw=;
-        b=fPLASyK6Go9q5nhiiBpMVuqjcRzW7M8JLvBgPdOJ5K53gCSerhS+o+MhN+UQ1lVEx3
-         J4qMQI1+qYrNN+d93CL4BLf8volxfWmTSTvv2zSYwZR6JOVIwFpqWmxvjRi8AuN5rRzh
-         oLjkU7obnQwiUA3wmsI+WNXP4QbZTOfQypUaWspgUtm6v29U0CkjJVqO60Xz6M4BTTO7
-         GaHxg/cOWX6DHBxeTkb7n7tFiC5NM7MyQjFj9g7iwvbPMXReAp7jt+qlWU+apOCFjFaL
-         YgAgCOzfkNOHU/2rkk7RQv3G9t8MSwCQoX2g++z5YvjikihjQ6i9pG6GwuS2dq6dDBGT
-         dy2Q==
-X-Gm-Message-State: APjAAAVF53ODcsnZ/iDD6mSYdI5Mi6NMdfWCJ/zwCUh3+dKS6rSeLULx
-        fOd59IXJcTXj4Ry42PQQsKLzMYxqvF0=
-X-Google-Smtp-Source: APXvYqxTgOhxM72JKlHlV5kMOY6sc1yIRmuh5WoXO9ljecQdzkuGFhUtsjPJO8ZqJx199FLTbeUtzw==
-X-Received: by 2002:a1c:cb43:: with SMTP id b64mr2712506wmg.135.1559826651950;
-        Thu, 06 Jun 2019 06:10:51 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id y2sm2074305wrl.4.2019.06.06.06.10.51
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 06:10:51 -0700 (PDT)
-Subject: Re: [PATCH v11] fs: Add VirtualBox guest shared folder (vboxsf)
- support
-To:     David Howells <dhowells@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-References: <20190606104618.28321-2-hdegoede@redhat.com>
- <20190606104618.28321-1-hdegoede@redhat.com>
- <27351.1559821872@warthog.procyon.org.uk>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <399587cf-9983-8e4f-98ca-6d3e0c9a0103@redhat.com>
-Date:   Thu, 6 Jun 2019 15:10:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727309AbfFFNRA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 6 Jun 2019 09:17:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49902 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726877AbfFFNQ7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Jun 2019 09:16:59 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2AC1F85546;
+        Thu,  6 Jun 2019 13:16:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E50DF108427E;
+        Thu,  6 Jun 2019 13:16:43 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <b91710d8-cd2d-6b93-8619-130b9d15983d@tycho.nsa.gov>
+References: <b91710d8-cd2d-6b93-8619-130b9d15983d@tycho.nsa.gov> <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-usb@vger.kernel.org, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Subject: Re: [RFC][PATCH 00/10] Mount, FS, Block and Keyrings notifications [ver #3]
 MIME-Version: 1.0
-In-Reply-To: <27351.1559821872@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3812.1559827003.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Thu, 06 Jun 2019 14:16:43 +0100
+Message-ID: <3813.1559827003@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 06 Jun 2019 13:16:59 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Stephen Smalley <sds@tycho.nsa.gov> wrote:
 
-Thank you for the quick review.
+This might be easier to discuss if you can reply to:
 
-On 06-06-19 13:51, David Howells wrote:
-> Hans de Goede <hdegoede@redhat.com> wrote:
+	https://lore.kernel.org/lkml/5393.1559768763@warthog.procyon.org.uk/
+
+which is on the ver #2 posting of this patchset.
+
+> > LSM support is included, but controversial:
+> >
+> >   (1) The creds of the process that did the fput() that reduced the refcount
+> >       to zero are cached in the file struct.
+> >
+> >   (2) __fput() overrides the current creds with the creds from (1) whilst
+> >       doing the cleanup, thereby making sure that the creds seen by the
+> >       destruction notification generated by mntput() appears to come from
+> >       the last fputter.
+> >
+> >   (3) security_post_notification() is called for each queue that we might
+> >       want to post a notification into, thereby allowing the LSM to prevent
+> >       covert communications.
+> >
+> >   (?) Do I need to add security_set_watch(), say, to rule on whether a watch
+> >       may be set in the first place?  I might need to add a variant per
+> >       watch-type.
+> >
+> >   (?) Do I really need to keep track of the process creds in which an
+> >       implicit object destruction happened?  For example, imagine you create
+> >       an fd with fsopen()/fsmount().  It is marked to dissolve the mount it
+> >       refers to on close unless move_mount() clears that flag.  Now, imagine
+> >       someone looking at that fd through procfs at the same time as you exit
+> >       due to an error.  The LSM sees the destruction notification come from
+> >       the looker if they happen to do their fput() after yours.
 > 
->> +enum {
->> +	SHFL_FN_QUERY_MAPPINGS = 1,	/* Query mappings changes. */
->> +	SHFL_FN_QUERY_MAP_NAME,		/* Query map name. */
->> +	SHFL_FN_CREATE,			/* Open/create object. */
->> +	SHFL_FN_CLOSE,			/* Close object handle. */
->> +	SHFL_FN_READ,			/* Read object content. */
->> +	SHFL_FN_WRITE,			/* Write new object content. */
->> +	SHFL_FN_LOCK,			/* Lock/unlock a range in the object. */
->> +	SHFL_FN_LIST,			/* List object content. */
->> +	SHFL_FN_INFORMATION,		/* Query/set object information. */
->> +	/* Note function number 10 is not used! */
->> +	SHFL_FN_REMOVE = 11,		/* Remove object */
->> +	SHFL_FN_MAP_FOLDER_OLD,		/* Map folder (legacy) */
->> +	SHFL_FN_UNMAP_FOLDER,		/* Unmap folder */
->> +	SHFL_FN_RENAME,			/* Rename object */
->> +	SHFL_FN_FLUSH,			/* Flush file */
->> +	SHFL_FN_SET_UTF8,		/* Select UTF8 filename encoding */
->> +	SHFL_FN_MAP_FOLDER,		/* Map folder */
->> +	SHFL_FN_READLINK,		/* Read symlink dest (as of VBox 4.0) */
->> +	SHFL_FN_SYMLINK,		/* Create symlink (as of VBox 4.0) */
->> +	SHFL_FN_SET_SYMLINKS,		/* Ask host to show symlinks (as of 4.0) */
->> +};
 > 
-> If these are protocol numbers that can't be changed, I would assign the value
-> on all of them.
+> I'm not in favor of this approach.
 
-Ok, will do for the next version.
+Which bit?  The last point?  Keeping track of the process creds after an
+implicit object destruction.
 
-> If they're used by userspace, should they be moved into a
-> uapi header (and the same for the other stuff in this file)?
+> Can we check permission to the object being watched when a watch is set
+> (read-like access),
 
-This is the protocol between the guest and the hypervisor, so it is not uapi.
+Yes, and I need to do that.  I think it's likely to require an extra hook for
+each entry point added because the objects are different:
 
->> +static const struct fs_parameter_spec vboxsf_param_specs[] = {
->> +	fsparam_string("nls", opt_nls),
->> +	fsparam_u32("uid", opt_uid),
->> +	fsparam_u32("gid", opt_gid),
->> +	fsparam_u32("ttl", opt_ttl),
->> +	fsparam_u32oct("dmode", opt_dmode),
->> +	fsparam_u32oct("fmode", opt_fmode),
->> +	fsparam_u32oct("dmask", opt_dmask),
->> +	fsparam_u32oct("fmask", opt_fmask),
->> +	{}
->> +};
-> 
-> I would format this with tabs so that everything nicely lines up:
-> 
-> 	static const struct fs_parameter_spec vboxsf_param_specs[] = {
-> 		fsparam_string	("nls",		opt_nls),
-> 		fsparam_u32	("uid",		opt_uid),
-> 		fsparam_u32	("gid",		opt_gid),
-> 		fsparam_u32	("ttl",		opt_ttl),
-> 		fsparam_u32oct	("dmode",	opt_dmode),
-> 		fsparam_u32oct	("fmode",	opt_fmode),
-> 		fsparam_u32oct	("dmask",	opt_dmask),
-> 		fsparam_u32oct	("fmask",	opt_fmask),
-> 		{}
-> 	};
-> 
-> but, otherwise, good!
+	int security_watch_key(struct watch *watch, struct key *key);
+	int security_watch_sb(struct watch *watch, struct path *path);
+	int security_watch_mount(struct watch *watch, struct path *path);
+	int security_watch_devices(struct watch *watch);
 
-Ok, will fix.
+> make sure every access that can trigger a notification requires a
+> (write-like) permission to the accessed object,
 
->> +	case opt_uid:
->> +		ctx->o.uid = result.uint_32;
->> +		break;
->> +	case opt_gid:
->> +		ctx->o.gid = result.uint_32;
->> +		break;
-> 
-> Should you be using kuid/kgid transforms for the appropriate namespace?
+"write-like permssion" for whom?  The triggerer or the watcher?
 
-That is probably a good idea, will do for the next version.
+There are various 'classes' of events:
 
-> 
-> 		opts->fs_uid = make_kuid(current_user_ns(), option);
-> 		if (!uid_valid(opts->fs_uid))
-> 			return -EINVAL;
-> 
-> sort of thing (excerpt from fs/fat/inode.c).
+ (1) System events (eg. hardware I/O errors, automount points expiring).
 
-Shouldn't this use the user-namespace from the filesystem-context?
+ (2) Direct events (eg. automounts, manual mounts, EDQUOT, key linkage).
 
-> 
->> +	case opt_ttl:
->> +		ctx->o.ttl = msecs_to_jiffies(result.uint_32);
->> +		break;
-> 
-> Is 0 valid?
+ (3) Indirect events (eg. exit/close doing the last fput and causing an
+     unmount).
 
-Yes, 0 means to always pass any stat() calls through to the host
-instead of relying on cached values.
+Class (1) are uncaused by a process, so I use init_cred for them.  One could
+argue that the automount point expiry should perhaps take place under the
+creds of whoever triggered it in the first place, but we need to be careful
+about long-term cred pinning.
 
-> 
->> +	case opt_dmode:
->> +		ctx->o.dmode = result.uint_32;
->> +		break;
->> +	case opt_fmode:
->> +		ctx->o.fmode = result.uint_32;
->> +		break;
->> +	case opt_dmask:
->> +		ctx->o.dmask = result.uint_32;
->> +		break;
->> +	case opt_fmask:
->> +		ctx->o.fmask = result.uint_32;
->> +		break;
-> 
-> Do these need vetting?  I guess you kind of do:
+Class (2) the causing process must've had permission to cause them - otherwise
+we wouldn't have got the event.
 
-Well I could refuse values where (result.uint_32 & 0777)
-is true here I guess; and then remove the & 0777 below:
+Class (3) is interesting since it's currently entirely cleanup events and the
+process may have the right to do them (close, dup2, exit, but also execve)
+whether the LSM thinks it should be able to cause the object to be destroyed
+or not.
 
-> 		inode->i_mode =
-> 			sf_g->o.dmode != ~0 ? (sf_g->o.dmode & 0777) : mode;
-> 		inode->i_mode &= ~sf_g->o.dmask;
-> 
-> I'm guessing you're stuck with the mount options?
+It gets more complicated than that, though: multiple processes with different
+security attributes can all have fds pointing to a common file object - and
+the last one to close carries the can as far as the LSM is concerned.
 
-More or less, yes. Changing them is going to be quite painful
-from a userspace compat pov.
+And yet more complicated when you throw in unix sockets with partially passed
+fds still in their queues.  That's what patch 01 is designed to try and cope
+with.
 
-> 
->> +struct vboxsf_options {
->> +	int ttl;
-> 
-> jiffies are unsigned long.
+> and make sure there is some sane way to control the relationship between the
+> accessed object and the watched object (write-like)?
 
-Ok.
+This is the trick.  Keys and superblocks have object labels of their own and
+don't - for now - propagate their watches.  With these, the watch is on the
+object you initially assign it to and it goes no further than that.
 
->> +	int uid;
->> +	int gid;
-> 
-> kuid_t & kgid_t.
+mount_notify() is the interesting case since we want to be able to detect
+mount topology change events from within the vfs subtree rooted at the watched
+directory without having to manually put a watch on every directory in that
+subtree - or even just every mount object.
 
-Ok.
+Or, maybe, that's what I'll have to do: make it mount_notify() can only apply
+to the subtree within its superblock, and the caller must call mount_notify()
+for every mount object it wants to monitor.  That would at least ensure that
+the caller can, at that point, reach all those mount points.
 
-> 
->> +	int dmode;
->> +	int fmode;
->> +	int dmask;
->> +	int fmask;
->> +};
-> 
-> umode_t.
+> For cases where we have no object per se or at least no security
+> structure/label associated with it, we may have to fall back to a
+> coarse-grained "Can the watcher get this kind of notification in general?".
 
-Ok.
+Agreed - and we should probably have that anyway.
 
-Regards,
-
-Hans
-
+David
