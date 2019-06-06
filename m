@@ -2,69 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE0173776A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 17:06:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23ACB377F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 17:31:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729144AbfFFPGU convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 6 Jun 2019 11:06:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38322 "EHLO mx1.redhat.com"
+        id S1729317AbfFFPbx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jun 2019 11:31:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727309AbfFFPGU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:06:20 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729045AbfFFPbx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Jun 2019 11:31:53 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0269B3086200;
-        Thu,  6 Jun 2019 15:06:20 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C86F810ABD60;
-        Thu,  6 Jun 2019 15:06:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <176F8189-3BE9-4B8C-A4D5-8915436338FB@amacapital.net>
-References: <176F8189-3BE9-4B8C-A4D5-8915436338FB@amacapital.net> <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk> <155981413016.17513.10540579988392555403.stgit@warthog.procyon.org.uk>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
+        by mail.kernel.org (Postfix) with ESMTPSA id DB9A520684;
+        Thu,  6 Jun 2019 15:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559835112;
+        bh=auxbwT7fReJRZ8phkETElOOGx98Nm3DMKGuBNzqK4tM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Sls1Ac8ft0yHOcjrqT/Sogzn929Pqs6//tyMW7eH5G0zrT8QLdNQhIS85jv6VxDzz
+         MHZqpcHha72lL1p3LiRLsHd6UO8jnT++nCFM6pgYXW18Vppu62GMNhI2WeA7tVfexV
+         UEPrGRlzojOutRXk5dBStG/hmW9kjs1A9pfGreoY=
+Date:   Thu, 6 Jun 2019 17:31:50 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        linux-usb@vger.kernel.org, raven@themaw.net,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-block@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] security: Override creds in __fput() with last fputter's creds [ver #3]
+Subject: Re: [PATCH 09/10] usb: Add USB subsystem notifications [ver #3]
+Message-ID: <20190606153150.GB28997@kroah.com>
+References: <20190606143306.GA11294@kroah.com>
+ <Pine.LNX.4.44L0.1906061051310.1641-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <11030.1559833574.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Thu, 06 Jun 2019 16:06:14 +0100
-Message-ID: <11031.1559833574@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 06 Jun 2019 15:06:20 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1906061051310.1641-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Andy Lutomirski <luto@amacapital.net> wrote:
-
-> > So that the LSM can see the credentials of the last process to do an fput()
-> > on a file object when the file object is being dismantled, do the following
-> > steps:
-> > 
+On Thu, Jun 06, 2019 at 10:55:24AM -0400, Alan Stern wrote:
+> On Thu, 6 Jun 2019, Greg Kroah-Hartman wrote:
 > 
-> I still maintain that this is a giant design error.
+> > On Thu, Jun 06, 2019 at 10:24:18AM -0400, Alan Stern wrote:
+> > > On Thu, 6 Jun 2019, David Howells wrote:
+> > > 
+> > > > Add a USB subsystem notification mechanism whereby notifications about
+> > > > hardware events such as device connection, disconnection, reset and I/O
+> > > > errors, can be reported to a monitoring process asynchronously.
+> > > 
+> > > USB I/O errors covers an awfully large and vague field.  Do we really
+> > > want to include them?  I'm doubtful.
+> > 
+> > See the other patch on the linux-usb list that wanted to start adding
+> > KOBJ_CHANGE notifications about USB "i/o errors".
+> 
+> That patch wanted to add notifications only for enumeration failures
+> (assuming you're talking about the patch from Eugeniu Rosca), not I/O
+> errors in general.
 
-Yes, I know.  This was primarily a post so that Greg could play with the USB
-notifications stuff I added.  The LSM support isn't resolved and is unchanged.
+Yes, sorry, I was thinking that as a "I/O failed in enumeration" :)
 
-> Can someone at least come up with a single valid use case that isn't
-> entirely full of bugs?
+> > So for "severe" issues, yes, we should do this, but perhaps not for all
+> > of the "normal" things we see when a device is yanked out of the system
+> > and the like.
+> 
+> Then what counts as a "severe" issue?  Anything besides enumeration 
+> failure?
 
-"Entirely full of bugs"?
+Not that I can think of at the moment, other than the other recently
+added KOBJ_CHANGE issue.  I'm sure we have other "hard failure" issues
+in the USB stack that people will want exposed over time.
 
-How would you propose I deal with Casey's requirement?  I'm getting the
-feeling you're going to nak it if I try to fulfil that and he's going to nak
-it if I don't.
+thanks,
 
-David
+greg k-h
