@@ -2,71 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69DC836C1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 08:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D410536D4D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 09:26:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbfFFGSZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jun 2019 02:18:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44600 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfFFGSZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jun 2019 02:18:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=U8rF1uP19dnET207DcY9H/fsoaYvyqbT8DVHn5K5oRM=; b=hh3vfV36YrLiF3AZvb2T4/Qsm
-        ZGpgeScpxKnNf0aS2baD3ki47trw/uHctB3wKBpv6V6SbCMpk2PfbKUk/5XgM8HNDjclepJ9Zdbz6
-        2GcqhtFfRtwgOlRsLz0gTHbH/QD8c0RD1Nwv73lkSzrx4ZW4CsWVtPnTSaYKb7q2DM4NJWtdmuwyk
-        Ib935aW8MHP3OauCGnonYIxkH5L3VSyJFRXG0U2YAfTuXHF11OiwL/C6RfAmS9J4JPPN67De362rW
-        nJke29YpqUQ+h0Q/HmV6zGVwwZQCpJPnOD1sInPHpqtie3EXgVS+P5THX1FahoL367+4HTT4+qz1H
-        qcJ4t2xpQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYljA-0005QG-0s; Thu, 06 Jun 2019 06:18:20 +0000
-Date:   Wed, 5 Jun 2019 23:18:19 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     ira.weiny@intel.com
-Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 03/10] mm/gup: Pass flags down to __gup_device_huge*
- calls
-Message-ID: <20190606061819.GA20520@infradead.org>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606014544.8339-4-ira.weiny@intel.com>
+        id S1726631AbfFFH0V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jun 2019 03:26:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59490 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725267AbfFFH0V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Jun 2019 03:26:21 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C44B58553D;
+        Thu,  6 Jun 2019 07:26:06 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 9FBC12E054;
+        Thu,  6 Jun 2019 07:26:01 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu,  6 Jun 2019 09:26:05 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 09:25:59 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de, dbueso@suse.de,
+        axboe@kernel.dk, dave@stgolabs.net, e@80x24.org, jbaron@akamai.com,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        omar.kilani@gmail.com, tglx@linutronix.de, stable@vger.kernel.org,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@ACULAB.COM>
+Subject: Re: [PATCH -mm 1/1] signal: simplify
+ set_user_sigmask/restore_user_sigmask
+Message-ID: <20190606072559.GA27021@redhat.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com>
+ <20190604134117.GA29963@redhat.com>
+ <20190605155801.GA25165@redhat.com>
+ <20190605155833.GB25165@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190606014544.8339-4-ira.weiny@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190605155833.GB25165@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 06 Jun 2019 07:26:21 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 06:45:36PM -0700, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> In order to support checking for a layout lease on a FS DAX inode these
-> calls need to know if FOLL_LONGTERM was specified.
-> 
-> Prepare for this with this patch.
+On 06/05, Oleg Nesterov wrote:
+>
+> +int set_user_sigmask(const sigset_t __user *umask, size_t sigsetsize)
+>  {
+> -	if (!usigmask)
+> -		return 0;
+> +	sigset_t *kmask;
 
-The GUP fast argument passing is a mess.  That is why I've come up
-with this as part of the (not ready) get_user_pages_fast_bvec
-implementation:
+Typo, this obviously should be
 
-http://git.infradead.org/users/hch/misc.git/commitdiff/c3d019802dbde5a4cc4160e7ec8ccba479b19f97
+	sigset_t kmask;
+
+I'll send v2.
+
+
+Dear Kbuild Test Robot, thank you very much,
+
+Oleg.
+
