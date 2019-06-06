@@ -2,212 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE6C36980
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 03:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43E63369D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 04:09:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfFFBp2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jun 2019 21:45:28 -0400
-Received: from mga03.intel.com ([134.134.136.65]:36145 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726950AbfFFBp2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jun 2019 21:45:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 18:45:27 -0700
-X-ExtLoop1: 1
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga002.jf.intel.com with ESMTP; 05 Jun 2019 18:45:26 -0700
-From:   ira.weiny@intel.com
-To:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH RFC 10/10] mm/gup: Remove FOLL_LONGTERM DAX exclusion
-Date:   Wed,  5 Jun 2019 18:45:43 -0700
-Message-Id: <20190606014544.8339-11-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190606014544.8339-1-ira.weiny@intel.com>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
+        id S1726649AbfFFCI7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jun 2019 22:08:59 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59224 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbfFFCI6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 Jun 2019 22:08:58 -0400
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5628UTB064831;
+        Thu, 6 Jun 2019 11:08:30 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
+ Thu, 06 Jun 2019 11:08:30 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5628TDc064823;
+        Thu, 6 Jun 2019 11:08:30 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x5628T0g064822;
+        Thu, 6 Jun 2019 11:08:29 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201906060208.x5628T0g064822@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: KASAN: use-after-free Read in =?ISO-2022-JP?B?dG9tb3lvX3JlYWxwYXRo?=
+ =?ISO-2022-JP?B?X2Zyb21fcGF0aA==?=
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc:     syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date:   Thu, 06 Jun 2019 11:08:29 +0900
+References: <0000000000004f43fa058a97f4d3@google.com>
+In-Reply-To: <0000000000004f43fa058a97f4d3@google.com>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+Here is a reproducer.
 
-Now that there is a mechanism for users to safely take LONGTERM pins on
-FS DAX pages, remove the FS DAX exclusion from GUP with FOLL_LONGTERM.
+The problem is that TOMOYO is accessing already freed socket from security_file_open()
+which later fails with -ENXIO (because we can't get file descriptor of sockets via
+/proc/pid/fd/n interface), and the file descriptor is getting released before
+security_file_open() completes because we do not raise "struct file"->f_count of
+the file which is accessible via /proc/pid/fd/n interface. We can avoid this problem
+if we can avoid calling security_file_open() which after all fails with -ENXIO.
+How should we handle this race? Let LSM modules check if security_file_open() was
+called on a socket?
 
-Special processing remains in effect for CONFIG_CMA
+----------------------------------------
+diff --git a/fs/open.c b/fs/open.c
+index b5b80469b93d..995ffcb37128 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -765,6 +765,12 @@ static int do_dentry_open(struct file *f,
+ 	error = security_file_open(f);
+ 	if (error)
+ 		goto cleanup_all;
++	if (!strcmp(current->comm, "a.out") &&
++	    f->f_path.dentry->d_sb->s_magic == SOCKFS_MAGIC) {
++		printk("Start open(socket) delay\n");
++		schedule_timeout_killable(HZ * 5);
++		printk("End open(socket) delay\n");
++	}
+ 
+ 	error = break_lease(locks_inode(f), f->f_flags);
+ 	if (error)
+----------------------------------------
 
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
----
- mm/gup.c | 78 ++++++--------------------------------------------------
- 1 file changed, 8 insertions(+), 70 deletions(-)
+----------------------------------------
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/socket.h>
 
-diff --git a/mm/gup.c b/mm/gup.c
-index d06cc5b14c0b..4f6e5606b81e 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1392,26 +1392,6 @@ long get_user_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
- }
- EXPORT_SYMBOL(get_user_pages_remote);
- 
--#if defined(CONFIG_FS_DAX) || defined (CONFIG_CMA)
--static bool check_dax_vmas(struct vm_area_struct **vmas, long nr_pages)
--{
--	long i;
--	struct vm_area_struct *vma_prev = NULL;
--
--	for (i = 0; i < nr_pages; i++) {
--		struct vm_area_struct *vma = vmas[i];
--
--		if (vma == vma_prev)
--			continue;
--
--		vma_prev = vma;
--
--		if (vma_is_fsdax(vma))
--			return true;
--	}
--	return false;
--}
--
- #ifdef CONFIG_CMA
- static struct page *new_non_cma_page(struct page *page, unsigned long private)
- {
-@@ -1542,18 +1522,6 @@ static long check_and_migrate_cma_pages(struct task_struct *tsk,
- 
- 	return nr_pages;
- }
--#else
--static long check_and_migrate_cma_pages(struct task_struct *tsk,
--					struct mm_struct *mm,
--					unsigned long start,
--					unsigned long nr_pages,
--					struct page **pages,
--					struct vm_area_struct **vmas,
--					unsigned int gup_flags)
--{
--	return nr_pages;
--}
--#endif
- 
- /*
-  * __gup_longterm_locked() is a wrapper for __get_user_pages_locked which
-@@ -1567,49 +1535,28 @@ static long __gup_longterm_locked(struct task_struct *tsk,
- 				  struct vm_area_struct **vmas,
- 				  unsigned int gup_flags)
- {
--	struct vm_area_struct **vmas_tmp = vmas;
- 	unsigned long flags = 0;
--	long rc, i;
-+	long rc;
- 
--	if (gup_flags & FOLL_LONGTERM) {
--		if (!pages)
--			return -EINVAL;
--
--		if (!vmas_tmp) {
--			vmas_tmp = kcalloc(nr_pages,
--					   sizeof(struct vm_area_struct *),
--					   GFP_KERNEL);
--			if (!vmas_tmp)
--				return -ENOMEM;
--		}
-+	if (flags & FOLL_LONGTERM)
- 		flags = memalloc_nocma_save();
--	}
- 
- 	rc = __get_user_pages_locked(tsk, mm, start, nr_pages, pages,
--				     vmas_tmp, NULL, gup_flags);
-+				     vmas, NULL, gup_flags);
- 
- 	if (gup_flags & FOLL_LONGTERM) {
- 		memalloc_nocma_restore(flags);
- 		if (rc < 0)
- 			goto out;
- 
--		if (check_dax_vmas(vmas_tmp, rc)) {
--			for (i = 0; i < rc; i++)
--				put_page(pages[i]);
--			rc = -EOPNOTSUPP;
--			goto out;
--		}
--
- 		rc = check_and_migrate_cma_pages(tsk, mm, start, rc, pages,
--						 vmas_tmp, gup_flags);
-+						 vmas, gup_flags);
- 	}
- 
- out:
--	if (vmas_tmp != vmas)
--		kfree(vmas_tmp);
- 	return rc;
- }
--#else /* !CONFIG_FS_DAX && !CONFIG_CMA */
-+#else /* !CONFIG_CMA */
- static __always_inline long __gup_longterm_locked(struct task_struct *tsk,
- 						  struct mm_struct *mm,
- 						  unsigned long start,
-@@ -1621,7 +1568,7 @@ static __always_inline long __gup_longterm_locked(struct task_struct *tsk,
- 	return __get_user_pages_locked(tsk, mm, start, nr_pages, pages, vmas,
- 				       NULL, flags);
- }
--#endif /* CONFIG_FS_DAX || CONFIG_CMA */
-+#endif /* CONFIG_CMA */
- 
- /*
-  * This is the same as get_user_pages_remote(), just with a
-@@ -1882,9 +1829,6 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
- 			goto pte_unmap;
- 
- 		if (pte_devmap(pte)) {
--			if (unlikely(flags & FOLL_LONGTERM))
--				goto pte_unmap;
--
- 			pgmap = get_dev_pagemap(pte_pfn(pte), pgmap);
- 			if (unlikely(!pgmap)) {
- 				undo_dev_pagemap(nr, nr_start, pages);
-@@ -2057,12 +2001,9 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 	if (!pmd_access_permitted(orig, flags & FOLL_WRITE))
- 		return 0;
- 
--	if (pmd_devmap(orig)) {
--		if (unlikely(flags & FOLL_LONGTERM))
--			return 0;
-+	if (pmd_devmap(orig))
- 		return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr,
- 					     flags);
--	}
- 
- 	refs = 0;
- 	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
-@@ -2101,12 +2042,9 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
- 	if (!pud_access_permitted(orig, flags & FOLL_WRITE))
- 		return 0;
- 
--	if (pud_devmap(orig)) {
--		if (unlikely(flags & FOLL_LONGTERM))
--			return 0;
-+	if (pud_devmap(orig))
- 		return __gup_device_huge_pud(orig, pudp, addr, end, pages, nr,
- 					     flags);
--	}
- 
- 	refs = 0;
- 	page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
--- 
-2.20.1
+int main(int argc, char *argv[])
+{
+	pid_t pid = getpid();
+	int fd = socket(AF_ISDN, SOCK_RAW, 0);
+	char buffer[128] = { };
+	if (fork() == 0) {
+		close(fd);
+		snprintf(buffer, sizeof(buffer) - 1, "/proc/%u/fd/%u", pid, fd);
+		open(buffer, 3);
+		_exit(0);
+	}
+	sleep(2);
+	close(fd);
+	return 0;
+}
+----------------------------------------
 
+----------------------------------------
+getpid()                                = 32504
+socket(AF_ISDN, SOCK_RAW, 0)            = 3
+clone(strace: Process 32505 attached
+child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7efea30dda10) = 32505
+[pid 32504] rt_sigprocmask(SIG_BLOCK, [CHLD],  <unfinished ...>
+[pid 32505] close(3 <unfinished ...>
+[pid 32504] <... rt_sigprocmask resumed> [], 8) = 0
+[pid 32505] <... close resumed> )       = 0
+[pid 32504] rt_sigaction(SIGCHLD, NULL, {SIG_DFL, [], 0}, 8) = 0
+[pid 32505] open("/proc/32504/fd/3", O_ACCMODE <unfinished ...>
+[pid 32504] rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+[pid 32504] nanosleep({2, 0}, 0x7ffd3c608150) = 0
+[pid 32504] close(3)                    = 0
+[pid 32504] exit_group(0)               = ?
+[pid 32504] +++ exited with 0 +++
+<... open resumed> )                    = -1 ENXIO (No such device or address)
+exit_group(0)                           = ?
+----------------------------------------
+
+----------------------------------------
+[   95.109628] Start open(socket) delay
+[   97.113150] base_sock_release(00000000506a3239) sk=00000000016d0ceb
+[  100.142235] End open(socket) delay
+----------------------------------------
