@@ -2,68 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C48B38140
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 00:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CA723814D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 00:53:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfFFWuy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 6 Jun 2019 18:50:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:25307 "EHLO mx1.redhat.com"
+        id S1726976AbfFFWwy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 6 Jun 2019 18:52:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58754 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726352AbfFFWuy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jun 2019 18:50:54 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1726352AbfFFWwy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Jun 2019 18:52:54 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 27461C1EB216;
-        Thu,  6 Jun 2019 22:50:52 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0889F30821DF;
+        Thu,  6 Jun 2019 22:52:54 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 17E1153B33;
-        Thu,  6 Jun 2019 22:50:48 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B61CD78569;
+        Thu,  6 Jun 2019 22:52:51 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <D2BD8FEB-5DF5-449B-AF81-83BA65E0E643@amacapital.net>
-References: <D2BD8FEB-5DF5-449B-AF81-83BA65E0E643@amacapital.net> <AD7898AE-B92C-4DE6-B895-7116FEDB3091@amacapital.net> <CALCETrVuNRPgEzv-XY4M9m6sEsCiRHxPenN_MpcMYc1h26vVwQ@mail.gmail.com> <b91710d8-cd2d-6b93-8619-130b9d15983d@tycho.nsa.gov> <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk> <3813.1559827003@warthog.procyon.org.uk> <8382af23-548c-f162-0e82-11e308049735@tycho.nsa.gov> <0eb007c5-b4a0-9384-d915-37b0e5a158bf@schaufler-ca.com> <c82052e5-ca11-67b5-965e-8f828081f31c@tycho.nsa.gov> <07e92045-2d80-8573-4d36-643deeaff9ec@schaufler-ca.com> <23611.1559855827@warthog.procyon.org.uk> <30567.1559860681@warthog.procyon.org.uk>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     dhowells@redhat.com, Andy Lutomirski <luto@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
+In-Reply-To: <20190606212140.GA25664@vmlxhi-102.adit-jv.com>
+References: <20190606212140.GA25664@vmlxhi-102.adit-jv.com> <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk> <155981421379.17513.13158528501056454772.stgit@warthog.procyon.org.uk>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>
-Subject: Re: [RFC][PATCH 00/10] Mount, FS, Block and Keyrings notifications [ver #3]
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH 10/10] Add sample notification program [ver #3]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <31574.1559861570.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: 8BIT
-Date:   Thu, 06 Jun 2019 23:50:48 +0100
-Message-ID: <31428.1559861448@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 06 Jun 2019 22:50:53 +0000 (UTC)
+Date:   Thu, 06 Jun 2019 23:52:50 +0100
+Message-ID: <31575.1559861570@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 06 Jun 2019 22:52:54 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Andy Lutomirski <luto@amacapital.net> wrote:
+Eugeniu Rosca <erosca@de.adit-jv.com> wrote:
 
-> They can call fsinfo() anyway, or just read /proc/self/mounts. As far as I’m
-> concerned, if you have CAP_SYS_ADMIN over a mount namespace and LSM policy
-> lets you mount things, the of course you can get information to basically
-> anyone who can use that mount namespace.
+> How about arm64? Do you intend to enable cross-compilation?
 
-And automounts?  You don't need CAP_SYS_ADMIN to trigger one of those, but
-they still generate events.  On the other hand, you need CSA to mount
-something that has automounts in the first place, and if you're particularly
-concerned about security, you probably don't want the processes you might be
-suspicious of having access to things that contain automounts (typically
-network filesystems).
+There's no guarantee that a cross-compiler can actually build userspace apps,
+though I haven't intended to encode anything against that in the Makefile.
+
+> > +			asm ("lfence" : : : "memory" );
+> [..]
+> > +			asm("mfence" ::: "memory");
+> 
+> FWIW, trying to cross-compile it returned:
+> 
+> aarch64-linux-gnu-gcc -I../../usr/include -I../../include  watch_test.c   -o watch_test
+> /tmp/ccDXYynm.s: Assembler messages:
+> /tmp/ccDXYynm.s:471: Error: unknown mnemonic `lfence' -- `lfence'
+> /tmp/ccDXYynm.s:568: Error: unknown mnemonic `mfence' -- `mfence'
+
+Yeah.  I need to use C-standard __atomic_* stuff.
 
 David
