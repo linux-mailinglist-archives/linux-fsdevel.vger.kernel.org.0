@@ -2,84 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E249D37246
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 12:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1776137263
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 13:05:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbfFFK66 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jun 2019 06:58:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:32798 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727324AbfFFK66 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jun 2019 06:58:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7F9F6AF21;
-        Thu,  6 Jun 2019 10:58:56 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id ED0EC1E3F51; Thu,  6 Jun 2019 12:58:55 +0200 (CEST)
-Date:   Thu, 6 Jun 2019 12:58:55 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     ira.weiny@intel.com
-Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
+        id S1727143AbfFFLFi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jun 2019 07:05:38 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:6381 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725784AbfFFLFi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Jun 2019 07:05:38 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D5D5B30872C3;
+        Thu,  6 Jun 2019 11:05:32 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 459EC2A333;
+        Thu,  6 Jun 2019 11:05:23 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu,  6 Jun 2019 13:05:32 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 13:05:22 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Linus Torvalds' <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 07/10] fs/ext4: Fail truncate if pages are GUP pinned
-Message-ID: <20190606105855.GG7433@quack2.suse.cz>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606014544.8339-8-ira.weiny@intel.com>
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "e@80x24.org" <e@80x24.org>, Jason Baron <jbaron@akamai.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        stable <stable@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: [PATCH -mm 0/1] signal: simplify
+ set_user_sigmask/restore_user_sigmask
+Message-ID: <20190606110522.GA4691@redhat.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com>
+ <20190604134117.GA29963@redhat.com>
+ <20190605155801.GA25165@redhat.com>
+ <CAHk-=wjkNx8u4Mcm5dfSQKYQmLQAv1Z1yGLDZvty7BVSj4eqBA@mail.gmail.com>
+ <1285a2e60e3748d8825b9b0e3500cd28@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190606014544.8339-8-ira.weiny@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1285a2e60e3748d8825b9b0e3500cd28@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 06 Jun 2019 11:05:38 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 05-06-19 18:45:40, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> If pages are actively gup pinned fail the truncate operation.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> ---
->  fs/ext4/inode.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 75f543f384e4..1ded83ec08c0 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4250,6 +4250,9 @@ int ext4_break_layouts(struct inode *inode, loff_t offset, loff_t len)
->  		if (!page)
->  			return 0;
->  
-> +		if (page_gup_pinned(page))
-> +			return -ETXTBSY;
-> +
->  		error = ___wait_var_event(&page->_refcount,
->  				atomic_read(&page->_refcount) == 1,
->  				TASK_INTERRUPTIBLE, 0, 0,
+On 06/06, David Laight wrote:
+>
+> If a signal handler is called, I presume that the trampoline
+> calls back into the kernel to get further handlers called
+> and to finally restore the original signal mask?
 
-This caught my eye. Does this mean that now truncate for a file which has
-temporary gup users (such buffers for DIO) can fail with ETXTBUSY? That
-doesn't look desirable. If we would mandate layout lease while pages are
-pinned as I suggested, this could be dealt with by checking for leases with
-pins (breaking such lease would return error and not break it) and if
-breaking leases succeeds (i.e., there are no long-term pinned pages), we'd
-just wait for the remaining references as we do now.
+See sigmask_to_save(), this is what the kernel records in uc.uc_sigmask
+before the signal handler runs, after that current->saved_sigmask has no
+meaning.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+When signal handler returns it does sys_rt_sigreturn() which restores
+the original mask saved in uc_sigmask.
+
+> What happens if a signal handler calls something that
+> would normally write to current->saved_sigmask?
+
+See above.
+
+Oleg.
+
