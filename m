@@ -2,97 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BBF637F77
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 23:22:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12B1137F8D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 23:28:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728328AbfFFVVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jun 2019 17:21:53 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:34561 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbfFFVVx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jun 2019 17:21:53 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id CDCD23C00DD;
-        Thu,  6 Jun 2019 23:21:49 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id F4M8mMrwGFmg; Thu,  6 Jun 2019 23:21:43 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id C54483C00D1;
-        Thu,  6 Jun 2019 23:21:43 +0200 (CEST)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 6 Jun 2019
- 23:21:43 +0200
-Date:   Thu, 6 Jun 2019 23:21:40 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     David Howells <dhowells@redhat.com>
-CC:     <viro@zeniv.linux.org.uk>, <raven@themaw.net>,
-        <linux-fsdevel@vger.kernel.org>, <linux-api@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <keyrings@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH 10/10] Add sample notification program [ver #3]
-Message-ID: <20190606212140.GA25664@vmlxhi-102.adit-jv.com>
-References: <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk>
- <155981421379.17513.13158528501056454772.stgit@warthog.procyon.org.uk>
+        id S1728488AbfFFV2G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jun 2019 17:28:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42696 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728398AbfFFV2G (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Jun 2019 17:28:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4F94BAF5F;
+        Thu,  6 Jun 2019 21:28:05 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id D99731E3FC9; Thu,  6 Jun 2019 23:28:04 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 23:28:04 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jan Kara <jack@suse.cz>, Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: [PATCH] dax: Fix xarray entry association for mixed mappings
+Message-ID: <20190606212804.GA10674@quack2.suse.cz>
+References: <20190606091028.31715-1-jack@suse.cz>
+ <CAPcyv4jxBoDUyuEFjY=1TcN_8ufjM8tqF1Yj0AN=xHfQ0NpdDQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <155981421379.17513.13158528501056454772.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.93.184]
+In-Reply-To: <CAPcyv4jxBoDUyuEFjY=1TcN_8ufjM8tqF1Yj0AN=xHfQ0NpdDQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi David,
+On Thu 06-06-19 10:00:01, Dan Williams wrote:
+> On Thu, Jun 6, 2019 at 2:10 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > When inserting entry into xarray, we store mapping and index in
+> > corresponding struct pages for memory error handling. When it happened
+> > that one process was mapping file at PMD granularity while another
+> > process at PTE granularity, we could wrongly deassociate PMD range and
+> > then reassociate PTE range leaving the rest of struct pages in PMD range
+> > without mapping information which could later cause missed notifications
+> > about memory errors. Fix the problem by calling the association /
+> > deassociation code if and only if we are really going to update the
+> > xarray (deassociating and associating zero or empty entries is just
+> > no-op so there's no reason to complicate the code with trying to avoid
+> > the calls for these cases).
+> 
+> Looks good to me, I assume this also needs:
+> 
+> Cc: <stable@vger.kernel.org>
+> Fixes: d2c997c0f145 ("fs, dax: use page->mapping to warn if truncate
+> collides with a busy page")
 
-On Thu, Jun 06, 2019 at 10:43:33AM +0100, David Howells wrote:
-[..]
-> diff --git a/samples/watch_queue/Makefile b/samples/watch_queue/Makefile
-> new file mode 100644
-> index 000000000000..42b694430d0f
-> --- /dev/null
-> +++ b/samples/watch_queue/Makefile
-> @@ -0,0 +1,9 @@
-> +# List of programs to build
-> +hostprogs-y := watch_test
-> +
-> +# Tell kbuild to always build the programs
-> +always := $(hostprogs-y)
-> +
-> +HOSTCFLAGS_watch_test.o += -I$(objtree)/usr/include
+Yes, thanks for that.
 
-How about arm64? Do you intend to enable cross-compilation?
+								Honza
 
-> +
-> +HOSTLOADLIBES_watch_test += -lkeyutils
-> diff --git a/samples/watch_queue/watch_test.c b/samples/watch_queue/watch_test.c
-> new file mode 100644
-> index 000000000000..893a5380f792
-> --- /dev/null
-> +++ b/samples/watch_queue/watch_test.c
-[..]
-
-> +			asm ("lfence" : : : "memory" );
-[..]
-> +			asm("mfence" ::: "memory");
-
-FWIW, trying to cross-compile it returned:
-
-aarch64-linux-gnu-gcc -I../../usr/include -I../../include  watch_test.c   -o watch_test
-/tmp/ccDXYynm.s: Assembler messages:
-/tmp/ccDXYynm.s:471: Error: unknown mnemonic `lfence' -- `lfence'
-/tmp/ccDXYynm.s:568: Error: unknown mnemonic `mfence' -- `mfence'
-<builtin>: recipe for target 'watch_test' failed
-make: *** [watch_test] Error 1
-
+> 
+> >
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > ---
+> >  fs/dax.c | 9 ++++-----
+> >  1 file changed, 4 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/fs/dax.c b/fs/dax.c
+> > index f74386293632..9fd908f3df32 100644
+> > --- a/fs/dax.c
+> > +++ b/fs/dax.c
+> > @@ -728,12 +728,11 @@ static void *dax_insert_entry(struct xa_state *xas,
+> >
+> >         xas_reset(xas);
+> >         xas_lock_irq(xas);
+> > -       if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
+> > +       if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
+> > +               void *old;
+> > +
+> >                 dax_disassociate_entry(entry, mapping, false);
+> >                 dax_associate_entry(new_entry, mapping, vmf->vma, vmf->address);
+> > -       }
+> > -
+> > -       if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
+> >                 /*
+> >                  * Only swap our new entry into the page cache if the current
+> >                  * entry is a zero page or an empty entry.  If a normal PTE or
+> > @@ -742,7 +741,7 @@ static void *dax_insert_entry(struct xa_state *xas,
+> >                  * existing entry is a PMD, we will just leave the PMD in the
+> >                  * tree and dirty it if necessary.
+> >                  */
+> > -               void *old = dax_lock_entry(xas, new_entry);
+> > +               old = dax_lock_entry(xas, new_entry);
+> >                 WARN_ON_ONCE(old != xa_mk_value(xa_to_value(entry) |
+> >                                         DAX_LOCKED));
+> >                 entry = new_entry;
+> > --
+> > 2.16.4
+> >
 -- 
-Best Regards,
-Eugeniu.
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
