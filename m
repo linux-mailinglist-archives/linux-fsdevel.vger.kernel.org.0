@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DAAB3696F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 03:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA3BF36972
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 03:45:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfFFBpQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jun 2019 21:45:16 -0400
+        id S1726847AbfFFBpV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jun 2019 21:45:21 -0400
 Received: from mga03.intel.com ([134.134.136.65]:36145 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726805AbfFFBpQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jun 2019 21:45:16 -0400
+        id S1726823AbfFFBpR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 Jun 2019 21:45:17 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 18:45:15 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 18:45:17 -0700
 X-ExtLoop1: 1
 Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga002.jf.intel.com with ESMTP; 05 Jun 2019 18:45:14 -0700
+  by orsmga002.jf.intel.com with ESMTP; 05 Jun 2019 18:45:16 -0700
 From:   ira.weiny@intel.com
 To:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
         "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
@@ -31,9 +31,9 @@ Cc:     Ira Weiny <ira.weiny@intel.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH RFC 04/10] mm/gup: Ensure F_LAYOUT lease is held prior to GUP'ing pages
-Date:   Wed,  5 Jun 2019 18:45:37 -0700
-Message-Id: <20190606014544.8339-5-ira.weiny@intel.com>
+Subject: [PATCH RFC 05/10] fs/ext4: Teach ext4 to break layout leases
+Date:   Wed,  5 Jun 2019 18:45:38 -0700
+Message-Id: <20190606014544.8339-6-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190606014544.8339-1-ira.weiny@intel.com>
 References: <20190606014544.8339-1-ira.weiny@intel.com>
@@ -46,163 +46,101 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-On FS DAX files users must inform the file system they intend to take
-long term GUP pins on the file pages.  Failure to do so should result in
-an error.
+ext4 needs to break a layout lease if it is held to inform a user
+holding a layout lease that a truncate is about to happen.  This allows
+the user knowledge of, and choice in how to handle, some other thread
+attempting to modify a file they are actively using.
 
-Ensure that a F_LAYOUT lease exists at the time the GUP call is made.
-If not return EPERM.
+Split out the logic to determine if a mapping is DAX, export it, and then
+break layout leases if a mapping is DAX.
 
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- fs/locks.c         | 41 +++++++++++++++++++++++++++++++++++++++++
- include/linux/mm.h |  2 ++
- mm/gup.c           | 25 +++++++++++++++++++++++++
- mm/huge_memory.c   | 12 ++++++++++++
- 4 files changed, 80 insertions(+)
+ fs/dax.c            | 23 ++++++++++++++++-------
+ fs/ext4/inode.c     |  4 ++++
+ include/linux/dax.h |  6 ++++++
+ 3 files changed, 26 insertions(+), 7 deletions(-)
 
-diff --git a/fs/locks.c b/fs/locks.c
-index de9761c068de..43f5dc97652c 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2945,3 +2945,44 @@ static int __init filelock_init(void)
- 	return 0;
+diff --git a/fs/dax.c b/fs/dax.c
+index f74386293632..29ff3b683657 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -552,6 +552,21 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 	return xa_mk_internal(VM_FAULT_FALLBACK);
  }
- core_initcall(filelock_init);
-+
-+/**
-+ * mapping_inode_has_layout()
-+ * @page page we are trying to GUP
-+ *
-+ * This should only be called on DAX pages.  DAX pages which are mapped through
-+ * FS DAX do not use the page cache.  As a result they require the user to take
-+ * a LAYOUT lease on them prior to be able to pin them for longterm use.
-+ * This allows the user to opt-into the fact that truncation operations will
-+ * fail for the duration of the pin.
-+ *
-+ * @Return true if the page has a LAYOUT lease associated with it's file.
-+ */
-+bool mapping_inode_has_layout(struct page *page)
+ 
++bool dax_mapping_is_dax(struct address_space *mapping)
 +{
-+	bool ret = false;
-+	struct inode *inode;
-+	struct file_lock *fl;
-+	struct file_lock_context *ctx;
-+
-+	if (WARN_ON(PageAnon(page)) ||
-+	    WARN_ON(!page) ||
-+	    WARN_ON(!page->mapping) ||
-+	    WARN_ON(!page->mapping->host))
++	/*
++	 * In the 'limited' case get_user_pages() for dax is disabled.
++	 */
++	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
 +		return false;
 +
-+	inode = page->mapping->host;
++	if (!dax_mapping(mapping) || !mapping_mapped(mapping))
++		return false;
 +
-+	ctx = locks_get_lock_context(inode, F_RDLCK);
-+	spin_lock(&ctx->flc_lock);
-+	list_for_each_entry(fl, &ctx->flc_lease, fl_list) {
-+		if (fl->fl_flags & FL_LAYOUT) {
-+			ret = true;
-+			break;
-+		}
-+	}
-+	spin_unlock(&ctx->flc_lock);
-+
-+	return ret;
++	return true;
 +}
-+EXPORT_SYMBOL_GPL(mapping_inode_has_layout);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index bc373a9b69fc..432b004b920c 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1630,6 +1630,8 @@ long get_user_pages_unlocked(unsigned long start, unsigned long nr_pages,
- int get_user_pages_fast(unsigned long start, int nr_pages,
- 			unsigned int gup_flags, struct page **pages);
++EXPORT_SYMBOL_GPL(dax_mapping_is_dax);
++
+ /**
+  * dax_layout_busy_page - find first pinned page in @mapping
+  * @mapping: address space to scan for a page with ref count > 1
+@@ -574,13 +589,7 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+ 	unsigned int scanned = 0;
+ 	struct page *page = NULL;
  
-+bool mapping_inode_has_layout(struct page *page);
-+
- /* Container for pinned pfns / pages */
- struct frame_vector {
- 	unsigned int nr_allocated;	/* Number of frames we have space for */
-diff --git a/mm/gup.c b/mm/gup.c
-index 26a7a3a3a657..d06cc5b14c0b 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -361,6 +361,13 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
- 			page = pte_page(pte);
- 		else
- 			goto no_page;
-+
-+		if (unlikely(flags & FOLL_LONGTERM) &&
-+		    (*pgmap)->type == MEMORY_DEVICE_FS_DAX &&
-+		    !mapping_inode_has_layout(page)) {
-+			page = ERR_PTR(-EPERM);
-+			goto out;
-+		}
- 	} else if (unlikely(!page)) {
- 		if (flags & FOLL_DUMP) {
- 			/* Avoid special (like zero) pages in core dumps */
-@@ -1905,6 +1912,16 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
+-	/*
+-	 * In the 'limited' case get_user_pages() for dax is disabled.
+-	 */
+-	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
+-		return NULL;
+-
+-	if (!dax_mapping(mapping) || !mapping_mapped(mapping))
++	if (!dax_mapping_is_dax(mapping))
+ 		return NULL;
  
- 		VM_BUG_ON_PAGE(compound_head(page) != head, page);
+ 	/*
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index c16071547c9c..c7c99f51961f 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4241,6 +4241,10 @@ int ext4_break_layouts(struct inode *inode)
+ 	if (WARN_ON_ONCE(!rwsem_is_locked(&ei->i_mmap_sem)))
+ 		return -EINVAL;
  
-+		if (pte_devmap(pte) &&
-+		    unlikely(flags & FOLL_LONGTERM) &&
-+		    pgmap->type == MEMORY_DEVICE_FS_DAX &&
-+		    !mapping_inode_has_layout(head)) {
-+			mod_node_page_state(page_pgdat(head),
-+					    NR_GUP_FAST_PAGE_BACKOFFS, 1);
-+			put_user_page(head);
-+			goto pte_unmap;
-+		}
++	/* Break layout leases if active */
++	if (dax_mapping_is_dax(inode->i_mapping))
++		break_layout(inode, true);
 +
- 		SetPageReferenced(page);
- 		pages[*nr] = page;
- 		(*nr)++;
-@@ -1955,6 +1972,14 @@ static int __gup_device_huge(unsigned long pfn, unsigned long addr,
- 		}
- 		SetPageReferenced(page);
- 		pages[*nr] = page;
+ 	do {
+ 		page = dax_layout_busy_page(inode->i_mapping);
+ 		if (!page)
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index becaea5f4488..ee6cbd56ddc4 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -106,6 +106,7 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
+ int dax_writeback_mapping_range(struct address_space *mapping,
+ 		struct block_device *bdev, struct writeback_control *wbc);
+ 
++bool dax_mapping_is_dax(struct address_space *mapping);
+ struct page *dax_layout_busy_page(struct address_space *mapping);
+ dax_entry_t dax_lock_page(struct page *page);
+ void dax_unlock_page(struct page *page, dax_entry_t cookie);
+@@ -137,6 +138,11 @@ static inline struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
+ 	return NULL;
+ }
+ 
++bool dax_mapping_is_dax(struct address_space *mapping)
++{
++	return false;
++}
 +
-+		if (unlikely(flags & FOLL_LONGTERM) &&
-+		    pgmap->type == MEMORY_DEVICE_FS_DAX &&
-+		    !mapping_inode_has_layout(page)) {
-+			undo_dev_pagemap(nr, nr_start, pages);
-+			return 0;
-+		}
-+
- 		if (try_get_gup_pin_page(page, NR_GUP_FAST_PAGES_REQUESTED)) {
- 			undo_dev_pagemap(nr, nr_start, pages);
- 			return 0;
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index bb7fd7fa6f77..cdc213e50902 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -950,6 +950,12 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
- 	if (!*pgmap)
- 		return ERR_PTR(-EFAULT);
- 	page = pfn_to_page(pfn);
-+
-+	if (unlikely(flags & FOLL_LONGTERM) &&
-+	    (*pgmap)->type == MEMORY_DEVICE_FS_DAX &&
-+	    !mapping_inode_has_layout(page))
-+		return ERR_PTR(-EPERM);
-+
- 	if (unlikely(!try_get_gup_pin_page(page,
- 					   NR_GUP_SLOW_PAGES_REQUESTED)))
- 		page = ERR_PTR(-ENOMEM);
-@@ -1092,6 +1098,12 @@ struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
- 	if (!*pgmap)
- 		return ERR_PTR(-EFAULT);
- 	page = pfn_to_page(pfn);
-+
-+	if (unlikely(flags & FOLL_LONGTERM) &&
-+	    (*pgmap)->type == MEMORY_DEVICE_FS_DAX &&
-+	    !mapping_inode_has_layout(page))
-+		return ERR_PTR(-EPERM);
-+
- 	if (unlikely(!try_get_gup_pin_page(page,
- 					   NR_GUP_SLOW_PAGES_REQUESTED)))
- 		page = ERR_PTR(-ENOMEM);
+ static inline struct page *dax_layout_busy_page(struct address_space *mapping)
+ {
+ 	return NULL;
 -- 
 2.20.1
 
