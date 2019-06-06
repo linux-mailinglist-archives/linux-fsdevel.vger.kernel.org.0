@@ -2,102 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF88B37AD5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 19:18:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6359437AE3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jun 2019 19:21:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730059AbfFFRSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jun 2019 13:18:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730061AbfFFRSb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:18:31 -0400
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B39F621019
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jun 2019 17:18:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559841509;
-        bh=xfZRqQoeex0rjsT5lia2MuMyCOHqkbEMbiBprno0lnU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=b2pabAOmyH+40Z8/KMs9sxFxXfW6WVNP4I/jMoE5zdAfCxRimo+cpZPUoWMpqR4jP
-         3QHygZqwEwEw8TbLImWAKKvU4l1/1o6zRVX5eSKtjrWbf0KXyrVhpDeLWRc2R8F7jn
-         04PKR0XBvb84vfTaQdBLKCFJiktoY17ZK7wFsypc=
-Received: by mail-wr1-f47.google.com with SMTP id d18so3258583wrs.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2019 10:18:28 -0700 (PDT)
-X-Gm-Message-State: APjAAAVjD84+inlR2OOEzKpGs2XfCZH5nyLPaa9Wqgm8Kfez2R00vVGs
-        54VT6Tr+3ATKT0u/9R9YzciGw6VWUHCEujiinNphoQ==
-X-Google-Smtp-Source: APXvYqz+L9VkEoyCu7JqdY0NTE0bD0Q2wBWq/mFsrPsDQ5iRojaTQMSztaXWiT2/0eqKCThtuSRumT2MYYGwvQLWLIQ=
-X-Received: by 2002:a5d:4d06:: with SMTP id z6mr3348178wrt.343.1559841507169;
- Thu, 06 Jun 2019 10:18:27 -0700 (PDT)
+        id S1730018AbfFFRVc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jun 2019 13:21:32 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37960 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727009AbfFFRVc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Jun 2019 13:21:32 -0400
+Received: by mail-lf1-f65.google.com with SMTP id b11so744979lfa.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2019 10:21:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fSh9JeAYZqEFU07GFlcm4g2RwNfVCw5VkJKLPgvFgpM=;
+        b=GXSY8IkFrWa7J8B6PJEPqJ0gkrWF9aF2wuVJ0wQ40ziAUSXofomBUgMg2tSIClx+89
+         +trdK2/MhDj4EjpP2yv3Xn8pX3rA48qk6bQhrjbIVV9fY3W5uHsxoW6S3hiV1u6bue1h
+         +WQ8hOkagCs/4IfWuZtcPZAZi6BK/PN2CpG1Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fSh9JeAYZqEFU07GFlcm4g2RwNfVCw5VkJKLPgvFgpM=;
+        b=ani9nSqQ8H56kE4mNz/WAFTv6ct2kd3/0tvUAT0PUzes44+NhSGRTBUUHRU5lrF+GA
+         Od+v3RgmPFpa6uVo+loGBzg8JMcZC8RiwCtqY2IG71Sps65YTZd05IBcYQewpu4a4FvM
+         IOqXDFij1UD7mKnMfWXxAt2In5RH2fqFA3pAw7CZkMTKKPaO/2hHdJp0tIg2c6hF2FMe
+         oJ8jAoJErCtiPRa68lFxpeuMIBPWeuv2TaDbNB6133MwEyHqUvULJ29tS/j06QVLRHxE
+         j52i4FClH1tJOe4poMBiUYkmWCwIJaVfsdTNbqWMBm8jf81AzM0TQvhFYkRQBzjuiS2g
+         1F5g==
+X-Gm-Message-State: APjAAAUGGlxyHlz66n3XU248/g1NuUEZeVW0d3A8ukZcJt6RqSHR6iGh
+        O1iK8375C/y4o2FqfNH/6yRFelzL9YY=
+X-Google-Smtp-Source: APXvYqybjCM5OHLHdXaaUzQgiVN/NG3D2Lkqc0b0VCTI8HoG9+kncLEjmNGT2j7EyDOJEwTBMfRq2A==
+X-Received: by 2002:a19:5007:: with SMTP id e7mr25970921lfb.76.1559841689487;
+        Thu, 06 Jun 2019 10:21:29 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id z83sm448362ljb.73.2019.06.06.10.21.28
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 10:21:28 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id k18so1374190ljc.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2019 10:21:28 -0700 (PDT)
+X-Received: by 2002:a2e:9ad1:: with SMTP id p17mr26100221ljj.147.1559841687851;
+ Thu, 06 Jun 2019 10:21:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk>
- <155981413016.17513.10540579988392555403.stgit@warthog.procyon.org.uk>
- <176F8189-3BE9-4B8C-A4D5-8915436338FB@amacapital.net> <11031.1559833574@warthog.procyon.org.uk>
-In-Reply-To: <11031.1559833574@warthog.procyon.org.uk>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 6 Jun 2019 10:18:16 -0700
-X-Gmail-Original-Message-ID: <CALCETrUukxNNhbBAifxz1EADzLOvYKoh9oqqZFJteU+MMhh1ig@mail.gmail.com>
-Message-ID: <CALCETrUukxNNhbBAifxz1EADzLOvYKoh9oqqZFJteU+MMhh1ig@mail.gmail.com>
-Subject: Re: [PATCH 01/10] security: Override creds in __fput() with last
- fputter's creds [ver #3]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+References: <20190606155205.2872-1-ebiggers@kernel.org>
+In-Reply-To: <20190606155205.2872-1-ebiggers@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 6 Jun 2019 10:21:12 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgSzRzoro8ATO5xb6OFxN1A0fjUCQSAHfGuEPbEu+zWvA@mail.gmail.com>
+Message-ID: <CAHk-=wgSzRzoro8ATO5xb6OFxN1A0fjUCQSAHfGuEPbEu+zWvA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/16] fs-verity: read-only file-based authenticity protection
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
+        linux-integrity@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 6, 2019 at 8:06 AM David Howells <dhowells@redhat.com> wrote:
+On Thu, Jun 6, 2019 at 8:54 AM Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> Andy Lutomirski <luto@amacapital.net> wrote:
->
-> > > So that the LSM can see the credentials of the last process to do an fput()
-> > > on a file object when the file object is being dismantled, do the following
-> > > steps:
-> > >
-> >
-> > I still maintain that this is a giant design error.
->
-> Yes, I know.  This was primarily a post so that Greg could play with the USB
-> notifications stuff I added.  The LSM support isn't resolved and is unchanged.
->
-> > Can someone at least come up with a single valid use case that isn't
-> > entirely full of bugs?
->
-> "Entirely full of bugs"?
+> This is a redesigned version of the fs-verity patchset, implementing
+> Ted's suggestion to build the Merkle tree in the kernel
+> (https://lore.kernel.org/linux-fsdevel/20190207031101.GA7387@mit.edu/).
+> This greatly simplifies the UAPI, since the verity metadata no longer
+> needs to be transferred to the kernel.
 
-I can say "hey, I have this policy that the person who triggered an
-event needs such-and-such permission, otherwise the event gets
-suppressed".  But this isn't a full use case, and it's buggy.  It's
-not a full use case because I haven't specified what my actual goal is
-and why this particular policy achieves my goals.  And it's entirely
-full of bugs because, as this patch so nicely illustrates, it's not
-well defined who triggered the event.  For example, if I exec a setuid
-process, who triggers the close?  What if I send the fd to systemd
-over a socket and immediately close my copy before systemd gets (and
-ignores) the message?  Or if I send it to Wayland, or to any other
-process?
+Interfaces look sane to me. My only real concern is whether it would
+make sense to make the FS_IOC_ENABLE_VERITY ioctl be something that
+could be done incrementally, since the way it is done now it looks
+like any random user could create a big file and then do the
+FS_IOC_ENABLE_VERITY to make the kernel do a _very_ expensive
+operation.
 
-A file is closed when everyone is done with it.  Trying to figure out
-who the last intentional user of the file was seems little better than
-random guessing.  Defining a security policy based on it seems like a
-poor idea.
+Yes, I see the
 
->
-> How would you propose I deal with Casey's requirement?  I'm getting the
-> feeling you're going to nak it if I try to fulfil that and he's going to nak
-> it if I don't.
->
++               if (fatal_signal_pending(current))
++                       return -EINTR;
++               cond_resched();
 
-Casey, I think you need to state your requirement in a way that's well
-defined, and I think you need to make a compelling case that your
-requirement is indeed worth dictating the design of parts of the
-kernel outside LSM.
+in there, so it's not like it's some entirely unkillable thing, and
+maybe we don't care as a result. But maybe the ioctl interface could
+be fundamentally restartable?
+
+If that was already considered and people just went "too complex", never mind.
+
+               Linus
