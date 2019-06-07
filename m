@@ -2,512 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AC71381FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 01:57:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2717B38224
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 02:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbfFFX5r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jun 2019 19:57:47 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45151 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727879AbfFFX5q (ORCPT
+        id S1728341AbfFGAY7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jun 2019 20:24:59 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46518 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728333AbfFGAY6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jun 2019 19:57:46 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f9so312535wre.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2019 16:57:45 -0700 (PDT)
+        Thu, 6 Jun 2019 20:24:58 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m15so174602ljg.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2019 17:24:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LMqswLyJBYhWcGy7Rk1bZ26UEgQ6j/7v6ZOx0ysNitE=;
-        b=AdRYd53OSEdrjcga4XVTu7dgkR8DGLCKnRFrc53UW33JzbYtEGkntdvVfv/lH4/VKy
-         +fREDSss1ZEZAUpcJg6haUGsNkGtk0tAxiXKFzbsCYFRHYHLJY1dW9hlRMk2FRcE0be1
-         OrHeG5jaheljYD4tQw6LUYRnKdz0lLojtqsoJnkxsbwdkQClf0507a5ahsRJeq0LdB6V
-         hiZb4BRclwOAPUCKvP9TZtd25wHhj5m4NJv2f9ajOi0o0D+pjWMHynAlIwPjckMrRrAb
-         Yoc872GU8SLEtBUCy4D1Ve6pIKmjP8SfQLBP3Eus/q3GwZWn8Pmm05rVHnjKjSGzvHMJ
-         hf3A==
-X-Gm-Message-State: APjAAAWh9NlpaM/HkwtfdPCWjo0rDnsaYJ5xB1josgsRyWr8GIj5ukWV
-        c2M/KwNTnlKJfWTYLbOXpzFgmw==
-X-Google-Smtp-Source: APXvYqxBt8Tt/Z4YZcUzU7F150lqa+/lCWQCB75x9ttj1y//XAUWmqVAQzzmIg3+K57MtGgIA+opDA==
-X-Received: by 2002:a5d:4f0a:: with SMTP id c10mr31305524wru.180.1559865464420;
-        Thu, 06 Jun 2019 16:57:44 -0700 (PDT)
-Received: from raver.teknoraver.net (net-93-144-152-91.cust.dsl.teletu.it. [93.144.152.91])
-        by smtp.gmail.com with ESMTPSA id f2sm656875wrq.48.2019.06.06.16.57.43
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 16:57:43 -0700 (PDT)
-From:   Matteo Croce <mcroce@redhat.com>
-To:     netdev@vger.kernel.org, linux-next@vger.kernel.org,
-        akpm@linux-foundation.org, Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH linux-next] mpls: don't build sysctl related code when sysctl is disabled
-Date:   Fri,  7 Jun 2019 01:57:42 +0200
-Message-Id: <20190606235742.1968-1-mcroce@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jjpV/GVZC7/6NIkIkxAR62f8LfbTURZiuQDu/JwjMc4=;
+        b=mo8v7L2bQwYrCa6Pti65Zqcc17+FdG8pp51g2QjNpsi5JfRhPVIQ6qz0+m251oQYex
+         nlPMLyMTZsGyC59Q5NUJJWnt28hyU0pKeGvJ02lPFpbOoqfntWJt29PkHuzUrkT3sgKw
+         O/Wyq7vd95AYqQuK06WaBJyfcuXZithf6YRCQOiuFRkDFCkA8IddSf1Bss1xeF3TkLdd
+         ESH97+R/leIfLxAPqwJKNb/jEQG4Fqcu8lxyQ/OPR/vv/SOy8OUdc17ETr38YVB8b//S
+         ezd0v46trG1ajnfZl+27UM316dKibz5mGOTMRt8CYN1Wp/k/OKdU41evhYISeyXMa+Mh
+         2gLA==
+X-Gm-Message-State: APjAAAWOyyDUhLRjdh94HjuNPkQ2zqDk2RNI1X/bHis18yQm+FrI8Qfr
+        4a+mjvFlgeewgHyG07YSA5aBkZHMl/bIAWQCENdmyj/BAT8=
+X-Google-Smtp-Source: APXvYqwugrE+HvpR1/J4UXMXJZT0jDeaBBB2NZMXth8iUXpfhZxwaHA9es7vfuwPufY+SwVTgs5F2CrkwWpGfygSiyg=
+X-Received: by 2002:a2e:83ca:: with SMTP id s10mr22921626ljh.163.1559867096646;
+ Thu, 06 Jun 2019 17:24:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190530035339.hJr4GziBa%akpm@linux-foundation.org>
+ <5a9fc4e5-eb29-99a9-dff6-2d4fdd5eb748@infradead.org> <2b1e5628-cc36-5a33-9259-08100a01d579@infradead.org>
+In-Reply-To: <2b1e5628-cc36-5a33-9259-08100a01d579@infradead.org>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Fri, 7 Jun 2019 02:24:20 +0200
+Message-ID: <CAGnkfhyO0gtg=RGUMGHYH43UhUV1htmqa-56nuK2tt_CACzOfg@mail.gmail.com>
+Subject: Re: mmotm 2019-05-29-20-52 uploaded (mpls) +linux-next
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        mhocko@suse.cz, mm-commits@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some sysctl related code and data structures are never referenced
-when CONFIG_SYSCTL is not set.
-While this is usually harmless, it produces a build failure since sysctl
-shared variables exist, due to missing sysctl_vals symbol:
+On Wed, Jun 5, 2019 at 12:29 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 5/30/19 3:28 PM, Randy Dunlap wrote:
+> > On 5/29/19 8:53 PM, akpm@linux-foundation.org wrote:
+> >> The mm-of-the-moment snapshot 2019-05-29-20-52 has been uploaded to
+> >>
+> >>    http://www.ozlabs.org/~akpm/mmotm/
+> >>
+> >> mmotm-readme.txt says
+> >>
+> >> README for mm-of-the-moment:
+> >>
+> >> http://www.ozlabs.org/~akpm/mmotm/
+> >>
+> >> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> >> more than once a week.
+> >>
+> >> You will need quilt to apply these patches to the latest Linus release (5.x
+> >> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> >> http://ozlabs.org/~akpm/mmotm/series
+> >>
+> >> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> >> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> >> followed by the base kernel version against which this patch series is to
+> >> be applied.
+> >>
+> >
+> > on i386 or x86_64:
+> >
+> > when CONFIG_PROC_SYSCTL is not set/enabled:
+> >
+> > ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
+> > af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
+> > ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
+> > ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
+> > ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
+> >
+>
+> Hi,
+> This now happens in linux-next 20190604.
+>
+>
+> --
+> ~Randy
 
-    ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
-    af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
-    ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
-    ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
-    ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
+Hi,
+I've just sent a patch to fix it.
 
-Fix this by moving all sysctl related code under #ifdef CONFIG_SYSCTL
+It seems that there is a lot of sysctl related code is built
+regardless of the CONFIG_SYSCTL value, but produces a build error only
+with my patch because I add a reference to sysctl_vals which is in
+kernel/sysctl.c.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
----
- net/mpls/af_mpls.c | 389 ++++++++++++++++++++++++---------------------
- 1 file changed, 204 insertions(+), 185 deletions(-)
+And it seems also that the compiler is unable to optimize out the
+unused code, which gets somehow in the final binary:
 
-diff --git a/net/mpls/af_mpls.c b/net/mpls/af_mpls.c
-index c312741df2ce..5aacbf129ec5 100644
---- a/net/mpls/af_mpls.c
-+++ b/net/mpls/af_mpls.c
-@@ -37,9 +37,6 @@
- 
- #define MPLS_NEIGH_TABLE_UNSPEC (NEIGH_LINK_TABLE + 1)
- 
--static int label_limit = (1 << 20) - 1;
--static int ttl_max = 255;
--
- #if IS_ENABLED(CONFIG_NET_IP_TUNNEL)
- static size_t ipgre_mpls_encap_hlen(struct ip_tunnel_encap *e)
- {
-@@ -1179,31 +1176,6 @@ static int mpls_netconf_msgsize_devconf(int type)
- 	return size;
- }
- 
--static void mpls_netconf_notify_devconf(struct net *net, int event,
--					int type, struct mpls_dev *mdev)
--{
--	struct sk_buff *skb;
--	int err = -ENOBUFS;
--
--	skb = nlmsg_new(mpls_netconf_msgsize_devconf(type), GFP_KERNEL);
--	if (!skb)
--		goto errout;
--
--	err = mpls_netconf_fill_devconf(skb, mdev, 0, 0, event, 0, type);
--	if (err < 0) {
--		/* -EMSGSIZE implies BUG in mpls_netconf_msgsize_devconf() */
--		WARN_ON(err == -EMSGSIZE);
--		kfree_skb(skb);
--		goto errout;
--	}
--
--	rtnl_notify(skb, net, 0, RTNLGRP_MPLS_NETCONF, NULL, GFP_KERNEL);
--	return;
--errout:
--	if (err < 0)
--		rtnl_set_sk_err(net, RTNLGRP_MPLS_NETCONF, err);
--}
--
- static const struct nla_policy devconf_mpls_policy[NETCONFA_MAX + 1] = {
- 	[NETCONFA_IFINDEX]	= { .len = sizeof(int) },
- };
-@@ -1362,6 +1334,36 @@ static int mpls_netconf_dump_devconf(struct sk_buff *skb,
- #define MPLS_PERDEV_SYSCTL_OFFSET(field)	\
- 	(&((struct mpls_dev *)0)->field)
- 
-+#ifdef CONFIG_SYSCTL
-+
-+static int label_limit = (1 << 20) - 1;
-+static int ttl_max = 255;
-+
-+static void mpls_netconf_notify_devconf(struct net *net, int event,
-+					int type, struct mpls_dev *mdev)
-+{
-+	struct sk_buff *skb;
-+	int err = -ENOBUFS;
-+
-+	skb = nlmsg_new(mpls_netconf_msgsize_devconf(type), GFP_KERNEL);
-+	if (!skb)
-+		goto errout;
-+
-+	err = mpls_netconf_fill_devconf(skb, mdev, 0, 0, event, 0, type);
-+	if (err < 0) {
-+		/* -EMSGSIZE implies BUG in mpls_netconf_msgsize_devconf() */
-+		WARN_ON(err == -EMSGSIZE);
-+		kfree_skb(skb);
-+		goto errout;
-+	}
-+
-+	rtnl_notify(skb, net, 0, RTNLGRP_MPLS_NETCONF, NULL, GFP_KERNEL);
-+	return;
-+errout:
-+	if (err < 0)
-+		rtnl_set_sk_err(net, RTNLGRP_MPLS_NETCONF, err);
-+}
-+
- static int mpls_conf_proc(struct ctl_table *ctl, int write,
- 			  void __user *buffer,
- 			  size_t *lenp, loff_t *ppos)
-@@ -1445,6 +1447,173 @@ static void mpls_dev_sysctl_unregister(struct net_device *dev,
- 	mpls_netconf_notify_devconf(net, RTM_DELNETCONF, 0, mdev);
- }
- 
-+static int resize_platform_label_table(struct net *net, size_t limit)
-+{
-+	size_t size = sizeof(struct mpls_route *) * limit;
-+	size_t old_limit;
-+	size_t cp_size;
-+	struct mpls_route __rcu **labels = NULL, **old;
-+	struct mpls_route *rt0 = NULL, *rt2 = NULL;
-+	unsigned index;
-+
-+	if (size) {
-+		labels = kvzalloc(size, GFP_KERNEL);
-+		if (!labels)
-+			goto nolabels;
-+	}
-+
-+	/* In case the predefined labels need to be populated */
-+	if (limit > MPLS_LABEL_IPV4NULL) {
-+		struct net_device *lo = net->loopback_dev;
-+		rt0 = mpls_rt_alloc(1, lo->addr_len, 0);
-+		if (IS_ERR(rt0))
-+			goto nort0;
-+		RCU_INIT_POINTER(rt0->rt_nh->nh_dev, lo);
-+		rt0->rt_protocol = RTPROT_KERNEL;
-+		rt0->rt_payload_type = MPT_IPV4;
-+		rt0->rt_ttl_propagate = MPLS_TTL_PROP_DEFAULT;
-+		rt0->rt_nh->nh_via_table = NEIGH_LINK_TABLE;
-+		rt0->rt_nh->nh_via_alen = lo->addr_len;
-+		memcpy(__mpls_nh_via(rt0, rt0->rt_nh), lo->dev_addr,
-+		       lo->addr_len);
-+	}
-+	if (limit > MPLS_LABEL_IPV6NULL) {
-+		struct net_device *lo = net->loopback_dev;
-+		rt2 = mpls_rt_alloc(1, lo->addr_len, 0);
-+		if (IS_ERR(rt2))
-+			goto nort2;
-+		RCU_INIT_POINTER(rt2->rt_nh->nh_dev, lo);
-+		rt2->rt_protocol = RTPROT_KERNEL;
-+		rt2->rt_payload_type = MPT_IPV6;
-+		rt2->rt_ttl_propagate = MPLS_TTL_PROP_DEFAULT;
-+		rt2->rt_nh->nh_via_table = NEIGH_LINK_TABLE;
-+		rt2->rt_nh->nh_via_alen = lo->addr_len;
-+		memcpy(__mpls_nh_via(rt2, rt2->rt_nh), lo->dev_addr,
-+		       lo->addr_len);
-+	}
-+
-+	rtnl_lock();
-+	/* Remember the original table */
-+	old = rtnl_dereference(net->mpls.platform_label);
-+	old_limit = net->mpls.platform_labels;
-+
-+	/* Free any labels beyond the new table */
-+	for (index = limit; index < old_limit; index++)
-+		mpls_route_update(net, index, NULL, NULL);
-+
-+	/* Copy over the old labels */
-+	cp_size = size;
-+	if (old_limit < limit)
-+		cp_size = old_limit * sizeof(struct mpls_route *);
-+
-+	memcpy(labels, old, cp_size);
-+
-+	/* If needed set the predefined labels */
-+	if ((old_limit <= MPLS_LABEL_IPV6NULL) &&
-+	    (limit > MPLS_LABEL_IPV6NULL)) {
-+		RCU_INIT_POINTER(labels[MPLS_LABEL_IPV6NULL], rt2);
-+		rt2 = NULL;
-+	}
-+
-+	if ((old_limit <= MPLS_LABEL_IPV4NULL) &&
-+	    (limit > MPLS_LABEL_IPV4NULL)) {
-+		RCU_INIT_POINTER(labels[MPLS_LABEL_IPV4NULL], rt0);
-+		rt0 = NULL;
-+	}
-+
-+	/* Update the global pointers */
-+	net->mpls.platform_labels = limit;
-+	rcu_assign_pointer(net->mpls.platform_label, labels);
-+
-+	rtnl_unlock();
-+
-+	mpls_rt_free(rt2);
-+	mpls_rt_free(rt0);
-+
-+	if (old) {
-+		synchronize_rcu();
-+		kvfree(old);
-+	}
-+	return 0;
-+
-+nort2:
-+	mpls_rt_free(rt0);
-+nort0:
-+	kvfree(labels);
-+nolabels:
-+	return -ENOMEM;
-+}
-+
-+static int mpls_platform_labels(struct ctl_table *table, int write,
-+				void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	struct net *net = table->data;
-+	int platform_labels = net->mpls.platform_labels;
-+	int ret;
-+	struct ctl_table tmp = {
-+		.procname	= table->procname,
-+		.data		= &platform_labels,
-+		.maxlen		= sizeof(int),
-+		.mode		= table->mode,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= &label_limit,
-+	};
-+
-+	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
-+
-+	if (write && ret == 0)
-+		ret = resize_platform_label_table(net, platform_labels);
-+
-+	return ret;
-+}
-+
-+#define MPLS_NS_SYSCTL_OFFSET(field)		\
-+	(&((struct net *)0)->field)
-+
-+static const struct ctl_table mpls_table[] = {
-+	{
-+		.procname	= "platform_labels",
-+		.data		= NULL,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= mpls_platform_labels,
-+	},
-+	{
-+		.procname	= "ip_ttl_propagate",
-+		.data		= MPLS_NS_SYSCTL_OFFSET(mpls.ip_ttl_propagate),
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+	{
-+		.procname	= "default_ttl",
-+		.data		= MPLS_NS_SYSCTL_OFFSET(mpls.default_ttl),
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ONE,
-+		.extra2		= &ttl_max,
-+	},
-+	{ }
-+};
-+
-+#else
-+
-+static int mpls_dev_sysctl_register(struct net_device *dev,
-+				    struct mpls_dev *mdev)
-+{
-+	return 0;
-+}
-+
-+static void mpls_dev_sysctl_unregister(struct net_device *dev,
-+				       struct mpls_dev *mdev)
-+{
-+}
-+
-+#endif
-+
- static struct mpls_dev *mpls_add_dev(struct net_device *dev)
- {
- 	struct mpls_dev *mdev;
-@@ -2497,168 +2666,12 @@ static int mpls_getroute(struct sk_buff *in_skb, struct nlmsghdr *in_nlh,
- 	return err;
- }
- 
--static int resize_platform_label_table(struct net *net, size_t limit)
--{
--	size_t size = sizeof(struct mpls_route *) * limit;
--	size_t old_limit;
--	size_t cp_size;
--	struct mpls_route __rcu **labels = NULL, **old;
--	struct mpls_route *rt0 = NULL, *rt2 = NULL;
--	unsigned index;
--
--	if (size) {
--		labels = kvzalloc(size, GFP_KERNEL);
--		if (!labels)
--			goto nolabels;
--	}
--
--	/* In case the predefined labels need to be populated */
--	if (limit > MPLS_LABEL_IPV4NULL) {
--		struct net_device *lo = net->loopback_dev;
--		rt0 = mpls_rt_alloc(1, lo->addr_len, 0);
--		if (IS_ERR(rt0))
--			goto nort0;
--		RCU_INIT_POINTER(rt0->rt_nh->nh_dev, lo);
--		rt0->rt_protocol = RTPROT_KERNEL;
--		rt0->rt_payload_type = MPT_IPV4;
--		rt0->rt_ttl_propagate = MPLS_TTL_PROP_DEFAULT;
--		rt0->rt_nh->nh_via_table = NEIGH_LINK_TABLE;
--		rt0->rt_nh->nh_via_alen = lo->addr_len;
--		memcpy(__mpls_nh_via(rt0, rt0->rt_nh), lo->dev_addr,
--		       lo->addr_len);
--	}
--	if (limit > MPLS_LABEL_IPV6NULL) {
--		struct net_device *lo = net->loopback_dev;
--		rt2 = mpls_rt_alloc(1, lo->addr_len, 0);
--		if (IS_ERR(rt2))
--			goto nort2;
--		RCU_INIT_POINTER(rt2->rt_nh->nh_dev, lo);
--		rt2->rt_protocol = RTPROT_KERNEL;
--		rt2->rt_payload_type = MPT_IPV6;
--		rt2->rt_ttl_propagate = MPLS_TTL_PROP_DEFAULT;
--		rt2->rt_nh->nh_via_table = NEIGH_LINK_TABLE;
--		rt2->rt_nh->nh_via_alen = lo->addr_len;
--		memcpy(__mpls_nh_via(rt2, rt2->rt_nh), lo->dev_addr,
--		       lo->addr_len);
--	}
--
--	rtnl_lock();
--	/* Remember the original table */
--	old = rtnl_dereference(net->mpls.platform_label);
--	old_limit = net->mpls.platform_labels;
--
--	/* Free any labels beyond the new table */
--	for (index = limit; index < old_limit; index++)
--		mpls_route_update(net, index, NULL, NULL);
--
--	/* Copy over the old labels */
--	cp_size = size;
--	if (old_limit < limit)
--		cp_size = old_limit * sizeof(struct mpls_route *);
--
--	memcpy(labels, old, cp_size);
--
--	/* If needed set the predefined labels */
--	if ((old_limit <= MPLS_LABEL_IPV6NULL) &&
--	    (limit > MPLS_LABEL_IPV6NULL)) {
--		RCU_INIT_POINTER(labels[MPLS_LABEL_IPV6NULL], rt2);
--		rt2 = NULL;
--	}
--
--	if ((old_limit <= MPLS_LABEL_IPV4NULL) &&
--	    (limit > MPLS_LABEL_IPV4NULL)) {
--		RCU_INIT_POINTER(labels[MPLS_LABEL_IPV4NULL], rt0);
--		rt0 = NULL;
--	}
--
--	/* Update the global pointers */
--	net->mpls.platform_labels = limit;
--	rcu_assign_pointer(net->mpls.platform_label, labels);
--
--	rtnl_unlock();
--
--	mpls_rt_free(rt2);
--	mpls_rt_free(rt0);
--
--	if (old) {
--		synchronize_rcu();
--		kvfree(old);
--	}
--	return 0;
--
--nort2:
--	mpls_rt_free(rt0);
--nort0:
--	kvfree(labels);
--nolabels:
--	return -ENOMEM;
--}
--
--static int mpls_platform_labels(struct ctl_table *table, int write,
--				void __user *buffer, size_t *lenp, loff_t *ppos)
--{
--	struct net *net = table->data;
--	int platform_labels = net->mpls.platform_labels;
--	int ret;
--	struct ctl_table tmp = {
--		.procname	= table->procname,
--		.data		= &platform_labels,
--		.maxlen		= sizeof(int),
--		.mode		= table->mode,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= &label_limit,
--	};
--
--	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
--
--	if (write && ret == 0)
--		ret = resize_platform_label_table(net, platform_labels);
--
--	return ret;
--}
--
--#define MPLS_NS_SYSCTL_OFFSET(field)		\
--	(&((struct net *)0)->field)
--
--static const struct ctl_table mpls_table[] = {
--	{
--		.procname	= "platform_labels",
--		.data		= NULL,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= mpls_platform_labels,
--	},
--	{
--		.procname	= "ip_ttl_propagate",
--		.data		= MPLS_NS_SYSCTL_OFFSET(mpls.ip_ttl_propagate),
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_ONE,
--	},
--	{
--		.procname	= "default_ttl",
--		.data		= MPLS_NS_SYSCTL_OFFSET(mpls.default_ttl),
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ONE,
--		.extra2		= &ttl_max,
--	},
--	{ }
--};
--
- static int mpls_net_init(struct net *net)
- {
-+#ifdef CONFIG_SYSCTL
- 	struct ctl_table *table;
- 	int i;
- 
--	net->mpls.platform_labels = 0;
--	net->mpls.platform_label = NULL;
--	net->mpls.ip_ttl_propagate = 1;
--	net->mpls.default_ttl = 255;
--
- 	table = kmemdup(mpls_table, sizeof(mpls_table), GFP_KERNEL);
- 	if (table == NULL)
- 		return -ENOMEM;
-@@ -2674,6 +2687,12 @@ static int mpls_net_init(struct net *net)
- 		kfree(table);
- 		return -ENOMEM;
- 	}
-+#endif
-+
-+	net->mpls.platform_labels = 0;
-+	net->mpls.platform_label = NULL;
-+	net->mpls.ip_ttl_propagate = 1;
-+	net->mpls.default_ttl = 255;
- 
- 	return 0;
- }
+$ grep PROC_SYSCTL .config
+# CONFIG_PROC_SYSCTL is not set
+$ readelf vmlinux -x .rodata |grep -A 2 platform_lab
+  0xffffffff81b09180 2e630070 6c617466 6f726d5f 6c616265 .c.platform_labe
+  0xffffffff81b09190 6c730069 705f7474 6c5f7072 6f706167 ls.ip_ttl_propag
+  0xffffffff81b091a0 61746500 64656661 756c745f 74746c00 ate.default_ttl.
+
+If the purpose of disabling sysctl is to save space, probably this
+code and definitions should all go under an #ifdef
+
+Regards,
 -- 
-2.21.0
-
+Matteo Croce
+per aspera ad upstream
