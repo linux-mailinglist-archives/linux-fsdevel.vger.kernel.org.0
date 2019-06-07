@@ -2,88 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E4E83942D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 20:21:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16B5E3943E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 20:24:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731636AbfFGSVT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jun 2019 14:21:19 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:32824 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729474AbfFGSVT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jun 2019 14:21:19 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y17so2337572lfe.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jun 2019 11:21:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kcUcDDcC5mC90UP39oOfydyRccLWkfoYEANrC6Q5vzo=;
-        b=s0tXCBipeEZLiyUq1kIA5uOtAITcdEM2lIuJevLlsm348D+kxPA3J0V1UMiYsScdAV
-         iAkDqV6bEkCbWJ5ZBCwRJS1uPgXYp7JtbOCoYyXJketTPNdC9kGyawJL9bUnU5nK39l4
-         FHhXUjX0EqZSvk8lIa472w6FrvLcyQjjmDX1sR2t97Sf39cEObUd8QoNPR49Zgfl7C2M
-         YBl4GwAkXuKx13NThm39wmolwYBovdJAuD8LIEIZx6C6RQ1T7k9NLAH6SnjgTNNPphF9
-         ZcvFK8KKTTflixMahpi/BDTxLfOBluVyRtg+BXnSsEmXEGs+FLEeoGSkwuX0s3gdTgVT
-         3Oqw==
-X-Gm-Message-State: APjAAAW85+LvJ3mBgD0wS9PWMm09zyiWfygySMDE63BPpbyy523Jgu+7
-        tg3gsQzXtjqSfIpO89ggkWVDFEZ3i1wns7kKGhVqfQ==
-X-Google-Smtp-Source: APXvYqxS5uzW3XR5kdyFjRpxOZreggJNwlHKkhL6Tmcr675Z5ilYvHwgYSkiUD3WZM5T1zybdCcFiR7fD7A9J2bVdkU=
-X-Received: by 2002:a19:22d8:: with SMTP id i207mr25716706lfi.97.1559931677223;
- Fri, 07 Jun 2019 11:21:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190607003646.10411-1-mcroce@redhat.com> <ea97df59-481b-3f05-476c-33e733b5c4ba@gmail.com>
-In-Reply-To: <ea97df59-481b-3f05-476c-33e733b5c4ba@gmail.com>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Fri, 7 Jun 2019 20:20:40 +0200
-Message-ID: <CAGnkfhx_h1d6k+wZk7xZXnECDZ+Z+oLw9zAWvDFRe+mHLksszA@mail.gmail.com>
-Subject: Re: [PATCH linux-next v2] mpls: don't build sysctl related code when
- sysctl is disabled
-To:     David Ahern <dsahern@gmail.com>
-Cc:     netdev <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        id S1731442AbfFGSYX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jun 2019 14:24:23 -0400
+Received: from mga05.intel.com ([192.55.52.43]:54926 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729677AbfFGSYW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Jun 2019 14:24:22 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 11:24:21 -0700
+X-ExtLoop1: 1
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga001.fm.intel.com with ESMTP; 07 Jun 2019 11:24:21 -0700
+Date:   Fri, 7 Jun 2019 11:25:35 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
+ <20190607110426.GB12765@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607110426.GB12765@quack2.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 7, 2019 at 7:14 PM David Ahern <dsahern@gmail.com> wrote:
->
-> On 6/6/19 6:36 PM, Matteo Croce wrote:
-> > Some sysctl related code and data structures is never referenced
-> > when CONFIG_SYSCTL is not set.
-> > While this is usually harmless, it produces a build failure since sysctl
-> > shared variables exists, due to missing sysctl_vals symbol:
-> >
-> >     ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
-> >     af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
-> >     ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
-> >     ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
-> >     ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
-> >
-> > Fix this by moving all sysctl related code under #ifdef CONFIG_SYSCTL
-> >
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Signed-off-by: Matteo Croce <mcroce@redhat.com>
-> > ---
-> >
-> > v1 -> v2: fix a crash on netns destroy
-> >
-> >  net/mpls/af_mpls.c | 393 ++++++++++++++++++++++++---------------------
-> >  1 file changed, 207 insertions(+), 186 deletions(-)
-> >
->
-> As I recall you need to set platform_labels for the mpls code to even
-> work, so building mpls_router without sysctl is pointless.
+On Fri, Jun 07, 2019 at 01:04:26PM +0200, Jan Kara wrote:
+> On Thu 06-06-19 15:03:30, Ira Weiny wrote:
+> > On Thu, Jun 06, 2019 at 12:42:03PM +0200, Jan Kara wrote:
+> > > On Wed 05-06-19 18:45:33, ira.weiny@intel.com wrote:
+> > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > 
+> > > So I'd like to actually mandate that you *must* hold the file lease until
+> > > you unpin all pages in the given range (not just that you have an option to
+> > > hold a lease). And I believe the kernel should actually enforce this. That
+> > > way we maintain a sane state that if someone uses a physical location of
+> > > logical file offset on disk, he has a layout lease. Also once this is done,
+> > > sysadmin has a reasonably easy way to discover run-away RDMA application
+> > > and kill it if he wishes so.
+> > 
+> > Fair enough.
+> > 
+> > I was kind of heading that direction but had not thought this far forward.  I
+> > was exploring how to have a lease remain on the file even after a "lease
+> > break".  But that is incompatible with the current semantics of a "layout"
+> > lease (as currently defined in the kernel).  [In the end I wanted to get an RFC
+> > out to see what people think of this idea so I did not look at keeping the
+> > lease.]
+> > 
+> > Also hitch is that currently a lease is forcefully broken after
+> > <sysfs>/lease-break-time.  To do what you suggest I think we would need a new
+> > lease type with the semantics you describe.
+> 
+> I'd do what Dave suggested - add flag to mark lease as unbreakable by
+> truncate and teach file locking core to handle that. There actually is
+> support for locks that are not broken after given timeout so there
+> shouldn't be too many changes need.
+>  
+> > Previously I had thought this would be a good idea (for other reasons).  But
+> > what does everyone think about using a "longterm lease" similar to [1] which
+> > has the semantics you proppose?  In [1] I was not sure "longterm" was a good
+> > name but with your proposal I think it makes more sense.
+> 
+> As I wrote elsewhere in this thread I think FL_LAYOUT name still makes
+> sense and I'd add there FL_UNBREAKABLE to mark unusal behavior with
+> truncate.
 
-This would explain why so much code went under the #ifdef.
-Should we select or depend on sysctl maybe?
+Ok I want to make sure I understand what you and Dave are suggesting.
 
-Regards,
--- 
-Matteo Croce
-per aspera ad upstream
+Are you suggesting that we have something like this from user space?
+
+	fcntl(fd, F_SETLEASE, F_LAYOUT | F_UNBREAKABLE);
+
+> 
+> > > - probably I'd just transition all gup_longterm()
+> > > users to a saner API similar to the one we have in mm/frame_vector.c where
+> > > we don't hand out page pointers but an encapsulating structure that does
+> > > all the necessary tracking.
+> > 
+> > I'll take a look at that code.  But that seems like a pretty big change.
+> 
+> I was looking into that yesterday before proposing this and there aren't
+> than many gup_longterm() users and most of them anyway just stick pages
+> array into their tracking structure and then release them once done. So it
+> shouldn't be that complex to convert to a new convention (and you have to
+> touch all gup_longterm() users anyway to teach them track leases etc.).
+
+I think in the direction we are heading this becomes more attractive for sure.
+For me though it will take some time.
+
+Should we convert the frame_vector over to this new mechanism?  (Or more
+accurately perhaps, add to frame_vector and use it?)  It seems bad to have "yet
+another object" returned from the pin pages interface...
+
+And I think this is related to what Christoph Hellwig is doing with bio_vec and
+dma.  Really we want drivers out of the page processing business.
+
+So for now I'm going to move forward with the idea of handing "some object" to
+the GUP callers and figure out the lsof stuff, and let bigger questions like
+this play out a bit more before I try and work with that code.  Fair?
+
+> 
+> > > Removing a lease would need to block until all
+> > > pins are released - this is probably the most hairy part since we need to
+> > > handle a case if application just closes the file descriptor which would
+> > > release the lease but OTOH we need to make sure task exit does not deadlock.
+> > > Maybe we could block only on explicit lease unlock and just drop the layout
+> > > lease on file close and if there are still pinned pages, send SIGKILL to an
+> > > application as a reminder it did something stupid...
+> > 
+> > As presented at LSFmm I'm not opposed to killing a process which does not
+> > "follow the rules".  But I'm concerned about how to handle this across a fork.
+> > 
+> > Limiting the open()/LEASE/GUP/close()/SIGKILL to a specific pid "leak"'s pins
+> > to a child through the RDMA context.  This was the major issue Jason had with
+> > the SIGBUS proposal.
+> > 
+> > Always sending a SIGKILL would prevent an RDMA process from doing something
+> > like system("ls") (would kill the child unnecessarily).  Are we ok with that?
+> 
+> I answered this in another email but system("ls") won't kill anybody.
+> fork(2) just creates new file descriptor for the same file and possibly
+> then closes it but since there is still another file descriptor for the
+> same struct file, the "close" code won't trigger.
+
+Agreed.  I was wrong.  Sorry.
+
+But if we can keep track of who has the pins in lsof can we agree no process
+needs to be SIGKILL'ed?  Admins can do this on their own "killing" if they
+really need to stop the use of these files, right?
+
+Ira
+
