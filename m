@@ -2,108 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1517739332
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 19:29:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B90E3393EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 20:05:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731416AbfFGR3k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jun 2019 13:29:40 -0400
-Received: from mail-yb1-f178.google.com ([209.85.219.178]:36450 "EHLO
-        mail-yb1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729550AbfFGR3k (ORCPT
+        id S1729921AbfFGSFc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jun 2019 14:05:32 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34737 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729817AbfFGSFc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jun 2019 13:29:40 -0400
-Received: by mail-yb1-f178.google.com with SMTP id y2so1073170ybo.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jun 2019 10:29:39 -0700 (PDT)
+        Fri, 7 Jun 2019 14:05:32 -0400
+Received: by mail-lf1-f65.google.com with SMTP id y198so2308450lfa.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jun 2019 11:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XxlVCeRgEIaUT8M+VwFtPChqEnieudHDwKBNflzAwnE=;
-        b=OqibJKHgGJKVpF0nAPZToy3ZpWM9rOGhlJ/FaMiug3AEgLGIJ28UBppQV9BQYinPup
-         YgcMcd0hKKBZOYcMPuAFbZUFx6ksi8KNULp6FOFmsmegvjS8BaetQHAsBXmXtN+AvnA6
-         KDDAJro5/Ml+HTs8bTaKJiLVtENmtd29moBwmjCgHLTWmqG+puiPMey4N4NkMr2EIDl1
-         vn9VQPZZBicKN7EdLLwyY3h+MTPJrO/oPbPDdGIfn9+6HdKONT7ByKawgdPENWNB32Ps
-         NtrPF8zShQkBvhwt7qMvp9i9dVZ3Qpu+jLOKOLv1cr3sdwI1gK+0T2WrYzX2FXjcv23P
-         QGcA==
+        bh=4AvJFyeYPhoZ4OqCr1dphehPV0ub1oVxmCWbJKgWsTI=;
+        b=d315/RM0DaMH44my3nNzmVmEhTs+nmHZuuQf+pKqz9YU+VjDMhvTt+Yvh514Ss3VZ3
+         osVtbUYyVCFBmdkSg2kW5jq84b2tec/7sH0g88lborkaDjwnEQCiquJ2Gjh042t4qJRK
+         O0Z2hoSc9g3XgDPMu2hQ/afW7OGSyKvzIuScc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XxlVCeRgEIaUT8M+VwFtPChqEnieudHDwKBNflzAwnE=;
-        b=gcfRQo3URPcpNeJYZnuujwvHd8qR09+z3eJObFOzaQ/tND4O+XCK0niKBCY56lrt3Z
-         UIc6YrskLd1OILb97YoTquRnxJUw+2lyAnOjVUakuM6MRBNjVqTCDxSo5lN7xH1Euyip
-         uw81v8yyLN/SCBOOPcaeWQm49bLuePY1Rruledox4s3XHg3Yb6UoHF94uOcOiBjtnFLr
-         PLPQGOetkGOUYliEb7WtqZ8VYlsgLQgq71foKMCgJqxoQ0AsX0TzLRF/KJV0b++17/il
-         4vYvimzcJGfAX50cEDkNtOPlMayLzIH6yY3wLy7v5Ag70lgf0oQ6iP/pWnOOUzBaYoJw
-         4Tjw==
-X-Gm-Message-State: APjAAAWb8Dp0v8Jm1+TOlC8Ue6jUf7TVKLcLfjyw+/rwF5VImYO0ztmz
-        o3z8Vdnl3hKbfQtBl9RHmamKDUQ30JalloQXFIw=
-X-Google-Smtp-Source: APXvYqyXz6wRpfRUc/tB/YeTIbAq7A0YCjEZM8112aXomn1MQG7pp6cIMLmYQu2J6gqQyrLuZF6bpGGPDMcSWj/L6Ic=
-X-Received: by 2002:a25:8109:: with SMTP id o9mr23721032ybk.132.1559928579272;
- Fri, 07 Jun 2019 10:29:39 -0700 (PDT)
+        bh=4AvJFyeYPhoZ4OqCr1dphehPV0ub1oVxmCWbJKgWsTI=;
+        b=lvR8m4HxTpUzkOFFDZFjzf+iI/toYUB/vhtAj8iypW+YInxuyyZiI9rMYwC89piQ9b
+         +eVL2hJPmD4gYCs9qS/VzNugJqe5rSkMKhLwOiv1YS96olumI5PwABdgTGwQ6ljLiENy
+         F+VTWplefzv/y6LasGXM5POZm6A0aVMLqWYJOBuCM3aE84VXGQAgAjbCEhJOad98Ue32
+         aii0pJ1H3o6SKZ7hQ0PEVqrR5PAQLPWvEbfbrMCjrC3us0FXE5fo6oPbIwUHqNzJeAex
+         MKS3Yxabf5RG4PS4CP8eYIMJ++OYhHbmZOHizzXRN2YhBGzW7TCwfif3sCGiArhPXHBF
+         lk5w==
+X-Gm-Message-State: APjAAAWHJi4hj03ESgVu2/7ByFx6r4Aoo1JmLvYUtZToQJwjuhyTHRp1
+        Vikk07PcdHb6rgA+7UqKXSqr2YwItdY=
+X-Google-Smtp-Source: APXvYqzKclvMNDZkxGxiO71ZoXnxfnTFJcij3VcjQY0zs+3CX7noxn0APRRTLgJLw5pvyOnroUY/rQ==
+X-Received: by 2002:ac2:52ac:: with SMTP id r12mr5038136lfm.126.1559930730145;
+        Fri, 07 Jun 2019 11:05:30 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id d65sm608242lfd.72.2019.06.07.11.05.29
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 11:05:29 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id j29so2281631lfk.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jun 2019 11:05:29 -0700 (PDT)
+X-Received: by 2002:a19:2d41:: with SMTP id t1mr27328138lft.79.1559930729175;
+ Fri, 07 Jun 2019 11:05:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <87zhmt7bhc.fsf@drapion.f-secure.com>
-In-Reply-To: <87zhmt7bhc.fsf@drapion.f-secure.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 7 Jun 2019 20:29:27 +0300
-Message-ID: <CAOQ4uxjP4kxE6-+UrbHWJ7OWUibixNhTwGWUfdJydYSnRhaxGA@mail.gmail.com>
-Subject: Re: fanotify and pidfd?
-To:     Marko Rauhamaa <marko.rauhamaa@f-secure.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com>
+ <20190606140814.GA13440@redhat.com> <20190606140852.GB13440@redhat.com>
+In-Reply-To: <20190606140852.GB13440@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 7 Jun 2019 11:05:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjTWSra20otC3tEGrpHJL3xhUFFe0+-7bZjUpibjwKjzg@mail.gmail.com>
+Message-ID: <CAHk-=wjTWSra20otC3tEGrpHJL3xhUFFe0+-7bZjUpibjwKjzg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] select: change do_poll() to return -ERESTARTNOHAND
+ rather than -EINTR
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-aio@kvack.org, omar.kilani@gmail.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        stable <stable@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        David Laight <David.Laight@aculab.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 7, 2019 at 5:31 PM Marko Rauhamaa
-<marko.rauhamaa@f-secure.com> wrote:
+On Thu, Jun 6, 2019 at 7:09 AM Oleg Nesterov <oleg@redhat.com> wrote:
 >
->
-> As it stands, fanotify reports the process ID of the file that is being
-> operated on:
->
->            struct fanotify_event_metadata {
->                __u32 event_len;
->                __u8 vers;
->                __u8 reserved;
->                __u16 metadata_len;
->                __aligned_u64 mask;
->                __s32 fd;
->                __s32 pid;
->            };
->
-> One nasty problem with this is that the process often is long gone by
-> the time the notification arrives.
->
-> Would it be possible to amend this format with:
->
->                __s32 pidfd;
->
+> do_poll() returns -EINTR if interrupted and after that all its callers
+> have to translate it into -ERESTARTNOHAND. Change do_poll() to return
+> -ERESTARTNOHAND and update (simplify) the callers.
 
-It's possible to report pidfd instead of pid with user opt-in
-(i.e. FAN_REPORT_PIDFD)
+Ack.
 
-If you want to implement this, follow the footsteps of code, test and
-man page for FAN_REPORT_TID.
+The *right* return value will actually be then chosen by
+poll_select_copy_remaining(), which will turn ERESTARTNOHAND to EINTR
+when it can't update the timeout.
 
-> It would hold the pid still for the duration of notification processing
-> and allow for the fanotify monitor to safely use the pid field to
-> inspect /proc/<pid>.
->
+Except for the cases that use restart_block and do that instead and
+don't have the whole timeout restart issue as a result.
 
-It will hold pid until someone closes pidfd.
-That also needs to be documented.
-
-> And the possibility of sending signals to the monitored process might
-> come in handy as well.
->
-> Thinking about this a bit more, could the fd field take on the dual role
-> of allowing you to read the file in question as well as acting as a
-> pidfd?
->
-
-Please no.
-
-Thanks,
-Amir.
+              Linus
