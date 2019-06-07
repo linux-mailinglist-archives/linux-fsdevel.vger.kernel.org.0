@@ -2,84 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70BC8382BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 04:34:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC61E383FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 08:01:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726336AbfFGCeJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jun 2019 22:34:09 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:35794 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726294AbfFGCeJ (ORCPT
+        id S1726795AbfFGGAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jun 2019 02:00:47 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36715 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbfFGGAr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jun 2019 22:34:09 -0400
-Received: from mr5.cc.vt.edu (junk.cc.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x572Y8L3003947
-        for <linux-fsdevel@vger.kernel.org>; Thu, 6 Jun 2019 22:34:08 -0400
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-        by mr5.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x572Y3Ab011931
-        for <linux-fsdevel@vger.kernel.org>; Thu, 6 Jun 2019 22:34:08 -0400
-Received: by mail-qk1-f197.google.com with SMTP id u128so413027qka.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2019 19:34:08 -0700 (PDT)
+        Fri, 7 Jun 2019 02:00:47 -0400
+Received: by mail-ot1-f67.google.com with SMTP id c3so826981otr.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2019 23:00:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/KxNQ9MI1VotM1MpZhO1sXWtsUgIvWtrmcpqkBhjppA=;
+        b=WfyEYkZegPTmvynLc2fjjKs6d/TdRZHB2mGyi3svr8A4gfvWp7nBiukv2oNPMrRNu3
+         LF5pIX9mWCDEYPKHsg9x8FyxTEXL3Pp4DEsbFXvMjA67etlGXIbfY2hNbJLOqw4TuZAK
+         Bxvkt2hCh3F5rpXtMyj2CBZde6MBilulGBAwGobq2TdvBZsm+WUcNaCHcTKujMNYBYzA
+         Jz+YlbRdrvtxV6qQh4bHw4H4UOWvGsLOnQyJmjDAnpMCiSaVTnMqJomtxlE/4a38CErg
+         OEy8Ur6MMHV2bA7bkrmZl08c3aZp2RHd2Dpw55zuwf2rl9TE1d9/sN4lvF3IDzCodhLY
+         IFJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:mime-version:date
-         :message-id;
-        bh=ZcoikDKkI7PPegWQ+6ZD26nDeLnWiH7ygdp1DcZcSDQ=;
-        b=K1GAE/yte2MdfUhZQ5txdxYQowDDF9emijkrnU8Y+Fm7To+V4JtchbosQ5qJIM5GNM
-         Z7wmbx5ZyZlxc4y0/dGWw6ANw4WX2KQ3UPA63rZWrUeijjnFW6JRudXvAAPfBIo31zCf
-         s7fKEg2vgl+neS/zgtftwMGac3X41niX1KVs2nB7fcyKQFS+0TOhduSM9JOuQjMDswkK
-         7a3PaBhhPr0FXbK/SDqzisZJ7nIBmxBivF4zFtawO6IPwhF82PcYhZJgvQwGM2a60YBQ
-         12e/yPWDNZcePWFcIFoTtnn2r7ApzrZ+3CtRDg9kQ8BPOoPK4pU7c7kwcI4B7xaGnEOY
-         0ZYA==
-X-Gm-Message-State: APjAAAURmneGWnHpYqANguCV24tzlnY5YWyZEaDJK4FgqRetAKyOkZBU
-        kNPFXxPh2zIYk9QkHqFbTR7bxtwILq21jkFy3roPkJ2qmqCAV9txA0XcYaRYHzAaj1cdbNZOyXg
-        wDYgET7hHyO7yWWVjeQW3nEHacTHp8IiFlSov
-X-Received: by 2002:a37:b607:: with SMTP id g7mr22692210qkf.257.1559874843108;
-        Thu, 06 Jun 2019 19:34:03 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqztjNXbN0PknY30mS4Cf3VjkBmChOemWcioN+jA0DTDb+VS/n4xW7sdOascOmxohJ3Ngiy3Bg==
-X-Received: by 2002:a37:b607:: with SMTP id g7mr22692194qkf.257.1559874842912;
-        Thu, 06 Jun 2019 19:34:02 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:4341::936])
-        by smtp.gmail.com with ESMTPSA id c7sm345534qth.53.2019.06.06.19.34.01
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 19:34:01 -0700 (PDT)
-From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/handle.c - fix up kerneldoc
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Date:   Thu, 06 Jun 2019 22:34:00 -0400
-Message-ID: <29300.1559874840@turing-police>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/KxNQ9MI1VotM1MpZhO1sXWtsUgIvWtrmcpqkBhjppA=;
+        b=syfrsaZ+km6/SoBSOlE0Jm2BZ7fQmPGmBoN/mvGL4/eFcCujw64F6UgLDl1nCdCOyF
+         IQon9uhO3hq/gK/WzuOfzhjDkoTDwCO4jMKmQGlPiqOCPHWVMIDJ1KZNL+PvF3oF/per
+         PS/S2ZYasJxwb3UQ3WlbUO+/szCa0BC8eVYZlg6PrFlFAvB8PYioGnwlB6Wc7LB1hKaR
+         LU4bpik39TUCKGVcKh9npbIkOYg6o849cq6s2cWbYT5C24W7vZ29PAZOmBGm9hFIhPS/
+         sxRnhnVKSVCqffS0vIwoJsNG5bh0pWSorW1vp8UCTtY4RSAIIX8yt8yI4ABKH7Konilb
+         w1Uw==
+X-Gm-Message-State: APjAAAWnxUjul5vFAk93BZE07n3D3Uc3olJT8rpLuizNC86rWQjAXhXo
+        6mOdZSJHUR4rlPcRb5RY3T7X+bCtfVEZB/PsMxWAbg==
+X-Google-Smtp-Source: APXvYqwgOBlvuuzB4VOYDbIT/0knuoEr43azK6XWvG7H+/gVjkfE0RSOiURNIXMgTP5DMZNdOklRtNkV5jBX8cvgDmo=
+X-Received: by 2002:a9d:6e96:: with SMTP id a22mr17778966otr.207.1559887246873;
+ Thu, 06 Jun 2019 23:00:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAPcyv4jyCDJTpGZB6qVX7_FiaxJfDzWA1cw8dfPjHM2j3j3yqQ@mail.gmail.com>
+ <20190214134622.GG4525@dhcp22.suse.cz> <CAPcyv4gxFKBQ9eVdn+pNEzBXRfw6Qwfmu21H2i5uj-PyFmRAGQ@mail.gmail.com>
+ <20190214191013.GA3420@redhat.com> <CAPcyv4jLTdJyTOy715qvBL_j_deiLoBmu_thkUnFKZKMvZL6hA@mail.gmail.com>
+ <20190214200840.GB12668@bombadil.infradead.org> <CAPcyv4hsDqvrV5yiDq8oWPuWb3WpuCEk_HB4qBxfiDpUwo75QQ@mail.gmail.com>
+ <20190605162204.jzou5hry5exly5wx@fiona>
+In-Reply-To: <20190605162204.jzou5hry5exly5wx@fiona>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 6 Jun 2019 23:00:35 -0700
+Message-ID: <CAPcyv4gZSsAA+GE9otf=WfKSkGMcTbxgdgSCErNys4sOCdCzuA@mail.gmail.com>
+Subject: Re: [Lsf-pc] [LSF/MM TOPIC] The end of the DAX experiment
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When building with W=1, gcc complains about kerneldoc issues:
+On Wed, Jun 5, 2019 at 9:22 AM Goldwyn Rodrigues <rgoldwyn@suse.de> wrote:
+>
+> Hi Dan/Jerome,
+>
+> On 12:20 14/02, Dan Williams wrote:
+> > On Thu, Feb 14, 2019 at 12:09 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > >
+> > > On Thu, Feb 14, 2019 at 11:31:24AM -0800, Dan Williams wrote:
+> > > > On Thu, Feb 14, 2019 at 11:10 AM Jerome Glisse <jglisse@redhat.com> wrote:
+> > > > > I am just again working on my struct page mapping patchset as well as
+> > > > > the generic page write protection that sits on top. I hope to be able
+> > > > > to post the v2 in couple weeks. You can always look at my posting last
+> > > > > year to see more details.
+> > > >
+> > > > Yes, I have that in mind as one of the contenders. However, it's not
+> > > > clear to me that its a suitable fit for filesystem-reflink. Others
+> > > > have floated the 'page proxy' idea, so it would be good to discuss the
+> > > > merits of the general approaches.
+> > >
+> > > ... and my preferred option of putting pfn entries in the page cache.
+> >
+> > Another option to include the discussion.
+> >
+> > > Or is that what you meant by "page proxy"?
+> >
+> > Page proxy would be an object that a filesystem could allocate to
+> > point back to a single physical 'struct page *'. The proxy would
+> > contain an override for page->index.
+>
+> Was there any outcome on this and its implementation? I am specifically
+> interested in this for DAX support on btrfs/CoW: The TODO comment on
+> top of dax_associate_entry() :)
+>
+> If there are patches/git tree I could use to base my patches on, it would
+> be nice.
 
-  CC      fs/fhandle.o
-fs/fhandle.c:259: warning: Function parameter or member 'flags' not described in 'sys_open_by_handle_at'
-fs/fhandle.c:259: warning: Excess function parameter 'flag' description in 'sys_open_by_handle_at'
-
-Fix typo in the kerneldoc
-
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 0ee727485615..01263ffbc4c0 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -246,7 +246,7 @@ static long do_handle_open(int mountdirfd, struct file_handle __user *ufh,
-  * sys_open_by_handle_at: Open the file handle
-  * @mountdirfd: directory file descriptor
-  * @handle: file handle to be opened
-- * @flag: open flags.
-+ * @flags: open flags.
-  *
-  * @mountdirfd indicate the directory file descriptor
-  * of the mount point. file handle is decoded relative
-
-
+Half joking, but I was hoping that by the time I had circled back to
+finally reviewing the brtfs dax patches that a solution to this
+problem would be waiting. We spent more time on other DAX topics. I
+recall that Jerome and I were mutually skeptical of each others
+approaches at first glance, but we did not get into the details. So, I
+think it will be a matter of getting the idea coded up. I'm finally
+coming out from under a pile of mm work so I should have some time
+this cycle to push the page proxy idea forward.
