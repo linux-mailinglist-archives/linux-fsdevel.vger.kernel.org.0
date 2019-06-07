@@ -2,117 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A96D7389FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 14:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B97AE38B3E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 15:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728064AbfFGMRb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jun 2019 08:17:31 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35508 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbfFGMRb (ORCPT
+        id S1728841AbfFGNLN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jun 2019 09:11:13 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:53156 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728098AbfFGNLM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jun 2019 08:17:31 -0400
-Received: by mail-qt1-f193.google.com with SMTP id d23so1944471qto.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jun 2019 05:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gtVg7214Fw18jFmO0/trZn1VfZgS9o74gz+vruFWYvs=;
-        b=AezT+tTAIxGyfB0KOhiZ4wlOnDCwDvYEe2UFeaP+bHsiFFJQ3quqmXBE4VmSizAzTs
-         J5ODOdrIQHOFjGLrQ2kl8pD0ejEenWX2TUZIYKB59qg474XzKIZuOVjBRq+lQLrWj4M2
-         iVSmY6vOHff8NwVO3HpVwZnoQ1jkfupA0SSt6+/EDEdGIfd2MHTCCINUJtnZE6aguk0H
-         Rq46XtTgO8/RXptKjB7wYR1vu5zDzIPtlBUqsEOtO9gMF69yTuBc5m8Ime/ZPUvcZqrt
-         ymNopsF+fiDS/oX9NSWKDQK6uJaybIPNjnDHpwGv1pap4mgqjUGIkS+C+1a2HU66vv8B
-         gi3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gtVg7214Fw18jFmO0/trZn1VfZgS9o74gz+vruFWYvs=;
-        b=lqFiLl0CSbE4bIvI5LZgQYHHRzs+KxHY4wA/dJCjFNkDsMz9awS9+pMyUbtbABRlpa
-         ISwVobUAFcO9SjcaVfB8iR7y0hfZ8UJ8noIEZRVFbnV5+vPi7m88gmfv9ZyRmv2OmkZ9
-         dk8I2kTgNxMTZb1GIgSw1r4F0yh3mqwjYYy6cJz6kIVSkT/0EoY19njTOEcjEwbGu9r9
-         rtDdAEPsAnQkpSwywX5fDY2DZ4UoOkPHxX+6AvocBki5tLy7CtIpsI0PaEUK0kjYPnmw
-         g/KJQGHivY1XzvYAK4Dm8iMxtYp7Jd4P66+SCO/IIWL69qkuh9lkHB3PVeBw/TWDU7b6
-         5UKw==
-X-Gm-Message-State: APjAAAV/8/T7fwcZZrotzoDXHgET7ha2JfMdXTXIhPZtPQ++pAMTvtZs
-        R3Uc7yt7oo0Rlo1CaZQPjpyhHw==
-X-Google-Smtp-Source: APXvYqwfuT8J8aHz9GDeVxlPBNadLwnaumAWGxao4r/2OtwvxxCdhCQDklOSjsDrPDzMrdJee4yNzw==
-X-Received: by 2002:a0c:8a69:: with SMTP id 38mr24854894qvu.116.1559909850154;
-        Fri, 07 Jun 2019 05:17:30 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id q36sm1286394qtc.12.2019.06.07.05.17.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Jun 2019 05:17:29 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hZDoH-0006pJ-3U; Fri, 07 Jun 2019 09:17:29 -0300
-Date:   Fri, 7 Jun 2019 09:17:29 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190607121729.GA14802@ziepe.ca>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606195114.GA30714@ziepe.ca>
- <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
- <20190607103636.GA12765@quack2.suse.cz>
+        Fri, 7 Jun 2019 09:11:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1559913072; x=1591449072;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=zNdfBMk/0Ll1/6zgIVFQjA05zAgxi2hPkJU9V5VK9MI=;
+  b=Qa2GLaMRXSPv4VrQqKRYlFK/yd6Lt6Zba/f4xN4Z4VKXhj1Xd5LedR7v
+   KdIkOdow287t7QfYReVq7k0jAlqyj9BmLmEx6262Lt5yV0DctaYYonhoR
+   wUSw4rbfUZtLyI5GCl3MpX/xQ3joy0oFFiyOIrngdMVnFNpXKj3wMkhXN
+   g9s6LZH4esNIfQRs0CFUktR2O3V7FalWV1IQH/OH+l6hXHcrAlHf8gpl9
+   6CoC1FDugIUw4vejdNYI3U2339ft1GMUtAOdXWRK4F7xfNpW4JT7pw+5x
+   Q7/r36286LgtLzXyrPEKOxFzyY1ljJfk57+tJlJHB7VFPqCZ3w7ypjtPr
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.63,563,1557158400"; 
+   d="scan'208";a="110027757"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 07 Jun 2019 21:11:12 +0800
+IronPort-SDR: 0G7vY6zepLWCadsUy8exvEQQrd+Tc/fA2wgYSmVfcRCIoh4UlVFcSrKVD31Hu6mmT7mZvV9HBh
+ jv4w0IfCcmbxwgcofLOqeOOHAjQVDJqPc6+aC/iIFkvahW/su7ii/o78FtqAcvtKGQJdf7dUyU
+ RInhdkxFUpKzs36+uClUsIpO73LzD52rm299PlH7D8/GenHACfR1Q0mjYBSLwha89knd/itv9b
+ OWIEKmGl7G40wLbYX6PTwSjh+DcvHetyxp2FCSD1gg+kCl4nLo9Adzb+wsFt5TRpxZgdrYuhn7
+ MySI5q37lR84hK/gNfEsfXiP
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 07 Jun 2019 05:48:29 -0700
+IronPort-SDR: M58K70zWa5mGNsVrm8EEyhuoYywykETbgsLM+fZK9R8XlrMyVdQQYpmfF+IsgBzfDaJa0M1vgA
+ /VaxxsFQJEQpekfHjjYSzyPtzi22+MqIesmqi1kJXLoClb6l05SqUbEEypO77EOO654NNDUWtX
+ K40LdoMg7U7bnLiWzRjMLaclZbMdFdRM9Wmu45NkFywjqTTGnI6QAO2l7LJVy7cutv3OuP3Puh
+ kZtQh7fzHHztOLuaMzH1m+GpmkAvoaywLTWMIiWd/n8OVaKVo1EVLVmOcZAJhsE5irSgGm+cjs
+ BdE=
+Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
+  by uls-op-cesaip02.wdc.com with ESMTP; 07 Jun 2019 06:11:10 -0700
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
+        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        linux-fsdevel@vger.kernel.org,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>
+Subject: [PATCH v2 00/19] btrfs zoned block device support
+Date:   Fri,  7 Jun 2019 22:10:06 +0900
+Message-Id: <20190607131025.31996-1-naohiro.aota@wdc.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607103636.GA12765@quack2.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 12:36:36PM +0200, Jan Kara wrote:
+btrfs zoned block device support
 
-> Because the pins would be invisible to sysadmin from that point on. 
+This series adds zoned block device support to btrfs.
 
-It is not invisible, it just shows up in a rdma specific kernel
-interface. You have to use rdma netlink to see the kernel object
-holding this pin.
+A zoned block device consists of a number of zones. Zones are either
+conventional and accepting random writes or sequential and requiring that
+writes be issued in LBA order from each zone write pointer position. This
+patch series ensures that the sequential write constraint of sequential
+zones is respected while fundamentally not changing BtrFS block and I/O
+management for block stored in conventional zones.
 
-If this visibility is the main sticking point I suggest just enhancing
-the existing MR reporting to include the file info for current GUP
-pins and teaching lsof to collect information from there as well so it
-is easy to use.
+To achieve this, the default chunk size of btrfs is changed on zoned block
+devices so that chunks are always aligned to a zone. Allocation of blocks
+within a chunk is changed so that the allocation is always sequential from
+the beginning of the chunks. To do so, an allocation pointer is added to
+block groups and used as the allocation hint.  The allocation changes also
+ensures that block freed below the allocation pointer are ignored,
+resulting in sequential block allocation regardless of the chunk usage.
 
-If the ownership of the lease transfers to the MR, and we report that
-ownership to userspace in a way lsof can find, then I think all the
-concerns that have been raised are met, right?
+While the introduction of the allocation pointer ensure that blocks will be
+allocated sequentially, I/Os to write out newly allocated blocks may be
+issued out of order, causing errors when writing to sequential zones. This
+problem s solved by introducing a submit_buffer() function and changes to
+the internal I/O scheduler to ensure in-order issuing of write I/Os for
+each chunk and corresponding to the block allocation order in the chunk.
 
-> ugly to live so we have to come up with something better. The best I can
-> currently come up with is to have a method associated with the lease that
-> would invalidate the RDMA context that holds the pins in the same way that
-> a file close would do it.
+The zone of a chunk is reset to allow reuse of the zone only when the block
+group is being freed, that is, when all the chunks of the block group are
+unused.
 
-This is back to requiring all RDMA HW to have some new behavior they
-currently don't have..
+For btrfs volumes composed of multiple zoned disks, restrictions are added
+to ensure that all disks have the same zone size. This matches the existing
+constraint that all chunks in a block group must have the same size.
 
-The main objection to the current ODP & DAX solution is that very
-little HW can actually implement it, having the alternative still
-require HW support doesn't seem like progress.
+As discussed with Chris Mason in LSFMM, we enabled device replacing in
+HMZONED mode. But still drop fallocate for now.
 
-I think we will eventually start seein some HW be able to do this
-invalidation, but it won't be universal, and I'd rather leave it
-optional, for recovery from truely catastrophic errors (ie my DAX is
-on fire, I need to unplug it).
+Patch 1 introduces the HMZONED incompatible feature flag to indicate that
+the btrfs volume was formatted for use on zoned block devices.
 
-Jason
+Patches 2 and 3 implement functions to gather information on the zones of
+the device (zones type and write pointer position).
+
+Patches 4 and 5 disable features which are not compatible with the
+sequential write constraints of zoned block devices. This includes
+fallocate and direct I/O support.
+
+Patches 6 and 7 tweak the extent buffer allocation for HMZONED mode to
+implement sequential block allocation in block groups and chunks.
+
+Patch 8 mark block group read only when write pointers of devices which
+compose e.g. RAID1 block group devices are mismatch.
+
+Patch 9 restrict the possible locations of super blocks to conventional
+zones to preserve the existing update in-place mechanism for the super
+blocks.
+
+Patches 10 to 12 implement the new submit buffer I/O path to ensure
+sequential write I/O delivery to the device zones.
+
+Patches 13 to 17 modify several parts of btrfs to handle free blocks
+without breaking the sequential block allocation and sequential write order
+as well as zone reset for unused chunks.
+
+Patch 18 add support for device replacing.
+
+Finally, patch 19 adds the HMZONED feature to the list of supported
+features.
+
+This series applies on kdave/for-5.2-rc2.
+
+Changelog
+v2:
+ - Add support for dev-replace
+ -- To support dev-replace, moved submit_buffer one layer up. It now
+    handles bio instead of btrfs_bio.
+ -- Mark unmirrored Block Group readonly only when there is writable
+    mirrored BGs. Necessary to handle degraded RAID.
+ - Expire worker use vanilla delayed_work instead of btrfs's async-thread
+ - Device extent allocator now ensure that region is on the same zone type.
+ - Add delayed allocation shrinking.
+ - Rename btrfs_drop_dev_zonetypes() to btrfs_destroy_dev_zonetypes
+ - Fix
+ -- Use SECTOR_SHIFT (Nikolay)
+ -- Use btrfs_err (Nikolay)
+
+Naohiro Aota (19):
+  btrfs: introduce HMZONED feature flag
+  btrfs: Get zone information of zoned block devices
+  btrfs: Check and enable HMZONED mode
+  btrfs: disable fallocate in HMZONED mode
+  btrfs: disable direct IO in HMZONED mode
+  btrfs: align dev extent allocation to zone boundary
+  btrfs: do sequential extent allocation in HMZONED mode
+  btrfs: make unmirroed BGs readonly only if we have at least one
+    writable BG
+  btrfs: limit super block locations in HMZONED mode
+  btrfs: rename btrfs_map_bio()
+  btrfs: introduce submit buffer
+  btrfs: expire submit buffer on timeout
+  btrfs: avoid sync IO prioritization on checksum in HMZONED mode
+  btrfs: redirty released extent buffers in sequential BGs
+  btrfs: reset zones of unused block groups
+  btrfs: wait existing extents before truncating
+  btrfs: shrink delayed allocation size in HMZONED mode
+  btrfs: support dev-replace in HMZONED mode
+  btrfs: enable to mount HMZONED incompat flag
+
+ fs/btrfs/ctree.h             |  47 ++-
+ fs/btrfs/dev-replace.c       | 103 ++++++
+ fs/btrfs/disk-io.c           |  49 ++-
+ fs/btrfs/disk-io.h           |   1 +
+ fs/btrfs/extent-tree.c       | 479 +++++++++++++++++++++++-
+ fs/btrfs/extent_io.c         |  28 ++
+ fs/btrfs/extent_io.h         |   2 +
+ fs/btrfs/file.c              |   4 +
+ fs/btrfs/free-space-cache.c  |  33 ++
+ fs/btrfs/free-space-cache.h  |   5 +
+ fs/btrfs/inode.c             |  14 +
+ fs/btrfs/scrub.c             | 171 +++++++++
+ fs/btrfs/super.c             |  30 +-
+ fs/btrfs/sysfs.c             |   2 +
+ fs/btrfs/transaction.c       |  35 ++
+ fs/btrfs/transaction.h       |   3 +
+ fs/btrfs/volumes.c           | 684 ++++++++++++++++++++++++++++++++++-
+ fs/btrfs/volumes.h           |  37 ++
+ include/trace/events/btrfs.h |  43 +++
+ include/uapi/linux/btrfs.h   |   1 +
+ 20 files changed, 1734 insertions(+), 37 deletions(-)
+
+-- 
+2.21.0
+
