@@ -2,113 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC61E383FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 08:01:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AEE938502
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 09:28:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfFGGAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jun 2019 02:00:47 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36715 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726726AbfFGGAr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jun 2019 02:00:47 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c3so826981otr.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jun 2019 23:00:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/KxNQ9MI1VotM1MpZhO1sXWtsUgIvWtrmcpqkBhjppA=;
-        b=WfyEYkZegPTmvynLc2fjjKs6d/TdRZHB2mGyi3svr8A4gfvWp7nBiukv2oNPMrRNu3
-         LF5pIX9mWCDEYPKHsg9x8FyxTEXL3Pp4DEsbFXvMjA67etlGXIbfY2hNbJLOqw4TuZAK
-         Bxvkt2hCh3F5rpXtMyj2CBZde6MBilulGBAwGobq2TdvBZsm+WUcNaCHcTKujMNYBYzA
-         Jz+YlbRdrvtxV6qQh4bHw4H4UOWvGsLOnQyJmjDAnpMCiSaVTnMqJomtxlE/4a38CErg
-         OEy8Ur6MMHV2bA7bkrmZl08c3aZp2RHd2Dpw55zuwf2rl9TE1d9/sN4lvF3IDzCodhLY
-         IFJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/KxNQ9MI1VotM1MpZhO1sXWtsUgIvWtrmcpqkBhjppA=;
-        b=syfrsaZ+km6/SoBSOlE0Jm2BZ7fQmPGmBoN/mvGL4/eFcCujw64F6UgLDl1nCdCOyF
-         IQon9uhO3hq/gK/WzuOfzhjDkoTDwCO4jMKmQGlPiqOCPHWVMIDJ1KZNL+PvF3oF/per
-         PS/S2ZYasJxwb3UQ3WlbUO+/szCa0BC8eVYZlg6PrFlFAvB8PYioGnwlB6Wc7LB1hKaR
-         LU4bpik39TUCKGVcKh9npbIkOYg6o849cq6s2cWbYT5C24W7vZ29PAZOmBGm9hFIhPS/
-         sxRnhnVKSVCqffS0vIwoJsNG5bh0pWSorW1vp8UCTtY4RSAIIX8yt8yI4ABKH7Konilb
-         w1Uw==
-X-Gm-Message-State: APjAAAWnxUjul5vFAk93BZE07n3D3Uc3olJT8rpLuizNC86rWQjAXhXo
-        6mOdZSJHUR4rlPcRb5RY3T7X+bCtfVEZB/PsMxWAbg==
-X-Google-Smtp-Source: APXvYqwgOBlvuuzB4VOYDbIT/0knuoEr43azK6XWvG7H+/gVjkfE0RSOiURNIXMgTP5DMZNdOklRtNkV5jBX8cvgDmo=
-X-Received: by 2002:a9d:6e96:: with SMTP id a22mr17778966otr.207.1559887246873;
- Thu, 06 Jun 2019 23:00:46 -0700 (PDT)
+        id S1727237AbfFGH24 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jun 2019 03:28:56 -0400
+Received: from smtp1.iitb.ac.in ([103.21.127.13]:60522 "EHLO smtp1.iitb.ac.in"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726711AbfFGH24 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Jun 2019 03:28:56 -0400
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+        by smtp1.iitb.ac.in (Postfix) with SMTP id 1848B105C475
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jun 2019 12:01:54 +0530 (IST)
+Received: (qmail 29995 invoked by uid 510); 7 Jun 2019 12:01:34 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <rws@aero.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/25472} 
+ Clear:RC:1(10.200.1.25):SA:0(1.5/7.0):. Processed in 3.224183 secs; 07 Jun 2019 12:01:34 +0530
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on ldns2.iitb.ac.in
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=7.0 tests=BAYES_50,IITB_ORIG,
+        MISSING_HEADERS,PROPER_IITB_MSGID autolearn=disabled version=3.4.1
+X-Spam-Pyzor: Reported 1 times.
+X-Envelope-From: rws@aero.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 7 Jun 2019 12:01:31 +0530
+Received: from vayu.aero.iitb.ac.in (vayu.aero.iitb.ac.in [10.101.1.1])
+        by ldns2.iitb.ac.in (Postfix) with ESMTP id CB958341965;
+        Fri,  7 Jun 2019 12:01:17 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+        by vayu.aero.iitb.ac.in (Postfix) with ESMTP id 9509A8902E52F;
+        Fri,  7 Jun 2019 12:01:17 +0530 (IST)
+Received: from vayu.aero.iitb.ac.in ([127.0.0.1])
+        by localhost (vayu.aero.iitb.ac.in [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 3VnK-_U7b-vs; Fri,  7 Jun 2019 12:01:17 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+        by vayu.aero.iitb.ac.in (Postfix) with ESMTP id 5DAB88902E54D;
+        Fri,  7 Jun 2019 12:01:14 +0530 (IST)
+X-Virus-Scanned: amavisd-new at aero.iitb.ac.in
+Received: from vayu.aero.iitb.ac.in ([127.0.0.1])
+        by localhost (vayu.aero.iitb.ac.in [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id TgJiwoMo_EHZ; Fri,  7 Jun 2019 12:01:14 +0530 (IST)
+Received: from vayu.aero.iitb.ac.in (vayu.aero.iitb.ac.in [10.101.1.1])
+        by vayu.aero.iitb.ac.in (Postfix) with ESMTP id 0EEE684310111;
+        Fri,  7 Jun 2019 12:01:10 +0530 (IST)
+Date:   Fri, 7 Jun 2019 12:01:09 +0530 (IST)
+From:   Martins Henry <rws@aero.iitb.ac.in>
+Message-ID: <412557711.60336.1559889069980.JavaMail.zimbra@aero.iitb.ac.in>
+Subject: Thanks and I wait for your answer
 MIME-Version: 1.0
-References: <CAPcyv4jyCDJTpGZB6qVX7_FiaxJfDzWA1cw8dfPjHM2j3j3yqQ@mail.gmail.com>
- <20190214134622.GG4525@dhcp22.suse.cz> <CAPcyv4gxFKBQ9eVdn+pNEzBXRfw6Qwfmu21H2i5uj-PyFmRAGQ@mail.gmail.com>
- <20190214191013.GA3420@redhat.com> <CAPcyv4jLTdJyTOy715qvBL_j_deiLoBmu_thkUnFKZKMvZL6hA@mail.gmail.com>
- <20190214200840.GB12668@bombadil.infradead.org> <CAPcyv4hsDqvrV5yiDq8oWPuWb3WpuCEk_HB4qBxfiDpUwo75QQ@mail.gmail.com>
- <20190605162204.jzou5hry5exly5wx@fiona>
-In-Reply-To: <20190605162204.jzou5hry5exly5wx@fiona>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 6 Jun 2019 23:00:35 -0700
-Message-ID: <CAPcyv4gZSsAA+GE9otf=WfKSkGMcTbxgdgSCErNys4sOCdCzuA@mail.gmail.com>
-Subject: Re: [Lsf-pc] [LSF/MM TOPIC] The end of the DAX experiment
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.101.1.5]
+X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF11 (Win)/8.8.12_GA_3794)
+Thread-Index: SsslhYkcLNFU69da/wYft5cO9/ZYnA==
+Thread-Topic: Thanks and I wait for your answer
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 5, 2019 at 9:22 AM Goldwyn Rodrigues <rgoldwyn@suse.de> wrote:
->
-> Hi Dan/Jerome,
->
-> On 12:20 14/02, Dan Williams wrote:
-> > On Thu, Feb 14, 2019 at 12:09 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Thu, Feb 14, 2019 at 11:31:24AM -0800, Dan Williams wrote:
-> > > > On Thu, Feb 14, 2019 at 11:10 AM Jerome Glisse <jglisse@redhat.com> wrote:
-> > > > > I am just again working on my struct page mapping patchset as well as
-> > > > > the generic page write protection that sits on top. I hope to be able
-> > > > > to post the v2 in couple weeks. You can always look at my posting last
-> > > > > year to see more details.
-> > > >
-> > > > Yes, I have that in mind as one of the contenders. However, it's not
-> > > > clear to me that its a suitable fit for filesystem-reflink. Others
-> > > > have floated the 'page proxy' idea, so it would be good to discuss the
-> > > > merits of the general approaches.
-> > >
-> > > ... and my preferred option of putting pfn entries in the page cache.
-> >
-> > Another option to include the discussion.
-> >
-> > > Or is that what you meant by "page proxy"?
-> >
-> > Page proxy would be an object that a filesystem could allocate to
-> > point back to a single physical 'struct page *'. The proxy would
-> > contain an override for page->index.
->
-> Was there any outcome on this and its implementation? I am specifically
-> interested in this for DAX support on btrfs/CoW: The TODO comment on
-> top of dax_associate_entry() :)
->
-> If there are patches/git tree I could use to base my patches on, it would
-> be nice.
+Hello,
 
-Half joking, but I was hoping that by the time I had circled back to
-finally reviewing the brtfs dax patches that a solution to this
-problem would be waiting. We spent more time on other DAX topics. I
-recall that Jerome and I were mutually skeptical of each others
-approaches at first glance, but we did not get into the details. So, I
-think it will be a matter of getting the idea coded up. I'm finally
-coming out from under a pile of mm work so I should have some time
-this cycle to push the page proxy idea forward.
+I am Martin Henry, An American Citizen; I am the personal secretary to
+Mr. Donald Railton, the controller of a Lottery Company. Please I am
+having big problem now, I have a 6yrs old daughter who has leukemia, a
+disease of the blood, and she needs a bone marrow transplant or she
+will die.
+
+Please I am only asking for your help and you will benefit from it
+also. As an insider with Lottery Firm, working as the personal
+secretary to the controller, I want you to send me your name to play,
+I have some numbers that are going to win, stored in his secret data
+system in the office. The Lottery is an online entry with credit card
+anywhere with a name and address. All I want you to do is to send your
+name to play it and I will send confirmation to you.
+
+I will play with my card on your name and the Prize will be shared
+equally between us. Immediately the results are released they will
+contact you for payment as the oversea winner. The lotto can be played
+with 9.00 dollars, or 50 dollars but the prize will be Millions.
+Remember that I am playing on your name with my card; I just want to
+front you for this, because I need this money to save the life of my
+little daughter.
+
+Thanks and I wait for your answer
+Martin Henry.
