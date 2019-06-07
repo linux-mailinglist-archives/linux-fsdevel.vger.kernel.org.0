@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5293138B77
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 15:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5A438B7A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 15:19:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729172AbfFGNSV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jun 2019 09:18:21 -0400
+        id S1729220AbfFGNSY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jun 2019 09:18:24 -0400
 Received: from esa2.hgst.iphmx.com ([68.232.143.124]:56479 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729165AbfFGNSV (ORCPT
+        with ESMTP id S1729213AbfFGNSX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jun 2019 09:18:21 -0400
+        Fri, 7 Jun 2019 09:18:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1559913536; x=1591449536;
+  t=1559913540; x=1591449540;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=e4NWtweua7TkhXD0M6sRjN0MzNkFoyAD3U+9vqG8Tws=;
-  b=QIZAnzZRmQxsijP03Gg6EUtjIdqHHPp+PdurIHpl9FWAtCZYzKVq9BY5
-   cPmgM2Kit7M6zw2QgCEGUugZaialuotl9c+SU0VIdwKdCApqyJUA5NGUd
-   Ku9Nwgzpste4b5L4iaOcKSejXq7HUOvmdl7VbKYllk/tvXJwLiDlpRmCL
-   mwBtoByP8z6PmvrQ+vb8LD/R4oRKpMpEw976Aqs7xsQsXKapvpT6FrPm+
-   6I/I5shhr0VLCTOiGrwYypf04JWhyH4Rcbaa8TdVom2zAATOBUkbM49lS
-   1yfbBbr1In5CxFDWc/n2sXQV5+LAnkhg206hs1+OUVvhaiuYfOiWxurPJ
-   Q==;
+  bh=iPnY+83avGj3yJ6GvVf5GDtpfB2HkmMtBeQYtYkFtCA=;
+  b=dhkfs/yCkxli/vSL4lI561yxGXW8nsuaC6bbtH2QtgpvlfnzTdandgN1
+   WMchXRpHwv/LR29QLhwmyzZ4U79bWv+ESrU1bGyP5NhquBDBL1cdiJdlV
+   iNSgJG7H9CeKCjqDez415Ov5XjYEXi0T6HyQYnQTxhfD3E2a+MfWI3f8p
+   WVSZV+ppqJ2Quw74RFwPrwK/NF62p1rk+lIL4vyaT+oz4N9WZ2Lh5J0PK
+   jRbaq9AzocK0LsqYTG2S7vgT/5W1GIUziE0KYnsg4YR7tPzla11UYCVu1
+   OxLHPLJw420bNGBZ4g3uenMdFomE2i452HPkIfU7iEDmBQUk6bnfjlGK5
+   w==;
 X-IronPort-AV: E=Sophos;i="5.63,563,1557158400"; 
-   d="scan'208";a="209675022"
+   d="scan'208";a="209675029"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Jun 2019 21:18:56 +0800
-IronPort-SDR: ZthmMGTQGMOOYvRdROOzND4Fk0u68/P+08GEijdd3cBzqxsEYWJQv3iXqTqVaumJoY1OorHC2f
- e64k2hQqg3JEQ4DEl3W+mp12euvp5aq1r4a3JLCsUJNsJZZhhWDmfR3KdxSWc1a56quZgxSxuy
- pA5bfB+yj8s8cCwD3ojbmMM9PEktrYB76MtDYHJIpV01YFq3nY2DQVcDevf6CoZJJA79SoWUAE
- o8NYAcjg+3nksv2Fo1zoA4kakQ7Lnw6d6PeKgD/SbuIZfndSZxLDwlTPA0UBTI0hdGnH9yF/lp
- YwPGDEgt4VBmWdyelObfnzph
+  by ob1.hgst.iphmx.com with ESMTP; 07 Jun 2019 21:19:00 +0800
+IronPort-SDR: vJUeiJMjh7t5JmiMPjQ+lH1OhAaVFWIC4Vvx6UM4KWCDwySbrj7DSmgKksbZALyvz5TDpbBAad
+ OXIqeKbmme67tlZbxEx1tHaPj37QOTDLLZb+OgoKRM1DvQenVz8spBIlMU4k8MvcI3FryjRXo9
+ SKaE707xwV4PI1xSSN3EKz+qr4iEA0Pkl9Roay/fkOajNh6WZaCNlAnC8kigMnE9kFY+83L+zV
+ ARVA5On+/mUA6fPQGYjX06PhzSSQOcNsNzz+cD5LYRLwK+f0Jp7so+T4davJqpnrBcJUlx9hfn
+ KpcTE+6xPtcn5ySF+DMPmW18
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 07 Jun 2019 05:55:38 -0700
-IronPort-SDR: LOv5t6VjMVSb81F17hV+/uTNSWRclkqc+qgAuEhG7YA3jTskaMuADsO0/qngMWl6R9M8e/t+a5
- ddwJfDeXemyhN5nlxe8dwnH3ZJ544imnAgaGqXh7hKYfaU0akHJNHCO1wK6PEcd29MNSxRu63K
- fmO78Z7rxgguxszfkLi4eu4CSHar61UgYGhKf3H5QHUEbVQf3OEqaObpFZZwYopC2Q/SMk7wF/
- wHAqVpIhTqdMh1t7zML2pbxQ3fI5aOTUYRZjGY+DddwDHeuywjVjjT4dKFz8kOdmB+RXBs6vPL
- CNA=
+  by uls-op-cesaep02.wdc.com with ESMTP; 07 Jun 2019 05:55:40 -0700
+IronPort-SDR: zYF9CF8Fzm1lHiV3A3KmeqXQyik2i6J5T3nJ/725Knt6b6kkQXFan4nNmEL9aMiLdPiCO17qeh
+ CV/7PmRS3oGke77YGXDan9iyuDX62Mnanh70ID+EhhKXKOwLKS4ctRdlCgMz66lqsSfdxiXvYO
+ V3Mz2QE35cSRsMIbO7Nzua8It+xVqCDWLZVlo/n79y3VKupDcjOpAJHB9OOp0MseBXpQLvuC4e
+ fx46fUkwzdf16Jh91P7AmT8GdZwUMgpI+AIZgJwfydQig4+mGpnpxUpFJjrfsDY4F/1e7u///w
+ S/Y=
 Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
-  by uls-op-cesaip02.wdc.com with ESMTP; 07 Jun 2019 06:18:19 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 07 Jun 2019 06:18:21 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -54,9 +54,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         Bart Van Assche <bvanassche@acm.org>,
         Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH 09/12] btrfs-progs: do sequential allocation
-Date:   Fri,  7 Jun 2019 22:17:48 +0900
-Message-Id: <20190607131751.5359-9-naohiro.aota@wdc.com>
+Subject: [PATCH 10/12] btrfs-progs: mkfs: Zoned block device support
+Date:   Fri,  7 Jun 2019 22:17:49 +0900
+Message-Id: <20190607131751.5359-10-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190607131751.5359-1-naohiro.aota@wdc.com>
 References: <20190607131025.31996-1-naohiro.aota@wdc.com>
@@ -68,317 +68,223 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ensures that block allocation in sequential write required zones is always
-done sequentially using an allocation pointer which is the zone write
-pointer plus the number of blocks already allocated but not yet written.
-For conventional zones, the legacy behavior is used.
+This patch makes the size of the temporary system group chunk equal to the
+device zone size. It also enables PREP_DEVICE_HMZONED if the user enables
+the HMZONED feature.
+
+Enabling HMZONED feature is done using option "-O hmzoned". This feature is
+incompatible for now with source directory setup.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- ctree.h       |  17 +++++
- extent-tree.c | 186 ++++++++++++++++++++++++++++++++++++++++++++++++++
- transaction.c |  16 +++++
- 3 files changed, 219 insertions(+)
+ mkfs/common.c | 12 +++++++-----
+ mkfs/common.h |  1 +
+ mkfs/main.c   | 45 +++++++++++++++++++++++++++++++++++++++------
+ 3 files changed, 47 insertions(+), 11 deletions(-)
 
-diff --git a/ctree.h b/ctree.h
-index 9f79686690e0..2e828bf1250e 100644
---- a/ctree.h
-+++ b/ctree.h
-@@ -1068,15 +1068,32 @@ struct btrfs_space_info {
- 	struct list_head list;
- };
+diff --git a/mkfs/common.c b/mkfs/common.c
+index f7e3badcf2b9..12af54c1d886 100644
+--- a/mkfs/common.c
++++ b/mkfs/common.c
+@@ -152,6 +152,7 @@ int make_btrfs(int fd, struct btrfs_mkfs_config *cfg)
+ 	int skinny_metadata = !!(cfg->features &
+ 				 BTRFS_FEATURE_INCOMPAT_SKINNY_METADATA);
+ 	u64 num_bytes;
++	u64 system_group_size;
  
-+/* Block group allocation types */
-+enum btrfs_alloc_type {
-+
-+	/* Regular first fit allocation */
-+	BTRFS_ALLOC_FIT		= 0,
-+
-+	/*
-+	 * Sequential allocation: this is for HMZONED mode and
-+	 * will result in ignoring free space before a block
-+	 * group allocation offset.
-+	 */
-+	BTRFS_ALLOC_SEQ		= 1,
-+};
-+
- struct btrfs_block_group_cache {
- 	struct cache_extent cache;
- 	struct btrfs_key key;
- 	struct btrfs_block_group_item item;
- 	struct btrfs_space_info *space_info;
- 	struct btrfs_free_space_ctl *free_space_ctl;
-+	enum btrfs_alloc_type alloc_type;
- 	u64 bytes_super;
- 	u64 pinned;
- 	u64 flags;
-+	u64 alloc_offset;
-+	u64 write_offset;
- 	int cached;
- 	int ro;
- 	/*
-diff --git a/extent-tree.c b/extent-tree.c
-index e62ee8c2ba13..528c6875c8fb 100644
---- a/extent-tree.c
-+++ b/extent-tree.c
-@@ -251,6 +251,14 @@ again:
- 	if (cache->ro || !block_group_bits(cache, data))
- 		goto new_group;
+ 	buf = malloc(sizeof(*buf) + max(cfg->sectorsize, cfg->nodesize));
+ 	if (!buf)
+@@ -312,12 +313,14 @@ int make_btrfs(int fd, struct btrfs_mkfs_config *cfg)
+ 	btrfs_set_item_offset(buf, btrfs_item_nr(nritems), itemoff);
+ 	btrfs_set_item_size(buf, btrfs_item_nr(nritems), item_size);
  
-+	if (cache->alloc_type == BTRFS_ALLOC_SEQ) {
-+		if (cache->key.offset - cache->alloc_offset < num)
-+			goto new_group;
-+		*start_ret = cache->key.objectid + cache->alloc_offset;
-+		cache->alloc_offset += num;
-+		return 0;
-+	}
++	system_group_size = (cfg->features & BTRFS_FEATURE_INCOMPAT_HMZONED) ?
++		cfg->zone_size : BTRFS_MKFS_SYSTEM_GROUP_SIZE;
 +
- 	while(1) {
- 		ret = find_first_extent_bit(&root->fs_info->free_space_cache,
- 					    last, &start, &end, EXTENT_DIRTY);
-@@ -277,6 +285,7 @@ out:
- 			(unsigned long long)search_start);
- 		return -ENOENT;
- 	}
-+	printf("nospace\n");
- 	return -ENOSPC;
+ 	dev_item = btrfs_item_ptr(buf, nritems, struct btrfs_dev_item);
+ 	btrfs_set_device_id(buf, dev_item, 1);
+ 	btrfs_set_device_generation(buf, dev_item, 0);
+ 	btrfs_set_device_total_bytes(buf, dev_item, num_bytes);
+-	btrfs_set_device_bytes_used(buf, dev_item,
+-				    BTRFS_MKFS_SYSTEM_GROUP_SIZE);
++	btrfs_set_device_bytes_used(buf, dev_item, system_group_size);
+ 	btrfs_set_device_io_align(buf, dev_item, cfg->sectorsize);
+ 	btrfs_set_device_io_width(buf, dev_item, cfg->sectorsize);
+ 	btrfs_set_device_sector_size(buf, dev_item, cfg->sectorsize);
+@@ -345,7 +348,7 @@ int make_btrfs(int fd, struct btrfs_mkfs_config *cfg)
+ 	btrfs_set_item_size(buf, btrfs_item_nr(nritems), item_size);
  
- new_group:
-@@ -3039,6 +3048,176 @@ error:
- 	return ret;
- }
+ 	chunk = btrfs_item_ptr(buf, nritems, struct btrfs_chunk);
+-	btrfs_set_chunk_length(buf, chunk, BTRFS_MKFS_SYSTEM_GROUP_SIZE);
++	btrfs_set_chunk_length(buf, chunk, system_group_size);
+ 	btrfs_set_chunk_owner(buf, chunk, BTRFS_EXTENT_TREE_OBJECTID);
+ 	btrfs_set_chunk_stripe_len(buf, chunk, BTRFS_STRIPE_LEN);
+ 	btrfs_set_chunk_type(buf, chunk, BTRFS_BLOCK_GROUP_SYSTEM);
+@@ -411,8 +414,7 @@ int make_btrfs(int fd, struct btrfs_mkfs_config *cfg)
+ 		    (unsigned long)btrfs_dev_extent_chunk_tree_uuid(dev_extent),
+ 		    BTRFS_UUID_SIZE);
  
-+#ifdef BTRFS_ZONED
-+static int
-+btrfs_get_block_group_alloc_offset(struct btrfs_fs_info *fs_info,
-+				   struct btrfs_block_group_cache *cache)
-+{
-+	struct btrfs_device *device;
-+	struct btrfs_mapping_tree *map_tree = &fs_info->mapping_tree;
-+	struct cache_extent *ce;
-+	struct map_lookup *map;
-+	u64 logical = cache->key.objectid;
-+	u64 length = cache->key.offset;
-+	u64 physical = 0;
-+	int ret = 0;
-+	int i;
-+	u64 zone_size = fs_info->fs_devices->zone_size;
-+	u64 *alloc_offsets = NULL;
-+
-+	if (!btrfs_fs_incompat(fs_info, HMZONED))
-+		return 0;
-+
-+	/* Sanity check */
-+	if (!IS_ALIGNED(length, zone_size)) {
-+		fprintf(stderr, "unaligned block group at %llu", logical);
-+		return -EIO;
-+	}
-+
-+	/* Get the chunk mapping */
-+	ce = search_cache_extent(&map_tree->cache_tree, logical);
-+	if (!ce) {
-+		fprintf(stderr, "failed to find block group at %llu", logical);
-+		return -ENOENT;
-+	}
-+	map = container_of(ce, struct map_lookup, ce);
-+
-+	/*
-+	 * Get the zone type: if the group is mapped to a non-sequential zone,
-+	 * there is no need for the allocation offset (fit allocation is OK).
-+	 */
-+	device = map->stripes[0].dev;
-+	physical = map->stripes[0].physical;
-+	if (!zone_is_random_write(&device->zinfo, physical))
-+		cache->alloc_type = BTRFS_ALLOC_SEQ;
-+
-+	/* check block group mapping */
-+	alloc_offsets = calloc(map->num_stripes, sizeof(*alloc_offsets));
-+	for (i = 0; i < map->num_stripes; i++) {
-+		int is_sequential;
-+		struct blk_zone zone;
-+
-+		device = map->stripes[i].dev;
-+		physical = map->stripes[i].physical;
-+
-+		is_sequential = !zone_is_random_write(&device->zinfo, physical);
-+		if ((is_sequential && cache->alloc_type != BTRFS_ALLOC_SEQ) ||
-+		    (!is_sequential && cache->alloc_type == BTRFS_ALLOC_SEQ)) {
-+			fprintf(stderr,
-+				"found block group of mixed zone types");
-+			ret = -EIO;
-+			goto out;
-+		}
-+
-+		if (!is_sequential)
-+			continue;
-+
-+		WARN_ON(!IS_ALIGNED(physical, zone_size));
-+		zone = device->zinfo.zones[physical / zone_size];
-+
-+		/*
-+		 * The group is mapped to a sequential zone. Get the zone write
-+		 * pointer to determine the allocation offset within the zone.
-+		 */
-+		switch (zone.cond) {
-+		case BLK_ZONE_COND_OFFLINE:
-+		case BLK_ZONE_COND_READONLY:
-+			fprintf(stderr, "Offline/readonly zone %llu",
-+				physical / fs_info->fs_devices->zone_size);
-+			ret = -EIO;
-+			goto out;
-+		case BLK_ZONE_COND_EMPTY:
-+			alloc_offsets[i] = 0;
-+			break;
-+		case BLK_ZONE_COND_FULL:
-+			alloc_offsets[i] = zone_size;
-+			break;
-+		default:
-+			/* Partially used zone */
-+			alloc_offsets[i] = ((zone.wp - zone.start) << 9);
-+			break;
-+		}
-+	}
-+
-+	if (cache->alloc_type != BTRFS_ALLOC_SEQ)
-+		goto out;
-+
-+	switch (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) {
-+	case 0: /* single */
-+	case BTRFS_BLOCK_GROUP_DUP:
-+	case BTRFS_BLOCK_GROUP_RAID1:
-+		for (i = 1; i < map->num_stripes; i++) {
-+			if (alloc_offsets[i] != alloc_offsets[0]) {
-+				fprintf(stderr,
-+					"zones' write pointers mismatch\n");
-+				ret = -EIO;
-+				goto out;
-+			}
-+		}
-+		cache->alloc_offset = alloc_offsets[0];
-+		break;
-+	case BTRFS_BLOCK_GROUP_RAID0:
-+		cache->alloc_offset = alloc_offsets[0];
-+		for (i = 1; i < map->num_stripes; i++) {
-+			cache->alloc_offset += alloc_offsets[i];
-+			if (alloc_offsets[0] < alloc_offsets[i]) {
-+				fprintf(stderr,
-+					"zones' write pointers mismatch\n");
-+				ret = -EIO;
-+				goto out;
-+			}
-+		}
-+		break;
-+	case BTRFS_BLOCK_GROUP_RAID10:
-+		cache->alloc_offset = 0;
-+		for (i = 0; i < map->num_stripes / map->sub_stripes; i++) {
-+			int j;
-+			int base;
-+
-+			base = i*map->sub_stripes;
-+			for (j = 1; j < map->sub_stripes; j++) {
-+				if (alloc_offsets[base] !=
-+					alloc_offsets[base+j]) {
-+					fprintf(stderr,
-+						"zones' write pointer mismatch\n");
-+					ret = -EIO;
-+					goto out;
-+				}
-+			}
-+
-+			if (alloc_offsets[0] < alloc_offsets[base]) {
-+				fprintf(stderr,
-+					"zones' write pointer mismatch\n");
-+				ret = -EIO;
-+				goto out;
-+			}
-+			cache->alloc_offset += alloc_offsets[base];
-+		}
-+		break;
-+	case BTRFS_BLOCK_GROUP_RAID5:
-+	case BTRFS_BLOCK_GROUP_RAID6:
-+		/* RAID5/6 is not supported yet */
-+	default:
-+		fprintf(stderr, "Unsupported profile %llu\n",
-+			map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+out:
-+	cache->write_offset = cache->alloc_offset;
-+	free(alloc_offsets);
-+	return ret;
-+}
-+#else
-+static int
-+btrfs_get_block_group_alloc_offset(struct btrfs_fs_info *fs_info,
-+				   struct btrfs_block_group_cache *cache)
-+{
-+	return 0;
-+}
-+#endif
-+
- int btrfs_read_block_groups(struct btrfs_root *root)
- {
- 	struct btrfs_path *path;
-@@ -3122,6 +3301,10 @@ int btrfs_read_block_groups(struct btrfs_root *root)
- 		BUG_ON(ret);
- 		cache->space_info = space_info;
+-	btrfs_set_dev_extent_length(buf, dev_extent,
+-				    BTRFS_MKFS_SYSTEM_GROUP_SIZE);
++	btrfs_set_dev_extent_length(buf, dev_extent, system_group_size);
+ 	nritems++;
  
-+		ret = btrfs_get_block_group_alloc_offset(info, cache);
-+		if (ret)
-+			goto error;
-+
- 		/* use EXTENT_LOCKED to prevent merging */
- 		set_extent_bits(block_group_cache, found_key.objectid,
- 				found_key.objectid + found_key.offset - 1,
-@@ -3151,6 +3334,9 @@ btrfs_add_block_group(struct btrfs_fs_info *fs_info, u64 bytes_used, u64 type,
- 	cache->key.objectid = chunk_offset;
- 	cache->key.offset = size;
+ 	btrfs_set_header_bytenr(buf, cfg->blocks[MKFS_DEV_TREE]);
+diff --git a/mkfs/common.h b/mkfs/common.h
+index 28912906d0a9..d0e4c7b2c906 100644
+--- a/mkfs/common.h
++++ b/mkfs/common.h
+@@ -53,6 +53,7 @@ struct btrfs_mkfs_config {
+ 	u64 features;
+ 	/* Size of the filesystem in bytes */
+ 	u64 num_bytes;
++	u64 zone_size;
  
-+	ret = btrfs_get_block_group_alloc_offset(fs_info, cache);
-+	BUG_ON(ret);
-+
- 	cache->key.type = BTRFS_BLOCK_GROUP_ITEM_KEY;
- 	btrfs_set_block_group_used(&cache->item, bytes_used);
- 	btrfs_set_block_group_chunk_objectid(&cache->item,
-diff --git a/transaction.c b/transaction.c
-index 138e10f0d6cc..39a52732bc71 100644
---- a/transaction.c
-+++ b/transaction.c
-@@ -129,16 +129,32 @@ int __commit_transaction(struct btrfs_trans_handle *trans,
- {
- 	u64 start;
- 	u64 end;
-+	u64 next = 0;
- 	struct btrfs_fs_info *fs_info = root->fs_info;
- 	struct extent_buffer *eb;
- 	struct extent_io_tree *tree = &fs_info->extent_cache;
-+	struct btrfs_block_group_cache *bg = NULL;
+ 	/* Output fields, set during creation */
+ 
+diff --git a/mkfs/main.c b/mkfs/main.c
+index 93c0b71c864e..cbfd45bee836 100644
+--- a/mkfs/main.c
++++ b/mkfs/main.c
+@@ -61,8 +61,12 @@ static int create_metadata_block_groups(struct btrfs_root *root, int mixed,
+ 	u64 bytes_used;
+ 	u64 chunk_start = 0;
+ 	u64 chunk_size = 0;
++	u64 system_group_size = 0;
  	int ret;
  
++	system_group_size = fs_info->fs_devices->hmzoned ?
++		fs_info->fs_devices->zone_size : BTRFS_MKFS_SYSTEM_GROUP_SIZE;
++
+ 	trans = btrfs_start_transaction(root, 1);
+ 	BUG_ON(IS_ERR(trans));
+ 	bytes_used = btrfs_super_bytes_used(fs_info->super_copy);
+@@ -75,8 +79,8 @@ static int create_metadata_block_groups(struct btrfs_root *root, int mixed,
+ 	ret = btrfs_make_block_group(trans, fs_info, bytes_used,
+ 				     BTRFS_BLOCK_GROUP_SYSTEM,
+ 				     BTRFS_BLOCK_RESERVED_1M_FOR_SUPER,
+-				     BTRFS_MKFS_SYSTEM_GROUP_SIZE);
+-	allocation->system += BTRFS_MKFS_SYSTEM_GROUP_SIZE;
++				     system_group_size);
++	allocation->system += system_group_size;
+ 	if (ret)
+ 		return ret;
+ 
+@@ -761,6 +765,7 @@ int main(int argc, char **argv)
+ 	int metadata_profile_opt = 0;
+ 	int discard = 1;
+ 	int ssd = 0;
++	int hmzoned = 0;
+ 	int force_overwrite = 0;
+ 	char *source_dir = NULL;
+ 	bool source_dir_set = false;
+@@ -774,6 +779,7 @@ int main(int argc, char **argv)
+ 	u64 features = BTRFS_MKFS_DEFAULT_FEATURES;
+ 	struct mkfs_allocation allocation = { 0 };
+ 	struct btrfs_mkfs_config mkfs_cfg;
++	u64 system_group_size;
+ 
  	while(1) {
-+again:
- 		ret = find_first_extent_bit(tree, 0, &start, &end,
- 					    EXTENT_DIRTY);
- 		if (ret)
- 			break;
-+		bg = btrfs_lookup_first_block_group(fs_info, start);
-+		BUG_ON(!bg);
-+		if (bg->alloc_type == BTRFS_ALLOC_SEQ &&
-+		    bg->key.objectid + bg->write_offset < start) {
-+			next = bg->key.objectid + bg->write_offset;
-+			BUG_ON(next + fs_info->nodesize > start);
-+			eb = btrfs_find_create_tree_block(fs_info, next);
-+			btrfs_mark_buffer_dirty(eb);
-+			free_extent_buffer(eb);
-+			goto again;
+ 		int c;
+@@ -896,6 +902,8 @@ int main(int argc, char **argv)
+ 	if (dev_cnt == 0)
+ 		print_usage(1);
+ 
++	hmzoned = features & BTRFS_FEATURE_INCOMPAT_HMZONED;
++
+ 	if (source_dir_set && dev_cnt > 1) {
+ 		error("the option -r is limited to a single device");
+ 		goto error;
+@@ -905,6 +913,11 @@ int main(int argc, char **argv)
+ 		goto error;
+ 	}
+ 
++	if (source_dir_set && hmzoned) {
++		error("The -r and hmzoned feature are incompatible\n");
++		exit(1);
++	}
++
+ 	if (*fs_uuid) {
+ 		uuid_t dummy_uuid;
+ 
+@@ -936,6 +949,16 @@ int main(int argc, char **argv)
+ 
+ 	file = argv[optind++];
+ 	ssd = is_ssd(file);
++	if (hmzoned) {
++		if (zoned_model(file) == ZONED_NONE) {
++			error("%s: not a zoned block device\n", file);
++			exit(1);
 +		}
-+		if (bg->alloc_type == BTRFS_ALLOC_SEQ)
-+			bg->write_offset += (end + 1 - start);
- 		while(start <= end) {
- 			eb = find_first_extent_buffer(tree, start);
- 			BUG_ON(!eb || eb->start != start);
++		if (!zone_size(file)) {
++			error("%s: zone size undefined\n", file);
++			exit(1);
++		}
++	}
+ 
+ 	/*
+ 	* Set default profiles according to number of added devices.
+@@ -1087,7 +1110,8 @@ int main(int argc, char **argv)
+ 	ret = btrfs_prepare_device(fd, file, &dev_block_count, block_count,
+ 			(zero_end ? PREP_DEVICE_ZERO_END : 0) |
+ 			(discard ? PREP_DEVICE_DISCARD : 0) |
+-			(verbose ? PREP_DEVICE_VERBOSE : 0));
++			(verbose ? PREP_DEVICE_VERBOSE : 0) |
++			(hmzoned ? PREP_DEVICE_HMZONED : 0));
+ 	if (ret)
+ 		goto error;
+ 	if (block_count && block_count > dev_block_count) {
+@@ -1098,9 +1122,11 @@ int main(int argc, char **argv)
+ 	}
+ 
+ 	/* To create the first block group and chunk 0 in make_btrfs */
+-	if (dev_block_count < BTRFS_MKFS_SYSTEM_GROUP_SIZE) {
++	system_group_size = hmzoned ?
++		zone_size(file) : BTRFS_MKFS_SYSTEM_GROUP_SIZE;
++	if (dev_block_count < system_group_size) {
+ 		error("device is too small to make filesystem, must be at least %llu",
+-				(unsigned long long)BTRFS_MKFS_SYSTEM_GROUP_SIZE);
++				(unsigned long long)system_group_size);
+ 		goto error;
+ 	}
+ 
+@@ -1116,6 +1142,7 @@ int main(int argc, char **argv)
+ 	mkfs_cfg.sectorsize = sectorsize;
+ 	mkfs_cfg.stripesize = stripesize;
+ 	mkfs_cfg.features = features;
++	mkfs_cfg.zone_size = zone_size(file);
+ 
+ 	ret = make_btrfs(fd, &mkfs_cfg);
+ 	if (ret) {
+@@ -1126,6 +1153,7 @@ int main(int argc, char **argv)
+ 
+ 	fs_info = open_ctree_fs_info(file, 0, 0, 0,
+ 			OPEN_CTREE_WRITES | OPEN_CTREE_TEMPORARY_SUPER);
++
+ 	if (!fs_info) {
+ 		error("open ctree failed");
+ 		goto error;
+@@ -1199,7 +1227,8 @@ int main(int argc, char **argv)
+ 				block_count,
+ 				(verbose ? PREP_DEVICE_VERBOSE : 0) |
+ 				(zero_end ? PREP_DEVICE_ZERO_END : 0) |
+-				(discard ? PREP_DEVICE_DISCARD : 0));
++				(discard ? PREP_DEVICE_DISCARD : 0) |
++				(hmzoned ? PREP_DEVICE_HMZONED : 0));
+ 		if (ret) {
+ 			goto error;
+ 		}
+@@ -1296,6 +1325,10 @@ raid_groups:
+ 			btrfs_group_profile_str(metadata_profile),
+ 			pretty_size(allocation.system));
+ 		printf("SSD detected:       %s\n", ssd ? "yes" : "no");
++		printf("Zoned device:       %s\n", hmzoned ? "yes" : "no");
++		if (hmzoned)
++			printf("Zone size:          %s\n",
++			       pretty_size(fs_info->fs_devices->zone_size));
+ 		btrfs_parse_features_to_string(features_buf, features);
+ 		printf("Incompat features:  %s", features_buf);
+ 		printf("\n");
 -- 
 2.21.0
 
