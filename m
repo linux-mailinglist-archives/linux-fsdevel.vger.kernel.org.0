@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D94438B81
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 15:20:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C29938B7D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 15:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729322AbfFGNSf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jun 2019 09:18:35 -0400
+        id S1729282AbfFGNS2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jun 2019 09:18:28 -0400
 Received: from esa2.hgst.iphmx.com ([68.232.143.124]:56479 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729237AbfFGNSZ (ORCPT
+        with ESMTP id S1729274AbfFGNS1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jun 2019 09:18:25 -0400
+        Fri, 7 Jun 2019 09:18:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1559913543; x=1591449543;
+  t=1559913547; x=1591449547;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=7YLox0tNG9lHpTIY6mw5AUho1M9ivC0mOCOT+Ptqtag=;
-  b=N9ghDEItGra4M3hn4J1YEmpfaYc9wUP+5be/71BtOpMut9cZp2kdLYR8
-   QqoYsaGt8Mym7ZQtDnwBTA7gggHMUxuUbb23vKufW3LGIcwIcg4DpLtxu
-   NXR/PB8gGX75sGB+1sOWcpTRm5XtwdxkpM3IXjxcEGQ7rLBaZ0ls2J3nv
-   VfYZTw4pInOwWS8g3R5WcpMW/+JSFUOw4R3iQ0bazCXFxRFyj7KdtwG5w
-   zomhklQHEoE31PqXn7vCPFfXDViyYyrxKQCIeVw9o91fz6jSgTPuH+5aX
-   eTFfd7knC17TwshWbd9xozsIEYEBnjupYDGp+SoQYr//UMsUXoj/k3qAs
-   A==;
+  bh=7OJCfl7mJcrjPMSDFaEobu5+R6OlEI3WvKTSWthUVKA=;
+  b=cat6pKsmsGvICKvIRFSiNmsIDjb+2tYCRhFMsW/psD4i/JBUD6ASRYWc
+   MrSq6ihFSsV1A/Sx15fDJ7A2UeCW+l4xPXh1CEjYHvOZCJdUfngtIk3+a
+   yHV8K+EC/kcjbPfrQSXksOVkfNWO0TJLjVEoj2ZnWJzm8RpcUFccVq+m8
+   /bCFXK6E7J8/oedlREQTvr07WJQiGRYJ37eRQLOHvMVnxHSo5CLR1mV92
+   PALQtANBD+sb0cFHBFHgFjcSFSbZWhlNefj46fteFZZuJg2KUPXL6/MB4
+   9vIZJphdEMF4ImHluYERcOESMrQrEITidGId6Ubu0GBvo0EfFISPqLR9B
+   g==;
 X-IronPort-AV: E=Sophos;i="5.63,563,1557158400"; 
-   d="scan'208";a="209675031"
+   d="scan'208";a="209675034"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Jun 2019 21:19:03 +0800
-IronPort-SDR: fhh+Eb7eEBM7K27cHL19ZtzYge3s7ME3DC4xsAzr9bGw1moJGYwXL4Qt77pXNniZMZKS00OXNF
- /aZwVyFzJTX80pwg3bnHoLTAkyJUa4W+diwCANjnRTYWXNfmfvCsqqP66N+qeXpe8zeZsK0H2m
- 1rmmdAf8+gEXukIQfG0B5IkYhyQ7wPS+/PAEvpxLIe3RcUt9NRYQkpKQvo2Ny1fKruWsdYXodi
- 6Pglo1qLc3ZjNw8a45yOnOtch3scUq4k+Y5gXhOB5q8tf6Hw14cUop5B96IpCBI3dmOX7tHHQh
- 800aOelsOYlUlvZhjYqPVtgK
+  by ob1.hgst.iphmx.com with ESMTP; 07 Jun 2019 21:19:06 +0800
+IronPort-SDR: xgi4EgEqZ/nvDaA/Y4QrDRNhQ2jkmUpl8UrzS1+ryZ+f+egYcyXt5uTbFk5mOfYb0VFvecmc/Q
+ 1TlSlKMNZARr1/4JLsIGsAEULTWcjY+0++VKgRDa+b/94VEZzaV2hzbhGO3LGiGxKjogrX+YyJ
+ XDUDT8/aU7ov8/HeWxsgJD73Yg0ZHPmqAQ/EnU2w6C+dszcmRDMtmTvOrZkhali59ZfwRTxNYj
+ DOqy2leTzYKjOMlwmwbbwYcv26xlc2sVOSjdTAKQlZjPIDfuTLlj/7JY/nRakdQwSgNIMxZP1y
+ +o/rGJKTp4Bin2wUa+mgLrEN
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 07 Jun 2019 05:55:42 -0700
-IronPort-SDR: vbwS6gnqfZa3FR8uJ/1d5LALS/dMBFOW13K5BAVI3QDC6EPc2VxU7W6/CnqRw6a4WWOb/Y7a6S
- PVIYYUylJJJMchov5wzsmU7EzajGiChKTaApdkirYb0Vk5YGJbni87vTI0RY3GbyOkzwaVo6Gv
- D3hO8Yr65KVJTPGoMdxCofVZ7G7g+dEmzlOkcWJWncZIOW649RCU4c6FwF0n0jBULMSakAnz8c
- s/UzpElvM+dcJenD57r9GSaXZ7/2qsUnusp3KTMqfjF71QZ55ytwp9wFuEX/i6tbQfY/efjuF4
- 3PU=
+  by uls-op-cesaep02.wdc.com with ESMTP; 07 Jun 2019 05:55:45 -0700
+IronPort-SDR: EGR3OeGqPSc8rQAD7I2QT16I633TuWGjdQODiLRNAhQQB0qJp685MdKHrdeEnUgxVpoX3sjoGN
+ XubpuDY4bDd/9XP1+/gJRVFWr8gzq0PSYCMxUhy+YEK/tGNV2sB7RDEPxT5kgl5/mrZ4UhfpAZ
+ OWUqG6ADmh7hYLzNP6pqy67y/g8eermho3CKWM3F5PGlCHl4ivONBiAtcQEwGwaLWszTy3E0Cq
+ wyUj+avjKxf6f0sSmVT8RU2fheYM+ZaWzwDMzBCupHQvIdJ7PbxV7Nt81ZJDgHPYUPKkT3sSsa
+ zms=
 Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
-  by uls-op-cesaip02.wdc.com with ESMTP; 07 Jun 2019 06:18:24 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 07 Jun 2019 06:18:26 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -54,9 +54,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         Bart Van Assche <bvanassche@acm.org>,
         Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH 11/12] btrfs-progs: device-add: support HMZONED device
-Date:   Fri,  7 Jun 2019 22:17:50 +0900
-Message-Id: <20190607131751.5359-11-naohiro.aota@wdc.com>
+Subject: [PATCH 12/12] btrfs-progs: introduce support for dev-place HMZONED device
+Date:   Fri,  7 Jun 2019 22:17:51 +0900
+Message-Id: <20190607131751.5359-12-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190607131751.5359-1-naohiro.aota@wdc.com>
 References: <20190607131025.31996-1-naohiro.aota@wdc.com>
@@ -74,68 +74,53 @@ prevent mixing non-zoned devices and zoned devices.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- cmds-device.c | 29 +++++++++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+ cmds-replace.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/cmds-device.c b/cmds-device.c
-index e3e30b6d5ded..86ffb1a2a5c2 100644
---- a/cmds-device.c
-+++ b/cmds-device.c
-@@ -57,6 +57,9 @@ static int cmd_device_add(int argc, char **argv)
- 	int discard = 1;
- 	int force = 0;
- 	int last_dev;
-+	int res;
-+	int hmzoned;
+diff --git a/cmds-replace.c b/cmds-replace.c
+index 713d200938d4..c752ceaadb77 100644
+--- a/cmds-replace.c
++++ b/cmds-replace.c
+@@ -116,6 +116,7 @@ static const char *const cmd_replace_start_usage[] = {
+ 
+ static int cmd_replace_start(int argc, char **argv)
+ {
 +	struct btrfs_ioctl_feature_flags feature_flags;
- 
- 	optind = 0;
- 	while (1) {
-@@ -92,12 +95,33 @@ static int cmd_device_add(int argc, char **argv)
+ 	struct btrfs_ioctl_dev_replace_args start_args = {0};
+ 	struct btrfs_ioctl_dev_replace_args status_args = {0};
+ 	int ret;
+@@ -123,6 +124,7 @@ static int cmd_replace_start(int argc, char **argv)
+ 	int c;
+ 	int fdmnt = -1;
+ 	int fddstdev = -1;
++	int hmzoned;
+ 	char *path;
+ 	char *srcdev;
+ 	char *dstdev = NULL;
+@@ -163,6 +165,13 @@ static int cmd_replace_start(int argc, char **argv)
  	if (fdmnt < 0)
- 		return 1;
+ 		goto leave_with_error;
  
-+	res = ioctl(fdmnt, BTRFS_IOC_GET_FEATURES, &feature_flags);
-+	if (res) {
-+		error("error getting feature flags '%s': %m", mntpnt);
-+		return 1;
++	ret = ioctl(fdmnt, BTRFS_IOC_GET_FEATURES, &feature_flags);
++	if (ret) {
++		error("ioctl(GET_FEATURES) on '%s' returns error: %m", path);
++		goto leave_with_error;
 +	}
 +	hmzoned = feature_flags.incompat_flags & BTRFS_FEATURE_INCOMPAT_HMZONED;
 +
- 	for (i = optind; i < last_dev; i++){
- 		struct btrfs_ioctl_vol_args ioctl_args;
--		int	devfd, res;
-+		int	devfd;
- 		u64 dev_block_count = 0;
- 		char *path;
+ 	/* check for possible errors before backgrounding */
+ 	status_args.cmd = BTRFS_IOCTL_DEV_REPLACE_CMD_STATUS;
+ 	status_args.result = BTRFS_IOCTL_DEV_REPLACE_RESULT_NO_RESULT;
+@@ -257,7 +266,8 @@ static int cmd_replace_start(int argc, char **argv)
+ 	strncpy((char *)start_args.start.tgtdev_name, dstdev,
+ 		BTRFS_DEVICE_PATH_NAME_MAX);
+ 	ret = btrfs_prepare_device(fddstdev, dstdev, &dstdev_block_count, 0,
+-			PREP_DEVICE_ZERO_END | PREP_DEVICE_VERBOSE);
++			PREP_DEVICE_ZERO_END | PREP_DEVICE_VERBOSE |
++			(hmzoned ? PREP_DEVICE_HMZONED | PREP_DEVICE_DISCARD : 0));
+ 	if (ret)
+ 		goto leave_with_error;
  
-+		if (hmzoned && zoned_model(argv[i]) == ZONED_NONE) {
-+			error("cannot add non-zoned device to HMZONED file system '%s'",
-+			      argv[i]);
-+			ret++;
-+			continue;
-+		}
-+
-+		if (!hmzoned && zoned_model(argv[i]) == ZONED_HOST_MANAGED) {
-+			error("cannot add host managed zoned device to non-HMZONED file system '%s'",
-+			      argv[i]);
-+			ret++;
-+			continue;
-+		}
-+
- 		res = test_dev_for_mkfs(argv[i], force);
- 		if (res) {
- 			ret++;
-@@ -113,7 +137,8 @@ static int cmd_device_add(int argc, char **argv)
- 
- 		res = btrfs_prepare_device(devfd, argv[i], &dev_block_count, 0,
- 				PREP_DEVICE_ZERO_END | PREP_DEVICE_VERBOSE |
--				(discard ? PREP_DEVICE_DISCARD : 0));
-+				(discard ? PREP_DEVICE_DISCARD : 0) |
-+				(hmzoned ? PREP_DEVICE_HMZONED : 0));
- 		close(devfd);
- 		if (res) {
- 			ret++;
 -- 
 2.21.0
 
