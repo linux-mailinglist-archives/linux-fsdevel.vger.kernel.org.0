@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CED2138B36
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 15:13:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9AF938B29
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 15:12:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbfFGNLh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jun 2019 09:11:37 -0400
+        id S1729296AbfFGNLm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jun 2019 09:11:42 -0400
 Received: from esa4.hgst.iphmx.com ([216.71.154.42]:53172 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729244AbfFGNLh (ORCPT
+        with ESMTP id S1729244AbfFGNLl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jun 2019 09:11:37 -0400
+        Fri, 7 Jun 2019 09:11:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1559913097; x=1591449097;
+  t=1559913100; x=1591449100;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Md7N9CZ8khRJ1RLXgchsCXH8xFL4tXDt3hVbHgdxZsc=;
-  b=B2zVem9dWUohx/XLmBWHyskoYTtKSWmaKxjA1+QUZS7gA7WSenf+5GlW
-   df+i/9SlSNFDFUyf4F6e0+XqSVZVjG9Tk6kP/5SEPpNhDnwT/Gzz8F3hb
-   dEEPCxzg2FuZJivA3aBcuE4eEjN1p7ljBbnE/tf3/m5qnzbZojbIr/Osd
-   6cQ9H/D9TVBUw0r9HK6/jACMy+bqMtttlChCvHAWRZ9QjUTU4JdMe2LIf
-   /T4xTolwIcp7ggoxwTqd0paINkZ0oByvJg6L2Hs7jo5wN/hLTqOn3I3SH
-   E+5yPb6ozuk5T7ZHLNoFumbkgq/6fXlaw/t2ohP+VXiN9xXGxkvcu4mlJ
-   w==;
+  bh=GoYf30WTHw0II9b6V5i/U/orUf2sypkPcyGouNXga/M=;
+  b=J5w+muKCneSXYiNgbLo5K0mXvRO38wZslXJefdgK4Vyak+raEWv2/nKM
+   yUpu+1uXjcPT9U7fx3n2YRZDwk7/9by1QFDSv9cEotNXLpkuB9HtPVw1u
+   ut9c8MuDE/l/cHl1hbPkslUjIUVOgsPl882ROcZjCTbhjpMHWW6hao+8L
+   iOmWaHkJFzokEIjtvVgmog7ZnwuEqfJp7RGZqwI49vg5hSE6NfLWTRVYN
+   zwPw0PlbXVMuxTI+8GM/7i1Han1qkhm06pUd8KAUFIobGsStNFcCe7+OY
+   BR+fZWkI5GgJ/QLWVJMsgEznNwbQkAKn1j1AdvvfYryz1+9WaV+g48W5k
+   A==;
 X-IronPort-AV: E=Sophos;i="5.63,563,1557158400"; 
-   d="scan'208";a="110027815"
+   d="scan'208";a="110027817"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Jun 2019 21:11:37 +0800
-IronPort-SDR: 48V5oN7uqwjYFwpGZZTjvI3qzyWPbIPi2w4hKsMRHqE/Qsl5szBJbAOpTg22kFxyyP9tycrOdX
- 2PHuHcxol14INu4PLMPEqUd2hUA66t4IR3ToU0UnntlVPPxRR6AD5ybdtPJjejMjiKtfzYVRQA
- A/qXkZPn6ZzUcZTGoiqPsT1H60yPZ/y2qH6Xv/zqsrkDkzLUmNazpx5I3fQm8pz0EALROB9v24
- 8A+bcM9DPrItuzAUa2m18XixxIszcDIr2ZTl6uJEXjUjhloMfowqIqDdxh7cCA5q10JZSqDv2i
- MtWTHU1BHVedYtOp56TpUPru
+  by ob1.hgst.iphmx.com with ESMTP; 07 Jun 2019 21:11:40 +0800
+IronPort-SDR: kwjn0jBdY6713oYsphFrj2W0PGXjEuFiqVihz86QsXjU+w57Ja8wv84IRL6jdvcShUucpi1BgO
+ ILupTMGWqVqXxHKRqXyaKTLTMTLySkUcZ/NHtOARuf3FrtdaLafXcEgHA8WHfpIL4DSkDQmbES
+ jcBiHcPi/0CzxPx/CYKKAZtBZUAKsFco7siO8jyWOM1mYpXJsKhqpZgwNYVxtvL3TMZIlKuWtv
+ X8hsKvMFERKWUwZkexa6qc81niP/JL5LqpUuq87Ae6aFloQqEUkznPNLoPlRajOxn+10870ae6
+ m/Ae8Ig+OOCrEy971r674LH2
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 07 Jun 2019 05:48:53 -0700
-IronPort-SDR: UrvpwSOk56ZiywO/Md4VupENO7qzjOp0MOmyuhgrTZkPx4lOzSzGwD5NZ8ltmjmRXD5hqOQ/S7
- /SVOaT+JkfSclqcVKuJI4j/llxlL1Lk6o8OE7KHnU9GYfcSTkWaVq8np8Kl6Q5NKp0q2T9Ve+5
- f8p5FvWQ8QsO4Pc1hwEPLLAjWz/ZwyWtp7I9pvOrV/4FijlE+w5r6vrqLz97coObvlBASySSQS
- ghtCem3vZWS1UMMj+uK5LYAaaqOuzXVdQPQbsUOZsIO836bchB9s7fVYLEGHXr1btsXNXWQbHG
- Z5c=
+  by uls-op-cesaep02.wdc.com with ESMTP; 07 Jun 2019 05:48:57 -0700
+IronPort-SDR: a9N/SVvEpntRkOI1lh60+JeGY+0UjvJLraoXISMbOe7ZnKGftLjFqju7tPgPZcWWC8qBi9O90f
+ RCvhebZ9KTXVYmfrcgkrw80BF7nCrjEbxwBL3Bq35qfh4siviPv8ADHfeOzE5GjW8ADpjp8pCD
+ dy1iP4z+ix/8gW42wfFngRUdEqwvtNFv8anvh7oHKu2RFKamP3yPbd8crVnyUUgjbbErSermHc
+ gU0usiOQdm8Ri/eBf3UmVjA+ZoRT8OC1W22KmbNyYRTYjl0rQSgCkscBczniIux3k+Xjnc4kPa
+ FfI=
 Received: from naota.dhcp.fujisawa.hgst.com (HELO naota.fujisawa.hgst.com) ([10.149.53.115])
-  by uls-op-cesaip02.wdc.com with ESMTP; 07 Jun 2019 06:11:35 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 07 Jun 2019 06:11:37 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -54,9 +54,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         Bart Van Assche <bvanassche@acm.org>,
         Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH 11/19] btrfs: introduce submit buffer
-Date:   Fri,  7 Jun 2019 22:10:17 +0900
-Message-Id: <20190607131025.31996-12-naohiro.aota@wdc.com>
+Subject: [PATCH 12/19] btrfs: expire submit buffer on timeout
+Date:   Fri,  7 Jun 2019 22:10:18 +0900
+Message-Id: <20190607131025.31996-13-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190607131025.31996-1-naohiro.aota@wdc.com>
 References: <20190607131025.31996-1-naohiro.aota@wdc.com>
@@ -67,400 +67,385 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sequential allocation is not enough to maintain sequential delivery of
-write IOs to the device. Various features (async compress, async checksum,
-...) of btrfs affect ordering of the IOs. This patch introduces submit
-buffer to sort WRITE bios belonging to a block group and sort them out
-sequentially in increasing block address to achieve sequential write
-sequences with __btrfs_map_bio().
+It is possible to have bios stalled in the submit buffer due to some bug or
+device problem. In such situation, btrfs stops working waiting for buffered
+bios completions. To avoid such hang, add a worker that will cancel the
+stalled bios after a timeout.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/ctree.h             |   3 +
- fs/btrfs/extent-tree.c       |   5 ++
- fs/btrfs/volumes.c           | 165 +++++++++++++++++++++++++++++++++--
- fs/btrfs/volumes.h           |   3 +
- include/trace/events/btrfs.h |  41 +++++++++
- 5 files changed, 212 insertions(+), 5 deletions(-)
+ fs/btrfs/ctree.h             |  13 ++++
+ fs/btrfs/disk-io.c           |   2 +
+ fs/btrfs/extent-tree.c       |  16 +++-
+ fs/btrfs/super.c             |  18 +++++
+ fs/btrfs/volumes.c           | 146 ++++++++++++++++++++++++++++++++++-
+ include/trace/events/btrfs.h |   2 +
+ 6 files changed, 193 insertions(+), 4 deletions(-)
 
 diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index f4bcd2a6ec12..ade6d8243962 100644
+index ade6d8243962..dad8ea5c3b99 100644
 --- a/fs/btrfs/ctree.h
 +++ b/fs/btrfs/ctree.h
-@@ -718,6 +718,9 @@ struct btrfs_block_group_cache {
- 	 */
- 	enum btrfs_alloc_type alloc_type;
- 	u64 alloc_offset;
-+	struct mutex submit_lock;
-+	u64 submit_offset;
-+	struct bio_list submit_buffer;
+@@ -596,6 +596,8 @@ enum btrfs_alloc_type {
+ 	BTRFS_ALLOC_SEQ		= 1,
+ };
+ 
++struct expire_work;
++
+ struct btrfs_block_group_cache {
+ 	struct btrfs_key key;
+ 	struct btrfs_block_group_item item;
+@@ -721,6 +723,14 @@ struct btrfs_block_group_cache {
+ 	struct mutex submit_lock;
+ 	u64 submit_offset;
+ 	struct bio_list submit_buffer;
++	struct expire_work *expire_work;
++	int expired:1;
++};
++
++struct expire_work {
++	struct list_head list;
++	struct delayed_work work;
++	struct btrfs_block_group_cache *block_group;
  };
  
  /* delayed seq elem */
+@@ -1194,6 +1204,9 @@ struct btrfs_fs_info {
+ 	spinlock_t ref_verify_lock;
+ 	struct rb_root block_tree;
+ #endif
++
++	struct list_head expire_work_list;
++	struct mutex expire_work_lock;
+ };
+ 
+ static inline struct btrfs_fs_info *btrfs_sb(struct super_block *sb)
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index ddbb02906042..56a416902ce7 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -2717,6 +2717,8 @@ int open_ctree(struct super_block *sb,
+ 	INIT_RADIX_TREE(&fs_info->reada_tree, GFP_NOFS & ~__GFP_DIRECT_RECLAIM);
+ 	spin_lock_init(&fs_info->reada_lock);
+ 	btrfs_init_ref_verify(fs_info);
++	INIT_LIST_HEAD(&fs_info->expire_work_list);
++	mutex_init(&fs_info->expire_work_lock);
+ 
+ 	fs_info->thread_pool_size = min_t(unsigned long,
+ 					  num_online_cpus() + 2, 8);
 diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index ae2c895d08c4..ebdc7a6dbe01 100644
+index ebdc7a6dbe01..cb29a96c226b 100644
 --- a/fs/btrfs/extent-tree.c
 +++ b/fs/btrfs/extent-tree.c
-@@ -124,6 +124,7 @@ void btrfs_put_block_group(struct btrfs_block_group_cache *cache)
- 	if (atomic_dec_and_test(&cache->count)) {
+@@ -125,6 +125,7 @@ void btrfs_put_block_group(struct btrfs_block_group_cache *cache)
  		WARN_ON(cache->pinned > 0);
  		WARN_ON(cache->reserved > 0);
-+		WARN_ON(!bio_list_empty(&cache->submit_buffer));
+ 		WARN_ON(!bio_list_empty(&cache->submit_buffer));
++		WARN_ON(cache->expire_work);
  
  		/*
  		 * If not empty, someone is still holding mutex of
-@@ -10511,6 +10512,8 @@ btrfs_get_block_group_alloc_offset(struct btrfs_block_group_cache *cache)
- 		goto out;
+@@ -10180,6 +10181,13 @@ int btrfs_free_block_groups(struct btrfs_fs_info *info)
+ 		    block_group->cached == BTRFS_CACHE_ERROR)
+ 			free_excluded_extents(block_group);
+ 
++		if (block_group->alloc_type == BTRFS_ALLOC_SEQ) {
++			mutex_lock(&block_group->submit_lock);
++			WARN_ON(!bio_list_empty(&block_group->submit_buffer));
++			WARN_ON(block_group->expire_work != NULL);
++			mutex_unlock(&block_group->submit_lock);
++		}
++
+ 		btrfs_remove_free_space_cache(block_group);
+ 		ASSERT(block_group->cached != BTRFS_CACHE_STARTED);
+ 		ASSERT(list_empty(&block_group->dirty_list));
+@@ -10513,6 +10521,7 @@ btrfs_get_block_group_alloc_offset(struct btrfs_block_group_cache *cache)
  	}
  
-+	cache->submit_offset = logical + cache->alloc_offset;
-+
+ 	cache->submit_offset = logical + cache->alloc_offset;
++	cache->expired = 0;
+ 
  out:
  	cache->alloc_type = alloc_type;
- 	kfree(alloc_offsets);
-@@ -10547,6 +10550,7 @@ btrfs_create_block_group_cache(struct btrfs_fs_info *fs_info,
+@@ -10565,6 +10574,7 @@ btrfs_create_block_group_cache(struct btrfs_fs_info *fs_info,
+ 	btrfs_init_full_stripe_locks_tree(&cache->full_stripe_locks_root);
+ 	cache->alloc_type = BTRFS_ALLOC_FIT;
+ 	cache->alloc_offset = 0;
++	cache->expire_work = NULL;
  
- 	atomic_set(&cache->count, 1);
- 	spin_lock_init(&cache->lock);
-+	mutex_init(&cache->submit_lock);
- 	init_rwsem(&cache->data_rwsem);
- 	INIT_LIST_HEAD(&cache->list);
- 	INIT_LIST_HEAD(&cache->cluster_list);
-@@ -10554,6 +10558,7 @@ btrfs_create_block_group_cache(struct btrfs_fs_info *fs_info,
- 	INIT_LIST_HEAD(&cache->ro_list);
- 	INIT_LIST_HEAD(&cache->dirty_list);
- 	INIT_LIST_HEAD(&cache->io_list);
-+	bio_list_init(&cache->submit_buffer);
- 	btrfs_init_free_space_ctl(cache);
- 	atomic_set(&cache->trimming, 0);
- 	mutex_init(&cache->free_space_lock);
+ 	if (btrfs_fs_incompat(fs_info, HMZONED)) {
+ 		ret = btrfs_get_block_group_alloc_offset(cache);
+@@ -11329,11 +11339,13 @@ void btrfs_delete_unused_bgs(struct btrfs_fs_info *fs_info)
+ 
+ 		/* Don't want to race with allocators so take the groups_sem */
+ 		down_write(&space_info->groups_sem);
++		mutex_lock(&block_group->submit_lock);
+ 		spin_lock(&block_group->lock);
+ 		if (block_group->reserved || block_group->pinned ||
+ 		    btrfs_block_group_used(&block_group->item) ||
+ 		    block_group->ro ||
+-		    list_is_singular(&block_group->list)) {
++		    list_is_singular(&block_group->list) ||
++		    !bio_list_empty(&block_group->submit_buffer)) {
+ 			/*
+ 			 * We want to bail if we made new allocations or have
+ 			 * outstanding allocations in this block group.  We do
+@@ -11342,10 +11354,12 @@ void btrfs_delete_unused_bgs(struct btrfs_fs_info *fs_info)
+ 			 */
+ 			trace_btrfs_skip_unused_block_group(block_group);
+ 			spin_unlock(&block_group->lock);
++			mutex_unlock(&block_group->submit_lock);
+ 			up_write(&space_info->groups_sem);
+ 			goto next;
+ 		}
+ 		spin_unlock(&block_group->lock);
++		mutex_unlock(&block_group->submit_lock);
+ 
+ 		/* We don't want to force the issue, only flip if it's ok. */
+ 		ret = inc_block_group_ro(block_group, 0);
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index 740a701f16c5..343c26537999 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -154,6 +154,24 @@ void __btrfs_handle_fs_error(struct btrfs_fs_info *fs_info, const char *function
+ 	 * completes. The next time when the filesystem is mounted writable
+ 	 * again, the device replace operation continues.
+ 	 */
++
++	/* expire pending bios in submit buffer */
++	if (btrfs_fs_incompat(fs_info, HMZONED)) {
++		struct expire_work *work;
++		struct btrfs_block_group_cache *block_group;
++
++		mutex_lock(&fs_info->expire_work_lock);
++		list_for_each_entry(work, &fs_info->expire_work_list, list) {
++			block_group = work->block_group;
++			mutex_lock(&block_group->submit_lock);
++			if (block_group->expire_work)
++				mod_delayed_work(
++					system_unbound_wq,
++					&block_group->expire_work->work, 0);
++			mutex_unlock(&block_group->submit_lock);
++		};
++		mutex_unlock(&fs_info->expire_work_lock);
++	}
+ }
+ 
+ #ifdef CONFIG_PRINTK
 diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 52d0d458c0fd..26a64a53032f 100644
+index 26a64a53032f..a04379e440fb 100644
 --- a/fs/btrfs/volumes.c
 +++ b/fs/btrfs/volumes.c
-@@ -29,6 +29,11 @@
- #include "sysfs.h"
- #include "tree-checker.h"
- 
-+struct map_bio_data {
-+	void *orig_bi_private;
-+	int mirror_num;
-+};
-+
- const struct btrfs_raid_attr btrfs_raid_array[BTRFS_NR_RAID_TYPES] = {
- 	[BTRFS_RAID_RAID10] = {
- 		.sub_stripes	= 2,
-@@ -523,6 +528,7 @@ static void requeue_list(struct btrfs_pending_bios *pending_bios,
- 		pending_bios->tail = tail;
- }
- 
-+
- /*
-  * we try to collect pending bios for a device so we don't get a large
-  * number of procs sending bios down to the same device.  This greatly
-@@ -606,6 +612,8 @@ static noinline void run_scheduled_bios(struct btrfs_device *device)
- 	spin_unlock(&device->io_lock);
- 
- 	while (pending) {
-+		struct btrfs_bio *bbio;
-+		struct completion *sent = NULL;
- 
- 		rmb();
- 		/* we want to work on both lists, but do more bios on the
-@@ -643,7 +651,12 @@ static noinline void run_scheduled_bios(struct btrfs_device *device)
- 			sync_pending = 0;
- 		}
- 
-+		bbio = cur->bi_private;
-+		if (bbio)
-+			sent = bbio->sent;
- 		btrfsic_submit_bio(cur);
-+		if (sent)
-+			complete(sent);
- 		num_run++;
- 		batch_run++;
- 
-@@ -5916,6 +5929,7 @@ static struct btrfs_bio *alloc_btrfs_bio(int total_stripes, int real_stripes)
- 
- 	atomic_set(&bbio->error, 0);
- 	refcount_set(&bbio->refs, 1);
-+	INIT_LIST_HEAD(&bbio->list);
- 
- 	return bbio;
- }
-@@ -6730,7 +6744,7 @@ static void btrfs_end_bio(struct bio *bio)
-  * the work struct is scheduled.
-  */
- static noinline void btrfs_schedule_bio(struct btrfs_device *device,
--					struct bio *bio)
-+					struct bio *bio, int need_seqwrite)
- {
- 	struct btrfs_fs_info *fs_info = device->fs_info;
- 	int should_queue = 1;
-@@ -6738,7 +6752,12 @@ static noinline void btrfs_schedule_bio(struct btrfs_device *device,
- 
- 	/* don't bother with additional async steps for reads, right now */
- 	if (bio_op(bio) == REQ_OP_READ) {
-+		struct btrfs_bio *bbio = bio->bi_private;
-+		struct completion *sent = bbio->sent;
-+
- 		btrfsic_submit_bio(bio);
-+		if (sent)
-+			complete(sent);
- 		return;
+@@ -6840,6 +6840,124 @@ static void bbio_error(struct btrfs_bio *bbio, struct bio *bio, u64 logical)
  	}
+ }
  
-@@ -6746,7 +6765,7 @@ static noinline void btrfs_schedule_bio(struct btrfs_device *device,
- 	bio->bi_next = NULL;
- 
- 	spin_lock(&device->io_lock);
--	if (op_is_sync(bio->bi_opf))
-+	if (op_is_sync(bio->bi_opf) && need_seqwrite == 0)
- 		pending_bios = &device->pending_sync_bios;
- 	else
- 		pending_bios = &device->pending_bios;
-@@ -6785,8 +6804,21 @@ static void submit_stripe_bio(struct btrfs_bio *bbio, struct bio *bio,
- 
- 	btrfs_bio_counter_inc_noblocked(fs_info);
- 
-+	/* queue all bios into scheduler if sequential write is required */
-+	if (bbio->need_seqwrite) {
-+		if (!async) {
-+			DECLARE_COMPLETION_ONSTACK(sent);
++static void expire_bios_fn(struct work_struct *work)
++{
++	struct expire_work *ework;
++	struct btrfs_block_group_cache *cache;
++	struct bio *bio, *next;
 +
-+			bbio->sent = &sent;
-+			btrfs_schedule_bio(dev, bio, bbio->need_seqwrite);
-+			wait_for_completion_io(&sent);
-+		} else {
-+			btrfs_schedule_bio(dev, bio, bbio->need_seqwrite);
-+		}
-+		return;
++	ework = container_of(work, struct expire_work, work.work);
++	cache = ework->block_group;
++
++	mutex_lock(&cache->fs_info->expire_work_lock);
++	mutex_lock(&cache->submit_lock);
++	list_del(&cache->expire_work->list);
++
++	if (btrfs_fs_closing(cache->fs_info)) {
++		WARN_ON(!bio_list_empty(&cache->submit_buffer));
++		goto end;
 +	}
- 	if (async)
--		btrfs_schedule_bio(dev, bio);
-+		btrfs_schedule_bio(dev, bio, bbio->need_seqwrite);
- 	else
- 		btrfsic_submit_bio(bio);
- }
-@@ -6808,9 +6840,10 @@ static void bbio_error(struct btrfs_bio *bbio, struct bio *bio, u64 logical)
- 	}
- }
- 
 +
++	if (bio_list_empty(&cache->submit_buffer))
++		goto end;
++
++	bio = bio_list_get(&cache->submit_buffer);
++	cache->expired = 1;
++	mutex_unlock(&cache->submit_lock);
++
++	btrfs_handle_fs_error(cache->fs_info, -EIO,
++			      "bio submit buffer expired");
++	btrfs_err(cache->fs_info, "block group %llu submit pos %llu",
++		  cache->key.objectid, cache->submit_offset);
++
++	while (bio) {
++		struct map_bio_data *map_private =
++			(struct map_bio_data *)bio->bi_private;
++
++		next = bio->bi_next;
++		bio->bi_next = NULL;
++		bio->bi_private = map_private->orig_bi_private;
++		kfree(map_private);
++
++		trace_btrfs_expire_bio(cache, bio);
++		bio->bi_status = BLK_STS_IOERR;
++		bio_endio(bio);
++
++		bio = next;
++	}
++
++end:
++	kfree(cache->expire_work);
++	cache->expire_work = NULL;
++	mutex_unlock(&cache->submit_lock);
++	mutex_unlock(&cache->fs_info->expire_work_lock);
++	btrfs_put_block_group(cache);
++}
++
++static int schedule_expire_work(struct btrfs_block_group_cache *cache)
++{
++	const unsigned long delay = 90 * HZ;
++	struct btrfs_fs_info *fs_info = cache->fs_info;
++	struct expire_work *work;
++	int ret = 0;
++
++	mutex_lock(&fs_info->expire_work_lock);
++	mutex_lock(&cache->submit_lock);
++	if (cache->expire_work) {
++		mod_delayed_work(system_unbound_wq, &cache->expire_work->work,
++				 delay);
++		goto end;
++	}
++
++	work = kmalloc(sizeof(*work), GFP_NOFS);
++	if (!work) {
++		ret = -ENOMEM;
++		goto end;
++	}
++	work->block_group = cache;
++	INIT_LIST_HEAD(&work->list);
++	INIT_DELAYED_WORK(&work->work, expire_bios_fn);
++	cache->expire_work = work;
++
++	list_add(&work->list, &fs_info->expire_work_list);
++	btrfs_get_block_group(cache);
++	mod_delayed_work(system_unbound_wq, &cache->expire_work->work, delay);
++
++end:
++	mutex_unlock(&cache->submit_lock);
++	mutex_unlock(&cache->fs_info->expire_work_lock);
++	return ret;
++}
++
++static bool cancel_expire_work(struct btrfs_block_group_cache *cache)
++{
++	struct expire_work *work;
++	bool ret = true;
++
++	mutex_lock(&cache->fs_info->expire_work_lock);
++	mutex_lock(&cache->submit_lock);
++	work = cache->expire_work;
++	if (!work)
++		goto end;
++	cache->expire_work = NULL;
++
++	ret = cancel_delayed_work(&work->work);
++	/*
++	 * if cancel failed, expire_work is freed by the
++	 * expire worker thread
++	 */
++	if (!ret)
++		goto end;
++
++	list_del(&work->list);
++	kfree(work);
++	btrfs_put_block_group(cache);
++
++end:
++	mutex_unlock(&cache->submit_lock);
++	mutex_unlock(&cache->fs_info->expire_work_lock);
++	return ret;
++}
+ 
  static blk_status_t __btrfs_map_bio(struct btrfs_fs_info *fs_info,
  				    struct bio *bio, int mirror_num,
--				    int async_submit)
-+				    int async_submit, int need_seqwrite)
- {
- 	struct btrfs_device *dev;
- 	struct bio *first_bio = bio;
-@@ -6838,6 +6871,7 @@ static blk_status_t __btrfs_map_bio(struct btrfs_fs_info *fs_info,
- 	bbio->private = first_bio->bi_private;
- 	bbio->end_io = first_bio->bi_end_io;
- 	bbio->fs_info = fs_info;
-+	bbio->need_seqwrite = need_seqwrite;
- 	atomic_set(&bbio->stripes_pending, bbio->num_stripes);
+@@ -6931,7 +7049,9 @@ static blk_status_t __btrfs_map_bio_zoned(struct btrfs_fs_info *fs_info,
+ 	struct btrfs_block_group_cache *cache = NULL;
+ 	struct map_bio_data *map_private;
+ 	int sent;
++	bool should_queue;
+ 	blk_status_t ret;
++	int ret2;
  
- 	if ((bbio->map_type & BTRFS_BLOCK_GROUP_RAID56_MASK) &&
-@@ -6885,10 +6919,131 @@ static blk_status_t __btrfs_map_bio(struct btrfs_fs_info *fs_info,
- 	return BLK_STS_OK;
- }
+ 	WARN_ON(bio_op(cur_bio) != REQ_OP_WRITE);
  
-+static blk_status_t __btrfs_map_bio_zoned(struct btrfs_fs_info *fs_info,
-+					  struct bio *cur_bio, int mirror_num,
-+					  int async_submit)
-+{
-+	u64 logical = (u64)cur_bio->bi_iter.bi_sector << SECTOR_SHIFT;
-+	u64 length = cur_bio->bi_iter.bi_size;
-+	struct bio *bio;
-+	struct bio *next;
-+	struct bio_list submit_list;
-+	struct btrfs_block_group_cache *cache = NULL;
-+	struct map_bio_data *map_private;
-+	int sent;
-+	blk_status_t ret;
+@@ -6944,8 +7064,20 @@ static blk_status_t __btrfs_map_bio_zoned(struct btrfs_fs_info *fs_info,
+ 	}
+ 
+ 	mutex_lock(&cache->submit_lock);
+-	if (cache->submit_offset == logical)
 +
-+	WARN_ON(bio_op(cur_bio) != REQ_OP_WRITE);
-+
-+	cache = btrfs_lookup_block_group(fs_info, logical);
-+	if (!cache || cache->alloc_type != BTRFS_ALLOC_SEQ) {
-+		if (cache)
-+			btrfs_put_block_group(cache);
-+		return __btrfs_map_bio(fs_info, cur_bio, mirror_num,
-+				       async_submit, 0);
-+	}
-+
-+	mutex_lock(&cache->submit_lock);
-+	if (cache->submit_offset == logical)
-+		goto send_bios;
-+
-+	if (cache->submit_offset > logical) {
-+		trace_btrfs_bio_before_write_pointer(cache, cur_bio);
++	if (cache->expired) {
++		trace_btrfs_bio_in_expired_block_group(cache, cur_bio);
 +		mutex_unlock(&cache->submit_lock);
 +		btrfs_put_block_group(cache);
 +		WARN_ON_ONCE(1);
 +		return BLK_STS_IOERR;
 +	}
 +
-+	/* buffer the unaligned bio */
-+	map_private = kmalloc(sizeof(*map_private), GFP_NOFS);
-+	if (!map_private) {
++	if (cache->submit_offset == logical) {
 +		mutex_unlock(&cache->submit_lock);
-+		return errno_to_blk_status(-ENOMEM);
++		cancel_expire_work(cache);
+ 		goto send_bios;
 +	}
+ 
+ 	if (cache->submit_offset > logical) {
+ 		trace_btrfs_bio_before_write_pointer(cache, cur_bio);
+@@ -6968,13 +7100,18 @@ static blk_status_t __btrfs_map_bio_zoned(struct btrfs_fs_info *fs_info,
+ 
+ 	bio_list_add(&cache->submit_buffer, cur_bio);
+ 	mutex_unlock(&cache->submit_lock);
 +
-+	map_private->orig_bi_private = cur_bio->bi_private;
-+	map_private->mirror_num = mirror_num;
-+	cur_bio->bi_private = map_private;
-+
-+	bio_list_add(&cache->submit_buffer, cur_bio);
-+	mutex_unlock(&cache->submit_lock);
++	ret2 = schedule_expire_work(cache);
++	if (ret2) {
++		btrfs_put_block_group(cache);
++		return errno_to_blk_status(ret2);
++	}
+ 	btrfs_put_block_group(cache);
+ 
+ 	/* mimic a good result ... */
+ 	return BLK_STS_OK;
+ 
+ send_bios:
+-	mutex_unlock(&cache->submit_lock);
+ 	/* send this bio */
+ 	ret = __btrfs_map_bio(fs_info, cur_bio, mirror_num, 1, 1);
+ 	if (ret != BLK_STS_OK) {
+@@ -7013,6 +7150,7 @@ static blk_status_t __btrfs_map_bio_zoned(struct btrfs_fs_info *fs_info,
+ 			bio = next;
+ 		}
+ 	} while (sent);
++	should_queue = !bio_list_empty(&cache->submit_buffer);
+ 	mutex_unlock(&cache->submit_lock);
+ 
+ 	/* send the collected bios */
+@@ -7031,8 +7169,10 @@ static blk_status_t __btrfs_map_bio_zoned(struct btrfs_fs_info *fs_info,
+ 
+ 	if (length)
+ 		goto loop;
+-	btrfs_put_block_group(cache);
+ 
++	if (should_queue)
++		WARN_ON(schedule_expire_work(cache));
 +	btrfs_put_block_group(cache);
-+
-+	/* mimic a good result ... */
-+	return BLK_STS_OK;
-+
-+send_bios:
-+	mutex_unlock(&cache->submit_lock);
-+	/* send this bio */
-+	ret = __btrfs_map_bio(fs_info, cur_bio, mirror_num, 1, 1);
-+	if (ret != BLK_STS_OK) {
-+		/* TODO kill buffered bios */
-+		return ret;
-+	}
-+
-+loop:
-+	/* and send previously buffered following bios */
-+	mutex_lock(&cache->submit_lock);
-+	cache->submit_offset += length;
-+	length = 0;
-+	bio_list_init(&submit_list);
-+
-+	/* collect sequential bios into submit_list */
-+	do {
-+		sent = 0;
-+		bio = bio_list_get(&cache->submit_buffer);
-+		while (bio) {
-+			u64 logical =
-+				(u64)bio->bi_iter.bi_sector << SECTOR_SHIFT;
-+			struct bio_list *target;
-+
-+			next = bio->bi_next;
-+			bio->bi_next = NULL;
-+
-+			if (logical == cache->submit_offset + length) {
-+				sent = 1;
-+				length += bio->bi_iter.bi_size;
-+				target = &submit_list;
-+			} else {
-+				target = &cache->submit_buffer;
-+			}
-+			bio_list_add(target, bio);
-+
-+			bio = next;
-+		}
-+	} while (sent);
-+	mutex_unlock(&cache->submit_lock);
-+
-+	/* send the collected bios */
-+	while ((bio = bio_list_pop(&submit_list)) != NULL) {
-+		map_private = (struct map_bio_data *)bio->bi_private;
-+		mirror_num = map_private->mirror_num;
-+		bio->bi_private = map_private->orig_bi_private;
-+		kfree(map_private);
-+
-+		ret = __btrfs_map_bio(fs_info, bio, mirror_num, 1, 1);
-+		if (ret) {
-+			bio->bi_status = ret;
-+			bio_endio(bio);
-+		}
-+	}
-+
-+	if (length)
-+		goto loop;
-+	btrfs_put_block_group(cache);
-+
-+	return BLK_STS_OK;
-+}
-+
- blk_status_t btrfs_map_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
- 			   int mirror_num, int async_submit)
- {
--	return __btrfs_map_bio(fs_info, bio, mirror_num, async_submit);
-+	if (btrfs_fs_incompat(fs_info, HMZONED) && bio_op(bio) == REQ_OP_WRITE)
-+		return __btrfs_map_bio_zoned(fs_info, bio, mirror_num,
-+					     async_submit);
-+
-+	return __btrfs_map_bio(fs_info, bio, mirror_num, async_submit, 0);
+ 	return BLK_STS_OK;
  }
  
- /*
-diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-index f66755e43669..e97d13cb1627 100644
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -329,6 +329,9 @@ struct btrfs_bio {
- 	int mirror_num;
- 	int num_tgtdevs;
- 	int *tgtdev_map;
-+	int need_seqwrite;
-+	struct list_head list;
-+	struct completion *sent;
- 	/*
- 	 * logical block numbers for the start of each stripe
- 	 * The last one or two are p/q.  These are sorted,
 diff --git a/include/trace/events/btrfs.h b/include/trace/events/btrfs.h
-index fe4d268028ee..2b4cd791bf24 100644
+index 2b4cd791bf24..0ffb0b330b6c 100644
 --- a/include/trace/events/btrfs.h
 +++ b/include/trace/events/btrfs.h
-@@ -2091,6 +2091,47 @@ DEFINE_BTRFS_LOCK_EVENT(btrfs_try_tree_read_lock);
- DEFINE_BTRFS_LOCK_EVENT(btrfs_try_tree_write_lock);
- DEFINE_BTRFS_LOCK_EVENT(btrfs_tree_read_lock_atomic);
+@@ -2131,6 +2131,8 @@ DEFINE_EVENT(btrfs_hmzoned_bio_buffer_events, name,			\
+ )
  
-+DECLARE_EVENT_CLASS(btrfs_hmzoned_bio_buffer_events,
-+	TP_PROTO(const struct btrfs_block_group_cache *cache,
-+		 const struct bio *bio),
-+
-+	TP_ARGS(cache, bio),
-+
-+	TP_STRUCT__entry_btrfs(
-+		__field(	u64,	block_group	)
-+		__field(	u64,	flags		)
-+		__field(	u64,	submit_pos	)
-+		__field(	u64,	logical	)
-+		__field(	u64,	length		)
-+	),
-+
-+	TP_fast_assign_btrfs(cache->fs_info,
-+		__entry->block_group = cache->key.objectid;
-+		__entry->flags = cache->flags;
-+		__entry->submit_pos = cache->submit_offset;
-+		__entry->logical = (u64)bio->bi_iter.bi_sector << SECTOR_SHIFT;
-+		__entry->length = bio->bi_iter.bi_size;
-+	),
-+
-+	TP_printk_btrfs(
-+		"block_group=%llu(%s) submit_pos=%llu logical=%llu length=%llu",
-+		__entry->block_group,
-+		__print_flags((unsigned long)__entry->flags, "|",
-+			      BTRFS_GROUP_FLAGS),
-+		__entry->submit_pos, __entry->logical,
-+		__entry->length)
-+);
-+
-+#define DEFINE_BTRFS_HMZONED_BIO_BUF_EVENT(name)			\
-+DEFINE_EVENT(btrfs_hmzoned_bio_buffer_events, name,			\
-+	     TP_PROTO(const struct btrfs_block_group_cache *cache,	\
-+		      const struct bio *bio),				\
-+									\
-+	     TP_ARGS(cache, bio)					\
-+)
-+
-+DEFINE_BTRFS_HMZONED_BIO_BUF_EVENT(btrfs_bio_before_write_pointer);
-+
+ DEFINE_BTRFS_HMZONED_BIO_BUF_EVENT(btrfs_bio_before_write_pointer);
++DEFINE_BTRFS_HMZONED_BIO_BUF_EVENT(btrfs_expire_bio);
++DEFINE_BTRFS_HMZONED_BIO_BUF_EVENT(btrfs_bio_in_expired_block_group);
+ 
  #endif /* _TRACE_BTRFS_H */
  
- /* This part must be outside protection */
 -- 
 2.21.0
 
