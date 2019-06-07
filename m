@@ -2,217 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E37DC39073
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 17:52:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D761392DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 19:14:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732012AbfFGPwK convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 7 Jun 2019 11:52:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45762 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730266AbfFGPwI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:52:08 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A1E209B3B7;
-        Fri,  7 Jun 2019 15:52:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B6A1160D7C;
-        Fri,  7 Jun 2019 15:52:00 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190607151228.GA1872258@magnolia>
-References: <20190607151228.GA1872258@magnolia> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <155991706083.15579.16359443779582362339.stgit@warthog.procyon.org.uk>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/13] uapi: General notification ring definitions [ver #4]
+        id S1730301AbfFGROp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jun 2019 13:14:45 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43948 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729632AbfFGROp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Jun 2019 13:14:45 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f25so1477157pgv.10;
+        Fri, 07 Jun 2019 10:14:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dhu7ls2KxQ8QU/rN48Qc+UuKg6SARArc79RMxUBdLhg=;
+        b=gJvoYzeZoCPM/XqMnfJFv1IalZWCl8N+pxJ9sKCjMIsTbd4AXAvdEa6K4magaXu/Yu
+         8AuletlbFiZNPsomLDaf/yr1UmBffYRpFAjT3RcEUHR6bT2FmNsSGt45m2IOAWyXZEjU
+         UB9WtFUWaztxuNP4AU9QkJdgbCqKeXRLK7WKRguMRAqw4bYfd3BfKNmk9TjmrcHEvbY6
+         fi9dIdtpbMLkhldXnVw/fF+zy4QEe6EmW5Jx7UiLhctOd7j9iLucyR3zNoW+6ZAzCPUg
+         oL/fCorGNksWg+8u4nzO1X3DbPJdfdAzAqk0kN4/XpYs6W9wClf3rz7HWj9ylnbpDmRg
+         Dk1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dhu7ls2KxQ8QU/rN48Qc+UuKg6SARArc79RMxUBdLhg=;
+        b=nsBpcCveL0o9qvRYAeX67m2xwm+RhIU5QK3wxphSqqz+v43MOX11o0c+yR4HP13KNF
+         3FbzCNAQjRlFUCkxzVTqMjmTULf62QRLNZryDEjL7ir89v7CmRnLj2oONu/TszpOBNMD
+         pzAEu/abblvvJM5fRifJkboj7y4JGwPsDZ/IWPLWlsEyOp+QXF8R5FcV6yDOWNTcc9hL
+         NUsXR+fx9ikbGGvk8cnHkmB7R9arDVIks9S6oluSS+eCIfwee3LNlQ8uFC6vmhzCVvBn
+         z9XX/MZqogmveCHKZ4AnGQplvSuURsG9/AVd3Ndy5XRjsEr+eOqu27RJlDLHznvA5BXk
+         futQ==
+X-Gm-Message-State: APjAAAUb5p/SZyvyL4IEEEYllEjVDTmklv0aBTf6cGQGtkfxsAozom/W
+        3ZIf5qmewHlyqm/VgWme1A2no3W2zpo=
+X-Google-Smtp-Source: APXvYqxMHSUGdCBGfb1AcstvB0brl/MCNX+/DnEPN4AAQpGYch+7JOv+AxxtFJsDHktR2gf7D2nPiQ==
+X-Received: by 2002:a62:304:: with SMTP id 4mr60126177pfd.186.1559927684362;
+        Fri, 07 Jun 2019 10:14:44 -0700 (PDT)
+Received: from [172.27.227.254] ([216.129.126.118])
+        by smtp.googlemail.com with ESMTPSA id p6sm2850294pfp.88.2019.06.07.10.14.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Jun 2019 10:14:42 -0700 (PDT)
+Subject: Re: [PATCH linux-next v2] mpls: don't build sysctl related code when
+ sysctl is disabled
+To:     Matteo Croce <mcroce@redhat.com>, netdev@vger.kernel.org,
+        linux-next@vger.kernel.org, akpm@linux-foundation.org,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20190607003646.10411-1-mcroce@redhat.com>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <ea97df59-481b-3f05-476c-33e733b5c4ba@gmail.com>
+Date:   Fri, 7 Jun 2019 11:14:41 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <29221.1559922719.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Fri, 07 Jun 2019 16:51:59 +0100
-Message-ID: <29222.1559922719@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 07 Jun 2019 15:52:08 +0000 (UTC)
+In-Reply-To: <20190607003646.10411-1-mcroce@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Darrick J. Wong <darrick.wong@oracle.com> wrote:
-
-> > +enum watch_notification_type {
-> > +	WATCH_TYPE_META		= 0,	/* Special record */
-> > +	WATCH_TYPE_MOUNT_NOTIFY	= 1,	/* Mount notification record */
-> > +	WATCH_TYPE_SB_NOTIFY	= 2,	/* Superblock notification */
-> > +	WATCH_TYPE_KEY_NOTIFY	= 3,	/* Key/keyring change notification */
-> > +	WATCH_TYPE_BLOCK_NOTIFY	= 4,	/* Block layer notifications */
-> > +#define WATCH_TYPE___NR 5
+On 6/6/19 6:36 PM, Matteo Croce wrote:
+> Some sysctl related code and data structures is never referenced
+> when CONFIG_SYSCTL is not set.
+> While this is usually harmless, it produces a build failure since sysctl
+> shared variables exists, due to missing sysctl_vals symbol:
 > 
-> Given the way enums work I think you can just make WATCH_TYPE___NR the
-> last element in the enum?
-
-Yeah.  I've a feeling I'd been asked not to do that, but I don't remember who
-by.
-
-> > +struct watch_notification {
+>     ld: net/mpls/af_mpls.o: in function `mpls_platform_labels':
+>     af_mpls.c:(.text+0x162a): undefined reference to `sysctl_vals'
+>     ld: net/mpls/af_mpls.o:(.rodata+0x830): undefined reference to `sysctl_vals'
+>     ld: net/mpls/af_mpls.o:(.rodata+0x838): undefined reference to `sysctl_vals'
+>     ld: net/mpls/af_mpls.o:(.rodata+0x870): undefined reference to `sysctl_vals'
 > 
-> Kind of a long name...
-
-*shrug*.  Try to avoid conflicts with userspace symbols.
-
-> > +	__u32			type:24;	/* enum watch_notification_type */
-> > +	__u32			subtype:8;	/* Type-specific subtype (filterable) */
+> Fix this by moving all sysctl related code under #ifdef CONFIG_SYSCTL
 > 
-> 16777216 diferent types and 256 different subtypes?  My gut instinct
-> wants a better balance, though I don't know where I'd draw the line.
-> Probably 12 bits for type and 10 for subtype?  OTOH I don't have a good
-> sense of how many distinct notification types an XFS would want to send
-> back to userspace, and maybe 256 subtypes is fine.  We could always
-> reserve another watch_notification_type if we need > 256.
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Matteo Croce <mcroce@redhat.com>
+> ---
 > 
-> Ok, no objections. :)
-
-If a source wants more than 256 subtypes, it can always allocate an additional
-type.  Note that the greater the number of subtypes, the larger the filter
-structure (added in patch 5).
-
-> > +	__u32			info;
-> > +#define WATCH_INFO_OVERRUN	0x00000001	/* Event(s) lost due to overrun */
-> > +#define WATCH_INFO_ENOMEM	0x00000002	/* Event(s) lost due to ENOMEM */
-> > +#define WATCH_INFO_RECURSIVE	0x00000004	/* Change was recursive */
-> > +#define WATCH_INFO_LENGTH	0x000001f8	/* Length of record / sizeof(watch_notification) */
+> v1 -> v2: fix a crash on netns destroy
 > 
-> This is a mask, isn't it?  Could we perhaps have some helpers here?
-> Something along the lines of...
+>  net/mpls/af_mpls.c | 393 ++++++++++++++++++++++++---------------------
+>  1 file changed, 207 insertions(+), 186 deletions(-)
 > 
-> #define WATCH_INFO_LENGTH_MASK	0x000001f8
-> #define WATCH_INFO_LENGTH_SHIFT	3
-> 
-> static inline size_t watch_notification_length(struct watch_notification *wn)
-> {
-> 	return (wn->info & WATCH_INFO_LENGTH_MASK) >> WATCH_INFO_LENGTH_SHIFT *
-> 			sizeof(struct watch_notification);
-> }
-> 
-> static inline struct watch_notification *watch_notification_next(
-> 		struct watch_notification *wn)
-> {
-> 	return wn + ((wn->info & WATCH_INFO_LENGTH_MASK) >>
-> 			WATCH_INFO_LENGTH_SHIFT);
-> }
 
-No inline functions in UAPI headers, please.  I'd love to kill off the ones
-that we have, but that would break things.
-
-> ...so that we don't have to opencode all of the ring buffer walking
-> magic and stuff?
-
-There'll end up being a small userspace library, I think.
-
-> (I might also shorten the namespace from WATCH_INFO_ to WNI_ ...)
-
-I'd rather not do that.  WNI_ could mean all sorts of things - at a first
-glance, it sounds like something to do with Windows or windowing.
-
-> Hmm so the length field is 6 bits and therefore the maximum size of a
-> notification record is ... 63 * (sizeof(u32)  * 2) = 504 bytes?  Which
-> means that kernel users can send back a maximum payload of 496 bytes?
-> That's probably big enough for random fs notifications (bad metadata
-> detected, media errors, etc.)
-
-Yep.  The ring buffer is limited in capacity since it has to be unswappable so
-that notifications can be written into it from softirq context or under lock.
-
-> Judging from the sample program I guess all that userspace does is
-> allocate a memory buffer and toss it into the kernel, which then
-> initializes the ring management variables, and from there we just scan
-> around the ring buffer every time poll(watch_fd) says there's something
-> to do?
-
-Yes.  Further, if head == tail, then it's empty.  Note that since head and
-tail will go up to 4G, but the buffer is limited to less than that, there's no
-need for a requisite unusable slot in the ring as head != tail when the ring
-is full.
-
-> How does userspace tell the kernel the size of the ring buffer?
-
-If you looked in the sample program, you might have noticed this in the main()
-function:
-
-	if (ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE) == -1) {
-
-The chardev allocates the buffer and then userspace mmaps it.
-
-I need to steal the locked-page accounting from the epoll patches to stop
-someone from using this to lock away all memory.
-
-> Does (watch_notification->info & WATCH_INFO_LENGTH) == 0 have any
-> meaning besides apparently "stop looking at me"?
-
-That's an illegal value, indicating a kernel bug.
-
-> > +#define WATCH_INFO_IN_SUBTREE	0x00000200	/* Change was not at watched root */
-> > +#define WATCH_INFO_TYPE_FLAGS	0x00ff0000	/* Type-specific flags */
-> 
-> WATCH_INFO_FLAG_MASK ?
-
-Yeah.
-
-> > +#define WATCH_INFO_FLAG_0	0x00010000
-> > +#define WATCH_INFO_FLAG_1	0x00020000
-> > +#define WATCH_INFO_FLAG_2	0x00040000
-> > +#define WATCH_INFO_FLAG_3	0x00080000
-> > +#define WATCH_INFO_FLAG_4	0x00100000
-> > +#define WATCH_INFO_FLAG_5	0x00200000
-> > +#define WATCH_INFO_FLAG_6	0x00400000
-> > +#define WATCH_INFO_FLAG_7	0x00800000
-> > +#define WATCH_INFO_ID		0xff000000	/* ID of watchpoint */
-> 
-> WATCH_INFO_ID_MASK ?
-
-Sure.
-
-> > +#define WATCH_INFO_ID__SHIFT	24
-> 
-> Why double underscore here?
-
-Because it's related to WATCH_INFO_ID, but isn't a mask on ->info.
-
-> > +};
-> > +
-> > +#define WATCH_LENGTH_SHIFT	3
-> > +
-> > +struct watch_queue_buffer {
-> > +	union {
-> > +		/* The first few entries are special, containing the
-> > +		 * ring management variables.
-> 
-> The first /two/ entries, correct?
-
-Currently two.
-
-> Also, weird multiline comment style.
-
-Not really.
-
-> > +		 */
-> > +		struct {
-> > +			struct watch_notification watch; /* WATCH_TYPE_META */
-> 
-> Do these structures have to be cache-aligned for the atomic reads and
-> writes to work?
-
-I hope not, otherwise we're screwed all over the kernel, particularly with
-structure randomisation.
-
-Further, what alignment is "cache aligned"?  It can vary by CPU for a single
-arch.
-
-David
+As I recall you need to set platform_labels for the mpls code to even
+work, so building mpls_router without sysctl is pointless.
