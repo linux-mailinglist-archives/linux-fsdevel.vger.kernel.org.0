@@ -2,91 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E82BF3985F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2019 00:15:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B593988C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2019 00:23:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730634AbfFGWP0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jun 2019 18:15:26 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35602 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730177AbfFGWP0 (ORCPT
+        id S1731183AbfFGWXG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jun 2019 18:23:06 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44277 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730852AbfFGWXF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jun 2019 18:15:26 -0400
-Received: by mail-lj1-f195.google.com with SMTP id h11so3035852ljb.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jun 2019 15:15:25 -0700 (PDT)
+        Fri, 7 Jun 2019 18:23:05 -0400
+Received: by mail-pl1-f195.google.com with SMTP id c5so1321298pll.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jun 2019 15:23:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7jg1F7lO7uVdQ9tdkXQLyc2uUklR2L0U9AiiLwg+uvg=;
-        b=aoO38c3t9rsjPFOteILVcuGQgCSWmQvFmxqe1O+LyeoYe2aN68r4/UJ6/k8U6kDF+9
-         k5nu15rfkguUHB69Ug3k1zaCjiMfZbLwrN5OOkDfDyFaGoeL8MWvfl6J09wlT65fi1IT
-         7aToDUMiC1CDBV3U4Q7S4ZrpIP6miijco5Te8=
+        bh=OscIWC1H8BYVUTSTRMLtHcpa3RbQBWs93JhulNsk+jk=;
+        b=kdR49OFNsFx7GSx/8YCa4OAXnuGm9wR3mA3FGM2j9z9kYOvNzqrt6gDMUmNTCF4V83
+         UuY0GuaC7cU7suXulXpVOn5N4HicehNGLM2Gv1N1iXUCkOIxaL4tP0q7CFg3Zr0ELRoH
+         c1K2fAfx/OZnoqY6EocLtP4K2Gyk7fJHcbAd5+nbSwsumoNC9uZdy1ZbqRPl2ZGb2KR0
+         5790YANxN6yo4XDpToutn8HtDWJ9qc4x2RtxrkIe4yf2ys4A7CKPGFlNlR6vaeXcDbDI
+         eCRkI67w15jEuFPGTFzQI8EIXARxKyvN1+GR9F9Qoev+vDDjbBqEj+ZoKNPmKxLF0J5U
+         DgLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7jg1F7lO7uVdQ9tdkXQLyc2uUklR2L0U9AiiLwg+uvg=;
-        b=l2J3GdS58fQtQIeg3/eBZ91AREUSIJ7VgKPSm0z3cZJKdOGAmvs8G85mY923jSD3od
-         OnAIWcWw07NO5lf7PRh/Ugxb3fSY0qnCWOqqPG5iV2Kax9Sl09fJlGdSVeEMDWxIUCTL
-         EGMkQkPCqH/gpSgokwgyjPi6AF9fx4TR6JBzipQelU4D7n2mAhXnqx6FawUvagQTapYI
-         nYbsUaAaHJBHRgPAyv62aRJ9B7/P2P5dxPB4v8bukz8rU1FLtow67FdesYv4fKFR0rm6
-         8jzKKsn8eb4E1Q9JjvwCQkwRVXGpOom4k6XiqqRIjQ1xGc/FPWs0lcvB9ZaPMWsR+cWc
-         xpAw==
-X-Gm-Message-State: APjAAAUs40yrQmXjtJFMw0WTXhZ9Vz2vz1w0NEN7onOPfosXZuAN5Sxw
-        8ErTpWNCH7wuSbEwYsRNLsKLGy4Isq/ihA==
-X-Google-Smtp-Source: APXvYqw68OCuiNz6udWoqMWIF8sZoUpkzWAvPtPV2cH0bnLDTC8h1cfHHIeBic0GiCljBdlSeNehdQ==
-X-Received: by 2002:a2e:9ed6:: with SMTP id h22mr15381758ljk.29.1559945724135;
-        Fri, 07 Jun 2019 15:15:24 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id x79sm604380lff.74.2019.06.07.15.15.23
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 15:15:23 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id t28so2995154lje.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jun 2019 15:15:23 -0700 (PDT)
-X-Received: by 2002:a2e:4246:: with SMTP id p67mr29323271lja.44.1559945263826;
- Fri, 07 Jun 2019 15:07:43 -0700 (PDT)
+        bh=OscIWC1H8BYVUTSTRMLtHcpa3RbQBWs93JhulNsk+jk=;
+        b=NE/reW4zMT6zLK2yElP1iZV9+dxye8chP4TPWHftTsriXbzqeyTpuwq7YqMY5PRrBD
+         RM3HsibZb2GmFc/4cKPl/fuajzF5zVGDGR2NUoqRtC6NbpIdSKsyNmHcS1jPIxOjiklo
+         LaSXJOmRACg/DwajlBgzQEOWQFPhTx1xaOHHpGwh5nza2Wua8EJUKQJorcZ1vik0bprt
+         hFtWIjyxJMREsrou3oAl+uKsxWU3VDiikmBYMVfJvWpfpijL3rAGZCpJ2B4huHjIo+AK
+         ehB4U8yk+uz4EX4VgDnzBJiqxqvofGTDmFw2h16+NHA9XYAJJNt5NIC6khtgXxMd4vlp
+         niDw==
+X-Gm-Message-State: APjAAAXIqU2BKfV2IfnN04cHTeIexN5UhJdiVRTYdMttbIskv4qQnn5N
+        pzcTFH1K8NxupkR9RIN8/C0fVzttRY4ANEI0T0PBGg==
+X-Google-Smtp-Source: APXvYqxqRVfuyQEdyfJNNkPVX/y1rXYgnEMZVKj/CtJa0Fm8bihW1BebEYmymKIH0C8/tAoxb6DpKUorgA1wvW4QAXM=
+X-Received: by 2002:a17:902:624:: with SMTP id 33mr59045206plg.325.1559946184199;
+ Fri, 07 Jun 2019 15:23:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com>
- <20190606140814.GA13440@redhat.com> <87k1dxaxcl.fsf_-_@xmission.com> <87ef45axa4.fsf_-_@xmission.com>
-In-Reply-To: <87ef45axa4.fsf_-_@xmission.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 7 Jun 2019 15:07:28 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjjVnEKSv3pV_dvgmqGDZDcw+N+Bgcorq7uqS86f1gwXA@mail.gmail.com>
-Message-ID: <CAHk-=wjjVnEKSv3pV_dvgmqGDZDcw+N+Bgcorq7uqS86f1gwXA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-aio@kvack.org, omar.kilani@gmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Laight <David.Laight@aculab.com>,
-        linux-arch <linux-arch@vger.kernel.org>
+References: <20190514221711.248228-1-brendanhiggins@google.com>
+ <20190514221711.248228-18-brendanhiggins@google.com> <20190517182254.548EA20815@mail.kernel.org>
+ <CAAXuY3p4qhKVsSpQ44_kQeGDMfg7OuFLgFyxhcFWS3yf-5A_7g@mail.gmail.com> <20190607190047.C3E7A20868@mail.kernel.org>
+In-Reply-To: <20190607190047.C3E7A20868@mail.kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 7 Jun 2019 15:22:53 -0700
+Message-ID: <CAFd5g475eUKnpNM3kDe_9PboCyZ=aanPeV2gTuzuJXRp-xbsWg@mail.gmail.com>
+Subject: Re: [PATCH v4 17/18] kernel/sysctl-test: Add null pointer test for sysctl.c:proc_dointvec()
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Iurii Zaikin <yzaikin@google.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 7, 2019 at 2:41 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+On Fri, Jun 7, 2019 at 12:00 PM Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> The sigsuspend system call overrides the signal mask just
-> like all of the other users of set_user_sigmask, so convert
-> it to use the same helpers.
+> Quoting Iurii Zaikin (2019-06-05 18:29:42)
+> > On Fri, May 17, 2019 at 11:22 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Brendan Higgins (2019-05-14 15:17:10)
+> > > > diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
+> > > > new file mode 100644
+> > > > index 0000000000000..fe0f2bae66085
+> > > > --- /dev/null
+> > > > +++ b/kernel/sysctl-test.c
+> > > > +
+> > > > +
+> > > > +static void sysctl_test_dointvec_happy_single_negative(struct kunit *test)
+> > > > +{
+> > > > +       struct ctl_table table = {
+> > > > +               .procname = "foo",
+> > > > +               .data           = &test_data.int_0001,
+> > > > +               .maxlen         = sizeof(int),
+> > > > +               .mode           = 0644,
+> > > > +               .proc_handler   = proc_dointvec,
+> > > > +               .extra1         = &i_zero,
+> > > > +               .extra2         = &i_one_hundred,
+> > > > +       };
+> > > > +       char input[] = "-9";
+> > > > +       size_t len = sizeof(input) - 1;
+> > > > +       loff_t pos = 0;
+> > > > +
+> > > > +       table.data = kunit_kzalloc(test, sizeof(int), GFP_USER);
+> > > > +       KUNIT_EXPECT_EQ(test, 0, proc_dointvec(&table, 1, input, &len, &pos));
+> > > > +       KUNIT_EXPECT_EQ(test, sizeof(input) - 1, len);
+> > > > +       KUNIT_EXPECT_EQ(test, sizeof(input) - 1, pos);
+> > > > +       KUNIT_EXPECT_EQ(test, -9, *(int *)table.data);
+> > >
+> > > Is the casting necessary? Or can the macro do a type coercion of the
+> > > second parameter based on the first type?
+> >  Data field is defined as void* so I believe casting is necessary to
+> > dereference it as a pointer to an array of ints. I don't think the
+> > macro should do any type coercion that == operator wouldn't do.
+> >  I did change the cast to make it more clear that it's a pointer to an
+> > array of ints being dereferenced.
+>
+> Ok, I still wonder if we should make KUNIT_EXPECT_EQ check the types on
+> both sides and cause a build warning/error if the types aren't the same.
+> This would be similar to our min/max macros that complain about
+> mismatched types in the comparisons. Then if a test developer needs to
+> convert one type or the other they could do so with a
+> KUNIT_EXPECT_EQ_T() macro that lists the types to coerce both sides to
+> explicitly.
 
-Me likey.
+Good point. I would definitely like to do this, for me it is only a
+question of how difficult it would be to make all that happen.
 
-Whole series looks good to me, but that's just from looking at the
-patches. Maybe testing shows problems..
+We will investigate and report back on it.
 
-              Linus
+Thanks for the suggestion! It's a really good idea!
+
+Cheers
