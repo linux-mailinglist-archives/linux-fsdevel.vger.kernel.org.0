@@ -2,167 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F26438C84
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 16:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F18C38C81
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jun 2019 16:17:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbfFGORl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jun 2019 10:17:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55174 "EHLO mx1.redhat.com"
+        id S1729267AbfFGORo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jun 2019 10:17:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45196 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728257AbfFGORl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jun 2019 10:17:41 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1729256AbfFGORo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Jun 2019 10:17:44 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9AA126EB9F;
-        Fri,  7 Jun 2019 14:17:35 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4130A30C31BA;
+        Fri,  7 Jun 2019 14:17:43 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E0ED188EE;
-        Fri,  7 Jun 2019 14:17:31 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 872D978566;
+        Fri,  7 Jun 2019 14:17:41 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 01/13] security: Override creds in __fput() with last
- fputter's creds [ver #4]
+Subject: [PATCH 02/13] uapi: General notification ring definitions [ver #4]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Casey Schaufler <casey@schaufler-ca.com>, dhowells@redhat.com,
-        raven@themaw.net, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-block@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 07 Jun 2019 15:17:30 +0100
-Message-ID: <155991705018.15579.1610295881980418301.stgit@warthog.procyon.org.uk>
+Cc:     dhowells@redhat.com, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 07 Jun 2019 15:17:40 +0100
+Message-ID: <155991706083.15579.16359443779582362339.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
 References: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 07 Jun 2019 14:17:40 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 07 Jun 2019 14:17:43 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-So that the LSM can see the credentials of the last process to do an fput()
-on a file object when the file object is being dismantled, do the following
-steps:
+Add UAPI definitions for the general notification ring, including the
+following pieces:
 
- (1) Cache the current credentials in file->f_fput_cred at the point the
-     file object's reference count reaches zero.
+ (1) struct watch_notification.
 
- (2) In __fput(), use override_creds() to apply those credentials to the
-     dismantling process.  This is necessary so that if we're dismantling a
-     unix socket that has semi-passed fds still in it, their fputs will
-     pick up the same credentials if they're reduced to zero at that point.
+     This is the metadata header for each entry in the ring.  It includes a
+     type and subtype that indicate the source of the message
+     (eg. WATCH_TYPE_MOUNT_NOTIFY) and the kind of the message
+     (eg. NOTIFY_MOUNT_NEW_MOUNT).
 
-     Note that it's probably not strictly necessary to take an extra ref on
-     the creds here (which override_creds() does).
+     The header also contains an information field that conveys the
+     following information:
 
- (3) Destroy the fput creds in file_free_rcu().
+	- WATCH_INFO_LENGTH.  The size of the entry (entries are variable
+          length).
 
-This additionally makes the creds available to:
+	- WATCH_INFO_OVERRUN.  If preceding messages were lost due to ring
+	  overrun or lack of memory.
 
-	fsnotify
-	eventpoll
-	file locking
-	->fasync, ->release file ops
-	superblock destruction
-	mountpoint destruction
+	- WATCH_INFO_ENOMEM.  If preceding messages were lost due to lack
+          of memory.
 
-This allows various notifications about object cleanups/destructions to
-carry appropriate credentials for the LSM to approve/disapprove them based
-on the process that caused them, even if indirectly.
+	- WATCH_INFO_RECURSIVE.  If the event detected was applied to
+          multiple objects (eg. a recursive change to mount attributes).
 
-Note that this means that someone looking at /proc/<pid>/fd/<n> may end up
-being inadvertently noted as the subject of a cleanup message if the
-process they're looking at croaks whilst they're looking at it.
+	- WATCH_INFO_IN_SUBTREE.  If the event didn't happen at the watched
+          object, but rather to some related object (eg. a subtree mount
+          watch saw a mount happen somewhere within the subtree).
 
-Further, kernel services like nfsd and cachefiles may be seen as the
-fputter and may not have a system credential.  In cachefiles's case, it may
-appear that cachefilesd caused the notification.
+	- WATCH_INFO_TYPE_FLAGS.  Eight flags whose meanings depend on the
+          message type.
 
-Suggested-by: Casey Schaufler <casey@schaufler-ca.com>
+	- WATCH_INFO_ID.  The watch ID specified when the watchpoint was
+          set.
+
+     All the information in the header can be used in filtering messages at
+     the point of writing into the buffer.
+
+ (2) struct watch_queue_buffer.
+
+     This describes the layout of the ring.  Note that the first slots in
+     the ring contain a special metadata entry that contains the ring
+     pointers.  The producer in the kernel knows to skip this and it has a
+     proper header (WATCH_TYPE_META, WATCH_META_SKIP_NOTIFICATION) that
+     indicates the size so that the ring consumer can handle it the same as
+     any other record and just skip it.
+
+     Note that this means that ring entries can never be split over the end
+     of the ring, so if an entry would need to be split, a skip record is
+     inserted to wrap the ring first; this is also WATCH_TYPE_META,
+     WATCH_META_SKIP_NOTIFICATION.
+
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Casey Schaufler <casey@schaufler-ca.com>
 ---
 
- fs/file_table.c    |   12 ++++++++++++
- include/linux/fs.h |    1 +
- 2 files changed, 13 insertions(+)
+ include/uapi/linux/watch_queue.h |   63 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+ create mode 100644 include/uapi/linux/watch_queue.h
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 3f9c1b452c1d..9bf2be45b7f9 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -46,6 +46,7 @@ static void file_free_rcu(struct rcu_head *head)
- 	struct file *f = container_of(head, struct file, f_u.fu_rcuhead);
- 
- 	put_cred(f->f_cred);
-+	put_cred(f->f_fput_cred);
- 	kmem_cache_free(filp_cachep, f);
- }
- 
-@@ -252,6 +253,7 @@ struct file *alloc_file_clone(struct file *base, int flags,
-  */
- static void __fput(struct file *file)
- {
-+	const struct cred *saved_cred;
- 	struct dentry *dentry = file->f_path.dentry;
- 	struct vfsmount *mnt = file->f_path.mnt;
- 	struct inode *inode = file->f_inode;
-@@ -262,6 +264,12 @@ static void __fput(struct file *file)
- 
- 	might_sleep();
- 
-+	/* Set the creds of whoever triggered the last fput for the LSM.  Note
-+	 * that this has to be made available to further fputs, say on fds
-+	 * trapped in a unix socket.
-+	 */
-+	saved_cred = override_creds(file->f_fput_cred);
+diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
+new file mode 100644
+index 000000000000..c3a88fa5f62a
+--- /dev/null
++++ b/include/uapi/linux/watch_queue.h
+@@ -0,0 +1,63 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_WATCH_QUEUE_H
++#define _UAPI_LINUX_WATCH_QUEUE_H
 +
- 	fsnotify_close(file);
- 	/*
- 	 * The function eventpoll_release() should be the first called
-@@ -293,6 +301,8 @@ static void __fput(struct file *file)
- 	if (unlikely(mode & FMODE_NEED_UNMOUNT))
- 		dissolve_on_fput(mnt);
- 	mntput(mnt);
++#include <linux/types.h>
 +
-+	revert_creds(saved_cred);
- out:
- 	file_free(file);
- }
-@@ -334,6 +344,7 @@ void fput_many(struct file *file, unsigned int refs)
- 	if (atomic_long_sub_and_test(refs, &file->f_count)) {
- 		struct task_struct *task = current;
- 
-+		file->f_fput_cred = get_current_cred();
- 		if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
- 			init_task_work(&file->f_u.fu_rcuhead, ____fput);
- 			if (!task_work_add(task, &file->f_u.fu_rcuhead, true))
-@@ -368,6 +379,7 @@ void __fput_sync(struct file *file)
- 	if (atomic_long_dec_and_test(&file->f_count)) {
- 		struct task_struct *task = current;
- 		BUG_ON(!(task->flags & PF_KTHREAD));
-+		file->f_fput_cred = get_current_cred();
- 		__fput(file);
- 	}
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f1c74596cd77..db05738b1951 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -943,6 +943,7 @@ struct file {
- 	loff_t			f_pos;
- 	struct fown_struct	f_owner;
- 	const struct cred	*f_cred;
-+	const struct cred	*f_fput_cred;	/* Who did the last fput() (for LSM) */
- 	struct file_ra_state	f_ra;
- 
- 	u64			f_version;
++enum watch_notification_type {
++	WATCH_TYPE_META		= 0,	/* Special record */
++	WATCH_TYPE_MOUNT_NOTIFY	= 1,	/* Mount notification record */
++	WATCH_TYPE_SB_NOTIFY	= 2,	/* Superblock notification */
++	WATCH_TYPE_KEY_NOTIFY	= 3,	/* Key/keyring change notification */
++	WATCH_TYPE_BLOCK_NOTIFY	= 4,	/* Block layer notifications */
++#define WATCH_TYPE___NR 5
++};
++
++enum watch_meta_notification_subtype {
++	WATCH_META_SKIP_NOTIFICATION	= 0,	/* Just skip this record */
++	WATCH_META_REMOVAL_NOTIFICATION	= 1,	/* Watched object was removed */
++};
++
++/*
++ * Notification record
++ */
++struct watch_notification {
++	__u32			type:24;	/* enum watch_notification_type */
++	__u32			subtype:8;	/* Type-specific subtype (filterable) */
++	__u32			info;
++#define WATCH_INFO_OVERRUN	0x00000001	/* Event(s) lost due to overrun */
++#define WATCH_INFO_ENOMEM	0x00000002	/* Event(s) lost due to ENOMEM */
++#define WATCH_INFO_RECURSIVE	0x00000004	/* Change was recursive */
++#define WATCH_INFO_LENGTH	0x000001f8	/* Length of record / sizeof(watch_notification) */
++#define WATCH_INFO_IN_SUBTREE	0x00000200	/* Change was not at watched root */
++#define WATCH_INFO_TYPE_FLAGS	0x00ff0000	/* Type-specific flags */
++#define WATCH_INFO_FLAG_0	0x00010000
++#define WATCH_INFO_FLAG_1	0x00020000
++#define WATCH_INFO_FLAG_2	0x00040000
++#define WATCH_INFO_FLAG_3	0x00080000
++#define WATCH_INFO_FLAG_4	0x00100000
++#define WATCH_INFO_FLAG_5	0x00200000
++#define WATCH_INFO_FLAG_6	0x00400000
++#define WATCH_INFO_FLAG_7	0x00800000
++#define WATCH_INFO_ID		0xff000000	/* ID of watchpoint */
++#define WATCH_INFO_ID__SHIFT	24
++};
++
++#define WATCH_LENGTH_SHIFT	3
++
++struct watch_queue_buffer {
++	union {
++		/* The first few entries are special, containing the
++		 * ring management variables.
++		 */
++		struct {
++			struct watch_notification watch; /* WATCH_TYPE_META */
++			__u32		head;		/* Ring head index */
++			__u32		tail;		/* Ring tail index */
++			__u32		mask;		/* Ring index mask */
++		} meta;
++		struct watch_notification slots[0];
++	};
++};
++
++#endif /* _UAPI_LINUX_WATCH_QUEUE_H */
 
