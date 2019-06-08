@@ -2,75 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D766C39FB5
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2019 14:50:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12A5B39FB7
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jun 2019 14:51:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfFHMue (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Jun 2019 08:50:34 -0400
-Received: from mail-wm1-f54.google.com ([209.85.128.54]:33054 "EHLO
-        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbfFHMue (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Jun 2019 08:50:34 -0400
-Received: by mail-wm1-f54.google.com with SMTP id h19so5860883wme.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Jun 2019 05:50:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hlCih0Ql28i40uIzvi3GAm97kcm7Flw3X0DygvueNwc=;
-        b=a0FLJWFBq13ckXP1mQldYFzCoavOfnci1+7PTMgNoHaDRvAJ1B0Jnr/sAX5fGo3DQ9
-         6DvQiMMLHdKuHyoHNN5IGtfPC0J/TbXbo/gZ9v3hxHu0ZGM5zzedC617RQ7xzmzz61am
-         rZ4LQuNkzLY8LV2PTF5bIvlB7W0+wegejWv/rvfPNU9XdW0/0K2cSS8ORbAlE0w0oPca
-         1WQBETdgIY69OiTscXsdzHb7ZBAu8DiExiuqr+nXTtE1EOwp/kaX5vmtWlb4BQIzuFGj
-         u5ztHQfakzVQxP4FcD1gUuuk3F0PVuaE/Pya0r4haHXpKQ0wjlk0iAD5eO+qZJawul2d
-         HgRQ==
-X-Gm-Message-State: APjAAAUJg8e/pFE4Jfhd2dk1EzCYW6eAbNCXAXSMXph8vpNBRykp1Drs
-        x5qsFyBp99551SpFwR7co2HdyQ==
-X-Google-Smtp-Source: APXvYqzpIby80Tewbtpb2LGh2fqIUOiyhotWBXo6dVznPVGxAbl/PSIblNHC6QHSlLTqyykJn5SDgg==
-X-Received: by 2002:a7b:cc0d:: with SMTP id f13mr7694208wmh.1.1559998232908;
-        Sat, 08 Jun 2019 05:50:32 -0700 (PDT)
-Received: from raver.teknoraver.net (net-93-144-152-91.cust.vodafonedsl.it. [93.144.152.91])
-        by smtp.gmail.com with ESMTPSA id d10sm7916279wrh.91.2019.06.08.05.50.31
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 08 Jun 2019 05:50:31 -0700 (PDT)
-From:   Matteo Croce <mcroce@redhat.com>
-To:     netdev@vger.kernel.org, linux-next@vger.kernel.org,
-        akpm@linux-foundation.org, Randy Dunlap <rdunlap@infradead.org>,
-        David Ahern <dsahern@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH net] mpls: fix af_mpls dependencies
-Date:   Sat,  8 Jun 2019 14:50:19 +0200
-Message-Id: <20190608125019.417-1-mcroce@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        id S1727234AbfFHMvr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Jun 2019 08:51:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35016 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726984AbfFHMvq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 8 Jun 2019 08:51:46 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9963BC00296E;
+        Sat,  8 Jun 2019 12:51:46 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-46.ams2.redhat.com [10.36.116.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A42086266B;
+        Sat,  8 Jun 2019 12:51:45 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v12 0/1] fs: Add VirtualBox guest shared folder (vboxsf) support
+Date:   Sat,  8 Jun 2019 14:51:43 +0200
+Message-Id: <20190608125144.8875-1-hdegoede@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Sat, 08 Jun 2019 12:51:46 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-MPLS routing code relies on sysctl to work, so let it select PROC_SYSCTL.
+Hello Everyone,
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Suggested-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
----
- net/mpls/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Here is the 12th version of my cleaned-up / refactored version of the
+VirtualBox shared-folder VFS driver.
 
-diff --git a/net/mpls/Kconfig b/net/mpls/Kconfig
-index d9391beea980..2b802a48d5a6 100644
---- a/net/mpls/Kconfig
-+++ b/net/mpls/Kconfig
-@@ -26,6 +26,7 @@ config NET_MPLS_GSO
- config MPLS_ROUTING
- 	tristate "MPLS: routing support"
- 	depends on NET_IP_TUNNEL || NET_IP_TUNNEL=n
-+	select PROC_SYSCTL
- 	---help---
- 	 Add support for forwarding of mpls packets.
- 
--- 
-2.21.0
+This version hopefully addresses all issues pointed out in David Howell's
+review of v11 (thank you for the review David):
+
+Changes in v12:
+-Move make_kuid / make_kgid calls to option parsing time and add
+ uid_valid / gid_valid checks.
+-In init_fs_context call current_uid_gid() to init uid and gid
+-Validate dmode, fmode, dmask and fmask options during option parsing
+-Use correct types for various mount option variables (kuid_t, kgid_t, umode_t)
+-Some small coding-style tweaks
+
+For changes in older versions see the change log in the patch.
+
+This version has been used by several distributions (arch, Fedora) for a
+while now, so hopefully we can get this upstream soonish, please review.
+
+Regards,
+
+Hans
 
