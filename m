@@ -2,52 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C63B3A68A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jun 2019 16:54:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 645503A691
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jun 2019 17:09:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbfFIOyN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Jun 2019 10:54:13 -0400
-Received: from mail180-16.suw31.mandrillapp.com ([198.2.180.16]:12269 "EHLO
-        mail180-16.suw31.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728746AbfFIOyN (ORCPT
+        id S1728822AbfFIPJQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Jun 2019 11:09:16 -0400
+Received: from mail177-30.suw61.mandrillapp.com ([198.2.177.30]:1459 "EHLO
+        mail177-30.suw61.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728678AbfFIPJQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Jun 2019 10:54:13 -0400
-X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Jun 2019 10:54:12 EDT
+        Sun, 9 Jun 2019 11:09:16 -0400
+X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Jun 2019 11:09:14 EDT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
  h=From:Subject:To:Cc:Message-Id:In-Reply-To:References:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=dm0aK3M64H+SXVlIii//Ha6Kj1rTeiHz47q5OrGWw5I=;
- b=kZ5zWNL796wzCwTeQz9ViOb9CBjWjun7cJdcspxset2+Md1lSvFaYuSg3OXRTC+dlTN1v/9w8GL2
-   gzJ08I51Ez2mb1eEMVoRb15Cw0Y4Un2CduG4RQjBUFPPKlpkH7LiDMgkUn/05QMVEiWnIPbjzXPl
-   mVCIB8j+Rpsgkj5aQ9U=
-Received: from pmta03.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail180-16.suw31.mandrillapp.com id hvkep822sc0l for <linux-fsdevel@vger.kernel.org>; Sun, 9 Jun 2019 14:39:09 +0000 (envelope-from <bounce-md_31050260.5cfd1a0d.v1-3b3930b96aaf4478bdbbd0307d3ac348@mandrillapp.com>)
+ bh=/BfBSryqLYb5jb5bpRRHljjnFOtlnTlngD5C6CvtqbY=;
+ b=C4OtMu/GPLTz9vYUtl7SM5eBB+r58mjjiy8hlYRXeWyy8pc+3U0P/Dfs2z4Odxb6rUsY2NJR0okz
+   WjASNNJGPe8Qzdlntgep+I1SZGq0AZae09vOxPj0w1cj332k9EZDntfM6aR6ZAfhTZtfEzINXxgH
+   c6byd/yTwb3Z0oYkzQI=
+Received: from pmta06.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail177-30.suw61.mandrillapp.com id hvkghm22rtkv for <linux-fsdevel@vger.kernel.org>; Sun, 9 Jun 2019 14:39:10 +0000 (envelope-from <bounce-md_31050260.5cfd1a0e.v1-bd496fd11b384500a69816183721fc52@mandrillapp.com>)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1560091149; h=From : 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1560091150; h=From : 
  Subject : To : Cc : Message-Id : In-Reply-To : References : Date : 
  MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
  Subject : Date : X-Mandrill-User : List-Unsubscribe; 
- bh=dm0aK3M64H+SXVlIii//Ha6Kj1rTeiHz47q5OrGWw5I=; 
- b=SK6n7BkrQ7bW3iiqeEWXr+sUDHZO6cdmZJVP9TZU3z4enYUXQeR6fqDDaPXApV5OS5nUES
- gdHqF9V9vvjoWAZAnfIsdQK1I/pzApg3no0aPDquf7OSOaM/H7oDuoWr+HBNhF5Dx0Nl4BaP
- mkgRRSnLZLQ2e7Y97njMr+VfLuN0c=
+ bh=/BfBSryqLYb5jb5bpRRHljjnFOtlnTlngD5C6CvtqbY=; 
+ b=i4cYj4vhrG+8FWgUgvPLlhm5hjks+AA6/j7KkHLPY2eWPlCBEr+XzjCMOpfYvjRZxOmNGH
+ aqZBd/Ny7ZYPD6U5HzlByKgRjwHC2l8B0cSSHvI0NrJXqZmtUeA2YzY2CSKEPC3HkS3db77K
+ 84bRm2JC9mZu0vN5sPb64+HOYC43w=
 From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: [PATCH 3.16 2/2] fuse: Add FOPEN_STREAM to use stream_open()
-Received: from [87.98.221.171] by mandrillapp.com id 3b3930b96aaf4478bdbbd0307d3ac348; Sun, 09 Jun 2019 14:39:09 +0000
+Subject: [PATCH 4.4 2/2] fuse: Add FOPEN_STREAM to use stream_open()
+Received: from [87.98.221.171] by mandrillapp.com id bd496fd11b384500a69816183721fc52; Sun, 09 Jun 2019 14:39:10 +0000
 X-Mailer: git-send-email 2.20.1
-To:     <stable@vger.kernel.org>, Ben Hutchings <ben@decadent.org.uk>
+To:     <stable@vger.kernel.org>
 Cc:     Sasha Levin <sashal@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Kirill Smelkov <kirr@nexedi.com>,
         Miklos Szeredi <mszeredi@redhat.com>
-Message-Id: <20190609135607.9840-3-kirr@nexedi.com>
-In-Reply-To: <20190609135607.9840-1-kirr@nexedi.com>
-References: <20190609135607.9840-1-kirr@nexedi.com>
+Message-Id: <20190609132443.9420-3-kirr@nexedi.com>
+In-Reply-To: <20190609132443.9420-1-kirr@nexedi.com>
+References: <20190609132443.9420-1-kirr@nexedi.com>
 X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.3b3930b96aaf4478bdbbd0307d3ac348
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.bd496fd11b384500a69816183721fc52
 X-Mandrill-User: md_31050260
-Date:   Sun, 09 Jun 2019 14:39:09 +0000
+Date:   Sun, 09 Jun 2019 14:39:10 +0000
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
@@ -106,10 +107,10 @@ Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
  2 files changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index bc8f5de48fd9..69e471b042a6 100644
+index d40c2451487c..cf50020f9f27 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -214,7 +214,9 @@ void fuse_finish_open(struct inode *inode, struct file *file)
+@@ -178,7 +178,9 @@ void fuse_finish_open(struct inode *inode, struct file *file)
  		file->f_op = &fuse_direct_io_file_operations;
  	if (!(ff->open_flags & FOPEN_KEEP_CACHE))
  		invalidate_inode_pages2(inode->i_mapping);
@@ -121,7 +122,7 @@ index bc8f5de48fd9..69e471b042a6 100644
  	if (fc->atomic_o_trunc && (file->f_flags & O_TRUNC)) {
  		struct fuse_inode *fi = get_fuse_inode(inode);
 diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 25084a052a1e..cff91b018953 100644
+index c9aca042e61d..d3a5cf3b5446 100644
 --- a/include/uapi/linux/fuse.h
 +++ b/include/uapi/linux/fuse.h
 @@ -205,10 +205,12 @@ struct fuse_file_lock {
