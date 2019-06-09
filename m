@@ -2,51 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DFEF3A3B1
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jun 2019 06:35:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9325E3A409
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jun 2019 08:42:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725802AbfFIEfh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Jun 2019 00:35:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41286 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbfFIEfg (ORCPT
+        id S1726770AbfFIGmm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Jun 2019 02:42:42 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:62795 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbfFIGmm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Jun 2019 00:35:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3iCKY5LeaLUChDTDcVwu/h/F/j5YNJNGeSjVT5fdq88=; b=by4vZqhKqOxBJlKDd6hArInlm
-        WKADOCatsOoNcHcijlFuSKSkpxMaFoz+89V6rK04DRk+KaXCbmjSjbMjOQfsAKas/yaCx5yaCrasG
-        PyDXtgEdyTUBWH6O2Kupd/9erdnh9qOXU3372Xvj91W9/ecClafI8rERmnDPqNnlLZLG8HaG0+dgj
-        PG34x6yfIbTqxYxkE5sdI9jS93S8CLdAEfq+8giWfgfKdy/xskycgZGnI+QZfPXyxlcVAEB/kbmeC
-        MklrDoI9xw3g29y2gcGpCpY13lPuccz0x2cX4ZFoHieSnsz9BE7EtXKwrdSxm6hjjELk+Y+gJQ64J
-        +1JtM+uTg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hZpYN-0008Ro-Px; Sun, 09 Jun 2019 04:35:35 +0000
-Subject: Re: [PATCH 02/13] uapi: General notification ring definitions [ver
- #4]
-To:     David Howells <dhowells@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190607151228.GA1872258@magnolia>
- <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
- <155991706083.15579.16359443779582362339.stgit@warthog.procyon.org.uk>
- <29222.1559922719@warthog.procyon.org.uk>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6b6f5bb0-1426-239b-ac9f-281e31ddcd04@infradead.org>
-Date:   Sat, 8 Jun 2019 21:35:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Sun, 9 Jun 2019 02:42:42 -0400
+Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x596fQHD002128;
+        Sun, 9 Jun 2019 15:41:26 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
+ Sun, 09 Jun 2019 15:41:26 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x596fI6M002079
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sun, 9 Jun 2019 15:41:26 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: [PATCH] tomoyo: Don't check open/getattr permission on sockets.
+To:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc:     syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
+References: <0000000000004f43fa058a97f4d3@google.com>
+ <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <1b5722cc-adbc-035d-5ca1-9aa56e70d312@I-love.SAKURA.ne.jp>
+Date:   Sun, 9 Jun 2019 15:41:18 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <29222.1559922719@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <201906060520.x565Kd8j017983@www262.sakura.ne.jp>
+Content-Type: text/plain; charset=iso-2022-jp
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -54,72 +49,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/7/19 8:51 AM, David Howells wrote:
-> Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> 
+syzbot is reporting that use of SOCKET_I()->sk from open() can result in
+use after free problem [1], for socket's inode is still reachable via
+/proc/pid/fd/n despite destruction of SOCKET_I()->sk already completed.
 
->>> +	__u32			info;
->>> +#define WATCH_INFO_OVERRUN	0x00000001	/* Event(s) lost due to overrun */
->>> +#define WATCH_INFO_ENOMEM	0x00000002	/* Event(s) lost due to ENOMEM */
->>> +#define WATCH_INFO_RECURSIVE	0x00000004	/* Change was recursive */
->>> +#define WATCH_INFO_LENGTH	0x000001f8	/* Length of record / sizeof(watch_notification) */
->>
->> This is a mask, isn't it?  Could we perhaps have some helpers here?
->> Something along the lines of...
->>
->> #define WATCH_INFO_LENGTH_MASK	0x000001f8
->> #define WATCH_INFO_LENGTH_SHIFT	3
->>
->> static inline size_t watch_notification_length(struct watch_notification *wn)
->> {
->> 	return (wn->info & WATCH_INFO_LENGTH_MASK) >> WATCH_INFO_LENGTH_SHIFT *
->> 			sizeof(struct watch_notification);
->> }
->>
->> static inline struct watch_notification *watch_notification_next(
->> 		struct watch_notification *wn)
->> {
->> 	return wn + ((wn->info & WATCH_INFO_LENGTH_MASK) >>
->> 			WATCH_INFO_LENGTH_SHIFT);
->> }
-> 
-> No inline functions in UAPI headers, please.  I'd love to kill off the ones
-> that we have, but that would break things.
+But there is no point with calling security_file_open() on sockets
+because open("/proc/pid/fd/n", !O_PATH) on sockets fails with -ENXIO.
 
-Hi David,
+There is some point with calling security_inode_getattr() on sockets
+because stat("/proc/pid/fd/n") and fstat(open("/proc/pid/fd/n", O_PATH))
+are valid. If we want to access "struct sock"->sk_{family,type,protocol}
+fields, we will need to use security_socket_post_create() hook and
+security_inode_free() hook in order to remember these fields because
+security_sk_free() hook is called before the inode is destructed. But
+since information which can be protected by checking
+security_inode_getattr() on sockets is trivial, let's not be bothered by
+"struct inode"->i_security management.
 
-What is the problem with inline functions in UAPI headers?
+There is point with calling security_file_ioctl() on sockets. Since
+ioctl(open("/proc/pid/fd/n", O_PATH)) is invalid, security_file_ioctl()
+on sockets should remain safe.
 
->> ...so that we don't have to opencode all of the ring buffer walking
->> magic and stuff?
-> 
-> There'll end up being a small userspace library, I think.
+[1] https://syzkaller.appspot.com/bug?id=73d590010454403d55164cca23bd0565b1eb3b74
 
->>> +};
->>> +
->>> +#define WATCH_LENGTH_SHIFT	3
->>> +
->>> +struct watch_queue_buffer {
->>> +	union {
->>> +		/* The first few entries are special, containing the
->>> +		 * ring management variables.
->>
->> The first /two/ entries, correct?
-> 
-> Currently two.
-> 
->> Also, weird multiline comment style.
-> 
-> Not really.
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>
+---
+ security/tomoyo/tomoyo.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Yes really.
-
->>> +		 */
-
-It does not match the preferred coding style for multi-line comments
-according to coding-style.rst.
-
-
-thanks.
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 716c92e..9661b86 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -126,6 +126,9 @@ static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
+  */
+ static int tomoyo_inode_getattr(const struct path *path)
+ {
++	/* It is not safe to call tomoyo_get_socket_name(). */
++	if (path->dentry->d_inode && S_ISSOCK(path->dentry->d_inode->i_mode))
++		return 0;
+ 	return tomoyo_path_perm(TOMOYO_TYPE_GETATTR, path, NULL);
+ }
+ 
+@@ -316,6 +319,10 @@ static int tomoyo_file_open(struct file *f)
+ 	/* Don't check read permission here if called from do_execve(). */
+ 	if (current->in_execve)
+ 		return 0;
++	/* Sockets can't be opened by open(). */
++	if (f->f_path.dentry->d_inode &&
++	    S_ISSOCK(f->f_path.dentry->d_inode->i_mode))
++		return 0;
+ 	return tomoyo_check_open_permission(tomoyo_domain(), &f->f_path,
+ 					    f->f_flags);
+ }
 -- 
-~Randy
+1.8.3.1
+
+
