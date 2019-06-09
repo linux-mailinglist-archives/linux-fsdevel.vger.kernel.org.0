@@ -2,121 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC19F3A2CB
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jun 2019 03:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DFEF3A3B1
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jun 2019 06:35:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbfFIB2S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Jun 2019 21:28:18 -0400
-Received: from mga03.intel.com ([134.134.136.65]:55288 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727577AbfFIB2S (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Jun 2019 21:28:18 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2019 18:28:17 -0700
-X-ExtLoop1: 1
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga008.fm.intel.com with ESMTP; 08 Jun 2019 18:28:16 -0700
-Date:   Sat, 8 Jun 2019 18:29:32 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190609012931.GA19825@iweiny-DESK2.sc.intel.com>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
- <20190607110426.GB12765@quack2.suse.cz>
- <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
- <20190608001036.GF14308@dread.disaster.area>
+        id S1725802AbfFIEfh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Jun 2019 00:35:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41286 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbfFIEfg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 9 Jun 2019 00:35:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3iCKY5LeaLUChDTDcVwu/h/F/j5YNJNGeSjVT5fdq88=; b=by4vZqhKqOxBJlKDd6hArInlm
+        WKADOCatsOoNcHcijlFuSKSkpxMaFoz+89V6rK04DRk+KaXCbmjSjbMjOQfsAKas/yaCx5yaCrasG
+        PyDXtgEdyTUBWH6O2Kupd/9erdnh9qOXU3372Xvj91W9/ecClafI8rERmnDPqNnlLZLG8HaG0+dgj
+        PG34x6yfIbTqxYxkE5sdI9jS93S8CLdAEfq+8giWfgfKdy/xskycgZGnI+QZfPXyxlcVAEB/kbmeC
+        MklrDoI9xw3g29y2gcGpCpY13lPuccz0x2cX4ZFoHieSnsz9BE7EtXKwrdSxm6hjjELk+Y+gJQ64J
+        +1JtM+uTg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hZpYN-0008Ro-Px; Sun, 09 Jun 2019 04:35:35 +0000
+Subject: Re: [PATCH 02/13] uapi: General notification ring definitions [ver
+ #4]
+To:     David Howells <dhowells@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190607151228.GA1872258@magnolia>
+ <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
+ <155991706083.15579.16359443779582362339.stgit@warthog.procyon.org.uk>
+ <29222.1559922719@warthog.procyon.org.uk>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6b6f5bb0-1426-239b-ac9f-281e31ddcd04@infradead.org>
+Date:   Sat, 8 Jun 2019 21:35:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190608001036.GF14308@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <29222.1559922719@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 08, 2019 at 10:10:36AM +1000, Dave Chinner wrote:
-> On Fri, Jun 07, 2019 at 11:25:35AM -0700, Ira Weiny wrote:
-> > On Fri, Jun 07, 2019 at 01:04:26PM +0200, Jan Kara wrote:
-> > > On Thu 06-06-19 15:03:30, Ira Weiny wrote:
-> > > > On Thu, Jun 06, 2019 at 12:42:03PM +0200, Jan Kara wrote:
-> > > > > On Wed 05-06-19 18:45:33, ira.weiny@intel.com wrote:
-> > > > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > > 
-> > > > > So I'd like to actually mandate that you *must* hold the file lease until
-> > > > > you unpin all pages in the given range (not just that you have an option to
-> > > > > hold a lease). And I believe the kernel should actually enforce this. That
-> > > > > way we maintain a sane state that if someone uses a physical location of
-> > > > > logical file offset on disk, he has a layout lease. Also once this is done,
-> > > > > sysadmin has a reasonably easy way to discover run-away RDMA application
-> > > > > and kill it if he wishes so.
-> > > > 
-> > > > Fair enough.
-> > > > 
-> > > > I was kind of heading that direction but had not thought this far forward.  I
-> > > > was exploring how to have a lease remain on the file even after a "lease
-> > > > break".  But that is incompatible with the current semantics of a "layout"
-> > > > lease (as currently defined in the kernel).  [In the end I wanted to get an RFC
-> > > > out to see what people think of this idea so I did not look at keeping the
-> > > > lease.]
-> > > > 
-> > > > Also hitch is that currently a lease is forcefully broken after
-> > > > <sysfs>/lease-break-time.  To do what you suggest I think we would need a new
-> > > > lease type with the semantics you describe.
-> > > 
-> > > I'd do what Dave suggested - add flag to mark lease as unbreakable by
-> > > truncate and teach file locking core to handle that. There actually is
-> > > support for locks that are not broken after given timeout so there
-> > > shouldn't be too many changes need.
-> > >  
-> > > > Previously I had thought this would be a good idea (for other reasons).  But
-> > > > what does everyone think about using a "longterm lease" similar to [1] which
-> > > > has the semantics you proppose?  In [1] I was not sure "longterm" was a good
-> > > > name but with your proposal I think it makes more sense.
-> > > 
-> > > As I wrote elsewhere in this thread I think FL_LAYOUT name still makes
-> > > sense and I'd add there FL_UNBREAKABLE to mark unusal behavior with
-> > > truncate.
-> > 
-> > Ok I want to make sure I understand what you and Dave are suggesting.
-> > 
-> > Are you suggesting that we have something like this from user space?
-> > 
-> > 	fcntl(fd, F_SETLEASE, F_LAYOUT | F_UNBREAKABLE);
+On 6/7/19 8:51 AM, David Howells wrote:
+> Darrick J. Wong <darrick.wong@oracle.com> wrote:
 > 
-> Rather than "unbreakable", perhaps a clearer description of the
-> policy it entails is "exclusive"?
-> 
-> i.e. what we are talking about here is an exclusive lease that
-> prevents other processes from changing the layout. i.e. the
-> mechanism used to guarantee a lease is exclusive is that the layout
-> becomes "unbreakable" at the filesystem level, but the policy we are
-> actually presenting to uses is "exclusive access"...
 
-That sounds good.
-
-Ira
-
+>>> +	__u32			info;
+>>> +#define WATCH_INFO_OVERRUN	0x00000001	/* Event(s) lost due to overrun */
+>>> +#define WATCH_INFO_ENOMEM	0x00000002	/* Event(s) lost due to ENOMEM */
+>>> +#define WATCH_INFO_RECURSIVE	0x00000004	/* Change was recursive */
+>>> +#define WATCH_INFO_LENGTH	0x000001f8	/* Length of record / sizeof(watch_notification) */
+>>
+>> This is a mask, isn't it?  Could we perhaps have some helpers here?
+>> Something along the lines of...
+>>
+>> #define WATCH_INFO_LENGTH_MASK	0x000001f8
+>> #define WATCH_INFO_LENGTH_SHIFT	3
+>>
+>> static inline size_t watch_notification_length(struct watch_notification *wn)
+>> {
+>> 	return (wn->info & WATCH_INFO_LENGTH_MASK) >> WATCH_INFO_LENGTH_SHIFT *
+>> 			sizeof(struct watch_notification);
+>> }
+>>
+>> static inline struct watch_notification *watch_notification_next(
+>> 		struct watch_notification *wn)
+>> {
+>> 	return wn + ((wn->info & WATCH_INFO_LENGTH_MASK) >>
+>> 			WATCH_INFO_LENGTH_SHIFT);
+>> }
 > 
-> Cheers,
+> No inline functions in UAPI headers, please.  I'd love to kill off the ones
+> that we have, but that would break things.
+
+Hi David,
+
+What is the problem with inline functions in UAPI headers?
+
+>> ...so that we don't have to opencode all of the ring buffer walking
+>> magic and stuff?
 > 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+> There'll end up being a small userspace library, I think.
+
+>>> +};
+>>> +
+>>> +#define WATCH_LENGTH_SHIFT	3
+>>> +
+>>> +struct watch_queue_buffer {
+>>> +	union {
+>>> +		/* The first few entries are special, containing the
+>>> +		 * ring management variables.
+>>
+>> The first /two/ entries, correct?
+> 
+> Currently two.
+> 
+>> Also, weird multiline comment style.
+> 
+> Not really.
+
+Yes really.
+
+>>> +		 */
+
+It does not match the preferred coding style for multi-line comments
+according to coding-style.rst.
+
+
+thanks.
+-- 
+~Randy
