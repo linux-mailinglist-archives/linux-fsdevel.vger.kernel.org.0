@@ -2,67 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20CD23BA77
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 19:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BADD13BAC5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 19:14:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbfFJRLN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jun 2019 13:11:13 -0400
-Received: from ms.lwn.net ([45.79.88.28]:44806 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbfFJRLM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:11:12 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id C166D2BB;
-        Mon, 10 Jun 2019 17:11:11 +0000 (UTC)
-Date:   Mon, 10 Jun 2019 11:11:10 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/13] keys: Add a notification facility [ver #4]
-Message-ID: <20190610111110.72468326@lwn.net>
-In-Reply-To: <155991709983.15579.13232123365803197237.stgit@warthog.procyon.org.uk>
-References: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
-        <155991709983.15579.13232123365803197237.stgit@warthog.procyon.org.uk>
-Organization: LWN.net
+        id S2387773AbfFJROV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jun 2019 13:14:21 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:35366 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387456AbfFJROU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 Jun 2019 13:14:20 -0400
+Received: by mail-yw1-f68.google.com with SMTP id k128so4079597ywf.2;
+        Mon, 10 Jun 2019 10:14:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kZcaNkyUCHyNNBHCoFIDrPq60f5nJL8w+ttSw5Z4HYU=;
+        b=tXKr1ajXOv3jcM26Ep7l86d6gJSnAXkSrsCwbr7KQPUfrYbaTxEHsAIBRAokJLhpyM
+         qBCrLvuXnUIbm40qjv3fJG0yOnYQoDqCW4OCC6NynBHBZ5QZ3cQElHVb5Zychgt36kBl
+         88w5NO3d/KU8YUZWQAQXVzabVW+m+9yPHmrWOaOV0dm6+FN5fGd3NUK0V0CqB7iG5/5y
+         o9YN2ka6v/1Ot4PbM8kngQDDhPrTKMDl7bWWD1Ic1/TePG5cJciif3qeaUuaipfWLpVm
+         MtPnP08UW4YmraTfMaYAPf6mJ0+S4uMGkm7Ed7BkVa6URZcIwl3lVOWkEmugGjT2AP9j
+         lGLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kZcaNkyUCHyNNBHCoFIDrPq60f5nJL8w+ttSw5Z4HYU=;
+        b=jCze4pHqo+/agVWX6uC/UBFJU/vclrk9ZEWXqmLlSVKa9zimfdoO9KLpd5xtnnyBUd
+         azksL7XbHKmS3v+gqvn1Ujwni4pp9S6LJqVwim9HQodY2b5qvak4jl9rQkwBuyA80PY6
+         dslaKmt7tWNVXS4eOkCvnn7mfJiEgEKXGQ4OaWQW6tptA7IAsJp0pfMd5yAEtDcY4caw
+         ETY02mg5dGg4EfW/oEyaLWr3DjWrOsC2tDvc6TKECYl2iNt4RpSS4IuCoSvlmltYbkb+
+         bqE4x8/67MY9EupYjZZjCmMWW8kUmOWAYRwVvxsZyT2hiww06Bxe13EUYx6Qlpok0nAh
+         l4HA==
+X-Gm-Message-State: APjAAAVcTwGOPjFibPnsBBgHGrvSgU267/KIKGX/70pOMgH1jrgIALZW
+        LpnAcWwsOcDAb8XwysH3rglf5ZAIJcvhk0xQPfQ=
+X-Google-Smtp-Source: APXvYqylMkXtCRaqRsONVov9vQReTdASSa/0yVxjCKKAD/fKBdISmUPR06X1sfw/WpWVbF/sEM/mSKgtSHDke8IPELg=
+X-Received: by 2002:a81:374c:: with SMTP id e73mr27985620ywa.379.1560186859913;
+ Mon, 10 Jun 2019 10:14:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+References: <20190610160624.GG1871505@magnolia>
+In-Reply-To: <20190610160624.GG1871505@magnolia>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 10 Jun 2019 20:14:08 +0300
+Message-ID: <CAOQ4uxhkE_TsN7XMBgzxVhEYDw+gZEOOCiZzn9otVwQtB-XHeA@mail.gmail.com>
+Subject: Re: [ANNOUNCE] xfs-linux: copy-file-range-fixes updated to fe0da9c09b2d
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        Steve French <smfrench@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 07 Jun 2019 15:18:19 +0100
-David Howells <dhowells@redhat.com> wrote:
++CC affected maintainers
 
-> Add a key/keyring change notification facility whereby notifications about
-> changes in key and keyring content and attributes can be received.
-> 
-> Firstly, an event queue needs to be created:
-> 
-> 	fd = open("/dev/event_queue", O_RDWR);
-> 	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, page_size << n);
-> 
-> then a notification can be set up to report notifications via that queue:
-> 
-> 	struct watch_notification_filter filter = {
-> 		.nr_filters = 1,
-> 		.filters = {
-> 			[0] = {
-> 				.type = WATCH_TYPE_KEY_NOTIFY,
-> 				.subtype_filter[0] = UINT_MAX,
-> 			},
-> 		},
-> 	};
-> 	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
-> 	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
+On Mon, Jun 10, 2019 at 7:06 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+>
+> Hi folks,
+>
+> The copy-file-range-fixes branch of the xfs-linux repository at:
+>
+>         git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+>
+> has just been updated.  This is a common branch from which everyone else
+> can create their own copy-file-range fix branches for 5.3.  When you
+> send your pull request to Linus please let him know that the fixes
+> stream out from here like some kind of hydra. :)
 
-One little nit: it seems that keyctl_watch_key is actually spelled
-keyctl(KEYCTL_WATCH_KEY, ...).
+Thanks Darrick!
+Should we also request to include this branch in linux-next?
 
-jon
+Attention nfs/cifs/fuse/ceph maintainers!
+This branch includes changes to your filesystems.
+At lease nfs/cifs/ceph have been tested with these changes and the
+new xfstests.
+
+I think it would be preferred if you merge Darrick's branch into your
+5.3 branch as soon as you have one ready to reduce chances of
+conflicts down the road.
+
+I will be sending out 2 more patches to cifs/ceph, which depend on
+this branch directly to maintainers.
+
+Thanks,
+Amir.
