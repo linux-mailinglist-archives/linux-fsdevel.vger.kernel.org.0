@@ -2,120 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8576C3ABA9
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jun 2019 21:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F7363ACA2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 03:12:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729115AbfFITgk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Jun 2019 15:36:40 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:39354 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729196AbfFITgk (ORCPT
+        id S1730097AbfFJBMD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Jun 2019 21:12:03 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:43221 "EHLO
+        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725933AbfFJBMD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Jun 2019 15:36:40 -0400
-Received: by mail-it1-f193.google.com with SMTP id j204so10110242ite.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Jun 2019 12:36:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0tNGv+arZFbUC2Bql5ZflXNQOeyrhKP+HeersrnEq2c=;
-        b=Tz1CP7qNKp+ywvO0r+kJ97LXd52kHRjysi9o+zkfcOn1MdFDTnoDqngjFjF7OlBOHd
-         K1K/+co/1kQzXR/aLTXVsmtPstkk6AKB/ZieUDHDrwDq4++GVL2uMDn1s/XbsDALO6N8
-         vPzDPuQuQrltSNbaxTHIipRAQcVLK9yRm7qSw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0tNGv+arZFbUC2Bql5ZflXNQOeyrhKP+HeersrnEq2c=;
-        b=hgWVC5tDM+IuM4P81dPEFEmpSZtz94NKsMS3J8vTwDwjasBCS2IO0BD06KOojwm8fG
-         Cq7cFmeIiQUsKICFhgSugT6N+CDYlW4TmnHo79bcSMitPsmDK/O+n1jzFoJfl+j1Gi+T
-         XUgvz/wJ3vWR8s1QckhTvFFXYe6T1NZyzuFzP9jSoVyufQLU2GEiaD6Pxl781BVvP9q+
-         WsJ1hz38miXpkWyptLfa0cZXyC69mqGBYJ2TlZuM2+aSYFCe8DPskRJu7YQM0b2Tru/v
-         RfTK3z+rm8HXLbc9tJgS4WKEemJHBl+9l5QS/C64xvRaZNkuXlR2GLjOGEMEBp8NWsJ2
-         t/Aw==
-X-Gm-Message-State: APjAAAXjCPrM6eLezAtwK6AqvQwM5CQuPNgaC/qj1+1wQm5yQbWWDfDe
-        s6nX2nWeCJFnYOV2Izzs3GVAJf0b+BPvue8+gSCXoyPbrY0=
-X-Google-Smtp-Source: APXvYqzj024nkPLD6+YBKZXRCpCyglYA29adS7WLrx/vssF2bitP3/nxSC+gZVSciAdKxQ5ks791fmqKraCFkjtwWZQ=
-X-Received: by 2002:a02:a384:: with SMTP id y4mr42330151jak.77.1560108999151;
- Sun, 09 Jun 2019 12:36:39 -0700 (PDT)
+        Sun, 9 Jun 2019 21:12:03 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id D905444A;
+        Sun,  9 Jun 2019 21:12:01 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sun, 09 Jun 2019 21:12:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=fe120Davi0T3Sjl5YLfPWyocg7C
+        ao7t/LQjsjCRH0lU=; b=d6t8jFSZevacgPIZUzoP50IQXqsA55IR0OudGjTn3lm
+        hDUlRxV/3cdMiN4nLp5Z967BrAUt5Ud3jcA7VKV4lx1eBuAHiChgHM4+To+OoSON
+        r5b0ANqXHUGHxokQskqp9lFjIzn4wcEXdg5P/JSkAr3CqaoR6I94RTg2y7/oEr/i
+        Ai0G7tfZEsSIJId3QuZYdosvqpeK7VK1uYj2wbGW/xMGA4JAuoaVYAuUuK0rQruD
+        UxwU1d2NmigbgLJk2r5FHiZFck/h/yIhcrw2DWhIzO2/NE+P69n8A+Cq/fyg9+WZ
+        LTnwwr3c1EJ8VnbJH9wwcXQBqqgXHbrSJzM9j17CzPQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=fe120D
+        avi0T3Sjl5YLfPWyocg7Cao7t/LQjsjCRH0lU=; b=H1IZduQRvo0WIm/CU1Mz/i
+        7BudZwbDvx5M7oJe7sPwy9IY4kvjH/4aJPXE2+tGoZBkqN2pTN8TuozXtrcmgZDC
+        Nv/pvNwJP7fnu0mwjkL7+B3o0Tm3Wa9apgkUybGxqMURUppPrGBTM5PPTeJmWmDT
+        mCbMbMviuT0MOTrSQe49JPSG/u8mnmgNvD5niaFTOaT2bxYZg8GaaO0dXpJv4jDK
+        VoBdoBpTr/cCzzsuvH78W6sOh3jGYm90UfeVfLUvgTDMwp7QYNchdjTL11PbcFe3
+        i+0zOR2kxHfDVs/620EyZrWlu98muHaWDD+0MZmuO+b0TBwsnQyVe9Bi6cCJARHw
+        ==
+X-ME-Sender: <xms:YK79XNTKxStsUgsqyZBtk-QZzbz5HitfbyVxpCW6Qf5aRlKFiVwBPQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudehuddggedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    gfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvuffkfhggtggujgfofgesthdtredt
+    ofervdenucfhrhhomhepfdfvohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtoh
+    gsihhnrdgttgeqnecukfhppedvuddtrddvfedrfedrleenucfrrghrrghmpehmrghilhhf
+    rhhomhepmhgvsehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:YK79XAmZQVccUpEAxclDJ-hf66vneQBtvQIiY88vdg7TheWrGXY-Sg>
+    <xmx:YK79XPbGGQWeuyPHG9hZccOyz3dudVlQJSpP9OSa6eodnt-3VZaVgw>
+    <xmx:YK79XCY1yyvMDSgBSOuqEzdQTfpTQB-qZzeD26N38MOJ-c6SbT2osg>
+    <xmx:Ya79XI18SokR_XETjHXhVy01npYJIOJ8i5qlPvo1WqHwx4wmPMHbUw>
+Received: from localhost (unknown [210.23.3.9])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 52E768005C;
+        Sun,  9 Jun 2019 21:11:59 -0400 (EDT)
+Date:   Mon, 10 Jun 2019 11:11:55 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Neil Brown <neilb@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: filesystems: vfs: Render method descriptions
+Message-ID: <20190610011155.GB2469@caerus>
+References: <20190604002656.30925-1-tobin@kernel.org>
+ <20190606094628.0e8775f7@lwn.net>
 MIME-Version: 1.0
-References: <20190608135717.8472-1-amir73il@gmail.com> <20190608135717.8472-2-amir73il@gmail.com>
-In-Reply-To: <20190608135717.8472-2-amir73il@gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Sun, 9 Jun 2019 21:36:28 +0200
-Message-ID: <CAJfpegs9=W7BwqqBpTPgoXj5xaR=YMkDHLFM3pBaj8YLK-CwyQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] vfs: replace i_readcount with a biased i_count
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606094628.0e8775f7@lwn.net>
+X-Mailer: Mutt 1.9.4 (2018-02-28)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 8, 2019 at 3:57 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> Count struct files open RO together with inode reference count instead
-> of using a dedicated i_readcount field.  This will allow us to use the
-> RO count also when CONFIG_IMA is not defined and will reduce the size of
-> struct inode for 32bit archs when CONFIG_IMA is defined.
->
-> We need this RO count for posix leases code, which currently naively
-> checks i_count and d_count in an inaccurate manner.
->
-> Should regular i_count overflow into RO count bias by struct files
-> opened for write, it's not a big deal, as we mostly need the RO count
-> to be reliable when the first writer comes along.
->
-> Cc: <stable@vger.kernel.org> # v4.19
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  include/linux/fs.h                | 33 +++++++++++++++++++------------
->  security/integrity/ima/ima_main.c |  2 +-
->  2 files changed, 21 insertions(+), 14 deletions(-)
->
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index f7fdfe93e25d..504bf17967dd 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -694,9 +694,6 @@ struct inode {
->         atomic_t                i_count;
->         atomic_t                i_dio_count;
->         atomic_t                i_writecount;
-> -#ifdef CONFIG_IMA
-> -       atomic_t                i_readcount; /* struct files open RO */
-> -#endif
->         union {
->                 const struct file_operations    *i_fop; /* former ->i_op->default_file_ops */
->                 void (*free_inode)(struct inode *);
-> @@ -2890,26 +2887,36 @@ static inline bool inode_is_open_for_write(const struct inode *inode)
->         return atomic_read(&inode->i_writecount) > 0;
->  }
->
-> -#ifdef CONFIG_IMA
-> +/*
-> + * Count struct files open RO together with inode rerefernce count.
-> + * We need this count for IMA and for posix leases. The RO count should not
-> + * include files opened RDWR nor files opened O_PATH and internal kernel
-> + * inode references, like the ones taken by overlayfs and inotify.
-> + * Should regular i_count overflow into I_RO_COUNT_BIAS by struct files
-> + * opened for write, it's not a big deal, as we mostly need
-> + * inode_is_open_rdonly() to be reliable when the first writer comes along.
+On Thu, Jun 06, 2019 at 09:46:28AM -0600, Jonathan Corbet wrote:
+> On Tue,  4 Jun 2019 10:26:56 +1000
+> "Tobin C. Harding" <tobin@kernel.org> wrote:
+> 
+> > Currently vfs.rst does not render well into HTML the method descriptions
+> > for VFS data structures.  We can improve the HTML output by putting the
+> > description string on a new line following the method name.
+> > 
+> > Suggested-by: Jonathan Corbet <corbet@lwn.net>
+> > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+> > ---
+> > 
+> > Jon,
+> > 
+> > As discussed on LKML; this patch applies on top of the series
+> > 
+> > 	[PATCH v4 0/9] docs: Convert VFS doc to RST
+> > 
+> > If it does not apply cleanly to your branch please feel free to ask me
+> > to fix it.
+> 
+> There was one merge conflict, but nothing too serious.  I've applied it,
+> and things look a lot better - thanks!
 
-The bigger issue is allowing i_count to wrap around: all you need is a
-file with 1025 hard links and 4194304 opens of said file.  Doable
-without privileges?  Not sure, but it does seem pretty fragile.
+Awesome, cheers mate.
 
-BTW the current 32 bit i_readcount that IMA uses also has wraparound
-issues, though that's not nearly as bad.
-
-Going to a 64 bit i_count would fix these, I guess.
-
-Thanks,
-Miklos
+	Tobin
