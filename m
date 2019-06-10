@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EFA53BCAD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 21:15:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E783E3BCA7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 21:15:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389589AbfFJTP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jun 2019 15:15:28 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:39098 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389210AbfFJTOg (ORCPT
+        id S2389530AbfFJTPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jun 2019 15:15:18 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:45774 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389243AbfFJTOh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jun 2019 15:14:36 -0400
-Received: by mail-vs1-f67.google.com with SMTP id n2so6215954vso.6;
-        Mon, 10 Jun 2019 12:14:35 -0700 (PDT)
+        Mon, 10 Jun 2019 15:14:37 -0400
+Received: by mail-ua1-f66.google.com with SMTP id v18so3525024uad.12;
+        Mon, 10 Jun 2019 12:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=aR//uD4NhWFMVjpTld02Vmm29l8MHQS0/NqSGli70F8=;
-        b=PGcOELLZdo4Kg9v3G6sVPoxRniXMINmFDyPMiPzN6isPtueXfeYgWgOyCx0uoSur6Y
-         BXjfDo4sohWRnSKAPm3pnL13BdVoyTCx9qi/EqPsq03d/dFrAs4Dw0EAGhJO2s387BYa
-         wkV4b6w1U/1tnm5eMOEcF6yk3uvrsTIBW7Bt6MF6DiKLaIrGx+8/XpDIebBQ0XvBKqA2
-         6UlHky1ZYmBRQDGoZ9N5kdM7QbeeK997QHERdJ2a1GzdhnDrpD/fmkI82eyHpQCrU58+
-         JOuVu272wM6Iye9GuJvp5FN9pnJlXOLfJUu6wCw5V/p9PXENnGZ2zaqXM5WkdrjhfesR
-         FngA==
+        bh=03qXnIOs+9PMTRKALHPhtOzBUbY1LuDMI7042jLkIEM=;
+        b=q+sYO+O25PAkVKSZpsKj1OfUzWZuizGq05GqQ//teUbVxoI0Gr+pudBTbJsrXVk0AK
+         vp9lmmAuSKZtW2KfBHrQdTcGHhPT6OanBLFG/Fjd5/lE/G9PII8873awfmqFC8hpUhKg
+         D2lY8xWKov4H/ovzgv+Jv2wNaGfUt7YJ8CYpYq9qiNNnHLFd3fNSRufWtnU8eWjDdDb/
+         fCCA0wei/JLshPe69z+yTS6HSU/mvkyKX2STQoHQVppctfDRW0SerJGmD7CdGkSc0YcH
+         5pFfkr/PmUXYwOdYEv0vwj5hTCy0OfvyRWzeApHLZaSmJjgBnkb23Rlz0i+dWupO6BEP
+         JUbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=aR//uD4NhWFMVjpTld02Vmm29l8MHQS0/NqSGli70F8=;
-        b=qc+9CS/YgIyfnPGJWqynPr/2+8P20ILz1kbFGF7oSdFKVZ/YvN+aDXtcibXSzWqwUM
-         MB+eo6C5JcQQgvUmCJcA4qN0n5aM4UIGR7wLH5AcVr5Fw3H/dEqAeOPDDKjwKvz7pwTb
-         xsREjvaM5Jx2+btcH+Pd2QDxduCh+ilwOzKdz0KAQjw9giupxSJnlMD1KyHVF9H8kvuu
-         Ssa0mZn5JlJJ9/rzUxIjQrzFQeZ/Tb5geElnSheC3TykChSPxcGbgzAT7hkxq4OhXiP/
-         HUFJE95HKPDvvBCxz29h1T+mNikgAPgGNNZbbRQKty5gjtT3VKEbccPx9gIoyFm6L4iY
-         AaUQ==
-X-Gm-Message-State: APjAAAVtCqmFXJ/P7M9kFsLQSG5ZCFfrx+73frVe+MsNGMYTm/vQCUb+
-        r62gx9nap9VK/N/9PSxDuujpWdVXlQ==
-X-Google-Smtp-Source: APXvYqxaP8f1TN0DkPEILnhMA4UYfW7vT2pn5ycz2pBDc25trij2XZ0vvzlD2cfHHMKAgC0ktwlfvg==
-X-Received: by 2002:a67:f911:: with SMTP id t17mr3355111vsq.128.1560194074584;
-        Mon, 10 Jun 2019 12:14:34 -0700 (PDT)
+        bh=03qXnIOs+9PMTRKALHPhtOzBUbY1LuDMI7042jLkIEM=;
+        b=jCu5XUgdOttHzL/7y+8mX5nWcKMClGE30JcXVsVO5yvd26X3cE9DR5O3y79IpQJjTm
+         QWSSeEE3N471m1FZSDvuM8ldYa2FYwKobpAYexKZwaWVUfc4xEKMZaSCd8PkHqQEpFPZ
+         6g8RNdxMW17vDlqdP10G4ap82ehm4he29qvq5wdzJwZD09Rd1qf5iWOZuymnvbu3aarY
+         9MXtqqZKlT9Auh2hRE5xTXj4Ntlhdu4LT9xQn1glC3Vkb6LzfBMctVG+mwLU/JmMd295
+         G7UzXwZk5vIOsBhRbUZULMK4Vc8aByVQ793lsSG5cB2+8Kx72paneoYY2p86Z9h2vCho
+         pcxw==
+X-Gm-Message-State: APjAAAU/50qk3yIzt/JoJcmQM9gj215yvl1SNGkF1bhC9KYW2cbnTymH
+        DDJaSTcA9PHxqA02SQGwuYntaDKOHw==
+X-Google-Smtp-Source: APXvYqx0V5Lkfup6ZBapoJxNQzzjDcvcm9S6eEe2y+rfZAijhO/uAxre2kPXwhD/J/e4Lkqp0KgekA==
+X-Received: by 2002:ab0:1590:: with SMTP id i16mr9163111uae.141.1560194076068;
+        Mon, 10 Jun 2019 12:14:36 -0700 (PDT)
 Received: from kmo-pixel.hsd1.vt.comcast.net (c-71-234-172-214.hsd1.vt.comcast.net. [71.234.172.214])
-        by smtp.gmail.com with ESMTPSA id t20sm4834014vkd.53.2019.06.10.12.14.33
+        by smtp.gmail.com with ESMTPSA id t20sm4834014vkd.53.2019.06.10.12.14.34
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 12:14:33 -0700 (PDT)
+        Mon, 10 Jun 2019 12:14:35 -0700 (PDT)
 From:   Kent Overstreet <kent.overstreet@gmail.com>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-bcache@vger.kernel.org
 Cc:     Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 05/12] fs: insert_inode_locked2()
-Date:   Mon, 10 Jun 2019 15:14:13 -0400
-Message-Id: <20190610191420.27007-6-kent.overstreet@gmail.com>
+Subject: [PATCH 06/12] fs: factor out d_mark_tmpfile()
+Date:   Mon, 10 Jun 2019 15:14:14 -0400
+Message-Id: <20190610191420.27007-7-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190610191420.27007-1-kent.overstreet@gmail.com>
 References: <20190610191420.27007-1-kent.overstreet@gmail.com>
@@ -62,78 +62,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-New helper for bcachefs, so that when we race inserting an inode we can
-atomically grab a ref to the inode already in the inode cache.
+New helper for bcachefs - bcachefs doesn't want the
+inode_dec_link_count() call that d_tmpfile does, it handles i_nlink on
+its own atomically with other btree updates
 
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
 ---
- fs/inode.c         | 40 ++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h |  1 +
- 2 files changed, 41 insertions(+)
+ fs/dcache.c            | 10 ++++++++--
+ include/linux/dcache.h |  1 +
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 8881dc551f..cc44f345e0 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1479,6 +1479,46 @@ int insert_inode_locked(struct inode *inode)
- }
- EXPORT_SYMBOL(insert_inode_locked);
+diff --git a/fs/dcache.c b/fs/dcache.c
+index aac41adf47..18edb4e5bc 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -3042,9 +3042,8 @@ void d_genocide(struct dentry *parent)
  
-+struct inode *insert_inode_locked2(struct inode *inode)
-+{
-+	struct super_block *sb = inode->i_sb;
-+	ino_t ino = inode->i_ino;
-+	struct hlist_head *head = inode_hashtable + hash(sb, ino);
-+
-+	while (1) {
-+		struct inode *old = NULL;
-+		spin_lock(&inode_hash_lock);
-+		hlist_for_each_entry(old, head, i_hash) {
-+			if (old->i_ino != ino)
-+				continue;
-+			if (old->i_sb != sb)
-+				continue;
-+			spin_lock(&old->i_lock);
-+			if (old->i_state & (I_FREEING|I_WILL_FREE)) {
-+				spin_unlock(&old->i_lock);
-+				continue;
-+			}
-+			break;
-+		}
-+		if (likely(!old)) {
-+			spin_lock(&inode->i_lock);
-+			inode->i_state |= I_NEW | I_CREATING;
-+			hlist_add_head(&inode->i_hash, head);
-+			spin_unlock(&inode->i_lock);
-+			spin_unlock(&inode_hash_lock);
-+			return NULL;
-+		}
-+		__iget(old);
-+		spin_unlock(&old->i_lock);
-+		spin_unlock(&inode_hash_lock);
-+		wait_on_inode(old);
-+		if (unlikely(!inode_unhashed(old)))
-+			return old;
-+		iput(old);
-+	}
-+}
-+EXPORT_SYMBOL(insert_inode_locked2);
-+
- int insert_inode_locked4(struct inode *inode, unsigned long hashval,
- 		int (*test)(struct inode *, void *), void *data)
+ EXPORT_SYMBOL(d_genocide);
+ 
+-void d_tmpfile(struct dentry *dentry, struct inode *inode)
++void d_mark_tmpfile(struct dentry *dentry, struct inode *inode)
  {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a88d994751..d5d12d6981 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3010,6 +3010,7 @@ extern struct inode *find_inode_nowait(struct super_block *,
- 				       void *data);
- extern int insert_inode_locked4(struct inode *, unsigned long, int (*test)(struct inode *, void *), void *);
- extern int insert_inode_locked(struct inode *);
-+extern struct inode *insert_inode_locked2(struct inode *);
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- extern void lockdep_annotate_inode_mutex_key(struct inode *inode);
- #else
+-	inode_dec_link_count(inode);
+ 	BUG_ON(dentry->d_name.name != dentry->d_iname ||
+ 		!hlist_unhashed(&dentry->d_u.d_alias) ||
+ 		!d_unlinked(dentry));
+@@ -3054,6 +3053,13 @@ void d_tmpfile(struct dentry *dentry, struct inode *inode)
+ 				(unsigned long long)inode->i_ino);
+ 	spin_unlock(&dentry->d_lock);
+ 	spin_unlock(&dentry->d_parent->d_lock);
++}
++EXPORT_SYMBOL(d_mark_tmpfile);
++
++void d_tmpfile(struct dentry *dentry, struct inode *inode)
++{
++	inode_dec_link_count(inode);
++	d_mark_tmpfile(dentry, inode);
+ 	d_instantiate(dentry, inode);
+ }
+ EXPORT_SYMBOL(d_tmpfile);
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 60996e64c5..e0fe330162 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -255,6 +255,7 @@ extern struct dentry * d_make_root(struct inode *);
+ /* <clickety>-<click> the ramfs-type tree */
+ extern void d_genocide(struct dentry *);
+ 
++extern void d_mark_tmpfile(struct dentry *, struct inode *);
+ extern void d_tmpfile(struct dentry *, struct inode *);
+ 
+ extern struct dentry *d_find_alias(struct inode *);
 -- 
 2.20.1
 
