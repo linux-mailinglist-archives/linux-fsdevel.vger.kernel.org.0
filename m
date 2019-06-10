@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6877A3B199
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 11:10:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E96223B19F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 11:10:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388756AbfFJJJv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jun 2019 05:09:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38406 "EHLO mx1.redhat.com"
+        id S2388859AbfFJJKe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jun 2019 05:10:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36538 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388218AbfFJJJv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jun 2019 05:09:51 -0400
+        id S2388190AbfFJJKd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 Jun 2019 05:10:33 -0400
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2855822386F;
-        Mon, 10 Jun 2019 09:09:49 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A27CE30872CC;
+        Mon, 10 Jun 2019 09:10:32 +0000 (UTC)
 Received: from dhcp201-121.englab.pnq.redhat.com (ovpn-116-103.sin2.redhat.com [10.67.116.103])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CA64C60C05;
-        Mon, 10 Jun 2019 09:09:11 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 751FC60BF1;
+        Mon, 10 Jun 2019 09:09:49 +0000 (UTC)
 From:   Pankaj Gupta <pagupta@redhat.com>
 To:     dm-devel@redhat.com, linux-nvdimm@lists.01.org,
         linux-kernel@vger.kernel.org,
@@ -38,457 +38,203 @@ Cc:     dan.j.williams@intel.com, zwisler@kernel.org,
         xiaoguangrong.eric@gmail.com, pbonzini@redhat.com,
         yuval.shaia@oracle.com, kilobyte@angband.pl, jstaron@google.com,
         rdunlap@infradead.org, snitzer@redhat.com, pagupta@redhat.com
-Subject: [PATCH v11 2/7] virtio-pmem: Add virtio pmem driver
-Date:   Mon, 10 Jun 2019 14:37:25 +0530
-Message-Id: <20190610090730.8589-3-pagupta@redhat.com>
+Subject: [PATCH v11 3/7] libnvdimm: add dax_dev sync flag
+Date:   Mon, 10 Jun 2019 14:37:26 +0530
+Message-Id: <20190610090730.8589-4-pagupta@redhat.com>
 In-Reply-To: <20190610090730.8589-1-pagupta@redhat.com>
 References: <20190610090730.8589-1-pagupta@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 10 Jun 2019 09:09:50 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 10 Jun 2019 09:10:33 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch adds virtio-pmem driver for KVM guest.
-
-Guest reads the persistent memory range information from
-Qemu over VIRTIO and registers it on nvdimm_bus. It also
-creates a nd_region object with the persistent memory
-range information so that existing 'nvdimm/pmem' driver
-can reserve this into system memory map. This way
-'virtio-pmem' driver uses existing functionality of pmem
-driver to register persistent memory compatible for DAX
-capable filesystems.
-
-This also provides function to perform guest flush over
-VIRTIO from 'pmem' driver when userspace performs flush
-on DAX memory range.
+This patch adds 'DAXDEV_SYNC' flag which is set
+for nd_region doing synchronous flush. This later
+is used to disable MAP_SYNC functionality for
+ext4 & xfs filesystem for devices don't support
+synchronous flush.
 
 Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Acked-by: Jakub Staron <jstaron@google.com>
-Tested-by: Jakub Staron <jstaron@google.com>
 ---
- drivers/nvdimm/Makefile          |   1 +
- drivers/nvdimm/nd_virtio.c       | 124 +++++++++++++++++++++++++++++++
- drivers/nvdimm/virtio_pmem.c     | 122 ++++++++++++++++++++++++++++++
- drivers/nvdimm/virtio_pmem.h     |  55 ++++++++++++++
- drivers/virtio/Kconfig           |  11 +++
- include/uapi/linux/virtio_ids.h  |   1 +
- include/uapi/linux/virtio_pmem.h |  35 +++++++++
- 7 files changed, 349 insertions(+)
- create mode 100644 drivers/nvdimm/nd_virtio.c
- create mode 100644 drivers/nvdimm/virtio_pmem.c
- create mode 100644 drivers/nvdimm/virtio_pmem.h
- create mode 100644 include/uapi/linux/virtio_pmem.h
+ drivers/dax/bus.c            |  2 +-
+ drivers/dax/super.c          | 19 ++++++++++++++++++-
+ drivers/md/dm.c              |  3 ++-
+ drivers/nvdimm/pmem.c        |  5 ++++-
+ drivers/nvdimm/region_devs.c |  7 +++++++
+ include/linux/dax.h          |  9 +++++++--
+ include/linux/libnvdimm.h    |  1 +
+ 7 files changed, 40 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/nvdimm/Makefile b/drivers/nvdimm/Makefile
-index 6f2a088afad6..cefe233e0b52 100644
---- a/drivers/nvdimm/Makefile
-+++ b/drivers/nvdimm/Makefile
-@@ -5,6 +5,7 @@ obj-$(CONFIG_ND_BTT) += nd_btt.o
- obj-$(CONFIG_ND_BLK) += nd_blk.o
- obj-$(CONFIG_X86_PMEM_LEGACY) += nd_e820.o
- obj-$(CONFIG_OF_PMEM) += of_pmem.o
-+obj-$(CONFIG_VIRTIO_PMEM) += virtio_pmem.o nd_virtio.o
+diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+index 2109cfe80219..5f184e751c82 100644
+--- a/drivers/dax/bus.c
++++ b/drivers/dax/bus.c
+@@ -388,7 +388,7 @@ struct dev_dax *__devm_create_dev_dax(struct dax_region *dax_region, int id,
+ 	 * No 'host' or dax_operations since there is no access to this
+ 	 * device outside of mmap of the resulting character device.
+ 	 */
+-	dax_dev = alloc_dax(dev_dax, NULL, NULL);
++	dax_dev = alloc_dax(dev_dax, NULL, NULL, DAXDEV_F_SYNC);
+ 	if (!dax_dev)
+ 		goto err;
  
- nd_pmem-y := pmem.o
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index bbd57ca0634a..93b3718b5cfa 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -186,6 +186,8 @@ enum dax_device_flags {
+ 	DAXDEV_ALIVE,
+ 	/* gate whether dax_flush() calls the low level flush routine */
+ 	DAXDEV_WRITE_CACHE,
++	/* flag to check if device supports synchronous flush */
++	DAXDEV_SYNC,
+ };
  
-diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.c
-new file mode 100644
-index 000000000000..efc535723517
---- /dev/null
-+++ b/drivers/nvdimm/nd_virtio.c
-@@ -0,0 +1,124 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * virtio_pmem.c: Virtio pmem Driver
-+ *
-+ * Discovers persistent memory range information
-+ * from host and provides a virtio based flushing
-+ * interface.
-+ */
-+#include "virtio_pmem.h"
-+#include "nd.h"
-+
-+ /* The interrupt handler */
-+void host_ack(struct virtqueue *vq)
+ /**
+@@ -354,6 +356,18 @@ bool dax_write_cache_enabled(struct dax_device *dax_dev)
+ }
+ EXPORT_SYMBOL_GPL(dax_write_cache_enabled);
+ 
++bool dax_synchronous(struct dax_device *dax_dev)
 +{
-+	struct virtio_pmem *vpmem = vq->vdev->priv;
-+	struct virtio_pmem_request *req_data, *req_buf;
-+	unsigned long flags;
-+	unsigned int len;
-+
-+	spin_lock_irqsave(&vpmem->pmem_lock, flags);
-+	while ((req_data = virtqueue_get_buf(vq, &len)) != NULL) {
-+		req_data->done = true;
-+		wake_up(&req_data->host_acked);
-+
-+		if (!list_empty(&vpmem->req_list)) {
-+			req_buf = list_first_entry(&vpmem->req_list,
-+					struct virtio_pmem_request, list);
-+			req_buf->wq_buf_avail = true;
-+			wake_up(&req_buf->wq_buf);
-+			list_del(&req_buf->list);
-+		}
-+	}
-+	spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
++	return test_bit(DAXDEV_SYNC, &dax_dev->flags);
 +}
-+EXPORT_SYMBOL_GPL(host_ack);
++EXPORT_SYMBOL_GPL(dax_synchronous);
 +
-+ /* The request submission function */
-+int virtio_pmem_flush(struct nd_region *nd_region)
++void set_dax_synchronous(struct dax_device *dax_dev)
 +{
-+	struct virtio_device *vdev = nd_region->provider_data;
-+	struct virtio_pmem *vpmem  = vdev->priv;
-+	struct virtio_pmem_request *req_data;
-+	struct scatterlist *sgs[2], sg, ret;
-+	unsigned long flags;
-+	int err, err1;
-+
-+	might_sleep();
-+	req_data = kmalloc(sizeof(*req_data), GFP_KERNEL);
-+	if (!req_data)
-+		return -ENOMEM;
-+
-+	req_data->done = false;
-+	init_waitqueue_head(&req_data->host_acked);
-+	init_waitqueue_head(&req_data->wq_buf);
-+	INIT_LIST_HEAD(&req_data->list);
-+	req_data->req.type = cpu_to_virtio32(vdev, VIRTIO_PMEM_REQ_TYPE_FLUSH);
-+	sg_init_one(&sg, &req_data->req, sizeof(req_data->req));
-+	sgs[0] = &sg;
-+	sg_init_one(&ret, &req_data->resp.ret, sizeof(req_data->resp));
-+	sgs[1] = &ret;
-+
-+	spin_lock_irqsave(&vpmem->pmem_lock, flags);
-+	 /*
-+	  * If virtqueue_add_sgs returns -ENOSPC then req_vq virtual
-+	  * queue does not have free descriptor. We add the request
-+	  * to req_list and wait for host_ack to wake us up when free
-+	  * slots are available.
-+	  */
-+	while ((err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req_data,
-+					GFP_ATOMIC)) == -ENOSPC) {
-+
-+		dev_err(&vdev->dev, "failed to send command to virtio pmem device, no free slots in the virtqueue\n");
-+		req_data->wq_buf_avail = false;
-+		list_add_tail(&req_data->list, &vpmem->req_list);
-+		spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-+
-+		/* A host response results in "host_ack" getting called */
-+		wait_event(req_data->wq_buf, req_data->wq_buf_avail);
-+		spin_lock_irqsave(&vpmem->pmem_lock, flags);
-+	}
-+	err1 = virtqueue_kick(vpmem->req_vq);
-+	spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-+	/*
-+	 * virtqueue_add_sgs failed with error different than -ENOSPC, we can't
-+	 * do anything about that.
-+	 */
-+	if (err || !err1) {
-+		dev_info(&vdev->dev, "failed to send command to virtio pmem device\n");
-+		err = -EIO;
-+	} else {
-+		/* A host repsonse results in "host_ack" getting called */
-+		wait_event(req_data->host_acked, req_data->done);
-+		err = virtio32_to_cpu(vdev, req_data->resp.ret);
-+	}
-+
-+	kfree(req_data);
-+	return err;
-+};
-+
-+/* The asynchronous flush callback function */
-+int async_pmem_flush(struct nd_region *nd_region, struct bio *bio)
-+{
-+	/* Create child bio for asynchronous flush and chain with
-+	 * parent bio. Otherwise directly call nd_region flush.
-+	 */
-+	if (bio && bio->bi_iter.bi_sector != -1) {
-+		struct bio *child = bio_alloc(GFP_ATOMIC, 0);
-+
-+		if (!child)
-+			return -ENOMEM;
-+		bio_copy_dev(child, bio);
-+		child->bi_opf = REQ_PREFLUSH;
-+		child->bi_iter.bi_sector = -1;
-+		bio_chain(child, bio);
-+		submit_bio(child);
-+		return 0;
-+	}
-+	if (virtio_pmem_flush(nd_region))
-+		return -EIO;
-+
-+	return 0;
-+};
-+EXPORT_SYMBOL_GPL(async_pmem_flush);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/nvdimm/virtio_pmem.c b/drivers/nvdimm/virtio_pmem.c
-new file mode 100644
-index 000000000000..b60ebd8cd2fd
---- /dev/null
-+++ b/drivers/nvdimm/virtio_pmem.c
-@@ -0,0 +1,122 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * virtio_pmem.c: Virtio pmem Driver
-+ *
-+ * Discovers persistent memory range information
-+ * from host and registers the virtual pmem device
-+ * with libnvdimm core.
-+ */
-+#include "virtio_pmem.h"
-+#include "nd.h"
-+
-+static struct virtio_device_id id_table[] = {
-+	{ VIRTIO_ID_PMEM, VIRTIO_DEV_ANY_ID },
-+	{ 0 },
-+};
-+
-+ /* Initialize virt queue */
-+static int init_vq(struct virtio_pmem *vpmem)
-+{
-+	/* single vq */
-+	vpmem->req_vq = virtio_find_single_vq(vpmem->vdev,
-+						host_ack, "flush_queue");
-+	if (IS_ERR(vpmem->req_vq))
-+		return PTR_ERR(vpmem->req_vq);
-+
-+	spin_lock_init(&vpmem->pmem_lock);
-+	INIT_LIST_HEAD(&vpmem->req_list);
-+
-+	return 0;
-+};
-+
-+static int virtio_pmem_probe(struct virtio_device *vdev)
-+{
-+	struct nd_region_desc ndr_desc = {};
-+	int nid = dev_to_node(&vdev->dev);
-+	struct nd_region *nd_region;
-+	struct virtio_pmem *vpmem;
-+	struct resource res;
-+	int err = 0;
-+
-+	if (!vdev->config->get) {
-+		dev_err(&vdev->dev, "%s failure: config access disabled\n",
-+			__func__);
-+		return -EINVAL;
-+	}
-+
-+	vpmem = devm_kzalloc(&vdev->dev, sizeof(*vpmem), GFP_KERNEL);
-+	if (!vpmem) {
-+		err = -ENOMEM;
-+		goto out_err;
-+	}
-+
-+	vpmem->vdev = vdev;
-+	vdev->priv = vpmem;
-+	err = init_vq(vpmem);
-+	if (err) {
-+		dev_err(&vdev->dev, "failed to initialize virtio pmem vq's\n");
-+		goto out_err;
-+	}
-+
-+	virtio_cread(vpmem->vdev, struct virtio_pmem_config,
-+			start, &vpmem->start);
-+	virtio_cread(vpmem->vdev, struct virtio_pmem_config,
-+			size, &vpmem->size);
-+
-+	res.start = vpmem->start;
-+	res.end   = vpmem->start + vpmem->size - 1;
-+	vpmem->nd_desc.provider_name = "virtio-pmem";
-+	vpmem->nd_desc.module = THIS_MODULE;
-+
-+	vpmem->nvdimm_bus = nvdimm_bus_register(&vdev->dev,
-+						&vpmem->nd_desc);
-+	if (!vpmem->nvdimm_bus) {
-+		dev_err(&vdev->dev, "failed to register device with nvdimm_bus\n");
-+		err = -ENXIO;
-+		goto out_vq;
-+	}
-+
-+	dev_set_drvdata(&vdev->dev, vpmem->nvdimm_bus);
-+
-+	ndr_desc.res = &res;
-+	ndr_desc.numa_node = nid;
-+	ndr_desc.flush = async_pmem_flush;
-+	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
-+	set_bit(ND_REGION_ASYNC, &ndr_desc.flags);
-+	nd_region = nvdimm_pmem_region_create(vpmem->nvdimm_bus, &ndr_desc);
-+	if (!nd_region) {
-+		dev_err(&vdev->dev, "failed to create nvdimm region\n");
-+		err = -ENXIO;
-+		goto out_nd;
-+	}
-+	nd_region->provider_data = dev_to_virtio(nd_region->dev.parent->parent);
-+	return 0;
-+out_nd:
-+	nvdimm_bus_unregister(vpmem->nvdimm_bus);
-+out_vq:
-+	vdev->config->del_vqs(vdev);
-+out_err:
-+	return err;
++	set_bit(DAXDEV_SYNC, &dax_dev->flags);
 +}
++EXPORT_SYMBOL_GPL(set_dax_synchronous);
 +
-+static void virtio_pmem_remove(struct virtio_device *vdev)
+ bool dax_alive(struct dax_device *dax_dev)
+ {
+ 	lockdep_assert_held(&dax_srcu);
+@@ -508,7 +522,7 @@ static void dax_add_host(struct dax_device *dax_dev, const char *host)
+ }
+ 
+ struct dax_device *alloc_dax(void *private, const char *__host,
+-		const struct dax_operations *ops)
++		const struct dax_operations *ops, unsigned long flags)
+ {
+ 	struct dax_device *dax_dev;
+ 	const char *host;
+@@ -531,6 +545,9 @@ struct dax_device *alloc_dax(void *private, const char *__host,
+ 	dax_add_host(dax_dev, host);
+ 	dax_dev->ops = ops;
+ 	dax_dev->private = private;
++	if (flags & DAXDEV_F_SYNC)
++		set_dax_synchronous(dax_dev);
++
+ 	return dax_dev;
+ 
+  err_dev:
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 1fb1333fefec..7eee7ddc73a8 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1970,7 +1970,8 @@ static struct mapped_device *alloc_dev(int minor)
+ 	sprintf(md->disk->disk_name, "dm-%d", minor);
+ 
+ 	if (IS_ENABLED(CONFIG_DAX_DRIVER)) {
+-		md->dax_dev = alloc_dax(md, md->disk->disk_name, &dm_dax_ops);
++		md->dax_dev = alloc_dax(md, md->disk->disk_name,
++					&dm_dax_ops, 0);
+ 		if (!md->dax_dev)
+ 			goto bad;
+ 	}
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 0279eb1da3ef..bdbd2b414d3d 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -365,6 +365,7 @@ static int pmem_attach_disk(struct device *dev,
+ 	struct gendisk *disk;
+ 	void *addr;
+ 	int rc;
++	unsigned long flags = 0UL;
+ 
+ 	pmem = devm_kzalloc(dev, sizeof(*pmem), GFP_KERNEL);
+ 	if (!pmem)
+@@ -462,7 +463,9 @@ static int pmem_attach_disk(struct device *dev,
+ 	nvdimm_badblocks_populate(nd_region, &pmem->bb, &bb_res);
+ 	disk->bb = &pmem->bb;
+ 
+-	dax_dev = alloc_dax(pmem, disk->disk_name, &pmem_dax_ops);
++	if (is_nvdimm_sync(nd_region))
++		flags = DAXDEV_F_SYNC;
++	dax_dev = alloc_dax(pmem, disk->disk_name, &pmem_dax_ops, flags);
+ 	if (!dax_dev) {
+ 		put_disk(disk);
+ 		return -ENOMEM;
+diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+index b4ef7d9ff22e..f3ea5369d20a 100644
+--- a/drivers/nvdimm/region_devs.c
++++ b/drivers/nvdimm/region_devs.c
+@@ -1197,6 +1197,13 @@ int nvdimm_has_cache(struct nd_region *nd_region)
+ }
+ EXPORT_SYMBOL_GPL(nvdimm_has_cache);
+ 
++bool is_nvdimm_sync(struct nd_region *nd_region)
 +{
-+	struct nvdimm_bus *nvdimm_bus = dev_get_drvdata(&vdev->dev);
-+
-+	nvdimm_bus_unregister(nvdimm_bus);
-+	vdev->config->del_vqs(vdev);
-+	vdev->config->reset(vdev);
++	return is_nd_pmem(&nd_region->dev) &&
++		!test_bit(ND_REGION_ASYNC, &nd_region->flags);
 +}
++EXPORT_SYMBOL_GPL(is_nvdimm_sync);
 +
-+static struct virtio_driver virtio_pmem_driver = {
-+	.driver.name		= KBUILD_MODNAME,
-+	.driver.owner		= THIS_MODULE,
-+	.id_table		= id_table,
-+	.probe			= virtio_pmem_probe,
-+	.remove			= virtio_pmem_remove,
-+};
-+
-+module_virtio_driver(virtio_pmem_driver);
-+MODULE_DEVICE_TABLE(virtio, id_table);
-+MODULE_DESCRIPTION("Virtio pmem driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/nvdimm/virtio_pmem.h b/drivers/nvdimm/virtio_pmem.h
-new file mode 100644
-index 000000000000..6e47521be158
---- /dev/null
-+++ b/drivers/nvdimm/virtio_pmem.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * virtio_pmem.h: virtio pmem Driver
-+ *
-+ * Discovers persistent memory range information
-+ * from host and provides a virtio based flushing
-+ * interface.
-+ **/
-+
-+#ifndef _LINUX_VIRTIO_PMEM_H
-+#define _LINUX_VIRTIO_PMEM_H
-+
-+#include <linux/module.h>
-+#include <uapi/linux/virtio_pmem.h>
-+#include <linux/libnvdimm.h>
-+#include <linux/spinlock.h>
-+
-+struct virtio_pmem_request {
-+	struct virtio_pmem_req req;
-+	struct virtio_pmem_resp resp;
-+
-+	/* Wait queue to process deferred work after ack from host */
-+	wait_queue_head_t host_acked;
-+	bool done;
-+
-+	/* Wait queue to process deferred work after virt queue buffer avail */
-+	wait_queue_head_t wq_buf;
-+	bool wq_buf_avail;
-+	struct list_head list;
-+};
-+
-+struct virtio_pmem {
-+	struct virtio_device *vdev;
-+
-+	/* Virtio pmem request queue */
-+	struct virtqueue *req_vq;
-+
-+	/* nvdimm bus registers virtio pmem device */
-+	struct nvdimm_bus *nvdimm_bus;
-+	struct nvdimm_bus_descriptor nd_desc;
-+
-+	/* List to store deferred work if virtqueue is full */
-+	struct list_head req_list;
-+
-+	/* Synchronize virtqueue data */
-+	spinlock_t pmem_lock;
-+
-+	/* Memory region information */
-+	uint64_t start;
-+	uint64_t size;
-+};
-+
-+void host_ack(struct virtqueue *vq);
-+int async_pmem_flush(struct nd_region *nd_region, struct bio *bio);
-+#endif
-diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-index 35897649c24f..009278b23241 100644
---- a/drivers/virtio/Kconfig
-+++ b/drivers/virtio/Kconfig
-@@ -42,6 +42,17 @@ config VIRTIO_PCI_LEGACY
+ struct conflict_context {
+ 	struct nd_region *nd_region;
+ 	resource_size_t start, size;
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 0dd316a74a29..2b106752b1b8 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -7,6 +7,9 @@
+ #include <linux/radix-tree.h>
+ #include <asm/pgtable.h>
  
- 	  If unsure, say Y.
++/* Flag for synchronous flush */
++#define DAXDEV_F_SYNC (1UL << 0)
++
+ typedef unsigned long dax_entry_t;
  
-+config VIRTIO_PMEM
-+	tristate "Support for virtio pmem driver"
-+	depends on VIRTIO
-+	depends on LIBNVDIMM
-+	help
-+	  This driver provides access to virtio-pmem devices, storage devices
-+	  that are mapped into the physical address space - similar to NVDIMMs
-+	   - with a virtio-based flushing interface.
-+
-+	  If unsure, say Y.
-+
- config VIRTIO_BALLOON
- 	tristate "Virtio balloon driver"
- 	depends on VIRTIO
-diff --git a/include/uapi/linux/virtio_ids.h b/include/uapi/linux/virtio_ids.h
-index 6d5c3b2d4f4d..32b2f94d1f58 100644
---- a/include/uapi/linux/virtio_ids.h
-+++ b/include/uapi/linux/virtio_ids.h
-@@ -43,5 +43,6 @@
- #define VIRTIO_ID_INPUT        18 /* virtio input */
- #define VIRTIO_ID_VSOCK        19 /* virtio vsock transport */
- #define VIRTIO_ID_CRYPTO       20 /* virtio crypto */
-+#define VIRTIO_ID_PMEM         27 /* virtio pmem */
+ struct iomap_ops;
+@@ -32,18 +35,20 @@ extern struct attribute_group dax_attribute_group;
+ #if IS_ENABLED(CONFIG_DAX)
+ struct dax_device *dax_get_by_host(const char *host);
+ struct dax_device *alloc_dax(void *private, const char *host,
+-		const struct dax_operations *ops);
++		const struct dax_operations *ops, unsigned long flags);
+ void put_dax(struct dax_device *dax_dev);
+ void kill_dax(struct dax_device *dax_dev);
+ void dax_write_cache(struct dax_device *dax_dev, bool wc);
+ bool dax_write_cache_enabled(struct dax_device *dax_dev);
++bool dax_synchronous(struct dax_device *dax_dev);
++void set_dax_synchronous(struct dax_device *dax_dev);
+ #else
+ static inline struct dax_device *dax_get_by_host(const char *host)
+ {
+ 	return NULL;
+ }
+ static inline struct dax_device *alloc_dax(void *private, const char *host,
+-		const struct dax_operations *ops)
++		const struct dax_operations *ops, unsigned long flags)
+ {
+ 	/*
+ 	 * Callers should check IS_ENABLED(CONFIG_DAX) to know if this
+diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+index feb342d026f2..3238a206e563 100644
+--- a/include/linux/libnvdimm.h
++++ b/include/linux/libnvdimm.h
+@@ -264,6 +264,7 @@ void nvdimm_flush(struct nd_region *nd_region);
+ int nvdimm_has_flush(struct nd_region *nd_region);
+ int nvdimm_has_cache(struct nd_region *nd_region);
+ int nvdimm_in_overwrite(struct nvdimm *nvdimm);
++bool is_nvdimm_sync(struct nd_region *nd_region);
  
- #endif /* _LINUX_VIRTIO_IDS_H */
-diff --git a/include/uapi/linux/virtio_pmem.h b/include/uapi/linux/virtio_pmem.h
-new file mode 100644
-index 000000000000..7a3e2fe52415
---- /dev/null
-+++ b/include/uapi/linux/virtio_pmem.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
-+/*
-+ * Definitions for virtio-pmem devices.
-+ *
-+ * Copyright (C) 2019 Red Hat, Inc.
-+ *
-+ * Author(s): Pankaj Gupta <pagupta@redhat.com>
-+ */
-+
-+#ifndef _UAPI_LINUX_VIRTIO_PMEM_H
-+#define _UAPI_LINUX_VIRTIO_PMEM_H
-+
-+#include <linux/types.h>
-+#include <linux/virtio_types.h>
-+#include <linux/virtio_ids.h>
-+#include <linux/virtio_config.h>
-+
-+struct virtio_pmem_config {
-+	__le64 start;
-+	__le64 size;
-+};
-+
-+#define VIRTIO_PMEM_REQ_TYPE_FLUSH      0
-+
-+struct virtio_pmem_resp {
-+	/* Host return status corresponding to flush request */
-+	__virtio32 ret;
-+};
-+
-+struct virtio_pmem_req {
-+	/* command type */
-+	__virtio32 type;
-+};
-+
-+#endif
+ static inline int nvdimm_ctl(struct nvdimm *nvdimm, unsigned int cmd, void *buf,
+ 		unsigned int buf_len, int *cmd_rc)
 -- 
 2.20.1
 
