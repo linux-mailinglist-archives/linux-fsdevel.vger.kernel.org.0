@@ -2,92 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 806A33BC9A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 21:15:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74D313BCC9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 21:24:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389366AbfFJTOs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jun 2019 15:14:48 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:34602 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389353AbfFJTOq (ORCPT
+        id S2388901AbfFJTYA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jun 2019 15:24:00 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:53833 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388841AbfFJTYA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jun 2019 15:14:46 -0400
-Received: by mail-vs1-f68.google.com with SMTP id q64so6227258vsd.1;
-        Mon, 10 Jun 2019 12:14:45 -0700 (PDT)
+        Mon, 10 Jun 2019 15:24:00 -0400
+Received: by mail-it1-f196.google.com with SMTP id m187so915850ite.3;
+        Mon, 10 Jun 2019 12:23:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=M+OkbCIxuFLegTVpH06BqaBwHcYDWj2efUoxZ29HmLU=;
-        b=W1SjbKamopitAaoclsyBsK7m8S7AzERGRKlTfb+yFZ3adAWG2rzZr2hfUwnov+P87B
-         vw18tsCdYvV8bx6u1lOYDktyzZbiKLEcNhxpFOiq/u53g3rN9bLIAzGy83lfCqbLtR4B
-         IsoDXAhb8whDoMpnKFF9Cp7dWDFsMWwJ6+dj354s5d5Bq118PwSWtaOPd5+JB4agqV8A
-         lRXpFX+waaRVdsPbZJS9Hfvb8/kaYk0hNBGs/IRL/gL09al/thBKjIc7RGjYrKYrX8Sb
-         f6phYca2bykOr7RMkMFIYQHOgnxR4RL9AidVs34lmo20OitiRtakSp113Fksx4pfd3sr
-         +FpA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9d9TchCmXOpazV5fGw/e5BwqVle7tBPHcq2VVRFHpjU=;
+        b=kDv8DeKe18uzB/O3oige0/Tw1MRnkELqC/XXKTW98ZW/X4CEVRWZHqK7G8MWMSeibJ
+         lVn21HnpNcyykNxfiMx5kNuNWUIUQTpmVg04RjLh9J8u5hRJp7JBvpsg5u23fPQ0QV+F
+         ByEpcOixlXjWtQUWqquiRMNWPhQzt/aP/ccxHCzYiJyP6vYq/28LrXk128pUGX1OjXN/
+         5r1Wfg57Pu/q+rgCTsfz39EUhhxK01GIu8L95r4B6RRl3R4gxlHc8DfntkK1HdWNvrx6
+         QFxgqa+n0BwGOzerqzTLnGAXy9m3tUVyORZP9Xw9FCIMiKCfN+00JB/UqCKTJ8dYywQL
+         Uuqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=M+OkbCIxuFLegTVpH06BqaBwHcYDWj2efUoxZ29HmLU=;
-        b=IswXtzt08rMYe6SHcgqsnOx5+r7v/f4jyrOV/kX/2EjTiEZzoGT6KbzJQmXo7u1YQW
-         3YLSgLoyqcld74iE4m1X3UT8ZJtKCofifnzawOjgF9/6lW9634/oqL6NIay7qcfQJQOe
-         fkJwZSc8aCv5nbtQWBUKyOVuME4Nqtq4jsDTsxukKnWpn9lzdr5Xixfjqrataopohbyu
-         gg6xccLQloXF0ymCLFyIz1h6M0H8HSvpfFS7C+mvuHQljCzmigUbo7JswAc+sn/BIInG
-         FKzAVKQ6l8ax4dnUFACiN9R30/xNjQRZySGRNajXJTLhan9yEW8N4AKJBXpFuooWRFTW
-         YLKg==
-X-Gm-Message-State: APjAAAUGRf2c/gwWBcldYX7AIBmPJrKm+gjytQr/oBcEjJztNOUC8vYV
-        yLmk142iriVYP5jYk0Lviv0MdwG4ew==
-X-Google-Smtp-Source: APXvYqxMjxT/TOdBkrDkVRcyvJVVBlm14OQBM2ULXJus1NpZtycPr2ZumLGbzRGxbtqTqldyNuKg9w==
-X-Received: by 2002:a67:f759:: with SMTP id w25mr18307516vso.235.1560194084934;
-        Mon, 10 Jun 2019 12:14:44 -0700 (PDT)
-Received: from kmo-pixel.hsd1.vt.comcast.net (c-71-234-172-214.hsd1.vt.comcast.net. [71.234.172.214])
-        by smtp.gmail.com with ESMTPSA id t20sm4834014vkd.53.2019.06.10.12.14.43
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 12:14:44 -0700 (PDT)
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcache@vger.kernel.org
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 12/12] closures: fix a race on wakeup from closure_sync
-Date:   Mon, 10 Jun 2019 15:14:20 -0400
-Message-Id: <20190610191420.27007-13-kent.overstreet@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190610191420.27007-1-kent.overstreet@gmail.com>
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9d9TchCmXOpazV5fGw/e5BwqVle7tBPHcq2VVRFHpjU=;
+        b=tw58biFs4gAfpEXVC3CWmDG7T9NFruUgjcMJ+ut2UclJbF6wj6H2CFIj9ISomTmg23
+         tIbdrRouXgh8iHbBAypMxAFTTFRlwVikFrVlGgRsI1DGE7DC0h8phFEI4Wkif4ojjgjm
+         HOxCP2BDNcT7ZZ+iEy5MSTO4V/W9cBkzxJaW6fKcWFtK2KgI/hBupq1bTsxJSmBEJWlU
+         8fFwLGejy0H+LmonJKtiU1fdfBJXA3PR2k+Oi96nXR19MxRt3bDXLM4AAw2Z6MWCtqBw
+         MOJFgtyD6PDhJWGuKsh7eBVQFhMA7i+R1m9APdG5nuR7XYoAF9bv+3EYPJ9Jcq31AeDv
+         mJXw==
+X-Gm-Message-State: APjAAAWW4+fRAi0Pfv+G/PTNBL1ogaYIFpaNq8hE+/udUxabBvZjGi7j
+        uvtELIjHSlHiquj2d28hI7zk3+TUuQvQiPawrfw=
+X-Google-Smtp-Source: APXvYqwjdtih55E8Hk2+rPXz2u8fESUhUXHzWKyv6dJ+dhUCVzUIFKDOb3//P6w+quG6CIgGD60Wjmf8e7MXD4mgzQE=
+X-Received: by 2002:a24:b309:: with SMTP id e9mr878614itf.104.1560194639625;
+ Mon, 10 Jun 2019 12:23:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190610174007.4818-1-amir73il@gmail.com>
+In-Reply-To: <20190610174007.4818-1-amir73il@gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 10 Jun 2019 21:24:07 +0200
+Message-ID: <CAOi1vP-ad+62U4hBkSetFq+8kxC2fhmCLzcHZ+=wYBqgTyyy7g@mail.gmail.com>
+Subject: Re: [PATCH] ceph: copy_file_range needs to strip setuid bits and
+ update timestamps
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        xfs <linux-xfs@vger.kernel.org>,
+        Luis Henriques <lhenriques@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Jeff Layton <jlayton@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
----
- lib/closure.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+On Mon, Jun 10, 2019 at 7:40 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> Because ceph doesn't hold destination inode lock throughout the copy,
+> strip setuid bits before and after copy.
+>
+> The destination inode mtime is updated before and after the copy and the
+> source inode atime is updated after the copy, similar to the filesystem
+> ->read_iter() implementation.
+>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>
+> Hi Ilya,
+>
+> Please consider applying this patch to ceph branch after merging
+> Darrick's copy-file-range-fixes branch from:
+>         git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+>
+> The series (including this patch) was tested on ceph by
+> Luis Henriques using new copy_range xfstests.
+>
+> AFAIK, only fallback from ceph to generic_copy_file_range()
+> implementation was tested and not the actual ceph clustered
+> copy_file_range.
 
-diff --git a/lib/closure.c b/lib/closure.c
-index 46cfe4c382..3e6366c262 100644
---- a/lib/closure.c
-+++ b/lib/closure.c
-@@ -104,8 +104,14 @@ struct closure_syncer {
- 
- static void closure_sync_fn(struct closure *cl)
- {
--	cl->s->done = 1;
--	wake_up_process(cl->s->task);
-+	struct closure_syncer *s = cl->s;
-+	struct task_struct *p;
-+
-+	rcu_read_lock();
-+	p = READ_ONCE(s->task);
-+	s->done = 1;
-+	wake_up_process(p);
-+	rcu_read_unlock();
- }
- 
- void __sched __closure_sync(struct closure *cl)
--- 
-2.20.1
+Zheng, Jeff, please take a look.
 
+Thanks,
+
+                Ilya
