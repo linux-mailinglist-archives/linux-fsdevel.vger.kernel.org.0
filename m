@@ -2,114 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DB673BB1B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 19:37:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5EE63BB24
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 19:40:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388185AbfFJRhH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jun 2019 13:37:07 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37653 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387643AbfFJRhH (ORCPT
+        id S2387750AbfFJRkQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jun 2019 13:40:16 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55402 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbfFJRkQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:37:07 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 22so186835wmg.2;
-        Mon, 10 Jun 2019 10:37:06 -0700 (PDT)
+        Mon, 10 Jun 2019 13:40:16 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a15so179348wmj.5;
+        Mon, 10 Jun 2019 10:40:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=dNd7lU6c2A+wgDItBB4dmNeiVZ02cUuGhyiCfR1LShI=;
-        b=ttV/zx7yCdtitpTexlR05UW0tllm5wK+SaHltq60Kn7B8jqrV0vYEuxx+9lAFqG4ls
-         yMInlnWFxukmDOOoM15qXTKi1+IbGZw1dM1UqPb+Zth1huw2tfhogPn9EZDYkpH7ODp0
-         Ot26yaTX4oXe/T84LwbMysNxMSFW/3Tdbd9Sii2CycL+Xf/DP+xJxprBr7gT9seszRZl
-         Ksh+U6y5fk60zRMzhSFnS9luJ29jxEyGQMHIpab5q8zGpcixdKrFYJBwCOjprwNVfTUM
-         XFbaFOAdoC5keqaJC79CraJwRTdxJEZRuLo3JA3kelfx4bTHXu4gYTnAhJRMSpYuwZ6C
-         HxOQ==
+        bh=sRxFa1Jf076GSTOYcljbXAZ97bbjXQCf03nwhBl2QN4=;
+        b=XVzAha6eYDYQHoal5tpO1DzLP2UZcotLcWiAf1wsWBNC3ofsDm7DcZWkRdLvqwBBMs
+         /k+C3jzSPOHX1/VKTUZbzOM3mUQB3FVOVcaScrACbQdS5HrhDhFV5JBA+r05HH2Cp2sA
+         YCJbottNcfvr/9rxUEXutVLNePYPL1TkHgUgGRdA3vrALQkSF/mgmB/MwBOtcMiR9ivy
+         QkCxGyCyT4HXV0fe6/BDztCm82tRN2wx7K8KW4xYfOJz0JlB0R+CViqaImVFWxl3ziix
+         0wo9XhxlD1z3LlIcZI7KXdfvoxiNqhQw2dozVXgXOjW1hObrjpFVh72TKnNAmYKH5dLr
+         HlnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dNd7lU6c2A+wgDItBB4dmNeiVZ02cUuGhyiCfR1LShI=;
-        b=EXW4/FTIhbaY+cQoiKdZ80jC6Ec2GURZFd35Gs48tAbPTcrPVkvm0tV66qYnhn51Mb
-         ww+fmg6VczmCu9Q+MFjgwneYkUkHEDeEGuCAydAv+JCyebgQScCbCjN1JEHhRb7aWi8P
-         JIhI8byVFyWesjSvRnozsmh52qzCspolfGyvxMeTv2fVCFeb+uTXV7Z+uxcI5ijXYi7m
-         1EG5CmiqY62LCDnmg5TWTyTFfaPWmeZelwIT/RZAtyvpsKho6hqmEzwCf2MIXTrX1FGK
-         zj5tv5/MUk5eaFK/IpTOfHww1amVbIFyRjQCr7K9T/G4iiY7pTDJVhTJinEtFzO6mLFf
-         JwVw==
-X-Gm-Message-State: APjAAAVCxAt635j37mvEQ9rlm/lZ6AMEu3EAZGHQcx+Lc9PnpnLd0wET
-        c4OvYCXUxBjk+nseCS0bAE8=
-X-Google-Smtp-Source: APXvYqza+wDRDse2uMNkCwriD4ehxEez28vTez5KxlAwdXvosKd3Y4t7iUHYgRfe3sV2L/asN8nOOA==
-X-Received: by 2002:a05:600c:254b:: with SMTP id e11mr13254526wma.171.1560188225543;
-        Mon, 10 Jun 2019 10:37:05 -0700 (PDT)
+        bh=sRxFa1Jf076GSTOYcljbXAZ97bbjXQCf03nwhBl2QN4=;
+        b=Sc9yhIldBP9TkUuWwYFeneLoChbcF6twTeXCnCh3KxWJ+LWvImVxcmSlGYtSio6n2U
+         eDJ/qlNFOLTayodRtcZClzwFGwmVcWZZn7kTDT98FUiWNG6z9Py/miTSh6TFTBnYZwyE
+         bRMvskywbF42OIOS5PoQ5JfvuN9XFNDeHOpCn5xq1ow15x6KfnImxj0w1okwoWOiaWKv
+         ThNlgQWeH/AexlFVv6shEYTHDcqo5dTJLIx62j+anSYsB1qzacpz8Z7P5ciGXRGDxE/F
+         8padWIlzihCTzxNsLrLV5qMYvt7wV2q3X9+z9OHzpA9c2TJjZe+LkZYkv+CuUw3kt+O2
+         wt8Q==
+X-Gm-Message-State: APjAAAW46pTgkEdzBDWRgfI2ei05W5Tb7Dbt6rmRHUC2Q0VGcA0gqXnz
+        S1Z8Hl6+AT6fiOn6GOFXPlA=
+X-Google-Smtp-Source: APXvYqyoiEWH7B7F352DUKuVisMiLNOigQe3ypbo2xQ7RfdeUcyXu5rDKCpbj7mBY95ySuDUj+P1KQ==
+X-Received: by 2002:a7b:c344:: with SMTP id l4mr14053376wmj.25.1560188413799;
+        Mon, 10 Jun 2019 10:40:13 -0700 (PDT)
 Received: from localhost.localdomain ([5.102.238.208])
-        by smtp.gmail.com with ESMTPSA id b7sm9526927wrx.83.2019.06.10.10.37.04
+        by smtp.gmail.com with ESMTPSA id g17sm11659366wrm.7.2019.06.10.10.40.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 10:37:04 -0700 (PDT)
+        Mon, 10 Jun 2019 10:40:13 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
-To:     Steve French <smfrench@gmail.com>
+To:     Ilya Dryomov <idryomov@gmail.com>
 Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
         Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org
-Subject: [PATCH] cifs: copy_file_range needs to strip setuid bits and update timestamps
-Date:   Mon, 10 Jun 2019 20:36:57 +0300
-Message-Id: <20190610173657.4655-1-amir73il@gmail.com>
+        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
+Subject: [PATCH] ceph: copy_file_range needs to strip setuid bits and update timestamps
+Date:   Mon, 10 Jun 2019 20:40:07 +0300
+Message-Id: <20190610174007.4818-1-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-cifs has both source and destination inodes locked throughout the copy.
-Like ->write_iter(), we update mtime and strip setuid bits of destination
-file before copy and like ->read_iter(), we update atime of source file
-after copy.
+Because ceph doesn't hold destination inode lock throughout the copy,
+strip setuid bits before and after copy.
+
+The destination inode mtime is updated before and after the copy and the
+source inode atime is updated after the copy, similar to the filesystem
+->read_iter() implementation.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
 
-Hi Steve,
+Hi Ilya,
 
-Please apply this patch to you cifs branch after merging Darrick's
-copy-file-range-fixes branch from:
+Please consider applying this patch to ceph branch after merging
+Darrick's copy-file-range-fixes branch from:
         git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+
+The series (including this patch) was tested on ceph by
+Luis Henriques using new copy_range xfstests.
+
+AFAIK, only fallback from ceph to generic_copy_file_range()
+implementation was tested and not the actual ceph clustered
+copy_file_range.
 
 Thanks,
 Amir.
 
- fs/cifs/cifsfs.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ fs/ceph/file.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index f11eea6125c1..83956452c108 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -1096,6 +1096,10 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index c5517ffeb11c..b04c97c7d393 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1949,6 +1949,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
  		goto out;
  	}
  
-+	rc = -EOPNOTSUPP;
-+	if (!target_tcon->ses->server->ops->copychunk_range)
++	/* Should dst_inode lock be held throughout the copy operation? */
++	inode_lock(dst_inode);
++	ret = file_modified(dst_file);
++	inode_unlock(dst_inode);
++	if (ret < 0) {
++		dout("failed to modify dst file before copy (%zd)\n", ret);
 +		goto out;
++	}
 +
  	/*
- 	 * Note: cifs case is easier than btrfs since server responsible for
- 	 * checks for proper open modes and file type and if it wants
-@@ -1107,11 +1111,12 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
- 	/* should we flush first and last page first */
- 	truncate_inode_pages(&target_inode->i_data, 0);
+ 	 * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
+ 	 * clients may have dirty data in their caches.  And OSDs know nothing
+@@ -2099,6 +2108,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ out:
+ 	ceph_free_cap_flush(prealloc_cf);
  
--	if (target_tcon->ses->server->ops->copychunk_range)
-+	rc = file_modified(dst_file);
-+	if (!rc)
- 		rc = target_tcon->ses->server->ops->copychunk_range(xid,
- 			smb_file_src, smb_file_target, off, len, destoff);
--	else
--		rc = -EOPNOTSUPP;
-+
 +	file_accessed(src_file);
++	/* To be on the safe side, try to remove privs also after copy */
++	inode_lock(dst_inode);
++	err = file_modified(dst_file);
++	inode_unlock(dst_inode);
++	if (err < 0)
++		dout("failed to modify dst file after copy (%d)\n", err);
++
+ 	return ret;
+ }
  
- 	/* force revalidate of size and timestamps of target file now
- 	 * that target is updated on the server
 -- 
 2.17.1
 
