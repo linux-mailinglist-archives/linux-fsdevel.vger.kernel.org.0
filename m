@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E79EB3BC94
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 21:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C09A3BC95
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 21:15:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389301AbfFJTOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jun 2019 15:14:41 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:39105 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389188AbfFJTOk (ORCPT
+        id S2389320AbfFJTOm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jun 2019 15:14:42 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:41869 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389290AbfFJTOl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jun 2019 15:14:40 -0400
-Received: by mail-vs1-f67.google.com with SMTP id n2so6216142vso.6;
-        Mon, 10 Jun 2019 12:14:39 -0700 (PDT)
+        Mon, 10 Jun 2019 15:14:41 -0400
+Received: by mail-ua1-f65.google.com with SMTP id n2so3525329uad.8;
+        Mon, 10 Jun 2019 12:14:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tWvHhq8XxQsgdEEkuwdPbUPIjaH98CArgRPaOAub3ak=;
-        b=UGM3lu2qIHghbQDu1EsRRuavlODvaP07lY9tARpBwIqOVzP5rUfP+otXPvOH45AbIn
-         +q2gvV+wGnZYtNE2MViSJVHRWUI6IhueGI0T5o2nLX+gtRu0Rwf3H7Ky6Gdu7OKzQJmp
-         TR9OY7pSkBYQeo3qJix4w/zCPD4tfmlQFHKdEpNokvXY3s8MIgQjcNyBsMxgHuA1Krv2
-         9+GYTMwk3XwFdKHF+LbNFHmTqw93AbXVxU972IouXyhmJ+1/c3vyUjn/PLC4IICaQzsR
-         Brb3VMHqpYnTTyPFXbvg5yjV5/ctGZgH5oIrdlvkvZeCvWyiWF2IQBICWcH2GIbNOUA0
-         +45Q==
+        bh=3U3sA7JK4Wx4xJS71wfGXZ4KSvEZtwk1XyQ4suCC7B8=;
+        b=BoFQLMwXN/UZRVJyQluQO+IOXl42mInR39LPWD30FsUVUbwEcOlNCwBRSs675vWfTp
+         nDqqZC1kbJ5x4khJxDiawgPzJ5IcAGNh1tPH2eugTRlOKxMFBm3LjVwZKYadSI/l/qWa
+         0YP0ZfnQClFEIDjaqch6oLsjPXAWHQx3LovF86tLYwakeGuSfkV6h3h1DRFLr2qfNIWr
+         HQigF/Ymtnn8lCCeTJXeLY/TAhQxJJ3VOPEallbf+zk3hBFBgj9N38eBPUVnb4C1sgkK
+         APKy17dJTO2PC8mMUr8vpM34yPNj8ugLwG9vVxthcoEXlLID1am+Z6isAI3lhI6/lmFh
+         pb1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tWvHhq8XxQsgdEEkuwdPbUPIjaH98CArgRPaOAub3ak=;
-        b=tYM6DCtYFl6iYpg+1je3DzC1W20V5wEzVBcam4PO2cLFZ8uRPfONyeHgM/Rj0s7X5+
-         3bFhSaBTMAwLn9ERfWrMm/li+n6fQnqAWBj60P89Wod4i1vFXaR4CL/fVOqzd8ZPb1ef
-         9GgszwEax5P5pAbgMTX6aYynuWAe4c9o3cFyV8OER5ZWtstKCmVlIBznblySYBuDo83O
-         y1tMDqIqD6fdYa6PSqfW9OabQG6dfwVOtP2Je/tetKAW5qY2z0uIbBAH81tD9vHEXiVu
-         V83WEoGiq4I0avDEMNfO5+rbrc2rkzXMAoM0FHY8EixPpmEt/+pRsKQoKIsytTj6nLJv
-         4x2A==
-X-Gm-Message-State: APjAAAWuNPo9mhMmQSN59zCf7+4s9+9ECPGB9DkTmjxNbYEYjsuH7eti
-        aSkWqWCE5sn1wSqoS+fmIcToO7Ikzg==
-X-Google-Smtp-Source: APXvYqyp9NIqoSDj8Nbh7rQIbCBMQwTNEntUK0tr2oYE/q/t7X0iHO7hy11ayPE3I91sFc8HgJ3JFw==
-X-Received: by 2002:a67:f911:: with SMTP id t17mr3355596vsq.128.1560194079062;
-        Mon, 10 Jun 2019 12:14:39 -0700 (PDT)
+        bh=3U3sA7JK4Wx4xJS71wfGXZ4KSvEZtwk1XyQ4suCC7B8=;
+        b=cyXAi90wfIVRqHjQ/iVqGtjI8uY/cpGGUOGxsYC+EtVeI8qiU9IYoE3x1FLF7D7c4v
+         ZBs+OAMejVeM4y6uLAlLqTEzeGRLdhA+shsC7Xbo7CCM5+sWNs2yMMmGh8E1iFLqzQpq
+         T7CWpUsrt5FKw47K/xLvZXBmqKHsQOmPn0WFzm7WSb+WIB1O60LOPX4Kp40cg7aGpCph
+         gu9jgNk2pIjmdtN2AsRNrn6DvIB4/X+p3ypYgxRGDsw/FzBFjBnTlWTWeffpKSOaQ98z
+         83PoXr7jGX9EbUFPnQYHDePfLMG8VGTh//dWpmNbidtpxNUX7U2xImwdBRPZUatKTZqa
+         R18w==
+X-Gm-Message-State: APjAAAX995cWUtUnIWsmA4/b345sq7AXZwlLzl8MMM6HslJxoYKrvzXM
+        tAZ7N9HBQIEetlfpFVvKf0/KBaj4rA==
+X-Google-Smtp-Source: APXvYqz+UI+IwkgjNqvo1opaGdx3Xa36p3YJ2cGddzfl+1CV+RI8VIKQc3zO5YmWny0ZbpULl+VSpQ==
+X-Received: by 2002:ab0:2c09:: with SMTP id l9mr5860205uar.6.1560194080267;
+        Mon, 10 Jun 2019 12:14:40 -0700 (PDT)
 Received: from kmo-pixel.hsd1.vt.comcast.net (c-71-234-172-214.hsd1.vt.comcast.net. [71.234.172.214])
-        by smtp.gmail.com with ESMTPSA id t20sm4834014vkd.53.2019.06.10.12.14.38
+        by smtp.gmail.com with ESMTPSA id t20sm4834014vkd.53.2019.06.10.12.14.39
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 10 Jun 2019 12:14:38 -0700 (PDT)
+        Mon, 10 Jun 2019 12:14:39 -0700 (PDT)
 From:   Kent Overstreet <kent.overstreet@gmail.com>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-bcache@vger.kernel.org
 Cc:     Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 08/12] block: Add some exports for bcachefs
-Date:   Mon, 10 Jun 2019 15:14:16 -0400
-Message-Id: <20190610191420.27007-9-kent.overstreet@gmail.com>
+Subject: [PATCH 09/12] bcache: optimize continue_at_nobarrier()
+Date:   Mon, 10 Jun 2019 15:14:17 -0400
+Message-Id: <20190610191420.27007-10-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190610191420.27007-1-kent.overstreet@gmail.com>
 References: <20190610191420.27007-1-kent.overstreet@gmail.com>
@@ -64,37 +64,38 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
 ---
- block/bio.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/md/bcache/closure.h | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 716510ecd7..a67aa6e0de 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -958,6 +958,7 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 
- 	return 0;
+diff --git a/drivers/md/bcache/closure.h b/drivers/md/bcache/closure.h
+index c88cdc4ae4..376c5e659c 100644
+--- a/drivers/md/bcache/closure.h
++++ b/drivers/md/bcache/closure.h
+@@ -245,7 +245,7 @@ static inline void closure_queue(struct closure *cl)
+ 		     != offsetof(struct work_struct, func));
+ 	if (wq) {
+ 		INIT_WORK(&cl->work, cl->work.func);
+-		BUG_ON(!queue_work(wq, &cl->work));
++		queue_work(wq, &cl->work);
+ 	} else
+ 		cl->fn(cl);
  }
-+EXPORT_SYMBOL_GPL(bio_iov_iter_get_pages);
+@@ -340,8 +340,13 @@ do {									\
+  */
+ #define continue_at_nobarrier(_cl, _fn, _wq)				\
+ do {									\
+-	set_closure_fn(_cl, _fn, _wq);					\
+-	closure_queue(_cl);						\
++	closure_set_ip(_cl);						\
++	if (_wq) {							\
++		INIT_WORK(&(_cl)->work, (void *) _fn);			\
++		queue_work((_wq), &(_cl)->work);			\
++	} else {							\
++		(_fn)(_cl);						\
++	}								\
+ } while (0)
  
- static void submit_bio_wait_endio(struct bio *bio)
- {
-@@ -1658,6 +1659,7 @@ void bio_set_pages_dirty(struct bio *bio)
- 			set_page_dirty_lock(bvec->bv_page);
- 	}
- }
-+EXPORT_SYMBOL_GPL(bio_set_pages_dirty);
- 
- static void bio_release_pages(struct bio *bio)
- {
-@@ -1731,6 +1733,7 @@ void bio_check_pages_dirty(struct bio *bio)
- 	spin_unlock_irqrestore(&bio_dirty_lock, flags);
- 	schedule_work(&bio_dirty_work);
- }
-+EXPORT_SYMBOL_GPL(bio_check_pages_dirty);
- 
- void update_io_ticks(struct hd_struct *part, unsigned long now)
- {
+ /**
 -- 
 2.20.1
 
