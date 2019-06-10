@@ -2,103 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F7363ACA2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 03:12:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28F9F3ACB9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jun 2019 03:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbfFJBMD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Jun 2019 21:12:03 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:43221 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725933AbfFJBMD (ORCPT
+        id S2387397AbfFJBni (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Jun 2019 21:43:38 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:49573 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730055AbfFJBni (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Jun 2019 21:12:03 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id D905444A;
-        Sun,  9 Jun 2019 21:12:01 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sun, 09 Jun 2019 21:12:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=fe120Davi0T3Sjl5YLfPWyocg7C
-        ao7t/LQjsjCRH0lU=; b=d6t8jFSZevacgPIZUzoP50IQXqsA55IR0OudGjTn3lm
-        hDUlRxV/3cdMiN4nLp5Z967BrAUt5Ud3jcA7VKV4lx1eBuAHiChgHM4+To+OoSON
-        r5b0ANqXHUGHxokQskqp9lFjIzn4wcEXdg5P/JSkAr3CqaoR6I94RTg2y7/oEr/i
-        Ai0G7tfZEsSIJId3QuZYdosvqpeK7VK1uYj2wbGW/xMGA4JAuoaVYAuUuK0rQruD
-        UxwU1d2NmigbgLJk2r5FHiZFck/h/yIhcrw2DWhIzO2/NE+P69n8A+Cq/fyg9+WZ
-        LTnwwr3c1EJ8VnbJH9wwcXQBqqgXHbrSJzM9j17CzPQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=fe120D
-        avi0T3Sjl5YLfPWyocg7Cao7t/LQjsjCRH0lU=; b=H1IZduQRvo0WIm/CU1Mz/i
-        7BudZwbDvx5M7oJe7sPwy9IY4kvjH/4aJPXE2+tGoZBkqN2pTN8TuozXtrcmgZDC
-        Nv/pvNwJP7fnu0mwjkL7+B3o0Tm3Wa9apgkUybGxqMURUppPrGBTM5PPTeJmWmDT
-        mCbMbMviuT0MOTrSQe49JPSG/u8mnmgNvD5niaFTOaT2bxYZg8GaaO0dXpJv4jDK
-        VoBdoBpTr/cCzzsuvH78W6sOh3jGYm90UfeVfLUvgTDMwp7QYNchdjTL11PbcFe3
-        i+0zOR2kxHfDVs/620EyZrWlu98muHaWDD+0MZmuO+b0TBwsnQyVe9Bi6cCJARHw
-        ==
-X-ME-Sender: <xms:YK79XNTKxStsUgsqyZBtk-QZzbz5HitfbyVxpCW6Qf5aRlKFiVwBPQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudehuddggedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    gfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvuffkfhggtggujgfofgesthdtredt
-    ofervdenucfhrhhomhepfdfvohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtoh
-    gsihhnrdgttgeqnecukfhppedvuddtrddvfedrfedrleenucfrrghrrghmpehmrghilhhf
-    rhhomhepmhgvsehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:YK79XAmZQVccUpEAxclDJ-hf66vneQBtvQIiY88vdg7TheWrGXY-Sg>
-    <xmx:YK79XPbGGQWeuyPHG9hZccOyz3dudVlQJSpP9OSa6eodnt-3VZaVgw>
-    <xmx:YK79XCY1yyvMDSgBSOuqEzdQTfpTQB-qZzeD26N38MOJ-c6SbT2osg>
-    <xmx:Ya79XI18SokR_XETjHXhVy01npYJIOJ8i5qlPvo1WqHwx4wmPMHbUw>
-Received: from localhost (unknown [210.23.3.9])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 52E768005C;
-        Sun,  9 Jun 2019 21:11:59 -0400 (EDT)
-Date:   Mon, 10 Jun 2019 11:11:55 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Neil Brown <neilb@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: filesystems: vfs: Render method descriptions
-Message-ID: <20190610011155.GB2469@caerus>
-References: <20190604002656.30925-1-tobin@kernel.org>
- <20190606094628.0e8775f7@lwn.net>
+        Sun, 9 Jun 2019 21:43:38 -0400
+Received: from callcc.thunk.org ([66.31.38.53])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x5A1hTAK032337
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 9 Jun 2019 21:43:30 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id A857F420481; Sun,  9 Jun 2019 21:43:29 -0400 (EDT)
+Date:   Sun, 9 Jun 2019 21:43:29 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 1/8] mm/fs: don't allow writes to immutable files
+Message-ID: <20190610014329.GA3266@mit.edu>
+References: <155552786671.20411.6442426840435740050.stgit@magnolia>
+ <155552787330.20411.11893581890744963309.stgit@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190606094628.0e8775f7@lwn.net>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <155552787330.20411.11893581890744963309.stgit@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 09:46:28AM -0600, Jonathan Corbet wrote:
-> On Tue,  4 Jun 2019 10:26:56 +1000
-> "Tobin C. Harding" <tobin@kernel.org> wrote:
+On Wed, Apr 17, 2019 at 12:04:33PM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> > Currently vfs.rst does not render well into HTML the method descriptions
-> > for VFS data structures.  We can improve the HTML output by putting the
-> > description string on a new line following the method name.
-> > 
-> > Suggested-by: Jonathan Corbet <corbet@lwn.net>
-> > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-> > ---
-> > 
-> > Jon,
-> > 
-> > As discussed on LKML; this patch applies on top of the series
-> > 
-> > 	[PATCH v4 0/9] docs: Convert VFS doc to RST
-> > 
-> > If it does not apply cleanly to your branch please feel free to ask me
-> > to fix it.
+> The chattr manpage has this to say about immutable files:
 > 
-> There was one merge conflict, but nothing too serious.  I've applied it,
-> and things look a lot better - thanks!
+> "A file with the 'i' attribute cannot be modified: it cannot be deleted
+> or renamed, no link can be created to this file, most of the file's
+> metadata can not be modified, and the file can not be opened in write
+> mode."
+> 
+> Once the flag is set, it is enforced for quite a few file operations,
+> such as fallocate, fpunch, fzero, rm, touch, open, etc.  However, we
+> don't check for immutability when doing a write(), a PROT_WRITE mmap(),
+> a truncate(), or a write to a previously established mmap.
+> 
+> If a program has an open write fd to a file that the administrator
+> subsequently marks immutable, the program still can change the file
+> contents.  Weird!
+> 
+> The ability to write to an immutable file does not follow the manpage
+> promise that immutable files cannot be modified.  Worse yet it's
+> inconsistent with the behavior of other syscalls which don't allow
+> modifications of immutable files.
+> 
+> Therefore, add the necessary checks to make the write, mmap, and
+> truncate behavior consistent with what the manpage says and consistent
+> with other syscalls on filesystems which support IMMUTABLE.
+> 
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-Awesome, cheers mate.
+Thanks, looks good.  I'm going to take this patch through the ext4
+tree since it doesn't have any dependencies on the rest of the patch
+series.
 
-	Tobin
+	    	     	       	     - Ted
