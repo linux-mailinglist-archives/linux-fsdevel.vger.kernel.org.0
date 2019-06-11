@@ -2,152 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03FC03C244
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 06:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5129A3C25D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 06:39:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388260AbfFKEeh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 00:34:37 -0400
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:58055 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726267AbfFKEeh (ORCPT
+        id S2390955AbfFKEjU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 00:39:20 -0400
+Received: from mail-lf1-f48.google.com ([209.85.167.48]:33283 "EHLO
+        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388260AbfFKEjU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 00:34:37 -0400
-X-Greylist: delayed 1366 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Jun 2019 00:34:35 EDT
-Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id BD8C03DE29E;
-        Tue, 11 Jun 2019 14:34:33 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1haYTY-0004UU-2P; Tue, 11 Jun 2019 14:33:36 +1000
-Date:   Tue, 11 Jun 2019 14:33:36 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Tue, 11 Jun 2019 00:39:20 -0400
+Received: by mail-lf1-f48.google.com with SMTP id y17so8223573lfe.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jun 2019 21:39:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9SMEwJWMeHtEyw0+L1caTDzGbNv810UPp3Lqsx3PUF8=;
+        b=QoOOR0HYKqsx3JsW6Ew+a3guMYkQ2W/iAmuqxvOFKc2gBdgPpiDUc6GDNZv08ve+UL
+         EI1jVlrxftmcd8GkeJ0oFp4Q1bcxwTC2j3DRi7CGlH9xQA0pIgDG9f/n8XTk+FnhBPSf
+         5EUYmUYvqmN9yKTc9mv8oUSfj0cMJfJ9bKh/Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9SMEwJWMeHtEyw0+L1caTDzGbNv810UPp3Lqsx3PUF8=;
+        b=t0B7/ykbXLQ2PFPLSWjREWijqvatDbFMA+h+QRx+lFukYZuzHuRcEvZ9saf7ZmivSk
+         C7XV0NeUdDQwv3hTEvO94D+Z2RIhC5oyju0IDTaQN+Ka3XaT8Wl0ExkQtxUE69A25JcL
+         IpgRNUna58tIZK7/6blLUmep8+zGyMKo1RZtR3UMWWIxtieJ4nTuz+4/EaAwvMQ8dMr2
+         60d1n0Gpc3QKNUcefvHyIwaLkoOKwXGNktOceVguWRTNEa1aOGIxr8zfuaexoN174KeA
+         eHewYGmkveTQ6iu9uK7WVAwFOLiOUEAbkk6mM/dB+wV/Oz7UzuHrri/7UToG9FB+cp5D
+         pusQ==
+X-Gm-Message-State: APjAAAUpFZmKXMVqDvflFSNcnkA98ugaKnV04nBeKlcQ50H5Uj+tPQCZ
+        2tmLINLUn2sIZDJmBgDyokUJ49YmCRA=
+X-Google-Smtp-Source: APXvYqzDR2zalV3y2GHqTe/aQ9yno9hCx3LOR52ecNPIwljPzlgBP1kFJFMxr5BlEH8gf8rhw142Og==
+X-Received: by 2002:ac2:4358:: with SMTP id o24mr35662031lfl.13.1560227958244;
+        Mon, 10 Jun 2019 21:39:18 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id d4sm2322187lfi.91.2019.06.10.21.39.16
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Jun 2019 21:39:17 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id i21so10140266ljj.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jun 2019 21:39:16 -0700 (PDT)
+X-Received: by 2002:a2e:2c07:: with SMTP id s7mr4973161ljs.44.1560227956599;
+ Mon, 10 Jun 2019 21:39:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com> <20190611041045.GA14363@dread.disaster.area>
+In-Reply-To: <20190611041045.GA14363@dread.disaster.area>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 10 Jun 2019 18:39:00 -1000
+X-Gmail-Original-Message-ID: <CAHk-=whDmeozRHUO0qM+2OeGw+=dkcjwGdsvms-x5Dz4y7Tzcw@mail.gmail.com>
+Message-ID: <CAHk-=whDmeozRHUO0qM+2OeGw+=dkcjwGdsvms-x5Dz4y7Tzcw@mail.gmail.com>
+Subject: Re: bcachefs status update (it's done cooking; let's get this sucker merged)
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-bcache@vger.kernel.org,
+        linux-bcache@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Zach Brown <zach.brown@ni.com>, Jens Axboe <axboe@kernel.dk>,
+        Zach Brown <zach.brown@ni.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Josef Bacik <josef@toxicpanda.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tejun Heo <tj@kernel.org>
-Subject: Re: bcachefs status update (it's done cooking; let's get this sucker
- merged)
-Message-ID: <20190611043336.GB14363@dread.disaster.area>
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
- <20190611011737.GA28701@kmo-pixel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611011737.GA28701@kmo-pixel>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
-        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
-        a=pGLkceISAAAA:8 a=7-415B0cAAAA:8 a=68WdggZJTFTYu4wTi6oA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 09:17:37PM -0400, Kent Overstreet wrote:
-> On Mon, Jun 10, 2019 at 10:46:35AM -1000, Linus Torvalds wrote:
-> > On Mon, Jun 10, 2019 at 9:14 AM Kent Overstreet
-> > <kent.overstreet@gmail.com> wrote:
-> > That lock is somewhat questionable in the first place, and no, we
-> > don't do those hacky recursive things anyway. A recursive lock is
-> > almost always a buggy and mis-designed one.
-> 
-> You're preaching to the choir there, I still feel dirty about that code and I'd
-> love nothing more than for someone else to come along and point out how stupid
-> I've been with a much better way of doing it. 
-> 
-> > Why does the regular page lock (at a finer granularity) not suffice?
-> 
-> Because the lock needs to prevent pages from being _added_ to the page cache -
-> to do it with a page granularity lock it'd have to be part of the radix tree, 
-> 
-> > And no, nobody has ever cared. The dio people just don't care about
-> > page cache anyway. They have their own thing going.
-> 
-> It's not just dio, it's even worse with the various fallocate operations. And
-> the xfs people care, but IIRC even they don't have locking for pages being
-> faulted in. This is an issue I've talked to other filesystem people quite a bit
-> about - especially Dave Chinner, maybe we can get him to weigh in here.
-> 
-> And this inconsistency does result in _real_ bugs. It goes something like this:
->  - dio write shoots down the range of the page cache for the file it's writing
->    to, using invalidate_inode_pages_range2
->  - After the page cache shoot down, but before the write actually happens,
->    another process pulls those pages back in to the page cache
->  - Now the write happens: if that write was e.g. an allocating write, you're
->    going to have page cache state (buffer heads) that say that page doesn't have
->    anything on disk backing it, but it actually does because of the dio write.
-> 
-> xfs has additional locking (that the vfs does _not_ do) around both the buffered
-> and dio IO paths to prevent this happening because of a buffered read pulling
-> the pages back in, but no one has a solution for pages getting _faulted_ back in
-> - either because of mmap or gup().
-> 
-> And there are some filesystem people who do know about this race, because at
-> some point the dio code has been changed to shoot down the page cache _again_
-> after the write completes. But that doesn't eliminate the race, it just makes it
-> harder to trigger.
-> 
-> And dio writes actually aren't the worst of it, it's even worse with fallocate
-> FALLOC_FL_INSERT_RANGE/COLLAPSE_RANGE. Last time I looked at the ext4 fallocate
-> code, it looked _completely_ broken to me - the code seemed to think it was
-> using the same mechanism truncate uses for shooting down the page cache and
-> keeping pages from being readded - but that only works for truncate because it's
-> changing i_size and shooting down pages above i_size. Fallocate needs to shoot
-> down pages that are still within i_size, so... yeah...
+On Mon, Jun 10, 2019 at 6:11 PM Dave Chinner <david@fromorbit.com> wrote:
+>
+> Please, no, let's not make the rwsems even more fragile than they
+> already are. I'm tired of the ongoing XFS customer escalations that
+> end up being root caused to yet another rwsem memory barrier bug.
+>
+> > Have you talked to Waiman Long about that?
+>
+> Unfortunately, Waiman has been unable to find/debug multiple rwsem
+> exclusion violations we've seen in XFS bug reports over the past 2-3
+> years.
 
-Yes, that ext4 code is broken, and Jan Kara is trying to work out
-how to fix it. His recent patchset fell foul of taking the same lock
-either side of the mmap_sem in this path:
+Inside xfs you can do whatever you want.
 
-> The recursiveness is needed because otherwise, if you mmap a file, then do a dio
-> write where you pass the address you mmapped to pwrite(), gup() from the dio
-> write path will be trying to fault in the exact pages it's blocking from being
-> added.
-> 
-> A better solution would be for gup() to detect that and return an error, so we
-> can just fall back to buffered writes. Or just return an error to userspace
-> because fuck anyone who would actually do that.
+But in generic code, no, we're not saying "we don't trust the generic
+locking, so we cook our own random locking".
 
-I just recently said this with reference to the range lock stuff I'm
-working on in the background:
+If tghere really are exclusion issues, they should be fairly easy to
+try to find with a generic test-suite. Have a bunch of readers that
+assert that some shared variable has a particular value, and a bund of
+writers that then modify the value and set it back. Add some random
+timing and "yield" to them all, and show that the serialization is
+wrong.
 
-	FWIW, it's to avoid problems with stupid userspace stuff
-	that nobody really should be doing that I want range locks
-	for the XFS inode locks.  If userspace overlaps the ranges
-	and deadlocks in that case, they they get to keep all the
-	broken bits because, IMO, they are doing something
-	monumentally stupid. I'd probably be making it return
-	EDEADLOCK back out to userspace in the case rather than
-	deadlocking but, fundamentally, I think it's broken
-	behaviour that we should be rejecting with an error rather
-	than adding complexity trying to handle it.
+Some kind of "XFS load Y shows problems" is undebuggable, and not
+necessarily due to locking.
 
-So I think this recusive locking across a page fault case should
-just fail, not add yet more complexity to try to handle a rare
-corner case that exists more in theory than in reality. i.e put the
-lock context in the current task, then if the page fault requires a
-conflicting lock context to be taken, we terminate the page fault,
-back out of the IO and return EDEADLOCK out to userspace. This works
-for all types of lock contexts - only the filesystem itself needs to
-know what the lock context pointer contains....
+Because if the locking issues are real (and we did fix one bug
+recently in a9e9bcb45b15: "locking/rwsem: Prevent decrement of reader
+count before increment") it needs to be fixed. Some kind of "let's do
+something else entirely" is simply not acceptable.
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+                  Linus
