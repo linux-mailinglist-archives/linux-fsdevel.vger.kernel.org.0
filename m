@@ -2,292 +2,374 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 975153CEC5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 16:33:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73A0C3CFDC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 16:56:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389183AbfFKOcp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 10:32:45 -0400
-Received: from upbd19pa09.eemsg.mail.mil ([214.24.27.84]:55673 "EHLO
-        UPBD19PA09.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387551AbfFKOcp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:32:45 -0400
-X-EEMSG-check-017: 202016600|UPBD19PA09_EEMSG_MP9.csd.disa.mil
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by UPBD19PA09.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 11 Jun 2019 14:32:34 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1560263555; x=1591799555;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=eFTXXk3T4XgQDmNF1yXHpOrZQWkja9D5zGYogAuEtx0=;
-  b=Oi6ccJo9Rkd2wqPHbWC2qBQCbbtC2ot//QXTAZXb1bPpBRwWN11ZMlru
-   Q7Cq5hNn7ie9IAukGDMoyNYhB9O5i434CMicqBoZfmzzaOXilguPORtsY
-   jC04qafCTnkvXgmjS/AXrmCZ2swugNINESYy7jrbXCEloZXIQN3sVRf1E
-   MzZ5u5tlfuhrtoaqxUhJdy0B5TtcEy2g3d1C8mNj4FENsEMEwoQ1qhF7/
-   jET+2DJghFXv8vE6rSIariFVSwhQQrfnm2W6admaFIayX3Ofwoi2JDrYz
-   uRIB21Lth7yHxOWFp9pyOXsG2ouOu8OyGd2lJlrscgkX1DfWikPVuWKe5
-   g==;
-X-IronPort-AV: E=Sophos;i="5.63,579,1557187200"; 
-   d="scan'208";a="28815970"
-IronPort-PHdr: =?us-ascii?q?9a23=3AMV5BwhMuYaH4IEzx4jMl6mtUPXoX/o7sNwtQ0K?=
- =?us-ascii?q?IMzox0K/v4r8bcNUDSrc9gkEXOFd2Cra4d0qyP7v2rBD1IyK3CmUhKSIZLWR?=
- =?us-ascii?q?4BhJdetC0bK+nBN3fGKuX3ZTcxBsVIWQwt1Xi6NU9IBJS2PAWK8TW94jEIBx?=
- =?us-ascii?q?rwKxd+KPjrFY7OlcS30P2594HObwlSizexfK5+IA+roQjRtsQajotvJ6IswR?=
- =?us-ascii?q?bVv3VEfPhby3l1LlyJhRb84cmw/J9n8ytOvv8q6tBNX6bncakmVLJUFDspPX?=
- =?us-ascii?q?w7683trhnDUBCA5mAAXWUMkxpHGBbK4RfnVZrsqCT6t+592C6HPc3qSL0/RD?=
- =?us-ascii?q?qv47t3RBLulSwKLCAy/n3JhcNsjaJbuBOhqAJ5w47Ie4GeKf5ycrrAcd8GWW?=
- =?us-ascii?q?ZNW8BcWCJbAoO4coABEewPM+hFpIX5vlcDox+zCQyqCejyyDFHm2X20LUn3e?=
- =?us-ascii?q?o/HwHI3A8uEdwAv3vbrtr6KKgcXPupzKTL1zjPc+9a1Dn/5YXObxsvoeuMXb?=
- =?us-ascii?q?V1ccfJ1EcvCx3Kjk2QqYP7OTOey/kDs22B4OpkUeKglW4moBx2rzi028gskZ?=
- =?us-ascii?q?LEhp4Vy1/Y9SV5x5w5JdujSEFhe9KkH5xQtz+DOoZwX8gsQHlotT4nxrAJtp?=
- =?us-ascii?q?O3ZigHxIk9yxLBZPGLbZKE7g/lWe2MOzl3nmhld6i6hxuq9EigzfDzWdes3V?=
- =?us-ascii?q?ZRqypFjsHMtncQ1xzP8sSHSuVy/kOm2TuXywDc8PtEIUEplarAMZIh3r4xmY?=
- =?us-ascii?q?YTsUTEBCP2nln5jLSKeUk+/+io6uDnbq3npp+aKYB0lhnzPrkhl8GwG+g1Mh?=
- =?us-ascii?q?UCU3KF9emzyrHv51D1TK1PjvIsk6nZtJ7aJd4cpq68GwJVyZss6w2kAje60N?=
- =?us-ascii?q?UXgXkHLFVfdBKBlIjmIUvCIP//Dfehm1isiitkx+jaPr39BZXANnzDkKr9fb?=
- =?us-ascii?q?Z68ENT0g8zwspD6J1OErEBIe7zVVX1tNDCCB82LRC0yf79CNphzoMeRX6PAq?=
- =?us-ascii?q?iBPazOq1CI/fwgIumXaY8OpDn9K+Iq5+PgjX89h1AdZ7Cl0ocNZ3yiAvtmJE?=
- =?us-ascii?q?CZa2L2gtgdCWcKohY+TOvyhV2GTD5Te3GyUrk/5j4lEoKmC5nMRoS3jLyGxi?=
- =?us-ascii?q?e7EYVcZnpaBVCUDXfoa4KEVu8RZyKSJc9gnCILVbylS486zhyurhH1xKdnLu?=
- =?us-ascii?q?XO5i0Ur47s1N9w5+fLjxE96SR0D9iB02GKV2x0gGIIRyUx3K1koE1y1FGD0a?=
- =?us-ascii?q?lmg/BCEdxT5vVJUho1NJLGyOx6Ed/yVhjcfteKUFymWMmpASktTtItxN8De0?=
- =?us-ascii?q?J9G9SkjhDe0CumGqIVl6eQC5Ev7KLc0Gb+J9xnx3bFyqYhlV8mTdVLNWG8ga?=
- =?us-ascii?q?5/7QfTDZbTk0qFj6aqabgc3CnV+WeHzGqOulxYUQFpXaXeQ38QelbWrc745k?=
- =?us-ascii?q?PeT76iELEnMgxcxs6fLqtFdMbkjUtJRPj9ItTSeWGxlHmqBRaO2LyMaJDme2?=
- =?us-ascii?q?IH3CXSEEIEiRwc/W6aNQgiASesu23eDCZwGlLgYEPs8fJzqHe6Tk8y0gGLYE?=
- =?us-ascii?q?Nh172o+h4TmPOTUe8T3rMDuCcnsTl0G0y9393OAdqauwVhZLlcYc864Fpfz2?=
- =?us-ascii?q?LWrRJ9MYKmL615ml4ecxp4v0b02BR5EIlAl9YlrG8yxgpoNa2YyE9Bdy+f3Z?=
- =?us-ascii?q?3oPr3XK2/y/A2gaqLP1FHey8uZ9bkR6Psmr1Xupx+pFkU8/HV9ydVV0GWT5o?=
- =?us-ascii?q?/MDAUMVZL9SEE39wJ1p7vCeCky+5vU1WFwMamzqjLC39MpBO04yhevZttQKr?=
- =?us-ascii?q?uEFA7pHs0ECMihNvYql0Kqbh0aJuBS8rA7P8e8e/uBwq6rM/5qnCi6gmRf/I?=
- =?us-ascii?q?B9zkWM+jJ4Su7J2ZYF3v6Z0hKcWDf4i1eursP3lJtaZTEdAGW/0zLoBI1Paa?=
- =?us-ascii?q?1oe4YEF2OuL9ewxtVkiJ7nQ2RY+0K7B1MaxM+pfgKfb1/j0gxQz0QXoHqnmS?=
- =?us-ascii?q?SjzzFvjTEpobSQ3DbUz+ThahUHIGhLS3dmjVv2Joi0ld8aVlCybwc1jBul+V?=
- =?us-ascii?q?r6x69DqaR7LmnTR1pIfifvI2FhTKSwrLyCbNBL6J4zryVXX/qzYUqARr7+vR?=
- =?us-ascii?q?QaySXjEHVaxDwhcDGqoJr5lQRgiG2BNHZzsGbZecZoyBfH/tPcWPpR0yEeRC?=
- =?us-ascii?q?ZilDnXAkGwP9yu/dWTjZfMrPqyWH6mVp1WImHXytapsieqrUl3HRq6nuqomd?=
- =?us-ascii?q?yvRQwnzSjT3txjXizQrQr1Zs/t2rjsdapMd1JlFRfH4MpzB496n5F40JoZwn?=
- =?us-ascii?q?ULro6e/XMan2P+K5BQ0OT1a39bFhARxNuA2xTowE1uKDqywov9UniMip96a8?=
- =?us-ascii?q?KSfnId2iV76dtDTqiT8uoXzmNOvlOkoFeJMrBGlTAHxK5rsSVLjg=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2CmAwB0uv9c/wHyM5BmHAEBAQQBAQcEAQGBZYFiBSqBO?=
- =?us-ascii?q?wEyKIQVknNMAQEBAQEBBoEQJYlRjySBZwkBAQEBAQEBAQE0AQIBAYRAAoJ+I?=
- =?us-ascii?q?zgTAQMBAQEEAQEBAQMBAWwogjopAYJnAQIDIw8BBT8CEAsOCgICJgICVwYBD?=
- =?us-ascii?q?AYCAQGCUww/gXcUqQqBMYVHgy2BRoEMKItdF3iBB4E4DIIqBy4+hAiDRoJYB?=
- =?us-ascii?q?I15mk1qCYISghuRJAYbgiWCH4RehAeGAoN1jRaYTCGBWCsIAhgIIQ+DJ5BuI?=
- =?us-ascii?q?wMwgQYBAY8IAQE?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 11 Jun 2019 14:32:32 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x5BEWUaX007043;
-        Tue, 11 Jun 2019 10:32:30 -0400
-Subject: Re: [RFC][PATCH 00/13] Mount, FS, Block and Keyrings notifications
- [ver #4]
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        David Howells <dhowells@redhat.com>,
+        id S2391550AbfFKOzH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 10:55:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52372 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388097AbfFKOzH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Jun 2019 10:55:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 53FF0ABD2;
+        Tue, 11 Jun 2019 14:55:05 +0000 (UTC)
+From:   Roman Penyaev <rpenyaev@suse.de>
+Cc:     Roman Penyaev <rpenyaev@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        USB list <linux-usb@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        raven@themaw.net, Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>
-References: <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
- <be966d9c-e38d-7a30-8d80-fad5f25ab230@tycho.nsa.gov>
- <0cf7a49d-85f6-fba9-62ec-a378e0b76adf@schaufler-ca.com>
- <CALCETrX5O18q2=dUeC=hEtK2=t5KQpGBy9XveHxFw36OqkbNOg@mail.gmail.com>
- <dac74580-5b48-86e4-8222-cac29a9f541d@schaufler-ca.com>
- <E0925E1F-E5F2-4457-8704-47B6E64FE3F3@amacapital.net>
- <4b7d02b2-2434-8a7c-66cc-7dbebc37efbc@schaufler-ca.com>
- <CALCETrU+PKVbrKQJoXj9x_5y+vTZENMczHqyM_Xb85ca5YDZuA@mail.gmail.com>
- <25d88489-9850-f092-205e-0a4fc292f41b@schaufler-ca.com>
- <97BA9EB5-4E62-4E3A-BD97-CEC34F16FCFF@amacapital.net>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <cf3f4865-b6d7-7303-0212-960439e0c119@tycho.nsa.gov>
-Date:   Tue, 11 Jun 2019 10:32:30 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Azat Khuzhin <azat@libevent.org>, Eric Wong <e@80x24.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/14] epoll: support pollable epoll from userspace
+Date:   Tue, 11 Jun 2019 16:54:44 +0200
+Message-Id: <20190611145458.9540-1-rpenyaev@suse.de>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <97BA9EB5-4E62-4E3A-BD97-CEC34F16FCFF@amacapital.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/10/19 8:13 PM, Andy Lutomirski wrote:
-> 
-> 
->> On Jun 10, 2019, at 2:25 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>
->>> On 6/10/2019 12:53 PM, Andy Lutomirski wrote:
->>> On Mon, Jun 10, 2019 at 12:34 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>>>>> I think you really need to give an example of a coherent policy that
->>>>>>> needs this.
->>>>>> I keep telling you, and you keep ignoring what I say.
->>>>>>
->>>>>>> As it stands, your analogy seems confusing.
->>>>>> It's pretty simple. I have given both the abstract
->>>>>> and examples.
->>>>> You gave the /dev/null example, which is inapplicable to this patchset.
->>>> That addressed an explicit objection, and pointed out
->>>> an exception to a generality you had asserted, which was
->>>> not true. It's also a red herring regarding the current
->>>> discussion.
->>> This argument is pointless.
->>>
->>> Please humor me and just give me an example.  If you think you have
->>> already done so, feel free to repeat yourself.  If you have no
->>> example, then please just say so.
->>
->> To repeat the /dev/null example:
->>
->> Process A and process B both open /dev/null.
->> A and B can write and read to their hearts content
->> to/from /dev/null without ever once communicating.
->> The mutual accessibility of /dev/null in no way implies that
->> A and B can communicate. If A can set a watch on /dev/null,
->> and B triggers an event, there still has to be an access
->> check on the delivery of the event because delivering an event
->> to A is not an action on /dev/null, but on A.
->>
-> 
-> At discussed, this is an irrelevant straw man. This patch series does not produce events when this happens. I’m looking for a relevant example, please.
->>
->>
->>>   An unprivileged
->>> user can create a new userns and a new mount ns, but then they're
->>> modifying a whole different mount tree.
->>
->> Within those namespaces you can still have multiple users,
->> constrained be system access control policy.
-> 
-> And the one doing the mounting will be constrained by MAC and DAC policy, as always.  The namespace creator is, from the perspective of those processes, admin.
-> 
->>
->>>
->>>>>>> Similarly, if someone
->>>>>>> tries to receive a packet on a socket, we check whether they have the
->>>>>>> right to receive on that socket (from the endpoint in question) and,
->>>>>>> if the sender is local, whether the sender can send to that socket.
->>>>>>> We do not check whether the sender can send to the receiver.
->>>>>> Bzzzt! Smack sure does.
->>>>> This seems dubious. I’m still trying to get you to explain to a non-Smack person why this makes sense.
->>>> Process A sends a packet to process B.
->>>> If A has access to TopSecret data and B is not
->>>> allowed to see TopSecret data, the delivery should
->>>> be prevented. Is that nonsensical?
->>> It makes sense.  As I see it, the way that a sensible policy should do
->>> this is by making sure that there are no sockets, pipes, etc that
->>> Process A can write and that Process B can read.
->>
->> You can't explain UDP controls without doing the access check
->> on packet delivery. The sendmsg() succeeds when the packet leaves
->> the sender. There doesn't even have to be a socket bound to the
->> port. The only opportunity you have for control is on packet
->> delivery, which is the only point at which you can have the
->> information required.
-> 
-> Huh?  You sendmsg() from an address to an address.  My point is that, for most purposes, that’s all the information that’s needed.
-> 
->>
->>> If you really want to prevent a malicious process with TopSecret data
->>> from sending it to a different process, then you can't use Linux on
->>> x86 or ARM.  Maybe that will be fixed some day, but you're going to
->>> need to use an extremely tight sandbox to make this work.
->>
->> I won't be commenting on that.
-> 
-> Then why is preventing this is an absolute requirement? It’s unattainable.
-> 
->>
->>>
->>>>>>> The signal example is inapplicable.
->>>>>>  From a modeling viewpoint the actions are identical.
->>>>> This seems incorrect to me
->>>> What would be correct then? Some convoluted combination
->>>> of system entities that aren't owned or controlled by
->>>> any mechanism?
->>>>
->>> POSIX signal restrictions aren't there to prevent two processes from
->>> communicating.  They're there to prevent the sender from manipulating
->>> or crashing the receiver without appropriate privilege.
->>
->> POSIX signal restrictions have a long history. In the P10031e/2c
->> debates both communication and manipulation where seriously
->> considered. I would say both are true.
->>
->>>>> and, I think, to most everyone else reading this.
->>>> That's quite the assertion. You may even be correct.
->>>>
->>>>> Can you explain?
->>>>>
->>>>> In SELinux-ese, when you write to a file, the subject is the writer and the object is the file.  When you send a signal to a process, the object is the target process.
->>>> YES!!!!!!!!!!!!
->>>>
->>>> And when a process triggers a notification it is the subject
->>>> and the watching process is the object!
->>>>
->>>> Subject == active entity
->>>> Object  == passive entity
->>>>
->>>> Triggering an event is, like calling kill(), an action!
->>>>
->>> And here is where I disagree with your interpretation.  Triggering an
->>> event is a side effect of writing to the file.  There are *two*
->>> security relevant actions, not one, and they are:
->>>
->>> First, the write:
->>>
->>> Subject == the writer
->>> Action == write
->>> Object == the file
->>>
->>> Then the event, which could be modeled in a couple of ways:
->>>
->>> Subject == the file
->>
->> Files   are   not   subjects. They are passive entities.
->>
->>> Action == notify
->>> Object == the recipient
-> 
-> Great. Then use the variant below.
-> 
->>>
->>> or
->>>
->>> Subject == the recipient
->>> Action == watch
->>> Object == the file
->>>
->>> By conflating these two actions into one, you've made the modeling
->>> very hard, and you start running into all these nasty questions like
->>> "who actually closed this open file"
->>
->> No, I've made the code more difficult.
->> You can not call
->> the file a subject. That is just wrong. It's not a valid
->> model.
-> 
-> You’ve ignored the “Action == watch” variant. Do you care to comment?
+Hi all,
 
-While I agree with this model in general, I will note two caveats when 
-trying to apply this to watches/notifications:
+This is v4 which introduces pollable epoll from userspace.
 
-1) The object on which the notification was triggered and the object on 
-which the watch was placed are not necessarily the same and access to 
-one might not imply access to the other,
+v4:
+  Changes based on Peter Zijlstra remarks:
 
-2) If notifications can be triggered by read-like operations (as in 
-fanotify, for example), then a "read" can be turned into a "write" flow 
-through a notification.
+  - remove wmb() which was used incorrectly on event path
+  - remove "atomic_" prefix from some local helpers in order not to
+    mix them with the atomic_t API.
+  - store and read all member shared with userspace using WRITE/READ_ONCE
+    in order to avoid store/load tearing.
+  - do xchg(&epi->event.events, event->events) in ep_modify() instead of
+    plain write to avoid value corruption on archs (parisc, sparc32 and
+	arc-eznps) where atomic ops support is limited.
+  - change lockless algorithm which adds events to the uring, mainly
+    get rid of busy loop on user side, which can last uncontrollably
+	long. The drawbacks are additional 2 cmpxchg ops on hot event path
+	and complexity of the add_event_to_uring() logic.
+  - no gcc atomic builtins are used
 
-Whether or not these caveats are applicable to the notifications in this 
-series I am not clear.
+  - add epoll_create2 syscall to all syscall*.tbl files (Arnd Bergmann)
+  - add uepoll kselftests: testing/selftests/uepoll/* (Andrew Morton)
+  - reduce size of epitem structure for the original epoll case (Eric Wong)
+
+  - queue work to system high priority workqueue
+
+v3:
+ - Measurements made, represented below.
+
+ - Fix alignment for epoll_uitem structure on all 64-bit archs except
+   x86-64. epoll_uitem should be always 16 bit, proper BUILD_BUG_ON
+   is added. (Linus)
+
+ - Check pollflags explicitly on 0 inside work callback, and do nothing
+   if 0.
+
+v2:
+ - No reallocations, the max number of items (thus size of the user ring)
+   is specified by the caller.
+
+ - Interface is simplified: -ENOSPC is returned on attempt to add a new
+   epoll item if number is reached the max, nothing more.
+
+ - Alloced pages are accounted using user->locked_vm and limited to
+   RLIMIT_MEMLOCK value.
+
+ - EPOLLONESHOT is handled.
+
+This series introduces pollable epoll from userspace, i.e. user creates
+epfd with a new EPOLL_USERPOLL flag, mmaps epoll descriptor, gets header
+and ring pointers and then consumes ready events from a ring, avoiding
+epoll_wait() call.  When ring is empty, user has to call epoll_wait()
+in order to wait for new events.  epoll_wait() returns -ESTALE if user
+ring has events in the ring (kind of indication, that user has to consume
+events from the user ring first, I could not invent anything better than
+returning -ESTALE).
+
+For user header and user ring allocation I used vmalloc_user().  I found
+that it is much easy to reuse remap_vmalloc_range_partial() instead of
+dealing with page cache (like aio.c does).  What is also nice is that
+virtual address is properly aligned on SHMLBA, thus there should not be
+any d-cache aliasing problems on archs with vivt or vipt caches.
+
+** Measurements
+
+In order to measure polling from userspace libevent was modified [1] and
+bench_http benchmark (client and server) was used:
+
+ o EPOLLET, original epoll:
+
+    20000 requests in 0.551306 sec. (36277.49 throughput)
+    Each took about 5.54 msec latency
+    1600000bytes read. 0 errors.
+
+ o EPOLLET + polling from userspace:
+
+    20000 requests in 0.475585 sec. (42053.47 throughput)
+    Each took about 4.78 msec latency
+    1600000bytes read. 0 errors.
+
+So harvesting events from userspace gives 15% gain.  Though bench_http
+is not ideal benchmark, but at least it is the part of libevent and was
+easy to modify.
+
+Worth to mention that uepoll is very sensible to CPU, e.g. the gain above
+is observed on desktop "Intel(R) Core(TM) i7-6820HQ CPU @ 2.70GHz", but on
+"Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz" measurements are almost the
+same for both runs.
+
+** Limitations
+
+1. Expect always EPOLLET flag for new epoll items (Edge Triggered behavior)
+     obviously we can't call vfs_epoll() from userpace to have level
+     triggered behaviour.
+
+2. No support for EPOLLWAKEUP
+     events are consumed from userspace, thus no way to call __pm_relax()
+
+3. No support for EPOLLEXCLUSIVE
+     If device does not pass pollflags to wake_up() there is no way to
+     call poll() from the context under spinlock, thus special work is
+     scheduled to offload polling.  In this specific case we can't
+     support exclusive wakeups, because we do not know actual result
+     of scheduled work and have to wake up every waiter.
+
+** Principle of operation
+
+* Basic structures shared with userspace:
+
+In order to consume events from userspace all inserted items should be
+stored in items array, which has original epoll_event field and u32
+field for keeping ready events, i.e. each item has the following struct:
+
+ struct epoll_uitem {
+        __poll_t ready_events;
+        __poll_t events;
+        __u64 data;
+ };
+ BUILD_BUG_ON(sizeof(struct epoll_uitem) != 16);
+
+And the following is a header, which is seen by userspace:
+
+ struct epoll_uheader {
+    u32 magic;          /* epoll user header magic */
+    u32 header_length;  /* length of the header + items */
+    u32 index_length;   /* length of the index ring, always pow2 */
+    u32 max_items_nr;   /* max num of items */
+    u32 head;           /* updated by userland */
+    u32 int tail;       /* updated by kernel */
+
+	struct epoll_uitem items[] __aligned(128);
+ };
+
+ /* Header is 128 bytes, thus items are aligned on CPU cache */
+ BUILD_BUG_ON(sizeof(struct epoll_uheader) != 128);
+
+In order to poll epfd from userspace application has to call:
+
+   epoll_create2(EPOLL_USERPOLL, max_items_nr);
+
+Ready events are kept in a ring buffer, which is simply an index table,
+where each element points to an item in a header:
+
+ unsinged int *user_index;
+
+* How is new event accounted on kernel side?  Hot it is consumed from
+* userspace?
+
+When new event comes for some epoll item kernel does the following:
+
+ struct epoll_uitem *uitem;
+
+ /* Each item has a bit (index in user items array), discussed later */
+ uitem = user_header->items[epi->bit];
+
+ if (!atomic_fetch_or(uitem->ready_events, pollflags)) {
+     /* Increase all three subcounters at once */
+     cnt = atomic64_add_return_acquire(0x100010001, &ep->shadow_cnt);
+
+     idx = cnt_to_monotonic(cnt) - 1;
+     item_idx = &ep->user_index[idx & index_mask];
+
+     /* Add a bit to the uring */
+     WRITE_ONCE(*item_idx, uepi->bit);
+
+     do {
+         old = cnt;
+         if (cnt_to_refs(cnt) == 1) {
+             /* We are the last, we will advance the tail */
+             advance = cnt_to_advance(cnt);
+             WARN_ON(!advance);
+             /* Zero out all fields except monotonic counter */
+             cnt &= ~MONOTONIC_MASK;
+         } else {
+             /* Someone else will advance, only drop the ref */
+             advance = 0;
+             cnt -= 1;
+         }
+     } while ((cnt = atomic64_cmpxchg_release(&ep->shadow_cnt,
+                                              old, cnt)) != old);
+
+     if (advance) {
+         /*
+          * Advance the tail.  Tail is shared with userspace, thus we
+          * can't use kernel atomic_t for just atomic add, so use
+          * cmpxchg().  Sigh.
+          *
+          * We can race here with another cpu which also advances the
+          * tail.  This is absolutely ok, since the tail is advanced
+          * in one direction and eventually addition is commutative.
+          */
+         unsigned int old, tail = READ_ONCE(ep->user_header->tail);
+         do {
+             old = tail;
+         } while ((tail = cmpxchg(&ep->user_header->tail,
+                      old, old + advance)) != old);
+     }
+ }
+
+The most complicated part is how new event is added to the ring locklessly.
+To achieve that ->shadow_cnt is split on 3 subcounters and the whole
+layout of the counter can be represented as follows:
+
+   struct counter_t {
+       unsigned long long monotonic :32;
+       unsigned long long advance   :16;
+       unsigned long long refs      :16;
+   };
+
+   'monotonic' - Monotonically increases on each event insertion,
+                 never decreases.  Used as an index for an event
+                 in the uring.
+
+   'advance'   - Represents number of events on which user ->tail
+                 has to be advanced.  Monotonically increases if
+                 events are coming in parallel from different cpus
+                 while reference number keeps > 1.
+
+  'refs'       - Represents reference number, i.e. number of cpus
+                 inserting events in parallel.  Once there is a
+                 last inserter (the reference is 1), it should
+                 zero out 'advance' member and advance the tail
+                 for the userspace.
+
+What this is all about?  The main problem is that since event can be
+inserted from many cpus in parallel, we can't advance the tail if
+previous insertion has not been fully completed.  The idea to solve
+this is simple: the last one advances the tail.  Who is exactly the
+last?  Who detects the reference number is equal to 1.
+
+The other thing is worth to mention is that the ring can't infinitely
+grow and corrupt other elements, because kernel always checks that item
+was marked as ready, so userspace has to clear ready_events field.
+
+On userside events the following code should be used in order to consume
+events:
+
+ tail = READ_ONCE(header->tail);
+ for (i = 0; header->head != tail; header->head++) {
+     item_idx_ptr = &index[idx & indeces_mask];
+
+     /* Load index */
+     idx = __atomic_load_n(item_idx_ptr, __ATOMIC_ACQUIRE);
+
+     item = &header->items[idx];
+
+     /*
+      * Fetch data first, if event is cleared by the kernel we drop the data
+      * returning false.
+      */
+     event->data = item->event.data;
+     event->events = __atomic_exchange_n(&item->ready_events, 0,
+                         __ATOMIC_RELEASE);
+
+ }
+
+* How new epoll item gets its index inside user items array?
+
+Kernel has a bitmap for that and gets free bit on attempt to insert a new
+epoll item.  When bitmap is full -ENOSPC is returned.
+
+* Is there any testing app available?
+
+There is a small app [2] which starts many threads with many event fds and
+produces many events, while single consumer fetches them from userspace
+and goes to kernel from time to time in order to wait.
+
+Also libevent modification [1] is available, see "measurements" section
+above.
+
+[1] https://github.com/libevent/libevent/pull/801
+[2] https://github.com/rouming/test-tools/blob/master/userpolled-epoll.c
+
+Roman Penyaev (14):
+  epoll: move private helpers from a header to the source
+  epoll: introduce user structures for polling from userspace
+  epoll: allocate user header and user events ring for polling from
+    userspace
+  epoll: some sanity flags checks for epoll syscalls for polling from
+    userspace
+  epoll: offload polling to a work in case of epfd polled from userspace
+  epoll: introduce helpers for adding/removing events to uring
+  epoll: call ep_add_event_to_uring() from ep_poll_callback()
+  epoll: support polling from userspace for ep_insert()
+  epoll: support polling from userspace for ep_remove()
+  epoll: support polling from userspace for ep_modify()
+  epoll: support polling from userspace for ep_poll()
+  epoll: support mapping for epfd when polled from userspace
+  epoll: implement epoll_create2() syscall
+  kselftest: add uepoll-test which tests polling from userspace
+
+ arch/alpha/kernel/syscalls/syscall.tbl        |   2 +
+ arch/arm/tools/syscall.tbl                    |   1 +
+ arch/arm64/include/asm/unistd.h               |   2 +-
+ arch/arm64/include/asm/unistd32.h             |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |   2 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   2 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   2 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |   2 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   2 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   2 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   2 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   2 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   2 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   2 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   1 +
+ fs/eventpoll.c                                | 925 ++++++++++++++++--
+ include/linux/syscalls.h                      |   1 +
+ include/uapi/asm-generic/unistd.h             |   4 +-
+ include/uapi/linux/eventpoll.h                |  47 +-
+ kernel/sys_ni.c                               |   1 +
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/uepoll/.gitignore     |   1 +
+ tools/testing/selftests/uepoll/Makefile       |  16 +
+ .../uepoll/atomic-builtins-support.c          |  13 +
+ tools/testing/selftests/uepoll/uepoll-test.c  | 603 ++++++++++++
+ 28 files changed, 1540 insertions(+), 103 deletions(-)
+ create mode 100644 tools/testing/selftests/uepoll/.gitignore
+ create mode 100644 tools/testing/selftests/uepoll/Makefile
+ create mode 100644 tools/testing/selftests/uepoll/atomic-builtins-support.c
+ create mode 100644 tools/testing/selftests/uepoll/uepoll-test.c
+
+Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Azat Khuzhin <azat@libevent.org>
+Cc: Eric Wong <e@80x24.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+-- 
+2.21.0
+
