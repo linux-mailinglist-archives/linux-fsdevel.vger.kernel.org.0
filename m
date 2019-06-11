@@ -2,115 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CD943C613
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 10:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2CF13C7A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 11:52:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391273AbfFKIjb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 04:39:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57712 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725766AbfFKIjb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 04:39:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 13652AE4D;
-        Tue, 11 Jun 2019 08:39:30 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH] ceph: copy_file_range needs to strip setuid bits and update timestamps
-References: <20190610174007.4818-1-amir73il@gmail.com>
-Date:   Tue, 11 Jun 2019 09:39:27 +0100
-In-Reply-To: <20190610174007.4818-1-amir73il@gmail.com> (Amir Goldstein's
-        message of "Mon, 10 Jun 2019 20:40:07 +0300")
-Message-ID: <87h88w8qio.fsf@suse.com>
+        id S2405110AbfFKJwa convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 05:52:30 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:51653 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404366AbfFKJwa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Jun 2019 05:52:30 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-196-OKKF5U8lNxCJ1snZU1YqkA-1; Tue, 11 Jun 2019 10:52:27 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue,
+ 11 Jun 2019 10:52:25 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 11 Jun 2019 10:52:25 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "dave@stgolabs.net" <dave@stgolabs.net>,
+        "e@80x24.org" <e@80x24.org>,
+        "jbaron@akamai.com" <jbaron@akamai.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: RE: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Thread-Topic: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Thread-Index: AQHVH9JWknGdQ9+D0UeylJNmvFzQKKaWJ31Q
+Date:   Tue, 11 Jun 2019 09:52:25 +0000
+Message-ID: <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+        <20190529161157.GA27659@redhat.com>     <20190604134117.GA29963@redhat.com>
+        <20190606140814.GA13440@redhat.com> <87k1dxaxcl.fsf_-_@xmission.com>
+        <87ef45axa4.fsf_-_@xmission.com> <20190610162244.GB8127@redhat.com>
+ <87lfy96sta.fsf@xmission.com>
+In-Reply-To: <87lfy96sta.fsf@xmission.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MC-Unique: OKKF5U8lNxCJ1snZU1YqkA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Amir Goldstein <amir73il@gmail.com> writes:
+From: Eric W. Biederman
+> Sent: 10 June 2019 22:21
+...
+> >
+> > As for "remove saved_sigmask" I have some concerns... At least this
+> > means a user-visible change iiuc. Say, pselect unblocks a fatal signal.
+> > Say, SIGINT without a handler. Suppose SIGINT comes after set_sigmask().
+> >
+> > Before this change the process will be killed.
+> >
+> > After this change it will be killed or not. It won't be killed if
+> > do_select() finds an already ready fd without blocking, or it finds a
+> > ready fd right after SIGINT interrupts poll_schedule_timeout().
+> 
+> Yes.  Because having the signal set in real_blocked disables the
+> immediate kill optimization, and the signal has to be delivered before
+> we decide to kill the process.  Which matters because as you say if
+> nothing checks signal_pending() when the signals are unblocked we might
+> not attempt to deliver the signal.
+> 
+> So it is a matter of timing.
+> 
+> If we have both a signal and a file descriptor become ready
+> at the same time I would call that a race.  Either could
+> wake up the process and depending on the exact time we could
+> return either one.
+> 
+> So it is possible that today if the signal came just after the file
+> descriptor ,the code might have made it to restore_saved_sigmask_unless,
+> before __send_signal runs.
+> 
+> I see the concern.  I think in a matter like this we try it.  Make
+> the patches clean so people can bisect the problem.  Then if someone
+> runs into this problem we revert the offending patches.
 
-> Because ceph doesn't hold destination inode lock throughout the copy,
-> strip setuid bits before and after copy.
->
-> The destination inode mtime is updated before and after the copy and the
-> source inode atime is updated after the copy, similar to the filesystem
-> ->read_iter() implementation.
->
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->
-> Hi Ilya,
->
-> Please consider applying this patch to ceph branch after merging
-> Darrick's copy-file-range-fixes branch from:
->         git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
->
-> The series (including this patch) was tested on ceph by
-> Luis Henriques using new copy_range xfstests.
->
-> AFAIK, only fallback from ceph to generic_copy_file_range()
-> implementation was tested and not the actual ceph clustered
-> copy_file_range.
+If I have an application that has a loop with a pselect call that
+enables SIGINT (without a handler) and, for whatever reason,
+one of the fd is always 'ready' then I'd expect a SIGINT
+(from ^C) to terminate the program.
 
-JFYI I've also run tests that exercise the ceph implementation,
-i.e. that actually do the copy offload.  It's the xfstests that (AFAIR)
-only exercise the generic VFS copy_file_range as they never meet the
-requirements for this copy offload to happen (for example, the copy must
-be at least the same length as the files object size which is 4M by
-default).
+A quick test program:
 
-Cheers,
--- 
-Luis
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
+#include <sys/select.h>
+#include <signal.h>
 
->
-> Thanks,
-> Amir.
->
->  fs/ceph/file.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index c5517ffeb11c..b04c97c7d393 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1949,6 +1949,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  		goto out;
->  	}
->  
-> +	/* Should dst_inode lock be held throughout the copy operation? */
-> +	inode_lock(dst_inode);
-> +	ret = file_modified(dst_file);
-> +	inode_unlock(dst_inode);
-> +	if (ret < 0) {
-> +		dout("failed to modify dst file before copy (%zd)\n", ret);
-> +		goto out;
-> +	}
-> +
->  	/*
->  	 * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
->  	 * clients may have dirty data in their caches.  And OSDs know nothing
-> @@ -2099,6 +2108,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  out:
->  	ceph_free_cap_flush(prealloc_cf);
->  
-> +	file_accessed(src_file);
-> +	/* To be on the safe side, try to remove privs also after copy */
-> +	inode_lock(dst_inode);
-> +	err = file_modified(dst_file);
-> +	inode_unlock(dst_inode);
-> +	if (err < 0)
-> +		dout("failed to modify dst file after copy (%d)\n", err);
-> +
->  	return ret;
->  }
+int main(int argc, char **argv)
+{
+        fd_set readfds;
+        sigset_t sig_int;
+        struct timespec delay = {1, 0};
+
+        sigfillset(&sig_int);
+        sigdelset(&sig_int, SIGINT);
+
+        sighold(SIGINT);
+
+        for (;;) {
+                FD_ZERO(&readfds);
+                FD_SET(0, &readfds);
+                pselect(1, &readfds, NULL, NULL, &delay, &sig_int);
+
+                poll(0,0,1000);
+        }
+}
+
+Run under strace to see what is happening and send SIGINT from a different terminal.
+The program sleeps for a second in each of the pselect() and poll() calls.
+Send a SIGINT and in terminates after pselect() returns ERESTARTNOHAND.
+
+Run again, this time press enter - making fd 0 readable.
+pselect() returns 1, but the program still exits.
+(Tested on a 5.1.0-rc5 kernel.)
+
+If a signal handler were defined it should be called instead.
+
+FWIW is ERESTARTNOHAND actually sane here?
+If I've used setitimer() to get SIGALARM generated every second I'd
+expect select() to return EINTR every second even if I don't
+have a SIGALARM handler?
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
