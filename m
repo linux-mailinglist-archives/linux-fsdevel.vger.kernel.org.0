@@ -2,194 +2,280 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A2173DBD0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 22:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1108A416FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 23:37:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406496AbfFKU3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 16:29:13 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41949 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406271AbfFKU3N (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 16:29:13 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 83so7585037pgg.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2019 13:29:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dhnwSrdCPnvzoEVfuuVGqE83p7TnkQ5Modn2BNCoQD0=;
-        b=Pp0Hq+hd8QA6syECahlCWtYv82jhOxBm0sr+fZ9Dkk8nXtHe7nrSiSj+V8u0FaITQ7
-         84fXuzNXkrhzDQgkHPp26EjnsIzrDKXg48+xvOTrPv1gFdJxgRLOvcs0dwgoU2BGvzqE
-         Liz3+gL3rcT7wqBUJosubNY4aHZAru2eeUFG6CtPZ2mbKIzTjquHFKUIQcWXvVk4hMLI
-         7UB1amIr3aRGarnBUHse/35CwxBlRRF3qifo7BnhaOJV61RWbVqr0wA4GIowlDaA6gfT
-         pWINRb5VwbD/mtNfms9GrZfwha/4G8tSCCTtYnHFhjTrLaOGAdTroClIT1QeFCWuqloy
-         NJbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dhnwSrdCPnvzoEVfuuVGqE83p7TnkQ5Modn2BNCoQD0=;
-        b=klri8P0n5+Ao0+2XkKiRL4uN4/yGjNSA8IwlMiURpEe7Fm1Uw6LIGYNXBIHE309ceh
-         ASeqyiuB1zwBNgiSKYVcqV72Fz3weLfrV7dN7zhFFz2KAMBtmXbQcQZCZJIC++sjemDk
-         Da/OZrLDhilqwQBHf53oC4FrTLneTYs2XIJF5FbUG8MQiQ8EiIAQPy4aRT8EsMoh4tSi
-         S36WVBo7tR7iP95J2xq3f3ZmNuPAG9LgFt6Wg3X02S18bIz+lrp0IoB0fkQVH+ZPuSpG
-         q2KojsKEyldgKdNX1Zpcw0vZCpG75mkmz6MnXVqe81CSX2CDXylfpFnk7EnZJm6JY99T
-         OaTQ==
-X-Gm-Message-State: APjAAAWcPQSQhKdUqF8zaLtQE/kceK0dk/Oq2lWjSg1wYiHPn61Fi2Yd
-        QypVu/E1kpbQuhOiPTmF8osYdOrnnsubot0WMQy5eA==
-X-Google-Smtp-Source: APXvYqycBtJ32qbIn8pTyxMIAID5Xv7JTruAR7oTyIED4r622bu9rIlLgVdk0eekxjLa2OE4wVYL1Pw8y64Cqw0kRwU=
-X-Received: by 2002:a17:90a:2e89:: with SMTP id r9mr28553830pjd.117.1560284952085;
- Tue, 11 Jun 2019 13:29:12 -0700 (PDT)
+        id S2436566AbfFKVgz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 17:36:55 -0400
+Received: from mga17.intel.com ([192.55.52.151]:36483 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403793AbfFKVgz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Jun 2019 17:36:55 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2019 14:36:54 -0700
+X-ExtLoop1: 1
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga007.fm.intel.com with ESMTP; 11 Jun 2019 14:36:53 -0700
+Date:   Tue, 11 Jun 2019 14:38:13 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH RFC 02/10] fs/locks: Export F_LAYOUT lease to user space
+Message-ID: <20190611213812.GC14336@iweiny-DESK2.sc.intel.com>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606014544.8339-3-ira.weiny@intel.com>
+ <4e5eb31a41b91a28fbc83c65195a2c75a59cfa24.camel@kernel.org>
 MIME-Version: 1.0
-References: <20190514221711.248228-1-brendanhiggins@google.com>
- <20190514221711.248228-18-brendanhiggins@google.com> <20190517182254.548EA20815@mail.kernel.org>
- <CAAXuY3p4qhKVsSpQ44_kQeGDMfg7OuFLgFyxhcFWS3yf-5A_7g@mail.gmail.com>
- <20190607190047.C3E7A20868@mail.kernel.org> <20190611175830.GA236872@google.com>
- <20190611185018.2E1C021744@mail.kernel.org>
-In-Reply-To: <20190611185018.2E1C021744@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 11 Jun 2019 13:29:01 -0700
-Message-ID: <CAFd5g47dmcHOCX41cr2v9Kaj3xa_5-PoqUPX_1=AoQLUG90NkQ@mail.gmail.com>
-Subject: Re: [PATCH v4 17/18] kernel/sysctl-test: Add null pointer test for sysctl.c:proc_dointvec()
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Iurii Zaikin <yzaikin@google.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4e5eb31a41b91a28fbc83c65195a2c75a59cfa24.camel@kernel.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 11:50 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Brendan Higgins (2019-06-11 10:58:30)
-> > On Fri, Jun 07, 2019 at 12:00:47PM -0700, Stephen Boyd wrote:
-> > > Quoting Iurii Zaikin (2019-06-05 18:29:42)
-> > > > On Fri, May 17, 2019 at 11:22 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > > >
-> > > > > Quoting Brendan Higgins (2019-05-14 15:17:10)
-> > > > > > diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
-> > > > > > new file mode 100644
-> > > > > > index 0000000000000..fe0f2bae66085
-> > > > > > --- /dev/null
-> > > > > > +++ b/kernel/sysctl-test.c
-> > > > > > +
-> > > > > > +
-> > > > > > +static void sysctl_test_dointvec_happy_single_negative(struct kunit *test)
-> > > > > > +{
-> > > > > > +       struct ctl_table table = {
-> > > > > > +               .procname = "foo",
-> > > > > > +               .data           = &test_data.int_0001,
-> > > > > > +               .maxlen         = sizeof(int),
-> > > > > > +               .mode           = 0644,
-> > > > > > +               .proc_handler   = proc_dointvec,
-> > > > > > +               .extra1         = &i_zero,
-> > > > > > +               .extra2         = &i_one_hundred,
-> > > > > > +       };
-> > > > > > +       char input[] = "-9";
-> > > > > > +       size_t len = sizeof(input) - 1;
-> > > > > > +       loff_t pos = 0;
-> > > > > > +
-> > > > > > +       table.data = kunit_kzalloc(test, sizeof(int), GFP_USER);
-> > > > > > +       KUNIT_EXPECT_EQ(test, 0, proc_dointvec(&table, 1, input, &len, &pos));
-> > > > > > +       KUNIT_EXPECT_EQ(test, sizeof(input) - 1, len);
-> > > > > > +       KUNIT_EXPECT_EQ(test, sizeof(input) - 1, pos);
-> > > > > > +       KUNIT_EXPECT_EQ(test, -9, *(int *)table.data);
-> > > > >
-> > > > > Is the casting necessary? Or can the macro do a type coercion of the
-> > > > > second parameter based on the first type?
-> > > >  Data field is defined as void* so I believe casting is necessary to
-> > > > dereference it as a pointer to an array of ints. I don't think the
-> > > > macro should do any type coercion that == operator wouldn't do.
-> > > >  I did change the cast to make it more clear that it's a pointer to an
-> > > > array of ints being dereferenced.
-> > >
-> > > Ok, I still wonder if we should make KUNIT_EXPECT_EQ check the types on
-> > > both sides and cause a build warning/error if the types aren't the same.
-> > > This would be similar to our min/max macros that complain about
-> > > mismatched types in the comparisons. Then if a test developer needs to
-> > > convert one type or the other they could do so with a
-> > > KUNIT_EXPECT_EQ_T() macro that lists the types to coerce both sides to
-> > > explicitly.
-> >
-> > Do you think it would be better to do a phony compare similar to how
-> > min/max used to work prior to 4.17, or to use the new __typecheck(...)
-> > macro? This might seem like a dumb question (and maybe it is), but Iurii
-> > and I thought the former created an error message that was a bit easier
-> > to understand, whereas __typecheck is obviously superior in terms of
-> > code reuse.
-> >
-> > This is what we are thinking right now; if you don't have any complaints
-> > I will squash it into the relevant commits on the next revision:
->
-> Can you provide the difference in error messages and describe that in
-> the commit text? The commit message is where you "sell" the patch, so
-> being able to compare the tradeoff of having another macro to do type
-> comparisons vs. reusing the one that's there in kernel.h would be useful
-> to allay concerns that we're duplicating logic for better error
-> messages.
+On Sun, Jun 09, 2019 at 09:00:24AM -0400, Jeff Layton wrote:
+> On Wed, 2019-06-05 at 18:45 -0700, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > GUP longterm pins of non-pagecache file system pages (eg FS DAX) are
+> > currently disallowed because they are unsafe.
+> > 
+> > The danger for pinning these pages comes from the fact that hole punch
+> > and/or truncate of those files results in the pages being mapped and
+> > pinned by a user space process while DAX has potentially allocated those
+> > pages to other processes.
+> > 
+> > Most (All) users who are mapping FS DAX pages for long term pin purposes
+> > (such as RDMA) are not going to want to deallocate these pages while
+> > those pages are in use.  To do so would mean the application would lose
+> > data.  So the use case for allowing truncate operations of such pages
+> > is limited.
+> > 
+> > However, the kernel must protect itself and users from potential
+> > mistakes and/or malicious user space code.  Rather than disabling long
+> > term pins as is done now.   Allow for users who know they are going to
+> > be pinning this memory to alert the file system of this intention.
+> > Furthermore, allow users to be alerted such that they can react if a
+> > truncate operation occurs for some reason.
+> > 
+> > Example user space pseudocode for a user using RDMA and wanting to allow
+> > a truncate would look like this:
+> > 
+> > lease_break_sigio_handler() {
+> > ...
+> > 	if (sigio.fd == rdma_fd) {
+> > 		complete_rdma_operations(...);
+> > 		ibv_dereg_mr(mr);
+> > 		close(rdma_fd);
+> > 		fcntl(rdma_fd, F_SETLEASE, F_UNLCK);
+> > 	}
+> > }
+> > 
+> > setup_rdma_to_dax_file() {
+> > ...
+> > 	rdma_fd = open(...)
+> > 	fcntl(rdma_fd, F_SETLEASE, F_LAYOUT);
+> 
+> I'm not crazy about this interface. F_LAYOUT doesn't seem to be in the
+> same category as F_RDLCK/F_WRLCK/F_UNLCK.
+> 
+> Maybe instead of F_SETLEASE, this should use new
+> F_SETLAYOUT/F_GETLAYOUT cmd values? There is nothing that would prevent
+> you from setting both a lease and a layout on a file, and indeed knfsd
+> can set both.
+> 
+> This interface seems to conflate the two.
 
-Oh sorry, I didn't think too hard about the commit message since I
-figured it would get split up and squashed into the existing commits.
-I just wanted to get it out sooner to discuss this before I post the
-next revision (probably later this week).
+I've been feeling the same way.  This is why I was leaning toward a new lease
+type.  I called it "F_LONGTERM" but the name is not important.
 
-> Honestly, I'd prefer we just use the macros that we've developed in
-> kernel.h to do comparisons here so that we can get code reuse, but more
-> importantly so that we don't trip over problems that caused those macros
-> to be created in the first place. If the error message is bad, perhaps
-> that can be fixed with some sort of compiler directive to make the error
-> message a little more useful, i.e. compiletime_warning() thrown into
-> __typecheck() or something.
+I think the concept of adding "exclusive" to the layout lease can fix this
+because the NFS lease is non-exclusive where the user space one (for the
+purpose of GUP pinning) would need to be.
 
-That's a good point. I have no qualms sticking with __typecheck(...)
-for now; if we later feel that it is causing problems, we can always
-fix it later by supplying our own warning in the manner you suggest.
+FWIW I have not worked out exactly what this new "exclusive" code will look
+like.  Jan said:
 
-Iurii, do you have any additional thoughts on this?
+	"There actually is support for locks that are not broken after given
+	timeout so there shouldn't be too many changes need."
 
->
+But I'm not seeing that for Lease code.  So I'm working on something for the
+lease code now.
+
+Ira
+
+> 
+> > 	sigaction(SIGIO, ...  lease_break ...);
+> > 	ptr = mmap(rdma_fd, ...);
+> > 	mr = ibv_reg_mr(ptr, ...);
+> > 	do_rdma_stuff(...);
+> > }
+> > 
+> > Follow on patches implement the notification of the lease holder on
+> > truncate as well as failing the truncate if the GUP pin is not released.
+> > 
+> > This first patch exports the F_LAYOUT lease type and allows the user to set
+> > and get it.
+> > 
+> > After the complete series:
+> > 
+> > 1) Failure to obtain a F_LAYOUT lease on an open FS DAX file will result
+> >    in a failure to GUP pin any pages in that file.  An example of a call
+> >    which results in GUP pin is ibv_reg_mr().
+> > 2) While the GUP pin is in place (eg MR is in use) truncates of the
+> >    affected pages will fail.
+> > 3) If the user registers a sigaction they will be notified of the
+> >    truncate so they can react.  Failure to react will result in the
+> >    lease being revoked after <sysfs>/lease-break-time seconds.  After
+> >    this time new GUP pins will fail without a new lease being taken.
+> > 4) A truncate will work if the pages being truncated are not actively
+> >    pinned at the time of truncate.  Attempts to pin these pages after
+> >    will result in a failure.
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 > > ---
-> > From: Iurii Zaikin <yzaikin@google.com>
-> >
-> > Adds a warning message when comparing values of different types similar
-> > to what min() / max() macros do.
-> >
-> > Signed-off-by: Iurii Zaikin <yzaikin@google.com>
+> >  fs/locks.c                       | 36 +++++++++++++++++++++++++++-----
+> >  include/linux/fs.h               |  2 +-
+> >  include/uapi/asm-generic/fcntl.h |  3 +++
+> >  3 files changed, 35 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/fs/locks.c b/fs/locks.c
+> > index 0cc2b9f30e22..de9761c068de 100644
+> > --- a/fs/locks.c
+> > +++ b/fs/locks.c
+> > @@ -191,6 +191,8 @@ static int target_leasetype(struct file_lock *fl)
+> >  		return F_UNLCK;
+> >  	if (fl->fl_flags & FL_DOWNGRADE_PENDING)
+> >  		return F_RDLCK;
+> > +	if (fl->fl_flags & FL_LAYOUT)
+> > +		return F_LAYOUT;
+> >  	return fl->fl_type;
+> >  }
+> >  
+> > @@ -611,7 +613,8 @@ static const struct lock_manager_operations lease_manager_ops = {
+> >  /*
+> >   * Initialize a lease, use the default lock manager operations
+> >   */
+> > -static int lease_init(struct file *filp, long type, struct file_lock *fl)
+> > +static int lease_init(struct file *filp, long type, unsigned int flags,
+> > +		      struct file_lock *fl)
+> >  {
+> >  	if (assign_type(fl, type) != 0)
+> >  		return -EINVAL;
+> > @@ -621,6 +624,8 @@ static int lease_init(struct file *filp, long type, struct file_lock *fl)
+> >  
+> >  	fl->fl_file = filp;
+> >  	fl->fl_flags = FL_LEASE;
+> > +	if (flags & FL_LAYOUT)
+> > +		fl->fl_flags |= FL_LAYOUT;
+> >  	fl->fl_start = 0;
+> >  	fl->fl_end = OFFSET_MAX;
+> >  	fl->fl_ops = NULL;
+> > @@ -629,7 +634,8 @@ static int lease_init(struct file *filp, long type, struct file_lock *fl)
+> >  }
+> >  
+> >  /* Allocate a file_lock initialised to this type of lease */
+> > -static struct file_lock *lease_alloc(struct file *filp, long type)
+> > +static struct file_lock *lease_alloc(struct file *filp, long type,
+> > +				     unsigned int flags)
+> >  {
+> >  	struct file_lock *fl = locks_alloc_lock();
+> >  	int error = -ENOMEM;
+> > @@ -637,7 +643,7 @@ static struct file_lock *lease_alloc(struct file *filp, long type)
+> >  	if (fl == NULL)
+> >  		return ERR_PTR(error);
+> >  
+> > -	error = lease_init(filp, type, fl);
+> > +	error = lease_init(filp, type, flags, fl);
+> >  	if (error) {
+> >  		locks_free_lock(fl);
+> >  		return ERR_PTR(error);
+> > @@ -1588,7 +1594,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+> >  	int want_write = (mode & O_ACCMODE) != O_RDONLY;
+> >  	LIST_HEAD(dispose);
+> >  
+> > -	new_fl = lease_alloc(NULL, want_write ? F_WRLCK : F_RDLCK);
+> > +	new_fl = lease_alloc(NULL, want_write ? F_WRLCK : F_RDLCK, 0);
+> >  	if (IS_ERR(new_fl))
+> >  		return PTR_ERR(new_fl);
+> >  	new_fl->fl_flags = type;
+> > @@ -1725,6 +1731,8 @@ EXPORT_SYMBOL(lease_get_mtime);
+> >   *
+> >   *	%F_UNLCK to indicate no lease is held.
+> >   *
+> > + *	%F_LAYOUT to indicate a layout lease is held.
+> > + *
+> >   *	(if a lease break is pending):
+> >   *
+> >   *	%F_RDLCK to indicate an exclusive lease needs to be
+> > @@ -2015,8 +2023,26 @@ static int do_fcntl_add_lease(unsigned int fd, struct file *filp, long arg)
+> >  	struct file_lock *fl;
+> >  	struct fasync_struct *new;
+> >  	int error;
+> > +	unsigned int flags = 0;
+> > +
+> > +	/*
+> > +	 * NOTE on F_LAYOUT lease
+> > +	 *
+> > +	 * LAYOUT lease types are taken on files which the user knows that
+> > +	 * they will be pinning in memory for some indeterminate amount of
+> > +	 * time.  Such as for use with RDMA.  While we don't know what user
+> > +	 * space is going to do with the file we still use a F_RDLOCK level of
+> > +	 * lease.  This ensures that there are no conflicts between
+> > +	 * 2 users.  The conflict should only come from the File system wanting
+> > +	 * to revoke the lease in break_layout()  And this is done by using
+> > +	 * F_WRLCK in the break code.
+> > +	 */
+> > +	if (arg == F_LAYOUT) {
+> > +		arg = F_RDLCK;
+> > +		flags = FL_LAYOUT;
+> > +	}
+> >  
+> > -	fl = lease_alloc(filp, arg);
+> > +	fl = lease_alloc(filp, arg, flags);
+> >  	if (IS_ERR(fl))
+> >  		return PTR_ERR(fl);
+> >  
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index f7fdfe93e25d..9e9d8d35ee93 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -998,7 +998,7 @@ static inline struct file *get_file(struct file *f)
+> >  #define FL_DOWNGRADE_PENDING	256 /* Lease is being downgraded */
+> >  #define FL_UNLOCK_PENDING	512 /* Lease is being broken */
+> >  #define FL_OFDLCK	1024	/* lock is "owned" by struct file */
+> > -#define FL_LAYOUT	2048	/* outstanding pNFS layout */
+> > +#define FL_LAYOUT	2048	/* outstanding pNFS layout or user held pin */
+> >  
+> >  #define FL_CLOSE_POSIX (FL_POSIX | FL_CLOSE)
+> >  
+> > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+> > index 9dc0bf0c5a6e..baddd54f3031 100644
+> > --- a/include/uapi/asm-generic/fcntl.h
+> > +++ b/include/uapi/asm-generic/fcntl.h
+> > @@ -174,6 +174,9 @@ struct f_owner_ex {
+> >  #define F_SHLCK		8	/* or 4 */
+> >  #endif
+> >  
+> > +#define F_LAYOUT	16      /* layout lease to allow longterm pins such as
+> > +				   RDMA */
+> > +
+> >  /* operations for bsd flock(), also used by the kernel implementation */
+> >  #define LOCK_SH		1	/* shared lock */
+> >  #define LOCK_EX		2	/* exclusive lock */
+> 
