@@ -2,138 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 564BC3C563
+	by mail.lfdr.de (Postfix) with ESMTP id C1CD33C564
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 09:48:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404382AbfFKHss (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 03:48:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60164 "EHLO mx1.redhat.com"
+        id S2404480AbfFKHsy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 03:48:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49718 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404064AbfFKHss (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 03:48:48 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S2404064AbfFKHsy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Jun 2019 03:48:54 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E47B882F5;
-        Tue, 11 Jun 2019 07:48:48 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A5207C04B2F6;
+        Tue, 11 Jun 2019 07:48:53 +0000 (UTC)
 Received: from localhost (dhcp-12-130.nay.redhat.com [10.66.12.130])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 059701972C;
-        Tue, 11 Jun 2019 07:48:41 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E16E60BCD;
+        Tue, 11 Jun 2019 07:48:50 +0000 (UTC)
 From:   Murphy Zhou <xzhou@redhat.com>
 To:     liwang@redhat.com
 Cc:     ltp@lists.linux.it, amir73il@gmail.com, chrubis@suse.cz,
         linux-fsdevel@vger.kernel.org, Murphy Zhou <xzhou@redhat.com>
-Subject: [PATCH v7 2/4] swapon/libswapon: add helper is_swap_supported
-Date:   Tue, 11 Jun 2019 15:47:39 +0800
-Message-Id: <20190611074741.31903-2-xzhou@redhat.com>
+Subject: [PATCH v7 3/4] syscalls/swapon/swapon0{1..3}: use helpers to check support status
+Date:   Tue, 11 Jun 2019 15:47:40 +0800
+Message-Id: <20190611074741.31903-3-xzhou@redhat.com>
 In-Reply-To: <20190611074741.31903-1-xzhou@redhat.com>
 References: <CAEemH2e5b4q+bOeE3v8FG-piSUteCinPMVmxpnkVcYCmrUc4Uw@mail.gmail.com>
  <20190611074741.31903-1-xzhou@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 11 Jun 2019 07:48:48 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 11 Jun 2019 07:48:53 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-To check if the filesystem we are testing on supports FIBMAP, mkswap,
-swapon and swapoff operations. Survivor of this function should support
-swapfile function well, like swapon and swapoff.
-Modify make_swapfile function to test mkswap support status safely.
+Of swap operations.
 
 Reviewed-by: Li Wang <liwang@redhat.com>
 Signed-off-by: Murphy Zhou <xzhou@redhat.com>
 ---
- testcases/kernel/syscalls/swapon/libswapon.c | 45 +++++++++++++++++++-
- testcases/kernel/syscalls/swapon/libswapon.h |  7 ++-
- 2 files changed, 49 insertions(+), 3 deletions(-)
+ testcases/kernel/syscalls/swapon/swapon01.c | 11 ++---------
+ testcases/kernel/syscalls/swapon/swapon02.c | 13 +++----------
+ testcases/kernel/syscalls/swapon/swapon03.c | 15 ++++-----------
+ 3 files changed, 9 insertions(+), 30 deletions(-)
 
-diff --git a/testcases/kernel/syscalls/swapon/libswapon.c b/testcases/kernel/syscalls/swapon/libswapon.c
-index cf6a98891..0a4501bdd 100644
---- a/testcases/kernel/syscalls/swapon/libswapon.c
-+++ b/testcases/kernel/syscalls/swapon/libswapon.c
-@@ -19,13 +19,15 @@
-  *
-  */
+diff --git a/testcases/kernel/syscalls/swapon/swapon01.c b/testcases/kernel/syscalls/swapon/swapon01.c
+index 32538f82b..f95ce0ab2 100644
+--- a/testcases/kernel/syscalls/swapon/swapon01.c
++++ b/testcases/kernel/syscalls/swapon/swapon01.c
+@@ -84,16 +84,9 @@ static void setup(void)
  
-+#include <errno.h>
-+#include "lapi/syscalls.h"
- #include "test.h"
- #include "libswapon.h"
+ 	tst_tmpdir();
  
- /*
-  * Make a swap file
-  */
--void make_swapfile(void (cleanup)(void), const char *swapfile)
-+int make_swapfile(void (cleanup)(void), const char *swapfile, int safe)
- {
- 	if (!tst_fs_has_free(NULL, ".", sysconf(_SC_PAGESIZE) * 10,
- 	    TST_BYTES)) {
-@@ -45,5 +47,44 @@ void make_swapfile(void (cleanup)(void), const char *swapfile)
- 	argv[1] = swapfile;
- 	argv[2] = NULL;
+-	switch ((fs_type = tst_fs_type(cleanup, "."))) {
+-	case TST_NFS_MAGIC:
+-	case TST_TMPFS_MAGIC:
+-		tst_brkm(TCONF, cleanup,
+-			 "Cannot do swapon on a file on %s filesystem",
+-			 tst_fs_type_name(fs_type));
+-	break;
+-	}
++	is_swap_supported(cleanup, "./tstswap");
  
--	tst_run_cmd(cleanup, argv, "/dev/null", "/dev/null", 0);
-+	return tst_run_cmd(cleanup, argv, "/dev/null", "/dev/null", safe);
-+}
-+
-+/*
-+ * Check swapon/swapoff support status of filesystems or files
-+ * we are testing on.
-+ */
-+void is_swap_supported(void (cleanup)(void), const char *filename)
-+{
-+	int fibmap = tst_fibmap(filename);
-+	long fs_type = tst_fs_type(cleanup, filename);
-+	const char *fstype = tst_fs_type_name(fs_type);
-+
-+	int ret = make_swapfile(NULL, filename, 1);
-+	if (ret != 0) {
-+		if (fibmap == 1) {
-+			tst_brkm(TCONF, cleanup,
-+				"mkswap on %s not supported", fstype);
-+		} else {
-+			tst_brkm(TFAIL, cleanup,
-+				"mkswap on %s failed", fstype);
-+		}
-+	}
-+
-+	TEST(ltp_syscall(__NR_swapon, filename, 0));
-+	if (TEST_RETURN == -1) {
-+		if (fibmap == 1 && errno == EINVAL) {
-+			tst_brkm(TCONF, cleanup,
-+				"Swapfile on %s not implemented", fstype);
-+		} else {
-+			tst_brkm(TFAIL | TERRNO, cleanup,
-+				 "swapon on %s failed", fstype);
-+		}
-+	}
-+
-+	TEST(ltp_syscall(__NR_swapoff, filename, 0));
-+	if (TEST_RETURN == -1) {
-+		tst_brkm(TFAIL | TERRNO, cleanup,
-+			"swapoff on %s failed", fstype);
-+	}
+-	make_swapfile(cleanup, "swapfile01");
++	make_swapfile(cleanup, "swapfile01", 0);
  }
-diff --git a/testcases/kernel/syscalls/swapon/libswapon.h b/testcases/kernel/syscalls/swapon/libswapon.h
-index 7f7211eb4..a51833ec1 100644
---- a/testcases/kernel/syscalls/swapon/libswapon.h
-+++ b/testcases/kernel/syscalls/swapon/libswapon.h
-@@ -29,6 +29,11 @@
- /*
-  * Make a swap file
-  */
--void make_swapfile(void (cleanup)(void), const char *swapfile);
-+int make_swapfile(void (cleanup)(void), const char *swapfile, int safe);
  
-+/*
-+ * Check swapon/swapoff support status of filesystems or files
-+ * we are testing on.
-+ */
-+void is_swap_supported(void (cleanup)(void), const char *filename);
- #endif /* __LIBSWAPON_H__ */
+ static void cleanup(void)
+diff --git a/testcases/kernel/syscalls/swapon/swapon02.c b/testcases/kernel/syscalls/swapon/swapon02.c
+index 4af5105c6..3d49d0c6b 100644
+--- a/testcases/kernel/syscalls/swapon/swapon02.c
++++ b/testcases/kernel/syscalls/swapon/swapon02.c
+@@ -132,18 +132,11 @@ static void setup(void)
+ 
+ 	tst_tmpdir();
+ 
+-	switch ((fs_type = tst_fs_type(cleanup, "."))) {
+-	case TST_NFS_MAGIC:
+-	case TST_TMPFS_MAGIC:
+-		tst_brkm(TCONF, cleanup,
+-			 "Cannot do swapon on a file on %s filesystem",
+-			 tst_fs_type_name(fs_type));
+-	break;
+-	}
++	is_swap_supported(cleanup, "./tstswap");
+ 
+ 	SAFE_TOUCH(cleanup, "notswap", 0777, NULL);
+-	make_swapfile(cleanup, "swapfile01");
+-	make_swapfile(cleanup, "alreadyused");
++	make_swapfile(cleanup, "swapfile01", 0);
++	make_swapfile(cleanup, "alreadyused", 0);
+ 
+ 	if (ltp_syscall(__NR_swapon, "alreadyused", 0)) {
+ 		if (fs_type != TST_BTRFS_MAGIC || errno != EINVAL)
+diff --git a/testcases/kernel/syscalls/swapon/swapon03.c b/testcases/kernel/syscalls/swapon/swapon03.c
+index 955ac247b..cef57150c 100644
+--- a/testcases/kernel/syscalls/swapon/swapon03.c
++++ b/testcases/kernel/syscalls/swapon/swapon03.c
+@@ -153,7 +153,7 @@ static int setup_swap(void)
+ 	int j, fd;
+ 	int status;
+ 	int res = 0;
+-	char filename[15];
++	char filename[FILENAME_MAX];
+ 	char buf[BUFSIZ + 1];
+ 
+ 	/* Find out how many swapfiles (1 line per entry) already exist */
+@@ -210,7 +210,7 @@ static int setup_swap(void)
+ 			}
+ 
+ 			/* Create the swapfile */
+-			make_swapfile(cleanup, filename);
++			make_swapfile(cleanup, filename, 0);
+ 
+ 			/* turn on the swap file */
+ 			res = ltp_syscall(__NR_swapon, filename, 0);
+@@ -246,7 +246,7 @@ static int setup_swap(void)
+ 
+ 	/* Create all needed extra swapfiles for testing */
+ 	for (j = 0; j < testfiles; j++)
+-		make_swapfile(cleanup, swap_testfiles[j].filename);
++		make_swapfile(cleanup, swap_testfiles[j].filename, 0);
+ 
+ 	return 0;
+ 
+@@ -333,14 +333,7 @@ static void setup(void)
+ 
+ 	tst_tmpdir();
+ 
+-	switch ((fs_type = tst_fs_type(cleanup, "."))) {
+-	case TST_NFS_MAGIC:
+-	case TST_TMPFS_MAGIC:
+-		tst_brkm(TCONF, cleanup,
+-			 "Cannot do swapon on a file on %s filesystem",
+-			 tst_fs_type_name(fs_type));
+-	break;
+-	}
++	is_swap_supported(cleanup, "./tstswap");
+ 
+ 	TEST_PAUSE;
+ }
 -- 
 2.21.0
 
