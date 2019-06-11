@@ -2,143 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 383023C565
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 09:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3746C3C5A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 10:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404485AbfFKHs4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 03:48:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54424 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404064AbfFKHsz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 03:48:55 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A9B803082E25;
-        Tue, 11 Jun 2019 07:48:55 +0000 (UTC)
-Received: from localhost (dhcp-12-130.nay.redhat.com [10.66.12.130])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2626360BC9;
-        Tue, 11 Jun 2019 07:48:54 +0000 (UTC)
-From:   Murphy Zhou <xzhou@redhat.com>
-To:     liwang@redhat.com
-Cc:     ltp@lists.linux.it, amir73il@gmail.com, chrubis@suse.cz,
-        linux-fsdevel@vger.kernel.org, Murphy Zhou <xzhou@redhat.com>
-Subject: [PATCH v7 4/4] syscalls/swapoff/swapoff0{1,2}: use helpers to check support status
-Date:   Tue, 11 Jun 2019 15:47:41 +0800
-Message-Id: <20190611074741.31903-4-xzhou@redhat.com>
-In-Reply-To: <20190611074741.31903-1-xzhou@redhat.com>
-References: <CAEemH2e5b4q+bOeE3v8FG-piSUteCinPMVmxpnkVcYCmrUc4Uw@mail.gmail.com>
- <20190611074741.31903-1-xzhou@redhat.com>
+        id S2404619AbfFKILH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 04:11:07 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18545 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2404432AbfFKILH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Jun 2019 04:11:07 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 47CABB653578D8FD9F97;
+        Tue, 11 Jun 2019 16:04:57 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 11 Jun
+ 2019 16:04:49 +0800
+Subject: Re: [PATCH v8 1/1] f2fs: ioctl for removing a range from F2FS
+To:     sunqiuyang <sunqiuyang@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+CC:     <jaegeuk@kernel.org>
+References: <20190605033325.47628-1-sunqiuyang@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <fff6519a-17c7-35d3-19ff-37163cc0283a@huawei.com>
+Date:   Tue, 11 Jun 2019 16:04:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 11 Jun 2019 07:48:55 +0000 (UTC)
+In-Reply-To: <20190605033325.47628-1-sunqiuyang@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Of swap operations. Change Makefile to use functions from
-../swapon/libswapon.c
+On 2019/6/5 11:33, sunqiuyang wrote:
+> From: Qiuyang Sun <sunqiuyang@huawei.com>
+> 
+> This ioctl shrinks a given length (aligned to sections) from end of the
+> main area. Any cursegs and valid blocks will be moved out before
+> invalidating the range.
+> 
+> This feature can be used for adjusting partition sizes online.
+> --
+> Changlog v1 ==> v2:
+> 
+> Sahitya Tummala:
+>  - Add this ioctl for f2fs_compat_ioctl() as well.
+>  - Fix debugfs status to reflect the online resize changes.
+>  - Fix potential race between online resize path and allocate new data
+>    block path or gc path.
+> 
+> Others:
+>  - Rename some identifiers.
+>  - Add some error handling branches.
+>  - Clear sbi->next_victim_seg[BG_GC/FG_GC] in shrinking range.
+> --
+> Changelog v2 ==> v3:
+> Implement this interface as ext4's, and change the parameter from shrunk
+> bytes to new block count of F2FS.
+> --
+> Changelog v3 ==> v4:
+>  - During resizing, force to empty sit_journal and forbid adding new
+>    entries to it, in order to avoid invalid segno in journal after resize.
+>  - Reduce sbi->user_block_count before resize starts.
+>  - Commit the updated superblock first, and then update in-memory metadata
+>    only when the former succeeds.
+>  - Target block count must align to sections.
+> --
+> Changelog v4 ==> v5:
+> Write checkpoint before and after committing the new superblock, w/o
+> CP_FSCK_FLAG respectively, so that the FS can be fixed by fsck even if
+> resize fails after the new superblock is committed.
+> --
+> Changelog v5 ==> v6:
+>  - In free_segment_range(), reduce granularity of gc_mutex.
+>  - Add protection on curseg migration.
+> --
+> Changelog v6 ==> v7:
+>  - Add freeze_bdev() and thaw_bdev() for resize fs.
+>  - Remove CUR_MAIN_SECS and use MAIN_SECS directly for allocation.
+>  - Recover super_block and FS metadata when resize fails.
+> --
+> Changelog v7 ==> v8:
+>  - No need to clear CP_FSCK_FLAG in update_ckpt_flags().
+>  - Clean up the sb and fs metadata update functions for resize_fs.
+> 
+> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 
-Reviewed-by: Li Wang <liwang@redhat.com>
-Signed-off-by: Murphy Zhou <xzhou@redhat.com>
----
- testcases/kernel/syscalls/swapoff/Makefile     |  3 ++-
- testcases/kernel/syscalls/swapoff/Makefile.inc |  6 ++++++
- testcases/kernel/syscalls/swapoff/swapoff01.c  | 10 ++--------
- testcases/kernel/syscalls/swapoff/swapoff02.c  | 11 ++---------
- 4 files changed, 12 insertions(+), 18 deletions(-)
- create mode 100644 testcases/kernel/syscalls/swapoff/Makefile.inc
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/testcases/kernel/syscalls/swapoff/Makefile b/testcases/kernel/syscalls/swapoff/Makefile
-index bd617d806..536b2dbac 100644
---- a/testcases/kernel/syscalls/swapoff/Makefile
-+++ b/testcases/kernel/syscalls/swapoff/Makefile
-@@ -19,5 +19,6 @@
- top_srcdir		?= ../../../..
- 
- include $(top_srcdir)/include/mk/testcases.mk
--
-+include $(abs_srcdir)/./Makefile.inc
- include $(top_srcdir)/include/mk/generic_leaf_target.mk
-+$(MAKE_TARGETS): %: %.o ../swapon/libswapon.o
-diff --git a/testcases/kernel/syscalls/swapoff/Makefile.inc b/testcases/kernel/syscalls/swapoff/Makefile.inc
-new file mode 100644
-index 000000000..65350cbeb
---- /dev/null
-+++ b/testcases/kernel/syscalls/swapoff/Makefile.inc
-@@ -0,0 +1,6 @@
-+LIBDIR			+= ../swapon/
-+LIBSWAPON		:= $(LIBDIR)/libswapon.o
-+$(LIBSWAPON):
-+	$(MAKE) -C $(LIBDIR)
-+CPPFLAGS		+= -I$(abs_srcdir)/$(LIBDIR)
-+LDFLAGS			+= -L$(abs_builddir)/$(LIBDIR)
-diff --git a/testcases/kernel/syscalls/swapoff/swapoff01.c b/testcases/kernel/syscalls/swapoff/swapoff01.c
-index a63e661a5..e115269c0 100644
---- a/testcases/kernel/syscalls/swapoff/swapoff01.c
-+++ b/testcases/kernel/syscalls/swapoff/swapoff01.c
-@@ -25,6 +25,7 @@
- #include <stdlib.h>
- #include "config.h"
- #include "lapi/syscalls.h"
-+#include "../swapon/libswapon.h"
- 
- static void setup(void);
- static void cleanup(void);
-@@ -86,14 +87,7 @@ static void setup(void)
- 
- 	tst_tmpdir();
- 
--	switch ((fs_type = tst_fs_type(cleanup, "."))) {
--	case TST_NFS_MAGIC:
--	case TST_TMPFS_MAGIC:
--		tst_brkm(TCONF, cleanup,
--			 "Cannot do swapoff on a file on %s filesystem",
--			 tst_fs_type_name(fs_type));
--	break;
--	}
-+	is_swap_supported(cleanup, "./tstswap");
- 
- 	if (!tst_fs_has_free(NULL, ".", 64, TST_MB)) {
- 		tst_brkm(TBROK, cleanup,
-diff --git a/testcases/kernel/syscalls/swapoff/swapoff02.c b/testcases/kernel/syscalls/swapoff/swapoff02.c
-index b5c6312a1..8954f975f 100644
---- a/testcases/kernel/syscalls/swapoff/swapoff02.c
-+++ b/testcases/kernel/syscalls/swapoff/swapoff02.c
-@@ -33,6 +33,7 @@
- #include "test.h"
- #include "lapi/syscalls.h"
- #include "safe_macros.h"
-+#include "../swapon/libswapon.h"
- 
- static void setup(void);
- static void cleanup(void);
-@@ -124,7 +125,6 @@ static void cleanup01(void)
- 
- static void setup(void)
- {
--	long type;
- 	struct passwd *nobody;
- 
- 	tst_sig(FORK, DEF_HANDLER, cleanup);
-@@ -138,14 +138,7 @@ static void setup(void)
- 
- 	tst_tmpdir();
- 
--	switch ((type = tst_fs_type(cleanup, "."))) {
--	case TST_NFS_MAGIC:
--	case TST_TMPFS_MAGIC:
--		tst_brkm(TCONF, cleanup,
--			 "Cannot do swapoff on a file on %s filesystem",
--			 tst_fs_type_name(type));
--	break;
--	}
-+	is_swap_supported(cleanup, "./tstswap");
- 
- 	if (!tst_fs_has_free(NULL, ".", 1, TST_KB)) {
- 		tst_brkm(TBROK, cleanup,
--- 
-2.21.0
+Qiuyang, could you please add one f2fs individual testcase in fstest suit to do
+simple test with this ioctl.
 
+e.g.
+- mkfs & mount
+- fragment image
+- resizefs ioctl
+- check fs size via statfs
+- umount & fsck
+- maybe mount & check again
+
+Thanks,
