@@ -2,167 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B9DF41644
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 22:42:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2173DBD0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 22:29:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406598AbfFKUmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 16:42:49 -0400
-Received: from mail180-16.suw31.mandrillapp.com ([198.2.180.16]:12613 "EHLO
-        mail180-16.suw31.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2406534AbfFKUms (ORCPT
+        id S2406496AbfFKU3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 16:29:13 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41949 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406271AbfFKU3N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 16:42:48 -0400
-X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Jun 2019 16:42:47 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
- h=From:Subject:To:Cc:Message-Id:References:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=NII9dUPZstPQzWQWcZ0kvkl2Xz8WPoKqKU56SNDW9Hs=;
- b=GzvjTqIcZ125Ub5isuaXAIKqodlApvePh4Bspf+e682j5KT3otq9jxOKCKAzkHq3wOG4Xp//6+f4
-   NY5v9SOsqTWkm9WdjvoQl35Qe6g0tXx8Wcu88SxDHnP1A+nHw9Byo+m5aUUErkLJKoOywko215iq
-   xhsgVZOJEugLfHTHQ9k=
-Received: from pmta03.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail180-16.suw31.mandrillapp.com id h0094e22sc02 for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2019 20:27:45 +0000 (envelope-from <bounce-md_31050260.5d000ec1.v1-009b9b45c10841e3a4870e12842f7d7a@mandrillapp.com>)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1560284865; h=From : 
- Subject : To : Cc : Message-Id : References : In-Reply-To : Date : 
- MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
- Subject : Date : X-Mandrill-User : List-Unsubscribe; 
- bh=NII9dUPZstPQzWQWcZ0kvkl2Xz8WPoKqKU56SNDW9Hs=; 
- b=MEbgxtTSbSGFe7a+58AgNN2E4o66jr3WhidFffFm9oDd49y77yxriHce4lBS4P8S86IrbO
- fft/+Rgci0P0gTneLV64xHjvfVR+mjqCl+7vyt6hGObB/zwxoxusPypzrHmFrYuMmGnIohJg
- jPqoncGQWDWLdDhLk9fC4ZGtEOc1w=
-From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: Re: Linux 5.2-RC regression bisected, mounting glusterfs volumes fails after commit: fuse: require /dev/fuse reads to have enough buffer capacity
-Received: from [87.98.221.171] by mandrillapp.com id 009b9b45c10841e3a4870e12842f7d7a; Tue, 11 Jun 2019 20:27:45 +0000
-To:     Sander Eikelenboom <linux@eikelenboom.it>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>, <gluster-devel@gluster.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-Message-Id: <20190611202738.GA22556@deco.navytux.spb.ru>
-References: <876aefd0-808a-bb4b-0897-191f0a8d9e12@eikelenboom.it> <CAJfpegvRBm3M8fUJ1Le1dPd0QSJgAWAYJGLCQKa6YLTE+4oucw@mail.gmail.com>
-In-Reply-To: <CAJfpegvRBm3M8fUJ1Le1dPd0QSJgAWAYJGLCQKa6YLTE+4oucw@mail.gmail.com>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.009b9b45c10841e3a4870e12842f7d7a
-X-Mandrill-User: md_31050260
-Date:   Tue, 11 Jun 2019 20:27:45 +0000
+        Tue, 11 Jun 2019 16:29:13 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 83so7585037pgg.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2019 13:29:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dhnwSrdCPnvzoEVfuuVGqE83p7TnkQ5Modn2BNCoQD0=;
+        b=Pp0Hq+hd8QA6syECahlCWtYv82jhOxBm0sr+fZ9Dkk8nXtHe7nrSiSj+V8u0FaITQ7
+         84fXuzNXkrhzDQgkHPp26EjnsIzrDKXg48+xvOTrPv1gFdJxgRLOvcs0dwgoU2BGvzqE
+         Liz3+gL3rcT7wqBUJosubNY4aHZAru2eeUFG6CtPZ2mbKIzTjquHFKUIQcWXvVk4hMLI
+         7UB1amIr3aRGarnBUHse/35CwxBlRRF3qifo7BnhaOJV61RWbVqr0wA4GIowlDaA6gfT
+         pWINRb5VwbD/mtNfms9GrZfwha/4G8tSCCTtYnHFhjTrLaOGAdTroClIT1QeFCWuqloy
+         NJbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dhnwSrdCPnvzoEVfuuVGqE83p7TnkQ5Modn2BNCoQD0=;
+        b=klri8P0n5+Ao0+2XkKiRL4uN4/yGjNSA8IwlMiURpEe7Fm1Uw6LIGYNXBIHE309ceh
+         ASeqyiuB1zwBNgiSKYVcqV72Fz3weLfrV7dN7zhFFz2KAMBtmXbQcQZCZJIC++sjemDk
+         Da/OZrLDhilqwQBHf53oC4FrTLneTYs2XIJF5FbUG8MQiQ8EiIAQPy4aRT8EsMoh4tSi
+         S36WVBo7tR7iP95J2xq3f3ZmNuPAG9LgFt6Wg3X02S18bIz+lrp0IoB0fkQVH+ZPuSpG
+         q2KojsKEyldgKdNX1Zpcw0vZCpG75mkmz6MnXVqe81CSX2CDXylfpFnk7EnZJm6JY99T
+         OaTQ==
+X-Gm-Message-State: APjAAAWcPQSQhKdUqF8zaLtQE/kceK0dk/Oq2lWjSg1wYiHPn61Fi2Yd
+        QypVu/E1kpbQuhOiPTmF8osYdOrnnsubot0WMQy5eA==
+X-Google-Smtp-Source: APXvYqycBtJ32qbIn8pTyxMIAID5Xv7JTruAR7oTyIED4r622bu9rIlLgVdk0eekxjLa2OE4wVYL1Pw8y64Cqw0kRwU=
+X-Received: by 2002:a17:90a:2e89:: with SMTP id r9mr28553830pjd.117.1560284952085;
+ Tue, 11 Jun 2019 13:29:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+References: <20190514221711.248228-1-brendanhiggins@google.com>
+ <20190514221711.248228-18-brendanhiggins@google.com> <20190517182254.548EA20815@mail.kernel.org>
+ <CAAXuY3p4qhKVsSpQ44_kQeGDMfg7OuFLgFyxhcFWS3yf-5A_7g@mail.gmail.com>
+ <20190607190047.C3E7A20868@mail.kernel.org> <20190611175830.GA236872@google.com>
+ <20190611185018.2E1C021744@mail.kernel.org>
+In-Reply-To: <20190611185018.2E1C021744@mail.kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 11 Jun 2019 13:29:01 -0700
+Message-ID: <CAFd5g47dmcHOCX41cr2v9Kaj3xa_5-PoqUPX_1=AoQLUG90NkQ@mail.gmail.com>
+Subject: Re: [PATCH v4 17/18] kernel/sysctl-test: Add null pointer test for sysctl.c:proc_dointvec()
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Iurii Zaikin <yzaikin@google.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 01:52:14PM +0200, Miklos Szeredi wrote:
-> On Tue, Jun 11, 2019 at 1:03 PM Sander Eikelenboom <linux@eikelenboom.it> wrote:
+On Tue, Jun 11, 2019 at 11:50 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Brendan Higgins (2019-06-11 10:58:30)
+> > On Fri, Jun 07, 2019 at 12:00:47PM -0700, Stephen Boyd wrote:
+> > > Quoting Iurii Zaikin (2019-06-05 18:29:42)
+> > > > On Fri, May 17, 2019 at 11:22 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > > >
+> > > > > Quoting Brendan Higgins (2019-05-14 15:17:10)
+> > > > > > diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
+> > > > > > new file mode 100644
+> > > > > > index 0000000000000..fe0f2bae66085
+> > > > > > --- /dev/null
+> > > > > > +++ b/kernel/sysctl-test.c
+> > > > > > +
+> > > > > > +
+> > > > > > +static void sysctl_test_dointvec_happy_single_negative(struct kunit *test)
+> > > > > > +{
+> > > > > > +       struct ctl_table table = {
+> > > > > > +               .procname = "foo",
+> > > > > > +               .data           = &test_data.int_0001,
+> > > > > > +               .maxlen         = sizeof(int),
+> > > > > > +               .mode           = 0644,
+> > > > > > +               .proc_handler   = proc_dointvec,
+> > > > > > +               .extra1         = &i_zero,
+> > > > > > +               .extra2         = &i_one_hundred,
+> > > > > > +       };
+> > > > > > +       char input[] = "-9";
+> > > > > > +       size_t len = sizeof(input) - 1;
+> > > > > > +       loff_t pos = 0;
+> > > > > > +
+> > > > > > +       table.data = kunit_kzalloc(test, sizeof(int), GFP_USER);
+> > > > > > +       KUNIT_EXPECT_EQ(test, 0, proc_dointvec(&table, 1, input, &len, &pos));
+> > > > > > +       KUNIT_EXPECT_EQ(test, sizeof(input) - 1, len);
+> > > > > > +       KUNIT_EXPECT_EQ(test, sizeof(input) - 1, pos);
+> > > > > > +       KUNIT_EXPECT_EQ(test, -9, *(int *)table.data);
+> > > > >
+> > > > > Is the casting necessary? Or can the macro do a type coercion of the
+> > > > > second parameter based on the first type?
+> > > >  Data field is defined as void* so I believe casting is necessary to
+> > > > dereference it as a pointer to an array of ints. I don't think the
+> > > > macro should do any type coercion that == operator wouldn't do.
+> > > >  I did change the cast to make it more clear that it's a pointer to an
+> > > > array of ints being dereferenced.
+> > >
+> > > Ok, I still wonder if we should make KUNIT_EXPECT_EQ check the types on
+> > > both sides and cause a build warning/error if the types aren't the same.
+> > > This would be similar to our min/max macros that complain about
+> > > mismatched types in the comparisons. Then if a test developer needs to
+> > > convert one type or the other they could do so with a
+> > > KUNIT_EXPECT_EQ_T() macro that lists the types to coerce both sides to
+> > > explicitly.
 > >
-> > L.S.,
+> > Do you think it would be better to do a phony compare similar to how
+> > min/max used to work prior to 4.17, or to use the new __typecheck(...)
+> > macro? This might seem like a dumb question (and maybe it is), but Iurii
+> > and I thought the former created an error message that was a bit easier
+> > to understand, whereas __typecheck is obviously superior in terms of
+> > code reuse.
 > >
-> > While testing a linux 5.2 kernel I noticed it fails to mount my glusterfs volumes.
+> > This is what we are thinking right now; if you don't have any complaints
+> > I will squash it into the relevant commits on the next revision:
+>
+> Can you provide the difference in error messages and describe that in
+> the commit text? The commit message is where you "sell" the patch, so
+> being able to compare the tradeoff of having another macro to do type
+> comparisons vs. reusing the one that's there in kernel.h would be useful
+> to allay concerns that we're duplicating logic for better error
+> messages.
+
+Oh sorry, I didn't think too hard about the commit message since I
+figured it would get split up and squashed into the existing commits.
+I just wanted to get it out sooner to discuss this before I post the
+next revision (probably later this week).
+
+> Honestly, I'd prefer we just use the macros that we've developed in
+> kernel.h to do comparisons here so that we can get code reuse, but more
+> importantly so that we don't trip over problems that caused those macros
+> to be created in the first place. If the error message is bad, perhaps
+> that can be fixed with some sort of compiler directive to make the error
+> message a little more useful, i.e. compiletime_warning() thrown into
+> __typecheck() or something.
+
+That's a good point. I have no qualms sticking with __typecheck(...)
+for now; if we later feel that it is causing problems, we can always
+fix it later by supplying our own warning in the manner you suggest.
+
+Iurii, do you have any additional thoughts on this?
+
+>
+> > ---
+> > From: Iurii Zaikin <yzaikin@google.com>
 > >
-> > It repeatedly fails with:
-> >    [2019-06-11 09:15:27.106946] W [fuse-bridge.c:4993:fuse_thread_proc] 0-glusterfs-fuse: read from /dev/fuse returned -1 (Invalid argument)
-> >    [2019-06-11 09:15:27.106955] W [fuse-bridge.c:4993:fuse_thread_proc] 0-glusterfs-fuse: read from /dev/fuse returned -1 (Invalid argument)
-> >    [2019-06-11 09:15:27.106963] W [fuse-bridge.c:4993:fuse_thread_proc] 0-glusterfs-fuse: read from /dev/fuse returned -1 (Invalid argument)
-> >    [2019-06-11 09:15:27.106971] W [fuse-bridge.c:4993:fuse_thread_proc] 0-glusterfs-fuse: read from /dev/fuse returned -1 (Invalid argument)
-> >    etc.
-> >    etc.
+> > Adds a warning message when comparing values of different types similar
+> > to what min() / max() macros do.
 > >
-> > Bisecting turned up as culprit:
-> >     commit d4b13963f217dd947da5c0cabd1569e914d21699: fuse: require /dev/fuse reads to have enough buffer capacity
-> >
-> > The glusterfs version i'm using is from Debian stable:
-> >     ii  glusterfs-client                3.8.8-1                      amd64        clustered file-system (client package)
-> >     ii  glusterfs-common                3.8.8-1                      amd64        GlusterFS common libraries and translator modules
-> >
-> >
-> > A 5.1.* kernel works fine, as does a 5.2-rc4 kernel with said commit reverted.
-> 
-> Thanks for the report, reverted the bad commit.
-
-First of all I'm sorry for breaking things here. The diff of the guilty
-commit is
-
-	--- a/fs/fuse/dev.c
-	+++ b/fs/fuse/dev.c
-	@@ -1317,6 +1317,16 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
-	        unsigned reqsize;
-	        unsigned int hash;
-	 
-	+       /*
-	+        * Require sane minimum read buffer - that has capacity for fixed part
-	+        * of any request header + negotated max_write room for data. If the
-	+        * requirement is not satisfied return EINVAL to the filesystem server
-	+        * to indicate that it is not following FUSE server/client contract.
-	+        * Don't dequeue / abort any request.
-	+        */
-	+       if (nbytes < max_t(size_t, FUSE_MIN_READ_BUFFER, 4096 + fc->max_write))
-	+               return -EINVAL;
-	+
-	  restart:
-	        spin_lock(&fiq->waitq.lock);
-	        err = -EAGAIN;
-
-and it was essentially requesting that the filesystem server provide
-4K+<negotiated_max_write> buffer for reads from /dev/fuse. That 4K was meant as
-space for FUSE request header, citing commit:
-
-    Before getting into operation phase, FUSE filesystem server and kernel
-    client negotiate what should be the maximum write size the client will
-    ever issue. After negotiation the contract in between server/client is
-    that the filesystem server then should queue /dev/fuse sys_read calls with
-    enough buffer capacity to receive any client request - WRITE in
-    particular, while FUSE client should not, in particular, send WRITE
-    requests with > negotiated max_write payload. FUSE client in kernel and
-    libfuse historically reserve 4K for request header. This way the
-    contract is that filesystem server should queue sys_reads with
-    4K+max_write buffer.
-
-I could reproduce the problem and as it turns out what broke here is that
-glusterfs is using not 4K but a smaller room for header - 80 bytes for
-gluster-3.8 being `sizeof(fuse_in_header) + sizeof(fuse_write_in)`:
-
-https://github.com/gluster/glusterfs/blob/v3.8.15-0-gd174f021a/xlators/mount/fuse/src/fuse-bridge.c#L4894
-
-
-Since
-
-	`sizeof(fuse_in_header) + sizeof(fuse_write_in)` ==
-	`sizeof(fuse_in_header) + sizeof(fuse_read_in)`
-
-is the absolute minimum any sane filesystem should be using for header room, can
-we please restore the patch with that value instead of 4K?
-
-That patch was there in the first place to help diagnose stuck fuse
-servers much more easier, citing commit:
-
-    If the filesystem server does not follow this contract, what can happen
-    is that fuse_dev_do_read will see that request size is > buffer size,
-    and then it will return EIO to client who issued the request but won't
-    indicate in any way that there is a problem to filesystem server.
-    This can be hard to diagnose because for some requests, e.g. for
-    NOTIFY_REPLY which mimics WRITE, there is no client thread that is
-    waiting for request completion and that EIO goes nowhere, while on
-    filesystem server side things look like the kernel is not replying back
-    after successful NOTIFY_RETRIEVE request made by the server.
-
-    We can make the problem easy to diagnose if we indicate via error return to
-    filesystem server when it is violating the contract.  This should not
-    practically cause problems because if a filesystem server is using shorter
-    buffer, writes to it were already very likely to cause EIO, and if the
-    filesystem is read-only it should be too following FUSE_MIN_READ_BUFFER
-    minimum buffer size.
-
-    Please see [1] for context where the problem of stuck filesystem was hit
-    for real (because kernel client was incorrectly sending more than
-    max_write data with NOTIFY_REPLY; see also previous patch), how the
-    situation was traced and for more involving patch that did not make it
-    into the tree.
-
-    [1] https://marc.info/?l=linux-fsdevel&m=155057023600853&w=2
-
-so it would be a pity to loose that property.
-
-Miklos, would 4K -> `sizeof(fuse_in_header) + sizeof(fuse_write_in)` for
-header room change be accepted?
-
-Kirill
+> > Signed-off-by: Iurii Zaikin <yzaikin@google.com>
