@@ -2,29 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3D283CFC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 16:55:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F345F3CFC6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 16:55:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391691AbfFKOzd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 10:55:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52726 "EHLO mx1.suse.de"
+        id S2391707AbfFKOzh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 10:55:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52806 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391683AbfFKOzc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:55:32 -0400
+        id S2391683AbfFKOzh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Jun 2019 10:55:37 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1A8B1AD5D;
-        Tue, 11 Jun 2019 14:55:30 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 69DFEAD5D;
+        Tue, 11 Jun 2019 14:55:35 +0000 (UTC)
 From:   Roman Penyaev <rpenyaev@suse.de>
 Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 13/14] epoll: implement epoll_create2() syscall
-Date:   Tue, 11 Jun 2019 16:54:57 +0200
-Message-Id: <20190611145458.9540-14-rpenyaev@suse.de>
+Subject: [PATCH v4 14/14] kselftest: add uepoll-test which tests polling from userspace
+Date:   Tue, 11 Jun 2019 16:54:58 +0200
+Message-Id: <20190611145458.9540-15-rpenyaev@suse.de>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190611145458.9540-1-rpenyaev@suse.de>
 References: <20190611145458.9540-1-rpenyaev@suse.de>
@@ -36,291 +35,693 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-epoll_create2() is needed to accept EPOLL_USERPOLL flags
-and size, i.e. this patch wires up polling from userspace.
-
 Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/uepoll/.gitignore     |   1 +
+ tools/testing/selftests/uepoll/Makefile       |  16 +
+ .../uepoll/atomic-builtins-support.c          |  13 +
+ tools/testing/selftests/uepoll/uepoll-test.c  | 603 ++++++++++++++++++
+ 5 files changed, 634 insertions(+)
+ create mode 100644 tools/testing/selftests/uepoll/.gitignore
+ create mode 100644 tools/testing/selftests/uepoll/Makefile
+ create mode 100644 tools/testing/selftests/uepoll/atomic-builtins-support.c
+ create mode 100644 tools/testing/selftests/uepoll/uepoll-test.c
 
-Hi Arnd,
-
-I am not sure is that correct, especially for alpha, because
-clone3() is missing for some archs.  I noticed that clone3()
-follows with a gap, so I kept the same for all archs.
-Could you please take a look.
-
-
- arch/alpha/kernel/syscalls/syscall.tbl      | 2 ++
- arch/arm/tools/syscall.tbl                  | 1 +
- arch/arm64/include/asm/unistd.h             | 2 +-
- arch/arm64/include/asm/unistd32.h           | 2 ++
- arch/ia64/kernel/syscalls/syscall.tbl       | 2 ++
- arch/m68k/kernel/syscalls/syscall.tbl       | 2 ++
- arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   | 2 ++
- arch/mips/kernel/syscalls/syscall_n64.tbl   | 2 ++
- arch/mips/kernel/syscalls/syscall_o32.tbl   | 2 ++
- arch/parisc/kernel/syscalls/syscall.tbl     | 2 ++
- arch/powerpc/kernel/syscalls/syscall.tbl    | 2 ++
- arch/s390/kernel/syscalls/syscall.tbl       | 2 ++
- arch/sh/kernel/syscalls/syscall.tbl         | 2 ++
- arch/sparc/kernel/syscalls/syscall.tbl      | 2 ++
- arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
- fs/eventpoll.c                              | 5 +++++
- include/linux/syscalls.h                    | 1 +
- include/uapi/asm-generic/unistd.h           | 4 +++-
- kernel/sys_ni.c                             | 1 +
- 22 files changed, 40 insertions(+), 2 deletions(-)
-
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 1db9bbcfb84e..a1d7b695063d 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -474,3 +474,5 @@
- 542	common	fsmount				sys_fsmount
- 543	common	fspick				sys_fspick
- 544	common	pidfd_open			sys_pidfd_open
-+# 546	common	clone3			sys_clone3
-+547	common	epoll_create2			sys_epoll_create2
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index ff45d8807cb8..1497f3c87d54 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -449,3 +449,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 436	common	clone3				sys_clone3
-+437	common	epoll_create2			sys_epoll_create2
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 24480c2d95da..8ed47af3d64a 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -44,7 +44,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
--#define __NR_compat_syscalls		437
-+#define __NR_compat_syscalls		438
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 10f16b0175ca..eb467e639352 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -890,6 +890,8 @@ __SYSCALL(__NR_fspick, sys_fspick)
- __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
- #define __NR_clone3 436
- __SYSCALL(__NR_clone3, sys_clone3)
-+#define __NR_epoll_create2 437
-+__SYSCALL(__NR_epoll_create2, sys_epoll_create2)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index ecc44926737b..5cecff901853 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -355,3 +355,5 @@
- 432	common	fsmount				sys_fsmount
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
-+# 436	common	clone3			sys_clone3
-+437	common	epoll_create2			sys_epoll_create2
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 9a3eb2558568..29d944e2e9d6 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -434,3 +434,5 @@
- 432	common	fsmount				sys_fsmount
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
-+# 436	common	clone3			sys_clone3
-+437	common	epoll_create2			sys_epoll_create2
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 9181f181f76d..fad83841b16b 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -441,3 +441,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 436	common	clone3				sys_clone3
-+437	common	epoll_create2			sys_epoll_create2
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 97035e19ad03..661d63d7ea84 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -373,3 +373,5 @@
- 432	n32	fsmount				sys_fsmount
- 433	n32	fspick				sys_fspick
- 434	n32	pidfd_open			sys_pidfd_open
-+# 436	n32	clone3			sys_clone3
-+437	n32	epoll_create2			sys_epoll_create2
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index d7292722d3b0..4a7f270ef126 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -349,3 +349,5 @@
- 432	n64	fsmount				sys_fsmount
- 433	n64	fspick				sys_fspick
- 434	n64	pidfd_open			sys_pidfd_open
-+# 436	n64	clone3			sys_clone3
-+437	n64	epoll_create2			sys_epoll_create2
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index dba084c92f14..db87225a9dc5 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -422,3 +422,5 @@
- 432	o32	fsmount				sys_fsmount
- 433	o32	fspick				sys_fspick
- 434	o32	pidfd_open			sys_pidfd_open
-+# 436	o32	clone3			sys_clone3
-+437	o32	epoll_create2			sys_epoll_create2
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index 5022b9e179c2..25374a2c4e16 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -431,3 +431,5 @@
- 432	common	fsmount				sys_fsmount
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
-+# 436 common	clone3			sys_clone3
-+437	common	epoll_create2			sys_epoll_create2
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index f2c3bda2d39f..9f48d8a737ab 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -516,3 +516,5 @@
- 432	common	fsmount				sys_fsmount
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
-+# 436	common	clone3			sys_clone3
-+437	common	epoll_create2			sys_epoll_create2
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 6ebacfeaf853..0cef54850a1c 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -437,3 +437,5 @@
- 432  common	fsmount			sys_fsmount			sys_fsmount
- 433  common	fspick			sys_fspick			sys_fspick
- 434  common	pidfd_open		sys_pidfd_open			sys_pidfd_open
-+# 436  common	clone3		sys_clone3			sys_clone3
-+437  common	epoll_create2		sys_epoll_create2               sys_epoll_create2
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index 834c9c7d79fa..42769d6ec8fe 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -437,3 +437,5 @@
- 432	common	fsmount				sys_fsmount
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
-+# 436  common	clone3		sys_clone3
-+437	common	epoll_create2			sys_epoll_create2
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index c58e71f21129..bf86fa32913d 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -480,3 +480,5 @@
- 432	common	fsmount				sys_fsmount
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
-+# 436  common	clone3		sys_clone3
-+437	common	epoll_create2			sys_epoll_create2
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 6a99dbbf7e04..26d64f09b097 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -440,3 +440,4 @@
- 433	i386	fspick			sys_fspick			__ia32_sys_fspick
- 434	i386	pidfd_open		sys_pidfd_open			__ia32_sys_pidfd_open
- 436	i386	clone3			sys_clone3			__ia32_sys_clone3
-+437	i386	epoll_create2		sys_epoll_create2		__ia32_sys_epoll_create2
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 68227c7f71e5..4b58d8694693 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -357,6 +357,7 @@
- 433	common	fspick			__x64_sys_fspick
- 434	common	pidfd_open		__x64_sys_pidfd_open
- 436	common	clone3			__x64_sys_clone3/ptregs
-+437	common	epoll_create2		__x64_sys_epoll_create2
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index d5a1fd2c96c7..eef4367d433e 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -406,3 +406,4 @@
- 433	common	fspick				sys_fspick
- 434	common	pidfd_open			sys_pidfd_open
- 436	common	clone3				sys_clone3
-+437	common	epoll_create2			sys_epoll_create2
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index c5db15c5f8b0..6b1b5c043e42 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2799,6 +2799,11 @@ static int do_epoll_create(int flags, size_t size)
- 	return error;
- }
- 
-+SYSCALL_DEFINE2(epoll_create2, int, flags, size_t, size)
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 9781ca79794a..ff87ac3400fe 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -52,6 +52,7 @@ TARGETS += timers
+ endif
+ TARGETS += tmpfs
+ TARGETS += tpm2
++TARGETS += uepoll
+ TARGETS += user
+ TARGETS += vm
+ TARGETS += x86
+diff --git a/tools/testing/selftests/uepoll/.gitignore b/tools/testing/selftests/uepoll/.gitignore
+new file mode 100644
+index 000000000000..8eedec333023
+--- /dev/null
++++ b/tools/testing/selftests/uepoll/.gitignore
+@@ -0,0 +1 @@
++uepoll-test
+diff --git a/tools/testing/selftests/uepoll/Makefile b/tools/testing/selftests/uepoll/Makefile
+new file mode 100644
+index 000000000000..cc1b2009197d
+--- /dev/null
++++ b/tools/testing/selftests/uepoll/Makefile
+@@ -0,0 +1,16 @@
++# SPDX-License-Identifier: GPL-2.0
++
++CC := $(CROSS_COMPILE)gcc
++CFLAGS += -O2 -g -I../../../../usr/include/ -lnuma -lpthread
++
++BUILTIN_SUPPORT := $(shell $(CC) -o /dev/null ./atomic-builtins-support.c >/dev/null 2>&1; echo $$?)
++
++ifeq "$(BUILTIN_SUPPORT)" "0"
++    TEST_GEN_PROGS := uepoll-test
++else
++    $(warning WARNING:)
++    $(warning WARNING: uepoll compilation is skipped, gcc atomic builtins are not supported!)
++    $(warning WARNING:)
++endif
++
++include ../lib.mk
+diff --git a/tools/testing/selftests/uepoll/atomic-builtins-support.c b/tools/testing/selftests/uepoll/atomic-builtins-support.c
+new file mode 100644
+index 000000000000..d9ded39ec497
+--- /dev/null
++++ b/tools/testing/selftests/uepoll/atomic-builtins-support.c
+@@ -0,0 +1,13 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Just a test to check if gcc supports atomic builtins
++ */
++unsigned long long v, vv, vvv;
++
++int main(void)
 +{
-+	return do_epoll_create(flags, size);
++	vv = __atomic_load_n(&v, __ATOMIC_ACQUIRE);
++	vvv = __atomic_exchange_n(&vv, 0, __ATOMIC_ACQUIRE);
++
++	return __atomic_add_fetch(&vvv, 1, __ATOMIC_RELAXED);
++}
+diff --git a/tools/testing/selftests/uepoll/uepoll-test.c b/tools/testing/selftests/uepoll/uepoll-test.c
+new file mode 100644
+index 000000000000..1cefdcc1e25b
+--- /dev/null
++++ b/tools/testing/selftests/uepoll/uepoll-test.c
+@@ -0,0 +1,603 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * uepoll-test.c - Test cases for epoll_create2(), namely pollable
++ * epoll from userspace.  Copyright (c) 2019 Roman Penyaev
++ */
++
++#define _GNU_SOURCE
++#include <stdio.h>
++#include <stdlib.h>
++#include <time.h>
++#include <assert.h>
++#include <sys/mman.h>
++#include <sys/eventfd.h>
++#include <unistd.h>
++#include <pthread.h>
++#include <errno.h>
++#include <syscall.h>
++#include <numa.h>
++
++#include "../kselftest.h"
++#include "../kselftest_harness.h"
++
++#include <linux/eventpoll.h>
++#include <linux/types.h>
++
++#define BUILD_BUG_ON(condition) ((void)sizeof(char [1 - 2*!!(condition)]))
++#define READ_ONCE(v) (*(volatile typeof(v)*)&(v))
++
++#define ITERS     1000000ull
++
++/*
++ * Add main epoll functions manually, because sys/epoll.h conflicts
++ * with linux/eventpoll.h.
++ */
++extern int epoll_create1(int __flags);
++extern int epoll_ctl(int __epfd, int __op, int __fd,
++		     struct epoll_event *__event);
++extern int epoll_wait(int __epfd, struct epoll_event *__events,
++		      int __maxevents, int __timeout);
++
++static inline long epoll_create2(int flags, size_t size)
++{
++	return syscall(__NR_epoll_create2, flags, size);
 +}
 +
- SYSCALL_DEFINE1(epoll_create1, int, flags)
- {
- 	return do_epoll_create(flags, 0);
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index b01d54a5732e..655ac0ebfdf9 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -357,6 +357,7 @@ asmlinkage long sys_eventfd2(unsigned int count, int flags);
- 
- /* fs/eventpoll.c */
- asmlinkage long sys_epoll_create1(int flags);
-+asmlinkage long sys_epoll_create2(int flags, size_t size);
- asmlinkage long sys_epoll_ctl(int epfd, int op, int fd,
- 				struct epoll_event __user *event);
- asmlinkage long sys_epoll_pwait(int epfd, struct epoll_event __user *events,
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 7c7c14a2e097..59c9dea64565 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -848,9 +848,11 @@ __SYSCALL(__NR_fspick, sys_fspick)
- __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
- #define __NR_clone3 436
- __SYSCALL(__NR_clone3, sys_clone3)
-+#define __NR_epoll_create2 437
-+__SYSCALL(__NR_epoll_create2, sys_epoll_create2)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 437
-+#define __NR_syscalls 438
- 
- /*
-  * 32 bit systems traditionally used different
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index 4d9ae5ea6caf..665908b8a326 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -65,6 +65,7 @@ COND_SYSCALL(eventfd2);
- 
- /* fs/eventfd.c */
- COND_SYSCALL(epoll_create1);
-+COND_SYSCALL(epoll_create2);
- COND_SYSCALL(epoll_ctl);
- COND_SYSCALL(epoll_pwait);
- COND_SYSCALL_COMPAT(epoll_pwait);
++struct thread_ctx {
++	pthread_t thread;
++	int efd;
++};
++
++struct cpu_map {
++	unsigned int nr;
++	unsigned int map[];
++};
++
++static volatile unsigned int thr_ready;
++static volatile unsigned int start;
++
++static inline unsigned int max_index_nr(struct epoll_uheader *header)
++{
++	return header->index_length >> 2;
++}
++
++static int is_cpu_online(int cpu)
++{
++	char buf[64];
++	char online;
++	FILE *f;
++	int rc;
++
++	snprintf(buf, sizeof(buf), "/sys/devices/system/cpu/cpu%d/online", cpu);
++	f = fopen(buf, "r");
++	if (!f)
++		return 1;
++
++	rc = fread(&online, 1, 1, f);
++	assert(rc == 1);
++	fclose(f);
++
++	return (char)online == '1';
++}
++
++static struct cpu_map *cpu_map__new(void)
++{
++	struct cpu_map *cpu;
++	struct bitmask *bm;
++
++	int i, bit, cpus_nr;
++
++	cpus_nr = numa_num_possible_cpus();
++	cpu = calloc(1, sizeof(*cpu) + sizeof(cpu->map[0]) * cpus_nr);
++	if (!cpu)
++		return NULL;
++
++	bm = numa_all_cpus_ptr;
++	assert(bm);
++
++	for (bit = 0, i = 0; bit < bm->size; bit++) {
++		if (numa_bitmask_isbitset(bm, bit) && is_cpu_online(bit)) {
++			cpu->map[i++] = bit;
++		}
++	}
++	cpu->nr = i;
++
++	return cpu;
++}
++
++static void cpu_map__put(struct cpu_map *cpu)
++{
++	free(cpu);
++}
++
++static inline unsigned long long nsecs(void)
++{
++	struct timespec ts = {0, 0};
++
++	clock_gettime(CLOCK_MONOTONIC, &ts);
++	return ((unsigned long long)ts.tv_sec * 1000000000ull) + ts.tv_nsec;
++}
++
++static void *thread_work(void *arg)
++{
++	struct thread_ctx *ctx = arg;
++	uint64_t ucnt = 1;
++	unsigned int i;
++	int rc;
++
++	__atomic_add_fetch(&thr_ready, 1, __ATOMIC_RELAXED);
++
++	while (!start)
++		;
++
++	for (i = 0; i < ITERS; i++) {
++		rc = write(ctx->efd, &ucnt, sizeof(ucnt));
++		assert(rc == sizeof(ucnt));
++	}
++
++	return NULL;
++}
++
++static inline _Bool read_event(struct epoll_uheader *header,
++			       unsigned int *index, unsigned int idx,
++			       struct epoll_event *event)
++{
++	struct epoll_uitem *item;
++	unsigned int *item_idx_ptr;
++	unsigned int indeces_mask;
++
++	indeces_mask = max_index_nr(header) - 1;
++	if (indeces_mask & max_index_nr(header)) {
++		assert(0);
++		/* Should be pow2, corrupted header? */
++		return 0;
++	}
++
++	item_idx_ptr = &index[idx & indeces_mask];
++
++	/* Load index */
++	idx = __atomic_load_n(item_idx_ptr, __ATOMIC_ACQUIRE);
++	if (idx >= header->max_items_nr) {
++		assert(0);
++		/* Corrupted index? */
++		return 0;
++	}
++
++	item = &header->items[idx];
++
++	/*
++	 * Fetch data first, if event is cleared by the kernel we drop the data
++	 * returning false.
++	 */
++	event->data = (__u64) item->data;
++	event->events = __atomic_exchange_n(&item->ready_events, 0,
++					    __ATOMIC_RELEASE);
++
++	return (event->events & ~EPOLLREMOVED);
++}
++
++static int uepoll_wait(struct epoll_uheader *header, unsigned int *index,
++		       int epfd, struct epoll_event *events, int maxevents)
++
++{
++	/*
++	 * Before entering kernel we do busy wait for ~1ms, naively assuming
++	 * each iteration costs 1 cycle, 1 ns.
++	 */
++	unsigned int spins = 1000000;
++	unsigned int tail;
++	int i;
++
++	assert(maxevents > 0);
++
++again:
++	/*
++	 * Cache the tail because we don't want refetch it on each iteration
++	 * and then catch live events updates, i.e. we don't want user @events
++	 * array consist of events from the same fds.
++	 */
++	tail = READ_ONCE(header->tail);
++
++	if (header->head == tail) {
++		if (spins--)
++			/* Busy loop a bit */
++			goto again;
++
++		i = epoll_wait(epfd, NULL, 0, -1);
++		assert(i < 0);
++		if (errno != ESTALE)
++			return i;
++
++		tail = READ_ONCE(header->tail);
++		assert(header->head != tail);
++	}
++
++	for (i = 0; header->head != tail && i < maxevents; header->head++) {
++		if (read_event(header, index, header->head, &events[i]))
++			i++;
++		else
++			/* Event can't be removed under us */
++			assert(0);
++	}
++
++	return i;
++}
++
++static void uepoll_mmap(int epfd, struct epoll_uheader **_header,
++		       unsigned int **_index)
++{
++	struct epoll_uheader *header;
++	unsigned int *index, len;
++
++	BUILD_BUG_ON(sizeof(*header) != EPOLL_USERPOLL_HEADER_SIZE);
++	BUILD_BUG_ON(sizeof(header->items[0]) != 16);
++
++	len = sysconf(_SC_PAGESIZE);
++again:
++	header = mmap(NULL, len, PROT_WRITE|PROT_READ, MAP_SHARED, epfd, 0);
++	if (header == MAP_FAILED)
++		ksft_exit_fail_msg("Failed map(header)\n");
++
++	if (header->header_length != len) {
++		unsigned int tmp_len = len;
++
++		len = header->header_length;
++		munmap(header, tmp_len);
++		goto again;
++	}
++	assert(header->magic == EPOLL_USERPOLL_HEADER_MAGIC);
++
++	index = mmap(NULL, header->index_length, PROT_WRITE|PROT_READ,
++		     MAP_SHARED, epfd, header->header_length);
++	if (index == MAP_FAILED)
++		ksft_exit_fail_msg("Failed map(index)\n");
++
++	*_header = header;
++	*_index = index;
++}
++
++static void uepoll_munmap(struct epoll_uheader *header,
++			  unsigned int *index)
++{
++	int rc;
++
++	rc = munmap(index, header->index_length);
++	if (rc)
++		ksft_exit_fail_msg("Failed munmap(index)\n");
++
++	rc = munmap(header, header->header_length);
++	if (rc)
++		ksft_exit_fail_msg("Failed munmap(header)\n");
++}
++
++static int do_bench(struct cpu_map *cpu, unsigned int nthreads)
++{
++	struct epoll_event ev, events[nthreads];
++	struct thread_ctx threads[nthreads];
++	pthread_attr_t thrattr;
++	struct thread_ctx *ctx;
++	int rc, epfd, nfds;
++	cpu_set_t cpuset;
++	unsigned int i;
++
++	struct epoll_uheader *header;
++	unsigned int *index;
++
++	unsigned long long epoll_calls = 0, epoll_nsecs;
++	unsigned long long ucnt, ucnt_sum = 0, eagains = 0;
++
++	thr_ready = 0;
++	start = 0;
++
++	epfd = epoll_create2(EPOLL_USERPOLL, nthreads);
++	if (epfd < 0)
++		ksft_exit_fail_msg("Failed epoll_create2()\n");
++
++	for (i = 0; i < nthreads; i++) {
++		ctx = &threads[i];
++
++		ctx->efd = eventfd(0, EFD_NONBLOCK);
++		if (ctx->efd < 0)
++			ksft_exit_fail_msg("Failed eventfd()\n");
++
++		ev.events = EPOLLIN | EPOLLET;
++		ev.data = (uintptr_t) ctx;
++		rc = epoll_ctl(epfd, EPOLL_CTL_ADD, ctx->efd, &ev);
++		if (rc)
++			ksft_exit_fail_msg("Failed epoll_ctl()\n");
++
++		CPU_ZERO(&cpuset);
++		CPU_SET(cpu->map[i % cpu->nr], &cpuset);
++
++		pthread_attr_init(&thrattr);
++		rc = pthread_attr_setaffinity_np(&thrattr, sizeof(cpu_set_t),
++						 &cpuset);
++		if (rc) {
++			errno = rc;
++			ksft_exit_fail_msg("Failed pthread_attr_setaffinity_np()\n");
++		}
++
++		rc = pthread_create(&ctx->thread, NULL, thread_work, ctx);
++		if (rc) {
++			errno = rc;
++			ksft_exit_fail_msg("Failed pthread_create()\n");
++		}
++	}
++
++	/* Mmap all pointers */
++	uepoll_mmap(epfd, &header, &index);
++
++	while (thr_ready != nthreads)
++		;
++
++	/* Signal start for all threads */
++	start = 1;
++
++	epoll_nsecs = nsecs();
++	while (1) {
++		nfds = uepoll_wait(header, index, epfd, events, nthreads);
++		if (nfds < 0)
++			ksft_exit_fail_msg("Failed uepoll_wait()\n");
++
++		epoll_calls++;
++
++		for (i = 0; i < (unsigned int)nfds; ++i) {
++			ctx = (void *)(uintptr_t) events[i].data;
++			rc = read(ctx->efd, &ucnt, sizeof(ucnt));
++			if (rc < 0) {
++				assert(errno == EAGAIN);
++				continue;
++			}
++			assert(rc == sizeof(ucnt));
++			ucnt_sum += ucnt;
++			if (ucnt_sum == nthreads * ITERS)
++				goto end;
++		}
++	}
++end:
++	epoll_nsecs = nsecs() - epoll_nsecs;
++
++	for (i = 0; i < nthreads; i++) {
++		ctx = &threads[i];
++		pthread_join(ctx->thread, NULL);
++	}
++	uepoll_munmap(header, index);
++	close(epfd);
++
++	ksft_print_msg("%7d   %8lld     %8lld\n",
++	       nthreads,
++	       ITERS*nthreads/(epoll_nsecs/1000/1000),
++	       epoll_nsecs/1000/1000);
++
++	return 0;
++}
++
++/**
++ * uepoll loop
++ */
++TEST(uepoll_basics)
++{
++	unsigned int i, nthreads_arr[] = {8, 16, 32, 64};
++	struct cpu_map *cpu;
++
++	cpu = cpu_map__new();
++	if (!cpu) {
++		errno = ENOMEM;
++		ksft_exit_fail_msg("Failed cpu_map__new()\n");
++	}
++
++	ksft_print_msg("threads  events/ms  run-time ms\n");
++	for (i = 0; i < ARRAY_SIZE(nthreads_arr); i++)
++		do_bench(cpu, nthreads_arr[i]);
++
++	cpu_map__put(cpu);
++}
++
++/**
++ * Checks different flags and args
++ */
++TEST(uepoll_args)
++{
++	struct epoll_event ev;
++	int epfd, evfd, rc;
++
++	/* Fail */
++	epfd = epoll_create2(EPOLL_USERPOLL, (1<<16)+1);
++	ASSERT_EQ(errno, EINVAL);
++	ASSERT_EQ(epfd, -1);
++
++	/* Fail */
++	epfd = epoll_create2(EPOLL_USERPOLL, 0);
++	ASSERT_EQ(errno, EINVAL);
++	ASSERT_EQ(epfd, -1);
++
++	/* Success */
++	epfd = epoll_create2(EPOLL_USERPOLL, (1<<16));
++	ASSERT_GE(epfd, 0);
++
++	/* Success */
++	evfd = eventfd(0, EFD_NONBLOCK);
++	ASSERT_GE(evfd, 0);
++
++	/* Fail, expect EPOLLET */
++	ev.events = EPOLLIN;
++	rc = epoll_ctl(epfd, EPOLL_CTL_ADD, evfd, &ev);
++	ASSERT_EQ(errno, EINVAL);
++	ASSERT_EQ(rc, -1);
++
++	/* Fail, no support for EPOLLEXCLUSIVE */
++	ev.events = EPOLLIN | EPOLLET | EPOLLEXCLUSIVE;
++	rc = epoll_ctl(epfd, EPOLL_CTL_ADD, evfd, &ev);
++	ASSERT_EQ(errno, EINVAL);
++	ASSERT_EQ(rc, -1);
++
++	/* Success */
++	ev.events = EPOLLIN | EPOLLET;
++	rc = epoll_ctl(epfd, EPOLL_CTL_ADD, evfd, &ev);
++	ASSERT_EQ(rc, 0);
++
++	/* Fail, expect events and maxevents as zeroes */
++	rc = epoll_wait(epfd, &ev, 1, -1);
++	ASSERT_EQ(errno, EINVAL);
++	ASSERT_EQ(rc, -1);
++
++	/* Fail, expect events as zero */
++	rc = epoll_wait(epfd, &ev, 0, -1);
++	ASSERT_EQ(errno, EINVAL);
++	ASSERT_EQ(rc, -1);
++
++	/* Fail, expect maxevents as zero */
++	rc = epoll_wait(epfd, NULL, 1, -1);
++	ASSERT_EQ(errno, EINVAL);
++	ASSERT_EQ(rc, -1);
++
++	/* Success */
++	rc = epoll_wait(epfd, NULL, 0, 0);
++	ASSERT_EQ(rc, 0);
++
++	close(epfd);
++	close(evfd);
++}
++
++static void *signal_eventfd_work(void *arg)
++{
++	unsigned long long cnt;
++
++	int rc, evfd = *(int *)arg;
++
++	sleep(1);
++	cnt = 1;
++	rc = write(evfd, &cnt, sizeof(cnt));
++	assert(rc == 8);
++
++	return NULL;
++}
++
++/**
++ * Nested poll
++ */
++TEST(uepoll_poll)
++{
++	int epfd, uepfd, evfd, rc;
++
++	struct epoll_event ev;
++	pthread_t thread;
++
++	/* Success */
++	uepfd = epoll_create2(EPOLL_USERPOLL, 128);
++	ASSERT_GE(uepfd, 0);
++
++	/* Success */
++	epfd = epoll_create2(0, 0);
++	ASSERT_GE(epfd, 0);
++
++	/* Success */
++	evfd = eventfd(0, EFD_NONBLOCK);
++	ASSERT_GE(evfd, 0);
++
++	/* Success */
++	ev.events = EPOLLIN | EPOLLET;
++	rc = epoll_ctl(uepfd, EPOLL_CTL_ADD, evfd, &ev);
++	ASSERT_EQ(rc, 0);
++
++	/* Success */
++	ev.events = EPOLLIN | EPOLLET;
++	rc = epoll_ctl(epfd, EPOLL_CTL_ADD, uepfd, &ev);
++	ASSERT_EQ(rc, 0);
++
++	/* Success */
++	rc = epoll_wait(epfd, &ev, 1, 0);
++	ASSERT_EQ(rc, 0);
++
++	/* Success */
++	rc = pthread_create(&thread, NULL, signal_eventfd_work, &evfd);
++	ASSERT_EQ(rc, 0);
++
++	/* Success */
++	rc = epoll_wait(epfd, &ev, 1, 5000);
++	ASSERT_EQ(rc, 1);
++
++	close(uepfd);
++	close(epfd);
++	close(evfd);
++}
++
++/**
++ * One shot
++ */
++TEST(uepoll_epolloneshot)
++{
++	int epfd, evfd, rc;
++	unsigned long long cnt;
++
++	struct epoll_uheader *header;
++	unsigned int *index;
++
++	struct epoll_event ev;
++	pthread_t thread;
++
++	/* Success */
++	epfd = epoll_create2(EPOLL_USERPOLL, 128);
++	ASSERT_GE(epfd, 0);
++
++	/* Mmap all pointers */
++	uepoll_mmap(epfd, &header, &index);
++
++	/* Success */
++	evfd = eventfd(0, EFD_NONBLOCK);
++	ASSERT_GE(evfd, 0);
++
++	/* Success */
++	ev.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
++	rc = epoll_ctl(epfd, EPOLL_CTL_ADD, evfd, &ev);
++	ASSERT_EQ(rc, 0);
++
++	/* Success */
++	rc = pthread_create(&thread, NULL, signal_eventfd_work, &evfd);
++	ASSERT_EQ(rc, 0);
++
++	/* Fail, expect -ESTALE */
++	rc = epoll_wait(epfd, NULL, 0, 3000);
++	ASSERT_EQ(errno, ESTALE);
++	ASSERT_EQ(rc, -1);
++
++	/* Success */
++	rc = uepoll_wait(header, index, epfd, &ev, 1);
++	ASSERT_EQ(rc, 1);
++
++	/* Success */
++	rc = pthread_create(&thread, NULL, signal_eventfd_work, &evfd);
++	ASSERT_EQ(rc, 0);
++
++	/* Success */
++	rc = epoll_wait(epfd, NULL, 0, 3000);
++	ASSERT_EQ(rc, 0);
++
++
++	/* Success */
++	ev.events = EPOLLIN | EPOLLET;
++	rc = epoll_ctl(epfd, EPOLL_CTL_MOD, evfd, &ev);
++	ASSERT_EQ(rc, 0);
++
++	/* Success */
++	rc = pthread_create(&thread, NULL, signal_eventfd_work, &evfd);
++	ASSERT_EQ(rc, 0);
++
++	/* Success */
++	rc = uepoll_wait(header, index, epfd, &ev, 1);
++	ASSERT_EQ(rc, 1);
++
++	/* Success */
++	rc = pthread_create(&thread, NULL, signal_eventfd_work, &evfd);
++	ASSERT_EQ(rc, 0);
++
++	/* Success */
++	rc = uepoll_wait(header, index, epfd, &ev, 1);
++	ASSERT_EQ(rc, 1);
++
++	uepoll_munmap(header, index);
++	close(epfd);
++	close(evfd);
++}
++
++TEST_HARNESS_MAIN
 -- 
 2.21.0
 
