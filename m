@@ -2,151 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B87A3C4B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 09:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFCF63C55F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 09:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403865AbfFKHLm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 03:11:42 -0400
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:59440 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2403812AbfFKHLl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 03:11:41 -0400
-Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 253733DC13E;
-        Tue, 11 Jun 2019 17:11:36 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1haavW-0005Oj-9L; Tue, 11 Jun 2019 17:10:38 +1000
-Date:   Tue, 11 Jun 2019 17:10:38 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-bcache@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Zach Brown <zach.brown@ni.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: bcachefs status update (it's done cooking; let's get this sucker
- merged)
-Message-ID: <20190611071038.GC14363@dread.disaster.area>
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
- <20190611041045.GA14363@dread.disaster.area>
- <CAHk-=whDmeozRHUO0qM+2OeGw+=dkcjwGdsvms-x5Dz4y7Tzcw@mail.gmail.com>
+        id S2404472AbfFKHsa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 03:48:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56286 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404272AbfFKHs3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Jun 2019 03:48:29 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7C37F30860B7;
+        Tue, 11 Jun 2019 07:48:29 +0000 (UTC)
+Received: from localhost (dhcp-12-130.nay.redhat.com [10.66.12.130])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E8CA85C22E;
+        Tue, 11 Jun 2019 07:48:26 +0000 (UTC)
+From:   Murphy Zhou <xzhou@redhat.com>
+To:     liwang@redhat.com
+Cc:     ltp@lists.linux.it, amir73il@gmail.com, chrubis@suse.cz,
+        linux-fsdevel@vger.kernel.org, Murphy Zhou <xzhou@redhat.com>
+Subject: [PATCH v7 1/4] lib/tst_ioctl.c: add helper tst_fibmap
+Date:   Tue, 11 Jun 2019 15:47:38 +0800
+Message-Id: <20190611074741.31903-1-xzhou@redhat.com>
+In-Reply-To: <CAEemH2e5b4q+bOeE3v8FG-piSUteCinPMVmxpnkVcYCmrUc4Uw@mail.gmail.com>
+References: <CAEemH2e5b4q+bOeE3v8FG-piSUteCinPMVmxpnkVcYCmrUc4Uw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whDmeozRHUO0qM+2OeGw+=dkcjwGdsvms-x5Dz4y7Tzcw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
-        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
-        a=7-415B0cAAAA:8 a=m8L2FmhVJQLV1jLVrjkA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 11 Jun 2019 07:48:29 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 06:39:00PM -1000, Linus Torvalds wrote:
-> On Mon, Jun 10, 2019 at 6:11 PM Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > Please, no, let's not make the rwsems even more fragile than they
-> > already are. I'm tired of the ongoing XFS customer escalations that
-> > end up being root caused to yet another rwsem memory barrier bug.
-> >
-> > > Have you talked to Waiman Long about that?
-> >
-> > Unfortunately, Waiman has been unable to find/debug multiple rwsem
-> > exclusion violations we've seen in XFS bug reports over the past 2-3
-> > years.
-> 
-> Inside xfs you can do whatever you want.
->
-> But in generic code, no, we're not saying "we don't trust the generic
-> locking, so we cook our own random locking".
+To check if FIBMAP ioctl is supported by the filesystem we are
+testing on. It also can check the support status of specific
+files, but that may not needed for now.
 
-We use the generic rwsems in XFS, too, and it's the generic
-rwsems that have been the cause of the problems I'm talking about.
+Reviewed-by: Li Wang <liwang@redhat.com>
+Signed-off-by: Murphy Zhou <xzhou@redhat.com>
+---
+v7:
+  Make tst_fibmap return value more accurate
+  Print errno if fibmap ioctl does not succeed
+  Make swapoff02 use new helper
+  Mute some build warnnings
+  cc linux-fsdevel list
+  Overall diff stat:
 
-The same rwsem issues were seen on the mmap_sem, the shrinker rwsem,
-in a couple of device drivers, and so on. i.e. This isn't an XFS
-issue I'm raising here - I'm raising a concern about the lack of
-validation of core infrastructure and it's suitability for
-functionality extensions.
+ include/tst_fs.h                               |  5 +++++
+ lib/tst_ioctl.c                                | 37 +++++++++++++++++++++++++++++++++++++
+ testcases/kernel/syscalls/swapoff/Makefile     |  3 ++-
+ testcases/kernel/syscalls/swapoff/Makefile.inc |  6 ++++++
+ testcases/kernel/syscalls/swapoff/swapoff01.c  | 10 ++--------
+ testcases/kernel/syscalls/swapoff/swapoff02.c  | 11 ++---------
+ testcases/kernel/syscalls/swapon/libswapon.c   | 45 +++++++++++++++++++++++++++++++++++++++++++--
+ testcases/kernel/syscalls/swapon/libswapon.h   |  7 ++++++-
+ testcases/kernel/syscalls/swapon/swapon01.c    | 11 ++---------
+ testcases/kernel/syscalls/swapon/swapon02.c    | 13 +++----------
+ testcases/kernel/syscalls/swapon/swapon03.c    | 15 ++++-----------
+ 11 files changed, 112 insertions(+), 51 deletions(-)
 
-> If tghere really are exclusion issues, they should be fairly easy to
-> try to find with a generic test-suite.  Have a bunch of readers that
-> assert that some shared variable has a particular value, and a bund of
-> writers that then modify the value and set it back. Add some random
-> timing and "yield" to them all, and show that the serialization is
-> wrong.
+v6:
+  Modify make_swapfile() to check mkswap support status safely
+  Remove whitelist
+  Remove BTRFS EINVAL check
+  Check mkswap status before testing swapon in helper
+  If swapon pass, following swapoff failure will fail the whole test and break
+  Also modify swapoff02 to remove whitelist completely
+v5:
+  Split to 4 patches
+  Only take one filename parameter in tst_fibmap
+  Add helper is_swap_supported to check swap operation support status
+  Test fibmap/swapon and swapoff operation in the helper
+  Keep NFS/TMPFS whitelist
+  Keep BTRFS EINVAL handling logic, except above 2 situation:
+    if swapon fails and fibmap is not supported, tst_brk with TCONF
+    if swapon fails and fibmap is supported, tst_brk with TFAIL
+  If swapon test pass in the helper, test swapoff similarly
+  Put is_swap_supported helper in libswapon, link swapoff binaries to it
+  Mute a sprintf filaname wanrning by the way
+v4:
+  Fail softly if FIBMAP nit supported, instead of skip entire testcase
+v3:
+  Fix fs_type undeclared in swapoff01.c
+v2:
+  Test FIBMAP instead of fstype whitelist
 
-Writing such a test suite would be the responsibility of the rwsem
-maintainers, yes?
+ include/tst_fs.h |  5 +++++
+ lib/tst_ioctl.c  | 37 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
+ create mode 100644 lib/tst_ioctl.c
 
-> Some kind of "XFS load Y shows problems" is undebuggable, and not
-> necessarily due to locking.
-
-Sure, but this wasn't isolated to XFS, and it wasn't one workload.
-
-We had a growing pile of kernel crash dumps all with the same
-signatures across multiple subsystems. When this happens, it falls
-to the maintainer of that common element to more deeply analyse the
-issue. One of the rwsem maintainers was unable to reproduce or find
-the root cause of the pile of rwsem state corruptions, and so we've
-been left hanging telling people "we think it's rwsems because the
-state is valid right up to the rwsem state going bad, but we can't
-prove it's a rwsem problem because the debug we've added to the
-rwsem code makes the problem go away". Sometime later, a bug has
-been found in the upstream rwsem code....
-
-This has played out several times over the past couple of years. No
-locking bugs have been found in XFS, with the mmap_sem, the shrinker
-rwsem, etc, but 4 or 5 bugs have been found in the rwsem code and
-backports of those commits have been proven to solve _all_ the
-issues that were reported.
-
-That's the painful reality I'm telling you about here - that poor
-upstream core infrastructure quality has had quite severe downstream
-knock-on effects that cost a lot of time, resources, money and
-stress to diagnose and rectify.  I don't want those same mistakes to
-be made again for many reasons, not the least that the stress of
-these situations has a direct and adverse impact on my mental
-health....
-
-> Because if the locking issues are real (and we did fix one bug
-> recently in a9e9bcb45b15: "locking/rwsem: Prevent decrement of reader
-> count before increment") it needs to be fixed.
-
-That's just one of the bugs we've tripped over. There's been a
-couple of missed wakeups bugs that caused rwsem state hangs (e.g.
-readers waiting with no holder), there was a power arch specific
-memory barrier bug that caused read/write exclusion bugs, the
-optimistic spinning caused some severe performance degradations on
-the mmap_sem with some highly threaded workloads, the rwsem bias
-changed from read biased to write biased (might be the other way
-around, can't remember) some time around 4.10 causing a complete
-inversion in mixed read-write IO characteristics, there was a
-botched RHEL7 backport that had memory barrier bugs in it that
-upstream didn't have that occurred because of the complexity of the
-code, etc.
-
-But this is all off-topic for bcachefs review - all we need to do
-here is keep the SIX locking in a separate module and everything
-rwsem related will be just fine.
-
-Cheers,
-
-Dave.
+diff --git a/include/tst_fs.h b/include/tst_fs.h
+index ebca065c6..6d03371ec 100644
+--- a/include/tst_fs.h
++++ b/include/tst_fs.h
+@@ -178,6 +178,11 @@ const char **tst_get_supported_fs_types(void);
+  */
+ void tst_fill_fs(const char *path, int verbose);
+ 
++/*
++ * test if FIBMAP ioctl is supported
++ */
++int tst_fibmap(const char *filename);
++
+ #ifdef TST_TEST_H__
+ static inline long tst_fs_type(const char *path)
+ {
+diff --git a/lib/tst_ioctl.c b/lib/tst_ioctl.c
+new file mode 100644
+index 000000000..364220bcd
+--- /dev/null
++++ b/lib/tst_ioctl.c
+@@ -0,0 +1,37 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++#include <errno.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/ioctl.h>
++#include <linux/fs.h>
++
++#define TST_NO_DEFAULT_MAIN
++
++#include "tst_test.h"
++
++int tst_fibmap(const char *filename)
++{
++	/* test if FIBMAP ioctl is supported */
++	int fd, block = 0;
++
++	fd = open(filename, O_RDWR | O_CREAT, 0666);
++	if (fd < 0) {
++		tst_res(TWARN | TERRNO,
++			 "open(%s, O_RDWR | O_CREAT, 0666) failed", filename);
++		return -1;
++	}
++
++	if (ioctl(fd, FIBMAP, &block)) {
++		tst_res(TINFO | TERRNO, "FIBMAP ioctl is NOT supported");
++		close(fd);
++		return 1;
++	}
++	tst_res(TINFO, "FIBMAP ioctl is supported");
++
++	if (close(fd)) {
++		tst_res(TWARN | TERRNO, "close(fd) failed");
++		return -1;
++	}
++	return 0;
++}
 -- 
-Dave Chinner
-david@fromorbit.com
+2.21.0
+
