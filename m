@@ -2,109 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5129A3C25D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 06:39:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E88503C28F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 06:47:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390955AbfFKEjU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 00:39:20 -0400
-Received: from mail-lf1-f48.google.com ([209.85.167.48]:33283 "EHLO
-        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388260AbfFKEjU (ORCPT
+        id S2391130AbfFKEqz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 00:46:55 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:43402 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391097AbfFKEqy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 00:39:20 -0400
-Received: by mail-lf1-f48.google.com with SMTP id y17so8223573lfe.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jun 2019 21:39:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9SMEwJWMeHtEyw0+L1caTDzGbNv810UPp3Lqsx3PUF8=;
-        b=QoOOR0HYKqsx3JsW6Ew+a3guMYkQ2W/iAmuqxvOFKc2gBdgPpiDUc6GDNZv08ve+UL
-         EI1jVlrxftmcd8GkeJ0oFp4Q1bcxwTC2j3DRi7CGlH9xQA0pIgDG9f/n8XTk+FnhBPSf
-         5EUYmUYvqmN9yKTc9mv8oUSfj0cMJfJ9bKh/Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9SMEwJWMeHtEyw0+L1caTDzGbNv810UPp3Lqsx3PUF8=;
-        b=t0B7/ykbXLQ2PFPLSWjREWijqvatDbFMA+h+QRx+lFukYZuzHuRcEvZ9saf7ZmivSk
-         C7XV0NeUdDQwv3hTEvO94D+Z2RIhC5oyju0IDTaQN+Ka3XaT8Wl0ExkQtxUE69A25JcL
-         IpgRNUna58tIZK7/6blLUmep8+zGyMKo1RZtR3UMWWIxtieJ4nTuz+4/EaAwvMQ8dMr2
-         60d1n0Gpc3QKNUcefvHyIwaLkoOKwXGNktOceVguWRTNEa1aOGIxr8zfuaexoN174KeA
-         eHewYGmkveTQ6iu9uK7WVAwFOLiOUEAbkk6mM/dB+wV/Oz7UzuHrri/7UToG9FB+cp5D
-         pusQ==
-X-Gm-Message-State: APjAAAUpFZmKXMVqDvflFSNcnkA98ugaKnV04nBeKlcQ50H5Uj+tPQCZ
-        2tmLINLUn2sIZDJmBgDyokUJ49YmCRA=
-X-Google-Smtp-Source: APXvYqzDR2zalV3y2GHqTe/aQ9yno9hCx3LOR52ecNPIwljPzlgBP1kFJFMxr5BlEH8gf8rhw142Og==
-X-Received: by 2002:ac2:4358:: with SMTP id o24mr35662031lfl.13.1560227958244;
-        Mon, 10 Jun 2019 21:39:18 -0700 (PDT)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id d4sm2322187lfi.91.2019.06.10.21.39.16
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Jun 2019 21:39:17 -0700 (PDT)
-Received: by mail-lj1-f170.google.com with SMTP id i21so10140266ljj.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jun 2019 21:39:16 -0700 (PDT)
-X-Received: by 2002:a2e:2c07:: with SMTP id s7mr4973161ljs.44.1560227956599;
- Mon, 10 Jun 2019 21:39:16 -0700 (PDT)
+        Tue, 11 Jun 2019 00:46:54 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5B4hc6d179818;
+        Tue, 11 Jun 2019 04:45:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ cc : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=cAdDQjLmw3paRsCYayAMtBFRH59fRNc4vYLBHuqjsSA=;
+ b=AnqW+epX9OYHOzw5sTwOrIxO7AnaE4zZ8lKJiAKmrhvGxrpd3f8wxkkZBflgbEq1sOzY
+ KV9eHWtYAaDLZEqtrf3ZJguDUBlZ5gkFNbVMpa3eMHo3FyTTFKbmVm7G73D6lbw7s1dS
+ 5J0Lk/d+rVXhiXXKr/mH872REZ1FpGGZjopVCJKDYW2v1wPRflHiayy7E/k6yaqVysXu
+ pMLLiLZptpvWSoeeq4y3wkBrabcsyoDe44zUwkjmFZpE9J0c9WugSVczTNIfBX8CJsY6
+ ZMZfEBndl9+QIq5/p+cyhxYC9prtn2PzyyKr32uqZ/hzXp9SjaAVfhiNdQ0vX/gWicFf oA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 2t02hejre6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Jun 2019 04:45:44 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5B4il0Y048614;
+        Tue, 11 Jun 2019 04:45:43 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 2t1jph7wm8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Jun 2019 04:45:43 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5B4jhlt050428;
+        Tue, 11 Jun 2019 04:45:43 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2t1jph7wm5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Jun 2019 04:45:43 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5B4jZLV002246;
+        Tue, 11 Jun 2019 04:45:36 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 Jun 2019 21:45:35 -0700
+Subject: [PATCH 0/4] vfs: clean up SETFLAGS and FSSETXATTR option processing
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
+        darrick.wong@oracle.com, shaggy@kernel.org,
+        ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com,
+        adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
+        dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk
+Cc:     cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
+        linux-efi@vger.kernel.org, reiserfs-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Date:   Mon, 10 Jun 2019 21:45:32 -0700
+Message-ID: <156022833285.3227089.11990489625041926920.stgit@magnolia>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com> <20190611041045.GA14363@dread.disaster.area>
-In-Reply-To: <20190611041045.GA14363@dread.disaster.area>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 10 Jun 2019 18:39:00 -1000
-X-Gmail-Original-Message-ID: <CAHk-=whDmeozRHUO0qM+2OeGw+=dkcjwGdsvms-x5Dz4y7Tzcw@mail.gmail.com>
-Message-ID: <CAHk-=whDmeozRHUO0qM+2OeGw+=dkcjwGdsvms-x5Dz4y7Tzcw@mail.gmail.com>
-Subject: Re: bcachefs status update (it's done cooking; let's get this sucker merged)
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-bcache@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Zach Brown <zach.brown@ni.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=864 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906110033
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 6:11 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> Please, no, let's not make the rwsems even more fragile than they
-> already are. I'm tired of the ongoing XFS customer escalations that
-> end up being root caused to yet another rwsem memory barrier bug.
->
-> > Have you talked to Waiman Long about that?
->
-> Unfortunately, Waiman has been unable to find/debug multiple rwsem
-> exclusion violations we've seen in XFS bug reports over the past 2-3
-> years.
+Hi all,
 
-Inside xfs you can do whatever you want.
+The FS_IOC_SETFLAGS and FS_IOC_FSSETXATTR ioctls were promoted from ext4
+and XFS, respectively, into the VFS.  However, we didn't promote any of
+the parameter checking code from those filesystems, which lead to a mess
+where each filesystem open-codes whatever parameter checks they want and
+the behavior across filesystems is no longer consistent.
 
-But in generic code, no, we're not saying "we don't trust the generic
-locking, so we cook our own random locking".
+Therefore, create some generic checking functions in the VFS and remove
+all the open-coded pieces in each filesystem.  This preserves the
+current behavior where a filesystem can choose to ignore fields it
+doesn't understand.
 
-If tghere really are exclusion issues, they should be fairly easy to
-try to find with a generic test-suite. Have a bunch of readers that
-assert that some shared variable has a particular value, and a bund of
-writers that then modify the value and set it back. Add some random
-timing and "yield" to them all, and show that the serialization is
-wrong.
+If you're going to start using this mess, you probably ought to just
+pull from my git trees, which are linked below.
 
-Some kind of "XFS load Y shows problems" is undebuggable, and not
-necessarily due to locking.
+This has been lightly tested with fstests.  Enjoy!
+Comments and questions are, as always, welcome.
 
-Because if the locking issues are real (and we did fix one bug
-recently in a9e9bcb45b15: "locking/rwsem: Prevent decrement of reader
-count before increment") it needs to be fixed. Some kind of "let's do
-something else entirely" is simply not acceptable.
+--D
 
-                  Linus
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=file-ioctl-cleanups
