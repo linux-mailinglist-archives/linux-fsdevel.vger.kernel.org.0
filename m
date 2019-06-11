@@ -2,124 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6831C3C3ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 08:28:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B87A3C4B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 09:11:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403857AbfFKG22 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 02:28:28 -0400
-Received: from mga18.intel.com ([134.134.136.126]:57905 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725766AbfFKG21 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 02:28:27 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jun 2019 23:28:26 -0700
-X-ExtLoop1: 1
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by fmsmga001.fm.intel.com with ESMTP; 10 Jun 2019 23:28:23 -0700
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Alan Stern <stern@rowland.harvard.edu>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
-        linux-usb@vger.kernel.org, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/10] usb: Add USB subsystem notifications [ver #3]
-In-Reply-To: <Pine.LNX.4.44L0.1906071000260.1612-100000@iolanthe.rowland.org>
-References: <Pine.LNX.4.44L0.1906071000260.1612-100000@iolanthe.rowland.org>
-Date:   Tue, 11 Jun 2019 09:28:15 +0300
-Message-ID: <875zpcfxfk.fsf@linux.intel.com>
+        id S2403865AbfFKHLm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 03:11:42 -0400
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:59440 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2403812AbfFKHLl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Jun 2019 03:11:41 -0400
+Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 253733DC13E;
+        Tue, 11 Jun 2019 17:11:36 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1haavW-0005Oj-9L; Tue, 11 Jun 2019 17:10:38 +1000
+Date:   Tue, 11 Jun 2019 17:10:38 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-bcache@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Zach Brown <zach.brown@ni.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: bcachefs status update (it's done cooking; let's get this sucker
+ merged)
+Message-ID: <20190611071038.GC14363@dread.disaster.area>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611041045.GA14363@dread.disaster.area>
+ <CAHk-=whDmeozRHUO0qM+2OeGw+=dkcjwGdsvms-x5Dz4y7Tzcw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whDmeozRHUO0qM+2OeGw+=dkcjwGdsvms-x5Dz4y7Tzcw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
+        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
+        a=7-415B0cAAAA:8 a=m8L2FmhVJQLV1jLVrjkA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-
-Hi,
-
-Alan Stern <stern@rowland.harvard.edu> writes:
->> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
->> > On Thu, Jun 06, 2019 at 10:55:24AM -0400, Alan Stern wrote:
->> >> On Thu, 6 Jun 2019, Greg Kroah-Hartman wrote:
->> >>=20
->> >> > On Thu, Jun 06, 2019 at 10:24:18AM -0400, Alan Stern wrote:
->> >> > > On Thu, 6 Jun 2019, David Howells wrote:
->> >> > >=20
->> >> > > > Add a USB subsystem notification mechanism whereby notification=
-s about
->> >> > > > hardware events such as device connection, disconnection, reset=
- and I/O
->> >> > > > errors, can be reported to a monitoring process asynchronously.
->> >> > >=20
->> >> > > USB I/O errors covers an awfully large and vague field.  Do we re=
-ally
->> >> > > want to include them?  I'm doubtful.
->> >> >=20
->> >> > See the other patch on the linux-usb list that wanted to start addi=
-ng
->> >> > KOBJ_CHANGE notifications about USB "i/o errors".
->> >>=20
->> >> That patch wanted to add notifications only for enumeration failures
->> >> (assuming you're talking about the patch from Eugeniu Rosca), not I/O
->> >> errors in general.
->> >
->> > Yes, sorry, I was thinking that as a "I/O failed in enumeration" :)
->> >
->> >> > So for "severe" issues, yes, we should do this, but perhaps not for=
- all
->> >> > of the "normal" things we see when a device is yanked out of the sy=
-stem
->> >> > and the like.
->> >>=20
->> >> Then what counts as a "severe" issue?  Anything besides enumeration=20
->> >> failure?
->> >
->> > Not that I can think of at the moment, other than the other recently
->> > added KOBJ_CHANGE issue.  I'm sure we have other "hard failure" issues
->> > in the USB stack that people will want exposed over time.
->>=20
->> From an XHCI standpoint, Transaction Errors might be one thing. They
->> happen rarely and are a strong indication that the bus itself is
->> bad. Either bad cable, misbehaving PHYs, improper power management, etc.
+On Mon, Jun 10, 2019 at 06:39:00PM -1000, Linus Torvalds wrote:
+> On Mon, Jun 10, 2019 at 6:11 PM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > Please, no, let's not make the rwsems even more fragile than they
+> > already are. I'm tired of the ongoing XFS customer escalations that
+> > end up being root caused to yet another rwsem memory barrier bug.
+> >
+> > > Have you talked to Waiman Long about that?
+> >
+> > Unfortunately, Waiman has been unable to find/debug multiple rwsem
+> > exclusion violations we've seen in XFS bug reports over the past 2-3
+> > years.
+> 
+> Inside xfs you can do whatever you want.
 >
-> Don't you also get transaction errors if the user unplugs a device in=20
-> the middle of a transfer?  That's not the sort of thing we want to sent=20
-> notifications about.
+> But in generic code, no, we're not saying "we don't trust the generic
+> locking, so we cook our own random locking".
 
-Mathias, do we get Transaction Error if user removes cable during a
-transfer? I thought we would just get Port Status Change with CC bit
-cleared, no?
+We use the generic rwsems in XFS, too, and it's the generic
+rwsems that have been the cause of the problems I'm talking about.
 
-=2D-=20
-balbi
+The same rwsem issues were seen on the mmap_sem, the shrinker rwsem,
+in a couple of device drivers, and so on. i.e. This isn't an XFS
+issue I'm raising here - I'm raising a concern about the lack of
+validation of core infrastructure and it's suitability for
+functionality extensions.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> If tghere really are exclusion issues, they should be fairly easy to
+> try to find with a generic test-suite.  Have a bunch of readers that
+> assert that some shared variable has a particular value, and a bund of
+> writers that then modify the value and set it back. Add some random
+> timing and "yield" to them all, and show that the serialization is
+> wrong.
 
------BEGIN PGP SIGNATURE-----
+Writing such a test suite would be the responsibility of the rwsem
+maintainers, yes?
 
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlz/Sf8ACgkQzL64meEa
-mQYadA//auaAM9h9MprFzdErulkqH3HmHRaWdSU/kq9mtbaRLTuogqjRpvHqUc8p
-MTfNarWOJXGd5K8l8wjKT1LINfnFJSgcUOWE+bx3FFBbtistVC7KQ+ig9lb/+xj5
-TdkQa+9uZRkdFYkJrmPUTLjrnj74wNAnydPdqu5hPPcAHS+MCHF3KNTCN69h+s6g
-1F2nxcr9/6ZAPlIPtIHy3NW1wqDSvAKIM9nVWwTtT97B0pPAohAcu9/HrteyqyZ5
-53cqMqEn+8l430ehCn1IPNhQW9vIYFsxnaUdcRWpgUgEhkhmS8CBNPianolrMvf6
-VkWX0cfFSQeA/T/hrjqEfDAN+jaHlNGfBWScnqKupATHEOQtxobyxo/W9Pzsofqo
-k05eNr39pwAKaE0Fh+KOtrhnMKe9n3/ePAkYrYHdV30fuqF0WmtWhNw6btIYA30T
-2WHtHhJBP+yRu8VU0Y+EICyBF2L2gNO5sp3m2HsrpcQChescr1br7UYVGgXpxt8T
-/74wp8DlZB4NKSgrCrmwE3j1CfbgJCgf1KKsEXWUgF+zdVZTuoZVVOqo5G3iOxZg
-9Ry8nqLEA0Gz+HY/37wVmSG7hWS/Me7cpQg289uuEll9UXzpVal6oDaZrBFv3jeA
-pf6kOp99IqzbPVG/E16BGCdOgb5gwBNb+agM/Rj5jAn3f0BftoE=
-=gmf3
------END PGP SIGNATURE-----
---=-=-=--
+> Some kind of "XFS load Y shows problems" is undebuggable, and not
+> necessarily due to locking.
+
+Sure, but this wasn't isolated to XFS, and it wasn't one workload.
+
+We had a growing pile of kernel crash dumps all with the same
+signatures across multiple subsystems. When this happens, it falls
+to the maintainer of that common element to more deeply analyse the
+issue. One of the rwsem maintainers was unable to reproduce or find
+the root cause of the pile of rwsem state corruptions, and so we've
+been left hanging telling people "we think it's rwsems because the
+state is valid right up to the rwsem state going bad, but we can't
+prove it's a rwsem problem because the debug we've added to the
+rwsem code makes the problem go away". Sometime later, a bug has
+been found in the upstream rwsem code....
+
+This has played out several times over the past couple of years. No
+locking bugs have been found in XFS, with the mmap_sem, the shrinker
+rwsem, etc, but 4 or 5 bugs have been found in the rwsem code and
+backports of those commits have been proven to solve _all_ the
+issues that were reported.
+
+That's the painful reality I'm telling you about here - that poor
+upstream core infrastructure quality has had quite severe downstream
+knock-on effects that cost a lot of time, resources, money and
+stress to diagnose and rectify.  I don't want those same mistakes to
+be made again for many reasons, not the least that the stress of
+these situations has a direct and adverse impact on my mental
+health....
+
+> Because if the locking issues are real (and we did fix one bug
+> recently in a9e9bcb45b15: "locking/rwsem: Prevent decrement of reader
+> count before increment") it needs to be fixed.
+
+That's just one of the bugs we've tripped over. There's been a
+couple of missed wakeups bugs that caused rwsem state hangs (e.g.
+readers waiting with no holder), there was a power arch specific
+memory barrier bug that caused read/write exclusion bugs, the
+optimistic spinning caused some severe performance degradations on
+the mmap_sem with some highly threaded workloads, the rwsem bias
+changed from read biased to write biased (might be the other way
+around, can't remember) some time around 4.10 causing a complete
+inversion in mixed read-write IO characteristics, there was a
+botched RHEL7 backport that had memory barrier bugs in it that
+upstream didn't have that occurred because of the complexity of the
+code, etc.
+
+But this is all off-topic for bcachefs review - all we need to do
+here is keep the SIX locking in a separate module and everything
+rwsem related will be just fine.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
