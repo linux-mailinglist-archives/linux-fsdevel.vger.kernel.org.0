@@ -2,138 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6457E3C1D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 06:02:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 233153C1EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jun 2019 06:05:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbfFKECF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 00:02:05 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35394 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbfFKECF (ORCPT
+        id S1729016AbfFKEFI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 00:05:08 -0400
+Received: from mail-it1-f197.google.com ([209.85.166.197]:55147 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728999AbfFKEFH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 00:02:05 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5B3xS3t127380;
-        Tue, 11 Jun 2019 04:02:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=6nlMSeiHXuaAoKt04VW27Qxb3rdRfOkxL7bmQeftPRU=;
- b=V149dt1zKjTA5ARNFnvnnFWV0docEvxmTSemcrCOFNTBc7a30mdN9ueFKeqUrC1M/bpR
- fs01vi/l+hr8Am8PGvYC/C9oW1KA3/QUskLjHaqodZ9gVJw7TY0j0oz/TVgZjXO2neIC
- 8TyBZsoQzeZEQZ8RdrR62+jG2flGbpF07ES67pgYg5kSLy9cBSE24h3xZP0eJgV2Onhx
- eHOipnR7wZRvvze+b39WADeDfrjEDALm3zOjfPeQSv7OBMbYphu7c4rrH+vULUHcw9y6
- vW1T/SkAr/raAloXc48bVr+mxjnTj3wW7Ryq82eyxY8UfJGfUbaEqnevwzqpzUVsoEUD tQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2t04etjfgn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Jun 2019 04:02:01 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5B41F1h078043;
-        Tue, 11 Jun 2019 04:02:00 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2t024u63pf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Jun 2019 04:02:00 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5B41xkA029089;
-        Tue, 11 Jun 2019 04:01:59 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 10 Jun 2019 21:01:59 -0700
-Date:   Mon, 10 Jun 2019 21:01:57 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 1/8] mm/fs: don't allow writes to immutable files
-Message-ID: <20190611040157.GC1872258@magnolia>
-References: <155552786671.20411.6442426840435740050.stgit@magnolia>
- <155552787330.20411.11893581890744963309.stgit@magnolia>
- <20190610015145.GB3266@mit.edu>
- <20190610044144.GA1872750@magnolia>
- <20190610131417.GD15963@mit.edu>
- <20190610160934.GH1871505@magnolia>
- <20190610204154.GA5466@mit.edu>
+        Tue, 11 Jun 2019 00:05:07 -0400
+Received: by mail-it1-f197.google.com with SMTP id n81so1353840ita.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jun 2019 21:05:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Z7rXbvY7aGPLANrpOsQTULXmMd0kTr3kjT2Kw5c860Y=;
+        b=bXTGghaZOm6Gfh4pu3+InhQqixd9zNHVMhjSmByNmz6z3a0Ekad0ebh8FZ35YwX+U9
+         NVvmFTxAG4QtGW/VAkwnz9X3Dl1Gd3d0UWSk2IdQLbR32KSIGRJnIAW3BL2JyqsCURn+
+         HKPEeqnrF+HWx34JZK8NmZmF3UptgcZuN51CcxxUPKYYjgXM44wEM+RA6jcn2GoA2ISx
+         zInVtmgMt3MobPvkYKjkxOPT3ppyxrX5sjV2vVT3+VikO6o3fbAT74CGRNvXs5RD5rgP
+         UPpjA8/h8Vs5LQtqDbV7LLHm30crRpdx58Ajo5IchJyNcxsGKoxmFpIFKxp32IMN+0qd
+         HtXw==
+X-Gm-Message-State: APjAAAUYbeNd7fbLeF8bhfN3C9rfbj8Ankqjdq/LPeJJiA7O3TGXiGbD
+        yksgeUHclr1Y17ihN2KTo3OKvmUCIVIEiBCQuTNhrXIsgI8q
+X-Google-Smtp-Source: APXvYqx0Q527R1SywnUOVL2YQEPX7udOZxGbcfMLQoA8o9WhY8jM2l9/88LqSdHXMuuY6IIIc3TQhM+Qw0OBSNeav6qkpnd2gr7o
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190610204154.GA5466@mit.edu>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906110026
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906110026
+X-Received: by 2002:a24:3dc1:: with SMTP id n184mr16083311itn.130.1560225906808;
+ Mon, 10 Jun 2019 21:05:06 -0700 (PDT)
+Date:   Mon, 10 Jun 2019 21:05:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f1e431058b0466ab@google.com>
+Subject: KASAN: use-after-free Read in mntput
+From:   syzbot <syzbot+99de05d099a170867f22@syzkaller.appspotmail.com>
+To:     arnd@arndb.de, axboe@kernel.dk, bp@alien8.de,
+        catalin.marinas@arm.com, christian@brauner.io, dhowells@redhat.com,
+        geert@linux-m68k.org, hare@suse.com, heiko.carstens@de.ibm.com,
+        hpa@zytor.com, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        luto@kernel.org, mingo@redhat.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, viro@zeniv.linux.org.uk, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 04:41:54PM -0400, Theodore Ts'o wrote:
-> On Mon, Jun 10, 2019 at 09:09:34AM -0700, Darrick J. Wong wrote:
-> > > I was planning on only taking 8/8 through the ext4 tree.  I also added
-> > > a patch which filtered writes, truncates, and page_mkwrites (but not
-> > > mmap) for immutable files at the ext4 level.
-> > 
-> > *Oh*.  I saw your reply attached to the 1/8 patch and thought that was
-> > the one you were taking.  I was sort of surprised, tbh. :)
-> 
-> Sorry, my bad.  I mis-replied to the wrong e-mail message  :-)
+Hello,
 
-Also ... after flailing around with the v2 series I decided that it
-would be much less work to refactor all the current implementations to
-call a common parameter-checking function, which will hopefully make the
-behavior of SETFLAGS and FSSETXATTR more consistent across filesystems.
+syzbot found the following crash on:
 
-That makes the immutable series much less code and fewer patches, but
-also means that the 8/8 patch isn't needed anymore.
+HEAD commit:    d1fdb6d8 Linux 5.2-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12b30acaa00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9f7e1b6a8bb586
+dashboard link: https://syzkaller.appspot.com/bug?extid=99de05d099a170867f22
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1114dc46a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17eade6aa00000
 
-I'm about to send both out.
+The bug was bisected to:
 
---D
+commit 9c8ad7a2ff0bfe58f019ec0abc1fb965114dde7d
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu May 16 11:52:27 2019 +0000
 
-> > > I *could* take this patch through the mm/fs tree, but I wasn't sure
-> > > what your plans were for the rest of the patch series, and it seemed
-> > > like it hadn't gotten much review/attention from other fs or mm folks
-> > > (well, I guess Brian Foster weighed in).
-> > 
-> > > What do you think?
-> > 
-> > Not sure.  The comments attached to the LWN story were sort of nasty,
-> > and now that a couple of people said "Oh, well, Debian documented the
-> > inconsistent behavior so just let it be" I haven't felt like
-> > resurrecting the series for 5.3.
-> 
-> Ah, I had missed the LWN article.   <Looks>
-> 
-> Yeah, it's the same set of issues that we had discussed when this
-> first came up.  We can go round and round on this one; It's true that
-> root can now cause random programs which have a file mmap'ed for
-> writing to seg fault, but root has a million ways of killing and
-> otherwise harming running application programs, and it's unlikely
-> files get marked for immutable all that often.  We just have to pick
-> one way of doing things, and let it be same across all the file
-> systems.
-> 
-> My understanding was that XFS had chosen to make the inode immutable
-> as soon as the flag is set (as opposed to forbidding new fd's to be
-> opened which were writeable), and I was OK moving ext4 to that common
-> interpretation of the immmutable bit, even though it would be a change
-> to ext4.
-> 
-> And then when I saw that Amir had included a patch that would cause
-> test failures unless that patch series was applied, it seemed that we
-> had all thought that the change was a done deal.  Perhaps we should
-> have had a more explicit discussion when the test was sent for review,
-> but I had assumed it was exclusively a copy_file_range set of tests,
-> so I didn't realize it was going to cause ext4 failures.
-> 
->      	    	       	   	 - Ted
+     uapi, x86: Fix the syscall numbering of the mount API syscalls [ver #2]
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15c9f91ea00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=17c9f91ea00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13c9f91ea00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+99de05d099a170867f22@syzkaller.appspotmail.com
+Fixes: 9c8ad7a2ff0b ("uapi, x86: Fix the syscall numbering of the mount API  
+syscalls [ver #2]")
+
+==================================================================
+BUG: KASAN: use-after-free in mntput+0x91/0xa0 fs/namespace.c:1207
+Read of size 4 at addr ffff88808f661124 by task syz-executor817/8955
+
+CPU: 1 PID: 8955 Comm: syz-executor817 Not tainted 5.2.0-rc4 #18
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:188
+  __kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  kasan_report+0x12/0x20 mm/kasan/common.c:614
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:131
+  mntput+0x91/0xa0 fs/namespace.c:1207
+  path_put+0x50/0x70 fs/namei.c:483
+  free_fs_struct+0x25/0x70 fs/fs_struct.c:91
+  exit_fs+0xf0/0x130 fs/fs_struct.c:108
+  do_exit+0x8e0/0x2fa0 kernel/exit.c:873
+  do_group_exit+0x135/0x370 kernel/exit.c:981
+  __do_sys_exit_group kernel/exit.c:992 [inline]
+  __se_sys_exit_group kernel/exit.c:990 [inline]
+  __ia32_sys_exit_group+0x44/0x50 kernel/exit.c:990
+  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
+  do_fast_syscall_32+0x27b/0xd7d arch/x86/entry/common.c:408
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f16849
+Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 3c 24 c3 90 90  
+90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
+90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000ffe4f85c EFLAGS: 00000296 ORIG_RAX: 00000000000000fc
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000080ed2b8
+RDX: 0000000000000000 RSI: 00000000080d71fc RDI: 00000000080ed2c0
+RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 8955:
+  save_stack+0x23/0x90 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_kmalloc mm/kasan/common.c:489 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:462
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:497
+  slab_post_alloc_hook mm/slab.h:437 [inline]
+  slab_alloc mm/slab.c:3326 [inline]
+  kmem_cache_alloc+0x11a/0x6f0 mm/slab.c:3488
+  kmem_cache_zalloc include/linux/slab.h:732 [inline]
+  alloc_vfsmnt+0x28/0x780 fs/namespace.c:182
+  vfs_create_mount+0x96/0x500 fs/namespace.c:961
+  __do_sys_fsmount fs/namespace.c:3423 [inline]
+  __se_sys_fsmount fs/namespace.c:3340 [inline]
+  __ia32_sys_fsmount+0x584/0xc80 fs/namespace.c:3340
+  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
+  do_fast_syscall_32+0x27b/0xd7d arch/x86/entry/common.c:408
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+Freed by task 16:
+  save_stack+0x23/0x90 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:451
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
+  __cache_free mm/slab.c:3432 [inline]
+  kmem_cache_free+0x86/0x260 mm/slab.c:3698
+  free_vfsmnt+0x6f/0x90 fs/namespace.c:559
+  delayed_free_vfsmnt+0x16/0x20 fs/namespace.c:564
+  __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2092 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2310 [inline]
+  rcu_core+0xba5/0x1500 kernel/rcu/tree.c:2291
+  __do_softirq+0x25c/0x94c kernel/softirq.c:292
+
+The buggy address belongs to the object at ffff88808f661000
+  which belongs to the cache mnt_cache of size 432
+The buggy address is located 292 bytes inside of
+  432-byte region [ffff88808f661000, ffff88808f6611b0)
+The buggy address belongs to the page:
+page:ffffea00023d9840 refcount:1 mapcount:0 mapping:ffff8880aa594940  
+index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea0002a35e08 ffffea00022a3f08 ffff8880aa594940
+raw: 0000000000000000 ffff88808f661000 0000000100000008 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88808f661000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88808f661080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88808f661100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                ^
+  ffff88808f661180: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
+  ffff88808f661200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
