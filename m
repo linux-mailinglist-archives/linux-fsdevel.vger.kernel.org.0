@@ -2,94 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 662B9428A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 16:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11AE742A66
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 17:10:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408119AbfFLOVF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 10:21:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35482 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726921AbfFLOVE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 10:21:04 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1648030C3195;
-        Wed, 12 Jun 2019 14:20:56 +0000 (UTC)
-Received: from gondolin (ovpn-116-169.ams2.redhat.com [10.36.116.169])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D885A79581;
-        Wed, 12 Jun 2019 14:20:14 +0000 (UTC)
-Date:   Wed, 12 Jun 2019 16:20:12 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     dm-devel@redhat.com, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, dan.j.williams@intel.com,
-        zwisler@kernel.org, vishal.l.verma@intel.com, dave.jiang@intel.com,
-        mst@redhat.com, jasowang@redhat.com, willy@infradead.org,
-        rjw@rjwysocki.net, hch@infradead.org, lenb@kernel.org,
-        jack@suse.cz, tytso@mit.edu, adilger.kernel@dilger.ca,
-        darrick.wong@oracle.com, lcapitulino@redhat.com, kwolf@redhat.com,
-        imammedo@redhat.com, jmoyer@redhat.com, nilal@redhat.com,
-        riel@surriel.com, stefanha@redhat.com, aarcange@redhat.com,
-        david@redhat.com, david@fromorbit.com,
-        xiaoguangrong.eric@gmail.com, pbonzini@redhat.com,
-        yuval.shaia@oracle.com, kilobyte@angband.pl, jstaron@google.com,
-        rdunlap@infradead.org, snitzer@redhat.com
-Subject: Re: [PATCH v13 2/7] virtio-pmem: Add virtio pmem driver
-Message-ID: <20190612162012.06b4af7f.cohuck@redhat.com>
-In-Reply-To: <20190612124527.3763-3-pagupta@redhat.com>
-References: <20190612124527.3763-1-pagupta@redhat.com>
-        <20190612124527.3763-3-pagupta@redhat.com>
-Organization: Red Hat GmbH
+        id S2440010AbfFLPKN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 11:10:13 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:44313 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437304AbfFLPKN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 11:10:13 -0400
+Received: by mail-yb1-f196.google.com with SMTP id x187so6502399ybc.11;
+        Wed, 12 Jun 2019 08:10:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=whA1MTQ/AQLJNqb+5D2QO/K0h7g3p7yYZHms0D8AcfU=;
+        b=hmGDYtb1Cvfqgb4T8epuX9aN30ElC4h99ZBYD8BBT0avdBTjncS4lUxyO+zfy8KkCK
+         T97FVMy1zM5VsDq8K7VULsHhBE52+BTYqYBVXlr6AQ1uUxiDgUw4GK0lxQZOht2bRcBN
+         +rGCva5D+rL5e/UxLFyI3371rg2jO99mQO4BpwGgL9ThWCFl5VfGUKMPWZHjklipXyLZ
+         YkZQYqQkX0Ahy/Uvmr9SvJnkilaHPQhb0ZLFH0olf28/vCDGQ21R5IXSlwksY6d8ZeK2
+         z4lEkOuTLoWvZrOKFLo3TIL2U5CF1rN3Ofw37L1hOvvFx7ch+35uWk2cUWsAjKKjd59A
+         rfwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=whA1MTQ/AQLJNqb+5D2QO/K0h7g3p7yYZHms0D8AcfU=;
+        b=S2L06v4TmF8RFQja8aef4iCllDMqve7yTZw3aKrQRXTu5pNqy2pHC6Y4w5lE+OoSXt
+         YWugBQjqTtBN4Iu8XiKvZhL0OQGDKQqYrNtCSVQX3xajOovp3RR63Nfq6XSJOK2Hjrfl
+         yglqYTMUtaJd+eJnYyAPEd1/qDhjQ8BZO8dOaJDYZbHIst/EVo6HgtnXJphlk4I+gIns
+         RroUmd28bJFEp6vjE4gGAmfVaMNoWSiEKEjPw3A2CKNYeyR0fJFImId+nkjIM3EH3FGV
+         g6mtkiPYU6tSkKAOUIrS+uhCcnJNWfythwo7gdLD+2hWRPSd/vyqxxhzyxuN02i92XyZ
+         l5BQ==
+X-Gm-Message-State: APjAAAUTywwpoqWqhsa1bWX0OhaOAUv3cpdsxb81yf9zUR37D+t2WcAc
+        OsAUkfcCn4ngE676P400Xz2bJ/iTcvDfX2EekWI=
+X-Google-Smtp-Source: APXvYqzZvBvyZY1onRqoKdTzhjMQBcY5zXvQ3lzUyJcP7f0JpG1CqEEQwmFIgdsy1KIyP5VwvJNgqQw2E6ZOEWIahoI=
+X-Received: by 2002:a25:8109:: with SMTP id o9mr36591180ybk.132.1560352212349;
+ Wed, 12 Jun 2019 08:10:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 12 Jun 2019 14:21:04 +0000 (UTC)
+References: <20190608135717.8472-1-amir73il@gmail.com> <20190608135717.8472-2-amir73il@gmail.com>
+ <1560343899.4578.9.camel@linux.ibm.com>
+In-Reply-To: <1560343899.4578.9.camel@linux.ibm.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 12 Jun 2019 18:09:59 +0300
+Message-ID: <CAOQ4uxhooVwtHcDCr4hu+ovzKGUdWfQ+3F3nbgK3HXgV+fUK9w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] vfs: replace i_readcount with a biased i_count
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 12 Jun 2019 18:15:22 +0530
-Pankaj Gupta <pagupta@redhat.com> wrote:
+On Wed, Jun 12, 2019 at 3:52 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Sat, 2019-06-08 at 16:57 +0300, Amir Goldstein wrote:
+> > Count struct files open RO together with inode reference count instead
+> > of using a dedicated i_readcount field.  This will allow us to use the
+> > RO count also when CONFIG_IMA is not defined and will reduce the size of
+> > struct inode for 32bit archs when CONFIG_IMA is defined.
+> >
+> > We need this RO count for posix leases code, which currently naively
+> > checks i_count and d_count in an inaccurate manner.
+> >
+> > Should regular i_count overflow into RO count bias by struct files
+> > opened for write, it's not a big deal, as we mostly need the RO count
+> > to be reliable when the first writer comes along.
+>
+> "i_count" has been defined forever.  Has its meaning changed?  This
+> patch implies that "i_readcount" was never really needed.
+>
 
-> This patch adds virtio-pmem driver for KVM guest.
-> 
-> Guest reads the persistent memory range information from
-> Qemu over VIRTIO and registers it on nvdimm_bus. It also
-> creates a nd_region object with the persistent memory
-> range information so that existing 'nvdimm/pmem' driver
-> can reserve this into system memory map. This way
-> 'virtio-pmem' driver uses existing functionality of pmem
-> driver to register persistent memory compatible for DAX
-> capable filesystems.
-> 
-> This also provides function to perform guest flush over
-> VIRTIO from 'pmem' driver when userspace performs flush
-> on DAX memory range.
-> 
-> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-> Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> Acked-by: Jakub Staron <jstaron@google.com>
-> Tested-by: Jakub Staron <jstaron@google.com>
-> ---
->  drivers/nvdimm/Makefile          |   1 +
->  drivers/nvdimm/nd_virtio.c       | 125 +++++++++++++++++++++++++++++++
->  drivers/nvdimm/virtio_pmem.c     | 122 ++++++++++++++++++++++++++++++
->  drivers/nvdimm/virtio_pmem.h     |  55 ++++++++++++++
->  drivers/virtio/Kconfig           |  11 +++
->  include/uapi/linux/virtio_ids.h  |   1 +
->  include/uapi/linux/virtio_pmem.h |  35 +++++++++
->  7 files changed, 350 insertions(+)
->  create mode 100644 drivers/nvdimm/nd_virtio.c
->  create mode 100644 drivers/nvdimm/virtio_pmem.c
->  create mode 100644 drivers/nvdimm/virtio_pmem.h
->  create mode 100644 include/uapi/linux/virtio_pmem.h
+Not really.
+i_count is only used to know if object is referenced.
+It does not matter if user takes 1 or more references on i_count
+as long as user puts back all the references it took.
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+If user took i_readcount, i_count cannot be zero, so short of overflow,
+we can describe i_readcount as a biased i_count.
+
+But if I am following Miklos' suggestion to make i_count 64bit, inode
+struct size is going to grow for 32bit arch when  CONFIG_IMA is not
+defined, so to reduce impact, I will keep i_readcount as a separate
+member and let it be defined also when BITS_PER_LONG == 64
+and implement inode_is_open_rdonly() using d_count and i_count
+when i_readcount is not defined.
+
+Let's see what people will have to say about that...
+
+Thanks,
+Amir.
