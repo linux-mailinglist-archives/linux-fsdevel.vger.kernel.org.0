@@ -2,212 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD60642306
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 12:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1C18423F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 13:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407175AbfFLKup (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 06:50:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53694 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405021AbfFLKup (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 06:50:45 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6E5BBC057F2C;
-        Wed, 12 Jun 2019 10:50:39 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3C07D795AD;
-        Wed, 12 Jun 2019 10:50:37 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id BDF7E1806B16;
-        Wed, 12 Jun 2019 10:50:34 +0000 (UTC)
-Date:   Wed, 12 Jun 2019 06:50:34 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     rdunlap@infradead.org, jack@suse.cz, kvm@vger.kernel.org,
-        mst@redhat.com, jasowang@redhat.com, david@fromorbit.com,
-        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
-        dm-devel@redhat.com, adilger kernel <adilger.kernel@dilger.ca>,
-        zwisler@kernel.org, aarcange@redhat.com,
-        dave jiang <dave.jiang@intel.com>, jstaron@google.com,
-        linux-nvdimm@lists.01.org,
-        vishal l verma <vishal.l.verma@intel.com>, david@redhat.com,
-        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
-        jmoyer@redhat.com, linux-ext4@vger.kernel.org, lenb@kernel.org,
-        kilobyte@angband.pl, riel@surriel.com,
-        yuval shaia <yuval.shaia@oracle.com>, stefanha@redhat.com,
-        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
-        lcapitulino@redhat.com, kwolf@redhat.com, nilal@redhat.com,
-        tytso@mit.edu, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        snitzer@redhat.com, darrick wong <darrick.wong@oracle.com>,
-        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        imammedo@redhat.com
-Message-ID: <977172256.34591602.1560336634257.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190612083711.2c0cfd7e.cohuck@redhat.com>
-References: <20190611163802.25352-1-pagupta@redhat.com> <20190611163802.25352-3-pagupta@redhat.com> <20190611190209.0b25033e.cohuck@redhat.com> <1003601865.34513553.1560310490030.JavaMail.zimbra@redhat.com> <20190612083711.2c0cfd7e.cohuck@redhat.com>
-Subject: Re: [Qemu-devel] [PATCH v12 2/7] virtio-pmem: Add virtio pmem
- driver
+        id S2409002AbfFLLZy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 07:25:54 -0400
+Received: from mail177-30.suw61.mandrillapp.com ([198.2.177.30]:48153 "EHLO
+        mail177-30.suw61.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2406101AbfFLLZy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 07:25:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
+ h=From:Subject:To:Cc:Message-Id:References:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=cA3R4pJB9551xrjuB8IzZ/Uxj/3WlOh0i4J4iLjSJrM=;
+ b=Y3Sy90pb1uO0Yn9uQG63fUB/ZAaEuC6rKByF1SCvOoN1YIl5Q4iNwKDKi8IsOESxdYjW4RXXw/TY
+   DbqlSCJKD7vI+YoR3oJBIshsfhF5sXNtck7RvMNSdsWxEudv5xqzisKb7UEa97/AcdfFuomENrf2
+   uOwtBVAQe+WOvrywVBE=
+Received: from pmta06.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail177-30.suw61.mandrillapp.com id h03gk022rtk4 for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 11:25:52 +0000 (envelope-from <bounce-md_31050260.5d00e140.v1-57b49a64cca4495783e17ad3be2e3430@mandrillapp.com>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1560338752; h=From : 
+ Subject : To : Cc : Message-Id : References : In-Reply-To : Date : 
+ MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
+ Subject : Date : X-Mandrill-User : List-Unsubscribe; 
+ bh=cA3R4pJB9551xrjuB8IzZ/Uxj/3WlOh0i4J4iLjSJrM=; 
+ b=pq/KdzLUtAYK2PeY9Qo5jY0mZCKnkJ5Qq28pQCj+uSWfKNKPRo2GPWmdoaQwUSZyWMxt+J
+ sNGzMCeIy4kZK/v8ixZ4sPy74n+e2WbmYnzoAWkx+Aw6xa6vHmDFc5K4wH040FRFVB6u/oVG
+ /IXQQezWSJYiwxgZ4mbC3twqkfXeI=
+From:   Kirill Smelkov <kirr@nexedi.com>
+Subject: [PATCH] fuse: require /dev/fuse reads to have enough buffer capacity (take 2)
+Received: from [87.98.221.171] by mandrillapp.com id 57b49a64cca4495783e17ad3be2e3430; Wed, 12 Jun 2019 11:25:52 +0000
+To:     Miklos Szeredi <mszeredi@redhat.com>,
+        Sander Eikelenboom <linux@eikelenboom.it>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, <gluster-devel@gluster.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Message-Id: <20190612112544.GA21465@deco.navytux.spb.ru>
+References: <876aefd0-808a-bb4b-0897-191f0a8d9e12@eikelenboom.it> <CAJfpegvRBm3M8fUJ1Le1dPd0QSJgAWAYJGLCQKa6YLTE+4oucw@mail.gmail.com> <20190611202738.GA22556@deco.navytux.spb.ru> <CAOssrKfj-MDujX0_t_fgobL_KwpuG2fxFmT=4nURuJA=sUvYYg@mail.gmail.com>
+In-Reply-To: <CAOssrKfj-MDujX0_t_fgobL_KwpuG2fxFmT=4nURuJA=sUvYYg@mail.gmail.com>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.57b49a64cca4495783e17ad3be2e3430
+X-Mandrill-User: md_31050260
+Date:   Wed, 12 Jun 2019 11:25:52 +0000
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.228, 10.4.195.25]
-Thread-Topic: virtio-pmem: Add virtio pmem driver
-Thread-Index: JA2T0z0G1tIHKmlJmlUYn7dmJ8rB0Q==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 12 Jun 2019 10:50:44 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Jun 12, 2019 at 09:44:49AM +0200, Miklos Szeredi wrote:
+> On Tue, Jun 11, 2019 at 10:28 PM Kirill Smelkov <kirr@nexedi.com> wrote:
+> 
+> > Miklos, would 4K -> `sizeof(fuse_in_header) + sizeof(fuse_write_in)` for
+> > header room change be accepted?
+> 
+> Yes, next cycle.   For 4.2 I'll just push the revert.
 
-> 
-> Hi Pankaj,
-> 
-> On Tue, 11 Jun 2019 23:34:50 -0400 (EDT)
-> Pankaj Gupta <pagupta@redhat.com> wrote:
-> 
-> > Hi Cornelia,
-> > 
-> > > On Tue, 11 Jun 2019 22:07:57 +0530
-> > > Pankaj Gupta <pagupta@redhat.com> wrote:
-> 
-> 
-> > > > +	err1 = virtqueue_kick(vpmem->req_vq);
-> > > > +	spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> > > > +	/*
-> > > > +	 * virtqueue_add_sgs failed with error different than -ENOSPC, we
-> > > > can't
-> > > > +	 * do anything about that.
-> > > > +	 */
-> > > 
-> > > Does it make sense to kick if you couldn't add at all?
-> > 
-> > When we could not add because of -ENOSPC we are waiting and when buffer is
-> > added
-> > then only we do a kick. For any other error which might be a rare
-> > occurrence, I think
-> > kick is harmless here and keeps the code clean?
-> 
-> Yes, I agree it does not hurt. Let's keep it as-is.
+Thanks Miklos. Please consider queuing the following patch for 5.3.
+Sander, could you please confirm that glusterfs is not broken with this
+version of the check?
 
-Sure.
+Thanks beforehand,
+Kirill
 
-> 
-> 
-> > Sure, Thank you. Attaching below on top changes on current patch2 based on
-> > your suggestions. Let me know if these are okay and then will send official
-> > v13 to for upstream merging.
-> 
-> Looks good to me, except for one change.
+---- 8< ----
+From 24a04e8be9bbf6e67de9e1908dcbe95d426d2521 Mon Sep 17 00:00:00 2001
+From: Kirill Smelkov <kirr@nexedi.com>
+Date: Wed, 27 Mar 2019 10:15:15 +0000
+Subject: [PATCH] fuse: require /dev/fuse reads to have enough buffer capacity (take 2)
 
-Sure. Will send v13 shortly.
+[ This retries commit d4b13963f217 which was reverted in 766741fcaa1f.
 
-> 
-> [Again sorry for the late review, did not want to get the version
-> numbers up :)]
+  In this version we require only `sizeof(fuse_in_header) + sizeof(fuse_write_in)`
+  instead of 4K for FUSE request header room, because, contrary to
+  libfuse and kernel client behaviour, GlusterFS actually provides only
+  so much room for request header. ]
 
-Thank you :)
+A FUSE filesystem server queues /dev/fuse sys_read calls to get
+filesystem requests to handle. It does not know in advance what would be
+that request as it can be anything that client issues - LOOKUP, READ,
+WRITE, ... Many requests are short and retrieve data from the
+filesystem. However WRITE and NOTIFY_REPLY write data into filesystem.
 
-> 
-> > 
-> > Thanks,
-> > Pankaj
-> > 
-> > ===============
-> > 
-> > diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.c
-> > index efc535723517..5b8d2367da0b 100644
-> > --- a/drivers/nvdimm/nd_virtio.c
-> > +++ b/drivers/nvdimm/nd_virtio.c
-> > @@ -10,7 +10,7 @@
-> >  #include "nd.h"
-> >  
-> >   /* The interrupt handler */
-> > -void host_ack(struct virtqueue *vq)
-> > +void virtio_pmem_host_ack(struct virtqueue *vq)
-> >  {
-> >         struct virtio_pmem *vpmem = vq->vdev->priv;
-> >         struct virtio_pmem_request *req_data, *req_buf;
-> > @@ -32,10 +32,10 @@ void host_ack(struct virtqueue *vq)
-> >         }
-> >         spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> >  }
-> > -EXPORT_SYMBOL_GPL(host_ack);
-> > +EXPORT_SYMBOL_GPL(virtio_pmem_host_ack);
-> >  
-> >   /* The request submission function */
-> > -int virtio_pmem_flush(struct nd_region *nd_region)
-> > +static int virtio_pmem_flush(struct nd_region *nd_region)
-> >  {
-> >         struct virtio_device *vdev = nd_region->provider_data;
-> >         struct virtio_pmem *vpmem  = vdev->priv;
-> > @@ -69,7 +69,7 @@ int virtio_pmem_flush(struct nd_region *nd_region)
-> >         while ((err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req_data,
-> >                                         GFP_ATOMIC)) == -ENOSPC) {
-> >  
-> > -               dev_err(&vdev->dev, "failed to send command to virtio pmem
-> > device, no free slots in the virtqueue\n");
-> > +               dev_info(&vdev->dev, "failed to send command to virtio pmem
-> > device, no free slots in the virtqueue\n");
-> >                 req_data->wq_buf_avail = false;
-> >                 list_add_tail(&req_data->list, &vpmem->req_list);
-> >                 spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
-> > @@ -90,7 +90,8 @@ int virtio_pmem_flush(struct nd_region *nd_region)
-> >         } else {
-> >                 /* A host repsonse results in "host_ack" getting called */
-> >                 wait_event(req_data->host_acked, req_data->done);
-> > -               err = virtio32_to_cpu(vdev, req_data->resp.ret);
-> > +               if ((err = virtio32_to_cpu(vdev, req_data->resp.ret)))
-> > +                       err = -EIO;
-> 
-> Hm, why are you making this change? I think the previous code was fine.
+Before getting into operation phase, FUSE filesystem server and kernel
+client negotiate what should be the maximum write size the client will
+ever issue. After negotiation the contract in between server/client is
+that the filesystem server then should queue /dev/fuse sys_read calls with
+enough buffer capacity to receive any client request - WRITE in
+particular, while FUSE client should not, in particular, send WRITE
+requests with > negotiated max_write payload. FUSE client in kernel and
+libfuse historically reserve 4K for request header. However an existing
+filesystem server - GlusterFS - was found which reserves only 80 bytes
+for header room (= `sizeof(fuse_in_header) + sizeof(fuse_write_in)`).
 
-Yes, Something came to my mind while making the change but I agree will keep
-this as it was before.
+https://lore.kernel.org/linux-fsdevel/20190611202738.GA22556@deco.navytux.spb.ru/
+https://github.com/gluster/glusterfs/blob/v3.8.15-0-gd174f021a/xlators/mount/fuse/src/fuse-bridge.c#L4894
 
-> 
-> >         }
-> >  
-> >         kfree(req_data);
-> > @@ -100,7 +101,8 @@ int virtio_pmem_flush(struct nd_region *nd_region)
-> >  /* The asynchronous flush callback function */
-> >  int async_pmem_flush(struct nd_region *nd_region, struct bio *bio)
-> >  {
-> > -       /* Create child bio for asynchronous flush and chain with
-> > +       /*
-> > +        * Create child bio for asynchronous flush and chain with
-> >          * parent bio. Otherwise directly call nd_region flush.
-> >          */
-> >         if (bio && bio->bi_iter.bi_sector != -1) {
-> > diff --git a/drivers/nvdimm/virtio_pmem.c b/drivers/nvdimm/virtio_pmem.c
-> > index b60ebd8cd2fd..5e3d07b47e0c 100644
-> > --- a/drivers/nvdimm/virtio_pmem.c
-> > +++ b/drivers/nvdimm/virtio_pmem.c
-> > @@ -19,7 +19,7 @@ static int init_vq(struct virtio_pmem *vpmem)
-> >  {
-> >         /* single vq */
-> >         vpmem->req_vq = virtio_find_single_vq(vpmem->vdev,
-> > -                                               host_ack, "flush_queue");
-> > +                                       virtio_pmem_host_ack,
-> > "flush_queue");
-> >         if (IS_ERR(vpmem->req_vq))
-> >                 return PTR_ERR(vpmem->req_vq);
-> >  
-> > diff --git a/drivers/nvdimm/virtio_pmem.h b/drivers/nvdimm/virtio_pmem.h
-> > index 6e47521be158..998efbc7660c 100644
-> > --- a/drivers/nvdimm/virtio_pmem.h
-> > +++ b/drivers/nvdimm/virtio_pmem.h
-> > @@ -50,6 +50,6 @@ struct virtio_pmem {
-> >         uint64_t size;
-> >  };
-> >  
-> > -void host_ack(struct virtqueue *vq);
-> > +void virtio_pmem_host_ack(struct virtqueue *vq);
-> >  int async_pmem_flush(struct nd_region *nd_region, struct bio *bio);
-> >  #endif
-> 
-> 
-> 
+Since
+
+	`sizeof(fuse_in_header) + sizeof(fuse_write_in)` ==
+	`sizeof(fuse_in_header) + sizeof(fuse_read_in)`  ==
+	`sizeof(fuse_in_header) + sizeof(fuse_notify_retrieve_in)`
+
+is the absolute minimum any sane filesystem should be using for header
+room, the contract is that filesystem server should queue sys_reads with
+`sizeof(fuse_in_header) + sizeof(fuse_write_in)` + max_write buffer.
+
+If the filesystem server does not follow this contract, what can happen
+is that fuse_dev_do_read will see that request size is > buffer size,
+and then it will return EIO to client who issued the request but won't
+indicate in any way that there is a problem to filesystem server.
+This can be hard to diagnose because for some requests, e.g. for
+NOTIFY_REPLY which mimics WRITE, there is no client thread that is
+waiting for request completion and that EIO goes nowhere, while on
+filesystem server side things look like the kernel is not replying back
+after successful NOTIFY_RETRIEVE request made by the server.
+
+We can make the problem easy to diagnose if we indicate via error return to
+filesystem server when it is violating the contract.  This should not
+practically cause problems because if a filesystem server is using shorter
+buffer, writes to it were already very likely to cause EIO, and if the
+filesystem is read-only it should be too following FUSE_MIN_READ_BUFFER
+minimum buffer size.
+
+Please see [1] for context where the problem of stuck filesystem was hit
+for real (because kernel client was incorrectly sending more than
+max_write data with NOTIFY_REPLY; see also previous patch), how the
+situation was traced and for more involving patch that did not make it
+into the tree.
+
+[1] https://marc.info/?l=linux-fsdevel&m=155057023600853&w=2
+
+Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
+Cc: Han-Wen Nienhuys <hanwen@google.com>
+Cc: Jakob Unterwurzacher <jakobunt@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/fuse/dev.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index ea8237513dfa..15531ba560b5 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1317,6 +1317,25 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+ 	unsigned reqsize;
+ 	unsigned int hash;
+ 
++	/*
++	 * Require sane minimum read buffer - that has capacity for fixed part
++	 * of any request header + negotiated max_write room for data. If the
++	 * requirement is not satisfied return EINVAL to the filesystem server
++	 * to indicate that it is not following FUSE server/client contract.
++	 * Don't dequeue / abort any request.
++	 *
++	 * Historically libfuse reserves 4K for fixed header room, but e.g.
++	 * GlusterFS reserves only 80 bytes
++	 *
++	 *	= `sizeof(fuse_in_header) + sizeof(fuse_write_in)`
++	 *
++	 * which is the absolute minimum any sane filesystem should be using
++	 * for header room.
++	 */
++	if (nbytes < max_t(size_t, FUSE_MIN_READ_BUFFER,
++			   sizeof(fuse_in_header) + sizeof(fuse_write_in) + fc->max_write))
++		return -EINVAL;
++
+  restart:
+ 	spin_lock(&fiq->waitq.lock);
+ 	err = -EAGAIN;
+-- 
+2.20.1
