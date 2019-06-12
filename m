@@ -2,137 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 946BF4304F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 21:37:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50B5F4306E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 21:49:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbfFLThA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 15:37:00 -0400
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:49613 "EHLO
-        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727496AbfFLThA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 15:37:00 -0400
-Received: from [4.30.142.84] (helo=srivatsab-a01.vmware.com)
-        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
-        (Exim 4.82)
-        (envelope-from <srivatsa@csail.mit.edu>)
-        id 1hb93J-000Cx6-6M; Wed, 12 Jun 2019 15:36:57 -0400
-Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
- controller
-To:     Jan Kara <jack@suse.cz>
-Cc:     Paolo Valente <paolo.valente@linaro.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Moyer <jmoyer@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>, amakhalov@vmware.com,
-        anishs@vmware.com, srivatsab@vmware.com,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stable <stable@vger.kernel.org>
-References: <6FE0A98F-1E3D-4EF6-8B38-2C85741924A4@linaro.org>
- <2A58C239-EF3F-422B-8D87-E7A3B500C57C@linaro.org>
- <a04368ba-f1d5-8f2c-1279-a685a137d024@csail.mit.edu>
- <E270AD92-943E-4529-8158-AB480D6D9DF8@linaro.org>
- <5b71028c-72f0-73dd-0cd5-f28ff298a0a3@csail.mit.edu>
- <FFA44D26-75FF-4A8E-A331-495349BE5FFC@linaro.org>
- <0d6e3c02-1952-2177-02d7-10ebeb133940@csail.mit.edu>
- <7B74A790-BD98-412B-ADAB-3B513FB1944E@linaro.org>
- <6a6f4aa4-fc95-f132-55b2-224ff52bd2d8@csail.mit.edu>
- <7c5e9d11-4a3d-7df4-c1e6-7c95919522ab@csail.mit.edu>
- <20190612130446.GD14578@quack2.suse.cz>
-From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Message-ID: <dd32ed59-a543-fc76-9a9a-2462f0119270@csail.mit.edu>
-Date:   Wed, 12 Jun 2019 12:36:53 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        id S1728382AbfFLTs2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 15:48:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727938AbfFLTs2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 15:48:28 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BF4920866;
+        Wed, 12 Jun 2019 19:48:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560368907;
+        bh=wwI7SdZmd/IQDavcocBFuS/T0Hb/7yBUbnvBQNK7QzI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pE8WgP+oCDzW48eYHUbA/VoCCh0hdzsMIr97KDTT3JhYdAI7AK4i+V/ZizjdjmQMK
+         c0G/5JyQ6tn0Obyp9rvHi+EHjZGewh6bMj65MGePlFPOmyD9x2EEBYQeY2n99VhJt/
+         WKJIR1zjvxY0d1lapcgNXFSu2mmLcuzBso071mb8=
+Date:   Wed, 12 Jun 2019 12:48:26 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     syzbot <syzbot+a3accb352f9c22041cfa@syzkaller.appspotmail.com>,
+        bcrl@kvack.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: possible deadlock in io_submit_one
+Message-ID: <20190612194825.GH18795@gmail.com>
+References: <00000000000082477205811c029c@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190612130446.GD14578@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000082477205811c029c@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Bart and Christoph,
 
-[ Adding Greg to CC ]
-
-On 6/12/19 6:04 AM, Jan Kara wrote:
-> On Tue 11-06-19 15:34:48, Srivatsa S. Bhat wrote:
->> On 6/2/19 12:04 AM, Srivatsa S. Bhat wrote:
->>> On 5/30/19 3:45 AM, Paolo Valente wrote:
->>>>
->> [...]
->>>> At any rate, since you pointed out that you are interested in
->>>> out-of-the-box performance, let me complete the context: in case
->>>> low_latency is left set, one gets, in return for this 12% loss,
->>>> a) at least 1000% higher responsiveness, e.g., 1000% lower start-up
->>>> times of applications under load [1];
->>>> b) 500-1000% higher throughput in multi-client server workloads, as I
->>>> already pointed out [2].
->>>>
->>>
->>> I'm very happy that you could solve the problem without having to
->>> compromise on any of the performance characteristics/features of BFQ!
->>>
->>>
->>>> I'm going to prepare complete patches.  In addition, if ok for you,
->>>> I'll report these results on the bug you created.  Then I guess we can
->>>> close it.
->>>>
->>>
->>> Sounds great!
->>>
->>
->> Hi Paolo,
->>
->> Hope you are doing great!
->>
->> I was wondering if you got a chance to post these patches to LKML for
->> review and inclusion... (No hurry, of course!)
->>
->> Also, since your fixes address the performance issues in BFQ, do you
->> have any thoughts on whether they can be adapted to CFQ as well, to
->> benefit the older stable kernels that still support CFQ?
+On Mon, Feb 04, 2019 at 06:03:04PM -0800, syzbot wrote:
+> Hello,
 > 
-> Since CFQ doesn't exist in current upstream kernel anymore, I seriously
-> doubt you'll be able to get any performance improvements for it in the
-> stable kernels...
+> syzbot found the following crash on:
+> 
+> HEAD commit:    5eeb63359b1e Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17906f64c00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2e0064f906afee10
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a3accb352f9c22041cfa
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=156479f8c00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=128c75c4c00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+a3accb352f9c22041cfa@syzkaller.appspotmail.com
+> 
+> =====================================================
+> WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
+> 5.0.0-rc4+ #56 Not tainted
+> -----------------------------------------------------
+> syz-executor263/8874 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+> 00000000c469f622 (&ctx->fd_wqh){....}, at: spin_lock
+> include/linux/spinlock.h:329 [inline]
+> 00000000c469f622 (&ctx->fd_wqh){....}, at: aio_poll fs/aio.c:1772 [inline]
+> 00000000c469f622 (&ctx->fd_wqh){....}, at: __io_submit_one fs/aio.c:1875
+> [inline]
+> 00000000c469f622 (&ctx->fd_wqh){....}, at: io_submit_one+0xedf/0x1cf0
+> fs/aio.c:1908
+> 
+> and this task is already holding:
+> 00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq
+> include/linux/spinlock.h:354 [inline]
+> 00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at: aio_poll
+> fs/aio.c:1771 [inline]
+> 00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at: __io_submit_one
+> fs/aio.c:1875 [inline]
+> 00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at:
+> io_submit_one+0xeb6/0x1cf0 fs/aio.c:1908
+> which would create a new lock dependency:
+>  (&(&ctx->ctx_lock)->rlock){..-.} -> (&ctx->fd_wqh){....}
 > 
 
-I suspected as much, but that seems unfortunate though. The latest LTS
-kernel is based on 4.19, which still supports CFQ. It would have been
-great to have a process to address significant issues on older
-kernels too.
+This is still happening.  See
+https://syzkaller.appspot.com/text?tag=CrashReport&x=129eb971a00000 for a report
+on Linus' tree from 5 days ago.
 
-Greg, do you have any thoughts on this? The context is that both CFQ
-and BFQ I/O schedulers have issues that cause I/O throughput to suffer
-upto 10x - 30x on certain workloads and system configurations, as
-reported in [1].
+I see that a few months ago there was a commit
 
-In this thread, Paolo posted patches to fix BFQ performance on
-mainline. However CFQ suffers from the same performance collapse, but
-CFQ was removed from the kernel in v5.0. So obviously the usual stable
-backporting path won't work here for several reasons:
+	commit d3d6a18d7d351cbcc9b33dbedf710e65f8ce1595
+	Author: Bart Van Assche <bvanassche@acm.org>
+	Date:   Fri Feb 8 16:59:49 2019 -0800
 
-  1. There won't be a mainline commit to backport from, as CFQ no
-     longer exists in mainline.
+	    aio: Fix locking in aio_poll()
 
-  2. This is not a security/stability fix, and is likely to involve
-     invasive changes.
+but apparently it didn't fully fix the problem.
 
-I was wondering if there was a way to address the performance issues
-in CFQ in the older stable kernels (including the latest LTS 4.19),
-despite the above constraints, since the performance drop is much too
-significant. I guess not, but thought I'd ask :-)
-
-[1]. https://lore.kernel.org/lkml/8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu/ 
-
-
-Regards,
-Srivatsa
-VMware Photon OS
+- Eric
