@@ -2,215 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B991042D62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 19:24:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DC4842DA7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 19:41:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407290AbfFLRYT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 13:24:19 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40390 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407019AbfFLRYS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 13:24:18 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p11so17799039wre.7;
-        Wed, 12 Jun 2019 10:24:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=JaDk0B2JuZF4UPbktkuAfxaGadSzIqD38JFVgmfBIWs=;
-        b=L/8aQM0zZfjRGpclojJSpYbbgU7RKIEziz0NHfsIDDLYRDOt+iAy7LlpErcteY5hbk
-         Zk8xPd24vIzJ+HhiWHf5i+cHYyroTfaPCN6cDKDlObpRb4pyOAqhEeXfMbxz2zEYK37M
-         uZ43tQodaOLP8QEgDQNgtY/bk3mtv2/hYCwHAYIQydD2iLFAJJZTvRvFwyJRR1vokBFr
-         UQbGJLErLOZIkSPuzDj91DHtrPsJR8Wmd6XlLiEx/bgS5aBrH8Pz6kOdPULmMaDjiPHB
-         0gOFBLuMleWHilRh4Cz5vJTOrjRvlbr1USqXgrhDH9kAWBcHXywc+LKzzfF8HsY2iXpv
-         9JUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JaDk0B2JuZF4UPbktkuAfxaGadSzIqD38JFVgmfBIWs=;
-        b=RWSpmAFULhfjhDFG7/5HQT4w8K9zyIrmAjqBJn6Qrd1Mi6rI0oScPptxcOrkQ6wrBH
-         PjoM6OZjJglAJmFDWw4MdXhtuoP0mDlW4TAYC8TxRcYdBSgrZRsuoJZVwImDN8LzRvWi
-         jKACR399hoSwseoKIuE1bvzCFaX7lzT95NpgL2P26OCi6Zv9csvMjjEIPmgomUiys9Po
-         n951D6N105xVj6mUl7jv/XmCjEfep5sbFEkLUaL0xqDMTBdDVg3He8Cy2r1SZNYkwjcQ
-         Bva2Q5pTlLc7/NfaROiH8ZMqc3K4/6eDXZTW6rO2Ik7tI5PMGUXTCzXX01xuh4kTl8DW
-         /pCQ==
-X-Gm-Message-State: APjAAAXf13JyBGlJxxt+Vd4d1v5SXh55wOowFNzBdPYJU3G49XFcmY5W
-        dvpiBC4jjfmhN7MmzVYOD3U=
-X-Google-Smtp-Source: APXvYqwStm/z+FAde/SFAgWzsa5IoAKISOCAtEsvi1y9UO+FcQKU4hEaIb9WOUjr2yY/00ILxAJHyw==
-X-Received: by 2002:a5d:6b47:: with SMTP id x7mr3863898wrw.83.1560360255667;
-        Wed, 12 Jun 2019 10:24:15 -0700 (PDT)
-Received: from localhost.localdomain ([5.102.238.208])
-        by smtp.gmail.com with ESMTPSA id j17sm423482wrw.6.2019.06.12.10.24.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Jun 2019 10:24:14 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        "J . Bruce Fields" <bfields@fieldses.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: [PATCH v2] locks: eliminate false positive conflicts for write lease
-Date:   Wed, 12 Jun 2019 20:24:08 +0300
-Message-Id: <20190612172408.22671-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728329AbfFLRl3 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 13:41:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57954 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725878AbfFLRl3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 13:41:29 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1899231628E2;
+        Wed, 12 Jun 2019 17:41:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 058825D9CA;
+        Wed, 12 Jun 2019 17:41:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com>
+References: <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <31009.1560262869@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, Stephen Smalley <sds@tycho.nsa.gov>,
+        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: What do LSMs *actually* need for checks on notifications?
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <14575.1560361278.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 12 Jun 2019 18:41:18 +0100
+Message-ID: <14576.1560361278@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 12 Jun 2019 17:41:28 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-check_conflicting_open() is checking for existing fd's open for read or
-for write before allowing to take a write lease.  The check that was
-implemented using i_count and d_count is an approximation that has
-several false positives.  For example, overlayfs since v4.19, takes an
-extra reference on the dentry; An open with O_PATH takes a reference on
-the dentry although the file cannot be read nor written.
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Change the implementation to use i_readcount and i_writecount to
-eliminate the false positive conflicts and allow a write lease to be
-taken on an overlayfs file.
+> >  (4) The security attributes of the object on which the watch was set (uid,
+> >      gid, mode, labels).
+> 
+> Smack needs this to set a watch on the named object (file, key, ...).
+> I am going to say that if you can't access an object you can't watch it.
 
-The change of behavior with existing fd's open with O_PATH is symmetric
-w.r.t. current behavior of lease breakers - an open with O_PATH currently
-does not break a write lease.
+So for the things I've so far defined:
 
-This increases the size of struct inode by 4 bytes on 32bit archs when
-CONFIG_FILE_LOCKING is defined and CONFIG_IMA was not already
-defined.
+ (*) Keys/keyrings require View permission, but it could be Read permission
+     instead - though that may get disabled if the key type does not support
+     KEYCTL_READ.
 
-Cc: <stable@vger.kernel.org> # v4.19
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
+ (*) Mount/superblock watches - I've made these require execute permission on
+     the specified directory.  Could be read permission instead.
 
-Miklos, Jeff and Bruce,
+ (*) Device events (block/usb) don't require any permissions, but currently
+     only deliver hardware notifications.
 
-This patch fixes a v4.19 overlayfs regression with taking write
-leases. It also provides correct semantics w.r.t RDONLY open counter
-that Bruce also needed for nfsd.
+> I think that read access is sufficient provided that no one else can
+> see what watches I've created.
 
-Since this is locks code that fixes an overlayfs regression which
-is also needed for nfsd, it could go via either of your trees.
-I didn't want to pick sides, so first one to grab the patch wins ;-)
+You can't find out what watches exist.
 
-I verified the changes using modified LTP F_SETLEASE tests [1],
-which I ran over xfs and overlayfs.
+> > At the moment, when post_one_notification() wants to write a notification
+> > into a queue, it calls security_post_notification() to ask if it should be
+> > allowed to do so.  This is passed (1) and (3) above plus the notification
+> > record.
+> 
+> Is "current" (2)? Smack needs (2) for the event delivery access check.
 
-Thanks,
-Amir.
+(2) was current_cred() when watch_sb(), KEYCTL_NOTIFY, etc. was called, but
+isn't necessarily current_cred() at the point post_one_notification() is
+called.  The latter is called at the point the event is generated and
+current_cred() is the creds of whatever thread that is called in (which may be
+a work_queue thread if it got deferred).
 
-[1] https://github.com/amir73il/ltp/commits/overlayfs-devel
+At the moment, I'm storing the creds of whoever opened the queue (ie. (1)) and
+using that, but I could cache the creds of whoever created each watch
+(ie. (2)) and pass that to post_one_notification() instead.
 
-Changes since v1:
-- Drop patch to fold i_readcount into i_count
-- Make i_readcount depend on CONFIG_FILE_LOCKING
+However, it should be noted that (1) is the creds of the buffer owner.
 
- fs/locks.c         | 33 ++++++++++++++++++++++-----------
- include/linux/fs.h |  4 ++--
- 2 files changed, 24 insertions(+), 13 deletions(-)
+> >  (e) All the points at which we walk over an object in a chain from (c) to
+> >      find the watch on which we can effect (d) (eg. we walk rootwards from a
+> >      mountpoint to find watches on a branch in the mount topology).
+> 
+> Smack does not require anything beyond existing checks.
 
-diff --git a/fs/locks.c b/fs/locks.c
-index ec1e4a5df629..28528b4fc53b 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -1753,10 +1753,10 @@ int fcntl_getlease(struct file *filp)
- }
- 
- /**
-- * check_conflicting_open - see if the given dentry points to a file that has
-+ * check_conflicting_open - see if the given file points to an inode that has
-  *			    an existing open that would conflict with the
-  *			    desired lease.
-- * @dentry:	dentry to check
-+ * @filp:	file to check
-  * @arg:	type of lease that we're trying to acquire
-  * @flags:	current lock flags
-  *
-@@ -1764,19 +1764,31 @@ int fcntl_getlease(struct file *filp)
-  * conflict with the lease we're trying to set.
-  */
- static int
--check_conflicting_open(const struct dentry *dentry, const long arg, int flags)
-+check_conflicting_open(struct file *filp, const long arg, int flags)
- {
- 	int ret = 0;
--	struct inode *inode = dentry->d_inode;
-+	struct inode *inode = locks_inode(filp);
-+	int wcount = atomic_read(&inode->i_writecount);
-+	int self_wcount = 0, self_rcount = 0;
- 
- 	if (flags & FL_LAYOUT)
- 		return 0;
- 
--	if ((arg == F_RDLCK) && inode_is_open_for_write(inode))
-+	if (arg == F_RDLCK && wcount > 0)
- 		return -EAGAIN;
- 
--	if ((arg == F_WRLCK) && ((d_count(dentry) > 1) ||
--	    (atomic_read(&inode->i_count) > 1)))
-+	/* Eliminate deny writes from actual writers count */
-+	if (wcount < 0)
-+		wcount = 0;
-+
-+	/* Make sure that only read/write count is from lease requestor */
-+	if (filp->f_mode & FMODE_WRITE)
-+		self_wcount = 1;
-+	else if ((filp->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
-+		self_rcount = 1;
-+
-+	if (arg == F_WRLCK && (wcount != self_wcount ||
-+	    atomic_read(&inode->i_readcount) != self_rcount))
- 		ret = -EAGAIN;
- 
- 	return ret;
-@@ -1786,8 +1798,7 @@ static int
- generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **priv)
- {
- 	struct file_lock *fl, *my_fl = NULL, *lease;
--	struct dentry *dentry = filp->f_path.dentry;
--	struct inode *inode = dentry->d_inode;
-+	struct inode *inode = locks_inode(filp);
- 	struct file_lock_context *ctx;
- 	bool is_deleg = (*flp)->fl_flags & FL_DELEG;
- 	int error;
-@@ -1822,7 +1833,7 @@ generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **pr
- 	percpu_down_read(&file_rwsem);
- 	spin_lock(&ctx->flc_lock);
- 	time_out_leases(inode, &dispose);
--	error = check_conflicting_open(dentry, arg, lease->fl_flags);
-+	error = check_conflicting_open(filp, arg, lease->fl_flags);
- 	if (error)
- 		goto out;
- 
-@@ -1879,7 +1890,7 @@ generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **pr
- 	 * precedes these checks.
- 	 */
- 	smp_mb();
--	error = check_conflicting_open(dentry, arg, lease->fl_flags);
-+	error = check_conflicting_open(filp, arg, lease->fl_flags);
- 	if (error) {
- 		locks_unlink_lock_ctx(lease);
- 		goto out;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 79ffa2958bd8..2d55f1b64014 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -694,7 +694,7 @@ struct inode {
- 	atomic_t		i_count;
- 	atomic_t		i_dio_count;
- 	atomic_t		i_writecount;
--#ifdef CONFIG_IMA
-+#if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
- 	atomic_t		i_readcount; /* struct files open RO */
- #endif
- 	union {
-@@ -2895,7 +2895,7 @@ static inline bool inode_is_open_for_write(const struct inode *inode)
- 	return atomic_read(&inode->i_writecount) > 0;
- }
- 
--#ifdef CONFIG_IMA
-+#if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
- static inline void i_readcount_dec(struct inode *inode)
- {
- 	BUG_ON(!atomic_read(&inode->i_readcount));
--- 
-2.17.1
+I'm glad to hear that, as this might be sufficiently impractical as to render
+it unusable with Smack.  Calling i_op->permissions() a lot would suck.
 
+> >  (y) What checks should be done on object destruction after final put and
+> >      what contexts need to be supplied?
+> 
+> Classically there is no such thing as filesystem object deletion.
+> By making it possible to set a watch on that you've inadvertently
+> added a security relevant action to the security model. :o
+
+That wasn't my original intention - I intended fsmount(2) to mount directly as
+mount(2) does, but Al had other ideas.
+
+Now fsmount(2) produces a file descriptor referring to a new mount object that
+can be mounted into by move_mount(2) before being spliced into the mount
+topology by move_mount(2).  However, if the fd is closed before the last step,
+close() will destroy the mount subtree attached to it (kind of quasi-unmount).
+
+That wouldn't be a problem, except that the fd from fsmount(2) can be used
+anywhere an O_PATH fd can be used - including watch_mount(2), fchdir(2), ...
+Further, FMODE_NEED_UNMOUNT gets cleared if the mount is spliced in at least
+once.
+
+Okay, having tried it you don't get an unmount event (since there's no actual
+unmount), but you do get an event to say that your watch got deleted (if the
+directory on which the watch was placed got removed from the system).
+
+So...  does the "your watch got deleted" message need checking?  In my
+opinion, it shouldn't get discarded because then the watcher doesn't know
+their watch went away.
+
+David
