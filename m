@@ -2,89 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71D3A41A54
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 04:23:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3096441A70
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 04:40:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408406AbfFLCXN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 22:23:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34806 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405661AbfFLCXN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 22:23:13 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 63D5C3082E03;
-        Wed, 12 Jun 2019 02:23:12 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 32A02648BF;
-        Wed, 12 Jun 2019 02:23:11 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 2391624B25;
-        Wed, 12 Jun 2019 02:23:10 +0000 (UTC)
-Date:   Tue, 11 Jun 2019 22:23:09 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     cohuck@redhat.com, jack@suse.cz, kvm@vger.kernel.org,
-        mst@redhat.com, jasowang@redhat.com, david@fromorbit.com,
-        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
-        dm-devel@redhat.com, adilger kernel <adilger.kernel@dilger.ca>,
-        zwisler@kernel.org, aarcange@redhat.com,
-        dave jiang <dave.jiang@intel.com>, jstaron@google.com,
-        linux-nvdimm@lists.01.org,
-        vishal l verma <vishal.l.verma@intel.com>, david@redhat.com,
-        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
-        jmoyer@redhat.com, linux-ext4@vger.kernel.org, lenb@kernel.org,
-        kilobyte@angband.pl, rdunlap@infradead.org, riel@surriel.com,
-        yuval shaia <yuval.shaia@oracle.com>, stefanha@redhat.com,
-        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
-        lcapitulino@redhat.com, kwolf@redhat.com, nilal@redhat.com,
-        tytso@mit.edu, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        darrick wong <darrick.wong@oracle.com>, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, imammedo@redhat.com
-Message-ID: <332155967.34508010.1560306189624.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190611171416.GA1248@redhat.com>
-References: <20190611163802.25352-1-pagupta@redhat.com> <20190611163802.25352-5-pagupta@redhat.com> <20190611171416.GA1248@redhat.com>
-Subject: Re: [Qemu-devel] [PATCH v12 4/7] dm: enable synchronous dax
+        id S2436498AbfFLCkA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 22:40:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37130 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406202AbfFLCkA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Jun 2019 22:40:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yvy/gkrIuOAqW1aZMYOf3AGFTiXylWG+oKPZyKjIo4w=; b=juH7/uOYpZ8jrItAQ7kbO3cWF
+        t2fmGc+ksnS3y/SXiuvQqTb5NklWSxrFgXXQqRQJBtZuS6QRqiZHTPq9vlQg6cjARtYfByfwJlBLR
+        kcj2xXFRseqw4IJnSFvuZrvQmLORk+DHSNqOzXJi+mUdIWusr4FOXjaDoZWOrlGYciRlbNQglynUX
+        743DguT32rU6j1hOn0ql6TVad55xC17RcI54BJgfyEslIfGMPjDx/ZzpMt3HLV0RHad2QERo47mSG
+        4JabUXwBWYCbBwT3MM/PtaiQ/lEhqv0D9WNmZo7V2YXhrAbwVHXJWQqDz+JdNlJTOVJykIWAa/ZSi
+        4kx41DZbA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hatB9-0006Wi-L2; Wed, 12 Jun 2019 02:39:59 +0000
+Subject: Re: [PATCH net] mpls: fix af_mpls dependencies
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Ahern <dsahern@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+References: <20190608125019.417-1-mcroce@redhat.com>
+ <20190609.195742.739339469351067643.davem@davemloft.net>
+ <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org>
+ <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <49b58181-90da-4ee4-cbb0-80e226d040fc@infradead.org>
+Date:   Tue, 11 Jun 2019 19:39:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.70, 10.4.195.27]
-Thread-Topic: enable synchronous dax
-Thread-Index: 7O59Nmg+n8QzGpvkvBkkxWqWG8w3fA==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 12 Jun 2019 02:23:12 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 6/11/19 5:08 PM, Matteo Croce wrote:
+> On Wed, Jun 12, 2019 at 1:07 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> On 6/9/19 7:57 PM, David Miller wrote:
+>>> From: Matteo Croce <mcroce@redhat.com>
+>>> Date: Sat,  8 Jun 2019 14:50:19 +0200
+>>>
+>>>> MPLS routing code relies on sysctl to work, so let it select PROC_SYSCTL.
+>>>>
+>>>> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+>>>> Suggested-by: David Ahern <dsahern@gmail.com>
+>>>> Signed-off-by: Matteo Croce <mcroce@redhat.com>
+>>>
+>>> Applied, thanks.
+>>>
+>>
+>> This patch causes build errors when
+>> # CONFIG_PROC_FS is not set
+>> because PROC_SYSCTL depends on PROC_FS.  The build errors are not
+>> in fs/proc/ but in other places in the kernel that never expect to see
+>> PROC_FS not set but PROC_SYSCTL=y.
+>>
+> 
+> Hi,
+> 
+> Maybe I'm missing something, if PROC_SYSCTL depends on PROC_FS, how is
+> possible to have PROC_FS not set but PROC_SYSCTL=y?
 
-> On Tue, Jun 11 2019 at 12:37pm -0400,
-> Pankaj Gupta <pagupta@redhat.com> wrote:
-> 
-> > This patch sets dax device 'DAXDEV_SYNC' flag if all the target
-> > devices of device mapper support synchrononous DAX. If device
-> > mapper consists of both synchronous and asynchronous dax devices,
-> > we don't set 'DAXDEV_SYNC' flag.
-> > 
-> > 'dm_table_supports_dax' is refactored to pass 'iterate_devices_fn'
-> > as argument so that the callers can pass the appropriate functions.
-> > 
-> > Suggested-by: Mike Snitzer <snitzer@redhat.com>
-> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> 
-> Thanks, and for the benefit of others, passing function pointers like
-> this is perfectly fine IMHO because this code is _not_ in the fast
-> path.  These methods are only for device creation.
-> 
-> Reviewed-by: Mike Snitzer <snitzer@redhat.com>
+When MPLS=y and MPLS_ROUTING=[y|m], MPLS_ROUTING selects PROC_SYSCTL.
+That enables PROC_SYSCTL, whether PROC_FS is set/enabled or not.
 
-Thank you, Mike
+There is a warning about this in Documentation/kbuild/kconfig-language.rst:
 
-Best regards,
-Pankaj
+  Note:
+	select should be used with care. select will force
+	a symbol to a value without visiting the dependencies.
+	By abusing select you are able to select a symbol FOO even
+	if FOO depends on BAR that is not set.
+	In general use select only for non-visible symbols
+	(no prompts anywhere) and for symbols with no dependencies.
+	That will limit the usefulness but on the other hand avoid
+	the illegal configurations all over.
 
+
+> I tried it by manually editing .config. but make oldconfig warns:
 > 
-> 
+> WARNING: unmet direct dependencies detected for PROC_SYSCTL
+>   Depends on [n]: PROC_FS [=n]
+>   Selected by [m]:
+>   - MPLS_ROUTING [=m] && NET [=y] && MPLS [=y] && (NET_IP_TUNNEL [=n]
+> || NET_IP_TUNNEL [=n]=n)
+
+Yes, I get this also.
+
+> *
+> * Restart config...
+> *
+> *
+> * Configure standard kernel features (expert users)
+> *
+> Configure standard kernel features (expert users) (EXPERT) [Y/?] y
+>   Multiple users, groups and capabilities support (MULTIUSER) [Y/n/?] y
+>   sgetmask/ssetmask syscalls support (SGETMASK_SYSCALL) [N/y/?] n
+>   Sysfs syscall support (SYSFS_SYSCALL) [N/y/?] n
+>   Sysctl syscall support (SYSCTL_SYSCALL) [N/y/?] (NEW)
+
+So I still say that MPLS_ROUTING should depend on PROC_SYSCTL,
+not select it.
+
+-- 
+~Randy
