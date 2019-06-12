@@ -2,363 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19CD842E5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 20:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 650B642E6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 20:15:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbfFLSKt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 14:10:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726167AbfFLSKs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:10:48 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1B01208CA;
-        Wed, 12 Jun 2019 18:10:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560363048;
-        bh=MrI+H3cwc9qGHA+GY1OIq8hqi5QtGAWDAbDuqX98X4U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WzJv3zTmdUV31igC8M7p41j4UzeI4OjJvuL7UnCTwfx1JJPA0A0fDHqDKAIMewr8W
-         REuZHykGGJAoNYeOEIP3P7JeN/XqHUQtV/yiKqxm2VXvhFa6bfxdVw9FU9HBOjKpef
-         TYnIDmNzSuxKrWG5HtypaiMFV55GAxnxovXwq6e4=
-Date:   Wed, 12 Jun 2019 11:10:46 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Parshuram Raju Thombare <pthombar@cadence.com>,
-        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>
-Subject: Re: [RFC PATCH v2 2/8] block: Add encryption context to struct bio
-Message-ID: <20190612181044.GA18795@gmail.com>
-References: <20190605232837.31545-1-satyat@google.com>
- <20190605232837.31545-3-satyat@google.com>
+        id S1726921AbfFLSOq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 14:14:46 -0400
+Received: from sonic309-22.consmr.mail.bf2.yahoo.com ([74.6.129.196]:46426
+        "EHLO sonic309-22.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726660AbfFLSOo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 14:14:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1560363281; bh=xIF1XHVgS31oW5M5zK0EqGkjdhl54UMxsg7idDaz8ik=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=aLd0A6CZHfDugx9DtN3ricVSnlmVqdR2p8Kwr2MTVebdGsBkpUCszSmtm2gJZSE1JHzGOqK+EOhMfQBLjYa1jrsFipmpOvYGWBJWRlIjh7lksfhi7C0vzcsUcrsMrTSQuXHkBW8hDT1SzTT7K893zLayGt/hKBkYbU5gqOFH12m85+llfgiaYktxaAc+rxXZqla0/c+IptW8EquhbvDWC2+haMreihiUyZEBjuD7+Mn8tfie78sxKHFP9iOVEcBQyKN7vHhoa6ec6ppcp7rrzgl/KUnDO5g1EeXQ8lA6P5zX69Bf+1auBZwnR2BgzEPLsV1N5L7uC3AiK4JoZaByag==
+X-YMail-OSG: Xl318kMVM1lYWYMfF8RkKKue51mSK02d_ZqzkgEhZfk_znF8gGMYBiMqLWvWjPf
+ 0SDQQK4Kc9UlbO7v4Lq9ZlKNpNYwL5uCm8jqBVDYd1TLYV24FUXz1VlihyKLXn7DH3xmcSWaTzPD
+ czhc_y2Bzw4vFZ2VrKPL4DcJ25Ae5n6bPrbd8KIRyzikMQnSR1Qf.wSmbFeAAMyvVu0VoE4WR46t
+ p1oWaPe5fQLPDbqwYvLyIc6xlS6vXv2Icg1hoEcf5d2S_85WB5Q40msob4CUXocGU9x0hDEQz2hF
+ NyA2pNEryZHrvijtIduoIbn6BD61VBPOTIsSxHPmmauAh6jWiwd8.QPVgxgI4VtYX5ySEhigIFPG
+ Jn6fVlCbgoHNBbToKL8rUhvm.kjd1r75kqPqsOKhH45.h9AbH0TSwEu754XcAxUUNq3UhPbnGyye
+ 8rnpl_Qtz2RAUH_APQzqrYHRQSStDzYOglK3VNY.s1FqU2wi7JZCDe_ARBFJKe9H4G33EnCPbSB9
+ DhPHri8cVRln2V05tC3N24rX3ln4LvsbMb5B1bKhrVxvOIrFDbCfKPFzliVs3RYmr8Vhufzs6oKB
+ 8QpCkZpTyoyAoUMZsHCNpbD0FWUWjHrHLhshbgJrzxPqJDXZMd9IjixAeOAoyk909EdjPyFaktkC
+ BraqxDezBU8n2fdIafQbM2_V1Aw2NlYhpJk_uy8a.uIy4FyxzcPC3qhYJPD_kxtsCiZqlz3Gb8xg
+ SekjPKUVxiviwmeXgyIjBHodT7HEu1BPwervIVdeWco8Tcbz1V_wlZEigdfGMPse.R1U0_mYdFqi
+ BJbmvbcQIeH5QFWwyDTeW7Q20jr5KOgL1N6hCtik7eH3pma4VHZB98d.mqesPvJYVQU7qYGhKitu
+ wXmAVIucpUAUSiVeZNLAARtIN17iOMMSAvbkmF7xKo1CyhdVJuKZUKFCDA9VBbvDP6z1WCAZZZye
+ PKEYUk_NAK55ahr_7njAE7MmwNQXd1FnU.21PqYo7ENAy6GVrQVGuhy96eTw5BNeDtGpsmMcnu1S
+ ob5SFWowUOknCHJUIMiA3ifJTAjRsEgYNEHDdRJAOiahGYL7evsCZwq3fDSxyEBgscFiUi4Rfdjr
+ AEMoamGkIjrJj5_l22Nzo_OI3273656M5mF9nmifOTtceOcioI6Q28ISUlcr.MJmie4M2ZR5q.6w
+ Pu4ExRtMRNOnurhhDPqa92QJ0ZNki7ynA9Q9gQsXPseY67XslaXxRqhHCQI6elKZGZm6ZkHUtRmX
+ yayT.TRuYJqJTdZp7kble
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.bf2.yahoo.com with HTTP; Wed, 12 Jun 2019 18:14:41 +0000
+Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
+          by smtp405.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 90667aa732a85c97b8d2b127900fddb3;
+          Wed, 12 Jun 2019 18:14:39 +0000 (UTC)
+Subject: Re: What do LSMs *actually* need for checks on notifications?
+To:     David Howells <dhowells@redhat.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        casey@schaufler-ca.com
+References: <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com>
+ <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
+ <31009.1560262869@warthog.procyon.org.uk>
+ <14576.1560361278@warthog.procyon.org.uk>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <0483c310-87c0-17b6-632e-d57b2274a32f@schaufler-ca.com>
+Date:   Wed, 12 Jun 2019 11:14:37 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190605232837.31545-3-satyat@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <14576.1560361278@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Satya,
+On 6/12/2019 10:41 AM, David Howells wrote:
+> Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+>>>  (4) The security attributes of the object on which the watch was set=
+ (uid,
+>>>      gid, mode, labels).
+>> Smack needs this to set a watch on the named object (file, key, ...).
+>> I am going to say that if you can't access an object you can't watch i=
+t.
+> So for the things I've so far defined:
+>
+>  (*) Keys/keyrings require View permission, but it could be Read permis=
+sion
+>      instead - though that may get disabled if the key type does not su=
+pport
+>      KEYCTL_READ.
 
-On Wed, Jun 05, 2019 at 04:28:31PM -0700, Satya Tangirala wrote:
-> We must have some way of letting a storage device driver know what
-> encryption context it should use for en/decrypting a request. However,
-> it's the filesystem/fscrypt that knows about and manages encryption
-> contexts. As such, when the filesystem layer submits a bio to the block
-> layer, and this bio eventually reaches a device driver with support for
-> inline encryption, the device driver will need to have been told the
-> encryption context for that bio.
-> 
-> We want to communicate the encryption context from the filesystem layer
-> to the storage device along with the bio, when the bio is submitted to the
-> block layer. To do this, we add a struct bio_crypt_ctx to struct bio, which
-> can represent an encryption context (note that we can't use the bi_private
-> field in struct bio to do this because that field does not function to pass
-> information across layers in the storage stack). We also introduce various
-> functions to manipulate the bio_crypt_ctx and make the bio/request merging
-> logic aware of the bio_crypt_ctx.
-> 
-> Signed-off-by: Satya Tangirala <satyat@google.com>
-> ---
->  block/bio.c               |  12 ++-
->  block/blk-crypt-ctx.c     |  90 +++++++++++++++++++
->  block/blk-merge.c         |  34 ++++++-
->  block/bounce.c            |   9 +-
->  drivers/md/dm.c           |  15 ++--
->  include/linux/bio.h       | 180 ++++++++++++++++++++++++++++++++++++++
->  include/linux/blk_types.h |  28 ++++++
->  7 files changed, 355 insertions(+), 13 deletions(-)
->  create mode 100644 block/blk-crypt-ctx.c
-> 
-> diff --git a/block/bio.c b/block/bio.c
-> index 683cbb40f051..87aa87288b39 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -16,6 +16,7 @@
->  #include <linux/workqueue.h>
->  #include <linux/cgroup.h>
->  #include <linux/blk-cgroup.h>
-> +#include <linux/keyslot-manager.h>
+View is good enough.
 
-No need to include keyslot-manager.h here.
+>  (*) Mount/superblock watches - I've made these require execute permiss=
+ion on
+>      the specified directory.  Could be read permission instead.
 
-> @@ -1019,6 +1026,7 @@ void bio_advance(struct bio *bio, unsigned bytes)
->  		bio_integrity_advance(bio, bytes);
->  
->  	bio_advance_iter(bio, &bio->bi_iter, bytes);
-> +	bio_crypt_advance(bio, bytes);
->  }
->  EXPORT_SYMBOL(bio_advance);
+Execute is good enough.
 
-It would be more logical to do bio_crypt_advance() before bio_advance_iter(), so
-that the special features (encryption and integrity) are grouped together.
+>  (*) Device events (block/usb) don't require any permissions, but curre=
+ntly
+>      only deliver hardware notifications.
 
->  
-> diff --git a/block/blk-crypt-ctx.c b/block/blk-crypt-ctx.c
-> new file mode 100644
-> index 000000000000..174c058ab0c6
-> --- /dev/null
-> +++ b/block/blk-crypt-ctx.c
+How do you specify what device you want to watch?
+Don't you have to access a /dev/something?
 
-It would be more logical for this file to be named "bio-crypt-ctx.c", as that
-would match 'struct bio_crypt_ctx' and help distinguish it from "blk-crypto".
+"currently" makes me nervous.
 
-> @@ -0,0 +1,90 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2019 Google LLC
-> + */
-> +
-> +#include <linux/bio.h>
-> +#include <linux/blkdev.h>
-> +#include <linux/slab.h>
-> +#include <linux/keyslot-manager.h>
-> +
-> +struct bio_crypt_ctx *bio_crypt_alloc_ctx(gfp_t gfp_mask)
-> +{
-> +	return kzalloc(sizeof(struct bio_crypt_ctx), gfp_mask);
-> +}
+>> I think that read access is sufficient provided that no one else can
+>> see what watches I've created.
+> You can't find out what watches exist.
 
-This needs EXPORT_SYMBOL(), since it's called by bio_crypt_set_ctx() which is an
-inline function that will be called by places that submit bios.
+Not even your own?
 
-> +
-> +void bio_crypt_free_ctx(struct bio *bio)
-> +{
-> +	kzfree(bio->bi_crypt_context);
-> +	bio->bi_crypt_context = NULL;
-> +}
-> +
-> +int bio_clone_crypt_context(struct bio *dst, struct bio *src, gfp_t gfp_mask)
-> +{
 
-How about naming this function bio_crypt_clone(), for consistency with
-bio_integrity_clone()?
+>>> At the moment, when post_one_notification() wants to write a notifica=
+tion
+>>> into a queue, it calls security_post_notification() to ask if it shou=
+ld be
+>>> allowed to do so.  This is passed (1) and (3) above plus the notifica=
+tion
+>>> record.
+>> Is "current" (2)? Smack needs (2) for the event delivery access check.=
 
-> +	if (!bio_is_encrypted(src) || bio_crypt_swhandled(src))
-> +		return 0;
+> (2) was current_cred() when watch_sb(), KEYCTL_NOTIFY, etc. was called,=
+ but
+> isn't necessarily current_cred() at the point post_one_notification() i=
+s
+> called.  The latter is called at the point the event is generated and
+> current_cred() is the creds of whatever thread that is called in (which=
+ may be
+> a work_queue thread if it got deferred).
+>
+> At the moment, I'm storing the creds of whoever opened the queue (ie. (=
+1)) and
+> using that, but I could cache the creds of whoever created each watch
+> (ie. (2)) and pass that to post_one_notification() instead.
+>
+> However, it should be noted that (1) is the creds of the buffer owner.
 
-Why isn't cloning needed when bio_crypt_swhandled(src)?
+How are buffers shared? Who besides the buffer creator can use it?
 
-> +
-> +	dst->bi_crypt_context = bio_crypt_alloc_ctx(gfp_mask);
-> +	if (!dst->bi_crypt_context)
-> +		return -ENOMEM;
-> +
-> +	*dst->bi_crypt_context = *src->bi_crypt_context;
-> +
-> +	if (!bio_crypt_has_keyslot(src))
-> +		return 0;
-> +
-> +	keyslot_manager_get_slot(src->bi_crypt_context->processing_ksm,
-> +				 src->bi_crypt_context->keyslot);
-> +
-> +	return 0;
-> +}
+>>>  (e) All the points at which we walk over an object in a chain from (=
+c) to
+>>>      find the watch on which we can effect (d) (eg. we walk rootwards=
+ from a
+>>>      mountpoint to find watches on a branch in the mount topology).
+>> Smack does not require anything beyond existing checks.
+> I'm glad to hear that, as this might be sufficiently impractical as to =
+render
+> it unusable with Smack.  Calling i_op->permissions() a lot would suck.
+>
+>>>  (y) What checks should be done on object destruction after final put=
+ and
+>>>      what contexts need to be supplied?
+>> Classically there is no such thing as filesystem object deletion.
+>> By making it possible to set a watch on that you've inadvertently
+>> added a security relevant action to the security model. :o
+> That wasn't my original intention - I intended fsmount(2) to mount dire=
+ctly as
+> mount(2) does, but Al had other ideas.
+>
+> Now fsmount(2) produces a file descriptor referring to a new mount obje=
+ct that
+> can be mounted into by move_mount(2) before being spliced into the moun=
+t
+> topology by move_mount(2).  However, if the fd is closed before the las=
+t step,
+> close() will destroy the mount subtree attached to it (kind of quasi-un=
+mount).
+>
+> That wouldn't be a problem, except that the fd from fsmount(2) can be u=
+sed
+> anywhere an O_PATH fd can be used - including watch_mount(2), fchdir(2)=
+, ...
+> Further, FMODE_NEED_UNMOUNT gets cleared if the mount is spliced in at =
+least
+> once.
+>
+> Okay, having tried it you don't get an unmount event (since there's no =
+actual
+> unmount), but you do get an event to say that your watch got deleted (i=
+f the
+> directory on which the watch was placed got removed from the system).
+>
+> So...  does the "your watch got deleted" message need checking?  In my
+> opinion, it shouldn't get discarded because then the watcher doesn't kn=
+ow
+> their watch went away.
 
-Nit: a conditional get would be cleaner than an early return here.
+Can you glean information from the watch being deleted?
+I wouldn't think so, and it seems like a one-time event
+from the system, so I don't think an access check would
+be required.
 
-	if (bio_crypt_has_keyslot(src))
-		keyslot_manager_get_slot(src->bi_crypt_context->processing_ksm,
-					 src->bi_crypt_context->keyslot);
+>
+> David
 
-Also, this function needs EXPORT_SYMBOL(), since it's called by drivers/md/dm.c,
-which can be a loadable module.
-
-> +/*
-> + * Checks that two bio crypt contexts are compatible - i.e. that
-> + * they are mergeable except for data_unit_num continuity.
-> + */
-> +bool bio_crypt_ctx_compatible(struct bio *b_1, struct bio *b_2)
-> +{
-> +	struct bio_crypt_ctx *bc1 = b_1->bi_crypt_context;
-> +	struct bio_crypt_ctx *bc2 = b_2->bi_crypt_context;
-> +
-> +	if (bio_is_encrypted(b_1) != bio_is_encrypted(b_2))
-> +		return false;
-> +
-> +	if (!bio_is_encrypted(b_1))
-> +		return true;
-> +
-> +	return bc1->keyslot != bc2->keyslot &&
-> +	       bc1->data_unit_size_bits == bc2->data_unit_size_bits;
-> +}
-
-It needs to be 'bc1->keyslot == bc2->keyslot'.
-
-> +
-> +/*
-> + * Checks that two bio crypt contexts are compatible, and also
-> + * that their data_unit_nums are continuous (and can hence be merged)
-> + */
-> +bool bio_crypt_ctx_back_mergeable(struct bio *b_1,
-> +				  unsigned int b1_sectors,
-> +				  struct bio *b_2)
-> +{
-> +	struct bio_crypt_ctx *bc1 = b_1->bi_crypt_context;
-> +	struct bio_crypt_ctx *bc2 = b_2->bi_crypt_context;
-> +
-> +	if (!bio_crypt_ctx_compatible(b_1, b_2))
-> +		return false;
-> +
-> +	return !bio_is_encrypted(b_1) ||
-> +		(bc1->data_unit_num +
-> +		(b1_sectors >> (bc1->data_unit_size_bits - 9)) ==
-> +		bc2->data_unit_num);
-> +}
-> +
-
-Unnecessary blank line at end of file.
-
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 0f23b5682640..ba9552932571 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -561,6 +561,186 @@ static inline void bvec_kunmap_irq(char *buffer, unsigned long *flags)
->  }
->  #endif
->  
-> +#ifdef CONFIG_BLK_INLINE_ENCRYPTION
-> +extern int bio_clone_crypt_context(struct bio *dst, struct bio *src,
-> +				   gfp_t gfp_mask);
-> +
-> +static inline bool bio_is_encrypted(struct bio *bio)
-> +{
-> +	return bio && bio->bi_crypt_context;
-> +}
-
-Is the 'bio != NULL' check actually needed?  Most bio helper functions don't
-check for NULL, as it's not a meaningful case.
-
-> +
-> +static inline bool bio_crypt_has_keyslot(struct bio *bio)
-> +{
-> +	return bio_is_encrypted(bio) &&
-> +	       bio->bi_crypt_context->keyslot >= 0;
-> +}
-> +
-
-I think the bio_is_encrypted() check here should be dropped, since all callers
-check it beforehand anyway.  It doesn't really make sense for someone to call
-functions that are meant to access fields of the bio_crypt_ctx, before verifying
-that there actually is a bio_crypt_ctx.  Other bio_crypt_* functions don't check
-for NULL, so it seems inconsistent that this one does.
-
-> +
-> +static inline int bio_crypt_get_slot(struct bio *bio)
-> +{
-> +	return bio->bi_crypt_context->keyslot;
-> +}
-
-For consistency this should be named *_get_keyslot(), not *_get_slot().
-
-> +
-> +static inline void bio_crypt_set_keyslot(struct bio *bio,
-> +					 unsigned int keyslot,
-> +					 struct keyslot_manager *ksm)
-> +{
-> +	bio->bi_crypt_context->keyslot = keyslot;
-> +	bio->bi_crypt_context->processing_ksm = ksm;
-> +
-> +	bio->bi_crypt_context->crypt_iter = bio->bi_iter;
-> +	bio->bi_crypt_context->sw_data_unit_num =
-> +		bio->bi_crypt_context->data_unit_num;
-> +}
-> +
-> +static inline void bio_crypt_unset_keyslot(struct bio *bio)
-> +{
-> +	bio->bi_crypt_context->processing_ksm = NULL;
-> +	bio->bi_crypt_context->keyslot = -1;
-> +}
-> +
-> +static inline u8 *bio_crypt_raw_key(struct bio *bio)
-> +{
-> +	return bio->bi_crypt_context->raw_key;
-> +}
-> +
-> +static inline enum blk_crypt_mode_num bio_crypt_mode(struct bio *bio)
-> +{
-> +	return bio->bi_crypt_context->crypt_mode;
-> +}
-
-bio_crypt_unset_keyslot(), bio_crypt_raw_key(), and bio_crypt_mode() are only
-used in blk-crypto.c.  Is there any reason for block users or drivers to need to
-call them?  If not, these fields should really just be accessed directly in
-blk-crypto.c.  It's not needed to provide these functions in bio.h where they
-are available to everyone.
-
-> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> index aafa96839f95..c111b1ce8d24 100644
-> --- a/include/linux/blk_types.h
-> +++ b/include/linux/blk_types.h
-> @@ -148,6 +148,29 @@ enum blk_crypt_mode_num {
->  	 */
->  };
->  
-> +struct bio_crypt_ctx {
-> +	int keyslot;
-> +	u8 *raw_key;
-> +	enum blk_crypt_mode_num crypt_mode;
-> +	u64 data_unit_num;
-> +	unsigned int data_unit_size_bits;
-> +
-> +	/*
-> +	 * The keyslot manager where the key has been programmed
-> +	 * with keyslot.
-> +	 */
-> +	struct keyslot_manager *processing_ksm;
-> +
-> +	/*
-> +	 * Copy of the bvec_iter when this bio was submitted.
-> +	 * We only want to en/decrypt the part of the bio
-> +	 * as described by the bvec_iter upon submission because
-> +	 * bio might be split before being resubmitted
-> +	 */
-> +	struct bvec_iter crypt_iter;
-> +	u64 sw_data_unit_num;
-> +};
-> +
-
-How about making this struct definition conditional on
-CONFIG_BLK_INLINE_ENCRYPTION?  When !CONFIG_BLK_INLINE_ENCRYPTION, no code is
-compiled that dereferences any pointer to this struct.
-
-For consistency with bio_integrity_payload and to avoid an extra #ifdef, I think
-this should also be moved to bio.h.
-
-blk_crypt_mode_num can be moved to bio.h too, but it will need to be
-unconditional since it's used as a parameter to bio_crypt_set_ctx().
-
->  /*
->   * main unit of I/O for the block layer and lower layers (ie drivers and
->   * stacking drivers)
-> @@ -186,6 +209,11 @@ struct bio {
->  	struct blkcg_gq		*bi_blkg;
->  	struct bio_issue	bi_issue;
->  #endif
-> +
-> +#ifdef CONFIG_BLK_INLINE_ENCRYPTION
-> +	struct bio_crypt_ctx	*bi_crypt_context;
-> +#endif
-> +
->  	union {
->  #if defined(CONFIG_BLK_DEV_INTEGRITY)
->  		struct bio_integrity_payload *bi_integrity; /* data integrity */
-> -- 
-> 2.22.0.rc1.311.g5d7573a151-goog
-> 
-
-Is it actually meaningful to use the blk_integrity feature in combination with
-inline encryption?  How might this be tested?  If the features actually conflict
-anyway, bi_crypt_context and bi_integrity could share the same union.
-
-- Eric
