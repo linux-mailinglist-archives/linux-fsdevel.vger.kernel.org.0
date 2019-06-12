@@ -2,192 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D940842F47
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 20:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4234042F49
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 20:48:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfFLSrW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 14:47:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57408 "EHLO mail.kernel.org"
+        id S1727105AbfFLSsF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 14:48:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725497AbfFLSrW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:47:22 -0400
+        id S1725497AbfFLSsF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 14:48:05 -0400
 Received: from gmail.com (unknown [104.132.1.77])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2891C20896;
-        Wed, 12 Jun 2019 18:47:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE84820896;
+        Wed, 12 Jun 2019 18:48:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560365240;
-        bh=Mu8MsyDqwI1xMjO/n74TanH+3lavL7WUWw2zY4LfQak=;
+        s=default; t=1560365284;
+        bh=aCbx5hIUl8edjzFxaGKbmiWY108GNZtyNpUD2kpZaoM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AhIdugIuo0lJDiIRyejtpeQ/Znvnp3LMRvNOmjgAQBqJNHD1MU0y0WKboRbPDTtx8
-         MF4Tdj00Wjo3pBmVlyksV9PNnAh2MQoffbEJAwSXWcqaaYr0ZFgyFhRq+zRAxluH1x
-         57Gh7yRFdFoDHznN9TSTc6OPmZsh5Xexzucw4mDw=
-Date:   Wed, 12 Jun 2019 11:47:18 -0700
+        b=w90ttNo475P6/qoLOr+PDv5SqrliVxUAizLt06FZu3zm6rN460NOx4kk+hFsy/DZ6
+         MMYYrFV+GkBMaXvzTMA8j1RUoJpI5IIhYFK4fvCZOsSKtGSGkZisw7YMXzuvPHjNe3
+         vPU3zd2g9fj1g/QkBsSS0m0ktbC/jZM+s5Z0tAg8=
+Date:   Wed, 12 Jun 2019 11:48:02 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+99de05d099a170867f22@syzkaller.appspotmail.com>
-Cc:     arnd@arndb.de, axboe@kernel.dk, bp@alien8.de,
-        catalin.marinas@arm.com, christian@brauner.io, dhowells@redhat.com,
-        geert@linux-m68k.org, hare@suse.com, heiko.carstens@de.ibm.com,
-        hpa@zytor.com, keescook@chromium.org,
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     syzbot <syzbot+7008b8b8ba7df475fdc8@syzkaller.appspotmail.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        luto@kernel.org, mingo@redhat.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, viro@zeniv.linux.org.uk, x86@kernel.org
-Subject: Re: KASAN: use-after-free Read in mntput
-Message-ID: <20190612184718.GC18795@gmail.com>
-References: <000000000000f1e431058b0466ab@google.com>
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        David Howells <dhowells@redhat.com>
+Subject: Re: BUG: Dentry still in use [unmount of tmpfs tmpfs]
+Message-ID: <20190612184801.GD18795@gmail.com>
+References: <000000000000456245058adf33a4@google.com>
+ <20190610151135.GC16989@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000f1e431058b0466ab@google.com>
+In-Reply-To: <20190610151135.GC16989@lakrids.cambridge.arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 09:05:06PM -0700, syzbot wrote:
-> Hello,
+On Mon, Jun 10, 2019 at 04:11:36PM +0100, Mark Rutland wrote:
+> On Sun, Jun 09, 2019 at 12:42:06AM -0700, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot found the following crash on:
+> > 
+> > HEAD commit:    79c3ba32 Merge tag 'drm-fixes-2019-06-07-1' of git://anong..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=16eacf36a00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=60564cb52ab29d5b
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=7008b8b8ba7df475fdc8
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > 
+> > Unfortunately, I don't have any reproducer for this crash yet.
 > 
-> syzbot found the following crash on:
+> I suspect that this is the same issue I reported at:
 > 
-> HEAD commit:    d1fdb6d8 Linux 5.2-rc4
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12b30acaa00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9f7e1b6a8bb586
-> dashboard link: https://syzkaller.appspot.com/bug?extid=99de05d099a170867f22
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> userspace arch: i386
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1114dc46a00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17eade6aa00000
+>   https://lore.kernel.org/lkml/20190605135401.GB30925@lakrids.cambridge.arm.com/
 > 
-> The bug was bisected to:
+> ... which has a C reproducer hand-minimized from Syzkaller's
+> auto-generated repro.
 > 
-> commit 9c8ad7a2ff0bfe58f019ec0abc1fb965114dde7d
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Thu May 16 11:52:27 2019 +0000
+> Thanks,
+> Mark.
 > 
->     uapi, x86: Fix the syscall numbering of the mount API syscalls [ver #2]
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15c9f91ea00000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=17c9f91ea00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13c9f91ea00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+99de05d099a170867f22@syzkaller.appspotmail.com
-> Fixes: 9c8ad7a2ff0b ("uapi, x86: Fix the syscall numbering of the mount API
-> syscalls [ver #2]")
-> 
-> ==================================================================
-> BUG: KASAN: use-after-free in mntput+0x91/0xa0 fs/namespace.c:1207
-> Read of size 4 at addr ffff88808f661124 by task syz-executor817/8955
-> 
-> CPU: 1 PID: 8955 Comm: syz-executor817 Not tainted 5.2.0-rc4 #18
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:188
->  __kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
->  kasan_report+0x12/0x20 mm/kasan/common.c:614
->  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:131
->  mntput+0x91/0xa0 fs/namespace.c:1207
->  path_put+0x50/0x70 fs/namei.c:483
->  free_fs_struct+0x25/0x70 fs/fs_struct.c:91
->  exit_fs+0xf0/0x130 fs/fs_struct.c:108
->  do_exit+0x8e0/0x2fa0 kernel/exit.c:873
->  do_group_exit+0x135/0x370 kernel/exit.c:981
->  __do_sys_exit_group kernel/exit.c:992 [inline]
->  __se_sys_exit_group kernel/exit.c:990 [inline]
->  __ia32_sys_exit_group+0x44/0x50 kernel/exit.c:990
->  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
->  do_fast_syscall_32+0x27b/0xd7d arch/x86/entry/common.c:408
->  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-> RIP: 0023:0xf7f16849
-> Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 3c 24 c3 90 90
-> 90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90
-> 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-> RSP: 002b:00000000ffe4f85c EFLAGS: 00000296 ORIG_RAX: 00000000000000fc
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000080ed2b8
-> RDX: 0000000000000000 RSI: 00000000080d71fc RDI: 00000000080ed2c0
-> RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> 
-> Allocated by task 8955:
->  save_stack+0x23/0x90 mm/kasan/common.c:71
->  set_track mm/kasan/common.c:79 [inline]
->  __kasan_kmalloc mm/kasan/common.c:489 [inline]
->  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:462
->  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:497
->  slab_post_alloc_hook mm/slab.h:437 [inline]
->  slab_alloc mm/slab.c:3326 [inline]
->  kmem_cache_alloc+0x11a/0x6f0 mm/slab.c:3488
->  kmem_cache_zalloc include/linux/slab.h:732 [inline]
->  alloc_vfsmnt+0x28/0x780 fs/namespace.c:182
->  vfs_create_mount+0x96/0x500 fs/namespace.c:961
->  __do_sys_fsmount fs/namespace.c:3423 [inline]
->  __se_sys_fsmount fs/namespace.c:3340 [inline]
->  __ia32_sys_fsmount+0x584/0xc80 fs/namespace.c:3340
->  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
->  do_fast_syscall_32+0x27b/0xd7d arch/x86/entry/common.c:408
->  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-> 
-> Freed by task 16:
->  save_stack+0x23/0x90 mm/kasan/common.c:71
->  set_track mm/kasan/common.c:79 [inline]
->  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:451
->  kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
->  __cache_free mm/slab.c:3432 [inline]
->  kmem_cache_free+0x86/0x260 mm/slab.c:3698
->  free_vfsmnt+0x6f/0x90 fs/namespace.c:559
->  delayed_free_vfsmnt+0x16/0x20 fs/namespace.c:564
->  __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
->  rcu_do_batch kernel/rcu/tree.c:2092 [inline]
->  invoke_rcu_callbacks kernel/rcu/tree.c:2310 [inline]
->  rcu_core+0xba5/0x1500 kernel/rcu/tree.c:2291
->  __do_softirq+0x25c/0x94c kernel/softirq.c:292
-> 
-> The buggy address belongs to the object at ffff88808f661000
->  which belongs to the cache mnt_cache of size 432
-> The buggy address is located 292 bytes inside of
->  432-byte region [ffff88808f661000, ffff88808f6611b0)
-> The buggy address belongs to the page:
-> page:ffffea00023d9840 refcount:1 mapcount:0 mapping:ffff8880aa594940
-> index:0x0
-> flags: 0x1fffc0000000200(slab)
-> raw: 01fffc0000000200 ffffea0002a35e08 ffffea00022a3f08 ffff8880aa594940
-> raw: 0000000000000000 ffff88808f661000 0000000100000008 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff88808f661000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff88808f661080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ffff88808f661100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                ^
->  ffff88808f661180: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
->  ffff88808f661200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+> > 
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+7008b8b8ba7df475fdc8@syzkaller.appspotmail.com
+> > 
+> > BUG: Dentry 00000000c5e232d4{i=15d04,n=/}  still in use (2) [unmount of
+> > tmpfs tmpfs]
+> > WARNING: CPU: 0 PID: 22126 at fs/dcache.c:1529 umount_check fs/dcache.c:1520
+> > [inline]
+> > WARNING: CPU: 0 PID: 22126 at fs/dcache.c:1529 umount_check.cold+0xe9/0x10a
+> > fs/dcache.c:1510
+> > Kernel panic - not syncing: panic_on_warn set ...
+> > CPU: 0 PID: 22126 Comm: syz-executor.5 Not tainted 5.2.0-rc3+ #16
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+> >  panic+0x2cb/0x744 kernel/panic.c:219
+> >  __warn.cold+0x20/0x4d kernel/panic.c:576
+> >  report_bug+0x263/0x2b0 lib/bug.c:186
+> >  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+> >  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+> >  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
+> >  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
+> >  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
+> > RIP: 0010:umount_check fs/dcache.c:1529 [inline]
+> > RIP: 0010:umount_check.cold+0xe9/0x10a fs/dcache.c:1510
+> > Code: 89 ff e8 50 62 f0 ff 48 81 c3 68 06 00 00 45 89 e8 4c 89 e1 53 4d 8b
+> > 0f 4c 89 f2 4c 89 e6 48 c7 c7 c0 ff 75 87 e8 31 d4 a1 ff <0f> 0b 58 e9 bd 2a
+> > ff ff e8 20 62 f0 ff e9 29 ff ff ff 45 31 f6 e9
+> > RSP: 0018:ffff8880659d7bf8 EFLAGS: 00010286
+> > RAX: 0000000000000054 RBX: ffff8880934748a8 RCX: 0000000000000000
+> > RDX: 0000000000000000 RSI: ffffffff815ac976 RDI: ffffed100cb3af71
+> > RBP: ffff8880659d7c28 R08: 0000000000000054 R09: ffffed1015d06011
+> > R10: ffffed1015d06010 R11: ffff8880ae830087 R12: ffff88808fa10840
+> > R13: 0000000000000002 R14: 0000000000015d04 R15: ffffffff88c21260
+> >  d_walk+0x194/0x950 fs/dcache.c:1264
+> >  do_one_tree+0x28/0x40 fs/dcache.c:1536
+> >  shrink_dcache_for_umount+0x72/0x170 fs/dcache.c:1552
+> >  generic_shutdown_super+0x6d/0x370 fs/super.c:443
+> >  kill_anon_super+0x3e/0x60 fs/super.c:1137
+> >  kill_litter_super+0x50/0x60 fs/super.c:1146
+> >  deactivate_locked_super+0x95/0x100 fs/super.c:331
+> >  deactivate_super fs/super.c:362 [inline]
+> >  deactivate_super+0x1b2/0x1d0 fs/super.c:358
+> >  cleanup_mnt+0xbf/0x160 fs/namespace.c:1120
+> >  __cleanup_mnt+0x16/0x20 fs/namespace.c:1127
+> >  task_work_run+0x145/0x1c0 kernel/task_work.c:113
+> >  tracehook_notify_resume include/linux/tracehook.h:185 [inline]
+> >  exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:168
+> >  prepare_exit_to_usermode arch/x86/entry/common.c:199 [inline]
+> >  syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
+> >  do_syscall_64+0x58e/0x680 arch/x86/entry/common.c:304
+> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x412f61
+> > Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 48
+> > 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48 89
+> > c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+> > RSP: 002b:00007fff7b2152c0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> > RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000412f61
+> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+> > RBP: 0000000000000001 R08: 00000000ea5b01f8 R09: ffffffffffffffff
+> > R10: 00007fff7b2153a0 R11: 0000000000000293 R12: 0000000000760d58
+> > R13: 0000000000077aaa R14: 0000000000077ad7 R15: 000000000075bf2c
+> > Kernel Offset: disabled
+> > Rebooting in 86400 seconds..
+> > 
+> > 
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > 
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 > 
 
-Same as https://marc.info/?l=linux-fsdevel&m=156017950130792&w=2
-
-#syz dup: BUG: Dentry still in use [unmount of tmpfs tmpfs]
-
-Also, patch sent: https://patchwork.kernel.org/patch/10990715/
+Patch sent: https://patchwork.kernel.org/patch/10990715/
 ("vfs: fsmount: add missing mntget()").
 
 - Eric
