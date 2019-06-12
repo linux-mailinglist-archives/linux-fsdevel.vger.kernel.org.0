@@ -2,94 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E819342ECA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 20:37:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68DCC42F38
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 20:42:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfFLShA convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 14:37:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50952 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726677AbfFLShA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:37:00 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5350E308795D;
-        Wed, 12 Jun 2019 18:37:00 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 42FE85F9C3;
-        Wed, 12 Jun 2019 18:36:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <0483c310-87c0-17b6-632e-d57b2274a32f@schaufler-ca.com>
-References: <0483c310-87c0-17b6-632e-d57b2274a32f@schaufler-ca.com> <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <31009.1560262869@warthog.procyon.org.uk> <14576.1560361278@warthog.procyon.org.uk>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com, Stephen Smalley <sds@tycho.nsa.gov>,
-        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
-        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: What do LSMs *actually* need for checks on notifications?
+        id S1727855AbfFLSmG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 14:42:06 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40945 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727047AbfFLSmF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 14:42:05 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w196so12464414oie.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 11:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tLkmphJnLjEku4wPa26GqmShS2e5likwCcmpQlFLS9E=;
+        b=zfGP+t+9ivTiw9crHzyoG37UKVT39+ZjMSRc6i4RLF5qzgoEzM0PJJFpTl3UpomLM/
+         kX7wxsRh/bfXL05Kn2SjQT8PDTQbpZvw2lUD2P17lgifKk9462SiGOzy9eolZxENP8tF
+         +j8h3CL4xbOvN0NcXJng0ZhfijbK4zlpWlo5g45OKeiNBbSWh4j6EO8XjD4uzxYBWXSc
+         XQXw6jfUAUrXoISJcc1nasZDsCw2vNnJrgvivK5m8U97df7yj+O0/KKRytyMUK2vV5wL
+         CVPInnibqz35AZHLe+QENPOC6d6PXPPLQ6FBHTljTMKMRhnltIiFojDH2RTb0H3+DeCQ
+         awHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tLkmphJnLjEku4wPa26GqmShS2e5likwCcmpQlFLS9E=;
+        b=aAstaxJiu9dFx6VfsuWGMhIpuWe1dqyfObT3f1jOULhfBAgBOgk3RH8CwtljZvH1ws
+         dQxsIsdrledCNzaOmR2ffS7v4gCtJ7NBvRtuOgniSLyLSRw+v57AzqKiVC9sShKKarr5
+         7MJ/4NlOndlzJ/3mjA1zsrGW60iRKukN++nPRiM0oXvVw0syEhBx9mYAGZxzXL7VDNZg
+         DZGfbBlqEmKSmeVmOhxXvJcNSf16Uty61/OQfbzi1E1ad/h5UEsLEhuLVCeb3xodVtXD
+         JWkRPuGtO2FG7MPe/VxH8wH7ty1z0kfZInifkdJT4ZUTDh/mg0dUUTAd5RDxBFY06erl
+         7bug==
+X-Gm-Message-State: APjAAAUipdPr7C62dYRc4i7NIHt/c3bPWA00Qkf8TUsMxb/heh/QqUPj
+        KNHCuYmWtZs1Ulok4qf9TQ7tDgu2wqbNEmBTOO7/SQ==
+X-Google-Smtp-Source: APXvYqxw8Jxg8VjrdgkzfIw+Yn35hC16YxwrfmO4tE9KRMFgYTyKNK9pqaozSKJ82RqVYk9X5Uls8HWSSM7jkwOY/uo=
+X-Received: by 2002:aca:ed4c:: with SMTP id l73mr412323oih.149.1560364924898;
+ Wed, 12 Jun 2019 11:42:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17321.1560364615.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 12 Jun 2019 19:36:55 +0100
-Message-ID: <17322.1560364615@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 12 Jun 2019 18:37:00 +0000 (UTC)
+References: <20190606014544.8339-1-ira.weiny@intel.com> <20190606104203.GF7433@quack2.suse.cz>
+ <20190606195114.GA30714@ziepe.ca> <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
+ <20190607103636.GA12765@quack2.suse.cz> <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com> <20190612102917.GB14578@quack2.suse.cz>
+ <20190612114721.GB3876@ziepe.ca> <20190612120907.GC14578@quack2.suse.cz>
+In-Reply-To: <20190612120907.GC14578@quack2.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 12 Jun 2019 11:41:53 -0700
+Message-ID: <CAPcyv4ikn219XUgHwsPdYp06vBNAJB9Rk-hjZA-fYT4GB3gi+w@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Ira Weiny <ira.weiny@intel.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Wed, Jun 12, 2019 at 5:09 AM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 12-06-19 08:47:21, Jason Gunthorpe wrote:
+> > On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
+> >
+> > > > > The main objection to the current ODP & DAX solution is that very
+> > > > > little HW can actually implement it, having the alternative still
+> > > > > require HW support doesn't seem like progress.
+> > > > >
+> > > > > I think we will eventually start seein some HW be able to do this
+> > > > > invalidation, but it won't be universal, and I'd rather leave it
+> > > > > optional, for recovery from truely catastrophic errors (ie my DAX is
+> > > > > on fire, I need to unplug it).
+> > > >
+> > > > Agreed.  I think software wise there is not much some of the devices can do
+> > > > with such an "invalidate".
+> > >
+> > > So out of curiosity: What does RDMA driver do when userspace just closes
+> > > the file pointing to RDMA object? It has to handle that somehow by aborting
+> > > everything that's going on... And I wanted similar behavior here.
+> >
+> > It aborts *everything* connected to that file descriptor. Destroying
+> > everything avoids creating inconsistencies that destroying a subset
+> > would create.
+> >
+> > What has been talked about for lease break is not destroying anything
+> > but very selectively saying that one memory region linked to the GUP
+> > is no longer functional.
+>
+> OK, so what I had in mind was that if RDMA app doesn't play by the rules
+> and closes the file with existing pins (and thus layout lease) we would
+> force it to abort everything. Yes, it is disruptive but then the app didn't
+> obey the rule that it has to maintain file lease while holding pins. Thus
+> such situation should never happen unless the app is malicious / buggy.
 
-> >  (*) Device events (block/usb) don't require any permissions, but currently
-> >      only deliver hardware notifications.
-> 
-> How do you specify what device you want to watch?
-
-It's a general queue.
-
-> Don't you have to access a /dev/something?
-
-Not at the moment.  One problem is that there may not be a /dev/something for
-a device (take a bridge for example), and even if it does, the device driver
-doesn't necessarily have access to the path.  The messages contain the device
-name string as appears in dmesg ("3-7" for a USB device, for example).
-
-I think it would be wise to limit the general queue to hardware events that
-either get triggered by someone physically mucking around with the hardware or
-device errors, such as bad sectors or links going up and down.
-
-> > You can't find out what watches exist.
-> 
-> Not even your own?
-
-No.
-
-> > However, it should be noted that (1) is the creds of the buffer owner.
-> 
-> How are buffers shared? Who besides the buffer creator can use it?
-
-When you open /dev/watch_queue, you get buffers private to that file object; a
-second open of the device, even by the same process, will get different
-buffers.
-
-The buffers are 'attached' to that file and are accessed by calling mmap() on
-the fd; shareability is governed by how shareable the fd and a mapping are
-shareable.
-
-> Can you glean information from the watch being deleted?
-> I wouldn't think so, and it seems like a one-time event
-> from the system, so I don't think an access check would
-> be required.
-
-As you say, it's a one-time message per watch.  The object that got deleted
-would need to be recreated, rewatched and made available to both parties.
-
-David
+When you say 'close' do you mean the final release of the fd? The vma
+keeps a reference to a 'struct file' live even after the fd is closed.
