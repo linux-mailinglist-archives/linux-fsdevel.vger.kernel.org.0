@@ -2,144 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5822C426D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 15:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99C20426EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 15:05:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406388AbfFLNAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 09:00:39 -0400
-Received: from server.eikelenboom.it ([91.121.65.215]:55200 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbfFLNAj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 09:00:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=HvkmB5zmkH1Nopajgb0Co97pzTawdlIaMBG8LWGv2pE=; b=eHZ920JvkOCNOKfsZO4Pv+MDHY
-        LK4EYXAqMrvHRgw2UmHPQPl9Cl9TK4LYAOTkSRR9ISUJSlvAiPWMgj3LnFPp0ng2P+7XRX+Ern7O3
-        MnvU24z1w3i2PIh+jHWnI4xq+5f/kgd5e543YkprN1qxRbjFbv/pJeYouh+xB+9hOkZU=;
-Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:45508 helo=[10.97.34.6])
-        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <linux@eikelenboom.it>)
-        id 1hb2rh-0004Xv-Ac; Wed, 12 Jun 2019 15:00:33 +0200
-Subject: Re: [PATCH] fuse: require /dev/fuse reads to have enough buffer
- capacity (take 2)
-To:     Kirill Smelkov <kirr@nexedi.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, gluster-devel@gluster.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <876aefd0-808a-bb4b-0897-191f0a8d9e12@eikelenboom.it>
- <CAJfpegvRBm3M8fUJ1Le1dPd0QSJgAWAYJGLCQKa6YLTE+4oucw@mail.gmail.com>
- <20190611202738.GA22556@deco.navytux.spb.ru>
- <CAOssrKfj-MDujX0_t_fgobL_KwpuG2fxFmT=4nURuJA=sUvYYg@mail.gmail.com>
- <20190612112544.GA21465@deco.navytux.spb.ru>
-From:   Sander Eikelenboom <linux@eikelenboom.it>
-Message-ID: <f31ca7b5-0c9b-5fde-6a75-967265de67c6@eikelenboom.it>
-Date:   Wed, 12 Jun 2019 15:03:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1731352AbfFLNEs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 09:04:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55104 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728322AbfFLNEs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 09:04:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D5E70AF8F;
+        Wed, 12 Jun 2019 13:04:46 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 1FBB21E4328; Wed, 12 Jun 2019 15:04:46 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 15:04:46 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
+        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+Message-ID: <20190612130446.GD14578@quack2.suse.cz>
+References: <6FE0A98F-1E3D-4EF6-8B38-2C85741924A4@linaro.org>
+ <2A58C239-EF3F-422B-8D87-E7A3B500C57C@linaro.org>
+ <a04368ba-f1d5-8f2c-1279-a685a137d024@csail.mit.edu>
+ <E270AD92-943E-4529-8158-AB480D6D9DF8@linaro.org>
+ <5b71028c-72f0-73dd-0cd5-f28ff298a0a3@csail.mit.edu>
+ <FFA44D26-75FF-4A8E-A331-495349BE5FFC@linaro.org>
+ <0d6e3c02-1952-2177-02d7-10ebeb133940@csail.mit.edu>
+ <7B74A790-BD98-412B-ADAB-3B513FB1944E@linaro.org>
+ <6a6f4aa4-fc95-f132-55b2-224ff52bd2d8@csail.mit.edu>
+ <7c5e9d11-4a3d-7df4-c1e6-7c95919522ab@csail.mit.edu>
 MIME-Version: 1.0
-In-Reply-To: <20190612112544.GA21465@deco.navytux.spb.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c5e9d11-4a3d-7df4-c1e6-7c95919522ab@csail.mit.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/06/2019 13:25, Kirill Smelkov wrote:
-> On Wed, Jun 12, 2019 at 09:44:49AM +0200, Miklos Szeredi wrote:
->> On Tue, Jun 11, 2019 at 10:28 PM Kirill Smelkov <kirr@nexedi.com> wrote:
->>
->>> Miklos, would 4K -> `sizeof(fuse_in_header) + sizeof(fuse_write_in)` for
->>> header room change be accepted?
->>
->> Yes, next cycle.   For 4.2 I'll just push the revert.
+On Tue 11-06-19 15:34:48, Srivatsa S. Bhat wrote:
+> On 6/2/19 12:04 AM, Srivatsa S. Bhat wrote:
+> > On 5/30/19 3:45 AM, Paolo Valente wrote:
+> >>
+> [...]
+> >> At any rate, since you pointed out that you are interested in
+> >> out-of-the-box performance, let me complete the context: in case
+> >> low_latency is left set, one gets, in return for this 12% loss,
+> >> a) at least 1000% higher responsiveness, e.g., 1000% lower start-up
+> >> times of applications under load [1];
+> >> b) 500-1000% higher throughput in multi-client server workloads, as I
+> >> already pointed out [2].
+> >>
+> > 
+> > I'm very happy that you could solve the problem without having to
+> > compromise on any of the performance characteristics/features of BFQ!
+> > 
+> > 
+> >> I'm going to prepare complete patches.  In addition, if ok for you,
+> >> I'll report these results on the bug you created.  Then I guess we can
+> >> close it.
+> >>
+> > 
+> > Sounds great!
+> >
 > 
-> Thanks Miklos. Please consider queuing the following patch for 5.3.
-> Sander, could you please confirm that glusterfs is not broken with this
-> version of the check?
+> Hi Paolo,
 > 
-> Thanks beforehand,
-> Kirill
+> Hope you are doing great!
+> 
+> I was wondering if you got a chance to post these patches to LKML for
+> review and inclusion... (No hurry, of course!)
+> 
+> Also, since your fixes address the performance issues in BFQ, do you
+> have any thoughts on whether they can be adapted to CFQ as well, to
+> benefit the older stable kernels that still support CFQ?
 
+Since CFQ doesn't exist in current upstream kernel anymore, I seriously
+doubt you'll be able to get any performance improvements for it in the
+stable kernels...
 
-Hmm unfortunately it doesn't build, see below.
+								Honza
 
---
-Sander
-
-
-In file included from ./include/linux/list.h:9:0,
-                 from ./include/linux/wait.h:7,
-                 from ./include/linux/wait_bit.h:8,
-                 from ./include/linux/fs.h:6,
-                 from fs/fuse/fuse_i.h:17,
-                 from fs/fuse/dev.c:9:
-fs/fuse/dev.c: In function ‘fuse_dev_do_read’:
-fs/fuse/dev.c:1336:14: error: ‘fuse_in_header’ undeclared (first use in this function)
-       sizeof(fuse_in_header) + sizeof(fuse_write_in) + fc->max_write))
-              ^
-./include/linux/kernel.h:818:40: note: in definition of macro ‘__typecheck’
-   (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-                                        ^
-./include/linux/kernel.h:842:24: note: in expansion of macro ‘__safe_cmp’
-  __builtin_choose_expr(__safe_cmp(x, y), \
-                        ^~~~~~~~~~
-./include/linux/kernel.h:918:27: note: in expansion of macro ‘__careful_cmp’
- #define max_t(type, x, y) __careful_cmp((type)(x), (type)(y), >)
-                           ^~~~~~~~~~~~~
-fs/fuse/dev.c:1335:15: note: in expansion of macro ‘max_t’
-  if (nbytes < max_t(size_t, FUSE_MIN_READ_BUFFER,
-               ^~~~~
-fs/fuse/dev.c:1336:14: note: each undeclared identifier is reported only once for each function it appears in
-       sizeof(fuse_in_header) + sizeof(fuse_write_in) + fc->max_write))
-              ^
-./include/linux/kernel.h:818:40: note: in definition of macro ‘__typecheck’
-   (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-                                        ^
-./include/linux/kernel.h:842:24: note: in expansion of macro ‘__safe_cmp’
-  __builtin_choose_expr(__safe_cmp(x, y), \
-                        ^~~~~~~~~~
-./include/linux/kernel.h:918:27: note: in expansion of macro ‘__careful_cmp’
- #define max_t(type, x, y) __careful_cmp((type)(x), (type)(y), >)
-                           ^~~~~~~~~~~~~
-fs/fuse/dev.c:1335:15: note: in expansion of macro ‘max_t’
-  if (nbytes < max_t(size_t, FUSE_MIN_READ_BUFFER,
-               ^~~~~
-fs/fuse/dev.c:1336:39: error: ‘fuse_write_in’ undeclared (first use in this function)
-       sizeof(fuse_in_header) + sizeof(fuse_write_in) + fc->max_write))
-                                       ^
-./include/linux/kernel.h:818:40: note: in definition of macro ‘__typecheck’
-   (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-                                        ^
-./include/linux/kernel.h:842:24: note: in expansion of macro ‘__safe_cmp’
-  __builtin_choose_expr(__safe_cmp(x, y), \
-                        ^~~~~~~~~~
-./include/linux/kernel.h:918:27: note: in expansion of macro ‘__careful_cmp’
- #define max_t(type, x, y) __careful_cmp((type)(x), (type)(y), >)
-                           ^~~~~~~~~~~~~
-fs/fuse/dev.c:1335:15: note: in expansion of macro ‘max_t’
-  if (nbytes < max_t(size_t, FUSE_MIN_READ_BUFFER,
-               ^~~~~
-./include/linux/kernel.h:842:2: error: first argument to ‘__builtin_choose_expr’ not a constant
-  __builtin_choose_expr(__safe_cmp(x, y), \
-  ^
-./include/linux/kernel.h:918:27: note: in expansion of macro ‘__careful_cmp’
- #define max_t(type, x, y) __careful_cmp((type)(x), (type)(y), >)
-                           ^~~~~~~~~~~~~
-fs/fuse/dev.c:1335:15: note: in expansion of macro ‘max_t’
-  if (nbytes < max_t(size_t, FUSE_MIN_READ_BUFFER,
-               ^~~~~
-scripts/Makefile.build:278: recipe for target 'fs/fuse/dev.o' failed
-make[3]: *** [fs/fuse/dev.o] Error 1
-scripts/Makefile.build:489: recipe for target 'fs/fuse' failed
-make[2]: *** [fs/fuse] Error 2
-
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
