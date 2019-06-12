@@ -2,151 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4234042F49
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 20:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 443E842F50
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 20:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfFLSsF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 14:48:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725497AbfFLSsF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:48:05 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE84820896;
-        Wed, 12 Jun 2019 18:48:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560365284;
-        bh=aCbx5hIUl8edjzFxaGKbmiWY108GNZtyNpUD2kpZaoM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=w90ttNo475P6/qoLOr+PDv5SqrliVxUAizLt06FZu3zm6rN460NOx4kk+hFsy/DZ6
-         MMYYrFV+GkBMaXvzTMA8j1RUoJpI5IIhYFK4fvCZOsSKtGSGkZisw7YMXzuvPHjNe3
-         vPU3zd2g9fj1g/QkBsSS0m0ktbC/jZM+s5Z0tAg8=
-Date:   Wed, 12 Jun 2019 11:48:02 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     syzbot <syzbot+7008b8b8ba7df475fdc8@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        David Howells <dhowells@redhat.com>
-Subject: Re: BUG: Dentry still in use [unmount of tmpfs tmpfs]
-Message-ID: <20190612184801.GD18795@gmail.com>
-References: <000000000000456245058adf33a4@google.com>
- <20190610151135.GC16989@lakrids.cambridge.arm.com>
+        id S1727072AbfFLSuD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 14:50:03 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39318 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbfFLSuD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 14:50:03 -0400
+Received: by mail-oi1-f196.google.com with SMTP id m202so12484648oig.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 11:50:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oLKBk3Q7ccO0NJJMRJYYFBU09UJHS0/ornRP0j3Fxnk=;
+        b=gmeYon7zauy3OQh0dds8NZYm6t5UDisLz6yhyFv+zAHzAQld3I1PlASf7zsZM+CaaZ
+         CehQMBgQdj6gortTquDOB3N7bsSZoRiiIPq0F65TSYhGSEiVglTlgXcZdamdruNK0EZE
+         L4hW+NB6I/OXN8FIUSFL51bNjJWJFW8hzlwgXFjesNuMtfLc6oA7+M/3K2vidJa0br9V
+         czG4Eoe/orE9D++K3+lLCE4n/UgTBq+X11qW/QB7IGhWEAbaQV6NagrYsJ8UOQey3FsU
+         R4uBxwDIf6zhdzoruyQQmgKdtCNWOHRzy7IMkgSp8cIYB925DCaZB8zX5lMCi8WnCkui
+         Earw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oLKBk3Q7ccO0NJJMRJYYFBU09UJHS0/ornRP0j3Fxnk=;
+        b=d22zVx/gNbvxAnPEUWI+b1OpF0Nuy6oLuMprKk2gH8QvspTZdcK2ok0O3DUQ80W35x
+         8gmMxR4RX+1wopdxB8PLo2ugkeXako+ki7ky00I+c9vaVxvpBnKj7q1zMp6XmkHazQwV
+         /5o+CG/Pq2yaqezwEcly83N4ezhZKe90b1s618v5DJDA1f6oGVMBjSJ6/Zor5QYBa5uX
+         r0bC5K+2iQ0uXHJze2nB9OMK31y4HdkDCc0+IreCji2A0VNl/ZTEWUzUnp9OYQkpIq/u
+         TvELDYJi1cEnCGLc+SC11Q2MqrOQX41DW0Sdb7gj0Ma85gnS9LXNHc97bjUaBC/R3m2T
+         Rukw==
+X-Gm-Message-State: APjAAAVuhsdzrjrjKp43YqZXdcwRYU5O2i79wFCDc2uei4RDglGEHKvY
+        kahHEg1prNNp/iiBP9NjojX9+wwWdHtkF1OVuGsm92H45TA=
+X-Google-Smtp-Source: APXvYqxnUAltCxrDlkjMuVh0Fis6UXRXzk4ak5OCGI7cs5NoWVrVaXVk3zYCAPwY8b7pSu88qbXHjB+1CYR77yxpUws=
+X-Received: by 2002:aca:ec82:: with SMTP id k124mr420099oih.73.1560365403007;
+ Wed, 12 Jun 2019 11:50:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190610151135.GC16989@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190606014544.8339-1-ira.weiny@intel.com> <20190606104203.GF7433@quack2.suse.cz>
+ <20190606195114.GA30714@ziepe.ca> <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
+ <20190607103636.GA12765@quack2.suse.cz> <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com> <20190612102917.GB14578@quack2.suse.cz>
+In-Reply-To: <20190612102917.GB14578@quack2.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 12 Jun 2019 11:49:52 -0700
+Message-ID: <CAPcyv4jSyTjC98UsWb3-FnZekV0oyboiSe9n1NYDC2TSKAqiqw@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+To:     Jan Kara <jack@suse.cz>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 04:11:36PM +0100, Mark Rutland wrote:
-> On Sun, Jun 09, 2019 at 12:42:06AM -0700, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    79c3ba32 Merge tag 'drm-fixes-2019-06-07-1' of git://anong..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=16eacf36a00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=60564cb52ab29d5b
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=7008b8b8ba7df475fdc8
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > 
-> > Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> I suspect that this is the same issue I reported at:
-> 
->   https://lore.kernel.org/lkml/20190605135401.GB30925@lakrids.cambridge.arm.com/
-> 
-> ... which has a C reproducer hand-minimized from Syzkaller's
-> auto-generated repro.
-> 
-> Thanks,
-> Mark.
-> 
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+7008b8b8ba7df475fdc8@syzkaller.appspotmail.com
-> > 
-> > BUG: Dentry 00000000c5e232d4{i=15d04,n=/}  still in use (2) [unmount of
-> > tmpfs tmpfs]
-> > WARNING: CPU: 0 PID: 22126 at fs/dcache.c:1529 umount_check fs/dcache.c:1520
-> > [inline]
-> > WARNING: CPU: 0 PID: 22126 at fs/dcache.c:1529 umount_check.cold+0xe9/0x10a
-> > fs/dcache.c:1510
-> > Kernel panic - not syncing: panic_on_warn set ...
-> > CPU: 0 PID: 22126 Comm: syz-executor.5 Not tainted 5.2.0-rc3+ #16
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-> >  panic+0x2cb/0x744 kernel/panic.c:219
-> >  __warn.cold+0x20/0x4d kernel/panic.c:576
-> >  report_bug+0x263/0x2b0 lib/bug.c:186
-> >  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-> >  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-> >  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
-> >  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
-> >  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
-> > RIP: 0010:umount_check fs/dcache.c:1529 [inline]
-> > RIP: 0010:umount_check.cold+0xe9/0x10a fs/dcache.c:1510
-> > Code: 89 ff e8 50 62 f0 ff 48 81 c3 68 06 00 00 45 89 e8 4c 89 e1 53 4d 8b
-> > 0f 4c 89 f2 4c 89 e6 48 c7 c7 c0 ff 75 87 e8 31 d4 a1 ff <0f> 0b 58 e9 bd 2a
-> > ff ff e8 20 62 f0 ff e9 29 ff ff ff 45 31 f6 e9
-> > RSP: 0018:ffff8880659d7bf8 EFLAGS: 00010286
-> > RAX: 0000000000000054 RBX: ffff8880934748a8 RCX: 0000000000000000
-> > RDX: 0000000000000000 RSI: ffffffff815ac976 RDI: ffffed100cb3af71
-> > RBP: ffff8880659d7c28 R08: 0000000000000054 R09: ffffed1015d06011
-> > R10: ffffed1015d06010 R11: ffff8880ae830087 R12: ffff88808fa10840
-> > R13: 0000000000000002 R14: 0000000000015d04 R15: ffffffff88c21260
-> >  d_walk+0x194/0x950 fs/dcache.c:1264
-> >  do_one_tree+0x28/0x40 fs/dcache.c:1536
-> >  shrink_dcache_for_umount+0x72/0x170 fs/dcache.c:1552
-> >  generic_shutdown_super+0x6d/0x370 fs/super.c:443
-> >  kill_anon_super+0x3e/0x60 fs/super.c:1137
-> >  kill_litter_super+0x50/0x60 fs/super.c:1146
-> >  deactivate_locked_super+0x95/0x100 fs/super.c:331
-> >  deactivate_super fs/super.c:362 [inline]
-> >  deactivate_super+0x1b2/0x1d0 fs/super.c:358
-> >  cleanup_mnt+0xbf/0x160 fs/namespace.c:1120
-> >  __cleanup_mnt+0x16/0x20 fs/namespace.c:1127
-> >  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-> >  tracehook_notify_resume include/linux/tracehook.h:185 [inline]
-> >  exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:168
-> >  prepare_exit_to_usermode arch/x86/entry/common.c:199 [inline]
-> >  syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
-> >  do_syscall_64+0x58e/0x680 arch/x86/entry/common.c:304
-> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x412f61
-> > Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 48
-> > 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48 89
-> > c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-> > RSP: 002b:00007fff7b2152c0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-> > RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000412f61
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
-> > RBP: 0000000000000001 R08: 00000000ea5b01f8 R09: ffffffffffffffff
-> > R10: 00007fff7b2153a0 R11: 0000000000000293 R12: 0000000000760d58
-> > R13: 0000000000077aaa R14: 0000000000077ad7 R15: 000000000075bf2c
-> > Kernel Offset: disabled
-> > Rebooting in 86400 seconds..
-> > 
-> > 
-> > ---
-> > This bug is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > 
-> > syzbot will keep track of this bug report. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
+On Wed, Jun 12, 2019 at 3:29 AM Jan Kara <jack@suse.cz> wrote:
+>
+> On Fri 07-06-19 07:52:13, Ira Weiny wrote:
+> > On Fri, Jun 07, 2019 at 09:17:29AM -0300, Jason Gunthorpe wrote:
+> > > On Fri, Jun 07, 2019 at 12:36:36PM +0200, Jan Kara wrote:
+> > >
+> > > > Because the pins would be invisible to sysadmin from that point on.
+> > >
+> > > It is not invisible, it just shows up in a rdma specific kernel
+> > > interface. You have to use rdma netlink to see the kernel object
+> > > holding this pin.
+> > >
+> > > If this visibility is the main sticking point I suggest just enhancing
+> > > the existing MR reporting to include the file info for current GUP
+> > > pins and teaching lsof to collect information from there as well so it
+> > > is easy to use.
+> > >
+> > > If the ownership of the lease transfers to the MR, and we report that
+> > > ownership to userspace in a way lsof can find, then I think all the
+> > > concerns that have been raised are met, right?
+> >
+> > I was contemplating some new lsof feature yesterday.  But what I don't
+> > think we want is sysadmins to have multiple tools for multiple
+> > subsystems.  Or even have to teach lsof something new for every potential
+> > new subsystem user of GUP pins.
+>
+> Agreed.
+>
+> > I was thinking more along the lines of reporting files which have GUP
+> > pins on them directly somewhere (dare I say procfs?) and teaching lsof to
+> > report that information.  That would cover any subsystem which does a
+> > longterm pin.
+>
+> So lsof already parses /proc/<pid>/maps to learn about files held open by
+> memory mappings. It could parse some other file as well I guess. The good
+> thing about that would be that then "longterm pin" structure would just hold
+> struct file reference. That would avoid any needs of special behavior on
+> file close (the file reference in the "longterm pin" structure would make
+> sure struct file and thus the lease stays around, we'd just need to make
+> explicit lease unlock block until the "longterm pin" structure is freed).
+> The bad thing is that it requires us to come up with a sane new proc
+> interface for reporting "longterm pins" and associated struct file. Also we
+> need to define what this interface shows if the pinned pages are in DRAM
+> (either page cache or anon) and not on NVDIMM.
 
-Patch sent: https://patchwork.kernel.org/patch/10990715/
-("vfs: fsmount: add missing mntget()").
-
-- Eric
+The anon vs shared detection case is important because a longterm pin
+might be blocking a memory-hot-unplug operation if it is pinning
+ZONE_MOVABLE memory, but I don't think we want DRAM vs NVDIMM to be an
+explicit concern of the interface. For the anon / cached case I expect
+it might be useful to put that communication under the memory-blocks
+sysfs interface. I.e. a list of pids that are pinning that
+memory-block from being hot-unplugged.
