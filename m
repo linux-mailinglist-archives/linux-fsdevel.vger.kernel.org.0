@@ -2,91 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD0A342153
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 11:47:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DDC242274
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 12:29:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437621AbfFLJro (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 05:47:44 -0400
-Received: from mail-eopbgr670101.outbound.protection.outlook.com ([40.107.67.101]:21776
-        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
+        id S1727879AbfFLK3V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 06:29:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42614 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2437315AbfFLJro (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 05:47:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=raithlin.onmicrosoft.com; s=selector1-raithlin-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eHwinwiRTyd7elaRQ4eGRyuD4IaBeL0SL6+sc7DP3fM=;
- b=PERUtsr91lOIUSqI2dLSpvwFl02mrftBVEbeIWRRWDbF5L+MVhSNAAUj8NYs8eynisF2RjxJFJBA+o9gtmA4woXocapUcjRZAgqyscF+/dy0+pN+DV41zdQxoPhENhiY1hBB1TNsphQ5bnchGjNPcXRbgJJ9ftfzvttBVxEYumk=
-Received: from YQXPR0101MB0792.CANPRD01.PROD.OUTLOOK.COM (52.132.75.161) by
- YQXPR0101MB1797.CANPRD01.PROD.OUTLOOK.COM (52.132.78.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.15; Wed, 12 Jun 2019 09:47:40 +0000
-Received: from YQXPR0101MB0792.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::dc19:eb46:8b29:e502]) by YQXPR0101MB0792.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::dc19:eb46:8b29:e502%6]) with mapi id 15.20.1965.017; Wed, 12 Jun 2019
- 09:47:40 +0000
-From:   "Stephen  Bates" <sbates@raithlin.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "shhuiw@foxmail.com" <shhuiw@foxmail.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] io_uring: fix SQPOLL cpu check
-Thread-Topic: [PATCH] io_uring: fix SQPOLL cpu check
-Thread-Index: AQHVILE8MKvlFSwx2kqc/AjEamoMkaaXv8UAgAAXWoA=
-Date:   Wed, 12 Jun 2019 09:47:40 +0000
-Message-ID: <DCE71F95-F72A-414C-8A02-98CC81237F40@raithlin.com>
-References: <5D2859FE-DB39-48F5-BBB5-6EDD3791B6C3@raithlin.com>
- <20190612092403.GA38578@lakrids.cambridge.arm.com>
-In-Reply-To: <20190612092403.GA38578@lakrids.cambridge.arm.com>
-Accept-Language: en-CA, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.1a.0.190609
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sbates@raithlin.com; 
-x-originating-ip: [2001:bb6:a2c:ed58:2ca3:41e6:9240:e71d]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a1fe94ea-82a4-494d-2714-08d6ef1b0258
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:YQXPR0101MB1797;
-x-ms-traffictypediagnostic: YQXPR0101MB1797:
-x-microsoft-antispam-prvs: <YQXPR0101MB17971289C5E96B4B10091EEDAAEC0@YQXPR0101MB1797.CANPRD01.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:2512;
-x-forefront-prvs: 0066D63CE6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39830400003)(376002)(396003)(366004)(136003)(199004)(189003)(4744005)(76176011)(81156014)(54906003)(508600001)(6116002)(2906002)(8936002)(446003)(486006)(14444005)(36756003)(102836004)(99286004)(6506007)(71200400001)(14454004)(5660300002)(25786009)(33656002)(256004)(71190400001)(4326008)(2616005)(229853002)(6916009)(186003)(6246003)(7736002)(58126008)(305945005)(53936002)(8676002)(6486002)(11346002)(476003)(86362001)(66446008)(66476007)(68736007)(316002)(81166006)(73956011)(6512007)(46003)(66556008)(64756008)(76116006)(91956017)(66946007)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:YQXPR0101MB1797;H:YQXPR0101MB0792.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: raithlin.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: gj87e061HACEbkw7MSULW6nHSxRBzrrGWMJtYXQtiaG34stO+gtjL5UG9y/pjB0x7JGB5pSdkW2dq1VacqyQf6A7+kd/RPlRzPd6mkePxgY22D1NsOFhyjdpHVWU8xpH4Q47OPNgwE/FM6La2qkrsuxmWjqhWde1n0lkLnFo59pIf8StX6FF1SYIkcaU662IlyRCqDACUr3ZkaFYj+cxcBivjAqwmypyvvNvw9mzWHJEbGoY2vo/nTrLNDa+DKJe5RRjA97Ba2f5X1+Dkd5eoL3VXdJFZyX/cuLIyg/B1Il82wIsLeurw1mtnPB/aD0mJI4AzNquoiLO7rxYqndWJFo5uI6pUGyxIvch1OB6x2Oct09TMxUxUKxmLcDorExtdhgilgNcLWq2wPp2hlvM9SSGNNUg0AhvGgp9gg8/3Go=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F256B79C2DC9584FBE3C0FEB46796B20@CANPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+        id S1726851AbfFLK3V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 06:29:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 16DA0AE07;
+        Wed, 12 Jun 2019 10:29:19 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id BA8661E4328; Wed, 12 Jun 2019 12:29:17 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 12:29:17 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190612102917.GB14578@quack2.suse.cz>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606195114.GA30714@ziepe.ca>
+ <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
+ <20190607103636.GA12765@quack2.suse.cz>
+ <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: raithlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1fe94ea-82a4-494d-2714-08d6ef1b0258
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2019 09:47:40.1021
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sbates@raithlin.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR0101MB1797
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBBYXJnaC4gTXkgb3JpZ2luYWwgcGF0Y2ggWzFdIGhhbmRsZWQgdGhhdCBjb3JyZWN0bHksIGFu
-ZCB0aGlzIGNhc2Ugd2FzDQo+IGV4cGxpY2l0bHkgY2FsbGVkIG91dCBpbiB0aGUgY29tbWl0IG1l
-c3NhZ2UsIHdoaWNoIHdhcyByZXRhaW5lZCBldmVuDQo+IHdoZW4gdGhlIHBhdGNoIHdhcyAic2lt
-cGxpZmllZCIuIFRoYXQncyByYXRoZXIgZGlzYXBwb2ludGluZy4gOi8NCiAgDQpJdCBsb29rcyBs
-aWtlIEplbnMgZGlkIGEgZml4IGZvciB0aGlzICg0NGE5YmQxOGEwZjA2YmJhIA0KIiBpb191cmlu
-ZzogZml4IGZhaWx1cmUgdG8gdmVyaWZ5IFNRX0FGRiBjcHUiKSB3aGljaCBpcyBpbiB0aGUgNS4y
-LXJjIHNlcmllcyANCmJ1dCB3aGljaCBoYXNu4oCZdCBiZWVuIGFwcGxpZWQgdG8gdGhlIHN0YWJs
-ZSBzZXJpZXMgeWV0LiBJIGFtIG5vdCBzdXJlIGhvdyANCkkgbWlzc2VkIHRoYXQgYnV0IGl0IG1h
-a2VzIG15IHBhdGNoIHJlZHVuZGFudC4NCg0KSmVucywgd2lsbCA0NGE5YmQxOGEwZjA2YmJhIGJl
-IGFwcGxpZWQgdG8gc3RhYmxlIGtlcm5lbHM/DQoNClN0ZXBoZW4NCg0K
+On Fri 07-06-19 07:52:13, Ira Weiny wrote:
+> On Fri, Jun 07, 2019 at 09:17:29AM -0300, Jason Gunthorpe wrote:
+> > On Fri, Jun 07, 2019 at 12:36:36PM +0200, Jan Kara wrote:
+> > 
+> > > Because the pins would be invisible to sysadmin from that point on. 
+> > 
+> > It is not invisible, it just shows up in a rdma specific kernel
+> > interface. You have to use rdma netlink to see the kernel object
+> > holding this pin.
+> > 
+> > If this visibility is the main sticking point I suggest just enhancing
+> > the existing MR reporting to include the file info for current GUP
+> > pins and teaching lsof to collect information from there as well so it
+> > is easy to use.
+> > 
+> > If the ownership of the lease transfers to the MR, and we report that
+> > ownership to userspace in a way lsof can find, then I think all the
+> > concerns that have been raised are met, right?
+> 
+> I was contemplating some new lsof feature yesterday.  But what I don't
+> think we want is sysadmins to have multiple tools for multiple
+> subsystems.  Or even have to teach lsof something new for every potential
+> new subsystem user of GUP pins.
+
+Agreed.
+
+> I was thinking more along the lines of reporting files which have GUP
+> pins on them directly somewhere (dare I say procfs?) and teaching lsof to
+> report that information.  That would cover any subsystem which does a
+> longterm pin.
+
+So lsof already parses /proc/<pid>/maps to learn about files held open by
+memory mappings. It could parse some other file as well I guess. The good
+thing about that would be that then "longterm pin" structure would just hold
+struct file reference. That would avoid any needs of special behavior on
+file close (the file reference in the "longterm pin" structure would make
+sure struct file and thus the lease stays around, we'd just need to make
+explicit lease unlock block until the "longterm pin" structure is freed).
+The bad thing is that it requires us to come up with a sane new proc
+interface for reporting "longterm pins" and associated struct file. Also we
+need to define what this interface shows if the pinned pages are in DRAM
+(either page cache or anon) and not on NVDIMM.
+
+> > > ugly to live so we have to come up with something better. The best I can
+> > > currently come up with is to have a method associated with the lease that
+> > > would invalidate the RDMA context that holds the pins in the same way that
+> > > a file close would do it.
+> > 
+> > This is back to requiring all RDMA HW to have some new behavior they
+> > currently don't have..
+> > 
+> > The main objection to the current ODP & DAX solution is that very
+> > little HW can actually implement it, having the alternative still
+> > require HW support doesn't seem like progress.
+> > 
+> > I think we will eventually start seein some HW be able to do this
+> > invalidation, but it won't be universal, and I'd rather leave it
+> > optional, for recovery from truely catastrophic errors (ie my DAX is
+> > on fire, I need to unplug it).
+> 
+> Agreed.  I think software wise there is not much some of the devices can do
+> with such an "invalidate".
+
+So out of curiosity: What does RDMA driver do when userspace just closes
+the file pointing to RDMA object? It has to handle that somehow by aborting
+everything that's going on... And I wanted similar behavior here.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
