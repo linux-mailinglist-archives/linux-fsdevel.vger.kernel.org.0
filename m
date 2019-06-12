@@ -2,84 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6108542020
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 10:57:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CE39420A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 11:24:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731361AbfFLI5i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 04:57:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51982 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726286AbfFLI5i (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 04:57:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0BB60AF49;
-        Wed, 12 Jun 2019 08:57:37 +0000 (UTC)
-Subject: Re: [PATCH v2 1/3] fs/fuse, splice_write: Don't access pipe->buffers
- without pipe_lock()
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <CAJfpegvAAQTAjxLcQLefvFOQDJ6ug_G8Jggt=UZci+YnNP741A@mail.gmail.com>
- <20180717160035.9422-1-aryabinin@virtuozzo.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <b7aceb99-9631-cbcf-fdec-3abef72c949d@suse.cz>
-Date:   Wed, 12 Jun 2019 10:57:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1731691AbfFLJYO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 05:24:14 -0400
+Received: from foss.arm.com ([217.140.110.172]:48282 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731233AbfFLJYO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 05:24:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4179B28;
+        Wed, 12 Jun 2019 02:24:13 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E54E3F246;
+        Wed, 12 Jun 2019 02:24:12 -0700 (PDT)
+Date:   Wed, 12 Jun 2019 10:24:04 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Stephen Bates <sbates@raithlin.com>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "shhuiw@foxmail.com" <shhuiw@foxmail.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] io_uring: fix SQPOLL cpu check
+Message-ID: <20190612092403.GA38578@lakrids.cambridge.arm.com>
+References: <5D2859FE-DB39-48F5-BBB5-6EDD3791B6C3@raithlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20180717160035.9422-1-aryabinin@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5D2859FE-DB39-48F5-BBB5-6EDD3791B6C3@raithlin.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/17/18 6:00 PM, Andrey Ryabinin wrote:
-> fuse_dev_splice_write() reads pipe->buffers to determine the size of
-> 'bufs' array before taking the pipe_lock(). This is not safe as
-> another thread might change the 'pipe->buffers' between the allocation
-> and taking the pipe_lock(). So we end up with too small 'bufs' array.
+On Tue, Jun 11, 2019 at 11:56:06PM +0000, Stephen  Bates wrote:
+> The array_index_nospec() check in io_sq_offload_start() is performed
+> before any checks on p->sq_thread_cpu are done. This means cpu is
+> clamped and therefore no error occurs when out-of-range values are
+> passed in from userspace. This is in violation of the specification
+> for io_ring_setup() and causes the io_ring_setup unit test in liburing
+> to regress.
 > 
-> Move the bufs allocations inside pipe_lock()/pipe_unlock() to fix this.
+> Add a new bounds check on sq_thread_cpu at the start of
+> io_sq_offload_start() so we can exit the function early when bad
+> values are passed in.
 > 
-> Fixes: dd3bb14f44a6 ("fuse: support splice() writing to fuse device")
-> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> Cc: <stable@vger.kernel.org>
+> Fixes: 975554b03edd ("io_uring: fix SQPOLL cpu validation")
+> Signed-off-by: Stephen Bates <sbates@raithlin.com>
 
-BTW, why don't we need to do the same in fuse_dev_splice_read()?
+Aargh. My original patch [1] handled that correctly, and this case was
+explicitly called out in the commit message, which was retained even
+when the patch was "simplified". That's rather disappointing. :/
 
 Thanks,
-Vlastimil
+Mark.
+
+[1] https://lore.kernel.org/lkml/20190430123451.44227-1-mark.rutland@arm.com/
 
 > ---
->  fs/fuse/dev.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+>  fs/io_uring.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index c6b88fa85e2e..702592cce546 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -1944,12 +1944,15 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->  	if (!fud)
->  		return -EPERM;
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 30a5687..e458470 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2316,6 +2316,9 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+>  {
+>  	int ret;
 >  
-> +	pipe_lock(pipe);
+> +	if (p->sq_thread_cpu >= nr_cpu_ids)
+> +		return -EINVAL;
 > +
->  	bufs = kmalloc_array(pipe->buffers, sizeof(struct pipe_buffer),
->  			     GFP_KERNEL);
-> -	if (!bufs)
-> +	if (!bufs) {
-> +		pipe_unlock(pipe);
->  		return -ENOMEM;
-> +	}
->  
-> -	pipe_lock(pipe);
->  	nbuf = 0;
->  	rem = 0;
->  	for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
+>  	init_waitqueue_head(&ctx->sqo_wait);
+>  	mmgrab(current->mm);
+>  	ctx->sqo_mm = current->mm;
+> -- 
+> 2.7.4
 > 
-
