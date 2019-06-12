@@ -2,124 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E39A42B86
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 17:59:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86AB942C13
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 18:22:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438019AbfFLP7Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 11:59:25 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50360 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2406027AbfFLP7Z (ORCPT
+        id S2502072AbfFLQVs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 12:21:48 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:36806 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437976AbfFLQVs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 11:59:25 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5CFvCho011351
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 11:59:24 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t33w81j6b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 11:59:24 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 12 Jun 2019 16:59:22 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Jun 2019 16:59:19 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5CFxI2m40042810
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Jun 2019 15:59:18 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B2FF4C044;
-        Wed, 12 Jun 2019 15:59:18 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 28C034C050;
-        Wed, 12 Jun 2019 15:59:17 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.109.218])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 12 Jun 2019 15:59:17 +0000 (GMT)
-Subject: Re: [PATCH 1/2] vfs: replace i_readcount with a biased i_count
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Wed, 12 Jun 2019 12:21:48 -0400
+Received: by mail-qt1-f196.google.com with SMTP id p15so11720481qtl.3;
+        Wed, 12 Jun 2019 09:21:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9EBwbWfsA9jQlfiCxUyc9e2H035Ves6CLXOfri3HY3c=;
+        b=sV7Q9pQ5BfY4ghdOP9Q0XQAuEO4teJ16NQq2soC0ZjRUbAOSlRIZFbSU5LilX2fCY1
+         QmWOJbWMb6mwyLo5X9BUA/4mN3D/5EEC0JxcILAhOymTk4Jvyin69iSq/3jdBRonpTcE
+         76ytq9PpM32r7Dvy/VNW7lKrCAMI1nrRQw3t7pYVOrKbd6kgqF58W2UDG9aMAqVJjtVv
+         4c6O7zIO+6+HbUV/OVpcJiSO1s0HE/ay994FzUySe7RwW+ytF7G3HhxYSsLFCQDoZtM1
+         MwZrrEpmKSGCBingJmWrVmOI/AliTlbaMk9Z8pVivv7dwC45mnDBa8fA3MKSJ2NO/0b8
+         dE3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9EBwbWfsA9jQlfiCxUyc9e2H035Ves6CLXOfri3HY3c=;
+        b=HLDV11rRl9voqB1EFPiuB9Kj0LiAZdwrLYPOX0baMZj9gTBg53SdFoVFGWaD4Iqqok
+         alOzFwMdHPn/JwDFw05OEsb3R86XpNkCs1fB5zlZewCEuXiosn/7VLHzcbPfa0oPc02s
+         QtExNGQuXZhYF7uFFyfcxnKUXrpJ9/JM6pFsm2GE5+ZvmdY2oFURaUB02hlBg5G1zlx0
+         tM7spomDDoaCU64g6DAlKTKHnIxg0XJrBENsXUdgTGDW72JSSKDFbTGiUfjzC2QktsIl
+         nL1QB8XG/jGkjZ+V+GXx9XPh9sQ3dQn4YdIgwqbbcrYNwqzQ5EIS+YYb3YwzcjbRpx87
+         ETSg==
+X-Gm-Message-State: APjAAAUbr0H5gy/Vp5e2yK2se6rm+4LsXutLNLwNuVvbT/KHX7wKodqI
+        z86TBq5SLVF4O8iY6owpQg==
+X-Google-Smtp-Source: APXvYqxZApMK6W8Zar2IN27EONCe2VtQ7jzp+fOnM7MS9mn0USyIB/k4W++raMdWD9E7hA0WCVh/Ug==
+X-Received: by 2002:ac8:1b2d:: with SMTP id y42mr22428374qtj.202.1560356507411;
+        Wed, 12 Jun 2019 09:21:47 -0700 (PDT)
+Received: from kmo-pixel ([69.5.123.9])
+        by smtp.gmail.com with ESMTPSA id s23sm143068qtj.56.2019.06.12.09.21.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 12 Jun 2019 09:21:46 -0700 (PDT)
+Date:   Wed, 12 Jun 2019 12:21:44 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Wed, 12 Jun 2019 11:59:06 -0400
-In-Reply-To: <CAOQ4uxhooVwtHcDCr4hu+ovzKGUdWfQ+3F3nbgK3HXgV+fUK9w@mail.gmail.com>
-References: <20190608135717.8472-1-amir73il@gmail.com>
-         <20190608135717.8472-2-amir73il@gmail.com>
-         <1560343899.4578.9.camel@linux.ibm.com>
-         <CAOQ4uxhooVwtHcDCr4hu+ovzKGUdWfQ+3F3nbgK3HXgV+fUK9w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061215-0016-0000-0000-000002887DF7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061215-0017-0000-0000-000032E5B4BB
-Message-Id: <1560355146.4578.61.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-12_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=776 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906120107
+        linux-bcache@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Zach Brown <zach.brown@ni.com>, Jens Axboe <axboe@kernel.dk>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: bcachefs status update (it's done cooking; let's get this sucker
+ merged)
+Message-ID: <20190612162144.GA7619@kmo-pixel>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611011737.GA28701@kmo-pixel>
+ <20190611043336.GB14363@dread.disaster.area>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611043336.GB14363@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2019-06-12 at 18:09 +0300, Amir Goldstein wrote:
-> On Wed, Jun 12, 2019 at 3:52 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > On Sat, 2019-06-08 at 16:57 +0300, Amir Goldstein wrote:
-> > > Count struct files open RO together with inode reference count instead
-> > > of using a dedicated i_readcount field.  This will allow us to use the
-> > > RO count also when CONFIG_IMA is not defined and will reduce the size of
-> > > struct inode for 32bit archs when CONFIG_IMA is defined.
-> > >
-> > > We need this RO count for posix leases code, which currently naively
-> > > checks i_count and d_count in an inaccurate manner.
-> > >
-> > > Should regular i_count overflow into RO count bias by struct files
-> > > opened for write, it's not a big deal, as we mostly need the RO count
-> > > to be reliable when the first writer comes along.
-> >
-> > "i_count" has been defined forever.  Has its meaning changed?  This
-> > patch implies that "i_readcount" was never really needed.
-> >
+On Tue, Jun 11, 2019 at 02:33:36PM +1000, Dave Chinner wrote:
+> I just recently said this with reference to the range lock stuff I'm
+> working on in the background:
 > 
-> Not really.
-> i_count is only used to know if object is referenced.
-> It does not matter if user takes 1 or more references on i_count
-> as long as user puts back all the references it took.
+> 	FWIW, it's to avoid problems with stupid userspace stuff
+> 	that nobody really should be doing that I want range locks
+> 	for the XFS inode locks.  If userspace overlaps the ranges
+> 	and deadlocks in that case, they they get to keep all the
+> 	broken bits because, IMO, they are doing something
+> 	monumentally stupid. I'd probably be making it return
+> 	EDEADLOCK back out to userspace in the case rather than
+> 	deadlocking but, fundamentally, I think it's broken
+> 	behaviour that we should be rejecting with an error rather
+> 	than adding complexity trying to handle it.
 > 
-> If user took i_readcount, i_count cannot be zero, so short of overflow,
-> we can describe i_readcount as a biased i_count.
+> So I think this recusive locking across a page fault case should
+> just fail, not add yet more complexity to try to handle a rare
+> corner case that exists more in theory than in reality. i.e put the
+> lock context in the current task, then if the page fault requires a
+> conflicting lock context to be taken, we terminate the page fault,
+> back out of the IO and return EDEADLOCK out to userspace. This works
+> for all types of lock contexts - only the filesystem itself needs to
+> know what the lock context pointer contains....
 
-Having a count was originally to make sure we weren't missing
-anything.  As long as we can detect if a file is opened for read, the
-less IMA specific code there is, the better.
+Ok, I'm totally on board with returning EDEADLOCK.
 
-> 
-> But if I am following Miklos' suggestion to make i_count 64bit, inode
-> struct size is going to grow for 32bit arch when  CONFIG_IMA is not
-> defined, so to reduce impact, I will keep i_readcount as a separate
-> member and let it be defined also when BITS_PER_LONG == 64
-> and implement inode_is_open_rdonly() using d_count and i_count
-> when i_readcount is not defined.
-> 
-> Let's see what people will have to say about that...
+Question: Would we be ok with returning EDEADLOCK for any IO where the buffer is
+in the same address space as the file being read/written to, even if the buffer
+and the IO don't technically overlap?
 
-Ok
+This would simplify things a lot and eliminate a really nasty corner case - page
+faults trigger readahead. Even if the buffer and the direct IO don't overlap,
+readahead can pull in pages that do overlap with the dio.
 
-Mimi
-
+And on getting EDEADLOCK we could fall back to buffered IO, so userspace would
+never know...
