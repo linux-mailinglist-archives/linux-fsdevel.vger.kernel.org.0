@@ -2,79 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF2334243E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 13:43:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54231424A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 13:47:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbfFLLnQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 07:43:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38074 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728601AbfFLLnQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 07:43:16 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C388D7573D;
-        Wed, 12 Jun 2019 11:43:10 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E2927614C4;
-        Wed, 12 Jun 2019 11:43:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <05ddc1e6-78ba-b60e-73b1-ffe86de2f2f8@tycho.nsa.gov>
-References: <05ddc1e6-78ba-b60e-73b1-ffe86de2f2f8@tycho.nsa.gov> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <31009.1560262869@warthog.procyon.org.uk>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     dhowells@redhat.com, Casey Schaufler <casey@schaufler-ca.com>,
-        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
-        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: What do LSMs *actually* need for checks on notifications?
+        id S1727004AbfFLLrY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 07:47:24 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38998 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbfFLLrX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 07:47:23 -0400
+Received: by mail-qt1-f193.google.com with SMTP id i34so18135025qta.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 04:47:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=doRL6xBFBed4pJcj6qEQTvbXU3ur3CIYrFA1lN8ah30=;
+        b=KEjL99IzABO4E8zOpgtHyEE7fDCc4xx1ObR/IKbq+ZUDqR6OX5HnV4sIUZFTf7RnZt
+         b2Ynd/zlz64GKX5T4XDhbfMlrndVetU9EumvX37IkUOWJMmaxMkt+vAcxu1CdZPoc7EU
+         ab05F8Xpa83TYkV6OHDY0iY2sudedN7HpmLMnCVeAmqMtt9fy753PUDc6q2lXgRHWuNb
+         WbanwUiNhr0RXy5e3mIuwzswALCs1rX2s+SZhewD51kCAtF+shTYjgGV9IGTi7j7s9Wy
+         MYyHNmVkN91noui2Vnp7/PPo2P6dBu6nZ6qFP8tAHWsLEKkJnaOd1W/VqIrOF8KjgmmJ
+         M41A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=doRL6xBFBed4pJcj6qEQTvbXU3ur3CIYrFA1lN8ah30=;
+        b=l2SdRpsmdFmTTUOUTp3vkK5cy5nEwADrSrCtBnPDky/Sgl8xt5oWc1DaBynCAkU129
+         oJw1t+TClBtk0WIc2nc602oylD8PLY6skci5cTogKFbpVRmihxYjx5/xwAYe/fpP1c+B
+         hWMEaUt3St19oqQgCRixruVJT+zDk/ofWyncdgY9SGUoDgHyxPUsK6aT3nGOqgURPb1N
+         c9cCqq5kuutuIJt/LKfn3aZrb6oLxc0XpoeVm3GTc5/6YxBJc5Gbn22JXl7Hj0qSfR1r
+         RA1aDJvroG6IahcjC/tVC8eDf1QXKTOp3tkBPGHM9irp7ht/LD8X40xgiEC8XZZHttlY
+         KsDQ==
+X-Gm-Message-State: APjAAAUQ1i74VOp8AMx6p3T0Y0sjkKNpvfgygHv+bmYqTossCVfnKZyY
+        djJeRdBsg6IedrHyqKIQ43aM6g==
+X-Google-Smtp-Source: APXvYqycHb6gvBCa/U7QXKWMgTojD1Kl8PmNQRXZ9Diy9dAscbbAdH3XTO8f9by4yoHhgJdAhCfOmQ==
+X-Received: by 2002:ac8:2eb9:: with SMTP id h54mr69874544qta.381.1560340042946;
+        Wed, 12 Jun 2019 04:47:22 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id v17sm10366715qtc.23.2019.06.12.04.47.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Jun 2019 04:47:22 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hb1is-0002JC-07; Wed, 12 Jun 2019 08:47:22 -0300
+Date:   Wed, 12 Jun 2019 08:47:21 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190612114721.GB3876@ziepe.ca>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606195114.GA30714@ziepe.ca>
+ <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
+ <20190607103636.GA12765@quack2.suse.cz>
+ <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
+ <20190612102917.GB14578@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <25044.1560339786.1@warthog.procyon.org.uk>
-Date:   Wed, 12 Jun 2019 12:43:06 +0100
-Message-ID: <25045.1560339786@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 12 Jun 2019 11:43:15 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612102917.GB14578@quack2.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Stephen Smalley <sds@tycho.nsa.gov> wrote:
+On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
 
-> >   (6) The security attributes of all the objects between the object in (5)
-> >       and the object in (4), assuming we work from (5) towards (4) if the
-> >       two aren't coincident (WATCH_INFO_RECURSIVE).
+> > > The main objection to the current ODP & DAX solution is that very
+> > > little HW can actually implement it, having the alternative still
+> > > require HW support doesn't seem like progress.
+> > > 
+> > > I think we will eventually start seein some HW be able to do this
+> > > invalidation, but it won't be universal, and I'd rather leave it
+> > > optional, for recovery from truely catastrophic errors (ie my DAX is
+> > > on fire, I need to unplug it).
+> > 
+> > Agreed.  I think software wise there is not much some of the devices can do
+> > with such an "invalidate".
 > 
-> Does this apply to anything other than mount notifications?
+> So out of curiosity: What does RDMA driver do when userspace just closes
+> the file pointing to RDMA object? It has to handle that somehow by aborting
+> everything that's going on... And I wanted similar behavior here.
 
-Not at the moment.  I'm considering making it such that you can make a watch
-on a keyring get automatically propagated to keys that get added to the
-keyring (and removed upon unlink) - the idea being that there is no 'single
-parent path' concept for a keyring as there is for a directory.
+It aborts *everything* connected to that file descriptor. Destroying
+everything avoids creating inconsistencies that destroying a subset
+would create.
 
-I'm also pondering the idea of making it possible to have superblock watches
-automatically propagated to superblocks created by automount points on the
-watched superblock.
+What has been talked about for lease break is not destroying anything
+but very selectively saying that one memory region linked to the GUP
+is no longer functional.
 
-> And for mount notifications, isn't the notification actually for a change to
-> the mount namespace, not a change to any file?
-
-Yes.
-
-> Hence, the real "object" for events that trigger mount notifications is the
-> mount namespace, right?
-
-Um... arguably.  Would that mean that that would need a label from somewhere?
-
-> The watched path is just a way of identifying a subtree of the mount
-> namespace for notifications - it isn't the real object being watched.
-
-I like that argument.
-
-Thanks,
-David
+Jason
