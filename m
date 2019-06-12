@@ -2,199 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF6DA42EBB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 20:31:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E819342ECA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 20:37:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfFLSb6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 14:31:58 -0400
-Received: from fieldses.org ([173.255.197.46]:51562 "EHLO fieldses.org"
+        id S1726722AbfFLShA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 14:37:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50952 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726167AbfFLSb6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:31:58 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id B16022012; Wed, 12 Jun 2019 14:31:56 -0400 (EDT)
-Date:   Wed, 12 Jun 2019 14:31:56 -0400
-From:   "J . Bruce Fields" <bfields@fieldses.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v2] locks: eliminate false positive conflicts for write
- lease
-Message-ID: <20190612183156.GA27576@fieldses.org>
-References: <20190612172408.22671-1-amir73il@gmail.com>
+        id S1726677AbfFLShA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 14:37:00 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5350E308795D;
+        Wed, 12 Jun 2019 18:37:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 42FE85F9C3;
+        Wed, 12 Jun 2019 18:36:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <0483c310-87c0-17b6-632e-d57b2274a32f@schaufler-ca.com>
+References: <0483c310-87c0-17b6-632e-d57b2274a32f@schaufler-ca.com> <9c41cd56-af21-f17d-ab54-66615802f30e@schaufler-ca.com> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <31009.1560262869@warthog.procyon.org.uk> <14576.1560361278@warthog.procyon.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, Stephen Smalley <sds@tycho.nsa.gov>,
+        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: What do LSMs *actually* need for checks on notifications?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612172408.22671-1-amir73il@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <17321.1560364615.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 12 Jun 2019 19:36:55 +0100
+Message-ID: <17322.1560364615@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 12 Jun 2019 18:37:00 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-How do opens for execute work?  I guess they create a struct file with
-FMODE_EXEC and FMODE_RDONLY set and they decrement i_writecount.  Do
-they also increment i_readcount?  Reading do_open_execat and alloc_file,
-looks like it does, so, good, they should conflict with write leases,
-which sounds right.
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Looks good to me.--b.
+> >  (*) Device events (block/usb) don't require any permissions, but currently
+> >      only deliver hardware notifications.
+> 
+> How do you specify what device you want to watch?
 
-On Wed, Jun 12, 2019 at 08:24:08PM +0300, Amir Goldstein wrote:
-> check_conflicting_open() is checking for existing fd's open for read or
-> for write before allowing to take a write lease.  The check that was
-> implemented using i_count and d_count is an approximation that has
-> several false positives.  For example, overlayfs since v4.19, takes an
-> extra reference on the dentry; An open with O_PATH takes a reference on
-> the dentry although the file cannot be read nor written.
+It's a general queue.
+
+> Don't you have to access a /dev/something?
+
+Not at the moment.  One problem is that there may not be a /dev/something for
+a device (take a bridge for example), and even if it does, the device driver
+doesn't necessarily have access to the path.  The messages contain the device
+name string as appears in dmesg ("3-7" for a USB device, for example).
+
+I think it would be wise to limit the general queue to hardware events that
+either get triggered by someone physically mucking around with the hardware or
+device errors, such as bad sectors or links going up and down.
+
+> > You can't find out what watches exist.
 > 
-> Change the implementation to use i_readcount and i_writecount to
-> eliminate the false positive conflicts and allow a write lease to be
-> taken on an overlayfs file.
+> Not even your own?
+
+No.
+
+> > However, it should be noted that (1) is the creds of the buffer owner.
 > 
-> The change of behavior with existing fd's open with O_PATH is symmetric
-> w.r.t. current behavior of lease breakers - an open with O_PATH currently
-> does not break a write lease.
-> 
-> This increases the size of struct inode by 4 bytes on 32bit archs when
-> CONFIG_FILE_LOCKING is defined and CONFIG_IMA was not already
-> defined.
-> 
-> Cc: <stable@vger.kernel.org> # v4.19
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
-> 
-> Miklos, Jeff and Bruce,
-> 
-> This patch fixes a v4.19 overlayfs regression with taking write
-> leases. It also provides correct semantics w.r.t RDONLY open counter
-> that Bruce also needed for nfsd.
-> 
-> Since this is locks code that fixes an overlayfs regression which
-> is also needed for nfsd, it could go via either of your trees.
-> I didn't want to pick sides, so first one to grab the patch wins ;-)
-> 
-> I verified the changes using modified LTP F_SETLEASE tests [1],
-> which I ran over xfs and overlayfs.
-> 
-> Thanks,
-> Amir.
-> 
-> [1] https://github.com/amir73il/ltp/commits/overlayfs-devel
-> 
-> Changes since v1:
-> - Drop patch to fold i_readcount into i_count
-> - Make i_readcount depend on CONFIG_FILE_LOCKING
-> 
->  fs/locks.c         | 33 ++++++++++++++++++++++-----------
->  include/linux/fs.h |  4 ++--
->  2 files changed, 24 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/locks.c b/fs/locks.c
-> index ec1e4a5df629..28528b4fc53b 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -1753,10 +1753,10 @@ int fcntl_getlease(struct file *filp)
->  }
->  
->  /**
-> - * check_conflicting_open - see if the given dentry points to a file that has
-> + * check_conflicting_open - see if the given file points to an inode that has
->   *			    an existing open that would conflict with the
->   *			    desired lease.
-> - * @dentry:	dentry to check
-> + * @filp:	file to check
->   * @arg:	type of lease that we're trying to acquire
->   * @flags:	current lock flags
->   *
-> @@ -1764,19 +1764,31 @@ int fcntl_getlease(struct file *filp)
->   * conflict with the lease we're trying to set.
->   */
->  static int
-> -check_conflicting_open(const struct dentry *dentry, const long arg, int flags)
-> +check_conflicting_open(struct file *filp, const long arg, int flags)
->  {
->  	int ret = 0;
-> -	struct inode *inode = dentry->d_inode;
-> +	struct inode *inode = locks_inode(filp);
-> +	int wcount = atomic_read(&inode->i_writecount);
-> +	int self_wcount = 0, self_rcount = 0;
->  
->  	if (flags & FL_LAYOUT)
->  		return 0;
->  
-> -	if ((arg == F_RDLCK) && inode_is_open_for_write(inode))
-> +	if (arg == F_RDLCK && wcount > 0)
->  		return -EAGAIN;
->  
-> -	if ((arg == F_WRLCK) && ((d_count(dentry) > 1) ||
-> -	    (atomic_read(&inode->i_count) > 1)))
-> +	/* Eliminate deny writes from actual writers count */
-> +	if (wcount < 0)
-> +		wcount = 0;
-> +
-> +	/* Make sure that only read/write count is from lease requestor */
-> +	if (filp->f_mode & FMODE_WRITE)
-> +		self_wcount = 1;
-> +	else if ((filp->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
-> +		self_rcount = 1;
-> +
-> +	if (arg == F_WRLCK && (wcount != self_wcount ||
-> +	    atomic_read(&inode->i_readcount) != self_rcount))
->  		ret = -EAGAIN;
->  
->  	return ret;
-> @@ -1786,8 +1798,7 @@ static int
->  generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **priv)
->  {
->  	struct file_lock *fl, *my_fl = NULL, *lease;
-> -	struct dentry *dentry = filp->f_path.dentry;
-> -	struct inode *inode = dentry->d_inode;
-> +	struct inode *inode = locks_inode(filp);
->  	struct file_lock_context *ctx;
->  	bool is_deleg = (*flp)->fl_flags & FL_DELEG;
->  	int error;
-> @@ -1822,7 +1833,7 @@ generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **pr
->  	percpu_down_read(&file_rwsem);
->  	spin_lock(&ctx->flc_lock);
->  	time_out_leases(inode, &dispose);
-> -	error = check_conflicting_open(dentry, arg, lease->fl_flags);
-> +	error = check_conflicting_open(filp, arg, lease->fl_flags);
->  	if (error)
->  		goto out;
->  
-> @@ -1879,7 +1890,7 @@ generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **pr
->  	 * precedes these checks.
->  	 */
->  	smp_mb();
-> -	error = check_conflicting_open(dentry, arg, lease->fl_flags);
-> +	error = check_conflicting_open(filp, arg, lease->fl_flags);
->  	if (error) {
->  		locks_unlink_lock_ctx(lease);
->  		goto out;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 79ffa2958bd8..2d55f1b64014 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -694,7 +694,7 @@ struct inode {
->  	atomic_t		i_count;
->  	atomic_t		i_dio_count;
->  	atomic_t		i_writecount;
-> -#ifdef CONFIG_IMA
-> +#if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
->  	atomic_t		i_readcount; /* struct files open RO */
->  #endif
->  	union {
-> @@ -2895,7 +2895,7 @@ static inline bool inode_is_open_for_write(const struct inode *inode)
->  	return atomic_read(&inode->i_writecount) > 0;
->  }
->  
-> -#ifdef CONFIG_IMA
-> +#if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
->  static inline void i_readcount_dec(struct inode *inode)
->  {
->  	BUG_ON(!atomic_read(&inode->i_readcount));
-> -- 
-> 2.17.1
+> How are buffers shared? Who besides the buffer creator can use it?
+
+When you open /dev/watch_queue, you get buffers private to that file object; a
+second open of the device, even by the same process, will get different
+buffers.
+
+The buffers are 'attached' to that file and are accessed by calling mmap() on
+the fd; shareability is governed by how shareable the fd and a mapping are
+shareable.
+
+> Can you glean information from the watch being deleted?
+> I wouldn't think so, and it seems like a one-time event
+> from the system, so I don't think an access check would
+> be required.
+
+As you say, it's a one-time message per watch.  The object that got deleted
+would need to be recreated, rewatched and made available to both parties.
+
+David
