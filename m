@@ -2,153 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 501CA42B47
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 17:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E39A42B86
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 17:59:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728844AbfFLPw0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 11:52:26 -0400
-Received: from fieldses.org ([173.255.197.46]:51348 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726829AbfFLPw0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 11:52:26 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id A606C1E3B; Wed, 12 Jun 2019 11:52:24 -0400 (EDT)
-Date:   Wed, 12 Jun 2019 11:52:24 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Wenbin Zeng <wenbin.zeng@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, davem@davemloft.net, jlayton@kernel.org,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        wenbinzeng@tencent.com, dsahern@gmail.com,
-        nicolas.dichtel@6wind.com, willy@infradead.org,
-        edumazet@google.com, jakub.kicinski@netronome.com,
-        tyhicks@canonical.com, chuck.lever@oracle.com, neilb@suse.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] auth_gss: netns refcount leaks when
- use-gss-proxy==1
-Message-ID: <20190612155224.GF16331@fieldses.org>
-References: <1556692945-3996-1-git-send-email-wenbinzeng@tencent.com>
- <1557470163-30071-1-git-send-email-wenbinzeng@tencent.com>
- <20190515010331.GA3232@fieldses.org>
- <20190612083755.GA27776@bridge.tencent.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612083755.GA27776@bridge.tencent.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S2438019AbfFLP7Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 11:59:25 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50360 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2406027AbfFLP7Z (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 11:59:25 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5CFvCho011351
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 11:59:24 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t33w81j6b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 11:59:24 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 12 Jun 2019 16:59:22 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Jun 2019 16:59:19 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5CFxI2m40042810
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jun 2019 15:59:18 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B2FF4C044;
+        Wed, 12 Jun 2019 15:59:18 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 28C034C050;
+        Wed, 12 Jun 2019 15:59:17 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.109.218])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Jun 2019 15:59:17 +0000 (GMT)
+Subject: Re: [PATCH 1/2] vfs: replace i_readcount with a biased i_count
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date:   Wed, 12 Jun 2019 11:59:06 -0400
+In-Reply-To: <CAOQ4uxhooVwtHcDCr4hu+ovzKGUdWfQ+3F3nbgK3HXgV+fUK9w@mail.gmail.com>
+References: <20190608135717.8472-1-amir73il@gmail.com>
+         <20190608135717.8472-2-amir73il@gmail.com>
+         <1560343899.4578.9.camel@linux.ibm.com>
+         <CAOQ4uxhooVwtHcDCr4hu+ovzKGUdWfQ+3F3nbgK3HXgV+fUK9w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061215-0016-0000-0000-000002887DF7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061215-0017-0000-0000-000032E5B4BB
+Message-Id: <1560355146.4578.61.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-12_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=776 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906120107
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 04:37:55PM +0800, Wenbin Zeng wrote:
-> On Tue, May 14, 2019 at 09:03:31PM -0400, J. Bruce Fields wrote:
-> > Whoops, I was slow to test these.  I'm getting failuring krb5 nfs
-> > mounts, and the following the server's logs.  Dropping the three patches
-> > for now.
-> My bad, I should have found it earlier. Thank you for testing it, Bruce.
+On Wed, 2019-06-12 at 18:09 +0300, Amir Goldstein wrote:
+> On Wed, Jun 12, 2019 at 3:52 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >
+> > On Sat, 2019-06-08 at 16:57 +0300, Amir Goldstein wrote:
+> > > Count struct files open RO together with inode reference count instead
+> > > of using a dedicated i_readcount field.  This will allow us to use the
+> > > RO count also when CONFIG_IMA is not defined and will reduce the size of
+> > > struct inode for 32bit archs when CONFIG_IMA is defined.
+> > >
+> > > We need this RO count for posix leases code, which currently naively
+> > > checks i_count and d_count in an inaccurate manner.
+> > >
+> > > Should regular i_count overflow into RO count bias by struct files
+> > > opened for write, it's not a big deal, as we mostly need the RO count
+> > > to be reliable when the first writer comes along.
+> >
+> > "i_count" has been defined forever.  Has its meaning changed?  This
+> > patch implies that "i_readcount" was never really needed.
+> >
 > 
-> I figured it out, the problem that you saw is due to the following code:
-> the if-condition is incorrect here because sn->gssp_clnt==NULL doesn't mean
-> inexistence of 'use-gss-proxy':
+> Not really.
+> i_count is only used to know if object is referenced.
+> It does not matter if user takes 1 or more references on i_count
+> as long as user puts back all the references it took.
+> 
+> If user took i_readcount, i_count cannot be zero, so short of overflow,
+> we can describe i_readcount as a biased i_count.
 
-Thanks, but with the new patches I see the following.  I haven't tried
-to investigate.
+Having a count was originally to make sure we weren't missing
+anything.  As long as we can detect if a file is opened for read, the
+less IMA specific code there is, the better.
 
---b.
+> 
+> But if I am following Miklos' suggestion to make i_count 64bit, inode
+> struct size is going to grow for 32bit arch when  CONFIG_IMA is not
+> defined, so to reduce impact, I will keep i_readcount as a separate
+> member and let it be defined also when BITS_PER_LONG == 64
+> and implement inode_is_open_rdonly() using d_count and i_count
+> when i_readcount is not defined.
+> 
+> Let's see what people will have to say about that...
 
-[ 2908.134813] ------------[ cut here ]------------
-[ 2908.135732] name 'use-gss-proxy'
-[ 2908.136276] WARNING: CPU: 2 PID: 15032 at fs/proc/generic.c:673 remove_proc_entry+0x124/0x190
-[ 2908.138144] Modules linked in: nfsv4 rpcsec_gss_krb5 nfsv3 nfs_acl nfs lockd grace auth_rpcgss sunrpc
-[ 2908.140183] CPU: 2 PID: 15032 Comm: (coredump) Not tainted 5.2.0-rc2-00441-gaef575f54640 #2257
-[ 2908.142062] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
-[ 2908.143756] RIP: 0010:remove_proc_entry+0x124/0x190
-[ 2908.144519] Code: c3 48 c7 c7 60 24 8b 82 e8 29 16 a5 00 eb d5 48 c7 c7 60 24 8b 82 e8 1b 16 a5 00 4c 89 e6 48 c7 c7 ec 4c 52 82 e8 50 fd db ff <0f> 0b eb b6 48 8b 04 24 83 a8 90 00 00 00 01 e9 78 ff ff ff 4c 89
-[ 2908.148138] RSP: 0018:ffffc900047bbdb0 EFLAGS: 00010282
-[ 2908.148945] RAX: 0000000000000000 RBX: ffff888036060580 RCX: 0000000000000000
-[ 2908.150139] RDX: ffff88807fd24e80 RSI: ffff88807fd165b8 RDI: 00000000ffffffff
-[ 2908.151334] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-[ 2908.152564] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa00adb1b
-[ 2908.153816] R13: 00007ffc8bda5d30 R14: 0000000000000000 R15: ffff88805e2873a8
-[ 2908.155007] FS:  00007f470bc27e40(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
-[ 2908.156421] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 2908.157333] CR2: 0000562b07764c58 CR3: 000000005e8ea001 CR4: 00000000001606e0
-[ 2908.158529] Call Trace:
-[ 2908.158796]  destroy_use_gss_proxy_proc_entry+0xb7/0x150 [auth_rpcgss]
-[ 2908.159966]  gss_svc_shutdown_net+0x11/0x170 [auth_rpcgss]
-[ 2908.160830]  netns_evict+0x2f/0x40
-[ 2908.161266]  nsfs_evict+0x27/0x40
-[ 2908.161685]  evict+0xd0/0x1a0
-[ 2908.162035]  __dentry_kill+0xdf/0x180
-[ 2908.162520]  dentry_kill+0x50/0x1c0
-[ 2908.163005]  ? dput+0x1c/0x2b0
-[ 2908.163369]  dput+0x260/0x2b0
-[ 2908.163739]  path_put+0x12/0x20
-[ 2908.164155]  do_faccessat+0x17c/0x240
-[ 2908.164643]  do_syscall_64+0x50/0x1c0
-[ 2908.165170]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[ 2908.165959] RIP: 0033:0x7f47098e2157
-[ 2908.166445] Code: 77 01 c3 48 8b 15 69 dd 2c 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 15 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 8b 15 39 dd 2c 00 f7 d8 64 89 02 b8
-[ 2908.169994] RSP: 002b:00007ffc8bda5d28 EFLAGS: 00000246 ORIG_RAX: 0000000000000015
-[ 2908.171315] RAX: ffffffffffffffda RBX: 0000562b0774d979 RCX: 00007f47098e2157
-[ 2908.172563] RDX: 00007ffc8bda5d3e RSI: 0000000000000000 RDI: 00007ffc8bda5d30
-[ 2908.173753] RBP: 00007ffc8bda5d70 R08: 0000000000000000 R09: 0000562b07d0b130
-[ 2908.174943] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc8bda5d30
-[ 2908.176163] R13: 0000562b07b34c80 R14: 0000562b07b35120 R15: 0000000000000000
-[ 2908.177395] irq event stamp: 4256
-[ 2908.177835] hardirqs last  enabled at (4255): [<ffffffff811221ee>] console_unlock+0x41e/0x590
-[ 2908.179378] hardirqs last disabled at (4256): [<ffffffff81001b2f>] trace_hardirqs_off_thunk+0x1a/0x1c
-[ 2908.181031] softirqs last  enabled at (4252): [<ffffffff820002be>] __do_softirq+0x2be/0x4aa
-[ 2908.182458] softirqs last disabled at (4233): [<ffffffff810bf8e0>] irq_exit+0x80/0x90
-[ 2908.183869] ---[ end trace d88132b63efc09d8 ]---
-[ 2908.184620] BUG: kernel NULL pointer dereference, address: 0000000000000030
-[ 2908.185829] #PF: supervisor read access in kernel mode
-[ 2908.186924] #PF: error_code(0x0000) - not-present page
-[ 2908.187887] PGD 0 P4D 0 
-[ 2908.188318] Oops: 0000 [#1] PREEMPT SMP PTI
-[ 2908.189254] CPU: 2 PID: 15032 Comm: (coredump) Tainted: G        W         5.2.0-rc2-00441-gaef575f54640 #2257
-[ 2908.192506] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
-[ 2908.195137] RIP: 0010:__lock_acquire+0x3d2/0x1d90
-[ 2908.196414] Code: db 48 8b 84 24 88 00 00 00 65 48 33 04 25 28 00 00 00 0f 85 be 10 00 00 48 8d 65 d8 44 89 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 <48> 81 3f 60 0d 01 83 41 bb 00 00 00 00 45 0f 45 d8 83 fe 01 0f 87
-[ 2908.202720] RSP: 0018:ffffc900047bbc80 EFLAGS: 00010002
-[ 2908.204165] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-[ 2908.206125] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000030
-[ 2908.208203] RBP: ffffc900047bbd40 R08: 0000000000000001 R09: 0000000000000000
-[ 2908.210219] R10: 0000000000000001 R11: 0000000000000001 R12: ffff88807ad91500
-[ 2908.211386] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000282
-[ 2908.212532] FS:  00007f470bc27e40(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
-[ 2908.213647] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 2908.214400] CR2: 0000000000000030 CR3: 000000005e8ea001 CR4: 00000000001606e0
-[ 2908.215393] Call Trace:
-[ 2908.215589]  ? __lock_acquire+0x255/0x1d90
-[ 2908.216071]  ? clear_gssp_clnt+0x1b/0x50 [auth_rpcgss]
-[ 2908.216720]  ? __mutex_lock+0x99/0x920
-[ 2908.217114]  lock_acquire+0x95/0x1b0
-[ 2908.217484]  ? cache_purge+0x1c/0x110 [sunrpc]
-[ 2908.218000]  _raw_spin_lock+0x2f/0x40
-[ 2908.218370]  ? cache_purge+0x1c/0x110 [sunrpc]
-[ 2908.218882]  cache_purge+0x1c/0x110 [sunrpc]
-[ 2908.219346]  gss_svc_shutdown_net+0xb8/0x170 [auth_rpcgss]
-[ 2908.220104]  netns_evict+0x2f/0x40
-[ 2908.220439]  nsfs_evict+0x27/0x40
-[ 2908.220786]  evict+0xd0/0x1a0
-[ 2908.221050]  __dentry_kill+0xdf/0x180
-[ 2908.221458]  dentry_kill+0x50/0x1c0
-[ 2908.221842]  ? dput+0x1c/0x2b0
-[ 2908.222126]  dput+0x260/0x2b0
-[ 2908.222384]  path_put+0x12/0x20
-[ 2908.222753]  do_faccessat+0x17c/0x240
-[ 2908.223125]  do_syscall_64+0x50/0x1c0
-[ 2908.223479]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[ 2908.224152] RIP: 0033:0x7f47098e2157
-[ 2908.224566] Code: 77 01 c3 48 8b 15 69 dd 2c 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 15 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 8b 15 39 dd 2c 00 f7 d8 64 89 02 b8
-[ 2908.228198] RSP: 002b:00007ffc8bda5d28 EFLAGS: 00000246 ORIG_RAX: 0000000000000015
-[ 2908.229496] RAX: ffffffffffffffda RBX: 0000562b0774d979 RCX: 00007f47098e2157
-[ 2908.230938] RDX: 00007ffc8bda5d3e RSI: 0000000000000000 RDI: 00007ffc8bda5d30
-[ 2908.232182] RBP: 00007ffc8bda5d70 R08: 0000000000000000 R09: 0000562b07d0b130
-[ 2908.233481] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc8bda5d30
-[ 2908.234750] R13: 0000562b07b34c80 R14: 0000562b07b35120 R15: 0000000000000000
-[ 2908.236068] Modules linked in: nfsv4 rpcsec_gss_krb5 nfsv3 nfs_acl nfs lockd grace auth_rpcgss sunrpc
-[ 2908.237861] CR2: 0000000000000030
-[ 2908.238277] ---[ end trace d88132b63efc09d9 ]---
+Ok
+
+Mimi
+
