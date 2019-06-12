@@ -2,97 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FBB841A40
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 04:08:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71D3A41A54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 04:23:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408328AbfFLCIB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 22:08:01 -0400
-Received: from mail-lf1-f41.google.com ([209.85.167.41]:45682 "EHLO
-        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406597AbfFLCIB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 22:08:01 -0400
-Received: by mail-lf1-f41.google.com with SMTP id u10so10759555lfm.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2019 19:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zvcuGBw+4LQao88YFmzPADNOaa+2pmIz1aMFK+ndk6M=;
-        b=XcZ9B2oIjVRXTLHyuEPsLajuh6i76LN69nh3G8uioz1IkqIoBNiJmqBx/YkM+zyHPY
-         2G4ifYC/e/x616EYdSNIo03kIta8UGvL7gEmyY9zsCOwuEh0KIGgPW6cVGtYZOxKD6oY
-         Cr+IJ89IjBKKmulpfediz94KCA9DcxQ3obwPo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zvcuGBw+4LQao88YFmzPADNOaa+2pmIz1aMFK+ndk6M=;
-        b=Xo/zbofglN7Si3psjxJqwnsIgn1WxY8mPEyQ2dzNFCjDx9VsYBkjqExy5ywbc5d2Mn
-         ftTwOrqHfD56+c3B2ovMekY6n0Z47vfLCXjiGiMlvzrSy7CGmVSUydoMvhI2pm3fm19T
-         VGM9SVTp5igi8sW7SMhiQmOjEHZr3tASCQyILWvcnjDe8iEet6ngEsE2gHZhgxDEb3t4
-         xi9dfh4oK/eOzV3cdq1lEpmj6gFVajPLz8pKcJ3N0xC20Ob/hAOm8z9JOp+NyAF6ge9o
-         ItG9hYnPHuS+x32SQZAu68+1ddoOEEVimTOMVulwUNMgM2Xun6H3B6EBsL8mikJ3jWIT
-         bxeQ==
-X-Gm-Message-State: APjAAAU/8Wc80TPYazR7LNUtpfgub+zGZ399va+h3pnmo6XriMkAJpI5
-        7y6krzFXTleh9Pr9zrVN+0MtvRarEC8=
-X-Google-Smtp-Source: APXvYqyQ0uMqFJ0t3CdNLI8UElBpE9FZcCGt95rx21V9/gugzsR2LENv5wnxqLc25QK5LBxf5Nj63Q==
-X-Received: by 2002:ac2:5095:: with SMTP id f21mr39552250lfm.155.1560305277827;
-        Tue, 11 Jun 2019 19:07:57 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id k4sm1158162ljj.41.2019.06.11.19.07.56
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 19:07:56 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id v24so9254682ljg.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2019 19:07:56 -0700 (PDT)
-X-Received: by 2002:a2e:9c03:: with SMTP id s3mr26468187lji.209.1560305276220;
- Tue, 11 Jun 2019 19:07:56 -0700 (PDT)
+        id S2408406AbfFLCXN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 22:23:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34806 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405661AbfFLCXN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Jun 2019 22:23:13 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 63D5C3082E03;
+        Wed, 12 Jun 2019 02:23:12 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 32A02648BF;
+        Wed, 12 Jun 2019 02:23:11 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 2391624B25;
+        Wed, 12 Jun 2019 02:23:10 +0000 (UTC)
+Date:   Tue, 11 Jun 2019 22:23:09 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     cohuck@redhat.com, jack@suse.cz, kvm@vger.kernel.org,
+        mst@redhat.com, jasowang@redhat.com, david@fromorbit.com,
+        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
+        dm-devel@redhat.com, adilger kernel <adilger.kernel@dilger.ca>,
+        zwisler@kernel.org, aarcange@redhat.com,
+        dave jiang <dave.jiang@intel.com>, jstaron@google.com,
+        linux-nvdimm@lists.01.org,
+        vishal l verma <vishal.l.verma@intel.com>, david@redhat.com,
+        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
+        jmoyer@redhat.com, linux-ext4@vger.kernel.org, lenb@kernel.org,
+        kilobyte@angband.pl, rdunlap@infradead.org, riel@surriel.com,
+        yuval shaia <yuval.shaia@oracle.com>, stefanha@redhat.com,
+        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
+        lcapitulino@redhat.com, kwolf@redhat.com, nilal@redhat.com,
+        tytso@mit.edu, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        darrick wong <darrick.wong@oracle.com>, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, imammedo@redhat.com
+Message-ID: <332155967.34508010.1560306189624.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20190611171416.GA1248@redhat.com>
+References: <20190611163802.25352-1-pagupta@redhat.com> <20190611163802.25352-5-pagupta@redhat.com> <20190611171416.GA1248@redhat.com>
+Subject: Re: [Qemu-devel] [PATCH v12 4/7] dm: enable synchronous dax
 MIME-Version: 1.0
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
- <20190611041045.GA14363@dread.disaster.area> <CAHk-=whDmeozRHUO0qM+2OeGw+=dkcjwGdsvms-x5Dz4y7Tzcw@mail.gmail.com>
- <20190611071038.GC14363@dread.disaster.area>
-In-Reply-To: <20190611071038.GC14363@dread.disaster.area>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 11 Jun 2019 16:07:40 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wgBdTUvjYXKPr_wAAe_Z-hFgM2KMHcsK+b=3w5yMSJ9zw@mail.gmail.com>
-Message-ID: <CAHk-=wgBdTUvjYXKPr_wAAe_Z-hFgM2KMHcsK+b=3w5yMSJ9zw@mail.gmail.com>
-Subject: Re: bcachefs status update (it's done cooking; let's get this sucker merged)
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-bcache@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Zach Brown <zach.brown@ni.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.70, 10.4.195.27]
+Thread-Topic: enable synchronous dax
+Thread-Index: 7O59Nmg+n8QzGpvkvBkkxWqWG8w3fA==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 12 Jun 2019 02:23:12 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 9:11 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> The same rwsem issues were seen on the mmap_sem, the shrinker rwsem,
-> in a couple of device drivers, and so on. i.e. This isn't an XFS
-> issue I'm raising here - I'm raising a concern about the lack of
-> validation of core infrastructure and it's suitability for
-> functionality extensions.
 
-I haven't actually seen the reports.
+> On Tue, Jun 11 2019 at 12:37pm -0400,
+> Pankaj Gupta <pagupta@redhat.com> wrote:
+> 
+> > This patch sets dax device 'DAXDEV_SYNC' flag if all the target
+> > devices of device mapper support synchrononous DAX. If device
+> > mapper consists of both synchronous and asynchronous dax devices,
+> > we don't set 'DAXDEV_SYNC' flag.
+> > 
+> > 'dm_table_supports_dax' is refactored to pass 'iterate_devices_fn'
+> > as argument so that the callers can pass the appropriate functions.
+> > 
+> > Suggested-by: Mike Snitzer <snitzer@redhat.com>
+> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> 
+> Thanks, and for the benefit of others, passing function pointers like
+> this is perfectly fine IMHO because this code is _not_ in the fast
+> path.  These methods are only for device creation.
+> 
+> Reviewed-by: Mike Snitzer <snitzer@redhat.com>
 
-That said, I do think this should be improving. The random
-architecture-specific code is largely going away, and we'll have a
-unified rwsem.
+Thank you, Mike
 
-It might obviously cause some pain initially, but I think long-term we
-should be much better off, at least avoiding the "on particular
-configurations" issue..
+Best regards,
+Pankaj
 
-              Linus
+> 
+> 
