@@ -2,139 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DCBA42FC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 21:14:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 946BF4304F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 21:37:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbfFLTOY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 15:14:24 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40722 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727795AbfFLTOY (ORCPT
+        id S1728371AbfFLThA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 15:37:00 -0400
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:49613 "EHLO
+        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727496AbfFLThA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 15:14:24 -0400
-Received: by mail-qt1-f194.google.com with SMTP id a15so19725510qtn.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 12:14:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Q6iGM1TiupqbenVhxjWmtAI5HyN33SMdpalMPy6x5OY=;
-        b=fKZgzRoQazhx2NyU0bXbVZS8dOqt2ksyWGIauwNWYHJH8kgsCVJI03c4N5lKN0UfbL
-         Bhd0f7dzZ8VYCFXXU+aLJIcr64Q7WMzXQZhTBHMZGz5IhlK3ID/yDJO/l9SrdO5KfgqK
-         Pzqt+w2uTJiIBcYRcbkg+zqo7JEvQt6YgPwzekPufoXbr56qiO4x0n/EncSJ7JDY0Ihx
-         5v476nbYAMqpu7FcZAOCJM9Yr1cgH62Vahq2y1Hbu0KZAQpHI9vvaxHreBBJ1eHnpDXL
-         1X7rLB8DRwb8xJ6R2YIgnjubs6XczMXMrodaik5vqBCeF/b9SQjTHUeI0/OO4EIsnzG3
-         NonA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q6iGM1TiupqbenVhxjWmtAI5HyN33SMdpalMPy6x5OY=;
-        b=UP//GEd9z4cT0AaqWTgYiHgL+ekMs6M3vrxu/19528PWUmjN/pk8Ma3VEH3ffkz3tM
-         tDaFBLWuPSY82ZR9J6vzD9l+1zJRGxWRA0WgaMRJvtZaWWK/g8qJGdazFo1mPrDH5CnB
-         hX11Yu6L47aZL/LgHnpnaPSg3VWDnlrIN8QSmvlO/QNm6djiWZWNnsEh4agjITjSdQ1T
-         kAS0kdEFNw3ad0+V+FJPMc/27sXvCP2KgeDc4RKIXJBwDSg44qkfThRhtv5s78WC+K0S
-         B5/IBNEFADO/TQAE/YUOfBWh74QI2Jzjyj2Bx/KHH4wO4qzQ97esSOGbsjbZar+YnJ21
-         uPuA==
-X-Gm-Message-State: APjAAAU/FkkhNnGyaCuOKSfoPq0JmyiE7X/xtG9wndLdKUGovh5Roo3C
-        uIkz/f2ToxizKc6tp0wD1ejxpw==
-X-Google-Smtp-Source: APXvYqxNVQoMlV0omgFKo75Awgw9qRfhh6FBsXYbr1pvY1QOdw5O302UlF57KTTs2aFOEmTGVw1+7g==
-X-Received: by 2002:aed:3a03:: with SMTP id n3mr38086132qte.85.1560366863270;
-        Wed, 12 Jun 2019 12:14:23 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id e66sm296313qtb.55.2019.06.12.12.14.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Jun 2019 12:14:22 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hb8hR-00037z-Na; Wed, 12 Jun 2019 16:14:21 -0300
-Date:   Wed, 12 Jun 2019 16:14:21 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
+        Wed, 12 Jun 2019 15:37:00 -0400
+Received: from [4.30.142.84] (helo=srivatsab-a01.vmware.com)
+        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
+        (Exim 4.82)
+        (envelope-from <srivatsa@csail.mit.edu>)
+        id 1hb93J-000Cx6-6M; Wed, 12 Jun 2019 15:36:57 -0400
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
 To:     Jan Kara <jack@suse.cz>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190612191421.GM3876@ziepe.ca>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606195114.GA30714@ziepe.ca>
- <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
- <20190607103636.GA12765@quack2.suse.cz>
- <20190607121729.GA14802@ziepe.ca>
- <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
- <20190612102917.GB14578@quack2.suse.cz>
- <20190612114721.GB3876@ziepe.ca>
- <20190612120907.GC14578@quack2.suse.cz>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Moyer <jmoyer@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>, amakhalov@vmware.com,
+        anishs@vmware.com, srivatsab@vmware.com,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stable <stable@vger.kernel.org>
+References: <6FE0A98F-1E3D-4EF6-8B38-2C85741924A4@linaro.org>
+ <2A58C239-EF3F-422B-8D87-E7A3B500C57C@linaro.org>
+ <a04368ba-f1d5-8f2c-1279-a685a137d024@csail.mit.edu>
+ <E270AD92-943E-4529-8158-AB480D6D9DF8@linaro.org>
+ <5b71028c-72f0-73dd-0cd5-f28ff298a0a3@csail.mit.edu>
+ <FFA44D26-75FF-4A8E-A331-495349BE5FFC@linaro.org>
+ <0d6e3c02-1952-2177-02d7-10ebeb133940@csail.mit.edu>
+ <7B74A790-BD98-412B-ADAB-3B513FB1944E@linaro.org>
+ <6a6f4aa4-fc95-f132-55b2-224ff52bd2d8@csail.mit.edu>
+ <7c5e9d11-4a3d-7df4-c1e6-7c95919522ab@csail.mit.edu>
+ <20190612130446.GD14578@quack2.suse.cz>
+From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Message-ID: <dd32ed59-a543-fc76-9a9a-2462f0119270@csail.mit.edu>
+Date:   Wed, 12 Jun 2019 12:36:53 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612120907.GC14578@quack2.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190612130446.GD14578@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 02:09:07PM +0200, Jan Kara wrote:
-> On Wed 12-06-19 08:47:21, Jason Gunthorpe wrote:
-> > On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
-> > 
-> > > > > The main objection to the current ODP & DAX solution is that very
-> > > > > little HW can actually implement it, having the alternative still
-> > > > > require HW support doesn't seem like progress.
-> > > > > 
-> > > > > I think we will eventually start seein some HW be able to do this
-> > > > > invalidation, but it won't be universal, and I'd rather leave it
-> > > > > optional, for recovery from truely catastrophic errors (ie my DAX is
-> > > > > on fire, I need to unplug it).
-> > > > 
-> > > > Agreed.  I think software wise there is not much some of the devices can do
-> > > > with such an "invalidate".
-> > > 
-> > > So out of curiosity: What does RDMA driver do when userspace just closes
-> > > the file pointing to RDMA object? It has to handle that somehow by aborting
-> > > everything that's going on... And I wanted similar behavior here.
-> > 
-> > It aborts *everything* connected to that file descriptor. Destroying
-> > everything avoids creating inconsistencies that destroying a subset
-> > would create.
-> > 
-> > What has been talked about for lease break is not destroying anything
-> > but very selectively saying that one memory region linked to the GUP
-> > is no longer functional.
+
+[ Adding Greg to CC ]
+
+On 6/12/19 6:04 AM, Jan Kara wrote:
+> On Tue 11-06-19 15:34:48, Srivatsa S. Bhat wrote:
+>> On 6/2/19 12:04 AM, Srivatsa S. Bhat wrote:
+>>> On 5/30/19 3:45 AM, Paolo Valente wrote:
+>>>>
+>> [...]
+>>>> At any rate, since you pointed out that you are interested in
+>>>> out-of-the-box performance, let me complete the context: in case
+>>>> low_latency is left set, one gets, in return for this 12% loss,
+>>>> a) at least 1000% higher responsiveness, e.g., 1000% lower start-up
+>>>> times of applications under load [1];
+>>>> b) 500-1000% higher throughput in multi-client server workloads, as I
+>>>> already pointed out [2].
+>>>>
+>>>
+>>> I'm very happy that you could solve the problem without having to
+>>> compromise on any of the performance characteristics/features of BFQ!
+>>>
+>>>
+>>>> I'm going to prepare complete patches.  In addition, if ok for you,
+>>>> I'll report these results on the bug you created.  Then I guess we can
+>>>> close it.
+>>>>
+>>>
+>>> Sounds great!
+>>>
+>>
+>> Hi Paolo,
+>>
+>> Hope you are doing great!
+>>
+>> I was wondering if you got a chance to post these patches to LKML for
+>> review and inclusion... (No hurry, of course!)
+>>
+>> Also, since your fixes address the performance issues in BFQ, do you
+>> have any thoughts on whether they can be adapted to CFQ as well, to
+>> benefit the older stable kernels that still support CFQ?
 > 
-> OK, so what I had in mind was that if RDMA app doesn't play by the rules
-> and closes the file with existing pins (and thus layout lease) we would
-> force it to abort everything. Yes, it is disruptive but then the app didn't
-> obey the rule that it has to maintain file lease while holding pins. Thus
-> such situation should never happen unless the app is malicious / buggy.
+> Since CFQ doesn't exist in current upstream kernel anymore, I seriously
+> doubt you'll be able to get any performance improvements for it in the
+> stable kernels...
+> 
 
-We do have the infrastructure to completely revoke the entire
-*content* of a FD (this is called device disassociate). It is
-basically close without the app doing close. But again it only works
-with some drivers. However, this is more likely something a driver
-could support without a HW change though.
+I suspected as much, but that seems unfortunate though. The latest LTS
+kernel is based on 4.19, which still supports CFQ. It would have been
+great to have a process to address significant issues on older
+kernels too.
 
-It is quite destructive as it forcibly kills everything RDMA related
-the process(es) are doing, but it is less violent than SIGKILL, and
-there is perhaps a way for the app to recover from this, if it is
-coded for it.
+Greg, do you have any thoughts on this? The context is that both CFQ
+and BFQ I/O schedulers have issues that cause I/O throughput to suffer
+upto 10x - 30x on certain workloads and system configurations, as
+reported in [1].
 
-My preference would be to avoid this scenario, but if it is really
-necessary, we could probably build it with some work.
+In this thread, Paolo posted patches to fix BFQ performance on
+mainline. However CFQ suffers from the same performance collapse, but
+CFQ was removed from the kernel in v5.0. So obviously the usual stable
+backporting path won't work here for several reasons:
 
-The only case we use it today is forced HW hot unplug, so it is rarely
-used and only for an 'emergency' like use case.
+  1. There won't be a mainline commit to backport from, as CFQ no
+     longer exists in mainline.
 
-Jason
+  2. This is not a security/stability fix, and is likely to involve
+     invasive changes.
+
+I was wondering if there was a way to address the performance issues
+in CFQ in the older stable kernels (including the latest LTS 4.19),
+despite the above constraints, since the performance drop is much too
+significant. I guess not, but thought I'd ask :-)
+
+[1]. https://lore.kernel.org/lkml/8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu/ 
+
+
+Regards,
+Srivatsa
+VMware Photon OS
