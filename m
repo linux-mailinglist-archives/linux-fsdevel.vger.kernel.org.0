@@ -2,124 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 443E842F50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 20:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DCBA42FC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 21:14:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfFLSuD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 14:50:03 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:39318 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbfFLSuD (ORCPT
+        id S1727951AbfFLTOY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 15:14:24 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:40722 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727795AbfFLTOY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 14:50:03 -0400
-Received: by mail-oi1-f196.google.com with SMTP id m202so12484648oig.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 11:50:03 -0700 (PDT)
+        Wed, 12 Jun 2019 15:14:24 -0400
+Received: by mail-qt1-f194.google.com with SMTP id a15so19725510qtn.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 12:14:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oLKBk3Q7ccO0NJJMRJYYFBU09UJHS0/ornRP0j3Fxnk=;
-        b=gmeYon7zauy3OQh0dds8NZYm6t5UDisLz6yhyFv+zAHzAQld3I1PlASf7zsZM+CaaZ
-         CehQMBgQdj6gortTquDOB3N7bsSZoRiiIPq0F65TSYhGSEiVglTlgXcZdamdruNK0EZE
-         L4hW+NB6I/OXN8FIUSFL51bNjJWJFW8hzlwgXFjesNuMtfLc6oA7+M/3K2vidJa0br9V
-         czG4Eoe/orE9D++K3+lLCE4n/UgTBq+X11qW/QB7IGhWEAbaQV6NagrYsJ8UOQey3FsU
-         R4uBxwDIf6zhdzoruyQQmgKdtCNWOHRzy7IMkgSp8cIYB925DCaZB8zX5lMCi8WnCkui
-         Earw==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Q6iGM1TiupqbenVhxjWmtAI5HyN33SMdpalMPy6x5OY=;
+        b=fKZgzRoQazhx2NyU0bXbVZS8dOqt2ksyWGIauwNWYHJH8kgsCVJI03c4N5lKN0UfbL
+         Bhd0f7dzZ8VYCFXXU+aLJIcr64Q7WMzXQZhTBHMZGz5IhlK3ID/yDJO/l9SrdO5KfgqK
+         Pzqt+w2uTJiIBcYRcbkg+zqo7JEvQt6YgPwzekPufoXbr56qiO4x0n/EncSJ7JDY0Ihx
+         5v476nbYAMqpu7FcZAOCJM9Yr1cgH62Vahq2y1Hbu0KZAQpHI9vvaxHreBBJ1eHnpDXL
+         1X7rLB8DRwb8xJ6R2YIgnjubs6XczMXMrodaik5vqBCeF/b9SQjTHUeI0/OO4EIsnzG3
+         NonA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oLKBk3Q7ccO0NJJMRJYYFBU09UJHS0/ornRP0j3Fxnk=;
-        b=d22zVx/gNbvxAnPEUWI+b1OpF0Nuy6oLuMprKk2gH8QvspTZdcK2ok0O3DUQ80W35x
-         8gmMxR4RX+1wopdxB8PLo2ugkeXako+ki7ky00I+c9vaVxvpBnKj7q1zMp6XmkHazQwV
-         /5o+CG/Pq2yaqezwEcly83N4ezhZKe90b1s618v5DJDA1f6oGVMBjSJ6/Zor5QYBa5uX
-         r0bC5K+2iQ0uXHJze2nB9OMK31y4HdkDCc0+IreCji2A0VNl/ZTEWUzUnp9OYQkpIq/u
-         TvELDYJi1cEnCGLc+SC11Q2MqrOQX41DW0Sdb7gj0Ma85gnS9LXNHc97bjUaBC/R3m2T
-         Rukw==
-X-Gm-Message-State: APjAAAVuhsdzrjrjKp43YqZXdcwRYU5O2i79wFCDc2uei4RDglGEHKvY
-        kahHEg1prNNp/iiBP9NjojX9+wwWdHtkF1OVuGsm92H45TA=
-X-Google-Smtp-Source: APXvYqxnUAltCxrDlkjMuVh0Fis6UXRXzk4ak5OCGI7cs5NoWVrVaXVk3zYCAPwY8b7pSu88qbXHjB+1CYR77yxpUws=
-X-Received: by 2002:aca:ec82:: with SMTP id k124mr420099oih.73.1560365403007;
- Wed, 12 Jun 2019 11:50:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190606014544.8339-1-ira.weiny@intel.com> <20190606104203.GF7433@quack2.suse.cz>
- <20190606195114.GA30714@ziepe.ca> <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
- <20190607103636.GA12765@quack2.suse.cz> <20190607121729.GA14802@ziepe.ca>
- <20190607145213.GB14559@iweiny-DESK2.sc.intel.com> <20190612102917.GB14578@quack2.suse.cz>
-In-Reply-To: <20190612102917.GB14578@quack2.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 12 Jun 2019 11:49:52 -0700
-Message-ID: <CAPcyv4jSyTjC98UsWb3-FnZekV0oyboiSe9n1NYDC2TSKAqiqw@mail.gmail.com>
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q6iGM1TiupqbenVhxjWmtAI5HyN33SMdpalMPy6x5OY=;
+        b=UP//GEd9z4cT0AaqWTgYiHgL+ekMs6M3vrxu/19528PWUmjN/pk8Ma3VEH3ffkz3tM
+         tDaFBLWuPSY82ZR9J6vzD9l+1zJRGxWRA0WgaMRJvtZaWWK/g8qJGdazFo1mPrDH5CnB
+         hX11Yu6L47aZL/LgHnpnaPSg3VWDnlrIN8QSmvlO/QNm6djiWZWNnsEh4agjITjSdQ1T
+         kAS0kdEFNw3ad0+V+FJPMc/27sXvCP2KgeDc4RKIXJBwDSg44qkfThRhtv5s78WC+K0S
+         B5/IBNEFADO/TQAE/YUOfBWh74QI2Jzjyj2Bx/KHH4wO4qzQ97esSOGbsjbZar+YnJ21
+         uPuA==
+X-Gm-Message-State: APjAAAU/FkkhNnGyaCuOKSfoPq0JmyiE7X/xtG9wndLdKUGovh5Roo3C
+        uIkz/f2ToxizKc6tp0wD1ejxpw==
+X-Google-Smtp-Source: APXvYqxNVQoMlV0omgFKo75Awgw9qRfhh6FBsXYbr1pvY1QOdw5O302UlF57KTTs2aFOEmTGVw1+7g==
+X-Received: by 2002:aed:3a03:: with SMTP id n3mr38086132qte.85.1560366863270;
+        Wed, 12 Jun 2019 12:14:23 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id e66sm296313qtb.55.2019.06.12.12.14.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Jun 2019 12:14:22 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hb8hR-00037z-Na; Wed, 12 Jun 2019 16:14:21 -0300
+Date:   Wed, 12 Jun 2019 16:14:21 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
 To:     Jan Kara <jack@suse.cz>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
         Dave Chinner <david@fromorbit.com>,
         Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-xfs@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190612191421.GM3876@ziepe.ca>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606195114.GA30714@ziepe.ca>
+ <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
+ <20190607103636.GA12765@quack2.suse.cz>
+ <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
+ <20190612102917.GB14578@quack2.suse.cz>
+ <20190612114721.GB3876@ziepe.ca>
+ <20190612120907.GC14578@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612120907.GC14578@quack2.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 3:29 AM Jan Kara <jack@suse.cz> wrote:
->
-> On Fri 07-06-19 07:52:13, Ira Weiny wrote:
-> > On Fri, Jun 07, 2019 at 09:17:29AM -0300, Jason Gunthorpe wrote:
-> > > On Fri, Jun 07, 2019 at 12:36:36PM +0200, Jan Kara wrote:
-> > >
-> > > > Because the pins would be invisible to sysadmin from that point on.
-> > >
-> > > It is not invisible, it just shows up in a rdma specific kernel
-> > > interface. You have to use rdma netlink to see the kernel object
-> > > holding this pin.
-> > >
-> > > If this visibility is the main sticking point I suggest just enhancing
-> > > the existing MR reporting to include the file info for current GUP
-> > > pins and teaching lsof to collect information from there as well so it
-> > > is easy to use.
-> > >
-> > > If the ownership of the lease transfers to the MR, and we report that
-> > > ownership to userspace in a way lsof can find, then I think all the
-> > > concerns that have been raised are met, right?
-> >
-> > I was contemplating some new lsof feature yesterday.  But what I don't
-> > think we want is sysadmins to have multiple tools for multiple
-> > subsystems.  Or even have to teach lsof something new for every potential
-> > new subsystem user of GUP pins.
->
-> Agreed.
->
-> > I was thinking more along the lines of reporting files which have GUP
-> > pins on them directly somewhere (dare I say procfs?) and teaching lsof to
-> > report that information.  That would cover any subsystem which does a
-> > longterm pin.
->
-> So lsof already parses /proc/<pid>/maps to learn about files held open by
-> memory mappings. It could parse some other file as well I guess. The good
-> thing about that would be that then "longterm pin" structure would just hold
-> struct file reference. That would avoid any needs of special behavior on
-> file close (the file reference in the "longterm pin" structure would make
-> sure struct file and thus the lease stays around, we'd just need to make
-> explicit lease unlock block until the "longterm pin" structure is freed).
-> The bad thing is that it requires us to come up with a sane new proc
-> interface for reporting "longterm pins" and associated struct file. Also we
-> need to define what this interface shows if the pinned pages are in DRAM
-> (either page cache or anon) and not on NVDIMM.
+On Wed, Jun 12, 2019 at 02:09:07PM +0200, Jan Kara wrote:
+> On Wed 12-06-19 08:47:21, Jason Gunthorpe wrote:
+> > On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
+> > 
+> > > > > The main objection to the current ODP & DAX solution is that very
+> > > > > little HW can actually implement it, having the alternative still
+> > > > > require HW support doesn't seem like progress.
+> > > > > 
+> > > > > I think we will eventually start seein some HW be able to do this
+> > > > > invalidation, but it won't be universal, and I'd rather leave it
+> > > > > optional, for recovery from truely catastrophic errors (ie my DAX is
+> > > > > on fire, I need to unplug it).
+> > > > 
+> > > > Agreed.  I think software wise there is not much some of the devices can do
+> > > > with such an "invalidate".
+> > > 
+> > > So out of curiosity: What does RDMA driver do when userspace just closes
+> > > the file pointing to RDMA object? It has to handle that somehow by aborting
+> > > everything that's going on... And I wanted similar behavior here.
+> > 
+> > It aborts *everything* connected to that file descriptor. Destroying
+> > everything avoids creating inconsistencies that destroying a subset
+> > would create.
+> > 
+> > What has been talked about for lease break is not destroying anything
+> > but very selectively saying that one memory region linked to the GUP
+> > is no longer functional.
+> 
+> OK, so what I had in mind was that if RDMA app doesn't play by the rules
+> and closes the file with existing pins (and thus layout lease) we would
+> force it to abort everything. Yes, it is disruptive but then the app didn't
+> obey the rule that it has to maintain file lease while holding pins. Thus
+> such situation should never happen unless the app is malicious / buggy.
 
-The anon vs shared detection case is important because a longterm pin
-might be blocking a memory-hot-unplug operation if it is pinning
-ZONE_MOVABLE memory, but I don't think we want DRAM vs NVDIMM to be an
-explicit concern of the interface. For the anon / cached case I expect
-it might be useful to put that communication under the memory-blocks
-sysfs interface. I.e. a list of pids that are pinning that
-memory-block from being hot-unplugged.
+We do have the infrastructure to completely revoke the entire
+*content* of a FD (this is called device disassociate). It is
+basically close without the app doing close. But again it only works
+with some drivers. However, this is more likely something a driver
+could support without a HW change though.
+
+It is quite destructive as it forcibly kills everything RDMA related
+the process(es) are doing, but it is less violent than SIGKILL, and
+there is perhaps a way for the app to recover from this, if it is
+coded for it.
+
+My preference would be to avoid this scenario, but if it is really
+necessary, we could probably build it with some work.
+
+The only case we use it today is forced HW hot unplug, so it is rarely
+used and only for an 'emergency' like use case.
+
+Jason
