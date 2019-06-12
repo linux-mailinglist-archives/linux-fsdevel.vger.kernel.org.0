@@ -2,141 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F20BD447F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 19:03:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 406C3447F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 19:03:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393230AbfFMRD3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 13:03:29 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34782 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729446AbfFLWyc (ORCPT
+        id S1729486AbfFMRDQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 13:03:16 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34585 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729449AbfFLWyh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 18:54:32 -0400
-Received: by mail-oi1-f196.google.com with SMTP id u64so12973566oib.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 15:54:31 -0700 (PDT)
+        Wed, 12 Jun 2019 18:54:37 -0400
+Received: by mail-wm1-f66.google.com with SMTP id w9so5270610wmd.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 15:54:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Bdl55fUd9OUfrgwift11oOf2CuCyNYJsaQ/2pJqMiX8=;
-        b=TDdvtQWHOWeWDi3ya4dvSfYwmH6uUyvwLhp+t3pFlfqs6fcjGtEhlIbrtaKLrkMypK
-         3r/atyNnqdAwbVWCWb36k5W6rbANKEH05Zq/fvFhnbIMRVlG9MdVxZaKROsDcGxg5fsD
-         xcJSZa1UHKrohPWZiLJYsIJPKe+yEk1iAWtIe7q0UI4HOt2ZVPruDMChcmE8v+JbGquZ
-         zGgFJZ9TyYotfWPDbv2PbDOKp3zl5e1hmsd/9uCbz4MhdDtoN1em2rz6Z08xQRdK7PRW
-         lz+4KI6GRAFXU1BeCj1XGUxgC4Zn//as5jdjihKbG8sNr4JMjs+LswufzA5pgK5q8yPQ
-         G1VQ==
+        d=brauner.io; s=google;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=JPDTuU1KnT4imMfQFt3NF1AkrQ8ighWpONZCIjWty8k=;
+        b=Nq8XeflSpeNq85e0XL6YL6R2q9mdD488Rr1YrYR+xdjtkLsTPQ2J+RZ+++BpMD6zs4
+         0PUUwrE079J3RlX/OYkGYC9YyuOcEvxfOqptTMqPnhFbZf51cS1TkTQ9shNS3Xmu8lsx
+         LIgiKMllwi/VvpMIO63KrOTNKDCWxUyuXQuQOn/hk0cs1TLXFLsWrTHr16u4lAumEPal
+         xZF48NOWp4DkVh8r8exkogr1ZfbxTHy6Q+3E5sGDd8BRh62mpDKONNBwxYDF8sMXCTBC
+         RCCkc+wC5jS8dENlCKFJvHhLlIE5/3gbR6zPxnFgpahYIn1DIOkmO/0V6V3tLjJSwzEO
+         UUyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Bdl55fUd9OUfrgwift11oOf2CuCyNYJsaQ/2pJqMiX8=;
-        b=GyRJc3KIJoOplyY1O0yp4ibzIqlechKw+HuXa68pBUev7WRxAZ9s/9xX1bkbTvmUlT
-         XjaZgTGK8enRKC1DgbNAN//1vGU32NolQ6eKpNDm6Kb7u/6w3KWpb10uHP5eJD3QzUaC
-         lCxuwRMvyVOBYsaQhKqEPXD8jXfFpgD9Kv7CAVkD0gZiW9e1TKg8RXndVUJKMTzp2rIT
-         e0l8jLHRaikSiNvpQgPn1oz4zv1Id/B5KUcLEuHtfBYpuTLof+ulVvvGFvkMljkDxnWV
-         i6FhlzpGnGOM/w1CvN2VNdd+V0oe4cJrpoDoFhXH+rF4+005h8RzN6C6pxka7WWS7jkF
-         mcUQ==
-X-Gm-Message-State: APjAAAWYNpIZ81FTKiJvkUbPwD+k5fUxGcEzXl39dWCgavCRgpc5OCrI
-        s3iwnBeApX7vbH0h7H9/XrfqmS9kxMshC0jh6Zm+0Q==
-X-Google-Smtp-Source: APXvYqw1FP7LujPNDjxfvPPdcXEEv7BpZu0ZvkIEpv2DDnh9DqFnd/FGbL1Cg5TXidb34VUmG/D3LrKYdijZM5Cv9VY=
-X-Received: by 2002:aca:ec82:: with SMTP id k124mr1023354oih.73.1560380070925;
- Wed, 12 Jun 2019 15:54:30 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=JPDTuU1KnT4imMfQFt3NF1AkrQ8ighWpONZCIjWty8k=;
+        b=K0ui58DwXa/XCixUQ0TYqFyCbxjG3AChmssysp/gYNH1qX5DB7nxmx2VGCfZZPXl4r
+         RzFVSqSARajhJp0Hzugs3rVYs/D9vKNJLiOsottmf+Cw7Sf3QFcqW2dyZV9JdiiHGwkE
+         WrH36ZLu2h2q7wIgEsom6GjVZy5iLYBYbE43z+Vmn2xf9+kf8waxy+oWsOtgnH1M+yCV
+         vJ+Ad2mmOzZrzzHchdMziO8cxsoEpVgCpfAmhQRkHqQbx3w43KLpq6I5H21BAGi+RJFG
+         4h86qJwi1rP1umG6HboILkm8Xnh1FpjffGYabI6CtVXrtK2w/HxNkVYtrJdXqBOtkJJE
+         vXgQ==
+X-Gm-Message-State: APjAAAXsPe3RtgXpIn4ssLK+EYBUZCWCEd6EYzZ6Wl/G67OK3QXQXpbY
+        aBbJElo1dtx1gJAtl3hE+WG2AJ5GvNupMQ==
+X-Google-Smtp-Source: APXvYqzMwFI47ICM+9xHYN+8QsBe1OUPB18O7f91O/loMUm8TPCfIlC6qG8jtfcI5of1Ah/ZYCVwLQ==
+X-Received: by 2002:a1c:acc8:: with SMTP id v191mr1006944wme.177.1560380074924;
+        Wed, 12 Jun 2019 15:54:34 -0700 (PDT)
+Received: from brauner.io ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id z14sm996092wre.96.2019.06.12.15.54.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 12 Jun 2019 15:54:34 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 00:54:33 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, dhowells@redhat.com
+Subject: Regression for MS_MOVE on kernel v5.1
+Message-ID: <20190612225431.p753mzqynxpsazb7@brauner.io>
 MIME-Version: 1.0
-References: <20190606104203.GF7433@quack2.suse.cz> <20190606195114.GA30714@ziepe.ca>
- <20190606222228.GB11698@iweiny-DESK2.sc.intel.com> <20190607103636.GA12765@quack2.suse.cz>
- <20190607121729.GA14802@ziepe.ca> <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
- <20190612102917.GB14578@quack2.suse.cz> <20190612114721.GB3876@ziepe.ca>
- <20190612120907.GC14578@quack2.suse.cz> <20190612191421.GM3876@ziepe.ca> <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
-In-Reply-To: <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 12 Jun 2019 15:54:19 -0700
-Message-ID: <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 3:12 PM Ira Weiny <ira.weiny@intel.com> wrote:
->
-> On Wed, Jun 12, 2019 at 04:14:21PM -0300, Jason Gunthorpe wrote:
-> > On Wed, Jun 12, 2019 at 02:09:07PM +0200, Jan Kara wrote:
-> > > On Wed 12-06-19 08:47:21, Jason Gunthorpe wrote:
-> > > > On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
-> > > >
-> > > > > > > The main objection to the current ODP & DAX solution is that very
-> > > > > > > little HW can actually implement it, having the alternative still
-> > > > > > > require HW support doesn't seem like progress.
-> > > > > > >
-> > > > > > > I think we will eventually start seein some HW be able to do this
-> > > > > > > invalidation, but it won't be universal, and I'd rather leave it
-> > > > > > > optional, for recovery from truely catastrophic errors (ie my DAX is
-> > > > > > > on fire, I need to unplug it).
-> > > > > >
-> > > > > > Agreed.  I think software wise there is not much some of the devices can do
-> > > > > > with such an "invalidate".
-> > > > >
-> > > > > So out of curiosity: What does RDMA driver do when userspace just closes
-> > > > > the file pointing to RDMA object? It has to handle that somehow by aborting
-> > > > > everything that's going on... And I wanted similar behavior here.
-> > > >
-> > > > It aborts *everything* connected to that file descriptor. Destroying
-> > > > everything avoids creating inconsistencies that destroying a subset
-> > > > would create.
-> > > >
-> > > > What has been talked about for lease break is not destroying anything
-> > > > but very selectively saying that one memory region linked to the GUP
-> > > > is no longer functional.
-> > >
-> > > OK, so what I had in mind was that if RDMA app doesn't play by the rules
-> > > and closes the file with existing pins (and thus layout lease) we would
-> > > force it to abort everything. Yes, it is disruptive but then the app didn't
-> > > obey the rule that it has to maintain file lease while holding pins. Thus
-> > > such situation should never happen unless the app is malicious / buggy.
-> >
-> > We do have the infrastructure to completely revoke the entire
-> > *content* of a FD (this is called device disassociate). It is
-> > basically close without the app doing close. But again it only works
-> > with some drivers. However, this is more likely something a driver
-> > could support without a HW change though.
-> >
-> > It is quite destructive as it forcibly kills everything RDMA related
-> > the process(es) are doing, but it is less violent than SIGKILL, and
-> > there is perhaps a way for the app to recover from this, if it is
-> > coded for it.
->
-> I don't think many are...  I think most would effectively be "killed" if this
-> happened to them.
->
-> >
-> > My preference would be to avoid this scenario, but if it is really
-> > necessary, we could probably build it with some work.
-> >
-> > The only case we use it today is forced HW hot unplug, so it is rarely
-> > used and only for an 'emergency' like use case.
->
-> I'd really like to avoid this as well.  I think it will be very confusing for
-> RDMA apps to have their context suddenly be invalid.  I think if we have a way
-> for admins to ID who is pinning a file the admin can take more appropriate
-> action on those processes.   Up to and including killing the process.
+Hey,
 
-Can RDMA context invalidation, "device disassociate", be inflicted on
-a process from the outside? Identifying the pid of a pin holder only
-leaves SIGKILL of the entire process as the remediation for revoking a
-pin, and I assume admins would use the finer grained invalidation
-where it was available.
+Sorry to be the bearer of bad news but I think I observed a pretty
+gnarly regression for userspace with MS_MOVE from kernel v5.1 onwards.
+
+When propagating mounts across mount namespaces owned by different user
+namespaces it is not possible anymore to move the mount in the less
+privileged mount namespace.
+Here is a reproducer:
+
+sudo mount -t tmpfs tmpfs /mnt
+sudo --make-rshared /mnt
+
+# create unprivileged user + mount namespace and preserve propagation
+unshare -U -m --map-root --propagation=unchanged
+
+# now change back to the original mount namespace in another terminal:
+sudo mkdir /mnt/aaa
+sudo mount -t tmpfs tmpfs /mnt/aaa
+
+# now in the unprivileged user + mount namespace
+mount --move /mnt/aaa /opt
+
+This will work on kernels prior to 5.1 but will fail on kernels starting
+with 5.1.
+Unfortunately, this is a pretty big deal for userspace. In LXD - which I
+maintain when not doing kernel stuff - we use this mechanism to inject
+mounts into running unprivileged containers. Users started reporting
+failures against our mount injection feature just a short while ago
+(cf.  [1], [2]) and I just came around to looking into this today.
+
+I tracked this down to commit:
+
+commit 3bd045cc9c4be2049602b47505256b43908b4e2f
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Wed Jan 30 13:15:45 2019 -0500
+
+    separate copying and locking mount tree on cross-userns copies
+
+    Rather than having propagate_mnt() check doing unprivileged copies,
+    lock them before commit_tree().
+
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+reverting it makes MS_MOVE to work correctly again.
+The commit changes the internal logic to lock mounts when propagating
+mounts (user+)mount namespaces and - I believe - causes do_mount_move()
+to fail at:
+
+if (old->mnt.mnt_flags & MNT_LOCKED)
+        goto out;
+
+If that's indeed the case we should either revert this commit (reverts
+cleanly, just tested it) or find a fix.
+
+Thanks!
+Christian
+
+[1]: https://github.com/lxc/lxd/issues/5788
+[2]: https://github.com/lxc/lxd/issues/5836
