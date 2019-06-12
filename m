@@ -2,74 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1923A42505
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 14:08:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FFA042610
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 14:39:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438450AbfFLMIZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jun 2019 08:08:25 -0400
-Received: from server.eikelenboom.it ([91.121.65.215]:54960 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436551AbfFLMIZ (ORCPT
+        id S2408511AbfFLMh5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jun 2019 08:37:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48760 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406351AbfFLMh5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 08:08:25 -0400
+        Wed, 12 Jun 2019 08:37:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=HMMzkEP4WbpPiU7OaAK4YYStnvL4huMRmKxIzkOsvO0=; b=YziB4QXQ1wZZTmpueJ7TbStAiC
-        2OB0T4AcHVrvcXFvdn+encKtRh++7eIctsFdZRN2IA428qb3nU1FiAGa68Q+vvyr6BL7ohsIraMK7
-        zJzAnpX/bMXKuE8eLl7Ued5Z8lCWfuCFrWtHbjg5lForaybVdp6y73fJa6pfzOXXUfBw=;
-Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:25793 helo=[10.97.34.6])
-        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <linux@eikelenboom.it>)
-        id 1hb23B-0004SJ-0E; Wed, 12 Jun 2019 14:08:21 +0200
-Subject: Re: [PATCH] fuse: require /dev/fuse reads to have enough buffer
- capacity (take 2)
-To:     Kirill Smelkov <kirr@nexedi.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, gluster-devel@gluster.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <876aefd0-808a-bb4b-0897-191f0a8d9e12@eikelenboom.it>
- <CAJfpegvRBm3M8fUJ1Le1dPd0QSJgAWAYJGLCQKa6YLTE+4oucw@mail.gmail.com>
- <20190611202738.GA22556@deco.navytux.spb.ru>
- <CAOssrKfj-MDujX0_t_fgobL_KwpuG2fxFmT=4nURuJA=sUvYYg@mail.gmail.com>
- <20190612112544.GA21465@deco.navytux.spb.ru>
-From:   Sander Eikelenboom <linux@eikelenboom.it>
-Message-ID: <97c87eb3-5b95-c848-8c50-ed7b535220b0@eikelenboom.it>
-Date:   Wed, 12 Jun 2019 14:11:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l/g0KnT/EyAvMoDe4YYe+/hlvBi7vzZDEnk1KrMoaBA=; b=LcKAST6BxZ0yaOkpMIf7Enjfj
+        6c1UeC9+DtFiAG+4D1XV7S0v/ELkcMzkURVHfKUblrSfnsOxjaT7amrayTl8QE7Smq9tJEjwDCWRd
+        cPbbPfreHmLvxItzPtzj01TyLpkUqy/kyuWCUwt7PAmxBBWhSBNFS/O2Q9nWYMpVJEIh8LvtVttjd
+        3KNMNDefD5IFT6bWTwg5AiN9UAusMV0sJPpB8YYd7y3pqpMB8efSmNBLxM2eJ58kVJO5XNksaSM2O
+        FqwQN4iCqdirubzy0TOiW6r/sZA9NbDScogy2w/raTG/y8nZlf2j6YFQA1y/4Snew3ovKOI6jiSdf
+        lwADVwjOA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hb2Vl-00060B-5I; Wed, 12 Jun 2019 12:37:53 +0000
+Date:   Wed, 12 Jun 2019 05:37:53 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190612123751.GD32656@bombadil.infradead.org>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
+ <20190607110426.GB12765@quack2.suse.cz>
+ <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
+ <20190608001036.GF14308@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <20190612112544.GA21465@deco.navytux.spb.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190608001036.GF14308@dread.disaster.area>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/06/2019 13:25, Kirill Smelkov wrote:
-> On Wed, Jun 12, 2019 at 09:44:49AM +0200, Miklos Szeredi wrote:
->> On Tue, Jun 11, 2019 at 10:28 PM Kirill Smelkov <kirr@nexedi.com> wrote:
->>
->>> Miklos, would 4K -> `sizeof(fuse_in_header) + sizeof(fuse_write_in)` for
->>> header room change be accepted?
->>
->> Yes, next cycle.   For 4.2 I'll just push the revert.
+On Sat, Jun 08, 2019 at 10:10:36AM +1000, Dave Chinner wrote:
+> On Fri, Jun 07, 2019 at 11:25:35AM -0700, Ira Weiny wrote:
+> > Are you suggesting that we have something like this from user space?
+> > 
+> > 	fcntl(fd, F_SETLEASE, F_LAYOUT | F_UNBREAKABLE);
 > 
-> Thanks Miklos. Please consider queuing the following patch for 5.3.
-> Sander, could you please confirm that glusterfs is not broken with this
-> version of the check?
+> Rather than "unbreakable", perhaps a clearer description of the
+> policy it entails is "exclusive"?
 > 
-> Thanks beforehand,
-> Kirill
+> i.e. what we are talking about here is an exclusive lease that
+> prevents other processes from changing the layout. i.e. the
+> mechanism used to guarantee a lease is exclusive is that the layout
+> becomes "unbreakable" at the filesystem level, but the policy we are
+> actually presenting to uses is "exclusive access"...
 
-Sure will give it a spin this evening and report back.
+That's rather different from the normal meaning of 'exclusive' in the
+context of locks, which is "only one user can have access to this at
+a time".  As I understand it, this is rather more like a 'shared' or
+'read' lock.  The filesystem would be the one which wants an exclusive
+lock, so it can modify the mapping of logical to physical blocks.
 
---
-Sander
+The complication being that by default the filesystem has an exclusive
+lock on the mapping, and what we're trying to add is the ability for
+readers to ask the filesystem to give up its exclusive lock.
+
