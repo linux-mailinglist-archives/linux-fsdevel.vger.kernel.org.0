@@ -2,122 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 406C3447F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 19:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F0EF447E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 19:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729486AbfFMRDQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 13:03:16 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34585 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729449AbfFLWyh (ORCPT
+        id S1732734AbfFMRCv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 13:02:51 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:33351 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729490AbfFLXD3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 18:54:37 -0400
-Received: by mail-wm1-f66.google.com with SMTP id w9so5270610wmd.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 15:54:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=JPDTuU1KnT4imMfQFt3NF1AkrQ8ighWpONZCIjWty8k=;
-        b=Nq8XeflSpeNq85e0XL6YL6R2q9mdD488Rr1YrYR+xdjtkLsTPQ2J+RZ+++BpMD6zs4
-         0PUUwrE079J3RlX/OYkGYC9YyuOcEvxfOqptTMqPnhFbZf51cS1TkTQ9shNS3Xmu8lsx
-         LIgiKMllwi/VvpMIO63KrOTNKDCWxUyuXQuQOn/hk0cs1TLXFLsWrTHr16u4lAumEPal
-         xZF48NOWp4DkVh8r8exkogr1ZfbxTHy6Q+3E5sGDd8BRh62mpDKONNBwxYDF8sMXCTBC
-         RCCkc+wC5jS8dENlCKFJvHhLlIE5/3gbR6zPxnFgpahYIn1DIOkmO/0V6V3tLjJSwzEO
-         UUyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=JPDTuU1KnT4imMfQFt3NF1AkrQ8ighWpONZCIjWty8k=;
-        b=K0ui58DwXa/XCixUQ0TYqFyCbxjG3AChmssysp/gYNH1qX5DB7nxmx2VGCfZZPXl4r
-         RzFVSqSARajhJp0Hzugs3rVYs/D9vKNJLiOsottmf+Cw7Sf3QFcqW2dyZV9JdiiHGwkE
-         WrH36ZLu2h2q7wIgEsom6GjVZy5iLYBYbE43z+Vmn2xf9+kf8waxy+oWsOtgnH1M+yCV
-         vJ+Ad2mmOzZrzzHchdMziO8cxsoEpVgCpfAmhQRkHqQbx3w43KLpq6I5H21BAGi+RJFG
-         4h86qJwi1rP1umG6HboILkm8Xnh1FpjffGYabI6CtVXrtK2w/HxNkVYtrJdXqBOtkJJE
-         vXgQ==
-X-Gm-Message-State: APjAAAXsPe3RtgXpIn4ssLK+EYBUZCWCEd6EYzZ6Wl/G67OK3QXQXpbY
-        aBbJElo1dtx1gJAtl3hE+WG2AJ5GvNupMQ==
-X-Google-Smtp-Source: APXvYqzMwFI47ICM+9xHYN+8QsBe1OUPB18O7f91O/loMUm8TPCfIlC6qG8jtfcI5of1Ah/ZYCVwLQ==
-X-Received: by 2002:a1c:acc8:: with SMTP id v191mr1006944wme.177.1560380074924;
-        Wed, 12 Jun 2019 15:54:34 -0700 (PDT)
-Received: from brauner.io ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id z14sm996092wre.96.2019.06.12.15.54.33
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 15:54:34 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 00:54:33 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, dhowells@redhat.com
-Subject: Regression for MS_MOVE on kernel v5.1
-Message-ID: <20190612225431.p753mzqynxpsazb7@brauner.io>
+        Wed, 12 Jun 2019 19:03:29 -0400
+Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 341A143A474;
+        Thu, 13 Jun 2019 09:03:22 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hbCG8-0003d7-Ew; Thu, 13 Jun 2019 09:02:24 +1000
+Date:   Thu, 13 Jun 2019 09:02:24 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-bcache@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Zach Brown <zach.brown@ni.com>, Jens Axboe <axboe@kernel.dk>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: bcachefs status update (it's done cooking; let's get this sucker
+ merged)
+Message-ID: <20190612230224.GJ14308@dread.disaster.area>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611011737.GA28701@kmo-pixel>
+ <20190611043336.GB14363@dread.disaster.area>
+ <20190612162144.GA7619@kmo-pixel>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190612162144.GA7619@kmo-pixel>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
+        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
+        a=7-415B0cAAAA:8 a=tccdw4E4cXR0RJmQ1BEA:9 a=0qVWwiFle0hDQdq2:21
+        a=AnpUfA7Lj1-y_lnq:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hey,
+On Wed, Jun 12, 2019 at 12:21:44PM -0400, Kent Overstreet wrote:
+> On Tue, Jun 11, 2019 at 02:33:36PM +1000, Dave Chinner wrote:
+> > I just recently said this with reference to the range lock stuff I'm
+> > working on in the background:
+> > 
+> > 	FWIW, it's to avoid problems with stupid userspace stuff
+> > 	that nobody really should be doing that I want range locks
+> > 	for the XFS inode locks.  If userspace overlaps the ranges
+> > 	and deadlocks in that case, they they get to keep all the
+> > 	broken bits because, IMO, they are doing something
+> > 	monumentally stupid. I'd probably be making it return
+> > 	EDEADLOCK back out to userspace in the case rather than
+> > 	deadlocking but, fundamentally, I think it's broken
+> > 	behaviour that we should be rejecting with an error rather
+> > 	than adding complexity trying to handle it.
+> > 
+> > So I think this recusive locking across a page fault case should
+> > just fail, not add yet more complexity to try to handle a rare
+> > corner case that exists more in theory than in reality. i.e put the
+> > lock context in the current task, then if the page fault requires a
+> > conflicting lock context to be taken, we terminate the page fault,
+> > back out of the IO and return EDEADLOCK out to userspace. This works
+> > for all types of lock contexts - only the filesystem itself needs to
+> > know what the lock context pointer contains....
+> 
+> Ok, I'm totally on board with returning EDEADLOCK.
+> 
+> Question: Would we be ok with returning EDEADLOCK for any IO where the buffer is
+> in the same address space as the file being read/written to, even if the buffer
+> and the IO don't technically overlap?
 
-Sorry to be the bearer of bad news but I think I observed a pretty
-gnarly regression for userspace with MS_MOVE from kernel v5.1 onwards.
+I'd say that depends on the lock granularity. For a range lock,
+we'd be able to do the IO for non-overlapping ranges. For a normal
+mutex or rwsem, then we risk deadlock if the page fault triggers on
+the same address space host as we already have locked for IO. That's
+the case we currently handle with the second IO lock in XFS, ext4,
+btrfs, etc (XFS_MMAPLOCK_* in XFS).
 
-When propagating mounts across mount namespaces owned by different user
-namespaces it is not possible anymore to move the mount in the less
-privileged mount namespace.
-Here is a reproducer:
+One of the reasons I'm looking at range locks for XFS is to get rid
+of the need for this second mmap lock, as there is no reason for it
+existing if we can lock ranges and EDEADLOCK inside page faults and
+return errors.
 
-sudo mount -t tmpfs tmpfs /mnt
-sudo --make-rshared /mnt
+> This would simplify things a lot and eliminate a really nasty corner case - page
+> faults trigger readahead. Even if the buffer and the direct IO don't overlap,
+> readahead can pull in pages that do overlap with the dio.
 
-# create unprivileged user + mount namespace and preserve propagation
-unshare -U -m --map-root --propagation=unchanged
+Page cache readahead needs to be moved under the filesystem IO
+locks. There was a recent thread about how readahead can race with
+hole punching and other fallocate() operations because page cache
+readahead bypasses the filesystem IO locks used to serialise page
+cache invalidation.
 
-# now change back to the original mount namespace in another terminal:
-sudo mkdir /mnt/aaa
-sudo mount -t tmpfs tmpfs /mnt/aaa
+e.g. Readahead can be directed by userspace via fadvise, so we now
+have file->f_op->fadvise() so that filesystems can lock the inode
+before calling generic_fadvise() such that page cache instantiation
+and readahead dispatch can be serialised against page cache
+invalidation. I have a patch for XFS sitting around somewhere that
+implements the ->fadvise method.
 
-# now in the unprivileged user + mount namespace
-mount --move /mnt/aaa /opt
+I think there are some other patches floating around to address the
+other readahead mechanisms to only be done under filesytem IO locks,
+but I haven't had time to dig into it any further. Readahead from
+page faults most definitely needs to be under the MMAPLOCK at
+least so it serialises against fallocate()...
 
-This will work on kernels prior to 5.1 but will fail on kernels starting
-with 5.1.
-Unfortunately, this is a pretty big deal for userspace. In LXD - which I
-maintain when not doing kernel stuff - we use this mechanism to inject
-mounts into running unprivileged containers. Users started reporting
-failures against our mount injection feature just a short while ago
-(cf.  [1], [2]) and I just came around to looking into this today.
+> And on getting EDEADLOCK we could fall back to buffered IO, so
+> userspace would never know....
 
-I tracked this down to commit:
+Yup, that's a choice that individual filesystems can make.
 
-commit 3bd045cc9c4be2049602b47505256b43908b4e2f
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Wed Jan 30 13:15:45 2019 -0500
+Cheers,
 
-    separate copying and locking mount tree on cross-userns copies
-
-    Rather than having propagate_mnt() check doing unprivileged copies,
-    lock them before commit_tree().
-
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-reverting it makes MS_MOVE to work correctly again.
-The commit changes the internal logic to lock mounts when propagating
-mounts (user+)mount namespaces and - I believe - causes do_mount_move()
-to fail at:
-
-if (old->mnt.mnt_flags & MNT_LOCKED)
-        goto out;
-
-If that's indeed the case we should either revert this commit (reverts
-cleanly, just tested it) or find a fix.
-
-Thanks!
-Christian
-
-[1]: https://github.com/lxc/lxd/issues/5788
-[2]: https://github.com/lxc/lxd/issues/5836
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
