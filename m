@@ -2,100 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E2B41A08
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 03:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FBB841A40
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jun 2019 04:08:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407317AbfFLBqh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jun 2019 21:46:37 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43964 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729074AbfFLBqg (ORCPT
+        id S2408328AbfFLCIB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jun 2019 22:08:01 -0400
+Received: from mail-lf1-f41.google.com ([209.85.167.41]:45682 "EHLO
+        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406597AbfFLCIB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jun 2019 21:46:36 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w33so23011672edb.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2019 18:46:35 -0700 (PDT)
+        Tue, 11 Jun 2019 22:08:01 -0400
+Received: by mail-lf1-f41.google.com with SMTP id u10so10759555lfm.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2019 19:07:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LXj97QV1xj0YMzJTfwO7V63Jo2GxebtIwJp0QMGiowU=;
-        b=HXRALFEYuiiWfCAMv5ihCzb+blJRwM2p40Q+4CrmWGOBIgEkIDSwBrEmzJYKQ+tQQG
-         z2zhnfgt9xZBNdaJnC4IYxdve974bp8GqdRK0VoTR77WKjzD+KD0JIztls5JApZ5hV+F
-         OZ26YVVQJtbKfc4dhoGKHLxGltQMUFpy31s8E4bdelVuXnJSkCJzxdSGyZILsBzUq80t
-         f2c+1jkR/tn+MjiDAWne64fh2CCM+Ju3910qo87nTjZEZJjXCiYH7ZeVy12toNmoHyaz
-         IxnqUNMjynTbSnz5WxKPBzjlGaW/AxuUfXPeCSCnkTypuYPRZ93+e0sfsOSBZY616mof
-         zdBg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zvcuGBw+4LQao88YFmzPADNOaa+2pmIz1aMFK+ndk6M=;
+        b=XcZ9B2oIjVRXTLHyuEPsLajuh6i76LN69nh3G8uioz1IkqIoBNiJmqBx/YkM+zyHPY
+         2G4ifYC/e/x616EYdSNIo03kIta8UGvL7gEmyY9zsCOwuEh0KIGgPW6cVGtYZOxKD6oY
+         Cr+IJ89IjBKKmulpfediz94KCA9DcxQ3obwPo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LXj97QV1xj0YMzJTfwO7V63Jo2GxebtIwJp0QMGiowU=;
-        b=QIdgZiIofrnWJ8Q9NsP1SVRKsyxrRjtoRkxHVxUC4r1q+eAfGejvt+D0OtFtEw9u3h
-         /muoLfpkkwAylvmf22EFbwnjWKm7mmQ/FGy7Ni0md20YA7LsmT+KHkQO4DinEzkx6Wi9
-         RI+mQ09YDXt47ho5CGbORo1OpNehLd9sPdguExTciBojCPyjqcRJzYaKknNLkto7OtEM
-         9nzm8xzRRukWd+rAJgYz0/VrQapbJjGgmu5fz8hVWzttC2Cb1A4rX5aGrwySBorhyl2T
-         Y2iNPEVVk+ZBgmCQviSMnmloIAwQBZy0oVasvutwyCrztKeHdXU9l+9TJC4CarOBttOU
-         eAvg==
-X-Gm-Message-State: APjAAAUov1G7tVefjX6HneW/YTyLWXDi4IcrtPa76OHMdG99lZ9PzjU3
-        jpi+Q5L6VvVHqj4yz5U3EHxb0Q==
-X-Google-Smtp-Source: APXvYqwI5Qv0C/a0lrl6mzuoFXDCntFWruXenrhqcLo08+2SpUh6wATX727OIc7E2oRZg6ayc5q2AQ==
-X-Received: by 2002:a50:ad01:: with SMTP id y1mr62139325edc.180.1560303994960;
-        Tue, 11 Jun 2019 18:46:34 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id a53sm1063966eda.56.2019.06.11.18.46.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Jun 2019 18:46:34 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 0011A10081B; Wed, 12 Jun 2019 04:46:34 +0300 (+03)
-Date:   Wed, 12 Jun 2019 04:46:34 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Hugh Dickins <hughd@google.com>,
-        Jan Kara <jack@suse.cz>, Song Liu <liu.song.a23@gmail.com>
-Subject: Re: [PATCH v4] page cache: Store only head pages in i_pages
-Message-ID: <20190612014634.f23fjumw666jj52s@box>
-References: <20190307153051.18815-1-willy@infradead.org>
- <155951205528.18214.706102020945306720@skylake-alporthouse-com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zvcuGBw+4LQao88YFmzPADNOaa+2pmIz1aMFK+ndk6M=;
+        b=Xo/zbofglN7Si3psjxJqwnsIgn1WxY8mPEyQ2dzNFCjDx9VsYBkjqExy5ywbc5d2Mn
+         ftTwOrqHfD56+c3B2ovMekY6n0Z47vfLCXjiGiMlvzrSy7CGmVSUydoMvhI2pm3fm19T
+         VGM9SVTp5igi8sW7SMhiQmOjEHZr3tASCQyILWvcnjDe8iEet6ngEsE2gHZhgxDEb3t4
+         xi9dfh4oK/eOzV3cdq1lEpmj6gFVajPLz8pKcJ3N0xC20Ob/hAOm8z9JOp+NyAF6ge9o
+         ItG9hYnPHuS+x32SQZAu68+1ddoOEEVimTOMVulwUNMgM2Xun6H3B6EBsL8mikJ3jWIT
+         bxeQ==
+X-Gm-Message-State: APjAAAU/8Wc80TPYazR7LNUtpfgub+zGZ399va+h3pnmo6XriMkAJpI5
+        7y6krzFXTleh9Pr9zrVN+0MtvRarEC8=
+X-Google-Smtp-Source: APXvYqyQ0uMqFJ0t3CdNLI8UElBpE9FZcCGt95rx21V9/gugzsR2LENv5wnxqLc25QK5LBxf5Nj63Q==
+X-Received: by 2002:ac2:5095:: with SMTP id f21mr39552250lfm.155.1560305277827;
+        Tue, 11 Jun 2019 19:07:57 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id k4sm1158162ljj.41.2019.06.11.19.07.56
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 19:07:56 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id v24so9254682ljg.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jun 2019 19:07:56 -0700 (PDT)
+X-Received: by 2002:a2e:9c03:: with SMTP id s3mr26468187lji.209.1560305276220;
+ Tue, 11 Jun 2019 19:07:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155951205528.18214.706102020945306720@skylake-alporthouse-com>
-User-Agent: NeoMutt/20180716
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611041045.GA14363@dread.disaster.area> <CAHk-=whDmeozRHUO0qM+2OeGw+=dkcjwGdsvms-x5Dz4y7Tzcw@mail.gmail.com>
+ <20190611071038.GC14363@dread.disaster.area>
+In-Reply-To: <20190611071038.GC14363@dread.disaster.area>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 11 Jun 2019 16:07:40 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wgBdTUvjYXKPr_wAAe_Z-hFgM2KMHcsK+b=3w5yMSJ9zw@mail.gmail.com>
+Message-ID: <CAHk-=wgBdTUvjYXKPr_wAAe_Z-hFgM2KMHcsK+b=3w5yMSJ9zw@mail.gmail.com>
+Subject: Re: bcachefs status update (it's done cooking; let's get this sucker merged)
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-bcache@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Zach Brown <zach.brown@ni.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jun 02, 2019 at 10:47:35PM +0100, Chris Wilson wrote:
-> Quoting Matthew Wilcox (2019-03-07 15:30:51)
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 404acdcd0455..aaf88f85d492 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -2456,6 +2456,9 @@ static void __split_huge_page(struct page *page, struct list_head *list,
-> >                         if (IS_ENABLED(CONFIG_SHMEM) && PageSwapBacked(head))
-> >                                 shmem_uncharge(head->mapping->host, 1);
-> >                         put_page(head + i);
-> > +               } else if (!PageAnon(page)) {
-> > +                       __xa_store(&head->mapping->i_pages, head[i].index,
-> > +                                       head + i, 0);
-> 
-> Forgiving the ignorant copy'n'paste, this is required:
-> 
-> +               } else if (PageSwapCache(page)) {
-> +                       swp_entry_t entry = { .val = page_private(head + i) };
-> +                       __xa_store(&swap_address_space(entry)->i_pages,
-> +                                  swp_offset(entry),
-> +                                  head + i, 0);
->                 }
->         }
->  
-> The locking is definitely wrong.
+On Mon, Jun 10, 2019 at 9:11 PM Dave Chinner <david@fromorbit.com> wrote:
+>
+> The same rwsem issues were seen on the mmap_sem, the shrinker rwsem,
+> in a couple of device drivers, and so on. i.e. This isn't an XFS
+> issue I'm raising here - I'm raising a concern about the lack of
+> validation of core infrastructure and it's suitability for
+> functionality extensions.
 
-Does it help with the problem, or it's just a possible lead?
+I haven't actually seen the reports.
 
--- 
- Kirill A. Shutemov
+That said, I do think this should be improving. The random
+architecture-specific code is largely going away, and we'll have a
+unified rwsem.
+
+It might obviously cause some pain initially, but I think long-term we
+should be much better off, at least avoiding the "on particular
+configurations" issue..
+
+              Linus
