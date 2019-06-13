@@ -2,218 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EDAA439EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:17:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87A4439EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:17:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733210AbfFMPRU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 11:17:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45400 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732191AbfFMNWo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:22:44 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31D5621473;
-        Thu, 13 Jun 2019 13:22:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560432163;
-        bh=JwfwFzoAqbbp1outlf75R3DQtkfxeJF9Er26IgGsSK8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=jKHRgDobe0P6NKgK1Mpfvx8moCATLdwO4mCjgeY5ijni/cpHRAckOvnyucfGlNiHC
-         a1BplI0n4QvnofEIaqntUYI3pJwHCmjjTAXZwVbcRWXIfRRxDZ5riPB+wPr1MAoNsf
-         TMurIYQ01fH4QpZjegUL3HUBWLCaTh7CGg8M51K4=
-Message-ID: <2851a6b983ed8b5b858b3b336e70296204349762.camel@kernel.org>
-Subject: Re: [PATCH v2] locks: eliminate false positive conflicts for write
- lease
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "J . Bruce Fields" <bfields@fieldses.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Date:   Thu, 13 Jun 2019 09:22:41 -0400
-In-Reply-To: <20190612172408.22671-1-amir73il@gmail.com>
-References: <20190612172408.22671-1-amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        id S1732928AbfFMPRT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 11:17:19 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55380 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732192AbfFMNWz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:22:55 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a15so10179881wmj.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 06:22:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wuAK6EQ80PyDNnpIyEX4qP2XC/coEnhgovta7yfYWxY=;
+        b=JMQ0l3NrX2S5rxk2gqdSAV86GVbkXTUcGPYAfocG6ziyl8sqM3X+SMNxQgaJ7/z2U5
+         HJ4eyfVwdzmcB0Zb1Y1LC+S5FHiMrDv9M1bCkfwvadnhM5bHTiVz3TpWvQc0LwHv14Bg
+         EaXkN7lOTGprcoVn6/xbN8yMBrS2n60nsukmJN/V6yw78xXOI/PjvhfZRKH6E0vgUR91
+         feM1JDdZdSetkpv4okXsDVJL2RxQkpL5Frr7VMsmNVAfI3iJCf5GlflsDSQv+1i5VPXO
+         4SvN2fm0I6lD8JtK5KrWSuUpCZ4R1A0ZwKaMBsKzvg9ZqXYmaPdBL3YqRQwlfvRmO3Sa
+         Q9fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wuAK6EQ80PyDNnpIyEX4qP2XC/coEnhgovta7yfYWxY=;
+        b=IjUJOESWuWe8k3BDx3wY8euqKyVx5Be0NGPgD+0pZwhubh0cEPLQEgjfSlK57d43ke
+         r3uoj7lNvcdUuXeuuKDkIbl2nSF4TuVTt7ts3O2i58sCBbmHT7zq52QoPegAcSj5FCyu
+         WPL//FxxfPf/SIbhqdZ51pJnpx4lGrYwdpbrA67SPJBDTeBeDTNKZaeua0rOWARC1Fj7
+         l6ip/i0Klwt0hguBw+Sg3x5y+JNbHpQ0/Qc/sWLkHAipugz24D8Ht7PLZlexH/xp+Oel
+         ADRUSargXGxT6YDcLyokQ12utmxfxPWj+M0sPyFdDL1g04g3YqPbVFfTG+v8HoUTlov+
+         iqmw==
+X-Gm-Message-State: APjAAAV3DvJOVOtsvKRmV9wER9gq1A+J4GsaSpC9J8FXygsTbTdldyKc
+        Wy4644qePeaR+IPJOQvwt7gGRA==
+X-Google-Smtp-Source: APXvYqwuKiRsCndV/u776Jp+G0a5brq9AKUHpU7KLSBoUmn9cPWSRkTi7WUGMxVnxHSrjc8P5HbdIg==
+X-Received: by 2002:a1c:f519:: with SMTP id t25mr3944137wmh.58.1560432173272;
+        Thu, 13 Jun 2019 06:22:53 -0700 (PDT)
+Received: from brauner.io ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id f3sm2842924wre.93.2019.06.13.06.22.51
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 06:22:52 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 15:22:51 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: Regression for MS_MOVE on kernel v5.1
+Message-ID: <20190613132250.u65yawzvf4voifea@brauner.io>
+References: <20190612225431.p753mzqynxpsazb7@brauner.io>
+ <CAHk-=wh2Khe1Lj-Pdu3o2cXxumL1hegg_1JZGJXki6cchg_Q2Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh2Khe1Lj-Pdu3o2cXxumL1hegg_1JZGJXki6cchg_Q2Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2019-06-12 at 20:24 +0300, Amir Goldstein wrote:
-> check_conflicting_open() is checking for existing fd's open for read or
-> for write before allowing to take a write lease.  The check that was
-> implemented using i_count and d_count is an approximation that has
-> several false positives.  For example, overlayfs since v4.19, takes an
-> extra reference on the dentry; An open with O_PATH takes a reference on
-> the dentry although the file cannot be read nor written.
+On Wed, Jun 12, 2019 at 06:00:39PM -1000, Linus Torvalds wrote:
+> On Wed, Jun 12, 2019 at 12:54 PM Christian Brauner <christian@brauner.io> wrote:
+> >
+> > The commit changes the internal logic to lock mounts when propagating
+> > mounts (user+)mount namespaces and - I believe - causes do_mount_move()
+> > to fail at:
 > 
-> Change the implementation to use i_readcount and i_writecount to
-> eliminate the false positive conflicts and allow a write lease to be
-> taken on an overlayfs file.
+> You mean 'do_move_mount()'.
 > 
-> The change of behavior with existing fd's open with O_PATH is symmetric
-> w.r.t. current behavior of lease breakers - an open with O_PATH currently
-> does not break a write lease.
+> > if (old->mnt.mnt_flags & MNT_LOCKED)
+> >         goto out;
+> >
+> > If that's indeed the case we should either revert this commit (reverts
+> > cleanly, just tested it) or find a fix.
 > 
-> This increases the size of struct inode by 4 bytes on 32bit archs when
-> CONFIG_FILE_LOCKING is defined and CONFIG_IMA was not already
-> defined.
+> Hmm.. I'm not entirely sure of the logic here, and just looking at
+> that commit 3bd045cc9c4b ("separate copying and locking mount tree on
+> cross-userns copies") doesn't make me go "Ahh" either.
 > 
-> Cc: <stable@vger.kernel.org> # v4.19
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
-> 
-> Miklos, Jeff and Bruce,
-> 
-> This patch fixes a v4.19 overlayfs regression with taking write
-> leases. It also provides correct semantics w.r.t RDONLY open counter
-> that Bruce also needed for nfsd.
-> 
-> Since this is locks code that fixes an overlayfs regression which
-> is also needed for nfsd, it could go via either of your trees.
-> I didn't want to pick sides, so first one to grab the patch wins ;-)
-> 
-> I verified the changes using modified LTP F_SETLEASE tests [1],
-> which I ran over xfs and overlayfs.
-> 
-> Thanks,
-> Amir.
-> 
-> [1] https://github.com/amir73il/ltp/commits/overlayfs-devel
-> 
-> Changes since v1:
-> - Drop patch to fold i_readcount into i_count
-> - Make i_readcount depend on CONFIG_FILE_LOCKING
-> 
->  fs/locks.c         | 33 ++++++++++++++++++++++-----------
->  include/linux/fs.h |  4 ++--
->  2 files changed, 24 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/locks.c b/fs/locks.c
-> index ec1e4a5df629..28528b4fc53b 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -1753,10 +1753,10 @@ int fcntl_getlease(struct file *filp)
->  }
->  
->  /**
-> - * check_conflicting_open - see if the given dentry points to a file that has
-> + * check_conflicting_open - see if the given file points to an inode that has
->   *			    an existing open that would conflict with the
->   *			    desired lease.
-> - * @dentry:	dentry to check
-> + * @filp:	file to check
->   * @arg:	type of lease that we're trying to acquire
->   * @flags:	current lock flags
->   *
-> @@ -1764,19 +1764,31 @@ int fcntl_getlease(struct file *filp)
->   * conflict with the lease we're trying to set.
->   */
->  static int
-> -check_conflicting_open(const struct dentry *dentry, const long arg, int flags)
-> +check_conflicting_open(struct file *filp, const long arg, int flags)
->  {
->  	int ret = 0;
-> -	struct inode *inode = dentry->d_inode;
-> +	struct inode *inode = locks_inode(filp);
-> +	int wcount = atomic_read(&inode->i_writecount);
-> +	int self_wcount = 0, self_rcount = 0;
->  
->  	if (flags & FL_LAYOUT)
->  		return 0;
->  
-> -	if ((arg == F_RDLCK) && inode_is_open_for_write(inode))
-> +	if (arg == F_RDLCK && wcount > 0)
->  		return -EAGAIN;
->  
-> -	if ((arg == F_WRLCK) && ((d_count(dentry) > 1) ||
-> -	    (atomic_read(&inode->i_count) > 1)))
-> +	/* Eliminate deny writes from actual writers count */
-> +	if (wcount < 0)
-> +		wcount = 0;
-> +
-> +	/* Make sure that only read/write count is from lease requestor */
-> +	if (filp->f_mode & FMODE_WRITE)
-> +		self_wcount = 1;
-> +	else if ((filp->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
+> Al? My gut feel is that we need to just revert, since this was in 5.1
+> and it's getting reasonably late in 5.2 too. But maybe you go "guys,
+> don't be silly, this is easily fixed with this one-liner".
 
-nit: you already checked for FMODE_WRITE and you know that it's not set
-here, so this is equivalent to:
+David and I have been staring at that code today for a while together.
+I think I made some sense of it.
+One thing we weren't absolutely sure is if the old MS_MOVE behavior was
+intentional or a bug. If it is a bug we have a problem since we quite
+heavily rely on this...
 
-    else if (filp->f_mode & FMODE_READ)
+So this whole cross-user+mnt namespace propagation mechanism comes with
+a big hammer that Eric indeed did introduce a while back which is
+MNT_LOCKED (cf. [1] for the relevant commit).
 
-> +		self_rcount = 1;
-> +
-> +	if (arg == F_WRLCK && (wcount != self_wcount ||
-> +	    atomic_read(&inode->i_readcount) != self_rcount))
->  		ret = -EAGAIN;
->  
->  	return ret;
-> @@ -1786,8 +1798,7 @@ static int
->  generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **priv)
->  {
->  	struct file_lock *fl, *my_fl = NULL, *lease;
-> -	struct dentry *dentry = filp->f_path.dentry;
-> -	struct inode *inode = dentry->d_inode;
-> +	struct inode *inode = locks_inode(filp);
->  	struct file_lock_context *ctx;
->  	bool is_deleg = (*flp)->fl_flags & FL_DELEG;
->  	int error;
-> @@ -1822,7 +1833,7 @@ generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **pr
->  	percpu_down_read(&file_rwsem);
->  	spin_lock(&ctx->flc_lock);
->  	time_out_leases(inode, &dispose);
-> -	error = check_conflicting_open(dentry, arg, lease->fl_flags);
-> +	error = check_conflicting_open(filp, arg, lease->fl_flags);
->  	if (error)
->  		goto out;
->  
-> @@ -1879,7 +1890,7 @@ generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **pr
->  	 * precedes these checks.
->  	 */
->  	smp_mb();
-> -	error = check_conflicting_open(dentry, arg, lease->fl_flags);
-> +	error = check_conflicting_open(filp, arg, lease->fl_flags);
->  	if (error) {
->  		locks_unlink_lock_ctx(lease);
->  		goto out;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 79ffa2958bd8..2d55f1b64014 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -694,7 +694,7 @@ struct inode {
->  	atomic_t		i_count;
->  	atomic_t		i_dio_count;
->  	atomic_t		i_writecount;
-> -#ifdef CONFIG_IMA
-> +#if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
->  	atomic_t		i_readcount; /* struct files open RO */
->  #endif
->  	union {
-> @@ -2895,7 +2895,7 @@ static inline bool inode_is_open_for_write(const struct inode *inode)
->  	return atomic_read(&inode->i_writecount) > 0;
->  }
->  
-> -#ifdef CONFIG_IMA
-> +#if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
->  static inline void i_readcount_dec(struct inode *inode)
->  {
->  	BUG_ON(!atomic_read(&inode->i_readcount));
+Afaict, MNT_LOCKED is (among other cases) supposed to prevent a user+mnt
+namespace pair to get access to a mount that is hidden underneath an
+additional mount. Consider the following scenario:
 
+sudo mount -t tmpfs tmpfs /mnt
+sudo mount --make-rshared /mnt
+sudo mount -t tmpfs tmpfs /mnt
+sudo mount --make-rshared /mnt
+unshare -U -m --map-root --propagation=unchanged
 
-Looks good to me. Aside from the minor nit above:
+umount /mnt
+# or
+mount --move -mnt /opt
 
-    Reviewed-by: Jeff Layton <jlayton@kernel.org>
+The last umount/MS_MOVE is supposed to fail since the mount is locked
+with MNT_LOCKED since umounting or MS_MOVing the mount would reveal the
+underlying mount which I didn't have access to prior to the creation of
+my user+mnt namespace pair.
+(Whether or not this is a reasonable security mechanism is a separate
+discussion.)
 
-I have one file locking patch queued up for v5.3 so far, but nothing for
-v5.2. Miklos or Bruce, if either of you have anything to send to Linus
-for v5.2 would you mind taking this one too?
+But now consider the case where from the ancestor user+mnt namespace
+pair I do:
 
-If not I can queue it up and get it to him after letting it soak in
-linux-next for a bit.
+# propagate the mount to the user+mount namespace pair                 
+sudo mount -t tmpfs tmpfs /mnt
+# switch to the child user+mnt namespace pair
+umount /mnt
+# or
+mount --move /mnt /opt
 
+That umount/MS_MOVE should work since that mount was propagated to the
+unprivileged task after the user+mnt namespace pair was created.
+Also, because I already had access to the underlying mount in the first
+place and second because this is literally the only way - we know of -
+to inject a mount cross mount namespaces and this is a must have feature
+that quite a lot of users rely on.
+
+Christian
+
+[1]: git show 5ff9d8a65ce80efb509ce4e8051394e9ed2cd942
