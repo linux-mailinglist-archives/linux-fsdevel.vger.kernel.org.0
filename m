@@ -2,107 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E28A44659
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BBC84464E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730178AbfFMQu6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:50:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56558 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730157AbfFMDmZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 23:42:25 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 92B14B0ABB;
-        Thu, 13 Jun 2019 03:42:24 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6CCCD5DA34;
-        Thu, 13 Jun 2019 03:42:24 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 300A31806B16;
-        Thu, 13 Jun 2019 03:42:19 +0000 (UTC)
-Date:   Wed, 12 Jun 2019 23:42:18 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     rdunlap@infradead.org, jack@suse.cz, kvm@vger.kernel.org,
-        mst@redhat.com, jasowang@redhat.com, david@fromorbit.com,
-        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
-        dm-devel@redhat.com, adilger kernel <adilger.kernel@dilger.ca>,
-        zwisler@kernel.org, aarcange@redhat.com,
-        dave jiang <dave.jiang@intel.com>, jstaron@google.com,
-        linux-nvdimm@lists.01.org,
-        vishal l verma <vishal.l.verma@intel.com>, david@redhat.com,
-        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
-        jmoyer@redhat.com, linux-ext4@vger.kernel.org, lenb@kernel.org,
-        kilobyte@angband.pl, riel@surriel.com,
-        yuval shaia <yuval.shaia@oracle.com>, stefanha@redhat.com,
-        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
-        lcapitulino@redhat.com, kwolf@redhat.com, nilal@redhat.com,
-        tytso@mit.edu, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        snitzer@redhat.com, darrick wong <darrick.wong@oracle.com>,
-        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        imammedo@redhat.com
-Message-ID: <165204827.34945594.1560397338620.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190612162012.06b4af7f.cohuck@redhat.com>
-References: <20190612124527.3763-1-pagupta@redhat.com> <20190612124527.3763-3-pagupta@redhat.com> <20190612162012.06b4af7f.cohuck@redhat.com>
-Subject: Re: [Qemu-devel] [PATCH v13 2/7] virtio-pmem: Add virtio pmem
- driver
+        id S1730227AbfFMQuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:50:46 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36026 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfFMEA7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 00:00:59 -0400
+Received: by mail-lj1-f194.google.com with SMTP id i21so17087891ljj.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 21:00:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fbJVJjV4JHgO+lN2CsoiJmjNN9A/OrzWGNbZgYy8/Gk=;
+        b=ZuHB+EFIWdmyBI+Bcm6q34WvnNer+ayYdcSCBHw9qKdJL9RuMOUEPVDSrPOV456jEe
+         Mu2BtvM6HHM2VC/dxpIL71LNetzBiC2Kp/5bf8wCUjnRs36qyJeTHEY/nu3+T/gkFmV2
+         AKNJR7dBb43TR0xZODVPwIEf0f2Q0JzJ6s+UY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fbJVJjV4JHgO+lN2CsoiJmjNN9A/OrzWGNbZgYy8/Gk=;
+        b=aPcqEdgI157R+S7KLBTyJBfPeF7NgGwRltnlWb3CDsdnUnyEnzzuqx+PSsn3bUifdp
+         Y5TPwtdvxOXIpHPUgMsXxn4Ip6nVGBCwIxvFNTIVoBGsj8ruXuCrLRJTivHGNRxxi2wm
+         mH9VBwkLcCDooL8NM0iDCY6lrf3vMwk/pq0qsIys/1GSkH0DKMAS3ALXZyVuDbCFg6QW
+         tLtpBpG/gpr7Q88O4rFXFEESHR7DNUdLS8H3dDyCqHKuZr9tVqDSzs6ApkTm0zHJXqFj
+         6IjHHOTwFI+TXcJ6rE/VSxl0Xe95SiyYhBIqxUDp7soOKfVYj9IhPF82M2fYSUDaiAlU
+         eIEw==
+X-Gm-Message-State: APjAAAUweiJjK+0veyd9pL/vMLfO+tG4337RqjdMQul6fJOLoDDlYh+Q
+        ZLE/EmLyih6GXFB3sOvGyQJuXVOaOIo=
+X-Google-Smtp-Source: APXvYqytGnd7R4qqFRA4jyma10MohjNgPNX6jV0rS2DGXm0+r1eixgLhhhbFDQpPXPBj94Hx0qTIGg==
+X-Received: by 2002:a2e:9e58:: with SMTP id g24mr2034142ljk.1.1560398457143;
+        Wed, 12 Jun 2019 21:00:57 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id c8sm320167ljk.77.2019.06.12.21.00.55
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 21:00:55 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id a21so17073868ljh.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 21:00:55 -0700 (PDT)
+X-Received: by 2002:a2e:2c07:: with SMTP id s7mr5616489ljs.44.1560398455064;
+ Wed, 12 Jun 2019 21:00:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.133, 10.4.195.21]
-Thread-Topic: virtio-pmem: Add virtio pmem driver
-Thread-Index: fhRQKNWPndesm/uRD8iV/XnY9gJKfQ==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 13 Jun 2019 03:42:24 +0000 (UTC)
+References: <20190612225431.p753mzqynxpsazb7@brauner.io>
+In-Reply-To: <20190612225431.p753mzqynxpsazb7@brauner.io>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 12 Jun 2019 18:00:39 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wh2Khe1Lj-Pdu3o2cXxumL1hegg_1JZGJXki6cchg_Q2Q@mail.gmail.com>
+Message-ID: <CAHk-=wh2Khe1Lj-Pdu3o2cXxumL1hegg_1JZGJXki6cchg_Q2Q@mail.gmail.com>
+Subject: Re: Regression for MS_MOVE on kernel v5.1
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Jun 12, 2019 at 12:54 PM Christian Brauner <christian@brauner.io> wrote:
+>
+> The commit changes the internal logic to lock mounts when propagating
+> mounts (user+)mount namespaces and - I believe - causes do_mount_move()
+> to fail at:
 
-> 
-> > This patch adds virtio-pmem driver for KVM guest.
-> > 
-> > Guest reads the persistent memory range information from
-> > Qemu over VIRTIO and registers it on nvdimm_bus. It also
-> > creates a nd_region object with the persistent memory
-> > range information so that existing 'nvdimm/pmem' driver
-> > can reserve this into system memory map. This way
-> > 'virtio-pmem' driver uses existing functionality of pmem
-> > driver to register persistent memory compatible for DAX
-> > capable filesystems.
-> > 
-> > This also provides function to perform guest flush over
-> > VIRTIO from 'pmem' driver when userspace performs flush
-> > on DAX memory range.
-> > 
-> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> > Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-> > Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> > Acked-by: Jakub Staron <jstaron@google.com>
-> > Tested-by: Jakub Staron <jstaron@google.com>
-> > ---
-> >  drivers/nvdimm/Makefile          |   1 +
-> >  drivers/nvdimm/nd_virtio.c       | 125 +++++++++++++++++++++++++++++++
-> >  drivers/nvdimm/virtio_pmem.c     | 122 ++++++++++++++++++++++++++++++
-> >  drivers/nvdimm/virtio_pmem.h     |  55 ++++++++++++++
-> >  drivers/virtio/Kconfig           |  11 +++
-> >  include/uapi/linux/virtio_ids.h  |   1 +
-> >  include/uapi/linux/virtio_pmem.h |  35 +++++++++
-> >  7 files changed, 350 insertions(+)
-> >  create mode 100644 drivers/nvdimm/nd_virtio.c
-> >  create mode 100644 drivers/nvdimm/virtio_pmem.c
-> >  create mode 100644 drivers/nvdimm/virtio_pmem.h
-> >  create mode 100644 include/uapi/linux/virtio_pmem.h
-> 
-> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+You mean 'do_move_mount()'.
 
-Thank you Cornelia for the review.
+> if (old->mnt.mnt_flags & MNT_LOCKED)
+>         goto out;
+>
+> If that's indeed the case we should either revert this commit (reverts
+> cleanly, just tested it) or find a fix.
 
-Best regards,
-Pankaj
-> 
-> 
+Hmm.. I'm not entirely sure of the logic here, and just looking at
+that commit 3bd045cc9c4b ("separate copying and locking mount tree on
+cross-userns copies") doesn't make me go "Ahh" either.
+
+Al? My gut feel is that we need to just revert, since this was in 5.1
+and it's getting reasonably late in 5.2 too. But maybe you go "guys,
+don't be silly, this is easily fixed with this one-liner".
+
+                      Linus
