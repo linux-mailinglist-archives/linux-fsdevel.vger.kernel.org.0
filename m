@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2120F44B8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 21:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B846344B9A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 21:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729069AbfFMTEK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 15:04:10 -0400
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:36476 "EHLO
+        id S1729332AbfFMTFw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 15:05:52 -0400
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:36525 "EHLO
         outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727327AbfFMTEJ (ORCPT
+        by vger.kernel.org with ESMTP id S1727298AbfFMTFw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 15:04:09 -0400
+        Thu, 13 Jun 2019 15:05:52 -0400
 Received: from [4.30.142.84] (helo=srivatsab-a01.vmware.com)
         by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
         (Exim 4.82)
         (envelope-from <srivatsa@csail.mit.edu>)
-        id 1hbV14-0006b2-P6; Thu, 13 Jun 2019 15:04:06 -0400
+        id 1hbV2i-0007Iv-Mi; Thu, 13 Jun 2019 15:05:48 -0400
 Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
  controller
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jan Kara <jack@suse.cz>, Paolo Valente <paolo.valente@linaro.org>,
+To:     Jan Kara <jack@suse.cz>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
         linux-fsdevel@vger.kernel.org,
         linux-block <linux-block@vger.kernel.org>,
         linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
@@ -30,6 +30,7 @@ Cc:     Jan Kara <jack@suse.cz>, Paolo Valente <paolo.valente@linaro.org>,
         anishs@vmware.com, srivatsab@vmware.com,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Stable <stable@vger.kernel.org>
 References: <a04368ba-f1d5-8f2c-1279-a685a137d024@csail.mit.edu>
  <E270AD92-943E-4529-8158-AB480D6D9DF8@linaro.org>
@@ -41,14 +42,14 @@ References: <a04368ba-f1d5-8f2c-1279-a685a137d024@csail.mit.edu>
  <7c5e9d11-4a3d-7df4-c1e6-7c95919522ab@csail.mit.edu>
  <20190612130446.GD14578@quack2.suse.cz>
  <dd32ed59-a543-fc76-9a9a-2462f0119270@csail.mit.edu>
- <20190613060203.GA25205@kroah.com>
+ <20190613082053.GD26505@quack2.suse.cz>
 From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Message-ID: <61946313-c229-6213-d65f-83bd221e4b6d@csail.mit.edu>
-Date:   Thu, 13 Jun 2019 12:03:59 -0700
+Message-ID: <f30aaec1-d629-1c82-50da-16b2eaea16c5@csail.mit.edu>
+Date:   Thu, 13 Jun 2019 12:05:46 -0700
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
  Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190613060203.GA25205@kroah.com>
+In-Reply-To: <20190613082053.GD26505@quack2.suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -57,8 +58,8 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/12/19 11:02 PM, Greg Kroah-Hartman wrote:
-> On Wed, Jun 12, 2019 at 12:36:53PM -0700, Srivatsa S. Bhat wrote:
+On 6/13/19 1:20 AM, Jan Kara wrote:
+> On Wed 12-06-19 12:36:53, Srivatsa S. Bhat wrote:
 >>
 >> [ Adding Greg to CC ]
 >>
@@ -109,43 +110,16 @@ On 6/12/19 11:02 PM, Greg Kroah-Hartman wrote:
 >> kernel is based on 4.19, which still supports CFQ. It would have been
 >> great to have a process to address significant issues on older
 >> kernels too.
->>
->> Greg, do you have any thoughts on this? The context is that both CFQ
->> and BFQ I/O schedulers have issues that cause I/O throughput to suffer
->> upto 10x - 30x on certain workloads and system configurations, as
->> reported in [1].
->>
->> In this thread, Paolo posted patches to fix BFQ performance on
->> mainline. However CFQ suffers from the same performance collapse, but
->> CFQ was removed from the kernel in v5.0. So obviously the usual stable
->> backporting path won't work here for several reasons:
->>
->>   1. There won't be a mainline commit to backport from, as CFQ no
->>      longer exists in mainline.
->>
->>   2. This is not a security/stability fix, and is likely to involve
->>      invasive changes.
->>
->> I was wondering if there was a way to address the performance issues
->> in CFQ in the older stable kernels (including the latest LTS 4.19),
->> despite the above constraints, since the performance drop is much too
->> significant. I guess not, but thought I'd ask :-)
 > 
-> If someone cares about something like this, then I strongly just
-> recommend they move to the latest kernel version.  There should not be
-> anything stoping them from doing that, right?  Nothing "forces" anyone
-> to be on the 4.19.y release, especially when it really starts to show
-> its age.
-> 
-> Don't ever treat the LTS releases as "the only thing someone can run, so
-> we must backport huge things to it!"  Just use 5.1, and then move to 5.2
-> when it is out and so on.  That's always the preferred way, you always
-> get better support, faster kernels, newer features, better hardware
-> support, and most importantly, more bugfixes.
+> Well, you could still tune the performance difference by changing
+> slice_idle and group_idle tunables for CFQ (in
+> /sys/block/<device>/queue/iosched/).  Changing these to lower values will
+> reduce the throughput loss when switching between cgroups at the cost of
+> lower accuracy of enforcing configured IO proportions among cgroups.
 > 
 
-Thank you for the clarification!
- 
+Good point, and seems fair enough, thank you!
+
 Regards,
 Srivatsa
 VMware Photon OS
