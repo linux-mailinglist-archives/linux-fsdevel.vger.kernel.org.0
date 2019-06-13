@@ -2,168 +2,411 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4892144B0A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 20:46:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC6D844B66
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 20:56:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728776AbfFMSqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 14:46:44 -0400
-Received: from uhil19pa14.eemsg.mail.mil ([214.24.21.87]:15913 "EHLO
-        UHIL19PA14.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbfFMSql (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 14:46:41 -0400
-X-EEMSG-check-017: 61114394|UHIL19PA14_EEMSG_MP12.csd.disa.mil
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by UHIL19PA14.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 13 Jun 2019 18:46:33 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1560451593; x=1591987593;
-  h=from:subject:to:cc:references:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=W8eTWLv9tHywO5BpKJxyj7MNrrIdkJL3Y6n3rMjH5ts=;
-  b=T+8qluC/UFgE2QSLbuHUAFuQJ7xgGfSjehXDYT8+nEOeDbeRUTivduiP
-   6cHCJJmse1lPZm3pyxCfF5j/siBah2kgTX/MSwwIIyMAsPflqmiPer/wf
-   2Sl9QLP47nS2nUP07MC4nNqXgdJIsl2IvwDfXo2YZZJPAxG6dBim3wTbZ
-   SL6HpGZ3K4dMnVaKxWzORy/a6HzK+TRSDRnbTcHLKs1t892G5HYfCidJZ
-   NB9SxFSlE6FYpApta9s/Mam5NTVtAr++S+fzoRcxMjaWQ9NED4XAAHe6n
-   3ZglMWg+tQpbIMpCbhaeVhjGEJaZRELmqnMqzyko5/J+6Vh4b5PPWnBPO
-   w==;
-X-IronPort-AV: E=Sophos;i="5.63,369,1557187200"; 
-   d="scan'208";a="24726270"
-IronPort-PHdr: =?us-ascii?q?9a23=3A8c5gXRd6GHq0oOq8ssDlLq5plGMj4u6mDksu8p?=
- =?us-ascii?q?Mizoh2WeGdxc25ZhON2/xhgRfzUJnB7Loc0qyK6vmmADFRqs/b7jgrS99lb1?=
- =?us-ascii?q?c9k8IYnggtUoauKHbQC7rUVRE8B9lIT1R//nu2YgB/Ecf6YEDO8DXptWZBUh?=
- =?us-ascii?q?rwOhBoKevrB4Xck9q41/yo+53Ufg5EmCexbal9IRmrsAndrNQajItmJ6o+1x?=
- =?us-ascii?q?fFvHpFcPlKyG11Il6egwzy7dqq8p559CRQtfMh98peXqj/Yq81U79WAik4Pm?=
- =?us-ascii?q?4s/MHkugXNQgWJ5nsHT2UZiQFIDBTf7BH7RZj+rC33vfdg1SaAPM32Sbc0WS?=
- =?us-ascii?q?m+76puVRTlhjsLOyI//WrKkcF7kr5Vrwy9qBx+247UYZ+aNPxifqPGYNgWQX?=
- =?us-ascii?q?NNUttNWyBdB4+xaYUAD/AFPe1FsYfzoVUApga6CQW1BO7izjpEi3nr1qM4zu?=
- =?us-ascii?q?shCxnL0gw9EdwQvnTar9v7O6kdXu+30KbGwi7Ob+9U1Drn9ITEbh4srPOKUL?=
- =?us-ascii?q?ltccTR004vFwbdg1uNtYzqISuV1uQTvGid8uFuSOevhHQjqwF1vDeuxtonh4?=
- =?us-ascii?q?7Sho0I0VDJ7jl5wYYpKt24T053e9ikEIBKuC2AOIt2Rd0iTnhutS0nybMGoY?=
- =?us-ascii?q?a2cDUFxZko3RLSa+GLf5KW7h/sSuqdOyp0iXR4c7ylnRmy61KvyujkW8mx11?=
- =?us-ascii?q?ZFszRKn8HXtnAIyxzT8s+HSuZh/ku52TaAyQTT6uZcLEAoj6XbMZ8hwqMrlp?=
- =?us-ascii?q?YJrUTCHjP5mEXxjKOMcEUr5vOo5Pj9brXjp5+cM5d4igD4MqswhsyyGfk0Pw?=
- =?us-ascii?q?cBUmSB+emwyafv8VP2TblUlPE6j7HVsJXAKsQaoq65DRVV0oEm6xunFDepzc?=
- =?us-ascii?q?8YkGIbLFNFZB2Hj4/pN0vIIPDjF/izmVuskDB1x/zeJL3uHo3NLmTfkLfmZb?=
- =?us-ascii?q?ty9k5cyA09zN9B45JUDqoBLenpWkDvqdPYDgU2MxCuz+n7D9V905sUWXiTDa?=
- =?us-ascii?q?+BLKPSrViI6/ozLOaWf48apjb8JuM+5/HyjX82g0Idfaet3ZQJcnC0B+hpLF?=
- =?us-ascii?q?+DbXXwhdcBFH8AvhAiQ+zylF2CTTlTam62X6Ih+jE7D5mrDYTdSYC3hryOwi?=
- =?us-ascii?q?O7EodRZmBcBVCGCW3oeJmcW/cQdCKSJddskiIFVbi7TI8szhCvuxH8y7pmMO?=
- =?us-ascii?q?rY4CkYtZPl1Nho6OzfjxYy9SZ7D8iHzmGNTHl+nnkUSD8uwKB/vUt9x0+H0a?=
- =?us-ascii?q?h5hfxYCNNS6+pUUgchLpHR1PJ6C9/sVQLbZNuJS0ipQs+gAT4vStI92dgOY1?=
- =?us-ascii?q?xyG9+6lBDMwzKqA6MJl7yMHJE09qPc337sJ8dy0nrGz7cugEU7QstVNG2mmq?=
- =?us-ascii?q?5++xHWB47OjkqZiqKqeroH0S7T+2eM03COsFtbUAFuS6XFW24QZk/ModT+/E?=
- =?us-ascii?q?PCQKekCa47PQtZ1c6CNqxKZ8XtjVVHQvfjJdvfb3u/m2erGBmH2K2MY5Tue2?=
- =?us-ascii?q?gGwiXdB1YLkxoJ8XaFKwc+HCGhrHzaDDB0ElLveUzs+/FkqHynVk800x2Kb0?=
- =?us-ascii?q?p52rqx+x4Vg+GcSvwK0rIHpighsTN0E0i539/NFdqAqBRufL9GbdM+/lhHz2?=
- =?us-ascii?q?TZuBJ5PpC6KKBinFEeeRxtv0zyzxV3FplAkc8yoXMy1gVyNKaY3UhZdzyCwJ?=
- =?us-ascii?q?DwPqTbKmz1/BCoca7ZxEvS38qR+qcKu7wErADPtR+oGgIC9Gpq191Omy+Q5p?=
- =?us-ascii?q?LVAQ4WSrrrX0o3/gQ8rLbfNHoT/YTRgEZwPLG0vzmK4NcgAO8o2170ZNtEGL?=
- =?us-ascii?q?+VHw/1VcsBDo6hL/J8yAvhVQ4NIO0HrP18BMihbfbTnff2bes=3D?=
-X-IPAS-Result: =?us-ascii?q?A2DLDgDKmAJd/wHyM5BmHgEGBwaBZYFnKoE7ATIohBaTQ?=
- =?us-ascii?q?gECAQEBBoE1iVGPJIFnCQEBAQEBAQEBATQBAgEBhEACgkkjOBMBAwEBAQQBA?=
- =?us-ascii?q?QEBAwEBbCiCOikBgmYBAQEBAgEjFToFAhALDgoCAiYCAlcGDQYCAQGCXz+Bd?=
- =?us-ascii?q?wUPqzWBMYhrgUaBDCiLXRd4gQeBOIJrPoN+LoMiglgElB6VLgmCEoIbkSsGG?=
- =?us-ascii?q?4ImiwqJfKV7IYFYKwgCGAghD4MnghsXjjwjAzCBBgEBjWqCQwEB?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 13 Jun 2019 18:46:32 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x5DIkUSV011773;
-        Thu, 13 Jun 2019 14:46:31 -0400
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: What do LSMs *actually* need for checks on notifications?
-To:     David Howells <dhowells@redhat.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
-        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>
-References: <05ddc1e6-78ba-b60e-73b1-ffe86de2f2f8@tycho.nsa.gov>
- <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
- <31009.1560262869@warthog.procyon.org.uk>
- <25045.1560339786@warthog.procyon.org.uk>
-Message-ID: <deef1cbd-993e-78e4-396f-0f80b4da4668@tycho.nsa.gov>
-Date:   Thu, 13 Jun 2019 14:46:30 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1729147AbfFMSz7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 14:55:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727273AbfFMSz7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 14:55:59 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C005220B7C;
+        Thu, 13 Jun 2019 18:55:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560452158;
+        bh=EsTk4HvtPnRJFuCBvZ/1aCPCtFTDrzSsd6Xdltd+PK8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2TPo2Y3G6fiIF6nOyZlqyucyfl8i3dyj7UOfUq8OpkQO8enlLLru4RkjM9wUoYEX/
+         sW2ydaV+wbVvmz764syPg6XWSgly2+hyXRUa4EHgzmEJleIDeNJfkO/anokDwP7xI3
+         eEttBuIoEbCob2X/3NzFcz8P4POmvSeJqM+KoOr0=
+Date:   Thu, 13 Jun 2019 11:55:56 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Parshuram Raju Thombare <pthombar@cadence.com>,
+        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>
+Subject: Re: [RFC PATCH v2 7/8] fscrypt: wire up fscrypt to use blk-crypto
+Message-ID: <20190613185556.GD686@sol.localdomain>
+References: <20190605232837.31545-1-satyat@google.com>
+ <20190605232837.31545-8-satyat@google.com>
 MIME-Version: 1.0
-In-Reply-To: <25045.1560339786@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190605232837.31545-8-satyat@google.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/12/19 7:43 AM, David Howells wrote:
-> Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> 
->>>    (6) The security attributes of all the objects between the object in (5)
->>>        and the object in (4), assuming we work from (5) towards (4) if the
->>>        two aren't coincident (WATCH_INFO_RECURSIVE).
->>
->> Does this apply to anything other than mount notifications?
-> 
-> Not at the moment.  I'm considering making it such that you can make a watch
-> on a keyring get automatically propagated to keys that get added to the
-> keyring (and removed upon unlink) - the idea being that there is no 'single
-> parent path' concept for a keyring as there is for a directory.
-> 
-> I'm also pondering the idea of making it possible to have superblock watches
-> automatically propagated to superblocks created by automount points on the
-> watched superblock.
+Hi Satya,
 
-So at the point where you can set a watch on one object O1 with label X, 
-and receive notifications triggered upon operations on another object O2 
-with label Y, we have to consider whether the relationship between X and 
-Y is controlled in any way (possibly transitively through a series of 
-checks performed earlier) and whether we can reasonably infer that the 
-authorization to watch X implies the ability to be notified of 
-operations on Y.  Not a problem for the mount notifications AFAICS 
-because there is only truly one object - the mount namespace itself, and 
-it is always our own.
+On Wed, Jun 05, 2019 at 04:28:36PM -0700, Satya Tangirala wrote:
+> Introduce fscrypt_set_bio_crypt_ctx for filesystems to call to set up
+> encryption contexts in bios, and fscrypt_evict_crypt_key to evict
+> the encryption context associated with an inode.
+> 
+> Inline encryption is controlled by a policy flag in the fscrypt_info
+> in the inode, and filesystems may check if an inode should use inline
+> encryption by calling fscrypt_inode_is_hw_encrypted. Files can be marked
+> as inline encrypted from userspace by appropriately modifying the flags
+> (OR-ing FS_POLICY_FLAGS_HW_ENCRYPTION to it) in the fscrypt_policy
+> passed to fscrypt_ioctl_set_policy.
+> 
+> To test inline encryption with the fscrypt dummy context, add
+> ctx.flags |= FS_POLICY_FLAGS_HW_ENCRYPTION
+> when setting up the dummy context in fs/crypto/keyinfo.c.
+> 
+> Note that blk-crypto will fall back to software en/decryption in the
+> absence of inline crypto hardware, so setting up the ctx.flags in the
+> dummy context without inline crypto hardware serves as a test for
+> the software fallback in blk-crypto.
+> 
+> Signed-off-by: Satya Tangirala <satyat@google.com>
 
-> 
->> And for mount notifications, isn't the notification actually for a change to
->> the mount namespace, not a change to any file?
-> 
-> Yes.
-> 
->> Hence, the real "object" for events that trigger mount notifications is the
->> mount namespace, right?
-> 
-> Um... arguably.  Would that mean that that would need a label from somewhere?
+I think a fscrypt_policy flag is the right approach, but the "HW_ENCRYPTION"
+name is really confusing and wrong.
 
-That takes us into the whole question of whether namespaces should be 
-labeled (presumably from their creator), and the association between 
-processes and their namespaces should be controlled.  I think when we 
-originally looked at them, it wasn't much of a concern since the only 
-means of creating a new namespace and associating with it was via 
-clone() and then later also via unshare().  /proc/pid/ns and setns() 
-changed that picture, but still requires ptrace read mode access, which 
-at least provides some control over entering namespaces created by 
-others. I suspect that ultimately we want namespaces to be labeled and 
-controlled but that isn't your problem to solve here.
+What it really enables is a cryptosystem and on-disk format change where, for
+the purpose of working better with inline encryption, file contents are
+encrypted with the master key directly (or for v2 encryption policies it will be
+a per-mode derived key as it really should be, once we can actually get the v2
+encryption policy support reviewed and merged), and the inode numbers are added
+to the IVs.  As we know, when ext4 support is added, this will also preclude the
+filesystem from being resized.
 
-For your purposes, a process is setting a watch on its own namespace, 
-and it already inherently can observe changes to that namespace without 
-needing watches/notifications, and it can modify that namespace iff 
-privileged wrt to the namespace.  One might argue that no check is 
-required at all for setting the watch, and at most, it would be a check 
-between the process and its own label to match the checking when 
-accessing /proc/self/mounts. That presumes that no additional 
-information is conveyed via the notification that isn't already 
-available from /proc/self/mounts, particularly any information specific 
-to the process that triggered the notification.  Does that make sense?
+It's not necessarily "hardware encryption".  You're implementing it using the
+block layer encryption, but that can fallback to the crypto API in blk-crypto.
 
-> 
->> The watched path is just a way of identifying a subtree of the mount
->> namespace for notifications - it isn't the real object being watched.
-> 
-> I like that argument.
-> 
-> Thanks,
-> David
-> 
+Moreover fscrypt already supports hardware encryption via the crypto API, just
+not *inline* hardware encryption.
+
+So calling it "hardware encryption" is wrong.
+
+I think a much better name would be something like
+FS_POLICY_FLAG_DIRECT_CONTENTS or FS_POLICY_FLAG_INLINECRYPT_OPTIMIZED.
+
+Similarly for everywhere else in this patch that references "hardware
+encryption" -- usually it should be "inline encryption".
+
+> diff --git a/block/blk-crypto.c b/block/blk-crypto.c
+> index 5adb5251ae7e..7e98acd2b963 100644
+> --- a/block/blk-crypto.c
+> +++ b/block/blk-crypto.c
+> @@ -82,7 +82,6 @@ static int blk_crypto_keyslot_program(void *priv, const u8 *key,
+>  		slotp->tfm = tfm;
+>  	}
+>  
+> -
+>  	err = crypto_skcipher_setkey(tfm, key, keysize);
+>  
+>  	if (err) {
+
+This should be folded into an earlier patch.
+
+> diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
+> index 24ed99e2eca0..aa5b2bc6c8dd 100644
+> --- a/fs/crypto/Kconfig
+> +++ b/fs/crypto/Kconfig
+> @@ -15,3 +15,10 @@ config FS_ENCRYPTION
+>  	  efficient since it avoids caching the encrypted and
+>  	  decrypted pages in the page cache.  Currently Ext4,
+>  	  F2FS and UBIFS make use of this feature.
+> +
+> +config FS_ENCRYPTION_HW_CRYPT
+> +	tristate "Enable fscrypt to use inline crypto"
+> +	default n
+> +	depends on FS_ENCRYPTION && BLK_INLINE_ENCRYPTION
+> +	help
+> +	  Enables fscrypt to use inline crypto hardware if available.
+
+"Enable fscrypt to use inline crypto" isn't a loadable module, so it needs to be
+a bool, not a tristate.
+
+That also means use '#ifdef CONFIG_...', not '#if IS_ENABLED(CONFIG...)'.
+
+Also no need for 'default n', since 'n' is already the default.
+
+> diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+> index b46021ebde85..b06b1a2be99b 100644
+> --- a/fs/crypto/bio.c
+> +++ b/fs/crypto/bio.c
+> @@ -24,17 +24,24 @@
+>  #include <linux/module.h>
+>  #include <linux/bio.h>
+>  #include <linux/namei.h>
+> +#include <linux/keyslot-manager.h>
+> +#include <linux/blkdev.h>
+> +#include <crypto/algapi.h>
+>  #include "fscrypt_private.h"
+>  
+> -static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
+> +static void __fscrypt_decrypt_bio(struct bio *bio, bool done, bool decrypt)
+>  {
+>  	struct bio_vec *bv;
+>  	struct bvec_iter_all iter_all;
+>  
+>  	bio_for_each_segment_all(bv, bio, iter_all) {
+>  		struct page *page = bv->bv_page;
+> -		int ret = fscrypt_decrypt_page(page->mapping->host, page,
+> -				PAGE_SIZE, 0, page->index);
+> +		int ret = 0;
+> +
+> +		if (decrypt) {
+> +			ret = fscrypt_decrypt_page(page->mapping->host, page,
+> +						   PAGE_SIZE, 0, page->index);
+> +		}
+>  
+>  		if (ret)
+>  			SetPageError(page);
+> @@ -47,7 +54,7 @@ static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
+>  
+>  void fscrypt_decrypt_bio(struct bio *bio)
+>  {
+> -	__fscrypt_decrypt_bio(bio, false);
+> +	__fscrypt_decrypt_bio(bio, false, true);
+>  }
+>  EXPORT_SYMBOL(fscrypt_decrypt_bio);
+>  
+> @@ -57,16 +64,27 @@ static void completion_pages(struct work_struct *work)
+>  		container_of(work, struct fscrypt_ctx, r.work);
+>  	struct bio *bio = ctx->r.bio;
+>  
+> -	__fscrypt_decrypt_bio(bio, true);
+> +	__fscrypt_decrypt_bio(bio, true, true);
+> +	fscrypt_release_ctx(ctx);
+> +	bio_put(bio);
+> +}
+> +
+> +static void decrypt_bio_hwcrypt(struct fscrypt_ctx *ctx, struct bio *bio)
+> +{
+> +	__fscrypt_decrypt_bio(bio, true, false);
+>  	fscrypt_release_ctx(ctx);
+>  	bio_put(bio);
+>  }
+>  
+>  void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx, struct bio *bio)
+>  {
+> -	INIT_WORK(&ctx->r.work, completion_pages);
+> -	ctx->r.bio = bio;
+> -	fscrypt_enqueue_decrypt_work(&ctx->r.work);
+> +	if (bio_is_encrypted(bio)) {
+> +		decrypt_bio_hwcrypt(ctx, bio);
+> +	} else {
+> +		INIT_WORK(&ctx->r.work, completion_pages);
+> +		ctx->r.bio = bio;
+> +		fscrypt_enqueue_decrypt_work(&ctx->r.work);
+> +	}
+>  }
+>  EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
+
+I don't think we should be repurposing the normal fscrypt decryption path like
+this.  In the case of inline decryption, the decryption *already happened*, so
+there's no need for the filesystem to call into fs/crypto/ after the I/O
+completes.  It's also inefficient since there is a fscrypt_ctx being allocated
+for every bio, but it's useless for inline decryption since the only purpose of
+fscrypt_ctx is to hold the bio decryption workqueue item.
+
+Instead I think we should just make the filesystems' ->readpages() correctly
+check whether post-read decryption is needed.  I.e. instead of checking...
+
+	IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode)
+
+add a helper function...
+
+	fscrypt_needs_fs_layer_crypto()
+
+(there may be a better name for it)
+
+that returns true if IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) &&
+FS_POLICY_FLAG_INLINECRYPT_OPTIMIZED (or whatever we decide to call it) is unset
+in the inode's fscrypt policy.
+
+Likewise for encryption: only call fscrypt_encrypt_page() when
+fscrypt_needs_fs_layer_crypto().
+
+> +int fscrypt_set_bio_crypt_ctx(const struct inode *inode,
+> +				 struct bio *bio, u64 data_unit_num)
+> +{
+> +	struct fscrypt_info *ci = inode->i_crypt_info;
+> +
+> +	/* If inode is not hw encrypted, nothing to do. */
+> +	if (!fscrypt_inode_is_hw_encrypted(inode))
+> +		return 0;
+> +
+> +	return bio_crypt_set_ctx(bio, ci->ci_master_key->mk_raw,
+> +			get_blk_crypto_alg_for_fscryptalg(ci->ci_data_mode),
+> +			data_unit_num,
+> +			PAGE_SHIFT);
+> +}
+> +EXPORT_SYMBOL(fscrypt_set_bio_crypt_ctx);
+
+To be ready for ext4 encryption with block_size < PAGE_SIZE this needs to pass
+inode->i_blkbits for the dun_bits, not inode->i_blkbits.
+
+> diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
+> index dcd91a3fbe49..c00d986799d5 100644
+> --- a/fs/crypto/keyinfo.c
+> +++ b/fs/crypto/keyinfo.c
+> @@ -25,6 +25,21 @@ static struct crypto_shash *essiv_hash_tfm;
+>  static DEFINE_HASHTABLE(fscrypt_master_keys, 6); /* 6 bits = 64 buckets */
+>  static DEFINE_SPINLOCK(fscrypt_master_keys_lock);
+>  
+> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION_HW_CRYPT)
+> +static inline bool __flags_hw_encrypted(u8 flags,
+> +					const struct inode *inode)
+> +{
+> +	return inode && (flags & FS_POLICY_FLAGS_HW_ENCRYPTION) &&
+> +	       S_ISREG(inode->i_mode);
+> +}
+> +#else
+> +static inline bool __flags_hw_encrypted(u8 flags,
+> +					const struct inode *inode)
+> +{
+> +	return false;
+> +}
+> +#endif /* CONFIG_FS_ENCRYPTION_HW_CRYPT */
+> +
+>  /*
+>   * Key derivation function.  This generates the derived key by encrypting the
+>   * master key with AES-128-ECB using the inode's nonce as the AES key.
+> @@ -220,6 +235,9 @@ static int find_and_derive_key(const struct inode *inode,
+>  			memcpy(derived_key, payload->raw, mode->keysize);
+>  			err = 0;
+>  		}
+> +	} else if (__flags_hw_encrypted(ctx->flags, inode)) {
+> +		memcpy(derived_key, payload->raw, mode->keysize);
+> +		err = 0;
+>  	} else {
+>  		err = derive_key_aes(payload->raw, ctx, derived_key,
+>  				     mode->keysize);
+> @@ -269,16 +287,6 @@ allocate_skcipher_for_mode(struct fscrypt_mode *mode, const u8 *raw_key,
+>  	return ERR_PTR(err);
+>  }
+
+As I mentioned, to follow crypto best practices this really should use a
+per-mode key and not the master key directly...  We can do that pretty easily
+after the v2 encryption policy support is merged.
+
+> -static void put_master_key(struct fscrypt_master_key *mk)
+> +static void put_master_key(struct fscrypt_master_key *mk,
+> +			   struct inode *inode)
+>  {
+>  	if (!refcount_dec_and_lock(&mk->mk_refcount, &fscrypt_master_keys_lock))
+>  		return;
+>  	hash_del(&mk->mk_node);
+>  	spin_unlock(&fscrypt_master_keys_lock);
+>  
+> +	fscrypt_evict_crypt_key(inode);
+>  	free_master_key(mk);
+>  }
+>  
+> @@ -360,11 +370,13 @@ fscrypt_get_master_key(const struct fscrypt_info *ci, struct fscrypt_mode *mode,
+>  		return ERR_PTR(-ENOMEM);
+>  	refcount_set(&mk->mk_refcount, 1);
+>  	mk->mk_mode = mode;
+> -	mk->mk_ctfm = allocate_skcipher_for_mode(mode, raw_key, inode);
+> -	if (IS_ERR(mk->mk_ctfm)) {
+> -		err = PTR_ERR(mk->mk_ctfm);
+> -		mk->mk_ctfm = NULL;
+> -		goto err_free_mk;
+> +	if (!__flags_hw_encrypted(ci->ci_flags, inode)) {
+> +		mk->mk_ctfm = allocate_skcipher_for_mode(mode, raw_key, inode);
+> +		if (IS_ERR(mk->mk_ctfm)) {
+> +			err = PTR_ERR(mk->mk_ctfm);
+> +			mk->mk_ctfm = NULL;
+> +			goto err_free_mk;
+> +		}
+>  	}
+>  	memcpy(mk->mk_descriptor, ci->ci_master_key_descriptor,
+>  	       FS_KEY_DESCRIPTOR_SIZE);
+> @@ -456,7 +468,8 @@ static int setup_crypto_transform(struct fscrypt_info *ci,
+>  	struct crypto_skcipher *ctfm;
+>  	int err;
+>  
+> -	if (ci->ci_flags & FS_POLICY_FLAG_DIRECT_KEY) {
+> +	if ((ci->ci_flags & FS_POLICY_FLAG_DIRECT_KEY) ||
+> +	    __flags_hw_encrypted(ci->ci_flags, inode)) {
+>  		mk = fscrypt_get_master_key(ci, mode, raw_key, inode);
+>  		if (IS_ERR(mk))
+>  			return PTR_ERR(mk);
+> @@ -486,13 +499,13 @@ static int setup_crypto_transform(struct fscrypt_info *ci,
+>  	return 0;
+>  }
+>  
+> -static void put_crypt_info(struct fscrypt_info *ci)
+> +static void put_crypt_info(struct fscrypt_info *ci, struct inode *inode)
+>  {
+>  	if (!ci)
+>  		return;
+>  
+>  	if (ci->ci_master_key) {
+> -		put_master_key(ci->ci_master_key);
+> +		put_master_key(ci->ci_master_key, inode);
+>  	} else {
+>  		crypto_free_skcipher(ci->ci_ctfm);
+>  		crypto_free_cipher(ci->ci_essiv_tfm);
+
+Using the struct fscrypt_master_key in this way is wrong because they are
+identified by (ci_mode, ci_descriptor, and ci_raw_key).  That means:
+
+- The same fscrypt_master_key might be used by both inodes with and without the
+  FS_POLICY_FLAGS_HW_ENCRYPTION (or whatever it's renamed to) flag set.  This
+  will cause a NULL dereference on ->ci_ctfm if the fscrypt_master_key was
+  initially created for a policy with FS_POLICY_FLAGS_HW_ENCRYPTION, and then
+  later used by a policy without FS_POLICY_FLAGS_HW_ENCRYPTION.
+
+- The same fscrypt_master_key can be used by inodes on multiple filesystems.
+  This patch only makes the key be evicted from the keyslots on the last device
+  to be used.
+
+We can fix this by extending the identifier for fscrypt_master_key to (ci_mode,
+ci_descriptor, ci_raw_key, super_block, ci_ctfm != NULL).  So you'd get separate
+fscrypt_master_key's for different filesystems, and for policies with and
+without FS_POLICY_FLAGS_HW_ENCRYPTION.
+
+Of course, you are screwed if you use the same master key for inline encryption
+on multiple filesystems anyway, since IVs will be reused.  What we really should
+be doing is use HKDF to derive the inline encryption key from (master_key,
+contents_encryption_mode, filesystem_uuid).  Which again, depends on v2 policy
+support, which hopefully I can convince people should be merged so we don't have
+to keep piling on these cryptographically questionable hacks :-)
+
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -224,7 +224,17 @@ struct fsxattr {
+>  #define FS_POLICY_FLAGS_PAD_32		0x03
+>  #define FS_POLICY_FLAGS_PAD_MASK	0x03
+>  #define FS_POLICY_FLAG_DIRECT_KEY	0x04	/* use master key directly */
+> -#define FS_POLICY_FLAGS_VALID		0x07
+> +#define FS_POLICY_FLAGS_VALID_BASE	0x07
+> +
+> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION_HW_CRYPT)
+> +#define FS_POLICY_FLAGS_HW_ENCRYPTION	0x08
+> +#else
+> +#define FS_POLICY_FLAGS_HW_ENCRYPTION	0x00
+> +#endif
+> +
+> +
+> +#define FS_POLICY_FLAGS_VALID (FS_POLICY_FLAGS_VALID_BASE | \
+> +			       FS_POLICY_FLAGS_HW_ENCRYPTION)
+>  
+>  /* Encryption algorithms */
+>  #define FS_ENCRYPTION_MODE_INVALID		0
+> -- 
+
+Checking the kernel config is meaningless in UAPI headers.  Everyone gets the
+same <linux/fs.h> header, and they can build programs with it and run them on
+any arbitrary kernel.  So flag needs to be unconditional.
+
+Thanks,
+
+- Eric
