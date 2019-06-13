@@ -2,203 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5015944ACB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 20:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4892144B0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 20:46:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbfFMSgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 14:36:31 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45950 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725981AbfFMSga (ORCPT
+        id S1728776AbfFMSqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 14:46:44 -0400
+Received: from uhil19pa14.eemsg.mail.mil ([214.24.21.87]:15913 "EHLO
+        UHIL19PA14.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbfFMSql (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 14:36:30 -0400
-Received: by mail-qt1-f195.google.com with SMTP id j19so23719201qtr.12;
-        Thu, 13 Jun 2019 11:36:29 -0700 (PDT)
+        Thu, 13 Jun 2019 14:46:41 -0400
+X-EEMSG-check-017: 61114394|UHIL19PA14_EEMSG_MP12.csd.disa.mil
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by UHIL19PA14.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 13 Jun 2019 18:46:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6ITGBXky5KVn9XMTKBDXnnPCspAr7C23a4QQc6Ze3Bg=;
-        b=hu9+FOtssmys//ZSW0tYxltG5VskFg2+efScE6Ik7WEWq9Ba2nJk2R97MFfEfIhgCP
-         MclQcBk8hggl6lK9IZPZ6kYFXbqGm1LN8q6GcCUtj192gH+so0Ft3aGe6m1xIb57WwQY
-         ekH39m1g++EEBOTaJqMkYKHXHSqrzKMbl+ulAZAmowXTUz7nKvKMk2BY8wVvuiVKHC4G
-         M7ZLm8ZNSLOUDVvxAIUKR1GvWom7P77UijaOKR6KoVzFqbIutYMltDlnwaZ8CZFHuZs8
-         vg55Wp+devBiL3Zl5OwCpr6DVAPSYn2tY4DMD1TCuaAzTArtieBvKZKPos0eLMl9Zrct
-         0Wiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6ITGBXky5KVn9XMTKBDXnnPCspAr7C23a4QQc6Ze3Bg=;
-        b=NcnSJTlX17i11gq+wc9HNa9p501mmQUNvtU1381cvaMLPDYSCW8wOZQtguWYx6XVV1
-         55iM8QNM8lCrDFW3C9JWldHVeWmNOl2GZ5zhtrG2whvhP+E6RzhJgPEERmVouQmE+A13
-         gIILwigJS0e7xT6rNlo828bKbjNOM45Cq1PX2VKSSQWjLHRizyE2rf089RHrbbf0Q/IH
-         uFregDGAw59UxQbN0kRDHvTnXwwMgc+lth/QiWvXx6U0SQ5dmeNFdu4B5JNCK45QXwA3
-         yTbxj54wPOueR/JH9pCx4WHuHoxS+ENjVQtkttlAhoyNdVepJlk1n4/beW5LlllQa5NB
-         vVXw==
-X-Gm-Message-State: APjAAAWIcfOTdX9v0S0ju7v+3yu7pjBrNppnZMWYhXqIQD6LmOcdVmeu
-        vNklHYvgxy0Cpt14uayw9A==
-X-Google-Smtp-Source: APXvYqyjD7DfwqAZqrqCPqac6drl7iDV+EFeyRjxOukxiyvbKRL9xbz1pOjU9oj39Gt9Kci0TwPIbA==
-X-Received: by 2002:a0c:b04d:: with SMTP id l13mr4767610qvc.104.1560450989350;
-        Thu, 13 Jun 2019 11:36:29 -0700 (PDT)
-Received: from kmo-pixel (c-71-234-172-214.hsd1.vt.comcast.net. [71.234.172.214])
-        by smtp.gmail.com with ESMTPSA id c18sm214737qkk.73.2019.06.13.11.36.27
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 11:36:28 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 14:36:25 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: pagecache locking (was: bcachefs status update) merged)
-Message-ID: <20190613183625.GA28171@kmo-pixel>
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
- <20190611011737.GA28701@kmo-pixel>
- <20190611043336.GB14363@dread.disaster.area>
- <20190612162144.GA7619@kmo-pixel>
- <20190612230224.GJ14308@dread.disaster.area>
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1560451593; x=1591987593;
+  h=from:subject:to:cc:references:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=W8eTWLv9tHywO5BpKJxyj7MNrrIdkJL3Y6n3rMjH5ts=;
+  b=T+8qluC/UFgE2QSLbuHUAFuQJ7xgGfSjehXDYT8+nEOeDbeRUTivduiP
+   6cHCJJmse1lPZm3pyxCfF5j/siBah2kgTX/MSwwIIyMAsPflqmiPer/wf
+   2Sl9QLP47nS2nUP07MC4nNqXgdJIsl2IvwDfXo2YZZJPAxG6dBim3wTbZ
+   SL6HpGZ3K4dMnVaKxWzORy/a6HzK+TRSDRnbTcHLKs1t892G5HYfCidJZ
+   NB9SxFSlE6FYpApta9s/Mam5NTVtAr++S+fzoRcxMjaWQ9NED4XAAHe6n
+   3ZglMWg+tQpbIMpCbhaeVhjGEJaZRELmqnMqzyko5/J+6Vh4b5PPWnBPO
+   w==;
+X-IronPort-AV: E=Sophos;i="5.63,369,1557187200"; 
+   d="scan'208";a="24726270"
+IronPort-PHdr: =?us-ascii?q?9a23=3A8c5gXRd6GHq0oOq8ssDlLq5plGMj4u6mDksu8p?=
+ =?us-ascii?q?Mizoh2WeGdxc25ZhON2/xhgRfzUJnB7Loc0qyK6vmmADFRqs/b7jgrS99lb1?=
+ =?us-ascii?q?c9k8IYnggtUoauKHbQC7rUVRE8B9lIT1R//nu2YgB/Ecf6YEDO8DXptWZBUh?=
+ =?us-ascii?q?rwOhBoKevrB4Xck9q41/yo+53Ufg5EmCexbal9IRmrsAndrNQajItmJ6o+1x?=
+ =?us-ascii?q?fFvHpFcPlKyG11Il6egwzy7dqq8p559CRQtfMh98peXqj/Yq81U79WAik4Pm?=
+ =?us-ascii?q?4s/MHkugXNQgWJ5nsHT2UZiQFIDBTf7BH7RZj+rC33vfdg1SaAPM32Sbc0WS?=
+ =?us-ascii?q?m+76puVRTlhjsLOyI//WrKkcF7kr5Vrwy9qBx+247UYZ+aNPxifqPGYNgWQX?=
+ =?us-ascii?q?NNUttNWyBdB4+xaYUAD/AFPe1FsYfzoVUApga6CQW1BO7izjpEi3nr1qM4zu?=
+ =?us-ascii?q?shCxnL0gw9EdwQvnTar9v7O6kdXu+30KbGwi7Ob+9U1Drn9ITEbh4srPOKUL?=
+ =?us-ascii?q?ltccTR004vFwbdg1uNtYzqISuV1uQTvGid8uFuSOevhHQjqwF1vDeuxtonh4?=
+ =?us-ascii?q?7Sho0I0VDJ7jl5wYYpKt24T053e9ikEIBKuC2AOIt2Rd0iTnhutS0nybMGoY?=
+ =?us-ascii?q?a2cDUFxZko3RLSa+GLf5KW7h/sSuqdOyp0iXR4c7ylnRmy61KvyujkW8mx11?=
+ =?us-ascii?q?ZFszRKn8HXtnAIyxzT8s+HSuZh/ku52TaAyQTT6uZcLEAoj6XbMZ8hwqMrlp?=
+ =?us-ascii?q?YJrUTCHjP5mEXxjKOMcEUr5vOo5Pj9brXjp5+cM5d4igD4MqswhsyyGfk0Pw?=
+ =?us-ascii?q?cBUmSB+emwyafv8VP2TblUlPE6j7HVsJXAKsQaoq65DRVV0oEm6xunFDepzc?=
+ =?us-ascii?q?8YkGIbLFNFZB2Hj4/pN0vIIPDjF/izmVuskDB1x/zeJL3uHo3NLmTfkLfmZb?=
+ =?us-ascii?q?ty9k5cyA09zN9B45JUDqoBLenpWkDvqdPYDgU2MxCuz+n7D9V905sUWXiTDa?=
+ =?us-ascii?q?+BLKPSrViI6/ozLOaWf48apjb8JuM+5/HyjX82g0Idfaet3ZQJcnC0B+hpLF?=
+ =?us-ascii?q?+DbXXwhdcBFH8AvhAiQ+zylF2CTTlTam62X6Ih+jE7D5mrDYTdSYC3hryOwi?=
+ =?us-ascii?q?O7EodRZmBcBVCGCW3oeJmcW/cQdCKSJddskiIFVbi7TI8szhCvuxH8y7pmMO?=
+ =?us-ascii?q?rY4CkYtZPl1Nho6OzfjxYy9SZ7D8iHzmGNTHl+nnkUSD8uwKB/vUt9x0+H0a?=
+ =?us-ascii?q?h5hfxYCNNS6+pUUgchLpHR1PJ6C9/sVQLbZNuJS0ipQs+gAT4vStI92dgOY1?=
+ =?us-ascii?q?xyG9+6lBDMwzKqA6MJl7yMHJE09qPc337sJ8dy0nrGz7cugEU7QstVNG2mmq?=
+ =?us-ascii?q?5++xHWB47OjkqZiqKqeroH0S7T+2eM03COsFtbUAFuS6XFW24QZk/ModT+/E?=
+ =?us-ascii?q?PCQKekCa47PQtZ1c6CNqxKZ8XtjVVHQvfjJdvfb3u/m2erGBmH2K2MY5Tue2?=
+ =?us-ascii?q?gGwiXdB1YLkxoJ8XaFKwc+HCGhrHzaDDB0ElLveUzs+/FkqHynVk800x2Kb0?=
+ =?us-ascii?q?p52rqx+x4Vg+GcSvwK0rIHpighsTN0E0i539/NFdqAqBRufL9GbdM+/lhHz2?=
+ =?us-ascii?q?TZuBJ5PpC6KKBinFEeeRxtv0zyzxV3FplAkc8yoXMy1gVyNKaY3UhZdzyCwJ?=
+ =?us-ascii?q?DwPqTbKmz1/BCoca7ZxEvS38qR+qcKu7wErADPtR+oGgIC9Gpq191Omy+Q5p?=
+ =?us-ascii?q?LVAQ4WSrrrX0o3/gQ8rLbfNHoT/YTRgEZwPLG0vzmK4NcgAO8o2170ZNtEGL?=
+ =?us-ascii?q?+VHw/1VcsBDo6hL/J8yAvhVQ4NIO0HrP18BMihbfbTnff2bes=3D?=
+X-IPAS-Result: =?us-ascii?q?A2DLDgDKmAJd/wHyM5BmHgEGBwaBZYFnKoE7ATIohBaTQ?=
+ =?us-ascii?q?gECAQEBBoE1iVGPJIFnCQEBAQEBAQEBATQBAgEBhEACgkkjOBMBAwEBAQQBA?=
+ =?us-ascii?q?QEBAwEBbCiCOikBgmYBAQEBAgEjFToFAhALDgoCAiYCAlcGDQYCAQGCXz+Bd?=
+ =?us-ascii?q?wUPqzWBMYhrgUaBDCiLXRd4gQeBOIJrPoN+LoMiglgElB6VLgmCEoIbkSsGG?=
+ =?us-ascii?q?4ImiwqJfKV7IYFYKwgCGAghD4MnghsXjjwjAzCBBgEBjWqCQwEB?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 13 Jun 2019 18:46:32 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x5DIkUSV011773;
+        Thu, 13 Jun 2019 14:46:31 -0400
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: What do LSMs *actually* need for checks on notifications?
+To:     David Howells <dhowells@redhat.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Andy Lutomirski <luto@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-usb@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>
+References: <05ddc1e6-78ba-b60e-73b1-ffe86de2f2f8@tycho.nsa.gov>
+ <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
+ <31009.1560262869@warthog.procyon.org.uk>
+ <25045.1560339786@warthog.procyon.org.uk>
+Message-ID: <deef1cbd-993e-78e4-396f-0f80b4da4668@tycho.nsa.gov>
+Date:   Thu, 13 Jun 2019 14:46:30 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612230224.GJ14308@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <25045.1560339786@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 09:02:24AM +1000, Dave Chinner wrote:
-> On Wed, Jun 12, 2019 at 12:21:44PM -0400, Kent Overstreet wrote:
-> > Ok, I'm totally on board with returning EDEADLOCK.
-> > 
-> > Question: Would we be ok with returning EDEADLOCK for any IO where the buffer is
-> > in the same address space as the file being read/written to, even if the buffer
-> > and the IO don't technically overlap?
+On 6/12/19 7:43 AM, David Howells wrote:
+> Stephen Smalley <sds@tycho.nsa.gov> wrote:
 > 
-> I'd say that depends on the lock granularity. For a range lock,
-> we'd be able to do the IO for non-overlapping ranges. For a normal
-> mutex or rwsem, then we risk deadlock if the page fault triggers on
-> the same address space host as we already have locked for IO. That's
-> the case we currently handle with the second IO lock in XFS, ext4,
-> btrfs, etc (XFS_MMAPLOCK_* in XFS).
+>>>    (6) The security attributes of all the objects between the object in (5)
+>>>        and the object in (4), assuming we work from (5) towards (4) if the
+>>>        two aren't coincident (WATCH_INFO_RECURSIVE).
+>>
+>> Does this apply to anything other than mount notifications?
 > 
-> One of the reasons I'm looking at range locks for XFS is to get rid
-> of the need for this second mmap lock, as there is no reason for it
-> existing if we can lock ranges and EDEADLOCK inside page faults and
-> return errors.
-
-My concern is that range locks are going to turn out to be both more complicated
-and heavier weight, performance wise, than the approach I've taken of just a
-single lock per address space.
-
-Reason being range locks only help when you've got multiple operations going on
-simultaneously that don't conflict - i.e. it's really only going to be useful
-for applications that are doing buffered IO and direct IO simultaneously to the
-same file. Personally, I think that would be a pretty gross thing to do and I'm
-not particularly interested in optimizing for that case myself... but, if you
-know of applications that do depend on that I might change my opinion. If not, I
-want to try and get the simpler, one-lock-per-address space approach to work.
-
-That said though - range locks on the page cache can be viewed as just a
-performance optimization over my approach, they've got the same semantics
-(locking a subset of the page cache vs. the entire thing). So that's a bit of a
-digression.
-
-> > This would simplify things a lot and eliminate a really nasty corner case - page
-> > faults trigger readahead. Even if the buffer and the direct IO don't overlap,
-> > readahead can pull in pages that do overlap with the dio.
+> Not at the moment.  I'm considering making it such that you can make a watch
+> on a keyring get automatically propagated to keys that get added to the
+> keyring (and removed upon unlink) - the idea being that there is no 'single
+> parent path' concept for a keyring as there is for a directory.
 > 
-> Page cache readahead needs to be moved under the filesystem IO
-> locks. There was a recent thread about how readahead can race with
-> hole punching and other fallocate() operations because page cache
-> readahead bypasses the filesystem IO locks used to serialise page
-> cache invalidation.
+> I'm also pondering the idea of making it possible to have superblock watches
+> automatically propagated to superblocks created by automount points on the
+> watched superblock.
+
+So at the point where you can set a watch on one object O1 with label X, 
+and receive notifications triggered upon operations on another object O2 
+with label Y, we have to consider whether the relationship between X and 
+Y is controlled in any way (possibly transitively through a series of 
+checks performed earlier) and whether we can reasonably infer that the 
+authorization to watch X implies the ability to be notified of 
+operations on Y.  Not a problem for the mount notifications AFAICS 
+because there is only truly one object - the mount namespace itself, and 
+it is always our own.
+
 > 
-> e.g. Readahead can be directed by userspace via fadvise, so we now
-> have file->f_op->fadvise() so that filesystems can lock the inode
-> before calling generic_fadvise() such that page cache instantiation
-> and readahead dispatch can be serialised against page cache
-> invalidation. I have a patch for XFS sitting around somewhere that
-> implements the ->fadvise method.
+>> And for mount notifications, isn't the notification actually for a change to
+>> the mount namespace, not a change to any file?
+> 
+> Yes.
+> 
+>> Hence, the real "object" for events that trigger mount notifications is the
+>> mount namespace, right?
+> 
+> Um... arguably.  Would that mean that that would need a label from somewhere?
 
-I just puked a little in my mouth.
+That takes us into the whole question of whether namespaces should be 
+labeled (presumably from their creator), and the association between 
+processes and their namespaces should be controlled.  I think when we 
+originally looked at them, it wasn't much of a concern since the only 
+means of creating a new namespace and associating with it was via 
+clone() and then later also via unshare().  /proc/pid/ns and setns() 
+changed that picture, but still requires ptrace read mode access, which 
+at least provides some control over entering namespaces created by 
+others. I suspect that ultimately we want namespaces to be labeled and 
+controlled but that isn't your problem to solve here.
 
-> I think there are some other patches floating around to address the
-> other readahead mechanisms to only be done under filesytem IO locks,
-> but I haven't had time to dig into it any further. Readahead from
-> page faults most definitely needs to be under the MMAPLOCK at
-> least so it serialises against fallocate()...
+For your purposes, a process is setting a watch on its own namespace, 
+and it already inherently can observe changes to that namespace without 
+needing watches/notifications, and it can modify that namespace iff 
+privileged wrt to the namespace.  One might argue that no check is 
+required at all for setting the watch, and at most, it would be a check 
+between the process and its own label to match the checking when 
+accessing /proc/self/mounts. That presumes that no additional 
+information is conveyed via the notification that isn't already 
+available from /proc/self/mounts, particularly any information specific 
+to the process that triggered the notification.  Does that make sense?
 
-So I think there's two different approaches we should distinguish between. We
-can either add the locking to all the top level IO paths - what you just
-described - or, the locking can be pushed down to protect _only_ adding pages to
-the page cache, which is the approach I've been taking.
-
-I think both approaches are workable, but I do think that pushing the locking
-down to __add_to_page_cache_locked is fundamentally the better, more correct
-approach.
-
- - It better matches the semantics of what we're trying to do. All these
-   operations we're trying to protect - dio, fallocate, truncate - they all have
-   in common that they just want to shoot down a range of the page cache and
-   keep it from being readded. And in general, it's better to have locks that
-   protect specific data structures ("adding to this radix tree"), vs. large
-   critical sections ("the io path").
-
-   In bcachefs, at least for buffered IO I don't currently need any per-inode IO
-   locks, page granularity locks suffice, so I'd like to keep that - under the
-   theory that buffered IO to pages already in cache is more of a fast path than
-   faulting pages in.
-
- - If we go with the approach of using the filesystem IO locks, we need to be
-   really careful about auditing and adding assertions to make sure we've found
-   and fixed all the code paths that can potentially add pages to the page
-   cache. I didn't even know about the fadvise case, eesh.
-
- - We still need to do something about the case where we're recursively faulting
-   pages back in, which means we need _something_ in place to even detect that
-   that's happening. Just trying to cover everything with the filesystem IO
-   locks isn't useful here.
-
-So to summarize - if we have locking specifically for adding pages to the page
-cache, we don't need to extend the filesystem IO locks to all these places, and
-we need something at that level anyways to handle recursive faults from gup()
-anyways.
-
-The tricky part is that there's multiple places that want to call
-add_to_page_cache() while holding this pagecache_add_lock.
-
- - dio -> gup(): but, you had the idea of just returning -EDEADLOCK here which I
-   like way better than my recursive locking approach.
-
- - the other case is truncate/fpunch/etc - they make use of buffered IO to
-   handle operations that aren't page/block aligned. But those look a lot more
-   tractable than dio, since they're calling find_get_page()/readpage() directly
-   instead of via gup(), and possibly they could be structured to not have to
-   truncate/punch the partial page while holding the pagecache_add_lock at all
-   (but that's going to be heavily filesystem dependent).
-
-The more I think about it, the more convinced I am that this is fundamentally
-the correct approach. So, I'm going to work on an improved version of this
-patch.
-
-One other tricky thing we need is a way to write out and then evict a page
-without allowing it to be redirtied - i.e. something that combines
-filemap_write_and_wait_range() with invalidate_inode_pages2_range(). Otherwise,
-a process continuously redirtying a page is going to make truncate/dio
-operations spin trying to shoot down the page cache - in bcachefs I'm currently
-taking pagecache_add_lock in write_begin and mkwrite to prevent this, but I
-really want to get rid of that. If we can get that combined
-write_and_invalidate() operation, then I think the locking will turn out fairly
-clean.
+> 
+>> The watched path is just a way of identifying a subtree of the mount
+>> namespace for notifications - it isn't the real object being watched.
+> 
+> I like that argument.
+> 
+> Thanks,
+> David
+> 
