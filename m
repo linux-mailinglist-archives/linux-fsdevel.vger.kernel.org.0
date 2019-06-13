@@ -2,142 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3371F4476A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:59:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 966E04474E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:59:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730896AbfFMQ7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:59:20 -0400
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:36961 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729826AbfFMA1B (ORCPT
+        id S2404210AbfFMQ6o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:58:44 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:45836 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729874AbfFMAni (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 20:27:01 -0400
-Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id D76D33DB9FA;
-        Thu, 13 Jun 2019 10:26:52 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hbDYx-00046z-Ci; Thu, 13 Jun 2019 10:25:55 +1000
-Date:   Thu, 13 Jun 2019 10:25:55 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190613002555.GH14363@dread.disaster.area>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
- <20190607110426.GB12765@quack2.suse.cz>
- <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
- <20190608001036.GF14308@dread.disaster.area>
- <20190612123751.GD32656@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612123751.GD32656@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
-        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
-        a=7-415B0cAAAA:8 a=0tDtZe7MyfZ8QGwI5qwA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+        Wed, 12 Jun 2019 20:43:38 -0400
+Received: from jaskaran-Intel-Server-Board-S1200V3RPS-UEFI-Development-Kit.corp.microsoft.com (unknown [131.107.160.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 380F620B7186;
+        Wed, 12 Jun 2019 17:43:37 -0700 (PDT)
+From:   Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+To:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
+        jmorris@namei.org, scottsh@microsoft.com, ebiggers@google.com,
+        mpatocka@redhat.com
+Subject: [RFC PATCH v4 0/1] Add dm verity root hash pkcs7 sig validation.
+Date:   Wed, 12 Jun 2019 17:43:27 -0700
+Message-Id: <20190613004328.4274-1-jaskarankhurana@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
-> On Sat, Jun 08, 2019 at 10:10:36AM +1000, Dave Chinner wrote:
-> > On Fri, Jun 07, 2019 at 11:25:35AM -0700, Ira Weiny wrote:
-> > > Are you suggesting that we have something like this from user space?
-> > > 
-> > > 	fcntl(fd, F_SETLEASE, F_LAYOUT | F_UNBREAKABLE);
-> > 
-> > Rather than "unbreakable", perhaps a clearer description of the
-> > policy it entails is "exclusive"?
-> > 
-> > i.e. what we are talking about here is an exclusive lease that
-> > prevents other processes from changing the layout. i.e. the
-> > mechanism used to guarantee a lease is exclusive is that the layout
-> > becomes "unbreakable" at the filesystem level, but the policy we are
-> > actually presenting to uses is "exclusive access"...
-> 
-> That's rather different from the normal meaning of 'exclusive' in the
-> context of locks, which is "only one user can have access to this at
-> a time".
+This patch set adds in-kernel pkcs7 signature checking for the roothash of
+the dm-verity hash tree.
+The verification is to support cases where the roothash is not secured by
+Trusted Boot, UEFI Secureboot or similar technologies.
+One of the use cases for this is for dm-verity volumes mounted after boot,
+the root hash provided during the creation of the dm-verity volume has to
+be secure and thus in-kernel validation implemented here will be used
+before we trust the root hash and allow the block device to be created.
 
+Why we are doing validation in the Kernel?
 
-Layout leases are not locks, they are a user access policy object.
-It is the process/fd which holds the lease and it's the process/fd
-that is granted exclusive access.  This is exactly the same semantic
-as O_EXCL provides for granting exclusive access to a block device
-via open(), yes?
+The reason is to still be secure in cases where the attacker is able to
+compromise the user mode application in which case the user mode validation
+could not have been trusted.
+The root hash signature validation in the kernel along with existing
+dm-verity implementation gives a higher level of confidence in the
+executable code or the protected data. Before allowing the creation of
+the device mapper block device the kernel code will check that the detached
+pkcs7 signature passed to it validates the roothash and the signature is
+trusted by builtin keys set at kernel creation. The kernel should be
+secured using Verified boot, UEFI Secure Boot or similar technologies so we
+can trust it.
 
-> As I understand it, this is rather more like a 'shared' or
-> 'read' lock.  The filesystem would be the one which wants an exclusive
-> lock, so it can modify the mapping of logical to physical blocks.
+What about attacker mounting non dm-verity volumes to run executable
+code?
 
-ISTM that you're conflating internal filesystem implementation with
-application visible semantics. Yes, the filesystem uses internal
-locks to serialise the modification of the things the lease manages
-access too, but that has nothing to do with the access policy the
-lease provides to users.
+This verification can be used to have a security architecture where a LSM
+can enforce this verification for all the volumes and by doing this it can
+ensure that all executable code runs from signed and trusted dm-verity
+volumes.
 
-e.g. Process A has an exclusive layout lease on file F. It does an
-IO to file F. The filesystem IO path checks that Process A owns the
-lease on the file and so skips straight through layout breaking
-because it owns the lease and is allowed to modify the layout. It
-then takes the inode metadata locks to allocate new space and write
-new data.
+Further patches will be posted that build on this and enforce this
+verification based on policy for all the volumes on the system.
 
-Process B now tries to write to file F. The FS checks whether
-Process B owns a layout lease on file F. It doesn't, so then it
-tries to break the layout lease so the IO can proceed. The layout
-breaking code sees that process A has an exclusive layout lease
-granted, and so returns -ETXTBSY to process B - it is not allowed to
-break the lease and so the IO fails with -ETXTBSY.
+How are these changes tested?
 
-i.e. the exclusive layout lease prevents other processes from
-performing operations that may need to modify the layout from
-performing those operations. It does not "lock" the file/inode in
-any way, it just changes how the layout lease breaking behaves.
+To generate and sign the roothash just dump the roothash returned by veritysetup
+format in a text file and then sign using the tool in the topic branch here:
+(fsverity uses the tool for signing, I just added a parameter there for testing)
 
-Further, the "exclusiveness" of a layout lease is completely
-irrelevant to the filesystem that is indicating that an operation
-that may need to modify the layout is about to be performed. All the
-filesystem has to do is handle failures to break the lease
-appropriately.  Yes, XFS serialises the layout lease validation
-against other IO to the same file via it's IO locks, but that's an
-internal data IO coherency requirement, not anything to do with
-layout lease management.
+https://github.com/jaskarankhurana/fsverity-sign/tree/fs_verity_detached_pkcs7_for_dm_verity
 
-Note that I talk about /writes/ here. This is interchangable with
-any other operation that may need to modify the extent layout of the
-file, be it truncate, fallocate, etc: the attempt to break the
-layout lease by a non-owner should fail if the lease is "exclusive"
-to the owner.
+fsverity sign-dm-verity <ROOTHASH_IN_A_FILE>  <OUTSIG> --key=<KEYFILE>
+--cert=<CERTFILE>
 
-> The complication being that by default the filesystem has an exclusive
-> lock on the mapping, and what we're trying to add is the ability for
-> readers to ask the filesystem to give up its exclusive lock.
+veritysetup part of cryptsetup library was modified to take a optional
+root-hash-sig parameter.
 
-The filesystem doesn't even lock the "mapping" until after the
-layout lease has been validated or broken.
+Commandline used to test the changes:
 
-Cheers,
+veritysetup open  <data_device> <name> <hash_device> <root_hash>
+ --root-hash-sig=<root_hash_pkcs7_detached_sig>
 
-Dave.
+The changes for veritysetup are in a topic branch for now at:
+https://github.com/jaskarankhurana/veritysetup/tree/veritysetup_add_sig
+
+Changelog:
+
+v4:
+  - Code review feedback given by Milan Broz.
+  - Add documentation about the root hash signature parameter.
+  - Bump up the dm-verity target version.
+  - Provided way to sign and test with veritysetup in cover letter.
+
+v3:
+  - Code review feedback given by Sasha Levin.
+  - Removed EXPORT_SYMBOL_GPL since this was not required.
+  - Removed "This file is released under the GPLv2" since we have SPDX
+    identifier.
+  - Inside verity_verify_root_hash changed EINVAL to ENOKEY when the key
+    descriptor is not specified but due to force option being set it is
+    expected.
+  - Moved CONFIG check to inside verity_verify_get_sig_from_key.
+     (Did not move the sig_opts_cleanup to inside verity_dtr as the
+     sig_opts do not need to be allocated for the entire duration the block
+     device is active unlike the verity structure, note verity_dtr is called
+     only if verity_ctr fails or after the lifetime of the block device.)
+
+v2:
+  - Code review feedback to pass the signature binary blob as a key that can be
+    looked up in the kernel and be used to verify the roothash.
+    [Suggested by Milan Broz]
+  - Made the code related change suggested in review of v1.
+    [Suggested by Balbir Singh]
+
+v1:
+  - Add kconfigs to control dm-verity root has signature verification and
+    use the signature if specified to verify the root hash.
+
+Jaskaran Khurana (1):
+  Adds in-kernel pkcs7 sig checking the roothash of the dm-verity hash
+    tree
+
+ Documentation/device-mapper/verity.txt |   7 ++
+ drivers/md/Kconfig                     |  23 +++++
+ drivers/md/Makefile                    |   2 +-
+ drivers/md/dm-verity-target.c          |  36 ++++++-
+ drivers/md/dm-verity-verify-sig.c      | 132 +++++++++++++++++++++++++
+ drivers/md/dm-verity-verify-sig.h      |  30 ++++++
+ 6 files changed, 224 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/md/dm-verity-verify-sig.c
+ create mode 100644 drivers/md/dm-verity-verify-sig.h
+
 -- 
-Dave Chinner
-david@fromorbit.com
+2.17.1
+
