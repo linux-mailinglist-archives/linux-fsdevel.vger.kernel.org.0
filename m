@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84A1F43882
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:06:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24F0843870
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:06:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732816AbfFMPGY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 11:06:24 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:45439 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732415AbfFMOJZ (ORCPT
+        id S1732943AbfFMPFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 11:05:54 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46783 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732432AbfFMOMh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:09:25 -0400
-Received: by mail-qt1-f196.google.com with SMTP id j19so22652021qtr.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 07:09:25 -0700 (PDT)
+        Thu, 13 Jun 2019 10:12:37 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h21so22648411qtn.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 07:12:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=oUME5bpW/Pr2SfzIJPfU0VV06cSnG0RxvavtUh+MNiE=;
-        b=M/EoFGxSABgyBztItve42zjdupYcYzfD66qeOAPLBjvpSgzRq3HwHibHyK/bfTYVEp
-         Snv4WKDHMWhtXFgzfNRIFTonBDpjlZsLLMc7vcnU9wP5LDnc/CIYINLuC6ppOlhzSzY5
-         ZWucyBOfomZUhxoFgVEij2q2INcKhyqsuO0F4hRvO7iu5rONPKPMTHOya75MQbomTah8
-         wugG9whK6bvLQvDOPZ19ijqEfPhbK5NevTijutOMONhj6LXCDCikjy8e+z5pAil5qWGh
-         rbacUCGTqim+/+M2vPQhdgQMs5lJtjkZ2RiSQhQb59i7UDGC3ZBzpBNJdPhIml4PbxZi
-         n6EA==
+        bh=GDhqdSFdNrJkUzLZKLANjMrDzCWc+1BFxgZR9EoSJWc=;
+        b=o9ysYyAYYAkKDCEjOpEcA8dHcyUIgiishqyzWE+RGyB0CPD0qX9BMV8V2Ph7rpuhQ2
+         K8NR9n3H2e8PDC40efcl/XPNsZvrJzaA26yNoknpyzgEflgHS0LCRUJZDIxSiwaskZOx
+         wVtjRQyVJFXdvVLENdH2e5X3E+kNGZusxml91Hhgrxkdi0137ew7YVLbQca3LK9zF88/
+         ajD2LpyQ70yJdzGRaInaMTvnMegeomU9tWJ7wrO/cd9dwWrkG3s41kbgxjMsoVvaBYhS
+         JdQZnPb7pa+AfGg8+n8JdN/2O+vKRsl7thrK0YyHBoE/x0JUOpZD1nFq32wrn+4+Pmlh
+         8wdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oUME5bpW/Pr2SfzIJPfU0VV06cSnG0RxvavtUh+MNiE=;
-        b=t8ufVKqtgzWe5QhxveD4WYxWMqlzu4o6mzb1NScD1Iqsr6YN2+444lv9QsifW/bdAJ
-         AtfFWziG42U8bu+GNe5ETPSDUNj7b7ECkGMvGhTsTGBp19QdI1/ra5onie7L3S+0OPPY
-         0CeCQRhnbX5VCx22yBeaNzwLoQ9twY5cBV4c/XJVEb/Egl+VUnbOj4sRkD9diwcqzxOW
-         oeCy8QeB05mjhPvj+4C0IR4tmdoxGvjJ31a8w3XN/6MCdLhJ5zS+n2JG+K78zIXnrSlz
-         yWOZCw9ZgbfZZsI4vxbIvtiqX9DqFqwlOFdMXkR4d/2Cb1BrvJ+8LjRHVkdriVWGOkSP
-         4qRg==
-X-Gm-Message-State: APjAAAVxR7A5swoayeyr+5ctd/kOt3q9giPQ2IK5UY6yRrT97xffoo7L
-        UFoU5lqy5lcF/q66jeXxl1Z/FQ==
-X-Google-Smtp-Source: APXvYqx4PKvJqRb73kg+itLzxBEy7G8qizukwpBTzsJCknKQ1saPW7YkHzuQiHXLfj0I/50gl4TQCA==
-X-Received: by 2002:a0c:b036:: with SMTP id k51mr3868142qvc.103.1560434964503;
-        Thu, 13 Jun 2019 07:09:24 -0700 (PDT)
+        bh=GDhqdSFdNrJkUzLZKLANjMrDzCWc+1BFxgZR9EoSJWc=;
+        b=XanSfCrhbPhtdx6fb5MXFAvAiUMFC8C7HNr0Wcz03PD55F4IJcY7ragadu3xsWNQGF
+         FA4rhEko6yP9OiJcI1eN0/1Fli7sFw2f7LEwUowvYoIANGGGroa4SmvfJLeFkXq7aBwU
+         sjSKmKHaqJYYbHYdOIUoqi2QdOYW5YwpD96/hnJP2dvg7cr1vHPjGhCAqOnuPgTu1Esi
+         MjsF4hc4o42pcBjk1/zATyvYGLyK/JXVQ5DE2kGKK3Qm1Muoho4ZHFG3tzqOmgNmNOnh
+         +/v7hAixdE20CQM0PyVCUtgdt7ouwquq6Npn4BgADehgeaDAiy8zvVaR2LJ91hOOGML8
+         C7pw==
+X-Gm-Message-State: APjAAAVybOuLkOPeedGkl0CP/edYD3TBO0cBDPd+XdiwmBluAPOkPmOI
+        OI6Dq9uRdxt3yWAm8BxKpHIS0w==
+X-Google-Smtp-Source: APXvYqxb/kePzso30q0J3LDebGmnh0NZA/pxwsejwKpoIHkaoRXf9QORb3+scacfUjYllSbAb0hUTg==
+X-Received: by 2002:ac8:18f0:: with SMTP id o45mr74804877qtk.273.1560435156338;
+        Thu, 13 Jun 2019 07:12:36 -0700 (PDT)
 Received: from localhost ([2620:10d:c091:480::9d6b])
-        by smtp.gmail.com with ESMTPSA id m44sm1865189qtm.54.2019.06.13.07.09.23
+        by smtp.gmail.com with ESMTPSA id k15sm1394975qtg.22.2019.06.13.07.12.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 07:09:23 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 10:09:22 -0400
+        Thu, 13 Jun 2019 07:12:35 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 10:12:34 -0400
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     Naohiro Aota <naohiro.aota@wdc.com>
 Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
@@ -57,29 +57,48 @@ Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
         Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 08/19] btrfs: make unmirroed BGs readonly only if we have
- at least one writable BG
-Message-ID: <20190613140921.a2kmty5p6lzqztej@MacBook-Pro-91.local>
+Subject: Re: [PATCH 09/19] btrfs: limit super block locations in HMZONED mode
+Message-ID: <20190613141232.nud7gqz622ewcyzp@MacBook-Pro-91.local>
 References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190607131025.31996-9-naohiro.aota@wdc.com>
+ <20190607131025.31996-10-naohiro.aota@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190607131025.31996-9-naohiro.aota@wdc.com>
+In-Reply-To: <20190607131025.31996-10-naohiro.aota@wdc.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 10:10:14PM +0900, Naohiro Aota wrote:
-> If the btrfs volume has mirrored block groups, it unconditionally makes
-> un-mirrored block groups read only. When we have mirrored block groups, but
-> don't have writable block groups, this will drop all writable block groups.
-> So, check if we have at least one writable mirrored block group before
-> setting un-mirrored block groups read only.
+On Fri, Jun 07, 2019 at 10:10:15PM +0900, Naohiro Aota wrote:
+> When in HMZONED mode, make sure that device super blocks are located in
+> randomly writable zones of zoned block devices. That is, do not write super
+> blocks in sequential write required zones of host-managed zoned block
+> devices as update would not be possible.
 > 
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>  fs/btrfs/disk-io.c     | 11 +++++++++++
+>  fs/btrfs/disk-io.h     |  1 +
+>  fs/btrfs/extent-tree.c |  4 ++++
+>  fs/btrfs/scrub.c       |  2 ++
+>  4 files changed, 18 insertions(+)
+> 
+> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> index 7c1404c76768..ddbb02906042 100644
+> --- a/fs/btrfs/disk-io.c
+> +++ b/fs/btrfs/disk-io.c
+> @@ -3466,6 +3466,13 @@ struct buffer_head *btrfs_read_dev_super(struct block_device *bdev)
+>  	return latest;
+>  }
+>  
+> +int btrfs_check_super_location(struct btrfs_device *device, u64 pos)
+> +{
+> +	/* any address is good on a regular (zone_size == 0) device */
+> +	/* non-SEQUENTIAL WRITE REQUIRED zones are capable on a zoned device */
 
-I don't understand why you want this.  Thanks,
+This is not how you do multi-line comments in the kernel.  Thanks,
 
 Josef
