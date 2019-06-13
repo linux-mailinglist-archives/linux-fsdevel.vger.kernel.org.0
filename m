@@ -2,136 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7BD343FE1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:01:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9AFD43EF1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:54:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389787AbfFMQBB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:01:01 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:55599 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731455AbfFMIsr (ORCPT
+        id S1732011AbfFMPx7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 11:53:59 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:41183 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731590AbfFMI5H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:48:47 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-77-sMo5MtksNjyrgFaEIWzQmA-1; Thu, 13 Jun 2019 09:48:42 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu,
- 13 Jun 2019 09:48:41 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 13 Jun 2019 09:48:41 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Oleg Nesterov' <oleg@redhat.com>
-CC:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
-        'Andrew Morton' <akpm@linux-foundation.org>,
-        'Deepa Dinamani' <deepa.kernel@gmail.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'arnd@arndb.de'" <arnd@arndb.de>,
-        "'dbueso@suse.de'" <dbueso@suse.de>,
-        "'axboe@kernel.dk'" <axboe@kernel.dk>,
-        "'dave@stgolabs.net'" <dave@stgolabs.net>,
-        "'e@80x24.org'" <e@80x24.org>,
-        "'jbaron@akamai.com'" <jbaron@akamai.com>,
-        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
-        "'linux-aio@kvack.org'" <linux-aio@kvack.org>,
-        "'omar.kilani@gmail.com'" <omar.kilani@gmail.com>,
-        "'tglx@linutronix.de'" <tglx@linutronix.de>,
-        'Al Viro' <viro@ZenIV.linux.org.uk>,
-        'Linus Torvalds' <torvalds@linux-foundation.org>,
-        "'linux-arch@vger.kernel.org'" <linux-arch@vger.kernel.org>
-Subject: RE: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
-Thread-Topic: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
-Thread-Index: AQHVH9JWknGdQ9+D0UeylJNmvFzQKKaWJ31QgAHScICAABPkMIABOuaw
-Date:   Thu, 13 Jun 2019 08:48:41 +0000
-Message-ID: <6e9b964b08d84c99980b1707e5fe3d1d@AcuMS.aculab.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com>
- <20190606140814.GA13440@redhat.com> <87k1dxaxcl.fsf_-_@xmission.com>
- <87ef45axa4.fsf_-_@xmission.com> <20190610162244.GB8127@redhat.com>
- <87lfy96sta.fsf@xmission.com>
- <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
- <20190612134558.GB3276@redhat.com>
- <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
-In-Reply-To: <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 13 Jun 2019 04:57:07 -0400
+Received: by mail-yb1-f196.google.com with SMTP id d2so7522858ybh.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 01:57:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5rpwm+WXYqpS5Yt4a3EFiaLIxY1PzE0lEAcH6B/6h0A=;
+        b=fXL4Bw5Kwl/mMKIWGa1cdKDK4KAo0XR2yGRH64ZJ/I1MVExg0wWUUDX3vBHTYZkjOF
+         vYFKvyecLJNLSA/E7m7sTD8zh55AOz/agx/OfhCByMjAe9qffdMIJXqrpeOoxi+v3NkU
+         sXmf687D6xOZ2qyVaV0Av3gvkn68lJwqr/d2PEpnz/YSD7pg1u3UtvyzLDx4Mi3w75OR
+         HJJI+g/bVt6L2m1CG0hBdOwJes2EebjVxjs/giB7QyWUieZGe5ei2HyxPmHI0pV+dWgb
+         1hEim2OLo6wzfu6Jcv47M0Q4ZvWL5BNXddHdsTUs3Eu/hfMQJY2po5LVVP9PbG0vjMfb
+         rW5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5rpwm+WXYqpS5Yt4a3EFiaLIxY1PzE0lEAcH6B/6h0A=;
+        b=t99xFip5qnyzGKe2v7ekFBGbzpvQgCBOJM5MdW5a2w/lXc2yCnBrWS7jojtAm0LQWB
+         dQFC4aN2Yhns7ElC6omFpH0nge7YJFfS3tLMRSFHDFjqsrji4lPxTDvk2kindydS5tlR
+         6rdhD4/RlEEmZQGfZEbuk4UDrWdGrSqMW8AkqPoWySjNx1XVnjyKJeXz0p6y17VtK2ut
+         cMMajOC02GMS/3snEMg0Ui5K0rR4c9R8T0zjptsM76M5ESMZkEFdTrdZuUNvdA157koj
+         +/DNEZ4xJh2JoU3sABkAz5+Wa3V8Pe5vo3qdJu7QdKXOMSYfXPGMzudsap4VObFLgmVb
+         IhXw==
+X-Gm-Message-State: APjAAAUmQnN+TUvXBnGD3Mc8XALD3iOYWw1xBKzdtkkkpHjqDFfndtG1
+        /9UcDHUASbPuxAZbZgdCRruhag==
+X-Google-Smtp-Source: APXvYqw1zJomCCuCV1QnOnfqSwphH8qY2fZ84XDZGajBAG2kedoKa5gZ+d1vm3seCvUptjeuiel9rQ==
+X-Received: by 2002:a5b:b8b:: with SMTP id l11mr40277348ybq.165.1560416227034;
+        Thu, 13 Jun 2019 01:57:07 -0700 (PDT)
+Received: from [172.20.10.3] (mobile-166-172-57-221.mycingular.net. [166.172.57.221])
+        by smtp.gmail.com with ESMTPSA id i199sm607899ywe.89.2019.06.13.01.57.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 01:57:06 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: fix SQPOLL cpu check
+To:     Stephen Bates <sbates@raithlin.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shhuiw@foxmail.com" <shhuiw@foxmail.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <5D2859FE-DB39-48F5-BBB5-6EDD3791B6C3@raithlin.com>
+ <20190612092403.GA38578@lakrids.cambridge.arm.com>
+ <DCE71F95-F72A-414C-8A02-98CC81237F40@raithlin.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b3c9138e-bf3b-0851-a63e-f52f926d5ed8@kernel.dk>
+Date:   Thu, 13 Jun 2019 02:54:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-X-MC-Unique: sMo5MtksNjyrgFaEIWzQmA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <DCE71F95-F72A-414C-8A02-98CC81237F40@raithlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Laight
-> Sent: 12 June 2019 15:18
-> From: Oleg Nesterov
-> > Sent: 12 June 2019 14:46
-> > On 06/11, David Laight wrote:
-> > >
-> > > If I have an application that has a loop with a pselect call that
-> > > enables SIGINT (without a handler) and, for whatever reason,
-> > > one of the fd is always 'ready' then I'd expect a SIGINT
-> > > (from ^C) to terminate the program.
-> >
-> > This was never true.
-> >
-> > Before Eric's patches SIGINT can kill a process or not, depending on timing.
-> > In particular, if SIGINT was already pending before pselect() and it finds
-> > an already ready fd, the program won't terminate.
+On 6/12/19 3:47 AM, Stephen  Bates wrote:
+>> Aargh. My original patch [1] handled that correctly, and this case was
+>> explicitly called out in the commit message, which was retained even
+>> when the patch was "simplified". That's rather disappointing. :/
+>    
+> It looks like Jens did a fix for this (44a9bd18a0f06bba
+> " io_uring: fix failure to verify SQ_AFF cpu") which is in the 5.2-rc series
+> but which hasn’t been applied to the stable series yet. I am not sure how
+> I missed that but it makes my patch redundant.
 > 
-> Which matches what I see on a very old Linux system.
-> 
-> > After the Eric's patches SIGINT will only kill the program if pselect() does
-> > not find a ready fd.
-> >
-> > And this is much more consistent. Now we can simply say that the signal will
-> > be delivered only if pselect() fails and returns -EINTR. If it doesn't have
-> > a handler the process will be killed, otherwise the handler will be called.
-> 
-> But is it what the standards mandate?
-> Can anyone check how Solaris and any of the BSDs behave?
-> I don't have access to any solaris systems (I doubt I'll get the disk to
-> spin on the one in my garage).
-> I can check NetBSD when I get home.
+> Jens, will 44a9bd18a0f06bba be applied to stable kernels?
 
-I tested NetBSD last night.
-pselect() always calls the signal handlers even when an fd is ready.
-I'm beginning to suspect that this is the 'standards conforming' behaviour.
-I don't remember when pselect() was added to the ToG specs, it didn't
-go through XNET while I  was going to the meetings.
+Yes, we can get it flagged for stable. Greg, can you pull in the above
+commit for 5.1 stable?
 
-	David
 
-> 
-> The ToG page for pselect() http://pubs.opengroup.org/onlinepubs/9699919799/functions/pselect.html
-> says:
->     "If sigmask is not a null pointer, then the pselect() function shall replace
->     the signal mask of the caller by the set of signals pointed to by sigmask
->     before examining the descriptors, and shall restore the signal mask of the
->     calling thread before returning."
-> Note that it says 'before examining the descriptors' not 'before blocking'.
-> Under the general description about signals it also says that the signal handler
-> will be called (or other action happen) when a pending signal is unblocked.
-> So unblocking SIGINT (set to SIG_DFL) prior to examining the descriptors
-> should be enough to cause the process to exit.
-> The fact that signal handlers are not called until 'return to user'
-> is really an implementation choice - but (IMHO) it should appear as if they
-> were called at the time they became unmasked.
-> 
-> If nothing else the man pages need a note about the standards and portability.
-> 
-> 	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+-- 
+Jens Axboe
 
