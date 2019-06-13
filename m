@@ -2,149 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C71B944619
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8683445E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbfFMQtG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:49:06 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:41045 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727662AbfFMEhz (ORCPT
+        id S1730318AbfFMQr0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:47:26 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:49286 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730261AbfFME72 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 00:37:55 -0400
-Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id BEAB014A744;
-        Thu, 13 Jun 2019 14:37:47 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hbHTl-0005bp-W0; Thu, 13 Jun 2019 14:36:49 +1000
-Date:   Thu, 13 Jun 2019 14:36:49 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190613043649.GJ14363@dread.disaster.area>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
- <20190607110426.GB12765@quack2.suse.cz>
- <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
- <20190608001036.GF14308@dread.disaster.area>
- <20190612123751.GD32656@bombadil.infradead.org>
- <20190613002555.GH14363@dread.disaster.area>
- <20190613032320.GG32656@bombadil.infradead.org>
+        Thu, 13 Jun 2019 00:59:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1560401968; x=1591937968;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=froBIPifBYx27SwWUHteL9+TGrAfb3ZLthb2Y1Mh82o=;
+  b=rCSjt4H5kktAq50t8QH521mHCrks511nJpZL6GJAS/EuM81pYYjtgnfK
+   SEWx5D5U4Ht4Idia6QPfigSskSTLgmkbbPBgy/iktVm4yoQ7/Wo+dmFp4
+   v+0XBduJuj+R1ArnYmgePmYmXxm+QRMmKAr2lU2ddLgpl1I0yuolxdAy6
+   fMJHfhWkkebUUMpzqmo3CYsMCgins6iLZNJb8cNWuFKtN2RDvkIm31pnf
+   HxoyZlzftNX5Oruq3xOgpPIs9kauwG4AqBdeSGfTmucN/szZUDhHvhkGc
+   4xtEl0Qja6mI2T4YvtQOGBEJXnYt+aJm2rX6wB6qlh1ozoJYP3RDlPY33
+   A==;
+X-IronPort-AV: E=Sophos;i="5.63,368,1557158400"; 
+   d="scan'208";a="112089076"
+Received: from mail-bl2nam02lp2058.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([104.47.38.58])
+  by ob1.hgst.iphmx.com with ESMTP; 13 Jun 2019 12:59:26 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=froBIPifBYx27SwWUHteL9+TGrAfb3ZLthb2Y1Mh82o=;
+ b=i59vNMQpTaO9sHtd1VnWzw6WxcFG0TZohAYd8IT1tPtQ8nf4FQGH4Ea8AF70ID4x9Y8xtrFNmloTqWDsQejUeVv4xpVzNDjhDfc2eOpNfcxSG4CG50UGHdpGL0Ds7LtwxNrfkyExT6KjXuF8cQWrC5rgxkskfuUDz0UPHs1GlXc=
+Received: from SN6PR04MB5231.namprd04.prod.outlook.com (20.177.254.85) by
+ SN6PR04MB5469.namprd04.prod.outlook.com (20.177.254.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.15; Thu, 13 Jun 2019 04:59:23 +0000
+Received: from SN6PR04MB5231.namprd04.prod.outlook.com
+ ([fe80::5005:99a1:65aa:f088]) by SN6PR04MB5231.namprd04.prod.outlook.com
+ ([fe80::5005:99a1:65aa:f088%6]) with mapi id 15.20.1987.012; Thu, 13 Jun 2019
+ 04:59:23 +0000
+From:   Naohiro Aota <Naohiro.Aota@wdc.com>
+To:     "dsterba@suse.cz" <dsterba@suse.cz>
+CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        =?iso-8859-1?Q?Matias_Bj=F8rling?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH v2 00/19] btrfs zoned block device support
+Thread-Topic: [PATCH v2 00/19] btrfs zoned block device support
+Thread-Index: AQHVHTKAMt+QxADp/024sRBo1BQ8yw==
+Date:   Thu, 13 Jun 2019 04:59:23 +0000
+Message-ID: <SN6PR04MB5231E2F482B8D794950058FF8CEF0@SN6PR04MB5231.namprd04.prod.outlook.com>
+References: <20190607131025.31996-1-naohiro.aota@wdc.com>
+ <20190612175138.GT3563@twin.jikos.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Naohiro.Aota@wdc.com; 
+x-originating-ip: [199.255.47.8]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 88ee645f-50c3-4ca4-d0d8-08d6efbbe721
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:SN6PR04MB5469;
+x-ms-traffictypediagnostic: SN6PR04MB5469:
+x-ms-exchange-purlcount: 2
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <SN6PR04MB5469E8F89BB32AA3CBAEC9978CEF0@SN6PR04MB5469.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0067A8BA2A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(366004)(346002)(396003)(136003)(199004)(189003)(229853002)(53546011)(6506007)(256004)(33656002)(2906002)(71190400001)(71200400001)(6916009)(1730700003)(8936002)(81166006)(81156014)(8676002)(7696005)(102836004)(66476007)(7736002)(66556008)(25786009)(91956017)(76116006)(73956011)(64756008)(2351001)(3846002)(74316002)(66946007)(66446008)(76176011)(7416002)(99286004)(305945005)(68736007)(6436002)(6246003)(186003)(54906003)(5660300002)(476003)(72206003)(446003)(26005)(966005)(316002)(478600001)(6116002)(9686003)(52536014)(53936002)(14454004)(55016002)(4326008)(53376002)(66066001)(2501003)(6306002)(86362001)(5640700003)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB5469;H:SN6PR04MB5231.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: R/Kt3jxwG1IpmP2qaeH9kAG9bzyO/MLbAqxdV/V9lh6Rynp06J4PwbN69qOJCEq5qOibH3GYly5SitPBy2szgMqLZL69XjTB1+OrzyK+q4libGsUK8vV7VJ9vwPZp90OhM/B8Rh3TKoL/cy6/KrQIK65UHC0kuRhT4s2cBWkeVnsUQUAgjPb8y5VXtMdXdnxxEIXB/N8jvH9bYRtOPhXOxJwNTTjNV1+8Zna3REeiLbCSS4l82Hb+WHQA95+D2JA3TOhAEQ+ksAm6+2ww1KpVJkLcGeYGl2Pu5x0ht4Grzpzov9fUeMrYHzX/Efoz8vAF5lbCHbxnLVjQCJwiuCNSZ2DvIxGn0EkF5NZcmm3Zv3UU9Ca7N87LcIYgoD1dc7tw5n2joIpJBSHHGBaSYFuh1zeM9f6diKbg75UAYSN2kE=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613032320.GG32656@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
-        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
-        a=7-415B0cAAAA:8 a=VVmKscACqtQWyMykWwEA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88ee645f-50c3-4ca4-d0d8-08d6efbbe721
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 04:59:23.3460
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Naohiro.Aota1@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5469
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 08:23:20PM -0700, Matthew Wilcox wrote:
-> On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
-> > On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
-> > > That's rather different from the normal meaning of 'exclusive' in the
-> > > context of locks, which is "only one user can have access to this at
-> > > a time".
-> > 
-> > Layout leases are not locks, they are a user access policy object.
-> > It is the process/fd which holds the lease and it's the process/fd
-> > that is granted exclusive access.  This is exactly the same semantic
-> > as O_EXCL provides for granting exclusive access to a block device
-> > via open(), yes?
-> 
-> This isn't my understanding of how RDMA wants this to work, so we should
-> probably clear that up before we get too far down deciding what name to
-> give it.
-> 
-> For the RDMA usage case, it is entirely possible that both process A
-> and process B which don't know about each other want to perform RDMA to
-> file F.  So there will be two layout leases active on this file at the
-> same time.  It's fine for IOs to simultaneously be active to both leases.
-
-Yes, it is.
-
-> But if the filesystem wants to move blocks around, it has to break
-> both leases.
-
-No, the _lease layer_ needs to break both leases when the filesystem
-calls break_layout().
-
-The filesystem is /completely unaware/ of whether a lease is held,
-how many leases are held, what is involved in revoking leases or
-whether they are exclusive or not. The filesystem only knows that it
-is about to perform an operation that may require a layout lease to
-be broken, so it's _asking permission_ from the layout lease layer
-whether it is OK to go ahead with the operation.
-
-See what I mean about the layout lease being an /access arbitration/
-layer? It's the layer that decides whether a modification can be
-made or not, not the filesystem. The layout lease layer tells the
-filesystem what it should do, the filesystem just has to ensure it
-adds layout breaking callouts in places that can block safely and
-are serialised to ensure operations from new layouts can't race with
-the operation that broke the existing layouts.
-
-> If Process C tries to do a write to file F without a lease, there's no
-> problem, unless a side-effect of the write would be to change the block
-> mapping,
-
-That's a side effect we cannot predict ahead of time. But it's
-also _completely irrelevant_ to the layout lease layer API and
-implementation.(*)
-
-> in which case either the leases must break first, or the write
-> must be denied.
-
-Which is exactly how I'm saying layout leases already interact with
-the filesystem: that if the lease cannot be broken, break_layout()
-returns -ETXTBSY to the filesystem, and the filesystem returns that
-to the application having made no changes at all. Layout leases are
-the policy engine, the filesystem just has to implement the
-break_layout() callouts such that layout breaking is consistent,
-correct, and robust....
-
-Cheers,
-
-Dave.
-
-(*) In the case of XFS, we don't know if a layout change will be
-necessary until we are deep inside the actual IO path and hold inode
-metadata locks. We can't block here to break the layout because IO
-completion and metadata commits need to occur to allow the
-application to release it's lease and IO completion requires that
-same inode metadata lock. i.e. if we block once we know a layout
-change needs to occur, we will deadlock the filesystem on the inode
-metadata lock.
-
-Hence the filesystem implementation dictates when the filesystem
-issues layout lease break notifications. However, these filesystem
-implementation issues do not dictate how applications interact with
-layout leases, how layout leases are managed, whether concurrent
-leases are allowed, whether leases can be broken, etc.  That's all
-managed by the layout lease layer and that's where the go/no go
-decision is made and communicated to the filesystem as the return
-value from the break_layout() call.
-
--- 
-Dave Chinner
-david@fromorbit.com
+On 2019/06/13 2:50, David Sterba wrote:=0A=
+> On Fri, Jun 07, 2019 at 10:10:06PM +0900, Naohiro Aota wrote:=0A=
+>> btrfs zoned block device support=0A=
+>>=0A=
+>> This series adds zoned block device support to btrfs.=0A=
+> =0A=
+> The overall design sounds ok.=0A=
+> =0A=
+> I skimmed through the patches and the biggest task I see is how to make=
+=0A=
+> the hmzoned adjustments and branches less visible, ie. there are too=0A=
+> many if (hmzoned) { do something } standing out. But that's merely a=0A=
+> matter of wrappers and maybe an abstraction here and there.=0A=
+=0A=
+Sure. I'll add some more abstractions in the next version.=0A=
+=0A=
+> How can I test the zoned devices backed by files (or regular disks)? I=0A=
+> searched for some concrete example eg. for qemu or dm-zoned, but closest=
+=0A=
+> match was a text description in libzbc README that it's possible to=0A=
+> implement. All other howtos expect a real zoned device.=0A=
+=0A=
+You can use tcmu-runer [1] to create an emulated zoned device backed by =0A=
+a regular file. Here is a setup how-to:=0A=
+http://zonedstorage.io/projects/tcmu-runner/#compilation-and-installation=
+=0A=
+=0A=
+[1] https://github.com/open-iscsi/tcmu-runner=0A=
+=0A=
+> Merge target is 5.3 or later, we'll see how things will go. I'm=0A=
+> expecting that we might need some time to get feedback about the=0A=
+> usability as there's no previous work widely used that we can build on=0A=
+> top of.=0A=
+> =0A=
