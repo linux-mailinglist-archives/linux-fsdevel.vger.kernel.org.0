@@ -2,70 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0918D43E1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:47:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CDE843DEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:46:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731822AbfFMPri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 11:47:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55346 "EHLO mx1.redhat.com"
+        id S1731807AbfFMPpb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 11:45:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34172 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731750AbfFMJ1m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 05:27:42 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1731801AbfFMJno (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 05:43:44 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2AD9430A6986;
-        Thu, 13 Jun 2019 09:27:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-109.rdu2.redhat.com [10.10.120.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8457E600C0;
-        Thu, 13 Jun 2019 09:27:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wh2Khe1Lj-Pdu3o2cXxumL1hegg_1JZGJXki6cchg_Q2Q@mail.gmail.com>
-References: <CAHk-=wh2Khe1Lj-Pdu3o2cXxumL1hegg_1JZGJXki6cchg_Q2Q@mail.gmail.com> <20190612225431.p753mzqynxpsazb7@brauner.io>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian@brauner.io>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: Regression for MS_MOVE on kernel v5.1
+        by mx1.redhat.com (Postfix) with ESMTPS id D4F32C04AC69;
+        Thu, 13 Jun 2019 09:43:36 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2B8F35F9B0;
+        Thu, 13 Jun 2019 09:43:26 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 13 Jun 2019 11:43:36 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 11:43:25 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        'Andrew Morton' <akpm@linux-foundation.org>,
+        'Deepa Dinamani' <deepa.kernel@gmail.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'arnd@arndb.de'" <arnd@arndb.de>,
+        "'dbueso@suse.de'" <dbueso@suse.de>,
+        "'axboe@kernel.dk'" <axboe@kernel.dk>,
+        "'dave@stgolabs.net'" <dave@stgolabs.net>,
+        "'e@80x24.org'" <e@80x24.org>,
+        "'jbaron@akamai.com'" <jbaron@akamai.com>,
+        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-aio@kvack.org'" <linux-aio@kvack.org>,
+        "'omar.kilani@gmail.com'" <omar.kilani@gmail.com>,
+        "'tglx@linutronix.de'" <tglx@linutronix.de>,
+        'Al Viro' <viro@ZenIV.linux.org.uk>,
+        'Linus Torvalds' <torvalds@linux-foundation.org>,
+        "'linux-arch@vger.kernel.org'" <linux-arch@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Message-ID: <20190613094324.GA12506@redhat.com>
+References: <20190604134117.GA29963@redhat.com>
+ <20190606140814.GA13440@redhat.com>
+ <87k1dxaxcl.fsf_-_@xmission.com>
+ <87ef45axa4.fsf_-_@xmission.com>
+ <20190610162244.GB8127@redhat.com>
+ <87lfy96sta.fsf@xmission.com>
+ <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
+ <20190612134558.GB3276@redhat.com>
+ <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
+ <6e9b964b08d84c99980b1707e5fe3d1d@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <9382.1560418050.1@warthog.procyon.org.uk>
-Date:   Thu, 13 Jun 2019 10:27:30 +0100
-Message-ID: <9383.1560418050@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 13 Jun 2019 09:27:42 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e9b964b08d84c99980b1707e5fe3d1d@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 13 Jun 2019 09:43:43 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Adding Eric to the cc list since he implemented MNT_LOCKED]
+On 06/13, David Laight wrote:
+>
+> I tested NetBSD last night.
+> pselect() always calls the signal handlers even when an fd is ready.
+> I'm beginning to suspect that this is the 'standards conforming' behaviour.
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+May be. May be not. I have no idea.
 
-> > The commit changes the internal logic to lock mounts when propagating
-> > mounts (user+)mount namespaces and - I believe - causes do_mount_move()
-> > to fail at:
-> 
-> You mean 'do_move_mount()'.
-> 
-> > if (old->mnt.mnt_flags & MNT_LOCKED)
-> >         goto out;
-> >
-> > If that's indeed the case we should either revert this commit (reverts
-> > cleanly, just tested it) or find a fix.
-> 
-> Hmm.. I'm not entirely sure of the logic here, and just looking at
-> that commit 3bd045cc9c4b ("separate copying and locking mount tree on
-> cross-userns copies") doesn't make me go "Ahh" either.
-> 
-> Al? My gut feel is that we need to just revert, since this was in 5.1
-> and it's getting reasonably late in 5.2 too. But maybe you go "guys,
-> don't be silly, this is easily fixed with this one-liner".
+> > The ToG page for pselect() http://pubs.opengroup.org/onlinepubs/9699919799/functions/pselect.html
+> > says:
+> >     "If sigmask is not a null pointer, then the pselect() function shall replace
+> >     the signal mask of the caller by the set of signals pointed to by sigmask
+> >     before examining the descriptors, and shall restore the signal mask of the
+> >     calling thread before returning."
+
+> > Note that it says 'before examining the descriptors' not 'before blocking'.
+
+And you interpret this as if a pending signal should be delivered in any case,
+even if pselect succeeds. Again, perhaps you are right, but to me this is simply
+undocumented.
+
+However, linux never did this. Until the commit 854a6ed56839 ("signal: Add
+restore_user_sigmask()"). This commit caused regression. We had to revert it.
+
+> > If nothing else the man pages need a note about the standards and portability.
+
+Agreed.
+
+Oleg.
+
