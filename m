@@ -2,130 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 845D443B00
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:25:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1914E43A90
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:22:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732668AbfFMPZN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 11:25:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45740 "EHLO mail.kernel.org"
+        id S1732152AbfFMPWI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 11:22:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56618 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731575AbfFMMD7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 08:03:59 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731989AbfFMMoJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 08:44:09 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D5C421721;
-        Thu, 13 Jun 2019 12:03:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560427438;
-        bh=p2FKjRUBwjz5hPRVT7bIqF2K2jvLxaCfR3Nd2QCuhAI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=h7oNytnJoZSKgKryW1tJj9jWvo+nYi59n7LE9Dz/eaP3Mc2jgY3VNdcESIoxlvf+u
-         C0GXDXC/EjUmbNb/AVlxc3XpOYwUovNGErQ2VUEoVEPPUz9Onqp8RncBTcRjN8oQBr
-         hjCcALIYmN7Y1oU3GcpawPyxm6X1xLhhZ9Aq+sh4=
-Message-ID: <ed2e4b5d26890e96ba9dafcb3dba88427e36e619.camel@kernel.org>
-Subject: Re: [PATCH] ceph: copy_file_range needs to strip setuid bits and
- update timestamps
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-Date:   Thu, 13 Jun 2019 08:03:55 -0400
-In-Reply-To: <20190610174007.4818-1-amir73il@gmail.com>
-References: <20190610174007.4818-1-amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        by mx1.redhat.com (Postfix) with ESMTPS id B5DF330860AE;
+        Thu, 13 Jun 2019 12:43:54 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3080C1001B1A;
+        Thu, 13 Jun 2019 12:43:49 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 13 Jun 2019 14:43:54 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 14:43:48 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        'Andrew Morton' <akpm@linux-foundation.org>,
+        'Deepa Dinamani' <deepa.kernel@gmail.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'arnd@arndb.de'" <arnd@arndb.de>,
+        "'dbueso@suse.de'" <dbueso@suse.de>,
+        "'axboe@kernel.dk'" <axboe@kernel.dk>,
+        "'dave@stgolabs.net'" <dave@stgolabs.net>,
+        "'e@80x24.org'" <e@80x24.org>,
+        "'jbaron@akamai.com'" <jbaron@akamai.com>,
+        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-aio@kvack.org'" <linux-aio@kvack.org>,
+        "'omar.kilani@gmail.com'" <omar.kilani@gmail.com>,
+        "'tglx@linutronix.de'" <tglx@linutronix.de>,
+        'Al Viro' <viro@ZenIV.linux.org.uk>,
+        'Linus Torvalds' <torvalds@linux-foundation.org>,
+        "'linux-arch@vger.kernel.org'" <linux-arch@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Message-ID: <20190613124347.GB12506@redhat.com>
+References: <87k1dxaxcl.fsf_-_@xmission.com>
+ <87ef45axa4.fsf_-_@xmission.com>
+ <20190610162244.GB8127@redhat.com>
+ <87lfy96sta.fsf@xmission.com>
+ <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
+ <20190612134558.GB3276@redhat.com>
+ <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
+ <6e9b964b08d84c99980b1707e5fe3d1d@AcuMS.aculab.com>
+ <20190613094324.GA12506@redhat.com>
+ <66311ce9762849f7988c16bc752ea5a9@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66311ce9762849f7988c16bc752ea5a9@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 13 Jun 2019 12:44:09 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2019-06-10 at 20:40 +0300, Amir Goldstein wrote:
-> Because ceph doesn't hold destination inode lock throughout the copy,
-> strip setuid bits before and after copy.
-> 
-> The destination inode mtime is updated before and after the copy and the
-> source inode atime is updated after the copy, similar to the filesystem
-> ->read_iter() implementation.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
-> 
-> Hi Ilya,
-> 
-> Please consider applying this patch to ceph branch after merging
-> Darrick's copy-file-range-fixes branch from:
->         git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
-> 
-> The series (including this patch) was tested on ceph by
-> Luis Henriques using new copy_range xfstests.
-> 
-> AFAIK, only fallback from ceph to generic_copy_file_range()
-> implementation was tested and not the actual ceph clustered
-> copy_file_range.
-> 
-> Thanks,
-> Amir.
-> 
->  fs/ceph/file.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index c5517ffeb11c..b04c97c7d393 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1949,6 +1949,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  		goto out;
->  	}
->  
-> +	/* Should dst_inode lock be held throughout the copy operation? */
-> +	inode_lock(dst_inode);
-> +	ret = file_modified(dst_file);
-> +	inode_unlock(dst_inode);
-> +	if (ret < 0) {
-> +		dout("failed to modify dst file before copy (%zd)\n", ret);
-> +		goto out;
-> +	}
-> +
+On 06/13, David Laight wrote:
+>
+> > And you interpret this as if a pending signal should be delivered in any case,
+> > even if pselect succeeds. Again, perhaps you are right, but to me this is simply
+> > undocumented.
+>
+> This text (from http://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap02.html) is moderately clear:
+>     ... if all threads within the process block delivery of the signal, the signal shall
+>     remain pending on the process until a thread calls a sigwait() function selecting that
+>     signal, a thread unblocks delivery of the signal, or the action associated with the signal
+>     is set to ignore the signal.
+>
+> So when pselect() 'replaces the signal mask' any pending signals should be delivered.
 
-I don't see anything that guarantees that the mode of the destination
-file is up to date at this point. file_modified() just ends up checking
-the mode cached in the inode.
+I fail to understand this logic.
 
-I wonder if we ought to fix get_rd_wr_caps() to also acquire a reference
-to AUTH_SHARED caps on the destination inode, and then call
-file_modified() after we get those caps. That would also mean that we
-wouldn't need to do this a second time after the copy.
 
-The catch is that if we did need to issue a setattr, I'm not sure if
-we'd need to release those caps first.
+> > However, linux never did this. Until the commit 854a6ed56839 ("signal: Add
+> > restore_user_sigmask()"). This commit caused regression. We had to revert it.
+>
+> That change wasn't expected to change the behaviour...
 
-Luis, Zheng, thoughts?
+Yes.
 
->  	/*
->  	 * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
->  	 * clients may have dirty data in their caches.  And OSDs know nothing
-> @@ -2099,6 +2108,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  out:
->  	ceph_free_cap_flush(prealloc_cf);
->  
-> +	file_accessed(src_file);
-> +	/* To be on the safe side, try to remove privs also after copy */
-> +	inode_lock(dst_inode);
-> +	err = file_modified(dst_file);
-> +	inode_unlock(dst_inode);
-> +	if (err < 0)
-> +		dout("failed to modify dst file after copy (%d)\n", err);
-> +
->  	return ret;
->  }
->  
+And the changed behaviour matched your understanding of standard. We had to
+change it back.
 
+So what do you want from me? ;)
+
+Oleg.
 
