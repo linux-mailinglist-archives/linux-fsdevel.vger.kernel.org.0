@@ -2,155 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58053445C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEB9B445B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:46:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730564AbfFMQqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:46:32 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:49615 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730304AbfFMF3n (ORCPT
+        id S1730350AbfFMQpy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:45:54 -0400
+Received: from mail-wr1-f54.google.com ([209.85.221.54]:33765 "EHLO
+        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730322AbfFMFqU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 01:29:43 -0400
-X-Originating-IP: 79.86.19.127
-Received: from [192.168.0.12] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 30F5620007;
-        Thu, 13 Jun 2019 05:29:26 +0000 (UTC)
-Subject: Re: [PATCH v4 00/14] Provide generic top-down mmap layout functions
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        James Hogan <jhogan@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20190526134746.9315-1-alex@ghiti.fr>
-From:   Alex Ghiti <alex@ghiti.fr>
-Message-ID: <bfb1565d-0468-8ea8-19f9-b862faa4f1d4@ghiti.fr>
-Date:   Thu, 13 Jun 2019 01:29:26 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190526134746.9315-1-alex@ghiti.fr>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: sv-FI
+        Thu, 13 Jun 2019 01:46:20 -0400
+Received: by mail-wr1-f54.google.com with SMTP id n9so19316740wru.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 22:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=+KC+G8mdsFHRq3fTO8qSFdNuM/o8bUU5Ws1W0tY9nMQ=;
+        b=fcMHhd8SlQkGpmu4B4nnHAcWQF7KwY2oVV3mNcGcuZAm4mu6blLKC7FPW5p4xwO0k4
+         ElkPvnrtllGvpBASvZHiwuIorqIrmYPY1qDm4otU9sYAlokfFwYlR4PR2pE8qjSxJ2bv
+         Cc+n3yEeKCFqbEXJLo7edU2gB4dYlbZHfUPcT4pMQ8U0cZqodb/v5NPuEnuAp7VrL9N0
+         bZEESFOJmsJ97ksQTSUutEBELnFtWGZo8oAQ+JLQxVoFeSB81OPPH9JWwTl3JqqBruas
+         4CREGmjevp7mkIo8lNxjmg3TZAzNDJaThvyulLFtw+2h+imVMSsk2+eDbUEoGTrUF22T
+         NjIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=+KC+G8mdsFHRq3fTO8qSFdNuM/o8bUU5Ws1W0tY9nMQ=;
+        b=Ld711A0D4A92vT/DBEJBukX0TED+25kx5UiDbZo6ydM/92f3q+/BdbheL3j30AgwUt
+         +AdXu7sjrowA0A7DwCS1FMH/jjVbbCMOQHVF2kc1qV+3Hhy4q02PqNaTCJEeHGLZ9ga2
+         +pObqdnzA9IaaZ4TXTcHTKt0AO+7BICL7F0ohxgy/2MWzL9J0RCThg7IUP0tRh7jKG3A
+         RqIJaKe+l9d+mRypWx/g+QEpBx/SxWyD9oFnj+evEe50O23w3uoSAPEotWqz6RXbD7A5
+         bU7HmmF4UP5Dp09GekrQCHsRRr5Zvlmh6RXUY073G+v14Xyqv+bvcTmyWDIlG6CDy3uQ
+         96pQ==
+X-Gm-Message-State: APjAAAUjYE0x6HtT6/OyxhAGn6Bk24ESQmfcvhHeKR7PFVr4QQSh2OD0
+        iyJaRBU97Lp3Un1NlGoUmXfGTA==
+X-Google-Smtp-Source: APXvYqw/aYOTu9cU/Ok5QkUUC38n3D+JffJJRYpP42j/6jsR85bV4Vha18mx5IR6w74L0iQ1L9eZ9A==
+X-Received: by 2002:adf:ebc6:: with SMTP id v6mr14275239wrn.222.1560404777633;
+        Wed, 12 Jun 2019 22:46:17 -0700 (PDT)
+Received: from [192.168.0.102] (88-147-71-233.dyn.eolo.it. [88.147.71.233])
+        by smtp.gmail.com with ESMTPSA id z14sm3164273wre.96.2019.06.12.22.46.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Jun 2019 22:46:16 -0700 (PDT)
+From:   Paolo Valente <paolo.valente@linaro.org>
+Message-Id: <43486E4F-2237-4E40-BDFE-07CFCCFFFA25@linaro.org>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_C82715EC-E52D-48BB-975D-458C5D643A93";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+Date:   Thu, 13 Jun 2019 07:46:12 +0200
+In-Reply-To: <7c5e9d11-4a3d-7df4-c1e6-7c95919522ab@csail.mit.edu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
+        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+To:     "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <5B6570A2-541A-4CF8-98E0-979EA6E3717D@linaro.org>
+ <2CB39B34-21EE-4A95-A073-8633CF2D187C@linaro.org>
+ <FC24E25F-4578-454D-AE2B-8D8D352478D8@linaro.org>
+ <0e3fdf31-70d9-26eb-7b42-2795d4b03722@csail.mit.edu>
+ <F5E29C98-6CC4-43B8-994D-0B5354EECBF3@linaro.org>
+ <686D6469-9DE7-4738-B92A-002144C3E63E@linaro.org>
+ <01d55216-5718-767a-e1e6-aadc67b632f4@csail.mit.edu>
+ <CA8A23E2-6F22-4444-9A20-E052A94CAA9B@linaro.org>
+ <cc148388-3c82-d7c0-f9ff-8c31bb5dc77d@csail.mit.edu>
+ <6FE0A98F-1E3D-4EF6-8B38-2C85741924A4@linaro.org>
+ <2A58C239-EF3F-422B-8D87-E7A3B500C57C@linaro.org>
+ <a04368ba-f1d5-8f2c-1279-a685a137d024@csail.mit.edu>
+ <E270AD92-943E-4529-8158-AB480D6D9DF8@linaro.org>
+ <5b71028c-72f0-73dd-0cd5-f28ff298a0a3@csail.mit.edu>
+ <FFA44D26-75FF-4A8E-A331-495349BE5FFC@linaro.org>
+ <0d6e3c02-1952-2177-02d7-10ebeb133940@csail.mit.edu>
+ <7B74A790-BD98-412B-ADAB-3B513FB1944E@linaro.org>
+ <6a6f4aa4-fc95-f132-55b2-224ff52bd2d8@csail.mit.edu>
+ <7c5e9d11-4a3d-7df4-c1e6-7c95919522ab@csail.mit.edu>
+X-Mailer: Apple Mail (2.3445.104.8)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/26/19 9:47 AM, Alexandre Ghiti wrote:
-> This series introduces generic functions to make top-down mmap layout
-> easily accessible to architectures, in particular riscv which was
-> the initial goal of this series.
-> The generic implementation was taken from arm64 and used successively
-> by arm, mips and finally riscv.
->
-> Note that in addition the series fixes 2 issues:
-> - stack randomization was taken into account even if not necessary.
-> - [1] fixed an issue with mmap base which did not take into account
->    randomization but did not report it to arm and mips, so by moving
->    arm64 into a generic library, this problem is now fixed for both
->    architectures.
->
-> This work is an effort to factorize architecture functions to avoid
-> code duplication and oversights as in [1].
->
-> [1]: https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1429066.html
->
-> Changes in v4:
->    - Make ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT select ARCH_HAS_ELF_RANDOMIZE
->      by default as suggested by Kees,
->    - ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT depends on MMU and defines the
->      functions needed by ARCH_HAS_ELF_RANDOMIZE => architectures that use
->      the generic mmap topdown functions cannot have ARCH_HAS_ELF_RANDOMIZE
->      selected without MMU, but I think it's ok since randomization without
->      MMU does not add much security anyway.
->    - There is no common API to determine if a process is 32b, so I came up with
->      !IS_ENABLED(CONFIG_64BIT) || is_compat_task() in [PATCH v4 12/14].
->    - Mention in the change log that x86 already takes care of not offseting mmap
->      base address if the task does not want randomization.
->    - Re-introduce a comment that should not have been removed.
->    - Add Reviewed/Acked-By from Paul, Christoph and Kees, thank you for that.
->    - I tried to minimize the changes from the commits in v3 in order to make
->      easier the review of the v4, the commits changed or added are:
->      - [PATCH v4 5/14]
->      - [PATCH v4 8/14]
->      - [PATCH v4 11/14]
->      - [PATCH v4 12/14]
->      - [PATCH v4 13/14]
 
-Hi Paul,
+--Apple-Mail=_C82715EC-E52D-48BB-975D-458C5D643A93
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-Compared to the previous version you already acked, patches 11, 12 and 13
-would need your feedback, do you have time to take a look at them ?
 
-Hope I don't bother you,
+
+> Il giorno 12 giu 2019, alle ore 00:34, Srivatsa S. Bhat =
+<srivatsa@csail.mit.edu> ha scritto:
+>=20
+> On 6/2/19 12:04 AM, Srivatsa S. Bhat wrote:
+>> On 5/30/19 3:45 AM, Paolo Valente wrote:
+>>>=20
+> [...]
+>>> At any rate, since you pointed out that you are interested in
+>>> out-of-the-box performance, let me complete the context: in case
+>>> low_latency is left set, one gets, in return for this 12% loss,
+>>> a) at least 1000% higher responsiveness, e.g., 1000% lower start-up
+>>> times of applications under load [1];
+>>> b) 500-1000% higher throughput in multi-client server workloads, as =
+I
+>>> already pointed out [2].
+>>>=20
+>>=20
+>> I'm very happy that you could solve the problem without having to
+>> compromise on any of the performance characteristics/features of BFQ!
+>>=20
+>>=20
+>>> I'm going to prepare complete patches.  In addition, if ok for you,
+>>> I'll report these results on the bug you created.  Then I guess we =
+can
+>>> close it.
+>>>=20
+>>=20
+>> Sounds great!
+>>=20
+>=20
+> Hi Paolo,
+>=20
+
+Hi
+
+> Hope you are doing great!
+>=20
+
+Sort of, thanks :)
+
+> I was wondering if you got a chance to post these patches to LKML for
+> review and inclusion... (No hurry, of course!)
+>=20
+
+
+I'm having troubles testing these new patches on 5.2-rc4.  As it
+happened with the first release candidates for 5.1, the CPU of my test
+machine (Intel Core i7-2760QM@2.40GHz) is so slowed down that results
+are heavily distorted with every I/O scheduler.
+
+Unfortunately, I'm not competent enough to spot the cause of this
+regression in a feasible amount of time.  I hope it'll go away with
+next release candidates, or I'll test on 5.1.
+
+> Also, since your fixes address the performance issues in BFQ, do you
+> have any thoughts on whether they can be adapted to CFQ as well, to
+> benefit the older stable kernels that still support CFQ?
+>=20
+
+I have implanted my fixes on the existing throughput-boosting
+infrastructure of BFQ.  CFQ doesn't have such an infrastructure.
+
+If you need I/O control with older kernels, you may want to check my
+version of BFQ for legacy block, named bfq-sq and available in this
+repo:
+https://github.com/Algodev-github/bfq-mq/
+
+I'm willing to provide you with any information or help if needed.
 
 Thanks,
+Paolo
 
-Alex
+
+> Thank you!
+>=20
+> Regards,
+> Srivatsa
+> VMware Photon OS
 
 
->
-> Changes in v3:
->    - Split into small patches to ease review as suggested by Christoph
->      Hellwig and Kees Cook
->    - Move help text of new config as a comment, as suggested by Christoph
->    - Make new config depend on MMU, as suggested by Christoph
->
-> Changes in v2 as suggested by Christoph Hellwig:
->    - Preparatory patch that moves randomize_stack_top
->    - Fix duplicate config in riscv
->    - Align #if defined on next line => this gives rise to a checkpatch
->      warning. I found this pattern all around the tree, in the same proportion
->      as the previous pattern which was less pretty:
->      git grep -C 1 -n -P "^#if defined.+\|\|.*\\\\$"
->
-> Alexandre Ghiti (14):
->    mm, fs: Move randomize_stack_top from fs to mm
->    arm64: Make use of is_compat_task instead of hardcoding this test
->    arm64: Consider stack randomization for mmap base only when necessary
->    arm64, mm: Move generic mmap layout functions to mm
->    arm64, mm: Make randomization selected by generic topdown mmap layout
->    arm: Properly account for stack randomization and stack guard gap
->    arm: Use STACK_TOP when computing mmap base address
->    arm: Use generic mmap top-down layout and brk randomization
->    mips: Properly account for stack randomization and stack guard gap
->    mips: Use STACK_TOP when computing mmap base address
->    mips: Adjust brk randomization offset to fit generic version
->    mips: Replace arch specific way to determine 32bit task with generic
->      version
->    mips: Use generic mmap top-down layout and brk randomization
->    riscv: Make mmap allocation top-down by default
->
->   arch/Kconfig                       |  11 +++
->   arch/arm/Kconfig                   |   2 +-
->   arch/arm/include/asm/processor.h   |   2 -
->   arch/arm/kernel/process.c          |   5 --
->   arch/arm/mm/mmap.c                 |  52 --------------
->   arch/arm64/Kconfig                 |   2 +-
->   arch/arm64/include/asm/processor.h |   2 -
->   arch/arm64/kernel/process.c        |   8 ---
->   arch/arm64/mm/mmap.c               |  72 -------------------
->   arch/mips/Kconfig                  |   2 +-
->   arch/mips/include/asm/processor.h  |   5 --
->   arch/mips/mm/mmap.c                |  84 ----------------------
->   arch/riscv/Kconfig                 |  11 +++
->   fs/binfmt_elf.c                    |  20 ------
->   include/linux/mm.h                 |   2 +
->   kernel/sysctl.c                    |   6 +-
->   mm/util.c                          | 107 ++++++++++++++++++++++++++++-
->   17 files changed, 137 insertions(+), 256 deletions(-)
->
+--Apple-Mail=_C82715EC-E52D-48BB-975D-458C5D643A93
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEpYoduex+OneZyvO8OAkCLQGo9oMFAl0B4yQACgkQOAkCLQGo
+9oNOVg/+KTDsN0F9V0g74Et2TxDdqnhABWgQ3HrajfUnRzmLdMR0Tx0C0YUBZM5t
+S3xp4ofC2oP3HItm6gJ+z+Pw/6K+C5k8cd09zRh9W9wkw4dLGXTuotakmMupTpyT
+XTymYIUfHt72H42arlX0dxtoPkhMMRuP7PXKtvbLun4dLiErjGh03Lvs139EQvyJ
+L65pJTeoIaTT7r+MlblZkmaVRpqG/XF8yRzRNg5/pSbkvPhegZsJC7pMMdjwLsK8
+1skizw2Nt1G24RqGSuofRti9lCDPKLSND2t4xBUZ1BWN93f9Nz3Zm8m9ylWiCNGE
+c0G3RpRTknqxbYtkPUr71MJZ63Hl2d5F/02XUkZGkSo7EtOoMKiKCg6VzzIq24JP
+gxL/lMoVO27+JM9DWBUBvdWxkOHtvD1JRAaGX9VWqTi7ksUFDlFHOF83Udyj5HBz
+PJS2TL5dQ+X+l3G7nD3YHJCwSD2+DC1rZPQhj75BGu1CBnGXaEHtEMn3CfmVVQpL
+H0pVqIyF7lnJJu+vEYuea73RfnfSi4FU+MpFFYFCG6fElqUik9X7IzCQRcB6ianK
+vqNbdqMwq9BeFgwm3f09fKzc6JdkBu0YApmPJp9mxeYkvQLJYLxGlyYnUU7ottDL
+4QlYZevYyTv9G+O8HM/l8PuET7+X66xi8Dlj5oGnURXNmRLh64g=
+=PUTU
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_C82715EC-E52D-48BB-975D-458C5D643A93--
