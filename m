@@ -2,104 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F47F43977
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45A6C43B54
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:28:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387795AbfFMPN5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 11:13:57 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44884 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732781AbfFMPN5 (ORCPT
+        id S1729918AbfFMP2A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 11:28:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52048 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727259AbfFMP17 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:13:57 -0400
-Received: by mail-qt1-f196.google.com with SMTP id x47so22923422qtk.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 08:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KkKhR2elMbqIQhtMNyRPKfFVISR0bn0T2g34f2r/Vr8=;
-        b=SfHInPm3DzZYLPoEmUVQqUjB5LScF9DsUpJ4xj+NyGtlotEBCDOd7k0OAiLknLgpy1
-         UwRMpQmGSzJF0gJD/kcFMjRmesoOZkKPKtk3EWMStIXtk1BSmgVZYNk1p6EKmXc4imPv
-         1V1hEuNESlphnwH9Ffq42vPqvIo/88Zh85Tr1f4Tsa8YuL7Uls35977s64dpr/1WcL8J
-         ZbYx/FYbcjhIEQbbmhQgdZInCU3g7QIDiBsNO/6qOPrD5yA2TBMRXmDe20WR5bhjdxVZ
-         hMtmCv3lKFvdGH4OgmFjKOdFtkKSEmGywoQe1a2KSSYQTb19JMjkAlD66sOEA23ZLtm9
-         d4ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KkKhR2elMbqIQhtMNyRPKfFVISR0bn0T2g34f2r/Vr8=;
-        b=tApIWTqXe5m3yEnT/H1vfgqAUlOfLb2stfOohR+iTY+cBqdIVBZE12tS+ydxrC4T8w
-         zla4I0PztPxtIlVN3vXjwqR9swMe251czNBLHxTmgHU2eHJVm+bqXai/ukMFPcYDyFTw
-         EvgHsfB0R/dyiMXz6IA3OK1RI2m0rF4HSNhDEqrnPAgd80GdCqmzbZ7iwbPwqamUA+HI
-         YCpgnxoBdMBs8Va0hhVN+5GVuGBNOkm7kDdcXV/BeskohVPHul47fhJTmIOX8l9oaEMh
-         ZB5rLxcCClsWBZ0R+Ddln1w9aFEEB/+RAKrTcoSJY+reZolmNfqah/teGpLFW/No2rvD
-         XKHA==
-X-Gm-Message-State: APjAAAXDa1psUvPXTRbvpGcRFFXyH+KToZR5zBf1Om0dCHrTjnV99YjU
-        R3PhFMXmOkDS4JMJ0eZ/ahVEaQ==
-X-Google-Smtp-Source: APXvYqxrIgS7SEgThFO4xWkROTtAeKu9gS/7k/Y8mWYSTA6O8BjyUZUk4XGZHPcLg6c7oSu9BznGCA==
-X-Received: by 2002:ac8:2f90:: with SMTP id l16mr60699198qta.12.1560438835818;
-        Thu, 13 Jun 2019 08:13:55 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id c18sm1546907qkk.73.2019.06.13.08.13.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Jun 2019 08:13:55 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hbRQI-0001rX-U0; Thu, 13 Jun 2019 12:13:54 -0300
-Date:   Thu, 13 Jun 2019 12:13:54 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dan Williams <dan.j.williams@intel.com>
+        Thu, 13 Jun 2019 11:27:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vn04L/39CxGmnFvWZbLFG3AukuBPlzgMR3HJ4g3XYMs=; b=tHlQpyqzo7ZQBVB5wRrQJI46t
+        aGvrn7sclf7JSvki0K76DhAQ9grt++rr3RsyMukb0ZOE6ao5QkZuVltTGW0kSmf01kovvUtAmSiMC
+        FRCnkWcmo+pTrNeUZtpZy52SEQbCrGAv6HRyCq081N6v+J6AluX52Ap/rjGwfAbZNww9f9q25CrJ4
+        2/28x8clrMHc5fH8S/5jQZoozJIYzfzvecMqlkikJzXv1MdjRaDtLgMF0+C/+TZhLxUqIdCboLufF
+        QARq/0WKMHCQBh07+I4aQgQBCb/hzuiZZD053C7PNwE5NpsajGwqxDMtci1Q9lcRzIGXjOlZwRRQS
+        8bRUD+XPw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbRdr-0002TD-Ht; Thu, 13 Jun 2019 15:27:55 +0000
+Date:   Thu, 13 Jun 2019 08:27:55 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
 Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
         Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
+        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
 Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190613151354.GC22901@ziepe.ca>
-References: <20190607121729.GA14802@ziepe.ca>
- <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
- <20190612102917.GB14578@quack2.suse.cz>
- <20190612114721.GB3876@ziepe.ca>
- <20190612120907.GC14578@quack2.suse.cz>
- <20190612191421.GM3876@ziepe.ca>
- <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
- <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com>
- <20190612233324.GE14336@iweiny-DESK2.sc.intel.com>
- <CAPcyv4jf19CJbtXTp=ag7Ns=ZQtqeQd3C0XhV9FcFCwd9JCNtQ@mail.gmail.com>
+Message-ID: <20190613152755.GI32656@bombadil.infradead.org>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
+ <20190607110426.GB12765@quack2.suse.cz>
+ <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
+ <20190608001036.GF14308@dread.disaster.area>
+ <20190612123751.GD32656@bombadil.infradead.org>
+ <20190613002555.GH14363@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4jf19CJbtXTp=ag7Ns=ZQtqeQd3C0XhV9FcFCwd9JCNtQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190613002555.GH14363@dread.disaster.area>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 06:14:46PM -0700, Dan Williams wrote:
-> > Effectively, we would need a way for an admin to close a specific file
-> > descriptor (or set of fds) which point to that file.  AFAIK there is no way to
-> > do that at all, is there?
+On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
+> e.g. Process A has an exclusive layout lease on file F. It does an
+> IO to file F. The filesystem IO path checks that Process A owns the
+> lease on the file and so skips straight through layout breaking
+> because it owns the lease and is allowed to modify the layout. It
+> then takes the inode metadata locks to allocate new space and write
+> new data.
 > 
-> Even if there were that gets back to my other question, does RDMA
-> teardown happen at close(fd), or at final fput() of the 'struct
-> file'?
+> Process B now tries to write to file F. The FS checks whether
+> Process B owns a layout lease on file F. It doesn't, so then it
+> tries to break the layout lease so the IO can proceed. The layout
+> breaking code sees that process A has an exclusive layout lease
+> granted, and so returns -ETXTBSY to process B - it is not allowed to
+> break the lease and so the IO fails with -ETXTBSY.
 
-AFAIK there is no kernel side driver hook for close(fd). 
-
-rdma uses a normal chardev so it's lifetime is linked to the file_ops
-release, which is called on last fput. So all the mmaps, all the dups,
-everything must go before it releases its resources.
-
-Jason
+This description doesn't match the behaviour that RDMA wants either.
+Even if Process A has a lease on the file, an IO from Process A which
+results in blocks being freed from the file is going to result in the
+RDMA device being able to write to blocks which are now freed (and
+potentially reallocated to another file).
