@@ -2,427 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38E2844720
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:57:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44C8144717
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731622AbfFMQ5N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:57:13 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:54344 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729933AbfFMBGR (ORCPT
+        id S1729998AbfFMQ5F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:57:05 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33519 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729948AbfFMBO6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 21:06:17 -0400
-Received: from jaskaran-Intel-Server-Board-S1200V3RPS-UEFI-Development-Kit.corp.microsoft.com (unknown [131.107.160.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 5B0CD20B719F;
-        Wed, 12 Jun 2019 18:06:16 -0700 (PDT)
-From:   Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
-To:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        jmorris@namei.org, scottsh@microsoft.com, ebiggers@google.com,
-        mpatocka@redhat.com, jaskarankhurana@linux.microsoft.com
-Subject: [RFC PATCH v4 1/1] Add dm verity root hash pkcs7 sig validation.
-Date:   Wed, 12 Jun 2019 18:06:10 -0700
-Message-Id: <20190613010610.4364-2-jaskarankhurana@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190613010610.4364-1-jaskarankhurana@linux.microsoft.com>
-References: <20190613010610.4364-1-jaskarankhurana@linux.microsoft.com>
+        Wed, 12 Jun 2019 21:14:58 -0400
+Received: by mail-oi1-f195.google.com with SMTP id q186so13187538oia.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 18:14:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RcKUTNC1/Yaa+Z7YVTaDTsC+idf0Auxj860bjLfby9Y=;
+        b=pyVy5aBfnvmLd4LmS99NC7v2hHH+z4UZs9t88ZWrifMnyNQ1ntVXoql6oB68VhzVo1
+         F8hclQ0Wyg9MsOlwr7j9F9a5FwakzRc0cX63T9oeseLCkWGBIj3OBaI1LL2HQs2XiGNX
+         ETH5Cv/Dp91sVJ4t+YsWm75tFBfI5P44fYs8oiCUlHe8OHYW0zmCh+Jz3mI3juP3eG0d
+         bwg8PkQXV/rh9Ruhio4gTK3UfuitZunT8jlU1uJv5ynSJJDHBTJWHqmmDp1yyxN5HdDN
+         3nC3in/UilzgUI6FwH3DI0lKZs/DXkSb6pM0DXEBpGmyHzzfZCjAONw9LI5SpclpGpd3
+         Jyhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RcKUTNC1/Yaa+Z7YVTaDTsC+idf0Auxj860bjLfby9Y=;
+        b=hPnRabYJgx0ke2LI+50/MwVUGC8zCIuIdCPJUUt+JPzQsPBOveuNsqg8w8POmzMv7Z
+         CNQNpqZU9q7xpbBstmewbBkQR6f6UL2USp72FaSuxm8glMI1i6YueESpv1/P81uN6H7C
+         HriSbJenavziahRlEi8/y7ikBQBdTqQ9CUo/ESkK3577c5ke5UGE8D8SMXCx8FkT86IF
+         2lQ6/KKvEbMx6Gig89PvNgnv1ZLybDHfHj6v8hMuyeNxSmNPd/umk48H6xFGR33Z1rWP
+         iGau4JLafjdL3Xo8JHgkYZYmUVr5xaFnj9yOBNOoFNZ2acBR9BkHMY1w+qpyJozAc5GR
+         fkxQ==
+X-Gm-Message-State: APjAAAXAHA05ow4qeAzS4seZfftQjjHf6q2so+PFF/p2YYbsFt4uCIpe
+        pM3RHZYz6cngh7fEWefWx/+9XYvP1n2fDdz6jEvkWQ==
+X-Google-Smtp-Source: APXvYqykCVdxD0fjMiZ7EZWZAtb82hdqz1hJdJILcfFTKlDzRoucvcWvFMaxGMog6wRYrJg2D1GBjocrrJhQVeNNqcs=
+X-Received: by 2002:aca:fc50:: with SMTP id a77mr1431023oii.0.1560388497122;
+ Wed, 12 Jun 2019 18:14:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
+ <20190607103636.GA12765@quack2.suse.cz> <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com> <20190612102917.GB14578@quack2.suse.cz>
+ <20190612114721.GB3876@ziepe.ca> <20190612120907.GC14578@quack2.suse.cz>
+ <20190612191421.GM3876@ziepe.ca> <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com> <20190612233324.GE14336@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20190612233324.GE14336@iweiny-DESK2.sc.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 12 Jun 2019 18:14:46 -0700
+Message-ID: <CAPcyv4jf19CJbtXTp=ag7Ns=ZQtqeQd3C0XhV9FcFCwd9JCNtQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The verification is to support cases where the roothash is not secured by
-Trusted Boot, UEFI Secureboot or similar technologies.
-One of the use cases for this is for dm-verity volumes mounted after boot,
-the root hash provided during the creation of the dm-verity volume has to
-be secure and thus in-kernel validation implemented here will be used
-before we trust the root hash and allow the block device to be created.
+On Wed, Jun 12, 2019 at 4:32 PM Ira Weiny <ira.weiny@intel.com> wrote:
+>
+> On Wed, Jun 12, 2019 at 03:54:19PM -0700, Dan Williams wrote:
+> > On Wed, Jun 12, 2019 at 3:12 PM Ira Weiny <ira.weiny@intel.com> wrote:
+> > >
+> > > On Wed, Jun 12, 2019 at 04:14:21PM -0300, Jason Gunthorpe wrote:
+> > > > On Wed, Jun 12, 2019 at 02:09:07PM +0200, Jan Kara wrote:
+> > > > > On Wed 12-06-19 08:47:21, Jason Gunthorpe wrote:
+> > > > > > On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
+> > > > > >
+> > > > > > > > > The main objection to the current ODP & DAX solution is that very
+> > > > > > > > > little HW can actually implement it, having the alternative still
+> > > > > > > > > require HW support doesn't seem like progress.
+> > > > > > > > >
+> > > > > > > > > I think we will eventually start seein some HW be able to do this
+> > > > > > > > > invalidation, but it won't be universal, and I'd rather leave it
+> > > > > > > > > optional, for recovery from truely catastrophic errors (ie my DAX is
+> > > > > > > > > on fire, I need to unplug it).
+> > > > > > > >
+> > > > > > > > Agreed.  I think software wise there is not much some of the devices can do
+> > > > > > > > with such an "invalidate".
+> > > > > > >
+> > > > > > > So out of curiosity: What does RDMA driver do when userspace just closes
+> > > > > > > the file pointing to RDMA object? It has to handle that somehow by aborting
+> > > > > > > everything that's going on... And I wanted similar behavior here.
+> > > > > >
+> > > > > > It aborts *everything* connected to that file descriptor. Destroying
+> > > > > > everything avoids creating inconsistencies that destroying a subset
+> > > > > > would create.
+> > > > > >
+> > > > > > What has been talked about for lease break is not destroying anything
+> > > > > > but very selectively saying that one memory region linked to the GUP
+> > > > > > is no longer functional.
+> > > > >
+> > > > > OK, so what I had in mind was that if RDMA app doesn't play by the rules
+> > > > > and closes the file with existing pins (and thus layout lease) we would
+> > > > > force it to abort everything. Yes, it is disruptive but then the app didn't
+> > > > > obey the rule that it has to maintain file lease while holding pins. Thus
+> > > > > such situation should never happen unless the app is malicious / buggy.
+> > > >
+> > > > We do have the infrastructure to completely revoke the entire
+> > > > *content* of a FD (this is called device disassociate). It is
+> > > > basically close without the app doing close. But again it only works
+> > > > with some drivers. However, this is more likely something a driver
+> > > > could support without a HW change though.
+> > > >
+> > > > It is quite destructive as it forcibly kills everything RDMA related
+> > > > the process(es) are doing, but it is less violent than SIGKILL, and
+> > > > there is perhaps a way for the app to recover from this, if it is
+> > > > coded for it.
+> > >
+> > > I don't think many are...  I think most would effectively be "killed" if this
+> > > happened to them.
+> > >
+> > > >
+> > > > My preference would be to avoid this scenario, but if it is really
+> > > > necessary, we could probably build it with some work.
+> > > >
+> > > > The only case we use it today is forced HW hot unplug, so it is rarely
+> > > > used and only for an 'emergency' like use case.
+> > >
+> > > I'd really like to avoid this as well.  I think it will be very confusing for
+> > > RDMA apps to have their context suddenly be invalid.  I think if we have a way
+> > > for admins to ID who is pinning a file the admin can take more appropriate
+> > > action on those processes.   Up to and including killing the process.
+> >
+> > Can RDMA context invalidation, "device disassociate", be inflicted on
+> > a process from the outside? Identifying the pid of a pin holder only
+> > leaves SIGKILL of the entire process as the remediation for revoking a
+> > pin, and I assume admins would use the finer grained invalidation
+> > where it was available.
+>
+> No not in the way you are describing it.  As Jason said you can hotplug the
+> device which is "from the outside" but this would affect all users of that
+> device.
+>
+> Effectively, we would need a way for an admin to close a specific file
+> descriptor (or set of fds) which point to that file.  AFAIK there is no way to
+> do that at all, is there?
 
-The signature being provided for verification must verify the root hash and
-must be trusted by the builtin keyring for verification to succeed.
-
-The hash is added as a key of type "user" and the description is passed to
-the kernel so it can look it up and use it for verification.
-
-Adds DM_VERITY_VERIFY_ROOTHASH_SIG: roothash verification
-against the roothash signature file *if* specified, if signature file is
-specified verification must succeed prior to creation of device mapper
-block device.
-
-Adds DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE: roothash signature *must* be
-specified for all dm verity volumes and verification must succeed prior
-to creation of device mapper block device.
-
-Signed-off-by: Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
----
- Documentation/device-mapper/verity.txt |   7 ++
- drivers/md/Kconfig                     |  23 +++++
- drivers/md/Makefile                    |   2 +-
- drivers/md/dm-verity-target.c          |  36 ++++++-
- drivers/md/dm-verity-verify-sig.c      | 132 +++++++++++++++++++++++++
- drivers/md/dm-verity-verify-sig.h      |  30 ++++++
- 6 files changed, 224 insertions(+), 6 deletions(-)
- create mode 100644 drivers/md/dm-verity-verify-sig.c
- create mode 100644 drivers/md/dm-verity-verify-sig.h
-
-diff --git a/Documentation/device-mapper/verity.txt b/Documentation/device-mapper/verity.txt
-index b3d2e4a42255..df7ef1d553cc 100644
---- a/Documentation/device-mapper/verity.txt
-+++ b/Documentation/device-mapper/verity.txt
-@@ -121,6 +121,13 @@ check_at_most_once
-     blocks, and a hash block will not be verified any more after all the data
-     blocks it covers have been verified anyway.
- 
-+root_hash_sig_key_desc <key_description>
-+    This is the description of the USER_KEY that the kernel will lookup to get
-+    the pkcs7 signature of the roothash. The pkcs7 signature is used to validate
-+    the root hash during the creation of the device mapper block device.
-+    Verification of roothash depends on the config DM_VERITY_VERIFY_ROOTHASH_SIG
-+    being set in the kernel.
-+
- Theory of operation
- ===================
- 
-diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-index db269a348b20..da4115753f25 100644
---- a/drivers/md/Kconfig
-+++ b/drivers/md/Kconfig
-@@ -489,6 +489,29 @@ config DM_VERITY
- 
- 	  If unsure, say N.
- 
-+config DM_VERITY_VERIFY_ROOTHASH_SIG
-+	def_bool n
-+	bool "Verity data device root hash signature verification support"
-+	depends on DM_VERITY
-+	select SYSTEM_DATA_VERIFICATION
-+	  help
-+	  The device mapper target created by DM-VERITY can be validated if the
-+	  pre-generated tree of cryptographic checksums passed has a pkcs#7
-+	  signature file that can validate the roothash of the tree.
-+
-+	  If unsure, say N.
-+
-+config DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE
-+	def_bool n
-+	bool "Forces all dm verity data device root hash should be signed"
-+	depends on DM_VERITY_VERIFY_ROOTHASH_SIG
-+	  help
-+	  The device mapper target created by DM-VERITY will succeed only if the
-+	  pre-generated tree of cryptographic checksums passed also has a pkcs#7
-+	  signature file that can validate the roothash of the tree.
-+
-+	  If unsure, say N.
-+
- config DM_VERITY_FEC
- 	bool "Verity forward error correction support"
- 	depends on DM_VERITY
-diff --git a/drivers/md/Makefile b/drivers/md/Makefile
-index be7a6eb92abc..8a8c142bcfe1 100644
---- a/drivers/md/Makefile
-+++ b/drivers/md/Makefile
-@@ -61,7 +61,7 @@ obj-$(CONFIG_DM_LOG_USERSPACE)	+= dm-log-userspace.o
- obj-$(CONFIG_DM_ZERO)		+= dm-zero.o
- obj-$(CONFIG_DM_RAID)	+= dm-raid.o
- obj-$(CONFIG_DM_THIN_PROVISIONING)	+= dm-thin-pool.o
--obj-$(CONFIG_DM_VERITY)		+= dm-verity.o
-+obj-$(CONFIG_DM_VERITY)		+= dm-verity.o dm-verity-verify-sig.o
- obj-$(CONFIG_DM_CACHE)		+= dm-cache.o
- obj-$(CONFIG_DM_CACHE_SMQ)	+= dm-cache-smq.o
- obj-$(CONFIG_DM_ERA)		+= dm-era.o
-diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-index f4c31ffaa88e..adf7f376be7d 100644
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -16,7 +16,7 @@
- 
- #include "dm-verity.h"
- #include "dm-verity-fec.h"
--
-+#include "dm-verity-verify-sig.h"
- #include <linux/module.h>
- #include <linux/reboot.h>
- 
-@@ -34,7 +34,8 @@
- #define DM_VERITY_OPT_IGN_ZEROES	"ignore_zero_blocks"
- #define DM_VERITY_OPT_AT_MOST_ONCE	"check_at_most_once"
- 
--#define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC)
-+#define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC + \
-+					 DM_VERITY_ROOT_HASH_VERIFICATION_OPTS)
- 
- static unsigned dm_verity_prefetch_cluster = DM_VERITY_DEFAULT_PREFETCH_SIZE;
- 
-@@ -855,7 +856,8 @@ static int verity_alloc_zero_digest(struct dm_verity *v)
- 	return r;
- }
- 
--static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
-+static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
-+				 struct dm_verity_sig_opts *verify_args)
- {
- 	int r;
- 	unsigned argc;
-@@ -904,6 +906,14 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
- 			if (r)
- 				return r;
- 			continue;
-+		} else if (verity_verify_is_sig_opt_arg(arg_name)) {
-+			r = verity_verify_sig_parse_opt_args(as, v,
-+							     verify_args,
-+							     &argc, arg_name);
-+			if (r)
-+				return r;
-+			continue;
-+
- 		}
- 
- 		ti->error = "Unrecognized verity feature request";
-@@ -930,6 +940,7 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
- static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- {
- 	struct dm_verity *v;
-+	struct dm_verity_sig_opts verify_args = {0};
- 	struct dm_arg_set as;
- 	unsigned int num;
- 	unsigned long long num_ll;
-@@ -937,6 +948,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 	int i;
- 	sector_t hash_position;
- 	char dummy;
-+	char *root_hash_digest_to_validate;
- 
- 	v = kzalloc(sizeof(struct dm_verity), GFP_KERNEL);
- 	if (!v) {
-@@ -1070,6 +1082,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 		r = -EINVAL;
- 		goto bad;
- 	}
-+	root_hash_digest_to_validate = argv[8];
- 
- 	if (strcmp(argv[9], "-")) {
- 		v->salt_size = strlen(argv[9]) / 2;
-@@ -1095,11 +1108,20 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 		as.argc = argc;
- 		as.argv = argv;
- 
--		r = verity_parse_opt_args(&as, v);
-+		r = verity_parse_opt_args(&as, v, &verify_args);
- 		if (r < 0)
- 			goto bad;
- 	}
- 
-+	/* Root hash signature is  a optional parameter*/
-+	r = verity_verify_root_hash(root_hash_digest_to_validate,
-+				    strlen(root_hash_digest_to_validate),
-+				    verify_args.sig,
-+				    verify_args.sig_size);
-+	if (r < 0) {
-+		ti->error = "Root hash verification failed";
-+		goto bad;
-+	}
- 	v->hash_per_block_bits =
- 		__fls((1 << v->hash_dev_block_bits) / v->digest_size);
- 
-@@ -1165,9 +1187,13 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 	ti->per_io_data_size = roundup(ti->per_io_data_size,
- 				       __alignof__(struct dm_verity_io));
- 
-+	verity_verify_sig_opts_cleanup(&verify_args);
-+
- 	return 0;
- 
- bad:
-+
-+	verity_verify_sig_opts_cleanup(&verify_args);
- 	verity_dtr(ti);
- 
- 	return r;
-@@ -1175,7 +1201,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 
- static struct target_type verity_target = {
- 	.name		= "verity",
--	.version	= {1, 4, 0},
-+	.version	= {1, 5, 0},
- 	.module		= THIS_MODULE,
- 	.ctr		= verity_ctr,
- 	.dtr		= verity_dtr,
-diff --git a/drivers/md/dm-verity-verify-sig.c b/drivers/md/dm-verity-verify-sig.c
-new file mode 100644
-index 000000000000..1a889be76ede
---- /dev/null
-+++ b/drivers/md/dm-verity-verify-sig.c
-@@ -0,0 +1,132 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 Microsoft Corporation.
-+ *
-+ * Author:  Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
-+ *
-+ */
-+#include <linux/device-mapper.h>
-+#include <linux/verification.h>
-+#include <keys/user-type.h>
-+#include "dm-verity.h"
-+#include "dm-verity-verify-sig.h"
-+
-+#define DM_VERITY_VERIFY_ERR(s) DM_VERITY_ROOT_HASH_VERIFICATION " " s
-+
-+
-+bool verity_verify_is_sig_opt_arg(const char *arg_name)
-+{
-+	return (!strcasecmp(arg_name,
-+			    DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG_KEY));
-+}
-+
-+static int verity_verify_get_sig_from_key(const char *key_desc,
-+					struct dm_verity_sig_opts *sig_opts)
-+{
-+	struct key *key;
-+	const struct user_key_payload *ukp;
-+	int ret = 0;
-+
-+	if (!IS_ENABLED(CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG))
-+		return 0;
-+
-+	key = request_key(&key_type_user,
-+			key_desc, NULL);
-+	if (IS_ERR(key))
-+		return PTR_ERR(key);
-+
-+	down_read(&key->sem);
-+
-+	ukp = user_key_payload_locked(key);
-+	if (!ukp) {
-+		ret = -EKEYREVOKED;
-+		goto end;
-+	}
-+
-+	sig_opts->sig = kmalloc(ukp->datalen, GFP_KERNEL);
-+	if (!sig_opts->sig) {
-+		ret = -ENOMEM;
-+		goto end;
-+	}
-+	sig_opts->sig_size = ukp->datalen;
-+
-+	memcpy(sig_opts->sig, ukp->data, sig_opts->sig_size);
-+
-+end:
-+	up_read(&key->sem);
-+	key_put(key);
-+
-+	return ret;
-+}
-+
-+int verity_verify_sig_parse_opt_args(struct dm_arg_set *as,
-+				     struct dm_verity *v,
-+				     struct dm_verity_sig_opts *sig_opts,
-+				     unsigned int *argc,
-+				     const char *arg_name)
-+{
-+	struct dm_target *ti = v->ti;
-+	int ret = 0;
-+	const char *sig_key = NULL;
-+
-+	if (!*argc) {
-+		ti->error = DM_VERITY_VERIFY_ERR("Signature key not specified");
-+		return -EINVAL;
-+	}
-+
-+	sig_key = dm_shift_arg(as);
-+	(*argc)--;
-+
-+	ret = verity_verify_get_sig_from_key(sig_key, sig_opts);
-+	if (ret < 0)
-+		ti->error = DM_VERITY_VERIFY_ERR("Invalid key specified");
-+
-+	return ret;
-+}
-+
-+#ifdef CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG
-+/*
-+ * verify_verify_roothash - Verify the root hash of the verity hash device
-+ *			     using builtin trusted keys.
-+ *
-+ * @root_hash: For verity, the roothash/data to be verified.
-+ * @root_hash_len: Size of the roothash/data to be verified.
-+ * @sig_data: The trusted signature that verifies the roothash/data.
-+ * @sig_len: Size of the signature.
-+ *
-+ */
-+int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
-+			    const void *sig_data, size_t sig_len)
-+{
-+	int ret;
-+
-+	if (!root_hash || root_hash_len == 0)
-+		return -EINVAL;
-+
-+	if (!sig_data  || sig_len == 0) {
-+		if (IS_ENABLED(CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE))
-+			return -ENOKEY;
-+		else
-+			return 0;
-+	}
-+
-+	ret = verify_pkcs7_signature(root_hash, root_hash_len, sig_data,
-+				sig_len, NULL, VERIFYING_UNSPECIFIED_SIGNATURE,
-+				NULL, NULL);
-+
-+	return ret;
-+}
-+#else
-+int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
-+			    const void *sig_data, size_t sig_len)
-+{
-+	return 0;
-+}
-+#endif
-+
-+void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
-+{
-+	kfree(sig_opts->sig);
-+	sig_opts->sig = NULL;
-+	sig_opts->sig_size = 0;
-+}
-diff --git a/drivers/md/dm-verity-verify-sig.h b/drivers/md/dm-verity-verify-sig.h
-new file mode 100644
-index 000000000000..339818e6b527
---- /dev/null
-+++ b/drivers/md/dm-verity-verify-sig.h
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2019 Microsoft Corporation.
-+ *
-+ * Author:  Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
-+ *
-+ */
-+#ifndef DM_VERITY_SIG_VERIFICATION_H
-+#define DM_VERITY_SIG_VERIFICATION_H
-+
-+#define DM_VERITY_ROOT_HASH_VERIFICATION "DM Verity Sig Verification"
-+#define DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG_KEY "root_hash_sig_key_desc"
-+#define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 2
-+
-+struct dm_verity_sig_opts {
-+	unsigned int sig_size;
-+	u8 *sig;
-+};
-+int verity_verify_root_hash(const void *data, size_t data_len,
-+			    const void *sig_data, size_t sig_len);
-+
-+bool verity_verify_is_sig_opt_arg(const char *arg_name);
-+
-+int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
-+				    struct dm_verity_sig_opts *sig_opts,
-+				    unsigned int *argc, const char *arg_name);
-+
-+void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts);
-+
-+#endif /* DM_VERITY_SIG_VERIFICATION_H */
--- 
-2.17.1
-
+Even if there were that gets back to my other question, does RDMA
+teardown happen at close(fd), or at final fput() of the 'struct file'?
+I.e. does it also need munmap() to get the vma to drop its reference?
+Perhaps a pointer to the relevant code would help me wrap my head
+around this mechanism.
