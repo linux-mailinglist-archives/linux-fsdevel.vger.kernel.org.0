@@ -2,364 +2,347 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A925945050
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 01:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7212845056
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 01:57:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfFMXrO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 19:47:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725863AbfFMXrO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 19:47:14 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A62021721;
-        Thu, 13 Jun 2019 23:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560469632;
-        bh=2b4X40rkyNH3lif/GSoA5mbxCyn0RCmljqDnIyDIJxI=;
-        h=Date:From:To:Subject:From;
-        b=lnsyQPVRZo9LQjfOuoesbWGHHba8kZcW5kvvojzNHpkp1WZRnnGy6U0zmKkoZg+3C
-         Lt0lA11p8mRVJx8b1sAxw2zKI3IdbFRk8wc3Eop3c+8rtYDvBG5HKojAuBBYcr/tiE
-         v8UwmmwtXhfppwscV5P1+VDaeRGBcYGorDTUmSBw=
-Date:   Thu, 13 Jun 2019 16:47:12 -0700
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org
-Subject:  mmotm 2019-06-13-16-46 uploaded
-Message-ID: <20190613234712.AE0Qq%akpm@linux-foundation.org>
-User-Agent: s-nail v14.9.10
+        id S1726442AbfFMX4b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 19:56:31 -0400
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:36296 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725836AbfFMX4b (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 19:56:31 -0400
+Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id BA4F33DD573;
+        Fri, 14 Jun 2019 09:56:22 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hbZYy-0004TE-N2; Fri, 14 Jun 2019 09:55:24 +1000
+Date:   Fri, 14 Jun 2019 09:55:24 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: pagecache locking (was: bcachefs status update) merged)
+Message-ID: <20190613235524.GK14363@dread.disaster.area>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611011737.GA28701@kmo-pixel>
+ <20190611043336.GB14363@dread.disaster.area>
+ <20190612162144.GA7619@kmo-pixel>
+ <20190612230224.GJ14308@dread.disaster.area>
+ <20190613183625.GA28171@kmo-pixel>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613183625.GA28171@kmo-pixel>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
+        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
+        a=7-415B0cAAAA:8 a=LKujGtbL0NNE4ZLgYmkA:9 a=mFbICs-dwuItUDgk:21
+        a=WMtmk-cKf8VlWF7L:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2019-06-13-16-46 has been uploaded to
+On Thu, Jun 13, 2019 at 02:36:25PM -0400, Kent Overstreet wrote:
+> On Thu, Jun 13, 2019 at 09:02:24AM +1000, Dave Chinner wrote:
+> > On Wed, Jun 12, 2019 at 12:21:44PM -0400, Kent Overstreet wrote:
+> > > Ok, I'm totally on board with returning EDEADLOCK.
+> > > 
+> > > Question: Would we be ok with returning EDEADLOCK for any IO where the buffer is
+> > > in the same address space as the file being read/written to, even if the buffer
+> > > and the IO don't technically overlap?
+> > 
+> > I'd say that depends on the lock granularity. For a range lock,
+> > we'd be able to do the IO for non-overlapping ranges. For a normal
+> > mutex or rwsem, then we risk deadlock if the page fault triggers on
+> > the same address space host as we already have locked for IO. That's
+> > the case we currently handle with the second IO lock in XFS, ext4,
+> > btrfs, etc (XFS_MMAPLOCK_* in XFS).
+> > 
+> > One of the reasons I'm looking at range locks for XFS is to get rid
+> > of the need for this second mmap lock, as there is no reason for it
+> > existing if we can lock ranges and EDEADLOCK inside page faults and
+> > return errors.
+> 
+> My concern is that range locks are going to turn out to be both more complicated
+> and heavier weight, performance wise, than the approach I've taken of just a
+> single lock per address space.
 
-   http://www.ozlabs.org/~akpm/mmotm/
+That's the battle I'm fighting at the moment with them for direct
+IO(*), but range locks are something I'm doing for XFS and I don't
+really care if anyone else wants to use them or not.
 
-mmotm-readme.txt says
+(*)Direct IO on XFS is a pure shared lock workload, so the rwsem
+scales until single atomic update cache line bouncing limits
+throughput. That means I can max out my hardware at 1.6 million
+random 4k read/write IOPS (a bit over 6GB/s)(**) to a single file
+with a rwsem at 32 AIO+DIO dispatch threads. I've only got range
+locks to about 1.1M IOPS on the same workload, though it's within a
+couple of percent of a rwsem up to 16 threads...
 
-README for mm-of-the-moment:
+(**) A small handful of nvme SSDs fed by AIO+DIO are /way faster/
+than pmem that is emulated with RAM, let alone real pmem which is
+much slower at random writes than RAM.
 
-http://www.ozlabs.org/~akpm/mmotm/
+> Reason being range locks only help when you've got multiple operations going on
+> simultaneously that don't conflict - i.e. it's really only going to be useful
+> for applications that are doing buffered IO and direct IO simultaneously to the
+> same file.
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+Yes, they do that, but that's not why I'm looking at this.  Range
+locks are primarily for applications that mix multiple different
+types of operations to the same file concurrently. e.g:
 
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+- fallocate and read/write() can be run concurrently if they
+don't overlap, but right now we serialise them because we have no
+visibility into what other operations require.
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+- buffered read and buffered write can run concurrently if they
+don't overlap, but right now they are serialised because that's the
+only way to provide POSIX atomic write vs read semantics (only XFS
+provides userspace with that guarantee).
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+- Sub-block direct IO is serialised against all other direct IO
+because we can't tell if it overlaps with some other direct IO and
+so we have to take the slow but safe option - range locks solve that
+problem, too.
 
+- there's inode_dio_wait() for DIO truncate serialisation
+because AIO doesn't hold inode locks across IO - range locks can be
+held all the way to AIO completion so we can get rid of
+inode_Dio_wait() in XFS and that allows truncate/fallocate to run
+concurrently with non-overlapping direct IO.
 
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
+- holding non-overlapping range locks on either side of page
+faults which then gets rid of the need for the special mmap locking
+path to serialise it against invalidation operations.
 
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+IOWs, range locks for IO solve a bunch of long term problems we have
+in XFS and largely simplify the lock algorithms within the
+filesystem. And it puts us on the path to introduce range locks for
+extent mapping serialisation, allowing concurrent mapping lookups
+and allocation within a single file. It also has the potential to
+allow us to do concurrent directory modifications....
 
+> Personally, I think that would be a pretty gross thing to do and I'm
+> not particularly interested in optimizing for that case myself... but, if you
+> know of applications that do depend on that I might change my opinion. If not, I
+> want to try and get the simpler, one-lock-per-address space approach to work.
+> 
+> That said though - range locks on the page cache can be viewed as just a
+> performance optimization over my approach, they've got the same semantics
+> (locking a subset of the page cache vs. the entire thing). So that's a bit of a
+> digression.
 
+IO range locks are not "locking the page cache". IO range locks are
+purely for managing concurrent IO state in a fine grained manner.
+The page cache already has it's own locking - that just needs to
+nest inside IO range locks as teh io locks are what provide the high
+level exclusion from overlapping page cache operations...
 
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
+> > > This would simplify things a lot and eliminate a really nasty corner case - page
+> > > faults trigger readahead. Even if the buffer and the direct IO don't overlap,
+> > > readahead can pull in pages that do overlap with the dio.
+> > 
+> > Page cache readahead needs to be moved under the filesystem IO
+> > locks. There was a recent thread about how readahead can race with
+> > hole punching and other fallocate() operations because page cache
+> > readahead bypasses the filesystem IO locks used to serialise page
+> > cache invalidation.
+> > 
+> > e.g. Readahead can be directed by userspace via fadvise, so we now
+> > have file->f_op->fadvise() so that filesystems can lock the inode
+> > before calling generic_fadvise() such that page cache instantiation
+> > and readahead dispatch can be serialised against page cache
+> > invalidation. I have a patch for XFS sitting around somewhere that
+> > implements the ->fadvise method.
+> 
+> I just puked a little in my mouth.
 
-A git copy of this tree is available at
+Yeah, it's pretty gross. But the page cache simply isn't designed to
+allow atomic range operations to be performed. We ahven't be able to
+drag it out of the 1980s - we wrote the fs/iomap.c code so we could
+do range based extent mapping for IOs rather than the horrible,
+inefficient page-by-page block mapping the generic page cache code
+does - that gave us a 30+% increase in buffered IO throughput
+because we only do a single mapping lookup per IO rather than one
+per page...
 
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+That said, the page cache is still far, far slower than direct IO,
+and the gap is just getting wider and wider as nvme SSDs get faster
+and faster. PCIe 4 SSDs are just going to make this even more
+obvious - it's getting to the point where the only reason for having
+a page cache is to support mmap() and cheap systems with spinning
+rust storage.
 
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+> > I think there are some other patches floating around to address the
+> > other readahead mechanisms to only be done under filesytem IO locks,
+> > but I haven't had time to dig into it any further. Readahead from
+> > page faults most definitely needs to be under the MMAPLOCK at
+> > least so it serialises against fallocate()...
+> 
+> So I think there's two different approaches we should distinguish between. We
+> can either add the locking to all the top level IO paths - what you just
+> described - or, the locking can be pushed down to protect _only_ adding pages to
+> the page cache, which is the approach I've been taking.
 
+I'm don't think just serialising adding pages is sufficient for
+filesystems like XFS because, e.g., DAX.
 
-This mmotm tree contains the following patches against 5.2-rc4:
-(patches marked "*" will be included in linux-next)
+> I think both approaches are workable, but I do think that pushing the locking
+> down to __add_to_page_cache_locked is fundamentally the better, more correct
+> approach.
+> 
+>  - It better matches the semantics of what we're trying to do. All these
+>    operations we're trying to protect - dio, fallocate, truncate - they all have
+>    in common that they just want to shoot down a range of the page cache and
+>    keep it from being readded. And in general, it's better to have locks that
+>    protect specific data structures ("adding to this radix tree"), vs. large
+>    critical sections ("the io path").
 
-  origin.patch
-* mm-memcontrol-dont-batch-updates-of-local-vm-stats-and-events.patch
-* list_lru-fix-memory-leak-in-__memcg_init_list_lru_node.patch
-* scripts-decode_stacktracesh-prefix-addr2line-with-cross_compile.patch
-* mm-mlockall-error-for-flag-mcl_onfault.patch
-* mm-fix-recent_rotated-history.patch
-* fs-ocfs2-fix-race-in-ocfs2_dentry_attach_lock.patch
-* mm-mmu_gather-remove-__tlb_reset_range-for-force-flush.patch
-* mm-change-count_mm_mlocked_page_nr-return-type.patch
-* coredump-fix-race-condition-between-collapse_huge_page-and-core-dumping.patch
-* mm-fix-trying-to-reclaim-unevicable-lru-page.patch
-* drivers-base-devres-introduce-devm_release_action.patch
-* mm-devm_memremap_pages-introduce-devm_memunmap_pages.patch
-* pci-p2pdma-fix-the-gen_pool_add_virt-failure-path.patch
-* lib-genalloc-introduce-chunk-owners.patch
-* pci-p2pdma-track-pgmap-references-per-resource-not-globally.patch
-* mm-devm_memremap_pages-fix-final-page-put-race.patch
-* mm-dev_pfn-exclude-memory_device_private-while-computing-virtual-address.patch
-* fs-proc-allow-reporting-eip-esp-for-all-coredumping-threads.patch
-* mm-mempolicy-fix-an-incorrect-rebind-node-in-mpol_rebind_nodemask.patch
-* binfmt_flat-make-load_flat_shared_library-work.patch
-* signal-remove-the-wrong-signal_pending-check-in-restore_user_sigmask.patch
-* mm-soft-offline-return-ebusy-if-set_hwpoison_free_buddy_page-fails.patch
-* mm-hugetlb-soft-offline-dissolve_free_huge_page-return-zero-on-pagehuge.patch
-* iommu-replace-single-char-identifiers-in-macros.patch
-* scripts-decode_stacktrace-match-basepath-using-shell-prefix-operator-not-regex.patch
-* scripts-decode_stacktrace-look-for-modules-with-kodebug-extension.patch
-* scripts-decode_stacktrace-look-for-modules-with-kodebug-extension-v2.patch
-* scripts-spellingtxt-drop-sepc-from-the-misspelling-list.patch
-* scripts-spellingtxt-drop-sepc-from-the-misspelling-list-fix.patch
-* scripts-spellingtxt-add-spelling-fix-for-prohibited.patch
-* scripts-decode_stacktrace-accept-dash-underscore-in-modules.patch
-* sh-configs-remove-config_logfs-from-defconfig.patch
-* sh-config-remove-left-over-backlight_lcd_support.patch
-* debugobjects-move-printk-out-of-db-lock-critical-sections.patch
-* fs-ocfs-fix-spelling-mistake-hearbeating-heartbeat.patch
-* ocfs2-dlm-use-struct_size-helper.patch
-* ocfs2-add-last-unlock-times-in-locking_state.patch
-* ocfs2-add-locking-filter-debugfs-file.patch
-* ocfs2-add-locking-filter-debugfs-file-fix.patch
-* ocfs2-add-first-lock-wait-time-in-locking_state.patch
-* ocfs-no-need-to-check-return-value-of-debugfs_create-functions.patch
-* ocfs-no-need-to-check-return-value-of-debugfs_create-functions-v2.patch
-* ocfs2-clear-zero-in-unaligned-direct-io.patch
-* ocfs2-clear-zero-in-unaligned-direct-io-checkpatch-fixes.patch
-* ocfs2-wait-for-recovering-done-after-direct-unlock-request.patch
-* ocfs2-checkpoint-appending-truncate-log-transaction-before-flushing.patch
-* ramfs-support-o_tmpfile.patch
-  mm.patch
-* mm-slab-validate-cache-membership-under-freelist-hardening.patch
-* mm-slab-sanity-check-page-type-when-looking-up-cache.patch
-* mm-slab-sanity-check-page-type-when-looking-up-cache-fix.patch
-* lkdtm-heap-add-tests-for-freelist-hardening.patch
-* mm-slub-avoid-double-string-traverse-in-kmem_cache_flags.patch
-* kmemleak-fix-check-for-softirq-context.patch
-* mm-kmemleak-change-error-at-_write-when-kmemleak-is-disabled.patch
-* docs-kmemleak-add-more-documentation-details.patch
-* mm-kasan-print-frame-description-for-stack-bugs.patch
-* device-dax-fix-memory-and-resource-leak-if-hotplug-fails.patch
-* mm-hotplug-make-remove_memory-interface-useable.patch
-* device-dax-hotremove-persistent-memory-that-is-used-like-normal-ram.patch
-* mm-move-map_sync-to-asm-generic-mman-commonh.patch
-* include-linux-pfn_th-remove-pfn_t_to_virt.patch
-* arm-remove-arch_select_memory_model.patch
-* s390-remove-arch_select_memory_model.patch
-* sparc-remove-arch_select_memory_model.patch
-* mm-gupc-make-follow_page_mask-static.patch
-* mm-migrate-remove-unused-mode-argument.patch
-* mm-trivial-clean-up-in-insert_page.patch
-* mm-make-config_huge_page-wrappers-into-static-inlines.patch
-* swap-ifdef-struct-vm_area_struct-swap_readahead_info.patch
-* mm-remove-the-account_page_dirtied-export.patch
-* mm-failslab-by-default-do-not-fail-allocations-with-direct-reclaim-only.patch
-* mm-debug_pagelloc-use-static-keys-to-enable-debugging.patch
-* mm-page_alloc-more-extensive-free-page-checking-with-debug_pagealloc.patch
-* mm-debug_pagealloc-use-a-page-type-instead-of-page_ext-flag.patch
-* mm-page_owner-store-page_owners-gfp_mask-in-stackdepot-itself.patch
-* mm-fix-an-overly-long-line-in-read_cache_page.patch
-* mm-dont-cast-readpage-to-filler_t-for-do_read_cache_page.patch
-* jffs2-pass-the-correct-prototype-to-read_cache_page.patch
-* 9p-pass-the-correct-prototype-to-read_cache_page.patch
-* mm-filemap-correct-the-comment-about-vm_fault_retry.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
-* mm-swap-simplify-total_swapcache_pages-with-get_swap_device.patch
-* mm-swap-simplify-total_swapcache_pages-with-get_swap_device-fix.patch
-* mm-swap-use-rbtree-for-swap_extent.patch
-* mm-swap-use-rbtree-for-swap_extent-fix.patch
-* mm-fix-race-between-swapoff-and-mincore.patch
-* memcg-oom-no-oom-kill-for-__gfp_retry_mayfail.patch
-* memcg-fsnotify-no-oom-kill-for-remote-memcg-charging.patch
-* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
-* mm-memcg-introduce-memoryeventslocal.patch
-* mm-memcontrol-dump-memorystat-during-cgroup-oom.patch
-* mm-memcontrol-dump-memorystat-during-cgroup-oom-fix.patch
-* mm-postpone-kmem_cache-memcg-pointer-initialization-to-memcg_link_cache.patch
-* mm-rename-slab-delayed-deactivation-functions-and-fields.patch
-* mm-generalize-postponed-non-root-kmem_cache-deactivation.patch
-* mm-introduce-__memcg_kmem_uncharge_memcg.patch
-* mm-unify-slab-and-slub-page-accounting.patch
-* mm-dont-check-the-dying-flag-on-kmem_cache-creation.patch
-* mm-synchronize-access-to-kmem_cache-dying-flag-using-a-spinlock.patch
-* mm-rework-non-root-kmem_cache-lifecycle-management.patch
-* mm-stop-setting-page-mem_cgroup-pointer-for-slab-pages.patch
-* mm-reparent-memcg-kmem_caches-on-cgroup-removal.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* asm-generic-x86-introduce-generic-pte_allocfree_one.patch
-* alpha-switch-to-generic-version-of-pte-allocation.patch
-* arm-switch-to-generic-version-of-pte-allocation.patch
-* arm64-switch-to-generic-version-of-pte-allocation.patch
-* arm64-switch-to-generic-version-of-pte-allocation-fix.patch
-* csky-switch-to-generic-version-of-pte-allocation.patch
-* m68k-sun3-switch-to-generic-version-of-pte-allocation.patch
-* mips-switch-to-generic-version-of-pte-allocation.patch
-* nds32-switch-to-generic-version-of-pte-allocation.patch
-* nios2-switch-to-generic-version-of-pte-allocation.patch
-* parisc-switch-to-generic-version-of-pte-allocation.patch
-* riscv-switch-to-generic-version-of-pte-allocation.patch
-* um-switch-to-generic-version-of-pte-allocation.patch
-* unicore32-switch-to-generic-version-of-pte-allocation.patch
-* mm-memremap-rename-and-consolidate-section_size.patch
-* mm-clean-up-is_device__page-definitions.patch
-* mm-introduce-arch_has_pte_devmap.patch
-* arm64-mm-implement-pte_devmap-support.patch
-* arm64-mm-implement-pte_devmap-support-fix.patch
-* mm-pgtable-drop-pgtable_t-variable-from-pte_fn_t-functions.patch
-* mm-fail-when-offset-==-num-in-first-check-of-vm_map_pages_zero.patch
-* mm-mmap-move-common-defines-to-mman-commonh.patch
-* mm-swap-fix-release_pages-when-releasing-devmap-pages.patch
-* mm-swap-fix-release_pages-when-releasing-devmap-pages-v2.patch
-* mm-swap-fix-release_pages-when-releasing-devmap-pages-v3.patch
-* mm-swap-fix-release_pages-when-releasing-devmap-pages-v4.patch
-* mm-mmu_notifier-use-hlist_add_head_rcu.patch
-* mm-add-account_locked_vm-utility-function.patch
-* mm-add-account_locked_vm-utility-function-v3.patch
-* mm-memory_hotplug-simplify-and-fix-check_hotplug_memory_range.patch
-* s390x-mm-fail-when-an-altmap-is-used-for-arch_add_memory.patch
-* s390x-mm-implement-arch_remove_memory.patch
-* arm64-mm-add-temporary-arch_remove_memory-implementation.patch
-* drivers-base-memory-pass-a-block_id-to-init_memory_block.patch
-* drivers-base-memory-pass-a-block_id-to-init_memory_block-fix.patch
-* mm-memory_hotplug-allow-arch_remove_pages-without-config_memory_hotremove.patch
-* mm-memory_hotplug-create-memory-block-devices-after-arch_add_memory.patch
-* mm-memory_hotplug-drop-mhp_memblock_api.patch
-* mm-memory_hotplug-remove-memory-block-devices-before-arch_remove_memory.patch
-* mm-memory_hotplug-make-unregister_memory_block_under_nodes-never-fail.patch
-* mm-memory_hotplug-remove-zone-parameter-from-sparse_remove_one_section.patch
-* mm-vmallocc-remove-node-argument.patch
-* mm-vmallocc-preload-a-cpu-with-one-object-for-split-purpose.patch
-* mm-vmallocc-get-rid-of-one-single-unlink_va-when-merge.patch
-* mm-vmallocc-switch-to-warn_on-and-move-it-under-unlink_va.patch
-* mm-vmalloc-spelling-s-configuraion-configuration.patch
-* mm-large-system-hash-use-vmalloc-for-size-max_order-when-hashdist.patch
-* mm-large-system-hash-clear-hashdist-when-only-one-node-with-memory-is-booted.patch
-* mm-vmscan-remove-double-slab-pressure-by-incing-sc-nr_scanned.patch
-* mm-vmscan-correct-some-vmscan-counters-for-thp-swapout.patch
-* tools-vm-slabinfo-order-command-line-options.patch
-* tools-vm-slabinfo-add-partial-slab-listing-to-x.patch
-* tools-vm-slabinfo-add-option-to-sort-by-partial-slabs.patch
-* tools-vm-slabinfo-add-sorting-info-to-help-menu.patch
-* proc-use-down_read_killable-mmap_sem-for-proc-pid-maps.patch
-* proc-use-down_read_killable-mmap_sem-for-proc-pid-smaps_rollup.patch
-* proc-use-down_read_killable-mmap_sem-for-proc-pid-pagemap.patch
-* proc-use-down_read_killable-mmap_sem-for-proc-pid-clear_refs.patch
-* proc-use-down_read_killable-mmap_sem-for-proc-pid-map_files.patch
-* proc-use-down_read_killable-mmap_sem-for-proc-pid-map_files-fix.patch
-* mm-use-down_read_killable-for-locking-mmap_sem-in-access_remote_vm.patch
-* z3fold-add-inter-page-compaction.patch
-* z3fold-add-inter-page-compaction-fix.patch
-* z3fold-add-inter-page-compaction-fix-2.patch
-* mm-memory-failure-clarify-error-message.patch
-* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill.patch
-* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill-fix.patch
-* x86-numa-always-initialize-all-possible-nodes.patch
-* mm-be-more-verbose-about-zonelist-initialization.patch
-* mm-gup-rename-nr-as-nr_pinned-in-get_user_pages_fast.patch
-* mm-gup-fix-omission-of-check-on-foll_longterm-in-gup-fast-path.patch
-* mm-gup_benchemark-add-longterm_benchmark-test-in-gup-fast-path.patch
-* mm-proportional-memorylowmin-reclaim.patch
-* mm-make-memoryemin-the-baseline-for-utilisation-determination.patch
-* mm-make-memoryemin-the-baseline-for-utilisation-determination-fix.patch
-* mm-vmscan-remove-unused-lru_pages-argument.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* proc-hide-segfault-at-ffffffffff600000-dmesg-spam.patch
-* vmcore-add-a-kernel-parameter-novmcoredd.patch
-* vmcore-add-a-kernel-parameter-novmcoredd-fix.patch
-* vmcore-add-a-kernel-parameter-novmcoredd-fix-fix.patch
-* add-typeof_member-macro.patch
-* proc-use-typeof_member-macro.patch
-* kernel-fix-typos-and-some-coding-style-in-comments.patch
-* linux-bitsh-make-bit-genmask-and-friends-available-in-assembly.patch
-* arch-replace-_bitul-in-kernel-space-headers-with-bit.patch
-* byteorder-sanity-check-toolchain-vs-kernel-endianess.patch
-* byteorder-sanity-check-toolchain-vs-kernel-endianess-checkpatch-fixes.patch
-* lib-genallocc-export-symbol-addr_in_gen_pool.patch
-* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr.patch
-* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr-fix.patch
-* lib-fix-possible-incorrect-result-from-rational-fractions-helper.patch
-* tweak-list_poison2-for-better-code-generation-on-x86_64.patch
-* lib-string-allow-searching-for-nul-with-strnchr.patch
-* lib-test_string-avoid-masking-memset16-32-64-failures.patch
-* lib-test_string-add-some-testcases-for-strchr-and-strnchr.patch
-* lib-test_overflow-avoid-tainting-the-kernel-and-fix-wrap-size.patch
-* lib-introduce-test_meminit-module.patch
-* mm-ioremap-check-virtual-address-alignment-while-creating-huge-mappings.patch
-* lib-string_helpers-fix-some-kerneldoc-warnings.patch
-* lib-debugobjects-no-need-to-check-return-value-of-debugfs_create-functions.patch
-* checkpatchpl-warn-on-duplicate-sysctl-local-variable.patch
-* checkpatch-dont-interpret-stack-dumps-as-commit-ids.patch
-* checkpatch-fix-something.patch
-* binfmt_flat-remove-set-but-not-used-variable-inode.patch
-* elf-delete-stale-comment.patch
-* mm-kconfig-fix-neighboring-typos.patch
-* mm-generalize-and-rename-notify_page_fault-as-kprobe_page_fault.patch
-* coda-pass-the-host-file-in-vma-vm_file-on-mmap.patch
-* uapi-linux-codah-use-__kernel_pid_t-for-userspace.patch
-* uapi-linux-coda_psdevh-move-upc_req-definition-from-uapi-to-kernel-side-headers.patch
-* coda-add-error-handling-for-fget.patch
-* coda-potential-buffer-overflow-in-coda_psdev_write.patch
-* coda-fix-build-using-bare-metal-toolchain.patch
-* coda-dont-try-to-print-names-that-were-considered-too-long.patch
-* uapi-linux-coda_psdevh-move-coda_req_-from-uapi-to-kernel-side-headers.patch
-* coda-clean-up-indentation-replace-spaces-with-tab.patch
-* coda-stop-using-struct-timespec-in-user-api.patch
-* coda-change-codas-user-api-to-use-64-bit-time_t-in-timespec.patch
-* coda-get-rid-of-coda_alloc.patch
-* coda-get-rid-of-coda_free.patch
-* coda-bump-module-version.patch
-* coda-move-internal-defs-out-of-include-linux.patch
-* coda-remove-uapi-linux-coda_psdevh.patch
-* coda-destroy-mutex-in-put_super.patch
-* coda-use-size-for-stat.patch
-* coda-add-__init-to-init_coda_psdev.patch
-* coda-remove-sysctl-object-from-module-when-unused.patch
-* coda-remove-sb-test-in-coda_fid_to_inode.patch
-* coda-ftoc-validity-check-integration.patch
-* hfsplus-replace-strncpy-with-memcpy.patch
-* ufs-remove-set-but-not-used-variable-usb3.patch
-* nds32-fix-asm-syscallh.patch
-* hexagon-define-syscall_get_error-and-syscall_get_return_value.patch
-* mips-define-syscall_get_error.patch
-* parisc-define-syscall_get_error.patch
-* powerpc-define-syscall_get_error.patch
-* ptrace-add-ptrace_get_syscall_info-request.patch
-* selftests-ptrace-add-a-test-case-for-ptrace_get_syscall_info.patch
-* selftests-ptrace-add-a-test-case-for-ptrace_get_syscall_info-checkpatch-fixes.patch
-* signal-reorder-struct-sighand_struct.patch
-* signal-simplify-set_user_sigmask-restore_user_sigmask.patch
-* select-change-do_poll-to-return-erestartnohand-rather-than-eintr.patch
-* select-shift-restore_saved_sigmask_unless-into-poll_select_copy_remaining.patch
-* coredump-split-pipe-command-whitespace-before-expanding-template.patch
-* rapidio-mport_cdev-nul-terminate-some-strings.patch
-* convert-struct-pid-count-to-refcount_t.patch
-* aio-simplify-read_events.patch
-* ipc-mqueue-only-perform-resource-calculation-if-user-valid.patch
-* ipc-consolidate-all-xxxctl_down-functions.patch
-* lz4-fix-spelling-and-copy-paste-errors-in-documentation.patch
-  linux-next.patch
-  linux-next-rejects.patch
-  linux-next-git-rejects.patch
-* pinctrl-fix-pxa2xxc-build-warnings.patch
-* proc-sysctl-add-shared-variables-for-range-check.patch
-* proc-sysctl-add-shared-variables-for-range-check-fix.patch
-* proc-sysctl-add-shared-variables-for-range-check-fix-2.patch
-* proc-sysctl-add-shared-variables-for-range-check-fix-2-fix.patch
-* fs-select-use-struct_size-in-kmalloc.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
+I disagree :)
+
+The high level IO locks provide the IO concurrency policy for the
+filesystem. The page cache is an internal structure for caching
+pages - it is not a structure for efficiently and cleanly
+implementing IO concurrency policy. That's the mistake the current
+page cache architecture makes - it tries to be the central control
+for all the filesystem IO (because filesystems are dumb and the page
+cache knows best!) but, unfortunately, this does not provide the
+semantics or functionality that all filesystems want and/or need.
+
+Just look at the truncate detection mess we have every time we
+lookup and lock a page anywhere in the mm/ code - do you see any
+code in all that which detects a hole punch race? Nope, you don't
+because the filesystems take responsibility for serialising that
+functionality. Unfortunately, we have so much legacy filesystem
+cruft we'll never get rid of those truncate hacks.
+
+That's my beef with relying on the page cache - the page cache is
+rapidly becoming a legacy structure that only serves to slow modern
+IO subsystems down. More and more we are going to bypass the page
+cache and push/pull data via DMA directly into user buffers because
+that's the only way we have enough CPU power in the systems to keep
+the storage we have fully utilised.
+
+That means, IMO, making the page cache central to solving an IO
+concurrency problem is going the wrong way....
+
+>    In bcachefs, at least for buffered IO I don't currently need any per-inode IO
+>    locks, page granularity locks suffice, so I'd like to keep that - under the
+>    theory that buffered IO to pages already in cache is more of a fast path than
+>    faulting pages in.
+> 
+>  - If we go with the approach of using the filesystem IO locks, we need to be
+>    really careful about auditing and adding assertions to make sure we've found
+>    and fixed all the code paths that can potentially add pages to the page
+>    cache. I didn't even know about the fadvise case, eesh.
+
+Sure, but we've largely done that already. There aren't a lot of
+places that add pages to the page cache.
+
+>  - We still need to do something about the case where we're recursively faulting
+>    pages back in, which means we need _something_ in place to even detect that
+>    that's happening. Just trying to cover everything with the filesystem IO
+>    locks isn't useful here.
+
+Haven't we just addressed that with setting a current task lock
+context and returning -EDEADLOCK?
+
+> So to summarize - if we have locking specifically for adding pages to the page
+> cache, we don't need to extend the filesystem IO locks to all these places, and
+> we need something at that level anyways to handle recursive faults from gup()
+> anyways.
+> 
+> The tricky part is that there's multiple places that want to call
+> add_to_page_cache() while holding this pagecache_add_lock.
+> 
+>  - dio -> gup(): but, you had the idea of just returning -EDEADLOCK here which I
+>    like way better than my recursive locking approach.
+> 
+>  - the other case is truncate/fpunch/etc - they make use of buffered IO to
+>    handle operations that aren't page/block aligned.  But those look a lot more
+>    tractable than dio, since they're calling find_get_page()/readpage() directly
+>    instead of via gup(), and possibly they could be structured to not have to
+>    truncate/punch the partial page while holding the pagecache_add_lock at all
+>    (but that's going to be heavily filesystem dependent).
+
+That sounds like it is going to be messy. :(
+
+> One other tricky thing we need is a way to write out and then evict a page
+> without allowing it to be redirtied - i.e. something that combines
+> filemap_write_and_wait_range() with invalidate_inode_pages2_range(). Otherwise,
+> a process continuously redirtying a page is going to make truncate/dio
+> operations spin trying to shoot down the page cache - in bcachefs I'm currently
+> taking pagecache_add_lock in write_begin and mkwrite to prevent this, but I
+> really want to get rid of that. If we can get that combined
+> write_and_invalidate() operation, then I think the locking will turn out fairly
+> clean.
+
+IMO, this isn't a page cache problem - this is a filesystem
+operation vs page fault serialisation issue. Why? Because the
+problem exists for DAX, and it doesn't add pages to the page cache
+for mappings...
+
+i.e.  We've already solved these problems with the same high level
+IO locks that solve all the truncate, hole punch, etc issues for
+both the page cache and DAX operation. i.e. The MMAPLOCK prevents
+the PTE being re-dirtied across the entire filesystem operation, not
+just the writeback and invalidation. The XFS flush+inval code
+looks like this:
+
+	xfs_ilock(ip, XFS_IOLOCK_EXCL);
+	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
+	xfs_flush_unmap_range(ip, offset, len);
+
+	<do operation that requires invalidated page cache>
+	<flush modifications if necessary>
+
+	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
+	xfs_iunlock(ip, XFS_IOLOCK_EXCL);
+
+With range locks it looks like this;
+
+	range_lock_init(&rl, offset, len);
+	range_lock_write(&ip->i_iolock, &rl);
+	xfs_flush_unmap_range(ip, offset, len);
+
+	<do operation that requires invalidated page cache>
+	<flush modified range if necessary>
+
+	range_unlock_write(&ip->i_iolock, &rl);
+
+---
+
+In summary, I can see why the page cache add lock works well for
+bcachefs, but on the other hand I can say that it really doesn't
+match well for filesystems like XFS or for filesystems that
+implement DAX and so may not be using the page cache at all...
+
+Don't get me wrong - I'm not opposed to incuding page cache add
+locking - I'm just saying that the problems it tries to address (and
+ones it cannot address) are already largely solved in existing
+filesystems. I suspect that if we do merge this code, whatever
+locking is added would have to be optional....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
