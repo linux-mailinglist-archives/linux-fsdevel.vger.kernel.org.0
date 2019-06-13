@@ -2,127 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18A714442C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A099B44400
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:34:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392323AbfFMQfR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:35:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38932 "EHLO mx1.suse.de"
+        id S1730784AbfFMQeO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:34:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40610 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730730AbfFMHoD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 03:44:03 -0400
+        id S1730782AbfFMHxk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 03:53:40 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 920EBAB91;
-        Thu, 13 Jun 2019 07:44:00 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id B6CC4AD1E;
+        Thu, 13 Jun 2019 07:53:37 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B5C631E4328; Thu, 13 Jun 2019 09:43:59 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 09:43:59 +0200
+        id 4A7821E4328; Thu, 13 Jun 2019 09:53:33 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 09:53:33 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Theodore Ts'o <tytso@mit.edu>,
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
         Jeff Layton <jlayton@kernel.org>,
         Dave Chinner <david@fromorbit.com>,
         Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-xfs@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
         =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org
 Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190613074359.GB26505@quack2.suse.cz>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606195114.GA30714@ziepe.ca>
+Message-ID: <20190613075333.GC26505@quack2.suse.cz>
+References: <20190606195114.GA30714@ziepe.ca>
  <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
  <20190607103636.GA12765@quack2.suse.cz>
  <20190607121729.GA14802@ziepe.ca>
  <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
  <20190612102917.GB14578@quack2.suse.cz>
- <CAPcyv4jSyTjC98UsWb3-FnZekV0oyboiSe9n1NYDC2TSKAqiqw@mail.gmail.com>
+ <20190612114721.GB3876@ziepe.ca>
+ <20190612120907.GC14578@quack2.suse.cz>
+ <20190612191421.GM3876@ziepe.ca>
+ <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4jSyTjC98UsWb3-FnZekV0oyboiSe9n1NYDC2TSKAqiqw@mail.gmail.com>
+In-Reply-To: <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 12-06-19 11:49:52, Dan Williams wrote:
-> On Wed, Jun 12, 2019 at 3:29 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Fri 07-06-19 07:52:13, Ira Weiny wrote:
-> > > On Fri, Jun 07, 2019 at 09:17:29AM -0300, Jason Gunthorpe wrote:
-> > > > On Fri, Jun 07, 2019 at 12:36:36PM +0200, Jan Kara wrote:
-> > > >
-> > > > > Because the pins would be invisible to sysadmin from that point on.
-> > > >
-> > > > It is not invisible, it just shows up in a rdma specific kernel
-> > > > interface. You have to use rdma netlink to see the kernel object
-> > > > holding this pin.
-> > > >
-> > > > If this visibility is the main sticking point I suggest just enhancing
-> > > > the existing MR reporting to include the file info for current GUP
-> > > > pins and teaching lsof to collect information from there as well so it
-> > > > is easy to use.
-> > > >
-> > > > If the ownership of the lease transfers to the MR, and we report that
-> > > > ownership to userspace in a way lsof can find, then I think all the
-> > > > concerns that have been raised are met, right?
-> > >
-> > > I was contemplating some new lsof feature yesterday.  But what I don't
-> > > think we want is sysadmins to have multiple tools for multiple
-> > > subsystems.  Or even have to teach lsof something new for every potential
-> > > new subsystem user of GUP pins.
-> >
-> > Agreed.
-> >
-> > > I was thinking more along the lines of reporting files which have GUP
-> > > pins on them directly somewhere (dare I say procfs?) and teaching lsof to
-> > > report that information.  That would cover any subsystem which does a
-> > > longterm pin.
-> >
-> > So lsof already parses /proc/<pid>/maps to learn about files held open by
-> > memory mappings. It could parse some other file as well I guess. The good
-> > thing about that would be that then "longterm pin" structure would just hold
-> > struct file reference. That would avoid any needs of special behavior on
-> > file close (the file reference in the "longterm pin" structure would make
-> > sure struct file and thus the lease stays around, we'd just need to make
-> > explicit lease unlock block until the "longterm pin" structure is freed).
-> > The bad thing is that it requires us to come up with a sane new proc
-> > interface for reporting "longterm pins" and associated struct file. Also we
-> > need to define what this interface shows if the pinned pages are in DRAM
-> > (either page cache or anon) and not on NVDIMM.
+On Wed 12-06-19 15:13:36, Ira Weiny wrote:
+> On Wed, Jun 12, 2019 at 04:14:21PM -0300, Jason Gunthorpe wrote:
+> > On Wed, Jun 12, 2019 at 02:09:07PM +0200, Jan Kara wrote:
+> > > On Wed 12-06-19 08:47:21, Jason Gunthorpe wrote:
+> > > > On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
+> > > > 
+> > > > > > > The main objection to the current ODP & DAX solution is that very
+> > > > > > > little HW can actually implement it, having the alternative still
+> > > > > > > require HW support doesn't seem like progress.
+> > > > > > > 
+> > > > > > > I think we will eventually start seein some HW be able to do this
+> > > > > > > invalidation, but it won't be universal, and I'd rather leave it
+> > > > > > > optional, for recovery from truely catastrophic errors (ie my DAX is
+> > > > > > > on fire, I need to unplug it).
+> > > > > > 
+> > > > > > Agreed.  I think software wise there is not much some of the devices can do
+> > > > > > with such an "invalidate".
+> > > > > 
+> > > > > So out of curiosity: What does RDMA driver do when userspace just closes
+> > > > > the file pointing to RDMA object? It has to handle that somehow by aborting
+> > > > > everything that's going on... And I wanted similar behavior here.
+> > > > 
+> > > > It aborts *everything* connected to that file descriptor. Destroying
+> > > > everything avoids creating inconsistencies that destroying a subset
+> > > > would create.
+> > > > 
+> > > > What has been talked about for lease break is not destroying anything
+> > > > but very selectively saying that one memory region linked to the GUP
+> > > > is no longer functional.
+> > > 
+> > > OK, so what I had in mind was that if RDMA app doesn't play by the rules
+> > > and closes the file with existing pins (and thus layout lease) we would
+> > > force it to abort everything. Yes, it is disruptive but then the app didn't
+> > > obey the rule that it has to maintain file lease while holding pins. Thus
+> > > such situation should never happen unless the app is malicious / buggy.
+> > 
+> > We do have the infrastructure to completely revoke the entire
+> > *content* of a FD (this is called device disassociate). It is
+> > basically close without the app doing close. But again it only works
+> > with some drivers. However, this is more likely something a driver
+> > could support without a HW change though.
+> > 
+> > It is quite destructive as it forcibly kills everything RDMA related
+> > the process(es) are doing, but it is less violent than SIGKILL, and
+> > there is perhaps a way for the app to recover from this, if it is
+> > coded for it.
 > 
-> The anon vs shared detection case is important because a longterm pin
-> might be blocking a memory-hot-unplug operation if it is pinning
-> ZONE_MOVABLE memory, but I don't think we want DRAM vs NVDIMM to be an
-> explicit concern of the interface. For the anon / cached case I expect
-> it might be useful to put that communication under the memory-blocks
-> sysfs interface. I.e. a list of pids that are pinning that
-> memory-block from being hot-unplugged.
+> I don't think many are...  I think most would effectively be "killed" if this
+> happened to them.
 
-Yes, I was thinking of memory hotplug as well. But I don't think the
-distinction is really shared vs anon - a pinned page cache page can be
-blocking your memory unplug / migration the same way as a pinned anon page.
-So the information for a pin we need to convey is the "location of
-resources" being pinned - that is pfn (both for DRAM and NVDIMM) - but then
-also additional mapping information (which is filename for DAX page, not
-sure about DRAM). Also a separate question is how to expose this
-information so that it is efficiently usable by userspace. For lsof, a file
-in /proc/<pid>/xxx with information would be probably the easiest to use
-plus all the issues with file access permissions and visibility among
-different user namespaces is solved out of the box. And I believe it would
-be reasonably usable for memory hotplug usecase as well. A file in sysfs
-would be OK for memory hotplug I guess, but not really usable for lsof and
-so I'm not sure we really need it when we are going to have one in procfs.
+Yes, I repeat we are in a situation when the application has a bug and
+didn't propely manage its long term pins which are fully under its control.
+So in my mind a situation similar to application using memory it has
+already freed. The kernel has to manage that but we don't really care
+what's left from the application when this happens.
+
+That being said I'm not insisting this has to happen - tracking associated
+"RDMA file" with a layout lease and somehow invalidating it on close of a
+leased file is somewhat ugly anyway. But it is still an option if exposing
+pins to userspace for lsof to consume proves even worse...
 
 								Honza
 -- 
