@@ -2,110 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5A49446AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34616446BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:54:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392938AbfFMQxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:53:50 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:45686 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404431AbfFMQxi (ORCPT
+        id S2392906AbfFMQyK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:54:10 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43599 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730065AbfFMQyJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:53:38 -0400
-Received: by mail-yw1-f68.google.com with SMTP id m16so8606390ywh.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 09:53:37 -0700 (PDT)
+        Thu, 13 Jun 2019 12:54:09 -0400
+Received: by mail-oi1-f196.google.com with SMTP id w79so14950233oif.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 09:54:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2sPkTPdJ3wOyLAIYnFkdamPG63sZ+DeF7BYB5onzOKU=;
-        b=lojDYtBtcdzshl4fWmF/BKJaI7rMcG9iFo3d/WVo5IJlaZbQDg8EFeHp9BfcyY82IL
-         Y+wFGtqgiDOROUOSPEkeKXYTzYxVLwYzcoIfzWwOz86jJpDrIcSGMN6CG/VdeTA/q7aF
-         zOGyOeeKWhY3EPdfv/GL7AWk2cV/lyitf+Zk66ImFj4mE+0qAwV9yviJfwXq+7nI6i1+
-         qJ6OiNqID3sUoAudotTHlfgW8Huk2HadR8XHNYC5s6vOk3JqtXkSOTkG3WnxkG0LNJtk
-         6a/NsvqEnfGRyO1quKtZSS5AIfUECw48N75AtuGg7bib8rLGbMhab5PWJ0GDC7R7gZwR
-         rLfw==
+        bh=K5QgKSw4Z6Xg8aYYXT+LBjYPe44CbIinLwHH3dcmWHs=;
+        b=JPkB0BV6X6JhIXM15mmuE6WMYycZpu9oR7r0I7K/LQCBr9DwAP6ai9HZjnhDeAYv4q
+         TiZo9rDNmnnfaiz17BD3uxFdbeSL7Y/8LOiTSNry6at9hQCVwGCeToNG6Ex+J8u5/KQP
+         rSeVmghdMiyUulN3yC6UXoG+jamCw6Iq9RQa6hVQWk/7tpob4VyGK5isoLBgPG5+8CMc
+         oA3+NEhNWRx5DhX8fFS+ibJYngtPEXnpdgd2MSVqUjHZLmRvj+vJ+ceFOp5MLrQ4oEX/
+         0Rx8uu+6IN2lNuQ5sNTppCrMvyeKhRIg9ncvGbzO5FXYhJ6K3FlfiHQBnhAn2M8BLSYe
+         /S4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2sPkTPdJ3wOyLAIYnFkdamPG63sZ+DeF7BYB5onzOKU=;
-        b=YWE020hfvJCXpSfmNiitXcHBE44KBRyMiq3rj2yrL6QOdZdhOlYppdG0LN9ogkzhGU
-         hm+s8wzMlL7KiuLxZrlG68XlYtMNfow3fEJFHqo/0uitnOi/t23cBrwm1WWVQ/ZGpwLM
-         qo6m7ipDmD9ccYqUdZUQgU7p2YVsx9Y5ePEL5TOuuyYorxM8p8zsm07NFlAZ1x0wgxnD
-         YS0AlgXSXrf9ZgK1LaqWM3EQP4slfga25/v6njEGoh9jBeHwyO85qfZ1d01McGehVc1d
-         ByI/y15RW6NzMWo69RsurdFGP5b70rTyGWtkp5LL6lx7meis+R2GQ1A2jxdSIuD5q4jD
-         rMRw==
-X-Gm-Message-State: APjAAAWpjmw73JgKvxlLVgLnjHVl1KCnoXARShs08wB9n1xRU7+sjLWJ
-        gz+9QyQG9bvJZNwW6YSSXy8z97kOUPfXBVCZKas=
-X-Google-Smtp-Source: APXvYqxT7CSa1Fp1M4Dmj9UNPC0yB+eVMw913N8MwhuTGH+dbWfLCKeb6LXBboWSKfziMlOH43lSoEFk1vFh0jzO4fs=
-X-Received: by 2002:a81:7096:: with SMTP id l144mr50488611ywc.294.1560444817087;
- Thu, 13 Jun 2019 09:53:37 -0700 (PDT)
+        bh=K5QgKSw4Z6Xg8aYYXT+LBjYPe44CbIinLwHH3dcmWHs=;
+        b=ZInh2ohVdM4WC25+3BVg5xLzl3xDG1gxu2OeNsNKh9abrMJJbDLyrB39lbHc8tOlvs
+         7jWHjb1xU92lZgkUdAfCcbG5wA6IarcaE0EibxxA3mNseWFV4Qc67wA4+GcNBetbUNrx
+         v0ngBYQT5PKDP7rw5m1I2oTDCrJgxrP1bfxV3CKDw993NVmsXt8GwbgRI5zS98lkOfcY
+         gNsTrO72Fhcgdvg7rAjektPGqXHRWds4cuOEGpT0RL/1ji2LfHXOygAD65wucdpjNIuL
+         qaJmq6jQRlES0Ug2ZE8z9T7L7KE8bWPyKuY8tw+X34p5muO6czL6C2Kqe8PbHM5R855+
+         3wcg==
+X-Gm-Message-State: APjAAAX46hdHzWID0905bBYNagjmsFQCVnj7ySQAv93+ieN5JmYwr0QR
+        S0EzKxMqZZapAbohi/r1jUIvkr0mUVB91p62v1DNIg==
+X-Google-Smtp-Source: APXvYqw1WkLu6931wraGkR43kxA852RaajLizs6v5Jy3HNf2qRKdqa2zWoPAYJUPvBUNSayLXHYwfeMfsWWcQaOonts=
+X-Received: by 2002:aca:4208:: with SMTP id p8mr3752304oia.105.1560444848738;
+ Thu, 13 Jun 2019 09:54:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190526143411.11244-1-amir73il@gmail.com> <20190526143411.11244-5-amir73il@gmail.com>
-In-Reply-To: <20190526143411.11244-5-amir73il@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 13 Jun 2019 19:53:25 +0300
-Message-ID: <CAOQ4uxg5e4zJ+GVCXs1X55TTBdNKHVASkA1Q-Xz_pyLnD8UDpA@mail.gmail.com>
-Subject: Re: [PATCH v3 04/10] tracefs: call fsnotify_{unlink,rmdir}() hooks
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     David Sterba <dsterba@suse.com>, Christoph Hellwig <hch@lst.de>,
-        Joel Becker <jlbec@evilplan.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+References: <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
+ <20190607103636.GA12765@quack2.suse.cz> <20190607121729.GA14802@ziepe.ca>
+ <20190607145213.GB14559@iweiny-DESK2.sc.intel.com> <20190612102917.GB14578@quack2.suse.cz>
+ <20190612114721.GB3876@ziepe.ca> <20190612120907.GC14578@quack2.suse.cz>
+ <20190612191421.GM3876@ziepe.ca> <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com> <20190612233324.GE14336@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20190612233324.GE14336@iweiny-DESK2.sc.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 13 Jun 2019 09:53:57 -0700
+Message-ID: <CAPcyv4hKw7owf+Jpxiu+V7DE+U4GkQ1Hr3korZvgSve-LPexNA@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 26, 2019 at 5:34 PM Amir Goldstein <amir73il@gmail.com> wrote:
+On Wed, Jun 12, 2019 at 4:32 PM Ira Weiny <ira.weiny@intel.com> wrote:
 >
-> This will allow generating fsnotify delete events after the
-> fsnotify_nameremove() hook is removed from d_delete().
+> On Wed, Jun 12, 2019 at 03:54:19PM -0700, Dan Williams wrote:
+> > On Wed, Jun 12, 2019 at 3:12 PM Ira Weiny <ira.weiny@intel.com> wrote:
+> > >
+> > > On Wed, Jun 12, 2019 at 04:14:21PM -0300, Jason Gunthorpe wrote:
+> > > > On Wed, Jun 12, 2019 at 02:09:07PM +0200, Jan Kara wrote:
+> > > > > On Wed 12-06-19 08:47:21, Jason Gunthorpe wrote:
+> > > > > > On Wed, Jun 12, 2019 at 12:29:17PM +0200, Jan Kara wrote:
+> > > > > >
+> > > > > > > > > The main objection to the current ODP & DAX solution is that very
+> > > > > > > > > little HW can actually implement it, having the alternative still
+> > > > > > > > > require HW support doesn't seem like progress.
+> > > > > > > > >
+> > > > > > > > > I think we will eventually start seein some HW be able to do this
+> > > > > > > > > invalidation, but it won't be universal, and I'd rather leave it
+> > > > > > > > > optional, for recovery from truely catastrophic errors (ie my DAX is
+> > > > > > > > > on fire, I need to unplug it).
+> > > > > > > >
+> > > > > > > > Agreed.  I think software wise there is not much some of the devices can do
+> > > > > > > > with such an "invalidate".
+> > > > > > >
+> > > > > > > So out of curiosity: What does RDMA driver do when userspace just closes
+> > > > > > > the file pointing to RDMA object? It has to handle that somehow by aborting
+> > > > > > > everything that's going on... And I wanted similar behavior here.
+> > > > > >
+> > > > > > It aborts *everything* connected to that file descriptor. Destroying
+> > > > > > everything avoids creating inconsistencies that destroying a subset
+> > > > > > would create.
+> > > > > >
+> > > > > > What has been talked about for lease break is not destroying anything
+> > > > > > but very selectively saying that one memory region linked to the GUP
+> > > > > > is no longer functional.
+> > > > >
+> > > > > OK, so what I had in mind was that if RDMA app doesn't play by the rules
+> > > > > and closes the file with existing pins (and thus layout lease) we would
+> > > > > force it to abort everything. Yes, it is disruptive but then the app didn't
+> > > > > obey the rule that it has to maintain file lease while holding pins. Thus
+> > > > > such situation should never happen unless the app is malicious / buggy.
+> > > >
+> > > > We do have the infrastructure to completely revoke the entire
+> > > > *content* of a FD (this is called device disassociate). It is
+> > > > basically close without the app doing close. But again it only works
+> > > > with some drivers. However, this is more likely something a driver
+> > > > could support without a HW change though.
+> > > >
+> > > > It is quite destructive as it forcibly kills everything RDMA related
+> > > > the process(es) are doing, but it is less violent than SIGKILL, and
+> > > > there is perhaps a way for the app to recover from this, if it is
+> > > > coded for it.
+> > >
+> > > I don't think many are...  I think most would effectively be "killed" if this
+> > > happened to them.
+> > >
+> > > >
+> > > > My preference would be to avoid this scenario, but if it is really
+> > > > necessary, we could probably build it with some work.
+> > > >
+> > > > The only case we use it today is forced HW hot unplug, so it is rarely
+> > > > used and only for an 'emergency' like use case.
+> > >
+> > > I'd really like to avoid this as well.  I think it will be very confusing for
+> > > RDMA apps to have their context suddenly be invalid.  I think if we have a way
+> > > for admins to ID who is pinning a file the admin can take more appropriate
+> > > action on those processes.   Up to and including killing the process.
+> >
+> > Can RDMA context invalidation, "device disassociate", be inflicted on
+> > a process from the outside? Identifying the pid of a pin holder only
+> > leaves SIGKILL of the entire process as the remediation for revoking a
+> > pin, and I assume admins would use the finer grained invalidation
+> > where it was available.
 >
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-
-Hi Steven,
-
-Would you be able to provide an ACK on this patch?
-We need to add those explicit fsnotify hooks to match the existing
-fsnotify_create/mkdir hooks in tracefs, because
-the hook embedded inside d_delete() is going away [1].
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-fsdevel/20190526143411.11244-1-amir73il@gmail.com/
-
-
-> ---
->  fs/tracefs/inode.c | 3 +++
->  1 file changed, 3 insertions(+)
+> No not in the way you are describing it.  As Jason said you can hotplug the
+> device which is "from the outside" but this would affect all users of that
+> device.
 >
-> diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-> index 7098c49f3693..497a8682b5b9 100644
-> --- a/fs/tracefs/inode.c
-> +++ b/fs/tracefs/inode.c
-> @@ -509,9 +509,12 @@ static int __tracefs_remove(struct dentry *dentry, struct dentry *parent)
->                         switch (dentry->d_inode->i_mode & S_IFMT) {
->                         case S_IFDIR:
->                                 ret = simple_rmdir(parent->d_inode, dentry);
-> +                               if (!ret)
-> +                                       fsnotify_rmdir(parent->d_inode, dentry);
->                                 break;
->                         default:
->                                 simple_unlink(parent->d_inode, dentry);
-> +                               fsnotify_unlink(parent->d_inode, dentry);
->                                 break;
->                         }
->                         if (!ret)
-> --
-> 2.17.1
->
+> Effectively, we would need a way for an admin to close a specific file
+> descriptor (or set of fds) which point to that file.  AFAIK there is no way to
+> do that at all, is there?
+
+You can certainly give the lease holder the option to close the file
+voluntarily via the siginfo_t that can be attached to a lease break
+signal. But it's not really "close" you want as much as a finer
+grained disassociate.
+
+All that said you could require the lease taker opt-in to SIGKILL via
+F_SETSIG before marking the lease "exclusive". That effectively
+precludes failing truncate, but it's something we can enforce today
+and work on finer grained / less drastic escalations over time for
+something that should "never" happen.
