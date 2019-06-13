@@ -2,192 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C54445019
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 01:37:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 690CB45048
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 01:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbfFMXhM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 19:37:12 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54408 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfFMXhM (ORCPT
+        id S1727341AbfFMXpc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 19:45:32 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38101 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727038AbfFMXpc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 19:37:12 -0400
-Received: by mail-wm1-f66.google.com with SMTP id g135so452474wme.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 16:37:10 -0700 (PDT)
+        Thu, 13 Jun 2019 19:45:32 -0400
+Received: by mail-qt1-f193.google.com with SMTP id n11so481558qtl.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 16:45:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
+        d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=oodRWfym8vGhEJNTwBcKhJMKuWNGLtph+QGLWfAyKO0=;
-        b=BvbGJfCrFemSkbH88wzZyyFSZzIZCF3X5vaX3OL9UB8Lz6ZMFUlq6T7RtZ5xwzVe2m
-         HGeBjbnEatgk9gSuh2WSiV+1vzf4BLyKfU6qbBz/4JMx/GGodTcx4WLzM+cUKFDgk7ut
-         8X7p3+SL7XYNw8+ei+6PhnS02p01XJ+5Xzs1Fn/fGsDgjjxrjpq6INY/46Ooh+ZdhAGK
-         Z+wGDUrYd+UR1Q8ZFuUHNrQwf4ValMHY33hco3gNPx00Auyxm4rAcRlWv9qKAvua0nBx
-         yvAtdRmzcUviT0Kw+M6SucHg8julb2219C8fnqqt8ccGYQs4MvzsDL0f34FkR2JospN9
-         pp4g==
+        bh=3+t+8plqnMDu5LItEINv+R5LzGXlbnOEW8lA7KqYoSA=;
+        b=V4uYx3PC9/Kgy2M4ZekgvRKvGqR7t7tO5empinBcdD/vjjrTDNXNvOpJr4/tQqqwEv
+         pgwxcXIhwGK63QcFR+H2l9DHorWqNbCBtL/l6TDJJHIPYNsX9L9ltGsrgYOW3djbfTBk
+         +CXWBZJDK9oBlsTLuRXbHuNYYhdEA1G3FVTmNkzNArpZNxg9Y+HQQ0VSyzjYgYXSbRs9
+         dsl1IHcwMZEtpAJdgQWfZ90e/nLGeyYk/+rPuZQscIiBjl8tNgkwswTbzSy2Qj7AjBEY
+         8qq4PDFRq3uqJPA6SKTJGsY5tJs7i3mv34NRvdlqzlDhrOcr5qUMSiJ4ZEoA8UNdsYha
+         GrlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oodRWfym8vGhEJNTwBcKhJMKuWNGLtph+QGLWfAyKO0=;
-        b=slLLHhG3qGC4OcZ2kOD/SoQE4XLLSlhlPhZWybyiJfnNGmYiVUZLqbkp0t3bJCjzyh
-         GQRfAF6Es/LxxRLZNXjdHJ2scd7me0sgLOMy8jJ7T3yp6dVlPy+lUVAR4NkWN1aoQ1Fr
-         L2wCkMMO08b5mWsVjzv6oNui+RuASgVgIwN78ZsE1dC0Ox4krNzzz7KUSl/kdRQiX3sI
-         hritq6sh+QOnggcmdJjnXY5Nly6qXFG95yrTORBpKIJC2abevZmBzer4cOR/H7lodzHd
-         DgwrBEku3Q544JSGvAmf/xBFcpoufP+M9Patmf8vftahBNVEmAdXTUhw8nNm48Uq8adK
-         LF5Q==
-X-Gm-Message-State: APjAAAUkdP7TrKAsXbTWIQzMsRuIZryX3epx3SongC2mOwf3OZrdmMGC
-        C4aVEB48xHSHJqDd8YIAH/hFGw==
-X-Google-Smtp-Source: APXvYqzEfhmewH9tg1rXq9RVwyKLlMT4ECRx5um77h5E2+ZurrtbqNeEBidyPPF+YuN7/SeF8pNtfw==
-X-Received: by 2002:a7b:cd84:: with SMTP id y4mr5640506wmj.41.1560469029595;
-        Thu, 13 Jun 2019 16:37:09 -0700 (PDT)
-Received: from brauner.io ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id f13sm2169960wrt.27.2019.06.13.16.37.08
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 16:37:09 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 01:37:07 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Regression for MS_MOVE on kernel v5.1
-Message-ID: <20190613233706.6k6struu7valxaxy@brauner.io>
-References: <20190612225431.p753mzqynxpsazb7@brauner.io>
- <CAHk-=wh2Khe1Lj-Pdu3o2cXxumL1hegg_1JZGJXki6cchg_Q2Q@mail.gmail.com>
- <20190613132250.u65yawzvf4voifea@brauner.io>
- <871rzxwcz7.fsf@xmission.com>
- <CAJfpegvZwDY+zoWjDTrPpMCS01rzQgeE-_z-QtGfvcRnoamzgg@mail.gmail.com>
- <878su5tadf.fsf@xmission.com>
+        bh=3+t+8plqnMDu5LItEINv+R5LzGXlbnOEW8lA7KqYoSA=;
+        b=iQHVw7ZMtNWREDYnBJzqoANNIgljCQyZO/ey4nxEWRhL/1osYOdve1gluZ7+nRX5UM
+         BxHWAe8QPXOgHoqGY3n+mcD44GU9sa5X3E7P3H9fcb1Gyr0Lxii8s56QovLpsyqiVuJ3
+         mnCKEZhd9EDC6LZjA+OgBXMkUHw0C7rCcZwjJL1QBTuAqntLJMy1ijCZPGpJtftsRbYq
+         NwXpZcyptxXVszUFaCQ2VVInv5QHFdPEhoRTcg+5Szkhhn0oOndoho+qNgSQB99kq9Xl
+         65ulIQTBGpb0hk2u5qrTaK+Vde9IfFqM+i36kpK85d62ZC71/2Dv2chUvypDR/WQy6JQ
+         ViZg==
+X-Gm-Message-State: APjAAAUyZIB/ZDtk71XjQzUP5KIWAL1hOjOkZQRzMbrD0t3TnwXvIlBc
+        IrVDAOKUeeERpfsvoGaDd56S8w==
+X-Google-Smtp-Source: APXvYqyYGz8y4mU0RR/vAVXwfFNX88unrTDt/8bHx6WUKQJx5OGFlsQT6pP8kmmk4D4YyMl9wIuX5A==
+X-Received: by 2002:ac8:2f7b:: with SMTP id k56mr66798515qta.376.1560469531072;
+        Thu, 13 Jun 2019 16:45:31 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id o6sm757625qtc.47.2019.06.13.16.45.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Jun 2019 16:45:30 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hbZPO-00019B-4b; Thu, 13 Jun 2019 20:45:30 -0300
+Date:   Thu, 13 Jun 2019 20:45:30 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190613234530.GK22901@ziepe.ca>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606104203.GF7433@quack2.suse.cz>
+ <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
+ <20190607110426.GB12765@quack2.suse.cz>
+ <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
+ <20190608001036.GF14308@dread.disaster.area>
+ <20190612123751.GD32656@bombadil.infradead.org>
+ <20190613002555.GH14363@dread.disaster.area>
+ <20190613152755.GI32656@bombadil.infradead.org>
+ <20190613211321.GC32404@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <878su5tadf.fsf@xmission.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190613211321.GC32404@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 04:59:24PM -0500, Eric W. Biederman wrote:
-> Miklos Szeredi <miklos@szeredi.hu> writes:
+On Thu, Jun 13, 2019 at 02:13:21PM -0700, Ira Weiny wrote:
+> On Thu, Jun 13, 2019 at 08:27:55AM -0700, Matthew Wilcox wrote:
+> > On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
+> > > e.g. Process A has an exclusive layout lease on file F. It does an
+> > > IO to file F. The filesystem IO path checks that Process A owns the
+> > > lease on the file and so skips straight through layout breaking
+> > > because it owns the lease and is allowed to modify the layout. It
+> > > then takes the inode metadata locks to allocate new space and write
+> > > new data.
+> > > 
+> > > Process B now tries to write to file F. The FS checks whether
+> > > Process B owns a layout lease on file F. It doesn't, so then it
+> > > tries to break the layout lease so the IO can proceed. The layout
+> > > breaking code sees that process A has an exclusive layout lease
+> > > granted, and so returns -ETXTBSY to process B - it is not allowed to
+> > > break the lease and so the IO fails with -ETXTBSY.
+> > 
+> > This description doesn't match the behaviour that RDMA wants either.
+> > Even if Process A has a lease on the file, an IO from Process A which
+> > results in blocks being freed from the file is going to result in the
+> > RDMA device being able to write to blocks which are now freed (and
+> > potentially reallocated to another file).
 > 
-> > On Thu, Jun 13, 2019 at 8:35 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >>
-> >> Christian Brauner <christian@brauner.io> writes:
-> >>
-> >> > On Wed, Jun 12, 2019 at 06:00:39PM -1000, Linus Torvalds wrote:
-> >> >> On Wed, Jun 12, 2019 at 12:54 PM Christian Brauner <christian@brauner.io> wrote:
-> >> >> >
-> >> >> > The commit changes the internal logic to lock mounts when propagating
-> >> >> > mounts (user+)mount namespaces and - I believe - causes do_mount_move()
-> >> >> > to fail at:
-> >> >>
-> >> >> You mean 'do_move_mount()'.
-> >> >>
-> >> >> > if (old->mnt.mnt_flags & MNT_LOCKED)
-> >> >> >         goto out;
-> >> >> >
-> >> >> > If that's indeed the case we should either revert this commit (reverts
-> >> >> > cleanly, just tested it) or find a fix.
-> >> >>
-> >> >> Hmm.. I'm not entirely sure of the logic here, and just looking at
-> >> >> that commit 3bd045cc9c4b ("separate copying and locking mount tree on
-> >> >> cross-userns copies") doesn't make me go "Ahh" either.
-> >> >>
-> >> >> Al? My gut feel is that we need to just revert, since this was in 5.1
-> >> >> and it's getting reasonably late in 5.2 too. But maybe you go "guys,
-> >> >> don't be silly, this is easily fixed with this one-liner".
-> >> >
-> >> > David and I have been staring at that code today for a while together.
-> >> > I think I made some sense of it.
-> >> > One thing we weren't absolutely sure is if the old MS_MOVE behavior was
-> >> > intentional or a bug. If it is a bug we have a problem since we quite
-> >> > heavily rely on this...
-> >>
-> >> It was intentional.
-> >>
-> >> The only mounts that are locked in propagation are the mounts that
-> >> propagate together.  If you see the mounts come in as individuals you
-> >> can always see/manipulate/work with the underlying mount.
-> >>
-> >> I can think of only a few ways for MNT_LOCKED to become set:
-> >> a) unshare(CLONE_NEWNS)
-> >> b) mount --rclone /path/to/mnt/tree /path/to/propagation/point
-> >> c) mount --move /path/to/mnt/tree /path/to/propgation/point
-> >>
-> >> Nothing in the target namespace should be locked on the propgation point
-> >> but all of the new mounts that came across as a unit should be locked
-> >> together.
-> >
-> > Locked together means the root of the new mount tree doesn't have
-> > MNT_LOCKED set, but all mounts below do have MNT_LOCKED, right?
-> >
-> > Isn't the bug here that the root mount gets MNT_LOCKED as well?
+> I don't understand why this would not work for RDMA?  As long as the layout
+> does not change the page pins can remain in place.
 
-Yes, we suspected this as well. We just couldn't pinpoint where the
-surgery would need to start.
+Because process A had a layout lease (and presumably a MR) and the
+layout was still modified in way that invalidates the RDMA MR.
 
-> 
-> Yes, and the code to remove MNT_LOCKED is still sitting there in
-> propogate_one right after it calls copy_tree.  It should be a trivial
-> matter of moving that change to after the lock_mnt_tree call.
-> 
-> Now that I have been elightened about anonymous mount namespaces
-> I am suspecting that we want to take the user_namespace of the anonymous
-> namespace into account when deciding to lock the mounts.
-> 
-> >> Then it breaking is definitely a regression that needs to be fixed.
-> >>
-> >> I believe the problematic change as made because the new mount
-> >> api allows attaching floating mounts.  Or that was the plan last I
-> >> looked.   Those floating mounts don't have a mnt_ns so will result
-> >> in a NULL pointer dereference when they are attached.
-> >
-> > Well, it's called anonymous namespace.  So there *is* an mnt_ns, and
-> > its lifetime is bound to the file returned by fsmount().
-> 
-> Interesting.  That has changed since I last saw the patches.
-> 
-> Below is what will probably be a straight forward fix for the regression.
-
-Tested the patch just now applied on top of v5.1. It fixes the
-regression.
-Can you please send a proper patch, Eric?
-
-Tested-by: Christian Brauner <christian@brauner.io>
-Acked-by: Christian Brauner <christian@brauner.io>
-
-> 
-> Eric
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index ffb13f0562b0..a39edeecbc46 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2105,6 +2105,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
->                 /* Notice when we are propagating across user namespaces */
->                 if (child->mnt_parent->mnt_ns->user_ns != user_ns)
->                         lock_mnt_tree(child);
-> +               child->mnt.mnt_flags &= ~MNT_LOCKED;
->                 commit_tree(child);
->         }
->         put_mountpoint(smp);
-> diff --git a/fs/pnode.c b/fs/pnode.c
-> index 7ea6cfb65077..012be405fec0 100644
-> --- a/fs/pnode.c
-> +++ b/fs/pnode.c
-> @@ -262,7 +262,6 @@ static int propagate_one(struct mount *m)
->         child = copy_tree(last_source, last_source->mnt.mnt_root, type);
->         if (IS_ERR(child))
->                 return PTR_ERR(child);
-> -       child->mnt.mnt_flags &= ~MNT_LOCKED;
->         mnt_set_mountpoint(m, mp, child);
->         last_dest = m;
->         last_source = child;
-> 
-> 
+Jason
