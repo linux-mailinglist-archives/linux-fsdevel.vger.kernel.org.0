@@ -2,138 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B0DA4401C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7BD343FE1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:01:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390992AbfFMQDB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:03:01 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42074 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731393AbfFMIrj (ORCPT
+        id S2389787AbfFMQBB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:01:01 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:55599 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731455AbfFMIsr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:47:39 -0400
-Received: by mail-wr1-f67.google.com with SMTP id x17so4515741wrl.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 01:47:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=v6PLdyQOzI0tG2cZQ2qQYi4K1VGuuUo6oAxFYdZjwNY=;
-        b=WkxZ0ZaYt/UxgaO0AGRtXeVfV8vQftxoFqoFblsq3fXVJa5lyDJ3lsrYxFr7sULIua
-         YpIWXsQ5rwhxeRkpgCujNzHng+MyOoF9WlBdSS5plsIn1a5nsD07hT3DUFt42YMe4Hz6
-         nq+bHgOZbAlNCEv4qryu1jup+dv7NFBzv8UG8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v6PLdyQOzI0tG2cZQ2qQYi4K1VGuuUo6oAxFYdZjwNY=;
-        b=LQ89FYYv9Syw67/CIG35kFb1g9Up8uWJGqfj+iQl3fksxUQgaLOiRyKbHS4E0gT4U0
-         /X95k0nNTI3TyfU4VAzYGpbYhVFhUZQPKfShLOG9aNfKGPDyMFnIoV+C/8mmyOZp0Y4D
-         7Xi1QFhmmUi9Ww8SjEvRY/jSdsBsAReBGLJ2FizGKD4W1ODNsQRMDBJOGot6yEAWl06W
-         3zyW+VFnt+BvsKxTFikZ9SjszVD3IvI7vH7tp/69b1vaRVcQKbbZlutPj3cB+Gt0m87e
-         NDxL89PCdp0gmk3QZzzg13Hta3tpMDWpOkAWfQ+q5pSD3/kdVzhFc1AyD8eDBEjKoPcE
-         AKSg==
-X-Gm-Message-State: APjAAAX8zFJHUNeNIBcoVyQQayMqjZfklpym+YAXND0xT8SuHNtmGZgz
-        qV3dBTloMieFsIjej1wx7Pr0HA==
-X-Google-Smtp-Source: APXvYqxKS8gUln6fvs1SbyW8pE5NsMpr3bzbKlLKlBr0EAEthBfXY+0ShPDuQUi4SaVl+Mr1RTCvhw==
-X-Received: by 2002:adf:f683:: with SMTP id v3mr1049914wrp.258.1560415657694;
-        Thu, 13 Jun 2019 01:47:37 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id w67sm4993557wma.24.2019.06.13.01.47.35
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 01:47:36 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 10:47:28 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: fsmount: add missing mntget()
-Message-ID: <20190613084728.GA32129@miu.piliscsaba.redhat.com>
-References: <20190610183031.GE63833@gmail.com>
- <20190612184313.143456-1-ebiggers@kernel.org>
+        Thu, 13 Jun 2019 04:48:47 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-77-sMo5MtksNjyrgFaEIWzQmA-1; Thu, 13 Jun 2019 09:48:42 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu,
+ 13 Jun 2019 09:48:41 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 13 Jun 2019 09:48:41 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Oleg Nesterov' <oleg@redhat.com>
+CC:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        'Andrew Morton' <akpm@linux-foundation.org>,
+        'Deepa Dinamani' <deepa.kernel@gmail.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'arnd@arndb.de'" <arnd@arndb.de>,
+        "'dbueso@suse.de'" <dbueso@suse.de>,
+        "'axboe@kernel.dk'" <axboe@kernel.dk>,
+        "'dave@stgolabs.net'" <dave@stgolabs.net>,
+        "'e@80x24.org'" <e@80x24.org>,
+        "'jbaron@akamai.com'" <jbaron@akamai.com>,
+        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-aio@kvack.org'" <linux-aio@kvack.org>,
+        "'omar.kilani@gmail.com'" <omar.kilani@gmail.com>,
+        "'tglx@linutronix.de'" <tglx@linutronix.de>,
+        'Al Viro' <viro@ZenIV.linux.org.uk>,
+        'Linus Torvalds' <torvalds@linux-foundation.org>,
+        "'linux-arch@vger.kernel.org'" <linux-arch@vger.kernel.org>
+Subject: RE: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Thread-Topic: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Thread-Index: AQHVH9JWknGdQ9+D0UeylJNmvFzQKKaWJ31QgAHScICAABPkMIABOuaw
+Date:   Thu, 13 Jun 2019 08:48:41 +0000
+Message-ID: <6e9b964b08d84c99980b1707e5fe3d1d@AcuMS.aculab.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com>
+ <20190606140814.GA13440@redhat.com> <87k1dxaxcl.fsf_-_@xmission.com>
+ <87ef45axa4.fsf_-_@xmission.com> <20190610162244.GB8127@redhat.com>
+ <87lfy96sta.fsf@xmission.com>
+ <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
+ <20190612134558.GB3276@redhat.com>
+ <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
+In-Reply-To: <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612184313.143456-1-ebiggers@kernel.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+X-MC-Unique: sMo5MtksNjyrgFaEIWzQmA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 11:43:13AM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+From: David Laight
+> Sent: 12 June 2019 15:18
+> From: Oleg Nesterov
+> > Sent: 12 June 2019 14:46
+> > On 06/11, David Laight wrote:
+> > >
+> > > If I have an application that has a loop with a pselect call that
+> > > enables SIGINT (without a handler) and, for whatever reason,
+> > > one of the fd is always 'ready' then I'd expect a SIGINT
+> > > (from ^C) to terminate the program.
+> >
+> > This was never true.
+> >
+> > Before Eric's patches SIGINT can kill a process or not, depending on timing.
+> > In particular, if SIGINT was already pending before pselect() and it finds
+> > an already ready fd, the program won't terminate.
 > 
-> sys_fsmount() needs to take a reference to the new mount when adding it
-> to the anonymous mount namespace.  Otherwise the filesystem can be
-> unmounted while it's still in use, as found by syzkaller.
+> Which matches what I see on a very old Linux system.
+> 
+> > After the Eric's patches SIGINT will only kill the program if pselect() does
+> > not find a ready fd.
+> >
+> > And this is much more consistent. Now we can simply say that the signal will
+> > be delivered only if pselect() fails and returns -EINTR. If it doesn't have
+> > a handler the process will be killed, otherwise the handler will be called.
+> 
+> But is it what the standards mandate?
+> Can anyone check how Solaris and any of the BSDs behave?
+> I don't have access to any solaris systems (I doubt I'll get the disk to
+> spin on the one in my garage).
+> I can check NetBSD when I get home.
 
-So it needs one count for the file (which dentry_open() obtains) and one for the
-attachment into the anonymous namespace.  The latter one is dropped at cleanup
-time, so your patch appears to be correct at getting that ref.
+I tested NetBSD last night.
+pselect() always calls the signal handlers even when an fd is ready.
+I'm beginning to suspect that this is the 'standards conforming' behaviour.
+I don't remember when pselect() was added to the ToG specs, it didn't
+go through XNET while I  was going to the meetings.
 
-I wonder why such a blatant use-after-free was missed in normal testing.  RCU
-delayed freeing, I guess?
+	David
 
-How about this additional sanity checking patch?
+> 
+> The ToG page for pselect() http://pubs.opengroup.org/onlinepubs/9699919799/functions/pselect.html
+> says:
+>     "If sigmask is not a null pointer, then the pselect() function shall replace
+>     the signal mask of the caller by the set of signals pointed to by sigmask
+>     before examining the descriptors, and shall restore the signal mask of the
+>     calling thread before returning."
+> Note that it says 'before examining the descriptors' not 'before blocking'.
+> Under the general description about signals it also says that the signal handler
+> will be called (or other action happen) when a pending signal is unblocked.
+> So unblocking SIGINT (set to SIG_DFL) prior to examining the descriptors
+> should be enough to cause the process to exit.
+> The fact that signal handlers are not called until 'return to user'
+> is really an implementation choice - but (IMHO) it should appear as if they
+> were called at the time they became unmasked.
+> 
+> If nothing else the man pages need a note about the standards and portability.
+> 
+> 	David
 
-Thanks,
-Miklos
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index b26778bdc236..c638f220805a 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -153,10 +153,10 @@ static inline void mnt_add_count(struct mount *mnt, int n)
- /*
-  * vfsmount lock must be held for write
-  */
--unsigned int mnt_get_count(struct mount *mnt)
-+int mnt_get_count(struct mount *mnt)
- {
- #ifdef CONFIG_SMP
--	unsigned int count = 0;
-+	int count = 0;
- 	int cpu;
- 
- 	for_each_possible_cpu(cpu) {
-@@ -1140,6 +1140,8 @@ static DECLARE_DELAYED_WORK(delayed_mntput_work, delayed_mntput);
- 
- static void mntput_no_expire(struct mount *mnt)
- {
-+	int count;
-+
- 	rcu_read_lock();
- 	if (likely(READ_ONCE(mnt->mnt_ns))) {
- 		/*
-@@ -1162,11 +1164,13 @@ static void mntput_no_expire(struct mount *mnt)
- 	 */
- 	smp_mb();
- 	mnt_add_count(mnt, -1);
--	if (mnt_get_count(mnt)) {
-+	count = mnt_get_count(mnt);
-+	if (count > 0) {
- 		rcu_read_unlock();
- 		unlock_mount_hash();
- 		return;
- 	}
-+	WARN_ON(count < 0);
- 	if (unlikely(mnt->mnt.mnt_flags & MNT_DOOMED)) {
- 		rcu_read_unlock();
- 		unlock_mount_hash();
-diff --git a/fs/pnode.h b/fs/pnode.h
-index 49a058c73e4c..26f74e092bd9 100644
---- a/fs/pnode.h
-+++ b/fs/pnode.h
-@@ -44,7 +44,7 @@ int propagate_mount_busy(struct mount *, int);
- void propagate_mount_unlock(struct mount *);
- void mnt_release_group_id(struct mount *);
- int get_dominating_id(struct mount *mnt, const struct path *root);
--unsigned int mnt_get_count(struct mount *mnt);
-+int mnt_get_count(struct mount *mnt);
- void mnt_set_mountpoint(struct mount *, struct mountpoint *,
- 			struct mount *);
- void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
