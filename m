@@ -2,112 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C711743E73
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:50:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7088043E80
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389878AbfFMPuR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 11:50:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389867AbfFMPuQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:50:16 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E98FD20851;
-        Thu, 13 Jun 2019 15:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560441015;
-        bh=K2TNgrw4R37jC2wvNP4NHp0ffDkAz0bEuDOQ1i8V7ek=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=m1kNRdddxbXGayevadF9jfE0nvRRBTCCggZjBzxfXcycF0EMw3iRJ551T4Yw7KW/w
-         mLWKjnyjUKybN1jKLgWu4/8ThKtiCTZoHUt70uCgNYwQHVZ8ajxtXsZ8R/o9hCJusV
-         tRasdxZsU1hEz3yaRkBUWXpDOg3GlUhaHnp14Tgg=
-Message-ID: <e1d60ba87b311da9fbca9cfd291b48f4798f9462.camel@kernel.org>
-Subject: Re: [PATCH v2] locks: eliminate false positive conflicts for write
- lease
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>,
-        "J . Bruce Fields" <bfields@fieldses.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Date:   Thu, 13 Jun 2019 11:50:13 -0400
-In-Reply-To: <CAOQ4uxhXjuqMDbUq_4=oL8QETuUF3bs0V5qE9bNDJDind6F2pQ@mail.gmail.com>
-References: <20190612172408.22671-1-amir73il@gmail.com>
-         <20190612183156.GA27576@fieldses.org>
-         <CAJfpegvj0NHQrPcHFd=b47M-uz2CY6Hnamk_dJvcrUtwW65xBw@mail.gmail.com>
-         <20190613143151.GC2145@fieldses.org>
-         <CAOQ4uxhXjuqMDbUq_4=oL8QETuUF3bs0V5qE9bNDJDind6F2pQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        id S1731758AbfFMPua (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 11:50:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54340 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727006AbfFMPu3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:50:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 04871AF47;
+        Thu, 13 Jun 2019 15:50:26 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] ceph: copy_file_range needs to strip setuid bits and update timestamps
+References: <20190610174007.4818-1-amir73il@gmail.com>
+        <ed2e4b5d26890e96ba9dafcb3dba88427e36e619.camel@kernel.org>
+Date:   Thu, 13 Jun 2019 16:50:25 +0100
+In-Reply-To: <ed2e4b5d26890e96ba9dafcb3dba88427e36e619.camel@kernel.org> (Jeff
+        Layton's message of "Thu, 13 Jun 2019 08:03:55 -0400")
+Message-ID: <87zhml7ada.fsf@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2019-06-13 at 18:47 +0300, Amir Goldstein wrote:
-> On Thu, Jun 13, 2019 at 5:32 PM J . Bruce Fields <bfields@fieldses.org> wrote:
-> > On Thu, Jun 13, 2019 at 04:13:15PM +0200, Miklos Szeredi wrote:
-> > > On Wed, Jun 12, 2019 at 8:31 PM J . Bruce Fields <bfields@fieldses.org> wrote:
-> > > > How do opens for execute work?  I guess they create a struct file with
-> > > > FMODE_EXEC and FMODE_RDONLY set and they decrement i_writecount.  Do
-> > > > they also increment i_readcount?  Reading do_open_execat and alloc_file,
-> > > > looks like it does, so, good, they should conflict with write leases,
-> > > > which sounds right.
-> > > 
-> > > Right, but then why this:
-> > > 
-> > > > > +     /* Eliminate deny writes from actual writers count */
-> > > > > +     if (wcount < 0)
-> > > > > +             wcount = 0;
-> > > 
-> > > It's basically a no-op, as you say.  And it doesn't make any sense
-> > > logically, since denying writes *should* deny write leases as well...
-> > 
-> > Yes.  I feel like the negative writecount case is a little nonobvious,
-> > so maybe replace that by a comment, something like this?:
-> > 
-> > --b.
-> > 
-> > diff --git a/fs/locks.c b/fs/locks.c
-> > index 2056595751e8..379829b913c1 100644
-> > --- a/fs/locks.c
-> > +++ b/fs/locks.c
-> > @@ -1772,11 +1772,12 @@ check_conflicting_open(struct file *filp, const long arg, int flags)
-> >         if (arg == F_RDLCK && wcount > 0)
-> >                 return -EAGAIN;
-> > 
-> > -       /* Eliminate deny writes from actual writers count */
-> > -       if (wcount < 0)
-> > -               wcount = 0;
-> > -
-> > -       /* Make sure that only read/write count is from lease requestor */
-> > +       /*
-> > +        * Make sure that only read/write count is from lease requestor.
-> > +        * Note that this will result in denying write leases when wcount
-> > +        * is negative, which is what we want.  (We shouldn't grant
-> > +        * write leases on files open for execution.)
-> > +        */
-> >         if (filp->f_mode & FMODE_WRITE)
-> >                 self_wcount = 1;
-> >         else if (filp->f_mode & FMODE_READ)
-> 
-> I'm fine with targeting 5.3 and I'm fine with all suggested changes
-> and adding some of my own. At this point we no longer need wcount
-> variable and code becomes more readable without it.
-> See attached patch (also tested).
-> 
-> Thanks,
-> Amir.
+Jeff Layton <jlayton@kernel.org> writes:
 
-Thanks Amir. In that case, I'll go ahead and pick this up for v5.3, and
-will get it into linux-next soon.
+> On Mon, 2019-06-10 at 20:40 +0300, Amir Goldstein wrote:
+>> Because ceph doesn't hold destination inode lock throughout the copy,
+>> strip setuid bits before and after copy.
+>> 
+>> The destination inode mtime is updated before and after the copy and the
+>> source inode atime is updated after the copy, similar to the filesystem
+>> ->read_iter() implementation.
+>> 
+>> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>> ---
+>> 
+>> Hi Ilya,
+>> 
+>> Please consider applying this patch to ceph branch after merging
+>> Darrick's copy-file-range-fixes branch from:
+>>         git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+>> 
+>> The series (including this patch) was tested on ceph by
+>> Luis Henriques using new copy_range xfstests.
+>> 
+>> AFAIK, only fallback from ceph to generic_copy_file_range()
+>> implementation was tested and not the actual ceph clustered
+>> copy_file_range.
+>> 
+>> Thanks,
+>> Amir.
+>> 
+>>  fs/ceph/file.c | 17 +++++++++++++++++
+>>  1 file changed, 17 insertions(+)
+>> 
+>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> index c5517ffeb11c..b04c97c7d393 100644
+>> --- a/fs/ceph/file.c
+>> +++ b/fs/ceph/file.c
+>> @@ -1949,6 +1949,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>>  		goto out;
+>>  	}
+>>  
+>> +	/* Should dst_inode lock be held throughout the copy operation? */
+>> +	inode_lock(dst_inode);
+>> +	ret = file_modified(dst_file);
+>> +	inode_unlock(dst_inode);
+>> +	if (ret < 0) {
+>> +		dout("failed to modify dst file before copy (%zd)\n", ret);
+>> +		goto out;
+>> +	}
+>> +
+>
+> I don't see anything that guarantees that the mode of the destination
+> file is up to date at this point. file_modified() just ends up checking
+> the mode cached in the inode.
+>
+> I wonder if we ought to fix get_rd_wr_caps() to also acquire a reference
+> to AUTH_SHARED caps on the destination inode, and then call
+> file_modified() after we get those caps. That would also mean that we
+> wouldn't need to do this a second time after the copy.
+>
+> The catch is that if we did need to issue a setattr, I'm not sure if
+> we'd need to release those caps first.
+>
+> Luis, Zheng, thoughts?
 
-Thanks,
+Hmm... I missed that.  IIRC the FILE_WR caps allow to modify some
+metadata (such as timestamps, and file size).  I suppose it doesn't
+allow to cache the mode, does it?  If it does, fixing it would be a
+matter of moving the code a bit further down.  If it doesn't the
+ceph_copy_file_range function already has this problem, as it calls
+file_update_time.  And I wonder if other code paths have this problem
+too.
+
+Obviously, the chunk below will have the same problem.
+
+Cheers,
 -- 
-Jeff Layton <jlayton@kernel.org>
+Luis
 
+
+>
+>>  	/*
+>>  	 * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
+>>  	 * clients may have dirty data in their caches.  And OSDs know nothing
+>> @@ -2099,6 +2108,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>>  out:
+>>  	ceph_free_cap_flush(prealloc_cf);
+>>  
+>> +	file_accessed(src_file);
+>> +	/* To be on the safe side, try to remove privs also after copy */
+>> +	inode_lock(dst_inode);
+>> +	err = file_modified(dst_file);
+>> +	inode_unlock(dst_inode);
+>> +	if (err < 0)
+>> +		dout("failed to modify dst file after copy (%d)\n", err);
+>> +
+>>  	return ret;
+>>  }
+>>  
+>
+>
+>
