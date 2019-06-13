@@ -2,116 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B8FF43BF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF76E43BD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:32:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728859AbfFMPcj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 11:32:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41576 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728462AbfFMKrr (ORCPT
+        id S1727385AbfFMPbx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 11:31:53 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:29159 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728575AbfFMK4W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:47:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GEs9TuIKz96lXRS7FnLGyqSMFlOm6a6Nuvp5RkrDbpg=; b=iMC2hvEIOcyryH8ttvBTFCIwJ
-        +/UTOZxleRRIx/Qk3yqPfUzPCOda7GErke13ZzFQak5ewSoRm8WulpfqNH7Zcz8Q/4E8j/T6eNEmH
-        zqn/a0VQTD+joB/VdqCU1xYbOG/t0Yt1iH7D4MVcM+JnmapUwUFZ9n9jOt8V0iESGcP+afyjOL9pH
-        +Z800XzTY/YS/+CM4flrqhchMwkDHfagPOomV5WMld5ChIy1boYvTjVntNNzTcy5LKpr/Bsx2mf7S
-        S446zK0y8A3V0fwGhTmnFSvXqbCAHfkut7f3C9ZExu7tOQe+5MbplKDwi6MAkqGaZIAtnEYCa3p8M
-        bMZjvH0qQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbNGh-0007DC-6o; Thu, 13 Jun 2019 10:47:43 +0000
-Date:   Thu, 13 Jun 2019 03:47:43 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190613104743.GH32656@bombadil.infradead.org>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
- <20190607110426.GB12765@quack2.suse.cz>
- <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
- <20190608001036.GF14308@dread.disaster.area>
- <20190612123751.GD32656@bombadil.infradead.org>
- <20190613002555.GH14363@dread.disaster.area>
- <20190613032320.GG32656@bombadil.infradead.org>
- <20190613043649.GJ14363@dread.disaster.area>
+        Thu, 13 Jun 2019 06:56:22 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-145-lRm-i_CsMV6GXrqEfUx8qQ-1; Thu, 13 Jun 2019 11:56:18 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 13 Jun 2019 11:56:17 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 13 Jun 2019 11:56:17 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Oleg Nesterov' <oleg@redhat.com>
+CC:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        'Andrew Morton' <akpm@linux-foundation.org>,
+        'Deepa Dinamani' <deepa.kernel@gmail.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'arnd@arndb.de'" <arnd@arndb.de>,
+        "'dbueso@suse.de'" <dbueso@suse.de>,
+        "'axboe@kernel.dk'" <axboe@kernel.dk>,
+        "'dave@stgolabs.net'" <dave@stgolabs.net>,
+        "'e@80x24.org'" <e@80x24.org>,
+        "'jbaron@akamai.com'" <jbaron@akamai.com>,
+        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-aio@kvack.org'" <linux-aio@kvack.org>,
+        "'omar.kilani@gmail.com'" <omar.kilani@gmail.com>,
+        "'tglx@linutronix.de'" <tglx@linutronix.de>,
+        'Al Viro' <viro@ZenIV.linux.org.uk>,
+        'Linus Torvalds' <torvalds@linux-foundation.org>,
+        "'linux-arch@vger.kernel.org'" <linux-arch@vger.kernel.org>
+Subject: RE: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Thread-Topic: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
+Thread-Index: AQHVH9JWknGdQ9+D0UeylJNmvFzQKKaWJ31QgAHScICAABPkMIABOuaw////xYCAAB9eAA==
+Date:   Thu, 13 Jun 2019 10:56:17 +0000
+Message-ID: <66311ce9762849f7988c16bc752ea5a9@AcuMS.aculab.com>
+References: <20190604134117.GA29963@redhat.com>
+ <20190606140814.GA13440@redhat.com> <87k1dxaxcl.fsf_-_@xmission.com>
+ <87ef45axa4.fsf_-_@xmission.com> <20190610162244.GB8127@redhat.com>
+ <87lfy96sta.fsf@xmission.com>
+ <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
+ <20190612134558.GB3276@redhat.com>
+ <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
+ <6e9b964b08d84c99980b1707e5fe3d1d@AcuMS.aculab.com>
+ <20190613094324.GA12506@redhat.com>
+In-Reply-To: <20190613094324.GA12506@redhat.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613043649.GJ14363@dread.disaster.area>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-MC-Unique: lRm-i_CsMV6GXrqEfUx8qQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 02:36:49PM +1000, Dave Chinner wrote:
-> On Wed, Jun 12, 2019 at 08:23:20PM -0700, Matthew Wilcox wrote:
-> > On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
-> > > On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
-> > > > That's rather different from the normal meaning of 'exclusive' in the
-> > > > context of locks, which is "only one user can have access to this at
-> > > > a time".
-> > > 
-> > > Layout leases are not locks, they are a user access policy object.
-> > > It is the process/fd which holds the lease and it's the process/fd
-> > > that is granted exclusive access.  This is exactly the same semantic
-> > > as O_EXCL provides for granting exclusive access to a block device
-> > > via open(), yes?
-> > 
-> > This isn't my understanding of how RDMA wants this to work, so we should
-> > probably clear that up before we get too far down deciding what name to
-> > give it.
-> > 
-> > For the RDMA usage case, it is entirely possible that both process A
-> > and process B which don't know about each other want to perform RDMA to
-> > file F.  So there will be two layout leases active on this file at the
-> > same time.  It's fine for IOs to simultaneously be active to both leases.
+From: Oleg Nesterov
+> Sent: 13 June 2019 10:43
+> On 06/13, David Laight wrote:
+> >
+> > I tested NetBSD last night.
+> > pselect() always calls the signal handlers even when an fd is ready.
+> > I'm beginning to suspect that this is the 'standards conforming' behaviour.
 > 
-> Yes, it is.
+> May be. May be not. I have no idea.
 > 
-> > But if the filesystem wants to move blocks around, it has to break
-> > both leases.
+> > > The ToG page for pselect() http://pubs.opengroup.org/onlinepubs/9699919799/functions/pselect.html
+> > > says:
+> > >     "If sigmask is not a null pointer, then the pselect() function shall replace
+> > >     the signal mask of the caller by the set of signals pointed to by sigmask
+> > >     before examining the descriptors, and shall restore the signal mask of the
+> > >     calling thread before returning."
 > 
-> No, the _lease layer_ needs to break both leases when the filesystem
-> calls break_layout().
-
-That's a distinction without a difference as far as userspace is
-concerned.  If process A asks for an exclusive lease (and gets it),
-then process B asks for an exclusive lease (and gets it), that lease
-isn't exclusive!  It's shared.
-
-I think the example you give of O_EXCL is more of a historical accident.
-It's a relatively recent Linuxism that O_EXCL on a block device means
-"this block device is not part of a filesystem", and I don't think
-most userspace programmers are aware of what it means when not paired
-with O_CREAT.
-
-> > If Process C tries to do a write to file F without a lease, there's no
-> > problem, unless a side-effect of the write would be to change the block
-> > mapping,
+> > > Note that it says 'before examining the descriptors' not 'before blocking'.
 > 
-> That's a side effect we cannot predict ahead of time. But it's
-> also _completely irrelevant_ to the layout lease layer API and
-> implementation.(*)
+> And you interpret this as if a pending signal should be delivered in any case,
+> even if pselect succeeds. Again, perhaps you are right, but to me this is simply
+> undocumented.
 
-It's irrelevant to the naming, but you brought it up as part of the
-semantics.
+This text (from http://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap02.html) is moderately clear:
+    ... if all threads within the process block delivery of the signal, the signal shall
+    remain pending on the process until a thread calls a sigwait() function selecting that
+    signal, a thread unblocks delivery of the signal, or the action associated with the signal
+    is set to ignore the signal.
+
+So when pselect() 'replaces the signal mask' any pending signals should be delivered.
+And 'delivery' means 'call the signal handler'.
+All Unix systems will defer calling the signal handler until the system call
+returns, but this is not mandated by Posix.
+
+> However, linux never did this. Until the commit 854a6ed56839 ("signal: Add
+> restore_user_sigmask()"). This commit caused regression. We had to revert it.
+
+That change wasn't expected to change the behaviour...
+
+	David
+
+> > > If nothing else the man pages need a note about the standards and portability.
+> 
+> Agreed.
+> 
+> Oleg.
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
