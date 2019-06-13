@@ -2,86 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D389544500
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5A49446AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:53:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392639AbfFMQlK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:41:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59174 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726959AbfFMQlJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:41:09 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E48E220644;
-        Thu, 13 Jun 2019 16:41:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560444069;
-        bh=C34ebvo6AEFxf3EflJEFb177I+rCto2FjRJcZW9t0Io=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I7fdzUpQNPCk2YfMQVrLWDVqmuu43ACjuslQSremYqJQYV4iZABsStKEgi+mQA5A1
-         ykJh+be+IyEGMtFTcsz0+PwyXSpLqAN/s89hUbH5dSgiwrN87aS2d0L/nI5CRC7g8u
-         8Tdr9FHQ7nY1S7pVnpQiX6aJ+xqIBFhfDsxFi8zk=
-Date:   Thu, 13 Jun 2019 09:41:07 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: fsmount: add missing mntget()
-Message-ID: <20190613164107.GA686@sol.localdomain>
-References: <20190610183031.GE63833@gmail.com>
- <20190612184313.143456-1-ebiggers@kernel.org>
- <20190613084728.GA32129@miu.piliscsaba.redhat.com>
+        id S2392938AbfFMQxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:53:50 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:45686 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404431AbfFMQxi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:53:38 -0400
+Received: by mail-yw1-f68.google.com with SMTP id m16so8606390ywh.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 09:53:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2sPkTPdJ3wOyLAIYnFkdamPG63sZ+DeF7BYB5onzOKU=;
+        b=lojDYtBtcdzshl4fWmF/BKJaI7rMcG9iFo3d/WVo5IJlaZbQDg8EFeHp9BfcyY82IL
+         Y+wFGtqgiDOROUOSPEkeKXYTzYxVLwYzcoIfzWwOz86jJpDrIcSGMN6CG/VdeTA/q7aF
+         zOGyOeeKWhY3EPdfv/GL7AWk2cV/lyitf+Zk66ImFj4mE+0qAwV9yviJfwXq+7nI6i1+
+         qJ6OiNqID3sUoAudotTHlfgW8Huk2HadR8XHNYC5s6vOk3JqtXkSOTkG3WnxkG0LNJtk
+         6a/NsvqEnfGRyO1quKtZSS5AIfUECw48N75AtuGg7bib8rLGbMhab5PWJ0GDC7R7gZwR
+         rLfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2sPkTPdJ3wOyLAIYnFkdamPG63sZ+DeF7BYB5onzOKU=;
+        b=YWE020hfvJCXpSfmNiitXcHBE44KBRyMiq3rj2yrL6QOdZdhOlYppdG0LN9ogkzhGU
+         hm+s8wzMlL7KiuLxZrlG68XlYtMNfow3fEJFHqo/0uitnOi/t23cBrwm1WWVQ/ZGpwLM
+         qo6m7ipDmD9ccYqUdZUQgU7p2YVsx9Y5ePEL5TOuuyYorxM8p8zsm07NFlAZ1x0wgxnD
+         YS0AlgXSXrf9ZgK1LaqWM3EQP4slfga25/v6njEGoh9jBeHwyO85qfZ1d01McGehVc1d
+         ByI/y15RW6NzMWo69RsurdFGP5b70rTyGWtkp5LL6lx7meis+R2GQ1A2jxdSIuD5q4jD
+         rMRw==
+X-Gm-Message-State: APjAAAWpjmw73JgKvxlLVgLnjHVl1KCnoXARShs08wB9n1xRU7+sjLWJ
+        gz+9QyQG9bvJZNwW6YSSXy8z97kOUPfXBVCZKas=
+X-Google-Smtp-Source: APXvYqxT7CSa1Fp1M4Dmj9UNPC0yB+eVMw913N8MwhuTGH+dbWfLCKeb6LXBboWSKfziMlOH43lSoEFk1vFh0jzO4fs=
+X-Received: by 2002:a81:7096:: with SMTP id l144mr50488611ywc.294.1560444817087;
+ Thu, 13 Jun 2019 09:53:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613084728.GA32129@miu.piliscsaba.redhat.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <20190526143411.11244-1-amir73il@gmail.com> <20190526143411.11244-5-amir73il@gmail.com>
+In-Reply-To: <20190526143411.11244-5-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 13 Jun 2019 19:53:25 +0300
+Message-ID: <CAOQ4uxg5e4zJ+GVCXs1X55TTBdNKHVASkA1Q-Xz_pyLnD8UDpA@mail.gmail.com>
+Subject: Re: [PATCH v3 04/10] tracefs: call fsnotify_{unlink,rmdir}() hooks
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     David Sterba <dsterba@suse.com>, Christoph Hellwig <hch@lst.de>,
+        Joel Becker <jlbec@evilplan.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 10:47:28AM +0200, Miklos Szeredi wrote:
-> On Wed, Jun 12, 2019 at 11:43:13AM -0700, Eric Biggers wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > sys_fsmount() needs to take a reference to the new mount when adding it
-> > to the anonymous mount namespace.  Otherwise the filesystem can be
-> > unmounted while it's still in use, as found by syzkaller.
-> 
-> So it needs one count for the file (which dentry_open() obtains) and one for the
-> attachment into the anonymous namespace.  The latter one is dropped at cleanup
-> time, so your patch appears to be correct at getting that ref.
+On Sun, May 26, 2019 at 5:34 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> This will allow generating fsnotify delete events after the
+> fsnotify_nameremove() hook is removed from d_delete().
+>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Yes.
+Hi Steven,
 
-> 
-> I wonder why such a blatant use-after-free was missed in normal testing.  RCU
-> delayed freeing, I guess?
+Would you be able to provide an ACK on this patch?
+We need to add those explicit fsnotify hooks to match the existing
+fsnotify_create/mkdir hooks in tracefs, because
+the hook embedded inside d_delete() is going away [1].
 
-It's because mount freeing is delayed by task_work_add(), so normally the refcnt
-would be dropped to -1 when the file is closed without problems.  The problems
-only showed up if you took another reference, e.g. by fchdir().
+Thanks,
+Amir.
 
-> 
-> How about this additional sanity checking patch?
+[1] https://lore.kernel.org/linux-fsdevel/20190526143411.11244-1-amir73il@gmail.com/
 
-Seems like a good idea.  Without my fix, the WARNING is triggered by the
-following program (no fchdir() needed):
 
-	int main(void)
-	{
-		int fs;
-
-		fs = syscall(__NR_fsopen, "ramfs", 0);
-		syscall(__NR_fsconfig, fs, 6, 0, 0, 0);
-		syscall(__NR_fsmount, fs, 0, 0);
-	}
-
-Can you send it as a formal patch?
-
-- Eric
+> ---
+>  fs/tracefs/inode.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+> index 7098c49f3693..497a8682b5b9 100644
+> --- a/fs/tracefs/inode.c
+> +++ b/fs/tracefs/inode.c
+> @@ -509,9 +509,12 @@ static int __tracefs_remove(struct dentry *dentry, struct dentry *parent)
+>                         switch (dentry->d_inode->i_mode & S_IFMT) {
+>                         case S_IFDIR:
+>                                 ret = simple_rmdir(parent->d_inode, dentry);
+> +                               if (!ret)
+> +                                       fsnotify_rmdir(parent->d_inode, dentry);
+>                                 break;
+>                         default:
+>                                 simple_unlink(parent->d_inode, dentry);
+> +                               fsnotify_unlink(parent->d_inode, dentry);
+>                                 break;
+>                         }
+>                         if (!ret)
+> --
+> 2.17.1
+>
