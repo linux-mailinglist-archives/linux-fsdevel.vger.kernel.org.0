@@ -2,178 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3876244AC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 20:35:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5015944ACB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 20:36:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbfFMSfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 14:35:14 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:57340 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726838AbfFMSfN (ORCPT
+        id S1728633AbfFMSgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 14:36:31 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45950 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbfFMSga (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 14:35:13 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hbUZ5-000421-61; Thu, 13 Jun 2019 12:35:11 -0600
-Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hbUZ4-0007q5-8w; Thu, 13 Jun 2019 12:35:11 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Christian Brauner <christian@brauner.io>
+        Thu, 13 Jun 2019 14:36:30 -0400
+Received: by mail-qt1-f195.google.com with SMTP id j19so23719201qtr.12;
+        Thu, 13 Jun 2019 11:36:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6ITGBXky5KVn9XMTKBDXnnPCspAr7C23a4QQc6Ze3Bg=;
+        b=hu9+FOtssmys//ZSW0tYxltG5VskFg2+efScE6Ik7WEWq9Ba2nJk2R97MFfEfIhgCP
+         MclQcBk8hggl6lK9IZPZ6kYFXbqGm1LN8q6GcCUtj192gH+so0Ft3aGe6m1xIb57WwQY
+         ekH39m1g++EEBOTaJqMkYKHXHSqrzKMbl+ulAZAmowXTUz7nKvKMk2BY8wVvuiVKHC4G
+         M7ZLm8ZNSLOUDVvxAIUKR1GvWom7P77UijaOKR6KoVzFqbIutYMltDlnwaZ8CZFHuZs8
+         vg55Wp+devBiL3Zl5OwCpr6DVAPSYn2tY4DMD1TCuaAzTArtieBvKZKPos0eLMl9Zrct
+         0Wiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6ITGBXky5KVn9XMTKBDXnnPCspAr7C23a4QQc6Ze3Bg=;
+        b=NcnSJTlX17i11gq+wc9HNa9p501mmQUNvtU1381cvaMLPDYSCW8wOZQtguWYx6XVV1
+         55iM8QNM8lCrDFW3C9JWldHVeWmNOl2GZ5zhtrG2whvhP+E6RzhJgPEERmVouQmE+A13
+         gIILwigJS0e7xT6rNlo828bKbjNOM45Cq1PX2VKSSQWjLHRizyE2rf089RHrbbf0Q/IH
+         uFregDGAw59UxQbN0kRDHvTnXwwMgc+lth/QiWvXx6U0SQ5dmeNFdu4B5JNCK45QXwA3
+         yTbxj54wPOueR/JH9pCx4WHuHoxS+ENjVQtkttlAhoyNdVepJlk1n4/beW5LlllQa5NB
+         vVXw==
+X-Gm-Message-State: APjAAAWIcfOTdX9v0S0ju7v+3yu7pjBrNppnZMWYhXqIQD6LmOcdVmeu
+        vNklHYvgxy0Cpt14uayw9A==
+X-Google-Smtp-Source: APXvYqyjD7DfwqAZqrqCPqac6drl7iDV+EFeyRjxOukxiyvbKRL9xbz1pOjU9oj39Gt9Kci0TwPIbA==
+X-Received: by 2002:a0c:b04d:: with SMTP id l13mr4767610qvc.104.1560450989350;
+        Thu, 13 Jun 2019 11:36:29 -0700 (PDT)
+Received: from kmo-pixel (c-71-234-172-214.hsd1.vt.comcast.net. [71.234.172.214])
+        by smtp.gmail.com with ESMTPSA id c18sm214737qkk.73.2019.06.13.11.36.27
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 11:36:28 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 14:36:25 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Dave Chinner <david@fromorbit.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-References: <20190612225431.p753mzqynxpsazb7@brauner.io>
-        <CAHk-=wh2Khe1Lj-Pdu3o2cXxumL1hegg_1JZGJXki6cchg_Q2Q@mail.gmail.com>
-        <20190613132250.u65yawzvf4voifea@brauner.io>
-Date:   Thu, 13 Jun 2019 13:34:52 -0500
-In-Reply-To: <20190613132250.u65yawzvf4voifea@brauner.io> (Christian Brauner's
-        message of "Thu, 13 Jun 2019 15:22:51 +0200")
-Message-ID: <871rzxwcz7.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: pagecache locking (was: bcachefs status update) merged)
+Message-ID: <20190613183625.GA28171@kmo-pixel>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611011737.GA28701@kmo-pixel>
+ <20190611043336.GB14363@dread.disaster.area>
+ <20190612162144.GA7619@kmo-pixel>
+ <20190612230224.GJ14308@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1hbUZ4-0007q5-8w;;;mid=<871rzxwcz7.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+JzB9Pk1jfWwta+BptGM8qAR+dHIiNwEY=
-X-SA-Exim-Connect-IP: 72.206.97.68
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_XMDrugObfuBody_12,
-        T_XMDrugObfuBody_14 autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.2 T_XMDrugObfuBody_14 obfuscated drug references
-        *  1.0 T_XMDrugObfuBody_12 obfuscated drug references
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Christian Brauner <christian@brauner.io>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 534 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 2.7 (0.5%), b_tie_ro: 1.72 (0.3%), parse: 1.19
-        (0.2%), extract_message_metadata: 13 (2.4%), get_uri_detail_list: 2.6
-        (0.5%), tests_pri_-1000: 5 (1.0%), tests_pri_-950: 1.37 (0.3%),
-        tests_pri_-900: 1.09 (0.2%), tests_pri_-90: 43 (8.0%), check_bayes: 41
-        (7.6%), b_tokenize: 17 (3.1%), b_tok_get_all: 11 (2.1%), b_comp_prob:
-        5 (0.9%), b_tok_touch_all: 4.3 (0.8%), b_finish: 0.70 (0.1%),
-        tests_pri_0: 456 (85.4%), check_dkim_signature: 0.84 (0.2%),
-        check_dkim_adsp: 2.8 (0.5%), poll_dns_idle: 0.35 (0.1%), tests_pri_10:
-        2.00 (0.4%), tests_pri_500: 6 (1.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: Regression for MS_MOVE on kernel v5.1
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612230224.GJ14308@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christian Brauner <christian@brauner.io> writes:
+On Thu, Jun 13, 2019 at 09:02:24AM +1000, Dave Chinner wrote:
+> On Wed, Jun 12, 2019 at 12:21:44PM -0400, Kent Overstreet wrote:
+> > Ok, I'm totally on board with returning EDEADLOCK.
+> > 
+> > Question: Would we be ok with returning EDEADLOCK for any IO where the buffer is
+> > in the same address space as the file being read/written to, even if the buffer
+> > and the IO don't technically overlap?
+> 
+> I'd say that depends on the lock granularity. For a range lock,
+> we'd be able to do the IO for non-overlapping ranges. For a normal
+> mutex or rwsem, then we risk deadlock if the page fault triggers on
+> the same address space host as we already have locked for IO. That's
+> the case we currently handle with the second IO lock in XFS, ext4,
+> btrfs, etc (XFS_MMAPLOCK_* in XFS).
+> 
+> One of the reasons I'm looking at range locks for XFS is to get rid
+> of the need for this second mmap lock, as there is no reason for it
+> existing if we can lock ranges and EDEADLOCK inside page faults and
+> return errors.
 
-> On Wed, Jun 12, 2019 at 06:00:39PM -1000, Linus Torvalds wrote:
->> On Wed, Jun 12, 2019 at 12:54 PM Christian Brauner <christian@brauner.io> wrote:
->> >
->> > The commit changes the internal logic to lock mounts when propagating
->> > mounts (user+)mount namespaces and - I believe - causes do_mount_move()
->> > to fail at:
->> 
->> You mean 'do_move_mount()'.
->> 
->> > if (old->mnt.mnt_flags & MNT_LOCKED)
->> >         goto out;
->> >
->> > If that's indeed the case we should either revert this commit (reverts
->> > cleanly, just tested it) or find a fix.
->> 
->> Hmm.. I'm not entirely sure of the logic here, and just looking at
->> that commit 3bd045cc9c4b ("separate copying and locking mount tree on
->> cross-userns copies") doesn't make me go "Ahh" either.
->> 
->> Al? My gut feel is that we need to just revert, since this was in 5.1
->> and it's getting reasonably late in 5.2 too. But maybe you go "guys,
->> don't be silly, this is easily fixed with this one-liner".
->
-> David and I have been staring at that code today for a while together.
-> I think I made some sense of it.
-> One thing we weren't absolutely sure is if the old MS_MOVE behavior was
-> intentional or a bug. If it is a bug we have a problem since we quite
-> heavily rely on this...
+My concern is that range locks are going to turn out to be both more complicated
+and heavier weight, performance wise, than the approach I've taken of just a
+single lock per address space.
 
-It was intentional.
+Reason being range locks only help when you've got multiple operations going on
+simultaneously that don't conflict - i.e. it's really only going to be useful
+for applications that are doing buffered IO and direct IO simultaneously to the
+same file. Personally, I think that would be a pretty gross thing to do and I'm
+not particularly interested in optimizing for that case myself... but, if you
+know of applications that do depend on that I might change my opinion. If not, I
+want to try and get the simpler, one-lock-per-address space approach to work.
 
-The only mounts that are locked in propagation are the mounts that
-propagate together.  If you see the mounts come in as individuals you
-can always see/manipulate/work with the underlying mount.
+That said though - range locks on the page cache can be viewed as just a
+performance optimization over my approach, they've got the same semantics
+(locking a subset of the page cache vs. the entire thing). So that's a bit of a
+digression.
 
-I can think of only a few ways for MNT_LOCKED to become set:
-a) unshare(CLONE_NEWNS)
-b) mount --rclone /path/to/mnt/tree /path/to/propagation/point
-c) mount --move /path/to/mnt/tree /path/to/propgation/point
+> > This would simplify things a lot and eliminate a really nasty corner case - page
+> > faults trigger readahead. Even if the buffer and the direct IO don't overlap,
+> > readahead can pull in pages that do overlap with the dio.
+> 
+> Page cache readahead needs to be moved under the filesystem IO
+> locks. There was a recent thread about how readahead can race with
+> hole punching and other fallocate() operations because page cache
+> readahead bypasses the filesystem IO locks used to serialise page
+> cache invalidation.
+> 
+> e.g. Readahead can be directed by userspace via fadvise, so we now
+> have file->f_op->fadvise() so that filesystems can lock the inode
+> before calling generic_fadvise() such that page cache instantiation
+> and readahead dispatch can be serialised against page cache
+> invalidation. I have a patch for XFS sitting around somewhere that
+> implements the ->fadvise method.
 
-Nothing in the target namespace should be locked on the propgation point
-but all of the new mounts that came across as a unit should be locked
-together.
+I just puked a little in my mouth.
 
-> So this whole cross-user+mnt namespace propagation mechanism comes with
-> a big hammer that Eric indeed did introduce a while back which is
-> MNT_LOCKED (cf. [1] for the relevant commit).
->
-> Afaict, MNT_LOCKED is (among other cases) supposed to prevent a user+mnt
-> namespace pair to get access to a mount that is hidden underneath an
-> additional mount. Consider the following scenario:
->
-> sudo mount -t tmpfs tmpfs /mnt
-> sudo mount --make-rshared /mnt
-> sudo mount -t tmpfs tmpfs /mnt
-> sudo mount --make-rshared /mnt
-> unshare -U -m --map-root --propagation=unchanged
->
-> umount /mnt
-> # or
-> mount --move -mnt /opt
->
-> The last umount/MS_MOVE is supposed to fail since the mount is locked
-> with MNT_LOCKED since umounting or MS_MOVing the mount would reveal the
-> underlying mount which I didn't have access to prior to the creation of
-> my user+mnt namespace pair.
-> (Whether or not this is a reasonable security mechanism is a separate
-> discussion.)
->
-> But now consider the case where from the ancestor user+mnt namespace
-> pair I do:
->
-> # propagate the mount to the user+mount namespace pair                 
-> sudo mount -t tmpfs tmpfs /mnt
-> # switch to the child user+mnt namespace pair
-> umount /mnt
-> # or
-> mount --move /mnt /opt
->
-> That umount/MS_MOVE should work since that mount was propagated to the
-> unprivileged task after the user+mnt namespace pair was created.
-> Also, because I already had access to the underlying mount in the first
-> place and second because this is literally the only way - we know of -
-> to inject a mount cross mount namespaces and this is a must have feature
-> that quite a lot of users rely on.
+> I think there are some other patches floating around to address the
+> other readahead mechanisms to only be done under filesytem IO locks,
+> but I haven't had time to dig into it any further. Readahead from
+> page faults most definitely needs to be under the MMAPLOCK at
+> least so it serialises against fallocate()...
 
-Then it breaking is definitely a regression that needs to be fixed.
+So I think there's two different approaches we should distinguish between. We
+can either add the locking to all the top level IO paths - what you just
+described - or, the locking can be pushed down to protect _only_ adding pages to
+the page cache, which is the approach I've been taking.
 
-I believe the problematic change as made because the new mount
-api allows attaching floating mounts.  Or that was the plan last I
-looked.   Those floating mounts don't have a mnt_ns so will result
-in a NULL pointer dereference when they are attached.
+I think both approaches are workable, but I do think that pushing the locking
+down to __add_to_page_cache_locked is fundamentally the better, more correct
+approach.
 
-So I suspect fixing this is not as simple as reverting a single patch.
+ - It better matches the semantics of what we're trying to do. All these
+   operations we're trying to protect - dio, fallocate, truncate - they all have
+   in common that they just want to shoot down a range of the page cache and
+   keep it from being readded. And in general, it's better to have locks that
+   protect specific data structures ("adding to this radix tree"), vs. large
+   critical sections ("the io path").
 
-Eric
+   In bcachefs, at least for buffered IO I don't currently need any per-inode IO
+   locks, page granularity locks suffice, so I'd like to keep that - under the
+   theory that buffered IO to pages already in cache is more of a fast path than
+   faulting pages in.
+
+ - If we go with the approach of using the filesystem IO locks, we need to be
+   really careful about auditing and adding assertions to make sure we've found
+   and fixed all the code paths that can potentially add pages to the page
+   cache. I didn't even know about the fadvise case, eesh.
+
+ - We still need to do something about the case where we're recursively faulting
+   pages back in, which means we need _something_ in place to even detect that
+   that's happening. Just trying to cover everything with the filesystem IO
+   locks isn't useful here.
+
+So to summarize - if we have locking specifically for adding pages to the page
+cache, we don't need to extend the filesystem IO locks to all these places, and
+we need something at that level anyways to handle recursive faults from gup()
+anyways.
+
+The tricky part is that there's multiple places that want to call
+add_to_page_cache() while holding this pagecache_add_lock.
+
+ - dio -> gup(): but, you had the idea of just returning -EDEADLOCK here which I
+   like way better than my recursive locking approach.
+
+ - the other case is truncate/fpunch/etc - they make use of buffered IO to
+   handle operations that aren't page/block aligned. But those look a lot more
+   tractable than dio, since they're calling find_get_page()/readpage() directly
+   instead of via gup(), and possibly they could be structured to not have to
+   truncate/punch the partial page while holding the pagecache_add_lock at all
+   (but that's going to be heavily filesystem dependent).
+
+The more I think about it, the more convinced I am that this is fundamentally
+the correct approach. So, I'm going to work on an improved version of this
+patch.
+
+One other tricky thing we need is a way to write out and then evict a page
+without allowing it to be redirtied - i.e. something that combines
+filemap_write_and_wait_range() with invalidate_inode_pages2_range(). Otherwise,
+a process continuously redirtying a page is going to make truncate/dio
+operations spin trying to shoot down the page cache - in bcachefs I'm currently
+taking pagecache_add_lock in write_begin and mkwrite to prevent this, but I
+really want to get rid of that. If we can get that combined
+write_and_invalidate() operation, then I think the locking will turn out fairly
+clean.
