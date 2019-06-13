@@ -2,101 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B81A4465E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:51:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E28A44659
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:51:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392751AbfFMQvI convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:51:08 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:42669 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730154AbfFMDgz (ORCPT
-        <rfc822;groupwise-linux-fsdevel@vger.kernel.org:9:1>);
-        Wed, 12 Jun 2019 23:36:55 -0400
-Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
-        with Novell_GroupWise; Wed, 12 Jun 2019 21:36:53 -0600
-Message-Id: <5D01C4CD020000F90006C06A@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.1.1 
-Date:   Wed, 12 Jun 2019 21:36:45 -0600
-From:   "Gang He" <ghe@suse.com>
-To:     "Randy Dunlap" <rdunlap@infradead.org>, <akpm@linux-foundation.org>
-Cc:     <sfr@canb.auug.org.au>, <broonie@kernel.org>, <linux-mm@kvack.org>,
-        "Joseph Qi" <joseph.qi@linux.alibaba.com>,
-        <ocfs2-devel@oss.oracle.com>, <mhocko@suse.cz>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-next@vger.kernel.org>, <mm-commits@vger.kernel.org>
-Subject: Re: [Ocfs2-devel] mmotm 2019-06-11-16-59 uploaded (ocfs2)
-References: <20190611235956.4FZF6%akpm@linux-foundation.org>
- <492b4bcc-4760-7cbb-7083-9f22e7ab4b82@infradead.org>
- <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
-In-Reply-To: <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+        id S1730178AbfFMQu6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:50:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56558 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730157AbfFMDmZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Jun 2019 23:42:25 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 92B14B0ABB;
+        Thu, 13 Jun 2019 03:42:24 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6CCCD5DA34;
+        Thu, 13 Jun 2019 03:42:24 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 300A31806B16;
+        Thu, 13 Jun 2019 03:42:19 +0000 (UTC)
+Date:   Wed, 12 Jun 2019 23:42:18 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     rdunlap@infradead.org, jack@suse.cz, kvm@vger.kernel.org,
+        mst@redhat.com, jasowang@redhat.com, david@fromorbit.com,
+        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
+        dm-devel@redhat.com, adilger kernel <adilger.kernel@dilger.ca>,
+        zwisler@kernel.org, aarcange@redhat.com,
+        dave jiang <dave.jiang@intel.com>, jstaron@google.com,
+        linux-nvdimm@lists.01.org,
+        vishal l verma <vishal.l.verma@intel.com>, david@redhat.com,
+        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
+        jmoyer@redhat.com, linux-ext4@vger.kernel.org, lenb@kernel.org,
+        kilobyte@angband.pl, riel@surriel.com,
+        yuval shaia <yuval.shaia@oracle.com>, stefanha@redhat.com,
+        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
+        lcapitulino@redhat.com, kwolf@redhat.com, nilal@redhat.com,
+        tytso@mit.edu, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        snitzer@redhat.com, darrick wong <darrick.wong@oracle.com>,
+        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        imammedo@redhat.com
+Message-ID: <165204827.34945594.1560397338620.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20190612162012.06b4af7f.cohuck@redhat.com>
+References: <20190612124527.3763-1-pagupta@redhat.com> <20190612124527.3763-3-pagupta@redhat.com> <20190612162012.06b4af7f.cohuck@redhat.com>
+Subject: Re: [Qemu-devel] [PATCH v13 2/7] virtio-pmem: Add virtio pmem
+ driver
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.133, 10.4.195.21]
+Thread-Topic: virtio-pmem: Add virtio pmem driver
+Thread-Index: fhRQKNWPndesm/uRD8iV/XnY9gJKfQ==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 13 Jun 2019 03:42:24 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Randy and Andrew,
-
->>> On 6/13/2019 at  9:18 am, in message
-<20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Wed, 12 Jun 2019 07:15:30 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> On 6/11/19 4:59 PM, akpm@linux-foundation.org wrote:
->> > The mm-of-the-moment snapshot 2019-06-11-16-59 has been uploaded to
->> > 
->> >    
-> https://urldefense.proofpoint.com/v2/url?u=http-3A__www.ozlabs.org_-7Eakpm_ 
-> mmotm_&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0
-> vmU6X8CMk6L2iDY8-HD0qT6Fo7Y&m=zWoF0Bft4OzQeAaZXMGI56DN7p9MjLynOay4PZYAlhQ&s=vYme
-> DBOk3Nv08-ZA7IweIdaUk094Ldvmgzc20fjjzDs&e=
->> > 
->> > mmotm-readme.txt says
->> > 
->> > README for mm-of-the-moment:
->> > 
->> > 
-> https://urldefense.proofpoint.com/v2/url?u=http-3A__www.ozlabs.org_-7Eakpm_mmo 
-> tm_&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0vmU
-> 6X8CMk6L2iDY8-HD0qT6Fo7Y&m=zWoF0Bft4OzQeAaZXMGI56DN7p9MjLynOay4PZYAlhQ&s=vYmeDBO
-> k3Nv08-ZA7IweIdaUk094Ldvmgzc20fjjzDs&e=
->> > 
->> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->> > more than once a week.
->> 
->> 
->> on i386:
->> 
->> ld: fs/ocfs2/dlmglue.o: in function `ocfs2_dlm_seq_show':
->> dlmglue.c:(.text+0x46e4): undefined reference to `__udivdi3'
-> 
-> Thanks.  This, I guess:
-> 
-> --- a/fs/ocfs2/dlmglue.c~ocfs2-add-locking-filter-debugfs-file-fix
-> +++ a/fs/ocfs2/dlmglue.c
-> @@ -3115,7 +3115,7 @@ static int ocfs2_dlm_seq_show(struct seq
->  		 * otherwise, only dump the last N seconds active lock
->  		 * resources.
->  		 */
-> -		if ((now - last) / 1000000 > dlm_debug->d_filter_secs)
-> +		if (div_u64(now - last, 1000000) > dlm_debug->d_filter_secs)
->  			return 0;
->  	}
->  #endif
-> 
-> review and test, please?
-Thank for this fix, the change is OK for my testing on x86_64.
-
-Thanks
-Gang
 
 > 
-> _______________________________________________
-> Ocfs2-devel mailing list
-> Ocfs2-devel@oss.oracle.com 
-> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
+> > This patch adds virtio-pmem driver for KVM guest.
+> > 
+> > Guest reads the persistent memory range information from
+> > Qemu over VIRTIO and registers it on nvdimm_bus. It also
+> > creates a nd_region object with the persistent memory
+> > range information so that existing 'nvdimm/pmem' driver
+> > can reserve this into system memory map. This way
+> > 'virtio-pmem' driver uses existing functionality of pmem
+> > driver to register persistent memory compatible for DAX
+> > capable filesystems.
+> > 
+> > This also provides function to perform guest flush over
+> > VIRTIO from 'pmem' driver when userspace performs flush
+> > on DAX memory range.
+> > 
+> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> > Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+> > Acked-by: Michael S. Tsirkin <mst@redhat.com>
+> > Acked-by: Jakub Staron <jstaron@google.com>
+> > Tested-by: Jakub Staron <jstaron@google.com>
+> > ---
+> >  drivers/nvdimm/Makefile          |   1 +
+> >  drivers/nvdimm/nd_virtio.c       | 125 +++++++++++++++++++++++++++++++
+> >  drivers/nvdimm/virtio_pmem.c     | 122 ++++++++++++++++++++++++++++++
+> >  drivers/nvdimm/virtio_pmem.h     |  55 ++++++++++++++
+> >  drivers/virtio/Kconfig           |  11 +++
+> >  include/uapi/linux/virtio_ids.h  |   1 +
+> >  include/uapi/linux/virtio_pmem.h |  35 +++++++++
+> >  7 files changed, 350 insertions(+)
+> >  create mode 100644 drivers/nvdimm/nd_virtio.c
+> >  create mode 100644 drivers/nvdimm/virtio_pmem.c
+> >  create mode 100644 drivers/nvdimm/virtio_pmem.h
+> >  create mode 100644 include/uapi/linux/virtio_pmem.h
+> 
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
 
+Thank you Cornelia for the review.
+
+Best regards,
+Pankaj
+> 
+> 
