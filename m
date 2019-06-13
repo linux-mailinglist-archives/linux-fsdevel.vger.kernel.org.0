@@ -2,71 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 144B2446C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:54:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A885644691
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:53:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfFMQyQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:54:16 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:41902 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730066AbfFMCxB (ORCPT
+        id S1730113AbfFMQwr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:52:47 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47294 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730102AbfFMDFy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 22:53:01 -0400
-Received: by mail-io1-f72.google.com with SMTP id x17so13572516iog.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jun 2019 19:53:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=Np5gXReZhEQY+f0111rtDnwU/KIuuZ02Fmiq9/XZl1M=;
-        b=uP1ekeF+FFb989tI5zeMwc1CXP4EB7jmUFsPUhPmkphPQk76QpswC1nkI8Lr2JheXO
-         fjC1EDTZU0748BEwoBlCgxpUbI3w+qRk+T831UaZtW5tj0kzwMSIueMea2kxKZlgJ3mx
-         zu6QDCEQbLSG4ykz1TnK9lvIFLwE1g+3QM3l1yzfPIS6cA1RHSFxbFRsXHfrmvDmXz1A
-         h3PJLl5jdM1u7tsZklRwGbjApdu5hTWZXTo+UyRx4NCkbogVEFnoqznu+EDL2mxsA6Q+
-         U2A40FWqTxpnQfz1xNEwTQePi1vk7PDLaujcjmNTR1aOly8Vb3TLthUVW25P5sHv4Bn3
-         vgWQ==
-X-Gm-Message-State: APjAAAWmISdTQ3BCfkz7kWi/BrXel0xxmpCBbamSlPEodb7ZWVXxU5VU
-        kRJXxD0+oQ5E1UHTp1xRh29pjHOaPe/3TJIX7XotPisWMMOg
-X-Google-Smtp-Source: APXvYqx5IsSM2NAOI/iAdm4c3z4Q0KMokZxWs1UI+Ut9ao7lxnz24tDe4bNCdFgQ1DgRpytXrLHrXA/sEafV/s9VWjsSAD+q/q20
+        Wed, 12 Jun 2019 23:05:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5347sLkcqdCaDr4KbIIf3bKPXQaQU7AVUw40AwlLk0E=; b=gf4dv7WU5lUnCVxWX1b/VbhuEP
+        RpAMKwYyUlhgcAdDBmtQ/bz/ehU3elbdJn89YliwF//sPf0+wbq8mbjoMZbkAAQy3GEUTYilX4iSj
+        k/MtsOknTvg2JkzcbSuGPMoJIAd1IqE+0bhPaUj7Ck/jBLsepF1XEmo5T3V4WLhxVkr261JgfaI+q
+        kJdtOMZfu7WKBScGQVBpA4dS8b+VasmQTV9rhm1DmyISlPeT+ImRMVI4LVCJpBHXKH56hgyQZ+xL8
+        8Mm8BTD5aVCrnkDcvN3rqEi+H2BBxYlZt6vaok0WqL/4pL/2cGXo4h4qLmCehl6qYrFBo+IjcXnE5
+        8GXZHODg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbG3Y-0006L6-IB; Thu, 13 Jun 2019 03:05:40 +0000
+Subject: Re: mmotm 2019-06-11-16-59 uploaded (ocfs2)
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <20190611235956.4FZF6%akpm@linux-foundation.org>
+ <492b4bcc-4760-7cbb-7083-9f22e7ab4b82@infradead.org>
+ <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a412fca5-7204-7001-cc1a-f620ea6f64bd@infradead.org>
+Date:   Wed, 12 Jun 2019 20:05:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:9d15:: with SMTP id f21mr1753140itd.13.1560394380348;
- Wed, 12 Jun 2019 19:53:00 -0700 (PDT)
-Date:   Wed, 12 Jun 2019 19:53:00 -0700
-In-Reply-To: <000000000000a861f6058b2699e0@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c0103a058b2ba0ec@google.com>
-Subject: Re: INFO: task syz-executor can't die for more than 143 seconds.
-From:   syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
-To:     jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        yuchao0@huawei.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On 6/12/19 6:18 PM, Andrew Morton wrote:
+> On Wed, 12 Jun 2019 07:15:30 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+>> On 6/11/19 4:59 PM, akpm@linux-foundation.org wrote:
+>>> The mm-of-the-moment snapshot 2019-06-11-16-59 has been uploaded to
+>>>
+>>>    http://www.ozlabs.org/~akpm/mmotm/
+>>>
+>>> mmotm-readme.txt says
+>>>
+>>> README for mm-of-the-moment:
+>>>
+>>> http://www.ozlabs.org/~akpm/mmotm/
+>>>
+>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>>> more than once a week.
+>>
+>>
+>> on i386:
+>>
+>> ld: fs/ocfs2/dlmglue.o: in function `ocfs2_dlm_seq_show':
+>> dlmglue.c:(.text+0x46e4): undefined reference to `__udivdi3'
+> 
+> Thanks.  This, I guess:
+> 
+> --- a/fs/ocfs2/dlmglue.c~ocfs2-add-locking-filter-debugfs-file-fix
+> +++ a/fs/ocfs2/dlmglue.c
+> @@ -3115,7 +3115,7 @@ static int ocfs2_dlm_seq_show(struct seq
+>  		 * otherwise, only dump the last N seconds active lock
+>  		 * resources.
+>  		 */
+> -		if ((now - last) / 1000000 > dlm_debug->d_filter_secs)
+> +		if (div_u64(now - last, 1000000) > dlm_debug->d_filter_secs)
+>  			return 0;
+>  	}
+>  #endif
+> 
+> review and test, please?
+> 
 
-commit 4ddc1b28aac57a90c6426d55e0dea3c1b5eb4782
-Author: Chao Yu <yuchao0@huawei.com>
-Date:   Wed Jul 25 23:19:48 2018 +0000
+Builds for me.  Thanks.
 
-     f2fs: fix to restrict mount condition when without CONFIG_QUOTA
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=142f4e49a00000
-start commit:   81a72c79 Add linux-next specific files for 20190612
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=122f4e49a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8aa46bbce201b8b6
-dashboard link: https://syzkaller.appspot.com/bug?extid=8ab2d0f39fb79fe6ca40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1250ae3ea00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1568557aa00000
 
-Reported-by: syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com
-Fixes: 4ddc1b28aac5 ("f2fs: fix to restrict mount condition when without  
-CONFIG_QUOTA")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+~Randy
