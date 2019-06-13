@@ -2,97 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1914E43A90
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:22:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EDAA439EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:17:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732152AbfFMPWI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 11:22:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56618 "EHLO mx1.redhat.com"
+        id S1733210AbfFMPRU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 11:17:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731989AbfFMMoJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 08:44:09 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1732191AbfFMNWo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:22:44 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B5DF330860AE;
-        Thu, 13 Jun 2019 12:43:54 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3080C1001B1A;
-        Thu, 13 Jun 2019 12:43:49 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 13 Jun 2019 14:43:54 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 14:43:48 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     "'Eric W. Biederman'" <ebiederm@xmission.com>,
-        'Andrew Morton' <akpm@linux-foundation.org>,
-        'Deepa Dinamani' <deepa.kernel@gmail.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'arnd@arndb.de'" <arnd@arndb.de>,
-        "'dbueso@suse.de'" <dbueso@suse.de>,
-        "'axboe@kernel.dk'" <axboe@kernel.dk>,
-        "'dave@stgolabs.net'" <dave@stgolabs.net>,
-        "'e@80x24.org'" <e@80x24.org>,
-        "'jbaron@akamai.com'" <jbaron@akamai.com>,
-        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
-        "'linux-aio@kvack.org'" <linux-aio@kvack.org>,
-        "'omar.kilani@gmail.com'" <omar.kilani@gmail.com>,
-        "'tglx@linutronix.de'" <tglx@linutronix.de>,
-        'Al Viro' <viro@ZenIV.linux.org.uk>,
-        'Linus Torvalds' <torvalds@linux-foundation.org>,
-        "'linux-arch@vger.kernel.org'" <linux-arch@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/5] signal: Teach sigsuspend to use set_user_sigmask
-Message-ID: <20190613124347.GB12506@redhat.com>
-References: <87k1dxaxcl.fsf_-_@xmission.com>
- <87ef45axa4.fsf_-_@xmission.com>
- <20190610162244.GB8127@redhat.com>
- <87lfy96sta.fsf@xmission.com>
- <9199239a450d4ea397783ccf98742220@AcuMS.aculab.com>
- <20190612134558.GB3276@redhat.com>
- <6f748b26bef748208e2a74174c0c0bfc@AcuMS.aculab.com>
- <6e9b964b08d84c99980b1707e5fe3d1d@AcuMS.aculab.com>
- <20190613094324.GA12506@redhat.com>
- <66311ce9762849f7988c16bc752ea5a9@AcuMS.aculab.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 31D5621473;
+        Thu, 13 Jun 2019 13:22:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560432163;
+        bh=JwfwFzoAqbbp1outlf75R3DQtkfxeJF9Er26IgGsSK8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=jKHRgDobe0P6NKgK1Mpfvx8moCATLdwO4mCjgeY5ijni/cpHRAckOvnyucfGlNiHC
+         a1BplI0n4QvnofEIaqntUYI3pJwHCmjjTAXZwVbcRWXIfRRxDZ5riPB+wPr1MAoNsf
+         TMurIYQ01fH4QpZjegUL3HUBWLCaTh7CGg8M51K4=
+Message-ID: <2851a6b983ed8b5b858b3b336e70296204349762.camel@kernel.org>
+Subject: Re: [PATCH v2] locks: eliminate false positive conflicts for write
+ lease
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "J . Bruce Fields" <bfields@fieldses.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Date:   Thu, 13 Jun 2019 09:22:41 -0400
+In-Reply-To: <20190612172408.22671-1-amir73il@gmail.com>
+References: <20190612172408.22671-1-amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66311ce9762849f7988c16bc752ea5a9@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 13 Jun 2019 12:44:09 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 06/13, David Laight wrote:
->
-> > And you interpret this as if a pending signal should be delivered in any case,
-> > even if pselect succeeds. Again, perhaps you are right, but to me this is simply
-> > undocumented.
->
-> This text (from http://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap02.html) is moderately clear:
->     ... if all threads within the process block delivery of the signal, the signal shall
->     remain pending on the process until a thread calls a sigwait() function selecting that
->     signal, a thread unblocks delivery of the signal, or the action associated with the signal
->     is set to ignore the signal.
->
-> So when pselect() 'replaces the signal mask' any pending signals should be delivered.
+On Wed, 2019-06-12 at 20:24 +0300, Amir Goldstein wrote:
+> check_conflicting_open() is checking for existing fd's open for read or
+> for write before allowing to take a write lease.  The check that was
+> implemented using i_count and d_count is an approximation that has
+> several false positives.  For example, overlayfs since v4.19, takes an
+> extra reference on the dentry; An open with O_PATH takes a reference on
+> the dentry although the file cannot be read nor written.
+> 
+> Change the implementation to use i_readcount and i_writecount to
+> eliminate the false positive conflicts and allow a write lease to be
+> taken on an overlayfs file.
+> 
+> The change of behavior with existing fd's open with O_PATH is symmetric
+> w.r.t. current behavior of lease breakers - an open with O_PATH currently
+> does not break a write lease.
+> 
+> This increases the size of struct inode by 4 bytes on 32bit archs when
+> CONFIG_FILE_LOCKING is defined and CONFIG_IMA was not already
+> defined.
+> 
+> Cc: <stable@vger.kernel.org> # v4.19
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+> 
+> Miklos, Jeff and Bruce,
+> 
+> This patch fixes a v4.19 overlayfs regression with taking write
+> leases. It also provides correct semantics w.r.t RDONLY open counter
+> that Bruce also needed for nfsd.
+> 
+> Since this is locks code that fixes an overlayfs regression which
+> is also needed for nfsd, it could go via either of your trees.
+> I didn't want to pick sides, so first one to grab the patch wins ;-)
+> 
+> I verified the changes using modified LTP F_SETLEASE tests [1],
+> which I ran over xfs and overlayfs.
+> 
+> Thanks,
+> Amir.
+> 
+> [1] https://github.com/amir73il/ltp/commits/overlayfs-devel
+> 
+> Changes since v1:
+> - Drop patch to fold i_readcount into i_count
+> - Make i_readcount depend on CONFIG_FILE_LOCKING
+> 
+>  fs/locks.c         | 33 ++++++++++++++++++++++-----------
+>  include/linux/fs.h |  4 ++--
+>  2 files changed, 24 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/locks.c b/fs/locks.c
+> index ec1e4a5df629..28528b4fc53b 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -1753,10 +1753,10 @@ int fcntl_getlease(struct file *filp)
+>  }
+>  
+>  /**
+> - * check_conflicting_open - see if the given dentry points to a file that has
+> + * check_conflicting_open - see if the given file points to an inode that has
+>   *			    an existing open that would conflict with the
+>   *			    desired lease.
+> - * @dentry:	dentry to check
+> + * @filp:	file to check
+>   * @arg:	type of lease that we're trying to acquire
+>   * @flags:	current lock flags
+>   *
+> @@ -1764,19 +1764,31 @@ int fcntl_getlease(struct file *filp)
+>   * conflict with the lease we're trying to set.
+>   */
+>  static int
+> -check_conflicting_open(const struct dentry *dentry, const long arg, int flags)
+> +check_conflicting_open(struct file *filp, const long arg, int flags)
+>  {
+>  	int ret = 0;
+> -	struct inode *inode = dentry->d_inode;
+> +	struct inode *inode = locks_inode(filp);
+> +	int wcount = atomic_read(&inode->i_writecount);
+> +	int self_wcount = 0, self_rcount = 0;
+>  
+>  	if (flags & FL_LAYOUT)
+>  		return 0;
+>  
+> -	if ((arg == F_RDLCK) && inode_is_open_for_write(inode))
+> +	if (arg == F_RDLCK && wcount > 0)
+>  		return -EAGAIN;
+>  
+> -	if ((arg == F_WRLCK) && ((d_count(dentry) > 1) ||
+> -	    (atomic_read(&inode->i_count) > 1)))
+> +	/* Eliminate deny writes from actual writers count */
+> +	if (wcount < 0)
+> +		wcount = 0;
+> +
+> +	/* Make sure that only read/write count is from lease requestor */
+> +	if (filp->f_mode & FMODE_WRITE)
+> +		self_wcount = 1;
+> +	else if ((filp->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
 
-I fail to understand this logic.
+nit: you already checked for FMODE_WRITE and you know that it's not set
+here, so this is equivalent to:
+
+    else if (filp->f_mode & FMODE_READ)
+
+> +		self_rcount = 1;
+> +
+> +	if (arg == F_WRLCK && (wcount != self_wcount ||
+> +	    atomic_read(&inode->i_readcount) != self_rcount))
+>  		ret = -EAGAIN;
+>  
+>  	return ret;
+> @@ -1786,8 +1798,7 @@ static int
+>  generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **priv)
+>  {
+>  	struct file_lock *fl, *my_fl = NULL, *lease;
+> -	struct dentry *dentry = filp->f_path.dentry;
+> -	struct inode *inode = dentry->d_inode;
+> +	struct inode *inode = locks_inode(filp);
+>  	struct file_lock_context *ctx;
+>  	bool is_deleg = (*flp)->fl_flags & FL_DELEG;
+>  	int error;
+> @@ -1822,7 +1833,7 @@ generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **pr
+>  	percpu_down_read(&file_rwsem);
+>  	spin_lock(&ctx->flc_lock);
+>  	time_out_leases(inode, &dispose);
+> -	error = check_conflicting_open(dentry, arg, lease->fl_flags);
+> +	error = check_conflicting_open(filp, arg, lease->fl_flags);
+>  	if (error)
+>  		goto out;
+>  
+> @@ -1879,7 +1890,7 @@ generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **pr
+>  	 * precedes these checks.
+>  	 */
+>  	smp_mb();
+> -	error = check_conflicting_open(dentry, arg, lease->fl_flags);
+> +	error = check_conflicting_open(filp, arg, lease->fl_flags);
+>  	if (error) {
+>  		locks_unlink_lock_ctx(lease);
+>  		goto out;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 79ffa2958bd8..2d55f1b64014 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -694,7 +694,7 @@ struct inode {
+>  	atomic_t		i_count;
+>  	atomic_t		i_dio_count;
+>  	atomic_t		i_writecount;
+> -#ifdef CONFIG_IMA
+> +#if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
+>  	atomic_t		i_readcount; /* struct files open RO */
+>  #endif
+>  	union {
+> @@ -2895,7 +2895,7 @@ static inline bool inode_is_open_for_write(const struct inode *inode)
+>  	return atomic_read(&inode->i_writecount) > 0;
+>  }
+>  
+> -#ifdef CONFIG_IMA
+> +#if defined(CONFIG_IMA) || defined(CONFIG_FILE_LOCKING)
+>  static inline void i_readcount_dec(struct inode *inode)
+>  {
+>  	BUG_ON(!atomic_read(&inode->i_readcount));
 
 
-> > However, linux never did this. Until the commit 854a6ed56839 ("signal: Add
-> > restore_user_sigmask()"). This commit caused regression. We had to revert it.
->
-> That change wasn't expected to change the behaviour...
+Looks good to me. Aside from the minor nit above:
 
-Yes.
+    Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
-And the changed behaviour matched your understanding of standard. We had to
-change it back.
+I have one file locking patch queued up for v5.3 so far, but nothing for
+v5.2. Miklos or Bruce, if either of you have anything to send to Linus
+for v5.2 would you mind taking this one too?
 
-So what do you want from me? ;)
-
-Oleg.
+If not I can queue it up and get it to him after letting it soak in
+linux-next for a bit.
 
