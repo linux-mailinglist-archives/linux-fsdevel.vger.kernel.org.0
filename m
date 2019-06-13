@@ -2,96 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D82A442D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D389544500
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:41:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392284AbfFMQ0G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:26:06 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45766 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732349AbfFMQ0G (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:26:06 -0400
-Received: by mail-oi1-f194.google.com with SMTP id m206so14862095oib.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 09:26:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wjBnZv2pCLDEwG4yb+2F3joyqEyCgCcLuoiul4+lDtg=;
-        b=KHbKhiCEqP27YRm90NCLuB4c2IplNhmcOcBL7/TKZlk3SiaZQfwA9S0uY/GsQv03Pr
-         aBL2AWfi8XTIFaky9LKQqE+K/NfNYYNrlmFC/I9jOaxHcs4tAfHfjcUQbqcl3RnXxild
-         Tu3HngJ2BWQbjHKSA518A7LMdZsRAI0y2xoRezHhz45e3uyBcpgMb0voTy98I6u2hRnp
-         NYEu7LcFVoYX1llZ3PhX+HJY3OdLwk1vk8E00NF1S8iWedYKuEKJl7E8AOFKwK6O5TC3
-         f4HIkh3G/dWUfgrFHj9h1Gd+qxz3edzqRbXtlNTkaPme0fjX3JDzh/8PrIf6qw6dZLSg
-         gtaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wjBnZv2pCLDEwG4yb+2F3joyqEyCgCcLuoiul4+lDtg=;
-        b=M7hSUHvq4QAv8qAUqPbRu4f9SpR8fhIn4/WAxsv6PlYh9V+OsryTmzyUCcw0PHPzIT
-         J9p8ou3Hu0qFKskS4+h+kE/qk2vK4DLlaQUndhKLDEY78hXvBUR3TKeESuFYDq8r1ZcP
-         KmBkgLOBYHrBg/povOFeqKeVyw/O+o7k4tiVP+PQFaZzltb8TlraMAk/zJ2acmZSsSuI
-         +NPpT/bnKsbSGglPW8kfQxJIlt0iL2SDi4Uq8fGr/SrZutxns/1riKEfdIQb5B7+vY94
-         /b0S5LSsiJnRCL0kWn8FrbBT9GeAbrjzR2cZeoqbbYkCEN8eGsrmNMYsmxqyWIB0CBVa
-         z6og==
-X-Gm-Message-State: APjAAAXfEkbNn0yMp1WuB5mRraQCV+OokZw3jvDBufA7RZNJExgZQQMK
-        HoEhjwH+gZfNEx4NYIwvcVbuLkfOiXtHsiRPtSkfTapk
-X-Google-Smtp-Source: APXvYqyIpO3hOidIsXLbc4Y7aCrEkKlPPSiQhXNkmA/XJwYbaL526BswBcBQAMtK33IEuzEN5c+1wA+6c6zViqiveWY=
-X-Received: by 2002:aca:7c5:: with SMTP id 188mr3423005oih.70.1560443165189;
- Thu, 13 Jun 2019 09:26:05 -0700 (PDT)
+        id S2392639AbfFMQlK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:41:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726959AbfFMQlJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:41:09 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E48E220644;
+        Thu, 13 Jun 2019 16:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560444069;
+        bh=C34ebvo6AEFxf3EflJEFb177I+rCto2FjRJcZW9t0Io=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I7fdzUpQNPCk2YfMQVrLWDVqmuu43ACjuslQSremYqJQYV4iZABsStKEgi+mQA5A1
+         ykJh+be+IyEGMtFTcsz0+PwyXSpLqAN/s89hUbH5dSgiwrN87aS2d0L/nI5CRC7g8u
+         8Tdr9FHQ7nY1S7pVnpQiX6aJ+xqIBFhfDsxFi8zk=
+Date:   Thu, 13 Jun 2019 09:41:07 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: fsmount: add missing mntget()
+Message-ID: <20190613164107.GA686@sol.localdomain>
+References: <20190610183031.GE63833@gmail.com>
+ <20190612184313.143456-1-ebiggers@kernel.org>
+ <20190613084728.GA32129@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-References: <20190607121729.GA14802@ziepe.ca> <20190607145213.GB14559@iweiny-DESK2.sc.intel.com>
- <20190612102917.GB14578@quack2.suse.cz> <20190612114721.GB3876@ziepe.ca>
- <20190612120907.GC14578@quack2.suse.cz> <20190612191421.GM3876@ziepe.ca>
- <20190612221336.GA27080@iweiny-DESK2.sc.intel.com> <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com>
- <20190612233324.GE14336@iweiny-DESK2.sc.intel.com> <CAPcyv4jf19CJbtXTp=ag7Ns=ZQtqeQd3C0XhV9FcFCwd9JCNtQ@mail.gmail.com>
- <20190613151354.GC22901@ziepe.ca>
-In-Reply-To: <20190613151354.GC22901@ziepe.ca>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 13 Jun 2019 09:25:54 -0700
-Message-ID: <CAPcyv4hZsxd+eUrVCQmm-O8Zcu16O5R1d0reTM+JBBn7oP7Uhw@mail.gmail.com>
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613084728.GA32129@miu.piliscsaba.redhat.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 8:14 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
->
-> On Wed, Jun 12, 2019 at 06:14:46PM -0700, Dan Williams wrote:
-> > > Effectively, we would need a way for an admin to close a specific file
-> > > descriptor (or set of fds) which point to that file.  AFAIK there is no way to
-> > > do that at all, is there?
-> >
-> > Even if there were that gets back to my other question, does RDMA
-> > teardown happen at close(fd), or at final fput() of the 'struct
-> > file'?
->
-> AFAIK there is no kernel side driver hook for close(fd).
->
-> rdma uses a normal chardev so it's lifetime is linked to the file_ops
-> release, which is called on last fput. So all the mmaps, all the dups,
-> everything must go before it releases its resources.
+On Thu, Jun 13, 2019 at 10:47:28AM +0200, Miklos Szeredi wrote:
+> On Wed, Jun 12, 2019 at 11:43:13AM -0700, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > sys_fsmount() needs to take a reference to the new mount when adding it
+> > to the anonymous mount namespace.  Otherwise the filesystem can be
+> > unmounted while it's still in use, as found by syzkaller.
+> 
+> So it needs one count for the file (which dentry_open() obtains) and one for the
+> attachment into the anonymous namespace.  The latter one is dropped at cleanup
+> time, so your patch appears to be correct at getting that ref.
 
-Oh, I must have missed where this conversation started talking about
-the driver-device fd. I thought we were talking about the close /
-release of the target file that is MAP_SHARED for the memory
-registration. A release of the driver fd is orthogonal to coordinating
-/ signalling actions relative to the leased file.
+Yes.
+
+> 
+> I wonder why such a blatant use-after-free was missed in normal testing.  RCU
+> delayed freeing, I guess?
+
+It's because mount freeing is delayed by task_work_add(), so normally the refcnt
+would be dropped to -1 when the file is closed without problems.  The problems
+only showed up if you took another reference, e.g. by fchdir().
+
+> 
+> How about this additional sanity checking patch?
+
+Seems like a good idea.  Without my fix, the WARNING is triggered by the
+following program (no fchdir() needed):
+
+	int main(void)
+	{
+		int fs;
+
+		fs = syscall(__NR_fsopen, "ramfs", 0);
+		syscall(__NR_fsconfig, fs, 6, 0, 0, 0);
+		syscall(__NR_fsmount, fs, 0, 0);
+	}
+
+Can you send it as a formal patch?
+
+- Eric
