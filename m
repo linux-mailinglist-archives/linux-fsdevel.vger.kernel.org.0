@@ -2,89 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10E194416B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B0DA4401C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:03:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731236AbfFMQOQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:14:16 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:36965 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731194AbfFMIma (ORCPT
+        id S2390992AbfFMQDB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:03:01 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42074 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731393AbfFMIrj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:42:30 -0400
-Received: by mail-yb1-f195.google.com with SMTP id v144so1730962ybb.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 01:42:30 -0700 (PDT)
+        Thu, 13 Jun 2019 04:47:39 -0400
+Received: by mail-wr1-f67.google.com with SMTP id x17so4515741wrl.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 01:47:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zjpXrdhZdWSVnzo1hcCmpdYCRukSqJAaG4+HlfSu5wc=;
-        b=Dww8Mp6DzN1GHQieAdQBJBXrZ6Dx9lwUFAyjoSpdOPjDv5aHFyXKPRFuPFDadk3F4N
-         PlAxkpCqcbhb6+yKQ3k3gDZlgZ8ltdDU3HqW0ffCqnxdaRQN/wD1YadQA77Sbb051t1M
-         u3hZk++QD/VFEeZiQvaXESGohxYVWpUChsQd0zFYnswawNr2oKOBEv9Rc5HGkHPQ3Rs6
-         wP+KYkzy8EYouMLVbEHXfV8pMIxqWa3daudYkLkiEWCCTSBX6kXfjntbprtvsFputU3m
-         DNZBzUHcvlxbDEeq+ZdSCnZORxSBGGAQFGxDcZryNZn+8w1MabKJ9e5hOwV6uOAdegLT
-         n3XA==
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=v6PLdyQOzI0tG2cZQ2qQYi4K1VGuuUo6oAxFYdZjwNY=;
+        b=WkxZ0ZaYt/UxgaO0AGRtXeVfV8vQftxoFqoFblsq3fXVJa5lyDJ3lsrYxFr7sULIua
+         YpIWXsQ5rwhxeRkpgCujNzHng+MyOoF9WlBdSS5plsIn1a5nsD07hT3DUFt42YMe4Hz6
+         nq+bHgOZbAlNCEv4qryu1jup+dv7NFBzv8UG8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zjpXrdhZdWSVnzo1hcCmpdYCRukSqJAaG4+HlfSu5wc=;
-        b=ZN2kBoCmMABEeCC2/S8+97lnSm8E/+/JIpk5jRaEfcq2IOQT7CcBvI/9P0QjlmgNoT
-         LPWQbFs1GL4Ux8P5ChHoKm6xl25HCocdGREsJMJupV5QXUxeE60wwDGk29oCMVcyiEG2
-         qZ+ok4/XUGmPXafmxLvRswQV3JsT7TVDjVrJ6gl+dfCtlI4Z3+tpcP3MEYnlcusnmfEk
-         tGR6g57Marqr1zl16TmPiazgUxMLh67sJcQxn2m7cn1CFg0g2omD/Qqin0Yg7Hc+Xml3
-         0CHT9/qCdHfH+4G2Yh1WZxUbIWeP8eKDTa7xSmxz4HMAG/V+Wp3ei68NTkSI/1+pEdIE
-         bLCw==
-X-Gm-Message-State: APjAAAVPVWQ2No5b3kVsIALwp50HNUwQwVNzWU+g0eNFYP/mNsWJC5XA
-        Gpao6qWfHw+NEX/xBf4nWltGcQ==
-X-Google-Smtp-Source: APXvYqw6HbzBIcjkNiK7Q0GLBBoGGfFaDqjTHwqIkqQaT8YYX/nxFXa9ac5Nsx5wzsq/aODUxFvBaA==
-X-Received: by 2002:a25:320b:: with SMTP id y11mr14886649yby.92.1560415350170;
-        Thu, 13 Jun 2019 01:42:30 -0700 (PDT)
-Received: from [172.20.10.3] (mobile-166-172-57-221.mycingular.net. [166.172.57.221])
-        by smtp.gmail.com with ESMTPSA id 84sm769447ywp.45.2019.06.13.01.42.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 01:42:29 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: fix memory leak of UNIX domain socket inode
-To:     Eric Biggers <ebiggers@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=v6PLdyQOzI0tG2cZQ2qQYi4K1VGuuUo6oAxFYdZjwNY=;
+        b=LQ89FYYv9Syw67/CIG35kFb1g9Up8uWJGqfj+iQl3fksxUQgaLOiRyKbHS4E0gT4U0
+         /X95k0nNTI3TyfU4VAzYGpbYhVFhUZQPKfShLOG9aNfKGPDyMFnIoV+C/8mmyOZp0Y4D
+         7Xi1QFhmmUi9Ww8SjEvRY/jSdsBsAReBGLJ2FizGKD4W1ODNsQRMDBJOGot6yEAWl06W
+         3zyW+VFnt+BvsKxTFikZ9SjszVD3IvI7vH7tp/69b1vaRVcQKbbZlutPj3cB+Gt0m87e
+         NDxL89PCdp0gmk3QZzzg13Hta3tpMDWpOkAWfQ+q5pSD3/kdVzhFc1AyD8eDBEjKoPcE
+         AKSg==
+X-Gm-Message-State: APjAAAX8zFJHUNeNIBcoVyQQayMqjZfklpym+YAXND0xT8SuHNtmGZgz
+        qV3dBTloMieFsIjej1wx7Pr0HA==
+X-Google-Smtp-Source: APXvYqxKS8gUln6fvs1SbyW8pE5NsMpr3bzbKlLKlBr0EAEthBfXY+0ShPDuQUi4SaVl+Mr1RTCvhw==
+X-Received: by 2002:adf:f683:: with SMTP id v3mr1049914wrp.258.1560415657694;
+        Thu, 13 Jun 2019 01:47:37 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id w67sm4993557wma.24.2019.06.13.01.47.35
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 01:47:36 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 10:47:28 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+111cb28d9f583693aefa@syzkaller.appspotmail.com>
-References: <0000000000005bc340058983fe8e@google.com>
- <20190612215843.91294-1-ebiggers@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c8afa475-8ed9-e8ee-c66a-270bea7efad5@kernel.dk>
-Date:   Thu, 13 Jun 2019 02:40:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        linux-fsdevel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: fsmount: add missing mntget()
+Message-ID: <20190613084728.GA32129@miu.piliscsaba.redhat.com>
+References: <20190610183031.GE63833@gmail.com>
+ <20190612184313.143456-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190612215843.91294-1-ebiggers@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612184313.143456-1-ebiggers@kernel.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/12/19 3:58 PM, Eric Biggers wrote:
+On Wed, Jun 12, 2019 at 11:43:13AM -0700, Eric Biggers wrote:
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> Opening and closing an io_uring instance leaks a UNIX domain socket
-> inode.  This is because the ->file of the io_uring instance's internal
-> UNIX domain socket is set to point to the io_uring file, but then
-> sock_release() sees the non-NULL ->file and assumes the inode reference
-> is held by the file so doesn't call iput().  That's not the case here,
-> since the reference is still meant to be held by the socket; the actual
-> inode of the io_uring file is different.
-> 
-> Fix this leak by NULL-ing out ->file before releasing the socket.
+> sys_fsmount() needs to take a reference to the new mount when adding it
+> to the anonymous mount namespace.  Otherwise the filesystem can be
+> unmounted while it's still in use, as found by syzkaller.
 
-Thanks, applied.
+So it needs one count for the file (which dentry_open() obtains) and one for the
+attachment into the anonymous namespace.  The latter one is dropped at cleanup
+time, so your patch appears to be correct at getting that ref.
 
--- 
-Jens Axboe
+I wonder why such a blatant use-after-free was missed in normal testing.  RCU
+delayed freeing, I guess?
 
+How about this additional sanity checking patch?
+
+Thanks,
+Miklos
+
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index b26778bdc236..c638f220805a 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -153,10 +153,10 @@ static inline void mnt_add_count(struct mount *mnt, int n)
+ /*
+  * vfsmount lock must be held for write
+  */
+-unsigned int mnt_get_count(struct mount *mnt)
++int mnt_get_count(struct mount *mnt)
+ {
+ #ifdef CONFIG_SMP
+-	unsigned int count = 0;
++	int count = 0;
+ 	int cpu;
+ 
+ 	for_each_possible_cpu(cpu) {
+@@ -1140,6 +1140,8 @@ static DECLARE_DELAYED_WORK(delayed_mntput_work, delayed_mntput);
+ 
+ static void mntput_no_expire(struct mount *mnt)
+ {
++	int count;
++
+ 	rcu_read_lock();
+ 	if (likely(READ_ONCE(mnt->mnt_ns))) {
+ 		/*
+@@ -1162,11 +1164,13 @@ static void mntput_no_expire(struct mount *mnt)
+ 	 */
+ 	smp_mb();
+ 	mnt_add_count(mnt, -1);
+-	if (mnt_get_count(mnt)) {
++	count = mnt_get_count(mnt);
++	if (count > 0) {
+ 		rcu_read_unlock();
+ 		unlock_mount_hash();
+ 		return;
+ 	}
++	WARN_ON(count < 0);
+ 	if (unlikely(mnt->mnt.mnt_flags & MNT_DOOMED)) {
+ 		rcu_read_unlock();
+ 		unlock_mount_hash();
+diff --git a/fs/pnode.h b/fs/pnode.h
+index 49a058c73e4c..26f74e092bd9 100644
+--- a/fs/pnode.h
++++ b/fs/pnode.h
+@@ -44,7 +44,7 @@ int propagate_mount_busy(struct mount *, int);
+ void propagate_mount_unlock(struct mount *);
+ void mnt_release_group_id(struct mount *);
+ int get_dominating_id(struct mount *mnt, const struct path *root);
+-unsigned int mnt_get_count(struct mount *mnt);
++int mnt_get_count(struct mount *mnt);
+ void mnt_set_mountpoint(struct mount *, struct mountpoint *,
+ 			struct mount *);
+ void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
