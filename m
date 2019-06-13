@@ -2,227 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12310448CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 19:12:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2D7244980
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 19:18:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbfFMRLV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 13:11:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54244 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729166AbfFMRLR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 13:11:17 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CF022063F;
-        Thu, 13 Jun 2019 17:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560445875;
-        bh=FBWMxYgWxiNu6570dn7YwBKk4jtYzSoOQbyjngxdWio=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=onyQ0TF6UDHFdLqBxVbYoaq8Vmetqt3XjxdkKH0dS0Gl8rOx6CanWFVNqTD5fhlPW
-         CmhHjh0De9XgMRHLmahJfqiLW0NbrhZWZXtRyjPTdqDxYTvTI0JiEhV0DUFGfC4ypv
-         Ebrd89F9zTt1JacElWfJJLosLuVPvJO62FCNDpVc=
-Date:   Thu, 13 Jun 2019 10:11:13 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Parshuram Raju Thombare <pthombar@cadence.com>,
-        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>
-Subject: Re: [RFC PATCH v2 5/8] scsi: ufs: UFS crypto API
-Message-ID: <20190613171113.GB686@sol.localdomain>
-References: <20190605232837.31545-1-satyat@google.com>
- <20190605232837.31545-6-satyat@google.com>
+        id S1727381AbfFMRSg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 13:18:36 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33194 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726989AbfFMRSg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 13:18:36 -0400
+Received: by mail-qt1-f195.google.com with SMTP id x2so22548541qtr.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 10:18:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ECRuDs1AAJXccME5fjhnIagUHhl7wP1zzfkz6zfy+gs=;
+        b=lpafWUUxvoz6cw8t6bvxhkbpKx1MuDJC/6+rsfIk9kELesUHNICDeurjA/f9ZuoaJv
+         lKvrldgcxc6rNvpGlf+9lPT2riW0RE1+HuS2OqxKuK9J/UHHXstRF22tdIYHVfy+KlvT
+         LRXs02nEuzM/Fk4kx+1bbgAFr8bE6dMuPmxEyYZicAywAmS5YuFqquENcwoxV3ALaTJr
+         wrm1jUeHUGOSNU/aAA8xVX35TgozP9YEYH5RVAbReFiyARjThtZ1Rs+sS5w3QP1kXXnb
+         Bg53NxX8LuVo7QxF8lvDT58SoxeM97wjJy7wRjhtAvG+RnkgIyeQxLZquacOghksiJH/
+         /FWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ECRuDs1AAJXccME5fjhnIagUHhl7wP1zzfkz6zfy+gs=;
+        b=PcQUsE7Q5TeXCxRgI16igjgNfTbGfuoz1bEPk9yhSqXHNmSE+cYuTgoPwHy5z4WyXq
+         nIFJ4Si9N4EvlwsWm7frjCUQk47019wPMi6v+23amqY6oO30DXfrhNvQlBtqk2GeWDeA
+         ox3JhtkX1NW/8ARbepEllVgc/+5gnU9HA+HkAGzL1slCUTEudY1FVOWhO9mMavoydQQK
+         W4pi3PNULKJd15akhwjsBe8Y7lHkkxScyKfGlFJbCUmSD9QjPYmGr3D6kcsc/Fx4q3tQ
+         IunuotV8TiBC+EFklrGSHpBc3z6FZY4SsxEwOVKV1g2ay+gBS+wdKXMy2J/7bNsjCiow
+         nnfw==
+X-Gm-Message-State: APjAAAV/9HBEv8dvTYA1+ArEGfYKQSX7aTVcBOC/yCS9I0CvrAmmSvJU
+        Yi2I3VN5l2SdkSqKZ9+1erR4Tg==
+X-Google-Smtp-Source: APXvYqxo9wZDsL+u9xxF1oR9luzN2plR83tNtwXpM5LjZTCeK+hD6TjhoexGVCwTWwyvS0UUHoLRyg==
+X-Received: by 2002:aed:3686:: with SMTP id f6mr53799960qtb.30.1560446315300;
+        Thu, 13 Jun 2019 10:18:35 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id l3sm76969qkd.49.2019.06.13.10.18.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Jun 2019 10:18:34 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hbTMw-000325-3P; Thu, 13 Jun 2019 14:18:34 -0300
+Date:   Thu, 13 Jun 2019 14:18:34 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
+Message-ID: <20190613171834.GE22901@ziepe.ca>
+References: <20190612102917.GB14578@quack2.suse.cz>
+ <20190612114721.GB3876@ziepe.ca>
+ <20190612120907.GC14578@quack2.suse.cz>
+ <20190612191421.GM3876@ziepe.ca>
+ <20190612221336.GA27080@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4gkksnceCV-p70hkxAyEPJWFvpMezJA1rEj6TEhKAJ7qQ@mail.gmail.com>
+ <20190612233324.GE14336@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4jf19CJbtXTp=ag7Ns=ZQtqeQd3C0XhV9FcFCwd9JCNtQ@mail.gmail.com>
+ <20190613151354.GC22901@ziepe.ca>
+ <CAPcyv4hZsxd+eUrVCQmm-O8Zcu16O5R1d0reTM+JBBn7oP7Uhw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190605232837.31545-6-satyat@google.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <CAPcyv4hZsxd+eUrVCQmm-O8Zcu16O5R1d0reTM+JBBn7oP7Uhw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Satya,
-
-On Wed, Jun 05, 2019 at 04:28:34PM -0700, Satya Tangirala wrote:
-> Introduce functions to manipulate UFS inline encryption hardware
-> in line with the JEDEC UFSHCI v2.1 specification and to work with the
-> block keyslot manager.
+On Thu, Jun 13, 2019 at 09:25:54AM -0700, Dan Williams wrote:
+> On Thu, Jun 13, 2019 at 8:14 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Wed, Jun 12, 2019 at 06:14:46PM -0700, Dan Williams wrote:
+> > > > Effectively, we would need a way for an admin to close a specific file
+> > > > descriptor (or set of fds) which point to that file.  AFAIK there is no way to
+> > > > do that at all, is there?
+> > >
+> > > Even if there were that gets back to my other question, does RDMA
+> > > teardown happen at close(fd), or at final fput() of the 'struct
+> > > file'?
+> >
+> > AFAIK there is no kernel side driver hook for close(fd).
+> >
+> > rdma uses a normal chardev so it's lifetime is linked to the file_ops
+> > release, which is called on last fput. So all the mmaps, all the dups,
+> > everything must go before it releases its resources.
 > 
-> Signed-off-by: Satya Tangirala <satyat@google.com>
-> ---
->  drivers/scsi/ufs/Kconfig         |  10 +
->  drivers/scsi/ufs/Makefile        |   1 +
->  drivers/scsi/ufs/ufshcd-crypto.c | 438 +++++++++++++++++++++++++++++++
->  drivers/scsi/ufs/ufshcd-crypto.h |  69 +++++
->  4 files changed, 518 insertions(+)
->  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
->  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
-> 
+> Oh, I must have missed where this conversation started talking about
+> the driver-device fd. 
 
-There is a build error after this patch because it adds code that uses the
-crypto fields in struct ufs_hba, but those aren't added until the next patch.
+In the first paragraph above where Ira is musing about 'close a
+specific file', he is talking about the driver-device fd.
 
-It needs to be possible to compile a working kernel after each patch.
-Otherwise it breaks bisection.
+Ie unilaterally closing /dev/uverbs as a punishment for an application
+that used leases wrong: ie that released its lease with the RDMA is
+still ongoing. 
 
-So, perhaps add the fields in this patch instead.
-
-> +++ b/drivers/scsi/ufs/ufshcd-crypto.c
-> @@ -0,0 +1,438 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2019 Google LLC
-> + */
-> +
-> +#include <crypto/algapi.h>
-> +
-> +#include "ufshcd.h"
-> +#include "ufshcd-crypto.h"
-> +
-> +bool ufshcd_hba_is_crypto_supported(struct ufs_hba *hba)
-> +{
-> +	return hba->crypto_capabilities.reg_val != 0;
-> +}
-> +
-> +bool ufshcd_is_crypto_enabled(struct ufs_hba *hba)
-> +{
-> +	return hba->caps & UFSHCD_CAP_CRYPTO;
-> +}
-> +
-> +static bool ufshcd_cap_idx_valid(struct ufs_hba *hba, unsigned int cap_idx)
-> +{
-> +	return cap_idx < hba->crypto_capabilities.num_crypto_cap;
-> +}
-> +
-> +#define NUM_KEYSLOTS(hba) (hba->crypto_capabilities.config_count + 1)
-> +
-> +bool ufshcd_keyslot_valid(struct ufs_hba *hba, unsigned int slot)
-> +{
-> +	/*
-> +	 * The actual number of configurations supported is (CFGC+1), so slot
-> +	 * numbers range from 0 to config_count inclusive.
-> +	 */
-> +	return slot < NUM_KEYSLOTS(hba);
-> +}
-
-Since ufshcd_hba_is_crypto_supported(), ufshcd_is_crypto_enabled(), and
-ufshcd_keyslot_valid() are one-liners, don't access any private structures, and
-are used outside this file including on the command submission path, how about
-making them inline functions in ufshcd-crypto.h?
-
-> +
-> +static int ufshcd_crypto_alg_find(void *hba_p,
-> +			   enum blk_crypt_mode_num crypt_mode,
-> +			   unsigned int data_unit_size)
-> +{
-
-Now that the concept of "crypto alg IDs" is gone, rename this to
-ufshcd_crypto_cap_find() and rename the crypto_alg_id variables to cap_idx.
-
-This would make it consistent with using cap_idx elsewhere in the code and avoid
-confusion with ufs_crypto_cap_entry::algorithm_id.
-
-> +
-> +static int ufshcd_crypto_keyslot_program(void *hba_p, const u8 *key,
-> +					 enum blk_crypt_mode_num crypt_mode,
-> +					 unsigned int data_unit_size,
-> +					 unsigned int slot)
-> +{
-> +	struct ufs_hba *hba = hba_p;
-> +	int err = 0;
-> +	u8 data_unit_mask;
-> +	union ufs_crypto_cfg_entry cfg;
-> +	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
-> +	int crypto_alg_id;
-> +
-> +	crypto_alg_id = ufshcd_crypto_alg_find(hba_p, crypt_mode,
-> +					       data_unit_size);
-> +
-> +	if (!ufshcd_is_crypto_enabled(hba) ||
-> +	    !ufshcd_keyslot_valid(hba, slot) ||
-> +	    !ufshcd_cap_idx_valid(hba, crypto_alg_id))
-> +		return -EINVAL;
-> +
-> +	data_unit_mask = get_data_unit_size_mask(data_unit_size);
-> +
-> +	if (!(data_unit_mask &
-> +	      hba->crypto_cap_array[crypto_alg_id].sdus_mask))
-> +		return -EINVAL;
-
-Nit: the 'if' expression with data_unit_mask fits on one line.
-
-> +static int ufshcd_crypto_keyslot_find(void *hba_p,
-> +				      const u8 *key,
-> +				      enum blk_crypt_mode_num crypt_mode,
-> +				      unsigned int data_unit_size)
-> +{
-> +	struct ufs_hba *hba = hba_p;
-> +	int err = 0;
-> +	int slot;
-> +	u8 data_unit_mask;
-> +	union ufs_crypto_cfg_entry cfg;
-> +	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
-> +	int crypto_alg_id;
-> +
-> +	crypto_alg_id = ufshcd_crypto_alg_find(hba_p, crypt_mode,
-> +					       data_unit_size);
-> +
-> +	if (!ufshcd_is_crypto_enabled(hba) ||
-> +	    !ufshcd_cap_idx_valid(hba, crypto_alg_id))
-> +		return -EINVAL;
-> +
-> +	data_unit_mask = get_data_unit_size_mask(data_unit_size);
-> +
-> +	if (!(data_unit_mask &
-> +	      hba->crypto_cap_array[crypto_alg_id].sdus_mask))
-> +		return -EINVAL;
-
-Same here.
-
-> +	for (slot = 0; slot < NUM_KEYSLOTS(hba); slot++) {
-> +		if ((cfg_arr[slot].config_enable &
-> +		     UFS_CRYPTO_CONFIGURATION_ENABLE) &&
-> +		    data_unit_mask == cfg_arr[slot].data_unit_size &&
-> +		    crypto_alg_id == cfg_arr[slot].crypto_cap_idx &&
-> +		    crypto_memneq(&cfg.crypto_key, cfg_arr[slot].crypto_key,
-> +				  UFS_CRYPTO_KEY_MAX_SIZE) == 0) {
-> +			memzero_explicit(&cfg, sizeof(cfg));
-> +			return slot;
-> +		}
-> +	}
-
-Nit: as I've mentioned before, I think !crypto_memneq() is easier to read than
-'crypto_memneq() == 0'.
-
-> +	hba->crypto_cap_array =
-> +		devm_kcalloc(hba->dev,
-> +			     hba->crypto_capabilities.num_crypto_cap,
-> +			     sizeof(hba->crypto_cap_array[0]),
-> +			     GFP_KERNEL);
-> +	if (!hba->crypto_cap_array) {
-> +		err = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	hba->crypto_cfgs =
-> +		devm_kcalloc(hba->dev,
-> +			     hba->crypto_capabilities.config_count + 1,
-> +			     sizeof(union ufs_crypto_cfg_entry),
-> +			     GFP_KERNEL);
-> +	if (!hba->crypto_cfgs) {
-> +		err = -ENOMEM;
-> +		goto out_cfg_mem;
-> +	}
-
-Nit: use 'sizeof(hba->crypto_cfgs[0])' rather than 'sizeof(union
-ufs_crypto_cfg_entry)', for consistency with the other array allocation.
-
-Thanks,
-
-- Eric
+Jason
