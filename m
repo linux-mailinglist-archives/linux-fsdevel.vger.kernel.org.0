@@ -2,92 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F1BF4379C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:00:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C8B43779
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 16:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732861AbfFMPAW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 11:00:22 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49828 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732590AbfFMOt6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:49:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WMyyxODgsxZ/XkDr48HWA7aTA4P32ySnPu90ZE1usUA=; b=SvRYAM6V25RdXhhsF2XFD/myCy
-        xb90MjFff+RemiPe/zmVRTwQhoIo5cqAF2taZi8MUOejdLT1cBDi4MzIr/OkvNaoWh9WPy78Y9iGa
-        km6RgOwE7MG8qQFY13YKdOYFyn6V6JWac8/2o05TV/mDxP5THfZdU34j/GMH7AaMmOqeVG5aDRGck
-        dbH6tYpypSW4SkNfYadSbfEYCHgblPGISG5mOtez1Wu92EQCQWKUOcaDGfrR2/Ic2uOjlu72PANeR
-        IrYhaIbx5gzo/xLXBtkiC/5kXhTzhv1AERPNvZZ0goFmnYWMrfD555r42SloB+Sv1bvNB2b5jQhg3
-        MQHwsJRQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbR35-0004ea-Lj; Thu, 13 Jun 2019 14:49:55 +0000
-Subject: Re: [PATCH 02/13] uapi: General notification ring definitions [ver
- #4]
-To:     David Howells <dhowells@redhat.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <6b6f5bb0-1426-239b-ac9f-281e31ddcd04@infradead.org>
- <20190607151228.GA1872258@magnolia>
- <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk>
- <155991706083.15579.16359443779582362339.stgit@warthog.procyon.org.uk>
- <29222.1559922719@warthog.procyon.org.uk>
- <30226.1560432885@warthog.procyon.org.uk>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <575fa290-961f-8dcd-3b76-4608daa5ee0e@infradead.org>
-Date:   Thu, 13 Jun 2019 07:49:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <30226.1560432885@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1732641AbfFMO7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 10:59:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40622 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732610AbfFMOzJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 10:55:09 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AB71680494;
+        Thu, 13 Jun 2019 14:55:06 +0000 (UTC)
+Received: from jsavitz.bos.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F0F8D6061E;
+        Thu, 13 Jun 2019 14:55:00 +0000 (UTC)
+From:   Joel Savitz <jsavitz@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Joel Savitz <jsavitz@redhat.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Rafael Aquini <aquini@redhat.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4] fs/proc: add VmTaskSize field to /proc/$$/status
+Date:   Thu, 13 Jun 2019 10:54:50 -0400
+Message-Id: <1560437690-13919-1-git-send-email-jsavitz@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 13 Jun 2019 14:55:08 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/13/19 6:34 AM, David Howells wrote:
-> Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> What is the problem with inline functions in UAPI headers?
-> 
-> It makes compiler problems more likely; it increases the potential for name
-> collisions with userspace; it makes for more potential problems if the headers
-> are imported into some other language; and it's not easy to fix a bug in one
-> if userspace uses it, just in case fixing the bug breaks userspace.
-> 
-> Further, in this case, the first of Darrick's functions (calculating the
-> length) is probably reasonable, but the second is not.  It should crank the
-> tail pointer and then use that, but that requires 
-> 
->>>> Also, weird multiline comment style.
->>>
->>> Not really.
->>
->> Yes really.
-> 
-> No.  It's not weird.  If anything, the default style is less good for several
-> reasons.  I'm going to deal with this separately as I need to generate some
-> stats first.
-> 
-> David
-> 
+The kernel provides no architecture-independent mechanism to get the
+size of the virtual address space of a task (userspace process) without
+brute-force calculation. This patch allows a user to easily retrieve
+this value via a new VmTaskSize entry in /proc/$$/status.
 
-OK, maybe you are objecting to the word "weird."  So the multi-line comment style
-that you used is not the preferred Linux kernel multi-line comment style
-(except in networking code) [Documentation/process/coding-style.rst] that has been
-in effect for 20+ years AFAIK.
+Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+---
+ Documentation/filesystems/proc.txt | 2 ++
+ fs/proc/task_mmu.c                 | 2 ++
+ 2 files changed, 4 insertions(+)
 
-
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 66cad5c86171..1c6a912e3975 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -187,6 +187,7 @@ read the file /proc/PID/status:
+   VmLib:      1412 kB
+   VmPTE:        20 kb
+   VmSwap:        0 kB
++  VmTaskSize:	137438953468 kB
+   HugetlbPages:          0 kB
+   CoreDumping:    0
+   THP_enabled:	  1
+@@ -263,6 +264,7 @@ Table 1-2: Contents of the status files (as of 4.19)
+  VmPTE                       size of page table entries
+  VmSwap                      amount of swap used by anonymous private data
+                              (shmem swap usage is not included)
++ VmTaskSize                  size of task (userspace process) vm space
+  HugetlbPages                size of hugetlb memory portions
+  CoreDumping                 process's memory is currently being dumped
+                              (killing the process may lead to a corrupted core)
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 95ca1fe7283c..0af7081f7b19 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -74,6 +74,8 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+ 	seq_put_decimal_ull_width(m,
+ 		    " kB\nVmPTE:\t", mm_pgtables_bytes(mm) >> 10, 8);
+ 	SEQ_PUT_DEC(" kB\nVmSwap:\t", swap);
++	seq_put_decimal_ull_width(m,
++		    " kB\nVmTaskSize:\t", mm->task_size >> 10, 8);
+ 	seq_puts(m, " kB\n");
+ 	hugetlb_report_usage(m, mm);
+ }
 -- 
-~Randy
+2.18.1
+
