@@ -2,90 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA5B44679
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B81A4465E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:51:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393033AbfFMQwB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:52:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60620 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730127AbfFMDX2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jun 2019 23:23:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QaIPZk5fG08PMipK2ZOjFgNMkP7/mE5EU+2hsa7y6lY=; b=VCF/wqwvWCkPBIrvCaL/D3G8l
-        tHqc/P5TR0jF4odv4tFa+eZycXtANJYw8npQGw1u7+6Uv8D3dPL6PSPWSss02vOD3RMl8SN9UE9tE
-        pgdev89Cvk50mX8MdLQMFzWKjT9ybPnHlvymKlhrDcAdtq9BjKibIVkW+vernB9b/39/CVM/w8KPZ
-        7eNO6yjjUerdEhluGAkQcubSLK9G/8N4d5w54XxHTAPHR/5HqmRB4lPvHLnyja2+Z1QV2Pr2MBWyz
-        OHrDRVCwX8aCx5s1LcyskUetCbhRrlq1e3Hk4+o+Gp2Qi2Fokqvsf6H+CAZFG91Ylp4HPDaT6v01i
-        r9dkL+CUQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbGKe-0003os-RJ; Thu, 13 Jun 2019 03:23:20 +0000
-Date:   Wed, 12 Jun 2019 20:23:20 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190613032320.GG32656@bombadil.infradead.org>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
- <20190607110426.GB12765@quack2.suse.cz>
- <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
- <20190608001036.GF14308@dread.disaster.area>
- <20190612123751.GD32656@bombadil.infradead.org>
- <20190613002555.GH14363@dread.disaster.area>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S2392751AbfFMQvI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 12:51:08 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:42669 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730154AbfFMDgz (ORCPT
+        <rfc822;groupwise-linux-fsdevel@vger.kernel.org:9:1>);
+        Wed, 12 Jun 2019 23:36:55 -0400
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Wed, 12 Jun 2019 21:36:53 -0600
+Message-Id: <5D01C4CD020000F90006C06A@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.1.1 
+Date:   Wed, 12 Jun 2019 21:36:45 -0600
+From:   "Gang He" <ghe@suse.com>
+To:     "Randy Dunlap" <rdunlap@infradead.org>, <akpm@linux-foundation.org>
+Cc:     <sfr@canb.auug.org.au>, <broonie@kernel.org>, <linux-mm@kvack.org>,
+        "Joseph Qi" <joseph.qi@linux.alibaba.com>,
+        <ocfs2-devel@oss.oracle.com>, <mhocko@suse.cz>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-next@vger.kernel.org>, <mm-commits@vger.kernel.org>
+Subject: Re: [Ocfs2-devel] mmotm 2019-06-11-16-59 uploaded (ocfs2)
+References: <20190611235956.4FZF6%akpm@linux-foundation.org>
+ <492b4bcc-4760-7cbb-7083-9f22e7ab4b82@infradead.org>
+ <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
+In-Reply-To: <20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Content-Disposition: inline
-In-Reply-To: <20190613002555.GH14363@dread.disaster.area>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
-> On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
-> > That's rather different from the normal meaning of 'exclusive' in the
-> > context of locks, which is "only one user can have access to this at
-> > a time".
+Hello Randy and Andrew,
+
+>>> On 6/13/2019 at  9:18 am, in message
+<20190612181813.48ad05832e05f767e7116d7b@linux-foundation.org>, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Wed, 12 Jun 2019 07:15:30 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
 > 
-> Layout leases are not locks, they are a user access policy object.
-> It is the process/fd which holds the lease and it's the process/fd
-> that is granted exclusive access.  This is exactly the same semantic
-> as O_EXCL provides for granting exclusive access to a block device
-> via open(), yes?
+>> On 6/11/19 4:59 PM, akpm@linux-foundation.org wrote:
+>> > The mm-of-the-moment snapshot 2019-06-11-16-59 has been uploaded to
+>> > 
+>> >    
+> https://urldefense.proofpoint.com/v2/url?u=http-3A__www.ozlabs.org_-7Eakpm_ 
+> mmotm_&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0
+> vmU6X8CMk6L2iDY8-HD0qT6Fo7Y&m=zWoF0Bft4OzQeAaZXMGI56DN7p9MjLynOay4PZYAlhQ&s=vYme
+> DBOk3Nv08-ZA7IweIdaUk094Ldvmgzc20fjjzDs&e=
+>> > 
+>> > mmotm-readme.txt says
+>> > 
+>> > README for mm-of-the-moment:
+>> > 
+>> > 
+> https://urldefense.proofpoint.com/v2/url?u=http-3A__www.ozlabs.org_-7Eakpm_mmo 
+> tm_&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=C7gAd4uDxlAvTdc0vmU
+> 6X8CMk6L2iDY8-HD0qT6Fo7Y&m=zWoF0Bft4OzQeAaZXMGI56DN7p9MjLynOay4PZYAlhQ&s=vYmeDBO
+> k3Nv08-ZA7IweIdaUk094Ldvmgzc20fjjzDs&e=
+>> > 
+>> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> > more than once a week.
+>> 
+>> 
+>> on i386:
+>> 
+>> ld: fs/ocfs2/dlmglue.o: in function `ocfs2_dlm_seq_show':
+>> dlmglue.c:(.text+0x46e4): undefined reference to `__udivdi3'
+> 
+> Thanks.  This, I guess:
+> 
+> --- a/fs/ocfs2/dlmglue.c~ocfs2-add-locking-filter-debugfs-file-fix
+> +++ a/fs/ocfs2/dlmglue.c
+> @@ -3115,7 +3115,7 @@ static int ocfs2_dlm_seq_show(struct seq
+>  		 * otherwise, only dump the last N seconds active lock
+>  		 * resources.
+>  		 */
+> -		if ((now - last) / 1000000 > dlm_debug->d_filter_secs)
+> +		if (div_u64(now - last, 1000000) > dlm_debug->d_filter_secs)
+>  			return 0;
+>  	}
+>  #endif
+> 
+> review and test, please?
+Thank for this fix, the change is OK for my testing on x86_64.
 
-This isn't my understanding of how RDMA wants this to work, so we should
-probably clear that up before we get too far down deciding what name to
-give it.
+Thanks
+Gang
 
-For the RDMA usage case, it is entirely possible that both process A
-and process B which don't know about each other want to perform RDMA to
-file F.  So there will be two layout leases active on this file at the
-same time.  It's fine for IOs to simultaneously be active to both leases.
-But if the filesystem wants to move blocks around, it has to break
-both leases.
+> 
+> _______________________________________________
+> Ocfs2-devel mailing list
+> Ocfs2-devel@oss.oracle.com 
+> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
 
-If Process C tries to do a write to file F without a lease, there's no
-problem, unless a side-effect of the write would be to change the block
-mapping, in which case either the leases must break first, or the write
-must be denied.
-
-Jason, please correct me if I've misunderstood the RDMA needs here.
