@@ -2,103 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24F0843870
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:06:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40E3B4386C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:06:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732943AbfFMPFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 11:05:54 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46783 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732432AbfFMOMh (ORCPT
+        id S1732495AbfFMPFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 11:05:47 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40282 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732438AbfFMON2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:12:37 -0400
-Received: by mail-qt1-f193.google.com with SMTP id h21so22648411qtn.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 07:12:36 -0700 (PDT)
+        Thu, 13 Jun 2019 10:13:28 -0400
+Received: by mail-io1-f67.google.com with SMTP id n5so17181076ioc.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 07:13:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GDhqdSFdNrJkUzLZKLANjMrDzCWc+1BFxgZR9EoSJWc=;
-        b=o9ysYyAYYAkKDCEjOpEcA8dHcyUIgiishqyzWE+RGyB0CPD0qX9BMV8V2Ph7rpuhQ2
-         K8NR9n3H2e8PDC40efcl/XPNsZvrJzaA26yNoknpyzgEflgHS0LCRUJZDIxSiwaskZOx
-         wVtjRQyVJFXdvVLENdH2e5X3E+kNGZusxml91Hhgrxkdi0137ew7YVLbQca3LK9zF88/
-         ajD2LpyQ70yJdzGRaInaMTvnMegeomU9tWJ7wrO/cd9dwWrkG3s41kbgxjMsoVvaBYhS
-         JdQZnPb7pa+AfGg8+n8JdN/2O+vKRsl7thrK0YyHBoE/x0JUOpZD1nFq32wrn+4+Pmlh
-         8wdA==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ehkJYWC1p94ZapNpY1eAcwZHNv2DdSb1jRkL6CQmSXc=;
+        b=XzV9xpChVBAa9jqtcQ66PwrzgArnW79YoNikn4QKmOORtfYCNARNhku1YV8k8pRd0+
+         TpBceZrFLMj5ZWbnm89SpTimND8ZZ/i1NpGKPvDFFV7+kY5PhvA3deJRh1t1MviBz8d6
+         2WgvYrKsRmPboQ59Dsf3w67lwDKzEGbhgPQXM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GDhqdSFdNrJkUzLZKLANjMrDzCWc+1BFxgZR9EoSJWc=;
-        b=XanSfCrhbPhtdx6fb5MXFAvAiUMFC8C7HNr0Wcz03PD55F4IJcY7ragadu3xsWNQGF
-         FA4rhEko6yP9OiJcI1eN0/1Fli7sFw2f7LEwUowvYoIANGGGroa4SmvfJLeFkXq7aBwU
-         sjSKmKHaqJYYbHYdOIUoqi2QdOYW5YwpD96/hnJP2dvg7cr1vHPjGhCAqOnuPgTu1Esi
-         MjsF4hc4o42pcBjk1/zATyvYGLyK/JXVQ5DE2kGKK3Qm1Muoho4ZHFG3tzqOmgNmNOnh
-         +/v7hAixdE20CQM0PyVCUtgdt7ouwquq6Npn4BgADehgeaDAiy8zvVaR2LJ91hOOGML8
-         C7pw==
-X-Gm-Message-State: APjAAAVybOuLkOPeedGkl0CP/edYD3TBO0cBDPd+XdiwmBluAPOkPmOI
-        OI6Dq9uRdxt3yWAm8BxKpHIS0w==
-X-Google-Smtp-Source: APXvYqxb/kePzso30q0J3LDebGmnh0NZA/pxwsejwKpoIHkaoRXf9QORb3+scacfUjYllSbAb0hUTg==
-X-Received: by 2002:ac8:18f0:: with SMTP id o45mr74804877qtk.273.1560435156338;
-        Thu, 13 Jun 2019 07:12:36 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::9d6b])
-        by smtp.gmail.com with ESMTPSA id k15sm1394975qtg.22.2019.06.13.07.12.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 07:12:35 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 10:12:34 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
-        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        linux-fsdevel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 09/19] btrfs: limit super block locations in HMZONED mode
-Message-ID: <20190613141232.nud7gqz622ewcyzp@MacBook-Pro-91.local>
-References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190607131025.31996-10-naohiro.aota@wdc.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ehkJYWC1p94ZapNpY1eAcwZHNv2DdSb1jRkL6CQmSXc=;
+        b=t4keGdVRDsIq05MrDHv6B3RYK8uzBPg9rsy5WsKX+1jT6+0ad/3sNIX9fl7o18rysu
+         xbOlsAS+2IVHoQLUi1kpD7apRJ+GibmfcITv9MGEdPRsb0Hf6lkyMPnDBqqUO6wC/dm1
+         jnKT8BYovhv/5PATjtH74+Be2zhNpwlCHh6IIXhxVT/mw/C5ieweh/maqAJ0ScsBvYHr
+         saNUw+VhuIgunN2LLelrbSoS3Q/5fIqxh9wnxa8fKwhGppH9QyLO1L/Kbn7XIp4tHSu0
+         0opa9UbgYR3Uurbo76IoiPFsulCviUNlp/Wpju2f6rgyBwzJKXhiP/JfFTr9kK0+dk70
+         jwzA==
+X-Gm-Message-State: APjAAAUc/x54BgqR0hHWlbKXRo4zOESNLj1Ej1RUjBD3EoLTNzTcW/nh
+        n5ILivPo76v7xvQ/wQLkwioaIFq2L2Cc6SgMHBxMTQ==
+X-Google-Smtp-Source: APXvYqy6WRYvdHLq+gy5VPmn46gTLcUDrorQB67zOqyoIHFBd6FWkOmz9cXztOtlGThbC8W7OtdrbIjOIR3xeRUcdgc=
+X-Received: by 2002:a5e:8618:: with SMTP id z24mr54385645ioj.174.1560435207415;
+ Thu, 13 Jun 2019 07:13:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607131025.31996-10-naohiro.aota@wdc.com>
-User-Agent: NeoMutt/20180716
+References: <20190612172408.22671-1-amir73il@gmail.com> <20190612183156.GA27576@fieldses.org>
+In-Reply-To: <20190612183156.GA27576@fieldses.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 13 Jun 2019 16:13:15 +0200
+Message-ID: <CAJfpegvj0NHQrPcHFd=b47M-uz2CY6Hnamk_dJvcrUtwW65xBw@mail.gmail.com>
+Subject: Re: [PATCH v2] locks: eliminate false positive conflicts for write lease
+To:     "J . Bruce Fields" <bfields@fieldses.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        linux-fsdevel@vger.kernel.org,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 10:10:15PM +0900, Naohiro Aota wrote:
-> When in HMZONED mode, make sure that device super blocks are located in
-> randomly writable zones of zoned block devices. That is, do not write super
-> blocks in sequential write required zones of host-managed zoned block
-> devices as update would not be possible.
-> 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> ---
->  fs/btrfs/disk-io.c     | 11 +++++++++++
->  fs/btrfs/disk-io.h     |  1 +
->  fs/btrfs/extent-tree.c |  4 ++++
->  fs/btrfs/scrub.c       |  2 ++
->  4 files changed, 18 insertions(+)
-> 
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index 7c1404c76768..ddbb02906042 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -3466,6 +3466,13 @@ struct buffer_head *btrfs_read_dev_super(struct block_device *bdev)
->  	return latest;
->  }
->  
-> +int btrfs_check_super_location(struct btrfs_device *device, u64 pos)
-> +{
-> +	/* any address is good on a regular (zone_size == 0) device */
-> +	/* non-SEQUENTIAL WRITE REQUIRED zones are capable on a zoned device */
+On Wed, Jun 12, 2019 at 8:31 PM J . Bruce Fields <bfields@fieldses.org> wrote:
+>
+> How do opens for execute work?  I guess they create a struct file with
+> FMODE_EXEC and FMODE_RDONLY set and they decrement i_writecount.  Do
+> they also increment i_readcount?  Reading do_open_execat and alloc_file,
+> looks like it does, so, good, they should conflict with write leases,
+> which sounds right.
 
-This is not how you do multi-line comments in the kernel.  Thanks,
+Right, but then why this:
 
-Josef
+> > +     /* Eliminate deny writes from actual writers count */
+> > +     if (wcount < 0)
+> > +             wcount = 0;
+
+It's basically a no-op, as you say.  And it doesn't make any sense
+logically, since denying writes *should* deny write leases as well...
+
+Thanks,
+Miklos
