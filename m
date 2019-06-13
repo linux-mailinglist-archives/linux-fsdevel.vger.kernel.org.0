@@ -2,81 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94FE043ED7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:53:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E327C43EB7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 17:53:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732402AbfFMPxV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 11:53:21 -0400
-Received: from foss.arm.com ([217.140.110.172]:36722 "EHLO foss.arm.com"
+        id S2389779AbfFMPwY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 11:52:24 -0400
+Received: from relay.sw.ru ([185.231.240.75]:35994 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731617AbfFMJDQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 05:03:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8B92367;
-        Thu, 13 Jun 2019 02:03:15 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22DCB3F694;
-        Thu, 13 Jun 2019 02:03:15 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 10:03:06 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: fsmount: add missing mntget()
-Message-ID: <20190613090305.GA40885@lakrids.cambridge.arm.com>
-References: <20190610183031.GE63833@gmail.com>
- <20190612184313.143456-1-ebiggers@kernel.org>
+        id S1731641AbfFMJKM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 05:10:12 -0400
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.92)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1hbLkG-0008MK-5e; Thu, 13 Jun 2019 12:10:08 +0300
+Subject: Re: [PATCH v2 1/3] fs/fuse, splice_write: Don't access pipe->buffers
+ without pipe_lock()
+To:     Vlastimil Babka <vbabka@suse.cz>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <CAJfpegvAAQTAjxLcQLefvFOQDJ6ug_G8Jggt=UZci+YnNP741A@mail.gmail.com>
+ <20180717160035.9422-1-aryabinin@virtuozzo.com>
+ <b7aceb99-9631-cbcf-fdec-3abef72c949d@suse.cz>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <3fcf7f4f-a9c0-f9c8-f526-ab12e283cd43@virtuozzo.com>
+Date:   Thu, 13 Jun 2019 12:10:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612184313.143456-1-ebiggers@kernel.org>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <b7aceb99-9631-cbcf-fdec-3abef72c949d@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 11:43:13AM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+
+
+On 6/12/19 11:57 AM, Vlastimil Babka wrote:
+> On 7/17/18 6:00 PM, Andrey Ryabinin wrote:
+>> fuse_dev_splice_write() reads pipe->buffers to determine the size of
+>> 'bufs' array before taking the pipe_lock(). This is not safe as
+>> another thread might change the 'pipe->buffers' between the allocation
+>> and taking the pipe_lock(). So we end up with too small 'bufs' array.
+>>
+>> Move the bufs allocations inside pipe_lock()/pipe_unlock() to fix this.
+>>
+>> Fixes: dd3bb14f44a6 ("fuse: support splice() writing to fuse device")
+>> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+>> Cc: <stable@vger.kernel.org>
 > 
-> sys_fsmount() needs to take a reference to the new mount when adding it
-> to the anonymous mount namespace.  Otherwise the filesystem can be
-> unmounted while it's still in use, as found by syzkaller.
+> BTW, why don't we need to do the same in fuse_dev_splice_read()?
 > 
-> Reported-by: Mark Rutland <mark.rutland@arm.com>
-> Reported-by: syzbot+99de05d099a170867f22@syzkaller.appspotmail.com
-> Reported-by: syzbot+7008b8b8ba7df475fdc8@syzkaller.appspotmail.com
-> Fixes: 93766fbd2696 ("vfs: syscall: Add fsmount() to create a mount for a superblock")
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-With this patch applied, my reproducer from [1] no longer triggers the
-issue. I polled /proc/meminfo, and don't see any leak. FWIW:
+do_splice() already takes the pipe_lock() before calling ->splice_read()
 
-Tested-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks for fixing this!
-
-Mark.
-
-[1] https://lore.kernel.org/lkml/20190605135401.GB30925@lakrids.cambridge.arm.com/
-
-> ---
->  fs/namespace.c | 1 +
->  1 file changed, 1 insertion(+)
+> Thanks,
+> Vlastimil
 > 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index b26778bdc236e..5dc137a22d406 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -3445,6 +3445,7 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
->  	ns->root = mnt;
->  	ns->mounts = 1;
->  	list_add(&mnt->mnt_list, &ns->list);
-> +	mntget(newmount.mnt);
->  
->  	/* Attach to an apparent O_PATH fd with a note that we need to unmount
->  	 * it, not just simply put it.
-> -- 
-> 2.22.0.rc2.383.gf4fbbf30c2-goog
+>> ---
+>>  fs/fuse/dev.c | 7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+>> index c6b88fa85e2e..702592cce546 100644
+>> --- a/fs/fuse/dev.c
+>> +++ b/fs/fuse/dev.c
+>> @@ -1944,12 +1944,15 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
+>>  	if (!fud)
+>>  		return -EPERM;
+>>  
+>> +	pipe_lock(pipe);
+>> +
+>>  	bufs = kmalloc_array(pipe->buffers, sizeof(struct pipe_buffer),
+>>  			     GFP_KERNEL);
+>> -	if (!bufs)
+>> +	if (!bufs) {
+>> +		pipe_unlock(pipe);
+>>  		return -ENOMEM;
+>> +	}
+>>  
+>> -	pipe_lock(pipe);
+>>  	nbuf = 0;
+>>  	rem = 0;
+>>  	for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
+>>
 > 
