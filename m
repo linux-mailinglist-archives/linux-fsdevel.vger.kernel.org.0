@@ -2,166 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB4CC44724
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 18:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12310448CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jun 2019 19:12:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730904AbfFMQ5V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 12:57:21 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:35157 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732430AbfFMQ5U (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:57:20 -0400
-Received: by mail-yb1-f196.google.com with SMTP id v17so8128977ybm.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jun 2019 09:57:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fEjnMzfA3Hv1ozzthCse/fQV+F5H9Bjmjys7If1K+ZQ=;
-        b=GRoD/Oz9s/SMjATDeRqd+McD5yeHRXzYd3k5crBTXdaXxD1cwG+h5YBfaWeYObjoQ6
-         OzfNtWLpaYtA2e1fLIPBaG6c403qYDA9mHpUTzAuxG9G3O/789UsgUV+DQpWCz46Ohz8
-         sXkStCerG5vjXybbnZ6FogN77H5c8O31XmNk8q/dM6reFdZDDDAblfB/Jq3Lxf47d/kq
-         C74S5jnP1fpIGxTPch1cWHdgMrprXk6WKDMFkhowpG+Mj2vWgEVabnqvpW2SlQKURUU6
-         rg+2YFQz+KsYMY4Yfo5r7z94HOWawfahOG6af/BtFbUpdxjBraN2HkFCBsF/I32nerkI
-         tUoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fEjnMzfA3Hv1ozzthCse/fQV+F5H9Bjmjys7If1K+ZQ=;
-        b=RilozdBe313NMJRANKKLGxbxQRhnGuJlWubZDmKKinmoCjxtmgPtLVbqtpG22fMhpZ
-         3auINFZaJhPGyWcm8hwG9bvlOTDVgpq44Rkp3iT1yCnie1E08Nq+VjJIEVsrvyseW1n0
-         lQ3gY6RINXIc+z1XoWsfEwuyA6+iOmw+oxmiSPzpr1iyPLYACOyZT0QKLq6/I0xxIzeW
-         ZIus1E7AfF2KYhmPZzcskh95C7jBAUgR0TogoFU7zaqRE1MdTXyyXnwMxBOrlnFHFfIn
-         IgYjb0BQ8qpK9o0TOmFRqkxkuFfHBycIk9z03OeV6Ng9Rqd/1JYYo5/a/KXjhEIcH3ZS
-         4gLA==
-X-Gm-Message-State: APjAAAXPWh7JSwp4IicdGVTpR1gernee1NyOdel21Xfk8NJBdf1iuf74
-        OVODNFRRlgnCRJ6kLx9drFEUs25mC+VtbNcBIdI=
-X-Google-Smtp-Source: APXvYqxu9GKAm29nyl5U0qBIi/xI22YgFenFXuqCo+Vf+7wU+9qGldWegftYnXJrmlw+qzb1Pl2uqydbcJmLZcRWjCk=
-X-Received: by 2002:a25:d946:: with SMTP id q67mr42216892ybg.126.1560445039670;
- Thu, 13 Jun 2019 09:57:19 -0700 (PDT)
+        id S1729356AbfFMRLV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jun 2019 13:11:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54244 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729166AbfFMRLR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Jun 2019 13:11:17 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CF022063F;
+        Thu, 13 Jun 2019 17:11:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560445875;
+        bh=FBWMxYgWxiNu6570dn7YwBKk4jtYzSoOQbyjngxdWio=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=onyQ0TF6UDHFdLqBxVbYoaq8Vmetqt3XjxdkKH0dS0Gl8rOx6CanWFVNqTD5fhlPW
+         CmhHjh0De9XgMRHLmahJfqiLW0NbrhZWZXtRyjPTdqDxYTvTI0JiEhV0DUFGfC4ypv
+         Ebrd89F9zTt1JacElWfJJLosLuVPvJO62FCNDpVc=
+Date:   Thu, 13 Jun 2019 10:11:13 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Parshuram Raju Thombare <pthombar@cadence.com>,
+        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>
+Subject: Re: [RFC PATCH v2 5/8] scsi: ufs: UFS crypto API
+Message-ID: <20190613171113.GB686@sol.localdomain>
+References: <20190605232837.31545-1-satyat@google.com>
+ <20190605232837.31545-6-satyat@google.com>
 MIME-Version: 1.0
-References: <20190526143411.11244-1-amir73il@gmail.com> <20190526143411.11244-9-amir73il@gmail.com>
- <CAOQ4uxi+1xQW5eoH7r18DHjvQQyKeMGq2Qtbe1hcxtcmqA_hAg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxi+1xQW5eoH7r18DHjvQQyKeMGq2Qtbe1hcxtcmqA_hAg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 13 Jun 2019 19:57:08 +0300
-Message-ID: <CAOQ4uxiCOa0+wKwaVrg=0_Gyc5yxhkutOCP6rFFrXN+b8G_WnQ@mail.gmail.com>
-Subject: Re: [PATCH v3 08/10] configfs: call fsnotify_rmdir() hook
-To:     Christoph Hellwig <hch@lst.de>, Joel Becker <jlbec@evilplan.org>,
-        Jan Kara <jack@suse.cz>
-Cc:     David Sterba <dsterba@suse.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190605232837.31545-6-satyat@google.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 30, 2019 at 9:06 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Sun, May 26, 2019 at 5:34 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > This will allow generating fsnotify delete events on unregister
-> > of group/subsystem after the fsnotify_nameremove() hook is removed
-> > from d_delete().
-> >
-> > The rest of the d_delete() calls from this filesystem are either
-> > called recursively from within debugfs_unregister_{group,subsystem},
-> > called from a vfs function that already has delete hooks or are
-> > called from shutdown/cleanup code.
-> >
-> > Cc: Joel Becker <jlbec@evilplan.org>
-> > Cc: Christoph Hellwig <hch@lst.de>
->
-> Hi Christoph and Joel,
->
-> Per Christoph's request, I cc'ed you guys on the entire patch series
-> for context,
-> so my discussion with Greg [1] about the special status of configfs in
-> this patch set
-> should already be somewhere in your mailboxes...
->
-> Could I ask you to provide an ACK on this patch and on the chosen
+Hi Satya,
 
-PING.
-Any comment from configfs maintainers?
+On Wed, Jun 05, 2019 at 04:28:34PM -0700, Satya Tangirala wrote:
+> Introduce functions to manipulate UFS inline encryption hardware
+> in line with the JEDEC UFSHCI v2.1 specification and to work with the
+> block keyslot manager.
+> 
+> Signed-off-by: Satya Tangirala <satyat@google.com>
+> ---
+>  drivers/scsi/ufs/Kconfig         |  10 +
+>  drivers/scsi/ufs/Makefile        |   1 +
+>  drivers/scsi/ufs/ufshcd-crypto.c | 438 +++++++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd-crypto.h |  69 +++++
+>  4 files changed, 518 insertions(+)
+>  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
+>  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
+> 
 
-Jan,
+There is a build error after this patch because it adds code that uses the
+crypto fields in struct ufs_hba, but those aren't added until the next patch.
 
-We can also drop this patch from the series given that configs has no
-explicit fsnotify create hooks. If users come shouting, we can add
-the missing create and delete hooks.
+It needs to be possible to compile a working kernel after each patch.
+Otherwise it breaks bisection.
+
+So, perhaps add the fields in this patch instead.
+
+> +++ b/drivers/scsi/ufs/ufshcd-crypto.c
+> @@ -0,0 +1,438 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2019 Google LLC
+> + */
+> +
+> +#include <crypto/algapi.h>
+> +
+> +#include "ufshcd.h"
+> +#include "ufshcd-crypto.h"
+> +
+> +bool ufshcd_hba_is_crypto_supported(struct ufs_hba *hba)
+> +{
+> +	return hba->crypto_capabilities.reg_val != 0;
+> +}
+> +
+> +bool ufshcd_is_crypto_enabled(struct ufs_hba *hba)
+> +{
+> +	return hba->caps & UFSHCD_CAP_CRYPTO;
+> +}
+> +
+> +static bool ufshcd_cap_idx_valid(struct ufs_hba *hba, unsigned int cap_idx)
+> +{
+> +	return cap_idx < hba->crypto_capabilities.num_crypto_cap;
+> +}
+> +
+> +#define NUM_KEYSLOTS(hba) (hba->crypto_capabilities.config_count + 1)
+> +
+> +bool ufshcd_keyslot_valid(struct ufs_hba *hba, unsigned int slot)
+> +{
+> +	/*
+> +	 * The actual number of configurations supported is (CFGC+1), so slot
+> +	 * numbers range from 0 to config_count inclusive.
+> +	 */
+> +	return slot < NUM_KEYSLOTS(hba);
+> +}
+
+Since ufshcd_hba_is_crypto_supported(), ufshcd_is_crypto_enabled(), and
+ufshcd_keyslot_valid() are one-liners, don't access any private structures, and
+are used outside this file including on the command submission path, how about
+making them inline functions in ufshcd-crypto.h?
+
+> +
+> +static int ufshcd_crypto_alg_find(void *hba_p,
+> +			   enum blk_crypt_mode_num crypt_mode,
+> +			   unsigned int data_unit_size)
+> +{
+
+Now that the concept of "crypto alg IDs" is gone, rename this to
+ufshcd_crypto_cap_find() and rename the crypto_alg_id variables to cap_idx.
+
+This would make it consistent with using cap_idx elsewhere in the code and avoid
+confusion with ufs_crypto_cap_entry::algorithm_id.
+
+> +
+> +static int ufshcd_crypto_keyslot_program(void *hba_p, const u8 *key,
+> +					 enum blk_crypt_mode_num crypt_mode,
+> +					 unsigned int data_unit_size,
+> +					 unsigned int slot)
+> +{
+> +	struct ufs_hba *hba = hba_p;
+> +	int err = 0;
+> +	u8 data_unit_mask;
+> +	union ufs_crypto_cfg_entry cfg;
+> +	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
+> +	int crypto_alg_id;
+> +
+> +	crypto_alg_id = ufshcd_crypto_alg_find(hba_p, crypt_mode,
+> +					       data_unit_size);
+> +
+> +	if (!ufshcd_is_crypto_enabled(hba) ||
+> +	    !ufshcd_keyslot_valid(hba, slot) ||
+> +	    !ufshcd_cap_idx_valid(hba, crypto_alg_id))
+> +		return -EINVAL;
+> +
+> +	data_unit_mask = get_data_unit_size_mask(data_unit_size);
+> +
+> +	if (!(data_unit_mask &
+> +	      hba->crypto_cap_array[crypto_alg_id].sdus_mask))
+> +		return -EINVAL;
+
+Nit: the 'if' expression with data_unit_mask fits on one line.
+
+> +static int ufshcd_crypto_keyslot_find(void *hba_p,
+> +				      const u8 *key,
+> +				      enum blk_crypt_mode_num crypt_mode,
+> +				      unsigned int data_unit_size)
+> +{
+> +	struct ufs_hba *hba = hba_p;
+> +	int err = 0;
+> +	int slot;
+> +	u8 data_unit_mask;
+> +	union ufs_crypto_cfg_entry cfg;
+> +	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
+> +	int crypto_alg_id;
+> +
+> +	crypto_alg_id = ufshcd_crypto_alg_find(hba_p, crypt_mode,
+> +					       data_unit_size);
+> +
+> +	if (!ufshcd_is_crypto_enabled(hba) ||
+> +	    !ufshcd_cap_idx_valid(hba, crypto_alg_id))
+> +		return -EINVAL;
+> +
+> +	data_unit_mask = get_data_unit_size_mask(data_unit_size);
+> +
+> +	if (!(data_unit_mask &
+> +	      hba->crypto_cap_array[crypto_alg_id].sdus_mask))
+> +		return -EINVAL;
+
+Same here.
+
+> +	for (slot = 0; slot < NUM_KEYSLOTS(hba); slot++) {
+> +		if ((cfg_arr[slot].config_enable &
+> +		     UFS_CRYPTO_CONFIGURATION_ENABLE) &&
+> +		    data_unit_mask == cfg_arr[slot].data_unit_size &&
+> +		    crypto_alg_id == cfg_arr[slot].crypto_cap_idx &&
+> +		    crypto_memneq(&cfg.crypto_key, cfg_arr[slot].crypto_key,
+> +				  UFS_CRYPTO_KEY_MAX_SIZE) == 0) {
+> +			memzero_explicit(&cfg, sizeof(cfg));
+> +			return slot;
+> +		}
+> +	}
+
+Nit: as I've mentioned before, I think !crypto_memneq() is easier to read than
+'crypto_memneq() == 0'.
+
+> +	hba->crypto_cap_array =
+> +		devm_kcalloc(hba->dev,
+> +			     hba->crypto_capabilities.num_crypto_cap,
+> +			     sizeof(hba->crypto_cap_array[0]),
+> +			     GFP_KERNEL);
+> +	if (!hba->crypto_cap_array) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	hba->crypto_cfgs =
+> +		devm_kcalloc(hba->dev,
+> +			     hba->crypto_capabilities.config_count + 1,
+> +			     sizeof(union ufs_crypto_cfg_entry),
+> +			     GFP_KERNEL);
+> +	if (!hba->crypto_cfgs) {
+> +		err = -ENOMEM;
+> +		goto out_cfg_mem;
+> +	}
+
+Nit: use 'sizeof(hba->crypto_cfgs[0])' rather than 'sizeof(union
+ufs_crypto_cfg_entry)', for consistency with the other array allocation.
 
 Thanks,
-Amir.
 
-> policy. To recap:
-> Before patch set:
-> 1. User gets create/delete events when files/dirs created/removed via vfs_*()
-> 2. User does *not* get create events when files/dirs created via
-> debugfs_register_*()
-> 3. User *does* get delete events when files/dirs removed via
-> debugfs_unregister_*()
->
-> After patch set:
-> 1. No change
-> 2. No change
-> 3. User will get delete events only on the root group/subsystem dir
-> when tree is removed via debugfs_unregister_*()
->
-> For symmetry, we could also add create events for  root group/subsystem dir
-> when tree is created via debugfs_unregister_*(), but that would be a
-> followup patch.
-> For users though, it may be that delete events are more important than
-> create events
-> (i.e. for user cleanup tasks).
->
-> Thanks,
-> Amir.
->
-> [1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjyg5AVPrcR4bPm4zMY9BKmgV8g7TAuH--cfKNJv8pRYQ@mail.gmail.com/
->
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/configfs/dir.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
-> > index 5e7932d668ab..ba17881a8d84 100644
-> > --- a/fs/configfs/dir.c
-> > +++ b/fs/configfs/dir.c
-> > @@ -27,6 +27,7 @@
-> >  #undef DEBUG
-> >
-> >  #include <linux/fs.h>
-> > +#include <linux/fsnotify.h>
-> >  #include <linux/mount.h>
-> >  #include <linux/module.h>
-> >  #include <linux/slab.h>
-> > @@ -1804,6 +1805,7 @@ void configfs_unregister_group(struct config_group *group)
-> >         configfs_detach_group(&group->cg_item);
-> >         d_inode(dentry)->i_flags |= S_DEAD;
-> >         dont_mount(dentry);
-> > +       fsnotify_rmdir(d_inode(parent), dentry);
-> >         d_delete(dentry);
-> >         inode_unlock(d_inode(parent));
-> >
-> > @@ -1932,6 +1934,7 @@ void configfs_unregister_subsystem(struct configfs_subsystem *subsys)
-> >         configfs_detach_group(&group->cg_item);
-> >         d_inode(dentry)->i_flags |= S_DEAD;
-> >         dont_mount(dentry);
-> > +       fsnotify_rmdir(d_inode(root), dentry);
-> >         inode_unlock(d_inode(dentry));
-> >
-> >         d_delete(dentry);
-> > --
-> > 2.17.1
-> >
+- Eric
