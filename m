@@ -2,112 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69D0B4600B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 16:07:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6603A4607E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 16:20:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728716AbfFNOHK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 10:07:10 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43485 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727382AbfFNOHK (ORCPT
+        id S1728514AbfFNOUL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 10:20:11 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:50363 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728285AbfFNOUL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:07:10 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i189so1520525pfg.10;
-        Fri, 14 Jun 2019 07:07:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LJg9268+LDPIRhGrkFTLGpEAlX1lCnLtO8bJQ4QN05M=;
-        b=QJy/6MnsHsECy1HYz/rqZ3HHq3OQroAc6nX9BCwm9YFf2YbvaicxGQ6bvxsH5aqSZa
-         6yEn9yuIgjL95131ax2bk6Pe0PoU3AeVPdqf2QS1c19ftcVhh5zHh1wq7wvqwGxu4MvP
-         O4s1ytatGdrM1WwgTMFFgxxyEVplOnOrE3ydAcx+o9F1Dw3n5E4uHMbJqtLK8zKEJjmY
-         42i0Umlo3Z+ig8IkvNchp8izRNDzR4Mr6YoT9wb5iO+PuscND4uR+e/Fq6S8mKsFykpB
-         bInllyf25qaS7Vgi5WvgHtvepVsxg+HmjvOEycPObi0biMGp1BsUEqhg0MSF2oaKEN8V
-         hpOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LJg9268+LDPIRhGrkFTLGpEAlX1lCnLtO8bJQ4QN05M=;
-        b=rRQfi4eOIYRHtLcmGARFp/JWGvoHqxOQRTz86tUVhFb+u4Qcrg3pMLjDcYQbW33Yy7
-         ZbOA4fyGxmcFwGSTh1oLMOFUnNuIqJESZWJS80zwsiY+ojaOojy0RijuqCJO0JUTaSpE
-         jD+hjQ5RLW1n5ANg0dR0UhRMBP85kQEfmNJDd3qUC2LOKKb4FZcEzUwCUGg/ne8ANJuy
-         NUKGl7Dch5/doIInl0fpBAyk+u4eSO+jLr8xFNmSONIKnkjTnrJZZiY4xN6DQfTbuj54
-         RdE8v8j8UMtvRINRp6l6aIaiD4BPGcI3Rq0T3CTeerX5d4o/KhcEjARjvBX9t1JiayGC
-         IZLg==
-X-Gm-Message-State: APjAAAVX8iLJT+MShvgQ3lgQbOPReFpzKupXw13BNhUXCUi89dkCea6x
-        SyryCSsUjuzbTnttIVdwMH+SXWoZQ9U=
-X-Google-Smtp-Source: APXvYqzcEOiZIn73KTG+EBoUQLrcnli4yGKqfYpCbo2WD10sB9flhtjQ3YZWE5gdb0osUBpoEcTbUA==
-X-Received: by 2002:a62:1ec1:: with SMTP id e184mr8001336pfe.185.1560521229311;
-        Fri, 14 Jun 2019 07:07:09 -0700 (PDT)
-Received: from [172.27.227.167] ([216.129.126.118])
-        by smtp.googlemail.com with ESMTPSA id i3sm3418766pfo.138.2019.06.14.07.07.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 07:07:08 -0700 (PDT)
-Subject: Re: [PATCH net] mpls: fix af_mpls dependencies
-To:     Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>
-Cc:     Matteo Croce <mcroce@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-References: <20190608125019.417-1-mcroce@redhat.com>
- <20190609.195742.739339469351067643.davem@davemloft.net>
- <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org>
- <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
- <49b58181-90da-4ee4-cbb0-80e226d040fc@infradead.org>
- <CAK8P3a1mwnDFeD3xnQ6bm1x8C6yX=YEccxN2jknvTbRiCfD=Bg@mail.gmail.com>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <47f1889a-e919-e3fd-f90c-39c26cb1ccbb@gmail.com>
-Date:   Fri, 14 Jun 2019 08:07:06 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Fri, 14 Jun 2019 10:20:11 -0400
+Received: from [192.168.1.110] ([77.4.92.40]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MS1G7-1i3agl3c7v-00TTps; Fri, 14 Jun 2019 16:20:08 +0200
+Subject: Re: Help with reviewing dosfstools patches
+To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
+        util-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190614102513.4uwsu2wkigg3pimq@pali>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <ae5097ee-12af-2807-d48c-4274b4fc856d@metux.net>
+Date:   Fri, 14 Jun 2019 16:20:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1mwnDFeD3xnQ6bm1x8C6yX=YEccxN2jknvTbRiCfD=Bg@mail.gmail.com>
+In-Reply-To: <20190614102513.4uwsu2wkigg3pimq@pali>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:2LLNQoGhbONM7cyzksFdRnDRrWxFja1lcyXQZkHp6CWWemZOkKF
+ pc3fUTvjvOWenMaUP08jTJaD4bFmIqeyEpnapbLFd+NB5wEGkJnc1wiR5RbM0n1wrJ1Atsn
+ 8sUteMyz4dUAuL11lg6U6vOe/AAZZpsjzILFkfAaNlF2EkcYP041m/+du6ucu1QI8wSz/QA
+ pbZU69Ng0PVKjkhBm4lZw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:aQchCXy9btw=:9Qws8XsyQdvFbXHq9LjVfm
+ GzRTHRtG+vO9hkB8LN9NLXAiEbsmpSpPglc34dCBVvRiQ+FuxwHxWsXcdJ78KV/Cq7gUia/ym
+ ZR1BcplPcOlPbB/wc7goEdiypd9Y4m7lHO/lUzRl2ToJZ/6+0udruO91lh3tpnnRRTxiM2yqR
+ 9NsQW3aSJ4lKZItnGYyCEDI1CWTb1DvHanEzPFKVTRNA7cmzJc/tgZUyR9XSr3fC239eRzZHY
+ sbAfC8WcGu4iiMFz1OY0t4TWbhjEYer9n+tFO+3Mjg0+tOvJxVlbEDU0Ak0ZIAd2IdH+k4CcR
+ xC8ksBUf6ptFcGfkYFAVCNiO83RTZkLsv8VOHcW41PhG06VB0ux6ZI4GXwnjPktGMZneS18VC
+ zckfodNus0nc6r1li4t8cx7XhA0cIdn3PvTWAkdailUvk2rcVX3B9N0Q3mNqkhringMkwWMUV
+ 5r3Emo8SsoJXESmTaMSBWWWFgrskjbEIEBlHQsQsgJywpsyI94pxRoUexuEMjxiJbrbUQFjNh
+ oumJwpQ2j8o4CDp8Pr4WdbRfWekD/Xoh0pwznRmBF2eaLZ43PzrWMnG22wSb39Y+KK/p3miCr
+ ysz1lrzKgvZ/TKtPkkKkBe3B4lEWHkznP1pRpXtzemsguvq5F8knyyIdEqaWwUaNhcG03+qqL
+ DZyQxmO8/mBVNlDG57OGX//wcDN/3U7oFNSTv1KZfo1cyReG6tcfWKdDXNYJ6qbuwCIkmxjLP
+ wJZ3oMpg/mZBS7hQRSaQ7SMD/3/+PDXlxy9wGeN2rLvcz7mAtCVNMBqaFlM=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/14/19 8:01 AM, Arnd Bergmann wrote:
-> On Wed, Jun 12, 2019 at 9:41 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 6/11/19 5:08 PM, Matteo Croce wrote:
->>> On Wed, Jun 12, 2019 at 1:07 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->>> * Configure standard kernel features (expert users)
->>> *
->>> Configure standard kernel features (expert users) (EXPERT) [Y/?] y
->>>   Multiple users, groups and capabilities support (MULTIUSER) [Y/n/?] y
->>>   sgetmask/ssetmask syscalls support (SGETMASK_SYSCALL) [N/y/?] n
->>>   Sysfs syscall support (SYSFS_SYSCALL) [N/y/?] n
->>>   Sysctl syscall support (SYSCTL_SYSCALL) [N/y/?] (NEW)
->>
->> So I still say that MPLS_ROUTING should depend on PROC_SYSCTL,
->> not select it.
+On 14.06.19 12:25, Pali Rohár wrote:
+> Hello!
 > 
-> It clearly shouldn't select PROC_SYSCTL, but I think it should not
-> have a 'depends on' statement either. I think the correct fix for the
-> original problem would have been something like
-> 
-> --- a/net/mpls/af_mpls.c
-> +++ b/net/mpls/af_mpls.c
-> @@ -2659,6 +2659,9 @@ static int mpls_net_init(struct net *net)
->         net->mpls.ip_ttl_propagate = 1;
->         net->mpls.default_ttl = 255;
-> 
-> +       if (!IS_ENABLED(CONFIG_PROC_SYSCTL))
-> +               return 0;
-> +
->         table = kmemdup(mpls_table, sizeof(mpls_table), GFP_KERNEL);
->         if (table == NULL)
->                 return -ENOMEM;
-> 
+> Can somebody help with reviewing existing patches / pull requests for
+> dosfstools project? https://github.com/dosfstools/dosfstools/pulls
 
-Without sysctl, the entire mpls_router code is disabled. So if sysctl is
-not enabled there is no point in building this file.
+I'll have a look at it. Could you perhaps prepare a (rebased) patch
+queue ?
+
+Does the project already have a maillist ?
+
+
+--mtx
+
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
