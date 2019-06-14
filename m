@@ -2,98 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5433D46237
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 17:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1780446333
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 17:45:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbfFNPKw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 11:10:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56798 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725834AbfFNPKw (ORCPT
+        id S1726105AbfFNPpY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 11:45:24 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:33267 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbfFNPpX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:10:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mE9NtdIMLtRYrJYsPVWIdYlP8QGELtHjDgLDViKfFl8=; b=FnqdDZiJoa/hEZr3Y2wAtAUvW
-        RwDKcxBcqFY2c4fPRp6dSp+IE8gwtLiBGpdqJHcJmQvP+4Ydz77mape5I6u1BOJPd61R25r3sE1Uq
-        Wsu8q691aQtts8MORMHhDzbud0v3H9nwLCsJZQ9FeadiPcbNDKVkGJkTUgMY27NGkZwebeaGufkjc
-        FYFyjqmMpwzysLyHIAAogDRhsHYoQ+Gifq4FFht8alnljAOYi/gKzwpdRNMAaaZ+9Ea6vwAjo3KZC
-        +A+uix0ZXF6suPpy6TiGQsXZeuTTHRG0i2hNhQR9tuor/hc3xiQYTTfy4JEylUiV4lzI7oUjXqisS
-        5KamCY3rg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbnqt-00089R-Jx; Fri, 14 Jun 2019 15:10:51 +0000
-Subject: Re: [PATCH net] mpls: fix af_mpls dependencies
-To:     Arnd Bergmann <arnd@arndb.de>, David Ahern <dsahern@gmail.com>
-Cc:     Matteo Croce <mcroce@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-References: <20190608125019.417-1-mcroce@redhat.com>
- <20190609.195742.739339469351067643.davem@davemloft.net>
- <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org>
- <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
- <49b58181-90da-4ee4-cbb0-80e226d040fc@infradead.org>
- <CAK8P3a1mwnDFeD3xnQ6bm1x8C6yX=YEccxN2jknvTbRiCfD=Bg@mail.gmail.com>
- <47f1889a-e919-e3fd-f90c-39c26cb1ccbb@gmail.com>
- <CAK8P3a0w3K1O23616g3Nz4XQdgw-xHDPWSQ+Rb_O3VAy-3FnQg@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <dd09f750-5001-d7e4-8ef7-15bfcb29ee10@infradead.org>
-Date:   Fri, 14 Jun 2019 08:10:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 14 Jun 2019 11:45:23 -0400
+Received: from [192.168.1.110] ([77.4.92.40]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MD9nd-1hkMym2NO5-0098ca; Fri, 14 Jun 2019 17:45:21 +0200
+Subject: Re: Help with reviewing dosfstools patches
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
+        util-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190614102513.4uwsu2wkigg3pimq@pali>
+ <ae5097ee-12af-2807-d48c-4274b4fc856d@metux.net>
+Organization: metux IT consult
+Message-ID: <9e81aa56-358a-71e1-edc1-50781062f3a4@metux.net>
+Date:   Fri, 14 Jun 2019 17:45:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0w3K1O23616g3Nz4XQdgw-xHDPWSQ+Rb_O3VAy-3FnQg@mail.gmail.com>
+In-Reply-To: <ae5097ee-12af-2807-d48c-4274b4fc856d@metux.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:qac5b9bV7zvSd7iQ4X0pCft/q2EJPLi7mfSiZbmTpE0sPDGhAC1
+ VRNMAmKV36VozMyK3rWKT7sjIpddFXl8+8x2CHvrKhpMbxmYzvl1NoVwe571TmeQEecoPdd
+ DovXLwbrtAq9WZLC19n+ZGnf3x/CaScxt6QLWiVlIAiPBzjVWmrfKAxWf0pmdnqSlv6YL4w
+ 6DvyI6Ff0MTUYJXdgdC8Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:wjdDE5rA/mI=:gEuP1f7JUa24CM5jb4oOe+
+ sD2m3zN9pW1yiixDOZ+/BJ5JIiHUV92VLznT91iaUp9iTozKGSTvf33nVmAhwSUQUDNMFrLou
+ 1SKVnufEN40n5extwnYZ80cr1GG4JBZ4TD+ZwFFw0E7amq1OiGoQbV/aP/hFD0P7AvitkEwfK
+ +XocfTWUMhz+pWh9taQMupi9XRo/vBiypNXHxw3FJUO0CEjUDUOrt/20l9D8z3fnhym/2cjRE
+ QcUof+png9r7t2Hbc3J4IL+Jygn+oqmmG7thzGEA4KM7dymvY393GSPE9jvAXOcUMoGyqii6v
+ zRnP7HEORP7tOFtgtz3Ubx2OAvAr8OXrDgUqmzB5iN4I40+rywJMzOpN4cA2y/DRtDEaYh/Y9
+ DinhCpaBT9A4Q2gaj0D6IUFzBhs0IjJNzW1carOcebqe+u5GUyK4PnEYDT3U8Vekn4oauv+iH
+ z+3qoV8hm7swc73sB7s+TmXbSDbAreprvWtGZNuFddY9wszKgoC1xbUPR9JeO6R1r4QGzSee4
+ ucHRPC5pdAJSpd+bTB3g6shDdEH9MYuj+e8EwHK0s+cUMoEKPLKEDzZeUvT+zilPMfiU9qpCw
+ B1kveLg4HX62JhFUcQhpFBMTvRzmsP6LLy8qQxJwjz+ZanHfCUx0t9lZzWQA3D025WBVjWB9I
+ SjLhPmnFmQX9yZ6i24fwR354nhbPOguOXE3Gl2YVC268xO2zMaMRkiT4IuxOtUQB6l/4BWFBX
+ vbTqY8ANnKyjH2TUx/IU3zaxRR3S9TYqDWTHGoPokFtgOCLZm9+dBJW/7M8=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/14/19 7:26 AM, Arnd Bergmann wrote:
-> On Fri, Jun 14, 2019 at 4:07 PM David Ahern <dsahern@gmail.com> wrote:
->> On 6/14/19 8:01 AM, Arnd Bergmann wrote:
->>> On Wed, Jun 12, 2019 at 9:41 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->>>> On 6/11/19 5:08 PM, Matteo Croce wrote:
->>>
->>> It clearly shouldn't select PROC_SYSCTL, but I think it should not
->>> have a 'depends on' statement either. I think the correct fix for the
->>> original problem would have been something like
->>>
->>> --- a/net/mpls/af_mpls.c
->>> +++ b/net/mpls/af_mpls.c
->>> @@ -2659,6 +2659,9 @@ static int mpls_net_init(struct net *net)
->>>         net->mpls.ip_ttl_propagate = 1;
->>>         net->mpls.default_ttl = 255;
->>>
->>> +       if (!IS_ENABLED(CONFIG_PROC_SYSCTL))
->>> +               return 0;
->>> +
->>>         table = kmemdup(mpls_table, sizeof(mpls_table), GFP_KERNEL);
->>>         if (table == NULL)
->>>                 return -ENOMEM;
->>>
->>
->> Without sysctl, the entire mpls_router code is disabled. So if sysctl is
->> not enabled there is no point in building this file.
-> 
-> Ok, I see.
-> 
-> There are a couple of other drivers that use 'depends on SYSCTL',
-> which may be the right thing to do here. In theory, one can still
-> build a kernel with CONFIG_SYSCTRL_SYSCALL=y and no
-> procfs.
+On 14.06.19 16:20, Enrico Weigelt, metux IT consult wrote:
 
-Yes, that makes sense.
+<snip>
+
+Currently working through your branches. Smells like they really deserve
+a rebase and signed-off lines.
+
+
+--mtx
 
 -- 
-~Randy
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
