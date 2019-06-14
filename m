@@ -2,90 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E48E6460AB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 16:26:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C88A6460C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 16:31:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbfFNO0e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 10:26:34 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41906 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728050AbfFNO0e (ORCPT
+        id S1728374AbfFNOaz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 10:30:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55502 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728121AbfFNOaz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:26:34 -0400
-Received: by mail-qt1-f193.google.com with SMTP id 33so2643854qtr.8;
-        Fri, 14 Jun 2019 07:26:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fsH/gim6l6XO8QfAbuJALk4V1gTdlhygBm6XyVxI9qg=;
-        b=jfpFSeAQUlfIBpExHyjmqaCtIM2EwUfLpZAkckzOUPiTdDiKYp8K7fiOemtmwiq3jq
-         I+txdOa8Dvk7DoCUWiRs2jkOX3od8w2VWuLj/vXR4/hQ8CPNlrGEUe4BuxY/wgOZv8No
-         XKVQAut6yLbzNUotLe7cA+wmMzbGuYkBpKgQrbL1UQWatwSdis20WiZSSUMgESokzvdW
-         1GcsUS+0AeL7OANQd0M13Zp73mXmsDNSDNRIksg7xHbQSf53cGupF5/e+xlJNicFYx8j
-         yDDhSHa6bvOhvsap9plPjddqYXSzuWAqnfbpszChjzjzsm/c0PoaHeTVH0pXdNasNIVZ
-         O5Vw==
-X-Gm-Message-State: APjAAAV5v4LBj+W09YDXUGN5maogq1DArfOmJDOaOAvMIey6lm5zI//J
-        +jcJqfnCrfHcMISRJ6/aPVeweudA+RVXYtmPUObM/A6e
-X-Google-Smtp-Source: APXvYqxXhm7TnuxtaEh9KXMmRib1D32rPPmeRe/uOuM/a+gnrmMNxZtrulilU22MG6n4lcM7rLKib+JuXvUF08xN6qk=
-X-Received: by 2002:aed:33a4:: with SMTP id v33mr46597878qtd.18.1560522393205;
- Fri, 14 Jun 2019 07:26:33 -0700 (PDT)
+        Fri, 14 Jun 2019 10:30:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=g+j545IMwIJikYLXl8ImiYVIWrJ6ceFqhokOAsJBX7s=; b=cM786c65V4kkuIngazZnMLV984
+        naip0mPWhZac9mKV9KODwN08xWW4C000ncgC8+c0HPnIlOHcIATtO/rCFwxw70GeCrODf9MynGlvh
+        6m38ZTtpfwldKgVCKRdbotYqvsYbdCsBJnRgnSqK+drvHDChY7ql/bSEhL4ZbIMeobeyLLPzerQfm
+        xHBc8WISsqWEavTN7ZZcOZlG+o1BpXrSOq2ChfgU6BBy2DXHlMEGTjTRAphi9hJ9a2jp9wt9SPoOi
+        XIeND7qTYR8tnCPWjaBkFDVBUprrR5Xu8E2nTkHEPpQJnI0FucO52NlI13y8iXV70oLxZQeK0sIn8
+        jmilIPbQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbnEC-0000KR-UG; Fri, 14 Jun 2019 14:30:52 +0000
+Date:   Fri, 14 Jun 2019 07:30:52 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        util-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Help with reviewing dosfstools patches
+Message-ID: <20190614143052.GA21822@infradead.org>
+References: <20190614102513.4uwsu2wkigg3pimq@pali>
+ <ae5097ee-12af-2807-d48c-4274b4fc856d@metux.net>
+ <20190614142534.4obcytnq4v3ejdni@pali>
 MIME-Version: 1.0
-References: <20190608125019.417-1-mcroce@redhat.com> <20190609.195742.739339469351067643.davem@davemloft.net>
- <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org> <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
- <49b58181-90da-4ee4-cbb0-80e226d040fc@infradead.org> <CAK8P3a1mwnDFeD3xnQ6bm1x8C6yX=YEccxN2jknvTbRiCfD=Bg@mail.gmail.com>
- <47f1889a-e919-e3fd-f90c-39c26cb1ccbb@gmail.com>
-In-Reply-To: <47f1889a-e919-e3fd-f90c-39c26cb1ccbb@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 14 Jun 2019 16:26:14 +0200
-Message-ID: <CAK8P3a0w3K1O23616g3Nz4XQdgw-xHDPWSQ+Rb_O3VAy-3FnQg@mail.gmail.com>
-Subject: Re: [PATCH net] mpls: fix af_mpls dependencies
-To:     David Ahern <dsahern@gmail.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Matteo Croce <mcroce@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190614142534.4obcytnq4v3ejdni@pali>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 4:07 PM David Ahern <dsahern@gmail.com> wrote:
-> On 6/14/19 8:01 AM, Arnd Bergmann wrote:
-> > On Wed, Jun 12, 2019 at 9:41 AM Randy Dunlap <rdunlap@infradead.org> wrote:
-> >> On 6/11/19 5:08 PM, Matteo Croce wrote:
-> >
-> > It clearly shouldn't select PROC_SYSCTL, but I think it should not
-> > have a 'depends on' statement either. I think the correct fix for the
-> > original problem would have been something like
-> >
-> > --- a/net/mpls/af_mpls.c
-> > +++ b/net/mpls/af_mpls.c
-> > @@ -2659,6 +2659,9 @@ static int mpls_net_init(struct net *net)
-> >         net->mpls.ip_ttl_propagate = 1;
-> >         net->mpls.default_ttl = 255;
-> >
-> > +       if (!IS_ENABLED(CONFIG_PROC_SYSCTL))
-> > +               return 0;
-> > +
-> >         table = kmemdup(mpls_table, sizeof(mpls_table), GFP_KERNEL);
-> >         if (table == NULL)
-> >                 return -ENOMEM;
-> >
->
-> Without sysctl, the entire mpls_router code is disabled. So if sysctl is
-> not enabled there is no point in building this file.
+On Fri, Jun 14, 2019 at 04:25:34PM +0200, Pali Rohár wrote:
+> > Does the project already have a maillist ?
+> 
+> No, there is no mailing list. Basically whole development is on github
+> via github pull requests where are also put review comments and where is
+> also whole discussion, including bug reports.
 
-Ok, I see.
-
-There are a couple of other drivers that use 'depends on SYSCTL',
-which may be the right thing to do here. In theory, one can still
-build a kernel with CONFIG_SYSCTRL_SYSCALL=y and no
-procfs.
-
-        Arnd
+That could explain why it is lacking qualified reviewers..
