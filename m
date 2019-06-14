@@ -2,130 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87D274565C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 09:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7295D457E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 10:52:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726344AbfFNHb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 03:31:57 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:54640 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725846AbfFNHb4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 03:31:56 -0400
-Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4FFEC1AD6C8;
-        Fri, 14 Jun 2019 17:31:51 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hbgfl-0007DD-JD; Fri, 14 Jun 2019 17:30:53 +1000
-Date:   Fri, 14 Jun 2019 17:30:53 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Dave Chinner <dchinner@redhat.com>,
+        id S1726072AbfFNIw0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 04:52:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48512 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725951AbfFNIw0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Jun 2019 04:52:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F13A3B02E;
+        Fri, 14 Jun 2019 08:52:23 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: pagecache locking (was: bcachefs status update) merged)
-Message-ID: <20190614073053.GQ14363@dread.disaster.area>
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
- <20190611011737.GA28701@kmo-pixel>
- <20190611043336.GB14363@dread.disaster.area>
- <20190612162144.GA7619@kmo-pixel>
- <20190612230224.GJ14308@dread.disaster.area>
- <20190613183625.GA28171@kmo-pixel>
- <20190613235524.GK14363@dread.disaster.area>
- <CAHk-=wj3SQjfHHvE_CNrQAYS2p7bsC=OXEc156cHA_ujyaG0NA@mail.gmail.com>
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] ceph: copy_file_range needs to strip setuid bits and update timestamps
+References: <20190610174007.4818-1-amir73il@gmail.com>
+        <ed2e4b5d26890e96ba9dafcb3dba88427e36e619.camel@kernel.org>
+        <87zhml7ada.fsf@suse.com>
+        <38f6f71f6be0b5baaea75417aa4bcf072e625567.camel@kernel.org>
+Date:   Fri, 14 Jun 2019 09:52:21 +0100
+In-Reply-To: <38f6f71f6be0b5baaea75417aa4bcf072e625567.camel@kernel.org> (Jeff
+        Layton's message of "Thu, 13 Jun 2019 13:48:42 -0400")
+Message-ID: <87v9x87dmi.fsf@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj3SQjfHHvE_CNrQAYS2p7bsC=OXEc156cHA_ujyaG0NA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
-        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
-        a=7-415B0cAAAA:8 a=N7bZJnSf5Z-prqCgXwgA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 04:30:36PM -1000, Linus Torvalds wrote:
-> On Thu, Jun 13, 2019 at 1:56 PM Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > That said, the page cache is still far, far slower than direct IO,
-> 
-> Bullshit, Dave.
-> 
-> You've made that claim before, and it's been complete bullshit before
-> too, and I've called you out on it then too.
+Jeff Layton <jlayton@kernel.org> writes:
 
-Yes, your last run of insulting rants on this topic resulted in me
-pointing out your CoC violations because you were unable to listen
-or discuss the subject matter in a civil manner. And you've started
-right where you left off last time....
+> On Thu, 2019-06-13 at 16:50 +0100, Luis Henriques wrote:
+>> Jeff Layton <jlayton@kernel.org> writes:
+>> 
+>> > On Mon, 2019-06-10 at 20:40 +0300, Amir Goldstein wrote:
+>> > > Because ceph doesn't hold destination inode lock throughout the copy,
+>> > > strip setuid bits before and after copy.
+>> > > 
+>> > > The destination inode mtime is updated before and after the copy and the
+>> > > source inode atime is updated after the copy, similar to the filesystem
+>> > > ->read_iter() implementation.
+>> > > 
+>> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>> > > ---
+>> > > 
+>> > > Hi Ilya,
+>> > > 
+>> > > Please consider applying this patch to ceph branch after merging
+>> > > Darrick's copy-file-range-fixes branch from:
+>> > >         git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+>> > > 
+>> > > The series (including this patch) was tested on ceph by
+>> > > Luis Henriques using new copy_range xfstests.
+>> > > 
+>> > > AFAIK, only fallback from ceph to generic_copy_file_range()
+>> > > implementation was tested and not the actual ceph clustered
+>> > > copy_file_range.
+>> > > 
+>> > > Thanks,
+>> > > Amir.
+>> > > 
+>> > >  fs/ceph/file.c | 17 +++++++++++++++++
+>> > >  1 file changed, 17 insertions(+)
+>> > > 
+>> > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> > > index c5517ffeb11c..b04c97c7d393 100644
+>> > > --- a/fs/ceph/file.c
+>> > > +++ b/fs/ceph/file.c
+>> > > @@ -1949,6 +1949,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>> > >  		goto out;
+>> > >  	}
+>> > >  
+>> > > +	/* Should dst_inode lock be held throughout the copy operation? */
+>> > > +	inode_lock(dst_inode);
+>> > > +	ret = file_modified(dst_file);
+>> > > +	inode_unlock(dst_inode);
+>> > > +	if (ret < 0) {
+>> > > +		dout("failed to modify dst file before copy (%zd)\n", ret);
+>> > > +		goto out;
+>> > > +	}
+>> > > +
+>> > 
+>> > I don't see anything that guarantees that the mode of the destination
+>> > file is up to date at this point. file_modified() just ends up checking
+>> > the mode cached in the inode.
+>> > 
+>> > I wonder if we ought to fix get_rd_wr_caps() to also acquire a reference
+>> > to AUTH_SHARED caps on the destination inode, and then call
+>> > file_modified() after we get those caps. That would also mean that we
+>> > wouldn't need to do this a second time after the copy.
+>> > 
+>> > The catch is that if we did need to issue a setattr, I'm not sure if
+>> > we'd need to release those caps first.
+>> > 
+>> > Luis, Zheng, thoughts?
+>> 
+>> Hmm... I missed that.  IIRC the FILE_WR caps allow to modify some
+>> metadata (such as timestamps, and file size).  I suppose it doesn't
+>> allow to cache the mode, does it? 
+>
+> No, W caps don't guarantee that the mode won't change. You need As or Ax
+> caps for that.
+>
+>>  If it does, fixing it would be a
+>> matter of moving the code a bit further down.  If it doesn't the
+>> ceph_copy_file_range function already has this problem, as it calls
+>> file_update_time.  And I wonder if other code paths have this problem
+>> too.
+>> 
+>
+> I think you mean file_remove_privs, but yes...the write codepath has a
+> similar problem. file_remove_privs is called before acquiring any caps,
+> so the same thing could happen there too.
+>
+> It'd be good to fix both places, but taking As cap references in the
+> write codepath could have performance impact in some cases. OTOH, they
+> don't change that much, so maybe that's OK.
+>
+>> Obviously, the chunk below will have the same problem.
+>> 
+>
+> Right. If however, we have this code take an As cap reference before
+> doing the copy, then we can be sure that the mode can't change until we
+> drop them. That way we wouldn't need the second call.
 
-> Why do you continue to make this obviously garbage argument?
-> 
-> The key word in the "page cache" name is "cache".
-> 
-> Caches work, Dave.
+So, do you think the patch below would be enough?  It's totally
+untested, but I wanted to know if that would be acceptable before
+running some tests on it.
 
-Yes, they do, I see plenty of cases where the page cache works just
-fine because it is still faster than most storage. But that's _not
-what I said_.
-
-Indeed, you haven't even bothered to ask me to clarify what I was
-refering to in the statement you quoted. IOWs, you've taken _one
-single statement_ I made from a huge email about complexities in
-dealing with IO concurency, the page cache and architectural flaws n
-the existing code, quoted it out of context, fabricated a completely
-new context and started ranting about how I know nothing about how
-caches or the page cache work.
-
-Not very professional but, unfortunately, an entirely predictable
-and _expected_ response.
-
-Linus, nobody can talk about direct IO without you screaming and
-tossing all your toys out of the crib. If you can't be civil or you
-find yourself writing a some condescending "caching 101" explanation
-to someone who has spent the last 15+ years working with filesystems
-and caches, then you're far better off not saying anything.
-
----
-
-So, in the interests of further _civil_ discussion, let me clarify
-my statement for you: for a highly concurrent application that is
-crunching through bulk data on large files on high throughput
-storage, the page cache is still far, far slower than direct IO.
-
-Which comes back to this statement you made:
-
-> Is direct IO faster when you *know* it's not cached, and shouldn't
-> be cached? Sure. But that/s actually quite rare. 
-
-This is where I think you get the wrong end of the stick, Linus.
-
-The world I work in has a significant proportion of applications
-where the data set is too large to be cached effectively or is
-better cached by the application than the kernel. IOWs, data being
-cached efficiently by the page cache is the exception rather than
-the rule. Hence, they use direct IO because it is faster than the
-page cache. This is common in applications like major enterprise
-databases, HPC apps, data mining/analysis applications, etc. and
-there's an awful lot of the world that runs on these apps....
-
--Dave.
+Cheers,
 -- 
-Dave Chinner
-david@fromorbit.com
+Luis
+
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index c5517ffeb11c..f6b0683dd8dc 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1949,6 +1949,21 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 		goto out;
+ 	}
+ 
++	ret = ceph_do_getattr(dst_inode, CEPH_CAP_AUTH_SHARED, false);
++	if (ret < 0) {
++		dout("failed to get auth caps on dst file (%zd)\n", ret);
++		goto out;
++	}
++
++	/* Should dst_inode lock be held throughout the copy operation? */
++	inode_lock(dst_inode);
++	ret = file_modified(dst_file);
++	inode_unlock(dst_inode);
++	if (ret < 0) {
++		dout("failed to modify dst file before copy (%zd)\n", ret);
++		goto out;
++	}
++
+ 	/*
+ 	 * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
+ 	 * clients may have dirty data in their caches.  And OSDs know nothing
