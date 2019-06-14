@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AFBF466AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 19:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21B1D466B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 19:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbfFNR7N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 13:59:13 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33008 "EHLO huawei.com"
+        id S1726980AbfFNR7n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 13:59:43 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33009 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726389AbfFNR7N (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:59:13 -0400
+        id S1726389AbfFNR7m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:59:42 -0400
 Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 8E24D53F4C2D688BC80F;
-        Fri, 14 Jun 2019 18:59:10 +0100 (IST)
+        by Forcepoint Email with ESMTP id 01142FA5D678E3CBCF56;
+        Fri, 14 Jun 2019 18:59:41 +0100 (IST)
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
  by smtpsuk.huawei.com (10.201.108.43) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Fri, 14 Jun 2019 18:59:00 +0100
+ 14.3.408.0; Fri, 14 Jun 2019 18:59:34 +0100
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
         <mjg59@google.com>
@@ -25,10 +25,12 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 00/14] ima: introduce IMA Digest Lists extension
-Date:   Fri, 14 Jun 2019 19:54:59 +0200
-Message-ID: <20190614175513.27097-1-roberto.sassu@huawei.com>
+Subject: [PATCH v4 01/14] ima: read hash algorithm from security.ima even if appraisal is not enabled
+Date:   Fri, 14 Jun 2019 19:55:00 +0200
+Message-ID: <20190614175513.27097-2-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190614175513.27097-1-roberto.sassu@huawei.com>
+References: <20190614175513.27097-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.204.65.154]
@@ -38,125 +40,197 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch set introduces a new IMA extension called IMA Digest Lists.
+IMA reads the hash algorithm from security.ima, if exists, so that a
+signature can be verified even if the algorithm used for the signature
+differs from IMA algorithm.
 
-At early boot, the extension preloads in kernel memory reference digest
-values, that can be compared with actual file digests when files are
-accessed in the system.
+This patch moves ima_read_xattr() and ima_get_hash_algo() to ima_main.c, to
+retrieve the algorithm even if appraisal is not enabled. Knowing the
+algorithm in advance would be useful also for measurement. The new Digest
+Lists extension does not add a new entry to the measurement list if the
+actual file digest is found in a loaded list. It might be possible that the
+algorithm used for the digest lists differs from IMA algorithm.
 
-The extension will open for new possibilities: PCR with predictable value,
-that can be used for sealing policies associated to data or TPM keys;
-appraisal based on reference digests already provided by Linux distribution
-vendors in the software packages.
+This patch also changes the requirement that security.ima must contain a
+signature, if the type is EVM_IMA_XATTR_DIGSIG. A signature with length
+zero is accepted.
 
-The first objective can be achieved because the PCR values does not depend
-on which and when files are measured: the extension measures digest lists
-sequentially and files whose digest is not in the digest list.
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima.h          | 16 --------
+ security/integrity/ima/ima_appraise.c | 55 ++-------------------------
+ security/integrity/ima/ima_main.c     | 51 +++++++++++++++++++++++++
+ 3 files changed, 55 insertions(+), 67 deletions(-)
 
-The second objective can be reached because the extension is able to
-extract reference measurements from packages (with a user space tool) and
-use it as a source for appraisal verification as the reference came from
-the security.ima xattr. This approach will also reduce the overhead as only
-one signature is verified for many files (as opposed to one signature for
-each file with the current implementation).
-
-This version of the patch set provides a clear separation between current
-and new functionality. First, the new functionality must be explicitly
-enabled from the kernel command line. Second, results of operations
-performed by the extension can be distinguished from those obtained from
-the existing code: measurement entries created by the extension have a
-different PCR; mutable files appraised with the extension have a different
-security.ima type.
-
-The review of this patch set should start from patch 11 and 12, which
-modify the IMA-Measure and IMA-Appraise submodules to use digest lists.
-Patch 1 to 5 are prerequisites. Patch 6 to 10 adds support for digest
-lists. Finally, patch 13 introduces two new policies to measure/appraise
-rootfs and patch 14 adds the documentation (including a flow chart to
-show how IMA has been modified).
-
-The user space tools to configure digest lists are available at:
-
-https://github.com/euleros/digest-list-tools/releases/tag/v0.3
-
-The patch set applies on top of linux-integrity/next-queued-testing
-(73589972b987).
-
-It is necessary to apply also:
-https://patchwork.kernel.org/cover/10957495/
-
-To use appraisal, it is necessary to use a modified cpio and a modified
-dracut:
-
-https://github.com/euleros/cpio/tree/xattr-v1
-https://github.com/euleros/dracut/tree/digest-lists
-
-For now, please use it only in a testing environment.
-
-
-Changelog
-
-v3:
-- move ima_lookup_loaded_digest() and ima_add_digest_data_entry() from
-  ima_queue.c to ima_digest_list.c
-- remove patch that introduces security.ima_algo
-- add version number and type modifiers to the compact list header
-- remove digest list metadata, all digest lists in the directory are
-  accessed
-- move loading of signing keys to user space
-- add violation for both PCRs if they are selected
-- introduce two new appraisal modes
-
-v2:
-- add support for multiple hash algorithms
-- remove RPM parser from the kernel
-- add support for parsing digest lists in user space
-
-v1:
-- add support for immutable/mutable files
-- add support for appraisal with digest lists
-
-
-Roberto Sassu (14):
-  ima: read hash algorithm from security.ima even if appraisal is not
-    enabled
-  ima: generalize ima_read_policy()
-  ima: generalize ima_write_policy() and raise uploaded data size limit
-  ima: generalize policy file operations
-  ima: use ima_show_htable_value to show violations and hash table data
-  ima: add parser of compact digest list
-  ima: restrict upload of converted digest lists
-  ima: prevent usage of digest lists that are not measured/appraised
-  ima: introduce new securityfs files
-  ima: load parser digests and execute the parser at boot time
-  ima: add support for measurement with digest lists
-  ima: add support for appraisal with digest lists
-  ima: introduce new policies initrd and appraise_initrd
-  ima: add Documentation/security/IMA-digest-lists.txt
-
- .../admin-guide/kernel-parameters.txt         |  16 +-
- Documentation/security/IMA-digest-lists.txt   | 226 +++++++++++++
- include/linux/evm.h                           |   6 +
- include/linux/fs.h                            |   1 +
- security/integrity/evm/evm_main.c             |   2 +-
- security/integrity/iint.c                     |   1 +
- security/integrity/ima/Kconfig                |  25 ++
- security/integrity/ima/Makefile               |   1 +
- security/integrity/ima/ima.h                  |  32 +-
- security/integrity/ima/ima_api.c              |  43 ++-
- security/integrity/ima/ima_appraise.c         |  92 +++---
- security/integrity/ima/ima_digest_list.c      | 309 ++++++++++++++++++
- security/integrity/ima/ima_digest_list.h      |  69 ++++
- security/integrity/ima/ima_fs.c               | 224 ++++++++-----
- security/integrity/ima/ima_init.c             |   2 +-
- security/integrity/ima/ima_main.c             |  81 ++++-
- security/integrity/ima/ima_policy.c           |  29 +-
- security/integrity/integrity.h                |  22 ++
- 18 files changed, 1018 insertions(+), 163 deletions(-)
- create mode 100644 Documentation/security/IMA-digest-lists.txt
- create mode 100644 security/integrity/ima/ima_digest_list.c
- create mode 100644 security/integrity/ima/ima_digest_list.h
-
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index ee509c68fe14..b4a0d2a02ff2 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -248,10 +248,6 @@ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func);
+ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file);
+ enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
+ 					   enum ima_hooks func);
+-enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
+-				 int xattr_len);
+-int ima_read_xattr(struct dentry *dentry,
+-		   struct evm_ima_xattr_data **xattr_value);
+ 
+ #else
+ static inline int ima_appraise_measurement(enum ima_hooks func,
+@@ -282,18 +278,6 @@ static inline enum integrity_status ima_get_cache_status(struct integrity_iint_c
+ 	return INTEGRITY_UNKNOWN;
+ }
+ 
+-static inline enum hash_algo
+-ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value, int xattr_len)
+-{
+-	return ima_hash_algo;
+-}
+-
+-static inline int ima_read_xattr(struct dentry *dentry,
+-				 struct evm_ima_xattr_data **xattr_value)
+-{
+-	return 0;
+-}
+-
+ #endif /* CONFIG_IMA_APPRAISE */
+ 
+ /* LSM based policy rules require audit */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 9b3b172f9748..2566dbfd2464 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -151,57 +151,6 @@ static void ima_cache_flags(struct integrity_iint_cache *iint,
+ 	}
+ }
+ 
+-enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
+-				 int xattr_len)
+-{
+-	struct signature_v2_hdr *sig;
+-	enum hash_algo ret;
+-
+-	if (!xattr_value || xattr_len < 2)
+-		/* return default hash algo */
+-		return ima_hash_algo;
+-
+-	switch (xattr_value->type) {
+-	case EVM_IMA_XATTR_DIGSIG:
+-		sig = (typeof(sig))xattr_value;
+-		if (sig->version != 2 || xattr_len <= sizeof(*sig))
+-			return ima_hash_algo;
+-		return sig->hash_algo;
+-		break;
+-	case IMA_XATTR_DIGEST_NG:
+-		ret = xattr_value->digest[0];
+-		if (ret < HASH_ALGO__LAST)
+-			return ret;
+-		break;
+-	case IMA_XATTR_DIGEST:
+-		/* this is for backward compatibility */
+-		if (xattr_len == 21) {
+-			unsigned int zero = 0;
+-			if (!memcmp(&xattr_value->digest[16], &zero, 4))
+-				return HASH_ALGO_MD5;
+-			else
+-				return HASH_ALGO_SHA1;
+-		} else if (xattr_len == 17)
+-			return HASH_ALGO_MD5;
+-		break;
+-	}
+-
+-	/* return default hash algo */
+-	return ima_hash_algo;
+-}
+-
+-int ima_read_xattr(struct dentry *dentry,
+-		   struct evm_ima_xattr_data **xattr_value)
+-{
+-	ssize_t ret;
+-
+-	ret = vfs_getxattr_alloc(dentry, XATTR_NAME_IMA, (char **)xattr_value,
+-				 0, GFP_NOFS);
+-	if (ret == -EOPNOTSUPP)
+-		ret = 0;
+-	return ret;
+-}
+-
+ /*
+  * ima_appraise_measurement - appraise file measurement
+  *
+@@ -226,6 +175,10 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	if (!(inode->i_opflags & IOP_XATTR))
+ 		return INTEGRITY_UNKNOWN;
+ 
++	if (xattr_len == sizeof(struct signature_v2_hdr) &&
++	    xattr_value->type == EVM_IMA_XATTR_DIGSIG)
++		rc = -ENODATA;
++
+ 	if (rc <= 0) {
+ 		if (rc && rc != -ENODATA)
+ 			goto out;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 0c49cf6470a4..dc53ed8b0dd0 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -143,6 +143,57 @@ static void ima_rdwr_violation_check(struct file *file,
+ 				  "invalid_pcr", "open_writers");
+ }
+ 
++static enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
++					int xattr_len)
++{
++	struct signature_v2_hdr *sig;
++	enum hash_algo ret;
++
++	if (!xattr_value || xattr_len < 2)
++		/* return default hash algo */
++		return ima_hash_algo;
++
++	switch (xattr_value->type) {
++	case EVM_IMA_XATTR_DIGSIG:
++		sig = (typeof(sig))xattr_value;
++		if (sig->version != 2 || xattr_len < sizeof(*sig))
++			return ima_hash_algo;
++		return sig->hash_algo;
++	case IMA_XATTR_DIGEST_NG:
++		ret = xattr_value->digest[0];
++		if (ret < HASH_ALGO__LAST)
++			return ret;
++		break;
++	case IMA_XATTR_DIGEST:
++		/* this is for backward compatibility */
++		if (xattr_len == 21) {
++			unsigned int zero = 0;
++
++			if (!memcmp(&xattr_value->digest[16], &zero, 4))
++				return HASH_ALGO_MD5;
++			else
++				return HASH_ALGO_SHA1;
++		} else if (xattr_len == 17)
++			return HASH_ALGO_MD5;
++		break;
++	}
++
++	/* return default hash algo */
++	return ima_hash_algo;
++}
++
++static int ima_read_xattr(struct dentry *dentry,
++			  struct evm_ima_xattr_data **xattr_value)
++{
++	ssize_t ret;
++
++	ret = vfs_getxattr_alloc(dentry, XATTR_NAME_IMA, (char **)xattr_value,
++				 0, GFP_NOFS);
++	if (ret == -EOPNOTSUPP)
++		ret = 0;
++	return ret;
++}
++
+ static void ima_check_last_writer(struct integrity_iint_cache *iint,
+ 				  struct inode *inode, struct file *file)
+ {
 -- 
 2.17.1
 
