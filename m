@@ -2,182 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F83D45314
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 05:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87D274565C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 09:31:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725884AbfFNDne (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jun 2019 23:43:34 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:53103 "EHLO
+        id S1726344AbfFNHb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 03:31:57 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:54640 "EHLO
         mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725616AbfFNDnd (ORCPT
+        by vger.kernel.org with ESMTP id S1725846AbfFNHb4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jun 2019 23:43:33 -0400
+        Fri, 14 Jun 2019 03:31:56 -0400
 Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 505E11AD622;
-        Fri, 14 Jun 2019 13:43:28 +1000 (AEST)
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4FFEC1AD6C8;
+        Fri, 14 Jun 2019 17:31:51 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92)
         (envelope-from <david@fromorbit.com>)
-        id 1hbd6k-0005oM-Ah; Fri, 14 Jun 2019 13:42:30 +1000
-Date:   Fri, 14 Jun 2019 13:42:30 +1000
+        id 1hbgfl-0007DD-JD; Fri, 14 Jun 2019 17:30:53 +1000
+Date:   Fri, 14 Jun 2019 17:30:53 +1000
 From:   Dave Chinner <david@fromorbit.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190614034230.GP14363@dread.disaster.area>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
- <20190607110426.GB12765@quack2.suse.cz>
- <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
- <20190608001036.GF14308@dread.disaster.area>
- <20190612123751.GD32656@bombadil.infradead.org>
- <20190612233024.GD14336@iweiny-DESK2.sc.intel.com>
- <20190613005552.GI14363@dread.disaster.area>
- <20190613203406.GB32404@iweiny-DESK2.sc.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: pagecache locking (was: bcachefs status update) merged)
+Message-ID: <20190614073053.GQ14363@dread.disaster.area>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611011737.GA28701@kmo-pixel>
+ <20190611043336.GB14363@dread.disaster.area>
+ <20190612162144.GA7619@kmo-pixel>
+ <20190612230224.GJ14308@dread.disaster.area>
+ <20190613183625.GA28171@kmo-pixel>
+ <20190613235524.GK14363@dread.disaster.area>
+ <CAHk-=wj3SQjfHHvE_CNrQAYS2p7bsC=OXEc156cHA_ujyaG0NA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190613203406.GB32404@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <CAHk-=wj3SQjfHHvE_CNrQAYS2p7bsC=OXEc156cHA_ujyaG0NA@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
         a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
         a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
-        a=7-415B0cAAAA:8 a=k35vKodN1J5BDQ_Sz-4A:9 a=CjuIK1q_8ugA:10
+        a=7-415B0cAAAA:8 a=N7bZJnSf5Z-prqCgXwgA:9 a=CjuIK1q_8ugA:10
         a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 01:34:06PM -0700, Ira Weiny wrote:
-> On Thu, Jun 13, 2019 at 10:55:52AM +1000, Dave Chinner wrote:
-> > On Wed, Jun 12, 2019 at 04:30:24PM -0700, Ira Weiny wrote:
-> > > On Wed, Jun 12, 2019 at 05:37:53AM -0700, Matthew Wilcox wrote:
-> > > > On Sat, Jun 08, 2019 at 10:10:36AM +1000, Dave Chinner wrote:
-> > > > > On Fri, Jun 07, 2019 at 11:25:35AM -0700, Ira Weiny wrote:
-> > > > > > Are you suggesting that we have something like this from user space?
-> > > > > > 
-> > > > > > 	fcntl(fd, F_SETLEASE, F_LAYOUT | F_UNBREAKABLE);
-> > > > > 
-> > > > > Rather than "unbreakable", perhaps a clearer description of the
-> > > > > policy it entails is "exclusive"?
-> > > > > 
-> > > > > i.e. what we are talking about here is an exclusive lease that
-> > > > > prevents other processes from changing the layout. i.e. the
-> > > > > mechanism used to guarantee a lease is exclusive is that the layout
-> > > > > becomes "unbreakable" at the filesystem level, but the policy we are
-> > > > > actually presenting to uses is "exclusive access"...
-> > > > 
-> > > > That's rather different from the normal meaning of 'exclusive' in the
-> > > > context of locks, which is "only one user can have access to this at
-> > > > a time".  As I understand it, this is rather more like a 'shared' or
-> > > > 'read' lock.  The filesystem would be the one which wants an exclusive
-> > > > lock, so it can modify the mapping of logical to physical blocks.
-> > > > 
-> > > > The complication being that by default the filesystem has an exclusive
-> > > > lock on the mapping, and what we're trying to add is the ability for
-> > > > readers to ask the filesystem to give up its exclusive lock.
-> > > 
-> > > This is an interesting view...
-> > > 
-> > > And after some more thought, exclusive does not seem like a good name for this
-> > > because technically F_WRLCK _is_ an exclusive lease...
-> > > 
-> > > In addition, the user does not need to take the "exclusive" write lease to be
-> > > notified of (broken by) an unexpected truncate.  A "read" lease is broken by
-> > > truncate.  (And "write" leases really don't do anything different WRT the
-> > > interaction of the FS and the user app.  Write leases control "exclusive"
-> > > access between other file descriptors.)
-> > 
-> > I've been assuming that there is only one type of layout lease -
-> > there is no use case I've heard of for read/write layout leases, and
-> > like you say there is zero difference in behaviour at the filesystem
-> > level - they all have to be broken to allow a non-lease truncate to
-> > proceed.
-> > 
-> > IMO, taking a "read lease" to be able to modify and write to the
-> > underlying mapping of a file makes absolutely no sense at all.
-> > IOWs, we're talking exaclty about a revokable layout lease vs an
-> > exclusive layout lease here, and so read/write really doesn't match
-> > the policy or semantics we are trying to provide.
+On Thu, Jun 13, 2019 at 04:30:36PM -1000, Linus Torvalds wrote:
+> On Thu, Jun 13, 2019 at 1:56 PM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > That said, the page cache is still far, far slower than direct IO,
 > 
-> I humbly disagree, at least depending on how you look at it...  :-D
+> Bullshit, Dave.
 > 
-> The patches as they stand expect the user to take a "read" layout lease which
-> indicates they are currently using "reading" the layout as is.
-> They are not
-> changing ("writing" to) the layout.
+> You've made that claim before, and it's been complete bullshit before
+> too, and I've called you out on it then too.
 
-As I said in a another email in the thread, a layout lease does not
-make the layout "read only". It just means the lease owner will be
-notified when someone else is about to modify it. The lease owner
-can modify the mapping themselves, and they will not get notified
-about their own modifications.
+Yes, your last run of insulting rants on this topic resulted in me
+pointing out your CoC violations because you were unable to listen
+or discuss the subject matter in a civil manner. And you've started
+right where you left off last time....
 
-> They then pin pages which locks parts of
-> the layout and therefore they expect no "writers" to change the layout.
-
-Except they can change the layout themselves. It's perfectly valid
-to get a layout lease, write() from offset 0 to EOF and fsync() to
-intiialise the file and allocate all the space in the file, then
-mmap() it and hand to off to RMDA, all while holding the layout
-lease.
-
-> The "write" layout lease breaks the "read" layout lease indicating that the
-> layout is being written to.
-
-Layout leases do not work this way.
-
-> In fact, this is what NFS does right now.  The lease it puts on the file is of
-> "read" type.
+> Why do you continue to make this obviously garbage argument?
 > 
-> nfs4layouts.c:
-> static int
-> nfsd4_layout_setlease(struct nfs4_layout_stateid *ls)
-> {
-> ...
->         fl->fl_flags = FL_LAYOUT;
->         fl->fl_type = F_RDLCK;
-> ...
-> }
+> The key word in the "page cache" name is "cache".
+> 
+> Caches work, Dave.
 
-Yes, the existing /implementation/ uses F_RDLCK, but that doesn't
-mean the layout is "read only". Look at the pNFS mapping layout code
-- the ->map_blocks export operation:
+Yes, they do, I see plenty of cases where the page cache works just
+fine because it is still faster than most storage. But that's _not
+what I said_.
 
-       int (*map_blocks)(struct inode *inode, loff_t offset,
-                          u64 len, struct iomap *iomap,
-                          bool write, u32 *device_generation);
-                          ^^^^^^^^^^
+Indeed, you haven't even bothered to ask me to clarify what I was
+refering to in the statement you quoted. IOWs, you've taken _one
+single statement_ I made from a huge email about complexities in
+dealing with IO concurency, the page cache and architectural flaws n
+the existing code, quoted it out of context, fabricated a completely
+new context and started ranting about how I know nothing about how
+caches or the page cache work.
 
-Yup, it has a write variable that, when set, causes the filesystem
-to _allocate_ blocks if the range to be written to falls over a hole
-in the file.  IOWs, a pNFS layout lease can modify the file layout -
-you're conflating use of a "read lock" API to mean that what the
-lease _manages_ is "read only". That is not correct.
+Not very professional but, unfortunately, an entirely predictable
+and _expected_ response.
 
-Layouts are /always writeable/ by the lease owner(s), the question
-here is what we do with third parties attempting to modify a layout
-covered by an "exclusive" layout lease. Hence, I'll repeat:
+Linus, nobody can talk about direct IO without you screaming and
+tossing all your toys out of the crib. If you can't be civil or you
+find yourself writing a some condescending "caching 101" explanation
+to someone who has spent the last 15+ years working with filesystems
+and caches, then you're far better off not saying anything.
 
-> > we're talking exaclty about a revokable layout lease vs an
-> > exclusive layout lease here, and so read/write really doesn't match
-> > the policy or semantics we are trying to provide.
+---
 
-Cheers,
+So, in the interests of further _civil_ discussion, let me clarify
+my statement for you: for a highly concurrent application that is
+crunching through bulk data on large files on high throughput
+storage, the page cache is still far, far slower than direct IO.
 
-Dave.
+Which comes back to this statement you made:
+
+> Is direct IO faster when you *know* it's not cached, and shouldn't
+> be cached? Sure. But that/s actually quite rare. 
+
+This is where I think you get the wrong end of the stick, Linus.
+
+The world I work in has a significant proportion of applications
+where the data set is too large to be cached effectively or is
+better cached by the application than the kernel. IOWs, data being
+cached efficiently by the page cache is the exception rather than
+the rule. Hence, they use direct IO because it is faster than the
+page cache. This is common in applications like major enterprise
+databases, HPC apps, data mining/analysis applications, etc. and
+there's an awful lot of the world that runs on these apps....
+
+-Dave.
 -- 
 Dave Chinner
 david@fromorbit.com
