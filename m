@@ -2,78 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 793C945A2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 12:17:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 777B345A54
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 12:25:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbfFNKRK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 06:17:10 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:51090 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfFNKRK (ORCPT
+        id S1727335AbfFNKZR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 06:25:17 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35917 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbfFNKZR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:17:10 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5EAGObb038267;
-        Fri, 14 Jun 2019 19:16:24 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Fri, 14 Jun 2019 19:16:24 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x5EAGHsZ038230
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 14 Jun 2019 19:16:24 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: [PATCH] kexec: Bail out upon SIGKILL when allocating memory.
-To:     Eric Biederman <ebiederm@xmission.com>
-References: <000000000000a861f6058b2699e0@google.com>
- <000000000000c0103a058b2ba0ec@google.com>
-Cc:     syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <993c9185-d324-2640-d061-bed2dd18b1f7@I-love.SAKURA.ne.jp>
-Date:   Fri, 14 Jun 2019 19:16:18 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 14 Jun 2019 06:25:17 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n4so1965938wrs.3;
+        Fri, 14 Jun 2019 03:25:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=ks/1jmSJKxs1ncmSkAMP0ItIlKw6T3TzRE1qoFw+E5A=;
+        b=kUWroVeijDm9bzhzpUxRfZ9hMYQNn9eQmH0tUmSV0w4DdYwIQO4aRCNkpCV+BNvsjM
+         UGZwOZPI7w6O/djb/LQhKUA7ytP1rQh4txH4CXHfYlC26ORkZ7mI1FVnll/V1XqlGRYN
+         RYYzFWy+6okKYFEPEaNo4lh4kRhcZ87DHVzhCpKBOULqKUHvEKWwkFPPk75OFDpNduJw
+         WNm0EsFzGjGtsfC927hae9qNzFF8JWLse13MaqY4dUaDSBZqn5Q7yQzf6imoPTIbL+S8
+         RPUVppPqn9xKPIqkSfueducS1qAkhNzfNrcXoKOjn+JRJbUZii+fjGcTpe7vhyhmuXQo
+         qb5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=ks/1jmSJKxs1ncmSkAMP0ItIlKw6T3TzRE1qoFw+E5A=;
+        b=XUyosOT5Z01i9rr6NDjjzEAl9GviI+WABOySidDUIS5ueW52DfBgJRU9ztgj13lQRu
+         6h0h6ylQnH7avXls4SuWXTn6wvblXG5dqcN7xtntld+poX9yNkhgseoj/IklppSHbado
+         n3gNFaVUfjY4J7a/s4ktEhR+Cd1PZ6g42ArwQ5kb3/fClH/h6hXceUdJDHP7eBOa6ZMw
+         xoFwYIPS2w8KZvT8oxDB4eEPQufVf9gwHA9k1KIZSfY6IefJsJVtEF3RCYAwQL1EGKh4
+         YN0Dtm3oVmdQbcXG0RAikWS1gZVBKo1Z7bpS5GHlUbV/L03QEsroUR5Xk0EbcQo6WpX3
+         yqvw==
+X-Gm-Message-State: APjAAAU3Ia81eO1QaXGeEkeMdHAuwNIT9a/Cc0fqtAp3hnAe7uT2CVOF
+        aaciU75gnNbz5PhVhgoswA5/V7vSLgU=
+X-Google-Smtp-Source: APXvYqw9EmKo3dJlol+Y0ztB7t3zpQOt4EXb0zFFriuCw5GQUPRN4U272roZb63DjFCDr5xtonwoIw==
+X-Received: by 2002:adf:ba8e:: with SMTP id p14mr20904700wrg.39.1560507915517;
+        Fri, 14 Jun 2019 03:25:15 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id u23sm1766697wmj.33.2019.06.14.03.25.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Jun 2019 03:25:14 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 12:25:13 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     util-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Help with reviewing dosfstools patches
+Message-ID: <20190614102513.4uwsu2wkigg3pimq@pali>
 MIME-Version: 1.0
-In-Reply-To: <000000000000c0103a058b2ba0ec@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot found that a thread can stall for minutes inside kexec_load() after
-that thread was killed by SIGKILL [1]. It turned out that the reproducer
-was trying to allocate 2408MB of memory using kimage_alloc_page() from
-kimage_load_normal_segment(). Let's check for SIGKILL before doing memory
-allocation.
+Hello!
 
-[1] https://syzkaller.appspot.com/bug?id=a0e3436829698d5824231251fad9d8e998f94f5e
+Can somebody help with reviewing existing patches / pull requests for
+dosfstools project? https://github.com/dosfstools/dosfstools/pulls
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
----
- kernel/kexec_core.c | 2 ++
- 1 file changed, 2 insertions(+)
+Dosfstools contains linux userspace utilities for FAT file filesystems,
+including mkfs and fsck. They are de-facto standard tools available in
+any linux distribution supporting FAT file systems.
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index fd5c95f..2b25d95 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -302,6 +302,8 @@ static struct page *kimage_alloc_pages(gfp_t gfp_mask, unsigned int order)
- {
- 	struct page *pages;
- 
-+	if (fatal_signal_pending(current))
-+		return NULL;
- 	pages = alloc_pages(gfp_mask & ~__GFP_ZERO, order);
- 	if (pages) {
- 		unsigned int count, i;
+There are more patches for these utilities and due to lack of more
+active developers, these patches are just waiting for review.
+
+More end users are asking for releasing a new version of dosfstools
+including of those waiting patches. So can somebody help with reviewing
+them?
+
 -- 
-1.8.3.1
-
+Pali Rohár
+pali.rohar@gmail.com
