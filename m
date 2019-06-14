@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A11D04675F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 20:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08CF646750
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 20:17:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725889AbfFNSRj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 14:17:39 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18617 "EHLO huawei.com"
+        id S1726627AbfFNSR0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 14:17:26 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:18619 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726429AbfFNSRV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 14:17:21 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 65C475463CF33BAB43D3;
-        Sat, 15 Jun 2019 02:17:18 +0800 (CST)
+        id S1726545AbfFNSR0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Jun 2019 14:17:26 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 73CA778964032139EC6E;
+        Sat, 15 Jun 2019 02:17:23 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sat, 15 Jun
- 2019 02:17:11 +0800
+ 2019 02:17:12 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     <chao@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <devel@driverdev.osuosl.org>
@@ -25,9 +25,9 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [RFC PATCH 6/8] staging: erofs: introduce LZ4 decompression inplace
-Date:   Sat, 15 Jun 2019 02:16:17 +0800
-Message-ID: <20190614181619.64905-7-gaoxiang25@huawei.com>
+Subject: [RFC PATCH 7/8] staging: erofs: switch to new decompression backend
+Date:   Sat, 15 Jun 2019 02:16:18 +0800
+Message-ID: <20190614181619.64905-8-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190614181619.64905-1-gaoxiang25@huawei.com>
 References: <20190614181619.64905-1-gaoxiang25@huawei.com>
@@ -40,108 +40,361 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-compressed data will be usually loaded into last pages of
-the extent (the last page for 4k) for in-place decompression
-(more specifically, in-place IO), as ilustration below,
+This patch integrates new decompression framework to
+erofs decompression path, and remove the old
+decompression implementation as well.
 
-         start of compressed logical extent
-           |                          end of this logical extent
-           |                           |
-     ______v___________________________v________
-... |  page 6  |  page 7  |  page 8  |  page 9  | ...
-    |__________|__________|__________|__________|
-           .                         ^ .        ^
-           .                         |compressed|
-           .                         |   data   |
-           .                           .        .
-           |<          dstsize        >|<margin>|
-                                       oend     iend
-           op                        ip
-
-Therefore, it's possible to do decompression inplace (thus no
-memcpy at all) if the margin is sufficient and safe enough [1],
-and it can be implemented only for fixed-size output compression
-compared with fixed-size input compression.
-
-No memcpy for most of in-place IO (about 99% of enwik9) after
-decompression inplace is implemented and sequential read will
-be improved of course (see the following patch for test results).
-
-[1] https://github.com/lz4/lz4/commit/b17f578a919b7e6b078cede2d52be29dd48c8e8c
-    https://github.com/lz4/lz4/commit/5997e139f53169fa3a1c1b4418d2452a90b01602
+On kirin980 platform, sequential read is slightly
+improved to 778MiB/s after the new decompression
+backend is used.
 
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/staging/erofs/compress.h     |  1 +
- drivers/staging/erofs/decompressor.c | 21 ++++++++++++++++++---
- drivers/staging/erofs/erofs_fs.h     |  3 ++-
- 3 files changed, 21 insertions(+), 4 deletions(-)
+ drivers/staging/erofs/Makefile        |   2 +-
+ drivers/staging/erofs/unzip_vle.c     |  59 +++----
+ drivers/staging/erofs/unzip_vle.h     |  13 --
+ drivers/staging/erofs/unzip_vle_lz4.c | 216 --------------------------
+ 4 files changed, 22 insertions(+), 268 deletions(-)
+ delete mode 100644 drivers/staging/erofs/unzip_vle_lz4.c
 
-diff --git a/drivers/staging/erofs/compress.h b/drivers/staging/erofs/compress.h
-index ebeccb1f4eae..c43aa3374d28 100644
---- a/drivers/staging/erofs/compress.h
-+++ b/drivers/staging/erofs/compress.h
-@@ -17,6 +17,7 @@ enum {
- };
+diff --git a/drivers/staging/erofs/Makefile b/drivers/staging/erofs/Makefile
+index adeb5d6e2668..e704d9e51514 100644
+--- a/drivers/staging/erofs/Makefile
++++ b/drivers/staging/erofs/Makefile
+@@ -9,5 +9,5 @@ obj-$(CONFIG_EROFS_FS) += erofs.o
+ ccflags-y += -I $(srctree)/$(src)/include
+ erofs-objs := super.o inode.o data.o namei.o dir.o utils.o
+ erofs-$(CONFIG_EROFS_FS_XATTR) += xattr.o
+-erofs-$(CONFIG_EROFS_FS_ZIP) += unzip_vle.o unzip_vle_lz4.o zmap.o decompressor.o
++erofs-$(CONFIG_EROFS_FS_ZIP) += unzip_vle.o zmap.o decompressor.o
  
- struct z_erofs_decompress_req {
-+	struct super_block *sb;
- 	struct page **in, **out;
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index d95f985936b6..cb870b83f3c8 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -897,12 +897,12 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 	unsigned int sparsemem_pages = 0;
+ 	struct page *pages_onstack[Z_EROFS_VLE_VMAP_ONSTACK_PAGES];
+ 	struct page **pages, **compressed_pages, *page;
+-	unsigned int i, llen;
++	unsigned int algorithm;
++	unsigned int i, outputsize;
  
- 	unsigned short pageofs_out;
-diff --git a/drivers/staging/erofs/decompressor.c b/drivers/staging/erofs/decompressor.c
-index 4f644bdea0bc..727bae6a3cb0 100644
---- a/drivers/staging/erofs/decompressor.c
-+++ b/drivers/staging/erofs/decompressor.c
-@@ -14,6 +14,9 @@
+ 	enum z_erofs_page_type page_type;
+ 	bool overlapped;
+ 	struct z_erofs_vle_work *work;
+-	void *vout;
+ 	int err;
+ 
+ 	might_sleep();
+@@ -1009,43 +1009,26 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 	if (unlikely(err))
+ 		goto out;
+ 
+-	llen = (nr_pages << PAGE_SHIFT) - work->pageofs;
+-
+-	if (z_erofs_vle_workgrp_fmt(grp) == Z_EROFS_VLE_WORKGRP_FMT_PLAIN) {
+-		err = z_erofs_vle_plain_copy(compressed_pages, clusterpages,
+-					     pages, nr_pages, work->pageofs);
+-		goto out;
+-	}
+-
+-	if (llen > grp->llen)
+-		llen = grp->llen;
+-
+-	err = z_erofs_vle_unzip_fast_percpu(compressed_pages, clusterpages,
+-					    pages, llen, work->pageofs);
+-	if (err != -ENOTSUPP)
+-		goto out;
+-
+-	if (sparsemem_pages >= nr_pages)
+-		goto skip_allocpage;
+-
+-	for (i = 0; i < nr_pages; ++i) {
+-		if (pages[i])
+-			continue;
+-
+-		pages[i] = __stagingpage_alloc(page_pool, GFP_NOFS);
+-	}
+-
+-skip_allocpage:
+-	vout = erofs_vmap(pages, nr_pages);
+-	if (!vout) {
+-		err = -ENOMEM;
+-		goto out;
+-	}
+-
+-	err = z_erofs_vle_unzip_vmap(compressed_pages, clusterpages, vout,
+-				     llen, work->pageofs, overlapped);
++	if (nr_pages << PAGE_SHIFT >= work->pageofs + grp->llen)
++		outputsize = grp->llen;
++	else
++		outputsize = (nr_pages << PAGE_SHIFT) - work->pageofs;
+ 
+-	erofs_vunmap(vout, nr_pages);
++	if (z_erofs_vle_workgrp_fmt(grp) == Z_EROFS_VLE_WORKGRP_FMT_PLAIN)
++		algorithm = Z_EROFS_COMPRESSION_SHIFTED;
++	else
++		algorithm = Z_EROFS_COMPRESSION_LZ4;
++
++	err = z_erofs_decompress(&(struct z_erofs_decompress_req) {
++					.sb = sb,
++					.in = compressed_pages,
++					.out = pages,
++					.pageofs_out = work->pageofs,
++					.inputsize = PAGE_SIZE,
++					.outputsize = outputsize,
++					.alg = algorithm,
++					.inplace_io = overlapped,
++					.partial_decoding = true }, page_pool);
+ 
+ out:
+ 	/* must handle all compressed pages before endding pages */
+diff --git a/drivers/staging/erofs/unzip_vle.h b/drivers/staging/erofs/unzip_vle.h
+index 6c3e0deb63e7..2abde53d09d7 100644
+--- a/drivers/staging/erofs/unzip_vle.h
++++ b/drivers/staging/erofs/unzip_vle.h
+@@ -189,18 +189,5 @@ static inline void z_erofs_onlinepage_endio(struct page *page)
+ 	min_t(unsigned int, THREAD_SIZE / 8 / sizeof(struct page *), 96U)
+ #define Z_EROFS_VLE_VMAP_GLOBAL_PAGES	2048
+ 
+-/* unzip_vle_lz4.c */
+-int z_erofs_vle_plain_copy(struct page **compressed_pages,
+-			   unsigned int clusterpages, struct page **pages,
+-			   unsigned int nr_pages, unsigned short pageofs);
+-int z_erofs_vle_unzip_fast_percpu(struct page **compressed_pages,
+-				  unsigned int clusterpages,
+-				  struct page **pages, unsigned int outlen,
+-				  unsigned short pageofs);
+-int z_erofs_vle_unzip_vmap(struct page **compressed_pages,
+-			   unsigned int clusterpages,
+-			   void *vaddr, unsigned int llen,
+-			   unsigned short pageofs, bool overlapped);
+-
  #endif
  
- #define LZ4_MAX_DISTANCE_PAGES	DIV_ROUND_UP(LZ4_DISTANCE_MAX, PAGE_SIZE)
-+#ifndef LZ4_DECOMPRESS_INPLACE_MARGIN
-+#define LZ4_DECOMPRESS_INPLACE_MARGIN(srcsize)  (((srcsize) >> 8) + 32)
-+#endif
- 
- struct z_erofs_decompressor {
- 	/*
-@@ -131,9 +134,21 @@ static int lz4_decompress(struct z_erofs_decompress_req *rq, u8 *out)
- 	copied = false;
- 	inlen = rq->inputsize - inputmargin;
- 	if (rq->inplace_io) {
--		src = generic_copy_inplace_data(rq, src, inputmargin);
--		inputmargin = 0;
--		copied = true;
-+		const uint oend = (rq->pageofs_out +
-+				   rq->outputsize) & ~PAGE_MASK;
-+		const uint nr = PAGE_ALIGN(rq->pageofs_out +
-+					   rq->outputsize) >> PAGE_SHIFT;
-+
-+		if (rq->partial_decoding ||
-+		    !(EROFS_SB(rq->sb)->requirements &
-+		      EROFS_REQUIREMENT_LZ4_0PADDING) ||
-+		    rq->out[nr - 1] != rq->in[0] ||
-+		    rq->inputsize - oend <
-+		      LZ4_DECOMPRESS_INPLACE_MARGIN(inlen)) {
-+			src = generic_copy_inplace_data(rq, src, inputmargin);
-+			inputmargin = 0;
-+			copied = true;
-+		}
- 	}
- 
- 	ret = LZ4_decompress_safe_partial(src + inputmargin, out,
-diff --git a/drivers/staging/erofs/erofs_fs.h b/drivers/staging/erofs/erofs_fs.h
-index a05139f1df60..353322a3206c 100644
---- a/drivers/staging/erofs/erofs_fs.h
-+++ b/drivers/staging/erofs/erofs_fs.h
-@@ -21,7 +21,8 @@
-  * Any bits that aren't in EROFS_ALL_REQUIREMENTS should be
-  * incompatible with this kernel version.
-  */
--#define EROFS_ALL_REQUIREMENTS  0
-+#define EROFS_REQUIREMENT_LZ4_0PADDING	0x00000001
-+#define EROFS_ALL_REQUIREMENTS		EROFS_REQUIREMENT_LZ4_0PADDING
- 
- struct erofs_super_block {
- /*  0 */__le32 magic;           /* in the little endian */
+diff --git a/drivers/staging/erofs/unzip_vle_lz4.c b/drivers/staging/erofs/unzip_vle_lz4.c
+deleted file mode 100644
+index 399c3e3a3ff3..000000000000
+--- a/drivers/staging/erofs/unzip_vle_lz4.c
++++ /dev/null
+@@ -1,216 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * linux/drivers/staging/erofs/unzip_vle_lz4.c
+- *
+- * Copyright (C) 2018 HUAWEI, Inc.
+- *             http://www.huawei.com/
+- * Created by Gao Xiang <gaoxiang25@huawei.com>
+- *
+- * This file is subject to the terms and conditions of the GNU General Public
+- * License.  See the file COPYING in the main directory of the Linux
+- * distribution for more details.
+- */
+-#include "unzip_vle.h"
+-#include <linux/lz4.h>
+-
+-static int z_erofs_unzip_lz4(void *in, void *out, size_t inlen, size_t outlen)
+-{
+-	int ret = LZ4_decompress_safe_partial(in, out, inlen, outlen, outlen);
+-
+-	if (ret >= 0)
+-		return ret;
+-
+-	/*
+-	 * LZ4_decompress_safe_partial will return an error code
+-	 * (< 0) if decompression failed
+-	 */
+-	errln("%s, failed to decompress, in[%p, %zu] outlen[%p, %zu]",
+-	      __func__, in, inlen, out, outlen);
+-	WARN_ON(1);
+-	print_hex_dump(KERN_DEBUG, "raw data [in]: ", DUMP_PREFIX_OFFSET,
+-		       16, 1, in, inlen, true);
+-	print_hex_dump(KERN_DEBUG, "raw data [out]: ", DUMP_PREFIX_OFFSET,
+-		       16, 1, out, outlen, true);
+-	return -EIO;
+-}
+-
+-int z_erofs_vle_plain_copy(struct page **compressed_pages,
+-			   unsigned int clusterpages,
+-			   struct page **pages,
+-			   unsigned int nr_pages,
+-			   unsigned short pageofs)
+-{
+-	unsigned int i, j;
+-	void *src = NULL;
+-	const unsigned int righthalf = PAGE_SIZE - pageofs;
+-	char *percpu_data;
+-	bool mirrored[Z_EROFS_CLUSTER_MAX_PAGES] = { 0 };
+-
+-	percpu_data = erofs_get_pcpubuf(0);
+-
+-	j = 0;
+-	for (i = 0; i < nr_pages; j = i++) {
+-		struct page *page = pages[i];
+-		void *dst;
+-
+-		if (!page) {
+-			if (src) {
+-				if (!mirrored[j])
+-					kunmap_atomic(src);
+-				src = NULL;
+-			}
+-			continue;
+-		}
+-
+-		dst = kmap_atomic(page);
+-
+-		for (; j < clusterpages; ++j) {
+-			if (compressed_pages[j] != page)
+-				continue;
+-
+-			DBG_BUGON(mirrored[j]);
+-			memcpy(percpu_data + j * PAGE_SIZE, dst, PAGE_SIZE);
+-			mirrored[j] = true;
+-			break;
+-		}
+-
+-		if (i) {
+-			if (!src)
+-				src = mirrored[i - 1] ?
+-					percpu_data + (i - 1) * PAGE_SIZE :
+-					kmap_atomic(compressed_pages[i - 1]);
+-
+-			memcpy(dst, src + righthalf, pageofs);
+-
+-			if (!mirrored[i - 1])
+-				kunmap_atomic(src);
+-
+-			if (unlikely(i >= clusterpages)) {
+-				kunmap_atomic(dst);
+-				break;
+-			}
+-		}
+-
+-		if (!righthalf) {
+-			src = NULL;
+-		} else {
+-			src = mirrored[i] ? percpu_data + i * PAGE_SIZE :
+-				kmap_atomic(compressed_pages[i]);
+-
+-			memcpy(dst + pageofs, src, righthalf);
+-		}
+-
+-		kunmap_atomic(dst);
+-	}
+-
+-	if (src && !mirrored[j])
+-		kunmap_atomic(src);
+-
+-	erofs_put_pcpubuf(percpu_data);
+-	return 0;
+-}
+-
+-int z_erofs_vle_unzip_fast_percpu(struct page **compressed_pages,
+-				  unsigned int clusterpages,
+-				  struct page **pages,
+-				  unsigned int outlen,
+-				  unsigned short pageofs)
+-{
+-	void *vin, *vout;
+-	unsigned int nr_pages, i, j;
+-	int ret;
+-
+-	if (outlen + pageofs > EROFS_PCPUBUF_NR_PAGES * PAGE_SIZE)
+-		return -ENOTSUPP;
+-
+-	nr_pages = DIV_ROUND_UP(outlen + pageofs, PAGE_SIZE);
+-
+-	if (clusterpages == 1) {
+-		vin = kmap_atomic(compressed_pages[0]);
+-	} else {
+-		vin = erofs_vmap(compressed_pages, clusterpages);
+-		if (!vin)
+-			return -ENOMEM;
+-	}
+-
+-	vout = erofs_get_pcpubuf(0);
+-
+-	ret = z_erofs_unzip_lz4(vin, vout + pageofs,
+-				clusterpages * PAGE_SIZE, outlen);
+-
+-	if (ret < 0)
+-		goto out;
+-	ret = 0;
+-
+-	for (i = 0; i < nr_pages; ++i) {
+-		j = min((unsigned int)PAGE_SIZE - pageofs, outlen);
+-
+-		if (pages[i]) {
+-			if (clusterpages == 1 &&
+-			    pages[i] == compressed_pages[0]) {
+-				memcpy(vin + pageofs, vout + pageofs, j);
+-			} else {
+-				void *dst = kmap_atomic(pages[i]);
+-
+-				memcpy(dst + pageofs, vout + pageofs, j);
+-				kunmap_atomic(dst);
+-			}
+-		}
+-		vout += PAGE_SIZE;
+-		outlen -= j;
+-		pageofs = 0;
+-	}
+-
+-out:
+-	erofs_put_pcpubuf(vout);
+-
+-	if (clusterpages == 1)
+-		kunmap_atomic(vin);
+-	else
+-		erofs_vunmap(vin, clusterpages);
+-
+-	return ret;
+-}
+-
+-int z_erofs_vle_unzip_vmap(struct page **compressed_pages,
+-			   unsigned int clusterpages,
+-			   void *vout,
+-			   unsigned int llen,
+-			   unsigned short pageofs,
+-			   bool overlapped)
+-{
+-	void *vin;
+-	unsigned int i;
+-	int ret;
+-
+-	if (overlapped) {
+-		vin = erofs_get_pcpubuf(0);
+-
+-		for (i = 0; i < clusterpages; ++i) {
+-			void *t = kmap_atomic(compressed_pages[i]);
+-
+-			memcpy(vin + PAGE_SIZE * i, t, PAGE_SIZE);
+-			kunmap_atomic(t);
+-		}
+-	} else if (clusterpages == 1) {
+-		vin = kmap_atomic(compressed_pages[0]);
+-	} else {
+-		vin = erofs_vmap(compressed_pages, clusterpages);
+-	}
+-
+-	ret = z_erofs_unzip_lz4(vin, vout + pageofs,
+-				clusterpages * PAGE_SIZE, llen);
+-	if (ret > 0)
+-		ret = 0;
+-
+-	if (overlapped) {
+-		erofs_put_pcpubuf(vin);
+-	} else {
+-		if (clusterpages == 1)
+-			kunmap_atomic(vin);
+-		else
+-			erofs_vunmap(vin, clusterpages);
+-	}
+-	return ret;
+-}
+-
 -- 
 2.17.1
 
