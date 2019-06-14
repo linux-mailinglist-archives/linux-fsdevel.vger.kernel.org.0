@@ -2,66 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24E3646806
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 21:08:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D44EC4680E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 21:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725972AbfFNTII (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 15:08:08 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35764 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbfFNTII (ORCPT
+        id S1726325AbfFNTK5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 15:10:57 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35225 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbfFNTK5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 15:08:08 -0400
-Received: by mail-wm1-f66.google.com with SMTP id c6so3343538wml.0;
-        Fri, 14 Jun 2019 12:08:06 -0700 (PDT)
+        Fri, 14 Jun 2019 15:10:57 -0400
+Received: by mail-wr1-f66.google.com with SMTP id m3so3648697wrv.2;
+        Fri, 14 Jun 2019 12:10:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=lJnppciqjw6M4NiJW+erJedc3KCAQSIupzbo8maB6jE=;
-        b=FtILNZfH+hdagSP1/xl6gu80bDXfYlo8ExHwaebJu5LDsxq5tqX6Vr1+ijmD/H+BM/
-         m1hAJfq2yXvweXFvyz7vV2NXw3/HbkAHV0OHkmK1f2bwjRUpaSKC9dDZP6MU7+mWahjq
-         b7KXRHibaNnYRsfPenVNW+Pcv72caTu3pse4Ssm7cROUSObTl5XborhdGYbjgRssVh5J
-         5l/aw5FtSVoZp/NYqSuRNztdagRVD/gtrqYgQFCmaVM6MdMK/r8dl1K1G0kbFvG2ujBy
-         1G6W7D8Py0T5Qe+RaSouxbU8amx+aL/XsFel4CamGqS8tANw6qWX/ulmlcdBVtawrejE
-         NsSg==
+        bh=qrggckRqwzqE+687AEU2OojJ8a7zrArb+JSl8o0Vjw4=;
+        b=rayG/z2HRetFZn2HaODu/GrCa4jqHCks19ez5NpHbbndaksHa3GoQiqB06ds312oLG
+         Kj2t6SHd4oV7NoDNG3bPwz7at/o2+xze2B9NiPzxiyd+9P5b+N3sGqdIwHVZfTPdv52A
+         vspLz4ZxvGgNTtKIsm/rgAM8jCmu/Q+FQowFWQa5NqwcTl+VlV512kfiuY6QMsw8kzgn
+         Hm9tdv2O9Og7Loox/ZNmHKfDe+obyLmJ/bfMUY4JRCFchdVzG/fza9fCYjmMVo9jr2Kf
+         Rg8a6lSkcUM+1+hvQ8Zzq2SruIObPwTP6YbKL1FG9j/GkFl2UfSpisI/yekUGX85TKIO
+         2uOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lJnppciqjw6M4NiJW+erJedc3KCAQSIupzbo8maB6jE=;
-        b=CwV7qdXS3wcajzw1HjMjDA8JgqbXQ3MgXUC5hz2U5YjYuvC2C/s+YH2KlGR3gLRDhk
-         ZTjKgkrg086t70zcVTcrn6x/kLJAlbSJw3ebKWOmcJLJUVXRiTyTd8QLPcObFXVaOQWk
-         Qx6J4f16TF0QffOBvdNbybHXrMOqyar89RHGzql3dolHiyH/PbR979BN9k4YNW6dM5ND
-         HkXuI/MsoO9XOVzoX2gkhmV3Dnxy+nfuLKOM20LveGXhJj41MtCGfRmS95/210skRLnC
-         2j9UATbSyg1HKU29B6fpRAKy2SeSd519vdDcAF36Zg6b2SwvRNRYY/znKhKA2a24R/Y0
-         LF7g==
-X-Gm-Message-State: APjAAAXFN/Cdcf3HpAgCdfOHhIFyyG2a9o7O6UaBkCrKt1bFV/ovzuiX
-        CntkDoHgN2PxMDnngFXHBdRymiwfJ0Y=
-X-Google-Smtp-Source: APXvYqwjonpCxDEc9kdNmK7fSFyC5cz95rZ3cV/f+qEnmlXeFzXmguySzdYC51X34BOBdG2EeqZiag==
-X-Received: by 2002:a1c:343:: with SMTP id 64mr9590262wmd.116.1560539285449;
-        Fri, 14 Jun 2019 12:08:05 -0700 (PDT)
+        bh=qrggckRqwzqE+687AEU2OojJ8a7zrArb+JSl8o0Vjw4=;
+        b=B1hVwOp/kKrsAehm7z1cyjesTzqpTA2WcbQiC5UgrtQfXoWdczBY0eXp0xWRnkYRs3
+         TxzDBE2RJWOshJo6lr/do+HvMX0Olr8mSkbDvgNxOdm9wFyelNn198XOFl7yLiP+jqv+
+         GwN+OM7oBcWr0sRxFhQZluBjAzkpF/THxIrQlGs8GqESq4hi5H+eHrOMxtZIxO6Ed6yi
+         CDXyCM72anw4zZxS1dPKEGpGwkyADaMAa8fa7pQZp3+xTqcQJMp1iUs/StP1d0sgDfpC
+         cy8ILXVzh0MZQ4lTxDzLVkVsgfnGqbPLtIc6ehx7XnrENHx32X1SSiHxUM6fPrY9SB+u
+         N1cg==
+X-Gm-Message-State: APjAAAWppYY7K7zMxpFsqWB01qNg+l7qc5CEHUhUlqpE1R32n8BJowAU
+        8Xhfuj2aU+alOsiTQdydN98+zQDUjbQ=
+X-Google-Smtp-Source: APXvYqw3BF4lCoCWCq+ma92ACJPhMyodhOncoLwNRZkplMdgZ50n3/jnqZcxn0EKz3JLitAF4Q3llQ==
+X-Received: by 2002:adf:f683:: with SMTP id v3mr5420052wrp.258.1560539455205;
+        Fri, 14 Jun 2019 12:10:55 -0700 (PDT)
 Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id v27sm652246wrv.45.2019.06.14.12.08.03
+        by smtp.gmail.com with ESMTPSA id g2sm4825176wmh.0.2019.06.14.12.10.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Jun 2019 12:08:04 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 21:08:03 +0200
+        Fri, 14 Jun 2019 12:10:54 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 21:10:53 +0200
 From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        util-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     util-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: Re: Help with reviewing dosfstools patches
-Message-ID: <20190614190803.2wg3gky5gypge6xp@pali>
+Message-ID: <20190614191053.22whtrb5f5uqis64@pali>
 References: <20190614102513.4uwsu2wkigg3pimq@pali>
  <ae5097ee-12af-2807-d48c-4274b4fc856d@metux.net>
- <20190614142534.4obcytnq4v3ejdni@pali>
- <20190614143052.GA21822@infradead.org>
+ <9e81aa56-358a-71e1-edc1-50781062f3a4@metux.net>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="uhnyqyra6n5d7ky5"
+        protocol="application/pgp-signature"; boundary="in23yynysfbxdhp3"
 Content-Disposition: inline
-In-Reply-To: <20190614143052.GA21822@infradead.org>
+In-Reply-To: <9e81aa56-358a-71e1-edc1-50781062f3a4@metux.net>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
@@ -69,59 +67,42 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---uhnyqyra6n5d7ky5
+--in23yynysfbxdhp3
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Friday 14 June 2019 07:30:52 Christoph Hellwig wrote:
-> On Fri, Jun 14, 2019 at 04:25:34PM +0200, Pali Roh=C3=A1r wrote:
-> > > Does the project already have a maillist ?
-> >=20
-> > No, there is no mailing list. Basically whole development is on github
-> > via github pull requests where are also put review comments and where is
-> > also whole discussion, including bug reports.
+On Friday 14 June 2019 17:45:20 Enrico Weigelt, metux IT consult wrote:
+> On 14.06.19 16:20, Enrico Weigelt, metux IT consult wrote:
 >=20
-> That could explain why it is lacking qualified reviewers..
+> <snip>
+>=20
+> Currently working through your branches. Smells like they really deserve
+> a rebase and signed-off lines.
 
-That is not my decision. Probably current maintainer of dosfstools like
-it. But nowadays do not have much more time and gave me commit access.
+Every patch/pull request is mean to be based on current upstream
+"master" branch.
 
-Main benefit of github pull requests is that every one pull request
-patch is automatically compiled and tested on i686, x86_64, x32, arm
-and big endian powerpc systems via Travis CI. So author and also
-reviewers/people with commit access immediately know if proposed change
-could break something.
+As some of pull requests were opened long time ago, they are out-of-sync
+=66rom upstream "master" branch.
 
-I like automated testing on more platforms, because lot of people either
-do not know or do not have access to different systems just for testing.
-And this can show possible problems...
+Currently I rebased and force-pushed those changes which had merge
+conflict with upstream master branch.
 
-Setting up a new mailing list, configuring some testing server, copying
-existing patches from github to list, etc... is just tons of work for
-which I basically do not have a time. Therefore I asked for help to
-review existing stuff with minimal technical time setup.
-
-I understand that it is not ideal for everybody, but for current
-contributors it is probably better. I have already reviewed and merged
-more patches, just those which are mine are left open, so more eyes can
-look at them.
-
-If you or somebody else have time and want to improve dosfstools
-project, I'm not against it...
+And now on each pull request passed compilation and 'make check'.
 
 --=20
 Pali Roh=C3=A1r
 pali.rohar@gmail.com
 
---uhnyqyra6n5d7ky5
+--in23yynysfbxdhp3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXQPwkQAKCRCL8Mk9A+RD
-UoiWAJ0Z13QU2KM91Gdfn4EVW7zcRUqjiwCfVP/g/rwJEfPthHkdZqpnpZjS3x0=
-=c3IA
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXQPxPAAKCRCL8Mk9A+RD
+UuX5AJ46vqpIet8egkxbo/F0OHqmHeH7kwCgnQQzBB6Nr3uUcwShqXuXpsUIzo8=
+=SZLS
 -----END PGP SIGNATURE-----
 
---uhnyqyra6n5d7ky5--
+--in23yynysfbxdhp3--
