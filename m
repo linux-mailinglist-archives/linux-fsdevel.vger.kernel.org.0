@@ -2,87 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 470DC460A0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 16:25:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E48E6460AB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 16:26:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728333AbfFNOZj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 10:25:39 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46489 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728050AbfFNOZi (ORCPT
+        id S1728539AbfFNO0e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 10:26:34 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:41906 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728050AbfFNO0e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:25:38 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n4so2719665wrw.13;
-        Fri, 14 Jun 2019 07:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=1Xht2wc6GWx7rzL95f/p5mApKK3FegYBNbBLdEdfnr8=;
-        b=HTTzFtfpAF7+upWVnlS6HBVNxdNCAADrxhNr4kucftYM4HXyFdAvdhyZxI+VeHwMml
-         tpCWY6gmJD8HUgbBkc+253BCWQZ+EKwBarLVFbmzugu1hsPor4xw7UaSuB3fX50ahyeF
-         98A/bSytV5+rUoSWDjrvwqlHAyARUmOvVB1TopUb9S1Oe3HfKH+eCnuiCLhkLzp4aT2Y
-         f3SJIwUVEaHqrNeDpwUTycBzlA2luKc9RKu+ct38kupUocELFqB8akHFXXMH0TyT0S1R
-         DHre7T8ydHY4mLa3ZSteGpRlTAyWh9QS9ibS3245dY+bIiC8yk16FwhWl8lq9BDkeRYh
-         /MCA==
+        Fri, 14 Jun 2019 10:26:34 -0400
+Received: by mail-qt1-f193.google.com with SMTP id 33so2643854qtr.8;
+        Fri, 14 Jun 2019 07:26:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=1Xht2wc6GWx7rzL95f/p5mApKK3FegYBNbBLdEdfnr8=;
-        b=P0LsrmlvEtCY+2LPOikfguIHNDfeM9nZOelgwefKTWTk7NInK9MOVS7FqF2a6F94Hh
-         1q2MT2V/jS+NUn9EietTKRSx9Jzgb4Sfc+eezv0VU9S00maAZDgs2YdoC+QZktX25Vl6
-         q2XZxwoecaMWy/SMys/eTymUYgEeddvj1Dm4fHzET2IB1GmiBl1mAsFS2fDvwwgFRSiH
-         2L3P3lA7v5B8w+2cQ0aXy5z7wYIbH3hJuXWuU3UflmGADyIWKrcms7QD30ySndociFm6
-         cpvFzTf1xIjFpBZ0wglcmk3smGqmJmx0KFy3QXEH6psDhkHdB/d5X25eQxwIvk6lWtQJ
-         +gVQ==
-X-Gm-Message-State: APjAAAVNXfNMtN4o8Vo6pb62HSrnpyrr1c4V+ygO+7u0qNzvwFgqEduo
-        80W3XQmDvoMYiU/QR2h1PyrkEwqEw/Q=
-X-Google-Smtp-Source: APXvYqzwEPtYyUzAXb5zFSOaN+f0YKpZ4EqTXQYjc8hxuUV7sIsNkAI1Sk65ytkZJVM7eEj1ESqcLA==
-X-Received: by 2002:adf:ebc6:: with SMTP id v6mr3408593wrn.222.1560522336433;
-        Fri, 14 Jun 2019 07:25:36 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id z14sm7966501wre.96.2019.06.14.07.25.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Jun 2019 07:25:35 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 16:25:34 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     util-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Help with reviewing dosfstools patches
-Message-ID: <20190614142534.4obcytnq4v3ejdni@pali>
-References: <20190614102513.4uwsu2wkigg3pimq@pali>
- <ae5097ee-12af-2807-d48c-4274b4fc856d@metux.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fsH/gim6l6XO8QfAbuJALk4V1gTdlhygBm6XyVxI9qg=;
+        b=jfpFSeAQUlfIBpExHyjmqaCtIM2EwUfLpZAkckzOUPiTdDiKYp8K7fiOemtmwiq3jq
+         I+txdOa8Dvk7DoCUWiRs2jkOX3od8w2VWuLj/vXR4/hQ8CPNlrGEUe4BuxY/wgOZv8No
+         XKVQAut6yLbzNUotLe7cA+wmMzbGuYkBpKgQrbL1UQWatwSdis20WiZSSUMgESokzvdW
+         1GcsUS+0AeL7OANQd0M13Zp73mXmsDNSDNRIksg7xHbQSf53cGupF5/e+xlJNicFYx8j
+         yDDhSHa6bvOhvsap9plPjddqYXSzuWAqnfbpszChjzjzsm/c0PoaHeTVH0pXdNasNIVZ
+         O5Vw==
+X-Gm-Message-State: APjAAAV5v4LBj+W09YDXUGN5maogq1DArfOmJDOaOAvMIey6lm5zI//J
+        +jcJqfnCrfHcMISRJ6/aPVeweudA+RVXYtmPUObM/A6e
+X-Google-Smtp-Source: APXvYqxXhm7TnuxtaEh9KXMmRib1D32rPPmeRe/uOuM/a+gnrmMNxZtrulilU22MG6n4lcM7rLKib+JuXvUF08xN6qk=
+X-Received: by 2002:aed:33a4:: with SMTP id v33mr46597878qtd.18.1560522393205;
+ Fri, 14 Jun 2019 07:26:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ae5097ee-12af-2807-d48c-4274b4fc856d@metux.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20190608125019.417-1-mcroce@redhat.com> <20190609.195742.739339469351067643.davem@davemloft.net>
+ <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org> <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
+ <49b58181-90da-4ee4-cbb0-80e226d040fc@infradead.org> <CAK8P3a1mwnDFeD3xnQ6bm1x8C6yX=YEccxN2jknvTbRiCfD=Bg@mail.gmail.com>
+ <47f1889a-e919-e3fd-f90c-39c26cb1ccbb@gmail.com>
+In-Reply-To: <47f1889a-e919-e3fd-f90c-39c26cb1ccbb@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 14 Jun 2019 16:26:14 +0200
+Message-ID: <CAK8P3a0w3K1O23616g3Nz4XQdgw-xHDPWSQ+Rb_O3VAy-3FnQg@mail.gmail.com>
+Subject: Re: [PATCH net] mpls: fix af_mpls dependencies
+To:     David Ahern <dsahern@gmail.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Matteo Croce <mcroce@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Friday 14 June 2019 16:20:08 Enrico Weigelt, metux IT consult wrote:
-> On 14.06.19 12:25, Pali Rohár wrote:
-> > Hello!
-> > 
-> > Can somebody help with reviewing existing patches / pull requests for
-> > dosfstools project? https://github.com/dosfstools/dosfstools/pulls
-> 
-> I'll have a look at it. Could you perhaps prepare a (rebased) patch
-> queue ?
-> 
-> Does the project already have a maillist ?
+On Fri, Jun 14, 2019 at 4:07 PM David Ahern <dsahern@gmail.com> wrote:
+> On 6/14/19 8:01 AM, Arnd Bergmann wrote:
+> > On Wed, Jun 12, 2019 at 9:41 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+> >> On 6/11/19 5:08 PM, Matteo Croce wrote:
+> >
+> > It clearly shouldn't select PROC_SYSCTL, but I think it should not
+> > have a 'depends on' statement either. I think the correct fix for the
+> > original problem would have been something like
+> >
+> > --- a/net/mpls/af_mpls.c
+> > +++ b/net/mpls/af_mpls.c
+> > @@ -2659,6 +2659,9 @@ static int mpls_net_init(struct net *net)
+> >         net->mpls.ip_ttl_propagate = 1;
+> >         net->mpls.default_ttl = 255;
+> >
+> > +       if (!IS_ENABLED(CONFIG_PROC_SYSCTL))
+> > +               return 0;
+> > +
+> >         table = kmemdup(mpls_table, sizeof(mpls_table), GFP_KERNEL);
+> >         if (table == NULL)
+> >                 return -ENOMEM;
+> >
+>
+> Without sysctl, the entire mpls_router code is disabled. So if sysctl is
+> not enabled there is no point in building this file.
 
-No, there is no mailing list. Basically whole development is on github
-via github pull requests where are also put review comments and where is
-also whole discussion, including bug reports.
+Ok, I see.
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+There are a couple of other drivers that use 'depends on SYSCTL',
+which may be the right thing to do here. In theory, one can still
+build a kernel with CONFIG_SYSCTRL_SYSCALL=y and no
+procfs.
+
+        Arnd
