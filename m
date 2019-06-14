@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F52466F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 20:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EB2C466F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 20:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfFNSDg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 14:03:36 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33016 "EHLO huawei.com"
+        id S1727392AbfFNSEL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 14:04:11 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33017 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726305AbfFNSDf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 14:03:35 -0400
+        id S1726305AbfFNSEL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Jun 2019 14:04:11 -0400
 Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 3A58543FD37D8D34A0D7;
-        Fri, 14 Jun 2019 19:03:34 +0100 (IST)
+        by Forcepoint Email with ESMTP id EADD767C6981C0E7D81F;
+        Fri, 14 Jun 2019 19:04:09 +0100 (IST)
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
  by smtpsuk.huawei.com (10.201.108.43) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Fri, 14 Jun 2019 19:03:24 +0100
+ 14.3.408.0; Fri, 14 Jun 2019 19:03:59 +0100
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
         <mjg59@google.com>
@@ -25,9 +25,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 08/14] ima: prevent usage of digest lists that are not measured/appraised
-Date:   Fri, 14 Jun 2019 19:55:07 +0200
-Message-ID: <20190614175513.27097-9-roberto.sassu@huawei.com>
+Subject: [PATCH v4 09/14] ima: introduce new securityfs files
+Date:   Fri, 14 Jun 2019 19:55:08 +0200
+Message-ID: <20190614175513.27097-10-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190614175513.27097-1-roberto.sassu@huawei.com>
 References: <20190614175513.27097-1-roberto.sassu@huawei.com>
@@ -40,195 +40,164 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The Digest Lists extension creates a new measurement only when a file is
-unknown (i.e. its digest is not found in the uploaded digest lists).
-However, if digest lists are not measured, a remote verifier cannot
-determine which files could have possibly been accessed. If they are not
-appraised, a user would be able to access files that are not signed or
-protected with a HMAC.
-
-This patch prevents this issue by monitoring the process that opened
-digest_list_data and that can upload digests. If the process opens a file
-that is not measured, digest list queries by IMA-Measure will be always
-negative (ima_digest_allow() will always return a NULL pointer). The same
-happens for IMA-Appraise.
-
-This patch also ensures that the parser can only execute shared libraries
-with type COMPACT_PARSER (i.e. libraries adding support for custom digest
-list formats).
+This patch introduces two new files in the securityfs filesystem:
+digest_list_data, loads a digest list from the specified path, if it is in
+the compact format, or loads a digest list converted by the user space
+parser; digests_count: shows the number of digests stored in the
+ima_digests_htable hash table.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima.h             |  2 ++
- security/integrity/ima/ima_digest_list.c | 36 ++++++++++++++++++++++++
- security/integrity/ima/ima_digest_list.h | 15 ++++++++++
- security/integrity/ima/ima_main.c        | 17 ++++++++++-
- 4 files changed, 69 insertions(+), 1 deletion(-)
+ include/linux/fs.h              |  1 +
+ security/integrity/ima/ima_fs.c | 44 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 44 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index b4a0d2a02ff2..1729ecc4e3e7 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -53,6 +53,8 @@ extern int ima_hash_algo;
- extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f7fdfe93e25d..0591a3c3cc2f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2921,6 +2921,7 @@ extern int do_pipe_flags(int *, int);
+ 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
+ 	id(POLICY, security-policy)		\
+ 	id(X509_CERTIFICATE, x509-certificate)	\
++	id(DIGEST_LIST, digest-list)	\
+ 	id(MAX_ID, )
  
-+extern int ima_digest_list_actions;
-+
- /* IMA event related data */
- struct ima_event_data {
- 	struct integrity_iint_cache *iint;
-diff --git a/security/integrity/ima/ima_digest_list.c b/security/integrity/ima/ima_digest_list.c
-index 3c77a6cec29a..3aaa26d6e8e3 100644
---- a/security/integrity/ima/ima_digest_list.c
-+++ b/security/integrity/ima/ima_digest_list.c
-@@ -163,6 +163,9 @@ bool ima_check_current_is_parser(void)
- 	struct file *parser_file;
- 	struct mm_struct *mm;
- 
-+	if (!(ima_digest_list_actions & ima_policy_flag))
-+		return false;
-+
- 	mm = get_task_mm(current);
- 	if (!mm)
- 		return false;
-@@ -204,3 +207,36 @@ struct task_struct *ima_get_parser(void)
- {
- 	return current_parser;
- }
-+
-+/**********************
-+ * Digest usage check *
-+ **********************/
-+void ima_check_parser_action(struct inode *inode, enum ima_hooks hook,
-+			     int mask, int action, bool check_digest,
-+			     struct ima_digest *digest)
-+{
-+	int action_mask = (IMA_DO_MASK & ~IMA_APPRAISE_SUBMASK);
-+
-+	if (current != current_parser)
-+		return;
-+
-+	if (!(mask & (MAY_READ | MAY_EXEC)))
-+		return;
-+
-+	if (hook == MMAP_CHECK && mask == MAY_EXEC && check_digest &&
-+	    (!digest || digest->type != COMPACT_PARSER))
-+		action_mask = 0;
-+
-+	if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
-+		action_mask = 0;
-+
-+	ima_digest_list_actions &= (action & action_mask);
-+}
-+
-+struct ima_digest *ima_digest_allow(struct ima_digest *digest, int action)
-+{
-+	if (!(ima_digest_list_actions & action))
-+		return NULL;
-+
-+	return digest;
-+}
-diff --git a/security/integrity/ima/ima_digest_list.h b/security/integrity/ima/ima_digest_list.h
-index be07a4afd7b6..49798688f9c8 100644
---- a/security/integrity/ima/ima_digest_list.h
-+++ b/security/integrity/ima/ima_digest_list.h
-@@ -29,6 +29,10 @@ int ima_parse_compact_list(loff_t size, void *buf);
- bool ima_check_current_is_parser(void);
- void ima_set_parser(struct task_struct *parser);
- struct task_struct *ima_get_parser(void);
-+void ima_check_parser_action(struct inode *inode, enum ima_hooks hook,
-+			     int mask, int action, bool check_digest,
-+			     struct ima_digest *digest);
-+struct ima_digest *ima_digest_allow(struct ima_digest *digest, int action);
- #else
- static inline struct ima_digest *ima_lookup_digest(u8 *digest,
- 						   enum hash_algo algo)
-@@ -50,5 +54,16 @@ static inline struct task_struct *ima_get_parser(void)
- {
- 	return NULL;
- }
-+static inline void ima_check_parser_action(struct inode *inode,
-+					   enum ima_hooks hook, int mask,
-+					   int action, bool check_digest,
-+					   struct ima_digest *digest)
-+{
-+}
-+static inline struct ima_digest *ima_digest_allow(struct ima_digest *digest,
-+						  int action)
-+{
-+	return NULL;
-+}
- #endif /*CONFIG_IMA_DIGEST_LIST*/
- #endif /*LINUX_IMA_DIGEST_LIST_H*/
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index dc53ed8b0dd0..15eb00fb6b6d 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -29,6 +29,7 @@
- #include <linux/fs.h>
+ #define __fid_enumify(ENUM, dummy) READING_ ## ENUM,
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 0f503b7cd396..b02b9a447d56 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -24,6 +24,7 @@
+ #include <linux/vmalloc.h>
  
  #include "ima.h"
 +#include "ima_digest_list.h"
  
- #ifdef CONFIG_IMA_APPRAISE
- int ima_appraise = IMA_APPRAISE_ENFORCE;
-@@ -36,6 +37,9 @@ int ima_appraise = IMA_APPRAISE_ENFORCE;
- int ima_appraise;
+ static DEFINE_MUTEX(ima_write_mutex);
+ 
+@@ -34,6 +35,8 @@ static struct dentry *ascii_runtime_measurements;
+ static struct dentry *runtime_measurements_count;
+ static struct dentry *violations;
+ static struct dentry *ima_policy;
++static struct dentry *digests_count;
++static struct dentry *digest_list_data;
+ 
+ bool ima_canonical_fmt;
+ static int __init default_canonical_fmt_setup(char *str)
+@@ -58,6 +61,10 @@ static ssize_t ima_show_htable_value(struct file *filp, char __user *buf,
+ 		val = &ima_htable.violations;
+ 	else if (filp->f_path.dentry == runtime_measurements_count)
+ 		val = &ima_htable.len;
++#ifdef CONFIG_IMA_DIGEST_LIST
++	else if (filp->f_path.dentry == digests_count)
++		val = &ima_digests_htable.len;
++#endif
+ 
+ 	len = scnprintf(tmpbuf, sizeof(tmpbuf), "%li\n", atomic_long_read(val));
+ 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
+@@ -296,6 +303,9 @@ static ssize_t ima_read_file(char *path, enum kernel_read_file_id file_id)
+ 			pr_debug("rule: %s\n", p);
+ 			rc = ima_parse_add_rule(p);
+ 			break;
++		case READING_DIGEST_LIST:
++			rc = ima_parse_compact_list(size, data);
++			break;
+ 		default:
+ 			break;
+ 		}
+@@ -319,6 +329,10 @@ static ssize_t ima_write_data(struct file *file, const char __user *buf,
+ 	char *data;
+ 	ssize_t result;
+ 	struct dentry *dentry = file_dentry(file);
++	enum kernel_read_file_id id = READING_POLICY;
++
++	if (dentry == digest_list_data)
++		id = READING_DIGEST_LIST;
+ 
+ 	/* No partial writes. */
+ 	result = -EINVAL;
+@@ -345,7 +359,7 @@ static ssize_t ima_write_data(struct file *file, const char __user *buf,
+ 		goto out_free;
+ 
+ 	if (data[0] == '/') {
+-		result = ima_read_file(data, READING_POLICY);
++		result = ima_read_file(data, id);
+ 	} else if (dentry == ima_policy) {
+ 		if (ima_appraise & IMA_APPRAISE_POLICY) {
+ 			pr_err("signed policy file (specified as an absolute pathname) required\n");
+@@ -357,6 +371,11 @@ static ssize_t ima_write_data(struct file *file, const char __user *buf,
+ 		} else {
+ 			result = ima_parse_add_rule(data);
+ 		}
++	} else if (dentry == digest_list_data) {
++		if (ima_check_current_is_parser())
++			result = ima_parse_compact_list(datalen, data);
++		else
++			result = -EACCES;
+ 	} else {
+ 		pr_err("Unknown data type\n");
+ 		result = -EINVAL;
+@@ -373,6 +392,7 @@ static ssize_t ima_write_data(struct file *file, const char __user *buf,
+ 
+ enum ima_fs_flags {
+ 	IMA_POLICY_BUSY,
++	IMA_DIGEST_LIST_DATA_BUSY,
+ 	IMA_FS_BUSY,
+ };
+ 
+@@ -382,6 +402,8 @@ static enum ima_fs_flags ima_get_dentry_flag(struct dentry *dentry)
+ 
+ 	if (dentry == ima_policy)
+ 		flag = IMA_POLICY_BUSY;
++	else if (dentry == digest_list_data)
++		flag = IMA_DIGEST_LIST_DATA_BUSY;
+ 
+ 	return flag;
+ }
+@@ -412,6 +434,8 @@ static int ima_open_data_upload(struct inode *inode, struct file *filp)
+ 		read_allowed = true;
+ 		seq_ops = &ima_policy_seqops;
  #endif
- 
-+/* Actions (measure/appraisal) for which digest lists can be used */
-+int ima_digest_list_actions;
-+
- int ima_hash_algo = HASH_ALGO_SHA1;
- static int hash_setup_done;
- 
-@@ -252,11 +256,15 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	const char *pathname = NULL;
- 	int rc = 0, action, must_appraise = 0;
- 	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
-+	struct ima_digest *found_digest = NULL;
- 	struct evm_ima_xattr_data *xattr_value = NULL;
- 	int xattr_len = 0;
- 	bool violation_check;
- 	enum hash_algo hash_algo;
- 
-+	ima_check_parser_action(inode, func, mask, ima_policy_flag, false,
-+				NULL);
-+
- 	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
- 		return 0;
- 
-@@ -268,6 +276,9 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 				&template_desc);
- 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
- 			   (ima_policy_flag & IMA_MEASURE));
-+
-+	ima_check_parser_action(inode, func, mask, action, false, NULL);
-+
- 	if (!action && !violation_check)
- 		return 0;
- 
-@@ -312,7 +323,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	if (test_and_clear_bit(IMA_CHANGE_XATTR, &iint->atomic_flags) ||
- 	    ((inode->i_sb->s_iflags & SB_I_IMA_UNVERIFIABLE_SIGNATURE) &&
- 	     !(inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER) &&
--	     !(action & IMA_FAIL_UNVERIFIABLE_SIGS))) {
-+	     !(action & IMA_FAIL_UNVERIFIABLE_SIGS)) ||
-+	    ima_get_parser() == current) {
- 		iint->flags &= ~IMA_DONE_MASK;
- 		iint->measured_pcrs = 0;
++	} else if (dentry == digest_list_data) {
++		ima_set_parser(current);
  	}
-@@ -366,6 +378,9 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
- 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
  
-+	found_digest = ima_lookup_digest(iint->ima_hash->digest, hash_algo);
-+	ima_check_parser_action(inode, func, mask, action, true, found_digest);
+ 	if (!(filp->f_flags & O_WRONLY)) {
+@@ -444,6 +468,9 @@ static int ima_release_data_upload(struct inode *inode, struct file *file)
+ 	if ((file->f_flags & O_ACCMODE) == O_RDONLY)
+ 		return seq_release(inode, file);
+ 
++	if (dentry == digest_list_data)
++		ima_set_parser(NULL);
 +
- 	if (action & IMA_MEASURE)
- 		ima_store_measurement(iint, file, pathname,
- 				      xattr_value, xattr_len, pcr,
+ 	if (dentry != ima_policy) {
+ 		clear_bit(flag, &ima_fs_flags);
+ 		return 0;
+@@ -529,8 +556,23 @@ int __init ima_fs_init(void)
+ 	if (IS_ERR(ima_policy))
+ 		goto out;
+ 
++#ifdef CONFIG_IMA_DIGEST_LIST
++	digests_count = securityfs_create_file("digests_count",
++					       S_IRUSR | S_IRGRP, ima_dir,
++					       NULL, &ima_htable_value_ops);
++	if (IS_ERR(digests_count))
++		goto out;
++
++	digest_list_data = securityfs_create_file("digest_list_data", S_IWUSR,
++						  ima_dir, NULL,
++						  &ima_data_upload_ops);
++	if (IS_ERR(digest_list_data))
++		goto out;
++#endif
+ 	return 0;
+ out:
++	securityfs_remove(digest_list_data);
++	securityfs_remove(digests_count);
+ 	securityfs_remove(violations);
+ 	securityfs_remove(runtime_measurements_count);
+ 	securityfs_remove(ascii_runtime_measurements);
 -- 
 2.17.1
 
