@@ -2,100 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C343B467CA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 20:45:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24E3646806
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jun 2019 21:08:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726126AbfFNSpF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 14:45:05 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:43403 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbfFNSpF (ORCPT
+        id S1725972AbfFNTII (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 15:08:08 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35764 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbfFNTII (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 14:45:05 -0400
-Received: from [192.168.1.110] ([77.4.92.40]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MCsgS-1hkccZ2Tui-008rOk; Fri, 14 Jun 2019 20:45:03 +0200
-Subject: Re: Help with reviewing dosfstools patches
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
+        Fri, 14 Jun 2019 15:08:08 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c6so3343538wml.0;
+        Fri, 14 Jun 2019 12:08:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lJnppciqjw6M4NiJW+erJedc3KCAQSIupzbo8maB6jE=;
+        b=FtILNZfH+hdagSP1/xl6gu80bDXfYlo8ExHwaebJu5LDsxq5tqX6Vr1+ijmD/H+BM/
+         m1hAJfq2yXvweXFvyz7vV2NXw3/HbkAHV0OHkmK1f2bwjRUpaSKC9dDZP6MU7+mWahjq
+         b7KXRHibaNnYRsfPenVNW+Pcv72caTu3pse4Ssm7cROUSObTl5XborhdGYbjgRssVh5J
+         5l/aw5FtSVoZp/NYqSuRNztdagRVD/gtrqYgQFCmaVM6MdMK/r8dl1K1G0kbFvG2ujBy
+         1G6W7D8Py0T5Qe+RaSouxbU8amx+aL/XsFel4CamGqS8tANw6qWX/ulmlcdBVtawrejE
+         NsSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lJnppciqjw6M4NiJW+erJedc3KCAQSIupzbo8maB6jE=;
+        b=CwV7qdXS3wcajzw1HjMjDA8JgqbXQ3MgXUC5hz2U5YjYuvC2C/s+YH2KlGR3gLRDhk
+         ZTjKgkrg086t70zcVTcrn6x/kLJAlbSJw3ebKWOmcJLJUVXRiTyTd8QLPcObFXVaOQWk
+         Qx6J4f16TF0QffOBvdNbybHXrMOqyar89RHGzql3dolHiyH/PbR979BN9k4YNW6dM5ND
+         HkXuI/MsoO9XOVzoX2gkhmV3Dnxy+nfuLKOM20LveGXhJj41MtCGfRmS95/210skRLnC
+         2j9UATbSyg1HKU29B6fpRAKy2SeSd519vdDcAF36Zg6b2SwvRNRYY/znKhKA2a24R/Y0
+         LF7g==
+X-Gm-Message-State: APjAAAXFN/Cdcf3HpAgCdfOHhIFyyG2a9o7O6UaBkCrKt1bFV/ovzuiX
+        CntkDoHgN2PxMDnngFXHBdRymiwfJ0Y=
+X-Google-Smtp-Source: APXvYqwjonpCxDEc9kdNmK7fSFyC5cz95rZ3cV/f+qEnmlXeFzXmguySzdYC51X34BOBdG2EeqZiag==
+X-Received: by 2002:a1c:343:: with SMTP id 64mr9590262wmd.116.1560539285449;
+        Fri, 14 Jun 2019 12:08:05 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id v27sm652246wrv.45.2019.06.14.12.08.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Jun 2019 12:08:04 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 21:08:03 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
         util-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: Help with reviewing dosfstools patches
+Message-ID: <20190614190803.2wg3gky5gypge6xp@pali>
 References: <20190614102513.4uwsu2wkigg3pimq@pali>
  <ae5097ee-12af-2807-d48c-4274b4fc856d@metux.net>
- <9e81aa56-358a-71e1-edc1-50781062f3a4@metux.net>
-Organization: metux IT consult
-Message-ID: <6f21c79d-5a80-ce3f-513c-0799145202ea@metux.net>
-Date:   Fri, 14 Jun 2019 20:45:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ <20190614142534.4obcytnq4v3ejdni@pali>
+ <20190614143052.GA21822@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <9e81aa56-358a-71e1-edc1-50781062f3a4@metux.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Y9lqlfdstTBt0DoPMvEfRUXRoxw4Xje2tgqv1QQgs0hUer3hnwZ
- pmR2xxNGqf4WU6XyUwGiQGU8IPF7j/ckuQk1KTUBTMxD969kW9bluh4lEps4UGjuwj48WRr
- sMXMJh2WRQOS7r3FDSYEdLYLLb84wzrLDP/1WBHy5KB1pu+1r6v7J7IydIOktUNUYDBFeLo
- Y/K7riDsb6EFhIhp+jM8w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:84khekgv8Ak=:siex7XVyERaJL8tZlcUIUW
- U81Dx/pqkrYpp21xMJZvQRQncP2yNEEmjLHlNUFxRxQ/Q7lyQ2FDN+8KWW8padybQEDTibhet
- 8fv7ioFxOZQr+ntNnZXQdqv1oPJpKHQmXcDnqjWMhmix8jJ/8NBWaSyedsy/gmf92TVv+wY6i
- 9rvWTVQqWtLPNfuUVTVEow0CrhDiN/lF04DNERSdLwW+t4KXaFiahU9oxyxdCVFrR5Kebyyh+
- FeaigG5Ikb6HlDJG7i+BUaqMbFaSHVX8VY8mTo/eqka07caKUSnzAUi1blU6DTAJSUHJwYTDj
- Zd8S2hTPDOAF6+zY3afVqTq8SSF87QLM2KUpXxOFO6AcXZN1fjcsRUQHaEvgBqUZ74H3eef/h
- Lf6iFGdtaimRIGl3M2E1L9AyNgHau2GZGm9F3H1JvmVZboFfcfRjuTHmWxErcmmVkAcoV/Hj9
- 6yUgKaZKaOdYAz9mUgldVvrM1kZma6Z5Ipc1gTo15ur38IHD1o9ltETUntT7F+dgugBe1S5bl
- L201Au8abecRf3VnW9/4OEiQZQePlq3UfuyQlho0ypv8hu5YP1wf+rpBUbreAULlhNFJSWXPW
- HuB0gB/TNv5EDDalTo6qSJ4YiqRIZe3u1uNy8PR11Yod4VqtCnHfq/g+BJDAXFk6N5c8BHCpd
- UiFbjnQmsl3Kc2p8sZqedY3hcSqJte1eMtfjbbKCsqdLlCpnpgIY+iSsJF1gISihT5xYsNJJR
- 0oogBcIWAyVmkoSry/tS1msfAmzc7b1gxBVVMmCdKOxKC1iydX9xVw+4qc4=
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="uhnyqyra6n5d7ky5"
+Content-Disposition: inline
+In-Reply-To: <20190614143052.GA21822@infradead.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14.06.19 17:45, Enrico Weigelt, metux IT consult wrote:
-> On 14.06.19 16:20, Enrico Weigelt, metux IT consult wrote:
-> 
-> <snip>
-> 
-> Currently working through your branches. Smells like they really deserve
-> a rebase and signed-off lines.
 
-rebased/applied your patches and got test failures:
+--uhnyqyra6n5d7ky5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-XFAIL: check-dot_entries
-========================
+On Friday 14 June 2019 07:30:52 Christoph Hellwig wrote:
+> On Fri, Jun 14, 2019 at 04:25:34PM +0200, Pali Roh=C3=A1r wrote:
+> > > Does the project already have a maillist ?
+> >=20
+> > No, there is no mailing list. Basically whole development is on github
+> > via github pull requests where are also put review comments and where is
+> > also whole discussion, including bug reports.
+>=20
+> That could explain why it is lacking qualified reviewers..
 
-Test check-dot_entries
-First fsck run to check and fix error...
-fsck.fat 4.1+git (2017-01-24)
-/DIR
-  "." is not first entry. Can't fix this yet.
-/DIR
-  ".." is not second entry. Can't fix this yet.
-check-dot_entries.img: 4 files, 3/63931 clusters
-*** Error was not detected by fsck.
-XFAIL check-dot_entries.fsck (exit status: 100)
+That is not my decision. Probably current maintainer of dosfstools like
+it. But nowadays do not have much more time and gave me commit access.
 
-XFAIL: check-huge
-=================
+Main benefit of github pull requests is that every one pull request
+patch is automatically compiled and tested on i686, x86_64, x32, arm
+and big endian powerpc systems via Travis CI. So author and also
+reviewers/people with commit access immediately know if proposed change
+could break something.
 
-Test check-huge
-First fsck run to check and fix error...
-Failed to read sector 167772191.
-fsck.fat 4.1+git (2017-01-24)
-Second fsck run to check if error was fixed...
-Failed to read sector 167772191.
-fsck.fat 4.1+git (2017-01-24)
-*** Error was not fixed by fsck.
-XFAIL check-huge.fsck (exit status: 1)
+I like automated testing on more platforms, because lot of people either
+do not know or do not have access to different systems just for testing.
+And this can show possible problems...
 
+Setting up a new mailing list, configuring some testing server, copying
+existing patches from github to list, etc... is just tons of work for
+which I basically do not have a time. Therefore I asked for help to
+review existing stuff with minimal technical time setup.
 
---mtx
+I understand that it is not ideal for everybody, but for current
+contributors it is probably better. I have already reviewed and merged
+more patches, just those which are mine are left open, so more eyes can
+look at them.
 
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+If you or somebody else have time and want to improve dosfstools
+project, I'm not against it...
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--uhnyqyra6n5d7ky5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXQPwkQAKCRCL8Mk9A+RD
+UoiWAJ0Z13QU2KM91Gdfn4EVW7zcRUqjiwCfVP/g/rwJEfPthHkdZqpnpZjS3x0=
+=c3IA
+-----END PGP SIGNATURE-----
+
+--uhnyqyra6n5d7ky5--
