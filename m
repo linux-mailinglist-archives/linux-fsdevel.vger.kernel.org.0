@@ -2,101 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C61346E0C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2019 06:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9057A46FED
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2019 14:39:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725817AbfFOEB0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Jun 2019 00:01:26 -0400
-Received: from mail-lf1-f51.google.com ([209.85.167.51]:44794 "EHLO
-        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbfFOEB0 (ORCPT
+        id S1726512AbfFOMjv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Jun 2019 08:39:51 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:35245 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725943AbfFOMjv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Jun 2019 00:01:26 -0400
-Received: by mail-lf1-f51.google.com with SMTP id r15so3003029lfm.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jun 2019 21:01:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LNCCQDzXq6yRFhVLoEUQSeznUefXALf/b6AvjDf5zbk=;
-        b=K+NlbgNmc77iE+WvrjEBgMNlZucBcKdO/O5/nk7OZOBx6QGiPLKgW6xHqeUKR/z1/9
-         zyhhdNgrB4+1BFo6Zu6tRLbi1YgVBxzcym14Fw3e1Cvu/GabpqLG0GbD6xnKbRNydIPE
-         3038hUhYpnFUOgY2FK0lkFrB+J3deHeUX1FtU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LNCCQDzXq6yRFhVLoEUQSeznUefXALf/b6AvjDf5zbk=;
-        b=MJaoZGF6y9tRwCUrDXrUgbZZt2SFJGzIwOrqDe++KmbjiE5r1eU+43AwwpagyXXN0w
-         r05Ev0bPN9riZP9/AruzKAHT2VE+DsQ/4Zw0bL4c8bWGZvmcb1omLcXfRgEsD4DruV7m
-         HyHtBUlqoV84yj0OH1bMYpd0BPuFUWSiXKdWhRte24sD+n7W9HVSuBzM0ASK4J4ZX5e3
-         TD+nTJZ9WqiE0/A8cT/sw9rMrV+wvvTuIzwF2dOK36tg11CBQL1gdUL6Hxv0PCw8mzeG
-         kckKYlUyFpNABtJ67RIT6S2lqiW3A/DSWOLvOwjfma+BLpjuicw2F7fIYTRcKuHAwLCM
-         3ogg==
-X-Gm-Message-State: APjAAAXpZ+6hZoM8YKiuCgl5UnF+ojc/1VroTwoW3rYBACtIQ4N1BRJp
-        qMXS7wTX8VXjYA8R2lw8CgYhpkiucJk=
-X-Google-Smtp-Source: APXvYqylm0jY7Zh+scteXSQuuKBwBbUdFk6dbPobs1BFd3B+GX3ZQoE17q7UTyAF2tNN1TXSPs7IRA==
-X-Received: by 2002:a19:740e:: with SMTP id v14mr51779692lfe.144.1560571284436;
-        Fri, 14 Jun 2019 21:01:24 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id x20sm886616ljc.15.2019.06.14.21.01.23
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 21:01:24 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id m23so4248896lje.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jun 2019 21:01:23 -0700 (PDT)
-X-Received: by 2002:a2e:b003:: with SMTP id y3mr18772815ljk.72.1560571283486;
- Fri, 14 Jun 2019 21:01:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
- <20190611011737.GA28701@kmo-pixel> <20190611043336.GB14363@dread.disaster.area>
- <20190612162144.GA7619@kmo-pixel> <20190612230224.GJ14308@dread.disaster.area>
- <20190613183625.GA28171@kmo-pixel> <20190613235524.GK14363@dread.disaster.area>
- <CAHk-=whMHtg62J2KDKnyOTaoLs9GxcNz1hN9QKqpxoO=0bJqdQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whMHtg62J2KDKnyOTaoLs9GxcNz1hN9QKqpxoO=0bJqdQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 14 Jun 2019 18:01:07 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wgz+7O0pdn8Wfxc5EQKNy44FTtf4LAPO1WgCidNjxbWzg@mail.gmail.com>
-Message-ID: <CAHk-=wgz+7O0pdn8Wfxc5EQKNy44FTtf4LAPO1WgCidNjxbWzg@mail.gmail.com>
-Subject: Re: pagecache locking (was: bcachefs status update) merged)
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Sat, 15 Jun 2019 08:39:51 -0400
+Received: from callcc.thunk.org (rrcs-74-87-88-165.west.biz.rr.com [74.87.88.165])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x5FCdL7J031269
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 15 Jun 2019 08:39:22 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id A4E1B420484; Sat, 15 Jun 2019 08:39:20 -0400 (EDT)
+Date:   Sat, 15 Jun 2019 08:39:20 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v4 01/16] fs-verity: add a documentation file
+Message-ID: <20190615123920.GB6142@mit.edu>
+References: <20190606155205.2872-1-ebiggers@kernel.org>
+ <20190606155205.2872-2-ebiggers@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606155205.2872-2-ebiggers@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 5:08 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I do not believe that posix itself actually requires that at all,
-> although extended standards may.
+On Thu, Jun 06, 2019 at 08:51:50AM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Add a documentation file for fs-verity, covering....
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-So I tried to see if I could find what this perhaps alludes to.
+Looks good; you can add:
 
-And I suspect it's not in the read/write thing, but the pthreads side
-talks about atomicity.
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 
-Interesting, but I doubt if that's actually really intentional, since
-the non-thread read/write behavior specifically seems to avoid the
-whole concurrency issue.
 
-The pthreads atomicity thing seems to be about not splitting up IO and
-doing it in chunks when you have m:n threading models, but can be
-(mis-)construed to have threads given higher atomicity guarantees than
-processes.
+One minor design point below:
 
-               Linus
+> +ext4 stores the verity metadata (Merkle tree and fsverity_descriptor)
+> +past the end of the file, starting at the first page fully beyond
+                                                   ^^^^
+> +i_size.  This approach works because (a) verity files are readonly,
+> +and (b) pages fully beyond i_size aren't visible to userspace but can
+> +be read/written internally by ext4 with only some relatively small
+> +changes to ext4.  This approach avoids having to depend on the
+> +EA_INODE feature and on rearchitecturing ext4's xattr support to
+> +support paging multi-gigabyte xattrs into memory, and to support
+> +encrypting xattrs.  Note that the verity metadata *must* be encrypted
+> +when the file is, since it contains hashes of the plaintext data.
+
+If we ever want to support mounting, say, a file system with 4k blocks
+and fsverity enabled on a architecture with a 16k or 64k page size,
+then "page" in that first sentence will need to become "block".  At
+the moment we only support fsverity when page size == block size, so
+it's not an issue.
+
+However, it's worth reflecting on what this means.  In order to
+satisfy this requirement (from the mmap man page):
+
+       A file is mapped in multiples of the page size.  For a file
+       that is not a multiple of the page size, the remaining memory
+       is zeroed when mapped...
+
+we're going to have to special case how the last page gets mmaped.
+The simplest way to do this will be to map in an anonymous page which
+just has the blocks that are part of the data block copied in, and the
+rest of the page can be zero'ed.
+
+One thing we might consider doing just to make life much easier for
+ourselves (should we ever want to support page size != block size ---
+which I could imagine some folks like Chandan might find desirable) is
+to specify that the fsverity metadata begins at an offset which begins
+at i_size rounded up to the next 64k binary, which should handle all
+current and future architectures' page sizes.
+
+					- Ted
