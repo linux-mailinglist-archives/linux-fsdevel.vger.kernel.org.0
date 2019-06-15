@@ -2,68 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31CB44708A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2019 16:48:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3934747092
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2019 16:55:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfFOOsu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Jun 2019 10:48:50 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54549 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726700AbfFOOsu (ORCPT
+        id S1726703AbfFOOzr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Jun 2019 10:55:47 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42768 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbfFOOzr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Jun 2019 10:48:50 -0400
-Received: from callcc.thunk.org (rrcs-74-87-88-165.west.biz.rr.com [74.87.88.165])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x5FEmOLp000697
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 15 Jun 2019 10:48:25 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 5E1F9420484; Sat, 15 Jun 2019 10:48:24 -0400 (EDT)
-Date:   Sat, 15 Jun 2019 10:48:24 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v4 09/16] fs-verity: add data verification hooks for
- ->readpages()
-Message-ID: <20190615144824.GJ6142@mit.edu>
-References: <20190606155205.2872-1-ebiggers@kernel.org>
- <20190606155205.2872-10-ebiggers@kernel.org>
+        Sat, 15 Jun 2019 10:55:47 -0400
+Received: by mail-ot1-f65.google.com with SMTP id l15so5376326otn.9
+        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Jun 2019 07:55:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gFmJrg9gTcnKcoZCiQypnNRQNxX/k8DGBmBoxNPZno8=;
+        b=klK5xT+pZCZCxBKmT+dDi1L17ZIzGrGo8paskk1sn9yxvC/ntAZApYPoQyIiyaqcbI
+         ulJk3aIUyDq4+s5deAn5oPtj1SvlaXKC4OQiikcuMEmykKMzZ6v73uDGsgGAcD+O0rZF
+         ZW3P7DVLEHiW5O5k7lBEuayN5yVMBij7qJbo2ZveJyhrB4n7/bN48CwGmn0s3euIQjT1
+         6rm+4x+ncDflhIWFxjJ5rMSj7TeA2V9BpCswbSQwRtEjj1UMN7ANWSt0ekAtyCnppweC
+         Jzs1OPw9MtKfjgojQzo3VYyyxAM27Zh9AgF2uy62wQSQPJgAfGfWax+CQUMTig8DBQR7
+         vcig==
+X-Gm-Message-State: APjAAAWyQnC/DWCyCoQ3OjwGlqE5HdrlPXtQiPgOGgzOs2ZTtC/iNE+r
+        NafCx9uRINVxuVnVUdMEYYu+28LL7BQ+KxBS73+QAQ==
+X-Google-Smtp-Source: APXvYqwKBPzqo5TL6rFrnREFUjRgNeUMkK3klySr7NevDMq8P3LAgYuZoUbBHpsMVVHfErjvWphf4b3VQAeDVe90mDI=
+X-Received: by 2002:a9d:67d5:: with SMTP id c21mr33729557otn.243.1560610546148;
+ Sat, 15 Jun 2019 07:55:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606155205.2872-10-ebiggers@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1560437690-13919-1-git-send-email-jsavitz@redhat.com> <20190613122956.2fe1e200419c6497159044a0@linux-foundation.org>
+In-Reply-To: <20190613122956.2fe1e200419c6497159044a0@linux-foundation.org>
+From:   Joel Savitz <jsavitz@redhat.com>
+Date:   Sat, 15 Jun 2019 10:55:31 -0400
+Message-ID: <CAL1p7m5_uzOhk6Lj78Pgh6Y6EXPd=+YLk4vwMZd6xyoiJutt5g@mail.gmail.com>
+Subject: Re: [PATCH v4] fs/proc: add VmTaskSize field to /proc/$$/status
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Rafael Aquini <aquini@redhat.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 08:51:58AM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Add functions that verify data pages that have been read from a
-> fs-verity file, against that file's Merkle tree.  These will be called
-> from filesystems' ->readpage() and ->readpages() methods.
-> 
-> Since data verification can block, a workqueue is provided for these
-> methods to enqueue verification work from their bio completion callback.
-> 
-> See the "Verifying data" section of
-> Documentation/filesystems/fsverity.rst for more information.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+The most immediate use case is the optimization of an internal test,
+but upon closer examination neither this patch nor the test itself
+turn out to be worth pursuing.
 
-Looks good; you can add:
+Thank you for your time and constructive comments.
 
-Reviewed-off-by: Theodore Ts'o <tytso@mit.edu>
+Best,
+Joel Savitz
 
-						- Ted
+
+On Thu, Jun 13, 2019 at 3:30 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Thu, 13 Jun 2019 10:54:50 -0400 Joel Savitz <jsavitz@redhat.com> wrote:
+>
+> > The kernel provides no architecture-independent mechanism to get the
+> > size of the virtual address space of a task (userspace process) without
+> > brute-force calculation. This patch allows a user to easily retrieve
+> > this value via a new VmTaskSize entry in /proc/$$/status.
+>
+> Why is access to ->task_size required?  Please fully describe the
+> use case.
+>
+> > --- a/Documentation/filesystems/proc.txt
+> > +++ b/Documentation/filesystems/proc.txt
+> > @@ -187,6 +187,7 @@ read the file /proc/PID/status:
+> >    VmLib:      1412 kB
+> >    VmPTE:        20 kb
+> >    VmSwap:        0 kB
+> > +  VmTaskSize:        137438953468 kB
+> >    HugetlbPages:          0 kB
+> >    CoreDumping:    0
+> >    THP_enabled:         1
+> > @@ -263,6 +264,7 @@ Table 1-2: Contents of the status files (as of 4.19)
+> >   VmPTE                       size of page table entries
+> >   VmSwap                      amount of swap used by anonymous private data
+> >                               (shmem swap usage is not included)
+> > + VmTaskSize                  size of task (userspace process) vm space
+>
+> This is rather vague.  Is it the total amount of physical memory?  The
+> sum of all vma sizes, populated or otherwise?  Something else?
+>
+>
