@@ -2,664 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8D3146CD6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2019 01:23:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D149846D76
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jun 2019 03:15:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbfFNXWu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jun 2019 19:22:50 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46284 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfFNXWu (ORCPT
+        id S1726466AbfFOBP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jun 2019 21:15:28 -0400
+Received: from mail-lf1-f46.google.com ([209.85.167.46]:38432 "EHLO
+        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbfFOBP2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jun 2019 19:22:50 -0400
-Received: by mail-pl1-f196.google.com with SMTP id e5so1574509pls.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jun 2019 16:22:49 -0700 (PDT)
+        Fri, 14 Jun 2019 21:15:28 -0400
+Received: by mail-lf1-f46.google.com with SMTP id b11so2887339lfa.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jun 2019 18:15:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UldVqdZ9D7hgJVdDeCXgBnGyHE7wD3aOYhsVNPjQpDw=;
-        b=HHBH0YpOxZFV9lHpttKQ3HfN/1oER3nBUQGphZ90oXPdDn2KZbJ2MQ41X1Xc16GXe7
-         FmIdhPNKlSBvDi4DZocJ7oWj+wCKAcAE7Tj/n6rwkGr4WvjvEjKWNN1ZQ7LPvvVssd49
-         pC3H6lUCEueSArd8ZNEhFii+7+rgcthyxP7QVl6AGl/huF16b5b84U5+zU3R25tnRjnJ
-         yz54Dy9ywc9HGpYGA+iyIlXcOCS2nJYVRWpku/vG7fpxW8iCu4L2vDMQrdJI7t97+ZA2
-         B0MkEs/3/saU4gLpjce7QscqCFbJa3JdBLPuSmyu5jRObskEqFhao2y/azQKyZoKomI2
-         iX7A==
+        bh=T0sAjPXXfslJFeHisHU1yrczsKCc0N+yl4i1W3iXGv0=;
+        b=RaOwSCtNqtqtil2BG0A89cO+YIcb7ccAuT10ZjRkB+BM/5iXa5e7ccARHhlDEdfwDb
+         UNWwmuNiXnI+FDpavul6sS3iDMhBtpB7ngwnNuMNvZlWEDtMgPp9OYEojdQ5XLD6tTG6
+         emJyLc9yswuypGzecLiYQUAz3ylLy9F1cagCU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UldVqdZ9D7hgJVdDeCXgBnGyHE7wD3aOYhsVNPjQpDw=;
-        b=rAJQIqAJyqukz0PAvaPgf1fU5Nqzqc86JMm77Ee6v+sPDGlomShoMi+tqiNpoiLD0C
-         i7YHhDyE5g89Zw9EFwH3Nv58y4Z9sA+zNcLqxWvdSUWV83BBf1UFm0P0NLtQqoBSbG6V
-         46u+35BjBj5de/fuvwwL32Hq2ddG5ug07v5FNzNs+I55CL4lpHYv9sZ6JjBDjEu1eNp3
-         MdxCBYeafmF/NXvyUpv4jVmGNik7SQbSf2gwscuS3153d4zpOyhBS+24uvf47iNThsM/
-         Uv/M2IVws8wggT49lHI3aOxIIIoIgXf5J8fNrxbTmj1AnQEsNl3bDFukU05SgeunSXpv
-         qzQA==
-X-Gm-Message-State: APjAAAW+s9f2+nHCbwUEjnybfFITNvIbIMSoUo6SoYuGaGFgodbnWFRw
-        H48UzhHTwiro0wEavpapPvYruYzMxKl5KOgT5/mhJw==
-X-Google-Smtp-Source: APXvYqxlUzSZlpmZAhfWujncoeY8eP2McvCAGNGuLdo6uZc7M5yKHyP/mexl4yajuCPTw3IZ+IfXUvYA5H/nHX/FZy8=
-X-Received: by 2002:a17:902:102c:: with SMTP id b41mr45686628pla.204.1560554568603;
- Fri, 14 Jun 2019 16:22:48 -0700 (PDT)
+        bh=T0sAjPXXfslJFeHisHU1yrczsKCc0N+yl4i1W3iXGv0=;
+        b=APQ788QJJXh7ny1MKboyb365ed83zWFlIT0Cdz7kx/FxXcA8jM2o/lH/SbcFkuOEgj
+         emFbL6P3ipF4AiXcug5zTCAScNCB7A9ZviIqzJdgMylRDxv00/RQ3nZiD4/IxmS+nr4B
+         RcRfeGBRB6mQU66BksbfdKIerE/iTQvf7fLV9d0o4cL8ZZ3pTpsmV3PbW+1lXz7dldk3
+         OKmcXqKmCckKXbPVHyMXhhjDJkbj3L1jZB60Oy2eSRVOuNNL416tT2MjHHrB9uNT3H5s
+         Ni0V41lkU/SzAhrl8UsadT2G/ziaa5JfUWXOFjOxA7qxaQdg5R2F/yJh9+l09ch/amEB
+         teFg==
+X-Gm-Message-State: APjAAAXL7qJFv0s6u9jy/Y4janSCbugwOgZS2cydQ5iMkQvlIhJ9o2TO
+        DVwsM43+vm5+U4t56n6pnk9hZCY3cnY=
+X-Google-Smtp-Source: APXvYqw39cwHTeywmnarT8bRvPx6SQjE/tOK5XfpKpUjuEgUI5QjdBARYl3QhYyffmqypg/AQLzb9w==
+X-Received: by 2002:a19:521a:: with SMTP id m26mr24107387lfb.134.1560561324115;
+        Fri, 14 Jun 2019 18:15:24 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id t21sm849546ljg.60.2019.06.14.18.15.22
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 18:15:22 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id b11so2887287lfa.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jun 2019 18:15:22 -0700 (PDT)
+X-Received: by 2002:ac2:59c9:: with SMTP id x9mr48522334lfn.52.1560561321789;
+ Fri, 14 Jun 2019 18:15:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190514221711.248228-1-brendanhiggins@google.com>
- <20190514221711.248228-2-brendanhiggins@google.com> <20190517185304.24EBE20848@mail.kernel.org>
-In-Reply-To: <20190517185304.24EBE20848@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Fri, 14 Jun 2019 16:22:36 -0700
-Message-ID: <CAFd5g44D8mySkp3ch=MaD3HZ_AuqnM6zfPbBUnNQDD-K4yBc4A@mail.gmail.com>
-Subject: Re: [PATCH v4 01/18] kunit: test: add KUnit test runner core
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611011737.GA28701@kmo-pixel> <20190611043336.GB14363@dread.disaster.area>
+ <20190612162144.GA7619@kmo-pixel> <20190612230224.GJ14308@dread.disaster.area>
+ <20190613183625.GA28171@kmo-pixel> <20190613235524.GK14363@dread.disaster.area>
+ <CAHk-=wj3SQjfHHvE_CNrQAYS2p7bsC=OXEc156cHA_ujyaG0NA@mail.gmail.com> <20190614073053.GQ14363@dread.disaster.area>
+In-Reply-To: <20190614073053.GQ14363@dread.disaster.area>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 14 Jun 2019 15:15:05 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wgoXo-irWbU1SbKvHuYyAz2nwOkrw2L=+HackVWsXFhpQ@mail.gmail.com>
+Message-ID: <CAHk-=wgoXo-irWbU1SbKvHuYyAz2nwOkrw2L=+HackVWsXFhpQ@mail.gmail.com>
+Subject: Re: pagecache locking (was: bcachefs status update) merged)
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 17, 2019 at 11:53 AM Stephen Boyd <sboyd@kernel.org> wrote:
+On Thu, Jun 13, 2019 at 9:31 PM Dave Chinner <david@fromorbit.com> wrote:
 >
-> Quoting Brendan Higgins (2019-05-14 15:16:54)
-> > diff --git a/include/kunit/test.h b/include/kunit/test.h
-> > new file mode 100644
-> > index 0000000000000..e682ea0e1f9a5
-> > --- /dev/null
-> > +++ b/include/kunit/test.h
-> > @@ -0,0 +1,162 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Base unit test (KUnit) API.
-> > + *
-> > + * Copyright (C) 2019, Google LLC.
-> > + * Author: Brendan Higgins <brendanhiggins@google.com>
-> > + */
-> > +
-> > +#ifndef _KUNIT_TEST_H
-> > +#define _KUNIT_TEST_H
-> > +
-> > +#include <linux/types.h>
-> > +#include <linux/slab.h>
->
-> Is this include used here?
+> Yes, they do, I see plenty of cases where the page cache works just
+> fine because it is still faster than most storage. But that's _not
+> what I said_.
 
-Err, it is used in the very next commit in the sequence. Sorry, I will
-add it in the commit that actually uses it in the next revision.
+I only quoted one small part of your email, because I wanted to point
+out how you again dismissed caches.
 
-> > +
-> > +struct kunit;
-> > +
-> > +/**
-> > + * struct kunit_case - represents an individual test case.
-> > + * @run_case: the function representing the actual test case.
-> > + * @name: the name of the test case.
-> > + *
-> > + * A test case is a function with the signature, ``void (*)(struct kunit *)``
-> > + * that makes expectations (see KUNIT_EXPECT_TRUE()) about code under test. Each
-> > + * test case is associated with a &struct kunit_module and will be run after the
-> > + * module's init function and followed by the module's exit function.
-> > + *
-> > + * A test case should be static and should only be created with the KUNIT_CASE()
-> > + * macro; additionally, every array of test cases should be terminated with an
-> > + * empty test case.
-> > + *
-> > + * Example:
-> > + *
-> > + * .. code-block:: c
-> > + *
-> > + *     void add_test_basic(struct kunit *test)
-> > + *     {
-> > + *             KUNIT_EXPECT_EQ(test, 1, add(1, 0));
-> > + *             KUNIT_EXPECT_EQ(test, 2, add(1, 1));
-> > + *             KUNIT_EXPECT_EQ(test, 0, add(-1, 1));
-> > + *             KUNIT_EXPECT_EQ(test, INT_MAX, add(0, INT_MAX));
-> > + *             KUNIT_EXPECT_EQ(test, -1, add(INT_MAX, INT_MIN));
-> > + *     }
-> > + *
-> > + *     static struct kunit_case example_test_cases[] = {
-> > + *             KUNIT_CASE(add_test_basic),
-> > + *             {},
->
-> Nitpick: Please drop the comma on the sentinel so nobody gets ideas to
-> add another entry after it.
+And yes, that literally _is_ what you said. In other parts of that
+same email you said
 
-Good idea. Will fix here and elsewhere.
+   "..it's getting to the point where the only reason for having
+    a page cache is to support mmap() and cheap systems with spinning
+    rust storage"
 
-> > + *     };
-> > + *
-> > + */
-> > +struct kunit_case {
-> > +       void (*run_case)(struct kunit *test);
-> > +       const char name[256];
->
-> Maybe 256 can be a #define KUNIT_NAME_MAX_LEN? Or it could just be a
-> const char pointer to a literal pool? Are unit tests making up names at
-> runtime?
+and
 
-Yeah, sorry, I forgot why I did it this way in the first place. Will
-fix in next revision.
+  "That's my beef with relying on the page cache - the page cache is
+   rapidly becoming a legacy structure that only serves to slow modern
+   IO subsystems down"
 
-> > +
-> > +       /* private: internal use only. */
-> > +       bool success;
-> > +};
-> > +
-> > +/**
-> > + * KUNIT_CASE - A helper for creating a &struct kunit_case
-> > + * @test_name: a reference to a test case function.
-> > + *
-> > + * Takes a symbol for a function representing a test case and creates a
-> > + * &struct kunit_case object from it. See the documentation for
-> > + * &struct kunit_case for an example on how to use it.
-> > + */
-> > +#define KUNIT_CASE(test_name) { .run_case = test_name, .name = #test_name }
-> > +
-> > +/**
-> > + * struct kunit_module - describes a related collection of &struct kunit_case s.
-> > + * @name: the name of the test. Purely informational.
-> > + * @init: called before every test case.
-> > + * @exit: called after every test case.
-> > + * @test_cases: a null terminated array of test cases.
-> > + *
-> > + * A kunit_module is a collection of related &struct kunit_case s, such that
-> > + * @init is called before every test case and @exit is called after every test
-> > + * case, similar to the notion of a *test fixture* or a *test class* in other
-> > + * unit testing frameworks like JUnit or Googletest.
-> > + *
-> > + * Every &struct kunit_case must be associated with a kunit_module for KUnit to
-> > + * run it.
-> > + */
-> > +struct kunit_module {
-> > +       const char name[256];
-> > +       int (*init)(struct kunit *test);
-> > +       void (*exit)(struct kunit *test);
-> > +       struct kunit_case *test_cases;
->
-> Can this variable be const? Or we expect test modules to adjust test_cases after
-> the fact?
+and your whole email was basically a rant against the page cache.
 
-I understand why it would be nice to do it that way, but we store the
-failed result on test cases; I don't think it really makes sense to
-have another parallel data structure just for the results on each test
-case.
+So I only quoted the bare minimum, and pointed out that caching is
+still damn important.
 
-> > +};
-> > +
-> > +/**
-> > + * struct kunit - represents a running instance of a test.
-> > + * @priv: for user to store arbitrary data. Commonly used to pass data created
-> > + * in the init function (see &struct kunit_module).
-> > + *
-> > + * Used to store information about the current context under which the test is
-> > + * running. Most of this data is private and should only be accessed indirectly
-> > + * via public functions; the one exception is @priv which can be used by the
-> > + * test writer to store arbitrary data.
-> > + */
-> > +struct kunit {
-> > +       void *priv;
-> > +
-> > +       /* private: internal use only. */
-> > +       const char *name; /* Read only after initialization! */
-> > +       spinlock_t lock; /* Gaurds all mutable test state. */
-> > +       bool success; /* Protected by lock. */
-> > +};
-> > +
-> > +void kunit_init_test(struct kunit *test, const char *name);
-> > +
-> > +int kunit_run_tests(struct kunit_module *module);
-> > +
-> > +/**
-> > + * module_test() - used to register a &struct kunit_module with KUnit.
-> > + * @module: a statically allocated &struct kunit_module.
-> > + *
-> > + * Registers @module with the test framework. See &struct kunit_module for more
-> > + * information.
-> > + */
-> > +#define module_test(module) \
-> > +               static int module_kunit_init##module(void) \
-> > +               { \
-> > +                       return kunit_run_tests(&module); \
-> > +               } \
-> > +               late_initcall(module_kunit_init##module)
->
-> Maybe we need to introduce another initcall level after
-> late_initcall_sync() for tests? I wonder if there will be tests that
-> need to run after all other initcalls have run, including late sync
-> initcalls.
+Because most loads cache well.
 
-Yeah, I have another patch ready to go to do that. I guess I just
-figured that was something that could lead to a lot of bikeshedding
-that I wanted to avoid in the initial patchset.
+How you are back-tracking a bit from your statements, but don't go
+saying was misreading you. How else would the above be read? You
+really were saying that caching was "legacy". I called you out on it.
+Now you're trying to back-track.
 
-Nevertheless, I can add it in if you feel it is better to discuss now.
+Yes, you have loads that don't cache well. But that does not mean that
+caching has somehow become irrelevant in the big picture or a "legacy"
+thing at all.
 
-> > +
-> > +void __printf(3, 4) kunit_printk(const char *level,
-> > +                                const struct kunit *test,
-> > +                                const char *fmt, ...);
-> > +
-> > +/**
-> > + * kunit_info() - Prints an INFO level message associated with the current test.
-> > + * @test: The test context object.
-> > + * @fmt: A printk() style format string.
-> > + *
-> > + * Prints an info level message associated with the test module being run. Takes
-> > + * a variable number of format parameters just like printk().
-> > + */
-> > +#define kunit_info(test, fmt, ...) \
-> > +               kunit_printk(KERN_INFO, test, fmt, ##__VA_ARGS__)
-> > +
-> > +/**
-> > + * kunit_warn() - Prints a WARN level message associated with the current test.
-> > + * @test: The test context object.
-> > + * @fmt: A printk() style format string.
-> > + *
-> > + * See kunit_info().
->
-> Why? Just write out that it "Prints a warning level message".
->
-> > + */
-> > +#define kunit_warn(test, fmt, ...) \
-> > +               kunit_printk(KERN_WARNING, test, fmt, ##__VA_ARGS__)
-> > +
-> > +/**
-> > + * kunit_err() - Prints an ERROR level message associated with the current test.
-> > + * @test: The test context object.
-> > + * @fmt: A printk() style format string.
-> > + *
-> > + * See kunit_info().
->
-> Same comment.
->
-> > + */
-> > +#define kunit_err(test, fmt, ...) \
-> > +               kunit_printk(KERN_ERR, test, fmt, ##__VA_ARGS__)
-> > +
-> > +#endif /* _KUNIT_TEST_H */
-> > diff --git a/kunit/Kconfig b/kunit/Kconfig
-> > new file mode 100644
-> > index 0000000000000..64480092b2c24
-> > --- /dev/null
-> > +++ b/kunit/Kconfig
-> > @@ -0,0 +1,16 @@
-> > +#
-> > +# KUnit base configuration
-> > +#
-> > +
-> > +menu "KUnit support"
-> > +
-> > +config KUNIT
-> > +       bool "Enable support for unit tests (KUnit)"
-> > +       help
-> > +         Enables support for kernel unit tests (KUnit), a lightweight unit
-> > +         testing and mocking framework for the Linux kernel. These tests are
-> > +         able to be run locally on a developer's workstation without a VM or
-> > +         special hardware. For more information, please see
-> > +         Documentation/kunit/
->
-> This moved and needs an update.
->
-> > +
-> > +endmenu
-> > diff --git a/kunit/Makefile b/kunit/Makefile
-> > new file mode 100644
-> > index 0000000000000..5efdc4dea2c08
-> > --- /dev/null
-> > +++ b/kunit/Makefile
-> > @@ -0,0 +1 @@
-> > +obj-$(CONFIG_KUNIT) +=                 test.o
-> > diff --git a/kunit/test.c b/kunit/test.c
-> > new file mode 100644
-> > index 0000000000000..86f65ba2bcf92
-> > --- /dev/null
-> > +++ b/kunit/test.c
-> > @@ -0,0 +1,229 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Base unit test (KUnit) API.
-> > + *
-> > + * Copyright (C) 2019, Google LLC.
-> > + * Author: Brendan Higgins <brendanhiggins@google.com>
-> > + */
-> > +
-> > +#include <linux/sched.h>
->
-> This include gets removed later in the series, was it ever needed?
+The thing is, I don't even hate DIO. But we always end up clashing
+because you seem to have this mindset where nothing else matters
+(which really came through in that email I replied to).
 
-Nope, that was a mistake. Sorry.
+Do you really wonder why I point out that caching is important?
+Because you seem to actively claim caching doesn't matter. Are you
+happier now that I quoted more of your emails back to you?
 
-> > +#include <linux/sched/debug.h>
-> > +#include <kunit/test.h>
-> > +
-> > +static bool kunit_get_success(struct kunit *test)
-> > +{
-> > +       unsigned long flags;
-> > +       bool success;
-> > +
-> > +       spin_lock_irqsave(&test->lock, flags);
-> > +       success = test->success;
-> > +       spin_unlock_irqrestore(&test->lock, flags);
-> > +
-> > +       return success;
-> > +}
-> > +
-> > +static void kunit_set_success(struct kunit *test, bool success)
-> > +{
-> > +       unsigned long flags;
-> > +
-> > +       spin_lock_irqsave(&test->lock, flags);
-> > +       test->success = success;
-> > +       spin_unlock_irqrestore(&test->lock, flags);
-> > +}
-> > +
-> > +static int kunit_vprintk_emit(int level, const char *fmt, va_list args)
-> > +{
-> > +       return vprintk_emit(0, level, NULL, 0, fmt, args);
-> > +}
-> > +
-> > +static int kunit_printk_emit(int level, const char *fmt, ...)
-> > +{
-> > +       va_list args;
-> > +       int ret;
-> > +
-> > +       va_start(args, fmt);
-> > +       ret = kunit_vprintk_emit(level, fmt, args);
-> > +       va_end(args);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static void kunit_vprintk(const struct kunit *test,
-> > +                         const char *level,
-> > +                         struct va_format *vaf)
-> > +{
-> > +       kunit_printk_emit(level[1] - '0', "\t# %s: %pV", test->name, vaf);
-> > +}
-> > +
-> > +static bool kunit_has_printed_tap_version;
-> > +
-> > +static void kunit_print_tap_version(void)
-> > +{
-> > +       if (!kunit_has_printed_tap_version) {
-> > +               kunit_printk_emit(LOGLEVEL_INFO, "TAP version 14\n");
-> > +               kunit_has_printed_tap_version = true;
-> > +       }
-> > +}
-> > +
-> > +static size_t kunit_test_cases_len(struct kunit_case *test_cases)
-> > +{
-> > +       struct kunit_case *test_case;
-> > +       size_t len = 0;
-> > +
-> > +       for (test_case = test_cases; test_case->run_case; test_case++)
-> > +               len++;
-> > +
-> > +       return len;
-> > +}
-> > +
-> > +static void kunit_print_subtest_start(struct kunit_module *module)
-> > +{
-> > +       kunit_print_tap_version();
-> > +       kunit_printk_emit(LOGLEVEL_INFO, "\t# Subtest: %s\n", module->name);
-> > +       kunit_printk_emit(LOGLEVEL_INFO,
-> > +                         "\t1..%zd\n",
-> > +                         kunit_test_cases_len(module->test_cases));
-> > +}
-> > +
-> > +static void kunit_print_ok_not_ok(bool should_indent,
-> > +                                 bool is_ok,
-> > +                                 size_t test_number,
-> > +                                 const char *description)
-> > +{
-> > +       const char *indent, *ok_not_ok;
-> > +
-> > +       if (should_indent)
-> > +               indent = "\t";
-> > +       else
-> > +               indent = "";
-> > +
-> > +       if (is_ok)
-> > +               ok_not_ok = "ok";
-> > +       else
-> > +               ok_not_ok = "not ok";
-> > +
-> > +       kunit_printk_emit(LOGLEVEL_INFO,
-> > +                         "%s%s %zd - %s\n",
-> > +                         indent, ok_not_ok, test_number, description);
-> > +}
-> > +
-> > +static bool kunit_module_has_succeeded(struct kunit_module *module)
-> > +{
-> > +       struct kunit_case *test_case;
->
-> This can be const?
+>         IOWs, you've taken _one
+> single statement_ I made from a huge email about complexities in
+> dealing with IO concurency, the page cache and architectural flaws n
+> the existing code, quoted it out of context, fabricated a completely
+> new context and started ranting about how I know nothing about how
+> caches or the page cache work.
 
-Yep, nice catch.
+See above. I cut things down a lot, but it wasn't a single statement
+at all. I just boiled it down to the basics.
 
-> > +       bool success = true;
-> > +
-> > +       for (test_case = module->test_cases; test_case->run_case; test_case++)
-> > +               if (!test_case->success)
-> > +                       success = false;
->
-> Bail out early here on first "fail" with return false?
+> Linus, nobody can talk about direct IO without you screaming and
+> tossing all your toys out of the crib.
 
-Will fix on next revision.
+Dave, look in the mirror some day. You might be surprised.
 
-> > +
-> > +       return success;
-> > +}
-> > +
-> > +size_t kunit_module_counter = 1;
-> > +
-> > +static void kunit_print_subtest_end(struct kunit_module *module)
-> > +{
-> > +       kunit_print_ok_not_ok(false,
-> > +                             kunit_module_has_succeeded(module),
-> > +                             kunit_module_counter++,
-> > +                             module->name);
-> > +}
-> > +
-> > +static void kunit_print_test_case_ok_not_ok(struct kunit_case *test_case,
-> > +                                           size_t test_number)
-> > +{
-> > +       kunit_print_ok_not_ok(true,
-> > +                             test_case->success,
-> > +                             test_number,
-> > +                             test_case->name);
-> > +}
-> > +
-> > +void kunit_init_test(struct kunit *test, const char *name)
-> > +{
-> > +       spin_lock_init(&test->lock);
-> > +       test->name = name;
-> > +}
-> > +
-> > +/*
-> > + * Initializes and runs test case. Does not clean up or do post validations.
-> > + */
-> > +static void kunit_run_case_internal(struct kunit *test,
-> > +                                   struct kunit_module *module,
-> > +                                   struct kunit_case *test_case)
-> > +{
-> > +       int ret;
-> > +
-> > +       if (module->init) {
-> > +               ret = module->init(test);
-> > +               if (ret) {
-> > +                       kunit_err(test, "failed to initialize: %d\n", ret);
-> > +                       kunit_set_success(test, false);
-> > +                       return;
-> > +               }
-> > +       }
-> > +
-> > +       test_case->run_case(test);
-> > +}
-> > +
-> > +/*
-> > + * Performs post validations and cleanup after a test case was run.
-> > + * XXX: Should ONLY BE CALLED AFTER kunit_run_case_internal!
-> > + */
-> > +static void kunit_run_case_cleanup(struct kunit *test,
-> > +                                  struct kunit_module *module,
-> > +                                  struct kunit_case *test_case)
->
-> But test_case isn't used?
+> So, in the interests of further _civil_ discussion, let me clarify
+> my statement for you: for a highly concurrent application that is
+> crunching through bulk data on large files on high throughput
+> storage, the page cache is still far, far slower than direct IO.
 
-Whoops, will fix.
+.. and Christ, Dave, we even _agree_ on this.
 
-> > +{
-> > +       if (module->exit)
->
-> Aha, so we don't need empty functions in the sysctl test.
+But when DIO becomes an issue is when you try to claim it makes the
+page cache irrelevant, or a problem.
 
-Nope, sorry about that. That will be fixed in the next revision.
+I also take issue with you then making statements that seem to be
+explicitly designed to be misleading. For DIO, you talk about how XFS
+has no serialization and gets great performance. Then in the very next
+email, you talk about how you think buffered IO has to be excessively
+serialized, and how XFS is the only one who does it properly, and how
+that is a problem for performance. But as far as I can tell, the
+serialization rule you quote is simply not true. But for you it is,
+and only for buffered IO.
 
-> > +               module->exit(test);
-> > +}
-> > +
-> > +/*
-> > + * Performs all logic to run a test case.
-> > + */
-> > +static void kunit_run_case(struct kunit_module *module,
-> > +                          struct kunit_case *test_case)
-> > +{
-> > +       struct kunit test;
-> > +
-> > +       kunit_init_test(&test, test_case->name);
-> > +       kunit_set_success(&test, true);
->
-> Can kunit_init_test() also kunit_set_success() to true or false,
-> depending on what is desired as the initial state?
->
-> > +
-> > +       kunit_run_case_internal(&test, module, test_case);
-> > +       kunit_run_case_cleanup(&test, module, test_case);
->
-> I find this odd, we have run_case_internal() that does two things, init
-> and run_case, while case_cleanup() does one thing, call module->exit().
->
-> Can we just inline all those functions in here so that it looks like
-> this:
->
->        int ret = 0;
->
->        if (module->init) {
->               ret = module->init(test);
->                if (ret) {
->                        kunit_err(test, "failed to initialize: %d\n", ret);
->                        kunit_set_success(&test, false);
->                }
->        }
->
->        if (!ret)
->                test_case->run_case(&test);
->
->        if (module->exit)
->                module->exit(&test);
->
->        return kunit_get_success(&test);
->
-> Then I don't have to read two more functions to figure out the flow of
-> running a test case.
+It's really as if you were actively trying to make the non-DIO case
+look bad by picking and choosing your rules.
 
-Sorry about that. A lot more logic gets added to running test cases
-later on in this patchset. This logic added "later" is actually older
-than what's here, so I basically "unrefactored" something I had
-already written to get this earlier patch.
+And the thing is, I suspect that the overlap between DIO and cached IO
+shouldn't even need to be there. We've generally tried to just not
+have them interact at all, by just having DIO invalidate the caches
+(which is really really cheap if they don't exist - which should be
+the common case by far!). People almost never mix the two at all, and
+we might be better off aiming to separate them out even more than we
+do now.
 
-In anycase, you are right; these little tiny functions don't make any
-sense (yet); I will remove them in the next revision (and let the
-later patch make these changes in a  more organic looking way).
+That's actually the part I like best about the page cache add lock - I
+may not be a great fan of yet another ad-hoc lock - but I do like how
+it adds minimal overhead to the cached case (because by definition,
+the good cached case is when you don't need to add new pages), while
+hopefully working well together with the whole "invalidate existing
+caches" case for DIO.
 
->
-> > +
-> > +       test_case->success = kunit_get_success(&test);
-> > +}
-> > +
-> > +int kunit_run_tests(struct kunit_module *module)
-> > +{
-> > +       struct kunit_case *test_case;
-> > +       size_t test_case_count = 1;
->
-> Might make sense to assign this to 0 first and then pre-increment so
-> that test_case_count can't be 1 when there aren't any tests?
+I know you don't like the cache flush and invalidation stuff for some
+reason, but I don't even understand why you care. Again, if you're
+actually just doing all DIO, the caches will be empty and not be in
+your way. So normally all that should be really really cheap. Flushing
+and invalidating caches that don't exists isn't really complicated, is
+it?
 
-No, sorry, this is actually specified by the Test Anything Protocol
-(TAP); it indexes it's tests starting at 1; not what I would have
-done, but we (Greg, Frank, myself, and others) previously agreed that
-KUnit should follow TAP[1].
+And if cached state *does* exist, and if it can't be invalidated (for
+example, existing busy mmap or whatever), maybe the solution there is
+"always fall back to buffered/cached IO".
 
-Maybe the name of this variable is a bit misleading since it is the
-"test number" or test index. Would `test_case_number` be better?
+For the cases you care about, that should never happen, after all.
 
-> > +
-> > +       kunit_print_subtest_start(module);
-> > +
-> > +       for (test_case = module->test_cases; test_case->run_case; test_case++) {
-> > +               kunit_run_case(module, test_case);
-> > +               kunit_print_test_case_ok_not_ok(test_case, test_case_count++);
->
-> Can this be pushed into kunit_run_case() and have that function take a
-> test_case_count number? Maybe that would allow us to avoid storing
-> test_case->success entirely? Assuming that kunit_run_case() returned a
-> value like success or failure, then yes it would work.
+IOW, if anything, I think we should strive for a situation where the
+whole DIO vs cached becomes even _more_ independent. If there are busy
+caches, just fall back to cached IO. It will have lower IO throughput,
+but that's one of the _points_ of caches - they should decrease the
+need for IO, and less IO is what it's all about.
 
-Eh, I would prefer not to do that. I like keeping the
-printing/reporting functions as orthogonal as possible; it kind of
-mirrors the parsing logic on the test harness script side, and will
-also be easier to pull out when I go back to improve the expectation
-failure reporting when I get around to that later. Even if I never get
-around to that, I think this will be much easier for me to maintain.
+So I don't understand why you hate the page cache so much. For the
+cases you care about, the page cache should be a total non-issue. And
+if the page cache does exist, then it almost by definition means that
+it's not a case you care about.
 
->        unsigned int failed = 0;
->
->        for (test_case = module->test_cases; test_case->run_case; test_case++) {
->                failed |= kunit_run_case(module, test_case, ++test_case_count);
->
->        kunit_print_ok_not_ok(false,
->                              !failed,
->                              kunit_module_counter++,
->                              module->name);
->
-> > +       kunit_print_subtest_end(module);
-> > +
-> > +       return 0;
-> > +}
+And yes, yes, maybe some day people won't have SSD's at all, and it's
+all nvdimm's and all filesystem data accesses are DAX, and caching is
+all done by hardware and the page cache will never exist at all. At
+that point a page cache will be legacy.
 
-[1] https://github.com/TestAnything/Specification/blob/tap-14-specification/specification.md#the-test-line
+But honestly, that day is not today. It's decades away, and might
+never happen at all.
+
+So in the meantime, don't pooh-pooh the page cache. It works very well
+indeed, and I say that as somebody who has refused to touch spinning
+media (or indeed bad SSD's) for a decade.
+
+              Linus
