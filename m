@@ -2,396 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00BA5477E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 04:07:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 343F14783C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 04:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbfFQCHC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Jun 2019 22:07:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40008 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727620AbfFQCHB (ORCPT
+        id S1727515AbfFQCoG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Jun 2019 22:44:06 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:9663 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727441AbfFQCoF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Jun 2019 22:07:01 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5H26r0M127457
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jun 2019 22:07:00 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t5vdjqep5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Jun 2019 22:07:00 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Mon, 17 Jun 2019 03:06:54 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Jun 2019 03:06:45 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5H26bJa36897046
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Jun 2019 02:06:37 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BE4AE4203F;
-        Mon, 17 Jun 2019 02:06:44 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2F5E542047;
-        Mon, 17 Jun 2019 02:06:44 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Jun 2019 02:06:44 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id A6A3FA03B6;
-        Mon, 17 Jun 2019 12:06:41 +1000 (AEST)
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     alastair@d-silva.org
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Stanislaw Gruszka <sgruszka@redhat.com>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 7/7] lib/hexdump.c: Optionally retain byte ordering
-Date:   Mon, 17 Jun 2019 12:04:30 +1000
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190617020430.8708-1-alastair@au1.ibm.com>
-References: <20190617020430.8708-1-alastair@au1.ibm.com>
+        Sun, 16 Jun 2019 22:44:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1560739445; x=1592275445;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=ZDR5R/CXP3LpMv/Ax+MOPt+KGN6XD3YAOJrepCUmOFo=;
+  b=XpAChl4MAsDOcAu8Tqop81zPZn5+kQBdud3CUNUKW8w3uDF59gO9Wwo9
+   VZ+f3dlxbrSmDF0cbRkwXq7Nb3fxG6PXJBpOmDUUBmoyOnGK6/joM2XOG
+   kbUH6FWgIiaCtFp3gT/2qxo0bC+HLK/KGD6CGkzUr+3+Z2O9xx5ZIu0Pn
+   vA3LhBY6nTd4a9SCKn3NxnKUcDFQKTyD7CAmewtHGEXcbc4jpS69cq3g9
+   asDpZN/j+mWFpESTdwsfAZDvN3yG5xGRBsw8iTZNRzSdX6DrgbmHdJ9p3
+   g5bumVAkLo6faL6pQCrJcAsVp4sFAbytWMZKKn/VuuHeWOWGT5BCaPP+t
+   w==;
+X-IronPort-AV: E=Sophos;i="5.63,383,1557158400"; 
+   d="scan'208";a="115631615"
+Received: from mail-by2nam05lp2050.outbound.protection.outlook.com (HELO NAM05-BY2-obe.outbound.protection.outlook.com) ([104.47.50.50])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Jun 2019 10:44:04 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZDR5R/CXP3LpMv/Ax+MOPt+KGN6XD3YAOJrepCUmOFo=;
+ b=fNvZUmFvxjDs4h6t7z8KOZq7S8ABrg0we/hqKFzeAmB7y0PrpWoAq2gVx9tyxQF056U3c5SKMn4Kq7sQN88CGkT+3QuaSHJ41jq8pXUw5fB39n+mDvQe3c3n/ykYWUgvcZVDkX9Lqg6436GZXkUrbokBvGmfxYbcgeCpGhGu3ME=
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
+ BYAPR04MB5542.namprd04.prod.outlook.com (20.178.232.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.11; Mon, 17 Jun 2019 02:44:03 +0000
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::d090:297a:d6ae:e757]) by BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::d090:297a:d6ae:e757%4]) with mapi id 15.20.1965.018; Mon, 17 Jun 2019
+ 02:44:03 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     "dsterba@suse.cz" <dsterba@suse.cz>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>
+CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        =?iso-8859-1?Q?Matias_Bj=F8rling?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH v2 00/19] btrfs zoned block device support
+Thread-Topic: [PATCH v2 00/19] btrfs zoned block device support
+Thread-Index: AQHVHTKAJDlGAC+HkUGU89kQ+2+L3A==
+Date:   Mon, 17 Jun 2019 02:44:03 +0000
+Message-ID: <BYAPR04MB5816E0A249D4225633AB5EABE7EB0@BYAPR04MB5816.namprd04.prod.outlook.com>
+References: <20190607131025.31996-1-naohiro.aota@wdc.com>
+ <20190612175138.GT3563@twin.jikos.cz>
+ <SN6PR04MB5231E2F482B8D794950058FF8CEF0@SN6PR04MB5231.namprd04.prod.outlook.com>
+ <20190613134612.GU3563@suse.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [129.253.182.57]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 32671e44-a72b-4f73-4d55-08d6f2cda8e3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5542;
+x-ms-traffictypediagnostic: BYAPR04MB5542:
+x-ms-exchange-purlcount: 1
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <BYAPR04MB554290947779FEAE3EC12DBFE7EB0@BYAPR04MB5542.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0071BFA85B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(396003)(366004)(376002)(346002)(199004)(189003)(486006)(66556008)(53936002)(81166006)(7416002)(33656002)(316002)(26005)(2501003)(478600001)(110136005)(7696005)(54906003)(72206003)(966005)(14454004)(66066001)(71200400001)(71190400001)(305945005)(74316002)(186003)(256004)(229853002)(52536014)(55016002)(6246003)(68736007)(4326008)(25786009)(3846002)(66946007)(53376002)(5660300002)(102836004)(76116006)(7736002)(6436002)(6116002)(9686003)(66446008)(53546011)(81156014)(99286004)(6506007)(8676002)(73956011)(86362001)(6306002)(6636002)(446003)(64756008)(2906002)(66476007)(76176011)(8936002)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5542;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: tJN5Z0e4U+Iuel5BclRaj8xBtWz+72OuCZEjrmFC7ZH1NtCD4Aq49wzGy4onArgees+LSe11GZV5R3qpZrzd5/2JGdqBU74BaB57YLMTib1yJ+E0CE71Tnaaynli84XJGh+NiAJTbS0FN3NVhdI2hItX3JkMc7cnN+5MYcu1KIwr3NugnihjPLczqxvdzLVG5wTz4468se6N7eqwCZerBnd9BzHqZ+Ca5FBvBo6syEuq2yH+Cb3nPCgvsXJ6IFk9WsroepeNB1BHoIaNPzetKnyZ3nlo4i77VjDOUAmVX8ivgg6qAx3VygjY2ed2zEVFWs7TJnZq1pGtAsfbqFCiSB3XxkGZ6iijFHKGNJ3fYgGCQk/zGhEWu4I8uY/PoGZy+WDrqyyTPEru++ii41JVA0/yQWLBDxq39GIp1MxVjDQ=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061702-0012-0000-0000-00000329AB1A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061702-0013-0000-0000-00002162C071
-Message-Id: <20190617020430.8708-8-alastair@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906170019
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32671e44-a72b-4f73-4d55-08d6f2cda8e3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2019 02:44:03.3221
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Damien.LeMoal@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5542
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Alastair D'Silva <alastair@d-silva.org>
-
-The behaviour of hexdump groups is to print the data out as if
-it was a native-endian number.
-
-This patch tweaks the documentation to make this clear, and also
-adds the HEXDUMP_RETAIN_BYTE_ORDER flag to allow groups of
-multiple bytes to be printed without affecting the ordering
-of the printed bytes.
-
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
----
- include/linux/printk.h |  1 +
- lib/hexdump.c          | 30 +++++++++++++++++----
- lib/test_hexdump.c     | 60 +++++++++++++++++++++++++++++-------------
- 3 files changed, 68 insertions(+), 23 deletions(-)
-
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index 04416e788802..ffc94bedd737 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -490,6 +490,7 @@ enum {
- #define HEXDUMP_2_GRP_SPACES		BIT(5)
- #define HEXDUMP_4_GRP_SPACES		BIT(6)
- #define HEXDUMP_8_GRP_SPACES		BIT(7)
-+#define HEXDUMP_RETAIN_BYTE_ORDER	BIT(8)
- 
- extern int hex_dump_to_buffer(const void *buf, size_t len, int rowsize,
- 			      int groupsize, char *linebuf, size_t linebuflen,
-diff --git a/lib/hexdump.c b/lib/hexdump.c
-index dc85ef0dbb0a..ce14abc7701f 100644
---- a/lib/hexdump.c
-+++ b/lib/hexdump.c
-@@ -127,7 +127,8 @@ static void separator_parameters(u64 flags, int groupsize, int *sep_chars,
-  * @buf: data blob to dump
-  * @len: number of bytes in the @buf
-  * @rowsize: number of bytes to print per line; must be a multiple of groupsize
-- * @groupsize: number of bytes to print at a time (1, 2, 4, 8; default = 1)
-+ * @groupsize: number of bytes to convert to a native endian number and print:
-+ * 	       1, 2, 4, 8; default = 1
-  * @linebuf: where to put the converted data
-  * @linebuflen: total size of @linebuf, including space for terminating NUL
-  * @flags: A bitwise OR of the following flags:
-@@ -138,6 +139,9 @@ static void separator_parameters(u64 flags, int groupsize, int *sep_chars,
-  *	HEXDUMP_2_GRP_SPACES:		insert a ' ' after every 2 groups
-  *	HEXDUMP_4_GRP_SPACES:		insert a ' ' after every 4 groups
-  *	HEXDUMP_8_GRP_SPACES:		insert a ' ' after every 8 groups
-+ *	HEXDUMP_RETAIN_BYTE_ORDER:	Retain the byte ordering of groups
-+ *					instead of treating each group as a
-+ *					native-endian number
-  *
-  * hex_dump_to_buffer() works on one "line" of output at a time, converting
-  * <groupsize> bytes of input to hexadecimal (and optionally printable ASCII)
-@@ -171,6 +175,7 @@ int hex_dump_to_buffer(const void *buf, size_t len, int rowsize, int groupsize,
- 	int ret;
- 	int sep_chars = 0;
- 	char sep = 0;
-+	bool big_endian = (flags & HEXDUMP_RETAIN_BYTE_ORDER) ? 1 : 0;
- 
- 	if (!is_power_of_2(groupsize) || groupsize > 8)
- 		groupsize = 1;
-@@ -202,10 +207,13 @@ int hex_dump_to_buffer(const void *buf, size_t len, int rowsize, int groupsize,
- 		const u64 *ptr8 = buf;
- 
- 		for (j = 0; j < ngroups; j++) {
-+			u64 val = big_endian ?
-+					be64_to_cpu(get_unaligned(ptr8 + j)) :
-+					get_unaligned(ptr8 + j);
- 			ret = snprintf(linebuf + lx, linebuflen - lx,
- 				       "%s%16.16llx",
- 				       j ? group_separator(j, flags) : "",
--				       get_unaligned(ptr8 + j));
-+				       val);
- 			if (ret >= linebuflen - lx)
- 				goto overflow1;
- 			lx += ret;
-@@ -214,10 +222,14 @@ int hex_dump_to_buffer(const void *buf, size_t len, int rowsize, int groupsize,
- 		const u32 *ptr4 = buf;
- 
- 		for (j = 0; j < ngroups; j++) {
-+			u32 val = big_endian ?
-+					be32_to_cpu(get_unaligned(ptr4 + j)) :
-+					get_unaligned(ptr4 + j);
-+
- 			ret = snprintf(linebuf + lx, linebuflen - lx,
- 				       "%s%8.8x",
- 				       j ? group_separator(j, flags) : "",
--				       get_unaligned(ptr4 + j));
-+				       val);
- 			if (ret >= linebuflen - lx)
- 				goto overflow1;
- 			lx += ret;
-@@ -226,10 +238,14 @@ int hex_dump_to_buffer(const void *buf, size_t len, int rowsize, int groupsize,
- 		const u16 *ptr2 = buf;
- 
- 		for (j = 0; j < ngroups; j++) {
-+			u16 val = big_endian ?
-+					be16_to_cpu(get_unaligned(ptr2 + j)) :
-+					get_unaligned(ptr2 + j);
-+
- 			ret = snprintf(linebuf + lx, linebuflen - lx,
- 				       "%s%4.4x",
- 				       j ? group_separator(j, flags) : "",
--				       get_unaligned(ptr2 + j));
-+				       val);
- 			if (ret >= linebuflen - lx)
- 				goto overflow1;
- 			lx += ret;
-@@ -331,7 +347,8 @@ static void announce_skipped(const char *level, const char *prefix_str,
-  * @prefix_type: controls whether prefix of an offset, address, or none
-  *  is printed (%DUMP_PREFIX_OFFSET, %DUMP_PREFIX_ADDRESS, %DUMP_PREFIX_NONE)
-  * @rowsize: number of bytes to print per line; must be a multiple of groupsize
-- * @groupsize: number of bytes to print at a time (1, 2, 4, 8; default = 1)
-+ * @groupsize: number of bytes to convert to a native endian number and print:
-+ * 	       1, 2, 4, 8; default = 1
-  * @buf: data blob to dump
-  * @len: number of bytes in the @buf
-  * @ascii: include ASCII after the hex output
-@@ -342,6 +359,9 @@ static void announce_skipped(const char *level, const char *prefix_str,
-  *	HEXDUMP_2_GRP_LINES:		insert a '|' after every 2 groups
-  *	HEXDUMP_4_GRP_LINES:		insert a '|' after every 4 groups
-  *	HEXDUMP_8_GRP_LINES:		insert a '|' after every 8 groups
-+ *	HEXDUMP_RETAIN_BYTE_ORDER:	Retain the byte ordering of groups
-+ *					instead of treating each group as a
-+ *					native-endian number
-  *
-  * Given a buffer of u8 data, print_hex_dump() prints a hex + ASCII dump
-  * to the kernel log at the specified kernel log level, with an optional
-diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
-index ae340c5c1c6f..1e510e934568 100644
---- a/lib/test_hexdump.c
-+++ b/lib/test_hexdump.c
-@@ -98,14 +98,15 @@ static unsigned failed_tests __initdata;
- 
- static void __init test_hexdump_prepare_test(size_t len, int rowsize,
- 					     int groupsize, char *test,
--					     size_t testlen, bool ascii)
-+					     size_t testlen, u64 flags)
- {
- 	char *p;
- 	const char * const *result;
- 	size_t l = len;
- 	int gs = groupsize, rs = rowsize;
- 	unsigned int i;
--	const bool is_be = IS_ENABLED(CONFIG_CPU_BIG_ENDIAN);
-+	const bool is_be = IS_ENABLED(CONFIG_CPU_BIG_ENDIAN) ||
-+			(flags & HEXDUMP_RETAIN_BYTE_ORDER);
- 
- 	if (l > rs)
- 		l = rs;
-@@ -142,7 +143,7 @@ static void __init test_hexdump_prepare_test(size_t len, int rowsize,
- 		p--;
- 
- 	/* ASCII part */
--	if (ascii) {
-+	if (flags & HEXDUMP_ASCII) {
- 		do {
- 			*p++ = ' ';
- 		} while (p < test + rs * 2 + rs / gs + 1);
-@@ -157,7 +158,7 @@ static void __init test_hexdump_prepare_test(size_t len, int rowsize,
- #define TEST_HEXDUMP_BUF_SIZE		(64 * 3 + 2 + 64 + 1)
- 
- static void __init test_hexdump(size_t len, int rowsize, int groupsize,
--				bool ascii)
-+				u64 flags)
- {
- 	char test[TEST_HEXDUMP_BUF_SIZE];
- 	char real[TEST_HEXDUMP_BUF_SIZE];
-@@ -166,11 +167,11 @@ static void __init test_hexdump(size_t len, int rowsize, int groupsize,
- 
- 	memset(real, FILL_CHAR, sizeof(real));
- 	hex_dump_to_buffer(data_b, len, rowsize, groupsize, real, sizeof(real),
--			   ascii ? HEXDUMP_ASCII : 0);
-+			   flags);
- 
- 	memset(test, FILL_CHAR, sizeof(test));
- 	test_hexdump_prepare_test(len, rowsize, groupsize, test, sizeof(test),
--				  ascii);
-+				  flags);
- 
- 	if (memcmp(test, real, TEST_HEXDUMP_BUF_SIZE)) {
- 		pr_err("Len: %zu row: %d group: %d\n", len, rowsize, groupsize);
-@@ -193,7 +194,7 @@ static void __init test_hexdump_set(int rowsize, bool ascii)
- 
- static void __init test_hexdump_overflow(size_t buflen, size_t len,
- 					 int rowsize, int groupsize,
--					 bool ascii)
-+					 u64 flags)
- {
- 	char test[TEST_HEXDUMP_BUF_SIZE];
- 	char buf[TEST_HEXDUMP_BUF_SIZE];
-@@ -205,7 +206,7 @@ static void __init test_hexdump_overflow(size_t buflen, size_t len,
- 	memset(buf, FILL_CHAR, sizeof(buf));
- 
- 	rc = hex_dump_to_buffer(data_b, len, rowsize, groupsize, buf, buflen,
--				ascii ? HEXDUMP_ASCII : 0);
-+				flags);
- 
- 	/*
- 	 * Caller must provide the data length multiple of groupsize. The
-@@ -222,12 +223,12 @@ static void __init test_hexdump_overflow(size_t buflen, size_t len,
- 		  - 1 /* no trailing space */;
- 	}
- 
--	expected_len = (ascii) ? ascii_len : hex_len;
-+	expected_len = (flags & HEXDUMP_ASCII) ? ascii_len : hex_len;
- 
- 	fill_point = min_t(int, expected_len + 1, buflen);
- 	if (buflen) {
- 		test_hexdump_prepare_test(len, rowsize, groupsize, test,
--					  sizeof(test), ascii);
-+					  sizeof(test), flags);
- 		test[fill_point - 1] = '\0';
- 	}
- 	memset(test + fill_point, FILL_CHAR, sizeof(test) - fill_point);
-@@ -237,8 +238,8 @@ static void __init test_hexdump_overflow(size_t buflen, size_t len,
- 	buf[sizeof(buf) - 1] = '\0';
- 
- 	if (!match) {
--		pr_err("rowsize: %u groupsize: %u ascii: %d Len: %zu buflen: %zu strlen: %zu\n",
--			rowsize, groupsize, ascii, len, buflen,
-+		pr_err("rowsize: %u groupsize: %u flags: %llx Len: %zu buflen: %zu strlen: %zu\n",
-+			rowsize, groupsize, flags, len, buflen,
- 			strnlen(buf, sizeof(buf)));
- 		pr_err("Result: %d '%-.*s'\n", rc, (int)buflen, buf);
- 		pr_err("Expect: %d '%-.*s'\n", expected_len, (int)buflen, test);
-@@ -247,7 +248,7 @@ static void __init test_hexdump_overflow(size_t buflen, size_t len,
- 	}
- }
- 
--static void __init test_hexdump_overflow_set(size_t buflen, bool ascii)
-+static void __init test_hexdump_overflow_set(size_t buflen, u64 flags)
- {
- 	unsigned int i = 0;
- 	int rs = (get_random_int() % 4 + 1) * 16;
-@@ -256,7 +257,7 @@ static void __init test_hexdump_overflow_set(size_t buflen, bool ascii)
- 		int gs = 1 << i;
- 		size_t len = get_random_int() % rs + gs;
- 
--		test_hexdump_overflow(buflen, rounddown(len, gs), rs, gs, ascii);
-+		test_hexdump_overflow(buflen, rounddown(len, gs), rs, gs, flags);
- 	} while (i++ < 3);
- }
- 
-@@ -264,20 +265,43 @@ static int __init test_hexdump_init(void)
- {
- 	unsigned int i;
- 	int rowsize;
-+	u64 flags;
- 
-+	flags = 0;
- 	rowsize = (get_random_int() % 4 + 1) * 16;
- 	for (i = 0; i < 16; i++)
--		test_hexdump_set(rowsize, false);
-+		test_hexdump_set(rowsize, flags);
- 
-+	flags = HEXDUMP_ASCII;
- 	rowsize = (get_random_int() % 4 + 1) * 16;
- 	for (i = 0; i < 16; i++)
--		test_hexdump_set(rowsize, true);
-+		test_hexdump_set(rowsize, flags);
- 
-+	flags = HEXDUMP_RETAIN_BYTE_ORDER;
-+	rowsize = (get_random_int() % 2 + 1) * 16;
-+	for (i = 0; i < 16; i++)
-+		test_hexdump_set(rowsize, flags);
-+
-+	flags = HEXDUMP_ASCII | HEXDUMP_RETAIN_BYTE_ORDER;
-+	rowsize = (get_random_int() % 2 + 1) * 16;
-+	for (i = 0; i < 16; i++)
-+		test_hexdump_set(rowsize, flags);
-+
-+	flags = 0;
-+	for (i = 0; i <= TEST_HEXDUMP_BUF_SIZE; i++)
-+		test_hexdump_overflow_set(i, flags);
-+
-+	flags = HEXDUMP_ASCII;
-+	for (i = 0; i <= TEST_HEXDUMP_BUF_SIZE; i++)
-+		test_hexdump_overflow_set(i, flags);
-+
-+	flags = HEXDUMP_RETAIN_BYTE_ORDER;
- 	for (i = 0; i <= TEST_HEXDUMP_BUF_SIZE; i++)
--		test_hexdump_overflow_set(i, false);
-+		test_hexdump_overflow_set(i, flags);
- 
-+	flags = HEXDUMP_ASCII | HEXDUMP_RETAIN_BYTE_ORDER;
- 	for (i = 0; i <= TEST_HEXDUMP_BUF_SIZE; i++)
--		test_hexdump_overflow_set(i, true);
-+		test_hexdump_overflow_set(i, flags);
- 
- 	if (failed_tests == 0)
- 		pr_info("all %u tests passed\n", total_tests);
--- 
-2.21.0
-
+David,=0A=
+=0A=
+On 2019/06/13 22:45, David Sterba wrote:=0A=
+> On Thu, Jun 13, 2019 at 04:59:23AM +0000, Naohiro Aota wrote:=0A=
+>> On 2019/06/13 2:50, David Sterba wrote:=0A=
+>>> On Fri, Jun 07, 2019 at 10:10:06PM +0900, Naohiro Aota wrote:=0A=
+>>>> btrfs zoned block device support=0A=
+>>>>=0A=
+>>>> This series adds zoned block device support to btrfs.=0A=
+>>>=0A=
+>>> The overall design sounds ok.=0A=
+>>>=0A=
+>>> I skimmed through the patches and the biggest task I see is how to make=
+=0A=
+>>> the hmzoned adjustments and branches less visible, ie. there are too=0A=
+>>> many if (hmzoned) { do something } standing out. But that's merely a=0A=
+>>> matter of wrappers and maybe an abstraction here and there.=0A=
+>>=0A=
+>> Sure. I'll add some more abstractions in the next version.=0A=
+> =0A=
+> Ok, I'll reply to the patches with specific things.=0A=
+> =0A=
+>>> How can I test the zoned devices backed by files (or regular disks)? I=
+=0A=
+>>> searched for some concrete example eg. for qemu or dm-zoned, but closes=
+t=0A=
+>>> match was a text description in libzbc README that it's possible to=0A=
+>>> implement. All other howtos expect a real zoned device.=0A=
+>>=0A=
+>> You can use tcmu-runer [1] to create an emulated zoned device backed by =
+=0A=
+>> a regular file. Here is a setup how-to:=0A=
+>> http://zonedstorage.io/projects/tcmu-runner/#compilation-and-installatio=
+n=0A=
+> =0A=
+> That looks great, thanks. I wonder why there's no way to find that, all=
+=0A=
+> I got were dead links to linux-iscsi.org or tutorials of targetcli that=
+=0A=
+> were years old and not working.=0A=
+=0A=
+The site went online 4 days ago :) We will advertise it whenever we can. Th=
+is is=0A=
+intended to document all things "zoned block device" including Btrfs suppor=
+t,=0A=
+when we get it finished :)=0A=
+=0A=
+> =0A=
+> Feeding the textual commands to targetcli is not exactly what I'd=0A=
+> expect for scripting, but at least it seems to work.=0A=
+=0A=
+Yes, this is not exactly obvious, but that is how most automation with linu=
+x=0A=
+iscsi is done.=0A=
+=0A=
+> =0A=
+> I tried to pass an emulated ZBC device on host to KVM guest (as a scsi=0A=
+> device) but lsscsi does not recognize that it as a zonde device (just a=
+=0A=
+> QEMU harddisk). So this seems the emulation must be done inside the VM.=
+=0A=
+> =0A=
+=0A=
+What driver did you use for the drive ? virtio block ? I have not touch tha=
+t=0A=
+driver nor qemu side, so zoned block dev support is likely missing. I will =
+add=0A=
+it. That would be especially useful for testing with a real drive. In the c=
+ase=0A=
+of tcmu runner, the initiator can be started in the guest directly and the=
+=0A=
+target emulation done either in the guest if loopback is used, or on the ho=
+st=0A=
+using iscsi connection. The former is what we use all the time and so is we=
+ll=0A=
+tested. I have to admit that testing with iscsi is lacking... Will add that=
+ to=0A=
+the todo list.=0A=
+=0A=
+Best regards.=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
