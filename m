@@ -2,68 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 343F14783C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 04:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70EB147895
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 05:16:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbfFQCoG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Jun 2019 22:44:06 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:9663 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727441AbfFQCoF (ORCPT
+        id S1727481AbfFQDQO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Jun 2019 23:16:14 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:3215 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727383AbfFQDQO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Jun 2019 22:44:05 -0400
+        Sun, 16 Jun 2019 23:16:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1560739445; x=1592275445;
+  t=1560741374; x=1592277374;
   h=from:to:cc:subject:date:message-id:references:
    content-transfer-encoding:mime-version;
-  bh=ZDR5R/CXP3LpMv/Ax+MOPt+KGN6XD3YAOJrepCUmOFo=;
-  b=XpAChl4MAsDOcAu8Tqop81zPZn5+kQBdud3CUNUKW8w3uDF59gO9Wwo9
-   VZ+f3dlxbrSmDF0cbRkwXq7Nb3fxG6PXJBpOmDUUBmoyOnGK6/joM2XOG
-   kbUH6FWgIiaCtFp3gT/2qxo0bC+HLK/KGD6CGkzUr+3+Z2O9xx5ZIu0Pn
-   vA3LhBY6nTd4a9SCKn3NxnKUcDFQKTyD7CAmewtHGEXcbc4jpS69cq3g9
-   asDpZN/j+mWFpESTdwsfAZDvN3yG5xGRBsw8iTZNRzSdX6DrgbmHdJ9p3
-   g5bumVAkLo6faL6pQCrJcAsVp4sFAbytWMZKKn/VuuHeWOWGT5BCaPP+t
-   w==;
+  bh=CrXKPsAMdScfC9QEoBLnj9DSSqXoXky9HKTeSrXgxpE=;
+  b=AHY+PkYR29tXQVhEWQHJQCjZTBib47dWTpyylquJmCD4QSXJC+M9QlJW
+   7VKX8K+LOa86mIm4NyD2pO6hPMnCfO5pnkOoO59a4LNYjRpOZbJAORAXD
+   rDFOGxQGYuE3DWNVNTT5tUmwNmhzi9vTvQbJonuPrfmoeT55pwAa59JLK
+   GKe8PM0s3N7eYT0+cOX8FphRpVgxjC3CIAiMa3podTN5PMj9LNCLekvne
+   A/v4jxVMK7D6eE7Mt/i3ttOdge+A0U/EMiQ+itSlLe8UzZeODasJwSCIu
+   7InNYPXmWdjlW/mY5bfINvUrtdt4ctNQ6wYU6QYgdE6TP+M0lOT002D70
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.63,383,1557158400"; 
-   d="scan'208";a="115631615"
-Received: from mail-by2nam05lp2050.outbound.protection.outlook.com (HELO NAM05-BY2-obe.outbound.protection.outlook.com) ([104.47.50.50])
-  by ob1.hgst.iphmx.com with ESMTP; 17 Jun 2019 10:44:04 +0800
+   d="scan'208";a="110705567"
+Received: from mail-sn1nam01lp2051.outbound.protection.outlook.com (HELO NAM01-SN1-obe.outbound.protection.outlook.com) ([104.47.32.51])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Jun 2019 11:16:07 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZDR5R/CXP3LpMv/Ax+MOPt+KGN6XD3YAOJrepCUmOFo=;
- b=fNvZUmFvxjDs4h6t7z8KOZq7S8ABrg0we/hqKFzeAmB7y0PrpWoAq2gVx9tyxQF056U3c5SKMn4Kq7sQN88CGkT+3QuaSHJ41jq8pXUw5fB39n+mDvQe3c3n/ykYWUgvcZVDkX9Lqg6436GZXkUrbokBvGmfxYbcgeCpGhGu3ME=
+ bh=iLuszdpRLoQma80gnykj4WlU3EBYT2u1117mFYOHA20=;
+ b=E+9cppGNtEGQ+EV+b08ps5v7V6ESbJU6ECzh9IYjkz+IqmzfnmVHOwnMWC1D2GmNCucgKTboLrKM5hllCYHZXQafjM2fAEr9rutn/mTZWmBKPhkHZfua5EkLEzn7t900S/t+e5rONe8KRNyVu1DyNrEeOanz5J1L/EXHuw+mV/Q=
 Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
- BYAPR04MB5542.namprd04.prod.outlook.com (20.178.232.149) with Microsoft SMTP
+ BYAPR04MB5991.namprd04.prod.outlook.com (20.178.233.20) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.11; Mon, 17 Jun 2019 02:44:03 +0000
+ 15.20.1987.12; Mon, 17 Jun 2019 03:16:06 +0000
 Received: from BYAPR04MB5816.namprd04.prod.outlook.com
  ([fe80::d090:297a:d6ae:e757]) by BYAPR04MB5816.namprd04.prod.outlook.com
  ([fe80::d090:297a:d6ae:e757%4]) with mapi id 15.20.1965.018; Mon, 17 Jun 2019
- 02:44:03 +0000
+ 03:16:06 +0000
 From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     "dsterba@suse.cz" <dsterba@suse.cz>,
+To:     Josef Bacik <josef@toxicpanda.com>,
         Naohiro Aota <Naohiro.Aota@wdc.com>
 CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
         David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
+        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Hannes Reinecke <hare@suse.com>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         =?iso-8859-1?Q?Matias_Bj=F8rling?= <mb@lightnvm.io>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH v2 00/19] btrfs zoned block device support
-Thread-Topic: [PATCH v2 00/19] btrfs zoned block device support
-Thread-Index: AQHVHTKAJDlGAC+HkUGU89kQ+2+L3A==
-Date:   Mon, 17 Jun 2019 02:44:03 +0000
-Message-ID: <BYAPR04MB5816E0A249D4225633AB5EABE7EB0@BYAPR04MB5816.namprd04.prod.outlook.com>
+Subject: Re: [PATCH 11/19] btrfs: introduce submit buffer
+Thread-Topic: [PATCH 11/19] btrfs: introduce submit buffer
+Thread-Index: AQHVHTKKjg778rmXIkyNFIGQA7/Xbg==
+Date:   Mon, 17 Jun 2019 03:16:05 +0000
+Message-ID: <BYAPR04MB5816E9FC012A289CA438E794E7EB0@BYAPR04MB5816.namprd04.prod.outlook.com>
 References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190612175138.GT3563@twin.jikos.cz>
- <SN6PR04MB5231E2F482B8D794950058FF8CEF0@SN6PR04MB5231.namprd04.prod.outlook.com>
- <20190613134612.GU3563@suse.cz>
+ <20190607131025.31996-12-naohiro.aota@wdc.com>
+ <20190613141457.jws5ca63wfgjf7da@MacBook-Pro-91.local>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -72,115 +70,115 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Damien.LeMoal@wdc.com; 
 x-originating-ip: [129.253.182.57]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 32671e44-a72b-4f73-4d55-08d6f2cda8e3
+x-ms-office365-filtering-correlation-id: 45f42baf-75ad-4e76-7f31-08d6f2d222cd
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5542;
-x-ms-traffictypediagnostic: BYAPR04MB5542:
-x-ms-exchange-purlcount: 1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5991;
+x-ms-traffictypediagnostic: BYAPR04MB5991:
 wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <BYAPR04MB554290947779FEAE3EC12DBFE7EB0@BYAPR04MB5542.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-microsoft-antispam-prvs: <BYAPR04MB59915EDB8C8669899A10A945E7EB0@BYAPR04MB5991.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
 x-forefront-prvs: 0071BFA85B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(396003)(366004)(376002)(346002)(199004)(189003)(486006)(66556008)(53936002)(81166006)(7416002)(33656002)(316002)(26005)(2501003)(478600001)(110136005)(7696005)(54906003)(72206003)(966005)(14454004)(66066001)(71200400001)(71190400001)(305945005)(74316002)(186003)(256004)(229853002)(52536014)(55016002)(6246003)(68736007)(4326008)(25786009)(3846002)(66946007)(53376002)(5660300002)(102836004)(76116006)(7736002)(6436002)(6116002)(9686003)(66446008)(53546011)(81156014)(99286004)(6506007)(8676002)(73956011)(86362001)(6306002)(6636002)(446003)(64756008)(2906002)(66476007)(76176011)(8936002)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5542;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(396003)(136003)(366004)(199004)(189003)(6246003)(66946007)(66446008)(52536014)(53936002)(54906003)(102836004)(99286004)(478600001)(33656002)(110136005)(14454004)(256004)(74316002)(55016002)(6506007)(9686003)(26005)(446003)(72206003)(2906002)(305945005)(76176011)(316002)(186003)(6116002)(7696005)(476003)(66066001)(5660300002)(81166006)(7736002)(7416002)(229853002)(14444005)(3846002)(6436002)(68736007)(53546011)(8676002)(73956011)(64756008)(66476007)(6636002)(81156014)(66556008)(76116006)(4326008)(486006)(71200400001)(25786009)(8936002)(71190400001)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5991;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: tJN5Z0e4U+Iuel5BclRaj8xBtWz+72OuCZEjrmFC7ZH1NtCD4Aq49wzGy4onArgees+LSe11GZV5R3qpZrzd5/2JGdqBU74BaB57YLMTib1yJ+E0CE71Tnaaynli84XJGh+NiAJTbS0FN3NVhdI2hItX3JkMc7cnN+5MYcu1KIwr3NugnihjPLczqxvdzLVG5wTz4468se6N7eqwCZerBnd9BzHqZ+Ca5FBvBo6syEuq2yH+Cb3nPCgvsXJ6IFk9WsroepeNB1BHoIaNPzetKnyZ3nlo4i77VjDOUAmVX8ivgg6qAx3VygjY2ed2zEVFWs7TJnZq1pGtAsfbqFCiSB3XxkGZ6iijFHKGNJ3fYgGCQk/zGhEWu4I8uY/PoGZy+WDrqyyTPEru++ii41JVA0/yQWLBDxq39GIp1MxVjDQ=
+x-microsoft-antispam-message-info: vCA6NlQZpox7jOFv1HRt+6UlcVhi8lpmTc/bJ0cromuq11JXK2nha6CzXY/1prqHCXzM+A5X1PqcQemyCkeGIu8enPAaAkGkKyQ8xeGgNPvzI7waoNmVu46dzgawwokR/IBM2umq5+PVqqxl17oRLQF6o08uc1SWukQpNiHmEZLQZT+ZG/0dBcsDWDZFSujSQL4t3k1QVjaFAXbJxsS7EnwiD3jzFe0fbIV+zSYFIqZWyYorj4ZlReZXAwMjdX3pFs8tX8yIp4I6MRf+WbsvgkGQ2oFYkIVxmdTTUY6bqt115l3/vk9LSfg6FU355a+WEIy7rvGYjyDx+jeTs9WGJ6s6s85LFSUXHkgZnRmQxfgoDpvBy5ss7nkEl5KJU4qclUlAMgIUMVCrtQYnoXlH5/mWx4OdiD6Q+xzV6GxXgc4=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32671e44-a72b-4f73-4d55-08d6f2cda8e3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2019 02:44:03.3221
+X-MS-Exchange-CrossTenant-Network-Message-Id: 45f42baf-75ad-4e76-7f31-08d6f2d222cd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2019 03:16:05.8391
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: Damien.LeMoal@wdc.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5542
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5991
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David,=0A=
+Josef,=0A=
 =0A=
-On 2019/06/13 22:45, David Sterba wrote:=0A=
-> On Thu, Jun 13, 2019 at 04:59:23AM +0000, Naohiro Aota wrote:=0A=
->> On 2019/06/13 2:50, David Sterba wrote:=0A=
->>> On Fri, Jun 07, 2019 at 10:10:06PM +0900, Naohiro Aota wrote:=0A=
->>>> btrfs zoned block device support=0A=
->>>>=0A=
->>>> This series adds zoned block device support to btrfs.=0A=
->>>=0A=
->>> The overall design sounds ok.=0A=
->>>=0A=
->>> I skimmed through the patches and the biggest task I see is how to make=
+On 2019/06/13 23:15, Josef Bacik wrote:=0A=
+> On Fri, Jun 07, 2019 at 10:10:17PM +0900, Naohiro Aota wrote:=0A=
+>> Sequential allocation is not enough to maintain sequential delivery of=
 =0A=
->>> the hmzoned adjustments and branches less visible, ie. there are too=0A=
->>> many if (hmzoned) { do something } standing out. But that's merely a=0A=
->>> matter of wrappers and maybe an abstraction here and there.=0A=
+>> write IOs to the device. Various features (async compress, async checksu=
+m,=0A=
+>> ...) of btrfs affect ordering of the IOs. This patch introduces submit=
+=0A=
+>> buffer to sort WRITE bios belonging to a block group and sort them out=
+=0A=
+>> sequentially in increasing block address to achieve sequential write=0A=
+>> sequences with __btrfs_map_bio().=0A=
 >>=0A=
->> Sure. I'll add some more abstractions in the next version.=0A=
+>> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>=0A=
 > =0A=
-> Ok, I'll reply to the patches with specific things.=0A=
-> =0A=
->>> How can I test the zoned devices backed by files (or regular disks)? I=
+> I hate everything about this.  Can't we just use the plugging infrastruct=
+ure for=0A=
+> this and then make sure it re-orders the bios before submitting them?  Al=
+so=0A=
+> what's to prevent the block layer scheduler from re-arranging these io's?=
 =0A=
->>> searched for some concrete example eg. for qemu or dm-zoned, but closes=
+> Thanks,=0A=
+=0A=
+The block I/O scheduler reorders requests in LBA order, but that happens fo=
+r a=0A=
+newly inserted request against pending requests. If there are no pending=0A=
+requests because all requests were already issued, no ordering happen, and =
+even=0A=
+worse, if the drive queue is not full yet (e.g. there are free tags), then =
+the=0A=
+newly inserted request will be dispatched almost immediately, preventing=0A=
+reordering with subsequent incoming write requests to happen.=0A=
+=0A=
+The other problem is that the mq-deadline scheduler does not track zone WP=
+=0A=
+position. Write request issuing is done regardless of the current WP value,=
+=0A=
+solely based on LBA ordering. This means that mq-deadline will not prevent=
+=0A=
+out-of-order, or rather, unaligned write requests. These will not be detect=
+ed=0A=
+and dispatched whenever possible. The reasons for this are that:=0A=
+1) the disk user (the FS) has to manage zone WP positions anyway. So duplic=
+ating=0A=
+that management at the block IO scheduler level is inefficient.=0A=
+2) Adding zone WP management at the block IO scheduler level would also nee=
+d a=0A=
+write error processing path to resync the WP value in case of failed writes=
+. But=0A=
+the user/FS also needs that anyway. Again duplicated functionalities.=0A=
+3) The block layer will need a timeout to force issue or cancel pending=0A=
+unaligned write requests. This is necessary in case the drive user stops is=
+suing=0A=
+writes (for whatever reasons) or the scheduler is being switched. This woul=
+d=0A=
+unnecessarily cause write I/O errors or cause deadlocks if the request queu=
+e=0A=
+quiesce mode is entered at the wrong time (and I do not see a good way to d=
+eal=0A=
+with that).=0A=
+=0A=
+blk-mq is already complicated enough. Adding this to the block IO scheduler=
+ will=0A=
+unnecessarily complicate things further for no real benefits. I would like =
+to=0A=
+point out the dm-zoned device mapper and f2fs which are both already dealin=
+g=0A=
+with write ordering and write error processing directly. Both are fairly=0A=
+straightforward but completely different and each optimized for their own s=
+tructure.=0A=
+=0A=
+Naohiro changes to btrfs IO scheduler have the same intent, that is, effici=
+ently=0A=
+integrate and handle write ordering "a la btrfs". Would creating a differen=
 t=0A=
->>> match was a text description in libzbc README that it's possible to=0A=
->>> implement. All other howtos expect a real zoned device.=0A=
->>=0A=
->> You can use tcmu-runer [1] to create an emulated zoned device backed by =
-=0A=
->> a regular file. Here is a setup how-to:=0A=
->> http://zonedstorage.io/projects/tcmu-runner/#compilation-and-installatio=
-n=0A=
-> =0A=
-> That looks great, thanks. I wonder why there's no way to find that, all=
-=0A=
-> I got were dead links to linux-iscsi.org or tutorials of targetcli that=
-=0A=
-> were years old and not working.=0A=
-=0A=
-The site went online 4 days ago :) We will advertise it whenever we can. Th=
-is is=0A=
-intended to document all things "zoned block device" including Btrfs suppor=
-t,=0A=
-when we get it finished :)=0A=
-=0A=
-> =0A=
-> Feeding the textual commands to targetcli is not exactly what I'd=0A=
-> expect for scripting, but at least it seems to work.=0A=
-=0A=
-Yes, this is not exactly obvious, but that is how most automation with linu=
-x=0A=
-iscsi is done.=0A=
-=0A=
-> =0A=
-> I tried to pass an emulated ZBC device on host to KVM guest (as a scsi=0A=
-> device) but lsscsi does not recognize that it as a zonde device (just a=
-=0A=
-> QEMU harddisk). So this seems the emulation must be done inside the VM.=
-=0A=
-> =0A=
-=0A=
-What driver did you use for the drive ? virtio block ? I have not touch tha=
-t=0A=
-driver nor qemu side, so zoned block dev support is likely missing. I will =
-add=0A=
-it. That would be especially useful for testing with a real drive. In the c=
-ase=0A=
-of tcmu runner, the initiator can be started in the guest directly and the=
-=0A=
-target emulation done either in the guest if loopback is used, or on the ho=
-st=0A=
-using iscsi connection. The former is what we use all the time and so is we=
-ll=0A=
-tested. I have to admit that testing with iscsi is lacking... Will add that=
- to=0A=
-the todo list.=0A=
+"hmzoned" btrfs IO scheduler help address your concerns ?=0A=
 =0A=
 Best regards.=0A=
+=0A=
 =0A=
 -- =0A=
 Damien Le Moal=0A=
