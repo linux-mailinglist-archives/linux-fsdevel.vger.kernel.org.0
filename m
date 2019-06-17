@@ -2,151 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F81649569
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2019 00:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CF484956F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2019 00:48:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbfFQWr2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jun 2019 18:47:28 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:40474 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbfFQWr1 (ORCPT
+        id S1728173AbfFQWsT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jun 2019 18:48:19 -0400
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:42742 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725839AbfFQWsT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jun 2019 18:47:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=oWCvapawJTmHWfTi4W/xQzd/vam+JtASkBkdfBDmQPA=; b=n2EkBbCtepqSck3LcKcBk9ucLP
-        OopaIKVxH7Ft5pKUkNM6axeXE0K/dN0KlZBFHBkuZUjcuBojBVwA6eyj3zIf/SrSJ0AXP+ap36Tfr
-        X0WYpzcQ34E0H9clamwWKVPA2G5AqZgtlebPbdol2VZl3hzV0WHHKTyO/DPw8RjqxrUZIc7QdVFKM
-        vHCGFyYLYGCxZF9eADucfOb8FK17P9rwh5jOCnBGSKiVmNRqoUfswvbapl0LJeUcbgsSotAmzefsG
-        BuQwk3FdoCSOiq6Zwz2/pJMld3yRBwfY9eWtfMYCawPt2uqyoLPRXHwia2hme5jMcDzrgP6F97p9i
-        1TAbXIzA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hd0P6-0004pi-Aw; Mon, 17 Jun 2019 22:47:08 +0000
-Subject: Re: [PATCH v3 2/7] lib/hexdump.c: Relax rowsize checks in
- hex_dump_to_buffer
-To:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Stanislaw Gruszka <sgruszka@redhat.com>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mon, 17 Jun 2019 18:48:19 -0400
+Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 769BE3DC8C8;
+        Tue, 18 Jun 2019 08:48:12 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hd0PC-0005cY-Ew; Tue, 18 Jun 2019 08:47:14 +1000
+Date:   Tue, 18 Jun 2019 08:47:14 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
-References: <20190617020430.8708-1-alastair@au1.ibm.com>
- <20190617020430.8708-3-alastair@au1.ibm.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <94413756-c927-a4ca-dd59-47e3cc87d58d@infradead.org>
-Date:   Mon, 17 Jun 2019 15:47:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: pagecache locking (was: bcachefs status update) merged)
+Message-ID: <20190617224714.GR14363@dread.disaster.area>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611011737.GA28701@kmo-pixel>
+ <20190611043336.GB14363@dread.disaster.area>
+ <20190612162144.GA7619@kmo-pixel>
+ <20190612230224.GJ14308@dread.disaster.area>
+ <20190613183625.GA28171@kmo-pixel>
+ <20190613235524.GK14363@dread.disaster.area>
+ <CAHk-=whMHtg62J2KDKnyOTaoLs9GxcNz1hN9QKqpxoO=0bJqdQ@mail.gmail.com>
+ <CAHk-=wgz+7O0pdn8Wfxc5EQKNy44FTtf4LAPO1WgCidNjxbWzg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190617020430.8708-3-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgz+7O0pdn8Wfxc5EQKNy44FTtf4LAPO1WgCidNjxbWzg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
+        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
+        a=Z4Rwk6OoAAAA:8 a=7-415B0cAAAA:8 a=yB7Y4sE8DmJNDpec8TgA:9
+        a=CjuIK1q_8ugA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-Just a comment style nit below...
-
-On 6/16/19 7:04 PM, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
+On Fri, Jun 14, 2019 at 06:01:07PM -1000, Linus Torvalds wrote:
+> On Thu, Jun 13, 2019 at 5:08 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > I do not believe that posix itself actually requires that at all,
+> > although extended standards may.
 > 
-> This patch removes the hardcoded row limits and allows for
-> other lengths. These lengths must still be a multiple of
-> groupsize.
+> So I tried to see if I could find what this perhaps alludes to.
 > 
-> This allows structs that are not 16/32 bytes to display on
-> a single line.
-> 
-> This patch also expands the self-tests to test row sizes
-> up to 64 bytes (though they can now be arbitrarily long).
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
->  lib/hexdump.c      | 48 ++++++++++++++++++++++++++++--------------
->  lib/test_hexdump.c | 52 ++++++++++++++++++++++++++++++++++++++--------
->  2 files changed, 75 insertions(+), 25 deletions(-)
-> 
-> diff --git a/lib/hexdump.c b/lib/hexdump.c
-> index 81b70ed37209..3943507bc0e9 100644
-> --- a/lib/hexdump.c
-> +++ b/lib/hexdump.c
+> And I suspect it's not in the read/write thing, but the pthreads side
+> talks about atomicity.
+>
+> Interesting, but I doubt if that's actually really intentional, since
+> the non-thread read/write behavior specifically seems to avoid the
+> whole concurrency issue.
 
-> @@ -246,17 +248,29 @@ void print_hex_dump(const char *level, const char *prefix_str, int prefix_type,
->  {
->  	const u8 *ptr = buf;
->  	int i, linelen, remaining = len;
-> -	unsigned char linebuf[32 * 3 + 2 + 32 + 1];
-> +	unsigned char *linebuf;
-> +	unsigned int linebuf_len;
->  
-> -	if (rowsize != 16 && rowsize != 32)
-> -		rowsize = 16;
-> +	if (rowsize % groupsize)
-> +		rowsize -= rowsize % groupsize;
-> +
-> +	/* Worst case line length:
-> +	 * 2 hex chars + space per byte in, 2 spaces, 1 char per byte in, NULL
-> +	 */
+The wording of posix changes every time they release a new version
+of the standard, and it's _never_ obvious what behaviour the
+standard is actually meant to define. They are always written with
+sufficient ambiguity and wiggle room that they could mean
+_anything_. The POSIX 2017.1 standard you quoted is quite different
+to older versions, but it's no less ambiguous...
 
-According to Documentation/process/coding-style.rst:
+> The pthreads atomicity thing seems to be about not splitting up IO and
+> doing it in chunks when you have m:n threading models, but can be
+> (mis-)construed to have threads given higher atomicity guarantees than
+> processes.
 
-The preferred style for long (multi-line) comments is:
+Right, but regardless of the spec we have to consider that the
+behaviour of XFS comes from it's Irix heritage (actually from EFS,
+the predecessor of XFS from the late 1980s). i.e. the IO exclusion
+model dates to long before POSIX had anything to say about pthreads,
+and it's wording about atomicity could only refer to to
+multi-process interactions.
 
-.. code-block:: c
+These days, however, is the unfortunate reality of a long tail of
+applications developed on other Unix systems under older POSIX
+specifications that are still being ported to and deployed on Linux.
+Hence the completely ambiguous behaviours defined in the older specs
+are still just as important these days as the completely ambiguous
+behaviours defined in the new specifications. :/
 
-	/*
-	 * This is the preferred style for multi-line
-	 * comments in the Linux kernel source code.
-	 * Please use it consistently.
-	 *
-	 * Description:  A column of asterisks on the left side,
-	 * with beginning and ending almost-blank lines.
-	 */
+Cheers,
 
-
-except in networking software.
-
-
-> +	linebuf_len = rowsize * 3 + 2 + rowsize + 1;
-> +	linebuf = kzalloc(linebuf_len, GFP_KERNEL);
-> +	if (!linebuf) {
-> +		printk("%s%shexdump: Could not alloc %u bytes for buffer\n",
-> +			level, prefix_str, linebuf_len);
-> +		return;
-> +	}
-
-
+Dave.
 -- 
-~Randy
+Dave Chinner
+david@fromorbit.com
