@@ -2,128 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08F1447899
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 05:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93521478F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 06:07:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfFQDTN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Jun 2019 23:19:13 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:4430 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727383AbfFQDTN (ORCPT
+        id S1726080AbfFQEHp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jun 2019 00:07:45 -0400
+Received: from ushosting.nmnhosting.com ([66.55.73.32]:44232 "EHLO
+        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbfFQEHo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Jun 2019 23:19:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1560741552; x=1592277552;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=83c7DmHWdGCQdYsUcr3GMDaxUdVq1wOVner+tJ0hhrM=;
-  b=m/xMF01QsBroF0hvkjrW7VtUnlw8cIrMXECe4TlhDRyWBQynzt1hoJsb
-   X3KL7jXc/P/eRTbtQLK9imRy9HUk6sLZ6OTJEGsfMXd5OJWmba9lF6ZQ0
-   Vq+Ts0/q6f6NGm7IClntNNLWxWd8FFCTpCPv3Uzq+giKaMPupXbfWXLnX
-   FcOaNOL+Bbfmayw5Qddf3+9+8U7ePe/tC6WWIx2oaGOjZuYFoK23f7sFs
-   EpMFMLgG52tEam7yN2NV3aECZbKSRuwzkS5PRXRwgqelAAZqR42c3YQDu
-   HQX3pkYfHIPHys9PqwUsEszXehOTqOQ/vFqvknG5WzIonyrbpKqO2uLye
-   A==;
-X-IronPort-AV: E=Sophos;i="5.63,383,1557158400"; 
-   d="scan'208";a="112368754"
-Received: from mail-co1nam05lp2055.outbound.protection.outlook.com (HELO NAM05-CO1-obe.outbound.protection.outlook.com) ([104.47.48.55])
-  by ob1.hgst.iphmx.com with ESMTP; 17 Jun 2019 11:19:12 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XXRU3OIUR1Iq4Ff/qMgYnjzKjHT9Ti2qKIyweLj4uhQ=;
- b=lXXluEGIljh+Vq0thlJznrtDkksfQK/DAYH8OszD8G8BJZo0WrlGgaLs/tJ4KsiMElCRjlk4RQgNIY6NXjNBmKIMbfc1lBSUCCCk67p2DJ3Eerqo6XszSz69RxWJfQeI9LPvHHE2eS37j3eEZ9cYHxkeB52afjxTW4W0XNL9oDc=
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
- BYAPR04MB5238.namprd04.prod.outlook.com (20.178.48.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.13; Mon, 17 Jun 2019 03:19:10 +0000
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::d090:297a:d6ae:e757]) by BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::d090:297a:d6ae:e757%4]) with mapi id 15.20.1965.018; Mon, 17 Jun 2019
- 03:19:10 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>
-CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        =?iso-8859-1?Q?Matias_Bj=F8rling?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 12/19] btrfs: expire submit buffer on timeout
-Thread-Topic: [PATCH 12/19] btrfs: expire submit buffer on timeout
-Thread-Index: AQHVHTKNw7/mCQKsqka4kbTmHgZhiA==
-Date:   Mon, 17 Jun 2019 03:19:10 +0000
-Message-ID: <BYAPR04MB5816CFF901A5BF10A2E51A52E7EB0@BYAPR04MB5816.namprd04.prod.outlook.com>
-References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190607131025.31996-13-naohiro.aota@wdc.com>
- <20190613141548.vlczaxiqqzbxgtzk@MacBook-Pro-91.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Damien.LeMoal@wdc.com; 
-x-originating-ip: [129.253.182.57]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7e6c63a2-6e30-4828-96a2-08d6f2d290ec
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5238;
-x-ms-traffictypediagnostic: BYAPR04MB5238:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <BYAPR04MB523823A5D129F41A850BA9C2E7EB0@BYAPR04MB5238.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0071BFA85B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(136003)(376002)(366004)(39860400002)(199004)(189003)(256004)(72206003)(6506007)(3846002)(8676002)(81156014)(7416002)(305945005)(53936002)(7696005)(81166006)(66066001)(6636002)(86362001)(4744005)(66476007)(68736007)(71190400001)(71200400001)(14444005)(9686003)(229853002)(76176011)(478600001)(6436002)(446003)(6116002)(55016002)(486006)(52536014)(476003)(54906003)(64756008)(316002)(14454004)(5660300002)(4326008)(6246003)(110136005)(2906002)(66446008)(25786009)(76116006)(26005)(73956011)(186003)(99286004)(7736002)(8936002)(33656002)(66556008)(102836004)(66946007)(74316002)(53546011);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5238;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 0cOIhPQh1+3AK4r7RkKNqA5ybHVRY6xYvDc5uVJDdsoIjOoQ0UuLAxQpnmfeZ31khiYKP7RdkyxiBwMYlWvWjP63NIAE8/ljra0KgDlBZs545vVzt22LY6t779Haqe5ugeR+ym3n77R0mAhJijb72ySvBU53rR6/y+eEVn46ov4mEom0+8EilGvSwj3cu0cABSIZp7qfphc+5HZrZI8dXGvN6YpSSTXaoNW6QqHSY320yBJ1mwpz+IBKmwiBTu44Fr00GfqTurSOWNz1wxhl5vwBwrqIxBA0JNoo6V6aChFIrfCoM/+WnupS0h5PvlcoJZ1wu5o9GIs1tc84mCNC3D1mlNvho8HXszcAyJKFrAz6UkUWXCnSsgKjHKUAWuA1ecXenPDax6PSN0PLA8fS0h3pJ6DENm/WFW0GkRvsw1g=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 17 Jun 2019 00:07:44 -0400
+Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
+        by ushosting.nmnhosting.com (Postfix) with ESMTPS id E75102DC007F;
+        Mon, 17 Jun 2019 00:07:39 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
+        s=201810a; t=1560744460;
+        bh=fcIJWb9zFrSz2UB8a7mxef1I4k9iDutEwQyvrCEDLlQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=WCFaSA53OEIg+og8L/naQbQPlaTsOoXPKsvTwtmXP2Vk09oVK0XuS5AD3x5/CqLrM
+         G0GIng39m1v0lZ4sKpUf3T99/+YBxM9RX44WLALuhESqgh+r5BAShy10176lEQBE3q
+         DQvd2fgD6zwuDb2r3HtAMEKvNfyGEklzY4KUQ+U+VxMilUgRO+yfLfvjALw1DuedIj
+         U07cuyKZx46E0NJINEB5+8FVHhYvvSWxSY7sKWAoGvSBG/TJ18P0TuXGu+r+H6bH0e
+         aXUQ8ilJHofP52ff/zDalxsvFnS/I19R0WtGSyZHeql8nV+rZAy3ckW9tGr7DubBUl
+         qpbsJvQK16Hb/jOSoEHhPkG1VKXuLKMb1qy/wzkUplRpkQy3lck+ggy2ukzRhUgkqh
+         N1Q6mMJi30A9PGd1HWpWuLWkLg4LedcJItJ961IWPw6XnamogZOK4OajearEtq6Wug
+         Q7fZpUvUrqSKSyRRBPeipKEoLRw/YY+95nWqf7l5GKHjuTC0GylNVU3e6c29Aa3j+X
+         5pRuwG5Xw/zIJlIzmObseyKrpDD4TC7M/3O2j/4ernSmXnXxPfSq1dRv9DqHM2oKIk
+         cA8ovQOzGfvEiJha5fCrgByfWUnR6D8Ngp3/azplb/9QJOs0SiH1pg9yh8F/C3rFek
+         9RkRnoy0sArwZ3E9Df8kzHf0=
+Received: from adsilva.ozlabs.ibm.com (static-82-10.transact.net.au [122.99.82.10] (may be forged))
+        (authenticated bits=0)
+        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x5H47CvI055927
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 14:07:28 +1000 (AEST)
+        (envelope-from alastair@d-silva.org)
+Message-ID: <da2ff58290c4b6f08eb5ac25c288bdd03b5688f7.camel@d-silva.org>
+Subject: Re: [PATCH v3 3/7] lib/hexdump.c: Optionally suppress lines of
+ repeated bytes
+From:   "Alastair D'Silva" <alastair@d-silva.org>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
+Date:   Mon, 17 Jun 2019 14:07:12 +1000
+In-Reply-To: <20190617020430.8708-4-alastair@au1.ibm.com>
+References: <20190617020430.8708-1-alastair@au1.ibm.com>
+         <20190617020430.8708-4-alastair@au1.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e6c63a2-6e30-4828-96a2-08d6f2d290ec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2019 03:19:10.6063
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Damien.LeMoal@wdc.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5238
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Mon, 17 Jun 2019 14:07:35 +1000 (AEST)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/06/13 23:15, Josef Bacik wrote:=0A=
-> On Fri, Jun 07, 2019 at 10:10:18PM +0900, Naohiro Aota wrote:=0A=
->> It is possible to have bios stalled in the submit buffer due to some bug=
- or=0A=
->> device problem. In such situation, btrfs stops working waiting for buffe=
-red=0A=
->> bios completions. To avoid such hang, add a worker that will cancel the=
-=0A=
->> stalled bios after a timeout.=0A=
->>=0A=
-> =0A=
-> The block layer does this with it's request timeouts right?  So it'll tim=
-eout=0A=
-> and we'll get an EIO?  If that's not working then we need to fix the bloc=
-k=0A=
-> layer.  Thanks,=0A=
-=0A=
-Joseph,=0A=
-=0A=
-The block layer timeout is started only when the request is dispatched. The=
-=0A=
-timeout is not started on BIO/request allocation and so will not trigger fo=
-r=0A=
-bios stalled inside btrfs scheduler.=0A=
-=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+On Mon, 2019-06-17 at 12:04 +1000, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> Some buffers may only be partially filled with useful data, while the
+> rest
+> is padded (typically with 0x00 or 0xff).
+> 
+> This patch introduces a flag to allow the supression of lines of
+> repeated
+> bytes, which are replaced with '** Skipped %u bytes of value 0x%x **'
+> 
+> An inline wrapper function is provided for backwards compatibility
+> with
+> existing code, which maintains the original behaviour.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> ---
+>  include/linux/printk.h | 25 +++++++++---
+>  lib/hexdump.c          | 91 ++++++++++++++++++++++++++++++++++++--
+> ----
+>  2 files changed, 99 insertions(+), 17 deletions(-)
+> 
+> diff --git a/include/linux/printk.h b/include/linux/printk.h
+> index cefd374c47b1..d7754799cfe0 100644
+> --- a/include/linux/printk.h
+> +++ b/include/linux/printk.h
+> @@ -481,13 +481,18 @@ enum {
+>  	DUMP_PREFIX_ADDRESS,
+>  	DUMP_PREFIX_OFFSET
+>  };
+> +
+>  extern int hex_dump_to_buffer(const void *buf, size_t len, int
+> rowsize,
+>  			      int groupsize, char *linebuf, size_t
+> linebuflen,
+>  			      bool ascii);
+> +
+> +#define HEXDUMP_ASCII			BIT(0)
+> +#define HEXDUMP_SUPPRESS_REPEATED	BIT(1)
+> +
+
+This is missing the include of linux/bits.h, I'll fix this in the next
+version.
+
+-- 
+Alastair D'Silva           mob: 0423 762 819
+skype: alastair_dsilva    
+Twitter: @EvilDeece
+blog: http://alastair.d-silva.org
+
+
