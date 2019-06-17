@@ -2,110 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06D11488D0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 18:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B53AE48CDE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 20:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfFQQZQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jun 2019 12:25:16 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35502 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbfFQQZQ (ORCPT
+        id S1728561AbfFQSrZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jun 2019 14:47:25 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50984 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728464AbfFQSrZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:25:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PXluhcTCTbRu7MWWqjlNoU2J2WlclfBp1+lbYvichwE=; b=NrVMIU4FjkXaOiq8EBdBsisYX
-        RPTIEzflV5zzQh/U2sftmMWhHn06EA8gVxhHQI09wAKbG1YY/aylBwEQE3x3HBwdn0p4zMqAk5Mo8
-        Mvga3SN32GaMtRhAnUBUhndqL+MxsHwNGkAS3M0CB357M+Invewv0tSVMt+X2l3KOM45BTbbhqnDt
-        1+++Y1sYLNcIANFQDfBUusVnW+IoqYMTzumlNSNAxUdtCv1NiresC8d9lLN1vOGTCgavANJXprh0g
-        Ycsi9s+FlfSM4Wn38hFtg0KP3TV8Cxgna/sKWsWO2eGeM2ZxuvI/tX2zz3ee6gP63a/gt8MV8ySJJ
-        snbxbH0mw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hcuRE-0000rQ-MP; Mon, 17 Jun 2019 16:24:56 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 366F52076F712; Mon, 17 Jun 2019 18:24:55 +0200 (CEST)
-Date:   Mon, 17 Jun 2019 18:24:55 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jann Horn <jannh@google.com>, Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
- ring buffer
-Message-ID: <20190617162455.GL3436@hirez.programming.kicks-ass.net>
-References: <20190528162603.GA24097@kroah.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
- <4031.1559064620@warthog.procyon.org.uk>
- <20190528231218.GA28384@kroah.com>
- <31936.1559146000@warthog.procyon.org.uk>
- <16193.1559163763@warthog.procyon.org.uk>
- <21942.1559304135@warthog.procyon.org.uk>
- <606.1559312412@warthog.procyon.org.uk>
- <15401.1559322762@warthog.procyon.org.uk>
+        Mon, 17 Jun 2019 14:47:25 -0400
+Received: by mail-wm1-f67.google.com with SMTP id c66so514767wmf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jun 2019 11:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jyz6fqs53F/qDL0teIid/cZMh/h4MCVWeZnSY+AMCoY=;
+        b=dpkZ/BaXFS1LG6+8QDEVPNUs8VTnwlkwRqxE2SkOPncRaIFYbT5UtO0rCbAE8wklPK
+         A+pM4bjs042iCCS63cjDb5nKJp6db4RHvVWRUuKWSDEOVVnTbO7OWr8WYlCextQ0QimK
+         hw4LLF1wNpVkzFD6V+ONmIlTnrY1+8k6e4TaZdpVoNDlKqkUuSqFVfBEQ+OJG1LDWSgP
+         m75VIMcL0EguIzRlli+ULY88ePkc83ABPa3Xgx6PJVjcudVyRfDrhq7dPFSQXwt/+NkE
+         589m46d9c9z40EJjutdnQmqYLs/FwabIdq2M/LnYeF6nxtc/3UfhKEjb+iwOPAalvC/K
+         5BLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jyz6fqs53F/qDL0teIid/cZMh/h4MCVWeZnSY+AMCoY=;
+        b=fmtENmA0Izl9pGIEKX3BeWAjaKcfVPVKOZ408kQMJMF/X3oEJF8DeonyNoc5YJQzTk
+         TVCAOcUZTJpm30lz35SwGQj18HTrP52chIBE98nxhbUuS3Gyv0tgSA/h4taazchNNOof
+         sVGwrjPrMJW9WgGmxCcoI+j/xMTPH08J7qOVniXuv2axz/g3oFRBztwJ2qKmuUWzFy8f
+         Vfx/6zuf0YdFiUSI6EWJBPRnoVBrFnni76T6DvWmNpQCaelCpORRbtqX9f73A9p/J9mf
+         I0LXgdivTvVFNyEh4WL7XqgNVUB3pIHZJaPyXsLtsnUHiNWXeKqVOAEsGVcy5rUvmw/v
+         Rrzg==
+X-Gm-Message-State: APjAAAVkgHhdM0zpQ2l9mbZ+DFGb3/x6+It++y1MNYi+1VIiQV4gwF7h
+        no+V88fvPiD7J0z36u5MNz7NHA==
+X-Google-Smtp-Source: APXvYqwCog0WuntJNECNO7CxMrilOnBpLe8UZEZ8fB1Xecu0XDTNFGjWT/QTVqbrRp87QTWwXnKxrA==
+X-Received: by 2002:a1c:9a05:: with SMTP id c5mr63708wme.36.1560797243509;
+        Mon, 17 Jun 2019 11:47:23 -0700 (PDT)
+Received: from localhost.localdomain ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id w23sm70389wmi.45.2019.06.17.11.47.21
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 11:47:22 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        ebiederm@xmission.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>,
+        stable@vger.kernel.org
+Subject: [PATCH] fs/namespace: fix unprivileged mount propagation
+Date:   Mon, 17 Jun 2019 20:47:11 +0200
+Message-Id: <20190617184711.21364-1-christian@brauner.io>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15401.1559322762@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 31, 2019 at 06:12:42PM +0100, David Howells wrote:
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > > > (and it has already been established that refcount_t doesn't work for
-> > > > usage count scenarios)
-> > > 
-> > > ?
-> > > 
-> > > Does that mean struct kref doesn't either?
-> > 
-> > Indeed, since kref is just a pointless wrapper around refcount_t it does
-> > not either.
-> > 
-> > The main distinction between a reference count and a usage count is that
-> > 0 means different things. For a refcount 0 means dead. For a usage count
-> > 0 is merely unused but valid.
-> 
-> Ah - I consider the terms interchangeable.
-> 
-> Take Documentation/filesystems/vfs.txt for instance:
-> 
->   dget: open a new handle for an existing dentry (this just increments
-> 	the usage count)
-> 
->   dput: close a handle for a dentry (decrements the usage count). ...
-> 
->   ...
-> 
->   d_lookup: look up a dentry given its parent and path name component
-> 	It looks up the child of that given name from the dcache
-> 	hash table. If it is found, the reference count is incremented
-> 	and the dentry is returned. The caller must use dput()
-> 	to free the dentry when it finishes using it.
-> 
-> Here we interchange the terms.
-> 
-> Or https://www.kernel.org/doc/gorman/html/understand/understand013.html
-> which seems to interchange the terms in reference to struct page.
+When propagating mounts across mount namespaces owned by different user
+namespaces it is not possible anymore to move or umount the mount in the
+less privileged mount namespace.
 
-Right, but we have two distinct set of semantics, I figured it makes
-sense to have two different names for them. Do you have an alternative
-naming scheme we could use?
+Here is a reproducer:
 
-Or should we better document our distinction between reference and usage
-count?
+  sudo mount -t tmpfs tmpfs /mnt
+  sudo --make-rshared /mnt
+
+  # create unprivileged user + mount namespace and preserve propagation
+  unshare -U -m --map-root --propagation=unchanged
+
+  # now change back to the original mount namespace in another terminal:
+  sudo mkdir /mnt/aaa
+  sudo mount -t tmpfs tmpfs /mnt/aaa
+
+  # now in the unprivileged user + mount namespace
+  mount --move /mnt/aaa /opt
+
+Unfortunately, this is a pretty big deal for userspace since this is
+e.g. used to inject mounts into running unprivileged containers.
+So this regression really needs to go away rather quickly.
+
+The problem is that a recent change falsely locked the root of the newly
+added mounts by setting MNT_LOCKED. Fix this by only locking the mounts
+on copy_mnt_ns() and not when adding a new mount.
+
+Fixes: 3bd045cc9c4b ("separate copying and locking mount tree on cross-userns copies")
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: <stable@vger.kernel.org>
+Tested-by: Christian Brauner <christian@brauner.io>
+Acked-by: Christian Brauner <christian@brauner.io>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Christian Brauner <christian@brauner.io>
+---
+ fs/namespace.c | 1 +
+ fs/pnode.c     | 3 +--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index b26778bdc236..44b540e6feb9 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2105,6 +2105,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 		/* Notice when we are propagating across user namespaces */
+ 		if (child->mnt_parent->mnt_ns->user_ns != user_ns)
+ 			lock_mnt_tree(child);
++		child->mnt.mnt_flags &= ~MNT_LOCKED;
+ 		commit_tree(child);
+ 	}
+ 	put_mountpoint(smp);
+diff --git a/fs/pnode.c b/fs/pnode.c
+index 595857a1883e..d118106fa631 100644
+--- a/fs/pnode.c
++++ b/fs/pnode.c
+@@ -257,11 +257,10 @@ static int propagate_one(struct mount *m)
+ 		if (IS_MNT_SHARED(m))
+ 			type |= CL_MAKE_SHARED;
+ 	}
+-		
++
+ 	child = copy_tree(last_source, last_source->mnt.mnt_root, type);
+ 	if (IS_ERR(child))
+ 		return PTR_ERR(child);
+-	child->mnt.mnt_flags &= ~MNT_LOCKED;
+ 	mnt_set_mountpoint(m, mp, child);
+ 	last_dest = m;
+ 	last_source = child;
+-- 
+2.21.0
+
