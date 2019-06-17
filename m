@@ -2,73 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3845947AC7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 09:28:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3338447B22
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 09:37:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbfFQH2b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jun 2019 03:28:31 -0400
-Received: from slot0.nejknio.cf ([89.32.41.233]:37639 "EHLO slot0.nejknio.cf"
+        id S1727039AbfFQHhH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jun 2019 03:37:07 -0400
+Received: from mga14.intel.com ([192.55.52.115]:55174 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725826AbfFQH2a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jun 2019 03:28:30 -0400
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=nejknio.cf;
- h=Content-Type:MIME-Version:Content-Transfer-Encoding:Content-Description:Subject:To:From:Date:Reply-To:Message-ID; i=trade1@nejknio.cf;
- bh=73Xs4LxjK+lP+h5mKCyFyWTpkoQ=;
- b=G7gz0NujgpyDCssDt0j+4GF3P6twR1h98ttRcSLpbd0gpFT6pGFJ/EUh9sw+JWTeAJeHADMLrV0U
-   06OpbajcDpnOvtU/0oRI71Bq4BALjsTXDkFg8cx6uJRlRZOZ898zkCAd528JfGsg6w/4xA8VYHOG
-   4GUH2A9NAx2zV829orOk6y1qeGnCQocjqxwxzcky5r3jeY3NUUMGLYxJ7sGlhYPFx6/36YjJMsjt
-   i52Gy+j16yBZCLKjR7/SdagVblFHDUTY9Fn+1wYxjt6EQjBXdv+VkqLBu/Rydq8zkcXdgsMoMX2L
-   bCJbCJcJfN+44iKK8PHWjxHRfmsyC95qStmzHQ==
-DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=nejknio.cf;
- b=Qj0HddTjRaPODwot2RJlKhf3anciJFzbEfwR6sgmFrENQu90Ty61hWEdnqns7vzIEoXqNG/4xjTv
-   OB2XQEY3Cad0ZOkbLUpoBf1hKb99i1TOwJ3PIVd8oJTDLs6olhMnDFuf8k10lfGaCZseEiASFPku
-   ZvB9G2/CPOWD5nn2yBUw48X75bMkyj61vZia14DYP8UVy5pd10KqBq3jwoDRa9dSTxTCvg4+gPtW
-   DRZbPJztidkqf4OVG075MZx5OL3KS1bETTYn3kdL1UHUBZKp46tmW3tx6rFF/gu9ZI0sK4E0ANLf
-   kZgVJns/YkKCTRjBSk4tRdxxAvjKKBo4V2XcrA==;
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726189AbfFQHhG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 Jun 2019 03:37:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 00:37:06 -0700
+X-ExtLoop1: 1
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Jun 2019 00:36:57 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 4/7] lib/hexdump.c: Replace ascii bool in hex_dump_to_buffer with flags
+In-Reply-To: <20190617020430.8708-5-alastair@au1.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190617020430.8708-1-alastair@au1.ibm.com> <20190617020430.8708-5-alastair@au1.ibm.com>
+Date:   Mon, 17 Jun 2019 10:39:53 +0300
+Message-ID: <87imt4vewm.fsf@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: PRODUCT INQUIRY FOR EXPORT SHIPMENT
-To:     Recipients <trade1@nejknio.cf>
-From:   "Mark Maths" <trade1@nejknio.cf>
-Date:   Mon, 17 Jun 2019 10:08:35 +0300
-Reply-To: purchase_m.maths@aol.com
-Message-ID: <0.0.1.D54.1D524DB6F8B8A80.0@slot0.nejknio.cf>
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Sales team,
- =
+On Mon, 17 Jun 2019, "Alastair D'Silva" <alastair@au1.ibm.com> wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+>
+> In order to support additional features in hex_dump_to_buffer, replace
+> the ascii bool parameter with flags.
+>
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> ---
+>  drivers/gpu/drm/i915/intel_engine_cs.c            |  2 +-
+>  drivers/isdn/hardware/mISDN/mISDNisar.c           |  6 ++++--
+>  drivers/mailbox/mailbox-test.c                    |  2 +-
+>  drivers/net/ethernet/amd/xgbe/xgbe-drv.c          |  2 +-
+>  drivers/net/ethernet/synopsys/dwc-xlgmac-common.c |  2 +-
+>  drivers/net/wireless/ath/ath10k/debug.c           |  3 ++-
+>  drivers/net/wireless/intel/iwlegacy/3945-mac.c    |  2 +-
+>  drivers/platform/chrome/wilco_ec/debugfs.c        |  2 +-
+>  drivers/scsi/scsi_logging.c                       |  8 +++-----
+>  drivers/staging/fbtft/fbtft-core.c                |  2 +-
+>  fs/seq_file.c                                     |  3 ++-
+>  include/linux/printk.h                            |  8 ++++----
+>  lib/hexdump.c                                     | 15 ++++++++-------
+>  lib/test_hexdump.c                                |  5 +++--
+>  14 files changed, 33 insertions(+), 29 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/intel_engine_cs.c b/drivers/gpu/drm/i915/intel_engine_cs.c
+> index eea9bec04f1b..5df5fffdb848 100644
+> --- a/drivers/gpu/drm/i915/intel_engine_cs.c
+> +++ b/drivers/gpu/drm/i915/intel_engine_cs.c
+> @@ -1340,7 +1340,7 @@ static void hexdump(struct drm_printer *m, const void *buf, size_t len)
+>  		WARN_ON_ONCE(hex_dump_to_buffer(buf + pos, len - pos,
+>  						rowsize, sizeof(u32),
+>  						line, sizeof(line),
+> -						false) >= sizeof(line));
+> +						0) >= sizeof(line));
+>  		drm_printf(m, "[%04zx] %s\n", pos, line);
+>  
+>  		prev = buf + pos;
 
-In furtherance to our market research, we have reviewed all your products t=
-ypes and we have finally interested in your product for our market here in =
+On i915,
+
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 
 
-United State for your production. We introduce ourselves as Emilxa Tram SRL=
-, A general group of company located in the United State. =
-
-
-We are sourcing for new suppliers from your location =
-
-
-Kindly advice us if you accept new purchase orders, I will forward our PO f=
-or urgent order.
-
-Waiting for your response to send order. Reply to ( purchase_m.maths@aol.co=
-m)
-
-Best regards.
-Mark Maths
-Company Address:
-Emilxa Tram SRL Company Limited
-P.O. Box 978
-Road Town
-Tortola
-British Virgin Islands
-Contact information:
-Tel: +1 (284) 493 7235
-Email: purchase_m.maths@aol.com
-https://meridianbvi.com/contact-us/
+-- 
+Jani Nikula, Intel Open Source Graphics Center
