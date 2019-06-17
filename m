@@ -2,135 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93521478F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 06:07:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9EC647A50
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jun 2019 08:57:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbfFQEHp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jun 2019 00:07:45 -0400
-Received: from ushosting.nmnhosting.com ([66.55.73.32]:44232 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfFQEHo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jun 2019 00:07:44 -0400
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id E75102DC007F;
-        Mon, 17 Jun 2019 00:07:39 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1560744460;
-        bh=fcIJWb9zFrSz2UB8a7mxef1I4k9iDutEwQyvrCEDLlQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=WCFaSA53OEIg+og8L/naQbQPlaTsOoXPKsvTwtmXP2Vk09oVK0XuS5AD3x5/CqLrM
-         G0GIng39m1v0lZ4sKpUf3T99/+YBxM9RX44WLALuhESqgh+r5BAShy10176lEQBE3q
-         DQvd2fgD6zwuDb2r3HtAMEKvNfyGEklzY4KUQ+U+VxMilUgRO+yfLfvjALw1DuedIj
-         U07cuyKZx46E0NJINEB5+8FVHhYvvSWxSY7sKWAoGvSBG/TJ18P0TuXGu+r+H6bH0e
-         aXUQ8ilJHofP52ff/zDalxsvFnS/I19R0WtGSyZHeql8nV+rZAy3ckW9tGr7DubBUl
-         qpbsJvQK16Hb/jOSoEHhPkG1VKXuLKMb1qy/wzkUplRpkQy3lck+ggy2ukzRhUgkqh
-         N1Q6mMJi30A9PGd1HWpWuLWkLg4LedcJItJ961IWPw6XnamogZOK4OajearEtq6Wug
-         Q7fZpUvUrqSKSyRRBPeipKEoLRw/YY+95nWqf7l5GKHjuTC0GylNVU3e6c29Aa3j+X
-         5pRuwG5Xw/zIJlIzmObseyKrpDD4TC7M/3O2j/4ernSmXnXxPfSq1dRv9DqHM2oKIk
-         cA8ovQOzGfvEiJha5fCrgByfWUnR6D8Ngp3/azplb/9QJOs0SiH1pg9yh8F/C3rFek
-         9RkRnoy0sArwZ3E9Df8kzHf0=
-Received: from adsilva.ozlabs.ibm.com (static-82-10.transact.net.au [122.99.82.10] (may be forged))
-        (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x5H47CvI055927
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 17 Jun 2019 14:07:28 +1000 (AEST)
-        (envelope-from alastair@d-silva.org)
-Message-ID: <da2ff58290c4b6f08eb5ac25c288bdd03b5688f7.camel@d-silva.org>
-Subject: Re: [PATCH v3 3/7] lib/hexdump.c: Optionally suppress lines of
- repeated bytes
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Stanislaw Gruszka <sgruszka@redhat.com>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
-Date:   Mon, 17 Jun 2019 14:07:12 +1000
-In-Reply-To: <20190617020430.8708-4-alastair@au1.ibm.com>
-References: <20190617020430.8708-1-alastair@au1.ibm.com>
-         <20190617020430.8708-4-alastair@au1.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        id S1726320AbfFQG47 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jun 2019 02:56:59 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33023 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725793AbfFQG46 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 Jun 2019 02:56:58 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id B16C3488195E49602C2C;
+        Mon, 17 Jun 2019 07:56:56 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 17 Jun
+ 2019 07:56:49 +0100
+Subject: Re: [PATCH v4 00/14] ima: introduce IMA Digest Lists extension
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20190614175513.27097-1-roberto.sassu@huawei.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <9029dd14-1077-ec89-ddc2-e677e16ad314@huawei.com>
+Date:   Mon, 17 Jun 2019 08:56:53 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <20190614175513.27097-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Mon, 17 Jun 2019 14:07:35 +1000 (AEST)
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2019-06-17 at 12:04 +1000, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
+On 6/14/2019 7:54 PM, Roberto Sassu wrote:
+> This patch set introduces a new IMA extension called IMA Digest Lists.
 > 
-> Some buffers may only be partially filled with useful data, while the
-> rest
-> is padded (typically with 0x00 or 0xff).
+> At early boot, the extension preloads in kernel memory reference digest
+> values, that can be compared with actual file digests when files are
+> accessed in the system.
 > 
-> This patch introduces a flag to allow the supression of lines of
-> repeated
-> bytes, which are replaced with '** Skipped %u bytes of value 0x%x **'
+> The extension will open for new possibilities: PCR with predictable value,
+> that can be used for sealing policies associated to data or TPM keys;
+> appraisal based on reference digests already provided by Linux distribution
+> vendors in the software packages.
 > 
-> An inline wrapper function is provided for backwards compatibility
-> with
-> existing code, which maintains the original behaviour.
+> The first objective can be achieved because the PCR values does not depend
+> on which and when files are measured: the extension measures digest lists
+> sequentially and files whose digest is not in the digest list.
 > 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
->  include/linux/printk.h | 25 +++++++++---
->  lib/hexdump.c          | 91 ++++++++++++++++++++++++++++++++++++--
-> ----
->  2 files changed, 99 insertions(+), 17 deletions(-)
+> The second objective can be reached because the extension is able to
+> extract reference measurements from packages (with a user space tool) and
+> use it as a source for appraisal verification as the reference came from
+> the security.ima xattr. This approach will also reduce the overhead as only
+> one signature is verified for many files (as opposed to one signature for
+> each file with the current implementation).
 > 
-> diff --git a/include/linux/printk.h b/include/linux/printk.h
-> index cefd374c47b1..d7754799cfe0 100644
-> --- a/include/linux/printk.h
-> +++ b/include/linux/printk.h
-> @@ -481,13 +481,18 @@ enum {
->  	DUMP_PREFIX_ADDRESS,
->  	DUMP_PREFIX_OFFSET
->  };
-> +
->  extern int hex_dump_to_buffer(const void *buf, size_t len, int
-> rowsize,
->  			      int groupsize, char *linebuf, size_t
-> linebuflen,
->  			      bool ascii);
-> +
-> +#define HEXDUMP_ASCII			BIT(0)
-> +#define HEXDUMP_SUPPRESS_REPEATED	BIT(1)
-> +
+> This version of the patch set provides a clear separation between current
+> and new functionality. First, the new functionality must be explicitly
+> enabled from the kernel command line. Second, results of operations
+> performed by the extension can be distinguished from those obtained from
+> the existing code: measurement entries created by the extension have a
+> different PCR; mutable files appraised with the extension have a different
+> security.ima type.
+> 
+> The review of this patch set should start from patch 11 and 12, which
+> modify the IMA-Measure and IMA-Appraise submodules to use digest lists.
+> Patch 1 to 5 are prerequisites. Patch 6 to 10 adds support for digest
+> lists. Finally, patch 13 introduces two new policies to measure/appraise
+> rootfs and patch 14 adds the documentation (including a flow chart to
+> show how IMA has been modified).
+> 
+> The user space tools to configure digest lists are available at:
+> 
+> https://github.com/euleros/digest-list-tools/releases/tag/v0.3
+> 
+> The patch set applies on top of linux-integrity/next-queued-testing
+> (73589972b987).
+> 
+> It is necessary to apply also:
+> https://patchwork.kernel.org/cover/10957495/
 
-This is missing the include of linux/bits.h, I'll fix this in the next
-version.
+Another dependency is:
+
+https://patchwork.kernel.org/cover/10979341/
+
+Roberto
+
+
+> To use appraisal, it is necessary to use a modified cpio and a modified
+> dracut:
+> 
+> https://github.com/euleros/cpio/tree/xattr-v1
+> https://github.com/euleros/dracut/tree/digest-lists
+> 
+> For now, please use it only in a testing environment.
+> 
+> 
+> Changelog
+> 
+> v3:
+> - move ima_lookup_loaded_digest() and ima_add_digest_data_entry() from
+>    ima_queue.c to ima_digest_list.c
+> - remove patch that introduces security.ima_algo
+> - add version number and type modifiers to the compact list header
+> - remove digest list metadata, all digest lists in the directory are
+>    accessed
+> - move loading of signing keys to user space
+> - add violation for both PCRs if they are selected
+> - introduce two new appraisal modes
+> 
+> v2:
+> - add support for multiple hash algorithms
+> - remove RPM parser from the kernel
+> - add support for parsing digest lists in user space
+> 
+> v1:
+> - add support for immutable/mutable files
+> - add support for appraisal with digest lists
+> 
+> 
+> Roberto Sassu (14):
+>    ima: read hash algorithm from security.ima even if appraisal is not
+>      enabled
+>    ima: generalize ima_read_policy()
+>    ima: generalize ima_write_policy() and raise uploaded data size limit
+>    ima: generalize policy file operations
+>    ima: use ima_show_htable_value to show violations and hash table data
+>    ima: add parser of compact digest list
+>    ima: restrict upload of converted digest lists
+>    ima: prevent usage of digest lists that are not measured/appraised
+>    ima: introduce new securityfs files
+>    ima: load parser digests and execute the parser at boot time
+>    ima: add support for measurement with digest lists
+>    ima: add support for appraisal with digest lists
+>    ima: introduce new policies initrd and appraise_initrd
+>    ima: add Documentation/security/IMA-digest-lists.txt
+> 
+>   .../admin-guide/kernel-parameters.txt         |  16 +-
+>   Documentation/security/IMA-digest-lists.txt   | 226 +++++++++++++
+>   include/linux/evm.h                           |   6 +
+>   include/linux/fs.h                            |   1 +
+>   security/integrity/evm/evm_main.c             |   2 +-
+>   security/integrity/iint.c                     |   1 +
+>   security/integrity/ima/Kconfig                |  25 ++
+>   security/integrity/ima/Makefile               |   1 +
+>   security/integrity/ima/ima.h                  |  32 +-
+>   security/integrity/ima/ima_api.c              |  43 ++-
+>   security/integrity/ima/ima_appraise.c         |  92 +++---
+>   security/integrity/ima/ima_digest_list.c      | 309 ++++++++++++++++++
+>   security/integrity/ima/ima_digest_list.h      |  69 ++++
+>   security/integrity/ima/ima_fs.c               | 224 ++++++++-----
+>   security/integrity/ima/ima_init.c             |   2 +-
+>   security/integrity/ima/ima_main.c             |  81 ++++-
+>   security/integrity/ima/ima_policy.c           |  29 +-
+>   security/integrity/integrity.h                |  22 ++
+>   18 files changed, 1018 insertions(+), 163 deletions(-)
+>   create mode 100644 Documentation/security/IMA-digest-lists.txt
+>   create mode 100644 security/integrity/ima/ima_digest_list.c
+>   create mode 100644 security/integrity/ima/ima_digest_list.h
+> 
 
 -- 
-Alastair D'Silva           mob: 0423 762 819
-skype: alastair_dsilva    
-Twitter: @EvilDeece
-blog: http://alastair.d-silva.org
-
-
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
