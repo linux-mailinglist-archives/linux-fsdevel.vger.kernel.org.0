@@ -2,159 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 458414967E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2019 02:57:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE3AC4968D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2019 03:07:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfFRA5d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jun 2019 20:57:33 -0400
-Received: from ushosting.nmnhosting.com ([66.55.73.32]:35430 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfFRA5d (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jun 2019 20:57:33 -0400
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 2797C2DC0096;
-        Mon, 17 Jun 2019 20:57:31 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1560819452;
-        bh=u7VpYNn8JpTLdyHPUljh2Z7wehVtDH+n9nHQNgN6N2A=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=jvSabEdrNHOl7NlBGL5YcdZQfi+fpB9BO+GaqBWlR/PP+V/1JX3MOC/vdfprE+d4q
-         W0UTx/depws8/q6fCe4qsmxzaHqtVkUa+v+Mp2PYjaUrKq1XeKLKJ3TPmwKDKYb7Ix
-         tm9Ggg2c204E7SWf1Kzm3b7UURvQRUF+YtE1qaFXWb7M1bSsECs2dxPGyAy4TwdTwu
-         YrzjrIAdGWVZDKXuSQHyDOqmmePgS4sV2lw+tlA9IZJRT1DXVvYEFcSGBy5FTId/0l
-         fqkDcrBYmDhMWn+3CZbnwx7qgnLFWM0LDHsbAyxHAnRZtM+pOmK0XpTf0aiYcsAURz
-         JAHTKkLHxAgXWfC3qIJOHW9mN0wLp5AYzfNmMC3C5ks7bZYsWq3PGnPXMMgDkMzyop
-         xeuPVBo2+37GGuWiHd1PVStu6wl0eKfSBJgyWJvhXbnAdDsbuqzYFH9Boz+O6C1oWT
-         2Stkwa1MvSezs7en91awfFUNUzrvwbjOv/IZIK0ZFoGni+dz4kIbQSJzdLLHGKQkgV
-         TVlkQn6TAJU90DRRiC92kuMldKfElutBjDwzhohJifPcEvF9T9IrE1SS4Zaz3ft2Rz
-         ho6zF2/9j+ouJCRd5AcHglBo4L8CMDItufZhI5pCGZ7PhbKy0bPXekMmqRlgelk8er
-         vDFIJF20+9ye5cMw79l/tHxg=
-Received: from adsilva.ozlabs.ibm.com (static-82-10.transact.net.au [122.99.82.10] (may be forged))
-        (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x5I0v17n063106
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Jun 2019 10:57:17 +1000 (AEST)
-        (envelope-from alastair@d-silva.org)
-Message-ID: <b2651117ca8a55d94b7e14e273d25199515039c3.camel@d-silva.org>
-Subject: Re: [PATCH v3 2/7] lib/hexdump.c: Relax rowsize checks in
- hex_dump_to_buffer
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Stanislaw Gruszka <sgruszka@redhat.com>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
-Date:   Tue, 18 Jun 2019 10:57:00 +1000
-In-Reply-To: <94413756-c927-a4ca-dd59-47e3cc87d58d@infradead.org>
-References: <20190617020430.8708-1-alastair@au1.ibm.com>
-         <20190617020430.8708-3-alastair@au1.ibm.com>
-         <94413756-c927-a4ca-dd59-47e3cc87d58d@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        id S1726608AbfFRBHf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jun 2019 21:07:35 -0400
+Received: from mout.gmx.net ([212.227.17.21]:55705 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbfFRBHf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 Jun 2019 21:07:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1560820050;
+        bh=udQO5efJBM9PXQnI6xMdbHSv5W44M5zHvd0ZXbeSIds=;
+        h=X-UI-Sender-Class:Subject:To:References:From:Date:In-Reply-To;
+        b=gtInDD4YmN/OXv3YG1JkUm11yDcvz63BbI430fwsf+PQZo5tJnXZD5JyBRy1ZI45a
+         al5EXe+pmGt84CUNwwrwzYm+G1Y4sOnBweHydvFuBQCwlo62KZzpuQqdUJw1886V7K
+         +jdxwKnpfc11VCOtv7gw79tTAkRzEfWv9n/wr0u4=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([54.250.245.166]) by mail.gmx.com (mrgmx102
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 0Lj4xG-1iBpBX1kek-00dJ4v; Tue, 18
+ Jun 2019 03:07:30 +0200
+Subject: Re: Proper packed attribute usage?
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <f24ea8b6-01ff-f570-4b9b-43b4126118e6@gmx.com>
+ <1560785821.3538.22.camel@HansenPartnership.com>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=quwenruo.btrfs@gmx.com; prefer-encrypt=mutual; keydata=
+ mQENBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAG0IlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT6JAVQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWCnQUJCWYC
+ bgAKCRDCPZHzoSX+qAR8B/94VAsSNygx1C6dhb1u1Wp1Jr/lfO7QIOK/nf1PF0VpYjTQ2au8
+ ihf/RApTna31sVjBx3jzlmpy+lDoPdXwbI3Czx1PwDbdhAAjdRbvBmwM6cUWyqD+zjVm4RTG
+ rFTPi3E7828YJ71Vpda2qghOYdnC45xCcjmHh8FwReLzsV2A6FtXsvd87bq6Iw2axOHVUax2
+ FGSbardMsHrya1dC2jF2R6n0uxaIc1bWGweYsq0LXvLcvjWH+zDgzYCUB0cfb+6Ib/ipSCYp
+ 3i8BevMsTs62MOBmKz7til6Zdz0kkqDdSNOq8LgWGLOwUTqBh71+lqN2XBpTDu1eLZaNbxSI
+ ilaVuQENBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAGJATwEGAEIACYWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWBrwIbDAUJA8JnAAAK
+ CRDCPZHzoSX+qA3xB/4zS8zYh3Cbm3FllKz7+RKBw/ETBibFSKedQkbJzRlZhBc+XRwF61mi
+ f0SXSdqKMbM1a98fEg8H5kV6GTo62BzvynVrf/FyT+zWbIVEuuZttMk2gWLIvbmWNyrQnzPl
+ mnjK4AEvZGIt1pk+3+N/CMEfAZH5Aqnp0PaoytRZ/1vtMXNgMxlfNnb96giC3KMR6U0E+siA
+ 4V7biIoyNoaN33t8m5FwEwd2FQDG9dAXWhG13zcm9gnk63BN3wyCQR+X5+jsfBaS4dvNzvQv
+ h8Uq/YGjCoV1ofKYh3WKMY8avjq25nlrhzD/Nto9jHp8niwr21K//pXVA81R2qaXqGbql+zo
+Message-ID: <94dc6bb0-5df8-6b86-77e8-b3fdc8507660@gmx.com>
+Date:   Tue, 18 Jun 2019 09:07:23 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Tue, 18 Jun 2019 10:57:27 +1000 (AEST)
+In-Reply-To: <1560785821.3538.22.camel@HansenPartnership.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="KcA5qcjNIMGYqJcA63BA1lU0geZnEqLJc"
+X-Provags-ID: V03:K1:6mOPfQw95f38p1xCH06ItjfH4fP31bjdIE45PCu9+xUIpWSVILc
+ d9QNufq3rNUPJ+JiW4TAuwkgQEBsGFKJLhi5FlJ6mUYeNw+dB280+ozz/3m+zJvKJgLXyew
+ jy0y1FILctacUS6R9LcLtdfIn3qQ/qVDliFbysvt7MdIS8gpXwzYlj5IcO7YK3Y0QNuWBkT
+ YJtkBYfuw1Ft2UWh+86XQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:BcQpfZbbgdA=:X/ke1fj2J0BxZOAwOQFdao
+ QTyvNOJ2HpGHilzC/4Msyg53D56SuWIbD8VDKPlBsZ4Y1vpgG+HdGEIb67q7KYlBRTLZtom/H
+ r/wWwsu9gEWsHjVUpBAf63fru/9Y7ZsC6XK+mxnmqLd3lCX9r6die4RfTAMAtjw3QdhNgEp5o
+ 29n1bOl0fHO9zfPD0TofBJ42J6NlIEP/odOBNWw5BT9L7EFR6OJQHtABXCWWS3A11+xEmlwls
+ Eg5bch3nPHkAJfr7omb9L3ik/DWof1ZAuTVB5NDlNBZnr5ODsxKJySDoKrW9dpnvVp1LQW/Hr
+ fX06q/iff3YDN1pQq/2e4wr8WXUNsb0/orUb4DlGJvnpfiYps937XkvqlkIWM4LU9VNL8ch0w
+ 1Nf3xKoPHwODOGTo01GDN4jhjWsSew4XFajUU6VxJaVYcevPnvaYLmkJvlm/0kMqDjh1Z2am7
+ tnFCnnR3RuEm1cDh1fqfK8dvGkcwVKO4+fCIjDTk74u1J2PXB5KRMhjDchK1yDbkqYPWPi8fk
+ JO4W9ZG0s8kbRwsU6C1JNWbi4q6Fr+Rw3v7sVJl+dSNlkvSPmzGnFRm+xGuXz/SCj/2Tu8gs5
+ dt09k83Vf4L37ADotXKstcjcHj/3wlO5mfYn8gXCCYD8Tmh8Wglx2MEISm9bYD/C2OMW1+tQW
+ yI6g5AibqvWKDeMvq/Wdbj+WP4Ey6vAQH6tcUo71jq5Z/juf8/586dmWBHoVq8MzGmQ3uK8Lc
+ O4zLIZ3kjPCHnSIUVNWs+y8MYhip5VAhGyuR1jUUD9HRporKp5H4UTv6YgqGVyJYDdEWWC5k8
+ afH9SifWv5vsAxZ3JocMa7gJT+XnwNaWlbwUYOdjIZ/OrG2asPa7gX90id2lJg09LPq8SfT+/
+ MvmsMDdbLT40EcbJIX4EWmGBaZhrBrVWQ83PSg5GVj7/fKnNuqMJ/tMLzkDTNGNK06//DDRXo
+ NYAY6C6CMJOJjOh0HQHgvEF6aGS/O2aE=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2019-06-17 at 15:47 -0700, Randy Dunlap wrote:
-> Hi,
-> Just a comment style nit below...
-> 
-> On 6/16/19 7:04 PM, Alastair D'Silva wrote:
-> > From: Alastair D'Silva <alastair@d-silva.org>
-> > 
-> > This patch removes the hardcoded row limits and allows for
-> > other lengths. These lengths must still be a multiple of
-> > groupsize.
-> > 
-> > This allows structs that are not 16/32 bytes to display on
-> > a single line.
-> > 
-> > This patch also expands the self-tests to test row sizes
-> > up to 64 bytes (though they can now be arbitrarily long).
-> > 
-> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > ---
-> >  lib/hexdump.c      | 48 ++++++++++++++++++++++++++++--------------
-> >  lib/test_hexdump.c | 52 ++++++++++++++++++++++++++++++++++++++--
-> > ------
-> >  2 files changed, 75 insertions(+), 25 deletions(-)
-> > 
-> > diff --git a/lib/hexdump.c b/lib/hexdump.c
-> > index 81b70ed37209..3943507bc0e9 100644
-> > --- a/lib/hexdump.c
-> > +++ b/lib/hexdump.c
-> > @@ -246,17 +248,29 @@ void print_hex_dump(const char *level, const
-> > char *prefix_str, int prefix_type,
-> >  {
-> >  	const u8 *ptr = buf;
-> >  	int i, linelen, remaining = len;
-> > -	unsigned char linebuf[32 * 3 + 2 + 32 + 1];
-> > +	unsigned char *linebuf;
-> > +	unsigned int linebuf_len;
-> >  
-> > -	if (rowsize != 16 && rowsize != 32)
-> > -		rowsize = 16;
-> > +	if (rowsize % groupsize)
-> > +		rowsize -= rowsize % groupsize;
-> > +
-> > +	/* Worst case line length:
-> > +	 * 2 hex chars + space per byte in, 2 spaces, 1 char per byte
-> > in, NULL
-> > +	 */
-> 
-> According to Documentation/process/coding-style.rst:
-> 
-> The preferred style for long (multi-line) comments is:
-> 
-> .. code-block:: c
-> 
-> 	/*
-> 	 * This is the preferred style for multi-line
-> 	 * comments in the Linux kernel source code.
-> 	 * Please use it consistently.
-> 	 *
-> 	 * Description:  A column of asterisks on the left side,
-> 	 * with beginning and ending almost-blank lines.
-> 	 */
-> 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--KcA5qcjNIMGYqJcA63BA1lU0geZnEqLJc
+Content-Type: multipart/mixed; boundary="6NnAtpdSzpvbdd3QSmZBMblxgrc2GHySA";
+ protected-headers="v1"
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Message-ID: <94dc6bb0-5df8-6b86-77e8-b3fdc8507660@gmx.com>
+Subject: Re: Proper packed attribute usage?
+References: <f24ea8b6-01ff-f570-4b9b-43b4126118e6@gmx.com>
+ <1560785821.3538.22.camel@HansenPartnership.com>
+In-Reply-To: <1560785821.3538.22.camel@HansenPartnership.com>
 
-Thanks Randy, I'll address this.
+--6NnAtpdSzpvbdd3QSmZBMblxgrc2GHySA
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
 
--- 
-Alastair D'Silva           mob: 0423 762 819
-skype: alastair_dsilva    
-Twitter: @EvilDeece
-blog: http://alastair.d-silva.org
+
+On 2019/6/17 =E4=B8=8B=E5=8D=8811:37, James Bottomley wrote:
+> On Mon, 2019-06-17 at 17:06 +0800, Qu Wenruo wrote:
+> [...]
+>> But then this means, we should have two copies of data for every such
+>> structures. One for the fixed format one, and one for the compiler
+>> aligned one, with enough helper to convert them (along with needed
+>> endian convert).
+>=20
+> I don't think it does mean this.  The compiler can easily access the
+> packed data by pointer, the problem on systems requiring strict
+> alignment is that it has to be done with byte accesses, so instead of a=
+
+> load word for a pointer to an int, you have to do four load bytes.=20
+> This is mostly a minor slowdown so trying to evolve a whole
+> infrastructure around copying data for these use cases really wouldn't
+> be a good use of resources.
+
+Then I can argue it shouldn't be a default warning for GCC 9.
+
+But anyway, kernel will disable the warning, so I think it shouldn't
+cause much problem.
+
+Thanks,
+Qu
+
+>=20
+> James
+>=20
 
 
+--6NnAtpdSzpvbdd3QSmZBMblxgrc2GHySA--
+
+--KcA5qcjNIMGYqJcA63BA1lU0geZnEqLJc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEELd9y5aWlW6idqkLhwj2R86El/qgFAl0IOUsACgkQwj2R86El
+/qhrKgf/QA7GMi26LEi/snqrQF0NqHQaD/RXLxt4ehKOgCYW/syJtkeFCOtcmXcJ
+5T3kK4eqL7ZeHsAUuqHeo6+ZP3KhcJ5hbeJHnT7kIMf7C3gjBeuoWKHXkKRoBQAH
+au0FpEbwiUupS1Juodip64BSsvIWBi7o6HZvmDW7Ch9xGK42/9HeBMzuRnMfJzJ2
+MIQnvJnfYSYvojeywyN+M0Wmgh6QtZWztaDlWBF3TEprhoFPgy5jeGGeft42lDqB
+sD4NWe6AfcyoiqulaVlldzY/REwyHhjYPlERJLmLUqzyB4e1JYrT79loNdCOuA94
+FTSHIYfSs1D1TYUYJXkuFdcYAMafUQ==
+=iTrp
+-----END PGP SIGNATURE-----
+
+--KcA5qcjNIMGYqJcA63BA1lU0geZnEqLJc--
