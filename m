@@ -2,101 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E34004A6E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2019 18:29:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B2BA4A6E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2019 18:31:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729760AbfFRQ31 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jun 2019 12:29:27 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:54484 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729514AbfFRQ30 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jun 2019 12:29:26 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5IGTP6O025845;
-        Tue, 18 Jun 2019 16:29:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=l1dTzqN9G2QJV0pMIlba24yIaHI9Yrth9VNnpv2KwpQ=;
- b=bmWWNVqZuZui0/P61PL/xi7cZGcEvqFnocuRDTDjWmBgNstyjEzN0u2zv1b5kh5ilQdG
- 4j7xtdcEGBcAbQjIRAPfsIZcOdVzmcsIGcIBAepb7EpUrAtKQ+K/LxISJmRdoAlFtaJu
- FciE0uH4At0IorYHZcu0ZQwXMFnUy3q6q9jnFac7U6US4B22JHU4PwQujLmNJc25awx0
- RKe/xPRP/XaCvzwtJgI1gqbEpo7WBuxGJwt1Lgz4jimxMu+3kWn5jV8gOOedU6FUTOQZ
- +EN67kP2/sEGGTJQyLCWGwN3ojInDWsrN0oL5TPAF4tYFwz4zNExUYCOygPTulxxeneT YA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2t4saqdjmu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Jun 2019 16:29:25 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5IGR7lb184857;
-        Tue, 18 Jun 2019 16:27:25 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2t5h5tub9d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Jun 2019 16:27:24 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5IGROMo016054;
-        Tue, 18 Jun 2019 16:27:24 GMT
-Received: from localhost (/10.159.230.49)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 18 Jun 2019 09:27:23 -0700
-Date:   Tue, 18 Jun 2019 09:27:22 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     xfs <linux-xfs@vger.kernel.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] xfs: claim maintainership of loose files
-Message-ID: <20190618162722.GC5387@magnolia>
-References: <20190612154001.GC3773859@magnolia>
+        id S1729563AbfFRQbV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jun 2019 12:31:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58924 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729319AbfFRQbV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 Jun 2019 12:31:21 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3AE32054F;
+        Tue, 18 Jun 2019 16:31:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560875480;
+        bh=8s8EM+uYReYgUA7GU9MPlmqiEwIExiskI/J8sVZVt2E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wgRJzptgTLpjPDiEHTaZP7Qip+BiPwTjsvkocLXBfaZEI/gTRT5gSpoRGEMSpNuHe
+         U5HifCFDwTn9R81SiN+y7/MXL3wJ9s2x4LNgLhYTvryiwZpwtId2IibVduHFLs4qAP
+         P2C8p4W6B8LMCJMcvopWfhP9eOwKX0fxQoCm8fnE=
+Date:   Tue, 18 Jun 2019 09:31:18 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v4 01/16] fs-verity: add a documentation file
+Message-ID: <20190618163116.GA184520@gmail.com>
+References: <20190606155205.2872-1-ebiggers@kernel.org>
+ <20190606155205.2872-2-ebiggers@kernel.org>
+ <20190615123920.GB6142@mit.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190612154001.GC3773859@magnolia>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9291 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906180130
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9291 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906180131
+In-Reply-To: <20190615123920.GB6142@mit.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ping?
+Hi Ted,
 
-On Wed, Jun 12, 2019 at 08:40:01AM -0700, Darrick J. Wong wrote:
-> From: Darrick J. Wong <darrick.wong@oracle.com>
+On Sat, Jun 15, 2019 at 08:39:20AM -0400, Theodore Ts'o wrote:
+> On Thu, Jun 06, 2019 at 08:51:50AM -0700, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > Add a documentation file for fs-verity, covering....
+> > 
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
 > 
-> Claim maintainership over the miscellaneous files outside of fs/xfs/
-> that came from xfs.
+> Looks good; you can add:
 > 
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> ---
->  MAINTAINERS |    6 ++++++
->  1 file changed, 6 insertions(+)
+> Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 57f496cff999..f0edb53b9dd3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17357,7 +17357,13 @@ W:	http://xfs.org/
->  T:	git git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
->  S:	Supported
->  F:	Documentation/filesystems/xfs.txt
-> +F:	Documentation/ABI/testing/sysfs-fs-xfs
-> +F:	Documentation/filesystems/xfs.txt
-> +F:	Documentation/filesystems/xfs-delayed-logging-design.txt
-> +F:	Documentation/filesystems/xfs-self-describing-metadata.txt
->  F:	fs/xfs/
-> +F:	include/uapi/linux/dqblk_xfs.h
-> +F:	include/uapi/linux/fsmap.h
->  
->  XILINX AXI ETHERNET DRIVER
->  M:	Anirudha Sarangi <anirudh@xilinx.com>
+> 
+> One minor design point below:
+> 
+> > +ext4 stores the verity metadata (Merkle tree and fsverity_descriptor)
+> > +past the end of the file, starting at the first page fully beyond
+>                                                    ^^^^
+> > +i_size.  This approach works because (a) verity files are readonly,
+> > +and (b) pages fully beyond i_size aren't visible to userspace but can
+> > +be read/written internally by ext4 with only some relatively small
+> > +changes to ext4.  This approach avoids having to depend on the
+> > +EA_INODE feature and on rearchitecturing ext4's xattr support to
+> > +support paging multi-gigabyte xattrs into memory, and to support
+> > +encrypting xattrs.  Note that the verity metadata *must* be encrypted
+> > +when the file is, since it contains hashes of the plaintext data.
+> 
+> If we ever want to support mounting, say, a file system with 4k blocks
+> and fsverity enabled on a architecture with a 16k or 64k page size,
+> then "page" in that first sentence will need to become "block".  At
+> the moment we only support fsverity when page size == block size, so
+> it's not an issue.
+> 
+> However, it's worth reflecting on what this means.  In order to
+> satisfy this requirement (from the mmap man page):
+> 
+>        A file is mapped in multiples of the page size.  For a file
+>        that is not a multiple of the page size, the remaining memory
+>        is zeroed when mapped...
+> 
+> we're going to have to special case how the last page gets mmaped.
+> The simplest way to do this will be to map in an anonymous page which
+> just has the blocks that are part of the data block copied in, and the
+> rest of the page can be zero'ed.
+> 
+> One thing we might consider doing just to make life much easier for
+> ourselves (should we ever want to support page size != block size ---
+> which I could imagine some folks like Chandan might find desirable) is
+> to specify that the fsverity metadata begins at an offset which begins
+> at i_size rounded up to the next 64k binary, which should handle all
+> current and future architectures' page sizes.
+> 
+
+Thanks for the review.  Good point; I think we should just go with the "always
+round up to the next 64K boundary" method.  Special-casing how the last page
+gets mmap()ed seems it would be really painful.
+
+Since there can be a hole between the end of the file and the start of the
+verity metadata, this doesn't even necessarily use any additional disk space.
+
+For consistency and since there is little downside I think I'll do the same for
+f2fs too, though f2fs doesn't currently support PAGE_SIZE != 4096 at all anyway.
+
+- Eric
