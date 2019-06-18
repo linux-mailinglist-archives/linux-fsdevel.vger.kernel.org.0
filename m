@@ -2,53 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B06F34A33D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2019 16:01:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 616E34A345
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jun 2019 16:03:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbfFROBr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jun 2019 10:01:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46190 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729163AbfFROBr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jun 2019 10:01:47 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5A2D830C1205;
-        Tue, 18 Jun 2019 14:01:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BE17E7D933;
-        Tue, 18 Jun 2019 14:01:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <d88b3276-a81a-d5a6-76d6-1a01376aa31c@gmail.com>
-References: <d88b3276-a81a-d5a6-76d6-1a01376aa31c@gmail.com> <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk> <155905647369.1662.10806818386998503329.stgit@warthog.procyon.org.uk>
-To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mszeredi@redhat.com
-Subject: Re: [PATCH 25/25] fsinfo: Add API documentation [ver #13]
+        id S1728845AbfFRODZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jun 2019 10:03:25 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:46868 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbfFRODZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 Jun 2019 10:03:25 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hdEh6-00037d-Bm; Tue, 18 Jun 2019 14:02:40 +0000
+Date:   Tue, 18 Jun 2019 15:02:40 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     syzbot <syzbot+6004acbaa1893ad013f0@syzkaller.appspotmail.com>
+Cc:     arnd@arndb.de, axboe@kernel.dk, bp@alien8.de,
+        catalin.marinas@arm.com, christian@brauner.io, dhowells@redhat.com,
+        geert@linux-m68k.org, hare@suse.com, heiko.carstens@de.ibm.com,
+        hpa@zytor.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, luto@kernel.org, mingo@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: general protection fault in do_move_mount (2)
+Message-ID: <20190618140239.GA17978@ZenIV.linux.org.uk>
+References: <000000000000bb362d058b96d54d@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <18934.1560866496.1@warthog.procyon.org.uk>
-Date:   Tue, 18 Jun 2019 15:01:36 +0100
-Message-ID: <18935.1560866496@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 18 Jun 2019 14:01:47 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000bb362d058b96d54d@google.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Alan Jenkins <alan.christopher.jenkins@gmail.com> wrote:
-
-> > +    eleemnts in the FSINFO_ATTR_MOUNT_CHROOT list.
+On Tue, Jun 18, 2019 at 03:47:10AM -0700, syzbot wrote:
+> Hello,
 > 
-> FSINFO_ATTR_MOUNT_CHROOT -> FSINFO_ATTR_MOUNT_CHILDREN
+> syzbot found the following crash on:
+> 
+> HEAD commit:    9e0babf2 Linux 5.2-rc5
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=138b310aa00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d16883d6c7f0d717
+> dashboard link: https://syzkaller.appspot.com/bug?extid=6004acbaa1893ad013f0
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154e8c2aa00000
 
-I've applied your changes.
+IDGI...
 
-David
+mkdir(&(0x7f0000632000)='./file0\x00', 0x0)
+mount(0x0, 0x0, 0x0, 0x0, 0x0)
+syz_open_procfs(0x0, 0x0)
+r0 = open(&(0x7f0000032ff8)='./file0\x00', 0x0, 0x0)
+r1 = memfd_create(&(0x7f00000001c0)='\xb3', 0x0)
+write$FUSE_DIRENT(r1, &(0x7f0000000080)=ANY=[], 0x29)
+move_mount(r0, &(0x7f0000000040)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000100)='./file0\x00', 0x66)
+
+reads as if we'd done mkdir ./file0, opened it and then tried
+to feed move_mount(2) "./file0" relative to that descriptor.
+How the hell has that avoided an instant -ENOENT?  On the first
+pair, that is - the second one (AT_FDCWD, "./file0") is fine...
+
+Confused...  Incidentally, what the hell is
+	mount(0x0, 0x0, 0x0, 0x0, 0x0)
+about?  *IF* that really refers to mount(2) with
+such arguments, all you'll get is -EFAULT.  Way before
+it gets to actually doing anything - it won't get past
+        /* ... and get the mountpoint */
+        retval = user_path(dir_name, &path);
+        if (retval)
+                return retval;
+in do_mount(2)...
