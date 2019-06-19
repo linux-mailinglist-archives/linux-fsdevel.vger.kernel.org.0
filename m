@@ -2,29 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 973734BF45
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2019 19:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A584BF58
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2019 19:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbfFSRGV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jun 2019 13:06:21 -0400
-Received: from foss.arm.com ([217.140.110.172]:49242 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726109AbfFSRGV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jun 2019 13:06:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20F1D344;
-        Wed, 19 Jun 2019 10:06:21 -0700 (PDT)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5390A3F246;
-        Wed, 19 Jun 2019 10:06:20 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 18:06:18 +0100
-From:   Will Deacon <will.deacon@arm.com>
+        id S1729867AbfFSRJm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jun 2019 13:09:42 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39182 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfFSRJm (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Jun 2019 13:09:42 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hde5c-00072w-7A; Wed, 19 Jun 2019 17:09:40 +0000
+Date:   Wed, 19 Jun 2019 18:09:40 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Vicente Bergas <vicencb@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
 Subject: Re: d_lookup: Unable to handle kernel paging request
-Message-ID: <20190619170618.GJ7767@fuggles.cambridge.arm.com>
+Message-ID: <20190619170940.GG17978@ZenIV.linux.org.uk>
 References: <23950bcb-81b0-4e07-8dc8-8740eb53d7fd@gmail.com>
  <20190522135331.GM17978@ZenIV.linux.org.uk>
  <bdc8b245-afca-4662-99e2-a082f25fc927@gmail.com>
@@ -38,17 +35,35 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <bc774f6b-711e-4a20-ad85-c282f9761392@gmail.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Wed, Jun 19, 2019 at 06:51:51PM +0200, Vicente Bergas wrote:
+
+> > What's your config, BTW?  SMP and DEBUG_SPINLOCK, specifically...
+> 
+> Hi Al,
 > here it is:
 > https://paste.debian.net/1088517
 
-No modules and OPTIMIZE_INLINING=n, so this isn't either of my first
-thoughts. Hmm. I guess I should try to reproduce the issue locally.
+Aha...  So LIST_BL_LOCKMASK is 1 there (same as on distro builds)...
 
-Will
+Hell knows - how about
+static inline void hlist_bl_lock(struct hlist_bl_head *b)
+{
+	BUG_ON(((u32)READ_ONCE(*b)&~LIST_BL_LOCKMASK) == 0x01000000);
+        bit_spin_lock(0, (unsigned long *)b);
+}
+
+and
+
+static inline void hlist_bl_unlock(struct hlist_bl_head *b)
+{
+        __bit_spin_unlock(0, (unsigned long *)b);
+	BUG_ON(((u32)READ_ONCE(*b)&~LIST_BL_LOCKMASK) == 0x01000000);
+}
+
+to see if we can narrow down where that happens?
