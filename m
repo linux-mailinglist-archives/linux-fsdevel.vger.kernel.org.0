@@ -2,84 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7BCE4B224
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2019 08:35:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B458B4B23A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2019 08:41:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730503AbfFSGdy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jun 2019 02:33:54 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:46606 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730481AbfFSGdy (ORCPT
+        id S1730502AbfFSGkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jun 2019 02:40:17 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:34567 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfFSGkQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jun 2019 02:33:54 -0400
-Received: by mail-io1-f66.google.com with SMTP id i10so35495640iol.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jun 2019 23:33:51 -0700 (PDT)
+        Wed, 19 Jun 2019 02:40:16 -0400
+Received: by mail-yb1-f195.google.com with SMTP id x32so2885646ybh.1;
+        Tue, 18 Jun 2019 23:40:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bMNViY4iztj4vl/Dr2F11/lbr0UeP3ZXI0/HogSeDNI=;
-        b=FctOUlat3YI5lot/q4NRcZSX4MU2PW4YfhkwI9I4zkZuhPG8P69+R2Aw5jAtcJGQD6
-         YFAGkZncePhTyhF1iCR8y8iI+paHhWUIxu6nMZfEYjsEWK8qADgt8khRHaFctIZ9GNR9
-         OiYWoTA1dYyRCTz34cuaLp6oezL0oSMReABgI=
+        bh=gUQB8b/ALcnBOEXgIR9mL83C8fnNPPgpdoM8ggiCu6o=;
+        b=UiaGMjNTRZklEIOHaKABCJZaYsCo2aau7Kd/LOksavDTm9WMyYfdNonQ0OuTvUkyVu
+         Zf/dmD6NUiMFJ1h5akTSE3OjBQocNr+nuCt5x5vgF7eDU1gt/F8xT8UKCTFBEcHdIyvb
+         GNnu5iL1KLg84OCWLN4t6TMu1XjzZN6d2//WYiG+pC+8SlVe2ga7H2xHOXw2PaxaeTgH
+         n3jqi+WonV3sxY6Gh2WHZ0S/vWjtI89IzbflPProwPdwulvYD/J3OPS1e82XPlBj2wFE
+         g9bjVQGtmAEwvSXYvkV/ULfpXrSOa6BOQ2zMNESIqxfrmaLcGwlUQy5PaNJXrMd0EYXJ
+         wFYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bMNViY4iztj4vl/Dr2F11/lbr0UeP3ZXI0/HogSeDNI=;
-        b=Eve3dTB/oLPOrCnMyu2tSnffNHJyixslpdZQHxeBhGK8UFGbsjv2ibo3gD17Z2KStY
-         0SOEaGlBCuevdyirr//aC/nL5MzPGERKV6ObfnmGYFqvV0R3RjV2PBUaWy8LVuH6yILT
-         AN7oSWtGlGWVjoy24FsL6Va1WF75WaNcHMIOWDOVxWv1yNPIwSZINjraJlPi1p2RzFql
-         X8oBmgzpPqsrVQjP4jbA3dmRC8IjEoGTAkRW6hT4pp3Q1u9cg/KOqmY/ANNgbW2oClaP
-         W0V4aajMkXNxm8OJLnG6rxDQWXCnjBqBiVxNQhhk+lz1J4KCG7Hdp2WagCzB8zz0g6x3
-         Sz9Q==
-X-Gm-Message-State: APjAAAWxzLGSXSHmc8ShcMoYo/wAp4dwiNUmoQKFBD9uudyM/PLzG4mG
-        ChjEiySHeK8HhcacKxwBAzoTQ7ze1nz5x0+6ZAXOKw==
-X-Google-Smtp-Source: APXvYqyTrgQB4tUX0NqWRg74v50lPrI1xsfZs2C/h0/lMOY9TptquYR7rxkUMy6gsSAZuF6JO7GiJz7HehcP8VuiOxg=
-X-Received: by 2002:a6b:7e41:: with SMTP id k1mr4391132ioq.285.1560926031492;
- Tue, 18 Jun 2019 23:33:51 -0700 (PDT)
+        bh=gUQB8b/ALcnBOEXgIR9mL83C8fnNPPgpdoM8ggiCu6o=;
+        b=WPsTL71Fy1c0PvFNMAMn0MiqSV77Fb5xVhKF6cKa7zqyX4bIHSHN7MyBuw1PByeQ64
+         Iy1KKqv1LlIHHR7CROlE2ZiaCyFeuL99JJQyUShtVgxqb1789+hoEiwDuuyrMcG2MscC
+         bbXokZdHGVSDW1I8eBqQf0aC3fAbcAvsKdsyWPzgjPTy5/EJ48RgrQW6r/gT2cQfQKNw
+         cti+ROYamqzZOG8PF6A3/+NVPu90VFEBHhxebJLvUH0773mmxa4qv3+1Sn5DFCkmyuiF
+         IfXIyx+o8oOY7CSD8NyxftW9uMPvREW6+bpqY6Xppx0YyenGjhEDBQ10WkpnSwhUONMi
+         enuA==
+X-Gm-Message-State: APjAAAXGN8UAgF2b0+uaVxe4KKpnB069vlPBnuMzH1AmEt6XdpCEcnQb
+        wrmAhgM/j4C90nH6t3GUI3UlHzq6v46pESOyI84=
+X-Google-Smtp-Source: APXvYqwXp4890is+TONe5fQdzQFKrWFMeQ51oVqSH9DSJdiLLDDBr0ylytN+Guu85z2Kf+87w/ZP9nujvn10DJQDb4Q=
+X-Received: by 2002:a25:a081:: with SMTP id y1mr36233727ybh.428.1560926416060;
+ Tue, 18 Jun 2019 23:40:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk>
- <155905629702.1662.7233272785972036117.stgit@warthog.procyon.org.uk>
- <CAJfpegutheVtnmN6BFSjzrmz8p9+DpZxFoKa4CoShoh4MW+5gQ@mail.gmail.com> <24127.1560897289@warthog.procyon.org.uk>
-In-Reply-To: <24127.1560897289@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 19 Jun 2019 08:33:40 +0200
-Message-ID: <CAJfpegtXp0bQRFGaZia_MGmFGFjKG5XoCnDCy=onmsWBJGHMHw@mail.gmail.com>
-Subject: Re: [PATCH 04/25] vfs: Implement parameter value retrieval with
- fsinfo() [ver #13]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Miklos Szeredi <mszeredi@redhat.com>
+References: <000000000000623c45058b9c2479@google.com> <CAOQ4uxhsnOXXVCuOT4p4c_koBMFfprWwdtCPGNGhzprFaJZwRA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhsnOXXVCuOT4p4c_koBMFfprWwdtCPGNGhzprFaJZwRA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 19 Jun 2019 09:40:04 +0300
+Message-ID: <CAOQ4uxh9ZWghUNS3i_waNq5huitwwypEwY9xEWddFo1JHYu88g@mail.gmail.com>
+Subject: Re: WARNING in fanotify_handle_event
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 12:34 AM David Howells <dhowells@redhat.com> wrote:
-
-> > Same goes for vfs_parse_sb_flag() btw.   It should be moved into each
-> > filesystem's ->parse_param() and not be a mandatory thing.
+On Tue, Jun 18, 2019 at 11:27 PM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> I disagree.  Every filesystem *must* be able to accept these standard flags,
-> even if it then ignores them.
+> On Tue, Jun 18, 2019 at 8:07 PM syzbot
+> <syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    963172d9 Merge branch 'x86-urgent-for-linus' of git://git...
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=17c090eaa00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9f7e1b6a8bb586
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=c277e8e2f46414645508
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a32f46a00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a7dc9ea00000
+> >
+> > The bug was bisected to:
+> >
+> > commit 77115225acc67d9ac4b15f04dd138006b9cd1ef2
+> > Author: Amir Goldstein <amir73il@gmail.com>
+> > Date:   Thu Jan 10 17:04:37 2019 +0000
+> >
+> >      fanotify: cache fsid in fsnotify_mark_connector
+> >
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12bfcb66a00000
+> > final crash:    https://syzkaller.appspot.com/x/report.txt?x=11bfcb66a00000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=16bfcb66a00000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com
+> > Fixes: 77115225acc6 ("fanotify: cache fsid in fsnotify_mark_connector")
+> >
+> > WARNING: CPU: 0 PID: 8994 at fs/notify/fanotify/fanotify.c:359
+> > fanotify_get_fsid fs/notify/fanotify/fanotify.c:359 [inline]
+>
+> Oops, we forgot to update conn->fsid when the first mark added
+> for inode has no fsid (e.g. inotify) and the second mark has fid,
+> which is more or less the only thing the repro does.
+> And if we are going to update conn->fsid, we do no have the
+> cmpxchg to guaranty setting fsid atomically.
+>
+> I am thinking a set-once flag on connector FSNOTIFY_CONN_HAS_FSID
+> checked before smp_rmb() in fanotify_get_fsid().
+> If the flag is not set then call vfs_get_fsid() instead of using fsid cache.
 
-"posixacl" is not a standard flag.  It never was accepted by mount(8)
-so I don't see where you got that from.
+Actually, we don't need to call vfs_get_fsid() in race we just drop the event.
 
-Can you explain why you think "mand", "sync", "dirsync", "lazytime"
-should be accepted by a filesystem such as proc?  The argument that it
-breaks userspace is BS, because this is a new interface, hence by
-definition we cannot break old userspace.  If mount(8) wants to use
-the new API and there really is breakage if these options are rejected
-(which I doubt) then it can easily work around that by ignoring them
-itself.
+> conn->fsid can be updated in fsnotify_add_mark_list() under conn->lock,
+> and flag set after smp_wmb().
+>
+> Does that sound correct?
+>
 
-Also why should "rw" not be rejected for filesystems which are
-read-only by definition, such as iso9660?
+Something like this:
+
+#syz test: https://github.com/amir73il/linux.git fsnotify-fix-fsid-cache
+
+It passed my modified ltp test:
+https://github.com/amir73il/ltp/commits/fanotify_dirent
 
 Thanks,
-Miklos
+Amir.
