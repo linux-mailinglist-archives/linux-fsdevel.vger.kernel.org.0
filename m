@@ -2,222 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 352884BD68
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2019 18:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EE924BD83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2019 18:06:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbfFSQB5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jun 2019 12:01:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42364 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726332AbfFSQB5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jun 2019 12:01:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8E0FEAD4C;
-        Wed, 19 Jun 2019 16:01:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 538551E434D; Wed, 19 Jun 2019 18:01:54 +0200 (CEST)
-Date:   Wed, 19 Jun 2019 18:01:54 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, cluster-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs: Move mark_inode_dirty out of __generic_write_end
-Message-ID: <20190619160154.GA13630@quack2.suse.cz>
-References: <20190618144716.8133-1-agruenba@redhat.com>
+        id S1728572AbfFSQGH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jun 2019 12:06:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42108 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726091AbfFSQGG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Jun 2019 12:06:06 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 171BE3087945;
+        Wed, 19 Jun 2019 16:06:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A3AFE5D9E5;
+        Wed, 19 Jun 2019 16:06:01 +0000 (UTC)
+Subject: [PATCH 0/9] keys: Namespacing [ver #4]
+From:   David Howells <dhowells@redhat.com>
+To:     ebiederm@xmission.com, keyrings@vger.kernel.org
+Cc:     linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        dhowells@redhat.com, dwalsh@redhat.com, vgoyal@redhat.com,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 19 Jun 2019 17:06:00 +0100
+Message-ID: <156096036064.6697.2432500504898119675.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190618144716.8133-1-agruenba@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 19 Jun 2019 16:06:06 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 18-06-19 16:47:16, Andreas Gruenbacher wrote:
-> Remove the mark_inode_dirty call from __generic_write_end and add it to
-> generic_write_end and the high-level iomap functions where necessary.
-> That way, large writes will only dirty inodes at the end instead of
-> dirtying them once per page.  This fixes a performance bottleneck on
-> gfs2.
-> 
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-So the patch looks correct but honestly I don't like how we duplicate inode
-dirtying over several places. I was wondering whether we could not move the
-logic to iomap_apply() or something like that.
+Here are some patches to make keys and keyrings more namespace aware.
 
-								Honza
+Firstly some miscellaneous patches to make the process easier:
 
-> ---
->  fs/buffer.c | 26 ++++++++++++++++++--------
->  fs/iomap.c  | 42 ++++++++++++++++++++++++++++++++++++++----
->  2 files changed, 56 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index e450c55f6434..1b51003bc9d2 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -2089,8 +2089,7 @@ EXPORT_SYMBOL(block_write_begin);
->  void __generic_write_end(struct inode *inode, loff_t pos, unsigned copied,
->  		struct page *page)
->  {
-> -	loff_t old_size = inode->i_size;
-> -	bool i_size_changed = false;
-> +	loff_t old_size;
->  
->  	/*
->  	 * No need to use i_size_read() here, the i_size cannot change under us
-> @@ -2099,23 +2098,21 @@ void __generic_write_end(struct inode *inode, loff_t pos, unsigned copied,
->  	 * But it's important to update i_size while still holding page lock:
->  	 * page writeout could otherwise come in and zero beyond i_size.
->  	 */
-> -	if (pos + copied > inode->i_size) {
-> +	old_size = inode->i_size;
-> +	if (pos + copied > old_size)
->  		i_size_write(inode, pos + copied);
-> -		i_size_changed = true;
-> -	}
->  
->  	unlock_page(page);
->  
->  	if (old_size < pos)
->  		pagecache_isize_extended(inode, old_size, pos);
-> +
->  	/*
->  	 * Don't mark the inode dirty under page lock. First, it unnecessarily
->  	 * makes the holding time of page lock longer. Second, it forces lock
->  	 * ordering of page lock and transaction start for journaling
->  	 * filesystems.
->  	 */
-> -	if (i_size_changed)
-> -		mark_inode_dirty(inode);
->  }
->  
->  int block_write_end(struct file *file, struct address_space *mapping,
-> @@ -2158,9 +2155,22 @@ int generic_write_end(struct file *file, struct address_space *mapping,
->  			loff_t pos, unsigned len, unsigned copied,
->  			struct page *page, void *fsdata)
->  {
-> +	struct inode *inode = mapping->host;
-> +	loff_t old_size;
-> +
-> +	/*
-> +	 * No need to use i_size_read() here, the i_size cannot change under us
-> +	 * because we hold i_rwsem.
-> +	 */
-> +	old_size = inode->i_size;
-> +
->  	copied = block_write_end(file, mapping, pos, len, copied, page, fsdata);
-> -	__generic_write_end(mapping->host, pos, copied, page);
-> +	__generic_write_end(inode, pos, copied, page);
->  	put_page(page);
-> +
-> +	if (old_size != inode->i_size)
-> +		mark_inode_dirty(inode);
-> +
->  	return copied;
->  }
->  EXPORT_SYMBOL(generic_write_end);
-> diff --git a/fs/iomap.c b/fs/iomap.c
-> index 23ef63fd1669..9454568a7f5e 100644
-> --- a/fs/iomap.c
-> +++ b/fs/iomap.c
-> @@ -881,6 +881,13 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *iter,
->  {
->  	struct inode *inode = iocb->ki_filp->f_mapping->host;
->  	loff_t pos = iocb->ki_pos, ret = 0, written = 0;
-> +	loff_t old_size;
-> +
-> +        /*
-> +	 * No need to use i_size_read() here, the i_size cannot change under us
-> +	 * because we hold i_rwsem.
-> +	 */
-> +	old_size = inode->i_size;
->  
->  	while (iov_iter_count(iter)) {
->  		ret = iomap_apply(inode, pos, iov_iter_count(iter),
-> @@ -891,6 +898,9 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *iter,
->  		written += ret;
->  	}
->  
-> +	if (old_size != inode->i_size)
-> +		mark_inode_dirty(inode);
-> +
->  	return written ? written : ret;
->  }
->  EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
-> @@ -961,18 +971,30 @@ int
->  iomap_file_dirty(struct inode *inode, loff_t pos, loff_t len,
->  		const struct iomap_ops *ops)
->  {
-> +	loff_t old_size;
->  	loff_t ret;
->  
-> +        /*
-> +	 * No need to use i_size_read() here, the i_size cannot change under us
-> +	 * because we hold i_rwsem.
-> +	 */
-> +	old_size = inode->i_size;
-> +
->  	while (len) {
->  		ret = iomap_apply(inode, pos, len, IOMAP_WRITE, ops, NULL,
->  				iomap_dirty_actor);
->  		if (ret <= 0)
-> -			return ret;
-> +			goto out;
->  		pos += ret;
->  		len -= ret;
->  	}
-> +	ret = 0;
->  
-> -	return 0;
-> +out:
-> +	if (old_size != inode->i_size)
-> +		mark_inode_dirty(inode);
-> +
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(iomap_file_dirty);
->  
-> @@ -1039,19 +1061,31 @@ int
->  iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
->  		const struct iomap_ops *ops)
->  {
-> +	loff_t old_size;
->  	loff_t ret;
->  
-> +        /*
-> +	 * No need to use i_size_read() here, the i_size cannot change under us
-> +	 * because we hold i_rwsem.
-> +	 */
-> +	old_size = inode->i_size;
-> +
->  	while (len > 0) {
->  		ret = iomap_apply(inode, pos, len, IOMAP_ZERO,
->  				ops, did_zero, iomap_zero_range_actor);
->  		if (ret <= 0)
-> -			return ret;
-> +			goto out;
->  
->  		pos += ret;
->  		len -= ret;
->  	}
-> +	ret = 0;
->  
-> -	return 0;
-> +out:
-> +	if (old_size != inode->i_size)
-> +		mark_inode_dirty(inode);
-> +
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(iomap_zero_range);
->  
-> -- 
-> 2.20.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+ (1) Simplify key index_key handling so that the word-sized chunks
+     assoc_array requires don't have to be shifted about, making it easier
+     to add more bits into the key.
+
+ (2) Cache the hash value in the key so that we don't have to calculate on
+     every key we examine during a search (it involves a bunch of
+     multiplications).
+
+ (3) Allow keying_search() to search non-recursively.
+
+Then the main patches:
+
+ (4) Make it so that keyring names are per-user_namespace from the point of
+     view of KEYCTL_JOIN_SESSION_KEYRING so that they're not accessible
+     cross-user_namespace.
+
+     keyctl_capabilities() shows KEYCTL_CAPS1_NS_KEYRING_NAME for this.
+
+ (5) Move the user and user-session keyrings to the user_namespace rather
+     than the user_struct.  This prevents them propagating directly across
+     user_namespaces boundaries (ie. the KEY_SPEC_* flags will only pick
+     from the current user_namespace).
+
+ (6) Make it possible to include the target namespace in which the key shall
+     operate in the index_key.  This will allow the possibility of multiple
+     keys with the same description, but different target domains to be held
+     in the same keyring.
+
+     keyctl_capabilities() shows KEYCTL_CAPS1_NS_KEY_TAG for this.
+
+ (7) Make it so that keys are implicitly invalidated by removal of a domain
+     tag, causing them to be garbage collected.
+
+ (8) Institute a network namespace domain tag that allows keys to be
+     differentiated by the network namespace in which they operate.  New keys
+     that are of a type marked 'KEY_TYPE_NET_DOMAIN' are assigned the network
+     domain in force when they are created.
+
+ (9) Make it so that the desired network namespace can be handed down into the
+     request_key() mechanism.  This allows AFS, NFS, etc. to request keys
+     specific to the network namespace of the superblock.
+
+     This also means that the keys in the DNS record cache are thenceforth
+     namespaced, provided network filesystems pass the appropriate network
+     namespace down into dns_query().
+
+     For DNS, AFS and NFS are good; CIFS and Ceph are not.  Other cache
+     keyrings, such as idmapper keyrings, also need to set the domain tag -
+     for which they need access to the network namespace of the superblock.
+
+The patches can be found on the following branch:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-namespace
+
+David
+---
+David Howells (9):
+      keys: Simplify key description management
+      keys: Cache the hash value to avoid lots of recalculation
+      keys: Add a 'recurse' flag for keyring searches
+      keys: Namespace keyring names
+      keys: Move the user and user-session keyrings to the user_namespace
+      keys: Include target namespace in match criteria
+      keys: Garbage collect keys for which the domain has been removed
+      keys: Network namespace domain tag
+      keys: Pass the network namespace into request_key mechanism
+
+
+ Documentation/security/keys/core.rst        |   38 +++-
+ Documentation/security/keys/request-key.rst |   29 ++-
+ certs/blacklist.c                           |    2 
+ crypto/asymmetric_keys/asymmetric_type.c    |    2 
+ fs/afs/addr_list.c                          |    4 
+ fs/afs/dynroot.c                            |    8 +
+ fs/cifs/dns_resolve.c                       |    3 
+ fs/nfs/dns_resolve.c                        |    3 
+ fs/nfs/nfs4idmap.c                          |    2 
+ include/linux/dns_resolver.h                |    3 
+ include/linux/key-type.h                    |    3 
+ include/linux/key.h                         |   81 ++++++++
+ include/linux/sched/user.h                  |   14 -
+ include/linux/user_namespace.h              |   12 +
+ include/net/net_namespace.h                 |    3 
+ include/uapi/linux/keyctl.h                 |    2 
+ kernel/user.c                               |    8 -
+ kernel/user_namespace.c                     |    9 -
+ lib/digsig.c                                |    2 
+ net/ceph/messenger.c                        |    3 
+ net/core/net_namespace.c                    |   19 ++
+ net/dns_resolver/dns_key.c                  |    1 
+ net/dns_resolver/dns_query.c                |    7 +
+ net/rxrpc/key.c                             |    6 -
+ net/rxrpc/security.c                        |    2 
+ security/integrity/digsig_asymmetric.c      |    4 
+ security/keys/gc.c                          |    2 
+ security/keys/internal.h                    |   10 +
+ security/keys/key.c                         |    5 -
+ security/keys/keyctl.c                      |    6 -
+ security/keys/keyring.c                     |  263 +++++++++++++++------------
+ security/keys/persistent.c                  |   10 +
+ security/keys/proc.c                        |    3 
+ security/keys/process_keys.c                |  262 +++++++++++++++++----------
+ security/keys/request_key.c                 |   62 ++++--
+ security/keys/request_key_auth.c            |    3 
+ 36 files changed, 587 insertions(+), 309 deletions(-)
+
