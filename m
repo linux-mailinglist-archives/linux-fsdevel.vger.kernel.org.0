@@ -2,174 +2,297 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C1754BCFF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2019 17:36:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A220B4BD04
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2019 17:36:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbfFSPg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jun 2019 11:36:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36008 "EHLO mx1.redhat.com"
+        id S1730050AbfFSPgg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jun 2019 11:36:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47562 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726428AbfFSPg2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jun 2019 11:36:28 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1730029AbfFSPgf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Jun 2019 11:36:35 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 26F88C004BA8;
-        Wed, 19 Jun 2019 15:36:28 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9445DF9E65;
+        Wed, 19 Jun 2019 15:36:35 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B3C80608A7;
-        Wed, 19 Jun 2019 15:36:26 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2DFCC5C205;
+        Wed, 19 Jun 2019 15:36:34 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 4/6] keys: Provide request_key_rcu() [ver #2]
+Subject: [PATCH 5/6] keys: Cache result of request_key*() temporarily in
+ task_struct [ver #2]
 From:   David Howells <dhowells@redhat.com>
 To:     keyrings@vger.kernel.org
 Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 19 Jun 2019 16:36:25 +0100
-Message-ID: <156095858592.25264.17369833581092140668.stgit@warthog.procyon.org.uk>
+Date:   Wed, 19 Jun 2019 16:36:33 +0100
+Message-ID: <156095859338.25264.8042921626224707738.stgit@warthog.procyon.org.uk>
 In-Reply-To: <156095855610.25264.16666970456822465537.stgit@warthog.procyon.org.uk>
 References: <156095855610.25264.16666970456822465537.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 19 Jun 2019 15:36:28 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 19 Jun 2019 15:36:35 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a request_key_rcu() function that can be used to request a key
-under RCU conditions.  It can only search and check permissions; it cannot
-allocate a new key, upcall or wait for an upcall to complete.  It may
-return a partially constructed key.
+If a filesystem uses keys to hold authentication tokens, then it needs a
+token for each VFS operation that might perform an authentication check -
+either by passing it to the server, or using to perform a check based on
+authentication data cached locally.
+
+For open files this isn't a problem, since the key should be cached in the
+file struct since it represents the subject performing operations on that
+file descriptor.
+
+During pathwalk, however, there isn't anywhere to cache the key, except
+perhaps in the nameidata struct - but that isn't exposed to the
+filesystems.  Further, a pathwalk can incur a lot of operations, calling
+one or more of the following, for instance:
+
+	->lookup()
+	->permission()
+	->d_revalidate()
+	->d_automount()
+	->get_acl()
+	->getxattr()
+
+on each dentry/inode it encounters - and each one may need to call
+request_key().  And then, at the end of pathwalk, it will call the actual
+operation:
+
+	->mkdir()
+	->mknod()
+	->getattr()
+	->open()
+	...
+
+which may need to go and get the token again.
+
+However, it is very likely that all of the operations on a single
+dentry/inode - and quite possibly a sequence of them - will all want to use
+the same authentication token, which suggests that caching it would be a
+good idea.
+
+To this end:
+
+ (1) Make it so that a positive result of request_key() and co. that didn't
+     require upcalling to userspace is cached temporarily in task_struct.
+
+ (2) The cache is 1 deep, so a new result displaces the old one.
+
+ (3) The key is released by exit and by notify-resume.
+
+ (4) The cache is cleared in a newly forked process.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- Documentation/security/keys/core.rst        |   10 ++++++
- Documentation/security/keys/request-key.rst |    9 ++++++
- include/linux/key.h                         |    3 ++
- security/keys/request_key.c                 |   44 +++++++++++++++++++++++++++
- 4 files changed, 66 insertions(+)
+ Documentation/security/keys/request-key.rst |    7 ++++-
+ include/linux/sched.h                       |    5 ++++
+ include/linux/tracehook.h                   |    7 +++++
+ kernel/cred.c                               |    9 +++++++
+ security/keys/Kconfig                       |   17 ++++++++++++
+ security/keys/request_key.c                 |   37 +++++++++++++++++++++++++++
+ 6 files changed, 81 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
-index 82dd457ff78d..003f1452a5b7 100644
---- a/Documentation/security/keys/core.rst
-+++ b/Documentation/security/keys/core.rst
-@@ -1147,6 +1147,16 @@ payload contents" for more information.
-     case error ERESTARTSYS will be returned.
- 
- 
-+ *  To search for a key under RCU conditions, call::
-+
-+	struct key *request_key_rcu(const struct key_type *type,
-+				    const char *description);
-+
-+    which is similar to request_key() except that it does not check for keys
-+    that are under construction and it will not call out to userspace to
-+    construct a key if it can't find a match.
-+
-+
-  *  When it is no longer required, the key should be released using::
- 
- 	void key_put(struct key *key);
 diff --git a/Documentation/security/keys/request-key.rst b/Documentation/security/keys/request-key.rst
-index 07af991463b5..7caedc4d29f1 100644
+index 7caedc4d29f1..45049abdf290 100644
 --- a/Documentation/security/keys/request-key.rst
 +++ b/Documentation/security/keys/request-key.rst
-@@ -36,6 +36,11 @@ or::
- 					     	   size_t callout_len,
- 						   void *aux);
+@@ -176,6 +176,9 @@ The process stops immediately a valid key is found with permission granted to
+ use it.  Any error from a previous match attempt is discarded and the key is
+ returned.
  
-+or::
++When request_key() is invoked, if CONFIG_KEYS_REQUEST_CACHE=y, a per-task
++one-key cache is first checked for a match.
 +
-+	struct key *request_key_rcu(const struct key_type *type,
-+				    const char *description);
-+
- Or by userspace invoking the request_key system call::
+ When search_process_keyrings() is invoked, it performs the following searches
+ until one succeeds:
  
- 	key_serial_t request_key(const char *type,
-@@ -57,6 +62,10 @@ The two async in-kernel calls may return keys that are still in the process of
- being constructed.  The two non-async ones will wait for construction to
- complete first.
+@@ -195,7 +198,9 @@ until one succeeds:
+       c) The calling process's session keyring is searched.
  
-+The request_key_rcu() call is like the in-kernel request_key() call, except
-+that it doesn't check for keys that are under construction and doesn't attempt
-+to construct missing keys.
-+
- The userspace interface links the key to a keyring associated with the process
- to prevent the key from going away, and returns the serial number of the key to
- the caller.
-diff --git a/include/linux/key.h b/include/linux/key.h
-index 612e1cf84049..3604a554df99 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -274,6 +274,9 @@ extern struct key *request_key(struct key_type *type,
- 			       const char *description,
- 			       const char *callout_info);
+ The moment one succeeds, all pending errors are discarded and the found key is
+-returned.
++returned.  If CONFIG_KEYS_REQUEST_CACHE=y, then that key is placed in the
++per-task cache, displacing the previous key.  The cache is cleared on exit or
++just prior to resumption of userspace.
  
-+extern struct key *request_key_rcu(struct key_type *type,
-+				   const char *description);
+ Only if all these fail does the whole thing fail with the highest priority
+ error.  Note that several errors may have come from LSM.
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 11837410690f..e5f18857dd53 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -831,6 +831,11 @@ struct task_struct {
+ 	/* Effective (overridable) subjective task credentials (COW): */
+ 	const struct cred __rcu		*cred;
+ 
++#ifdef CONFIG_KEYS
++	/* Cached requested key. */
++	struct key			*cached_requested_key;
++#endif
 +
- extern struct key *request_key_with_auxdata(struct key_type *type,
- 					    const char *description,
- 					    const void *callout_info,
+ 	/*
+ 	 * executable name, excluding path.
+ 	 *
+diff --git a/include/linux/tracehook.h b/include/linux/tracehook.h
+index df20f8bdbfa3..81824467e6a6 100644
+--- a/include/linux/tracehook.h
++++ b/include/linux/tracehook.h
+@@ -187,6 +187,13 @@ static inline void tracehook_notify_resume(struct pt_regs *regs)
+ 	if (unlikely(current->task_works))
+ 		task_work_run();
+ 
++#ifdef CONFIG_KEYS_REQUEST_CACHE
++	if (unlikely(current->cached_requested_key)) {
++		key_put(current->cached_requested_key);
++		current->cached_requested_key = NULL;
++	}
++#endif
++
+ 	mem_cgroup_handle_over_high();
+ 	blkcg_maybe_throttle_current();
+ }
+diff --git a/kernel/cred.c b/kernel/cred.c
+index 3bd40de9e192..26da7e77098f 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -174,6 +174,11 @@ void exit_creds(struct task_struct *tsk)
+ 	validate_creds(cred);
+ 	alter_cred_subscribers(cred, -1);
+ 	put_cred(cred);
++
++#ifdef CONFIG_KEYS_REQUEST_CACHE
++	key_put(current->cached_requested_key);
++	current->cached_requested_key = NULL;
++#endif
+ }
+ 
+ /**
+@@ -327,6 +332,10 @@ int copy_creds(struct task_struct *p, unsigned long clone_flags)
+ 	struct cred *new;
+ 	int ret;
+ 
++#ifdef CONFIG_KEYS_REQUEST_CACHE
++	p->cached_requested_key = NULL;
++#endif
++
+ 	if (
+ #ifdef CONFIG_KEYS
+ 		!p->cred->thread_keyring &&
+diff --git a/security/keys/Kconfig b/security/keys/Kconfig
+index 6462e6654ccf..a2c2259aef5f 100644
+--- a/security/keys/Kconfig
++++ b/security/keys/Kconfig
+@@ -24,6 +24,23 @@ config KEYS_COMPAT
+ 	def_bool y
+ 	depends on COMPAT && KEYS
+ 
++config KEYS_REQUEST_CACHE
++	bool "Enable temporary caching of the last request_key() result"
++	help
++	  This option causes the result of the last successful request_key()
++	  call that didn't upcall to the kernel to be cached temporarily in the
++	  task_struct.  The cache is cleared by exit and just prior to the
++	  resumption of userspace.
++
++	  This allows the key used for multiple step processes where each step
++	  wants to request a key that is likely the same as the one requested
++	  by the last step to save on the searching.
++
++	  An example of such a process is a pathwalk through a network
++	  filesystem in which each method needs to request an authentication
++	  key.  Pathwalk will call multiple methods for each dentry traversed
++	  (permission, d_revalidate, lookup, getxattr, getacl, ...).
++
+ config PERSISTENT_KEYRINGS
+ 	bool "Enable register of persistent per-UID keyrings"
+ 	depends on KEYS
 diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index bf1d223ec21c..b4b3677657d6 100644
+index b4b3677657d6..f289982cb5db 100644
 --- a/security/keys/request_key.c
 +++ b/security/keys/request_key.c
-@@ -756,3 +756,47 @@ struct key *request_key_async_with_auxdata(struct key_type *type,
- 				    callout_len, aux, NULL, KEY_ALLOC_IN_QUOTA);
- }
- EXPORT_SYMBOL(request_key_async_with_auxdata);
-+
-+/**
-+ * request_key_rcu - Request key from RCU-read-locked context
-+ * @type: The type of key we want.
-+ * @description: The name of the key we want.
-+ *
-+ * Request a key from a context that we may not sleep in (such as RCU-mode
-+ * pathwalk).  Keys under construction are ignored.
-+ *
-+ * Return a pointer to the found key if successful, -ENOKEY if we couldn't find
-+ * a key or some other error if the key found was unsuitable or inaccessible.
-+ */
-+struct key *request_key_rcu(struct key_type *type, const char *description)
+@@ -22,6 +22,31 @@
+ 
+ #define key_negative_timeout	60	/* default timeout on a negative key's existence */
+ 
++static struct key *check_cached_key(struct keyring_search_context *ctx)
 +{
-+	struct keyring_search_context ctx = {
-+		.index_key.type		= type,
-+		.index_key.description	= description,
-+		.index_key.desc_len	= strlen(description),
-+		.cred			= current_cred(),
-+		.match_data.cmp		= key_default_cmp,
-+		.match_data.raw_data	= description,
-+		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
-+		.flags			= (KEYRING_SEARCH_DO_STATE_CHECK |
-+					   KEYRING_SEARCH_SKIP_EXPIRED),
-+	};
-+	struct key *key;
-+	key_ref_t key_ref;
++#ifdef CONFIG_KEYS_REQUEST_CACHE
++	struct key *key = current->cached_requested_key;
 +
-+	kenter("%s,%s", type->name, description);
-+
-+	/* search all the process keyrings for a key */
-+	key_ref = search_process_keyrings_rcu(&ctx);
-+	if (IS_ERR(key_ref)) {
-+		key = ERR_CAST(key_ref);
-+		if (PTR_ERR(key_ref) == -EAGAIN)
-+			key = ERR_PTR(-ENOKEY);
-+	} else {
-+		key = key_ref_to_ptr(key_ref);
-+	}
-+
-+	kleave(" = %p", key);
-+	return key;
++	if (key &&
++	    ctx->match_data.cmp(key, &ctx->match_data) &&
++	    !(key->flags & ((1 << KEY_FLAG_INVALIDATED) |
++			    (1 << KEY_FLAG_REVOKED))))
++		return key_get(key);
++#endif
++	return NULL;
 +}
-+EXPORT_SYMBOL(request_key_rcu);
++
++static void cache_requested_key(struct key *key)
++{
++#ifdef CONFIG_KEYS_REQUEST_CACHE
++	struct task_struct *t = current;
++
++	key_put(t->cached_requested_key);
++	t->cached_requested_key = key_get(key);
++	set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
++#endif
++}
++
+ /**
+  * complete_request_key - Complete the construction of a key.
+  * @authkey: The authorisation key.
+@@ -562,6 +587,10 @@ struct key *request_key_and_link(struct key_type *type,
+ 		}
+ 	}
+ 
++	key = check_cached_key(&ctx);
++	if (key)
++		return key;
++
+ 	/* search all the process keyrings for a key */
+ 	rcu_read_lock();
+ 	key_ref = search_process_keyrings_rcu(&ctx);
+@@ -587,6 +616,9 @@ struct key *request_key_and_link(struct key_type *type,
+ 				goto error_free;
+ 			}
+ 		}
++
++		/* Only cache the key on immediate success */
++		cache_requested_key(key);
+ 	} else if (PTR_ERR(key_ref) != -EAGAIN) {
+ 		key = ERR_CAST(key_ref);
+ 	} else  {
+@@ -786,6 +818,10 @@ struct key *request_key_rcu(struct key_type *type, const char *description)
+ 
+ 	kenter("%s,%s", type->name, description);
+ 
++	key = check_cached_key(&ctx);
++	if (key)
++		return key;
++
+ 	/* search all the process keyrings for a key */
+ 	key_ref = search_process_keyrings_rcu(&ctx);
+ 	if (IS_ERR(key_ref)) {
+@@ -794,6 +830,7 @@ struct key *request_key_rcu(struct key_type *type, const char *description)
+ 			key = ERR_PTR(-ENOKEY);
+ 	} else {
+ 		key = key_ref_to_ptr(key_ref);
++		cache_requested_key(key);
+ 	}
+ 
+ 	kleave(" = %p", key);
 
