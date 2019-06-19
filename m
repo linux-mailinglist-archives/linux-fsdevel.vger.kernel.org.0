@@ -2,156 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 478884C3CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 00:39:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F9FC4C407
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 01:16:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730020AbfFSWjB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jun 2019 18:39:01 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:40621 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726251AbfFSWjB (ORCPT
+        id S1730020AbfFSXQa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jun 2019 19:16:30 -0400
+Received: from ushosting.nmnhosting.com ([66.55.73.32]:42028 "EHLO
+        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbfFSXQ3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jun 2019 18:39:01 -0400
-Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id EA85710D6E8;
-        Thu, 20 Jun 2019 08:38:53 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hdjDI-0006Wo-4u; Thu, 20 Jun 2019 08:37:56 +1000
-Date:   Thu, 20 Jun 2019 08:37:56 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
+        Wed, 19 Jun 2019 19:16:29 -0400
+Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
+        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 5F37E2DC005B;
+        Wed, 19 Jun 2019 19:16:28 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
+        s=201810a; t=1560986188;
+        bh=P+nFrCYIAy9nbAT3inDjyh5Nu1AGlpkuYDjYYSTo8SU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=UMKHysbwL4zdfy50KqutmgBEIg3sB7A1AG+8ItwZQtNEjbw3/kefwvZoa3HJ/qPue
+         FtHy3iQpmn+NaSFA3Mu2gOfCMETJuOCnHShThOrTrRi0524godGZCgjbLwEXdIrujV
+         xDt+bXPG551xLU30DowKCzCX4sh2ZLCYlpwKny3nSfu6TdTO04XxEEAerz4PtGaObB
+         mK5WkSsuK3ES4PAPxgZb+pSYtoFroMpH18T3PLybvLGSjfjyn/CtIMs+blM8XYmdPJ
+         TvkZW6Ca8pzYT9RsBfJRAJWjf4qfNG6J0j+xJvEaD7SP/MIMGo1VZ5d/zw4b3FdeYt
+         JetXAd65Zd6yavahdde3VtkKoryPECl8+glQZ+N2eRG9ycQ1RafCdpTqdv72F0hGkL
+         4apz6zp0SeF0J1KA9qT4u68PJKa7dlMEnKXEomd5VE+2hLj+H2XT6HltLJdB5+pK9G
+         cMe1+bLK+ayAWxIXuyZ1/r/oJ5pzAFraInvomTVKBkCfLFy8CdlSIihUmPfej/4psJ
+         72/lVeYRJl+IifxxJ9hEA9A+QWlY8W986ROsAQ5xOTxmaRzXMnnZRdFLVPZt5axFGD
+         EQ+IOd3b5ZUWjk3U7T3wAvcchJQaqLNw/Njxg2yMVkYsKSYnAMuX4DYn+A7LJX3oLF
+         sv3nSS3HZsRxp6mS1j36fWkI=
+Received: from adsilva.ozlabs.ibm.com (static-82-10.transact.net.au [122.99.82.10] (may be forged))
+        (authenticated bits=0)
+        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x5JNFxcT078663
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 20 Jun 2019 09:16:14 +1000 (AEST)
+        (envelope-from alastair@d-silva.org)
+Message-ID: <c68cb819257f251cbb66f8998a95c31cebe2d72e.camel@d-silva.org>
+Subject: Re: [PATCH v3 0/7] Hexdump Enhancements
+From:   "Alastair D'Silva" <alastair@d-silva.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: pagecache locking (was: bcachefs status update) merged)
-Message-ID: <20190619223756.GC26375@dread.disaster.area>
-References: <20190612162144.GA7619@kmo-pixel>
- <20190612230224.GJ14308@dread.disaster.area>
- <20190613183625.GA28171@kmo-pixel>
- <20190613235524.GK14363@dread.disaster.area>
- <CAHk-=whMHtg62J2KDKnyOTaoLs9GxcNz1hN9QKqpxoO=0bJqdQ@mail.gmail.com>
- <CAHk-=wgz+7O0pdn8Wfxc5EQKNy44FTtf4LAPO1WgCidNjxbWzg@mail.gmail.com>
- <20190617224714.GR14363@dread.disaster.area>
- <CAHk-=wiR3a7+b0cUN45hGp1dvFh=s1i1OkVhoP7CivJxKqsLFQ@mail.gmail.com>
- <CAOQ4uxjqQjrCCt=ixgdUYjBJvKLhw4R9NeMZOB_s2rrWvoDMBw@mail.gmail.com>
- <20190619103838.GB32409@quack2.suse.cz>
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
+Date:   Thu, 20 Jun 2019 09:15:58 +1000
+In-Reply-To: <9a000734375c0801fc16b71f4be1235f9b857772.camel@perches.com>
+References: <20190617020430.8708-1-alastair@au1.ibm.com>
+         <9a000734375c0801fc16b71f4be1235f9b857772.camel@perches.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619103838.GB32409@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
-        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
-        a=7-415B0cAAAA:8 a=HMxRdiQgvCmKICatF68A:9 a=eZ04ofshWOP32MK1:21
-        a=slHfbUhONS5Q4bjw:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Thu, 20 Jun 2019 09:16:24 +1000 (AEST)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 12:38:38PM +0200, Jan Kara wrote:
-> On Tue 18-06-19 07:21:56, Amir Goldstein wrote:
-> > > > Right, but regardless of the spec we have to consider that the
-> > > > behaviour of XFS comes from it's Irix heritage (actually from EFS,
-> > > > the predecessor of XFS from the late 1980s)
-> > >
-> > > Sure. And as I mentioned, I think it's technically the nicer guarantee.
-> > >
-> > > That said, it's a pretty *expensive* guarantee. It's one that you
-> > > yourself are not willing to give for O_DIRECT IO.
-> > >
-> > > And it's not a guarantee that Linux has ever had. In fact, it's not
-> > > even something I've ever seen anybody ever depend on.
-> > >
-> > > I agree that it's possible that some app out there might depend on
-> > > that kind of guarantee, but I also suspect it's much much more likely
-> > > that it's the other way around: XFS is being unnecessarily strict,
-> > > because everybody is testing against filesystems that don't actually
-> > > give the total atomicity guarantees.
-> > >
-> > > Nobody develops for other unixes any more (and nobody really ever did
-> > > it by reading standards papers - even if they had been very explicit).
-> > >
-> > > And honestly, the only people who really do threaded accesses to the same file
-> > >
-> > >  (a) don't want that guarantee in the first place
-> > >
-> > >  (b) are likely to use direct-io that apparently doesn't give that
-> > > atomicity guarantee even on xfs
-> > >
-> > > so I do think it's moot.
-> > >
-> > > End result: if we had a really cheap range lock, I think it would be a
-> > > good idea to use it (for the whole QoI implementation), but for
-> > > practical reasons it's likely better to just stick to the current lack
-> > > of serialization because it performs better and nobody really seems to
-> > > want anything else anyway.
-> > >
+On Wed, 2019-06-19 at 09:31 -0700, Joe Perches wrote:
+> On Mon, 2019-06-17 at 12:04 +1000, Alastair D'Silva wrote:
+> > From: Alastair D'Silva <alastair@d-silva.org>
 > > 
-> > This is the point in the conversation where somebody usually steps in
-> > and says "let the user/distro decide". Distro maintainers are in a much
-> > better position to take the risk of breaking hypothetical applications.
+> > Apologies for the large CC list, it's a heads up for those
+> > responsible
+> > for subsystems where a prototype change in generic code causes a
+> > change
+> > in those subsystems.
 > > 
-> > I should point out that even if "strict atomic rw" behavior is desired, then
-> > page cache warmup [1] significantly improves performance.
-> > Having mentioned that, the discussion can now return to what is the
-> > preferred way to solve the punch hole vs. page cache add race.
-> > 
-> > XFS may end up with special tailored range locks, which beings some
-> > other benefits to XFS, but all filesystems need the solution for the punch
-> > hole vs. page cache add race.
-> > Jan recently took a stab at it for ext4 [2], but that didn't work out.
+> > This series enhances hexdump.
 > 
-> Yes, but I have idea how to fix it. I just need to push acquiring ext4's
-> i_mmap_sem down a bit further so that only page cache filling is protected
-> by it but not copying of data out to userspace. But I didn't get to coding
-> it last week due to other stuff.
+> Still not a fan of these patches.
+
+I'm afraid there's not too much action I can take on that, I'm happy to
+address specific issues though.
+
 > 
-> > So I wonder what everyone thinks about Kent's page add lock as the
-> > solution to the problem.
-> > Allegedly, all filesystems (XFS included) are potentially exposed to
-> > stale data exposure/data corruption.
+> > These improve the readability of the dumped data in certain
+> > situations
+> > (eg. wide terminals are available, many lines of empty bytes exist,
+> > etc).
 > 
-> When we first realized that hole-punching vs page faults races are an issue I
-> was looking into a generic solution but at that time there was a sentiment
-> against adding another rwsem to struct address_space (or inode) so we ended
-> up with a private lock in ext4 (i_mmap_rwsem), XFS (I_MMAPLOCK), and other
-> filesystems these days. If people think that growing struct inode for
-> everybody is OK, we can think about lifting private filesystem solutions
-> into a generic one. I'm fine with that.
+> Changing hexdump's last argument from bool to int is odd.
+> 
 
-I'd prefer it doesn't get lifted to the VFS because I'm planning on
-getting rid of it in XFS with range locks. i.e. the XFS_MMAPLOCK is
-likely to go away in the near term because a range lock can be
-taken on either side of the mmap_sem in the page fault path.
+Think of it as replacing a single boolean with many booleans.
 
-> That being said as Dave said we use those fs-private locks also for
-> serializing against equivalent issues arising for DAX. So the problem is
-> not only about page cache but generally about doing IO and caching
-> block mapping information for a file range. So the solution should not be
-> too tied to page cache.
+> Perhaps a new function should be added instead of changing
+> the existing hexdump.
+> 
 
-Yup, that was the point I was trying to make when Linus started
-shouting at me about how caches work and how essential they are.  I
-guess the fact that DAX doesn't use the page cache isn't as widely
-known as I assumed it was...
+There's only a handful of consumers, I don't think there is a value-add 
+in creating more wrappers vs updating the existing callers.
 
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Alastair D'Silva           mob: 0423 762 819
+skype: alastair_dsilva    
+Twitter: @EvilDeece
+blog: http://alastair.d-silva.org
+
+
