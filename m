@@ -2,119 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A67C94B263
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2019 08:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E2A94B2B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jun 2019 09:11:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730428AbfFSGvS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jun 2019 02:51:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58556 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725980AbfFSGvS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jun 2019 02:51:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B6765AF97;
-        Wed, 19 Jun 2019 06:51:16 +0000 (UTC)
-Date:   Wed, 19 Jun 2019 08:51:14 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-mm@kvack.org, matthew.wilcox@oracle.com,
-        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
-        william.kucharski@oracle.com, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/6] Enable THP for text section of non-shmem files
-Message-ID: <20190619065114.GD2968@dhcp22.suse.cz>
-References: <20190619062424.3486524-1-songliubraving@fb.com>
+        id S1726251AbfFSHLB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jun 2019 03:11:01 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:38591 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbfFSHLB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Jun 2019 03:11:01 -0400
+Received: by mail-io1-f70.google.com with SMTP id h4so19731141iol.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jun 2019 00:11:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=dA0fKhI3N29hx55QN7yMpshQ+ovUMn3cPeA5Fhie0RE=;
+        b=rMN1xWNuMOd4gwDR/ayxCvpFqWY3Pb8O8knba5SQmHKcfL7+epfqj2S3IFKk2hGS+P
+         Qs/SszlR1c6m9WwsAd/7jOYpCzHKLgv6AEBT94Bh22ylm0hfWKOt+ksnE25uChrTH23m
+         TdIbnv4WL1xAgEXPm+rrusfnZLVMwIYSaGF2uYN0vo/pyeA7a8eie0RZLHdQJDzrKh1n
+         WD3iGIU65B7f9GjzdFdVKx5XDvQrf0u3eoqFQtmw3IcR2WvuKsAl0NJDz+5OLMUe3Avb
+         hi5dmxZPGa0DT4Uw/GzRscWMG8g3LZf9RpKQg0nlPKji4lmsm/TdPm/pYnZC1uZVVkh0
+         HFnQ==
+X-Gm-Message-State: APjAAAW23XQVS2c+9saUt0YDnqgIqxQgqrwd+HU21CdL4wEaaQMIn9S7
+        M/03V1g9X+MEIKgdws4v8SiN+IrXnqx4Wl+0AOUVAbH1NnEN
+X-Google-Smtp-Source: APXvYqzkZp+PQ3mAuNYicnp5VPclFiKPKMckf04v2MwIJjKZTDInYOMm5BJwnLwOHlRr8iun7rJpj/mL0PeHTluH7712LhbuVY20
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619062424.3486524-1-songliubraving@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a05:6602:2248:: with SMTP id o8mr17747825ioo.90.1560928260665;
+ Wed, 19 Jun 2019 00:11:00 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 00:11:00 -0700
+In-Reply-To: <CAOQ4uxh9ZWghUNS3i_waNq5huitwwypEwY9xEWddFo1JHYu88g@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000803cc4058ba7eef7@google.com>
+Subject: Re: WARNING in fanotify_handle_event
+From:   syzbot <syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mbobrowski@mbobrowski.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Cc fsdevel and lkml]
+Hello,
 
-On Tue 18-06-19 23:24:18, Song Liu wrote:
-> Changes v2 => v3:
-> 1. Removed the limitation (cannot write to file with THP) by truncating
->    whole file during sys_open (see 6/6);
-> 2. Fixed a VM_BUG_ON_PAGE() in filemap_fault() (see 2/6);
-> 3. Split function rename to a separate patch (Rik);
-> 4. Updated condition in hugepage_vma_check() (Rik).
-> 
-> Changes v1 => v2:
-> 1. Fixed a missing mem_cgroup_commit_charge() for non-shmem case.
-> 
-> This set follows up discussion at LSF/MM 2019. The motivation is to put
-> text section of an application in THP, and thus reduces iTLB miss rate and
-> improves performance. Both Facebook and Oracle showed strong interests to
-> this feature.
-> 
-> To make reviews easier, this set aims a mininal valid product. Current
-> version of the work does not have any changes to file system specific
-> code. This comes with some limitations (discussed later).
-> 
-> This set enables an application to "hugify" its text section by simply
-> running something like:
-> 
->           madvise(0x600000, 0x80000, MADV_HUGEPAGE);
-> 
-> Before this call, the /proc/<pid>/maps looks like:
-> 
->     00400000-074d0000 r-xp 00000000 00:27 2006927     app
-> 
-> After this call, part of the text section is split out and mapped to
-> THP:
-> 
->     00400000-00425000 r-xp 00000000 00:27 2006927     app
->     00600000-00e00000 r-xp 00200000 00:27 2006927     app   <<< on THP
->     00e00000-074d0000 r-xp 00a00000 00:27 2006927     app
-> 
-> Limitations:
-> 
-> 1. This only works for text section (vma with VM_DENYWRITE).
-> 2. Original limitation #2 is removed in v3.
-> 
-> We gated this feature with an experimental config, READ_ONLY_THP_FOR_FS.
-> Once we get better support on the write path, we can remove the config and
-> enable it by default.
-> 
-> Tested cases:
-> 1. Tested with btrfs and ext4.
-> 2. Tested with real work application (memcache like caching service).
-> 3. Tested with "THP aware uprobe":
->    https://patchwork.kernel.org/project/linux-mm/list/?series=131339
-> 
-> Please share your comments and suggestions on this.
-> 
-> Thanks!
-> 
-> Song Liu (6):
->   filemap: check compound_head(page)->mapping in filemap_fault()
->   filemap: update offset check in filemap_fault()
->   mm,thp: stats for file backed THP
->   khugepaged: rename collapse_shmem() and khugepaged_scan_shmem()
->   mm,thp: add read-only THP support for (non-shmem) FS
->   mm,thp: handle writes to file with THP in pagecache
-> 
->  fs/inode.c             |   3 ++
->  fs/proc/meminfo.c      |   4 ++
->  include/linux/fs.h     |  31 ++++++++++++
->  include/linux/mmzone.h |   2 +
->  mm/Kconfig             |  11 +++++
->  mm/filemap.c           |   9 ++--
->  mm/khugepaged.c        | 104 +++++++++++++++++++++++++++++++++--------
->  mm/rmap.c              |  12 +++--
->  mm/truncate.c          |   7 ++-
->  mm/vmstat.c            |   2 +
->  10 files changed, 156 insertions(+), 29 deletions(-)
-> 
-> --
-> 2.17.1
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
--- 
-Michal Hocko
-SUSE Labs
+Reported-and-tested-by:  
+syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         a6a3fd5c fanotify: update connector fsid cache on add mark
+git tree:       https://github.com/amir73il/linux.git  
+fsnotify-fix-fsid-cache
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9f7e1b6a8bb586
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Note: testing is done by a robot and is best-effort only.
