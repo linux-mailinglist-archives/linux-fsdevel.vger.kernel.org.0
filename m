@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4DF84DBF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 22:54:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D2074DC03
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 22:54:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfFTUyG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jun 2019 16:54:06 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:45094 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726761AbfFTUyF (ORCPT
+        id S1727207AbfFTUyf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jun 2019 16:54:35 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:50822 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726130AbfFTUyI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jun 2019 16:54:05 -0400
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KKs2vW010773
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2019 13:54:04 -0700
+        Thu, 20 Jun 2019 16:54:08 -0400
+Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KKs1t3030343
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2019 13:54:07 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=iFz1RdjWCbrw1b7w4eZ5iGWyb2zDfKg3QSt6me6ZtqE=;
- b=b3fuWxEO2bh8EURL6LgbdwtTE0On0VONM5U8+/w2EiFEQLS9oOFpgcdCbTuOe5hPfUgz
- kX/6nUK8e79VK9unMApm+cqPvb8ZTUgxxa3bWBBZOu1nadIBd17jpOUIEKSHA+fcuzZM
- Xo1So6jIa9/E94+wKRc2OB4oh0s9UJpjX60= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2t8aj31pm6-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2019 13:54:04 -0700
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Thu, 20 Jun 2019 13:54:02 -0700
+ content-type; s=facebook; bh=n2snFM7QmmPTPpShlBhEnsGKC2i2/uKCmCMTseCu52k=;
+ b=MO6t/uuqWiOOomNBwU97YOg+TXttbjxehR5XUim4OqdKWGOalMKxrKcMTqcpsoFCSNTE
+ v2Tyx+5GHTxXTSPAKkK7icdV+5yVIe0Ew+tP8foHoFHqdgSuCNXYJKLQy9typVFfpkod
+ AIK/nAgzi7COfwqaGzTulaxsSRSMbugt65w= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2t8f1n0km2-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2019 13:54:07 -0700
+Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 20 Jun 2019 13:54:05 -0700
 Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 6532D62E2A35; Thu, 20 Jun 2019 13:54:01 -0700 (PDT)
+        id 06C3D62E2A35; Thu, 20 Jun 2019 13:54:04 -0700 (PDT)
 Smtp-Origin-Hostprefix: devbig
 From:   Song Liu <songliubraving@fb.com>
 Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
@@ -40,9 +40,9 @@ CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
         <kernel-team@fb.com>, <william.kucharski@oracle.com>,
         <akpm@linux-foundation.org>, Song Liu <songliubraving@fb.com>
 Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v5 3/6] mm,thp: stats for file backed THP
-Date:   Thu, 20 Jun 2019 13:53:45 -0700
-Message-ID: <20190620205348.3980213-4-songliubraving@fb.com>
+Subject: [PATCH v5 4/6] khugepaged: rename collapse_shmem() and khugepaged_scan_shmem()
+Date:   Thu, 20 Jun 2019 13:53:46 -0700
+Message-ID: <20190620205348.3980213-5-songliubraving@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190620205348.3980213-1-songliubraving@fb.com>
 References: <20190620205348.3980213-1-songliubraving@fb.com>
@@ -52,9 +52,9 @@ Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-20_14:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=570 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1906200150
 X-FB-Internal: deliver
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -62,58 +62,79 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In preparation for non-shmem THP, this patch adds two stats and exposes
-them in /proc/meminfo
+Next patch will add khugepaged support of non-shmem files. This patch
+renames these two functions to reflect the new functionality:
+
+    collapse_shmem()        =>  collapse_file()
+    khugepaged_scan_shmem() =>  khugepaged_scan_file()
 
 Acked-by: Rik van Riel <riel@surriel.com>
 Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- fs/proc/meminfo.c      | 4 ++++
- include/linux/mmzone.h | 2 ++
- mm/vmstat.c            | 2 ++
- 3 files changed, 8 insertions(+)
+ mm/khugepaged.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-index 568d90e17c17..bac395fc11f9 100644
---- a/fs/proc/meminfo.c
-+++ b/fs/proc/meminfo.c
-@@ -136,6 +136,10 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
- 		    global_node_page_state(NR_SHMEM_THPS) * HPAGE_PMD_NR);
- 	show_val_kb(m, "ShmemPmdMapped: ",
- 		    global_node_page_state(NR_SHMEM_PMDMAPPED) * HPAGE_PMD_NR);
-+	show_val_kb(m, "FileHugePages: ",
-+		    global_node_page_state(NR_FILE_THPS) * HPAGE_PMD_NR);
-+	show_val_kb(m, "FilePmdMapped: ",
-+		    global_node_page_state(NR_FILE_PMDMAPPED) * HPAGE_PMD_NR);
- #endif
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 0f7419938008..dde8e45552b3 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1287,7 +1287,7 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+ }
  
- #ifdef CONFIG_CMA
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 70394cabaf4e..827f9b777938 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -234,6 +234,8 @@ enum node_stat_item {
- 	NR_SHMEM,		/* shmem pages (included tmpfs/GEM pages) */
- 	NR_SHMEM_THPS,
- 	NR_SHMEM_PMDMAPPED,
-+	NR_FILE_THPS,
-+	NR_FILE_PMDMAPPED,
- 	NR_ANON_THPS,
- 	NR_UNSTABLE_NFS,	/* NFS unstable pages */
- 	NR_VMSCAN_WRITE,
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index fd7e16ca6996..6afc892a148a 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1158,6 +1158,8 @@ const char * const vmstat_text[] = {
- 	"nr_shmem",
- 	"nr_shmem_hugepages",
- 	"nr_shmem_pmdmapped",
-+	"nr_file_hugepages",
-+	"nr_file_pmdmapped",
- 	"nr_anon_transparent_hugepages",
- 	"nr_unstable",
- 	"nr_vmscan_write",
+ /**
+- * collapse_shmem - collapse small tmpfs/shmem pages into huge one.
++ * collapse_file - collapse small tmpfs/shmem pages into huge one.
+  *
+  * Basic scheme is simple, details are more complex:
+  *  - allocate and lock a new huge page;
+@@ -1304,10 +1304,11 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+  *    + restore gaps in the page cache;
+  *    + unlock and free huge page;
+  */
+-static void collapse_shmem(struct mm_struct *mm,
++static void collapse_file(struct vm_area_struct *vma,
+ 		struct address_space *mapping, pgoff_t start,
+ 		struct page **hpage, int node)
+ {
++	struct mm_struct *mm = vma->vm_mm;
+ 	gfp_t gfp;
+ 	struct page *new_page;
+ 	struct mem_cgroup *memcg;
+@@ -1563,7 +1564,7 @@ static void collapse_shmem(struct mm_struct *mm,
+ 	/* TODO: tracepoints */
+ }
+ 
+-static void khugepaged_scan_shmem(struct mm_struct *mm,
++static void khugepaged_scan_file(struct vm_area_struct *vma,
+ 		struct address_space *mapping,
+ 		pgoff_t start, struct page **hpage)
+ {
+@@ -1631,14 +1632,14 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
+ 			result = SCAN_EXCEED_NONE_PTE;
+ 		} else {
+ 			node = khugepaged_find_target_node();
+-			collapse_shmem(mm, mapping, start, hpage, node);
++			collapse_file(vma, mapping, start, hpage, node);
+ 		}
+ 	}
+ 
+ 	/* TODO: tracepoints */
+ }
+ #else
+-static void khugepaged_scan_shmem(struct mm_struct *mm,
++static void khugepaged_scan_file(struct vm_area_struct *vma,
+ 		struct address_space *mapping,
+ 		pgoff_t start, struct page **hpage)
+ {
+@@ -1722,7 +1723,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages,
+ 				file = get_file(vma->vm_file);
+ 				up_read(&mm->mmap_sem);
+ 				ret = 1;
+-				khugepaged_scan_shmem(mm, file->f_mapping,
++				khugepaged_scan_file(vma, file->f_mapping,
+ 						pgoff, hpage);
+ 				fput(file);
+ 			} else {
 -- 
 2.17.1
 
