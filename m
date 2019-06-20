@@ -2,115 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6381C4CACA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 11:26:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E85EA4CC33
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 12:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730494AbfFTJZy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jun 2019 05:25:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46702 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725875AbfFTJZx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jun 2019 05:25:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 771EBAD76;
-        Thu, 20 Jun 2019 09:25:52 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 13B0E1E434D; Thu, 20 Jun 2019 11:25:52 +0200 (CEST)
-Date:   Thu, 20 Jun 2019 11:25:52 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ross Zwisler <zwisler@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Ross Zwisler <zwisler@google.com>,
-        Theodore Ts'o <tytso@mit.edu>,
+        id S1730913AbfFTKru (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jun 2019 06:47:50 -0400
+Received: from mga04.intel.com ([192.55.52.120]:63311 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726211AbfFTKru (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Jun 2019 06:47:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 03:47:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,396,1557212400"; 
+   d="scan'208";a="181838324"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 20 Jun 2019 03:47:41 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Joe Perches <joe@perches.com>,
+        Alastair D'Silva <alastair@d-silva.org>
+Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Fletcher Woodruff <fletcherw@google.com>,
-        Justin TerAvest <teravest@google.com>
-Subject: Re: [PATCH 1/3] mm: add filemap_fdatawait_range_keep_errors()
-Message-ID: <20190620092552.GK13630@quack2.suse.cz>
-References: <20190619172156.105508-1-zwisler@google.com>
- <20190619172156.105508-2-zwisler@google.com>
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/7] Hexdump Enhancements
+In-Reply-To: <fcf57339aea60fb1744cea2a2593656c728c4ec4.camel@perches.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190617020430.8708-1-alastair@au1.ibm.com> <9a000734375c0801fc16b71f4be1235f9b857772.camel@perches.com> <c68cb819257f251cbb66f8998a95c31cebe2d72e.camel@d-silva.org> <d8316be322f33ea67640ff83f2248fe433078407.camel@perches.com> <9456ca2a4ae827635bb6d864e5095a9e51f2ac45.camel@d-silva.org> <fcf57339aea60fb1744cea2a2593656c728c4ec4.camel@perches.com>
+Date:   Thu, 20 Jun 2019 13:50:33 +0300
+Message-ID: <87sgs4sf7q.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619172156.105508-2-zwisler@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 19-06-19 11:21:54, Ross Zwisler wrote:
-> In the spirit of filemap_fdatawait_range() and
-> filemap_fdatawait_keep_errors(), introduce
-> filemap_fdatawait_range_keep_errors() which both takes a range upon
-> which to wait and does not clear errors from the address space.
-> 
-> Signed-off-by: Ross Zwisler <zwisler@google.com>
+On Wed, 19 Jun 2019, Joe Perches <joe@perches.com> wrote:
+> On Thu, 2019-06-20 at 11:14 +1000, Alastair D'Silva wrote:
+>> On Wed, 2019-06-19 at 17:35 -0700, Joe Perches wrote:
+>> > On Thu, 2019-06-20 at 09:15 +1000, Alastair D'Silva wrote:
+>> > > On Wed, 2019-06-19 at 09:31 -0700, Joe Perches wrote:
+>> > > > On Mon, 2019-06-17 at 12:04 +1000, Alastair D'Silva wrote:
+>> > > > > From: Alastair D'Silva <alastair@d-silva.org>
+>> > > > > 
+>> > > > > Apologies for the large CC list, it's a heads up for those
+>> > > > > responsible
+>> > > > > for subsystems where a prototype change in generic code causes
+>> > > > > a
+>> > > > > change
+>> > > > > in those subsystems.
+>> > > > > 
+>> > > > > This series enhances hexdump.
+>> > > > 
+>> > > > Still not a fan of these patches.
+>> > > 
+>> > > I'm afraid there's not too much action I can take on that, I'm
+>> > > happy to
+>> > > address specific issues though.
+>> > > 
+>> > > > > These improve the readability of the dumped data in certain
+>> > > > > situations
+>> > > > > (eg. wide terminals are available, many lines of empty bytes
+>> > > > > exist,
+>> > > > > etc).
+>> > 
+>> > I think it's generally overkill for the desired uses.
+>> 
+>> I understand where you're coming from, however, these patches make it a
+>> lot easier to work with large chucks of binary data. I think it makes
+>> more sense to have these patches upstream, even though committed code
+>> may not necessarily have all the features enabled, as it means that
+>> devs won't have to apply out-of-tree patches during development to make
+>> larger dumps manageable.
+>> 
+>> > > > Changing hexdump's last argument from bool to int is odd.
+>> > > > 
+>> > > 
+>> > > Think of it as replacing a single boolean with many booleans.
+>> > 
+>> > I understand it.  It's odd.
+>> > 
+>> > I would rather not have a mixture of true, false, and apparently
+>> > random collections of bitfields like 0xd or 0b1011 or their
+>> > equivalent or'd defines.
+>> > 
+>> 
+>> Where's the mixture? What would you propose instead?
+>
+> create a hex_dump_to_buffer_ext with a new argument
+> and a new static inline for the old hex_dump_to_buffer
+> without modifying the argument list that calls
+> hex_dump_to_buffer with whatever added argument content
+> you need.
+>
+> Something like:
+>
+> static inline
+> int hex_dump_to_buffer(const void *buf, size_t len, int rowsize,
+> 		       int groupsize, char *linebuf, size_t linebuflen,
+> 		       bool ascii)
+> {
+> 	return hex_dump_to_buffer_ext(buf, len, rowsize, groupsize,
+> 				      linebuf, linebuflen, ascii, 0);
+> }
+>
+> and remove EXPORT_SYMBOL(hex_dump_to_buffer)
 
-The patch looks good to me. You can add:
+If you decide to do something like this, I'd actually suggest you drop
+the bool ascii parameter from hex_dump_to_buffer() altogether, and
+replace the callers that do require ascii with
+hex_dump_to_buffer_ext(..., HEXDUMP_ASCII). Even if that also requires
+touching all callers.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+But no strong opinions, really.
 
-								Honza
+BR,
+Jani.
 
-> ---
->  include/linux/fs.h |  2 ++
->  mm/filemap.c       | 22 ++++++++++++++++++++++
->  2 files changed, 24 insertions(+)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index f7fdfe93e25d3..79fec8a8413f4 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2712,6 +2712,8 @@ extern int filemap_flush(struct address_space *);
->  extern int filemap_fdatawait_keep_errors(struct address_space *mapping);
->  extern int filemap_fdatawait_range(struct address_space *, loff_t lstart,
->  				   loff_t lend);
-> +extern int filemap_fdatawait_range_keep_errors(struct address_space *mapping,
-> +		loff_t start_byte, loff_t end_byte);
->  
->  static inline int filemap_fdatawait(struct address_space *mapping)
->  {
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index df2006ba0cfa5..e87252ca0835a 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -553,6 +553,28 @@ int filemap_fdatawait_range(struct address_space *mapping, loff_t start_byte,
->  }
->  EXPORT_SYMBOL(filemap_fdatawait_range);
->  
-> +/**
-> + * filemap_fdatawait_range_keep_errors - wait for writeback to complete
-> + * @mapping:		address space structure to wait for
-> + * @start_byte:		offset in bytes where the range starts
-> + * @end_byte:		offset in bytes where the range ends (inclusive)
-> + *
-> + * Walk the list of under-writeback pages of the given address space in the
-> + * given range and wait for all of them.  Unlike filemap_fdatawait_range(),
-> + * this function does not clear error status of the address space.
-> + *
-> + * Use this function if callers don't handle errors themselves.  Expected
-> + * call sites are system-wide / filesystem-wide data flushers: e.g. sync(2),
-> + * fsfreeze(8)
-> + */
-> +int filemap_fdatawait_range_keep_errors(struct address_space *mapping,
-> +		loff_t start_byte, loff_t end_byte)
-> +{
-> +	__filemap_fdatawait_range(mapping, start_byte, end_byte);
-> +	return filemap_check_and_keep_errors(mapping);
-> +}
-> +EXPORT_SYMBOL(filemap_fdatawait_range_keep_errors);
-> +
->  /**
->   * file_fdatawait_range - wait for writeback to complete
->   * @file:		file pointing to address space structure to wait for
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
-> 
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jani Nikula, Intel Open Source Graphics Center
