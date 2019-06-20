@@ -2,135 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6B904C652
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 06:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47BCC4C65C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 06:53:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725912AbfFTEsM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jun 2019 00:48:12 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:34598 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725872AbfFTEsM (ORCPT
+        id S1725965AbfFTExL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jun 2019 00:53:11 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:40245 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725872AbfFTExL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jun 2019 00:48:12 -0400
+        Thu, 20 Jun 2019 00:53:11 -0400
 Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id A9E2E149FBA;
-        Thu, 20 Jun 2019 14:48:06 +1000 (AEST)
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id B265A4395F5;
+        Thu, 20 Jun 2019 14:53:08 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92)
         (envelope-from <david@fromorbit.com>)
-        id 1hdoya-0000Gg-Dd; Thu, 20 Jun 2019 14:47:08 +1000
-Date:   Thu, 20 Jun 2019 14:47:08 +1000
+        id 1hdp3T-0000H9-9G; Thu, 20 Jun 2019 14:52:11 +1000
+Date:   Thu, 20 Jun 2019 14:52:11 +1000
 From:   Dave Chinner <david@fromorbit.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, cluster-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs: Move mark_inode_dirty out of __generic_write_end
-Message-ID: <20190620044708.GT14363@dread.disaster.area>
-References: <20190618144716.8133-1-agruenba@redhat.com>
+To:     Steve French <smfrench@gmail.com>
+Cc:     ronnie sahlberg <ronniesahlberg@gmail.com>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [SMB3][PATCH] fix copy_file_range when copying beyond end of
+ source file
+Message-ID: <20190620045211.GU14363@dread.disaster.area>
+References: <CAH2r5ms8f_wTwBVofvdRF=tNH2NJHvJC6sWYCJyG6E5PVGTwZQ@mail.gmail.com>
+ <CAN05THSoKCKCFXkzfSiKC0XUb3R1S3B9nc2b9B+8ksKDn+NE_A@mail.gmail.com>
+ <CAH2r5mu0kZFhOyg3sXw6NVaAjyVGKuNdRGP=r_MoKqtJSqXJbw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190618144716.8133-1-agruenba@redhat.com>
+In-Reply-To: <CAH2r5mu0kZFhOyg3sXw6NVaAjyVGKuNdRGP=r_MoKqtJSqXJbw@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
         a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
         a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=uX0c4KQHmT7z40gRqxMA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=7-415B0cAAAA:8 a=UWJoro48fT9aPvQt_DUA:9 a=Tx8gwBvrB81qvhLj:21
+        a=jfgipEjfrgx7MPLy:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 04:47:16PM +0200, Andreas Gruenbacher wrote:
-> Remove the mark_inode_dirty call from __generic_write_end and add it to
-> generic_write_end and the high-level iomap functions where necessary.
-> That way, large writes will only dirty inodes at the end instead of
-> dirtying them once per page.  This fixes a performance bottleneck on
-> gfs2.
-> 
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> ---
->  fs/buffer.c | 26 ++++++++++++++++++--------
->  fs/iomap.c  | 42 ++++++++++++++++++++++++++++++++++++++----
->  2 files changed, 56 insertions(+), 12 deletions(-)
+On Wed, Jun 19, 2019 at 10:19:30PM -0500, Steve French wrote:
+> Local file systems that I tried, seem to agree with xfstest and return
+> 0 if you try to copy beyond end of src file but do create a zero
+> length target file
 
-....
-
-> 
-> diff --git a/fs/iomap.c b/fs/iomap.c
-> index 23ef63fd1669..9454568a7f5e 100644
-> --- a/fs/iomap.c
-> +++ b/fs/iomap.c
-> @@ -881,6 +881,13 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *iter,
->  {
->  	struct inode *inode = iocb->ki_filp->f_mapping->host;
->  	loff_t pos = iocb->ki_pos, ret = 0, written = 0;
-> +	loff_t old_size;
-> +
-> +        /*
-> +	 * No need to use i_size_read() here, the i_size cannot change under us
-> +	 * because we hold i_rwsem.
-> +	 */
-> +	old_size = inode->i_size;
->  
->  	while (iov_iter_count(iter)) {
->  		ret = iomap_apply(inode, pos, iov_iter_count(iter),
-> @@ -891,6 +898,9 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *iter,
->  		written += ret;
->  	}
->  
-> +	if (old_size != inode->i_size)
-> +		mark_inode_dirty(inode);
-> +
->  	return written ? written : ret;
->  }
->  EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
-> @@ -961,18 +971,30 @@ int
->  iomap_file_dirty(struct inode *inode, loff_t pos, loff_t len,
->  		const struct iomap_ops *ops)
->  {
-> +	loff_t old_size;
->  	loff_t ret;
->  
-> +        /*
-> +	 * No need to use i_size_read() here, the i_size cannot change under us
-> +	 * because we hold i_rwsem.
-> +	 */
-> +	old_size = inode->i_size;
-> +
->  	while (len) {
->  		ret = iomap_apply(inode, pos, len, IOMAP_WRITE, ops, NULL,
->  				iomap_dirty_actor);
->  		if (ret <= 0)
-> -			return ret;
-> +			goto out;
->  		pos += ret;
->  		len -= ret;
->  	}
-> +	ret = 0;
->  
-> -	return 0;
-> +out:
-> +	if (old_size != inode->i_size)
-> +		mark_inode_dirty(inode);
-
-
-I don't think we want to do this.
-
-The patches I have that add range locking for XFS allow buffered
-writes to run concurrently with operations that change the inode
-size as long as the ranges don't overlap. To do this, XFS will not
-hold the i_rwsem over any iomap call it makes in future - it will
-hold a range lock instead. Hence we can have writes and other IO
-operations occurring at the same time some other operation is
-changing the size of the file, and that means this code no longer
-does what you are intending it to do because the inode->i_size is no
-longer constant across these operations...
-
-Hence I think adding code that depends on i_rwsem to be held to
-function correctly is the wrong direction to be taking the iomap
-infrastructure.
+The zero length target file that remains after cfr returns zero
+because src > EOF was not created by cfr.  i.e. the destination file
+has to be created by the application before cfr is called. Hence
+what you see here is the result of running cfr to an existing zero
+length file and copying zero bytes to it....
 
 Cheers,
 
