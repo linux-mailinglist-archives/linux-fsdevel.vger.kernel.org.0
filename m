@@ -2,59 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B9A24D53A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 19:28:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CE474D54B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 19:33:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732340AbfFTR2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jun 2019 13:28:30 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:6058 "EHLO
+        id S1726827AbfFTRdf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jun 2019 13:33:35 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:30960 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732342AbfFTR2Y (ORCPT
+        by vger.kernel.org with ESMTP id S1726551AbfFTRdf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:28:24 -0400
+        Thu, 20 Jun 2019 13:33:35 -0400
 Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KHKJbt001684
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2019 10:28:23 -0700
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KHKJdF001684;
+        Thu, 20 Jun 2019 10:33:29 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=hD2kmpWpjDtZ0Sd5qjALN5Ckzd1PVypTF/Ew4nsBLJo=;
- b=kTITvPU+VLMLvfdbMFDyZifEq4QY77unhvF7ZNsPRIYRVmsaTTAczOkMqjQbrW4KkNyx
- WRfB20b5+cNT/Nla5uSLnfp54+53I10+wQTxJ6BmSDrwxxjWvi59igHtflD1vYawgI+G
- 1bHjUCkL41VroygCaOla9CU8Q2cjtAL1Z0U= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2t7ur9kntm-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2019 10:28:23 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 20 Jun 2019 10:28:21 -0700
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 51AB362E2004; Thu, 20 Jun 2019 10:28:20 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
-        <kernel-team@fb.com>, <william.kucharski@oracle.com>,
-        <akpm@linux-foundation.org>, Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v4 6/6] mm,thp: avoid writes to file with THP in pagecache
-Date:   Thu, 20 Jun 2019 10:27:52 -0700
-Message-ID: <20190620172752.3300742-7-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190620172752.3300742-1-songliubraving@fb.com>
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=9JrVJbdBfSF0MhohJVF60W/ryo3IXTB4Ol2A9ONoUaQ=;
+ b=eWN2uOwtmbGhWQuYPGeSGgfyZjqRc4PagrJuvUHPrKdOG/G5PtH5uwIov4CWN93N8DPc
+ Inilz5WJOL8MUD+ru3aK2b4P8Na0z1cX4CfehW07AvCB9OjeGhOAgkC8qCF0UVHGC4UO
+ e1ZVh888AfLMcLB1mG0HOrLkzRm7vSmAUWU= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2t7ur9kpdr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jun 2019 10:33:29 -0700
+Received: from prn-mbx05.TheFacebook.com (2620:10d:c081:6::19) by
+ prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 20 Jun 2019 10:33:28 -0700
+Received: from prn-hub01.TheFacebook.com (2620:10d:c081:35::125) by
+ prn-mbx05.TheFacebook.com (2620:10d:c081:6::19) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 20 Jun 2019 10:33:28 -0700
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Thu, 20 Jun 2019 10:33:28 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9JrVJbdBfSF0MhohJVF60W/ryo3IXTB4Ol2A9ONoUaQ=;
+ b=onYFGFx/7QVExFlIXIoPqqq21GDz6DZzvMi8jkQ4JoZzS9Gap9kg3hL8gh+GRpscuR9MtbXFZqoNjPZGxY2Uevx73X+e5KcY58K0/V+usQPWVgDqS+A9kY9qEGkWJTCRCGXI8o4pTDaU36v7DGtRbe8AHlAjJM0eiea0Q8pSOrY=
+Received: from BYAPR15MB3479.namprd15.prod.outlook.com (20.179.60.19) by
+ BYAPR15MB2407.namprd15.prod.outlook.com (52.135.198.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.15; Thu, 20 Jun 2019 17:33:26 +0000
+Received: from BYAPR15MB3479.namprd15.prod.outlook.com
+ ([fe80::2569:19ec:512f:fda9]) by BYAPR15MB3479.namprd15.prod.outlook.com
+ ([fe80::2569:19ec:512f:fda9%5]) with mapi id 15.20.1987.014; Thu, 20 Jun 2019
+ 17:33:26 +0000
+From:   Rik van Riel <riel@fb.com>
+To:     Song Liu <songliubraving@fb.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "Kernel Team" <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: [PATCH v4 5/6] mm,thp: add read-only THP support for (non-shmem)
+ FS
+Thread-Topic: [PATCH v4 5/6] mm,thp: add read-only THP support for (non-shmem)
+ FS
+Thread-Index: AQHVJ43LQE1pNmPhcUCBRrcpB6GfjqakzWUA
+Date:   Thu, 20 Jun 2019 17:33:25 +0000
+Message-ID: <b9db545fdb5058831e48504ea4e4e0bcaaf36ff3.camel@fb.com>
 References: <20190620172752.3300742-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+         <20190620172752.3300742-6-songliubraving@fb.com>
+In-Reply-To: <20190620172752.3300742-6-songliubraving@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR1701CA0004.namprd17.prod.outlook.com
+ (2603:10b6:301:14::14) To BYAPR15MB3479.namprd15.prod.outlook.com
+ (2603:10b6:a03:112::19)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:180::1:f51]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b8eefe25-41ed-4e81-5540-08d6f5a5666f
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR15MB2407;
+x-ms-traffictypediagnostic: BYAPR15MB2407:
+x-microsoft-antispam-prvs: <BYAPR15MB2407D484950AD78D3C1F7C80A3E40@BYAPR15MB2407.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0074BBE012
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(39860400002)(136003)(366004)(376002)(189003)(199004)(229853002)(118296001)(5660300002)(4326008)(68736007)(102836004)(4744005)(2906002)(71190400001)(11346002)(486006)(46003)(110136005)(73956011)(36756003)(2201001)(478600001)(66446008)(71200400001)(99286004)(186003)(6486002)(8676002)(66556008)(54906003)(66946007)(2501003)(66476007)(6512007)(316002)(81166006)(6436002)(64756008)(6506007)(86362001)(446003)(81156014)(76176011)(25786009)(52116002)(476003)(256004)(6116002)(2616005)(6246003)(8936002)(14454004)(7736002)(53936002)(305945005)(386003)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2407;H:BYAPR15MB3479.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: /+JabLX0YE+oHbwXeCcgcSqMrYosKOPj8L6QXcH0cnqIEmpbObaq1097E7kQ6xze+LkRUnq76e7UQHO1nG1AoNgyhXG/trhnf57C4AwfRU/cGYNzk/5on2KAOHh5XLAolasq556g7f/yQCOB01eNKGgUeQJI9O1+cUAtVTDeg6IyKC+FIEFCq5ulJSZp0vef3+t6n+1HzKojebkfU6HSCLuxGziLO6smyy8ysIXQERCcLF6t0ZHI0gzXelnMFZRXSRldPpe7d/t/BUuovbScvx6HUACzVIf3boLtx9sEC0H7eEGaUym0xzSH//ZvVTMGDPphVa/Fhltzxh0qcNItgGmy4JSahxwuhLofEeWrBd3xbFOPK7SoJKXy0bXNTdt9WpEMhgOHusKQmvv4jlg20d8bl92iK2G95ni25GmGgck=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F260CBB187980D40AF5582D9C124341D@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8eefe25-41ed-4e81-5540-08d6f5a5666f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2019 17:33:26.0013
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: riel@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2407
+X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-20_12:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=792 adultscore=0 classifier=spam adjust=0 reason=mlx
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1906200124
 X-FB-Internal: deliver
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -62,148 +118,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In previous patch, an application could put part of its text section in
-THP via madvise(). These THPs will be protected from writes when the
-application is still running (TXTBSY). However, after the application
-exits, the file is available for writes.
-
-This patch avoids writes to file THP by dropping page cache for the file
-when the last vma with VM_DENYWRITE is removed. A new counter nr_thps is
-added to struct address_space. In exit_mmap(), if nr_thps is non-zero, we
-drop page cache for the whole file.
-
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- fs/inode.c         |  3 +++
- include/linux/fs.h | 31 +++++++++++++++++++++++++++++++
- mm/filemap.c       |  1 +
- mm/khugepaged.c    |  4 +++-
- mm/mmap.c          | 14 ++++++++++++++
- 5 files changed, 52 insertions(+), 1 deletion(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index df6542ec3b88..518113a4e219 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -181,6 +181,9 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- 	mapping->flags = 0;
- 	mapping->wb_err = 0;
- 	atomic_set(&mapping->i_mmap_writable, 0);
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_set(&mapping->nr_thps, 0);
-+#endif
- 	mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
- 	mapping->private_data = NULL;
- 	mapping->writeback_index = 0;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f7fdfe93e25d..3edf4ee42eee 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -444,6 +444,10 @@ struct address_space {
- 	struct xarray		i_pages;
- 	gfp_t			gfp_mask;
- 	atomic_t		i_mmap_writable;
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	/* number of thp, only for non-shmem files */
-+	atomic_t		nr_thps;
-+#endif
- 	struct rb_root_cached	i_mmap;
- 	struct rw_semaphore	i_mmap_rwsem;
- 	unsigned long		nrpages;
-@@ -2790,6 +2794,33 @@ static inline errseq_t filemap_sample_wb_err(struct address_space *mapping)
- 	return errseq_sample(&mapping->wb_err);
- }
- 
-+static inline int filemap_nr_thps(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	return atomic_read(&mapping->nr_thps);
-+#else
-+	return 0;
-+#endif
-+}
-+
-+static inline void filemap_nr_thps_inc(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_inc(&mapping->nr_thps);
-+#else
-+	WARN_ON_ONCE(1);
-+#endif
-+}
-+
-+static inline void filemap_nr_thps_dec(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_dec(&mapping->nr_thps);
-+#else
-+	WARN_ON_ONCE(1);
-+#endif
-+}
-+
- extern int vfs_fsync_range(struct file *file, loff_t start, loff_t end,
- 			   int datasync);
- extern int vfs_fsync(struct file *file, int datasync);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index e79ceccdc6df..a8e86c136381 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -205,6 +205,7 @@ static void unaccount_page_cache_page(struct address_space *mapping,
- 			__dec_node_page_state(page, NR_SHMEM_THPS);
- 	} else if (PageTransHuge(page)) {
- 		__dec_node_page_state(page, NR_FILE_THPS);
-+		filemap_nr_thps_dec(mapping);
- 	}
- 
- 	/*
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index fbcff5a1d65a..17ebe9da56ce 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1500,8 +1500,10 @@ static void collapse_file(struct vm_area_struct *vma,
- 
- 	if (is_shmem)
- 		__inc_node_page_state(new_page, NR_SHMEM_THPS);
--	else
-+	else {
- 		__inc_node_page_state(new_page, NR_FILE_THPS);
-+		filemap_nr_thps_inc(mapping);
-+	}
- 
- 	if (nr_none) {
- 		struct zone *zone = page_zone(new_page);
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 7e8c3e8ae75f..8094ce028d74 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3088,6 +3088,18 @@ int vm_brk(unsigned long addr, unsigned long len)
- }
- EXPORT_SYMBOL(vm_brk);
- 
-+static inline void release_file_thp(struct vm_area_struct *vma)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	struct file *file = vma->vm_file;
-+
-+	if (file && (vma->vm_flags & VM_DENYWRITE) &&
-+	    atomic_read(&file_inode(file)->i_writecount) == 0 &&
-+	    filemap_nr_thps(file_inode(file)->i_mapping))
-+		truncate_pagecache(file_inode(file), 0);
-+#endif
-+}
-+
- /* Release all mmaps. */
- void exit_mmap(struct mm_struct *mm)
- {
-@@ -3153,6 +3165,8 @@ void exit_mmap(struct mm_struct *mm)
- 	while (vma) {
- 		if (vma->vm_flags & VM_ACCOUNT)
- 			nr_accounted += vma_pages(vma);
-+
-+		release_file_thp(vma);
- 		vma = remove_vma(vma);
- 	}
- 	vm_unacct_memory(nr_accounted);
--- 
-2.17.1
-
+T24gVGh1LCAyMDE5LTA2LTIwIGF0IDEwOjI3IC0wNzAwLCBTb25nIExpdSB3cm90ZToNCj4gVGhp
+cyBwYXRjaCBpcyAoaG9wZWZ1bGx5KSB0aGUgZmlyc3Qgc3RlcCB0byBlbmFibGUgVEhQIGZvciBu
+b24tc2htZW0NCj4gZmlsZXN5c3RlbXMuDQo+IA0KPiBUaGlzIHBhdGNoIGVuYWJsZXMgYW4gYXBw
+bGljYXRpb24gdG8gcHV0IHBhcnQgb2YgaXRzIHRleHQgc2VjdGlvbnMgdG8NCj4gVEhQDQo+IHZp
+YSBtYWR2aXNlLCBmb3IgZXhhbXBsZToNCj4gDQo+ICAgICBtYWR2aXNlKCh2b2lkICopMHg2MDAw
+MDAsIDB4MjAwMDAwLCBNQURWX0hVR0VQQUdFKTsNCj4gDQo+IFdlIHRyaWVkIHRvIHJldXNlIHRo
+ZSBsb2dpYyBmb3IgVEhQIG9uIHRtcGZzLg0KPiANCj4gQ3VycmVudGx5LCB3cml0ZSBpcyBub3Qg
+c3VwcG9ydGVkIGZvciBub24tc2htZW0gVEhQLiBraHVnZXBhZ2VkIHdpbGwNCj4gb25seQ0KPiBw
+cm9jZXNzIHZtYSB3aXRoIFZNX0RFTllXUklURS4gVGhlIG5leHQgcGF0Y2ggd2lsbCBoYW5kbGUg
+d3JpdGVzLA0KPiB3aGljaA0KPiB3b3VsZCBvbmx5IGhhcHBlbiB3aGVuIHRoZSB2bWEgd2l0aCBW
+TV9ERU5ZV1JJVEUgaXMgdW5tYXBwZWQuDQo+IA0KPiBBbiBFWFBFUklNRU5UQUwgY29uZmlnLCBS
+RUFEX09OTFlfVEhQX0ZPUl9GUywgaXMgYWRkZWQgdG8gZ2F0ZSB0aGlzDQo+IGZlYXR1cmUuDQo+
+IA0KPiBTaWduZWQtb2ZmLWJ5OiBTb25nIExpdSA8c29uZ2xpdWJyYXZpbmdAZmIuY29tPg0KDQpB
+Y2tlZC1ieTogUmlrIHZhbiBSaWVsIDxyaWVsQHN1cnJpZWwuY29tPg0KDQooSSBzdXBwb3NlIEkg
+c2hvdWxkIGhhdmUgc2VudCB0aGlzIG91dCBsYXN0IG5pZ2h0LA0Kd2hpbGUgSSB3YXMgcG9zdGlu
+ZyBxdWVzdGlvbnMgYWJvdXQgcGF0Y2ggNikNCg0K
