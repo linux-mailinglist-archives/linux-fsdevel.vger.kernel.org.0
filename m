@@ -2,120 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB90C4C990
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 10:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6381C4CACA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 11:26:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725966AbfFTIgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jun 2019 04:36:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36090 "EHLO mx1.suse.de"
+        id S1730494AbfFTJZy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jun 2019 05:25:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46702 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725877AbfFTIgb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jun 2019 04:36:31 -0400
+        id S1725875AbfFTJZx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Jun 2019 05:25:53 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0758CAC63;
-        Thu, 20 Jun 2019 08:36:29 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 771EBAD76;
+        Thu, 20 Jun 2019 09:25:52 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id A8E141E434D; Thu, 20 Jun 2019 10:36:28 +0200 (CEST)
-Date:   Thu, 20 Jun 2019 10:36:28 +0200
+        id 13B0E1E434D; Thu, 20 Jun 2019 11:25:52 +0200 (CEST)
+Date:   Thu, 20 Jun 2019 11:25:52 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Liu Bo <obuil.liubo@gmail.com>
-Cc:     willy@infradead.org, dan.j.williams@intel.com,
-        Fengguang Wu <fengguang.wu@intel.com>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org
-Subject: Re: a few questions about pagevc_lookup_entries
-Message-ID: <20190620083628.GH13630@quack2.suse.cz>
-References: <CANQeFDCCGED3BR0oTpzQ75gtGpdGCw8FLf+kspBYytw3YteXAw@mail.gmail.com>
+To:     Ross Zwisler <zwisler@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Ross Zwisler <zwisler@google.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Fletcher Woodruff <fletcherw@google.com>,
+        Justin TerAvest <teravest@google.com>
+Subject: Re: [PATCH 1/3] mm: add filemap_fdatawait_range_keep_errors()
+Message-ID: <20190620092552.GK13630@quack2.suse.cz>
+References: <20190619172156.105508-1-zwisler@google.com>
+ <20190619172156.105508-2-zwisler@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANQeFDCCGED3BR0oTpzQ75gtGpdGCw8FLf+kspBYytw3YteXAw@mail.gmail.com>
+In-Reply-To: <20190619172156.105508-2-zwisler@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[added some relevant lists to CC - this can safe some people debugging by
-being able to google this discussion]
+On Wed 19-06-19 11:21:54, Ross Zwisler wrote:
+> In the spirit of filemap_fdatawait_range() and
+> filemap_fdatawait_keep_errors(), introduce
+> filemap_fdatawait_range_keep_errors() which both takes a range upon
+> which to wait and does not clear errors from the address space.
+> 
+> Signed-off-by: Ross Zwisler <zwisler@google.com>
 
-On Wed 19-06-19 15:57:38, Liu Bo wrote:
-> I found a weird dead loop within invalidate_inode_pages2_range, the
-> reason being that  pagevec_lookup_entries(index=1) returns an indices
-> array which has only one entry storing value 0, and this has led
-> invalidate_inode_pages2_range() to a dead loop, something like,
-> 
-> invalidate_inode_pages2_range()
->   -> while (pagevec_lookup_entries(index=1, indices))
->     ->  for (i = 0; i < pagevec_count(&pvec); i++) {
->       -> index = indices[0]; // index is set to 0
->       -> if (radix_tree_exceptional_entry(page)) {
->           -> if (!invalidate_exceptional_entry2()) //
->                   ->__dax_invalidate_mapping_entry // return 0
->                      -> // entry marked as PAGECACHE_TAG_DIRTY/TOWRITE
->                  ret = -EBUSY;
->           ->continue;
->           } // end of if (radix_tree_exceptional_entry(page))
->     -> index++; // index is set to 1
-> 
-> The following debug[1] proved the above analysis,  I was wondering if
-> this was a corner case that  pagevec_lookup_entries() allows or a
-> known bug that has been fixed upstream?
-> 
-> ps: the kernel in use is 4.19.30 (LTS).
+The patch looks good to me. You can add:
 
-Hum, the above trace suggests you are using DAX. Are you really? Because the
-stacktrace below shows we are working on fuse inode so that shouldn't
-really be DAX inode...
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
-> [1]:
-> $git diff
-> diff --git a/mm/truncate.c b/mm/truncate.c
-> index 71b65aab8077..82bfeeb53135 100644
-> --- a/mm/truncate.c
-> +++ b/mm/truncate.c
-> @@ -692,6 +692,7 @@ int invalidate_inode_pages2_range(struct
-> address_space *mapping,
->                         struct page *page = pvec.pages[i];
+> ---
+>  include/linux/fs.h |  2 ++
+>  mm/filemap.c       | 22 ++++++++++++++++++++++
+>  2 files changed, 24 insertions(+)
 > 
->                         /* We rely upon deletion not changing page->index */
-> +                       WARN_ONCE(index > indices[i], "index = %d
-> indices[%d]=%d\n", index, i, indices[i]);
->                         index = indices[i];
->                         if (index > end)
->                                 break;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index f7fdfe93e25d3..79fec8a8413f4 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2712,6 +2712,8 @@ extern int filemap_flush(struct address_space *);
+>  extern int filemap_fdatawait_keep_errors(struct address_space *mapping);
+>  extern int filemap_fdatawait_range(struct address_space *, loff_t lstart,
+>  				   loff_t lend);
+> +extern int filemap_fdatawait_range_keep_errors(struct address_space *mapping,
+> +		loff_t start_byte, loff_t end_byte);
+>  
+>  static inline int filemap_fdatawait(struct address_space *mapping)
+>  {
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index df2006ba0cfa5..e87252ca0835a 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -553,6 +553,28 @@ int filemap_fdatawait_range(struct address_space *mapping, loff_t start_byte,
+>  }
+>  EXPORT_SYMBOL(filemap_fdatawait_range);
+>  
+> +/**
+> + * filemap_fdatawait_range_keep_errors - wait for writeback to complete
+> + * @mapping:		address space structure to wait for
+> + * @start_byte:		offset in bytes where the range starts
+> + * @end_byte:		offset in bytes where the range ends (inclusive)
+> + *
+> + * Walk the list of under-writeback pages of the given address space in the
+> + * given range and wait for all of them.  Unlike filemap_fdatawait_range(),
+> + * this function does not clear error status of the address space.
+> + *
+> + * Use this function if callers don't handle errors themselves.  Expected
+> + * call sites are system-wide / filesystem-wide data flushers: e.g. sync(2),
+> + * fsfreeze(8)
+> + */
+> +int filemap_fdatawait_range_keep_errors(struct address_space *mapping,
+> +		loff_t start_byte, loff_t end_byte)
+> +{
+> +	__filemap_fdatawait_range(mapping, start_byte, end_byte);
+> +	return filemap_check_and_keep_errors(mapping);
+> +}
+> +EXPORT_SYMBOL(filemap_fdatawait_range_keep_errors);
+> +
+>  /**
+>   * file_fdatawait_range - wait for writeback to complete
+>   * @file:		file pointing to address space structure to wait for
+> -- 
+> 2.22.0.410.gd8fdbe21b5-goog
 > 
-> [  129.095383] ------------[ cut here ]------------
-> [  129.096164] index = 1 indices[0]=0
-> [  129.096786] WARNING: CPU: 0 PID: 3022 at mm/truncate.c:695
-> invalidate_inode_pages2_range+0x471/0x500
-> [  129.098234] Modules linked in:
-> [  129.098717] CPU: 0 PID: 3022 Comm: doio Not tainted 4.19.30+ #4
-> ...
-> [  129.101288] RIP: 0010:invalidate_inode_pages2_range+0x471/0x500
-> ...
-> [  129.114162] Call Trace:
-> [  129.114623]  ? __schedule+0x2ad/0x860
-> [  129.115214]  ? prepare_to_wait_event+0x80/0x140
-> [  129.115903]  ? finish_wait+0x3f/0x80
-> [  129.116452]  ? request_wait_answer+0x13d/0x210
-> [  129.117128]  ? remove_wait_queue+0x60/0x60
-> [  129.117757]  ? make_kgid+0x13/0x20
-> [  129.118277]  ? fuse_change_attributes_common+0x7d/0x130
-> [  129.119057]  ? fuse_change_attributes+0x8d/0x120
-> [  129.119754]  fuse_dentry_revalidate+0x2c5/0x300
-> [  129.120456]  lookup_fast+0x237/0x2b0
-> [  129.121018]  path_openat+0x15f/0x1380
-> [  129.121614]  ? generic_update_time+0x6b/0xd0
-> [  129.122316]  do_filp_open+0x91/0x100
-> [  129.122876]  do_sys_open+0x126/0x210
-> [  129.123453]  do_syscall_64+0x55/0x180
-> [  129.124036]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [  129.124820] RIP: 0033:0x7fbe0cd75e80
-> ...
-> [  129.134574] ---[ end trace c0fc0bbc5aebf0dc ]---
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
