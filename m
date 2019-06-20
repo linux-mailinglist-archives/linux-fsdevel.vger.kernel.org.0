@@ -2,164 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EBFE4D1CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 17:15:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D84E54D1DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 17:18:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfFTPPq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jun 2019 11:15:46 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44530 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726512AbfFTPPp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jun 2019 11:15:45 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8B25BEEF051135EFB448;
-        Thu, 20 Jun 2019 23:15:42 +0800 (CST)
-Received: from [127.0.0.1] (10.184.225.177) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 20 Jun 2019
- 23:15:33 +0800
-To:     <corbet@lwn.net>, <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-CC:     <akpm@linux-foundation.org>, <manfred@colorfullife.com>,
-        <jwilk@jwilk.net>, <dvyukov@google.com>, <feng.tang@intel.com>,
-        <sunilmut@microsoft.com>, <quentin.perret@arm.com>,
-        <linux@leemhuis.info>, <alex.popov@linux.com>,
-        <tglx@linutronix.de>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        "wangxiaogang (F)" <wangxiaogang3@huawei.com>,
-        "Zhoukang (A)" <zhoukang7@huawei.com>,
-        Mingfangsen <mingfangsen@huawei.com>, <tedheadster@gmail.com>,
-        Eric Dumazet <edumazet@google.com>
-From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Subject: [PATCH next] softirq: enable MAX_SOFTIRQ_TIME tuning with sysctl
- max_softirq_time_usecs
-Message-ID: <f274f85a-bbb6-3e32-b293-1d5d7f27a98f@huawei.com>
-Date:   Thu, 20 Jun 2019 23:14:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1731511AbfFTPSv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jun 2019 11:18:51 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:34862 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbfFTPSu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Jun 2019 11:18:50 -0400
+Received: by mail-io1-f65.google.com with SMTP id m24so648476ioo.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2019 08:18:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cjD1oM5q5tMvxLtnHLi6QjIV6Kzj0WhrdaBw8sxqP6E=;
+        b=KL5ut//fcz2BIKILaDyB8ohi01uo46BlAttcUNa51KKAK1tcFXFhC8SCH2ucE0+zu0
+         joRzLAIQOyAlR2Jt4XsZvDwQoJQxyJxF0Eha7wO+Lcc8hMsDmgZFzdjia1zGXgTCUqe+
+         R4q+jSRaCPpupw065Ncg6Ytj3OtHHyjuvu7rI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cjD1oM5q5tMvxLtnHLi6QjIV6Kzj0WhrdaBw8sxqP6E=;
+        b=cD/smk24eUe/xX8TElrtgHCyAl2E/fGKDzNwPTyM3zdaV4icyKJ1uGra5qRkV2cTtS
+         gspDi3IO6Fww+ok/6rsaKrXmVU5WcX9Qo+cShaHDZSPx0oajF1gvoTYszC0btIOtTrAd
+         JGnl780fgceiQ0uyj1TUapKuNx+y3qodyqMBat0AeINRGnMEoL4jgEP9CUWoYMW3SQKR
+         XqOrOA8hS+EVYVRaf3ewH5HcZ1LhB76S+sWWwlNy9JFf5S/5VxyvM6SNgnVERYQMO9Kp
+         hKMfzdpSwx8lLYG+vf48EyPXXz71F3dnMXHiM4Y/m9DiFU1p4KtjDBeVvIQBipVLX6Rm
+         LS+w==
+X-Gm-Message-State: APjAAAXgT82kmbNz0GXOpzhDU7m2F5zzEFXGk3Tqg89gMkIrYgRpFwx2
+        RY46eiww3XwQAsJOUlqZISL03Q==
+X-Google-Smtp-Source: APXvYqyhVkr7S5sXnpnoik5KXYCmAR287xq9lSFfhPvYClEQVEFY414UtXFLtAdnecBoub+5eQcwPg==
+X-Received: by 2002:a6b:641a:: with SMTP id t26mr5195793iog.3.1561043929997;
+        Thu, 20 Jun 2019 08:18:49 -0700 (PDT)
+Received: from localhost ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id c23sm140526iod.11.2019.06.20.08.18.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Jun 2019 08:18:49 -0700 (PDT)
+From:   Ross Zwisler <zwisler@chromium.org>
+X-Google-Original-From: Ross Zwisler <zwisler@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ross Zwisler <zwisler@google.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Fletcher Woodruff <fletcherw@google.com>,
+        Justin TerAvest <teravest@google.com>
+Subject: [PATCH v2 0/3] Add dirty range scoping to jbd2
+Date:   Thu, 20 Jun 2019 09:18:36 -0600
+Message-Id: <20190620151839.195506-1-zwisler@google.com>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.225.177]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Zhiqiang liu <liuzhiqiang26@huawei.com>
+Changes from v1:
+ - Relocated the code which resets dirty range upon transaction completion.
+   (Jan)
+ - Cc'd stable@vger.kernel.org because we see this issue with v4.14 and
+   v4.19 stable kernels in the field.
 
-In __do_softirq func, MAX_SOFTIRQ_TIME was set to 2ms via experimentation by
-commit c10d73671 ("softirq: reduce latencies") in 2013, which was designed
-to reduce latencies for various network workloads. The key reason is that the
-maximum number of microseconds in one NAPI polling cycle in net_rx_action func
-was set to 2 jiffies, so different HZ settting will lead to different latencies.
-
-However, commit 7acf8a1e8 ("Replace 2 jiffies with sysctl netdev_budget_usecs
-to enable softirq tuning") adopts netdev_budget_usecs to tun maximum number of
-microseconds in one NAPI polling cycle. So the latencies of net_rx_action can be
-controlled by sysadmins to copy with hardware changes over time.
-
-Correspondingly, the MAX_SOFTIRQ_TIME should be able to be tunned by sysadmins,
-who knows best about hardware performance, for excepted tradeoff between latence
-and fairness.
-
-Here, we add sysctl variable max_softirq_time_usecs to replace MAX_SOFTIRQ_TIME
-with 2ms default value.
-
-Signed-off-by: Zhiqiang liu <liuzhiqiang26@huawei.com>
 ---
- Documentation/sysctl/kernel.txt |  7 +++++++
- kernel/softirq.c                | 10 ++++++----
- kernel/sysctl.c                 |  9 +++++++++
- 3 files changed, 22 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
-index f0c86fbb3b48..647233faf896 100644
---- a/Documentation/sysctl/kernel.txt
-+++ b/Documentation/sysctl/kernel.txt
-@@ -44,6 +44,7 @@ show up in /proc/sys/kernel:
- - kexec_load_disabled
- - kptr_restrict
- - l2cr                        [ PPC only ]
-+- max_softirq_time_usecs
- - modprobe                    ==> Documentation/debugging-modules.txt
- - modules_disabled
- - msg_next_id		      [ sysv ipc ]
-@@ -445,6 +446,12 @@ This flag controls the L2 cache of G3 processor boards. If
+This patch series fixes the issue I described here:
 
- ==============================================================
+https://www.spinics.net/lists/linux-block/msg38274.html
 
-+max_softirq_time_usecs:
-+Maximum number of microseconds to break the loop of restarting softirq
-+processing for at most MAX_SOFTIRQ_RESTART times in __do_softirq().
-+
-+==============================================================
-+
- modules_disabled:
+Essentially the issue is that journal_finish_inode_data_buffers() operates
+on the entire address space of each of the inodes associated with a given
+journal entry.  This means that if we have an inode where we are constantly
+appending dirty pages we can end up waiting for an indefinite amount of
+time in journal_finish_inode_data_buffers().
 
- A toggle value indicating if modules are allowed to be loaded
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index a6b81c6b6bff..32f93d82e2e8 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -199,8 +199,9 @@ EXPORT_SYMBOL(__local_bh_enable_ip);
+This series improves this situation in ext4 by scoping each of the inode
+dirty ranges associated with a given transaction.  Other users of jbd2
+which don't (yet?) take advantage of this scoping (ocfs2) will continue to
+have the old behavior.
 
- /*
-  * We restart softirq processing for at most MAX_SOFTIRQ_RESTART times,
-- * but break the loop if need_resched() is set or after 2 ms.
-- * The MAX_SOFTIRQ_TIME provides a nice upper bound in most cases, but in
-+ * but break the loop if need_resched() is set or after
-+ * max_softirq_time_usecs usecs.
-+ * The max_softirq_time_usecs provides a nice upper bound in most cases, but in
-  * certain cases, such as stop_machine(), jiffies may cease to
-  * increment and so we need the MAX_SOFTIRQ_RESTART limit as
-  * well to make sure we eventually return from this method.
-@@ -210,7 +211,7 @@ EXPORT_SYMBOL(__local_bh_enable_ip);
-  * we want to handle softirqs as soon as possible, but they
-  * should not be able to lock up the box.
-  */
--#define MAX_SOFTIRQ_TIME  msecs_to_jiffies(2)
-+unsigned int __read_mostly max_softirq_time_usecs = 2000;
- #define MAX_SOFTIRQ_RESTART 10
+Ross Zwisler (3):
+  mm: add filemap_fdatawait_range_keep_errors()
+  jbd2: introduce jbd2_inode dirty range scoping
+  ext4: use jbd2_inode dirty range scoping
 
- #ifdef CONFIG_TRACE_IRQFLAGS
-@@ -248,7 +249,8 @@ static inline void lockdep_softirq_end(bool in_hardirq) { }
-
- asmlinkage __visible void __softirq_entry __do_softirq(void)
- {
--	unsigned long end = jiffies + MAX_SOFTIRQ_TIME;
-+	unsigned long end = jiffies +
-+		usecs_to_jiffies(max_softirq_time_usecs);
- 	unsigned long old_flags = current->flags;
- 	int max_restart = MAX_SOFTIRQ_RESTART;
- 	struct softirq_action *h;
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 1beca96fb625..db4bc18f84de 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -118,6 +118,7 @@ extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
- #ifndef CONFIG_MMU
- extern int sysctl_nr_trim_pages;
- #endif
-+extern unsigned int max_softirq_time_usecs;
-
- /* Constants used for minimum and  maximum */
- #ifdef CONFIG_LOCKUP_DETECTOR
-@@ -1276,6 +1277,14 @@ static struct ctl_table kern_table[] = {
- 		.extra2		= &one,
- 	},
- #endif
-+	{
-+		.procname	= "max_softirq_time_usecs",
-+		.data		= &max_softirq_time_usecs,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler   = proc_dointvec_minmax,
-+		.extra1		= &zero,
-+	},
- 	{ }
- };
+ fs/ext4/ext4_jbd2.h   | 12 +++++------
+ fs/ext4/inode.c       | 13 +++++++++---
+ fs/ext4/move_extent.c |  3 ++-
+ fs/jbd2/commit.c      | 23 ++++++++++++++------
+ fs/jbd2/journal.c     |  2 ++
+ fs/jbd2/transaction.c | 49 ++++++++++++++++++++++++-------------------
+ include/linux/fs.h    |  2 ++
+ include/linux/jbd2.h  | 22 +++++++++++++++++++
+ mm/filemap.c          | 22 +++++++++++++++++++
+ 9 files changed, 111 insertions(+), 37 deletions(-)
 
 -- 
-2.19.1
+2.22.0.410.gd8fdbe21b5-goog
 
