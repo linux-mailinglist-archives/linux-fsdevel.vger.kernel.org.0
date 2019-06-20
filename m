@@ -2,152 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E77F84D1B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 17:09:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EBFE4D1CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 17:15:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731567AbfFTPJQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jun 2019 11:09:16 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38830 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbfFTPJP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jun 2019 11:09:15 -0400
-Received: by mail-io1-f67.google.com with SMTP id j6so2360453ioa.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2019 08:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ewdhs5LHMjOeAYyn48UrmEBDkixoi9wUic5LA0EV24E=;
-        b=JdvJwEXrYAnx5AAC+XXXCNKVU113R27SbHcmaFh10XoeJ19jse9UlgQHUgP9Dbs/Ly
-         L5gsnLoUu69tMP0wH9tzzv14tw9rZx8tP97CUVrh25VbPy/chgSW/u87CuNuhB99D0ob
-         Jzxea/k/UXe+JdQrG5HCVGXJ7MwB+foaI17QqOx5S+HDW8qAMFIwEImkYuYp4+F+/pbb
-         ps+qGPCzBctzDiyTzmyWhPDKhpeBzqb9KiXlkgIFz/GzkJZl5P6q2rcOg5mf0hdnnvbK
-         xq4nHwF21difWFt9jzn8/KwkphqxT7Rj2JbfX2TwfWZhWPUsPMs6hx/0kOrsaq+6o/GK
-         O02Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ewdhs5LHMjOeAYyn48UrmEBDkixoi9wUic5LA0EV24E=;
-        b=oSweAqqJry0LzqNluOJ5z+eefvsG1+T0uR8BShjdzZJ1b+HVfKn8dM80KmVK/UvXXG
-         tr3RICX+zoF2WIVKUCu1pKyxoYsie2dGQMdDteN2OliKKM4S4cqjjXW+Sk4depKrmR8Q
-         1XI2Qpn+hLO+l7Xv/eFLMi5jGWyavNHI8CYrumLPJmY+lT2b/ThHbotNkh3BzNSbSq58
-         ghk0yBW0SGPqmw1JImPv/lla0OjTugIm6qowDR8vcuE/dOBZUGtjiXwRxavp3dv/bg+0
-         W7PwAnR3pckUSVJBFyRp1FAFMV3CdgGPBe7gPiXLIXrzML/MJBgYNSdzPEjTaQ01OP+e
-         RBIw==
-X-Gm-Message-State: APjAAAVl11XimEIYPEN7rTIztpAUxXSRKmyYHt8JzRkwCDj9RuqEI1hG
-        2mj5wMBAd+m22MUMib6PC+SUfw==
-X-Google-Smtp-Source: APXvYqx5OhNQGc/cowc4jUU7ZK9aKOWQfczrnZebKrjxu3Ng1Qb+wjCWeQXoL4sJ7gt1IrioslXb3g==
-X-Received: by 2002:a6b:3883:: with SMTP id f125mr89642441ioa.109.1561043354165;
-        Thu, 20 Jun 2019 08:09:14 -0700 (PDT)
-Received: from google.com ([2620:15c:183:200:855f:8919:84a7:4794])
-        by smtp.gmail.com with ESMTPSA id w23sm52147ioa.51.2019.06.20.08.09.12
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 20 Jun 2019 08:09:13 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 09:09:11 -0600
-From:   Ross Zwisler <zwisler@google.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Ross Zwisler <zwisler@chromium.org>, linux-kernel@vger.kernel.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Fletcher Woodruff <fletcherw@google.com>,
-        Justin TerAvest <teravest@google.com>
-Subject: Re: [PATCH 2/3] jbd2: introduce jbd2_inode dirty range scoping
-Message-ID: <20190620150911.GA4488@google.com>
-References: <20190619172156.105508-1-zwisler@google.com>
- <20190619172156.105508-3-zwisler@google.com>
- <20190620110454.GL13630@quack2.suse.cz>
+        id S1726940AbfFTPPq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jun 2019 11:15:46 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44530 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726512AbfFTPPp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Jun 2019 11:15:45 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8B25BEEF051135EFB448;
+        Thu, 20 Jun 2019 23:15:42 +0800 (CST)
+Received: from [127.0.0.1] (10.184.225.177) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 20 Jun 2019
+ 23:15:33 +0800
+To:     <corbet@lwn.net>, <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+CC:     <akpm@linux-foundation.org>, <manfred@colorfullife.com>,
+        <jwilk@jwilk.net>, <dvyukov@google.com>, <feng.tang@intel.com>,
+        <sunilmut@microsoft.com>, <quentin.perret@arm.com>,
+        <linux@leemhuis.info>, <alex.popov@linux.com>,
+        <tglx@linutronix.de>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        "wangxiaogang (F)" <wangxiaogang3@huawei.com>,
+        "Zhoukang (A)" <zhoukang7@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>, <tedheadster@gmail.com>,
+        Eric Dumazet <edumazet@google.com>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Subject: [PATCH next] softirq: enable MAX_SOFTIRQ_TIME tuning with sysctl
+ max_softirq_time_usecs
+Message-ID: <f274f85a-bbb6-3e32-b293-1d5d7f27a98f@huawei.com>
+Date:   Thu, 20 Jun 2019 23:14:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190620110454.GL13630@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.225.177]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 01:04:54PM +0200, Jan Kara wrote:
-> On Wed 19-06-19 11:21:55, Ross Zwisler wrote:
-> > Currently both journal_submit_inode_data_buffers() and
-> > journal_finish_inode_data_buffers() operate on the entire address space
-> > of each of the inodes associated with a given journal entry.  The
-> > consequence of this is that if we have an inode where we are constantly
-> > appending dirty pages we can end up waiting for an indefinite amount of
-> > time in journal_finish_inode_data_buffers() while we wait for all the
-> > pages under writeback to be written out.
-> > 
-> > The easiest way to cause this type of workload is do just dd from
-> > /dev/zero to a file until it fills the entire filesystem.  This can
-> > cause journal_finish_inode_data_buffers() to wait for the duration of
-> > the entire dd operation.
-> > 
-> > We can improve this situation by scoping each of the inode dirty ranges
-> > associated with a given transaction.  We do this via the jbd2_inode
-> > structure so that the scoping is contained within jbd2 and so that it
-> > follows the lifetime and locking rules for that structure.
-> > 
-> > This allows us to limit the writeback & wait in
-> > journal_submit_inode_data_buffers() and
-> > journal_finish_inode_data_buffers() respectively to the dirty range for
-> > a given struct jdb2_inode, keeping us from waiting forever if the inode
-> > in question is still being appended to.
-> > 
-> > Signed-off-by: Ross Zwisler <zwisler@google.com>
-> 
-> The patch looks good to me. I was thinking whether we should not have
-> separate ranges for current and the next transaction but I guess it is not
-> worth it at least for now. So just one nit below. With that applied feel free
-> to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+From: Zhiqiang liu <liuzhiqiang26@huawei.com>
 
-We could definitely keep separate dirty ranges for each of the current and
-next transaction.  I think the case where you would see a difference would be
-if you had multiple transactions in a row which grew the dirty range for a
-given jbd2_inode, and then had a random I/O workload which kept dirtying pages
-inside that enlarged dirty range.
+In __do_softirq func, MAX_SOFTIRQ_TIME was set to 2ms via experimentation by
+commit c10d73671 ("softirq: reduce latencies") in 2013, which was designed
+to reduce latencies for various network workloads. The key reason is that the
+maximum number of microseconds in one NAPI polling cycle in net_rx_action func
+was set to 2 jiffies, so different HZ settting will lead to different latencies.
 
-I'm not sure how often this type of workload would be a problem.  For the
-workloads I've been testing which purely append to the inode, having a single
-dirty range per jbd2_inode is sufficient.
+However, commit 7acf8a1e8 ("Replace 2 jiffies with sysctl netdev_budget_usecs
+to enable softirq tuning") adopts netdev_budget_usecs to tun maximum number of
+microseconds in one NAPI polling cycle. So the latencies of net_rx_action can be
+controlled by sysadmins to copy with hardware changes over time.
 
-I guess for now this single range seems simpler, but if later we find that
-someone would benefit from separate tracking for each of the current and next
-transactions, I'll take a shot at adding it.
+Correspondingly, the MAX_SOFTIRQ_TIME should be able to be tunned by sysadmins,
+who knows best about hardware performance, for excepted tradeoff between latence
+and fairness.
 
-Thank you for the review!
+Here, we add sysctl variable max_softirq_time_usecs to replace MAX_SOFTIRQ_TIME
+with 2ms default value.
 
-> > @@ -257,15 +262,24 @@ static int journal_finish_inode_data_buffers(journal_t *journal,
-> >  	/* For locking, see the comment in journal_submit_data_buffers() */
-> >  	spin_lock(&journal->j_list_lock);
-> >  	list_for_each_entry(jinode, &commit_transaction->t_inode_list, i_list) {
-> > +		loff_t dirty_start = jinode->i_dirty_start;
-> > +		loff_t dirty_end = jinode->i_dirty_end;
-> > +
-> >  		if (!(jinode->i_flags & JI_WAIT_DATA))
-> >  			continue;
-> >  		jinode->i_flags |= JI_COMMIT_RUNNING;
-> >  		spin_unlock(&journal->j_list_lock);
-> > -		err = filemap_fdatawait_keep_errors(
-> > -				jinode->i_vfs_inode->i_mapping);
-> > +		err = filemap_fdatawait_range_keep_errors(
-> > +				jinode->i_vfs_inode->i_mapping, dirty_start,
-> > +				dirty_end);
-> >  		if (!ret)
-> >  			ret = err;
-> >  		spin_lock(&journal->j_list_lock);
-> > +
-> > +		if (!jinode->i_next_transaction) {
-> > +			jinode->i_dirty_start = 0;
-> > +			jinode->i_dirty_end = 0;
-> > +		}
-> 
-> This would be more logical in the next loop that moves jinode into the next
-> transaction.
+Signed-off-by: Zhiqiang liu <liuzhiqiang26@huawei.com>
+---
+ Documentation/sysctl/kernel.txt |  7 +++++++
+ kernel/softirq.c                | 10 ++++++----
+ kernel/sysctl.c                 |  9 +++++++++
+ 3 files changed, 22 insertions(+), 4 deletions(-)
 
-Yep, agreed, this is much better.  Fixed in v2.
+diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
+index f0c86fbb3b48..647233faf896 100644
+--- a/Documentation/sysctl/kernel.txt
++++ b/Documentation/sysctl/kernel.txt
+@@ -44,6 +44,7 @@ show up in /proc/sys/kernel:
+ - kexec_load_disabled
+ - kptr_restrict
+ - l2cr                        [ PPC only ]
++- max_softirq_time_usecs
+ - modprobe                    ==> Documentation/debugging-modules.txt
+ - modules_disabled
+ - msg_next_id		      [ sysv ipc ]
+@@ -445,6 +446,12 @@ This flag controls the L2 cache of G3 processor boards. If
+
+ ==============================================================
+
++max_softirq_time_usecs:
++Maximum number of microseconds to break the loop of restarting softirq
++processing for at most MAX_SOFTIRQ_RESTART times in __do_softirq().
++
++==============================================================
++
+ modules_disabled:
+
+ A toggle value indicating if modules are allowed to be loaded
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index a6b81c6b6bff..32f93d82e2e8 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -199,8 +199,9 @@ EXPORT_SYMBOL(__local_bh_enable_ip);
+
+ /*
+  * We restart softirq processing for at most MAX_SOFTIRQ_RESTART times,
+- * but break the loop if need_resched() is set or after 2 ms.
+- * The MAX_SOFTIRQ_TIME provides a nice upper bound in most cases, but in
++ * but break the loop if need_resched() is set or after
++ * max_softirq_time_usecs usecs.
++ * The max_softirq_time_usecs provides a nice upper bound in most cases, but in
+  * certain cases, such as stop_machine(), jiffies may cease to
+  * increment and so we need the MAX_SOFTIRQ_RESTART limit as
+  * well to make sure we eventually return from this method.
+@@ -210,7 +211,7 @@ EXPORT_SYMBOL(__local_bh_enable_ip);
+  * we want to handle softirqs as soon as possible, but they
+  * should not be able to lock up the box.
+  */
+-#define MAX_SOFTIRQ_TIME  msecs_to_jiffies(2)
++unsigned int __read_mostly max_softirq_time_usecs = 2000;
+ #define MAX_SOFTIRQ_RESTART 10
+
+ #ifdef CONFIG_TRACE_IRQFLAGS
+@@ -248,7 +249,8 @@ static inline void lockdep_softirq_end(bool in_hardirq) { }
+
+ asmlinkage __visible void __softirq_entry __do_softirq(void)
+ {
+-	unsigned long end = jiffies + MAX_SOFTIRQ_TIME;
++	unsigned long end = jiffies +
++		usecs_to_jiffies(max_softirq_time_usecs);
+ 	unsigned long old_flags = current->flags;
+ 	int max_restart = MAX_SOFTIRQ_RESTART;
+ 	struct softirq_action *h;
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 1beca96fb625..db4bc18f84de 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -118,6 +118,7 @@ extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
+ #ifndef CONFIG_MMU
+ extern int sysctl_nr_trim_pages;
+ #endif
++extern unsigned int max_softirq_time_usecs;
+
+ /* Constants used for minimum and  maximum */
+ #ifdef CONFIG_LOCKUP_DETECTOR
+@@ -1276,6 +1277,14 @@ static struct ctl_table kern_table[] = {
+ 		.extra2		= &one,
+ 	},
+ #endif
++	{
++		.procname	= "max_softirq_time_usecs",
++		.data		= &max_softirq_time_usecs,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler   = proc_dointvec_minmax,
++		.extra1		= &zero,
++	},
+ 	{ }
+ };
+
+-- 
+2.19.1
+
