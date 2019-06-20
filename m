@@ -2,88 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74CAA4D0F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 16:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E77F84D1B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 17:09:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732020AbfFTOw5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jun 2019 10:52:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60284 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726675AbfFTOw5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jun 2019 10:52:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 327B0AE32;
-        Thu, 20 Jun 2019 14:52:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id AF6F01E434F; Thu, 20 Jun 2019 16:52:54 +0200 (CEST)
-Date:   Thu, 20 Jun 2019 16:52:54 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
+        id S1731567AbfFTPJQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jun 2019 11:09:16 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38830 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbfFTPJP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Jun 2019 11:09:15 -0400
+Received: by mail-io1-f67.google.com with SMTP id j6so2360453ioa.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jun 2019 08:09:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ewdhs5LHMjOeAYyn48UrmEBDkixoi9wUic5LA0EV24E=;
+        b=JdvJwEXrYAnx5AAC+XXXCNKVU113R27SbHcmaFh10XoeJ19jse9UlgQHUgP9Dbs/Ly
+         L5gsnLoUu69tMP0wH9tzzv14tw9rZx8tP97CUVrh25VbPy/chgSW/u87CuNuhB99D0ob
+         Jzxea/k/UXe+JdQrG5HCVGXJ7MwB+foaI17QqOx5S+HDW8qAMFIwEImkYuYp4+F+/pbb
+         ps+qGPCzBctzDiyTzmyWhPDKhpeBzqb9KiXlkgIFz/GzkJZl5P6q2rcOg5mf0hdnnvbK
+         xq4nHwF21difWFt9jzn8/KwkphqxT7Rj2JbfX2TwfWZhWPUsPMs6hx/0kOrsaq+6o/GK
+         O02Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ewdhs5LHMjOeAYyn48UrmEBDkixoi9wUic5LA0EV24E=;
+        b=oSweAqqJry0LzqNluOJ5z+eefvsG1+T0uR8BShjdzZJ1b+HVfKn8dM80KmVK/UvXXG
+         tr3RICX+zoF2WIVKUCu1pKyxoYsie2dGQMdDteN2OliKKM4S4cqjjXW+Sk4depKrmR8Q
+         1XI2Qpn+hLO+l7Xv/eFLMi5jGWyavNHI8CYrumLPJmY+lT2b/ThHbotNkh3BzNSbSq58
+         ghk0yBW0SGPqmw1JImPv/lla0OjTugIm6qowDR8vcuE/dOBZUGtjiXwRxavp3dv/bg+0
+         W7PwAnR3pckUSVJBFyRp1FAFMV3CdgGPBe7gPiXLIXrzML/MJBgYNSdzPEjTaQ01OP+e
+         RBIw==
+X-Gm-Message-State: APjAAAVl11XimEIYPEN7rTIztpAUxXSRKmyYHt8JzRkwCDj9RuqEI1hG
+        2mj5wMBAd+m22MUMib6PC+SUfw==
+X-Google-Smtp-Source: APXvYqx5OhNQGc/cowc4jUU7ZK9aKOWQfczrnZebKrjxu3Ng1Qb+wjCWeQXoL4sJ7gt1IrioslXb3g==
+X-Received: by 2002:a6b:3883:: with SMTP id f125mr89642441ioa.109.1561043354165;
+        Thu, 20 Jun 2019 08:09:14 -0700 (PDT)
+Received: from google.com ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id w23sm52147ioa.51.2019.06.20.08.09.12
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 20 Jun 2019 08:09:13 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 09:09:11 -0600
+From:   Ross Zwisler <zwisler@google.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Ross Zwisler <zwisler@chromium.org>, linux-kernel@vger.kernel.org,
         Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190620145254.GJ30243@quack2.suse.cz>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
- <20190607110426.GB12765@quack2.suse.cz>
- <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
- <20190608001036.GF14308@dread.disaster.area>
- <20190612123751.GD32656@bombadil.infradead.org>
- <20190613002555.GH14363@dread.disaster.area>
- <20190613152755.GI32656@bombadil.infradead.org>
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Fletcher Woodruff <fletcherw@google.com>,
+        Justin TerAvest <teravest@google.com>
+Subject: Re: [PATCH 2/3] jbd2: introduce jbd2_inode dirty range scoping
+Message-ID: <20190620150911.GA4488@google.com>
+References: <20190619172156.105508-1-zwisler@google.com>
+ <20190619172156.105508-3-zwisler@google.com>
+ <20190620110454.GL13630@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190613152755.GI32656@bombadil.infradead.org>
+In-Reply-To: <20190620110454.GL13630@quack2.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 13-06-19 08:27:55, Matthew Wilcox wrote:
-> On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
-> > e.g. Process A has an exclusive layout lease on file F. It does an
-> > IO to file F. The filesystem IO path checks that Process A owns the
-> > lease on the file and so skips straight through layout breaking
-> > because it owns the lease and is allowed to modify the layout. It
-> > then takes the inode metadata locks to allocate new space and write
-> > new data.
+On Thu, Jun 20, 2019 at 01:04:54PM +0200, Jan Kara wrote:
+> On Wed 19-06-19 11:21:55, Ross Zwisler wrote:
+> > Currently both journal_submit_inode_data_buffers() and
+> > journal_finish_inode_data_buffers() operate on the entire address space
+> > of each of the inodes associated with a given journal entry.  The
+> > consequence of this is that if we have an inode where we are constantly
+> > appending dirty pages we can end up waiting for an indefinite amount of
+> > time in journal_finish_inode_data_buffers() while we wait for all the
+> > pages under writeback to be written out.
 > > 
-> > Process B now tries to write to file F. The FS checks whether
-> > Process B owns a layout lease on file F. It doesn't, so then it
-> > tries to break the layout lease so the IO can proceed. The layout
-> > breaking code sees that process A has an exclusive layout lease
-> > granted, and so returns -ETXTBSY to process B - it is not allowed to
-> > break the lease and so the IO fails with -ETXTBSY.
+> > The easiest way to cause this type of workload is do just dd from
+> > /dev/zero to a file until it fills the entire filesystem.  This can
+> > cause journal_finish_inode_data_buffers() to wait for the duration of
+> > the entire dd operation.
+> > 
+> > We can improve this situation by scoping each of the inode dirty ranges
+> > associated with a given transaction.  We do this via the jbd2_inode
+> > structure so that the scoping is contained within jbd2 and so that it
+> > follows the lifetime and locking rules for that structure.
+> > 
+> > This allows us to limit the writeback & wait in
+> > journal_submit_inode_data_buffers() and
+> > journal_finish_inode_data_buffers() respectively to the dirty range for
+> > a given struct jdb2_inode, keeping us from waiting forever if the inode
+> > in question is still being appended to.
+> > 
+> > Signed-off-by: Ross Zwisler <zwisler@google.com>
 > 
-> This description doesn't match the behaviour that RDMA wants either.
-> Even if Process A has a lease on the file, an IO from Process A which
-> results in blocks being freed from the file is going to result in the
-> RDMA device being able to write to blocks which are now freed (and
-> potentially reallocated to another file).
+> The patch looks good to me. I was thinking whether we should not have
+> separate ranges for current and the next transaction but I guess it is not
+> worth it at least for now. So just one nit below. With that applied feel free
+> to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-I think you're partially wrong here. You are correct that the lease won't
-stop process A from doing truncate on the file. *But* there are still page
-pins in existence so truncate will block on waiting for these pins to go
-away (after all this is a protection that guards all short-term page pin
-users). So there is no problem with blocks being freed under the RDMA app.
-Yes, the app will effectively deadlock and sysadmin has to kill it. IMO an
-acceptable answer for doing something stupid and unsupportable...
+We could definitely keep separate dirty ranges for each of the current and
+next transaction.  I think the case where you would see a difference would be
+if you had multiple transactions in a row which grew the dirty range for a
+given jbd2_inode, and then had a random I/O workload which kept dirtying pages
+inside that enlarged dirty range.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I'm not sure how often this type of workload would be a problem.  For the
+workloads I've been testing which purely append to the inode, having a single
+dirty range per jbd2_inode is sufficient.
+
+I guess for now this single range seems simpler, but if later we find that
+someone would benefit from separate tracking for each of the current and next
+transactions, I'll take a shot at adding it.
+
+Thank you for the review!
+
+> > @@ -257,15 +262,24 @@ static int journal_finish_inode_data_buffers(journal_t *journal,
+> >  	/* For locking, see the comment in journal_submit_data_buffers() */
+> >  	spin_lock(&journal->j_list_lock);
+> >  	list_for_each_entry(jinode, &commit_transaction->t_inode_list, i_list) {
+> > +		loff_t dirty_start = jinode->i_dirty_start;
+> > +		loff_t dirty_end = jinode->i_dirty_end;
+> > +
+> >  		if (!(jinode->i_flags & JI_WAIT_DATA))
+> >  			continue;
+> >  		jinode->i_flags |= JI_COMMIT_RUNNING;
+> >  		spin_unlock(&journal->j_list_lock);
+> > -		err = filemap_fdatawait_keep_errors(
+> > -				jinode->i_vfs_inode->i_mapping);
+> > +		err = filemap_fdatawait_range_keep_errors(
+> > +				jinode->i_vfs_inode->i_mapping, dirty_start,
+> > +				dirty_end);
+> >  		if (!ret)
+> >  			ret = err;
+> >  		spin_lock(&journal->j_list_lock);
+> > +
+> > +		if (!jinode->i_next_transaction) {
+> > +			jinode->i_dirty_start = 0;
+> > +			jinode->i_dirty_end = 0;
+> > +		}
+> 
+> This would be more logical in the next loop that moves jinode into the next
+> transaction.
+
+Yep, agreed, this is much better.  Fixed in v2.
