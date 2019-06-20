@@ -2,126 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F9FC4C407
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 01:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E30294C462
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 02:15:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730020AbfFSXQa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jun 2019 19:16:30 -0400
-Received: from ushosting.nmnhosting.com ([66.55.73.32]:42028 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfFSXQ3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jun 2019 19:16:29 -0400
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 5F37E2DC005B;
-        Wed, 19 Jun 2019 19:16:28 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1560986188;
-        bh=P+nFrCYIAy9nbAT3inDjyh5Nu1AGlpkuYDjYYSTo8SU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=UMKHysbwL4zdfy50KqutmgBEIg3sB7A1AG+8ItwZQtNEjbw3/kefwvZoa3HJ/qPue
-         FtHy3iQpmn+NaSFA3Mu2gOfCMETJuOCnHShThOrTrRi0524godGZCgjbLwEXdIrujV
-         xDt+bXPG551xLU30DowKCzCX4sh2ZLCYlpwKny3nSfu6TdTO04XxEEAerz4PtGaObB
-         mK5WkSsuK3ES4PAPxgZb+pSYtoFroMpH18T3PLybvLGSjfjyn/CtIMs+blM8XYmdPJ
-         TvkZW6Ca8pzYT9RsBfJRAJWjf4qfNG6J0j+xJvEaD7SP/MIMGo1VZ5d/zw4b3FdeYt
-         JetXAd65Zd6yavahdde3VtkKoryPECl8+glQZ+N2eRG9ycQ1RafCdpTqdv72F0hGkL
-         4apz6zp0SeF0J1KA9qT4u68PJKa7dlMEnKXEomd5VE+2hLj+H2XT6HltLJdB5+pK9G
-         cMe1+bLK+ayAWxIXuyZ1/r/oJ5pzAFraInvomTVKBkCfLFy8CdlSIihUmPfej/4psJ
-         72/lVeYRJl+IifxxJ9hEA9A+QWlY8W986ROsAQ5xOTxmaRzXMnnZRdFLVPZt5axFGD
-         EQ+IOd3b5ZUWjk3U7T3wAvcchJQaqLNw/Njxg2yMVkYsKSYnAMuX4DYn+A7LJX3oLF
-         sv3nSS3HZsRxp6mS1j36fWkI=
-Received: from adsilva.ozlabs.ibm.com (static-82-10.transact.net.au [122.99.82.10] (may be forged))
-        (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x5JNFxcT078663
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Jun 2019 09:16:14 +1000 (AEST)
-        (envelope-from alastair@d-silva.org)
-Message-ID: <c68cb819257f251cbb66f8998a95c31cebe2d72e.camel@d-silva.org>
-Subject: Re: [PATCH v3 0/7] Hexdump Enhancements
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Stanislaw Gruszka <sgruszka@redhat.com>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
-Date:   Thu, 20 Jun 2019 09:15:58 +1000
-In-Reply-To: <9a000734375c0801fc16b71f4be1235f9b857772.camel@perches.com>
-References: <20190617020430.8708-1-alastair@au1.ibm.com>
-         <9a000734375c0801fc16b71f4be1235f9b857772.camel@perches.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        id S1730747AbfFTAP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jun 2019 20:15:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56078 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726479AbfFTAP2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Jun 2019 20:15:28 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93426218BE;
+        Thu, 20 Jun 2019 00:15:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560989726;
+        bh=Cyw3CS4Us7cHDynulRLePwpLSsuY8ho08g4vXgTjDFM=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=uxkDxyYpF7laGQMQdbheNapqj0FQjS0o/hFsG69mDV7yMnicTh9sX+q1GYO8mfbwg
+         E1z69sHUGBcQdsi2WlYDYbSc4B2+s17Nz6qJQoCAMJgUsjAbryk7FV2ai2kP081uXc
+         0hRlrWl2NbES9/L1UjKNP/E97FgjeS8RMgUcodoM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Thu, 20 Jun 2019 09:16:24 +1000 (AEST)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190617082613.109131-2-brendanhiggins@google.com>
+References: <20190617082613.109131-1-brendanhiggins@google.com> <20190617082613.109131-2-brendanhiggins@google.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        peterz@infradead.org, robh@kernel.org, shuah@kernel.org,
+        tytso@mit.edu, yamada.masahiro@socionext.com
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v5 01/18] kunit: test: add KUnit test runner core
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
+        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
+        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
+        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
+        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>
+User-Agent: alot/0.8.1
+Date:   Wed, 19 Jun 2019 17:15:25 -0700
+Message-Id: <20190620001526.93426218BE@mail.kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2019-06-19 at 09:31 -0700, Joe Perches wrote:
-> On Mon, 2019-06-17 at 12:04 +1000, Alastair D'Silva wrote:
-> > From: Alastair D'Silva <alastair@d-silva.org>
-> > 
-> > Apologies for the large CC list, it's a heads up for those
-> > responsible
-> > for subsystems where a prototype change in generic code causes a
-> > change
-> > in those subsystems.
-> > 
-> > This series enhances hexdump.
-> 
-> Still not a fan of these patches.
+Quoting Brendan Higgins (2019-06-17 01:25:56)
+> diff --git a/kunit/test.c b/kunit/test.c
+> new file mode 100644
+> index 0000000000000..d05d254f1521f
+> --- /dev/null
+> +++ b/kunit/test.c
+> @@ -0,0 +1,210 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Base unit test (KUnit) API.
+> + *
+> + * Copyright (C) 2019, Google LLC.
+> + * Author: Brendan Higgins <brendanhiggins@google.com>
+> + */
+> +
+> +#include <linux/sched/debug.h>
+> +#include <kunit/test.h>
+> +
+> +static bool kunit_get_success(struct kunit *test)
+> +{
+> +       unsigned long flags;
+> +       bool success;
+> +
+> +       spin_lock_irqsave(&test->lock, flags);
+> +       success =3D test->success;
+> +       spin_unlock_irqrestore(&test->lock, flags);
 
-I'm afraid there's not too much action I can take on that, I'm happy to
-address specific issues though.
+I still don't understand the locking scheme in this code. Is the
+intention to make getter and setter APIs that are "safe" by adding in a
+spinlock that is held around getting and setting various members in the
+kunit structure?
 
-> 
-> > These improve the readability of the dumped data in certain
-> > situations
-> > (eg. wide terminals are available, many lines of empty bytes exist,
-> > etc).
-> 
-> Changing hexdump's last argument from bool to int is odd.
-> 
+In what situation is there more than one thread reading or writing the
+kunit struct? Isn't it only a single process that is going to be
+operating on this structure? And why do we need to disable irqs? Are we
+expecting to be modifying the unit tests from irq contexts?
 
-Think of it as replacing a single boolean with many booleans.
+> +
+> +       return success;
+> +}
+> +
+> +static void kunit_set_success(struct kunit *test, bool success)
+> +{
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&test->lock, flags);
+> +       test->success =3D success;
+> +       spin_unlock_irqrestore(&test->lock, flags);
+> +}
+> +
+> +static int kunit_vprintk_emit(int level, const char *fmt, va_list args)
+> +{
+> +       return vprintk_emit(0, level, NULL, 0, fmt, args);
+> +}
+> +
+> +static int kunit_printk_emit(int level, const char *fmt, ...)
+> +{
+> +       va_list args;
+> +       int ret;
+> +
+> +       va_start(args, fmt);
+> +       ret =3D kunit_vprintk_emit(level, fmt, args);
+> +       va_end(args);
+> +
+> +       return ret;
+> +}
+> +
+> +static void kunit_vprintk(const struct kunit *test,
+> +                         const char *level,
+> +                         struct va_format *vaf)
+> +{
+> +       kunit_printk_emit(level[1] - '0', "\t# %s: %pV", test->name, vaf);
+> +}
+> +
+> +static bool kunit_has_printed_tap_version;
 
-> Perhaps a new function should be added instead of changing
-> the existing hexdump.
-> 
+Can you please move this into function local scope in the function
+below?
 
-There's only a handful of consumers, I don't think there is a value-add 
-in creating more wrappers vs updating the existing callers.
+> +
+> +static void kunit_print_tap_version(void)
+> +{
+> +       if (!kunit_has_printed_tap_version) {
+> +               kunit_printk_emit(LOGLEVEL_INFO, "TAP version 14\n");
+> +               kunit_has_printed_tap_version =3D true;
+> +       }
+> +}
+> +
+[...]
+> +
+> +static bool kunit_module_has_succeeded(struct kunit_module *module)
+> +{
+> +       const struct kunit_case *test_case;
+> +       bool success =3D true;
+> +
+> +       for (test_case =3D module->test_cases; test_case->run_case; test_=
+case++)
+> +               if (!test_case->success) {
+> +                       success =3D false;
+> +                       break;
 
--- 
-Alastair D'Silva           mob: 0423 762 819
-skype: alastair_dsilva    
-Twitter: @EvilDeece
-blog: http://alastair.d-silva.org
+Why not 'return false'?
 
+> +               }
+> +
+> +       return success;
 
+And 'return true'?
+
+> +}
+> +
+> +static size_t kunit_module_counter =3D 1;
+> +
+> +static void kunit_print_subtest_end(struct kunit_module *module)
+> +{
+> +       kunit_print_ok_not_ok(false,
+> +                             kunit_module_has_succeeded(module),
+> +                             kunit_module_counter++,
+> +                             module->name);
+> +}
+> +
+> +static void kunit_print_test_case_ok_not_ok(struct kunit_case *test_case,
+> +                                           size_t test_number)
+> +{
+> +       kunit_print_ok_not_ok(true,
+> +                             test_case->success,
+> +                             test_number,
+> +                             test_case->name);
+> +}
+> +
+> +void kunit_init_test(struct kunit *test, const char *name)
+> +{
+> +       spin_lock_init(&test->lock);
+> +       test->name =3D name;
+> +       test->success =3D true;
+> +}
+> +
+> +/*
+> + * Performs all logic to run a test case.
+> + */
+> +static void kunit_run_case(struct kunit_module *module,
+> +                          struct kunit_case *test_case)
+> +{
+> +       struct kunit test;
+> +       int ret =3D 0;
+> +
+> +       kunit_init_test(&test, test_case->name);
+> +
+> +       if (module->init) {
+> +               ret =3D module->init(&test);
+> +               if (ret) {
+> +                       kunit_err(&test, "failed to initialize: %d\n", re=
+t);
+> +                       kunit_set_success(&test, false);
+> +                       return;
+> +               }
+> +       }
+> +
+> +       if (!ret)
+> +               test_case->run_case(&test);
+
+Do we need this if condition? ret can only be set to non-zero above but
+then we'll exit the function early so it seems unnecessary. Given that,
+ret should probably be moved into the module->init path.
+
+> +
+> +       if (module->exit)
+> +               module->exit(&test);
+> +
+> +       test_case->success =3D kunit_get_success(&test);
+> +}
+> +
