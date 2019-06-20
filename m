@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D89F14D2CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 18:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EED8B4D2C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jun 2019 18:08:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732126AbfFTQIe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jun 2019 12:08:34 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18655 "EHLO huawei.com"
+        id S1732178AbfFTQIi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jun 2019 12:08:38 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40166 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732024AbfFTQIa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jun 2019 12:08:30 -0400
+        id S1732109AbfFTQIh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Jun 2019 12:08:37 -0400
 Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 14EDC1AED2EF8F19B19C;
-        Fri, 21 Jun 2019 00:08:22 +0800 (CST)
+        by Forcepoint Email with ESMTP id 449B53B3F83A37D1C56A;
+        Fri, 21 Jun 2019 00:08:30 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 21 Jun
- 2019 00:08:15 +0800
+ 2019 00:08:16 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Chao Yu <yuchao0@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -25,9 +25,9 @@ CC:     <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>,
         Chao Yu <chao@kernel.org>, Fang Wei <fangwei1@huawei.com>,
         Miao Xie <miaoxie@huawei.com>, Du Wei <weidu.du@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 5/8] staging: erofs: introduce generic decompression backend
-Date:   Fri, 21 Jun 2019 00:07:16 +0800
-Message-ID: <20190620160719.240682-6-gaoxiang25@huawei.com>
+Subject: [PATCH v2 6/8] staging: erofs: introduce LZ4 decompression inplace
+Date:   Fri, 21 Jun 2019 00:07:17 +0800
+Message-ID: <20190620160719.240682-7-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190620160719.240682-1-gaoxiang25@huawei.com>
 References: <20190620160719.240682-1-gaoxiang25@huawei.com>
@@ -40,383 +40,108 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch adds a new generic decompression framework
-in order to replace the old LZ4-specific decompression code.
+compressed data will be usually loaded into last pages of
+the extent (the last page for 4k) for in-place decompression
+(more specifically, in-place IO), as ilustration below,
 
-Even though LZ4 is still the only supported algorithm, yet
-it is more cleaner and easy to integrate new algorithm than
-the old almost hard-coded decompression backend.
+         start of compressed logical extent
+           |                          end of this logical extent
+           |                           |
+     ______v___________________________v________
+... |  page 6  |  page 7  |  page 8  |  page 9  | ...
+    |__________|__________|__________|__________|
+           .                         ^ .        ^
+           .                         |compressed|
+           .                         |   data   |
+           .                           .        .
+           |<          dstsize        >|<margin>|
+                                       oend     iend
+           op                        ip
+
+Therefore, it's possible to do decompression inplace (thus no
+memcpy at all) if the margin is sufficient and safe enough [1],
+and it can be implemented only for fixed-size output compression
+compared with fixed-size input compression.
+
+No memcpy for most of in-place IO (about 99% of enwik9) after
+decompression inplace is implemented and sequential read will
+be improved of course (see the following patches for test results).
+
+[1] https://github.com/lz4/lz4/commit/b17f578a919b7e6b078cede2d52be29dd48c8e8c
+    https://github.com/lz4/lz4/commit/5997e139f53169fa3a1c1b4418d2452a90b01602
 
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/staging/erofs/Makefile       |   2 +-
- drivers/staging/erofs/compress.h     |  21 ++
- drivers/staging/erofs/decompressor.c | 307 +++++++++++++++++++++++++++
- 3 files changed, 329 insertions(+), 1 deletion(-)
- create mode 100644 drivers/staging/erofs/decompressor.c
+ drivers/staging/erofs/compress.h     |  1 +
+ drivers/staging/erofs/decompressor.c | 21 ++++++++++++++++++---
+ drivers/staging/erofs/erofs_fs.h     |  3 ++-
+ 3 files changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/erofs/Makefile b/drivers/staging/erofs/Makefile
-index 84b412c7a991..adeb5d6e2668 100644
---- a/drivers/staging/erofs/Makefile
-+++ b/drivers/staging/erofs/Makefile
-@@ -9,5 +9,5 @@ obj-$(CONFIG_EROFS_FS) += erofs.o
- ccflags-y += -I $(srctree)/$(src)/include
- erofs-objs := super.o inode.o data.o namei.o dir.o utils.o
- erofs-$(CONFIG_EROFS_FS_XATTR) += xattr.o
--erofs-$(CONFIG_EROFS_FS_ZIP) += unzip_vle.o unzip_vle_lz4.o zmap.o
-+erofs-$(CONFIG_EROFS_FS_ZIP) += unzip_vle.o unzip_vle_lz4.o zmap.o decompressor.o
- 
 diff --git a/drivers/staging/erofs/compress.h b/drivers/staging/erofs/compress.h
-index 1dcfc3b35118..ebeccb1f4eae 100644
+index ebeccb1f4eae..c43aa3374d28 100644
 --- a/drivers/staging/erofs/compress.h
 +++ b/drivers/staging/erofs/compress.h
-@@ -9,6 +9,24 @@
- #ifndef __EROFS_FS_COMPRESS_H
- #define __EROFS_FS_COMPRESS_H
+@@ -17,6 +17,7 @@ enum {
+ };
  
-+#include "internal.h"
-+
-+enum {
-+	Z_EROFS_COMPRESSION_SHIFTED = Z_EROFS_COMPRESSION_MAX,
-+	Z_EROFS_COMPRESSION_RUNTIME_MAX
-+};
-+
-+struct z_erofs_decompress_req {
-+	struct page **in, **out;
-+
-+	unsigned short pageofs_out;
-+	unsigned int inputsize, outputsize;
-+
-+	/* indicate the algorithm will be used for decompression */
-+	unsigned int alg;
-+	bool inplace_io, partial_decoding;
-+};
-+
- /*
-  * - 0x5A110C8D ('sallocated', Z_EROFS_MAPPING_STAGING) -
-  * used to mark temporary allocated pages from other
-@@ -36,5 +54,8 @@ static inline bool z_erofs_put_stagingpage(struct list_head *pagepool,
- 	return true;
- }
+ struct z_erofs_decompress_req {
++	struct super_block *sb;
+ 	struct page **in, **out;
  
-+int z_erofs_decompress(struct z_erofs_decompress_req *rq,
-+		       struct list_head *pagepool);
-+
+ 	unsigned short pageofs_out;
+diff --git a/drivers/staging/erofs/decompressor.c b/drivers/staging/erofs/decompressor.c
+index c68d17b579e0..689fb8ec7032 100644
+--- a/drivers/staging/erofs/decompressor.c
++++ b/drivers/staging/erofs/decompressor.c
+@@ -14,6 +14,9 @@
  #endif
  
-diff --git a/drivers/staging/erofs/decompressor.c b/drivers/staging/erofs/decompressor.c
-new file mode 100644
-index 000000000000..c68d17b579e0
---- /dev/null
-+++ b/drivers/staging/erofs/decompressor.c
-@@ -0,0 +1,307 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * linux/drivers/staging/erofs/decompressor.c
-+ *
-+ * Copyright (C) 2019 HUAWEI, Inc.
-+ *             http://www.huawei.com/
-+ * Created by Gao Xiang <gaoxiang25@huawei.com>
-+ */
-+#include "compress.h"
-+#include <linux/lz4.h>
-+
-+#ifndef LZ4_DISTANCE_MAX	/* history window size */
-+#define LZ4_DISTANCE_MAX 65535	/* set to maximum value by default */
+ #define LZ4_MAX_DISTANCE_PAGES	DIV_ROUND_UP(LZ4_DISTANCE_MAX, PAGE_SIZE)
++#ifndef LZ4_DECOMPRESS_INPLACE_MARGIN
++#define LZ4_DECOMPRESS_INPLACE_MARGIN(srcsize)  (((srcsize) >> 8) + 32)
 +#endif
+ 
+ struct z_erofs_decompressor {
+ 	/*
+@@ -132,9 +135,21 @@ static int lz4_decompress(struct z_erofs_decompress_req *rq, u8 *out)
+ 	copied = false;
+ 	inlen = rq->inputsize - inputmargin;
+ 	if (rq->inplace_io) {
+-		src = generic_copy_inplace_data(rq, src, inputmargin);
+-		inputmargin = 0;
+-		copied = true;
++		const uint oend = (rq->pageofs_out +
++				   rq->outputsize) & ~PAGE_MASK;
++		const uint nr = PAGE_ALIGN(rq->pageofs_out +
++					   rq->outputsize) >> PAGE_SHIFT;
 +
-+#define LZ4_MAX_DISTANCE_PAGES	DIV_ROUND_UP(LZ4_DISTANCE_MAX, PAGE_SIZE)
-+
-+struct z_erofs_decompressor {
-+	/*
-+	 * if destpages have sparsed pages, fill them with bounce pages.
-+	 * it also check whether destpages indicate continuous physical memory.
-+	 */
-+	int (*prepare_destpages)(struct z_erofs_decompress_req *rq,
-+				 struct list_head *pagepool);
-+	int (*decompress)(struct z_erofs_decompress_req *rq, u8 *out);
-+	char *name;
-+};
-+
-+static int lz4_prepare_destpages(struct z_erofs_decompress_req *rq,
-+				 struct list_head *pagepool)
-+{
-+	const unsigned int nr =
-+		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
-+	struct page *availables[LZ4_MAX_DISTANCE_PAGES] = { NULL };
-+	unsigned long unused[DIV_ROUND_UP(LZ4_MAX_DISTANCE_PAGES,
-+					  BITS_PER_LONG)] = { 0 };
-+	void *kaddr = NULL;
-+	unsigned int i, j, k;
-+
-+	for (i = 0; i < nr; ++i) {
-+		struct page *const page = rq->out[i];
-+
-+		j = i & (LZ4_MAX_DISTANCE_PAGES - 1);
-+		if (availables[j])
-+			__set_bit(j, unused);
-+
-+		if (page) {
-+			if (kaddr) {
-+				if (kaddr + PAGE_SIZE == page_address(page))
-+					kaddr += PAGE_SIZE;
-+				else
-+					kaddr = NULL;
-+			} else if (!i) {
-+				kaddr = page_address(page);
-+			}
-+			continue;
++		if (rq->partial_decoding ||
++		    !(EROFS_SB(rq->sb)->requirements &
++		      EROFS_REQUIREMENT_LZ4_0PADDING) ||
++		    rq->out[nr - 1] != rq->in[0] ||
++		    rq->inputsize - oend <
++		      LZ4_DECOMPRESS_INPLACE_MARGIN(inlen)) {
++			src = generic_copy_inplace_data(rq, src, inputmargin);
++			inputmargin = 0;
++			copied = true;
 +		}
-+		kaddr = NULL;
-+
-+		k = find_first_bit(unused, LZ4_MAX_DISTANCE_PAGES);
-+		if (k < LZ4_MAX_DISTANCE_PAGES) {
-+			j = k;
-+			get_page(availables[j]);
-+		} else {
-+			DBG_BUGON(availables[j]);
-+
-+			if (!list_empty(pagepool)) {
-+				availables[j] = lru_to_page(pagepool);
-+				list_del(&availables[j]->lru);
-+				DBG_BUGON(page_ref_count(availables[j]) != 1);
-+			} else {
-+				availables[j] = alloc_pages(GFP_KERNEL, 0);
-+				if (!availables[j])
-+					return -ENOMEM;
-+			}
-+			availables[j]->mapping = Z_EROFS_MAPPING_STAGING;
-+		}
-+		rq->out[i] = availables[j];
-+		__clear_bit(j, unused);
-+	}
-+	return kaddr ? 1 : 0;
-+}
-+
-+static void *generic_copy_inplace_data(struct z_erofs_decompress_req *rq,
-+				       u8 *src, unsigned int pageofs_in)
-+{
-+	/*
-+	 * if in-place decompression is ongoing, those decompressed
-+	 * pages should be copied in order to avoid being overlapped.
-+	 */
-+	struct page **in = rq->in;
-+	u8 *const tmp = erofs_get_pcpubuf(0);
-+	u8 *tmpp = tmp;
-+	unsigned int inlen = rq->inputsize - pageofs_in;
-+	unsigned int count = min_t(uint, inlen, PAGE_SIZE - pageofs_in);
-+
-+	while (tmpp < tmp + inlen) {
-+		if (!src)
-+			src = kmap_atomic(*in);
-+		memcpy(tmpp, src + pageofs_in, count);
-+		kunmap_atomic(src);
-+		src = NULL;
-+		tmpp += count;
-+		pageofs_in = 0;
-+		count = PAGE_SIZE;
-+		++in;
-+	}
-+	return tmp;
-+}
-+
-+static int lz4_decompress(struct z_erofs_decompress_req *rq, u8 *out)
-+{
-+	unsigned int inputmargin, inlen;
-+	u8 *src;
-+	bool copied;
-+	int ret;
-+
-+	if (rq->inputsize > PAGE_SIZE)
-+		return -ENOTSUPP;
-+
-+	src = kmap_atomic(*rq->in);
-+	inputmargin = 0;
-+	while (!src[inputmargin & ~PAGE_MASK])
-+		if (!(++inputmargin & ~PAGE_MASK))
-+			break;
-+
-+	if (inputmargin >= rq->inputsize) {
-+		kunmap_atomic(src);
-+		return -EIO;
-+	}
-+
-+	copied = false;
-+	inlen = rq->inputsize - inputmargin;
-+	if (rq->inplace_io) {
-+		src = generic_copy_inplace_data(rq, src, inputmargin);
-+		inputmargin = 0;
-+		copied = true;
-+	}
-+
-+	ret = LZ4_decompress_safe_partial(src + inputmargin, out,
-+					  inlen, rq->outputsize,
-+					  rq->outputsize);
-+	if (ret < 0) {
-+		errln("%s, failed to decompress, in[%p, %u, %u] out[%p, %u]",
-+		      __func__, src + inputmargin, inlen, inputmargin,
-+		      out, rq->outputsize);
-+		WARN_ON(1);
-+		print_hex_dump(KERN_DEBUG, "[ in]: ", DUMP_PREFIX_OFFSET,
-+			       16, 1, src + inputmargin, inlen, true);
-+		print_hex_dump(KERN_DEBUG, "[out]: ", DUMP_PREFIX_OFFSET,
-+			       16, 1, out, rq->outputsize, true);
-+		ret = -EIO;
-+	}
-+
-+	if (copied)
-+		erofs_put_pcpubuf(src);
-+	else
-+		kunmap_atomic(src);
-+	return ret;
-+}
-+
-+static struct z_erofs_decompressor decompressors[] = {
-+	[Z_EROFS_COMPRESSION_SHIFTED] = {
-+		.name = "shifted"
-+	},
-+	[Z_EROFS_COMPRESSION_LZ4] = {
-+		.prepare_destpages = lz4_prepare_destpages,
-+		.decompress = lz4_decompress,
-+		.name = "lz4"
-+	},
-+};
-+
-+static void copy_from_pcpubuf(struct page **out, const char *dst,
-+			      unsigned short pageofs_out,
-+			      unsigned int outputsize)
-+{
-+	const char *end = dst + outputsize;
-+	const unsigned int righthalf = PAGE_SIZE - pageofs_out;
-+	const char *cur = dst - pageofs_out;
-+
-+	while (cur < end) {
-+		struct page *const page = *out++;
-+
-+		if (page) {
-+			char *buf = kmap_atomic(page);
-+
-+			if (cur >= dst) {
-+				memcpy(buf, cur, min_t(uint, PAGE_SIZE,
-+						       end - cur));
-+			} else {
-+				memcpy(buf + pageofs_out, cur + pageofs_out,
-+				       min_t(uint, righthalf, end - cur));
-+			}
-+			kunmap_atomic(buf);
-+		}
-+		cur += PAGE_SIZE;
-+	}
-+}
-+
-+static int decompress_generic(struct z_erofs_decompress_req *rq,
-+			      struct list_head *pagepool)
-+{
-+	const unsigned int nrpages_out =
-+		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
-+	const struct z_erofs_decompressor *alg = decompressors + rq->alg;
-+	unsigned int dst_maptype;
-+	void *dst;
-+	int ret;
-+
-+	if (nrpages_out == 1 && !rq->inplace_io) {
-+		DBG_BUGON(!*rq->out);
-+		dst = kmap_atomic(*rq->out);
-+		dst_maptype = 0;
-+		goto dstmap_out;
-+	}
-+
-+	/*
-+	 * For the case of small output size (especially much less
-+	 * than PAGE_SIZE), memcpy the decompressed data rather than
-+	 * compressed data is preferred.
-+	 */
-+	if (rq->outputsize <= PAGE_SIZE * 7 / 8) {
-+		dst = erofs_get_pcpubuf(0);
-+
-+		rq->inplace_io = false;
-+		ret = alg->decompress(rq, dst);
-+		if (!ret)
-+			copy_from_pcpubuf(rq->out, dst, rq->pageofs_out,
-+					  rq->outputsize);
-+
-+		erofs_put_pcpubuf(dst);
-+		return ret;
-+	}
-+
-+	ret = alg->prepare_destpages(rq, pagepool);
-+	if (ret < 0) {
-+		return ret;
-+	} else if (ret) {
-+		dst = page_address(*rq->out);
-+		dst_maptype = 1;
-+		goto dstmap_out;
-+	}
-+
-+	dst = erofs_vmap(rq->out, nrpages_out);
-+	if (!dst)
-+		return -ENOMEM;
-+	dst_maptype = 2;
-+
-+dstmap_out:
-+	ret = alg->decompress(rq, dst + rq->pageofs_out);
-+
-+	if (!dst_maptype)
-+		kunmap_atomic(dst);
-+	else if (dst_maptype == 2)
-+		erofs_vunmap(dst, nrpages_out);
-+	return ret;
-+}
-+
-+static int shifted_decompress(const struct z_erofs_decompress_req *rq,
-+			      struct list_head *pagepool)
-+{
-+	const unsigned int nrpages_out =
-+		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
-+	const unsigned int righthalf = PAGE_SIZE - rq->pageofs_out;
-+	unsigned char *src, *dst;
-+
-+	if (nrpages_out > 2) {
-+		DBG_BUGON(1);
-+		return -EIO;
-+	}
-+
-+	if (rq->out[0] == *rq->in) {
-+		DBG_BUGON(nrpages_out != 1);
-+		return 0;
-+	}
-+
-+	src = kmap_atomic(*rq->in);
-+	if (!rq->out[0]) {
-+		dst = NULL;
-+	} else {
-+		dst = kmap_atomic(rq->out[0]);
-+		memcpy(dst + rq->pageofs_out, src, righthalf);
-+	}
-+
-+	if (rq->out[1] == *rq->in) {
-+		memmove(src, src + righthalf, rq->pageofs_out);
-+	} else if (nrpages_out == 2) {
-+		if (dst)
-+			kunmap_atomic(dst);
-+		DBG_BUGON(!rq->out[1]);
-+		dst = kmap_atomic(rq->out[1]);
-+		memcpy(dst, src + righthalf, rq->pageofs_out);
-+	}
-+	if (dst)
-+		kunmap_atomic(dst);
-+	kunmap_atomic(src);
-+	return 0;
-+}
-+
-+int z_erofs_decompress(struct z_erofs_decompress_req *rq,
-+		       struct list_head *pagepool)
-+{
-+	if (rq->alg == Z_EROFS_COMPRESSION_SHIFTED)
-+		return shifted_decompress(rq, pagepool);
-+	return decompress_generic(rq, pagepool);
-+}
-+
+ 	}
+ 
+ 	ret = LZ4_decompress_safe_partial(src + inputmargin, out,
+diff --git a/drivers/staging/erofs/erofs_fs.h b/drivers/staging/erofs/erofs_fs.h
+index a05139f1df60..353322a3206c 100644
+--- a/drivers/staging/erofs/erofs_fs.h
++++ b/drivers/staging/erofs/erofs_fs.h
+@@ -21,7 +21,8 @@
+  * Any bits that aren't in EROFS_ALL_REQUIREMENTS should be
+  * incompatible with this kernel version.
+  */
+-#define EROFS_ALL_REQUIREMENTS  0
++#define EROFS_REQUIREMENT_LZ4_0PADDING	0x00000001
++#define EROFS_ALL_REQUIREMENTS		EROFS_REQUIREMENT_LZ4_0PADDING
+ 
+ struct erofs_super_block {
+ /*  0 */__le32 magic;           /* in the little endian */
 -- 
 2.17.1
 
