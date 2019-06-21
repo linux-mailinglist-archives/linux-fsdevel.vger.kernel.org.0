@@ -2,81 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F47B4EB1B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2019 16:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E5A4EB62
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2019 17:00:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbfFUOuy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jun 2019 10:50:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57150 "EHLO mx1.redhat.com"
+        id S1726184AbfFUO7x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jun 2019 10:59:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726338AbfFUOuy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:50:54 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725985AbfFUO7x (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 Jun 2019 10:59:53 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E8E6C057F2B;
-        Fri, 21 Jun 2019 14:50:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F1B75D9E2;
-        Fri, 21 Jun 2019 14:50:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190621132839.6ggsppexqfp5htpw@brauner.io>
-References: <20190621132839.6ggsppexqfp5htpw@brauner.io> <20190621094757.zijugn6cfulmchnf@brauner.io> <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk> <155905627927.1662.13276277442207649583.stgit@warthog.procyon.org.uk> <21652.1561122763@warthog.procyon.org.uk> <E76F5188-CED8-4472-9136-BDCDFDAF57F0@brauner.io>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mszeredi@redhat.com
-Subject: Re: [PATCH 02/25] vfs: Allow fsinfo() to query what's in an fs_context [ver #13]
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FA3F2070B;
+        Fri, 21 Jun 2019 14:59:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561129191;
+        bh=jQOqVXNcfZkUcGV1wjafezc/ZNY8PMgE5h6rHbcBqkg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fVF0cWJ0mpMA6KTd3g5GTFKTqGb07hlbAKRaXsHiU5gZicbhsP8nzhP5lBm7wdR3Q
+         86P67oj3InItTJvZZf4vHPGbEwHeuhFRn7muUTOHYoK/hhOwBhjYJrlR4tOL/ZkWh0
+         lyQWIOYhLwZoPcg3Yd91RlXYf2pF/02sm7Qm2pBI=
+Subject: Re: [PATCH v5 00/18] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     Frank Rowand <frowand.list@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        gregkh@linuxfoundation.org, jpoimboe@redhat.com,
+        keescook@google.com, kieran.bingham@ideasonboard.com,
+        mcgrof@kernel.org, peterz@infradead.org, robh@kernel.org,
+        sboyd@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
+        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
+        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
+        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
+        wfg@linux.intel.com, shuah <shuah@kernel.org>
+References: <20190617082613.109131-1-brendanhiggins@google.com>
+ <10feac3e-7621-65e5-fbf0-9c63fcbe09c9@gmail.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <69809117-dcda-160a-ee0a-d1d3b4c5cd8a@kernel.org>
+Date:   Fri, 21 Jun 2019 08:59:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <27767.1561128650.1@warthog.procyon.org.uk>
-Date:   Fri, 21 Jun 2019 15:50:50 +0100
-Message-ID: <27768.1561128650@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 21 Jun 2019 14:50:54 +0000 (UTC)
+In-Reply-To: <10feac3e-7621-65e5-fbf0-9c63fcbe09c9@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christian Brauner <christian@brauner.io> wrote:
+Hi Brendan,
 
-> > >If you tried to go through /proc/pid/fd with open(O_PATH), I think
-> > >you'd get
-> > >the symlink, not the target.
-> > 
-> > Then you should use fdget(), no? :)
+On 6/19/19 7:17 PM, Frank Rowand wrote:
+> Hi Brendan,
 > 
-> That is unless you want fsinfo() to be useable on any fd and just fds
-> that are returned from the new mount-api syscalls. Maybe that wasn't
-> clear from my first mail.
-
-fsinfo(), as coded, is usable on any fd, as for fstat(), statx() and
-fstatfs().
-
-I have made it such that if you do this on the fd returned by fsopen() or
-fspick(), the access is diverted to the filesystem that the fs_context refers
-to since querying anon_inodes is of little value.
-
-Now, it could be argued that it should require an AT_xxx flag to cause this
-diversion to happen.
-
-> Is the information returned for:
+> I am only responding to this because you asked me to in the v4 thread.
 > 
-> int fd = fsopen()/fspick();
-> fsinfo(fd);
+> Thank you for evaluating my comments in the v4 thread and asking me to
+> comment on v5
 > 
-> int ofd = open("/", O_PATH);
-> fsinfo(ofd, ...);
+> On 6/17/19 1:25 AM, Brendan Higgins wrote:
+>> ## TL;DR
+>>
+>> A not so quick follow-up to Stephen's suggestions on PATCH v4. Nothing
+>> that really changes any functionality or usage with the minor exception
+>> of a couple public functions that Stephen asked me to rename.
+>> Nevertheless, a good deal of clean up and fixes. See changes below.
+>>
+>> As for our current status, right now we got Reviewed-bys on all patches
+>> except:
+>>
+>> - [PATCH v5 08/18] objtool: add kunit_try_catch_throw to the noreturn
+>>    list
+>>
+>> However, it would probably be good to get reviews/acks from the
+>> subsystem maintainers on:
+>>
+>> - [PATCH v5 06/18] kbuild: enable building KUnit
+>> - [PATCH v5 08/18] objtool: add kunit_try_catch_throw to the noreturn
+>>    list
+>> - [PATCH v5 15/18] Documentation: kunit: add documentation for KUnit
+>> - [PATCH v5 17/18] kernel/sysctl-test: Add null pointer test for
+>>    sysctl.c:proc_dointvec()
+>> - [PATCH v5 18/18] MAINTAINERS: add proc sysctl KUnit test to PROC
+>>    SYSCTL section
+>>
+>> Other than that, I think we should be good to go.
+>>
+>> One last thing, I updated the background to include my thoughts on KUnit
+>> vs. in kernel testing with kselftest in the background sections as
+>> suggested by Frank in the discussion on PATCH v2.
+>>
+>> ## Background
+>>
+>> This patch set proposes KUnit, a lightweight unit testing and mocking
+>> framework for the Linux kernel.
+>>
+>> Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+>> it does not require installing the kernel on a test machine or in a VM
+>> (however, KUnit still allows you to run tests on test machines or in VMs
+>> if you want[1]) and does not require tests to be written in userspace
+>> running on a host kernel. Additionally, KUnit is fast: From invocation
+>> to completion KUnit can run several dozen tests in under a second.
+>> Currently, the entire KUnit test suite for KUnit runs in under a second
+>> from the initial invocation (build time excluded).
+>>
+>> KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+>> Googletest/Googlemock for C++. KUnit provides facilities for defining
+>> unit test cases, grouping related test cases into test suites, providing
+>> common infrastructure for running tests, mocking, spying, and much more.
+>>
 > 
-> the same if they refer to the same mount or would they differ?
+> I looked only at this section, as was specifically requested:
+> 
+>> ### But wait! Doesn't kselftest support in kernel testing?!
+>>
+>> In a previous version of this patchset Frank pointed out that kselftest
+>> already supports writing a test that resides in the kernel using the
+>> test module feature[2]. LWN did a really great summary on this
+>> discussion here[3].
+>>
+>> Kselftest has a feature that allows a test module to be loaded into a
+>> kernel using the kselftest framework; this does allow someone to write
+>> tests against kernel code not directly exposed to userland; however, it
+>> does not provide much of a framework around how to structure the tests.
+>> The kselftest test module feature just provides a header which has a
+>> standardized way of reporting test failures,
+> 
+> 
+>> and then provides
+>> infrastructure to load and run the tests using the kselftest test
+>> harness.
+> 
+> The in-kernel tests can also be invoked at boot time if they are
+> configured (Kconfig) as in-kernel instead of as modules.  I did not
+> check how many of the tests have tri-state configuration to allow
+> this, but the few that I looked at did.
+> 
+>>
+>> The kselftest test module does not seem to be opinionated at all in
+>> regards to how tests are structured, how they check for failures, how
+>> tests are organized. Even in the method it provides for reporting
+>> failures is pretty simple; it doesn't have any more advanced failure
+>> reporting or logging features. Given what's there, I think it is fair to
+>> say that it is not actually a framework, but a feature that makes it
+>> possible for someone to do some checks in kernel space.
+> 
+> I would call that description a little dismissive.  The set of in-kernel
+> tests that I looked like followed a common pattern and reported results
+> in a uniform manner.
+> 
+>>
 
-At the moment it differs.  In the former case, there may not even be a
-superblock attached to the fd to query, though invariants like filesystem
-parameter types and names can be queried.
+I think I commented on this before. I agree with the statement that
+there is no overlap between Kselftest and KUnit. I would like see this
+removed. Kselftest module support supports use-cases KUnit won't be able
+to. I can build an kernel with Kselftest test modules and use it in the
+filed to load and run tests if I need to debug a problem and get data
+from a system. I can't do that with KUnit.
 
-David
+In my mind, I am not viewing this as which is better. Kselftest and
+KUnit both have their place in the kernel development process. It isn't
+productive and/or necessary to comparing Kselftest and KUnit without a
+good understanding of the problem spaces for each of these.
+
+I would strongly recommend not making reference to Kselftest and talk
+about what KUnit offers.
+
+>> Furthermore, kselftest test module has very few users. I checked for all
+>> the tests that use it using the following grep command:
+>>
+>> grep -Hrn -e 'kselftest_module\.h'
+>>
+>> and only got three results: lib/test_strscpy.c, lib/test_printf.c, and
+>> lib/test_bitmap.c.
+> 
+
+Again, unnecessary. KUnit can't replace Kselftest module in the way
+Kselftest module support can be used for debugging and gathering
+information on system that might be in active use and not dedicated
+to test and development alone. I wouldn't hesitate loading a Kselftest
+test module on my laptop and running tests, but I wouldn't use KUnit
+the same way.
+
+Again, this is not a competition between which is better. Kselftest
+and KUnit serve different needs and problem spaces.
+
+Please redo this documentation to reflect that.
+
+thanks,
+-- Shuah
+
+
