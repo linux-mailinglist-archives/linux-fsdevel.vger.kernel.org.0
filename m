@@ -2,446 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 905464E654
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2019 12:42:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADDCC4E885
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jun 2019 15:07:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfFUKmY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jun 2019 06:42:24 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:19055 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726250AbfFUKmY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jun 2019 06:42:24 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 735FE667646B6A95163A;
-        Fri, 21 Jun 2019 18:42:20 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 21 Jun
- 2019 18:42:12 +0800
-Subject: Re: [PATCH v2 5/8] staging: erofs: introduce generic decompression
- backend
-To:     Chao Yu <yuchao0@huawei.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-        Chao Yu <chao@kernel.org>, Fang Wei <fangwei1@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, Du Wei <weidu.du@huawei.com>
-References: <20190620160719.240682-1-gaoxiang25@huawei.com>
- <20190620160719.240682-6-gaoxiang25@huawei.com>
- <4e3a822e-1c18-122e-9eb1-c4eaf0204e63@huawei.com>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <348e6203-b1be-1579-dbe9-cbf1a906af6f@huawei.com>
-Date:   Fri, 21 Jun 2019 18:42:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1726957AbfFUNHn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jun 2019 09:07:43 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40861 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbfFUNHk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 Jun 2019 09:07:40 -0400
+Received: by mail-ed1-f65.google.com with SMTP id k8so10036453eds.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jun 2019 06:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/K0/kvf7+EWXr6rQfoz7UxMfktgW7/4j5Pgej3x77XM=;
+        b=PAE6OEZ8NC/qeGpE32S7WnaYR8nyncYe408Jq0CgpSEX5qzdvqxgDZs5ZCZwf9z2M/
+         MfmA07u7v2Dcvj6N9Gc4vkUdsz3EIDYCqEMeeoBYxLeIb/y9bGSed3H8d9o3PlC4Ytxn
+         oA+VlnKMSsS7quvovP4p8aKwmbYWhZkd0zTnk3u9Du+67+nLBJwp5bknGKkUG+ONwhjz
+         tkTJX8Bq4oIKNeZVi+bbrVcdMW8Y1t9Y67TTb0mrmwBheAxfAtMwJDljsYfa7Ogu0jLk
+         RAaOEsejUFYQQpQXuZEuxRWQuaGtNp10HL9BRM8wQxljKfSAywRlF4E5te+9lTIG2AOz
+         S/QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/K0/kvf7+EWXr6rQfoz7UxMfktgW7/4j5Pgej3x77XM=;
+        b=cUZ77H6lxdKBudchOaXrXJYI7PjlRJOpgGMLGQSYvzyqcr8pUgeZu+/RJu9z4m23G9
+         e0I7a/XB9nL2MMjb3pW7AP6kq7m2tH8bAv3rZ3C0mCldP2WZlUTUiFo9QfU/ogi3aOA6
+         gLeq9pYtV2fDAa14SF6FFwa2IfwpDhxQZpO+x8f0oIebhZpKPu0oiYooQos1VH8bRJur
+         sLhEf9vnwg6XNMjee3Z4W4bT9WBsBcYIHoJUkPaGyx2hNF8vAiRyUuRG0/2HiYZQMlO/
+         dO8FAITTn6IIDTtrmHkdan9b0QnFrHYMr8rW7c98vmC2fCZgfB2TDKlJyiHdYCRVe1Zj
+         82ZA==
+X-Gm-Message-State: APjAAAXUns31nwOK2khBapzRAc2hrX92YX9konthC06+2jxJxZVqdvmS
+        tQGNllJknpOUWyNT9JSVi5seLg==
+X-Google-Smtp-Source: APXvYqwSIu9UphVAwE3sOjCJhhXK/jVAbMQD+iKQGW5Qdf6dAWE8bX5wKC8SIAJa13mOWwqqReekHg==
+X-Received: by 2002:a50:913c:: with SMTP id e57mr95497578eda.257.1561122459409;
+        Fri, 21 Jun 2019 06:07:39 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id e12sm813636edb.72.2019.06.21.06.07.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Jun 2019 06:07:38 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id C59BE10289C; Fri, 21 Jun 2019 16:07:40 +0300 (+03)
+Date:   Fri, 21 Jun 2019 16:07:40 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, matthew.wilcox@oracle.com,
+        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
+        william.kucharski@oracle.com, akpm@linux-foundation.org
+Subject: Re: [PATCH v5 6/6] mm,thp: avoid writes to file with THP in pagecache
+Message-ID: <20190621130740.ehobvjjj7gjiazjw@box>
+References: <20190620205348.3980213-1-songliubraving@fb.com>
+ <20190620205348.3980213-7-songliubraving@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <4e3a822e-1c18-122e-9eb1-c4eaf0204e63@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190620205348.3980213-7-songliubraving@fb.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Chao,
-
-On 2019/6/21 17:46, Chao Yu wrote:
-> On 2019/6/21 0:07, Gao Xiang wrote:
->> This patch adds a new generic decompression framework
->> in order to replace the old LZ4-specific decompression code.
->>
->> Even though LZ4 is still the only supported algorithm, yet
->> it is more cleaner and easy to integrate new algorithm than
->> the old almost hard-coded decompression backend.
->>
->> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
->> ---
->>  drivers/staging/erofs/Makefile       |   2 +-
->>  drivers/staging/erofs/compress.h     |  21 ++
->>  drivers/staging/erofs/decompressor.c | 307 +++++++++++++++++++++++++++
->>  3 files changed, 329 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/staging/erofs/decompressor.c
->>
->> diff --git a/drivers/staging/erofs/Makefile b/drivers/staging/erofs/Makefile
->> index 84b412c7a991..adeb5d6e2668 100644
->> --- a/drivers/staging/erofs/Makefile
->> +++ b/drivers/staging/erofs/Makefile
->> @@ -9,5 +9,5 @@ obj-$(CONFIG_EROFS_FS) += erofs.o
->>  ccflags-y += -I $(srctree)/$(src)/include
->>  erofs-objs := super.o inode.o data.o namei.o dir.o utils.o
->>  erofs-$(CONFIG_EROFS_FS_XATTR) += xattr.o
->> -erofs-$(CONFIG_EROFS_FS_ZIP) += unzip_vle.o unzip_vle_lz4.o zmap.o
->> +erofs-$(CONFIG_EROFS_FS_ZIP) += unzip_vle.o unzip_vle_lz4.o zmap.o decompressor.o
->>  
->> diff --git a/drivers/staging/erofs/compress.h b/drivers/staging/erofs/compress.h
->> index 1dcfc3b35118..ebeccb1f4eae 100644
->> --- a/drivers/staging/erofs/compress.h
->> +++ b/drivers/staging/erofs/compress.h
->> @@ -9,6 +9,24 @@
->>  #ifndef __EROFS_FS_COMPRESS_H
->>  #define __EROFS_FS_COMPRESS_H
->>  
->> +#include "internal.h"
->> +
->> +enum {
->> +	Z_EROFS_COMPRESSION_SHIFTED = Z_EROFS_COMPRESSION_MAX,
->> +	Z_EROFS_COMPRESSION_RUNTIME_MAX
->> +};
->> +
->> +struct z_erofs_decompress_req {
->> +	struct page **in, **out;
->> +
->> +	unsigned short pageofs_out;
->> +	unsigned int inputsize, outputsize;
->> +
->> +	/* indicate the algorithm will be used for decompression */
->> +	unsigned int alg;
->> +	bool inplace_io, partial_decoding;
->> +};
->> +
->>  /*
->>   * - 0x5A110C8D ('sallocated', Z_EROFS_MAPPING_STAGING) -
->>   * used to mark temporary allocated pages from other
->> @@ -36,5 +54,8 @@ static inline bool z_erofs_put_stagingpage(struct list_head *pagepool,
->>  	return true;
->>  }
->>  
->> +int z_erofs_decompress(struct z_erofs_decompress_req *rq,
->> +		       struct list_head *pagepool);
->> +
->>  #endif
->>  
->> diff --git a/drivers/staging/erofs/decompressor.c b/drivers/staging/erofs/decompressor.c
->> new file mode 100644
->> index 000000000000..c68d17b579e0
->> --- /dev/null
->> +++ b/drivers/staging/erofs/decompressor.c
->> @@ -0,0 +1,307 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * linux/drivers/staging/erofs/decompressor.c
->> + *
->> + * Copyright (C) 2019 HUAWEI, Inc.
->> + *             http://www.huawei.com/
->> + * Created by Gao Xiang <gaoxiang25@huawei.com>
->> + */
->> +#include "compress.h"
->> +#include <linux/lz4.h>
->> +
->> +#ifndef LZ4_DISTANCE_MAX	/* history window size */
->> +#define LZ4_DISTANCE_MAX 65535	/* set to maximum value by default */
->> +#endif
->> +
->> +#define LZ4_MAX_DISTANCE_PAGES	DIV_ROUND_UP(LZ4_DISTANCE_MAX, PAGE_SIZE)
->> +
->> +struct z_erofs_decompressor {
->> +	/*
->> +	 * if destpages have sparsed pages, fill them with bounce pages.
->> +	 * it also check whether destpages indicate continuous physical memory.
->> +	 */
->> +	int (*prepare_destpages)(struct z_erofs_decompress_req *rq,
->> +				 struct list_head *pagepool);
->> +	int (*decompress)(struct z_erofs_decompress_req *rq, u8 *out);
->> +	char *name;
->> +};
->> +
->> +static int lz4_prepare_destpages(struct z_erofs_decompress_req *rq,
->> +				 struct list_head *pagepool)
->> +{
->> +	const unsigned int nr =
->> +		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
->> +	struct page *availables[LZ4_MAX_DISTANCE_PAGES] = { NULL };
->> +	unsigned long unused[DIV_ROUND_UP(LZ4_MAX_DISTANCE_PAGES,
->> +					  BITS_PER_LONG)] = { 0 };
->> +	void *kaddr = NULL;
->> +	unsigned int i, j, k;
->> +
->> +	for (i = 0; i < nr; ++i) {
->> +		struct page *const page = rq->out[i];
->> +
->> +		j = i & (LZ4_MAX_DISTANCE_PAGES - 1);
->> +		if (availables[j])
->> +			__set_bit(j, unused);
->> +
->> +		if (page) {
->> +			if (kaddr) {
->> +				if (kaddr + PAGE_SIZE == page_address(page))
->> +					kaddr += PAGE_SIZE;
->> +				else
->> +					kaddr = NULL;
->> +			} else if (!i) {
->> +				kaddr = page_address(page);
->> +			}
->> +			continue;
->> +		}
->> +		kaddr = NULL;
->> +
->> +		k = find_first_bit(unused, LZ4_MAX_DISTANCE_PAGES);
->> +		if (k < LZ4_MAX_DISTANCE_PAGES) {
->> +			j = k;
->> +			get_page(availables[j]);
->> +		} else {
->> +			DBG_BUGON(availables[j]);
->> +
->> +			if (!list_empty(pagepool)) {
->> +				availables[j] = lru_to_page(pagepool);
->> +				list_del(&availables[j]->lru);
->> +				DBG_BUGON(page_ref_count(availables[j]) != 1);
->> +			} else {
->> +				availables[j] = alloc_pages(GFP_KERNEL, 0);
->> +				if (!availables[j])
->> +					return -ENOMEM;
->> +			}
->> +			availables[j]->mapping = Z_EROFS_MAPPING_STAGING;
+On Thu, Jun 20, 2019 at 01:53:48PM -0700, Song Liu wrote:
+> In previous patch, an application could put part of its text section in
+> THP via madvise(). These THPs will be protected from writes when the
+> application is still running (TXTBSY). However, after the application
+> exits, the file is available for writes.
 > 
-> Could we use __stagingpage_alloc() instead opened codes, there is something
-> different in between them though.
-
-It was written "on propose" since the problem is that currently __stagingpage_alloc()
-will allocate all pages in GFP_NOFAIL case, but memory allocation failure is accepted
-here, therefore I open code to aim at introducing new decompression backend.
-
-I will submit another patch after this series to clean up all staging page allocation
-cases later, which was already on my scheduling list. :)
-
-Thanks,
-Gao Xiang
-
+> This patch avoids writes to file THP by dropping page cache for the file
+> when the file is open for write. A new counter nr_thps is added to struct
+> address_space. In do_last(), if the file is open for write and nr_thps
+> is non-zero, we drop page cache for the whole file.
 > 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> ---
+>  fs/inode.c         |  3 +++
+>  fs/namei.c         | 22 +++++++++++++++++++++-
+>  include/linux/fs.h | 31 +++++++++++++++++++++++++++++++
+>  mm/filemap.c       |  1 +
+>  mm/khugepaged.c    |  4 +++-
+>  5 files changed, 59 insertions(+), 2 deletions(-)
 > 
-> Thanks,
-> 
->> +		}
->> +		rq->out[i] = availables[j];
->> +		__clear_bit(j, unused);
->> +	}
->> +	return kaddr ? 1 : 0;
->> +}
->> +
->> +static void *generic_copy_inplace_data(struct z_erofs_decompress_req *rq,
->> +				       u8 *src, unsigned int pageofs_in)
->> +{
->> +	/*
->> +	 * if in-place decompression is ongoing, those decompressed
->> +	 * pages should be copied in order to avoid being overlapped.
->> +	 */
->> +	struct page **in = rq->in;
->> +	u8 *const tmp = erofs_get_pcpubuf(0);
->> +	u8 *tmpp = tmp;
->> +	unsigned int inlen = rq->inputsize - pageofs_in;
->> +	unsigned int count = min_t(uint, inlen, PAGE_SIZE - pageofs_in);
->> +
->> +	while (tmpp < tmp + inlen) {
->> +		if (!src)
->> +			src = kmap_atomic(*in);
->> +		memcpy(tmpp, src + pageofs_in, count);
->> +		kunmap_atomic(src);
->> +		src = NULL;
->> +		tmpp += count;
->> +		pageofs_in = 0;
->> +		count = PAGE_SIZE;
->> +		++in;
->> +	}
->> +	return tmp;
->> +}
->> +
->> +static int lz4_decompress(struct z_erofs_decompress_req *rq, u8 *out)
->> +{
->> +	unsigned int inputmargin, inlen;
->> +	u8 *src;
->> +	bool copied;
->> +	int ret;
->> +
->> +	if (rq->inputsize > PAGE_SIZE)
->> +		return -ENOTSUPP;
->> +
->> +	src = kmap_atomic(*rq->in);
->> +	inputmargin = 0;
->> +	while (!src[inputmargin & ~PAGE_MASK])
->> +		if (!(++inputmargin & ~PAGE_MASK))
->> +			break;
->> +
->> +	if (inputmargin >= rq->inputsize) {
->> +		kunmap_atomic(src);
->> +		return -EIO;
->> +	}
->> +
->> +	copied = false;
->> +	inlen = rq->inputsize - inputmargin;
->> +	if (rq->inplace_io) {
->> +		src = generic_copy_inplace_data(rq, src, inputmargin);
->> +		inputmargin = 0;
->> +		copied = true;
->> +	}
->> +
->> +	ret = LZ4_decompress_safe_partial(src + inputmargin, out,
->> +					  inlen, rq->outputsize,
->> +					  rq->outputsize);
->> +	if (ret < 0) {
->> +		errln("%s, failed to decompress, in[%p, %u, %u] out[%p, %u]",
->> +		      __func__, src + inputmargin, inlen, inputmargin,
->> +		      out, rq->outputsize);
->> +		WARN_ON(1);
->> +		print_hex_dump(KERN_DEBUG, "[ in]: ", DUMP_PREFIX_OFFSET,
->> +			       16, 1, src + inputmargin, inlen, true);
->> +		print_hex_dump(KERN_DEBUG, "[out]: ", DUMP_PREFIX_OFFSET,
->> +			       16, 1, out, rq->outputsize, true);
->> +		ret = -EIO;
->> +	}
->> +
->> +	if (copied)
->> +		erofs_put_pcpubuf(src);
->> +	else
->> +		kunmap_atomic(src);
->> +	return ret;
->> +}
->> +
->> +static struct z_erofs_decompressor decompressors[] = {
->> +	[Z_EROFS_COMPRESSION_SHIFTED] = {
->> +		.name = "shifted"
->> +	},
->> +	[Z_EROFS_COMPRESSION_LZ4] = {
->> +		.prepare_destpages = lz4_prepare_destpages,
->> +		.decompress = lz4_decompress,
->> +		.name = "lz4"
->> +	},
->> +};
->> +
->> +static void copy_from_pcpubuf(struct page **out, const char *dst,
->> +			      unsigned short pageofs_out,
->> +			      unsigned int outputsize)
->> +{
->> +	const char *end = dst + outputsize;
->> +	const unsigned int righthalf = PAGE_SIZE - pageofs_out;
->> +	const char *cur = dst - pageofs_out;
->> +
->> +	while (cur < end) {
->> +		struct page *const page = *out++;
->> +
->> +		if (page) {
->> +			char *buf = kmap_atomic(page);
->> +
->> +			if (cur >= dst) {
->> +				memcpy(buf, cur, min_t(uint, PAGE_SIZE,
->> +						       end - cur));
->> +			} else {
->> +				memcpy(buf + pageofs_out, cur + pageofs_out,
->> +				       min_t(uint, righthalf, end - cur));
->> +			}
->> +			kunmap_atomic(buf);
->> +		}
->> +		cur += PAGE_SIZE;
->> +	}
->> +}
->> +
->> +static int decompress_generic(struct z_erofs_decompress_req *rq,
->> +			      struct list_head *pagepool)
->> +{
->> +	const unsigned int nrpages_out =
->> +		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
->> +	const struct z_erofs_decompressor *alg = decompressors + rq->alg;
->> +	unsigned int dst_maptype;
->> +	void *dst;
->> +	int ret;
->> +
->> +	if (nrpages_out == 1 && !rq->inplace_io) {
->> +		DBG_BUGON(!*rq->out);
->> +		dst = kmap_atomic(*rq->out);
->> +		dst_maptype = 0;
->> +		goto dstmap_out;
->> +	}
->> +
->> +	/*
->> +	 * For the case of small output size (especially much less
->> +	 * than PAGE_SIZE), memcpy the decompressed data rather than
->> +	 * compressed data is preferred.
->> +	 */
->> +	if (rq->outputsize <= PAGE_SIZE * 7 / 8) {
->> +		dst = erofs_get_pcpubuf(0);
->> +
->> +		rq->inplace_io = false;
->> +		ret = alg->decompress(rq, dst);
->> +		if (!ret)
->> +			copy_from_pcpubuf(rq->out, dst, rq->pageofs_out,
->> +					  rq->outputsize);
->> +
->> +		erofs_put_pcpubuf(dst);
->> +		return ret;
->> +	}
->> +
->> +	ret = alg->prepare_destpages(rq, pagepool);
->> +	if (ret < 0) {
->> +		return ret;
->> +	} else if (ret) {
->> +		dst = page_address(*rq->out);
->> +		dst_maptype = 1;
->> +		goto dstmap_out;
->> +	}
->> +
->> +	dst = erofs_vmap(rq->out, nrpages_out);
->> +	if (!dst)
->> +		return -ENOMEM;
->> +	dst_maptype = 2;
->> +
->> +dstmap_out:
->> +	ret = alg->decompress(rq, dst + rq->pageofs_out);
->> +
->> +	if (!dst_maptype)
->> +		kunmap_atomic(dst);
->> +	else if (dst_maptype == 2)
->> +		erofs_vunmap(dst, nrpages_out);
->> +	return ret;
->> +}
->> +
->> +static int shifted_decompress(const struct z_erofs_decompress_req *rq,
->> +			      struct list_head *pagepool)
->> +{
->> +	const unsigned int nrpages_out =
->> +		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
->> +	const unsigned int righthalf = PAGE_SIZE - rq->pageofs_out;
->> +	unsigned char *src, *dst;
->> +
->> +	if (nrpages_out > 2) {
->> +		DBG_BUGON(1);
->> +		return -EIO;
->> +	}
->> +
->> +	if (rq->out[0] == *rq->in) {
->> +		DBG_BUGON(nrpages_out != 1);
->> +		return 0;
->> +	}
->> +
->> +	src = kmap_atomic(*rq->in);
->> +	if (!rq->out[0]) {
->> +		dst = NULL;
->> +	} else {
->> +		dst = kmap_atomic(rq->out[0]);
->> +		memcpy(dst + rq->pageofs_out, src, righthalf);
->> +	}
->> +
->> +	if (rq->out[1] == *rq->in) {
->> +		memmove(src, src + righthalf, rq->pageofs_out);
->> +	} else if (nrpages_out == 2) {
->> +		if (dst)
->> +			kunmap_atomic(dst);
->> +		DBG_BUGON(!rq->out[1]);
->> +		dst = kmap_atomic(rq->out[1]);
->> +		memcpy(dst, src + righthalf, rq->pageofs_out);
->> +	}
->> +	if (dst)
->> +		kunmap_atomic(dst);
->> +	kunmap_atomic(src);
->> +	return 0;
->> +}
->> +
->> +int z_erofs_decompress(struct z_erofs_decompress_req *rq,
->> +		       struct list_head *pagepool)
->> +{
->> +	if (rq->alg == Z_EROFS_COMPRESSION_SHIFTED)
->> +		return shifted_decompress(rq, pagepool);
->> +	return decompress_generic(rq, pagepool);
->> +}
->> +
->>
+> diff --git a/fs/inode.c b/fs/inode.c
+> index df6542ec3b88..518113a4e219 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -181,6 +181,9 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+>  	mapping->flags = 0;
+>  	mapping->wb_err = 0;
+>  	atomic_set(&mapping->i_mmap_writable, 0);
+> +#ifdef CONFIG_READ_ONLY_THP_FOR_FS
+> +	atomic_set(&mapping->nr_thps, 0);
+> +#endif
+>  	mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
+>  	mapping->private_data = NULL;
+>  	mapping->writeback_index = 0;
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 20831c2fbb34..de64f24b58e9 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3249,6 +3249,22 @@ static int lookup_open(struct nameidata *nd, struct path *path,
+>  	return error;
+>  }
+>  
+> +/*
+> + * The file is open for write, so it is not mmapped with VM_DENYWRITE. If
+> + * it still has THP in page cache, drop the whole file from pagecache
+> + * before processing writes. This helps us avoid handling write back of
+> + * THP for now.
+> + */
+> +static inline void release_file_thp(struct file *file)
+> +{
+> +#ifdef CONFIG_READ_ONLY_THP_FOR_FS
+> +	struct inode *inode = file_inode(file);
+> +
+> +	if (inode_is_open_for_write(inode) && filemap_nr_thps(inode->i_mapping))
+> +		truncate_pagecache(inode, 0);
+> +#endif
+> +}
+> +
+>  /*
+>   * Handle the last step of open()
+>   */
+> @@ -3418,7 +3434,11 @@ static int do_last(struct nameidata *nd,
+>  		goto out;
+>  opened:
+>  	error = ima_file_check(file, op->acc_mode);
+> -	if (!error && will_truncate)
+> +	if (error)
+> +		goto out;
+> +
+> +	release_file_thp(file);
+
+What protects against re-fill the file with THP in parallel?
+
+
+-- 
+ Kirill A. Shutemov
