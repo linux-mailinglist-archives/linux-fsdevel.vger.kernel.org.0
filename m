@@ -2,205 +2,275 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 192644F3BA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2019 06:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB5F44F3C1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2019 07:02:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726063AbfFVEtO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Jun 2019 00:49:14 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:64960 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725932AbfFVEtO (ORCPT
+        id S1726059AbfFVFBz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Jun 2019 01:01:55 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:26696 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725932AbfFVFBy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Jun 2019 00:49:14 -0400
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5M4dhdk002638;
-        Fri, 21 Jun 2019 21:48:41 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=Ge55FUa7qfaj4R5csk5DvO4vnJxSG45JSpxaqoQOo1o=;
- b=Ahuczc3YMlaD7KIyAWJOcA10zwJBwrJQc16cDLb52TWXjIvCEGNuhF7RcDpTBMPE5eej
- lJ9x69Z3BCwwCYMo4BLRX+rUzWzCbqWjLgXcbXcjerjKaLapBaxeGhuveWFUjLOk5R62
- TZkQN26EFyLQwSkMumtlEIcwigdibALHc40= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2t9d3er2eu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 21 Jun 2019 21:48:41 -0700
-Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
- prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Fri, 21 Jun 2019 21:48:40 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
- via Frontend Transport; Fri, 21 Jun 2019 21:48:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ge55FUa7qfaj4R5csk5DvO4vnJxSG45JSpxaqoQOo1o=;
- b=MLNpD0rZgmzdxlqnaMRyhk/OW5c6NDpNm+Vit2jhcvoGO1HHQa3O1qIlL4gKk7jeDq11N2sr07GIsNAa3RrgwrkacAvgYm6fEF6W/4soKmBXhbawybfhnGE3Th3pck+VjONyTm/EOkIB9Fy2S9lQntKMQBcCTEExmSLj+nnRmP0=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
- MWHPR15MB1471.namprd15.prod.outlook.com (10.173.233.137) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.12; Sat, 22 Jun 2019 04:48:25 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::400e:e329:ea98:aa0d]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::400e:e329:ea98:aa0d%6]) with mapi id 15.20.2008.014; Sat, 22 Jun 2019
- 04:48:25 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Hillf Danton <hdanton@sina.com>
-CC:     Linux-MM <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        Kernel Team <Kernel-team@fb.com>,
-        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: Re: [PATCH v6 4/6] khugepaged: rename collapse_shmem() and
- khugepaged_scan_shmem()
-Thread-Topic: [PATCH v6 4/6] khugepaged: rename collapse_shmem() and
- khugepaged_scan_shmem()
-Thread-Index: AQHVKKhH0iJY1YD8bkGfCTvF/8doEqanGiIA
-Date:   Sat, 22 Jun 2019 04:48:25 +0000
-Message-ID: <55244DE8-D7BD-4DBB-A518-45CA746DE4FE@fb.com>
-References: <20190622031151.3316-1-hdanton@sina.com>
-In-Reply-To: <20190622031151.3316-1-hdanton@sina.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.104.11)
-x-originating-ip: [2620:10d:c090:180::1:e75a]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 19273941-80fe-416e-04be-08d6f6ccdc82
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1471;
-x-ms-traffictypediagnostic: MWHPR15MB1471:
-x-microsoft-antispam-prvs: <MWHPR15MB1471817921291D172FA05DD7B3E60@MWHPR15MB1471.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0076F48C8A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(136003)(376002)(346002)(189003)(199004)(14454004)(81166006)(81156014)(6512007)(99286004)(76116006)(64756008)(102836004)(8676002)(66476007)(66446008)(66556008)(66946007)(73956011)(54906003)(316002)(71200400001)(71190400001)(5660300002)(68736007)(256004)(14444005)(8936002)(25786009)(86362001)(4326008)(186003)(33656002)(229853002)(57306001)(7736002)(53546011)(36756003)(478600001)(6116002)(2616005)(6506007)(6246003)(305945005)(50226002)(6486002)(6436002)(486006)(76176011)(6916009)(46003)(2906002)(476003)(11346002)(53936002)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1471;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 7Ky2ztEtEzuGvqNpculwpX8J9tTFv/8GssQEI+4G+zFbT/9rNk39rUkl3R6X/zaT0g026qFpTe26pbC863QN3Nm2Ies+buc0h2Oegr4p2DZxeIZuix9XN5T6uNsDaTi4fLQc/SlznCNBbrTBd6OCeZa11lYPi6OAQEer0y2Y0ISJ5leKAjnvYIZtV7SCNqkfeaqicIRzlemyPCJN4DHgmOiF+m0J5uAkAEkkafLfZbOYPQUMrhhDEIqZMPbTIMHgADuhbhqrlo/LIn3NfZih4eNCpAe6PFpxysrQUrrEi+Xjg+jr9kmMYNZ79uEl5AwDNQQi38ZHBwFsJN7IAligXItzWw1U7YGD44tKRCVIx67EkbAsfKRqQFWPtU/Gv3Ob5biI/YeigUED2CrI/BsCEh4B5DrycRJuoZpuQXJpZHo=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C0A1412AD7F79E4083FAF55DF07CF8C8@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Sat, 22 Jun 2019 01:01:54 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Fri, 21 Jun 2019 22:01:48 -0700
+Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 57E364173D;
+        Fri, 21 Jun 2019 22:01:45 -0700 (PDT)
+From:   Ajay Kaher <akaher@vmware.com>
+To:     <aarcange@redhat.com>, <jannh@google.com>, <oleg@redhat.com>,
+        <peterx@redhat.com>, <rppt@linux.ibm.com>, <jgg@mellanox.com>,
+        <mhocko@suse.com>
+CC:     <jglisse@redhat.com>, <akpm@linux-foundation.org>,
+        <mike.kravetz@oracle.com>, <viro@zeniv.linux.org.uk>,
+        <riandrews@android.com>, <arve@android.com>,
+        <yishaih@mellanox.com>, <dledford@redhat.com>,
+        <sean.hefty@intel.com>, <hal.rosenstock@gmail.com>,
+        <matanb@mellanox.com>, <leonro@mellanox.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <devel@driverdev.osuosl.org>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <akaher@vmware.com>, <srivatsab@vmware.com>,
+        <amakhalov@vmware.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v3 1/2] [v4.9.y] coredump: fix race condition between mmget_not_zero()/get_task_mm() and core dumping
+Date:   Sat, 22 Jun 2019 18:32:17 +0530
+Message-ID: <1561208539-29682-1-git-send-email-akaher@vmware.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19273941-80fe-416e-04be-08d6f6ccdc82
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jun 2019 04:48:25.1022
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1471
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-22_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=840 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906220042
-X-FB-Internal: deliver
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: akaher@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+From: Andrea Arcangeli <aarcange@redhat.com>
 
+commit 04f5866e41fb70690e28397487d8bd8eea7d712a upstream.
 
-> On Jun 21, 2019, at 8:11 PM, Hillf Danton <hdanton@sina.com> wrote:
->=20
->=20
-> Hello
->=20
-> On Fri, 21 Jun 2019 17:05:10 -0700 Song Liu <songliubraving@fb.com> wrote=
-:
->> Next patch will add khugepaged support of non-shmem files. This patch
->> renames these two functions to reflect the new functionality:
->>=20
->>    collapse_shmem()        =3D>  collapse_file()
->>    khugepaged_scan_shmem() =3D>  khugepaged_scan_file()
->>=20
->> Acked-by: Rik van Riel <riel@surriel.com>
->> Signed-off-by: Song Liu <songliubraving@fb.com>
->> ---
->> mm/khugepaged.c | 13 +++++++------
->> 1 file changed, 7 insertions(+), 6 deletions(-)
->>=20
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index 0f7419938008..dde8e45552b3 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -1287,7 +1287,7 @@ static void retract_page_tables(struct address_spa=
-ce *mapping, pgoff_t pgoff)
->> }
->>=20
->> /**
->> - * collapse_shmem - collapse small tmpfs/shmem pages into huge one.
->> + * collapse_file - collapse small tmpfs/shmem pages into huge one.
->>  *
->>  * Basic scheme is simple, details are more complex:
->>  *  - allocate and lock a new huge page;
->> @@ -1304,10 +1304,11 @@ static void retract_page_tables(struct address_s=
-pace *mapping, pgoff_t pgoff)
->>  *    + restore gaps in the page cache;
->>  *    + unlock and free huge page;
->>  */
->> -static void collapse_shmem(struct mm_struct *mm,
->> +static void collapse_file(struct vm_area_struct *vma,
->> 		struct address_space *mapping, pgoff_t start,
->> 		struct page **hpage, int node)
->> {
->> +	struct mm_struct *mm =3D vma->vm_mm;
->> 	gfp_t gfp;
->> 	struct page *new_page;
->> 	struct mem_cgroup *memcg;
->> @@ -1563,7 +1564,7 @@ static void collapse_shmem(struct mm_struct *mm,
->> 	/* TODO: tracepoints */
->> }
->>=20
->> -static void khugepaged_scan_shmem(struct mm_struct *mm,
->> +static void khugepaged_scan_file(struct vm_area_struct *vma,
->> 		struct address_space *mapping,
->> 		pgoff_t start, struct page **hpage)
->> {
->> @@ -1631,14 +1632,14 @@ static void khugepaged_scan_shmem(struct mm_stru=
-ct *mm,
->> 			result =3D SCAN_EXCEED_NONE_PTE;
->> 		} else {
->> 			node =3D khugepaged_find_target_node();
->> -			collapse_shmem(mm, mapping, start, hpage, node);
->> +			collapse_file(vma, mapping, start, hpage, node);
->> 		}
->> 	}
->>=20
->> 	/* TODO: tracepoints */
->> }
->> #else
->> -static void khugepaged_scan_shmem(struct mm_struct *mm,
->> +static void khugepaged_scan_file(struct vm_area_struct *vma,
->> 		struct address_space *mapping,
->> 		pgoff_t start, struct page **hpage)
->> {
->> @@ -1722,7 +1723,7 @@ static unsigned int khugepaged_scan_mm_slot(unsign=
-ed int pages,
->> 				file =3D get_file(vma->vm_file);
->> 				up_read(&mm->mmap_sem);
->> 				ret =3D 1;
->> -				khugepaged_scan_shmem(mm, file->f_mapping,
->> +				khugepaged_scan_file(vma, file->f_mapping,
->> 						pgoff, hpage);
->> 				fput(file);
->=20
-> Is it a change that should have put some material in the log message?
-> Is it unlikely for vma to go without mmap_sem held?
+The core dumping code has always run without holding the mmap_sem for
+writing, despite that is the only way to ensure that the entire vma
+layout will not change from under it.  Only using some signal
+serialization on the processes belonging to the mm is not nearly enough.
+This was pointed out earlier.  For example in Hugh's post from Jul 2017:
 
-This is a great point. We really need to be more careful. Let me fix=20
-it in the next version.=20
+  https://lkml.kernel.org/r/alpine.LSU.2.11.1707191716030.2055@eggly.anvils
 
-Thanks,
-Song
+  "Not strictly relevant here, but a related note: I was very surprised
+   to discover, only quite recently, how handle_mm_fault() may be called
+   without down_read(mmap_sem) - when core dumping. That seems a
+   misguided optimization to me, which would also be nice to correct"
+
+In particular because the growsdown and growsup can move the
+vm_start/vm_end the various loops the core dump does around the vma will
+not be consistent if page faults can happen concurrently.
+
+Pretty much all users calling mmget_not_zero()/get_task_mm() and then
+taking the mmap_sem had the potential to introduce unexpected side
+effects in the core dumping code.
+
+Adding mmap_sem for writing around the ->core_dump invocation is a
+viable long term fix, but it requires removing all copy user and page
+faults and to replace them with get_dump_page() for all binary formats
+which is not suitable as a short term fix.
+
+For the time being this solution manually covers the places that can
+confuse the core dump either by altering the vma layout or the vma flags
+while it runs.  Once ->core_dump runs under mmap_sem for writing the
+function mmget_still_valid() can be dropped.
+
+Allowing mmap_sem protected sections to run in parallel with the
+coredump provides some minor parallelism advantage to the swapoff code
+(which seems to be safe enough by never mangling any vma field and can
+keep doing swapins in parallel to the core dumping) and to some other
+corner case.
+
+In order to facilitate the backporting I added "Fixes: 86039bd3b4e6"
+however the side effect of this same race condition in /proc/pid/mem
+should be reproducible since before 2.6.12-rc2 so I couldn't add any
+other "Fixes:" because there's no hash beyond the git genesis commit.
+
+Because find_extend_vma() is the only location outside of the process
+context that could modify the "mm" structures under mmap_sem for
+reading, by adding the mmget_still_valid() check to it, all other cases
+that take the mmap_sem for reading don't need the new check after
+mmget_not_zero()/get_task_mm().  The expand_stack() in page fault
+context also doesn't need the new check, because all tasks under core
+dumping are frozen.
+
+Link: http://lkml.kernel.org/r/20190325224949.11068-1-aarcange@redhat.com
+Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Reported-by: Jann Horn <jannh@google.com>
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Peter Xu <peterx@redhat.com>
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Reviewed-by: Jann Horn <jannh@google.com>
+Acked-by: Jason Gunthorpe <jgg@mellanox.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[akaher@vmware.com: stable 4.9 backport
+ -  handle binder_update_page_range - mhocko@suse.com]
+Signed-off-by: Ajay Kaher <akaher@vmware.com>
+---
+ drivers/android/binder.c |  6 ++++++
+ fs/proc/task_mmu.c       | 18 ++++++++++++++++++
+ fs/userfaultfd.c         |  9 +++++++++
+ include/linux/mm.h       | 21 +++++++++++++++++++++
+ mm/mmap.c                |  6 +++++-
+ 5 files changed, 59 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 80499f4..f05ab8f 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -581,6 +581,12 @@ static int binder_update_page_range(struct binder_proc *proc, int allocate,
+ 
+ 	if (mm) {
+ 		down_write(&mm->mmap_sem);
++		if (!mmget_still_valid(mm)) {
++			if (allocate == 0)
++				goto free_range;
++			goto err_no_vma;
++		}
++
+ 		vma = proc->vma;
+ 		if (vma && mm != proc->vma_vm_mm) {
+ 			pr_err("%d: vma mm and task mm mismatch\n",
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 5138e78..4b207b1 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -1057,6 +1057,24 @@ static ssize_t clear_refs_write(struct file *file, const char __user *buf,
+ 					count = -EINTR;
+ 					goto out_mm;
+ 				}
++				/*
++				 * Avoid to modify vma->vm_flags
++				 * without locked ops while the
++				 * coredump reads the vm_flags.
++				 */
++				if (!mmget_still_valid(mm)) {
++					/*
++					 * Silently return "count"
++					 * like if get_task_mm()
++					 * failed. FIXME: should this
++					 * function have returned
++					 * -ESRCH if get_task_mm()
++					 * failed like if
++					 * get_proc_task() fails?
++					 */
++					up_write(&mm->mmap_sem);
++					goto out_mm;
++				}
+ 				for (vma = mm->mmap; vma; vma = vma->vm_next) {
+ 					vma->vm_flags &= ~VM_SOFTDIRTY;
+ 					vma_set_page_prot(vma);
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 784d667..8bf425a 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -479,6 +479,8 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
+ 	 * taking the mmap_sem for writing.
+ 	 */
+ 	down_write(&mm->mmap_sem);
++	if (!mmget_still_valid(mm))
++		goto skip_mm;
+ 	prev = NULL;
+ 	for (vma = mm->mmap; vma; vma = vma->vm_next) {
+ 		cond_resched();
+@@ -501,6 +503,7 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
+ 		vma->vm_flags = new_flags;
+ 		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+ 	}
++skip_mm:
+ 	up_write(&mm->mmap_sem);
+ 	mmput(mm);
+ wakeup:
+@@ -802,6 +805,9 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+ 		goto out;
+ 
+ 	down_write(&mm->mmap_sem);
++	if (!mmget_still_valid(mm))
++		goto out_unlock;
++
+ 	vma = find_vma_prev(mm, start, &prev);
+ 	if (!vma)
+ 		goto out_unlock;
+@@ -947,6 +953,9 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+ 		goto out;
+ 
+ 	down_write(&mm->mmap_sem);
++	if (!mmget_still_valid(mm))
++		goto out_unlock;
++
+ 	vma = find_vma_prev(mm, start, &prev);
+ 	if (!vma)
+ 		goto out_unlock;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index e3c8d40..c239984 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1189,6 +1189,27 @@ void zap_page_range(struct vm_area_struct *vma, unsigned long address,
+ void unmap_vmas(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
+ 		unsigned long start, unsigned long end);
+ 
++/*
++ * This has to be called after a get_task_mm()/mmget_not_zero()
++ * followed by taking the mmap_sem for writing before modifying the
++ * vmas or anything the coredump pretends not to change from under it.
++ *
++ * NOTE: find_extend_vma() called from GUP context is the only place
++ * that can modify the "mm" (notably the vm_start/end) under mmap_sem
++ * for reading and outside the context of the process, so it is also
++ * the only case that holds the mmap_sem for reading that must call
++ * this function. Generally if the mmap_sem is hold for reading
++ * there's no need of this check after get_task_mm()/mmget_not_zero().
++ *
++ * This function can be obsoleted and the check can be removed, after
++ * the coredump code will hold the mmap_sem for writing before
++ * invoking the ->core_dump methods.
++ */
++static inline bool mmget_still_valid(struct mm_struct *mm)
++{
++	return likely(!mm->core_state);
++}
++
+ /**
+  * mm_walk - callbacks for walk_page_range
+  * @pmd_entry: if set, called for each non-empty PMD (3rd-level) entry
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 3f2314a..19368fb 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2448,7 +2448,8 @@ find_extend_vma(struct mm_struct *mm, unsigned long addr)
+ 	vma = find_vma_prev(mm, addr, &prev);
+ 	if (vma && (vma->vm_start <= addr))
+ 		return vma;
+-	if (!prev || expand_stack(prev, addr))
++	/* don't alter vm_end if the coredump is running */
++	if (!prev || !mmget_still_valid(mm) || expand_stack(prev, addr))
+ 		return NULL;
+ 	if (prev->vm_flags & VM_LOCKED)
+ 		populate_vma_page_range(prev, addr, prev->vm_end, NULL);
+@@ -2474,6 +2475,9 @@ find_extend_vma(struct mm_struct *mm, unsigned long addr)
+ 		return vma;
+ 	if (!(vma->vm_flags & VM_GROWSDOWN))
+ 		return NULL;
++	/* don't alter vm_start if the coredump is running */
++	if (!mmget_still_valid(mm))
++		return NULL;
+ 	start = vma->vm_start;
+ 	if (expand_stack(vma, addr))
+ 		return NULL;
+-- 
+2.7.4
 
