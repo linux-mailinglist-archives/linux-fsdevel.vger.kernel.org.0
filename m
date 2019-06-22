@@ -2,417 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF6A4F2E3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2019 02:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F7C74F2FA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2019 03:02:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbfFVAqg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jun 2019 20:46:36 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52094 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfFVAqf (ORCPT
+        id S1726134AbfFVBCg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jun 2019 21:02:36 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36023 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbfFVBCg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jun 2019 20:46:35 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5M0jYhf082647;
-        Sat, 22 Jun 2019 00:46:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=c2c1vi8H9Q4Zb2ZW1Ej+DklQDn48J9ticrhevp4p6oM=;
- b=Tdz6cg6+B52HLTi9UENOeN4K5WS52PjdT2Hg+8B+jJ8JWaX/d5Pnfs8c6UQ0Y7OOfPrA
- FdzbkY58Mrh8t2lLzrroHaEbqwp2TKgkJmHbPNVpDlDBpl2CpErljc4MC0OF7kTjS5so
- g6W5Tv35aBbjzMU5hS0i0n6tglvoV225Zwqsgu/3SXSjP1BCSAvYDfUi8ESQjSDFW6nT
- S6YvXYzFUQI7N545fisvHUqAAZ4XIX/td7imLny5ilonWqw/apmUzTaof/avqF3VVycY
- JZ8/QyxwkRQ0MQ3RZZc0W5vVrHhUntNWh60hUHLS8TBRZLWB+e4sDcpiCLWtP1q+u2Ac Hw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2t7809rv2y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 22 Jun 2019 00:46:27 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5M0iZ2p117863;
-        Sat, 22 Jun 2019 00:46:26 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2t77yq78de-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 22 Jun 2019 00:46:26 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5M0kPwC006643;
-        Sat, 22 Jun 2019 00:46:25 GMT
-Received: from localhost (/10.159.131.214)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 21 Jun 2019 17:46:25 -0700
-Date:   Fri, 21 Jun 2019 17:46:24 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@lst.de, david@fromorbit.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 1/6] iomap: Use a IOMAP_COW/srcmap for a
- read-modify-write I/O
-Message-ID: <20190622004624.GC1611011@magnolia>
-References: <20190621192828.28900-1-rgoldwyn@suse.de>
- <20190621192828.28900-2-rgoldwyn@suse.de>
+        Fri, 21 Jun 2019 21:02:36 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r7so4420395pfl.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jun 2019 18:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pn4/IgcE/a3A9HRsf8YysVQmDOFkLMRirlv4eJOCAEY=;
+        b=r0d0D49hNJck2jmBOZ7hKq1EyIQm5VIsrCLXNfWA/zqw7JUB/PFT9/TEg3f9m8Exka
+         4OB4CLnAA+t7ZyRfMqNWActJqwB4eElCzw9OwOGul12RrF6Xah0/adQB3rDPYCiKwGSb
+         1cQfwLiJupuJHVE6kDeqU7eCLKZrrozRyUdaq1BAJ5w/IyIufGa6roBqLtZxSQ3wQLl8
+         cBD+npmSvsH7CB96WJOcXSzHxVdpszLog3BtkM+9yhp75ZfrhE2bcktgSWTAXvuCSrTY
+         kUvb5BfS0a52N4OmjgywAeDaICRhfTcMxYZ0cxZGqUP9umwcIynczzP5GVJDJnjw5aRm
+         2oGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pn4/IgcE/a3A9HRsf8YysVQmDOFkLMRirlv4eJOCAEY=;
+        b=MeFOtZVepLXXT7G6VKiXKF885wALjdpt4F2wn2EZUILkJG8U09vEYhlWfbARlwXMs6
+         bAr7kv/An1ay9lh2qFMATrzB9X401iayinQDr9OtZ/lutewiox8k5wLNUrC5RWmSnzZB
+         Fj3ye+LMZLe4oh2J0AaP/JSQea6Vc/w4x7U18a/TpF4ZEGihq21ZUDf7pRMSGpX1dZ+i
+         9e2mCrndXVjwjCqIKdKk5drbiOAzwim/BH6Y8cgC3aafCcnNQomuqdi+M/Kwno0hrBV4
+         76PwQT4cw0Y8eUIXGiJB7LHrEXXe4E7CQVh6dPiMZWFlE9/qhhOUVVbDPzbs+LpE/Zav
+         ZIZA==
+X-Gm-Message-State: APjAAAXX8psUWnaYgNb5FLvYn+OdLKdvWaTPdYy2fcPWZMBZZ/f3eGds
+        ai4sY/ED834H3MPIR/Ui+uWEm1Itt8l5NYv5AbThpw==
+X-Google-Smtp-Source: APXvYqwOxize9xmrZ2ApT7No74w3onQmjRsjgozaiDJFMKpG33Vqht+PxeXD1e0v4vbFE+q+E/bORwyHwGlVO6g99RY=
+X-Received: by 2002:a17:90a:9382:: with SMTP id q2mr10190000pjo.131.1561164883594;
+ Fri, 21 Jun 2019 17:54:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190621192828.28900-2-rgoldwyn@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9295 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906220005
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9295 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906220005
+References: <20190617082613.109131-1-brendanhiggins@google.com>
+ <10feac3e-7621-65e5-fbf0-9c63fcbe09c9@gmail.com> <69809117-dcda-160a-ee0a-d1d3b4c5cd8a@kernel.org>
+ <20190621181342.GA17166@mit.edu> <6f3f5184-d14e-1b46-17f1-391ee67e699c@kernel.org>
+In-Reply-To: <6f3f5184-d14e-1b46-17f1-391ee67e699c@kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 21 Jun 2019 17:54:31 -0700
+Message-ID: <CAFd5g46W1u+6JKLW0WX9uicK5utvJe9tvq4YBsCkghuo0rCmng@mail.gmail.com>
+Subject: Re: [PATCH v5 00/18] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     shuah <shuah@kernel.org>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 02:28:23PM -0500, Goldwyn Rodrigues wrote:
-> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> Introduces a new type IOMAP_COW, which means the data at offset
-> must be read from a srcmap and copied before performing the
-> write on the offset.
-> 
-> The srcmap is used to identify where the read is to be performed
-> from. This is passed to iomap->begin(), which is supposed to
-> put in the details for reading, typically set with type IOMAP_READ.
+On Fri, Jun 21, 2019 at 12:21 PM shuah <shuah@kernel.org> wrote:
+>
+> On 6/21/19 12:13 PM, Theodore Ts'o wrote:
+> > On Fri, Jun 21, 2019 at 08:59:48AM -0600, shuah wrote:
+> >>>> ### But wait! Doesn't kselftest support in kernel testing?!
+> >>>>
+> >>>> ....
+> >>
+> >> I think I commented on this before. I agree with the statement that
+> >> there is no overlap between Kselftest and KUnit. I would like see this
+> >> removed. Kselftest module support supports use-cases KUnit won't be able
+> >> to. I can build an kernel with Kselftest test modules and use it in the
+> >> filed to load and run tests if I need to debug a problem and get data
+> >> from a system. I can't do that with KUnit.
 
-What is IOMAP_READ ?
+Sure, I think this point has been brought up a number of times before.
+Maybe I didn't write this section well because, like Frank said, it
+comes across as being critical of the Kselftest module support; that
+wasn't my intention. I was speaking from the perspective that
+Kselftest module support is just a feature of Kselftest, and not a
+full framework like KUnit is (obviously Kselftest itself *is* a
+framework, but a very small part of it is not).
 
-> 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> ---
->  fs/dax.c              |  8 +++++---
->  fs/ext2/inode.c       |  2 +-
->  fs/ext4/inode.c       |  2 +-
->  fs/gfs2/bmap.c        |  3 ++-
->  fs/internal.h         |  2 +-
->  fs/iomap.c            | 31 ++++++++++++++++---------------
->  fs/xfs/xfs_iomap.c    |  9 ++++++---
->  include/linux/iomap.h |  4 +++-
->  8 files changed, 35 insertions(+), 26 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 2e48c7ebb973..80b9e2599223 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1078,7 +1078,7 @@ EXPORT_SYMBOL_GPL(__dax_zero_page_range);
->  
->  static loff_t
->  dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct block_device *bdev = iomap->bdev;
->  	struct dax_device *dax_dev = iomap->dax_dev;
-> @@ -1236,6 +1236,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	unsigned long vaddr = vmf->address;
->  	loff_t pos = (loff_t)vmf->pgoff << PAGE_SHIFT;
->  	struct iomap iomap = { 0 };
-> +	struct iomap srcmap = { 0 };
->  	unsigned flags = IOMAP_FAULT;
->  	int error, major = 0;
->  	bool write = vmf->flags & FAULT_FLAG_WRITE;
-> @@ -1280,7 +1281,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	 * the file system block size to be equal the page size, which means
->  	 * that we never have to deal with more than a single extent here.
->  	 */
-> -	error = ops->iomap_begin(inode, pos, PAGE_SIZE, flags, &iomap);
-> +	error = ops->iomap_begin(inode, pos, PAGE_SIZE, flags, &iomap, &srcmap);
->  	if (iomap_errp)
->  		*iomap_errp = error;
->  	if (error) {
-> @@ -1460,6 +1461,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	struct inode *inode = mapping->host;
->  	vm_fault_t result = VM_FAULT_FALLBACK;
->  	struct iomap iomap = { 0 };
-> +	struct iomap srcmap = { 0 };
->  	pgoff_t max_pgoff;
->  	void *entry;
->  	loff_t pos;
-> @@ -1534,7 +1536,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
->  	 * to look up our filesystem block.
->  	 */
->  	pos = (loff_t)xas.xa_index << PAGE_SHIFT;
-> -	error = ops->iomap_begin(inode, pos, PMD_SIZE, iomap_flags, &iomap);
-> +	error = ops->iomap_begin(inode, pos, PMD_SIZE, iomap_flags, &iomap, &srcmap);
+It was obvious to me what Kselftest module support was intended for,
+and it is not intended to cover the use case that KUnit is targeting.
 
-Line too long?
+> >> In my mind, I am not viewing this as which is better. Kselftest and
+> >> KUnit both have their place in the kernel development process. It isn't
+> >> productive and/or necessary to comparing Kselftest and KUnit without a
+> >> good understanding of the problem spaces for each of these.
 
-Also, I guess the DAX and directio write paths will just WARN_ON_ONCE if
-someone feeds them an IOMAP_COW type iomap?
+Again, I didn't mean to draw a comparison of which is better than the
+other. I was just trying to point out that Kselftest module support
+doesn't make sense as a stand alone unit testing framework, or really
+a framework of any kind, despite how it might actually be used.
 
-Ah, right, I guess the only filesystems that use iomap directio and
-iomap dax don't support COW. :)
+> >> I would strongly recommend not making reference to Kselftest and talk
+> >> about what KUnit offers.
 
---D
+I can see your point. It seems that both you and Frank seem to think
+that I drew a comparison between Kselftest and KUnit, which was
+unintended. I probably should have spent more time editing this
+section, but I can see the point of drawing the comparison itself
+might invite this confusion.
 
->  	if (error)
->  		goto unlock_entry;
->  
-> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-> index e474127dd255..f081f11980ad 100644
-> --- a/fs/ext2/inode.c
-> +++ b/fs/ext2/inode.c
-> @@ -801,7 +801,7 @@ int ext2_get_block(struct inode *inode, sector_t iblock,
->  
->  #ifdef CONFIG_FS_DAX
->  static int ext2_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
-> -		unsigned flags, struct iomap *iomap)
-> +		unsigned flags, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	unsigned int blkbits = inode->i_blkbits;
->  	unsigned long first_block = offset >> blkbits;
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index c7f77c643008..a8017e0c302b 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3437,7 +3437,7 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
->  }
->  
->  static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
-> -			    unsigned flags, struct iomap *iomap)
-> +			    unsigned flags, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
->  	unsigned int blkbits = inode->i_blkbits;
-> diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-> index 93ea1d529aa3..affa0c4305b7 100644
-> --- a/fs/gfs2/bmap.c
-> +++ b/fs/gfs2/bmap.c
-> @@ -1124,7 +1124,8 @@ static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
->  }
->  
->  static int gfs2_iomap_begin(struct inode *inode, loff_t pos, loff_t length,
-> -			    unsigned flags, struct iomap *iomap)
-> +			    unsigned flags, struct iomap *iomap,
-> +			    struct iomap *srcmap)
->  {
->  	struct gfs2_inode *ip = GFS2_I(inode);
->  	struct metapath mp = { .mp_aheight = 1, };
-> diff --git a/fs/internal.h b/fs/internal.h
-> index a48ef81be37d..79e495d86165 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -188,7 +188,7 @@ extern int do_vfs_ioctl(struct file *file, unsigned int fd, unsigned int cmd,
->   * iomap support:
->   */
->  typedef loff_t (*iomap_actor_t)(struct inode *inode, loff_t pos, loff_t len,
-> -		void *data, struct iomap *iomap);
-> +		void *data, struct iomap *iomap, struct iomap *srcmap);
->  
->  loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
->  		unsigned flags, const struct iomap_ops *ops, void *data,
-> diff --git a/fs/iomap.c b/fs/iomap.c
-> index 23ef63fd1669..6648957af268 100644
-> --- a/fs/iomap.c
-> +++ b/fs/iomap.c
-> @@ -41,6 +41,7 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
->  		const struct iomap_ops *ops, void *data, iomap_actor_t actor)
->  {
->  	struct iomap iomap = { 0 };
-> +	struct iomap srcmap = { 0 };
->  	loff_t written = 0, ret;
->  
->  	/*
-> @@ -55,7 +56,7 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
->  	 * expose transient stale data. If the reserve fails, we can safely
->  	 * back out at this point as there is nothing to undo.
->  	 */
-> -	ret = ops->iomap_begin(inode, pos, length, flags, &iomap);
-> +	ret = ops->iomap_begin(inode, pos, length, flags, &iomap, &srcmap);
->  	if (ret)
->  		return ret;
->  	if (WARN_ON(iomap.offset > pos))
-> @@ -75,7 +76,7 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
->  	 * we can do the copy-in page by page without having to worry about
->  	 * failures exposing transient data.
->  	 */
-> -	written = actor(inode, pos, length, data, &iomap);
-> +	written = actor(inode, pos, length, data, &iomap, &srcmap);
->  
->  	/*
->  	 * Now the data has been copied, commit the range we've copied.  This
-> @@ -282,7 +283,7 @@ iomap_read_inline_data(struct inode *inode, struct page *page,
->  
->  static loff_t
->  iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct iomap_readpage_ctx *ctx = data;
->  	struct page *page = ctx->cur_page;
-> @@ -424,7 +425,7 @@ iomap_next_page(struct inode *inode, struct list_head *pages, loff_t pos,
->  
->  static loff_t
->  iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap)
-> +		void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct iomap_readpage_ctx *ctx = data;
->  	loff_t done, ret;
-> @@ -444,7 +445,7 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
->  			ctx->cur_page_in_bio = false;
->  		}
->  		ret = iomap_readpage_actor(inode, pos + done, length - done,
-> -				ctx, iomap);
-> +				ctx, iomap, srcmap);
->  	}
->  
->  	return done;
-> @@ -796,7 +797,7 @@ iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
->  
->  static loff_t
->  iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct iov_iter *i = data;
->  	long status = 0;
-> @@ -913,7 +914,7 @@ __iomap_read_page(struct inode *inode, loff_t offset)
->  
->  static loff_t
->  iomap_dirty_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, struct iomap *srcmap)
->  {
->  	long status = 0;
->  	ssize_t written = 0;
-> @@ -1002,7 +1003,7 @@ static int iomap_dax_zero(loff_t pos, unsigned offset, unsigned bytes,
->  
->  static loff_t
->  iomap_zero_range_actor(struct inode *inode, loff_t pos, loff_t count,
-> -		void *data, struct iomap *iomap)
-> +		void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	bool *did_zero = data;
->  	loff_t written = 0;
-> @@ -1071,7 +1072,7 @@ EXPORT_SYMBOL_GPL(iomap_truncate_page);
->  
->  static loff_t
->  iomap_page_mkwrite_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap)
-> +		void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct page *page = data;
->  	int ret;
-> @@ -1169,7 +1170,7 @@ static int iomap_to_fiemap(struct fiemap_extent_info *fi,
->  
->  static loff_t
->  iomap_fiemap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
-> -		struct iomap *iomap)
-> +		struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct fiemap_ctx *ctx = data;
->  	loff_t ret = length;
-> @@ -1343,7 +1344,7 @@ page_cache_seek_hole_data(struct inode *inode, loff_t offset, loff_t length,
->  
->  static loff_t
->  iomap_seek_hole_actor(struct inode *inode, loff_t offset, loff_t length,
-> -		      void *data, struct iomap *iomap)
-> +		      void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	switch (iomap->type) {
->  	case IOMAP_UNWRITTEN:
-> @@ -1389,7 +1390,7 @@ EXPORT_SYMBOL_GPL(iomap_seek_hole);
->  
->  static loff_t
->  iomap_seek_data_actor(struct inode *inode, loff_t offset, loff_t length,
-> -		      void *data, struct iomap *iomap)
-> +		      void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	switch (iomap->type) {
->  	case IOMAP_HOLE:
-> @@ -1790,7 +1791,7 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
->  
->  static loff_t
->  iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap)
-> +		void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct iomap_dio *dio = data;
->  
-> @@ -2057,7 +2058,7 @@ static int iomap_swapfile_add_extent(struct iomap_swapfile_info *isi)
->   * distinction between written and unwritten extents.
->   */
->  static loff_t iomap_swapfile_activate_actor(struct inode *inode, loff_t pos,
-> -		loff_t count, void *data, struct iomap *iomap)
-> +		loff_t count, void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct iomap_swapfile_info *isi = data;
->  	int error;
-> @@ -2161,7 +2162,7 @@ EXPORT_SYMBOL_GPL(iomap_swapfile_activate);
->  
->  static loff_t
->  iomap_bmap_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap)
-> +		void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	sector_t *bno = data, addr;
->  
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 63d323916bba..6116a75f03da 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -925,7 +925,8 @@ xfs_file_iomap_begin(
->  	loff_t			offset,
->  	loff_t			length,
->  	unsigned		flags,
-> -	struct iomap		*iomap)
-> +	struct iomap		*iomap,
-> +	struct iomap		*srcmap)
->  {
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct xfs_mount	*mp = ip->i_mount;
-> @@ -1148,7 +1149,8 @@ xfs_seek_iomap_begin(
->  	loff_t			offset,
->  	loff_t			length,
->  	unsigned		flags,
-> -	struct iomap		*iomap)
-> +	struct iomap		*iomap,
-> +	struct iomap		*srcmap)
->  {
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct xfs_mount	*mp = ip->i_mount;
-> @@ -1234,7 +1236,8 @@ xfs_xattr_iomap_begin(
->  	loff_t			offset,
->  	loff_t			length,
->  	unsigned		flags,
-> -	struct iomap		*iomap)
-> +	struct iomap		*iomap,
-> +	struct iomap		*srcmap)
->  {
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct xfs_mount	*mp = ip->i_mount;
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 2103b94cb1bf..f49767c7fd83 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -25,6 +25,7 @@ struct vm_fault;
->  #define IOMAP_MAPPED	0x03	/* blocks allocated at @addr */
->  #define IOMAP_UNWRITTEN	0x04	/* blocks allocated at @addr in unwritten state */
->  #define IOMAP_INLINE	0x05	/* data inline in the inode */
-> +#define IOMAP_COW	0x06	/* copy data from srcmap before writing */
->  
->  /*
->   * Flags for all iomap mappings:
-> @@ -102,7 +103,8 @@ struct iomap_ops {
->  	 * The actual length is returned in iomap->length.
->  	 */
->  	int (*iomap_begin)(struct inode *inode, loff_t pos, loff_t length,
-> -			unsigned flags, struct iomap *iomap);
-> +			unsigned flags, struct iomap *iomap,
-> +			struct iomap *srcmap);
->  
->  	/*
->  	 * Commit and/or unreserve space previous allocated using iomap_begin.
-> -- 
-> 2.16.4
-> 
+> > Shuah,
+> >
+> > Just to recall the history, this section of the FAQ was added to rebut
+> > the ***very*** strong statements that Frank made that there was
+> > overlap between Kselftest and Kunit, and that having too many ways for
+> > kernel developers to do the identical thing was harmful (he said it
+> > was too much of a burden on a kernel developer) --- and this was an
+> > argument for not including Kunit in the upstream kernel.
+
+I don't think he was actually advocating that we don't include KUnit,
+maybe playing devil's advocate; nevertheless, at the end, Frank seemed
+to agree that there were valuable things that KUnit offered. I thought
+he just wanted to make the point that I hadn't made the distinction
+sufficiently clear in the cover letter, and other reviewers might get
+confused in the future as well.
+
+Additionally, it does look like people were trying to use Kselftest
+module support to cover some things which really were trying to be
+unit tests. I know this isn't really intended - everything looks like
+a nail when you only have a hammer, which I think Frank was pointing
+out furthers the above confusion.
+
+In anycase, it sounds like I have, if anything, only made the
+discussion even more confusing by adding this section; sorry about
+that.
+
+> > If we're past that objection, then perhaps this section can be
+> > dropped, but there's a very good reason why it was there.  I wouldn't
+> > Brendan to be accused of ignoring feedback from those who reviewed his
+> > patches.   :-)
+> >
+>
+> Agreed. I understand that this FAQ probably was needed at one time and
+> Brendan added it to address the concerns.
+
+I don't want to speak for Frank, but I don't think it was an objection
+to KUnit itself, but rather an objection to not sufficiently
+addressing the point about how they differ.
+
+> I think at some point we do need to have a document that outlines when
+> to KUnit and when to use Kselftest modules. I think one concern people
+> have is that if KUnit is perceived as a  replacement for Ksefltest
+> module, Kselftest module will be ignored leaving users without the
+> ability to build and run with Kselftest modules and load them on a need
+> basis to gather data on a systems that aren't dedicated strictly for
+> testing.
+
+I absolutely agree! I posed a suggestion here[1], which after I just
+now searched for a link, I realize for some reason it didn't seem like
+it reached a number of the mailing lists that I sent it to, so I
+should probably resend it.
+
+Anyway, a summary of what I suggested: We should start off by better
+organizing Documentation/dev-tools/ and create a landing page that
+groups the dev-tools by function according to what person is likely to
+use them and for what. Eventually and specifically for Kselftest and
+KUnit, I would like to have a testing guide for the kernel that
+explains what testing procedure should look like and what to use and
+when.
+
+> I am trying to move the conversation forward from KUnit vs. Kselftest
+> modules discussion to which problem areas each one addresses keeping
+> in mind that it is not about which is better. Kselftest and KUnit both
+> have their place in the kernel development process. We just have to be
+> clear on usage as we write tests for each.
+
+I think that is the right long term approach. I think a good place to
+start, like I suggested above, is cleaning up
+Documentation/dev-tools/, but I think that belongs in a (probably
+several) follow-up patchset.
+
+Frank, I believe your objection was mostly related to how KUnit is
+presented specifically in the cover letter, and doesn't necessarily
+deal with the intended use case. So I don't think that doing this,
+especially doing this later, really addresses your concern. I don't
+want to belabor the issue, but I would also rather not put words in
+your mouth, what are your thoughts on the above?
+
+I think my main concern moving forward on this point is that I am not
+sure that I can address the debate that this section covers in a way
+that is both sufficiently concise for a cover letter, but also doesn't
+invite more potential confusion. My inclination at this point is to
+drop it since I think the set of reviewers for this patchset has at
+this point become fixed, and it seems that it will likely cause more
+confusion rather than reduce it; also, I don't really think this will
+be an issue for end users, especially once we have proper
+documentation in place. Alternatively, I guess I could maybe address
+the point elsewhere and refer to it in the cover letter? Or maybe just
+put it at the end of the cover letter?
+
+[1] https://www.mail-archive.com/kgdb-bugreport@lists.sourceforge.net/msg05059.html
