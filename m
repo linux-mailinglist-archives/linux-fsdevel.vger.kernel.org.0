@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 777B34F3C5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2019 07:02:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4009F4F3C8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2019 07:02:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726136AbfFVFCR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Jun 2019 01:02:17 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:26713 "EHLO
+        id S1726186AbfFVFCc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Jun 2019 01:02:32 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:26729 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726111AbfFVFCQ (ORCPT
+        by vger.kernel.org with ESMTP id S1726111AbfFVFCc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Jun 2019 01:02:16 -0400
+        Sat, 22 Jun 2019 01:02:32 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Fri, 21 Jun 2019 22:02:11 -0700
+ 15.0.1156.6; Fri, 21 Jun 2019 22:02:27 -0700
 Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 07D5C416DE;
-        Fri, 21 Jun 2019 22:02:08 -0700 (PDT)
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 3C55341723;
+        Fri, 21 Jun 2019 22:02:25 -0700 (PDT)
 From:   Ajay Kaher <akaher@vmware.com>
 To:     <aarcange@redhat.com>, <jannh@google.com>, <oleg@redhat.com>,
         <peterx@redhat.com>, <rppt@linux.ibm.com>, <jgg@mellanox.com>,
@@ -32,9 +32,9 @@ CC:     <jglisse@redhat.com>, <akpm@linux-foundation.org>,
         <devel@driverdev.osuosl.org>, <linux-rdma@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
         <akaher@vmware.com>, <srivatsab@vmware.com>, <amakhalov@vmware.com>
-Subject: [PATCH v3 2/2][v4.9.y] coredump: fix race condition between mmget_not_zero()/get_task_mm() and core dumping
-Date:   Sat, 22 Jun 2019 18:32:18 +0530
-Message-ID: <1561208539-29682-2-git-send-email-akaher@vmware.com>
+Subject: [PATCH v3 0/2] [v4.9.y] coredump: fix race condition between mmget_not_zero()/get_task_mm() and core dumping
+Date:   Sat, 22 Jun 2019 18:32:19 +0530
+Message-ID: <1561208539-29682-3-git-send-email-akaher@vmware.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1561208539-29682-1-git-send-email-akaher@vmware.com>
 References: <1561208539-29682-1-git-send-email-akaher@vmware.com>
@@ -47,64 +47,17 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch is the extension of following upstream commit to fix
-the race condition between get_task_mm() and core dumping
-for IB->mlx4 and IB->mlx5 drivers:
+coredump: fix race condition between mmget_not_zero()/get_task_mm()
+and core dumping
 
-commit 04f5866e41fb ("coredump: fix race condition between
-mmget_not_zero()/get_task_mm() and core dumping")'
+[PATCH v3 1/2]:
+Backporting of commit 04f5866e41fb70690e28397487d8bd8eea7d712a upstream.
 
-Thanks to Jason for pointing this.
+[PATCH v3 2/2]:
+Extension of commit 04f5866e41fb to fix the race condition between
+get_task_mm() and core dumping for IB->mlx4 and IB->mlx5 drivers.
 
-Signed-off-by: Ajay Kaher <akaher@vmware.com>
----
- drivers/infiniband/hw/mlx4/main.c | 4 +++-
- drivers/infiniband/hw/mlx5/main.c | 3 +++
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index 8d59a59..7ccf722 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -1172,6 +1172,8 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 	 * mlx4_ib_vma_close().
- 	 */
- 	down_write(&owning_mm->mmap_sem);
-+	if (!mmget_still_valid(owning_mm))
-+		goto skip_mm;
- 	for (i = 0; i < HW_BAR_COUNT; i++) {
- 		vma = context->hw_bar_info[i].vma;
- 		if (!vma)
-@@ -1190,7 +1192,7 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 		/* context going to be destroyed, should not access ops any more */
- 		context->hw_bar_info[i].vma->vm_ops = NULL;
- 	}
--
-+skip_mm:
- 	up_write(&owning_mm->mmap_sem);
- 	mmput(owning_mm);
- 	put_task_struct(owning_process);
-diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-index b1daf5c..f94df0e 100644
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -1307,6 +1307,8 @@ static void mlx5_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 	 * mlx5_ib_vma_close.
- 	 */
- 	down_write(&owning_mm->mmap_sem);
-+	if (!mmget_still_valid(owning_mm))
-+		goto skip_mm;
- 	list_for_each_entry_safe(vma_private, n, &context->vma_private_list,
- 				 list) {
- 		vma = vma_private->vma;
-@@ -1321,6 +1323,7 @@ static void mlx5_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
- 		list_del(&vma_private->list);
- 		kfree(vma_private);
- 	}
-+skip_mm:
- 	up_write(&owning_mm->mmap_sem);
- 	mmput(owning_mm);
- 	put_task_struct(owning_process);
--- 
-2.7.4
-
+[diff from v2]:
+- moved mmget_still_valid to mm.h in [PATCH v3 1/2]
+- added binder.c changes in [PATCH v3 1/2]
+- added [PATCH v3 2/2]
