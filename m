@@ -2,65 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC0074F6DB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2019 18:28:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E23924F7B7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jun 2019 20:02:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbfFVQ2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Jun 2019 12:28:53 -0400
-Received: from sonic301-3.consmr.mail.bf2.yahoo.com ([74.6.129.42]:44832 "EHLO
-        sonic301-3.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726365AbfFVQ2u (ORCPT
+        id S1726388AbfFVSCY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Jun 2019 14:02:24 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44136 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726286AbfFVSCY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Jun 2019 12:28:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1561220929; bh=3fXYToOZXvh5MOJ1JSawYDThjnynC/Ekt2gucIg6zZg=; h=Date:From:Reply-To:Subject:From:Subject; b=FwrBLUl7u665XwQeVPTq5hUQ4Ptv5qPcwgE0MfCyAxPjQW66W+sBKlTITy95Xiak8M/9mL3k87XvuhuNYmdzjOXFqAsXXJ7ZeR0tr0xQhaR4qpp9+I79zHB4JVXDeOtUnrv/ni1DEn3m49tSMIml9+1SbDvUcui/xLYzcB7mOtvlwJJC6bBkcbOwJW8drH7WnSKYQVlUvO9PRg8+IWYABo4m/HoTrmg3JSd7+tfq1bmdsTjreC9G6uwJClVG1p8XyGEOijmNqXv9Ivunj8UzUvxVldTIg/taTAKdSlSG3i+xbnz28LKLpxSK2+M63p52Vf+hNJ0OycyVj1TkO+H8OQ==
-X-YMail-OSG: BClZlNgVM1mJa1pSUAMlnjmDwJQUKDn0osVKNVIeZ6AC0JZQ8NzrV_.P2vPToBw
- lk4l1yMYy0P1wu9iKWHPF1vwWtED.NCcY6jE.jXdELnZdUngnDzcX.f1Ik7TcPjN._6dUftCNvSG
- 0ilPDIIh6JKut3rld3EDzfXqVTEprJFL10dLfXEmdNXy8_9HzWnLN9Uxxh6FWr8nj4DbExyF48M8
- b8CzHn8AtWzh0fDjJqMRXb5UR1L1fHF.mq4wk_41bl8VHLLREhO8D9AiMB_Iou.TvP.xektI4Uzf
- lBotEg54S8nbe5a5a2eamKaLSiD6XaCIzSQkrGwkgk9qzk7J4361PG1C2lAWhSULJjGYH.uKi9SH
- 8omXh8MvwuZmVU7umqXbA4eIFWV8ruRR3qRFWtA.2B0Eer.D49EbNovsAu.wRPm8yYyL6YMdaoys
- 3vYAkjype1yPgR0gHAH3zObnNPMrtMzQfsTzcaha59dNYsVWPRo5EvcFgAIKXVIUqnKnooWuODru
- O4SgrdrM8PGEZGs5dJS.h.dJB3gwQ.0I1wf1Q_CLgJhbPMrumaMiWl3ifhN9G_CCxrGhRPRltqdB
- RyAvAXGENXKEJswzM.sYWHkLQyblOWaGX5TLKzeDGaJCZVu7CtZvQ0aNcyWtqrf4SAtE7MK9SqUH
- 7phABBxeBrGdyDkvdUQOX_EPh25.Hb3SncDKllMEIHjvEdwbQcMGmqMEDVCI8Jh0nfgpjh259ODl
- q.bGW_sz63_QvjPWXygjUQ4RzfXiei1bHIkvbkPAHc04dS.Qr8LP1Jyxp2QD0wtNtJgo5RScK99X
- P5NPqcNAR8eez8YgXpk3cKLQCR9JSylhL6QyUVACODhQSLMO_l73eEDpWzNQUeEQLrEwA53TFUO9
- BXx4lR26gADp4OeWMANR3pTNDn8J7Oc5G1l.tF8AqVFtdsoB5vgCdw0tzoX9_22cJzNNteihaN9H
- ktOSXaCeUY26x9DWNkYi7HTOCc9F4vHnioRwelB9Lv.KGDeGPUJBBPmfcn0xXC8MB2YTlUFeVHzN
- FJsHhvFz9eJx.VwEAdhJs3DHW6xmbj9a_RSOf.BoLPiAvMAdoBe_1sVY8nFOqhuBwpkbj17TOzIW
- ts0JEWafkyantIFw8kEnIr0AHDEAK4aB1fgOVS8TQpbEaj2tB4pKHPa4OOjXszQAPBozr7PYVj2f
- 6AcwHFYhcmsrFfliX20p43dgFMRY8GMXgvUWeegBAeAuOTxCoUC9WvAdL
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Sat, 22 Jun 2019 16:28:49 +0000
-Date:   Sat, 22 Jun 2019 16:28:46 +0000 (UTC)
-From:   "Miss.Fatima Yusuf" <fatimayusuf5@outlook.fr>
-Reply-To: miss.fmayusuf11@gmail.com
-Message-ID: <270302503.296556.1561220926635@mail.yahoo.com>
-Subject: From:Miss: Fatima Yusuf.
+        Sat, 22 Jun 2019 14:02:24 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r16so9553398wrl.11;
+        Sat, 22 Jun 2019 11:02:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:mime-version:message-id:in-reply-to
+         :references:user-agent:content-transfer-encoding;
+        bh=MvdVlfsCZCzoiO3dWaS7svRVtEzJywqCcVUPGHCcDEY=;
+        b=sRilaimFeaePIYvUwtlO1PJMAd7GYlH/2BTb3QuVFlcXeebELLDg49wv+7OV/8s353
+         2ix06k0Vj/SkuFx5HkmQ2iu4KpaVsy0yRQGztD4WrEVP5IENxBnKBn1yAQikMz/IY1gW
+         rz3EM5F7XA4NuzDE6aXSWaQ1VjRY/ipjHzBI6GleCLN8LLYpmIow2dZkBY2fK9X2yoWF
+         PdvH8NNebh274GufOsmCvHqDn5dU/BBti+LvvxujmK5TIX92VIDaIu3BRWtf2a0JUJx5
+         cXoykUUfB7HRzYXUkArpvOEt5GZsQijFbXFNB6Nf+yl6ppbcfsgTgiFkpWF3JQXkfk2n
+         402Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:mime-version:message-id
+         :in-reply-to:references:user-agent:content-transfer-encoding;
+        bh=MvdVlfsCZCzoiO3dWaS7svRVtEzJywqCcVUPGHCcDEY=;
+        b=PzhWnwJDBfjem/oOpqjheusToiCgQ+d63onyFijfQppw5hzjbekv7jh0UpvdshVD1Q
+         b/hst7HMdWqCQAcUhbdj+NaqcHSrAWm6x1i2PECzvX8RxnnT0SkVo4Fcly7gfMuLhbFx
+         jzSKgc6d+11brDBc+FH5dnUE18ntOFodeCxvCTGOrriCrLHqStAhmUFpHQMMk72OPcwT
+         VceD3YzUs5wZ0gMttfE3zP7afVjiRbPEgvX95HWmGgqgG6eyeqZPwgOJprJOMfozAMoI
+         wRo2F5C589hv3ciiHkCEpxkFEHQy8v58twf+kpL7LKjxja9p7SmHoz/Xbrm/Ky4TU22x
+         ASQA==
+X-Gm-Message-State: APjAAAWaAlFlYhqn5gMqwN9jQGuW2pQDX9hNTSsv4D5DXHA5tzcKNj+u
+        AqvkRA81NiCNy2ntxRTcbSESHdVPNvRMGA==
+X-Google-Smtp-Source: APXvYqyndRWSOXsFEF0LcRNbc+VXO2mtyNTfcHVkaia8QxZAkUMLjqJhHL7pGbiMghjIHQMBNiYgHg==
+X-Received: by 2002:adf:82e7:: with SMTP id 94mr8603119wrc.95.1561226542020;
+        Sat, 22 Jun 2019 11:02:22 -0700 (PDT)
+Received: from localhost ([92.59.185.54])
+        by smtp.gmail.com with ESMTPSA id q15sm4621055wrr.19.2019.06.22.11.02.20
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 22 Jun 2019 11:02:20 -0700 (PDT)
+From:   Vicente Bergas <vicencb@gmail.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: =?iso-8859-1?Q?d=5Flookup:_Unable_to_handle_kernel_paging_request?=
+Date:   Sat, 22 Jun 2019 20:02:19 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+Message-ID: <cd84de0e-909e-4117-a20a-6cde42079267@gmail.com>
+In-Reply-To: <20190619170940.GG17978@ZenIV.linux.org.uk>
+References: <23950bcb-81b0-4e07-8dc8-8740eb53d7fd@gmail.com>
+ <20190522135331.GM17978@ZenIV.linux.org.uk>
+ <bdc8b245-afca-4662-99e2-a082f25fc927@gmail.com>
+ <20190522162945.GN17978@ZenIV.linux.org.uk>
+ <10192e43-c21d-44e4-915d-bf77a50c22c4@gmail.com>
+ <20190618183548.GB17978@ZenIV.linux.org.uk>
+ <bf2b3aa6-bda1-43f1-9a01-e4ad3df81c0b@gmail.com>
+ <20190619162802.GF17978@ZenIV.linux.org.uk>
+ <bc774f6b-711e-4a20-ad85-c282f9761392@gmail.com>
+ <20190619170940.GG17978@ZenIV.linux.org.uk>
+User-Agent: Trojita
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Al,
+i think have a hint of what is going on.
+With the last kernel built with your sentinels at hlist_bl_*lock
+it is very easy to reproduce the issue.
+In fact it is so unstable that i had to connect a serial port
+in order to save the kernel trace.
+Unfortunately all the traces are at different addresses and
+your sentinel did not trigger.
 
+Now i am writing this email from that same buggy kernel, which is
+v5.2-rc5-224-gbed3c0d84e7e.
 
-From:Miss: Fatima Yusuf.
+The difference is that I changed the bootloader.
+Before was booting 5.1.12 and kexec into this one.
+Now booting from u-boot into this one.
+I will continue booting with u-boot for some time to be sure it is
+stable and confirm this is the cause.
 
-For sure this mail would definitely come to you as a surprise, but do take your good time to go through it, My name is Ms. Fatima Yusuf,i am from Ivory Coast.
+In case it is, who is the most probable offender?
+the kernel before kexec or the kernel after?
 
-I lost my parents a year and couple of months ago. My father was a serving director of the Agro-exporting board until his death. He was assassinated by his business partners.Before his death, he made a deposit of US$9.7 Million Dollars here in Cote d'ivoire which was for the purchase of cocoa processing machine and development of another factory before his untimely death.
+The original report was sent to you because you appeared as the maintainer
+of fs/dcache.c, which appeared on the trace. Should this be redirected
+somewhere else now?
 
-Being that this part of the world experiences political and crises time without number, there is no guarantee of lives and properties. I cannot invest this money here any long, despite the fact it had been my late father's industrial plans.
+Regards,
+  Vicen=C3=A7.
 
-I want you to do me a favor to receive this funds into your country or any safer place as the beneficiary, I have plans to invest this money in continuation with the investment vision of my late father, but not in this place again rather in your country. I have the vision of going into real estate and industrial production or any profitable business venture.
+On Wednesday, June 19, 2019 7:09:40 PM CEST, Al Viro wrote:
+> On Wed, Jun 19, 2019 at 06:51:51PM +0200, Vicente Bergas wrote:
+>
+>>> What's your config, BTW?  SMP and DEBUG_SPINLOCK, specifically...
+>>=20
+>> Hi Al,
+>> here it is:
+>> https://paste.debian.net/1088517
+>
+> Aha...  So LIST_BL_LOCKMASK is 1 there (same as on distro builds)...
+>
+> Hell knows - how about
+> static inline void hlist_bl_lock(struct hlist_bl_head *b)
+> {
+> =09BUG_ON(((u32)READ_ONCE(*b)&~LIST_BL_LOCKMASK) =3D=3D 0x01000000);
+>         bit_spin_lock(0, (unsigned long *)b);
+> }
+>
+> and
+>
+> static inline void hlist_bl_unlock(struct hlist_bl_head *b)
+> {
+>         __bit_spin_unlock(0, (unsigned long *)b);
+> =09BUG_ON(((u32)READ_ONCE(*b)&~LIST_BL_LOCKMASK) =3D=3D 0x01000000);
+> }
+>
+> to see if we can narrow down where that happens?
 
-I will be ready to compensate you with 20% of the total Amount, now all my hope is banked on you and i really wants to invest this money in your country, where there is stability of Government, political and economic welfare.
-
-My greatest worry now is how to move out of this country because my uncle is threatening to kill me as he killed my father,Please do not let anybody hear about this, it is between me and you alone because of my security reason.
-
-I am waiting to hear from you.
-Yours Sincerely,
-Miss.Fatima Yusuf.
