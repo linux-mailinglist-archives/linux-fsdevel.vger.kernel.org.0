@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07B034FA80
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2019 08:30:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0610C4FA7F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jun 2019 08:30:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbfFWGas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Jun 2019 02:30:48 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:26706 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725268AbfFWGar (ORCPT
+        id S1726350AbfFWGaI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Jun 2019 02:30:08 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:56446 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725268AbfFWGaI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Jun 2019 02:30:47 -0400
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x5N6Rhkv017016
-        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Jun 2019 23:30:46 -0700
+        Sun, 23 Jun 2019 02:30:08 -0400
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5N6Ro9I018427
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Jun 2019 23:30:07 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : mime-version : content-type; s=facebook;
  bh=N4p2KBB2M58AXrXvSXMaov3ijBFbuQ4LQynUr7EYajE=;
  b=aqXk+llhlxf02/luaoTtoMU/QnV7fgpAZH4oiXC817GCprF8wIzbKUp2eizSg1UnMbpE
  c+s0KSeRKCD1fnrA2+yzsV0izvJoGFdvddXdaCkSEnBcHRo9VNYxIJYQR35gq6DOI5KD
  OXqYsIXNU8/PM07z9k08FsPArBIURLCqz/Y= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by m0001303.ppops.net with ESMTP id 2t9g0aadre-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Jun 2019 23:30:45 -0700
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Sat, 22 Jun 2019 23:30:44 -0700
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2t9kmja3gf-15
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Jun 2019 23:30:06 -0700
+Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Sat, 22 Jun 2019 22:36:35 -0700
 Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
         id 3779762E2CFB; Sat, 22 Jun 2019 22:47:54 -0700 (PDT)
 Smtp-Origin-Hostprefix: devbig
