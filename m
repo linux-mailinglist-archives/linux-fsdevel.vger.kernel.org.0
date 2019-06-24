@@ -2,726 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB50850EBF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 16:42:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6824B50EE7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 16:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbfFXOmH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 10:42:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50414 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729088AbfFXOmG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:42:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D1A7AAFAB;
-        Mon, 24 Jun 2019 14:42:04 +0000 (UTC)
-From:   Roman Penyaev <rpenyaev@suse.de>
-Cc:     Roman Penyaev <rpenyaev@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 14/14] kselftest: add uepoll-test which tests polling from userspace
-Date:   Mon, 24 Jun 2019 16:41:51 +0200
-Message-Id: <20190624144151.22688-15-rpenyaev@suse.de>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190624144151.22688-1-rpenyaev@suse.de>
-References: <20190624144151.22688-1-rpenyaev@suse.de>
+        id S1728852AbfFXOoB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 10:44:01 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:37606 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728037AbfFXOoB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:44:01 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x5OEccID028211;
+        Mon, 24 Jun 2019 07:42:17 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=biTD7+gjv13LBHVp56WKg5wlOTLn7gVlvfXmHII4/ok=;
+ b=YbT/S+4jHhwcBUnVmSpfg/CTv+qiHSa2j6QjIcDl18JMdRk2nD2uHIJn0YWv6JALpzJP
+ zbKM8BWJoyqfL1UP4IfzjGvN3HFG8NaqMiWeipfrkyBgXjfur8uH8SzQ46voPT89jB5k
+ oBswVWrhd05YwMe+wt7ccxbPEm0ffPSHj+k= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by m0089730.ppops.net with ESMTP id 2tavm1rt2c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 07:42:16 -0700
+Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
+ prn-hub04.TheFacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Mon, 24 Jun 2019 07:42:14 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Mon, 24 Jun 2019 07:42:14 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=biTD7+gjv13LBHVp56WKg5wlOTLn7gVlvfXmHII4/ok=;
+ b=YkUAdX/CR/SfdHVD2JNUQSU0NdeTpCi0XH2ngMXk3QgAFuyId43CFQgdiD3JMPNU8Me9i1wasfDlGvSxp4wND/MJUTfmwE8lFwqyP/0j0ydaC2WuIBw3K9gqiG9DSGFn7kkJUw7a0GaD1Talvx9ix+l4HTZVMBcRRlVHi2s5P5w=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1807.namprd15.prod.outlook.com (10.174.255.135) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Mon, 24 Jun 2019 14:42:13 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d%6]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
+ 14:42:13 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hdanton@sina.com" <hdanton@sina.com>
+Subject: Re: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
+ FS
+Thread-Topic: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
+ FS
+Thread-Index: AQHVKYdGAmz09KUZ80Kts9GVGsmXGaaqwvwAgAAUeoCAAAd4gIAABAcA
+Date:   Mon, 24 Jun 2019 14:42:13 +0000
+Message-ID: <C3161C66-5044-44E6-92F4-BBAD42EDF4E2@fb.com>
+References: <20190623054749.4016638-1-songliubraving@fb.com>
+ <20190623054749.4016638-6-songliubraving@fb.com>
+ <20190624124746.7evd2hmbn3qg3tfs@box>
+ <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
+ <20190624142747.chy5s3nendxktm3l@box>
+In-Reply-To: <20190624142747.chy5s3nendxktm3l@box>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:180::1:d642]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 45d81ac6-ac3e-48e2-beae-08d6f8b2257b
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1807;
+x-ms-traffictypediagnostic: MWHPR15MB1807:
+x-microsoft-antispam-prvs: <MWHPR15MB180742845552E60E19A13010B3E00@MWHPR15MB1807.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 007814487B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(366004)(346002)(376002)(39860400002)(189003)(199004)(6506007)(76176011)(81166006)(4326008)(14454004)(229853002)(8936002)(33656002)(478600001)(81156014)(316002)(305945005)(446003)(11346002)(486006)(476003)(2906002)(68736007)(54906003)(71190400001)(2616005)(7736002)(46003)(6916009)(5660300002)(99286004)(86362001)(102836004)(53546011)(186003)(6116002)(50226002)(71200400001)(14444005)(256004)(53936002)(6486002)(6246003)(6436002)(8676002)(57306001)(66946007)(36756003)(6512007)(66446008)(25786009)(64756008)(66556008)(66476007)(73956011)(76116006)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1807;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Lk/CUEMV78I14ydrlsW5qgP88OvuK0x0jsbMzojChZI4NXsxs7L5JIxUdB54ovFl1olcDjTDROkr4Bxf3UCCcY9zKBFkQfnr9nubd1XPluSCROzP5cicyHWygeW7Dz9wtOGA6diNLFhvJ3YyYBl2Of5B3kpBr1lm8yb3eZznP6vPttZz8I2dc9HoEuIdPl/L3SvjRKw3XeYoH5i3JFSRjdDlFdp9+mmiCkX44tOgfqQWizoSz5Xb21BnIUwfeOvOebo+jvrnGsBU8sFkm9IYLJ00a0t+fRwgmGSpoCC95AxAF6hoZ1ujDhN1Fko5AYpBQfmVYXr2cKltW9YnoZG/n7Iw8hXP+2bT0OWGVrO3a/nyZlzul1gupwRB09UVlxxGZuZXW2ieBDJxVuQ1LBRiV/gTVYbg24l55bwIFHQ7qIw=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2A04ABA06972B54D9DEF657049A91AAE@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 45d81ac6-ac3e-48e2-beae-08d6f8b2257b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 14:42:13.4296
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1807
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240119
+X-FB-Internal: deliver
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/uepoll/.gitignore     |   1 +
- tools/testing/selftests/uepoll/Makefile       |  16 +
- .../uepoll/atomic-builtins-support.c          |  13 +
- tools/testing/selftests/uepoll/uepoll-test.c  | 603 ++++++++++++++++++
- 5 files changed, 634 insertions(+)
- create mode 100644 tools/testing/selftests/uepoll/.gitignore
- create mode 100644 tools/testing/selftests/uepoll/Makefile
- create mode 100644 tools/testing/selftests/uepoll/atomic-builtins-support.c
- create mode 100644 tools/testing/selftests/uepoll/uepoll-test.c
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 9781ca79794a..ff87ac3400fe 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -52,6 +52,7 @@ TARGETS += timers
- endif
- TARGETS += tmpfs
- TARGETS += tpm2
-+TARGETS += uepoll
- TARGETS += user
- TARGETS += vm
- TARGETS += x86
-diff --git a/tools/testing/selftests/uepoll/.gitignore b/tools/testing/selftests/uepoll/.gitignore
-new file mode 100644
-index 000000000000..8eedec333023
---- /dev/null
-+++ b/tools/testing/selftests/uepoll/.gitignore
-@@ -0,0 +1 @@
-+uepoll-test
-diff --git a/tools/testing/selftests/uepoll/Makefile b/tools/testing/selftests/uepoll/Makefile
-new file mode 100644
-index 000000000000..cc1b2009197d
---- /dev/null
-+++ b/tools/testing/selftests/uepoll/Makefile
-@@ -0,0 +1,16 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+CC := $(CROSS_COMPILE)gcc
-+CFLAGS += -O2 -g -I../../../../usr/include/ -lnuma -lpthread
-+
-+BUILTIN_SUPPORT := $(shell $(CC) -o /dev/null ./atomic-builtins-support.c >/dev/null 2>&1; echo $$?)
-+
-+ifeq "$(BUILTIN_SUPPORT)" "0"
-+    TEST_GEN_PROGS := uepoll-test
-+else
-+    $(warning WARNING:)
-+    $(warning WARNING: uepoll compilation is skipped, gcc atomic builtins are not supported!)
-+    $(warning WARNING:)
-+endif
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/uepoll/atomic-builtins-support.c b/tools/testing/selftests/uepoll/atomic-builtins-support.c
-new file mode 100644
-index 000000000000..d9ded39ec497
---- /dev/null
-+++ b/tools/testing/selftests/uepoll/atomic-builtins-support.c
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Just a test to check if gcc supports atomic builtins
-+ */
-+unsigned long long v, vv, vvv;
-+
-+int main(void)
-+{
-+	vv = __atomic_load_n(&v, __ATOMIC_ACQUIRE);
-+	vvv = __atomic_exchange_n(&vv, 0, __ATOMIC_ACQUIRE);
-+
-+	return __atomic_add_fetch(&vvv, 1, __ATOMIC_RELAXED);
-+}
-diff --git a/tools/testing/selftests/uepoll/uepoll-test.c b/tools/testing/selftests/uepoll/uepoll-test.c
-new file mode 100644
-index 000000000000..1cefdcc1e25b
---- /dev/null
-+++ b/tools/testing/selftests/uepoll/uepoll-test.c
-@@ -0,0 +1,603 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * uepoll-test.c - Test cases for epoll_create2(), namely pollable
-+ * epoll from userspace.  Copyright (c) 2019 Roman Penyaev
-+ */
-+
-+#define _GNU_SOURCE
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <time.h>
-+#include <assert.h>
-+#include <sys/mman.h>
-+#include <sys/eventfd.h>
-+#include <unistd.h>
-+#include <pthread.h>
-+#include <errno.h>
-+#include <syscall.h>
-+#include <numa.h>
-+
-+#include "../kselftest.h"
-+#include "../kselftest_harness.h"
-+
-+#include <linux/eventpoll.h>
-+#include <linux/types.h>
-+
-+#define BUILD_BUG_ON(condition) ((void)sizeof(char [1 - 2*!!(condition)]))
-+#define READ_ONCE(v) (*(volatile typeof(v)*)&(v))
-+
-+#define ITERS     1000000ull
-+
-+/*
-+ * Add main epoll functions manually, because sys/epoll.h conflicts
-+ * with linux/eventpoll.h.
-+ */
-+extern int epoll_create1(int __flags);
-+extern int epoll_ctl(int __epfd, int __op, int __fd,
-+		     struct epoll_event *__event);
-+extern int epoll_wait(int __epfd, struct epoll_event *__events,
-+		      int __maxevents, int __timeout);
-+
-+static inline long epoll_create2(int flags, size_t size)
-+{
-+	return syscall(__NR_epoll_create2, flags, size);
-+}
-+
-+struct thread_ctx {
-+	pthread_t thread;
-+	int efd;
-+};
-+
-+struct cpu_map {
-+	unsigned int nr;
-+	unsigned int map[];
-+};
-+
-+static volatile unsigned int thr_ready;
-+static volatile unsigned int start;
-+
-+static inline unsigned int max_index_nr(struct epoll_uheader *header)
-+{
-+	return header->index_length >> 2;
-+}
-+
-+static int is_cpu_online(int cpu)
-+{
-+	char buf[64];
-+	char online;
-+	FILE *f;
-+	int rc;
-+
-+	snprintf(buf, sizeof(buf), "/sys/devices/system/cpu/cpu%d/online", cpu);
-+	f = fopen(buf, "r");
-+	if (!f)
-+		return 1;
-+
-+	rc = fread(&online, 1, 1, f);
-+	assert(rc == 1);
-+	fclose(f);
-+
-+	return (char)online == '1';
-+}
-+
-+static struct cpu_map *cpu_map__new(void)
-+{
-+	struct cpu_map *cpu;
-+	struct bitmask *bm;
-+
-+	int i, bit, cpus_nr;
-+
-+	cpus_nr = numa_num_possible_cpus();
-+	cpu = calloc(1, sizeof(*cpu) + sizeof(cpu->map[0]) * cpus_nr);
-+	if (!cpu)
-+		return NULL;
-+
-+	bm = numa_all_cpus_ptr;
-+	assert(bm);
-+
-+	for (bit = 0, i = 0; bit < bm->size; bit++) {
-+		if (numa_bitmask_isbitset(bm, bit) && is_cpu_online(bit)) {
-+			cpu->map[i++] = bit;
-+		}
-+	}
-+	cpu->nr = i;
-+
-+	return cpu;
-+}
-+
-+static void cpu_map__put(struct cpu_map *cpu)
-+{
-+	free(cpu);
-+}
-+
-+static inline unsigned long long nsecs(void)
-+{
-+	struct timespec ts = {0, 0};
-+
-+	clock_gettime(CLOCK_MONOTONIC, &ts);
-+	return ((unsigned long long)ts.tv_sec * 1000000000ull) + ts.tv_nsec;
-+}
-+
-+static void *thread_work(void *arg)
-+{
-+	struct thread_ctx *ctx = arg;
-+	uint64_t ucnt = 1;
-+	unsigned int i;
-+	int rc;
-+
-+	__atomic_add_fetch(&thr_ready, 1, __ATOMIC_RELAXED);
-+
-+	while (!start)
-+		;
-+
-+	for (i = 0; i < ITERS; i++) {
-+		rc = write(ctx->efd, &ucnt, sizeof(ucnt));
-+		assert(rc == sizeof(ucnt));
-+	}
-+
-+	return NULL;
-+}
-+
-+static inline _Bool read_event(struct epoll_uheader *header,
-+			       unsigned int *index, unsigned int idx,
-+			       struct epoll_event *event)
-+{
-+	struct epoll_uitem *item;
-+	unsigned int *item_idx_ptr;
-+	unsigned int indeces_mask;
-+
-+	indeces_mask = max_index_nr(header) - 1;
-+	if (indeces_mask & max_index_nr(header)) {
-+		assert(0);
-+		/* Should be pow2, corrupted header? */
-+		return 0;
-+	}
-+
-+	item_idx_ptr = &index[idx & indeces_mask];
-+
-+	/* Load index */
-+	idx = __atomic_load_n(item_idx_ptr, __ATOMIC_ACQUIRE);
-+	if (idx >= header->max_items_nr) {
-+		assert(0);
-+		/* Corrupted index? */
-+		return 0;
-+	}
-+
-+	item = &header->items[idx];
-+
-+	/*
-+	 * Fetch data first, if event is cleared by the kernel we drop the data
-+	 * returning false.
-+	 */
-+	event->data = (__u64) item->data;
-+	event->events = __atomic_exchange_n(&item->ready_events, 0,
-+					    __ATOMIC_RELEASE);
-+
-+	return (event->events & ~EPOLLREMOVED);
-+}
-+
-+static int uepoll_wait(struct epoll_uheader *header, unsigned int *index,
-+		       int epfd, struct epoll_event *events, int maxevents)
-+
-+{
-+	/*
-+	 * Before entering kernel we do busy wait for ~1ms, naively assuming
-+	 * each iteration costs 1 cycle, 1 ns.
-+	 */
-+	unsigned int spins = 1000000;
-+	unsigned int tail;
-+	int i;
-+
-+	assert(maxevents > 0);
-+
-+again:
-+	/*
-+	 * Cache the tail because we don't want refetch it on each iteration
-+	 * and then catch live events updates, i.e. we don't want user @events
-+	 * array consist of events from the same fds.
-+	 */
-+	tail = READ_ONCE(header->tail);
-+
-+	if (header->head == tail) {
-+		if (spins--)
-+			/* Busy loop a bit */
-+			goto again;
-+
-+		i = epoll_wait(epfd, NULL, 0, -1);
-+		assert(i < 0);
-+		if (errno != ESTALE)
-+			return i;
-+
-+		tail = READ_ONCE(header->tail);
-+		assert(header->head != tail);
-+	}
-+
-+	for (i = 0; header->head != tail && i < maxevents; header->head++) {
-+		if (read_event(header, index, header->head, &events[i]))
-+			i++;
-+		else
-+			/* Event can't be removed under us */
-+			assert(0);
-+	}
-+
-+	return i;
-+}
-+
-+static void uepoll_mmap(int epfd, struct epoll_uheader **_header,
-+		       unsigned int **_index)
-+{
-+	struct epoll_uheader *header;
-+	unsigned int *index, len;
-+
-+	BUILD_BUG_ON(sizeof(*header) != EPOLL_USERPOLL_HEADER_SIZE);
-+	BUILD_BUG_ON(sizeof(header->items[0]) != 16);
-+
-+	len = sysconf(_SC_PAGESIZE);
-+again:
-+	header = mmap(NULL, len, PROT_WRITE|PROT_READ, MAP_SHARED, epfd, 0);
-+	if (header == MAP_FAILED)
-+		ksft_exit_fail_msg("Failed map(header)\n");
-+
-+	if (header->header_length != len) {
-+		unsigned int tmp_len = len;
-+
-+		len = header->header_length;
-+		munmap(header, tmp_len);
-+		goto again;
-+	}
-+	assert(header->magic == EPOLL_USERPOLL_HEADER_MAGIC);
-+
-+	index = mmap(NULL, header->index_length, PROT_WRITE|PROT_READ,
-+		     MAP_SHARED, epfd, header->header_length);
-+	if (index == MAP_FAILED)
-+		ksft_exit_fail_msg("Failed map(index)\n");
-+
-+	*_header = header;
-+	*_index = index;
-+}
-+
-+static void uepoll_munmap(struct epoll_uheader *header,
-+			  unsigned int *index)
-+{
-+	int rc;
-+
-+	rc = munmap(index, header->index_length);
-+	if (rc)
-+		ksft_exit_fail_msg("Failed munmap(index)\n");
-+
-+	rc = munmap(header, header->header_length);
-+	if (rc)
-+		ksft_exit_fail_msg("Failed munmap(header)\n");
-+}
-+
-+static int do_bench(struct cpu_map *cpu, unsigned int nthreads)
-+{
-+	struct epoll_event ev, events[nthreads];
-+	struct thread_ctx threads[nthreads];
-+	pthread_attr_t thrattr;
-+	struct thread_ctx *ctx;
-+	int rc, epfd, nfds;
-+	cpu_set_t cpuset;
-+	unsigned int i;
-+
-+	struct epoll_uheader *header;
-+	unsigned int *index;
-+
-+	unsigned long long epoll_calls = 0, epoll_nsecs;
-+	unsigned long long ucnt, ucnt_sum = 0, eagains = 0;
-+
-+	thr_ready = 0;
-+	start = 0;
-+
-+	epfd = epoll_create2(EPOLL_USERPOLL, nthreads);
-+	if (epfd < 0)
-+		ksft_exit_fail_msg("Failed epoll_create2()\n");
-+
-+	for (i = 0; i < nthreads; i++) {
-+		ctx = &threads[i];
-+
-+		ctx->efd = eventfd(0, EFD_NONBLOCK);
-+		if (ctx->efd < 0)
-+			ksft_exit_fail_msg("Failed eventfd()\n");
-+
-+		ev.events = EPOLLIN | EPOLLET;
-+		ev.data = (uintptr_t) ctx;
-+		rc = epoll_ctl(epfd, EPOLL_CTL_ADD, ctx->efd, &ev);
-+		if (rc)
-+			ksft_exit_fail_msg("Failed epoll_ctl()\n");
-+
-+		CPU_ZERO(&cpuset);
-+		CPU_SET(cpu->map[i % cpu->nr], &cpuset);
-+
-+		pthread_attr_init(&thrattr);
-+		rc = pthread_attr_setaffinity_np(&thrattr, sizeof(cpu_set_t),
-+						 &cpuset);
-+		if (rc) {
-+			errno = rc;
-+			ksft_exit_fail_msg("Failed pthread_attr_setaffinity_np()\n");
-+		}
-+
-+		rc = pthread_create(&ctx->thread, NULL, thread_work, ctx);
-+		if (rc) {
-+			errno = rc;
-+			ksft_exit_fail_msg("Failed pthread_create()\n");
-+		}
-+	}
-+
-+	/* Mmap all pointers */
-+	uepoll_mmap(epfd, &header, &index);
-+
-+	while (thr_ready != nthreads)
-+		;
-+
-+	/* Signal start for all threads */
-+	start = 1;
-+
-+	epoll_nsecs = nsecs();
-+	while (1) {
-+		nfds = uepoll_wait(header, index, epfd, events, nthreads);
-+		if (nfds < 0)
-+			ksft_exit_fail_msg("Failed uepoll_wait()\n");
-+
-+		epoll_calls++;
-+
-+		for (i = 0; i < (unsigned int)nfds; ++i) {
-+			ctx = (void *)(uintptr_t) events[i].data;
-+			rc = read(ctx->efd, &ucnt, sizeof(ucnt));
-+			if (rc < 0) {
-+				assert(errno == EAGAIN);
-+				continue;
-+			}
-+			assert(rc == sizeof(ucnt));
-+			ucnt_sum += ucnt;
-+			if (ucnt_sum == nthreads * ITERS)
-+				goto end;
-+		}
-+	}
-+end:
-+	epoll_nsecs = nsecs() - epoll_nsecs;
-+
-+	for (i = 0; i < nthreads; i++) {
-+		ctx = &threads[i];
-+		pthread_join(ctx->thread, NULL);
-+	}
-+	uepoll_munmap(header, index);
-+	close(epfd);
-+
-+	ksft_print_msg("%7d   %8lld     %8lld\n",
-+	       nthreads,
-+	       ITERS*nthreads/(epoll_nsecs/1000/1000),
-+	       epoll_nsecs/1000/1000);
-+
-+	return 0;
-+}
-+
-+/**
-+ * uepoll loop
-+ */
-+TEST(uepoll_basics)
-+{
-+	unsigned int i, nthreads_arr[] = {8, 16, 32, 64};
-+	struct cpu_map *cpu;
-+
-+	cpu = cpu_map__new();
-+	if (!cpu) {
-+		errno = ENOMEM;
-+		ksft_exit_fail_msg("Failed cpu_map__new()\n");
-+	}
-+
-+	ksft_print_msg("threads  events/ms  run-time ms\n");
-+	for (i = 0; i < ARRAY_SIZE(nthreads_arr); i++)
-+		do_bench(cpu, nthreads_arr[i]);
-+
-+	cpu_map__put(cpu);
-+}
-+
-+/**
-+ * Checks different flags and args
-+ */
-+TEST(uepoll_args)
-+{
-+	struct epoll_event ev;
-+	int epfd, evfd, rc;
-+
-+	/* Fail */
-+	epfd = epoll_create2(EPOLL_USERPOLL, (1<<16)+1);
-+	ASSERT_EQ(errno, EINVAL);
-+	ASSERT_EQ(epfd, -1);
-+
-+	/* Fail */
-+	epfd = epoll_create2(EPOLL_USERPOLL, 0);
-+	ASSERT_EQ(errno, EINVAL);
-+	ASSERT_EQ(epfd, -1);
-+
-+	/* Success */
-+	epfd = epoll_create2(EPOLL_USERPOLL, (1<<16));
-+	ASSERT_GE(epfd, 0);
-+
-+	/* Success */
-+	evfd = eventfd(0, EFD_NONBLOCK);
-+	ASSERT_GE(evfd, 0);
-+
-+	/* Fail, expect EPOLLET */
-+	ev.events = EPOLLIN;
-+	rc = epoll_ctl(epfd, EPOLL_CTL_ADD, evfd, &ev);
-+	ASSERT_EQ(errno, EINVAL);
-+	ASSERT_EQ(rc, -1);
-+
-+	/* Fail, no support for EPOLLEXCLUSIVE */
-+	ev.events = EPOLLIN | EPOLLET | EPOLLEXCLUSIVE;
-+	rc = epoll_ctl(epfd, EPOLL_CTL_ADD, evfd, &ev);
-+	ASSERT_EQ(errno, EINVAL);
-+	ASSERT_EQ(rc, -1);
-+
-+	/* Success */
-+	ev.events = EPOLLIN | EPOLLET;
-+	rc = epoll_ctl(epfd, EPOLL_CTL_ADD, evfd, &ev);
-+	ASSERT_EQ(rc, 0);
-+
-+	/* Fail, expect events and maxevents as zeroes */
-+	rc = epoll_wait(epfd, &ev, 1, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+	ASSERT_EQ(rc, -1);
-+
-+	/* Fail, expect events as zero */
-+	rc = epoll_wait(epfd, &ev, 0, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+	ASSERT_EQ(rc, -1);
-+
-+	/* Fail, expect maxevents as zero */
-+	rc = epoll_wait(epfd, NULL, 1, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+	ASSERT_EQ(rc, -1);
-+
-+	/* Success */
-+	rc = epoll_wait(epfd, NULL, 0, 0);
-+	ASSERT_EQ(rc, 0);
-+
-+	close(epfd);
-+	close(evfd);
-+}
-+
-+static void *signal_eventfd_work(void *arg)
-+{
-+	unsigned long long cnt;
-+
-+	int rc, evfd = *(int *)arg;
-+
-+	sleep(1);
-+	cnt = 1;
-+	rc = write(evfd, &cnt, sizeof(cnt));
-+	assert(rc == 8);
-+
-+	return NULL;
-+}
-+
-+/**
-+ * Nested poll
-+ */
-+TEST(uepoll_poll)
-+{
-+	int epfd, uepfd, evfd, rc;
-+
-+	struct epoll_event ev;
-+	pthread_t thread;
-+
-+	/* Success */
-+	uepfd = epoll_create2(EPOLL_USERPOLL, 128);
-+	ASSERT_GE(uepfd, 0);
-+
-+	/* Success */
-+	epfd = epoll_create2(0, 0);
-+	ASSERT_GE(epfd, 0);
-+
-+	/* Success */
-+	evfd = eventfd(0, EFD_NONBLOCK);
-+	ASSERT_GE(evfd, 0);
-+
-+	/* Success */
-+	ev.events = EPOLLIN | EPOLLET;
-+	rc = epoll_ctl(uepfd, EPOLL_CTL_ADD, evfd, &ev);
-+	ASSERT_EQ(rc, 0);
-+
-+	/* Success */
-+	ev.events = EPOLLIN | EPOLLET;
-+	rc = epoll_ctl(epfd, EPOLL_CTL_ADD, uepfd, &ev);
-+	ASSERT_EQ(rc, 0);
-+
-+	/* Success */
-+	rc = epoll_wait(epfd, &ev, 1, 0);
-+	ASSERT_EQ(rc, 0);
-+
-+	/* Success */
-+	rc = pthread_create(&thread, NULL, signal_eventfd_work, &evfd);
-+	ASSERT_EQ(rc, 0);
-+
-+	/* Success */
-+	rc = epoll_wait(epfd, &ev, 1, 5000);
-+	ASSERT_EQ(rc, 1);
-+
-+	close(uepfd);
-+	close(epfd);
-+	close(evfd);
-+}
-+
-+/**
-+ * One shot
-+ */
-+TEST(uepoll_epolloneshot)
-+{
-+	int epfd, evfd, rc;
-+	unsigned long long cnt;
-+
-+	struct epoll_uheader *header;
-+	unsigned int *index;
-+
-+	struct epoll_event ev;
-+	pthread_t thread;
-+
-+	/* Success */
-+	epfd = epoll_create2(EPOLL_USERPOLL, 128);
-+	ASSERT_GE(epfd, 0);
-+
-+	/* Mmap all pointers */
-+	uepoll_mmap(epfd, &header, &index);
-+
-+	/* Success */
-+	evfd = eventfd(0, EFD_NONBLOCK);
-+	ASSERT_GE(evfd, 0);
-+
-+	/* Success */
-+	ev.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
-+	rc = epoll_ctl(epfd, EPOLL_CTL_ADD, evfd, &ev);
-+	ASSERT_EQ(rc, 0);
-+
-+	/* Success */
-+	rc = pthread_create(&thread, NULL, signal_eventfd_work, &evfd);
-+	ASSERT_EQ(rc, 0);
-+
-+	/* Fail, expect -ESTALE */
-+	rc = epoll_wait(epfd, NULL, 0, 3000);
-+	ASSERT_EQ(errno, ESTALE);
-+	ASSERT_EQ(rc, -1);
-+
-+	/* Success */
-+	rc = uepoll_wait(header, index, epfd, &ev, 1);
-+	ASSERT_EQ(rc, 1);
-+
-+	/* Success */
-+	rc = pthread_create(&thread, NULL, signal_eventfd_work, &evfd);
-+	ASSERT_EQ(rc, 0);
-+
-+	/* Success */
-+	rc = epoll_wait(epfd, NULL, 0, 3000);
-+	ASSERT_EQ(rc, 0);
-+
-+
-+	/* Success */
-+	ev.events = EPOLLIN | EPOLLET;
-+	rc = epoll_ctl(epfd, EPOLL_CTL_MOD, evfd, &ev);
-+	ASSERT_EQ(rc, 0);
-+
-+	/* Success */
-+	rc = pthread_create(&thread, NULL, signal_eventfd_work, &evfd);
-+	ASSERT_EQ(rc, 0);
-+
-+	/* Success */
-+	rc = uepoll_wait(header, index, epfd, &ev, 1);
-+	ASSERT_EQ(rc, 1);
-+
-+	/* Success */
-+	rc = pthread_create(&thread, NULL, signal_eventfd_work, &evfd);
-+	ASSERT_EQ(rc, 0);
-+
-+	/* Success */
-+	rc = uepoll_wait(header, index, epfd, &ev, 1);
-+	ASSERT_EQ(rc, 1);
-+
-+	uepoll_munmap(header, index);
-+	close(epfd);
-+	close(evfd);
-+}
-+
-+TEST_HARNESS_MAIN
--- 
-2.21.0
 
+> On Jun 24, 2019, at 7:27 AM, Kirill A. Shutemov <kirill@shutemov.name> wr=
+ote:
+>=20
+> On Mon, Jun 24, 2019 at 02:01:05PM +0000, Song Liu wrote:
+>>>> @@ -1392,6 +1403,23 @@ static void collapse_file(struct mm_struct *mm,
+>>>> 				result =3D SCAN_FAIL;
+>>>> 				goto xa_unlocked;
+>>>> 			}
+>>>> +		} else if (!page || xa_is_value(page)) {
+>>>> +			xas_unlock_irq(&xas);
+>>>> +			page_cache_sync_readahead(mapping, &file->f_ra, file,
+>>>> +						  index, PAGE_SIZE);
+>>>> +			lru_add_drain();
+>>>=20
+>>> Why?
+>>=20
+>> isolate_lru_page() is likely to fail if we don't drain the pagevecs.=20
+>=20
+> Please add a comment.
+
+Will do.=20
+
+>=20
+>>>> +			page =3D find_lock_page(mapping, index);
+>>>> +			if (unlikely(page =3D=3D NULL)) {
+>>>> +				result =3D SCAN_FAIL;
+>>>> +				goto xa_unlocked;
+>>>> +			}
+>>>> +		} else if (!PageUptodate(page)) {
+>>>=20
+>>> Maybe we should try wait_on_page_locked() here before give up?
+>>=20
+>> Are you referring to the "if (!PageUptodate(page))" case?=20
+>=20
+> Yes.
+
+I think this case happens when another thread is reading the page in.=20
+I could not think of a way to trigger this condition for testing.=20
+
+On the other hand, with current logic, we will retry the page on the=20
+next scan, so I guess this is OK.=20
+
+Thanks,
+Song=
