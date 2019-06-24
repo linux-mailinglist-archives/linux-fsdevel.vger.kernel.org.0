@@ -2,240 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BAAF50F56
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 16:57:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AADBC50FA4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 17:06:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbfFXO5f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 10:57:35 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:45456 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726984AbfFXO5e (ORCPT
+        id S1730016AbfFXPGH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 11:06:07 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:29906 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725562AbfFXPGH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:57:34 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OEmwk1147744;
-        Mon, 24 Jun 2019 14:57:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=vf38MUSviZWXpFFR8zJqdfyvFiALTqyaKIAiW4IsZV8=;
- b=s4kRuya+oMnIKkUZwwbq3syP47ugfDN24rX/YobrHYymBFWm4hO36700Mwtj6FiCx+YD
- pwxsMt32ScfTgY9M0jlcH9AdzTGMJWuqN8qZDnh/EFCGnYpgIqup4oWQ/bTQYHqbjc7H
- d71vfRwA4Pp9Bv3PZ1jOMrnlSr0YUM22+cVqS4gol1DXCJzhPqrVgvfJiBUmtqw6xiFN
- xHil8CH6G8fvZOdk/rDI2OAxPI5ty2HFN69q3dRrws+5L2/oFKEzH6eOcAB/bcMmMRr8
- YSzuSBIIge64L6dl0kImWkbLg2YFb3XkUXydryssUCYNRB/L/pf/76vZv9VTi3AWer2K vQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2t9c9pew80-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 14:57:10 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OEtoMq037995;
-        Mon, 24 Jun 2019 14:57:10 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2t99f3apn0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 14:57:10 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5OEv9Pu006338;
-        Mon, 24 Jun 2019 14:57:09 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 24 Jun 2019 07:57:08 -0700
-Date:   Mon, 24 Jun 2019 07:57:07 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/12] xfs: initialize ioma->flags in xfs_bmbt_to_iomap
-Message-ID: <20190624145707.GH5387@magnolia>
-References: <20190624055253.31183-1-hch@lst.de>
- <20190624055253.31183-5-hch@lst.de>
+        Mon, 24 Jun 2019 11:06:07 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OEvnsO004968;
+        Mon, 24 Jun 2019 08:04:23 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=wAbXcPgUJOYdfGMLbmH1Z7DXHW0tzW6Rge5M0Y12xYg=;
+ b=V+afxCw4wjdx8xnBGMl2OAvyO54pvEZYHW50MQXGa2C9fmulrZGDX/bfSl+GbizmStrI
+ oEIQgRzrwALjcQ5A9HCodFDryka1CT7Bkg5JY3sazSHgWePCxzt30Dyol8e1GAxs4ggp
+ SCYgv+FlpwGrSNwbgQcEyJ+1+jESJkzRER8= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2taujw1545-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 08:04:23 -0700
+Received: from prn-mbx04.TheFacebook.com (2620:10d:c081:6::18) by
+ prn-hub04.TheFacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Mon, 24 Jun 2019 08:04:23 -0700
+Received: from prn-hub04.TheFacebook.com (2620:10d:c081:35::128) by
+ prn-mbx04.TheFacebook.com (2620:10d:c081:6::18) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Mon, 24 Jun 2019 08:04:22 -0700
+Received: from NAM01-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Mon, 24 Jun 2019 08:04:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wAbXcPgUJOYdfGMLbmH1Z7DXHW0tzW6Rge5M0Y12xYg=;
+ b=EDPL+dC6XilxxNf4HQX2esAFi2NtG55lAVOmkvT+ojvjaaryQ/arT4Zy5P+WT78yjHGbvpuXAVKMICdraijWF/luA4wgT/6c1yDQtpG4dYO6LS1+mThdXPH/AijuUC/HMpPFlefDSI0/4+AGVXf32Gl4TQqhkHDcrn60I5bfWGo=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1232.namprd15.prod.outlook.com (10.175.4.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Mon, 24 Jun 2019 15:04:21 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d%6]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
+ 15:04:21 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hdanton@sina.com" <hdanton@sina.com>
+Subject: Re: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
+ FS
+Thread-Topic: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
+ FS
+Thread-Index: AQHVKYdGAmz09KUZ80Kts9GVGsmXGaaqwvwAgAAUeoCAAAd4gIAABAcAgAADi4CAAAKkAA==
+Date:   Mon, 24 Jun 2019 15:04:21 +0000
+Message-ID: <5BE23F34-B611-496B-9277-A09C9CC784B1@fb.com>
+References: <20190623054749.4016638-1-songliubraving@fb.com>
+ <20190623054749.4016638-6-songliubraving@fb.com>
+ <20190624124746.7evd2hmbn3qg3tfs@box>
+ <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
+ <20190624142747.chy5s3nendxktm3l@box>
+ <C3161C66-5044-44E6-92F4-BBAD42EDF4E2@fb.com>
+ <20190624145453.u4ej3e4ktyyqjite@box>
+In-Reply-To: <20190624145453.u4ej3e4ktyyqjite@box>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:180::1:d642]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6ac82330-a4bb-43fa-ae24-08d6f8b53d03
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1232;
+x-ms-traffictypediagnostic: MWHPR15MB1232:
+x-microsoft-antispam-prvs: <MWHPR15MB1232812A54DBA94A2CDEDEC3B3E00@MWHPR15MB1232.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 007814487B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(39860400002)(366004)(346002)(376002)(189003)(199004)(68736007)(66556008)(6486002)(81156014)(54906003)(4326008)(76176011)(86362001)(36756003)(14444005)(5660300002)(25786009)(102836004)(53936002)(53546011)(14454004)(6506007)(71190400001)(6916009)(6246003)(316002)(71200400001)(478600001)(33656002)(6436002)(50226002)(8676002)(64756008)(66446008)(11346002)(66476007)(46003)(81166006)(229853002)(76116006)(66946007)(99286004)(6512007)(8936002)(186003)(486006)(73956011)(476003)(305945005)(256004)(7736002)(2616005)(57306001)(6116002)(2906002)(446003)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1232;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: tPD8t/UNAK4Vi02lbF9qIaK9bfU9bG1mrnoVdYULmwo+/Ka3TPaYRA/ag++ZagjNYIXZkp/NJ/SxARdDVqOPdHgB8DeFWTdxvRW+r5KJLKuqBLuJa2FhOxATFOAwH+gFNKN+JsLm7jeJnJYry71Za0StevZGQ9qbkvhsF6FoGMBYQ6r7N3Ap6V9HXUzyBb8qTZ98q4iSLaE9/dFI2V+H1qDnr+mpH+TSvjPNYWYiCDFwE8XLi9kktQMv3DwOHjICpC1cy5J3D9Pzq2EQ8ULjXmybI3LFnrALoHbcUpr6ZXuDL+SwWKT2ZG4WED7L89xjhLV1FhZ1AP3Gy1rDasbuAFA8EGcJlRDA/GWW2AOaeeSnuJ8R9pTk7MrWMm8QHSDOf/PUAzo/asKxTEeoLX5ucHcUH3VqUTavQP7mlUondDI=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <ADE4CD8BAFE8BE4DA4CFF6C4D4090BC4@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624055253.31183-5-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906240121
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906240121
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ac82330-a4bb-43fa-ae24-08d6f8b53d03
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 15:04:21.4803
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1232
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240122
+X-FB-Internal: deliver
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 07:52:45AM +0200, Christoph Hellwig wrote:
-> Currently we don't overwrite the flags field in the iomap in
-> xfs_bmbt_to_iomap.  This works fine with 0-initialized iomaps on stack,
-> but is harmful once we want to be able to reuse an iomap in the
-> writeback code.
 
-Is that going to affect all the other iomap users, or is xfs the only
-one that assumes zero-initialized iomaps being passed into
-->iomap_begin?
 
---D
+> On Jun 24, 2019, at 7:54 AM, Kirill A. Shutemov <kirill@shutemov.name> wr=
+ote:
+>=20
+> On Mon, Jun 24, 2019 at 02:42:13PM +0000, Song Liu wrote:
+>>=20
+>>=20
+>>> On Jun 24, 2019, at 7:27 AM, Kirill A. Shutemov <kirill@shutemov.name> =
+wrote:
+>>>=20
+>>> On Mon, Jun 24, 2019 at 02:01:05PM +0000, Song Liu wrote:
+>>>>>> @@ -1392,6 +1403,23 @@ static void collapse_file(struct mm_struct *m=
+m,
+>>>>>> 				result =3D SCAN_FAIL;
+>>>>>> 				goto xa_unlocked;
+>>>>>> 			}
+>>>>>> +		} else if (!page || xa_is_value(page)) {
+>>>>>> +			xas_unlock_irq(&xas);
+>>>>>> +			page_cache_sync_readahead(mapping, &file->f_ra, file,
+>>>>>> +						  index, PAGE_SIZE);
+>>>>>> +			lru_add_drain();
+>>>>>=20
+>>>>> Why?
+>>>>=20
+>>>> isolate_lru_page() is likely to fail if we don't drain the pagevecs.=20
+>>>=20
+>>> Please add a comment.
+>>=20
+>> Will do.=20
+>>=20
+>>>=20
+>>>>>> +			page =3D find_lock_page(mapping, index);
+>>>>>> +			if (unlikely(page =3D=3D NULL)) {
+>>>>>> +				result =3D SCAN_FAIL;
+>>>>>> +				goto xa_unlocked;
+>>>>>> +			}
+>>>>>> +		} else if (!PageUptodate(page)) {
+>>>>>=20
+>>>>> Maybe we should try wait_on_page_locked() here before give up?
+>>>>=20
+>>>> Are you referring to the "if (!PageUptodate(page))" case?=20
+>>>=20
+>>> Yes.
+>>=20
+>> I think this case happens when another thread is reading the page in.=20
+>> I could not think of a way to trigger this condition for testing.=20
+>>=20
+>> On the other hand, with current logic, we will retry the page on the=20
+>> next scan, so I guess this is OK.=20
+>=20
+> What I meant that calling wait_on_page_locked() on !PageUptodate() page
+> will likely make it up-to-date and we don't need to SCAN_FAIL the attempt=
+.
+>=20
 
-> Replace the shared paramter with a set of initial
-> flags an thus ensures the flags field is always reinitialized.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/xfs/xfs_iomap.c | 28 +++++++++++++++++-----------
->  fs/xfs/xfs_iomap.h |  2 +-
->  fs/xfs/xfs_pnfs.c  |  2 +-
->  3 files changed, 19 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 63d323916bba..6b29452bfba0 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -57,7 +57,7 @@ xfs_bmbt_to_iomap(
->  	struct xfs_inode	*ip,
->  	struct iomap		*iomap,
->  	struct xfs_bmbt_irec	*imap,
-> -	bool			shared)
-> +	u16			flags)
->  {
->  	struct xfs_mount	*mp = ip->i_mount;
->  
-> @@ -82,12 +82,11 @@ xfs_bmbt_to_iomap(
->  	iomap->length = XFS_FSB_TO_B(mp, imap->br_blockcount);
->  	iomap->bdev = xfs_find_bdev_for_inode(VFS_I(ip));
->  	iomap->dax_dev = xfs_find_daxdev_for_inode(VFS_I(ip));
-> +	iomap->flags = flags;
->  
->  	if (xfs_ipincount(ip) &&
->  	    (ip->i_itemp->ili_fsync_fields & ~XFS_ILOG_TIMESTAMP))
->  		iomap->flags |= IOMAP_F_DIRTY;
-> -	if (shared)
-> -		iomap->flags |= IOMAP_F_SHARED;
->  	return 0;
->  }
->  
-> @@ -543,6 +542,7 @@ xfs_file_iomap_begin_delay(
->  	struct xfs_iext_cursor	icur, ccur;
->  	xfs_fsblock_t		prealloc_blocks = 0;
->  	bool			eof = false, cow_eof = false, shared = false;
-> +	u16			iomap_flags = 0;
->  	int			whichfork = XFS_DATA_FORK;
->  	int			error = 0;
->  
-> @@ -710,7 +710,7 @@ xfs_file_iomap_begin_delay(
->  	 * Flag newly allocated delalloc blocks with IOMAP_F_NEW so we punch
->  	 * them out if the write happens to fail.
->  	 */
-> -	iomap->flags |= IOMAP_F_NEW;
-> +	iomap_flags |= IOMAP_F_NEW;
->  	trace_xfs_iomap_alloc(ip, offset, count, whichfork,
->  			whichfork == XFS_DATA_FORK ? &imap : &cmap);
->  done:
-> @@ -718,14 +718,17 @@ xfs_file_iomap_begin_delay(
->  		if (imap.br_startoff > offset_fsb) {
->  			xfs_trim_extent(&cmap, offset_fsb,
->  					imap.br_startoff - offset_fsb);
-> -			error = xfs_bmbt_to_iomap(ip, iomap, &cmap, true);
-> +			error = xfs_bmbt_to_iomap(ip, iomap, &cmap,
-> +					IOMAP_F_SHARED);
->  			goto out_unlock;
->  		}
->  		/* ensure we only report blocks we have a reservation for */
->  		xfs_trim_extent(&imap, cmap.br_startoff, cmap.br_blockcount);
->  		shared = true;
->  	}
-> -	error = xfs_bmbt_to_iomap(ip, iomap, &imap, shared);
-> +	if (shared)
-> +		iomap_flags |= IOMAP_F_SHARED;
-> +	error = xfs_bmbt_to_iomap(ip, iomap, &imap, iomap_flags);
->  out_unlock:
->  	xfs_iunlock(ip, XFS_ILOCK_EXCL);
->  	return error;
-> @@ -933,6 +936,7 @@ xfs_file_iomap_begin(
->  	xfs_fileoff_t		offset_fsb, end_fsb;
->  	int			nimaps = 1, error = 0;
->  	bool			shared = false;
-> +	u16			iomap_flags = 0;
->  	unsigned		lockmode;
->  
->  	if (XFS_FORCED_SHUTDOWN(mp))
-> @@ -1048,11 +1052,13 @@ xfs_file_iomap_begin(
->  	if (error)
->  		return error;
->  
-> -	iomap->flags |= IOMAP_F_NEW;
-> +	iomap_flags |= IOMAP_F_NEW;
->  	trace_xfs_iomap_alloc(ip, offset, length, XFS_DATA_FORK, &imap);
->  
->  out_finish:
-> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, shared);
-> +	if (shared)
-> +		iomap_flags |= IOMAP_F_SHARED;
-> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, iomap_flags);
->  
->  out_found:
->  	ASSERT(nimaps);
-> @@ -1196,7 +1202,7 @@ xfs_seek_iomap_begin(
->  		if (data_fsb < cow_fsb + cmap.br_blockcount)
->  			end_fsb = min(end_fsb, data_fsb);
->  		xfs_trim_extent(&cmap, offset_fsb, end_fsb);
-> -		error = xfs_bmbt_to_iomap(ip, iomap, &cmap, true);
-> +		error = xfs_bmbt_to_iomap(ip, iomap, &cmap, IOMAP_F_SHARED);
->  		/*
->  		 * This is a COW extent, so we must probe the page cache
->  		 * because there could be dirty page cache being backed
-> @@ -1218,7 +1224,7 @@ xfs_seek_iomap_begin(
->  	imap.br_state = XFS_EXT_NORM;
->  done:
->  	xfs_trim_extent(&imap, offset_fsb, end_fsb);
-> -	error = xfs_bmbt_to_iomap(ip, iomap, &imap, false);
-> +	error = xfs_bmbt_to_iomap(ip, iomap, &imap, 0);
->  out_unlock:
->  	xfs_iunlock(ip, lockmode);
->  	return error;
-> @@ -1264,7 +1270,7 @@ xfs_xattr_iomap_begin(
->  	if (error)
->  		return error;
->  	ASSERT(nimaps);
-> -	return xfs_bmbt_to_iomap(ip, iomap, &imap, false);
-> +	return xfs_bmbt_to_iomap(ip, iomap, &imap, 0);
->  }
->  
->  const struct iomap_ops xfs_xattr_iomap_ops = {
-> diff --git a/fs/xfs/xfs_iomap.h b/fs/xfs/xfs_iomap.h
-> index 5c2f6aa6d78f..71d0ae460c44 100644
-> --- a/fs/xfs/xfs_iomap.h
-> +++ b/fs/xfs/xfs_iomap.h
-> @@ -16,7 +16,7 @@ int xfs_iomap_write_direct(struct xfs_inode *, xfs_off_t, size_t,
->  int xfs_iomap_write_unwritten(struct xfs_inode *, xfs_off_t, xfs_off_t, bool);
->  
->  int xfs_bmbt_to_iomap(struct xfs_inode *, struct iomap *,
-> -		struct xfs_bmbt_irec *, bool shared);
-> +		struct xfs_bmbt_irec *, u16);
->  xfs_extlen_t xfs_eof_alignment(struct xfs_inode *ip, xfs_extlen_t extsize);
->  
->  static inline xfs_filblks_t
-> diff --git a/fs/xfs/xfs_pnfs.c b/fs/xfs/xfs_pnfs.c
-> index bde2c9f56a46..12f664785248 100644
-> --- a/fs/xfs/xfs_pnfs.c
-> +++ b/fs/xfs/xfs_pnfs.c
-> @@ -185,7 +185,7 @@ xfs_fs_map_blocks(
->  	}
->  	xfs_iunlock(ip, XFS_IOLOCK_EXCL);
->  
-> -	error = xfs_bmbt_to_iomap(ip, iomap, &imap, false);
-> +	error = xfs_bmbt_to_iomap(ip, iomap, &imap, 0);
->  	*device_generation = mp->m_generation;
->  	return error;
->  out_unlock:
-> -- 
-> 2.20.1
-> 
+Yeah, I got the point. My only concern is that I don't know how to=20
+reliably trigger this case for testing. I can try to trigger it. But I=20
+don't know whether it will happen easily.=20
+
+Thanks,
+Song
+
+
+
+
