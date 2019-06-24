@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D62E0519D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 19:43:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CCA0519DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 19:43:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbfFXRnY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 13:43:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48708 "EHLO mx1.redhat.com"
+        id S1731742AbfFXRng (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 13:43:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48810 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726730AbfFXRnY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 13:43:24 -0400
+        id S1728975AbfFXRng (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jun 2019 13:43:36 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EB82A13AA9;
-        Mon, 24 Jun 2019 17:43:13 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id DB640C058CBD;
+        Mon, 24 Jun 2019 17:43:17 +0000 (UTC)
 Received: from llong.com (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F92A5D9C5;
-        Mon, 24 Jun 2019 17:42:59 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 13DF95D9D3;
+        Mon, 24 Jun 2019 17:43:14 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Christoph Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
@@ -38,37 +38,66 @@ Cc:     linux-mm@kvack.org, linux-doc@vger.kernel.org,
         Shakeel Butt <shakeelb@google.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH 0/2] mm, slab: Extend vm/drop_caches to shrink kmem slabs
-Date:   Mon, 24 Jun 2019 13:42:17 -0400
-Message-Id: <20190624174219.25513-1-longman@redhat.com>
+Subject: [PATCH 1/2] mm, memcontrol: Add memcg_iterate_all()
+Date:   Mon, 24 Jun 2019 13:42:18 -0400
+Message-Id: <20190624174219.25513-2-longman@redhat.com>
+In-Reply-To: <20190624174219.25513-1-longman@redhat.com>
+References: <20190624174219.25513-1-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 24 Jun 2019 17:43:24 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 24 Jun 2019 17:43:35 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The purpose of this patchset is to allow system administrators to have
-the ability to shrink all the kmem slabs in order to free up memory
-and get a more accurate picture of how many slab objects are actually
-being used.
+Add a memcg_iterate_all() function for iterating all the available
+memory cgroups and call the given callback function for each of the
+memory cgruops.
 
-Patch 1 adds a new memcg_iterate_all() that is used by the patch 2 to
-iterate on all the memory cgroups.
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ include/linux/memcontrol.h |  3 +++
+ mm/memcontrol.c            | 13 +++++++++++++
+ 2 files changed, 16 insertions(+)
 
-Waiman Long (2):
-  mm, memcontrol: Add memcg_iterate_all()
-  mm, slab: Extend vm/drop_caches to shrink kmem slabs
-
- Documentation/sysctl/vm.txt | 11 ++++++++--
- fs/drop_caches.c            |  4 ++++
- include/linux/memcontrol.h  |  3 +++
- include/linux/slab.h        |  1 +
- kernel/sysctl.c             |  4 ++--
- mm/memcontrol.c             | 13 +++++++++++
- mm/slab_common.c            | 44 +++++++++++++++++++++++++++++++++++++
- 7 files changed, 76 insertions(+), 4 deletions(-)
-
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 1dcb763bb610..0e31418e5a47 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1268,6 +1268,9 @@ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
+ struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep);
+ void memcg_kmem_put_cache(struct kmem_cache *cachep);
+ 
++extern void memcg_iterate_all(void (*callback)(struct mem_cgroup *memcg,
++					       void *arg), void *arg);
++
+ #ifdef CONFIG_MEMCG_KMEM
+ int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order);
+ void __memcg_kmem_uncharge(struct page *page, int order);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index ba9138a4a1de..c1c4706f7696 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -443,6 +443,19 @@ static int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
+ static void memcg_free_shrinker_maps(struct mem_cgroup *memcg) { }
+ #endif /* CONFIG_MEMCG_KMEM */
+ 
++/*
++ * Iterate all the memory cgroups and call the given callback function
++ * for each of the memory cgroups.
++ */
++void memcg_iterate_all(void (*callback)(struct mem_cgroup *memcg, void *arg),
++		       void *arg)
++{
++	struct mem_cgroup *memcg;
++
++	for_each_mem_cgroup(memcg)
++		callback(memcg, arg);
++}
++
+ /**
+  * mem_cgroup_css_from_page - css of the memcg associated with a page
+  * @page: page of interest
 -- 
 2.18.1
 
