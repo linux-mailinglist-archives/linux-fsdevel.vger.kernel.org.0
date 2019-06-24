@@ -2,92 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1491750480
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 10:26:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2255F505A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 11:28:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbfFXI0C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 04:26:02 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42752 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727922AbfFXI0B (ORCPT
+        id S1727517AbfFXJ2c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 05:28:32 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35255 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbfFXJ2c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 04:26:01 -0400
-Received: by mail-io1-f68.google.com with SMTP id u19so1195706ior.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2019 01:26:01 -0700 (PDT)
+        Mon, 24 Jun 2019 05:28:32 -0400
+Received: by mail-io1-f66.google.com with SMTP id m24so129624ioo.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2019 02:28:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6DpP4P5H8yV1mb1kZ3rW1l+srfewAeWKH+iTqFQUwmM=;
+        b=hBD3Z/tNYbZkAQC3D22H7riQ4gMrxvDvdzYGBgfkdV70wwCAzi+YAD95zVKUb6mU3k
+         fHr140oU8mIwIzVHrADEjl5OSCIWd+jjJKJs/qMeAXAb28W7zA1MBBM438gLgzV+g599
+         qNlrVVvAVGcc5RFWcwKZ7UbSr7XC3oO5dI6pZlDBZ3n2qvClh8yc2CO7Ffb4SAwWI/Dt
+         CsZllwYZBVAcv3ixjGKcW2zO35DwefnBL9JtPgHSnvu3WWkj9nTLpfb/s4kzl/u2Ejs2
+         c9e9kpg+85urAheXm+AWQE5xhQ3aS4iRS22IenNrefhSXlZ6jB7GW58/AWDEyiBLF/Gc
+         JjcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kfyERo/qbyCrZtACfmY6e7oEdMDreZL5930Ld8MdyWA=;
-        b=FXd6dF+MBFfwb3gwP2DArhYx+x1hcOu1jJmd9tOlQhiaz5GEXnr8RrsN1Sv2JmAvf0
-         SwswrzfQZDWfvBeTLoVEk720WXhm9JXtazdDBA/17Q2sMWM/aUc/id1mR7C3svpaEH1c
-         TGTdOsiDWMleSM/TnA9XjsJ/NnG3L1cMYKvRqYB63pFLp/utnSOWl7cdBTe1KWpaAvIa
-         ISUmDqayFQg2qZL9bu7sVADcyArMxWiF4WBOTp95zGwntqgJuZYgS4KriOVINVgpMGlT
-         GupyS5vdnP/3vW0mXA1MW0rs5qoA04XMUfIoFx29Xtd8XkcUIWBbhPQywPRKRgjc0fo6
-         LmUA==
-X-Gm-Message-State: APjAAAW7hwI5npnPXR8i2t26/SKQ9auVeB4urcpQN1L9ICUKIIVeUe/s
-        Ltx/7B3mQNVnKcuw3NIHU34hYu2qJcPziIerOygL/A==
-X-Google-Smtp-Source: APXvYqxWKVfvD82LkcUgZZSuaW7gHtIZNb3ThzXsHToF9uKf0p3weHT5YuTecAFti5V8yJGEHzcSv4flXMz9LzUVNyw=
-X-Received: by 2002:a5d:9c46:: with SMTP id 6mr8555199iof.6.1561364760754;
- Mon, 24 Jun 2019 01:26:00 -0700 (PDT)
+        bh=6DpP4P5H8yV1mb1kZ3rW1l+srfewAeWKH+iTqFQUwmM=;
+        b=ixgKc55PJ+KoKpabbqIWlw9+zrja0HwiLP4leF38uEAQ09Tsha9qJE6B+O5BJQ7CFA
+         DVuAWB2q7OWwA1zOi5a9sbDo0a/J7NhLQgebD0ImEkCtPZ9t0dsT5HOu1ozIi/X/bDr2
+         g0PvHRuu9hS1rAwkH8o9qElvG+F/j0/mkqHokMfx2ogDEXeg+ejbx5D2rzY/vaKl8FRp
+         gaw2w3Lr7+v29RPV5aO/ZCy4KoKn2kF2Et3OhNMU5H671vCxGzw+XBgfxZXVFLj8VRJq
+         XzLi1vlv7uP0e27dinG+mjXe1ChNl+l/boOz/t+4zUoDBdUa6L2iZ+tn6N3MiOadKy5a
+         H6Ug==
+X-Gm-Message-State: APjAAAXPlcCwQwpTZtYZaF/C5fvJlomT/PO3fEw35U20kO7zw1QFBjCm
+        O4FdFH7dJ/pLAB93D4GPvm5G+ZDbYFSnuvH4dVlPPw==
+X-Google-Smtp-Source: APXvYqzs/C+I2k5zMhYuS21PxyB//gPteWn4ghlZ9GUtazBEuBQQgRg27KAq+8zBBz+1X/mmrTeyh15XbD0fJhhRPPE=
+X-Received: by 2002:a6b:fb0f:: with SMTP id h15mr36700690iog.266.1561368511114;
+ Mon, 24 Jun 2019 02:28:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190619123019.30032-1-mszeredi@redhat.com> <20190619123019.30032-5-mszeredi@redhat.com>
- <1ea8ec52ce19499f021510b5c9e38be8d8ebe38f.camel@themaw.net>
-In-Reply-To: <1ea8ec52ce19499f021510b5c9e38be8d8ebe38f.camel@themaw.net>
-From:   Miklos Szeredi <mszeredi@redhat.com>
-Date:   Mon, 24 Jun 2019 10:25:49 +0200
-Message-ID: <CAOssrKcU2JKDYMDbW7V6jpM7_4WFSMA91h9AjpjoYmX=H4ybeg@mail.gmail.com>
-Subject: Re: [PATCH 05/13] vfs: don't parse "silent" option
-To:     Ian Kent <raven@themaw.net>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
+References: <000000000000bb362d058b96d54d@google.com> <20190618140239.GA17978@ZenIV.linux.org.uk>
+In-Reply-To: <20190618140239.GA17978@ZenIV.linux.org.uk>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 24 Jun 2019 11:28:18 +0200
+Message-ID: <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
+Subject: Re: general protection fault in do_move_mount (2)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     syzbot <syzbot+6004acbaa1893ad013f0@syzkaller.appspotmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Brauner <christian@brauner.io>,
+        David Howells <dhowells@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Hannes Reinecke <hare@suse.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 6:40 AM Ian Kent <raven@themaw.net> wrote:
+On Tue, Jun 18, 2019 at 4:03 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> On Wed, 2019-06-19 at 14:30 +0200, Miklos Szeredi wrote:
-> > While this is a standard option as documented in mount(8), it is ignored by
-> > most filesystems.  So reject, unless filesystem explicitly wants to handle
-> > it.
+> On Tue, Jun 18, 2019 at 03:47:10AM -0700, syzbot wrote:
+> > Hello,
 > >
-> > The exception is unconverted filesystems, where it is unknown if the
-> > filesystem handles this or not.
+> > syzbot found the following crash on:
 > >
-> > Any implementation, such as mount(8) that needs to parse this option
-> > without failing should simply ignore the return value from fsconfig().
+> > HEAD commit:    9e0babf2 Linux 5.2-rc5
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=138b310aa00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=d16883d6c7f0d717
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=6004acbaa1893ad013f0
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154e8c2aa00000
 >
-> In theory this is fine but every time someone has attempted
-> to change the handling of this in the past autofs has had
-> problems so I'm a bit wary of the change.
+> IDGI...
 >
-> It was originally meant to tell the file system to ignore
-> invalid options such as could be found in automount maps that
-> are used with multiple OS implementations that have differences
-> in their options.
+> mkdir(&(0x7f0000632000)='./file0\x00', 0x0)
+> mount(0x0, 0x0, 0x0, 0x0, 0x0)
+> syz_open_procfs(0x0, 0x0)
+> r0 = open(&(0x7f0000032ff8)='./file0\x00', 0x0, 0x0)
+> r1 = memfd_create(&(0x7f00000001c0)='\xb3', 0x0)
+> write$FUSE_DIRENT(r1, &(0x7f0000000080)=ANY=[], 0x29)
+> move_mount(r0, &(0x7f0000000040)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000100)='./file0\x00', 0x66)
 >
-> That was, IIRC, primarily NFS although NFS should handle most
-> (if not all of those) cases these days.
+> reads as if we'd done mkdir ./file0, opened it and then tried
+> to feed move_mount(2) "./file0" relative to that descriptor.
+> How the hell has that avoided an instant -ENOENT?  On the first
+> pair, that is - the second one (AT_FDCWD, "./file0") is fine...
 >
-> Nevertheless I'm a bit nervous about it, ;)
+> Confused...  Incidentally, what the hell is
+>         mount(0x0, 0x0, 0x0, 0x0, 0x0)
+> about?  *IF* that really refers to mount(2) with
+> such arguments, all you'll get is -EFAULT.  Way before
+> it gets to actually doing anything - it won't get past
+>         /* ... and get the mountpoint */
+>         retval = user_path(dir_name, &path);
+>         if (retval)
+>                 return retval;
+> in do_mount(2)...
 
-What I'm saying is that with a new interface the rules need not follow
-the rules of the old interface, because at the start no one is using
-the new interface, so no chance of breaking anything.
+Yes, mount(0x0, 0x0, 0x0, 0x0, 0x0) is mount with 0 arguments. Most
+likely it returns EFAULT.
+Since the reproducer have "threaded":true,"collide":true and no C
+repro, most likely this is a subtle race. So it attempted to remove
+mount(0x0, 0x0, 0x0, 0x0, 0x0) but it did not crash, so the conclusion
+was that it's somehow needed. You can actually see that other
+reproducers for this bug do not have this mount, but are otherwise
+similar.
 
-Yes, there's a chance of making the interface difficult to use, but I
-don't think this is one of those things.
+With "threaded":true,"collide":true the execution mode is not just
+"execute each syscall once one after another".
+The syscalls are executed in separate threads and actually twice. You
+can see the approximate execution mode in this C program:
+https://gist.githubusercontent.com/dvyukov/c3a52f012e7cff9bdebf3935d35245cf/raw/b5587824111a1d982c985b00137ae8609572335b/gistfile1.txt
+Yet using the C program did not trigger the crash somehow (maybe just
+slightly different timings).
 
-For one, "silent" should not be needed on the new interface at all,
-because error messages relating to the setup of the filesystem can be
-redirected to a log buffer dedicated to the setup instance,
-effectively enabling silent operation by default.
-
-Thanks.,
-Miklos
+Since syzkaller was able to reproduce it multiple times, it looks like
+a real bug rather than an induced memory corruption or something.
