@@ -2,86 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EA1050605
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 11:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ABA250908
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 12:36:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfFXJp1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 05:45:27 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35496 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbfFXJp1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:45:27 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hfLX6-00045j-BR; Mon, 24 Jun 2019 11:45:04 +0200
-Date:   Mon, 24 Jun 2019 11:45:03 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Zhiqiang Liu <liuzhiqiang26@huawei.com>
-cc:     corbet@lwn.net, mcgrof@kernel.org,
-        Kees Cook <keescook@chromium.org>, akpm@linux-foundation.org,
-        manfred@colorfullife.com, jwilk@jwilk.net, dvyukov@google.com,
-        feng.tang@intel.com, sunilmut@microsoft.com,
-        quentin.perret@arm.com, linux@leemhuis.info, alex.popov@linux.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "wangxiaogang (F)" <wangxiaogang3@huawei.com>,
-        "Zhoukang (A)" <zhoukang7@huawei.com>,
-        Mingfangsen <mingfangsen@huawei.com>, tedheadster@gmail.com,
-        Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH next] softirq: enable MAX_SOFTIRQ_TIME tuning with sysctl
- max_softirq_time_usecs
-In-Reply-To: <0099726a-ead3-bdbe-4c66-c8adc9a4f11b@huawei.com>
-Message-ID: <alpine.DEB.2.21.1906241141370.32342@nanos.tec.linutronix.de>
-References: <f274f85a-bbb6-3e32-b293-1d5d7f27a98f@huawei.com> <alpine.DEB.2.21.1906231820470.32342@nanos.tec.linutronix.de> <0099726a-ead3-bdbe-4c66-c8adc9a4f11b@huawei.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1728574AbfFXKgl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 06:36:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34521 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726774AbfFXKgk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:36:40 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7F7A2307D98F;
+        Mon, 24 Jun 2019 10:36:40 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DE91B60605;
+        Mon, 24 Jun 2019 10:36:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAOssrKcU2JKDYMDbW7V6jpM7_4WFSMA91h9AjpjoYmX=H4ybeg@mail.gmail.com>
+References: <CAOssrKcU2JKDYMDbW7V6jpM7_4WFSMA91h9AjpjoYmX=H4ybeg@mail.gmail.com> <20190619123019.30032-1-mszeredi@redhat.com> <20190619123019.30032-5-mszeredi@redhat.com> <1ea8ec52ce19499f021510b5c9e38be8d8ebe38f.camel@themaw.net>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     dhowells@redhat.com, Ian Kent <raven@themaw.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 05/13] vfs: don't parse "silent" option
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-687753982-1561369504=:32342"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <30204.1561372589.1@warthog.procyon.org.uk>
+Date:   Mon, 24 Jun 2019 11:36:29 +0100
+Message-ID: <30205.1561372589@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 24 Jun 2019 10:36:40 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Miklos Szeredi <mszeredi@redhat.com> wrote:
 
---8323329-687753982-1561369504=:32342
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 8BIT
+> What I'm saying is that with a new interface the rules need not follow
+> the rules of the old interface, because at the start no one is using
+> the new interface, so no chance of breaking anything.
 
-Zhiqiang,
+Er. No.  That's not true, since the old interface comes through the new one.
 
-On Mon, 24 Jun 2019, Zhiqiang Liu wrote:
-> ÔÚ 2019/6/24 0:38, Thomas Gleixner Ð´µÀ:
-> > If we keep it jiffies based, then microseconds do not make any sense. They
-> > just give a false sense of controlability.
-> > 
-> > Keep also in mind that with jiffies the accuracy depends also on the
-> > distance to the next tick when 'end' is evaluated. The next tick might be
-> > imminent.
-> > 
-> > That's all information which needs to be in the documentation.
-> > 
-> 
-> Thanks again for your detailed advice.
-> As your said, the max_softirq_time_usecs setting without explaining the
-> relationship with CONFIG_HZ will give a false sense of controlability. And
-> the time accuracy of jiffies will result in a certain difference between the
-> max_softirq_time_usecs set value and the actual value, which is in one jiffies
-> range.
-> 
-> I will add these infomation in the sysctl documentation and changelog in v2 patch.
-
-Please make the sysctl milliseconds based. That's the closest approximation
-of useful units for this. This still has the same issues as explained
-before but it's not off by 3 orders of magitude anymore.
-
-Thanks,
-
-	tglx
---8323329-687753982-1561369504=:32342--
+David
