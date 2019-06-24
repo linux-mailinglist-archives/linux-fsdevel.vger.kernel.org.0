@@ -2,187 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5944E51019
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 17:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1E8851016
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 17:15:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730525AbfFXPPd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 11:15:33 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56876 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbfFXPPc (ORCPT
+        id S1727957AbfFXPP0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 11:15:26 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37002 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbfFXPPZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 11:15:32 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OFECoq071721;
-        Mon, 24 Jun 2019 15:15:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=K2nF3E6XseZb+sJVbpB/EPZWQ5pUv4zPKdLyAreNOeQ=;
- b=tTbnK/vSuSa/WFsaptNDxZHOGxUMqS8lmHdzq0BRMVHDBGNihqRcZwy7kJVr8k6ag7RL
- X0FIAd02B28xMSzH+fRqWndtIb7Qw/Um9Mqamdp9nUtdjxj9vaVcpJh1z9N+vihDaH90
- Uej6lAZjeSzXYFFtLwsbrh2JTcXgM1yOCvCesULk6OlXMsJNUsMStk17Z1RnI4TiXA7u
- dQya6dyibkajKJgk96csInRebW5GNNeq0m6qcJn/MEvUzrWMtmzakakVu6I9Z3mXL6NI
- EYvFTPHiWPKPmnTV1eXVR5hqYH3kXFGoY5LHfyBIG184Hkdse1xBtXt2+dH3/EDLyowK WQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2t9cyq7023-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 15:15:02 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OFEkLB095843;
-        Mon, 24 Jun 2019 15:15:01 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2t9p6tn1ts-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 15:15:01 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5OFF0xw004130;
-        Mon, 24 Jun 2019 15:15:00 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 24 Jun 2019 08:14:59 -0700
-Date:   Mon, 24 Jun 2019 08:14:58 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/12] xfs: simplify xfs_chain_bio
-Message-ID: <20190624151458.GI5387@magnolia>
-References: <20190624055253.31183-1-hch@lst.de>
- <20190624055253.31183-3-hch@lst.de>
+        Mon, 24 Jun 2019 11:15:25 -0400
+Received: by mail-ed1-f65.google.com with SMTP id w13so22328797eds.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2019 08:15:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tb/fwXJIPZBkB2w8y3N+xp6qDheDapQLagvbQVmWBxs=;
+        b=hKivaIYvCcbw0ygV6Kz/ud/MoCDO10N8kdFBEYqhIMh4ZVCmzkU5sNxig8oy6ZYXyO
+         DaxcwQ0dkrrDxCs+vYrQatvN8v7AZbUi+4VwFuHZnNzOD1wtZ8Y54yY17uaAJEGQ6PcN
+         yRxIyk/1RryQNYcrfRh4XEPNBhwjPu1A6L+5MulFzYjeDc/0xxkYjzHAmbGMJ5NKWyA9
+         UkUGsfw18XOL+7K9WbelemLiJ3LthA+M0veyhFrPVt6CR8IQFI15s1KBKIOSa3dsDjT8
+         uBxf4Mz5ND81hGRaKlV6YbyHwMOiqyw7I9U54xVYEi2z/yawXzgiyOpuhmO7EF3adB03
+         IU2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tb/fwXJIPZBkB2w8y3N+xp6qDheDapQLagvbQVmWBxs=;
+        b=FBU7aIikORQl4bZPjpkKIHl+B/Qlbq7Z1IRp+UUquAC0lCSB1s3nYOAfmb0E4DhihZ
+         v96WDS/6XstI408iIwDmhLmlCvIQDIv6o7Hdr8u8A0rL/gldrLW5r7+6rlSrElasjl8T
+         gAUGQqHpV8zTZoHSmr3gKzbizGRQsy2Rmahs6TDu6krR+J1c3NAjvP50VfGC65AqenVU
+         argVxRvo0Rg7HjJIlvxzjhELKX69EZ7nazU5o/cgQ1Ru2Fy0xirLGX6k+klecbaHDIqt
+         JcW5Ib6L+qQjKTUPRoYTHrvpkHBzehqtd2XDtePgB2rUOFb349B9tdaq42DHtEUSNKN+
+         vkAw==
+X-Gm-Message-State: APjAAAXIo05e+gTh6sMxgEg+lWG8goV/j91pgHQPbrbjn8HUgJ+w4SSw
+        /KokNQdqjxhjIO6LRfg40V8GGQ==
+X-Google-Smtp-Source: APXvYqz2rk4utKNukeyBdZl2ORALqkVcwVPb1q4qGRLCaAP8B6P/6LhMQuSx+7vkAKVkB7JktYIaZQ==
+X-Received: by 2002:a17:906:85d4:: with SMTP id i20mr20687001ejy.256.1561389324273;
+        Mon, 24 Jun 2019 08:15:24 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id f2sm873444ejb.41.2019.06.24.08.15.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 08:15:23 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id A98AF1043B3; Mon, 24 Jun 2019 18:15:28 +0300 (+03)
+Date:   Mon, 24 Jun 2019 18:15:28 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hdanton@sina.com" <hdanton@sina.com>
+Subject: Re: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
+ FS
+Message-ID: <20190624151528.fnz3hvlnyvea3ytn@box>
+References: <20190623054749.4016638-1-songliubraving@fb.com>
+ <20190623054749.4016638-6-songliubraving@fb.com>
+ <20190624124746.7evd2hmbn3qg3tfs@box>
+ <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
+ <20190624142747.chy5s3nendxktm3l@box>
+ <C3161C66-5044-44E6-92F4-BBAD42EDF4E2@fb.com>
+ <20190624145453.u4ej3e4ktyyqjite@box>
+ <5BE23F34-B611-496B-9277-A09C9CC784B1@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190624055253.31183-3-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906240122
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906240123
+In-Reply-To: <5BE23F34-B611-496B-9277-A09C9CC784B1@fb.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 07:52:43AM +0200, Christoph Hellwig wrote:
-> Move setting up operation and write hint to xfs_alloc_ioend, and
-> then just copy over all needed information from the previous bio
-> in xfs_chain_bio and stop passing various parameters to it.
+On Mon, Jun 24, 2019 at 03:04:21PM +0000, Song Liu wrote:
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-I always thought it was a little odd that we were still setting bio
-fields in the submission function...
-
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> ---
->  fs/xfs/xfs_aops.c | 35 +++++++++++++++++------------------
->  1 file changed, 17 insertions(+), 18 deletions(-)
 > 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index a6f0f4761a37..9cceb90e77c5 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -665,7 +665,6 @@ xfs_submit_ioend(
->  
->  	ioend->io_bio->bi_private = ioend;
->  	ioend->io_bio->bi_end_io = xfs_end_bio;
-> -	ioend->io_bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
->  
->  	/*
->  	 * If we are failing the IO now, just mark the ioend with an
-> @@ -679,7 +678,6 @@ xfs_submit_ioend(
->  		return status;
->  	}
->  
-> -	ioend->io_bio->bi_write_hint = ioend->io_inode->i_write_hint;
->  	submit_bio(ioend->io_bio);
->  	return 0;
->  }
-> @@ -691,7 +689,8 @@ xfs_alloc_ioend(
->  	xfs_exntst_t		state,
->  	xfs_off_t		offset,
->  	struct block_device	*bdev,
-> -	sector_t		sector)
-> +	sector_t		sector,
-> +	struct writeback_control *wbc)
->  {
->  	struct xfs_ioend	*ioend;
->  	struct bio		*bio;
-> @@ -699,6 +698,8 @@ xfs_alloc_ioend(
->  	bio = bio_alloc_bioset(GFP_NOFS, BIO_MAX_PAGES, &xfs_ioend_bioset);
->  	bio_set_dev(bio, bdev);
->  	bio->bi_iter.bi_sector = sector;
-> +	bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
-> +	bio->bi_write_hint = inode->i_write_hint;
->  
->  	ioend = container_of(bio, struct xfs_ioend, io_inline_bio);
->  	INIT_LIST_HEAD(&ioend->io_list);
-> @@ -719,24 +720,22 @@ xfs_alloc_ioend(
->   * so that the bi_private linkage is set up in the right direction for the
->   * traversal in xfs_destroy_ioend().
->   */
-> -static void
-> +static struct bio *
->  xfs_chain_bio(
-> -	struct xfs_ioend	*ioend,
-> -	struct writeback_control *wbc,
-> -	struct block_device	*bdev,
-> -	sector_t		sector)
-> +	struct bio		*prev)
->  {
->  	struct bio *new;
->  
->  	new = bio_alloc(GFP_NOFS, BIO_MAX_PAGES);
-> -	bio_set_dev(new, bdev);
-> -	new->bi_iter.bi_sector = sector;
-> -	bio_chain(ioend->io_bio, new);
-> -	bio_get(ioend->io_bio);		/* for xfs_destroy_ioend */
-> -	ioend->io_bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
-> -	ioend->io_bio->bi_write_hint = ioend->io_inode->i_write_hint;
-> -	submit_bio(ioend->io_bio);
-> -	ioend->io_bio = new;
-> +	bio_copy_dev(new, prev);
-> +	new->bi_iter.bi_sector = bio_end_sector(prev);
-> +	new->bi_opf = prev->bi_opf;
-> +	new->bi_write_hint = prev->bi_write_hint;
-> +
-> +	bio_chain(prev, new);
-> +	bio_get(prev);		/* for xfs_destroy_ioend */
-> +	submit_bio(prev);
-> +	return new;
->  }
->  
->  /*
-> @@ -771,14 +770,14 @@ xfs_add_to_ioend(
->  		if (wpc->ioend)
->  			list_add(&wpc->ioend->io_list, iolist);
->  		wpc->ioend = xfs_alloc_ioend(inode, wpc->fork,
-> -				wpc->imap.br_state, offset, bdev, sector);
-> +				wpc->imap.br_state, offset, bdev, sector, wbc);
->  	}
->  
->  	if (!__bio_try_merge_page(wpc->ioend->io_bio, page, len, poff, true)) {
->  		if (iop)
->  			atomic_inc(&iop->write_count);
->  		if (bio_full(wpc->ioend->io_bio))
-> -			xfs_chain_bio(wpc->ioend, wbc, bdev, sector);
-> +			wpc->ioend->io_bio = xfs_chain_bio(wpc->ioend->io_bio);
->  		bio_add_page(wpc->ioend->io_bio, page, len, poff);
->  	}
->  
-> -- 
-> 2.20.1
+> > On Jun 24, 2019, at 7:54 AM, Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> > 
+> > On Mon, Jun 24, 2019 at 02:42:13PM +0000, Song Liu wrote:
+> >> 
+> >> 
+> >>> On Jun 24, 2019, at 7:27 AM, Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> >>> 
+> >>> On Mon, Jun 24, 2019 at 02:01:05PM +0000, Song Liu wrote:
+> >>>>>> @@ -1392,6 +1403,23 @@ static void collapse_file(struct mm_struct *mm,
+> >>>>>> 				result = SCAN_FAIL;
+> >>>>>> 				goto xa_unlocked;
+> >>>>>> 			}
+> >>>>>> +		} else if (!page || xa_is_value(page)) {
+> >>>>>> +			xas_unlock_irq(&xas);
+> >>>>>> +			page_cache_sync_readahead(mapping, &file->f_ra, file,
+> >>>>>> +						  index, PAGE_SIZE);
+> >>>>>> +			lru_add_drain();
+> >>>>> 
+> >>>>> Why?
+> >>>> 
+> >>>> isolate_lru_page() is likely to fail if we don't drain the pagevecs. 
+> >>> 
+> >>> Please add a comment.
+> >> 
+> >> Will do. 
+> >> 
+> >>> 
+> >>>>>> +			page = find_lock_page(mapping, index);
+> >>>>>> +			if (unlikely(page == NULL)) {
+> >>>>>> +				result = SCAN_FAIL;
+> >>>>>> +				goto xa_unlocked;
+> >>>>>> +			}
+> >>>>>> +		} else if (!PageUptodate(page)) {
+> >>>>> 
+> >>>>> Maybe we should try wait_on_page_locked() here before give up?
+> >>>> 
+> >>>> Are you referring to the "if (!PageUptodate(page))" case? 
+> >>> 
+> >>> Yes.
+> >> 
+> >> I think this case happens when another thread is reading the page in. 
+> >> I could not think of a way to trigger this condition for testing. 
+> >> 
+> >> On the other hand, with current logic, we will retry the page on the 
+> >> next scan, so I guess this is OK. 
+> > 
+> > What I meant that calling wait_on_page_locked() on !PageUptodate() page
+> > will likely make it up-to-date and we don't need to SCAN_FAIL the attempt.
+> > 
 > 
+> Yeah, I got the point. My only concern is that I don't know how to 
+> reliably trigger this case for testing. I can try to trigger it. But I 
+> don't know whether it will happen easily. 
+
+Atrifically slowing down IO should do the trick.
+
+-- 
+ Kirill A. Shutemov
