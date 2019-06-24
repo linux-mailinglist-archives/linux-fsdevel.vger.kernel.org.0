@@ -2,130 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 695AC517DA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 18:01:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B2A517DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 18:02:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729525AbfFXQBS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 12:01:18 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:51252 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbfFXQBS (ORCPT
+        id S1731371AbfFXQCA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 12:02:00 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41739 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730806AbfFXQCA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 12:01:18 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OFxKPh013673;
-        Mon, 24 Jun 2019 16:00:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=V3ndcbQ+TD0LKSqQzM3594IpMdqXKhrtNeECQwftLGg=;
- b=m/jK0RHjc6e19DnNRpaH326/Sd3WoZnVNM6LuWd5CqrxEpraHwHJiRjFqmbkocm6rdkd
- Wk63oRCGUr22uSLQWdeF6DPABbMed+nshfq5g6E2Awhx4Cbi44wavPeVJW5eYmlsfNoa
- T8cBvlmVWxqInzZxySncLgE97qr9M8KMPbVNrOFTacny8BXANNS+DQwO6UuYDOQJ7qOe
- 0cgm5uKnFd1Z0p5hBNB0r/3vjxSGK4Wwq4kpNT/ZGSvFnCX1o47wUt4IOZcfLRxaoiUL
- BlDlFvf1pSIZVmJQXnMOlcTKV+y7hPWV9ZTL9TIjXHWdHqbrkSF2dTSQwZYwdWpz+XCK 0A== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2t9c9pf97e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 16:00:59 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OFxocm018126;
-        Mon, 24 Jun 2019 16:00:58 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2t99f3btjs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 16:00:58 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5OG0wBD006770;
-        Mon, 24 Jun 2019 16:00:58 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 24 Jun 2019 09:00:57 -0700
-Date:   Mon, 24 Jun 2019 09:00:56 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/12] xfs: simplify xfs_ioend_can_merge
-Message-ID: <20190624160056.GN5387@magnolia>
-References: <20190624055253.31183-1-hch@lst.de>
- <20190624055253.31183-9-hch@lst.de>
+        Mon, 24 Jun 2019 12:02:00 -0400
+Received: by mail-lf1-f65.google.com with SMTP id 136so10453185lfa.8;
+        Mon, 24 Jun 2019 09:01:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=AMA2HAM5GHzbGba8x47+feRyrGzC/8GufLwaBmuBGpI=;
+        b=cFi4VKjZjCmxjO8v4tBxWI7Ea1nJvu9U3IDUVkQnvLY8+cpRzX+obGqM/tRosDuQMV
+         kNAVYQcesAqVtliX5j3bqrmHEoEcXpG++ecm99MOEAW1iSON5my8NvupWBRjr/TjOOvB
+         xP+g/HfL+kbiL4bzfR+xz8dnj8VzNYjpTTAVXoLC49gwygejRxXVyZyFNPGRznx6y0aM
+         HodbAi3fl3M689LBAB1X2SG/ROPB8cHJAfwoSByXoS4XxHozMOcdYAaNOwLFSDIE1hLb
+         55Kh+ZBhy7qh/JLQNynGXsoIpFWhegQyOyecGSXZmyb4m1fK17XLNmG8R26WF09dCrJv
+         9MCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=AMA2HAM5GHzbGba8x47+feRyrGzC/8GufLwaBmuBGpI=;
+        b=lVsEnYbIbKosTF/3ecuAqyOGL5uHSEUHy2VdfSp+m4jR7LB2GlGhF+q2eGDBO/+qHo
+         lZu/IfO1mT4wLpN50lB28gm/RrDzQ229Ak6qE5/RBfzTuUbxtS+C5oAk8g8zqQrIDJuw
+         Rfy695kDPahwDjp4GlciTju/wRwcK6x3i4bl+oXUNJYKLxBcv+SVbznzb2UmDo3m7hBJ
+         JCFccOo7KjVsucxEot6y801UHx9KBnbUsvIKB8lbQN2YFdxs/bp3Aq1O0HB01+UGSx10
+         m7Xw8LVVxBAtbpm94a7aE0U4Uik1cd8nTD2v+FVGBMzUsdnl5rhaO0chxsZXr88Ouar+
+         qPRg==
+X-Gm-Message-State: APjAAAWL5P6Er4ECbVdWs2yBn4+WqWXjo3JYVqI6DoFue/RW9rB/eTx0
+        JH2BJjFdjR6PQN9WIfg/9X6w/p9XtSJhH6RKawp8SA==
+X-Google-Smtp-Source: APXvYqxCN8kQWiKJaD//zsae7V99HE3CrWQOEkiJLG6rUAhV1euZ3kkcLIT7ZhMJHflLxaZ1bAUr7N5KUH2jhqEWsBM=
+X-Received: by 2002:ac2:5467:: with SMTP id e7mr52671259lfn.23.1561392117802;
+ Mon, 24 Jun 2019 09:01:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624055253.31183-9-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906240127
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906240128
+References: <20190617185815.3949-1-carmeli.tamir@gmail.com>
+In-Reply-To: <20190617185815.3949-1-carmeli.tamir@gmail.com>
+From:   Tamir Carmeli <carmeli.tamir@gmail.com>
+Date:   Mon, 24 Jun 2019 19:01:21 +0300
+Message-ID: <CAKxm1-EFzwbFS73VsriiwZKHJjZZAyvD-WHpFRsWttzhqqMy2Q@mail.gmail.com>
+Subject: Re: [PATCH] fs/binfmt: Changed order of elf and misc to prevent
+ privilege escalation
+To:     viro@zeniv.linux.org.uk, Tamir Carmeli <carmeli.tamir@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 07:52:49AM +0200, Christoph Hellwig wrote:
-> Compare the block layer status directly instead of converting it to
-> an errno first.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Hi,
+I'd appreciate feedback on the patch. Seems like we can solve a stupid
+"hiding" technique, more "advanced" than just marking an executable
+with suid, that leads to privilege escalation. Please tell me if I
+miss something.
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
---D
-
+On Mon, Jun 17, 2019 at 9:58 PM Carmeli Tamir <carmeli.tamir@gmail.com> wrote:
+>
+> The misc format handler is configured to work in many boards
+> and distributions, exposing a  volnurability that enables an
+> attacker with a temporary root access to configure the system
+> to gain a hidden persistent root acces. This can be easily
+> demonstrated using https://github.com/toffan/binfmt_misc .
+>
+> According to binfmt_misc documentation
+> (https://lwn.net/Articles/679310/), the handler is used
+> to execute more binary formats, e.g. execs compiled
+> for different architectures. After this patch, every
+> mentioned example in the documentation shall work.
+>
+> I tested this patch using a "positive example" - running
+> and ARM executable on an x86 machine using a qemu-arm misc
+> handler, and a "negative example" of running the demostration
+> by toffan I mention above. Before the patch both examples
+> work, and after the patch only the positive example work
+> where the volnurability is prevented.
+>
+> Signed-off-by: Carmeli Tamir <carmeli.tamir@gmail.com>
 > ---
->  fs/xfs/xfs_aops.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 017b87b7765f..acbd73976067 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -226,13 +226,9 @@ xfs_end_ioend(
->  static bool
->  xfs_ioend_can_merge(
->  	struct xfs_ioend	*ioend,
-> -	int			ioend_error,
->  	struct xfs_ioend	*next)
+>  fs/binfmt_elf.c  | 2 +-
+>  fs/binfmt_misc.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index d4e11b2e04f6..3a2afe84943c 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -2411,7 +2411,7 @@ static int elf_core_dump(struct coredump_params *cprm)
+>
+>  static int __init init_elf_binfmt(void)
 >  {
-> -	int			next_error;
-> -
-> -	next_error = blk_status_to_errno(next->io_bio->bi_status);
-> -	if (ioend_error != next_error)
-> +	if (ioend->io_bio->bi_status != next->io_bio->bi_status)
->  		return false;
->  	if ((ioend->io_fork == XFS_COW_FORK) ^ (next->io_fork == XFS_COW_FORK))
->  		return false;
-> @@ -251,17 +247,11 @@ xfs_ioend_try_merge(
->  	struct list_head	*more_ioends)
+> -       register_binfmt(&elf_format);
+> +       insert_binfmt(&elf_format);
+>         return 0;
+>  }
+>
+> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> index b8e145552ec7..f4a9e1154cae 100644
+> --- a/fs/binfmt_misc.c
+> +++ b/fs/binfmt_misc.c
+> @@ -859,7 +859,7 @@ static int __init init_misc_binfmt(void)
 >  {
->  	struct xfs_ioend	*next_ioend;
-> -	int			ioend_error;
-> -
-> -	if (list_empty(more_ioends))
-> -		return;
-> -
-> -	ioend_error = blk_status_to_errno(ioend->io_bio->bi_status);
->  
->  	while (!list_empty(more_ioends)) {
->  		next_ioend = list_first_entry(more_ioends, struct xfs_ioend,
->  				io_list);
-> -		if (!xfs_ioend_can_merge(ioend, ioend_error, next_ioend))
-> +		if (!xfs_ioend_can_merge(ioend, next_ioend))
->  			break;
->  		list_move_tail(&next_ioend->io_list, &ioend->io_list);
->  		ioend->io_size += next_ioend->io_size;
-> -- 
-> 2.20.1
-> 
+>         int err = register_filesystem(&bm_fs_type);
+>         if (!err)
+> -               insert_binfmt(&misc_format);
+> +               register_binfmt(&misc_format);
+>         return err;
+>  }
+>
+> --
+> 2.21.0
+>
