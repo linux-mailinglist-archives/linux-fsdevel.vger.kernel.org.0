@@ -2,85 +2,310 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D69E51831
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 18:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6E3251838
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 18:18:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731815AbfFXQOn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 12:14:43 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46376 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbfFXQOn (ORCPT
+        id S1731843AbfFXQSC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 12:18:02 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:32770 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730045AbfFXQSC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 12:14:43 -0400
-Received: by mail-qk1-f196.google.com with SMTP id x18so10135178qkn.13;
-        Mon, 24 Jun 2019 09:14:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HTF/nS1+qdBT86jDRSsd6Qn5jIsT6F1veuGsXftHOjc=;
-        b=rRlkfi9Bf+ds070dsCIXgWVZaMDuDV2wmQdcfYy7uD13+zOkxauLv0fEC85tUhfe9r
-         RRbF98+lp3sC4rJAhHYHxz8djuyEqIhbIzpTlsBbBbUy1zZCeC847i5o372T9ONj0Bu9
-         jZS/zk+VdeKk/MgFgXjnGl7M+eLUAZks5I/zjcvHIOExCgCPA6rQXn6nGLwYP3WX0hyF
-         6xTuCLZ3yleylPF3X7icnnl/PwhQfosotcKUFWLdmFukHkXOoIm9gSJlNB6N7uk7Fix6
-         AYeX9+m4QYR3n8kh60DRMRc80zks0CIUAZnYLXRDszNM/lkVmWudxLQWQxoSqQtyKxGQ
-         LjKQ==
-X-Gm-Message-State: APjAAAXJy0KJ2zQ46oLFnVCpPudej7BxYLCiMXiM01kSTa9ASsrx5dnm
-        tkmFkzvUcle6GQWPo1Vd1vJU8XsaJLQ4NG3XrzU=
-X-Google-Smtp-Source: APXvYqyfH93Six0OcO4zr/WcQbQNutoi7R+T6yeai3iSMLU6xDTPFUfvRcImY2k2OlF7h86FZYep6Q4xr3oJIgOgFSM=
-X-Received: by 2002:a37:76c5:: with SMTP id r188mr17681349qkc.394.1561392882315;
- Mon, 24 Jun 2019 09:14:42 -0700 (PDT)
+        Mon, 24 Jun 2019 12:18:02 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OG9RhG120007;
+        Mon, 24 Jun 2019 16:17:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=QSdJIcYPhRP8AVUdSZIleoEcVMe8cjEDcuPBEeUeRA4=;
+ b=JZfLHyYuVFOmsE2ExpcijqRHL+HP3uqAFjiq6K43XLGL+BmZOLhUrUI5aIXhOy4s+dSt
+ kpMQ1SeaUclXVHn9uLfTngAS8tVq/SZ8jAT0BxqIRxYFxigzUfv0K0iJWEW5GfJsnkCl
+ 3++dcyyyoCSflz0rqVPDBa6f1CqJ1IkZdL3a+pzCx0pLozd+XUAtmZLlPgCcn9t9WYcO
+ JU+b0XKFrygRuJID6YpM5Kh83dEf3iVfryUBiU4xDiWGc4fH6nsywyNdzWKNkI5fFPUU
+ YWijSlkATWRRRfnQOykRJLeuQFT8BKoSGp5u+rVSbYZC6BQ1XWO4eW+jSO2PG/rKdbX8 JQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2t9cyq7b37-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 16:17:28 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OGHRc0190628;
+        Mon, 24 Jun 2019 16:17:27 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2t9acbkhgt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 16:17:27 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5OGHL5G011382;
+        Mon, 24 Jun 2019 16:17:21 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 24 Jun 2019 09:17:21 -0700
+Date:   Mon, 24 Jun 2019 09:17:20 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/12] xfs: don't preallocate a transaction for file size
+ updates
+Message-ID: <20190624161720.GQ5387@magnolia>
+References: <20190624055253.31183-1-hch@lst.de>
+ <20190624055253.31183-8-hch@lst.de>
 MIME-Version: 1.0
-References: <20190624144151.22688-1-rpenyaev@suse.de> <20190624144151.22688-14-rpenyaev@suse.de>
-In-Reply-To: <20190624144151.22688-14-rpenyaev@suse.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 24 Jun 2019 18:14:25 +0200
-Message-ID: <CAK8P3a3YgKZbF=nx4nsbj5mvgcSk8OfjU1HNvSjC19RPsyVMsQ@mail.gmail.com>
-Subject: Re: [PATCH v5 13/14] epoll: implement epoll_create2() syscall
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624055253.31183-8-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906240129
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906240129
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 4:42 PM Roman Penyaev <rpenyaev@suse.de> wrote:
->
-> epoll_create2() is needed to accept EPOLL_USERPOLL flags
-> and size, i.e. this patch wires up polling from userspace.
+On Mon, Jun 24, 2019 at 07:52:48AM +0200, Christoph Hellwig wrote:
+> We have historically decided that we want to preallocate the xfs_trans
+> structure at writeback time so that we don't have to allocate on in
+> the I/O completion handler.  But we treat unwrittent extent and COW
+> fork conversions different already, which proves that the transaction
+> allocations in the end I/O handler are not a problem.  Removing the
+> preallocation gets rid of a lot of corner case code, and also ensures
+> we only allocate one and log a transaction when actually required,
+> as the ioend merging can reduce the number of actual i_size updates
+> significantly.
 
-Can you explain in the patch description more what it's needed for?
+That's what I thought when I wrote the ioend merging patches, but IIRC
+Dave objected on the grounds that most file writes are trivial file
+extending writes and therefore we should leave this alone to avoid
+slowing down the ioend path even if it came at a cost of cancelling a
+lot of empty transactions.
 
-The man page only states that "Since Linux 2.6.8, the size argument
-is ignored", so your description above does not explain why you need
-to add the size argument back.
+I wasn't 100% convinced it mattered but ran out of time in the
+development window and never got around to researching if it made any
+difference.
 
-> diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-> index 1db9bbcfb84e..a1d7b695063d 100644
-> --- a/arch/alpha/kernel/syscalls/syscall.tbl
-> +++ b/arch/alpha/kernel/syscalls/syscall.tbl
-> @@ -474,3 +474,5 @@
->  542    common  fsmount                         sys_fsmount
->  543    common  fspick                          sys_fspick
->  544    common  pidfd_open                      sys_pidfd_open
-> +# 546  common  clone3                  sys_clone3
-> +547    common  epoll_create2                   sys_epoll_create2
-> diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-> index ff45d8807cb8..1497f3c87d54 100644
-> --- a/arch/arm/tools/syscall.tbl
-> +++ b/arch/arm/tools/syscall.tbl
-> @@ -449,3 +449,4 @@
->  433    common  fspick                          sys_fspick
->  434    common  pidfd_open                      sys_pidfd_open
->  436    common  clone3                          sys_clone3
-> +437    common  epoll_create2                   sys_epoll_create2
+So, uh, how much of a hit do we take for having to allocate a
+transaction for a file size extension?  Particularly since we can
+combine those things now?
 
-The table changes all look correct and complete, provided we
-don't get another patch picking the same number.
+--D
 
-          Arnd
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/xfs/xfs_aops.c | 110 +++++-----------------------------------------
+>  fs/xfs/xfs_aops.h |   1 -
+>  2 files changed, 12 insertions(+), 99 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 633baaaff7ae..017b87b7765f 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -130,44 +130,23 @@ static inline bool xfs_ioend_is_append(struct xfs_ioend *ioend)
+>  		XFS_I(ioend->io_inode)->i_d.di_size;
+>  }
+>  
+> -STATIC int
+> -xfs_setfilesize_trans_alloc(
+> -	struct xfs_ioend	*ioend)
+> -{
+> -	struct xfs_mount	*mp = XFS_I(ioend->io_inode)->i_mount;
+> -	struct xfs_trans	*tp;
+> -	int			error;
+> -
+> -	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp);
+> -	if (error)
+> -		return error;
+> -
+> -	ioend->io_append_trans = tp;
+> -
+> -	/*
+> -	 * We may pass freeze protection with a transaction.  So tell lockdep
+> -	 * we released it.
+> -	 */
+> -	__sb_writers_release(ioend->io_inode->i_sb, SB_FREEZE_FS);
+> -	/*
+> -	 * We hand off the transaction to the completion thread now, so
+> -	 * clear the flag here.
+> -	 */
+> -	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+> -	return 0;
+> -}
+> -
+>  /*
+>   * Update on-disk file size now that data has been written to disk.
+>   */
+> -STATIC int
+> -__xfs_setfilesize(
+> +int
+> +xfs_setfilesize(
+>  	struct xfs_inode	*ip,
+> -	struct xfs_trans	*tp,
+>  	xfs_off_t		offset,
+>  	size_t			size)
+>  {
+> +	struct xfs_mount	*mp = ip->i_mount;
+> +	struct xfs_trans	*tp;
+>  	xfs_fsize_t		isize;
+> +	int			error;
+> +
+> +	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp);
+> +	if (error)
+> +		return error;
+>  
+>  	xfs_ilock(ip, XFS_ILOCK_EXCL);
+>  	isize = xfs_new_eof(ip, offset + size);
+> @@ -186,48 +165,6 @@ __xfs_setfilesize(
+>  	return xfs_trans_commit(tp);
+>  }
+>  
+> -int
+> -xfs_setfilesize(
+> -	struct xfs_inode	*ip,
+> -	xfs_off_t		offset,
+> -	size_t			size)
+> -{
+> -	struct xfs_mount	*mp = ip->i_mount;
+> -	struct xfs_trans	*tp;
+> -	int			error;
+> -
+> -	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp);
+> -	if (error)
+> -		return error;
+> -
+> -	return __xfs_setfilesize(ip, tp, offset, size);
+> -}
+> -
+> -STATIC int
+> -xfs_setfilesize_ioend(
+> -	struct xfs_ioend	*ioend,
+> -	int			error)
+> -{
+> -	struct xfs_inode	*ip = XFS_I(ioend->io_inode);
+> -	struct xfs_trans	*tp = ioend->io_append_trans;
+> -
+> -	/*
+> -	 * The transaction may have been allocated in the I/O submission thread,
+> -	 * thus we need to mark ourselves as being in a transaction manually.
+> -	 * Similarly for freeze protection.
+> -	 */
+> -	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+> -	__sb_writers_acquired(VFS_I(ip)->i_sb, SB_FREEZE_FS);
+> -
+> -	/* we abort the update if there was an IO error */
+> -	if (error) {
+> -		xfs_trans_cancel(tp);
+> -		return error;
+> -	}
+> -
+> -	return __xfs_setfilesize(ip, tp, ioend->io_offset, ioend->io_size);
+> -}
+> -
+>  /*
+>   * IO write completion.
+>   */
+> @@ -267,12 +204,9 @@ xfs_end_ioend(
+>  		error = xfs_reflink_end_cow(ip, offset, size);
+>  	else if (ioend->io_type == IOMAP_UNWRITTEN)
+>  		error = xfs_iomap_write_unwritten(ip, offset, size, false);
+> -	else
+> -		ASSERT(!xfs_ioend_is_append(ioend) || ioend->io_append_trans);
+> -
+> +	if (!error && xfs_ioend_is_append(ioend))
+> +		error = xfs_setfilesize(ip, offset, size);
+>  done:
+> -	if (ioend->io_append_trans)
+> -		error = xfs_setfilesize_ioend(ioend, error);
+>  	list_replace_init(&ioend->io_list, &ioend_list);
+>  	xfs_destroy_ioend(ioend, error);
+>  
+> @@ -307,8 +241,6 @@ xfs_ioend_can_merge(
+>  		return false;
+>  	if (ioend->io_offset + ioend->io_size != next->io_offset)
+>  		return false;
+> -	if (xfs_ioend_is_append(ioend) != xfs_ioend_is_append(next))
+> -		return false;
+>  	return true;
+>  }
+>  
+> @@ -320,7 +252,6 @@ xfs_ioend_try_merge(
+>  {
+>  	struct xfs_ioend	*next_ioend;
+>  	int			ioend_error;
+> -	int			error;
+>  
+>  	if (list_empty(more_ioends))
+>  		return;
+> @@ -334,10 +265,6 @@ xfs_ioend_try_merge(
+>  			break;
+>  		list_move_tail(&next_ioend->io_list, &ioend->io_list);
+>  		ioend->io_size += next_ioend->io_size;
+> -		if (ioend->io_append_trans) {
+> -			error = xfs_setfilesize_ioend(next_ioend, 1);
+> -			ASSERT(error == 1);
+> -		}
+>  	}
+>  }
+>  
+> @@ -398,7 +325,7 @@ xfs_end_bio(
+>  
+>  	if (ioend->io_fork == XFS_COW_FORK ||
+>  	    ioend->io_type == IOMAP_UNWRITTEN ||
+> -	    ioend->io_append_trans != NULL) {
+> +	    xfs_ioend_is_append(ioend)) {
+>  		spin_lock_irqsave(&ip->i_ioend_lock, flags);
+>  		if (list_empty(&ip->i_ioend_list))
+>  			WARN_ON_ONCE(!queue_work(mp->m_unwritten_workqueue,
+> @@ -660,18 +587,6 @@ xfs_submit_ioend(
+>  		memalloc_nofs_restore(nofs_flag);
+>  	}
+>  
+> -	/* Reserve log space if we might write beyond the on-disk inode size. */
+> -	if (!status &&
+> -	    (ioend->io_fork == XFS_COW_FORK ||
+> -	     ioend->io_type != IOMAP_UNWRITTEN) &&
+> -	    xfs_ioend_is_append(ioend) &&
+> -	    !ioend->io_append_trans) {
+> -		unsigned nofs_flag = memalloc_nofs_save();
+> -
+> -		status = xfs_setfilesize_trans_alloc(ioend);
+> -		memalloc_nofs_restore(nofs_flag);
+> -	}
+> -
+>  	ioend->io_bio->bi_private = ioend;
+>  	ioend->io_bio->bi_end_io = xfs_end_bio;
+>  
+> @@ -715,7 +630,6 @@ xfs_alloc_ioend(
+>  	ioend->io_inode = inode;
+>  	ioend->io_size = 0;
+>  	ioend->io_offset = offset;
+> -	ioend->io_append_trans = NULL;
+>  	ioend->io_bio = bio;
+>  	return ioend;
+>  }
+> diff --git a/fs/xfs/xfs_aops.h b/fs/xfs/xfs_aops.h
+> index 72e30d1c3bdf..23c087f0bcbf 100644
+> --- a/fs/xfs/xfs_aops.h
+> +++ b/fs/xfs/xfs_aops.h
+> @@ -18,7 +18,6 @@ struct xfs_ioend {
+>  	struct inode		*io_inode;	/* file being written to */
+>  	size_t			io_size;	/* size of the extent */
+>  	xfs_off_t		io_offset;	/* offset in the file */
+> -	struct xfs_trans	*io_append_trans;/* xact. for size update */
+>  	struct bio		*io_bio;	/* bio being built */
+>  	struct bio		io_inline_bio;	/* MUST BE LAST! */
+>  };
+> -- 
+> 2.20.1
+> 
