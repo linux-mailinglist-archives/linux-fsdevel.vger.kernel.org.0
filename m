@@ -2,462 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA542503C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 09:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C518F50461
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 10:21:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbfFXHjs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 03:39:48 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57604 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726334AbfFXHjs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:39:48 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2EEB02B3136D2B09CB17;
-        Mon, 24 Jun 2019 15:39:45 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 24 Jun
- 2019 15:39:39 +0800
-Subject: Re: [PATCH v2 5/8] staging: erofs: introduce generic decompression
- backend
-To:     Gao Xiang <gaoxiang25@huawei.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-        Chao Yu <chao@kernel.org>, Fang Wei <fangwei1@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, Du Wei <weidu.du@huawei.com>
-References: <20190620160719.240682-1-gaoxiang25@huawei.com>
- <20190620160719.240682-6-gaoxiang25@huawei.com>
- <4e3a822e-1c18-122e-9eb1-c4eaf0204e63@huawei.com>
- <348e6203-b1be-1579-dbe9-cbf1a906af6f@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <3414cc67-fd03-7896-7075-ee7beaae66e7@huawei.com>
-Date:   Mon, 24 Jun 2019 15:39:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727645AbfFXIVI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 04:21:08 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:52713 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbfFXIVH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jun 2019 04:21:07 -0400
+Received: by mail-io1-f72.google.com with SMTP id p12so21013263iog.19
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2019 01:21:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=3wbx66XjtrNDKjy5yo1ONJmuibxwTL2Y/NDCfUz1CRc=;
+        b=j+pGs9q5cy+RGjnuHKSl+jGnHT3kbtwu6GhRtA/3ZleJD6jdl89JV4wZW6hpc1fC3a
+         wJF+Oz5jLr47zoGdDUb2tXmrjy11anDIuVFjfZWTcD6Iplzx/RZXfm1qB2LihBmaj9kZ
+         EBFI46741xl5KwWhnCLjUbtvQ3hgMfeiKY8x/LBaM7NRmCkCA6tfDvv/aX8jv8e21nty
+         3MBpvv+KnKvDHQNy0/EFf157zRuLrUvfNF1CfLM5svyj+8czBI/i1DkwnIwifJ0bMGxp
+         8k236MlNiKmP8MTvM1x33kGaywQh/wDfOdytA4NjJB5ZakcFB87RqiKZnqMY6qO1dBAr
+         R2cQ==
+X-Gm-Message-State: APjAAAWAi2D3iYipbmWG9WG6lLlB3T03EIvWHu6TZQ8Awlh23OxWiUYZ
+        u5VOzFXVWxwt9oYUhn9RegW5lRtTJqZEB8uMswi/DVOVPrKD
+X-Google-Smtp-Source: APXvYqzq26g+qUJSiKX+qhzG+N1V3GCN91+hK2RLY8R1V1u8qDa69oNKyOBTw/GDqrefBDH1udIPnevCMlG573olXu5T5S7Wb6+e
 MIME-Version: 1.0
-In-Reply-To: <348e6203-b1be-1579-dbe9-cbf1a906af6f@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a6b:7b07:: with SMTP id l7mr14661964iop.225.1561364466648;
+ Mon, 24 Jun 2019 01:21:06 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 01:21:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000665152058c0d7ed9@google.com>
+Subject: INFO: task hung in io_uring_release
+From:   syzbot <syzbot+94324416c485d422fe15@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/6/21 18:42, Gao Xiang wrote:
-> Hi Chao,
-> 
-> On 2019/6/21 17:46, Chao Yu wrote:
->> On 2019/6/21 0:07, Gao Xiang wrote:
->>> This patch adds a new generic decompression framework
->>> in order to replace the old LZ4-specific decompression code.
->>>
->>> Even though LZ4 is still the only supported algorithm, yet
->>> it is more cleaner and easy to integrate new algorithm than
->>> the old almost hard-coded decompression backend.
->>>
->>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
->>> ---
->>>  drivers/staging/erofs/Makefile       |   2 +-
->>>  drivers/staging/erofs/compress.h     |  21 ++
->>>  drivers/staging/erofs/decompressor.c | 307 +++++++++++++++++++++++++++
->>>  3 files changed, 329 insertions(+), 1 deletion(-)
->>>  create mode 100644 drivers/staging/erofs/decompressor.c
->>>
->>> diff --git a/drivers/staging/erofs/Makefile b/drivers/staging/erofs/Makefile
->>> index 84b412c7a991..adeb5d6e2668 100644
->>> --- a/drivers/staging/erofs/Makefile
->>> +++ b/drivers/staging/erofs/Makefile
->>> @@ -9,5 +9,5 @@ obj-$(CONFIG_EROFS_FS) += erofs.o
->>>  ccflags-y += -I $(srctree)/$(src)/include
->>>  erofs-objs := super.o inode.o data.o namei.o dir.o utils.o
->>>  erofs-$(CONFIG_EROFS_FS_XATTR) += xattr.o
->>> -erofs-$(CONFIG_EROFS_FS_ZIP) += unzip_vle.o unzip_vle_lz4.o zmap.o
->>> +erofs-$(CONFIG_EROFS_FS_ZIP) += unzip_vle.o unzip_vle_lz4.o zmap.o decompressor.o
->>>  
->>> diff --git a/drivers/staging/erofs/compress.h b/drivers/staging/erofs/compress.h
->>> index 1dcfc3b35118..ebeccb1f4eae 100644
->>> --- a/drivers/staging/erofs/compress.h
->>> +++ b/drivers/staging/erofs/compress.h
->>> @@ -9,6 +9,24 @@
->>>  #ifndef __EROFS_FS_COMPRESS_H
->>>  #define __EROFS_FS_COMPRESS_H
->>>  
->>> +#include "internal.h"
->>> +
->>> +enum {
->>> +	Z_EROFS_COMPRESSION_SHIFTED = Z_EROFS_COMPRESSION_MAX,
->>> +	Z_EROFS_COMPRESSION_RUNTIME_MAX
->>> +};
->>> +
->>> +struct z_erofs_decompress_req {
->>> +	struct page **in, **out;
->>> +
->>> +	unsigned short pageofs_out;
->>> +	unsigned int inputsize, outputsize;
->>> +
->>> +	/* indicate the algorithm will be used for decompression */
->>> +	unsigned int alg;
->>> +	bool inplace_io, partial_decoding;
->>> +};
->>> +
->>>  /*
->>>   * - 0x5A110C8D ('sallocated', Z_EROFS_MAPPING_STAGING) -
->>>   * used to mark temporary allocated pages from other
->>> @@ -36,5 +54,8 @@ static inline bool z_erofs_put_stagingpage(struct list_head *pagepool,
->>>  	return true;
->>>  }
->>>  
->>> +int z_erofs_decompress(struct z_erofs_decompress_req *rq,
->>> +		       struct list_head *pagepool);
->>> +
->>>  #endif
->>>  
->>> diff --git a/drivers/staging/erofs/decompressor.c b/drivers/staging/erofs/decompressor.c
->>> new file mode 100644
->>> index 000000000000..c68d17b579e0
->>> --- /dev/null
->>> +++ b/drivers/staging/erofs/decompressor.c
->>> @@ -0,0 +1,307 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * linux/drivers/staging/erofs/decompressor.c
->>> + *
->>> + * Copyright (C) 2019 HUAWEI, Inc.
->>> + *             http://www.huawei.com/
->>> + * Created by Gao Xiang <gaoxiang25@huawei.com>
->>> + */
->>> +#include "compress.h"
->>> +#include <linux/lz4.h>
->>> +
->>> +#ifndef LZ4_DISTANCE_MAX	/* history window size */
->>> +#define LZ4_DISTANCE_MAX 65535	/* set to maximum value by default */
->>> +#endif
->>> +
->>> +#define LZ4_MAX_DISTANCE_PAGES	DIV_ROUND_UP(LZ4_DISTANCE_MAX, PAGE_SIZE)
->>> +
->>> +struct z_erofs_decompressor {
->>> +	/*
->>> +	 * if destpages have sparsed pages, fill them with bounce pages.
->>> +	 * it also check whether destpages indicate continuous physical memory.
->>> +	 */
->>> +	int (*prepare_destpages)(struct z_erofs_decompress_req *rq,
->>> +				 struct list_head *pagepool);
->>> +	int (*decompress)(struct z_erofs_decompress_req *rq, u8 *out);
->>> +	char *name;
->>> +};
->>> +
->>> +static int lz4_prepare_destpages(struct z_erofs_decompress_req *rq,
->>> +				 struct list_head *pagepool)
->>> +{
->>> +	const unsigned int nr =
->>> +		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
->>> +	struct page *availables[LZ4_MAX_DISTANCE_PAGES] = { NULL };
->>> +	unsigned long unused[DIV_ROUND_UP(LZ4_MAX_DISTANCE_PAGES,
->>> +					  BITS_PER_LONG)] = { 0 };
->>> +	void *kaddr = NULL;
->>> +	unsigned int i, j, k;
->>> +
->>> +	for (i = 0; i < nr; ++i) {
->>> +		struct page *const page = rq->out[i];
->>> +
->>> +		j = i & (LZ4_MAX_DISTANCE_PAGES - 1);
->>> +		if (availables[j])
->>> +			__set_bit(j, unused);
->>> +
->>> +		if (page) {
->>> +			if (kaddr) {
->>> +				if (kaddr + PAGE_SIZE == page_address(page))
->>> +					kaddr += PAGE_SIZE;
->>> +				else
->>> +					kaddr = NULL;
->>> +			} else if (!i) {
->>> +				kaddr = page_address(page);
->>> +			}
->>> +			continue;
->>> +		}
->>> +		kaddr = NULL;
->>> +
->>> +		k = find_first_bit(unused, LZ4_MAX_DISTANCE_PAGES);
->>> +		if (k < LZ4_MAX_DISTANCE_PAGES) {
->>> +			j = k;
->>> +			get_page(availables[j]);
->>> +		} else {
->>> +			DBG_BUGON(availables[j]);
->>> +
->>> +			if (!list_empty(pagepool)) {
->>> +				availables[j] = lru_to_page(pagepool);
->>> +				list_del(&availables[j]->lru);
->>> +				DBG_BUGON(page_ref_count(availables[j]) != 1);
->>> +			} else {
->>> +				availables[j] = alloc_pages(GFP_KERNEL, 0);
->>> +				if (!availables[j])
->>> +					return -ENOMEM;
->>> +			}
->>> +			availables[j]->mapping = Z_EROFS_MAPPING_STAGING;
->>
->> Could we use __stagingpage_alloc() instead opened codes, there is something
->> different in between them though.
-> 
-> It was written "on propose" since the problem is that currently __stagingpage_alloc()
-> will allocate all pages in GFP_NOFAIL case, but memory allocation failure is accepted
-> here, therefore I open code to aim at introducing new decompression backend.
-> 
-> I will submit another patch after this series to clean up all staging page allocation
-> cases later, which was already on my scheduling list. :)
+Hello,
 
-Hi Xiang,
+syzbot found the following crash on:
 
-Yes, I noticed that there is something different in between __stagingpage_alloc
-and opened codes, I think we can change __stagingpage_alloc to accept extra
-parameters for different requirement.
+HEAD commit:    bed3c0d8 Merge tag 'for-5.2-rc5-tag' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1418bf0aa00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28ec3437a5394ee0
+dashboard link: https://syzkaller.appspot.com/bug?extid=94324416c485d422fe15
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
 
-But, anyway, I agreed with you that we can clean up with additional patch later. :)
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Thanks,
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+94324416c485d422fe15@syzkaller.appspotmail.com
 
-> 
-> Thanks,
-> Gao Xiang
-> 
->>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>
->> Thanks,
->>
->>> +		}
->>> +		rq->out[i] = availables[j];
->>> +		__clear_bit(j, unused);
->>> +	}
->>> +	return kaddr ? 1 : 0;
->>> +}
->>> +
->>> +static void *generic_copy_inplace_data(struct z_erofs_decompress_req *rq,
->>> +				       u8 *src, unsigned int pageofs_in)
->>> +{
->>> +	/*
->>> +	 * if in-place decompression is ongoing, those decompressed
->>> +	 * pages should be copied in order to avoid being overlapped.
->>> +	 */
->>> +	struct page **in = rq->in;
->>> +	u8 *const tmp = erofs_get_pcpubuf(0);
->>> +	u8 *tmpp = tmp;
->>> +	unsigned int inlen = rq->inputsize - pageofs_in;
->>> +	unsigned int count = min_t(uint, inlen, PAGE_SIZE - pageofs_in);
->>> +
->>> +	while (tmpp < tmp + inlen) {
->>> +		if (!src)
->>> +			src = kmap_atomic(*in);
->>> +		memcpy(tmpp, src + pageofs_in, count);
->>> +		kunmap_atomic(src);
->>> +		src = NULL;
->>> +		tmpp += count;
->>> +		pageofs_in = 0;
->>> +		count = PAGE_SIZE;
->>> +		++in;
->>> +	}
->>> +	return tmp;
->>> +}
->>> +
->>> +static int lz4_decompress(struct z_erofs_decompress_req *rq, u8 *out)
->>> +{
->>> +	unsigned int inputmargin, inlen;
->>> +	u8 *src;
->>> +	bool copied;
->>> +	int ret;
->>> +
->>> +	if (rq->inputsize > PAGE_SIZE)
->>> +		return -ENOTSUPP;
->>> +
->>> +	src = kmap_atomic(*rq->in);
->>> +	inputmargin = 0;
->>> +	while (!src[inputmargin & ~PAGE_MASK])
->>> +		if (!(++inputmargin & ~PAGE_MASK))
->>> +			break;
->>> +
->>> +	if (inputmargin >= rq->inputsize) {
->>> +		kunmap_atomic(src);
->>> +		return -EIO;
->>> +	}
->>> +
->>> +	copied = false;
->>> +	inlen = rq->inputsize - inputmargin;
->>> +	if (rq->inplace_io) {
->>> +		src = generic_copy_inplace_data(rq, src, inputmargin);
->>> +		inputmargin = 0;
->>> +		copied = true;
->>> +	}
->>> +
->>> +	ret = LZ4_decompress_safe_partial(src + inputmargin, out,
->>> +					  inlen, rq->outputsize,
->>> +					  rq->outputsize);
->>> +	if (ret < 0) {
->>> +		errln("%s, failed to decompress, in[%p, %u, %u] out[%p, %u]",
->>> +		      __func__, src + inputmargin, inlen, inputmargin,
->>> +		      out, rq->outputsize);
->>> +		WARN_ON(1);
->>> +		print_hex_dump(KERN_DEBUG, "[ in]: ", DUMP_PREFIX_OFFSET,
->>> +			       16, 1, src + inputmargin, inlen, true);
->>> +		print_hex_dump(KERN_DEBUG, "[out]: ", DUMP_PREFIX_OFFSET,
->>> +			       16, 1, out, rq->outputsize, true);
->>> +		ret = -EIO;
->>> +	}
->>> +
->>> +	if (copied)
->>> +		erofs_put_pcpubuf(src);
->>> +	else
->>> +		kunmap_atomic(src);
->>> +	return ret;
->>> +}
->>> +
->>> +static struct z_erofs_decompressor decompressors[] = {
->>> +	[Z_EROFS_COMPRESSION_SHIFTED] = {
->>> +		.name = "shifted"
->>> +	},
->>> +	[Z_EROFS_COMPRESSION_LZ4] = {
->>> +		.prepare_destpages = lz4_prepare_destpages,
->>> +		.decompress = lz4_decompress,
->>> +		.name = "lz4"
->>> +	},
->>> +};
->>> +
->>> +static void copy_from_pcpubuf(struct page **out, const char *dst,
->>> +			      unsigned short pageofs_out,
->>> +			      unsigned int outputsize)
->>> +{
->>> +	const char *end = dst + outputsize;
->>> +	const unsigned int righthalf = PAGE_SIZE - pageofs_out;
->>> +	const char *cur = dst - pageofs_out;
->>> +
->>> +	while (cur < end) {
->>> +		struct page *const page = *out++;
->>> +
->>> +		if (page) {
->>> +			char *buf = kmap_atomic(page);
->>> +
->>> +			if (cur >= dst) {
->>> +				memcpy(buf, cur, min_t(uint, PAGE_SIZE,
->>> +						       end - cur));
->>> +			} else {
->>> +				memcpy(buf + pageofs_out, cur + pageofs_out,
->>> +				       min_t(uint, righthalf, end - cur));
->>> +			}
->>> +			kunmap_atomic(buf);
->>> +		}
->>> +		cur += PAGE_SIZE;
->>> +	}
->>> +}
->>> +
->>> +static int decompress_generic(struct z_erofs_decompress_req *rq,
->>> +			      struct list_head *pagepool)
->>> +{
->>> +	const unsigned int nrpages_out =
->>> +		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
->>> +	const struct z_erofs_decompressor *alg = decompressors + rq->alg;
->>> +	unsigned int dst_maptype;
->>> +	void *dst;
->>> +	int ret;
->>> +
->>> +	if (nrpages_out == 1 && !rq->inplace_io) {
->>> +		DBG_BUGON(!*rq->out);
->>> +		dst = kmap_atomic(*rq->out);
->>> +		dst_maptype = 0;
->>> +		goto dstmap_out;
->>> +	}
->>> +
->>> +	/*
->>> +	 * For the case of small output size (especially much less
->>> +	 * than PAGE_SIZE), memcpy the decompressed data rather than
->>> +	 * compressed data is preferred.
->>> +	 */
->>> +	if (rq->outputsize <= PAGE_SIZE * 7 / 8) {
->>> +		dst = erofs_get_pcpubuf(0);
->>> +
->>> +		rq->inplace_io = false;
->>> +		ret = alg->decompress(rq, dst);
->>> +		if (!ret)
->>> +			copy_from_pcpubuf(rq->out, dst, rq->pageofs_out,
->>> +					  rq->outputsize);
->>> +
->>> +		erofs_put_pcpubuf(dst);
->>> +		return ret;
->>> +	}
->>> +
->>> +	ret = alg->prepare_destpages(rq, pagepool);
->>> +	if (ret < 0) {
->>> +		return ret;
->>> +	} else if (ret) {
->>> +		dst = page_address(*rq->out);
->>> +		dst_maptype = 1;
->>> +		goto dstmap_out;
->>> +	}
->>> +
->>> +	dst = erofs_vmap(rq->out, nrpages_out);
->>> +	if (!dst)
->>> +		return -ENOMEM;
->>> +	dst_maptype = 2;
->>> +
->>> +dstmap_out:
->>> +	ret = alg->decompress(rq, dst + rq->pageofs_out);
->>> +
->>> +	if (!dst_maptype)
->>> +		kunmap_atomic(dst);
->>> +	else if (dst_maptype == 2)
->>> +		erofs_vunmap(dst, nrpages_out);
->>> +	return ret;
->>> +}
->>> +
->>> +static int shifted_decompress(const struct z_erofs_decompress_req *rq,
->>> +			      struct list_head *pagepool)
->>> +{
->>> +	const unsigned int nrpages_out =
->>> +		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
->>> +	const unsigned int righthalf = PAGE_SIZE - rq->pageofs_out;
->>> +	unsigned char *src, *dst;
->>> +
->>> +	if (nrpages_out > 2) {
->>> +		DBG_BUGON(1);
->>> +		return -EIO;
->>> +	}
->>> +
->>> +	if (rq->out[0] == *rq->in) {
->>> +		DBG_BUGON(nrpages_out != 1);
->>> +		return 0;
->>> +	}
->>> +
->>> +	src = kmap_atomic(*rq->in);
->>> +	if (!rq->out[0]) {
->>> +		dst = NULL;
->>> +	} else {
->>> +		dst = kmap_atomic(rq->out[0]);
->>> +		memcpy(dst + rq->pageofs_out, src, righthalf);
->>> +	}
->>> +
->>> +	if (rq->out[1] == *rq->in) {
->>> +		memmove(src, src + righthalf, rq->pageofs_out);
->>> +	} else if (nrpages_out == 2) {
->>> +		if (dst)
->>> +			kunmap_atomic(dst);
->>> +		DBG_BUGON(!rq->out[1]);
->>> +		dst = kmap_atomic(rq->out[1]);
->>> +		memcpy(dst, src + righthalf, rq->pageofs_out);
->>> +	}
->>> +	if (dst)
->>> +		kunmap_atomic(dst);
->>> +	kunmap_atomic(src);
->>> +	return 0;
->>> +}
->>> +
->>> +int z_erofs_decompress(struct z_erofs_decompress_req *rq,
->>> +		       struct list_head *pagepool)
->>> +{
->>> +	if (rq->alg == Z_EROFS_COMPRESSION_SHIFTED)
->>> +		return shifted_decompress(rq, pagepool);
->>> +	return decompress_generic(rq, pagepool);
->>> +}
->>> +
->>>
-> .
-> 
+INFO: task syz-executor.5:8634 blocked for more than 143 seconds.
+       Not tainted 5.2.0-rc5+ #3
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor.5  D25632  8634   8224 0x00004004
+Call Trace:
+  context_switch kernel/sched/core.c:2818 [inline]
+  __schedule+0x658/0x9e0 kernel/sched/core.c:3445
+  schedule+0x131/0x1d0 kernel/sched/core.c:3509
+  schedule_timeout+0x9a/0x2b0 kernel/time/timer.c:1783
+  do_wait_for_common+0x35e/0x5a0 kernel/sched/completion.c:83
+  __wait_for_common kernel/sched/completion.c:104 [inline]
+  wait_for_common kernel/sched/completion.c:115 [inline]
+  wait_for_completion+0x47/0x60 kernel/sched/completion.c:136
+  kthread_stop+0xb4/0x150 kernel/kthread.c:559
+  io_sq_thread_stop fs/io_uring.c:2252 [inline]
+  io_finish_async fs/io_uring.c:2259 [inline]
+  io_ring_ctx_free fs/io_uring.c:2770 [inline]
+  io_ring_ctx_wait_and_kill+0x268/0x880 fs/io_uring.c:2834
+  io_uring_release+0x5d/0x70 fs/io_uring.c:2842
+  __fput+0x2e4/0x740 fs/file_table.c:280
+  ____fput+0x15/0x20 fs/file_table.c:313
+  task_work_run+0x17e/0x1b0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:185 [inline]
+  exit_to_usermode_loop arch/x86/entry/common.c:168 [inline]
+  prepare_exit_to_usermode+0x402/0x4f0 arch/x86/entry/common.c:199
+  syscall_return_slowpath+0x110/0x440 arch/x86/entry/common.c:279
+  do_syscall_64+0x126/0x140 arch/x86/entry/common.c:304
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x412fb1
+Code: 80 3b 7c 0f 84 c7 02 00 00 c7 85 d0 00 00 00 00 00 00 00 48 8b 05 cf  
+a6 24 00 49 8b 14 24 41 b9 cb 2a 44 00 48 89 ee 48 89 df <48> 85 c0 4c 0f  
+45 c8 45 31 c0 31 c9 e8 0e 5b 00 00 85 c0 41 89 c7
+RSP: 002b:00007ffe7ee6a180 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000412fb1
+RDX: 0000001b2d920000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 0000000000000001 R08: 00000000f3a3e1f8 R09: 00000000f3a3e1fc
+R10: 00007ffe7ee6a260 R11: 0000000000000293 R12: 000000000075c9a0
+R13: 000000000075c9a0 R14: 0000000000024c00 R15: 000000000075bf2c
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/1043:
+  #0: 00000000ec789630 (rcu_read_lock){....}, at: rcu_lock_acquire+0x4/0x30  
+include/linux/rcupdate.h:207
+1 lock held by rsyslogd/8054:
+  #0: 00000000a1730567 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x243/0x2e0  
+fs/file.c:801
+2 locks held by getty/8167:
+  #0: 000000000d85b796 (&tty->ldisc_sem){++++}, at:  
+tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+  #1: 000000006ecd2335 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+2 locks held by getty/8168:
+  #0: 000000005c58bd1f (&tty->ldisc_sem){++++}, at:  
+tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+  #1: 00000000158ead38 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+2 locks held by getty/8169:
+  #0: 000000003d373884 (&tty->ldisc_sem){++++}, at:  
+tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+  #1: 0000000026014169 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+2 locks held by getty/8170:
+  #0: 00000000ba3eabbd (&tty->ldisc_sem){++++}, at:  
+tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+  #1: 0000000003284ce2 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+2 locks held by getty/8171:
+  #0: 000000009fcb2c0e (&tty->ldisc_sem){++++}, at:  
+tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+  #1: 00000000ac5d0da7 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+2 locks held by getty/8172:
+  #0: 000000003f4e772c (&tty->ldisc_sem){++++}, at:  
+tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+  #1: 000000000c930b31 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+2 locks held by getty/8173:
+  #0: 000000002a3615cf (&tty->ldisc_sem){++++}, at:  
+tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+  #1: 00000000dd5c3618 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 1043 Comm: khungtaskd Not tainted 5.2.0-rc5+ #3
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
+  nmi_cpu_backtrace+0x89/0x160 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x125/0x230 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x10/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace+0x17/0x20 include/linux/nmi.h:146
+  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
+  watchdog+0xbb9/0xbd0 kernel/hung_task.c:289
+  kthread+0x325/0x350 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 2546 Comm: kworker/u4:4 Not tainted 5.2.0-rc5+ #3
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: bat_events batadv_nc_worker
+RIP: 0010:__read_once_size include/linux/compiler.h:194 [inline]
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:31 [inline]
+RIP: 0010:atomic_read include/asm-generic/atomic-instrumented.h:27 [inline]
+RIP: 0010:rcu_dynticks_curr_cpu_in_eqs kernel/rcu/tree.c:292 [inline]
+RIP: 0010:rcu_is_watching+0x62/0xa0 kernel/rcu/tree.c:872
+Code: 4c 89 f7 e8 70 50 4c 00 48 c7 c3 b8 5f 03 00 49 03 1e 48 89 df be 04  
+00 00 00 e8 89 25 4c 00 48 89 d8 48 c1 e8 03 42 8a 04 38 <84> c0 75 1e 8b  
+03 65 ff 0d 5d 72 9f 7e 74 0c 83 e0 02 d1 e8 5b 41
+RSP: 0018:ffff8880a10ffbe8 EFLAGS: 00000a02
+RAX: 1ffff11015d66b00 RBX: ffff8880aeb35fb8 RCX: ffffffff81628ad7
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880aeb35fb8
+RBP: ffff8880a10ffc00 R08: dffffc0000000000 R09: ffffed1015d66bf8
+R10: ffffed1015d66bf8 R11: 1ffff11015d66bf7 R12: dffffc0000000000
+R13: ffff8880a93c9b00 R14: ffffffff8881f258 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880aeb00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c434bbb720 CR3: 000000008e6fa000 CR4: 00000000001406e0
+Call Trace:
+  rcu_read_lock include/linux/rcupdate.h:594 [inline]
+  batadv_nc_purge_orig_hash net/batman-adv/network-coding.c:407 [inline]
+  batadv_nc_worker+0x115/0x600 net/batman-adv/network-coding.c:718
+  process_one_work+0x814/0x1130 kernel/workqueue.c:2269
+  worker_thread+0xc01/0x1640 kernel/workqueue.c:2415
+  kthread+0x325/0x350 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
