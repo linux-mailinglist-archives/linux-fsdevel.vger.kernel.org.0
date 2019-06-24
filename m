@@ -2,170 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 823775032D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 09:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE43E50341
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 09:25:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbfFXHYQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 03:24:16 -0400
-Received: from sonic308-54.consmr.mail.gq1.yahoo.com ([98.137.68.30]:44531
-        "EHLO sonic308-54.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726505AbfFXHYP (ORCPT
+        id S1726924AbfFXHZM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 03:25:12 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43529 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfFXHZM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:24:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1561361054; bh=XN4/4Mvu/C7mSe5qfL8p8XSrY/AwGHjOVtbeNaoCeoU=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=OPLzPTRiWq/vAyaAy/KRePopVnFkCjp6GT7neMxxViud8D6p5yUE7pvn9KuNtkwDQFvZtwTgpfsU6FlmUf9n1bn55Dc8b37wvISpfaujwDujv363NWncpYQ4+moV1WV/QCeRw2BE7pkEb1tVVFMlfprNuU2K1AoahD20sbhzGf44DsGStlLsVgdIeUsGB6IR30I3E05o1rt4YigjQBqmVZhNh93yWJQ1ycCGxEkPErd2/RT6fzmg+H8YKK24nj/gNIKgXtT36P+5/Ip5uSbnh2tud+T5BbIiV0Wl5slvzoY6S/2/Edug28xGo7tRXVH3NAhMP5LjlArDMFY5rFaMRw==
-X-YMail-OSG: U0qtGfoVM1lm2ob0MAZnt3RoHiQSuOYpYGXFrMHsws5KWuEBH61kjNYc.tDVWny
- F3ITfK1tLWI89XIw2WjTexsNGS0jY.ijPmKJbIlnenGs6Q5MW5r6K8KcV10nZACy_d3BsAqEwnq4
- pw3l2GuhmTIrBhZ_0e581dG_SKKJ70hNeh1ahHSBI7fU1C0wlbTvU8_bq66iZ7cL__HSwT4Z.swT
- FVYjneZ91zS3x4fE8GMamiYiLicsZjkYW9JL9OR2gfq.0IAin0MOlLwpPbmytT7hLtTw7LBcHJ.T
- cTfHRXVV8_2qkv4mpWoQ_lyTJzsK3ujdKcpl9y7KywNAVor05vriAUdeLXXnSDS6YtnkNG4vCrMp
- 2aDJW663lmF9xjkT.9UICjm8yWACMQQ6TdgDPDiQzcB1xQOa_xPyDs43KfoYwlTRrPFPzHiZqOr3
- 3kc.oLZHLqpAHnZmsLVzAYVVQPg8vvTemP4qudjblO2e6V8ptmjKQV1pficM8mtIyhZkhSuj2xnK
- JlYNNnuRtgbvRdaStqAIDo30VRVVR8mfKl.KjzaEHFHrNygcLZypGYxJG2EAZZ.laXbCslV.kqdZ
- gTjZ205wQfmdwuvPhjJ9yY5QVHN9UywHHGtOg3QCh_.Vlus0kL26aa.inJ8tvIHm1CJ86pLXcpW0
- noAAj.WNYbN4l3FCHLwxhYVI5weBmfOj2ZezBokSPtYB22xrlitEEi9AlOnkUk7YaBGHDDIdlcuz
- NgKlE.kgmIzM2F8HupSETKT6rF2s0_lUGpAu2xwNXS2E9BL.qH_GyPL18W7wNN5ZCjtgndvDgIaV
- AkcQC3my28eEo55jKv990wKjAplpvQ0xMfFF0aSFpHddgSOxVRnrJ1i19ukorHXptcrGZJC128JA
- o9vPZ6uJYJnNjI6eDXbfEgKpZh4lxhJWtS66VdjEzQTWGHR1xwaHWvlJBcNXlLhaXi6Op2xyEVSC
- FHoNl1UtVJskDJZMPa2Qtv_N0bsKYDD4ICgKL37rA8S0gsyV4rN.a387bS1k3YJpsZwKdavAbVvt
- LoIjveqPRsMWqsXhhw0jv6DtkAKEhRnMNQhJijjA.A.wbxgKOZgUpxxyGUPEqIGRrLPzama0gBZZ
- R2Fbic0eD.ltBw5lw6oA_vZDQH_rzFgP1dvvZGyzLJjIkDHh7ANT_JNMCfgyhVg9cb9yU7..PJZr
- JP5E18ae3yXHTMpmxftCAk1mMqyk76YLDn_.BNtzKiLf1ZQDOCYgXirvYeFPYWHm_f_E0
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.gq1.yahoo.com with HTTP; Mon, 24 Jun 2019 07:24:14 +0000
-Received: from 116.226.249.212 (EHLO localhost.localdomain) ([116.226.249.212])
-          by smtp415.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 6d1878af4efb7cadb69856afeea1b125;
-          Mon, 24 Jun 2019 07:24:09 +0000 (UTC)
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, Du Wei <weidu.du@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v3 8/8] staging: erofs: integrate decompression inplace
-Date:   Mon, 24 Jun 2019 15:22:58 +0800
-Message-Id: <20190624072258.28362-9-hsiangkao@aol.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190624072258.28362-1-hsiangkao@aol.com>
-References: <20190624072258.28362-1-hsiangkao@aol.com>
+        Mon, 24 Jun 2019 03:25:12 -0400
+Received: by mail-io1-f68.google.com with SMTP id k20so122801ios.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2019 00:25:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d06Pia/4lguTSyfVaEUkJGeGzpj48WO3rGAQAMd0JI0=;
+        b=rJKBNWS/CBTy5/iFxgr+p/i6UK2GzCu06m4babw4ksvR9H8XBN7Jz7JwzofgpjmuTs
+         Bk+7hgADEaxcUjCveN8zvoIz5AJPfaxQPdn9xY8iwK3UphdlI9FOxUvbGouCd3mgAZi0
+         A+jX5TEKN6abHFboRaB9AbJwa8n/jXJPoHd7k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d06Pia/4lguTSyfVaEUkJGeGzpj48WO3rGAQAMd0JI0=;
+        b=pGwWDsgpk5VZPGH7I8PsEs2LG7SQO37v5w6MPUTE+c7nLgEfw31qcDS/NYzZzd5pPo
+         +ys1SdhaWVPHiG4FuargyKSCmr6uuwpIH/x8vs4qHj/nXxmYvdbiDD+ynEGTm7Iq+Lbf
+         YNlJ2+MIExyyrzRSCOVW71v4vc/usNAs1+InsxgXVCFY9Ega9N469cLrH2CrL27Q8AxA
+         0WPVwOdZu6p0O5DL0Po3V7VfRYl3pnIfMQuG51uBEcs142nuXR8b2lvZaRGJfqEI24Yv
+         mgkPSn0FHfHaAR6WlLS8+kyHfyWhA+sm/wH/P5kgFfUy/8VoiL5a5ppnuEt35k5OkBBs
+         kLDw==
+X-Gm-Message-State: APjAAAUlY4cYdYh87mz6ZDRcvRdBZ2FZNXzsodpdDbnvv6JuUiETSo2b
+        p0UE1hOy8wn9A/Bu00qCE6tEOaPGRX+jYAOGZaaaEw==
+X-Google-Smtp-Source: APXvYqzSFVYqgkEMUYRR/hMSf4R0JOiOzdzfQKcoXcpVZ2cUWIBSIsXogNHRPZg/mu51W1Q8ppk6FXK6bX3yJdvx55k=
+X-Received: by 2002:a5e:da4b:: with SMTP id o11mr8462865iop.212.1561361111479;
+ Mon, 24 Jun 2019 00:25:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <CANQeFDCCGED3BR0oTpzQ75gtGpdGCw8FLf+kspBYytw3YteXAw@mail.gmail.com>
+ <20190620083628.GH13630@quack2.suse.cz> <CANQeFDB_oSkb_0tBbqoL88UzGf6+FYqjZ3oOo1puSyR7aKtYOA@mail.gmail.com>
+In-Reply-To: <CANQeFDB_oSkb_0tBbqoL88UzGf6+FYqjZ3oOo1puSyR7aKtYOA@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 24 Jun 2019 09:25:00 +0200
+Message-ID: <CAJfpeguGr66Oox27ThPUedDa+rDofehNC1f2gsb_C+eHay1kmg@mail.gmail.com>
+Subject: Re: a few questions about pagevc_lookup_entries
+To:     Liu Bo <obuil.liubo@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        dan.j.williams@intel.com, Fengguang Wu <fengguang.wu@intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Gao Xiang <gaoxiang25@huawei.com>
+[cc: vivek, stefan, dgilbert]
 
-Decompressor needs to know whether it's a partial
-or full decompression since only full decompression
-can be decompressed in-place.
-
-On kirin980 platform, sequential read is finally
-increased to 812MiB/s after decompression inplace
-is enabled.
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/internal.h  |  3 +++
- drivers/staging/erofs/unzip_vle.c | 15 +++++++++++----
- drivers/staging/erofs/unzip_vle.h |  1 +
- drivers/staging/erofs/zmap.c      |  1 +
- 4 files changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-index 6c8767d4a1d5..963cc1b8b896 100644
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -441,6 +441,7 @@ extern const struct address_space_operations z_erofs_vle_normalaccess_aops;
-  */
- enum {
- 	BH_Zipped = BH_PrivateStart,
-+	BH_FullMapped,
- };
- 
- /* Has a disk mapping */
-@@ -449,6 +450,8 @@ enum {
- #define EROFS_MAP_META		(1 << BH_Meta)
- /* The extent has been compressed */
- #define EROFS_MAP_ZIPPED	(1 << BH_Zipped)
-+/* The length of extent is full */
-+#define EROFS_MAP_FULL_MAPPED	(1 << BH_FullMapped)
- 
- struct erofs_map_blocks {
- 	erofs_off_t m_pa, m_la;
-diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
-index cb870b83f3c8..316382d33783 100644
---- a/drivers/staging/erofs/unzip_vle.c
-+++ b/drivers/staging/erofs/unzip_vle.c
-@@ -469,6 +469,9 @@ z_erofs_vle_work_register(const struct z_erofs_vle_work_finder *f,
- 				    Z_EROFS_VLE_WORKGRP_FMT_LZ4 :
- 				    Z_EROFS_VLE_WORKGRP_FMT_PLAIN);
- 
-+	if (map->m_flags & EROFS_MAP_FULL_MAPPED)
-+		grp->flags |= Z_EROFS_VLE_WORKGRP_FULL_LENGTH;
-+
- 	/* new workgrps have been claimed as type 1 */
- 	WRITE_ONCE(grp->next, *f->owned_head);
- 	/* primary and followed work for all new workgrps */
-@@ -901,7 +904,7 @@ static int z_erofs_vle_unzip(struct super_block *sb,
- 	unsigned int i, outputsize;
- 
- 	enum z_erofs_page_type page_type;
--	bool overlapped;
-+	bool overlapped, partial;
- 	struct z_erofs_vle_work *work;
- 	int err;
- 
-@@ -1009,10 +1012,13 @@ static int z_erofs_vle_unzip(struct super_block *sb,
- 	if (unlikely(err))
- 		goto out;
- 
--	if (nr_pages << PAGE_SHIFT >= work->pageofs + grp->llen)
-+	if (nr_pages << PAGE_SHIFT >= work->pageofs + grp->llen) {
- 		outputsize = grp->llen;
--	else
-+		partial = !(grp->flags & Z_EROFS_VLE_WORKGRP_FULL_LENGTH);
-+	} else {
- 		outputsize = (nr_pages << PAGE_SHIFT) - work->pageofs;
-+		partial = true;
-+	}
- 
- 	if (z_erofs_vle_workgrp_fmt(grp) == Z_EROFS_VLE_WORKGRP_FMT_PLAIN)
- 		algorithm = Z_EROFS_COMPRESSION_SHIFTED;
-@@ -1028,7 +1034,8 @@ static int z_erofs_vle_unzip(struct super_block *sb,
- 					.outputsize = outputsize,
- 					.alg = algorithm,
- 					.inplace_io = overlapped,
--					.partial_decoding = true }, page_pool);
-+					.partial_decoding = partial
-+				 }, page_pool);
- 
- out:
- 	/* must handle all compressed pages before endding pages */
-diff --git a/drivers/staging/erofs/unzip_vle.h b/drivers/staging/erofs/unzip_vle.h
-index a2d9b60beebd..ab509d75aefd 100644
---- a/drivers/staging/erofs/unzip_vle.h
-+++ b/drivers/staging/erofs/unzip_vle.h
-@@ -46,6 +46,7 @@ struct z_erofs_vle_work {
- #define Z_EROFS_VLE_WORKGRP_FMT_PLAIN        0
- #define Z_EROFS_VLE_WORKGRP_FMT_LZ4          1
- #define Z_EROFS_VLE_WORKGRP_FMT_MASK         1
-+#define Z_EROFS_VLE_WORKGRP_FULL_LENGTH      2
- 
- typedef void *z_erofs_vle_owned_workgrp_t;
- 
-diff --git a/drivers/staging/erofs/zmap.c b/drivers/staging/erofs/zmap.c
-index 1e75cef11db4..9c0bd65c46bf 100644
---- a/drivers/staging/erofs/zmap.c
-+++ b/drivers/staging/erofs/zmap.c
-@@ -424,6 +424,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- 			goto unmap_out;
- 		}
- 		end = (m.lcn << lclusterbits) | m.clusterofs;
-+		map->m_flags |= EROFS_MAP_FULL_MAPPED;
- 		m.delta[0] = 1;
- 		/* fallthrough */
- 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
--- 
-2.17.1
-
+On Fri, Jun 21, 2019 at 12:04 AM Liu Bo <obuil.liubo@gmail.com> wrote:
+>
+> On Thu, Jun 20, 2019 at 1:36 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > [added some relevant lists to CC - this can safe some people debugging by
+> > being able to google this discussion]
+> >
+> > On Wed 19-06-19 15:57:38, Liu Bo wrote:
+> > > I found a weird dead loop within invalidate_inode_pages2_range, the
+> > > reason being that  pagevec_lookup_entries(index=1) returns an indices
+> > > array which has only one entry storing value 0, and this has led
+> > > invalidate_inode_pages2_range() to a dead loop, something like,
+> > >
+> > > invalidate_inode_pages2_range()
+> > >   -> while (pagevec_lookup_entries(index=1, indices))
+> > >     ->  for (i = 0; i < pagevec_count(&pvec); i++) {
+> > >       -> index = indices[0]; // index is set to 0
+> > >       -> if (radix_tree_exceptional_entry(page)) {
+> > >           -> if (!invalidate_exceptional_entry2()) //
+> > >                   ->__dax_invalidate_mapping_entry // return 0
+> > >                      -> // entry marked as PAGECACHE_TAG_DIRTY/TOWRITE
+> > >                  ret = -EBUSY;
+> > >           ->continue;
+> > >           } // end of if (radix_tree_exceptional_entry(page))
+> > >     -> index++; // index is set to 1
+> > >
+> > > The following debug[1] proved the above analysis,  I was wondering if
+> > > this was a corner case that  pagevec_lookup_entries() allows or a
+> > > known bug that has been fixed upstream?
+> > >
+> > > ps: the kernel in use is 4.19.30 (LTS).
+> >
+> > Hum, the above trace suggests you are using DAX. Are you really? Because the
+> > stacktrace below shows we are working on fuse inode so that shouldn't
+> > really be DAX inode...
+> >
+>
+> So I was running tests against virtiofs[1] which adds dax support to
+> fuse, with dax, fuse provides posix stuff while dax provides data
+> channel.
+>
+> [1]: https://virtio-fs.gitlab.io/
+> https://gitlab.com/virtio-fs/linux
+>
+> thanks,
+> liubo
+>
+> >                                                                 Honza
+> >
+> > > [1]:
+> > > $git diff
+> > > diff --git a/mm/truncate.c b/mm/truncate.c
+> > > index 71b65aab8077..82bfeeb53135 100644
+> > > --- a/mm/truncate.c
+> > > +++ b/mm/truncate.c
+> > > @@ -692,6 +692,7 @@ int invalidate_inode_pages2_range(struct
+> > > address_space *mapping,
+> > >                         struct page *page = pvec.pages[i];
+> > >
+> > >                         /* We rely upon deletion not changing page->index */
+> > > +                       WARN_ONCE(index > indices[i], "index = %d
+> > > indices[%d]=%d\n", index, i, indices[i]);
+> > >                         index = indices[i];
+> > >                         if (index > end)
+> > >                                 break;
+> > >
+> > > [  129.095383] ------------[ cut here ]------------
+> > > [  129.096164] index = 1 indices[0]=0
+> > > [  129.096786] WARNING: CPU: 0 PID: 3022 at mm/truncate.c:695
+> > > invalidate_inode_pages2_range+0x471/0x500
+> > > [  129.098234] Modules linked in:
+> > > [  129.098717] CPU: 0 PID: 3022 Comm: doio Not tainted 4.19.30+ #4
+> > > ...
+> > > [  129.101288] RIP: 0010:invalidate_inode_pages2_range+0x471/0x500
+> > > ...
+> > > [  129.114162] Call Trace:
+> > > [  129.114623]  ? __schedule+0x2ad/0x860
+> > > [  129.115214]  ? prepare_to_wait_event+0x80/0x140
+> > > [  129.115903]  ? finish_wait+0x3f/0x80
+> > > [  129.116452]  ? request_wait_answer+0x13d/0x210
+> > > [  129.117128]  ? remove_wait_queue+0x60/0x60
+> > > [  129.117757]  ? make_kgid+0x13/0x20
+> > > [  129.118277]  ? fuse_change_attributes_common+0x7d/0x130
+> > > [  129.119057]  ? fuse_change_attributes+0x8d/0x120
+> > > [  129.119754]  fuse_dentry_revalidate+0x2c5/0x300
+> > > [  129.120456]  lookup_fast+0x237/0x2b0
+> > > [  129.121018]  path_openat+0x15f/0x1380
+> > > [  129.121614]  ? generic_update_time+0x6b/0xd0
+> > > [  129.122316]  do_filp_open+0x91/0x100
+> > > [  129.122876]  do_sys_open+0x126/0x210
+> > > [  129.123453]  do_syscall_64+0x55/0x180
+> > > [  129.124036]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > > [  129.124820] RIP: 0033:0x7fbe0cd75e80
+> > > ...
+> > > [  129.134574] ---[ end trace c0fc0bbc5aebf0dc ]---
+> > --
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
