@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DE1950318
+	by mail.lfdr.de (Postfix) with ESMTP id E0DFE5031B
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 09:23:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfFXHXY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 03:23:24 -0400
-Received: from sonic306-19.consmr.mail.gq1.yahoo.com ([98.137.68.82]:35741
-        "EHLO sonic306-19.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726793AbfFXHXX (ORCPT
+        id S1727613AbfFXHXd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 03:23:33 -0400
+Received: from sonic315-8.consmr.mail.gq1.yahoo.com ([98.137.65.32]:39534 "EHLO
+        sonic315-8.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727376AbfFXHX3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:23:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1561361002; bh=+ljCyW+vRKro5RELDhkKeYWyWrn99Hdrg58DZS2JHRE=; h=From:To:Cc:Subject:Date:From:Subject; b=lrwBN9ezCr6UuMRr0BN6VLdF+8DrPlNn55x7yYUYZUmXN163kcForezSzFKQgXl7ttkOHz7TE1iDDx4L/KyEwiUjcWTNR7ioBoxl6FD3KExpXF2d6DOEQINBbClvPU9ul5KVgiqpyL0Pj8/Dc8+GzE3qfi3SjrD999p6fAPBvsizPXvKjE1OBi3T9NO99vkgOTo0lRWbt+QqM75z5sqg660r/SWpl5viD2dW2gohvmeGn47IpSRyZWGYfFV9lTcW6HQc5N4n4i0RCGrvNtTvTqihdALUDjHxNSptrDiG81Mhx4gnrBXC9XmKoZ7ef29yf7rZvQcT1Lk4/LyfFeFW6Q==
-X-YMail-OSG: 8pyX03AVM1k63EuvChAh_6MbmnJTPicDjKQG3jKmJ_.4o8T3ZLHsCIzs.KnInx8
- KdE75i8Bqh4KWZhRJLSDOzb3svG5.5oE3gPjYFo_mJ2beUh2YKbcbCFFzAMz2m.kCAqi.Yl153tc
- PNZavS1iMZELK2LXX7w0IVl_tUNMYkzQlUgjFo0reRCmr8203VS6DCIq98SIAbPjO06OjE_QQirK
- mm0XyjElFiQVEBsDFnts0jP2V3kgi_uEKLvybFNIuop7a04k.scdDb.wvKyFMQdvK2ZHVp3qbDdL
- IUcVhUpEXjQfE3Y0J8NAw8Y0ctdqyYxYPd841b1bByAbYYFJ78fPuoNHmMwVQsi5paCXM1phYts9
- svC6eIxOUZq32S7ejK5xd5AzzHiGAmBSMJAu4H.osjsQV7pf5xiFRsct4kWuYkGbi8a4i4Awz27A
- Fmm8Lq5PyCrztyzsOZEJxpZHegBBAM2GQ0YBfG78i7sgP0RG051.2cWY.Yf3T6zoBGpMs_fmY.95
- MzkUNFU.XuuATN.sK9SHJ4sVbCxmDu5VjoswbSuDeZbW25FIhzErPsFlqetMWHNmZF1YBUZ8z3GP
- 6_fIdM7r9leNG77gIKZowlBKu6PjccBuz_1Idc8gHSdfbGEkkeAFJjXYjKvP0g4Qw4OhWWwpPat0
- BPjflEPCBaCUzopOpdjWNoxCvm1_Ideq1LDThdzeVUxOWredPwBRQHGDvBtt7_FLiiAA0s7is3rn
- kieOBynSk0cbQdCCftXJtdbptRFkbrV5JTdA7jf5nd8FKAZNJYTZpI1mFfpoE0BNQUjPQeY_M2HJ
- r.lWDlr84JUs.go_rxZ8ZBIXFEH5w5avUfLpstPAq405ETYUOb3LLH0gVZn60jAA4wF1r3p_5z9O
- 566hPwT8S6ti.nWpKivGV2JJn5j8zZuTZmdM_I8XkBPAgCMSS6GdHnTEevA7el748cJU9VHc5ete
- niyydWVYy4FK4Gka7s2vEBQ7Sk3pdCb5NVISDTKSUCm2J7mmTTfBGi3olIgEM.2Ug3kQndXZIJkf
- qENPdEuoxlgICzmNKzu_i__v.U4.6uHLQN_5NK1ffr_HZg_wA9CqzZIANvbvolCHQgW2UryTh2S6
- c1Fya5B8SkqitYcPU4k0e1.BeXxc_fykjjozSHGzwcxm1_iku3RqX6qPCyObHspHfTufq1O_IS9_
- L0W2oSn1lm5PAEFAhyUC_S7aO2IHX.lfKGiNtlk8PcAdD_mF4Pc5JK0bhvBxUsw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.gq1.yahoo.com with HTTP; Mon, 24 Jun 2019 07:23:22 +0000
+        Mon, 24 Jun 2019 03:23:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1561361007; bh=FW+/1lb9mfJ20uNCEwlBFLI4AZF2y/hx1vdOnQyhjdY=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=EvR93tzXndNWgONwtPEi2l2LpS70yHxK9cTMzSLH2BSAMdGuZfbEIcr9PeuU/LdG7Cs9mk2kZjiPUFi9g71yyFzdWZ6jJEmbn+AYCHksUJz6kb++Eh6e+MLosBfBKw9xDTTbZfHqtV9Zqx2a7llO1oxAUSipJS4W/Y62dWgw9F2suvdgOhUmLvNE0L5rAQmjef+SlTSSnQ03jon4vbJujpoGtngw+W5fyii6DhArXhuMVxItMPZZ5AvnhZt1c1PwJFbigVMRbCWT+6NyOMlf/rYNo2Kwgzq8HTclZlk/ib/L99z5UedDrRXsrWTq10n7Za4zQvQkytDSqgxj8G3uqg==
+X-YMail-OSG: BmGNjvUVM1nT2wSiTXeetZovRRa0Nfhz9plJB0Ohgod.dcukqAMfk8m5dmT5y5E
+ W7el6iPtA8Dz1Zg.HhCdm74YVEqfNx0IotRCXyz1ZkBhOua_P3q1RujculgVqlynqFGuYOpgwoZI
+ 4m1s_a4ws4KbcolsN9yNMURLq5wLc9Ycfz7edfLkJzlH6kUSHpNA4UT1jXdJ8Wm6kBjC2V2EIOWk
+ HaVeH2xPfMTIuvSBEXqNchvu5hl5FhkFn_5n.Xg9SL4Ya.Usk.IRxerbR7AW9IULcQDbl0SECUJw
+ 9Et4bdeew81lkhIoKBMGwMk63dj2EUbQhfnGyoXX0Hpzz6bcmgH6VRHuCduKfesuNKnXrwt.fhhe
+ UG.TsnMDcLmpqYm19Shsx1itdW1c.WGhg_4pVfA8QV4691sGhfTJ1ic2tGMvLkDjdM1qg3To3sli
+ .BWl6QcNy8dutZLZyr9M7BGhHOVGyqm2ZXxxP6X82eiHy9guEBUgVzX5QJeYHfScacC2Tz02QzQM
+ 5nGPdV8v6jx7bjhaqULksqRekQ0YcU7VyImdaK5X.mIV7j8kjP4dRRGIfIb6oqhjpc2b1tR5TAjm
+ RVrdvjXEuUuTCwN5U6cxU5A8hefwo4COc6W2SpybOr5YN_inmypjczJdMkOSzF5FuVwmXPf.Ob3B
+ v5Db2eqZhy.1lQH2N4IyMoTgd1XHe7MwRkV27EMZan7inotDX75G6GjQZ4oPZDQuNA2jnlrQYefT
+ 40RoUnEQk9F1k02GEI4QzUTyt8FTKuCORyWaVH_YYTLuB.SCqul5xh7QroYATYQ9ZSR.2e9h6eYa
+ BcvpIjsHFsoyS3UNNb6DFsxVnSdSWM7vhR0dt1yFXk.dkkLEeUSbJKU0GiFiS22X4qqRty_EoP4U
+ pidsryxBFCxstJl6u9KUvwI9PgoxIOiJoI0ICQjT9OjhUcw7D8LWuvccQgHMFT7TqR_G91ENHiqT
+ zACk8Jw8BAvT79W07YLwJJk4CWjwsOSiCehPYmPjYLoYvFNI6GQTlKdU.yMIGDO8Y48y4bE4Ub3B
+ Mowjff0D44teGmriCodFkL_Er.q70e5pJ7gmhxDr8Vor13J9nX08uxIZ1eY8qx.mDP934_2GPVS0
+ W1eE.afxwX_jBx6.ml_XMvDrHFubY5pmvJ_IF1IbM7AJfZE7PI7vnVCJ4SMLzqbTJgiVsyvKnhIw
+ AgAH1N5UWZwgud4odeE9tt_mfWklWcJPILK._XoCTV.f0xSJpiLQp0b4shKog3g--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Mon, 24 Jun 2019 07:23:27 +0000
 Received: from 116.226.249.212 (EHLO localhost.localdomain) ([116.226.249.212])
           by smtp415.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 6d1878af4efb7cadb69856afeea1b125;
-          Mon, 24 Jun 2019 07:23:19 +0000 (UTC)
+          Mon, 24 Jun 2019 07:23:25 +0000 (UTC)
 From:   Gao Xiang <hsiangkao@aol.com>
 To:     Chao Yu <yuchao0@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -41,161 +41,255 @@ Cc:     devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
         Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
         Fang Wei <fangwei1@huawei.com>, Du Wei <weidu.du@huawei.com>,
-        Gao Xiang <hsiangkao@aol.com>
-Subject: [PATCH v3 0/8] staging: erofs: decompression inplace approach
-Date:   Mon, 24 Jun 2019 15:22:50 +0800
-Message-Id: <20190624072258.28362-1-hsiangkao@aol.com>
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v3 1/8] staging: erofs: add compacted ondisk compression indexes
+Date:   Mon, 24 Jun 2019 15:22:51 +0800
+Message-Id: <20190624072258.28362-2-hsiangkao@aol.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190624072258.28362-1-hsiangkao@aol.com>
+References: <20190624072258.28362-1-hsiangkao@aol.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is patch v3 of erofs decompression inplace approach, which is sent
-out by my personal email since I'm out of office to attend Open Source
-Summit China 2019 these days. No major change from PATCH v2 since no
-noticeable issue raised from landing to our products till now, mainly
-as a response to Chao's suggestions.
+From: Gao Xiang <gaoxiang25@huawei.com>
 
-See the bottom lines which are taken from RFC PATCH v1 and describe
-the principle of these technologies.
+This patch introduces new compacted compression indexes.
 
-The series is based on the latest staging-next since all dependencies
-have already been merged.
+In contract to legacy compression indexes that
+   each 4k logical cluster has an 8-byte index,
+compacted ondisk compression indexes will have
+   amortized 2 bytes for each 4k logical cluster (compacted 2B)
+   amortized 4 bytes for each 4k logical cluster (compacted 4B)
 
-changelog from v2:
- - wrap up some offsets as marcos;
- - add some error handling for erofs_get_pcpubuf();
- - move some decompression inplace stuffes from PATCH 5 -> 6.
+In detail, several continuous clusters will be encoded in
+a compacted pack with cluster types, offsets, and one blkaddr
+at the end of the pack to leave 4-byte margin for better
+decoding performance, as illustrated below:
+   _____________________________________________
+  |___@_____ encoded bits __________|_ blkaddr _|
+  0       .                                     amortized * vcnt
+  .          .
+  .             .                   amortized * vcnt - 4
+  .                .
+  .___________________.
+  |_type_|_clusterofs_|
 
-changelog from v1:
- - keep Z_EROFS_NR_INLINE_PAGEVECS in unzip_vle.h after switching to
-   new decompression backend;
- - add some DBG_BUGONs in new decompression backend to observe
-   potential issues;
- - minor code cleanup.
+Note that compacted 2 / 4B should be aligned with 32 / 8 bytes
+in order to avoid each pack crossing page boundary.
 
-8<--------
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+change log v3:
+ - wrap up offset for better readability pointed out by Chao.
 
-Hi,
+ drivers/staging/erofs/data.c      |  4 +-
+ drivers/staging/erofs/erofs_fs.h  | 65 ++++++++++++++++++++++++-------
+ drivers/staging/erofs/inode.c     |  5 +--
+ drivers/staging/erofs/internal.h  | 11 ++----
+ drivers/staging/erofs/unzip_vle.c |  8 ++--
+ 5 files changed, 62 insertions(+), 31 deletions(-)
 
-After working on for more than half a year, the detail of erofs decompression
-inplace is almost determined and ready for linux-next.
-
-Currently, inplace IO is used if the whole compressed data is used
-in order to reduce compressed pages extra memory overhead and an extra
-memcpy (the only one memcpy) will be used for each inplace IO since
-temporary buffer is needed to keep decompressing safe for inplace IO.
-
-However, most of lz-based decompression algorithms support decompression
-inplace by their algorithm designs, such as LZ4, LZO, etc.
-
-If iend - oend margin is large enough, decompression inplace can be done
-in the same buffer safely, as illustrated below:
-
-         start of compressed logical extent
-           |                          end of this logical extent
-           |                           |
-     ______v___________________________v________
-... |  page 6  |  page 7  |  page 8  |  page 9  | ...
-    |__________|__________|__________|__________|
-           .                         ^ .        ^
-           .                         |compressed|
-           .                         |   data   |
-           .                           .        .
-           |<          dstsize        >|<margin>|
-                                       oend     iend
-           op                        ip
-
-Fixed-size output compression can make the full use of this feature
-to reduce memory overhead and avoid extra memcpy compared with fixed-size
-input compression since iend is strictly not less than oend for fixed-size
-output compression with inplace IO to last pages.
-
-In addition, erofs compression indexes have been improved as well by
-introducing compacted compression indexes.
-
-These two techniques all benefit sequential read (on x86_64, 710.8MiB/s ->
-755.4MiB/s; on Kirin980, 725MiB/s -> 812MiB/s) therefore erofs could have
-similar sequential read performance against ext4 in a larger CR range
-on high-spend SSD / NVMe devices as well.
-
-However, note that it is _cpu vs storage device_ tradeoff, there is no
-absolute performance conclusion for all on-market combinations.
-
-Test images:
- name                       size                 CR
- enwik9                     1000000000           1.00
- enwik9_4k.squashfs.img      621211648           1.61
- enwik9_4k.erofs.img         558133248           1.79
- enwik9_8k.squashfs.img      556191744           1.80
- enwik9_16k.squashfs.img     502661120           1.99
- enwik9_128k.squashfs.img    398204928           2.51
-
-Test Environment:
-CPU: Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz (4 cores, 8 threads)
-DDR: 8G
-SSD: INTEL SSDPEKKF360G7H
-Kernel: Linux 5.2-rc3+ (with lz4-1.8.3 algorithm)
-
-Test configuration:
-squashfs:
-CONFIG_SQUASHFS=y
-CONFIG_SQUASHFS_FILE_DIRECT=y
-CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU=y
-CONFIG_SQUASHFS_LZ4=y
-CONFIG_SQUASHFS_4K_DEVBLK_SIZE=y
-erofs:
-CONFIG_EROFS_FS_USE_VM_MAP_RAM=y
-CONFIG_EROFS_FS_ZIP=y
-CONFIG_EROFS_FS_CLUSTER_PAGE_LIMIT=1
-CONFIG_EROFS_FS_ZIP_CACHE_BIPOLAR=y
-
-with intel_pstate=disable,
-     8 cpus on at 1801000 scaling_{min,max}_freq,
-     userspace scaling_governor
-
-Sequential read results (MiB/s):
-                           1      2      3      4      5      avg
- enwik9_4k.ext4.img        767    770    738    726    724    745
- enwik9_4k.erofs.img       756    745    770    746    760    755.4
- enwik9_4k.squashfs.img    90.3   83.0   94.3   90.7   92.6   90.18
- enwik9_8k.squashfs.img    111    108    110    108    110    109.4
- enwik9_16k.squashfs.img   158    163    146    165    174    161.2
- enwik9_128k.squashfs.img  324    314    262    262    296    291.6
-
-
-Thanks,
-Gao Xiang
-
-Gao Xiang (8):
-  staging: erofs: add compacted ondisk compression indexes
-  staging: erofs: add compacted compression indexes support
-  staging: erofs: move per-CPU buffers implementation to utils.c
-  staging: erofs: move stagingpage operations to compress.h
-  staging: erofs: introduce generic decompression backend
-  staging: erofs: introduce LZ4 decompression inplace
-  staging: erofs: switch to new decompression backend
-  staging: erofs: integrate decompression inplace
-
- drivers/staging/erofs/Makefile        |   2 +-
- drivers/staging/erofs/compress.h      |  62 ++++
- drivers/staging/erofs/data.c          |   4 +-
- drivers/staging/erofs/decompressor.c  | 329 ++++++++++++++++++
- drivers/staging/erofs/erofs_fs.h      |  68 +++-
- drivers/staging/erofs/inode.c         |  12 +-
- drivers/staging/erofs/internal.h      |  52 ++-
- drivers/staging/erofs/unzip_vle.c     | 368 ++------------------
- drivers/staging/erofs/unzip_vle.h     |  38 +--
- drivers/staging/erofs/unzip_vle_lz4.c | 229 -------------
- drivers/staging/erofs/utils.c         |  12 +
- drivers/staging/erofs/zmap.c          | 463 ++++++++++++++++++++++++++
- 12 files changed, 1006 insertions(+), 633 deletions(-)
- create mode 100644 drivers/staging/erofs/compress.h
- create mode 100644 drivers/staging/erofs/decompressor.c
- delete mode 100644 drivers/staging/erofs/unzip_vle_lz4.c
- create mode 100644 drivers/staging/erofs/zmap.c
-
+diff --git a/drivers/staging/erofs/data.c b/drivers/staging/erofs/data.c
+index 746685f90564..cc31c3e5984c 100644
+--- a/drivers/staging/erofs/data.c
++++ b/drivers/staging/erofs/data.c
+@@ -124,7 +124,7 @@ static int erofs_map_blocks_flatmode(struct inode *inode,
+ 	trace_erofs_map_blocks_flatmode_enter(inode, map, flags);
+ 
+ 	nblocks = DIV_ROUND_UP(inode->i_size, PAGE_SIZE);
+-	lastblk = nblocks - is_inode_layout_inline(inode);
++	lastblk = nblocks - is_inode_flat_inline(inode);
+ 
+ 	if (unlikely(offset >= inode->i_size)) {
+ 		/* leave out-of-bound access unmapped */
+@@ -139,7 +139,7 @@ static int erofs_map_blocks_flatmode(struct inode *inode,
+ 	if (offset < blknr_to_addr(lastblk)) {
+ 		map->m_pa = blknr_to_addr(vi->raw_blkaddr) + map->m_la;
+ 		map->m_plen = blknr_to_addr(lastblk) - offset;
+-	} else if (is_inode_layout_inline(inode)) {
++	} else if (is_inode_flat_inline(inode)) {
+ 		/* 2 - inode inline B: inode, [xattrs], inline last blk... */
+ 		struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
+ 
+diff --git a/drivers/staging/erofs/erofs_fs.h b/drivers/staging/erofs/erofs_fs.h
+index 8ddb2b3e7d39..9a9aaf2d9fbb 100644
+--- a/drivers/staging/erofs/erofs_fs.h
++++ b/drivers/staging/erofs/erofs_fs.h
+@@ -49,19 +49,29 @@ struct erofs_super_block {
+  * erofs inode data mapping:
+  * 0 - inode plain without inline data A:
+  * inode, [xattrs], ... | ... | no-holed data
+- * 1 - inode VLE compression B:
++ * 1 - inode VLE compression B (legacy):
+  * inode, [xattrs], extents ... | ...
+  * 2 - inode plain with inline data C:
+  * inode, [xattrs], last_inline_data, ... | ... | no-holed data
+- * 3~7 - reserved
++ * 3 - inode compression D:
++ * inode, [xattrs], map_header, extents ... | ...
++ * 4~7 - reserved
+  */
+ enum {
+-	EROFS_INODE_LAYOUT_PLAIN,
+-	EROFS_INODE_LAYOUT_COMPRESSION,
+-	EROFS_INODE_LAYOUT_INLINE,
++	EROFS_INODE_FLAT_PLAIN,
++	EROFS_INODE_FLAT_COMPRESSION_LEGACY,
++	EROFS_INODE_FLAT_INLINE,
++	EROFS_INODE_FLAT_COMPRESSION,
+ 	EROFS_INODE_LAYOUT_MAX
+ };
+ 
++static bool erofs_inode_is_data_compressed(unsigned int datamode)
++{
++	if (datamode == EROFS_INODE_FLAT_COMPRESSION)
++		return true;
++	return datamode == EROFS_INODE_FLAT_COMPRESSION_LEGACY;
++}
++
+ /* bit definitions of inode i_advise */
+ #define EROFS_I_VERSION_BITS            1
+ #define EROFS_I_DATA_MAPPING_BITS       3
+@@ -176,11 +186,39 @@ struct erofs_xattr_entry {
+ 	sizeof(struct erofs_xattr_entry) + \
+ 	(entry)->e_name_len + le16_to_cpu((entry)->e_value_size))
+ 
+-/* have to be aligned with 8 bytes on disk */
+-struct erofs_extent_header {
+-	__le32 eh_checksum;
+-	__le32 eh_reserved[3];
+-} __packed;
++/* available compression algorithm types */
++enum {
++	Z_EROFS_COMPRESSION_LZ4,
++	Z_EROFS_COMPRESSION_MAX
++};
++
++/*
++ * bit 0 : COMPACTED_2B indexes (0 - off; 1 - on)
++ *  e.g. for 4k logical cluster size,      4B        if compacted 2B is off;
++ *                                  (4B) + 2B + (4B) if compacted 2B is on.
++ */
++#define Z_EROFS_ADVISE_COMPACTED_2B_BIT         0
++
++#define Z_EROFS_ADVISE_COMPACTED_2B     (1 << Z_EROFS_ADVISE_COMPACTED_2B_BIT)
++
++struct z_erofs_map_header {
++	__le32	h_reserved1;
++	__le16	h_advise;
++	/*
++	 * bit 0-3 : algorithm type of head 1 (logical cluster type 01);
++	 * bit 4-7 : algorithm type of head 2 (logical cluster type 11).
++	 */
++	__u8	h_algorithmtype;
++	/*
++	 * bit 0-2 : logical cluster bits - 12, e.g. 0 for 4096;
++	 * bit 3-4 : (physical - logical) cluster bits of head 1:
++	 *       For example, if logical clustersize = 4096, 1 for 8192.
++	 * bit 5-7 : (physical - logical) cluster bits of head 2.
++	 */
++	__u8	h_clusterbits;
++};
++
++#define Z_EROFS_VLE_LEGACY_HEADER_PADDING       8
+ 
+ /*
+  * Z_EROFS Variable-sized Logical Extent cluster type:
+@@ -236,8 +274,9 @@ struct z_erofs_vle_decompressed_index {
+ 	} di_u __packed;		/* 8 bytes */
+ } __packed;
+ 
+-#define Z_EROFS_VLE_EXTENT_ALIGN(size) round_up(size, \
+-	sizeof(struct z_erofs_vle_decompressed_index))
++#define Z_EROFS_VLE_LEGACY_INDEX_ALIGN(size) \
++	(round_up(size, sizeof(struct z_erofs_vle_decompressed_index)) + \
++	 sizeof(struct z_erofs_map_header) + Z_EROFS_VLE_LEGACY_HEADER_PADDING)
+ 
+ /* dirent sorts in alphabet order, thus we can do binary search */
+ struct erofs_dirent {
+@@ -270,7 +309,7 @@ static inline void erofs_check_ondisk_layout_definitions(void)
+ 	BUILD_BUG_ON(sizeof(struct erofs_inode_v2) != 64);
+ 	BUILD_BUG_ON(sizeof(struct erofs_xattr_ibody_header) != 12);
+ 	BUILD_BUG_ON(sizeof(struct erofs_xattr_entry) != 4);
+-	BUILD_BUG_ON(sizeof(struct erofs_extent_header) != 16);
++	BUILD_BUG_ON(sizeof(struct z_erofs_map_header) != 8);
+ 	BUILD_BUG_ON(sizeof(struct z_erofs_vle_decompressed_index) != 8);
+ 	BUILD_BUG_ON(sizeof(struct erofs_dirent) != 12);
+ 
+diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
+index e51348f7e838..3539290b8e45 100644
+--- a/drivers/staging/erofs/inode.c
++++ b/drivers/staging/erofs/inode.c
+@@ -127,12 +127,9 @@ static int fill_inline_data(struct inode *inode, void *data,
+ {
+ 	struct erofs_vnode *vi = EROFS_V(inode);
+ 	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
+-	const int mode = vi->datamode;
+-
+-	DBG_BUGON(mode >= EROFS_INODE_LAYOUT_MAX);
+ 
+ 	/* should be inode inline C */
+-	if (mode != EROFS_INODE_LAYOUT_INLINE)
++	if (!is_inode_flat_inline(inode))
+ 		return 0;
+ 
+ 	/* fast symlink (following ext4) */
+diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+index 1666cceecb3c..c851d0be6cf6 100644
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -382,19 +382,14 @@ static inline unsigned long inode_datablocks(struct inode *inode)
+ 	return DIV_ROUND_UP(inode->i_size, EROFS_BLKSIZ);
+ }
+ 
+-static inline bool is_inode_layout_plain(struct inode *inode)
+-{
+-	return EROFS_V(inode)->datamode == EROFS_INODE_LAYOUT_PLAIN;
+-}
+-
+ static inline bool is_inode_layout_compression(struct inode *inode)
+ {
+-	return EROFS_V(inode)->datamode == EROFS_INODE_LAYOUT_COMPRESSION;
++	return erofs_inode_is_data_compressed(EROFS_V(inode)->datamode);
+ }
+ 
+-static inline bool is_inode_layout_inline(struct inode *inode)
++static inline bool is_inode_flat_inline(struct inode *inode)
+ {
+-	return EROFS_V(inode)->datamode == EROFS_INODE_LAYOUT_INLINE;
++	return EROFS_V(inode)->datamode == EROFS_INODE_FLAT_INLINE;
+ }
+ 
+ extern const struct super_operations erofs_sops;
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index f3d0d2c03939..ae62293d5a82 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -1642,8 +1642,8 @@ vle_extent_blkaddr(struct inode *inode, pgoff_t index)
+ 	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
+ 	struct erofs_vnode *vi = EROFS_V(inode);
+ 
+-	unsigned int ofs = Z_EROFS_VLE_EXTENT_ALIGN(vi->inode_isize +
+-		vi->xattr_isize) + sizeof(struct erofs_extent_header) +
++	unsigned int ofs = Z_EROFS_VLE_LEGACY_INDEX_ALIGN(vi->inode_isize +
++							  vi->xattr_isize) +
+ 		index * sizeof(struct z_erofs_vle_decompressed_index);
+ 
+ 	return erofs_blknr(iloc(sbi, vi->nid) + ofs);
+@@ -1655,8 +1655,8 @@ vle_extent_blkoff(struct inode *inode, pgoff_t index)
+ 	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
+ 	struct erofs_vnode *vi = EROFS_V(inode);
+ 
+-	unsigned int ofs = Z_EROFS_VLE_EXTENT_ALIGN(vi->inode_isize +
+-		vi->xattr_isize) + sizeof(struct erofs_extent_header) +
++	unsigned int ofs = Z_EROFS_VLE_LEGACY_INDEX_ALIGN(vi->inode_isize +
++							  vi->xattr_isize) +
+ 		index * sizeof(struct z_erofs_vle_decompressed_index);
+ 
+ 	return erofs_blkoff(iloc(sbi, vi->nid) + ofs);
 -- 
 2.17.1
 
