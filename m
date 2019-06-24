@@ -2,295 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A006E50D89
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 16:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9D7650D8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 16:11:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbfFXOL2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 10:11:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53804 "EHLO mx1.redhat.com"
+        id S1728235AbfFXOLf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 10:11:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52678 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727276AbfFXOL2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:11:28 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1726690AbfFXOLf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:11:35 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AE3643082B22;
-        Mon, 24 Jun 2019 14:11:27 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id F1D27882FB;
+        Mon, 24 Jun 2019 14:11:34 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 25FFD19C79;
-        Mon, 24 Jun 2019 14:11:26 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A1B7B60BF7;
+        Mon, 24 Jun 2019 14:11:33 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 17/25] afs: Support fsinfo() [ver #14]
+Subject: [PATCH 18/25] fsinfo: proc - add sb operation fsinfo() [ver #14]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, raven@themaw.net, mszeredi@redhat.com,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Mon, 24 Jun 2019 15:11:25 +0100
-Message-ID: <156138548543.25627.1523298860189709232.stgit@warthog.procyon.org.uk>
+Date:   Mon, 24 Jun 2019 15:11:32 +0100
+Message-ID: <156138549291.25627.9442017015199997555.stgit@warthog.procyon.org.uk>
 In-Reply-To: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
 References: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 24 Jun 2019 14:11:27 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 24 Jun 2019 14:11:35 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add fsinfo support to the AFS filesystem.
+From: Ian Kent <raven@themaw.net>
 
+The new fsinfo() system call adds a new super block operation
+->fsinfo() which is used by file systems to provide file
+system specific information for fsinfo() requests.
+
+The fsinfo() request FSINFO_ATTR_PARAMETERS provides the same
+function as sb operation ->show_options() so it needs to be
+implemented by any file system that provides ->show_options()
+as a minimum.
+
+Also add a simple FSINFO_ATTR_CAPABILITIES implementation.
+
+Signed-off-by: Ian Kent <raven@themaw.net>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/afs/internal.h           |    1 
- fs/afs/super.c              |  180 +++++++++++++++++++++++++++++++++++++++++++
- fs/fsinfo.c                 |    3 +
- include/uapi/linux/fsinfo.h |   12 +++
- samples/vfs/test-fsinfo.c   |   33 ++++++++
- 5 files changed, 227 insertions(+), 2 deletions(-)
+ fs/proc/inode.c |   37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 2073c1a3ab4b..da40ea036c6a 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -254,6 +254,7 @@ struct afs_super_info {
- 	struct afs_volume	*volume;	/* volume record */
- 	enum afs_flock_mode	flock_mode:8;	/* File locking emulation mode */
- 	bool			dyn_root;	/* True if dynamic root */
-+	bool			autocell;	/* True if autocell */
- };
- 
- static inline struct afs_super_info *AFS_FS_S(struct super_block *sb)
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index f18911e8d770..47bc49be9bd3 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -26,6 +26,7 @@
- #include <linux/sched.h>
- #include <linux/nsproxy.h>
- #include <linux/magic.h>
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 5f8d215b3fd0..28c287aff6aa 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -24,6 +24,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+ #include <linux/mount.h>
 +#include <linux/fsinfo.h>
- #include <net/net_namespace.h>
- #include "internal.h"
  
-@@ -35,6 +36,9 @@ static struct inode *afs_alloc_inode(struct super_block *sb);
- static void afs_destroy_inode(struct inode *inode);
- static void afs_free_inode(struct inode *inode);
- static int afs_statfs(struct dentry *dentry, struct kstatfs *buf);
-+#ifdef CONFIG_FSINFO
-+static int afs_fsinfo(struct path *path, struct fsinfo_kparams *params);
-+#endif
- static int afs_show_devname(struct seq_file *m, struct dentry *root);
- static int afs_show_options(struct seq_file *m, struct dentry *root);
- static int afs_init_fs_context(struct fs_context *fc);
-@@ -54,6 +58,9 @@ int afs_net_id;
+ #include <linux/uaccess.h>
  
- static const struct super_operations afs_super_ops = {
- 	.statfs		= afs_statfs,
-+#ifdef CONFIG_FSINFO
-+	.fsinfo		= afs_fsinfo,
-+#endif
- 	.alloc_inode	= afs_alloc_inode,
- 	.drop_inode	= afs_drop_inode,
- 	.destroy_inode	= afs_destroy_inode,
-@@ -199,7 +206,7 @@ static int afs_show_options(struct seq_file *m, struct dentry *root)
- 
- 	if (as->dyn_root)
- 		seq_puts(m, ",dyn");
--	if (test_bit(AFS_VNODE_AUTOCELL, &AFS_FS_I(d_inode(root))->flags))
-+	if (as->autocell)
- 		seq_puts(m, ",autocell");
- 	switch (as->flock_mode) {
- 	case afs_flock_mode_unset:	break;
-@@ -463,7 +470,7 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
--	if (ctx->autocell || as->dyn_root)
-+	if (as->autocell || as->dyn_root)
- 		set_bit(AFS_VNODE_AUTOCELL, &AFS_FS_I(inode)->flags);
- 
- 	ret = -ENOMEM;
-@@ -503,6 +510,8 @@ static struct afs_super_info *afs_alloc_sbi(struct fs_context *fc)
- 			as->cell = afs_get_cell(ctx->cell);
- 			as->volume = __afs_get_volume(ctx->volume);
- 		}
-+		if (ctx->autocell)
-+			as->autocell = true;
- 	}
- 	return as;
+@@ -115,6 +116,39 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ 	return 0;
  }
-@@ -765,3 +774,170 @@ static int afs_statfs(struct dentry *dentry, struct kstatfs *buf)
  
- 	return ret;
- }
-+
 +#ifdef CONFIG_FSINFO
-+static const struct fsinfo_timestamp_info afs_timestamp_info = {
-+	.atime = {
-+		.minimum	= 0,
-+		.maximum	= UINT_MAX,
-+		.gran_mantissa	= 1,
-+		.gran_exponent	= 0,
-+	},
-+	.mtime = {
-+		.minimum	= 0,
-+		.maximum	= UINT_MAX,
-+		.gran_mantissa	= 1,
-+		.gran_exponent	= 0,
-+	},
-+	.ctime = {
-+		.minimum	= 0,
-+		.maximum	= UINT_MAX,
-+		.gran_mantissa	= 1,
-+		.gran_exponent	= 0,
-+	},
-+	.btime = {
-+		.minimum	= 0,
-+		.maximum	= UINT_MAX,
-+		.gran_mantissa	= 1,
-+		.gran_exponent	= 0,
-+	},
-+};
-+
 +/*
 + * Get filesystem information.
 + */
-+static int afs_fsinfo(struct path *path, struct fsinfo_kparams *params)
++static int proc_fsinfo(struct path *path, struct fsinfo_kparams *params)
 +{
-+	struct fsinfo_timestamp_info *tsinfo;
-+	struct fsinfo_server_address *addr;
++	struct super_block *sb = path->dentry->d_sb;
++	struct pid_namespace *pid = sb->s_fs_info;
 +	struct fsinfo_capabilities *caps;
-+	struct fsinfo_supports *sup;
-+	struct dentry *dentry = path->dentry;
-+	struct afs_server_list *slist;
-+	struct afs_super_info *as = AFS_FS_S(dentry->d_sb);
-+	struct afs_addr_list *alist;
-+	struct afs_server *server;
-+	struct afs_volume *volume = as->volume;
-+	struct afs_cell *cell = as->cell;
-+	struct afs_net *net = afs_d2net(dentry);
-+	bool dyn_root = as->dyn_root;
-+	int ret;
 +
 +	switch (params->request) {
-+	case FSINFO_ATTR_TIMESTAMP_INFO:
-+		tsinfo = params->buffer;
-+		*tsinfo = afs_timestamp_info;
-+		return sizeof(*tsinfo);
-+
-+	case FSINFO_ATTR_SUPPORTS:
-+		sup = params->buffer;
-+		sup->stx_mask = (STATX_TYPE | STATX_MODE |
-+				 STATX_NLINK |
-+				 STATX_UID | STATX_GID |
-+				 STATX_MTIME | STATX_INO |
-+				 STATX_SIZE);
-+		sup->stx_attributes = STATX_ATTR_AUTOMOUNT;
-+		return sizeof(*sup);
-+
 +	case FSINFO_ATTR_CAPABILITIES:
 +		caps = params->buffer;
-+		if (dyn_root) {
-+			fsinfo_set_cap(caps, FSINFO_CAP_IS_AUTOMOUNTER_FS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_AUTOMOUNTS);
-+		} else {
-+			fsinfo_set_cap(caps, FSINFO_CAP_IS_NETWORK_FS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_AUTOMOUNTS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_ADV_LOCKS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_UIDS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_GIDS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_VOLUME_ID);
-+			fsinfo_set_cap(caps, FSINFO_CAP_VOLUME_NAME);
-+			fsinfo_set_cap(caps, FSINFO_CAP_IVER_MONO_INCR);
-+			fsinfo_set_cap(caps, FSINFO_CAP_SYMLINKS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_HARD_LINKS_1DIR);
-+			fsinfo_set_cap(caps, FSINFO_CAP_HAS_MTIME);
-+		}
++		fsinfo_set_cap(caps, FSINFO_CAP_IS_KERNEL_FS);
++		fsinfo_set_cap(caps, FSINFO_CAP_NOT_PERSISTENT);
 +		return sizeof(*caps);
 +
-+	case FSINFO_ATTR_VOLUME_NAME:
-+		if (dyn_root)
-+			return -EOPNOTSUPP;
-+		memcpy(params->buffer, volume->name, volume->name_len);
-+		return volume->name_len;
-+
-+	case FSINFO_ATTR_CELL_NAME:
-+		if (dyn_root)
-+			return -EOPNOTSUPP;
-+		memcpy(params->buffer, cell->name, cell->name_len);
-+		return cell->name_len;
-+
-+	case FSINFO_ATTR_SERVER_NAME:
-+		if (dyn_root)
-+			return -EOPNOTSUPP;
-+		read_lock(&volume->servers_lock);
-+		slist = afs_get_serverlist(volume->servers);
-+		read_unlock(&volume->servers_lock);
-+
-+		if (params->Nth < slist->nr_servers) {
-+			server = slist->servers[params->Nth].server;
-+			ret = sprintf(params->buffer, "%pU", &server->uuid);
-+		} else {
-+			ret = -ENODATA;
-+		}
-+
-+		afs_put_serverlist(net, slist);
-+		return ret;
-+
-+	case FSINFO_ATTR_SERVER_ADDRESS:
-+		addr = params->buffer;
-+		if (dyn_root)
-+			return -EOPNOTSUPP;
-+		read_lock(&volume->servers_lock);
-+		slist = afs_get_serverlist(volume->servers);
-+		read_unlock(&volume->servers_lock);
-+
-+		ret = -ENODATA;
-+		if (params->Nth >= slist->nr_servers)
-+			goto put_slist;
-+		server = slist->servers[params->Nth].server;
-+
-+		read_lock(&server->fs_lock);
-+		alist = afs_get_addrlist(rcu_access_pointer(server->addresses));
-+		read_unlock(&server->fs_lock);
-+		if (!alist)
-+			goto put_slist;
-+
-+		if (params->Mth >= alist->nr_addrs)
-+			goto put_alist;
-+
-+		memcpy(addr, &alist->addrs[params->Mth],
-+		       sizeof(struct sockaddr_rxrpc));
-+		ret = sizeof(*addr);
-+
-+	put_alist:
-+		afs_put_addrlist(alist);
-+	put_slist:
-+		afs_put_serverlist(net, slist);
-+		return ret;
-+
 +	case FSINFO_ATTR_PARAMETERS:
-+		fsinfo_note_sb_params(params, dentry->d_sb->s_flags);
-+		if (!dyn_root)
-+			fsinfo_note_paramf(params, "source", "%c%s:%s%s",
-+					   volume->type == AFSVL_RWVOL ? '%' : '#',
-+					   cell->name,
-+					   volume->name,
-+					   volume->type == AFSVL_RWVOL ? "" :
-+					   volume->type == AFSVL_ROVOL ? ".readonly" :
-+					   ".backup");
-+		if (as->autocell)
-+			fsinfo_note_param(params, "autocell", NULL);
-+		if (dyn_root)
-+			fsinfo_note_param(params, "dyn", NULL);
++		fsinfo_note_sb_params(params, sb->s_flags);
++		if (!gid_eq(pid->pid_gid, GLOBAL_ROOT_GID))
++			fsinfo_note_paramf(params, "gid", "%u",
++				from_kgid_munged(&init_user_ns, pid->pid_gid));
++		if (pid->hide_pid != HIDEPID_OFF)
++			fsinfo_note_paramf(params, "hidepid",
++					  "%u", pid->hide_pid);
 +		return params->usage;
 +
 +	default:
@@ -298,118 +112,18 @@ index f18911e8d770..47bc49be9bd3 100644
 +	}
 +}
 +#endif /* CONFIG_FSINFO */
-diff --git a/fs/fsinfo.c b/fs/fsinfo.c
-index 61f00f375fd2..c48df3028d60 100644
---- a/fs/fsinfo.c
-+++ b/fs/fsinfo.c
-@@ -635,6 +635,9 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
- 	FSINFO_STRING		(MOUNT_DEVNAME,		mount_devname),
- 	FSINFO_STRUCT_ARRAY	(MOUNT_CHILDREN,	mount_child),
- 	FSINFO_STRING_N		(MOUNT_SUBMOUNT,	mount_submount),
-+	FSINFO_STRING_N		(SERVER_NAME,		server_name),
-+	FSINFO_STRUCT_NM	(SERVER_ADDRESS,	server_address),
-+	FSINFO_STRING		(CELL_NAME,		cell_name),
- };
- 
- /**
-diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
-index 88e1d004ac6c..12e94201a5d1 100644
---- a/include/uapi/linux/fsinfo.h
-+++ b/include/uapi/linux/fsinfo.h
-@@ -36,6 +36,9 @@ enum fsinfo_attribute {
- 	FSINFO_ATTR_MOUNT_DEVNAME	= 18,	/* Mount object device name (string) */
- 	FSINFO_ATTR_MOUNT_CHILDREN	= 19,	/* Submount list (array) */
- 	FSINFO_ATTR_MOUNT_SUBMOUNT	= 20,	/* Relative path of Nth submount (string) */
-+	FSINFO_ATTR_SERVER_NAME		= 21,	/* Name of the Nth server (string) */
-+	FSINFO_ATTR_SERVER_ADDRESS	= 22,	/* Mth address of the Nth server */
-+	FSINFO_ATTR_CELL_NAME		= 23,	/* Cell name (string) */
- 	FSINFO_ATTR__NR
- };
- 
-@@ -304,4 +307,13 @@ struct fsinfo_mount_child {
- 	__u32		notify_counter;	/* Number of notifications generated on mount. */
- };
- 
-+/*
-+ * Information struct for fsinfo(fsinfo_attr_server_addresses).
-+ *
-+ * Find the Mth address of the Nth server for a network mount.
-+ */
-+struct fsinfo_server_address {
-+	struct __kernel_sockaddr_storage address;
-+};
 +
- #endif /* _UAPI_LINUX_FSINFO_H */
-diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
-index ab32a15d4c5b..6d856c1c8bad 100644
---- a/samples/vfs/test-fsinfo.c
-+++ b/samples/vfs/test-fsinfo.c
-@@ -87,6 +87,9 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
- 	FSINFO_STRING		(MOUNT_DEVNAME,		mount_devname),
- 	FSINFO_STRUCT_ARRAY	(MOUNT_CHILDREN,	mount_child),
- 	FSINFO_STRING_N		(MOUNT_SUBMOUNT,	mount_submount),
-+	FSINFO_STRING_N		(SERVER_NAME,		server_name),
-+	FSINFO_STRUCT_NM	(SERVER_ADDRESS,	server_address),
-+	FSINFO_STRING		(CELL_NAME,		cell_name),
+ const struct super_operations proc_sops = {
+ 	.alloc_inode	= proc_alloc_inode,
+ 	.free_inode	= proc_free_inode,
+@@ -122,6 +156,9 @@ const struct super_operations proc_sops = {
+ 	.evict_inode	= proc_evict_inode,
+ 	.statfs		= simple_statfs,
+ 	.show_options	= proc_show_options,
++#ifdef CONFIG_FSINFO
++	.fsinfo		= proc_fsinfo,
++#endif
  };
  
- #define FSINFO_NAME(X,Y) [FSINFO_ATTR_##X] = #Y
-@@ -112,6 +115,9 @@ static const char *fsinfo_attr_names[FSINFO_ATTR__NR] = {
- 	FSINFO_NAME		(MOUNT_DEVNAME,		mount_devname),
- 	FSINFO_NAME		(MOUNT_CHILDREN,	mount_children),
- 	FSINFO_NAME		(MOUNT_SUBMOUNT,	mount_submount),
-+	FSINFO_NAME		(SERVER_NAME,		server_name),
-+	FSINFO_NAME		(SERVER_ADDRESS,	server_address),
-+	FSINFO_NAME		(CELL_NAME,		cell_name),
- };
- 
- union reply {
-@@ -126,6 +132,7 @@ union reply {
- 	struct fsinfo_volume_uuid uuid;
- 	struct fsinfo_mount_info mount_info;
- 	struct fsinfo_mount_child mount_children[1];
-+	struct fsinfo_server_address srv_addr;
- };
- 
- static void dump_hex(unsigned int *data, int from, int to)
-@@ -329,6 +336,31 @@ static void dump_attr_VOLUME_UUID(union reply *r, int size)
- 	       f->uuid[14], f->uuid[15]);
- }
- 
-+static void dump_attr_SERVER_ADDRESS(union reply *r, int size)
-+{
-+	struct fsinfo_server_address *f = &r->srv_addr;
-+	struct sockaddr_in6 *sin6;
-+	struct sockaddr_in *sin;
-+	char buf[1024];
-+
-+	switch (f->address.ss_family) {
-+	case AF_INET:
-+		sin = (struct sockaddr_in *)&f->address;
-+		if (!inet_ntop(AF_INET, &sin->sin_addr, buf, sizeof(buf)))
-+			break;
-+		printf("IPv4: %s\n", buf);
-+		return;
-+	case AF_INET6:
-+		sin6 = (struct sockaddr_in6 *)&f->address;
-+		if (!inet_ntop(AF_INET6, &sin6->sin6_addr, buf, sizeof(buf)))
-+			break;
-+		printf("IPv6: %s\n", buf);
-+		return;
-+	}
-+
-+	printf("family=%u\n", f->address.ss_family);
-+}
-+
- static void dump_attr_MOUNT_INFO(union reply *r, int size)
- {
- 	struct fsinfo_mount_info *f = &r->mount_info;
-@@ -369,6 +401,7 @@ static const dumper_t fsinfo_attr_dumper[FSINFO_ATTR__NR] = {
- 	FSINFO_DUMPER(VOLUME_UUID),
- 	FSINFO_DUMPER(MOUNT_INFO),
- 	FSINFO_DUMPER(MOUNT_CHILDREN),
-+	FSINFO_DUMPER(SERVER_ADDRESS),
- };
- 
- static void dump_fsinfo(enum fsinfo_attribute attr,
+ enum {BIAS = -1U<<31};
 
