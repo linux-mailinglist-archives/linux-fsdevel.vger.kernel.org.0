@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C53C750EE3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 16:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 518AA50EBC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 16:42:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfFXOmC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 10:42:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50316 "EHLO mx1.suse.de"
+        id S1729085AbfFXOmF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 10:42:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50338 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726402AbfFXOmC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:42:02 -0400
+        id S1727661AbfFXOmE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:42:04 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C9EE7AE32;
-        Mon, 24 Jun 2019 14:42:00 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 2F40DAE5C;
+        Mon, 24 Jun 2019 14:42:01 +0000 (UTC)
 From:   Roman Penyaev <rpenyaev@suse.de>
 Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 02/14] epoll: introduce user structures for polling from userspace
-Date:   Mon, 24 Jun 2019 16:41:39 +0200
-Message-Id: <20190624144151.22688-3-rpenyaev@suse.de>
+Subject: [PATCH v5 03/14] epoll: allocate user header and user events ring for polling from userspace
+Date:   Mon, 24 Jun 2019 16:41:40 +0200
+Message-Id: <20190624144151.22688-4-rpenyaev@suse.de>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190624144151.22688-1-rpenyaev@suse.de>
 References: <20190624144151.22688-1-rpenyaev@suse.de>
@@ -35,13 +35,18 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This one introduces structures of user items array:
+This one allocates user header and user events ring according to max items
+number, passed as a parameter.  User events (index) ring is in a pow2.
+Pages, which will be shared between kernel and userspace, are accounted
+through user->locked_vm counter.
 
-struct epoll_uheader -
-    describes inserted epoll items.
-
-struct epoll_uitem -
-    single epoll item visible to userspace.
+No support on architectures with reduced set of atomic ops, namely
+arc-plat-eznps, sparc32, parisc.  These architectures have a single
+atomic op (something like xchg) and others ops are fudged in kernel
+with a support of a spinlock, thus it is impossible to safely share
+a variable with a userspace and expect that this variable will not
+to be corrupted or observed correctly.  For these archs -EOPNOTSUP
+is returned.
 
 Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -50,77 +55,270 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- fs/eventpoll.c                 | 11 +++++++++++
- include/uapi/linux/eventpoll.h | 29 +++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
+ fs/eventpoll.c                 | 160 +++++++++++++++++++++++++++++++--
+ include/uapi/linux/eventpoll.h |   3 +-
+ 2 files changed, 155 insertions(+), 8 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 622b6c9ef8c9..6d7a5fe4a831 100644
+index 6d7a5fe4a831..b6682365d970 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -4,6 +4,7 @@
-  *  Copyright (C) 2001,...,2009	 Davide Libenzi
-  *
-  *  Davide Libenzi <davidel@xmailserver.org>
-+ *  Polling from userspace support by Roman Penyaev <rpenyaev@suse.de>
-  */
+@@ -228,6 +228,33 @@ struct eventpoll {
  
- #include <linux/init.h>
-@@ -104,6 +105,16 @@
- 
- #define EP_ITEM_COST (sizeof(struct epitem) + sizeof(struct eppoll_entry))
- 
-+/*
-+ * That is around 1.3mb of allocated memory for one epfd.  What is more
-+ * important is ->index_length, which should be ^2, so do not increase
-+ * max items number to avoid size doubling of user index.
-+ *
-+ * Before increasing the value see add_event_to_uring() and especially
-+ * cnt_to_advance() functions and change them accordingly.
-+ */
-+#define EP_USERPOLL_MAX_ITEMS_NR 65536
-+
- struct epoll_filefd {
  	struct file *file;
- 	int fd;
+ 
++	/* User header with array of items */
++	struct epoll_uheader *user_header;
++
++	/* User index, which acts as a ring of coming events */
++	unsigned int *user_index;
++
++	/* Actual length of user header, always aligned on page */
++	unsigned int header_length;
++
++	/* Actual length of user index, always pow2 */
++	unsigned int index_length;
++
++	/* Maximum possible event items */
++	unsigned int max_items_nr;
++
++	/* Items bitmap, is used to get a free bit for new registered epi */
++	unsigned long *items_bm;
++
++	/* Length of both items bitmaps, always aligned on page */
++	unsigned int items_bm_length;
++
++	/*
++	 * Counter to support atomic and lockless ->tail updates.
++	 * See add_event_to_uring() for details of counter layout.
++	 */
++	atomic64_t shadow_cnt;
++
+ 	/* used to optimize loop detection check */
+ 	int visited;
+ 	struct list_head visited_list_link;
+@@ -377,6 +404,44 @@ static void ep_nested_calls_init(struct nested_calls *ncalls)
+ 	spin_lock_init(&ncalls->lock);
+ }
+ 
++static inline unsigned int ep_to_items_length(unsigned int nr)
++{
++	struct epoll_uheader *user_header;
++
++	return PAGE_ALIGN(struct_size(user_header, items, nr));
++}
++
++static inline unsigned int ep_to_index_length(unsigned int nr)
++{
++	struct eventpoll *ep;
++	unsigned int size;
++
++	size = roundup_pow_of_two(nr << ilog2(sizeof(*ep->user_index)));
++	return max_t(typeof(size), size, PAGE_SIZE);
++}
++
++static inline unsigned int ep_to_items_bm_length(unsigned int nr)
++{
++	return PAGE_ALIGN(ALIGN(nr, 8) >> 3);
++}
++
++static inline bool ep_userpoll_supported(void)
++{
++	/*
++	 * These architectures have a single atomic op (something like
++	 * xchg) and others ops are fudged in kernel with a support of
++	 * a spinlock, thus it is impossible to safely share a variable
++	 * with a userspace and expect that this variable will not to
++	 * be corrupted or observed correctly.  The problematic variable
++	 * is ->ready_events, which has to be atomically cleared on
++	 * userspace, but on the kernel side cmpxchg() is called, which
++	 * uses a spinlock as a method of synchronization.
++	 */
++	return !(IS_ENABLED(CONFIG_ARC_PLAT_EZNPS) ||
++		 IS_ENABLED(CONFIG_SPARC32) ||
++		 IS_ENABLED(CONFIG_PARISC));
++}
++
+ /**
+  * ep_events_available - Checks if ready events might be available.
+  *
+@@ -832,6 +897,38 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
+ 	return 0;
+ }
+ 
++static int ep_account_mem(struct eventpoll *ep, struct user_struct *user)
++{
++	unsigned long nr_pages, page_limit, cur_pages, new_pages;
++
++	nr_pages  = ep->header_length >> PAGE_SHIFT;
++	nr_pages += ep->index_length >> PAGE_SHIFT;
++
++	/* Don't allow more pages than we can safely lock */
++	page_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
++
++	do {
++		cur_pages = atomic_long_read(&user->locked_vm);
++		new_pages = cur_pages + nr_pages;
++		if (new_pages > page_limit && !capable(CAP_IPC_LOCK))
++			return -ENOMEM;
++	} while (atomic_long_cmpxchg(&user->locked_vm, cur_pages,
++				     new_pages) != cur_pages);
++
++	return 0;
++}
++
++static void ep_unaccount_mem(struct eventpoll *ep, struct user_struct *user)
++{
++	unsigned long nr_pages;
++
++	nr_pages  = ep->header_length >> PAGE_SHIFT;
++	nr_pages += ep->index_length >> PAGE_SHIFT;
++	if (nr_pages)
++		/* When polled by user */
++		atomic_long_sub(nr_pages, &user->locked_vm);
++}
++
+ static void ep_free(struct eventpoll *ep)
+ {
+ 	struct rb_node *rbp;
+@@ -879,8 +976,12 @@ static void ep_free(struct eventpoll *ep)
+ 
+ 	mutex_unlock(&epmutex);
+ 	mutex_destroy(&ep->mtx);
+-	free_uid(ep->user);
+ 	wakeup_source_unregister(ep->ws);
++	vfree(ep->user_header);
++	vfree(ep->user_index);
++	vfree(ep->items_bm);
++	ep_unaccount_mem(ep, ep->user);
++	free_uid(ep->user);
+ 	kfree(ep);
+ }
+ 
+@@ -1033,7 +1134,7 @@ void eventpoll_release_file(struct file *file)
+ 	mutex_unlock(&epmutex);
+ }
+ 
+-static int ep_alloc(struct eventpoll **pep)
++static int ep_alloc(struct eventpoll **pep, int flags, size_t max_items)
+ {
+ 	int error;
+ 	struct user_struct *user;
+@@ -1045,6 +1146,44 @@ static int ep_alloc(struct eventpoll **pep)
+ 	if (unlikely(!ep))
+ 		goto free_uid;
+ 
++	if (flags & EPOLL_USERPOLL) {
++		BUILD_BUG_ON(sizeof(*ep->user_header) !=
++			     EPOLL_USERPOLL_HEADER_SIZE);
++		BUILD_BUG_ON(sizeof(ep->user_header->items[0]) != 16);
++
++		error = -EOPNOTSUPP;
++		if (!ep_userpoll_supported())
++			goto free_ep;
++
++		error = -EINVAL;
++		if (!max_items || max_items > EP_USERPOLL_MAX_ITEMS_NR)
++			goto free_ep;
++
++		ep->max_items_nr = max_items;
++		ep->header_length = ep_to_items_length(max_items);
++		ep->index_length = ep_to_index_length(max_items);
++		ep->items_bm_length = ep_to_items_bm_length(max_items);
++
++		error = ep_account_mem(ep, user);
++		if (error)
++			goto free_ep;
++
++		error = -ENOMEM;
++		ep->user_header = vmalloc_user(ep->header_length);
++		ep->user_index = vmalloc_user(ep->index_length);
++		ep->items_bm = vzalloc(ep->items_bm_length);
++		if (!ep->user_header || !ep->user_index || !ep->items_bm)
++			goto unaccount_mem;
++
++		*ep->user_header = (typeof(*ep->user_header)) {
++			.magic         = EPOLL_USERPOLL_HEADER_MAGIC,
++			.header_length = ep->header_length,
++			.index_length  = ep->index_length,
++			.max_items_nr  = ep->max_items_nr,
++		};
++	}
++
++	atomic64_set(&ep->shadow_cnt, 0);
+ 	mutex_init(&ep->mtx);
+ 	rwlock_init(&ep->lock);
+ 	init_waitqueue_head(&ep->wq);
+@@ -1058,6 +1197,13 @@ static int ep_alloc(struct eventpoll **pep)
+ 
+ 	return 0;
+ 
++unaccount_mem:
++	ep_unaccount_mem(ep, user);
++	vfree(ep->user_header);
++	vfree(ep->user_index);
++	vfree(ep->items_bm);
++free_ep:
++	kfree(ep);
+ free_uid:
+ 	free_uid(user);
+ 	return error;
+@@ -2062,7 +2208,7 @@ static void clear_tfile_check_list(void)
+ /*
+  * Open an eventpoll file descriptor.
+  */
+-static int do_epoll_create(int flags)
++static int do_epoll_create(int flags, size_t size)
+ {
+ 	int error, fd;
+ 	struct eventpoll *ep = NULL;
+@@ -2071,12 +2217,12 @@ static int do_epoll_create(int flags)
+ 	/* Check the EPOLL_* constant for consistency.  */
+ 	BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC);
+ 
+-	if (flags & ~EPOLL_CLOEXEC)
++	if (flags & ~(EPOLL_CLOEXEC | EPOLL_USERPOLL))
+ 		return -EINVAL;
+ 	/*
+ 	 * Create the internal data structure ("struct eventpoll").
+ 	 */
+-	error = ep_alloc(&ep);
++	error = ep_alloc(&ep, flags, size);
+ 	if (error < 0)
+ 		return error;
+ 	/*
+@@ -2107,7 +2253,7 @@ static int do_epoll_create(int flags)
+ 
+ SYSCALL_DEFINE1(epoll_create1, int, flags)
+ {
+-	return do_epoll_create(flags);
++	return do_epoll_create(flags, 0);
+ }
+ 
+ SYSCALL_DEFINE1(epoll_create, int, size)
+@@ -2115,7 +2261,7 @@ SYSCALL_DEFINE1(epoll_create, int, size)
+ 	if (size <= 0)
+ 		return -EINVAL;
+ 
+-	return do_epoll_create(0);
++	return do_epoll_create(0, 0);
+ }
+ 
+ /*
 diff --git a/include/uapi/linux/eventpoll.h b/include/uapi/linux/eventpoll.h
-index 39dfc29f0f52..3317901b19c4 100644
+index 3317901b19c4..efd58e9177c2 100644
 --- a/include/uapi/linux/eventpoll.h
 +++ b/include/uapi/linux/eventpoll.h
-@@ -79,4 +79,33 @@ struct epoll_event {
- 	__u64 data;
- } EPOLL_PACKED;
+@@ -20,7 +20,8 @@
+ #include <linux/types.h>
  
-+#define EPOLL_USERPOLL_HEADER_MAGIC 0xeb01eb01
-+#define EPOLL_USERPOLL_HEADER_SIZE  128
-+
-+/*
-+ * Item, shared with userspace.  Unfortunately we can't embed epoll_event
-+ * structure, because it is badly aligned on all 64-bit archs, except
-+ * x86-64 (see EPOLL_PACKED).  sizeof(epoll_uitem) == 16
-+ */
-+struct epoll_uitem {
-+	__poll_t ready_events;
-+	__poll_t events;
-+	__u64 data;
-+};
-+
-+/*
-+ * Header, shared with userspace. sizeof(epoll_uheader) == 128
-+ */
-+struct epoll_uheader {
-+	__u32 magic;          /* epoll user header magic */
-+	__u32 header_length;  /* length of the header + items */
-+	__u32 index_length;   /* length of the index ring, always pow2 */
-+	__u32 max_items_nr;   /* max number of items */
-+	__u32 head;           /* updated by userland */
-+	__u32 tail;           /* updated by kernel */
-+
-+	struct epoll_uitem items[]
-+		__attribute__((__aligned__(EPOLL_USERPOLL_HEADER_SIZE)));
-+};
-+
- #endif /* _UAPI_LINUX_EVENTPOLL_H */
+ /* Flags for epoll_create1.  */
+-#define EPOLL_CLOEXEC O_CLOEXEC
++#define EPOLL_CLOEXEC  O_CLOEXEC
++#define EPOLL_USERPOLL 1
+ 
+ /* Valid opcodes to issue to sys_epoll_ctl() */
+ #define EPOLL_CTL_ADD 1
 -- 
 2.21.0
 
