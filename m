@@ -2,96 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B1C9509E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 13:37:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E08F150A12
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 13:47:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728603AbfFXLhm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 07:37:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55440 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727608AbfFXLhm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 07:37:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0EF03AE79;
-        Mon, 24 Jun 2019 11:37:40 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DBCD31E2F23; Mon, 24 Jun 2019 13:37:37 +0200 (CEST)
-Date:   Mon, 24 Jun 2019 13:37:37 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
-        ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com,
-        adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, jack@suse.com,
-        dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org,
-        reiserfs-devel@vger.kernel.org, linux-efi@vger.kernel.org,
-        devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 2/7] vfs: flush and wait for io when setting the
- immutable flag via SETFLAGS
-Message-ID: <20190624113737.GG32376@quack2.suse.cz>
-References: <156116141046.1664939.11424021489724835645.stgit@magnolia>
- <156116142734.1664939.5074567130774423066.stgit@magnolia>
+        id S1726887AbfFXLrr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 07:47:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726334AbfFXLrr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jun 2019 07:47:47 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17BFF20674;
+        Mon, 24 Jun 2019 11:47:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561376866;
+        bh=EHCIrE5dWZz7UIHv3Mt0UGdPFK98b1UEAL4km+gAnRM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JpzEg3oNYpbs1copvvpNgzJoG/DGjPL1JheCElUYYb3Kyfn6ZY3vMNpnIO7zdr5bM
+         YstNnwaddGcQvaxeMAMks8QR4gCvCw/200+rSeXlQ6FfEQpvgEqbY/D8jDmA2ARNd2
+         NOMmlmCjjxArVHgQKI7rGxrmQ7BczUbloPCy59gQ=
+Date:   Mon, 24 Jun 2019 12:47:41 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Vicente Bergas <vicencb@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: d_lookup: Unable to handle kernel paging request
+Message-ID: <20190624114741.i542cb3wbhfbk4q4@willie-the-truck>
+References: <20190522135331.GM17978@ZenIV.linux.org.uk>
+ <bdc8b245-afca-4662-99e2-a082f25fc927@gmail.com>
+ <20190522162945.GN17978@ZenIV.linux.org.uk>
+ <10192e43-c21d-44e4-915d-bf77a50c22c4@gmail.com>
+ <20190618183548.GB17978@ZenIV.linux.org.uk>
+ <bf2b3aa6-bda1-43f1-9a01-e4ad3df81c0b@gmail.com>
+ <20190619162802.GF17978@ZenIV.linux.org.uk>
+ <bc774f6b-711e-4a20-ad85-c282f9761392@gmail.com>
+ <20190619170940.GG17978@ZenIV.linux.org.uk>
+ <cd84de0e-909e-4117-a20a-6cde42079267@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <156116142734.1664939.5074567130774423066.stgit@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <cd84de0e-909e-4117-a20a-6cde42079267@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 21-06-19 16:57:07, Darrick J. Wong wrote:
-> From: Darrick J. Wong <darrick.wong@oracle.com>
+On Sat, Jun 22, 2019 at 08:02:19PM +0200, Vicente Bergas wrote:
+> Hi Al,
+> i think have a hint of what is going on.
+> With the last kernel built with your sentinels at hlist_bl_*lock
+> it is very easy to reproduce the issue.
+> In fact it is so unstable that i had to connect a serial port
+> in order to save the kernel trace.
+> Unfortunately all the traces are at different addresses and
+> your sentinel did not trigger.
 > 
-> When we're using FS_IOC_SETFLAGS to set the immutable flag on a file, we
-> need to ensure that userspace can't continue to write the file after the
-> file becomes immutable.  To make that happen, we have to flush all the
-> dirty pagecache pages to disk to ensure that we can fail a page fault on
-> a mmap'd region, wait for pending directio to complete, and hope the
-> caller locked out any new writes by holding the inode lock.
+> Now i am writing this email from that same buggy kernel, which is
+> v5.2-rc5-224-gbed3c0d84e7e.
 > 
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> The difference is that I changed the bootloader.
+> Before was booting 5.1.12 and kexec into this one.
+> Now booting from u-boot into this one.
+> I will continue booting with u-boot for some time to be sure it is
+> stable and confirm this is the cause.
+> 
+> In case it is, who is the most probable offender?
+> the kernel before kexec or the kernel after?
 
-Seeing the way this worked out, is there a reason to have separate
-vfs_ioc_setflags_flush_data() instead of folding the functionality in
-vfs_ioc_setflags_check() (possibly renaming it to
-vfs_ioc_setflags_prepare() to indicate it does already some changes)? I
-don't see any place that would need these two separated...
+Has kexec ever worked reliably on this board? If you used to kexec
+successfully, then we can try to hunt down the regression using memtest.
+If you kexec into a problematic kernel with CONFIG_MEMTEST=y and pass
+"memtest=17" on the command-line, it will hopefully reveal any active
+memory corruption.
 
-> +/*
-> + * Flush all pending IO and dirty mappings before setting S_IMMUTABLE on an
-> + * inode via FS_IOC_SETFLAGS.  If the flush fails we'll clear the flag before
-> + * returning error.
-> + *
-> + * Note: the caller should be holding i_mutex, or else be sure that
-> + * they have exclusive access to the inode structure.
-> + */
-> +static inline int vfs_ioc_setflags_flush_data(struct inode *inode, int flags)
-> +{
-> +	int ret;
-> +
-> +	if (!vfs_ioc_setflags_need_flush(inode, flags))
-> +		return 0;
-> +
-> +	inode_set_flags(inode, S_IMMUTABLE, S_IMMUTABLE);
-> +	ret = inode_flush_data(inode);
-> +	if (ret)
-> +		inode_set_flags(inode, 0, S_IMMUTABLE);
-> +	return ret;
-> +}
+My first thought is that there is ongoing DMA which corrupts the dentry
+hash. The rk3399 SoC also has an IOMMU, which could contribute to the fun
+if it's not shutdown correctly (i.e. if it enters bypass mode).
 
-Also this sets S_IMMUTABLE whenever vfs_ioc_setflags_need_flush() returns
-true. That is currently the right thing but seems like a landmine waiting
-to trip? So I'd just drop the vfs_ioc_setflags_need_flush() abstraction to
-make it clear what's going on.
+> The original report was sent to you because you appeared as the maintainer
+> of fs/dcache.c, which appeared on the trace. Should this be redirected
+> somewhere else now?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+linux-arm-kernel@lists.infradead.org
+
+Probably worth adding Heiko Stuebner <heiko@sntech.de> to cc.
+
+Will
