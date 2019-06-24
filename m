@@ -2,147 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F32ED50DA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 16:12:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5223A50DF0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 16:27:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbfFXOM3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 10:12:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54544 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbfFXOM3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:12:29 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BB2CD3087946;
-        Mon, 24 Jun 2019 14:12:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 51D3A5C21F;
-        Mon, 24 Jun 2019 14:12:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 25/25] fsinfo: ufs - add sb operation fsinfo() [ver #14]
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, raven@themaw.net, mszeredi@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 24 Jun 2019 15:12:25 +0100
-Message-ID: <156138554552.25627.15667264043714854814.stgit@warthog.procyon.org.uk>
-In-Reply-To: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
-References: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1728347AbfFXO1o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 10:27:44 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44026 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727736AbfFXO1o (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:27:44 -0400
+Received: by mail-ed1-f65.google.com with SMTP id e3so22037384edr.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2019 07:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nMad3CaCSZkzI4gyvFvbmTY8mwA5a8Sp7vTVJg617is=;
+        b=jtU1r3t/2UsWRHp4cHYwBYGPpiZUxz1/KLoBCTrKS4GUbo9DYoiKDE4ko+tPLCvBZu
+         kVU2KDKQj4bZshQa9gZS8SkpWHRzIIr1zMHVlq+h71f92Sb1sMdH5cnBrexMB088xYoj
+         lsqFXhocWNoaRaULy95jAMLyLmMA7bfqik/wFGsDEb1zokXQv1eavf7pI0rdaS0SuOiE
+         7dXJYQcgVtIul74lHRgtWv1FCERbkHxuQATQxfehC89AGfJA6TAGFluhj8wPparDYqeP
+         dx75xVh4boioNOkMS5RMHsVzHq+Fqmr9V3rUsM9KoOJQYU4Kgjhf0MyUkXvlsYHXp7+O
+         n7Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nMad3CaCSZkzI4gyvFvbmTY8mwA5a8Sp7vTVJg617is=;
+        b=GIwMnv5SRdWAiMDx9DUAcfruUkvrmpcFXAu2jB8v/USC4m7kskWZ1Zv9agjv4IAR2h
+         Ei93xK6l/MQU1Q41YS+uClmgn6IZremEQWKk7+aqHB0Rzqh2EYDHMMZc2jq3S/BhOwFr
+         ZMwUHtJgJM+w1IlhBaaKJKrPfbjydoO0so6NXcIDJBM/7pjvHKNbEGyEZlNR5oW8ITtJ
+         V93NJcd5m3CV9JdsqU5rPxAtEFPz6Q8+17qBpqpdbjon3mIdDRDLM2BiPbFxP7yVg0Fs
+         IQf44gZ++xlUVm606UdUaOq7tr9nnQO6+PFNJmCTj6kW5F75WxdjEwNjmstKm/naGQKm
+         Bk7Q==
+X-Gm-Message-State: APjAAAWIFIihzDiXBk2Ump0cOH5g4sfRDlwH3IdLMcvp95g4b4/VjRZV
+        hEav9FyPV8raBRTyHClwEKGAiQ==
+X-Google-Smtp-Source: APXvYqwqid3EK2KULR3HvJOfTxPaV9NVV4GB+bO31X1U4vpGtxWUZczZsb76evJVJFcgmV4mVSqaMg==
+X-Received: by 2002:a17:906:3c1:: with SMTP id c1mr34162609eja.221.1561386462321;
+        Mon, 24 Jun 2019 07:27:42 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id a8sm3743134edt.56.2019.06.24.07.27.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 07:27:41 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 0F1161043B3; Mon, 24 Jun 2019 17:27:47 +0300 (+03)
+Date:   Mon, 24 Jun 2019 17:27:47 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hdanton@sina.com" <hdanton@sina.com>
+Subject: Re: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
+ FS
+Message-ID: <20190624142747.chy5s3nendxktm3l@box>
+References: <20190623054749.4016638-1-songliubraving@fb.com>
+ <20190623054749.4016638-6-songliubraving@fb.com>
+ <20190624124746.7evd2hmbn3qg3tfs@box>
+ <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 24 Jun 2019 14:12:28 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ian Kent <raven@themaw.net>
+On Mon, Jun 24, 2019 at 02:01:05PM +0000, Song Liu wrote:
+> >> @@ -1392,6 +1403,23 @@ static void collapse_file(struct mm_struct *mm,
+> >> 				result = SCAN_FAIL;
+> >> 				goto xa_unlocked;
+> >> 			}
+> >> +		} else if (!page || xa_is_value(page)) {
+> >> +			xas_unlock_irq(&xas);
+> >> +			page_cache_sync_readahead(mapping, &file->f_ra, file,
+> >> +						  index, PAGE_SIZE);
+> >> +			lru_add_drain();
+> > 
+> > Why?
+> 
+> isolate_lru_page() is likely to fail if we don't drain the pagevecs. 
 
-The new fsinfo() system call adds a new super block operation
-->fsinfo() which is used by file systems to provide file
-system specific information for fsinfo() requests.
+Please add a comment.
 
-The fsinfo() request FSINFO_ATTR_PARAMETERS provides the same
-function as sb operation ->show_options() so it needs to be
-implemented by any file system that provides ->show_options()
-as a minimum.
+> >> +			page = find_lock_page(mapping, index);
+> >> +			if (unlikely(page == NULL)) {
+> >> +				result = SCAN_FAIL;
+> >> +				goto xa_unlocked;
+> >> +			}
+> >> +		} else if (!PageUptodate(page)) {
+> > 
+> > Maybe we should try wait_on_page_locked() here before give up?
+> 
+> Are you referring to the "if (!PageUptodate(page))" case? 
 
-Signed-off-by: Ian Kent <raven@themaw.net>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Yes.
 
- fs/ufs/super.c |   58 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
-
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index 84c0c5178cd2..40a3e9db8ac7 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -89,6 +89,7 @@
- #include <linux/mount.h>
- #include <linux/seq_file.h>
- #include <linux/iversion.h>
-+#include <linux/fsinfo.h>
- 
- #include "ufs_fs.h"
- #include "ufs.h"
-@@ -1401,6 +1402,60 @@ static int ufs_show_options(struct seq_file *seq, struct dentry *root)
- 	return 0;
- }
- 
-+#ifdef CONFIG_FSINFO
-+static int ufs_fsinfo_print_token(struct fsinfo_kparams *params, const char *token)
-+{
-+	char *new, *key, *value;
-+
-+	new = kstrdup(token, GFP_KERNEL);
-+	if (!new)
-+		return -ENOMEM;
-+
-+	key = new;
-+	value = strchr(new, '=');
-+	if (value)
-+		*value++ = '\0';
-+
-+	fsinfo_note_param(params, key, value);
-+
-+	kfree(new);
-+	return 0;
-+}
-+
-+/*
-+ * Get filesystem information.
-+ */
-+static int ufs_fsinfo(struct path *path, struct fsinfo_kparams *params)
-+{
-+	struct ufs_sb_info *sbi = UFS_SB(path->dentry->d_sb);
-+	unsigned mval = sbi->s_mount_opt & UFS_MOUNT_UFSTYPE;
-+	const struct match_token *tp = tokens;
-+	int ret;
-+
-+	switch (params->request) {
-+	case FSINFO_ATTR_PARAMETERS:
-+		fsinfo_note_sb_params(params, path->dentry->d_sb->s_flags);
-+		while (tp->token != Opt_onerror_panic && tp->token != mval)
-+			++tp;
-+		BUG_ON(tp->token == Opt_onerror_panic);
-+		ret = ufs_fsinfo_print_token(params, tp->pattern);
-+		if (ret)
-+			return ret;
-+		mval = sbi->s_mount_opt & UFS_MOUNT_ONERROR;
-+		while (tp->token != Opt_err && tp->token != mval)
-+			++tp;
-+		BUG_ON(tp->token == Opt_err);
-+		ret = ufs_fsinfo_print_token(params, tp->pattern);
-+		if (ret)
-+			return ret;
-+		return params->usage;
-+
-+	default:
-+		return generic_fsinfo(path, params);
-+	}
-+}
-+#endif /* CONFIG_FSINFO */
-+
- static int ufs_statfs(struct dentry *dentry, struct kstatfs *buf)
- {
- 	struct super_block *sb = dentry->d_sb;
-@@ -1496,6 +1551,9 @@ static const struct super_operations ufs_super_ops = {
- 	.statfs		= ufs_statfs,
- 	.remount_fs	= ufs_remount,
- 	.show_options   = ufs_show_options,
-+#ifdef CONFIG_FSINFO
-+	.fsinfo		= ufs_fsinfo,
-+#endif
- };
- 
- static struct dentry *ufs_mount(struct file_system_type *fs_type,
-
+-- 
+ Kirill A. Shutemov
