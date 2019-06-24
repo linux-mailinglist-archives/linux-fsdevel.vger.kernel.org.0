@@ -2,276 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A5E519E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 19:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E796851A66
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 20:22:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732570AbfFXRnm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 13:43:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35570 "EHLO mx1.redhat.com"
+        id S1726820AbfFXSWv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 14:22:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45249 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728975AbfFXRnl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 13:43:41 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1725268AbfFXSWv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jun 2019 14:22:51 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EEC937FDE5;
-        Mon, 24 Jun 2019 17:43:22 +0000 (UTC)
-Received: from llong.com (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D47B5D9D5;
-        Mon, 24 Jun 2019 17:43:17 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc:     linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH 2/2] mm, slab: Extend vm/drop_caches to shrink kmem slabs
-Date:   Mon, 24 Jun 2019 13:42:19 -0400
-Message-Id: <20190624174219.25513-3-longman@redhat.com>
-In-Reply-To: <20190624174219.25513-1-longman@redhat.com>
-References: <20190624174219.25513-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 24 Jun 2019 17:43:40 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 97CC53001822;
+        Mon, 24 Jun 2019 18:22:50 +0000 (UTC)
+Received: from max.com (unknown [10.40.205.213])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B9956090E;
+        Mon, 24 Jun 2019 18:22:46 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs: Move mark_inode_dirty out of __generic_write_end
+Date:   Mon, 24 Jun 2019 20:22:43 +0200
+Message-Id: <20190624182243.22447-1-agruenba@redhat.com>
+In-Reply-To: <20190624065408.GA3565@lst.de>
+References: <20190618144716.8133-1-agruenba@redhat.com> <20190624065408.GA3565@lst.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 24 Jun 2019 18:22:50 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With the slub memory allocator, the numbers of active slab objects
-reported in /proc/slabinfo are not real because they include objects
-that are held by the per-cpu slab structures whether they are actually
-used or not.  The problem gets worse the more CPUs a system have. For
-instance, looking at the reported number of active task_struct objects,
-one will wonder where all the missing tasks gone.
+On Mon, 24 Jun 2019 at 08:55, Christoph Hellwig <hch@lst.de> wrote:
+> At least for xfs we don't need the mark_inode_dirty at all.  Can you
+> solve your gfs2 requirements on top of something like the patch below?
+> Note that in general it seems like you should try to only update the
+> on-disk inode size in writeback completion anyway, otherwise you can
+> have a stale i_size update before the data was actually written.
+>
+>
+> diff --git a/fs/iomap.c b/fs/iomap.c
+> index c98107a6bf81..fcf2cbd39114 100644
+> --- a/fs/iomap.c
+> +++ b/fs/iomap.c
+> @@ -785,6 +785,7 @@ iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
+>                 unsigned copied, struct page *page, struct iomap *iomap)
+>  {
+>         const struct iomap_page_ops *page_ops = iomap->page_ops;
+> +       loff_t old_size = inode->i_size;
+>         int ret;
+>
+>         if (iomap->type == IOMAP_INLINE) {
+> @@ -796,7 +797,12 @@ iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
+>                 ret = __iomap_write_end(inode, pos, len, copied, page, iomap);
+>         }
+>
+> -       __generic_write_end(inode, pos, ret, page);
+> +       if (pos + ret > inode->i_size)
+> +               i_size_write(inode, pos + ret);
+> +       unlock_page(page);
+> +
+> +       if (old_size < pos)
+> +               pagecache_isize_extended(inode, old_size, pos);
+>         if (page_ops && page_ops->page_done)
+>                 page_ops->page_done(inode, pos, copied, page, iomap);
+>         put_page(page);
 
-I know it is hard and costly to get a real count of active objects. So
-I am not advocating for that. Instead, this patch extends the
-/proc/sys/vm/drop_caches sysctl parameter by using a new bit (bit 3)
-to shrink all the kmem slabs which will flush out all the slabs in the
-per-cpu structures and give a more accurate view of how much memory are
-really used up by the active slab objects. This is a costly operation,
-of course, but it gives a way to have a clearer picture of the actual
-number of slab objects used, if the need arises.
+That would work, but I don't like how this leaves us with a vfs function
+that updates i_size without bothering to dirty the inode very much.
 
-The upper range of the drop_caches sysctl parameter is increased to 15
-to allow all possible combinations of the lowest 4 bits.
+How about if we move the __generic_write_end call into the page_done
+callback and leave special handling to the filesystem code if needed
+instead?  The below patch seems to work for gfs2.
 
-On a 2-socket 64-core 256-thread ARM64 system with 64k page size after
-a parallel kernel build, the amount of memory occupied by slabs before
-and after echoing to drop_caches were:
+Thanks,
+Andreas
 
- # grep task_struct /proc/slabinfo
- task_struct        48376  48434   4288   61    4 : tunables    0    0
- 0 : slabdata    794    794      0
- # grep "^S[lRU]" /proc/meminfo
- Slab:            3419072 kB
- SReclaimable:     354688 kB
- SUnreclaim:      3064384 kB
- # echo 3 > /proc/sys/vm/drop_caches
- # grep "^S[lRU]" /proc/meminfo
- Slab:            3351680 kB
- SReclaimable:     316096 kB
- SUnreclaim:      3035584 kB
- # echo 8 > /proc/sys/vm/drop_caches
- # grep "^S[lRU]" /proc/meminfo
- Slab:            1008192 kB
- SReclaimable:     126912 kB
- SUnreclaim:       881280 kB
- # grep task_struct /proc/slabinfo
- task_struct         2601   6588   4288   61    4 : tunables    0    0
- 0 : slabdata    108    108      0
-
-Shrinking the slabs saves more than 2GB of memory in this case. This
-new feature certainly fulfills the promise of dropping caches.
-
-Unlike counting objects in the per-node caches done by /proc/slabinfo
-which is rather light weight, iterating all the per-cpu caches and
-shrinking them is much more heavy weight.
-
-For this particular instance, the time taken to shrinks all the root
-caches was about 30.2ms. There were 73 memory cgroup and the longest
-time taken for shrinking the largest one was about 16.4ms. The total
-shrinking time was about 101ms.
-
-Because of the potential long time to shrinks all the caches, the
-slab_mutex was taken multiple times - once for all the root caches
-and once for each memory cgroup. This is to reduce the slab_mutex hold
-time to minimize impact to other running applications that may need to
-acquire the mutex.
-
-The slab shrinking feature is only available when CONFIG_MEMCG_KMEM is
-defined as the code need to access slab_root_caches to iterate all the
-root caches.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- Documentation/sysctl/vm.txt | 11 ++++++++--
- fs/drop_caches.c            |  4 ++++
- include/linux/slab.h        |  1 +
- kernel/sysctl.c             |  4 ++--
- mm/slab_common.c            | 44 +++++++++++++++++++++++++++++++++++++
- 5 files changed, 60 insertions(+), 4 deletions(-)
+ fs/gfs2/bmap.c   | 42 ++++++++++++++++++++++++++++++++++++------
+ fs/gfs2/incore.h |  1 +
+ fs/iomap.c       |  5 +++--
+ 3 files changed, 40 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/sysctl/vm.txt b/Documentation/sysctl/vm.txt
-index 749322060f10..b643ac8968d2 100644
---- a/Documentation/sysctl/vm.txt
-+++ b/Documentation/sysctl/vm.txt
-@@ -207,8 +207,8 @@ Setting this to zero disables periodic writeback altogether.
- drop_caches
- 
- Writing to this will cause the kernel to drop clean caches, as well as
--reclaimable slab objects like dentries and inodes.  Once dropped, their
--memory becomes free.
-+reclaimable slab objects like dentries and inodes.  It can also be used
-+to shrink the slabs.  Once dropped, their memory becomes free.
- 
- To free pagecache:
- 	echo 1 > /proc/sys/vm/drop_caches
-@@ -216,6 +216,8 @@ To free reclaimable slab objects (includes dentries and inodes):
- 	echo 2 > /proc/sys/vm/drop_caches
- To free slab objects and pagecache:
- 	echo 3 > /proc/sys/vm/drop_caches
-+To shrink the slabs:
-+	echo 8 > /proc/sys/vm/drop_caches
- 
- This is a non-destructive operation and will not free any dirty objects.
- To increase the number of objects freed by this operation, the user may run
-@@ -223,6 +225,11 @@ To increase the number of objects freed by this operation, the user may run
- number of dirty objects on the system and create more candidates to be
- dropped.
- 
-+Shrinking the slabs can reduce the memory footprint used by the slabs.
-+It also makes the number of active objects reported in /proc/slabinfo
-+more representative of the actual number of objects used for the slub
-+memory allocator.
-+
- This file is not a means to control the growth of the various kernel caches
- (inodes, dentries, pagecache, etc...)  These objects are automatically
- reclaimed by the kernel when memory is needed elsewhere on the system.
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index d31b6c72b476..633b99e25dab 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -9,6 +9,7 @@
- #include <linux/writeback.h>
- #include <linux/sysctl.h>
- #include <linux/gfp.h>
-+#include <linux/slab.h>
- #include "internal.h"
- 
- /* A global variable is a bit ugly, but it keeps the code simple */
-@@ -65,6 +66,9 @@ int drop_caches_sysctl_handler(struct ctl_table *table, int write,
- 			drop_slab();
- 			count_vm_event(DROP_SLAB);
- 		}
-+		if (sysctl_drop_caches & 8) {
-+			kmem_cache_shrink_all();
-+		}
- 		if (!stfu) {
- 			pr_info("%s (%d): drop_caches: %d\n",
- 				current->comm, task_pid_nr(current),
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 9449b19c5f10..f7c1626b2aa6 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -149,6 +149,7 @@ struct kmem_cache *kmem_cache_create_usercopy(const char *name,
- 			void (*ctor)(void *));
- void kmem_cache_destroy(struct kmem_cache *);
- int kmem_cache_shrink(struct kmem_cache *);
-+void kmem_cache_shrink_all(void);
- 
- void memcg_create_kmem_cache(struct mem_cgroup *, struct kmem_cache *);
- void memcg_deactivate_kmem_caches(struct mem_cgroup *);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 1beca96fb625..feeb867dabd7 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -129,7 +129,7 @@ static int __maybe_unused neg_one = -1;
- static int zero;
- static int __maybe_unused one = 1;
- static int __maybe_unused two = 2;
--static int __maybe_unused four = 4;
-+static int __maybe_unused fifteen = 15;
- static unsigned long zero_ul;
- static unsigned long one_ul = 1;
- static unsigned long long_max = LONG_MAX;
-@@ -1455,7 +1455,7 @@ static struct ctl_table vm_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= drop_caches_sysctl_handler,
- 		.extra1		= &one,
--		.extra2		= &four,
-+		.extra2		= &fifteen,
- 	},
- #ifdef CONFIG_COMPACTION
- 	{
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 58251ba63e4a..b3c5b64f9bfb 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -956,6 +956,50 @@ int kmem_cache_shrink(struct kmem_cache *cachep)
- }
- EXPORT_SYMBOL(kmem_cache_shrink);
- 
-+#ifdef CONFIG_MEMCG_KMEM
-+static void kmem_cache_shrink_memcg(struct mem_cgroup *memcg,
-+				    void __maybe_unused *arg)
-+{
-+	struct kmem_cache *s;
-+
-+	if (memcg == root_mem_cgroup)
-+		return;
-+	mutex_lock(&slab_mutex);
-+	list_for_each_entry(s, &memcg->kmem_caches,
-+			    memcg_params.kmem_caches_node) {
-+		kmem_cache_shrink(s);
-+	}
-+	mutex_unlock(&slab_mutex);
-+	cond_resched();
-+}
-+
-+/*
-+ * Shrink all the kmem caches.
-+ *
-+ * If there are a large number of memory cgroups outstanding, it may take
-+ * a while to shrink all of them. So we may need to release the lock, call
-+ * cond_resched() and reacquire the lock from time to time.
-+ */
-+void kmem_cache_shrink_all(void)
-+{
-+	struct kmem_cache *s;
-+
-+	/* Shrink all the root caches */
-+	mutex_lock(&slab_mutex);
-+	list_for_each_entry(s, &slab_root_caches, root_caches_node)
-+		kmem_cache_shrink(s);
-+	mutex_unlock(&slab_mutex);
-+	cond_resched();
-+
-+	/*
-+	 * Flush each of the memcg individually
-+	 */
-+	memcg_iterate_all(kmem_cache_shrink_memcg, NULL);
-+}
-+#else
-+void kmem_cache_shrink_all(void) { }
-+#endif
-+
- bool slab_is_available(void)
+diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
+index 93ea1d529aa3..7569770e6871 100644
+--- a/fs/gfs2/bmap.c
++++ b/fs/gfs2/bmap.c
+@@ -991,10 +991,13 @@ static void gfs2_write_unlock(struct inode *inode)
+ static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
+ 				   unsigned len, struct iomap *iomap)
  {
- 	return slab_state >= UP;
+-	unsigned int blockmask = i_blocksize(inode) - 1;
++	struct gfs2_inode *ip = GFS2_I(inode);
+ 	struct gfs2_sbd *sdp = GFS2_SB(inode);
+-	unsigned int blocks;
++	unsigned int blockmask, blocks;
+ 
++	if (!(gfs2_is_stuffed(ip) || gfs2_is_jdata(ip)))
++		return 0;
++	blockmask = i_blocksize(inode) - 1;
+ 	blocks = ((pos & blockmask) + len + blockmask) >> inode->i_blkbits;
+ 	return gfs2_trans_begin(sdp, RES_DINODE + blocks, 0);
+ }
+@@ -1005,10 +1008,33 @@ static void gfs2_iomap_page_done(struct inode *inode, loff_t pos,
+ {
+ 	struct gfs2_inode *ip = GFS2_I(inode);
+ 	struct gfs2_sbd *sdp = GFS2_SB(inode);
++	loff_t old_size;
++
++	if (!page)
++		goto out;
+ 
+-	if (page && !gfs2_is_stuffed(ip))
++	/*
++	 * Avoid calling __generic_write_end here to prevent mark_inode_dirty
++	 * from being called for each page: it's relatively expensive on gfs2,
++	 * so we defer that to gfs2_iomap_end.
++	 */
++	old_size = inode->i_size;
++	if (pos + copied > old_size) {
++		i_size_write(inode, pos + copied);
++		set_bit(GIF_SIZE_CHANGED, &ip->i_flags);
++	}
++
++	unlock_page(page);
++
++	if (old_size < pos)
++		pagecache_isize_extended(inode, old_size, pos);
++
++	if (gfs2_is_jdata(ip) && !gfs2_is_stuffed(ip))
+ 		gfs2_page_add_databufs(ip, page, offset_in_page(pos), copied);
+-	gfs2_trans_end(sdp);
++
++out:
++	if (current->journal_info)
++		gfs2_trans_end(sdp);
+ }
+ 
+ static const struct iomap_page_ops gfs2_iomap_page_ops = {
+@@ -1106,8 +1132,7 @@ static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
+ 		gfs2_trans_end(sdp);
+ 	}
+ 
+-	if (gfs2_is_stuffed(ip) || gfs2_is_jdata(ip))
+-		iomap->page_ops = &gfs2_iomap_page_ops;
++	iomap->page_ops = &gfs2_iomap_page_ops;
+ 	return 0;
+ 
+ out_trans_end:
+@@ -1160,6 +1185,11 @@ static int gfs2_iomap_end(struct inode *inode, loff_t pos, loff_t length,
+ 	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) != IOMAP_WRITE)
+ 		goto out;
+ 
++	if (test_bit(GIF_SIZE_CHANGED, &ip->i_flags)) {
++		clear_bit(GIF_SIZE_CHANGED, &ip->i_flags);
++		mark_inode_dirty(inode);
++	}
++
+ 	if (!gfs2_is_stuffed(ip))
+ 		gfs2_ordered_add_inode(ip);
+ 
+diff --git a/fs/gfs2/incore.h b/fs/gfs2/incore.h
+index c9af93ac6c73..9f620807b396 100644
+--- a/fs/gfs2/incore.h
++++ b/fs/gfs2/incore.h
+@@ -396,6 +396,7 @@ enum {
+ 	GIF_ORDERED		= 4,
+ 	GIF_FREE_VFS_INODE      = 5,
+ 	GIF_GLOP_PENDING	= 6,
++	GIF_SIZE_CHANGED	= 7,
+ };
+ 
+ struct gfs2_inode {
+diff --git a/fs/iomap.c b/fs/iomap.c
+index 12654c2e78f8..b5c761827966 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -788,9 +788,10 @@ iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
+ 		ret = __iomap_write_end(inode, pos, len, copied, page, iomap);
+ 	}
+ 
+-	__generic_write_end(inode, pos, ret, page);
+ 	if (page_ops && page_ops->page_done)
+-		page_ops->page_done(inode, pos, copied, page, iomap);
++		page_ops->page_done(inode, pos, ret, page, iomap);
++	else
++		__generic_write_end(inode, pos, ret, page);
+ 	put_page(page);
+ 
+ 	if (ret < len)
 -- 
-2.18.1
+2.20.1
 
