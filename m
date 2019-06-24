@@ -2,222 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 432C251E48
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 00:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73B4151E5F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 00:35:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbfFXWaT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 18:30:19 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:62916 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727139AbfFXWaS (ORCPT
+        id S1726523AbfFXWe5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 18:34:57 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:41856 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726397AbfFXWe5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 18:30:18 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OMIE4w000694
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2019 15:30:17 -0700
+        Mon, 24 Jun 2019 18:34:57 -0400
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x5OMWGaE031494;
+        Mon, 24 Jun 2019 15:34:31 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=1YmphlJ3H8jOCDJ7k4G2S7xvfsjoBsLcepmZ6MADQ8Y=;
- b=bDtECx7JjGTraAQgcG+LiSc0bC+DOB+jM2yn4IYkK2W7vzJreSCkFUik5nANicKPctGH
- GEVwBJchObVFymR3+HxGxfiY0ESoyufbZdV3sAYjbm4gpcIuIgq1f+GyrXDCCZutciMc
- 81z1y+YcZ+IWajUeJ1ItDgGTxIa7xRIEgMg= 
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=yWBoxyxrfYTIir4UEH96celI9RYHLQtE4HQNhnZk66U=;
+ b=Xn1zg9acwhVMIggUjNpahKyM/FblpDg4/syrSWuJzXKdSsWnL1sswR0yJmxQLWcNwblp
+ v8QpMWy/oDMQI/sYICcvrfnM+EQJwSDijUKIBddbubJqAhqStH0XvAd30W93iO8Bwcgd
+ nMamMzw52ZMmpD+BLcEfd1/jFfAKdSpy0ZQ= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2tb6j2g6a8-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2019 15:30:17 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+        by m0001303.ppops.net with ESMTP id 2t9g0ag9yu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 24 Jun 2019 15:34:30 -0700
+Received: from ash-exhub201.TheFacebook.com (2620:10d:c0a8:83::7) by
+ ash-exhub102.TheFacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 24 Jun 2019 15:30:16 -0700
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id E384862E206E; Mon, 24 Jun 2019 15:30:11 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
+ 15.1.1713.5; Mon, 24 Jun 2019 15:34:30 -0700
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Mon, 24 Jun 2019 15:34:30 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yWBoxyxrfYTIir4UEH96celI9RYHLQtE4HQNhnZk66U=;
+ b=fvm9/RRZAZTgW5ZivadEoUQ3Btkup/9riISQFC4TWBorfwIRs4+KTk3ZLJkJqlpGfZ2fCrmWuku6Ye52quoPOQFHwZE0VEFcuDU7fiWEX0+dxRG29ifdopyzLrVFaNuiifxHbTJD1XFexC9ILZGVN8TjmiBA7mU2sSNMtRynliQ=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1278.namprd15.prod.outlook.com (10.175.3.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Mon, 24 Jun 2019 22:34:29 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d%6]) with mapi id 15.20.2008.014; Mon, 24 Jun 2019
+ 22:34:29 +0000
 From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
-        <kernel-team@fb.com>, <william.kucharski@oracle.com>,
-        <akpm@linux-foundation.org>, <hdanton@sina.com>,
-        Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v8 6/6] mm,thp: avoid writes to file with THP in pagecache
-Date:   Mon, 24 Jun 2019 15:29:51 -0700
-Message-ID: <20190624222951.37076-7-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190624222951.37076-1-songliubraving@fb.com>
+To:     Linux-MM <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+CC:     "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "Kernel Team" <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hdanton@sina.com" <hdanton@sina.com>
+Subject: Re: [PATCH v8 0/6] Enable THP for text section of non-shmem files
+Thread-Topic: [PATCH v8 0/6] Enable THP for text section of non-shmem files
+Thread-Index: AQHVKtxbf9M9JYvZyE29Ijo3qgVrlqarZD2A
+Date:   Mon, 24 Jun 2019 22:34:29 +0000
+Message-ID: <D1AFAFC0-56BC-4865-A6B7-4AAF30315BE5@fb.com>
 References: <20190624222951.37076-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+In-Reply-To: <20190624222951.37076-1-songliubraving@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:200::2:78ae]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 385f32fd-e573-4d74-e130-08d6f8f41edd
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1278;
+x-ms-traffictypediagnostic: MWHPR15MB1278:
+x-microsoft-antispam-prvs: <MWHPR15MB1278173CE9FA972BD8B1538DB3E00@MWHPR15MB1278.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2803;
+x-forefront-prvs: 007814487B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(39860400002)(396003)(136003)(189003)(199004)(446003)(64756008)(66556008)(66946007)(46003)(66446008)(66476007)(6246003)(25786009)(6486002)(71200400001)(73956011)(5660300002)(2501003)(486006)(71190400001)(6436002)(53936002)(86362001)(229853002)(4326008)(6116002)(11346002)(99286004)(476003)(57306001)(68736007)(6512007)(76176011)(81166006)(558084003)(50226002)(8936002)(76116006)(53546011)(102836004)(81156014)(6506007)(8676002)(305945005)(2906002)(2616005)(186003)(7736002)(36756003)(33656002)(14454004)(256004)(316002)(110136005)(54906003)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1278;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ke8NFVkdEP/tsZAnqXnuLclSzNDtD23piJr2iRkbefFSxMAmDXPSsil5+/0MVlw7UoLD4PVIndjvDQtwGCriJFKkUteNAIOPIiIuyg+5Hh7DlVxcxKlQNtWfEC3iDZXNFctDynzd0ux/JFBuZk6BlLKo72sZOf7IhmqBADrGrhBgqcEX2yAIc/moEA5MXXdy+bsUQ8uXZlOVD31ayIyfBx/FTSzs4RRdvrAO6/l46AbtIIocfP36iU5Jfxw0VVUbCLHhXY7ELh/pNxy5WrOx7DR67f4CjeU6oTjsB+qWEPWTTf0xs7JBFSZTbbLbBhNad+1SDCvtpcNLR3MVdm24d4gUuL7TzFMjnPfgdHjsAA1ScqXuWTEWxqIjakmrB6UZz49xdrM/ZvMO9tJGmjiyufgh8efhEan+k3kIXWaYwpk=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2B3F7FBF4FEA4741B1BFDE92301624E8@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-Exchange-CrossTenant-Network-Message-Id: 385f32fd-e573-4d74-e130-08d6f8f41edd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2019 22:34:29.0497
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1278
+X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_15:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=804 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906240176
+ mlxlogscore=923 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240177
 X-FB-Internal: deliver
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In previous patch, an application could put part of its text section in
-THP via madvise(). These THPs will be protected from writes when the
-application is still running (TXTBSY). However, after the application
-exits, the file is available for writes.
 
-This patch avoids writes to file THP by dropping page cache for the file
-when the file is open for write. A new counter nr_thps is added to struct
-address_space. In do_last(), if the file is open for write and nr_thps
-is non-zero, we drop page cache for the whole file.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- fs/inode.c         |  2 ++
- fs/namei.c         | 23 ++++++++++++++++++++++-
- include/linux/fs.h | 28 ++++++++++++++++++++++++++++
- mm/filemap.c       |  1 +
- mm/khugepaged.c    |  4 +++-
- 5 files changed, 56 insertions(+), 2 deletions(-)
+> On Jun 24, 2019, at 3:29 PM, Song Liu <songliubraving@fb.com> wrote:
+>=20
+> Changes v7 =3D> v8:
+> 1. Use IS_ENABLED wherever possible (Kirill A. Shutemov);
 
-diff --git a/fs/inode.c b/fs/inode.c
-index df6542ec3b88..7f27a5fd147b 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -181,6 +181,8 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- 	mapping->flags = 0;
- 	mapping->wb_err = 0;
- 	atomic_set(&mapping->i_mmap_writable, 0);
-+	if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS))
-+		atomic_set(&mapping->nr_thps, 0);
- 	mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
- 	mapping->private_data = NULL;
- 	mapping->writeback_index = 0;
-diff --git a/fs/namei.c b/fs/namei.c
-index 20831c2fbb34..3d95e94029cc 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3249,6 +3249,23 @@ static int lookup_open(struct nameidata *nd, struct path *path,
- 	return error;
- }
- 
-+/*
-+ * The file is open for write, so it is not mmapped with VM_DENYWRITE. If
-+ * it still has THP in page cache, drop the whole file from pagecache
-+ * before processing writes. This helps us avoid handling write back of
-+ * THP for now.
-+ */
-+static inline void release_file_thp(struct file *file)
-+{
-+	if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS)) {
-+		struct inode *inode = file_inode(file);
-+
-+		if (inode_is_open_for_write(inode) &&
-+		    filemap_nr_thps(inode->i_mapping))
-+			truncate_pagecache(inode, 0);
-+	}
-+}
-+
- /*
-  * Handle the last step of open()
-  */
-@@ -3418,7 +3435,11 @@ static int do_last(struct nameidata *nd,
- 		goto out;
- opened:
- 	error = ima_file_check(file, op->acc_mode);
--	if (!error && will_truncate)
-+	if (error)
-+		goto out;
-+
-+	release_file_thp(file);
-+	if (will_truncate)
- 		error = handle_truncate(file);
- out:
- 	if (unlikely(error > 0)) {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f7fdfe93e25d..20443d63692e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -427,6 +427,7 @@ int pagecache_write_end(struct file *, struct address_space *mapping,
-  * @i_pages: Cached pages.
-  * @gfp_mask: Memory allocation flags to use for allocating pages.
-  * @i_mmap_writable: Number of VM_SHARED mappings.
-+ * @nr_thps: Number of THPs in the pagecache (non-shmem only).
-  * @i_mmap: Tree of private and shared mappings.
-  * @i_mmap_rwsem: Protects @i_mmap and @i_mmap_writable.
-  * @nrpages: Number of page entries, protected by the i_pages lock.
-@@ -444,6 +445,10 @@ struct address_space {
- 	struct xarray		i_pages;
- 	gfp_t			gfp_mask;
- 	atomic_t		i_mmap_writable;
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	/* number of thp, only for non-shmem files */
-+	atomic_t		nr_thps;
-+#endif
- 	struct rb_root_cached	i_mmap;
- 	struct rw_semaphore	i_mmap_rwsem;
- 	unsigned long		nrpages;
-@@ -2790,6 +2795,29 @@ static inline errseq_t filemap_sample_wb_err(struct address_space *mapping)
- 	return errseq_sample(&mapping->wb_err);
- }
- 
-+static inline int filemap_nr_thps(struct address_space *mapping)
-+{
-+	if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS))
-+		return atomic_read(&mapping->nr_thps);
-+	return 0;
-+}
-+
-+static inline void filemap_nr_thps_inc(struct address_space *mapping)
-+{
-+	if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS))
-+		atomic_inc(&mapping->nr_thps);
-+	else
-+		WARN_ON_ONCE(1);
-+}
-+
-+static inline void filemap_nr_thps_dec(struct address_space *mapping)
-+{
-+	if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS))
-+		atomic_dec(&mapping->nr_thps);
-+	else
-+		WARN_ON_ONCE(1);
-+}
-+
- extern int vfs_fsync_range(struct file *file, loff_t start, loff_t end,
- 			   int datasync);
- extern int vfs_fsync(struct file *file, int datasync);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index e79ceccdc6df..a8e86c136381 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -205,6 +205,7 @@ static void unaccount_page_cache_page(struct address_space *mapping,
- 			__dec_node_page_state(page, NR_SHMEM_THPS);
- 	} else if (PageTransHuge(page)) {
- 		__dec_node_page_state(page, NR_FILE_THPS);
-+		filemap_nr_thps_dec(mapping);
- 	}
- 
- 	/*
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index acbbbeaa083c..0bbc6be51197 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1503,8 +1503,10 @@ static void collapse_file(struct mm_struct *mm,
- 
- 	if (is_shmem)
- 		__inc_node_page_state(new_page, NR_SHMEM_THPS);
--	else
-+	else {
- 		__inc_node_page_state(new_page, NR_FILE_THPS);
-+		filemap_nr_thps_inc(mapping);
-+	}
- 
- 	if (nr_none) {
- 		struct zone *zone = page_zone(new_page);
--- 
-2.17.1
+I messed up with IS_ENABLED. Please ignore this version. v9 coming soon.
+
+Sorry for the noise.=20
+
+Song
 
