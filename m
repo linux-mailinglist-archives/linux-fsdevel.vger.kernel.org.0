@@ -2,225 +2,281 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C609751804
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 18:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7D2E51810
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2019 18:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731587AbfFXQG0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jun 2019 12:06:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47560 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727082AbfFXQG0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jun 2019 12:06:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 85038AE21;
-        Mon, 24 Jun 2019 16:06:24 +0000 (UTC)
-Subject: Re: [PATCH 09/12] xfs: refactor the ioend merging code
-To:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
+        id S1727813AbfFXQJA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jun 2019 12:09:00 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53918 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbfFXQJA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Jun 2019 12:09:00 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OFxEFo102550;
+        Mon, 24 Jun 2019 16:08:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=xaAR1E4Fxz0Cts7pE7vSewbijB30THeaBrz9cGPEzU0=;
+ b=EMnzYG7oVb8IMIJ3tAV/ebbrfMQwaICcRVmRJqEVySShYYAXJab8SE5BIv0/ICZTM31k
+ wrQah8bDuEvgoahnj7t1SGz5f3SOnUryh/N3bS/t7aBKfwEyTUAZZn2eG619q8DuKDHI
+ ZNa7vAMZXkGcpIBDK3tCFFK7yyL7Qu4nELk+xt+bsM0u4Q53GmSRhpbO3ZqSoEj4jKgM
+ C//Ig6G/Z85Up0BAdn0x0MbKWPV+vYYxZNhNlt0ZyTg2oWd/MWPk2eJU5W6tOGxyMM6n
+ qaXlZwFcRxPKM/WYG7SrRvNWX5wo9e8DaBxSvvYc20oTNJzmUnTpiCi2I1EAsDLMH/KH tA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2t9brsycdh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 16:08:42 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OG7oQP047075;
+        Mon, 24 Jun 2019 16:08:42 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2t99f3byvj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 16:08:41 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5OG8ec2030270;
+        Mon, 24 Jun 2019 16:08:40 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 24 Jun 2019 09:08:40 -0700
+Date:   Mon, 24 Jun 2019 09:08:39 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
 Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/12] xfs: remove the fork fields in the writepage_ctx
+ and ioend
+Message-ID: <20190624160839.GP5387@magnolia>
 References: <20190624055253.31183-1-hch@lst.de>
- <20190624055253.31183-10-hch@lst.de>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e42c54c4-4c64-8185-8ac3-cca38ad8e8a4@suse.com>
-Date:   Mon, 24 Jun 2019 19:06:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+ <20190624055253.31183-11-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20190624055253.31183-10-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624055253.31183-11-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906240129
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9298 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906240128
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 24.06.19 г. 8:52 ч., Christoph Hellwig wrote:
-> Introduce two nicely abstracted helper, which can be moved to the
-> iomap code later.  Also use list_pop and list_first_entry_or_null
-> to simplify the code a bit.
+On Mon, Jun 24, 2019 at 07:52:51AM +0200, Christoph Hellwig wrote:
+> In preparation for moving the writeback code to iomap.c, replace the
+> XFS-specific COW fork concept with the iomap IOMAP_F_SHARED flag.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
 > ---
->  fs/xfs/xfs_aops.c | 66 ++++++++++++++++++++++++++---------------------
->  1 file changed, 36 insertions(+), 30 deletions(-)
+>  fs/xfs/xfs_aops.c | 40 +++++++++++++++++++++-------------------
+>  fs/xfs/xfs_aops.h |  2 +-
+>  2 files changed, 22 insertions(+), 20 deletions(-)
 > 
 > diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index acbd73976067..5d302ebe2a33 100644
+> index 5d302ebe2a33..d9a7a9e6b912 100644
 > --- a/fs/xfs/xfs_aops.c
 > +++ b/fs/xfs/xfs_aops.c
-> @@ -121,6 +121,19 @@ xfs_destroy_ioend(
->  	}
->  }
->  
-> +static void
-> +xfs_destroy_ioends(
-> +	struct xfs_ioend	*ioend,
-> +	int			error)
-> +{
-> +	struct list_head	tmp;
-> +
-> +	list_replace_init(&ioend->io_list, &tmp);
-> +	xfs_destroy_ioend(ioend, error);
-> +	while ((ioend = list_pop(&tmp, struct xfs_ioend, io_list)))
-> +		xfs_destroy_ioend(ioend, error);
-
-nit: I'd prefer if the list_pop patch is right before this one since
-this is the first user of it. Additionally, I don't think list_pop is
-really a net-negative win in comparison to list_for_each_entry_safe
-here. In fact this "delete the list" would seems more idiomatic if
-implemented via list_for_each_entry_safe
-
-> +}
-> +
->  /*
->   * Fast and loose check if this write could update the on-disk inode size.
+> @@ -28,7 +28,6 @@
 >   */
-> @@ -173,7 +186,6 @@ xfs_end_ioend(
->  	struct xfs_ioend	*ioend)
->  {
->  	unsigned int		nofs_flag = memalloc_nofs_save();
-> -	struct list_head	ioend_list;
->  	struct xfs_inode	*ip = XFS_I(ioend->io_inode);
->  	xfs_off_t		offset = ioend->io_offset;
->  	size_t			size = ioend->io_size;
-> @@ -207,16 +219,7 @@ xfs_end_ioend(
->  	if (!error && xfs_ioend_is_append(ioend))
->  		error = xfs_setfilesize(ip, offset, size);
->  done:
-> -	list_replace_init(&ioend->io_list, &ioend_list);
-> -	xfs_destroy_ioend(ioend, error);
-> -
-> -	while (!list_empty(&ioend_list)) {
-> -		ioend = list_first_entry(&ioend_list, struct xfs_ioend,
-> -				io_list);
-> -		list_del_init(&ioend->io_list);
-> -		xfs_destroy_ioend(ioend, error);
-> -	}
-> -
-> +	xfs_destroy_ioends(ioend, error);
->  	memalloc_nofs_restore(nofs_flag);
->  }
->  
-> @@ -246,15 +249,16 @@ xfs_ioend_try_merge(
->  	struct xfs_ioend	*ioend,
->  	struct list_head	*more_ioends)
->  {
-> -	struct xfs_ioend	*next_ioend;
-> +	struct xfs_ioend	*next;
->  
-> -	while (!list_empty(more_ioends)) {
-> -		next_ioend = list_first_entry(more_ioends, struct xfs_ioend,
-> -				io_list);
-> -		if (!xfs_ioend_can_merge(ioend, next_ioend))
-> +	INIT_LIST_HEAD(&ioend->io_list);
-> +
-> +	while ((next = list_first_entry_or_null(more_ioends, struct xfs_ioend,
-> +			io_list))) {
-> +		if (!xfs_ioend_can_merge(ioend, next))
->  			break;
-> -		list_move_tail(&next_ioend->io_list, &ioend->io_list);
-> -		ioend->io_size += next_ioend->io_size;
-> +		list_move_tail(&next->io_list, &ioend->io_list);
-> +		ioend->io_size += next->io_size;
+>  struct xfs_writepage_ctx {
+>  	struct iomap		iomap;
+> -	int			fork;
+>  	unsigned int		data_seq;
+>  	unsigned int		cow_seq;
+>  	struct xfs_ioend	*ioend;
+> @@ -204,7 +203,7 @@ xfs_end_ioend(
+>  	 */
+>  	error = blk_status_to_errno(ioend->io_bio->bi_status);
+>  	if (unlikely(error)) {
+> -		if (ioend->io_fork == XFS_COW_FORK)
+> +		if (ioend->io_flags & IOMAP_F_SHARED)
+>  			xfs_reflink_cancel_cow_range(ip, offset, size, true);
+>  		goto done;
 >  	}
->  }
+> @@ -212,7 +211,7 @@ xfs_end_ioend(
+>  	/*
+>  	 * Success: commit the COW or unwritten blocks if needed.
+>  	 */
+> -	if (ioend->io_fork == XFS_COW_FORK)
+> +	if (ioend->io_flags & IOMAP_F_SHARED)
+>  		error = xfs_reflink_end_cow(ip, offset, size);
+>  	else if (ioend->io_type == IOMAP_UNWRITTEN)
+>  		error = xfs_iomap_write_unwritten(ip, offset, size, false);
+> @@ -233,7 +232,8 @@ xfs_ioend_can_merge(
+>  {
+>  	if (ioend->io_bio->bi_status != next->io_bio->bi_status)
+>  		return false;
+> -	if ((ioend->io_fork == XFS_COW_FORK) ^ (next->io_fork == XFS_COW_FORK))
+> +	if ((ioend->io_flags & IOMAP_F_SHARED) ^
+> +	    (next->io_flags & IOMAP_F_SHARED))
+>  		return false;
+>  	if ((ioend->io_type == IOMAP_UNWRITTEN) ^
+>  	    (next->io_type == IOMAP_UNWRITTEN))
+> @@ -319,7 +319,7 @@ xfs_end_bio(
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	unsigned long		flags;
 >  
-> @@ -277,29 +281,31 @@ xfs_ioend_compare(
+> -	if (ioend->io_fork == XFS_COW_FORK ||
+> +	if ((ioend->io_flags & IOMAP_F_SHARED) ||
+>  	    ioend->io_type == IOMAP_UNWRITTEN ||
+>  	    xfs_ioend_is_append(ioend)) {
+>  		spin_lock_irqsave(&ip->i_ioend_lock, flags);
+> @@ -350,7 +350,7 @@ xfs_imap_valid(
+>  	 * covers the offset. Be careful to check this first because the caller
+>  	 * can revalidate a COW mapping without updating the data seqno.
+>  	 */
+> -	if (wpc->fork == XFS_COW_FORK)
+> +	if (wpc->iomap.flags & IOMAP_F_SHARED)
+>  		return true;
+>  
+>  	/*
+> @@ -380,6 +380,7 @@ static int
+>  xfs_convert_blocks(
+>  	struct xfs_writepage_ctx *wpc,
+>  	struct xfs_inode	*ip,
+> +	int			whichfork,
+>  	loff_t			offset)
+>  {
+>  	int			error;
+> @@ -391,8 +392,8 @@ xfs_convert_blocks(
+>  	 * delalloc extent if free space is sufficiently fragmented.
+>  	 */
+>  	do {
+> -		error = xfs_bmapi_convert_delalloc(ip, wpc->fork, offset,
+> -				&wpc->iomap, wpc->fork == XFS_COW_FORK ?
+> +		error = xfs_bmapi_convert_delalloc(ip, whichfork, offset,
+> +				&wpc->iomap, whichfork == XFS_COW_FORK ?
+>  					&wpc->cow_seq : &wpc->data_seq);
+>  		if (error)
+>  			return error;
+> @@ -413,6 +414,7 @@ xfs_map_blocks(
+>  	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
+>  	xfs_fileoff_t		end_fsb = XFS_B_TO_FSB(mp, offset + count);
+>  	xfs_fileoff_t		cow_fsb = NULLFILEOFF;
+> +	int			whichfork = XFS_DATA_FORK;
+>  	struct xfs_bmbt_irec	imap;
+>  	struct xfs_iext_cursor	icur;
+>  	int			retries = 0;
+> @@ -461,7 +463,7 @@ xfs_map_blocks(
+>  		wpc->cow_seq = READ_ONCE(ip->i_cowfp->if_seq);
+>  		xfs_iunlock(ip, XFS_ILOCK_SHARED);
+>  
+> -		wpc->fork = XFS_COW_FORK;
+> +		whichfork = XFS_COW_FORK;
+>  		goto allocate_blocks;
+>  	}
+>  
+> @@ -484,8 +486,6 @@ xfs_map_blocks(
+>  	wpc->data_seq = READ_ONCE(ip->i_df.if_seq);
+>  	xfs_iunlock(ip, XFS_ILOCK_SHARED);
+>  
+> -	wpc->fork = XFS_DATA_FORK;
+> -
+>  	/* landed in a hole or beyond EOF? */
+>  	if (imap.br_startoff > offset_fsb) {
+>  		imap.br_blockcount = imap.br_startoff - offset_fsb;
+> @@ -510,10 +510,10 @@ xfs_map_blocks(
+>  		goto allocate_blocks;
+>  
+>  	xfs_bmbt_to_iomap(ip, &wpc->iomap, &imap, 0);
+> -	trace_xfs_map_blocks_found(ip, offset, count, wpc->fork, &imap);
+> +	trace_xfs_map_blocks_found(ip, offset, count, whichfork, &imap);
+>  	return 0;
+>  allocate_blocks:
+> -	error = xfs_convert_blocks(wpc, ip, offset);
+> +	error = xfs_convert_blocks(wpc, ip, whichfork, offset);
+>  	if (error) {
+>  		/*
+>  		 * If we failed to find the extent in the COW fork we might have
+> @@ -522,7 +522,8 @@ xfs_map_blocks(
+>  		 * the former case, but prevent additional retries to avoid
+>  		 * looping forever for the latter case.
+>  		 */
+> -		if (error == -EAGAIN && wpc->fork == XFS_COW_FORK && !retries++)
+> +		if (error == -EAGAIN && (wpc->iomap.flags & IOMAP_F_SHARED) &&
+> +		    !retries++)
+>  			goto retry;
+>  		ASSERT(error != -EAGAIN);
+>  		return error;
+> @@ -533,7 +534,7 @@ xfs_map_blocks(
+>  	 * original delalloc one.  Trim the return extent to the next COW
+>  	 * boundary again to force a re-lookup.
+>  	 */
+> -	if (wpc->fork != XFS_COW_FORK && cow_fsb != NULLFILEOFF) {
+> +	if (!(wpc->iomap.flags & IOMAP_F_SHARED) && cow_fsb != NULLFILEOFF) {
+>  		loff_t		cow_offset = XFS_FSB_TO_B(mp, cow_fsb);
+>  
+>  		if (cow_offset < wpc->iomap.offset + wpc->iomap.length)
+> @@ -542,7 +543,7 @@ xfs_map_blocks(
+>  
+>  	ASSERT(wpc->iomap.offset <= offset);
+>  	ASSERT(wpc->iomap.offset + wpc->iomap.length > offset);
+> -	trace_xfs_map_blocks_alloc(ip, offset, count, wpc->fork, &imap);
+> +	trace_xfs_map_blocks_alloc(ip, offset, count, whichfork, &imap);
 >  	return 0;
 >  }
 >  
-> +static void
-> +xfs_sort_ioends(
-> +	struct list_head	*ioend_list)
-> +{
-> +	list_sort(NULL, ioend_list, xfs_ioend_compare);
-> +}
-> +
->  /* Finish all pending io completions. */
->  void
->  xfs_end_io(
->  	struct work_struct	*work)
+> @@ -567,7 +568,7 @@ xfs_submit_ioend(
+>  	int			status)
 >  {
-> -	struct xfs_inode	*ip;
-> +	struct xfs_inode	*ip =
-> +		container_of(work, struct xfs_inode, i_ioend_work);
->  	struct xfs_ioend	*ioend;
-> -	struct list_head	completion_list;
-> +	struct list_head	tmp;
->  	unsigned long		flags;
+>  	/* Convert CoW extents to regular */
+> -	if (!status && ioend->io_fork == XFS_COW_FORK) {
+> +	if (!status && (ioend->io_flags & IOMAP_F_SHARED)) {
+>  		/*
+>  		 * Yuk. This can do memory allocation, but is not a
+>  		 * transactional operation so everything is done in GFP_KERNEL
+> @@ -621,8 +622,8 @@ xfs_alloc_ioend(
 >  
-> -	ip = container_of(work, struct xfs_inode, i_ioend_work);
-> -
->  	spin_lock_irqsave(&ip->i_ioend_lock, flags);
-> -	list_replace_init(&ip->i_ioend_list, &completion_list);
-> +	list_replace_init(&ip->i_ioend_list, &tmp);
->  	spin_unlock_irqrestore(&ip->i_ioend_lock, flags);
+>  	ioend = container_of(bio, struct xfs_ioend, io_inline_bio);
+>  	INIT_LIST_HEAD(&ioend->io_list);
+> -	ioend->io_fork = wpc->fork;
+>  	ioend->io_type = wpc->iomap.type;
+> +	ioend->io_flags = wpc->iomap.flags;
+>  	ioend->io_inode = inode;
+>  	ioend->io_size = 0;
+>  	ioend->io_offset = offset;
+> @@ -676,7 +677,8 @@ xfs_add_to_ioend(
+>  	sector = (wpc->iomap.addr + offset - wpc->iomap.offset) >> 9;
 >  
-> -	list_sort(NULL, &completion_list, xfs_ioend_compare);
-> -
-> -	while (!list_empty(&completion_list)) {
-> -		ioend = list_first_entry(&completion_list, struct xfs_ioend,
-> -				io_list);
-> -		list_del_init(&ioend->io_list);
-> -		xfs_ioend_try_merge(ioend, &completion_list);
-> +	xfs_sort_ioends(&tmp);
-> +	while ((ioend = list_pop(&tmp, struct xfs_ioend, io_list))) {
-> +		xfs_ioend_try_merge(ioend, &tmp);
->  		xfs_end_ioend(ioend);
-
-Here again, tmp is a local copy that is immutable so using while()
-instead of list_for_each_entry_safe doesn't seem to be providing much.
-
->  	}
->  }
+>  	if (!wpc->ioend ||
+> -	    wpc->fork != wpc->ioend->io_fork ||
+> +	    (wpc->iomap.flags & IOMAP_F_SHARED) !=
+> +	    (wpc->ioend->io_flags & IOMAP_F_SHARED) ||
+>  	    wpc->iomap.type != wpc->ioend->io_type ||
+>  	    sector != bio_end_sector(wpc->ioend->io_bio) ||
+>  	    offset != wpc->ioend->io_offset + wpc->ioend->io_size) {
+> diff --git a/fs/xfs/xfs_aops.h b/fs/xfs/xfs_aops.h
+> index 23c087f0bcbf..bf95837c59af 100644
+> --- a/fs/xfs/xfs_aops.h
+> +++ b/fs/xfs/xfs_aops.h
+> @@ -13,8 +13,8 @@ extern struct bio_set xfs_ioend_bioset;
+>   */
+>  struct xfs_ioend {
+>  	struct list_head	io_list;	/* next ioend in chain */
+> -	int			io_fork;	/* inode fork written back */
+>  	u16			io_type;
+> +	u16			io_flags;
+>  	struct inode		*io_inode;	/* file being written to */
+>  	size_t			io_size;	/* size of the extent */
+>  	xfs_off_t		io_offset;	/* offset in the file */
+> -- 
+> 2.20.1
 > 
