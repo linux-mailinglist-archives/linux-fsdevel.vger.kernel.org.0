@@ -2,301 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C054558D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 22:28:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93171558FB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 22:37:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726420AbfFYU2q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jun 2019 16:28:46 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34550 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbfFYU2h (ORCPT
+        id S1726934AbfFYUho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jun 2019 16:37:44 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37604 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfFYUhn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jun 2019 16:28:37 -0400
-Received: by mail-pf1-f193.google.com with SMTP id c85so18692pfc.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2019 13:28:37 -0700 (PDT)
+        Tue, 25 Jun 2019 16:37:43 -0400
+Received: by mail-pl1-f195.google.com with SMTP id bh12so82006plb.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2019 13:37:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qq39ykktkvFBpmzRtbgM4tstWpOedFNE8kr26lh/InM=;
-        b=ni94OwioZx/gzf2szVloCDZTFFpJCo2YKSFZ2X9qr6bxYnBeEpnnagfszyXnnz51L8
-         DkJXaethFUsoHnz8KOQVG2ZSAlP6R4YiehiVV+cY7fw97Xus3XNQzLPLdgQULmgYaWnL
-         GEAS55DRith5+cQIVd4nDD9PnOpK5SEC0mcAjXyMYNE83XKQ2Jfbx9GzYoD6pnR9q88y
-         VjAnVY+gy9KsY/4+Tbda/+4DRlDyvSks4s9chgBxuZrKHnC3t/s2Oqm9eCfJpWO+nPcJ
-         ixgXgEVA9P9D5QKdeUq3VIirHZ16lxLB0iDdlrfqM9fruDTYYR+l+8zODcodp3flRnlv
-         dArA==
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=k9wVBI3MNSxJVQhODLuSRbOf+SmT1l1K5RRF5+DdhGM=;
+        b=i0tlux+8FNEu0ugkEvUUlD4zKy+jo4LmPTngoA6r4KZwHDBk4l5v9aHPUQEnX49/5g
+         z/5lU03hiGUesQ1zP/lPDO/M9fU515Y8oNEl0EKjwdC7dNyZmZQEQEJzGU548pSrAizw
+         AlBCGdOUNg8gVK9FeesIiFWJzJ6YbgT5nrsBvzAUmh99yf7q8hQlgwIm8HPdOmToZugA
+         nEmrM6blVwgyo7dN5eFPje1f1HwAtA+5XwodCP1ntkD5mvR/FwjSqB5AJn7YMTtfEeor
+         5bhYLcubsCaGOlgF0onarHD40ER7JyKcO4a/eslTTHQKCN3GB1Tra4WgBV7T6KYa0chE
+         ps9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qq39ykktkvFBpmzRtbgM4tstWpOedFNE8kr26lh/InM=;
-        b=s3/iJvczWC1t1mcSAVrFFP5oPNSrdXcgiBppgRSCFQ8Lcl0gSUrSJNN5yQ60nSs4ei
-         te2tv5o3YAmeEghhLAGrL96yTAH9Ce+bJoXuxZFV7QIQTtQJjelXADBQfpketh4WJ7mM
-         s2yJ/Q2Lhl7iUG6bwqyuyMvVk1Z0ljITm/4igSFYXhK8t6ySon2nhA6oY2aq5riGeykw
-         tz9msakdhEw/I17I8Wp4yi7G8iWjwZPYGmar0z5iEtMTy0a71aFFM+10mz9TvfAUFHvs
-         lwPUq/buDCn4HR7bv6dKuTd03A1wM6re7Ts4HvMOf9TULgepaVzZTldMekg+nMLOluY1
-         lp8w==
-X-Gm-Message-State: APjAAAWt06gXPrWIPeGoKsYhYdJ0iTUyhMV9LEJov4DhDGHJzHl3Lvyi
-        B00SusNSO2px6hpPtVgGZUUa1LKb7hG8h9ZCLIUI3g==
-X-Google-Smtp-Source: APXvYqzvk20XXdVFtm6zl0X1nrjaH0TttItfcdP9iwaQ+JKQIeNhKF1pa7VSVvlXNPpMAUzP/tv1oR2JBEXuSnWnLw4=
-X-Received: by 2002:a17:90b:f0e:: with SMTP id br14mr754020pjb.117.1561494516332;
- Tue, 25 Jun 2019 13:28:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190617082613.109131-1-brendanhiggins@google.com>
- <20190617082613.109131-2-brendanhiggins@google.com> <20190620001526.93426218BE@mail.kernel.org>
-In-Reply-To: <20190620001526.93426218BE@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 25 Jun 2019 13:28:25 -0700
-Message-ID: <CAFd5g46Jhxsz6_VXHEVYvTeDRwwzgKpr=aUWLL5b3S4kUukb8g@mail.gmail.com>
-Subject: Re: [PATCH v5 01/18] kunit: test: add KUnit test runner core
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=k9wVBI3MNSxJVQhODLuSRbOf+SmT1l1K5RRF5+DdhGM=;
+        b=myA8gYDtklerAhbcotYFYi02ZXZPRtqSDdA43q+77iL/Ylf2CA695jsZhlDMhfwbux
+         qJTUETGcqmTDFzuu2r1lgNuupn8ma6SXm6Vi/Ip2pY6AR5HlWxA/1XoZRuicrWyw1cW3
+         EfHC2WQlcQXrtLONkUuU2/wNOs7+5OSgMUWCeVRYFdF3RcPrpW5KfMhMAmPUpGqBJ6gb
+         8JjagviMvdgmvKVjliJCbVc0Xus5U07+g4LU9qGfeaKiBP++Sr4b+pTSQYRPLxYKzJVC
+         M+rqV4X+VKZNC4jhOWXj65y+faAzGqUw+xOjee+Ay1FOMQexh+wadM2+25PxQyyZS/Ot
+         P/gg==
+X-Gm-Message-State: APjAAAUpaG2SsOulzODepf/7ttNmttsD5N35tIvswi2C+fU80p4cGWSO
+        P/Yl7F+eITwcjYz7N+x9qEpzTw==
+X-Google-Smtp-Source: APXvYqxrr/uL0yeWv0l0AFEkJ0fiuFxZszwvIRMBTgsPNJXwasc7ZXW/q9+Il/kiADkCo486i0NA9w==
+X-Received: by 2002:a17:902:f216:: with SMTP id gn22mr690564plb.118.1561495062448;
+        Tue, 25 Jun 2019 13:37:42 -0700 (PDT)
+Received: from cabot.adilger.ext (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id m4sm4145961pff.108.2019.06.25.13.37.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Jun 2019 13:37:41 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <E84C8EBC-8341-49E5-8EED-0980D158CD50@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_D22B91A1-39DB-42F5-937D-A1034700DAE0";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v4 0/7] vfs: make immutable files actually immutable
+Date:   Tue, 25 Jun 2019 14:37:37 -0600
+In-Reply-To: <20190625180326.GC2230847@magnolia>
+Cc:     Christoph Hellwig <hch@infradead.org>, matthew.garrett@nebula.com,
+        yuchao0@huawei.com, Theodore Ts'o <tytso@mit.edu>,
+        ard.biesheuvel@linaro.org, Josef Bacik <josef@toxicpanda.com>,
+        Chris Mason <clm@fb.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.com>, dsterba@suse.com,
+        Jaegeuk Kim <jaegeuk@kernel.org>, jk@ozlabs.org,
+        reiserfs-devel@vger.kernel.org, linux-efi@vger.kernel.org,
+        devel@lists.orangefs.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, linux-nilfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+References: <156116141046.1664939.11424021489724835645.stgit@magnolia>
+ <20190625103631.GB30156@infradead.org> <20190625180326.GC2230847@magnolia>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 5:15 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Brendan Higgins (2019-06-17 01:25:56)
-> > diff --git a/kunit/test.c b/kunit/test.c
-> > new file mode 100644
-> > index 0000000000000..d05d254f1521f
-> > --- /dev/null
-> > +++ b/kunit/test.c
-> > @@ -0,0 +1,210 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Base unit test (KUnit) API.
-> > + *
-> > + * Copyright (C) 2019, Google LLC.
-> > + * Author: Brendan Higgins <brendanhiggins@google.com>
-> > + */
-> > +
-> > +#include <linux/sched/debug.h>
-> > +#include <kunit/test.h>
-> > +
-> > +static bool kunit_get_success(struct kunit *test)
-> > +{
-> > +       unsigned long flags;
-> > +       bool success;
-> > +
-> > +       spin_lock_irqsave(&test->lock, flags);
-> > +       success = test->success;
-> > +       spin_unlock_irqrestore(&test->lock, flags);
->
-> I still don't understand the locking scheme in this code. Is the
-> intention to make getter and setter APIs that are "safe" by adding in a
-> spinlock that is held around getting and setting various members in the
-> kunit structure?
 
-Yes, your understanding is correct. It is possible for a user to write
-a test such that certain elements may be updated in different threads;
-this would most likely happen in the case where someone wants to make
-an assertion or an expectation in a thread created by a piece of code
-under test. Although this should generally be avoided, it is possible,
-and there are occasionally good reasons to do so, so it is
-functionality that we should support.
+--Apple-Mail=_D22B91A1-39DB-42F5-937D-A1034700DAE0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-Do you think I should add a comment to this effect?
+On Jun 25, 2019, at 12:03 PM, Darrick J. Wong <darrick.wong@oracle.com> =
+wrote:
+>=20
+> On Tue, Jun 25, 2019 at 03:36:31AM -0700, Christoph Hellwig wrote:
+>> On Fri, Jun 21, 2019 at 04:56:50PM -0700, Darrick J. Wong wrote:
+>>> Hi all,
+>>>=20
+>>> The chattr(1) manpage has this to say about the immutable bit that
+>>> system administrators can set on files:
+>>>=20
+>>> "A file with the 'i' attribute cannot be modified: it cannot be =
+deleted
+>>> or renamed, no link can be created to this file, most of the file's
+>>> metadata can not be modified, and the file can not be opened in =
+write
+>>> mode."
+>>>=20
+>>> Given the clause about how the file 'cannot be modified', it is
+>>> surprising that programs holding writable file descriptors can =
+continue
+>>> to write to and truncate files after the immutable flag has been =
+set,
+>>> but they cannot call other things such as utimes, fallocate, unlink,
+>>> link, setxattr, or reflink.
+>>=20
+>> I still think living code beats documentation.  And as far as I can
+>> tell the immutable bit never behaved as documented or implemented
+>> in this series on Linux, and it originated on Linux.
+>=20
+> The behavior has never been consistent -- since the beginning you can
+> keep write()ing to a fd after the file becomes immutable, but you =
+can't
+> ftruncate() it.  I would really like to make the behavior consistent.
+> Since the authors of nearly every new system call and ioctl since the
+> late 1990s have interpreted S_IMMUTABLE to mean "immutable takes =
+effect
+> everywhere immediately" I resolved the inconsistency in favor of that
+> interpretation.
+>=20
+> I asked Ted what he thought that that userspace having the ability to
+> continue writing to an immutable file, and he thought it was an
+> implementation bug that had been there for 25 years.  Even he thought
+> that immutable should take effect immediately everywhere.
+>=20
+>> If you want  hard cut off style immutable flag it should really be a
+>> new API, but I don't really see the point.  It isn't like the usual
+>> workload is to set the flag on a file actively in use.
+>=20
+> FWIW Ted also thought that since it's rare for admins to set +i on a
+> file actively in use we could just change it without forcing everyone
+> onto a new api.
 
-> In what situation is there more than one thread reading or writing the
-> kunit struct? Isn't it only a single process that is going to be
+On the flip side, it is possible to continue to write to an open fd
+after removing the write permission, and this is a problem we've hit
+in the real world with NFS export, so real applications do this.
 
-As I said above, it is possible that the code under test may spawn a
-new thread that may make an expectation or an assertion. It is not a
-super common use case, but it is possible.
+It may be the same case with immutable files, where an application sets
+the immutable flag immediately after creation, but continues to write
+until it closes the file, so that the file can't be modified by other
+processes, and there isn't a risk that the file is missing the immutable
+flag if the writing process dies before setting it at the end.
 
-> operating on this structure? And why do we need to disable irqs? Are we
-> expecting to be modifying the unit tests from irq contexts?
+Cheers, Andreas
 
-There are instances where someone may want to test a driver which has
-an interrupt handler in it. I actually have (not the greatest) example
-here. Now in these cases, I expect someone to use a mock irqchip or
-some other fake mechanism to trigger the interrupt handler and not
-actual hardware; technically speaking in this case, it is not going to
-be accessed from a "real" irq context; however, the code under test
-should think that it is in an irq context; given that, I figured it is
-best to just treat it as a real irq context. Does that make sense?
 
-> > +
-> > +       return success;
-> > +}
-> > +
-> > +static void kunit_set_success(struct kunit *test, bool success)
-> > +{
-> > +       unsigned long flags;
-> > +
-> > +       spin_lock_irqsave(&test->lock, flags);
-> > +       test->success = success;
-> > +       spin_unlock_irqrestore(&test->lock, flags);
-> > +}
-> > +
-> > +static int kunit_vprintk_emit(int level, const char *fmt, va_list args)
-> > +{
-> > +       return vprintk_emit(0, level, NULL, 0, fmt, args);
-> > +}
-> > +
-> > +static int kunit_printk_emit(int level, const char *fmt, ...)
-> > +{
-> > +       va_list args;
-> > +       int ret;
-> > +
-> > +       va_start(args, fmt);
-> > +       ret = kunit_vprintk_emit(level, fmt, args);
-> > +       va_end(args);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static void kunit_vprintk(const struct kunit *test,
-> > +                         const char *level,
-> > +                         struct va_format *vaf)
-> > +{
-> > +       kunit_printk_emit(level[1] - '0', "\t# %s: %pV", test->name, vaf);
-> > +}
-> > +
-> > +static bool kunit_has_printed_tap_version;
->
-> Can you please move this into function local scope in the function
-> below?
 
-Sure, that makes sense.
 
-> > +
-> > +static void kunit_print_tap_version(void)
-> > +{
-> > +       if (!kunit_has_printed_tap_version) {
-> > +               kunit_printk_emit(LOGLEVEL_INFO, "TAP version 14\n");
-> > +               kunit_has_printed_tap_version = true;
-> > +       }
-> > +}
-> > +
-> [...]
-> > +
-> > +static bool kunit_module_has_succeeded(struct kunit_module *module)
-> > +{
-> > +       const struct kunit_case *test_case;
-> > +       bool success = true;
-> > +
-> > +       for (test_case = module->test_cases; test_case->run_case; test_case++)
-> > +               if (!test_case->success) {
-> > +                       success = false;
-> > +                       break;
->
-> Why not 'return false'?
 
-Also a good point. Will fix.
 
-> > +               }
-> > +
-> > +       return success;
->
-> And 'return true'?
+--Apple-Mail=_D22B91A1-39DB-42F5-937D-A1034700DAE0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
-Will fix.
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
 
-> > +}
-> > +
-> > +static size_t kunit_module_counter = 1;
-> > +
-> > +static void kunit_print_subtest_end(struct kunit_module *module)
-> > +{
-> > +       kunit_print_ok_not_ok(false,
-> > +                             kunit_module_has_succeeded(module),
-> > +                             kunit_module_counter++,
-> > +                             module->name);
-> > +}
-> > +
-> > +static void kunit_print_test_case_ok_not_ok(struct kunit_case *test_case,
-> > +                                           size_t test_number)
-> > +{
-> > +       kunit_print_ok_not_ok(true,
-> > +                             test_case->success,
-> > +                             test_number,
-> > +                             test_case->name);
-> > +}
-> > +
-> > +void kunit_init_test(struct kunit *test, const char *name)
-> > +{
-> > +       spin_lock_init(&test->lock);
-> > +       test->name = name;
-> > +       test->success = true;
-> > +}
-> > +
-> > +/*
-> > + * Performs all logic to run a test case.
-> > + */
-> > +static void kunit_run_case(struct kunit_module *module,
-> > +                          struct kunit_case *test_case)
-> > +{
-> > +       struct kunit test;
-> > +       int ret = 0;
-> > +
-> > +       kunit_init_test(&test, test_case->name);
-> > +
-> > +       if (module->init) {
-> > +               ret = module->init(&test);
-> > +               if (ret) {
-> > +                       kunit_err(&test, "failed to initialize: %d\n", ret);
-> > +                       kunit_set_success(&test, false);
-> > +                       return;
-> > +               }
-> > +       }
-> > +
-> > +       if (!ret)
-> > +               test_case->run_case(&test);
->
-> Do we need this if condition? ret can only be set to non-zero above but
-> then we'll exit the function early so it seems unnecessary. Given that,
-> ret should probably be moved into the module->init path.
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl0ShhEACgkQcqXauRfM
+H+CbrRAAps35LK3poNlahSXPmgZ5tD+3nAlaeG8JU1XTggnEeHdAHY7wdK713thT
+OumdwU7nj1s+0ngxeUxPU/ZVWyuL2LjugpWEfw8lf0N/16hoTIUPBAe7kXce3jb+
+eg72QT36y1srscGQ/95rv/DPfelxzC7WiVYV7ZHIIF2Cq31B34cZ7GF0zpi6oZSH
+RKioHBOX1Qez1CksvAevhtSGf9e0dF1hNx7gyoVFnGb5V72P7WGGQqWSW4nSJvMe
+xhzkT0wLU28MioHsIcnqwnZJdvCb66Z1FGvAwsNItELe2tch4JzZjVR5sbq/g0+Q
+CpDZk350WiKaFzo9m1TO2Eiiog2vS1bqO+hZuwf7jPqcfIa6Tu9BdCx9U/bKp/rN
+sEtDj+p4qnjTCX2ggozPxye92wzhbF2o25jjoofBh9x9ShQ3GAc/gaTxcR9fpuWJ
+UmMwXwKMVXP/kvBaclrbz/zxaeo3ga7z3mFGgzxU6we9M5x1Lo+ppFxRpEPMIVkW
+LUEIQ4emE6yqzOWLWH6iPnxly9Jtzye3jsiq6s7RPPUGHn1/SCdhVZG130vKEpkC
+IcSmmJGlhPcI8wJ5/gwhAoxm9yLa+t0oH/Y6HUoNc722A3sCVRV5JWoHuK9MKBDK
+IPKKud+iKoNON0zr28k4iNyK1XAO+7yAqjfBAmdm0grbW/nItxg=
+=YBbV
+-----END PGP SIGNATURE-----
 
-Whoops. Sorry, another instance of how it evolved over time and I
-forgot why I did the check. Will fix.
-
-> > +
-> > +       if (module->exit)
-> > +               module->exit(&test);
-> > +
-> > +       test_case->success = kunit_get_success(&test);
-> > +}
-> > +
-
-Thanks!
+--Apple-Mail=_D22B91A1-39DB-42F5-937D-A1034700DAE0--
