@@ -2,222 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE2865280E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 11:27:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CA7C5281F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 11:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731507AbfFYJ1d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jun 2019 05:27:33 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43415 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727172AbfFYJ1d (ORCPT
+        id S1731471AbfFYJbp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jun 2019 05:31:45 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38836 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728506AbfFYJbm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jun 2019 05:27:33 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p13so16992649wru.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2019 02:27:30 -0700 (PDT)
+        Tue, 25 Jun 2019 05:31:42 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d18so17045175wrs.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2019 02:31:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=6Tqn0XsSi/4YD7ZlmU6wfa+zp1PqcP2Zu3pbhFPe06Y=;
-        b=ZaCvQomp0Io9vi4ZQxZAI892vL67TiTgJ1AmlbxDYvNjhjAzndgJ2+aZLubYypJv9D
-         K83aDzBwjlNZ3oeNggC1kAHrANbVPk2hifGf05mIr8f2IYXk7T75GMbCdW6VM5vWWGn+
-         yX3deTetWPzW+cwfuXamZj9woRBXunzN5EDUwz/mnLYLofVyuV8PWH13wzm6Moi3LWd6
-         +sL43lCKuIU1Zyf1jA+GdU1mYvIz89SgeXOdBaQCmKINbJzw5s4VTrMY2x5LAeEnWf5A
-         6wz3Tu0ZxqfxrnyKP/ntDm1MgAudwYPyY/slB1Kpc1o1vw/1IFciGLEfPp0VTgOSUz1m
-         jfvg==
+        bh=Toj+LJIB4PKggH1iYkdWD6WYjNSZkZdJZmfKxIdgNOM=;
+        b=biXWqakyslc/OXZwQ+Upfk9PMvx5lMCOSMIB9fOiT62/BwStJIEMD8hhIZj64MC0iE
+         R+eAmt4ZBd4HuMpLGKvl8S1MyHBeUXhkemkQPn4vbEzZkbQg9NB89HDEsZfolFZoSwQM
+         kq7QCAlLW1Zsar5w4f6WMp6HbV2Lez1WCwh9/MdwukTSm4jTDcCJGDi0R3j0192Rrlu1
+         44Yqs6Prjl0MKH9QYjBdWb9s1g/bnJYImDb8HU8SqasCKChi/efEoWsGE/FLjEgGi3k2
+         WGBCIlsap9oBn2dTHFkdkLFb0ijKBsJHiyG3srWMby0xQf1hMq+CirMTZJhYCegyludE
+         NEFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6Tqn0XsSi/4YD7ZlmU6wfa+zp1PqcP2Zu3pbhFPe06Y=;
-        b=XilKCtPhYgRzt6QKho51/2WAjvqsMrgDNGVn3ASVwyYkEvDVI3usi043+l9UvCRTVV
-         ZxCYQvrpa6s1CuJFBEIn2tt44KMh0k1KpyntRcmg8cCsAH1YUvgrhBG3Rla1mkSaz6A7
-         mtgx1yRfwwUUv6scA1eRNorKMeg5lp4fD/5yFi0jFGQPp1HgEE56fUZHw5eAK+HXDFOL
-         N9Z2XjJqxHBcA7gvQ7pGWuD0Cq25zUj0+1jPYb72ZesffabNS3CdJ3Kn4BAOCEjFm9zw
-         1oxo0JFIb9qpzLDBf0I8LJ9XqxI+8jDxRpB8LiArnxu2WiGkgTz2F2d6ivx8D9Nfwb5I
-         DgKg==
-X-Gm-Message-State: APjAAAXRY12AsZVOLAuxKoJfaijmKhjGDAxqn1RYYKduXdIyhAaLsWVV
-        lPafxA6JMx1eRN/4QxK/7eumZg==
-X-Google-Smtp-Source: APXvYqyVlnUPQN5LnTAef8GBwr27xOaXhu/vlrP3sS/cKVrRf93EqtxK+8tUlR277cKY1O/giCg7TQ==
-X-Received: by 2002:a5d:5542:: with SMTP id g2mr37429818wrw.232.1561454849774;
-        Tue, 25 Jun 2019 02:27:29 -0700 (PDT)
+        bh=Toj+LJIB4PKggH1iYkdWD6WYjNSZkZdJZmfKxIdgNOM=;
+        b=ulFQD6QQcUALEe/cxFWdH/MGlm0Bo3hKQzHhlv5zkCP/xhY2TIuz+Tusznnr+OfvYX
+         BR+NhZtoCk9WfKIN2taIcJk0jqYK0xlL5+hUw3BudnQcJj0T8Fn2nAwDzs1NKSEKXJb8
+         rb7y3JDb9A6OVNSiAzqssexwXtC7nX4PuIhs5NQ2Wzwgi5nHfGbbP2UvBtt6Qo9M4I1J
+         ZMB8YPPz9coqcb7PZ5j3EDWekqVoLOHQ/q2j7MU1BcgDSpg4FzjN3Q9LH4sPhzMHHnbQ
+         zAfyOfJZXDrvpCJi4woXBbuPoiAux73/wvPgUAaYwr9oK067Qg+Sl0KsVZwNXU5+gMvN
+         VmWA==
+X-Gm-Message-State: APjAAAWIS9sb8EBb7WL0gGx4KE7voqOs64g41u9oUZ8NcS/X4EljSbUa
+        zkiEUKGQqHqcbZNRNuAjPRy/7Q==
+X-Google-Smtp-Source: APXvYqx3pLQItdPselIyeEnN0nT5U01EEfJwpGcin9np6Y2GdTYDM+GrxpQmsENZMBQMi4hmSOPOqw==
+X-Received: by 2002:a5d:4489:: with SMTP id j9mr70765943wrq.15.1561455098468;
+        Tue, 25 Jun 2019 02:31:38 -0700 (PDT)
 Received: from brauner.io ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id n10sm12248929wrw.83.2019.06.25.02.27.29
+        by smtp.gmail.com with ESMTPSA id f2sm19221175wrq.48.2019.06.25.02.31.37
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 02:27:29 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 11:27:28 +0200
+        Tue, 25 Jun 2019 02:31:37 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 11:31:37 +0200
 From:   Christian Brauner <christian@brauner.io>
 To:     David Howells <dhowells@redhat.com>
 Cc:     viro@zeniv.linux.org.uk, raven@themaw.net, mszeredi@redhat.com,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/25] vfs: Allow fsinfo() to query what's in an
- fs_context [ver #14]
-Message-ID: <20190625092728.z3jn3gbyopzcg2it@brauner.io>
+Subject: Re: [PATCH 02/25] fsinfo: Add syscalls to other arches [ver #14]
+Message-ID: <20190625093136.rxljcdgruca37cuh@brauner.io>
 References: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
- <156138535407.25627.15015993364565647650.stgit@warthog.procyon.org.uk>
+ <156138534520.25627.6299627770679918852.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <156138535407.25627.15015993364565647650.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156138534520.25627.6299627770679918852.stgit@warthog.procyon.org.uk>
 User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 03:09:14PM +0100, David Howells wrote:
-> Allow fsinfo() to be used to query the filesystem attached to an fs_context
-> once a superblock has been created or if it comes from fspick().
-> 
-> The caller must specify AT_FSINFO_FROM_FSOPEN in the parameters and must
-
-Yeah, I like that better than how it was before.
-
-> supply the fd from fsopen() as dfd and must set filename to NULL.
-> 
-> This is done with something like:
-> 
-> 	fd = fsopen("ext4", 0);
-> 	...
-> 	struct fsinfo_params params = {
-> 		.at_flags = AT_FSINFO_FROM_FSOPEN;
-> 		...
-> 	};
-> 	fsinfo(fd, NULL, &params, ...);
+On Mon, Jun 24, 2019 at 03:09:05PM +0100, David Howells wrote:
+> Add the fsinfo syscall to the other arches.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
 > 
->  fs/fsinfo.c                |   46 +++++++++++++++++++++++++++++++++++++++++++-
->  fs/statfs.c                |    2 +-
->  include/uapi/linux/fcntl.h |    2 ++
->  3 files changed, 48 insertions(+), 2 deletions(-)
+>  arch/alpha/kernel/syscalls/syscall.tbl      |    1 +
+>  arch/arm/tools/syscall.tbl                  |    1 +
+>  arch/arm64/include/asm/unistd.h             |    2 +-
+
+I think you missed
+
+arch/arm64/include/asm/unistd32.h
+
+?
+
+>  arch/ia64/kernel/syscalls/syscall.tbl       |    1 +
+>  arch/m68k/kernel/syscalls/syscall.tbl       |    1 +
+>  arch/microblaze/kernel/syscalls/syscall.tbl |    1 +
+>  arch/mips/kernel/syscalls/syscall_n32.tbl   |    1 +
+>  arch/mips/kernel/syscalls/syscall_n64.tbl   |    1 +
+>  arch/mips/kernel/syscalls/syscall_o32.tbl   |    1 +
+>  arch/parisc/kernel/syscalls/syscall.tbl     |    1 +
+>  arch/powerpc/kernel/syscalls/syscall.tbl    |    1 +
+>  arch/s390/kernel/syscalls/syscall.tbl       |    1 +
+>  arch/sh/kernel/syscalls/syscall.tbl         |    1 +
+>  arch/sparc/kernel/syscalls/syscall.tbl      |    1 +
+>  arch/xtensa/kernel/syscalls/syscall.tbl     |    1 +
+>  15 files changed, 15 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/fsinfo.c b/fs/fsinfo.c
-> index 49b46f96dda3..c24701f994d1 100644
-> --- a/fs/fsinfo.c
-> +++ b/fs/fsinfo.c
-> @@ -8,6 +8,7 @@
->  #include <linux/security.h>
->  #include <linux/uaccess.h>
->  #include <linux/fsinfo.h>
-> +#include <linux/fs_context.h>
->  #include <uapi/linux/mount.h>
->  #include "internal.h"
+> diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+> index 9e7704e44f6d..624d01c3c8eb 100644
+> --- a/arch/alpha/kernel/syscalls/syscall.tbl
+> +++ b/arch/alpha/kernel/syscalls/syscall.tbl
+> @@ -473,3 +473,4 @@
+>  541	common	fsconfig			sys_fsconfig
+>  542	common	fsmount				sys_fsmount
+>  543	common	fspick				sys_fspick
+> +544	common	fsinfo				sys_fsinfo
+> diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+> index aaf479a9e92d..ad608b49808c 100644
+> --- a/arch/arm/tools/syscall.tbl
+> +++ b/arch/arm/tools/syscall.tbl
+> @@ -447,3 +447,4 @@
+>  431	common	fsconfig			sys_fsconfig
+>  432	common	fsmount				sys_fsmount
+>  433	common	fspick				sys_fspick
+> +434	common	fsinfo				sys_fsinfo
+> diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+> index 70e6882853c0..e8f7d95a1481 100644
+> --- a/arch/arm64/include/asm/unistd.h
+> +++ b/arch/arm64/include/asm/unistd.h
+> @@ -44,7 +44,7 @@
+>  #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+>  #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
 >  
-> @@ -340,6 +341,42 @@ static int vfs_fsinfo_fd(unsigned int fd, struct fsinfo_kparams *params)
->  	return ret;
->  }
+> -#define __NR_compat_syscalls		434
+> +#define __NR_compat_syscalls		435
+>  #endif
 >  
-> +/*
-> + * Allow access to an fs_context object as created by fsopen() or fspick().
-> + */
-> +static int vfs_fsinfo_fscontext(int fd, struct fsinfo_kparams *params)
-> +{
-> +	struct fs_context *fc;
-> +	struct fd f = fdget(fd);
-> +	int ret;
-> +
-> +	if (!f.file)
-> +		return -EBADF;
-> +
-> +	ret = -EINVAL;
-> +	if (f.file->f_op == &fscontext_fops)
-
-Don't you mean != ?
-
-if (f.file->f_op != &fscontext_fops)
-
-> +		goto out_f;
-> +	ret = -EOPNOTSUPP;
-> +	if (fc->ops == &legacy_fs_context_ops)
-> +		goto out_f;
-> +
-> +	ret = mutex_lock_interruptible(&fc->uapi_mutex);
-> +	if (ret == 0) {
-> +		ret = -EIO;
-
-Why EIO when there's no root dentry?
-
-> +		if (fc->root) {
-> +			struct path path = { .dentry = fc->root };
-> +
-> +			ret = vfs_fsinfo(&path, params);
-> +		}
-> +
-> +		mutex_unlock(&fc->uapi_mutex);
-> +	}
-> +
-> +out_f:
-> +	fdput(f);
-> +	return ret;
-> +}
-> +
->  /*
->   * Return buffer information by requestable attribute.
->   *
-> @@ -445,6 +482,9 @@ SYSCALL_DEFINE5(fsinfo,
->  		params.request = user_params.request;
->  		params.Nth = user_params.Nth;
->  		params.Mth = user_params.Mth;
-> +
-
-[1]:
-
-> +		if ((params.at_flags & AT_FSINFO_FROM_FSOPEN) && filename)
-> +			return -EINVAL;
->  	} else {
->  		params.request = FSINFO_ATTR_STATFS;
->  	}
-> @@ -453,6 +493,8 @@ SYSCALL_DEFINE5(fsinfo,
->  		user_buf_size = 0;
->  		user_buffer = NULL;
->  	}
-> +	if ((params.at_flags & AT_FSINFO_FROM_FSOPEN) && filename)
-> +		return -EINVAL;
-
-Sorry, why is this checked twice (see [1])? Or is the diff just
-misleading here?
-
->  
->  	/* Allocate an appropriately-sized buffer.  We will truncate the
->  	 * contents when we write the contents back to userspace.
-> @@ -500,7 +542,9 @@ SYSCALL_DEFINE5(fsinfo,
->  	if (!params.buffer)
->  		goto error_scratch;
->  
-> -	if (filename)
-> +	if (params.at_flags & AT_FSINFO_FROM_FSOPEN)
-> +		ret = vfs_fsinfo_fscontext(dfd, &params);
-> +	else if (filename)
->  		ret = vfs_fsinfo_path(dfd, filename, &params);
->  	else
->  		ret = vfs_fsinfo_fd(dfd, &params);
-> diff --git a/fs/statfs.c b/fs/statfs.c
-> index eea7af6f2f22..b9b63d9f4f24 100644
-> --- a/fs/statfs.c
-> +++ b/fs/statfs.c
-> @@ -86,7 +86,7 @@ int vfs_statfs(const struct path *path, struct kstatfs *buf)
->  	int error;
->  
->  	error = statfs_by_dentry(path->dentry, buf);
-> -	if (!error)
-> +	if (!error && path->mnt)
->  		buf->f_flags = calculate_f_flags(path->mnt);
->  	return error;
->  }
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 1d338357df8a..6a2402a8fa30 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -91,6 +91,8 @@
->  #define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'd with the server */
->  #define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
->  
-> +#define AT_FSINFO_FROM_FSOPEN	0x2000	/* Examine the fs_context attached to dfd by fsopen() */
-> +
->  #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
->  
->  
+>  #define __ARCH_WANT_SYS_CLONE
+> diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+> index e01df3f2f80d..68314763ad16 100644
+> --- a/arch/ia64/kernel/syscalls/syscall.tbl
+> +++ b/arch/ia64/kernel/syscalls/syscall.tbl
+> @@ -354,3 +354,4 @@
+>  431	common	fsconfig			sys_fsconfig
+>  432	common	fsmount				sys_fsmount
+>  433	common	fspick				sys_fspick
+> +434	common	fsinfo				sys_fsinfo
+> diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+> index 7e3d0734b2f3..ee73a7534b1b 100644
+> --- a/arch/m68k/kernel/syscalls/syscall.tbl
+> +++ b/arch/m68k/kernel/syscalls/syscall.tbl
+> @@ -433,3 +433,4 @@
+>  431	common	fsconfig			sys_fsconfig
+>  432	common	fsmount				sys_fsmount
+>  433	common	fspick				sys_fspick
+> +434	common	fsinfo				sys_fsinfo
+> diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+> index 26339e417695..7bc067f4b713 100644
+> --- a/arch/microblaze/kernel/syscalls/syscall.tbl
+> +++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+> @@ -439,3 +439,4 @@
+>  431	common	fsconfig			sys_fsconfig
+>  432	common	fsmount				sys_fsmount
+>  433	common	fspick				sys_fspick
+> +434	common	fsinfo				sys_fsinfo
+> diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+> index 0e2dd68ade57..29b76bd67cc0 100644
+> --- a/arch/mips/kernel/syscalls/syscall_n32.tbl
+> +++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+> @@ -372,3 +372,4 @@
+>  431	n32	fsconfig			sys_fsconfig
+>  432	n32	fsmount				sys_fsmount
+>  433	n32	fspick				sys_fspick
+> +434	n32	fsinfo				sys_fsinfo
+> diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+> index 5eebfa0d155c..349fb30bb8b5 100644
+> --- a/arch/mips/kernel/syscalls/syscall_n64.tbl
+> +++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+> @@ -348,3 +348,4 @@
+>  431	n64	fsconfig			sys_fsconfig
+>  432	n64	fsmount				sys_fsmount
+>  433	n64	fspick				sys_fspick
+> +434	n64	fsinfo				sys_fsinfo
+> diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+> index 3cc1374e02d0..71057426b503 100644
+> --- a/arch/mips/kernel/syscalls/syscall_o32.tbl
+> +++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+> @@ -421,3 +421,4 @@
+>  431	o32	fsconfig			sys_fsconfig
+>  432	o32	fsmount				sys_fsmount
+>  433	o32	fspick				sys_fspick
+> +434	o32	fsinfo				sys_fsinfo
+> diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+> index c9e377d59232..32cff48a1ebd 100644
+> --- a/arch/parisc/kernel/syscalls/syscall.tbl
+> +++ b/arch/parisc/kernel/syscalls/syscall.tbl
+> @@ -430,3 +430,4 @@
+>  431	common	fsconfig			sys_fsconfig
+>  432	common	fsmount				sys_fsmount
+>  433	common	fspick				sys_fspick
+> +434	common	fsinfo				sys_fsinfo
+> diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+> index 103655d84b4b..e5755eb6fb84 100644
+> --- a/arch/powerpc/kernel/syscalls/syscall.tbl
+> +++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+> @@ -515,3 +515,4 @@
+>  431	common	fsconfig			sys_fsconfig
+>  432	common	fsmount				sys_fsmount
+>  433	common	fspick				sys_fspick
+> +434	common	fsinfo				sys_fsinfo
+> diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+> index e822b2964a83..bcd54116e107 100644
+> --- a/arch/s390/kernel/syscalls/syscall.tbl
+> +++ b/arch/s390/kernel/syscalls/syscall.tbl
+> @@ -436,3 +436,4 @@
+>  431  common	fsconfig		sys_fsconfig			sys_fsconfig
+>  432  common	fsmount			sys_fsmount			sys_fsmount
+>  433  common	fspick			sys_fspick			sys_fspick
+> +434	common	fsinfo			sys_fsinfo			sys_fsinfo
+> diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+> index 016a727d4357..0320a5c63cbd 100644
+> --- a/arch/sh/kernel/syscalls/syscall.tbl
+> +++ b/arch/sh/kernel/syscalls/syscall.tbl
+> @@ -436,3 +436,4 @@
+>  431	common	fsconfig			sys_fsconfig
+>  432	common	fsmount				sys_fsmount
+>  433	common	fspick				sys_fspick
+> +434	common	fsinfo				sys_fsinfo
+> diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+> index e047480b1605..f81b1f9402bd 100644
+> --- a/arch/sparc/kernel/syscalls/syscall.tbl
+> +++ b/arch/sparc/kernel/syscalls/syscall.tbl
+> @@ -479,3 +479,4 @@
+>  431	common	fsconfig			sys_fsconfig
+>  432	common	fsmount				sys_fsmount
+>  433	common	fspick				sys_fspick
+> +434	common	fsinfo				sys_fsinfo
+> diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+> index 5fa0ee1c8e00..729795148850 100644
+> --- a/arch/xtensa/kernel/syscalls/syscall.tbl
+> +++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+> @@ -404,3 +404,4 @@
+>  431	common	fsconfig			sys_fsconfig
+>  432	common	fsmount				sys_fsmount
+>  433	common	fspick				sys_fspick
+> +434	common	fsinfo				sys_fsinfo
 > 
