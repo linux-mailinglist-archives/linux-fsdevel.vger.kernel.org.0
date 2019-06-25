@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 736D552907
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 12:07:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39FEB5290E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 12:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfFYKHc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jun 2019 06:07:32 -0400
-Received: from verein.lst.de ([213.95.11.211]:33395 "EHLO newverein.lst.de"
+        id S1727786AbfFYKIp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jun 2019 06:08:45 -0400
+Received: from verein.lst.de ([213.95.11.211]:33408 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726274AbfFYKHc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jun 2019 06:07:32 -0400
+        id S1726274AbfFYKIl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 Jun 2019 06:08:41 -0400
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 5367068B05; Tue, 25 Jun 2019 12:07:01 +0200 (CEST)
-Date:   Tue, 25 Jun 2019 12:07:01 +0200
+        id 45AF768C65; Tue, 25 Jun 2019 12:08:10 +0200 (CEST)
+Date:   Tue, 25 Jun 2019 12:08:10 +0200
 From:   Christoph Hellwig <hch@lst.de>
 To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     Christoph Hellwig <hch@lst.de>,
@@ -21,30 +21,38 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/12] xfs: initialize ioma->flags in xfs_bmbt_to_iomap
-Message-ID: <20190625100701.GG1462@lst.de>
-References: <20190624055253.31183-1-hch@lst.de> <20190624055253.31183-5-hch@lst.de> <20190624145707.GH5387@magnolia>
+Subject: Re: [PATCH 11/12] iomap: move the xfs writeback code to iomap.c
+Message-ID: <20190625100810.GH1462@lst.de>
+References: <20190624055253.31183-1-hch@lst.de> <20190624055253.31183-12-hch@lst.de> <20190624154601.GK5387@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190624145707.GH5387@magnolia>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190624154601.GK5387@magnolia>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 07:57:07AM -0700, Darrick J. Wong wrote:
-> On Mon, Jun 24, 2019 at 07:52:45AM +0200, Christoph Hellwig wrote:
-> > Currently we don't overwrite the flags field in the iomap in
-> > xfs_bmbt_to_iomap.  This works fine with 0-initialized iomaps on stack,
-> > but is harmful once we want to be able to reuse an iomap in the
-> > writeback code.
+On Mon, Jun 24, 2019 at 08:46:01AM -0700, Darrick J. Wong wrote:
+> This looks like a straight code copy from fs/xfs/ into fs/iomap.c.
+> That's fine with me, but seeing as this file is now ~2700 lines long,
+> perhaps we should break this up among major functional lines?
 > 
-> Is that going to affect all the other iomap users, or is xfs the only
-> one that assumes zero-initialized iomaps being passed into
-> ->iomap_begin?
+> Looking at fs/iomap.c, I see...
+> 
+>  * Basic iomap iterator functions (~40 lines)
+>  * Page cache management (readpage*, write, mkwrite) (~860 lines)
+>  * Zeroing (~80 lines)
+>  * FIEMAP and seek hole / seek data (~300 lines)
+>  * directio (~500 lines)
+>  * swapfiles (~170 lines)
+>  * and now, page cache writeback (~520 lines)
+> 
+> If I have spare time this week (ha ha) I'll see if I can break all this
+> up (as a separate patch series), so for this:
 
-This doesn't affect any existing user as they all get a zeroed iomap
-passed from the caller in iomap.c.  It affects the writeback code
-once it uses struct iomap as it overwrites a previously used iomap.
+Meh.  Not sure I'm a fan of too fine grained splits like the one
+above.  And ~3k lines is still pretty manageable.  But yes, once it
+grows むore it might be worth splitting a bit.
