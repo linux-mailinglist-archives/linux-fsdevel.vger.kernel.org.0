@@ -2,120 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2D3555F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 19:32:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85E4A55607
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 19:35:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731843AbfFYRcf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jun 2019 13:32:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34810 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727652AbfFYRcf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jun 2019 13:32:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0E8FBAD8A;
-        Tue, 25 Jun 2019 17:32:32 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 2D2B6DA8F6; Tue, 25 Jun 2019 19:33:16 +0200 (CEST)
-Date:   Tue, 25 Jun 2019 19:33:16 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     dsterba@suse.cz, Christoph Hellwig <hch@infradead.org>,
-        matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
-        shaggy@kernel.org, ard.biesheuvel@linaro.org, josef@toxicpanda.com,
-        clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
-        dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
-        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 2/4] vfs: create a generic checking function for
- FS_IOC_FSSETXATTR
-Message-ID: <20190625173316.GU8917@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>, matthew.garrett@nebula.com,
-        yuchao0@huawei.com, tytso@mit.edu, shaggy@kernel.org,
-        ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com,
-        adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
-        dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
-        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-References: <156116136742.1664814.17093419199766834123.stgit@magnolia>
- <156116138952.1664814.16552129914959122837.stgit@magnolia>
- <20190625105725.GB26085@infradead.org>
- <20190625170248.GS8917@twin.jikos.cz>
- <20190625171616.GB2230847@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625171616.GB2230847@magnolia>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+        id S1732081AbfFYRfy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jun 2019 13:35:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43676 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731942AbfFYRfy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 Jun 2019 13:35:54 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5PHWFis062918
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2019 13:35:53 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tbnw1p0s4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2019 13:35:53 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 25 Jun 2019 18:35:50 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 25 Jun 2019 18:35:45 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5PHZjvB52625554
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jun 2019 17:35:45 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E2AF35204E;
+        Tue, 25 Jun 2019 17:35:44 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.110.8])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id BCB9952059;
+        Tue, 25 Jun 2019 17:35:43 +0000 (GMT)
+Subject: Re: [PATCH v4 00/14] ima: introduce IMA Digest Lists extension
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        dmitry.kasatkin@huawei.com, mjg59@google.com,
+        Rob Landley <rob@landley.net>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Tue, 25 Jun 2019 13:35:33 -0400
+In-Reply-To: <88d368e6-5b3c-0206-23a0-dc3e0aa385f0@huawei.com>
+References: <20190614175513.27097-1-roberto.sassu@huawei.com>
+         <9029dd14-1077-ec89-ddc2-e677e16ad314@huawei.com>
+         <88d368e6-5b3c-0206-23a0-dc3e0aa385f0@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062517-0012-0000-0000-0000032C52A3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062517-0013-0000-0000-000021658924
+Message-Id: <1561484133.4066.16.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-25_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906250132
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 10:16:16AM -0700, Darrick J. Wong wrote:
-> On Tue, Jun 25, 2019 at 07:02:48PM +0200, David Sterba wrote:
-> > On Tue, Jun 25, 2019 at 03:57:25AM -0700, Christoph Hellwig wrote:
-> > > On Fri, Jun 21, 2019 at 04:56:29PM -0700, Darrick J. Wong wrote:
-> > > > From: Darrick J. Wong <darrick.wong@oracle.com>
-> > > > 
-> > > > Create a generic checking function for the incoming FS_IOC_FSSETXATTR
-> > > > fsxattr values so that we can standardize some of the implementation
-> > > > behaviors.
-> > > > 
-> > > > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > > > ---
-> > > >  fs/btrfs/ioctl.c   |   21 +++++++++-------
-> > > >  fs/ext4/ioctl.c    |   27 ++++++++++++++------
-> > > >  fs/f2fs/file.c     |   26 ++++++++++++++-----
-> > > >  fs/inode.c         |   17 +++++++++++++
-> > > >  fs/xfs/xfs_ioctl.c |   70 ++++++++++++++++++++++++++++++----------------------
-> > > >  include/linux/fs.h |    3 ++
-> > > >  6 files changed, 111 insertions(+), 53 deletions(-)
-> > > > 
-> > > > 
-> > > > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> > > > index f408aa93b0cf..7ddda5b4b6a6 100644
-> > > > --- a/fs/btrfs/ioctl.c
-> > > > +++ b/fs/btrfs/ioctl.c
-> > > > @@ -366,6 +366,13 @@ static int check_xflags(unsigned int flags)
-> > > >  	return 0;
-> > > >  }
-> > > >  
-> > > > +static void __btrfs_ioctl_fsgetxattr(struct btrfs_inode *binode,
-> > > > +				     struct fsxattr *fa)
-> > > > +{
-> > > > +	memset(fa, 0, sizeof(*fa));
-> > > > +	fa->fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags);
-> > > 
-> > > Is there really much of a point in this helper? Epeciall as
-> > > the zeroing could easily be done in the variable declaration
-> > > line using
-> > > 
-> > > 	struct fsxattr fa = { };
-> > 
-> > Agreed, not counting the initialization the wrapper is merely another
-> > name for btrfs_inode_flags_to_xflags. I also find it slightly confusing
-> > that __btrfs_ioctl_fsgetxattr name is too close to the ioctl callback
-> > implementation btrfs_ioctl_fsgetxattr but only does some initialization.
-> 
-> Ok; it's easily enough changed to:
-> 
-> 	struct fsxattr old_fa = {
-> 		.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags),
-> 	};
+[Cc'ing Rob Landley]
 
-Works for me, thanks.
+On Tue, 2019-06-25 at 14:57 +0200, Roberto Sassu wrote:
+> Mimi, do you have any thoughts on this version?
+
+I need to look closer, but when I first looked these changes seemed to
+be really invasive.  Let's first work on getting the CPIO xattr
+support upstreamed.  Rob Landley said he was going to review and test
+them.  Do you have any documentation on how to set up a test
+environment?  I'd really appreciate if others would also help with
+reviewing the CPIO patches.
+
+thanks!
+
+Mimi
+
