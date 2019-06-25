@@ -2,68 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 987BB54D0A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 12:59:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF98B54D3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 13:07:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732416AbfFYK7R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jun 2019 06:59:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36820 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729618AbfFYK7R (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jun 2019 06:59:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Wwjd99RoXuSnHJKoAHqWgUdarmES3VQyay6SQK/R1Zo=; b=UwU0highZEA/FGERbHhOX+NGj
-        wbOEOfYCrykn4i/NMFvP0XQWLaO76P5pTHVLBqJkG76euT9OEwHgRthOqNy2+bpGfoQffYe+VSjUn
-        QLbNyICQ73+5wpZ67NnuWDRQEVMjMQ9n+ScMYd+VXjhbz8KGNZJ7arzmVhIfPVZ6AqQzv7e6MuDSa
-        aGu3nC2IVp/W+ZNu5JgLyHLadtwk9OKFT74gLui/zAk4qpMo1UK4kcsXrMvY0K5yWKTJkGWyq3w6u
-        d68URRrxr9HRoeZ3xU0m2oIIkykZy8SnVCCE4rPDUJESqTKtzeQYumA5/zO5K0UZUKNm4pEvUaMY8
-        Hwh6CeXHA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfjA7-0000tm-GM; Tue, 25 Jun 2019 10:58:55 +0000
-Date:   Tue, 25 Jun 2019 03:58:55 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
-        shaggy@kernel.org, ard.biesheuvel@linaro.org, josef@toxicpanda.com,
-        clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
-        dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
-        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 4/4] vfs: teach vfs_ioc_fssetxattr_check to check extent
- size hints
-Message-ID: <20190625105855.GD26085@infradead.org>
-References: <156116136742.1664814.17093419199766834123.stgit@magnolia>
- <156116140570.1664814.4607468365269898575.stgit@magnolia>
+        id S1730291AbfFYLHF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jun 2019 07:07:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49856 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730028AbfFYLHE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 Jun 2019 07:07:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 63EC2ACA7;
+        Tue, 25 Jun 2019 11:07:03 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <156116140570.1664814.4607468365269898575.stgit@magnolia>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 25 Jun 2019 13:07:02 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Eric Wong <e@80x24.org>
+Cc:     Jason Baron <jbaron@akamai.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Azat Khuzhin <azat@libevent.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/14] epoll: support pollable epoll from userspace
+In-Reply-To: <20190625002456.unhdqihvs5lqcjn6@dcvr>
+References: <20190624144151.22688-1-rpenyaev@suse.de>
+ <20190625002456.unhdqihvs5lqcjn6@dcvr>
+Message-ID: <1e50e45cfc832320999f21a81790a060@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 04:56:45PM -0700, Darrick J. Wong wrote:
-> From: Darrick J. Wong <darrick.wong@oracle.com>
+On 2019-06-25 02:24, Eric Wong wrote:
+> Roman Penyaev <rpenyaev@suse.de> wrote:
+>> Hi all,
 > 
-> Move the extent size hint checks that aren't xfs-specific to the vfs.
+> +cc Jason Baron
 > 
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
+>> ** Limitations
+> 
+> <snip>
+> 
+>> 4. No support for EPOLLEXCLUSIVE
+>>      If device does not pass pollflags to wake_up() there is no way to
+>>      call poll() from the context under spinlock, thus special work is
+>>      scheduled to offload polling.  In this specific case we can't
+>>      support exclusive wakeups, because we do not know actual result
+>>      of scheduled work and have to wake up every waiter.
+> 
+> Lacking EPOLLEXCLUSIVE support is probably a showstopper for
+> common applications using per-task epoll combined with
+> non-blocking accept4() (e.g. nginx).
 
-Looks good,
+For the 'accept' case it seems SO_REUSEPORT can be used:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+    https://lwn.net/Articles/542629/
+
+Although I've never tried it in O_NONBLOCK + epoll scenario.
+
+But I've just again dived into this add-wait-exclusive logic and it
+seems possible to support EPOLLEXCLUSIVE by iterating over all "epis"
+for a particular fd, which has been woken up.
+
+For now I want to leave it as is just not to overcomplicate the code.
+
+> Fwiw, I'm still a weirdo who prefers a dedicated thread doing
+> blocking accept4 for distribution between tasks (so epoll never
+> sees a listen socket).  But, depending on what runtime/language
+> I'm using, I can't always dedicate a blocking thread, so I
+> recently started using EPOLLEXCLUSIVE from Perl5 where I
+> couldn't rely on threads being available.
+> 
+> 
+> If I could dedicate time to improving epoll; I'd probably
+> add writev() support for batching epoll_ctl modifications
+> to reduce syscall traffic, or pick-up the kevent()-like interface
+> started long ago:
+> https://lore.kernel.org/lkml/1393206162-18151-1-git-send-email-n1ght.4nd.d4y@gmail.com/
+> (but I'm not sure I want to increase the size of the syscall table).
+
+There is also fresh fs/io_uring.c thingy, which supports polling and
+batching (among other IO things).  But polling there acts only as a
+single-shot, so it might make sense to support there event subscription
+instead of resurrecting kevent and co.
+
+--
+Roman
+
+
+
+
+
+
