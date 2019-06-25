@@ -2,137 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2820556D3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 20:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89847556F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 20:18:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731530AbfFYSNg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jun 2019 14:13:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59450 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729099AbfFYSNg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jun 2019 14:13:36 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CE885301D680;
-        Tue, 25 Jun 2019 18:13:35 +0000 (UTC)
-Received: from max.com (unknown [10.40.205.213])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 526FE10013D9;
-        Tue, 25 Jun 2019 18:13:31 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs: Move mark_inode_dirty out of __generic_write_end
-Date:   Tue, 25 Jun 2019 20:13:29 +0200
-Message-Id: <20190625181329.3160-1-agruenba@redhat.com>
-In-Reply-To: <20190625105011.GA2602@lst.de>
-References: <20190618144716.8133-1-agruenba@redhat.com> <20190624065408.GA3565@lst.de> <20190624182243.22447-1-agruenba@redhat.com> <20190625095707.GA1462@lst.de> <20190625105011.GA2602@lst.de>
+        id S1732869AbfFYSSj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jun 2019 14:18:39 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59798 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727479AbfFYSSi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 Jun 2019 14:18:38 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PI4epq154535;
+        Tue, 25 Jun 2019 18:17:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=lmgK8Cm3Fl3Y68PjHL3I/TBSUBy/0hTgnkbGgtqK7rI=;
+ b=sq8wRGFMDp2keeCzfEbQvRF23m4FZdHqzF6KTStnvsnqKgYJRFIybtKXIRJ/BkjACsOp
+ VHjdfFdvkzl4/Qyds9SgcqVsToxzG/t5q2X6QJw92ykC0hsb2bCu0+1HnE8/vR1cKWgj
+ 9LAuCEvVM/6Q8BB9oO+b2Er0NdC/PFqDczBk7D1I2Io7k9QsIy4cloHAf7QWxHhbVscL
+ fa9qlI7JJ3E8N38P1RnUBSFFAK1Ox9ur0vfVe7sOoxdIUQu71AdGqU2biDBGiUMsl2PB
+ KOtGcPBYzfwUGEHU5Q7xPZKcvd0Ct/iT3yoSupbQ+ljJ3hcRKX4C0zF8TH1T/hnyBICA pg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2t9brt63t2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jun 2019 18:17:39 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PIHUke113170;
+        Tue, 25 Jun 2019 18:17:38 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 2t9acc8wvk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Jun 2019 18:17:38 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5PIHcHG113583;
+        Tue, 25 Jun 2019 18:17:38 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2t9acc8wve-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jun 2019 18:17:38 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5PIHai8000391;
+        Tue, 25 Jun 2019 18:17:36 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 25 Jun 2019 11:17:36 -0700
+Date:   Tue, 25 Jun 2019 11:17:33 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     dsterba@suse.cz, matthew.garrett@nebula.com, yuchao0@huawei.com,
+        tytso@mit.edu, shaggy@kernel.org, ard.biesheuvel@linaro.org,
+        josef@toxicpanda.com, clm@fb.com, adilger.kernel@dilger.ca,
+        jk@ozlabs.org, jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org,
+        viro@zeniv.linux.org.uk, cluster-devel@redhat.com,
+        jfs-discussion@lists.sourceforge.net, linux-efi@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 1/4] vfs: create a generic checking function for
+ FS_IOC_SETFLAGS
+Message-ID: <20190625181733.GG5375@magnolia>
+References: <156116136742.1664814.17093419199766834123.stgit@magnolia>
+ <156116138140.1664814.9610454726122206157.stgit@magnolia>
+ <20190625171254.GT8917@twin.jikos.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 25 Jun 2019 18:13:35 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190625171254.GT8917@twin.jikos.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906250137
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 25 Jun 2019 at 12:50, Christoph Hellwig <hch@lst.de> wrote:
->
-> > That seems way more complicated.  I'd much rather go with something
-> > like may patch plus maybe a big fat comment explaining that persisting
-> > the size update is the file systems job.  Note that a lot of the modern
-> > file systems don't use the VFS inode tracking for that, besides XFS
-> > that includes at least btrfs and ocfs2 as well.
->
-> I'd suggest something like this as the baseline:
->
-> http://git.infradead.org/users/hch/xfs.git/shortlog/refs/heads/iomap-i_size
+On Tue, Jun 25, 2019 at 07:12:54PM +0200, David Sterba wrote:
+> On Fri, Jun 21, 2019 at 04:56:21PM -0700, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <darrick.wong@oracle.com>
+> > 
+> > Create a generic checking function for the incoming FS_IOC_SETFLAGS flag
+> > values so that we can standardize the implementations that follow ext4's
+> > flag values.
+> 
+> I checked a few samples what's the type of the flags, there are unsigned
+> types while the proposed VFS functions take signed type.
+> 
+> > +int vfs_ioc_setflags_check(struct inode *inode, int oldflags, int flags);
+> 
+> Specifically ext4 uses unsigned type and his was the original API that
+> got copied so I'd think that it should unsigned everywhere.
 
-Alright, can we change this as follows?
+Yeah, I'll change it.
 
-[Also, I'm not really sure why we check for (pos + ret > inode->i_size)
-when we have already read inode->i_size into old_size.]
+> >  fs/btrfs/ioctl.c    |   13 +++++--------
+> 
+> For the btrfs bits
+> 
+> Acked-by: David Sterba <dsterba@suse.com>
+> 
+> and besides the signedness, the rest of the changes look good to me.
 
-Thanks,
-Andreas
+Thanks for the look around!  I'll have a new revision with all changes
+out by the end of the day. :)
 
---
-
-iomap: don't mark the inode dirty in iomap_write_end
-
-Marking the inode dirty for each page copied into the page cache
-can be very ineffcient for file systems that use the VFS dirty
-inode tracking, and is completely pointless for those that don't
-use the VFS dirty tracking.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/gfs2/bmap.c        |  2 ++
- fs/iomap.c            | 15 ++++++++++++++-
- include/linux/iomap.h |  1 +
- 3 files changed, 17 insertions(+), 1 deletion(-)
-
-diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index 93ea1d5..f4b895f 100644
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -1182,6 +1182,8 @@ static int gfs2_iomap_end(struct inode *inode, loff_t pos, loff_t length,
- 
- 	if (ip->i_qadata && ip->i_qadata->qa_qd_num)
- 		gfs2_quota_unlock(ip);
-+	if (iomap->flags & IOMAP_F_SIZE_CHANGED)
-+		mark_inode_dirty(inode);
- 	gfs2_write_unlock(inode);
- 
- out:
-diff --git a/fs/iomap.c b/fs/iomap.c
-index 12654c2..cd24bd1 100644
---- a/fs/iomap.c
-+++ b/fs/iomap.c
-@@ -777,6 +777,7 @@ struct iomap_readpage_ctx {
- 		unsigned copied, struct page *page, struct iomap *iomap)
- {
- 	const struct iomap_page_ops *page_ops = iomap->page_ops;
-+	loff_t old_size = inode->i_size;
- 	int ret;
- 
- 	if (iomap->type == IOMAP_INLINE) {
-@@ -788,7 +789,19 @@ struct iomap_readpage_ctx {
- 		ret = __iomap_write_end(inode, pos, len, copied, page, iomap);
- 	}
- 
--	__generic_write_end(inode, pos, ret, page);
-+	/*
-+	 * Update the in-memory inode size after copying the data into the page
-+	 * cache.  It's up to the file system to write the updated size to disk,
-+	 * preferably after I/O completion so that no stale data is exposed.
-+	 */
-+	if (pos + ret > inode->i_size) {
-+		i_size_write(inode, pos + ret);
-+		iomap->flags |= IOMAP_F_SIZE_CHANGED;
-+	}
-+	unlock_page(page);
-+
-+	if (old_size < pos)
-+		pagecache_isize_extended(inode, old_size, pos);
- 	if (page_ops && page_ops->page_done)
- 		page_ops->page_done(inode, pos, copied, page, iomap);
- 	put_page(page);
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 2103b94..1df9ea1 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -35,6 +35,7 @@
- #define IOMAP_F_NEW		0x01	/* blocks have been newly allocated */
- #define IOMAP_F_DIRTY		0x02	/* uncommitted metadata */
- #define IOMAP_F_BUFFER_HEAD	0x04	/* file system requires buffer heads */
-+#define IOMAP_F_SIZE_CHANGED	0x08	/* file size has changed */
- 
- /*
-  * Flags that only need to be reported for IOMAP_REPORT requests:
--- 
-1.8.3.1
-
+--D
