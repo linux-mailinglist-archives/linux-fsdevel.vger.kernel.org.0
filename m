@@ -2,551 +2,389 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 617F852840
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 11:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAA5052863
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 11:44:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbfFYJke (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jun 2019 05:40:34 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33145 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727289AbfFYJke (ORCPT
+        id S1726628AbfFYJoU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jun 2019 05:44:20 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38976 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726545AbfFYJoT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jun 2019 05:40:34 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n9so17117335wru.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2019 02:40:31 -0700 (PDT)
+        Tue, 25 Jun 2019 05:44:19 -0400
+Received: by mail-wm1-f66.google.com with SMTP id z23so2230053wma.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2019 02:44:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=VohKwACWw5bL0KX4gs/jYcjNtUuq75BE+ItLSHt/5W4=;
-        b=e1rgOfqXYiuddh7qqo4jovC6WTtzSXhkO2v3h9TH1K5pFFENeCV1qVvV2nYrdNyJQm
-         Jm7ueK3W7b0n5vHfyhOasi6+T5w5B0x2CfL9Pe2BGOgjJUXWFmOX53g60Mz0FLG2oDHU
-         d4GdR6Ah98GoFVF9AgpL4KCo9oJBmWfSuJ7NrGCn+VGKH4OPioltDRO8uylum37nipaE
-         aodyPE4lmd2hAQyca6EYK1+ag7mCLfr4ydiAi1goYXgC/BWvRVqGGDEBc9aL3qUMCg9E
-         IZtZtPqM2l6BYnQZGN/PuReOWLVSibMHvK4hQ74ZXrxR4WHYm3prToxkl5woxKYkECMe
-         wmOA==
+        bh=bydo2op0dEgUZuz3qW1iTjTnv7PZTnBhu3PVuy5btRI=;
+        b=ZQiQ3l2DAOdTJcoC1/Rsa9r+oooT/9ohiTlXeViOLYljBKqXmmxSnzM1i1GdrEciOp
+         xbGsiJI4Rm/eKlyR7IoQN8NZ5tVAnBuPfKadcdUywwAc7vrSBif7OtHBO0Mzqhv8ZTZw
+         nswaxWmYfKddj1aNCNntl0JDid41iE3UJX12wR8hyscyqFkfwGwAenyS01/Lg6MaeOv8
+         IE8br5WXbq2r++Rb1aD8/72p25sVF6mYX1E6r0AWZ1TaO0cfwaCMTuCDuDTZVBYEt+iI
+         YLzkgQb1FKPdnH4QeiTlvPghLn7+FoAQT0zOpeTzLKdKuFSrBdM6TTJHZ4tLnLRQmj4F
+         nVZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VohKwACWw5bL0KX4gs/jYcjNtUuq75BE+ItLSHt/5W4=;
-        b=Hk8VGHtnxJ6dqNGCSp7m12frM0nryzK/899chbAwFMsu1CIyA+vdnBCEXQLr5RL5LW
-         ztqjxoFAKBAgGi35TY/tb27U9PsK8TV9cBg/eO4zUld6hrcxstFwXYCcjsvGf8WhuSaz
-         6rqPpq2A4mGxRQFiyLx5XpXlGAMtZ4WW9/MbK2KEePO4pgnoHE6OUNy4icpOns6rCwXj
-         tTLh0BRJVXJHA9ntjPgr+ls8y3jj6Tka8dBYmMBLIdP+UxFTrdFOgejojYIqcs5uB2z4
-         wfPFWpiLzjQ/2iIPnyBJWSCVo9fF0ZytGlrmAZEuUooTU4XcDnHlmkS80S1PvQbe27A1
-         3a9g==
-X-Gm-Message-State: APjAAAXqbNMVM2hdfmTXErYeNcCda3pdJ2dr2aZHfkaKdds0J/9QlJpc
-        TK522jDApGJjpQ2ypgYQH9nKPQ==
-X-Google-Smtp-Source: APXvYqxb752rTxhniPH1z8vSkQMlU+s0zWfJZbo2/K3ikuoyh75SrCRhbN39aPng56bg+wGR/e2/hw==
-X-Received: by 2002:a5d:628d:: with SMTP id k13mr32435590wru.317.1561455630260;
-        Tue, 25 Jun 2019 02:40:30 -0700 (PDT)
+        bh=bydo2op0dEgUZuz3qW1iTjTnv7PZTnBhu3PVuy5btRI=;
+        b=EpKtT+fKIrgExO06NuYoPFwcDn7AgH9fRRwIynUbdWZtavZK8op/7lpTtqGaGyVJ3P
+         YWJHW2hnpULlYkhBTy3iI4Ke0wn4Suq+/W27swq0zlc0imXBPKFX2NFKznK36lahCdNn
+         8fiMcVAFZ6EE/Q9zKThOKYB0bClbjg/3ov+z+bcJzfii6ayx+5KwZCinGjXWT5KjrALM
+         jr/GnK2qWnoFHalgLtBkR8LqejvtolIMrWJis96FFpl/l60a7kojeDUNQQ23JssL+9tR
+         TReX/RKDWGISK4wv1xvgyF57ZHarbOCf9USvo9lhv61XOeAE/u6zF6hpVD/T9uwGR5qN
+         UWIQ==
+X-Gm-Message-State: APjAAAUPwbYLY4NGH0IzHN6lEwX0nXRjWPabufg32yOHYBME2aUCxv3y
+        k1hXfl9AvwPBkT74Bfck4GoExA==
+X-Google-Smtp-Source: APXvYqzbbgxKqnWuULE98jTvZIu0mIK3QI2A9La+GcuSzjbQENnr1OIn9sUivIDTIuXJLnW+iQP4eQ==
+X-Received: by 2002:a1c:a483:: with SMTP id n125mr18675831wme.172.1561455857585;
+        Tue, 25 Jun 2019 02:44:17 -0700 (PDT)
 Received: from brauner.io ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id h14sm1433515wro.30.2019.06.25.02.40.29
+        by smtp.gmail.com with ESMTPSA id q1sm1859824wmq.25.2019.06.25.02.44.16
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 02:40:29 -0700 (PDT)
-Date:   Tue, 25 Jun 2019 11:40:28 +0200
+        Tue, 25 Jun 2019 02:44:17 -0700 (PDT)
+Date:   Tue, 25 Jun 2019 11:44:16 +0200
 From:   Christian Brauner <christian@brauner.io>
 To:     David Howells <dhowells@redhat.com>
 Cc:     viro@zeniv.linux.org.uk, raven@themaw.net, mszeredi@redhat.com,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/25] vfs: Allow fsinfo() to be used to query an fs
- parameter description [ver #14]
-Message-ID: <20190625094027.ly6ypsmadma6fncp@brauner.io>
+Subject: Re: [PATCH 05/25] vfs: Implement parameter value retrieval with
+ fsinfo() [ver #14]
+Message-ID: <20190625094415.lv4tw26isxziflxp@brauner.io>
 References: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
- <156138536153.25627.3397429813740738568.stgit@warthog.procyon.org.uk>
+ <156138537329.25627.5525420330768463735.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <156138536153.25627.3397429813740738568.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156138537329.25627.5525420330768463735.stgit@warthog.procyon.org.uk>
 User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 03:09:21PM +0100, David Howells wrote:
-> Provide fsinfo() attributes that can be used to query a filesystem
-> parameter description.  To do this, fsinfo() can be called on an
-
-Can you give a usecase for this?
-Wouldn't it be more helpful if fsinfo() when used to query a filesystem
-without a created or attached superblock could be used to query options
-the underlying fs supports so that users know what they can fsconfig()?
-(Maybe that's not possible because you'd already need to have a
-superblock created or attached in this case.)
-
-> fs_context that doesn't yet have a superblock created and attached.
+On Mon, Jun 24, 2019 at 03:09:33PM +0100, David Howells wrote:
+> Implement parameter value retrieval with fsinfo() - akin to parsing
+> /proc/mounts.
 > 
-> It can be obtained by doing, for example:
+> This allows all the parameters to be retrieved in one go with:
 > 
-> 	fd = fsopen("ext4", 0);
-> 
-> 	struct fsinfo_param_name name;
 > 	struct fsinfo_params params = {
-> 		.at_flags = AT_FSINFO_FROM_FSOPEN,
-> 		.request = fsinfo_attr_param_name,
-> 		.Nth	 = 3,
+> 		.request	= FSINFO_ATTR_PARAMETER,
 > 	};
-> 	fsinfo(fd, NULL, &params, &name, sizeof(name));
 > 
-> to query the 4th parameter name in the name to parameter ID mapping table.
+> Each parameter comes as a pair of blobs with a length tacked on the front
+> rather than using separators, since any printable character that could be
+> used as a separator can be found in some value somewhere (including comma).
+> In fact, cifs allows the separator to be set using the "sep=" option in
+> parameter parsing.
+> 
+> The length on the front of each blob is 1-3 bytes long.  Each byte has a
+> flag in bit 7 that's set if there are more bytes and clear on the last
+> byte; bits 0-6 should be shifted and OR'd into the length count.  The bytes
+> are most-significant first.
+> 
+> For example, 0x83 0xf5 0x06 is the length (0x03<<14 | 0x75<<7 | 0x06).
+
+Ok, but that is such a royal pain for userspace. Shouldn't we export a
+uapi helper that they can use to parse out the length or even iterate
+the string or something?
+
+> 
+> As mentioned, each parameter comes as a pair of blobs in key, value order.
+> The value has length zero if not present.  So, for example:
+> 
+> 	\x08compress\x04zlib
+> 
+> from btrfs would be equivalent to "compress=zlib" and:
+> 
+> 	\x02ro\x00\x06noexec\x00
+> 
+> would be equivalent to "ro,noexec".
+> 
+> The test-fsinfo sample program is modified to dump the parameters.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
 > 
->  fs/fsinfo.c                 |  101 +++++++++++++++++++++++++++++++
->  include/uapi/linux/fsinfo.h |   58 ++++++++++++++++++
->  samples/vfs/Makefile        |    2 +
->  samples/vfs/test-fs-query.c |  138 +++++++++++++++++++++++++++++++++++++++++++
->  samples/vfs/test-fsinfo.c   |   14 ++++
->  5 files changed, 311 insertions(+), 2 deletions(-)
->  create mode 100644 samples/vfs/test-fs-query.c
+>  fs/fsinfo.c                 |  122 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/fsinfo.h      |    4 +
+>  include/uapi/linux/fsinfo.h |    1 
+>  samples/vfs/test-fsinfo.c   |   38 +++++++++++++
+>  4 files changed, 165 insertions(+)
 > 
 > diff --git a/fs/fsinfo.c b/fs/fsinfo.c
-> index c24701f994d1..9e2a25510b88 100644
+> index 9e2a25510b88..3b35cedab0df 100644
 > --- a/fs/fsinfo.c
 > +++ b/fs/fsinfo.c
-> @@ -9,6 +9,7 @@
->  #include <linux/uaccess.h>
->  #include <linux/fsinfo.h>
->  #include <linux/fs_context.h>
-> +#include <linux/fs_parser.h>
->  #include <uapi/linux/mount.h>
->  #include "internal.h"
->  
-> @@ -223,12 +224,87 @@ static int fsinfo_generic_name_encoding(struct path *path, char *buf)
->  	return sizeof(encoding) - 1;
+> @@ -296,6 +296,32 @@ static int fsinfo_generic_param_enum(struct file_system_type *f,
+>  	return sizeof(*p);
 >  }
 >  
-> +static int fsinfo_generic_param_description(struct file_system_type *f,
-> +					    struct fsinfo_kparams *params)
+> +void fsinfo_note_sb_params(struct fsinfo_kparams *params, unsigned int s_flags)
 > +{
-> +	const struct fs_parameter_description *desc = f->parameters;
-> +	const struct fs_parameter_spec *s;
-> +	const struct fs_parameter_enum *e;
-
-nit: *s can probably be moved inside the first if() and *e into the second
-if().
-
-> +	struct fsinfo_param_description *p = params->buffer;
-> +
-> +	if (desc && desc->specs) {
-> +		for (s = desc->specs; s->name; s++) {}
-> +		p->nr_params = s - desc->specs;
-> +		if (desc->enums) {
-> +			for (e = desc->enums; e->name[0]; e++) {}
-> +			p->nr_enum_names = e - desc->enums;
-> +		}
-> +	}
-> +
-> +	return sizeof(*p);
+> +	if (s_flags & SB_DIRSYNC)
+> +		fsinfo_note_param(params, "dirsync", NULL);
+> +	if (s_flags & SB_LAZYTIME)
+> +		fsinfo_note_param(params, "lazytime", NULL);
+> +	if (s_flags & SB_MANDLOCK)
+> +		fsinfo_note_param(params, "mand", NULL);
+> +	if (s_flags & SB_POSIXACL)
+> +		fsinfo_note_param(params, "posixacl", NULL);
+> +	if (s_flags & SB_RDONLY)
+> +		fsinfo_note_param(params, "ro", NULL);
+> +	else
+> +		fsinfo_note_param(params, "rw", NULL);
+> +	if (s_flags & SB_SYNCHRONOUS)
+> +		fsinfo_note_param(params, "sync", NULL);
 > +}
+> +EXPORT_SYMBOL(fsinfo_note_sb_params);
 > +
-> +static int fsinfo_generic_param_specification(struct file_system_type *f,
-> +					      struct fsinfo_kparams *params)
-> +{
-> +	const struct fs_parameter_description *desc = f->parameters;
-> +	const struct fs_parameter_spec *s;
-> +	struct fsinfo_param_specification *p = params->buffer;
-> +	unsigned int nth = params->Nth;
-> +
-> +	if (!desc || !desc->specs)
-> +		return -ENODATA;
-> +
-> +	for (s = desc->specs; s->name; s++) {
-> +		if (nth == 0)
-> +			goto found;
-> +		nth--;
-> +	}
-> +
-> +	return -ENODATA;
-> +
-> +found:
-> +	p->type = s->type;
-> +	p->flags = s->flags;
-> +	p->opt = s->opt;
-> +	strlcpy(p->name, s->name, sizeof(p->name));
-> +	return sizeof(*p);
-> +}
-> +
-> +static int fsinfo_generic_param_enum(struct file_system_type *f,
+> +static int fsinfo_generic_parameters(struct path *path,
 > +				     struct fsinfo_kparams *params)
 > +{
-> +	const struct fs_parameter_description *desc = f->parameters;
-> +	const struct fs_parameter_enum *e;
-> +	struct fsinfo_param_enum *p = params->buffer;
-> +	unsigned int nth = params->Nth;
-> +
-> +	if (!desc || !desc->enums)
-> +		return -ENODATA;
-> +
-> +	for (e = desc->enums; e->name; e++) {
-> +		if (nth == 0)
-> +			goto found;
-> +		nth--;
-> +	}
-> +
-> +	return -ENODATA;
-> +
-> +found:
-> +	p->opt = e->opt;
-> +	strlcpy(p->name, e->name, sizeof(p->name));
-> +	return sizeof(*p);
+> +	fsinfo_note_sb_params(params, READ_ONCE(path->dentry->d_sb->s_flags));
+> +	return params->usage;
 > +}
 > +
 >  /*
 >   * Implement some queries generically from stuff in the superblock.
 >   */
->  int generic_fsinfo(struct path *path, struct fsinfo_kparams *params)
->  {
-> +	struct file_system_type *fs = path->dentry->d_sb->s_type;
-> +
+> @@ -304,6 +330,7 @@ int generic_fsinfo(struct path *path, struct fsinfo_kparams *params)
+>  	struct file_system_type *fs = path->dentry->d_sb->s_type;
+>  
 >  #define _gen(X, Y) FSINFO_ATTR_##X: return fsinfo_generic_##Y(path, params->buffer)
-> +#define _genf(X, Y) FSINFO_ATTR_##X: return fsinfo_generic_##Y(fs, params)
+> +#define _genp(X, Y) FSINFO_ATTR_##X: return fsinfo_generic_##Y(path, params)
+>  #define _genf(X, Y) FSINFO_ATTR_##X: return fsinfo_generic_##Y(fs, params)
 >  
 >  	switch (params->request) {
->  	case _gen(STATFS,		statfs);
-> @@ -240,6 +316,9 @@ int generic_fsinfo(struct path *path, struct fsinfo_kparams *params)
->  	case _gen(VOLUME_UUID,		volume_uuid);
->  	case _gen(VOLUME_ID,		volume_id);
->  	case _gen(NAME_ENCODING,	name_encoding);
-> +	case _genf(PARAM_DESCRIPTION,	param_description);
-> +	case _genf(PARAM_SPECIFICATION,	param_specification);
-> +	case _genf(PARAM_ENUM,		param_enum);
+> @@ -319,6 +346,7 @@ int generic_fsinfo(struct path *path, struct fsinfo_kparams *params)
+>  	case _genf(PARAM_DESCRIPTION,	param_description);
+>  	case _genf(PARAM_SPECIFICATION,	param_specification);
+>  	case _genf(PARAM_ENUM,		param_enum);
+> +	case _genp(PARAMETERS,		parameters);
 >  	default:
 >  		return -EOPNOTSUPP;
 >  	}
-> @@ -342,10 +421,11 @@ static int vfs_fsinfo_fd(unsigned int fd, struct fsinfo_kparams *params)
->  }
+> @@ -358,8 +386,16 @@ static int vfs_fsinfo(struct path *path, struct fsinfo_kparams *params)
+>  		return fsinfo(path, params);
 >  
->  /*
-> - * Allow access to an fs_context object as created by fsopen() or fspick().
-> + * Allow an fs_context object as created by fsopen() or fspick() to be queried.
->   */
->  static int vfs_fsinfo_fscontext(int fd, struct fsinfo_kparams *params)
->  {
-> +	struct file_system_type *fs;
->  	struct fs_context *fc;
->  	struct fd f = fdget(fd);
->  	int ret;
-> @@ -354,12 +434,26 @@ static int vfs_fsinfo_fscontext(int fd, struct fsinfo_kparams *params)
->  		return -EBADF;
->  
->  	ret = -EINVAL;
-> -	if (f.file->f_op == &fscontext_fops)
-> +	if (f.file->f_op != &fscontext_fops)
-
-Here you're fixing the error I pointed out in the other patch (I believe
-[03/<max>].). Probably best to fix it in the original patch. ;)
-
->  		goto out_f;
-> +	fc = f.file->private_data;
-> +	fs = fc->fs_type;
+>  	while (!signal_pending(current)) {
+> +		if (params->request == FSINFO_ATTR_PARAMETERS) {
+> +			if (down_read_killable(&dentry->d_sb->s_umount) < 0)
+> +				return -ERESTARTSYS;
+> +		}
 > +
->  	ret = -EOPNOTSUPP;
->  	if (fc->ops == &legacy_fs_context_ops)
->  		goto out_f;
->  
-> +	/* Filesystem parameter query is static information and doesn't need a
-> +	 * lock to read it, nor even a dentry or superblock.
-> +	 */
-> +	switch (params->request) {
-> +	case _genf(PARAM_DESCRIPTION,	param_description);
-> +	case _genf(PARAM_SPECIFICATION,	param_specification);
-> +	case _genf(PARAM_ENUM,		param_enum);
-> +	default:
-> +		break;
-> +	}
+>  		params->usage = 0;
+>  		ret = fsinfo(path, params);
+> +		if (params->request == FSINFO_ATTR_PARAMETERS)
+> +			up_read(&dentry->d_sb->s_umount);
 > +
->  	ret = mutex_lock_interruptible(&fc->uapi_mutex);
->  	if (ret == 0) {
->  		ret = -EIO;
-> @@ -432,6 +526,9 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
->  	FSINFO_STRING		(VOLUME_NAME,		-),
->  	FSINFO_STRING		(NAME_ENCODING,		-),
->  	FSINFO_STRING		(NAME_CODEPAGE,		-),
-> +	FSINFO_STRUCT		(PARAM_DESCRIPTION,	param_description),
-> +	FSINFO_STRUCT_N		(PARAM_SPECIFICATION,	param_specification),
-> +	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
+>  		if (ret <= (int)params->buf_size)
+>  			return ret; /* Error or it fitted */
+>  		kvfree(params->buffer);
+> @@ -529,6 +565,7 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
+>  	FSINFO_STRUCT		(PARAM_DESCRIPTION,	param_description),
+>  	FSINFO_STRUCT_N		(PARAM_SPECIFICATION,	param_specification),
+>  	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
+> +	FSINFO_OPAQUE		(PARAMETERS,		-),
 >  };
 >  
 >  /**
+> @@ -676,3 +713,88 @@ SYSCALL_DEFINE5(fsinfo,
+>  error:
+>  	return ret;
+>  }
+> +
+> +/*
+> + * Store a parameter into the user's parameter buffer.  The key is prefixed by
+> + * a single byte length (1-127) and the value by one (0-0x7f) or two bytes
+> + * (0x80-0x3fff) or three bytes (0x4000-0x1fffff).
+> + *
+> + * Note that we must always make the size determination, even if the buffer is
+> + * already full, so that we can tell the caller how much buffer we actually
+> + * need.
+> + */
+> +static void __fsinfo_note_param(struct fsinfo_kparams *params, const char *key,
+> +				const char *val, unsigned int vlen)
+> +{
+> +	char *p;
+> +	unsigned int usage;
+> +	int klen, total, vmeta;
+> +	u8 x;
+> +
+> +	klen = strlen(key);
+> +	BUG_ON(klen < 1 || klen > 127);
+> +	BUG_ON(vlen > (1 << 21) - 1);
+> +	BUG_ON(vlen > 0 && !val);
+> +
+> +	vmeta = (vlen <= 127) ? 1 : (vlen <= 127 * 127) ? 2 : 3;
+> +
+> +	total = 1 + klen + vmeta + vlen;
+> +
+> +	usage = params->usage;
+> +	params->usage = usage + total;
+> +	if (!params->buffer || params->usage > params->buf_size)
+> +		return;
+> +
+> +	p = params->buffer + usage;
+> +	*p++ = klen;
+> +	p = memcpy(p, key, klen);
+> +	p += klen;
+> +
+> +	/* The more significant groups of 7 bits in the size are included in
+> +	 * most->least order with 0x80 OR'd in.  The least significant 7 bits
+> +	 * are last with the top bit clear.
+> +	 */
+> +	x = vlen >> 14;
+> +	if (x & 0x7f)
+> +		*p++ = 0x80 | x;
+> +
+> +	x = vlen >> 7;
+> +	if (x & 0x7f)
+> +		*p++ = 0x80 | x;
+> +
+> +	*p++ = vlen & 0x7f;
+> +	memcpy(p, val, vlen);
+> +}
+> +
+> +/**
+> + * fsinfo_note_param - Store a parameter for FSINFO_ATTR_PARAMETERS
+> + * @params: The parameter buffer
+> + * @key: The parameter's key
+> + * @val: The parameter's value (or NULL)
+> + */
+> +void fsinfo_note_param(struct fsinfo_kparams *params, const char *key,
+> +		       const char *val)
+> +{
+> +	__fsinfo_note_param(params, key, val, val ? strlen(val) : 0);
+> +}
+> +EXPORT_SYMBOL(fsinfo_note_param);
+> +
+> +/**
+> + * fsinfo_note_paramf - Store a formatted parameter for FSINFO_ATTR_PARAMETERS
+> + * @params: The parameter buffer
+> + * @key: The parameter's key
+> + * @val_fmt: Format string for the parameter's value
+> + */
+> +void fsinfo_note_paramf(struct fsinfo_kparams *params, const char *key,
+> +			const char *val_fmt, ...)
+> +{
+> +	va_list va;
+> +	int n;
+> +
+> +	va_start(va, val_fmt);
+> +	n = vsnprintf(params->scratch_buffer, 4096, val_fmt, va);
+> +	va_end(va);
+> +
+> +	__fsinfo_note_param(params, key, params->scratch_buffer, n);
+> +}
+> +EXPORT_SYMBOL(fsinfo_note_paramf);
+> diff --git a/include/linux/fsinfo.h b/include/linux/fsinfo.h
+> index e17e4f0bae18..731931afbf1c 100644
+> --- a/include/linux/fsinfo.h
+> +++ b/include/linux/fsinfo.h
+> @@ -29,6 +29,10 @@ struct fsinfo_kparams {
+>  };
+>  
+>  extern int generic_fsinfo(struct path *, struct fsinfo_kparams *);
+> +extern void fsinfo_note_sb_params(struct fsinfo_kparams *, unsigned int);
+> +extern void fsinfo_note_param(struct fsinfo_kparams *, const char *, const char *);
+> +extern void fsinfo_note_paramf(struct fsinfo_kparams *, const char *, const char *, ...)
+> +	__printf(3, 4);
+>  
+>  static inline void fsinfo_set_cap(struct fsinfo_capabilities *c,
+>  				  enum fsinfo_capability cap)
 > diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
-> index a7a7c731d992..9d929d2f7eee 100644
+> index 9d929d2f7eee..475cd1c97b12 100644
 > --- a/include/uapi/linux/fsinfo.h
 > +++ b/include/uapi/linux/fsinfo.h
-> @@ -27,6 +27,9 @@ enum fsinfo_attribute {
->  	FSINFO_ATTR_VOLUME_NAME		= 9,	/* Volume name (string) */
->  	FSINFO_ATTR_NAME_ENCODING	= 10,	/* Filename encoding (string) */
->  	FSINFO_ATTR_NAME_CODEPAGE	= 11,	/* Filename codepage (string) */
-> +	FSINFO_ATTR_PARAM_DESCRIPTION	= 12,	/* General fs parameter description */
-> +	FSINFO_ATTR_PARAM_SPECIFICATION	= 13,	/* Nth parameter specification */
-> +	FSINFO_ATTR_PARAM_ENUM		= 14,	/* Nth enum-to-val */
+> @@ -30,6 +30,7 @@ enum fsinfo_attribute {
+>  	FSINFO_ATTR_PARAM_DESCRIPTION	= 12,	/* General fs parameter description */
+>  	FSINFO_ATTR_PARAM_SPECIFICATION	= 13,	/* Nth parameter specification */
+>  	FSINFO_ATTR_PARAM_ENUM		= 14,	/* Nth enum-to-val */
+> +	FSINFO_ATTR_PARAMETERS		= 15,	/* Mount parameters (large string) */
 >  	FSINFO_ATTR__NR
 >  };
 >  
-> @@ -216,4 +219,59 @@ struct fsinfo_fsinfo {
->  	__u32	max_cap;	/* Number of supported capabilities (fsinfo_cap__nr) */
->  };
->  
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_param_description).
-> + *
-> + * Query the parameter set for a filesystem.
-> + */
-> +struct fsinfo_param_description {
-> +	__u32		nr_params;		/* Number of individual parameters */
-> +	__u32		nr_enum_names;		/* Number of enum names  */
-> +};
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_param_specification).
-> + *
-> + * Query the specification of the Nth filesystem parameter.
-> + */
-> +struct fsinfo_param_specification {
-> +	__u32		type;		/* enum fsinfo_param_specification_type */
-> +	__u32		flags;		/* Qualifiers */
-> +	__u32		opt;		/* Corresponding params have same ID here */
-> +	char		name[240];
-> +};
-> +
-> +enum fsinfo_param_specification_type {
-> +	FSINFO_PARAM_SPEC_NOT_DEFINED		= 0,
-> +	FSINFO_PARAM_SPEC_IS_FLAG		= 1,
-> +	FSINFO_PARAM_SPEC_IS_BOOL		= 2,
-> +	FSINFO_PARAM_SPEC_IS_U32		= 3,
-> +	FSINFO_PARAM_SPEC_IS_U32_OCTAL		= 4,
-> +	FSINFO_PARAM_SPEC_IS_U32_HEX		= 5,
-> +	FSINFO_PARAM_SPEC_IS_S32		= 6,
-> +	FSINFO_PARAM_SPEC_IS_U64		= 7,
-> +	FSINFO_PARAM_SPEC_IS_ENUM		= 8,
-> +	FSINFO_PARAM_SPEC_IS_STRING		= 9,
-> +	FSINFO_PARAM_SPEC_IS_BLOB		= 10,
-> +	FSINFO_PARAM_SPEC_IS_BLOCKDEV		= 11,
-> +	FSINFO_PARAM_SPEC_IS_PATH		= 12,
-> +	FSINFO_PARAM_SPEC_IS_FD			= 13,
-> +	NR__FSINFO_PARAM_SPEC
-> +};
-> +
-> +#define FSINFO_PARAM_SPEC_VALUE_IS_OPTIONAL	0X00000001
-> +#define FSINFO_PARAM_SPEC_PREFIX_NO_IS_NEG	0X00000002
-> +#define FSINFO_PARAM_SPEC_EMPTY_STRING_IS_NEG	0X00000004
-> +#define FSINFO_PARAM_SPEC_DEPRECATED		0X00000008
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_param_enum).
-> + *
-> + * Query the Nth filesystem enum parameter value name.
-> + */
-> +struct fsinfo_param_enum {
-> +	__u32		opt;		/* ->opt of the relevant parameter specification */
-> +	char		name[252];	/* Name of the enum value */
-> +};
-> +
->  #endif /* _UAPI_LINUX_FSINFO_H */
-> diff --git a/samples/vfs/Makefile b/samples/vfs/Makefile
-> index d3cc8e9a4fd8..3c542d3b9479 100644
-> --- a/samples/vfs/Makefile
-> +++ b/samples/vfs/Makefile
-> @@ -1,6 +1,7 @@
->  # List of programs to build
->  hostprogs-y := \
->  	test-fsinfo \
-> +	test-fs-query \
->  	test-fsmount \
->  	test-statx
->  
-> @@ -10,5 +11,6 @@ always := $(hostprogs-y)
->  HOSTCFLAGS_test-fsinfo.o += -I$(objtree)/usr/include
->  HOSTLDLIBS_test-fsinfo += -lm
->  
-> +HOSTCFLAGS_test-fs-query.o += -I$(objtree)/usr/include
->  HOSTCFLAGS_test-fsmount.o += -I$(objtree)/usr/include
->  HOSTCFLAGS_test-statx.o += -I$(objtree)/usr/include
-> diff --git a/samples/vfs/test-fs-query.c b/samples/vfs/test-fs-query.c
-> new file mode 100644
-> index 000000000000..7572411ddb7e
-> --- /dev/null
-> +++ b/samples/vfs/test-fs-query.c
-> @@ -0,0 +1,138 @@
-> +/* Test using the fsinfo() system call to query mount parameters.
-> + *
-> + * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#define _ATFILE_SOURCE
-> +#include <stdbool.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <stdint.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +#include <ctype.h>
-> +#include <errno.h>
-> +#include <time.h>
-> +#include <math.h>
-> +#include <sys/syscall.h>
-> +#include <linux/fsinfo.h>
-> +#include <linux/fcntl.h>
-> +#include <sys/stat.h>
-> +
-> +#ifndef __NR_fsopen
-> +#define __NR_fsopen -1
-> +#endif
-> +#ifndef __NR_fsinfo
-> +#define __NR_fsinfo -1
-> +#endif
-> +
-> +static int fsopen(const char *fs_name, unsigned int flags)
-> +{
-> +	return syscall(__NR_fsopen, fs_name, flags);
-> +}
-> +
-> +static ssize_t fsinfo(int dfd, const char *filename, struct fsinfo_params *params,
-> +		      void *buffer, size_t buf_size)
-> +{
-> +	return syscall(__NR_fsinfo, dfd, filename, params, buffer, buf_size);
-> +}
-> +
-> +static const char *param_types[NR__FSINFO_PARAM_SPEC] = {
-> +	[FSINFO_PARAM_SPEC_NOT_DEFINED]		= "?undef",
-> +	[FSINFO_PARAM_SPEC_IS_FLAG]		= "flag",
-> +	[FSINFO_PARAM_SPEC_IS_BOOL]		= "bool",
-> +	[FSINFO_PARAM_SPEC_IS_U32]		= "u32",
-> +	[FSINFO_PARAM_SPEC_IS_U32_OCTAL]	= "octal",
-> +	[FSINFO_PARAM_SPEC_IS_U32_HEX]		= "hex",
-> +	[FSINFO_PARAM_SPEC_IS_S32]		= "s32",
-> +	[FSINFO_PARAM_SPEC_IS_U64]		= "u64",
-> +	[FSINFO_PARAM_SPEC_IS_ENUM]		= "enum",
-> +	[FSINFO_PARAM_SPEC_IS_STRING]		= "string",
-> +	[FSINFO_PARAM_SPEC_IS_BLOB]		= "binary",
-> +	[FSINFO_PARAM_SPEC_IS_BLOCKDEV]		= "blockdev",
-> +	[FSINFO_PARAM_SPEC_IS_PATH]		= "path",
-> +	[FSINFO_PARAM_SPEC_IS_FD]		= "fd",
-> +};
-> +
-> +/*
-> + *
-> + */
-> +int main(int argc, char **argv)
-> +{
-> +	struct fsinfo_param_description desc;
-> +	struct fsinfo_param_specification spec;
-> +	struct fsinfo_param_enum enum_name;
-> +
-> +	struct fsinfo_params params = {
-> +		.at_flags = AT_FSINFO_FROM_FSOPEN,
-> +	};
-> +	int fd;
-> +
-> +	if (argc != 2) {
-> +		printf("Format: test-fs-query <fs_name>\n");
-> +		exit(2);
-> +	}
-> +
-> +	fd = fsopen(argv[1], 0);
-> +	if (fd == -1) {
-> +		perror(argv[1]);
-> +		exit(1);
-> +	}
-> +
-> +	params.request = FSINFO_ATTR_PARAM_DESCRIPTION;
-> +	if (fsinfo(fd, NULL, &params, &desc, sizeof(desc)) == -1) {
-> +		perror("fsinfo/desc");
-> +		exit(1);
-> +	}
-> +
-> +	printf("Filesystem %s has %u parameters\n", argv[1], desc.nr_params);
-> +
-> +	params.request = FSINFO_ATTR_PARAM_SPECIFICATION;
-> +	for (params.Nth = 0; params.Nth < desc.nr_params; params.Nth++) {
-> +		char type[32];
-> +
-> +		if (fsinfo(fd, NULL, &params, &spec, sizeof(spec)) == -1) {
-> +			if (errno == ENODATA)
-> +				break;
-> +			perror("fsinfo/spec");
-> +			exit(1);
-> +		}
-> +
-> +		if (spec.type < NR__FSINFO_PARAM_SPEC)
-> +			strcpy(type, param_types[spec.type]);
-> +		else
-> +			sprintf(type, "?%u", spec.type);
-> +
-> +		printf("- PARAM[%3u] %-20s %3u %s%s%s%s%s\n",
-> +		       params.Nth,
-> +		       spec.name,
-> +		       spec.opt,
-> +		       type,
-> +		       spec.flags & FSINFO_PARAM_SPEC_VALUE_IS_OPTIONAL ? ",opt" : "",
-> +		       spec.flags & FSINFO_PARAM_SPEC_PREFIX_NO_IS_NEG ? ",neg-no" : "",
-> +		       spec.flags & FSINFO_PARAM_SPEC_EMPTY_STRING_IS_NEG ? ",neg-empty" : "",
-> +		       spec.flags & FSINFO_PARAM_SPEC_DEPRECATED ? ",dep" : "");
-> +	}
-> +
-> +	printf("Filesystem has %u enumeration values\n", desc.nr_enum_names);
-> +
-> +	params.request = FSINFO_ATTR_PARAM_ENUM;
-> +	for (params.Nth = 0; params.Nth < desc.nr_enum_names; params.Nth++) {
-> +		if (fsinfo(fd, NULL, &params, &enum_name, sizeof(enum_name)) == -1) {
-> +			if (errno == ENODATA)
-> +				break;
-> +			perror("fsinfo/enum");
-> +			exit(1);
-> +		}
-> +		printf("- ENUM[%3u] %3u: %s\n",
-> +		       params.Nth, enum_name.opt, enum_name.name);
-> +	}
-> +	return 0;
-> +}
 > diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
-> index 8cce1986df7e..3c6ea3a5c157 100644
+> index 3c6ea3a5c157..8cf5b02e333a 100644
 > --- a/samples/vfs/test-fsinfo.c
 > +++ b/samples/vfs/test-fsinfo.c
-> @@ -78,6 +78,9 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
->  	FSINFO_STRING		(VOLUME_NAME,		volume_name),
->  	FSINFO_STRING		(NAME_ENCODING,		name_encoding),
->  	FSINFO_STRING		(NAME_CODEPAGE,		name_codepage),
-> +	FSINFO_STRUCT		(PARAM_DESCRIPTION,	param_description),
-> +	FSINFO_STRUCT_N		(PARAM_SPECIFICATION,	param_specification),
-> +	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
+> @@ -81,6 +81,7 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
+>  	FSINFO_STRUCT		(PARAM_DESCRIPTION,	param_description),
+>  	FSINFO_STRUCT_N		(PARAM_SPECIFICATION,	param_specification),
+>  	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
+> +	FSINFO_OVERLARGE	(PARAMETERS,		-),
 >  };
 >  
 >  #define FSINFO_NAME(X,Y) [FSINFO_ATTR_##X] = #Y
-> @@ -94,6 +97,9 @@ static const char *fsinfo_attr_names[FSINFO_ATTR__NR] = {
->  	FSINFO_NAME		(VOLUME_NAME,		volume_name),
->  	FSINFO_NAME		(NAME_ENCODING,		name_encoding),
->  	FSINFO_NAME		(NAME_CODEPAGE,		name_codepage),
-> +	FSINFO_NAME		(PARAM_DESCRIPTION,	param_description),
-> +	FSINFO_NAME		(PARAM_SPECIFICATION,	param_specification),
-> +	FSINFO_NAME		(PARAM_ENUM,		param_enum),
+> @@ -100,6 +101,7 @@ static const char *fsinfo_attr_names[FSINFO_ATTR__NR] = {
+>  	FSINFO_NAME		(PARAM_DESCRIPTION,	param_description),
+>  	FSINFO_NAME		(PARAM_SPECIFICATION,	param_specification),
+>  	FSINFO_NAME		(PARAM_ENUM,		param_enum),
+> +	FSINFO_NAME		(PARAMETERS,		parameters),
 >  };
 >  
 >  union reply {
-> @@ -514,6 +520,14 @@ int main(int argc, char **argv)
->  	}
+> @@ -352,6 +354,34 @@ static void dump_fsinfo(enum fsinfo_attribute attr,
+>  	dumper(r, size);
+>  }
 >  
->  	for (attr = 0; attr <= FSINFO_ATTR__NR; attr++) {
-> +		switch (attr) {
-> +		case FSINFO_ATTR_PARAM_DESCRIPTION:
-> +		case FSINFO_ATTR_PARAM_SPECIFICATION:
-> +		case FSINFO_ATTR_PARAM_ENUM:
-> +			/* See test-fs-query.c instead */
-> +			continue;
+> +static void dump_params(struct fsinfo_attr_info about, union reply *r, int size)
+> +{
+> +	int len;
+> +	char *p = r->buffer, *e = p + size;
+> +	bool is_key = true;
+> +
+> +	while (p < e) {
+> +		len = 0;
+> +		while (p[0] & 0x80) {
+> +			len <<= 7;
+> +			len |= *p++ & 0x7f;
 > +		}
 > +
->  		Nth = 0;
->  		do {
->  			Mth = 0;
+> +		len <<= 7;
+> +		len |= *p++;
+> +		if (len > e - p)
+> +			break;
+> +		if (is_key || len)
+> +			printf("%s%*.*s", is_key ? "[PARM] " : "= ", len, len, p);
+> +		if (is_key)
+> +			putchar(' ');
+> +		else
+> +			putchar('\n');
+> +		p += len;
+> +		is_key = !is_key;
+> +	}
+> +}
+> +
+>  /*
+>   * Try one subinstance of an attribute.
+>   */
+> @@ -427,6 +457,12 @@ static int try_one(const char *file, struct fsinfo_params *params, bool raw)
+>  		return 0;
+>  	}
+>  
+> +	switch (params->request) {
+> +	case FSINFO_ATTR_PARAMETERS:
+> +		if (ret == 0)
+> +			return 0;
+> +	}
+> +
+>  	switch (about.flags & (__FSINFO_N | __FSINFO_NM)) {
+>  	case 0:
+>  		printf("\e[33m%s\e[m: ",
+> @@ -469,6 +505,8 @@ static int try_one(const char *file, struct fsinfo_params *params, bool raw)
+>  		return 0;
+>  
+>  	case __FSINFO_OVER:
+> +		if (params->request == FSINFO_ATTR_PARAMETERS)
+> +			dump_params(about, r, ret);
+>  		return 0;
+>  
+>  	case __FSINFO_STRUCT_ARRAY:
 > 
