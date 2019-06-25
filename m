@@ -2,92 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B242D55272
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 16:47:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CEA6552B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 17:00:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731285AbfFYOr1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jun 2019 10:47:27 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35902 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730505AbfFYOr1 (ORCPT
+        id S1731938AbfFYPA2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jun 2019 11:00:28 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46850 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730777AbfFYPA2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jun 2019 10:47:27 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PEdNRQ167283;
-        Tue, 25 Jun 2019 14:47:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=tVz8kO2gLLHtnMQan5xim91ffyHoI4bPRMULVju7siQ=;
- b=yEWHk7koXcYLvNUFHCQOzZnDhasDLXBZbbvf8R5hJN3XakAgl0CmyBUReSsw49cr/l3D
- c9+hdlZXXhQadF2mlLFL1UaSgNSDIKnsSvK1HDlirE7A1UZjF/v3vcR30y7c/mc5TKv4
- WzrxkMYl1oin4mukoAdj1d1bQYQgZ9zZs4tV5PGMS1nfyxZ7XCpIK7iW5bjfd/VzmEcS
- rm0QC5qdLFnSWTF862B9EuEk9s2H4GT6kA2DtBFRE+YNYZypzFRRaIxoDuqSvRMfbcGu
- TSW6ub+a7IzXE18YHSi9XpdEQbVb1hR4Wt6qo3cSSioMNTZ4oYWWYy9FEP1KWpz5l3eb tQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2t9brt4vqs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jun 2019 14:47:10 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5PEjPs2036229;
-        Tue, 25 Jun 2019 14:47:10 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2tat7c9bgu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jun 2019 14:47:09 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5PEl8qd002530;
-        Tue, 25 Jun 2019 14:47:08 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 25 Jun 2019 07:47:08 -0700
-Date:   Tue, 25 Jun 2019 07:47:07 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/12] iomap: add tracing for the address space operations
-Message-ID: <20190625144707.GC5379@magnolia>
-References: <20190624055253.31183-1-hch@lst.de>
- <20190624055253.31183-13-hch@lst.de>
- <20190624234921.GE7777@dread.disaster.area>
- <20190625101515.GL1462@lst.de>
+        Tue, 25 Jun 2019 11:00:28 -0400
+Received: by mail-oi1-f194.google.com with SMTP id 65so12717579oid.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2019 08:00:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=70GK+AO3uKZgZ8D6gQdcBKHcRe1VNXglbQbcE8WJm74=;
+        b=fU1rmjcxyJLj8X7SU9OSUMW6fTS/TTAvS2BuaKyep2KXVX8Klq2gi7xlYz+zBZ+18n
+         xCS9Kxr3HwDpCllFsnEqU9VPY7rIVGvXyJC+eJl1K8K6sxVm4BXrOvf5Sfenbzo3eaNe
+         Pkc5x+yQkgn3mlww4y0wW9Q4ZyEdCBPigGFdKU5nv2MBCf1U7hlwzI/sAWDpjXCf/bYA
+         3Iv8V+Gr7qAgr/dQwUID3dYSix2Op1c2gaQVFppP9zqpnG+GiwtYjz8pfxO2OGXTacNy
+         RmYLZSw2vDSwUWEW5pZtL9aiSF20Q8IKHpfCpjgAJj3rfThycpY/ZNhHgTZkY2/gqH7h
+         IIZQ==
+X-Gm-Message-State: APjAAAWAyZD9+BrRe+wEekf9JUZjab/iUQs5BsN5DdFe1pnhrfvBliQS
+        F5V3DvCK9c7h1ColDy5rK59nFyWaNihZqfqGzE2GrQ==
+X-Google-Smtp-Source: APXvYqwVfRfIKs2VVNJMH0Mkm6UR86DyT56S+wxjZ8DOyZk2D51KNnNrKZ+AMlENIW6mD4mWEAqIylIPnsGNSY7gwk8=
+X-Received: by 2002:aca:72d0:: with SMTP id p199mr14884156oic.178.1561474827425;
+ Tue, 25 Jun 2019 08:00:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625101515.GL1462@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906250114
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906250114
+References: <20190618144716.8133-1-agruenba@redhat.com> <20190624065408.GA3565@lst.de>
+ <20190624182243.22447-1-agruenba@redhat.com> <20190625095707.GA1462@lst.de>
+In-Reply-To: <20190625095707.GA1462@lst.de>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Tue, 25 Jun 2019 17:00:16 +0200
+Message-ID: <CAHc6FU5=WPY2nKYLmTzoiuiCYycad6F18FJPmm3dWCBV-PpJJw@mail.gmail.com>
+Subject: Re: [PATCH] fs: Move mark_inode_dirty out of __generic_write_end
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 12:15:15PM +0200, Christoph Hellwig wrote:
-> On Tue, Jun 25, 2019 at 09:49:21AM +1000, Dave Chinner wrote:
-> > > +#undef TRACE_SYSTEM
-> > > +#define TRACE_SYSTEM iomap
-> > 
-> > Can you add a comment somewhere here that says these tracepoints are
-> > volatile and we reserve the right to change them at any time so they
-> > don't form any sort of persistent UAPI that we have to maintain?
-> 
-> Sure.  Note that we don't have any such comment in xfs either..
+On Tue, 25 Jun 2019 at 11:57, Christoph Hellwig <hch@lst.de> wrote:
+> On Mon, Jun 24, 2019 at 08:22:43PM +0200, Andreas Gruenbacher wrote:
+> > That would work, but I don't like how this leaves us with a vfs function
+> > that updates i_size without bothering to dirty the inode very much.
+>
+> This isn't a VFS function, it is a helper library.
 
-I think we ought to add a comment to both of the tracepoint header files
-in xfs then...
+Well, let's call it that if this suits you better.
 
---D
+> > How about if we move the __generic_write_end call into the page_done
+> > callback and leave special handling to the filesystem code if needed
+> > instead?  The below patch seems to work for gfs2.
+>
+> That seems way more complicated.  I'd much rather go with something
+> like may patch plus maybe a big fat comment explaining that persisting
+> the size update is the file systems job.  Note that a lot of the modern
+> file systems don't use the VFS inode tracking for that, besides XFS
+> that includes at least btrfs and ocfs2 as well.
+
+Andreas
