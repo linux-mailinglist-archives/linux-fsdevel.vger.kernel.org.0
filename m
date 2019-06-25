@@ -2,38 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF98B54D3A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 13:07:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CF5554D60
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2019 13:19:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730291AbfFYLHF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jun 2019 07:07:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49856 "EHLO mx1.suse.de"
+        id S1730468AbfFYLTH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jun 2019 07:19:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51812 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730028AbfFYLHE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jun 2019 07:07:04 -0400
+        id S1730461AbfFYLTH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 Jun 2019 07:19:07 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 63EC2ACA7;
-        Tue, 25 Jun 2019 11:07:03 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id AD39FAEFF;
+        Tue, 25 Jun 2019 11:19:05 +0000 (UTC)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 25 Jun 2019 13:07:02 +0200
+Date:   Tue, 25 Jun 2019 13:19:04 +0200
 From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Eric Wong <e@80x24.org>
-Cc:     Jason Baron <jbaron@akamai.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Azat Khuzhin <azat@libevent.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+        Azat Khuzhin <azat@libevent.org>, Eric Wong <e@80x24.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v5 00/14] epoll: support pollable epoll from userspace
-In-Reply-To: <20190625002456.unhdqihvs5lqcjn6@dcvr>
+In-Reply-To: <CAHk-=wgQaCDiH09ocVA=74ceg9XyS=kRDF5Hi=783shCaKVRWg@mail.gmail.com>
 References: <20190624144151.22688-1-rpenyaev@suse.de>
- <20190625002456.unhdqihvs5lqcjn6@dcvr>
-Message-ID: <1e50e45cfc832320999f21a81790a060@suse.de>
+ <CAHk-=wgQaCDiH09ocVA=74ceg9XyS=kRDF5Hi=783shCaKVRWg@mail.gmail.com>
+Message-ID: <f0d2c829c72c63d08c8df46d2d32c2af@suse.de>
 X-Sender: rpenyaev@suse.de
 User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -41,64 +40,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-06-25 02:24, Eric Wong wrote:
-> Roman Penyaev <rpenyaev@suse.de> wrote:
->> Hi all,
+On 2019-06-24 22:38, Linus Torvalds wrote:
+> On Mon, Jun 24, 2019 at 10:42 PM Roman Penyaev <rpenyaev@suse.de> 
+> wrote:
+>> 
+>> So harvesting events from userspace gives 15% gain.  Though bench_http
+>> is not ideal benchmark, but at least it is the part of libevent and 
+>> was
+>> easy to modify.
+>> 
+>> Worth to mention that uepoll is very sensible to CPU, e.g. the gain 
+>> above
+>> is observed on desktop "Intel(R) Core(TM) i7-6820HQ CPU @ 2.70GHz", 
+>> but on
+>> "Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz" measurements are almost 
+>> the
+>> same for both runs.
 > 
-> +cc Jason Baron
+> Hmm. 15% may be big in a big picture thing, but when it comes to what
+> is pretty much a micro-benchmark, I'm not sure how meaningful it is.
 > 
->> ** Limitations
-> 
-> <snip>
-> 
->> 4. No support for EPOLLEXCLUSIVE
->>      If device does not pass pollflags to wake_up() there is no way to
->>      call poll() from the context under spinlock, thus special work is
->>      scheduled to offload polling.  In this specific case we can't
->>      support exclusive wakeups, because we do not know actual result
->>      of scheduled work and have to wake up every waiter.
-> 
-> Lacking EPOLLEXCLUSIVE support is probably a showstopper for
-> common applications using per-task epoll combined with
-> non-blocking accept4() (e.g. nginx).
+> And the CPU sensitivity thing worries me. Did you check _why_ it
+> doesn't seem to make any difference on the Xeon 4110? Is it just
+> because at that point the machine has enough cores that you might as
+> well just sit in epoll() in the kernel and uepoll doesn't give you
+> much? Or is there something else going on?
 
-For the 'accept' case it seems SO_REUSEPORT can be used:
+This http tool is a singlethreaded test, i.e. client and server
+work as a standalone processes and each has a single event thread
+for everything.
 
-    https://lwn.net/Articles/542629/
+According to what I saw there, is that events come slowly (or event
+loop acts faster?), so when time has come to harvest events there
+is nothing, we take a slow path and go to kernel in order to sleep.
+That does not explain the main "why", unfortunately.
 
-Although I've never tried it in O_NONBLOCK + epoll scenario.
-
-But I've just again dived into this add-wait-exclusive logic and it
-seems possible to support EPOLLEXCLUSIVE by iterating over all "epis"
-for a particular fd, which has been woken up.
-
-For now I want to leave it as is just not to overcomplicate the code.
-
-> Fwiw, I'm still a weirdo who prefers a dedicated thread doing
-> blocking accept4 for distribution between tasks (so epoll never
-> sees a listen socket).  But, depending on what runtime/language
-> I'm using, I can't always dedicate a blocking thread, so I
-> recently started using EPOLLEXCLUSIVE from Perl5 where I
-> couldn't rely on threads being available.
-> 
-> 
-> If I could dedicate time to improving epoll; I'd probably
-> add writev() support for batching epoll_ctl modifications
-> to reduce syscall traffic, or pick-up the kevent()-like interface
-> started long ago:
-> https://lore.kernel.org/lkml/1393206162-18151-1-git-send-email-n1ght.4nd.d4y@gmail.com/
-> (but I'm not sure I want to increase the size of the syscall table).
-
-There is also fresh fs/io_uring.c thingy, which supports polling and
-batching (among other IO things).  But polling there acts only as a
-single-shot, so it might make sense to support there event subscription
-instead of resurrecting kevent and co.
+I would like to retest that adding more clients to the server, thus
+server is more likely to observe events in a ring, avoiding sleep.
 
 --
 Roman
-
-
-
-
-
 
