@@ -2,139 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C31D55B3F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 00:33:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57F9A55B6F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 00:41:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbfFYWdQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jun 2019 18:33:16 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43390 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfFYWdQ (ORCPT
+        id S1726376AbfFYWlq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jun 2019 18:41:46 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43959 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbfFYWlm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jun 2019 18:33:16 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f25so133340pgv.10;
-        Tue, 25 Jun 2019 15:33:15 -0700 (PDT)
+        Tue, 25 Jun 2019 18:41:42 -0400
+Received: by mail-pl1-f195.google.com with SMTP id cl9so215804plb.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2019 15:41:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lZHzVm2a7c7UL6Qa6OAs8GEjMqpVhQyW6fXdYgD38tg=;
+        b=WD+/u8ZZNxnSkIT8uW5k3AjwCTR/8Rul0p24/yrVxO5s2EytGRajAgq/3lh2tgJCoM
+         vOOrZEi6S9bPRtEV0sQ50TTo+svFRl+vB4anHgBOhwDOhj/sKAavGpLkR9ZW/+8ZlccU
+         UdMs6Z8Ga9hdSotzdUPEFVwI6IZ9G3K5novTFltGAZnxEjjToD6xbWblx/HifwrkfVwk
+         hJ5e4XwNevJKRgf4O7t302ViaxWNKj1aXsprvBLH4sig979oKbLTzjrYSQpuQWmWeZ6j
+         dP5tx4S2eAu98MeIeDuog/S9j0E1psO/k6tGCkOvr99nidb5QryIDQhLc5bRofLMt0FA
+         FrzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TnzcHfb/rGR5D/vErJu8w17aFeeUcfwDXLuZxpFdgZc=;
-        b=rNVLR2LDpP8KAQuszWLfab1CJ9gXccbXmSDxzPyAeTL3JIPvljZWiiRYzz/i6H743/
-         TxnaB1vUVgTE+fcI5I4L5yXaetDkjWBc4fa7QZzjtDkX37hbEVE+Mv8wxt+1YPPhZ7iw
-         qrPQ/U5PNWOziks8EzD7jGwqK/S1DlixOuiEBasaPh9bRvvMAJJhFzjvJInkpFjuwqFQ
-         PzHITMs8V1MgjLPkwQsEfJVqojTjDLQfScJvbiXdErj/zv5BA3ECvLcNR7etZMU0zaLA
-         ebSl4H2FueURFNZnqnj5/CmerH8Mywg1MRbyEjDe43xPAS8vNYBx7LAuWX79drGCazPF
-         zdPQ==
-X-Gm-Message-State: APjAAAVNqmYSdo4AzoRGu7VqCyayqtHpfhhKjEQgWUQiX73Y78zNNfah
-        F+W+Hhe0i9GS11WR3P5MJAE=
-X-Google-Smtp-Source: APXvYqz8tePzVjq6qydlXc6fHsQtBqVBfz39DV20JLDT6sqkzfdOgtSxbEsBu2vrr4nNjRf5f7IpUg==
-X-Received: by 2002:a17:90a:e397:: with SMTP id b23mr267009pjz.140.1561501994728;
-        Tue, 25 Jun 2019 15:33:14 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id p67sm23643298pfg.124.2019.06.25.15.33.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 15:33:13 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id CD044401EB; Tue, 25 Jun 2019 22:33:12 +0000 (UTC)
-Date:   Tue, 25 Jun 2019 22:33:12 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, peterz@infradead.org,
-        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org, tytso@mit.edu,
-        yamada.masahiro@socionext.com, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
-        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
-        julia.lawall@lip6.fr, khilman@baylibre.com, knut.omang@oracle.com,
-        logang@deltatee.com, mpe@ellerman.id.au, pmladek@suse.com,
-        rdunlap@infradead.org, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-Subject: Re: [PATCH v5 01/18] kunit: test: add KUnit test runner core
-Message-ID: <20190625223312.GP19023@42.do-not-panic.com>
-References: <20190617082613.109131-1-brendanhiggins@google.com>
- <20190617082613.109131-2-brendanhiggins@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lZHzVm2a7c7UL6Qa6OAs8GEjMqpVhQyW6fXdYgD38tg=;
+        b=OZRldw1tc/vV57/nlhG4jwEBpv/dhtmQgx/E5h1at7oMJXtyhH+WrVmww3VfdKj0Lu
+         mrWDoVrT6PdUAB7IjIvexFySVAc9dkOFbUV3YTiEEjPI05qAZ4GA5qqSeIwZGtYMJj8G
+         x1biUuz5Igiq1QjLzN+CcUurbrkoBNwejMEzhKpwwuh9+wUMxpOozdPjDtkUn3DKPjyB
+         NfSgZlfCY6hc/FyHI2K/uLiz+FWhmPZYBMoWbbggYfU0r9QZGsxVM8b8UGrZlSoEBVtt
+         BXwZxTXAIIfxYYHx1CElE9EMYW3i7xQ0D9opHrcr0fthvrgedmUK0zM/Bgyhv8YAbi4H
+         G/ag==
+X-Gm-Message-State: APjAAAW61EElsH121OSsDvjCvm8VCT8Cz5RfrDlYtQAhrY9g3Ju2y5tc
+        +TUUwq6pYwz6M7recvfTDeKZ+UNcVYFTEBZ63QnCPA==
+X-Google-Smtp-Source: APXvYqy+cT1ZyNb5dbS97li+J3swfp3mEaFo87MllhiLnOnKUdNsGvjik4FBRsZ5dS4sFwdr9UIg/0trivOUWFuNZts=
+X-Received: by 2002:a17:902:1004:: with SMTP id b4mr1155831pla.325.1561502500720;
+ Tue, 25 Jun 2019 15:41:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617082613.109131-2-brendanhiggins@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190617082613.109131-1-brendanhiggins@google.com>
+ <20190617082613.109131-7-brendanhiggins@google.com> <20190625221318.GO19023@42.do-not-panic.com>
+In-Reply-To: <20190625221318.GO19023@42.do-not-panic.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 25 Jun 2019 15:41:29 -0700
+Message-ID: <CAFd5g448rYqr3PHg0cfoddr70nktkWXcRfJoZHmuPJjTW53YYg@mail.gmail.com>
+Subject: Re: [PATCH v5 06/18] kbuild: enable building KUnit
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah <shuah@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 01:25:56AM -0700, Brendan Higgins wrote:
-> +/**
-> + * module_test() - used to register a &struct kunit_module with KUnit.
-> + * @module: a statically allocated &struct kunit_module.
-> + *
-> + * Registers @module with the test framework. See &struct kunit_module for more
-> + * information.
-> + */
-> +#define module_test(module) \
-> +		static int module_kunit_init##module(void) \
-> +		{ \
-> +			return kunit_run_tests(&module); \
-> +		} \
-> +		late_initcall(module_kunit_init##module)
+On Tue, Jun 25, 2019 at 3:13 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Mon, Jun 17, 2019 at 01:26:01AM -0700, Brendan Higgins wrote:
+> > diff --git a/Kconfig b/Kconfig
+> > index 48a80beab6853..10428501edb78 100644
+> > --- a/Kconfig
+> > +++ b/Kconfig
+> > @@ -30,3 +30,5 @@ source "crypto/Kconfig"
+> >  source "lib/Kconfig"
+> >
+> >  source "lib/Kconfig.debug"
+> > +
+> > +source "kunit/Kconfig"
+>
+> This patch would break compilation as kunit/Kconfig is not introduced. This
+> would would also break bisectability on this commit. This change should
+> either be folded in to the next patch, or just be a separate patch after
+> the next one.
 
-Becuase late_initcall() is used, if these modules are built-in, this
-would preclude the ability to test things prior to this part of the
-kernel under UML or whatever architecture runs the tests. So, this
-limits the scope of testing. Small detail but the scope whould be
-documented.
+Maybe my brain isn't working right now, but I am pretty darn sure that
+I introduce kunit/Kconfig in the very first patch of this series.
+Quoting from the change summary from the first commit:
 
-> +static void kunit_print_tap_version(void)
-> +{
-> +	if (!kunit_has_printed_tap_version) {
-> +		kunit_printk_emit(LOGLEVEL_INFO, "TAP version 14\n");
+>  include/kunit/test.h | 161 +++++++++++++++++++++++++++++++++
+>  kunit/Kconfig        |  17 ++++
+>  kunit/Makefile       |   1 +
+>  kunit/test.c         | 210 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 389 insertions(+)
+>  create mode 100644 include/kunit/test.h
+>  create mode 100644 kunit/Kconfig
 
-What is this TAP thing? Why should we care what version it is on?
-Why are we printing this?
+I am not crazy, right?
 
-> +		kunit_has_printed_tap_version = true;
-> +	}
-> +}
-> +
-> +static size_t kunit_test_cases_len(struct kunit_case *test_cases)
-> +{
-> +	struct kunit_case *test_case;
-> +	size_t len = 0;
-> +
-> +	for (test_case = test_cases; test_case->run_case; test_case++)
-
-If we make the last test case NULL, we'd just check for test_case here,
-and save ourselves an extra few bytes per test module. Any reason why
-the last test case cannot be NULL?
-
-> +void kunit_init_test(struct kunit *test, const char *name)
-> +{
-> +	spin_lock_init(&test->lock);
-> +	test->name = name;
-> +	test->success = true;
-> +}
-> +
-> +/*
-> + * Performs all logic to run a test case.
-> + */
-> +static void kunit_run_case(struct kunit_module *module,
-> +			   struct kunit_case *test_case)
-> +{
-> +	struct kunit test;
-> +	int ret = 0;
-> +
-> +	kunit_init_test(&test, test_case->name);
-> +
-> +	if (module->init) {
-> +		ret = module->init(&test);
-
-I believe if we used struct kunit_module *kmodule it would be much
-clearer who's init this is.
-
-  Luis
+>  create mode 100644 kunit/Makefile
+>  create mode 100644 kunit/test.c
