@@ -2,547 +2,304 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4FAB565F7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 11:54:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5611D5660D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 11:59:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfFZJxz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jun 2019 05:53:55 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51400 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbfFZJxz (ORCPT
+        id S1726987AbfFZJ6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jun 2019 05:58:55 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35550 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbfFZJ6y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jun 2019 05:53:55 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 207so1411213wma.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2019 02:53:52 -0700 (PDT)
+        Wed, 26 Jun 2019 05:58:54 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f15so2006086wrp.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2019 02:58:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=/iLgTibls9Uct+KN4HLJocTMJWKhaxNmcUr5PRz+WR0=;
-        b=fIiz8OGGTgEFq8Omvk/rQroXMklONPl6Umcki5wQTGdGc7rkRpzoDs9y36YY431WvN
-         FHPYigBEIxaGGLN4ij/PVsAHpvd/Xy1tc5Yran4gCmslWSyq2GqW/hhbbayPpmZg3jeo
-         E1fVPQ4OsCJM7EnnBwBVi8CAfZxzxkbsQ6rRSo0Skx6ftg4EWzOU5txInBAlBdqAtXFP
-         VxLZE4Vw1dGKkZJCNT3i9Vy6nI2XcNFlTsv2RX+q1tMBpGbu9g+EDOY5XjDDlUZ6Baj5
-         UuBcnGWLpWg7VxHmsTa8x/wSyuZgVcAp0AEfk7W0qCXEERSuM76zGJuCAwHaz5gqFP1h
-         NGFg==
+        bh=tjBuCo45aFxoqpSrVx4ZG9vODgjxwNAjmtTCo5fxvkQ=;
+        b=EAlTFutWxgWZ7+ncUu0zZwKoW3CWhWO7sd8A25Kfpjs9OhPCDdH4gfXet83NxIUWF6
+         UPmejX3OgZl0Gw2kR28ajfZdW9g8xoZOHReDNu99OPvSzhDNuwu2X7Nas7tu7wHEELq6
+         COJLaoIMWCa2CdwV9+2cA92YhWbKQQkburyGohrfIw/w4CsOSxGYn92M76RlEazUdssC
+         KR8xbaJn70TnYUQRMExeoLuMASdcuA6/8QYdE5fMGqetfnQIdMhXVdRu7Sawvrrw59nK
+         uFWsTD41k418zySz4Mar86G1JGq+ol5DMw2jDbW0jRgnIcZZGNdroHJRdZKpD4bbqOr7
+         Amrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/iLgTibls9Uct+KN4HLJocTMJWKhaxNmcUr5PRz+WR0=;
-        b=cQqyTQrfQ2MmSuRSv8K0xG7zLeN6HQUzoda/Xo9nmd5mC9Cls/lvHVESNp8mN4k7Mj
-         PP0wvnwmRHJAHrtF0xTtbfponBrlCjsFwqbIukJ7ElA4E2Kp5OeJxtUi0WeV2snrV9Q3
-         fw6Nn6jSc9K5aCEvI/zF6Trgstu3fQ97H1l9X9KRc+nXdkqjRVc675Llv33gpkVl0Hwv
-         woWu8FZmxr88Mi7HhzCi4xhUEB2gpHzAShtnHFhTNqORkNykydbZIt5TbLKMPb2mtwKt
-         LBaBVT8OzEedJn85C+7Vnk1D9GQMcp+UKWkNqtGQWNLhsaIRj3N94AGlejq+8BR4Rt98
-         RDmQ==
-X-Gm-Message-State: APjAAAUpGE3FbH27H8CQWaOPFM9Tnubu8+pYj1FOzCNDC8zadR128fPp
-        P6uV0e9/QXHRT/iiu8olyM/WHw==
-X-Google-Smtp-Source: APXvYqxSlY1v64GThtEQScXPFmz29ZOg3LLbyYUgzywIMXHvlGfSLi++UcKDhdmbY5xcUvlrKhtnCQ==
-X-Received: by 2002:a1c:63d7:: with SMTP id x206mr2142668wmb.19.1561542831522;
-        Wed, 26 Jun 2019 02:53:51 -0700 (PDT)
+        bh=tjBuCo45aFxoqpSrVx4ZG9vODgjxwNAjmtTCo5fxvkQ=;
+        b=VPDO3YF42shW0sAu0FaA2fAcR7Xg1WROi/bMleZLcaIIgNm/xNuxHgwwGixmhVFroT
+         AIKB2tL7MgyxG2xP6BcEiDeVXTW6dOEW1nnB88LBKxmY4q1yn9kKFGoegpMMmt1XUgFl
+         fWcxuHhQRB6GrUP2FOqKFP8ALHi9Vr2HRkNdTuBnjrVU7Iuc89F4z/zeWWBLXih+fv/I
+         aRhhz4IWeCdt88EAJbbAS8bDuFHeQvO20kfn39TCIklul8xofn+tIvylI+6oF90bmnxJ
+         nBJpxfYZIOat1iUJzZmHQY0BFk6bJ1wGZ/AVwoUGlYDLudWYQIiCi+l/kZAeEh5qihIB
+         DDAg==
+X-Gm-Message-State: APjAAAX0az0/PeKWYs8j3rPaPo+cOwDym662Ca3vVuqKNwfwNLuuO9GS
+        ziS+0DUdoaY3yxKzGT0pQ5jecA==
+X-Google-Smtp-Source: APXvYqxxoJNHZqY3PaivUes61P8pElYQOnvhlerzfEETE9SnONfm0bSHyXlTDQIv1MKSwBoZBlUitg==
+X-Received: by 2002:adf:dd51:: with SMTP id u17mr2821336wrm.218.1561543131204;
+        Wed, 26 Jun 2019 02:58:51 -0700 (PDT)
 Received: from brauner.io ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id r131sm1501462wmf.4.2019.06.26.02.53.50
+        by smtp.gmail.com with ESMTPSA id w2sm15971588wrr.31.2019.06.26.02.58.50
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 02:53:50 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 11:53:50 +0200
+        Wed, 26 Jun 2019 02:58:50 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 11:58:49 +0200
 From:   Christian Brauner <christian@brauner.io>
 To:     David Howells <dhowells@redhat.com>
 Cc:     viro@zeniv.linux.org.uk, raven@themaw.net, mszeredi@redhat.com,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/25] vfs: Allow mount information to be queried by
- fsinfo() [ver #14]
-Message-ID: <20190626095349.4uar75jfcy3jzmxb@brauner.io>
-References: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
- <156138542011.25627.17245518783942568567.stgit@warthog.procyon.org.uk>
+Subject: Re: [PATCH 01/25] vfs: syscall: Add fsinfo() to query filesystem
+ information [ver #14]
+Message-ID: <20190626095848.fwcepme3cpwdluwz@brauner.io>
+References: <20190625082822.l4pz33dwzvotboe4@brauner.io>
+ <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
+ <156138533403.25627.4606280739806094239.stgit@warthog.procyon.org.uk>
+ <7560.1561542552@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <156138542011.25627.17245518783942568567.stgit@warthog.procyon.org.uk>
+In-Reply-To: <7560.1561542552@warthog.procyon.org.uk>
 User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 03:10:20PM +0100, David Howells wrote:
-> Allow mount information, including information about the topology tree to
-> be queried with the fsinfo() system call.  Usage of AT_FSINFO_MOUNTID_PATH
-> allows overlapping mounts to be queried.
+On Wed, Jun 26, 2019 at 10:49:12AM +0100, David Howells wrote:
+> Christian Brauner <christian@brauner.io> wrote:
+> 
+> > > +	return sizeof(*p);
+> > 
+> > Hm, the discrepancy between the function signature returning int and
+> > the sizeof operator most likely being size_t is bothering me. It
+> > probably doesn't matter but maybe we can avoid that.
+> 
+> If sizeof(*p) exceeds 4096, the buffer is going to have been overrun by this
+> point anyway.
 
-Again, I really think that this doesn't need to land at the same time as
-the basic infrastructure for fsinfo()...
+Ok.
 
 > 
-> To this end, four fsinfo() attributes are provided:
+> The function can't return size_t, though it could return ssize_t.  I could
+> switch it to return long or even store the result in fsinfo_kparams::usage and
+> return 0.
 > 
->  (1) FSINFO_ATTR_MOUNT_INFO.
+> > > +	strlcpy(p->f_fs_name, path->dentry->d_sb->s_type->name,
+> > > +		sizeof(p->f_fs_name));
+> > 
+> > Truncation is acceptable or impossible I assume?
 > 
->      This is a structure providing information about a mount, including:
+> I'm hoping that file_system_type::name isn't going to exceed 15 chars plus
+> NUL.  If it does, it will be truncated.  I don't really want to add an
+> individual attribute just for the filesystem driver name.
 > 
-> 	- Mounted superblock ID.
-> 	- Mount ID (as AT_FSINFO_MOUNTID_PATH).
-> 	- Parent mount ID.
-> 	- Mount attributes (eg. R/O, NOEXEC).
-> 	- Number of change notifications generated.
+> > > +#define _gen(X, Y) FSINFO_ATTR_##X: return fsinfo_generic_##Y(path, params->buffer)
+> > 
+> > I'm really not sure that this helps readability in the switch below... :)
+> > 
+> > > +
+> > > +	switch (params->request) {
+> > > +	case _gen(STATFS,		statfs);
+> > > +	case _gen(IDS,			ids);
+> > > +	case _gen(LIMITS,		limits);
+> > > +	case _gen(SUPPORTS,		supports);
+> > > +	case _gen(CAPABILITIES,		capabilities);
+> > > +	case _gen(TIMESTAMP_INFO,	timestamp_info);
+> > > ...
 > 
->      Note that the parent mount ID is overridden to the ID of the queried
->      mount if the parent lies outside of the chroot or dfd tree.
+> I'm trying to avoid having to spend multiple lines per case and tabulation
+> makes things easier to read.  So
 > 
->  (2) FSINFO_ATTR_MOUNT_DEVNAME.
+> 	case FSINFO_ATTR_SUPPORTS:		return fsinfo_generic_supports(path, params->buffer);
+> 	case FSINFO_ATTR_CAPABILITIES:		return fsinfo_generic_capabilities(path, params->buffer);
+> 	case FSINFO_ATTR_TIMESTAMP_INFO:	return fsinfo_generic_timestamp_info(path, params->buffer);
 > 
->      This a string providing the device name associated with the mount.
+> is a bit on the long side per line, whereas:
 > 
->      Note that the device name may be a path that lies outside of the root.
+> 	case FSINFO_ATTR_SUPPORTS:
+> 		return fsinfo_generic_supports(path, params->buffer);
+> 	case FSINFO_ATTR_CAPABILITIES:
+> 		return fsinfo_generic_capabilities(path, params->buffer);
+> 	case FSINFO_ATTR_TIMESTAMP_INFO:
+> 		return fsinfo_generic_timestamp_info(path, params->buffer);
 > 
->  (3) FSINFO_ATTR_MOUNT_CHILDREN.
+> is less readable by interleaving two of the three columns.  (Note that _gen is
+> a actually third column as I introduce alternatives later).
 > 
->      This produces an array of structures, one for each child and capped
->      with one for the argument mount (checked after listing all the
->      children).  Each element contains the mount ID and the notification
->      counter of the respective mount object.
+> > > +		if (ret <= (int)params->buf_size)
+> > 
+> > He, and this is where the return value discrepancy hits again. Just
+> > doesn't look nice tbh. :)
 > 
->  (4) FSINFO_ATTR_MOUNT_SUBMOUNT.
+> No.  That's dealing with signed/unsigned comparison.  It might be better if I
+> change this to:
 > 
->      This is a 1D array of strings, indexed with struct fsinfo_params::Nth.
->      Each string is the relative pathname of the corresponding child
->      returned by FSINFO_ATTR_MOUNT_CHILDREN.
+> 		if (IS_ERR_VALUE(ret))
+> 			return ret; /* Error */
+> 		if ((unsigned int)ret <= params->buf_size)
+> 			return ret; /* It fitted */
 > 
->      Note that paths in the mount at the base of the tree (whether that be
->      dfd or chroot) are relative to the base of the tree, not the root
->      directory of that mount.
+> In any case, buf_size isn't permitted to be larger than INT_MAX due to a check
+> later in the loop.
 > 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
+> > > +		kvfree(params->buffer);
+> > 
+> > That means callers should always memset fsinfo_kparams or this is an
+> > invalid free...
 > 
->  fs/d_path.c                 |    2 
->  fs/fsinfo.c                 |    8 ++
->  fs/internal.h               |    9 ++
->  fs/namespace.c              |  177 +++++++++++++++++++++++++++++++++++++++++++
->  include/uapi/linux/fsinfo.h |   28 +++++++
->  samples/vfs/test-fsinfo.c   |   47 +++++++++++
->  6 files changed, 267 insertions(+), 4 deletions(-)
+> vfs_info() isn't a public function.  And, in any case, the caller *must*
+> provide a buffer here.
 > 
-> diff --git a/fs/d_path.c b/fs/d_path.c
-> index a7d0a96b35ce..89d77c264c5f 100644
-> --- a/fs/d_path.c
-> +++ b/fs/d_path.c
-> @@ -227,7 +227,7 @@ static int prepend_unreachable(char **buffer, int *buflen)
->  	return prepend(buffer, buflen, "(unreachable)", 13);
->  }
->  
-> -static void get_fs_root_rcu(struct fs_struct *fs, struct path *root)
-> +void get_fs_root_rcu(struct fs_struct *fs, struct path *root)
->  {
->  	unsigned seq;
->  
-> diff --git a/fs/fsinfo.c b/fs/fsinfo.c
-> index 3b218f9fedb7..61f00f375fd2 100644
-> --- a/fs/fsinfo.c
-> +++ b/fs/fsinfo.c
-> @@ -348,6 +348,10 @@ int generic_fsinfo(struct path *path, struct fsinfo_kparams *params)
->  	case _genf(PARAM_SPECIFICATION,	param_specification);
->  	case _genf(PARAM_ENUM,		param_enum);
->  	case _genp(PARAMETERS,		parameters);
-> +	case _genp(MOUNT_INFO,		mount_info);
-> +	case _genp(MOUNT_DEVNAME,	mount_devname);
-> +	case _genp(MOUNT_CHILDREN,	mount_children);
-> +	case _genp(MOUNT_SUBMOUNT,	mount_submount);
->  	default:
->  		return -EOPNOTSUPP;
->  	}
-> @@ -627,6 +631,10 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
->  	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
->  	FSINFO_OPAQUE		(PARAMETERS,		-),
->  	FSINFO_OPAQUE		(LSM_PARAMETERS,	-),
-> +	FSINFO_STRUCT		(MOUNT_INFO,		mount_info),
-> +	FSINFO_STRING		(MOUNT_DEVNAME,		mount_devname),
-> +	FSINFO_STRUCT_ARRAY	(MOUNT_CHILDREN,	mount_child),
-> +	FSINFO_STRING_N		(MOUNT_SUBMOUNT,	mount_submount),
->  };
->  
->  /**
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 074b1c65e3bd..bb3d8efa7f49 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -53,6 +53,11 @@ void __generic_write_end(struct inode *inode, loff_t pos, unsigned copied,
->   */
->  extern void __init chrdev_init(void);
->  
-> +/*
-> + * d_path.c
-> + */
-> +extern void get_fs_root_rcu(struct fs_struct *fs, struct path *root);
-> +
->  /*
->   * fs_context.c
->   */
-> @@ -98,6 +103,10 @@ extern void __mnt_drop_write_file(struct file *);
->  
->  extern void dissolve_on_fput(struct vfsmount *);
->  extern int lookup_mount_object(struct path *, int, struct path *);
-> +extern int fsinfo_generic_mount_info(struct path *, struct fsinfo_kparams *);
-> +extern int fsinfo_generic_mount_devname(struct path *, struct fsinfo_kparams *);
-> +extern int fsinfo_generic_mount_children(struct path *, struct fsinfo_kparams *);
-> +extern int fsinfo_generic_mount_submount(struct path *, struct fsinfo_kparams *);
->  
->  /*
->   * fs_struct.c
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 1450faab96b9..2ec7d9d1905a 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -29,6 +29,7 @@
->  #include <linux/sched/task.h>
->  #include <uapi/linux/mount.h>
->  #include <linux/fs_context.h>
-> +#include <linux/fsinfo.h>
->  
->  #include "pnode.h"
->  #include "internal.h"
-> @@ -4112,3 +4113,179 @@ int lookup_mount_object(struct path *root, int mnt_id, struct path *_mntpt)
->  	unlock_mount_hash();
->  	goto out_unlock;
->  }
-> +
-> +#ifdef CONFIG_FSINFO
-> +int fsinfo_generic_mount_info(struct path *path, struct fsinfo_kparams *params)
-> +{
-> +	struct fsinfo_mount_info *p = params->buffer;
-> +	struct super_block *sb;
-> +	struct mount *m;
-> +	struct path root;
-> +	unsigned int flags;
-> +
-> +	if (!path->mnt)
-> +		return -ENODATA;
-> +
-> +	m = real_mount(path->mnt);
-> +	sb = m->mnt.mnt_sb;
-> +
-> +	p->f_sb_id		= sb->s_unique_id;
-> +	p->mnt_id		= m->mnt_id;
-> +	p->parent_id		= m->mnt_parent->mnt_id;
-> +	p->notify_counter	= atomic_read(&m->mnt_notify_counter);
-> +
-> +	get_fs_root(current->fs, &root);
-> +	if (path->mnt == root.mnt) {
-> +		p->parent_id = p->mnt_id;
-> +	} else {
-> +		rcu_read_lock();
-> +		if (!are_paths_connected(&root, path))
-> +			p->parent_id = p->mnt_id;
-> +		rcu_read_unlock();
-> +	}
-> +	if (IS_MNT_SHARED(m))
-> +		p->group_id = m->mnt_group_id;
-> +	if (IS_MNT_SLAVE(m)) {
-> +		int master = m->mnt_master->mnt_group_id;
-> +		int dom = get_dominating_id(m, &root);
-> +		p->master_id = master;
-> +		if (dom && dom != master)
-> +			p->from_id = dom;
-> +	}
-> +	path_put(&root);
-> +
-> +	flags = READ_ONCE(m->mnt.mnt_flags);
-> +	if (flags & MNT_READONLY)
-> +		p->attr |= MOUNT_ATTR_RDONLY;
-> +	if (flags & MNT_NOSUID)
-> +		p->attr |= MOUNT_ATTR_NOSUID;
-> +	if (flags & MNT_NODEV)
-> +		p->attr |= MOUNT_ATTR_NODEV;
-> +	if (flags & MNT_NOEXEC)
-> +		p->attr |= MOUNT_ATTR_NOEXEC;
-> +	if (flags & MNT_NODIRATIME)
-> +		p->attr |= MOUNT_ATTR_NODIRATIME;
-> +
-> +	if (flags & MNT_NOATIME)
-> +		p->attr |= MOUNT_ATTR_NOATIME;
-> +	else if (flags & MNT_RELATIME)
-> +		p->attr |= MOUNT_ATTR_RELATIME;
-> +	else
-> +		p->attr |= MOUNT_ATTR_STRICTATIME;
-> +	return sizeof(*p);
-> +}
-> +
-> +int fsinfo_generic_mount_devname(struct path *path, struct fsinfo_kparams *params)
-> +{
-> +	struct mount *m;
-> +	size_t len;
-> +
-> +	if (!path->mnt)
-> +		return -ENODATA;
-> +
-> +	m = real_mount(path->mnt);
-> +	len = strlen(m->mnt_devname);
-> +	memcpy(params->buffer, m->mnt_devname, len);
-> +	return len;
-> +}
-> +
-> +/*
-> + * Store a mount record into the fsinfo buffer.
-> + */
-> +static void store_mount_fsinfo(struct fsinfo_kparams *params,
-> +			       struct fsinfo_mount_child *child)
-> +{
-> +	unsigned int usage = params->usage;
-> +	unsigned int total = sizeof(*child);
-> +
-> +	if (params->usage >= INT_MAX)
-> +		return;
-> +	params->usage = usage + total;
-> +	if (params->buffer && params->usage <= params->buf_size)
-> +		memcpy(params->buffer + usage, child, total);
-> +}
-> +
-> +/*
-> + * Return information about the submounts relative to path.
-> + */
-> +int fsinfo_generic_mount_children(struct path *path, struct fsinfo_kparams *params)
-> +{
-> +	struct fsinfo_mount_child record;
-> +	struct mount *m, *child;
-> +
-> +	if (!path->mnt)
-> +		return -ENODATA;
-> +
-> +	m = real_mount(path->mnt);
-> +
-> +	rcu_read_lock();
-> +	list_for_each_entry_rcu(child, &m->mnt_mounts, mnt_child) {
-> +		if (child->mnt_parent != m)
-> +			continue;
-> +		record.mnt_id = child->mnt_id;
-> +		record.notify_counter = atomic_read(&child->mnt_notify_counter);
-> +		store_mount_fsinfo(params, &record);
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	/* End the list with a copy of the parameter mount's details so that
-> +	 * userspace can quickly check for changes.
-> +	 */
-> +	record.mnt_id = m->mnt_id;
-> +	record.notify_counter = atomic_read(&m->mnt_notify_counter);
-> +	store_mount_fsinfo(params, &record);
-> +	return params->usage;
-> +}
-> +
-> +/*
-> + * Return the path of the Nth submount relative to path.  This is derived from
-> + * d_path(), but the root determination is more complicated.
-> + */
-> +int fsinfo_generic_mount_submount(struct path *path, struct fsinfo_kparams *params)
-> +{
-> +	struct mountpoint *mp;
-> +	struct mount *m, *child;
-> +	struct path mountpoint, root;
-> +	unsigned int n = params->Nth;
-> +	size_t len;
-> +	void *p;
-> +
-> +	if (!path->mnt)
-> +		return -ENODATA;
-> +
-> +	rcu_read_lock();
-> +
-> +	m = real_mount(path->mnt);
-> +	list_for_each_entry_rcu(child, &m->mnt_mounts, mnt_child) {
-> +		mp = READ_ONCE(child->mnt_mp);
-> +		if (child->mnt_parent != m || !mp)
-> +			continue;
-> +		if (n-- == 0)
-> +			goto found;
-> +	}
-> +	rcu_read_unlock();
-> +	return -ENODATA;
-> +
-> +found:
-> +	mountpoint.mnt = path->mnt;
-> +	mountpoint.dentry = READ_ONCE(mp->m_dentry);
-> +
-> +	get_fs_root_rcu(current->fs, &root);
-> +	if (root.mnt != path->mnt) {
-> +		root.mnt = path->mnt;
-> +		root.dentry = path->mnt->mnt_root;
-> +	}
-> +
-> +	p = __d_path(&mountpoint, &root, params->buffer, params->buf_size);
-> +	rcu_read_unlock();
-> +
-> +	if (IS_ERR(p))
-> +		return PTR_ERR(p);
-> +	if (!p)
-> +		return -EPERM;
-> +
-> +	len = (params->buffer + params->buf_size) - p;
-> +	memmove(params->buffer, p, len);
-> +	return len;
-> +}
-> +#endif /* CONFIG_FSINFO */
-> diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
-> index bae0bdc9ace9..88e1d004ac6c 100644
-> --- a/include/uapi/linux/fsinfo.h
-> +++ b/include/uapi/linux/fsinfo.h
-> @@ -32,6 +32,10 @@ enum fsinfo_attribute {
->  	FSINFO_ATTR_PARAM_ENUM		= 14,	/* Nth enum-to-val */
->  	FSINFO_ATTR_PARAMETERS		= 15,	/* Mount parameters (large string) */
->  	FSINFO_ATTR_LSM_PARAMETERS	= 16,	/* LSM Mount parameters (large string) */
-> +	FSINFO_ATTR_MOUNT_INFO		= 17,	/* Mount object information */
-> +	FSINFO_ATTR_MOUNT_DEVNAME	= 18,	/* Mount object device name (string) */
-> +	FSINFO_ATTR_MOUNT_CHILDREN	= 19,	/* Submount list (array) */
-> +	FSINFO_ATTR_MOUNT_SUBMOUNT	= 20,	/* Relative path of Nth submount (string) */
->  	FSINFO_ATTR__NR
->  };
->  
-> @@ -276,4 +280,28 @@ struct fsinfo_param_enum {
->  	char		name[252];	/* Name of the enum value */
->  };
->  
-> +/*
-> + * Information struct for fsinfo(FSINFO_ATTR_MOUNT_INFO).
-> + */
-> +struct fsinfo_mount_info {
-> +	__u64		f_sb_id;	/* Superblock ID */
-> +	__u32		mnt_id;		/* Mount identifier (use with AT_FSINFO_MOUNTID_PATH) */
-> +	__u32		parent_id;	/* Parent mount identifier */
-> +	__u32		group_id;	/* Mount group ID */
-> +	__u32		master_id;	/* Slave master group ID */
-> +	__u32		from_id;	/* Slave propagated from ID */
-> +	__u32		attr;		/* MOUNT_ATTR_* flags */
-> +	__u32		notify_counter;	/* Number of notifications generated. */
-> +	__u32		__reserved[1];
-> +};
-> +
-> +/*
-> + * Information struct element for fsinfo(FSINFO_ATTR_MOUNT_CHILDREN).
-> + * - An extra element is placed on the end representing the parent mount.
-> + */
-> +struct fsinfo_mount_child {
-> +	__u32		mnt_id;		/* Mount identifier (use with AT_FSINFO_MOUNTID_PATH) */
-> +	__u32		notify_counter;	/* Number of notifications generated on mount. */
-> +};
-> +
->  #endif /* _UAPI_LINUX_FSINFO_H */
-> diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
-> index fadc5e1384fc..ab32a15d4c5b 100644
-> --- a/samples/vfs/test-fsinfo.c
-> +++ b/samples/vfs/test-fsinfo.c
-> @@ -21,10 +21,10 @@
->  #include <errno.h>
->  #include <time.h>
->  #include <math.h>
-> -#include <fcntl.h>
->  #include <sys/syscall.h>
->  #include <linux/fsinfo.h>
->  #include <linux/socket.h>
-> +#include <linux/fcntl.h>
->  #include <sys/stat.h>
->  #include <arpa/inet.h>
->  
-> @@ -83,6 +83,10 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
->  	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
->  	FSINFO_OVERLARGE	(PARAMETERS,		-),
->  	FSINFO_OVERLARGE	(LSM_PARAMETERS,	-),
-> +	FSINFO_STRUCT		(MOUNT_INFO,		mount_info),
-> +	FSINFO_STRING		(MOUNT_DEVNAME,		mount_devname),
-> +	FSINFO_STRUCT_ARRAY	(MOUNT_CHILDREN,	mount_child),
-> +	FSINFO_STRING_N		(MOUNT_SUBMOUNT,	mount_submount),
->  };
->  
->  #define FSINFO_NAME(X,Y) [FSINFO_ATTR_##X] = #Y
-> @@ -104,6 +108,10 @@ static const char *fsinfo_attr_names[FSINFO_ATTR__NR] = {
->  	FSINFO_NAME		(PARAM_ENUM,		param_enum),
->  	FSINFO_NAME		(PARAMETERS,		parameters),
->  	FSINFO_NAME		(LSM_PARAMETERS,	lsm_parameters),
-> +	FSINFO_NAME		(MOUNT_INFO,		mount_info),
-> +	FSINFO_NAME		(MOUNT_DEVNAME,		mount_devname),
-> +	FSINFO_NAME		(MOUNT_CHILDREN,	mount_children),
-> +	FSINFO_NAME		(MOUNT_SUBMOUNT,	mount_submount),
->  };
->  
->  union reply {
-> @@ -116,6 +124,8 @@ union reply {
->  	struct fsinfo_capabilities caps;
->  	struct fsinfo_timestamp_info timestamps;
->  	struct fsinfo_volume_uuid uuid;
-> +	struct fsinfo_mount_info mount_info;
-> +	struct fsinfo_mount_child mount_children[1];
->  };
->  
->  static void dump_hex(unsigned int *data, int from, int to)
-> @@ -319,6 +329,29 @@ static void dump_attr_VOLUME_UUID(union reply *r, int size)
->  	       f->uuid[14], f->uuid[15]);
->  }
->  
-> +static void dump_attr_MOUNT_INFO(union reply *r, int size)
-> +{
-> +	struct fsinfo_mount_info *f = &r->mount_info;
-> +
-> +	printf("\n");
-> +	printf("\tsb_id   : %llx\n", (unsigned long long)f->f_sb_id);
-> +	printf("\tmnt_id  : %x\n", f->mnt_id);
-> +	printf("\tparent  : %x\n", f->parent_id);
-> +	printf("\tgroup   : %x\n", f->group_id);
-> +	printf("\tattr    : %x\n", f->attr);
-> +	printf("\tnotifs  : %x\n", f->notify_counter);
-> +}
-> +
-> +static void dump_attr_MOUNT_CHILDREN(union reply *r, int size)
-> +{
-> +	struct fsinfo_mount_child *f = r->mount_children;
-> +	int i = 0;
-> +
-> +	printf("\n");
-> +	for (; size >= sizeof(*f); size -= sizeof(*f), f++)
-> +		printf("\t[%u] %8x %8x\n", i++, f->mnt_id, f->notify_counter);
-> +}
-> +
->  /*
->   *
->   */
-> @@ -334,6 +367,8 @@ static const dumper_t fsinfo_attr_dumper[FSINFO_ATTR__NR] = {
->  	FSINFO_DUMPER(CAPABILITIES),
->  	FSINFO_DUMPER(TIMESTAMP_INFO),
->  	FSINFO_DUMPER(VOLUME_UUID),
-> +	FSINFO_DUMPER(MOUNT_INFO),
-> +	FSINFO_DUMPER(MOUNT_CHILDREN),
->  };
->  
->  static void dump_fsinfo(enum fsinfo_attribute attr,
-> @@ -536,16 +571,21 @@ int main(int argc, char **argv)
->  	unsigned int attr;
->  	int raw = 0, opt, Nth, Mth;
->  
-> -	while ((opt = getopt(argc, argv, "adlr"))) {
-> +	while ((opt = getopt(argc, argv, "Madlr"))) {
->  		switch (opt) {
-> +		case 'M':
-> +			params.at_flags = AT_FSINFO_MOUNTID_PATH;
-> +			continue;
->  		case 'a':
->  			params.at_flags |= AT_NO_AUTOMOUNT;
-> +			params.at_flags &= ~AT_FSINFO_MOUNTID_PATH;
->  			continue;
->  		case 'd':
->  			debug = true;
->  			continue;
->  		case 'l':
->  			params.at_flags &= ~AT_SYMLINK_NOFOLLOW;
-> +			params.at_flags &= ~AT_FSINFO_MOUNTID_PATH;
->  			continue;
->  		case 'r':
->  			raw = 1;
-> @@ -558,7 +598,8 @@ int main(int argc, char **argv)
->  	argv += optind;
->  
->  	if (argc != 1) {
-> -		printf("Format: test-fsinfo [-alr] <file>\n");
-> +		printf("Format: test-fsinfo [-adlr] <file>\n");
-> +		printf("Format: test-fsinfo [-dr] -M <mnt_id>\n");
->  		exit(2);
->  	}
->  
+> > > + * Return buffer information by requestable attribute.
+> > > + *
+> > > + * STRUCT indicates a fixed-size structure with only one instance.
+> > > ...
+> > I honestly have a hard time following the documentation here
 > 
+> How about:
+> 
+>  * STRUCT	- a fixed-size structure with only one instance.
+>  * STRUCT_N	- a sequence of STRUCTs, indexed by Nth
+>  * STRUCT_NM	- a sequence of sequences of STRUCTs, indexed by Nth, Mth
+>  * STRING	- a string with only one instance.
+>  * STRING_N	- a sequence of STRING, indexed by Nth
+>  * STRING_NM	- a sequence of sequences of STRING, indexed by Nth, Mth
+>  * OPAQUE	- a blob that can be larger than 4K.
+>  * STRUCT_ARRAY - an array of structs that can be larger than 4K
+> 
+> > and that monster table/macro thing below.  For example, STRUCT_NM
+> > corresponds to __FSINFO_NM or what?
+> 
+> STRUCT_NM -> .type = __FSINFO_STRUCT, .flags = __FSINFO_NM, .size = ...
+> 
+> If you think this is bad, you should try looking at the device ID tables used
+> by the drivers and the attribute tables;-)
+> 
+> I could spell out the flag and type in the macro defs (such as the body of
+> FSINFO_STRING(X,Y) for instance).  It would make it harder to compare macros
+> as it wouldn't then tabulate, though.
+> 
+> > And is this uapi as you're using this in your samples/test below?
+> 
+> Not exactly.  Each attribute is defined as being a certain type in the
+> documentation in the UAPI header, but this is not coded there.  The assumption
+> being that if you're using a particular attribute, you'll know what the type
+> of the attribute is and you'll structure your code appropriately.
+> 
+> The reason the sample code has this replicated is that it doesn't really
+> attempt to interpret the type per se.  It has a dumper for an individual
+> attribute value, but the table tells it whether there should be one of those,
+> N of those or N of M(0), M(1), M(2), ... of those so that it can report an
+> error if it doesn't see what it expects.
+> 
+> I could even cheaply provide a meta attribute that dumps the contents of the
+> table (just the type info, not the names).
+> 
+> > > ...
+> > > +	FSINFO_STRING		(NAME_ENCODING,		-),
+> > > +	FSINFO_STRING		(NAME_CODEPAGE,		-),
+> > > +};
+> > 
+> > Can I complain again that this is really annoying to parse.
+> 
+> Apparently you can;-)  What would you prefer?  This:
+> 
+> static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
+> 	[FSINFO_STATFS] = {
+> 		.type	= __FSINFO_STRUCT,
+> 		.size	= sizeof(struct fsinfo_statfs),
+> 	},
+> 	[FSINFO_SERVERS] = {
+> 		.type	= __FSINFO_STRUCT,
+> 		.flags	= __FSINFO_NM,
+> 		.size	= sizeof(struct fsinfo_server),
+> 	},
+> 	...
+> };	
+> 
+> That has 3-5 lines for each 1 in the current code and isn't a great deal more
+> readable.
+
+Really, I find this more readable because parsing structs and arrays of
+structs is probably still even more common for C programmers then
+deciphering nested macros. :) But I won't enforce my own pov. :)
+
+> 
+> > if (copy_to_user()) and if (clear_user()) and not if (clear_user() != 0)
+> 
+> Better "if (copy_to_user() != 0)" since it's not a boolean return value in
+> either case.
+> 
+> > Nit: There's a bunch of name inconsistency for the arguments between the
+> > stub and the definition:
+> > 
+> > SYSCALL_DEFINE5(fsinfo,
+> > 		int, dfd, const char __user *, filename,
+> > 		struct fsinfo_params __user *, _params,
+> > 		void __user *, user_buffer, size_t, user_buf_size)
+> 
+> Yeah.  C just doesn't care.
+> 
+> I'll change filename to pathname throughout.  That's at least consistent with
+> various glibc manpages for other vfs syscalls.
+> 
+> _params I can change to params and params as-was to kparams.
+> 
+> But user_buffer and user_buf_size, I'll keep as I've named them such to avoid
+> confusion with kparams->buffer and kparams->scratch_buffer.  However, I
+> wouldn't want to call them that in the UAPI.
+
+Yep, it's really just that I prefer the naming to be consistent. :)
+
+> 
+> > Do we do SPDX that way? Or isn't this just supposed to be:
+> > // <spdxy stuff>
+> 
+> Look in, say, include/uapi/linux/stat.h or .../fs.h.
+> 
+> > > +	FSINFO_ATTR__NR
+> > 
+> > Nit/Bikeshed: FSINFO_ATTR_MAX? Seems more intuitive.
+> 
+> No.  That would imply a limit that it will never exceed.
+> 
+> > > +struct fsinfo_u128 {
+> > > +#if defined(__BYTE_ORDER) ? __BYTE_ORDER == __BIG_ENDIAN : defined(__BIG_ENDIAN)
+> > > +	__u64	hi;
+> > > +	__u64	lo;
+> > > +#elif defined(__BYTE_ORDER) ? __BYTE_ORDER == __LITTLE_ENDIAN : defined(__LITTLE_ENDIAN)
+> > > +	__u64	lo;
+> > > +	__u64	hi;
+> > > +#endif
+> > > +};
+> > 
+> > Hm, I know why you do this custom fsinfo_u128 thingy but for userspace
+> > that is going to be annoying to operate with, e.g. comparing the
+> > size/space of two filesystems etc.
+> 
+> We don't have a __u128 in the UAPI, and I'm reluctant to use __uint128_t.
+> 
+> Do you have a better suggestion?
+> 
+> > > +struct fsinfo_ids {
+> > > +	char	f_fs_name[15 + 1];	/* Filesystem name */
+> > 
+> > You should probably make this a macro so userspace can use it in fs-name
+> > length checks too.
+> 
+> The name length, you mean?  Well, you can use sizeof...
+> 
+> > > +	FSINFO_CAP__NR
+> > 
+> > Hm, again, maybe better to use FSINFO_CAP_MAX?
+> 
+> It's not a limit.
+
+Well, in both cases it's giving the limit of currently supported
+attributes. Other places in the kernel do the same (netlink for
+example). Anyway, it probably doesn't matter that much.
+
+Christian
