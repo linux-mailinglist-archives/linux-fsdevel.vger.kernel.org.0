@@ -2,56 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18D6556842
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 14:07:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA480567C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 13:38:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfFZMHk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jun 2019 08:07:40 -0400
-Received: from mail.vodokanal.poltava.ua ([91.219.220.27]:57275 "EHLO
-        mail.vodokanal.poltava.ua" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfFZMHk (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:07:40 -0400
-Received: by mail.vodokanal.poltava.ua (Postfix, from userid 80)
-        id C871922C44D; Wed, 26 Jun 2019 14:19:01 +0300 (EEST)
-Received: from 192.168.0.119
-        (SquirrelMail authenticated user test@vodokanal.poltava.ua)
-        by mail.vodokanal.poltava.ua with HTTP;
-        Wed, 26 Jun 2019 12:19:01 +0100
-Message-ID: <be6afb8d68f3a6f3240e3c6a1756ccb8.squirrel@mail.vodokanal.poltava.ua>
-Date:   Wed, 26 Jun 2019 12:19:01 +0100
-Subject: LOANS !!!
-From:   "Dial Direct Loans" <dialdirect@info.org>
-Reply-To: infodialdirectloans@mail2consultant.com
-User-Agent: SquirrelMail/1.4.21
+        id S1726965AbfFZLiX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jun 2019 07:38:23 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33036 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726077AbfFZLiX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Jun 2019 07:38:23 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 9E9C615522E748CA3604;
+        Wed, 26 Jun 2019 12:38:21 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 26 Jun
+ 2019 12:38:12 +0100
+Subject: Re: [PATCH v4 00/14] ima: introduce IMA Digest Lists extension
+To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>, Rob Landley <rob@landley.net>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20190614175513.27097-1-roberto.sassu@huawei.com>
+ <9029dd14-1077-ec89-ddc2-e677e16ad314@huawei.com>
+ <88d368e6-5b3c-0206-23a0-dc3e0aa385f0@huawei.com>
+ <1561484133.4066.16.camel@linux.ibm.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <19b082d1-b36e-bcbf-b25a-6d0969c9b638@huawei.com>
+Date:   Wed, 26 Jun 2019 13:38:21 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Priority: 3 (Normal)
-Importance: Normal
-To:     undisclosed-recipients:;
+In-Reply-To: <1561484133.4066.16.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 6/25/2019 7:35 PM, Mimi Zohar wrote:
+> [Cc'ing Rob Landley]
+> 
+> On Tue, 2019-06-25 at 14:57 +0200, Roberto Sassu wrote:
+>> Mimi, do you have any thoughts on this version?
+> 
+> I need to look closer, but when I first looked these changes seemed to
+> be really invasive.  Let's first work on getting the CPIO xattr
 
-Dial Direct Loan SA
+If you can provide early comments, that would be great. I'll have a look
+at the problems and when the xattr support for the ram disk is
+upstreamed I will be ready to send a new version.
 
+Thanks
 
-Consolidate your debts with Dial Direct Loan SA for your peace of
-mind at a fixed interest rate of 4.75%,personal and business loans
-are also welcome.For details  and file in your applications by sending an
-email
-to:infodialdirectloans@mail2consultant.com
+Roberto
 
-
-
-Yours in Service,
-Susan Muller (Mrs.),
-Senior Consultant,
-Loan Application Team
-Dial Direct Loan SA
-Tel No: +27717231058
-
-
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
