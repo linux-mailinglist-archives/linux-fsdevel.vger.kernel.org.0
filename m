@@ -2,83 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A90856839
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 14:07:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B81656888
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 14:21:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbfFZMHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jun 2019 08:07:21 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41719 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfFZMHV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:07:21 -0400
-Received: by mail-oi1-f193.google.com with SMTP id g7so1696825oia.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2019 05:07:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VoKKEjXBM4cP1xpPyuSdYmutpS68XoPtYXXMUeOUHus=;
-        b=BE1k67+PDhgUxwhQPhM292nq3RWjlJ78w988APLdRtJ1f0gknaV7piRVybc1La1LEH
-         je3YNDsDq7ol1lcPMlUhBzL4imJGaYH3iT+PD/yRm7TElXnA+o17e/tt/mbmHzzY/9gv
-         jOOnTxytdMWwjVLSIvJ3moqeChxio32yz79b8rPcrMFHG1S7dFa/+KpRyEnc6itPQVky
-         G1jdwHj4jZ2AT5VnzU8F+3Uo0X36gbiHsx5F9PYBaeIxQfrzlx2Kt01zf7OV8Q3dP/Lt
-         LbD9X97X66SmsyG6mK6n9tiuE19akpOwN+ESJPttLwNcXj8N23CXrJQPBT/az5cwHTi+
-         64pg==
-X-Gm-Message-State: APjAAAUmLPzR6ha08Rtv8FKBHntVKIWHYhpeIFN4woyjrapphMKr/9J/
-        /+fonRU2x2L5MfXCDFXH45tOHW8y/7uxEn9VvdCjA7xownI=
-X-Google-Smtp-Source: APXvYqw4QK5tcXZHs/HO9eHJu+gJ3v4dClKZMuGx+LHaemFAfCrtURTYBuEj6ikRj8Zb72meGE0sdW/8QMUAfVyN6M0=
-X-Received: by 2002:aca:b58b:: with SMTP id e133mr1518193oif.147.1561550840707;
- Wed, 26 Jun 2019 05:07:20 -0700 (PDT)
+        id S1726484AbfFZMVQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jun 2019 08:21:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59914 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726104AbfFZMVP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Jun 2019 08:21:15 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6DBE3308792C;
+        Wed, 26 Jun 2019 12:20:52 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0DAEC5D9C6;
+        Wed, 26 Jun 2019 12:20:49 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 26F8E1806B0E;
+        Wed, 26 Jun 2019 12:20:43 +0000 (UTC)
+Date:   Wed, 26 Jun 2019 08:20:42 -0400 (EDT)
+From:   Bob Peterson <rpeterso@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     matthew garrett <matthew.garrett@nebula.com>, yuchao0@huawei.com,
+        tytso@mit.edu, shaggy@kernel.org,
+        ard biesheuvel <ard.biesheuvel@linaro.org>,
+        josef@toxicpanda.com, hch@infradead.org, clm@fb.com,
+        adilger kernel <adilger.kernel@dilger.ca>, jk@ozlabs.org,
+        jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org,
+        viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-efi@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Christoph Hellwig <hch@lst.de>, ocfs2-devel@oss.oracle.com
+Message-ID: <868182386.37358699.1561551642881.JavaMail.zimbra@redhat.com>
+In-Reply-To: <156151633004.2283456.4175543089138173586.stgit@magnolia>
+References: <156151632209.2283456.3592379873620132456.stgit@magnolia> <156151633004.2283456.4175543089138173586.stgit@magnolia>
+Subject: Re: [Cluster-devel] [PATCH 1/5] vfs: create a generic checking and
+ prep function for FS_IOC_SETFLAGS
 MIME-Version: 1.0
-References: <20190618144716.8133-1-agruenba@redhat.com> <20190624065408.GA3565@lst.de>
- <20190624182243.22447-1-agruenba@redhat.com> <20190625095707.GA1462@lst.de>
- <20190625105011.GA2602@lst.de> <20190625181329.3160-1-agruenba@redhat.com> <20190626060329.GA23666@lst.de>
-In-Reply-To: <20190626060329.GA23666@lst.de>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Wed, 26 Jun 2019 14:07:09 +0200
-Message-ID: <CAHc6FU7bk-BtWreHTLgokVPTxvVCrMvdn1c1qwt+Z+z5nuUmSg@mail.gmail.com>
-Subject: Re: [PATCH] fs: Move mark_inode_dirty out of __generic_write_end
-To:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.3.116.201, 10.4.195.9]
+Thread-Topic: create a generic checking and prep function for FS_IOC_SETFLAGS
+Thread-Index: 5u1cuSAsKRaw36dS1F+PjLFgFqc7sA==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 26 Jun 2019 12:21:15 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 26 Jun 2019 at 08:04, Christoph Hellwig <hch@lst.de> wrote:
-> On Tue, Jun 25, 2019 at 08:13:29PM +0200, Andreas Gruenbacher wrote:
-> > On Tue, 25 Jun 2019 at 12:50, Christoph Hellwig <hch@lst.de> wrote:
-> > >
-> > > > That seems way more complicated.  I'd much rather go with something
-> > > > like may patch plus maybe a big fat comment explaining that persisting
-> > > > the size update is the file systems job.  Note that a lot of the modern
-> > > > file systems don't use the VFS inode tracking for that, besides XFS
-> > > > that includes at least btrfs and ocfs2 as well.
-> > >
-> > > I'd suggest something like this as the baseline:
-> > >
-> > > http://git.infradead.org/users/hch/xfs.git/shortlog/refs/heads/iomap-i_size
-> >
-> > Alright, can we change this as follows?
-> >
-> > [Also, I'm not really sure why we check for (pos + ret > inode->i_size)
-> > when we have already read inode->i_size into old_size.]
->
-> Yeah, you probably want to change that to old_size.  Your changes look
-> good to me,
->
-> Can you just take the patch over from here as you've clearly done more
-> work on it and resend the whole series?
+----- Original Message -----
+> From: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> Create a generic function to check incoming FS_IOC_SETFLAGS flag values
+> and later prepare the inode for updates so that we can standardize the
+> implementations that follow ext4's flag values.
+> 
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: David Sterba <dsterba@suse.com>
+> ---
+>  fs/btrfs/ioctl.c    |   13 +++++--------
+>  fs/efivarfs/file.c  |   26 +++++++++++++++++---------
+>  fs/ext2/ioctl.c     |   16 ++++------------
+>  fs/ext4/ioctl.c     |   13 +++----------
+>  fs/f2fs/file.c      |    7 ++++---
+>  fs/gfs2/file.c      |   42 +++++++++++++++++++++++++++++-------------
+>  fs/hfsplus/ioctl.c  |   21 ++++++++++++---------
+>  fs/inode.c          |   24 ++++++++++++++++++++++++
+>  fs/jfs/ioctl.c      |   22 +++++++---------------
+>  fs/nilfs2/ioctl.c   |    9 ++-------
+>  fs/ocfs2/ioctl.c    |   13 +++----------
+>  fs/orangefs/file.c  |   35 ++++++++++++++++++++++++++---------
+>  fs/reiserfs/ioctl.c |   10 ++++------
+>  fs/ubifs/ioctl.c    |   13 +++----------
+>  include/linux/fs.h  |    3 +++
+>  15 files changed, 146 insertions(+), 121 deletions(-)
 
-Ok, done. It's just the two patches; passes xfstests for xfs and gfs2,
-the current users.
+The gfs2 portion looks correct.
 
-Darrick, can you please push this in the next merge window as "usual"?
+Reviewed-by: Bob Peterson <rpeterso@redhat.com>
 
-Thanks,
-Andreas
+Regards,
+
+Bob Peterson
