@@ -2,99 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC0E55623F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 08:19:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C22256248
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 08:22:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726042AbfFZGS7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jun 2019 02:18:59 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41346 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfFZGS7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jun 2019 02:18:59 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5Q69Fjf174599;
-        Wed, 26 Jun 2019 06:18:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=6BDe7KrSfyrk0N8EkoAe7mWONmbNyYLrrjOaqe/97HA=;
- b=nMJdl0t+x2/tZNVW0YDI5WB+O0ihE+k3c0h6G2X0R4MdKo07dpOkdeLEiy9pW1x3wqyE
- C+ZJPXNu+Fzeww0XC6pAJOi4mPyQWuMwQbrCZKddt6NSZ35fNNrvQHTViJblGmRIblG2
- dbjfkHxbwNh+xssYmXG/PUCZbYVPkjv+MZfE7ouYhiYVchVoy2rdDe1oqiu8EEav2KCD
- H2moyhLbbJlwr3y5loq2LvMaTKfMfgIZlEW9cvRYGhXy02Te9dPI/toLf55WMDD8vG2W
- hdzgzt5gbTjADmoN/7JaIxZa3WiTNgs0jaPYfgIc8mTusbybZS1DUAkFcIRozTWxN8o4 lg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2t9c9pr7nm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 06:18:13 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5Q6Hten078114;
-        Wed, 26 Jun 2019 06:18:12 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2t99f49f97-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 06:18:12 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5Q6I9fa014602;
-        Wed, 26 Jun 2019 06:18:10 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 25 Jun 2019 23:18:09 -0700
-Date:   Wed, 26 Jun 2019 09:18:01 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Mike Marshall <hubcap@omnibond.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Colin King <colin.king@canonical.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        devel@lists.orangefs.org, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] orangefs: remove redundant assignment to variable
- buffer_index
-Message-ID: <20190626061801.GA18776@kadam>
-References: <20190511132700.4862-1-colin.king@canonical.com>
- <CAOg9mSQt42NQu-3nwZOCGOPx45y7G8aaiDaVe4SwotGnD9iY1A@mail.gmail.com>
- <20190521150311.GL31203@kadam>
- <CAOg9mSQmV=BDMpTNLJvb4QBr=f96qg4Hr9qu=bB6xZubB+1LZQ@mail.gmail.com>
+        id S1726732AbfFZGWV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jun 2019 02:22:21 -0400
+Received: from verein.lst.de ([213.95.11.211]:40468 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725379AbfFZGWV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Jun 2019 02:22:21 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id E1E1E68B05; Wed, 26 Jun 2019 08:21:48 +0200 (CEST)
+Date:   Wed, 26 Jun 2019 08:21:48 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hch@lst.de, david@fromorbit.com,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 1/6] iomap: Use a IOMAP_COW/srcmap for a
+ read-modify-write I/O
+Message-ID: <20190626062148.GB23972@lst.de>
+References: <20190621192828.28900-1-rgoldwyn@suse.de> <20190621192828.28900-2-rgoldwyn@suse.de> <20190622004624.GC1611011@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOg9mSQmV=BDMpTNLJvb4QBr=f96qg4Hr9qu=bB6xZubB+1LZQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906260074
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906260074
+In-Reply-To: <20190622004624.GC1611011@magnolia>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 02:55:11PM -0400, Mike Marshall wrote:
-> >> You often send these patches before they hit linux-next so I had skipped
-> >> reviewing this one when you sent it.
+On Fri, Jun 21, 2019 at 05:46:24PM -0700, Darrick J. Wong wrote:
+> On Fri, Jun 21, 2019 at 02:28:23PM -0500, Goldwyn Rodrigues wrote:
+> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > 
+> > Introduces a new type IOMAP_COW, which means the data at offset
+> > must be read from a srcmap and copied before performing the
+> > write on the offset.
+> > 
+> > The srcmap is used to identify where the read is to be performed
+> > from. This is passed to iomap->begin(), which is supposed to
+> > put in the details for reading, typically set with type IOMAP_READ.
 > 
-> I know Linus is likely to refuse pull requests for stuff that
-> has not been through linux-next, so I make sure stuff has been
-> there at least a few days before asking for it to be pulled.
-> "A few days" is long enough for robots to see it, perhaps not
-> long enough for humans. I especially appreciate the human review. One of
-> the good things about Orangefs is that it is easy to install and configure,
-> especially for testing. Documentation/filesystems/orangefs.txt has
-> instructions for dnf installing orangefs on Fedora, and also how to download
-> a source tarball and install from that.
+> What is IOMAP_READ ?
 
-No, no, that comment was to Colin.  It's good that he's sending patches
-for all the trees as soon as possible like the zero day bot does.  But
-it does make it hard to review at times.
+The lack of flags.  Which reminds me that our IOMAP_* types have
+pretty much gotten out of hand in how we use some flags that really
+are different types vs others that are modifiers.  We'll need to clean
+this up a bit eventually.
 
-regards,
-dan carpenter
+> 
+> > 
+> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > ---
+> >  fs/dax.c              |  8 +++++---
+> >  fs/ext2/inode.c       |  2 +-
+> >  fs/ext4/inode.c       |  2 +-
+> >  fs/gfs2/bmap.c        |  3 ++-
+> >  fs/internal.h         |  2 +-
+> >  fs/iomap.c            | 31 ++++++++++++++++---------------
+> >  fs/xfs/xfs_iomap.c    |  9 ++++++---
+> >  include/linux/iomap.h |  4 +++-
+> >  8 files changed, 35 insertions(+), 26 deletions(-)
+> > 
+> > diff --git a/fs/dax.c b/fs/dax.c
+> > index 2e48c7ebb973..80b9e2599223 100644
+> > --- a/fs/dax.c
+> > +++ b/fs/dax.c
+> > @@ -1078,7 +1078,7 @@ EXPORT_SYMBOL_GPL(__dax_zero_page_range);
+> >  
+> >  static loff_t
+> >  dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> > -		struct iomap *iomap)
+> > +		struct iomap *iomap, struct iomap *srcmap)
+> >  {
+> >  	struct block_device *bdev = iomap->bdev;
+> >  	struct dax_device *dax_dev = iomap->dax_dev;
+> > @@ -1236,6 +1236,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+> >  	unsigned long vaddr = vmf->address;
+> >  	loff_t pos = (loff_t)vmf->pgoff << PAGE_SHIFT;
+> >  	struct iomap iomap = { 0 };
+> > +	struct iomap srcmap = { 0 };
+> >  	unsigned flags = IOMAP_FAULT;
+> >  	int error, major = 0;
+> >  	bool write = vmf->flags & FAULT_FLAG_WRITE;
+> > @@ -1280,7 +1281,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+> >  	 * the file system block size to be equal the page size, which means
+> >  	 * that we never have to deal with more than a single extent here.
+> >  	 */
+> > -	error = ops->iomap_begin(inode, pos, PAGE_SIZE, flags, &iomap);
+> > +	error = ops->iomap_begin(inode, pos, PAGE_SIZE, flags, &iomap, &srcmap);
+> >  	if (iomap_errp)
+> >  		*iomap_errp = error;
+> >  	if (error) {
+> > @@ -1460,6 +1461,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+> >  	struct inode *inode = mapping->host;
+> >  	vm_fault_t result = VM_FAULT_FALLBACK;
+> >  	struct iomap iomap = { 0 };
+> > +	struct iomap srcmap = { 0 };
+> >  	pgoff_t max_pgoff;
+> >  	void *entry;
+> >  	loff_t pos;
+> > @@ -1534,7 +1536,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+> >  	 * to look up our filesystem block.
+> >  	 */
+> >  	pos = (loff_t)xas.xa_index << PAGE_SHIFT;
+> > -	error = ops->iomap_begin(inode, pos, PMD_SIZE, iomap_flags, &iomap);
+> > +	error = ops->iomap_begin(inode, pos, PMD_SIZE, iomap_flags, &iomap, &srcmap);
+> 
+> Line too long?
+> 
+> Also, I guess the DAX and directio write paths will just WARN_ON_ONCE if
+> someone feeds them an IOMAP_COW type iomap?
+> 
+> Ah, right, I guess the only filesystems that use iomap directio and
+> iomap dax don't support COW. :)
 
+?  XFS does iomap based cow for direct I/O.  But we don't use IOMAP_COW
+yey with this series as far as I can tell.
