@@ -2,139 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 180F356369
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 09:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B3E356360
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 09:34:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbfFZHfS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jun 2019 03:35:18 -0400
-Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:48195 "EHLO
-        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbfFZHfQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jun 2019 03:35:16 -0400
-Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
-        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x5Q7XpeS029374
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jun 2019 09:33:51 +0200
-Received: from ns3096276.ip-94-23-54.eu (ns3096276.ip-94-23-54.eu [94.23.54.103])
-        (authenticated bits=0)
-        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id x5Q7XZKl136464
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
-        Wed, 26 Jun 2019 09:33:46 +0200
-Subject: Re: [PATCH bpf-next v9 02/10] bpf: Add eBPF program subtype and
- is_valid_subtype() verifier
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>
-References: <20190625215239.11136-1-mic@digikod.net>
- <20190625215239.11136-3-mic@digikod.net>
- <CAADnVQ+Twio22VSi21RR5TY1Zm-1xRTGmREcXLSs5Jv-KWGTiw@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Openpgp: preference=signencrypt
-Message-ID: <1b87e170-0779-fad0-f623-8cf677843338@digikod.net>
-Date:   Wed, 26 Jun 2019 09:33:35 +0200
-User-Agent: 
+        id S1726912AbfFZHep (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jun 2019 03:34:45 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:19113 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725797AbfFZHep (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Jun 2019 03:34:45 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5C1E63B40CC181C0051E;
+        Wed, 26 Jun 2019 15:34:42 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 26 Jun
+ 2019 15:34:37 +0800
+Subject: Re: [PATCH v5 16/16] f2fs: add fs-verity support
+To:     Eric Biggers <ebiggers@kernel.org>
+CC:     <linux-fscrypt@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-fsdevel@vger.kernel.org>, <linux-api@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20190620205043.64350-1-ebiggers@kernel.org>
+ <20190620205043.64350-17-ebiggers@kernel.org>
+ <90495fb1-72eb-ca42-8457-ef8e969eda51@huawei.com>
+ <20190625175225.GC81914@gmail.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <68c5a15f-f6a8-75e2-b485-0f1b51471995@huawei.com>
+Date:   Wed, 26 Jun 2019 15:34:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAADnVQ+Twio22VSi21RR5TY1Zm-1xRTGmREcXLSs5Jv-KWGTiw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190625175225.GC81914@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Eric,
 
-
-On 26/06/2019 01:02, Alexei Starovoitov wrote:
-> On Tue, Jun 25, 2019 at 3:04 PM Mickaël Salaün <mic@digikod.net> wrote:
->>
->> The goal of the program subtype is to be able to have different static
->> fine-grained verifications for a unique program type.
->>
->> The struct bpf_verifier_ops gets a new optional function:
->> is_valid_subtype(). This new verifier is called at the beginning of the
->> eBPF program verification to check if the (optional) program subtype is
->> valid.
->>
->> The new helper bpf_load_program_xattr() enables to verify a program with
->> subtypes.
->>
->> For now, only Landlock eBPF programs are using a program subtype (see
->> next commits) but this could be used by other program types in the
->> future.
->>
->> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->> Cc: Alexei Starovoitov <ast@kernel.org>
->> Cc: Daniel Borkmann <daniel@iogearbox.net>
->> Cc: David S. Miller <davem@davemloft.net>
->> Link: https://lkml.kernel.org/r/20160827205559.GA43880@ast-mbp.thefacebook.com
->> ---
->>
->> Changes since v8:
->> * use bpf_load_program_xattr() instead of bpf_load_program() and add
->>   bpf_verify_program_xattr() to deal with subtypes
->> * remove put_extra() since there is no more "previous" field (for now)
->>
->> Changes since v7:
->> * rename LANDLOCK_SUBTYPE_* to LANDLOCK_*
->> * move subtype in bpf_prog_aux and use only one bit for has_subtype
->>   (suggested by Alexei Starovoitov)
+On 2019/6/26 1:52, Eric Biggers wrote:
+> Hi Chao, thanks for the review.
 > 
-> sorry to say, but I don't think the landlock will ever land,
-> since posting huge patches once a year is missing a lot of development
-> that is happening during that time.
+> On Tue, Jun 25, 2019 at 03:55:57PM +0800, Chao Yu wrote:
+>> Hi Eric,
+>>
+>> On 2019/6/21 4:50, Eric Biggers wrote:
+>>> +static int f2fs_begin_enable_verity(struct file *filp)
+>>> +{
+>>> +	struct inode *inode = file_inode(filp);
+>>> +	int err;
+>>> +
+>>
+>> I think we'd better add condition here (under inode lock) to disallow enabling
+>> verity on atomic/volatile inode, as we may fail to write merkle tree data due to
+>> atomic/volatile inode's special writeback method.
+>>
+> 
+> Yes, I'll add the following:
+> 
+> 	if (f2fs_is_atomic_file(inode) || f2fs_is_volatile_file(inode))
+> 		return -EOPNOTSUPP;
+> 
+>>> +	err = f2fs_convert_inline_inode(inode);
+>>> +	if (err)
+>>> +		return err;
+>>> +
+>>> +	err = dquot_initialize(inode);
+>>> +	if (err)
+>>> +		return err;
+>>
+>> We can get rid of dquot_initialize() here, since f2fs_file_open() ->
+>> dquot_file_open() should has initialized quota entry previously, right?
+> 
+> We still need it because dquot_file_open() only calls dquot_initialize() if the
+> file is being opened for writing.  But here the file descriptor is readonly.
+> I'll add a comment explaining this here and in the ext4 equivalent.
 
-You're right that it's been a while since the last patch set, but the
-main reasons behind this was a lack of feedback (probably because of the
-size of the patch set, which is now reduce to a consistent minimum), the
-rework needed to address everyone's concern (Landlock modify kernel
-components from different maintainers), and above all, the LSM stacking
-infrastructure which was quite beefy and then took some time to land:
-https://lore.kernel.org/lkml/50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com/
-This stacking infrastructure was required to have a useful version of
-Landlock (which is used as a use case example), and it was released with
-Linux v5.1 (last month). Now, I think everything is finally ready to
-move forward.
+Ah, you're right.
 
-> This 2/10 patch is an example.
-> subtype concept was useful 2 years ago when v6 was posted.
-> Since then bpf developers faced very similar problem in other parts
-> and it was solved with 'expected_attach_type' field.
-> See commit 5e43f899b03a ("bpf: Check attach type at prog load time")
-> dated March 2018.
+f2fs_convert_inline_inode() may grab one more block during conversion, so we
+need to call dquot_initialize() before inline conversion?
 
-I saw this nice feature but I wasn't sure if it was the right field to
-use. Indeed, I need more than a "type", but also some values (triggers)
-as shown by this patch. What do you suggest?
+Thanks,
+
+> 
+> - Eric
+> .
+> 
