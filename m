@@ -2,196 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04A8D55CD1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 02:07:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4626255D2C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 03:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbfFZAHq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jun 2019 20:07:46 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39354 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfFZAHp (ORCPT
+        id S1726320AbfFZBC7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jun 2019 21:02:59 -0400
+Received: from ushosting.nmnhosting.com ([66.55.73.32]:56172 "EHLO
+        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbfFZBC7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jun 2019 20:07:45 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 196so241218pgc.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2019 17:07:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0CKSZbZdZTCXDsFevmx6xy0jVDdxhx+j1rEEB3vl63s=;
-        b=Udp0DSI1eicbAQ93CL5kbvi8Xp/6zCCrOWD+4my5+Z2KobfpntEZptXwNDN+m1HYdl
-         aWzrSvRzjBSRt+1Ke5gfgolTpuldTSDWCwjjFSm2u0fallCYK2AWnGnpndlL89sFN0Zl
-         GTwNluZIxE+q2xxZzY/SPhBF2gsVikHJ199bU9KJdjOqqrHUctG5Or1EMQYsJztcsOoC
-         DiYGphxIA91H14nI8J5aNbvthpK6V9fOCpd2OHMJOcinqK81dIeXjiZaAKjLmKAP2Jwx
-         0nEa6ArcVSNjpUjZHNws6GQlmspmdwUJ/ZxXDeWnV3qF6zllsbtRDaXwGrbAJh9mZIai
-         k2MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0CKSZbZdZTCXDsFevmx6xy0jVDdxhx+j1rEEB3vl63s=;
-        b=tn1X1OlaiOkqKmDjxyJOcmBx8bh/f0V0o9FJ7rrvtDqoBMSoMVG5VYvnXiiPTGzQ6e
-         Wzj6p8P5Q8pHD6s21czh47O+L1LuCkqIDLvveygCitSZ/l6vo4mXBzMs4AYMjEYMHn8D
-         fDk0K2+Y/BrthAGWh3ayepfFbSEp1LljyZga3Ybjoy8Sl+c160H3e0HG8DkO2TXuGCN8
-         b3kvBG7QVJF9xbIStTd/Rs+rEmqJ1MRENpm19hG+sWw8O60WnT7m1v477yVWQRvlzFa5
-         hVk+isdUa7uDoLqItsTcFemG9dQibtbdpW0fqFRswf+zmZQwMODHFdvp3lguaHdEbfIS
-         7QTw==
-X-Gm-Message-State: APjAAAWSa2ydN5L7JFmlN3hKj1lxPUv+eZxV/6i7m6cI9V84wdEchnZn
-        eADHgK59rLlDON5kZnJ01c2XFv98snvDTA8QedYl4A==
-X-Google-Smtp-Source: APXvYqwFUlf+fXcTuEW4suwRhf8sO2Hw8q7BLLIj3tSrVcwKVl/cK8K/AXXabwkRnwCip/wX7DtGYsxR83H1S/Y9Z64=
-X-Received: by 2002:a17:90a:be0d:: with SMTP id a13mr657604pjs.84.1561507663974;
- Tue, 25 Jun 2019 17:07:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190617082613.109131-1-brendanhiggins@google.com>
- <20190617082613.109131-2-brendanhiggins@google.com> <20190625223312.GP19023@42.do-not-panic.com>
-In-Reply-To: <20190625223312.GP19023@42.do-not-panic.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 25 Jun 2019 17:07:32 -0700
-Message-ID: <CAFd5g46TLAONgXiZkFM98BPd-sariMTwhmYG9hSJ+M9=r-ixeg@mail.gmail.com>
-Subject: Re: [PATCH v5 01/18] kunit: test: add KUnit test runner core
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        shuah <shuah@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
+        Tue, 25 Jun 2019 21:02:59 -0400
+Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
+        by ushosting.nmnhosting.com (Postfix) with ESMTPS id E27A72DC0076;
+        Tue, 25 Jun 2019 21:02:57 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
+        s=201810a; t=1561510978;
+        bh=alTGTolfSOaJib81/HV1xk13UMDoyRYklK/SpUrmd7w=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NoxHUcByzLTCusX5pVe1lsXlBMGElTVDnI/XfJAy1Nl2CPCT+1tOht6i2EK/ciNkm
+         K9KG5Y432fz/6LApPs3O84qtWA9SlyMmA/wuAdUcSD4rSsw1vczNmq2IadH3d8Yjjj
+         5s/aRpOn+J8LZ+0EdQegjtRsGUm+NIxhK/RJ9SV1bF1UePOw1rCMB/TgxdowIewNFZ
+         Ra5cgiPNVLsA+gWt+IwCMHonGdcRTTyshPS7dwjlm4RdNgxtOKDy+eQbfRQfotbzjs
+         B5QQnvu0X2cSsH+yxVwnjSR18+Dt0Tt9kbJq7vhB7kczzOGw3vGeE9Nsk1oow8i/1I
+         3EN2KiSeiTlphcIF4jujWhyKJYRq8hKZqgXXkbYQ8cniR0sy1e4f3msouuG7u7FAGN
+         4N62OPQDxWHpA6QCR2bkcmJBVH1Jb6OE2kFfBG7EgyAY7YE5RDCG3qHf3x06F/DOxs
+         QIPziAUS4TwpT/g1pYu4AH2VTerslwlrRiUj0wkS6makKQ6LJI017iD3ClsF1dCjvw
+         9OKcxJoGQDOPUyeiE1V2QvnozdCZZJ0tZIwv2ngVO0Y5g38kYMSlrgiQm08cGPPyV1
+         1vTrS9K7ZJD22fxteol1WonkF1zHEWTT8Eu6rNYpH6cAVTxvZ5Uw16GXOQ+goHTzVz
+         m6Ftvv6Q+FYsWPnR2eqrJFq0=
+Received: from adsilva.ozlabs.ibm.com (static-82-10.transact.net.au [122.99.82.10] (may be forged))
+        (authenticated bits=0)
+        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x5Q12T29029544
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 26 Jun 2019 11:02:45 +1000 (AEST)
+        (envelope-from alastair@d-silva.org)
+Message-ID: <e16caf5b98aafea4033bfc0e49845ef987c02678.camel@d-silva.org>
+Subject: Re: [PATCH v4 0/7] Hexdump Enhancements
+From:   "Alastair D'Silva" <alastair@d-silva.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
+Date:   Wed, 26 Jun 2019 11:02:29 +1000
+In-Reply-To: <3ae4c1a4a72f8ee6b75c45adfbe543fc0a7b5da1.camel@perches.com>
+References: <20190625031726.12173-1-alastair@au1.ibm.com>
+         <3ae4c1a4a72f8ee6b75c45adfbe543fc0a7b5da1.camel@perches.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Wed, 26 Jun 2019 11:02:53 +1000 (AEST)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 3:33 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> On Mon, Jun 17, 2019 at 01:25:56AM -0700, Brendan Higgins wrote:
-> > +/**
-> > + * module_test() - used to register a &struct kunit_module with KUnit.
-> > + * @module: a statically allocated &struct kunit_module.
-> > + *
-> > + * Registers @module with the test framework. See &struct kunit_module for more
-> > + * information.
-> > + */
-> > +#define module_test(module) \
-> > +             static int module_kunit_init##module(void) \
-> > +             { \
-> > +                     return kunit_run_tests(&module); \
-> > +             } \
-> > +             late_initcall(module_kunit_init##module)
->
-> Becuase late_initcall() is used, if these modules are built-in, this
-> would preclude the ability to test things prior to this part of the
-> kernel under UML or whatever architecture runs the tests. So, this
-> limits the scope of testing. Small detail but the scope whould be
-> documented.
+On Mon, 2019-06-24 at 22:01 -0700, Joe Perches wrote:
+> On Tue, 2019-06-25 at 13:17 +1000, Alastair D'Silva wrote:
+> > From: Alastair D'Silva <alastair@d-silva.org>
+> > 
+> > Apologies for the large CC list, it's a heads up for those
+> > responsible
+> > for subsystems where a prototype change in generic code causes a
+> > change
+> > in those subsystems.
+> []
+> > The default behaviour of hexdump is unchanged, however, the
+> > prototype
+> > for hex_dump_to_buffer() has changed, and print_hex_dump() has been
+> > renamed to print_hex_dump_ext(), with a wrapper replacing it for
+> > compatibility with existing code, which would have been too
+> > invasive to
+> > change.
+> 
+> I believe this cover letter is misleading.
+> 
+> The point of the wrapper is to avoid unnecessary changes
+> in existing
+> code.
+> 
+> 
 
-You aren't the first person to complain about this (and I am not sure
-it is the first time you have complained about it). Anyway, I have
-some follow on patches that will improve the late_initcall thing, and
-people seemed okay with discussing the follow on patches as part of a
-subsequent patchset after this gets merged.
+The wrapper is for print_hex_dump(), which has many callers.
 
-I will nevertheless document the restriction until then.
+The changes to existing code are for hex_dump_to_buffer(), which is
+called in relatively few places.
 
-> > +static void kunit_print_tap_version(void)
-> > +{
-> > +     if (!kunit_has_printed_tap_version) {
-> > +             kunit_printk_emit(LOGLEVEL_INFO, "TAP version 14\n");
->
-> What is this TAP thing? Why should we care what version it is on?
-> Why are we printing this?
+-- 
+Alastair D'Silva           mob: 0423 762 819
+skype: alastair_dsilva    
+Twitter: @EvilDeece
+blog: http://alastair.d-silva.org
 
-It's part of the TAP specification[1]. Greg and Frank asked me to make
-the intermediate format conform to TAP. Seems like something else I
-should probable document...
 
-> > +             kunit_has_printed_tap_version = true;
-> > +     }
-> > +}
-> > +
-> > +static size_t kunit_test_cases_len(struct kunit_case *test_cases)
-> > +{
-> > +     struct kunit_case *test_case;
-> > +     size_t len = 0;
-> > +
-> > +     for (test_case = test_cases; test_case->run_case; test_case++)
->
-> If we make the last test case NULL, we'd just check for test_case here,
-> and save ourselves an extra few bytes per test module. Any reason why
-> the last test case cannot be NULL?
-
-Is there anyway to make that work with a statically defined array?
-
-Basically, I want to be able to do something like:
-
-static struct kunit_case example_test_cases[] = {
-        KUNIT_CASE(example_simple_test),
-        KUNIT_CASE(example_mock_test),
-        {}
-};
-
-FYI,
-#define KUNIT_CASE(test_name) { .run_case = test_name, .name = #test_name }
-
-In order to do what you are proposing, I think I need an array of
-pointers to test cases, which is not ideal.
-
-> > +void kunit_init_test(struct kunit *test, const char *name)
-> > +{
-> > +     spin_lock_init(&test->lock);
-> > +     test->name = name;
-> > +     test->success = true;
-> > +}
-> > +
-> > +/*
-> > + * Performs all logic to run a test case.
-> > + */
-> > +static void kunit_run_case(struct kunit_module *module,
-> > +                        struct kunit_case *test_case)
-> > +{
-> > +     struct kunit test;
-> > +     int ret = 0;
-> > +
-> > +     kunit_init_test(&test, test_case->name);
-> > +
-> > +     if (module->init) {
-> > +             ret = module->init(&test);
->
-> I believe if we used struct kunit_module *kmodule it would be much
-> clearer who's init this is.
-
-That's reasonable. I will fix in next revision.
-
-Cheers!
-
-[1] https://github.com/TestAnything/Specification/blob/tap-14-specification/specification.md
