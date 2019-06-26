@@ -2,107 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07BA6570E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 20:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 623965713C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 21:04:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfFZSmx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jun 2019 14:42:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42380 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726227AbfFZSmx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jun 2019 14:42:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CFED6AE12;
-        Wed, 26 Jun 2019 18:42:51 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 13:42:49 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, david@fromorbit.com
-Subject: Re: [PATCH 1/6] iomap: Use a IOMAP_COW/srcmap for a
- read-modify-write I/O
-Message-ID: <20190626184249.n24wffrqxa2sdrc7@fiona>
-References: <20190621192828.28900-1-rgoldwyn@suse.de>
- <20190621192828.28900-2-rgoldwyn@suse.de>
- <20190624070734.GB3675@lst.de>
- <20190625191442.m27cwx5o6jtu2qch@fiona>
- <20190626180005.GB5164@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626180005.GB5164@magnolia>
-User-Agent: NeoMutt/20180716
+        id S1726339AbfFZTEG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jun 2019 15:04:06 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36610 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfFZTEG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Jun 2019 15:04:06 -0400
+Received: by mail-io1-f65.google.com with SMTP id h6so5794594ioh.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2019 12:04:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=VKtnnmbioE9YmFDHEryqIRwRw2jsuw3ZA4a/XVWKC7U=;
+        b=rC1NdcfMmIl+ogqqColFqMiS+l8nUGfYcvlXAa13Xy1r4kJPveyb2aUPFbgcXHrIHe
+         fnlOTQfkbXvAsYAfIUKlHRzCrFh9QB5mslctXL8fCRRSQt52UBOt8RX9BDL0sKbbr/XY
+         9rh2ase5SwdnMFAwTn6TYFq90CtxDuflOhsEdmTg/FSgNuvlmh40wfQ963+NVzlBftsw
+         VFJH7u3vnWQMaNLwwhay4HuwAIOFxZhjjsTWq2/feAXFQGPaEH+iVbMhkfRxkaKK2mHD
+         wshngShWugmfJsRZ/aC0SrJwLoqk6lBCwe3lcPQcZfXUiGraqXUq/WoVm2nVuaJHmeQR
+         xusg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=VKtnnmbioE9YmFDHEryqIRwRw2jsuw3ZA4a/XVWKC7U=;
+        b=CpvBx+HN+n0opabOO8eehLZwhNTEwRmcJC+YNHF0S4ffg/9HJr2I8C7+TMto4LaWCX
+         90zsVtuPuejc3aKhGkLkCcndCT/nnVQypW6jJe9I8hjbQNu9u/W8IehjzUrB52cixP/Q
+         Xi9hOvPASg7pZKTggeVO6fn0rPuzYRJZZiCy0KQ7K+l949J5gxaXE6q/RNoVFmQ4m7t9
+         T/aqDlqVEvM7lWQunB3VRwhx1TrP+7FVMli3digtSnmCmLHqQYwHLWA+zgEGE6RyeROF
+         3VMs0XJLRfAyrtotkvn7OUR17XH16mDx9XuwhBOua7nZZD0MXSGBfVAjnFnZdVdkSXQ2
+         GQMw==
+X-Gm-Message-State: APjAAAXVJQ9Z6oMsBlX2dI+Vx9TohoyDFIBYTMGdUbyUKYUisaMNF1qw
+        FKF/VSiD7jAtxiEUYuDn1hmN3tBadj4=
+X-Google-Smtp-Source: APXvYqwHLhyYRnFygxcwd0JVmYFTKoIg5/yuAksaT+lO4F4n2L964F6S7MXiUgAT24cAQc34TulPWQ==
+X-Received: by 2002:a02:c7c7:: with SMTP id s7mr6803081jao.37.1561575845406;
+        Wed, 26 Jun 2019 12:04:05 -0700 (PDT)
+Received: from x220t.lan ([64.26.149.125])
+        by smtp.gmail.com with ESMTPSA id k5sm18446041ioj.47.2019.06.26.12.04.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Jun 2019 12:04:04 -0700 (PDT)
+From:   Alexander Aring <aring@mojatatu.com>
+To:     netdev@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, kernel@mojatatu.com,
+        Alexander Aring <aring@mojatatu.com>
+Subject: [RFC iproute2 0/1] iproute2 netns mount race issue and solution?
+Date:   Wed, 26 Jun 2019 15:03:42 -0400
+Message-Id: <20190626190343.22031-1-aring@mojatatu.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11:00 26/06, Darrick J. Wong wrote:
-> On Tue, Jun 25, 2019 at 02:14:42PM -0500, Goldwyn Rodrigues wrote:
-> > On  9:07 24/06, Christoph Hellwig wrote:
-> > > xfs will need to be updated to fill in the additional iomap for the
-> > > COW case.  Has this series been tested on xfs?
-> > > 
-> > 
-> > No, I have not tested this, or make xfs set IOMAP_COW. I will try to do
-> > it in the next iteration.
-> 
-> AFAICT even if you did absolutely nothing XFS would continue to work
-> properly because iomap_write_begin doesn't actually care if it's going
-> to be a COW write because the only IO it does from the mapping is to
-> read in the non-uptodate parts of the page if the write offset/len
-> aren't page-aligned.
-> 
-> > > I can't say I'm a huge fan of this two iomaps in one method call
-> > > approach.  I always though two separate iomap iterations would be nicer,
-> > > but compared to that even the older hack with just the additional
-> > > src_addr seems a little better.
-> > 
-> > I am just expanding on your idea of using multiple iterations for the Cow case
-> > in the hope we can come out of a good design:
-> > 
-> > 1. iomap_file_buffered_write calls iomap_apply with IOMAP_WRITE flag.
-> >    which calls iomap_begin() for the respective filesystem.
-> > 2. btrfs_iomap_begin() sets up iomap->type as IOMAP_COW and fills iomap
-> >    struct with read addr information.
-> > 3. iomap_apply() conditionally for IOMAP_COW calls do_cow(new function)
-> >    and calls ops->iomap_begin() with flag IOMAP_COW_READ_DONE(new flag).
-> 
-> Unless I'm misreading this, you don't need a do_cow() or
-> IOMAP_COW_READ_DONE because the page state tracks that for you:
-> 
-> iomap_write_begin calls ->iomap_begin to learn from where it should read
-> data if the write is not aligned to a page and the page isn't uptodate.
-> If it's IOMAP_COW then we learn from *srcmap instead of *iomap.
-> 
+Hi,
 
-We were discussing the single iomap structure (without srcmap), but
-with two iterations, the first to get the read information and the second
-to get the write information for CoW.
+We found an issue how we can react on namespaces created by iproute2.
+As state of the current Linux kernel there exists no way to get events
+on new mounts. Polling is not an option because you can miss mounts.
 
-> (The write actor then dirties the page)
-> 
-> fsync() or whatever
-> 
-> The mm calls ->writepage.  The filesystem grabs the new COW mapping,
-> constructs a bio with the new mapping and dirty pages, and submits the
-> bio.  pagesize >= blocksize so we're always writing full blocks.
-> 
-> The writeback bio completes and calls ->bio_endio, which is the
-> filesystem's trigger to make the mapping changes permanent, update
-> ondisk file size, etc.
-> 
-> For direct writes that are not block-aligned, we just bounce the write
-> to the page cache...
-> 
-> ...so it's only dax_iomap_rw where we're going to have to do the COW
-> ourselves.  That's simple -- map both addresses, copy the regions before
-> offset and after offset+len, then proceed with writing whatever
-> userspace sent us.  No need for the iomap code itself to get involved.
+It's an RFC to see that might people seeing the same issue here and
+would like to talk about possible solutions how to deal with that.
 
-Yes, this is how the latest patch series is working, with two iomap
-structures in iomap_begin() function parameters.
+I cc linux-fs here that they might can tell me a solution which maybe
+already exists if not this solution should be backwards compatible.
+
+I know this solution only works for iproute2 but isn't iproute2 not the
+standard defintion how /var/run/netns works?
+
+- Alex
+
+Alexander Aring (1):
+  ip: netns: add mounted state file for each netns
+
+ ip/ipnetns.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 -- 
-Goldwyn
+2.11.0
+
