@@ -2,206 +2,547 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B4FD565F3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 11:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4FAB565F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 11:54:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbfFZJxD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jun 2019 05:53:03 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46967 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfFZJxC (ORCPT
+        id S1726628AbfFZJxz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jun 2019 05:53:55 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51400 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbfFZJxz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jun 2019 05:53:02 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n4so1916834wrw.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2019 02:53:00 -0700 (PDT)
+        Wed, 26 Jun 2019 05:53:55 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 207so1411213wma.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2019 02:53:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=8pQpjdmJVhQvnmEuktN5/Xz1yU/XdyfuqdJKbPiBj1U=;
-        b=cUbPSTd2QPE9FZLfMSLJLxMmumGg04s7XO/R8f+H5EeDpFBizlLoCUMVTp8IsqX58y
-         PjIJSIZMBWNHiezN+AjDBmBjfAmUV1H1kM5gybcPayPWmxcPMAj/yHQVX/argLTD/Ntr
-         RzOr0GP+v1K6/P4amPBPBJTawkg65GekP1qKF2wTmi2eEX8oUhZMUhMh1898QRf/8kJC
-         ehfRtZOpxXK2thYiIWlrh36zePTorr8qJIatVloOPJAmQyFCwd96F+G4n8uNlFdoAmtl
-         cj3vurXgaP6OxdcJK7+Nbu2mwk7GB/JZBA58kLZCemr7eL8pWcU09ePtNiIOmTccnatw
-         idgg==
+        bh=/iLgTibls9Uct+KN4HLJocTMJWKhaxNmcUr5PRz+WR0=;
+        b=fIiz8OGGTgEFq8Omvk/rQroXMklONPl6Umcki5wQTGdGc7rkRpzoDs9y36YY431WvN
+         FHPYigBEIxaGGLN4ij/PVsAHpvd/Xy1tc5Yran4gCmslWSyq2GqW/hhbbayPpmZg3jeo
+         E1fVPQ4OsCJM7EnnBwBVi8CAfZxzxkbsQ6rRSo0Skx6ftg4EWzOU5txInBAlBdqAtXFP
+         VxLZE4Vw1dGKkZJCNT3i9Vy6nI2XcNFlTsv2RX+q1tMBpGbu9g+EDOY5XjDDlUZ6Baj5
+         UuBcnGWLpWg7VxHmsTa8x/wSyuZgVcAp0AEfk7W0qCXEERSuM76zGJuCAwHaz5gqFP1h
+         NGFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8pQpjdmJVhQvnmEuktN5/Xz1yU/XdyfuqdJKbPiBj1U=;
-        b=KYUkWXFEYVUwh8Uw5Or68RoAJZMQMfMmrkRcJZT3sbF8LCDhAcq9EI9zjatSZiXvLT
-         1XYfaZRKbs8poF3p+fXdpB/2D+eSwi6u/rcm2tpQH29kPjxSJWB1bzMHC7Md+7LoOHdb
-         vHL4MIW8H4PkwoYj2LAr2rsrloti2zN33NmepO1kaoJ+sxwCv4BWPiRhDWgoI8r9n5c0
-         jvb+nyrBhyv/y0TA3vfn6+pJreF8Ia6MlohC851xt1Z66lP+9EXGs4tg0rIqmnLcnFBO
-         T6zzYpTP+JHJcPQcvAFCJVQ6ePVCsecKISx6SL9pcPRH9M1Hkb+qzydxktYXr8bBOYr7
-         rf2g==
-X-Gm-Message-State: APjAAAW83LVwEjNhDTNlcS9LztEI8QspotC71Yt3M4KpKioyo7hWjPbi
-        4qLtQdrZ3+hPjUU9TKuHnpkmeg==
-X-Google-Smtp-Source: APXvYqzENWhsUAdR+lHaBRja7sDCrNPJyr/EbZI0XX6h6F2zd94X4ldLgurF85/sE2NYe80opHkCuA==
-X-Received: by 2002:a5d:56c1:: with SMTP id m1mr3130331wrw.26.1561542779770;
-        Wed, 26 Jun 2019 02:52:59 -0700 (PDT)
+        bh=/iLgTibls9Uct+KN4HLJocTMJWKhaxNmcUr5PRz+WR0=;
+        b=cQqyTQrfQ2MmSuRSv8K0xG7zLeN6HQUzoda/Xo9nmd5mC9Cls/lvHVESNp8mN4k7Mj
+         PP0wvnwmRHJAHrtF0xTtbfponBrlCjsFwqbIukJ7ElA4E2Kp5OeJxtUi0WeV2snrV9Q3
+         fw6Nn6jSc9K5aCEvI/zF6Trgstu3fQ97H1l9X9KRc+nXdkqjRVc675Llv33gpkVl0Hwv
+         woWu8FZmxr88Mi7HhzCi4xhUEB2gpHzAShtnHFhTNqORkNykydbZIt5TbLKMPb2mtwKt
+         LBaBVT8OzEedJn85C+7Vnk1D9GQMcp+UKWkNqtGQWNLhsaIRj3N94AGlejq+8BR4Rt98
+         RDmQ==
+X-Gm-Message-State: APjAAAUpGE3FbH27H8CQWaOPFM9Tnubu8+pYj1FOzCNDC8zadR128fPp
+        P6uV0e9/QXHRT/iiu8olyM/WHw==
+X-Google-Smtp-Source: APXvYqxSlY1v64GThtEQScXPFmz29ZOg3LLbyYUgzywIMXHvlGfSLi++UcKDhdmbY5xcUvlrKhtnCQ==
+X-Received: by 2002:a1c:63d7:: with SMTP id x206mr2142668wmb.19.1561542831522;
+        Wed, 26 Jun 2019 02:53:51 -0700 (PDT)
 Received: from brauner.io ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id w23sm1766190wmi.45.2019.06.26.02.52.58
+        by smtp.gmail.com with ESMTPSA id r131sm1501462wmf.4.2019.06.26.02.53.50
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 02:52:59 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 11:52:58 +0200
+        Wed, 26 Jun 2019 02:53:50 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 11:53:50 +0200
 From:   Christian Brauner <christian@brauner.io>
 To:     David Howells <dhowells@redhat.com>
 Cc:     viro@zeniv.linux.org.uk, raven@themaw.net, mszeredi@redhat.com,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/25] vfs: Add mount notification count [ver #14]
-Message-ID: <20190626095257.yi5k667gxulztyzz@brauner.io>
+Subject: Re: [PATCH 10/25] vfs: Allow mount information to be queried by
+ fsinfo() [ver #14]
+Message-ID: <20190626095349.4uar75jfcy3jzmxb@brauner.io>
 References: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
- <156138540611.25627.13279299200070977180.stgit@warthog.procyon.org.uk>
+ <156138542011.25627.17245518783942568567.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <156138540611.25627.13279299200070977180.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156138542011.25627.17245518783942568567.stgit@warthog.procyon.org.uk>
 User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 03:10:06PM +0100, David Howells wrote:
-> Add a notification count on mount objects so that the user can easily check
-> to see if a mount has changed its attributes or its children.
-> 
-> Future patches will:
-> 
->  (1) Provide this value through fsinfo() attributes.
-> 
->  (2) Hook into the notify_mount() function to provide a notification
->      interface for userspace to monitor.
+On Mon, Jun 24, 2019 at 03:10:20PM +0100, David Howells wrote:
+> Allow mount information, including information about the topology tree to
+> be queried with the fsinfo() system call.  Usage of AT_FSINFO_MOUNTID_PATH
+> allows overlapping mounts to be queried.
 
-Sorry, I might have missed this. Is this based on your notification
-patchset and thus presupposing that your notification patchset has been
-merged?
+Again, I really think that this doesn't need to land at the same time as
+the basic infrastructure for fsinfo()...
 
-(One further question below.)
-
+> 
+> To this end, four fsinfo() attributes are provided:
+> 
+>  (1) FSINFO_ATTR_MOUNT_INFO.
+> 
+>      This is a structure providing information about a mount, including:
+> 
+> 	- Mounted superblock ID.
+> 	- Mount ID (as AT_FSINFO_MOUNTID_PATH).
+> 	- Parent mount ID.
+> 	- Mount attributes (eg. R/O, NOEXEC).
+> 	- Number of change notifications generated.
+> 
+>      Note that the parent mount ID is overridden to the ID of the queried
+>      mount if the parent lies outside of the chroot or dfd tree.
+> 
+>  (2) FSINFO_ATTR_MOUNT_DEVNAME.
+> 
+>      This a string providing the device name associated with the mount.
+> 
+>      Note that the device name may be a path that lies outside of the root.
+> 
+>  (3) FSINFO_ATTR_MOUNT_CHILDREN.
+> 
+>      This produces an array of structures, one for each child and capped
+>      with one for the argument mount (checked after listing all the
+>      children).  Each element contains the mount ID and the notification
+>      counter of the respective mount object.
+> 
+>  (4) FSINFO_ATTR_MOUNT_SUBMOUNT.
+> 
+>      This is a 1D array of strings, indexed with struct fsinfo_params::Nth.
+>      Each string is the relative pathname of the corresponding child
+>      returned by FSINFO_ATTR_MOUNT_CHILDREN.
+> 
+>      Note that paths in the mount at the base of the tree (whether that be
+>      dfd or chroot) are relative to the base of the tree, not the root
+>      directory of that mount.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
 > 
->  fs/mount.h     |   22 ++++++++++++++++++++++
->  fs/namespace.c |   13 +++++++++++++
->  2 files changed, 35 insertions(+)
+>  fs/d_path.c                 |    2 
+>  fs/fsinfo.c                 |    8 ++
+>  fs/internal.h               |    9 ++
+>  fs/namespace.c              |  177 +++++++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/fsinfo.h |   28 +++++++
+>  samples/vfs/test-fsinfo.c   |   47 +++++++++++
+>  6 files changed, 267 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/mount.h b/fs/mount.h
-> index 6250de544760..47795802f78e 100644
-> --- a/fs/mount.h
-> +++ b/fs/mount.h
-> @@ -70,6 +70,7 @@ struct mount {
->  	struct hlist_head mnt_pins;
->  	struct fs_pin mnt_umount;
->  	struct dentry *mnt_ex_mountpoint;
-> +	atomic_t mnt_notify_counter;	/* Number of notifications generated */
->  } __randomize_layout;
->  
->  #define MNT_NS_INTERNAL ERR_PTR(-EINVAL) /* distinct from any mnt_namespace */
-> @@ -151,3 +152,24 @@ static inline bool is_anon_ns(struct mnt_namespace *ns)
->  {
->  	return ns->seq == 0;
+> diff --git a/fs/d_path.c b/fs/d_path.c
+> index a7d0a96b35ce..89d77c264c5f 100644
+> --- a/fs/d_path.c
+> +++ b/fs/d_path.c
+> @@ -227,7 +227,7 @@ static int prepend_unreachable(char **buffer, int *buflen)
+>  	return prepend(buffer, buflen, "(unreachable)", 13);
 >  }
-> +
+>  
+> -static void get_fs_root_rcu(struct fs_struct *fs, struct path *root)
+> +void get_fs_root_rcu(struct fs_struct *fs, struct path *root)
+>  {
+>  	unsigned seq;
+>  
+> diff --git a/fs/fsinfo.c b/fs/fsinfo.c
+> index 3b218f9fedb7..61f00f375fd2 100644
+> --- a/fs/fsinfo.c
+> +++ b/fs/fsinfo.c
+> @@ -348,6 +348,10 @@ int generic_fsinfo(struct path *path, struct fsinfo_kparams *params)
+>  	case _genf(PARAM_SPECIFICATION,	param_specification);
+>  	case _genf(PARAM_ENUM,		param_enum);
+>  	case _genp(PARAMETERS,		parameters);
+> +	case _genp(MOUNT_INFO,		mount_info);
+> +	case _genp(MOUNT_DEVNAME,	mount_devname);
+> +	case _genp(MOUNT_CHILDREN,	mount_children);
+> +	case _genp(MOUNT_SUBMOUNT,	mount_submount);
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -627,6 +631,10 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
+>  	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
+>  	FSINFO_OPAQUE		(PARAMETERS,		-),
+>  	FSINFO_OPAQUE		(LSM_PARAMETERS,	-),
+> +	FSINFO_STRUCT		(MOUNT_INFO,		mount_info),
+> +	FSINFO_STRING		(MOUNT_DEVNAME,		mount_devname),
+> +	FSINFO_STRUCT_ARRAY	(MOUNT_CHILDREN,	mount_child),
+> +	FSINFO_STRING_N		(MOUNT_SUBMOUNT,	mount_submount),
+>  };
+>  
+>  /**
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 074b1c65e3bd..bb3d8efa7f49 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -53,6 +53,11 @@ void __generic_write_end(struct inode *inode, loff_t pos, unsigned copied,
+>   */
+>  extern void __init chrdev_init(void);
+>  
 > +/*
-> + * Type of mount topology change notification.
+> + * d_path.c
 > + */
-> +enum mount_notification_subtype {
-> +	NOTIFY_MOUNT_NEW_MOUNT	= 0, /* New mount added */
-> +	NOTIFY_MOUNT_UNMOUNT	= 1, /* Mount removed manually */
-> +	NOTIFY_MOUNT_EXPIRY	= 2, /* Automount expired */
-> +	NOTIFY_MOUNT_READONLY	= 3, /* Mount R/O state changed */
-> +	NOTIFY_MOUNT_SETATTR	= 4, /* Mount attributes changed */
-> +	NOTIFY_MOUNT_MOVE_FROM	= 5, /* Mount moved from here */
-> +	NOTIFY_MOUNT_MOVE_TO	= 6, /* Mount moved to here (compare op_id) */
-> +};
+> +extern void get_fs_root_rcu(struct fs_struct *fs, struct path *root);
 > +
-> +static inline void notify_mount(struct mount *changed,
-> +				struct mount *aux,
-> +				enum mount_notification_subtype subtype,
-> +				u32 info_flags)
-> +{
-> +	atomic_inc(&changed->mnt_notify_counter);
-> +}
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index a49a7d9ed482..1450faab96b9 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -513,6 +513,8 @@ static int mnt_make_readonly(struct mount *mnt)
->  	smp_wmb();
->  	mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
->  	unlock_mount_hash();
-> +	if (ret == 0)
-> +		notify_mount(mnt, NULL, NOTIFY_MOUNT_READONLY, 0x10000);
->  	return ret;
->  }
+>  /*
+>   * fs_context.c
+>   */
+> @@ -98,6 +103,10 @@ extern void __mnt_drop_write_file(struct file *);
 >  
-> @@ -521,6 +523,7 @@ static int __mnt_unmake_readonly(struct mount *mnt)
->  	lock_mount_hash();
->  	mnt->mnt.mnt_flags &= ~MNT_READONLY;
->  	unlock_mount_hash();
-> +	notify_mount(mnt, NULL, NOTIFY_MOUNT_READONLY, 0);
->  	return 0;
->  }
->  
-> @@ -833,6 +836,7 @@ static void umount_mnt(struct mount *mnt)
->  {
->  	/* old mountpoint will be dropped when we can do that */
->  	mnt->mnt_ex_mountpoint = mnt->mnt_mountpoint;
-> +	notify_mount(mnt->mnt_parent, mnt, NOTIFY_MOUNT_UNMOUNT, 0);
->  	unhash_mnt(mnt);
->  }
->  
-> @@ -1472,6 +1476,7 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
->  		p = list_first_entry(&tmp_list, struct mount, mnt_list);
->  		list_del_init(&p->mnt_expire);
->  		list_del_init(&p->mnt_list);
-> +
->  		ns = p->mnt_ns;
->  		if (ns) {
->  			ns->mounts--;
-> @@ -2095,7 +2100,10 @@ static int attach_recursive_mnt(struct mount *source_mnt,
->  		lock_mount_hash();
->  	}
->  	if (parent_path) {
-> +		notify_mount(source_mnt->mnt_parent, source_mnt,
-> +			     NOTIFY_MOUNT_MOVE_FROM, 0);
->  		detach_mnt(source_mnt, parent_path);
-> +		notify_mount(dest_mnt, source_mnt, NOTIFY_MOUNT_MOVE_TO, 0);
->  		attach_mnt(source_mnt, dest_mnt, dest_mp);
->  		touch_mnt_namespace(source_mnt->mnt_ns);
->  	} else {
-> @@ -2104,6 +2112,9 @@ static int attach_recursive_mnt(struct mount *source_mnt,
->  			list_del_init(&source_mnt->mnt_ns->list);
->  		}
->  		mnt_set_mountpoint(dest_mnt, dest_mp, source_mnt);
-> +		notify_mount(dest_mnt, source_mnt, NOTIFY_MOUNT_NEW_MOUNT,
-> +			     source_mnt->mnt.mnt_sb->s_flags & SB_SUBMOUNT ?
-> +			     0x10000 : 0);
-
-What's that magic 0x10000 mean?
-
->  		commit_tree(source_mnt);
->  	}
->  
-> @@ -2480,6 +2491,7 @@ static void set_mount_attributes(struct mount *mnt, unsigned int mnt_flags)
->  	mnt->mnt.mnt_flags = mnt_flags;
->  	touch_mnt_namespace(mnt->mnt_ns);
->  	unlock_mount_hash();
-> +	notify_mount(mnt, NULL, NOTIFY_MOUNT_SETATTR, 0);
->  }
+>  extern void dissolve_on_fput(struct vfsmount *);
+>  extern int lookup_mount_object(struct path *, int, struct path *);
+> +extern int fsinfo_generic_mount_info(struct path *, struct fsinfo_kparams *);
+> +extern int fsinfo_generic_mount_devname(struct path *, struct fsinfo_kparams *);
+> +extern int fsinfo_generic_mount_children(struct path *, struct fsinfo_kparams *);
+> +extern int fsinfo_generic_mount_submount(struct path *, struct fsinfo_kparams *);
 >  
 >  /*
-> @@ -2880,6 +2892,7 @@ void mark_mounts_for_expiry(struct list_head *mounts)
->  		if (!xchg(&mnt->mnt_expiry_mark, 1) ||
->  			propagate_mount_busy(mnt, 1))
+>   * fs_struct.c
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 1450faab96b9..2ec7d9d1905a 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/sched/task.h>
+>  #include <uapi/linux/mount.h>
+>  #include <linux/fs_context.h>
+> +#include <linux/fsinfo.h>
+>  
+>  #include "pnode.h"
+>  #include "internal.h"
+> @@ -4112,3 +4113,179 @@ int lookup_mount_object(struct path *root, int mnt_id, struct path *_mntpt)
+>  	unlock_mount_hash();
+>  	goto out_unlock;
+>  }
+> +
+> +#ifdef CONFIG_FSINFO
+> +int fsinfo_generic_mount_info(struct path *path, struct fsinfo_kparams *params)
+> +{
+> +	struct fsinfo_mount_info *p = params->buffer;
+> +	struct super_block *sb;
+> +	struct mount *m;
+> +	struct path root;
+> +	unsigned int flags;
+> +
+> +	if (!path->mnt)
+> +		return -ENODATA;
+> +
+> +	m = real_mount(path->mnt);
+> +	sb = m->mnt.mnt_sb;
+> +
+> +	p->f_sb_id		= sb->s_unique_id;
+> +	p->mnt_id		= m->mnt_id;
+> +	p->parent_id		= m->mnt_parent->mnt_id;
+> +	p->notify_counter	= atomic_read(&m->mnt_notify_counter);
+> +
+> +	get_fs_root(current->fs, &root);
+> +	if (path->mnt == root.mnt) {
+> +		p->parent_id = p->mnt_id;
+> +	} else {
+> +		rcu_read_lock();
+> +		if (!are_paths_connected(&root, path))
+> +			p->parent_id = p->mnt_id;
+> +		rcu_read_unlock();
+> +	}
+> +	if (IS_MNT_SHARED(m))
+> +		p->group_id = m->mnt_group_id;
+> +	if (IS_MNT_SLAVE(m)) {
+> +		int master = m->mnt_master->mnt_group_id;
+> +		int dom = get_dominating_id(m, &root);
+> +		p->master_id = master;
+> +		if (dom && dom != master)
+> +			p->from_id = dom;
+> +	}
+> +	path_put(&root);
+> +
+> +	flags = READ_ONCE(m->mnt.mnt_flags);
+> +	if (flags & MNT_READONLY)
+> +		p->attr |= MOUNT_ATTR_RDONLY;
+> +	if (flags & MNT_NOSUID)
+> +		p->attr |= MOUNT_ATTR_NOSUID;
+> +	if (flags & MNT_NODEV)
+> +		p->attr |= MOUNT_ATTR_NODEV;
+> +	if (flags & MNT_NOEXEC)
+> +		p->attr |= MOUNT_ATTR_NOEXEC;
+> +	if (flags & MNT_NODIRATIME)
+> +		p->attr |= MOUNT_ATTR_NODIRATIME;
+> +
+> +	if (flags & MNT_NOATIME)
+> +		p->attr |= MOUNT_ATTR_NOATIME;
+> +	else if (flags & MNT_RELATIME)
+> +		p->attr |= MOUNT_ATTR_RELATIME;
+> +	else
+> +		p->attr |= MOUNT_ATTR_STRICTATIME;
+> +	return sizeof(*p);
+> +}
+> +
+> +int fsinfo_generic_mount_devname(struct path *path, struct fsinfo_kparams *params)
+> +{
+> +	struct mount *m;
+> +	size_t len;
+> +
+> +	if (!path->mnt)
+> +		return -ENODATA;
+> +
+> +	m = real_mount(path->mnt);
+> +	len = strlen(m->mnt_devname);
+> +	memcpy(params->buffer, m->mnt_devname, len);
+> +	return len;
+> +}
+> +
+> +/*
+> + * Store a mount record into the fsinfo buffer.
+> + */
+> +static void store_mount_fsinfo(struct fsinfo_kparams *params,
+> +			       struct fsinfo_mount_child *child)
+> +{
+> +	unsigned int usage = params->usage;
+> +	unsigned int total = sizeof(*child);
+> +
+> +	if (params->usage >= INT_MAX)
+> +		return;
+> +	params->usage = usage + total;
+> +	if (params->buffer && params->usage <= params->buf_size)
+> +		memcpy(params->buffer + usage, child, total);
+> +}
+> +
+> +/*
+> + * Return information about the submounts relative to path.
+> + */
+> +int fsinfo_generic_mount_children(struct path *path, struct fsinfo_kparams *params)
+> +{
+> +	struct fsinfo_mount_child record;
+> +	struct mount *m, *child;
+> +
+> +	if (!path->mnt)
+> +		return -ENODATA;
+> +
+> +	m = real_mount(path->mnt);
+> +
+> +	rcu_read_lock();
+> +	list_for_each_entry_rcu(child, &m->mnt_mounts, mnt_child) {
+> +		if (child->mnt_parent != m)
+> +			continue;
+> +		record.mnt_id = child->mnt_id;
+> +		record.notify_counter = atomic_read(&child->mnt_notify_counter);
+> +		store_mount_fsinfo(params, &record);
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	/* End the list with a copy of the parameter mount's details so that
+> +	 * userspace can quickly check for changes.
+> +	 */
+> +	record.mnt_id = m->mnt_id;
+> +	record.notify_counter = atomic_read(&m->mnt_notify_counter);
+> +	store_mount_fsinfo(params, &record);
+> +	return params->usage;
+> +}
+> +
+> +/*
+> + * Return the path of the Nth submount relative to path.  This is derived from
+> + * d_path(), but the root determination is more complicated.
+> + */
+> +int fsinfo_generic_mount_submount(struct path *path, struct fsinfo_kparams *params)
+> +{
+> +	struct mountpoint *mp;
+> +	struct mount *m, *child;
+> +	struct path mountpoint, root;
+> +	unsigned int n = params->Nth;
+> +	size_t len;
+> +	void *p;
+> +
+> +	if (!path->mnt)
+> +		return -ENODATA;
+> +
+> +	rcu_read_lock();
+> +
+> +	m = real_mount(path->mnt);
+> +	list_for_each_entry_rcu(child, &m->mnt_mounts, mnt_child) {
+> +		mp = READ_ONCE(child->mnt_mp);
+> +		if (child->mnt_parent != m || !mp)
+> +			continue;
+> +		if (n-- == 0)
+> +			goto found;
+> +	}
+> +	rcu_read_unlock();
+> +	return -ENODATA;
+> +
+> +found:
+> +	mountpoint.mnt = path->mnt;
+> +	mountpoint.dentry = READ_ONCE(mp->m_dentry);
+> +
+> +	get_fs_root_rcu(current->fs, &root);
+> +	if (root.mnt != path->mnt) {
+> +		root.mnt = path->mnt;
+> +		root.dentry = path->mnt->mnt_root;
+> +	}
+> +
+> +	p = __d_path(&mountpoint, &root, params->buffer, params->buf_size);
+> +	rcu_read_unlock();
+> +
+> +	if (IS_ERR(p))
+> +		return PTR_ERR(p);
+> +	if (!p)
+> +		return -EPERM;
+> +
+> +	len = (params->buffer + params->buf_size) - p;
+> +	memmove(params->buffer, p, len);
+> +	return len;
+> +}
+> +#endif /* CONFIG_FSINFO */
+> diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
+> index bae0bdc9ace9..88e1d004ac6c 100644
+> --- a/include/uapi/linux/fsinfo.h
+> +++ b/include/uapi/linux/fsinfo.h
+> @@ -32,6 +32,10 @@ enum fsinfo_attribute {
+>  	FSINFO_ATTR_PARAM_ENUM		= 14,	/* Nth enum-to-val */
+>  	FSINFO_ATTR_PARAMETERS		= 15,	/* Mount parameters (large string) */
+>  	FSINFO_ATTR_LSM_PARAMETERS	= 16,	/* LSM Mount parameters (large string) */
+> +	FSINFO_ATTR_MOUNT_INFO		= 17,	/* Mount object information */
+> +	FSINFO_ATTR_MOUNT_DEVNAME	= 18,	/* Mount object device name (string) */
+> +	FSINFO_ATTR_MOUNT_CHILDREN	= 19,	/* Submount list (array) */
+> +	FSINFO_ATTR_MOUNT_SUBMOUNT	= 20,	/* Relative path of Nth submount (string) */
+>  	FSINFO_ATTR__NR
+>  };
+>  
+> @@ -276,4 +280,28 @@ struct fsinfo_param_enum {
+>  	char		name[252];	/* Name of the enum value */
+>  };
+>  
+> +/*
+> + * Information struct for fsinfo(FSINFO_ATTR_MOUNT_INFO).
+> + */
+> +struct fsinfo_mount_info {
+> +	__u64		f_sb_id;	/* Superblock ID */
+> +	__u32		mnt_id;		/* Mount identifier (use with AT_FSINFO_MOUNTID_PATH) */
+> +	__u32		parent_id;	/* Parent mount identifier */
+> +	__u32		group_id;	/* Mount group ID */
+> +	__u32		master_id;	/* Slave master group ID */
+> +	__u32		from_id;	/* Slave propagated from ID */
+> +	__u32		attr;		/* MOUNT_ATTR_* flags */
+> +	__u32		notify_counter;	/* Number of notifications generated. */
+> +	__u32		__reserved[1];
+> +};
+> +
+> +/*
+> + * Information struct element for fsinfo(FSINFO_ATTR_MOUNT_CHILDREN).
+> + * - An extra element is placed on the end representing the parent mount.
+> + */
+> +struct fsinfo_mount_child {
+> +	__u32		mnt_id;		/* Mount identifier (use with AT_FSINFO_MOUNTID_PATH) */
+> +	__u32		notify_counter;	/* Number of notifications generated on mount. */
+> +};
+> +
+>  #endif /* _UAPI_LINUX_FSINFO_H */
+> diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
+> index fadc5e1384fc..ab32a15d4c5b 100644
+> --- a/samples/vfs/test-fsinfo.c
+> +++ b/samples/vfs/test-fsinfo.c
+> @@ -21,10 +21,10 @@
+>  #include <errno.h>
+>  #include <time.h>
+>  #include <math.h>
+> -#include <fcntl.h>
+>  #include <sys/syscall.h>
+>  #include <linux/fsinfo.h>
+>  #include <linux/socket.h>
+> +#include <linux/fcntl.h>
+>  #include <sys/stat.h>
+>  #include <arpa/inet.h>
+>  
+> @@ -83,6 +83,10 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
+>  	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
+>  	FSINFO_OVERLARGE	(PARAMETERS,		-),
+>  	FSINFO_OVERLARGE	(LSM_PARAMETERS,	-),
+> +	FSINFO_STRUCT		(MOUNT_INFO,		mount_info),
+> +	FSINFO_STRING		(MOUNT_DEVNAME,		mount_devname),
+> +	FSINFO_STRUCT_ARRAY	(MOUNT_CHILDREN,	mount_child),
+> +	FSINFO_STRING_N		(MOUNT_SUBMOUNT,	mount_submount),
+>  };
+>  
+>  #define FSINFO_NAME(X,Y) [FSINFO_ATTR_##X] = #Y
+> @@ -104,6 +108,10 @@ static const char *fsinfo_attr_names[FSINFO_ATTR__NR] = {
+>  	FSINFO_NAME		(PARAM_ENUM,		param_enum),
+>  	FSINFO_NAME		(PARAMETERS,		parameters),
+>  	FSINFO_NAME		(LSM_PARAMETERS,	lsm_parameters),
+> +	FSINFO_NAME		(MOUNT_INFO,		mount_info),
+> +	FSINFO_NAME		(MOUNT_DEVNAME,		mount_devname),
+> +	FSINFO_NAME		(MOUNT_CHILDREN,	mount_children),
+> +	FSINFO_NAME		(MOUNT_SUBMOUNT,	mount_submount),
+>  };
+>  
+>  union reply {
+> @@ -116,6 +124,8 @@ union reply {
+>  	struct fsinfo_capabilities caps;
+>  	struct fsinfo_timestamp_info timestamps;
+>  	struct fsinfo_volume_uuid uuid;
+> +	struct fsinfo_mount_info mount_info;
+> +	struct fsinfo_mount_child mount_children[1];
+>  };
+>  
+>  static void dump_hex(unsigned int *data, int from, int to)
+> @@ -319,6 +329,29 @@ static void dump_attr_VOLUME_UUID(union reply *r, int size)
+>  	       f->uuid[14], f->uuid[15]);
+>  }
+>  
+> +static void dump_attr_MOUNT_INFO(union reply *r, int size)
+> +{
+> +	struct fsinfo_mount_info *f = &r->mount_info;
+> +
+> +	printf("\n");
+> +	printf("\tsb_id   : %llx\n", (unsigned long long)f->f_sb_id);
+> +	printf("\tmnt_id  : %x\n", f->mnt_id);
+> +	printf("\tparent  : %x\n", f->parent_id);
+> +	printf("\tgroup   : %x\n", f->group_id);
+> +	printf("\tattr    : %x\n", f->attr);
+> +	printf("\tnotifs  : %x\n", f->notify_counter);
+> +}
+> +
+> +static void dump_attr_MOUNT_CHILDREN(union reply *r, int size)
+> +{
+> +	struct fsinfo_mount_child *f = r->mount_children;
+> +	int i = 0;
+> +
+> +	printf("\n");
+> +	for (; size >= sizeof(*f); size -= sizeof(*f), f++)
+> +		printf("\t[%u] %8x %8x\n", i++, f->mnt_id, f->notify_counter);
+> +}
+> +
+>  /*
+>   *
+>   */
+> @@ -334,6 +367,8 @@ static const dumper_t fsinfo_attr_dumper[FSINFO_ATTR__NR] = {
+>  	FSINFO_DUMPER(CAPABILITIES),
+>  	FSINFO_DUMPER(TIMESTAMP_INFO),
+>  	FSINFO_DUMPER(VOLUME_UUID),
+> +	FSINFO_DUMPER(MOUNT_INFO),
+> +	FSINFO_DUMPER(MOUNT_CHILDREN),
+>  };
+>  
+>  static void dump_fsinfo(enum fsinfo_attribute attr,
+> @@ -536,16 +571,21 @@ int main(int argc, char **argv)
+>  	unsigned int attr;
+>  	int raw = 0, opt, Nth, Mth;
+>  
+> -	while ((opt = getopt(argc, argv, "adlr"))) {
+> +	while ((opt = getopt(argc, argv, "Madlr"))) {
+>  		switch (opt) {
+> +		case 'M':
+> +			params.at_flags = AT_FSINFO_MOUNTID_PATH;
+> +			continue;
+>  		case 'a':
+>  			params.at_flags |= AT_NO_AUTOMOUNT;
+> +			params.at_flags &= ~AT_FSINFO_MOUNTID_PATH;
 >  			continue;
-> +		notify_mount(mnt, NULL, NOTIFY_MOUNT_EXPIRY, 0);
->  		list_move(&mnt->mnt_expire, &graveyard);
+>  		case 'd':
+>  			debug = true;
+>  			continue;
+>  		case 'l':
+>  			params.at_flags &= ~AT_SYMLINK_NOFOLLOW;
+> +			params.at_flags &= ~AT_FSINFO_MOUNTID_PATH;
+>  			continue;
+>  		case 'r':
+>  			raw = 1;
+> @@ -558,7 +598,8 @@ int main(int argc, char **argv)
+>  	argv += optind;
+>  
+>  	if (argc != 1) {
+> -		printf("Format: test-fsinfo [-alr] <file>\n");
+> +		printf("Format: test-fsinfo [-adlr] <file>\n");
+> +		printf("Format: test-fsinfo [-dr] -M <mnt_id>\n");
+>  		exit(2);
 >  	}
->  	while (!list_empty(&graveyard)) {
+>  
 > 
