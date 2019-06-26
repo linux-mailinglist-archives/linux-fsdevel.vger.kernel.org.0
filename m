@@ -2,163 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD00856A41
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 15:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B32356A4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 15:23:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727678AbfFZNTJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jun 2019 09:19:09 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36510 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbfFZNTI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jun 2019 09:19:08 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k21so3334420edq.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2019 06:19:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uWimTsy2viMAlcQt3nQShnKVZxeJZ1kUgkedqDnILjw=;
-        b=Sj7THSRqxrGnJqHJgt70gePvcrUdNhMDVP4KQK3sLtAWlkDbLD7V8T9bb4kmt4xTci
-         5PvH4dqLAFqiC4+Xx7zt+/f3tpF9b7dmVsfp2jf2jo8lNZup2ypx6+xxpRgIJcdih07v
-         RKLBg5Qk0ZRum0TpILqE5eBXUBVuXICqFK47AmfGsM/JndpN8LKU+QeMRN7K5iiRrsy0
-         4SctX2giUONNVdh6XIVGBJhX82P+rCIyHNfwsEdjvH+HOLT9lp198DekskRybC7SS37M
-         lHLlVdFUxEDyBU1z6Q2e14vgyUQIBEujx5ilY+l0ofzUREgYrVBvNRJfWgMUYdxMaEJD
-         N/vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uWimTsy2viMAlcQt3nQShnKVZxeJZ1kUgkedqDnILjw=;
-        b=aNm9w0SQPve+oCW8cZ7wao8IFQ5VUJPwLq2H3hvc9xPWRGCWogu/M60AUw0L83HJVW
-         KU0TNJW8XIAmc6/iLC4w3a++bMmcM/FiwjnheLANoLSHSxGaif4aExdF5PcN/YFCkw2s
-         3rgFSkZ/k2JPUGdkg7G4282O0fmTRKi3alfVI6Hfh3qjm4bo3ExbPwgntIM8KhTcH2za
-         z3XHZ0sa4tgVsqG78h5cX1iEwDHvU46Laqj1uKn5iMZrU96rdQp2U5KRJQYc6daOaw4i
-         w0MaG/79JoAjzsjPreDYdWY/WQqEBg5OdwnZsn1E7mVKD+EnshqxV0iVJRXaXJyQorQS
-         O+eg==
-X-Gm-Message-State: APjAAAWT7uj7rds5i0J+EOf6nYHdkuZCzrnMV3/DDP8Y1g2mgoFFly1k
-        FjSrJeBg2d+Sd466P5CjzQnBZQ==
-X-Google-Smtp-Source: APXvYqyErzt0sjZ4m8QcefX7GiGvtMUQMfnb1axdznmSoz1mvR7CxWpJkmiTH88DBuuioxVm5QTy8A==
-X-Received: by 2002:a17:906:4e57:: with SMTP id g23mr4033712ejw.52.1561555146108;
-        Wed, 26 Jun 2019 06:19:06 -0700 (PDT)
-Received: from brauner.io (cable-89-16-153-196.cust.telecolumbus.net. [89.16.153.196])
-        by smtp.gmail.com with ESMTPSA id n15sm5744325edd.49.2019.06.26.06.19.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 26 Jun 2019 06:19:05 -0700 (PDT)
-Date:   Wed, 26 Jun 2019 15:19:03 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, raven@themaw.net, mszeredi@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/25] VFS: Introduce filesystem information query
- syscall [ver #14]
-Message-ID: <20190626131902.6xat2ab65arc62td@brauner.io>
-References: <156138532485.25627.7459410522109581052.stgit@warthog.procyon.org.uk>
- <20190626100525.irdehd24jowz5f75@brauner.io>
+        id S1727259AbfFZNXl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jun 2019 09:23:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49988 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbfFZNXl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Jun 2019 09:23:41 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 810F3C047B7A;
+        Wed, 26 Jun 2019 13:23:41 +0000 (UTC)
+Received: from max.com (unknown [10.40.205.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C51C71001B0E;
+        Wed, 26 Jun 2019 13:23:37 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Cc:     cluster-devel@redhat.com, linux-xfs@vger.kernel.org,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH v2 1/3] iomap: don't mark the inode dirty in iomap_write_end
+Date:   Wed, 26 Jun 2019 15:23:33 +0200
+Message-Id: <20190626132335.14809-1-agruenba@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190626100525.irdehd24jowz5f75@brauner.io>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 26 Jun 2019 13:23:41 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 12:05:25PM +0200, Christian Brauner wrote:
-> On Mon, Jun 24, 2019 at 03:08:45PM +0100, David Howells wrote:
-> > 
-> > Hi Al,
-> > 
-> > Here are a set of patches that adds a syscall, fsinfo(), that allows
-> > attributes of a filesystem/superblock to be queried.  Attribute values are
-> > of four basic types:
-> > 
-> >  (1) Version dependent-length structure (size defined by type).
-> > 
-> >  (2) Variable-length string (up to PAGE_SIZE).
-> > 
-> >  (3) Array of fixed-length structures (up to INT_MAX size).
-> > 
-> >  (4) Opaque blob (up to INT_MAX size).
-> > 
-> > Attributes can have multiple values in up to two dimensions and all the
-> > values of a particular attribute must have the same type.
-> > 
-> > Note that the attribute values *are* allowed to vary between dentries
-> > within a single superblock, depending on the specific dentry that you're
-> > looking at.
-> > 
-> > I've tried to make the interface as light as possible, so integer/enum
-> > attribute selector rather than string and the core does all the allocation
-> > and extensibility support work rather than leaving that to the filesystems.
-> > That means that for the first two attribute types, sb->s_op->fsinfo() may
-> > assume that the provided buffer is always present and always big enough.
-> > 
-> > Further, this removes the possibility of the filesystem gaining access to the
-> > userspace buffer.
-> > 
-> > 
-> > fsinfo() allows a variety of information to be retrieved about a filesystem
-> > and the mount topology:
-> > 
-> >  (1) General superblock attributes:
-> > 
-> >       - The amount of space/free space in a filesystem (as statfs()).
-> >       - Filesystem identifiers (UUID, volume label, device numbers, ...)
-> >       - The limits on a filesystem's capabilities
-> >       - Information on supported statx fields and attributes and IOC flags.
-> >       - A variety single-bit flags indicating supported capabilities.
-> >       - Timestamp resolution and range.
-> >       - Sources (as per mount(2), but fsconfig() allows multiple sources).
-> >       - In-filesystem filename format information.
-> >       - Filesystem parameters ("mount -o xxx"-type things).
-> >       - LSM parameters (again "mount -o xxx"-type things).
-> > 
-> >  (2) Filesystem-specific superblock attributes:
-> > 
-> >       - Server names and addresses.
-> >       - Cell name.
-> > 
-> >  (3) Filesystem configuration metadata attributes:
-> > 
-> >       - Filesystem parameter type descriptions.
-> >       - Name -> parameter mappings.
-> >       - Simple enumeration name -> value mappings.
-> > 
-> >  (4) Mount topology:
-> > 
-> >       - General information about a mount object.
-> >       - Mount device name(s).
-> >       - Children of a mount object and their relative paths.
-> > 
-> >  (5) Information about what the fsinfo() syscall itself supports, including
-> >      the number of attibutes supported and the number of capability bits
-> >      supported.
-> 
-> Phew, this patchset is a lot. It's good of course but can we please cut
-> some of the more advanced features such as querying by mount id,
-> submounts etc. pp. for now?
-> I feel this would help with review and since your interface is
-> extensible it's really not a big deal if we defer fancy features to
-> later cycles after people had more time to review and the interface has
-> seen some exposure.
-> 
-> The mount api changes over the last months have honestly been so huge
-> that any chance to make the changes smaller and easier to digest we
-> should take. (I'm really not complaining. Good that the work is done and
-> it's entirely ok that it's a lot of code.)
-> 
-> It would also be great if after you have dropped some stuff from this
-> patchset and gotten an Ack we could stuff it into linux-next for some
-> time because it hasn't been so far...
+Marking the inode dirty for each page copied into the page cache can be
+very inefficient for file systems that use the VFS dirty inode tracking,
+and is completely pointless for those that don't use the VFS dirty inode
+tracking.  So instead, only set an iomap flag when changing the in-core
+inode size, and open code the rest of __generic_write_end.
 
-And I also very much recommend to remove any potential cross-dependency
-between the fsinfo() and the notification patchset.
-Ideally, I'd like to see fsinfo() to be completely independent to not
-block it on something way more controversial.
-Furthermore, I can't possibly keep the context of another huge patchset
-not yet merged in the back of my mind while reviewing this patchset. :)
+Partially based on code from Christoph Hellwig.
 
-Christian
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/gfs2/bmap.c        |  2 ++
+ fs/iomap.c            | 15 ++++++++++++++-
+ include/linux/iomap.h |  1 +
+ 3 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
+index 93ea1d529aa3..f4b895fc632d 100644
+--- a/fs/gfs2/bmap.c
++++ b/fs/gfs2/bmap.c
+@@ -1182,6 +1182,8 @@ static int gfs2_iomap_end(struct inode *inode, loff_t pos, loff_t length,
+ 
+ 	if (ip->i_qadata && ip->i_qadata->qa_qd_num)
+ 		gfs2_quota_unlock(ip);
++	if (iomap->flags & IOMAP_F_SIZE_CHANGED)
++		mark_inode_dirty(inode);
+ 	gfs2_write_unlock(inode);
+ 
+ out:
+diff --git a/fs/iomap.c b/fs/iomap.c
+index 12654c2e78f8..97569064faaa 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -777,6 +777,7 @@ iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
+ 		unsigned copied, struct page *page, struct iomap *iomap)
+ {
+ 	const struct iomap_page_ops *page_ops = iomap->page_ops;
++	loff_t old_size = inode->i_size;
+ 	int ret;
+ 
+ 	if (iomap->type == IOMAP_INLINE) {
+@@ -788,7 +789,19 @@ iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
+ 		ret = __iomap_write_end(inode, pos, len, copied, page, iomap);
+ 	}
+ 
+-	__generic_write_end(inode, pos, ret, page);
++	/*
++	 * Update the in-memory inode size after copying the data into the page
++	 * cache.  It's up to the file system to write the updated size to disk,
++	 * preferably after I/O completion so that no stale data is exposed.
++	 */
++	if (pos + ret > old_size) {
++		i_size_write(inode, pos + ret);
++		iomap->flags |= IOMAP_F_SIZE_CHANGED;
++	}
++	unlock_page(page);
++
++	if (old_size < pos)
++		pagecache_isize_extended(inode, old_size, pos);
+ 	if (page_ops && page_ops->page_done)
+ 		page_ops->page_done(inode, pos, copied, page, iomap);
+ 	put_page(page);
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 2103b94cb1bf..1df9ea187a9a 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -35,6 +35,7 @@ struct vm_fault;
+ #define IOMAP_F_NEW		0x01	/* blocks have been newly allocated */
+ #define IOMAP_F_DIRTY		0x02	/* uncommitted metadata */
+ #define IOMAP_F_BUFFER_HEAD	0x04	/* file system requires buffer heads */
++#define IOMAP_F_SIZE_CHANGED	0x08	/* file size has changed */
+ 
+ /*
+  * Flags that only need to be reported for IOMAP_REPORT requests:
+-- 
+2.20.1
+
