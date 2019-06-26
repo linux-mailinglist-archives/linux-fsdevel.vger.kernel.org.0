@@ -2,95 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B81656888
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 14:21:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22656569AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2019 14:47:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbfFZMVQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jun 2019 08:21:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59914 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbfFZMVP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jun 2019 08:21:15 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6DBE3308792C;
-        Wed, 26 Jun 2019 12:20:52 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0DAEC5D9C6;
-        Wed, 26 Jun 2019 12:20:49 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 26F8E1806B0E;
-        Wed, 26 Jun 2019 12:20:43 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 08:20:42 -0400 (EDT)
-From:   Bob Peterson <rpeterso@redhat.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     matthew garrett <matthew.garrett@nebula.com>, yuchao0@huawei.com,
-        tytso@mit.edu, shaggy@kernel.org,
-        ard biesheuvel <ard.biesheuvel@linaro.org>,
-        josef@toxicpanda.com, hch@infradead.org, clm@fb.com,
-        adilger kernel <adilger.kernel@dilger.ca>, jk@ozlabs.org,
-        jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org,
-        viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
-        jfs-discussion@lists.sourceforge.net, linux-efi@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Christoph Hellwig <hch@lst.de>, ocfs2-devel@oss.oracle.com
-Message-ID: <868182386.37358699.1561551642881.JavaMail.zimbra@redhat.com>
-In-Reply-To: <156151633004.2283456.4175543089138173586.stgit@magnolia>
-References: <156151632209.2283456.3592379873620132456.stgit@magnolia> <156151633004.2283456.4175543089138173586.stgit@magnolia>
-Subject: Re: [Cluster-devel] [PATCH 1/5] vfs: create a generic checking and
- prep function for FS_IOC_SETFLAGS
+        id S1727302AbfFZMrr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jun 2019 08:47:47 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:18809 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726948AbfFZMrq (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Jun 2019 08:47:46 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190626124744epoutp023267a5ef7f24f9aa2f3502d2494717f7~rwGvFJcSE1693416934epoutp02W
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2019 12:47:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190626124744epoutp023267a5ef7f24f9aa2f3502d2494717f7~rwGvFJcSE1693416934epoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1561553264;
+        bh=zH5ztn3xX70umuBcDQcF3am8p4S1Z0cIrMZJqK3E2CY=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=ewcLwayRZ4pRxQPNz2yVY9OIrGq6UqOhW4CY/8xSZOt5TXeLKBjfF0zVmkf4ARe5y
+         /5/IqygTb0WTtbW1W3CW4QwdWA9WoeVm4RVvGFjVfxxpVz1//cMk0b+zO9MoX5xRKl
+         eP1edKnpi3TYYqa7dyNX5fIGHxUHCY3ICwgk+Evo=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20190626124744epcas5p467d19851ca8e3cde56123960ec2aac30~rwGucKiQG2481324813epcas5p4g;
+        Wed, 26 Jun 2019 12:47:44 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7E.C2.04067.079631D5; Wed, 26 Jun 2019 21:47:44 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190626124743epcas5p105f8e82af483f0cd360b6c3d3944d545~rwGt9ylmb2730427304epcas5p1y;
+        Wed, 26 Jun 2019 12:47:43 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190626124743epsmtrp18e50bf82a358dde82e8a3fa29c6cd25b~rwGt9BOcl3178031780epsmtrp1K;
+        Wed, 26 Jun 2019 12:47:43 +0000 (GMT)
+X-AuditID: b6c32a4b-7a3ff70000000fe3-bf-5d136970370a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        23.52.03662.F69631D5; Wed, 26 Jun 2019 21:47:43 +0900 (KST)
+Received: from JOSHIK01 (unknown [107.111.93.135]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20190626124742epsmtip2335a164549cc240db896799ca1f82e62~rwGsgATdi1669716697epsmtip2L;
+        Wed, 26 Jun 2019 12:47:42 +0000 (GMT)
+From:   "kanchan" <joshi.k@samsung.com>
+To:     "'Christoph Hellwig'" <hch@infradead.org>
+Cc:     <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-ext4@vger.kernel.org>, <prakash.v@samsung.com>,
+        <anshul@samsung.com>,
+        "'Martin K. Petersen'" <martin.petersen@oracle.com>,
+        "'Jan Kara'" <jack@suse.cz>
+In-Reply-To: <20190522102530.GK17019@quack2.suse.cz>
+Subject: RE: [PATCH v5 0/7] Extend write-hint framework, and add write-hint
+ for Ext4 journal
+Date:   Wed, 26 Jun 2019 18:17:29 +0530
+Message-ID: <00f301d52c1d$58f1e820$0ad5b860$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.3.116.201, 10.4.195.9]
-Thread-Topic: create a generic checking and prep function for FS_IOC_SETFLAGS
-Thread-Index: 5u1cuSAsKRaw36dS1F+PjLFgFqc7sA==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 26 Jun 2019 12:21:15 +0000 (UTC)
+X-Mailer: Microsoft Outlook 15.0
+Content-Language: en-us
+Thread-Index: AQJoSeMIlXjPMuci1lQDnd0IsY+e8wLu+qiYAUGsmF8ChgSNDQJyI1AuAi3VLdkCT/pK/wHswGQGpQM4GVA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe89lO65Wpyns0SBzGaThpbI6gmhRHwYGRR/6YFkd86jD29jx
+        khk0GsylWCZe2ipTs7QZJWqZ17xmYhbesLyVNclFhimINbq4HSW//Z7n//yfy8tL4bIW0o1S
+        JSRxmgQ2TiGSEM86vLx81CrncP/BfJKxFeaRTG9OKcbcKtRhTPPoLsZYNC5impp7CGaw4baI
+        uftgWsyUd//BmKG8UvygRFlT4a2sKbus/DE9Siiv1ZqR8nVxp1i5UL31uChMEhTJxalSOI1f
+        8DlJjPnOJ5G6T36h5IMO0yKzcyZyooAOAGOWQZyJKEpGNyJ4GpWJJMs4j8BisOFCsIjgXadO
+        tGowF2gJQWhGUFlajwnBFwQL462kvUpE74DJpWyHw4X2gb6SGWQvwulKDO7pbWK74LTcaibj
+        qoOd6TOgnchxMLFsHihoczSS0oFQ8jZLJPBm6DFaCDvjtDvUzd7GhZW2QeN8Fynk5WDt6hQL
+        gyPgysy0Y1WgM8RQMVaCCYYj0KR7IRbYGb52166wG1iv61eYh1/jXbhgNiAY0RoJQQiB/qbf
+        mP3FcNoLnjT4CYM3QrbN4kgDLQWDXiZUe8Bk7jQpsBymbpatsBKmZmtQDvIwrTnNtOY005pz
+        TP+HFSPCjFw5NR8fzfH71HsTuFRfno3nkxOifc8nxlcjx6/yDn2Oqt8cbUc0hRQbpFp3WbiM
+        ZFP4tPh2BBSucJHeZ+lwmTSSTbvIaRLPapLjOL4dbaEIhVyaSw6fltHRbBIXy3FqTrOqYpST
+        mxYV6B/ttIQW9dz4fCzvxES2u+7x+/1jU70/P7aNBUJoR4MVWvMtiVW2/nWewS5hWR1Rwy0P
+        g/7GFnuvPxkygjqZucNWW1Gdv+LUWH1Ss2rPBBxwdUtdavKdl0ZlfRsOebU4N8Ee2u6evkQF
+        eJkHWsszI6pmwzblfk/niJeXPEeHFAQfw+72xjU8+w/RrzTPUQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIIsWRmVeSWpSXmKPExsWy7bCSvG5+pnCsQdMWDYvf06ewWpyesIjJ
+        Yvb0ZiaLvbe0LWbOu8NmsWfvSRaLy7vmsFnMX/aU3WL58X9MFlemLGJ24PLYvELLY/OSeo+P
+        T2+xePRtWcXocWbBEXaPz5vkAtiiuGxSUnMyy1KL9O0SuDJWzX3EVnBWvGLh/WamBsZVwl2M
+        nBwSAiYSq6Y1sHQxcnEICexmlJjzsosRIiEu0XztBzuELSyx8t9zdoiip4wS1zq3MoEk2ARU
+        Je796GUDsUUEdCXOLnzBCFLELLCZSWLLtrfMEB3tzBI/f64EG8UJtO9FeyeYLSwQI7F+8kKw
+        bhagSZemHWQFsXkFLCUWnu9mg7AFJU7OfAJ0HwfQVD2Jto1g1zELyEtsfzuHGeI6BYndn46y
+        QsTFJV4ePcIOcVCSRNOLpywTGIVnIZk0C2HSLCSTZiHpXsDIsopRMrWgODc9t9iwwCgvtVyv
+        ODG3uDQvXS85P3cTIzjitLR2MJ44EX+IUYCDUYmHt0FeKFaINbGsuDL3EKMEB7OSCO/SRIFY
+        Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzy+ccihQTSE0tSs1NTC1KLYLJMHJxSDYxqJnvkNHnU
+        6yMWy7x+6RpmNdmudr3w6ZpbkQwrNB47fgo6/ltflJX/CdeqpRu+vI7+M2PRsv4ihm0NvwVn
+        svE8Cepz7+xUyGmVWXl+3/ZpVxqn/PswLXtr2rJDV06azqjkmWHw18Y4NX3vm4SP0ftevX9y
+        R+WF9XSlDmnX46eK5BzE1+4ufH9HiaU4I9FQi7moOBEAkovLmLQCAAA=
+X-CMS-MailID: 20190626124743epcas5p105f8e82af483f0cd360b6c3d3944d545
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20190425112347epcas2p1f7be48b8f0d2203252b8c9dd510c1b61
+References: <CGME20190425112347epcas2p1f7be48b8f0d2203252b8c9dd510c1b61@epcas2p1.samsung.com>
+        <1556191202-3245-1-git-send-email-joshi.k@samsung.com>
+        <20190510170249.GA26907@infradead.org>
+        <00fb01d50c71$dd358e50$97a0aaf0$@samsung.com>
+        <20190520142719.GA15705@infradead.org>
+        <20190521082528.GA17709@quack2.suse.cz>
+        <20190521082846.GA11024@infradead.org>
+        <20190522102530.GK17019@quack2.suse.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
------ Original Message -----
-> From: Darrick J. Wong <darrick.wong@oracle.com>
+Christoph, 
+May I know if you have thoughts about what Jan mentioned below? 
+
+I reflected upon the whole series again, and here is my understanding of
+your concern (I hope to address that, once I get it right).
+Current patch-set targeted adding two things -
+1. Extend write-hint infra for in-kernel callers 
+2. Send write-hint for FS-journal
+
+In the process of doing 1, write-hint gets more closely connected to stream
+(as hint-to-stream conversion moves to block-layer). 
+And perhaps this is something that you've objection on. 
+Whether write-hint converts into flash-stream or into something-else is
+deliberately left to device-driver and that's why block layer does not have
+a hint-to-stream conversion in the first place.
+Is this the correct understanding of why things are the way they are?
+
+On 2, sending write-hint for FS journal is actually important, as there is
+clear data on both performance and endurance benefits.
+RWH_WRITE_LIFE_JOURNAL or REQ_JOURNAL (that Martin Petersen suggested) kind
+of thing will help in identifying Journal I/O which can be useful for other
+purposes (than streams) as well.
+I saw this LSFMM coverage https://lwn.net/Articles/788721/ , and felt that
+this could be useful for turbo-write in UFS.   
+
+BR,
+Kanchan
+
+-----Original Message-----
+From: Jan Kara [mailto:jack@suse.cz] 
+Sent: Wednesday, May 22, 2019 3:56 PM
+To: 'Christoph Hellwig' <hch@infradead.org>
+Cc: Jan Kara <jack@suse.cz>; kanchan <joshi.k@samsung.com>;
+linux-kernel@vger.kernel.org; linux-block@vger.kernel.org;
+linux-nvme@lists.infradead.org; linux-fsdevel@vger.kernel.org;
+linux-ext4@vger.kernel.org; prakash.v@samsung.com; anshul@samsung.com;
+Martin K. Petersen <martin.petersen@oracle.com>
+Subject: Re: [PATCH v5 0/7] Extend write-hint framework, and add write-hint
+for Ext4 journal
+
+On Tue 21-05-19 01:28:46, 'Christoph Hellwig' wrote:
+> On Tue, May 21, 2019 at 10:25:28AM +0200, Jan Kara wrote:
+> > performance benefits for some drives. After all you can just think 
+> > about it like RWH_WRITE_LIFE_JOURNAL type of hint available for the
+kernel...
 > 
-> Create a generic function to check incoming FS_IOC_SETFLAGS flag values
-> and later prepare the inode for updates so that we can standardize the
-> implementations that follow ext4's flag values.
+> Except that it actuallys adds a parallel insfrastructure.  A 
+> RWH_WRITE_LIFE_JOURNAL would be much more palatable, but someone needs 
+> to explain how that is:
 > 
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: David Sterba <dsterba@suse.com>
-> ---
->  fs/btrfs/ioctl.c    |   13 +++++--------
->  fs/efivarfs/file.c  |   26 +++++++++++++++++---------
->  fs/ext2/ioctl.c     |   16 ++++------------
->  fs/ext4/ioctl.c     |   13 +++----------
->  fs/f2fs/file.c      |    7 ++++---
->  fs/gfs2/file.c      |   42 +++++++++++++++++++++++++++++-------------
->  fs/hfsplus/ioctl.c  |   21 ++++++++++++---------
->  fs/inode.c          |   24 ++++++++++++++++++++++++
->  fs/jfs/ioctl.c      |   22 +++++++---------------
->  fs/nilfs2/ioctl.c   |    9 ++-------
->  fs/ocfs2/ioctl.c    |   13 +++----------
->  fs/orangefs/file.c  |   35 ++++++++++++++++++++++++++---------
->  fs/reiserfs/ioctl.c |   10 ++++------
->  fs/ubifs/ioctl.c    |   13 +++----------
->  include/linux/fs.h  |    3 +++
->  15 files changed, 146 insertions(+), 121 deletions(-)
+>  a) different from RWH_WRITE_LIFE_SHORT
 
-The gfs2 portion looks correct.
+The problem I have with this is: What does "short" mean? What if userspace's
+notion of short differs from the kernel notion? Also the journal block
+lifetime is somewhat hard to predict. It depends on the size of the journal
+and metadata load on the filesystem so there's big variance.
+So all we really know is that all journal blocks are the same.
 
-Reviewed-by: Bob Peterson <rpeterso@redhat.com>
+>  b) would not apply to a log/journal maintained in userspace that works
+>     exactly the same
 
-Regards,
+Lifetime of userspace journal/log may be significantly different from the
+lifetime of the filesystem journal. So using the same hint for them does not
+look like a great idea?
 
-Bob Peterson
+								Honza
+--
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
+
