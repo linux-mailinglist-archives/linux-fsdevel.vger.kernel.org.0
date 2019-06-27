@@ -2,80 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E00A3582D0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 14:46:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BDCC58343
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 15:18:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbfF0Mq2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jun 2019 08:46:28 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36223 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726431AbfF0Mq2 (ORCPT
+        id S1726819AbfF0NSm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jun 2019 09:18:42 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:60164 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726059AbfF0NSl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jun 2019 08:46:28 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k21so6958976edq.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2019 05:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QcDk5zUKbz23dkSjNBVXwjq0i8xHM9vtNbHjMMC6vV0=;
-        b=Ph8a0a5yHbRPhclO3Pn0KnYkbHmqZJ1TzgavGNPl8lmeqhJTJc84xPfvgYwIEtmpAJ
-         SLUBBxlcsWcu+FQLeGK2WBfqjvVNdPyCSw5uxBpm/DHLWwg6ht4aR7x0iOdbABcWIihQ
-         wRNHBiJrT+zuLgpTm1MbLIaqKSi2JTrCJHxM7CkX09ypWgFJpJ4b4xqX00fWg+NBj175
-         V7xJ+dVSS9ieTZq8jeuaAVG7c45OdqBRFsyCmrAD+BAy/yBT2KC/Homx61Vz7PAGYIeL
-         7oTqvW3rLlxDu9ZaKffB5hPvoQHEQthc7VBSVJ0OTK1xXMRCB1wzy+2+JrC9R38OptSn
-         mGQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QcDk5zUKbz23dkSjNBVXwjq0i8xHM9vtNbHjMMC6vV0=;
-        b=AngAPMla9gPuaLT48BSdghGml4O8zoGWTnLkNaPJxCgHXjCCrQ+8BMRLlfWgAhJzBI
-         jDcHH45q7z6J3Q7aKI/ebQYFHtKANwCUUt0SdDUsSARwi3/O8rDKCupXkqre9qnRJ2UF
-         q1fOBpSwgynDNv5qxzJvFJGq/1tphp0VH5iSuMq2qhr22YIq9/tPKgNBcdfQSONMKu78
-         IxeB6wTp+RC+4uVjiR14kkuVSvW/erP/fTVrbUmkExk7uoukiq2VnhOwNLto8NHC/vZ7
-         kmeIWhrcfP6Nz3OUht09AbRwUVWNrvtiqG0qZ6FQKPr5fhcvD20SA3/poQlyKzuuSOxi
-         S2Cw==
-X-Gm-Message-State: APjAAAVvF+z7plnyuQeMBeqvYrqc/BSFB8pMgq6aYAk/rskGbYwyNo+u
-        yvKgo+9QwI8ZILN8tCgRzedJINinnFk=
-X-Google-Smtp-Source: APXvYqx8PviEpESGoaGFrEkuGJDnDhMWSIld5rUq0chtQKwTslTti67hACIPECZQNkq5ZBizPpaPOw==
-X-Received: by 2002:a50:976d:: with SMTP id d42mr3969822edb.77.1561639586109;
-        Thu, 27 Jun 2019 05:46:26 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id c48sm735496edb.10.2019.06.27.05.46.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Jun 2019 05:46:25 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 2E04A103F66; Thu, 27 Jun 2019 15:46:24 +0300 (+03)
-Date:   Thu, 27 Jun 2019 15:46:24 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, matthew.wilcox@oracle.com,
-        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
-        william.kucharski@oracle.com, akpm@linux-foundation.org,
-        hdanton@sina.com
-Subject: Re: [PATCH v9 0/6] Enable THP for text section of non-shmem files
-Message-ID: <20190627124624.uzu5trpfcdcz5uzz@box>
+        Thu, 27 Jun 2019 09:18:41 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1hgUIO-0006Ad-1j; Thu, 27 Jun 2019 09:18:36 -0400
+Message-ID: <8026a0341c83ceee69d04cbe55f1e0fa3d6cb610.camel@surriel.com>
+Subject: Re: [PATCH v9 6/6] mm,thp: avoid writes to file with THP in
+ pagecache
+From:   Rik van Riel <riel@surriel.com>
+To:     Song Liu <songliubraving@fb.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     matthew.wilcox@oracle.com, kirill.shutemov@linux.intel.com,
+        kernel-team@fb.com, william.kucharski@oracle.com,
+        akpm@linux-foundation.org, hdanton@sina.com
+Date:   Thu, 27 Jun 2019 09:18:35 -0400
+In-Reply-To: <20190625001246.685563-7-songliubraving@fb.com>
 References: <20190625001246.685563-1-songliubraving@fb.com>
+         <20190625001246.685563-7-songliubraving@fb.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-WfH5iiK7XcqIOQRh+gpO"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190625001246.685563-1-songliubraving@fb.com>
-User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 05:12:40PM -0700, Song Liu wrote:
-> Please share your comments and suggestions on this.
 
-Looks like a great first step to THP in page cache. Thanks!
+--=-WfH5iiK7XcqIOQRh+gpO
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+On Mon, 2019-06-24 at 17:12 -0700, Song Liu wrote:
+> In previous patch, an application could put part of its text section
+> in
+> THP via madvise(). These THPs will be protected from writes when the
+> application is still running (TXTBSY). However, after the application
+> exits, the file is available for writes.
+>=20
+> This patch avoids writes to file THP by dropping page cache for the
+> file
+> when the file is open for write. A new counter nr_thps is added to
+> struct
+> address_space. In do_last(), if the file is open for write and
+> nr_thps
+> is non-zero, we drop page cache for the whole file.
+>=20
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Song Liu <songliubraving@fb.com>
 
-THP allocation in the fault path and write support are next goals.
+Acked-by: Rik van Riel <riel@surriel.com>
 
--- 
- Kirill A. Shutemov
+--=20
+All Rights Reversed.
+
+--=-WfH5iiK7XcqIOQRh+gpO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl0UwisACgkQznnekoTE
+3oNDZAgAhCigDJCHSHlL1abXwMFGGvkGQl64ICm1ia7nRSP9ppL9746ikxugPxnz
+oCURzm/HvLsSaR6w5Orpm9e/su04mjAOdax5Ab1+ZyVTAzRTY7353e12znTqSLBL
+p4ABWVBJ8LRquZvHJCD3XMUMtkyrfiA4pm10cP5irPZI7BEnmnpSR3FxhXOLJOxg
+DVvD5fo/0JRBgh18pLOaw1BdZXW4MlbRrnsEmkCr+cHP/oViU6S0LwKKnandYKoh
+y2s8zhUH4+aPl0lLLy3irNfXkXzPfnPDzBtwFaboLO/iUI1+bTrd8nax43O1pTxV
+AoHIzhfHDW7cPSs7GDBgvNa9PTgohw==
+=trnf
+-----END PGP SIGNATURE-----
+
+--=-WfH5iiK7XcqIOQRh+gpO--
+
