@@ -2,78 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BA5258349
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 15:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BBBE58539
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 17:07:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbfF0NTO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jun 2019 09:19:14 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:60182 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbfF0NTO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jun 2019 09:19:14 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1hgUIz-0006BR-AX; Thu, 27 Jun 2019 09:19:13 -0400
-Message-ID: <2f94b350ce562701bf31820d0ba745a06c983223.camel@surriel.com>
-Subject: Re: [PATCH v9 4/6] khugepaged: rename collapse_shmem() and
- khugepaged_scan_shmem()
-From:   Rik van Riel <riel@surriel.com>
-To:     Song Liu <songliubraving@fb.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     matthew.wilcox@oracle.com, kirill.shutemov@linux.intel.com,
-        kernel-team@fb.com, william.kucharski@oracle.com,
-        akpm@linux-foundation.org, hdanton@sina.com
-Date:   Thu, 27 Jun 2019 09:19:12 -0400
-In-Reply-To: <20190625001246.685563-5-songliubraving@fb.com>
-References: <20190625001246.685563-1-songliubraving@fb.com>
-         <20190625001246.685563-5-songliubraving@fb.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-XX3VlRGl2hyUPeG85tjf"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1726947AbfF0PHu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jun 2019 11:07:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40656 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726405AbfF0PHu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Jun 2019 11:07:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5F70CAC37;
+        Thu, 27 Jun 2019 15:07:48 +0000 (UTC)
+Date:   Thu, 27 Jun 2019 17:07:46 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [PATCH 1/2] mm, memcontrol: Add memcg_iterate_all()
+Message-ID: <20190627150746.GD5303@dhcp22.suse.cz>
+References: <20190624174219.25513-1-longman@redhat.com>
+ <20190624174219.25513-2-longman@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624174219.25513-2-longman@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon 24-06-19 13:42:18, Waiman Long wrote:
+> Add a memcg_iterate_all() function for iterating all the available
+> memory cgroups and call the given callback function for each of the
+> memory cgruops.
 
---=-XX3VlRGl2hyUPeG85tjf
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Why is a trivial wrapper any better than open coded usage of the
+iterator?
 
-On Mon, 2019-06-24 at 17:12 -0700, Song Liu wrote:
-> Next patch will add khugepaged support of non-shmem files. This patch
-> renames these two functions to reflect the new functionality:
->=20
->     collapse_shmem()        =3D>  collapse_file()
->     khugepaged_scan_shmem() =3D>  khugepaged_scan_file()
->=20
-> Signed-off-by: Song Liu <songliubraving@fb.com>
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  include/linux/memcontrol.h |  3 +++
+>  mm/memcontrol.c            | 13 +++++++++++++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 1dcb763bb610..0e31418e5a47 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -1268,6 +1268,9 @@ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
+>  struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep);
+>  void memcg_kmem_put_cache(struct kmem_cache *cachep);
+>  
+> +extern void memcg_iterate_all(void (*callback)(struct mem_cgroup *memcg,
+> +					       void *arg), void *arg);
+> +
+>  #ifdef CONFIG_MEMCG_KMEM
+>  int __memcg_kmem_charge(struct page *page, gfp_t gfp, int order);
+>  void __memcg_kmem_uncharge(struct page *page, int order);
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index ba9138a4a1de..c1c4706f7696 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -443,6 +443,19 @@ static int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
+>  static void memcg_free_shrinker_maps(struct mem_cgroup *memcg) { }
+>  #endif /* CONFIG_MEMCG_KMEM */
+>  
+> +/*
+> + * Iterate all the memory cgroups and call the given callback function
+> + * for each of the memory cgroups.
+> + */
+> +void memcg_iterate_all(void (*callback)(struct mem_cgroup *memcg, void *arg),
+> +		       void *arg)
+> +{
+> +	struct mem_cgroup *memcg;
+> +
+> +	for_each_mem_cgroup(memcg)
+> +		callback(memcg, arg);
+> +}
+> +
+>  /**
+>   * mem_cgroup_css_from_page - css of the memcg associated with a page
+>   * @page: page of interest
+> -- 
+> 2.18.1
 
-Acked-by: Rik van Riel <riel@surriel.com>
-
---=20
-All Rights Reversed.
-
---=-XX3VlRGl2hyUPeG85tjf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl0UwlEACgkQznnekoTE
-3oMxUQgAifzfEQEqWrpF79WAQuJKF6M1RfFVcdGX22cjDZlnZKZdbZM16fG55kdN
-0AsMM+3LHgBLS1mYq/8d/sjFPxCH8UH3qebrvr8RgZSOIQ6Yiy+GWoPMYgkfDqPd
-RX08C+un8MGcnzIcHnot4Ha8v4i/+AUFcYWcEdChkrXvaooEdjjOUPeoAaNt3um/
-lAP/vIGiFh+7paL/LSk0VGG5OUMn5EXtIBWiCRdcU8adw+2tcprzDBexQH5kGnA/
-qUpJSGlHjJzLgb/zan9+kc8ajJRqf2ybIMCTLmhpuFFHLOnhfly8aYkZiwOtvlmL
-nGKZ3qK9CZZrKTTQJwpQ70zomYRxQg==
-=37zQ
------END PGP SIGNATURE-----
-
---=-XX3VlRGl2hyUPeG85tjf--
-
+-- 
+Michal Hocko
+SUSE Labs
