@@ -2,90 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34CD058546
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 17:10:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C18F75855B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 17:15:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfF0PKS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jun 2019 11:10:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41226 "EHLO mx1.suse.de"
+        id S1726702AbfF0PPK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jun 2019 11:15:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43548 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726431AbfF0PKS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jun 2019 11:10:18 -0400
+        id S1726384AbfF0PPK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Jun 2019 11:15:10 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E8A79AC37;
-        Thu, 27 Jun 2019 15:10:16 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 32C2ADA811; Thu, 27 Jun 2019 17:11:00 +0200 (CEST)
-Date:   Thu, 27 Jun 2019 17:11:00 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Naohiro Aota <Naohiro.Aota@wdc.com>
-Cc:     "dsterba@suse.cz" <dsterba@suse.cz>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 02/19] btrfs: Get zone information of zoned block devices
-Message-ID: <20190627151100.GB20977@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190607131025.31996-3-naohiro.aota@wdc.com>
- <20190617185708.GH19057@twin.jikos.cz>
- <SN6PR04MB5231EA9395FB2C4E973BD32F8CEA0@SN6PR04MB5231.namprd04.prod.outlook.com>
+        by mx1.suse.de (Postfix) with ESMTP id A290BABC4;
+        Thu, 27 Jun 2019 15:15:08 +0000 (UTC)
+Date:   Thu, 27 Jun 2019 17:15:06 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [PATCH 2/2] mm, slab: Extend vm/drop_caches to shrink kmem slabs
+Message-ID: <20190627151506.GE5303@dhcp22.suse.cz>
+References: <20190624174219.25513-1-longman@redhat.com>
+ <20190624174219.25513-3-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SN6PR04MB5231EA9395FB2C4E973BD32F8CEA0@SN6PR04MB5231.namprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <20190624174219.25513-3-longman@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 06:42:09AM +0000, Naohiro Aota wrote:
-> >> +	device->seq_zones = kcalloc(BITS_TO_LONGS(device->nr_zones),
-> >> +				    sizeof(*device->seq_zones), GFP_KERNEL);
-> > 
-> > What's the expected range for the allocation size? There's one bit per
-> > zone, so one 4KiB page can hold up to 32768 zones, with 1GiB it's 32TiB
-> > of space on the drive. Ok that seems safe for now.
+On Mon 24-06-19 13:42:19, Waiman Long wrote:
+> With the slub memory allocator, the numbers of active slab objects
+> reported in /proc/slabinfo are not real because they include objects
+> that are held by the per-cpu slab structures whether they are actually
+> used or not.  The problem gets worse the more CPUs a system have. For
+> instance, looking at the reported number of active task_struct objects,
+> one will wonder where all the missing tasks gone.
 > 
-> Typically, zone size is 256MB (as default value in tcmu-runner). On such device,
-> we need one 4KB page per 8TB disk space. Still it's quite safe.
+> I know it is hard and costly to get a real count of active objects.
 
-Ok, and for drives up to 16T the allocation is 8kb that the allocator
-usually is able to find.
+What exactly is expensive? Why cannot slabinfo reduce the number of
+active objects by per-cpu cached objects?
 
-> >> +	u8  zone_size_shift;
-> > 
-> > So the zone_size is always power of two? I may be missing something, but
-> > I wonder if the calculations based on shifts are safe.
-> 
-> The kernel ZBD support have a restriction that
-> "The zone size must also be equal to a power of 2 number of logical blocks."
-> http://zonedstorage.io/introduction/linux-support/#zbd-support-restrictions
-> 
-> So, the zone_size is guaranteed to be power of two.
+> So
+> I am not advocating for that. Instead, this patch extends the
+> /proc/sys/vm/drop_caches sysctl parameter by using a new bit (bit 3)
+> to shrink all the kmem slabs which will flush out all the slabs in the
+> per-cpu structures and give a more accurate view of how much memory are
+> really used up by the active slab objects. This is a costly operation,
+> of course, but it gives a way to have a clearer picture of the actual
+> number of slab objects used, if the need arises.
 
-Ok. I don't remember if there are assertions, but would like to see them
-in the filesystem code indpendently anyway as the mount-time sanity
-checks.
+drop_caches is a terrible interface. It destroys all the caching and
+people are just too easy in using it to solve any kind of problem they
+think they might have and cause others they might not see immediately.
+I am strongly discouraging anybody - except for some tests which really
+do want to see reproducible results without cache effects - from using
+this interface and therefore I am not really happy to paper over
+something that might be a real problem with yet another mode. If SLUB
+indeed caches too aggressively on large machines then this should be
+fixed.
+
+-- 
+Michal Hocko
+SUSE Labs
