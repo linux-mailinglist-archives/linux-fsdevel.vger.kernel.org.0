@@ -2,119 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC3D5587C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 18:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C28B5894A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 19:50:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbfF0Q5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jun 2019 12:57:17 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:47906 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726425AbfF0Q5R (ORCPT
+        id S1726502AbfF0Ruc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jun 2019 13:50:32 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:53956 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfF0Ruc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jun 2019 12:57:17 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgXhQ-00066m-Ks; Thu, 27 Jun 2019 16:56:40 +0000
-Date:   Thu, 27 Jun 2019 17:56:40 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>
-Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v9 05/10] bpf,landlock: Add a new map type: inode
-Message-ID: <20190627165640.GQ17978@ZenIV.linux.org.uk>
-References: <20190625215239.11136-1-mic@digikod.net>
- <20190625215239.11136-6-mic@digikod.net>
- <20190625225201.GJ17978@ZenIV.linux.org.uk>
- <79bac827-4092-8a4d-9dc6-6019419b2486@ssi.gouv.fr>
+        Thu, 27 Jun 2019 13:50:32 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5RHhqUX194718;
+        Thu, 27 Jun 2019 17:50:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=9dcRBZ1oH1Yw3KXHkcZZY5r+tJ0AoB4UqlalnGuOKrw=;
+ b=tc2of1B4ZZYeugMVvjoTHZ7potobN0S2vYp0H5R9KvpdjImxhtrW+P+NcGc1HYqgX739
+ WDIuhOknuj9aY3+VbQrjtdpfUMOAzcET7s267K5UEMHtzpr2FevYjhzc4AbF76NvU5DZ
+ iK7ja0P1SQaYadRPMK0/pkeQXn5SSYslmfUQ0f6Whpx9NMSjorwC3f+j7WXlsCP8ZYag
+ o/70+3KRKY6gtVwplHOIfn3h8OkrgVyTx3YDhN7wszwJmL1oPq6FPQKbqE7+qY/GKiFu
+ 1bZ8D3xoyi/a1ibwRRf1YkTfkRBI8slj07ygKb3luG7CbY5HUamJ+quSyK1+vU/d56DA pg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2t9cyqsn5d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 17:50:15 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5RHnZnO164797;
+        Thu, 27 Jun 2019 17:50:14 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2t9acdd265-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 17:50:14 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5RHoCA3003961;
+        Thu, 27 Jun 2019 17:50:12 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 27 Jun 2019 10:50:12 -0700
+Date:   Thu, 27 Jun 2019 10:50:11 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/13] xfs: remove the unused xfs_count_page_state
+ declaration
+Message-ID: <20190627175011.GO5171@magnolia>
+References: <20190627104836.25446-1-hch@lst.de>
+ <20190627104836.25446-3-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <79bac827-4092-8a4d-9dc6-6019419b2486@ssi.gouv.fr>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190627104836.25446-3-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9301 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906270205
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9301 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906270205
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 06:18:12PM +0200, Mickaël Salaün wrote:
+On Thu, Jun 27, 2019 at 12:48:25PM +0200, Christoph Hellwig wrote:
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-> >> +/* called from syscall */
-> >> +static int sys_inode_map_delete_elem(struct bpf_map *map, struct inode *key)
-> >> +{
-> >> +    struct inode_array *array = container_of(map, struct inode_array, map);
-> >> +    struct inode *inode;
-> >> +    int i;
-> >> +
-> >> +    WARN_ON_ONCE(!rcu_read_lock_held());
-> >> +    for (i = 0; i < array->map.max_entries; i++) {
-> >> +            if (array->elems[i].inode == key) {
-> >> +                    inode = xchg(&array->elems[i].inode, NULL);
-> >> +                    array->nb_entries--;
-> >
-> > Umm...  Is that intended to be atomic in any sense?
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
+> ---
+>  fs/xfs/xfs_aops.h | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> nb_entries is not used as a bound check but to avoid walking uselessly
-> through the (pre-allocated) array when adding a new element, but I'll
-> use an atomic to avoid inconsistencies anyway.
-
-
-> > Wait a sec...  So we have those beasties that can have long-term
-> > references to arbitrary inodes stuck in them?  What will happen
-> > if you get umount(2) called while such a thing exists?
+> diff --git a/fs/xfs/xfs_aops.h b/fs/xfs/xfs_aops.h
+> index f62b03186c62..45a1ea240cbb 100644
+> --- a/fs/xfs/xfs_aops.h
+> +++ b/fs/xfs/xfs_aops.h
+> @@ -28,7 +28,6 @@ extern const struct address_space_operations xfs_dax_aops;
+>  
+>  int	xfs_setfilesize(struct xfs_inode *ip, xfs_off_t offset, size_t size);
+>  
+> -extern void xfs_count_page_state(struct page *, int *, int *);
+>  extern struct block_device *xfs_find_bdev_for_inode(struct inode *);
+>  extern struct dax_device *xfs_find_daxdev_for_inode(struct inode *);
+>  
+> -- 
+> 2.20.1
 > 
-> I though an umount would be denied but no, we get a self-destructed busy
-> inode and a bug!
-> What about wrapping the inode's superblock->s_op->destroy_inode() to
-> first remove the element from the map and then call the real
-> destroy_inode(), if any?
-
-What do you mean, _the_ map?  I don't see anything to prevent insertion
-of references to the same inode into any number of those...
-
-> Or I could update fs/inode.c:destroy_inode() to call inode->free_inode()
-> if it is set, and set it when such inode is referenced by a map?
-> Or maybe I could hold the referencing file in the map and then wrap its
-> f_op?
-
-First of all, anything including the word "wrap" is a non-starter.
-We really don't need the headache associated with the locking needed
-to replace the method tables on the fly, or with the code checking that
-->f_op points to given method table, etc.  That's not going to fly,
-especially since you'd end up _chaining_ those (again, the same reference
-can go in more than once).
-
-Nothing is allowed to change the method tables of live objects, period.
-Once a struct file is opened, its ->f_op is never going to change and
-it entirely belongs to the device driver or filesystem it resides on.
-Nothing else (not VFS, not VM, not some LSM module, etc.) has any business
-touching that.  The same goes for inodes, dentries, etc.
-
-What kind of behaviour do you want there?  Do you want the inodes you've
-referenced there to be forgotten on e.g. memory pressure?  The thing is,
-I don't see how "it's getting freed" could map onto any semantics that
-might be useful for you - it looks like the wrong event for that.
