@@ -2,62 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71A87582AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 14:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E00A3582D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 14:46:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbfF0MeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jun 2019 08:34:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38506 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbfF0MeS (ORCPT
+        id S1726589AbfF0Mq2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jun 2019 08:46:28 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36223 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726431AbfF0Mq2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jun 2019 08:34:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QQUdy9qv7ABtkbJ3dGIuBeaEJk7dGMp7ONsxEfM/sUo=; b=GB++/qHL9hKxCF/RRNMnajjsu
-        xKIvNL4xju2zGJKLaeidmxAup1NRvdhZjR3qz5yxAEki0voDqhp3K+7wBftYKcCS72jZrOA4UebYR
-        6L73m6dtLHtZnrVEgDp+vgb4NX2jCDSJ9Wkb8IubBlfTXdwBFfLTnU/lJAH6LMyDKYsLpBbJO1qgw
-        lgCL8lJdNVBxGDTi+PaQfAnimGwjCx09EVneNK413YhsRaMygyBBhgr74JEXnMhv92HXfD4mqTLlZ
-        y4VGOKeHb8nEXmqYQzy2b65mZZ7IR8LavdkAcrSMkldtnd15+4M6uzfMhCcV+Okn/QUGtYvSJY5gx
-        QaMJ3DiKw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgTbT-00045v-KE; Thu, 27 Jun 2019 12:34:15 +0000
-Date:   Thu, 27 Jun 2019 05:34:15 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
-        stable@vger.kernel.org, Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] filesystem-dax: Disable PMD support
-Message-ID: <20190627123415.GA4286@bombadil.infradead.org>
-References: <156159454541.2964018.7466991316059381921.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Thu, 27 Jun 2019 08:46:28 -0400
+Received: by mail-ed1-f66.google.com with SMTP id k21so6958976edq.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2019 05:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QcDk5zUKbz23dkSjNBVXwjq0i8xHM9vtNbHjMMC6vV0=;
+        b=Ph8a0a5yHbRPhclO3Pn0KnYkbHmqZJ1TzgavGNPl8lmeqhJTJc84xPfvgYwIEtmpAJ
+         SLUBBxlcsWcu+FQLeGK2WBfqjvVNdPyCSw5uxBpm/DHLWwg6ht4aR7x0iOdbABcWIihQ
+         wRNHBiJrT+zuLgpTm1MbLIaqKSi2JTrCJHxM7CkX09ypWgFJpJ4b4xqX00fWg+NBj175
+         V7xJ+dVSS9ieTZq8jeuaAVG7c45OdqBRFsyCmrAD+BAy/yBT2KC/Homx61Vz7PAGYIeL
+         7oTqvW3rLlxDu9ZaKffB5hPvoQHEQthc7VBSVJ0OTK1xXMRCB1wzy+2+JrC9R38OptSn
+         mGQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QcDk5zUKbz23dkSjNBVXwjq0i8xHM9vtNbHjMMC6vV0=;
+        b=AngAPMla9gPuaLT48BSdghGml4O8zoGWTnLkNaPJxCgHXjCCrQ+8BMRLlfWgAhJzBI
+         jDcHH45q7z6J3Q7aKI/ebQYFHtKANwCUUt0SdDUsSARwi3/O8rDKCupXkqre9qnRJ2UF
+         q1fOBpSwgynDNv5qxzJvFJGq/1tphp0VH5iSuMq2qhr22YIq9/tPKgNBcdfQSONMKu78
+         IxeB6wTp+RC+4uVjiR14kkuVSvW/erP/fTVrbUmkExk7uoukiq2VnhOwNLto8NHC/vZ7
+         kmeIWhrcfP6Nz3OUht09AbRwUVWNrvtiqG0qZ6FQKPr5fhcvD20SA3/poQlyKzuuSOxi
+         S2Cw==
+X-Gm-Message-State: APjAAAVvF+z7plnyuQeMBeqvYrqc/BSFB8pMgq6aYAk/rskGbYwyNo+u
+        yvKgo+9QwI8ZILN8tCgRzedJINinnFk=
+X-Google-Smtp-Source: APXvYqx8PviEpESGoaGFrEkuGJDnDhMWSIld5rUq0chtQKwTslTti67hACIPECZQNkq5ZBizPpaPOw==
+X-Received: by 2002:a50:976d:: with SMTP id d42mr3969822edb.77.1561639586109;
+        Thu, 27 Jun 2019 05:46:26 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id c48sm735496edb.10.2019.06.27.05.46.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Jun 2019 05:46:25 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 2E04A103F66; Thu, 27 Jun 2019 15:46:24 +0300 (+03)
+Date:   Thu, 27 Jun 2019 15:46:24 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, matthew.wilcox@oracle.com,
+        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
+        william.kucharski@oracle.com, akpm@linux-foundation.org,
+        hdanton@sina.com
+Subject: Re: [PATCH v9 0/6] Enable THP for text section of non-shmem files
+Message-ID: <20190627124624.uzu5trpfcdcz5uzz@box>
+References: <20190625001246.685563-1-songliubraving@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <156159454541.2964018.7466991316059381921.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190625001246.685563-1-songliubraving@fb.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 05:15:45PM -0700, Dan Williams wrote:
-> Ever since the conversion of DAX to the Xarray a RocksDB benchmark has
-> been encountering intermittent lockups. The backtraces always include
-> the filesystem-DAX PMD path, multi-order entries have been a source of
-> bugs in the past, and disabling the PMD path allows a test that fails in
-> minutes to run for an hour.
+On Mon, Jun 24, 2019 at 05:12:40PM -0700, Song Liu wrote:
+> Please share your comments and suggestions on this.
 
-On May 4th, I asked you:
+Looks like a great first step to THP in page cache. Thanks!
 
-Since this is provoked by a fatal signal, it must have something to do
-with a killable or interruptible sleep.  There's only one of those in the
-DAX code; fatal_signal_pending() in dax_iomap_actor().  Does rocksdb do
-I/O with write() or through a writable mmap()?  I'd like to know before
-I chase too far down this fault tree analysis.
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
+THP allocation in the fault path and write support are next goals.
+
+-- 
+ Kirill A. Shutemov
