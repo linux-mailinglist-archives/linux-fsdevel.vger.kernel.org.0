@@ -2,86 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0E8858D18
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 23:32:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8846958D4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 23:43:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbfF0Vc1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jun 2019 17:32:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55340 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726441AbfF0Vc1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jun 2019 17:32:27 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CBC2558E5C;
-        Thu, 27 Jun 2019 21:32:06 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 28CB85D9D2;
-        Thu, 27 Jun 2019 21:31:59 +0000 (UTC)
-Subject: Re: [PATCH 2/2] mm, slab: Extend vm/drop_caches to shrink kmem slabs
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20190624174219.25513-1-longman@redhat.com>
- <20190624174219.25513-3-longman@redhat.com>
- <20190626201900.GC24698@tower.DHCP.thefacebook.com>
- <063752b2-4f1a-d198-36e7-3e642d4fcf19@redhat.com>
- <20190627212419.GA25233@tower.DHCP.thefacebook.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <73f18141-7e74-9630-06ff-ac8cf9688e6e@redhat.com>
-Date:   Thu, 27 Jun 2019 17:31:58 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726572AbfF0VnI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jun 2019 17:43:08 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38576 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbfF0VnH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Jun 2019 17:43:07 -0400
+Received: by mail-pg1-f194.google.com with SMTP id z75so1602478pgz.5;
+        Thu, 27 Jun 2019 14:43:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ECxEwBAkmZlz+R/U2GMCP+JOckImbThC+rsHcI4sg+k=;
+        b=TkfF+jy9hX0y1Fb7WeNjVZckuzrpSj/PEFiwZNrSEg0RS3Wz2GlpiRc7VcVnedGGul
+         iLPPDtrWHW5CFnXt8I+kZWDug1j6pV8X5Zct8HuHu7j40oXvkRIgmUpqrOyujB98/1Pc
+         uzBDqIY5ddd2DB1F4b1xrKZIAdn/8s5KamFCRWh/sNHvgTbaaBgYno5RqwiU/hdNuq05
+         TeVfE45rvow/xL5CkcdP2api6QvYGcbXIz3IwQMaaZ8GsrGziOXut2nJ4qplMz87uDat
+         MYQoHOqoxsHlnfliu7y95qCqdwCZD8vtqFSD8TF7C4ucSFANg/ucj8tlzgbRAjAXZs98
+         sk2A==
+X-Gm-Message-State: APjAAAWz2+q2AFTYAhoWHvQ3qWtbEzFS8cysigtMtxIhzTm10dxTQP2I
+        Q7CjiNhLGqozBabgxtHYqUbT7+2Gs+A=
+X-Google-Smtp-Source: APXvYqy2MGlCLhKyFvZENP7n6Kdifoe3fs08NkTB518uSykdPFtEZtx8UHzGH9ePb0r/WXB1b8bkLg==
+X-Received: by 2002:a65:6083:: with SMTP id t3mr5790410pgu.342.1561671786661;
+        Thu, 27 Jun 2019 14:43:06 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id b135sm56397pfb.44.2019.06.27.14.43.05
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 27 Jun 2019 14:43:05 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id DF873403ED; Thu, 27 Jun 2019 21:43:04 +0000 (UTC)
+Date:   Thu, 27 Jun 2019 21:43:04 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Zorro Lang <zlang@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/13] xfs: allow merging ioends over append boundaries
+Message-ID: <20190627214304.GB30113@42.do-not-panic.com>
+References: <20190627104836.25446-1-hch@lst.de>
+ <20190627104836.25446-8-hch@lst.de>
+ <20190627182309.GP5171@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20190627212419.GA25233@tower.DHCP.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 27 Jun 2019 21:32:26 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190627182309.GP5171@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/27/19 5:24 PM, Roman Gushchin wrote:
->>> 2) what's your long-term vision here? do you think that we need to shrink
->>>    kmem_caches periodically, depending on memory pressure? how a user
->>>    will use this new sysctl?
->> Shrinking the kmem caches under extreme memory pressure can be one way
->> to free up extra pages, but the effect will probably be temporary.
->>> What's the problem you're trying to solve in general?
->> At least for the slub allocator, shrinking the caches allow the number
->> of active objects reported in slabinfo to be more accurate. In addition,
->> this allow to know the real slab memory consumption. I have been working
->> on a BZ about continuous memory leaks with a container based workloads.
->> The ability to shrink caches allow us to get a more accurate memory
->> consumption picture. Another alternative is to turn on slub_debug which
->> will then disables all the per-cpu slabs.
-> I see... I agree with Michal here, that extending drop_caches sysctl isn't
-> the best idea. Isn't it possible to achieve the same effect using slub sysfs?
+On Thu, Jun 27, 2019 at 11:23:09AM -0700, Darrick J. Wong wrote:
+> On Thu, Jun 27, 2019 at 12:48:30PM +0200, Christoph Hellwig wrote:
+> > There is no real problem merging ioends that go beyond i_size into an
+> > ioend that doesn't.  We just need to move the append transaction to the
+> > base ioend.  Also use the opportunity to use a real error code instead
+> > of the magic 1 to cancel the transactions, and write a comment
+> > explaining the scheme.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> 
+> Reading through this patch, I have a feeling it fixes the crash that
+> Zorro has been seeing occasionally with generic/475...
+> 
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-Yes, using the slub sysfs interface can be a possible alternative.
+Zorro, can you confirm? If so it would be great to also refer to
+the respective bugzilla entry #203947 [0].
 
-Cheers,
-Longman
+[0] https://bugzilla.kernel.org/show_bug.cgi?id=203947
 
+  Luis
