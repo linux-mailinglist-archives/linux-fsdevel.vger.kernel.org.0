@@ -2,148 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4569C589A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 20:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CABE7589DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 20:23:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfF0SQi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jun 2019 14:16:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47568 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726508AbfF0SQi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jun 2019 14:16:38 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EA752064A;
-        Thu, 27 Jun 2019 18:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561659396;
-        bh=2oWUiLUFI+CqOolaOKVa4jJ21rR9UR/fuLhE4nLYjdw=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=zM1PuCQOlI4msEkFixz730kc8/zFbvwJnRkqkjMyx+3IZ/8lQrJkX5bjK8+tcjTpD
-         9YTsqw4mLY9MvEtPAy8WslYPIgMqfSsLuNDFSuTYyeTtiNsbbEN2c2e7JVMq1S+AoJ
-         JJirWvQWTUXBy4OsdUUrOSg+eULRykDPesnCIHuI=
-Content-Type: text/plain; charset="utf-8"
+        id S1726781AbfF0SXl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jun 2019 14:23:41 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48560 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbfF0SXk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Jun 2019 14:23:40 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5RIA7rA019301;
+        Thu, 27 Jun 2019 18:23:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=0G6Y8m5n5DfJQPYFH33nWqg2UCy4HW55ipBD/Rtat5M=;
+ b=Xilmx0Vox9z6yWX6MHNl5wonE71OK7Ov/XTfsykPivZ29kYudcH6a72ZMAaFQ6gjUx9i
+ mVDJ8Jx2darKIcFVwEqEs/xAm9tPdVT1TOYHjYK0r6sofcj7FQeZ9lIYil0mBVf6oDqp
+ t9V/of3+k4zx5i3i2YoTNGUKMr8/rOD2WkJtOkC9F402FVQihLwSo5VlpQjgAsB+Nwu2
+ KcXh5r9EPgagzmB+JbJiw59nBL2Ha5FiPft03j85I8fukLgRqWDlSMs/C3Qb1jNeID87
+ oJQyTkLgXxT0528p4rJuQqo763BLvpzvRZqZ9l36ScBbcfRY4N+FUnZmvXcQv/QF2WTw Lg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2t9cyqssgw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 18:23:19 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5RIMUTH180896;
+        Thu, 27 Jun 2019 18:23:19 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2tat7dhq0c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Jun 2019 18:23:19 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5RINHKR014156;
+        Thu, 27 Jun 2019 18:23:17 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 27 Jun 2019 11:23:17 -0700
+Date:   Thu, 27 Jun 2019 11:23:09 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/13] xfs: allow merging ioends over append boundaries
+Message-ID: <20190627182309.GP5171@magnolia>
+References: <20190627104836.25446-1-hch@lst.de>
+ <20190627104836.25446-8-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFd5g46zHAupdUh3wDuqPJti2M+_=oje_5weFe7AVLQfkDDM6A@mail.gmail.com>
-References: <20190617082613.109131-1-brendanhiggins@google.com> <20190617082613.109131-2-brendanhiggins@google.com> <20190620001526.93426218BE@mail.kernel.org> <CAFd5g46Jhxsz6_VXHEVYvTeDRwwzgKpr=aUWLL5b3S4kUukb8g@mail.gmail.com> <20190626034100.B238520883@mail.kernel.org> <CAFd5g46zHAupdUh3wDuqPJti2M+_=oje_5weFe7AVLQfkDDM6A@mail.gmail.com>
-To:     Brendan Higgins <brendanhiggins@google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v5 01/18] kunit: test: add KUnit test runner core
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-User-Agent: alot/0.8.1
-Date:   Thu, 27 Jun 2019 11:16:35 -0700
-Message-Id: <20190627181636.5EA752064A@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190627104836.25446-8-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9301 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906270209
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9301 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906270208
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quoting Brendan Higgins (2019-06-26 16:00:40)
-> On Tue, Jun 25, 2019 at 8:41 PM Stephen Boyd <sboyd@kernel.org> wrote:
->=20
-> > scenario like below, but where it is a problem. There could be three
-> > CPUs, or even one CPU and three threads if you want to describe the
-> > extra thread scenario.
-> >
-> > Here's my scenario where it isn't needed:
-> >
-> >     CPU0                                      CPU1
-> >     ----                                      ----
-> >     kunit_run_test(&test)
-> >                                               test_case_func()
-> >                                                 ....
-> >                                               [mock hardirq]
-> >                                                 kunit_set_success(&test)
-> >                                               [hardirq ends]
-> >                                                 ...
-> >                                                 complete(&test_done)
-> >       wait_for_completion(&test_done)
-> >       kunit_get_success(&test)
-> >
-> > We don't need to care about having locking here because success or
-> > failure only happens in one place and it's synchronized with the
-> > completion.
->=20
-> Here is the scenario I am concerned about:
->=20
-> CPU0                      CPU1                       CPU2
-> ----                      ----                       ----
-> kunit_run_test(&test)
->                           test_case_func()
->                             ....
->                             schedule_work(foo_func)
->                           [mock hardirq]             foo_func()
->                             ...                        ...
->                             kunit_set_success(false)   kunit_set_success(=
-false)
->                           [hardirq ends]               ...
->                             ...
->                             complete(&test_done)
->   wait_for_completion(...)
->   kunit_get_success(&test)
->=20
-> In my scenario, since both CPU1 and CPU2 update the success status of
-> the test simultaneously, even though they are setting it to the same
-> value. If my understanding is correct, this could result in a
-> write-tear on some architectures in some circumstances. I suppose we
-> could just make it an atomic boolean, but I figured locking is also
-> fine, and generally preferred.
+On Thu, Jun 27, 2019 at 12:48:30PM +0200, Christoph Hellwig wrote:
+> There is no real problem merging ioends that go beyond i_size into an
+> ioend that doesn't.  We just need to move the append transaction to the
+> base ioend.  Also use the opportunity to use a real error code instead
+> of the magic 1 to cancel the transactions, and write a comment
+> explaining the scheme.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-This is what we have WRITE_ONCE() and READ_ONCE() for. Maybe you could
-just use that in the getter and setters and remove the lock if it isn't
-used for anything else.
+Reading through this patch, I have a feeling it fixes the crash that
+Zorro has been seeing occasionally with generic/475...
 
-It may also be a good idea to have a kunit_fail_test() API that fails
-the test passed in with a WRITE_ONCE(false). Otherwise, the test is
-assumed successful and it isn't even possible for a test to change the
-state from failure to success due to a logical error because the API
-isn't available. Then we don't really need to have a generic
-kunit_set_success() function at all. We could have a kunit_test_failed()
-function too that replaces the kunit_get_success() function. That would
-read better in an if condition.
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
->=20
-> Also, to be clear, I am onboard with dropping then IRQ stuff for now.
-> I am fine moving to a mutex for the time being.
->=20
+--D
 
-Ok.
-
+> ---
+>  fs/xfs/xfs_aops.c | 28 +++++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 8b3070a40245..4ef8343c3759 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -314,11 +314,28 @@ xfs_ioend_can_merge(
+>  		return false;
+>  	if (ioend->io_offset + ioend->io_size != next->io_offset)
+>  		return false;
+> -	if (xfs_ioend_is_append(ioend) != xfs_ioend_is_append(next))
+> -		return false;
+>  	return true;
+>  }
+>  
+> +/*
+> + * If the to be merged ioend has a preallocated transaction for file
+> + * size updates we need to ensure the ioend it is merged into also
+> + * has one.  If it already has one we can simply cancel the transaction
+> + * as it is guaranteed to be clean.
+> + */
+> +static void
+> +xfs_ioend_merge_append_transactions(
+> +	struct xfs_ioend	*ioend,
+> +	struct xfs_ioend	*next)
+> +{
+> +	if (!ioend->io_append_trans) {
+> +		ioend->io_append_trans = next->io_append_trans;
+> +		next->io_append_trans = NULL;
+> +	} else {
+> +		xfs_setfilesize_ioend(next, -ECANCELED);
+> +	}
+> +}
+> +
+>  /* Try to merge adjacent completions. */
+>  STATIC void
+>  xfs_ioend_try_merge(
+> @@ -327,7 +344,6 @@ xfs_ioend_try_merge(
+>  {
+>  	struct xfs_ioend	*next_ioend;
+>  	int			ioend_error;
+> -	int			error;
+>  
+>  	if (list_empty(more_ioends))
+>  		return;
+> @@ -341,10 +357,8 @@ xfs_ioend_try_merge(
+>  			break;
+>  		list_move_tail(&next_ioend->io_list, &ioend->io_list);
+>  		ioend->io_size += next_ioend->io_size;
+> -		if (ioend->io_append_trans) {
+> -			error = xfs_setfilesize_ioend(next_ioend, 1);
+> -			ASSERT(error == 1);
+> -		}
+> +		if (next_ioend->io_append_trans)
+> +			xfs_ioend_merge_append_transactions(ioend, next_ioend);
+>  	}
+>  }
+>  
+> -- 
+> 2.20.1
+> 
