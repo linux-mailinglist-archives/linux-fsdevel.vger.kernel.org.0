@@ -2,84 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C18F75855B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 17:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 953E35858B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2019 17:28:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbfF0PPK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jun 2019 11:15:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43548 "EHLO mx1.suse.de"
+        id S1726663AbfF0P2K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jun 2019 11:28:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46756 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726384AbfF0PPK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jun 2019 11:15:10 -0400
+        id S1726187AbfF0P2J (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Jun 2019 11:28:09 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A290BABC4;
-        Thu, 27 Jun 2019 15:15:08 +0000 (UTC)
-Date:   Thu, 27 Jun 2019 17:15:06 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH 2/2] mm, slab: Extend vm/drop_caches to shrink kmem slabs
-Message-ID: <20190627151506.GE5303@dhcp22.suse.cz>
-References: <20190624174219.25513-1-longman@redhat.com>
- <20190624174219.25513-3-longman@redhat.com>
+        by mx1.suse.de (Postfix) with ESMTP id 726F6AC41;
+        Thu, 27 Jun 2019 15:28:08 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 4598EDA811; Thu, 27 Jun 2019 17:28:54 +0200 (CEST)
+Date:   Thu, 27 Jun 2019 17:28:54 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Naohiro Aota <Naohiro.Aota@wdc.com>
+Cc:     "dsterba@suse.cz" <dsterba@suse.cz>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH 07/19] btrfs: do sequential extent allocation in HMZONED
+ mode
+Message-ID: <20190627152854.GC20977@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+References: <20190607131025.31996-1-naohiro.aota@wdc.com>
+ <20190607131025.31996-8-naohiro.aota@wdc.com>
+ <20190617223007.GI19057@twin.jikos.cz>
+ <SN6PR04MB5231F5D34D067832760BF33A8CEA0@SN6PR04MB5231.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190624174219.25513-3-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <SN6PR04MB5231F5D34D067832760BF33A8CEA0@SN6PR04MB5231.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 24-06-19 13:42:19, Waiman Long wrote:
-> With the slub memory allocator, the numbers of active slab objects
-> reported in /proc/slabinfo are not real because they include objects
-> that are held by the per-cpu slab structures whether they are actually
-> used or not.  The problem gets worse the more CPUs a system have. For
-> instance, looking at the reported number of active task_struct objects,
-> one will wonder where all the missing tasks gone.
+On Tue, Jun 18, 2019 at 08:49:00AM +0000, Naohiro Aota wrote:
+> On 2019/06/18 7:29, David Sterba wrote:
+> > On Fri, Jun 07, 2019 at 10:10:13PM +0900, Naohiro Aota wrote:
+> >> +	u64 unusable;
+> > 
+> > 'unusable' is specific to the zones, so 'zone_unusable' would make it
+> > clear. The terminilogy around space is confusing already (we have
+> > unused, free, reserved, allocated, slack).
 > 
-> I know it is hard and costly to get a real count of active objects.
+> Sure. I will change the name.
+> 
+> Or, is it better toadd new struct "btrfs_seq_alloc_info" and move all
+> these variable there? Then, I can just add one pointer to the struct here.
 
-What exactly is expensive? Why cannot slabinfo reduce the number of
-active objects by per-cpu cached objects?
-
-> So
-> I am not advocating for that. Instead, this patch extends the
-> /proc/sys/vm/drop_caches sysctl parameter by using a new bit (bit 3)
-> to shrink all the kmem slabs which will flush out all the slabs in the
-> per-cpu structures and give a more accurate view of how much memory are
-> really used up by the active slab objects. This is a costly operation,
-> of course, but it gives a way to have a clearer picture of the actual
-> number of slab objects used, if the need arises.
-
-drop_caches is a terrible interface. It destroys all the caching and
-people are just too easy in using it to solve any kind of problem they
-think they might have and cause others they might not see immediately.
-I am strongly discouraging anybody - except for some tests which really
-do want to see reproducible results without cache effects - from using
-this interface and therefore I am not really happy to paper over
-something that might be a real problem with yet another mode. If SLUB
-indeed caches too aggressively on large machines then this should be
-fixed.
-
--- 
-Michal Hocko
-SUSE Labs
+There are 4 new members, but the block group structure is large already
+(528 bytes) so adding a few more will not make the allocations worse.
+There are also holes or inefficient types used so the size can be
+squeezed a bit, but this is unrelated to this patchset.
