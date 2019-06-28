@@ -2,179 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E41159CCC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 15:17:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FAB659DB5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 16:26:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfF1NQ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 09:16:58 -0400
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:54792 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbfF1NQ6 (ORCPT
+        id S1726729AbfF1O0w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 10:26:52 -0400
+Received: from mail.parknet.co.jp ([210.171.160.6]:52996 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbfF1O0w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 09:16:58 -0400
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id BECDAD0006F;
-        Fri, 28 Jun 2019 15:17:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1561727823;
-        bh=4QpdD3Fv+j/DUToNpr9bdvINCY1lm/nwotSarRRnLoo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=V4oH5XMUGscMi8Gq1v5kREK8lTOsGXMNBJTpC+fp5yU/eKSBiSb1w/b9EhX95Jktz
-         23y4Ybyo+tnUbieYEDaGeYUlNE1cHJ6RJtZA3MPIpycNccHkUiBXMBanxf2uAAHmJh
-         Ft7/MNqWnvCVcuWJXvjzRin9RRW2xBP5gPWF9Yt/dfXGtYhG/ut4j7KHBwST+N6T9t
-         owuJLIZt1jkyJ3osKMCyBGjh9DKTRFVkcm1jdz3BA4PyPUp4bUoD1GIffCvvgBdkd6
-         wbBdiaGoCggKhAHyhC1FygajiYABF0pYSEW8ruWL6BWs/IF2x3k95+enXclwpBtyxP
-         oOEynOlKBS30Q==
-Subject: Re: [PATCH bpf-next v9 05/10] bpf,landlock: Add a new map type: inode
-To:     Al Viro <viro@zeniv.linux.org.uk>
-CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>
-References: <20190625215239.11136-1-mic@digikod.net>
- <20190625215239.11136-6-mic@digikod.net>
- <20190625225201.GJ17978@ZenIV.linux.org.uk>
- <79bac827-4092-8a4d-9dc6-6019419b2486@ssi.gouv.fr>
- <20190627165640.GQ17978@ZenIV.linux.org.uk>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <9dbe8d9c-d7a7-5bf2-dda2-7dd72c44be2d@ssi.gouv.fr>
-Date:   Fri, 28 Jun 2019 15:17:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Fri, 28 Jun 2019 10:26:52 -0400
+X-Greylist: delayed 510 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Jun 2019 10:26:51 EDT
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id DCD4B1B457C;
+        Fri, 28 Jun 2019 23:18:20 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SEIJXb030638
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Fri, 28 Jun 2019 23:18:20 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SEIJNM008995
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Fri, 28 Jun 2019 23:18:19 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id x5SEIJDd008994;
+        Fri, 28 Jun 2019 23:18:19 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fat: Add nobarrier to workaround the strange behavior of device
+Date:   Fri, 28 Jun 2019 23:18:19 +0900
+Message-ID: <871rzdrdxw.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20190627165640.GQ17978@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+There was the report of strange behavior of device with recent
+blkdev_issue_flush() position change.
 
-On 27/06/2019 18:56, Al Viro wrote:
-> On Thu, Jun 27, 2019 at 06:18:12PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
->
->>>> +/* called from syscall */
->>>> +static int sys_inode_map_delete_elem(struct bpf_map *map, struct inod=
-e *key)
->>>> +{
->>>> +    struct inode_array *array =3D container_of(map, struct inode_arra=
-y, map);
->>>> +    struct inode *inode;
->>>> +    int i;
->>>> +
->>>> +    WARN_ON_ONCE(!rcu_read_lock_held());
->>>> +    for (i =3D 0; i < array->map.max_entries; i++) {
->>>> +            if (array->elems[i].inode =3D=3D key) {
->>>> +                    inode =3D xchg(&array->elems[i].inode, NULL);
->>>> +                    array->nb_entries--;
->>>
->>> Umm...  Is that intended to be atomic in any sense?
->>
->> nb_entries is not used as a bound check but to avoid walking uselessly
->> through the (pre-allocated) array when adding a new element, but I'll
->> use an atomic to avoid inconsistencies anyway.
->
->
->>> Wait a sec...  So we have those beasties that can have long-term
->>> references to arbitrary inodes stuck in them?  What will happen
->>> if you get umount(2) called while such a thing exists?
->>
->> I though an umount would be denied but no, we get a self-destructed busy
->> inode and a bug!
->> What about wrapping the inode's superblock->s_op->destroy_inode() to
->> first remove the element from the map and then call the real
->> destroy_inode(), if any?
->
-> What do you mean, _the_ map?  I don't see anything to prevent insertion
-> of references to the same inode into any number of those...
+The following is simplified usbmon trace.
 
-Indeed, the current design needs to check for duplicate inode references
-to avoid unused entries (until a reference is removed). I was planning
-to use an rbtree but I'm working on using a hash table instead (cf.
-bpf/hashtab.c), which will solve the issue anyway.
+ 4203   9.160230         host -> 1.25.1       USBMS 95 SCSI: Synchronize Cache(10) LUN: 0x00 (LBA: 0x00000000, Len: 0)
+ 4206   9.164911       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Synchronize Cache(10)) (Good)
+ 4207   9.323927         host -> 1.25.1       USBMS 95 SCSI: Read(10) LUN: 0x00 (LBA: 0x00279950, Len: 240)
+ 4212   9.327138       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Read(10)) (Good)
 
->
->> Or I could update fs/inode.c:destroy_inode() to call inode->free_inode()
->> if it is set, and set it when such inode is referenced by a map?
->> Or maybe I could hold the referencing file in the map and then wrap its
->> f_op?
->
-> First of all, anything including the word "wrap" is a non-starter.
-> We really don't need the headache associated with the locking needed
-> to replace the method tables on the fly, or with the code checking that
-> ->f_op points to given method table, etc.  That's not going to fly,
-> especially since you'd end up _chaining_ those (again, the same reference
-> can go in more than once).
->
-> Nothing is allowed to change the method tables of live objects, period.
-> Once a struct file is opened, its ->f_op is never going to change and
-> it entirely belongs to the device driver or filesystem it resides on.
-> Nothing else (not VFS, not VM, not some LSM module, etc.) has any busines=
-s
-> touching that.  The same goes for inodes, dentries, etc.
->
-> What kind of behaviour do you want there?  Do you want the inodes you've
-> referenced there to be forgotten on e.g. memory pressure?  The thing is,
-> I don't see how "it's getting freed" could map onto any semantics that
-> might be useful for you - it looks like the wrong event for that.
+[...]
 
-At least, I would like to be able to compare an inode with the reference
-one if this reference may be accessible somewhere on the system. Being
-able to keep the inode reference as long as its superblock is alive
-seems to solve the problem. This enable for example to compare inodes
-from two bind mounts of the same file system even if one mount point is
-unmounted.
+ 7323  10.202167         host -> 1.25.1       USBMS 95 SCSI: Synchronize Cache(10) LUN: 0x00 (LBA: 0x00000000, Len: 0)
+ 7326  10.432266       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Synchronize Cache(10)) (Good)
+ 7327  10.769092         host -> 1.25.1       USBMS 95 SCSI: Test Unit Ready LUN: 0x00 
+ 7330  10.769192       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Test Unit Ready) (Good)
+ 7335  12.849093         host -> 1.25.1       USBMS 95 SCSI: Test Unit Ready LUN: 0x00 
+ 7338  12.849206       1.25.1 -> host         USBMS 77 SCSI: Response LUN: 0x00 (Test Unit Ready) (Check Condition)
+ 7339  12.849209         host -> 1.25.1       USBMS 95 SCSI: Request Sense LUN: 0x00
+ 
+If "Synchronize Cache" command issued then there is idle time, the
+device stop to process further commands, and behave as like no media.
+(it returns NOT_READY [MEDIUM NOT PRESENT] for SENSE command, and this
+happened on Kindle) [just a guess, the device is trying to detect the
+"safe-unplug" operation of Windows or such?]
 
-Storing and using the device ID and the inode number bring a new problem
-when an inode is removed and when its number is recycled. However, if I
-can be notified when such an inode is removed (preferably without using
-an LSM hook) and if I can know when the backing device go out of the
-scope of the (live) system (e.g. hot unplugging an USB drive), this
-should solve the problem and also enable to keep a reference to an inode
-as long as possible without any dangling pointer nor wrapper.
+To workaround those devices and provide flexibility, this adds
+"barrier"/"nobarrier" mount options to fat driver.
 
+Cc: <stable@vger.kernel.org>
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+---
 
---
-Micka=C3=ABl Sala=C3=BCn
-ANSSI/SDE/ST/LAM
+ fs/fat/fat.h   |    1 +
+ fs/fat/file.c  |    8 ++++++--
+ fs/fat/inode.c |   16 ++++++++++++++--
+ 3 files changed, 21 insertions(+), 4 deletions(-)
 
-Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
-es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
-=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
-nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
-=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
-tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
-acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
-eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
-t de d=C3=A9truire le message. The personal data collected and processed du=
-ring this exchange aims solely at completing a business relationship and is=
- limited to the necessary duration of that relationship. If you wish to use=
- your rights of consultation, rectification and deletion of your data, plea=
-se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
-n error, we thank you for informing the sender and destroying the message.
+diff -puN fs/fat/fat.h~fat-nobarrier fs/fat/fat.h
+--- linux/fs/fat/fat.h~fat-nobarrier	2019-06-28 21:22:18.146191739 +0900
++++ linux-hirofumi/fs/fat/fat.h	2019-06-28 21:59:11.693934616 +0900
+@@ -51,6 +51,7 @@ struct fat_mount_options {
+ 		 tz_set:1,	   /* Filesystem timestamps' offset set */
+ 		 rodir:1,	   /* allow ATTR_RO for directory */
+ 		 discard:1,	   /* Issue discard requests on deletions */
++		 barrier:1,	   /* Issue FLUSH command */
+ 		 dos1xfloppy:1;	   /* Assume default BPB for DOS 1.x floppies */
+ };
+ 
+diff -puN fs/fat/file.c~fat-nobarrier fs/fat/file.c
+--- linux/fs/fat/file.c~fat-nobarrier	2019-06-28 21:22:18.147191734 +0900
++++ linux-hirofumi/fs/fat/file.c	2019-06-28 21:59:11.693934616 +0900
+@@ -193,17 +193,21 @@ static int fat_file_release(struct inode
+ int fat_file_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
+ {
+ 	struct inode *inode = filp->f_mapping->host;
++	struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
+ 	int err;
+ 
+ 	err = __generic_file_fsync(filp, start, end, datasync);
+ 	if (err)
+ 		return err;
+ 
+-	err = sync_mapping_buffers(MSDOS_SB(inode->i_sb)->fat_inode->i_mapping);
++	err = sync_mapping_buffers(sbi->fat_inode->i_mapping);
+ 	if (err)
+ 		return err;
+ 
+-	return blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
++	if (sbi->options.barrier)
++		err = blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
++
++	return err;
+ }
+ 
+ 
+diff -puN fs/fat/inode.c~fat-nobarrier fs/fat/inode.c
+--- linux/fs/fat/inode.c~fat-nobarrier	2019-06-28 21:22:18.148191730 +0900
++++ linux-hirofumi/fs/fat/inode.c	2019-06-28 21:59:11.694934611 +0900
+@@ -1016,6 +1016,8 @@ static int fat_show_options(struct seq_f
+ 		seq_puts(m, ",nfs=stale_rw");
+ 	if (opts->discard)
+ 		seq_puts(m, ",discard");
++	if (!opts->barrier)
++		seq_puts(m, ",nobarrier");
+ 	if (opts->dos1xfloppy)
+ 		seq_puts(m, ",dos1xfloppy");
+ 
+@@ -1031,8 +1033,9 @@ enum {
+ 	Opt_shortname_winnt, Opt_shortname_mixed, Opt_utf8_no, Opt_utf8_yes,
+ 	Opt_uni_xl_no, Opt_uni_xl_yes, Opt_nonumtail_no, Opt_nonumtail_yes,
+ 	Opt_obsolete, Opt_flush, Opt_tz_utc, Opt_rodir, Opt_err_cont,
+-	Opt_err_panic, Opt_err_ro, Opt_discard, Opt_nfs, Opt_time_offset,
+-	Opt_nfs_stale_rw, Opt_nfs_nostale_ro, Opt_err, Opt_dos1xfloppy,
++	Opt_err_panic, Opt_err_ro, Opt_discard, Opt_barrier, Opt_nobarrier,
++	Opt_nfs, Opt_time_offset, Opt_nfs_stale_rw, Opt_nfs_nostale_ro,
++	Opt_err, Opt_dos1xfloppy,
+ };
+ 
+ static const match_table_t fat_tokens = {
+@@ -1062,6 +1065,8 @@ static const match_table_t fat_tokens =
+ 	{Opt_err_panic, "errors=panic"},
+ 	{Opt_err_ro, "errors=remount-ro"},
+ 	{Opt_discard, "discard"},
++	{Opt_barrier, "barrier"},
++	{Opt_nobarrier, "nobarrier"},
+ 	{Opt_nfs_stale_rw, "nfs"},
+ 	{Opt_nfs_stale_rw, "nfs=stale_rw"},
+ 	{Opt_nfs_nostale_ro, "nfs=nostale_ro"},
+@@ -1146,6 +1151,7 @@ static int parse_options(struct super_bl
+ 	opts->numtail = 1;
+ 	opts->usefree = opts->nocase = 0;
+ 	opts->tz_set = 0;
++	opts->barrier = 1;
+ 	opts->nfs = 0;
+ 	opts->errors = FAT_ERRORS_RO;
+ 	*debug = 0;
+@@ -1335,6 +1341,12 @@ static int parse_options(struct super_bl
+ 		case Opt_discard:
+ 			opts->discard = 1;
+ 			break;
++		case Opt_barrier:
++			opts->barrier = 1;
++			break;
++		case Opt_nobarrier:
++			opts->barrier = 0;
++			break;
+ 
+ 		/* obsolete mount options */
+ 		case Opt_obsolete:
+_
+
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
