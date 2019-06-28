@@ -2,102 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CE305938E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 07:41:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4E5B5939C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 07:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbfF1Flx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 01:41:53 -0400
-Received: from verein.lst.de ([213.95.11.210]:45079 "EHLO newverein.lst.de"
+        id S1726648AbfF1Fqy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 01:46:54 -0400
+Received: from verein.lst.de ([213.95.11.210]:45106 "EHLO newverein.lst.de"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726816AbfF1Flx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 01:41:53 -0400
-X-Greylist: delayed 509 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Jun 2019 01:41:52 EDT
+        id S1726240AbfF1Fqy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 Jun 2019 01:46:54 -0400
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 7AFC268C4E; Fri, 28 Jun 2019 07:33:20 +0200 (CEST)
-Date:   Fri, 28 Jun 2019 07:33:20 +0200
+        id 350AF68C7B; Fri, 28 Jun 2019 07:37:17 +0200 (CEST)
+Date:   Fri, 28 Jun 2019 07:37:17 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
         Damien Le Moal <Damien.LeMoal@wdc.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] iomap: move the xfs writeback code to iomap.c
-Message-ID: <20190628053320.GA26902@lst.de>
-References: <20190624055253.31183-1-hch@lst.de> <20190624055253.31183-12-hch@lst.de> <20190624234304.GD7777@dread.disaster.area> <20190625101020.GI1462@lst.de> <20190628004542.GJ7777@dread.disaster.area>
+Subject: Re: [PATCH 06/13] xfs: remove XFS_TRANS_NOFS
+Message-ID: <20190628053717.GB26902@lst.de>
+References: <20190627104836.25446-1-hch@lst.de> <20190627104836.25446-7-hch@lst.de> <20190627223030.GS5171@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190628004542.GJ7777@dread.disaster.area>
+In-Reply-To: <20190627223030.GS5171@magnolia>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 10:45:42AM +1000, Dave Chinner wrote:
-> You've already mentioned two new users you want to add. I don't even
-> have zone capable hardware here to test one of the users you are
-> indicating will use this code, and I suspect that very few people
-> do.  That's a non-trivial increase in testing requirements for
-> filesystem developers and distro QA departments who will want to
-> change and/or validate this code path.
+On Thu, Jun 27, 2019 at 03:30:30PM -0700, Darrick J. Wong wrote:
+> I think the wording of this is too indirect.  The reason we need to set
+> NOFS is because we could be doing writeback as part of reclaiming
+> memory, which means that we cannot recurse back into filesystems to
+> satisfy the memory allocation needed to create a transaction.  The NOFS
+> part applies to any memory allocation, of course.
+> 
+> If you're fine with the wording below I'll just edit that into the
+> patch:
+> 
+> 	/*
+> 	 * We can allocate memory here while doing writeback on behalf of
+> 	 * memory reclaim.  To avoid memory allocation deadlocks set the
+> 	 * task-wide nofs context for the following operations.
+> 	 */
+> 	nofs_flag = memalloc_nofs_save();
 
-Why do you assume you have to test it?  Back when we shared
-generic_file_read with everyone you also didn't test odd change to
-it with every possible fs.  If you change iomap.c, you'll test it
-with XFS, and Cc other maintainers so that they get a chance to
-also test it and comment on it, just like we do with other shared
-code in the kernel.
+Fine with me.
 
-> Indeed, integrating gfs2 into the existing generic iomap code has
-> required quite a bit of munging and adding new code paths and so on.
-> That's mostly been straight forward because it's just been adding
-> flags and conditional code to the existing paths. The way we
-> regularly rewrite sections of the XFS writeback code is a very
-> different sort of modification, and one that will be much harder to
-> do if we have to make those changes to generic code.
+> >  	trace_xfs_end_io_direct_write(ip, offset, size);
+> > @@ -395,10 +396,11 @@ xfs_dio_write_end_io(
+> >  	 */
+> >  	XFS_STATS_ADD(ip->i_mount, xs_write_bytes, size);
+> >  
+> > +	nofs_flag = memalloc_nofs_save();
+> 
+> Hmm, do we need this here?  I can't remember if there was a need for
+> setting NOFS under xfs_reflink_end_cow from a dio completion or if that
+> was purely the buffered writeback case...
 
-As the person who has done a lot of the recent rewriting of the
-writeback code I disagree.  Most of it has been do divorce is from
-leftovers of the buffer_head based sinle page at a time design from
-stone age.  Very little is about XFS itself, most of it has been
-about not being stupid in a fairly generic way.  And every since
-I got rid of buffer heads xfs_aops.c has been intimately tied
-into the iomap infrastructure, and I'd rather keep those details in
-one place.  I.e. with this series now XFS doesn't even need to know
-about the details of the iomap_page structure and the uptodate
-bits.  If for example I'd want to add sub-page dirty bits (which I
-don't if I can avoid it) I can handle this entirely in iomap now
-instead of spreading around iomap, xfs and duplicating the thing
-in every copy of the XFS code that would otherwise show up.
+We certainly had to add it for the unwritten extent conversion, maybe
+the corner case just didn't manage to show up for COW yet:
 
-> i.e. shared code is good if it's simple and doesn't have a lot of
-> external dependencies that restrict the type and scope of
-> modifications that can be made easily. Shared code that is complex
-> and comes from code that was tightly integrated with a specific
-> subsystem architecture is going to carry all those architectural
-> foilbles into the new "generic" code. Once it gets sufficient
-> users it's going to end up with the same "we can't change this code"
-> problems that we had with the existing IO path, and we'll go back to
-> implementing our own writeback path....
 
-From the high level POV I agree with your stance.  But the point is
-that the writeback code is not tightly integrated with xfs, and that
-is why I don't want it in XFS.  It is on other other hand very
-tightly integrated with the iomap buffer read and write into pagecache
-code, which is why I want to keep it together with that.
+commit 80641dc66a2d6dfb22af4413227a92b8ab84c7bb
+Author: Christoph Hellwig <hch@infradead.org>
+Date:   Mon Oct 19 04:00:03 2009 +0000
 
-> I've been planning on taking it even closer to the extent tree to
-> give us lockless, modification range coherent extent map caching in
-> this path (e.g. write() can add new delalloc extents without
-> invalidating cached writeback maps).  This patchset re-introduces
-> the iomap abstraction over the bmbt - an abstraction we removed some
-> time ago - and that makes these sorts of improvements much harder
-> and more complex to implement....
+    xfs: I/O completion handlers must use NOFS allocations
+    
+    When completing I/O requests we must not allow the memory allocator to
+    recurse into the filesystem, as we might deadlock on waiting for the
+    I/O completion otherwise.  The only thing currently allocating normal
+    GFP_KERNEL memory is the allocation of the transaction structure for
+    the unwritten extent conversion.  Add a memflags argument to
+    _xfs_trans_alloc to allow controlling the allocator behaviour.
+    
+    Signed-off-by: Christoph Hellwig <hch@lst.de>
+    Reported-by: Thomas Neumann <tneumann@users.sourceforge.net>
+    Tested-by: Thomas Neumann <tneumann@users.sourceforge.net>
+    Reviewed-by: Alex Elder <aelder@sgi.com>
+    Signed-off-by: Alex Elder <aelder@sgi.com>
 
-FYI, I had an earlier but not quite optimal implementation of lockless
-extent lookups using rcu updates in the btree.  And at least for that
-scheme all the details stay 100% in XFS in the split code, as the
-abstraction between iomap and xfs is very clear and allows for that.
+diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
+index 2d0b3e1da9e6..6f83f58c099f 100644
+--- a/fs/xfs/xfs_fsops.c
++++ b/fs/xfs/xfs_fsops.c
+@@ -611,7 +611,7 @@ xfs_fs_log_dummy(
+ 	xfs_inode_t	*ip;
+ 	int		error;
+ 
+-	tp = _xfs_trans_alloc(mp, XFS_TRANS_DUMMY1);
++	tp = _xfs_trans_alloc(mp, XFS_TRANS_DUMMY1, KM_SLEEP);
+ 	error = xfs_trans_reserve(tp, 0, XFS_ICHANGE_LOG_RES(mp), 0, 0, 0);
+ 	if (error) {
+ 		xfs_trans_cancel(tp, 0);
+diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+index 67ae5555a30a..7294abce6ef2 100644
+--- a/fs/xfs/xfs_iomap.c
++++ b/fs/xfs/xfs_iomap.c
+@@ -860,8 +860,15 @@ xfs_iomap_write_unwritten(
+ 		 * set up a transaction to convert the range of extents
+ 		 * from unwritten to real. Do allocations in a loop until
+ 		 * we have covered the range passed in.
++		 *
++		 * Note that we open code the transaction allocation here
++		 * to pass KM_NOFS--we can't risk to recursing back into
++		 * the filesystem here as we might be asked to write out
++		 * the same inode that we complete here and might deadlock
++		 * on the iolock.
+ 		 */
+-		tp = xfs_trans_alloc(mp, XFS_TRANS_STRAT_WRITE);
++		xfs_wait_for_freeze(mp, SB_FREEZE_TRANS);
++		tp = _xfs_trans_alloc(mp, XFS_TRANS_STRAT_WRITE, KM_NOFS);
+ 		tp->t_flags |= XFS_TRANS_RESERVE;
+ 		error = xfs_trans_reserve(tp, resblks,
+ 				XFS_WRITE_LOG_RES(mp), 0,
+diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+index 8b6c9e807efb..4d509f742bd2 100644
+--- a/fs/xfs/xfs_mount.c
++++ b/fs/xfs/xfs_mount.c
+@@ -1471,7 +1471,7 @@ xfs_log_sbcount(
+ 	if (!xfs_sb_version_haslazysbcount(&mp->m_sb))
+ 		return 0;
+ 
+-	tp = _xfs_trans_alloc(mp, XFS_TRANS_SB_COUNT);
++	tp = _xfs_trans_alloc(mp, XFS_TRANS_SB_COUNT, KM_SLEEP);
+ 	error = xfs_trans_reserve(tp, 0, mp->m_sb.sb_sectsize + 128, 0, 0,
+ 					XFS_DEFAULT_LOG_COUNT);
+ 	if (error) {
+diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
+index 66b849358e62..237badcbac3b 100644
+--- a/fs/xfs/xfs_trans.c
++++ b/fs/xfs/xfs_trans.c
+@@ -236,19 +236,20 @@ xfs_trans_alloc(
+ 	uint		type)
+ {
+ 	xfs_wait_for_freeze(mp, SB_FREEZE_TRANS);
+-	return _xfs_trans_alloc(mp, type);
++	return _xfs_trans_alloc(mp, type, KM_SLEEP);
+ }
+ 
+ xfs_trans_t *
+ _xfs_trans_alloc(
+ 	xfs_mount_t	*mp,
+-	uint		type)
++	uint		type,
++	uint		memflags)
+ {
+ 	xfs_trans_t	*tp;
+ 
+ 	atomic_inc(&mp->m_active_trans);
+ 
+-	tp = kmem_zone_zalloc(xfs_trans_zone, KM_SLEEP);
++	tp = kmem_zone_zalloc(xfs_trans_zone, memflags);
+ 	tp->t_magic = XFS_TRANS_MAGIC;
+ 	tp->t_type = type;
+ 	tp->t_mountp = mp;
+diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
+index ed47fc77759c..a0574f593f52 100644
+--- a/fs/xfs/xfs_trans.h
++++ b/fs/xfs/xfs_trans.h
+@@ -924,7 +924,7 @@ typedef struct xfs_trans {
+  * XFS transaction mechanism exported interfaces.
+  */
+ xfs_trans_t	*xfs_trans_alloc(struct xfs_mount *, uint);
+-xfs_trans_t	*_xfs_trans_alloc(struct xfs_mount *, uint);
++xfs_trans_t	*_xfs_trans_alloc(struct xfs_mount *, uint, uint);
+ xfs_trans_t	*xfs_trans_dup(xfs_trans_t *);
+ int		xfs_trans_reserve(xfs_trans_t *, uint, uint, uint,
+ 				  uint, uint);
