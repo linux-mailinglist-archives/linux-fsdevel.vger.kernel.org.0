@@ -2,58 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EA885A0C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 18:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DD8F5A0C6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 18:28:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbfF1Q07 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 12:26:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36324 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726605AbfF1Q07 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 12:26:59 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3C0C03082E55;
-        Fri, 28 Jun 2019 16:26:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-219.rdu2.redhat.com [10.10.120.219])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D3BFE608CA;
-        Fri, 28 Jun 2019 16:26:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <293c9bd3-f530-d75e-c353-ddeabac27cf6@6wind.com>
-References: <293c9bd3-f530-d75e-c353-ddeabac27cf6@6wind.com> <20190626190343.22031-1-aring@mojatatu.com> <20190626190343.22031-2-aring@mojatatu.com>
-To:     nicolas.dichtel@6wind.com
-Cc:     dhowells@redhat.com, Alexander Aring <aring@mojatatu.com>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel@mojatatu.com
-Subject: Re: [RFC iproute2 1/1] ip: netns: add mounted state file for each netns
+        id S1726879AbfF1Q16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 12:27:58 -0400
+Received: from mail.parknet.co.jp ([210.171.160.6]:53008 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfF1Q16 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 Jun 2019 12:27:58 -0400
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id BBD6D1B457B;
+        Sat, 29 Jun 2019 01:27:56 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SGRtVw032135
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Sat, 29 Jun 2019 01:27:56 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SGRtdk014802
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Sat, 29 Jun 2019 01:27:55 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id x5SGRtXF014801;
+        Sat, 29 Jun 2019 01:27:55 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fat: Add nobarrier to workaround the strange behavior of device
+References: <871rzdrdxw.fsf@mail.parknet.co.jp>
+        <20190628143216.GA538@infradead.org>
+        <87pnmxpx9p.fsf@mail.parknet.co.jp>
+        <20190628160230.GA24232@infradead.org>
+Date:   Sat, 29 Jun 2019 01:27:55 +0900
+In-Reply-To: <20190628160230.GA24232@infradead.org> (Christoph Hellwig's
+        message of "Fri, 28 Jun 2019 09:02:30 -0700")
+Message-ID: <87ftntptdg.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <18556.1561739215.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Fri, 28 Jun 2019 17:26:55 +0100
-Message-ID: <18557.1561739215@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 28 Jun 2019 16:26:59 +0000 (UTC)
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Nicolas Dichtel <nicolas.dichtel@6wind.com> wrote:
+Christoph Hellwig <hch@infradead.org> writes:
 
-> David Howells was working on a mount notification mechanism:
-> https://lwn.net/Articles/760714/
-> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
-> 
-> I don't know what is the status of this series.
+> On Sat, Jun 29, 2019 at 12:03:46AM +0900, OGAWA Hirofumi wrote:
+>> I see, sounds like good though. Does it work for all stable versions?
+>> Can it disable only flush command without other effect? And it would be
+>> better to be normal user controllable easily.
+>
+> The option was added in 2.6.17, so it's been around forever.  But
+> no, it obviously is not user exposed as using it on a normal drive
+> can lead to data loss.
 
-It's still alive.  I just posted a new version on it.  I'm hoping, possibly
-futiley, to get it in in this merge window.
+I see. It sounds like good as long term solution though (if no effect
+other than disabling flush command), it may need some monitor daemon and
+detect the device, and apply user policy as root. (BTW, I meant,
+workaround is normal user controllable with config by root or such)
 
-David
+I think, it may not be good as short term solution for especially stable
+users. If there is no better short term solution, I would like to still
+push this patch as short term workaround.
+
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
