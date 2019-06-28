@@ -2,414 +2,622 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61E8159F34
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 17:45:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FDDD59F38
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 17:45:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfF1PpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 11:45:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52066 "EHLO mx1.redhat.com"
+        id S1727112AbfF1PpP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 11:45:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60600 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbfF1PpJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:45:09 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1726657AbfF1PpP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 Jun 2019 11:45:15 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7883B30BB523;
-        Fri, 28 Jun 2019 15:45:06 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4EBEE37F46;
+        Fri, 28 Jun 2019 15:45:14 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-219.rdu2.redhat.com [10.10.120.219])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D330226E64;
-        Fri, 28 Jun 2019 15:45:02 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 72B086012E;
+        Fri, 28 Jun 2019 15:45:12 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 07/11] afs: Support fsinfo() [ver #15]
+Subject: [PATCH 08/11] fsinfo: Add API documentation [ver #15]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, raven@themaw.net, mszeredi@redhat.com,
         christian@brauner.io, linux-api@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 28 Jun 2019 16:45:02 +0100
-Message-ID: <156173670210.14042.7296305860822953053.stgit@warthog.procyon.org.uk>
+Date:   Fri, 28 Jun 2019 16:45:11 +0100
+Message-ID: <156173671169.14042.2848093993797220779.stgit@warthog.procyon.org.uk>
 In-Reply-To: <156173661696.14042.17822154531324224780.stgit@warthog.procyon.org.uk>
 References: <156173661696.14042.17822154531324224780.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 28 Jun 2019 15:45:08 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 28 Jun 2019 15:45:14 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add fsinfo support to the AFS filesystem.
+Add API documentation for fsinfo.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/afs/internal.h           |    1 
- fs/afs/super.c              |  180 +++++++++++++++++++++++++++++++++++++++++++
- fs/fsinfo.c                 |    3 +
- include/uapi/linux/fsinfo.h |   12 +++
- samples/vfs/test-fsinfo.c   |   33 ++++++++
- 5 files changed, 227 insertions(+), 2 deletions(-)
+ Documentation/filesystems/fsinfo.rst |  561 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 561 insertions(+)
+ create mode 100644 Documentation/filesystems/fsinfo.rst
 
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 2073c1a3ab4b..da40ea036c6a 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -254,6 +254,7 @@ struct afs_super_info {
- 	struct afs_volume	*volume;	/* volume record */
- 	enum afs_flock_mode	flock_mode:8;	/* File locking emulation mode */
- 	bool			dyn_root;	/* True if dynamic root */
-+	bool			autocell;	/* True if autocell */
- };
- 
- static inline struct afs_super_info *AFS_FS_S(struct super_block *sb)
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index f18911e8d770..d6c9742c0165 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -26,6 +26,7 @@
- #include <linux/sched.h>
- #include <linux/nsproxy.h>
- #include <linux/magic.h>
-+#include <linux/fsinfo.h>
- #include <net/net_namespace.h>
- #include "internal.h"
- 
-@@ -35,6 +36,9 @@ static struct inode *afs_alloc_inode(struct super_block *sb);
- static void afs_destroy_inode(struct inode *inode);
- static void afs_free_inode(struct inode *inode);
- static int afs_statfs(struct dentry *dentry, struct kstatfs *buf);
-+#ifdef CONFIG_FSINFO
-+static int afs_fsinfo(struct path *path, struct fsinfo_kparams *params);
-+#endif
- static int afs_show_devname(struct seq_file *m, struct dentry *root);
- static int afs_show_options(struct seq_file *m, struct dentry *root);
- static int afs_init_fs_context(struct fs_context *fc);
-@@ -54,6 +58,9 @@ int afs_net_id;
- 
- static const struct super_operations afs_super_ops = {
- 	.statfs		= afs_statfs,
-+#ifdef CONFIG_FSINFO
-+	.fsinfo		= afs_fsinfo,
-+#endif
- 	.alloc_inode	= afs_alloc_inode,
- 	.drop_inode	= afs_drop_inode,
- 	.destroy_inode	= afs_destroy_inode,
-@@ -199,7 +206,7 @@ static int afs_show_options(struct seq_file *m, struct dentry *root)
- 
- 	if (as->dyn_root)
- 		seq_puts(m, ",dyn");
--	if (test_bit(AFS_VNODE_AUTOCELL, &AFS_FS_I(d_inode(root))->flags))
-+	if (as->autocell)
- 		seq_puts(m, ",autocell");
- 	switch (as->flock_mode) {
- 	case afs_flock_mode_unset:	break;
-@@ -463,7 +470,7 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
--	if (ctx->autocell || as->dyn_root)
-+	if (as->autocell || as->dyn_root)
- 		set_bit(AFS_VNODE_AUTOCELL, &AFS_FS_I(inode)->flags);
- 
- 	ret = -ENOMEM;
-@@ -503,6 +510,8 @@ static struct afs_super_info *afs_alloc_sbi(struct fs_context *fc)
- 			as->cell = afs_get_cell(ctx->cell);
- 			as->volume = __afs_get_volume(ctx->volume);
- 		}
-+		if (ctx->autocell)
-+			as->autocell = true;
- 	}
- 	return as;
- }
-@@ -765,3 +774,170 @@ static int afs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 
- 	return ret;
- }
+diff --git a/Documentation/filesystems/fsinfo.rst b/Documentation/filesystems/fsinfo.rst
+new file mode 100644
+index 000000000000..86c187a46396
+--- /dev/null
++++ b/Documentation/filesystems/fsinfo.rst
+@@ -0,0 +1,561 @@
++================================
++Filesystem Information Retrieval
++================================
 +
-+#ifdef CONFIG_FSINFO
-+static const struct fsinfo_timestamp_info afs_timestamp_info = {
-+	.atime = {
-+		.minimum	= 0,
-+		.maximum	= UINT_MAX,
-+		.gran_mantissa	= 1,
-+		.gran_exponent	= 0,
-+	},
-+	.mtime = {
-+		.minimum	= 0,
-+		.maximum	= UINT_MAX,
-+		.gran_mantissa	= 1,
-+		.gran_exponent	= 0,
-+	},
-+	.ctime = {
-+		.minimum	= 0,
-+		.maximum	= UINT_MAX,
-+		.gran_mantissa	= 1,
-+		.gran_exponent	= 0,
-+	},
-+	.btime = {
-+		.minimum	= 0,
-+		.maximum	= UINT_MAX,
-+		.gran_mantissa	= 1,
-+		.gran_exponent	= 0,
-+	},
-+};
++The fsinfo() system call allows the retrieval of filesystem and filesystem
++security information beyond what stat(), statx() and statfs() can query.  It
++does not require a file to be opened as does ioctl().
 +
-+/*
-+ * Get filesystem information.
-+ */
-+static int afs_fsinfo(struct path *path, struct fsinfo_kparams *params)
-+{
-+	struct fsinfo_timestamp_info *tsinfo;
-+	struct fsinfo_server_address *addr;
-+	struct fsinfo_capabilities *caps;
-+	struct fsinfo_supports *sup;
-+	struct dentry *dentry = path->dentry;
-+	struct afs_server_list *slist;
-+	struct afs_super_info *as = AFS_FS_S(dentry->d_sb);
-+	struct afs_addr_list *alist;
-+	struct afs_server *server;
-+	struct afs_volume *volume = as->volume;
-+	struct afs_cell *cell = as->cell;
-+	struct afs_net *net = afs_d2net(dentry);
-+	bool dyn_root = as->dyn_root;
-+	int ret;
++fsinfo() may be called on a path, an open file descriptor, a filesystem-context
++file descriptor as allocated by fsopen() or fspick().
 +
-+	switch (params->request) {
-+	case FSINFO_ATTR_TIMESTAMP_INFO:
-+		tsinfo = params->buffer;
-+		*tsinfo = afs_timestamp_info;
-+		return sizeof(*tsinfo);
++The fsinfo() system call needs to be configured on by enabling:
 +
-+	case FSINFO_ATTR_SUPPORTS:
-+		sup = params->buffer;
-+		sup->stx_mask = (STATX_TYPE | STATX_MODE |
-+				 STATX_NLINK |
-+				 STATX_UID | STATX_GID |
-+				 STATX_MTIME | STATX_INO |
-+				 STATX_SIZE);
-+		sup->stx_attributes = STATX_ATTR_AUTOMOUNT;
-+		return sizeof(*sup);
++	"File systems"/"Enable the fsinfo() system call" (CONFIG_FSINFO)
 +
-+	case FSINFO_ATTR_CAPABILITIES:
-+		caps = params->buffer;
-+		if (dyn_root) {
-+			fsinfo_set_cap(caps, FSINFO_CAP_IS_AUTOMOUNTER_FS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_AUTOMOUNTS);
-+		} else {
-+			fsinfo_set_cap(caps, FSINFO_CAP_IS_NETWORK_FS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_AUTOMOUNTS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_ADV_LOCKS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_UIDS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_GIDS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_VOLUME_ID);
-+			fsinfo_set_cap(caps, FSINFO_CAP_VOLUME_NAME);
-+			fsinfo_set_cap(caps, FSINFO_CAP_IVER_MONO_INCR);
-+			fsinfo_set_cap(caps, FSINFO_CAP_SYMLINKS);
-+			fsinfo_set_cap(caps, FSINFO_CAP_HARD_LINKS_1DIR);
-+			fsinfo_set_cap(caps, FSINFO_CAP_HAS_MTIME);
-+		}
-+		return sizeof(*caps);
++This document has the following sections:
 +
-+	case FSINFO_ATTR_VOLUME_NAME:
-+		if (dyn_root)
-+			return -EOPNOTSUPP;
-+		memcpy(params->buffer, volume->name, volume->name_len);
-+		return volume->name_len;
++.. contents:: :local:
 +
-+	case FSINFO_ATTR_AFS_CELL_NAME:
-+		if (dyn_root)
-+			return -EOPNOTSUPP;
-+		memcpy(params->buffer, cell->name, cell->name_len);
-+		return cell->name_len;
 +
-+	case FSINFO_ATTR_SERVER_NAME:
-+		if (dyn_root)
-+			return -EOPNOTSUPP;
-+		read_lock(&volume->servers_lock);
-+		slist = afs_get_serverlist(volume->servers);
-+		read_unlock(&volume->servers_lock);
++Overview
++========
 +
-+		if (params->Nth < slist->nr_servers) {
-+			server = slist->servers[params->Nth].server;
-+			ret = sprintf(params->buffer, "%pU", &server->uuid);
-+		} else {
-+			ret = -ENODATA;
-+		}
++The fsinfo() system call retrieves one of a number of attributes, specified by
++the "fsinfo_attribute" enumeration::
 +
-+		afs_put_serverlist(net, slist);
-+		return ret;
++	FSINFO_ATTR_STATFS	- statfs()-style state
++	FSINFO_ATTR_FSINFO	- Information about fsinfo() itself
++	FSINFO_ATTR_IDS		- Filesystem IDs
++	FSINFO_ATTR_LIMITS	- Filesystem limits
++	...
 +
-+	case FSINFO_ATTR_SERVER_ADDRESS:
-+		addr = params->buffer;
-+		if (dyn_root)
-+			return -EOPNOTSUPP;
-+		read_lock(&volume->servers_lock);
-+		slist = afs_get_serverlist(volume->servers);
-+		read_unlock(&volume->servers_lock);
++Each attribute can have a single value, a sequence of values or a
++sequence-of-sequences of values.  All of the values of an attribute must be of
++the same type - and this is an inherent property of the attribute.  The
++available types are:
 +
-+		ret = -ENODATA;
-+		if (params->Nth >= slist->nr_servers)
-+			goto put_slist;
-+		server = slist->servers[params->Nth].server;
++ * ``Struct``.  This is a structure with a version-dependent length.  New
++   versions of the kernel may append more fields, though they are not
++   permitted to remove or replace old ones.
 +
-+		read_lock(&server->fs_lock);
-+		alist = afs_get_addrlist(rcu_access_pointer(server->addresses));
-+		read_unlock(&server->fs_lock);
-+		if (!alist)
-+			goto put_slist;
++   Older applications, expecting an older version of the field, can ask for a
++   shorter struct and will only get the fields they requested; newer
++   applications running on an older kernel will get the extra fields they
++   requested filled with zeros.  Either way, the kernel returns the actual size
++   of the internal struct, regardless of how much data it returned.
 +
-+		if (params->Mth >= alist->nr_addrs)
-+			goto put_alist;
++   This allows for struct-type fields to be extended in future.
 +
-+		memcpy(addr, &alist->addrs[params->Mth],
-+		       sizeof(struct sockaddr_rxrpc));
-+		ret = sizeof(*addr);
++ * ``String``.  This is a variable-length string of up to 4096 characters (no
++   NUL character is included).  The returned string will be truncated if the
++   output buffer is too small.  The total size of the string is returned,
++   regardless of any truncation.
 +
-+	put_alist:
-+		afs_put_addrlist(alist);
-+	put_slist:
-+		afs_put_serverlist(net, slist);
-+		return ret;
++ * ``Array``.  This is a variable-length array of fixed-size structures.  The
++   element size may not vary over time, so the element format must be designed
++   with care.  The maximum length is INT_MAX bytes, though this depends on the
++   kernel being able to allocate an internal buffer large enough.
 +
-+	case FSINFO_ATTR_PARAMETERS:
-+		fsinfo_note_sb_params(params, dentry->d_sb->s_flags);
-+		if (!dyn_root)
-+			fsinfo_note_paramf(params, "source", "%c%s:%s%s",
-+					   volume->type == AFSVL_RWVOL ? '%' : '#',
-+					   cell->name,
-+					   volume->name,
-+					   volume->type == AFSVL_RWVOL ? "" :
-+					   volume->type == AFSVL_ROVOL ? ".readonly" :
-+					   ".backup");
-+		if (as->autocell)
-+			fsinfo_note_param(params, "autocell", NULL);
-+		if (dyn_root)
-+			fsinfo_note_param(params, "dyn", NULL);
-+		return params->usage;
++ * ``Opaque``.  This is a variable-length blob of indeterminate structure.  It
++   may be up to INT_MAX bytes in size.
 +
-+	default:
-+		return generic_fsinfo(path, params);
-+	}
-+}
-+#endif /* CONFIG_FSINFO */
-diff --git a/fs/fsinfo.c b/fs/fsinfo.c
-index 45bfb10eb8d9..b3f605c39eb5 100644
---- a/fs/fsinfo.c
-+++ b/fs/fsinfo.c
-@@ -582,6 +582,9 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
- 	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
- 	FSINFO_OPAQUE		(PARAMETERS),
- 	FSINFO_OPAQUE		(LSM_PARAMETERS),
-+	FSINFO_STRING_N		(SERVER_NAME),
-+	FSINFO_STRUCT_NM	(SERVER_ADDRESS,	server_address),
-+	FSINFO_STRING		(AFS_CELL_NAME),
- };
- 
- /**
-diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
-index 0d57d37311fc..58a50207256f 100644
---- a/include/uapi/linux/fsinfo.h
-+++ b/include/uapi/linux/fsinfo.h
-@@ -32,6 +32,9 @@ enum fsinfo_attribute {
- 	FSINFO_ATTR_PARAM_ENUM		= 14,	/* Nth enum-to-val */
- 	FSINFO_ATTR_PARAMETERS		= 15,	/* Mount parameters (large string) */
- 	FSINFO_ATTR_LSM_PARAMETERS	= 16,	/* LSM Mount parameters (large string) */
-+	FSINFO_ATTR_SERVER_NAME		= 17,	/* Name of the Nth server (string) */
-+	FSINFO_ATTR_SERVER_ADDRESS	= 18,	/* Mth address of the Nth server */
-+	FSINFO_ATTR_AFS_CELL_NAME	= 19,	/* AFS cell name (string) */
- 	FSINFO_ATTR__NR
- };
- 
-@@ -276,4 +279,13 @@ struct fsinfo_param_enum {
- 	char		name[252];	/* Name of the enum value */
- };
- 
-+/*
-+ * Information struct for fsinfo(fsinfo_attr_server_addresses).
-+ *
-+ * Find the Mth address of the Nth server for a network mount.
-+ */
-+struct fsinfo_server_address {
-+	struct __kernel_sockaddr_storage address;
-+};
 +
- #endif /* _UAPI_LINUX_FSINFO_H */
-diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
-index f865bc1af16f..6389ae781cbb 100644
---- a/samples/vfs/test-fsinfo.c
-+++ b/samples/vfs/test-fsinfo.c
-@@ -83,6 +83,9 @@ static const struct fsinfo_attr_info fsinfo_buffer_info[FSINFO_ATTR__NR] = {
- 	FSINFO_STRUCT_N		(PARAM_ENUM,		param_enum),
- 	FSINFO_OVERLARGE	(PARAMETERS,		-),
- 	FSINFO_OVERLARGE	(LSM_PARAMETERS,	-),
-+	FSINFO_STRING_N		(SERVER_NAME,		server_name),
-+	FSINFO_STRUCT_NM	(SERVER_ADDRESS,	server_address),
-+	FSINFO_STRING		(AFS_CELL_NAME,		-),
- };
- 
- #define FSINFO_NAME(X,Y) [FSINFO_ATTR_##X] = #Y
-@@ -104,6 +107,9 @@ static const char *fsinfo_attr_names[FSINFO_ATTR__NR] = {
- 	FSINFO_NAME		(PARAM_ENUM,		param_enum),
- 	FSINFO_NAME		(PARAMETERS,		parameters),
- 	FSINFO_NAME		(LSM_PARAMETERS,	lsm_parameters),
-+	FSINFO_NAME		(SERVER_NAME,		server_name),
-+	FSINFO_NAME		(SERVER_ADDRESS,	server_address),
-+	FSINFO_NAME		(AFS_CELL_NAME,		afs_cell_name),
- };
- 
- union reply {
-@@ -116,6 +122,7 @@ union reply {
- 	struct fsinfo_capabilities caps;
- 	struct fsinfo_timestamp_info timestamps;
- 	struct fsinfo_volume_uuid uuid;
-+	struct fsinfo_server_address srv_addr;
- };
- 
- static void dump_hex(unsigned int *data, int from, int to)
-@@ -318,6 +325,31 @@ static void dump_attr_VOLUME_UUID(union reply *r, int size)
- 	       f->uuid[14], f->uuid[15]);
- }
- 
-+static void dump_attr_SERVER_ADDRESS(union reply *r, int size)
-+{
-+	struct fsinfo_server_address *f = &r->srv_addr;
-+	struct sockaddr_in6 *sin6;
-+	struct sockaddr_in *sin;
-+	char buf[1024];
++Filesystem API
++==============
 +
-+	switch (f->address.ss_family) {
-+	case AF_INET:
-+		sin = (struct sockaddr_in *)&f->address;
-+		if (!inet_ntop(AF_INET, &sin->sin_addr, buf, sizeof(buf)))
-+			break;
-+		printf("IPv4: %s\n", buf);
-+		return;
-+	case AF_INET6:
-+		sin6 = (struct sockaddr_in6 *)&f->address;
-+		if (!inet_ntop(AF_INET6, &sin6->sin6_addr, buf, sizeof(buf)))
-+			break;
-+		printf("IPv6: %s\n", buf);
-+		return;
-+	}
++The filesystem is called through a superblock_operations method::
 +
-+	printf("family=%u\n", f->address.ss_family);
-+}
++	int (*fsinfo) (struct path *path, struct fsinfo_kparams *params);
 +
- /*
-  *
-  */
-@@ -333,6 +365,7 @@ static const dumper_t fsinfo_attr_dumper[FSINFO_ATTR__NR] = {
- 	FSINFO_DUMPER(CAPABILITIES),
- 	FSINFO_DUMPER(TIMESTAMP_INFO),
- 	FSINFO_DUMPER(VOLUME_UUID),
-+	FSINFO_DUMPER(SERVER_ADDRESS),
- };
- 
- static void dump_fsinfo(enum fsinfo_attribute attr,
++where "path" indicates the object to be queried and params indicates the
++parameters and the output buffer description.  The function should return the
++total size of the data it would like to produce or an error.
++
++The parameter struct looks like::
++
++	struct fsinfo_kparams {
++		enum fsinfo_attribute	request;
++		__u32			Nth;
++		__u32			Mth;
++		unsigned int		buf_size;
++		unsigned int		usage;
++		void			*buffer;
++		char			*scratch_buffer;
++		...
++	};
++
++The fields relevant to the filesystem are as follows:
++
++ * ``request``
++
++   Which attribute is being requested.  EOPNOTSUPP should be returned if the
++   attribute is not supported by the filesystem or the LSM.
++
++ * ``Nth`` and ``Mth``
++
++   Which value of an attribute is being requested.
++
++   For a single-value attribute Nth and Mth will both be 0.
++
++   For a "1D" attribute, Nth will indicate which value and Mth will always
++   be 0.  Take, for example, FSINFO_ATTR_SERVER_NAME - for a network
++   filesystem, the superblock will be backed by a number of servers.  This will
++   return the name of the Nth server.  ENODATA will be returned if Nth goes
++   beyond the end of the array.
++
++   For a "2D" attribute, Mth will indicate the index in the Nth set of values.
++   Take, for example, Take, for example, FSINFO_ATTR_SERVER_ADDRESS - each
++   server listed by FSINFO_ATTR_SERVER_NAME may have one or more addresses.
++   This will return the Mth address of the Nth server.  ENODATA will be
++   returned if the Nth set doesn't exist or the Mth element of the Nth set
++   doesn't exist.
++
++ * ``buf_size``
++
++   This indicates the current size of the buffer.  For the array type and the
++   opaque type this will be increased if the current buffer won't hold the
++   value and the filesystem will be called again.
++
++ * ``usage``
++
++   This indicates how much of the buffer has been used so far for an array or
++   opaque type attribute.  This is updated by the fsinfo_note_param*()
++   functions.
++
++ * ``buffer``
++
++   This points to the output buffer.  For struct-type and string-type
++   attributes it will always be big enough; for array- and opaque-type, it will
++   be buf_size in size and will be resized if the returned size is larger than
++   this.
++
++ * ``scratch_buffer``
++
++   For array- and opaque-type attributes, this will point to a 4096-byte
++   scratch buffer.  Sometimes the value needs to be generated by sprintf(),
++   say, to find out how big is going to be, but that might not be possible in
++   the main buffer without risking an overrun.
++
++To simplify filesystem code, there will always be at least a minimal buffer
++available if the ->fsinfo() method gets called - and the filesystem should
++always write what it can into the buffer.  It's possible that the fsinfo()
++system call will then throw the contents away and just return the length.
++
++
++Helper Functions
++================
++
++The API includes a number of helper functions:
++
++ * ``int generic_fsinfo(struct path *path, struct fsinfo_kparams *params);``
++
++   This is the function that does default actions for filling out attribute
++   values from standard data, such as may be found in the file_system_type
++   struct and the super_block struct.  It also generates -EOPNOTSUPP for
++   unsupported attributes.
++
++   This should be called by a filesystem if it doesn't want to handle an
++   attribute.  The filesystem may also call this function and then adjust the
++   information returned, such as changing the listed capability flags.
++
++ * ``void fsinfo_set_cap(struct fsinfo_capabilities *c,
++			 enum fsinfo_capability cap);``
++
++   This function sets a capability flag.
++
++ * ``void fsinfo_clear_cap(struct fsinfo_capabilities *c,
++			   enum fsinfo_capability cap);``
++
++   This function clears a capability flag.
++
++ * ``void fsinfo_set_unix_caps(struct fsinfo_capabilities *caps);``
++
++   Set capability flags appropriate to the features of a standard UNIX
++   filesystem, such as having numeric UIDS and GIDS; allowing the creation of
++   directories, symbolic links, hard links, device files, FIFO and socket
++   files; permitting sparse files; and having access, change and modification
++   times.
++
++ * ``void fsinfo_note_sb_params(struct fsinfo_kparams *params,
++				unsigned int s_flags);``
++
++   This function notes the standard parameters corresponding to certain
++   ``SB_*`` flags in ``sb->s_flags`` into the parameter buffer.  The filesystem
++   is at liberty to adjust the s_flags mask as it sees fit.
++
++   This is intended for use with FSINFO_ATTR_PARAMETERS.
++
++ * ``void fsinfo_note_param(struct fsinfo_kparams *params, const char *key,
++			    const char *val);``
++
++   This function writes a pair of strings with prepended lengths into
++   params->buffer, if there's space, and always updates params->usage.  The
++   assumption is that the caller of s->s_op->fsinfo() will resize the buffer if
++   the usage grew too large and call again.
++
++   This is intended for use with FSINFO_ATTR_{,LSM_}PARAMETERS, but is not
++   limited to those.  The format allows binary data, though this API function
++   does not support anything with NUL characters in it.
++
++   Note that this function will not sleep, so is safe to take with locks held.
++
++ * ``void fsinfo_note_paramf(struct fsinfo_kparams *params, const char *key,
++			     const char *val_fmt, ...);``
++
++   This function is a simple wrapper around fsinfo_note_param(), writing the
++   value using vsnprintf() into params->scratch_buffer and then jumping to
++   fsinfo_note_param().
++
++
++Attribute Summary
++=================
++
++To summarise the attributes that are defined::
++
++  Symbolic name				Type
++  =====================================	===============
++  FSINFO_ATTR_STATFS			struct
++  FSINFO_ATTR_FSINFO			struct
++  FSINFO_ATTR_IDS			struct
++  FSINFO_ATTR_LIMITS			struct
++  FSINFO_ATTR_SUPPORTS			struct
++  FSINFO_ATTR_CAPABILITIES		struct
++  FSINFO_ATTR_TIMESTAMP_INFO		struct
++  FSINFO_ATTR_VOLUME_ID			string
++  FSINFO_ATTR_VOLUME_UUID		struct
++  FSINFO_ATTR_VOLUME_NAME		string
++  FSINFO_ATTR_NAME_ENCODING		string
++  FSINFO_ATTR_NAME_CODEPAGE		string
++  FSINFO_ATTR_PARAM_DESCRIPTION		struct
++  FSINFO_ATTR_PARAM_SPECIFICATION	N × struct
++  FSINFO_ATTR_PARAM_ENUM		N × struct
++  FSINFO_ATTR_PARAMETERS		opaque
++  FSINFO_ATTR_LSM_PARAMETERS		opaque
++  FSINFO_ATTR_SERVER_NAME		N × string
++  FSINFO_ATTR_SERVER_ADDRESS		N × M × struct
++  FSINFO_ATTR_AFS_CELL_NAME		string
++
++
++Attribute Catalogue
++===================
++
++A number of the attributes convey information about a filesystem superblock:
++
++ *  ``FSINFO_ATTR_STATFS``
++
++    This struct-type attribute gives most of the equivalent data to statfs(),
++    but with all the fields as unconditional 64-bit or 128-bit integers.  Note
++    that static data like IDs that don't change are retrieved with
++    FSINFO_ATTR_IDS instead.
++
++    Further, superblock flags (such as MS_RDONLY) are not exposed by this
++    attribute; rather the parameters must be listed and the attributes picked
++    out from that.
++
++ *  ``FSINFO_ATTR_IDS``
++
++    This struct-type attribute conveys various identifiers used by the target
++    filesystem.  This includes the filesystem name, the NFS filesystem ID, the
++    superblock ID used in notifications, the filesystem magic type number and
++    the primary device ID.
++
++ *  ``FSINFO_ATTR_LIMITS``
++
++    This struct-type attribute conveys the limits on various aspects of a
++    filesystem, such as maximum file, symlink and xattr sizes, maxiumm filename
++    and xattr name length, maximum number of symlinks, maximum device major and
++    minor numbers and maximum UID, GID and project ID numbers.
++
++ *  ``FSINFO_ATTR_SUPPORTS``
++
++    This struct-type attribute conveys information about the support the
++    filesystem has for various UAPI features of a filesystem.  This includes
++    information about which bits are supported in various masks employed by the
++    statx system call, what FS_IOC_* flags are supported by ioctls and what
++    DOS/Windows file attribute flags are supported.
++
++ *  ``FSINFO_ATTR_CAPABILITIES``
++
++    This is a special attribute, being a set of single-bit capability flags,
++    formatted as struct-type attribute.  The meanings of the capability bits
++    are listed below - see the "Capability Bit Catalogue" section.  The
++    capability bits are grouped numerically into bytes, such that capilities
++    0-7 are in byte 0, 8-15 are in byte 1, 16-23 in byte 2 and so on.
++
++    Any capability bit that's not supported by the kernel will be set to false
++    if asked for.  The highest supported capability can be obtained from
++    attribute "FSINFO_ATTR_FSINFO".
++
++ *  ``FSINFO_ATTR_TIMESTAMP_INFO``
++
++    This struct-type attribute conveys information about the resolution and
++    range of the timestamps available in a filesystem.  The resolutions are
++    given as a mantissa and exponent (resolution = mantissa * 10^exponent
++    seconds), where the exponent can be negative to indicate a sub-second
++    resolution (-9 being nanoseconds, for example).
++
++ *  ``FSINFO_ATTR_VOLUME_ID``
++
++    This is a string-type attribute that conveys the superblock identifier for
++    the volume.  By default it will be filled in from the contents of s_id from
++    the superblock.  For a block-based filesystem, for example, this might be
++    the name of the primary block device.
++
++ *  ``FSINFO_ATTR_VOLUME_UUID``
++
++    This is a struct-type attribute that conveys the UUID identifier for the
++    volume.  By default it will be filled in from the contents of s_uuid from
++    the superblock.  If this doesn't exist, it will be an entirely zeros.
++
++ *  ``FSINFO_ATTR_VOLUME_NAME``
++
++    This is a string-type attribute that conveys the name of the volume.  By
++    default it will return EOPNOTSUPP.  For a disk-based filesystem, it might
++    convey the partition label; for a network-based filesystem, it might convey
++    the name of the remote volume.
++
++ *  ``FSINFO_ATTR_NAME_ENCODING``
++
++    This is a string-type attribute that returns the type of encoding used for
++    filenames in the medium.  By default this will be filled in with "utf8".
++    Not all filesystems can support that, however, so this may indicate a
++    restriction on what characters can be used.
++
++ *  ``FSINFO_ATTR_NAME_CODEPAGE``
++
++    This is a string-type attribute that returns the name of the codepage used
++    to transliterate a Linux utf8 filename into whatever the medium supports.
++    By default it returns EOPNOTSUPP.
++
++
++The next attributes give information about the mount parameter parsers and the
++mount parameters values stored in a superblock and its security data.  The
++first few of these can be queried on the file descriptor returned by fsopen()
++before any superblock is attached:
++
++ *  ``FSINFO_ATTR_PARAM_DESCRIPTION``
++
++    This is a struct-type attribute that returns summary information about what
++    mount options are available on a filesystem, including the number of
++    parameters and the number of enum symbols.
++
++ *  ``FSINFO_ATTR_PARAM_SPECIFICATION``
++
++    This is a 1D array of struct-type attributes, indicating the type,
++    qualifiers, name and an option ID for the Nth mount parameter.  Parameters
++    that have the same option ID are presumed to be synonyms.
++
++ *  ``FSINFO_ATTR_PARAM_ENUM``
++
++    This is a 1D array of struct-type attributes, indicating the Nth value
++    symbol for the set of enumeration-type parameters.  All the values are in
++    the same table, so they can be matched to the parameter by option ID, and
++    each option ID may have several entries, each with a different name.
++
++ *  ``FSINFO_ATTR_PARAMETERS``
++ *  ``FSINFO_ATTR_LSM_PARAMETERS``
++
++    These are a pair of opaque blobs that list all the mount parameter values
++    currently set on a superblock.  The first set come from the filesystem and
++    the second is from the LSMs - and, as such, convey security information,
++    such as labelling.
++
++    Inside the filesystem or LSM, the parameter values should be read in one go
++    under lock to avoid races with remount if necessary.
++
++    Each opaque blob is encoded as a series of pairs of elements, where each
++    element begins with a length.  The first element of each pair is the key
++    name and the second is the value (which may contain commas, binary data,
++    NUL chars).
++
++    An element length is encoded as a series of bytes in most->least signifcant
++    order.  Each byte contributes 7 bits to the length.  The MSB in each byte
++    is set if there's another byte of length information following on (ie. all
++    but the last byte in the length have the MSB set).
++
++    A number of helper functions are provided to help record the parameters::
++
++	fsinfo_note_sb_params()
++	fsinfo_note_param()
++	fsinfo_note_paramf()
++
++    Note that the first is not applicable to LSM parameters.  It is called
++    automatically if the filesystem doesn't implement the attribute, but must,
++    and should, be called manually otherwise.  It should also be called first,
++    before noting any other parameters.
++
++
++Then there are filesystem-specific attributes.
++
++ *  ``FSINFO_ATTR_SERVER_NAME``
++
++    This is a string-type attribute that conveys the name of the Nth server
++    backing a network-filesystem superblock.
++
++ *  ``FSINFO_ATTR_SERVER_ADDRESS``
++
++    This is a struct-type attribute that conveys the Mth address of the Nth
++    server, as returned by FSINFO_ATTR_SERVER_NAME.
++
++ *  ``FSINFO_ATTR_AFS_CELL_NAME``
++
++    This is a string-type attribute that retrieves the AFS cell name of the
++    target object.
++
++
++Lastly, one attribute gives information about fsinfo() itself:
++
++ *  ``FSINFO_ATTR_FSINFO``
++
++    This struct-type attribute gives information about the fsinfo() system call
++    itself, including the maximum number of attributes supported and the
++    maximum number of capability bits supported.
++
++
++Capability Bit Catalogue
++========================
++
++The capability bits convey single true/false assertions about a specific
++instance of a filesystem (ie. a specific superblock).  They are accessed using
++the "FSINFO_ATTR_CAPABILITY" attribute:
++
++ *  ``FSINFO_CAP_IS_KERNEL_FS``
++ *  ``FSINFO_CAP_IS_BLOCK_FS``
++ *  ``FSINFO_CAP_IS_FLASH_FS``
++ *  ``FSINFO_CAP_IS_NETWORK_FS``
++ *  ``FSINFO_CAP_IS_AUTOMOUNTER_FS``
++ *  ``FSINFO_CAP_IS_MEMORY_FS``
++
++    These indicate what kind of filesystem the target is: kernel API (proc),
++    block-based (ext4), flash/nvm-based (jffs2), remote over the network (NFS),
++    local quasi-filesystem that acts as a tray of mountpoints (autofs), plain
++    in-memory filesystem (shmem).
++
++ *  ``FSINFO_CAP_AUTOMOUNTS``
++
++    This indicate if a filesystem may have objects that are automount points.
++
++ *  ``FSINFO_CAP_ADV_LOCKS``
++ *  ``FSINFO_CAP_MAND_LOCKS``
++ *  ``FSINFO_CAP_LEASES``
++
++    These indicate if a filesystem supports advisory locks, mandatory locks or
++    leases.
++
++ *  ``FSINFO_CAP_UIDS``
++ *  ``FSINFO_CAP_GIDS``
++ *  ``FSINFO_CAP_PROJIDS``
++
++    These indicate if a filesystem supports/stores/transports numeric user IDs,
++    group IDs or project IDs.  The "FSINFO_ATTR_LIMITS" attribute can be used
++    to find out the upper limits on the IDs values.
++
++ *  ``FSINFO_CAP_STRING_USER_IDS``
++
++    This indicates if a filesystem supports/stores/transports string user
++    identifiers.
++
++ *  ``FSINFO_CAP_GUID_USER_IDS``
++
++    This indicates if a filesystem supports/stores/transports Windows GUIDs as
++    user identifiers (eg. ntfs).
++
++ *  ``FSINFO_CAP_WINDOWS_ATTRS``
++
++    This indicates if a filesystem supports Windows FILE_* attribute bits
++    (eg. cifs, jfs).  The "FSINFO_ATTR_SUPPORTS" attribute can be used to find
++    out which windows file attributes are supported by the filesystem.
++
++ *  ``FSINFO_CAP_USER_QUOTAS``
++ *  ``FSINFO_CAP_GROUP_QUOTAS``
++ *  ``FSINFO_CAP_PROJECT_QUOTAS``
++
++    These indicate if a filesystem supports quotas for users, groups or
++    projects.
++
++ *  ``FSINFO_CAP_XATTRS``
++
++    These indicate if a filesystem supports extended attributes.  The
++    "FSINFO_ATTR_LIMITS" attribute can be used to find out the upper limits on
++    the supported name and body lengths.
++
++ *  ``FSINFO_CAP_JOURNAL``
++ *  ``FSINFO_CAP_DATA_IS_JOURNALLED``
++
++    These indicate whether the filesystem has a journal and whether data
++    changes are logged to it.
++
++ *  ``FSINFO_CAP_O_SYNC``
++ *  ``FSINFO_CAP_O_DIRECT``
++
++    These indicate whether the filesystem supports the O_SYNC and O_DIRECT
++    flags.
++
++ *  ``FSINFO_CAP_VOLUME_ID``
++ *  ``FSINFO_CAP_VOLUME_UUID``
++ *  ``FSINFO_CAP_VOLUME_NAME``
++ *  ``FSINFO_CAP_VOLUME_FSID``
++
++    These indicate whether ID, UUID, name and FSID identifiers actually exist
++    in the filesystem and thus might be considered persistent.
++
++ *  ``FSINFO_CAP_IVER_ALL_CHANGE``
++ *  ``FSINFO_CAP_IVER_DATA_CHANGE``
++ *  ``FSINFO_CAP_IVER_MONO_INCR``
++
++    These indicate whether i_version in the inode is supported and, if so, what
++    mode it operates in.  The first two indicate if it's changed for any data
++    or metadata change, or whether it's only changed for any data changes; the
++    last indicates whether or not it's monotonically increasing for each such
++    change.
++
++ *  ``FSINFO_CAP_HARD_LINKS``
++ *  ``FSINFO_CAP_HARD_LINKS_1DIR``
++
++    These indicate whether the filesystem can have hard links made in it, and
++    whether they can be made between directory or only within the same
++    directory.
++
++ *  ``FSINFO_CAP_DIRECTORIES``
++ *  ``FSINFO_CAP_SYMLINKS``
++ *  ``FSINFO_CAP_DEVICE_FILES``
++ *  ``FSINFO_CAP_UNIX_SPECIALS``
++
++    These indicate whether directories; symbolic links; device files; or pipes
++    and sockets can be made within the filesystem.
++
++ *  ``FSINFO_CAP_RESOURCE_FORKS``
++
++    This indicates if the filesystem supports resource forks.
++
++ *  ``FSINFO_CAP_NAME_CASE_INDEP``
++ *  ``FSINFO_CAP_NAME_NON_UTF8``
++ *  ``FSINFO_CAP_NAME_HAS_CODEPAGE``
++
++    These indicate if the filesystem supports case-independent file names,
++    whether the filenames are non-utf8 (see the "FSINFO_ATTR_NAME_ENCODING"
++    attribute) and whether a codepage is in use to transliterate them (see
++    the "FSINFO_ATTR_NAME_CODEPAGE" attribute).
++
++ *  ``FSINFO_CAP_SPARSE``
++
++    This indicates if a filesystem supports sparse files.
++
++ *  ``FSINFO_CAP_NOT_PERSISTENT``
++
++    This indicates if a filesystem is not persistent.
++
++ *  ``FSINFO_CAP_NO_UNIX_MODE``
++
++    This indicates if a filesystem doesn't support UNIX mode bits (though they
++    may be manufactured from other bits, such as Windows file attribute flags).
++
++ *  ``FSINFO_CAP_HAS_ATIME``
++ *  ``FSINFO_CAP_HAS_BTIME``
++ *  ``FSINFO_CAP_HAS_CTIME``
++ *  ``FSINFO_CAP_HAS_MTIME``
++
++    These indicate which timestamps a filesystem supports (access, birth,
++    change, modify).  The range and resolutions can be queried with the
++    "FSINFO_ATTR_TIMESTAMPS" attribute).
 
