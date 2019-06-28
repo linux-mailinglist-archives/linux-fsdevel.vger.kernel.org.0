@@ -2,73 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D75A75A170
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 18:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A143F5A1B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 19:03:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbfF1QyT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 12:54:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38532 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbfF1QyT (ORCPT
+        id S1726480AbfF1RDQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 13:03:16 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:60832 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbfF1RDQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 12:54:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4aCzK6AWV7v8l05GIE3EDguMtt1Ba9XnxuuiQ3Rlk3Q=; b=Z8w/Lg4IyFUwGyPbT6LlhpKWU
-        wUw/qfThpPpDK1EVkDTJ1UJiw38r1aWCtwbytMCtGAED4QvCWUMKs5Oh/6QO0Wybph75WFSCNiE4z
-        SSCY5E2KKmjqFf4YfC/RXkZbftMs0PDsnBkPp83MsdPmHC1whEcp4+szoDy/HcGbBBak06He3xVFX
-        Dv2t+nDoKM8qsnEYpPu09UUtlaDwdS+RkH8iyE0U10HWCA+u5ZYlH/WcMlbenvCowHplBHyZKDmM9
-        2YOpnvA7s/rZiLu/O8vCEzzqGKQwJz/jt4166JDneHDGirGpfGEMfS4Uo/xcZIJl7ErIdb9zvCDZq
-        /5Yxuz+9w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgu8f-0002TR-BH; Fri, 28 Jun 2019 16:54:17 +0000
-Date:   Fri, 28 Jun 2019 09:54:17 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>, Jan Kara <jack@suse.cz>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] filesystem-dax: Disable PMD support
-Message-ID: <20190628165417.GD4286@bombadil.infradead.org>
-References: <156159454541.2964018.7466991316059381921.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190627123415.GA4286@bombadil.infradead.org>
- <CAPcyv4jQP-SFJGor-Q3VCRQ0xwt3MuVpH2qHx2wzyRA88DGQww@mail.gmail.com>
- <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
- <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
- <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
- <20190627195948.GB4286@bombadil.infradead.org>
- <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
- <20190628163721.GC4286@bombadil.infradead.org>
- <CAPcyv4jeRwhYWnGw9RrfDA54RRa9LK4JPuF3zQ-av=HdRqCTJw@mail.gmail.com>
+        Fri, 28 Jun 2019 13:03:16 -0400
+Received: by linux.microsoft.com (Postfix, from userid 1029)
+        id DA9F320BE446; Fri, 28 Jun 2019 10:03:15 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by linux.microsoft.com (Postfix) with ESMTP id 856A53010329;
+        Fri, 28 Jun 2019 10:03:15 -0700 (PDT)
+Date:   Fri, 28 Jun 2019 10:03:15 -0700 (PDT)
+From:   Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
+X-X-Sender: jaskarankhurana@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net
+To:     Milan Broz <gmazyland@gmail.com>
+cc:     Eric Biggers <ebiggers@kernel.org>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, jmorris@namei.org, scottsh@microsoft.com,
+        mpatocka@redhat.com
+Subject: Re: [RFC PATCH v5 1/1] Add dm verity root hash pkcs7 sig
+ validation.
+In-Reply-To: <264565b3-ff3c-29c0-7df0-d8ff061087d3@gmail.com>
+Message-ID: <alpine.LRH.2.21.1906281001020.119795@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com> <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com> <20190627234149.GA212823@gmail.com> <alpine.LRH.2.21.1906271844470.22562@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+ <20190628030017.GA673@sol.localdomain> <264565b3-ff3c-29c0-7df0-d8ff061087d3@gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jeRwhYWnGw9RrfDA54RRa9LK4JPuF3zQ-av=HdRqCTJw@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 09:39:01AM -0700, Dan Williams wrote:
-> On Fri, Jun 28, 2019 at 9:37 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > That was the conclusion I came to; that one thread holding the mmap sem
-> > for read isn't being woken up when it should be.  Just need to find it ...
-> > obviously it's something to do with the PMD entries.
-> 
-> Can you explain to me one more time, yes I'm slow on the uptake on
-> this, the difference between xas_load() and xas_find_conflict() and
-> why it's ok for dax_lock_page() to use xas_load() while
-> grab_mapping_entry() uses xas_find_conflict()?
 
-When used with a non-zero 'order', xas_find_conflict() will return
-an entry whereas xas_load() might return a pointer to a node.
-dax_lock_page() always uses a zero order, so they would always do the
-same thing (xas_find_conflict() would be less efficient).
+Hello Eric/Milan,
+
+On Fri, 28 Jun 2019, Milan Broz wrote:
+
+> On 28/06/2019 05:00, Eric Biggers wrote:
+>>> Hello Eric,
+>>>
+>>> This started with a config (see V4). We didnot want scripts that pass this
+>>> parameter to suddenly stop working if for some reason the verification is
+>>> turned off so the optional parameter was just parsed and no validation
+>>> happened if the CONFIG was turned off. This was changed to a commandline
+>>> parameter after feedback from the community, so I would prefer to keep it
+>>> *now* as commandline parameter. Let me know if you are OK with this.
+>>>
+>>> Regards,
+>>> JK
+>>
+>> Sorry, I haven't been following the whole discussion.  (BTW, you sent out
+>> multiple versions both called "v4", and using a cover letter for a single patch
+>> makes it unnecessarily difficult to review.)  However, it appears Milan were
+>> complaining about the DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE option which set the
+>> policy for signature verification, *not* the DM_VERITY_VERIFY_ROOTHASH_SIG
+>> option which enabled support for signature verification.  Am I missing
+>> something?  You can have a module parameter which controls the "signatures
+>> required" setting, while also allowing people to compile out kernel support for
+>> the signature verification feature.
+>
+> Yes, this was exactly my point.
+>
+> I think I even mention in some reply to use exactly the same config Makefile logic
+> as for FEC - to allow completely compile it out of the source:
+>
+> ifeq ($(CONFIG_DM_VERITY_FEC),y)
+> dm-verity-objs                  += dm-verity-fec.o
+> endif
+>
+>> Sure, it means that the signature verification support won't be guaranteed to be
+>> present when dm-verity is.  But the same is true of the hash algorithm (e.g.
+>> sha512), and of the forward error correction feature.  Since the signature
+>> verification is nontrivial and pulls in a lot of other kernel code which might
+>> not be otherwise needed (via SYSTEM_DATA_VERIFICATION), it seems a natural
+>> candidate for putting the support behind a Kconfig option.
+>
+> On the other side, dm-verity is meant for a system verification, so if it depends
+> on SYSTEM_DATA_VERIFICATION is ... not so surprising :)
+>
+> But the change above is quite easy and while we already have FEC as config option,
+> perhaps let's do it the same here.
+>
+> Milan
+>
+Yes, I will make this change. Please consider this discussion as resolved. 
+Thanks.
+
+Regards,
+Jaskaran.
