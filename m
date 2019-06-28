@@ -2,71 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92A6D5A3CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 20:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8BC5A3F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 20:36:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbfF1Sf2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 14:35:28 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:39078 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726932AbfF1Sf2 (ORCPT
+        id S1727054AbfF1SgA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 14:36:00 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54666 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbfF1Sf7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 14:35:28 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SIYbxU114935;
-        Fri, 28 Jun 2019 18:34:37 GMT
+        Fri, 28 Jun 2019 14:35:59 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SIYFKk027580;
+        Fri, 28 Jun 2019 18:34:40 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=h0lWCLVuyu0P/36h1LaiA53s/qIbwAY/ZQm2+JFVybY=;
- b=13CJOqK6DbCKgAFDEdGfXZEvVfIS00B34kg4IH2cPp93lXn2rhMJKQVcwMqYiZ9PEp2q
- drixofMcAlyipPy+d/Jo+Il4ybSrgLHbAvgw4tK50RD45sM6EK0M99Ng0lKMs9md8KqU
- 5tWdoa087WIWXwrn2s04wAsed02vkTR17Ptv29tbMr+oiYCUt2st5FEwhJD+kbBFNC1C
- d6Cbdu48A/VnHcS1l1Uyg1hNGBWFXjSndaRyJNjjEv58y9c32fT1M9Wdzfgtx8/joI9R
- m5/NhIOc7kzQsT4bnybWNh+KY3MzGG2YNT1bb9zN/F0Q8J/dIXekyku7LABnmpwudcIb EA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2t9cyqxyhm-1
+ cc : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=fawPQY/UISfSH6DvrztcWabWXm47TtXieQJWSELxOKQ=;
+ b=MSV3k1wREyOZiFpPpvgY3Rux39mU5lQ1KuniYc4Ie6w7JtZJmHKecvubM23dsIDGuJZj
+ 0kBZKXN2nVbEu420ZAKAI1xRCkRYIV2YwintD6ID8Ef9AbMSdXwgcgptihQ1MHeFh2xq
+ 4rthJOp1LoqFymHqc7XUoAgWgyHhQQXJ6mUsYDiNcGbORfy7T7jZgONqr9D3Obf778mO
+ OMaSDrTN639V6Y5LIwKcUxtwE9Aby8Sku8uUQgNDdtjD6t77xSNL7Dbg+p5SeDnXQdcl
+ a2PsAdVk14mFbai1lLrR0i9JMF4YWvUjiuNurCUsTfH4inSLWA8dSmsARfc/6gXafxRO PQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2t9c9q72q0-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Jun 2019 18:34:37 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SIY3ak141544;
-        Fri, 28 Jun 2019 18:34:36 GMT
+        Fri, 28 Jun 2019 18:34:39 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5SIXdhY078899;
+        Fri, 28 Jun 2019 18:34:39 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 2t99f5qutn-1
+        by aserp3030.oracle.com with ESMTP id 2t9acdyeaf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 Jun 2019 18:34:36 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5SIYaxV142280;
-        Fri, 28 Jun 2019 18:34:36 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2t99f5qutg-1
+        Fri, 28 Jun 2019 18:34:39 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5SIYdKY080557;
+        Fri, 28 Jun 2019 18:34:39 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2t9acdyeac-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Jun 2019 18:34:36 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5SIYYg3021719;
-        Fri, 28 Jun 2019 18:34:34 GMT
+        Fri, 28 Jun 2019 18:34:39 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5SIYcPk001892;
+        Fri, 28 Jun 2019 18:34:38 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 28 Jun 2019 11:34:34 -0700
-Subject: [PATCH 5/5] vfs: only allow FSSETXATTR to set DAX flag on files and
- dirs
+        with ESMTP ; Fri, 28 Jun 2019 11:34:38 -0700
+Subject: [PATCH v6 0/4] vfs: make immutable files actually immutable
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
-        darrick.wong@oracle.com, shaggy@kernel.org,
-        ard.biesheuvel@linaro.org, josef@toxicpanda.com, hch@infradead.org,
-        clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
-        dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk
-Cc:     cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-efi@vger.kernel.org, reiserfs-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        darrick.wong@oracle.com, ard.biesheuvel@linaro.org,
+        josef@toxicpanda.com, hch@infradead.org, clm@fb.com,
+        adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, jack@suse.com,
+        dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org
+Cc:     reiserfs-devel@vger.kernel.org, linux-efi@vger.kernel.org,
+        devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
-        ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-Date:   Fri, 28 Jun 2019 11:34:31 -0700
-Message-ID: <156174687185.1557318.13703922197244050336.stgit@magnolia>
-In-Reply-To: <156174682897.1557318.14418894077683701275.stgit@magnolia>
-References: <156174682897.1557318.14418894077683701275.stgit@magnolia>
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Date:   Fri, 28 Jun 2019 11:34:35 -0700
+Message-ID: <156174687561.1557469.7505651950825460767.stgit@magnolia>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -74,7 +71,7 @@ Content-Transfer-Encoding: 7bit
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9302 signatures=668688
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=965 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1906280210
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -82,34 +79,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+Hi all,
 
-The DAX flag only applies to files and directories, so don't let it get
-set for other types of files.
+The chattr(1) manpage has this to say about the immutable bit that
+system administrators can set on files:
 
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- fs/inode.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+"A file with the 'i' attribute cannot be modified: it cannot be deleted
+or renamed, no link can be created to this file, most of the file's
+metadata can not be modified, and the file can not be opened in write
+mode."
 
+Given the clause about how the file 'cannot be modified', it is
+surprising that programs holding writable file descriptors can continue
+to write to and truncate files after the immutable flag has been set,
+but they cannot call other things such as utimes, fallocate, unlink,
+link, setxattr, or reflink.
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 670d5408d022..f08711b34341 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2259,6 +2259,14 @@ int vfs_ioc_fssetxattr_check(struct inode *inode, const struct fsxattr *old_fa,
- 	    !S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
- 		return -EINVAL;
- 
-+	/*
-+	 * It is only valid to set the DAX flag on regular files and
-+	 * directories on filesystems.
-+	 */
-+	if ((fa->fsx_xflags & FS_XFLAG_DAX) &&
-+	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
-+		return -EINVAL;
-+
- 	/* Extent size hints of zero turn off the flags. */
- 	if (fa->fsx_extsize == 0)
- 		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
+Since the immutable flag is only settable by administrators, resolve
+this inconsistent behavior in favor of the documented behavior -- once
+the flag is set, the file cannot be modified, period.  We presume that
+administrators must be trusted to know what they're doing, and that
+cutting off programs with writable fds will probably break them.
 
+Therefore, add immutability checks to the relevant VFS functions, then
+refactor the SETFLAGS and FSSETXATTR implementations to use common
+argument checking functions so that we can then force pagefaults on all
+the file data when setting immutability.
+
+Note that various distro manpages points out the inconsistent behavior
+of the various Linux filesystems w.r.t. immutable.  This fixes all that.
+
+I also discovered that userspace programs can write and create writable
+memory mappings to active swap files.  This is extremely bad because
+this allows anyone with write privileges to corrupt system memory.  The
+final patch in this series closes off that hole, at least for swap
+files.
+
+If you're going to start using this mess, you probably ought to just
+pull from my git trees, which are linked below.
+
+This has been lightly tested with fstests.  Enjoy!
+Comments and questions are, as always, welcome.
+
+--D
+
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=immutable-files
+
+fstests git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=immutable-files
