@@ -2,177 +2,288 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA8DE595C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 10:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35DFB59B76
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 14:33:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbfF1IJ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 04:09:57 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37617 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbfF1IJ5 (ORCPT
+        id S1727581AbfF1MdM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 08:33:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39142 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbfF1Maj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 04:09:57 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 19so2585704pfa.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2019 01:09:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yibP/Iv6ps2Lbs4MfioQUnaQ1X0MZgCBiZaerRAAUs0=;
-        b=e5kLlPi61UOlg3aWbm3hyHJ6zEvPrbJg4WaMTgr5J7N6beCFHbvMVMWvXm34zFIMK6
-         sy+TCthgNvl6QKdGAvF199JWgLSzY0riL7Qema9Z8eQSMrEVD7QmDgObmKA9VnGm6jQk
-         Qk9Vw4tG1NS/Rsaor+MwqJJtzbW9NLCCg64qdKIwo/lqdLjqjD0HoEJZR2UkGwIQNQU7
-         B8LVi8olEdiEG1gQQPAGB3QH7tntl/R65/A9R5rItsLpolqg+IRJEp1Du/WH5LqoOfL3
-         I3l8I0kuDspWHSG/V5vI+q5UJh9nND3VlxUlk753w0GhWsuvm1nMSIm2VqKl1wq8mbGo
-         9uhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yibP/Iv6ps2Lbs4MfioQUnaQ1X0MZgCBiZaerRAAUs0=;
-        b=jSVVvys1LEyLmpDtOmjRmh+FYXijEc0RDXYVa4qSJfeAVENyK4O/aLirn2+KEkgYpa
-         70VprtL/ebedL3pdxTIZbXu0fp1lljFdC/CFspvRNrq+PcF3N1sqGDHgCbWLJJVvSBD7
-         hgU58NvCQiUAe+bCGMQtEY8QWdiBPQRyXy9CsxR8Drz3M6EebsGkC/kJtYqaXTwXbh1F
-         Oj95PHpCBM9d+SxFGPZ360LxjBEIqzD1rF0xPqDOYP2oHailSYHuc1IyH6c3DTelxScW
-         ZI0EtL+XCv0O091bDH8RPk8AXbtwdhI2u3p7AtcEsC770gO0SXuvR4XBImscd5/0zFSD
-         1xUg==
-X-Gm-Message-State: APjAAAVBoxkYljC15j8tPj8re+LwcsXSrYHS77ooqFkvcMwB3iFGs5GX
-        8w5Xm5aFstykcYGbO2L1epHTYNDgGKFuw5ny3l74Kw==
-X-Google-Smtp-Source: APXvYqwa5Gi43WdeQYYulM3cScojWTt0/MI+kDN9NbNdt1CeW4jxKTFR3Algm98Jmh+XvwAADJqdAi9a1c1dDVA05Ew=
-X-Received: by 2002:a17:90a:be0d:: with SMTP id a13mr11033056pjs.84.1561709395368;
- Fri, 28 Jun 2019 01:09:55 -0700 (PDT)
+        Fri, 28 Jun 2019 08:30:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=3ry7BGeUhbdGjpQJZXLesZqx/UmqvudYXOpe/+NOUR4=; b=NQYhsg72RkwnggkwR1TJkacwmw
+        xL+F2DTw1S1ZaEUesrflgBBusDSY2hNSMu2Bjwhqw4GOsJl7MHoAlVvHOQxN+VbtZWQjpeNYDiqyc
+        P3IC/j057OcK3cYdLODD3Qgmqx0gFr2UXBTuCWUiRgtx0NpAJFXeUVF0xWuRAoA9e7D5wzYp8JE69
+        C4vJM6AclxjshJQM19T80O4eTKO9jEAMQTsB4aamOwyKIjTg+tGEmu+gFEJ97hWepoYH14IsUKih1
+        LF5ds28zkemmgARkGfHpZ3y3XV9vhLj3tlRD30jnIeQp55lc0WJJQboo0Cu6+aLop7p5GdZGHJNc7
+        NgXEUVPg==;
+Received: from [186.213.242.156] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hgq1U-00055F-9X; Fri, 28 Jun 2019 12:30:36 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hgq1S-0005SC-Bj; Fri, 28 Jun 2019 09:30:34 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH 16/39] docs: admin-guide: move sysctl directory to it
+Date:   Fri, 28 Jun 2019 09:30:09 -0300
+Message-Id: <22023257e9679c18eb6a25052e4c233a12e687da.1561724493.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
+References: <cover.1561724493.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-References: <20190617082613.109131-1-brendanhiggins@google.com>
- <20190617082613.109131-2-brendanhiggins@google.com> <20190620001526.93426218BE@mail.kernel.org>
- <CAFd5g46Jhxsz6_VXHEVYvTeDRwwzgKpr=aUWLL5b3S4kUukb8g@mail.gmail.com>
- <20190626034100.B238520883@mail.kernel.org> <CAFd5g46zHAupdUh3wDuqPJti2M+_=oje_5weFe7AVLQfkDDM6A@mail.gmail.com>
- <20190627181636.5EA752064A@mail.kernel.org>
-In-Reply-To: <20190627181636.5EA752064A@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Fri, 28 Jun 2019 01:09:44 -0700
-Message-ID: <CAFd5g44V3ZLNazUOgOo2sFR3zzbNnTkH4e9uxGX4iHi7G73Mzw@mail.gmail.com>
-Subject: Re: [PATCH v5 01/18] kunit: test: add KUnit test runner core
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 27, 2019 at 11:16 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Brendan Higgins (2019-06-26 16:00:40)
-> > On Tue, Jun 25, 2019 at 8:41 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > > scenario like below, but where it is a problem. There could be three
-> > > CPUs, or even one CPU and three threads if you want to describe the
-> > > extra thread scenario.
-> > >
-> > > Here's my scenario where it isn't needed:
-> > >
-> > >     CPU0                                      CPU1
-> > >     ----                                      ----
-> > >     kunit_run_test(&test)
-> > >                                               test_case_func()
-> > >                                                 ....
-> > >                                               [mock hardirq]
-> > >                                                 kunit_set_success(&test)
-> > >                                               [hardirq ends]
-> > >                                                 ...
-> > >                                                 complete(&test_done)
-> > >       wait_for_completion(&test_done)
-> > >       kunit_get_success(&test)
-> > >
-> > > We don't need to care about having locking here because success or
-> > > failure only happens in one place and it's synchronized with the
-> > > completion.
-> >
-> > Here is the scenario I am concerned about:
-> >
-> > CPU0                      CPU1                       CPU2
-> > ----                      ----                       ----
-> > kunit_run_test(&test)
-> >                           test_case_func()
-> >                             ....
-> >                             schedule_work(foo_func)
-> >                           [mock hardirq]             foo_func()
-> >                             ...                        ...
-> >                             kunit_set_success(false)   kunit_set_success(false)
-> >                           [hardirq ends]               ...
-> >                             ...
-> >                             complete(&test_done)
-> >   wait_for_completion(...)
-> >   kunit_get_success(&test)
-> >
-> > In my scenario, since both CPU1 and CPU2 update the success status of
-> > the test simultaneously, even though they are setting it to the same
-> > value. If my understanding is correct, this could result in a
-> > write-tear on some architectures in some circumstances. I suppose we
-> > could just make it an atomic boolean, but I figured locking is also
-> > fine, and generally preferred.
->
-> This is what we have WRITE_ONCE() and READ_ONCE() for. Maybe you could
-> just use that in the getter and setters and remove the lock if it isn't
-> used for anything else.
->
-> It may also be a good idea to have a kunit_fail_test() API that fails
-> the test passed in with a WRITE_ONCE(false). Otherwise, the test is
-> assumed successful and it isn't even possible for a test to change the
-> state from failure to success due to a logical error because the API
-> isn't available. Then we don't really need to have a generic
-> kunit_set_success() function at all. We could have a kunit_test_failed()
-> function too that replaces the kunit_get_success() function. That would
-> read better in an if condition.
+The stuff under sysctl describes /sys interface from userspace
+point of view. So, add it to the admin-guide and remove the
+:orphan: from its index file.
 
-You know what, I think you are right.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ CREDITS                                           | 2 +-
+ Documentation/admin-guide/index.rst               | 1 +
+ Documentation/admin-guide/kernel-parameters.txt   | 2 +-
+ Documentation/admin-guide/mm/index.rst            | 2 +-
+ Documentation/admin-guide/mm/ksm.rst              | 2 +-
+ Documentation/{ => admin-guide}/sysctl/abi.rst    | 0
+ Documentation/{ => admin-guide}/sysctl/fs.rst     | 0
+ Documentation/{ => admin-guide}/sysctl/index.rst  | 2 --
+ Documentation/{ => admin-guide}/sysctl/kernel.rst | 0
+ Documentation/{ => admin-guide}/sysctl/net.rst    | 0
+ Documentation/{ => admin-guide}/sysctl/sunrpc.rst | 0
+ Documentation/{ => admin-guide}/sysctl/user.rst   | 0
+ Documentation/{ => admin-guide}/sysctl/vm.rst     | 0
+ Documentation/core-api/printk-formats.rst         | 2 +-
+ Documentation/filesystems/proc.txt                | 2 +-
+ Documentation/networking/ip-sysctl.txt            | 2 +-
+ Documentation/vm/unevictable-lru.rst              | 2 +-
+ fs/proc/Kconfig                                   | 2 +-
+ kernel/panic.c                                    | 2 +-
+ mm/swap.c                                         | 2 +-
+ 20 files changed, 12 insertions(+), 13 deletions(-)
+ rename Documentation/{ => admin-guide}/sysctl/abi.rst (100%)
+ rename Documentation/{ => admin-guide}/sysctl/fs.rst (100%)
+ rename Documentation/{ => admin-guide}/sysctl/index.rst (99%)
+ rename Documentation/{ => admin-guide}/sysctl/kernel.rst (100%)
+ rename Documentation/{ => admin-guide}/sysctl/net.rst (100%)
+ rename Documentation/{ => admin-guide}/sysctl/sunrpc.rst (100%)
+ rename Documentation/{ => admin-guide}/sysctl/user.rst (100%)
+ rename Documentation/{ => admin-guide}/sysctl/vm.rst (100%)
 
-Sorry, for not realizing this earlier, I think you mentioned something
-along these lines a long time ago.
+diff --git a/CREDITS b/CREDITS
+index beac0c81d081..401c5092bbf9 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -3120,7 +3120,7 @@ S: France
+ N: Rik van Riel
+ E: riel@redhat.com
+ W: http://www.surriel.com/
+-D: Linux-MM site, Documentation/sysctl/*, swap/mm readaround
++D: Linux-MM site, Documentation/admin-guide/sysctl/*, swap/mm readaround
+ D: kswapd fixes, random kernel hacker, rmap VM,
+ D: nl.linux.org administrator, minor scheduler additions
+ S: Red Hat Boston
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index e0763c51b024..acd0efa46e9d 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -16,6 +16,7 @@ etc.
+    README
+    kernel-parameters
+    devices
++   sysctl/index
+ 
+ This section describes CPU vulnerabilities and their mitigations.
+ 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b2007fb4daf0..a3d3da5baacb 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3170,7 +3170,7 @@
+ 	numa_zonelist_order= [KNL, BOOT] Select zonelist order for NUMA.
+ 			'node', 'default' can be specified
+ 			This can be set from sysctl after boot.
+-			See Documentation/sysctl/vm.rst for details.
++			See Documentation/admin-guide/sysctl/vm.rst for details.
+ 
+ 	ohci1394_dma=early	[HW] enable debugging via the ohci1394 driver.
+ 			See Documentation/debugging-via-ohci1394.txt for more
+diff --git a/Documentation/admin-guide/mm/index.rst b/Documentation/admin-guide/mm/index.rst
+index f5e92f33f96e..5f61a6c429e0 100644
+--- a/Documentation/admin-guide/mm/index.rst
++++ b/Documentation/admin-guide/mm/index.rst
+@@ -11,7 +11,7 @@ processes address space and many other cool things.
+ Linux memory management is a complex system with many configurable
+ settings. Most of these settings are available via ``/proc``
+ filesystem and can be quired and adjusted using ``sysctl``. These APIs
+-are described in Documentation/sysctl/vm.rst and in `man 5 proc`_.
++are described in Documentation/admin-guide/sysctl/vm.rst and in `man 5 proc`_.
+ 
+ .. _man 5 proc: http://man7.org/linux/man-pages/man5/proc.5.html
+ 
+diff --git a/Documentation/admin-guide/mm/ksm.rst b/Documentation/admin-guide/mm/ksm.rst
+index 7b2b8767c0b4..874eb0c77d34 100644
+--- a/Documentation/admin-guide/mm/ksm.rst
++++ b/Documentation/admin-guide/mm/ksm.rst
+@@ -59,7 +59,7 @@ MADV_UNMERGEABLE is applied to a range which was never MADV_MERGEABLE.
+ 
+ If a region of memory must be split into at least one new MADV_MERGEABLE
+ or MADV_UNMERGEABLE region, the madvise may return ENOMEM if the process
+-will exceed ``vm.max_map_count`` (see Documentation/sysctl/vm.rst).
++will exceed ``vm.max_map_count`` (see Documentation/admin-guide/sysctl/vm.rst).
+ 
+ Like other madvise calls, they are intended for use on mapped areas of
+ the user address space: they will report ENOMEM if the specified range
+diff --git a/Documentation/sysctl/abi.rst b/Documentation/admin-guide/sysctl/abi.rst
+similarity index 100%
+rename from Documentation/sysctl/abi.rst
+rename to Documentation/admin-guide/sysctl/abi.rst
+diff --git a/Documentation/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
+similarity index 100%
+rename from Documentation/sysctl/fs.rst
+rename to Documentation/admin-guide/sysctl/fs.rst
+diff --git a/Documentation/sysctl/index.rst b/Documentation/admin-guide/sysctl/index.rst
+similarity index 99%
+rename from Documentation/sysctl/index.rst
+rename to Documentation/admin-guide/sysctl/index.rst
+index efbcde8c1c9c..03346f98c7b9 100644
+--- a/Documentation/sysctl/index.rst
++++ b/Documentation/admin-guide/sysctl/index.rst
+@@ -1,5 +1,3 @@
+-:orphan:
+-
+ ===========================
+ Documentation for /proc/sys
+ ===========================
+diff --git a/Documentation/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+similarity index 100%
+rename from Documentation/sysctl/kernel.rst
+rename to Documentation/admin-guide/sysctl/kernel.rst
+diff --git a/Documentation/sysctl/net.rst b/Documentation/admin-guide/sysctl/net.rst
+similarity index 100%
+rename from Documentation/sysctl/net.rst
+rename to Documentation/admin-guide/sysctl/net.rst
+diff --git a/Documentation/sysctl/sunrpc.rst b/Documentation/admin-guide/sysctl/sunrpc.rst
+similarity index 100%
+rename from Documentation/sysctl/sunrpc.rst
+rename to Documentation/admin-guide/sysctl/sunrpc.rst
+diff --git a/Documentation/sysctl/user.rst b/Documentation/admin-guide/sysctl/user.rst
+similarity index 100%
+rename from Documentation/sysctl/user.rst
+rename to Documentation/admin-guide/sysctl/user.rst
+diff --git a/Documentation/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+similarity index 100%
+rename from Documentation/sysctl/vm.rst
+rename to Documentation/admin-guide/sysctl/vm.rst
+diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+index 1d8e748f909f..c6224d039bcb 100644
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -119,7 +119,7 @@ Kernel Pointers
+ 
+ For printing kernel pointers which should be hidden from unprivileged
+ users. The behaviour of %pK depends on the kptr_restrict sysctl - see
+-Documentation/sysctl/kernel.rst for more details.
++Documentation/admin-guide/sysctl/kernel.rst for more details.
+ 
+ Unmodified Addresses
+ --------------------
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 52ec004a4a8b..be56af8dbb88 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -1479,7 +1479,7 @@ review the kernel documentation in the directory /usr/src/linux/Documentation.
+ This chapter  is  heavily  based  on the documentation included in the pre 2.2
+ kernels, and became part of it in version 2.2.1 of the Linux kernel.
+ 
+-Please see: Documentation/sysctl/ directory for descriptions of these
++Please see: Documentation/admin-guide/sysctl/ directory for descriptions of these
+ entries.
+ 
+ ------------------------------------------------------------------------------
+diff --git a/Documentation/networking/ip-sysctl.txt b/Documentation/networking/ip-sysctl.txt
+index 0f8e1c544e1e..864a5921e9d7 100644
+--- a/Documentation/networking/ip-sysctl.txt
++++ b/Documentation/networking/ip-sysctl.txt
+@@ -2284,7 +2284,7 @@ addr_scope_policy - INTEGER
+ 
+ 
+ /proc/sys/net/core/*
+-	Please see: Documentation/sysctl/net.rst for descriptions of these entries.
++	Please see: Documentation/admin-guide/sysctl/net.rst for descriptions of these entries.
+ 
+ 
+ /proc/sys/net/unix/*
+diff --git a/Documentation/vm/unevictable-lru.rst b/Documentation/vm/unevictable-lru.rst
+index 8ba656f37cd8..109052215bce 100644
+--- a/Documentation/vm/unevictable-lru.rst
++++ b/Documentation/vm/unevictable-lru.rst
+@@ -439,7 +439,7 @@ Compacting MLOCKED Pages
+ 
+ The unevictable LRU can be scanned for compactable regions and the default
+ behavior is to do so.  /proc/sys/vm/compact_unevictable_allowed controls
+-this behavior (see Documentation/sysctl/vm.rst).  Once scanning of the
++this behavior (see Documentation/admin-guide/sysctl/vm.rst).  Once scanning of the
+ unevictable LRU is enabled, the work of compaction is mostly handled by
+ the page migration code and the same work flow as described in MIGRATING
+ MLOCKED PAGES will apply.
+diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+index cba429db95d9..cb5629bd5fff 100644
+--- a/fs/proc/Kconfig
++++ b/fs/proc/Kconfig
+@@ -73,7 +73,7 @@ config PROC_SYSCTL
+ 	  interface is through /proc/sys.  If you say Y here a tree of
+ 	  modifiable sysctl entries will be generated beneath the
+           /proc/sys directory. They are explained in the files
+-	  in <file:Documentation/sysctl/>.  Note that enabling this
++	  in <file:Documentation/admin-guide/sysctl/>.  Note that enabling this
+ 	  option will enlarge the kernel by at least 8 KB.
+ 
+ 	  As it is generally a good thing, you should say Y here unless
+diff --git a/kernel/panic.c b/kernel/panic.c
+index e0ea74bbb41d..057540b6eee9 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -372,7 +372,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+ /**
+  * print_tainted - return a string to represent the kernel taint state.
+  *
+- * For individual taint flag meanings, see Documentation/sysctl/kernel.rst
++ * For individual taint flag meanings, see Documentation/admin-guide/sysctl/kernel.rst
+  *
+  * The string is overwritten by the next call to print_tainted(),
+  * but is always NULL terminated.
+diff --git a/mm/swap.c b/mm/swap.c
+index 83a2a15f4836..ae300397dfda 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -8,7 +8,7 @@
+ /*
+  * This file contains the default values for the operation of the
+  * Linux VM subsystem. Fine-tuning documentation can be found in
+- * Documentation/sysctl/vm.rst.
++ * Documentation/admin-guide/sysctl/vm.rst.
+  * Started 18.12.91
+  * Swap aging added 23.2.95, Stephen Tweedie.
+  * Buffermem limits added 12.3.98, Rik van Riel.
+-- 
+2.21.0
 
-Thanks for your patience!
-
-> >
-> > Also, to be clear, I am onboard with dropping then IRQ stuff for now.
-> > I am fine moving to a mutex for the time being.
-> >
->
-> Ok.
-
-Thanks!
