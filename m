@@ -2,83 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 646D258EA9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 01:42:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9D0B58F1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 02:45:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfF0Xlx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jun 2019 19:41:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57638 "EHLO mail.kernel.org"
+        id S1726633AbfF1ApD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jun 2019 20:45:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbfF0Xlx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jun 2019 19:41:53 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC31F208E3;
-        Thu, 27 Jun 2019 23:41:51 +0000 (UTC)
+        id S1726579AbfF1ApD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Jun 2019 20:45:03 -0400
+Subject: Re: [GIT PULL] AFS fixes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561678912;
-        bh=78SChau8nc/c1cE2Dc8hBwWP8MHlNLa/2/RRRHYTTBo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WY42jKzHRez627ToGgM55/WghYYH2Kd/+jPHX6Bn8WWc+PNCFMvfO8Ms8jKvtvqEq
-         m+4id6Is6WVNgVPDJ4B7svfCYUI4T4NeIIH/uolDIlsQLR8LOqMDxgWesIKgYb1WDj
-         5d/i1PKbaPL+t3T5LyL001tJIEHEXuDdUotEqFh4=
-Date:   Thu, 27 Jun 2019 16:41:50 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, jmorris@namei.org, scottsh@microsoft.com,
-        mpatocka@redhat.com, gmazyland@gmail.com
-Subject: Re: [RFC PATCH v5 1/1] Add dm verity root hash pkcs7 sig validation.
-Message-ID: <20190627234149.GA212823@gmail.com>
-References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
- <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        s=default; t=1561682702;
+        bh=wE0WyHlTV0mNFSx7vHFnmAbdh3OFAI5S95W9IoLnzwQ=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=mmrJ42WJWxkbmjyEzMbJGn/wMGMpym3AHje9aTVOlvqffCPfjQMAYQXaAPV+nHLrs
+         CllDqABAQFb511GeQpfqGPBmTeKoeWA8GFXl0mayjINf8fiJ27SMpftfk9uBM+o8aG
+         bY0d2In+WBppgENCe9lhA2bSzOZvXxzFuPd+TI+o=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <11571.1561556393@warthog.procyon.org.uk>
+References: <11571.1561556393@warthog.procyon.org.uk>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <11571.1561556393@warthog.procyon.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+ tags/afs-fixes-20190620
+X-PR-Tracked-Commit-Id: 2cd42d19cffa0ec3dfb57b1b3e1a07a9bf4ed80a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: cd0f3aaebc5b17e0ccb1b9ef9ae43042d075d767
+Message-Id: <156168270234.1895.4402791272691293668.pr-tracker-bot@kernel.org>
+Date:   Fri, 28 Jun 2019 00:45:02 +0000
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
+        iwienand@redhat.com, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jaskaran, one comment (I haven't reviewed this in detail):
+The pull request you sent on Wed, 26 Jun 2019 14:39:53 +0100:
 
-On Wed, Jun 19, 2019 at 12:10:48PM -0700, Jaskaran Khurana wrote:
-> diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-> index db269a348b20..2d658a3512cb 100644
-> --- a/drivers/md/Kconfig
-> +++ b/drivers/md/Kconfig
-> @@ -475,6 +475,7 @@ config DM_VERITY
->  	select CRYPTO
->  	select CRYPTO_HASH
->  	select DM_BUFIO
-> +	select SYSTEM_DATA_VERIFICATION
->  	---help---
->  	  This device-mapper target creates a read-only device that
->  	  transparently validates the data on one underlying device against
-> diff --git a/drivers/md/Makefile b/drivers/md/Makefile
-> index be7a6eb92abc..3b47b256b15e 100644
-> --- a/drivers/md/Makefile
-> +++ b/drivers/md/Makefile
-> @@ -18,7 +18,7 @@ dm-cache-y	+= dm-cache-target.o dm-cache-metadata.o dm-cache-policy.o \
->  		    dm-cache-background-tracker.o
->  dm-cache-smq-y   += dm-cache-policy-smq.o
->  dm-era-y	+= dm-era-target.o
-> -dm-verity-y	+= dm-verity-target.o
-> +dm-verity-y	+= dm-verity-target.o dm-verity-verify-sig.o
->  md-mod-y	+= md.o md-bitmap.o
->  raid456-y	+= raid5.o raid5-cache.o raid5-ppl.o
->  dm-zoned-y	+= dm-zoned-target.o dm-zoned-metadata.o dm-zoned-reclaim.o
+> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/afs-fixes-20190620
 
-Perhaps this should be made optional and controlled by a kconfig option
-CONFIG_DM_VERITY_SIGNATURE_VERIFICATION, similar to CONFIG_DM_VERITY_FEC?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/cd0f3aaebc5b17e0ccb1b9ef9ae43042d075d767
 
-CONFIG_SYSTEM_DATA_VERIFICATION brings in a lot of stuff, which might be
-unnecessary for some dm-verity users.  Also, you've already separated most of
-the code out into a separate .c file anyway.
+Thank you!
 
-- Eric
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
