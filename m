@@ -2,288 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35DFB59B76
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 14:33:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E41159CCC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 15:17:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbfF1MdM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 08:33:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39142 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbfF1Maj (ORCPT
+        id S1726697AbfF1NQ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 09:16:58 -0400
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:54792 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbfF1NQ6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:30:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3ry7BGeUhbdGjpQJZXLesZqx/UmqvudYXOpe/+NOUR4=; b=NQYhsg72RkwnggkwR1TJkacwmw
-        xL+F2DTw1S1ZaEUesrflgBBusDSY2hNSMu2Bjwhqw4GOsJl7MHoAlVvHOQxN+VbtZWQjpeNYDiqyc
-        P3IC/j057OcK3cYdLODD3Qgmqx0gFr2UXBTuCWUiRgtx0NpAJFXeUVF0xWuRAoA9e7D5wzYp8JE69
-        C4vJM6AclxjshJQM19T80O4eTKO9jEAMQTsB4aamOwyKIjTg+tGEmu+gFEJ97hWepoYH14IsUKih1
-        LF5ds28zkemmgARkGfHpZ3y3XV9vhLj3tlRD30jnIeQp55lc0WJJQboo0Cu6+aLop7p5GdZGHJNc7
-        NgXEUVPg==;
-Received: from [186.213.242.156] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgq1U-00055F-9X; Fri, 28 Jun 2019 12:30:36 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hgq1S-0005SC-Bj; Fri, 28 Jun 2019 09:30:34 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH 16/39] docs: admin-guide: move sysctl directory to it
-Date:   Fri, 28 Jun 2019 09:30:09 -0300
-Message-Id: <22023257e9679c18eb6a25052e4c233a12e687da.1561724493.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
-References: <cover.1561724493.git.mchehab+samsung@kernel.org>
+        Fri, 28 Jun 2019 09:16:58 -0400
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id BECDAD0006F;
+        Fri, 28 Jun 2019 15:17:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1561727823;
+        bh=4QpdD3Fv+j/DUToNpr9bdvINCY1lm/nwotSarRRnLoo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=V4oH5XMUGscMi8Gq1v5kREK8lTOsGXMNBJTpC+fp5yU/eKSBiSb1w/b9EhX95Jktz
+         23y4Ybyo+tnUbieYEDaGeYUlNE1cHJ6RJtZA3MPIpycNccHkUiBXMBanxf2uAAHmJh
+         Ft7/MNqWnvCVcuWJXvjzRin9RRW2xBP5gPWF9Yt/dfXGtYhG/ut4j7KHBwST+N6T9t
+         owuJLIZt1jkyJ3osKMCyBGjh9DKTRFVkcm1jdz3BA4PyPUp4bUoD1GIffCvvgBdkd6
+         wbBdiaGoCggKhAHyhC1FygajiYABF0pYSEW8ruWL6BWs/IF2x3k95+enXclwpBtyxP
+         oOEynOlKBS30Q==
+Subject: Re: [PATCH bpf-next v9 05/10] bpf,landlock: Add a new map type: inode
+To:     Al Viro <viro@zeniv.linux.org.uk>
+CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        <linux-kernel@vger.kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>,
+        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>
+References: <20190625215239.11136-1-mic@digikod.net>
+ <20190625215239.11136-6-mic@digikod.net>
+ <20190625225201.GJ17978@ZenIV.linux.org.uk>
+ <79bac827-4092-8a4d-9dc6-6019419b2486@ssi.gouv.fr>
+ <20190627165640.GQ17978@ZenIV.linux.org.uk>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <9dbe8d9c-d7a7-5bf2-dda2-7dd72c44be2d@ssi.gouv.fr>
+Date:   Fri, 28 Jun 2019 15:17:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190627165640.GQ17978@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The stuff under sysctl describes /sys interface from userspace
-point of view. So, add it to the admin-guide and remove the
-:orphan: from its index file.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- CREDITS                                           | 2 +-
- Documentation/admin-guide/index.rst               | 1 +
- Documentation/admin-guide/kernel-parameters.txt   | 2 +-
- Documentation/admin-guide/mm/index.rst            | 2 +-
- Documentation/admin-guide/mm/ksm.rst              | 2 +-
- Documentation/{ => admin-guide}/sysctl/abi.rst    | 0
- Documentation/{ => admin-guide}/sysctl/fs.rst     | 0
- Documentation/{ => admin-guide}/sysctl/index.rst  | 2 --
- Documentation/{ => admin-guide}/sysctl/kernel.rst | 0
- Documentation/{ => admin-guide}/sysctl/net.rst    | 0
- Documentation/{ => admin-guide}/sysctl/sunrpc.rst | 0
- Documentation/{ => admin-guide}/sysctl/user.rst   | 0
- Documentation/{ => admin-guide}/sysctl/vm.rst     | 0
- Documentation/core-api/printk-formats.rst         | 2 +-
- Documentation/filesystems/proc.txt                | 2 +-
- Documentation/networking/ip-sysctl.txt            | 2 +-
- Documentation/vm/unevictable-lru.rst              | 2 +-
- fs/proc/Kconfig                                   | 2 +-
- kernel/panic.c                                    | 2 +-
- mm/swap.c                                         | 2 +-
- 20 files changed, 12 insertions(+), 13 deletions(-)
- rename Documentation/{ => admin-guide}/sysctl/abi.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/fs.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/index.rst (99%)
- rename Documentation/{ => admin-guide}/sysctl/kernel.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/net.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/sunrpc.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/user.rst (100%)
- rename Documentation/{ => admin-guide}/sysctl/vm.rst (100%)
 
-diff --git a/CREDITS b/CREDITS
-index beac0c81d081..401c5092bbf9 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -3120,7 +3120,7 @@ S: France
- N: Rik van Riel
- E: riel@redhat.com
- W: http://www.surriel.com/
--D: Linux-MM site, Documentation/sysctl/*, swap/mm readaround
-+D: Linux-MM site, Documentation/admin-guide/sysctl/*, swap/mm readaround
- D: kswapd fixes, random kernel hacker, rmap VM,
- D: nl.linux.org administrator, minor scheduler additions
- S: Red Hat Boston
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index e0763c51b024..acd0efa46e9d 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -16,6 +16,7 @@ etc.
-    README
-    kernel-parameters
-    devices
-+   sysctl/index
- 
- This section describes CPU vulnerabilities and their mitigations.
- 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index b2007fb4daf0..a3d3da5baacb 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3170,7 +3170,7 @@
- 	numa_zonelist_order= [KNL, BOOT] Select zonelist order for NUMA.
- 			'node', 'default' can be specified
- 			This can be set from sysctl after boot.
--			See Documentation/sysctl/vm.rst for details.
-+			See Documentation/admin-guide/sysctl/vm.rst for details.
- 
- 	ohci1394_dma=early	[HW] enable debugging via the ohci1394 driver.
- 			See Documentation/debugging-via-ohci1394.txt for more
-diff --git a/Documentation/admin-guide/mm/index.rst b/Documentation/admin-guide/mm/index.rst
-index f5e92f33f96e..5f61a6c429e0 100644
---- a/Documentation/admin-guide/mm/index.rst
-+++ b/Documentation/admin-guide/mm/index.rst
-@@ -11,7 +11,7 @@ processes address space and many other cool things.
- Linux memory management is a complex system with many configurable
- settings. Most of these settings are available via ``/proc``
- filesystem and can be quired and adjusted using ``sysctl``. These APIs
--are described in Documentation/sysctl/vm.rst and in `man 5 proc`_.
-+are described in Documentation/admin-guide/sysctl/vm.rst and in `man 5 proc`_.
- 
- .. _man 5 proc: http://man7.org/linux/man-pages/man5/proc.5.html
- 
-diff --git a/Documentation/admin-guide/mm/ksm.rst b/Documentation/admin-guide/mm/ksm.rst
-index 7b2b8767c0b4..874eb0c77d34 100644
---- a/Documentation/admin-guide/mm/ksm.rst
-+++ b/Documentation/admin-guide/mm/ksm.rst
-@@ -59,7 +59,7 @@ MADV_UNMERGEABLE is applied to a range which was never MADV_MERGEABLE.
- 
- If a region of memory must be split into at least one new MADV_MERGEABLE
- or MADV_UNMERGEABLE region, the madvise may return ENOMEM if the process
--will exceed ``vm.max_map_count`` (see Documentation/sysctl/vm.rst).
-+will exceed ``vm.max_map_count`` (see Documentation/admin-guide/sysctl/vm.rst).
- 
- Like other madvise calls, they are intended for use on mapped areas of
- the user address space: they will report ENOMEM if the specified range
-diff --git a/Documentation/sysctl/abi.rst b/Documentation/admin-guide/sysctl/abi.rst
-similarity index 100%
-rename from Documentation/sysctl/abi.rst
-rename to Documentation/admin-guide/sysctl/abi.rst
-diff --git a/Documentation/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
-similarity index 100%
-rename from Documentation/sysctl/fs.rst
-rename to Documentation/admin-guide/sysctl/fs.rst
-diff --git a/Documentation/sysctl/index.rst b/Documentation/admin-guide/sysctl/index.rst
-similarity index 99%
-rename from Documentation/sysctl/index.rst
-rename to Documentation/admin-guide/sysctl/index.rst
-index efbcde8c1c9c..03346f98c7b9 100644
---- a/Documentation/sysctl/index.rst
-+++ b/Documentation/admin-guide/sysctl/index.rst
-@@ -1,5 +1,3 @@
--:orphan:
--
- ===========================
- Documentation for /proc/sys
- ===========================
-diff --git a/Documentation/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-similarity index 100%
-rename from Documentation/sysctl/kernel.rst
-rename to Documentation/admin-guide/sysctl/kernel.rst
-diff --git a/Documentation/sysctl/net.rst b/Documentation/admin-guide/sysctl/net.rst
-similarity index 100%
-rename from Documentation/sysctl/net.rst
-rename to Documentation/admin-guide/sysctl/net.rst
-diff --git a/Documentation/sysctl/sunrpc.rst b/Documentation/admin-guide/sysctl/sunrpc.rst
-similarity index 100%
-rename from Documentation/sysctl/sunrpc.rst
-rename to Documentation/admin-guide/sysctl/sunrpc.rst
-diff --git a/Documentation/sysctl/user.rst b/Documentation/admin-guide/sysctl/user.rst
-similarity index 100%
-rename from Documentation/sysctl/user.rst
-rename to Documentation/admin-guide/sysctl/user.rst
-diff --git a/Documentation/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-similarity index 100%
-rename from Documentation/sysctl/vm.rst
-rename to Documentation/admin-guide/sysctl/vm.rst
-diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-index 1d8e748f909f..c6224d039bcb 100644
---- a/Documentation/core-api/printk-formats.rst
-+++ b/Documentation/core-api/printk-formats.rst
-@@ -119,7 +119,7 @@ Kernel Pointers
- 
- For printing kernel pointers which should be hidden from unprivileged
- users. The behaviour of %pK depends on the kptr_restrict sysctl - see
--Documentation/sysctl/kernel.rst for more details.
-+Documentation/admin-guide/sysctl/kernel.rst for more details.
- 
- Unmodified Addresses
- --------------------
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index 52ec004a4a8b..be56af8dbb88 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -1479,7 +1479,7 @@ review the kernel documentation in the directory /usr/src/linux/Documentation.
- This chapter  is  heavily  based  on the documentation included in the pre 2.2
- kernels, and became part of it in version 2.2.1 of the Linux kernel.
- 
--Please see: Documentation/sysctl/ directory for descriptions of these
-+Please see: Documentation/admin-guide/sysctl/ directory for descriptions of these
- entries.
- 
- ------------------------------------------------------------------------------
-diff --git a/Documentation/networking/ip-sysctl.txt b/Documentation/networking/ip-sysctl.txt
-index 0f8e1c544e1e..864a5921e9d7 100644
---- a/Documentation/networking/ip-sysctl.txt
-+++ b/Documentation/networking/ip-sysctl.txt
-@@ -2284,7 +2284,7 @@ addr_scope_policy - INTEGER
- 
- 
- /proc/sys/net/core/*
--	Please see: Documentation/sysctl/net.rst for descriptions of these entries.
-+	Please see: Documentation/admin-guide/sysctl/net.rst for descriptions of these entries.
- 
- 
- /proc/sys/net/unix/*
-diff --git a/Documentation/vm/unevictable-lru.rst b/Documentation/vm/unevictable-lru.rst
-index 8ba656f37cd8..109052215bce 100644
---- a/Documentation/vm/unevictable-lru.rst
-+++ b/Documentation/vm/unevictable-lru.rst
-@@ -439,7 +439,7 @@ Compacting MLOCKED Pages
- 
- The unevictable LRU can be scanned for compactable regions and the default
- behavior is to do so.  /proc/sys/vm/compact_unevictable_allowed controls
--this behavior (see Documentation/sysctl/vm.rst).  Once scanning of the
-+this behavior (see Documentation/admin-guide/sysctl/vm.rst).  Once scanning of the
- unevictable LRU is enabled, the work of compaction is mostly handled by
- the page migration code and the same work flow as described in MIGRATING
- MLOCKED PAGES will apply.
-diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-index cba429db95d9..cb5629bd5fff 100644
---- a/fs/proc/Kconfig
-+++ b/fs/proc/Kconfig
-@@ -73,7 +73,7 @@ config PROC_SYSCTL
- 	  interface is through /proc/sys.  If you say Y here a tree of
- 	  modifiable sysctl entries will be generated beneath the
-           /proc/sys directory. They are explained in the files
--	  in <file:Documentation/sysctl/>.  Note that enabling this
-+	  in <file:Documentation/admin-guide/sysctl/>.  Note that enabling this
- 	  option will enlarge the kernel by at least 8 KB.
- 
- 	  As it is generally a good thing, you should say Y here unless
-diff --git a/kernel/panic.c b/kernel/panic.c
-index e0ea74bbb41d..057540b6eee9 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -372,7 +372,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
- /**
-  * print_tainted - return a string to represent the kernel taint state.
-  *
-- * For individual taint flag meanings, see Documentation/sysctl/kernel.rst
-+ * For individual taint flag meanings, see Documentation/admin-guide/sysctl/kernel.rst
-  *
-  * The string is overwritten by the next call to print_tainted(),
-  * but is always NULL terminated.
-diff --git a/mm/swap.c b/mm/swap.c
-index 83a2a15f4836..ae300397dfda 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -8,7 +8,7 @@
- /*
-  * This file contains the default values for the operation of the
-  * Linux VM subsystem. Fine-tuning documentation can be found in
-- * Documentation/sysctl/vm.rst.
-+ * Documentation/admin-guide/sysctl/vm.rst.
-  * Started 18.12.91
-  * Swap aging added 23.2.95, Stephen Tweedie.
-  * Buffermem limits added 12.3.98, Rik van Riel.
--- 
-2.21.0
+On 27/06/2019 18:56, Al Viro wrote:
+> On Thu, Jun 27, 2019 at 06:18:12PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+>
+>>>> +/* called from syscall */
+>>>> +static int sys_inode_map_delete_elem(struct bpf_map *map, struct inod=
+e *key)
+>>>> +{
+>>>> +    struct inode_array *array =3D container_of(map, struct inode_arra=
+y, map);
+>>>> +    struct inode *inode;
+>>>> +    int i;
+>>>> +
+>>>> +    WARN_ON_ONCE(!rcu_read_lock_held());
+>>>> +    for (i =3D 0; i < array->map.max_entries; i++) {
+>>>> +            if (array->elems[i].inode =3D=3D key) {
+>>>> +                    inode =3D xchg(&array->elems[i].inode, NULL);
+>>>> +                    array->nb_entries--;
+>>>
+>>> Umm...  Is that intended to be atomic in any sense?
+>>
+>> nb_entries is not used as a bound check but to avoid walking uselessly
+>> through the (pre-allocated) array when adding a new element, but I'll
+>> use an atomic to avoid inconsistencies anyway.
+>
+>
+>>> Wait a sec...  So we have those beasties that can have long-term
+>>> references to arbitrary inodes stuck in them?  What will happen
+>>> if you get umount(2) called while such a thing exists?
+>>
+>> I though an umount would be denied but no, we get a self-destructed busy
+>> inode and a bug!
+>> What about wrapping the inode's superblock->s_op->destroy_inode() to
+>> first remove the element from the map and then call the real
+>> destroy_inode(), if any?
+>
+> What do you mean, _the_ map?  I don't see anything to prevent insertion
+> of references to the same inode into any number of those...
 
+Indeed, the current design needs to check for duplicate inode references
+to avoid unused entries (until a reference is removed). I was planning
+to use an rbtree but I'm working on using a hash table instead (cf.
+bpf/hashtab.c), which will solve the issue anyway.
+
+>
+>> Or I could update fs/inode.c:destroy_inode() to call inode->free_inode()
+>> if it is set, and set it when such inode is referenced by a map?
+>> Or maybe I could hold the referencing file in the map and then wrap its
+>> f_op?
+>
+> First of all, anything including the word "wrap" is a non-starter.
+> We really don't need the headache associated with the locking needed
+> to replace the method tables on the fly, or with the code checking that
+> ->f_op points to given method table, etc.  That's not going to fly,
+> especially since you'd end up _chaining_ those (again, the same reference
+> can go in more than once).
+>
+> Nothing is allowed to change the method tables of live objects, period.
+> Once a struct file is opened, its ->f_op is never going to change and
+> it entirely belongs to the device driver or filesystem it resides on.
+> Nothing else (not VFS, not VM, not some LSM module, etc.) has any busines=
+s
+> touching that.  The same goes for inodes, dentries, etc.
+>
+> What kind of behaviour do you want there?  Do you want the inodes you've
+> referenced there to be forgotten on e.g. memory pressure?  The thing is,
+> I don't see how "it's getting freed" could map onto any semantics that
+> might be useful for you - it looks like the wrong event for that.
+
+At least, I would like to be able to compare an inode with the reference
+one if this reference may be accessible somewhere on the system. Being
+able to keep the inode reference as long as its superblock is alive
+seems to solve the problem. This enable for example to compare inodes
+from two bind mounts of the same file system even if one mount point is
+unmounted.
+
+Storing and using the device ID and the inode number bring a new problem
+when an inode is removed and when its number is recycled. However, if I
+can be notified when such an inode is removed (preferably without using
+an LSM hook) and if I can know when the backing device go out of the
+scope of the (live) system (e.g. hot unplugging an USB drive), this
+should solve the problem and also enable to keep a reference to an inode
+as long as possible without any dangling pointer nor wrapper.
+
+
+--
+Micka=C3=ABl Sala=C3=BCn
+ANSSI/SDE/ST/LAM
+
+Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
+es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
+=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
+nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
+=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
+tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
+acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
+eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
+t de d=C3=A9truire le message. The personal data collected and processed du=
+ring this exchange aims solely at completing a business relationship and is=
+ limited to the necessary duration of that relationship. If you wish to use=
+ your rights of consultation, rectification and deletion of your data, plea=
+se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
+n error, we thank you for informing the sender and destroying the message.
