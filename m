@@ -2,75 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B67E59E5E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 17:03:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9AD759EF0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 17:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfF1PDw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 11:03:52 -0400
-Received: from mail.parknet.co.jp ([210.171.160.6]:53002 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbfF1PDw (ORCPT
+        id S1726811AbfF1Pca (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 11:32:30 -0400
+Received: from a9-30.smtp-out.amazonses.com ([54.240.9.30]:45750 "EHLO
+        a9-30.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726686AbfF1Pc3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:03:52 -0400
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 0412D7C8;
-        Sat, 29 Jun 2019 00:03:51 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SF3nPq031179
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Sat, 29 Jun 2019 00:03:50 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SF3n8r014176
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Sat, 29 Jun 2019 00:03:49 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id x5SF3kNS014175;
-        Sat, 29 Jun 2019 00:03:46 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fat: Add nobarrier to workaround the strange behavior of device
-References: <871rzdrdxw.fsf@mail.parknet.co.jp>
-        <20190628143216.GA538@infradead.org>
-Date:   Sat, 29 Jun 2019 00:03:46 +0900
-In-Reply-To: <20190628143216.GA538@infradead.org> (Christoph Hellwig's message
-        of "Fri, 28 Jun 2019 07:32:16 -0700")
-Message-ID: <87pnmxpx9p.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        Fri, 28 Jun 2019 11:32:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1561735948;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=AS0whl/EcrrVIjGmsUBB1P/c2zpIOxnuhHXncVKXZDs=;
+        b=SPfGmsXFLQEBn6h5ufA7w1jky3/Rc5RZWDgWNaiTM/EHlEN3OYChoYEFopmh0TVK
+        CsfQ0V2VNWhAZKX5OVGAkkAuAJkc9V4P1tYZ2E+eFutc3svPaXxXsz0EOpjrjpx2KYK
+        te37a4g49qMNkC2/MEGlyyhGG40MgUxZQUWAqOFo=
+Date:   Fri, 28 Jun 2019 15:32:28 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Roman Gushchin <guro@fb.com>
+cc:     Waiman Long <longman@redhat.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [PATCH 2/2] mm, slab: Extend vm/drop_caches to shrink kmem
+ slabs
+In-Reply-To: <20190627212419.GA25233@tower.DHCP.thefacebook.com>
+Message-ID: <0100016b9eb7685e-0a5ab625-abb4-4e79-ab86-07744b1e4c3a-000000@email.amazonses.com>
+References: <20190624174219.25513-1-longman@redhat.com> <20190624174219.25513-3-longman@redhat.com> <20190626201900.GC24698@tower.DHCP.thefacebook.com> <063752b2-4f1a-d198-36e7-3e642d4fcf19@redhat.com> <20190627212419.GA25233@tower.DHCP.thefacebook.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2019.06.28-54.240.9.30
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> writes:
+On Thu, 27 Jun 2019, Roman Gushchin wrote:
 
-> On Fri, Jun 28, 2019 at 11:18:19PM +0900, OGAWA Hirofumi wrote:
->> To workaround those devices and provide flexibility, this adds
->> "barrier"/"nobarrier" mount options to fat driver.
+> so that objects belonging to different memory cgroups can share the same page
+> and kmem_caches.
 >
-> We have deprecated these rather misnamed options, and now instead allow
-> tweaking the 'cache_type' attribute on the SCSI device.
+> It's a fairly big change though.
 
-I see, sounds like good though. Does it work for all stable versions?
-Can it disable only flush command without other effect? And it would be
-better to be normal user controllable easily.
+Could this be done at another level? Put a cgoup pointer into the
+corresponding structures and then go back to just a single kmen_cache for
+the system as a whole? You can still account them per cgroup and there
+will be no cleanup problem anymore. You could scan through a slab cache
+to remove the objects of a certain cgroup and then the fragmentation
+problem that cgroups create here will be handled by the slab allocators in
+the traditional way. The duplication of the kmem_cache was not designed
+into the allocators but bolted on later.
 
-This happened on normal user's calibre app that mount via udisks.  With
-this option, user can workaround with /etc/fstab for immediate users.
-
-> That being said if the device behave this buggy you should also report
-> it to to the usb-storage and scsi maintainers so that we can add a
-> quirk for it.
-
-It might not be able to say as buggy simply. The device looks work if no
-idle and not hit pattern of usage, so quirk can be overkill.
-
-Anyway, I don't have the device, if you can get the device and
-investigate, it can be fine.
-
-Thanks.
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
