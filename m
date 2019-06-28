@@ -2,57 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82C2C59DCB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 16:32:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B67E59E5E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 17:03:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbfF1OcS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 10:32:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44652 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfF1OcS (ORCPT
+        id S1726796AbfF1PDw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 11:03:52 -0400
+Received: from mail.parknet.co.jp ([210.171.160.6]:53002 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726616AbfF1PDw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 10:32:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=z59db2q7R3Qs4jp6ksud3JOvoxe9K7xlif6grC7p/kQ=; b=lTxr/EJA0YdHAqSEH5qzLBFLP
-        42jOlBpT1JbuRG1wvwBpQ1qa/LBkUgDyp0fRyqB8o7sd7EqPfyrEM0WLXHygnty5VH2cmYV4+Z92O
-        OYS5NAee8o2LgdZkFFeLtBEtyCczqi8Fj3ouPyTEnoTX2bkEL6xOByS5DFV8wulLt5WOrzz80KPoY
-        1Fr240ld04fT4A1O5Cn6HNomln9tUVmVtT72MgirYml/jWFeYldqHdU4lDRP08MP1MTpPnhJRZYwI
-        6N/HeiuZdzewgesoTQVrYFRrSG8hpRrPB0WsPnGngrIvd9FKAaAYRV8SJCfUIywKaotBoJbImlXaQ
-        IKQmfjCwg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hgrvE-0001us-LS; Fri, 28 Jun 2019 14:32:16 +0000
-Date:   Fri, 28 Jun 2019 07:32:16 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+        Fri, 28 Jun 2019 11:03:52 -0400
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id 0412D7C8;
+        Sat, 29 Jun 2019 00:03:51 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SF3nPq031179
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Sat, 29 Jun 2019 00:03:50 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id x5SF3n8r014176
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Sat, 29 Jun 2019 00:03:49 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id x5SF3kNS014175;
+        Sat, 29 Jun 2019 00:03:46 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fat: Add nobarrier to workaround the strange behavior of
- device
-Message-ID: <20190628143216.GA538@infradead.org>
+Subject: Re: [PATCH] fat: Add nobarrier to workaround the strange behavior of device
 References: <871rzdrdxw.fsf@mail.parknet.co.jp>
+        <20190628143216.GA538@infradead.org>
+Date:   Sat, 29 Jun 2019 00:03:46 +0900
+In-Reply-To: <20190628143216.GA538@infradead.org> (Christoph Hellwig's message
+        of "Fri, 28 Jun 2019 07:32:16 -0700")
+Message-ID: <87pnmxpx9p.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871rzdrdxw.fsf@mail.parknet.co.jp>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 11:18:19PM +0900, OGAWA Hirofumi wrote:
-> To workaround those devices and provide flexibility, this adds
-> "barrier"/"nobarrier" mount options to fat driver.
+Christoph Hellwig <hch@infradead.org> writes:
 
-We have deprecated these rather misnamed options, and now instead allow
-tweaking the 'cache_type' attribute on the SCSI device.
+> On Fri, Jun 28, 2019 at 11:18:19PM +0900, OGAWA Hirofumi wrote:
+>> To workaround those devices and provide flexibility, this adds
+>> "barrier"/"nobarrier" mount options to fat driver.
+>
+> We have deprecated these rather misnamed options, and now instead allow
+> tweaking the 'cache_type' attribute on the SCSI device.
 
-That being said if the device behave this buggy you should also report
-it to to the usb-storage and scsi maintainers so that we can add a
-quirk for it.
+I see, sounds like good though. Does it work for all stable versions?
+Can it disable only flush command without other effect? And it would be
+better to be normal user controllable easily.
+
+This happened on normal user's calibre app that mount via udisks.  With
+this option, user can workaround with /etc/fstab for immediate users.
+
+> That being said if the device behave this buggy you should also report
+> it to to the usb-storage and scsi maintainers so that we can add a
+> quirk for it.
+
+It might not be able to say as buggy simply. The device looks work if no
+idle and not hit pattern of usage, so quirk can be overkill.
+
+Anyway, I don't have the device, if you can get the device and
+investigate, it can be fine.
+
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
