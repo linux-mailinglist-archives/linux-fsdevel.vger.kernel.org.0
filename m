@@ -2,103 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F263658FF2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 03:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6744859157
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 04:41:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfF1BwE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jun 2019 21:52:04 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:54352 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbfF1BwD (ORCPT
+        id S1727043AbfF1Cju (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jun 2019 22:39:50 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34499 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbfF1Cju (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jun 2019 21:52:03 -0400
-Received: by linux.microsoft.com (Postfix, from userid 1029)
-        id F37CB20B719F; Thu, 27 Jun 2019 18:52:02 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by linux.microsoft.com (Postfix) with ESMTP id EAF7C30056D6;
-        Thu, 27 Jun 2019 18:52:02 -0700 (PDT)
-Date:   Thu, 27 Jun 2019 18:52:02 -0700 (PDT)
-From:   Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
-X-X-Sender: jaskarankhurana@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net
-To:     Milan Broz <gmazyland@gmail.com>
-cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, jmorris@namei.org, scottsh@microsoft.com,
-        ebiggers@google.com, mpatocka@redhat.com
-Subject: Re: [RFC PATCH v5 1/1] Add dm verity root hash pkcs7 sig
- validation.
-In-Reply-To: <568f2532-e46b-5ac7-4fc5-c96983702f2d@gmail.com>
-Message-ID: <alpine.LRH.2.21.1906271850280.22562@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
-References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com> <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com> <568f2532-e46b-5ac7-4fc5-c96983702f2d@gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Thu, 27 Jun 2019 22:39:50 -0400
+Received: by mail-ot1-f68.google.com with SMTP id n5so4500492otk.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2019 19:39:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i+w5fn2Y32/L39vIbDWdR2CfVz49VqoI4F4CB/r+uKs=;
+        b=2BroReMxSyl7fumvZHFYCsXog9so/PwacI6uZo45fszzwoTUhDjTDVIC3dmDgkvhjI
+         1vPIrM+hSnKeAwrkzbGzAjTEPTTgmqOwCVSZQUdIDrvAxKA2cMV8Dr6GunOjfoKKRYiR
+         i8n913ea5p94gaxe2NpjIpJwUJ2qhzkQ+wHLtf//YGUdDQeqhjuL7sHzp6EjAr//ec01
+         XTKGHBCDcdPjUSb8oFPiQDfaUdsVI1ufjKYoVyP6pZsvPych6kooqkVWEaGAH73GpfeW
+         Q64A9UAnw0STfqhTNC283nlq9ZOnnmCyzDAjw3roZzNRDyNGYbLpCBliRHdGmg3LI7kY
+         Wv/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i+w5fn2Y32/L39vIbDWdR2CfVz49VqoI4F4CB/r+uKs=;
+        b=WzdczL+GuOlB+SbGJhv3j56qalECMEVt5v/koN9mqBjy5DF/a5POU3FefYb+/wX2i/
+         mwC/bUuQDgsN//UGMRfQMGg/IGafpCwgcKX1jnUfgDHDvTpGRdByJoL5XAh910r3FDBw
+         LhuDg03Wjnr57afdTr9AFc2VSeC+yk/6j4pP4X/N8dEkuTqJ21MtlAJKMl6tXtaeUgih
+         ZQKZC3lG0+UCiSuIAry4DgNxFVNwEfxvyAoH9FanRBIzNrohjmTNxVOKeGkzHIlXblAG
+         I4w1yVHO6/gkS9pIaXL/mjCO38peB8/MrtByl0Wri5KsExv/h6Z+gN/n+PH8E0W1/6Kp
+         pXxA==
+X-Gm-Message-State: APjAAAV/v6AQ35xv+3BI4l3z+4l7sHA8qvbA26h0UifSekuIvrxVoRYH
+        usZS/xJLXqT0I2FJ3lUxUYdCvV8Iw6tfvFiLDMWIIA==
+X-Google-Smtp-Source: APXvYqwSf5cu88/vylJhhX2x15ji/SfzGkHLqjJ94ZW0+LXDsKMlI1/GoQT5qpbwxtU93udva3CYg32AyPTcsoNMv3U=
+X-Received: by 2002:a9d:7b48:: with SMTP id f8mr5967248oto.207.1561689589382;
+ Thu, 27 Jun 2019 19:39:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+References: <156159454541.2964018.7466991316059381921.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190627123415.GA4286@bombadil.infradead.org> <CAPcyv4jQP-SFJGor-Q3VCRQ0xwt3MuVpH2qHx2wzyRA88DGQww@mail.gmail.com>
+ <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
+ <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
+ <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com> <20190627195948.GB4286@bombadil.infradead.org>
+In-Reply-To: <20190627195948.GB4286@bombadil.infradead.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 27 Jun 2019 19:39:37 -0700
+Message-ID: <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
+Subject: Re: [PATCH] filesystem-dax: Disable PMD support
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>, Jan Kara <jack@suse.cz>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Jun 27, 2019 at 12:59 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Jun 27, 2019 at 12:09:29PM -0700, Dan Williams wrote:
+> > > This bug feels like we failed to unlock, or unlocked the wrong entry
+> > > and this hunk in the bisected commit looks suspect to me. Why do we
+> > > still need to drop the lock now that the radix_tree_preload() calls
+> > > are gone?
+> >
+> > Nevermind, unmapp_mapping_pages() takes a sleeping lock, but then I
+> > wonder why we don't restart the lookup like the old implementation.
+>
+> We have the entry locked:
+>
+>                 /*
+>                  * Make sure 'entry' remains valid while we drop
+>                  * the i_pages lock.
+>                  */
+>                 dax_lock_entry(xas, entry);
+>
+>                 /*
+>                  * Besides huge zero pages the only other thing that gets
+>                  * downgraded are empty entries which don't need to be
+>                  * unmapped.
+>                  */
+>                 if (dax_is_zero_entry(entry)) {
+>                         xas_unlock_irq(xas);
+>                         unmap_mapping_pages(mapping,
+>                                         xas->xa_index & ~PG_PMD_COLOUR,
+>                                         PG_PMD_NR, false);
+>                         xas_reset(xas);
+>                         xas_lock_irq(xas);
+>                 }
+>
+> If something can remove a locked entry, then that would seem like the
+> real bug.  Might be worth inserting a lookup there to make sure that it
+> hasn't happened, I suppose?
 
+Nope, added a check, we do in fact get the same locked entry back
+after dropping the lock.
 
-On Thu, 27 Jun 2019, Milan Broz wrote:
+The deadlock revolves around the mmap_sem. One thread holds it for
+read and then gets stuck indefinitely in get_unlocked_entry(). Once
+that happens another rocksdb thread tries to mmap and gets stuck
+trying to take the mmap_sem for write. Then all new readers, including
+ps and top that try to access a remote vma, then get queued behind
+that write.
 
-> Hi,
->
-> I tried to test test the patch, two comments below.
->
-> On 19/06/2019 21:10, Jaskaran Khurana wrote:
->> The verification is to support cases where the roothash is not secured by
->> Trusted Boot, UEFI Secureboot or similar technologies.
->> One of the use cases for this is for dm-verity volumes mounted after boot,
->> the root hash provided during the creation of the dm-verity volume has to
->> be secure and thus in-kernel validation implemented here will be used
->> before we trust the root hash and allow the block device to be created.
->>
->> The signature being provided for verification must verify the root hash and
->> must be trusted by the builtin keyring for verification to succeed.
->>
->> The hash is added as a key of type "user" and the description is passed to
->> the kernel so it can look it up and use it for verification.
->>
->> Kernel commandline parameter will indicate whether to check (only if
->> specified) or force (for all dm verity volumes) roothash signature
->> verification.
->>
->> Kernel commandline: dm_verity.verify_sig=1 or 2 for check/force root hash
->> signature validation respectively.
->
-> 1) I think the switch should be just boolean - enforce signatures for all dm-verity targets
-> (with default to false/off).
->
-> The rest should be handled by simple logic - if the root_hash_sig_key_desc option
-> is specified, the signature MUST be validated in the constructor, all errors should cause
-> failure (bad reference in keyring, bad signature, etc).
->
-> (Now it ignores for example bad reference to the keyring, this is quite misleading.)
->
-> If a user wants to activate a dm-verity device without a signature, just remove
-> optional argument referencing the signature.
-> (This is not possible with dm_verity.verify_sig set to true/on.)
->
->
-> 2) All DM targets must provide the same mapping table status ("dmsetup table"
-> command) as initially configured.
-> The output of the command should be directly usable as mapping table constructor.
->
-> Your patch is missing that part, I tried to fix it, add-on patch is here
-> https://git.kernel.org/pub/scm/linux/kernel/git/mbroz/linux.git/commit/?h=dm-cryptsetup&id=a26c10806f5257e255b6a436713127e762935ad3
-> (feel free to fold it in your patch)
->
->
-> Thanks,
-> Milan
->
-Hello Milan,
-
-Thanks for testing and reviewing this. I will take care of the above 
-comments change it to a boolean and for the second point merge the add-on 
-patch that you shared.
-
-Regards,
-Jaskaran
+It could also be the case that we're missing a wake up.
