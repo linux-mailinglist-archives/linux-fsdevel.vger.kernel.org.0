@@ -2,93 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 448BD5A626
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 23:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD20B5A65F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 23:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbfF1VIf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 17:08:35 -0400
-Received: from mail-eopbgr750071.outbound.protection.outlook.com ([40.107.75.71]:39682
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725783AbfF1VIf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 17:08:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=netapp.onmicrosoft.com; s=selector2-netapp-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wLgLEJUHkQXKjGrOtnbFeAR89mxqW7EXn0YYtpiOAQA=;
- b=htYxJs+MLXODW43oWkslij9rCa3f9ladN0eLzm95gsmJvEF7LXdPhjTpg6NQlm9edFpg84CiMnJ1Khuzgy2BAnciZPhP0dWvQs8xhww6LBy8DOH9/LlIITfN1oVyoyrBpRpLHnTtn4/ttLEQzi+8waRUUpkgXtadVGtL5dxQavY=
-Received: from BN8PR06MB6228.namprd06.prod.outlook.com (20.178.217.156) by
- BN8PR06MB5538.namprd06.prod.outlook.com (20.178.210.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.17; Fri, 28 Jun 2019 21:08:31 +0000
-Received: from BN8PR06MB6228.namprd06.prod.outlook.com
- ([fe80::1de4:694f:e20b:137c]) by BN8PR06MB6228.namprd06.prod.outlook.com
- ([fe80::1de4:694f:e20b:137c%4]) with mapi id 15.20.2008.018; Fri, 28 Jun 2019
- 21:08:31 +0000
-From:   "Schumaker, Anna" <Anna.Schumaker@netapp.com>
-To:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-CC:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: [GIT PULL] Two more Linux NFS client fixes
-Thread-Topic: [GIT PULL] Two more Linux NFS client fixes
-Thread-Index: AQHVLfWjrS3C/N3qdk29RYss51YoBQ==
-Date:   Fri, 28 Jun 2019 21:08:31 +0000
-Message-ID: <89f621cf02c20863839561bfc0ef2ee36cbfe9ab.camel@netapp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.32.3 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Anna.Schumaker@netapp.com; 
-x-originating-ip: [23.28.75.121]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7f7c3d2a-8aad-45d4-32ce-08d6fc0cc670
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN8PR06MB5538;
-x-ms-traffictypediagnostic: BN8PR06MB5538:
-x-microsoft-antispam-prvs: <BN8PR06MB5538F407EFDD07525A347627F8FC0@BN8PR06MB5538.namprd06.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:962;
-x-forefront-prvs: 00826B6158
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(4636009)(366004)(376002)(396003)(346002)(136003)(39860400002)(199004)(189003)(305945005)(66946007)(66446008)(66476007)(6512007)(64756008)(53936002)(73956011)(7736002)(5640700003)(102836004)(5660300002)(476003)(1730700003)(81156014)(81166006)(2616005)(8936002)(99286004)(478600001)(8676002)(76116006)(6486002)(66556008)(186003)(118296001)(6506007)(86362001)(6436002)(26005)(6916009)(4326008)(2501003)(25786009)(68736007)(66066001)(2351001)(71200400001)(2906002)(486006)(54906003)(36756003)(3846002)(58126008)(316002)(72206003)(14454004)(256004)(71190400001)(6116002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN8PR06MB5538;H:BN8PR06MB6228.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: netapp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Xp3d9BOa5B0iMZ8NXYkgu5mzNR4NpuV4d5vt4SEpacWcmbj8oBhW9jXeqebv2UBh5n0FUv4SFgz9MiH7ibeMu5Y0uplBdHtk6AZSRo/Da5+V3Z8AjNYjysx1VISefxsErqn5Pj7WSF52k6MF0dNOu++qgaBWKyszJDMn48HcFCU97C6OUKIxzSxEhNU0wQd4LVbKn3DrNLJNfnk3kUfY3bhIglf9sjTivgqNohu7inq7V4LNpq7SOb7Ye1VuN8mJ05BWiY0w0t60XCiMWm/j3wV68c5En3zOYuKKpu17A0ptjGIJj8M7Y3F51lU8OZRgDCFoAzeeY/X9TFC/pZww2ftxR/LbCMmaqAhXN6RgybHdN+L7wTYyclRbJ5ls5gBYzcI/l96lFuL+uu3ZNg9glsP9tUU9+wTSHbievPF1Piw=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <296AA00904137F4EBB4707584C776469@namprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1726664AbfF1Vhf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 17:37:35 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34405 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbfF1Vhe (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 Jun 2019 17:37:34 -0400
+Received: by mail-pl1-f194.google.com with SMTP id i2so3949722plt.1;
+        Fri, 28 Jun 2019 14:37:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JgAuNdeYgPOaJAXJWPitQxb9O77ltQQoo3H5OkHlS/c=;
+        b=W86MRcxAJItkgXU1P+HfAJjX07YuDT/2EuPIvaTR3j2MhsGyMwaS0H6CirI+ZihPXQ
+         Rw9m/FSLLqbr+3BxsQGXD6Rh7uiIwQkRap2tvV38M2seKlycVAjBrkaFs8xOCgAEhlgR
+         RCz+w/+EfsTWjav2xZjZxTnxQ3KkBmrrcuKIPtkelRFLMXMxMZbCfrdlEr8yn5H+E6MD
+         Q9FOz04k+RVYoJynZSKDtaLKoM5LnrgnJGjYpLJCWrWC621eJ6eUF+bbD5n9JFzIEo3M
+         l2PiACCLzfWOqBf+h8w73uxLJY+ujnvZ8J38SB/ZTLhl3mnwPb0JsTdaYgpeeDNC+P1Y
+         bJNw==
+X-Gm-Message-State: APjAAAUwSq/44dHOh8Z1frsVpK2h4PhfHOOSADoAEsklNkpd7UQb6Fym
+        XlCfdqTeLzZx0nORh6MPm5E=
+X-Google-Smtp-Source: APXvYqy5ELfDL2fyyn/y9lJ8x6ZZyU+/eE48fR92CyznGhgcBuNDCxdNuVcUesc0a2YsMUSVisIbkg==
+X-Received: by 2002:a17:902:a60d:: with SMTP id u13mr6000172plq.144.1561757853454;
+        Fri, 28 Jun 2019 14:37:33 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id b15sm3215119pfi.141.2019.06.28.14.37.31
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 28 Jun 2019 14:37:32 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 8049D402AC; Fri, 28 Jun 2019 21:37:31 +0000 (UTC)
+Date:   Fri, 28 Jun 2019 21:37:31 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Cc:     Iurii Zaikin <yzaikin@google.com>, linux-api@vger.kernel.org,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah <shuah@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Subject: Re: [PATCH v5 17/18] kernel/sysctl-test: Add null pointer test for
+ sysctl.c:proc_dointvec()
+Message-ID: <20190628213731.GJ19023@42.do-not-panic.com>
+References: <20190617082613.109131-1-brendanhiggins@google.com>
+ <20190617082613.109131-18-brendanhiggins@google.com>
+ <20190626021744.GU19023@42.do-not-panic.com>
+ <CAAXuY3p+kVhjQ4LYtzormqVcH2vKu1abc_K9Z0XY=JX=bp8NcQ@mail.gmail.com>
+ <20190627061021.GE19023@42.do-not-panic.com>
+ <CAFd5g45VJ9yfuESUc=E0ydJyN+mk1b1kyHSCYvO2x9KPC7+3GQ@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: netapp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f7c3d2a-8aad-45d4-32ce-08d6fc0cc670
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2019 21:08:31.6413
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4b0911a0-929b-4715-944b-c03745165b3a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bjschuma@netapp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR06MB5538
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFd5g45VJ9yfuESUc=E0ydJyN+mk1b1kyHSCYvO2x9KPC7+3GQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGkgTGludXMsDQoNClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQNCjE5ZDU1MDQ2
-Y2Q4MjRiYWFiNTM1MzRiYTdlN2Y5OTk0NWM2ZmRjYjE6DQoNCiAgU1VOUlBDOiBGaXggYSBjcmVk
-ZW50aWFsIHJlZmNvdW50IGxlYWsgKDIwMTktMDYtMjEgMTQ6NDU6MDkgLTA0MDApDQoNCmFyZSBh
-dmFpbGFibGUgaW4gdGhlIEdpdCByZXBvc2l0b3J5IGF0Og0KDQogIGdpdDovL2dpdC5saW51eC1u
-ZnMub3JnL3Byb2plY3RzL2FubmEvbGludXgtbmZzLmdpdCB0YWdzL25mcy1mb3ItNS4yLQ0KNA0K
-DQpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8NCjY4ZjQ2MTU5M2Y3NmJkNWYxN2U4N2Nk
-ZDBiZWEyOGY0Mjc4YzcyNjg6DQoNCiAgTkZTL2ZsZXhmaWxlczogVXNlIHRoZSBjb3JyZWN0IFRD
-UCB0aW1lb3V0IGZvciBmbGV4ZmlsZXMgSS9PICgyMDE5LQ0KMDYtMjggMTE6NDg6NTIgLTA0MDAp
-DQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0NClRoZXNlIGFyZSBib3RoIHN0YWJsZSBmaXhlcy4gT25lIHRvIGNhbGN1bGF0
-ZSB0aGUgY29ycmVjdCBjbGllbnQNCm1lc3NhZ2UgbGVuZ3RoIGluIHRoZSBjYXNlIG9mIHBhcnRp
-YWwgdHJhbnNtaXNzaW9ucy4gQW5kIHRoZSBvdGhlciB0bw0Kc2V0IHRoZSBwcm9wZXIgVENQIHRp
-bWVvdXQgZm9yIGZsZXhmaWxlcy4NCg0KVGhhbmtzLA0KQW5uYQ0KLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KVHJvbmQgTXlr
-bGVidXN0ICgyKToNCiAgICAgIFNVTlJQQzogRml4IHVwIGNhbGN1bGF0aW9uIG9mIGNsaWVudCBt
-ZXNzYWdlIGxlbmd0aA0KICAgICAgTkZTL2ZsZXhmaWxlczogVXNlIHRoZSBjb3JyZWN0IFRDUCB0
-aW1lb3V0IGZvciBmbGV4ZmlsZXMgSS9PDQoNCiBmcy9uZnMvZmxleGZpbGVsYXlvdXQvZmxleGZp
-bGVsYXlvdXRkZXYuYyB8ICAyICstDQogbmV0L3N1bnJwYy94cHJ0c29jay5jICAgICAgICAgICAg
-ICAgICAgICAgfCAxNiArKysrKysrKy0tLS0tLS0tDQogMiBmaWxlcyBjaGFuZ2VkLCA5IGluc2Vy
-dGlvbnMoKyksIDkgZGVsZXRpb25zKC0pDQo=
+On Fri, Jun 28, 2019 at 01:01:54AM -0700, Brendan Higgins wrote:
+> On Wed, Jun 26, 2019 at 11:10 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > On Wed, Jun 26, 2019 at 09:07:43PM -0700, Iurii Zaikin wrote:
+> > > On Tue, Jun 25, 2019 at 7:17 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > > > > +static void sysctl_test_dointvec_table_maxlen_unset(struct kunit *test)
+> > > > > +{
+> > > > > +     struct ctl_table table = {
+> > > > > +             .procname = "foo",
+> > > > > +             .data           = &test_data.int_0001,
+> > > > > +             .maxlen         = 0,
+> > > > > +             .mode           = 0644,
+> > > > > +             .proc_handler   = proc_dointvec,
+> > > > > +             .extra1         = &i_zero,
+> > > > > +             .extra2         = &i_one_hundred,
+> > > > > +     };
+> > > > > +     void  *buffer = kunit_kzalloc(test, sizeof(int), GFP_USER);
+> > > > > +     size_t len;
+> > > > > +     loff_t pos;
+> > > > > +
+> > > > > +     len = 1234;
+> > > > > +     KUNIT_EXPECT_EQ(test, 0, proc_dointvec(&table, 0, buffer, &len, &pos));
+> > > > > +     KUNIT_EXPECT_EQ(test, (size_t)0, len);
+> > > > > +     len = 1234;
+> > > > > +     KUNIT_EXPECT_EQ(test, 0, proc_dointvec(&table, 1, buffer, &len, &pos));
+> > > > > +     KUNIT_EXPECT_EQ(test, (size_t)0, len);
+> > > > > +}
+> > > >
+> > > > In a way this is also testing for general kernel API changes. This is and the
+> > > > last one were good examples. So this is not just testing functionality
+> > > > here. There is no wrong or write answer if 0 or -EINVAL was returned
+> > > > other than the fact that we have been doing this for years.
+> > > >
+> > > > Its a perhaps small but important difference for some of these tests.  I
+> > > > *do* think its worth clarifying through documentation which ones are
+> > > > testing for API consistency Vs proper correctness.
+> > >
+> > > You make a good point that the test codifies the existing behavior of
+> > > the function in lieu of formal documentation.  However, the test cases
+> > > were derived from examining the source code of the function under test
+> > > and attempting to cover all branches. The assertions were added only
+> > > for the values that appeared to be set deliberately in the
+> > > implementation. And it makes sense to me to test that the code does
+> > > exactly what the implementation author intended.
+> >
+> > I'm not arguing against adding them. I'm suggesting that it is different
+> > to test for API than for correctness of intended functionality, and
+> > it would be wise to make it clear which test cases are for API and which
+> > for correctness.
+> 
+> I see later on that some of the API stuff you are talking about is
+> public APIs from the standpoint of user (outside of LInux) visible.
+
+Right, UAPI.
+
+> To
+> be clear, is that what you mean by public APIs throughout, or would
+> you distinguish between correctness tests, internal API tests, and
+> external API tests?
+
+I would definitely recommend distingishing between all of these.
+Kernel API (or just call it API), UAPI, and correctness.
+
+> > This will come up later for other kunit tests and it would be great
+> > to set precendent so that other kunit tests can follow similar
+> > practices to ensure its clear what is API realted Vs correctness of
+> > intended functionality.
+> >
+> > In fact, I'm not yet sure if its possible to test public kernel API to
+> > userspace with kunit, but if it is possible... well, that could make
+> > linux-api folks happy as they could enable us to codify interpreation of
+> > what is expected into kunit test cases, and we'd ensure that the
+> > codified interpretation is not only documented in man pages but also
+> > through formal kunit test cases.
+> >
+> > A regression in linux-api then could be formalized through a proper
+> > kunit tests case. And if an API evolves, it would force developers to
+> > update the respective kunit which codifies that contract.
+> 
+> Yep, I think that is long term hope. Some of the file system interface
+> stuff that requires a filesystem to be mounted somewhere might get a
+> little weird/difficult, but I suspect we should be able to do it
+> eventually. I mean it's all just C code right? Should mostly boil down
+> to someone figuring out how to do it the first time.
+
+There used to be hacks in the kernel the call syscalls in a few places.
+This was cleaned up and addressed via Dominik Brodowski's series last
+year in March:
+
+http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
+
+An example commit: d300b610812f3 ("kernel: use kernel_wait4() instead of
+sys_wait4()").
+
+So it would seem the work is done, and you'd just have to use the
+respective exposed kernel_syscallname() calls, or add some if you
+want to test a specific syscall in kernel space.
+
+  Luis
