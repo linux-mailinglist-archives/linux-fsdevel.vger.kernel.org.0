@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9624F59FD5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 17:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 603DB59FDA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2019 17:50:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfF1Pub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jun 2019 11:50:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54507 "EHLO mx1.redhat.com"
+        id S1727497AbfF1Puj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jun 2019 11:50:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49124 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726750AbfF1Pua (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:50:30 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1727219AbfF1Puj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 Jun 2019 11:50:39 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3CA4981DEB;
-        Fri, 28 Jun 2019 15:50:30 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id E9FDE30832D8;
+        Fri, 28 Jun 2019 15:50:38 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-219.rdu2.redhat.com [10.10.120.219])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 595C85C22C;
-        Fri, 28 Jun 2019 15:50:24 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 404FD6013A;
+        Fri, 28 Jun 2019 15:50:36 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 1/6] security: Add hooks to rule on setting a superblock or
- mount watch [ver #5]
+Subject: [PATCH 2/6] Adjust watch_queue documentation to mention mount and
+ superblock watches. [ver #5]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, Casey Schaufler <casey@schaufler-ca.com>,
@@ -37,124 +37,87 @@ Cc:     dhowells@redhat.com, Casey Schaufler <casey@schaufler-ca.com>,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Fri, 28 Jun 2019 16:50:23 +0100
-Message-ID: <156173702349.15650.1484210092464492434.stgit@warthog.procyon.org.uk>
+Date:   Fri, 28 Jun 2019 16:50:35 +0100
+Message-ID: <156173703546.15650.14319137940607993268.stgit@warthog.procyon.org.uk>
 In-Reply-To: <156173701358.15650.8735203424342507015.stgit@warthog.procyon.org.uk>
 References: <156173701358.15650.8735203424342507015.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 28 Jun 2019 15:50:30 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 28 Jun 2019 15:50:39 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add security hooks that will allow an LSM to rule on whether or not a watch
-may be set on a mount or on a superblock.  More than one hook is required
-as the watches watch different types of object.
-
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Casey Schaufler <casey@schaufler-ca.com>
-cc: Stephen Smalley <sds@tycho.nsa.gov>
-cc: linux-security-module@vger.kernel.org
 ---
 
- include/linux/lsm_hooks.h |   16 ++++++++++++++++
- include/linux/security.h  |   10 ++++++++++
- security/security.c       |   10 ++++++++++
- 3 files changed, 36 insertions(+)
+ Documentation/watch_queue.rst |   20 +++++++++++++++++++-
+ drivers/misc/Kconfig          |    5 +++--
+ 2 files changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 5fe387d35990..3a4d7a260572 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1433,6 +1433,18 @@
-  *	from devices (as a global set).
-  *	@watch: The watch object
-  *
-+ * @watch_mount:
-+ *	Check to see if a process is allowed to watch for mount topology change
-+ *	notifications on a mount subtree.
-+ *	@watch: The watch object
-+ *	@path: The root of the subtree to watch.
-+ *
-+ * @watch_sb:
-+ *	Check to see if a process is allowed to watch for event notifications
-+ *	from a superblock.
-+ *	@watch: The watch object
-+ *	@sb: The superblock to watch.
-+ *
-  * @post_notification:
-  *	Check to see if a watch notification can be posted to a particular
-  *	queue.
-@@ -1721,6 +1733,8 @@ union security_list_options {
- #ifdef CONFIG_WATCH_QUEUE
- 	int (*watch_key)(struct watch *watch, struct key *key);
- 	int (*watch_devices)(struct watch *watch);
-+	int (*watch_mount)(struct watch *watch, struct path *path);
-+	int (*watch_sb)(struct watch *watch, struct super_block *sb);
- 	int (*post_notification)(const struct cred *w_cred,
- 				 const struct cred *cred,
- 				 struct watch_notification *n);
-@@ -2007,6 +2021,8 @@ struct security_hook_heads {
- #ifdef CONFIG_WATCH_QUEUE
- 	struct hlist_head watch_key;
- 	struct hlist_head watch_devices;
-+	struct hlist_head watch_mount;
-+	struct hlist_head watch_sb;
- 	struct hlist_head post_notification;
- #endif /* CONFIG_WATCH_QUEUE */
- #ifdef CONFIG_SECURITY_NETWORK
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 8a9645472232..74ec6d41eca5 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -401,6 +401,8 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
- #ifdef CONFIG_WATCH_QUEUE
- int security_watch_key(struct watch *watch, struct key *key);
- int security_watch_devices(struct watch *watch);
-+int security_watch_mount(struct watch *watch, struct path *path);
-+int security_watch_sb(struct watch *watch, struct super_block *sb);
- int security_post_notification(const struct cred *w_cred,
- 			       const struct cred *cred,
- 			       struct watch_notification *n);
-@@ -1233,6 +1235,14 @@ static inline int security_watch_devices(struct watch *watch)
- {
- 	return 0;
- }
-+static inline int security_watch_mount(struct watch *watch, struct path *path)
-+{
-+	return 0;
-+}
-+static inline int security_watch_sb(struct watch *watch, struct super_block *sb)
-+{
-+	return 0;
-+}
- static inline int security_post_notification(const struct cred *w_cred,
- 					     const struct cred *cred,
- 					     struct watch_notification *n)
-diff --git a/security/security.c b/security/security.c
-index 1390fb1203e4..37fec6cec905 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1940,6 +1940,16 @@ int security_watch_devices(struct watch *watch)
- 	return call_int_hook(watch_devices, 0, watch);
- }
+diff --git a/Documentation/watch_queue.rst b/Documentation/watch_queue.rst
+index 4087a8e670a8..1bec2018d549 100644
+--- a/Documentation/watch_queue.rst
++++ b/Documentation/watch_queue.rst
+@@ -13,6 +13,10 @@ receive notifications from the kernel.  This can be used in conjunction with::
  
-+int security_watch_mount(struct watch *watch, struct path *path)
-+{
-+	return call_int_hook(watch_mount, 0, watch, path);
-+}
+     * USB subsystem event notifications
+ 
++  * Mount topology change notifications
 +
-+int security_watch_sb(struct watch *watch, struct super_block *sb)
-+{
-+	return call_int_hook(watch_sb, 0, watch, sb);
-+}
++  * Superblock event notifications
 +
- int security_post_notification(const struct cred *w_cred,
- 			       const struct cred *cred,
- 			       struct watch_notification *n)
+ 
+ The notifications buffers can be enabled by:
+ 
+@@ -324,6 +328,19 @@ Any particular buffer can be fed from multiple sources.  Sources include:
+     for buses and devices.  Watchpoints of this type are set on the global
+     device watch list.
+ 
++  * WATCH_TYPE_MOUNT_NOTIFY
++
++    Notifications of this type indicate mount tree topology changes and mount
++    attribute changes.  A watch can be set on a particular file or directory
++    and notifications from the path subtree rooted at that point will be
++    intercepted.
++
++  * WATCH_TYPE_SB_NOTIFY
++
++    Notifications of this type indicate superblock events, such as quota limits
++    being hit, I/O errors being produced or network server loss/reconnection.
++    Watches of this type are set directly on superblocks.
++
+ 
+ Event Filtering
+ ===============
+@@ -365,7 +382,8 @@ Where:
+ 	(watch.info & info_mask) == info_filter
+ 
+     This could be used, for example, to ignore events that are not exactly on
+-    the watched point in a mount tree.
++    the watched point in a mount tree by specifying NOTIFY_MOUNT_IN_SUBTREE
++    must be 0.
+ 
+   * ``subtype_filter`` is a bitmask indicating the subtypes that are of
+     interest.  Bit 0 of subtype_filter[0] corresponds to subtype 0, bit 1 to
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index e53f88783fe7..8b13103b17c0 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -11,8 +11,9 @@ config WATCH_QUEUE
+ 	help
+ 	  This is a general notification queue for the kernel to pass events to
+ 	  userspace through a mmap()'able ring buffer.  It can be used in
+-	  conjunction with watches for key/keyring change notifications and device
+-	  notifications.
++	  conjunction with watches for key/keyring change notifications, device
++	  notifications, mount topology change notifications, and superblock
++	  change notifications.
+ 
+ 	  Note that in theory this should work fine with NOMMU, but I'm not
+ 	  sure how to make that work.
 
