@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 217DD5ADA3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jun 2019 00:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8D1B5ADA5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jun 2019 00:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfF2WaR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Jun 2019 18:30:17 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:33166 "EHLO
+        id S1726952AbfF2WeY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Jun 2019 18:34:24 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33232 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbfF2WaQ (ORCPT
+        with ESMTP id S1726925AbfF2WeX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Jun 2019 18:30:16 -0400
+        Sat, 29 Jun 2019 18:34:23 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hhLqr-0002yp-RA; Sat, 29 Jun 2019 22:29:45 +0000
-Date:   Sat, 29 Jun 2019 23:29:45 +0100
+        id 1hhLv0-00037Q-Th; Sat, 29 Jun 2019 22:34:02 +0000
+Date:   Sat, 29 Jun 2019 23:34:02 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     "Tobin C. Harding" <tobin@kernel.org>,
@@ -40,7 +40,7 @@ Cc:     "Tobin C. Harding" <tobin@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: shrink_dentry_list() logics change (was Re: [RFC PATCH v3 14/15]
  dcache: Implement partial shrink via Slab Movable Objects)
-Message-ID: <20190629222945.GW17978@ZenIV.linux.org.uk>
+Message-ID: <20190629223402.GX17978@ZenIV.linux.org.uk>
 References: <20190411013441.5415-1-tobin@kernel.org>
  <20190411013441.5415-15-tobin@kernel.org>
  <20190411023322.GD2217@ZenIV.linux.org.uk>
@@ -50,48 +50,21 @@ References: <20190411013441.5415-1-tobin@kernel.org>
  <20190629040844.GS17978@ZenIV.linux.org.uk>
  <20190629043803.GT17978@ZenIV.linux.org.uk>
  <20190629190624.GU17978@ZenIV.linux.org.uk>
+ <20190629222945.GW17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190629190624.GU17978@ZenIV.linux.org.uk>
+In-Reply-To: <20190629222945.GW17978@ZenIV.linux.org.uk>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 29, 2019 at 08:06:24PM +0100, Al Viro wrote:
-> I wonder if after the "no evictable candidates, but something
-> on other's shrink lists" we ought to do something along the
-> lines of
-> 	rcu_read_lock
-> 	walk it, doing
-> 		if dentry has zero refcount
-> 			if it's not on a shrink list,
-> 				move it to ours
-> 			else
-> 				store its address in 'victim'
-> 				end the walk
-> 	if no victim found
-> 		rcu_read_unlock
-> 	else
-> 		lock victim for __dentry_kill
-> 		rcu_read_unlock
-> 		if it's still alive
-> 			if it's not IS_ROOT
-> 				if parent is not on shrink list
-> 					decrement parent's refcount
-> 					put it on our list
-> 				else
-> 					decrement parent's refcount
-> 			__dentry_kill(victim)
-> 		else
-> 			unlock
-> 	if our list is non-empty
-> 		shrink_dentry_list on it
-> in there...
+On Sat, Jun 29, 2019 at 11:29:45PM +0100, Al Viro wrote:
 
-Like this (again, only build-tested):
+> Like this (again, only build-tested):
+... and with obvious braino fixed,
 
 Teach shrink_dcache_parent() to cope with mixed-filesystem shrink lists
 
@@ -115,12 +88,12 @@ be stuck in e.g. iput(), getting umount of unrelated fs to spin waiting for
 the stuck shrinker to get around to our dentries.
 
 Solution:
-	1) have shrink_dentry_list() decrement the parent's refcount and
+    1) have shrink_dentry_list() decrement the parent's refcount and
 make sure it's on a shrink list (ours unless it already had been on some
 other) before calling __dentry_kill().  That eliminates the window when
 shrink_dcache_parent() would've blown past the entire subtree without
 noticing anything with zero refcount not on shrink lists.
-	2) when shrink_dcache_parent() has found no eviction candidates,
+    2) when shrink_dcache_parent() has found no eviction candidates,
 but some dentries are still sitting on shrink lists, rather than
 repeating the scan in hope that shrinkers have progressed, scan looking
 for something on shrink lists with zero refcount.  If such a thing is
@@ -138,7 +111,7 @@ Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
 
 diff --git a/fs/dcache.c b/fs/dcache.c
-index 8136bda27a1f..43480f516329 100644
+index 8136bda27a1f..4b50e09ee950 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
 @@ -860,6 +860,32 @@ void dput(struct dentry *dentry)
@@ -260,10 +233,11 @@ index 8136bda27a1f..43480f516329 100644
  		d_walk(parent, &data, select_collect);
  
  		if (!list_empty(&data.dispose)) {
-@@ -1502,6 +1550,21 @@ void shrink_dcache_parent(struct dentry *parent)
+@@ -1502,6 +1550,22 @@ void shrink_dcache_parent(struct dentry *parent)
  		cond_resched();
  		if (!data.found)
  			break;
++		data.victim = NULL;
 +		d_walk(parent, &data, select_collect2);
 +		if (data.victim) {
 +			struct dentry *parent;
@@ -282,3 +256,17 @@ index 8136bda27a1f..43480f516329 100644
  	}
  }
  EXPORT_SYMBOL(shrink_dcache_parent);
+diff --git a/fs/internal.h b/fs/internal.h
+index 0010889f2e85..68f132cf2664 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -160,6 +160,7 @@ extern int d_set_mounted(struct dentry *dentry);
+ extern long prune_dcache_sb(struct super_block *sb, struct shrink_control *sc);
+ extern struct dentry *d_alloc_cursor(struct dentry *);
+ extern struct dentry * d_alloc_pseudo(struct super_block *, const struct qstr *);
++extern void dput_to_list(struct dentry *, struct list_head *);
+ 
+ /*
+  * read_write.c
+
+
