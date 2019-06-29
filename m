@@ -2,71 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C64455ACB0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2019 19:23:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCA4B5ACFF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2019 21:07:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbfF2RXY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Jun 2019 13:23:24 -0400
-Received: from lkcl.net ([217.147.94.29]:42415 "EHLO lkcl.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726837AbfF2RXY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Jun 2019 13:23:24 -0400
-X-Greylist: delayed 2287 seconds by postgrey-1.27 at vger.kernel.org; Sat, 29 Jun 2019 13:23:23 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lkcl.net; s=201607131;
-        h=Content-Type:Cc:To:Subject:Message-ID:Date:From:MIME-Version; bh=s/sTi+hASQyPaQRLVOOh9ET0ya6bVtdjcUHl64yNEJw=;
-        b=RKPqwaFSFIFMxHCBw4GHqMY/1g7FEz7d0qo3eSy8ZtoC7DxmMt9BSLvCKb5oZ9PmwTer3bGW1sgc1Yo+fJXcBI3Q4RSrGfZqhPAF4G0BKV3t6bwaoktseUAjQmbGjVlLm2BGnRSsPcHX9jwNWu4IPsi9pxRRoghqesCT8zjPfkI=;
-Received: from mail-lj1-f176.google.com ([209.85.208.176])
-        by lkcl.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <lkcl@lkcl.net>)
-        id 1hhGTS-0008P0-Rf; Sat, 29 Jun 2019 16:45:14 +0000
-Received: by mail-lj1-f176.google.com with SMTP id t28so8909104lje.9;
-        Sat, 29 Jun 2019 09:44:59 -0700 (PDT)
-X-Gm-Message-State: APjAAAXeYxu9TidZ+kwM0+MFIZCL45e0dxzD9Jul0xAThrxOt+UTUiD6
-        D82ieLKUDH2aL1MtJeSx2+FeZEFPsrSK6HnZLHs=
-X-Google-Smtp-Source: APXvYqyT3rBGT+21WQD3pj3PIsLlCJsWc/KxmRIzx71GAXDRlfDfgfqr73eWhFqOZ/B2TWPMlCqEQW13yM2ujHPob5E=
-X-Received: by 2002:a2e:94cb:: with SMTP id r11mr8821456ljh.212.1561826376022;
- Sat, 29 Jun 2019 09:39:36 -0700 (PDT)
+        id S1726897AbfF2TGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Jun 2019 15:06:53 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59356 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726882AbfF2TGx (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 29 Jun 2019 15:06:53 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hhIg4-0007QN-HD; Sat, 29 Jun 2019 19:06:24 +0000
+Date:   Sat, 29 Jun 2019 20:06:24 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Alexander Viro <viro@ftp.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Pekka Enberg <penberg@cs.helsinki.fi>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Waiman Long <longman@redhat.com>,
+        Tycho Andersen <tycho@tycho.ws>, Theodore Ts'o <tytso@mit.edu>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Chinner <david@fromorbit.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        Rik van Riel <riel@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: shrink_dentry_list() logics change (was Re: [RFC PATCH v3 14/15]
+ dcache: Implement partial shrink via Slab Movable Objects)
+Message-ID: <20190629190624.GU17978@ZenIV.linux.org.uk>
+References: <20190411013441.5415-1-tobin@kernel.org>
+ <20190411013441.5415-15-tobin@kernel.org>
+ <20190411023322.GD2217@ZenIV.linux.org.uk>
+ <20190411024821.GB6941@eros.localdomain>
+ <20190411044746.GE2217@ZenIV.linux.org.uk>
+ <20190411210200.GH2217@ZenIV.linux.org.uk>
+ <20190629040844.GS17978@ZenIV.linux.org.uk>
+ <20190629043803.GT17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-From:   Luke Kenneth Casson Leighton <lkcl@lkcl.net>
-Date:   Sat, 29 Jun 2019 17:39:24 +0100
-X-Gmail-Original-Message-ID: <CAPweEDxufL1SHCh2ao7600fF9+aciMhr2V_5vxQN6S8r=u2W4g@mail.gmail.com>
-Message-ID: <CAPweEDxufL1SHCh2ao7600fF9+aciMhr2V_5vxQN6S8r=u2W4g@mail.gmail.com>
-Subject: Re: bcachefs status update (it's done cooking; let's get this sucker merged)
-To:     torvalds@linux-foundation.org
-Cc:     akpm@linux-foundation.org, axboe@kernel.dk,
-        darrick.wong@oracle.com, david@fromorbit.com, dchinner@redhat.com,
-        josef@toxicpanda.com, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, tj@kernel.org,
-        viro@zeniv.linux.org.uk, zach.brown@ni.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190629043803.GT17978@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-hey linus, you made news again, all blown up and pointless again.
-you're doing great: you're being honest. remember the offer i made to
-put you in touch with my friend.
+On Sat, Jun 29, 2019 at 05:38:03AM +0100, Al Viro wrote:
 
-anecdotal story: andrew tridgell worked on the fujitsu sparc
-supercomputer a couple decades ago: it had a really weird DMA ring
-bus.
+> PS: the problem is not gone in the next iteration of the patchset in
+> question.  The patch I'm proposing (including dput_to_list() and _ONLY_
+> compile-tested) follows.  Comments?
 
-* memory-to-memory copy (in the same core) was 10mbytes/sec
-* DMA memory-to-memory copy (in the same core) was 20mbytes/sec
-* memory-memory copy (across the ring bus i.e. to another machine) was
-100mbytes/sec
-* DMA memory-memory copy (across the ring bus) was *200* mbytes/sec.
+FWIW, there's another unpleasantness in the whole thing.  Suppose we have
+picked a page full of dentries, all with refcount 0.  We decide to
+evict all of them.  As it turns out, they are from two filesystems.
+Filesystem 1 is NFS on a server, with currently downed hub on the way
+to it.  Filesystem 2 is local.  We attempt to evict an NFS dentry and
+get stuck - tons of dirty data with no way to flush them on server.
+In the meanwhile, admin tries to unmount the local filesystem.  And
+gets stuck as well, since umount can't do anything to its dentries
+that happen to sit in our shrink list.
 
-when andrew tried asking people, "hey everyone, we need a filesystem
-that can work really well on this fast parallel system", he had to
-continuously fend off "i got a great idea for in-core memory-to-memory
-cacheing!!!!" suggestions, because they *just would never work*.
+I wonder if the root of problem here isn't in shrink_dcache_for_umount();
+all it really needs is to have everything on that fs with refcount 0
+dragged through __dentry_kill().  If something had been on a shrink
+list, __dentry_kill() will just leave behind a struct dentry completely
+devoid of any connection to superblock, other dentries, filesystem
+type, etc. - it's just a piece of memory that won't be freed until
+the owner of shrink list finally gets around to it.  Which can happen
+at any point - all they'll do to it is dentry_free(), and that doesn't
+need any fs-related data structures.
 
-the point being: caches aren't always "fast".
+The logics in shrink_dcache_parent() is
+	collect everything evictable into a shrink list
+	if anything found - kick it out and repeat the scan
+	otherwise, if something had been on other's shrink list
+		repeat the scan
 
-/salutes.
-
-l.
+I wonder if after the "no evictable candidates, but something
+on other's shrink lists" we ought to do something along the
+lines of
+	rcu_read_lock
+	walk it, doing
+		if dentry has zero refcount
+			if it's not on a shrink list,
+				move it to ours
+			else
+				store its address in 'victim'
+				end the walk
+	if no victim found
+		rcu_read_unlock
+	else
+		lock victim for __dentry_kill
+		rcu_read_unlock
+		if it's still alive
+			if it's not IS_ROOT
+				if parent is not on shrink list
+					decrement parent's refcount
+					put it on our list
+				else
+					decrement parent's refcount
+			__dentry_kill(victim)
+		else
+			unlock
+	if our list is non-empty
+		shrink_dentry_list on it
+in there...
