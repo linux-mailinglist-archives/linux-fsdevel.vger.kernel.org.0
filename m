@@ -2,146 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2ED35AD61
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2019 22:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59B645AD89
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2019 23:46:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbfF2Ujb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Jun 2019 16:39:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35508 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726909AbfF2Ujb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Jun 2019 16:39:31 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5484C214DA;
-        Sat, 29 Jun 2019 20:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561840769;
-        bh=7JcPwObF+UJSdcsSlwvawJPWjh/a/x2LParpaePs+Y4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Gt11Y3wz0ZaE5Hv0IzeV4/TfadqIoe5+LF0bmEIZ7zpNpcwnEwpw32gglcAwlQAaI
-         xW2u4mBLjnNvqGqnpwfq18Cc08XU268J2fkmKzkxr1sBm+u3PJlQ4uUg4W+6um4ra5
-         EfMaRBcVABXr9Ql6sb8E5IaJu8i+LM5OkaLkPdSU=
-Date:   Sat, 29 Jun 2019 13:39:27 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+6004acbaa1893ad013f0@syzkaller.appspotmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christian Brauner <christian@brauner.io>,
-        David Howells <dhowells@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Hannes Reinecke <hare@suse.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: general protection fault in do_move_mount (2)
-Message-ID: <20190629203927.GA686@sol.localdomain>
-References: <000000000000bb362d058b96d54d@google.com>
- <20190618140239.GA17978@ZenIV.linux.org.uk>
- <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
+        id S1726985AbfF2Vqg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Jun 2019 17:46:36 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41831 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbfF2Vqg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 29 Jun 2019 17:46:36 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 205so9298418ljj.8
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Jun 2019 14:46:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xkEYc72WKRbMxn5L/m1epy636FdcowEH46eJVLsCsgI=;
+        b=BvHlB51x8AXSGhwsCaVNbG5QNOzIXlAPn2izPhrDgIVx0PoS622WvoVB4rQ3BmqB0d
+         6wbE6wyObVwpqjaM8zmw8hnjViL4ToMrglm9FJmt8sllFI0qiadUC+q7JBBrEeDAVC6+
+         dFm4tsdKICzT5HDOMV9BnjZRd70bVxMtgMQrS6LWIcW8jR1HeVa6fEf68M0Q4p1dfDmi
+         rR/XmXuDG8FNYtOaljqVJUVO7Sldv2tfTSTWIg87VYg211gtKN1GZZDLHk50Yy4ib2H+
+         shNR7Ogpoe/TvYDpALVTIQxF/aPIJ4uMZ7fHLQ5MFPcCOPQ1TmhmbSJK3eQxK4T438i/
+         Pu+Q==
+X-Gm-Message-State: APjAAAU82VojrqOmssLo7GRDgOd8Gm+FaaEJtoWwaO1Ip5YKRFBNmUyB
+        b7jWQwZ0K9zVRMppHu6YVGWG/vNH/pZe03e0xuaCAA==
+X-Google-Smtp-Source: APXvYqzs+IPReceD2rzEsJnE/IkN+E6EJRWw+/EgGzGKxRG6U0Cq76ySy3Znw4J1ci5XIbj3n0mjZU+kzlgVbuHy2C8=
+X-Received: by 2002:a2e:3e01:: with SMTP id l1mr9876346lja.208.1561844794156;
+ Sat, 29 Jun 2019 14:46:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190626190343.22031-1-aring@mojatatu.com> <20190626190343.22031-2-aring@mojatatu.com>
+ <293c9bd3-f530-d75e-c353-ddeabac27cf6@6wind.com> <18557.1561739215@warthog.procyon.org.uk>
+ <CAGnkfhwe6p412q4sATwX=3ht4+NxKJDOFihRG=iwvXqWUtwgLQ@mail.gmail.com>
+In-Reply-To: <CAGnkfhwe6p412q4sATwX=3ht4+NxKJDOFihRG=iwvXqWUtwgLQ@mail.gmail.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Sat, 29 Jun 2019 23:45:57 +0200
+Message-ID: <CAGnkfhwKBaqE72A+0J-hLy_aWXvXWhW+tdvzOYJamM3V4iGiXA@mail.gmail.com>
+Subject: Re: [RFC iproute2 1/1] ip: netns: add mounted state file for each netns
+To:     David Howells <dhowells@redhat.com>
+Cc:     Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Alexander Aring <aring@mojatatu.com>,
+        netdev <netdev@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        kernel@mojatatu.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 11:28:18AM +0200, 'Dmitry Vyukov' via syzkaller-bugs wrote:
-> On Tue, Jun 18, 2019 at 4:03 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Fri, Jun 28, 2019 at 7:06 PM Matteo Croce <mcroce@redhat.com> wrote:
+>
+> On Fri, Jun 28, 2019 at 6:27 PM David Howells <dhowells@redhat.com> wrote:
 > >
-> > On Tue, Jun 18, 2019 at 03:47:10AM -0700, syzbot wrote:
-> > > Hello,
+> > Nicolas Dichtel <nicolas.dichtel@6wind.com> wrote:
+> >
+> > > David Howells was working on a mount notification mechanism:
+> > > https://lwn.net/Articles/760714/
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
 > > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    9e0babf2 Linux 5.2-rc5
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=138b310aa00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=d16883d6c7f0d717
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=6004acbaa1893ad013f0
-> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154e8c2aa00000
+> > > I don't know what is the status of this series.
 > >
-> > IDGI...
+> > It's still alive.  I just posted a new version on it.  I'm hoping, possibly
+> > futiley, to get it in in this merge window.
 > >
-> > mkdir(&(0x7f0000632000)='./file0\x00', 0x0)
-> > mount(0x0, 0x0, 0x0, 0x0, 0x0)
-> > syz_open_procfs(0x0, 0x0)
-> > r0 = open(&(0x7f0000032ff8)='./file0\x00', 0x0, 0x0)
-> > r1 = memfd_create(&(0x7f00000001c0)='\xb3', 0x0)
-> > write$FUSE_DIRENT(r1, &(0x7f0000000080)=ANY=[], 0x29)
-> > move_mount(r0, &(0x7f0000000040)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000100)='./file0\x00', 0x66)
-> >
-> > reads as if we'd done mkdir ./file0, opened it and then tried
-> > to feed move_mount(2) "./file0" relative to that descriptor.
-> > How the hell has that avoided an instant -ENOENT?  On the first
-> > pair, that is - the second one (AT_FDCWD, "./file0") is fine...
-> >
-> > Confused...  Incidentally, what the hell is
-> >         mount(0x0, 0x0, 0x0, 0x0, 0x0)
-> > about?  *IF* that really refers to mount(2) with
-> > such arguments, all you'll get is -EFAULT.  Way before
-> > it gets to actually doing anything - it won't get past
-> >         /* ... and get the mountpoint */
-> >         retval = user_path(dir_name, &path);
-> >         if (retval)
-> >                 return retval;
-> > in do_mount(2)...
-> 
-> Yes, mount(0x0, 0x0, 0x0, 0x0, 0x0) is mount with 0 arguments. Most
-> likely it returns EFAULT.
-> Since the reproducer have "threaded":true,"collide":true and no C
-> repro, most likely this is a subtle race. So it attempted to remove
-> mount(0x0, 0x0, 0x0, 0x0, 0x0) but it did not crash, so the conclusion
-> was that it's somehow needed. You can actually see that other
-> reproducers for this bug do not have this mount, but are otherwise
-> similar.
-> 
-> With "threaded":true,"collide":true the execution mode is not just
-> "execute each syscall once one after another".
-> The syscalls are executed in separate threads and actually twice. You
-> can see the approximate execution mode in this C program:
-> https://gist.githubusercontent.com/dvyukov/c3a52f012e7cff9bdebf3935d35245cf/raw/b5587824111a1d982c985b00137ae8609572335b/gistfile1.txt
-> Yet using the C program did not trigger the crash somehow (maybe just
-> slightly different timings).
-> 
-> Since syzkaller was able to reproduce it multiple times, it looks like
-> a real bug rather than an induced memory corruption or something.
-> 
+> > David
+>
+> Hi all,
+>
+> this could cause a clash if I create a netns with name ending with .mounted.
+>
+> $ sudo ip/ip netns add ns1.mounted
+> $ sudo ip/ip netns add ns1
+> Cannot create namespace file "/var/run/netns/ns1.mounted": File exists
+> Cannot remove namespace file "/var/run/netns/ns1.mounted": Device or
+> resource busy
+>
+> If you want to go along this road, please either:
+> - disallow netns creation with names ending with .mounted
+> - or properly document it in the manpage
+>
+> Regards,
+> --
+> Matteo Croce
+> per aspera ad upstream
 
-I sent a patch to fix this bug (https://lore.kernel.org/linux-fsdevel/20190629202744.12396-1-ebiggers@kernel.org/T/#u)
+BTW, this breaks the namespace listing:
 
-Dmitry, any idea why syzbot found such a bizarre reproducer for this?
-This is actually reproducible by a simple single threaded program:
+# ip netns add test
+# ip netns list
+Error: Peer netns reference is invalid.
+Error: Peer netns reference is invalid.
+test.mounted
+test
 
-    #include <unistd.h>
+A better choice IMHO could be to create a temporary file before the
+placeholder, and delete it after the bind mount, so an inotify watcher
+can listen for the delete event.
+For example, when creating the namespace "foo":
 
-    #define __NR_move_mount         429
-    #define MOVE_MOUNT_F_EMPTY_PATH 0x00000004
+- create /var/run/netns/.foo.mounting
+- create /var/run/netns/foo
+- bind mount from /proc/.. to /var/run/netns/foo
+- remove /var/run/netns/.foo.mounting
 
-    int main()
-    {
-    	int fds[2];
+and exclude .*.mounting from the netns listing
 
-	pipe(fds);
-	syscall(__NR_move_mount, fds[0], "", -1, "/", MOVE_MOUNT_F_EMPTY_PATH);
-    }
+Or, announce netns creation/deletion in some other way (dbus?).
 
-FYI, it also isn't really appropriate for syzbot to bisect all bugs in new
-syscalls to wiring them up to x86, and then blame all the x86 maintainers.
-Normally such bugs will be in the syscall itself, regardless of architecture.
-
-- Eric
+Regards,
+-- 
+Matteo Croce
+per aspera ad upstream
