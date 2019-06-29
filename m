@@ -2,93 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8E215AD4B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2019 22:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F63F5AD5A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2019 22:30:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfF2UJG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Jun 2019 16:09:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52216 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726906AbfF2UJF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Jun 2019 16:09:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 20195AD70;
-        Sat, 29 Jun 2019 20:09:03 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id AA7D51E3F56; Sat, 29 Jun 2019 22:09:01 +0200 (CEST)
-Date:   Sat, 29 Jun 2019 22:09:01 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     " Darrick J. Wong " <darrick.wong@oracle.com>
-Cc:     adilger.kernel@dilger.ca, clm@fb.com, yuchao0@huawei.com,
-        hch@infradead.org, jaegeuk@kernel.org, shaggy@kernel.org,
-        ard.biesheuvel@linaro.org, tytso@mit.edu,
-        matthew.garrett@nebula.com, jk@ozlabs.org,
-        David Sterba <dsterba@suse.com>, Jan Kara <jack@suse.com>,
-        josef@toxicpanda.com, viro@zeniv.linux.org.uk,
-        linux-mtd@lists.infradead.org,
-        jfs-discussion@lists.sourceforge.net,
-        linux-f2fs-devel@lists.sourceforge.net, ocfs2-devel@oss.oracle.com,
-        cluster-devel@redhat.com, linux-btrfs@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org
-Subject: Re: [PATCH 5/5] vfs: only allow FSSETXATTR to set DAX flag on files
- and dirs
-Message-ID: <20190629200901.GA18642@quack2.suse.cz>
-References: <156174682897.1557318.14418894077683701275.stgit@magnolia>
- <156174687185.1557318.13703922197244050336.stgit@magnolia>
+        id S1726935AbfF2Ua1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Jun 2019 16:30:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726909AbfF2Ua1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 29 Jun 2019 16:30:27 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74B7E216FD;
+        Sat, 29 Jun 2019 20:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561840226;
+        bh=7WeyNmN1MYWVxApjRQ0P0HYJKzZFNyxqnIFPjI0Riyc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=f46H7K3XMOsf2J2p0SY4LlqNUZ/75bdxYF7d+X6d889ykgXzqNABNu7SteeHPFhZ2
+         qidegt0COqFCUX41SNYE1XphQc7p1i2ceeNuqzJbU6ne0CAbCA5NZXPn0AhkN3wuaB
+         czxNNDHeYdIdCFkXbf1XRZAeFq0dJuyovLEJ79aQ=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: [PATCH] vfs: move_mount: reject moving kernel internal mounts
+Date:   Sat, 29 Jun 2019 13:27:44 -0700
+Message-Id: <20190629202744.12396-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
+References: <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <156174687185.1557318.13703922197244050336.stgit@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 28-06-19 11:34:31,  Darrick J. Wong  wrote:
-> From: Darrick J. Wong <darrick.wong@oracle.com>
-> 
-> The DAX flag only applies to files and directories, so don't let it get
-> set for other types of files.
-> 
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+From: Eric Biggers <ebiggers@google.com>
 
-Looks good to me. You can add:
+sys_move_mount() crashes by dereferencing the pointer MNT_NS_INTERNAL,
+a.k.a. ERR_PTR(-EINVAL), if the old mount is specified by fd for a
+kernel object with an internal mount, such as a pipe or memfd.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Fix it by checking for this case and returning -EINVAL.
 
-								Honza
+Reproducer:
 
-> ---
->  fs/inode.c |    8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 670d5408d022..f08711b34341 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2259,6 +2259,14 @@ int vfs_ioc_fssetxattr_check(struct inode *inode, const struct fsxattr *old_fa,
->  	    !S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
->  		return -EINVAL;
->  
-> +	/*
-> +	 * It is only valid to set the DAX flag on regular files and
-> +	 * directories on filesystems.
-> +	 */
-> +	if ((fa->fsx_xflags & FS_XFLAG_DAX) &&
-> +	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
-> +		return -EINVAL;
-> +
->  	/* Extent size hints of zero turn off the flags. */
->  	if (fa->fsx_extsize == 0)
->  		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
-> 
-> 
+    #include <unistd.h>
+
+    #define __NR_move_mount         429
+    #define MOVE_MOUNT_F_EMPTY_PATH 0x00000004
+
+    int main()
+    {
+    	int fds[2];
+
+    	pipe(fds);
+        syscall(__NR_move_mount, fds[0], "", -1, "/", MOVE_MOUNT_F_EMPTY_PATH);
+    }
+
+Reported-by: syzbot+6004acbaa1893ad013f0@syzkaller.appspotmail.com
+Fixes: 2db154b3ea8e ("vfs: syscall: Add move_mount(2) to move mounts around")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 7660c2749c96..a7e5a44770a7 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2600,7 +2600,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 	if (attached && !check_mnt(old))
+ 		goto out;
+ 
+-	if (!attached && !(ns && is_anon_ns(ns)))
++	if (!attached && !(ns && ns != MNT_NS_INTERNAL && is_anon_ns(ns)))
+ 		goto out;
+ 
+ 	if (old->mnt.mnt_flags & MNT_LOCKED)
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.22.0
+
