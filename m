@@ -2,80 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E6455B107
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jun 2019 19:42:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEAED5B217
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jun 2019 23:37:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbfF3RmQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jun 2019 13:42:16 -0400
-Received: from mail-qb1can01hn2083.outbound.protection.outlook.com ([52.100.145.83]:14799
-        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726641AbfF3RmP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jun 2019 13:42:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uwoca.onmicrosoft.com;
- s=selector1-uwoca-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0JyuDFUmOpzgKH6dgh5LdWzoUOc/E37EGuvvgxjAQ2g=;
- b=3acH5FWp6cHHoDz9UgPn0W1/mimEjzA/wuAQzVRpLnk4+5qQ2Gjlf3XUdx8zFq8lrOkBdPOMLRr5GCrIDpwisWKi7UpokKO8/67yT0uC3b0vVj1xAx0QcMPSTag0K4eZ6IEghsQbSAspEMwjBQQZwv03E9w7synGdz25l4B92Yo=
-Received: from YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM (52.132.69.19) by
- YQBPR0101MB1203.CANPRD01.PROD.OUTLOOK.COM (52.132.70.158) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.18; Sun, 30 Jun 2019 17:42:13 +0000
-Received: from YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::810f:1394:be78:11a4]) by YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::810f:1394:be78:11a4%7]) with mapi id 15.20.2032.019; Sun, 30 Jun 2019
- 17:42:13 +0000
-From:   Sandra Anne Hamilton <shamil32@uwo.ca>
-To:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: Project Analysis
-Thread-Topic: Project Analysis
-Thread-Index: AQHVL2XZNGRaFfr6Y02Vu5uSvdc5Ng==
-Importance: high
-X-Priority: 1
-Sensitivity: company-confidential
-Date:   Sun, 30 Jun 2019 17:04:16 +0000
-Message-ID: <YQBPR0101MB137831BE561D4AAE35EA1009A8FE0@YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM>
-Reply-To: "mrfuhuangfu101@mufgbank-jp.com" <mrfuhuangfu101@mufgbank-jp.com>
-Accept-Language: en-CA, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MN2PR16CA0010.namprd16.prod.outlook.com
- (2603:10b6:208:134::23) To YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c00:a::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shamil32@uwo.ca; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [102.165.49.36]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 36d1d2a9-4dc0-4978-ce3e-08d6fd7cfbe7
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:YQBPR0101MB1203;
-x-ms-traffictypediagnostic: YQBPR0101MB1203:
-x-microsoft-antispam-prvs: <YQBPR0101MB120304C8F5F2F3F9717908BEA8FE0@YQBPR0101MB1203.CANPRD01.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:3826;
-x-forefront-prvs: 008421A8FF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(136003)(346002)(376002)(39860400002)(199004)(189003)(102836004)(558084003)(3480700005)(14454004)(71190400001)(71200400001)(52116002)(7696005)(43066004)(81686011)(6436002)(386003)(53936002)(2501003)(6506007)(55016002)(9686003)(2351001)(99286004)(186003)(229853002)(26005)(5003540100004)(5640700003)(305945005)(66806009)(5660300002)(221733001)(8796002)(81156014)(478600001)(6246003)(86362001)(7736002)(6916009)(316002)(786003)(66066001)(2906002)(486006)(3846002)(6116002)(476003)(8936002)(66556008)(74482002)(25786009)(8676002)(256004)(66446008)(64756008)(66476007)(33656002)(68736007)(66946007)(74316002)(52536014)(73956011)(7116003)(81166006)(130330200001);DIR:OUT;SFP:1501;SCL:1;SRVR:YQBPR0101MB1203;H:YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: uwo.ca does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4geemCoa9DelGEpejj+QZXnnaFuD0YFX2yQgeTk1tdng8xeKuWWpoMO8fKZmWZJ3GfYUjhwehk4ZGHro+mEkzHAHoTGQLifcDyeuEa+ftNMrO58ob5hTWDhFF/KYwILC9tMHQF/nbg8uRp57/WTSubet20O6q1PuBsp+k8PZN+rTp1HrndGwh9aABQn5fE1oDwXszE1MQq48kCP27VLeiccO4bsLsFXGmh/Xh+vtEmayfB/HsbW6kvAe+j0h/cAxrU0sGhBNPSZKcvDW1xOjZbyJ7XX/poX7vZUJwFOmyGzmM+5oF/QOZTTiKj3TtzAK9dIb5YULbGb/34VAE9udD9G0EraZFfmD0wgC+YE2fpyB/cl+kXEqkUSdJvmMHacPsTG3LZ+62aNUaT5Jr1Xily5/0r1bVCxEYBmKMZ2R8fs=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <7088C5168939F74AB525D13450ACA9B8@CANPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+        id S1726842AbfF3Vhp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Jun 2019 17:37:45 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39744 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbfF3Vhp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 30 Jun 2019 17:37:45 -0400
+Received: by mail-oi1-f194.google.com with SMTP id m202so8361241oig.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jun 2019 14:37:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zX2YyQKrwAtLXzMGd1ZzMeQeW/2MOINdhvS/Pjj0Or8=;
+        b=Sryzx76yhFmzdPE+tVyLEjojYxynQpjV6uqI6VU+dUyYo6kvmBVPrpSg+BGfA8Dm5H
+         mh9J841lGyhhfmpDLeIWdDr4iVo7krDBlOLY/LCOKHfV4Tl2yoMEc0wnLUAuP36rNQTu
+         qBMLuIqhcOxcmZHwIiMmYHyXW2kopPNvm8HTMDaPmKCZLYmcQl61LwNz7So2zwo+qxPj
+         eA1QcuzWRAmdPvw3PpNA09H2JVr44DWRXXePhGZPgHCXWH025PcOtrsy6dhpQDi5rjo0
+         C5vU+8YqAMbBY6kFy2y0SdFA7srvUOC8IBrbLbY4aXYm0d7kMycWLufWM2N8mcVlA2BK
+         NXdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zX2YyQKrwAtLXzMGd1ZzMeQeW/2MOINdhvS/Pjj0Or8=;
+        b=eo1rJajFDikms6ye26TdNnX5CIu/CAXP9capAGOXF/O/yYU3yR1CvGaV2j75b118YG
+         KzDhFjT957jcR5USBA8PihjghEJm1QwLHzKxylr4Yu5W65KWxbS7ndDSSmVRq10JqmrC
+         rwXoSDgi8+TzTrJpLF5fZBOokmM72/y8jen8Cv3nPbv0k7I/6u64yYaub6vpR70n4gtq
+         Zl5ZP2l/JOnj8WzzHdMgHq+I8ZkMggu4wfF9LybwoJPOl+ZEgpufmBe+Q56nBSDZYku0
+         5af1fs9s0F0TOV1/Cj1Q84SSg35cgRiREk+n9yC1rXW3KJe/7YQAGEhBULaY6R4hA6Ak
+         WzmA==
+X-Gm-Message-State: APjAAAW5uS+EzdU10w2h7oOkqpW6Hn/XlJa8WcL/DTdWOzsRFQK+H3R1
+        Paj4kJmcxDzU7wFNqevtehHt4KYfapKGY+CnwsI/XA==
+X-Google-Smtp-Source: APXvYqzLe5GaWGJOfiOsBEzieZ/ae6JzO9eXsaMWe7B6qu1tptZdKDnjJgfQzU/Ta0EgbE+Mtcnf+G7PmqdAEPdTR5s=
+X-Received: by 2002:aca:ba02:: with SMTP id k2mr4483979oif.70.1561930664648;
+ Sun, 30 Jun 2019 14:37:44 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: uwo.ca
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36d1d2a9-4dc0-4978-ce3e-08d6fd7cfbe7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jun 2019 17:04:16.5357
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: ad93a64d-ad0d-4ecd-b2fd-e53ce15965be
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: shamil32@uwo.ca
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB1203
+References: <20190627123415.GA4286@bombadil.infradead.org> <CAPcyv4jQP-SFJGor-Q3VCRQ0xwt3MuVpH2qHx2wzyRA88DGQww@mail.gmail.com>
+ <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
+ <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
+ <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
+ <20190627195948.GB4286@bombadil.infradead.org> <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
+ <20190629160336.GB1180@bombadil.infradead.org> <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
+ <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com> <20190630152324.GA15900@bombadil.infradead.org>
+In-Reply-To: <20190630152324.GA15900@bombadil.infradead.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sun, 30 Jun 2019 14:37:32 -0700
+Message-ID: <CAPcyv4j2NBPBEUU3UW1Q5OyOEuo9R5e90HpkowpeEkMsAKiUyQ@mail.gmail.com>
+Subject: Re: [PATCH] filesystem-dax: Disable PMD support
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Did you receive my earlier email as  regards the project with Mr Fu huang C=
-EO. PLEASE REPLY immediately. Regards.
+On Sun, Jun 30, 2019 at 8:23 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Sun, Jun 30, 2019 at 01:01:04AM -0700, Dan Williams wrote:
+> > On Sun, Jun 30, 2019 at 12:27 AM Dan Williams <dan.j.williams@intel.com> wrote:
+> > >
+> > > On Sat, Jun 29, 2019 at 9:03 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > > >
+> > > > On Thu, Jun 27, 2019 at 07:39:37PM -0700, Dan Williams wrote:
+> > > > > On Thu, Jun 27, 2019 at 12:59 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > > > > >
+> > > > > > On Thu, Jun 27, 2019 at 12:09:29PM -0700, Dan Williams wrote:
+> > > > > > > > This bug feels like we failed to unlock, or unlocked the wrong entry
+> > > > > > > > and this hunk in the bisected commit looks suspect to me. Why do we
+> > > > > > > > still need to drop the lock now that the radix_tree_preload() calls
+> > > > > > > > are gone?
+> > > > > > >
+> > > > > > > Nevermind, unmapp_mapping_pages() takes a sleeping lock, but then I
+> > > > > > > wonder why we don't restart the lookup like the old implementation.
+> > > > > >
+> > > > > > We have the entry locked:
+> > > > > >
+> > > > > >                 /*
+> > > > > >                  * Make sure 'entry' remains valid while we drop
+> > > > > >                  * the i_pages lock.
+> > > > > >                  */
+> > > > > >                 dax_lock_entry(xas, entry);
+> > > > > >
+> > > > > >                 /*
+> > > > > >                  * Besides huge zero pages the only other thing that gets
+> > > > > >                  * downgraded are empty entries which don't need to be
+> > > > > >                  * unmapped.
+> > > > > >                  */
+> > > > > >                 if (dax_is_zero_entry(entry)) {
+> > > > > >                         xas_unlock_irq(xas);
+> > > > > >                         unmap_mapping_pages(mapping,
+> > > > > >                                         xas->xa_index & ~PG_PMD_COLOUR,
+> > > > > >                                         PG_PMD_NR, false);
+> > > > > >                         xas_reset(xas);
+> > > > > >                         xas_lock_irq(xas);
+> > > > > >                 }
+> > > > > >
+> > > > > > If something can remove a locked entry, then that would seem like the
+> > > > > > real bug.  Might be worth inserting a lookup there to make sure that it
+> > > > > > hasn't happened, I suppose?
+> > > > >
+> > > > > Nope, added a check, we do in fact get the same locked entry back
+> > > > > after dropping the lock.
+> > > > >
+> > > > > The deadlock revolves around the mmap_sem. One thread holds it for
+> > > > > read and then gets stuck indefinitely in get_unlocked_entry(). Once
+> > > > > that happens another rocksdb thread tries to mmap and gets stuck
+> > > > > trying to take the mmap_sem for write. Then all new readers, including
+> > > > > ps and top that try to access a remote vma, then get queued behind
+> > > > > that write.
+> > > > >
+> > > > > It could also be the case that we're missing a wake up.
+> > > >
+> > > > OK, I have a Theory.
+> > > >
+> > > > get_unlocked_entry() doesn't check the size of the entry being waited for.
+> > > > So dax_iomap_pmd_fault() can end up sleeping waiting for a PTE entry,
+> > > > which is (a) foolish, because we know it's going to fall back, and (b)
+> > > > can lead to a missed wakeup because it's going to sleep waiting for
+> > > > the PMD entry to come unlocked.  Which it won't, unless there's a happy
+> > > > accident that happens to map to the same hash bucket.
+> > > >
+> > > > Let's see if I can steal some time this weekend to whip up a patch.
+> > >
+> > > Theory seems to have some evidence... I instrumented fs/dax.c to track
+> > > outstanding 'lock' entries and 'wait' events. At the time of the hang
+> > > we see no locks held and the waiter is waiting on a pmd entry:
+> > >
+> > > [ 4001.354334] fs/dax locked entries: 0
+> > > [ 4001.358425] fs/dax wait entries: 1
+> > > [ 4001.362227] db_bench/2445 index: 0x0 shift: 6
+> > > [ 4001.367099]  grab_mapping_entry+0x17a/0x260
+> > > [ 4001.371773]  dax_iomap_pmd_fault.isra.43+0x168/0x7a0
+> > > [ 4001.377316]  ext4_dax_huge_fault+0x16f/0x1f0
+> > > [ 4001.382086]  __handle_mm_fault+0x411/0x1390
+> > > [ 4001.386756]  handle_mm_fault+0x172/0x360
+> >
+> > In fact, this naive fix is holding up so far:
+> >
+> > @@ -215,7 +216,7 @@ static wait_queue_head_t
+> > *dax_entry_waitqueue(struct xa_state *xas,
+> >          * queue to the start of that PMD.  This ensures that all offsets in
+> >          * the range covered by the PMD map to the same bit lock.
+> >          */
+> > -       if (dax_is_pmd_entry(entry))
+> > +       //if (dax_is_pmd_entry(entry))
+> >                 index &= ~PG_PMD_COLOUR;
+> >         key->xa = xas->xa;
+> >         key->entry_start = index;
+>
+> Hah, that's a great naive fix!  Thanks for trying that out.
+>
+> I think my theory was slightly mistaken, but your fix has the effect of
+> fixing the actual problem too.
+>
+> The xas->xa_index for a PMD is going to be PMD-aligned (ie a multiple of
+> 512), but xas_find_conflict() does _not_ adjust xa_index (... which I
+> really should have mentioned in the documentation).  So we go to sleep
+> on the PMD-aligned index instead of the index of the PTE.  Your patch
+> fixes this by using the PMD-aligned index for PTEs too.
+>
+> I'm trying to come up with a clean fix for this.  Clearly we
+> shouldn't wait for a PTE entry if we're looking for a PMD entry.
+> But what should get_unlocked_entry() return if it detects that case?
+> We could have it return an error code encoded as an internal entry,
+> like grab_mapping_entry() does.  Or we could have it return the _locked_
+> PTE entry, and have callers interpret that.
+>
+> At least get_unlocked_entry() is static, but it's got quite a few callers.
+> Trying to discern which ones might ask for a PMD entry is a bit tricky.
+> So this seems like a large patch which might have bugs.
+>
+> Thoughts?
+
+...but if it was a problem of just mismatched waitqueue's I would have
+expected it to trigger prior to commit b15cd800682f "dax: Convert page
+fault handlers to XArray". This hunk, if I'm reading it correctly,
+looks suspicious: @index in this case is coming directly from
+vm->pgoff without pmd alignment adjustment whereas after the
+conversion it's always pmd aligned from the xas->xa_index. So perhaps
+the issue is that the lock happens at pte granularity. I expect it
+would cause the old put_locked_mapping_entry() to WARN, but maybe that
+avoids the lockup and was missed in the bisect.
+
+@@ -884,21 +711,18 @@ static void *dax_insert_entry(struct
+address_space *mapping,
+                 * existing entry is a PMD, we will just leave the PMD in the
+                 * tree and dirty it if necessary.
+                 */
+-               struct radix_tree_node *node;
+-               void **slot;
+-               void *ret;
+-
+-               ret = __radix_tree_lookup(pages, index, &node, &slot);
+-               WARN_ON_ONCE(ret != entry);
+-               __radix_tree_replace(pages, node, slot,
+-                                    new_entry, NULL);
++               void *old = dax_lock_entry(xas, new_entry);
++               WARN_ON_ONCE(old != xa_mk_value(xa_to_value(entry) |
++                                       DAX_LOCKED));
+                entry = new_entry;
++       } else {
++               xas_load(xas);  /* Walk the xa_state */
+        }
+
+        if (dirty)
+-               radix_tree_tag_set(pages, index, PAGECACHE_TAG_DIRTY);
++               xas_set_mark(xas, PAGECACHE_TAG_DIRTY);
+
+-       xa_unlock_irq(pages);
++       xas_unlock_irq(xas);
+        return entry;
+ }
