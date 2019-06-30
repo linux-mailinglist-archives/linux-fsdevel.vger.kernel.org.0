@@ -2,66 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7204D5AFFD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jun 2019 15:55:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A268C5B00F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jun 2019 15:55:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfF3NzB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jun 2019 09:55:01 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37427 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbfF3NzA (ORCPT
+        id S1726671AbfF3NzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Jun 2019 09:55:05 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41897 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726660AbfF3NzD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jun 2019 09:55:00 -0400
-Received: by mail-io1-f65.google.com with SMTP id e5so22748529iok.4;
-        Sun, 30 Jun 2019 06:54:59 -0700 (PDT)
+        Sun, 30 Jun 2019 09:55:03 -0400
+Received: by mail-io1-f66.google.com with SMTP id w25so22706295ioc.8;
+        Sun, 30 Jun 2019 06:55:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=w9RRW34zJB7lcgGViIJxmoNYrrHbosLDVygv6GaW6G4=;
-        b=bzQkM772D3X7UQ9EBWUqUYsTPZDodkPjXdOyzm95MQzR4F/MLnKpZHqsPE98Ep6m3S
-         QCtWjDi2+oVQAdtXgc6yu85C2GAQEv2uHJLRyb0pfBSOnzAVvqG0ygRrqTFOzSCRx2sE
-         3Z9NPv6cYRteiKS1O4lv9kQhjgbkc9ZCI8S77rL6v8+MbkL6Srw1GHQXJWOYoHd0U1VX
-         bilrwgXCptda1GaEwtMI5KJWZCaqjFxfG16aol7TNxBftkWaY0Nvu/4rFSAdUEiye6rn
-         PswVOlkmR0RSCMoubuV0AekopEyf8V7GtvTuet5+pB2ftR4NY/sRsr3F3GMcbKVBFvn1
-         SiQQ==
+        bh=mC0aOWiyf39HNfQFHScyPluVHG26yH9hnOHWJSiH0wo=;
+        b=L6B6CZlNeJiHmKHQLihduSGYpKjtQsCPGt7VhxiI1rThC3D/FBY7ibrd+JR6eUztkV
+         gf+Z6ZoeondthRIypNJw8GTzoeInm2Ucv/OswhSnp9IENPqB3LE81H6HNtp7c1GK/jm5
+         YdCMv5SBT8q/gxCpOitSFp/zC5bk818CSO97NWCOF/tNHpP3k9MBJEoVh8f8uE2g52jM
+         wG4VbbsN66wlDLHWml087NbWf/X3S7eLmZM+aODBajI1dfPdvqsUuFOxiaVTTTPCSeC5
+         /WVqMBH4lgXYa3eIILiYN/A/Z8JW9hB/aYOlifeKoJHm6BM+7avPye9yhhVlDmgwj0Ur
+         9dfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=w9RRW34zJB7lcgGViIJxmoNYrrHbosLDVygv6GaW6G4=;
-        b=bqZW6dqNV9B/0eDkNcSKelBeXTyLKw4yqukB+F/XSPu/6nwcEnfna8Xs2itxFYJnly
-         +JF7oWIfjUClyIIU8Lb5NPaZsIlGIpz7DF6HxWPQAbD6SHWjFcnpl+o1ZzizUcfW/oDe
-         11E3kbGkrfcLtnuXAMnIcsAzz83FUxajWeTFf1tL/WppnZ859/oeu4Xbw/IRxQ983wgd
-         LT4+RHxERu5Kc9HiuUG/B4ctWvo/XkmBidJCIXOZZNUFsqwjxVgxLN87u+NLn6pAAYP4
-         DVNmMu4pLqfnQL0fF454s5ILbaOrnA5WUf7AzGU0aPUcQzcydXv+Dv3VwYfbEIfHQUHM
-         VRRw==
-X-Gm-Message-State: APjAAAXQxP3HzO6EEvWmj/5AmjGmSL+KN6j/rQOpL8a/gv/UkKdGATvf
-        xOusvF/7lI43rcuVU0xukZB3CqCC7g==
-X-Google-Smtp-Source: APXvYqyvEkdYUuVctXQiRhIOXMV8WWmqjRSyo2IM3zYCl0SeOnveuBqSTIXlxj6olKRBOvMTb7RpNg==
-X-Received: by 2002:a6b:e61a:: with SMTP id g26mr14678291ioh.300.1561902899033;
-        Sun, 30 Jun 2019 06:54:59 -0700 (PDT)
+        bh=mC0aOWiyf39HNfQFHScyPluVHG26yH9hnOHWJSiH0wo=;
+        b=ZWCxzM2lBK1K8Yp3g0cF6foXuOGss1bOacztAV+ApsdNhCuAnN7sCpZYyf5vOoHox/
+         39vIDMmmFiJjYBr1oYjW2PAYulh5BqZUYQxgr6MgUd+f+WCaGRk6deIXEeXRWPSwkZtT
+         CyS2E7M0F0fVJWZ+/VolfIRms/Xw31S1rFDlyFZN0jfbDjN+NgFIC09OkUFWp10fdH4A
+         wrtrzVd+RYf2qmB37dC+376RKwQ7rCSWSaCD1i8Ujq9BwcGKwFi+pFLFQVqKqDgTaJNC
+         grHyS+0clnbW0mU0x7fphxKWxQ+X4yxLuouoG4vOuAcLL7jLUoEHt0wvnmQHqzrhmn3G
+         hFUQ==
+X-Gm-Message-State: APjAAAUHpaAt2MO/qlJ2ac61oCToxs5EVEJoky4bZ+H+zypmgyUUbL+g
+        6NBg34owxz/Q6VMEmY7AgA==
+X-Google-Smtp-Source: APXvYqxNXeZ0u8mQhK30/0sjuZph9uM3y4SkittyCHF/qaMVLdk0uZhHsliT1TVjerUH7exZvefjaA==
+X-Received: by 2002:a5e:d507:: with SMTP id e7mr5208010iom.284.1561902900371;
+        Sun, 30 Jun 2019 06:55:00 -0700 (PDT)
 Received: from localhost.localdomain (50-124-245-189.alma.mi.frontiernet.net. [50.124.245.189])
-        by smtp.gmail.com with ESMTPSA id z17sm11930378iol.73.2019.06.30.06.54.56
+        by smtp.gmail.com with ESMTPSA id z17sm11930378iol.73.2019.06.30.06.54.59
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 30 Jun 2019 06:54:57 -0700 (PDT)
+        Sun, 30 Jun 2019 06:54:59 -0700 (PDT)
 From:   Trond Myklebust <trondmy@gmail.com>
 X-Google-Original-From: Trond Myklebust <trond.myklebust@hammerspace.com>
 To:     "J. Bruce Fields" <bfields@redhat.com>,
         Chuck Lever <chuck.lever@oracle.com>
 Cc:     Jeff Layton <jlayton@redhat.com>, linux-nfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 06/16] nfsd: hook up nfsd_write to the new nfsd_file cache
-Date:   Sun, 30 Jun 2019 09:52:30 -0400
-Message-Id: <20190630135240.7490-7-trond.myklebust@hammerspace.com>
+Subject: [PATCH 07/16] nfsd: hook up nfsd_read to the nfsd_file cache
+Date:   Sun, 30 Jun 2019 09:52:31 -0400
+Message-Id: <20190630135240.7490-8-trond.myklebust@hammerspace.com>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190630135240.7490-6-trond.myklebust@hammerspace.com>
+In-Reply-To: <20190630135240.7490-7-trond.myklebust@hammerspace.com>
 References: <20190630135240.7490-1-trond.myklebust@hammerspace.com>
  <20190630135240.7490-2-trond.myklebust@hammerspace.com>
  <20190630135240.7490-3-trond.myklebust@hammerspace.com>
  <20190630135240.7490-4-trond.myklebust@hammerspace.com>
  <20190630135240.7490-5-trond.myklebust@hammerspace.com>
  <20190630135240.7490-6-trond.myklebust@hammerspace.com>
+ <20190630135240.7490-7-trond.myklebust@hammerspace.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -75,45 +76,43 @@ Signed-off-by: Jeff Layton <jeff.layton@primarydata.com>
 Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 ---
- fs/nfsd/vfs.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ fs/nfsd/vfs.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
 diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index d12d2de3b444..13550828c3a0 100644
+index 13550828c3a0..d8ee0730fade 100644
 --- a/fs/nfsd/vfs.c
 +++ b/fs/nfsd/vfs.c
-@@ -44,6 +44,7 @@
- 
- #include "nfsd.h"
- #include "vfs.h"
-+#include "filecache.h"
- #include "trace.h"
- 
- #define NFSDDBG_FACILITY		NFSDDBG_FILEOP
-@@ -1104,17 +1105,18 @@ __be32
- nfsd_write(struct svc_rqst *rqstp, struct svc_fh *fhp, loff_t offset,
- 	   struct kvec *vec, int vlen, unsigned long *cnt, int stable)
+@@ -1071,25 +1071,22 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh *fhp, struct file *file,
+ __be32 nfsd_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	loff_t offset, struct kvec *vec, int vlen, unsigned long *count)
  {
--	struct file *file = NULL;
--	__be32 err = 0;
-+	struct nfsd_file *nf;
-+	__be32 err;
++	struct nfsd_file	*nf;
+ 	struct file *file;
+-	struct raparms	*ra;
+ 	__be32 err;
  
- 	trace_nfsd_write_start(rqstp, fhp, offset, *cnt);
- 
--	err = nfsd_open(rqstp, fhp, S_IFREG, NFSD_MAY_WRITE, &file);
-+	err = nfsd_file_acquire(rqstp, fhp, NFSD_MAY_WRITE, &nf);
+ 	trace_nfsd_read_start(rqstp, fhp, offset, *count);
+-	err = nfsd_open(rqstp, fhp, S_IFREG, NFSD_MAY_READ, &file);
++	err = nfsd_file_acquire(rqstp, fhp, NFSD_MAY_READ, &nf);
  	if (err)
- 		goto out;
+ 		return err;
  
--	err = nfsd_vfs_write(rqstp, fhp, file, offset, vec, vlen, cnt, stable);
+-	ra = nfsd_init_raparms(file);
+-
++	file = nf->nf_file;
+ 	if (file->f_op->splice_read && test_bit(RQ_SPLICE_OK, &rqstp->rq_flags))
+ 		err = nfsd_splice_read(rqstp, fhp, file, offset, count);
+ 	else
+ 		err = nfsd_readv(rqstp, fhp, file, offset, vec, vlen, count);
+ 
+-	if (ra)
+-		nfsd_put_raparams(file, ra);
 -	fput(file);
-+	err = nfsd_vfs_write(rqstp, fhp, nf->nf_file, offset, vec,
-+			vlen, cnt, stable);
 +	nfsd_file_put(nf);
- out:
- 	trace_nfsd_write_done(rqstp, fhp, offset, *cnt);
- 	return err;
+ 
+ 	trace_nfsd_read_done(rqstp, fhp, offset, *count);
+ 
 -- 
 2.21.0
 
