@@ -2,100 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 494605B088
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jun 2019 18:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E6455B107
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jun 2019 19:42:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfF3QPG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jun 2019 12:15:06 -0400
-Received: from mail-eopbgr810134.outbound.protection.outlook.com ([40.107.81.134]:42240
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S1726671AbfF3RmQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Jun 2019 13:42:16 -0400
+Received: from mail-qb1can01hn2083.outbound.protection.outlook.com ([52.100.145.83]:14799
+        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726520AbfF3QPG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jun 2019 12:15:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector2;
+        id S1726641AbfF3RmP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 30 Jun 2019 13:42:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uwoca.onmicrosoft.com;
+ s=selector1-uwoca-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7NbTInb3Q1h8ETP1q6lbwWfL655Jnsis58JQpi0Iwxc=;
- b=XE9abBnKktz0wawqdchFdMjB3fhKa/eoIZJ6C59AsjTSDWzOykjMd73P22xDUIn8/PXRB6MEfdez7/eOYxyCv2KbaSeiQFeh9V46gFXNPTWabxobbQZJUaUdO4PC8+yTK6Y8yhR8oR5FkTGM1newJLE1NVrrrxdf6u/9lNXtnXY=
-Received: from DM5PR13MB1851.namprd13.prod.outlook.com (10.171.159.143) by
- DM5PR13MB1148.namprd13.prod.outlook.com (10.168.120.135) with Microsoft SMTP
+ bh=0JyuDFUmOpzgKH6dgh5LdWzoUOc/E37EGuvvgxjAQ2g=;
+ b=3acH5FWp6cHHoDz9UgPn0W1/mimEjzA/wuAQzVRpLnk4+5qQ2Gjlf3XUdx8zFq8lrOkBdPOMLRr5GCrIDpwisWKi7UpokKO8/67yT0uC3b0vVj1xAx0QcMPSTag0K4eZ6IEghsQbSAspEMwjBQQZwv03E9w7synGdz25l4B92Yo=
+Received: from YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM (52.132.69.19) by
+ YQBPR0101MB1203.CANPRD01.PROD.OUTLOOK.COM (52.132.70.158) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2032.12; Sun, 30 Jun 2019 16:15:00 +0000
-Received: from DM5PR13MB1851.namprd13.prod.outlook.com
- ([fe80::3064:e318:82d9:4887]) by DM5PR13MB1851.namprd13.prod.outlook.com
- ([fe80::3064:e318:82d9:4887%12]) with mapi id 15.20.2052.010; Sun, 30 Jun
- 2019 16:15:00 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     "willy@infradead.org" <willy@infradead.org>
-CC:     "jlayton@redhat.com" <jlayton@redhat.com>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "bfields@redhat.com" <bfields@redhat.com>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>
-Subject: Re: [PATCH 05/16] nfsd: add a new struct file caching facility to
- nfsd
-Thread-Topic: [PATCH 05/16] nfsd: add a new struct file caching facility to
- nfsd
-Thread-Index: AQHVL0tq7yqCUIxETkmrUQ1GbWPANKa0WoWAgAAE0AA=
-Date:   Sun, 30 Jun 2019 16:15:00 +0000
-Message-ID: <61f965d747b74a1eb7406bcde4591f71d56305dc.camel@hammerspace.com>
-References: <20190630135240.7490-1-trond.myklebust@hammerspace.com>
-         <20190630135240.7490-2-trond.myklebust@hammerspace.com>
-         <20190630135240.7490-3-trond.myklebust@hammerspace.com>
-         <20190630135240.7490-4-trond.myklebust@hammerspace.com>
-         <20190630135240.7490-5-trond.myklebust@hammerspace.com>
-         <20190630135240.7490-6-trond.myklebust@hammerspace.com>
-         <20190630155745.GC15900@bombadil.infradead.org>
-In-Reply-To: <20190630155745.GC15900@bombadil.infradead.org>
-Accept-Language: en-US, en-GB
+ 15.20.2032.18; Sun, 30 Jun 2019 17:42:13 +0000
+Received: from YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::810f:1394:be78:11a4]) by YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::810f:1394:be78:11a4%7]) with mapi id 15.20.2032.019; Sun, 30 Jun 2019
+ 17:42:13 +0000
+From:   Sandra Anne Hamilton <shamil32@uwo.ca>
+To:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Project Analysis
+Thread-Topic: Project Analysis
+Thread-Index: AQHVL2XZNGRaFfr6Y02Vu5uSvdc5Ng==
+Importance: high
+X-Priority: 1
+Sensitivity: company-confidential
+Date:   Sun, 30 Jun 2019 17:04:16 +0000
+Message-ID: <YQBPR0101MB137831BE561D4AAE35EA1009A8FE0@YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM>
+Reply-To: "mrfuhuangfu101@mufgbank-jp.com" <mrfuhuangfu101@mufgbank-jp.com>
+Accept-Language: en-CA, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+x-clientproxiedby: MN2PR16CA0010.namprd16.prod.outlook.com
+ (2603:10b6:208:134::23) To YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c00:a::19)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=trondmy@hammerspace.com; 
-x-originating-ip: [50.124.245.189]
+ smtp.mailfrom=shamil32@uwo.ca; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [102.165.49.36]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7bd2956e-731f-4aa8-157a-08d6fd761a38
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:DM5PR13MB1148;
-x-ms-traffictypediagnostic: DM5PR13MB1148:
-x-microsoft-antispam-prvs: <DM5PR13MB114800FEAEF1D55C0A986776B8FE0@DM5PR13MB1148.namprd13.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-ms-office365-filtering-correlation-id: 36d1d2a9-4dc0-4978-ce3e-08d6fd7cfbe7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:YQBPR0101MB1203;
+x-ms-traffictypediagnostic: YQBPR0101MB1203:
+x-microsoft-antispam-prvs: <YQBPR0101MB120304C8F5F2F3F9717908BEA8FE0@YQBPR0101MB1203.CANPRD01.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:3826;
 x-forefront-prvs: 008421A8FF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(39830400003)(346002)(366004)(376002)(199004)(189003)(102836004)(54906003)(186003)(53936002)(66946007)(64756008)(73956011)(2351001)(5640700003)(66476007)(66066001)(6512007)(4744005)(66556008)(2501003)(5660300002)(2906002)(229853002)(6116002)(8936002)(76116006)(25786009)(118296001)(6436002)(76176011)(6506007)(68736007)(478600001)(3846002)(86362001)(316002)(71190400001)(71200400001)(8676002)(6486002)(6246003)(1730700003)(6916009)(7736002)(36756003)(81166006)(66446008)(256004)(14454004)(486006)(446003)(305945005)(26005)(99286004)(11346002)(4326008)(2616005)(476003)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR13MB1148;H:DM5PR13MB1851.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: hammerspace.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(136003)(346002)(376002)(39860400002)(199004)(189003)(102836004)(558084003)(3480700005)(14454004)(71190400001)(71200400001)(52116002)(7696005)(43066004)(81686011)(6436002)(386003)(53936002)(2501003)(6506007)(55016002)(9686003)(2351001)(99286004)(186003)(229853002)(26005)(5003540100004)(5640700003)(305945005)(66806009)(5660300002)(221733001)(8796002)(81156014)(478600001)(6246003)(86362001)(7736002)(6916009)(316002)(786003)(66066001)(2906002)(486006)(3846002)(6116002)(476003)(8936002)(66556008)(74482002)(25786009)(8676002)(256004)(66446008)(64756008)(66476007)(33656002)(68736007)(66946007)(74316002)(52536014)(73956011)(7116003)(81166006)(130330200001);DIR:OUT;SFP:1501;SCL:1;SRVR:YQBPR0101MB1203;H:YQBPR0101MB1378.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: uwo.ca does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: A0IE21QJP5cKSrxusyRr4lNgNplcdQsl9uyGKxGmt4WPeU/Mlo0QptXTYyitvNhX/e/dMf2Vj56C4sXaB7Fm/kUddEUxLqJ51W65jUcRPbSAZhI75xNSXi73+IVU6hdB5nO/kZd8Qi4Js/b9qTvDYNsVS2v5IAaj+tiwgnol8oeo2c6RMC2Yex/0kpaEkn3MXxzSgYcMIq5h9hf5KhjL7Eclc98HN6ea28P7UKRjqp3I1YToujVyFf8BTtdBEDnR6aIP65euDQAXQZEtuW/3kQylZXyPkPl5WSE0Q4l5aTvzXA23hLr2R06OnZ/nVOSRyxuhYMxwUVqTY07FjbSo+Wro1XKYCTpydFS1LBkQNTKZq63UvOTryvgyYB031xAenPUV1vjFz3zudi4Unfne23akXWJJobP/7HJZigwdmxU=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A21A8B6845EDCF45AE1BF9A400A9DBBB@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+x-microsoft-antispam-message-info: 4geemCoa9DelGEpejj+QZXnnaFuD0YFX2yQgeTk1tdng8xeKuWWpoMO8fKZmWZJ3GfYUjhwehk4ZGHro+mEkzHAHoTGQLifcDyeuEa+ftNMrO58ob5hTWDhFF/KYwILC9tMHQF/nbg8uRp57/WTSubet20O6q1PuBsp+k8PZN+rTp1HrndGwh9aABQn5fE1oDwXszE1MQq48kCP27VLeiccO4bsLsFXGmh/Xh+vtEmayfB/HsbW6kvAe+j0h/cAxrU0sGhBNPSZKcvDW1xOjZbyJ7XX/poX7vZUJwFOmyGzmM+5oF/QOZTTiKj3TtzAK9dIb5YULbGb/34VAE9udD9G0EraZFfmD0wgC+YE2fpyB/cl+kXEqkUSdJvmMHacPsTG3LZ+62aNUaT5Jr1Xily5/0r1bVCxEYBmKMZ2R8fs=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <7088C5168939F74AB525D13450ACA9B8@CANPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bd2956e-731f-4aa8-157a-08d6fd761a38
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jun 2019 16:15:00.6215
+X-OriginatorOrg: uwo.ca
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36d1d2a9-4dc0-4978-ce3e-08d6fd7cfbe7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jun 2019 17:04:16.5357
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-id: ad93a64d-ad0d-4ecd-b2fd-e53ce15965be
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: trondmy@hammerspace.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR13MB1148
+X-MS-Exchange-CrossTenant-userprincipalname: shamil32@uwo.ca
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB1203
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gU3VuLCAyMDE5LTA2LTMwIGF0IDA4OjU3IC0wNzAwLCBNYXR0aGV3IFdpbGNveCB3cm90ZToN
-Cj4gT24gU3VuLCBKdW4gMzAsIDIwMTkgYXQgMDk6NTI6MjlBTSAtMDQwMCwgVHJvbmQgTXlrbGVi
-dXN0IHdyb3RlOg0KPiA+ICsvKiBGSVhNRTogZHluYW1pY2FsbHkgc2l6ZSB0aGlzIGZvciB0aGUg
-bWFjaGluZSBzb21laG93PyAqLw0KPiA+ICsjZGVmaW5lIE5GU0RfRklMRV9IQVNIX0JJVFMgICAg
-ICAgICAgICAgICAgICAgMTINCj4gPiArI2RlZmluZSBORlNEX0ZJTEVfSEFTSF9TSVpFICAgICAg
-ICAgICAgICAgICAgKDEgPDwNCj4gPiBORlNEX0ZJTEVfSEFTSF9CSVRTKQ0KPiA+ICsjZGVmaW5l
-IE5GU0RfTEFVTkRSRVRURV9ERUxBWQkJICAgICAoMiAqIEhaKQ0KPiANCj4gSXNuJ3QgdGhpcyB3
-aGF0IHJoYXNodGFibGUgaXMgZm9yPw0KDQpNYXliZS4gSSdtIGxlc3MgY29uY2VybmVkIHRoYW4g
-SmVmZiB3YXMgb3ZlciB0aGUgc2l6ZSBvZiB0aGUgaGFzaA0KdGFibGUuDQoNCjQwOTYgYnVja2V0
-cyBzaG91bGQgc2NhbGUgcXVpdGUgd2VsbCB1cCB0byB0aGUgbWlsbGlvbnMgb2YgZW50cmllcy4N
-CldlJ3JlIGhpZ2hseSB1bmxpa2VseSB0byBoYXZlIHRoYXQgbWFueSBhY3RpdmUgZmlsZXMgYXQg
-dGhlIHNhbWUgdGltZSwNCmFuZCBwYXJ0aWN1bGFybHkgbm90IGZvciBORlN2Mywgd2hpY2ggaXMg
-dGhlIG1haW4gY3JpdGljYWwgdXNlciBvZiB0aGlzDQpsb29rdXAgdGFibGUuDQoNCi0tIA0KVHJv
-bmQgTXlrbGVidXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWluZXIsIEhhbW1lcnNwYWNlDQp0
-cm9uZC5teWtsZWJ1c3RAaGFtbWVyc3BhY2UuY29tDQoNCg0K
+Did you receive my earlier email as  regards the project with Mr Fu huang C=
+EO. PLEASE REPLY immediately. Regards.
