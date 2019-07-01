@@ -2,170 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D72E5B7FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 11:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D848F5B832
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 11:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728397AbfGAJ0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 05:26:35 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:58351 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728345AbfGAJ0f (ORCPT
+        id S1728388AbfGAJlm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 05:41:42 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54375 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728334AbfGAJll (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 05:26:35 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 67F391926;
-        Mon,  1 Jul 2019 05:26:31 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 01 Jul 2019 05:26:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=f4czRt2dBkv8pN065obux10iigs
-        5H2P/jUH4YPctBX4=; b=HbMdosaKJFUEmlxfPpgvwRPfUZZUnDtXEJSulkXKgRS
-        iq2GM3kPTqhnydLP/Hn1C1SM0wRFzxeqFQeuMY0cl17hHk0C4KQqSIu9e4hM9Nc/
-        1zY63VrUibN3ZqIkqGDzcgcgMLBRU3ezQvgVh+OV6PHp6CvTgFqXjvc7F6h9sS3A
-        s+psyVrnpX+4fRU1CEdKWo4NZTck9e93U1dpLG/+U2oVKS09doU0qqMw9okwRRRY
-        6YSXvr9WPdOAwrycZTB5T9Y54XbrUOasHAvfBpe++hlNwRQei0ErkXozmdjG0kE2
-        ANDFeR7mAs5D6Liz8gJdrSj/lANX4Bwz9Htdki1KOcg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=f4czRt
-        2dBkv8pN065obux10iigs5H2P/jUH4YPctBX4=; b=BXvZF4HvskL2NSVGHZ0Fai
-        pg5j0fHec3NoomL+fMN06PIxdn1g8X6AjhJoax5Q8jGxMrLCDpaWFSdepVlxV/Fa
-        9/yN6jJcMkJj0lBvOjvjfC4uLa7pqMoW30cqqRdZ0DvBXam/RwuUx1dBvhW/r41o
-        opZS+NBFQyPyxIGUTe2rnK4wsyA80nXXE+H4Xbn0O2Psfm9lqvwKecFMkqGpK0jn
-        ZeJKqfLElbOxcX5t46Fa+N5zhyGvzKrySddU3sfs5RVCnn1VGp5RL40vMbqmOu0d
-        uukhWVdWs501gAzAuRSPWubLEk80RDGAQCDuXScXf0on+ITTTdLmSFhquXCCFqUg
-        ==
-X-ME-Sender: <xms:xNEZXZ2Ol1P8OXll-4lgGH7sAy1d0uFZSyHMJ-Es9JVAQyiHZbvw8w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrvdeigddugecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
-    hrlhcuvffnffculdeftddmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttdertdfo
-    redvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesthhosg
-    hinhdrtggtqeenucfkphepuddvgedrudelrdefuddrgeenucfrrghrrghmpehmrghilhhf
-    rhhomhepmhgvsehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:xNEZXcFQV42vo-KmGldRMALNC7NGl2OO0b9N5E_bqmxd0JpnDAmVMQ>
-    <xmx:xNEZXciLWpFKc4Ak5VIpYa2gAJwJGtzduq1hkcjeLPi1SRM0TX3zKA>
-    <xmx:xNEZXVD8xLq-PNaGPYToblU5TA44fwD_xjDHmcubFMuYvWg0YhS7Og>
-    <xmx:x9EZXReMZW3f4q3cfjMzqXuJlFpECY_7lk8QU65JRm-j6WdmfvGskw>
-Received: from localhost (unknown [124.19.31.4])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 63C7F380074;
-        Mon,  1 Jul 2019 05:26:27 -0400 (EDT)
-Date:   Mon, 1 Jul 2019 19:26:25 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Tobin C. Harding" <tobin@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Alexander Viro <viro@ftp.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Pekka Enberg <penberg@cs.helsinki.fi>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Christopher Lameter <cl@linux.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Waiman Long <longman@redhat.com>,
-        Tycho Andersen <tycho@tycho.ws>, Theodore Ts'o <tytso@mit.edu>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Chinner <david@fromorbit.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Rik van Riel <riel@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: shrink_dentry_list() logics change (was Re: [RFC PATCH v3 14/15]
- dcache: Implement partial shrink via Slab Movable Objects)
-Message-ID: <20190701092625.GA9703@ares>
-References: <20190411013441.5415-1-tobin@kernel.org>
- <20190411013441.5415-15-tobin@kernel.org>
- <20190411023322.GD2217@ZenIV.linux.org.uk>
- <20190411024821.GB6941@eros.localdomain>
- <20190411044746.GE2217@ZenIV.linux.org.uk>
- <20190411210200.GH2217@ZenIV.linux.org.uk>
- <20190629040844.GS17978@ZenIV.linux.org.uk>
- <20190629043803.GT17978@ZenIV.linux.org.uk>
- <20190629190624.GU17978@ZenIV.linux.org.uk>
+        Mon, 1 Jul 2019 05:41:41 -0400
+Received: by mail-wm1-f67.google.com with SMTP id g135so15104200wme.4;
+        Mon, 01 Jul 2019 02:41:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6mj1GNCBlm5Kzl/Gv47qDDxI924Jr5t8ezQS95HGAxE=;
+        b=RMrB1vsX/2hK+on0/p7Z7GxznCyEy8+F457kddIrwKQwlCyrQQxmFpdyIB7KPTFSrI
+         1UEEwV35Lu1CwDmb2s+W4OV+NkzstIuw8Cc63+MTmhAkrLOTiGJ1qG16J4JvqTAEsrSs
+         uZnWKKrQgeqZdO/mh9YOy2EoWVT//ZMAZ8eHGu9m2sZo312GQ3vgDEcVGV8kekxPtJMN
+         rv0CFJjViOmLgWPsk0vUPM+G4Qtu0X7i8ze6FzUMeBgTwPapqt1nU/op3JD7L/rym6eB
+         LO9RSQlwXNBw4IS2pP/gIgz2ZEOQZYuk+kM5QZ6v7wLL6Ud/9JPtH+DTjO8Md5KsnlAx
+         l+pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6mj1GNCBlm5Kzl/Gv47qDDxI924Jr5t8ezQS95HGAxE=;
+        b=CNtxuFG0C+fodwzzq5WlRxI4eXG8u4oWNxdMbtgVH9eqvjg3qGe5BECdPnlRUwQHOl
+         5zPPffl0ZubCXhpFD+PP+biNgkSIrDyMEbgruvTLVtTQKAWiZplQgdS2dLMGR0KyHioL
+         0TesIpiz0CRrh47EEDomi3WbSdX2FX5ruq2nNlJHdl08YwgoWwCQP/Xjl6R9L0h3aIDX
+         rzzuHEZgXsEBXJCU2jnPN/HaiJK09JtABWgzPqi3JB/v4dD7z41EiAVtiNLRdbjr3c33
+         YR3fM0RwSsJaBAo0gmjf0z9OjJ0ohc2OjqwkF8BCyZN91V2yIUKbsjb91pvV2Noo1KrB
+         sCRA==
+X-Gm-Message-State: APjAAAUPpI1RUfTiCL2xC0BUakC47MacJo+h/dgw7tjbfOFjPCYRshky
+        BvC0niR5Pjy6mo1wcrJ6Wa0=
+X-Google-Smtp-Source: APXvYqw1GiG2c1p4SOty1AL+8QolpaF03Qeti32qNeBWi0z+owqwU83+3Kt9KKC6JMz4wuXTHDVY/A==
+X-Received: by 2002:a1c:3:: with SMTP id 3mr16735741wma.6.1561974098900;
+        Mon, 01 Jul 2019 02:41:38 -0700 (PDT)
+Received: from [172.22.36.64] (redhat-nat.vtp.fi.muni.cz. [78.128.215.6])
+        by smtp.gmail.com with ESMTPSA id 5sm5860353wmi.22.2019.07.01.02.41.37
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 02:41:38 -0700 (PDT)
+Subject: Re: [RFC PATCH v5 0/1] Add dm verity root hash pkcs7 sig validation.
+To:     James Morris <jmorris@namei.org>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, scottsh@microsoft.com, mpatocka@redhat.com
+References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
+ <20190628040041.GB673@sol.localdomain>
+ <alpine.LRH.2.21.1906282040490.15624@namei.org>
+From:   Milan Broz <gmazyland@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <749ddf56-3cb6-42c8-9ccc-71e09558400f@gmail.com>
+Date:   Mon, 1 Jul 2019 11:41:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190629190624.GU17978@ZenIV.linux.org.uk>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <alpine.LRH.2.21.1906282040490.15624@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 29, 2019 at 08:06:24PM +0100, Al Viro wrote:
-> On Sat, Jun 29, 2019 at 05:38:03AM +0100, Al Viro wrote:
+On 29/06/2019 06:01, James Morris wrote:
+> On Thu, 27 Jun 2019, Eric Biggers wrote:
 > 
-> > PS: the problem is not gone in the next iteration of the patchset in
-> > question.  The patch I'm proposing (including dput_to_list() and _ONLY_
-> > compile-tested) follows.  Comments?
+>> I don't understand your justification for this feature.
+>>
+>> If userspace has already been pwned severely enough for the attacker to be
+>> executing arbitrary code with CAP_SYS_ADMIN (which is what the device mapper
+>> ioctls need), what good are restrictions on loading more binaries from disk?
+>>
+>> Please explain your security model.
 > 
-> FWIW, there's another unpleasantness in the whole thing.  Suppose we have
-> picked a page full of dentries, all with refcount 0.  We decide to
-> evict all of them.  As it turns out, they are from two filesystems.
-> Filesystem 1 is NFS on a server, with currently downed hub on the way
-> to it.  Filesystem 2 is local.  We attempt to evict an NFS dentry and
-> get stuck - tons of dirty data with no way to flush them on server.
-> In the meanwhile, admin tries to unmount the local filesystem.  And
-> gets stuck as well, since umount can't do anything to its dentries
-> that happen to sit in our shrink list.
-> 
-> I wonder if the root of problem here isn't in shrink_dcache_for_umount();
-> all it really needs is to have everything on that fs with refcount 0
-> dragged through __dentry_kill().  If something had been on a shrink
-> list, __dentry_kill() will just leave behind a struct dentry completely
-> devoid of any connection to superblock, other dentries, filesystem
-> type, etc. - it's just a piece of memory that won't be freed until
-> the owner of shrink list finally gets around to it.  Which can happen
-> at any point - all they'll do to it is dentry_free(), and that doesn't
-> need any fs-related data structures.
-> 
-> The logics in shrink_dcache_parent() is
-> 	collect everything evictable into a shrink list
-> 	if anything found - kick it out and repeat the scan
-> 	otherwise, if something had been on other's shrink list
-> 		repeat the scan
-> 
-> I wonder if after the "no evictable candidates, but something
-> on other's shrink lists" we ought to do something along the
-> lines of
-> 	rcu_read_lock
-> 	walk it, doing
-> 		if dentry has zero refcount
-> 			if it's not on a shrink list,
-> 				move it to ours
-> 			else
-> 				store its address in 'victim'
-> 				end the walk
-> 	if no victim found
-> 		rcu_read_unlock
-> 	else
-> 		lock victim for __dentry_kill
-> 		rcu_read_unlock
-> 		if it's still alive
-> 			if it's not IS_ROOT
-> 				if parent is not on shrink list
-> 					decrement parent's refcount
-> 					put it on our list
-> 				else
-> 					decrement parent's refcount
-> 			__dentry_kill(victim)
-> 		else
-> 			unlock
-> 	if our list is non-empty
-> 		shrink_dentry_list on it
-> in there...
+> Let's say the system has a policy where all code must be signed with a 
+> valid key, and that one mechanism for enforcing this is via signed 
+> dm-verity volumes. Validating the signature within the kernel provides 
+> stronger assurance than userspace validation. The kernel validates and 
+> executes the code, using kernel-resident keys, and does not need to rely 
+> on validation which has occurred across a trust boundary.
 
-Thanks for still thinking about this Al.  I don't have a lot of idea
-about what to do with your comments until I can grok them fully but I
-wanted to acknowledge having read them.
+Yes, but as it is implemented in this patch, a certificate is provided as
+a binary blob by the (super)user that activates the dm-verity device.
 
-Thanks,
-Tobin.
+Actually, I can put there anything that looks like a correct signature (self-signed
+or so), and dm-verity code is happy because the root hash is now signed.
+
+Maybe could this concept be extended to support in-kernel compiled certificates?
+
+I like the idea of signed root hash, but the truth is that if you have access
+to device activation, it brings nothing, you can just put any cert in the keyring
+and use it.
+
+Milan
+
+> 
+> You don't need arbitrary CAP_SYS_ADMIN code execution, you just need a 
+> flaw in the app (or its dependent libraries, or configuration) which 
+> allows signature validation to be bypassed.
+> 
+> The attacker now needs a kernel rather than a userspace vulnerability to 
+> bypass the signed code policy.
+> 
