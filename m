@@ -2,101 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE4845BA7C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 13:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B7695BB4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 14:14:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbfGALVd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 07:21:33 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8247 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727239AbfGALVd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 07:21:33 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DAAC2A264424BE86046E;
-        Mon,  1 Jul 2019 19:21:28 +0800 (CST)
-Received: from [127.0.0.1] (10.184.213.217) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Mon, 1 Jul 2019
- 19:21:21 +0800
-Subject: Re: [PATCH] fs: change last_ino type to unsigned long
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
-        <houtao1@huawei.com>, <yi.zhang@huawei.com>, <rui.xiang@huawei.com>
-References: <1561811293-75769-1-git-send-email-zhengbin13@huawei.com>
- <20190629142101.GA1180@bombadil.infradead.org>
- <b8edc95d-0073-ab0f-27f2-3aee3a728d00@huawei.com>
- <20190701015257.GA18754@bombadil.infradead.org>
-From:   "zhengbin (A)" <zhengbin13@huawei.com>
-Message-ID: <34ee1d36-25d2-6971-9d10-17dd0ab721b1@huawei.com>
-Date:   Mon, 1 Jul 2019 19:21:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1727703AbfGAMOB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 08:14:01 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:44939 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727526AbfGAMOB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jul 2019 08:14:01 -0400
+Received: by mail-io1-f72.google.com with SMTP id i133so14933625ioa.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jul 2019 05:14:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=NWf6zAXmXdVI9wmyrTa+FuCFWEZ41w0HLTqj15sQqqk=;
+        b=NKDXb5cMoeURel876B699Bjycc0VYO1ht2RuuDoW5ougczRNK9VNUuY7HCbv8OiArR
+         aAC5S/Ovvrhpoge4KO7FlnotxenLWF09/514y1hqVpdKuGA/r/50Ts3RjQzrKrebbk0W
+         gLE1vdQdoeFuiMsqx0yvwKwI4AbKV+t4CKgIz0ygQdZRW+/1529oZauqc+abh/fcdNn/
+         m62cUGaDD82Bv4PoQA4JszgThUJftdbzP+hnus+9eJ7r02FOmuzQpFBoO9pJcUpdoP/n
+         mEm4SM07hScW2J6w0TeWTQW57Gey9uLccb/Qic5xVRQsLcWDms0+TkrKAsLFt+2HLfs3
+         mGZQ==
+X-Gm-Message-State: APjAAAXNtP82E0cvWRWV6CKpDsnhB3+y0Vn0M7Ne8eRR1jZ0CE22V2Ma
+        DIWa3f6CMC9chluoyej5yfcPNPXKtmciX37qKj/VJuh9C2ix
+X-Google-Smtp-Source: APXvYqymMtF4Sb3QSuurBcHYsH3E8Req+IEh12sC9+1vRDayQ+vOG5A9GROOa0/UnLqUgLp/5wtZGfRSO49p8UhKW1mNXVSK9KiL
 MIME-Version: 1.0
-In-Reply-To: <20190701015257.GA18754@bombadil.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.184.213.217]
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a5d:8497:: with SMTP id t23mr25182314iom.298.1561983240729;
+ Mon, 01 Jul 2019 05:14:00 -0700 (PDT)
+Date:   Mon, 01 Jul 2019 05:14:00 -0700
+In-Reply-To: <000000000000a5d3cb058c9a64f0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000357fba058c9d906d@google.com>
+Subject: Re: kernel panic: corrupted stack end in dput
+From:   syzbot <syzbot+d88a977731a9888db7ba@syzkaller.appspotmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/7/1 9:52, Matthew Wilcox wrote:
+syzbot has bisected this bug to:
 
-> On Mon, Jul 01, 2019 at 09:48:03AM +0800, zhengbin (A) wrote:
->> On 2019/6/29 22:21, Matthew Wilcox wrote:
->>> On Sat, Jun 29, 2019 at 08:28:13PM +0800, zhengbin wrote:
->>>> tmpfs use get_next_ino to get inode number, if last_ino wraps,
->>>> there will be files share the same inode number. Change last_ino
->>>> type to unsigned long.
->>> Is this a serious problem?
->> Yes, if two files share the same inode number, when application uses dlopen to get
->>
->> file handle,  there will be problems.
-> That wasn't what I meant.  Does it happen in practice?  Have you observed
-> it, or are you just worrying about a potential problem?
->
->> Maybe we could use iunique to try to get a unique i_ino value(when we allocate new inode,
->>
->> we need to add it to the hashtable), the questions are:
->>
->> 1. inode creation will be slow down, as the comment of function  iunique says:
->>
->>  *    BUGS:
->>  *    With a large number of inodes live on the file system this function
->>  *    currently becomes quite slow.
->>
->> 2. we need to convert all callers of  get_next_ino to use iunique (tmpfs, autofs, configfs...),
->>
->> moreover, the more callers are converted, the function of iunique will be more slower.
->>
->>
->> Looking forward to your reply, thanks.
->>> I'd be more convinced by a patch to use
->>> the sbitmap data structure than a blind conversion to use atomic64_t.
-> You ignored this sentence.
+commit e9db4ef6bf4ca9894bb324c76e01b8f1a16b2650
+Author: John Fastabend <john.fastabend@gmail.com>
+Date:   Sat Jun 30 13:17:47 2018 +0000
 
-Hi, maybe sbitmap is not a good solution, max_inodes of tmpfs are controlled by mount options--nrinodes,
+     bpf: sockhash fix omitted bucket lock in sock_close
 
-which can be modified by remountfs(bigger or smaller), as the comment of function sbitmap_resize says:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17f7f4d5a00000
+start commit:   7b75e49d net: dsa: mv88e6xxx: wait after reset deactivation
+git tree:       net
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=140ff4d5a00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=100ff4d5a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e7c31a94f66cc0aa
+dashboard link: https://syzkaller.appspot.com/bug?extid=d88a977731a9888db7ba
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130f49bda00000
 
- * Doesn't reallocate anything. It's up to the caller to ensure that the new
- * depth doesn't exceed the depth that the sb was initialized with.
+Reported-by: syzbot+d88a977731a9888db7ba@syzkaller.appspotmail.com
+Fixes: e9db4ef6bf4c ("bpf: sockhash fix omitted bucket lock in sock_close")
 
-We can modify this to meet the growing requirements, there will still be questions as follows:
-
-1. tmpfs is a ram filesystem, we need to allocate sbitmap memory for sbinfo->max_inodes(while this maybe huge)
-
-2.If remountfs changes  max_inode, we have to deal with it, while this may take a long time
-
-(bigger: we need to free the old sbitmap memory, allocate new memory, copy the old sbitmap to new sbitmap
-
-smaller: How do we deal with it?ie: we use sb->map[inode number/8] to find the sbitmap, we need to change the exist
-
-inode numbers?while this maybe used by userspace application.)
-
->
-> .
->
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
