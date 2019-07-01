@@ -2,162 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D9185C5DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2019 01:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F085E156
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 11:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfGAXKq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 19:10:46 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:54707 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726486AbfGAXKp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 19:10:45 -0400
-Received: from dread.disaster.area (pa49-195-139-63.pa.nsw.optusnet.com.au [49.195.139.63])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 811A01ACDC1;
-        Tue,  2 Jul 2019 09:10:40 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hi5QS-00040R-OE; Tue, 02 Jul 2019 09:09:32 +1000
-Date:   Tue, 2 Jul 2019 09:09:32 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] iomap: move the xfs writeback code to iomap.c
-Message-ID: <20190701230932.GN7777@dread.disaster.area>
-References: <20190624055253.31183-1-hch@lst.de>
- <20190624055253.31183-12-hch@lst.de>
- <20190624234304.GD7777@dread.disaster.area>
- <20190625101020.GI1462@lst.de>
- <20190628004542.GJ7777@dread.disaster.area>
- <20190628053320.GA26902@lst.de>
- <20190701000859.GL7777@dread.disaster.area>
- <20190701064333.GA20778@lst.de>
+        id S1727068AbfGCJrz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 05:47:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47630 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727056AbfGCJrx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jul 2019 05:47:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7ADFDB15C;
+        Wed,  3 Jul 2019 09:47:51 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 285CE1E433D; Mon,  1 Jul 2019 14:11:19 +0200 (CEST)
+Date:   Mon, 1 Jul 2019 14:11:19 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] filesystem-dax: Disable PMD support
+Message-ID: <20190701121119.GE31621@quack2.suse.cz>
+References: <CAPcyv4jQP-SFJGor-Q3VCRQ0xwt3MuVpH2qHx2wzyRA88DGQww@mail.gmail.com>
+ <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
+ <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
+ <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
+ <20190627195948.GB4286@bombadil.infradead.org>
+ <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
+ <20190629160336.GB1180@bombadil.infradead.org>
+ <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
+ <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
+ <20190630152324.GA15900@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190701064333.GA20778@lst.de>
+In-Reply-To: <20190630152324.GA15900@bombadil.infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
-        a=fNT+DnnR6FjB+3sUuX8HHA==:117 a=fNT+DnnR6FjB+3sUuX8HHA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=0o9FgrsRnhwA:10
-        a=EmmQ-hcxAAAA:8 a=7-415B0cAAAA:8 a=Qa3Qb0k2LGP6046GbCIA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 08:43:33AM +0200, Christoph Hellwig wrote:
-> On Mon, Jul 01, 2019 at 10:08:59AM +1000, Dave Chinner wrote:
-> > > Why do you assume you have to test it?  Back when we shared
-> > > generic_file_read with everyone you also didn't test odd change to
-> > > it with every possible fs.
-> > 
-> > I'm not sure what function you are referring to here. Can you
-> > clarify?
+On Sun 30-06-19 08:23:24, Matthew Wilcox wrote:
+> On Sun, Jun 30, 2019 at 01:01:04AM -0700, Dan Williams wrote:
+> > @@ -215,7 +216,7 @@ static wait_queue_head_t
+> > *dax_entry_waitqueue(struct xa_state *xas,
+> >          * queue to the start of that PMD.  This ensures that all offsets in
+> >          * the range covered by the PMD map to the same bit lock.
+> >          */
+> > -       if (dax_is_pmd_entry(entry))
+> > +       //if (dax_is_pmd_entry(entry))
+> >                 index &= ~PG_PMD_COLOUR;
+> >         key->xa = xas->xa;
+> >         key->entry_start = index;
 > 
-> Right now it is generic_file_read_iter(), but before iter it was
-> generic_file_readv, generic_file_read, etc.
-
-This generic code never came from XFS, so I'm still not sure what
-you are refering to here? Some pointers to commits would help me
-remember. :/
-
-> > > If you change iomap.c, you'll test it
-> > > with XFS, and Cc other maintainers so that they get a chance to
-> > > also test it and comment on it, just like we do with other shared
-> > > code in the kernel.
-> > 
-> > Which is why we've had problems with the generic code paths in the
-> > past and other filesystems just copy and paste then before making
-> > signficant modifications. e.g. both ext4 and btrfs re-implement
-> > write_cache_pages() rather than use the generic writeback code
-> > because they have slightly different requirements and those
-> > developers don't want to have to worry about other filesystems every
-> > time there is an internal filesystem change that affects their
-> > writeback constraints...
-> > 
-> > That's kinda what I'm getting at here: writeback isn't being shared
-> > by any of the major filesystems for good reasons...
+> Hah, that's a great naive fix!  Thanks for trying that out.
 > 
-> I very fundamentally disagree.  It is not shared for a bad reasons,
-> and that is people not understanding the mess that the buffer head
-> based code is, and not wanting to understand it. 
+> I think my theory was slightly mistaken, but your fix has the effect of
+> fixing the actual problem too.
+> 
+> The xas->xa_index for a PMD is going to be PMD-aligned (ie a multiple of
+> 512), but xas_find_conflict() does _not_ adjust xa_index (... which I
+> really should have mentioned in the documentation).  So we go to sleep
+> on the PMD-aligned index instead of the index of the PTE.  Your patch
+> fixes this by using the PMD-aligned index for PTEs too.
+> 
+> I'm trying to come up with a clean fix for this.  Clearly we
+> shouldn't wait for a PTE entry if we're looking for a PMD entry.
+> But what should get_unlocked_entry() return if it detects that case?
+> We could have it return an error code encoded as an internal entry,
+> like grab_mapping_entry() does.  Or we could have it return the _locked_
+> PTE entry, and have callers interpret that.
+> 
+> At least get_unlocked_entry() is static, but it's got quite a few callers.
+> Trying to discern which ones might ask for a PMD entry is a bit tricky.
+> So this seems like a large patch which might have bugs.
 
-The problem with heavily shared code is that it requires far more
-expertise, knowledge, capability and time to modify it. The code
-essentially ossifies, because changing something fundamental risks
-breaking other stuff that nobody actually understands anymore and is
-unwilling to risk changing.
+Yeah. So get_unlocked_entry() is used in several cases:
 
-That's not a problem with bufferheads - that's a problem of widely
-shared code that has been slowly hacked to pieces to "fix' random
-problems that show up from different users of the shared code.
+1) Case where we already have entry at given index but it is locked and we
+need it unlocked so that we can do our thing `(dax_writeback_one(),
+dax_layout_busy_page()).
 
-When the shared code ossifies like this, the only way to make
-progress is to either copy it and do whatever you need privately,
-or re-implement it completely. ext4 and btrfs have taken the route
-of "copy and modify privately", whereas XFS has taken the
-"re-implement it completely" path.
+2) Case where we want any entry covering given index (in
+__dax_invalidate_entry()). This is essentially the same as case 1) since we
+have already looked up the entry (just didn't propagate that information
+from mm/truncate.c) - we want any unlocked entry covering given index.
 
-We're now starting down the "share the XFS re-implementation" and
-we're slowly adding more complexity to the iomap code to handle the
-different things each filesystem that is converted needs. With each
-new fs adding their own little quirks, it gets harder to make
-significant modifications without unknowingly breaking something in
-some other filesystem.
+3) Cases where we really want entry at given index and we have some entry
+order constraints (dax_insert_pfn_mkwrite(), grab_mapping_entry()).
 
-It takes highly capable developers to make serious modifications
-across highly shared code and the reality is that there are very few
-of them around. most developers simply aren't capable of taking on
-such a task, especially given that they see capable, experienced
-developers who won't even try because of past experiences akin to
-a game of Running Man(*)....
+Honestly I'd make the rule that get_unlocked_entry() returns entry of any
+order that is covering given index. I agree it may be unnecessarily waiting
+for PTE entry lock for the case where in case 3) we are really looking only
+for PMD entry but that seems like a relatively small cost for the
+simplicity of the interface.
 
-Shared code is good, up to the point where the sharing gets so
-complex that even people with the capability are not willing to
-touch/fix the code. That's what happened to bufferheads and it's a
-pattern repeated across lots of kernel infrastructure code. Just
-because you can handle these modifications doesn't mean everyone
-else can or even wants to.
+BTW, looking into the xarray code, I think I found another difference
+between the old radix tree code and the new xarray code that could cause
+issues. In the old radix tree code if we tried to insert PMD entry but
+there was some PTE entry in the covered range, we'd get EEXIST error back
+and the DAX fault code relies on this. I don't see how similar behavior is
+achieved by xas_store()...
 
-> And I'd much rather fix this than going down the copy an paste and
-> slightly tweak it while fucking up something else route.
-
-The copy-n-paste is a result of developers who have little knowledge
-of things outside their domain of interest/expertise making the sane
-decision to minimise risk of breaking something they know nothing
-about. From an individual subsystem perspective, that's a -good
-decision- to make, and that's the point I was trying to make.
-
-You see that as a bad decision, because you equating "shared code"
-with "high quality" code. The reality is that shared code is often
-poor quality because people get too scared to touch it. That's
-exactly the situation I don't want us to get stuck with, and why I
-want to see how multiple implementations of this abstracted writeback
-path change what we have now before we start moving code about...
-
-i.e. I'm not saying "we shouldn't do this", I'm just saying that "we
-should do this because shared code is good" fundamentally conflicts
-with the fact we've just re-implemented a bunch of stuff because
-the *shared code was really bad*. And taking the same path that lead
-to really bad shared code (i.e. organic growth without planning or
-design) is likely to end up in the same place....
-
-Cheers,
-
-Dave.
-
-(*) https://www.imdb.com/title/tt0093894/
-
-"A wrongly convicted man must try to survive a public execution
-gauntlet staged as a game show."
-
+								Honza
 -- 
-Dave Chinner
-david@fromorbit.com
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
