@@ -2,143 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A6C75B57A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 09:04:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A9375B59D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 09:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727243AbfGAHEN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 03:04:13 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45130 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725798AbfGAHEN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 03:04:13 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 05444B0DB3AFBCB53823;
-        Mon,  1 Jul 2019 15:04:10 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 1 Jul 2019
- 15:03:59 +0800
-Subject: Re: [PATCH RFC] iomap: introduce IOMAP_TAIL
-To:     Chao Yu <yuchao0@huawei.com>
-CC:     <hch@infradead.org>, <darrick.wong@oracle.com>,
-        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <chao@kernel.org>
-References: <20190629073020.22759-1-yuchao0@huawei.com>
- <afda5702-1d88-7634-d943-0c413ae3b28f@huawei.com>
- <a27e3502-db75-22fa-4545-e588abbbfbf2@huawei.com>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <58511d64-aa7a-8ac2-0255-affe0e8d49de@huawei.com>
-Date:   Mon, 1 Jul 2019 15:03:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1727839AbfGAHPM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 03:15:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32778 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727173AbfGAHPM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jul 2019 03:15:12 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 89BA3308A9BE;
+        Mon,  1 Jul 2019 07:15:11 +0000 (UTC)
+Received: from localhost (ovpn-8-25.pek2.redhat.com [10.72.8.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C7CC1001B2E;
+        Mon,  1 Jul 2019 07:14:53 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Liu Yiding <liuyd.fnst@cn.fujitsu.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, stable@vger.kernel.org
+Subject: [PATCH V2] block: fix .bi_size overflow
+Date:   Mon,  1 Jul 2019 15:14:46 +0800
+Message-Id: <20190701071446.22028-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <a27e3502-db75-22fa-4545-e588abbbfbf2@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 01 Jul 2019 07:15:11 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+'bio->bi_iter.bi_size' is 'unsigned int', which at most hold 4G - 1
+bytes.
 
+Before 07173c3ec276 ("block: enable multipage bvecs"), one bio can
+include very limited pages, and usually at most 256, so the fs bio
+size won't be bigger than 1M bytes most of times.
 
-On 2019/7/1 14:40, Chao Yu wrote:
-> Hi Xiang,
-> 
-> On 2019/6/29 17:34, Gao Xiang wrote:
->> Hi Chao,
->>
->> On 2019/6/29 15:30, Chao Yu wrote:
->>> Some filesystems like erofs/reiserfs have the ability to pack tail
->>> data into metadata, however iomap framework can only support mapping
->>> inline data with IOMAP_INLINE type, it restricts that:
->>> - inline data should be locating at page #0.
->>> - inline size should equal to .i_size
->>> So we can not use IOMAP_INLINE to handle tail-packing case.
->>>
->>> This patch introduces new mapping type IOMAP_TAIL to map tail-packed
->>> data for further use of erofs.
->>>
->>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>> ---
->>>  fs/iomap.c            | 22 ++++++++++++++++++++++
->>>  include/linux/iomap.h |  1 +
->>>  2 files changed, 23 insertions(+)
->>>
->>> diff --git a/fs/iomap.c b/fs/iomap.c
->>> index 12654c2e78f8..ae7777ce77d0 100644
->>> --- a/fs/iomap.c
->>> +++ b/fs/iomap.c
->>> @@ -280,6 +280,23 @@ iomap_read_inline_data(struct inode *inode, struct page *page,
->>>  	SetPageUptodate(page);
->>>  }
->>>  
->>> +static void
->>> +iomap_read_tail_data(struct inode *inode, struct page *page,
->>> +		struct iomap *iomap)
->>> +{
->>> +	size_t size = i_size_read(inode) & (PAGE_SIZE - 1);
->>> +	void *addr;
->>> +
->>> +	if (PageUptodate(page))
->>> +		return;
->>> +
->>> +	addr = kmap_atomic(page);
->>> +	memcpy(addr, iomap->inline_data, size);
->>> +	memset(addr + size, 0, PAGE_SIZE - size);
->>
->> need flush_dcache_page(page) here for new page cache page since
->> it's generic iomap code (althrough not necessary for x86, arm), I am not sure...
->> see commit d2b2c6dd227b and c01778001a4f...
-> 
-> Thanks for your reminding, these all codes were copied from
-> iomap_read_inline_data(), so I think we need a separated patch to fix this issue
-> if necessary.
+Since we support multi-page bvec, in theory one fs bio really can
+be added > 1M pages, especially in case of hugepage, or big writeback
+with too many dirty pages. Then there is chance in which .bi_size
+is overflowed.
 
-Yes, just a reminder, it is good as it-is.
+Fixes this issue by using bio_full() to check if the added segment may
+overflow .bi_size.
 
-Thanks,
-Gao Xiang
+Cc: Liu Yiding <liuyd.fnst@cn.fujitsu.com>
+Cc: kernel test robot <rong.a.chen@intel.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: linux-xfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org
+Fixes: 07173c3ec276 ("block: enable multipage bvecs")
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ block/bio.c         | 10 +++++-----
+ fs/iomap.c          |  2 +-
+ fs/xfs/xfs_aops.c   |  2 +-
+ include/linux/bio.h | 18 ++++++++++++++++--
+ 4 files changed, 23 insertions(+), 9 deletions(-)
 
-> 
-> Thanks,
-> 
->>
->> Thanks,
->> Gao Xiang
->>
->>> +	kunmap_atomic(addr);
->>> +	SetPageUptodate(page);
->>> +}
->>> +
->>>  static loff_t
->>>  iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->>>  		struct iomap *iomap)
->>> @@ -298,6 +315,11 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->>>  		return PAGE_SIZE;
->>>  	}
->>>  
->>> +	if (iomap->type == IOMAP_TAIL) {
->>> +		iomap_read_tail_data(inode, page, iomap);
->>> +		return PAGE_SIZE;
->>> +	}
->>> +
->>>  	/* zero post-eof blocks as the page may be mapped */
->>>  	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
->>>  	if (plen == 0)
->>> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
->>> index 2103b94cb1bf..7e1ee48e3db7 100644
->>> --- a/include/linux/iomap.h
->>> +++ b/include/linux/iomap.h
->>> @@ -25,6 +25,7 @@ struct vm_fault;
->>>  #define IOMAP_MAPPED	0x03	/* blocks allocated at @addr */
->>>  #define IOMAP_UNWRITTEN	0x04	/* blocks allocated at @addr in unwritten state */
->>>  #define IOMAP_INLINE	0x05	/* data inline in the inode */
->>> +#define IOMAP_TAIL	0x06	/* tail data packed in metdata */
->>>  
->>>  /*
->>>   * Flags for all iomap mappings:
->>>
->> .
->>
+diff --git a/block/bio.c b/block/bio.c
+index ce797d73bb43..67bba12d273b 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -731,7 +731,7 @@ static int __bio_add_pc_page(struct request_queue *q, struct bio *bio,
+ 		}
+ 	}
+ 
+-	if (bio_full(bio))
++	if (bio_full(bio, len))
+ 		return 0;
+ 
+ 	if (bio->bi_phys_segments >= queue_max_segments(q))
+@@ -807,7 +807,7 @@ void __bio_add_page(struct bio *bio, struct page *page,
+ 	struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt];
+ 
+ 	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
+-	WARN_ON_ONCE(bio_full(bio));
++	WARN_ON_ONCE(bio_full(bio, len));
+ 
+ 	bv->bv_page = page;
+ 	bv->bv_offset = off;
+@@ -834,7 +834,7 @@ int bio_add_page(struct bio *bio, struct page *page,
+ 	bool same_page = false;
+ 
+ 	if (!__bio_try_merge_page(bio, page, len, offset, &same_page)) {
+-		if (bio_full(bio))
++		if (bio_full(bio, len))
+ 			return 0;
+ 		__bio_add_page(bio, page, len, offset);
+ 	}
+@@ -922,7 +922,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 			if (same_page)
+ 				put_page(page);
+ 		} else {
+-			if (WARN_ON_ONCE(bio_full(bio)))
++			if (WARN_ON_ONCE(bio_full(bio, len)))
+                                 return -EINVAL;
+ 			__bio_add_page(bio, page, len, offset);
+ 		}
+@@ -966,7 +966,7 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 			ret = __bio_iov_bvec_add_pages(bio, iter);
+ 		else
+ 			ret = __bio_iov_iter_get_pages(bio, iter);
+-	} while (!ret && iov_iter_count(iter) && !bio_full(bio));
++	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
+ 
+ 	if (iov_iter_bvec_no_ref(iter))
+ 		bio_set_flag(bio, BIO_NO_PAGE_REF);
+diff --git a/fs/iomap.c b/fs/iomap.c
+index 12654c2e78f8..da961fca3180 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -333,7 +333,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	if (iop)
+ 		atomic_inc(&iop->read_count);
+ 
+-	if (!ctx->bio || !is_contig || bio_full(ctx->bio)) {
++	if (!ctx->bio || !is_contig || bio_full(ctx->bio, plen)) {
+ 		gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
+ 		int nr_vecs = (length + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 8da5e6637771..11f703d4a605 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -782,7 +782,7 @@ xfs_add_to_ioend(
+ 		atomic_inc(&iop->write_count);
+ 
+ 	if (!merged) {
+-		if (bio_full(wpc->ioend->io_bio))
++		if (bio_full(wpc->ioend->io_bio, len))
+ 			xfs_chain_bio(wpc->ioend, wbc, bdev, sector);
+ 		bio_add_page(wpc->ioend->io_bio, page, len, poff);
+ 	}
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index f87abaa898f0..e36b8fc1b1c3 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -102,9 +102,23 @@ static inline void *bio_data(struct bio *bio)
+ 	return NULL;
+ }
+ 
+-static inline bool bio_full(struct bio *bio)
++/**
++ * bio_full - check if the bio is full
++ * @bio:	bio to check
++ * @len:	length of one segment to be added
++ *
++ * Return true if @bio is full and one segment with @len bytes can't be
++ * added to the bio, otherwise return false
++ */
++static inline bool bio_full(struct bio *bio, unsigned len)
+ {
+-	return bio->bi_vcnt >= bio->bi_max_vecs;
++	if (bio->bi_vcnt >= bio->bi_max_vecs)
++		return true;
++
++	if (bio->bi_iter.bi_size > UINT_MAX - len)
++		return true;
++
++	return false;
+ }
+ 
+ static inline bool bio_next_segment(const struct bio *bio,
+-- 
+2.20.1
+
