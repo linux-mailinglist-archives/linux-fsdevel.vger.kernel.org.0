@@ -2,277 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ECE95C564
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 23:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FC4A5C5C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2019 00:44:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfGAV4v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 17:56:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44894 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbfGAV4v (ORCPT
+        id S1726664AbfGAWoc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 18:44:32 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35740 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726341AbfGAWoc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 17:56:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=T44oZR9aRXb+y/DaM9nTlS8c7bCgCBZYSvEXZmSV5L0=; b=OIej5OKJ1WulTH5xva95et1pjG
-        8PGK8yz6k02h5xMZ1Xt+LiP4ZsLSsea+zf1aeCYzfXElMXlVErqpFvr5Kg+JIGuJKdrn3FNA5B9hL
-        KBlQEQ+MvmDMWytFAhcBH7C2dxmVjM2SjV7+GUkzS7RTpkaHHPa2Sm5xHocUVNqGBzxa6dQ7+2C0n
-        WsmpVtPOuXRTjXb62FPop11z8NzJa65AB5pnFz4MxXug7zH/sjrpan8FROI6ZrJNfhs4wE/fODy/h
-        6V4/s9rj2/RLciykFAq0P7k2hTUEOSN4PD+FRGBrsSxur037+084Cb9p701G6a92JF8vkvRMK431A
-        2EbSDoKA==;
-Received: from [38.98.37.141] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hi4Hv-0001xD-Fc; Mon, 01 Jul 2019 21:56:41 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com
-Subject: [PATCH 15/15] gfs2: use iomap for buffered I/O in ordered and writeback mode
-Date:   Mon,  1 Jul 2019 23:54:39 +0200
-Message-Id: <20190701215439.19162-16-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190701215439.19162-1-hch@lst.de>
-References: <20190701215439.19162-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 1 Jul 2019 18:44:32 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 36CE98EE0E3;
+        Mon,  1 Jul 2019 15:44:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1562021072;
+        bh=m0tNNukF7xF3egFzci432mYmOW/txTHRHkDLaD3r0gI=;
+        h=Subject:From:To:Cc:Date:From;
+        b=eEISfa5LQLXOvG/SkdKV8GqMYVDg089+LHRoPt6gSY58WROr08Ldy+H+/gcksv3nZ
+         oNdVjQq5d4PpYU0Y3gTaoHUCPB+iWOHbN7oHQGodV7ckv321IRgL5vbE74F4D3EOYl
+         n+gx45e2HRCThUZw4joEq0yG5zpIk1+z31pPft4g=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id cl_bLoQOAoej; Mon,  1 Jul 2019 15:44:32 -0700 (PDT)
+Received: from jarvis.lan (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B583C8EE0E0;
+        Mon,  1 Jul 2019 15:44:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1562021071;
+        bh=m0tNNukF7xF3egFzci432mYmOW/txTHRHkDLaD3r0gI=;
+        h=Subject:From:To:Cc:Date:From;
+        b=jsX6GdVXxECfcsXbXJMNy0nT+o4FuyJdpvwVdu2IhWxU/0psLUo+4BYvEG9cXXGNV
+         ssQu01I7rxO8KGLpOOEgjcpkaFDBY26SSRpPojpaMsJuliaNLL52KBLz0FsHHbp5Wg
+         i8Y5JvONLVeitVymW91F7DYazx1BUOoWCIJwKjiA=
+Message-ID: <1562021070.2762.36.camel@HansenPartnership.com>
+Subject: [BUG] mke2fs produces corrupt filesystem if badblock list contains
+ a block under 251
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Parisc List <linux-parisc@vger.kernel.org>
+Date:   Mon, 01 Jul 2019 15:44:30 -0700
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Switch to using the iomap readpage and writepage helpers for all I/O in
-the ordered and writeback modes, and thus eliminate using buffer_heads
-for I/O in these cases.  The journaled data mode is left untouched.
+Background: we actually use the badblocks feature of the ext filesystem
+group to do a poorman's boot filesystem for parisc: Our system chunks
+up the disk searching for an Initial Program Loader (IPL) signature and
+then executes it, so we poke a hole in an ext3 filesystem at creation
+time and place the IPL into it.  Our IP can read ext3 files and
+directories, so it allows us to load the kernel directly from the file.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+The problem is that our IPL needs to be aligned at 256k in absolute
+terms on the disk, so, in the usual situation of having a 64k partition
+label and the boot partition being the first one we usually end up
+poking the badblock hole beginning at block 224 (using a 1k block
+size).
+
+The problem is that this used to work long ago (where the value of long
+seems to be some time before 2011) but no longer does.  The problem can
+be illustrated simply by doing
+
 ---
- fs/gfs2/aops.c | 59 +++++++++++++++++++++++---------------------------
- fs/gfs2/bmap.c | 47 ++++++++++++++++++++++++++++++----------
- fs/gfs2/bmap.h |  1 +
- 3 files changed, 63 insertions(+), 44 deletions(-)
+# dd if=/dev/zero of=bbtest.img bs=1M count=100
+# losetup /dev/loop0 bbtest.img
+# a=237; while [ $a -le 450 ]; do echo $a >> bblist.txt; a=$[$a+1]; done
+# mke2fs -b 1024 -l /home/jejb/bblist.txt  /dev/loop0
+---
 
-diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-index 15a234fb8f88..9cdd61a44379 100644
---- a/fs/gfs2/aops.c
-+++ b/fs/gfs2/aops.c
-@@ -91,22 +91,13 @@ static int gfs2_writepage(struct page *page, struct writeback_control *wbc)
- 	struct inode *inode = page->mapping->host;
- 	struct gfs2_inode *ip = GFS2_I(inode);
- 	struct gfs2_sbd *sdp = GFS2_SB(inode);
--	loff_t i_size = i_size_read(inode);
--	pgoff_t end_index = i_size >> PAGE_SHIFT;
--	unsigned offset;
-+	struct iomap_writepage_ctx wpc = { };
- 
- 	if (gfs2_assert_withdraw(sdp, gfs2_glock_is_held_excl(ip->i_gl)))
- 		goto out;
- 	if (current->journal_info)
- 		goto redirty;
--	/* Is the page fully outside i_size? (truncate in progress) */
--	offset = i_size & (PAGE_SIZE-1);
--	if (page->index > end_index || (page->index == end_index && !offset)) {
--		page->mapping->a_ops->invalidatepage(page, 0, PAGE_SIZE);
--		goto out;
--	}
--
--	return nobh_writepage(page, gfs2_get_block_noalloc, wbc);
-+	return iomap_writepage(page, wbc, &wpc, &gfs2_writeback_ops);
- 
- redirty:
- 	redirty_page_for_writepage(wbc, page);
-@@ -210,7 +201,8 @@ static int gfs2_writepages(struct address_space *mapping,
- 			   struct writeback_control *wbc)
- {
- 	struct gfs2_sbd *sdp = gfs2_mapping2sbd(mapping);
--	int ret = mpage_writepages(mapping, wbc, gfs2_get_block_noalloc);
-+	struct iomap_writepage_ctx wpc = { };
-+	int ret;
- 
- 	/*
- 	 * Even if we didn't write any pages here, we might still be holding
-@@ -218,9 +210,9 @@ static int gfs2_writepages(struct address_space *mapping,
- 	 * want balance_dirty_pages() to loop indefinitely trying to write out
- 	 * pages held in the ail that it can't find.
- 	 */
-+	ret = iomap_writepages(mapping, wbc, &wpc, &gfs2_writeback_ops);
- 	if (ret == 0)
- 		set_bit(SDF_FORCE_AIL_FLUSH, &sdp->sd_flags);
--
- 	return ret;
- }
- 
-@@ -469,7 +461,6 @@ static int stuffed_readpage(struct gfs2_inode *ip, struct page *page)
- 	return 0;
- }
- 
--
- /**
-  * __gfs2_readpage - readpage
-  * @file: The file to read a page for
-@@ -479,16 +470,15 @@ static int stuffed_readpage(struct gfs2_inode *ip, struct page *page)
-  * reading code as in that case we already hold the glock. Also it's
-  * called by gfs2_readpage() once the required lock has been granted.
-  */
--
- static int __gfs2_readpage(void *file, struct page *page)
- {
--	struct gfs2_inode *ip = GFS2_I(page->mapping->host);
--	struct gfs2_sbd *sdp = GFS2_SB(page->mapping->host);
--
-+	struct inode *inode = page->mapping->host;
-+	struct gfs2_inode *ip = GFS2_I(inode);
-+	struct gfs2_sbd *sdp = GFS2_SB(inode);
- 	int error;
- 
--	if (i_blocksize(page->mapping->host) == PAGE_SIZE &&
--	    !page_has_buffers(page)) {
-+	if (!gfs2_is_jdata(ip) ||
-+	    (i_blocksize(inode) == PAGE_SIZE && !page_has_buffers(page))) {
- 		error = iomap_readpage(page, &gfs2_iomap_ops);
- 	} else if (gfs2_is_stuffed(ip)) {
- 		error = stuffed_readpage(ip, page);
-@@ -609,8 +599,12 @@ static int gfs2_readpages(struct file *file, struct address_space *mapping,
- 	ret = gfs2_glock_nq(&gh);
- 	if (unlikely(ret))
- 		goto out_uninit;
--	if (!gfs2_is_stuffed(ip))
-+	if (gfs2_is_stuffed(ip))
-+		;
-+	else if (gfs2_is_jdata(ip))
- 		ret = mpage_readpages(mapping, pages, nr_pages, gfs2_block_map);
-+	else
-+		ret = iomap_readpages(mapping, pages, nr_pages, &gfs2_iomap_ops);
- 	gfs2_glock_dq(&gh);
- out_uninit:
- 	gfs2_holder_uninit(&gh);
-@@ -827,17 +821,18 @@ int gfs2_releasepage(struct page *page, gfp_t gfp_mask)
- }
- 
- static const struct address_space_operations gfs2_aops = {
--	.writepage = gfs2_writepage,
--	.writepages = gfs2_writepages,
--	.readpage = gfs2_readpage,
--	.readpages = gfs2_readpages,
--	.bmap = gfs2_bmap,
--	.invalidatepage = gfs2_invalidatepage,
--	.releasepage = gfs2_releasepage,
--	.direct_IO = noop_direct_IO,
--	.migratepage = buffer_migrate_page,
--	.is_partially_uptodate = block_is_partially_uptodate,
--	.error_remove_page = generic_error_remove_page,
-+	.writepage		= gfs2_writepage,
-+	.writepages		= gfs2_writepages,
-+	.readpage		= gfs2_readpage,
-+	.readpages		= gfs2_readpages,
-+	.set_page_dirty		= iomap_set_page_dirty,
-+	.releasepage		= iomap_releasepage,
-+	.invalidatepage		= iomap_invalidatepage,
-+	.bmap			= gfs2_bmap,
-+	.direct_IO		= noop_direct_IO,
-+	.migratepage		= iomap_migrate_page,
-+	.is_partially_uptodate  = iomap_is_partially_uptodate,
-+	.error_remove_page	= generic_error_remove_page,
- };
- 
- static const struct address_space_operations gfs2_jdata_aops = {
-diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index b7bd811872cb..b8d795d277c9 100644
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -56,7 +56,6 @@ static int gfs2_unstuffer_page(struct gfs2_inode *ip, struct buffer_head *dibh,
- 			       u64 block, struct page *page)
- {
- 	struct inode *inode = &ip->i_inode;
--	struct buffer_head *bh;
- 	int release = 0;
- 
- 	if (!page || page->index) {
-@@ -80,20 +79,20 @@ static int gfs2_unstuffer_page(struct gfs2_inode *ip, struct buffer_head *dibh,
- 		SetPageUptodate(page);
- 	}
- 
--	if (!page_has_buffers(page))
--		create_empty_buffers(page, BIT(inode->i_blkbits),
--				     BIT(BH_Uptodate));
-+	if (gfs2_is_jdata(ip)) {
-+		struct buffer_head *bh;
- 
--	bh = page_buffers(page);
-+		if (!page_has_buffers(page))
-+			create_empty_buffers(page, BIT(inode->i_blkbits),
-+					     BIT(BH_Uptodate));
- 
--	if (!buffer_mapped(bh))
--		map_bh(bh, inode->i_sb, block);
-+		bh = page_buffers(page);
-+		if (!buffer_mapped(bh))
-+			map_bh(bh, inode->i_sb, block);
- 
--	set_buffer_uptodate(bh);
--	if (gfs2_is_jdata(ip))
-+		set_buffer_uptodate(bh);
- 		gfs2_trans_add_data(ip->i_gl, bh);
--	else {
--		mark_buffer_dirty(bh);
-+	} else {
- 		gfs2_ordered_add_inode(ip);
- 	}
- 
-@@ -1127,7 +1126,8 @@ static int gfs2_iomap_begin(struct inode *inode, loff_t pos, loff_t length,
- 	struct metapath mp = { .mp_aheight = 1, };
- 	int ret;
- 
--	iomap->flags |= IOMAP_F_BUFFER_HEAD;
-+	if (gfs2_is_jdata(ip))
-+		iomap->flags |= IOMAP_F_BUFFER_HEAD;
- 
- 	trace_gfs2_iomap_start(ip, pos, length, flags);
- 	if ((flags & IOMAP_WRITE) && !(flags & IOMAP_DIRECT)) {
-@@ -2431,3 +2431,26 @@ int __gfs2_punch_hole(struct file *file, loff_t offset, loff_t length)
- 		gfs2_trans_end(sdp);
- 	return error;
- }
-+
-+static int gfs2_map_blocks(struct iomap_writepage_ctx *wpc, struct inode *inode,
-+		loff_t offset)
-+{
-+	struct metapath mp = { .mp_aheight = 1, };
-+	int ret;
-+
-+	if (WARN_ON_ONCE(gfs2_is_stuffed(GFS2_I(inode))))
-+		return -EIO;
-+
-+	if (offset >= wpc->iomap.offset &&
-+	    offset < wpc->iomap.offset + wpc->iomap.length)
-+		return 0;
-+
-+	memset(&wpc->iomap, 0, sizeof(wpc->iomap));
-+	ret = gfs2_iomap_get(inode, offset, INT_MAX, 0, &wpc->iomap, &mp);
-+	release_metapath(&mp);
-+	return ret;
-+}
-+
-+const struct iomap_writeback_ops gfs2_writeback_ops = {
-+	.map_blocks		= gfs2_map_blocks,
-+};
-diff --git a/fs/gfs2/bmap.h b/fs/gfs2/bmap.h
-index b88fd45ab79f..aed4632d47d3 100644
---- a/fs/gfs2/bmap.h
-+++ b/fs/gfs2/bmap.h
-@@ -44,6 +44,7 @@ static inline void gfs2_write_calc_reserv(const struct gfs2_inode *ip,
- }
- 
- extern const struct iomap_ops gfs2_iomap_ops;
-+extern const struct iomap_writeback_ops gfs2_writeback_ops;
- 
- extern int gfs2_unstuff_dinode(struct gfs2_inode *ip, struct page *page);
- extern int gfs2_block_map(struct inode *inode, sector_t lblock,
--- 
-2.20.1
+Now if you try to do an e2fsck on the partition you'll get this
+
+---
+# e2fsck  -f /dev/loop0
+e2fsck 1.45.2 (27-May-2019)
+Pass 1: Checking inodes, blocks, and sizes
+Programming error?  block #237 claimed for no reason in process_bad_block.
+Programming error?  block #238 claimed for no reason in process_bad_block.
+Programming error?  block #239 claimed for no reason in process_bad_block.
+Programming error?  block #240 claimed for no reason in process_bad_block.
+Programming error?  block #241 claimed for no reason in process_bad_block.
+Programming error?  block #242 claimed for no reason in process_bad_block.
+Programming error?  block #243 claimed for no reason in process_bad_block.
+Programming error?  block #244 claimed for no reason in process_bad_block.
+Programming error?  block #245 claimed for no reason in process_bad_block.
+Programming error?  block #246 claimed for no reason in process_bad_block.
+Programming error?  block #247 claimed for no reason in process_bad_block.
+Programming error?  block #248 claimed for no reason in process_bad_block.
+Programming error?  block #249 claimed for no reason in process_bad_block.
+Programming error?  block #250 claimed for no reason in process_bad_block.
+Programming error?  block #251 claimed for no reason in process_bad_block.
+Programming error?  block #252 claimed for no reason in process_bad_block.
+Programming error?  block #253 claimed for no reason in process_bad_block.
+Programming error?  block #254 claimed for no reason in process_bad_block.
+Programming error?  block #255 claimed for no reason in process_bad_block.
+Programming error?  block #256 claimed for no reason in process_bad_block.
+Programming error?  block #257 claimed for no reason in process_bad_block.
+Programming error?  block #258 claimed for no reason in process_bad_block.
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+Free blocks count wrong for group #0 (7556, counted=7578).
+Fix<y>? 
+---
+
+So mke2fs has created an ab-inito corrupt filesystem.  Empirically,
+this only seems to happen if there is a block in the bad block list
+under 251, but I haven't verified this extensively.
+
+James
 
