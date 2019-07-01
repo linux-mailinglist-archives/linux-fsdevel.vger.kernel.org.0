@@ -2,120 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 236BE5B53C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 08:43:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 784AA5B549
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 08:46:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbfGAGng (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 02:43:36 -0400
-Received: from verein.lst.de ([213.95.11.211]:58657 "EHLO verein.lst.de"
+        id S1727552AbfGAGq4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 02:46:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36514 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727318AbfGAGng (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 02:43:36 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 831C568B20; Mon,  1 Jul 2019 08:43:33 +0200 (CEST)
-Date:   Mon, 1 Jul 2019 08:43:33 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
+        id S1727544AbfGAGqz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jul 2019 02:46:55 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8221981F18;
+        Mon,  1 Jul 2019 06:46:50 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-25.pek2.redhat.com [10.72.8.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B92131001B2E;
+        Mon,  1 Jul 2019 06:46:35 +0000 (UTC)
+Date:   Mon, 1 Jul 2019 14:46:30 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Liu Yiding <liuyd.fnst@cn.fujitsu.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] iomap: move the xfs writeback code to iomap.c
-Message-ID: <20190701064333.GA20778@lst.de>
-References: <20190624055253.31183-1-hch@lst.de> <20190624055253.31183-12-hch@lst.de> <20190624234304.GD7777@dread.disaster.area> <20190625101020.GI1462@lst.de> <20190628004542.GJ7777@dread.disaster.area> <20190628053320.GA26902@lst.de> <20190701000859.GL7777@dread.disaster.area>
+        stable@vger.kernel.org
+Subject: Re: [PATCH] block: fix .bi_size overflow
+Message-ID: <20190701064628.GC16809@ming.t460p>
+References: <20190701041644.16052-1-ming.lei@redhat.com>
+ <20190701063613.GA20733@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190701000859.GL7777@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190701063613.GA20733@lst.de>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 01 Jul 2019 06:46:55 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 10:08:59AM +1000, Dave Chinner wrote:
-> > Why do you assume you have to test it?  Back when we shared
-> > generic_file_read with everyone you also didn't test odd change to
-> > it with every possible fs.
+On Mon, Jul 01, 2019 at 08:36:13AM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 01, 2019 at 12:16:44PM +0800, Ming Lei wrote:
+> > 'bio->bi_iter.bi_size' is 'unsigned int', which at most hold 4G - 1
+> > bytes.
+> > 
+> > Before 07173c3ec276 ("block: enable multipage bvecs"), one bio can
+> > include very limited pages, and usually at most 256, so the fs bio
+> > size won't be bigger than 1M bytes most of times.
+> > 
+> > Since we support multi-page bvec, in theory one fs bio really can
+> > be added > 1M pages, especially in case of hugepage, or big writeback
+> > in case of huge dirty pages. Then there is chance in which .bi_size
+> > is overflowed.
+> > 
+> > Fixes this issue by adding bio_will_full() which checks if the added
+> > segment may overflow .bi_size.
 > 
-> I'm not sure what function you are referring to here. Can you
-> clarify?
+> Can you please just add the argument to bio_full?  bio_will_full sounds
+> rather odd.
 
-Right now it is generic_file_read_iter(), but before iter it was
-generic_file_readv, generic_file_read, etc.
+OK.
 
-> > If you change iomap.c, you'll test it
-> > with XFS, and Cc other maintainers so that they get a chance to
-> > also test it and comment on it, just like we do with other shared
-> > code in the kernel.
 > 
-> Which is why we've had problems with the generic code paths in the
-> past and other filesystems just copy and paste then before making
-> signficant modifications. e.g. both ext4 and btrfs re-implement
-> write_cache_pages() rather than use the generic writeback code
-> because they have slightly different requirements and those
-> developers don't want to have to worry about other filesystems every
-> time there is an internal filesystem change that affects their
-> writeback constraints...
-> 
-> That's kinda what I'm getting at here: writeback isn't being shared
-> by any of the major filesystems for good reasons...
+> Maybe also add a kerneldoc comment to the new bio_full to explain
+> it.  Otherwise this looks fine to me.
 
-I very fundamentally disagree.  It is not shared for a bad reasons,
-and that is people not understanding the mess that the buffer head
-based code is, and not wanting to understand it.  So they come up
-with their own piecemeal "improvements" for it making the situation
-worse.  Writeback is fundamentally not fs specific in any way.  Different
-file system might use different optional features like unwrittent
-extents, delalloc, data checksums, but once they implement them the
-behavior should be uniform.
+Fine.
 
-And I'd much rather fix this than going down the copy an paste and
-slightly tweak it while fucking up something else route.
 
-> > stone age.  Very little is about XFS itself, most of it has been
-> > about not being stupid in a fairly generic way.  And every since
-> > I got rid of buffer heads xfs_aops.c has been intimately tied
->   ^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> *cough*
-> 
-> Getting rid of bufferheads in writeback was largely a result of work
-> I did over a period of several years, thank you very much. Yes, work
-> you did over the same time period also got us there, but it's not
-> all your work.
-
-Sorry Dave - this isn't avoud taking credit of past work.  But ever
-since I finally got rid of bufferhads and introduced struct iomap_page
-we have this intimate tie up, which is the point here.
-
-> e.g. XFS requires COW fork manipulation on ioend submission
-> (xfs_submit_ioend() calls xfs_reflink_convert_cow()) and this has
-> some nasty memory allocation requirements (potential deadlock
-> situation). So the generic code has a hook for this XFS specific
-> functionality, even though no other filesystem if likely to ever
-> need this. And this is something we've been discussion getting rid
-> of from the XFS writeback path. i.e. reworking how we do all
-> the COW fork interactions in writeback. So some of these hooks are
-> suspect even now, and we're already trying to work out how to
-> re-work the XFS writeback path to sort out problems we have with it.
-
-Every file system that writes out of place will need some sort of
-hook here with the same issue, no matter if they call it COW fork
-or manipulate some all integrated data structure like btrfs.  Moreover
-btrfs will also have to deal with their data checksum in exactly this
-place.
-
-> That's the point I'm trying to make - the whole "generic" iomap
-> writeback API proposal is based around exactly the functionality XFS
-> - and only XFS - requires at this point in time. There are no other
-> users of this API and until there are, we've got no idea how
-> generic this functionality really is and just how much overhead
-> making fundamental changes to the XFS writeback code are going to
-> entail in future.
-
-No, it is based around generalizing what we have in xfs so that we
-can use it elsewhere.  With zonefs and gfs2 as the prime users
-initially, and other like btrfs hopefully to not far away.
+Thanks,
+Ming
