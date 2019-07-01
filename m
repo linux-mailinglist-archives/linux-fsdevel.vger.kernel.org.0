@@ -2,122 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 556E25B2F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 04:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98E8B5B34C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 06:17:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbfGAC7l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jun 2019 22:59:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54944 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbfGAC7l (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jun 2019 22:59:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IHOctcrnamPZlDOqkWx9gP7HKz6z4cfFnI1BHiO0w78=; b=MKHZDli96OWvWZf7Ml4qTTeTS
-        ADyGVjgEjt6ySSV9VdCosU1hi/21jcTscAC72nDZep1VKznI9fOx5A3N3iQPcPQy90pnC1WC+eC1S
-        Rr7xFMdssx1hm0W+7gNoMx1ZjX+NiaShGwa47IjtziyeHwzGGep8ZAN86u3cCfovTY2F7wuumVf87
-        txn5FMi7ZWCH/Z/lgAMKc90KP7QwzvTaqGRrZNGra+ZSPqK40+DWONlvWDTT8RVbu20a0hZVH3uxk
-        H2OilOPm03NJt7KIxOKf2aPx1YW4NfG8NGsQC+FAYu1tdnITXha3MxrdrMgG9/RcGNspO6MR5oPXD
-        8OeSFCLlA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hhmXZ-0007q7-Pi; Mon, 01 Jul 2019 02:59:37 +0000
-Subject: Re: [PATCH 2/6] Adjust watch_queue documentation to mention mount and
- superblock watches. [ver #5]
-To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.dichtel@6wind.com, raven@themaw.net,
-        Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <156173701358.15650.8735203424342507015.stgit@warthog.procyon.org.uk>
- <156173703546.15650.14319137940607993268.stgit@warthog.procyon.org.uk>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <7a288c2c-11a1-87df-9550-b247d6ce3010@infradead.org>
-Date:   Sun, 30 Jun 2019 19:59:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727139AbfGAERB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 00:17:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53100 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727002AbfGAERA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jul 2019 00:17:00 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1BB16308222E;
+        Mon,  1 Jul 2019 04:16:59 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DFD8934913;
+        Mon,  1 Jul 2019 04:16:54 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Liu Yiding <liuyd.fnst@cn.fujitsu.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, stable@vger.kernel.org
+Subject: [PATCH] block: fix .bi_size overflow
+Date:   Mon,  1 Jul 2019 12:16:44 +0800
+Message-Id: <20190701041644.16052-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <156173703546.15650.14319137940607993268.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 01 Jul 2019 04:17:00 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi David,
+'bio->bi_iter.bi_size' is 'unsigned int', which at most hold 4G - 1
+bytes.
 
-On 6/28/19 8:50 AM, David Howells wrote:
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
-> 
->  Documentation/watch_queue.rst |   20 +++++++++++++++++++-
->  drivers/misc/Kconfig          |    5 +++--
->  2 files changed, 22 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/watch_queue.rst b/Documentation/watch_queue.rst
-> index 4087a8e670a8..1bec2018d549 100644
-> --- a/Documentation/watch_queue.rst
-> +++ b/Documentation/watch_queue.rst
-> @@ -13,6 +13,10 @@ receive notifications from the kernel.  This can be used in conjunction with::
->  
->      * USB subsystem event notifications
->  
-> +  * Mount topology change notifications
-> +
-> +  * Superblock event notifications
-> +
->  
->  The notifications buffers can be enabled by:
->  
-> @@ -324,6 +328,19 @@ Any particular buffer can be fed from multiple sources.  Sources include:
->      for buses and devices.  Watchpoints of this type are set on the global
->      device watch list.
->  
-> +  * WATCH_TYPE_MOUNT_NOTIFY
-> +
-> +    Notifications of this type indicate mount tree topology changes and mount
-> +    attribute changes.  A watch can be set on a particular file or directory
-> +    and notifications from the path subtree rooted at that point will be
-> +    intercepted.
-> +
-> +  * WATCH_TYPE_SB_NOTIFY
-> +
-> +    Notifications of this type indicate superblock events, such as quota limits
-> +    being hit, I/O errors being produced or network server loss/reconnection.
-> +    Watches of this type are set directly on superblocks.
-> +
->  
->  Event Filtering
->  ===============
-> @@ -365,7 +382,8 @@ Where:
->  	(watch.info & info_mask) == info_filter
->  
->      This could be used, for example, to ignore events that are not exactly on
-> -    the watched point in a mount tree.
-> +    the watched point in a mount tree by specifying NOTIFY_MOUNT_IN_SUBTREE
-> +    must be 0.
+Before 07173c3ec276 ("block: enable multipage bvecs"), one bio can
+include very limited pages, and usually at most 256, so the fs bio
+size won't be bigger than 1M bytes most of times.
 
-I'm having a little trouble parsing that sentence.
-Could you clarify it or maybe rewrite/modify it?
-Thanks.
+Since we support multi-page bvec, in theory one fs bio really can
+be added > 1M pages, especially in case of hugepage, or big writeback
+in case of huge dirty pages. Then there is chance in which .bi_size
+is overflowed.
 
->  
->    * ``subtype_filter`` is a bitmask indicating the subtypes that are of
->      interest.  Bit 0 of subtype_filter[0] corresponds to subtype 0, bit 1 to
+Fixes this issue by adding bio_will_full() which checks if the added
+segment may overflow .bi_size.
 
+Cc: Liu Yiding <liuyd.fnst@cn.fujitsu.com>
+Cc: kernel test robot <rong.a.chen@intel.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: linux-xfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org
+Fixes: 07173c3ec276 ("block: enable multipage bvecs")
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ block/bio.c         |  8 ++++----
+ fs/iomap.c          |  2 +-
+ fs/xfs/xfs_aops.c   |  2 +-
+ include/linux/bio.h | 10 ++++++++++
+ 4 files changed, 16 insertions(+), 6 deletions(-)
 
-
+diff --git a/block/bio.c b/block/bio.c
+index ce797d73bb43..90164e089e60 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -731,7 +731,7 @@ static int __bio_add_pc_page(struct request_queue *q, struct bio *bio,
+ 		}
+ 	}
+ 
+-	if (bio_full(bio))
++	if (bio_will_full(bio, len))
+ 		return 0;
+ 
+ 	if (bio->bi_phys_segments >= queue_max_segments(q))
+@@ -807,7 +807,7 @@ void __bio_add_page(struct bio *bio, struct page *page,
+ 	struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt];
+ 
+ 	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
+-	WARN_ON_ONCE(bio_full(bio));
++	WARN_ON_ONCE(bio_will_full(bio, len));
+ 
+ 	bv->bv_page = page;
+ 	bv->bv_offset = off;
+@@ -834,7 +834,7 @@ int bio_add_page(struct bio *bio, struct page *page,
+ 	bool same_page = false;
+ 
+ 	if (!__bio_try_merge_page(bio, page, len, offset, &same_page)) {
+-		if (bio_full(bio))
++		if (bio_will_full(bio, len))
+ 			return 0;
+ 		__bio_add_page(bio, page, len, offset);
+ 	}
+@@ -922,7 +922,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 			if (same_page)
+ 				put_page(page);
+ 		} else {
+-			if (WARN_ON_ONCE(bio_full(bio)))
++			if (WARN_ON_ONCE(bio_will_full(bio, len)))
+                                 return -EINVAL;
+ 			__bio_add_page(bio, page, len, offset);
+ 		}
+diff --git a/fs/iomap.c b/fs/iomap.c
+index 12654c2e78f8..26cb851f9b35 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -333,7 +333,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	if (iop)
+ 		atomic_inc(&iop->read_count);
+ 
+-	if (!ctx->bio || !is_contig || bio_full(ctx->bio)) {
++	if (!ctx->bio || !is_contig || bio_will_full(ctx->bio, plen)) {
+ 		gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
+ 		int nr_vecs = (length + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 8da5e6637771..d705643567e7 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -782,7 +782,7 @@ xfs_add_to_ioend(
+ 		atomic_inc(&iop->write_count);
+ 
+ 	if (!merged) {
+-		if (bio_full(wpc->ioend->io_bio))
++		if (bio_will_full(wpc->ioend->io_bio, len))
+ 			xfs_chain_bio(wpc->ioend, wbc, bdev, sector);
+ 		bio_add_page(wpc->ioend->io_bio, page, len, poff);
+ 	}
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index f87abaa898f0..5feebcc04884 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -107,6 +107,16 @@ static inline bool bio_full(struct bio *bio)
+ 	return bio->bi_vcnt >= bio->bi_max_vecs;
+ }
+ 
++static inline bool bio_will_full(struct bio *bio, unsigned len)
++{
++	if (bio_full(bio))
++		return true;
++
++	if (bio->bi_iter.bi_size > UINT_MAX - len)
++		return true;
++	return false;
++}
++
+ static inline bool bio_next_segment(const struct bio *bio,
+ 				    struct bvec_iter_all *iter)
+ {
 -- 
-~Randy
+2.20.1
+
