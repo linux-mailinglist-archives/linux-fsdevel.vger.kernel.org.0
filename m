@@ -2,90 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 336015BB95
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 14:34:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35BC05BC28
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 14:54:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbfGAMex (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 08:34:53 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37502 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728689AbfGAMex (ORCPT
+        id S1727306AbfGAMye (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 08:54:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44768 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726329AbfGAMye (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 08:34:53 -0400
-Received: by mail-wm1-f65.google.com with SMTP id f17so15724606wme.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jul 2019 05:34:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=6wind.com; s=google;
-        h=reply-to:subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=U0+iQfhqZTmi+eMUqyf4aEvLRrml8zRgevAbFs0IHU0=;
-        b=DAfBkrpnXaMHVNf23+fG8b0BrDC/iYTXE1GFARO7lK8bOvVE5HSKmFgh0leeGWn8pE
-         jNYfp16AS7/MU2xO+6xLnQpINTBHVYGC1QtPoGt112qrzY2z/auhtSZY5mmsJ0OZ7t1r
-         CDOi9GLfekS8Xlr2Bg52GnMNzqgCPKnZufTAGXwMFr9aiGd/c7WHokvrurz2/5I+z1NA
-         xekRJbnat4EmsfQ7cGFchyKpqB3bh3NiBDamHnctAhVW6lPCcsBJYAW05eaUN0NveXQ7
-         E5nkvJejGEEBRsVh66GBW/Y3EKAj0B8wrabjfulL4M0jS0lyRLe1Prtb0oBhTK1g97bJ
-         cy3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=U0+iQfhqZTmi+eMUqyf4aEvLRrml8zRgevAbFs0IHU0=;
-        b=KbBhEv5lllb7W85utdAoaSrMTd6+BR9w8hX3+i5jfWlZslMzGXsF2/Awj3i7JGdaPi
-         ZHQ30/9xwdQZJb0SgBkcWgbgz62F1MkSMhd7vHpxRySZdLl/Wp442eGo4SXsS8A1KrCo
-         1EVwwjnMGSO7Q4tS6v1nwJywDvsjvgguMGbW1GoLoZz6LfRkaBaafZo2cSk3B1AnK49y
-         fswnJZ/UFWHxX5NsidTjTPo1x470f2rU61bHtPzdmZnUIkFFGVwNgZTDDk/8hW8awJBA
-         myhtPVyEucKe+KVeoOi6wvOSv4Lvhgnup4zYjcySx+Us+HKZrKiHd6x5uAAAXlIcf2R9
-         mXGQ==
-X-Gm-Message-State: APjAAAUHirbdShmwyneAnR/aGVsZhcWfjUP71x+jEoSxn3iD2NotSLEV
-        lgM9UKTy+jTCgBfwn00CJ0sM/w==
-X-Google-Smtp-Source: APXvYqymJi6wwNS/8315/nLS2MyRZoePM0N1Fn/cUy6ismxAmIhMutlP7p48n24TtX7sY61emKdSpg==
-X-Received: by 2002:a1c:5602:: with SMTP id k2mr15019398wmb.173.1561984491364;
-        Mon, 01 Jul 2019 05:34:51 -0700 (PDT)
-Received: from ?IPv6:2a01:e35:8b63:dc30:78cb:f345:e2db:cb5a? ([2a01:e35:8b63:dc30:78cb:f345:e2db:cb5a])
-        by smtp.gmail.com with ESMTPSA id x8sm27867360wre.73.2019.07.01.05.34.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 05:34:50 -0700 (PDT)
-Reply-To: nicolas.dichtel@6wind.com
-Subject: Re: [RFC iproute2 1/1] ip: netns: add mounted state file for each
- netns
-To:     David Howells <dhowells@redhat.com>
-Cc:     Alexander Aring <aring@mojatatu.com>, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel@mojatatu.com
-References: <293c9bd3-f530-d75e-c353-ddeabac27cf6@6wind.com>
- <20190626190343.22031-1-aring@mojatatu.com>
- <20190626190343.22031-2-aring@mojatatu.com>
- <18557.1561739215@warthog.procyon.org.uk>
-From:   Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Organization: 6WIND
-Message-ID: <3c84e8b6-99ec-b348-268c-72dd51fbd5a8@6wind.com>
-Date:   Mon, 1 Jul 2019 14:34:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <18557.1561739215@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 1 Jul 2019 08:54:34 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x61CpoLu083800
+        for <linux-fsdevel@vger.kernel.org>; Mon, 1 Jul 2019 08:54:32 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tfgg7fn5c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jul 2019 08:54:32 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 1 Jul 2019 13:54:30 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 1 Jul 2019 13:54:26 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x61CsEID36503890
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 1 Jul 2019 12:54:14 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 193E752051;
+        Mon,  1 Jul 2019 12:54:25 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.110.66])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E8AB55204E;
+        Mon,  1 Jul 2019 12:54:22 +0000 (GMT)
+Subject: Re: [PATCH v4 2/3] initramfs: read metadata from special file
+ METADATA!!!
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk
+Cc:     linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bug-cpio@gnu.org,
+        zohar@linux.vnet.ibm.com, silviu.vlasceanu@huawei.com,
+        dmitry.kasatkin@huawei.com, takondra@cisco.com, kamensky@cisco.com,
+        hpa@zytor.com, arnd@arndb.de, rob@landley.net,
+        james.w.mcmechan@gmail.com, niveditas98@gmail.com
+Date:   Mon, 01 Jul 2019 08:54:12 -0400
+In-Reply-To: <20190523121803.21638-3-roberto.sassu@huawei.com>
+References: <20190523121803.21638-1-roberto.sassu@huawei.com>
+         <20190523121803.21638-3-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19070112-0016-0000-0000-0000028E22EC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19070112-0017-0000-0000-000032EBAFDE
+Message-Id: <1561985652.4049.24.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-01_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907010159
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Le 28/06/2019 à 18:26, David Howells a écrit :
-> Nicolas Dichtel <nicolas.dichtel@6wind.com> wrote:
-> 
->> David Howells was working on a mount notification mechanism:
->> https://lwn.net/Articles/760714/
->> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
->>
->> I don't know what is the status of this series.
-> 
-> It's still alive.  I just posted a new version on it.  I'm hoping, possibly
-> futiley, to get it in in this merge window.
-Nice to hear. It will help to properly solve this issue.
+Hi Roberto,
 
+> diff --git a/init/initramfs.c b/init/initramfs.c
+> index 5de396a6aac0..862c03123de8 100644
+> --- a/init/initramfs.c
+> +++ b/init/initramfs.c
 
-Thank you,
-Nicolas
+> +static int __init do_process_metadata(char *buf, int len, bool last)
+> +{
+
+Part of the problem in upstreaming CPIO xattr support has been the
+difficulty in reading and understanding the initramfs code due to a
+lack of comments.  At least for any new code, let's add some comments
+to simplify the review.  In this case, understanding "last", before
+reading the code, would help.
+
+Mimi
+
+> +	int ret = 0;
+> +
+> +	if (!metadata_buf) {
+> +		metadata_buf_ptr = metadata_buf = kmalloc(body_len, GFP_KERNEL);
+> +		if (!metadata_buf_ptr) {
+> +			ret = -ENOMEM;
+> +			goto out;
+> +		}
+> +
+> +		metadata_len = body_len;
+> +	}
+> +
+> +	if (metadata_buf_ptr + len > metadata_buf + metadata_len) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	memcpy(metadata_buf_ptr, buf, len);
+> +	metadata_buf_ptr += len;
+> +
+> +	if (last)
+> +		do_parse_metadata(previous_name_buf);
+> +out:
+> +	if (ret < 0 || last) {
+> +		kfree(metadata_buf);
+> +		metadata_buf = NULL;
+> +		metadata = 0;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static int __init do_copy(void)
+>  {
+>  	if (byte_count >= body_len) {
+>  		if (xwrite(wfd, victim, body_len) != body_len)
+>  			error("write error");
+> +		if (metadata)
+> +			do_process_metadata(victim, body_len, true);
+>  		ksys_close(wfd);
+>  		do_utime(vcollected, mtime);
+>  		kfree(vcollected);
+> @@ -458,6 +500,8 @@ static int __init do_copy(void)
+>  	} else {
+>  		if (xwrite(wfd, victim, byte_count) != byte_count)
+>  			error("write error");
+> +		if (metadata)
+> +			do_process_metadata(victim, byte_count, false);
+>  		body_len -= byte_count;
+>  		eat(byte_count);
+>  		return 1;
+> 
+
