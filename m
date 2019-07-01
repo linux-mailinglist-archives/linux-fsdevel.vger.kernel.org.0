@@ -2,52 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C623F5C1AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 19:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69A7C5C1AE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 19:03:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbfGARDO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 13:03:14 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:38492 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727261AbfGARDO (ORCPT
+        id S1729850AbfGARDU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 13:03:20 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:41296 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729518AbfGARDT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 13:03:14 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61GnU3h183985;
-        Mon, 1 Jul 2019 17:03:09 GMT
+        Mon, 1 Jul 2019 13:03:19 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61GnU91192847;
+        Mon, 1 Jul 2019 17:03:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
  cc : date : message-id : in-reply-to : references : mime-version :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=XycoibodgEBQexl740VV8wsDuKqP5Tphpcth02e9nR8=;
- b=4WtvE0AnieiNlctGLmqZ98RcEPLzMhs1tuORh0P9IlNUKnFrdkSivamzDmUr1V7TZEnT
- +MzrvhGbRpTMafKUqZIeCOrkbNqTx+ZItgg2jZmi/gRHgmycUZ4b3eKW+VkThERS+lmD
- lKLW0rJeR4UoiQvkQIbV3XholEpPHOpOMnLRYTNlyVgMJHY8PTwcTo6Jy49M7cAhgK9s
- 3ifrGgjlJGDvie+rhcrH8fGp06JGwFRf43Dx7sLVfQILcaCsU4UHWHBZ+zop4qO0SogI
- sq/98OxdI61TCTtiCwLXwGKDsvE1S86YkZA0uYiYdQU6/fol2/nsjY11q4MDKZ7HZpFp 8g== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2te61dxueg-1
+ bh=1rk67rXEFq9bSgk9ubwIFuNKM975LjPC9KHj896pjfY=;
+ b=icPkhus854WvjZJGIlzEel1WOL+TuevIV1jvNjmamFWbrfmMncWJV68DmmOEzi9TwcNd
+ zDb5/9RebQzYoi0YnhVZ7MDYgMH2U49wLa6GVqGvo9ki1b/vqGS9rTCdReFlnuprHQ/r
+ mJZWOhlwwqqsqmwAaI9LlOjPMV/qy9DJKm9gFD3Q+WnlJN8r/vkTa6wu/sjob5fv8YYW
+ uiknUShHjLXd3Me0I+E9b4FPikjdeXg3Ra1GYDsaB/wPDDrINdZ0WHR7/OUCXZl8yHuQ
+ SFiDuq5oxsrM+EdtyM+jcjlcGphKRp8TNw1/lb5IqjboH13iSg5Zub29p0k+UVh4Mr6a jA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2te61ppud7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 17:03:09 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61GmM10183133;
-        Mon, 1 Jul 2019 17:03:08 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2tebktspaw-1
+        Mon, 01 Jul 2019 17:03:14 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61GmLcs154023;
+        Mon, 1 Jul 2019 17:03:14 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2tebqg1hb7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 17:03:08 +0000
+        Mon, 01 Jul 2019 17:03:14 +0000
 Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x61H37Rd032681;
-        Mon, 1 Jul 2019 17:03:07 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x61H3DDI030697;
+        Mon, 1 Jul 2019 17:03:13 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Jul 2019 10:03:06 -0700
-Subject: [PATCH 10/11] iomap: move the main iteration code into a separate
- file
+        with ESMTP ; Mon, 01 Jul 2019 10:03:13 -0700
+Subject: [PATCH 11/11] iomap: move internal declarations into fs/iomap/
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     hch@infradead.org, darrick.wong@oracle.com
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Mon, 01 Jul 2019 10:03:05 -0700
-Message-ID: <156200058572.1790352.7002559181117144841.stgit@magnolia>
+Date:   Mon, 01 Jul 2019 10:03:12 -0700
+Message-ID: <156200059214.1790352.12180565717959385551.stgit@magnolia>
 In-Reply-To: <156200051933.1790352.5147420943973755350.stgit@magnolia>
 References: <156200051933.1790352.5147420943973755350.stgit@magnolia>
 User-Agent: StGit/0.17.1-dirty
@@ -72,237 +71,164 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <darrick.wong@oracle.com>
 
-Move the main iteration code into a separate file so that we can group
-related functions in a single file instead of having a single enormous
-source file.
+Move internal function declarations out of fs/internal.h into
+fs/iomap/iomap_internal.h so that our transition is complete.
 
 Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
- fs/Makefile       |    1 -
- fs/iomap.c        |   98 -----------------------------------------------------
- fs/iomap/Makefile |    1 +
- fs/iomap/iomap.c  |   84 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 85 insertions(+), 99 deletions(-)
- delete mode 100644 fs/iomap.c
- create mode 100644 fs/iomap/iomap.c
+ fs/dax.c                  |    2 +-
+ fs/internal.h             |   10 ----------
+ fs/iomap/fiemap.c         |    2 +-
+ fs/iomap/iomap.c          |    1 -
+ fs/iomap/iomap_internal.h |   10 ++++++++++
+ fs/iomap/migrate.c        |    1 -
+ fs/iomap/page.c           |    2 +-
+ fs/iomap/read.c           |    1 -
+ fs/iomap/seek.c           |    2 +-
+ fs/iomap/swapfile.c       |    2 +-
+ 10 files changed, 15 insertions(+), 18 deletions(-)
 
 
-diff --git a/fs/Makefile b/fs/Makefile
-index 8e61bdf9f330..d60089fd689b 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -52,7 +52,6 @@ obj-$(CONFIG_COREDUMP)		+= coredump.o
- obj-$(CONFIG_SYSCTL)		+= drop_caches.o
- 
- obj-$(CONFIG_FHANDLE)		+= fhandle.o
--obj-$(CONFIG_FS_IOMAP)		+= iomap.o
- obj-y				+= iomap/
- 
- obj-y				+= quota/
-diff --git a/fs/iomap.c b/fs/iomap.c
-deleted file mode 100644
-index 885e2021b4d0..000000000000
---- a/fs/iomap.c
-+++ /dev/null
-@@ -1,98 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright (C) 2010 Red Hat, Inc.
-- * Copyright (c) 2016-2018 Christoph Hellwig.
-- */
--#include <linux/module.h>
--#include <linux/compiler.h>
--#include <linux/fs.h>
--#include <linux/iomap.h>
--#include <linux/uaccess.h>
--#include <linux/gfp.h>
--#include <linux/migrate.h>
--#include <linux/mm.h>
--#include <linux/mm_inline.h>
--#include <linux/swap.h>
--#include <linux/pagemap.h>
--#include <linux/pagevec.h>
--#include <linux/file.h>
--#include <linux/uio.h>
--#include <linux/backing-dev.h>
--#include <linux/buffer_head.h>
--#include <linux/task_io_accounting_ops.h>
--#include <linux/dax.h>
--#include <linux/sched/signal.h>
--
+diff --git a/fs/dax.c b/fs/dax.c
+index 2e48c7ebb973..86f4138c5695 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -26,7 +26,7 @@
+ #include <linux/mmu_notifier.h>
+ #include <linux/iomap.h>
+ #include <asm/pgalloc.h>
 -#include "internal.h"
--#include "iomap/iomap_internal.h"
--
++#include "iomap/iomap_internal.h"
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/fs_dax.h>
+diff --git a/fs/internal.h b/fs/internal.h
+index 2f3c3de51fad..2b0bebd67904 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -182,15 +182,5 @@ extern const struct dentry_operations ns_dentry_operations;
+ extern int do_vfs_ioctl(struct file *file, unsigned int fd, unsigned int cmd,
+ 		    unsigned long arg);
+ 
 -/*
-- * Execute a iomap write on a segment of the mapping that spans a
-- * contiguous range of pages that have identical block mapping state.
-- *
-- * This avoids the need to map pages individually, do individual allocations
-- * for each page and most importantly avoid the need for filesystem specific
-- * locking per page. Instead, all the operations are amortised over the entire
-- * range of pages. It is assumed that the filesystems will lock whatever
-- * resources they require in the iomap_begin call, and release them in the
-- * iomap_end call.
+- * iomap support:
 - */
--loff_t
--iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
--		const struct iomap_ops *ops, void *data, iomap_actor_t actor)
--{
--	struct iomap iomap = { 0 };
--	loff_t written = 0, ret;
+-typedef loff_t (*iomap_actor_t)(struct inode *inode, loff_t pos, loff_t len,
+-		void *data, struct iomap *iomap);
 -
--	/*
--	 * Need to map a range from start position for length bytes. This can
--	 * span multiple pages - it is only guaranteed to return a range of a
--	 * single type of pages (e.g. all into a hole, all mapped or all
--	 * unwritten). Failure at this point has nothing to undo.
--	 *
--	 * If allocation is required for this range, reserve the space now so
--	 * that the allocation is guaranteed to succeed later on. Once we copy
--	 * the data into the page cache pages, then we cannot fail otherwise we
--	 * expose transient stale data. If the reserve fails, we can safely
--	 * back out at this point as there is nothing to undo.
--	 */
--	ret = ops->iomap_begin(inode, pos, length, flags, &iomap);
--	if (ret)
--		return ret;
--	if (WARN_ON(iomap.offset > pos))
--		return -EIO;
--	if (WARN_ON(iomap.length == 0))
--		return -EIO;
+-loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
+-		unsigned flags, const struct iomap_ops *ops, void *data,
+-		iomap_actor_t actor);
 -
--	/*
--	 * Cut down the length to the one actually provided by the filesystem,
--	 * as it might not be able to give us the whole size that we requested.
--	 */
--	if (iomap.offset + iomap.length < pos + length)
--		length = iomap.offset + iomap.length - pos;
--
--	/*
--	 * Now that we have guaranteed that the space allocation will succeed.
--	 * we can do the copy-in page by page without having to worry about
--	 * failures exposing transient data.
--	 */
--	written = actor(inode, pos, length, data, &iomap);
--
--	/*
--	 * Now the data has been copied, commit the range we've copied.  This
--	 * should not fail unless the filesystem has had a fatal error.
--	 */
--	if (ops->iomap_end) {
--		ret = ops->iomap_end(inode, pos, length,
--				     written > 0 ? written : 0,
--				     flags, &iomap);
--	}
--
--	return written ? written : ret;
--}
--
--sector_t
--iomap_sector(struct iomap *iomap, loff_t pos)
--{
--	return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
--}
-diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
-index c88888795e12..2c0131b83af8 100644
---- a/fs/iomap/Makefile
-+++ b/fs/iomap/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_FS_IOMAP)		+= iomap.o
- iomap-y				+= \
- 					direct-io.o \
- 					fiemap.o \
-+					iomap.o \
- 					page.o \
- 					read.o \
- 					seek.o \
-diff --git a/fs/iomap/iomap.c b/fs/iomap/iomap.c
-new file mode 100644
-index 000000000000..bdaa6d07b354
---- /dev/null
-+++ b/fs/iomap/iomap.c
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2010 Red Hat, Inc.
-+ * Copyright (c) 2016-2018 Christoph Hellwig.
-+ */
-+#include <linux/module.h>
-+#include <linux/compiler.h>
-+#include <linux/fs.h>
-+#include <linux/iomap.h>
-+#include <linux/blkdev.h>
-+
-+#include "internal.h"
+ /* direct-io.c: */
+ int sb_init_dio_done_wq(struct super_block *sb);
+diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
+index 42ed9ef56699..4616e7fdbf0e 100644
+--- a/fs/iomap/fiemap.c
++++ b/fs/iomap/fiemap.c
+@@ -8,7 +8,7 @@
+ #include <linux/fs.h>
+ #include <linux/iomap.h>
+ 
+-#include "internal.h"
 +#include "iomap_internal.h"
-+
+ 
+ struct fiemap_ctx {
+ 	struct fiemap_extent_info *fi;
+diff --git a/fs/iomap/iomap.c b/fs/iomap/iomap.c
+index bdaa6d07b354..8d31daf7e696 100644
+--- a/fs/iomap/iomap.c
++++ b/fs/iomap/iomap.c
+@@ -9,7 +9,6 @@
+ #include <linux/iomap.h>
+ #include <linux/blkdev.h>
+ 
+-#include "internal.h"
+ #include "iomap_internal.h"
+ 
+ /*
+diff --git a/fs/iomap/iomap_internal.h b/fs/iomap/iomap_internal.h
+index defaa4d4b9e6..cee558386955 100644
+--- a/fs/iomap/iomap_internal.h
++++ b/fs/iomap/iomap_internal.h
+@@ -6,6 +6,16 @@
+ #ifndef _IOMAP_INTERNAL_H_
+ #define _IOMAP_INTERNAL_H_
+ 
 +/*
-+ * Execute a iomap write on a segment of the mapping that spans a
-+ * contiguous range of pages that have identical block mapping state.
-+ *
-+ * This avoids the need to map pages individually, do individual allocations
-+ * for each page and most importantly avoid the need for filesystem specific
-+ * locking per page. Instead, all the operations are amortised over the entire
-+ * range of pages. It is assumed that the filesystems will lock whatever
-+ * resources they require in the iomap_begin call, and release them in the
-+ * iomap_end call.
++ * iomap support:
 + */
-+loff_t
-+iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
-+		const struct iomap_ops *ops, void *data, iomap_actor_t actor)
-+{
-+	struct iomap iomap = { 0 };
-+	loff_t written = 0, ret;
++typedef loff_t (*iomap_actor_t)(struct inode *inode, loff_t pos, loff_t len,
++		void *data, struct iomap *iomap);
 +
-+	/*
-+	 * Need to map a range from start position for length bytes. This can
-+	 * span multiple pages - it is only guaranteed to return a range of a
-+	 * single type of pages (e.g. all into a hole, all mapped or all
-+	 * unwritten). Failure at this point has nothing to undo.
-+	 *
-+	 * If allocation is required for this range, reserve the space now so
-+	 * that the allocation is guaranteed to succeed later on. Once we copy
-+	 * the data into the page cache pages, then we cannot fail otherwise we
-+	 * expose transient stale data. If the reserve fails, we can safely
-+	 * back out at this point as there is nothing to undo.
-+	 */
-+	ret = ops->iomap_begin(inode, pos, length, flags, &iomap);
-+	if (ret)
-+		return ret;
-+	if (WARN_ON(iomap.offset > pos))
-+		return -EIO;
-+	if (WARN_ON(iomap.length == 0))
-+		return -EIO;
++loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
++		unsigned flags, const struct iomap_ops *ops, void *data,
++		iomap_actor_t actor);
 +
-+	/*
-+	 * Cut down the length to the one actually provided by the filesystem,
-+	 * as it might not be able to give us the whole size that we requested.
-+	 */
-+	if (iomap.offset + iomap.length < pos + length)
-+		length = iomap.offset + iomap.length - pos;
-+
-+	/*
-+	 * Now that we have guaranteed that the space allocation will succeed.
-+	 * we can do the copy-in page by page without having to worry about
-+	 * failures exposing transient data.
-+	 */
-+	written = actor(inode, pos, length, data, &iomap);
-+
-+	/*
-+	 * Now the data has been copied, commit the range we've copied.  This
-+	 * should not fail unless the filesystem has had a fatal error.
-+	 */
-+	if (ops->iomap_end) {
-+		ret = ops->iomap_end(inode, pos, length,
-+				     written > 0 ? written : 0,
-+				     flags, &iomap);
-+	}
-+
-+	return written ? written : ret;
-+}
-+
-+sector_t
-+iomap_sector(struct iomap *iomap, loff_t pos)
-+{
-+	return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
-+}
+ sector_t iomap_sector(struct iomap *iomap, loff_t pos);
+ void iomap_set_range_uptodate(struct page *page, unsigned off, unsigned len);
+ struct iomap_page *iomap_page_create(struct inode *inode, struct page *page);
+diff --git a/fs/iomap/migrate.c b/fs/iomap/migrate.c
+index 5fd58a868c80..a25874700f95 100644
+--- a/fs/iomap/migrate.c
++++ b/fs/iomap/migrate.c
+@@ -9,7 +9,6 @@
+ #include <linux/iomap.h>
+ #include <linux/migrate.h>
+ 
+-#include "internal.h"
+ #include "iomap_internal.h"
+ 
+ int
+diff --git a/fs/iomap/page.c b/fs/iomap/page.c
+index 1de513d5b1f7..0c18a88f4366 100644
+--- a/fs/iomap/page.c
++++ b/fs/iomap/page.c
+@@ -10,7 +10,7 @@
+ #include <linux/memcontrol.h>
+ #include <linux/blkdev.h>
+ 
+-#include "internal.h"
++#include "iomap_internal.h"
+ 
+ struct iomap_page *
+ iomap_page_create(struct inode *inode, struct page *page)
+diff --git a/fs/iomap/read.c b/fs/iomap/read.c
+index 237516d0af8b..117626cd7ead 100644
+--- a/fs/iomap/read.c
++++ b/fs/iomap/read.c
+@@ -11,7 +11,6 @@
+ #include <linux/pagemap.h>
+ #include <linux/blkdev.h>
+ 
+-#include "internal.h"
+ #include "iomap_internal.h"
+ 
+ /*
+diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
+index 0c36bef46522..4d2e6b668a9a 100644
+--- a/fs/iomap/seek.c
++++ b/fs/iomap/seek.c
+@@ -10,7 +10,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/pagevec.h>
+ 
+-#include "internal.h"
++#include "iomap_internal.h"
+ 
+ /*
+  * Seek for SEEK_DATA / SEEK_HOLE within @page, starting at @lastoff.
+diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
+index 4ca214d1e88d..543bb6e90a39 100644
+--- a/fs/iomap/swapfile.c
++++ b/fs/iomap/swapfile.c
+@@ -9,7 +9,7 @@
+ #include <linux/iomap.h>
+ #include <linux/swap.h>
+ 
+-#include "internal.h"
++#include "iomap_internal.h"
+ 
+ /* Swapfile activation */
+ 
 
