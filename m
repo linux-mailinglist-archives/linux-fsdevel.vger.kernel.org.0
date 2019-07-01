@@ -2,97 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07A755B2DF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 04:05:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 556E25B2F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 04:59:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfGACFO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jun 2019 22:05:14 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:35926 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726597AbfGACFN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jun 2019 22:05:13 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D230AB1175AD4ED7F767;
-        Mon,  1 Jul 2019 10:05:11 +0800 (CST)
-Received: from [127.0.0.1] (10.184.213.217) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Mon, 1 Jul 2019
- 10:05:03 +0800
-Subject: Re: [PATCH] fs: change last_ino type to unsigned long
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
-        <houtao1@huawei.com>, <yi.zhang@huawei.com>, <rui.xiang@huawei.com>
-References: <1561811293-75769-1-git-send-email-zhengbin13@huawei.com>
- <20190629142101.GA1180@bombadil.infradead.org>
- <b8edc95d-0073-ab0f-27f2-3aee3a728d00@huawei.com>
- <20190701015257.GA18754@bombadil.infradead.org>
-From:   "zhengbin (A)" <zhengbin13@huawei.com>
-Message-ID: <c100babb-e768-91f8-0ed1-d639f6e692d8@huawei.com>
-Date:   Mon, 1 Jul 2019 10:04:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1727048AbfGAC7l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Jun 2019 22:59:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54944 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726472AbfGAC7l (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 30 Jun 2019 22:59:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=IHOctcrnamPZlDOqkWx9gP7HKz6z4cfFnI1BHiO0w78=; b=MKHZDli96OWvWZf7Ml4qTTeTS
+        ADyGVjgEjt6ySSV9VdCosU1hi/21jcTscAC72nDZep1VKznI9fOx5A3N3iQPcPQy90pnC1WC+eC1S
+        Rr7xFMdssx1hm0W+7gNoMx1ZjX+NiaShGwa47IjtziyeHwzGGep8ZAN86u3cCfovTY2F7wuumVf87
+        txn5FMi7ZWCH/Z/lgAMKc90KP7QwzvTaqGRrZNGra+ZSPqK40+DWONlvWDTT8RVbu20a0hZVH3uxk
+        H2OilOPm03NJt7KIxOKf2aPx1YW4NfG8NGsQC+FAYu1tdnITXha3MxrdrMgG9/RcGNspO6MR5oPXD
+        8OeSFCLlA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hhmXZ-0007q7-Pi; Mon, 01 Jul 2019 02:59:37 +0000
+Subject: Re: [PATCH 2/6] Adjust watch_queue documentation to mention mount and
+ superblock watches. [ver #5]
+To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <156173701358.15650.8735203424342507015.stgit@warthog.procyon.org.uk>
+ <156173703546.15650.14319137940607993268.stgit@warthog.procyon.org.uk>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <7a288c2c-11a1-87df-9550-b247d6ce3010@infradead.org>
+Date:   Sun, 30 Jun 2019 19:59:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190701015257.GA18754@bombadil.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <156173703546.15650.14319137940607993268.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Originating-IP: [10.184.213.217]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi David,
 
-On 2019/7/1 9:52, Matthew Wilcox wrote:
-> On Mon, Jul 01, 2019 at 09:48:03AM +0800, zhengbin (A) wrote:
->> On 2019/6/29 22:21, Matthew Wilcox wrote:
->>> On Sat, Jun 29, 2019 at 08:28:13PM +0800, zhengbin wrote:
->>>> tmpfs use get_next_ino to get inode number, if last_ino wraps,
->>>> there will be files share the same inode number. Change last_ino
->>>> type to unsigned long.
->>> Is this a serious problem?
->> Yes, if two files share the same inode number, when application uses dlopen to get
->>
->> file handle,  there will be problems.
-> That wasn't what I meant.  Does it happen in practice?  Have you observed
-> it, or are you just worrying about a potential problem?
+On 6/28/19 8:50 AM, David Howells wrote:
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+> 
+>  Documentation/watch_queue.rst |   20 +++++++++++++++++++-
+>  drivers/misc/Kconfig          |    5 +++--
+>  2 files changed, 22 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/watch_queue.rst b/Documentation/watch_queue.rst
+> index 4087a8e670a8..1bec2018d549 100644
+> --- a/Documentation/watch_queue.rst
+> +++ b/Documentation/watch_queue.rst
+> @@ -13,6 +13,10 @@ receive notifications from the kernel.  This can be used in conjunction with::
+>  
+>      * USB subsystem event notifications
+>  
+> +  * Mount topology change notifications
+> +
+> +  * Superblock event notifications
+> +
+>  
+>  The notifications buffers can be enabled by:
+>  
+> @@ -324,6 +328,19 @@ Any particular buffer can be fed from multiple sources.  Sources include:
+>      for buses and devices.  Watchpoints of this type are set on the global
+>      device watch list.
+>  
+> +  * WATCH_TYPE_MOUNT_NOTIFY
+> +
+> +    Notifications of this type indicate mount tree topology changes and mount
+> +    attribute changes.  A watch can be set on a particular file or directory
+> +    and notifications from the path subtree rooted at that point will be
+> +    intercepted.
+> +
+> +  * WATCH_TYPE_SB_NOTIFY
+> +
+> +    Notifications of this type indicate superblock events, such as quota limits
+> +    being hit, I/O errors being produced or network server loss/reconnection.
+> +    Watches of this type are set directly on superblocks.
+> +
+>  
+>  Event Filtering
+>  ===============
+> @@ -365,7 +382,8 @@ Where:
+>  	(watch.info & info_mask) == info_filter
+>  
+>      This could be used, for example, to ignore events that are not exactly on
+> -    the watched point in a mount tree.
+> +    the watched point in a mount tree by specifying NOTIFY_MOUNT_IN_SUBTREE
+> +    must be 0.
 
-Yes, it happens in practice. we use a script to test it, after 10 days, this problem will happen:
+I'm having a little trouble parsing that sentence.
+Could you clarify it or maybe rewrite/modify it?
+Thanks.
 
-while the script are as follows:
+>  
+>    * ``subtype_filter`` is a bitmask indicating the subtypes that are of
+>      interest.  Bit 0 of subtype_filter[0] corresponds to subtype 0, bit 1 to
 
-while(1) {
 
-  create a file
 
-   dlopen it
-
-    ...
-
-    remove it
-
-}
-
->> Maybe we could use iunique to try to get a unique i_ino value(when we allocate new inode,
->>
->> we need to add it to the hashtable), the questions are:
->>
->> 1. inode creation will be slow down, as the comment of function  iunique says:
->>
->>  *    BUGS:
->>  *    With a large number of inodes live on the file system this function
->>  *    currently becomes quite slow.
->>
->> 2. we need to convert all callers of  get_next_ino to use iunique (tmpfs, autofs, configfs...),
->>
->> moreover, the more callers are converted, the function of iunique will be more slower.
->>
->>
->> Looking forward to your reply, thanks.
->>> I'd be more convinced by a patch to use
->>> the sbitmap data structure than a blind conversion to use atomic64_t.
-> You ignored this sentence.
-I will study sbitmap data structure
-> .
->
-
+-- 
+~Randy
