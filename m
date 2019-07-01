@@ -2,130 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA25F5BD28
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 15:42:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 160535BD93
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 16:05:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728755AbfGANmW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 09:42:22 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33037 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727268AbfGANmW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 09:42:22 -0400
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 4501BC28E3111F7B9A0A;
-        Mon,  1 Jul 2019 14:42:20 +0100 (IST)
-Received: from [10.47.65.207] (10.47.65.207) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 1 Jul
- 2019 14:42:14 +0100
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-To:     Mimi Zohar <zohar@linux.ibm.com>, Rob Landley <rob@landley.net>,
-        <viro@zeniv.linux.org.uk>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
-        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
-        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
-        <kamensky@cisco.com>, <hpa@zytor.com>, <arnd@arndb.de>,
-        <james.w.mcmechan@gmail.com>, <niveditas98@gmail.com>
-References: <20190523121803.21638-1-roberto.sassu@huawei.com>
- <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
- <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
- <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
- <1561909199.3985.33.camel@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
-Date:   Mon, 1 Jul 2019 16:42:13 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1729336AbfGAOFG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 10:05:06 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38294 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727031AbfGAOFG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jul 2019 10:05:06 -0400
+Received: by mail-io1-f68.google.com with SMTP id j6so29081858ioa.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jul 2019 07:05:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9IU9Vum1iEYXNFUQZJjTlbhqVVSUgpHJpWnEL+ydahk=;
+        b=zJSjcaNlk9MyLQy21nWTiY8jfylj+b2oHUfdD3gsHMqdUrDnNS8H0Qjd/1RxTRCofj
+         bU67WSUYf88+pyHStt0iUmfaB3OqQT2Do1CkVIWW3uLxLDV3gg3qy0aIFH+nrKS4j7Ln
+         4hPzI0zEjU0cUx0RhPZ4Zu/f9Ztj/uE9vkxOdwK6eFA5B10PtX65IvI2ztmg5577svSn
+         U9OXsWI+xAT5Dqe+xDWL/U52PzsOaADKukHP8yAtGuwSmL3QkQXpHOr9B0DaTweEYh6e
+         3WS6WnIVPs4vc4pDx9QiPZvWgcH7asKyLptIE45o6RnSx4nK1ZTEQUJ1rb7U6PYd2Qdt
+         NIPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9IU9Vum1iEYXNFUQZJjTlbhqVVSUgpHJpWnEL+ydahk=;
+        b=Ls0/xwr0VWdXGHNTq0zgNNtLG4NVm7ox8sHO/gZnRzK0yo7GoFF0hK2F4p8/5Cai4I
+         htXZ8K0Tcqt08f9Uk6w8PM2VOevXlrFomSedpQObmrvGMysX6CSDS28RSGfs0M5D678+
+         W47BCSFyfapmwJyHfuVY/smvT5StOuGAoFDhWEuNj29RlQ5U8ura6ng+cln8d1Oa64ii
+         ecW3zKkZi9WmPqOkntc6k6xk+t6KpWRwepfoVxek18aUdz8X3WfwWBegiUH4qDAxzY8T
+         WneLSYSlSuOj+6x0ME34fWMMjOHHCE+NisvfEEQabs1IrbNSQ/4rt353QPrR9yT4FmjU
+         3ulg==
+X-Gm-Message-State: APjAAAUcLDnN7lZRUp0J4EV3NF6sNaR0qmw43VvAfTTDFIeUXy6YXX5g
+        j6QtjnDN811AnCIOqap4D4KzUA==
+X-Google-Smtp-Source: APXvYqzhrHY+sRdQ6KZLe3VL0lPbv09Q/COiAF3X6IakXifjdtvvYSO02UJsciHFjbggEaoQ8waVoQ==
+X-Received: by 2002:a6b:b843:: with SMTP id i64mr730492iof.81.1561989905288;
+        Mon, 01 Jul 2019 07:05:05 -0700 (PDT)
+Received: from [192.168.1.158] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id w23sm9787246iod.12.2019.07.01.07.05.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 07:05:03 -0700 (PDT)
+Subject: Re: [PATCH V2] block: fix .bi_size overflow
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org,
+        Liu Yiding <liuyd.fnst@cn.fujitsu.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, stable@vger.kernel.org
+References: <20190701071446.22028-1-ming.lei@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8db73c5d-a0e2-00c9-59ab-64314097db26@kernel.dk>
+Date:   Mon, 1 Jul 2019 08:05:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-In-Reply-To: <1561909199.3985.33.camel@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20190701071446.22028-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.65.207]
-X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/30/2019 6:39 PM, Mimi Zohar wrote:
-> On Wed, 2019-06-26 at 10:15 +0200, Roberto Sassu wrote:
->> On 6/3/2019 8:32 PM, Rob Landley wrote:
->>> On 6/3/19 4:31 AM, Roberto Sassu wrote:
->>>>> This patch set aims at solving the following use case: appraise files from
->>>>> the initial ram disk. To do that, IMA checks the signature/hash from the
->>>>> security.ima xattr. Unfortunately, this use case cannot be implemented
->>>>> currently, as the CPIO format does not support xattrs.
->>>>>
->>>>> This proposal consists in including file metadata as additional files named
->>>>> METADATA!!!, for each file added to the ram disk. The CPIO parser in the
->>>>> kernel recognizes these special files from the file name, and calls the
->>>>> appropriate parser to add metadata to the previously extracted file. It has
->>>>> been proposed to use bit 17:16 of the file mode as a way to recognize files
->>>>> with metadata, but both the kernel and the cpio tool declare the file mode
->>>>> as unsigned short.
->>>>
->>>> Any opinion on this patch set?
->>>>
->>>> Thanks
->>>>
->>>> Roberto
->>>
->>> Sorry, I've had the window open since you posted it but haven't gotten around to
->>> it. I'll try to build it later today.
->>>
->>> It does look interesting, and I have no objections to the basic approach. I
->>> should be able to add support to toybox cpio over a weekend once I've got the
->>> kernel doing it to test against.
->>
->> Ok.
->>
->> Let me give some instructions so that people can test this patch set.
->>
->> To add xattrs to the ram disk embedded in the kernel it is sufficient
->> to set CONFIG_INITRAMFS_FILE_METADATA="xattr" and
->> CONFIG_INITRAMFS_SOURCE="<file with xattr>" in the kernel configuration.
->>
->> To add xattrs to the external ram disk, it is necessary to patch cpio:
->>
->> https://github.com/euleros/cpio/commit/531cabc88e9ecdc3231fad6e4856869baa9a91ef
->> (xattr-v1 branch)
->>
->> and dracut:
->>
->> https://github.com/euleros/dracut/commit/a2dee56ea80495c2c1871bc73186f7b00dc8bf3b
->> (digest-lists branch)
->>
->> The same modification can be done for mkinitramfs (add '-e xattr' to the
->> cpio command line).
->>
->> To simplify the test, it would be sufficient to replace only the cpio
->> binary and the dracut script with the modified versions. For dracut, the
->> patch should be applied to the local dracut (after it has been renamed
->> to dracut.sh).
->>
->> Then, run:
->>
->> dracut -e xattr -I <file with xattr> (add -f to overwrite the ram disk)
->>
->> Xattrs can be seen by stopping the boot process for example by adding
->> rd.break to the kernel command line.
+On 7/1/19 1:14 AM, Ming Lei wrote:
+> 'bio->bi_iter.bi_size' is 'unsigned int', which at most hold 4G - 1
+> bytes.
 > 
-> A simple way of testing, without needing any changes other than the
-> kernel patches, is to save the dracut temporary directory by supplying
-> "--keep" on the dracut command line, calling
-> usr/gen_initramfs_list.sh, followed by usr/gen_init_cpio with the "-e
-> xattr" option.
+> Before 07173c3ec276 ("block: enable multipage bvecs"), one bio can
+> include very limited pages, and usually at most 256, so the fs bio
+> size won't be bigger than 1M bytes most of times.
+> 
+> Since we support multi-page bvec, in theory one fs bio really can
+> be added > 1M pages, especially in case of hugepage, or big writeback
+> with too many dirty pages. Then there is chance in which .bi_size
+> is overflowed.
+> 
+> Fixes this issue by using bio_full() to check if the added segment may
+> overflow .bi_size.
 
-Alternatively, follow the instructions to create the embedded ram disk
-with xattrs, and use the existing external ram disk created with dracut
-to check if xattrs are created.
-
-Roberto
+Any objections to queuing this up for 5.3? It's not a new regression
+this series.
 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Jens Axboe
+
