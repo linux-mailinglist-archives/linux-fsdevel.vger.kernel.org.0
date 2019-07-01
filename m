@@ -2,85 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81D7E5C204
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 19:33:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 611CD5C22D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 19:42:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfGARdB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 13:33:01 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:53792 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727334AbfGARdB (ORCPT
+        id S1728903AbfGARm5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 13:42:57 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:48885 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727130AbfGARm4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 13:33:01 -0400
-Received: by linux.microsoft.com (Postfix, from userid 1029)
-        id 2FEB720BCFC5; Mon,  1 Jul 2019 10:33:00 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by linux.microsoft.com (Postfix) with ESMTP id 2922E3011494;
-        Mon,  1 Jul 2019 10:33:00 -0700 (PDT)
-Date:   Mon, 1 Jul 2019 10:33:00 -0700 (PDT)
-From:   Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
-X-X-Sender: jaskarankhurana@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net
-To:     Milan Broz <gmazyland@gmail.com>
-cc:     James Morris <jmorris@namei.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, scottsh@microsoft.com, mpatocka@redhat.com
-Subject: Re: [RFC PATCH v5 0/1] Add dm verity root hash pkcs7 sig
- validation.
-In-Reply-To: <749ddf56-3cb6-42c8-9ccc-71e09558400f@gmail.com>
-Message-ID: <alpine.LRH.2.21.1907011029100.31396@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
-References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com> <20190628040041.GB673@sol.localdomain> <alpine.LRH.2.21.1906282040490.15624@namei.org> <749ddf56-3cb6-42c8-9ccc-71e09558400f@gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Mon, 1 Jul 2019 13:42:56 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x61HfUQA010853
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 1 Jul 2019 13:41:32 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 0FB1D42002E; Mon,  1 Jul 2019 13:41:30 -0400 (EDT)
+Date:   Mon, 1 Jul 2019 13:41:29 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     hch@infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 00/11] iomap: regroup code by functional area
+Message-ID: <20190701174129.GA3315@mit.edu>
+References: <156200051933.1790352.5147420943973755350.stgit@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <156200051933.1790352.5147420943973755350.stgit@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Jul 01, 2019 at 10:01:59AM -0700, Darrick J. Wong wrote:
+> Note that this is not the final format of the patches, because I intend
+> to pick a point towards the end of the merge window (after everyone
+> else's merges have landed), rebase this series atop that, and push it
+> back to Linus.
 
-Hello Milan,
-On Mon, 1 Jul 2019, Milan Broz wrote:
+So normally Linus isn't psyched about pulling branches that were
+rebased at the last minute.  I guess we could ask him ahead of time if
+he's OK with this plan.  Or have you done that already?
 
-> On 29/06/2019 06:01, James Morris wrote:
->> On Thu, 27 Jun 2019, Eric Biggers wrote:
->>
->>> I don't understand your justification for this feature.
->>>
->>> If userspace has already been pwned severely enough for the attacker to be
->>> executing arbitrary code with CAP_SYS_ADMIN (which is what the device mapper
->>> ioctls need), what good are restrictions on loading more binaries from disk?
->>>
->>> Please explain your security model.
->>
->> Let's say the system has a policy where all code must be signed with a
->> valid key, and that one mechanism for enforcing this is via signed
->> dm-verity volumes. Validating the signature within the kernel provides
->> stronger assurance than userspace validation. The kernel validates and
->> executes the code, using kernel-resident keys, and does not need to rely
->> on validation which has occurred across a trust boundary.
->
-> Yes, but as it is implemented in this patch, a certificate is provided as
-> a binary blob by the (super)user that activates the dm-verity device.
->
-> Actually, I can put there anything that looks like a correct signature (self-signed
-> or so), and dm-verity code is happy because the root hash is now signed.
->
-> Maybe could this concept be extended to support in-kernel compiled certificates?
->
-> I like the idea of signed root hash, but the truth is that if you have access
-> to device activation, it brings nothing, you can just put any cert in the keyring
-> and use it.
->
-> Milan
->
+Alternatively you could rebase this on top of v5.3-rc2, after the
+merge window closes, and get agreement from the 4 file systems which
+are currently iomap users: ext2, ext4, gfs2, and xfs to start their
+development trees on top of that common branch for the 5.4 merge
+window.  After all, it's just moving code around and there are no
+substantive changes in this patch series, right?  So there's no rush
+as I understand things for this to hit mainline.
 
-The signature needs to be trusted by the .builtin_trusted_keys which is
-a read-only list of keys that were compiled into the kernel. The 
-verify_pkcs7_signature verifies trust against the builtin keyring so I 
-think what you are suggesting is covered here.
+Cheers,
 
-Regards,
-Jaskaran.
+						- Ted
