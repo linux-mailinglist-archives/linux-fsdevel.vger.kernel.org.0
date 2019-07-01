@@ -2,134 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 218585B530
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 08:40:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 236BE5B53C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 08:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbfGAGkl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 02:40:41 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7683 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725616AbfGAGkl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 02:40:41 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 94218D6CDC1276CFDC7C;
-        Mon,  1 Jul 2019 14:40:38 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 1 Jul 2019
- 14:40:29 +0800
-Subject: Re: [PATCH RFC] iomap: introduce IOMAP_TAIL
-To:     Gao Xiang <gaoxiang25@huawei.com>
-CC:     <hch@infradead.org>, <darrick.wong@oracle.com>,
-        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <chao@kernel.org>
-References: <20190629073020.22759-1-yuchao0@huawei.com>
- <afda5702-1d88-7634-d943-0c413ae3b28f@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <a27e3502-db75-22fa-4545-e588abbbfbf2@huawei.com>
-Date:   Mon, 1 Jul 2019 14:40:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727415AbfGAGng (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 02:43:36 -0400
+Received: from verein.lst.de ([213.95.11.211]:58657 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727318AbfGAGng (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jul 2019 02:43:36 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 831C568B20; Mon,  1 Jul 2019 08:43:33 +0200 (CEST)
+Date:   Mon, 1 Jul 2019 08:43:33 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/12] iomap: move the xfs writeback code to iomap.c
+Message-ID: <20190701064333.GA20778@lst.de>
+References: <20190624055253.31183-1-hch@lst.de> <20190624055253.31183-12-hch@lst.de> <20190624234304.GD7777@dread.disaster.area> <20190625101020.GI1462@lst.de> <20190628004542.GJ7777@dread.disaster.area> <20190628053320.GA26902@lst.de> <20190701000859.GL7777@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <afda5702-1d88-7634-d943-0c413ae3b28f@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190701000859.GL7777@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Xiang,
+On Mon, Jul 01, 2019 at 10:08:59AM +1000, Dave Chinner wrote:
+> > Why do you assume you have to test it?  Back when we shared
+> > generic_file_read with everyone you also didn't test odd change to
+> > it with every possible fs.
+> 
+> I'm not sure what function you are referring to here. Can you
+> clarify?
 
-On 2019/6/29 17:34, Gao Xiang wrote:
-> Hi Chao,
-> 
-> On 2019/6/29 15:30, Chao Yu wrote:
->> Some filesystems like erofs/reiserfs have the ability to pack tail
->> data into metadata, however iomap framework can only support mapping
->> inline data with IOMAP_INLINE type, it restricts that:
->> - inline data should be locating at page #0.
->> - inline size should equal to .i_size
->> So we can not use IOMAP_INLINE to handle tail-packing case.
->>
->> This patch introduces new mapping type IOMAP_TAIL to map tail-packed
->> data for further use of erofs.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/iomap.c            | 22 ++++++++++++++++++++++
->>  include/linux/iomap.h |  1 +
->>  2 files changed, 23 insertions(+)
->>
->> diff --git a/fs/iomap.c b/fs/iomap.c
->> index 12654c2e78f8..ae7777ce77d0 100644
->> --- a/fs/iomap.c
->> +++ b/fs/iomap.c
->> @@ -280,6 +280,23 @@ iomap_read_inline_data(struct inode *inode, struct page *page,
->>  	SetPageUptodate(page);
->>  }
->>  
->> +static void
->> +iomap_read_tail_data(struct inode *inode, struct page *page,
->> +		struct iomap *iomap)
->> +{
->> +	size_t size = i_size_read(inode) & (PAGE_SIZE - 1);
->> +	void *addr;
->> +
->> +	if (PageUptodate(page))
->> +		return;
->> +
->> +	addr = kmap_atomic(page);
->> +	memcpy(addr, iomap->inline_data, size);
->> +	memset(addr + size, 0, PAGE_SIZE - size);
-> 
-> need flush_dcache_page(page) here for new page cache page since
-> it's generic iomap code (althrough not necessary for x86, arm), I am not sure...
-> see commit d2b2c6dd227b and c01778001a4f...
+Right now it is generic_file_read_iter(), but before iter it was
+generic_file_readv, generic_file_read, etc.
 
-Thanks for your reminding, these all codes were copied from
-iomap_read_inline_data(), so I think we need a separated patch to fix this issue
-if necessary.
+> > If you change iomap.c, you'll test it
+> > with XFS, and Cc other maintainers so that they get a chance to
+> > also test it and comment on it, just like we do with other shared
+> > code in the kernel.
+> 
+> Which is why we've had problems with the generic code paths in the
+> past and other filesystems just copy and paste then before making
+> signficant modifications. e.g. both ext4 and btrfs re-implement
+> write_cache_pages() rather than use the generic writeback code
+> because they have slightly different requirements and those
+> developers don't want to have to worry about other filesystems every
+> time there is an internal filesystem change that affects their
+> writeback constraints...
+> 
+> That's kinda what I'm getting at here: writeback isn't being shared
+> by any of the major filesystems for good reasons...
 
-Thanks,
+I very fundamentally disagree.  It is not shared for a bad reasons,
+and that is people not understanding the mess that the buffer head
+based code is, and not wanting to understand it.  So they come up
+with their own piecemeal "improvements" for it making the situation
+worse.  Writeback is fundamentally not fs specific in any way.  Different
+file system might use different optional features like unwrittent
+extents, delalloc, data checksums, but once they implement them the
+behavior should be uniform.
 
+And I'd much rather fix this than going down the copy an paste and
+slightly tweak it while fucking up something else route.
+
+> > stone age.  Very little is about XFS itself, most of it has been
+> > about not being stupid in a fairly generic way.  And every since
+> > I got rid of buffer heads xfs_aops.c has been intimately tied
+>   ^^^^^^^^^^^^^^^^^^^^^^^^^
 > 
-> Thanks,
-> Gao Xiang
+> *cough*
 > 
->> +	kunmap_atomic(addr);
->> +	SetPageUptodate(page);
->> +}
->> +
->>  static loff_t
->>  iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->>  		struct iomap *iomap)
->> @@ -298,6 +315,11 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->>  		return PAGE_SIZE;
->>  	}
->>  
->> +	if (iomap->type == IOMAP_TAIL) {
->> +		iomap_read_tail_data(inode, page, iomap);
->> +		return PAGE_SIZE;
->> +	}
->> +
->>  	/* zero post-eof blocks as the page may be mapped */
->>  	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
->>  	if (plen == 0)
->> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
->> index 2103b94cb1bf..7e1ee48e3db7 100644
->> --- a/include/linux/iomap.h
->> +++ b/include/linux/iomap.h
->> @@ -25,6 +25,7 @@ struct vm_fault;
->>  #define IOMAP_MAPPED	0x03	/* blocks allocated at @addr */
->>  #define IOMAP_UNWRITTEN	0x04	/* blocks allocated at @addr in unwritten state */
->>  #define IOMAP_INLINE	0x05	/* data inline in the inode */
->> +#define IOMAP_TAIL	0x06	/* tail data packed in metdata */
->>  
->>  /*
->>   * Flags for all iomap mappings:
->>
-> .
-> 
+> Getting rid of bufferheads in writeback was largely a result of work
+> I did over a period of several years, thank you very much. Yes, work
+> you did over the same time period also got us there, but it's not
+> all your work.
+
+Sorry Dave - this isn't avoud taking credit of past work.  But ever
+since I finally got rid of bufferhads and introduced struct iomap_page
+we have this intimate tie up, which is the point here.
+
+> e.g. XFS requires COW fork manipulation on ioend submission
+> (xfs_submit_ioend() calls xfs_reflink_convert_cow()) and this has
+> some nasty memory allocation requirements (potential deadlock
+> situation). So the generic code has a hook for this XFS specific
+> functionality, even though no other filesystem if likely to ever
+> need this. And this is something we've been discussion getting rid
+> of from the XFS writeback path. i.e. reworking how we do all
+> the COW fork interactions in writeback. So some of these hooks are
+> suspect even now, and we're already trying to work out how to
+> re-work the XFS writeback path to sort out problems we have with it.
+
+Every file system that writes out of place will need some sort of
+hook here with the same issue, no matter if they call it COW fork
+or manipulate some all integrated data structure like btrfs.  Moreover
+btrfs will also have to deal with their data checksum in exactly this
+place.
+
+> That's the point I'm trying to make - the whole "generic" iomap
+> writeback API proposal is based around exactly the functionality XFS
+> - and only XFS - requires at this point in time. There are no other
+> users of this API and until there are, we've got no idea how
+> generic this functionality really is and just how much overhead
+> making fundamental changes to the XFS writeback code are going to
+> entail in future.
+
+No, it is based around generalizing what we have in xfs so that we
+can use it elsewhere.  With zonefs and gfs2 as the prime users
+initially, and other like btrfs hopefully to not far away.
