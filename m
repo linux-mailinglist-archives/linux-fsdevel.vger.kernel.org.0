@@ -2,110 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F9DF5B6CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 10:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D0BD5B716
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 10:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbfGAI1G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 04:27:06 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:46692 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727702AbfGAI1F (ORCPT
+        id S1727996AbfGAIqF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 04:46:05 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42695 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbfGAIqF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 04:27:05 -0400
-Received: by mail-io1-f70.google.com with SMTP id s83so14408138iod.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jul 2019 01:27:05 -0700 (PDT)
+        Mon, 1 Jul 2019 04:46:05 -0400
+Received: by mail-io1-f67.google.com with SMTP id u19so18415223ior.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jul 2019 01:46:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=IYVjMNAPDPB3g4UgnPc8UGgFEx9QPCSimigO/GLHsBU=;
+        b=h56oJXfRQo/o4lu+WGdXLsKdrbfT1gg0IRUA/DzTERPW1P4dBV2yyruiDQL8BTav47
+         wrOiecYdejVIJq5nAQI7edyf0fimOhblJ3hRv4LkqJJDlzClAhfhYf6aHQ5by9ULg/Q2
+         cKxSCxYgH5i4XaOHfEv0esDJwMFejLa49HSWo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=GC+x39g8IYbrwQLY2vbqdImonYYsq5udUTs88YPbw4c=;
-        b=uJCdVplCPY4DKzXypA/i6QR7hfQvWi711LT0qoE1xbLfqUOZwZCS+BokjJAm7GOA0e
-         ikUhuUQSejRtsdKVk1SpAXBqwvLTKgZCZJmUGye2S7pDoaulmohkhyQgAm4Uq8IuUbmk
-         0ZfD0ndNIUZo14c08CZ9YT4kWpF7BekNFO/2OPM1X4GyJEeKV9KR/hp8JF2+EaFzrX81
-         SB64AaOP6uueMwgyoPhgCk6XTmr0lByiKjnA3SJS6JmHvZS2tuHy6yz2u3kTWLIqv00i
-         Zj5TKxd+gYuWF28lHaQQ2JP1AyVIeCIudcugapBwEVKWg3CoHk7tgXGXsVJqeEOMKVfM
-         8XEA==
-X-Gm-Message-State: APjAAAVpf9pdNgxt3TyYeh16hX4ffopmonO1RiZG40vkY9UwgwcGmLs9
-        Z7aHQbuYssKNX1ojQCwcnr3sF7k6W1loSKghhlMradDIBswr
-X-Google-Smtp-Source: APXvYqzXk16c6JPKZk5Bi6NHsGlxPqYqwOLITlQ/xP5jq0+WNDdT9E5QYirBgLcGdfA7650FRi5Q8lkOPCoGC4bgX5mQkGfnsHjy
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=IYVjMNAPDPB3g4UgnPc8UGgFEx9QPCSimigO/GLHsBU=;
+        b=aBMruugNt6cHP29p80Ocrgi8lxe1LTauPnMMw9ZQu9waCX5u9vCwTHnUREwyWWT2Ul
+         cfMM7ASta79MNEbWvKaiauxh8wypI7W1sKF2f8P32MwX5klWxqiFo89Q1eehEXU4bBEn
+         oZjMAKx4wFihhiXqYRuTviNqzaf7fnCP+G0Mz1HDdCb7jJTL1mNr7cvK8VKhdy18fVzu
+         XLeFG+Yi9B7qdTU47j70aFpUrZLH9wHSMkXvE0QnqfMj/bcEl+j/MWH/CCs+Cr7409D0
+         6BD7BWGxaNpI+iZaym5ksqezmnSca/BYzR2HJRbFt06CCxlptEUWivVmT2J/2Vc7vojf
+         F+JA==
+X-Gm-Message-State: APjAAAVkrQ//785ekBH9tvJzD4Btd0z/p3Af8azrQjOpv78YwSIEH8e3
+        +HEhr6mxYsCRxI+Kc2Hj0v0rYjC6SnLDzVDOyydjMA==
+X-Google-Smtp-Source: APXvYqxxiZw+bGnK8YPjYZcf2sGoK8aDASylIc273wEuR0ihID6ic3gJk3WyoL35wKxKGn5mqfaNZ2WBpzy8GmFOi+4=
+X-Received: by 2002:a5e:cb43:: with SMTP id h3mr23250663iok.252.1561970764796;
+ Mon, 01 Jul 2019 01:46:04 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8890:: with SMTP id d16mr8303258ioo.274.1561969624992;
- Mon, 01 Jul 2019 01:27:04 -0700 (PDT)
-Date:   Mon, 01 Jul 2019 01:27:04 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a5d3cb058c9a64f0@google.com>
-Subject: kernel panic: corrupted stack end in dput
-From:   syzbot <syzbot+d88a977731a9888db7ba@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20190619123019.30032-1-mszeredi@redhat.com>
+In-Reply-To: <20190619123019.30032-1-mszeredi@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 1 Jul 2019 10:45:53 +0200
+Message-ID: <CAJfpegv_ezsXOLV2f7yd07=T3MenJoMKhu=MBac1-80s0BFg9A@mail.gmail.com>
+Subject: Re: [PATCH 01/13] vfs: verify param type in vfs_parse_sb_flag()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi David,
 
-syzbot found the following crash on:
+Ping?  Have you had a chance of looking at this series?
 
-HEAD commit:    7b75e49d net: dsa: mv88e6xxx: wait after reset deactivation
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f51b13a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e7c31a94f66cc0aa
-dashboard link: https://syzkaller.appspot.com/bug?extid=d88a977731a9888db7ba
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130f49bda00000
+K=C3=B6szi,
+Miklos
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d88a977731a9888db7ba@syzkaller.appspotmail.com
-
-Kernel panic - not syncing: corrupted stack end detected inside scheduler
-CPU: 1 PID: 8936 Comm: syz-executor.3 Not tainted 5.2.0-rc6+ #69
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  panic+0x2cb/0x744 kernel/panic.c:219
-  schedule_debug kernel/sched/core.c:3272 [inline]
-  __schedule+0x155d/0x1560 kernel/sched/core.c:3381
-  preempt_schedule_notrace kernel/sched/core.c:3664 [inline]
-  preempt_schedule_notrace+0xa0/0x130 kernel/sched/core.c:3635
-  ___preempt_schedule_notrace+0x16/0x2f
-  rcu_is_watching+0x23/0x30 kernel/rcu/tree.c:873
-  rcu_read_lock include/linux/rcupdate.h:594 [inline]
-  dput+0x41e/0x690 fs/dcache.c:845
-  __fput+0x424/0x890 fs/file_table.c:293
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:185 [inline]
-  exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:168
-  prepare_exit_to_usermode arch/x86/entry/common.c:199 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
-  do_syscall_64+0x58e/0x680 arch/x86/entry/common.c:304
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x413201
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 48  
-83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ffcee6f8e20 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000413201
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 0000000000000001 R08: ffffffffffffffff R09: ffffffffffffffff
-R10: 00007ffcee6f8f00 R11: 0000000000000293 R12: 000000000075c9a0
-R13: 000000000075c9a0 R14: 00000000000127ed R15: ffffffffffffffff
-Shutting down cpus with NMI
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+On Wed, Jun 19, 2019 at 2:30 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
+>
+> vfs_parse_sb_flag() accepted any kind of param with a matching key, not
+> just a flag.  This is wrong, only allow flag type and return -EINVAL
+> otherwise.
+>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/fs_context.c | 31 +++++++++++++++----------------
+>  1 file changed, 15 insertions(+), 16 deletions(-)
+>
+> diff --git a/fs/fs_context.c b/fs/fs_context.c
+> index 103643c68e3f..e56310fd8c75 100644
+> --- a/fs/fs_context.c
+> +++ b/fs/fs_context.c
+> @@ -81,30 +81,29 @@ static const char *const forbidden_sb_flag[] =3D {
+>  /*
+>   * Check for a common mount option that manipulates s_flags.
+>   */
+> -static int vfs_parse_sb_flag(struct fs_context *fc, const char *key)
+> +static int vfs_parse_sb_flag(struct fs_context *fc, struct fs_parameter =
+*param)
+>  {
+> -       unsigned int token;
+> +       const char *key =3D param->key;
+> +       unsigned int set, clear;
+>         unsigned int i;
+>
+>         for (i =3D 0; i < ARRAY_SIZE(forbidden_sb_flag); i++)
+>                 if (strcmp(key, forbidden_sb_flag[i]) =3D=3D 0)
+>                         return -EINVAL;
+>
+> -       token =3D lookup_constant(common_set_sb_flag, key, 0);
+> -       if (token) {
+> -               fc->sb_flags |=3D token;
+> -               fc->sb_flags_mask |=3D token;
+> -               return 0;
+> -       }
+> +       set =3D lookup_constant(common_set_sb_flag, key, 0);
+> +       clear =3D lookup_constant(common_clear_sb_flag, key, 0);
+> +       if (!set && !clear)
+> +               return -ENOPARAM;
+>
+> -       token =3D lookup_constant(common_clear_sb_flag, key, 0);
+> -       if (token) {
+> -               fc->sb_flags &=3D ~token;
+> -               fc->sb_flags_mask |=3D token;
+> -               return 0;
+> -       }
+> +       if (param->type !=3D fs_value_is_flag)
+> +               return invalf(fc, "%s: Unexpected value for '%s'",
+> +                             fc->fs_type->name, param->key);
+>
+> -       return -ENOPARAM;
+> +       fc->sb_flags |=3D set;
+> +       fc->sb_flags &=3D ~clear;
+> +       fc->sb_flags_mask |=3D set | clear;
+> +       return 0;
+>  }
+>
+>  /**
+> @@ -130,7 +129,7 @@ int vfs_parse_fs_param(struct fs_context *fc, struct =
+fs_parameter *param)
+>         if (!param->key)
+>                 return invalf(fc, "Unnamed parameter\n");
+>
+> -       ret =3D vfs_parse_sb_flag(fc, param->key);
+> +       ret =3D vfs_parse_sb_flag(fc, param);
+>         if (ret !=3D -ENOPARAM)
+>                 return ret;
+>
+> --
+> 2.21.0
+>
