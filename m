@@ -2,67 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7DB15C38B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 21:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 219B05C44C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 22:26:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfGATUx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 15:20:53 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:37368 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfGATUx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 15:20:53 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hi1r7-0005kH-Ok; Mon, 01 Jul 2019 19:20:49 +0000
-Date:   Mon, 1 Jul 2019 20:20:49 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] vfs: move_mount: reject moving kernel internal mounts
-Message-ID: <20190701192049.GB17978@ZenIV.linux.org.uk>
-References: <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
- <20190629202744.12396-1-ebiggers@kernel.org>
- <20190701164536.GA202431@gmail.com>
- <20190701182239.GA17978@ZenIV.linux.org.uk>
+        id S1726702AbfGAU0t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 16:26:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726620AbfGAU0s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jul 2019 16:26:48 -0400
+Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E65EA20B7C;
+        Mon,  1 Jul 2019 20:26:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562012808;
+        bh=bHXVVLIgc6WfqlmFZzYaV90ylrhq4JfZ8EnmuXsM1vM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OSpbrUwWPr0XVE/7R0/wA16gYkmjSek15Tqav6ajumHVktyFYoEoorUuZQF+gflA4
+         84F055Vx3NQftnhPrev4FSE19+whHobVMOFxeN4CJyKBcQqhWVncSNbipYtNqAprpc
+         VnbcSOFO5cSX4XOoH65e53wf4vd8lDttaWBoyZXQ=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Darrick J . Wong" <darrick.wong@oracle.com>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/3] f2fs: use generic helpers for FS_IOC_{SETFLAGS,FSSETXATTR}
+Date:   Mon,  1 Jul 2019 13:26:27 -0700
+Message-Id: <20190701202630.43776-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190701182239.GA17978@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 07:22:39PM +0100, Al Viro wrote:
+This series converts f2fs to use the new VFS helper functions that check
+the parameters of the FS_IOC_SETFLAGS and FS_IOC_FSSETXATTR ioctls.
 
-> FWIW, it's not just move_mount(2) - I'd expect
-> 
-> 	int fds[2];
-> 	char s[80];
-> 
-> 	pipe(fds);
-> 	sprintf(s, "/dev/fd/%d", fds[0]);
-> 	mount(s, "/dev/null", NULL, MS_MOVE, 0);
-> 
-> to step into exactly the same thing.  mount(2) does follow symlinks -
-> always had...
+This applies to the merge of the f2fs/dev and xfs/vfs-for-next branches:
 
-The same goes for e.g.
+	https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/log/?h=dev
+	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git/log/?h=vfs-for-next
 
-#define _GNU_SOURCE
-#include <sched.h>
-#include <sys/mount.h>
-#include <stdio.h>
-#include <sys/epoll.h>
+i.e., this series will apply to mainline after these two branches get
+merged into it for 5.3.  Don't apply it to the f2fs tree by itself yet.
 
-main()
-{
-	char s[80];
-	unshare(CLONE_NEWNS);	// so nobody else gets confused
- 	sprintf(s, "/dev/fd/%d", epoll_create1(0));
- 	mount(s, "/dev/null", NULL, MS_MOVE, 0);	// see if it oopses
-}
+See: https://lore.kernel.org/lkml/20190701110603.5abcbb2c@canb.auug.org.au/T/#u
 
-modulo error-checking, etc.
+Eric Biggers (3):
+  f2fs: use generic checking and prep function for FS_IOC_SETFLAGS
+  f2fs: use generic checking function for FS_IOC_FSSETXATTR
+  f2fs: remove redundant check from f2fs_setflags_common()
+
+ fs/f2fs/file.c | 63 ++++++++++++++++++--------------------------------
+ 1 file changed, 23 insertions(+), 40 deletions(-)
+
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
