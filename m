@@ -2,114 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D848F5B832
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 11:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AAD55B865
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 11:49:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbfGAJlm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 05:41:42 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54375 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728334AbfGAJll (ORCPT
+        id S1727602AbfGAJtQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 05:49:16 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40796 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727080AbfGAJtQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 05:41:41 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g135so15104200wme.4;
-        Mon, 01 Jul 2019 02:41:39 -0700 (PDT)
+        Mon, 1 Jul 2019 05:49:16 -0400
+Received: by mail-io1-f65.google.com with SMTP id n5so27317120ioc.7;
+        Mon, 01 Jul 2019 02:49:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6mj1GNCBlm5Kzl/Gv47qDDxI924Jr5t8ezQS95HGAxE=;
-        b=RMrB1vsX/2hK+on0/p7Z7GxznCyEy8+F457kddIrwKQwlCyrQQxmFpdyIB7KPTFSrI
-         1UEEwV35Lu1CwDmb2s+W4OV+NkzstIuw8Cc63+MTmhAkrLOTiGJ1qG16J4JvqTAEsrSs
-         uZnWKKrQgeqZdO/mh9YOy2EoWVT//ZMAZ8eHGu9m2sZo312GQ3vgDEcVGV8kekxPtJMN
-         rv0CFJjViOmLgWPsk0vUPM+G4Qtu0X7i8ze6FzUMeBgTwPapqt1nU/op3JD7L/rym6eB
-         LO9RSQlwXNBw4IS2pP/gIgz2ZEOQZYuk+kM5QZ6v7wLL6Ud/9JPtH+DTjO8Md5KsnlAx
-         l+pQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=abxVXeccHHFb0+Whp7D1V+v/o0Mk6/SKpT3C/dtCC68=;
+        b=Qd0RoIYgOmbLO4vcVd2bxbgA29YXziaH7L2dXbgMce9afQ20fYYlxvLzk9QGHlzSXe
+         oyo3KD7aYkpLcrQQIv57wQANN4OwadpQcCdqDO0FZhPB0h11Ne6GBbsgzALWQ/q9jpZm
+         B7VVZ9WTf6iaWQNgFH2YTOQYpoiVqyF5YbqJVuAjT2DSVF4jEoJyYblPj0f1nhq4tN62
+         jAR9UXb5z6o26yuAhAT2hOJlIWGPoP78h76AeWV2pm5fgA4/DICl77NwjjT0/RnnUnSj
+         stAj3ihu/wtnYI9YDTZy2fYUGqevmBqa6QUhKJhiJeF9XedtBGOjPE7GmSfWUjt0Svhq
+         IASQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6mj1GNCBlm5Kzl/Gv47qDDxI924Jr5t8ezQS95HGAxE=;
-        b=CNtxuFG0C+fodwzzq5WlRxI4eXG8u4oWNxdMbtgVH9eqvjg3qGe5BECdPnlRUwQHOl
-         5zPPffl0ZubCXhpFD+PP+biNgkSIrDyMEbgruvTLVtTQKAWiZplQgdS2dLMGR0KyHioL
-         0TesIpiz0CRrh47EEDomi3WbSdX2FX5ruq2nNlJHdl08YwgoWwCQP/Xjl6R9L0h3aIDX
-         rzzuHEZgXsEBXJCU2jnPN/HaiJK09JtABWgzPqi3JB/v4dD7z41EiAVtiNLRdbjr3c33
-         YR3fM0RwSsJaBAo0gmjf0z9OjJ0ohc2OjqwkF8BCyZN91V2yIUKbsjb91pvV2Noo1KrB
-         sCRA==
-X-Gm-Message-State: APjAAAUPpI1RUfTiCL2xC0BUakC47MacJo+h/dgw7tjbfOFjPCYRshky
-        BvC0niR5Pjy6mo1wcrJ6Wa0=
-X-Google-Smtp-Source: APXvYqw1GiG2c1p4SOty1AL+8QolpaF03Qeti32qNeBWi0z+owqwU83+3Kt9KKC6JMz4wuXTHDVY/A==
-X-Received: by 2002:a1c:3:: with SMTP id 3mr16735741wma.6.1561974098900;
-        Mon, 01 Jul 2019 02:41:38 -0700 (PDT)
-Received: from [172.22.36.64] (redhat-nat.vtp.fi.muni.cz. [78.128.215.6])
-        by smtp.gmail.com with ESMTPSA id 5sm5860353wmi.22.2019.07.01.02.41.37
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 02:41:38 -0700 (PDT)
-Subject: Re: [RFC PATCH v5 0/1] Add dm verity root hash pkcs7 sig validation.
-To:     James Morris <jmorris@namei.org>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, scottsh@microsoft.com, mpatocka@redhat.com
-References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
- <20190628040041.GB673@sol.localdomain>
- <alpine.LRH.2.21.1906282040490.15624@namei.org>
-From:   Milan Broz <gmazyland@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <749ddf56-3cb6-42c8-9ccc-71e09558400f@gmail.com>
-Date:   Mon, 1 Jul 2019 11:41:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=abxVXeccHHFb0+Whp7D1V+v/o0Mk6/SKpT3C/dtCC68=;
+        b=F9H8slxjZHyPh1ZxdNy4eTe6k6IBYPv0H8Eqqg4BUGj1j+BGIX4PcAFSoeAE9Snnwy
+         Fzr9yL3UP7z0og6h8pxUWXeP7E977zYxZHK4sufWAE1CcqkkfTxvJvP+3gF9DJE+TOHe
+         dTzk+vFqStlV2plHTPPHB6ilddzvgjuIFVuj8Z6UjAX7Y5h0gzLwNYYMrJYpehR7ShcE
+         b5BB92CWd0S7bfuQNcajB6xia4hOJBmr6N75BCcG9YKzlhcowIJiVoLeB0hyLlWbn9Fi
+         BmV64fFM8NSEfbLT6fMW3KNZiZcMoV+9IIyyTIZuGxbvSDvojO9B5CIkOmyAgblpdTIV
+         g3cQ==
+X-Gm-Message-State: APjAAAXyKkHgAGYIVbAQxtlPbv8HfDARJP66nRlOt3uBVBw4csYB1+IQ
+        sNy5uQFxi1M1LfvMYmTZV3bcMGUKSagUD7e24XH9eGYH
+X-Google-Smtp-Source: APXvYqzBksAhh+3gh8FH8ib5uVMRDD65qcRt5SUtnxTnRk497OcpAaHPQqHt5GicQge6gJ0TIVVCRkeEiYv5VTXoBcA=
+X-Received: by 2002:a6b:7d49:: with SMTP id d9mr20509287ioq.50.1561974555680;
+ Mon, 01 Jul 2019 02:49:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1906282040490.15624@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190629073020.22759-1-yuchao0@huawei.com> <afda5702-1d88-7634-d943-0c413ae3b28f@huawei.com>
+ <a27e3502-db75-22fa-4545-e588abbbfbf2@huawei.com> <58511d64-aa7a-8ac2-0255-affe0e8d49de@huawei.com>
+In-Reply-To: <58511d64-aa7a-8ac2-0255-affe0e8d49de@huawei.com>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Mon, 1 Jul 2019 11:49:04 +0200
+Message-ID: <CAHpGcMK4ihE1nv7ME0yKKUdBj+Rdr9nBMnxAtQfFFOmK9aEY_A@mail.gmail.com>
+Subject: Re: [PATCH RFC] iomap: introduce IOMAP_TAIL
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     Chao Yu <yuchao0@huawei.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        chao@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29/06/2019 06:01, James Morris wrote:
-> On Thu, 27 Jun 2019, Eric Biggers wrote:
-> 
->> I don't understand your justification for this feature.
->>
->> If userspace has already been pwned severely enough for the attacker to be
->> executing arbitrary code with CAP_SYS_ADMIN (which is what the device mapper
->> ioctls need), what good are restrictions on loading more binaries from disk?
->>
->> Please explain your security model.
-> 
-> Let's say the system has a policy where all code must be signed with a 
-> valid key, and that one mechanism for enforcing this is via signed 
-> dm-verity volumes. Validating the signature within the kernel provides 
-> stronger assurance than userspace validation. The kernel validates and 
-> executes the code, using kernel-resident keys, and does not need to rely 
-> on validation which has occurred across a trust boundary.
+Am Mo., 1. Juli 2019 um 10:04 Uhr schrieb Gao Xiang <gaoxiang25@huawei.com>:
+> On 2019/7/1 14:40, Chao Yu wrote:
+> > Hi Xiang,
+> >
+> > On 2019/6/29 17:34, Gao Xiang wrote:
+> >> Hi Chao,
+> >>
+> >> On 2019/6/29 15:30, Chao Yu wrote:
+> >>> Some filesystems like erofs/reiserfs have the ability to pack tail
+> >>> data into metadata, however iomap framework can only support mapping
+> >>> inline data with IOMAP_INLINE type, it restricts that:
+> >>> - inline data should be locating at page #0.
+> >>> - inline size should equal to .i_size
+> >>> So we can not use IOMAP_INLINE to handle tail-packing case.
+> >>>
+> >>> This patch introduces new mapping type IOMAP_TAIL to map tail-packed
+> >>> data for further use of erofs.
+> >>>
+> >>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>> ---
+> >>>  fs/iomap.c            | 22 ++++++++++++++++++++++
+> >>>  include/linux/iomap.h |  1 +
+> >>>  2 files changed, 23 insertions(+)
+> >>>
+> >>> diff --git a/fs/iomap.c b/fs/iomap.c
+> >>> index 12654c2e78f8..ae7777ce77d0 100644
+> >>> --- a/fs/iomap.c
+> >>> +++ b/fs/iomap.c
+> >>> @@ -280,6 +280,23 @@ iomap_read_inline_data(struct inode *inode, struct page *page,
+> >>>     SetPageUptodate(page);
+> >>>  }
+> >>>
+> >>> +static void
+> >>> +iomap_read_tail_data(struct inode *inode, struct page *page,
+> >>> +           struct iomap *iomap)
+> >>> +{
+> >>> +   size_t size = i_size_read(inode) & (PAGE_SIZE - 1);
+> >>> +   void *addr;
+> >>> +
+> >>> +   if (PageUptodate(page))
+> >>> +           return;
+> >>> +
+> >>> +   addr = kmap_atomic(page);
+> >>> +   memcpy(addr, iomap->inline_data, size);
+> >>> +   memset(addr + size, 0, PAGE_SIZE - size);
+> >>
+> >> need flush_dcache_page(page) here for new page cache page since
+> >> it's generic iomap code (althrough not necessary for x86, arm), I am not sure...
+> >> see commit d2b2c6dd227b and c01778001a4f...
+> >
+> > Thanks for your reminding, these all codes were copied from
+> > iomap_read_inline_data(), so I think we need a separated patch to fix this issue
+> > if necessary.
+>
+> Yes, just a reminder, it is good as it-is.
 
-Yes, but as it is implemented in this patch, a certificate is provided as
-a binary blob by the (super)user that activates the dm-verity device.
+Not sure if that means that IOMAP_INLINE as is works for you now. In
+any case, if the inline data isn't transparently copied into the page
+cache at index 0, memory-mapped I/O isn't going to work.
 
-Actually, I can put there anything that looks like a correct signature (self-signed
-or so), and dm-verity code is happy because the root hash is now signed.
+The code further assumes that "packed" files consist of exactly one
+IOMAP_INLINE mapping; no IOMAP_MAPPED or other mappings may follow. Is
+it that assumption that's causing you trouble? If so, what's the
+layout at the filesystem level you want to support?
 
-Maybe could this concept be extended to support in-kernel compiled certificates?
+Thanks,
+Andreas
 
-I like the idea of signed root hash, but the truth is that if you have access
-to device activation, it brings nothing, you can just put any cert in the keyring
-and use it.
-
-Milan
-
-> 
-> You don't need arbitrary CAP_SYS_ADMIN code execution, you just need a 
-> flaw in the app (or its dependent libraries, or configuration) which 
-> allows signature validation to be bypassed.
-> 
-> The attacker now needs a kernel rather than a userspace vulnerability to 
-> bypass the signed code policy.
-> 
+> Thanks,
+> Gao Xiang
+>
+> >
+> > Thanks,
+> >
+> >>
+> >> Thanks,
+> >> Gao Xiang
+> >>
+> >>> +   kunmap_atomic(addr);
+> >>> +   SetPageUptodate(page);
+> >>> +}
+> >>> +
+> >>>  static loff_t
+> >>>  iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> >>>             struct iomap *iomap)
+> >>> @@ -298,6 +315,11 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+> >>>             return PAGE_SIZE;
+> >>>     }
+> >>>
+> >>> +   if (iomap->type == IOMAP_TAIL) {
+> >>> +           iomap_read_tail_data(inode, page, iomap);
+> >>> +           return PAGE_SIZE;
+> >>> +   }
+> >>> +
+> >>>     /* zero post-eof blocks as the page may be mapped */
+> >>>     iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
+> >>>     if (plen == 0)
+> >>> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> >>> index 2103b94cb1bf..7e1ee48e3db7 100644
+> >>> --- a/include/linux/iomap.h
+> >>> +++ b/include/linux/iomap.h
+> >>> @@ -25,6 +25,7 @@ struct vm_fault;
+> >>>  #define IOMAP_MAPPED       0x03    /* blocks allocated at @addr */
+> >>>  #define IOMAP_UNWRITTEN    0x04    /* blocks allocated at @addr in unwritten state */
+> >>>  #define IOMAP_INLINE       0x05    /* data inline in the inode */
+> >>> +#define IOMAP_TAIL 0x06    /* tail data packed in metdata */
+> >>>
+> >>>  /*
+> >>>   * Flags for all iomap mappings:
+> >>>
+> >> .
+> >>
