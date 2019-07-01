@@ -2,173 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BE0B5BEF7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 17:02:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFBE05BF8F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2019 17:17:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728568AbfGAPCo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 11:02:44 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:57604 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727715AbfGAPCo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 11:02:44 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61ExEI1090191;
-        Mon, 1 Jul 2019 15:02:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=FWOSTFMOfDHTgBl33VNarj7cV1/JA+T1QTzThJm0xAM=;
- b=zhA4rp9Qae2cwRNQnOh5sn4NO4p5suDrggnlRU9JkHPuxneaKF386tD9D9K2S5oLXb9l
- 0yzdcJCIXOH/oTokESbqAP5sXzPjrF+tmtPJOIbZb0d99dnX97l8V8qM8DvdHisA65Rc
- RVkM49VRumn945uzde7EwJBWNjpRTP5Cz55vpVqZ1wyOQPI621821ArL10YkFNKmZ1ha
- PZIR2LBIcpSWdY2Irx0YO3Xcns+d57VahGEp5KGdnpY4DNUTA5WMBZNq/eqt3CN7V+zU
- dKqUjK1eVUOUwNmDFmzXoazeWJ5oDABe2OEludyHT5wxAiXsWxQYT5HttFC09nVmsxOF eg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2te61dx6kq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 15:02:16 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61EwEFl055915;
-        Mon, 1 Jul 2019 15:02:16 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2tebqfyetg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 01 Jul 2019 15:02:15 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x61F2Ee1000925;
-        Mon, 1 Jul 2019 15:02:14 GMT
-Received: from anon-dhcp-171.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 01 Jul 2019 08:02:14 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+        id S1727370AbfGAPRK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 11:17:10 -0400
+Received: from mail-eopbgr820130.outbound.protection.outlook.com ([40.107.82.130]:46624
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726912AbfGAPRK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jul 2019 11:17:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gq8DbxQKameBXFTy6FsSmt2e0mbynE10hUT0yZegz7M=;
+ b=aWrC9F5wOP9xZKlc5tunb6+syETX8vyFaeHjHDEsqlUngjOovQyuFjFb8x6VP4mTDVB6iErhfQcTEtIqM5GkfvmNpL8hAMbtol3NKE/fy2Ijf85QlWSHWCw597VOtEVTH+SRGf9u/DaYe0lF7jvqVaLYjCgqPodgj3ryzqbJveY=
+Received: from DM5PR13MB1851.namprd13.prod.outlook.com (10.171.159.143) by
+ DM5PR13MB1180.namprd13.prod.outlook.com (10.168.237.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2052.15; Mon, 1 Jul 2019 15:17:05 +0000
+Received: from DM5PR13MB1851.namprd13.prod.outlook.com
+ ([fe80::3064:e318:82d9:4887]) by DM5PR13MB1851.namprd13.prod.outlook.com
+ ([fe80::3064:e318:82d9:4887%12]) with mapi id 15.20.2052.010; Mon, 1 Jul 2019
+ 15:17:05 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "chuck.lever@oracle.com" <chuck.lever@oracle.com>
+CC:     "jlayton@redhat.com" <jlayton@redhat.com>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "bfields@redhat.com" <bfields@redhat.com>
 Subject: Re: [PATCH 00/16] Cache open file descriptors in knfsd
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20190630135240.7490-1-trond.myklebust@hammerspace.com>
-Date:   Mon, 1 Jul 2019 11:02:13 -0400
-Cc:     Bruce Fields <bfields@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <F1C28446-51F0-4999-AAA6-4FEA9371E36A@oracle.com>
+Thread-Topic: [PATCH 00/16] Cache open file descriptors in knfsd
+Thread-Index: AQHVL0tktH439TtrCUC3ptZv3/VZ3Ka13VaAgAAEJYA=
+Date:   Mon, 1 Jul 2019 15:17:05 +0000
+Message-ID: <98d5ef75d1fa2b8775f52d378ca7d8dd1a542ae1.camel@hammerspace.com>
 References: <20190630135240.7490-1-trond.myklebust@hammerspace.com>
-To:     Trond Myklebust <trondmy@gmail.com>
-X-Mailer: Apple Mail (2.3445.104.11)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907010182
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907010183
+         <F1C28446-51F0-4999-AAA6-4FEA9371E36A@oracle.com>
+In-Reply-To: <F1C28446-51F0-4999-AAA6-4FEA9371E36A@oracle.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=trondmy@hammerspace.com; 
+x-originating-ip: [50.124.245.189]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5c1e70aa-ddb4-423e-ff4c-08d6fe372d72
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:DM5PR13MB1180;
+x-ms-traffictypediagnostic: DM5PR13MB1180:
+x-microsoft-antispam-prvs: <DM5PR13MB11801096A35A4A5FCDC5F7E7B8F90@DM5PR13MB1180.namprd13.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 00851CA28B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39830400003)(346002)(136003)(376002)(366004)(189003)(199004)(76176011)(6506007)(7736002)(8936002)(2501003)(14454004)(81156014)(81166006)(8676002)(186003)(2351001)(118296001)(305945005)(26005)(229853002)(86362001)(102836004)(53546011)(6916009)(2616005)(446003)(256004)(476003)(486006)(14444005)(11346002)(2906002)(25786009)(53936002)(6116002)(3846002)(71190400001)(71200400001)(99286004)(316002)(6512007)(5660300002)(66066001)(68736007)(54906003)(6246003)(478600001)(36756003)(66476007)(66556008)(64756008)(66446008)(73956011)(66946007)(6436002)(76116006)(6486002)(4326008)(5640700003)(17423001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR13MB1180;H:DM5PR13MB1851.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: hammerspace.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 5mCy2CglvSzHq7fNdRcXIdKz+Okfxw0SDkeAKNecKzO+z8+7OsaCqs80ni9iVmpAOEmlmBV73hG+MK3c39qcq5fxkKe5QlKkODT7QfZf+Li0MlffBKzNZTUGLhMDWXe9xaYNIVM6myAPjJQIeTfHyAgrrnH1nef92bgWIyoNtC0Wdd3b81jpb4kqMmiTghNyXjtIuUP1CiOj+arEws9ZMnpWBngHDqPg9Jcb2TtUvuWRGT4ApZipMDPWDqA7oumeMN0QHPFpqyjQ286kFx0FKmcDslrIUMSLIU2OEX7HG8kNYTMT3SJKCc3td+j8b5bAYUrc1ImJbrhfjyXkx8LOHc/VOWiVbB2zcJPIwR0ExIz4r31AvSlruxZV2tRrC55c3RGJuWdS4+M90cE7u2R0jTTSBQaaxw8/QYcmzYOCfoI=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EF6E31D32CDFCD4BA9D8879F39055B19@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c1e70aa-ddb4-423e-ff4c-08d6fe372d72
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2019 15:17:05.6572
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: trondmy@hammerspace.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR13MB1180
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Interesting work! Kudos to you and Jeff.
-
-
-> On Jun 30, 2019, at 9:52 AM, Trond Myklebust <trondmy@gmail.com> wrote:
-> 
-> When a NFSv3 READ or WRITE request comes in, the first thing knfsd has
-> to do is open a new file descriptor. While this is often a relatively
-> inexpensive thing to do for most local filesystems, it is usually less
-> so for FUSE, clustered or networked filesystems that are being exported
-> by knfsd.
-
-True, I haven't measured much effect if any of open and close on local
-file systems. It would be valuable if the cover letter provided a more
-quantified assessment of the cost for these other use cases. It sounds
-plausible to me that they would be more expensive, but I'm wondering if
-the additional complexity of an open file cache is warranted and
-effective. Do you have any benchmark results to share?
-
-Are there particular workloads where you believe open caching will be
-especially beneficial?
-
-
-> This set of patches attempts to reduce some of that cost by caching
-> open file descriptors so that they may be reused by other incoming
-> READ/WRITE requests for the same file.
-
-Is the open file cache a single cache per server? Wondering if there
-can be significant interference (eg lock contention or cache sloshing)
-between separate workloads on different exports, for example.
-
-Do you have any benchmark results that show that removing the raparms
-cache is harmless?
-
-
-> One danger when doing this, is that knfsd may end up caching file
-> descriptors for files that have been unlinked. In order to deal with
-> this issue, we use fsnotify to monitor the files, and have hooks to
-> evict those descriptors from the file cache if the i_nlink value
-> goes to 0.
-> 
-> Jeff Layton (12):
->  sunrpc: add a new cache_detail operation for when a cache is flushed
->  locks: create a new notifier chain for lease attempts
->  nfsd: add a new struct file caching facility to nfsd
->  nfsd: hook up nfsd_write to the new nfsd_file cache
->  nfsd: hook up nfsd_read to the nfsd_file cache
->  nfsd: hook nfsd_commit up to the nfsd_file cache
->  nfsd: convert nfs4_file->fi_fds array to use nfsd_files
->  nfsd: convert fi_deleg_file and ls_file fields to nfsd_file
->  nfsd: hook up nfs4_preprocess_stateid_op to the nfsd_file cache
->  nfsd: have nfsd_test_lock use the nfsd_file cache
->  nfsd: rip out the raparms cache
->  nfsd: close cached files prior to a REMOVE or RENAME that would
->    replace target
-> 
-> Trond Myklebust (4):
->  notify: export symbols for use by the knfsd file cache
->  vfs: Export flush_delayed_fput for use by knfsd.
->  nfsd: Fix up some unused variable warnings
->  nfsd: Fix the documentation for svcxdr_tmpalloc()
-> 
-> fs/file_table.c                  |   1 +
-> fs/locks.c                       |  62 +++
-> fs/nfsd/Kconfig                  |   1 +
-> fs/nfsd/Makefile                 |   3 +-
-> fs/nfsd/blocklayout.c            |   3 +-
-> fs/nfsd/export.c                 |  13 +
-> fs/nfsd/filecache.c              | 885 +++++++++++++++++++++++++++++++
-> fs/nfsd/filecache.h              |  60 +++
-> fs/nfsd/nfs4layouts.c            |  12 +-
-> fs/nfsd/nfs4proc.c               |  83 +--
-> fs/nfsd/nfs4state.c              | 183 ++++---
-> fs/nfsd/nfs4xdr.c                |  31 +-
-> fs/nfsd/nfssvc.c                 |  16 +-
-> fs/nfsd/state.h                  |  10 +-
-> fs/nfsd/trace.h                  | 140 +++++
-> fs/nfsd/vfs.c                    | 295 ++++-------
-> fs/nfsd/vfs.h                    |   9 +-
-> fs/nfsd/xdr4.h                   |  19 +-
-> fs/notify/fsnotify.h             |   2 -
-> fs/notify/group.c                |   2 +
-> fs/notify/mark.c                 |   6 +
-> include/linux/fs.h               |   5 +
-> include/linux/fsnotify_backend.h |   2 +
-> include/linux/sunrpc/cache.h     |   1 +
-> net/sunrpc/cache.c               |   3 +
-> 25 files changed, 1465 insertions(+), 382 deletions(-)
-> create mode 100644 fs/nfsd/filecache.c
-> create mode 100644 fs/nfsd/filecache.h
-> 
-> -- 
-> 2.21.0
-> 
-
---
-Chuck Lever
-
-
-
+T24gTW9uLCAyMDE5LTA3LTAxIGF0IDExOjAyIC0wNDAwLCBDaHVjayBMZXZlciB3cm90ZToNCj4g
+SW50ZXJlc3Rpbmcgd29yayEgS3Vkb3MgdG8geW91IGFuZCBKZWZmLg0KPiANCj4gDQo+ID4gT24g
+SnVuIDMwLCAyMDE5LCBhdCA5OjUyIEFNLCBUcm9uZCBNeWtsZWJ1c3QgPHRyb25kbXlAZ21haWwu
+Y29tPg0KPiA+IHdyb3RlOg0KPiA+IA0KPiA+IFdoZW4gYSBORlN2MyBSRUFEIG9yIFdSSVRFIHJl
+cXVlc3QgY29tZXMgaW4sIHRoZSBmaXJzdCB0aGluZyBrbmZzZA0KPiA+IGhhcw0KPiA+IHRvIGRv
+IGlzIG9wZW4gYSBuZXcgZmlsZSBkZXNjcmlwdG9yLiBXaGlsZSB0aGlzIGlzIG9mdGVuIGENCj4g
+PiByZWxhdGl2ZWx5DQo+ID4gaW5leHBlbnNpdmUgdGhpbmcgdG8gZG8gZm9yIG1vc3QgbG9jYWwg
+ZmlsZXN5c3RlbXMsIGl0IGlzIHVzdWFsbHkNCj4gPiBsZXNzDQo+ID4gc28gZm9yIEZVU0UsIGNs
+dXN0ZXJlZCBvciBuZXR3b3JrZWQgZmlsZXN5c3RlbXMgdGhhdCBhcmUgYmVpbmcNCj4gPiBleHBv
+cnRlZA0KPiA+IGJ5IGtuZnNkLg0KPiANCj4gVHJ1ZSwgSSBoYXZlbid0IG1lYXN1cmVkIG11Y2gg
+ZWZmZWN0IGlmIGFueSBvZiBvcGVuIGFuZCBjbG9zZSBvbg0KPiBsb2NhbA0KPiBmaWxlIHN5c3Rl
+bXMuIEl0IHdvdWxkIGJlIHZhbHVhYmxlIGlmIHRoZSBjb3ZlciBsZXR0ZXIgcHJvdmlkZWQgYQ0K
+PiBtb3JlDQo+IHF1YW50aWZpZWQgYXNzZXNzbWVudCBvZiB0aGUgY29zdCBmb3IgdGhlc2Ugb3Ro
+ZXIgdXNlIGNhc2VzLiBJdA0KPiBzb3VuZHMNCj4gcGxhdXNpYmxlIHRvIG1lIHRoYXQgdGhleSB3
+b3VsZCBiZSBtb3JlIGV4cGVuc2l2ZSwgYnV0IEknbSB3b25kZXJpbmcNCj4gaWYNCj4gdGhlIGFk
+ZGl0aW9uYWwgY29tcGxleGl0eSBvZiBhbiBvcGVuIGZpbGUgY2FjaGUgaXMgd2FycmFudGVkIGFu
+ZA0KPiBlZmZlY3RpdmUuIERvIHlvdSBoYXZlIGFueSBiZW5jaG1hcmsgcmVzdWx0cyB0byBzaGFy
+ZT8NCj4gDQo+IEFyZSB0aGVyZSBwYXJ0aWN1bGFyIHdvcmtsb2FkcyB3aGVyZSB5b3UgYmVsaWV2
+ZSBvcGVuIGNhY2hpbmcgd2lsbCBiZQ0KPiBlc3BlY2lhbGx5IGJlbmVmaWNpYWw/DQoNCkknZCBl
+eHBlY3QgcHJldHR5IG11Y2ggYW55dGhpbmcgd2l0aCBhIG5vbnRyaXZpYWwgb3BlbigpIG1ldGhv
+ZC4gaS5lLjoNCkZVU0UsIEdGUzIsIE9DRlMyLCBDRVBILCBldGMuIHRvIGJlbmVmaXQuDQoNCkkn
+dmUgc2VlbiBubyBzbG93ZG93bnMgc28gZmFyIHdpdGggdHJhZGl0aW9uYWwgZmlsZXN5c3RlbXM6
+IGkuZS4gZXh0NA0KYW5kIHhmcy4NCg0KTm90ZSB0aGF0IHRoZSByZW1vdmFsIG9mIHRoZSByYXBh
+cm1zIGNhY2hlIGRvZXMgaW4gbWFueSB3YXkgY29tcGVuc2F0ZQ0KZm9yIHRoZSBuZXcgbmVlZCB0
+byBsb29rdXAgdGhlIHN0cnVjdCBmaWxlLg0KDQo+ID4gVGhpcyBzZXQgb2YgcGF0Y2hlcyBhdHRl
+bXB0cyB0byByZWR1Y2Ugc29tZSBvZiB0aGF0IGNvc3QgYnkgY2FjaGluZw0KPiA+IG9wZW4gZmls
+ZSBkZXNjcmlwdG9ycyBzbyB0aGF0IHRoZXkgbWF5IGJlIHJldXNlZCBieSBvdGhlciBpbmNvbWlu
+Zw0KPiA+IFJFQUQvV1JJVEUgcmVxdWVzdHMgZm9yIHRoZSBzYW1lIGZpbGUuDQo+IA0KPiBJcyB0
+aGUgb3BlbiBmaWxlIGNhY2hlIGEgc2luZ2xlIGNhY2hlIHBlciBzZXJ2ZXI/IFdvbmRlcmluZyBp
+ZiB0aGVyZQ0KPiBjYW4gYmUgc2lnbmlmaWNhbnQgaW50ZXJmZXJlbmNlIChlZyBsb2NrIGNvbnRl
+bnRpb24gb3IgY2FjaGUNCj4gc2xvc2hpbmcpDQo+IGJldHdlZW4gc2VwYXJhdGUgd29ya2xvYWRz
+IG9uIGRpZmZlcmVudCBleHBvcnRzLCBmb3IgZXhhbXBsZS4NCg0KVGhlIGZpbGUgY2FjaGUgaXMg
+Z2xvYmFsLiBDYWNoZSBsb29rdXBzIGFyZSBsb2NrbGVzcyAoaS5lLiBSQ1UNCnByb3RlY3RlZCks
+IHNvIHRoZXJlIGlzIGxpdHRsZSBjb250ZW50aW9uIGZvciB0aGUgY2FzZSB3aGVyZSB0aGVyZSBp
+cw0KYWxyZWFkeSBhbiBlbnRyeS4gRm9yIHRoZSBjYXNlIHdoZXJlIHdlIGhhdmUgdG8gYWRkIGFu
+IGVudHJ5LCB0aGVyZSBpcw0KYSBtdXRleCB0aGF0IG1pZ2h0IGdldCBjb250ZW5kZWQgaW4gdGhl
+IGNhc2Ugb2Ygd29ya2xvYWRzIHdpdGggbG90cyBvZg0Kc21hbGwgZmlsZSBvcGVuK2Nsb3Nlcy4N
+Cg0KPiBEbyB5b3UgaGF2ZSBhbnkgYmVuY2htYXJrIHJlc3VsdHMgdGhhdCBzaG93IHRoYXQgcmVt
+b3ZpbmcgdGhlIHJhcGFybXMNCj4gY2FjaGUgaXMgaGFybWxlc3M/DQoNClRoZSBzYW1lIGluZm9y
+bWF0aW9uIGlzIGNhcnJpZWQgaW4gc3RydWN0IGZpbGUuIFRoZSB3aG9sZSByYXBhcm1zIGNhY2hl
+DQp3YXMganVzdCBhIGhhY2sgaW4gb3JkZXIgdG8gYWxsb3cgdXMgdG8gcG9ydCB0aGUgcmVhZGFo
+ZWFkIGluZm9ybWF0aW9uDQphY3Jvc3Mgc3RydWN0IGZpbGUgaW5zdGFuY2VzLiBOb3cgdGhhdCB3
+ZSBhcmUgY2FjaGluZyB0aGUgc3RydWN0IGZpbGUNCml0c2VsZiwgdGhlIHJhcGFybXMgaGFjayBp
+cyB1bm5lY2Vzc2FyeS4NCg0KSU9XOiBJIGhhdmVuJ3Qgc2VlbiBhbnkgc2xvd2Rvd25zIHNvIGZh
+ciwgaG93ZXZlciBJIGRvbid0IGhhdmUgYWNjZXNzDQp0byBhIGJsZWVkaW5nIGVkZ2UgbmV0d29y
+a2luZyBzZXR1cCB0aGF0IHdvdWxkIHB1c2ggdGhpcyBmdXJ0aGVyLg0KDQo+ID4gT25lIGRhbmdl
+ciB3aGVuIGRvaW5nIHRoaXMsIGlzIHRoYXQga25mc2QgbWF5IGVuZCB1cCBjYWNoaW5nIGZpbGUN
+Cj4gPiBkZXNjcmlwdG9ycyBmb3IgZmlsZXMgdGhhdCBoYXZlIGJlZW4gdW5saW5rZWQuIEluIG9y
+ZGVyIHRvIGRlYWwNCj4gPiB3aXRoDQo+ID4gdGhpcyBpc3N1ZSwgd2UgdXNlIGZzbm90aWZ5IHRv
+IG1vbml0b3IgdGhlIGZpbGVzLCBhbmQgaGF2ZSBob29rcyB0bw0KPiA+IGV2aWN0IHRob3NlIGRl
+c2NyaXB0b3JzIGZyb20gdGhlIGZpbGUgY2FjaGUgaWYgdGhlIGlfbmxpbmsgdmFsdWUNCj4gPiBn
+b2VzIHRvIDAuDQo+ID4gDQo+ID4gSmVmZiBMYXl0b24gKDEyKToNCj4gPiAgc3VucnBjOiBhZGQg
+YSBuZXcgY2FjaGVfZGV0YWlsIG9wZXJhdGlvbiBmb3Igd2hlbiBhIGNhY2hlIGlzDQo+ID4gZmx1
+c2hlZA0KPiA+ICBsb2NrczogY3JlYXRlIGEgbmV3IG5vdGlmaWVyIGNoYWluIGZvciBsZWFzZSBh
+dHRlbXB0cw0KPiA+ICBuZnNkOiBhZGQgYSBuZXcgc3RydWN0IGZpbGUgY2FjaGluZyBmYWNpbGl0
+eSB0byBuZnNkDQo+ID4gIG5mc2Q6IGhvb2sgdXAgbmZzZF93cml0ZSB0byB0aGUgbmV3IG5mc2Rf
+ZmlsZSBjYWNoZQ0KPiA+ICBuZnNkOiBob29rIHVwIG5mc2RfcmVhZCB0byB0aGUgbmZzZF9maWxl
+IGNhY2hlDQo+ID4gIG5mc2Q6IGhvb2sgbmZzZF9jb21taXQgdXAgdG8gdGhlIG5mc2RfZmlsZSBj
+YWNoZQ0KPiA+ICBuZnNkOiBjb252ZXJ0IG5mczRfZmlsZS0+ZmlfZmRzIGFycmF5IHRvIHVzZSBu
+ZnNkX2ZpbGVzDQo+ID4gIG5mc2Q6IGNvbnZlcnQgZmlfZGVsZWdfZmlsZSBhbmQgbHNfZmlsZSBm
+aWVsZHMgdG8gbmZzZF9maWxlDQo+ID4gIG5mc2Q6IGhvb2sgdXAgbmZzNF9wcmVwcm9jZXNzX3N0
+YXRlaWRfb3AgdG8gdGhlIG5mc2RfZmlsZSBjYWNoZQ0KPiA+ICBuZnNkOiBoYXZlIG5mc2RfdGVz
+dF9sb2NrIHVzZSB0aGUgbmZzZF9maWxlIGNhY2hlDQo+ID4gIG5mc2Q6IHJpcCBvdXQgdGhlIHJh
+cGFybXMgY2FjaGUNCj4gPiAgbmZzZDogY2xvc2UgY2FjaGVkIGZpbGVzIHByaW9yIHRvIGEgUkVN
+T1ZFIG9yIFJFTkFNRSB0aGF0IHdvdWxkDQo+ID4gICAgcmVwbGFjZSB0YXJnZXQNCj4gPiANCj4g
+PiBUcm9uZCBNeWtsZWJ1c3QgKDQpOg0KPiA+ICBub3RpZnk6IGV4cG9ydCBzeW1ib2xzIGZvciB1
+c2UgYnkgdGhlIGtuZnNkIGZpbGUgY2FjaGUNCj4gPiAgdmZzOiBFeHBvcnQgZmx1c2hfZGVsYXll
+ZF9mcHV0IGZvciB1c2UgYnkga25mc2QuDQo+ID4gIG5mc2Q6IEZpeCB1cCBzb21lIHVudXNlZCB2
+YXJpYWJsZSB3YXJuaW5ncw0KPiA+ICBuZnNkOiBGaXggdGhlIGRvY3VtZW50YXRpb24gZm9yIHN2
+Y3hkcl90bXBhbGxvYygpDQo+ID4gDQo+ID4gZnMvZmlsZV90YWJsZS5jICAgICAgICAgICAgICAg
+ICAgfCAgIDEgKw0KPiA+IGZzL2xvY2tzLmMgICAgICAgICAgICAgICAgICAgICAgIHwgIDYyICsr
+Kw0KPiA+IGZzL25mc2QvS2NvbmZpZyAgICAgICAgICAgICAgICAgIHwgICAxICsNCj4gPiBmcy9u
+ZnNkL01ha2VmaWxlICAgICAgICAgICAgICAgICB8ICAgMyArLQ0KPiA+IGZzL25mc2QvYmxvY2ts
+YXlvdXQuYyAgICAgICAgICAgIHwgICAzICstDQo+ID4gZnMvbmZzZC9leHBvcnQuYyAgICAgICAg
+ICAgICAgICAgfCAgMTMgKw0KPiA+IGZzL25mc2QvZmlsZWNhY2hlLmMgICAgICAgICAgICAgIHwg
+ODg1DQo+ID4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+IGZzL25mc2QvZmls
+ZWNhY2hlLmggICAgICAgICAgICAgIHwgIDYwICsrKw0KPiA+IGZzL25mc2QvbmZzNGxheW91dHMu
+YyAgICAgICAgICAgIHwgIDEyICstDQo+ID4gZnMvbmZzZC9uZnM0cHJvYy5jICAgICAgICAgICAg
+ICAgfCAgODMgKy0tDQo+ID4gZnMvbmZzZC9uZnM0c3RhdGUuYyAgICAgICAgICAgICAgfCAxODMg
+KysrKy0tLQ0KPiA+IGZzL25mc2QvbmZzNHhkci5jICAgICAgICAgICAgICAgIHwgIDMxICstDQo+
+ID4gZnMvbmZzZC9uZnNzdmMuYyAgICAgICAgICAgICAgICAgfCAgMTYgKy0NCj4gPiBmcy9uZnNk
+L3N0YXRlLmggICAgICAgICAgICAgICAgICB8ICAxMCArLQ0KPiA+IGZzL25mc2QvdHJhY2UuaCAg
+ICAgICAgICAgICAgICAgIHwgMTQwICsrKysrDQo+ID4gZnMvbmZzZC92ZnMuYyAgICAgICAgICAg
+ICAgICAgICAgfCAyOTUgKysrKy0tLS0tLS0NCj4gPiBmcy9uZnNkL3Zmcy5oICAgICAgICAgICAg
+ICAgICAgICB8ICAgOSArLQ0KPiA+IGZzL25mc2QveGRyNC5oICAgICAgICAgICAgICAgICAgIHwg
+IDE5ICstDQo+ID4gZnMvbm90aWZ5L2Zzbm90aWZ5LmggICAgICAgICAgICAgfCAgIDIgLQ0KPiA+
+IGZzL25vdGlmeS9ncm91cC5jICAgICAgICAgICAgICAgIHwgICAyICsNCj4gPiBmcy9ub3RpZnkv
+bWFyay5jICAgICAgICAgICAgICAgICB8ICAgNiArDQo+ID4gaW5jbHVkZS9saW51eC9mcy5oICAg
+ICAgICAgICAgICAgfCAgIDUgKw0KPiA+IGluY2x1ZGUvbGludXgvZnNub3RpZnlfYmFja2VuZC5o
+IHwgICAyICsNCj4gPiBpbmNsdWRlL2xpbnV4L3N1bnJwYy9jYWNoZS5oICAgICB8ICAgMSArDQo+
+ID4gbmV0L3N1bnJwYy9jYWNoZS5jICAgICAgICAgICAgICAgfCAgIDMgKw0KPiA+IDI1IGZpbGVz
+IGNoYW5nZWQsIDE0NjUgaW5zZXJ0aW9ucygrKSwgMzgyIGRlbGV0aW9ucygtKQ0KPiA+IGNyZWF0
+ZSBtb2RlIDEwMDY0NCBmcy9uZnNkL2ZpbGVjYWNoZS5jDQo+ID4gY3JlYXRlIG1vZGUgMTAwNjQ0
+IGZzL25mc2QvZmlsZWNhY2hlLmgNCj4gPiANCj4gPiAtLSANCj4gPiAyLjIxLjANCj4gPiANCj4g
+DQo+IC0tDQo+IENodWNrIExldmVyDQo+IA0KPiANCj4gDQotLSANClRyb25kIE15a2xlYnVzdA0K
+TGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0
+QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg==
