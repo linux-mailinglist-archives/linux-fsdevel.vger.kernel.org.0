@@ -2,112 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D1185DAE3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 03:32:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 565E85D9F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 02:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfGCBcS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jul 2019 21:32:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44392 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727304AbfGCBcR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jul 2019 21:32:17 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 68284309174E;
-        Tue,  2 Jul 2019 20:44:33 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 67346183E0;
-        Tue,  2 Jul 2019 20:44:25 +0000 (UTC)
-Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
- caches
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
+        id S1727435AbfGCA6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jul 2019 20:58:21 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39114 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727074AbfGCA6V (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Jul 2019 20:58:21 -0400
+Received: by mail-oi1-f194.google.com with SMTP id m202so599484oig.6;
+        Tue, 02 Jul 2019 17:58:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DtQmDM1bjxYXcqNKxDIhe3kpTPPYxiOv+5lbfQfOZdE=;
+        b=rdNe1uBrDpAhqLxbcDYjpTEaSwGuI+OGS7FawePaNtE4XaFxFX9LZRkySKagywu96E
+         5elS2OlM2+9SQgOMAHfPsD14tq/9GPSsyXTBQ3v1vpiNeL6mut71AVMzDUmgoKvcaFjG
+         ZkG0TM63qOs8T6VRpCXd6HLvZitCUOj8H6AqM607XGa9sNMZxcj5Tj3Dgs6HVZi8+ESR
+         xkOnd3jnmRURIOnkuqQO34Ubry6C0J+SGZG6KYYpQEfIBOlBi11jTR0PdknRRl+Zli6X
+         R2bK6l6wqZo8BNKUpi7f8TOuuWmeQSAPLRaOIjTworkSmjVLbbO8vJl2DBuaJCC4r6ZZ
+         FONQ==
+X-Gm-Message-State: APjAAAUu5rtSqVJRCWOmfmBKZQ6UUYSPd1ThQtxFvCoFJrs/jqDCbwzs
+        OVV69Bmzj+Eqt4CMigJrY+ILGKuHCGs=
+X-Google-Smtp-Source: APXvYqxgfIVc55JlioUk1yKtSLmO9ntomZUFE6/lH8QIzZr758B9lCLwgU+mAmopE2kMlm4WWSK35A==
+X-Received: by 2002:a63:f342:: with SMTP id t2mr30570356pgj.83.1562101035558;
+        Tue, 02 Jul 2019 13:57:15 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id d26sm16963231pfn.29.2019.07.02.13.57.13
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 13:57:13 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id DC91A40251; Tue,  2 Jul 2019 20:57:12 +0000 (UTC)
+Date:   Tue, 2 Jul 2019 20:57:12 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah <shuah@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
         David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20190702183730.14461-1-longman@redhat.com>
- <20190702130318.39d187dc27dbdd9267788165@linux-foundation.org>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <78879b79-1b8f-cdfd-d4fa-610afe5e5d48@redhat.com>
-Date:   Tue, 2 Jul 2019 16:44:24 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Subject: Re: [PATCH v5 07/18] kunit: test: add initial tests
+Message-ID: <20190702205712.GS19023@42.do-not-panic.com>
+References: <20190617082613.109131-1-brendanhiggins@google.com>
+ <20190617082613.109131-8-brendanhiggins@google.com>
+ <20190625232249.GS19023@42.do-not-panic.com>
+ <CAFd5g46mnd=a0OqFCx0hOHX+DxW+5yA2LXH5Q0gEg8yUZK=4FA@mail.gmail.com>
+ <CAFd5g46=7OQDREdLDTiMgVWq-Xj2zfOw8cRhPJEihSbO89MDyA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190702130318.39d187dc27dbdd9267788165@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 02 Jul 2019 20:44:47 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFd5g46=7OQDREdLDTiMgVWq-Xj2zfOw8cRhPJEihSbO89MDyA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/2/19 4:03 PM, Andrew Morton wrote:
-> On Tue,  2 Jul 2019 14:37:30 -0400 Waiman Long <longman@redhat.com> wrote:
->
->> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
->> file to shrink the slab by flushing all the per-cpu slabs and free
->> slabs in partial lists. This applies only to the root caches, though.
->>
->> Extends this capability by shrinking all the child memcg caches and
->> the root cache when a value of '2' is written to the shrink sysfs file.
-> Why?
->
-> Please fully describe the value of the proposed feature to or users. 
-> Always.
+On Tue, Jul 02, 2019 at 10:52:50AM -0700, Brendan Higgins wrote:
+> On Wed, Jun 26, 2019 at 12:53 AM Brendan Higgins
+> <brendanhiggins@google.com> wrote:
+> >
+> > On Tue, Jun 25, 2019 at 4:22 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > >
+> > > On Mon, Jun 17, 2019 at 01:26:02AM -0700, Brendan Higgins wrote:
+> > > > diff --git a/kunit/example-test.c b/kunit/example-test.c
+> > > > new file mode 100644
+> > > > index 0000000000000..f44b8ece488bb
+> > > > --- /dev/null
+> > > > +++ b/kunit/example-test.c
+> > >
+> > > <-- snip -->
+> > >
+> > > > +/*
+> > > > + * This defines a suite or grouping of tests.
+> > > > + *
+> > > > + * Test cases are defined as belonging to the suite by adding them to
+> > > > + * `kunit_cases`.
+> > > > + *
+> > > > + * Often it is desirable to run some function which will set up things which
+> > > > + * will be used by every test; this is accomplished with an `init` function
+> > > > + * which runs before each test case is invoked. Similarly, an `exit` function
+> > > > + * may be specified which runs after every test case and can be used to for
+> > > > + * cleanup. For clarity, running tests in a test module would behave as follows:
+> > > > + *
+> > >
+> > > To be clear this is not the kernel module init, but rather the kunit
+> > > module init. I think using kmodule would make this clearer to a reader.
+> >
+> > Seems reasonable. Will fix in next revision.
+> >
+> > > > + * module.init(test);
+> > > > + * module.test_case[0](test);
+> > > > + * module.exit(test);
+> > > > + * module.init(test);
+> > > > + * module.test_case[1](test);
+> > > > + * module.exit(test);
+> > > > + * ...;
+> > > > + */
+> 
+> Do you think it might be clearer yet to rename `struct kunit_module
+> *module;` to `struct kunit_suite *suite;`?
 
-Sure. Essentially, the sysfs shrink interface is not complete. It allows
-the root cache to be shrunk, but not any of the memcg caches. 
+Yes. Definitely. Or struct kunit_test. Up to you.
 
-The same can also be said for others slab sysfs files which show current
-cache status. I don't think sysfs files are created for the memcg
-caches, but I may be wrong. In many cases, information can be available
-elsewhere like the slabinfo file. The shrink operation, however, has no
-other alternative available.
-
->> ...
->>
->> --- a/Documentation/ABI/testing/sysfs-kernel-slab
->> +++ b/Documentation/ABI/testing/sysfs-kernel-slab
->> @@ -429,10 +429,12 @@ KernelVersion:	2.6.22
->>  Contact:	Pekka Enberg <penberg@cs.helsinki.fi>,
->>  		Christoph Lameter <cl@linux-foundation.org>
->>  Description:
->> -		The shrink file is written when memory should be reclaimed from
->> -		a cache.  Empty partial slabs are freed and the partial list is
->> -		sorted so the slabs with the fewest available objects are used
->> -		first.
->> +		A value of '1' is written to the shrink file when memory should
->> +		be reclaimed from a cache.  Empty partial slabs are freed and
->> +		the partial list is sorted so the slabs with the fewest
->> +		available objects are used first.  When a value of '2' is
->> +		written, all the corresponding child memory cgroup caches
->> +		should be shrunk as well.  All other values are invalid.
-> One would expect this to be a bitfield, like /proc/sys/vm/drop_caches. 
-> So writing 3 does both forms of shrinking.
->
-> Yes, it happens to be the case that 2 is a superset of 1, but what
-> about if we add "4"?
->
-Yes, I can make it into a bit fields of 2 bits, just like
-/proc/sys/vm/drop_caches.
-
-Cheers,
-Longman
-
+  Luis
