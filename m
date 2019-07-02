@@ -2,126 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67E465C6D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2019 03:54:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D226B5C7D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2019 05:34:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfGBBym (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Jul 2019 21:54:42 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37698 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbfGBBym (ORCPT
+        id S1726936AbfGBDeN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 23:34:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34322 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726803AbfGBDeM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Jul 2019 21:54:42 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g15so4973145pgi.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jul 2019 18:54:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=D2g0s0JUGomRLeX7dDerJhRH+KgNtz7R3e0skhYcLEg=;
-        b=SkDMBCd3SUFo6ihA0QikeMboxta1FQi/bn9Yu3kDfMuHhS3cnAZAt+tCkm3jYfivPL
-         YXGDR+OtVOTOqarwDNDY8T8ZMGdoIY5Q9XkwOr5GaF89ns8H4ffEsc2Ghx302cwhhr6K
-         b+YYQqi94Ij238cGuapznFvcu0nLxJ/eJjDTPvO4Nsrn5QjtWDEfNpSJczK6Cy7Mqblm
-         AP50M9Gv4pLyuLpS7tQbCNXYYA9qKrKsLr93a0tBzBc+2JhLu2C/umBOs9D293vO2N7g
-         VxrBZ6e9b2vgx38v8zt9snQ6HhuqkFR9GFEg32UlRLBF3h9hFcxleNMleqrR961eMg8i
-         MF9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=D2g0s0JUGomRLeX7dDerJhRH+KgNtz7R3e0skhYcLEg=;
-        b=QiT6Kjci/Cx7IyAqKO3voO00KPLSqgDWY8clbMe0jtLgq/po5KHga9IGlbcSgWldnF
-         5ByKNwmM52BeICqtE1CGIA6x2CNnzeoYFPkIZONw01o5snXY0lQLmZkO/+Z7+tnILfvH
-         G3IVeVyHxYcVm2pytpxMixi5sByzG5X//rgT9xnRjR/41ORhczBtTszbdcc0ifemZxZL
-         PZqN7Mx884N1I4Yxos8qjT8NSSxsl/ZMZVu4RB5eVa9jc8ueCUVFPYnZeWVZtMHIdeXU
-         9J26dWIsLpdaMYXYNkKTNojjaElx4ZXCfUVVnKiQPcq4JyoUZp1pkjripcSgfpWoBA+l
-         VKqw==
-X-Gm-Message-State: APjAAAXqAWZnlmJ3yKva0uvHVFCI16XnnurKIsBHd/0d3IL2kLhJ+oVJ
-        nmspb/beP5QbzgvMYO/f7Rk=
-X-Google-Smtp-Source: APXvYqxeN84yuR5dgrIUqvA6+LTJjiA2KJVz6fa2lNJVfKI04RgFYHvXaZZkoY1xThpS337V/9zIrQ==
-X-Received: by 2002:a17:90a:3310:: with SMTP id m16mr2553249pjb.7.1562032481771;
-        Mon, 01 Jul 2019 18:54:41 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id q10sm9889974pgg.35.2019.07.01.18.54.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2019 18:54:40 -0700 (PDT)
-Subject: Re: [PATCH V2] block: fix .bi_size overflow
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org,
-        Liu Yiding <liuyd.fnst@cn.fujitsu.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, stable@vger.kernel.org
-References: <20190701071446.22028-1-ming.lei@redhat.com>
- <8db73c5d-a0e2-00c9-59ab-64314097db26@kernel.dk>
- <bd45842a-e0fd-28a7-ac79-96f7cb9b66e4@kernel.dk>
- <8b8dc953-e663-e3d8-b991-9d8dba9270be@kernel.dk>
- <20190702013829.GB8356@ming.t460p>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7c3987b1-ac39-276b-da6d-511bfc4485bf@kernel.dk>
-Date:   Mon, 1 Jul 2019 19:54:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 1 Jul 2019 23:34:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Rvg0fFhiVW2SSgiiyKRZ1dYBb2123d87t9/7oxE/t3s=; b=hPiTv9NcFQT+UCy+e+gooSaND
+        sN1+wbD/4vxONjqjO+zJCyR6e8DZkzG/PQft9f18todOUGe/vHEb+N0BKS6/qFoXtRJxu3A42+9MC
+        /AHlvyjEhP2Lde+VRKdHc0Vg3dVVJ76SftLB05vR0RWNiZYt8+lw/UGWf8lFOAoRkQkcopd3sYPVD
+        hJ62GN7gHpSF0ADfjsqqdKK8DjBOkSGEt+OZrZwWW3ZS7L508/tM/0kkY8ozLmnm2M1xOoKe5K9y1
+        cSBO3tQJcMnZOm2ARmAFW/nStl5qD455jTxWoWOuGkhCbO8GWejGio1Kbev1mZRYWrJgwPBTjnvPx
+        NBXZxZd2g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hi9YY-0000SB-QV; Tue, 02 Jul 2019 03:34:10 +0000
+Date:   Mon, 1 Jul 2019 20:34:10 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] filesystem-dax: Disable PMD support
+Message-ID: <20190702033410.GB1729@bombadil.infradead.org>
+References: <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
+ <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
+ <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
+ <20190627195948.GB4286@bombadil.infradead.org>
+ <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
+ <20190629160336.GB1180@bombadil.infradead.org>
+ <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
+ <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
+ <20190630152324.GA15900@bombadil.infradead.org>
+ <CAPcyv4j2NBPBEUU3UW1Q5OyOEuo9R5e90HpkowpeEkMsAKiUyQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190702013829.GB8356@ming.t460p>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4j2NBPBEUU3UW1Q5OyOEuo9R5e90HpkowpeEkMsAKiUyQ@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/1/19 7:38 PM, Ming Lei wrote:
-> On Mon, Jul 01, 2019 at 08:20:13AM -0600, Jens Axboe wrote:
->> On 7/1/19 8:14 AM, Jens Axboe wrote:
->>> On 7/1/19 8:05 AM, Jens Axboe wrote:
->>>> On 7/1/19 1:14 AM, Ming Lei wrote:
->>>>> 'bio->bi_iter.bi_size' is 'unsigned int', which at most hold 4G - 1
->>>>> bytes.
->>>>>
->>>>> Before 07173c3ec276 ("block: enable multipage bvecs"), one bio can
->>>>> include very limited pages, and usually at most 256, so the fs bio
->>>>> size won't be bigger than 1M bytes most of times.
->>>>>
->>>>> Since we support multi-page bvec, in theory one fs bio really can
->>>>> be added > 1M pages, especially in case of hugepage, or big writeback
->>>>> with too many dirty pages. Then there is chance in which .bi_size
->>>>> is overflowed.
->>>>>
->>>>> Fixes this issue by using bio_full() to check if the added segment may
->>>>> overflow .bi_size.
->>>>
->>>> Any objections to queuing this up for 5.3? It's not a new regression
->>>> this series.
->>>
->>> I took a closer look, and applied for 5.3 and removed the stable tag.
->>> We'll need to apply your patch for stable, and I added an adapted
->>> one for 5.3. I don't want a huge merge hassle because of this.
->>
->> OK, so we still get conflicts with that, due to both the same page
->> merge fix, and Christophs 5.3 changes.
->>
->> I ended up pulling in 5.2-rc6 in for-5.3/block, which resolves at
->> least most of it, and kept the stable tag since now it's possible
->> to backport without too much trouble.
+On Sun, Jun 30, 2019 at 02:37:32PM -0700, Dan Williams wrote:
+> On Sun, Jun 30, 2019 at 8:23 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > I think my theory was slightly mistaken, but your fix has the effect of
+> > fixing the actual problem too.
+> >
+> > The xas->xa_index for a PMD is going to be PMD-aligned (ie a multiple of
+> > 512), but xas_find_conflict() does _not_ adjust xa_index (... which I
+> > really should have mentioned in the documentation).  So we go to sleep
+> > on the PMD-aligned index instead of the index of the PTE.  Your patch
+> > fixes this by using the PMD-aligned index for PTEs too.
+> >
+> > I'm trying to come up with a clean fix for this.  Clearly we
+> > shouldn't wait for a PTE entry if we're looking for a PMD entry.
+> > But what should get_unlocked_entry() return if it detects that case?
+> > We could have it return an error code encoded as an internal entry,
+> > like grab_mapping_entry() does.  Or we could have it return the _locked_
+> > PTE entry, and have callers interpret that.
+> >
+> > At least get_unlocked_entry() is static, but it's got quite a few callers.
+> > Trying to discern which ones might ask for a PMD entry is a bit tricky.
+> > So this seems like a large patch which might have bugs.
+> >
+> > Thoughts?
 > 
-> Thanks for merging it.
+> ...but if it was a problem of just mismatched waitqueue's I would have
+> expected it to trigger prior to commit b15cd800682f "dax: Convert page
+> fault handlers to XArray".
+
+That commit converts grab_mapping_entry() (called by dax_iomap_pmd_fault())
+from calling get_unlocked_mapping_entry() to calling get_unlocked_entry().
+get_unlocked_mapping_entry() (eventually) called __radix_tree_lookup()
+instead of dax_find_conflict().
+
+> This hunk, if I'm reading it correctly,
+> looks suspicious: @index in this case is coming directly from
+> vm->pgoff without pmd alignment adjustment whereas after the
+> conversion it's always pmd aligned from the xas->xa_index. So perhaps
+> the issue is that the lock happens at pte granularity. I expect it
+> would cause the old put_locked_mapping_entry() to WARN, but maybe that
+> avoids the lockup and was missed in the bisect.
+
+I don't think that hunk is the problem.  The __radix_tree_lookup()
+is going to return a 'slot' which points to the canonical slot, no
+matter which of the 512 indices corresponding to that slot is chosen.
+So I think it's going to do essentially the same thing.
+
+> @@ -884,21 +711,18 @@ static void *dax_insert_entry(struct
+> address_space *mapping,
+>                  * existing entry is a PMD, we will just leave the PMD in the
+>                  * tree and dirty it if necessary.
+>                  */
+> -               struct radix_tree_node *node;
+> -               void **slot;
+> -               void *ret;
+> -
+> -               ret = __radix_tree_lookup(pages, index, &node, &slot);
+> -               WARN_ON_ONCE(ret != entry);
+> -               __radix_tree_replace(pages, node, slot,
+> -                                    new_entry, NULL);
+> +               void *old = dax_lock_entry(xas, new_entry);
+> +               WARN_ON_ONCE(old != xa_mk_value(xa_to_value(entry) |
+> +                                       DAX_LOCKED));
+>                 entry = new_entry;
+> +       } else {
+> +               xas_load(xas);  /* Walk the xa_state */
+>         }
 > 
-> BTW, we need the -stable tag, since Yiding has test case to reproduce
-> the issue reliably, which just needs one big machine with enough memory,
-> and fast storage, I guess.
-
-Just to be clear, I wasn't saying it shouldn't go to stable. But it's
-pointless to mark something for stable if you know it'll reject, and
-won't be easily fixable by the person applying it. For that case, it's
-better to NOT CC stable, and just send in an appropriate patch instead.
-
-But that's all moot now, as per last section in the email you are
-replying to.
-
--- 
-Jens Axboe
-
+>         if (dirty)
+> -               radix_tree_tag_set(pages, index, PAGECACHE_TAG_DIRTY);
+> +               xas_set_mark(xas, PAGECACHE_TAG_DIRTY);
+> 
+> -       xa_unlock_irq(pages);
+> +       xas_unlock_irq(xas);
+>         return entry;
+>  }
