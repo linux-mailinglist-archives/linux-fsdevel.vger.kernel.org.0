@@ -2,75 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 208D95D06B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2019 15:22:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E38245D302
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2019 17:38:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfGBNV7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jul 2019 09:21:59 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:49026 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbfGBNV7 (ORCPT
+        id S1726871AbfGBPiE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jul 2019 11:38:04 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:38972 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfGBPiE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jul 2019 09:21:59 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hiIjD-00044l-Ed; Tue, 02 Jul 2019 13:21:47 +0000
-Date:   Tue, 2 Jul 2019 14:21:47 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     syzbot <syzbot+d88a977731a9888db7ba@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: kernel panic: corrupted stack end in dput
-Message-ID: <20190702132147.GG17978@ZenIV.linux.org.uk>
-References: <000000000000a5d3cb058c9a64f0@google.com>
+        Tue, 2 Jul 2019 11:38:04 -0400
+Received: by mail-oi1-f193.google.com with SMTP id m202so13396953oig.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jul 2019 08:38:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ATmVU16yayuH858JtpQ8da12QUT0HIEkBZC0SnOh7VQ=;
+        b=lWkCRmDV2TTrVlfmg/FthFEquAfSnTCno0dxpAMUwrCCGDKTnkTRoXST11SO8f7+Tj
+         uLeH3pNIUdwbwIKw9S2b2u9/5GT+4Cd/DQWVJu00PiNqkIqKZT3dG3HSbfE+lOZH996I
+         trzHcR8MBfHQF8/mw7CdCjBtEpjmMjDT7HHB1rhi1/vT+2K8mXSrNaoJRq28qvxBwYmB
+         cZG8TsM5i0PbkuR8K6WNwpeWJRLEmDsvRGmSVEsZEIJpdJDZUOK7He1/4bSzSHiRpel6
+         HXuZMpntGPdgHNqEKJv0EbB7LUZ1Vzya7oGE+yGXGO1ybjcsDyuJoGIpg1qd7MMvN0r6
+         uV4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ATmVU16yayuH858JtpQ8da12QUT0HIEkBZC0SnOh7VQ=;
+        b=Vng+3c97kPkg/xdTaUaO3jvO2ca44NTYxY6gVfYd5ZYhs2o1afJ4SEmHqVsIVsbP3z
+         sgltxxxVdUBmEzt9AbAnln6X89pV/PPqL3Fz0mdSExU32gjBvhPRK9odlNu7N8F4l7br
+         mJkolBoMB8I4Cvfl5WF0fudXeftA2CULVLuBGwk/u3TTtkZOXEwyNglmdYljwEAmqiRb
+         3KhaHXXJOV2yj9EYWJ1x6rnBeOGZwP0WmP4S44LJyyjdBuJMwliQPPNcJ6G/7f5Yspfn
+         NY8vZuUP8S4qgs4TaZa4h0OovwSeZSZFxiZev6am51UwQmhyqWhofVkuhnoKZtHlGSoX
+         eaxg==
+X-Gm-Message-State: APjAAAWpO/xAlj+iqKb4o/X3UxvnFId5j+gKkmw7rkd1ToH0ugmNMXfY
+        quK8J1ZGt+6X5tbeeDSjrUEX/Lk2DFypvrl/pwS5yw==
+X-Google-Smtp-Source: APXvYqwXecSoHqwn3Yh/wmhCfWrrvRoK57/wvgQNY7Y9kcpgG7iWPbKyR/hOnbbFMByE8MW5gqNtEsleDAoJWtVtsZw=
+X-Received: by 2002:aca:ba02:: with SMTP id k2mr3189786oif.70.1562081883341;
+ Tue, 02 Jul 2019 08:38:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000a5d3cb058c9a64f0@google.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
+ <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
+ <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
+ <20190627195948.GB4286@bombadil.infradead.org> <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
+ <20190629160336.GB1180@bombadil.infradead.org> <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
+ <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
+ <20190630152324.GA15900@bombadil.infradead.org> <CAPcyv4j2NBPBEUU3UW1Q5OyOEuo9R5e90HpkowpeEkMsAKiUyQ@mail.gmail.com>
+ <20190702033410.GB1729@bombadil.infradead.org>
+In-Reply-To: <20190702033410.GB1729@bombadil.infradead.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 2 Jul 2019 08:37:52 -0700
+Message-ID: <CAPcyv4iEkN1o5HD6Gb9m5ohdAVQhmtiTDcFE+PMQczYx635Vwg@mail.gmail.com>
+Subject: Re: [PATCH] filesystem-dax: Disable PMD support
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 05:21:26PM +0800, Hillf Danton wrote:
+On Mon, Jul 1, 2019 at 8:34 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Sun, Jun 30, 2019 at 02:37:32PM -0700, Dan Williams wrote:
+> > On Sun, Jun 30, 2019 at 8:23 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > > I think my theory was slightly mistaken, but your fix has the effect of
+> > > fixing the actual problem too.
+> > >
+> > > The xas->xa_index for a PMD is going to be PMD-aligned (ie a multiple of
+> > > 512), but xas_find_conflict() does _not_ adjust xa_index (... which I
+> > > really should have mentioned in the documentation).  So we go to sleep
+> > > on the PMD-aligned index instead of the index of the PTE.  Your patch
+> > > fixes this by using the PMD-aligned index for PTEs too.
+> > >
+> > > I'm trying to come up with a clean fix for this.  Clearly we
+> > > shouldn't wait for a PTE entry if we're looking for a PMD entry.
+> > > But what should get_unlocked_entry() return if it detects that case?
+> > > We could have it return an error code encoded as an internal entry,
+> > > like grab_mapping_entry() does.  Or we could have it return the _locked_
+> > > PTE entry, and have callers interpret that.
+> > >
+> > > At least get_unlocked_entry() is static, but it's got quite a few callers.
+> > > Trying to discern which ones might ask for a PMD entry is a bit tricky.
+> > > So this seems like a large patch which might have bugs.
+> > >
+> > > Thoughts?
+> >
+> > ...but if it was a problem of just mismatched waitqueue's I would have
+> > expected it to trigger prior to commit b15cd800682f "dax: Convert page
+> > fault handlers to XArray".
+>
+> That commit converts grab_mapping_entry() (called by dax_iomap_pmd_fault())
+> from calling get_unlocked_mapping_entry() to calling get_unlocked_entry().
+> get_unlocked_mapping_entry() (eventually) called __radix_tree_lookup()
+> instead of dax_find_conflict().
+>
+> > This hunk, if I'm reading it correctly,
+> > looks suspicious: @index in this case is coming directly from
+> > vm->pgoff without pmd alignment adjustment whereas after the
+> > conversion it's always pmd aligned from the xas->xa_index. So perhaps
+> > the issue is that the lock happens at pte granularity. I expect it
+> > would cause the old put_locked_mapping_entry() to WARN, but maybe that
+> > avoids the lockup and was missed in the bisect.
+>
+> I don't think that hunk is the problem.  The __radix_tree_lookup()
+> is going to return a 'slot' which points to the canonical slot, no
+> matter which of the 512 indices corresponding to that slot is chosen.
+> So I think it's going to do essentially the same thing.
 
-> Hello,
+Yeah, no warnings on the parent commit for the regression.
 
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -673,14 +673,11 @@ static struct dentry *dentry_kill(struct dentry *dentry)
-> 	if (!IS_ROOT(dentry)) {
-> 		parent = dentry->d_parent;
-> 		if (unlikely(!spin_trylock(&parent->d_lock))) {
-> -			parent = __lock_parent(dentry);
-> -			if (likely(inode || !dentry->d_inode))
-> -				goto got_locks;
-> -			/* negative that became positive */
-> -			if (parent)
-> -				spin_unlock(&parent->d_lock);
-> -			inode = dentry->d_inode;
-> -			goto slow_positive;
-> +			/*
-> +			 * fine if peer is busy either populating or
-> +			 * cleaning up parent
-> +			 */
-> +			parent = NULL;
-> 		}
-> 	}
-> 	__dentry_kill(dentry);
-
-This is very much *NOT* fine.
-	1) trylock can fail from any number of reasons, starting
-with "somebody is going through the hash chain doing a lookup on
-something completely unrelated"
-	2) whoever had been holding the lock and whatever they'd
-been doing might be over right after we get the return value from
-spin_trylock().
-	3) even had that been really somebody adding children in
-the same parent *AND* even if they really kept doing that, rather
-than unlocking and buggering off, would you care to explain why
-dentry_unlist() called by __dentry_kill() and removing the victim
-from the list of children would be safe to do in parallel with that?
-
-NAK, in case it's not obvious from the above.
+I'd be inclined to do the brute force fix of not trying to get fancy
+with separate PTE/PMD waitqueues and then follow on with a more clever
+performance enhancement later. Thoughts about that?
