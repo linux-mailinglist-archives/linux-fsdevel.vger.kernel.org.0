@@ -2,137 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 120D35D5B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2019 19:53:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C8175D5FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2019 20:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbfGBRxD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jul 2019 13:53:03 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35537 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfGBRxD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jul 2019 13:53:03 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s27so8055973pgl.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jul 2019 10:53:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cUzLBUlR97uqGXzOFylb6nkkxBtyYZ1OhN+qvdTrCD0=;
-        b=roBJOIwXGuFOf1wltfxmsClcFxlkrjzp9+21T7P87pZ44BH/GjP/X/NuZ8mK2FoMzO
-         XotmCr6d6KsdJATAIIUbq5Oy4zR4Azgkp4HhOE4XiupuZAs2/ZBggUQTxGqGQNrNXKUR
-         RK1F2iELvIHqPezIMEexxn9HQjKb0Q7OjYsSgJwmHDUbD4xwBf6WQFlfeS4XFqE89Pff
-         n78AWxKci0ljIJl3H7X5khQxePoPu8jM9jZ95VMb0Zsz46NlIICQ2qPhYIcCIBC8U20Z
-         P1PLSOLwoWTdUhh3getWGZNkHFehqyZ7w/vmIfDcbd6OQGJv5O6KIgY9x4cjlJKaYt87
-         yyiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cUzLBUlR97uqGXzOFylb6nkkxBtyYZ1OhN+qvdTrCD0=;
-        b=jy/eKiHoGiIl3ss0MGo24ioqlLANfOY7Y16SiLAcMq31IKzjRjPoGPMUQYY5TaB5p4
-         YtHsQVuK1sFZY4qTwv8RjA+Dc70jXgwzEsvtF/FZLdLPS2JDbxCbcOBHcpPZpnxVQ8Ce
-         FElKat0bni+sE6frrXtjWoPQpzRU1pehJIBpUHOjBnfycXMhvClxrNrwb10LIpG6xZKe
-         hFw8L5Z+c/MmDI3d4PExkwAgXhzk2uwumhB6gqUoXqXnQwpQS6JhRyAnwOh7pIcjk5W4
-         eYNQW4UxMlZq6Jn6tnBwXRlGLmdM6sHAbxIgXV/mikGGrw86q+vEBThD/c2KMDJkUOqQ
-         y7AA==
-X-Gm-Message-State: APjAAAUuEmIKxXF9ddtChvQJ9/UDZ/g1UspXovYXd8QAvURMwOclpyDi
-        eIn3pVOqyGIosSMzEsDuS7PO7Z1gtbaVpLIOy5jDOg==
-X-Google-Smtp-Source: APXvYqw1QIOarVsPwN3Ymzn8KxtORstMAVkiFcCA6YNhVqWiDT/WJraRMIndv08KnJT+5qaDY4tAvp9OnwXy65WsZqM=
-X-Received: by 2002:a63:205f:: with SMTP id r31mr23471478pgm.159.1562089981635;
- Tue, 02 Jul 2019 10:53:01 -0700 (PDT)
+        id S1726457AbfGBSPo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jul 2019 14:15:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46410 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726291AbfGBSPn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Jul 2019 14:15:43 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC7FA20989;
+        Tue,  2 Jul 2019 18:15:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562091342;
+        bh=edidt6q3V/8wPli7YYyCa1ugOfMbWrYdtWTACKbLcPE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ngon/H5/9TjNBudpX/AhFNJ1EQWzCtYwqMLG2y1leW+Zi0QlMhmoMqsfmi2Orxe/y
+         O+UbAwpp+8j3h78ctsOyE4nQO7H2zvr0FJXdo1f1ZEN2DlqXTIPPMkU1WEoFET0aoG
+         H2jIcem6v3SjnDg4nJpZWjNxxvDwq1Sut1uP6OUU=
+Date:   Tue, 2 Jul 2019 11:15:40 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, raven@themaw.net, mszeredi@redhat.com,
+        christian@brauner.io, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] VFS: Introduce filesystem information query
+ syscall [ver #15]
+Message-ID: <20190702181539.GA110306@gmail.com>
+References: <156173661696.14042.17822154531324224780.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <20190617082613.109131-1-brendanhiggins@google.com>
- <20190617082613.109131-8-brendanhiggins@google.com> <20190625232249.GS19023@42.do-not-panic.com>
- <CAFd5g46mnd=a0OqFCx0hOHX+DxW+5yA2LXH5Q0gEg8yUZK=4FA@mail.gmail.com>
-In-Reply-To: <CAFd5g46mnd=a0OqFCx0hOHX+DxW+5yA2LXH5Q0gEg8yUZK=4FA@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 2 Jul 2019 10:52:50 -0700
-Message-ID: <CAFd5g46=7OQDREdLDTiMgVWq-Xj2zfOw8cRhPJEihSbO89MDyA@mail.gmail.com>
-Subject: Re: [PATCH v5 07/18] kunit: test: add initial tests
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        shuah <shuah@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <156173661696.14042.17822154531324224780.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 12:53 AM Brendan Higgins
-<brendanhiggins@google.com> wrote:
->
-> On Tue, Jun 25, 2019 at 4:22 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > On Mon, Jun 17, 2019 at 01:26:02AM -0700, Brendan Higgins wrote:
-> > > diff --git a/kunit/example-test.c b/kunit/example-test.c
-> > > new file mode 100644
-> > > index 0000000000000..f44b8ece488bb
-> > > --- /dev/null
-> > > +++ b/kunit/example-test.c
-> >
-> > <-- snip -->
-> >
-> > > +/*
-> > > + * This defines a suite or grouping of tests.
-> > > + *
-> > > + * Test cases are defined as belonging to the suite by adding them to
-> > > + * `kunit_cases`.
-> > > + *
-> > > + * Often it is desirable to run some function which will set up things which
-> > > + * will be used by every test; this is accomplished with an `init` function
-> > > + * which runs before each test case is invoked. Similarly, an `exit` function
-> > > + * may be specified which runs after every test case and can be used to for
-> > > + * cleanup. For clarity, running tests in a test module would behave as follows:
-> > > + *
-> >
-> > To be clear this is not the kernel module init, but rather the kunit
-> > module init. I think using kmodule would make this clearer to a reader.
->
-> Seems reasonable. Will fix in next revision.
->
-> > > + * module.init(test);
-> > > + * module.test_case[0](test);
-> > > + * module.exit(test);
-> > > + * module.init(test);
-> > > + * module.test_case[1](test);
-> > > + * module.exit(test);
-> > > + * ...;
-> > > + */
+On Fri, Jun 28, 2019 at 04:43:37PM +0100, David Howells wrote:
+> 
+> Here are a set of patches that adds a syscall, fsinfo(), that allows
+> attributes of a filesystem/superblock to be queried.  Attribute values are
+> of four basic types:
+> 
+>  (1) Version dependent-length structure (size defined by type).
+> 
+>  (2) Variable-length string (up to 4096, no NUL).
+> 
+>  (3) Array of fixed-length structures (up to INT_MAX size).
+> 
+>  (4) Opaque blob (up to INT_MAX size).
+> 
+> Attributes can have multiple values either as a sequence of values or a
+> sequence-of-sequences of values and all the values of a particular
+> attribute must be of the same type.
+> 
+> Note that the values of an attribute *are* allowed to vary between dentries
+> within a single superblock, depending on the specific dentry that you're
+> looking at.
+> 
+> I've tried to make the interface as light as possible, so integer/enum
+> attribute selector rather than string and the core does all the allocation
+> and extensibility support work rather than leaving that to the filesystems.
+> That means that for the first two attribute types, sb->s_op->fsinfo() may
+> assume that the provided buffer is always present and always big enough.
+> 
+> Further, this removes the possibility of the filesystem gaining access to the
+> userspace buffer.
+> 
+> 
+> fsinfo() allows a variety of information to be retrieved about a filesystem
+> and the mount topology:
+> 
+>  (1) General superblock attributes:
+> 
+>       - The amount of space/free space in a filesystem (as statfs()).
+>       - Filesystem identifiers (UUID, volume label, device numbers, ...)
+>       - The limits on a filesystem's capabilities
+>       - Information on supported statx fields and attributes and IOC flags.
+>       - A variety single-bit flags indicating supported capabilities.
+>       - Timestamp resolution and range.
+>       - Sources (as per mount(2), but fsconfig() allows multiple sources).
+>       - In-filesystem filename format information.
+>       - Filesystem parameters ("mount -o xxx"-type things).
+>       - LSM parameters (again "mount -o xxx"-type things).
+> 
+>  (2) Filesystem-specific superblock attributes:
+> 
+>       - Server names and addresses.
+>       - Cell name.
+> 
+>  (3) Filesystem configuration metadata attributes:
+> 
+>       - Filesystem parameter type descriptions.
+>       - Name -> parameter mappings.
+>       - Simple enumeration name -> value mappings.
+> 
+>  (4) Information about what the fsinfo() syscall itself supports, including
+>      the number of attibutes supported and the number of capability bits
+>      supported.
+> 
+>  (5) Future patches will include information about the mount topology.
+> 
+> The system is extensible:
+> 
+>  (1) New attributes can be added.  There is no requirement that a
+>      filesystem implement every attribute.  Note that the core VFS keeps a
+>      table of types and sizes so it can handle future extensibility rather
+>      than delegating this to the filesystems.
+> 
+>  (2) Version length-dependent structure attributes can be made larger and
+>      have additional information tacked on the end, provided it keeps the
+>      layout of the existing fields.  If an older process asks for a shorter
+>      structure, it will only be given the bits it asks for.  If a newer
+>      process asks for a longer structure on an older kernel, the extra
+>      space will be set to 0.  In all cases, the size of the data actually
+>      available is returned.
+> 
+>      In essence, the size of a structure is that structure's version: a
+>      smaller size is an earlier version and a later version includes
+>      everything that the earlier version did.
+> 
+>  (3) New single-bit capability flags can be added.  This is a structure-typed
+>      attribute and, as such, (2) applies.  Any bits you wanted but the kernel
+>      doesn't support are automatically set to 0.
+> 
+> If a filesystem-specific attribute is added, it should just take up the next
+> number in the enumeration.  Currently, I do not intend that the number space
+> should be subdivided between interested parties.
+> 
+> 
+> fsinfo() may be called like the following, for example:
+> 
+> 	struct fsinfo_params params = {
+> 		.at_flags	= AT_SYMLINK_NOFOLLOW,
+> 		.request	= FSINFO_ATTR_SERVER_ADDRESS;
+> 		.Nth		= 2;
+> 		.Mth		= 1;
+> 	};
+> 	struct fsinfo_server_address address;
+> 
+> 	len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
+> 		     &address, sizeof(address));
+> 
+> The above example would query a network filesystem, such as AFS or NFS, and
+> ask what the 2nd address (Mth) of the 3rd server (Nth) that the superblock is
+> using is.  Whereas:
+> 
+> 	struct fsinfo_params params = {
+> 		.at_flags	= AT_SYMLINK_NOFOLLOW,
+> 		.request	= FSINFO_ATTR_AFS_CELL_NAME;
+> 	};
+> 	char cell_name[256];
+> 
+> 	len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
+> 		     &cell_name, sizeof(cell_name));
+> 
+> would retrieve the name of an AFS cell as a string.
+> 
+> fsinfo() can also be used to query a context from fsopen() or fspick():
+> 
+> 	fd = fsopen("ext4", 0);
+> 	struct fsinfo_params params = {
+> 		.request	= FSINFO_ATTR_PARAM_DESCRIPTION;
+> 	};
+> 	struct fsinfo_param_description desc;
+> 	fsinfo(fd, NULL, &params, &desc, sizeof(desc));
+> 
+> even if that context doesn't currently have a superblock attached (though if
+> there's no superblock attached, only filesystem-specific things like parameter
+> descriptions can be accessed).
+> 
+> The patches can be found here also:
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+> 
+> on branch:
+> 
+> 	fsinfo-core
+> 
+> 
 
-Do you think it might be clearer yet to rename `struct kunit_module
-*module;` to `struct kunit_suite *suite;`?
+Where are the tests and man page for this system call?  "Tests" meaning actual
+automated tests in a commonly used test suite (e.g. LTP, kselftests, or
+xfstests), not just a sample program.
+
+- Eric
