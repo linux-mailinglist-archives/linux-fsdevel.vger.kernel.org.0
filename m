@@ -2,141 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 565E85D9F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 02:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D06F5DA7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 03:13:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfGCA6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jul 2019 20:58:21 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39114 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727074AbfGCA6V (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:58:21 -0400
-Received: by mail-oi1-f194.google.com with SMTP id m202so599484oig.6;
-        Tue, 02 Jul 2019 17:58:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DtQmDM1bjxYXcqNKxDIhe3kpTPPYxiOv+5lbfQfOZdE=;
-        b=rdNe1uBrDpAhqLxbcDYjpTEaSwGuI+OGS7FawePaNtE4XaFxFX9LZRkySKagywu96E
-         5elS2OlM2+9SQgOMAHfPsD14tq/9GPSsyXTBQ3v1vpiNeL6mut71AVMzDUmgoKvcaFjG
-         ZkG0TM63qOs8T6VRpCXd6HLvZitCUOj8H6AqM607XGa9sNMZxcj5Tj3Dgs6HVZi8+ESR
-         xkOnd3jnmRURIOnkuqQO34Ubry6C0J+SGZG6KYYpQEfIBOlBi11jTR0PdknRRl+Zli6X
-         R2bK6l6wqZo8BNKUpi7f8TOuuWmeQSAPLRaOIjTworkSmjVLbbO8vJl2DBuaJCC4r6ZZ
-         FONQ==
-X-Gm-Message-State: APjAAAUu5rtSqVJRCWOmfmBKZQ6UUYSPd1ThQtxFvCoFJrs/jqDCbwzs
-        OVV69Bmzj+Eqt4CMigJrY+ILGKuHCGs=
-X-Google-Smtp-Source: APXvYqxgfIVc55JlioUk1yKtSLmO9ntomZUFE6/lH8QIzZr758B9lCLwgU+mAmopE2kMlm4WWSK35A==
-X-Received: by 2002:a63:f342:: with SMTP id t2mr30570356pgj.83.1562101035558;
-        Tue, 02 Jul 2019 13:57:15 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id d26sm16963231pfn.29.2019.07.02.13.57.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 13:57:13 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id DC91A40251; Tue,  2 Jul 2019 20:57:12 +0000 (UTC)
-Date:   Tue, 2 Jul 2019 20:57:12 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        shuah <shuah@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
+        id S1727232AbfGCBNF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jul 2019 21:13:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbfGCBNF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Jul 2019 21:13:05 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED1AE218CA;
+        Tue,  2 Jul 2019 21:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562103221;
+        bh=7BKwrn5ZR0EvyKBoBdw71Sjqy+1SUbMyW6AzU7/ufH4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RBa6CBZoD/h1b3spSkXt/s5mk4/LF71sNM0q6jPS2dnne68logM7RJmnQeYqnoPlk
+         We4S37hoCXN1vJ/SylpXLdidWn8wQovBsN3zWD/thJwRlA5V0kPWzkSRUxdgTRtCMR
+         lCSW1e94ZmkPHXhQYrDUGU4rHNsLYjp0UCC4jn8o=
+Date:   Tue, 2 Jul 2019 14:33:40 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
         David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Subject: Re: [PATCH v5 07/18] kunit: test: add initial tests
-Message-ID: <20190702205712.GS19023@42.do-not-panic.com>
-References: <20190617082613.109131-1-brendanhiggins@google.com>
- <20190617082613.109131-8-brendanhiggins@google.com>
- <20190625232249.GS19023@42.do-not-panic.com>
- <CAFd5g46mnd=a0OqFCx0hOHX+DxW+5yA2LXH5Q0gEg8yUZK=4FA@mail.gmail.com>
- <CAFd5g46=7OQDREdLDTiMgVWq-Xj2zfOw8cRhPJEihSbO89MDyA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFd5g46=7OQDREdLDTiMgVWq-Xj2zfOw8cRhPJEihSbO89MDyA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
+ caches
+Message-Id: <20190702143340.715f771192721f60de1699d7@linux-foundation.org>
+In-Reply-To: <78879b79-1b8f-cdfd-d4fa-610afe5e5d48@redhat.com>
+References: <20190702183730.14461-1-longman@redhat.com>
+        <20190702130318.39d187dc27dbdd9267788165@linux-foundation.org>
+        <78879b79-1b8f-cdfd-d4fa-610afe5e5d48@redhat.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 10:52:50AM -0700, Brendan Higgins wrote:
-> On Wed, Jun 26, 2019 at 12:53 AM Brendan Higgins
-> <brendanhiggins@google.com> wrote:
-> >
-> > On Tue, Jun 25, 2019 at 4:22 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > >
-> > > On Mon, Jun 17, 2019 at 01:26:02AM -0700, Brendan Higgins wrote:
-> > > > diff --git a/kunit/example-test.c b/kunit/example-test.c
-> > > > new file mode 100644
-> > > > index 0000000000000..f44b8ece488bb
-> > > > --- /dev/null
-> > > > +++ b/kunit/example-test.c
-> > >
-> > > <-- snip -->
-> > >
-> > > > +/*
-> > > > + * This defines a suite or grouping of tests.
-> > > > + *
-> > > > + * Test cases are defined as belonging to the suite by adding them to
-> > > > + * `kunit_cases`.
-> > > > + *
-> > > > + * Often it is desirable to run some function which will set up things which
-> > > > + * will be used by every test; this is accomplished with an `init` function
-> > > > + * which runs before each test case is invoked. Similarly, an `exit` function
-> > > > + * may be specified which runs after every test case and can be used to for
-> > > > + * cleanup. For clarity, running tests in a test module would behave as follows:
-> > > > + *
-> > >
-> > > To be clear this is not the kernel module init, but rather the kunit
-> > > module init. I think using kmodule would make this clearer to a reader.
-> >
-> > Seems reasonable. Will fix in next revision.
-> >
-> > > > + * module.init(test);
-> > > > + * module.test_case[0](test);
-> > > > + * module.exit(test);
-> > > > + * module.init(test);
-> > > > + * module.test_case[1](test);
-> > > > + * module.exit(test);
-> > > > + * ...;
-> > > > + */
-> 
-> Do you think it might be clearer yet to rename `struct kunit_module
-> *module;` to `struct kunit_suite *suite;`?
+On Tue, 2 Jul 2019 16:44:24 -0400 Waiman Long <longman@redhat.com> wrote:
 
-Yes. Definitely. Or struct kunit_test. Up to you.
+> On 7/2/19 4:03 PM, Andrew Morton wrote:
+> > On Tue,  2 Jul 2019 14:37:30 -0400 Waiman Long <longman@redhat.com> wro=
+te:
+> >
+> >> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
+> >> file to shrink the slab by flushing all the per-cpu slabs and free
+> >> slabs in partial lists. This applies only to the root caches, though.
+> >>
+> >> Extends this capability by shrinking all the child memcg caches and
+> >> the root cache when a value of '2' is written to the shrink sysfs file.
+> > Why?
+> >
+> > Please fully describe the value of the proposed feature to or users.=20
+> > Always.
+>=20
+> Sure. Essentially, the sysfs shrink interface is not complete. It allows
+> the root cache to be shrunk, but not any of the memcg caches.=A0
 
-  Luis
+But that doesn't describe anything of value.  Who wants to use this,
+and why?  How will it be used?  What are the use-cases?
+
