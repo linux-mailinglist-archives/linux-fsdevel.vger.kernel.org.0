@@ -2,98 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 962E15D54D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2019 19:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 120D35D5B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2019 19:53:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfGBRdK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jul 2019 13:33:10 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:39746 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726150AbfGBRdK (ORCPT
+        id S1726762AbfGBRxD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jul 2019 13:53:03 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35537 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfGBRxD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jul 2019 13:33:10 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x62HX2i8005893
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 2 Jul 2019 13:33:03 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id C545142002E; Tue,  2 Jul 2019 13:33:01 -0400 (EDT)
-Date:   Tue, 2 Jul 2019 13:33:01 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>
-Subject: Re: [BUG] mke2fs produces corrupt filesystem if badblock list
- contains a block under 251
-Message-ID: <20190702173301.GA3032@mit.edu>
-References: <1562021070.2762.36.camel@HansenPartnership.com>
- <20190702002355.GB3315@mit.edu>
- <1562028814.2762.50.camel@HansenPartnership.com>
+        Tue, 2 Jul 2019 13:53:03 -0400
+Received: by mail-pg1-f194.google.com with SMTP id s27so8055973pgl.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jul 2019 10:53:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cUzLBUlR97uqGXzOFylb6nkkxBtyYZ1OhN+qvdTrCD0=;
+        b=roBJOIwXGuFOf1wltfxmsClcFxlkrjzp9+21T7P87pZ44BH/GjP/X/NuZ8mK2FoMzO
+         XotmCr6d6KsdJATAIIUbq5Oy4zR4Azgkp4HhOE4XiupuZAs2/ZBggUQTxGqGQNrNXKUR
+         RK1F2iELvIHqPezIMEexxn9HQjKb0Q7OjYsSgJwmHDUbD4xwBf6WQFlfeS4XFqE89Pff
+         n78AWxKci0ljIJl3H7X5khQxePoPu8jM9jZ95VMb0Zsz46NlIICQ2qPhYIcCIBC8U20Z
+         P1PLSOLwoWTdUhh3getWGZNkHFehqyZ7w/vmIfDcbd6OQGJv5O6KIgY9x4cjlJKaYt87
+         yyiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cUzLBUlR97uqGXzOFylb6nkkxBtyYZ1OhN+qvdTrCD0=;
+        b=jy/eKiHoGiIl3ss0MGo24ioqlLANfOY7Y16SiLAcMq31IKzjRjPoGPMUQYY5TaB5p4
+         YtHsQVuK1sFZY4qTwv8RjA+Dc70jXgwzEsvtF/FZLdLPS2JDbxCbcOBHcpPZpnxVQ8Ce
+         FElKat0bni+sE6frrXtjWoPQpzRU1pehJIBpUHOjBnfycXMhvClxrNrwb10LIpG6xZKe
+         hFw8L5Z+c/MmDI3d4PExkwAgXhzk2uwumhB6gqUoXqXnQwpQS6JhRyAnwOh7pIcjk5W4
+         eYNQW4UxMlZq6Jn6tnBwXRlGLmdM6sHAbxIgXV/mikGGrw86q+vEBThD/c2KMDJkUOqQ
+         y7AA==
+X-Gm-Message-State: APjAAAUuEmIKxXF9ddtChvQJ9/UDZ/g1UspXovYXd8QAvURMwOclpyDi
+        eIn3pVOqyGIosSMzEsDuS7PO7Z1gtbaVpLIOy5jDOg==
+X-Google-Smtp-Source: APXvYqw1QIOarVsPwN3Ymzn8KxtORstMAVkiFcCA6YNhVqWiDT/WJraRMIndv08KnJT+5qaDY4tAvp9OnwXy65WsZqM=
+X-Received: by 2002:a63:205f:: with SMTP id r31mr23471478pgm.159.1562089981635;
+ Tue, 02 Jul 2019 10:53:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1562028814.2762.50.camel@HansenPartnership.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190617082613.109131-1-brendanhiggins@google.com>
+ <20190617082613.109131-8-brendanhiggins@google.com> <20190625232249.GS19023@42.do-not-panic.com>
+ <CAFd5g46mnd=a0OqFCx0hOHX+DxW+5yA2LXH5Q0gEg8yUZK=4FA@mail.gmail.com>
+In-Reply-To: <CAFd5g46mnd=a0OqFCx0hOHX+DxW+5yA2LXH5Q0gEg8yUZK=4FA@mail.gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 2 Jul 2019 10:52:50 -0700
+Message-ID: <CAFd5g46=7OQDREdLDTiMgVWq-Xj2zfOw8cRhPJEihSbO89MDyA@mail.gmail.com>
+Subject: Re: [PATCH v5 07/18] kunit: test: add initial tests
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah <shuah@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 05:53:34PM -0700, James Bottomley wrote:
-> 
-> Actually, we control the location of the IPL, so as long as mke2fs
-> errors out if we get it wrong I can add an offset so it begins at
-> sector 258.  Palo actually executed mke2fs when you initialize the
-> partition so it can add any options it likes. I was also thinking I
-> should update palo to support ext4 as well.
+On Wed, Jun 26, 2019 at 12:53 AM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+>
+> On Tue, Jun 25, 2019 at 4:22 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > On Mon, Jun 17, 2019 at 01:26:02AM -0700, Brendan Higgins wrote:
+> > > diff --git a/kunit/example-test.c b/kunit/example-test.c
+> > > new file mode 100644
+> > > index 0000000000000..f44b8ece488bb
+> > > --- /dev/null
+> > > +++ b/kunit/example-test.c
+> >
+> > <-- snip -->
+> >
+> > > +/*
+> > > + * This defines a suite or grouping of tests.
+> > > + *
+> > > + * Test cases are defined as belonging to the suite by adding them to
+> > > + * `kunit_cases`.
+> > > + *
+> > > + * Often it is desirable to run some function which will set up things which
+> > > + * will be used by every test; this is accomplished with an `init` function
+> > > + * which runs before each test case is invoked. Similarly, an `exit` function
+> > > + * may be specified which runs after every test case and can be used to for
+> > > + * cleanup. For clarity, running tests in a test module would behave as follows:
+> > > + *
+> >
+> > To be clear this is not the kernel module init, but rather the kunit
+> > module init. I think using kmodule would make this clearer to a reader.
+>
+> Seems reasonable. Will fix in next revision.
+>
+> > > + * module.init(test);
+> > > + * module.test_case[0](test);
+> > > + * module.exit(test);
+> > > + * module.init(test);
+> > > + * module.test_case[1](test);
+> > > + * module.exit(test);
+> > > + * ...;
+> > > + */
 
-If you never going to resize the boot partition, because it's fixed
-size, you might as we not waste space on the reserving blocks for
-online resize.  So having the palo bootloader be very restrictive
-about what features it enables probably makes sense.
-
-> Well, we don't have to use badblocks to achieve this, but we would like
-> a way to make an inode cover the reserved physical area of the IPL. 
-> Effectively it's a single contiguous area on disk with specific
-> absolute alignment constraints.  It doesn't actually matter if it
-> appears in the directory tree.
-
-If you don't mind that it is visible in the namespace, you could take
-advantage of the existing mk_hugefile feature[1][2]
-
-[1] http://man7.org/linux/man-pages/man5/mke2fs.conf.5.html
-[2] https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git/tree/misc/mk_hugefiles.c
-
-# cat >> /etc/mke2fs.conf < EOF
-
-[fs_types]
-    palo_boot = {
-    	features = ^resize_inode
-	blocksize = 1024		 
-    	make_hugefiles = true
-	num_hugefiles = 1
-	hugefiles_dir = /palo
-	hugefiles_name = IPL
-	hugefiles_size = 214k
-	hugefiles_align = 256k
-	hugefiles_align_disk = true
-    }
-EOF
-# mke2fs -T palo_boot /dev/sda1
-
-Something like this will create a 1k block file system, containing a
-zero-filled /palo/IPL which is 214k long, aligned with respect to the
-beginning of the disk at an 256k boundary.  (This feature was
-sponsored by the letters, 'S', 'M', and 'R'.  :-)
-
-If you wanted it to be hidden from the file system you could just drop
-the hugefiles_dir line above, and then after mounting the file system
-run open the /IPL file and then execute the EXT4_IOC_SWAP_BOOT ioctl
-on it.  This will move those blocks so they are owned by inode #5, an
-inode reserved for the boot loader.
-
-Cheers,
-
-       	       	    	       - Ted
+Do you think it might be clearer yet to rename `struct kunit_module
+*module;` to `struct kunit_suite *suite;`?
