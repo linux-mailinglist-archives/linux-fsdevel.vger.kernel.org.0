@@ -2,117 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81F085E156
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 11:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA8DE5C64A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2019 02:24:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfGCJrz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 05:47:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47630 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727056AbfGCJrx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 05:47:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7ADFDB15C;
-        Wed,  3 Jul 2019 09:47:51 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 285CE1E433D; Mon,  1 Jul 2019 14:11:19 +0200 (CEST)
-Date:   Mon, 1 Jul 2019 14:11:19 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] filesystem-dax: Disable PMD support
-Message-ID: <20190701121119.GE31621@quack2.suse.cz>
-References: <CAPcyv4jQP-SFJGor-Q3VCRQ0xwt3MuVpH2qHx2wzyRA88DGQww@mail.gmail.com>
- <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
- <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
- <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
- <20190627195948.GB4286@bombadil.infradead.org>
- <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
- <20190629160336.GB1180@bombadil.infradead.org>
- <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
- <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
- <20190630152324.GA15900@bombadil.infradead.org>
+        id S1727028AbfGBAYE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Jul 2019 20:24:04 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38560 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726866AbfGBAYE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Jul 2019 20:24:04 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x620NuYE012079
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 1 Jul 2019 20:23:57 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 042C742002E; Mon,  1 Jul 2019 20:23:55 -0400 (EDT)
+Date:   Mon, 1 Jul 2019 20:23:55 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>
+Subject: Re: [BUG] mke2fs produces corrupt filesystem if badblock list
+ contains a block under 251
+Message-ID: <20190702002355.GB3315@mit.edu>
+References: <1562021070.2762.36.camel@HansenPartnership.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190630152324.GA15900@bombadil.infradead.org>
+In-Reply-To: <1562021070.2762.36.camel@HansenPartnership.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 30-06-19 08:23:24, Matthew Wilcox wrote:
-> On Sun, Jun 30, 2019 at 01:01:04AM -0700, Dan Williams wrote:
-> > @@ -215,7 +216,7 @@ static wait_queue_head_t
-> > *dax_entry_waitqueue(struct xa_state *xas,
-> >          * queue to the start of that PMD.  This ensures that all offsets in
-> >          * the range covered by the PMD map to the same bit lock.
-> >          */
-> > -       if (dax_is_pmd_entry(entry))
-> > +       //if (dax_is_pmd_entry(entry))
-> >                 index &= ~PG_PMD_COLOUR;
-> >         key->xa = xas->xa;
-> >         key->entry_start = index;
+On Mon, Jul 01, 2019 at 03:44:30PM -0700, James Bottomley wrote:
+> Background: we actually use the badblocks feature of the ext filesystem
+> group to do a poorman's boot filesystem for parisc: Our system chunks
+> up the disk searching for an Initial Program Loader (IPL) signature and
+> then executes it, so we poke a hole in an ext3 filesystem at creation
+> time and place the IPL into it.  Our IP can read ext3 files and
+> directories, so it allows us to load the kernel directly from the file.
 > 
-> Hah, that's a great naive fix!  Thanks for trying that out.
+> The problem is that our IPL needs to be aligned at 256k in absolute
+> terms on the disk, so, in the usual situation of having a 64k partition
+> label and the boot partition being the first one we usually end up
+> poking the badblock hole beginning at block 224 (using a 1k block
+> size).
 > 
-> I think my theory was slightly mistaken, but your fix has the effect of
-> fixing the actual problem too.
-> 
-> The xas->xa_index for a PMD is going to be PMD-aligned (ie a multiple of
-> 512), but xas_find_conflict() does _not_ adjust xa_index (... which I
-> really should have mentioned in the documentation).  So we go to sleep
-> on the PMD-aligned index instead of the index of the PTE.  Your patch
-> fixes this by using the PMD-aligned index for PTEs too.
-> 
-> I'm trying to come up with a clean fix for this.  Clearly we
-> shouldn't wait for a PTE entry if we're looking for a PMD entry.
-> But what should get_unlocked_entry() return if it detects that case?
-> We could have it return an error code encoded as an internal entry,
-> like grab_mapping_entry() does.  Or we could have it return the _locked_
-> PTE entry, and have callers interpret that.
-> 
-> At least get_unlocked_entry() is static, but it's got quite a few callers.
-> Trying to discern which ones might ask for a PMD entry is a bit tricky.
-> So this seems like a large patch which might have bugs.
+> The problem is that this used to work long ago (where the value of long
+> seems to be some time before 2011) but no longer does.  The problem can
+> be illustrated simply by doing
 
-Yeah. So get_unlocked_entry() is used in several cases:
+It broke sometime around 2006.  E2fsprogs 1.39 is when we started
+creating file systems with the resize inode to support the online
+resize feature.
 
-1) Case where we already have entry at given index but it is locked and we
-need it unlocked so that we can do our thing `(dax_writeback_one(),
-dax_layout_busy_page()).
+And the problem is with a 100M file system using 1k blocks, when you
+reserve blocks 237 -- 258, you're conflicting with the reserved blocks
+used for online resizing:
 
-2) Case where we want any entry covering given index (in
-__dax_invalidate_entry()). This is essentially the same as case 1) since we
-have already looked up the entry (just didn't propagate that information
-from mm/truncate.c) - we want any unlocked entry covering given index.
+Group 0: (Blocks 1-8192)
+  Primary superblock at 1, Group descriptors at 2-2
+  Reserved GDT blocks at 3-258 <========= THIS
+  Block bitmap at 451 (+450)
+  Inode bitmap at 452 (+451)
+  Inode table at 453-699 (+452)
+  7456 free blocks, 1965 free inodes, 2 directories
+  Free blocks: 715-8192
+  Free inodes: 12-1976
 
-3) Cases where we really want entry at given index and we have some entry
-order constraints (dax_insert_pfn_mkwrite(), grab_mapping_entry()).
+It's a bug that mke2fs didn't notice this issue and give an error
+message ("HAHAHAHA... NO.").  And it's also a bug that e2fsck didn't
+correctly diagnose the nature of the corruption.  Both of these bugs
+are because how the reserved blocks for online resizing are handled is
+a bit of a special case.
 
-Honestly I'd make the rule that get_unlocked_entry() returns entry of any
-order that is covering given index. I agree it may be unnecessarily waiting
-for PTE entry lock for the case where in case 3) we are really looking only
-for PMD entry but that seems like a relatively small cost for the
-simplicity of the interface.
+In any case, the workaround is to do this:
 
-BTW, looking into the xarray code, I think I found another difference
-between the old radix tree code and the new xarray code that could cause
-issues. In the old radix tree code if we tried to insert PMD entry but
-there was some PTE entry in the covered range, we'd get EEXIST error back
-and the DAX fault code relies on this. I don't see how similar behavior is
-achieved by xas_store()...
+# mke2fs -b 1024 -O ^resize_inode -l /home/jejb/bblist.txt  /dev/loop0
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+For bonus points, you could even add something like this to
+/etc/mke2fs.conf:
+
+[fs_types]
+     parisc_boot = {
+	features = ^resize_inode
+	blocksize = 1024
+	inode_size = 128
+    }
+
+Then all you would need to do something like this:
+
+# mke2fs -T parisc_boot -l bblist.txt /dev/sda1
+
+
+Also, I guess this answers the other question that had recently
+crossed my mind, which is I had been thinking of deprecating and
+eventually removing the badblock feature in e2fsprogs altogether,
+since no sane user of badblocks should exist in 2019.  I guess I stand
+corrected.  :-)
+
+					- Ted
+
+P.S.  Does this mean parisc has been using an amazingly obsolete
+version of e2fsprogs, which is why no one had noticed?  Or was there a
+static image file of the 100M boot partition, which you hadn't
+regenerated until now.... ?
