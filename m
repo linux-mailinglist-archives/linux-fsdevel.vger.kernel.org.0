@@ -2,90 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BD5A5E814
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 17:47:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E9465E831
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 17:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfGCPrE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 11:47:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46780 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfGCPrD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 11:47:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=c5kOloQ+WKclVgeWbSMLX2CoWuvmPxmxrcEhF8nzqns=; b=HV+JnjgFvWKjV4CCm3LWNei+D
-        dUQKdFpMgH9c7rrzBjIXKkcJmHfgvDLB/WAqpvJ85YhAxls3FjsnA0ioLob9VZbnQQJbtcq2/fkgL
-        oswHKQkgdurqbO1Lecz3uaI0H1QfUF93Gmia3dxrNobIbd+5s5Hmt2PyB2S+Uo3EgYdV9UMC6BR5h
-        uWqfZOlarNzVMFxAFe9LAZVBzLVAMWnzYhg5OI7sbYmYdFyV2+nCogciXfogxQNahbsmIayIytAyg
-        w2cjhCNkefcxaW6b9xkLQoMDP/TBLkKdwn0YSfYiXuaLYFvPrq9QgRlCaBW11Tr3+Q4EBFRoQbyw3
-        qcfPIWf3A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hihTJ-0000Vu-0v; Wed, 03 Jul 2019 15:47:01 +0000
-Date:   Wed, 3 Jul 2019 08:47:00 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] filesystem-dax: Disable PMD support
-Message-ID: <20190703154700.GI1729@bombadil.infradead.org>
-References: <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
- <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
- <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
- <20190627195948.GB4286@bombadil.infradead.org>
- <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
- <20190629160336.GB1180@bombadil.infradead.org>
- <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
- <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
- <20190630152324.GA15900@bombadil.infradead.org>
- <20190701121119.GE31621@quack2.suse.cz>
+        id S1726841AbfGCPxY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 11:53:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34834 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726574AbfGCPxY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jul 2019 11:53:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 18B12AD17;
+        Wed,  3 Jul 2019 15:53:22 +0000 (UTC)
+Date:   Wed, 3 Jul 2019 17:53:14 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
+ caches
+Message-ID: <20190703155314.GT978@dhcp22.suse.cz>
+References: <20190702183730.14461-1-longman@redhat.com>
+ <20190702130318.39d187dc27dbdd9267788165@linux-foundation.org>
+ <78879b79-1b8f-cdfd-d4fa-610afe5e5d48@redhat.com>
+ <20190702143340.715f771192721f60de1699d7@linux-foundation.org>
+ <c29ff725-95ba-db4d-944f-d33f5f766cd3@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190701121119.GE31621@quack2.suse.cz>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c29ff725-95ba-db4d-944f-d33f5f766cd3@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 02:11:19PM +0200, Jan Kara wrote:
-> BTW, looking into the xarray code, I think I found another difference
-> between the old radix tree code and the new xarray code that could cause
-> issues. In the old radix tree code if we tried to insert PMD entry but
-> there was some PTE entry in the covered range, we'd get EEXIST error back
-> and the DAX fault code relies on this. I don't see how similar behavior is
-> achieved by xas_store()...
+On Wed 03-07-19 11:21:16, Waiman Long wrote:
+> On 7/2/19 5:33 PM, Andrew Morton wrote:
+> > On Tue, 2 Jul 2019 16:44:24 -0400 Waiman Long <longman@redhat.com> wrote:
+> >
+> >> On 7/2/19 4:03 PM, Andrew Morton wrote:
+> >>> On Tue,  2 Jul 2019 14:37:30 -0400 Waiman Long <longman@redhat.com> wrote:
+> >>>
+> >>>> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
+> >>>> file to shrink the slab by flushing all the per-cpu slabs and free
+> >>>> slabs in partial lists. This applies only to the root caches, though.
+> >>>>
+> >>>> Extends this capability by shrinking all the child memcg caches and
+> >>>> the root cache when a value of '2' is written to the shrink sysfs file.
+> >>> Why?
+> >>>
+> >>> Please fully describe the value of the proposed feature to or users. 
+> >>> Always.
+> >> Sure. Essentially, the sysfs shrink interface is not complete. It allows
+> >> the root cache to be shrunk, but not any of the memcg caches. 
+> > But that doesn't describe anything of value.  Who wants to use this,
+> > and why?  How will it be used?  What are the use-cases?
+> >
+> For me, the primary motivation of posting this patch is to have a way to
+> make the number of active objects reported in /proc/slabinfo more
+> accurately reflect the number of objects that are actually being used by
+> the kernel.
 
-Are you referring to this?
+I believe we have been through that. If the number is inexact due to
+caching then lets fix slabinfo rather than trick around it and teach
+people to do a magic write to some file that will "solve" a problem.
+This is exactly what drop_caches turned out to be in fact. People just
+got used to drop caches because they were told so by $random web page.
+So really, think about the underlying problem and try to fix it.
 
--               entry = dax_make_locked(0, size_flag | DAX_EMPTY);
--
--               err = __radix_tree_insert(&mapping->i_pages, index,
--                               dax_entry_order(entry), entry);
--               radix_tree_preload_end();
--               if (err) {
--                       xa_unlock_irq(&mapping->i_pages);
--                       /*
--                        * Our insertion of a DAX entry failed, most likely
--                        * because we were inserting a PMD entry and it
--                        * collided with a PTE sized entry at a different
--                        * index in the PMD range.  We haven't inserted
--                        * anything into the radix tree and have no waiters to
--                        * wake.
--                        */
--                       return ERR_PTR(err);
--               }
-
-If so, that can't happen any more because we no longer drop the i_pages
-lock while the entry is NULL, so the entry is always locked while the
-i_pages lock is dropped.
+It is true that you could argue that this patch is actually fixing the
+existing interface because it doesn't really do what it is documented to
+do and on those grounds I would agree with the change. But do not teach
+people that they have to write to some file to get proper numbers.
+Because that is just a bad idea and it will kick back the same way
+drop_caches.
+-- 
+Michal Hocko
+SUSE Labs
