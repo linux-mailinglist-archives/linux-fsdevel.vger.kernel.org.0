@@ -2,25 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 392DA5EA58
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 19:21:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F9625EB12
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 20:03:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbfGCRVu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 13:21:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49336 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727119AbfGCRVu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 13:21:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3FC2DABF1;
-        Wed,  3 Jul 2019 17:21:47 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 147E11E0D71; Wed,  3 Jul 2019 19:21:41 +0200 (CEST)
-Date:   Wed, 3 Jul 2019 19:21:41 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Boaz Harrosh <openosd@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        id S1727154AbfGCSDs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 14:03:48 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43188 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbfGCSDr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jul 2019 14:03:47 -0400
+Received: by mail-ed1-f65.google.com with SMTP id e3so2935022edr.10;
+        Wed, 03 Jul 2019 11:03:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HktW2jbQb9daIuq89e7+nyOPIHE/MzRFk27e0RIauhk=;
+        b=I6CJEt6Z614d/vSVK4+ovKXsIY1OyStNiw/0DEsDi90EDdqxejjwwm6CxHQoLzDKTh
+         Kza0fDDdy+hYQnvd1trjWk2Yot/LCubzZ55fOGVoP51pjW5W8C4CMJj6jlD0Yi7cSVj1
+         naxRs6Yrh6fjZuddxCjI18AaGlVJvAI2MfTWOT/+6GOyKJbIaw2xOkVaqVG4UODVWSd9
+         Jib8DVlH/MamdEaPyeujMXQRMyITR71/z1UQJBPSmjseVyu1RytxGrisCGbvb4IuZzt8
+         hJZWi9Pxr9LOswwOA0pNnT1lK+5DPn3+gKuEKRU3tY/bMDvmm/J1qHhrfTzi+KsxNCfT
+         Ig6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HktW2jbQb9daIuq89e7+nyOPIHE/MzRFk27e0RIauhk=;
+        b=mI/uJgldtzLvQQTfCfMi5qlOqnVG6mNW/Ek5krGY/r/PdbVgGg4G8y9Xq/VXOP305Q
+         N5njfHeyTfQnpK9m9OKXNZZKCuPOvT6qJlhcofCb8tLiL3iyAlTk0lkWX8sTy95bKzLa
+         On9DQsR4dRK3xHt30WQeNbIldfuYyv3RT74lXVmlC3sqZZjJQn8benXI2m4GkgQW8lzd
+         CWZbJrRbNuUDdX8f/9U0zjB+003WS4voIF1uXC1z40X1mp0wED2s3SxsLxoXmVNfvcML
+         FpXgXnSbSgWwkDQvJcDYcMti5M9NjrCwG75b1a6Z4UrRtC6/OXHAonly/Kz6CsoeQFYk
+         Ve7w==
+X-Gm-Message-State: APjAAAXM4fbEwoxOHhcakgZH9wCwj57gVL4DiRCcnA5m3IMbSGIHZRwe
+        aknPhnEJ+kD2W9INI2NYR38=
+X-Google-Smtp-Source: APXvYqxJnEihMQhEJBAJmLJZlc+dec6NPvUGNPBXjPZf9NCZYQ3YUxTRIiNzg505Yt6WsP+02smZpw==
+X-Received: by 2002:aa7:c515:: with SMTP id o21mr44067179edq.2.1562177025786;
+        Wed, 03 Jul 2019 11:03:45 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.211.18])
+        by smtp.gmail.com with ESMTPSA id g11sm589222ejm.86.2019.07.03.11.03.43
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Jul 2019 11:03:45 -0700 (PDT)
+Subject: Re: [PATCH] mm: Support madvise_willneed override by Filesystems
+To:     Jan Kara <jack@suse.cz>
+Cc:     Dave Chinner <david@fromorbit.com>,
         Kent Overstreet <kent.overstreet@gmail.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Dave Chinner <dchinner@redhat.com>,
@@ -35,8 +63,6 @@ Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tejun Heo <tj@kernel.org>, Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH] mm: Support madvise_willneed override by Filesystems
-Message-ID: <20190703172141.GD26423@quack2.suse.cz>
 References: <20190610191420.27007-1-kent.overstreet@gmail.com>
  <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
  <20190611011737.GA28701@kmo-pixel>
@@ -45,96 +71,48 @@ References: <20190610191420.27007-1-kent.overstreet@gmail.com>
  <20190612230224.GJ14308@dread.disaster.area>
  <20190619082141.GA32409@quack2.suse.cz>
  <27171de5-430e-b3a8-16f1-7ce25b76c874@gmail.com>
+ <20190703172141.GD26423@quack2.suse.cz>
+From:   Boaz Harrosh <openosd@gmail.com>
+Message-ID: <7206059e-5a57-aa46-0a6c-e62b085f6c75@gmail.com>
+Date:   Wed, 3 Jul 2019 21:03:42 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27171de5-430e-b3a8-16f1-7ce25b76c874@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190703172141.GD26423@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 03-07-19 04:04:57, Boaz Harrosh wrote:
-> On 19/06/2019 11:21, Jan Kara wrote:
-> <>
-> > Yes, I have patch to make madvise(MADV_WILLNEED) go through ->fadvise() as
-> > well. I'll post it soon since the rest of the series isn't really dependent
-> > on it.
-> > 
-> > 								Honza
-> > 
+On 03/07/2019 20:21, Jan Kara wrote:
+> On Wed 03-07-19 04:04:57, Boaz Harrosh wrote:
+>> On 19/06/2019 11:21, Jan Kara wrote:
+>> <>
+<>
+>> Hi Jan
+>>
+>> Funny I'm sitting on the same patch since LSF last. I need it too for other
+>> reasons. I have not seen, have you pushed your patch yet?
+>> (Is based on old v4.20)
 > 
-> Hi Jan
+> Your patch is wrong due to lock ordering. You should not call vfs_fadvise()
+> under mmap_sem. So we need to do a similar dance like madvise_remove(). I
+> have to get to writing at least XFS fix so that the madvise change gets
+> used and post the madvise patch with it... Sorry it takes me so long.
 > 
-> Funny I'm sitting on the same patch since LSF last. I need it too for other
-> reasons. I have not seen, have you pushed your patch yet?
-> (Is based on old v4.20)
+> 								Honza
 
-Your patch is wrong due to lock ordering. You should not call vfs_fadvise()
-under mmap_sem. So we need to do a similar dance like madvise_remove(). I
-have to get to writing at least XFS fix so that the madvise change gets
-used and post the madvise patch with it... Sorry it takes me so long.
+Ha Sorry I was not aware of this. Lockdep did not catch it on my setup
+because my setup does not have any locking conflicts with mmap_sem on the
+WILL_NEED path.
 
-								Honza
-> 
-> ~~~~~~~~~
-> From fddb38169e33d23060ddd444ba6f2319f76edc89 Mon Sep 17 00:00:00 2001
-> From: Boaz Harrosh <boazh@netapp.com>
-> Date: Thu, 16 May 2019 20:02:14 +0300
-> Subject: [PATCH] mm: Support madvise_willneed override by Filesystems
-> 
-> In the patchset:
-> 	[b833a3660394] ovl: add ovl_fadvise()
-> 	[3d8f7615319b] vfs: implement readahead(2) using POSIX_FADV_WILLNEED
-> 	[45cd0faae371] vfs: add the fadvise() file operation
-> 
-> Amir Goldstein introduced a way for filesystems to overide fadvise.
-> Well madvise_willneed is exactly as fadvise_willneed except it always
-> returns 0.
-> 
-> In this patch we call the FS vector if it exists.
-> 
-> NOTE: I called vfs_fadvise(..,POSIX_FADV_WILLNEED);
->       (Which is my artistic preference)
-> 
-> I could also selectively call
-> 	if (file->f_op->fadvise)
-> 		return file->f_op->fadvise(..., POSIX_FADV_WILLNEED);
-> If we fear theoretical side effects. I don't mind either way.
-> 
-> CC: Amir Goldstein <amir73il@gmail.com>
-> CC: Miklos Szeredi <mszeredi@redhat.com>
-> Signed-off-by: Boaz Harrosh <boazh@netapp.com>
-> ---
->  mm/madvise.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 6cb1ca93e290..6b84ddcaaaf2 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -24,6 +24,7 @@
->  #include <linux/swapops.h>
->  #include <linux/shmem_fs.h>
->  #include <linux/mmu_notifier.h>
-> +#include <linux/fadvise.h>
->  
->  #include <asm/tlb.h>
->  
-> @@ -303,7 +304,8 @@ static long madvise_willneed(struct vm_area_struct *vma,
->  		end = vma->vm_end;
->  	end = ((end - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
->  
-> -	force_page_cache_readahead(file->f_mapping, file, start, end - start);
-> +	vfs_fadvise(file, start << PAGE_SHIFT, (end - start) << PAGE_SHIFT,
-> +		    POSIX_FADV_WILLNEED);
->  	return 0;
->  }
->  
-> -- 
-> 2.20.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+But surly you are right because the all effort is to fix the locking problems.
+
+I will also try in a day or two to do as you suggest, and look at madvise_remove()
+once I have a bit of time. Who ever gets to be less busy ...
+
+Thank you for your help
+Boaz
