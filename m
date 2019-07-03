@@ -2,121 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 192A35E46A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 14:48:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A3A55E4F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 15:12:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbfGCMrd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 08:47:33 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38380 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfGCMrc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 08:47:32 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p11so2669592wro.5;
-        Wed, 03 Jul 2019 05:47:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qXfAEOlH4aIpQXeFgILadkKYn01/VlG4XvVZEcPkJYY=;
-        b=fu9RPMVgXVFj4PgV3KF4+X0OrajMT8XRxnmdpd+teMNXTQldmYy+3On3v8YbjNRcoh
-         y8pu8JWKMBygejEkjCVH3FFo7TeUWFChx553OzBSnX7wB17SO+47EMJ25asq7QkekJRS
-         lEmerh2nRBiytWP6hWYZoku/WlMGJmLTtXi4MAqZ+3BWzctnGkUN5K92UzspI6a0gvCe
-         w2s98oiKc0aK9YThQsqY+9Mx/Fd0CP0NKNqfxWpVjuW191RQYzyMeInreFxiLzqT8ZB2
-         +WGt3/jdTI/5XUXWLMgohdHyulxJeidi4kLtVf6eg5Z9CewOrJyC/2f3DLPzGUQQI0gM
-         tXOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qXfAEOlH4aIpQXeFgILadkKYn01/VlG4XvVZEcPkJYY=;
-        b=k0U3aESoKtWqiIQMY6rxjgd7/jHC1QoEnH9934TBVkPRinVnvQqKwV/KD/+vIfCoYb
-         0rXVFjZyTdizShANKG4wVTbHBVHt4uKJynB9yFvfUkSjR6xbCiDsbgcIZIXtca/xx7kC
-         KJ0OhH7hyz04Vbi0WxwTJlL37mAvc+ptRn8FushRsDqW/7xFLIASmEcx+hyJh7Zr40iX
-         vnGQTIAqbKwvy4K4rYrbk2vB/YjbV1jIrbBU7tpjARbK4AZP6ufPQCpLeL1OeC7FFy9s
-         dRvYy9iVn8fEpK/YEdnZZCkG5JzfbAi8nF+et1vNKKm74/0zPJrAjAP0DIkGqaD1avgb
-         3qmw==
-X-Gm-Message-State: APjAAAUH2rD5XV19NwrwPUCDanWzQd1qyCeXAfZk4IDcg1RavfWAHRQq
-        p+mr/ziGpY/zYHmD1HSsGg9ETkkBAmo=
-X-Google-Smtp-Source: APXvYqxD6K+0ugAMNC/aj/0XoFB4rhxYFEfIRruIudKKenQi9Fn9L+MVPP9fnwZ3jnR+ZtZPVdDKtA==
-X-Received: by 2002:a5d:5186:: with SMTP id k6mr31267862wrv.30.1562158050417;
-        Wed, 03 Jul 2019 05:47:30 -0700 (PDT)
-Received: from heron.blarg.de (p200300DC6F443A000000000000000FD2.dip0.t-ipconnect.de. [2003:dc:6f44:3a00::fd2])
-        by smtp.gmail.com with ESMTPSA id o24sm5480588wmh.2.2019.07.03.05.47.29
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 05:47:29 -0700 (PDT)
-From:   Max Kellermann <max.kellermann@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        trond.myklebust@hammerspace.com, bfields@redhat.com,
-        gregkh@linuxfoundation.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, hughd@google.com,
-        anna.schumaker@netapp.com
-Cc:     linux-kernel@vger.kernel.org,
-        Max Kellermann <max.kellermann@gmail.com>
-Subject: [PATCH 4/4] nfs/super: check NFS_CAP_ACLS instead of the NFS version
-Date:   Wed,  3 Jul 2019 14:47:15 +0200
-Message-Id: <20190703124715.4319-4-max.kellermann@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190703124715.4319-1-max.kellermann@gmail.com>
-References: <20190703124715.4319-1-max.kellermann@gmail.com>
+        id S1726955AbfGCNMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 09:12:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33376 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725933AbfGCNMk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jul 2019 09:12:40 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 92AF1308FEC6;
+        Wed,  3 Jul 2019 13:12:19 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7702C1001B04;
+        Wed,  3 Jul 2019 13:12:13 +0000 (UTC)
+Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
+ caches
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+References: <20190702183730.14461-1-longman@redhat.com>
+ <20190703065628.GK978@dhcp22.suse.cz>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <9ade5859-b937-c1ac-9881-2289d734441d@redhat.com>
+Date:   Wed, 3 Jul 2019 09:12:13 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190703065628.GK978@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 03 Jul 2019 13:12:40 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This sets MS_POSIXACL only if ACL support is really enabled, instead
-of always setting MS_POSIXACL if the NFS protocol version
-theoretically supports ACL.
+On 7/3/19 2:56 AM, Michal Hocko wrote:
+> On Tue 02-07-19 14:37:30, Waiman Long wrote:
+>> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
+>> file to shrink the slab by flushing all the per-cpu slabs and free
+>> slabs in partial lists. This applies only to the root caches, though.
+>>
+>> Extends this capability by shrinking all the child memcg caches and
+>> the root cache when a value of '2' is written to the shrink sysfs file.
+> Why do we need a new value for this functionality? I would tend to think
+> that skipping memcg caches is a bug/incomplete implementation. Or is it
+> a deliberate decision to cover root caches only?
 
-The code comment says "We will [apply the umask] ourselves", but that
-happens in posix_acl_create() only if the kernel has POSIX ACL
-support.  Without it, posix_acl_create() is an empty dummy function.
+It is just that I don't want to change the existing behavior of the
+current code. It will definitely take longer to shrink both the root
+cache and the memcg caches. If we all agree that the only sensible
+operation is to shrink root cache and the memcg caches together. I am
+fine just adding memcg shrink without changing the sysfs interface
+definition and be done with it.
 
-So let's not pretend we will apply the umask if we can already know
-that we will never.
-
-This fixes a problem where the umask is always ignored in the NFS
-client when compiled without CONFIG_FS_POSIX_ACL.  This is a 4 year
-old regression caused by commit 013cdf1088d723 which itself was not
-completely wrong, but failed to consider all the side effects by
-misdesigned VFS code.
-
-Signed-off-by: Max Kellermann <max.kellermann@gmail.com>
----
- fs/nfs/super.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index c27ac96a95bd..e799296941ec 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2343,11 +2343,14 @@ void nfs_fill_super(struct super_block *sb, struct nfs_mount_info *mount_info)
- 	if (data && data->bsize)
- 		sb->s_blocksize = nfs_block_size(data->bsize, &sb->s_blocksize_bits);
- 
--	if (server->nfs_client->rpc_ops->version != 2) {
-+	if (NFS_SB(sb)->caps & NFS_CAP_ACLS) {
- 		/* The VFS shouldn't apply the umask to mode bits. We will do
- 		 * so ourselves when necessary.
- 		 */
- 		sb->s_flags |= SB_POSIXACL;
-+	}
-+
-+	if (server->nfs_client->rpc_ops->version != 2) {
- 		sb->s_time_gran = 1;
- 		sb->s_export_op = &nfs_export_ops;
- 	}
-@@ -2373,7 +2376,7 @@ static void nfs_clone_super(struct super_block *sb,
- 	sb->s_time_gran = 1;
- 	sb->s_export_op = old_sb->s_export_op;
- 
--	if (server->nfs_client->rpc_ops->version != 2) {
-+	if (NFS_SB(sb)->caps & NFS_CAP_ACLS) {
- 		/* The VFS shouldn't apply the umask to mode bits. We will do
- 		 * so ourselves when necessary.
- 		 */
--- 
-2.20.1
+Cheers,
+Longman
 
