@@ -2,89 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 682195DF2B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 09:55:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFA0C5E16F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 11:53:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbfGCHzf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 03:55:35 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:2964 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726670AbfGCHzf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 03:55:35 -0400
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id D1ABD1DAEB5225495F9E;
-        Wed,  3 Jul 2019 15:55:32 +0800 (CST)
-Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
- DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 3 Jul 2019 15:55:32 +0800
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- dggeme763-chm.china.huawei.com (10.3.19.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Wed, 3 Jul 2019 15:55:31 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <hch@infradead.org>, <darrick.wong@oracle.com>
-CC:     <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <andreas.gruenbacher@gmail.com>, <gaoxiang25@huawei.com>,
-        <chao@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Subject: [RFC PATCH] iomap: generalize IOMAP_INLINE to cover tail-packing case
-Date:   Wed, 3 Jul 2019 15:55:02 +0800
-Message-ID: <20190703075502.79782-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        id S1726765AbfGCJxv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 05:53:51 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:38337 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfGCJxv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jul 2019 05:53:51 -0400
+Received: from [192.168.1.110] ([95.114.150.241]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MYvPq-1i4UQO1u6a-00UvZs; Wed, 03 Jul 2019 11:53:48 +0200
+Subject: Re: [PATCH] fs/seq_file: Replace a seq_printf() call by seq_puts() in
+ seq_hex_dump()
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <8c295901-cdbd-a4a2-f23f-f63a58330f20@web.de>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <10744a9b-1c15-1581-8422-bbbf995c0da3@metux.net>
+Date:   Wed, 3 Jul 2019 11:53:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-ClientProxiedBy: dggeme717-chm.china.huawei.com (10.1.199.113) To
- dggeme763-chm.china.huawei.com (10.3.19.109)
-X-CFilter-Loop: Reflected
+In-Reply-To: <8c295901-cdbd-a4a2-f23f-f63a58330f20@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:xiC9aC0SXQUwA+BYVt/+cV5O9DXdVDss0yAIx+MA2irR0N/sKsm
+ udBlm60BA5MbOe92vuTq4Qt3CHgj6T+u2bceMRInHA27d/jhvjAD3DeH5KutUKXwt+tLYep
+ QdblIoLPF2rdW/drmNZeV+qy7YXWSajmZ8+rL8bQFq7VTL1W0abzuK0cij6Qf+XH1GEir40
+ kyRDkF1zIp2Ne74uoBkOQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:aPL7KJiS+uI=:7S7IBlN8EoVT6GT1IlIKwA
+ o12t/oiXZ0KNqic8DlaUWj/Org71srYU03+4+GFF/dqevDPvGGbubRHtcE2+GdaxFotH6DUBm
+ sftkTKR7YXHAyDLPAX5wUGQt9IQFXOIQ/8fwocN8i9cAeXDvuLZ1hgsLo0IR6lqKyAdUp83OD
+ Gd+Skw2CG+VTgfg6EDktkIDczBP7hj5Rv0jGmdj95wteby4rUo4clq9o+6ZyO8DcJpAp+B9Of
+ A+gXm8RyVlzBhYyzBScR6vFRaPjHIKso3LGWcY++CWFLq8SeKc8zFr5moGuSPDs5oWrXgZP8s
+ /glNL1Ka+kTuqx9h297iRDHVHezCSUeDHyIBm3exgs8nTLpwI9s1e0aZOKO46BV21gbsGzye7
+ hbOl5A+UQRjFcVADjfSTgccapUQ53DM5AlQJlxEnDrPC3MRChfLbMj5Slts54QLuy6BSqYS2m
+ y002WGW5kHjCgpgomdSUkHczm3i79jIBpdbFkVhBhg+eR5kjOng7wiT9vdFScM2f31nACvBzT
+ xDfQCbw6MXb+twLPqBD4f2viePHc/cGSPXzelRkrGg+aPftF86kiqWbJgIRmpEUnBPexdaaFq
+ Fv3uzrlGtsLE9bagQqWa21/Xuijy4kEQymMphQFvC3dXIkUKq8sZa8ypopLl9R62/ge6davtZ
+ D4QPyAIjqvowjJ26I7ngOIBwiH0SQZh5W/tvNhLES9yEItSOVPFaFuiRx+osA8gcLDVdw41Vs
+ /JQ5f6OQovUAp9WNjXrf1IlnTneUvD45u2SA74H839mWdij/18A9yU1iozg=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some filesystems like erofs/reiserfs have the ability to pack tail
-data into metadata, e.g.:
-IOMAP_MAPPED [0, 8192]
-IOMAP_INLINE [8192, 8200]
+On 02.07.19 18:38, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 2 Jul 2019 18:28:10 +0200
+> 
+> A string which did not contain a data format specification should be put
+> into a sequence. Thus use the corresponding function “seq_puts”.
 
-However current IOMAP_INLINE type has assumption that:
-- inline data should be locating at page #0.
-- inline size should equal to .i_size
-Those restriction fail to convert to use iomap IOMAP_INLINE in erofs,
-so this patch tries to relieve above limits to make IOMAP_INLINE more
-generic to cover tail-packing case.
+Looks good, but have you checked whether "m" could ever be NULL and
+whether seq_puts() has a check for that ?
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/iomap.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/iomap.c b/fs/iomap.c
-index 12654c2e78f8..d1c16b692d31 100644
---- a/fs/iomap.c
-+++ b/fs/iomap.c
-@@ -264,13 +264,12 @@ static void
- iomap_read_inline_data(struct inode *inode, struct page *page,
- 		struct iomap *iomap)
- {
--	size_t size = i_size_read(inode);
-+	size_t size = iomap->length;
- 	void *addr;
- 
- 	if (PageUptodate(page))
- 		return;
- 
--	BUG_ON(page->index);
- 	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
- 
- 	addr = kmap_atomic(page);
-@@ -293,7 +292,6 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 	sector_t sector;
- 
- 	if (iomap->type == IOMAP_INLINE) {
--		WARN_ON_ONCE(pos);
- 		iomap_read_inline_data(inode, page, iomap);
- 		return PAGE_SIZE;
- 	}
+--mtx
+
 -- 
-2.18.0.rc1
-
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
