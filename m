@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B78085EA15
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 19:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EE5D5EA2E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 19:12:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfGCRIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 13:08:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33902 "EHLO mail.kernel.org"
+        id S1726823AbfGCRL7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 13:11:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbfGCRIN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 13:08:13 -0400
+        id S1726430AbfGCRL7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jul 2019 13:11:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE6EE2080C;
-        Wed,  3 Jul 2019 17:08:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5575A2187F;
+        Wed,  3 Jul 2019 17:11:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562173692;
-        bh=0ouf0Y73C+G8kK8V/y9ZdKcbKz2QNfNH9xVkkqZP1JA=;
+        s=default; t=1562173917;
+        bh=436WDhYAGRaHC7DhWZalpPfSr0ODNk1419c0VWx8viE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gJ0o71u9D8lYdXoiiMKqqplUcWvoc5CoTLCEvXJliqmrj/bLCD4U7ZquS4QjDfQ5S
-         y6bAUovvtz1ELtv2hiWjY7X3gqzzZwKjN1wdiZhn6duk1o19EUlj0mUvmKXPY6BMpf
-         chEbpSaJjWxWVemuFC7cZlw0f5molzIeYgqrlTLE=
-Date:   Wed, 3 Jul 2019 19:08:10 +0200
+        b=LW8bdLtCYoDfg6i3v8/Zb0LcmNqE8rpNUBgIps/4onsP5WYZ8jFkGmxdI9HoGhFV/
+         0d/AgJ6q/XRAimimUZT/3XK7cS2LB9i7IFiLCpLtrxyTMU6j5c6r0990l9bYQUWtk5
+         gCSth1cwabsT5F31+PUYCFKvhk3LouU7MR1EZeZw=
+Date:   Wed, 3 Jul 2019 19:11:55 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     David Howells <dhowells@redhat.com>
 Cc:     viro@zeniv.linux.org.uk, Casey Schaufler <casey@schaufler-ca.com>,
@@ -33,68 +33,75 @@ Cc:     viro@zeniv.linux.org.uk, Casey Schaufler <casey@schaufler-ca.com>,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] uapi: General notification ring definitions [ver #5]
-Message-ID: <20190703170810.GB24672@kroah.com>
+Subject: Re: [PATCH 4/9] General notification queue with user mmap()'able
+ ring buffer [ver #5]
+Message-ID: <20190703171155.GC24672@kroah.com>
 References: <156173690158.15137.3985163001079120218.stgit@warthog.procyon.org.uk>
- <156173691411.15137.2073887155273175167.stgit@warthog.procyon.org.uk>
+ <156173695061.15137.17196611619288074120.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <156173691411.15137.2073887155273175167.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156173695061.15137.17196611619288074120.stgit@warthog.procyon.org.uk>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 04:48:34PM +0100, David Howells wrote:
-> Add UAPI definitions for the general notification ring, including the
-> following pieces:
+On Fri, Jun 28, 2019 at 04:49:10PM +0100, David Howells wrote:
+> Implement a misc device that implements a general notification queue as a
+> ring buffer that can be mmap()'d from userspace.
 > 
->  (1) struct watch_notification.
+> The way this is done is:
 > 
->      This is the metadata header for each entry in the ring.  It includes a
->      type and subtype that indicate the source of the message
->      (eg. WATCH_TYPE_MOUNT_NOTIFY) and the kind of the message
->      (eg. NOTIFY_MOUNT_NEW_MOUNT).
+>  (1) An application opens the device and indicates the size of the ring
+>      buffer that it wants to reserve in pages (this can only be set once):
 > 
->      The header also contains an information field that conveys the
->      following information:
+> 	fd = open("/dev/watch_queue", O_RDWR);
+> 	ioctl(fd, IOC_WATCH_QUEUE_NR_PAGES, nr_of_pages);
 > 
-> 	- WATCH_INFO_LENGTH.  The size of the entry (entries are variable
->           length).
+>  (2) The application should then map the pages that the device has
+>      reserved.  Each instance of the device created by open() allocates
+>      separate pages so that maps of different fds don't interfere with one
+>      another.  Multiple mmap() calls on the same fd, however, will all work
+>      together.
 > 
-> 	- WATCH_INFO_ID.  The watch ID specified when the watchpoint was
->           set.
+> 	page_size = sysconf(_SC_PAGESIZE);
+> 	mapping_size = nr_of_pages * page_size;
+> 	char *buf = mmap(NULL, mapping_size, PROT_READ|PROT_WRITE,
+> 			 MAP_SHARED, fd, 0);
 > 
-> 	- WATCH_INFO_TYPE_INFO.  (Sub)type-specific information.
+> The ring is divided into 8-byte slots.  Entries written into the ring are
+> variable size and can use between 1 and 63 slots.  A special entry is
+> maintained in the first two slots of the ring that contains the head and
+> tail pointers.  This is skipped when the ring wraps round.  Note that
+> multislot entries, therefore, aren't allowed to be broken over the end of
+> the ring, but instead "skip" entries are inserted to pad out the buffer.
 > 
-> 	- WATCH_INFO_FLAG_*.  Flag bits overlain on the type-specific
->           information.  For use by the type.
+> Each entry has a 1-slot header that describes it:
 > 
->      All the information in the header can be used in filtering messages at
->      the point of writing into the buffer.
+> 	struct watch_notification {
+> 		__u32	type:24;
+> 		__u32	subtype:8;
+> 		__u32	info;
+> 	};
 > 
->  (2) struct watch_queue_buffer.
+> The type indicates the source (eg. mount tree changes, superblock events,
+> keyring changes, block layer events) and the subtype indicates the event
+> type (eg. mount, unmount; EIO, EDQUOT; link, unlink).  The info field
+> indicates a number of things, including the entry length, an ID assigned to
+> a watchpoint contributing to this buffer, type-specific flags and meta
+> flags, such as an overrun indicator.
 > 
->      This describes the layout of the ring.  Note that the first slots in
->      the ring contain a special metadata entry that contains the ring
->      pointers.  The producer in the kernel knows to skip this and it has a
->      proper header (WATCH_TYPE_META, WATCH_META_SKIP_NOTIFICATION) that
->      indicates the size so that the ring consumer can handle it the same as
->      any other record and just skip it.
-> 
->      Note that this means that ring entries can never be split over the end
->      of the ring, so if an entry would need to be split, a skip record is
->      inserted to wrap the ring first; this is also WATCH_TYPE_META,
->      WATCH_META_SKIP_NOTIFICATION.
-> 
->  (3) WATCH_INFO_NOTIFICATIONS_LOST.
-> 
->      This is a flag that can be set in the metadata header by the kernel to
->      indicate that at least one message was lost since it was last cleared
->      by userspace.
+> Supplementary data, such as the key ID that generated an event, are
+> attached in additional slots.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
+
+I don't know if I mentioned this before, but your naming seems a bit
+"backwards" from other subsystems. Should "watch_queue" always be the
+prefix, instead of a mix of prefix/suffix usage?
+
+Anyway, your call, it's your code :)
 
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
