@@ -2,159 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86CDD5EE80
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 23:28:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ADBC5EF2F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2019 00:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfGCV2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 17:28:53 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40518 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfGCV2x (ORCPT
+        id S1727168AbfGCWfx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 18:35:53 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42394 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbfGCWfw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 17:28:53 -0400
-Received: by mail-ot1-f66.google.com with SMTP id e8so3902695otl.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jul 2019 14:28:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8Oa5fyrgRSaS4/rlLU6Dg1I751HN6ZGGg3XuTeNEsyA=;
-        b=EVDV2i92j6Oc8X9cDYFxw3faBgrvRgokearOh6hTInPcfDEF/9Dw3KaF4Zq6F/M1Po
-         7PhktLMJwFP6nTQp9RrenWueYOGk2EVUa/0Qx0+hUltXSvdhvIuEHI+qKgYeF3B1eFlS
-         5Y3swajWUyLDnwgyIA3axCIg+XMQUJMGQtIBwCbx1V1d//Itvxh9xcx753a7zTQU7G7q
-         9Zf9F4ew3jdtrywY3ZSbzOZTGZe1X8L9mb5LB87Kgaj4vPdRVLpEenwZhPzX+x7S/pLI
-         SKnQAFXjTLXqteyTAJ1slhEtrupPHQDbOkd7sNBcRXPLRfHg2/4qMUGQWkb8jOyatu6m
-         VoNA==
+        Wed, 3 Jul 2019 18:35:52 -0400
+Received: by mail-ot1-f67.google.com with SMTP id l15so4053872otn.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jul 2019 15:35:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8Oa5fyrgRSaS4/rlLU6Dg1I751HN6ZGGg3XuTeNEsyA=;
-        b=M5dMFGZX+ZSEijmoLQurao89uwxKGf5wWFKoemLzA0Lg/uelqv+jOhtndrKYN3PC15
-         hpkgPRZ6hb1ndbTdzczNnUaWSVmQYZOSkqPYYYNBHpjHSM3WRlX3CQyxU/jHPvXk5O+a
-         6a1lHWR1Dd54uax1NLBsxL/ZYy5xKRm6CXiAbBDQSh25uPlH2Yn5WSSpp0tzgR5i4EdT
-         bbczDQaIU+HRO+EWGIcjZI2fhOfKMaPJ/uxye+Go8OApcYUeBwCGft9Ob+C+GZ6JX3m8
-         Sx3IOGjxR7MJQRpOVlSXukZ7i3MYSVwpc59aXkQ6wIA5r90JHP/yae+vXqa1FObCpVn3
-         3+WQ==
-X-Gm-Message-State: APjAAAUUZfp4j0hqNlCbjQ5oAxhkFzVcvGrrDPYx5oABxDCQUjAqAaDL
-        erdgQMrau3+9toR3FBua7c5Y7JIeJZGK2rADy6QAww==
-X-Google-Smtp-Source: APXvYqx/eeik3ZxIiy7z87X0O8OLG62WiPNdXk3FcnhR2wJoQDPQ4BqLvO7rM7/LGIyRCPcHEmicv2tHJYa45mbHcK0=
-X-Received: by 2002:a9d:7248:: with SMTP id a8mr32385007otk.363.1562189332829;
- Wed, 03 Jul 2019 14:28:52 -0700 (PDT)
+        bh=uF998D8BR4hjaWYM/cm2nCswL6OUaWgofBX0cNua7mY=;
+        b=Oh85pGaoRfsoaqsDmyLA35uUD3i2iLVLsG2rXzSpjf+skjPaQhYaFQJBnp6R9jgBqn
+         fsn5kYADp/VM4oJmLp1IgmAQl/R5cSMbWeV3Ug2v9S6pmrxPLr+2ucXtqIVFsFB/o4mp
+         UUwu8nnPHjPIJZjQFNZqyx1DPSEG+cqGCnvTMG+p757Dgo9yH2uJPEvhYSRpEd7+Df4A
+         IVqybH5jcN3fse8TVw9feDm7EUpTRc2DA5nvuN+EOEV2r/58TFUNEWKzRRODvLN26Ean
+         02+Wub7Elmy2GeDgwagYBNY5mSp2Hg5e3dNYWsopohFMyAE7BldEa0BTt31YgqXImrrp
+         5MXA==
+X-Gm-Message-State: APjAAAW0JA6XJkb8JMdYrK6Xo/u+7pSeIAhiToK8yhpmilx2sdttME7D
+        8H5QPZcqlIntvMay+UaRH8hcECYVnaE/VIB351YJjA==
+X-Google-Smtp-Source: APXvYqyb3lCMpWvP5vv5fGbRMbkszNsSf4Dh8Q3SscBMZpgOEptvKSRqy1VjJc/2nmujeUFQiYMDumOh8kn0s1bWND8=
+X-Received: by 2002:a9d:5cc1:: with SMTP id r1mr28332622oti.341.1562193352267;
+ Wed, 03 Jul 2019 15:35:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190703121743.GH1729@bombadil.infradead.org> <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
- <20190703195302.GJ1729@bombadil.infradead.org>
-In-Reply-To: <20190703195302.GJ1729@bombadil.infradead.org>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 3 Jul 2019 14:28:41 -0700
-Message-ID: <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
-Subject: Re: [PATCH] dax: Fix missed PMD wakeups
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Boaz Harrosh <openosd@gmail.com>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190701215439.19162-1-hch@lst.de>
+In-Reply-To: <20190701215439.19162-1-hch@lst.de>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Thu, 4 Jul 2019 00:35:41 +0200
+Message-ID: <CAHc6FU5MHCdXENW_Y++hO_qhtCh4XtAHYOaTLzk+1KU=JNpPww@mail.gmail.com>
+Subject: Re: RFC: use the iomap writepage path in gfs2
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        cluster-devel <cluster-devel@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 3, 2019 at 12:53 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Wed, Jul 03, 2019 at 10:01:37AM -0700, Dan Williams wrote:
-> > On Wed, Jul 3, 2019 at 5:17 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Wed, Jul 03, 2019 at 12:24:54AM -0700, Dan Williams wrote:
-> > > > This fix may increase waitqueue contention, but a fix for that is saved
-> > > > for a larger rework. In the meantime this fix is suitable for -stable
-> > > > backports.
-> > >
-> > > I think this is too big for what it is; just the two-line patch to stop
-> > > incorporating the low bits of the PTE would be more appropriate.
-> >
-> > Sufficient, yes, "appropriate", not so sure. All those comments about
-> > pmd entry size are stale after this change.
->
-> But then they'll have to be put back in again.  This seems to be working
-> for me, although I doubt I'm actually hitting the edge case that rocksdb
-> hits:
+Hi Christoph,
 
-Seems to be holding up under testing here, a couple comments...
+On Mon, 1 Jul 2019 at 23:54, Christoph Hellwig <hch@lst.de> wrote:
+> Hi all,
+>
+> in this straight from the jetplane edition I present the series to
+> convert gfs2 to full iomap usage for the ordered and writeback mode,
+> that is we use iomap_page everywhere and entirely get rid of
+> buffer_heads in the data path.
 
->
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 2e48c7ebb973..e77bd6aef10c 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -198,6 +198,10 @@ static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
->   * if it did.
->   *
->   * Must be called with the i_pages lock held.
-> + *
-> + * If the xa_state refers to a larger entry, then it may return a locked
-> + * smaller entry (eg a PTE entry) without waiting for the smaller entry
-> + * to be unlocked.
->   */
->  static void *get_unlocked_entry(struct xa_state *xas)
->  {
-> @@ -211,7 +215,8 @@ static void *get_unlocked_entry(struct xa_state *xas)
->         for (;;) {
->                 entry = xas_find_conflict(xas);
->                 if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
-> -                               !dax_is_locked(entry))
-> +                               !dax_is_locked(entry) ||
-> +                               dax_entry_order(entry) < xas_get_order(xas))
+thank you very much, this is looking very good. I've done some testing
+with your cleanups applied so that those can go in in this merge
+window. The result can be found here:
 
-Doesn't this potentially allow a locked entry to be returned for a
-caller that expects all value entries are unlocked?
+  https://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git/log/?h=for-next.cleanups
 
->                         return entry;
->
->                 wq = dax_entry_waitqueue(xas, entry, &ewait.key);
-> @@ -253,8 +258,12 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
->
->  static void put_unlocked_entry(struct xa_state *xas, void *entry)
->  {
-> -       /* If we were the only waiter woken, wake the next one */
-> -       if (entry)
-> +       /*
-> +        * If we were the only waiter woken, wake the next one.
-> +        * Do not wake anybody if the entry is locked; that indicates
-> +        * we weren't woken.
-> +        */
-> +       if (entry && !dax_is_locked(entry))
->                 dax_wake_entry(xas, entry, false);
->  }
->
-> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-> index 052e06ff4c36..b17289d92af4 100644
-> --- a/include/linux/xarray.h
-> +++ b/include/linux/xarray.h
-> @@ -1529,6 +1529,27 @@ static inline void xas_set_order(struct xa_state *xas, unsigned long index,
->  #endif
->  }
->
-> +/**
-> + * xas_get_order() - Get the order of the entry being operated on.
-> + * @xas: XArray operation state.
-> + *
-> + * Return: The order of the entry.
-> + */
-> +static inline unsigned int xas_get_order(const struct xa_state *xas)
-> +{
-> +       unsigned int order = xas->xa_shift;
-> +
-> +#ifdef CONFIG_XARRAY_MULTI
-> +       unsigned int sibs = xas->xa_sibs;
-> +
-> +       while (sibs) {
-> +               order++;
-> +               sibs /= 2;
-> +       }
+Patch "gfs2: implement gfs2_block_zero_range using iomap_zero_range"
+isn't quite ready: the gfs2 iomap operations don't handle IOMAP_ZERO
+correctly so far, and that needs to be fixed first.
 
-Use ilog2() here?
+The actual buffer head removal will obviously have to wait a little
+longer because of the required infrastructure changes, but also
+because that still needs a lot more review and testing work.
+
+> This has only seen basic testing which ensured neither 4k or 1k blocksize
+> in ordered mode regressed vs the xfstests baseline, although that baseline
+> tends to look pretty bleak.
+
+Some of the tests assume that the filesystem supports unwritten
+extents, trusted xattrs, the usrquota / grpquota / prjquota mount
+options. There shouldn't be a huge number of failing tests beyond
+that, but I know things aren't perfect.
+
+> The series is to be applied on top of my "lift the xfs writepage code
+> into iomap v2" series.
+
+Again, thanks a lot for the patches!
+
+Andreas
