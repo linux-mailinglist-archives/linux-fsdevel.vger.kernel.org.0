@@ -2,117 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F9625EB12
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 20:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F0255EC42
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 21:08:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbfGCSDs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 14:03:48 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43188 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbfGCSDr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 14:03:47 -0400
-Received: by mail-ed1-f65.google.com with SMTP id e3so2935022edr.10;
-        Wed, 03 Jul 2019 11:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HktW2jbQb9daIuq89e7+nyOPIHE/MzRFk27e0RIauhk=;
-        b=I6CJEt6Z614d/vSVK4+ovKXsIY1OyStNiw/0DEsDi90EDdqxejjwwm6CxHQoLzDKTh
-         Kza0fDDdy+hYQnvd1trjWk2Yot/LCubzZ55fOGVoP51pjW5W8C4CMJj6jlD0Yi7cSVj1
-         naxRs6Yrh6fjZuddxCjI18AaGlVJvAI2MfTWOT/+6GOyKJbIaw2xOkVaqVG4UODVWSd9
-         Jib8DVlH/MamdEaPyeujMXQRMyITR71/z1UQJBPSmjseVyu1RytxGrisCGbvb4IuZzt8
-         hJZWi9Pxr9LOswwOA0pNnT1lK+5DPn3+gKuEKRU3tY/bMDvmm/J1qHhrfTzi+KsxNCfT
-         Ig6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HktW2jbQb9daIuq89e7+nyOPIHE/MzRFk27e0RIauhk=;
-        b=mI/uJgldtzLvQQTfCfMi5qlOqnVG6mNW/Ek5krGY/r/PdbVgGg4G8y9Xq/VXOP305Q
-         N5njfHeyTfQnpK9m9OKXNZZKCuPOvT6qJlhcofCb8tLiL3iyAlTk0lkWX8sTy95bKzLa
-         On9DQsR4dRK3xHt30WQeNbIldfuYyv3RT74lXVmlC3sqZZjJQn8benXI2m4GkgQW8lzd
-         CWZbJrRbNuUDdX8f/9U0zjB+003WS4voIF1uXC1z40X1mp0wED2s3SxsLxoXmVNfvcML
-         FpXgXnSbSgWwkDQvJcDYcMti5M9NjrCwG75b1a6Z4UrRtC6/OXHAonly/Kz6CsoeQFYk
-         Ve7w==
-X-Gm-Message-State: APjAAAXM4fbEwoxOHhcakgZH9wCwj57gVL4DiRCcnA5m3IMbSGIHZRwe
-        aknPhnEJ+kD2W9INI2NYR38=
-X-Google-Smtp-Source: APXvYqxJnEihMQhEJBAJmLJZlc+dec6NPvUGNPBXjPZf9NCZYQ3YUxTRIiNzg505Yt6WsP+02smZpw==
-X-Received: by 2002:aa7:c515:: with SMTP id o21mr44067179edq.2.1562177025786;
-        Wed, 03 Jul 2019 11:03:45 -0700 (PDT)
-Received: from [10.68.217.182] ([217.70.211.18])
-        by smtp.gmail.com with ESMTPSA id g11sm589222ejm.86.2019.07.03.11.03.43
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jul 2019 11:03:45 -0700 (PDT)
-Subject: Re: [PATCH] mm: Support madvise_willneed override by Filesystems
-To:     Jan Kara <jack@suse.cz>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-bcache@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Zach Brown <zach.brown@ni.com>, Jens Axboe <axboe@kernel.dk>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, Amir Goldstein <amir73il@gmail.com>
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
- <20190611011737.GA28701@kmo-pixel>
- <20190611043336.GB14363@dread.disaster.area>
- <20190612162144.GA7619@kmo-pixel>
- <20190612230224.GJ14308@dread.disaster.area>
- <20190619082141.GA32409@quack2.suse.cz>
- <27171de5-430e-b3a8-16f1-7ce25b76c874@gmail.com>
- <20190703172141.GD26423@quack2.suse.cz>
-From:   Boaz Harrosh <openosd@gmail.com>
-Message-ID: <7206059e-5a57-aa46-0a6c-e62b085f6c75@gmail.com>
-Date:   Wed, 3 Jul 2019 21:03:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726973AbfGCTIu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 15:08:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726430AbfGCTIu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jul 2019 15:08:50 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34097218A0;
+        Wed,  3 Jul 2019 19:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562180928;
+        bh=HoXkaVqeIwrvWqdQqRzUqS/2kqEcLJsak8sUVTa70Mg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iCGRdqfrO1yKOvMzmAzI4FSJ11JFFdrT8uAKg+aygBP5h5IfEI6mCyBes+A3df9OC
+         Ie4OwB9l5sIwKRko882CHgAkuHxlAwo7FQ0azM7j+nkURsbAu2Rj2Ldo80uVacZ9Ll
+         swNUriKPHqt6e9DGUl5mf0/CKOg3sWOFNDJaxhoM=
+Date:   Wed, 3 Jul 2019 21:08:46 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
+        raven@themaw.net, Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/9] Add a general, global device notification watch list
+ [ver #5]
+Message-ID: <20190703190846.GA15663@kroah.com>
+References: <156173690158.15137.3985163001079120218.stgit@warthog.procyon.org.uk>
+ <156173697086.15137.9549379251509621554.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20190703172141.GD26423@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <156173697086.15137.9549379251509621554.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 03/07/2019 20:21, Jan Kara wrote:
-> On Wed 03-07-19 04:04:57, Boaz Harrosh wrote:
->> On 19/06/2019 11:21, Jan Kara wrote:
->> <>
-<>
->> Hi Jan
->>
->> Funny I'm sitting on the same patch since LSF last. I need it too for other
->> reasons. I have not seen, have you pushed your patch yet?
->> (Is based on old v4.20)
+On Fri, Jun 28, 2019 at 04:49:30PM +0100, David Howells wrote:
+> Create a general, global watch list that can be used for the posting of
+> device notification events, for such things as device attachment,
+> detachment and errors on sources such as block devices and USB devices.
+> This can be enabled with:
 > 
-> Your patch is wrong due to lock ordering. You should not call vfs_fadvise()
-> under mmap_sem. So we need to do a similar dance like madvise_remove(). I
-> have to get to writing at least XFS fix so that the madvise change gets
-> used and post the madvise patch with it... Sorry it takes me so long.
+> 	CONFIG_DEVICE_NOTIFICATIONS
 > 
-> 								Honza
+> To add a watch on this list, an event queue must be created and configured:
+> 
+>         fd = open("/dev/event_queue", O_RDWR);
+>         ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, page_size << n);
+> 
+> and then a watch can be placed upon it using a system call:
+> 
+>         watch_devices(fd, 12, 0);
+> 
+> Unless the application wants to receive all events, it should employ
+> appropriate filters.
 
-Ha Sorry I was not aware of this. Lockdep did not catch it on my setup
-because my setup does not have any locking conflicts with mmap_sem on the
-WILL_NEED path.
+Ok, as discussed off-list, this is needed by the other patches
+afterward, i.e. the USB and block ones, which makes more sense.
 
-But surly you are right because the all effort is to fix the locking problems.
+Some tiny nits:
 
-I will also try in a day or two to do as you suggest, and look at madvise_remove()
-once I have a bit of time. Who ever gets to be less busy ...
+> diff --git a/drivers/base/watch.c b/drivers/base/watch.c
+> new file mode 100644
+> index 000000000000..00336607dc73
+> --- /dev/null
+> +++ b/drivers/base/watch.c
+> @@ -0,0 +1,90 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Event notifications.
+> + *
+> + * Copyright (C) 2019 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + */
+> +
+> +#include <linux/watch_queue.h>
+> +#include <linux/syscalls.h>
+> +#include <linux/init_task.h>
+> +#include <linux/security.h>
 
-Thank you for your help
-Boaz
+You forgot to include device.h which has the prototype for your global
+function :)
+
+> +
+> +/*
+> + * Global queue for watching for device layer events.
+> + */
+> +static struct watch_list device_watchers = {
+> +	.watchers	= HLIST_HEAD_INIT,
+> +	.lock		= __SPIN_LOCK_UNLOCKED(&device_watchers.lock),
+> +};
+> +
+> +static DEFINE_SPINLOCK(device_watchers_lock);
+> +
+> +/**
+> + * post_device_notification - Post notification of a device event
+> + * @n - The notification to post
+> + * @id - The device ID
+> + *
+> + * Note that there's only a global queue to which all events are posted.  Might
+> + * want to provide per-dev queues also.
+> + */
+> +void post_device_notification(struct watch_notification *n, u64 id)
+> +{
+> +	post_watch_notification(&device_watchers, n, &init_cred, id);
+> +}
+
+Don't you need to export this symbol?
+
+> +
+> +/**
+> + * sys_watch_devices - Watch for device events.
+> + * @watch_fd: The watch queue to send notifications to.
+> + * @watch_id: The watch ID to be placed in the notification (-1 to remove watch)
+> + * @flags: Flags (reserved for future)
+> + */
+> +SYSCALL_DEFINE3(watch_devices, int, watch_fd, int, watch_id, unsigned int, flags)
+
+Finally, the driver core gets a syscall!  :)
+
+Don't we need a manpage and a kselftest for it?
+
+> +{
+> +	struct watch_queue *wqueue;
+> +	struct watch_list *wlist = &device_watchers;
+
+No real need for wlist, right?  You just set it to this value and then
+it never changes?
+
+> +	struct watch *watch;
+> +	long ret = -ENOMEM;
+> +	u64 id = 0; /* Might want to allow dev# here. */
+
+I don't understand the comment here, what does "dev#" refer to?
+
+> +
+> +	if (watch_id < -1 || watch_id > 0xff || flags)
+> +		return -EINVAL;
+> +
+> +	wqueue = get_watch_queue(watch_fd);
+> +	if (IS_ERR(wqueue)) {
+> +		ret = PTR_ERR(wqueue);
+> +		goto err;
+> +	}
+> +
+> +	if (watch_id >= 0) {
+> +		watch = kzalloc(sizeof(*watch), GFP_KERNEL);
+> +		if (!watch)
+> +			goto err_wqueue;
+> +
+> +		init_watch(watch, wqueue);
+> +		watch->id	= id;
+> +		watch->info_id	= (u32)watch_id << WATCH_INFO_ID__SHIFT;
+> +
+> +		ret = security_watch_devices(watch);
+> +		if (ret < 0)
+> +			goto err_watch;
+> +
+> +		spin_lock(&device_watchers_lock);
+> +		ret = add_watch_to_object(watch, wlist);
+> +		spin_unlock(&device_watchers_lock);
+> +		if (ret == 0)
+> +			watch = NULL;
+> +	} else {
+> +		spin_lock(&device_watchers_lock);
+> +		ret = remove_watch_from_object(wlist, wqueue, id, false);
+> +		spin_unlock(&device_watchers_lock);
+> +	}
+> +
+> +err_watch:
+> +	kfree(watch);
+> +err_wqueue:
+> +	put_watch_queue(wqueue);
+> +err:
+> +	return ret;
+> +}
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index e85264fb6616..c947c078b1be 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -26,6 +26,7 @@
+>  #include <linux/uidgid.h>
+>  #include <linux/gfp.h>
+>  #include <linux/overflow.h>
+> +#include <linux/watch_queue.h>
+
+No need for this, just do:
+
+struct watch_notification;
+
+so that things build.
+
+thanks,
+
+greg k-h
