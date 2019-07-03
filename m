@@ -2,110 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 230D95D8C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 02:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0664E5D932
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 02:37:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbfGCA23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jul 2019 20:28:29 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33962 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727164AbfGCA23 (ORCPT
+        id S1727123AbfGCAhe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jul 2019 20:37:34 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:59280 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727025AbfGCAhe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:28:29 -0400
-Received: by mail-ed1-f65.google.com with SMTP id s49so322577edb.1;
-        Tue, 02 Jul 2019 17:28:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=O3TFYB/c8JGnIRSgqNPJw6u3GSkSqR28UU4ekieR1ww=;
-        b=c0Orqe6NQBE+sHLXT5J5nmlLtMemzO5waTwx4hEj7Bl04/hl6C0P+6hPRYDEAfph90
-         kg1ZVytJWoslu+wvzvpUmTJPGiWopB+CqjCPc1Ge/93q2IP0ruxhLtlIhl9ed5+hAqt5
-         /04yd0PyFdt0vekPpPo4dFYgQoX6r20BGdXRZhU33xxOAymQ9VLEdjBkSUPX4Ohh4xaK
-         oeKBpm1hXGBKA61bwDXLWcFXYxJKHcfDwnjVubiVNIz/V5hs0Bw4n8t7dH6rTZ7TISUi
-         8mAGclvqyCqY9XkLjYY0ydocBF0Zn5lUOoodMkb+gzJ84nYE5DlVPwzL6wE4hw5zTVn7
-         NnOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=O3TFYB/c8JGnIRSgqNPJw6u3GSkSqR28UU4ekieR1ww=;
-        b=m1quNqkNMIdkPgcBHittKTv5Ykk16LxXkEtft1qw4SIdIpd1As8bUm5H/MPIsWbuVW
-         5iDyNyVkBqyowa12CsL+g/RkAdC3u2qVklMFerSERexeZC9NS/e8CV7D1EeTH4HSGTso
-         ZKmoCs/3obLYMdZJqNCR23Ru1yaMw72fIk5XlndXEqJDYlO9FWf1QXrKPqnqZu9BLX1w
-         5T37MktAZtp+DaqkCXcPRGeaI0NzLub7voc+ozvgGCmYv506UClX6Ixfx1UQR/Yd1QM+
-         MX1k9VqAJUkgoVvanth59MXeGxDb4hU41cM6hq2owxaGFcoG8NVMttnfDvyiVuexfbuW
-         mQaA==
-X-Gm-Message-State: APjAAAWzSwxBgVJkVU2aawStGXYi+/H0LQgZfpPVJECaLY9p4vjFNxeu
-        /vyfyUWFWlR1YBiT5bzh6xs=
-X-Google-Smtp-Source: APXvYqw0ZksS0YC+pGL/ouOk9KhOw5LGAqS0CHttjy+Br4pM+v+dICQr6KzW3wmEDGg0H++t5zQLow==
-X-Received: by 2002:aa7:c692:: with SMTP id n18mr38211777edq.220.1562113372104;
-        Tue, 02 Jul 2019 17:22:52 -0700 (PDT)
-Received: from [10.68.217.182] ([217.70.211.18])
-        by smtp.gmail.com with ESMTPSA id b19sm113853eje.80.2019.07.02.17.22.50
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2019 17:22:51 -0700 (PDT)
-Subject: Re: [PATCH] filesystem-dax: Disable PMD support
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-References: <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
- <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
- <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
- <20190627195948.GB4286@bombadil.infradead.org>
- <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
- <20190629160336.GB1180@bombadil.infradead.org>
- <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
- <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
- <20190630152324.GA15900@bombadil.infradead.org>
- <CAPcyv4j2NBPBEUU3UW1Q5OyOEuo9R5e90HpkowpeEkMsAKiUyQ@mail.gmail.com>
- <20190702033410.GB1729@bombadil.infradead.org>
- <CAPcyv4iEkN1o5HD6Gb9m5ohdAVQhmtiTDcFE+PMQczYx635Vwg@mail.gmail.com>
-From:   Boaz Harrosh <openosd@gmail.com>
-Message-ID: <fa9b9165-7910-1fbd-fb5b-78023936d2f2@gmail.com>
-Date:   Wed, 3 Jul 2019 03:22:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4iEkN1o5HD6Gb9m5ohdAVQhmtiTDcFE+PMQczYx635Vwg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+        Tue, 2 Jul 2019 20:37:34 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 48BE28EE1D2;
+        Tue,  2 Jul 2019 17:37:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1562114254;
+        bh=uyzX6BoE1CwDs0CD6pnhs6F4/+UpRopcnU/hOzBnNNw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=vQyDZzWW3sZnLm6fLKFB04mnrY7TaJBg9G//u7FKHiUAnX2V912X26EJRk/KmTvcn
+         jJIsM6mRZZ2kmRUzeBDhzzvsWS0sUfyvdTLOe1EzswmTn2GT/3NsvAjo1Vda+yYgVg
+         COlvz7XL50US3q2NEesSe7p2LrfMTOpSD/mUzxyM=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8bT_NPhGTwR4; Tue,  2 Jul 2019 17:37:34 -0700 (PDT)
+Received: from jarvis.lan (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id BAAF18EE0CC;
+        Tue,  2 Jul 2019 17:37:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1562114253;
+        bh=uyzX6BoE1CwDs0CD6pnhs6F4/+UpRopcnU/hOzBnNNw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=YpJyr7JsuVvGT1ykRzxd9h2/EEh1dPbfQKip40Wx6lDwrObnlS+tSy27iSu5DqwhP
+         fX4CrrGlhUxZcLrv6fVTDHkSL9SSUMRzu3NDnxPT0C3K4k34KaEDkahutoDjOS7oZM
+         1qdtKsMME+Hty5mWf4bdJB7ZeS8WyVmk0Jc5O+K0=
+Message-ID: <1562114252.29304.64.camel@HansenPartnership.com>
+Subject: Re: [BUG] mke2fs produces corrupt filesystem if badblock list
+ contains a block under 251
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>
+Date:   Tue, 02 Jul 2019 17:37:32 -0700
+In-Reply-To: <20190702203937.GG3032@mit.edu>
+References: <1562021070.2762.36.camel@HansenPartnership.com>
+         <20190702002355.GB3315@mit.edu>
+         <1562028814.2762.50.camel@HansenPartnership.com>
+         <20190702173301.GA3032@mit.edu>
+         <1562095894.3321.52.camel@HansenPartnership.com>
+         <20190702203937.GG3032@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 02/07/2019 18:37, Dan Williams wrote:
-<>
+On Tue, 2019-07-02 at 16:39 -0400, Theodore Ts'o wrote:
+> On Tue, Jul 02, 2019 at 12:31:34PM -0700, James Bottomley wrote:
+> > Actually, this is giving me:
+> > 
+> > mke2fs: Operation not supported for inodes containing extents while
+> > creating huge files
+> > 
+> > Is that because it's an ext4 only feature?
 > 
-> I'd be inclined to do the brute force fix of not trying to get fancy
-> with separate PTE/PMD waitqueues and then follow on with a more clever
-> performance enhancement later. Thoughts about that?
-> 
+> That'll teach me not to send out a sequence like that without testing
+> it myself first.  :-)
 
-Sir Dan
+Heh, join the club ... it has a very large membership ... I've got a
+frequent flier card for it ...
 
-I do not understand how separate waitqueues are any performance enhancement?
-The all point of the waitqueues is that there is enough of them and the hash
-function does a good radomization spread to effectively grab a single locker
-per waitqueue unless the system is very contended and waitqueues are shared.
-Which is good because it means you effectively need a back pressure to the app.
-(Because pmem IO is mostly CPU bound with no long term sleeps I do not think
- you will ever get to that situation)
+> Yeah, because one of the requirements was to make the file
+> contiguous, without any intervening indirect block or extent tree
+> blocks, the creation of the file is done manually, and at the time, I
+> only implemented it for extents, since the original goal of the goal
+> was to create really big files (hence the name of the feature
+> "mk_hugefile"), and using indirect blocks would be a huge waste of
+> disk space.
 
-So the way I understand it having twice as many waitqueues serving two types
-will be better performance over all then, segregating the types each with half
-the number of queues.
+I guessed as much.
 
-(Regardless of the above problem of where the segregation is not race clean)
+> It wouldn't be that hard for me to add support for indirect block
+> maps, or if you were going to convert things over so that the pa_risc
+> 2nd stage boot loader can understand how to read from extents,
+> that'll allow this to work as well.
 
-Thanks
-Boaz
+Let me look at it.  I think I can just take routines out of lib/ext2fs
+and graft them into the IPL, but our own home grown ext2/3 handling
+routines are slightly eccentric so it's not as simple as that.
+
+James
+
