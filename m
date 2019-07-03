@@ -2,208 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F0255EC42
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 21:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD3D5ECFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 21:53:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfGCTIu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 15:08:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbfGCTIu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 15:08:50 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34097218A0;
-        Wed,  3 Jul 2019 19:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562180928;
-        bh=HoXkaVqeIwrvWqdQqRzUqS/2kqEcLJsak8sUVTa70Mg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iCGRdqfrO1yKOvMzmAzI4FSJ11JFFdrT8uAKg+aygBP5h5IfEI6mCyBes+A3df9OC
-         Ie4OwB9l5sIwKRko882CHgAkuHxlAwo7FQ0azM7j+nkURsbAu2Rj2Ldo80uVacZ9Ll
-         swNUriKPHqt6e9DGUl5mf0/CKOg3sWOFNDJaxhoM=
-Date:   Wed, 3 Jul 2019 21:08:46 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
-        raven@themaw.net, Christian Brauner <christian@brauner.io>,
-        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/9] Add a general, global device notification watch list
- [ver #5]
-Message-ID: <20190703190846.GA15663@kroah.com>
-References: <156173690158.15137.3985163001079120218.stgit@warthog.procyon.org.uk>
- <156173697086.15137.9549379251509621554.stgit@warthog.procyon.org.uk>
+        id S1727094AbfGCTxE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 15:53:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50470 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbfGCTxD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jul 2019 15:53:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vqmc8HmxSdsdZnmxVteLD7yTFn26ShwrILrKMFB1/Tc=; b=rbCs6946skmxDkFEn5TfgPylE
+        laGOaLKGnO9S5VL454/xNsm3WwPwWIxPnLXto3FC4YWiMtUACCGPfVKtUUu7ZQEoCcvzVCPYexAVn
+        j6GiW1iesIW/RVOjEEwWjG0FX6M/rb/g8ZbhSnfDEJTwS1Tui7BejMq18AjlomFkn364bPFv9jm2V
+        DmW58ErGlBOZjRgk8n1ehE3LmaSBh6IVZ7624NgU0HPj5ow+CdVOVaf8EKci5a924fPxNz34M9wlr
+        KZ4LJPC2P98XGM/fucAuOVB/0lObjFzajE9o4w2Jcca+TuXZFrFGFP4hUs7MhuGrqTADdnBUaR1PD
+        FfDHBxtWQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hilJO-0006Fu-TK; Wed, 03 Jul 2019 19:53:02 +0000
+Date:   Wed, 3 Jul 2019 12:53:02 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Boaz Harrosh <openosd@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+Message-ID: <20190703195302.GJ1729@bombadil.infradead.org>
+References: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190703121743.GH1729@bombadil.infradead.org>
+ <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <156173697086.15137.9549379251509621554.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 04:49:30PM +0100, David Howells wrote:
-> Create a general, global watch list that can be used for the posting of
-> device notification events, for such things as device attachment,
-> detachment and errors on sources such as block devices and USB devices.
-> This can be enabled with:
+On Wed, Jul 03, 2019 at 10:01:37AM -0700, Dan Williams wrote:
+> On Wed, Jul 3, 2019 at 5:17 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Wed, Jul 03, 2019 at 12:24:54AM -0700, Dan Williams wrote:
+> > > This fix may increase waitqueue contention, but a fix for that is saved
+> > > for a larger rework. In the meantime this fix is suitable for -stable
+> > > backports.
+> >
+> > I think this is too big for what it is; just the two-line patch to stop
+> > incorporating the low bits of the PTE would be more appropriate.
 > 
-> 	CONFIG_DEVICE_NOTIFICATIONS
-> 
-> To add a watch on this list, an event queue must be created and configured:
-> 
->         fd = open("/dev/event_queue", O_RDWR);
->         ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, page_size << n);
-> 
-> and then a watch can be placed upon it using a system call:
-> 
->         watch_devices(fd, 12, 0);
-> 
-> Unless the application wants to receive all events, it should employ
-> appropriate filters.
+> Sufficient, yes, "appropriate", not so sure. All those comments about
+> pmd entry size are stale after this change.
 
-Ok, as discussed off-list, this is needed by the other patches
-afterward, i.e. the USB and block ones, which makes more sense.
+But then they'll have to be put back in again.  This seems to be working
+for me, although I doubt I'm actually hitting the edge case that rocksdb
+hits:
 
-Some tiny nits:
-
-> diff --git a/drivers/base/watch.c b/drivers/base/watch.c
-> new file mode 100644
-> index 000000000000..00336607dc73
-> --- /dev/null
-> +++ b/drivers/base/watch.c
-> @@ -0,0 +1,90 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Event notifications.
-> + *
-> + * Copyright (C) 2019 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + */
-> +
-> +#include <linux/watch_queue.h>
-> +#include <linux/syscalls.h>
-> +#include <linux/init_task.h>
-> +#include <linux/security.h>
-
-You forgot to include device.h which has the prototype for your global
-function :)
-
-> +
-> +/*
-> + * Global queue for watching for device layer events.
-> + */
-> +static struct watch_list device_watchers = {
-> +	.watchers	= HLIST_HEAD_INIT,
-> +	.lock		= __SPIN_LOCK_UNLOCKED(&device_watchers.lock),
-> +};
-> +
-> +static DEFINE_SPINLOCK(device_watchers_lock);
-> +
-> +/**
-> + * post_device_notification - Post notification of a device event
-> + * @n - The notification to post
-> + * @id - The device ID
-> + *
-> + * Note that there's only a global queue to which all events are posted.  Might
-> + * want to provide per-dev queues also.
-> + */
-> +void post_device_notification(struct watch_notification *n, u64 id)
-> +{
-> +	post_watch_notification(&device_watchers, n, &init_cred, id);
-> +}
-
-Don't you need to export this symbol?
-
-> +
-> +/**
-> + * sys_watch_devices - Watch for device events.
-> + * @watch_fd: The watch queue to send notifications to.
-> + * @watch_id: The watch ID to be placed in the notification (-1 to remove watch)
-> + * @flags: Flags (reserved for future)
-> + */
-> +SYSCALL_DEFINE3(watch_devices, int, watch_fd, int, watch_id, unsigned int, flags)
-
-Finally, the driver core gets a syscall!  :)
-
-Don't we need a manpage and a kselftest for it?
-
-> +{
-> +	struct watch_queue *wqueue;
-> +	struct watch_list *wlist = &device_watchers;
-
-No real need for wlist, right?  You just set it to this value and then
-it never changes?
-
-> +	struct watch *watch;
-> +	long ret = -ENOMEM;
-> +	u64 id = 0; /* Might want to allow dev# here. */
-
-I don't understand the comment here, what does "dev#" refer to?
-
-> +
-> +	if (watch_id < -1 || watch_id > 0xff || flags)
-> +		return -EINVAL;
-> +
-> +	wqueue = get_watch_queue(watch_fd);
-> +	if (IS_ERR(wqueue)) {
-> +		ret = PTR_ERR(wqueue);
-> +		goto err;
-> +	}
-> +
-> +	if (watch_id >= 0) {
-> +		watch = kzalloc(sizeof(*watch), GFP_KERNEL);
-> +		if (!watch)
-> +			goto err_wqueue;
-> +
-> +		init_watch(watch, wqueue);
-> +		watch->id	= id;
-> +		watch->info_id	= (u32)watch_id << WATCH_INFO_ID__SHIFT;
-> +
-> +		ret = security_watch_devices(watch);
-> +		if (ret < 0)
-> +			goto err_watch;
-> +
-> +		spin_lock(&device_watchers_lock);
-> +		ret = add_watch_to_object(watch, wlist);
-> +		spin_unlock(&device_watchers_lock);
-> +		if (ret == 0)
-> +			watch = NULL;
-> +	} else {
-> +		spin_lock(&device_watchers_lock);
-> +		ret = remove_watch_from_object(wlist, wqueue, id, false);
-> +		spin_unlock(&device_watchers_lock);
-> +	}
-> +
-> +err_watch:
-> +	kfree(watch);
-> +err_wqueue:
-> +	put_watch_queue(wqueue);
-> +err:
-> +	return ret;
-> +}
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index e85264fb6616..c947c078b1be 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -26,6 +26,7 @@
->  #include <linux/uidgid.h>
->  #include <linux/gfp.h>
->  #include <linux/overflow.h>
-> +#include <linux/watch_queue.h>
-
-No need for this, just do:
-
-struct watch_notification;
-
-so that things build.
-
-thanks,
-
-greg k-h
+diff --git a/fs/dax.c b/fs/dax.c
+index 2e48c7ebb973..e77bd6aef10c 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -198,6 +198,10 @@ static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
+  * if it did.
+  *
+  * Must be called with the i_pages lock held.
++ *
++ * If the xa_state refers to a larger entry, then it may return a locked
++ * smaller entry (eg a PTE entry) without waiting for the smaller entry
++ * to be unlocked.
+  */
+ static void *get_unlocked_entry(struct xa_state *xas)
+ {
+@@ -211,7 +215,8 @@ static void *get_unlocked_entry(struct xa_state *xas)
+ 	for (;;) {
+ 		entry = xas_find_conflict(xas);
+ 		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
+-				!dax_is_locked(entry))
++				!dax_is_locked(entry) ||
++				dax_entry_order(entry) < xas_get_order(xas))
+ 			return entry;
+ 
+ 		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
+@@ -253,8 +258,12 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
+ 
+ static void put_unlocked_entry(struct xa_state *xas, void *entry)
+ {
+-	/* If we were the only waiter woken, wake the next one */
+-	if (entry)
++	/*
++	 * If we were the only waiter woken, wake the next one.
++	 * Do not wake anybody if the entry is locked; that indicates
++	 * we weren't woken.
++	 */
++	if (entry && !dax_is_locked(entry))
+ 		dax_wake_entry(xas, entry, false);
+ }
+ 
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 052e06ff4c36..b17289d92af4 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -1529,6 +1529,27 @@ static inline void xas_set_order(struct xa_state *xas, unsigned long index,
+ #endif
+ }
+ 
++/**
++ * xas_get_order() - Get the order of the entry being operated on.
++ * @xas: XArray operation state.
++ *
++ * Return: The order of the entry.
++ */
++static inline unsigned int xas_get_order(const struct xa_state *xas)
++{
++	unsigned int order = xas->xa_shift;
++
++#ifdef CONFIG_XARRAY_MULTI
++	unsigned int sibs = xas->xa_sibs;
++
++	while (sibs) {
++		order++;
++		sibs /= 2;
++	}
++#endif
++	return order;
++}
++
+ /**
+  * xas_set_update() - Set up XArray operation state for a callback.
+  * @xas: XArray operation state.
+diff --git a/lib/test_xarray.c b/lib/test_xarray.c
+index 7df4f7f395bf..af024477ec93 100644
+--- a/lib/test_xarray.c
++++ b/lib/test_xarray.c
+@@ -95,6 +95,17 @@ static noinline void check_xa_err(struct xarray *xa)
+ //	XA_BUG_ON(xa, xa_err(xa_store(xa, 0, xa_mk_internal(0), 0)) != -EINVAL);
+ }
+ 
++static noinline void check_xas_order(struct xarray *xa)
++{
++	XA_STATE(xas, xa, 0);
++	unsigned int i;
++
++	for (i = 0; i < sizeof(long) * 8; i++) {
++		xas_set_order(&xas, 0, i);
++		XA_BUG_ON(xa, xas_get_order(&xas) != i);
++	}
++}
++
+ static noinline void check_xas_retry(struct xarray *xa)
+ {
+ 	XA_STATE(xas, xa, 0);
+@@ -1583,6 +1594,7 @@ static DEFINE_XARRAY(array);
+ static int xarray_checks(void)
+ {
+ 	check_xa_err(&array);
++	check_xas_order(&array);
+ 	check_xas_retry(&array);
+ 	check_xa_load(&array);
+ 	check_xa_mark(&array);
