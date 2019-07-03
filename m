@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 203945EA0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 19:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B78085EA15
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 19:08:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfGCRHm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 13:07:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33668 "EHLO mail.kernel.org"
+        id S1727121AbfGCRIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 13:08:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbfGCRHl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 13:07:41 -0400
+        id S1726430AbfGCRIN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jul 2019 13:08:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83B1A2187F;
-        Wed,  3 Jul 2019 17:07:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE6EE2080C;
+        Wed,  3 Jul 2019 17:08:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562173661;
-        bh=/RsbjU0GcwuC/hHmX+8fVG3Hp6wHqgpo3y9n61F0SxY=;
+        s=default; t=1562173692;
+        bh=0ouf0Y73C+G8kK8V/y9ZdKcbKz2QNfNH9xVkkqZP1JA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0nxWUS1La7/zEKqHAoUcBBVMRp2NYddXSWFXok0//5VtJVIdUHfaOpP+d/yq+9yex
-         UNMulkzSIaZm2boFWUuypl2hdK47+RKfEpM5PUMrKg9KRDy5yVKQMta6VZPmYTEY3Q
-         S1lI+T8f/apMXIIHf3mwnwco6ZlFoYmsGCh77dOU=
-Date:   Wed, 3 Jul 2019 19:07:38 +0200
+        b=gJ0o71u9D8lYdXoiiMKqqplUcWvoc5CoTLCEvXJliqmrj/bLCD4U7ZquS4QjDfQ5S
+         y6bAUovvtz1ELtv2hiWjY7X3gqzzZwKjN1wdiZhn6duk1o19EUlj0mUvmKXPY6BMpf
+         chEbpSaJjWxWVemuFC7cZlw0f5molzIeYgqrlTLE=
+Date:   Wed, 3 Jul 2019 19:08:10 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     David Howells <dhowells@redhat.com>
 Cc:     viro@zeniv.linux.org.uk, Casey Schaufler <casey@schaufler-ca.com>,
@@ -33,81 +33,68 @@ Cc:     viro@zeniv.linux.org.uk, Casey Schaufler <casey@schaufler-ca.com>,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/9] usb: Add USB subsystem notifications [ver #5]
-Message-ID: <20190703170738.GA24672@kroah.com>
+Subject: Re: [PATCH 1/9] uapi: General notification ring definitions [ver #5]
+Message-ID: <20190703170810.GB24672@kroah.com>
 References: <156173690158.15137.3985163001079120218.stgit@warthog.procyon.org.uk>
- <156173698939.15137.11150923486478934112.stgit@warthog.procyon.org.uk>
+ <156173691411.15137.2073887155273175167.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <156173698939.15137.11150923486478934112.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156173691411.15137.2073887155273175167.stgit@warthog.procyon.org.uk>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 04:49:49PM +0100, David Howells wrote:
-> Add a USB subsystem notification mechanism whereby notifications about
-> hardware events such as device connection, disconnection, reset and I/O
-> errors, can be reported to a monitoring process asynchronously.
+On Fri, Jun 28, 2019 at 04:48:34PM +0100, David Howells wrote:
+> Add UAPI definitions for the general notification ring, including the
+> following pieces:
 > 
-> Firstly, an event queue needs to be created:
+>  (1) struct watch_notification.
 > 
-> 	fd = open("/dev/event_queue", O_RDWR);
-> 	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, page_size << n);
+>      This is the metadata header for each entry in the ring.  It includes a
+>      type and subtype that indicate the source of the message
+>      (eg. WATCH_TYPE_MOUNT_NOTIFY) and the kind of the message
+>      (eg. NOTIFY_MOUNT_NEW_MOUNT).
 > 
-> then a notification can be set up to report USB notifications via that
-> queue:
+>      The header also contains an information field that conveys the
+>      following information:
 > 
-> 	struct watch_notification_filter filter = {
-> 		.nr_filters = 1,
-> 		.filters = {
-> 			[0] = {
-> 				.type = WATCH_TYPE_USB_NOTIFY,
-> 				.subtype_filter[0] = UINT_MAX;
-> 			},
-> 		},
-> 	};
-> 	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
-> 	notify_devices(fd, 12);
+> 	- WATCH_INFO_LENGTH.  The size of the entry (entries are variable
+>           length).
 > 
-> After that, records will be placed into the queue when events occur on a
-> USB device or bus.  Records are of the following format:
+> 	- WATCH_INFO_ID.  The watch ID specified when the watchpoint was
+>           set.
 > 
-> 	struct usb_notification {
-> 		struct watch_notification watch;
-> 		__u32	error;
-> 		__u32	reserved;
-> 		__u8	name_len;
-> 		__u8	name[0];
-> 	} *n;
+> 	- WATCH_INFO_TYPE_INFO.  (Sub)type-specific information.
 > 
-> Where:
+> 	- WATCH_INFO_FLAG_*.  Flag bits overlain on the type-specific
+>           information.  For use by the type.
 > 
-> 	n->watch.type will be WATCH_TYPE_USB_NOTIFY
+>      All the information in the header can be used in filtering messages at
+>      the point of writing into the buffer.
 > 
-> 	n->watch.subtype will be the type of notification, such as
-> 	NOTIFY_USB_DEVICE_ADD.
+>  (2) struct watch_queue_buffer.
 > 
-> 	n->watch.info & WATCH_INFO_LENGTH will indicate the length of the
-> 	record.
+>      This describes the layout of the ring.  Note that the first slots in
+>      the ring contain a special metadata entry that contains the ring
+>      pointers.  The producer in the kernel knows to skip this and it has a
+>      proper header (WATCH_TYPE_META, WATCH_META_SKIP_NOTIFICATION) that
+>      indicates the size so that the ring consumer can handle it the same as
+>      any other record and just skip it.
 > 
-> 	n->watch.info & WATCH_INFO_ID will be the second argument to
-> 	device_notify(), shifted.
+>      Note that this means that ring entries can never be split over the end
+>      of the ring, so if an entry would need to be split, a skip record is
+>      inserted to wrap the ring first; this is also WATCH_TYPE_META,
+>      WATCH_META_SKIP_NOTIFICATION.
 > 
-> 	n->error and n->reserved are intended to convey information such as
-> 	error codes, but are currently not used
+>  (3) WATCH_INFO_NOTIFICATIONS_LOST.
 > 
-> 	n->name_len and n->name convey the USB device name as an
-> 	unterminated string.  This may be truncated - it is currently
-> 	limited to a maximum 63 chars.
-> 
-> Note that it is permissible for event records to be of variable length -
-> or, at least, the length may be dependent on the subtype.
+>      This is a flag that can be set in the metadata header by the kernel to
+>      indicate that at least one message was lost since it was last cleared
+>      by userspace.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> cc: linux-usb@vger.kernel.org
 
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
