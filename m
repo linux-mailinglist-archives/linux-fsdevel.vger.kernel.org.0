@@ -2,63 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 226E15DE50
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 08:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B52C35DF01
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 09:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbfGCG4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 02:56:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42086 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726490AbfGCG4e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 02:56:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 84525AF84;
-        Wed,  3 Jul 2019 06:56:32 +0000 (UTC)
-Date:   Wed, 3 Jul 2019 08:56:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
- caches
-Message-ID: <20190703065628.GK978@dhcp22.suse.cz>
-References: <20190702183730.14461-1-longman@redhat.com>
+        id S1727227AbfGCHjP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 03:39:15 -0400
+Received: from mga03.intel.com ([134.134.136.65]:5217 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727008AbfGCHjP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jul 2019 03:39:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 00:39:14 -0700
+X-IronPort-AV: E=Sophos;i="5.63,446,1557212400"; 
+   d="scan'208";a="157884803"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2019 00:39:11 -0700
+Subject: [PATCH] dax: Fix missed PMD wakeups
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Boaz Harrosh <openosd@gmail.com>, stable@vger.kernel.org,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Date:   Wed, 03 Jul 2019 00:24:54 -0700
+Message-ID: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190702183730.14461-1-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 02-07-19 14:37:30, Waiman Long wrote:
-> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
-> file to shrink the slab by flushing all the per-cpu slabs and free
-> slabs in partial lists. This applies only to the root caches, though.
-> 
-> Extends this capability by shrinking all the child memcg caches and
-> the root cache when a value of '2' is written to the shrink sysfs file.
+Ever since the conversion of DAX to the Xarray a RocksDB benchmark has
+been encountering intermittent lockups. In the failing case a thread
+that is taking a PMD-fault is awaiting a wakeup while holding the
+'mmap_sem' for read. As soon as the next mmap() event occurs that tries
+to take the 'mmap_sem' for write it causes ps(1)  and any new 'mmap_sem'
+reader to block.
 
-Why do we need a new value for this functionality? I would tend to think
-that skipping memcg caches is a bug/incomplete implementation. Or is it
-a deliberate decision to cover root caches only?
--- 
-Michal Hocko
-SUSE Labs
+Debug shows that there are no outstanding Xarray entry-lock holders in
+the hang state which indicates that a PTE lock-holder thread caused a
+PMD thread to wait. When the PTE index-lock is released it may wake the
+wrong waitqueue depending on how the index hashes. Brute-force fix this
+by arranging for PTE-aligned indices within a PMD-span to hash to the
+same waitqueue as the PMD-index.
+
+This fix may increase waitqueue contention, but a fix for that is saved
+for a larger rework. In the meantime this fix is suitable for -stable
+backports.
+
+Link: https://lore.kernel.org/linux-fsdevel/CAPcyv4hwHpX-MkUEqxwdTj7wCCZCN4RV-L4jsnuwLGyL_UEG4A@mail>
+Fixes: b15cd800682f ("dax: Convert page fault handlers to XArray")
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Boaz Harrosh <openosd@gmail.com>
+Cc: <stable@vger.kernel.org>
+Reported-by: Robert Barror <robert.barror@intel.com>
+Reported-by: Seema Pandit <seema.pandit@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ fs/dax.c |   34 ++++++++++++----------------------
+ 1 file changed, 12 insertions(+), 22 deletions(-)
+
+diff --git a/fs/dax.c b/fs/dax.c
+index 9fd908f3df32..592944c522b8 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -144,19 +144,14 @@ struct wait_exceptional_entry_queue {
+ 	struct exceptional_entry_key key;
+ };
+ 
+-static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
+-		void *entry, struct exceptional_entry_key *key)
++static wait_queue_head_t *dax_index_waitqueue(struct xa_state *xas,
++		struct exceptional_entry_key *key)
+ {
+ 	unsigned long hash;
+ 	unsigned long index = xas->xa_index;
+ 
+-	/*
+-	 * If 'entry' is a PMD, align the 'index' that we use for the wait
+-	 * queue to the start of that PMD.  This ensures that all offsets in
+-	 * the range covered by the PMD map to the same bit lock.
+-	 */
+-	if (dax_is_pmd_entry(entry))
+-		index &= ~PG_PMD_COLOUR;
++	/* PMD-align the index to ensure PTE events wakeup PMD waiters */
++	index &= ~PG_PMD_COLOUR;
+ 	key->xa = xas->xa;
+ 	key->entry_start = index;
+ 
+@@ -177,17 +172,12 @@ static int wake_exceptional_entry_func(wait_queue_entry_t *wait,
+ 	return autoremove_wake_function(wait, mode, sync, NULL);
+ }
+ 
+-/*
+- * @entry may no longer be the entry at the index in the mapping.
+- * The important information it's conveying is whether the entry at
+- * this index used to be a PMD entry.
+- */
+-static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
++static void dax_wake_index(struct xa_state *xas, bool wake_all)
+ {
+ 	struct exceptional_entry_key key;
+ 	wait_queue_head_t *wq;
+ 
+-	wq = dax_entry_waitqueue(xas, entry, &key);
++	wq = dax_index_waitqueue(xas, &key);
+ 
+ 	/*
+ 	 * Checking for locked entry and prepare_to_wait_exclusive() happens
+@@ -222,7 +212,7 @@ static void *get_unlocked_entry(struct xa_state *xas)
+ 				!dax_is_locked(entry))
+ 			return entry;
+ 
+-		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
++		wq = dax_index_waitqueue(xas, &ewait.key);
+ 		prepare_to_wait_exclusive(wq, &ewait.wait,
+ 					  TASK_UNINTERRUPTIBLE);
+ 		xas_unlock_irq(xas);
+@@ -246,7 +236,7 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
+ 	init_wait(&ewait.wait);
+ 	ewait.wait.func = wake_exceptional_entry_func;
+ 
+-	wq = dax_entry_waitqueue(xas, entry, &ewait.key);
++	wq = dax_index_waitqueue(xas, &ewait.key);
+ 	/*
+ 	 * Unlike get_unlocked_entry() there is no guarantee that this
+ 	 * path ever successfully retrieves an unlocked entry before an
+@@ -263,7 +253,7 @@ static void put_unlocked_entry(struct xa_state *xas, void *entry)
+ {
+ 	/* If we were the only waiter woken, wake the next one */
+ 	if (entry)
+-		dax_wake_entry(xas, entry, false);
++		dax_wake_index(xas, false);
+ }
+ 
+ /*
+@@ -281,7 +271,7 @@ static void dax_unlock_entry(struct xa_state *xas, void *entry)
+ 	old = xas_store(xas, entry);
+ 	xas_unlock_irq(xas);
+ 	BUG_ON(!dax_is_locked(old));
+-	dax_wake_entry(xas, entry, false);
++	dax_wake_index(xas, false);
+ }
+ 
+ /*
+@@ -522,7 +512,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 
+ 		dax_disassociate_entry(entry, mapping, false);
+ 		xas_store(xas, NULL);	/* undo the PMD join */
+-		dax_wake_entry(xas, entry, true);
++		dax_wake_index(xas, true);
+ 		mapping->nrexceptional--;
+ 		entry = NULL;
+ 		xas_set(xas, index);
+@@ -915,7 +905,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
+ 	xas_lock_irq(xas);
+ 	xas_store(xas, entry);
+ 	xas_clear_mark(xas, PAGECACHE_TAG_DIRTY);
+-	dax_wake_entry(xas, entry, false);
++	dax_wake_index(xas, false);
+ 
+ 	trace_dax_writeback_one(mapping->host, index, count);
+ 	return ret;
+
