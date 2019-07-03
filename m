@@ -2,110 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 496015D969
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 02:43:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17A6B5DA39
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 03:05:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbfGCAml (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Jul 2019 20:42:41 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39046 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727080AbfGCAml (ORCPT
+        id S1727182AbfGCBFD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Jul 2019 21:05:03 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:32921 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbfGCBFD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Jul 2019 20:42:41 -0400
-Received: by mail-ot1-f67.google.com with SMTP id r21so29834otq.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jul 2019 17:42:40 -0700 (PDT)
+        Tue, 2 Jul 2019 21:05:03 -0400
+Received: by mail-ed1-f66.google.com with SMTP id i11so377759edq.0;
+        Tue, 02 Jul 2019 18:05:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0AGSyMvf0zexOMokX4EpC11/R6d7poyoJeo3TShyztM=;
-        b=QWyJjuDYJNyB44jlcWkT2Do84tRKoTgiiRWbe8c+iRWLpEQXaFEgT0w9ZSZH2Cs9Tf
-         NgpgZ8pPPSpSGIZa0MJeB+dtoragQ2H4oPc7bonqaiiNZhCo2ZOJ7wWuogIDhfx9e4s/
-         ZfZgI41C2VLSea49134z094gXVVtjlcxZP9bHzuIY6XmQJlEzTwh4QKqYp1GvIhzTBqP
-         C0rfgeI6tqW1a8lFZkStsJB+FEkRAIaU3kaEYBQPQGtfGa8CabE6/0FtfDI1lC7Xc0F+
-         6+LCGjufHIildbzfwK5DH2jwZiLcBGxTCOHmP+FN42+bD0bPJuwOEVfltIw786Xw5ebf
-         Gk3Q==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Pi01KzgEdIhGIrXlu8OB1kwQXoOUnrYPaRcf2PLxb/U=;
+        b=rBDl/pv0TR7OXoDLtY4qDwH4O3XAyoj4V0fiUbjGY2+xdzLZWxDB/TZMz91zWAQJlx
+         8zBLKP1eFkYs4j9t8Da2yciljUcB9aURJx3yWKCgQzqh66D6c/8XKo5SyexehiKWyNOp
+         ZWrYiq6dCaMItTH8MUNzgLBpTC7SCEuWXRPVvUjJ3B2z/XeOIcg0lCgVCD5f9hyeQDXt
+         mZ7b3IqG9l4uy2f1st4KIqnXHTMMEZdmsemj1i0fq9Y3AWXJ/MHhJJ7Dot+zWlOQOgdn
+         BcDXqV/O64Z5CiU1FS45nsKgYBjhkzK/mdulCD7+pePhPoSvgHgclOTmd+WheWRCDmAe
+         BCoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0AGSyMvf0zexOMokX4EpC11/R6d7poyoJeo3TShyztM=;
-        b=Tg6Zmav0ornXRdH57Oe5T9oaL3lswvtqnWb0dVP0d4hywLPGH4VUj6TAYq7sYeV1Pb
-         35+Ji+lXY/qtLAmyj6LInYDUVFP+R6lZDpWf00J5s2OOLnTB3yB/Xfh8awJ2y1iDhTvU
-         mkA369U81lX1l9VCYML6mMuPFTbEKRBWoERXQlAKcDnRKnFj2ML/Khhlnppjk4kwjEp/
-         T/dDmzSYBJ/jh+udErBfJkhuISuD1STjXYpq5ZooNqGlkQV5P9bB0+H4Y1XuFERgEFgU
-         zsQeKk8gQNm41Yb5iY8fCHQBvz0IUkBRp/6s4Y2ZuXMIwX3Nlv1Lu/7d/ARgE/M7ofRZ
-         XEDA==
-X-Gm-Message-State: APjAAAVIlUxUzkm1T+3zwaZ5m5B2AAx8/5QA4mw03stGiLWgZ6TGVGj6
-        SKUtphmB0tNWY+0FhlZzkdS/aoPxoT9aWsViAE/BkQ==
-X-Google-Smtp-Source: APXvYqwt/AruSNRNxTjRUQk6hQeRuA06O8pI4+Ci7eZfCus0eFiY7ywxyleud1COJr+2irFyLNDBtxvmvCpYM8UHPzM=
-X-Received: by 2002:a9d:7a8b:: with SMTP id l11mr25111745otn.247.1562114560450;
- Tue, 02 Jul 2019 17:42:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAPcyv4jjqooboxivY=AsfEPhCvxdwU66GpwE9vM+cqrZWvtX3g@mail.gmail.com>
- <CAPcyv4h6HgNE38RF5TxO3C268ZvrxgcPNrPWOt94MnO5gP_pjw@mail.gmail.com>
- <CAPcyv4gwd1_VHk_MfHeNSxyH+N1=aatj9WkKXqYNPkSXe4bFDg@mail.gmail.com>
- <20190627195948.GB4286@bombadil.infradead.org> <CAPcyv4iB3f1hDdCsw=Cy234dP-RXpxGyXDoTwEU8nt5qUDEVQg@mail.gmail.com>
- <20190629160336.GB1180@bombadil.infradead.org> <CAPcyv4ge3Ht1k_v=tSoVA6hCzKg1N3imhs_rTL3oTB+5_KC8_Q@mail.gmail.com>
- <CAA9_cmcb-Prn6CnOx-mJfb9CRdf0uG9u4M1Vq1B1rKVemCD-Vw@mail.gmail.com>
- <20190630152324.GA15900@bombadil.infradead.org> <CAPcyv4j2NBPBEUU3UW1Q5OyOEuo9R5e90HpkowpeEkMsAKiUyQ@mail.gmail.com>
- <20190702033410.GB1729@bombadil.infradead.org> <CAPcyv4iEkN1o5HD6Gb9m5ohdAVQhmtiTDcFE+PMQczYx635Vwg@mail.gmail.com>
- <fa9b9165-7910-1fbd-fb5b-78023936d2f2@gmail.com>
-In-Reply-To: <fa9b9165-7910-1fbd-fb5b-78023936d2f2@gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 2 Jul 2019 17:42:28 -0700
-Message-ID: <CAPcyv4ihQ9djQvgnqZoTLRH3CwFhpWK_uUrmWSLH_3-Fi1g1qw@mail.gmail.com>
-Subject: Re: [PATCH] filesystem-dax: Disable PMD support
-To:     Boaz Harrosh <openosd@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Pi01KzgEdIhGIrXlu8OB1kwQXoOUnrYPaRcf2PLxb/U=;
+        b=r7CTgElxJYLXXsm61ybKzVBjBzcvA9nIDAX9d6c9BqirffFfjiIWd/Lsg0+Bfc2+eV
+         y5VXzrdL9VUMLUQnEYxL+stD31jbYx6EhWBUoPX4NyB5rrCfhb9Ac1ieuloHaVyi4Gxx
+         6NB48Jd7NJfZatHwZJcWVK49+BrqJT8DxoX4eZCNCtNFS+wOxjs8xDMtJARJ1M0EB9re
+         8rR964zBPzbpT7vlyP4JBgOiDaVjkNrFQKDcE/7xqvI0drdEiLlPS2tx4qxVvMMTMNSR
+         csMqfJ2p+hVButcnxikfTN8UCJrAuNPpgOncGYNt+jeQ76RQYltV8ViHQtta38KK/wRz
+         2Wbg==
+X-Gm-Message-State: APjAAAVdKorEDLo0QlmVJ8atakZJmb+ScuwVmf9SLuLVA1aDVnZt0DsI
+        bchqicUK/dq+VWqibTTa/Hk=
+X-Google-Smtp-Source: APXvYqx42CglJVsr1ZJyV/elcgmcFYXinubcozjroo+1Dkc9XOZY8Eq/do5QH5nMOg/YC2Qtqrn5Gg==
+X-Received: by 2002:aa7:ca54:: with SMTP id j20mr39393692edt.50.1562115901344;
+        Tue, 02 Jul 2019 18:05:01 -0700 (PDT)
+Received: from [10.68.217.182] ([217.70.211.18])
+        by smtp.gmail.com with ESMTPSA id p23sm136538ejl.43.2019.07.02.18.04.59
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2019 18:05:00 -0700 (PDT)
+Subject: [PATCH] mm: Support madvise_willneed override by Filesystems
+To:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+        linux-bcache@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Zach Brown <zach.brown@ni.com>, Jens Axboe <axboe@kernel.dk>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Amir Goldstein <amir73il@gmail.com>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611011737.GA28701@kmo-pixel>
+ <20190611043336.GB14363@dread.disaster.area>
+ <20190612162144.GA7619@kmo-pixel>
+ <20190612230224.GJ14308@dread.disaster.area>
+ <20190619082141.GA32409@quack2.suse.cz>
+From:   Boaz Harrosh <openosd@gmail.com>
+Message-ID: <27171de5-430e-b3a8-16f1-7ce25b76c874@gmail.com>
+Date:   Wed, 3 Jul 2019 04:04:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190619082141.GA32409@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 2, 2019 at 5:23 PM Boaz Harrosh <openosd@gmail.com> wrote:
->
-> On 02/07/2019 18:37, Dan Williams wrote:
-> <>
-> >
-> > I'd be inclined to do the brute force fix of not trying to get fancy
-> > with separate PTE/PMD waitqueues and then follow on with a more clever
-> > performance enhancement later. Thoughts about that?
-> >
->
-> Sir Dan
->
-> I do not understand how separate waitqueues are any performance enhancement?
-> The all point of the waitqueues is that there is enough of them and the hash
-> function does a good radomization spread to effectively grab a single locker
-> per waitqueue unless the system is very contended and waitqueues are shared.
+On 19/06/2019 11:21, Jan Kara wrote:
+<>
+> Yes, I have patch to make madvise(MADV_WILLNEED) go through ->fadvise() as
+> well. I'll post it soon since the rest of the series isn't really dependent
+> on it.
+> 
+> 								Honza
+> 
 
-Right, the fix in question limits the input to the hash calculation by
-masking the input to always be 2MB aligned.
+Hi Jan
 
-> Which is good because it means you effectively need a back pressure to the app.
-> (Because pmem IO is mostly CPU bound with no long term sleeps I do not think
->  you will ever get to that situation)
->
-> So the way I understand it having twice as many waitqueues serving two types
-> will be better performance over all then, segregating the types each with half
-> the number of queues.
+Funny I'm sitting on the same patch since LSF last. I need it too for other
+reasons. I have not seen, have you pushed your patch yet?
+(Is based on old v4.20)
 
-Yes, but the trick is how to manage cases where someone waiting on one
-type needs to be woken up by an event on the other. So all I'm saying
-it lets live with more hash collisions until we can figure out a race
-free way to better scale waitqueue usage.
+~~~~~~~~~
+From fddb38169e33d23060ddd444ba6f2319f76edc89 Mon Sep 17 00:00:00 2001
+From: Boaz Harrosh <boazh@netapp.com>
+Date: Thu, 16 May 2019 20:02:14 +0300
+Subject: [PATCH] mm: Support madvise_willneed override by Filesystems
 
->
-> (Regardless of the above problem of where the segregation is not race clean)
->
-> Thanks
-> Boaz
+In the patchset:
+	[b833a3660394] ovl: add ovl_fadvise()
+	[3d8f7615319b] vfs: implement readahead(2) using POSIX_FADV_WILLNEED
+	[45cd0faae371] vfs: add the fadvise() file operation
+
+Amir Goldstein introduced a way for filesystems to overide fadvise.
+Well madvise_willneed is exactly as fadvise_willneed except it always
+returns 0.
+
+In this patch we call the FS vector if it exists.
+
+NOTE: I called vfs_fadvise(..,POSIX_FADV_WILLNEED);
+      (Which is my artistic preference)
+
+I could also selectively call
+	if (file->f_op->fadvise)
+		return file->f_op->fadvise(..., POSIX_FADV_WILLNEED);
+If we fear theoretical side effects. I don't mind either way.
+
+CC: Amir Goldstein <amir73il@gmail.com>
+CC: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Boaz Harrosh <boazh@netapp.com>
+---
+ mm/madvise.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 6cb1ca93e290..6b84ddcaaaf2 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -24,6 +24,7 @@
+ #include <linux/swapops.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/mmu_notifier.h>
++#include <linux/fadvise.h>
+ 
+ #include <asm/tlb.h>
+ 
+@@ -303,7 +304,8 @@ static long madvise_willneed(struct vm_area_struct *vma,
+ 		end = vma->vm_end;
+ 	end = ((end - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
+ 
+-	force_page_cache_readahead(file->f_mapping, file, start, end - start);
++	vfs_fadvise(file, start << PAGE_SHIFT, (end - start) << PAGE_SHIFT,
++		    POSIX_FADV_WILLNEED);
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
+
