@@ -2,127 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87BDE5E894
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 18:16:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1FF05E9E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 19:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfGCQQW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 12:16:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57451 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbfGCQQW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 12:16:22 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A38FE307D853;
-        Wed,  3 Jul 2019 16:16:16 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1165519698;
-        Wed,  3 Jul 2019 16:16:09 +0000 (UTC)
-Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
- caches
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20190702183730.14461-1-longman@redhat.com>
- <20190702130318.39d187dc27dbdd9267788165@linux-foundation.org>
- <78879b79-1b8f-cdfd-d4fa-610afe5e5d48@redhat.com>
- <20190702143340.715f771192721f60de1699d7@linux-foundation.org>
- <c29ff725-95ba-db4d-944f-d33f5f766cd3@redhat.com>
- <20190703155314.GT978@dhcp22.suse.cz>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <ca6147ca-25be-cba6-a7b9-fcac6d21345d@redhat.com>
-Date:   Wed, 3 Jul 2019 12:16:09 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727177AbfGCRBz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 13:01:55 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38231 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727016AbfGCRBt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 3 Jul 2019 13:01:49 -0400
+Received: by mail-ot1-f68.google.com with SMTP id d17so3110122oth.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jul 2019 10:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Idpa3jUrKCpC/Bdr1fHQx4WNMnrk4XzF66JGkHfuORg=;
+        b=wNUY8V/mhFuU37yp/ZiCDNP/H5W230TbjZb/97Elz40NFzQaPClxobNSgEuk/f3fsc
+         KAsS1YqM5g5FH4s1vA63O4LG1jBHrjJk4+vd6uDPabBVuDZihDUD9S0urvnYPszj/0V7
+         K3GtQXRnQlXcSKL2AyAP/XyoqqAcN/eugW+0Q5+IDzc1779CIDToxE4AjArrBzIAjzzq
+         Q/pmhuRmYDByH0oTkD8u1Po/Dr97GukMF3RPS45sTrwZMCPuUPVZ7/af6ttu3XmQfaUC
+         k9omAOSsVODfgBm0uvi0QAClbSTpv8GcLOOgeFCzj/fCCrb3D7mDtnKte0e0X0QHsNvy
+         4Y+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Idpa3jUrKCpC/Bdr1fHQx4WNMnrk4XzF66JGkHfuORg=;
+        b=OG9ufux55no+rlIFFZhXHTWzqBuAe0hvvG28tGqQjtqHWJJU7ygFSj2QFa6D1KTldR
+         OOcns1dMxX2TGww+C7zEO/e8Ifz9P91Y3wn2iMkhmIYdmlbubA3C4NuztE1b+MLHgBt1
+         Q6uc4dhusGfo0R5WoJ6oM0Zc5jYPm1yV25c12EpZAmMRRrKI4vdvMduOxUOqo612Mztm
+         Z5OrPRHKKMTJK35CXDVLFzDJ/EOjgPR02yotmhBer5m0G/YWFdXgucdDI1gQPcyEpD7O
+         iL2ZTtQdfFDJn2UT/MCTUYuo3jmmyycUa5Th/ziaHE8msSHXsRBgQXgCqPQtIGXw/lCu
+         FUUA==
+X-Gm-Message-State: APjAAAXKewRo3iFV6ydSNAc8qLL2JNsVHakhdhVwLZSKgQ404UZx4fO5
+        i67SloVNAyjPHrUMaCLnuUGqO3NS7o8osGOUf94viQ==
+X-Google-Smtp-Source: APXvYqzUjYaojSiF9PThGytBdcW3gjnOn4fcnoQwduNIvsAmCsZm45nhyVZ2Fow2YVOBy+g16od/O247MvqVqqVrRTo=
+X-Received: by 2002:a9d:7b48:: with SMTP id f8mr29298148oto.207.1562173309283;
+ Wed, 03 Jul 2019 10:01:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190703155314.GT978@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 03 Jul 2019 16:16:21 +0000 (UTC)
+References: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190703121743.GH1729@bombadil.infradead.org>
+In-Reply-To: <20190703121743.GH1729@bombadil.infradead.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 3 Jul 2019 10:01:37 -0700
+Message-ID: <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Boaz Harrosh <openosd@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/3/19 11:53 AM, Michal Hocko wrote:
-> On Wed 03-07-19 11:21:16, Waiman Long wrote:
->> On 7/2/19 5:33 PM, Andrew Morton wrote:
->>> On Tue, 2 Jul 2019 16:44:24 -0400 Waiman Long <longman@redhat.com> wrote:
->>>
->>>> On 7/2/19 4:03 PM, Andrew Morton wrote:
->>>>> On Tue,  2 Jul 2019 14:37:30 -0400 Waiman Long <longman@redhat.com> wrote:
->>>>>
->>>>>> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
->>>>>> file to shrink the slab by flushing all the per-cpu slabs and free
->>>>>> slabs in partial lists. This applies only to the root caches, though.
->>>>>>
->>>>>> Extends this capability by shrinking all the child memcg caches and
->>>>>> the root cache when a value of '2' is written to the shrink sysfs file.
->>>>> Why?
->>>>>
->>>>> Please fully describe the value of the proposed feature to or users. 
->>>>> Always.
->>>> Sure. Essentially, the sysfs shrink interface is not complete. It allows
->>>> the root cache to be shrunk, but not any of the memcg caches. 
->>> But that doesn't describe anything of value.  Who wants to use this,
->>> and why?  How will it be used?  What are the use-cases?
->>>
->> For me, the primary motivation of posting this patch is to have a way to
->> make the number of active objects reported in /proc/slabinfo more
->> accurately reflect the number of objects that are actually being used by
->> the kernel.
-> I believe we have been through that. If the number is inexact due to
-> caching then lets fix slabinfo rather than trick around it and teach
-> people to do a magic write to some file that will "solve" a problem.
-> This is exactly what drop_caches turned out to be in fact. People just
-> got used to drop caches because they were told so by $random web page.
-> So really, think about the underlying problem and try to fix it.
+On Wed, Jul 3, 2019 at 5:17 AM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> It is true that you could argue that this patch is actually fixing the
-> existing interface because it doesn't really do what it is documented to
-> do and on those grounds I would agree with the change.
+> On Wed, Jul 03, 2019 at 12:24:54AM -0700, Dan Williams wrote:
+> > This fix may increase waitqueue contention, but a fix for that is saved
+> > for a larger rework. In the meantime this fix is suitable for -stable
+> > backports.
+>
+> I think this is too big for what it is; just the two-line patch to stop
+> incorporating the low bits of the PTE would be more appropriate.
 
-I do think that we should correct the shrink file to do what it is
-designed to do to include the memcg caches as well.
-
-
->  But do not teach
-> people that they have to write to some file to get proper numbers.
-> Because that is just a bad idea and it will kick back the same way
-> drop_caches.
-
-The /proc/slabinfo file is a well-known file that is probably used
-relatively extensively. Making it to scan through all the per-cpu
-structures will probably cause performance issues as the slab_mutex has
-to be taken during the whole duration of the scan. That could have
-undesirable side effect.
-
-Instead, I am thinking about extending the slab/objects sysfs file to
-also show the number of objects hold up by the per-cpu structures and
-thus we can get an accurate count by subtracting it from the reported
-active objects. That will have a more limited performance impact as it
-is just one kmem cache instead of all the kmem caches in the system.
-Also the sysfs files are not as commonly used as slabinfo. That will be
-another patch in the near future.
-
-Cheers,
-Longman
-
+Sufficient, yes, "appropriate", not so sure. All those comments about
+pmd entry size are stale after this change.
