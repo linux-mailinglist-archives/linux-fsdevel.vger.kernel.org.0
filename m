@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA425E471
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 14:48:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 192A35E46A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2019 14:48:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfGCMsh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 08:48:37 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38585 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727237AbfGCMrb (ORCPT
+        id S1727267AbfGCMrd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 08:47:33 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38380 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbfGCMrc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 08:47:31 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s15so2254366wmj.3;
-        Wed, 03 Jul 2019 05:47:30 -0700 (PDT)
+        Wed, 3 Jul 2019 08:47:32 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p11so2669592wro.5;
+        Wed, 03 Jul 2019 05:47:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=34BvfGgISONnsOeh6LA1EfvEoJF1pB0OtD1tUFoABIY=;
-        b=Zj7UGvBLfC6yTB5Gy9eKUFK4/FokpCeq4rsKDYgRDe54B8HOHzYIyxJ64uFiDQbtGe
-         dcymEX/OZ6UxckhsV0b+crR0nUn36wTE+Nv796dA6bjUx2vZ6sYWv8tDd1jR20vjkc/E
-         axfrDwffhX5EBlB97SlhsrG4ZiFWR5FA+HDb393ZrxDa6RifAc/eJepqKP/wXmu2vzgs
-         OYgSsKz6+0lKebUAHeQcH2lQ9xxZeLqJyHXk8w83aKszArAwC3b5GMCLtI4/PhKVlzi0
-         f7Z/iIPiIQgFkOYfQBg30MfEHsl2FgLmGofNPispLjwALIn7vwiuMtfBGPfrc7lxhjN7
-         TtWA==
+        bh=qXfAEOlH4aIpQXeFgILadkKYn01/VlG4XvVZEcPkJYY=;
+        b=fu9RPMVgXVFj4PgV3KF4+X0OrajMT8XRxnmdpd+teMNXTQldmYy+3On3v8YbjNRcoh
+         y8pu8JWKMBygejEkjCVH3FFo7TeUWFChx553OzBSnX7wB17SO+47EMJ25asq7QkekJRS
+         lEmerh2nRBiytWP6hWYZoku/WlMGJmLTtXi4MAqZ+3BWzctnGkUN5K92UzspI6a0gvCe
+         w2s98oiKc0aK9YThQsqY+9Mx/Fd0CP0NKNqfxWpVjuW191RQYzyMeInreFxiLzqT8ZB2
+         +WGt3/jdTI/5XUXWLMgohdHyulxJeidi4kLtVf6eg5Z9CewOrJyC/2f3DLPzGUQQI0gM
+         tXOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=34BvfGgISONnsOeh6LA1EfvEoJF1pB0OtD1tUFoABIY=;
-        b=aV3Ju7Ci0hz7Dkds9DMSpbYU8QlriyHGTIJ5dB1NLbK/HfVkA2LW5SGrtbIe8nhly1
-         ITTYuDK1O2Rq6AfCAADVg3e29ehOMxkZQj9ctM4zwEHPtD8prVbAeItxz3aNdy+IRm1Y
-         Sx6So0yAt6iofofJRPD6sSghXy7839nsXhqLviik74MMMAeoaaFSQ2UYdsXzseTaCOYf
-         0JgJSFCIgwSg8QaVE5WlgTZosxo8bQx2QVGM70wjs8aZdf/3gikehLGfOvTQJbUv6Cwl
-         JG3gBV2T5OtUSZCvcH+DCVn5wmhJHql/ysBocZJHXrg3nunBmR6841+nsS7QbEuORfkg
-         esrw==
-X-Gm-Message-State: APjAAAWqgyjhMIeH0NDCTK+crisDSBht2bF4RGSbY1P6Bh8ZX3HkF7zm
-        /ZmjU+7bvwSuxubmBEnkEQfq+VUJWpM=
-X-Google-Smtp-Source: APXvYqwY7iiZHXXifbUaGvDuBuT5SumvNPFuqW5mfuxQMgeVm6A6avgkZV86OlBxMZJEk3yqS5+mew==
-X-Received: by 2002:a7b:cd9a:: with SMTP id y26mr8435877wmj.44.1562158049430;
-        Wed, 03 Jul 2019 05:47:29 -0700 (PDT)
+        bh=qXfAEOlH4aIpQXeFgILadkKYn01/VlG4XvVZEcPkJYY=;
+        b=k0U3aESoKtWqiIQMY6rxjgd7/jHC1QoEnH9934TBVkPRinVnvQqKwV/KD/+vIfCoYb
+         0rXVFjZyTdizShANKG4wVTbHBVHt4uKJynB9yFvfUkSjR6xbCiDsbgcIZIXtca/xx7kC
+         KJ0OhH7hyz04Vbi0WxwTJlL37mAvc+ptRn8FushRsDqW/7xFLIASmEcx+hyJh7Zr40iX
+         vnGQTIAqbKwvy4K4rYrbk2vB/YjbV1jIrbBU7tpjARbK4AZP6ufPQCpLeL1OeC7FFy9s
+         dRvYy9iVn8fEpK/YEdnZZCkG5JzfbAi8nF+et1vNKKm74/0zPJrAjAP0DIkGqaD1avgb
+         3qmw==
+X-Gm-Message-State: APjAAAUH2rD5XV19NwrwPUCDanWzQd1qyCeXAfZk4IDcg1RavfWAHRQq
+        p+mr/ziGpY/zYHmD1HSsGg9ETkkBAmo=
+X-Google-Smtp-Source: APXvYqxD6K+0ugAMNC/aj/0XoFB4rhxYFEfIRruIudKKenQi9Fn9L+MVPP9fnwZ3jnR+ZtZPVdDKtA==
+X-Received: by 2002:a5d:5186:: with SMTP id k6mr31267862wrv.30.1562158050417;
+        Wed, 03 Jul 2019 05:47:30 -0700 (PDT)
 Received: from heron.blarg.de (p200300DC6F443A000000000000000FD2.dip0.t-ipconnect.de. [2003:dc:6f44:3a00::fd2])
-        by smtp.gmail.com with ESMTPSA id o24sm5480588wmh.2.2019.07.03.05.47.28
+        by smtp.gmail.com with ESMTPSA id o24sm5480588wmh.2.2019.07.03.05.47.29
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 03 Jul 2019 05:47:28 -0700 (PDT)
+        Wed, 03 Jul 2019 05:47:29 -0700 (PDT)
 From:   Max Kellermann <max.kellermann@gmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         trond.myklebust@hammerspace.com, bfields@redhat.com,
@@ -53,9 +53,9 @@ To:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         anna.schumaker@netapp.com
 Cc:     linux-kernel@vger.kernel.org,
         Max Kellermann <max.kellermann@gmail.com>
-Subject: [PATCH 3/4] linux/fs.h: fix umask on NFS with CONFIG_FS_POSIX_ACL=n
-Date:   Wed,  3 Jul 2019 14:47:14 +0200
-Message-Id: <20190703124715.4319-3-max.kellermann@gmail.com>
+Subject: [PATCH 4/4] nfs/super: check NFS_CAP_ACLS instead of the NFS version
+Date:   Wed,  3 Jul 2019 14:47:15 +0200
+Message-Id: <20190703124715.4319-4-max.kellermann@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190703124715.4319-1-max.kellermann@gmail.com>
 References: <20190703124715.4319-1-max.kellermann@gmail.com>
@@ -66,12 +66,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make IS_POSIXACL() return false if POSIX ACL support is disabled and
-ignore SB_POSIXACL/MS_POSIXACL.
+This sets MS_POSIXACL only if ACL support is really enabled, instead
+of always setting MS_POSIXACL if the NFS protocol version
+theoretically supports ACL.
 
-Never skip applying the umask in namei.c and never bother to do any
-ACL specific checks if the filesystem falsely indicates it has ACLs
-enabled when the feature is completely disabled in the kernel.
+The code comment says "We will [apply the umask] ourselves", but that
+happens in posix_acl_create() only if the kernel has POSIX ACL
+support.  Without it, posix_acl_create() is an empty dummy function.
+
+So let's not pretend we will apply the umask if we can already know
+that we will never.
 
 This fixes a problem where the umask is always ignored in the NFS
 client when compiled without CONFIG_FS_POSIX_ACL.  This is a 4 year
@@ -79,59 +83,40 @@ old regression caused by commit 013cdf1088d723 which itself was not
 completely wrong, but failed to consider all the side effects by
 misdesigned VFS code.
 
-Prior to that commit, there were two places where the umask could be
-applied, for example when creating a directory:
-
- 1. in the VFS layer in SYSCALL_DEFINE3(mkdirat), but only if
-    !IS_POSIXACL()
-
- 2. again (unconditionally) in nfs3_proc_mkdir()
-
-The first one does not apply, because even without
-CONFIG_FS_POSIX_ACL, the NFS client sets MS_POSIXACL in
-nfs_fill_super().
-
-After that commit, (2.) was replaced by:
-
- 2b. in posix_acl_create(), called by nfs3_proc_mkdir()
-
-There's one branch in posix_acl_create() which applies the umask;
-however, without CONFIG_FS_POSIX_ACL, posix_acl_create() is an empty
-dummy function which does not apply the umask.
-
-The approach chosen by this patch is to make IS_POSIXACL() always
-return false when POSIX ACL support is disabled, so the umask always
-gets applied by the VFS layer.  This is consistent with the (regular)
-behavior of posix_acl_create(): that function returns early if
-IS_POSIXACL() is false, before applying the umask.
-
-Therefore, posix_acl_create() is responsible for applying the umask if
-there is ACL support enabled in the file system (SB_POSIXACL), and the
-VFS layer is responsible for all other cases (no SB_POSIXACL or no
-CONFIG_FS_POSIX_ACL).
-
 Signed-off-by: Max Kellermann <max.kellermann@gmail.com>
 ---
- include/linux/fs.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/nfs/super.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index dd28e7679089..299acdaaab56 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1985,7 +1985,12 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
- #define IS_NOQUOTA(inode)	((inode)->i_flags & S_NOQUOTA)
- #define IS_APPEND(inode)	((inode)->i_flags & S_APPEND)
- #define IS_IMMUTABLE(inode)	((inode)->i_flags & S_IMMUTABLE)
-+
-+#ifdef CONFIG_FS_POSIX_ACL
- #define IS_POSIXACL(inode)	__IS_FLG(inode, SB_POSIXACL)
-+#else
-+#define IS_POSIXACL(inode)	0
-+#endif
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index c27ac96a95bd..e799296941ec 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -2343,11 +2343,14 @@ void nfs_fill_super(struct super_block *sb, struct nfs_mount_info *mount_info)
+ 	if (data && data->bsize)
+ 		sb->s_blocksize = nfs_block_size(data->bsize, &sb->s_blocksize_bits);
  
- #define IS_DEADDIR(inode)	((inode)->i_flags & S_DEAD)
- #define IS_NOCMTIME(inode)	((inode)->i_flags & S_NOCMTIME)
+-	if (server->nfs_client->rpc_ops->version != 2) {
++	if (NFS_SB(sb)->caps & NFS_CAP_ACLS) {
+ 		/* The VFS shouldn't apply the umask to mode bits. We will do
+ 		 * so ourselves when necessary.
+ 		 */
+ 		sb->s_flags |= SB_POSIXACL;
++	}
++
++	if (server->nfs_client->rpc_ops->version != 2) {
+ 		sb->s_time_gran = 1;
+ 		sb->s_export_op = &nfs_export_ops;
+ 	}
+@@ -2373,7 +2376,7 @@ static void nfs_clone_super(struct super_block *sb,
+ 	sb->s_time_gran = 1;
+ 	sb->s_export_op = old_sb->s_export_op;
+ 
+-	if (server->nfs_client->rpc_ops->version != 2) {
++	if (NFS_SB(sb)->caps & NFS_CAP_ACLS) {
+ 		/* The VFS shouldn't apply the umask to mode bits. We will do
+ 		 * so ourselves when necessary.
+ 		 */
 -- 
 2.20.1
 
