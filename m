@@ -2,100 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 321095F97F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2019 15:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EBE35F98C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2019 16:01:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbfGDN6H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Jul 2019 09:58:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40750 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727044AbfGDN6G (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Jul 2019 09:58:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/RLAY7zRxS6FP4wLWk1a+mxOsYYdecRt8hhGgB9GW4M=; b=nf1/g8o8E65eZqwz1hsFwCPcU
-        MBhwLZirPk/vxTpaggeMfdAROG8JpB00Rj6iiyRqEOQApcd1+J/mLDVIXT4EV/PuEYg2phrQHywIQ
-        9bztNfHZywQ2ABH4jnMjnJ8vuukFS0jb4MSlY0QCLjMraK2KjUDTM7z0J5ilmg8poMPmJ9SXKwzmh
-        iQKIP77O6i2PNUBBSwUR7QvppXdrJTr4lRMqEVBgd/OaM7fy/QdHnSAcGafKBFvF1TOK9I+R0vvId
-        b2s9evEN1sD+tCOKAqNbdSzQHl+EVFwGBqM6BgNQzCRhbVR0Zu9hKIPbPsCXsgrGUNKfGuwBO7sEe
-        xNz/Er2kQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hj2FQ-0002ZJ-Vt; Thu, 04 Jul 2019 13:58:04 +0000
-Date:   Thu, 4 Jul 2019 06:58:04 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Boaz Harrosh <openosd@gmail.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dax: Fix missed PMD wakeups
-Message-ID: <20190704135804.GL1729@bombadil.infradead.org>
-References: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190703121743.GH1729@bombadil.infradead.org>
- <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
- <20190703195302.GJ1729@bombadil.infradead.org>
- <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
- <20190704032728.GK1729@bombadil.infradead.org>
- <f23a1c71-d1b1-b279-c922-ce0f48cb4448@gmail.com>
+        id S1727239AbfGDOBK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Jul 2019 10:01:10 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8699 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726794AbfGDOBK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Jul 2019 10:01:10 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 808E05FCF004B354299B;
+        Thu,  4 Jul 2019 22:01:04 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 4 Jul 2019
+ 22:00:55 +0800
+Subject: Re: [PATCH] erofs: promote erofs from staging
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <devel@driverdev.osuosl.org>, Miao Xie <miaoxie@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>
+References: <20190704133413.43012-1-gaoxiang25@huawei.com>
+ <20190704135002.GB13609@kroah.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <29e713d5-8146-80cf-8ffd-138b15349489@huawei.com>
+Date:   Thu, 4 Jul 2019 22:00:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f23a1c71-d1b1-b279-c922-ce0f48cb4448@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190704135002.GB13609@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 04:00:00PM +0300, Boaz Harrosh wrote:
-> On 04/07/2019 06:27, Matthew Wilcox wrote:
-> > On Wed, Jul 03, 2019 at 02:28:41PM -0700, Dan Williams wrote:
-> >>> +#ifdef CONFIG_XARRAY_MULTI
-> >>> +       unsigned int sibs = xas->xa_sibs;
-> >>> +
-> >>> +       while (sibs) {
-> >>> +               order++;
-> >>> +               sibs /= 2;
-> >>> +       }
-> >>
-> >> Use ilog2() here?
-> > 
-> > Thought about it.  sibs is never going to be more than 31, so I don't
-> > know that it's worth eliminating 5 add/shift pairs in favour of whatever
-> > the ilog2 instruction is on a given CPU.  In practice, on x86, sibs is
-> > going to be either 0 (PTEs) or 7 (PMDs).  We could also avoid even having
-> > this function by passing PMD_ORDER or PTE_ORDER into get_unlocked_entry().
-> > 
-> > It's probably never going to be noticable in this scenario because it's
-> > the very last thing checked before we put ourselves on a waitqueue and
-> > go to sleep.
+Hi Greg,
+
+On 2019/7/4 21:50, Greg Kroah-Hartman wrote:
+> On Thu, Jul 04, 2019 at 09:34:13PM +0800, Gao Xiang wrote:
+>> EROFS file system has been in Linux-staging for about a year.
+>> It has been proved to be stable enough to move out of staging
+>> by 10+ millions of HUAWEI Android mobile phones on the market
+>> from EMUI 9.0.1, and it was promoted as one of the key features
+>> of EMUI 9.1 [1], including P30(pro).
+>>
+>> EROFS is a read-only file system designed to save extra storage
+>> space with guaranteed end-to-end performance by applying
+>> fixed-size output compression, inplace I/O and decompression
+>> inplace technologies [2] to Linux filesystem.
+>>
+>> In our observation, EROFS is one of the fastest Linux compression
+>> filesystem using buffered I/O in the world. It will support
+>> direct I/O in the future if needed. EROFS even has better read
+>> performance in a large CR range compared with generic uncompressed
+>> file systems with proper CPU-storage combination, which is
+>> a reason why erofs can be landed to speed up mobile phone
+>> performance, and which can be probably used for other use cases
+>> such as LiveCD and Docker image as well.
+>>
+>> Currently erofs supports 4k LZ4 fixed-size output compression
+>> since LZ4 is the fastest widely-used decompression solution in
+>> the world and 4k leads to unnoticable read amplification for
+>> the worst case. More compression algorithms and cluster sizes
+>> could be added later, which depends on the real requirement.
+>>
+>> More informations about erofs itself are available at:
+>>  Documentation/filesystems/erofs.txt
+>>  https://kccncosschn19eng.sched.com/event/Nru2/erofs-an-introduction-and-our-smartphone-practice-xiang-gao-huawei
+>>
+>> erofs-utils (mainly mkfs.erofs now) is available at
+>> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
+>>
+>> Preliminary iomap support has been pending in erofs mailing
+>> list by Chao Yu. The key issue is that current iomap doesn't
+>> support tail-end packing inline data yet, it should be
+>> resolved later.
+>>
+>> Thanks to many contributors in the last year, the code is more
+>> clean and improved. We hope erofs can be used in wider use cases
+>> so let's promote erofs out of staging and enhance it more actively.
+>>
+>> Share comments about erofs! We think erofs is useful to
+>> community as a part of Linux upstream :)
 > 
-> Matthew you must be kidding an ilog2 in binary is zero clocks
-> (Return the highest bit or something like that)
+> I don't know if this format is easy for the linux-fsdevel people to
+> review, it forces them to look at the in-kernel code, which makes it
+> hard to quote.
+> 
+> Perhaps just make a patch that adds the filesystem to the tree and after
+> it makes it through review, I can delete the staging version?  We've
+> been doing that for wifi drivers that move out of staging as it seems to
+> be a bit easier.
 
-You might want to actually check the documentation instead of just
-making shit up.
+OK, I will resend the whole patchset later as you suggested, but it will
+lack of information about some original authors and I'd like to know who
+is responsible to merge this kind of request to Linux upstream... maybe Linus?
 
-https://www.agner.org/optimize/instruction_tables.pdf
+And it could be more consistent to leave staging version for linux-5.3
+because we still use it, but anyway, I will do it now.
 
-I think in this instance what we want is BSR (aka ffz) since the input is
-going to be one of 0, 1, 3, 7, 15 or 31 (and we want 0, 1, 2, 3, 4, 5 as
-results).
+Thanks,
+Gao Xiang
 
-> In any way. It took me 5 minutes to understand what you are doing
-> here. And I only fully got it when Dan gave his comment. So please for
-> the sake of stupid guys like me could you please make it ilog2() so
-> to make it easier to understand?
-> (And please don't do the compiler's job. If in some arch the loop
->  is the fastest let the compiler decide?)
-
-The compiler doesn't know the range of 'sibs'.  Unless we do the
-profile-feedback thing.
+> 
+> thanks,
+> 
+> greg k-h
+> 
