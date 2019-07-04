@@ -2,102 +2,249 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5468A5F1C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2019 05:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A55C75F1E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2019 05:58:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbfGDD1a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 23:27:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59376 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbfGDD1a (ORCPT
+        id S1727350AbfGDD6x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 23:58:53 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:43832 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbfGDD6x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 23:27:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bfUuotpsA7QM4d+GD8HA3DqaH0YT4JnSqveOPEJHZmE=; b=DYj+iswCGfqMvh6Vcet5Evj0Y
-        GsyD8CyUisYULDtQjbA5vGZ/hNXgspOgh006SQe1+qr7TZT1AYlYjAkdkiYkjFqTvS8LExPkDsSrr
-        uw06xq/QsEuX5TQP7ma8p2d9Mx/iXMiWVC7aIfPC7vnXkkQD9TrdwQwkpdfYAkHIxKz2R1N70Z84l
-        3xhXHDMy3VQY/86p5LEXocdyG1zM5kB6mQK24lQ51xK5okoPAGeaUuzjsH1kNEoroTvfk1i+U9esr
-        G1GFk7RgJtLXqaHP8ZjaorampgpGJFFeAUoYwGLs6Y46p0O2fTKSxrdtPrKaMQi4oYQhBc4pdeaaj
-        BiqQpmSNA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hisPA-0006Hf-Tn; Thu, 04 Jul 2019 03:27:28 +0000
-Date:   Wed, 3 Jul 2019 20:27:28 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Boaz Harrosh <openosd@gmail.com>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dax: Fix missed PMD wakeups
-Message-ID: <20190704032728.GK1729@bombadil.infradead.org>
-References: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190703121743.GH1729@bombadil.infradead.org>
- <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
- <20190703195302.GJ1729@bombadil.infradead.org>
- <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
+        Wed, 3 Jul 2019 23:58:53 -0400
+Received: by mail-yw1-f66.google.com with SMTP id t2so872684ywe.10;
+        Wed, 03 Jul 2019 20:58:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CK0G9OZ8DCWe3vF1wOzHFZ3dAxdvPZiD2n1DgHZeubU=;
+        b=vKzoQBSt1weaqDTHZcbDVvitZexnoIlkvDDWG6UQ04h+M0e5OoP234Dh369tQKvHcf
+         XHRZIyelz/ANC0Li3Q972vi72DVlKknC3sUFUiMLi9d0Mu3x5mneBQHWGWadysS9YrVZ
+         /6ylPeatZ3wSgUsPom//wCrSvPGEFehhoXwoDXYNngcza3vhUiiCQAe9QD/A55odu+wW
+         GszrEhx2R9m19iPh0akwZE/RRerJ5QOjybmoFeiMPAokkGae15S9q1/yBkkxE9HnnTUN
+         Ph/kHJRIDYDeTdhagRZdQLOv7zaS4NHmPzwfqUMdKBtQFrE7rzlW37gSR39Kger7yMR0
+         wcAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CK0G9OZ8DCWe3vF1wOzHFZ3dAxdvPZiD2n1DgHZeubU=;
+        b=APWE68hDc4Ld5qVT+Gh/Gm2wHuXylIQbpBfDWelzEr+xOKAcJAQZSFPtFKyuQOgDpT
+         H093G3SlsXqkwx8YKK8u1m84lAM0T3uD+a4sIJgMw7qWUT4ucKpXvx6+2SCCCT8GaBm9
+         CJX6/iAmgrzmJerM0zsWx/AZKkTcWg+zSryClqc//WsmSyWOAruLe6l865+8pX5avFnR
+         +26dlP6IaPtCECvNlSYW0BenmZFxSsOtI9BHJ73imdS1ztPYTn5zwi5pvYKGXYW/pJHT
+         /PPVMfwu3eGArMXuDFzfyOwC7UWm2//xn6P41PipimCFSdu/0pfq3gQ4kfU8GPOao66Z
+         z0Uw==
+X-Gm-Message-State: APjAAAUMMn24zNkilD5ohW8ygf025p/N+ozEgH7OJzdoXXCN9129Xsir
+        RpCV5+DRElFpKuahGIJyTg8Hf2E8s77NM0aGyts=
+X-Google-Smtp-Source: APXvYqyY3GI0IPQwU5ZZloMHbZqaSJqEZ3fz6zE8Z3sh+orn2QGkQewP7GJkUz9eaMTDfDwA/0utBMnIc42E3PVkx5w=
+X-Received: by 2002:a0d:d853:: with SMTP id a80mr25949702ywe.426.1562212731962;
+ Wed, 03 Jul 2019 20:58:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <000000000000665152058c0d7ed9@google.com> <20190702060030.GD27702@sol.localdomain>
+In-Reply-To: <20190702060030.GD27702@sol.localdomain>
+From:   JackieLiu <jackieliu2113@gmail.com>
+Date:   Thu, 4 Jul 2019 11:58:40 +0800
+Message-ID: <CAPV7t-2jOgUs-LxiQYxqp_h8RH7X-CxxMcLL2SzOk1kEyc55Ug@mail.gmail.com>
+Subject: Re: INFO: task hung in io_uring_release
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+94324416c485d422fe15@syzkaller.appspotmail.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 02:28:41PM -0700, Dan Williams wrote:
-> On Wed, Jul 3, 2019 at 12:53 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > @@ -211,7 +215,8 @@ static void *get_unlocked_entry(struct xa_state *xas)
-> >         for (;;) {
-> >                 entry = xas_find_conflict(xas);
-> >                 if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
-> > -                               !dax_is_locked(entry))
-> > +                               !dax_is_locked(entry) ||
-> > +                               dax_entry_order(entry) < xas_get_order(xas))
-> 
-> Doesn't this potentially allow a locked entry to be returned for a
-> caller that expects all value entries are unlocked?
+Hello Eric Biggers
 
-It only allows locked entries to be returned for callers which pass in
-an xas which refers to a PMD entry.  This is fine for grab_mapping_entry()
-because it checks size_flag & is_pte_entry.
+I have reproduced this problem and are looking for a solution. maybe
+just use kthread_unpark to replace kthread_stop in io_uring_release
+function.
 
-dax_layout_busy_page() only uses 0-order.
-__dax_invalidate_entry() only uses 0-order.
-dax_writeback_one() needs an extra fix:
+---
+Jackie Liu
 
-                /* Did a PMD entry get split? */
-                if (dax_is_locked(entry))
-                        goto put_unlocked;
-
-dax_insert_pfn_mkwrite() checks for a mismatch of pte vs pmd.
-
-So I think we're good for all current users.
-
-> > +#ifdef CONFIG_XARRAY_MULTI
-> > +       unsigned int sibs = xas->xa_sibs;
-> > +
-> > +       while (sibs) {
-> > +               order++;
-> > +               sibs /= 2;
-> > +       }
-> 
-> Use ilog2() here?
-
-Thought about it.  sibs is never going to be more than 31, so I don't
-know that it's worth eliminating 5 add/shift pairs in favour of whatever
-the ilog2 instruction is on a given CPU.  In practice, on x86, sibs is
-going to be either 0 (PTEs) or 7 (PMDs).  We could also avoid even having
-this function by passing PMD_ORDER or PTE_ORDER into get_unlocked_entry().
-
-It's probably never going to be noticable in this scenario because it's
-the very last thing checked before we put ourselves on a waitqueue and
-go to sleep.
+Eric Biggers <ebiggers@kernel.org> =E4=BA=8E2019=E5=B9=B47=E6=9C=882=E6=97=
+=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=8D=882:01=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Jens, any idea about this?
+>
+> On Mon, Jun 24, 2019 at 01:21:06AM -0700, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    bed3c0d8 Merge tag 'for-5.2-rc5-tag' of git://git.kerne=
+l.o..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1418bf0aa00=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D28ec3437a53=
+94ee0
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D94324416c485d=
+422fe15
+> > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> >
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the comm=
+it:
+> > Reported-by: syzbot+94324416c485d422fe15@syzkaller.appspotmail.com
+> >
+> > INFO: task syz-executor.5:8634 blocked for more than 143 seconds.
+> >       Not tainted 5.2.0-rc5+ #3
+> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
+e.
+> > syz-executor.5  D25632  8634   8224 0x00004004
+> > Call Trace:
+> >  context_switch kernel/sched/core.c:2818 [inline]
+> >  __schedule+0x658/0x9e0 kernel/sched/core.c:3445
+> >  schedule+0x131/0x1d0 kernel/sched/core.c:3509
+> >  schedule_timeout+0x9a/0x2b0 kernel/time/timer.c:1783
+> >  do_wait_for_common+0x35e/0x5a0 kernel/sched/completion.c:83
+> >  __wait_for_common kernel/sched/completion.c:104 [inline]
+> >  wait_for_common kernel/sched/completion.c:115 [inline]
+> >  wait_for_completion+0x47/0x60 kernel/sched/completion.c:136
+> >  kthread_stop+0xb4/0x150 kernel/kthread.c:559
+> >  io_sq_thread_stop fs/io_uring.c:2252 [inline]
+> >  io_finish_async fs/io_uring.c:2259 [inline]
+> >  io_ring_ctx_free fs/io_uring.c:2770 [inline]
+> >  io_ring_ctx_wait_and_kill+0x268/0x880 fs/io_uring.c:2834
+> >  io_uring_release+0x5d/0x70 fs/io_uring.c:2842
+> >  __fput+0x2e4/0x740 fs/file_table.c:280
+> >  ____fput+0x15/0x20 fs/file_table.c:313
+> >  task_work_run+0x17e/0x1b0 kernel/task_work.c:113
+> >  tracehook_notify_resume include/linux/tracehook.h:185 [inline]
+> >  exit_to_usermode_loop arch/x86/entry/common.c:168 [inline]
+> >  prepare_exit_to_usermode+0x402/0x4f0 arch/x86/entry/common.c:199
+> >  syscall_return_slowpath+0x110/0x440 arch/x86/entry/common.c:279
+> >  do_syscall_64+0x126/0x140 arch/x86/entry/common.c:304
+> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x412fb1
+> > Code: 80 3b 7c 0f 84 c7 02 00 00 c7 85 d0 00 00 00 00 00 00 00 48 8b 05=
+ cf
+> > a6 24 00 49 8b 14 24 41 b9 cb 2a 44 00 48 89 ee 48 89 df <48> 85 c0 4c =
+0f 45
+> > c8 45 31 c0 31 c9 e8 0e 5b 00 00 85 c0 41 89 c7
+> > RSP: 002b:00007ffe7ee6a180 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> > RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000412fb1
+> > RDX: 0000001b2d920000 RSI: 0000000000000000 RDI: 0000000000000003
+> > RBP: 0000000000000001 R08: 00000000f3a3e1f8 R09: 00000000f3a3e1fc
+> > R10: 00007ffe7ee6a260 R11: 0000000000000293 R12: 000000000075c9a0
+> > R13: 000000000075c9a0 R14: 0000000000024c00 R15: 000000000075bf2c
+> >
+> > Showing all locks held in the system:
+> > 1 lock held by khungtaskd/1043:
+> >  #0: 00000000ec789630 (rcu_read_lock){....}, at: rcu_lock_acquire+0x4/0=
+x30
+> > include/linux/rcupdate.h:207
+> > 1 lock held by rsyslogd/8054:
+> >  #0: 00000000a1730567 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x243/0x2=
+e0
+> > fs/file.c:801
+> > 2 locks held by getty/8167:
+> >  #0: 000000000d85b796 (&tty->ldisc_sem){++++}, at:
+> > tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+> >  #1: 000000006ecd2335 (&ldata->atomic_read_lock){+.+.}, at:
+> > n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+> > 2 locks held by getty/8168:
+> >  #0: 000000005c58bd1f (&tty->ldisc_sem){++++}, at:
+> > tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+> >  #1: 00000000158ead38 (&ldata->atomic_read_lock){+.+.}, at:
+> > n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+> > 2 locks held by getty/8169:
+> >  #0: 000000003d373884 (&tty->ldisc_sem){++++}, at:
+> > tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+> >  #1: 0000000026014169 (&ldata->atomic_read_lock){+.+.}, at:
+> > n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+> > 2 locks held by getty/8170:
+> >  #0: 00000000ba3eabbd (&tty->ldisc_sem){++++}, at:
+> > tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+> >  #1: 0000000003284ce2 (&ldata->atomic_read_lock){+.+.}, at:
+> > n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+> > 2 locks held by getty/8171:
+> >  #0: 000000009fcb2c0e (&tty->ldisc_sem){++++}, at:
+> > tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+> >  #1: 00000000ac5d0da7 (&ldata->atomic_read_lock){+.+.}, at:
+> > n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+> > 2 locks held by getty/8172:
+> >  #0: 000000003f4e772c (&tty->ldisc_sem){++++}, at:
+> > tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+> >  #1: 000000000c930b31 (&ldata->atomic_read_lock){+.+.}, at:
+> > n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+> > 2 locks held by getty/8173:
+> >  #0: 000000002a3615cf (&tty->ldisc_sem){++++}, at:
+> > tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
+> >  #1: 00000000dd5c3618 (&ldata->atomic_read_lock){+.+.}, at:
+> > n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > NMI backtrace for cpu 0
+> > CPU: 0 PID: 1043 Comm: khungtaskd Not tainted 5.2.0-rc5+ #3
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
+> >  nmi_cpu_backtrace+0x89/0x160 lib/nmi_backtrace.c:101
+> >  nmi_trigger_cpumask_backtrace+0x125/0x230 lib/nmi_backtrace.c:62
+> >  arch_trigger_cpumask_backtrace+0x10/0x20 arch/x86/kernel/apic/hw_nmi.c=
+:38
+> >  trigger_all_cpu_backtrace+0x17/0x20 include/linux/nmi.h:146
+> >  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
+> >  watchdog+0xbb9/0xbd0 kernel/hung_task.c:289
+> >  kthread+0x325/0x350 kernel/kthread.c:255
+> >  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> > Sending NMI from CPU 0 to CPUs 1:
+> > NMI backtrace for cpu 1
+> > CPU: 1 PID: 2546 Comm: kworker/u4:4 Not tainted 5.2.0-rc5+ #3
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Workqueue: bat_events batadv_nc_worker
+> > RIP: 0010:__read_once_size include/linux/compiler.h:194 [inline]
+> > RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:31 [inline]
+> > RIP: 0010:atomic_read include/asm-generic/atomic-instrumented.h:27 [inl=
+ine]
+> > RIP: 0010:rcu_dynticks_curr_cpu_in_eqs kernel/rcu/tree.c:292 [inline]
+> > RIP: 0010:rcu_is_watching+0x62/0xa0 kernel/rcu/tree.c:872
+> > Code: 4c 89 f7 e8 70 50 4c 00 48 c7 c3 b8 5f 03 00 49 03 1e 48 89 df be=
+ 04
+> > 00 00 00 e8 89 25 4c 00 48 89 d8 48 c1 e8 03 42 8a 04 38 <84> c0 75 1e =
+8b 03
+> > 65 ff 0d 5d 72 9f 7e 74 0c 83 e0 02 d1 e8 5b 41
+> > RSP: 0018:ffff8880a10ffbe8 EFLAGS: 00000a02
+> > RAX: 1ffff11015d66b00 RBX: ffff8880aeb35fb8 RCX: ffffffff81628ad7
+> > RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880aeb35fb8
+> > RBP: ffff8880a10ffc00 R08: dffffc0000000000 R09: ffffed1015d66bf8
+> > R10: ffffed1015d66bf8 R11: 1ffff11015d66bf7 R12: dffffc0000000000
+> > R13: ffff8880a93c9b00 R14: ffffffff8881f258 R15: dffffc0000000000
+> > FS:  0000000000000000(0000) GS:ffff8880aeb00000(0000) knlGS:00000000000=
+00000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 000000c434bbb720 CR3: 000000008e6fa000 CR4: 00000000001406e0
+> > Call Trace:
+> >  rcu_read_lock include/linux/rcupdate.h:594 [inline]
+> >  batadv_nc_purge_orig_hash net/batman-adv/network-coding.c:407 [inline]
+> >  batadv_nc_worker+0x115/0x600 net/batman-adv/network-coding.c:718
+> >  process_one_work+0x814/0x1130 kernel/workqueue.c:2269
+> >  worker_thread+0xc01/0x1640 kernel/workqueue.c:2415
+> >  kthread+0x325/0x350 kernel/kthread.c:255
+> >  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
