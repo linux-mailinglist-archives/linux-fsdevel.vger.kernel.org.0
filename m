@@ -2,99 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C33A5F0AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2019 02:39:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5468A5F1C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2019 05:27:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbfGDAiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Jul 2019 20:38:54 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:37740 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727376AbfGDAix (ORCPT
+        id S1727148AbfGDD1a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Jul 2019 23:27:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59376 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbfGDD1a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Jul 2019 20:38:53 -0400
-Received: by mail-qt1-f201.google.com with SMTP id i12so2541170qtq.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jul 2019 17:38:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=oxYjFRyxX3NROXm+Ygmt9JHCAGAtVhFnOyo3OkZfbDU=;
-        b=pFv5mcrDyGgL+dq8XXN+UzV3D859ZKLMwvBZx8cL1G+iv8Gu3Bpp+0tDy7y+eqJdN+
-         Sys/jfOMPIa4Kk480wXC0YSxIJr4WY5NEmKFAbtIyqHPCEL2shC1RGkkrmviAIc9PnSu
-         TXCypRWrWJGDNfUhMWaPu525sXypB8WEC829GXbeLutNsc9f/WyFCZgbd+YcS+3Bt/27
-         ++SN32pVuSx2WX6MEAkXAXS9tJC649L452kf9cFUTF1O3tHvajHrkRSjikLGaYLmS0ab
-         9IJofwcEo1fJd6pCPer9SdnXJXIqGF+iHoAffclBGB8yGVB4sDN+f0jHKqqeZ/ia1nBq
-         8yIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=oxYjFRyxX3NROXm+Ygmt9JHCAGAtVhFnOyo3OkZfbDU=;
-        b=B7jyCnok0A45UphtwUEXzNIixUGmItq8BLaGmJJlorqcNuh9G3hak+hjfHr1pAntT/
-         S5HjvQ6A+zGNolEEK2UCuQZTZkARTvsW5zyy5EVwMuShPkr1rloE2zaRnzkNR5roEWlX
-         w/u03owRbwAE7jtAovVMSQoQNXOTCJsUci3wo9YH68x4l7SsKhi6sldOcKfxf6XlnwEu
-         4o3oihHh/RfAfDJChyaGOmesqw1PV95IX6t077AfLDXT8bH8UbgdxPOgdlZUZvCzQHyG
-         fSEGoZ7CzsK3ZPN17IPpYkHbM7BhY9GLUYMbO+lEYMZIJ/pcFv9O7Hmnuy9yYhVarcdC
-         4Dnw==
-X-Gm-Message-State: APjAAAWs8k7T7sAXFtar8TO5obJ6ybk6/hAJrlzFbemc0OMHh8QZQQHY
-        F4F74m7zPIhU8JPjQI9sOJaweJg+LtMxCTKVxfJzQA==
-X-Google-Smtp-Source: APXvYqzWy4FbKHHWYOuv608ZWRy81huPhVNFArtBSw25v8dz2nkh4QA//OrB7jPx5C158BeXlhqK6QKVWRPtFRELD79Swg==
-X-Received: by 2002:ac8:1a3c:: with SMTP id v57mr32832048qtj.339.1562200731869;
- Wed, 03 Jul 2019 17:38:51 -0700 (PDT)
-Date:   Wed,  3 Jul 2019 17:36:15 -0700
-In-Reply-To: <20190704003615.204860-1-brendanhiggins@google.com>
-Message-Id: <20190704003615.204860-19-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20190704003615.204860-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v6 18/18] MAINTAINERS: add proc sysctl KUnit test to PROC
- SYSCTL section
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 3 Jul 2019 23:27:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bfUuotpsA7QM4d+GD8HA3DqaH0YT4JnSqveOPEJHZmE=; b=DYj+iswCGfqMvh6Vcet5Evj0Y
+        GsyD8CyUisYULDtQjbA5vGZ/hNXgspOgh006SQe1+qr7TZT1AYlYjAkdkiYkjFqTvS8LExPkDsSrr
+        uw06xq/QsEuX5TQP7ma8p2d9Mx/iXMiWVC7aIfPC7vnXkkQD9TrdwQwkpdfYAkHIxKz2R1N70Z84l
+        3xhXHDMy3VQY/86p5LEXocdyG1zM5kB6mQK24lQ51xK5okoPAGeaUuzjsH1kNEoroTvfk1i+U9esr
+        G1GFk7RgJtLXqaHP8ZjaorampgpGJFFeAUoYwGLs6Y46p0O2fTKSxrdtPrKaMQi4oYQhBc4pdeaaj
+        BiqQpmSNA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hisPA-0006Hf-Tn; Thu, 04 Jul 2019 03:27:28 +0000
+Date:   Wed, 3 Jul 2019 20:27:28 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Boaz Harrosh <openosd@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+Message-ID: <20190704032728.GK1729@bombadil.infradead.org>
+References: <156213869409.3910140.7715747316991468148.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190703121743.GH1729@bombadil.infradead.org>
+ <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
+ <20190703195302.GJ1729@bombadil.infradead.org>
+ <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add entry for the new proc sysctl KUnit test to the PROC SYSCTL section.
+On Wed, Jul 03, 2019 at 02:28:41PM -0700, Dan Williams wrote:
+> On Wed, Jul 3, 2019 at 12:53 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > @@ -211,7 +215,8 @@ static void *get_unlocked_entry(struct xa_state *xas)
+> >         for (;;) {
+> >                 entry = xas_find_conflict(xas);
+> >                 if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
+> > -                               !dax_is_locked(entry))
+> > +                               !dax_is_locked(entry) ||
+> > +                               dax_entry_order(entry) < xas_get_order(xas))
+> 
+> Doesn't this potentially allow a locked entry to be returned for a
+> caller that expects all value entries are unlocked?
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+It only allows locked entries to be returned for callers which pass in
+an xas which refers to a PMD entry.  This is fine for grab_mapping_entry()
+because it checks size_flag & is_pte_entry.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 856a7c4f7dcf2..7b4dcae2526c6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12727,6 +12727,7 @@ S:	Maintained
- F:	fs/proc/proc_sysctl.c
- F:	include/linux/sysctl.h
- F:	kernel/sysctl.c
-+F:	kernel/sysctl-test.c
- F:	tools/testing/selftests/sysctl/
- 
- PS3 NETWORK SUPPORT
--- 
-2.22.0.410.gd8fdbe21b5-goog
+dax_layout_busy_page() only uses 0-order.
+__dax_invalidate_entry() only uses 0-order.
+dax_writeback_one() needs an extra fix:
 
+                /* Did a PMD entry get split? */
+                if (dax_is_locked(entry))
+                        goto put_unlocked;
+
+dax_insert_pfn_mkwrite() checks for a mismatch of pte vs pmd.
+
+So I think we're good for all current users.
+
+> > +#ifdef CONFIG_XARRAY_MULTI
+> > +       unsigned int sibs = xas->xa_sibs;
+> > +
+> > +       while (sibs) {
+> > +               order++;
+> > +               sibs /= 2;
+> > +       }
+> 
+> Use ilog2() here?
+
+Thought about it.  sibs is never going to be more than 31, so I don't
+know that it's worth eliminating 5 add/shift pairs in favour of whatever
+the ilog2 instruction is on a given CPU.  In practice, on x86, sibs is
+going to be either 0 (PTEs) or 7 (PMDs).  We could also avoid even having
+this function by passing PMD_ORDER or PTE_ORDER into get_unlocked_entry().
+
+It's probably never going to be noticable in this scenario because it's
+the very last thing checked before we put ourselves on a waitqueue and
+go to sleep.
