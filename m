@@ -2,87 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2D760783
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2019 16:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F1CE60810
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2019 16:40:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbfGEOLB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jul 2019 10:11:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53028 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725983AbfGEOLB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jul 2019 10:11:01 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 11A9B3084034;
-        Fri,  5 Jul 2019 14:10:51 +0000 (UTC)
-Received: from dhcp201-121.englab.pnq.redhat.com (ovpn-116-58.sin2.redhat.com [10.67.116.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D5AB860F4;
-        Fri,  5 Jul 2019 14:10:04 +0000 (UTC)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     dm-devel@redhat.com, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Cc:     dan.j.williams@intel.com, zwisler@kernel.org,
-        vishal.l.verma@intel.com, dave.jiang@intel.com, mst@redhat.com,
-        jasowang@redhat.com, willy@infradead.org, rjw@rjwysocki.net,
-        hch@infradead.org, lenb@kernel.org, jack@suse.cz, tytso@mit.edu,
-        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
-        lcapitulino@redhat.com, kwolf@redhat.com, imammedo@redhat.com,
-        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
-        stefanha@redhat.com, aarcange@redhat.com, david@redhat.com,
-        david@fromorbit.com, cohuck@redhat.com,
-        xiaoguangrong.eric@gmail.com, pagupta@redhat.com,
-        pbonzini@redhat.com, yuval.shaia@oracle.com, kilobyte@angband.pl,
-        jstaron@google.com, rdunlap@infradead.org, snitzer@redhat.com
-Subject: [PATCH v15 7/7] xfs: disable map_sync for async flush
-Date:   Fri,  5 Jul 2019 19:33:28 +0530
-Message-Id: <20190705140328.20190-8-pagupta@redhat.com>
-In-Reply-To: <20190705140328.20190-1-pagupta@redhat.com>
-References: <20190705140328.20190-1-pagupta@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 05 Jul 2019 14:10:56 +0000 (UTC)
+        id S1727114AbfGEOkh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jul 2019 10:40:37 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:46904 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1725681AbfGEOkh (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Jul 2019 10:40:37 -0400
+Received: (qmail 1961 invoked by uid 2102); 5 Jul 2019 10:40:36 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 5 Jul 2019 10:40:36 -0400
+Date:   Fri, 5 Jul 2019 10:40:36 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc:     David Howells <dhowells@redhat.com>, <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        <nicolas.dichtel@6wind.com>, <raven@themaw.net>,
+        Christian Brauner <christian@brauner.io>,
+        <keyrings@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-api@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/9] Add a general, global device notification watch list
+ [ver #5]
+In-Reply-To: <20190705084459.GA2579@kroah.com>
+Message-ID: <Pine.LNX.4.44L0.1907051038550.1606-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dont support 'MAP_SYNC' with non-DAX files and DAX files
-with asynchronous dax_device. Virtio pmem provides
-asynchronous host page cache flush mechanism. We don't
-support 'MAP_SYNC' with virtio pmem and xfs.
+On Fri, 5 Jul 2019, Greg Kroah-Hartman wrote:
 
-Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- fs/xfs/xfs_file.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+> On Fri, Jul 05, 2019 at 09:04:17AM +0100, David Howells wrote:
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > 
+> > > Hm, good point, but there should be some way to test this to verify it
+> > > works.  Maybe for the other types of events?
+> > 
+> > Keyrings is the simplest.  keyutils's testsuite will handle that.  I'm trying
+> > to work out if I can simply make every macro in there that does a modification
+> > perform a watch automatically to make sure the appropriate events happen.
+> 
+> That should be good enough to test the basic functionality.  After this
+> gets merged I'll see if I can come up with a way to test the USB
+> stuff...
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index a7ceae90110e..f17652cca5ff 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -1203,11 +1203,14 @@ xfs_file_mmap(
- 	struct file	*filp,
- 	struct vm_area_struct *vma)
- {
-+	struct dax_device 	*dax_dev;
-+
-+	dax_dev = xfs_find_daxdev_for_inode(file_inode(filp));
- 	/*
--	 * We don't support synchronous mappings for non-DAX files. At least
--	 * until someone comes with a sensible use case.
-+	 * We don't support synchronous mappings for non-DAX files and
-+	 * for DAX files if underneath dax_device is not synchronous.
- 	 */
--	if (!IS_DAX(file_inode(filp)) && (vma->vm_flags & VM_SYNC))
-+	if (!daxdev_mapping_supported(vma, dax_dev))
- 		return -EOPNOTSUPP;
- 
- 	file_accessed(filp);
--- 
-2.20.1
+You can create USB connect and disconnect events programmatically by
+using dummy-hcd with gadget-zero.  Turning off the port's POWER feature
+will cause a disconnect, and turning it back on will cause a connect.
+
+Alan Stern
 
