@@ -2,114 +2,290 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 556086064E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2019 15:03:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7479660730
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2019 16:05:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbfGENDI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jul 2019 09:03:08 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39171 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbfGENDI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jul 2019 09:03:08 -0400
-Received: by mail-io1-f66.google.com with SMTP id f4so3468468ioh.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jul 2019 06:03:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FpRqpOEyos9gWVI1KI/vAHqH4Vkw1K4vS/+vG+O4M0M=;
-        b=h83wm51N3b9RabIloRjdWAnEOC+c2ImXGh+hgmGj9lO8K8kgTY1/0CLpXIjAZvwaX/
-         0qfkwrKKGV72ZlSVF7+yVw8hFbl6nZH+ZWeje+qe1vKc3AarWUHxn+63MtvQqOmlIeSg
-         nvWl+/M6ygAn65l2oZ7KBjaDmP3lzfWMo3Cm9O5qDTX0Ymncl5kURYgRd1T5gmCQMPYF
-         5FVCLpzMYum5OV1yH6p43O/9FUDUIwtpTMe0bYGQCXiWkFxtbcMMvvVP8wUkDyrX3f9B
-         ojfkwX0SIcJLI8SOGVSUzHE++uzxLQyGMhO+Nd+22YPWyYiprZUiQpGwu0mJN3gULwah
-         ZGTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FpRqpOEyos9gWVI1KI/vAHqH4Vkw1K4vS/+vG+O4M0M=;
-        b=aEcA2UwbvLZLFadyg4xEz6w2Ek18U6rDnL2scPFHiqgu8NoAOjSrfi3w3gLOGchDQA
-         Kl9DQzBebpsuOg1CGXQqMZxy+4w0ic6GlapSElmuEfRhgzh4uyAw0x58jKluTBUHNoXQ
-         r2x0cwLWuCcvZ2gDn40uj6zDgzd5WTqGwYV1O8WfU0Squanu7gSHBcwAac+x9oGQEXOm
-         ZdQ4vhpUarltFe/VNw7OLBi6eWA3wuPtZSSRWVMFJHmDXVNL1gSfgnx1llXBXUbHbJb4
-         48bo8z204mHfvC4wlAvXqzBSFokkC3z4Ulk37TXSOhi//7Ut2TWGDEDZ+rmBLCd3Mxl7
-         oYig==
-X-Gm-Message-State: APjAAAWtmx5MzCAKVge2FHkaJdM8ITITk6dpFTQaF5vZYLpBlgUGGFyg
-        XSPe2xqG2i1kJ1iDAVb6wj98X+9Tt9vrbq/gDjq/AQ==
-X-Google-Smtp-Source: APXvYqzikCIRRm6GKiKDXwi/hI0nEYiWh5ayabFF03vNzuu9ihfvXwabo/dqnt4HiGji3FAZ2BKPmf9rRBzJJFA4FEs=
-X-Received: by 2002:a02:c7c9:: with SMTP id s9mr4323307jao.82.1562331787454;
- Fri, 05 Jul 2019 06:03:07 -0700 (PDT)
+        id S1727483AbfGEOFF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jul 2019 10:05:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45290 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725837AbfGEOFF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 5 Jul 2019 10:05:05 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4150E85541;
+        Fri,  5 Jul 2019 14:04:48 +0000 (UTC)
+Received: from dhcp201-121.englab.pnq.redhat.com (ovpn-116-58.sin2.redhat.com [10.67.116.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DA42C1B46C;
+        Fri,  5 Jul 2019 14:03:51 +0000 (UTC)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     dm-devel@redhat.com, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Cc:     dan.j.williams@intel.com, zwisler@kernel.org,
+        vishal.l.verma@intel.com, dave.jiang@intel.com, mst@redhat.com,
+        jasowang@redhat.com, willy@infradead.org, rjw@rjwysocki.net,
+        hch@infradead.org, lenb@kernel.org, jack@suse.cz, tytso@mit.edu,
+        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
+        lcapitulino@redhat.com, kwolf@redhat.com, imammedo@redhat.com,
+        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
+        stefanha@redhat.com, aarcange@redhat.com, david@redhat.com,
+        david@fromorbit.com, cohuck@redhat.com,
+        xiaoguangrong.eric@gmail.com, pagupta@redhat.com,
+        pbonzini@redhat.com, yuval.shaia@oracle.com, kilobyte@angband.pl,
+        jstaron@google.com, rdunlap@infradead.org, snitzer@redhat.com
+Subject: [PATCH v15 0/7] virtio pmem driver 
+Date:   Fri,  5 Jul 2019 19:33:21 +0530
+Message-Id: <20190705140328.20190-1-pagupta@redhat.com>
 MIME-Version: 1.0
-References: <000000000000bb362d058b96d54d@google.com> <20190618140239.GA17978@ZenIV.linux.org.uk>
- <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
- <20190629203927.GA686@sol.localdomain> <CACT4Y+aAqEyJdjTzRksGuFmnTjDHbB9yS6bPsK52sz3+jhxNbw@mail.gmail.com>
- <20190701151808.GA790@sol.localdomain>
-In-Reply-To: <20190701151808.GA790@sol.localdomain>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 5 Jul 2019 15:02:54 +0200
-Message-ID: <CACT4Y+ZR98hxgG9GC0ijC_o0UuYdYEY2pAnf01nBLNTjhG4+Vw@mail.gmail.com>
-Subject: Re: general protection fault in do_move_mount (2)
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+6004acbaa1893ad013f0@syzkaller.appspotmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christian Brauner <christian@brauner.io>,
-        David Howells <dhowells@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Hannes Reinecke <hare@suse.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 05 Jul 2019 14:05:04 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 1, 2019 at 5:18 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > > FYI, it also isn't really appropriate for syzbot to bisect all bugs in new
-> > > syscalls to wiring them up to x86, and then blame all the x86 maintainers.
-> > > Normally such bugs will be in the syscall itself, regardless of architecture.
-> >
-> > Agree. Do you think it's something worth handling automatically
-> > (stands out of the long tail of other inappropriate cases)? If so, how
-> > could we detect such cases? It seems that some of these predicates are
-> > quite hard to program. Similar things happen with introduction of new
-> > bug detection tools and checks, wiring any functionality to new access
-> > points and similar things.
-> >
->
-> Yes, this case could easily be automatically detected (most of the time) by
-> listing the filenames changed in the commit, and checking whether they all match
-> the pattern syscall.*\.tbl.  Sure, it's not common, but it could be alongside
-> other similar straightforward checks like checking for merge commits and
-> checking for commits that only modify Documentation/.
->
-> I'm not even asking for more correct bisection results at this point, I'm just
-> asking for fewer bad bisection results.
+ Hi Dan,
+
+ This series has only change in patch 2 for linux-next build
+ failure. There is no functional change. Keeping all the
+ existing review/acks and reposting the patch series for
+ merging via libnvdimm tree.
+ ---
+
+ This patch series has implementation for "virtio pmem". 
+ "virtio pmem" is fake persistent memory(nvdimm) in guest 
+ which allows to bypass the guest page cache. This also
+ implements a VIRTIO based asynchronous flush mechanism.  
+ 
+ Sharing guest kernel driver in this patchset with the 
+ changes suggested in v4. Tested with Qemu side device 
+ emulation [5] for virtio-pmem. Documented the impact of
+ possible page cache side channel attacks with suggested
+ countermeasures.
+
+ Details of project idea for 'virtio pmem' flushing interface 
+ is shared [3] & [4].
+
+ Implementation is divided into two parts:
+ New virtio pmem guest driver and qemu code changes for new 
+ virtio pmem paravirtualized device.
+
+1. Guest virtio-pmem kernel driver
+---------------------------------
+   - Reads persistent memory range from paravirt device and 
+     registers with 'nvdimm_bus'.  
+   - 'nvdimm/pmem' driver uses this information to allocate 
+     persistent memory region and setup filesystem operations 
+     to the allocated memory. 
+   - virtio pmem driver implements asynchronous flushing 
+     interface to flush from guest to host.
+
+2. Qemu virtio-pmem device
+---------------------------------
+   - Creates virtio pmem device and exposes a memory range to 
+     KVM guest. 
+   - At host side this is file backed memory which acts as 
+     persistent memory. 
+   - Qemu side flush uses aio thread pool API's and virtio 
+     for asynchronous guest multi request handling. 
+
+ Virtio-pmem security implications and countermeasures:
+ -----------------------------------------------------
+
+ In previous posting of kernel driver, there was discussion [7]
+ on possible implications of page cache side channel attacks with 
+ virtio pmem. After thorough analysis of details of known side 
+ channel attacks, below are the suggestions:
+
+ - Depends entirely on how host backing image file is mapped 
+   into guest address space. 
+
+ - virtio-pmem device emulation, by default shared mapping is used
+   to map host backing file. It is recommended to use separate
+   backing file at host side for every guest. This will prevent
+   any possibility of executing common code from multiple guests
+   and any chance of inferring guest local data based based on 
+   execution time.
+
+ - If backing file is required to be shared among multiple guests 
+   it is recommended to don't support host page cache eviction 
+   commands from the guest driver. This will avoid any possibility
+   of inferring guest local data or host data from another guest. 
+
+ - Proposed device specification [6] for virtio-pmem device with 
+   details of possible security implications and suggested 
+   countermeasures for device emulation.
+
+ Virtio-pmem errors handling:
+ ----------------------------------------
+  Checked behaviour of virtio-pmem for below types of errors
+  Need suggestions on expected behaviour for handling these errors?
+
+  - Hardware Errors: Uncorrectable recoverable Errors: 
+  a] virtio-pmem: 
+    - As per current logic if error page belongs to Qemu process, 
+      host MCE handler isolates(hwpoison) that page and send SIGBUS. 
+      Qemu SIGBUS handler injects exception to KVM guest. 
+    - KVM guest then isolates the page and send SIGBUS to guest 
+      userspace process which has mapped the page. 
+  
+  b] Existing implementation for ACPI pmem driver: 
+    - Handles such errors with MCE notifier and creates a list 
+      of bad blocks. Read/direct access DAX operation return EIO 
+      if accessed memory page fall in bad block list.
+    - It also starts backgound scrubbing.  
+    - Similar functionality can be reused in virtio-pmem with MCE 
+      notifier but without scrubbing(no ACPI/ARS)? Need inputs to 
+      confirm if this behaviour is ok or needs any change?
+
+Changes from PATCH v13: [1] 
+ - Rebase to Linux-5.2-rc7
+ - Fix Linux-next build failure for undefined type
+
+Changes from PATCH v13: [2] 
+ - Rebased to Linux-5.2-rc5
+ - Fix S390x build failure in patch 3
+ - Fix for !CONFIG_DAX with dax_synchronous
+ - Fix sparse warning in virtio patch 2
+
+Changes from PATCH v12:
+ - Minor changes(function name, dev_err -> dev_info & 
+   make function static in virtio patch - [Cornelia]
+ - Added r-o-b of Mike in patch 4
+
+Changes from PATCH v11: 
+ - Change implmentation for setting of synchronous DAX type
+   for device mapper - [Mike] 
+
+Changes from PATCH v10:
+ - Rebased on Linux-5.2-rc4
+
+Changes from PATCH v9:
+ - Kconfig help text add two spaces - Randy
+ - Fixed libnvdimm 'bio' include warning - Dan
+ - virtio-pmem, separate request/resp struct and 
+   move to uapi file with updated license - DavidH
+ - Use virtio32* type for req/resp endianess - DavidH
+ - Added tested-by & ack-by of Jakob
+ - Rebased to 5.2-rc1
+
+Changes from PATCH v8:
+ - Set device mapper synchronous if all target devices support - Dan
+ - Move virtio_pmem.h to nvdimm directory  - Dan
+ - Style, indentation & better error messages in patch 2 - DavidH
+ - Added MST's ack in patch 2.
+
+Changes from PATCH v7:
+ - Corrected pending request queue logic (patch 2) - Jakub Staroń
+ - Used unsigned long flags for passing DAXDEV_F_SYNC (patch 3) - Dan
+ - Fixed typo =>  vma 'flag' to 'vm_flag' (patch 4)
+ - Added rob in patch 6 & patch 2
+
+Changes from PATCH v6: 
+ - Corrected comment format in patch 5 & patch 6. [Dave]
+ - Changed variable declaration indentation in patch 6 [Darrick]
+ - Add Reviewed-by tag by 'Jan Kara' in patch 4 & patch 5
+
+Changes from PATCH v5: 
+  Changes suggested in by - [Cornelia, Yuval]
+- Remove assignment chaining in virtio driver
+- Better error message and remove not required free
+- Check nd_region before use
+
+  Changes suggested by - [Jan Kara]
+- dax_synchronous() for !CONFIG_DAX
+- Correct 'daxdev_mapping_supported' comment and non-dax implementation
+
+  Changes suggested by - [Dan Williams]
+- Pass meaningful flag 'DAXDEV_F_SYNC' to alloc_dax
+- Gate nvdimm_flush instead of additional async parameter
+- Move block chaining logic to flush callback than common nvdimm_flush
+- Use NULL flush callback for generic flush for better readability [Dan, Jan]
+
+- Use virtio device id 27 from 25(already used) - [MST]
+
+Changes from PATCH v4:
+- Factor out MAP_SYNC supported functionality to a common helper
+				[Dave, Darrick, Jan]
+- Comment, indentation and virtqueue_kick failure handle - Yuval Shaia
+
+Changes from PATCH v3: 
+- Use generic dax_synchronous() helper to check for DAXDEV_SYNC 
+  flag - [Dan, Darrick, Jan]
+- Add 'is_nvdimm_async' function
+- Document page cache side channel attacks implications & 
+  countermeasures - [Dave Chinner, Michael]
+
+Changes from PATCH v2: 
+- Disable MAP_SYNC for ext4 & XFS filesystems - [Dan] 
+- Use name 'virtio pmem' in place of 'fake dax' 
+
+Changes from PATCH v1: 
+- 0-day build test for build dependency on libnvdimm 
+
+ Changes suggested by - [Dan Williams]
+- Split the driver into two parts virtio & pmem  
+- Move queuing of async block request to block layer
+- Add "sync" parameter in nvdimm_flush function
+- Use indirect call for nvdimm_flush
+- Don’t move declarations to common global header e.g nd.h
+- nvdimm_flush() return 0 or -EIO if it fails
+- Teach nsio_rw_bytes() that the flush can fail
+- Rename nvdimm_flush() to generic_nvdimm_flush()
+- Use 'nd_region->provider_data' for long dereferencing
+- Remove virtio_pmem_freeze/restore functions
+- Remove BSD license text with SPDX license text
+
+- Add might_sleep() in virtio_pmem_flush - [Luiz]
+- Make spin_lock_irqsave() narrow
+
+Pankaj Gupta (7):
+   libnvdimm: nd_region flush callback support
+   virtio-pmem: Add virtio-pmem guest driver
+   libnvdimm: add nd_region buffered dax_dev flag
+   dax: check synchronous mapping is supported
+   dm: dm: Enable synchronous dax
+   ext4: disable map_sync for virtio pmem
+   xfs: disable map_sync for virtio pmem
+
+[1] https://lkml.org/lkml/2019/6/21/452
+[2] https://lkml.org/lkml/2019/6/12/624
+[3] https://www.spinics.net/lists/kvm/msg149761.html
+[4] https://www.spinics.net/lists/kvm/msg153095.html  
+[5] https://marc.info/?l=qemu-devel&m=155860751202202&w=2
+[6] https://lists.oasis-open.org/archives/virtio-dev/201903/msg00083.html
+[7] https://lkml.org/lkml/2019/1/9/1191
+
+ drivers/acpi/nfit/core.c         |    4 -
+ drivers/dax/bus.c                |    2 
+ drivers/dax/super.c              |   19 +++++
+ drivers/md/dm-table.c            |   24 +++++--
+ drivers/md/dm.c                  |    5 -
+ drivers/md/dm.h                  |    5 +
+ drivers/nvdimm/Makefile          |    1 
+ drivers/nvdimm/claim.c           |    6 +
+ drivers/nvdimm/nd.h              |    1 
+ drivers/nvdimm/nd_virtio.c       |  125 +++++++++++++++++++++++++++++++++++++++
+ drivers/nvdimm/pmem.c            |   18 +++--
+ drivers/nvdimm/region_devs.c     |   33 +++++++++-
+ drivers/nvdimm/virtio_pmem.c     |  122 ++++++++++++++++++++++++++++++++++++++
+ drivers/nvdimm/virtio_pmem.h     |   55 +++++++++++++++++
+ drivers/s390/block/dcssblk.c     |    2 
+ drivers/virtio/Kconfig           |   11 +++
+ fs/ext4/file.c                   |   10 +--
+ fs/xfs/xfs_file.c                |    9 +-
+ include/linux/dax.h              |   41 ++++++++++++
+ include/linux/libnvdimm.h        |   10 ++-
+ include/uapi/linux/virtio_ids.h  |    1 
+ include/uapi/linux/virtio_pmem.h |   34 ++++++++++
+ 22 files changed, 504 insertions(+), 34 deletions(-)
 
 
-Agree, if we implement a common framework for doing this type of
-checks and affecting reporting in some fixed set of ways, adding more
-rules can make sense even if they don't affect lots of cases. I filed
-https://github.com/google/syzkaller/issues/1271 for this.
 
-There are several open questions, though.
-1. The syscall.*\.tbl change is formally the right bisection result
-and it communicates a bit of potentially useful information. Do we
-want to handle them differently from, say, Documentation/* changes
-which are significantly a different type "incorrect".
-2. You mentioned merges. It seems that they can be just anything:
-completely incorrect results; formally correct, but not the change
-that introduced the bug; as well as the totally right commit to blame.
-Are you sure we should mark all of them as completely incorrect?
