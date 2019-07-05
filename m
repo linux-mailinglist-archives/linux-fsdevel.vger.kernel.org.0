@@ -2,90 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D31B160C2C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2019 22:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5776160C48
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2019 22:21:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbfGEURV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jul 2019 16:17:21 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:59920 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725813AbfGEURV (ORCPT
+        id S1727008AbfGEUUy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jul 2019 16:20:54 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37090 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725813AbfGEUUy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jul 2019 16:17:21 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 7EED28EE1F7;
-        Fri,  5 Jul 2019 13:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1562357841;
-        bh=Rr0/c3YY6b7M6XGt7eOf4jjmV2d3TMURmcZoEpYrahY=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=FOFnX6fsexFCfW5mVUquzMC+bE32BwR1CPHjvlO4jFuhi/W5UwqdXK99onoRuLSlD
-         vPV4PeI6GTA25+sQ+tDl9kUxG7ZGE8Bx6Owp9UlW/go1GD22tDCYa0f/VEnIOtJPql
-         9AAD+80Vj6CtXPqU0XebDXt9F4MGG3Vuj7/a/8Nk=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 3-_X30Ba98IQ; Fri,  5 Jul 2019 13:17:21 -0700 (PDT)
-Received: from jarvis.lan (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 27D648EE0CF;
-        Fri,  5 Jul 2019 13:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1562357841;
-        bh=Rr0/c3YY6b7M6XGt7eOf4jjmV2d3TMURmcZoEpYrahY=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=FOFnX6fsexFCfW5mVUquzMC+bE32BwR1CPHjvlO4jFuhi/W5UwqdXK99onoRuLSlD
-         vPV4PeI6GTA25+sQ+tDl9kUxG7ZGE8Bx6Owp9UlW/go1GD22tDCYa0f/VEnIOtJPql
-         9AAD+80Vj6CtXPqU0XebDXt9F4MGG3Vuj7/a/8Nk=
-Message-ID: <1562357840.10899.9.camel@HansenPartnership.com>
-Subject: [PATCH 4/4] palo: add support for formatting as ext4
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>
-Date:   Fri, 05 Jul 2019 13:17:20 -0700
-In-Reply-To: <1562357231.10899.5.camel@HansenPartnership.com>
-References: <1562357231.10899.5.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 5 Jul 2019 16:20:54 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 19so4749447pfa.4;
+        Fri, 05 Jul 2019 13:20:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=25Gxg4cOnHkRGBzoLvP39q6ZGr7xTfO8zZqC3Dmp4ao=;
+        b=RyziFGzHWyWzlikAwjp9TuEqufKplQPckAT9Ps87VZr4SMqKSJ/UQS4CSZI6Z21S93
+         w2laJ6Ts4yyGPTXs9IGqz337Cjn0f/2fvkfpMuo9/Zk/op4ADRld25AqmX4gbpn/b439
+         oFc6WzpyxqwuQa392FOjGrkGT0JHeEZjnXelRFeYhWjNfTAD4niMxk4GNky7HJ0vRDYm
+         pH5QcSnU6gRfzU8XW6AdB4rl53KysAKal9zHEHX32AEqOm29zoQDnrq/WSA3AWqJs4+3
+         9FE/BEjWVyGpweAZdaQwAVKfw9tE0zrR5ZHvJ5ezUMssVHy6x0LJzWHIZUZRFlHqKWrW
+         KQQQ==
+X-Gm-Message-State: APjAAAVwvZDbOEmdQXmo3iHAUqKLmwgr4iSaIH+53hQCnWo9ShlHpEJK
+        crI2JupPweDGKXAd/Ja4XQc=
+X-Google-Smtp-Source: APXvYqzDgP2UvvEnLjwLbSAV5+PRQhqdSDKK5VAZmMuJMa1jdDqx9hxhnLoRC5+cLLJisPXah8LMOQ==
+X-Received: by 2002:a63:e506:: with SMTP id r6mr7427654pgh.324.1562358053447;
+        Fri, 05 Jul 2019 13:20:53 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id r188sm18308824pfr.16.2019.07.05.13.20.52
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 05 Jul 2019 13:20:52 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id A47FE40190; Fri,  5 Jul 2019 20:20:51 +0000 (UTC)
+Date:   Fri, 5 Jul 2019 20:20:51 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, peterz@infradead.org,
+        robh@kernel.org, sboyd@kernel.org, shuah@kernel.org, tytso@mit.edu,
+        yamada.masahiro@socionext.com, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
+        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
+        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
+        julia.lawall@lip6.fr, khilman@baylibre.com, knut.omang@oracle.com,
+        logang@deltatee.com, mpe@ellerman.id.au, pmladek@suse.com,
+        rdunlap@infradead.org, richard@nod.at, rientjes@google.com,
+        rostedt@goodmis.org, wfg@linux.intel.com
+Subject: Re: [PATCH v6 01/18] kunit: test: add KUnit test runner core
+Message-ID: <20190705202051.GB19023@42.do-not-panic.com>
+References: <20190704003615.204860-1-brendanhiggins@google.com>
+ <20190704003615.204860-2-brendanhiggins@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190704003615.204860-2-brendanhiggins@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that iplboot can read ext4 filesystem, allow palo to create them
-with the palo --format-as=4 option.
+On Wed, Jul 03, 2019 at 05:35:58PM -0700, Brendan Higgins wrote:
+> +struct kunit {
+> +	void *priv;
+> +
+> +	/* private: internal use only. */
+> +	const char *name; /* Read only after initialization! */
+> +	bool success; /* Read only after test_case finishes! */
+> +};
 
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- palo/palo.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+No lock attribute above.
 
-diff --git a/palo/palo.c b/palo/palo.c
-index e088993..26da01b 100644
---- a/palo/palo.c
-+++ b/palo/palo.c
-@@ -506,8 +506,8 @@ do_formatted(int init, int media, const char *medianame, int partition,
- 	    }
- 	}
- 
--	sprintf(cmd, "mke2fs %s -O^resize_inode -b %d -l %s %s", do_format == 3 ? "-j" : "",
--		EXT2_BLOCKSIZE, badblockfilename, partitionname);
-+	sprintf(cmd, "mke2fs -t ext%d -O^resize_inode -b %d -l %s %s",
-+		do_format, EXT2_BLOCKSIZE, badblockfilename, partitionname);
- 
- 	if (verbose)
- 	    printf("Executing: %s\n", cmd);
-@@ -868,6 +868,8 @@ main(int argc, char *argv[])
- 		format_as = 2;
- 	    else if(strcmp(optarg, "3") == 0)
- 		format_as = 3;
-+	    else if (strcmp(optarg, "4") == 0)
-+		format_as = 4;
- 	    else
- 		error(0, argv[0]);
- 	    break;
--- 
-2.16.4
+> +void kunit_init_test(struct kunit *test, const char *name)
+> +{
+> +	spin_lock_init(&test->lock);
+> +	test->name = name;
+> +	test->success = true;
+> +}
 
+And yet here you initialize a spin lock... This won't compile. Seems
+you forgot to remove this line. So I guess a re-spin is better.
+
+  Luis
