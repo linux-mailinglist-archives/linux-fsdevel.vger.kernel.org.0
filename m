@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72D2D60C95
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2019 22:45:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D33E60CA2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2019 22:46:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728163AbfGEUpk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jul 2019 16:45:40 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36285 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbfGEUpk (ORCPT
+        id S1728201AbfGEUp7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jul 2019 16:45:59 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33856 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbfGEUp7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 5 Jul 2019 16:45:40 -0400
-Received: by mail-pg1-f196.google.com with SMTP id l21so755599pgm.3;
-        Fri, 05 Jul 2019 13:45:39 -0700 (PDT)
+        Fri, 5 Jul 2019 16:45:59 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b13so159904pfo.1;
+        Fri, 05 Jul 2019 13:45:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NINMgNCtdp9VxxGck6fqsoIqX8vCQf36P/6C5pYBqDM=;
-        b=YQepM3QfaLPrt38a06JLOG8+Sq+RthHTJT8ayAHe+a2sZFbhJHR0vrzdfGuv3uIS6g
-         LgSaqxZx8w3LOZ5d2xXa+wI8ODSGZw1ljVBMPgII5DuXYA09vvGrXrMEpPCkCC1Ro2wn
-         nElxs1KnW40X3XGGibm8ejsU+PtMo+8XY41bMdnUg49KaU9A250siGSFXlpnjF99wM7S
-         DJNenFTGXfHVNJcNSR1yrlwDcD5GgA6y5c9BobIy1E7ozvKxw7+3JrAJARmHRJvBu+Ar
-         TtDz4w1XK4PSEsDyURA6pi6BiSQ8xLgh/Lr4iOFpqvNhWSpCPXNr3QH2c7x8uw6r+O5g
-         pWSw==
-X-Gm-Message-State: APjAAAXD0rjwvWEAnJeescaKlWUENqU8iF4mYe6KY8/+IOJofpCcNGHK
-        gy34Hj/LyjZfOVKpRsnUTCs=
-X-Google-Smtp-Source: APXvYqzORz85r9dXJ+0VShptntCI2Ba5VbMOY6v1/mI3RdkuGvkVnROUEZV4rccMgxpa1+keGNumHQ==
-X-Received: by 2002:a17:90a:d58c:: with SMTP id v12mr89451pju.7.1562359539502;
-        Fri, 05 Jul 2019 13:45:39 -0700 (PDT)
+        bh=x4GIgI5QbQFYYHeADDS48yN0XwXbMzJsu3FTa+FaXcs=;
+        b=EEgnxdKVae5dLG3AvMagDH2whhQVFatQ1XfuuTEMJqXFdaO81LmDCsFAcpbXRXazur
+         7Nz9FFgtVruBbgzIgpctdysszanug/y2zd/g5vOxp3UN+b6QKLuEAYYr2U3JiMbYE+DV
+         TYlt2ztyXic2xsBnJVD83P/XZQo2NetHL8/uhaDiBNHPtYiESiTw+b6I3FZrDDVO/4Gi
+         s4miR5mx4pbg+DGbK4q1+Hu4TSPEsjdGWRNuEhBK0rES5AnCWosP+Rr1i/ZJ7X9el03m
+         Cib0JPx+zM0ZuGItBypJtpnoG8yFnSPKYyW5LRbSWzKq89pTwdaJ2IomEBW100+5C+x/
+         m2bg==
+X-Gm-Message-State: APjAAAVyVdJhG2B2iMb3yH27o0FgAHWKKO7VK9eklZHNNXdqVokPkBOc
+        HNMWDyL99aBK7LL88X7Biyw=
+X-Google-Smtp-Source: APXvYqzeFsCVF2ZvnbfqZHx8vhkEXe3aUADAaqpXImPQcsaBURcoZTbfCuqJiBja1aAbbmI4GIuc+A==
+X-Received: by 2002:a63:e018:: with SMTP id e24mr7383945pgh.361.1562359558392;
+        Fri, 05 Jul 2019 13:45:58 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id b17sm14479029pgj.73.2019.07.05.13.45.38
+        by smtp.gmail.com with ESMTPSA id s66sm13955192pgs.39.2019.07.05.13.45.56
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 05 Jul 2019 13:45:38 -0700 (PDT)
+        Fri, 05 Jul 2019 13:45:57 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 9D53F40190; Fri,  5 Jul 2019 20:45:37 +0000 (UTC)
-Date:   Fri, 5 Jul 2019 20:45:37 +0000
+        id 9151F40190; Fri,  5 Jul 2019 20:45:56 +0000 (UTC)
+Date:   Fri, 5 Jul 2019 20:45:56 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     Brendan Higgins <brendanhiggins@google.com>
 Cc:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
@@ -54,38 +54,35 @@ Cc:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
         julia.lawall@lip6.fr, khilman@baylibre.com, knut.omang@oracle.com,
         logang@deltatee.com, mpe@ellerman.id.au, pmladek@suse.com,
         rdunlap@infradead.org, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com
-Subject: Re: [PATCH v6 02/18] kunit: test: add test resource management API
-Message-ID: <20190705204537.GC19023@42.do-not-panic.com>
+        rostedt@goodmis.org, wfg@linux.intel.com,
+        Iurii Zaikin <yzaikin@google.com>
+Subject: Re: [PATCH v6 17/18] kernel/sysctl-test: Add null pointer test for
+ sysctl.c:proc_dointvec()
+Message-ID: <20190705204556.GD19023@42.do-not-panic.com>
 References: <20190704003615.204860-1-brendanhiggins@google.com>
- <20190704003615.204860-3-brendanhiggins@google.com>
+ <20190704003615.204860-18-brendanhiggins@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190704003615.204860-3-brendanhiggins@google.com>
+In-Reply-To: <20190704003615.204860-18-brendanhiggins@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 05:35:59PM -0700, Brendan Higgins wrote:
-> diff --git a/kunit/test.c b/kunit/test.c
-> index c030ba5a43e40..a70fbe449e922 100644
-> --- a/kunit/test.c
-> +++ b/kunit/test.c
-> @@ -122,7 +122,8 @@ static void kunit_print_test_case_ok_not_ok(struct kunit_case *test_case,
->  
->  void kunit_init_test(struct kunit *test, const char *name)
->  {
-> -	spin_lock_init(&test->lock);
+On Wed, Jul 03, 2019 at 05:36:14PM -0700, Brendan Higgins wrote:
+> From: Iurii Zaikin <yzaikin@google.com>
+> 
+> KUnit tests for initialized data behavior of proc_dointvec that is
+> explicitly checked in the code. Includes basic parsing tests including
+> int min/max overflow.
+> 
+> Signed-off-by: Iurii Zaikin <yzaikin@google.com>
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
 
-Once you re-spin, this above line should be removed.
-
-> +	mutex_init(&test->lock);
-> +	INIT_LIST_HEAD(&test->resources);
->  	test->name = name;
->  	test->success = true;
->  }
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
 
   Luis
