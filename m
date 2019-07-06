@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F8A60E48
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jul 2019 02:22:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68C1460E43
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jul 2019 02:22:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfGFAWn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 5 Jul 2019 20:22:43 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:47708 "EHLO
+        id S1727018AbfGFAWo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 5 Jul 2019 20:22:44 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:47712 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbfGFAWj (ORCPT
+        with ESMTP id S1726038AbfGFAWj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 5 Jul 2019 20:22:39 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hjYTM-0006nu-GO; Sat, 06 Jul 2019 00:22:36 +0000
+        id 1hjYTM-0006o2-LB; Sat, 06 Jul 2019 00:22:36 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] Teach shrink_dcache_parent() to cope with mixed-filesystem shrink lists
-Date:   Sat,  6 Jul 2019 01:22:33 +0100
-Message-Id: <20190706002236.26113-3-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 4/6] make struct mountpoint bear the dentry reference to mountpoint, not struct mount
+Date:   Sat,  6 Jul 2019 01:22:34 +0100
+Message-Id: <20190706002236.26113-4-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190706002236.26113-1-viro@ZenIV.linux.org.uk>
 References: <20190706001612.GM17978@ZenIV.linux.org.uk>
@@ -34,219 +34,241 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Currently, running into a shrink list that contains dentries from different
-filesystems can cause several unpleasant things for shrink_dcache_parent()
-and for umount(2).
-
-The first problem is that there's a window during shrink_dentry_list() between
-__dentry_kill() takes a victim out and dropping reference to its parent.  During
-that window the parent looks like a genuine busy dentry.  shrink_dcache_parent()
-(or, worse yet, shrink_dcache_for_umount()) coming at that time will see no
-eviction candidates and no indication that it needs to wait for some
-shrink_dentry_list() to proceed further.
-
-That applies for any shrink list that might intersect with the subtree we are
-trying to shrink; the only reason it does not blow on umount(2) in the mainline
-is that we unregister the memory shrinker before hitting shrink_dcache_for_umount().
-
-Another problem happens if something in a mixed-filesystem shrink list gets
-be stuck in e.g. iput(), getting umount of unrelated fs to spin waiting for
-the stuck shrinker to get around to our dentries.
-
-Solution:
-        1) have shrink_dentry_list() decrement the parent's refcount and
-make sure it's on a shrink list (ours unless it already had been on some
-other) before calling __dentry_kill().  That eliminates the window when
-shrink_dcache_parent() would've blown past the entire subtree without
-noticing anything with zero refcount not on shrink lists.
-	2) when shrink_dcache_parent() has found no eviction candidates,
-but some dentries are still sitting on shrink lists, rather than
-repeating the scan in hope that shrinkers have progressed, scan looking
-for something on shrink lists with zero refcount.  If such a thing is
-found, grab rcu_read_lock() and stop the scan, with caller locking
-it for eviction, dropping out of RCU and doing __dentry_kill(), with
-the same treatment for parent as shrink_dentry_list() would do.
-
-Note that right now mixed-filesystem shrink lists do not occur, so this
-is not a mainline bug.  Howevere, there's a bunch of uses for such
-beasts (e.g. the "try and evict everything we can out of given page"
-patches; there are potential uses in mount-related code, considerably
-simplifying the life in fs/namespace.c, etc.)
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/dcache.c   | 98 ++++++++++++++++++++++++++++++++++++++++++++++++-----------
- fs/internal.h |  2 ++
- 2 files changed, 83 insertions(+), 17 deletions(-)
+ fs/mount.h     |  1 -
+ fs/namespace.c | 66 +++++++++++++++++++++++++---------------------------------
+ 2 files changed, 28 insertions(+), 39 deletions(-)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index c435398f2c81..d8732cf2e302 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -861,6 +861,32 @@ void dput(struct dentry *dentry)
- }
- EXPORT_SYMBOL(dput);
+diff --git a/fs/mount.h b/fs/mount.h
+index 6250de544760..84aa8cdf4971 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -69,7 +69,6 @@ struct mount {
+ 	int mnt_expiry_mark;		/* true if marked for expiry */
+ 	struct hlist_head mnt_pins;
+ 	struct fs_pin mnt_umount;
+-	struct dentry *mnt_ex_mountpoint;
+ } __randomize_layout;
  
-+static void __dput_to_list(struct dentry *dentry, struct list_head *list)
-+__must_hold(&dentry->d_lock)
-+{
-+	if (dentry->d_flags & DCACHE_SHRINK_LIST) {
-+		/* let the owner of the list it's on deal with it */
-+		--dentry->d_lockref.count;
-+	} else {
-+		if (dentry->d_flags & DCACHE_LRU_LIST)
-+			d_lru_del(dentry);
-+		if (!--dentry->d_lockref.count)
-+			d_shrink_add(dentry, list);
-+	}
-+}
-+
-+void dput_to_list(struct dentry *dentry, struct list_head *list)
-+{
-+	rcu_read_lock();
-+	if (likely(fast_dput(dentry))) {
-+		rcu_read_unlock();
-+		return;
-+	}
-+	rcu_read_unlock();
-+	if (!retain_dentry(dentry))
-+		__dput_to_list(dentry, list);
-+	spin_unlock(&dentry->d_lock);
-+}
+ #define MNT_NS_INTERNAL ERR_PTR(-EINVAL) /* distinct from any mnt_namespace */
+diff --git a/fs/namespace.c b/fs/namespace.c
+index b7059a4f07e3..911675de2a70 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -69,6 +69,8 @@ static struct hlist_head *mount_hashtable __read_mostly;
+ static struct hlist_head *mountpoint_hashtable __read_mostly;
+ static struct kmem_cache *mnt_cache __read_mostly;
+ static DECLARE_RWSEM(namespace_sem);
++static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
++static LIST_HEAD(ex_mountpoints);
  
- /* This must be called with d_lock held */
- static inline void __dget_dlock(struct dentry *dentry)
-@@ -1067,7 +1093,7 @@ static bool shrink_lock_dentry(struct dentry *dentry)
- 	return false;
- }
- 
--static void shrink_dentry_list(struct list_head *list)
-+void shrink_dentry_list(struct list_head *list)
+ /* /sys/fs */
+ struct kobject *fs_kobj;
+@@ -172,7 +174,6 @@ unsigned int mnt_get_count(struct mount *mnt)
+ static void drop_mountpoint(struct fs_pin *p)
  {
- 	while (!list_empty(list)) {
- 		struct dentry *dentry, *parent;
-@@ -1089,18 +1115,9 @@ static void shrink_dentry_list(struct list_head *list)
- 		rcu_read_unlock();
- 		d_shrink_del(dentry);
- 		parent = dentry->d_parent;
-+		if (parent != dentry)
-+			__dput_to_list(parent, list);
- 		__dentry_kill(dentry);
--		if (parent == dentry)
--			continue;
--		/*
--		 * We need to prune ancestors too. This is necessary to prevent
--		 * quadratic behavior of shrink_dcache_parent(), but is also
--		 * expected to be beneficial in reducing dentry cache
--		 * fragmentation.
--		 */
--		dentry = parent;
--		while (dentry && !lockref_put_or_lock(&dentry->d_lockref))
--			dentry = dentry_kill(dentry);
- 	}
+ 	struct mount *m = container_of(p, struct mount, mnt_umount);
+-	dput(m->mnt_ex_mountpoint);
+ 	pin_remove(p);
+ 	mntput(&m->mnt);
+ }
+@@ -739,7 +740,7 @@ static struct mountpoint *get_mountpoint(struct dentry *dentry)
+ 
+ 	/* Add the new mountpoint to the hash table */
+ 	read_seqlock_excl(&mount_lock);
+-	new->m_dentry = dentry;
++	new->m_dentry = dget(dentry);
+ 	new->m_count = 1;
+ 	hlist_add_head(&new->m_hash, mp_hash(dentry));
+ 	INIT_HLIST_HEAD(&new->m_list);
+@@ -752,7 +753,7 @@ static struct mountpoint *get_mountpoint(struct dentry *dentry)
+ 	return mp;
  }
  
-@@ -1445,8 +1462,11 @@ int d_set_mounted(struct dentry *dentry)
- 
- struct select_data {
- 	struct dentry *start;
-+	union {
-+		long found;
-+		struct dentry *victim;
-+	};
- 	struct list_head dispose;
--	int found;
- };
- 
- static enum d_walk_ret select_collect(void *_data, struct dentry *dentry)
-@@ -1478,6 +1498,37 @@ static enum d_walk_ret select_collect(void *_data, struct dentry *dentry)
- 	return ret;
- }
- 
-+static enum d_walk_ret select_collect2(void *_data, struct dentry *dentry)
-+{
-+	struct select_data *data = _data;
-+	enum d_walk_ret ret = D_WALK_CONTINUE;
-+
-+	if (data->start == dentry)
-+		goto out;
-+
-+	if (dentry->d_flags & DCACHE_SHRINK_LIST) {
-+		if (!dentry->d_lockref.count) {
-+			rcu_read_lock();
-+			data->victim = dentry;
-+			return D_WALK_QUIT;
-+		}
-+	} else {
-+		if (dentry->d_flags & DCACHE_LRU_LIST)
-+			d_lru_del(dentry);
-+		if (!dentry->d_lockref.count)
-+			d_shrink_add(dentry, &data->dispose);
-+	}
-+	/*
-+	 * We can return to the caller if we have found some (this
-+	 * ensures forward progress). We'll be coming back to find
-+	 * the rest.
-+	 */
-+	if (!list_empty(&data->dispose))
-+		ret = need_resched() ? D_WALK_QUIT : D_WALK_NORETRY;
-+out:
-+	return ret;
-+}
-+
- /**
-  * shrink_dcache_parent - prune dcache
-  * @parent: parent of entries to prune
-@@ -1487,12 +1538,9 @@ static enum d_walk_ret select_collect(void *_data, struct dentry *dentry)
- void shrink_dcache_parent(struct dentry *parent)
+-static void put_mountpoint(struct mountpoint *mp)
++static void put_mountpoint(struct mountpoint *mp, struct list_head *list)
  {
- 	for (;;) {
--		struct select_data data;
-+		struct select_data data = {.start = parent};
- 
- 		INIT_LIST_HEAD(&data.dispose);
--		data.start = parent;
--		data.found = 0;
--
- 		d_walk(parent, &data, select_collect);
- 
- 		if (!list_empty(&data.dispose)) {
-@@ -1503,6 +1551,22 @@ void shrink_dcache_parent(struct dentry *parent)
- 		cond_resched();
- 		if (!data.found)
- 			break;
-+		data.victim = NULL;
-+		d_walk(parent, &data, select_collect2);
-+		if (data.victim) {
-+			struct dentry *parent;
-+			if (!shrink_lock_dentry(data.victim)) {
-+				rcu_read_unlock();
-+			} else {
-+				rcu_read_unlock();
-+				parent = data.victim->d_parent;
-+				if (parent != data.victim)
-+					__dput_to_list(parent, &data.dispose);
-+				__dentry_kill(data.victim);
-+			}
-+		}
-+		if (!list_empty(&data.dispose))
-+			shrink_dentry_list(&data.dispose);
+ 	if (!--mp->m_count) {
+ 		struct dentry *dentry = mp->m_dentry;
+@@ -760,6 +761,9 @@ static void put_mountpoint(struct mountpoint *mp)
+ 		spin_lock(&dentry->d_lock);
+ 		dentry->d_flags &= ~DCACHE_MOUNTED;
+ 		spin_unlock(&dentry->d_lock);
++		if (!list)
++			list = &ex_mountpoints;
++		dput_to_list(dentry, list);
+ 		hlist_del(&mp->m_hash);
+ 		kfree(mp);
  	}
+@@ -813,19 +817,17 @@ static struct mountpoint *unhash_mnt(struct mount *mnt)
+  */
+ static void detach_mnt(struct mount *mnt, struct path *old_path)
+ {
+-	old_path->dentry = mnt->mnt_mountpoint;
++	old_path->dentry = dget(mnt->mnt_mountpoint);
+ 	old_path->mnt = &mnt->mnt_parent->mnt;
+-	put_mountpoint(unhash_mnt(mnt));
++	put_mountpoint(unhash_mnt(mnt), NULL);
  }
- EXPORT_SYMBOL(shrink_dcache_parent);
-diff --git a/fs/internal.h b/fs/internal.h
-index a48ef81be37d..dc317abe31b5 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -156,6 +156,8 @@ extern int d_set_mounted(struct dentry *dentry);
- extern long prune_dcache_sb(struct super_block *sb, struct shrink_control *sc);
- extern struct dentry *d_alloc_cursor(struct dentry *);
- extern struct dentry * d_alloc_pseudo(struct super_block *, const struct qstr *);
-+extern void dput_to_list(struct dentry *, struct list_head *);
-+extern void shrink_dentry_list(struct list_head *);
  
  /*
-  * read_write.c
+  * vfsmount lock must be held for write
+  */
+-static void umount_mnt(struct mount *mnt)
++static void umount_mnt(struct mount *mnt, struct list_head *list)
+ {
+-	/* old mountpoint will be dropped when we can do that */
+-	mnt->mnt_ex_mountpoint = mnt->mnt_mountpoint;
+-	put_mountpoint(unhash_mnt(mnt));
++	put_mountpoint(unhash_mnt(mnt), list);
+ }
+ 
+ /*
+@@ -837,7 +839,7 @@ void mnt_set_mountpoint(struct mount *mnt,
+ {
+ 	mp->m_count++;
+ 	mnt_add_count(mnt, 1);	/* essentially, that's mntget */
+-	child_mnt->mnt_mountpoint = dget(mp->m_dentry);
++	child_mnt->mnt_mountpoint = mp->m_dentry;
+ 	child_mnt->mnt_parent = mnt;
+ 	child_mnt->mnt_mp = mp;
+ 	hlist_add_head(&child_mnt->mnt_mp_list, &mp->m_list);
+@@ -864,7 +866,6 @@ static void attach_mnt(struct mount *mnt,
+ void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp, struct mount *mnt)
+ {
+ 	struct mountpoint *old_mp = mnt->mnt_mp;
+-	struct dentry *old_mountpoint = mnt->mnt_mountpoint;
+ 	struct mount *old_parent = mnt->mnt_parent;
+ 
+ 	list_del_init(&mnt->mnt_child);
+@@ -873,23 +874,7 @@ void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp, struct m
+ 
+ 	attach_mnt(mnt, parent, mp);
+ 
+-	put_mountpoint(old_mp);
+-
+-	/*
+-	 * Safely avoid even the suggestion this code might sleep or
+-	 * lock the mount hash by taking advantage of the knowledge that
+-	 * mnt_change_mountpoint will not release the final reference
+-	 * to a mountpoint.
+-	 *
+-	 * During mounting, the mount passed in as the parent mount will
+-	 * continue to use the old mountpoint and during unmounting, the
+-	 * old mountpoint will continue to exist until namespace_unlock,
+-	 * which happens well after mnt_change_mountpoint.
+-	 */
+-	spin_lock(&old_mountpoint->d_lock);
+-	old_mountpoint->d_lockref.count--;
+-	spin_unlock(&old_mountpoint->d_lock);
+-
++	put_mountpoint(old_mp, NULL);
+ 	mnt_add_count(old_parent, -1);
+ }
+ 
+@@ -1142,6 +1127,8 @@ static DECLARE_DELAYED_WORK(delayed_mntput_work, delayed_mntput);
+ 
+ static void mntput_no_expire(struct mount *mnt)
+ {
++	LIST_HEAD(list);
++
+ 	rcu_read_lock();
+ 	if (likely(READ_ONCE(mnt->mnt_ns))) {
+ 		/*
+@@ -1182,10 +1169,11 @@ static void mntput_no_expire(struct mount *mnt)
+ 	if (unlikely(!list_empty(&mnt->mnt_mounts))) {
+ 		struct mount *p, *tmp;
+ 		list_for_each_entry_safe(p, tmp, &mnt->mnt_mounts,  mnt_child) {
+-			umount_mnt(p);
++			umount_mnt(p, &list);
+ 		}
+ 	}
+ 	unlock_mount_hash();
++	shrink_dentry_list(&list);
+ 
+ 	if (likely(!(mnt->mnt.mnt_flags & MNT_INTERNAL))) {
+ 		struct task_struct *task = current;
+@@ -1371,16 +1359,18 @@ int may_umount(struct vfsmount *mnt)
+ 
+ EXPORT_SYMBOL(may_umount);
+ 
+-static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+-
+ static void namespace_unlock(void)
+ {
+ 	struct hlist_head head;
++	LIST_HEAD(list);
+ 
+ 	hlist_move_list(&unmounted, &head);
++	list_splice_init(&ex_mountpoints, &list);
+ 
+ 	up_write(&namespace_sem);
+ 
++	shrink_dentry_list(&list);
++
+ 	if (likely(hlist_empty(&head)))
+ 		return;
+ 
+@@ -1481,7 +1471,7 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+ 				/* Don't forget about p */
+ 				list_add_tail(&p->mnt_child, &p->mnt_parent->mnt_mounts);
+ 			} else {
+-				umount_mnt(p);
++				umount_mnt(p, NULL);
+ 			}
+ 		}
+ 		change_mnt_propagation(p, MS_PRIVATE);
+@@ -1635,11 +1625,11 @@ void __detach_mounts(struct dentry *dentry)
+ 		mnt = hlist_entry(mp->m_list.first, struct mount, mnt_mp_list);
+ 		if (mnt->mnt.mnt_flags & MNT_UMOUNT) {
+ 			hlist_add_head(&mnt->mnt_umount.s_list, &unmounted);
+-			umount_mnt(mnt);
++			umount_mnt(mnt, NULL);
+ 		}
+ 		else umount_tree(mnt, UMOUNT_CONNECTED);
+ 	}
+-	put_mountpoint(mp);
++	put_mountpoint(mp, NULL);
+ out_unlock:
+ 	unlock_mount_hash();
+ 	namespace_unlock();
+@@ -2110,7 +2100,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 		child->mnt.mnt_flags &= ~MNT_LOCKED;
+ 		commit_tree(child);
+ 	}
+-	put_mountpoint(smp);
++	put_mountpoint(smp, NULL);
+ 	unlock_mount_hash();
+ 
+ 	return 0;
+@@ -2127,7 +2117,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 	ns->pending_mounts = 0;
+ 
+ 	read_seqlock_excl(&mount_lock);
+-	put_mountpoint(smp);
++	put_mountpoint(smp, NULL);
+ 	read_sequnlock_excl(&mount_lock);
+ 
+ 	return err;
+@@ -2167,7 +2157,7 @@ static void unlock_mount(struct mountpoint *where)
+ 	struct dentry *dentry = where->m_dentry;
+ 
+ 	read_seqlock_excl(&mount_lock);
+-	put_mountpoint(where);
++	put_mountpoint(where, NULL);
+ 	read_sequnlock_excl(&mount_lock);
+ 
+ 	namespace_unlock();
+@@ -3663,7 +3653,7 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
+ 	touch_mnt_namespace(current->nsproxy->mnt_ns);
+ 	/* A moved mount should not expire automatically */
+ 	list_del_init(&new_mnt->mnt_expire);
+-	put_mountpoint(root_mp);
++	put_mountpoint(root_mp, NULL);
+ 	unlock_mount_hash();
+ 	chroot_fs_refs(&root, &new);
+ 	error = 0;
 -- 
 2.11.0
 
