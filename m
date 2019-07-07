@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72D9061775
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Jul 2019 22:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6B6861777
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Jul 2019 22:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbfGGUmA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Jul 2019 16:42:00 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45072 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbfGGUmA (ORCPT
+        id S1727454AbfGGUm0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Jul 2019 16:42:26 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46544 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727341AbfGGUmZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Jul 2019 16:42:00 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x67Kdg6j040664;
-        Sun, 7 Jul 2019 20:41:44 GMT
+        Sun, 7 Jul 2019 16:42:25 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x67KeNVd130079;
+        Sun, 7 Jul 2019 20:42:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2018-07-02;
- bh=tFrWHg/aAE67pxauKL0omt7gMkY1t0PbRirUnZNOjFA=;
- b=BFEbX3npPed4HkYp+Np8xDXCIBvbU4jZUtYeTUf4rGO4CCrpJn8aMtXHx2qnWARtQwj9
- qk83CNMM/r2f10EVrcytEf96lHRdz1o6++hrMKFFGB/ey+aBdknesc9PWBfAC8Rngemt
- ZCV9wQ+k0ZpxY+KbQuexV+j/OP30UN5bm9loeCLOZuTTJDIO6/6i2LL5K1OLn6st/Y8n
- Ss4qtasRWvPWx37PZbSPFlgaNl77uma1leMPoBl5LoLo0ChXhV1TWbidOr3m/VX7Okhw
- l6pIDMnIctEFgjlmlKQYHL8wUoZcnkV3VbcxkZBa+8vbwUxD6U48M1qHKwx7qdAYoG2D xg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2tjm9qb80k-1
+ bh=vt3SZN0JDPBw66J952W5nQUebjM9H7IKiLkEthot7Sw=;
+ b=Yowvw0VF7qQgpfBbpDM2wryc5/KQ4X/YB795dezEQmJVMfI1vdfFefcNIDibdySm5ZNQ
+ /W2uanb4Vkar81azWEO+uP6Mb4+ZK2y73apVhxVmEwbRjgNqqS9zFIqbmSAnsO1TitlV
+ E8CHRB2ecv2eycf8/AoIuwh07CxOYa2Jzhm5kQe8r6/Xy/sndRClfyWjBQ8rVqHxMKUj
+ BmCEIGZCoHRnDwfR2x9fbKDYpYUjDgN7htFgBcv8K9tfGMkWV+aOQnGemIYw4zAIzHEo
+ haNK7IF5KPE5ZsHbWQzKHRSduxLLMIz2TszE00fux5PwW/IC9F39Zy4/VyxYYWDKH+zG bg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2tjkkpb93f-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 07 Jul 2019 20:41:44 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x67KcIiB014195;
-        Sun, 7 Jul 2019 20:41:44 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2tjjyjx0mw-1
+        Sun, 07 Jul 2019 20:42:14 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x67KcJjD073681;
+        Sun, 7 Jul 2019 20:42:14 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2tjhpc70r2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 07 Jul 2019 20:41:44 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x67Kfh0C018360;
-        Sun, 7 Jul 2019 20:41:43 GMT
+        Sun, 07 Jul 2019 20:42:14 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x67KgD3n007412;
+        Sun, 7 Jul 2019 20:42:13 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 07 Jul 2019 13:41:43 -0700
-Date:   Sun, 7 Jul 2019 13:41:39 -0700
+        with ESMTP ; Sun, 07 Jul 2019 13:42:13 -0700
+Date:   Sun, 7 Jul 2019 13:42:09 -0700
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     Eric Biggers <ebiggers@kernel.org>
 Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] f2fs: use generic checking function for
- FS_IOC_FSSETXATTR
-Message-ID: <20190707204139.GJ1654093@magnolia>
+Subject: Re: [PATCH 3/3] f2fs: remove redundant check from
+ f2fs_setflags_common()
+Message-ID: <20190707204209.GK1654093@magnolia>
 References: <20190701202630.43776-1-ebiggers@kernel.org>
- <20190701202630.43776-3-ebiggers@kernel.org>
+ <20190701202630.43776-4-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190701202630.43776-3-ebiggers@kernel.org>
+In-Reply-To: <20190701202630.43776-4-ebiggers@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9311 signatures=668688
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
@@ -73,12 +73,13 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 01:26:29PM -0700, Eric Biggers wrote:
+On Mon, Jul 01, 2019 at 01:26:30PM -0700, Eric Biggers wrote:
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> Make the f2fs implementation of FS_IOC_FSSETXATTR use the new VFS helper
-> function vfs_ioc_fssetxattr_check(), and remove the project quota check
-> since it's now done by the helper function.
+> Now that f2fs_ioc_setflags() and f2fs_ioc_fssetxattr() call the VFS
+> helper functions which check for permission to change the immutable and
+> append-only flags, it's no longer needed to do this check in
+> f2fs_setflags_common() too.  So remove it.
 > 
 > This is based on a patch from Darrick Wong, but reworked to apply after
 > commit 360985573b55 ("f2fs: separate f2fs i_flags from fs_flags and ext4
@@ -93,90 +94,34 @@ Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 --D
 
 > ---
->  fs/f2fs/file.c | 45 ++++++++++++++-------------------------------
->  1 file changed, 14 insertions(+), 31 deletions(-)
+>  fs/f2fs/file.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
 > 
 > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index b5b941e6448657..ae1a54ecc9fccc 100644
+> index ae1a54ecc9fccc..e8b81f6f5c2b15 100644
 > --- a/fs/f2fs/file.c
 > +++ b/fs/f2fs/file.c
-> @@ -2857,52 +2857,32 @@ static inline u32 f2fs_xflags_to_iflags(u32 xflags)
->  	return iflags;
->  }
->  
-> -static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
-> +static void f2fs_fill_fsxattr(struct inode *inode, struct fsxattr *fa)
+> @@ -1648,19 +1648,12 @@ static int f2fs_file_flush(struct file *file, fl_owner_t id)
+>  static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
 >  {
-> -	struct inode *inode = file_inode(filp);
 >  	struct f2fs_inode_info *fi = F2FS_I(inode);
-> -	struct fsxattr fa;
+> -	u32 oldflags;
 >  
-> -	memset(&fa, 0, sizeof(struct fsxattr));
-> -	fa.fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags);
-> +	simple_fill_fsxattr(fa, f2fs_iflags_to_xflags(fi->i_flags));
+>  	/* Is it quota file? Do not allow user to mess with it */
+>  	if (IS_NOQUOTA(inode))
+>  		return -EPERM;
 >  
->  	if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)))
-> -		fa.fsx_projid = (__u32)from_kprojid(&init_user_ns,
-> -							fi->i_projid);
+> -	oldflags = fi->i_flags;
 > -
-> -	if (copy_to_user((struct fsxattr __user *)arg, &fa, sizeof(fa)))
-> -		return -EFAULT;
-> -	return 0;
-> +		fa->fsx_projid = from_kprojid(&init_user_ns, fi->i_projid);
->  }
->  
-> -static int f2fs_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
-> +static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
->  {
-> -	/*
-> -	 * Project Quota ID state is only allowed to change from within the init
-> -	 * namespace. Enforce that restriction only if we are trying to change
-> -	 * the quota ID state. Everything else is allowed in user namespaces.
-> -	 */
-> -	if (current_user_ns() == &init_user_ns)
-> -		return 0;
+> -	if ((iflags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
+> -		if (!capable(CAP_LINUX_IMMUTABLE))
+> -			return -EPERM;
 > -
-> -	if (__kprojid_val(F2FS_I(inode)->i_projid) != fa->fsx_projid)
-> -		return -EINVAL;
-> +	struct inode *inode = file_inode(filp);
-> +	struct fsxattr fa;
+> -	fi->i_flags = iflags | (oldflags & ~mask);
+> +	fi->i_flags = iflags | (fi->i_flags & ~mask);
 >  
-> -	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL) {
-> -		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
-> -			return -EINVAL;
-> -	} else {
-> -		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
-> -			return -EINVAL;
-> -	}
-> +	f2fs_fill_fsxattr(inode, &fa);
->  
-> +	if (copy_to_user((struct fsxattr __user *)arg, &fa, sizeof(fa)))
-> +		return -EFAULT;
->  	return 0;
->  }
->  
->  static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
->  {
->  	struct inode *inode = file_inode(filp);
-> -	struct fsxattr fa;
-> +	struct fsxattr fa, old_fa;
->  	u32 iflags;
->  	int err;
->  
-> @@ -2925,9 +2905,12 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
->  		return err;
->  
->  	inode_lock(inode);
-> -	err = f2fs_ioctl_check_project(inode, &fa);
-> +
-> +	f2fs_fill_fsxattr(inode, &old_fa);
-> +	err = vfs_ioc_fssetxattr_check(inode, &old_fa, &fa);
->  	if (err)
->  		goto out;
-> +
->  	err = f2fs_setflags_common(inode, iflags,
->  			f2fs_xflags_to_iflags(F2FS_SUPPORTED_XFLAGS));
->  	if (err)
+>  	if (fi->i_flags & F2FS_PROJINHERIT_FL)
+>  		set_inode_flag(inode, FI_PROJ_INHERIT);
 > -- 
 > 2.22.0.410.gd8fdbe21b5-goog
 > 
