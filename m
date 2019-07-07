@@ -2,126 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6B6861777
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Jul 2019 22:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56FA4617B2
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Jul 2019 23:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfGGUm0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Jul 2019 16:42:26 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:46544 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbfGGUmZ (ORCPT
+        id S1727709AbfGGVR5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Jul 2019 17:17:57 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35031 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbfGGVR5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Jul 2019 16:42:25 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x67KeNVd130079;
-        Sun, 7 Jul 2019 20:42:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=vt3SZN0JDPBw66J952W5nQUebjM9H7IKiLkEthot7Sw=;
- b=Yowvw0VF7qQgpfBbpDM2wryc5/KQ4X/YB795dezEQmJVMfI1vdfFefcNIDibdySm5ZNQ
- /W2uanb4Vkar81azWEO+uP6Mb4+ZK2y73apVhxVmEwbRjgNqqS9zFIqbmSAnsO1TitlV
- E8CHRB2ecv2eycf8/AoIuwh07CxOYa2Jzhm5kQe8r6/Xy/sndRClfyWjBQ8rVqHxMKUj
- BmCEIGZCoHRnDwfR2x9fbKDYpYUjDgN7htFgBcv8K9tfGMkWV+aOQnGemIYw4zAIzHEo
- haNK7IF5KPE5ZsHbWQzKHRSduxLLMIz2TszE00fux5PwW/IC9F39Zy4/VyxYYWDKH+zG bg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2tjkkpb93f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 07 Jul 2019 20:42:14 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x67KcJjD073681;
-        Sun, 7 Jul 2019 20:42:14 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2tjhpc70r2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 07 Jul 2019 20:42:14 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x67KgD3n007412;
-        Sun, 7 Jul 2019 20:42:13 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 07 Jul 2019 13:42:13 -0700
-Date:   Sun, 7 Jul 2019 13:42:09 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/3] f2fs: remove redundant check from
- f2fs_setflags_common()
-Message-ID: <20190707204209.GK1654093@magnolia>
-References: <20190701202630.43776-1-ebiggers@kernel.org>
- <20190701202630.43776-4-ebiggers@kernel.org>
+        Sun, 7 Jul 2019 17:17:57 -0400
+Received: by mail-lj1-f195.google.com with SMTP id x25so7135699ljh.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Jul 2019 14:17:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=khwRExgsrAxesDLfa+MBNv1Kv3bFqCQXDesV7F9LKao=;
+        b=Ark+YhDSe2cjbYKXLWFRcC6Zg4N/GRkkzxT43m4iaIAuQN8NmmRJspuz1CcbY7cA3l
+         kXIt4/Gaks4V/Ht5T9hR8BRUbU/TxYdtsEocgCSmUawCXES9+asmQ8/q7YB0i/U02/eW
+         KOByO/j0JMeifjbX/2rrzc2QtpJKR98kzq/bo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=khwRExgsrAxesDLfa+MBNv1Kv3bFqCQXDesV7F9LKao=;
+        b=FDSwSReJ0j3gnYFIpvwWolFOLXvyTZ9Ck/lsUsPp1dYQsQIj8h1+TyGX294qUBBEVo
+         9lQQR0H59IG7GQMIX9JFb6Ti7MVFv/UDcMx8IN/At98LA2oO2uoFtzsDhQboASVb0+0k
+         AOd23qa+PYMA9IoV4s1nGWes6yAWaM1SNwkK+D+AbJk6oQuWuRGsv6q2vZFuEjBKrHAQ
+         riIQbVP9AuRQWaNFAkrGuiOSPRYq3HYBGNGiQ8YoBTxWAuT7+wNQaZh7qT505NyvoDUt
+         Uc+lVNWsa5w33irCx0YWgMbbrzFPvJw50cupBjvssz4sFRkN2+XrlmExkSmZNCmojQlZ
+         R7pA==
+X-Gm-Message-State: APjAAAUEGNNN7noxc1RDZ+58ABnkFvJ55HTdnfcJi3YhVJEKspO4Xddw
+        WuAuSV/H8FbQZCXsSOgJL1OWviYzwfE=
+X-Google-Smtp-Source: APXvYqzMPqNC6bbNq1f8JH6Smy0YQiHVjV8kBDaS+STC3v/al6DHzYF9z3BOraBy9ROyrXWO4yVT7A==
+X-Received: by 2002:a2e:9a19:: with SMTP id o25mr8305018lji.63.1562534275011;
+        Sun, 07 Jul 2019 14:17:55 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id b9sm3204289ljj.92.2019.07.07.14.17.54
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sun, 07 Jul 2019 14:17:54 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id c9so7751783lfh.4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Jul 2019 14:17:54 -0700 (PDT)
+X-Received: by 2002:a19:641a:: with SMTP id y26mr6182613lfb.29.1562534273929;
+ Sun, 07 Jul 2019 14:17:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190701202630.43776-4-ebiggers@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9311 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907070289
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9311 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907070289
+References: <20190706001612.GM17978@ZenIV.linux.org.uk> <20190706002236.26113-1-viro@ZenIV.linux.org.uk>
+ <20190706002236.26113-4-viro@ZenIV.linux.org.uk>
+In-Reply-To: <20190706002236.26113-4-viro@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 7 Jul 2019 14:17:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgB5NN=N9Z4Y26CTSr1EchMfXbuFvVU4rcKaNca9qVkiA@mail.gmail.com>
+Message-ID: <CAHk-=wgB5NN=N9Z4Y26CTSr1EchMfXbuFvVU4rcKaNca9qVkiA@mail.gmail.com>
+Subject: Re: [PATCH 4/6] make struct mountpoint bear the dentry reference to
+ mountpoint, not struct mount
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 01:26:30PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Now that f2fs_ioc_setflags() and f2fs_ioc_fssetxattr() call the VFS
-> helper functions which check for permission to change the immutable and
-> append-only flags, it's no longer needed to do this check in
-> f2fs_setflags_common() too.  So remove it.
-> 
-> This is based on a patch from Darrick Wong, but reworked to apply after
-> commit 360985573b55 ("f2fs: separate f2fs i_flags from fs_flags and ext4
-> i_flags").
-> 
-> Originally-from: Darrick J. Wong <darrick.wong@oracle.com>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+On Fri, Jul 5, 2019 at 5:22 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> +static HLIST_HEAD(unmounted);  /* protected by namespace_sem */
+> +static LIST_HEAD(ex_mountpoints);
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+What protects the ex_mountpoints list?
 
---D
+It looks like it's the mount_lock, but why isn't that documented?
 
-> ---
->  fs/f2fs/file.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index ae1a54ecc9fccc..e8b81f6f5c2b15 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1648,19 +1648,12 @@ static int f2fs_file_flush(struct file *file, fl_owner_t id)
->  static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
->  {
->  	struct f2fs_inode_info *fi = F2FS_I(inode);
-> -	u32 oldflags;
->  
->  	/* Is it quota file? Do not allow user to mess with it */
->  	if (IS_NOQUOTA(inode))
->  		return -EPERM;
->  
-> -	oldflags = fi->i_flags;
-> -
-> -	if ((iflags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
-> -		if (!capable(CAP_LINUX_IMMUTABLE))
-> -			return -EPERM;
-> -
-> -	fi->i_flags = iflags | (oldflags & ~mask);
-> +	fi->i_flags = iflags | (fi->i_flags & ~mask);
->  
->  	if (fi->i_flags & F2FS_PROJINHERIT_FL)
->  		set_inode_flag(inode, FI_PROJ_INHERIT);
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
-> 
+It sure isn't namespace_sem from the comment above.
+
+                  Linus
