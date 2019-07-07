@@ -2,89 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 322B26181C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 00:41:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F5236186A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 01:24:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbfGGWlx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Jul 2019 18:41:53 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43013 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbfGGWlu (ORCPT
+        id S1727528AbfGGXYF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Jul 2019 19:24:05 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:58808 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726044AbfGGXYF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Jul 2019 18:41:50 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 16so13936668ljv.10
-        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Jul 2019 15:41:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WcsLGMUFQAhJlOvMra+sDFTnfJhyurYZj32MYfKitAE=;
-        b=d1zDU5FEtUUjct83eyU6qfw3BEHwcpclDyV7DCNUYSglTpf1MCajLuQoKGKi4jJVVS
-         dYxWNlNhJM/pVgTqRYTsXVbEPAK3/A0UYNj8BhpeLmjA3O2f50q/ZhmZ4AVjPA7HJm9w
-         Lxic1Zrh0kVkBYTgX7gtZybpTIW/Tx2J0/wRA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WcsLGMUFQAhJlOvMra+sDFTnfJhyurYZj32MYfKitAE=;
-        b=qWYPZCln6FJvTGUD+GzvLNIHGdnvfxKIp8HtvDrb7brXEgyS3yOcbHD46Kp3quoXt7
-         xkFBFrsVM20vszBGujd8oSuSClEEs33X23LaQk+PmVkJWs9uQob9bCzBj5O9yQ3UT3ve
-         T4NfVDhPRDqfQVQiCsi76+r69V+49umR+b8aPa1orGipomigOeP62e0fm1bFHAhVxYDf
-         51Dxubrx3cxudouqtYz/Ufl4E6UyJl++1Ye9vKCBIy1RSuT2GA507hlndQMg08G7Z6QH
-         rh02Aea7IAoJ2LYxzWB7iAMnwtu/DRR0OHuztKLQJVbi7DSeNB3l+yirs+Yg3lvAqz1F
-         fHfA==
-X-Gm-Message-State: APjAAAULVFyrfzphqPytbyXCxCNLtS+LmwsEeSuoHxPN2xcdxEKp7B82
-        pDl74LpePW29eOGcuUh1lw5XC3zOSoU=
-X-Google-Smtp-Source: APXvYqzT5M1HWOGh/o4ApHlsQ08YxV7NAlrhDv5gSll31ZVzmE9rhlHupcU0Xbww4vm5nO1XvYtfvA==
-X-Received: by 2002:a2e:3c1a:: with SMTP id j26mr8438385lja.230.1562539307805;
-        Sun, 07 Jul 2019 15:41:47 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id y5sm3222068ljj.5.2019.07.07.15.41.46
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Jul 2019 15:41:47 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id b17so5971097lff.7
-        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Jul 2019 15:41:46 -0700 (PDT)
-X-Received: by 2002:ac2:4565:: with SMTP id k5mr7060354lfm.170.1562539306171;
- Sun, 07 Jul 2019 15:41:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190706001612.GM17978@ZenIV.linux.org.uk> <20190706002236.26113-1-viro@ZenIV.linux.org.uk>
- <20190706002236.26113-4-viro@ZenIV.linux.org.uk> <CAHk-=wgB5NN=N9Z4Y26CTSr1EchMfXbuFvVU4rcKaNca9qVkiA@mail.gmail.com>
- <20190707214042.GS17978@ZenIV.linux.org.uk>
-In-Reply-To: <20190707214042.GS17978@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 7 Jul 2019 15:41:30 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh=iuSja-aib7z4bgivbJWuVcKf1Yd8Cdx-2nos3Fnmqw@mail.gmail.com>
-Message-ID: <CAHk-=wh=iuSja-aib7z4bgivbJWuVcKf1Yd8Cdx-2nos3Fnmqw@mail.gmail.com>
-Subject: Re: [PATCH 4/6] make struct mountpoint bear the dentry reference to
- mountpoint, not struct mount
+        Sun, 7 Jul 2019 19:24:05 -0400
+Received: from dread.disaster.area (pa49-195-139-63.pa.nsw.optusnet.com.au [49.195.139.63])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 4420A43B261;
+        Mon,  8 Jul 2019 09:24:02 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hkGUg-0006b2-P1; Mon, 08 Jul 2019 09:22:54 +1000
+Date:   Mon, 8 Jul 2019 09:22:54 +1000
+From:   Dave Chinner <david@fromorbit.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC] dget_parent() misuse in xfs_filestream_get_parent()
+Message-ID: <20190707232254.GF7689@dread.disaster.area>
+References: <20190628060026.GR17978@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190628060026.GR17978@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0 cx=a_idp_d
+        a=fNT+DnnR6FjB+3sUuX8HHA==:117 a=fNT+DnnR6FjB+3sUuX8HHA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=0o9FgrsRnhwA:10
+        a=7-415B0cAAAA:8 a=OjdfWhF5gRNsxT9O6HoA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 7, 2019 at 2:40 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> It is namespace_sem.  Of all put_mountpoint() callers only the one
-> from mntput_no_expire() (disposing of stuck MNT_LOCKed children)
-> is not under namespace_sem;
->
->                 list_for_each_entry_safe(p, tmp, &mnt->mnt_mounts,  mnt_child) {
-> -                       umount_mnt(p);
-> +                       umount_mnt(p, &list);
->                 }
-> in mntput_no_expire() passes a local list to umount_mnt() (which passes it
-> to put_mountpoint()).
+On Fri, Jun 28, 2019 at 07:00:27AM +0100, Al Viro wrote:
+> 	dget_parent() never returns NULL.  So this
+> 
+>         parent = dget_parent(dentry);
+>         if (!parent)
+>                 goto out_dput;
+> 
+>         dir = igrab(d_inode(parent));
+>         dput(parent);
+> 
+> out_dput:
+> 
+> is obviously fishy.  What is that code trying to do?  Is that
+> "dentry might be a root of disconnected tree, in which case
+> we want xfs_filestream_get_parent() to return NULL"? 
 
-Ahh. Ok. This would be better with a comment. Maybe a separate helper
-function with that comment and the special case of passing in NULL (or
-maybe not pass in NULL at all, but pass in ex_mountpoints?).
+We want the parent inode of the current file inode if it is in
+memory. We don't care about the parent dentry that is returned as
+such, it's just the mechanism for finding the directory inode. The
+directory inode is what holds the allocation policy for all files in
+that directory, and that's what we need here.
 
-Different locking requirements depending on argument values is very
-confusing and easily overlooked..
+If there is no parent directory inode in memory, then we'll just use
+the default allocator behaviour rather than the context specific
+one we get from the directory inode...
 
-                Linus
+> If so,
+> that should be
+> 
+>         parent = dget_parent(dentry);
+>         if (parent != dentry)
+> 		dir = igrab(d_inode(parent));
+>         dput(parent);
+
+Seems reasonable. This code is largely legacy functionality, the
+allocator was really a specific workload policy that was never
+widely deployed and so the combination of disconnected dentries and
+this allocator have probably never been seen in real life...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
