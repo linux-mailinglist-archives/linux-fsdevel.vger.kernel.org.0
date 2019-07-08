@@ -2,167 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9A262814
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 20:13:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF076281F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 20:13:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730461AbfGHSM4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jul 2019 14:12:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42256 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728624AbfGHSM4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jul 2019 14:12:56 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6EBFB85363;
-        Mon,  8 Jul 2019 18:12:53 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-14.phx2.redhat.com [10.3.112.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 13A1C2BFBE;
-        Mon,  8 Jul 2019 18:12:39 +0000 (UTC)
-Date:   Mon, 8 Jul 2019 14:12:37 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        ebiederm@xmission.com, nhorman@tuxdriver.com
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-Message-ID: <20190708181237.5poheliito7zpvmc@madcap2.tricolour.ca>
-References: <20190529145742.GA8959@cisco>
- <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
- <20190529153427.GB8959@cisco>
- <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
- <20190529222835.GD8959@cisco>
- <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
- <20190530170913.GA16722@mail.hallyn.com>
- <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
- <20190530212900.GC5739@cisco>
- <CAHC9VhT5HPt9rCJoDutdvA3r1Y1GOHfpXe2eJ54atNC1=Vd8LA@mail.gmail.com>
+        id S2389235AbfGHSNI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jul 2019 14:13:08 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43652 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389079AbfGHSNH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Jul 2019 14:13:07 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f25so8081159pgv.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jul 2019 11:13:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JCk1WdM0E6nhQWvL7vJ1kxAIGG56jCba8QRd4SGiDCA=;
+        b=OgF8cL2jlYPassQya/5LPanMn4rdt4wOzgmrqwzZxEQPZIqKVwIc/cbAKjQaKs4FzI
+         MO+lSWFVjE1BjbNrUM+omMAeEVXWMjykV41krvzt8AWSDOTa5viWTuQtJ9ep0X0LXNYj
+         OdiZ626za04Q5e0ee0vw+VtEjSvuMHfSSgdE6F33EKsPb+2cKBbfbxgMScj9OazVWVAS
+         RUi9fLCfATh+IjCkIXVEG9DerSHN7LKc7YsX4AxnaewNdUelqDZmIgeZ0zeSR0DCe4sE
+         eOaHDJj5UB+8gGaq9GRuZY4qOho86pU0SRPsJdJUsDSn1VzYLTJqJx6RyW6gChbKWFWj
+         8y+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JCk1WdM0E6nhQWvL7vJ1kxAIGG56jCba8QRd4SGiDCA=;
+        b=PvR6DToab31cJ6E/i0chU5jIehqs5xpOrBcPaNIlJjSRsmMJdUjujZVKRsr8oJ2pvG
+         34eHQ8gYywotYZwRuZlAj0if6IbaGY7q7LF9+OHN6N2yAyh6dZFxxYYbL3vg74lbMzRC
+         JDNipOGhSYsmCniHMU/f12KFH9B9Fb05V5jxF3TpvX8cklrky/UR2aX6TdfqNhUIN1zY
+         Bu/+41AcJyYjbkf2DKoE3qIBlHu1fGU9Fj9X/rB5WnxOwXBySRPKnKNhiVrE7R2Ed5t6
+         yDoXbswMxyaDPzCHY72J3y554TOhmNni1lY3f6+Srj5bKU8US11sJ+CzNIZR/SYT3Fyv
+         C5sg==
+X-Gm-Message-State: APjAAAU6H66B6wG48jP/rZHzbFEuSq6+32YFft/jeIKL8wZNR6Fozy8x
+        S26wK5Y9WlU/iSd5xPb8RFQxhQ8NxTfVZ8mNf6K7KA==
+X-Google-Smtp-Source: APXvYqwC0igtuHeVBLKgctH3AD+JJSF1DFvHIy3IKlb3b8t5WGygrYUkxCrtO7R9CSN2ItDaerVKeb0U4IrWm5FTm44=
+X-Received: by 2002:a17:90b:f0e:: with SMTP id br14mr27407161pjb.117.1562609586818;
+ Mon, 08 Jul 2019 11:13:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhT5HPt9rCJoDutdvA3r1Y1GOHfpXe2eJ54atNC1=Vd8LA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 08 Jul 2019 18:12:55 +0000 (UTC)
+References: <20190704003615.204860-1-brendanhiggins@google.com>
+ <20190704003615.204860-2-brendanhiggins@google.com> <20190705202051.GB19023@42.do-not-panic.com>
+In-Reply-To: <20190705202051.GB19023@42.do-not-panic.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 8 Jul 2019 11:12:55 -0700
+Message-ID: <CAFd5g44_NoGHsMRfZJ-V42=8U6QYOYZV7zUmEdx-6V4xGarxHg@mail.gmail.com>
+Subject: Re: [PATCH v6 01/18] kunit: test: add KUnit test runner core
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah <shuah@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-05-30 19:26, Paul Moore wrote:
-> On Thu, May 30, 2019 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > On Thu, May 30, 2019 at 03:29:32PM -0400, Paul Moore wrote:
-> > >
-> > > [REMINDER: It is an "*audit* container ID" and not a general
-> > > "container ID" ;)  Smiley aside, I'm not kidding about that part.]
-> >
-> > This sort of seems like a distinction without a difference; presumably
-> > audit is going to want to differentiate between everything that people
-> > in userspace call a container. So you'll have to support all this
-> > insanity anyway, even if it's "not a container ID".
-> 
-> That's not quite right.  Audit doesn't care about what a container is,
-> or is not, it also doesn't care if the "audit container ID" actually
-> matches the ID used by the container engine in userspace and I think
-> that is a very important line to draw.  Audit is simply given a value
-> which it calls the "audit container ID", it ensures that the value is
-> inherited appropriately (e.g. children inherit their parent's audit
-> container ID), and it uses the value in audit records to provide some
-> additional context for log analysis.  The distinction isn't limited to
-> the value itself, but also to how it is used; it is an "audit
-> container ID" and not a "container ID" because this value is
-> exclusively for use by the audit subsystem.  We are very intentionally
-> not adding a generic container ID to the kernel.  If the kernel does
-> ever grow a general purpose container ID we will be one of the first
-> ones in line to make use of it, but we are not going to be the ones to
-> generically add containers to the kernel.  Enough people already hate
-> audit ;)
-> 
-> > > I'm not interested in supporting/merging something that isn't useful;
-> > > if this doesn't work for your use case then we need to figure out what
-> > > would work.  It sounds like nested containers are much more common in
-> > > the lxc world, can you elaborate a bit more on this?
-> > >
-> > > As far as the possible solutions you mention above, I'm not sure I
-> > > like the per-userns audit container IDs, I'd much rather just emit the
-> > > necessary tracking information via the audit record stream and let the
-> > > log analysis tools figure it out.  However, the bigger question is how
-> > > to limit (re)setting the audit container ID when you are in a non-init
-> > > userns.  For reasons already mentioned, using capable() is a non
-> > > starter for everything but the initial userns, and using ns_capable()
-> > > is equally poor as it essentially allows any userns the ability to
-> > > munge it's audit container ID (obviously not good).  It appears we
-> > > need a different method for controlling access to the audit container
-> > > ID.
-> >
-> > One option would be to make it a string, and have it be append only.
-> > That should be safe with no checks.
-> >
-> > I know there was a long thread about what type to make this thing. I
-> > think you could accomplish the append-only-ness with a u64 if you had
-> > some rule about only allowing setting lower order bits than those that
-> > are already set. With 4 bits for simplicity:
-> >
-> > 1100         # initial container id
-> > 1100 -> 1011 # not allowed
-> > 1100 -> 1101 # allowed, but now 1101 is set in stone since there are
-> >              # no lower order bits left
-> >
-> > There are probably fancier ways to do it if you actually understand
-> > math :)
-> 
->  ;)
-> 
-> > Since userns nesting is limited to 32 levels (right now, IIRC), and
-> > you have 64 bits, this might be reasonable. You could just teach
-> > container engines to use the first say N bits for themselves, with a 1
-> > bit for the barrier at the end.
-> 
-> I like the creativity, but I worry that at some point these
-> limitations are going to be raised (limits have a funny way of doing
-> that over time) and we will be in trouble.  I say "trouble" because I
-> want to be able to quickly do an audit container ID comparison and
-> we're going to pay a penalty for these larger values (we'll need this
-> when we add multiple auditd support and the requisite record routing).
-> 
-> Thinking about this makes me also realize we probably need to think a
-> bit longer about audit container ID conflicts between orchestrators.
-> Right now we just take the value that is given to us by the
-> orchestrator, but if we want to allow multiple container orchestrators
-> to work without some form of cooperation in userspace (I think we have
-> to assume the orchestrators will not talk to each other) we likely
-> need to have some way to block reuse of an audit container ID.  We
-> would either need to prevent the orchestrator from explicitly setting
-> an audit container ID to a currently in use value, or instead generate
-> the audit container ID in the kernel upon an event triggered by the
-> orchestrator (e.g. a write to a /proc file).  I suspect we should
-> start looking at the idr code, I think we will need to make use of it.
+On Fri, Jul 5, 2019 at 1:20 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Wed, Jul 03, 2019 at 05:35:58PM -0700, Brendan Higgins wrote:
+> > +struct kunit {
+> > +     void *priv;
+> > +
+> > +     /* private: internal use only. */
+> > +     const char *name; /* Read only after initialization! */
+> > +     bool success; /* Read only after test_case finishes! */
+> > +};
+>
+> No lock attribute above.
+>
+> > +void kunit_init_test(struct kunit *test, const char *name)
+> > +{
+> > +     spin_lock_init(&test->lock);
+> > +     test->name = name;
+> > +     test->success = true;
+> > +}
+>
+> And yet here you initialize a spin lock... This won't compile. Seems
+> you forgot to remove this line. So I guess a re-spin is better.
 
-To address this, I'd suggest that it is enforced to only allow the
-setting of descendants and to maintain a master list of audit container
-identifiers (with a hash table if necessary later) that includes the
-container owner.
+Oh crap, sorry about that. You can't compile these patches until the
+kbuild patch. I will fix this and make sure I didn't make any similar
+mistakes on these early patches.
 
-This also allows the orchestrator/engine to inject processes into
-existing containers by checking that the audit container identifier is
-only used again by the same owner.
-
-I have working code for both.
-
-> paul moore
-> www.paul-moore.com
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Thanks!
