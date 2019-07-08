@@ -2,80 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDC0C6271D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 19:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3078C627B4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 19:54:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388095AbfGHR3d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jul 2019 13:29:33 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34761 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728744AbfGHR3d (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jul 2019 13:29:33 -0400
-Received: by mail-ot1-f66.google.com with SMTP id n5so17045518otk.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jul 2019 10:29:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nA6Jna13w+RzGgaq8zqHZyOTzP+Rl2ic3AndNFYmYd4=;
-        b=AFB315xLziXd6fMwsmGYrjrVzce9Lo90h1aBil5lDsltFkW4M0LOZ/6PsZAPSMHbGf
-         f2i+vjHaBTefqrvwf1GENPSidfRdyJ+LxpfJfNHyYyQXIoa8KBCJL5i6PZNa31mlYEdB
-         NQQnKJQsXPiEiGjWPKT4eL2c5vVIr9/Kwx87xUh3eNFDJuNYQ+TSm6SIMKt9HVZgnVrY
-         fpJRrVbYHKdo5z4jARGLivrKKRwc9jb20lPESqk5njQuDNzDfVz2meQQNykpwpmIR7MR
-         yCSLWH23xz3gL3VPPV+rZKmAr+3tMbub/9Ig98rT2chvtz00cvGNAbwiMIXkx32Bj5fx
-         eb2Q==
-X-Gm-Message-State: APjAAAWAJOgC16l22V50ZLHDB1UcGm8f9/hr4F/TtxyXSoduflGMceX1
-        ogrLjpZaUZDh9wNGhP3D1CQXmYJMtDk/eTcmMx1e8A==
-X-Google-Smtp-Source: APXvYqx0RPvy74yzmrSczU2RfOeT51FXoyiAVwrmEDfjnlD9nHbQUGYVCsDvdT1tpWknkWW1QJvBsFLFOqZUsxSEAWw=
-X-Received: by 2002:a9d:5cc1:: with SMTP id r1mr15913810oti.341.1562606972599;
- Mon, 08 Jul 2019 10:29:32 -0700 (PDT)
+        id S1731013AbfGHRvi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jul 2019 13:51:38 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42704 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728117AbfGHRvi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Jul 2019 13:51:38 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 70F31E3E08;
+        Mon,  8 Jul 2019 17:51:32 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-14.phx2.redhat.com [10.3.112.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E42FD608A4;
+        Mon,  8 Jul 2019 17:51:08 +0000 (UTC)
+Date:   Mon, 8 Jul 2019 13:51:05 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+Message-ID: <20190708175105.7zb6mikjw2wmnwln@madcap2.tricolour.ca>
+References: <cover.1554732921.git.rgb@redhat.com>
+ <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
+ <20190529145742.GA8959@cisco>
+ <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190701215439.19162-1-hch@lst.de> <CAHc6FU5MHCdXENW_Y++hO_qhtCh4XtAHYOaTLzk+1KU=JNpPww@mail.gmail.com>
- <20190708160351.GA9871@lst.de>
-In-Reply-To: <20190708160351.GA9871@lst.de>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Mon, 8 Jul 2019 19:29:21 +0200
-Message-ID: <CAHc6FU5942i0XrCjUAhR9NCmfLuu7_CoPXNDsdF0X+gCpF1cDQ@mail.gmail.com>
-Subject: Re: RFC: use the iomap writepage path in gfs2
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        cluster-devel <cluster-devel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 08 Jul 2019 17:51:37 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 8 Jul 2019 at 18:04, Christoph Hellwig <hch@lst.de> wrote:
-> On Thu, Jul 04, 2019 at 12:35:41AM +0200, Andreas Gruenbacher wrote:
-> > Patch "gfs2: implement gfs2_block_zero_range using iomap_zero_range"
-> > isn't quite ready: the gfs2 iomap operations don't handle IOMAP_ZERO
-> > correctly so far, and that needs to be fixed first.
->
-> What is the issue with IOMAP_ZERO on gfs2?  Zeroing never does block
-> allocations except when on COW extents, which gfs2 doesn't support,
-> so there shouldn't really be any need for additional handling.
+On 2019-05-29 11:29, Paul Moore wrote:
+> On Wed, May 29, 2019 at 10:57 AM Tycho Andersen <tycho@tycho.ws> wrote:
+> >
+> > On Mon, Apr 08, 2019 at 11:39:09PM -0400, Richard Guy Briggs wrote:
+> > > It is not permitted to unset the audit container identifier.
+> > > A child inherits its parent's audit container identifier.
+> >
+> > ...
+> >
+> > >  /**
+> > > + * audit_set_contid - set current task's audit contid
+> > > + * @contid: contid value
+> > > + *
+> > > + * Returns 0 on success, -EPERM on permission failure.
+> > > + *
+> > > + * Called (set) from fs/proc/base.c::proc_contid_write().
+> > > + */
+> > > +int audit_set_contid(struct task_struct *task, u64 contid)
+> > > +{
+> > > +     u64 oldcontid;
+> > > +     int rc = 0;
+> > > +     struct audit_buffer *ab;
+> > > +     uid_t uid;
+> > > +     struct tty_struct *tty;
+> > > +     char comm[sizeof(current->comm)];
+> > > +
+> > > +     task_lock(task);
+> > > +     /* Can't set if audit disabled */
+> > > +     if (!task->audit) {
+> > > +             task_unlock(task);
+> > > +             return -ENOPROTOOPT;
+> > > +     }
+> > > +     oldcontid = audit_get_contid(task);
+> > > +     read_lock(&tasklist_lock);
+> > > +     /* Don't allow the audit containerid to be unset */
+> > > +     if (!audit_contid_valid(contid))
+> > > +             rc = -EINVAL;
+> > > +     /* if we don't have caps, reject */
+> > > +     else if (!capable(CAP_AUDIT_CONTROL))
+> > > +             rc = -EPERM;
+> > > +     /* if task has children or is not single-threaded, deny */
+> > > +     else if (!list_empty(&task->children))
+> > > +             rc = -EBUSY;
+> > > +     else if (!(thread_group_leader(task) && thread_group_empty(task)))
+> > > +             rc = -EALREADY;
+> > > +     read_unlock(&tasklist_lock);
+> > > +     if (!rc)
+> > > +             task->audit->contid = contid;
+> > > +     task_unlock(task);
+> > > +
+> > > +     if (!audit_enabled)
+> > > +             return rc;
+> >
+> > ...but it is allowed to change it (assuming
+> > capable(CAP_AUDIT_CONTROL), of course)? Seems like this might be more
+> > immediately useful since we still live in the world of majority
+> > privileged containers if we didn't allow changing it, in addition to
+> > un-setting it.
+> 
+> The idea is that only container orchestrators should be able to
+> set/modify the audit container ID, and since setting the audit
+> container ID can have a significant effect on the records captured
+> (and their routing to multiple daemons when we get there) modifying
+> the audit container ID is akin to modifying the audit configuration
+> which is why it is gated by CAP_AUDIT_CONTROL.  The current thinking
+> is that you would only change the audit container ID from one
+> set/inherited value to another if you were nesting containers, in
+> which case the nested container orchestrator would need to be granted
+> CAP_AUDIT_CONTROL (which everyone to date seems to agree is a workable
+> compromise).  We did consider allowing for a chain of nested audit
+> container IDs, but the implications of doing so are significant
+> (implementation mess, runtime cost, etc.) so we are leaving that out
+> of this effort.
 
-We still want to set iomap->page_ops for journalled data files on gfs2.
+We had previously discussed the idea of restricting
+orchestrators/engines from only being able to set the audit container
+identifier on their own descendants, but it was discarded.  I've added a
+check to ensure this is now enforced.
 
-Also, if we go through the existing gfs2_iomap_begin_write /
-__gfs2_iomap_begin logic for iomap_zero_range, it will work for
-stuffed files as well, and so we can replace stuffed_zero_range with
-iomap_zero_range.
+I've also added a check to ensure that a process can't set its own audit
+container identifier and that if the identifier is already set, then the
+orchestrator/engine must be in a descendant user namespace from the
+orchestrator that set the previously inherited audit container
+identifier.
 
-> > Some of the tests assume that the filesystem supports unwritten
-> > extents, trusted xattrs, the usrquota / grpquota / prjquota mount
-> > options. There shouldn't be a huge number of failing tests beyond
-> > that, but I know things aren't perfect.
->
-> In general xfstests is supposed to have tests for that and not run
-> the tests if not supported.  In most cases this is automatic, but
-> in case a feature can't be autodetect we have a few manual overrides.
+> From a practical perspective, un-setting the audit container ID is
+> pretty much the same as changing it from one set value to another so
+> most of the above applies to that case as well.
+> 
+> -- 
+> paul moore
+> www.paul-moore.com
 
-Yes, that needs a bit of work. Let's see.
+- RGB
 
-Thanks,
-Andreas
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
