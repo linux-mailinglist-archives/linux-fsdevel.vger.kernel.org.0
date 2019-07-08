@@ -2,142 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73DFF62994
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 21:28:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83519629BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 21:37:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404360AbfGHT2E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jul 2019 15:28:04 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45724 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404353AbfGHT2E (ORCPT
+        id S2391730AbfGHThH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jul 2019 15:37:07 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:48643 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391655AbfGHThG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jul 2019 15:28:04 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r1so8048907pfq.12;
-        Mon, 08 Jul 2019 12:28:03 -0700 (PDT)
+        Mon, 8 Jul 2019 15:37:06 -0400
+Received: by mail-io1-f72.google.com with SMTP id z19so20223784ioi.15
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jul 2019 12:37:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gYORkOVhBZ3qEfxmUhzIzVtUTq0YjbmyEVwzAUWkCu4=;
-        b=Fu98mGVA9yn/B3ahwTaX+oOlQQGwdD4LZ6N7wpWW5wwlAvjJjiW+x/+OGhlgai8UOt
-         ZJfM+7Fklv28HFUM3b9VchIgUG9rOw5kyu1DJt0z6NwIfKtvk3xUTxh+fri0c9jUwYje
-         gnwLApCr/2Yw0D1q3/qRGfAoqtsCWsDOamU/43RkCrQoXwBcRyGC1IJuoT6Fbj9Hj1ws
-         ij1o+vL+358IMceLoTQ9jXg5GXrPNQYrXNFnGXpBoczeAtAFL7L1xMalsd6jWrZDoZ+1
-         iZ3RlUJNkEJny390/QWdMrczPq9IgOqMcAds2BD5OkZbSfKtwJNfbsVcQPg7RcQJmuaz
-         ty2g==
-X-Gm-Message-State: APjAAAVlrCnOqJfHbQ/tTQt4kvgmsQazz72GPZ0nMQEb1t9nmItdEfGB
-        uLhYvcWkO+FzKfNZtmSYPWk=
-X-Google-Smtp-Source: APXvYqxPe0tbDU8G83EqyqzukW2HzB+R+6kKau5wgSRQGfqWlosKarDiCdKCWJ7ETpwEJmik5kXPqg==
-X-Received: by 2002:a17:90a:9bca:: with SMTP id b10mr27811582pjw.90.1562614083277;
-        Mon, 08 Jul 2019 12:28:03 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id o14sm280839pjp.19.2019.07.08.12.28.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 12:28:02 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id C08C140255; Mon,  8 Jul 2019 19:28:01 +0000 (UTC)
-Date:   Mon, 8 Jul 2019 19:28:01 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Radoslaw Burny <rburny@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jsperbeck@google.com, stable@vger.kernel.org
-Subject: Re: [PATCH v3] fs: Fix the default values of i_uid/i_gid on
- /proc/sys inodes.
-Message-ID: <20190708192801.GG19023@42.do-not-panic.com>
-References: <20190708115130.250149-1-rburny@google.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=GUa9cZJ8ImXXkbt2lBydisFYDuQGqcV3NZw+kvaoZYo=;
+        b=Tg9UNcwbvsASn9h4gtdI++ZBnN1bc/nGa8Q0HjFUetQNW7YTT8h++IS3fN4F4B4iyK
+         TIOszsKT7jwYONyFaWZSv8BUPItvUvtNd2CuwAME/sutsnSwo/0zx7z6kjI21jA6CTXN
+         MugiZZBwSlRYqZGcoqsjPrA/BwtokML5vYmk/GBpRZGB2l70w3Abaoiky9qGHR0Y4KYs
+         r4n6py6HmqCbOrO4aDHyylc7/s3LVtn2tZ+rc2J3C80ZkWHaZrjy/M/Kh02ryEYFt1pP
+         DvBvD1OYwx7lGbK3PGdE5+9FwCX27CLbZun7kpoQ0NWwNN3QIISuplKPrVLkXm5i4y+B
+         KwgQ==
+X-Gm-Message-State: APjAAAXaqNu/aOH8y5Jg64ZlbWyt2T8BhExpvx1v/VGLsqJujZ0106i7
+        skejArqqwWkBjHCwuZ6r2LvgmkFNQFTEL3N2WxlL8Pi/7S8H
+X-Google-Smtp-Source: APXvYqy5vmeb5tsQ9SDTC13H7/uGhyBpBt4LOXC8NwsUUbTsafLH2NBrZguq/jvGzP9tojrP5rPS9sVgAEK/v8qw3Np+gLXWzGOn
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190708115130.250149-1-rburny@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a5e:c70c:: with SMTP id f12mr6074270iop.293.1562614626062;
+ Mon, 08 Jul 2019 12:37:06 -0700 (PDT)
+Date:   Mon, 08 Jul 2019 12:37:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b519af058d3091d1@google.com>
+Subject: kernel BUG at lib/lockref.c:LINE!
+From:   syzbot <syzbot+f70e9b00f8c7d4187bd0@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 01:51:30PM +0200, Radoslaw Burny wrote:
-> fs: Fix the default values of i_uid/i_gid on /proc/sys inodes.
-> Normally, the inode's i_uid/i_gid are translated relative to s_user_ns,
-> but this is not a correct behavior for proc. Since sysctl permission
-> check in test_perm is done against GLOBAL_ROOT_[UG]ID, it makes more
-> sense to use these values in u_[ug]id of proc inodes.
-> In other words: although uid/gid in the inode is not read during
-> test_perm, the inode logically belongs to the root of the namespace.
-> I have confirmed this with Eric Biederman at LPC and in this thread:
-> https://lore.kernel.org/lkml/87k1kzjdff.fsf@xmission.com
-> 
-> Consequences
-> ============
-> Since the i_[ug]id values of proc nodes are not used for permissions
-> checks, this change usually makes no functional difference. However, it
-> causes an issue in a setup where:
-> * a namespace container is created without root user in container -
->   hence the i_[ug]id of proc nodes are set to INVALID_[UG]ID
-> * container creator tries to configure it by writing /proc/sys files,
->   e.g. writing /proc/sys/kernel/shmmax to configure shared memory limit
-> Kernel does not allow to open an inode for writing if its i_[ug]id are
-> invalid, making it impossible to write shmmax and thus - configure the
-> container.
-> Using a container with no root mapping is apparently rare, but we do use
-> this configuration at Google. Also, we use a generic tool to configure
-> the container limits, and the inability to write any of them causes a
-> failure.
-> 
-> History
-> =======
-> The invalid uids/gids in inodes first appeared due to 81754357770e (fs:
-> Update i_[ug]id_(read|write) to translate relative to s_user_ns).
-> However, AFAIK, this did not immediately cause any issues.
-> The inability to write to these "invalid" inodes was only caused by a
-> later commit 0bd23d09b874 (vfs: Don't modify inodes with a uid or gid
-> unknown to the vfs).
-> 
-> Tested: Used a repro program that creates a user namespace without any
-> mapping and stat'ed /proc/$PID/root/proc/sys/kernel/shmmax from outside.
-> Before the change, it shows the overflow uid, with the change it's 0.
-> The overflow uid indicates that the uid in the inode is not correct and
-> thus it is not possible to open the file for writing.
-> 
-> Fixes: 0bd23d09b874 ("vfs: Don't modify inodes with a uid or gid unknown to the vfs")
-> Cc: stable@vger.kernel.org # v4.8+
-> Signed-off-by: Radoslaw Burny <rburny@google.com>
+Hello,
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+syzbot found the following crash on:
 
-Andrew,
+HEAD commit:    d58b5ab9 Add linux-next specific files for 20190708
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=123d6887a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf9882946ecc11d9
+dashboard link: https://syzkaller.appspot.com/bug?extid=f70e9b00f8c7d4187bd0
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=173375c7a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1536f9bfa00000
 
-When you get a chance, can you pick this one up on your tree? This was
-an old patch that just fell through the cracks, but fortuntely Radoslaw
-followed through with an updated commit message. This affects only a
-small crowd, however it is a proper fix.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f70e9b00f8c7d4187bd0@syzkaller.appspotmail.com
 
-  Luis
-> ---
-> Changelog since v1:
->   - Updated the commit title and description.
-> 
->  fs/proc/proc_sysctl.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index c74570736b24..36ad1b0d6259 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -499,6 +499,10 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
->  
->  	if (root->set_ownership)
->  		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
-> +	else {
-> +		inode->i_uid = GLOBAL_ROOT_UID;
-> +		inode->i_gid = GLOBAL_ROOT_GID;
-> +	}
->  
->  	return inode;
->  }
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
-> 
+------------[ cut here ]------------
+kernel BUG at lib/lockref.c:189!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 9350 Comm: syz-executor444 Not tainted 5.2.0-next-20190708 #33
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:lockref_mark_dead lib/lockref.c:189 [inline]
+RIP: 0010:lockref_mark_dead+0x8b/0xa0 lib/lockref.c:187
+Code: 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 0f b6 04 02 84 c0 74 04 3c 03  
+7e 1d c7 43 38 80 ff ff ff 5b 41 5c 5d c3 e8 75 19 38 fe <0f> 0b 48 89 df  
+e8 0b 59 72 fe eb ab e8 a4 59 72 fe eb dc 90 90 55
+RSP: 0018:ffff88809004fc90 EFLAGS: 00010293
+RAX: ffff88808bcc0300 RBX: ffff8880a69b0520 RCX: ffffffff833a3abf
+RDX: 0000000000000000 RSI: ffffffff833a3afb RDI: 0000000000000005
+RBP: ffff88809004fca0 R08: ffff88808bcc0300 R09: ffffed1014d360a5
+R10: ffffed1014d360a4 R11: ffff8880a69b0523 R12: 0000000000000000
+R13: ffff8880a69b0520 R14: ffff8880a69b04a0 R15: 0000000000000000
+FS:  000055555571f880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555555738938 CR3: 0000000091be1000 CR4: 00000000001406f0
+Call Trace:
+  __dentry_kill+0x5f/0x600 fs/dcache.c:560
+  shrink_dcache_parent+0x2c9/0x3d0 fs/dcache.c:1565
+  vfs_rmdir fs/namei.c:3882 [inline]
+  vfs_rmdir+0x26f/0x4f0 fs/namei.c:3857
+  do_rmdir+0x39e/0x420 fs/namei.c:3940
+  __do_sys_rmdir fs/namei.c:3958 [inline]
+  __se_sys_rmdir fs/namei.c:3956 [inline]
+  __x64_sys_rmdir+0x36/0x40 fs/namei.c:3956
+  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x441917
+Code: 0f 1f 00 b8 57 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 ad 09 fc ff c3  
+66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 54 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 8d 09 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffe53fc08f8 EFLAGS: 00000207 ORIG_RAX: 0000000000000054
+RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 0000000000441917
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007ffe53fc1a90
+RBP: 00000000000024ef R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000005 R11: 0000000000000207 R12: 00007ffe53fc1a90
+R13: 00005555557288c0 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 407254279c8c4b61 ]---
+RIP: 0010:lockref_mark_dead lib/lockref.c:189 [inline]
+RIP: 0010:lockref_mark_dead+0x8b/0xa0 lib/lockref.c:187
+Code: 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 0f b6 04 02 84 c0 74 04 3c 03  
+7e 1d c7 43 38 80 ff ff ff 5b 41 5c 5d c3 e8 75 19 38 fe <0f> 0b 48 89 df  
+e8 0b 59 72 fe eb ab e8 a4 59 72 fe eb dc 90 90 55
+RSP: 0018:ffff88809004fc90 EFLAGS: 00010293
+RAX: ffff88808bcc0300 RBX: ffff8880a69b0520 RCX: ffffffff833a3abf
+RDX: 0000000000000000 RSI: ffffffff833a3afb RDI: 0000000000000005
+RBP: ffff88809004fca0 R08: ffff88808bcc0300 R09: ffffed1014d360a5
+R10: ffffed1014d360a4 R11: ffff8880a69b0523 R12: 0000000000000000
+R13: ffff8880a69b0520 R14: ffff8880a69b04a0 R15: 0000000000000000
+FS:  000055555571f880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555555738938 CR3: 0000000091be1000 CR4: 00000000001406f0
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
