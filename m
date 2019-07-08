@@ -2,173 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23156627E9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 20:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5DC627F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 20:08:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388421AbfGHSGT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jul 2019 14:06:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50052 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727413AbfGHSGS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jul 2019 14:06:18 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 903EA5D672;
-        Mon,  8 Jul 2019 18:06:12 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-14.phx2.redhat.com [10.3.112.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43F002B9F2;
-        Mon,  8 Jul 2019 18:06:01 +0000 (UTC)
-Date:   Mon, 8 Jul 2019 14:05:58 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        ebiederm@xmission.com, nhorman@tuxdriver.com
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-Message-ID: <20190708180558.5bar6ripag3sdadl@madcap2.tricolour.ca>
-References: <cover.1554732921.git.rgb@redhat.com>
- <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
- <20190529145742.GA8959@cisco>
- <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
- <20190529153427.GB8959@cisco>
- <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
- <20190529222835.GD8959@cisco>
- <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
- <20190530170913.GA16722@mail.hallyn.com>
- <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
+        id S1731146AbfGHSIk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jul 2019 14:08:40 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37953 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730854AbfGHSIk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Jul 2019 14:08:40 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y15so7981386pfn.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jul 2019 11:08:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pl4l3gaXCZ0Civm5i1pNfvFYe/9qjH5f6pxejgr6AT8=;
+        b=SmOjZWgQtja4PiBSvkc/DsaRuuY8KuEdsMMIKFu//v+ppa1NV5GwqJ4JU08u4uuqXU
+         KBGOdoVwwU+z3nPB5Yc7Nj2ei2N1Y2sszCQi7aydqX+v1bs0R5WVY9VfrLuAxD0X22yO
+         et4/wVXqTEuA8XKb8I+GG2Cy0aB5wgbYiiI9zkmmG0P1bXmqCbs0GEYAywdf8m69uDNv
+         i3LNyALK0qO5EHrEqLLK7h1Y4PRr0CfVpj56uFuOU19A9ib63eiTFseAJoBv3geF+XdI
+         Ex1jzjCOgerKv5XAy3Zhbk2qyoHk/ecWgRcxMQ7auZjG3EZDzZIqKZ+9SL7kyLXtMMIf
+         MRgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pl4l3gaXCZ0Civm5i1pNfvFYe/9qjH5f6pxejgr6AT8=;
+        b=G4W96/pJwHOpRTAUMuYUxnzKzrOsNEEB7KoigQb97fL8tYU4/WJEJWIDSPr+R+jW5K
+         tvO1+QpVg7zkQjxJ3sj1ozsQyq3AIoIuMskuf1Z9GOm5/sVewKFTl9qLxNRXXR1SwnOB
+         NBn63sOlfC/0ShM+6FPYPG5Ydocvd8f5o9sHR8gDvoBR9BFjrEKuyU2dzKdC+hkDGbWH
+         yMr1PbngaA5rUCzaoVOYyEQMWmZaG6o1nyYwgXdOv/90BSdXcvmF0kzYo07uPE+i1lE0
+         +9q3yf7WFPBsbuqyr9lqcsRSTpLvd7J0rtzbkqqzhXob/eUnDnYC/XDZJgd2/XAHpAGO
+         st4g==
+X-Gm-Message-State: APjAAAV658kEz14+SIc/EGzQEtOfGM/QszNX+YHZVr5GUjkNPTT+uPwN
+        n9tq8R2OJMbcFMzFp/NRXXjFt25fspSPl2dPrPDZfA==
+X-Google-Smtp-Source: APXvYqwoLoh11AGLeVf5uSZhLWgN1V0Lf0IPFYJElvqds2Mjg+FKGEtSZZdm1FCZKhiAeE2kYC6jZBxFraVmnG074HI=
+X-Received: by 2002:a63:b919:: with SMTP id z25mr25337810pge.201.1562609318390;
+ Mon, 08 Jul 2019 11:08:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 08 Jul 2019 18:06:17 +0000 (UTC)
+References: <20190704003615.204860-1-brendanhiggins@google.com>
+ <20190704003615.204860-2-brendanhiggins@google.com> <20190705201505.GA19023@42.do-not-panic.com>
+In-Reply-To: <20190705201505.GA19023@42.do-not-panic.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 8 Jul 2019 11:08:27 -0700
+Message-ID: <CAFd5g45cF9rYc8YupnCgd=7xz_yW+_TMp_L+cSFUBW7d9njnVQ@mail.gmail.com>
+Subject: Re: [PATCH v6 01/18] kunit: test: add KUnit test runner core
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah <shuah@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-05-30 15:29, Paul Moore wrote:
-> On Thu, May 30, 2019 at 1:09 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > On Wed, May 29, 2019 at 06:39:48PM -0400, Paul Moore wrote:
-> > > On Wed, May 29, 2019 at 6:28 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > > On Wed, May 29, 2019 at 12:03:58PM -0400, Paul Moore wrote:
-> > > > > On Wed, May 29, 2019 at 11:34 AM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > > > > On Wed, May 29, 2019 at 11:29:05AM -0400, Paul Moore wrote:
-> > > > > > > On Wed, May 29, 2019 at 10:57 AM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > > > > > > On Mon, Apr 08, 2019 at 11:39:09PM -0400, Richard Guy Briggs wrote:
-> 
-> ...
-> 
-> > > > > > > The current thinking
-> > > > > > > is that you would only change the audit container ID from one
-> > > > > > > set/inherited value to another if you were nesting containers, in
-> > > > > > > which case the nested container orchestrator would need to be granted
-> > > > > > > CAP_AUDIT_CONTROL (which everyone to date seems to agree is a workable
-> > > > > > > compromise).
-> > > >
-> > > > won't work in user namespaced containers, because they will never be
-> > > > capable(CAP_AUDIT_CONTROL); so I don't think this will work for
-> > > > nesting as is. But maybe nobody cares :)
-> > >
-> > > That's fun :)
-> > >
-> > > To be honest, I've never been a big fan of supporting nested
-> > > containers from an audit perspective, so I'm not really too upset
-> > > about this.  The k8s/cri-o folks seem okay with this, or at least I
-> > > haven't heard any objections; lxc folks, what do you have to say?
+On Fri, Jul 5, 2019 at 1:15 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Wed, Jul 03, 2019 at 05:35:58PM -0700, Brendan Higgins wrote:
+> > Add core facilities for defining unit tests; this provides a common way
+> > to define test cases, functions that execute code which is under test
+> > and determine whether the code under test behaves as expected; this also
+> > provides a way to group together related test cases in test suites (here
+> > we call them test_modules).
 > >
-> > I actually thought the answer to this (when last I looked, "some time" ago)
-> > was that userspace should track an audit message saying "task X in
-> > container Y is changing its auditid to Z", and then decide to also track Z.
-> > This should be doable, but a lot of extra work in userspace.
+> > Just define test cases and how to execute them for now; setting
+> > expectations on code will be defined later.
 > >
-> > Per-userns containerids would also work.  So task X1 is in containerid
-> > 1 on the host and creates a new task Y in new userns;  it continues to
-> > be reported in init_user_ns as containerid 1 forever;  but in its own
-> > userns it can request to be known as some other containerid.  Audit
-> > socks would be per-userns, allowing root in a container to watch for
-> > audit events in its own (and descendent) namespaces.
-> >
-> > But again I'm sure we've gone over all this in the last few years.
-> >
-> > I suppose we can look at this as a "first step", and talk about
-> > making it user-ns-nestable later.  But agreed it's not useful in a
-> > lot of situations as is.
-> 
-> [REMINDER: It is an "*audit* container ID" and not a general
-> "container ID" ;)  Smiley aside, I'm not kidding about that part.]
-> 
-> I'm not interested in supporting/merging something that isn't useful;
-> if this doesn't work for your use case then we need to figure out what
-> would work.  It sounds like nested containers are much more common in
-> the lxc world, can you elaborate a bit more on this?
-> 
-> As far as the possible solutions you mention above, I'm not sure I
-> like the per-userns audit container IDs, I'd much rather just emit the
-> necessary tracking information via the audit record stream and let the
-> log analysis tools figure it out.  However, the bigger question is how
-> to limit (re)setting the audit container ID when you are in a non-init
-> userns.  For reasons already mentioned, using capable() is a non
-> starter for everything but the initial userns, and using ns_capable()
-> is equally poor as it essentially allows any userns the ability to
-> munge it's audit container ID (obviously not good).  It appears we
-> need a different method for controlling access to the audit container
-> ID.
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+>
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+>
+> But a nitpick below, I think that can be fixed later with a follow up
+> patch.
+>
+> > +/**
+> > + * struct kunit - represents a running instance of a test.
+> > + * @priv: for user to store arbitrary data. Commonly used to pass data created
+> > + * in the init function (see &struct kunit_suite).
+> > + *
+> > + * Used to store information about the current context under which the test is
+> > + * running. Most of this data is private and should only be accessed indirectly
+> > + * via public functions; the one exception is @priv which can be used by the
+> > + * test writer to store arbitrary data.
+> > + *
+> > + * A brief note on locking:
+> > + *
+> > + * First off, we need to lock because in certain cases a user may want to use an
+> > + * expectation in a thread other than the thread that the test case is running
+> > + * in.
+>
+> This as a prefix to the struct without a lock seems odd. It would be
+> clearer I think if you'd explain here what locking mechanism we decided
+> to use and why it suffices today.
 
-We're not quite ready yet for multiple audit daemons and possibly not
-yet for audit namespaces, but this is starting to look a lot like the
-latter.
+Whoops, sorry this should have been in the next patch. Will fix.
 
-If we can't trust ns_capable() then why are we passing on
-CAP_AUDIT_CONTROL?  It is being passed down and not stripped purposely
-by the orchestrator/engine.  If ns_capable() isn't inherited how is it
-gained otherwise?  Can it be inserted by cotainer image?  I think the
-answer is "no".  Either we trust ns_capable() or we have audit
-namespaces (recommend based on user namespace) (or both).
+> > +/**
+> > + * suite_test() - used to register a &struct kunit_suite with KUnit.
+>
+> You mean kunit_test_suite()?
 
-At this point I would say we are at an impasse unless we trust
-ns_capable() or we implement audit namespaces.
+Yep, sorry about that. Will fix.
 
-I don't think another mechanism to trust nested orchestrators/engines
-will buy us anything.
+> > + * @suite: a statically allocated &struct kunit_suite.
+> > + *
+> > + * Registers @suite with the test framework. See &struct kunit_suite for more
+> > + * information.
+> > + *
+> > + * NOTE: Currently KUnit tests are all run as late_initcalls; this means that
+> > + * they cannot test anything where tests must run at a different init phase. One
+> > + * significant restriction resulting from this is that KUnit cannot reliably
+> > + * test anything that is initialize in the late_init phase.
+>                             initialize prior to the late init phase.
+>
+>
+> That is, this is useless to test things running early.
 
-Am I missing something?
+Yeah, I can add that phrasing in.
 
-> Punting this to a LSM hook is an obvious thing to do, and something we
-> might want to do anyway, but currently audit doesn't rely on the LSM
-> for proper/safe operation and I'm not sure I want to change that now.
-> 
-> The next obvious thing is to create some sort of access control knob
-> in audit itself.  Perhaps an auditctl operation that would allow the
-> administrator to specify which containers, via their corresponding
-> audit container IDs, are allowed to change their audit container ID?
-> The permission granting would need to be done in the init userns, but
-> it would allow containers with a non-init userns the ability to change
-> their audit container ID.  We would probably still want a
-> ns_capable(CAP_AUDIT_CONTROL) restriction in this case.
+> > + *
+> > + * TODO(brendanhiggins@google.com): Don't run all KUnit tests as late_initcalls.
+> > + * I have some future work planned to dispatch all KUnit tests from the same
+> > + * place, and at the very least to do so after everything else is definitely
+> > + * initialized.
+>
+> TODOs are odd to be adding to documentation, this is just not common
+> place practice. The NOTE should suffice for you.
 
-This auditctl knob of which you speak is an additional API, not changing
-the existing proposed one.
+Because it is a kernel doc? Would you usually make a separate
+non-kernel doc comment for a TODO? I guess that makes sense.
 
-> Does anyone else have any other ideas?
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Thanks!
