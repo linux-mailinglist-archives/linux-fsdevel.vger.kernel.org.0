@@ -2,129 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C66761DF5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 13:51:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BCB861E20
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 14:02:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730574AbfGHLvg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jul 2019 07:51:36 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:54877 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727811AbfGHLvg (ORCPT
+        id S1728609AbfGHMCo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jul 2019 08:02:44 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:53675 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728320AbfGHMCo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jul 2019 07:51:36 -0400
-Received: by mail-pg1-f202.google.com with SMTP id t2so10349589pgs.21
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jul 2019 04:51:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=RUO0cgtogOledx1PUbIVwBv1WP5SbTQS/eUbtx6ca1A=;
-        b=B0OFmaHSy+LoXPkMA2Ul+miuzJXjvdo9LY8EJgk2lFUHwSUSB4ZmtFqaWavAsdj4od
-         snl/VTXx4lCoKMHUKCW4oO5innRUxx+6QMFHQHWdZV2KLezn4+jOtVMpJlLJd8OXJpno
-         J2bSSy8JyaZrLnQvfe9GOQm1/PRFnQ7QeIgWKOUPn72NqRKyO9M5wgG+YfYcF/AMnASr
-         VuuZb+NvgEQpvoUdHvQ/2N2MZ8IiQ2nSYCrSHYvDQ8RfD/1DbPl7gHQGaYM/weFidX+5
-         wVgeuPwmOQCZaeIfiPaH6FY2Q69hwYyORxDxBiM7C0EzotWxKYRGMr9y7prf4uIkXGsc
-         m2Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=RUO0cgtogOledx1PUbIVwBv1WP5SbTQS/eUbtx6ca1A=;
-        b=byr1t/WnVa6aCiupjm3arN1GvnU+TE2CgazUYGruBZNR5woeABLUtRKtFtQ6T037Cz
-         3oKtQkisCABMsLPEaJoScaZZFNizDPxamYS/CkVwbycyuylOgVbaZx6agoaXp2ht47S1
-         8TBtQuU0Ffe0MZS7HIq1WRoHZW97b90iKvRGEdb50BDCFhrpyIdae7LY1/SwCuK3oGHx
-         jAqnYFPARn9OoTpGRWkp9FNok1q+9+m3XS52yLxavozFdcX+6wWvgADNJZUZrUN1vENU
-         KB9TxgcWclLPB8SU+du3uaX+w8k5bk29mhGl1Tafa+jAQkOoPCn8U9ddZXnSe3Py49Qh
-         vAvg==
-X-Gm-Message-State: APjAAAU5rN9ACgi/xH86FoqnxBR5Bkyzaq1o8QyQEK9aw9OxoWnbklKf
-        F/pQqkP1R9u0wz2VzrIP7Y37rqomEtc=
-X-Google-Smtp-Source: APXvYqyy3wqolz5H6URclfrxPsjBk3fSL9runmXFQbRxI7E/LFW05znauTpADCA+6Xq5+MqfLTdxro38OnM=
-X-Received: by 2002:a65:49cc:: with SMTP id t12mr6413038pgs.83.1562586695288;
- Mon, 08 Jul 2019 04:51:35 -0700 (PDT)
-Date:   Mon,  8 Jul 2019 13:51:30 +0200
-Message-Id: <20190708115130.250149-1-rburny@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v3] fs: Fix the default values of i_uid/i_gid on /proc/sys inodes.
-From:   Radoslaw Burny <rburny@google.com>
-To:     "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Seth Forshee <seth.forshee@canonical.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jsperbeck@google.com, Andrew Morton <akpm@linux-foundation.org>,
-        Radoslaw Burny <rburny@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 8 Jul 2019 08:02:44 -0400
+Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x68C2GN4006206;
+        Mon, 8 Jul 2019 21:02:16 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
+ Mon, 08 Jul 2019 21:02:16 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x68C2ApD006173
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Mon, 8 Jul 2019 21:02:16 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts
+ around
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        ebiederm@xmission.com, linux-security-module@vger.kernel.org
+References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
+ <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
+Date:   Mon, 8 Jul 2019 21:02:10 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fs: Fix the default values of i_uid/i_gid on /proc/sys inodes.
-Normally, the inode's i_uid/i_gid are translated relative to s_user_ns,
-but this is not a correct behavior for proc. Since sysctl permission
-check in test_perm is done against GLOBAL_ROOT_[UG]ID, it makes more
-sense to use these values in u_[ug]id of proc inodes.
-In other words: although uid/gid in the inode is not read during
-test_perm, the inode logically belongs to the root of the namespace.
-I have confirmed this with Eric Biederman at LPC and in this thread:
-https://lore.kernel.org/lkml/87k1kzjdff.fsf@xmission.com
+Hello, David Howells.
 
-Consequences
-============
-Since the i_[ug]id values of proc nodes are not used for permissions
-checks, this change usually makes no functional difference. However, it
-causes an issue in a setup where:
-* a namespace container is created without root user in container -
-  hence the i_[ug]id of proc nodes are set to INVALID_[UG]ID
-* container creator tries to configure it by writing /proc/sys files,
-  e.g. writing /proc/sys/kernel/shmmax to configure shared memory limit
-Kernel does not allow to open an inode for writing if its i_[ug]id are
-invalid, making it impossible to write shmmax and thus - configure the
-container.
-Using a container with no root mapping is apparently rare, but we do use
-this configuration at Google. Also, we use a generic tool to configure
-the container limits, and the inability to write any of them causes a
-failure.
+I realized via https://lwn.net/Articles/792622/ that a new set of
+system calls for filesystem mounting has been added to Linux 5.2. But
+I feel that LSM modules are not ready to support these system calls.
 
-History
-=======
-The invalid uids/gids in inodes first appeared due to 81754357770e (fs:
-Update i_[ug]id_(read|write) to translate relative to s_user_ns).
-However, AFAIK, this did not immediately cause any issues.
-The inability to write to these "invalid" inodes was only caused by a
-later commit 0bd23d09b874 (vfs: Don't modify inodes with a uid or gid
-unknown to the vfs).
+An example is move_mount() added by this patch. This patch added
+security_move_mount() LSM hook but none of in-tree LSM modules are
+providing "LSM_HOOK_INIT(move_mount, ...)" entry. Therefore, currently
+security_move_mount() is a no-op. At least for TOMOYO, I want to check
+mount manipulations caused by system calls because allowing mounts on
+arbitrary location is not acceptable for pathname based access control.
+What happened? I want TOMOYO to perform similar checks like mount() does.
 
-Tested: Used a repro program that creates a user namespace without any
-mapping and stat'ed /proc/$PID/root/proc/sys/kernel/shmmax from outside.
-Before the change, it shows the overflow uid, with the change it's 0.
-The overflow uid indicates that the uid in the inode is not correct and
-thus it is not possible to open the file for writing.
-
-Fixes: 0bd23d09b874 ("vfs: Don't modify inodes with a uid or gid unknown to the vfs")
-Cc: stable@vger.kernel.org # v4.8+
-Signed-off-by: Radoslaw Burny <rburny@google.com>
----
-Changelog since v1:
-  - Updated the commit title and description.
-
- fs/proc/proc_sysctl.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index c74570736b24..36ad1b0d6259 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -499,6 +499,10 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
- 
- 	if (root->set_ownership)
- 		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
-+	else {
-+		inode->i_uid = GLOBAL_ROOT_UID;
-+		inode->i_gid = GLOBAL_ROOT_GID;
-+	}
- 
- 	return inode;
- }
--- 
-2.22.0.410.gd8fdbe21b5-goog
-
+On 2019/02/20 2:08, David Howells wrote:
+> Add a move_mount() system call that will move a mount from one place to
+> another and, in the next commit, allow to attach an unattached mount tree.
+> 
+> The new system call looks like the following:
+> 
+> 	int move_mount(int from_dfd, const char *from_path,
+> 		       int to_dfd, const char *to_path,
+> 		       unsigned int flags);
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: linux-api@vger.kernel.org
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
