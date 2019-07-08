@@ -2,74 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57387618A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 02:02:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE27F618B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2019 03:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbfGHACN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Jul 2019 20:02:13 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:36838 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727455AbfGHACM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Jul 2019 20:02:12 -0400
-Received: from dread.disaster.area (pa49-195-139-63.pa.nsw.optusnet.com.au [49.195.139.63])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id A9A4643B878;
-        Mon,  8 Jul 2019 10:02:10 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hkH5b-0006vw-J9; Mon, 08 Jul 2019 10:01:03 +1000
-Date:   Mon, 8 Jul 2019 10:01:03 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com
-Subject: Re: RFC: use the iomap writepage path in gfs2
-Message-ID: <20190708000103.GH7689@dread.disaster.area>
-References: <20190701215439.19162-1-hch@lst.de>
+        id S1727962AbfGHBPo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Jul 2019 21:15:44 -0400
+Received: from ozlabs.org ([203.11.71.1]:46577 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727949AbfGHBPn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 7 Jul 2019 21:15:43 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45hnZJ0R8Jz9sN4;
+        Mon,  8 Jul 2019 11:15:35 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 10/10] selftests: add openat2(2) selftests
+In-Reply-To: <20190706145737.5299-11-cyphar@cyphar.com>
+References: <20190706145737.5299-1-cyphar@cyphar.com> <20190706145737.5299-11-cyphar@cyphar.com>
+Date:   Mon, 08 Jul 2019 11:15:35 +1000
+Message-ID: <878st9iax4.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190701215439.19162-1-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
-        a=fNT+DnnR6FjB+3sUuX8HHA==:117 a=fNT+DnnR6FjB+3sUuX8HHA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=0o9FgrsRnhwA:10
-        a=7-415B0cAAAA:8 a=BIJwB3zSu3MTrXN99fEA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 11:54:24PM +0200, Christoph Hellwig wrote:
-> Hi all,
-> 
-> in this straight from the jetplane edition I present the series to
-> convert gfs2 to full iomap usage for the ordered and writeback mode,
-> that is we use iomap_page everywhere and entirely get rid of
-> buffer_heads in the data path.  This has only seen basic testing
-> which ensured neither 4k or 1k blocksize in ordered mode regressed
-> vs the xfstests baseline, although that baseline tends to look
-> pretty bleak.
-> 
-> The series is to be applied on top of my "lift the xfs writepage code
-> into iomap v2" series.
+Hi Aleksa,
 
-Ok, this doesn't look too bad from the iomap perspective, though it
-does raise more questions. :)
+A few minor comments below.
 
-gfs2 now has two iopaths, right? One that uses bufferheads for
-journalled data, and the other that uses iomap? That seems like it's
-only a partial conversion - what needs to be done to iomap and gfs2
-to support the journalled data path so there's a single data IO
-path?
+Aleksa Sarai <cyphar@cyphar.com> writes:
+> diff --git a/tools/testing/selftests/openat2/Makefile b/tools/testing/selftests/openat2/Makefile
+> new file mode 100644
+> index 000000000000..8235a49928f6
+> --- /dev/null
+> +++ b/tools/testing/selftests/openat2/Makefile
+> @@ -0,0 +1,12 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +CFLAGS += -Wall -O2 -g
+> +TEST_GEN_PROGS := linkmode_test resolve_test rename_attack_test
+> +
+> +include ../lib.mk
+> +
+> +$(OUTPUT)/linkmode_test: linkmode_test.c helpers.o
+> +$(OUTPUT)/rename_attack_test: rename_attack_test.c helpers.o
+> +$(OUTPUT)/resolve_test: resolve_test.c helpers.o
 
-Cheers,
+You don't need to tell make that foo depends on foo.c.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Also if you make the dependency be on helpers.c then you won't get an
+intermediate helpers.o, and then you don't need to clean it.
+
+So the above three lines could just be:
+
+$(TEST_GEN_PROGS): helpers.c
+
+> +EXTRA_CLEAN = helpers.o $(wildcard /tmp/ksft-openat2-*)
+
+If you follow my advice above you don't need helpers.o in there.
+
+Deleting things from /tmp is also a bit fishy on shared machines, ie. it
+will error if those files happen to be owned by another user.
+
+cheers
