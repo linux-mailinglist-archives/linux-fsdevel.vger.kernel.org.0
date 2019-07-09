@@ -2,57 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32DF262E92
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 05:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1591762F0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 05:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbfGIDPE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jul 2019 23:15:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726569AbfGIDPE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jul 2019 23:15:04 -0400
-Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562642102;
-        bh=ffJpmiG3YCVrmSdb4Ds3CGUQgDaz+9N4x55s4P3dlvo=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=gquIdpoSw1zf4tIdWE/tortMRjaZsdQquNItwfubAGAx7ABS6Jg++fZscnR0BnsTY
-         IBuaA0rawGY1tLdIcROynx/7Ndt8b7dpg8G33y+ze2Xv6bNom2fBgUYdFNSu1/eoIZ
-         WpG6iyy5q1f4L2tWwnRPvv2jW+B6HfkehCwoYY2E=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <28477.1562362239@warthog.procyon.org.uk>
-References: <28477.1562362239@warthog.procyon.org.uk>
-X-PR-Tracked-List-Id: <linux-nfs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <28477.1562362239@warthog.procyon.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
- tags/keys-acl-20190703
-X-PR-Tracked-Commit-Id: 7a1ade847596dadc94b37e49f8c03f167fd71748
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0f75ef6a9cff49ff612f7ce0578bced9d0b38325
-Message-Id: <156264210283.2709.18395042155936707106.pr-tracker-bot@kernel.org>
-Date:   Tue, 09 Jul 2019 03:15:02 +0000
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
-        jmorris@namei.org, keyrings@vger.kernel.org,
-        netdev@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1727278AbfGIDtU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jul 2019 23:49:20 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:33303 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfGIDtU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 8 Jul 2019 23:49:20 -0400
+Received: by mail-qk1-f196.google.com with SMTP id r6so15054392qkc.0;
+        Mon, 08 Jul 2019 20:49:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KskYFE/Ug0iwkacs3vqwqivOLXYCEi71ZnQKnzUX30M=;
+        b=i/lSK/sGsCjIv7NK4j211T9EVDJQrekIqOlLKS6Af+/tyS/4Ah6LC0pzIwcthHOpeK
+         kRaiXZb5zhaAM2qbBCPR5S8atFRKJW3nKToNFaCoPnneeLk0+lcohoqx9vFvpKq8+QJR
+         +K4nhp3FsPuapZykCCpDfGKFEi0qeZUii3AIeq62G7E9rSUEnKXJ2gJlj83ueS/igMWc
+         KsUdHwFWPFkdpFoAa7+0+dsj4UT8YesXMUjlCBEVVbnFtnsv6XOx24Spgz+BW/yb863o
+         QJ1r//PQeNA2NKa/kpvhDBs3E6CWZe7QGnU5tNSSPX1SkzqXvXebS4+WH9W/G0uOivf/
+         76ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KskYFE/Ug0iwkacs3vqwqivOLXYCEi71ZnQKnzUX30M=;
+        b=qZ7Tu7y2MYBXuNzQiF+bAfpeUx1dMesYimOwBD8mfWwVLMzFl9BRmwLdWhxa5K5oTT
+         +wCYeAbtnIKfwMeKHqBD3bOumTBFU1AvgHHnmmmJb0oR8XV7wMZxfETEDU+IarNiqSSq
+         kNLCyeLoM3FPivaJVlYn9JPon/OhSQxOS0m61hrQXEQIkENZPbkrmLLFsPisBYrB1u4P
+         ViwfezMYhCWQPv/ucXYRpSJFWcwxIwoHuIZmZcsoDTKCvfNNrhyCYhLnYkfEZ/s4Wj7f
+         i3cuT1vMBs2OoNIjeHymnbjInqAs7qHmOGarYOIdu3z2MTxZ3EbAKDbusJwetUpIDKoU
+         ppLA==
+X-Gm-Message-State: APjAAAU9I500JMcjhXUW3A9rdqy98JrBLniBANAjwnqpETovAcBjbmiB
+        O0KXfKly3a/oQ6kQ5B2w22y+7fw1CEhPxTjjjGw=
+X-Google-Smtp-Source: APXvYqyHEPt11qvDNytVkWwFfFQJWbcpFr7QvnTFs5hkJOjlcIKBKaKfbxKCFFuklVb6b7rIZsFc549dQgGP5eJ6qiM=
+X-Received: by 2002:a37:660d:: with SMTP id a13mr17326893qkc.36.1562644159307;
+ Mon, 08 Jul 2019 20:49:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <000000000000a5d738058d2d1396@google.com>
+In-Reply-To: <000000000000a5d738058d2d1396@google.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Mon, 8 Jul 2019 20:49:08 -0700
+Message-ID: <CAEf4BzZfqnFZRbDVo1-=Vph=NpOm1g=wGuV_O5Cniuxj9f9CsQ@mail.gmail.com>
+Subject: Re: WARNING in __mark_chain_precision
+To:     syzbot <syzbot+4da3ff23081bafe74fc2@syzkaller.appspotmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>, bcrl@kvack.org,
+        bpf <bpf@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>, hawk@kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        john fastabend <john.fastabend@gmail.com>,
+        Martin Lau <kafai@fb.com>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk, xdp-newbies@vger.kernel.org,
+        Yonghong Song <yhs@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Fri, 05 Jul 2019 22:30:39 +0100:
-
-> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-acl-20190703
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0f75ef6a9cff49ff612f7ce0578bced9d0b38325
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+#syz test: https://github.com/anakryiko/linux bpf-fix-precise-bpf_st
