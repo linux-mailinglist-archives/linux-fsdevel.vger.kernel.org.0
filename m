@@ -2,108 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A0BE639B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 18:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90C48639B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 18:50:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726154AbfGIQuK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jul 2019 12:50:10 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:60904 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfGIQuK (ORCPT
+        id S1726341AbfGIQux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jul 2019 12:50:53 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:58288 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726218AbfGIQuw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jul 2019 12:50:10 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x69GnQaj070323;
-        Tue, 9 Jul 2019 16:49:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=SA6dzMCTWrij2CwnL3CHgy3imU10Tg6y0fcMO9yW8QI=;
- b=MjgoVDIchlhL2HArHYeA7DeBhr5PflqMmSEb4iZHjBBBUtJZU3dEhACjSRDp69Ui4iZK
- uTS8ne32PSgCGiCBbGuNni0FjRJu9HwsxrZyo5FGTWEuh1ZpYKoTOYp/MvySWpfZXRZb
- w9XuQDoN0U2ASAnJxW0nfiDTIDQKjFYE9hzfrJSxE96PmF0qZpeIPaIA5AxAJSM3hl1g
- yWQnnOuBqfPghMoyiO+eCL1DNyfYA/v7UPkT/RttbsRx28lbBfvi0Ao6sYG0BdD3Ll8i
- lkOMeVEkbMLB573BsRUV06uAOnKp0Ntf+ObSIKFPZok1fM6FW+g5tjq6d7rP5cbWFWr/ Hg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2tjk2tnk53-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 09 Jul 2019 16:49:56 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x69GmA9x088051;
-        Tue, 9 Jul 2019 16:49:56 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2tjgru7c2n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 09 Jul 2019 16:49:55 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x69GnrDo026589;
-        Tue, 9 Jul 2019 16:49:53 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 09 Jul 2019 09:49:53 -0700
-Date:   Tue, 9 Jul 2019 09:49:52 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 00/11] iomap: regroup code by functional area
-Message-ID: <20190709164952.GT1404256@magnolia>
-References: <156200051933.1790352.5147420943973755350.stgit@magnolia>
- <20190708184652.GB20670@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190708184652.GB20670@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9313 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907090198
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9313 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907090198
+        Tue, 9 Jul 2019 12:50:52 -0400
+Received: from mr2.cc.vt.edu (mr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x69Gopid010251
+        for <linux-fsdevel@vger.kernel.org>; Tue, 9 Jul 2019 12:50:51 -0400
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x69Gok0v000706
+        for <linux-fsdevel@vger.kernel.org>; Tue, 9 Jul 2019 12:50:51 -0400
+Received: by mail-qt1-f198.google.com with SMTP id i12so17211942qtq.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2019 09:50:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=pYyupce07jX+WDxPtqdtXk3hG5t417BkTzPivM8p47w=;
+        b=S+mkqUSTIOXN1dq9txGbh7kED5/8JGe9nU+mhpDQdxG4Ob+3KQ6iVR2VE+tlpcMNf7
+         bJGDO6DgTQyw7egxKrrk0BEXvXg00oBHkP/qGsbqLaUN0ZejILh/Ji9u2gyQyGbQijGQ
+         nyWkk87fxAxlDhpHI2YFfsos4YsAos+RJDTMH7SbW6LXttaJMFUdBB2yCmNfoBH5olGL
+         gsWQaNoZElHFv0VvtufBHFoW4Dg+7j5C8Z5bsqHyXHLQhL3h2CK2I+m7xYDtp360zaGd
+         qx8DEpQZpzsDwtupFC+gD8HjB+IR+zp9WfdZUvJofKqouQ7tw47FEJl4VLklGFp+j4DJ
+         tDEQ==
+X-Gm-Message-State: APjAAAUeFpg4SsTHJw4f08PWWCikLERw03Jl76D2nOMgqW0jxPLRTDoH
+        NJgbFfVAmc6JmrE7ywc0Thj2FkgvuneClWQYKtSBrxCcUy0ZsgvGT6kY7x8AGhWqyYUhxVqRkI0
+        UHhIJb+JT13yEYZPt5z5kLcgK6b66br0n0vDr
+X-Received: by 2002:a37:4b46:: with SMTP id y67mr19205100qka.66.1562691046268;
+        Tue, 09 Jul 2019 09:50:46 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxgaCF5Vy7+up/DCAY/qBFZBrxFfhiU0tMqaxFR0G0zFt+i3kSSn4l5D4I+4TFTR5M97RMWjg==
+X-Received: by 2002:a37:4b46:: with SMTP id y67mr19205078qka.66.1562691046042;
+        Tue, 09 Jul 2019 09:50:46 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4341::7ca])
+        by smtp.gmail.com with ESMTPSA id x10sm12844861qtc.34.2019.07.09.09.50.44
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 09 Jul 2019 09:50:44 -0700 (PDT)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     KY Srinivasan <kys@microsoft.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: exfat filesystem
+In-Reply-To: <SN6PR2101MB10726033399AEA1D0BD22067A0F10@SN6PR2101MB1072.namprd21.prod.outlook.com>
+References: <21080.1562632662@turing-police> <20190709045020.GB23646@mit.edu> <20190709112136.GI32320@bombadil.infradead.org> <20190709153039.GA3200@mit.edu> <20190709154834.GJ32320@bombadil.infradead.org>
+ <SN6PR2101MB10726033399AEA1D0BD22067A0F10@SN6PR2101MB1072.namprd21.prod.outlook.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1562691043_2389P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 09 Jul 2019 12:50:43 -0400
+Message-ID: <24605.1562691043@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 11:46:52AM -0700, Christoph Hellwig wrote:
-> On Mon, Jul 01, 2019 at 10:01:59AM -0700, Darrick J. Wong wrote:
-> > Hi all,
-> > 
-> > This series breaks up fs/iomap.c by grouping the functions by major
-> > functional area (swapfiles, fiemap, seek hole/data, directio, buffered
-> > writes, buffered reads, page management, and page migration) in separate
-> > source code files under fs/iomap/.  No functional changes have been
-> > made.
-> > 
-> > Note that this is not the final format of the patches, because I intend
-> > to pick a point towards the end of the merge window (after everyone
-> > else's merges have landed), rebase this series atop that, and push it
-> > back to Linus.  The RFC is posted so that everyone can provide feedback
-> > on the grouping strategy, not line-specific code movements.
-> > 
-> > This has been lightly tested with fstests.  Enjoy!
-> > Comments and questions are, as always, welcome.
-> 
-> Do you have a branch somewhere for the layout?
+--==_Exmh_1562691043_2389P
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-I sent it out to for-next to see what it would collide with:
+On Tue, 09 Jul 2019 16:39:31 -0000, KY Srinivasan said:
 
-https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git/log/?h=iomap-5.3-merge
+> Let me dig up the details here.
 
-Though I'll probably rebase it after the mm and block merges (which
-might have already happened).
+In case this helps clarify the chain of events, the code in question
+is the Samsung code mentioned here, updated to 5.2 kernel....
 
-> To me it seems to be a little too fine grained and creates tons of tiny
-> files, which make hacking the code painful.
+=22We know that Microsoft has done patent troll shakedowns in the past on=
+ Linux
+products related to the exfat filesystem. While we at Conservancy were
+successful in getting the code that implements exfat for Linux released u=
+nder
+GPL (by Samsung), that code has not been upstreamed into Linux. So, Micro=
+soft
+has not included any patents they might hold on exfat into the patent
+non-aggression pact.=22
 
-It's nine files and now code is grouped by functional area which makes
-it easier to keep track of which functions go with the publicly exposed
-iomap apis.  I don't think we're going to more than a half dozen more
-files ever.
+https://sfconservancy.org/blog/2018/oct/10/microsoft-oin-exfat/
+=20
+(Link in that para points here):
+https://sfconservancy.org/news/2013/aug/16/exfat-samsung/
 
---D
+
+
+--==_Exmh_1562691043_2389P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQIVAwUBXSTF4gdmEQWDXROgAQL54Q/9Hlj0gpg86LJ/QMJSgnF2F4/8RSnWxUX8
+XORTc3xuKuh0usDDWrb00semHxVT8dQfISpM7bvfiTGB1p5RO522PA/QI2bU9vTk
+tIZzLLDmqk/ambCGDF6SdKaPtTTw2Yx4KSkhzjUc3i1CBg2R9YUfpST/Y93NAtwr
+Vx64TgufPWmNtU7/sUiEKSFV2T6EIdv3gHoog+/JoPioRwmdVH0DhxgVWy7lki3s
+vMkJg3XJYsPDHe+P8F30RRSTQAwq/5HmtbF4nmFAASBYuD2vyAAraVtOxkkcyLKb
+DMhFbw7LyScyYVv9C1W2GfCjySjmacHDr7E0tZqfZFqj0/JiA+/McjxEWydrZLae
+80LU3QBR0jIM9TX2y/IWOA+A+YAlzaYE+HY1JrnqqmsuS0ygF2CU093F1ebYmEFM
+XvdjkVWZRocxZW/RAE0PurJKAJvqoNm7PjJEzOqdgZsP9a2g39OxoXdA8OoMNsgv
+0dRH92veXFLgbyMbAjwNYgfmUyJi1n6AEtflZW4tdBCo5yTs2qyQNgzpZ8/9nxzM
+YzfKeGSIomxWvPPmi3Ku9JY5y6MHaaNNo/DshPKYjZflZYBdVA5OBsEXhHKf1ANt
+aWUe43IU19mQm0zIHSQaTgKcXbpzhEEvNZqnEzBwyULgOETjg5Nda5VZbFziukup
+qBtKuW2QIiQ=
+=x5Ci
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1562691043_2389P--
