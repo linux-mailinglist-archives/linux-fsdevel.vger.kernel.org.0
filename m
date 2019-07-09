@@ -2,151 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF5C6398E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 18:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A83A6398A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 18:40:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfGIQkO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jul 2019 12:40:14 -0400
-Received: from mail-eopbgr720120.outbound.protection.outlook.com ([40.107.72.120]:35776
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726115AbfGIQkN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jul 2019 12:40:13 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=acKShBbhxk0J5CGZDYxuRts+54UtF5ttCC2yVXYOJW+ZMD2G7dGELlgR/WpQ0X+xtzzX1RgaQQbirRvFY2dAyptNA+WJP+1KmtygHtUFeWt57Bmmvtv/z7+YBg3HMcW//nQAqZdZRtwpXWs7lXXwASN6cf7GbAVYr5xy/F9PE9hpAxKCUIbBeq5qx6zYer4nmGcYHP/RJrMRrYWpaumICeRflc1pefXI6K+tLXDqgB9601cAAPTKmz/5D73rTNG2tdzJa55mqReIN122PLztGzQ69fgsV08rNhGwwhtbjygLCc/c3gdjFBX0ApMAsE/p67ZFJIEP5uxkDv0rq0YFhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QZz5U4EYZGIEsslrLZ50Alrf3+pxAojYiMuhvEQpAHM=;
- b=APaYc5ltvVNx4RRKdWIKmWL4RQ6T88kAUiCOyPUypGpo96D/mkX9TLlGQBZxcDmgfL64e9WoYITj3zT73D8ts/pdbGjslCt39czovgSA12UtDuL2eQqCWCIc8nfSa5+OYJYlWIYO+AmF7kDbo5QmMscCmLcqh1g3RNm4bZsRmT2igRX4qtUGfNtIgXGzf5VqUChQXcNdNAd5MtRR/d03Zz9r4E/uPnsFpZGwk9nyob7fR18D5Osw+dGkHQd1W5XuqQjbSibaucLvVgIeWNfqTOjdNcihNrM8DIFBHVQIHxz4v5ftlK66schTid/YBKa9aKthHOFtAlJRsttBxWEkPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=microsoft.com;dmarc=pass action=none
- header.from=microsoft.com;dkim=pass header.d=microsoft.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QZz5U4EYZGIEsslrLZ50Alrf3+pxAojYiMuhvEQpAHM=;
- b=LTsuo5odeN9C6bVkznvUdyWTO6L6nQ6AAxvCgr633THGipNgdSpOYws9C2uRAsnVV/3LwBwloA2LmTGT+RQ2Vx3W3ByZsTOA2WP39N3ZfQZwQjkXiedglph0Wx38zLcaPqhhgi8fmXnB9wh5SCygq9jlhsBMtIgILbhNvaOQ4sU=
-Received: from SN6PR2101MB1072.namprd21.prod.outlook.com (52.132.115.21) by
- SN6PR2101MB1039.namprd21.prod.outlook.com (52.132.115.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.2; Tue, 9 Jul 2019 16:39:31 +0000
-Received: from SN6PR2101MB1072.namprd21.prod.outlook.com
- ([fe80::f9cc:1b2a:1b20:808b]) by SN6PR2101MB1072.namprd21.prod.outlook.com
- ([fe80::f9cc:1b2a:1b20:808b%8]) with mapi id 15.20.2094.001; Tue, 9 Jul 2019
- 16:39:31 +0000
-From:   KY Srinivasan <kys@microsoft.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        =?windows-1257?Q?Valdis_Kl=E7tnieks?= <valdis.kletnieks@vt.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
-CC:     Sasha Levin <sashal@kernel.org>
-Subject: RE: exfat filesystem
-Thread-Topic: exfat filesystem
-Thread-Index: AQHVNm3O4cwoiVd1wUyFaPLSrlI8N6bCfKmw
-Date:   Tue, 9 Jul 2019 16:39:31 +0000
-Message-ID: <SN6PR2101MB10726033399AEA1D0BD22067A0F10@SN6PR2101MB1072.namprd21.prod.outlook.com>
-References: <21080.1562632662@turing-police> <20190709045020.GB23646@mit.edu>
- <20190709112136.GI32320@bombadil.infradead.org>
- <20190709153039.GA3200@mit.edu>
- <20190709154834.GJ32320@bombadil.infradead.org>
-In-Reply-To: <20190709154834.GJ32320@bombadil.infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=kys@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-07-09T16:39:29.1424552Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=a1d36c8d-2089-45f6-8656-02491b3ad9c5;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kys@microsoft.com; 
-x-originating-ip: [131.107.147.171]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d8cffe00-255e-4b2d-3a6a-08d7048c0490
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:SN6PR2101MB1039;
-x-ms-traffictypediagnostic: SN6PR2101MB1039:
-x-ms-exchange-purlcount: 2
-x-microsoft-antispam-prvs: <SN6PR2101MB10396D77BF582592C9C20A9FA0F10@SN6PR2101MB1039.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1247;
-x-forefront-prvs: 0093C80C01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(4636009)(376002)(346002)(396003)(136003)(366004)(39860400002)(199004)(189003)(13464003)(66556008)(64756008)(66476007)(6436002)(966005)(73956011)(110136005)(8936002)(10090500001)(5660300002)(66946007)(229853002)(3480700005)(6306002)(55016002)(66446008)(4326008)(9686003)(33656002)(305945005)(25786009)(446003)(76116006)(11346002)(76176011)(476003)(8676002)(316002)(68736007)(81156014)(81166006)(7696005)(2201001)(71200400001)(22452003)(71190400001)(7736002)(99286004)(2501003)(186003)(66574012)(52536014)(86362001)(2906002)(2171002)(26005)(6246003)(6506007)(53546011)(478600001)(8990500004)(74316002)(7116003)(6116002)(66066001)(53936002)(10290500003)(102836004)(486006)(256004)(14454004)(221733001)(3846002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR2101MB1039;H:SN6PR2101MB1072.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: kGwTgC4VWgywyfifpQ1uwFyFk3Yolegvns+xQNinZ+t2gaJd0/HIVAcearqCLX28wpUm+yAZMckyUwVgILo2NQ+J/6GfVRGoYEYDDNvLwgQtiGxQig12Q5vsFSxIYBlOfbZFUH9pEF7V3AST3tjDo200keXJqw55ZiZTCK5QmmHz1y95pFZtgsP25Ol9s94+7B50Omt2t91bL4c12JnQW2xSbpsB8+pSppTgbw7P9q8W4Tg8rGtlI3BS8uaBAvAr8hPguLwQ9BILEVIL46cEZnLclt0ANs7vKEQuS8bgiTOuCJSLn11oiTVmmk7KyYAyIEMy7k8gPV5R3GLhWc8ASFLkLTUbSimLfhytX1PtzmKmJSMSs9qxYKG2d8VzdbskCwK4UVl8zEy6mt298r85qAltLndvcNdd9MkeFnbMSXU=
-Content-Type: text/plain; charset="windows-1257"
-Content-Transfer-Encoding: quoted-printable
+        id S1726335AbfGIQj6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jul 2019 12:39:58 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:44810 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfGIQj5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Jul 2019 12:39:57 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x69GdE6s161171;
+        Tue, 9 Jul 2019 16:39:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=mWNNIxC852F1T0hY0S7in0tupX7SXeFAcfZFVC9JuHc=;
+ b=e9bxnDLdWmEv4iyK7fRYTvsxKk8R/ME6bb5u6O7S9N7U6vXWCvcixpyJ3dnWdGbOgJYO
+ QNpskiCWabU4aof3LdgDKZ0Oh4+s+xDlD4mwN31VCpUwYEbrUaatMrojVAYXHJnrmKJx
+ Jq+45JPmTksPZyrFDyp1WMg4J8PQdGwWWFuZNMdYffe5G8HgnNJl5EZMBAs03fsf3/Dy
+ GtEHDqeRkB64/yVPawheMP7ZJfc8WmejyT7ZVQC6UFw+ZOAvF4NgA0gLmPUzYeHs6iHn
+ 3poPhq/2k4/oHDMM767sIDMhiZeZXVO+QN+c/UKLu+tL77SovjP4B8GrDNvdwIPGM6I3 Rw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2tjkkpnfhj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 09 Jul 2019 16:39:52 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x69GcNrl128049;
+        Tue, 9 Jul 2019 16:39:51 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2tjjykwjr9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 09 Jul 2019 16:39:51 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x69GdnRm028412;
+        Tue, 9 Jul 2019 16:39:50 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 09 Jul 2019 09:39:49 -0700
+Date:   Tue, 9 Jul 2019 09:39:48 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: [GIT PULL] vfs: fix copy_file_range bad behavior
+Message-ID: <20190709163947.GE5164@magnolia>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8cffe00-255e-4b2d-3a6a-08d7048c0490
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2019 16:39:31.3049
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kys@microsoft.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB1039
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9313 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907090195
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9313 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907090195
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Linus,
 
+Please pull this series to fix numerous parameter checking problems and
+inconsistent behaviors in the new(ish) copy_file_range system call.  Now
+the system call will actually check its range parameters correctly;
+refuse to copy into files for which the caller does not have sufficient
+privileges; update mtime and strip setuid like file writes are supposed
+to do; and allows copying up to the EOF of the source file instead of
+failing the call like we used to.
 
------Original Message-----
-From: Matthew Wilcox <willy@infradead.org>=20
-Sent: Tuesday, July 9, 2019 8:49 AM
-To: Theodore Ts'o <tytso@mit.edu>; Valdis Kl=E7tnieks <valdis.kletnieks@vt.=
-edu>; Alexander Viro <viro@zeniv.linux.org.uk>; Greg Kroah-Hartman <gregkh@=
-linuxfoundation.org>; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kern=
-el.org; devel@driverdev.osuosl.org; KY Srinivasan <kys@microsoft.com>
-Cc: Sasha Levin <sashal@kernel.org>
-Subject: exfat filesystem
+The branch merges cleanly against this morning's HEAD and survived an
+overnight run of xfstests.  The merge was completely straightforward, so
+please let me know if you run into anything weird.
 
-On Tue, Jul 09, 2019 at 11:30:39AM -0400, Theodore Ts'o wrote:
-> On Tue, Jul 09, 2019 at 04:21:36AM -0700, Matthew Wilcox wrote:
-> > How does
-> > https://nam06.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fww
-> > w.zdnet.com%2Farticle%2Fmicrosoft-open-sources-its-entire-patent-por
-> > tfolio%2F&amp;data=3D02%7C01%7Ckys%40microsoft.com%7Cd73183ff28c94bbbf
-> > 6dd08d70484f009%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C6369828
-> > 41322780798&amp;sdata=3DTCSgqe0h4FYaA5BBGVJl98WFBqbEHSo8B0FhlfTYVVA%3D
-> > &amp;reserved=3D0
-> > change your personal opinion?
->=20
-> According to SFC's legal analysis, Microsoft joining the OIN doesn't=20
-> mean that the eXFAT patents are covered, unless *Microsoft*=20
-> contributes the code to the Linux usptream kernel.  That's because the=20
-> OIN is governed by the Linux System Definition, and until MS=20
-> contributes code which covered by the exFAT patents, it doesn't count.
->=20
-> For more details:
->=20
-> https://nam06.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fsfco
-> nservancy.org%2Fblog%2F2018%2Foct%2F10%2Fmicrosoft-oin-exfat%2F&amp;da
-> ta=3D02%7C01%7Ckys%40microsoft.com%7Cd73183ff28c94bbbf6dd08d70484f009%7C
-> 72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C636982841322780798&amp;sdat
-> a=3Dy%2BhZFhjIXUrFVn5%2FN%2BRVxRQWzYs2QI5V1jM8SDPN2dg%3D&amp;reserved=3D0
->=20
-> (This is not legal advice, and I am not a lawyer.)
+--D
 
->Interesting analysis.  It seems to me that the correct forms would be obse=
-rved if someone suitably senior at Microsoft accepted the work from >Valdis=
- and submitted it with their sign-off.  KY, how about it?
+The following changes since commit d1fdb6d8f6a4109a4263176c84b899076a5f8008:
 
-Matthew,
+  Linux 5.2-rc4 (2019-06-08 20:24:46 -0700)
 
-Let me dig up the details here.
+are available in the Git repository at:
 
-K. Y
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/copy-file-range-fixes-1
+
+for you to fetch changes up to fe0da9c09b2dc448ff781d1426ecb36d145ce51b:
+
+  fuse: copy_file_range needs to strip setuid bits and update timestamps (2019-06-09 10:07:07 -0700)
+
+----------------------------------------------------------------
+Changes to copy_file_range for 5.3 from Dave and Amir:
+- Create a generic copy_file_range handler and make individual
+  filesystems responsible for calling it (i.e. no more assuming that
+  do_splice_direct will work or is appropriate)
+- Refactor copy_file_range and remap_range parameter checking where they
+  are the same
+- Install missing copy_file_range parameter checking(!)
+- Remove suid/sgid and update mtime like any other file write
+- Change the behavior so that a copy range crossing the source file's
+  eof will result in a short copy to the source file's eof instead of
+  EINVAL
+- Permit filesystems to decide if they want to handle cross-superblock
+  copy_file_range in their local handlers.
+
+----------------------------------------------------------------
+Amir Goldstein (7):
+      vfs: introduce generic_file_rw_checks()
+      vfs: remove redundant checks from generic_remap_checks()
+      vfs: add missing checks to copy_file_range
+      vfs: introduce file_modified() helper
+      xfs: use file_modified() helper
+      vfs: allow copy_file_range to copy across devices
+      fuse: copy_file_range needs to strip setuid bits and update timestamps
+
+Dave Chinner (2):
+      vfs: introduce generic_copy_file_range()
+      vfs: no fallback for ->copy_file_range
+
+ fs/ceph/file.c     |  23 ++++++++--
+ fs/cifs/cifsfs.c   |   4 ++
+ fs/fuse/file.c     |  29 +++++++++++--
+ fs/inode.c         |  20 +++++++++
+ fs/nfs/nfs4file.c  |  23 ++++++++--
+ fs/read_write.c    | 124 +++++++++++++++++++++++++++++------------------------
+ fs/xfs/xfs_file.c  |  15 +------
+ include/linux/fs.h |   9 ++++
+ mm/filemap.c       | 110 ++++++++++++++++++++++++++++++++++++++---------
+ 9 files changed, 257 insertions(+), 100 deletions(-)
