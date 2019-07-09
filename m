@@ -2,121 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90C48639B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 18:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9030D639DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 19:04:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726341AbfGIQux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jul 2019 12:50:53 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:58288 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726218AbfGIQuw (ORCPT
+        id S1726284AbfGIREK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jul 2019 13:04:10 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49786 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725816AbfGIREK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jul 2019 12:50:52 -0400
-Received: from mr2.cc.vt.edu (mr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x69Gopid010251
-        for <linux-fsdevel@vger.kernel.org>; Tue, 9 Jul 2019 12:50:51 -0400
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x69Gok0v000706
-        for <linux-fsdevel@vger.kernel.org>; Tue, 9 Jul 2019 12:50:51 -0400
-Received: by mail-qt1-f198.google.com with SMTP id i12so17211942qtq.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2019 09:50:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=pYyupce07jX+WDxPtqdtXk3hG5t417BkTzPivM8p47w=;
-        b=S+mkqUSTIOXN1dq9txGbh7kED5/8JGe9nU+mhpDQdxG4Ob+3KQ6iVR2VE+tlpcMNf7
-         bJGDO6DgTQyw7egxKrrk0BEXvXg00oBHkP/qGsbqLaUN0ZejILh/Ji9u2gyQyGbQijGQ
-         nyWkk87fxAxlDhpHI2YFfsos4YsAos+RJDTMH7SbW6LXttaJMFUdBB2yCmNfoBH5olGL
-         gsWQaNoZElHFv0VvtufBHFoW4Dg+7j5C8Z5bsqHyXHLQhL3h2CK2I+m7xYDtp360zaGd
-         qx8DEpQZpzsDwtupFC+gD8HjB+IR+zp9WfdZUvJofKqouQ7tw47FEJl4VLklGFp+j4DJ
-         tDEQ==
-X-Gm-Message-State: APjAAAUeFpg4SsTHJw4f08PWWCikLERw03Jl76D2nOMgqW0jxPLRTDoH
-        NJgbFfVAmc6JmrE7ywc0Thj2FkgvuneClWQYKtSBrxCcUy0ZsgvGT6kY7x8AGhWqyYUhxVqRkI0
-        UHhIJb+JT13yEYZPt5z5kLcgK6b66br0n0vDr
-X-Received: by 2002:a37:4b46:: with SMTP id y67mr19205100qka.66.1562691046268;
-        Tue, 09 Jul 2019 09:50:46 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxgaCF5Vy7+up/DCAY/qBFZBrxFfhiU0tMqaxFR0G0zFt+i3kSSn4l5D4I+4TFTR5M97RMWjg==
-X-Received: by 2002:a37:4b46:: with SMTP id y67mr19205078qka.66.1562691046042;
-        Tue, 09 Jul 2019 09:50:46 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:4341::7ca])
-        by smtp.gmail.com with ESMTPSA id x10sm12844861qtc.34.2019.07.09.09.50.44
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 09 Jul 2019 09:50:44 -0700 (PDT)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     KY Srinivasan <kys@microsoft.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
+        Tue, 9 Jul 2019 13:04:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 096998EE15F;
+        Tue,  9 Jul 2019 10:04:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1562691846;
+        bh=fHLhVNRZX5i6YF+IH8IXJ7fw4skeuYlN0YWtHKitwus=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=W7kYCPqCtFlGXoz2hjMn6mxlI6Ti/6X+VL/ND0W+iKJLVQA1ayOK1BoWPUqaYKWN0
+         AocbxFxY4M944e7QsrqFmg/NSOnJwpmGlPuaUqn/3zDQchOyR3XUVeqO0iyuMCTaX9
+         NWLylOImiLMNlOAY5I02yQcK9HGQ51uEkfLv13cQ=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GiLem5l3gMZC; Tue,  9 Jul 2019 10:04:05 -0700 (PDT)
+Received: from jarvis.lan (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 318A48EE247;
+        Tue,  9 Jul 2019 10:03:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1562691830;
+        bh=fHLhVNRZX5i6YF+IH8IXJ7fw4skeuYlN0YWtHKitwus=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=iCSfQvsWoZjCVRF6BGTJnzq63SLrHKIlcQp0PedW2Fuhbca5XUNu9VaNVQaeB9Id+
+         Oj0U95zaf4O0lfio4/1APisTVW0zh4L6cCB7DCUpH+ku98okvS0tfI4CL6XGOvg5cH
+         EgIC2YgJha012VT/zBCfy6ETAizeuxJPWXSMgdeE=
+Message-ID: <1562691829.3362.68.camel@HansenPartnership.com>
+Subject: Re: exfat filesystem
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Sasha Levin <sashal@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: exfat filesystem
-In-Reply-To: <SN6PR2101MB10726033399AEA1D0BD22067A0F10@SN6PR2101MB1072.namprd21.prod.outlook.com>
-References: <21080.1562632662@turing-police> <20190709045020.GB23646@mit.edu> <20190709112136.GI32320@bombadil.infradead.org> <20190709153039.GA3200@mit.edu> <20190709154834.GJ32320@bombadil.infradead.org>
- <SN6PR2101MB10726033399AEA1D0BD22067A0F10@SN6PR2101MB1072.namprd21.prod.outlook.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, kys@microsoft.com
+Date:   Tue, 09 Jul 2019 10:03:49 -0700
+In-Reply-To: <20190709163744.GS10104@sasha-vm>
+References: <21080.1562632662@turing-police>
+         <20190709045020.GB23646@mit.edu>
+         <20190709112136.GI32320@bombadil.infradead.org>
+         <20190709153039.GA3200@mit.edu>
+         <20190709154834.GJ32320@bombadil.infradead.org>
+         <20190709163744.GS10104@sasha-vm>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1562691043_2389P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 09 Jul 2019 12:50:43 -0400
-Message-ID: <24605.1562691043@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---==_Exmh_1562691043_2389P
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2019-07-09 at 12:37 -0400, Sasha Levin wrote:
+> On Tue, Jul 09, 2019 at 08:48:34AM -0700, Matthew Wilcox wrote:
+> > On Tue, Jul 09, 2019 at 11:30:39AM -0400, Theodore Ts'o wrote:
+> > > On Tue, Jul 09, 2019 at 04:21:36AM -0700, Matthew Wilcox wrote:
+> > > > How does
+> > > > https://www.zdnet.com/article/microsoft-open-sources-its-entire
+> > > > -patent-portfolio/
+> > > > change your personal opinion?
+> > > 
+> > > According to SFC's legal analysis, Microsoft joining the OIN
+> > > doesn't mean that the eXFAT patents are covered, unless
+> > > *Microsoft* contributes the code to the Linux usptream
+> > > kernel.  That's because the OIN is governed by the Linux System
+> > > Definition, and until MS contributes code which covered by the
+> > > exFAT patents, it doesn't count.
+> > > 
+> > > For more details:
+> > > 
+> > > https://sfconservancy.org/blog/2018/oct/10/microsoft-oin-exfat/
+> > > 
+> > > (This is not legal advice, and I am not a lawyer.)
+> > 
+> > Interesting analysis.  It seems to me that the correct forms would
+> > be observed if someone suitably senior at Microsoft accepted the
+> > work from Valdis and submitted it with their sign-off.  KY, how
+> > about it?
+> 
+> Huh, that's really how this works? Let me talk with our lawyers to
+> clear this up.
 
-On Tue, 09 Jul 2019 16:39:31 -0000, KY Srinivasan said:
+Not exactly, no.  A corporate signoff is useful evidence of intent to
+bind patents, but a formal statement would be better and wouldn't
+require a signoff.  The SFC analysis is also a bit lacking:
+hypothetically if exfat became part of Linux, it would be covered by
+the OIN legal definition which would place MS in an untenable position
+with regard to the mutual defence pact if it still wanted to enforce
+FAT patents against Linux.
 
-> Let me dig up the details here.
+> Would this mean, hypothetically, that if MS has claims against the
+> kernel's scheduler for example, it can still assert them if no one
+> from MS touched the code? And then they lose that ability if a MS
+> employee adds a tiny fix in?
 
-In case this helps clarify the chain of events, the code in question
-is the Samsung code mentioned here, updated to 5.2 kernel....
+No.  You're already shipping a linux kernel, that makes Microsoft a
+distributor meaning you're bound by the GPL express patent licences so
+any patent Microsoft has on technology in the Linux kernel would be
+unenforceable under that.  Plus as a member of OIN, you've guaranteed
+not to sue for any patent that reads on the Linux System definition,
+which is also a promise you can be held to.
 
-=22We know that Microsoft has done patent troll shakedowns in the past on=
- Linux
-products related to the exfat filesystem. While we at Conservancy were
-successful in getting the code that implements exfat for Linux released u=
-nder
-GPL (by Samsung), that code has not been upstreamed into Linux. So, Micro=
-soft
-has not included any patents they might hold on exfat into the patent
-non-aggression pact.=22
+James
 
-https://sfconservancy.org/blog/2018/oct/10/microsoft-oin-exfat/
-=20
-(Link in that para points here):
-https://sfconservancy.org/news/2013/aug/16/exfat-samsung/
-
-
-
---==_Exmh_1562691043_2389P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXSTF4gdmEQWDXROgAQL54Q/9Hlj0gpg86LJ/QMJSgnF2F4/8RSnWxUX8
-XORTc3xuKuh0usDDWrb00semHxVT8dQfISpM7bvfiTGB1p5RO522PA/QI2bU9vTk
-tIZzLLDmqk/ambCGDF6SdKaPtTTw2Yx4KSkhzjUc3i1CBg2R9YUfpST/Y93NAtwr
-Vx64TgufPWmNtU7/sUiEKSFV2T6EIdv3gHoog+/JoPioRwmdVH0DhxgVWy7lki3s
-vMkJg3XJYsPDHe+P8F30RRSTQAwq/5HmtbF4nmFAASBYuD2vyAAraVtOxkkcyLKb
-DMhFbw7LyScyYVv9C1W2GfCjySjmacHDr7E0tZqfZFqj0/JiA+/McjxEWydrZLae
-80LU3QBR0jIM9TX2y/IWOA+A+YAlzaYE+HY1JrnqqmsuS0ygF2CU093F1ebYmEFM
-XvdjkVWZRocxZW/RAE0PurJKAJvqoNm7PjJEzOqdgZsP9a2g39OxoXdA8OoMNsgv
-0dRH92veXFLgbyMbAjwNYgfmUyJi1n6AEtflZW4tdBCo5yTs2qyQNgzpZ8/9nxzM
-YzfKeGSIomxWvPPmi3Ku9JY5y6MHaaNNo/DshPKYjZflZYBdVA5OBsEXhHKf1ANt
-aWUe43IU19mQm0zIHSQaTgKcXbpzhEEvNZqnEzBwyULgOETjg5Nda5VZbFziukup
-qBtKuW2QIiQ=
-=x5Ci
------END PGP SIGNATURE-----
-
---==_Exmh_1562691043_2389P--
