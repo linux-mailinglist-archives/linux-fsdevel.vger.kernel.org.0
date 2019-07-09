@@ -2,157 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CCD262CFA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 02:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7731762D16
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 02:37:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbfGIAOA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Jul 2019 20:14:00 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:57422 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbfGIAOA (ORCPT
+        id S1726679AbfGIAhw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Jul 2019 20:37:52 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:50284 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725905AbfGIAhw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Jul 2019 20:14:00 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hkdle-0003Yp-4l; Mon, 08 Jul 2019 18:13:58 -0600
-Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hkdld-0000Hx-6V; Mon, 08 Jul 2019 18:13:57 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-security-module@vger.kernel.org
-References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
-        <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
-        <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
-        <20190708131831.GT17978@ZenIV.linux.org.uk>
-        <874l3wo3gq.fsf@xmission.com>
-        <20190708180132.GU17978@ZenIV.linux.org.uk>
-        <20190708202124.GX17978@ZenIV.linux.org.uk>
-Date:   Mon, 08 Jul 2019 19:13:33 -0500
-In-Reply-To: <20190708202124.GX17978@ZenIV.linux.org.uk> (Al Viro's message of
-        "Mon, 8 Jul 2019 21:21:24 +0100")
-Message-ID: <87pnmkhxoy.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1hkdld-0000Hx-6V;;;mid=<87pnmkhxoy.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19lXMlz1gf1ewdMm7N8JUU30PMjddK1ff4=
-X-SA-Exim-Connect-IP: 72.206.97.68
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: ***
-X-Spam-Status: No, score=3.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,
-        T_TooManySym_01,T_TooManySym_02,T_TooManySym_03,XMNoVowels,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4991]
-        *  0.7 XMSubLong Long Subject
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ***;Al Viro <viro@zeniv.linux.org.uk>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 526 ms - load_scoreonly_sql: 0.07 (0.0%),
-        signal_user_changed: 3.1 (0.6%), b_tie_ro: 2.1 (0.4%), parse: 1.08
-        (0.2%), extract_message_metadata: 13 (2.5%), get_uri_detail_list: 2.3
-        (0.4%), tests_pri_-1000: 8 (1.6%), tests_pri_-950: 1.44 (0.3%),
-        tests_pri_-900: 1.15 (0.2%), tests_pri_-90: 28 (5.3%), check_bayes: 26
-        (5.0%), b_tokenize: 9 (1.7%), b_tok_get_all: 9 (1.7%), b_comp_prob:
-        3.2 (0.6%), b_tok_touch_all: 3.2 (0.6%), b_finish: 0.62 (0.1%),
-        tests_pri_0: 452 (85.8%), check_dkim_signature: 0.65 (0.1%),
-        check_dkim_adsp: 2.7 (0.5%), poll_dns_idle: 0.54 (0.1%), tests_pri_10:
-        3.3 (0.6%), tests_pri_500: 11 (2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts around
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Mon, 8 Jul 2019 20:37:52 -0400
+Received: from mr6.cc.vt.edu (mr6.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x690boEi011204
+        for <linux-fsdevel@vger.kernel.org>; Mon, 8 Jul 2019 20:37:50 -0400
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x690bj52001709
+        for <linux-fsdevel@vger.kernel.org>; Mon, 8 Jul 2019 20:37:50 -0400
+Received: by mail-qk1-f197.google.com with SMTP id n190so17937337qkd.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jul 2019 17:37:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:mime-version
+         :content-transfer-encoding:date:message-id;
+        bh=OjZRbgABpZBvMDOAUmYBmnCF4ZS/G+yWz40tVt9zM7o=;
+        b=scw38JH8bmoVB48pYDdl+EcTqjuugPyuO7b8B5bMEaX8Qehui/dsmTGGAKfr4bEopg
+         Y/IpvN52VFhU9rZqNq4L/cZIIIyLbRhJZvg5WmcBXvdhB791tKXF6lNRBxE4uFr17Ml+
+         T1d+lFEYStpu55vm8yUX//xf0pg2Q+nfTUe5LLYNYonqNY/CJxhmoyut2ZrMiXvl75v5
+         iveZVnUOAkXMso9pNePCPUhAn8yfgKKAaGWfqP1KWuWhjhRgUzNeNcxrGPgjA1v9ylQQ
+         aCkrGCC87Er3FfDgoxb/oi81qWOAc49ryEszfOzUBWadWL0WZpPidriIYoq+4WJpXp2Z
+         7OeQ==
+X-Gm-Message-State: APjAAAV6tMWZ0N/e/3m775NSJTdDmigLwi212m0PXffcqcsOZmwUuw5Y
+        AhLEry08FHN6Z6SRVNHK6re2tAvXt0gM1M8eI3qq3BjW5pJ3hTH1cibWdxOUftReer/RxuGARLv
+        gbB2shJNh8n5BcGb7NY4TGFW/NSJwExMwQuFq
+X-Received: by 2002:a37:6813:: with SMTP id d19mr16780990qkc.454.1562632665373;
+        Mon, 08 Jul 2019 17:37:45 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzbFEeUXsRnbhMMEq2850586hL282ux6U2bioRM0L8JU0Om9HCOlfHqXfOGUn65sn/AuySwJA==
+X-Received: by 2002:a37:6813:: with SMTP id d19mr16780979qkc.454.1562632665165;
+        Mon, 08 Jul 2019 17:37:45 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4341::7ca])
+        by smtp.gmail.com with ESMTPSA id z33sm6958980qtc.56.2019.07.08.17.37.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 08 Jul 2019 17:37:43 -0700 (PDT)
+From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: Procedure questions - new filesystem driver..
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1562632662_2389P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 08 Jul 2019 20:37:42 -0400
+Message-ID: <21080.1562632662@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+--==_Exmh_1562632662_2389P
+Content-Type: text/plain; charset=us-ascii
 
-> On Mon, Jul 08, 2019 at 07:01:32PM +0100, Al Viro wrote:
->> On Mon, Jul 08, 2019 at 12:12:21PM -0500, Eric W. Biederman wrote:
->> 
->> > Al you do realize that the TOCTOU you are talking about comes the system
->> > call API.  TOMOYO can only be faulted for not playing in their own
->> > sandbox and not reaching out and fixing the vfs implementation details.
->
-> PS: the fact that mount(2) has been overloaded to hell and back (including
-> MS_MOVE, which goes back to v2.5.0.5) predates the introduction of ->sb_mount()
-> and LSM in general (2.5.27).  MS_BIND is 2.4.0-test9pre2.
->
-> In all the years since the introduction of ->sb_mount() I've seen zero
-> questions from LSM folks regarding a sane place for those checks.  What I have
-> seen was "we want it immediately upon the syscall entry, let the module
-> figure out what to do" in reply to several times I tried to tell them "folks,
-> it's called in a bad place; you want the checks applied to objects, not to
-> raw string arguments".
->
-> As it is, we have easily bypassable checks on mount(2) (by way of ->sb_mount();
-> there are other hooks also in the game for remounts and new mounts).
->
-> I see no point whatsoever trying to duplicate ->sb_mount() on the top level
-> of move_mount(2).  When and if sane checks are agreed upon for that thing,
-> they certainly should be used both for MS_MOVE case of mount(2) and for
-> move_mount(2).  And that'll come for free from calling those in do_move_mount().
-> They won't be the first thing called in mount(2) - we demultiplex first,
-> decide that we have a move and do pathname resolution on source.  And that's
-> precisely what we need to avoid the TOCTOU there.
->
-> I'm sorry, but this "run the hook at the very beginning, the modules know
-> better what they want, just give them as close to syscall arguments as
-> possible before even looking at the flags" model is wrong, plain and simple.
->
-> As for the MS_MOVE checks, the arguments are clear enough (two struct path *,
-> same as what we pass to do_move_mount()).  AFAICS, only tomoyo and
-> apparmor are trying to do anything for MS_MOVE in ->sb_mount(), and both
-> look like it should be easy enough to implement what said checks intend
-> to do (probably - assuming that aa_move_mount() doesn't depend upon
-> having its kern_path() inside the __begin_current_label_crit_section()/
-> __end_current_label_crit_section() pair; looks like it shouldn't be,
-> but that's for apparmor folks to decide).
->
-> That's really for LSM folks, though - I've given up on convincing
-> (or even getting a rationale out of) them on anything related to hook
-> semantics years ago.
+I have an out-of-tree driver for the exfat file system that I beaten into shape
+for upstreaming. The driver works, and passes sparse and checkpatch (except
+for a number of line-too-long complaints).
 
-I have found the LSM folks in recent years to be rather reasonable,
-especially when something concrete has been proposed.
+Do you want this taken straight to the fs/ tree, or through drivers/staging?
 
-A quick look suggests that the new security_mount_move is a reasonable
-hook for the mount_move check.
+--==_Exmh_1562632662_2389P
+Content-Type: application/pgp-signature
 
-Tetsuo, do you think you can implement the checks you need for Tomoyo
-for mount_move on top of the new security_mount_move?
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
 
-Al is proposing that similar hooks be added for the other subcases of
-mount so that less racy hooks can be implemented.  Tetsuo do you have
-any problem with that?
+iQIVAwUBXSPh1gdmEQWDXROgAQJUtQ/+NuCpOp32phoMWYvnTb21fwNfIzCEPXBH
+RSyAHXRkx17XhCx4jgTbz6FN95SGVNdlTuMF0GJPwHthtfdmHLql1QB2ROHELCjY
+faIk6BGAuTnHlAExeC4VgMBUA+SBgfMwaVTs9d4i4yQ6+Uy8whEPcdgeuKecctFi
+jt76tj+gRgpRIhTTAKq+DlpaIu/tpORttvGv23x/a8txU2Y0EaBRkcWbUVXWYI8G
+IQ4Sk1J6T1J/n8trp/nHdG3vriAv/w+iUcjVFSDikSrp2tVG4OdbFUzsFC4P+wR4
+7cuBLC4cgYZCX2tj45Tc9qTd6SpvdEozR/SQfW1r4lL1j0N05TZpcsYKzLibIegi
+xWHpAMqSkhwfC2mF8c9ZCvq1wakHaTLN18OxKM/dPUKUxrSPPnvYiLoQsORH9pUK
+JLXY2YlEwdY6SroUfZMBssL8MgGBx+dDcfimyJ1D6oZx1ss4wPRccuk6BmQYBzyH
+hyYbNiKcPGimgZEwg2tVnn86X7FCcAhFza+UuzqJ37c0g4ldr/CYa2C0RXsPHn2x
+eiKlV99LYR0SDugx8rs74s+bSi41Qi1GvSPy4zDWhBsCwwqxo1xFVAcndAk9NIVL
+pKkzVh/nJIoAq724EW2C9dOtasEJx1ogOSUH48hNigytNyLhmOK/gVb9LO8A0vSn
+fKUr0veoCZo=
+=cgVZ
+-----END PGP SIGNATURE-----
 
-Tetsuo whatever the virtues of this patchset getting merged into Linus's
-tree it is merged now, so the only thing we can do now is roll up our
-sleeves go through everything and fix the regressions/bugs/issues that
-have emerged with the new mount api.
-
-Eric
-
-
-
+--==_Exmh_1562632662_2389P--
