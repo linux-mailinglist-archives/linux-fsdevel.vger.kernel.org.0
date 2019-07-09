@@ -2,62 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC14463C09
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 21:40:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B1D763C44
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2019 21:55:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbfGITkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jul 2019 15:40:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726680AbfGITkE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jul 2019 15:40:04 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 163062082A;
-        Tue,  9 Jul 2019 19:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562701203;
-        bh=oS2Acvk9n7QZUDRZRWI2hJ5hiJ/akB4hbMEUJJl1dxM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZiTINaQ9y1fuiilmmJ9Rh6nqxxRKORUXIRuK/aFSgM+An/z72pzIkewiHPpJvf6mk
-         xRdFANzjWM1VcHeWLYb4nqDRJs5IJptMUTr0YpB7yvPkloiFXIMp19c2yR3CuQMagU
-         fTbEKTpx7VevL6WUr105j2nsVo5pIjOjYrX7ofjw=
-Date:   Tue, 9 Jul 2019 12:40:01 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] vfs: move_mount: reject moving kernel internal mounts
-Message-ID: <20190709194001.GG641@sol.localdomain>
-Mail-Followup-To: Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
- <20190629202744.12396-1-ebiggers@kernel.org>
- <20190701164536.GA202431@gmail.com>
- <20190701182239.GA17978@ZenIV.linux.org.uk>
- <20190702182258.GB110306@gmail.com>
+        id S1729155AbfGITzq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jul 2019 15:55:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50402 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728991AbfGITzp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Jul 2019 15:55:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A985CAC84;
+        Tue,  9 Jul 2019 19:55:44 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 1E77D1E4376; Tue,  9 Jul 2019 21:55:35 +0200 (CEST)
+Date:   Tue, 9 Jul 2019 21:55:35 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Steve Magnani <steve.magnani@digidescorp.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] udf: 2.01 interoperability issues with Windows 10
+Message-ID: <20190709195535.GA509@quack2.suse.cz>
+References: <96e1ea00-ac12-015d-5c54-80a83f08b898@digidescorp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190702182258.GB110306@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <96e1ea00-ac12-015d-5c54-80a83f08b898@digidescorp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 11:22:59AM -0700, Eric Biggers wrote:
+Hi!
+
+On Tue 09-07-19 13:27:58, Steve Magnani wrote:
+> Recently I have been exploring Advanced Format (4K sector size)
+> and high capacity aspects of UDF 2.01 support in Linux and
+> Windows 10. I thought it might be helpful to summarize my findings.
 > 
-> Sure, but the new mount syscalls still need tests.  Where are the tests?
+> The good news is that I did not see any bugs in the Linux
+> ecosystem (kernel driver + mkudffs).
 > 
+> The not-so-good news is that Windows has some issues that affect
+> interoperability. One of my goals in posting this is to open a
+> discussion on whether changes should be made in the Linux UDF
+> ecosystem to accommodate these quirks.
+> 
+> My test setup includes the following software components:
+> 
+> * mkudffs 1.3 and 2.0
+> * kernel 4.15.0-43 and 4.15.0-52
+> * Windows 10 1803 17134.829
+> * chkdsk 10.0.17134.1
+> * udfs.sys 10.0.17134.648
+> 
+> 
+> ISSUE 1: Inability of the Linux UDF driver to mount 4K-sector
+>          media formatted by Windows.
+> 
+> This is because the Windows ecosystem mishandles the ECMA-167
+> corner case that requires Volume Recognition Sequence components
+> to be placed at 4K intervals on 4K-sector media, instead of the
+> 2K intervals required with smaller sectors. The Linux UDF driver
+> emits the following when presented with Windows-formatted media:
+> 
+>   UDF-fs: warning (device sdc1): udf_load_vrs: No VRS found
+>   UDF-fs: Scanning with blocksize 4096 failed
+> 
+> A hex dump of the VRS written by the Windows 10 'format' utility
+> yields this:
+> 
+>   0000: 00 42 45 41 30 31 01 00 00 00 00 00 00 00 00 00  .BEA01..........
+>   0800: 00 4e 53 52 30 33 01 00 00 00 00 00 00 00 00 00  .NSR03..........
+>   1000: 00 54 45 41 30 31 01 00 00 00 00 00 00 00 00 00  .TEA01..........
+> 
+> We may want to consider tweaking the kernel UDF driver to
+> tolerate this quirk; if so a question is whether that should be
+> done automatically, only in response to a mount option or
+> module parameter, or only with some subsequent confirmation
+> that the medium was formatted by Windows.
 
-Still waiting for an answer to this question.
+Yeah, I think we could do that although it will be a bit painful. I would
+do it by default if we found BEA descriptor but not NSR descriptor. We do
+already have handling for various quirks of other udf creators so this is
+nothing new... I think Palo replied about the rest of the issues you've
+found.
 
-Did we just release 6 new syscalls with no tests?
-
-I don't understand how that is even remotely acceptable.
-
-- Eric
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
