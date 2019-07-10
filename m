@@ -2,155 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9047E643B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2019 10:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDB8F64531
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2019 12:30:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbfGJIl5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jul 2019 04:41:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60498 "EHLO mx1.suse.de"
+        id S1727121AbfGJKaV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jul 2019 06:30:21 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2251 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726198AbfGJIl4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jul 2019 04:41:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 413FDAE15;
-        Wed, 10 Jul 2019 08:41:54 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 239281E3F45; Wed, 10 Jul 2019 10:41:53 +0200 (CEST)
-Date:   Wed, 10 Jul 2019 10:41:53 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, Boaz Harrosh <openosd@gmail.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: pagecache locking
-Message-ID: <20190710084153.GA962@quack2.suse.cz>
-References: <CAHk-=wgz+7O0pdn8Wfxc5EQKNy44FTtf4LAPO1WgCidNjxbWzg@mail.gmail.com>
- <20190617224714.GR14363@dread.disaster.area>
- <CAHk-=wiR3a7+b0cUN45hGp1dvFh=s1i1OkVhoP7CivJxKqsLFQ@mail.gmail.com>
- <CAOQ4uxjqQjrCCt=ixgdUYjBJvKLhw4R9NeMZOB_s2rrWvoDMBw@mail.gmail.com>
- <20190619103838.GB32409@quack2.suse.cz>
- <20190619223756.GC26375@dread.disaster.area>
- <3f394239-f532-23eb-9ff1-465f7d1f3cb4@gmail.com>
- <20190705233157.GD7689@dread.disaster.area>
- <20190708133114.GC20507@quack2.suse.cz>
- <20190709234712.GL7689@dread.disaster.area>
+        id S1726281AbfGJKaV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Jul 2019 06:30:21 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9A5FBF2180E151FADF4A;
+        Wed, 10 Jul 2019 18:30:18 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 10 Jul
+ 2019 18:30:07 +0800
+Subject: Re: [RFC PATCH] iomap: generalize IOMAP_INLINE to cover tail-packing
+ case
+To:     =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        <linux-xfs@vger.kernel.org>,
+        "Linux FS-devel Mailing List" <linux-fsdevel@vger.kernel.org>,
+        Gao Xiang <gaoxiang25@huawei.com>, <chao@kernel.org>
+References: <20190703075502.79782-1-yuchao0@huawei.com>
+ <CAHpGcM+s77hKMXo=66nWNF7YKa3qhLY9bZrdb4-Lkspyg2CCDw@mail.gmail.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <39944e50-5888-f900-1954-91be2b12ea5b@huawei.com>
+Date:   Wed, 10 Jul 2019 18:30:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190709234712.GL7689@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHpGcM+s77hKMXo=66nWNF7YKa3qhLY9bZrdb4-Lkspyg2CCDw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 10-07-19 09:47:12, Dave Chinner wrote:
-> On Mon, Jul 08, 2019 at 03:31:14PM +0200, Jan Kara wrote:
-> > I'd be really careful with nesting range locks. You can have nasty
-> > situations like:
-> > 
-> > Thread 1		Thread 2
-> > read_lock(0,1000)	
-> > 			write_lock(500,1500) -> blocks due to read lock
-> > read_lock(1001,1500) -> blocks due to write lock (or you have to break
-> >   fairness and then deal with starvation issues).
-> >
-> > So once you allow nesting of range locks, you have to very carefully define
-> > what is and what is not allowed.
-> 
-> Yes. I do understand the problem with rwsem read nesting and how
-> that can translate to reange locks.
-> 
-> That's why my range locks don't even try to block on other pending
-> waiters. The case where read nesting vs write might occur like above
-> is something like copy_file_range() vs truncate, but otherwise for
-> IO locks we simply don't have arbitrarily deep nesting of range
-> locks.
-> 
-> i.e. for your example my range lock would result in:
-> 
-> Thread 1		Thread 2
-> read_lock(0,1000)	
-> 			write_lock(500,1500)
-> 			<finds conflicting read lock>
-> 			<marks read lock as having a write waiter>
-> 			<parks on range lock wait list>
-> <...>
-> read_lock_nested(1001,1500)
-> <no overlapping range in tree>
-> <gets nested range lock>
-> 
-> <....>
-> read_unlock(1001,1500)	<stays blocked because nothing is waiting
-> 		         on (1001,1500) so no wakeup>
-> <....>
-> read_unlock(0,1000)
-> <sees write waiter flag, runs wakeup>
-> 			<gets woken>
-> 			<retries write lock>
-> 			<write lock gained>
-> 
-> IOWs, I'm not trying to complicate the range lock implementation
-> with complex stuff like waiter fairness or anti-starvation semantics
-> at this point in time. Waiters simply don't impact whether a new lock
-> can be gained or not, and hence the limitations of rwsem semantics
-> don't apply.
-> 
-> If such functionality is necessary (and I suspect it will be to
-> prevent AIO from delaying truncate and fallocate-like operations
-> indefinitely) then I'll add a "barrier" lock type (e.g.
-> range_lock_write_barrier()) that will block new range lock attempts
-> across it's span.
-> 
-> However, because this can cause deadlocks like the above, a barrier
-> lock will not block new *_lock_nested() or *_trylock() calls, hence
-> allowing runs of nested range locking to complete and drain without
-> deadlocking on a conflicting barrier range. And that still can't be
-> modelled by existing rwsem semantics....
+Hi Andreas,
 
-Clever :). Thanks for explanation.
+Thanks for your review in advance. :)
 
-> > That's why in my range lock implementation
-> > ages back I've decided to treat range lock as a rwsem for deadlock
-> > verification purposes.
+On 2019/7/10 7:32, Andreas Grünbacher wrote:
+> Hi Chao,
 > 
-> IMO, treating a range lock as a rwsem for deadlock purposes defeats
-> the purpose of adding range locks in the first place. The
-> concurrency models are completely different, and some of the
-> limitations on rwsems are a result of implementation choices rather
-> than limitations of a rwsem construct.
+> Am Mi., 3. Juli 2019 um 09:55 Uhr schrieb Chao Yu <yuchao0@huawei.com>:
+>> Some filesystems like erofs/reiserfs have the ability to pack tail
+>> data into metadata, e.g.:
+>> IOMAP_MAPPED [0, 8192]
+>> IOMAP_INLINE [8192, 8200]
+>>
+>> However current IOMAP_INLINE type has assumption that:
+>> - inline data should be locating at page #0.
+>> - inline size should equal to .i_size
+>> Those restriction fail to convert to use iomap IOMAP_INLINE in erofs,
+>> so this patch tries to relieve above limits to make IOMAP_INLINE more
+>> generic to cover tail-packing case.
+> 
+> this patch suffers from the following problems:
+> 
+> * Fiemap distinguishes between FIEMAP_EXTENT_DATA_INLINE and
+> FIEMAP_EXTENT_DATA_TAIL. Someone will sooner or later inevitably use
+> iomap_fiemap on a filesystem with tail packing, so if we don't make
+> the same distinction in iomap, iomap_fiemap will silently produce the
+> wrong result. This means that IOMAP_TAIL should become a separate
+> mapping type.
 
-Well, even a range lock that cannot nest allows concurrent non-overlapping
-read and write to the same file which rwsem doesn't allow. But I agree that
-your nesting variant offers more (but also at the cost of higher complexity
-of the lock semantics).
+I'm a little confused, IIUC, IOMAP_TAIL and FIEMAP_EXTENT_DATA_TAIL are with
+different semantics:
 
-> In reality I couldn't care less about what lockdep can or can't
-> verify. I've always said lockdep is a crutch for people who don't
-> understand locks and the concurrency model of the code they
-> maintain. That obviously extends to the fact that lockdep
-> verification limitations should not limit what we allow new locking
-> primitives to do.
+- IOMAP_TAIl:
+  we may introduce this flag to cover tail-packing case, in where we merge
+small-sized data in the tail of file into free space of its metadata.
+- FIEMAP_EXTENT_DATA_TAIL:
+quoted from Documentation/filesystems/fiemap.txt
+"  This will also set FIEMAP_EXTENT_NOT_ALIGNED
+Data is packed into a block with data from other files."
+It looks like this flag indicates that blocks from different files stores into
+one common block.
 
-I didn't say we have to constrain new locking primitives to what lockdep
-can support. It is just a locking correctness verification tool so naturally
-lockdep should be taught to what it needs to know about any locking scheme
-we come up with. And sometimes it is just too much effort which is why e.g.
-page lock still doesn't have lockdep coverage.
+I'm not familiar with fiemap flags' history, but maybe FIEMAP_EXTENT_DATA_TAIL
+should be better to rename to FIEMAP_EXTENT_DATA_PACKING to avoid ambiguity. And
+then FIEMAP_EXTENT_DATA_INLINE will be enough to cover normal inline case and
+tail-packing case?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
+> * IOMAP_INLINE mappings always start at offset 0 and span an entire
+> page, so they are always page aligned. IOMAP_TAIL mappings only need
+
+Why can't #0 page consist of more than one block/mapping? I didn't get what's
+difference here.
+
+> to be block aligned. If the block size is smaller than the page size,
+
+- reiserfs tries to find last page's content, if the size of that page's valid
+content is smaller than threshold (at least less than one block), reiserfs can
+do the packing.
+
+- erofs' block size is 4kb which is the same as page size.
+
+Actually, for IOMAP_TAIL, there is no users who need to map more than one block
+into metadata, so I'm not sure that we should support that, or we just need to
+let code preparing for that to those potential users?
+
+Thanks,
+
+> a tail page can consist of more than one mapping. So
+> iomap_read_inline_data needs to be changed to only copy a single block
+> out of iomap->inline_data, and we need to adjust iomap_write_begin and
+> iomap_readpage_actor accordingly.
+> 
+> * Functions iomap_read_inline_data, iomap_write_end_inline, and
+> iomap_dio_inline_actor currently all assume that we are operating on
+> page 0, and that iomap->inline_data points at the data at offset 0.
+> That's no longer the case for IOMAP_TAIL mappings. We need to look
+> only at the offset within the page / block there.
+> 
+> * There are some asserts like the following int he code:
+> 
+>   BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> 
+> Those should probably be tightened to check for block boundaries
+> instead of page boundaries, i.e. something like:
+> 
+>   BUG_ON(size > i_blocksize(inode) -
+> offset_in_block(iomap->inline_data, inode));
+> 
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/iomap.c | 4 +---
+>>  1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/fs/iomap.c b/fs/iomap.c
+>> index 12654c2e78f8..d1c16b692d31 100644
+>> --- a/fs/iomap.c
+>> +++ b/fs/iomap.c
+>> @@ -264,13 +264,12 @@ static void
+>>  iomap_read_inline_data(struct inode *inode, struct page *page,
+>>                 struct iomap *iomap)
+>>  {
+>> -       size_t size = i_size_read(inode);
+>> +       size_t size = iomap->length;
+> 
+> Function iomap_read_inline_data fills the entire page here, not only
+> the iomap->length part, so this is wrong. But see my comment above
+> about changing iomap_read_inline_data to read a single block above as
+> well.
+> 
+>>         void *addr;
+>>
+>>         if (PageUptodate(page))
+>>                 return;
+>>
+>> -       BUG_ON(page->index);
+>>         BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+>>
+>>         addr = kmap_atomic(page);
+>> @@ -293,7 +292,6 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>>         sector_t sector;
+>>
+>>         if (iomap->type == IOMAP_INLINE) {
+>> -               WARN_ON_ONCE(pos);
+>>                 iomap_read_inline_data(inode, page, iomap);
+>>                 return PAGE_SIZE;
+>>         }
+> 
+> Those last two changes look right to me.
+> 
+> Thanks,
+> Andreas
+> .
+> 
