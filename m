@@ -2,76 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE0B364D58
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2019 22:15:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8388664D5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2019 22:16:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbfGJUPn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jul 2019 16:15:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56876 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727004AbfGJUPm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jul 2019 16:15:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=TneDxC5vwBl8tHPTt+hx98vFK0V+NjAtmdMURbie6aI=; b=QqvxyQ/jMxX71GYdnj31MmGR3
-        gIeJSHz2uz8UcrOq92xcYenNrHWfTRttrl8uNx0ZY7g8+Mi6O6xNLYFgO6U+xPGX2Z3tLw27LrBFJ
-        T2hi2lw1l7NolR2u0V2g6AIHX0/ntXI0IzAJr+3kRrvMvE4fRFIr+k5ALWRNkPqYpQ/4QWeSrgwRs
-        kL7nQZOfsqMlSEhJnJ9JWLQOg44dVC2RR1CyJoj8Z3FoBUdzke07RP1i9jfFZv8cby6i0dO1JHT2r
-        lNoRSvHeaGzI1GutlMvAtMFOCgnf+e3IAwlWb1XMvGcu8E9KqyqN3MhbPqJCcrCTekvfQUy2maHjs
-        2LtCZGABg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlJ07-0006Cj-UN; Wed, 10 Jul 2019 20:15:39 +0000
-Date:   Wed, 10 Jul 2019 13:15:39 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
+        id S1727868AbfGJUP5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jul 2019 16:15:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727004AbfGJUP4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Jul 2019 16:15:56 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0DEC2064A;
+        Wed, 10 Jul 2019 20:15:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562789755;
+        bh=d8p0JYHfjRjXCVvf33vPI8tBHS7ZguMC3ng9NlE0nYY=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=B79NOjOoFHWoAh1IFHtmv0W/AdIVfj3yAtV1dT439vAJ5XjuCayhazs+9diiDL84k
+         BQDDmFpO8yiQ6FndhE4UI+gljpIgpr1BP9qH4K3fMPU3Pr/wGzHtlz+rrEzBZcz1n9
+         X0eFfUq+iOLf9NETlrEVBNDhiQdaILJjx7y5cU7I=
+Date:   Wed, 10 Jul 2019 13:15:53 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, linux-nfs@vger.kernel.org,
+        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Boaz Harrosh <openosd@gmail.com>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dax: Fix missed PMD wakeups
-Message-ID: <20190710201539.GN32320@bombadil.infradead.org>
-References: <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
- <20190703195302.GJ1729@bombadil.infradead.org>
- <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
- <20190704032728.GK1729@bombadil.infradead.org>
- <20190704165450.GH31037@quack2.suse.cz>
- <20190704191407.GM1729@bombadil.infradead.org>
- <CAPcyv4gUiDw8Ma9mvbW5BamQtGZxWVuvBW7UrOLa2uijrXUWaw@mail.gmail.com>
- <20190705191004.GC32320@bombadil.infradead.org>
- <CAPcyv4jVARa38Qc4NjQ04wJ4ZKJ6On9BbJgoL95wQqU-p-Xp_w@mail.gmail.com>
- <20190710190204.GB14701@quack2.suse.cz>
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
+Message-ID: <20190710201552.GB83443@gmail.com>
+Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, linux-nfs@vger.kernel.org,
+        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <28477.1562362239@warthog.procyon.org.uk>
+ <CAHk-=wjxoeMJfeBahnWH=9zShKp2bsVy527vo3_y8HfOdhwAAw@mail.gmail.com>
+ <20190710194620.GA83443@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190710190204.GB14701@quack2.suse.cz>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190710194620.GA83443@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 09:02:04PM +0200, Jan Kara wrote:
-> +#define DAX_ENTRY_CONFLICT dax_make_entry(pfn_to_pfn_t(1), DAX_EMPTY)
+On Wed, Jul 10, 2019 at 12:46:22PM -0700, Eric Biggers wrote:
+> On Wed, Jul 10, 2019 at 11:35:07AM -0700, Linus Torvalds wrote:
+> > On Fri, Jul 5, 2019 at 2:30 PM David Howells <dhowells@redhat.com> wrote:
+> > >
+> > > Here's my fourth block of keyrings changes for the next merge window.  They
+> > > change the permissions model used by keys and keyrings to be based on an
+> > > internal ACL by the following means:
+> > 
+> > It turns out that this is broken, and I'll probably have to revert the
+> > merge entirely.
+> > 
+> > With this merge in place, I can't boot any of the machines that have
+> > an encrypted disk setup. The boot just stops at
+> > 
+> >   systemd[1]: Started Forward Password Requests to Plymouth Directory Watch.
+> >   systemd[1]: Reached target Paths.
+> > 
+> > and never gets any further. I never get the prompt for a passphrase
+> > for the disk encryption.
+> > 
+> > Apparently not a lot of developers are using encrypted volumes for
+> > their development machines.
+> > 
+> > I'm not sure if the only requirement is an encrypted volume, or if
+> > this is also particular to a F30 install in case you need to be able
+> > to reproduce. But considering that you have a redhat email address,
+> > I'm sure you can find a F30 install somewhere with an encrypted disk.
+> > 
+> > David, if you can fix this quickly, I'll hold off on the revert of it
+> > all, but I can wait only so long. I've stopped merging stuff since I
+> > noticed my machines don't work (this merge window has not been
+> > pleasant so far - in addition to this issue I had another entirely
+> > unrelated boot failure which made bisecting this one even more fun).
+> > 
+> > So if I don't see a quick fix, I'll just revert in order to then
+> > continue to do pull requests later today. Because I do not want to do
+> > further pulls with something that I can't boot as a base.
+> > 
+> >                  Linus
+> 
+> This also broke 'keyctl new_session' and hence all the fscrypt tests
+> (https://lkml.kernel.org/lkml/20190710011559.GA7973@sol.localdomain/), and it
+> also broke loading in-kernel X.509 certificates
+> (https://lore.kernel.org/lkml/27671.1562384658@turing-police/T/#u).
+> 
+> I'm *guessing* these are all some underlying issue where keyrings aren't being
+> given all the needed permissions anymore.
+> 
+> But just FYI, David had said he's on vacation with no laptop or email access for
+> 2 weeks starting from Sunday (3 days ago).  So I don't think you can expect a
+> quick fix from him.
+> 
+> I was planning to look into this to fix the fscrypt tests, but it might be a few
+> days before I get to it.  And while I'm *guessing* it will be a simple fix, it
+> might not be.  So I can't speak for David, but personally I'm fine with the
+> commits being reverted for now.
+> 
+> I'm also unhappy that the new keyctl KEYCTL_GRANT_PERMISSION doesn't have any
+> documentation or tests.  (Which seems to be a common problem with David's
+> work...  None of the new mount syscalls in v5.2 have any tests, for example, and
+> the man pages are still work-in-progress and last sent out for review a year
+> ago, despite API changes that occurred before the syscalls were merged.)
+> 
 
-I was hoping to get rid of DAX_EMPTY ... it's almost unused now.  Once
-we switch to having a single DAX_LOCK value instead of a single bit,
-I think it can go away, freeing up two bits.
+Also worth noting that the key ACL patches were only in linux-next for 9 days
+before the pull request was sent.  The X.509 certificate loading bug (which
+might be the same underlying bug) was reported on July 6 by someone testing
+linux-next, but the pull request had already been sent on July 5.  I suspect
+these bug(s) would have been fixed if they had been in linux-next for longer.
 
-If you really want a special DAX_ENTRY_CONFLICT, I think we can make
-one in the 2..4094 range.
-
-That aside, this looks pretty similar to the previous patch I sent, so
-if you're now happy with this, let's add
-
-#define XA_DAX_CONFLICT_ENTRY xa_mk_internal(258)
-
-to xarray.h and do it that way?
+- Eric
