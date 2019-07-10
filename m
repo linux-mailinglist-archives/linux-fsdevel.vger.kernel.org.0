@@ -2,194 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A7CB64C64
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2019 20:48:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDDFA64C7A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2019 21:02:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbfGJSsP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jul 2019 14:48:15 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46833 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbfGJSsO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jul 2019 14:48:14 -0400
-Received: by mail-pg1-f193.google.com with SMTP id i8so1636060pgm.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jul 2019 11:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=y9kooNntoKsSjfBoyAT/Wl3OUMWao+tgpJsSDEV/3mY=;
-        b=OFjD/iLuYrkg1RhYeN3VKM0/ELOCopxGEBIDDqvo5swD04JGSTNq3LyO5brgEAqGsz
-         UALrJXenvXS3YoCtUXy1CBNOI/pwmTHCuw1BEj4n86Ll2AEYX2iZ+SfVRUjx5S15W7RH
-         33kEls+0jpJZbSW7GcqyjXCHCAByMD4WHssllukI4Py2WXt6L9Ad+H0i8h7E/WSQphKg
-         RLLmcPbF1sWNvg8/UeJfoQwz3J9c8A9TsX8KPp/38Rp7oVTCobf/hHCqPtJqFMy7sNkW
-         AYN0vfhtiynvE5ZxG7n4/uXDHiUgnIzwMO5st4VDEViLo5enzimobH+MdiHGRzTrhzD2
-         +bGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y9kooNntoKsSjfBoyAT/Wl3OUMWao+tgpJsSDEV/3mY=;
-        b=PimJtsUX30ZPnrG6W/kqqZqXKF38o1njbDODa0p3ma4ZDqj/UEnobkXKMaWEEQlSJF
-         DkLeSyi8lD2Z8UMTNjfg8sTVPRwLeCxF4G2U+OXwG0KtOevl/KRaQjxaaa/CA1ET447X
-         txNGl+DOwRcYKRexGSnqPoGILTXmNunapSIf/lOJ0/sPQC0F3cvmgiUMVc6FsQUS+iSY
-         CzQBJTjLGiYo6F6aQbR+9CrcPKMmz06muu2QfchAnOtfT3QRO64Weg+KU/CdUc/KBGNj
-         75Xgmy9VVKbCN4uPagsGWShiDwowjd+fditCFFO0sXwZvelHYMRhkWg0G7KYgfxb7zRB
-         CPsw==
-X-Gm-Message-State: APjAAAWdvpJDbVIHBNP+iM1V8SmIu9P67STbD3+79pn4giC/W9ruBp9u
-        iWNDRvxXyDHczhntpJS49WIHoA==
-X-Google-Smtp-Source: APXvYqw+kZW6sO6JboWw1tOGgmgFR3oUqPRhYylozUo7bOJrFZM3xbWs7lUQ85zycV3bVRZjD38Cyw==
-X-Received: by 2002:a63:4404:: with SMTP id r4mr38331577pga.245.1562784493365;
-        Wed, 10 Jul 2019 11:48:13 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::2:5b9d])
-        by smtp.gmail.com with ESMTPSA id k184sm2700588pgk.7.2019.07.10.11.48.12
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 10 Jul 2019 11:48:12 -0700 (PDT)
-Date:   Wed, 10 Jul 2019 14:48:11 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, matthew.wilcox@oracle.com,
-        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
-        william.kucharski@oracle.com, akpm@linux-foundation.org,
-        hdanton@sina.com
-Subject: Re: [PATCH v9 5/6] mm,thp: add read-only THP support for (non-shmem)
- FS
-Message-ID: <20190710184811.GF11197@cmpxchg.org>
-References: <20190625001246.685563-1-songliubraving@fb.com>
- <20190625001246.685563-6-songliubraving@fb.com>
+        id S1727939AbfGJTCM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jul 2019 15:02:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59064 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726245AbfGJTCL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Jul 2019 15:02:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0B052B030;
+        Wed, 10 Jul 2019 19:02:10 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4AAE71E43B7; Wed, 10 Jul 2019 21:02:04 +0200 (CEST)
+Date:   Wed, 10 Jul 2019 21:02:04 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Boaz Harrosh <openosd@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+Message-ID: <20190710190204.GB14701@quack2.suse.cz>
+References: <20190703121743.GH1729@bombadil.infradead.org>
+ <CAPcyv4jgs5LTtTXR+2CyfbjJE85B_eoPFuXQsGBDnVMo41Jawg@mail.gmail.com>
+ <20190703195302.GJ1729@bombadil.infradead.org>
+ <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
+ <20190704032728.GK1729@bombadil.infradead.org>
+ <20190704165450.GH31037@quack2.suse.cz>
+ <20190704191407.GM1729@bombadil.infradead.org>
+ <CAPcyv4gUiDw8Ma9mvbW5BamQtGZxWVuvBW7UrOLa2uijrXUWaw@mail.gmail.com>
+ <20190705191004.GC32320@bombadil.infradead.org>
+ <CAPcyv4jVARa38Qc4NjQ04wJ4ZKJ6On9BbJgoL95wQqU-p-Xp_w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="Nq2Wo0NMKNjxTN9z"
 Content-Disposition: inline
-In-Reply-To: <20190625001246.685563-6-songliubraving@fb.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <CAPcyv4jVARa38Qc4NjQ04wJ4ZKJ6On9BbJgoL95wQqU-p-Xp_w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 05:12:45PM -0700, Song Liu wrote:
-> This patch is (hopefully) the first step to enable THP for non-shmem
-> filesystems.
+
+--Nq2Wo0NMKNjxTN9z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri 05-07-19 13:47:02, Dan Williams wrote:
+> On Fri, Jul 5, 2019 at 12:10 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Thu, Jul 04, 2019 at 04:27:14PM -0700, Dan Williams wrote:
+> > > On Thu, Jul 4, 2019 at 12:14 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > > >
+> > > > On Thu, Jul 04, 2019 at 06:54:50PM +0200, Jan Kara wrote:
+> > > > > On Wed 03-07-19 20:27:28, Matthew Wilcox wrote:
+> > > > > > So I think we're good for all current users.
+> > > > >
+> > > > > Agreed but it is an ugly trap. As I already said, I'd rather pay the
+> > > > > unnecessary cost of waiting for pte entry and have an easy to understand
+> > > > > interface. If we ever have a real world use case that would care for this
+> > > > > optimization, we will need to refactor functions to make this possible and
+> > > > > still keep the interfaces sane. For example get_unlocked_entry() could
+> > > > > return special "error code" indicating that there's no entry with matching
+> > > > > order in xarray but there's a conflict with it. That would be much less
+> > > > > error-prone interface.
+> > > >
+> > > > This is an internal interface.  I think it's already a pretty gnarly
+> > > > interface to use by definition -- it's going to sleep and might return
+> > > > almost anything.  There's not much scope for returning an error indicator
+> > > > either; value entries occupy half of the range (all odd numbers between 1
+> > > > and ULONG_MAX inclusive), plus NULL.  We could use an internal entry, but
+> > > > I don't think that makes the interface any easier to use than returning
+> > > > a locked entry.
+> > > >
+> > > > I think this iteration of the patch makes it a little clearer.  What do you
+> > > > think?
+> > > >
+> > >
+> > > Not much clearer to me. get_unlocked_entry() is now misnamed and this
+> >
+> > misnamed?  You'd rather it was called "try_get_unlocked_entry()"?
 > 
-> This patch enables an application to put part of its text sections to THP
-> via madvise, for example:
-> 
->     madvise((void *)0x600000, 0x200000, MADV_HUGEPAGE);
-> 
-> We tried to reuse the logic for THP on tmpfs.
-> 
-> Currently, write is not supported for non-shmem THP. khugepaged will only
-> process vma with VM_DENYWRITE. sys_mmap() ignores VM_DENYWRITE requests
-> (see ksys_mmap_pgoff). The only way to create vma with VM_DENYWRITE is
-> execve(). This requirement limits non-shmem THP to text sections.
-> 
-> The next patch will handle writes, which would only happen when the all
-> the vmas with VM_DENYWRITE are unmapped.
-> 
-> An EXPERIMENTAL config, READ_ONLY_THP_FOR_FS, is added to gate this
-> feature.
-> 
-> Acked-by: Rik van Riel <riel@surriel.com>
-> Signed-off-by: Song Liu <songliubraving@fb.com>
+> I was thinking more along the lines of
+> get_unlocked_but_sometimes_locked_entry(), i.e. per Jan's feedback to
+> keep the interface simple.
 
-This is really cool, and less invasive than I anticipated. Nice work.
+So how about the attached patch? That keeps the interface sane and passes a
+smoketest for me (full fstest run running). Obviously it also needs a
+proper changelog...
 
-I only have one concern and one question:
+								Honza
 
-> @@ -1392,6 +1401,29 @@ static void collapse_file(struct mm_struct *mm,
->  				result = SCAN_FAIL;
->  				goto xa_unlocked;
->  			}
-> +		} else if (!page || xa_is_value(page)) {
-> +			xas_unlock_irq(&xas);
-> +			page_cache_sync_readahead(mapping, &file->f_ra, file,
-> +						  index, PAGE_SIZE);
-> +			/* drain pagevecs to help isolate_lru_page() */
-> +			lru_add_drain();
-> +			page = find_lock_page(mapping, index);
-> +			if (unlikely(page == NULL)) {
-> +				result = SCAN_FAIL;
-> +				goto xa_unlocked;
-> +			}
-> +		} else if (!PageUptodate(page)) {
-> +			VM_BUG_ON(is_shmem);
-> +			xas_unlock_irq(&xas);
-> +			wait_on_page_locked(page);
-> +			if (!trylock_page(page)) {
-> +				result = SCAN_PAGE_LOCK;
-> +				goto xa_unlocked;
-> +			}
-> +			get_page(page);
-> +		} else if (!is_shmem && PageDirty(page)) {
-> +			result = SCAN_FAIL;
-> +			goto xa_locked;
->  		} else if (trylock_page(page)) {
->  			get_page(page);
->  			xas_unlock_irq(&xas);
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
-The many else ifs here check fairly complex page state and are hard to
-follow and verify mentally. In fact, it's a bit easier now in the
-patch when you see how it *used* to work with just shmem, but the end
-result is fragile from a maintenance POV.
+--Nq2Wo0NMKNjxTN9z
+Content-Type: text/x-patch; charset=us-ascii
+Content-Disposition: attachment; filename="0001-dax-Fix-missed-PMD-wakeups.patch"
 
-The shmem and file cases have little in common - basically only the
-trylock_page(). Can you please make one big 'if (is_shmem) {} {}'
-structure instead that keeps those two scenarios separate?
+From 1aeaba0e061b2bf38143f21d054e66853543a680 Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Wed, 10 Jul 2019 20:28:37 +0200
+Subject: [PATCH] dax: Fix missed PMD wakeups
 
-> @@ -1426,6 +1458,12 @@ static void collapse_file(struct mm_struct *mm,
->  			goto out_unlock;
->  		}
->  
-> +		if (page_has_private(page) &&
-> +		    !try_to_release_page(page, GFP_KERNEL)) {
-> +			result = SCAN_PAGE_HAS_PRIVATE;
-> +			break;
-> +		}
-> +
->  		if (page_mapped(page))
->  			unmap_mapping_pages(mapping, index, 1, false);
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/dax.c | 46 +++++++++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
 
-> @@ -1607,6 +1658,17 @@ static void khugepaged_scan_file(struct mm_struct *mm,
->  			break;
->  		}
->  
-> +		if (page_has_private(page) && trylock_page(page)) {
-> +			int ret;
-> +
-> +			ret = try_to_release_page(page, GFP_KERNEL);
-> +			unlock_page(page);
-> +			if (!ret) {
-> +				result = SCAN_PAGE_HAS_PRIVATE;
-> +				break;
-> +			}
-> +		}
-> +
->  		if (page_count(page) != 1 + page_mapcount(page)) {
->  			result = SCAN_PAGE_COUNT;
->  			break;
+diff --git a/fs/dax.c b/fs/dax.c
+index fe5e33810cd4..3fe655d38c7a 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -191,15 +191,18 @@ static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
+ 		__wake_up(wq, TASK_NORMAL, wake_all ? 0 : 1, &key);
+ }
+ 
++#define DAX_ENTRY_CONFLICT dax_make_entry(pfn_to_pfn_t(1), DAX_EMPTY)
+ /*
+  * Look up entry in page cache, wait for it to become unlocked if it
+  * is a DAX entry and return it.  The caller must subsequently call
+  * put_unlocked_entry() if it did not lock the entry or dax_unlock_entry()
+- * if it did.
++ * if it did. 'order' is the minimum order of entry to return. If there's no
++ * entry of sufficiently large order but there are some entries of lower order
++ * in the range described by xas, return special DAX_ENTRY_CONFLICT value.
+  *
+  * Must be called with the i_pages lock held.
+  */
+-static void *get_unlocked_entry(struct xa_state *xas)
++static void *get_unlocked_entry(struct xa_state *xas, unsigned int order)
+ {
+ 	void *entry;
+ 	struct wait_exceptional_entry_queue ewait;
+@@ -210,6 +213,8 @@ static void *get_unlocked_entry(struct xa_state *xas)
+ 
+ 	for (;;) {
+ 		entry = xas_find_conflict(xas);
++		if (dax_entry_order(entry) < order)
++			return DAX_ENTRY_CONFLICT;
+ 		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
+ 				!dax_is_locked(entry))
+ 			return entry;
+@@ -254,7 +259,7 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
+ static void put_unlocked_entry(struct xa_state *xas, void *entry)
+ {
+ 	/* If we were the only waiter woken, wake the next one */
+-	if (entry)
++	if (entry && entry != DAX_ENTRY_CONFLICT)
+ 		dax_wake_entry(xas, entry, false);
+ }
+ 
+@@ -461,7 +466,7 @@ void dax_unlock_page(struct page *page, dax_entry_t cookie)
+  * overlap with xarray value entries.
+  */
+ static void *grab_mapping_entry(struct xa_state *xas,
+-		struct address_space *mapping, unsigned long size_flag)
++		struct address_space *mapping, unsigned int order)
+ {
+ 	unsigned long index = xas->xa_index;
+ 	bool pmd_downgrade = false; /* splitting PMD entry into PTE entries? */
+@@ -469,20 +474,16 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 
+ retry:
+ 	xas_lock_irq(xas);
+-	entry = get_unlocked_entry(xas);
+-
++	entry = get_unlocked_entry(xas, order);
++	if (entry == DAX_ENTRY_CONFLICT)
++		goto fallback;
+ 	if (entry) {
+ 		if (!xa_is_value(entry)) {
+ 			xas_set_err(xas, EIO);
+ 			goto out_unlock;
+ 		}
+ 
+-		if (size_flag & DAX_PMD) {
+-			if (dax_is_pte_entry(entry)) {
+-				put_unlocked_entry(xas, entry);
+-				goto fallback;
+-			}
+-		} else { /* trying to grab a PTE entry */
++		if (order == 0) {
+ 			if (dax_is_pmd_entry(entry) &&
+ 			    (dax_is_zero_entry(entry) ||
+ 			     dax_is_empty_entry(entry))) {
+@@ -523,7 +524,11 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 	if (entry) {
+ 		dax_lock_entry(xas, entry);
+ 	} else {
+-		entry = dax_make_entry(pfn_to_pfn_t(0), size_flag | DAX_EMPTY);
++		unsigned long flags = DAX_EMPTY;
++
++		if (order > 0)
++			flags |= DAX_PMD;
++		entry = dax_make_entry(pfn_to_pfn_t(0), flags);
+ 		dax_lock_entry(xas, entry);
+ 		if (xas_error(xas))
+ 			goto out_unlock;
+@@ -594,7 +599,7 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+ 		if (WARN_ON_ONCE(!xa_is_value(entry)))
+ 			continue;
+ 		if (unlikely(dax_is_locked(entry)))
+-			entry = get_unlocked_entry(&xas);
++			entry = get_unlocked_entry(&xas, 0);
+ 		if (entry)
+ 			page = dax_busy_page(entry);
+ 		put_unlocked_entry(&xas, entry);
+@@ -621,7 +626,7 @@ static int __dax_invalidate_entry(struct address_space *mapping,
+ 	void *entry;
+ 
+ 	xas_lock_irq(&xas);
+-	entry = get_unlocked_entry(&xas);
++	entry = get_unlocked_entry(&xas, 0);
+ 	if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
+ 		goto out;
+ 	if (!trunc &&
+@@ -848,7 +853,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
+ 	if (unlikely(dax_is_locked(entry))) {
+ 		void *old_entry = entry;
+ 
+-		entry = get_unlocked_entry(xas);
++		entry = get_unlocked_entry(xas, 0);
+ 
+ 		/* Entry got punched out / reallocated? */
+ 		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
+@@ -1509,7 +1514,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	 * entry is already in the array, for instance), it will return
+ 	 * VM_FAULT_FALLBACK.
+ 	 */
+-	entry = grab_mapping_entry(&xas, mapping, DAX_PMD);
++	entry = grab_mapping_entry(&xas, mapping, PMD_ORDER);
+ 	if (xa_is_internal(entry)) {
+ 		result = xa_to_internal(entry);
+ 		goto fallback;
+@@ -1658,11 +1663,10 @@ dax_insert_pfn_mkwrite(struct vm_fault *vmf, pfn_t pfn, unsigned int order)
+ 	vm_fault_t ret;
+ 
+ 	xas_lock_irq(&xas);
+-	entry = get_unlocked_entry(&xas);
++	entry = get_unlocked_entry(&xas, order);
+ 	/* Did we race with someone splitting entry or so? */
+-	if (!entry ||
+-	    (order == 0 && !dax_is_pte_entry(entry)) ||
+-	    (order == PMD_ORDER && !dax_is_pmd_entry(entry))) {
++	if (!entry || entry == DAX_ENTRY_CONFLICT ||
++	    (order == 0 && !dax_is_pte_entry(entry))) {
+ 		put_unlocked_entry(&xas, entry);
+ 		xas_unlock_irq(&xas);
+ 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
+-- 
+2.16.4
 
-There is already a try_to_release() inside the page lock section in
-collapse_file(). I'm assuming you added this one because private data
-affects the refcount. But it seems a bit overkill just for that; we
-could also still fail the check, in which case we'd have dropped the
-buffers in vain. Can you fix the check instead?
 
-There is an is_page_cache_freeable() function in vmscan.c that handles
-private fs references:
-
-static inline int is_page_cache_freeable(struct page *page)
-{
-	/*
-	 * A freeable page cache page is referenced only by the caller
-	 * that isolated the page, the page cache and optional buffer
-	 * heads at page->private.
-	 */
-	int page_cache_pins = PageTransHuge(page) && PageSwapCache(page) ?
-		HPAGE_PMD_NR : 1;
-	return page_count(page) - page_has_private(page) == 1 + page_cache_pins;
-}
-
-Wouldn't this work here as well?
-
-The rest looks great to me.
+--Nq2Wo0NMKNjxTN9z--
