@@ -2,96 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6910463F52
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2019 04:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC53763F9F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2019 05:23:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbfGJCbg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Jul 2019 22:31:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55040 "EHLO mx1.redhat.com"
+        id S1726344AbfGJDXP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Jul 2019 23:23:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725832AbfGJCbg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Jul 2019 22:31:36 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726318AbfGJDXO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Jul 2019 23:23:14 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4796E5AFE9;
-        Wed, 10 Jul 2019 02:31:34 +0000 (UTC)
-Received: from treble (ovpn-112-43.rdu2.redhat.com [10.10.112.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A90BE5F9D8;
-        Wed, 10 Jul 2019 02:31:25 +0000 (UTC)
-Date:   Tue, 9 Jul 2019 21:31:23 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        keescook@google.com, kieran.bingham@ideasonboard.com,
-        mcgrof@kernel.org, peterz@infradead.org, robh@kernel.org,
-        sboyd@kernel.org, shuah@kernel.org, tytso@mit.edu,
-        yamada.masahiro@socionext.com, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-um@lists.infradead.org, Alexander.Levin@microsoft.com,
-        Tim.Bird@sony.com, amir73il@gmail.com, dan.carpenter@oracle.com,
-        daniel@ffwll.ch, jdike@addtoit.com, joel@jms.id.au,
-        julia.lawall@lip6.fr, khilman@baylibre.com, knut.omang@oracle.com,
-        logang@deltatee.com, mpe@ellerman.id.au, pmladek@suse.com,
-        rdunlap@infradead.org, richard@nod.at, rientjes@google.com,
-        rostedt@goodmis.org, wfg@linux.intel.com,
-        kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH v7 08/18] objtool: add kunit_try_catch_throw to the
- noreturn list
-Message-ID: <20190710023123.ifnt5osimvzoe5hf@treble>
-References: <20190709063023.251446-1-brendanhiggins@google.com>
- <20190709063023.251446-9-brendanhiggins@google.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id D914520693;
+        Wed, 10 Jul 2019 03:23:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562728994;
+        bh=6VM69cjMR62DOFam6wRJOf7DU+65RZThCwGfDpt5tl4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cn0LZTICeh1nxbAizoAtW8xwe+ZUjm/iQei9c7Yi1sc3XOKFhjQlSed3gZm+z4i9p
+         kgYKk/e/4TOnrk9yEZqHna0Rb6OG+Q5eDXjx8JhtKZcz2ZVi3pGqGY/MDt1DbfPhvB
+         0xkEPwG1N+HTraHEGGVQ7hO6aXPG4IJcdTMejo4U=
+Date:   Tue, 9 Jul 2019 20:23:12 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: 6 new syscalls without tests (was: [PATCH] vfs: move_mount: reject
+ moving kernel internal mounts)
+Message-ID: <20190710032312.GA2152@sol.localdomain>
+Mail-Followup-To: Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <CACT4Y+ZN8CZq7L1GQANr25extEqPASRERGVh+sD4-55cvWPOSg@mail.gmail.com>
+ <20190629202744.12396-1-ebiggers@kernel.org>
+ <20190701164536.GA202431@gmail.com>
+ <20190701182239.GA17978@ZenIV.linux.org.uk>
+ <20190702182258.GB110306@gmail.com>
+ <20190709194001.GG641@sol.localdomain>
+ <20190709205424.GB17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190709063023.251446-9-brendanhiggins@google.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 10 Jul 2019 02:31:35 +0000 (UTC)
+In-Reply-To: <20190709205424.GB17978@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 11:30:13PM -0700, Brendan Higgins wrote:
-> Fix the following warning seen on GCC 7.3:
->   kunit/test-test.o: warning: objtool: kunit_test_unsuccessful_try() falls through to next function kunit_test_catch()
+On Tue, Jul 09, 2019 at 09:54:24PM +0100, Al Viro wrote:
+> On Tue, Jul 09, 2019 at 12:40:01PM -0700, Eric Biggers wrote:
+> > On Tue, Jul 02, 2019 at 11:22:59AM -0700, Eric Biggers wrote:
+> > > 
+> > > Sure, but the new mount syscalls still need tests.  Where are the tests?
+> > > 
+> > 
+> > Still waiting for an answer to this question.
 > 
-> kunit_try_catch_throw is a function added in the following patch in this
-> series; it allows KUnit, a unit testing framework for the kernel, to
-> bail out of a broken test. As a consequence, it is a new __noreturn
-> function that objtool thinks is broken (as seen above). So fix this
-> warning by adding kunit_try_catch_throw to objtool's noreturn list.
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> Link: https://www.spinics.net/lists/linux-kbuild/msg21708.html
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> ---
->  tools/objtool/check.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> index 172f991957269..98db5fe85c797 100644
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -134,6 +134,7 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
->  		"usercopy_abort",
->  		"machine_real_restart",
->  		"rewind_stack_do_exit",
-> +		"kunit_try_catch_throw",
->  	};
->  
->  	if (func->bind == STB_WEAK)
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
-> 
+> In samples/vfs/fsmount.c, IIRC, and that's not much of a test.
 
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+A sample program doesn't count.  There need to be tests that can be run
+automatically as part of a well known test suite, such as LTP, kselftests, or
+xfstests.  Why is this not mandatory for new syscalls to be accepted?  What if
+they are broken and we don't know?  See what happened with copy_file_range():
+https://lwn.net/Articles/774114/
 
--- 
-Josh
+- Eric
