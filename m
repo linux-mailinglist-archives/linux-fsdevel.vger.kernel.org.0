@@ -2,153 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A58C64D8A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2019 22:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE7D664E1F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2019 23:50:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbfGJU1z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jul 2019 16:27:55 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43576 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727197AbfGJU1y (ORCPT
+        id S1727680AbfGJVuv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jul 2019 17:50:51 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37018 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727625AbfGJVuv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jul 2019 16:27:54 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f25so1756602pgv.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jul 2019 13:27:54 -0700 (PDT)
+        Wed, 10 Jul 2019 17:50:51 -0400
+Received: by mail-io1-f68.google.com with SMTP id q22so8086656iog.4;
+        Wed, 10 Jul 2019 14:50:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hO2jzOM05mxrz5IGdqgpee+axiQH+2OXPmqo+Ul0FcM=;
-        b=DXE2TyoaAsiT9dgVdMLJlwnFOJG+VPwltPNRpKt3x1FLvKASU/iQDS/su9pWcI6ZPd
-         MXkkWpKWuusX2P8emSJdJDlt30oE5SxYRezHyYxpjjVp3ZbcLi8A3iWXovzH83yYRc8k
-         fjxQns6K5/tsiMazqiGGWLPX8o1RPbeCk84rZYGhBrbKZfsdxcSVvoPDO0y7puTr2iGH
-         fQNI4xvqDUtOGBpEZRrc5xNRkpC2AFKD+tShr+e3Bwk8ghWvxHexXjknk4e4/Fuddr4K
-         h5eIBtrjZWB7rbYTWe1Z8/fz44NvT2DlWtjdcUYum8NYmtJkqcBIajW2gxCHzFBMqhlz
-         2q0w==
+         :cc:content-transfer-encoding;
+        bh=szjTCXs/+qzPjQoJIlXrmJ5QRPtMUoSrM9cPDUs6dgg=;
+        b=dIVcKYaknlt37uO6ESWKfchDa+WB9+B5g+y3PeiUwxUyVLmkiVYp7v9ARUuAw2Aufo
+         qGkvuaajAEo9I2w3whE7ewAT903bK7+tGpe6rM1uH/dblZd38Kbrk49gH/IdMkurUTRH
+         1D+MBld/AiyH02qS4bit48NM4gq7fpia4ATUjr3PN2It5TORTrmoNFIOFCnZcHcPLijF
+         gnGSAJot0Ytfr1kUIAeV0yMTCIMnBkOqE2hkdXhb6RM0Tqy3+9wYqHvzBqCzfbq7Q8QG
+         V/27WRLaSAGyOfYo0qFCPMIkBs5G7IEB+UfDqJo4bSEsfwbScXtZuaQLgiwrvg6DJFrp
+         Vj7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hO2jzOM05mxrz5IGdqgpee+axiQH+2OXPmqo+Ul0FcM=;
-        b=mz+j3V0tpRFnUa6G3NcrDlXz5oXTaA5OJCLBLzkwZmdgwNjw0LpfsYACvSXqPa7l8+
-         jKrdkLTtMKrfDzauGbRNWttrfgkG5AG7aSfXo8CJV+Hsj3cqG2ivXLnY/bpBPnTcCGAF
-         Jla25Gi4Onhykw8vGe6BQMlC9xtadfSQ8WWa6D7DG7miNEL4Uxzw7Jr8rwtMOdIOY4YC
-         NTQjb5qF0p0SAzUK5cx0T3C+hfjryoSUcVAMA81rDqXvJmfeSRg9hiMzM7RiZEfQMmhS
-         ww2fFG5Ca5TbqyO9Yv+MjlFQYGMgeAxb5L8/QrCIEcGgr++gx3UDd0gY0WpHivVdbO8C
-         vygA==
-X-Gm-Message-State: APjAAAUq0oxc0zAdck+3FzNe0eUUChFVZc5bobLOgG5qZDmAqa9Gfb3s
-        a+YUGB6GNK9WpLSCd/ucczW8mBc4Djk6X9OTcZ9gzQ==
-X-Google-Smtp-Source: APXvYqzZdlWhCkBvFW8XUuT2KDhsG6TgutjUsDP74lsWb4XjESrHCjQll9Q/yu+3XrTs4ARL+yM6pPyLsGbtB4DuWT0=
-X-Received: by 2002:a63:205f:: with SMTP id r31mr109331pgm.159.1562790473396;
- Wed, 10 Jul 2019 13:27:53 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=szjTCXs/+qzPjQoJIlXrmJ5QRPtMUoSrM9cPDUs6dgg=;
+        b=I6eXmfA9sFaPxRZA3+FBNcfiwMSmfCPuD6vRwvbm7xTGiSj4VqcKu+gAN7D3QHwqFk
+         T3b+8dqP3y9DgkCoCTbO31cW6H2FOorXeqcOEtYQzozZDeGMT3JDSXT3NogOtECAjR+V
+         HBAav4ECHoFgX75SHl5U+5KH2Vu9Gy4voWwKoNiOhnyyu0g6pwJAXA5d1TW2Hz45fOrK
+         zQcmJ+lWXspgidSir4QelSDNb1hgYg8ferc8ccAJUPYpeqmcrAJa1pFlBD+CTb5KlJYd
+         iWPfuTGWa4PrnDKxYXYfX62Vv8WbGFu31x5HJ4ImnTSfsnnWdImUJlsM3JptiEFzjUbE
+         Mp4w==
+X-Gm-Message-State: APjAAAUIYMiPBjLJbisJQtezp/svGwujOvcgK91JfSu0LCCgmUBz8eqM
+        37BLU87K8cJqH6DFFL+Nsgo1SW7CggnVG2ObBYYyolzE
+X-Google-Smtp-Source: APXvYqywSqqa4SHlujvNVxfUYsAaEqPdPXoF6aCEi5Pmeih57jtNFLzWD6Y8hjCf/hTm6N2bo/WYmWoiS6J9eljuGtQ=
+X-Received: by 2002:a5e:9e42:: with SMTP id j2mr360059ioq.133.1562795450420;
+ Wed, 10 Jul 2019 14:50:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190709063023.251446-1-brendanhiggins@google.com>
- <20190709063023.251446-17-brendanhiggins@google.com> <7cc417dd-036f-7dc1-6814-b1fdac810f03@kernel.org>
- <CAFd5g4595X8cM919mohQVaShs4dKWzZ_-2RVB=6SH3RdVMwuQw@mail.gmail.com>
-In-Reply-To: <CAFd5g4595X8cM919mohQVaShs4dKWzZ_-2RVB=6SH3RdVMwuQw@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Wed, 10 Jul 2019 13:27:42 -0700
-Message-ID: <CAFd5g45zFhBN-yrJbRt6KnFkYKxVqjs9qeQULCSD6z89vvG-Tg@mail.gmail.com>
-Subject: Re: [PATCH v7 16/18] MAINTAINERS: add entry for KUnit the unit
- testing framework
-To:     shuah <shuah@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+References: <20190703075502.79782-1-yuchao0@huawei.com> <CAHpGcM+s77hKMXo=66nWNF7YKa3qhLY9bZrdb4-Lkspyg2CCDw@mail.gmail.com>
+ <39944e50-5888-f900-1954-91be2b12ea5b@huawei.com>
+In-Reply-To: <39944e50-5888-f900-1954-91be2b12ea5b@huawei.com>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Wed, 10 Jul 2019 23:50:39 +0200
+Message-ID: <CAHpGcMJ_wPJf8KtF3xMP_28pe4Vq4XozFtmd2EuZ+RTqZKQxLA@mail.gmail.com>
+Subject: Re: [RFC PATCH] iomap: generalize IOMAP_INLINE to cover tail-packing case
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Gao Xiang <gaoxiang25@huawei.com>, chao@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 11:01 AM Brendan Higgins
-<brendanhiggins@google.com> wrote:
+Am Mi., 10. Juli 2019 um 12:31 Uhr schrieb Chao Yu <yuchao0@huawei.com>:
+> Hi Andreas,
 >
-> On Tue, Jul 9, 2019 at 7:53 AM shuah <shuah@kernel.org> wrote:
-> >
-> > On 7/9/19 12:30 AM, Brendan Higgins wrote:
-> > > Add myself as maintainer of KUnit, the Linux kernel's unit testing
-> > > framework.
-> > >
-> > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-> > > ---
-> > >   MAINTAINERS | 11 +++++++++++
-> > >   1 file changed, 11 insertions(+)
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 677ef41cb012c..48d04d180a988 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -8599,6 +8599,17 @@ S:     Maintained
-> > >   F:  tools/testing/selftests/
-> > >   F:  Documentation/dev-tools/kselftest*
-> > >
-> > > +KERNEL UNIT TESTING FRAMEWORK (KUnit)
-> > > +M:   Brendan Higgins <brendanhiggins@google.com>
-> > > +L:   linux-kselftest@vger.kernel.org
-> > > +L:   kunit-dev@googlegroups.com
-> > > +W:   https://google.github.io/kunit-docs/third_party/kernel/docs/
-> > > +S:   Maintained
-> > > +F:   Documentation/dev-tools/kunit/
-> > > +F:   include/kunit/
-> > > +F:   kunit/
-> > > +F:   tools/testing/kunit/
-> > > +
-> > >   KERNEL USERMODE HELPER
-> > >   M:  Luis Chamberlain <mcgrof@kernel.org>
-> > >   L:  linux-kernel@vger.kernel.org
-> > >
-> >
-> > Thanks Brendan.
-> >
-> > I am good with this. I can take KUnit patches through kselftest
-> > with your Ack.
+> Thanks for your review in advance. :)
 >
-> My acknowledgement? Sure! I thought we already agreed to that.
+> On 2019/7/10 7:32, Andreas Gr=C3=BCnbacher wrote:
+> > Hi Chao,
+> >
+> > Am Mi., 3. Juli 2019 um 09:55 Uhr schrieb Chao Yu <yuchao0@huawei.com>:
+> >> Some filesystems like erofs/reiserfs have the ability to pack tail
+> >> data into metadata, e.g.:
+> >> IOMAP_MAPPED [0, 8192]
+> >> IOMAP_INLINE [8192, 8200]
+> >>
+> >> However current IOMAP_INLINE type has assumption that:
+> >> - inline data should be locating at page #0.
+> >> - inline size should equal to .i_size
+> >> Those restriction fail to convert to use iomap IOMAP_INLINE in erofs,
+> >> so this patch tries to relieve above limits to make IOMAP_INLINE more
+> >> generic to cover tail-packing case.
+> >
+> > this patch suffers from the following problems:
+> >
+> > * Fiemap distinguishes between FIEMAP_EXTENT_DATA_INLINE and
+> > FIEMAP_EXTENT_DATA_TAIL. Someone will sooner or later inevitably use
+> > iomap_fiemap on a filesystem with tail packing, so if we don't make
+> > the same distinction in iomap, iomap_fiemap will silently produce the
+> > wrong result. This means that IOMAP_TAIL should become a separate
+> > mapping type.
 >
-> Also, do we need an ack from Masahiro or Michal for the Kbuild patch
-> [PATCH v7 06/18]? And an ack from Josh or Peter for the objtool patch
-> [PATCH v7 08/18]?
+> I'm a little confused, IIUC, IOMAP_TAIL and FIEMAP_EXTENT_DATA_TAIL are w=
+ith
+> different semantics:
+>
+> - IOMAP_TAIL:
+>   we may introduce this flag to cover tail-packing case, in where we merg=
+e
+> small-sized data in the tail of file into free space of its metadata.
+> - FIEMAP_EXTENT_DATA_TAIL:
+> quoted from Documentation/filesystems/fiemap.txt
+> "  This will also set FIEMAP_EXTENT_NOT_ALIGNED
+> Data is packed into a block with data from other files."
+> It looks like this flag indicates that blocks from different files stores=
+ into
+> one common block.
 
-By the way, I am guessing you have already seen it, but I uploaded a
-new version to incorporate a suggestion made by Masahiro on patch
-06/18. In addition, I have gotten acks on the two patches mentioned
-above. So I think we are good to go.
+Well, maybe FIEMAP_EXTENT_DATA_INLINE is indeed the more appropriate
+flag in your scenario. In that case, we should be fine on the fiemap
+front.
 
-Thanks!
+> I'm not familiar with fiemap flags' history, but maybe FIEMAP_EXTENT_DATA=
+_TAIL
+> should be better to rename to FIEMAP_EXTENT_DATA_PACKING to avoid ambigui=
+ty. And
+> then FIEMAP_EXTENT_DATA_INLINE will be enough to cover normal inline case=
+ and
+> tail-packing case?
+
+Those definitions are user-visible.
+
+> > * IOMAP_INLINE mappings always start at offset 0 and span an entire
+> > page, so they are always page aligned. IOMAP_TAIL mappings only need
+>
+> Why can't #0 page consist of more than one block/mapping? I didn't get wh=
+at's
+> difference here.
+
+Currently, iomap_write_begin will read the inline data into page #0
+and mark that page up-to-date. There's a check for that in
+iomap_write_end_inline. If a page contains more than one mapping, we
+won't be able to mark the entire page up to date anymore; we'd need to
+track which parts of the page are up to date and which are not. Iomap
+supports two tracking mechanisms, buffer heads and iomap_page, and
+we'd need to implement that tracking code for each of those cases.
+
+> > to be block aligned. If the block size is smaller than the page size,
+>
+> - reiserfs tries to find last page's content, if the size of that page's =
+valid
+> content is smaller than threshold (at least less than one block), reiserf=
+s can
+> do the packing.
+>
+> - erofs' block size is 4kb which is the same as page size.
+>
+>
+> Actually, for IOMAP_TAIL, there is no users who need to map more than one=
+ block
+> into metadata, so I'm not sure that we should support that, or we just ne=
+ed to
+> let code preparing for that to those potential users?
+
+How about architectures with PAGE_SIZE > 4096? I'm assuming that erofs
+doesn't require block size =3D=3D PAGE_SIZE?
+
+> Thanks,
+>
+> > a tail page can consist of more than one mapping. So
+> > iomap_read_inline_data needs to be changed to only copy a single block
+> > out of iomap->inline_data, and we need to adjust iomap_write_begin and
+> > iomap_readpage_actor accordingly.
+> >
+> > * Functions iomap_read_inline_data, iomap_write_end_inline, and
+> > iomap_dio_inline_actor currently all assume that we are operating on
+> > page 0, and that iomap->inline_data points at the data at offset 0.
+> > That's no longer the case for IOMAP_TAIL mappings. We need to look
+> > only at the offset within the page / block there.
+> >
+> > * There are some asserts like the following int he code:
+> >
+> >   BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> >
+> > Those should probably be tightened to check for block boundaries
+> > instead of page boundaries, i.e. something like:
+> >
+> >   BUG_ON(size > i_blocksize(inode) -
+> > offset_in_block(iomap->inline_data, inode));
+> >
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/iomap.c | 4 +---
+> >>  1 file changed, 1 insertion(+), 3 deletions(-)
+> >>
+> >> diff --git a/fs/iomap.c b/fs/iomap.c
+> >> index 12654c2e78f8..d1c16b692d31 100644
+> >> --- a/fs/iomap.c
+> >> +++ b/fs/iomap.c
+> >> @@ -264,13 +264,12 @@ static void
+> >>  iomap_read_inline_data(struct inode *inode, struct page *page,
+> >>                 struct iomap *iomap)
+> >>  {
+> >> -       size_t size =3D i_size_read(inode);
+> >> +       size_t size =3D iomap->length;
+> >
+> > Function iomap_read_inline_data fills the entire page here, not only
+> > the iomap->length part, so this is wrong. But see my comment above
+> > about changing iomap_read_inline_data to read a single block above as
+> > well.
+> >
+> >>         void *addr;
+> >>
+> >>         if (PageUptodate(page))
+> >>                 return;
+> >>
+> >> -       BUG_ON(page->index);
+> >>         BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+> >>
+> >>         addr =3D kmap_atomic(page);
+> >> @@ -293,7 +292,6 @@ iomap_readpage_actor(struct inode *inode, loff_t p=
+os, loff_t length, void *data,
+> >>         sector_t sector;
+> >>
+> >>         if (iomap->type =3D=3D IOMAP_INLINE) {
+> >> -               WARN_ON_ONCE(pos);
+> >>                 iomap_read_inline_data(inode, page, iomap);
+> >>                 return PAGE_SIZE;
+> >>         }
+> >
+> > Those last two changes look right to me.
+> >
+> > Thanks,
+> > Andreas
+> > .
+> >
+
+At this point, can I ask how important this packing mechanism is to
+you? I can see a point in implementing inline files, which help
+because there tends to be a large number of very small files. But for
+not-so-small files, is saving an extra block really worth the trouble,
+especially given how cheap storage has become?
+
+Thanks,
+Andreas
