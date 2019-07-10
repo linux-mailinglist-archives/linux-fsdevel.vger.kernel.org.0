@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A614864EED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 00:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DCD764EF4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 00:56:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbfGJW4f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jul 2019 18:56:35 -0400
-Received: from mail-yb1-f201.google.com ([209.85.219.201]:50443 "EHLO
-        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727805AbfGJW4f (ORCPT
+        id S1727841AbfGJW4j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jul 2019 18:56:39 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:56866 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727705AbfGJW4j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jul 2019 18:56:35 -0400
-Received: by mail-yb1-f201.google.com with SMTP id p20so2396831yba.17
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jul 2019 15:56:34 -0700 (PDT)
+        Wed, 10 Jul 2019 18:56:39 -0400
+Received: by mail-pf1-f202.google.com with SMTP id x10so2209276pfa.23
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jul 2019 15:56:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=gBYFtPRXhxr+nzaRjz6EC4G0IMEVRegQNSnIQUQ5+Ss=;
-        b=AN/IiiQIDrvoyYl7GrGvpIcyzRWThu9OKn/c+JOW3OAgaVJoL3ZA9ebAymuLYKs2HP
-         qeK7A6Gm8oa/5IAzvrq+t+c9P6ryQ4odqpGpXkogMiQl/fZWpCP2pxbWqoNuKFlm01G8
-         p9aGmbOLb7CFYendEH57fU1j/k958sb3BH/r/+CUZLB/+qiifSF9PMZcNvnPMHG9M66q
-         wtvOKT3Ru3gYZ7oBe/uc1vhnxuQ3MwQbMk3kIC6AGyG/BCppAuelfd1APOCRF3vce+Ki
-         Rnvzd+jqxs5Ec84H4bl0xJ7CD3x35wsl8OU+6j4gh0hPv4mUM1sBCDmX0r7qs+pcAeyN
-         T1yw==
+        bh=OHrZfjp/K12gC+qxbFciCHqHs9g6QC4y4kIf9uBdohg=;
+        b=JS6aUM/2e/leP4wpd89iwhRZK7jNIwpmkFqY3EdShoFfERVlMuWTxjB8k0VfMYtWN8
+         kVHVsmA0agNvjKA12e7zCDdgBG/V3IBkGdkYybJGl+BqBg/h/U7NwLhBvlWLXuI6d/sM
+         BoCa5Pg0cpDw7tdlk5hBCcbBhsPUC+h+mAA6G4s5LC/ncEaUINFw115RNpSttbfQ4eud
+         4ONKp7K1HDDNnYP0GFnqZevYVg3fjoPWe1jQcJSfwqvvMR3x79Eb5CDGsQOBdel/wQcO
+         UBELzf3PoaTEmQB9BjlRei1Tj/43UIePPekWy+yJ+/hRSctACYBjJS+AhyTpeJjh48lu
+         NYHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=gBYFtPRXhxr+nzaRjz6EC4G0IMEVRegQNSnIQUQ5+Ss=;
-        b=PL9TPqbqSindjSBQEGHEOmtssONnTwkqLGfGLXxFDsN7WBJ6bHQxdHN6QI2kTahZaL
-         6yK7xHDtNv45PpKjx++ol2dpQSBVMmQp+dFz9gDkugJx4v1SHDxXjy+B1WilH1u8WZ0i
-         Q0kDyO3MMeJGhm9xvEanvskfCyrHwPoe0ulRL9QDm+n5AuHiGpAj2BMSf8e/nstvPUQP
-         dEPauRUWoyyVokiHr3VL+tux3FnoEBVGITX3u11nkJeruR5/IOm4ZpsvlyFLd+OKljaR
-         mdbS93VS9uMiWpTl6/VmgwXbUT7eIs31PjcVn/8bQTdOt8lCsOJs5t79yIpRancWRTCa
-         btDw==
-X-Gm-Message-State: APjAAAVaqr6LujDXXkkV9dq9Wazsbb83kDlPEIxQ9pohSK09PCsYxORl
-        JAN0Jq8AMraHAPI+vz3wGkEqB5v6M5U=
-X-Google-Smtp-Source: APXvYqykpCYwU8A7u94IHh3hHSp7WCbpVY9q+I6TCfG6EYagAruzTHqCtkVFeBJxHlDryZO08M2jvKs/J7U=
-X-Received: by 2002:a81:5888:: with SMTP id m130mr120135ywb.422.1562799393664;
- Wed, 10 Jul 2019 15:56:33 -0700 (PDT)
-Date:   Wed, 10 Jul 2019 15:56:06 -0700
+        bh=OHrZfjp/K12gC+qxbFciCHqHs9g6QC4y4kIf9uBdohg=;
+        b=cXGnUVoKRpwgo5RWq+VnASezGxQ2n0toto9QSLHTdsSdPe4jIQkCD0cyfDaTMIFC7g
+         iV+O09CYd026ebYIIbDQT6Y1KBQCe3T+FWGBM1YAk9Y2VJDO7+vpqAM3XW3XISpPA1Du
+         /yL53wICjy7T7LjdXTihgSFklcV8fQNgq1DG9nklEpgLUgbOjT6pZZy5AqjbdDSunCwm
+         TN6cZx3uWmovg8CZt4UDtdx6ZH23/x7+PlfzbjKWxCY5d7g2aJUu0SSae69KcuffjqZI
+         74F5YhUh2/iih3TwxJuqydY+gnPRR5DNM6Q534IPcr6JcRAa3bvfLhJCw1JDJ5/CFD2j
+         d9kQ==
+X-Gm-Message-State: APjAAAWrfScwzRrO+hzuMp5brLkgWTzNhxy61qB70qtK1vT+GxBnv4/O
+        bkJ6CHbiroJ/dZpkQkdpntWL81r7m7w=
+X-Google-Smtp-Source: APXvYqzf7PIg0ekGuFEV6rIElTZBVnBZbzuA3mRwQSLhDGV6O5t+VPYc2LM1TfOVu5EsFmZS8EGdEOsXcbM=
+X-Received: by 2002:a65:4841:: with SMTP id i1mr770141pgs.316.1562799397968;
+ Wed, 10 Jul 2019 15:56:37 -0700 (PDT)
+Date:   Wed, 10 Jul 2019 15:56:07 -0700
 In-Reply-To: <20190710225609.192252-1-satyat@google.com>
-Message-Id: <20190710225609.192252-6-satyat@google.com>
+Message-Id: <20190710225609.192252-7-satyat@google.com>
 Mime-Version: 1.0
 References: <20190710225609.192252-1-satyat@google.com>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH 5/8] scsi: ufs: UFS crypto API
+Subject: [PATCH 6/8] scsi: ufs: Add inline encryption support to UFS
 From:   Satya Tangirala <satyat@google.com>
 To:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -64,617 +64,214 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce functions to manipulate UFS inline encryption hardware
-in line with the JEDEC UFSHCI v2.1 specification and to work with the
-block keyslot manager.
+Wire up ufshcd.c with the UFS Crypto API, the block layer inline
+encryption additions and the keyslot manager.
 
 Signed-off-by: Satya Tangirala <satyat@google.com>
 ---
- drivers/scsi/ufs/Kconfig         |  10 +
- drivers/scsi/ufs/Makefile        |   1 +
- drivers/scsi/ufs/ufshcd-crypto.c | 435 +++++++++++++++++++++++++++++++
- drivers/scsi/ufs/ufshcd-crypto.h |  86 ++++++
- drivers/scsi/ufs/ufshcd.h        |  18 ++
- 5 files changed, 550 insertions(+)
- create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
- create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
+ drivers/scsi/ufs/ufshcd.c | 82 ++++++++++++++++++++++++++++++++++++---
+ drivers/scsi/ufs/ufshcd.h |  6 +++
+ 2 files changed, 83 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-index 0b845ab7c3bf..861aabfe791b 100644
---- a/drivers/scsi/ufs/Kconfig
-+++ b/drivers/scsi/ufs/Kconfig
-@@ -150,3 +150,13 @@ config SCSI_UFS_BSG
- 
- 	  Select this if you need a bsg device node for your UFS controller.
- 	  If unsure, say N.
-+
-+config SCSI_UFS_CRYPTO
-+	bool "UFS Crypto Engine Support"
-+	depends on SCSI_UFSHCD && BLK_INLINE_ENCRYPTION
-+	help
-+	  Enable Crypto Engine Support in UFS.
-+	  Enabling this makes it possible for the kernel to use the crypto
-+	  capabilities of the UFS device (if present) to perform crypto
-+	  operations on data being transferred to/from the device.
-+
-diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-index 2a9097939bcb..094c39989a37 100644
---- a/drivers/scsi/ufs/Makefile
-+++ b/drivers/scsi/ufs/Makefile
-@@ -11,3 +11,4 @@ obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
- obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
- obj-$(CONFIG_SCSI_UFS_HISI) += ufs-hisi.o
- obj-$(CONFIG_SCSI_UFS_MEDIATEK) += ufs-mediatek.o
-+ufshcd-core-$(CONFIG_SCSI_UFS_CRYPTO) += ufshcd-crypto.o
-diff --git a/drivers/scsi/ufs/ufshcd-crypto.c b/drivers/scsi/ufs/ufshcd-crypto.c
-new file mode 100644
-index 000000000000..834c57ca912a
---- /dev/null
-+++ b/drivers/scsi/ufs/ufshcd-crypto.c
-@@ -0,0 +1,435 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2019 Google LLC
-+ */
-+
-+#include <crypto/algapi.h>
-+
-+#include "ufshcd.h"
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 36413f97074d..492e9db6b50f 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -47,6 +47,7 @@
+ #include "unipro.h"
+ #include "ufs-sysfs.h"
+ #include "ufs_bsg.h"
 +#include "ufshcd-crypto.h"
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/ufs.h>
+@@ -855,7 +856,14 @@ static void ufshcd_enable_run_stop_reg(struct ufs_hba *hba)
+  */
+ static inline void ufshcd_hba_start(struct ufs_hba *hba)
+ {
+-	ufshcd_writel(hba, CONTROLLER_ENABLE, REG_CONTROLLER_ENABLE);
++	u32 val = CONTROLLER_ENABLE;
 +
-+static bool ufshcd_cap_idx_valid(struct ufs_hba *hba, unsigned int cap_idx)
-+{
-+	return cap_idx < hba->crypto_capabilities.num_crypto_cap;
-+}
-+
-+static u8 get_data_unit_size_mask(unsigned int data_unit_size)
-+{
-+	if (data_unit_size < 512 || data_unit_size > 65536 ||
-+	    !is_power_of_2(data_unit_size))
-+		return 0;
-+
-+	return data_unit_size / 512;
-+}
-+
-+static size_t get_keysize_bytes(enum ufs_crypto_key_size size)
-+{
-+	switch (size) {
-+	case UFS_CRYPTO_KEY_SIZE_128: return 16;
-+	case UFS_CRYPTO_KEY_SIZE_192: return 24;
-+	case UFS_CRYPTO_KEY_SIZE_256: return 32;
-+	case UFS_CRYPTO_KEY_SIZE_512: return 64;
-+	default: return 0;
-+	}
-+}
-+
-+static int ufshcd_crypto_cap_find(void *hba_p,
-+			   enum blk_crypt_mode_num crypt_mode,
-+			   unsigned int data_unit_size)
-+{
-+	struct ufs_hba *hba = hba_p;
-+	enum ufs_crypto_alg ufs_alg;
-+	u8 data_unit_mask;
-+	int cap_idx;
-+	enum ufs_crypto_key_size ufs_key_size;
-+	union ufs_crypto_cap_entry *ccap_array = hba->crypto_cap_array;
-+
-+	if (!ufshcd_hba_is_crypto_supported(hba))
-+		return -EINVAL;
-+
-+	switch (crypt_mode) {
-+	case BLK_ENCRYPTION_MODE_AES_256_XTS:
-+		ufs_alg = UFS_CRYPTO_ALG_AES_XTS;
-+		ufs_key_size = UFS_CRYPTO_KEY_SIZE_256;
-+		break;
-+	/*
-+	 * case BLK_CRYPTO_ALG_BITLOCKER_AES_CBC:
-+	 *	ufs_alg = UFS_CRYPTO_ALG_BITLOCKER_AES_CBC;
-+	 *	break;
-+	 * case INLINECRYPT_ALG_AES_ECB:
-+	 *	ufs_alg = UFS_CRYPTO_ALG_AES_ECB;
-+	 *	break;
-+	 * case INLINECRYPT_ALG_ESSIV_AES_CBC:
-+	 *	ufs_alg = UFS_CRYPTO_ALG_ESSIV_AES_CBC;
-+	 *	break;
-+	 */
-+	default: return -EINVAL;
++	if (ufshcd_hba_is_crypto_supported(hba)) {
++		ufshcd_crypto_enable(hba);
++		val |= CRYPTO_GENERAL_ENABLE;
 +	}
 +
-+	data_unit_mask = get_data_unit_size_mask(data_unit_size);
-+
-+	/*
-+	 * TODO: We can replace this for loop entirely by constructing
-+	 * a table on init that translates blk_crypt_mode to
-+	 * ufs crypt alg numbers. (By assuming that each alg/keysize combo
-+	 * appears only once in the ufs crypto caps array.)
-+	 */
-+	for (cap_idx = 0; cap_idx < hba->crypto_capabilities.num_crypto_cap;
-+	     cap_idx++) {
-+		if (ccap_array[cap_idx].algorithm_id == ufs_alg &&
-+		    (ccap_array[cap_idx].sdus_mask & data_unit_mask) &&
-+		    ccap_array[cap_idx].key_size == ufs_key_size)
-+			return cap_idx;
++	ufshcd_writel(hba, val, REG_CONTROLLER_ENABLE);
+ }
+ 
+ /**
+@@ -2209,9 +2217,21 @@ static void ufshcd_prepare_req_desc_hdr(struct ufshcd_lrb *lrbp,
+ 		dword_0 |= UTP_REQ_DESC_INT_CMD;
+ 
+ 	/* Transfer request descriptor header fields */
++	if (lrbp->crypto_enable) {
++		dword_0 |= UTP_REQ_DESC_CRYPTO_ENABLE_CMD;
++		dword_0 |= lrbp->crypto_key_slot;
++		req_desc->header.dword_1 =
++			cpu_to_le32((u32)lrbp->data_unit_num);
++		req_desc->header.dword_3 =
++			cpu_to_le32((u32)(lrbp->data_unit_num >> 32));
++	} else {
++		/* dword_1 and dword_3 are reserved, hence they are set to 0 */
++		req_desc->header.dword_1 = 0;
++		req_desc->header.dword_3 = 0;
 +	}
 +
-+	return -EINVAL;
-+}
+ 	req_desc->header.dword_0 = cpu_to_le32(dword_0);
+-	/* dword_1 is reserved, hence it is set to 0 */
+-	req_desc->header.dword_1 = 0;
 +
-+/**
-+ * ufshcd_crypto_cfg_entry_write_key - Write a key into a crypto_cfg_entry
-+ *
-+ *	Writes the key with the appropriate format - for AES_XTS,
-+ *	the first half of the key is copied as is, the second half is
-+ *	copied with an offset halfway into the cfg->crypto_key array.
-+ *	For the other supported crypto algs, the key is just copied.
-+ *
-+ * @cfg: The crypto config to write to
-+ * @key: The key to write
-+ * @cap: The crypto capability (which specifies the crypto alg and key size)
-+ *
-+ * Returns 0 on success, or -EINVAL
-+ */
-+static int ufshcd_crypto_cfg_entry_write_key(union ufs_crypto_cfg_entry *cfg,
-+					     const u8 *key,
-+					     union ufs_crypto_cap_entry cap)
+ 	/*
+ 	 * assigning invalid value for command status. Controller
+ 	 * updates OCS on command completion, with the command
+@@ -2219,8 +2239,6 @@ static void ufshcd_prepare_req_desc_hdr(struct ufshcd_lrb *lrbp,
+ 	 */
+ 	req_desc->header.dword_2 =
+ 		cpu_to_le32(OCS_INVALID_COMMAND_STATUS);
+-	/* dword_3 is reserved, hence it is set to 0 */
+-	req_desc->header.dword_3 = 0;
+ 
+ 	req_desc->prd_table_length = 0;
+ }
+@@ -2380,6 +2398,37 @@ static inline u16 ufshcd_upiu_wlun_to_scsi_wlun(u8 upiu_wlun_id)
+ 	return (upiu_wlun_id & ~UFS_UPIU_WLUN_ID) | SCSI_W_LUN_BASE;
+ }
+ 
++static inline int ufshcd_prepare_lrbp_crypto(struct ufs_hba *hba,
++					     struct scsi_cmnd *cmd,
++					     struct ufshcd_lrb *lrbp)
 +{
-+	size_t key_size_bytes = get_keysize_bytes(cap.key_size);
++	int key_slot;
 +
-+	if (key_size_bytes == 0)
-+		return -EINVAL;
-+
-+	switch (cap.algorithm_id) {
-+	case UFS_CRYPTO_ALG_AES_XTS:
-+		key_size_bytes *= 2;
-+		if (key_size_bytes > UFS_CRYPTO_KEY_MAX_SIZE)
-+			return -EINVAL;
-+
-+		memcpy(cfg->crypto_key, key, key_size_bytes/2);
-+		memcpy(cfg->crypto_key + UFS_CRYPTO_KEY_MAX_SIZE/2,
-+		       key + key_size_bytes/2, key_size_bytes/2);
-+		return 0;
-+	case UFS_CRYPTO_ALG_BITLOCKER_AES_CBC: // fallthrough
-+	case UFS_CRYPTO_ALG_AES_ECB: // fallthrough
-+	case UFS_CRYPTO_ALG_ESSIV_AES_CBC:
-+		memcpy(cfg->crypto_key, key, key_size_bytes);
++	if (!cmd->request->bio ||
++	    !bio_crypt_should_process(cmd->request->bio, cmd->request->q)) {
++		lrbp->crypto_enable = false;
 +		return 0;
 +	}
 +
-+	return -EINVAL;
-+}
-+
-+static void program_key(struct ufs_hba *hba,
-+			const union ufs_crypto_cfg_entry *cfg,
-+			int slot)
-+{
-+	int i;
-+	u32 slot_offset = hba->crypto_cfg_register + slot * sizeof(*cfg);
-+
-+	/* Clear the dword 16 */
-+	ufshcd_writel(hba, 0, slot_offset + 16 * sizeof(cfg->reg_val[0]));
-+	/* Ensure that CFGE is cleared before programming the key */
-+	wmb();
-+	for (i = 0; i < 16; i++) {
-+		ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[i]),
-+			      slot_offset + i * sizeof(cfg->reg_val[0]));
-+		/* Spec says each dword in key must be written sequentially */
-+		wmb();
++	if (WARN_ON(!ufshcd_is_crypto_enabled(hba))) {
++		/*
++		 * Upper layer asked us to do inline encryption
++		 * but that isn't enabled, so we fail this request.
++		 */
++		return -EINVAL;
 +	}
-+	/* Write dword 17 */
-+	ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[17]),
-+		      slot_offset + 17 * sizeof(cfg->reg_val[0]));
-+	/* Dword 16 must be written last */
-+	wmb();
-+	/* Write dword 16 */
-+	ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[16]),
-+		      slot_offset + 16 * sizeof(cfg->reg_val[0]));
-+	wmb();
-+}
-+
-+static int ufshcd_crypto_keyslot_program(void *hba_p, const u8 *key,
-+					 enum blk_crypt_mode_num crypt_mode,
-+					 unsigned int data_unit_size,
-+					 unsigned int slot)
-+{
-+	struct ufs_hba *hba = hba_p;
-+	int err = 0;
-+	u8 data_unit_mask;
-+	union ufs_crypto_cfg_entry cfg;
-+	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
-+	int cap_idx;
-+
-+	cap_idx = ufshcd_crypto_cap_find(hba_p, crypt_mode,
-+					       data_unit_size);
-+
-+	if (!ufshcd_is_crypto_enabled(hba) ||
-+	    !ufshcd_keyslot_valid(hba, slot) ||
-+	    !ufshcd_cap_idx_valid(hba, cap_idx))
++	key_slot = bio_crypt_get_keyslot(cmd->request->bio);
++	if (!ufshcd_keyslot_valid(hba, key_slot))
 +		return -EINVAL;
 +
-+	data_unit_mask = get_data_unit_size_mask(data_unit_size);
-+
-+	if (!(data_unit_mask & hba->crypto_cap_array[cap_idx].sdus_mask))
-+		return -EINVAL;
-+
-+	memset(&cfg, 0, sizeof(cfg));
-+	cfg.data_unit_size = data_unit_mask;
-+	cfg.crypto_cap_idx = cap_idx;
-+	cfg.config_enable |= UFS_CRYPTO_CONFIGURATION_ENABLE;
-+
-+	err = ufshcd_crypto_cfg_entry_write_key(&cfg, key,
-+				hba->crypto_cap_array[cap_idx]);
-+	if (err)
-+		return err;
-+
-+	program_key(hba, &cfg, slot);
-+
-+	memcpy(&cfg_arr[slot], &cfg, sizeof(cfg));
-+	memzero_explicit(&cfg, sizeof(cfg));
++	lrbp->crypto_enable = true;
++	lrbp->crypto_key_slot = key_slot;
++	lrbp->data_unit_num = bio_crypt_data_unit_num(cmd->request->bio);
 +
 +	return 0;
 +}
 +
-+static int ufshcd_crypto_keyslot_find(void *hba_p,
-+				      const u8 *key,
-+				      enum blk_crypt_mode_num crypt_mode,
-+				      unsigned int data_unit_size)
-+{
-+	struct ufs_hba *hba = hba_p;
-+	int err = 0;
-+	int slot;
-+	u8 data_unit_mask;
-+	union ufs_crypto_cfg_entry cfg;
-+	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
-+	int cap_idx;
 +
-+	cap_idx = ufshcd_crypto_cap_find(hba_p, crypt_mode,
-+					       data_unit_size);
+ /**
+  * ufshcd_queuecommand - main entry point for SCSI requests
+  * @host: SCSI host pointer
+@@ -2467,6 +2516,13 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ 	lrbp->task_tag = tag;
+ 	lrbp->lun = ufshcd_scsi_to_upiu_lun(cmd->device->lun);
+ 	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba) ? true : false;
 +
-+	if (!ufshcd_is_crypto_enabled(hba) ||
-+	    !ufshcd_cap_idx_valid(hba, cap_idx))
-+		return -EINVAL;
-+
-+	data_unit_mask = get_data_unit_size_mask(data_unit_size);
-+
-+	if (!(data_unit_mask & hba->crypto_cap_array[cap_idx].sdus_mask))
-+		return -EINVAL;
-+
-+	memset(&cfg, 0, sizeof(cfg));
-+	err = ufshcd_crypto_cfg_entry_write_key(&cfg, key,
-+					hba->crypto_cap_array[cap_idx]);
-+
-+	if (err)
-+		return -EINVAL;
-+
-+	for (slot = 0; slot < NUM_KEYSLOTS(hba); slot++) {
-+		if ((cfg_arr[slot].config_enable &
-+		     UFS_CRYPTO_CONFIGURATION_ENABLE) &&
-+		    data_unit_mask == cfg_arr[slot].data_unit_size &&
-+		    cap_idx == cfg_arr[slot].crypto_cap_idx &&
-+		    !crypto_memneq(&cfg.crypto_key, cfg_arr[slot].crypto_key,
-+				  UFS_CRYPTO_KEY_MAX_SIZE)) {
-+			memzero_explicit(&cfg, sizeof(cfg));
-+			return slot;
-+		}
-+	}
-+
-+	memzero_explicit(&cfg, sizeof(cfg));
-+	return -ENOKEY;
-+}
-+
-+static int ufshcd_crypto_keyslot_evict(void *hba_p, const u8 *key,
-+				       enum blk_crypt_mode_num crypt_mode,
-+				       unsigned int data_unit_size,
-+				       unsigned int slot)
-+{
-+	struct ufs_hba *hba = hba_p;
-+	int i = 0;
-+	u32 reg_base;
-+	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
-+
-+	if (!ufshcd_is_crypto_enabled(hba) ||
-+	    !ufshcd_keyslot_valid(hba, slot))
-+		return -EINVAL;
-+
-+	memset(&cfg_arr[slot], 0, sizeof(cfg_arr[slot]));
-+	reg_base = hba->crypto_cfg_register + slot * sizeof(cfg_arr[0]);
-+
-+	/*
-+	 * Clear the crypto cfg on the device. Clearing CFGE
-+	 * might not be sufficient, so just clear the entire cfg.
-+	 */
-+	for (i = 0; i < sizeof(cfg_arr[0]); i += sizeof(__le32))
-+		ufshcd_writel(hba, 0, reg_base + i);
-+	wmb();
-+
-+	return 0;
-+}
-+
-+static bool ufshcd_crypt_mode_supported(void *hba_p,
-+					 enum blk_crypt_mode_num crypt_mode,
-+					 unsigned int data_unit_size)
-+{
-+	return ufshcd_crypto_cap_find(hba_p, crypt_mode, data_unit_size) >= 0;
-+}
-+
-+void ufshcd_crypto_enable(struct ufs_hba *hba)
-+{
-+	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
-+	int slot;
-+
-+	if (!ufshcd_hba_is_crypto_supported(hba))
-+		return;
-+
-+	hba->caps |= UFSHCD_CAP_CRYPTO;
-+	/*
-+	 * Reset might clear all keys, so reprogram all the keys.
-+	 * Also serves to clear keys on driver init.
-+	 */
-+	for (slot = 0; slot < NUM_KEYSLOTS(hba); slot++)
-+		program_key(hba, &cfg_arr[slot], slot);
-+}
-+
-+void ufshcd_crypto_disable(struct ufs_hba *hba)
-+{
-+	hba->caps &= ~UFSHCD_CAP_CRYPTO;
-+}
-+
-+
-+/**
-+ * ufshcd_hba_init_crypto - Read crypto capabilities, init crypto fields in hba
-+ * @hba: Per adapter instance
-+ *
-+ * Returns 0 on success. Returns -ENODEV if such capabilties don't exist, and
-+ * -ENOMEM upon OOM.
-+ */
-+int ufshcd_hba_init_crypto(struct ufs_hba *hba)
-+{
-+	int cap_idx = 0;
-+	int err = 0;
-+
-+	/* Default to disabling crypto */
-+	hba->caps &= ~UFSHCD_CAP_CRYPTO;
-+
-+	if (!(hba->capabilities & MASK_CRYPTO_SUPPORT)) {
-+		err = -ENODEV;
++	err = ufshcd_prepare_lrbp_crypto(hba, cmd, lrbp);
++	if (err) {
++		lrbp->cmd = NULL;
++		clear_bit_unlock(tag, &hba->lrb_in_use);
 +		goto out;
 +	}
+ 	lrbp->req_abort_skip = false;
+ 
+ 	ufshcd_comp_scsi_upiu(hba, lrbp);
+@@ -2500,6 +2556,7 @@ static int ufshcd_compose_dev_cmd(struct ufs_hba *hba,
+ 	lrbp->task_tag = tag;
+ 	lrbp->lun = 0; /* device management cmd is not specific to any LUN */
+ 	lrbp->intr_cmd = true; /* No interrupt aggregation */
++	lrbp->crypto_enable = false; /* No crypto operations */
+ 	hba->dev_cmd.type = cmd_type;
+ 
+ 	return ufshcd_comp_devman_upiu(hba, lrbp);
+@@ -4192,6 +4249,8 @@ static inline void ufshcd_hba_stop(struct ufs_hba *hba, bool can_sleep)
+ {
+ 	int err;
+ 
++	ufshcd_crypto_disable(hba);
 +
-+	/*
-+	 * Crypto Capabilities should never be 0, because the
-+	 * config_array_ptr > 04h. So we use a 0 value to indicate that
-+	 * crypto init failed, and can't be enabled.
-+	 */
-+	hba->crypto_capabilities.reg_val =
-+			cpu_to_le32(ufshcd_readl(hba, REG_UFS_CCAP));
-+	hba->crypto_cfg_register =
-+		(u32)hba->crypto_capabilities.config_array_ptr * 0x100;
-+	hba->crypto_cap_array =
-+		devm_kcalloc(hba->dev,
-+			     hba->crypto_capabilities.num_crypto_cap,
-+			     sizeof(hba->crypto_cap_array[0]),
-+			     GFP_KERNEL);
-+	if (!hba->crypto_cap_array) {
-+		err = -ENOMEM;
-+		goto out;
+ 	ufshcd_writel(hba, CONTROLLER_DISABLE,  REG_CONTROLLER_ENABLE);
+ 	err = ufshcd_wait_for_register(hba, REG_CONTROLLER_ENABLE,
+ 					CONTROLLER_ENABLE, CONTROLLER_DISABLE,
+@@ -4585,10 +4644,13 @@ static int ufshcd_change_queue_depth(struct scsi_device *sdev, int depth)
+ static int ufshcd_slave_configure(struct scsi_device *sdev)
+ {
+ 	struct request_queue *q = sdev->request_queue;
++	struct ufs_hba *hba = shost_priv(sdev->host);
+ 
+ 	blk_queue_update_dma_pad(q, PRDT_DATA_BYTE_COUNT_PAD - 1);
+ 	blk_queue_max_segment_size(q, PRDT_DATA_BYTE_COUNT_MAX);
+ 
++	ufshcd_crypto_setup_rq_keyslot_manager(hba, q);
++
+ 	return 0;
+ }
+ 
+@@ -4599,6 +4661,7 @@ static int ufshcd_slave_configure(struct scsi_device *sdev)
+ static void ufshcd_slave_destroy(struct scsi_device *sdev)
+ {
+ 	struct ufs_hba *hba;
++	struct request_queue *q = sdev->request_queue;
+ 
+ 	hba = shost_priv(sdev->host);
+ 	/* Drop the reference as it won't be needed anymore */
+@@ -4609,6 +4672,8 @@ static void ufshcd_slave_destroy(struct scsi_device *sdev)
+ 		hba->sdev_ufs_device = NULL;
+ 		spin_unlock_irqrestore(hba->host->host_lock, flags);
+ 	}
++
++	ufshcd_crypto_destroy_rq_keyslot_manager(hba, q);
+ }
+ 
+ /**
+@@ -8293,6 +8358,13 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+ 		goto exit_gating;
+ 	}
+ 
++	/* Init crypto */
++	err = ufshcd_hba_init_crypto(hba);
++	if (err) {
++		dev_err(hba->dev, "crypto setup failed\n");
++		goto out_remove_scsi_host;
 +	}
 +
-+	hba->crypto_cfgs =
-+		devm_kcalloc(hba->dev,
-+			     hba->crypto_capabilities.config_count + 1,
-+			     sizeof(hba->crypto_cfgs[0]),
-+			     GFP_KERNEL);
-+	if (!hba->crypto_cfgs) {
-+		err = -ENOMEM;
-+		goto out_cfg_mem;
-+	}
-+
-+	/*
-+	 * Store all the capabilities now so that we don't need to repeatedly
-+	 * access the device each time we want to know its capabilities
-+	 */
-+	for (cap_idx = 0; cap_idx < hba->crypto_capabilities.num_crypto_cap;
-+	     cap_idx++) {
-+		hba->crypto_cap_array[cap_idx].reg_val =
-+			cpu_to_le32(ufshcd_readl(hba,
-+						 REG_UFS_CRYPTOCAP +
-+						 cap_idx * sizeof(__le32)));
-+	}
-+
-+	hba->ksm = NULL;
-+	mutex_init(&hba->ksm_lock);
-+	hba->ksm_num_refs = 0;
-+
-+	return 0;
-+out_cfg_mem:
-+	devm_kfree(hba->dev, hba->crypto_cap_array);
-+out:
-+	// TODO: print error?
-+	/* Indicate that init failed by setting crypto_capabilities to 0 */
-+	hba->crypto_capabilities.reg_val = 0;
-+	return err;
-+}
-+
-+static const struct keyslot_mgmt_ll_ops ufshcd_ksm_ops = {
-+	.keyslot_program	= ufshcd_crypto_keyslot_program,
-+	.keyslot_evict		= ufshcd_crypto_keyslot_evict,
-+	.keyslot_find		= ufshcd_crypto_keyslot_find,
-+	.crypt_mode_supported	= ufshcd_crypt_mode_supported,
-+};
-+
-+void ufshcd_crypto_setup_rq_keyslot_manager(struct ufs_hba *hba,
-+					    struct request_queue *q)
-+{
-+	if (!ufshcd_hba_is_crypto_supported(hba))
-+		return;
-+
-+	if (q) {
-+		mutex_lock(&hba->ksm_lock);
-+		if (!hba->ksm) {
-+			hba->ksm = keyslot_manager_create(
-+				hba->crypto_capabilities.config_count + 1,
-+				&ufshcd_ksm_ops, hba);
-+			hba->ksm_num_refs = 0;
-+		}
-+		hba->ksm_num_refs++;
-+		mutex_unlock(&hba->ksm_lock);
-+		q->ksm = hba->ksm;
-+	}
-+	/*
-+	 * If we fail we make it look like
-+	 * crypto is not supported, which will avoid issues
-+	 * with reset
-+	 */
-+	if (!q || !q->ksm) {
-+		ufshcd_crypto_disable(hba);
-+		hba->crypto_capabilities.reg_val = 0;
-+		devm_kfree(hba->dev, hba->crypto_cap_array);
-+		devm_kfree(hba->dev, hba->crypto_cfgs);
-+	}
-+}
-+
-+void ufshcd_crypto_destroy_rq_keyslot_manager(struct ufs_hba *hba,
-+					      struct request_queue *q)
-+{
-+	if (q && q->ksm) {
-+		q->ksm = NULL;
-+		mutex_lock(&hba->ksm_lock);
-+		hba->ksm_num_refs--;
-+		if (hba->ksm_num_refs == 0) {
-+			keyslot_manager_destroy(hba->ksm);
-+			hba->ksm = NULL;
-+		}
-+		mutex_unlock(&hba->ksm_lock);
-+	}
-+}
-+
-diff --git a/drivers/scsi/ufs/ufshcd-crypto.h b/drivers/scsi/ufs/ufshcd-crypto.h
-new file mode 100644
-index 000000000000..73ddc8e493fb
---- /dev/null
-+++ b/drivers/scsi/ufs/ufshcd-crypto.h
-@@ -0,0 +1,86 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2019 Google LLC
-+ */
-+
-+#ifndef _UFSHCD_CRYPTO_H
-+#define _UFSHCD_CRYPTO_H
-+
-+struct ufs_hba;
-+
-+#ifdef CONFIG_SCSI_UFS_CRYPTO
-+#include <linux/keyslot-manager.h>
-+
-+#include "ufshci.h"
-+
-+#define NUM_KEYSLOTS(hba) (hba->crypto_capabilities.config_count + 1)
-+
-+static inline bool ufshcd_keyslot_valid(struct ufs_hba *hba, unsigned int slot)
-+{
-+	/*
-+	 * The actual number of configurations supported is (CFGC+1), so slot
-+	 * numbers range from 0 to config_count inclusive.
-+	 */
-+	return slot < NUM_KEYSLOTS(hba);
-+}
-+
-+static inline bool ufshcd_hba_is_crypto_supported(struct ufs_hba *hba)
-+{
-+	return hba->crypto_capabilities.reg_val != 0;
-+}
-+
-+static inline bool ufshcd_is_crypto_enabled(struct ufs_hba *hba)
-+{
-+	return hba->caps & UFSHCD_CAP_CRYPTO;
-+}
-+
-+void ufshcd_crypto_enable(struct ufs_hba *hba);
-+
-+void ufshcd_crypto_disable(struct ufs_hba *hba);
-+
-+int ufshcd_hba_init_crypto(struct ufs_hba *hba);
-+
-+void ufshcd_crypto_setup_rq_keyslot_manager(struct ufs_hba *hba,
-+					    struct request_queue *q);
-+
-+void ufshcd_crypto_destroy_rq_keyslot_manager(struct ufs_hba *hba,
-+					      struct request_queue *q);
-+
-+#else /* CONFIG_SCSI_UFS_CRYPTO */
-+
-+static inline bool ufshcd_keyslot_valid(struct ufs_hba *hba,
-+					unsigned int slot)
-+{
-+	return false;
-+}
-+
-+static inline bool ufshcd_hba_is_crypto_supported(struct ufs_hba *hba)
-+{
-+	return false;
-+}
-+
-+static inline bool ufshcd_is_crypto_enabled(struct ufs_hba *hba)
-+{
-+	return false;
-+}
-+
-+static inline void ufshcd_crypto_enable(struct ufs_hba *hba) { }
-+
-+static inline void ufshcd_crypto_disable(struct ufs_hba *hba) { }
-+
-+static inline int ufshcd_hba_init_crypto(struct ufs_hba *hba)
-+{
-+	return 0;
-+}
-+
-+static inline void ufshcd_crypto_setup_rq_keyslot_manager(
-+					struct ufs_hba *hba,
-+					struct request_queue *q) { }
-+
-+static inline void ufshcd_crypto_destroy_rq_keyslot_manager(
-+				struct ufs_hba *hba,
-+				struct request_queue *q) { }
-+
-+#endif /* CONFIG_SCSI_UFS_CRYPTO */
-+
-+#endif /* _UFSHCD_CRYPTO_H */
+ 	/* Host controller enable */
+ 	err = ufshcd_hba_enable(hba);
+ 	if (err) {
 diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index d3b6a6b57a37..ef62b3ba03fd 100644
+index ef62b3ba03fd..ab9c1191c206 100644
 --- a/drivers/scsi/ufs/ufshcd.h
 +++ b/drivers/scsi/ufs/ufshcd.h
-@@ -501,6 +501,13 @@ struct ufs_stats {
-  * @is_urgent_bkops_lvl_checked: keeps track if the urgent bkops level for
-  *  device is known or not.
-  * @scsi_block_reqs_cnt: reference counting for scsi block requests
-+ * @crypto_capabilities: Content of crypto capabilities register (0x100)
-+ * @crypto_cap_array: Array of crypto capabilities
-+ * @crypto_cfg_register: Start of the crypto cfg array
-+ * @crypto_cfgs: Array of crypto configurations (i.e. config for each slot)
-+ * @ksm: the keyslot manager tied to this hba
-+ * @ksm_lock: lock to protect initialization and refcount of ksm
-+ * @ksm_num_refs: refcount for ksm
+@@ -167,6 +167,9 @@ struct ufs_pm_lvl_states {
+  * @intr_cmd: Interrupt command (doesn't participate in interrupt aggregation)
+  * @issue_time_stamp: time stamp for debug purposes
+  * @compl_time_stamp: time stamp for statistics
++ * @crypto_enable: whether or not the request needs inline crypto operations
++ * @crypto_key_slot: the key slot to use for inline crypto
++ * @data_unit_num: the data unit number for the first block for inline crypto
+  * @req_abort_skip: skip request abort task flag
   */
- struct ufs_hba {
- 	void __iomem *mmio_base;
-@@ -711,6 +718,17 @@ struct ufs_hba {
+ struct ufshcd_lrb {
+@@ -191,6 +194,9 @@ struct ufshcd_lrb {
+ 	bool intr_cmd;
+ 	ktime_t issue_time_stamp;
+ 	ktime_t compl_time_stamp;
++	bool crypto_enable;
++	u8 crypto_key_slot;
++	u64 data_unit_num;
  
- 	struct device		bsg_dev;
- 	struct request_queue	*bsg_queue;
-+
-+#ifdef CONFIG_SCSI_UFS_CRYPTO
-+	/* crypto */
-+	union ufs_crypto_capabilities crypto_capabilities;
-+	union ufs_crypto_cap_entry *crypto_cap_array;
-+	u32 crypto_cfg_register;
-+	union ufs_crypto_cfg_entry *crypto_cfgs;
-+	struct keyslot_manager *ksm;
-+	struct mutex ksm_lock;
-+	unsigned int ksm_num_refs;
-+#endif /* CONFIG_SCSI_UFS_CRYPTO */
+ 	bool req_abort_skip;
  };
- 
- /* Returns true if clocks can be gated. Otherwise false */
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
