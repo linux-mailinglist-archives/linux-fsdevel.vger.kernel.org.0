@@ -2,108 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBFC765793
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 15:04:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B29816579C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 15:07:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbfGKNEf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jul 2019 09:04:35 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36987 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728068AbfGKNEe (ORCPT
+        id S1728440AbfGKNHC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jul 2019 09:07:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45256 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbfGKNHC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jul 2019 09:04:34 -0400
-Received: by mail-io1-f65.google.com with SMTP id q22so12339422iog.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jul 2019 06:04:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digidescorp.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=shtQwTN82SLzlsJ+3Dw6r1akGAa25vF9P/FWU52bI/A=;
-        b=bYHNLj2555c6nQAGFXIgsx02XGYUdwS5556hzj7AhU7eSNV5HudXIMxO9o/Tg+vHvR
-         J/JU8/EISnQ35BHU84MseRjDJTTCks5voIBeOq6zBVfTXscVdANrtBX/Ly5lUjLkkPYz
-         qLX9cR8Tku9cfQgOFkbDXFy20RvQEPcn7JRMc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=shtQwTN82SLzlsJ+3Dw6r1akGAa25vF9P/FWU52bI/A=;
-        b=nHZ670uRJeD+NiFH4wKtODAVsBvBxqd7bIDVm0c+b4ZPo6B8/wOeFA9gi2irasRCiy
-         ajJRdZ2GB1QM6UAV4+8jncF2hehSIeeXP7pXm8rk1LPVlkqDO2KoFYnY0v/zJB62OO2g
-         UUy9XQBJdt7BBO4Fy//Q01KF6FDEO8klLSGy984DSqBXL/mOWpFV8aswsfoHQKUY+nXz
-         VXu3F6xxu9qoLZyYbEuximdpq8UvrGsXDxlIFHlp8QvOom2gh2mSF1JabNw3POimsjwQ
-         lb/IZfUhQeKFQTHBURxI4FfmL6erWfePe9hvRGF+riCl8iTwMsBGlfKusmsnOT4V1hkh
-         1F5A==
-X-Gm-Message-State: APjAAAVagZLkN6tgIzpBcSl6dPm0XDWhBJTmdGBBfZZ/kVSO4qNp9gW3
-        1W9nqtiJ4ubz9DPT4HEDud/6pg==
-X-Google-Smtp-Source: APXvYqzKJRu7RRE0OzusmNdv5ntOQE2Vuy0JDu0xeE9VyYwevfdkM4d9gSmDfN4PNtDu81ZjH3M9/w==
-X-Received: by 2002:a5d:91d7:: with SMTP id k23mr4220181ior.163.1562850273790;
-        Thu, 11 Jul 2019 06:04:33 -0700 (PDT)
-Received: from iscandar.digidescorp.com (104-51-28-62.lightspeed.cicril.sbcglobal.net. [104.51.28.62])
-        by smtp.googlemail.com with ESMTPSA id l11sm4051951ioj.32.2019.07.11.06.04.32
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 11 Jul 2019 06:04:33 -0700 (PDT)
-From:   "Steven J. Magnani" <steve.magnani@digidescorp.com>
-X-Google-Original-From: "Steven J. Magnani" <steve@digidescorp.com>
-To:     Jan Kara <jack@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        "Steven J . Magnani" <steve@digidescorp.com>
-Subject: [PATCH 2/2] udf: support 2048-byte spacing of VRS descriptors on 4K media
-Date:   Thu, 11 Jul 2019 08:04:10 -0500
-Message-Id: <20190711130410.13047-2-steve@digidescorp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190711130410.13047-1-steve@digidescorp.com>
-References: <20190711130410.13047-1-steve@digidescorp.com>
+        Thu, 11 Jul 2019 09:07:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uB6GvQipfUImhV08891dUYAhTGVxS2/sDJOSj04yG0k=; b=Ls2Xv81qZlTY6bZagVazu/EV3
+        OyTqTWL9owsatConf5VKPWEgaJeQgkwvg9BpoQDKlBBAePe0mDMdtQlIvHcgxxbV5B5VxCzBpAKzk
+        l+JIGoEy5D/JaC/GJgvEopWxjHmDnuRU9UmoUvt/nMCGh36rSsyp12pfQ3GwXEL+b0ayEsW1xty27
+        xrLYvZQWjGHO1eqbFsgG+YHxH4/gzXr6eTnxAuj+gvE4s+Crxf8VddahxG+1402WOWkELwETJKxac
+        QV+Hc9KSnrPGJrA+j8aUTT5erv/uNIWm2acZnQIO7SZnwix9mNBE8XcTy9BigtkNd5oUEWyICIs9y
+        cRyz0Qavw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlYmf-0004Px-QH; Thu, 11 Jul 2019 13:06:49 +0000
+Date:   Thu, 11 Jul 2019 06:06:49 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     Andreas =?iso-8859-1?Q?Gr=FCnbacher?= 
+        <andreas.gruenbacher@gmail.com>, Chao Yu <yuchao0@huawei.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Gao Xiang <gaoxiang25@huawei.com>, chao@kernel.org
+Subject: Re: [RFC PATCH] iomap: generalize IOMAP_INLINE to cover tail-packing
+ case
+Message-ID: <20190711130649.GQ32320@bombadil.infradead.org>
+References: <20190703075502.79782-1-yuchao0@huawei.com>
+ <CAHpGcM+s77hKMXo=66nWNF7YKa3qhLY9bZrdb4-Lkspyg2CCDw@mail.gmail.com>
+ <39944e50-5888-f900-1954-91be2b12ea5b@huawei.com>
+ <CAHpGcMJ_wPJf8KtF3xMP_28pe4Vq4XozFtmd2EuZ+RTqZKQxLA@mail.gmail.com>
+ <1506e523-109d-7253-ee4b-961c4264781d@aol.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1506e523-109d-7253-ee4b-961c4264781d@aol.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some UDF creators (specifically Microsoft, but perhaps others) mishandle
-the ECMA-167 corner case that requires descriptors within a Volume
-Recognition Sequence to be placed at 4096-byte intervals on media where
-the block size is 4K. Instead, the descriptors are placed at the 2048-
-byte interval mandated for media with smaller blocks. This nonconformity
-currently prevents Linux from recognizing the filesystem as UDF.
+On Thu, Jul 11, 2019 at 07:42:20AM +0800, Gao Xiang wrote:
+> 
+> At 2019/7/11 ??????5:50, Andreas Gr??nbacher Wrote:
+> > At this point, can I ask how important this packing mechanism is to
+> > you? I can see a point in implementing inline files, which help
+> > because there tends to be a large number of very small files. But for
+> > not-so-small files, is saving an extra block really worth the trouble,
+> > especially given how cheap storage has become?
+> 
+> I would try to answer the above. I think there are several advantages by
+> using tail-end packing inline:
+> 1) It is more cache-friendly. Considering a file "A" accessed by user
+> now or recently, we
+> ?????? tend to (1) get more data about "A" (2) leave more data about "A"
+> according to LRU-like assumption
+> ?????? because it is more likely to be used than the metadata of some other
+> files "X", especially for files whose
+> ?????? tail-end block is relatively small enough (less than a threshold,
+> e.g. < 100B just for example);
+> 
+> 2) for directories files, tail-end packing will boost up those traversal
+> performance;
+> 
+> 3) I think tail-end packing is a more generic inline, it saves I/Os for
+> generic cases not just to
+> ?????? save the storage space;
+> 
+> "is saving an extra block really worth the trouble" I dont understand
+> what exact the trouble is...
 
-Modify the driver to tolerate a misformatted VRS on 4K media.
+"the trouble" is adding code complexity and additional things to test.
 
-Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
+I'm not sure you really understood Andreas' question.  He's saying that he
+understands the performance and space gain from packing short files
+(eg files less than 100 bytes).  But how many files are there between
+4096 and 4196 bytes in size, let alone between 8192 and 8292, 12384 and
+12484 ...
 
---- a/fs/udf/super.c	2019-07-10 20:55:33.334359446 -0500
-+++ b/fs/udf/super.c	2019-07-10 21:20:58.138382326 -0500
-@@ -741,6 +741,7 @@ static int udf_check_vsd(struct super_bl
- 	int sectorsize;
- 	struct buffer_head *bh = NULL;
- 	int nsr = 0;
-+	int quirk_nsr = 0;
- 	struct udf_sb_info *sbi;
- 
- 	sbi = UDF_SB(sb);
-@@ -780,11 +781,27 @@ static int udf_check_vsd(struct super_bl
- 		if (vsd_id > nsr)
- 			nsr = vsd_id;
- 
-+		/* Special handling for improperly formatted VRS (e.g., Win10)
-+		 * where components are separated by 2048 bytes
-+		 * even though sectors are 4K
-+		 */
-+		if ((sb->s_blocksize == 4096) && (quirk_nsr < 2)) {
-+			vsd_id = identify_vsd(vsd + 1);
-+			if ((nsr == 1) || (quirk_nsr == 1)) {
-+				/* BEA01 has been seen, allow quirk NSR */
-+				if (vsd_id > quirk_nsr)
-+					quirk_nsr = vsd_id;
-+			} else if (vsd_id > 3)
-+				quirk_nsr = vsd_id;  /* 0 -> 255 */
-+		}
-+
- 		brelse(bh);
- 	}
- 
- 	if ((nsr >= 2) && (nsr <= 3))
- 		return nsr;
-+	else if ((quirk_nsr >= 2) && (quirk_nsr <= 3))
-+		return quirk_nsr;
- 	else if (!bh && sector - (sbi->s_session << sb->s_blocksize_bits) ==
- 			VSD_FIRST_SECTOR_OFFSET)
- 		return -1;
+Is optimising for _those_ files worth it?
