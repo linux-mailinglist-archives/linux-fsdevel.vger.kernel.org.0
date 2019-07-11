@@ -2,255 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A42E6656DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 14:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A06165790
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 15:04:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbfGKM2h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jul 2019 08:28:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:62761 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725926AbfGKM2h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jul 2019 08:28:37 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 39D9830820C9;
-        Thu, 11 Jul 2019 12:28:36 +0000 (UTC)
-Received: from max.com (unknown [10.40.205.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 490E160603;
-        Thu, 11 Jul 2019 12:28:34 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gao Xiang <gaoxiang25@huawei.com>, chao@kernel.org
-Subject: Re: [RFC PATCH] iomap: generalize IOMAP_INLINE to cover tail-packing case
-Date:   Thu, 11 Jul 2019 14:28:31 +0200
-Message-Id: <20190711122831.3970-1-agruenba@redhat.com>
-In-Reply-To: <39944e50-5888-f900-1954-91be2b12ea5b@huawei.com>
-References: <20190703075502.79782-1-yuchao0@huawei.com> <CAHpGcM+s77hKMXo=66nWNF7YKa3qhLY9bZrdb4-Lkspyg2CCDw@mail.gmail.com> <39944e50-5888-f900-1954-91be2b12ea5b@huawei.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 11 Jul 2019 12:28:36 +0000 (UTC)
+        id S1728465AbfGKNE2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jul 2019 09:04:28 -0400
+Received: from mail-io1-f53.google.com ([209.85.166.53]:44132 "EHLO
+        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728226AbfGKNE1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Jul 2019 09:04:27 -0400
+Received: by mail-io1-f53.google.com with SMTP id s7so12253868iob.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jul 2019 06:04:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digidescorp.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=GGCfBTnKFypHSz3MKJ6YppDuAUrI5zYaZIUkoyhrq8o=;
+        b=Jr7Vd7r1Z/ZvARlkea9pw32BCUC3MhmPvhr68LuqBqeireBBPu5+Ni1w7m/JhALmOV
+         0nzb43cKwCs1GzDj7NacJZm/A67UlNC/GyxiRY8/FWlCik6ZblyBIVbZ5GBNCt/Cifsn
+         iR5X25cYmRA+t8rZDYxBkTMEbUSUcIcwzgL9w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GGCfBTnKFypHSz3MKJ6YppDuAUrI5zYaZIUkoyhrq8o=;
+        b=pk3C6jbVujIPbL0+sFpy1KiSaTbzNmXl6gsvz9Z2y+UWMXlvK9khT1PzuRGOCLCHDq
+         WrxwAQaeouFpoM7gVTgiOBo/6b2CA/dHcq2kAnVq+ma1j0sBMXqHEZSc+M43nPbkUQHC
+         P4TBI3s8h034gVKLna07WyQZNdCjRQAAzRWrdBdkVDdDZOSCwJbIkXeakXUlX2BgzuK7
+         Y3fkp0vaMUZr5L55Pc9vlIZr6egn99G2K6e6ckUubKwHAJ5I9hN7ohs0tnagom/ZyhZ0
+         /IGyUCnQF+o/2r11PUw/pkq/spE1+cJu/zQOsc2wlxrya4UqTmdbY9Pgux5Kt/XnTsP2
+         O4Ag==
+X-Gm-Message-State: APjAAAWk8qzHmbLvSQfgojyJIQnrqNgRkfPOb5nQsb7gf+gpApb1NR1Z
+        v/AYGdD2kxTF9jcmjINXj4U9cD600rA=
+X-Google-Smtp-Source: APXvYqzRr5xpAiyzpEsahGkQAmfIJfAjowpULAni25ciz7QjERdANFMxNIQK4Mzk1a6TSv5Tn6RgEw==
+X-Received: by 2002:a5d:9e48:: with SMTP id i8mr2662448ioi.51.1562850266543;
+        Thu, 11 Jul 2019 06:04:26 -0700 (PDT)
+Received: from iscandar.digidescorp.com (104-51-28-62.lightspeed.cicril.sbcglobal.net. [104.51.28.62])
+        by smtp.googlemail.com with ESMTPSA id l11sm4051951ioj.32.2019.07.11.06.04.25
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 11 Jul 2019 06:04:26 -0700 (PDT)
+From:   "Steven J. Magnani" <steve.magnani@digidescorp.com>
+X-Google-Original-From: "Steven J. Magnani" <steve@digidescorp.com>
+To:     Jan Kara <jack@suse.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        "Steven J . Magnani" <steve@digidescorp.com>
+Subject: [PATCH 1/2] udf: refactor VRS descriptor identification
+Date:   Thu, 11 Jul 2019 08:04:09 -0500
+Message-Id: <20190711130410.13047-1-steve@digidescorp.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Something along the lines of the attached, broken patch might work in
-the end.
+Extract code that parses a Volume Recognition Sequence descriptor
+(component), in preparation for calling it twice against different
+locations in a block.
 
-Andreas
+Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
 
----
- fs/buffer.c           | 10 ++++--
- fs/iomap.c            | 74 +++++++++++++++++++++++++++++--------------
- include/linux/iomap.h |  3 ++
- 3 files changed, 61 insertions(+), 26 deletions(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index e450c55f6434..8d8668e377ab 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1873,8 +1873,8 @@ void page_zero_new_buffers(struct page *page, unsigned from, unsigned to)
- EXPORT_SYMBOL(page_zero_new_buffers);
- 
- static void
--iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
--		struct iomap *iomap)
-+iomap_to_bh(struct inode *inode, struct page *page, sector_t block,
-+		struct buffer_head *bh, struct iomap *iomap)
- {
- 	loff_t offset = block << inode->i_blkbits;
- 
-@@ -1924,6 +1924,10 @@ iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
- 				inode->i_blkbits;
- 		set_buffer_mapped(bh);
- 		break;
-+	case IOMAP_INLINE:
-+		__iomap_read_inline_data(inode, page, iomap);
-+		set_buffer_uptodate(bh);
-+		break;
- 	}
+--- a/fs/udf/super.c	2019-07-10 18:57:41.192852154 -0500
++++ b/fs/udf/super.c	2019-07-10 20:47:50.438352500 -0500
+@@ -685,16 +685,62 @@ out_unlock:
+ 	return error;
  }
  
-@@ -1969,7 +1973,7 @@ int __block_write_begin_int(struct page *page, loff_t pos, unsigned len,
- 				if (err)
- 					break;
- 			} else {
--				iomap_to_bh(inode, block, bh, iomap);
-+				iomap_to_bh(inode, page, block, bh, iomap);
- 			}
- 
- 			if (buffer_new(bh)) {
-diff --git a/fs/iomap.c b/fs/iomap.c
-index 45aa58e837b5..61188e95def2 100644
---- a/fs/iomap.c
-+++ b/fs/iomap.c
-@@ -260,24 +260,47 @@ struct iomap_readpage_ctx {
- 	struct list_head	*pages;
- };
- 
--static void
--iomap_read_inline_data(struct inode *inode, struct page *page,
-+#define offset_in_block(offset, inode) \
-+	((unsigned long)(offset) & (i_blocksize(inode) - 1))
-+
-+static bool
-+inline_data_within_block(struct inode *inode, struct iomap *iomap,
-+		unsigned int size)
+-/* Check Volume Structure Descriptors (ECMA 167 2/9.1) */
+-/* We also check any "CD-ROM Volume Descriptor Set" (ECMA 167 2/8.3.1) */
+-static loff_t udf_check_vsd(struct super_block *sb)
++static int identify_vsd(const struct volStructDesc *vsd)
 +{
-+	unsigned int off = offset_in_block(iomap->inline_data, inode);
++	int vsd_id = 0;
 +
-+	return size <= i_blocksize(inode) - off;
-+}
-+
-+void
-+__iomap_read_inline_data(struct inode *inode, struct page *page,
- 		struct iomap *iomap)
- {
--	size_t size = i_size_read(inode);
-+	size_t size = offset_in_block(i_size_read(inode), inode);
-+	unsigned int poff = offset_in_page(iomap->offset);
-+	unsigned int bsize = i_blocksize(inode);
- 	void *addr;
- 
- 	if (PageUptodate(page))
- 		return;
- 
--	BUG_ON(page->index);
--	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
-+	BUG_ON(!inline_data_within_block(inode, iomap, size));
- 
- 	addr = kmap_atomic(page);
--	memcpy(addr, iomap->inline_data, size);
--	memset(addr + size, 0, PAGE_SIZE - size);
-+	memcpy(addr + poff, iomap->inline_data, size);
-+	memset(addr + poff + size, 0, bsize - size);
- 	kunmap_atomic(addr);
--	SetPageUptodate(page);
-+}
-+
-+static void
-+iomap_read_inline_data(struct inode *inode, struct page *page,
-+		struct iomap *iomap)
-+{
-+	unsigned int poff = offset_in_page(iomap->offset);
-+	unsigned int bsize = i_blocksize(inode);
-+
-+	__iomap_read_inline_data(inode, page, iomap);
-+	iomap_set_range_uptodate(page, poff, bsize);
- }
- 
- static loff_t
-@@ -292,11 +315,8 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 	unsigned poff, plen;
- 	sector_t sector;
- 
--	if (iomap->type == IOMAP_INLINE) {
--		WARN_ON_ONCE(pos);
-+	if (iomap->type == IOMAP_INLINE)
- 		iomap_read_inline_data(inode, page, iomap);
--		return PAGE_SIZE;
--	}
- 
- 	/* zero post-eof blocks as the page may be mapped */
- 	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
-@@ -637,6 +657,11 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len,
- 	if (PageUptodate(page))
- 		return 0;
- 
-+	if (iomap->type == IOMAP_INLINE) {
-+		iomap_read_inline_data(inode, page, iomap);
-+		return 0;
++	if (!strncmp(vsd->stdIdent, VSD_STD_ID_CD001, VSD_STD_ID_LEN)) {
++		switch (vsd->structType) {
++		case 0:
++			udf_debug("ISO9660 Boot Record found\n");
++			break;
++		case 1:
++			udf_debug("ISO9660 Primary Volume Descriptor found\n");
++			break;
++		case 2:
++			udf_debug("ISO9660 Supplementary Volume Descriptor found\n");
++			break;
++		case 3:
++			udf_debug("ISO9660 Volume Partition Descriptor found\n");
++			break;
++		case 255:
++			udf_debug("ISO9660 Volume Descriptor Set Terminator found\n");
++			break;
++		default:
++			udf_debug("ISO9660 VRS (%u) found\n", vsd->structType);
++			break;
++		}
++	} else if (!strncmp(vsd->stdIdent, VSD_STD_ID_BEA01, VSD_STD_ID_LEN))
++		vsd_id = 1;
++	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_NSR02, VSD_STD_ID_LEN))
++		vsd_id = 2;
++	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_NSR03, VSD_STD_ID_LEN))
++		vsd_id = 3;
++	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_BOOT2, VSD_STD_ID_LEN))
++		; /* vsd_id = 0 */
++	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_CDW02, VSD_STD_ID_LEN))
++		; /* vsd_id = 0 */
++	else {
++		/* TEA01 or invalid id : end of volume recognition area */
++		vsd_id = 255;
 +	}
 +
- 	do {
- 		iomap_adjust_read_range(inode, iop, &block_start,
- 				block_end - block_start, &poff, &plen);
-@@ -682,9 +707,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
- 		goto out_no_page;
- 	}
- 
--	if (iomap->type == IOMAP_INLINE)
--		iomap_read_inline_data(inode, page, iomap);
--	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
-+	if (iomap->flags & IOMAP_F_BUFFER_HEAD)
- 		status = __block_write_begin_int(page, pos, len, NULL, iomap);
- 	else
- 		status = __iomap_write_begin(inode, pos, len, page, iomap);
-@@ -761,11 +784,11 @@ iomap_write_end_inline(struct inode *inode, struct page *page,
- {
- 	void *addr;
- 
--	WARN_ON_ONCE(!PageUptodate(page));
--	BUG_ON(pos + copied > PAGE_SIZE - offset_in_page(iomap->inline_data));
-+	BUG_ON(!inline_data_within_block(inode, iomap, pos + copied));
- 
- 	addr = kmap_atomic(page);
--	memcpy(iomap->inline_data + pos, addr + pos, copied);
-+	memcpy(iomap->inline_data + offset_in_block(pos, inode),
-+	       addr + offset_in_page(pos), copied);
- 	kunmap_atomic(addr);
- 
- 	mark_inode_dirty(inode);
-@@ -1064,7 +1087,7 @@ iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
- 		const struct iomap_ops *ops)
- {
- 	unsigned int blocksize = i_blocksize(inode);
--	unsigned int off = pos & (blocksize - 1);
-+	unsigned int off = offset_in_block(pos, inode);
- 
- 	/* Block boundary? Nothing to do */
- 	if (!off)
-@@ -1772,21 +1795,26 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
- 	struct iov_iter *iter = dio->submit.iter;
- 	size_t copied;
- 
--	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
-+	BUG_ON(!inline_data_within_block(inode, iomap, pos + length));
- 
- 	if (dio->flags & IOMAP_DIO_WRITE) {
- 		loff_t size = inode->i_size;
- 
- 		if (pos > size)
--			memset(iomap->inline_data + size, 0, pos - size);
--		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
-+			memset(iomap->inline_data +
-+			       offset_in_block(size, inode), 0, pos - size);
-+		copied = copy_from_iter(iomap->inline_data +
-+					offset_in_block(pos, inode),
-+					length, iter);
- 		if (copied) {
- 			if (pos + copied > size)
- 				i_size_write(inode, pos + copied);
- 			mark_inode_dirty(inode);
- 		}
- 	} else {
--		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
-+		copied = copy_to_iter(iomap->inline_data +
-+				      offset_in_block(pos, inode),
-+				      length, iter);
- 	}
- 	dio->size += copied;
- 	return copied;
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 2103b94cb1bf..a8a60dd2fdc0 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -131,6 +131,9 @@ static inline struct iomap_page *to_iomap_page(struct page *page)
- 	return NULL;
- }
- 
-+void __iomap_read_inline_data(struct inode *inode, struct page *page,
-+		struct iomap *iomap);
++	return vsd_id;
++}
 +
- ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
- 		const struct iomap_ops *ops);
- int iomap_readpage(struct page *page, const struct iomap_ops *ops);
--- 
-2.20.1
-
++/*
++ * Check Volume Structure Descriptors (ECMA 167 2/9.1)
++ * We also check any "CD-ROM Volume Descriptor Set" (ECMA 167 2/8.3.1)
++ * @return   2 if NSR02 found, 3 if NSR03 found,
++ *	    -1 if first sector read error, 0 otherwise
++ */
++static int udf_check_vsd(struct super_block *sb)
+ {
+ 	struct volStructDesc *vsd = NULL;
+ 	loff_t sector = VSD_FIRST_SECTOR_OFFSET;
+ 	int sectorsize;
+ 	struct buffer_head *bh = NULL;
+-	int nsr02 = 0;
+-	int nsr03 = 0;
++	int nsr = 0;
+ 	struct udf_sb_info *sbi;
+ 
+ 	sbi = UDF_SB(sb);
+@@ -718,71 +764,27 @@ static loff_t udf_check_vsd(struct super
+ 	 * activity. This actually happened with uninitialised SSD partitions
+ 	 * (all 0xFF) before the check for the limit and all valid IDs were
+ 	 * added */
+-	for (; !nsr02 && !nsr03 && sector < VSD_MAX_SECTOR_OFFSET;
++	for (; (nsr < 2) && sector < VSD_MAX_SECTOR_OFFSET;
+ 	     sector += sectorsize) {
++		int vsd_id;
++
+ 		/* Read a block */
+ 		bh = udf_tread(sb, sector >> sb->s_blocksize_bits);
+ 		if (!bh)
+ 			break;
+ 
+-		/* Look for ISO  descriptors */
+ 		vsd = (struct volStructDesc *)(bh->b_data +
+ 					      (sector & (sb->s_blocksize - 1)));
+ 
+-		if (!strncmp(vsd->stdIdent, VSD_STD_ID_CD001,
+-				    VSD_STD_ID_LEN)) {
+-			switch (vsd->structType) {
+-			case 0:
+-				udf_debug("ISO9660 Boot Record found\n");
+-				break;
+-			case 1:
+-				udf_debug("ISO9660 Primary Volume Descriptor found\n");
+-				break;
+-			case 2:
+-				udf_debug("ISO9660 Supplementary Volume Descriptor found\n");
+-				break;
+-			case 3:
+-				udf_debug("ISO9660 Volume Partition Descriptor found\n");
+-				break;
+-			case 255:
+-				udf_debug("ISO9660 Volume Descriptor Set Terminator found\n");
+-				break;
+-			default:
+-				udf_debug("ISO9660 VRS (%u) found\n",
+-					  vsd->structType);
+-				break;
+-			}
+-		} else if (!strncmp(vsd->stdIdent, VSD_STD_ID_BEA01,
+-				    VSD_STD_ID_LEN))
+-			; /* nothing */
+-		else if (!strncmp(vsd->stdIdent, VSD_STD_ID_TEA01,
+-				    VSD_STD_ID_LEN)) {
+-			brelse(bh);
+-			break;
+-		} else if (!strncmp(vsd->stdIdent, VSD_STD_ID_NSR02,
+-				    VSD_STD_ID_LEN))
+-			nsr02 = sector;
+-		else if (!strncmp(vsd->stdIdent, VSD_STD_ID_NSR03,
+-				    VSD_STD_ID_LEN))
+-			nsr03 = sector;
+-		else if (!strncmp(vsd->stdIdent, VSD_STD_ID_BOOT2,
+-				    VSD_STD_ID_LEN))
+-			; /* nothing */
+-		else if (!strncmp(vsd->stdIdent, VSD_STD_ID_CDW02,
+-				    VSD_STD_ID_LEN))
+-			; /* nothing */
+-		else {
+-			/* invalid id : end of volume recognition area */
+-			brelse(bh);
+-			break;
+-		}
++		vsd_id = identify_vsd(vsd);
++		if (vsd_id > nsr)
++			nsr = vsd_id;
++
+ 		brelse(bh);
+ 	}
+ 
+-	if (nsr03)
+-		return nsr03;
+-	else if (nsr02)
+-		return nsr02;
++	if ((nsr >= 2) && (nsr <= 3))
++		return nsr;
+ 	else if (!bh && sector - (sbi->s_session << sb->s_blocksize_bits) ==
+ 			VSD_FIRST_SECTOR_OFFSET)
+ 		return -1;
+@@ -1936,7 +1938,7 @@ static int udf_load_vrs(struct super_blo
+ 			int silent, struct kernel_lb_addr *fileset)
+ {
+ 	struct udf_sb_info *sbi = UDF_SB(sb);
+-	loff_t nsr_off;
++	int nsr = 0;
+ 	int ret;
+ 
+ 	if (!sb_set_blocksize(sb, uopt->blocksize)) {
+@@ -1947,13 +1949,13 @@ static int udf_load_vrs(struct super_blo
+ 	sbi->s_last_block = uopt->lastblock;
+ 	if (!uopt->novrs) {
+ 		/* Check that it is NSR02 compliant */
+-		nsr_off = udf_check_vsd(sb);
+-		if (!nsr_off) {
++		nsr = udf_check_vsd(sb);
++		if (!nsr) {
+ 			if (!silent)
+ 				udf_warn(sb, "No VRS found\n");
+ 			return -EINVAL;
+ 		}
+-		if (nsr_off == -1)
++		if (nsr == 255)
+ 			udf_debug("Failed to read sector at offset %d. "
+ 				  "Assuming open disc. Skipping validity "
+ 				  "check\n", VSD_FIRST_SECTOR_OFFSET);
