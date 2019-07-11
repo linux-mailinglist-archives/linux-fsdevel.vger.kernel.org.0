@@ -2,103 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C372B658FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 16:30:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AB81659D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 17:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728788AbfGKO1o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jul 2019 10:27:44 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55754 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728505AbfGKO1o (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:27:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=kgSCqCMgkzHP3NI7bApdCQ2mgMy1VndTbhMfuP51VMY=; b=vYqpYvpe4pu04ng6B0A06A2Ebt
-        IEotIWqUDGlLiIeJXs3STCRzutaBfRE8kMERKV9c7ZRD5PB+jVgbutrHwHhFQdoFSNubb17mq05ay
-        pILpcnf6sG5BKWFktgHStubOK9UqnnoPCyptfIMcsrCDcCoV/zaZdI6rh/UVSFFCapTpb0LStSgYV
-        XEAUQnYOyieF5R42wT7u2kL17EUSlkCjtyvlmXvQQsct3CXPyDLrc3Cixv/gAoOluBL6Y/OSSpg9A
-        iqvrC7IKzdy209HkI4yhcxi7UtnvQ5PpTa86x0CyyEahVMeohTVHZCpUSg97S19SCOjj4iR+cjY8o
-        1+fQ8g6g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hla2n-0003zh-2O; Thu, 11 Jul 2019 14:27:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D714220213042; Thu, 11 Jul 2019 16:27:28 +0200 (CEST)
-Date:   Thu, 11 Jul 2019 16:27:28 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        Mel Gorman <mgorman@suse.de>, riel@surriel.com
-Subject: Re: [PATCH 4/4] numa: introduce numa cling feature
-Message-ID: <20190711142728.GF3402@hirez.programming.kicks-ass.net>
-References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
- <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
- <9a440936-1e5d-d3bb-c795-ef6f9839a021@linux.alibaba.com>
+        id S1729074AbfGKO6Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jul 2019 10:58:24 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2209 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728594AbfGKO6X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Jul 2019 10:58:23 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2155F3980DF446C8B868;
+        Thu, 11 Jul 2019 22:58:18 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 11 Jul
+ 2019 22:58:10 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v2 00/24] erofs: promote erofs from staging
+Date:   Thu, 11 Jul 2019 22:57:31 +0800
+Message-ID: <20190711145755.33908-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9a440936-1e5d-d3bb-c795-ef6f9839a021@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 11:34:16AM +0800, 王贇 wrote:
-> Although we paid so many effort to settle down task on a particular
-> node, there are still chances for a task to leave it's preferred
-> node, that is by wakeup, numa swap migrations or load balance.
-> 
-> When we are using cpu cgroup in share way, since all the workloads
-> see all the cpus, it could be really bad especially when there
-> are too many fast wakeup, although now we can numa group the tasks,
-> they won't really stay on the same node, for example we have numa
-> group ng_A, ng_B, ng_C, ng_D, it's very likely result as:
-> 
-> 	CPU Usage:
-> 		Node 0		Node 1
-> 		ng_A(600%)	ng_A(400%)
-> 		ng_B(400%)	ng_B(600%)
-> 		ng_C(400%)	ng_C(600%)
-> 		ng_D(600%)	ng_D(400%)
-> 
-> 	Memory Ratio:
-> 		Node 0		Node 1
-> 		ng_A(60%)	ng_A(40%)
-> 		ng_B(40%)	ng_B(60%)
-> 		ng_C(40%)	ng_C(60%)
-> 		ng_D(60%)	ng_D(40%)
-> 
-> Locality won't be too bad but far from the best situation, we want
-> a numa group to settle down thoroughly on a particular node, with
-> every thing balanced.
-> 
-> Thus we introduce the numa cling, which try to prevent tasks leaving
-> the preferred node on wakeup fast path.
+Changelog from v1:
+ o resend the whole filesystem into a patchset suggested by Greg;
+ o code is more cleaner, especially for decompression frontend.
+
+--8<----------
+
+Hi,
+
+EROFS file system has been in Linux-staging for about a year.
+It has been proved to be stable enough to move out of staging
+by 10+ millions of HUAWEI Android mobile phones on the market
+from EMUI 9.0.1, and it was promoted as one of the key features
+of EMUI 9.1 [1], including P30(pro).
+
+EROFS is a read-only file system designed to save extra storage
+space with guaranteed end-to-end performance by applying
+fixed-size output compression, inplace I/O and decompression
+inplace technologies [2] to Linux filesystem.
+
+In our observation, EROFS is one of the fastest Linux compression
+filesystem using buffered I/O in the world. It will support
+direct I/O in the future if needed. EROFS even has better read
+performance in a large CR range compared with generic uncompressed
+file systems with proper CPU-storage combination, which is
+a reason why EROFS can be landed to speed up mobile phone
+performance, and which can be probably used for other use cases
+such as LiveCD and Docker image as well.
+
+Currently EROFS supports 4k LZ4 fixed-size output compression
+since LZ4 is the fastest widely-used decompression solution in
+the world and 4k leads to unnoticable read amplification for
+the worst case. More compression algorithms and cluster sizes
+could be added later, which depends on the real requirement.
+
+More informations about EROFS itself are available at:
+ Documentation/filesystems/erofs.txt
+ https://kccncosschn19eng.sched.com/event/Nru2/erofs-an-introduction-and-our-smartphone-practice-xiang-gao-huawei
+
+erofs-utils (mainly mkfs.erofs now) is available at
+git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
+
+Preliminary iomap support has been pending in EROFS mailing
+list by Chao Yu. The key issue is that current iomap doesn't
+support tail-end packing inline data yet, it should be
+resolved later.
+
+Thanks to many contributors in the last year, the code is more
+clean and improved. We hope EROFS can be used in wider use cases
+so let's promote erofs out of staging and enhance it more actively.
+
+Share comments about EROFS! We think EROFS is useful to
+community as a part of Linux upstream.
+
+Thank you very much,
+Gao Xiang
+
+[1] http://web.archive.org/web/20190627021241/https://consumer.huawei.com/en/emui/
+[2] https://lore.kernel.org/lkml/20190624072258.28362-1-hsiangkao@aol.com/
+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Chao Yu <yuchao0@huawei.com>
+Cc: Miao Xie <miaoxie@huawei.com>
+Cc: Li Guifu <bluce.liguifu@huawei.com>
+Cc: Fang Wei <fangwei1@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 
 
-> @@ -6195,6 +6447,13 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
->  	if ((unsigned)i < nr_cpumask_bits)
->  		return i;
-> 
-> +	/*
-> +	 * Failed to find an idle cpu, wake affine may want to pull but
-> +	 * try stay on prev-cpu when the task cling to it.
-> +	 */
-> +	if (task_numa_cling(p, cpu_to_node(prev), cpu_to_node(target)))
-> +		return prev;
-> +
->  	return target;
->  }
+Gao Xiang (24):
+  erofs: add on-disk layout
+  erofs: add erofs in-memory stuffs
+  erofs: add super block operations
+  erofs: add raw address_space operations
+  erofs: add inode operations
+  erofs: support special inode
+  erofs: add directory operations
+  erofs: add namei functions
+  erofs: support tracepoint
+  erofs: update Kconfig and Makefile
+  erofs: introduce xattr & posixacl support
+  erofs: introduce tagged pointer
+  erofs: add compression indexes support
+  erofs: introduce superblock registration
+  erofs: introduce erofs shrinker
+  erofs: introduce workstation for decompression
+  erofs: introduce per-CPU buffers implementation
+  erofs: introduce pagevec for decompression subsystem
+  erofs: add erofs_allocpage()
+  erofs: introduce generic decompression backend
+  erofs: introduce LZ4 decompression inplace
+  erofs: introduce the decompression frontend
+  erofs: introduce cached decompression
+  erofs: add document
 
-Select idle sibling should never cross node boundaries and is thus the
-entirely wrong place to fix anything.
+ Documentation/filesystems/erofs.txt |  211 ++++
+ fs/Kconfig                          |    1 +
+ fs/Makefile                         |    1 +
+ fs/erofs/Kconfig                    |  154 +++
+ fs/erofs/Makefile                   |   11 +
+ fs/erofs/compress.h                 |   89 ++
+ fs/erofs/data.c                     |  390 ++++++++
+ fs/erofs/decompressor.c             |  329 ++++++
+ fs/erofs/dir.c                      |  147 +++
+ fs/erofs/erofs_fs.h                 |  317 ++++++
+ fs/erofs/inode.c                    |  326 ++++++
+ fs/erofs/internal.h                 |  566 +++++++++++
+ fs/erofs/namei.c                    |  250 +++++
+ fs/erofs/super.c                    |  616 ++++++++++++
+ fs/erofs/tagptr.h                   |  110 ++
+ fs/erofs/utils.c                    |  416 ++++++++
+ fs/erofs/xattr.c                    |  700 +++++++++++++
+ fs/erofs/xattr.h                    |   93 ++
+ fs/erofs/zdata.c                    | 1439 +++++++++++++++++++++++++++
+ fs/erofs/zdata.h                    |  201 ++++
+ fs/erofs/zmap.c                     |  462 +++++++++
+ fs/erofs/zpvec.h                    |  159 +++
+ include/trace/events/erofs.h        |  256 +++++
+ 23 files changed, 7244 insertions(+)
+ create mode 100644 Documentation/filesystems/erofs.txt
+ create mode 100644 fs/erofs/Kconfig
+ create mode 100644 fs/erofs/Makefile
+ create mode 100644 fs/erofs/compress.h
+ create mode 100644 fs/erofs/data.c
+ create mode 100644 fs/erofs/decompressor.c
+ create mode 100644 fs/erofs/dir.c
+ create mode 100644 fs/erofs/erofs_fs.h
+ create mode 100644 fs/erofs/inode.c
+ create mode 100644 fs/erofs/internal.h
+ create mode 100644 fs/erofs/namei.c
+ create mode 100644 fs/erofs/super.c
+ create mode 100644 fs/erofs/tagptr.h
+ create mode 100644 fs/erofs/utils.c
+ create mode 100644 fs/erofs/xattr.c
+ create mode 100644 fs/erofs/xattr.h
+ create mode 100644 fs/erofs/zdata.c
+ create mode 100644 fs/erofs/zdata.h
+ create mode 100644 fs/erofs/zmap.c
+ create mode 100644 fs/erofs/zpvec.h
+ create mode 100644 include/trace/events/erofs.h
+
+-- 
+2.17.1
+
