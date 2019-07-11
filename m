@@ -2,105 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 752606585E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 16:00:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C9436588B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 16:10:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbfGKOAS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jul 2019 10:00:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51082 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728102AbfGKOAS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:00:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F3AB4AF57;
-        Thu, 11 Jul 2019 14:00:16 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 2E77A1E43CE; Thu, 11 Jul 2019 16:00:16 +0200 (CEST)
-From:   Jan Kara <jack@suse.cz>
-To:     <linux-fsdevel@vger.kernel.org>
-Cc:     <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Boaz Harrosh <boaz@plexistor.com>, Jan Kara <jack@suse.cz>,
-        stable@vger.kernel.org
-Subject: [PATCH 3/3] xfs: Fix stale data exposure when readahead races with hole punch
-Date:   Thu, 11 Jul 2019 16:00:12 +0200
-Message-Id: <20190711140012.1671-4-jack@suse.cz>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190711140012.1671-1-jack@suse.cz>
-References: <20190711140012.1671-1-jack@suse.cz>
+        id S1728421AbfGKOKs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jul 2019 10:10:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58376 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbfGKOKs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Jul 2019 10:10:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=dmt+pyxw4T8mpV04yaOR9Ac6pmdUH/6jx5BRJ/VTKwk=; b=coBVf6pqOhCxhlHxZ9jfrb5HIq
+        ZIxMQPsvl/1QYBSuJZ2qrOQS7f4mGMfasw7bXNG0qpCNsuWadIMZLNwl7OYbGVCJd2UbbWWOT8ulL
+        jieZjB9EX28Ot8ElDXoevE6hXg5n/VAFcpM98wDmKV6665EcvkBeD9L5rJycn1WxB6LHzIxH8wXvq
+        ai4b9IGzqcLo5U+aVro7B8GQnPKYlV/UqE2Z+Q0QYcOCk2KgY8s9EUTYzgQoyOdASD0VX/9FFt6rL
+        IhYObU/yrPxXR0U5ksG4M3yFW1wLduESZnhsr2ZVMTiJV6QfLbdbuv0idzy2WmW/c3WpQM91jVDUb
+        pIsG/a8w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlZmS-00016J-Jn; Thu, 11 Jul 2019 14:10:40 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 661B320976D81; Thu, 11 Jul 2019 16:10:38 +0200 (CEST)
+Date:   Thu, 11 Jul 2019 16:10:38 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        Mel Gorman <mgorman@suse.de>, riel@surriel.com
+Subject: Re: [PATCH 3/4] numa: introduce numa group per task group
+Message-ID: <20190711141038.GE3402@hirez.programming.kicks-ass.net>
+References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
+ <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
+ <93cf9333-2f9a-ca1e-a4a6-54fc388d1673@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <93cf9333-2f9a-ca1e-a4a6-54fc388d1673@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hole puching currently evicts pages from page cache and then goes on to
-remove blocks from the inode. This happens under both XFS_IOLOCK_EXCL
-and XFS_MMAPLOCK_EXCL which provides appropriate serialization with
-racing reads or page faults. However there is currently nothing that
-prevents readahead triggered by fadvise() or madvise() from racing with
-the hole punch and instantiating page cache page after hole punching has
-evicted page cache in xfs_flush_unmap_range() but before it has removed
-blocks from the inode. This page cache page will be mapping soon to be
-freed block and that can lead to returning stale data to userspace or
-even filesystem corruption.
+On Wed, Jul 03, 2019 at 11:32:32AM +0800, 王贇 wrote:
+> By tracing numa page faults, we recognize tasks sharing the same page,
+> and try pack them together into a single numa group.
+> 
+> However when two task share lot's of cache pages while not much
+> anonymous pages, since numa balancing do not tracing cache page, they
+> have no chance to join into the same group.
+> 
+> While tracing cache page cost too much, we could use some hints from
 
-Fix the problem by protecting handling of readahead requests by
-XFS_IOLOCK_SHARED similarly as we protect reads.
+I forgot; where again do we skip shared pages? task_numa_work() doesn't
+seem to skip file vmas.
 
-CC: stable@vger.kernel.org
-Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com/
-Reported-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/xfs/xfs_file.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+> userland and cpu cgroup could be a good one.
+> 
+> This patch introduced new entry 'numa_group' for cpu cgroup, by echo
+> non-zero into the entry, we can now force all the tasks of this cgroup
+> to join the same numa group serving for task group.
+> 
+> In this way tasks are more likely to settle down on the same node, to
+> share closer cpu cache and gain benefit from NUMA on both file/anonymous
+> pages.
+> 
+> Besides, when multiple cgroup enabled numa group, they will be able to
+> exchange task location by utilizing numa migration, in this way they
+> could achieve single node settle down without breaking load balance.
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 76748255f843..88fe3dbb3ba2 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -33,6 +33,7 @@
- #include <linux/pagevec.h>
- #include <linux/backing-dev.h>
- #include <linux/mman.h>
-+#include <linux/fadvise.h>
- 
- static const struct vm_operations_struct xfs_file_vm_ops;
- 
-@@ -939,6 +940,24 @@ xfs_file_fallocate(
- 	return error;
- }
- 
-+STATIC int
-+xfs_file_fadvise(
-+	struct file *file,
-+	loff_t start,
-+	loff_t end,
-+	int advice)
-+{
-+	struct xfs_inode *ip = XFS_I(file_inode(file));
-+	int ret;
-+
-+	/* Readahead needs protection from hole punching and similar ops */
-+	if (advice == POSIX_FADV_WILLNEED)
-+		xfs_ilock(ip, XFS_IOLOCK_SHARED);
-+	ret = generic_fadvise(file, start, end, advice);
-+	if (advice == POSIX_FADV_WILLNEED)
-+		xfs_iunlock(ip, XFS_IOLOCK_SHARED);
-+	return ret;
-+}
- 
- STATIC loff_t
- xfs_file_remap_range(
-@@ -1235,6 +1254,7 @@ const struct file_operations xfs_file_operations = {
- 	.fsync		= xfs_file_fsync,
- 	.get_unmapped_area = thp_get_unmapped_area,
- 	.fallocate	= xfs_file_fallocate,
-+	.fadvise	= xfs_file_fadvise,
- 	.remap_file_range = xfs_file_remap_range,
- };
- 
--- 
-2.16.4
+I dislike cgroup only interfaces; it there really nothing else we could
+use for this?
 
