@@ -2,84 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C9436588B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 16:10:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 256046589A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 16:14:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728421AbfGKOKs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jul 2019 10:10:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58376 "EHLO
+        id S1728421AbfGKONw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jul 2019 10:13:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59354 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbfGKOKs (ORCPT
+        with ESMTP id S1726116AbfGKONw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:10:48 -0400
+        Thu, 11 Jul 2019 10:13:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=dmt+pyxw4T8mpV04yaOR9Ac6pmdUH/6jx5BRJ/VTKwk=; b=coBVf6pqOhCxhlHxZ9jfrb5HIq
-        ZIxMQPsvl/1QYBSuJZ2qrOQS7f4mGMfasw7bXNG0qpCNsuWadIMZLNwl7OYbGVCJd2UbbWWOT8ulL
-        jieZjB9EX28Ot8ElDXoevE6hXg5n/VAFcpM98wDmKV6665EcvkBeD9L5rJycn1WxB6LHzIxH8wXvq
-        ai4b9IGzqcLo5U+aVro7B8GQnPKYlV/UqE2Z+Q0QYcOCk2KgY8s9EUTYzgQoyOdASD0VX/9FFt6rL
-        IhYObU/yrPxXR0U5ksG4M3yFW1wLduESZnhsr2ZVMTiJV6QfLbdbuv0idzy2WmW/c3WpQM91jVDUb
-        pIsG/a8w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlZmS-00016J-Jn; Thu, 11 Jul 2019 14:10:40 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 661B320976D81; Thu, 11 Jul 2019 16:10:38 +0200 (CEST)
-Date:   Thu, 11 Jul 2019 16:10:38 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        Mel Gorman <mgorman@suse.de>, riel@surriel.com
-Subject: Re: [PATCH 3/4] numa: introduce numa group per task group
-Message-ID: <20190711141038.GE3402@hirez.programming.kicks-ass.net>
-References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
- <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
- <93cf9333-2f9a-ca1e-a4a6-54fc388d1673@linux.alibaba.com>
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=A+M9EKycY4/Na49/3ZTutvW03nTdeCovAhe5sPEc738=; b=DWaYAaHL39mYbsCRqEJ3S1QQ7
+        P02squV/NBUTgulBtI4yUhtjhZPbXviXwn5cZ64a18nBrxMDqHZ9sjyzYhy8rrWsIGViUL4cuiFNR
+        13jc9CGjCkCg9vUQQobNtgkPofyl56m4PinPfQAT8yXfkSrKa7TQw4y6e8ow4U8TMK37DxOKX3CX3
+        TtYqXc/uTk7W5yiypMbcKX93JyA6IotJW3FcTmtHuDWAS30qOioSZlpdonSH/3GJq3YRLQ3nWrWuK
+        /tXAoQynuvEE2hyzve6v52C027MqCmg4zh1ItcUY/JouC54bRwId30BRrUhafL+gbKxIhAS5QCvkO
+        4gn8QmF5Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlZpW-0001Os-V6; Thu, 11 Jul 2019 14:13:50 +0000
+Date:   Thu, 11 Jul 2019 07:13:50 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Boaz Harrosh <openosd@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+Message-ID: <20190711141350.GS32320@bombadil.infradead.org>
+References: <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
+ <20190704032728.GK1729@bombadil.infradead.org>
+ <20190704165450.GH31037@quack2.suse.cz>
+ <20190704191407.GM1729@bombadil.infradead.org>
+ <CAPcyv4gUiDw8Ma9mvbW5BamQtGZxWVuvBW7UrOLa2uijrXUWaw@mail.gmail.com>
+ <20190705191004.GC32320@bombadil.infradead.org>
+ <CAPcyv4jVARa38Qc4NjQ04wJ4ZKJ6On9BbJgoL95wQqU-p-Xp_w@mail.gmail.com>
+ <20190710190204.GB14701@quack2.suse.cz>
+ <20190710201539.GN32320@bombadil.infradead.org>
+ <20190710202647.GA7269@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <93cf9333-2f9a-ca1e-a4a6-54fc388d1673@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190710202647.GA7269@quack2.suse.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 03, 2019 at 11:32:32AM +0800, 王贇 wrote:
-> By tracing numa page faults, we recognize tasks sharing the same page,
-> and try pack them together into a single numa group.
+On Wed, Jul 10, 2019 at 10:26:47PM +0200, Jan Kara wrote:
+> On Wed 10-07-19 13:15:39, Matthew Wilcox wrote:
+> > On Wed, Jul 10, 2019 at 09:02:04PM +0200, Jan Kara wrote:
+> > > +#define DAX_ENTRY_CONFLICT dax_make_entry(pfn_to_pfn_t(1), DAX_EMPTY)
+> > 
+> > I was hoping to get rid of DAX_EMPTY ... it's almost unused now.  Once
+> > we switch to having a single DAX_LOCK value instead of a single bit,
+> > I think it can go away, freeing up two bits.
+> > 
+> > If you really want a special DAX_ENTRY_CONFLICT, I think we can make
+> > one in the 2..4094 range.
+> > 
+> > That aside, this looks pretty similar to the previous patch I sent, so
+> > if you're now happy with this, let's add
+> > 
+> > #define XA_DAX_CONFLICT_ENTRY xa_mk_internal(258)
+> > 
+> > to xarray.h and do it that way?
 > 
-> However when two task share lot's of cache pages while not much
-> anonymous pages, since numa balancing do not tracing cache page, they
-> have no chance to join into the same group.
+> Yeah, that would work for me as well. The chosen value for DAX_ENTRY_CONFLICT
+> was pretty arbitrary. Or we could possibly use:
 > 
-> While tracing cache page cost too much, we could use some hints from
+> #define DAX_ENTRY_CONFLICT XA_ZERO_ENTRY
+> 
+> so that we don't leak DAX-specific internal definition into xarray.h?
 
-I forgot; where again do we skip shared pages? task_numa_work() doesn't
-seem to skip file vmas.
+I don't want to use the ZERO entry as our conflict marker because that
+could legitimately appear in an XArray.  Not the i_pages XArray today,
+but I hold out hope for using that in place of the DAX_ZERO_PAGE bit too.
+That's going to be a bit more tricky since we currently distinguish
+between DAX_ZERO_PAGE and DAX_ZERO_PAGE | DAX_PMD.
 
-> userland and cpu cgroup could be a good one.
-> 
-> This patch introduced new entry 'numa_group' for cpu cgroup, by echo
-> non-zero into the entry, we can now force all the tasks of this cgroup
-> to join the same numa group serving for task group.
-> 
-> In this way tasks are more likely to settle down on the same node, to
-> share closer cpu cache and gain benefit from NUMA on both file/anonymous
-> pages.
-> 
-> Besides, when multiple cgroup enabled numa group, they will be able to
-> exchange task location by utilizing numa migration, in this way they
-> could achieve single node settle down without breaking load balance.
-
-I dislike cgroup only interfaces; it there really nothing else we could
-use for this?
-
+However, the XA_RETRY_ENTRY might be a good choice.  It doesn't normally
+appear in an XArray (it may appear if you're looking at a deleted node,
+but since we're holding the lock, we can't see deleted nodes).
