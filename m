@@ -2,108 +2,255 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 383D465366
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 11:00:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A42E6656DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 14:28:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbfGKJAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jul 2019 05:00:17 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:60700 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726088AbfGKJAR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jul 2019 05:00:17 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TWcBEPJ_1562835610;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TWcBEPJ_1562835610)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 11 Jul 2019 17:00:11 +0800
-Subject: Re: [PATCH 0/4] per cgroup numa suite
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-To:     Peter Zijlstra <peterz@infradead.org>, hannes@cmpxchg.org,
-        mhocko@kernel.org, vdavydov.dev@gmail.com,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mcgrof@kernel.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
- <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
-Message-ID: <6a050974-30f3-66b6-4c99-c7e376fb84d8@linux.alibaba.com>
-Date:   Thu, 11 Jul 2019 17:00:10 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        id S1728576AbfGKM2h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jul 2019 08:28:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:62761 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725926AbfGKM2h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Jul 2019 08:28:37 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 39D9830820C9;
+        Thu, 11 Jul 2019 12:28:36 +0000 (UTC)
+Received: from max.com (unknown [10.40.205.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 490E160603;
+        Thu, 11 Jul 2019 12:28:34 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gao Xiang <gaoxiang25@huawei.com>, chao@kernel.org
+Subject: Re: [RFC PATCH] iomap: generalize IOMAP_INLINE to cover tail-packing case
+Date:   Thu, 11 Jul 2019 14:28:31 +0200
+Message-Id: <20190711122831.3970-1-agruenba@redhat.com>
+In-Reply-To: <39944e50-5888-f900-1954-91be2b12ea5b@huawei.com>
+References: <20190703075502.79782-1-yuchao0@huawei.com> <CAHpGcM+s77hKMXo=66nWNF7YKa3qhLY9bZrdb4-Lkspyg2CCDw@mail.gmail.com> <39944e50-5888-f900-1954-91be2b12ea5b@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 11 Jul 2019 12:28:36 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+Something along the lines of the attached, broken patch might work in
+the end.
 
-How do you think about these patches?
+Andreas
 
-During most of our tests the results show stable improvements, thus
-we consider this as a generic problem and proposed this solution,
-hope to help address the issue.
+---
+ fs/buffer.c           | 10 ++++--
+ fs/iomap.c            | 74 +++++++++++++++++++++++++++++--------------
+ include/linux/iomap.h |  3 ++
+ 3 files changed, 61 insertions(+), 26 deletions(-)
 
-Comments are sincerely welcome :-)
+diff --git a/fs/buffer.c b/fs/buffer.c
+index e450c55f6434..8d8668e377ab 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1873,8 +1873,8 @@ void page_zero_new_buffers(struct page *page, unsigned from, unsigned to)
+ EXPORT_SYMBOL(page_zero_new_buffers);
+ 
+ static void
+-iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
+-		struct iomap *iomap)
++iomap_to_bh(struct inode *inode, struct page *page, sector_t block,
++		struct buffer_head *bh, struct iomap *iomap)
+ {
+ 	loff_t offset = block << inode->i_blkbits;
+ 
+@@ -1924,6 +1924,10 @@ iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
+ 				inode->i_blkbits;
+ 		set_buffer_mapped(bh);
+ 		break;
++	case IOMAP_INLINE:
++		__iomap_read_inline_data(inode, page, iomap);
++		set_buffer_uptodate(bh);
++		break;
+ 	}
+ }
+ 
+@@ -1969,7 +1973,7 @@ int __block_write_begin_int(struct page *page, loff_t pos, unsigned len,
+ 				if (err)
+ 					break;
+ 			} else {
+-				iomap_to_bh(inode, block, bh, iomap);
++				iomap_to_bh(inode, page, block, bh, iomap);
+ 			}
+ 
+ 			if (buffer_new(bh)) {
+diff --git a/fs/iomap.c b/fs/iomap.c
+index 45aa58e837b5..61188e95def2 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -260,24 +260,47 @@ struct iomap_readpage_ctx {
+ 	struct list_head	*pages;
+ };
+ 
+-static void
+-iomap_read_inline_data(struct inode *inode, struct page *page,
++#define offset_in_block(offset, inode) \
++	((unsigned long)(offset) & (i_blocksize(inode) - 1))
++
++static bool
++inline_data_within_block(struct inode *inode, struct iomap *iomap,
++		unsigned int size)
++{
++	unsigned int off = offset_in_block(iomap->inline_data, inode);
++
++	return size <= i_blocksize(inode) - off;
++}
++
++void
++__iomap_read_inline_data(struct inode *inode, struct page *page,
+ 		struct iomap *iomap)
+ {
+-	size_t size = i_size_read(inode);
++	size_t size = offset_in_block(i_size_read(inode), inode);
++	unsigned int poff = offset_in_page(iomap->offset);
++	unsigned int bsize = i_blocksize(inode);
+ 	void *addr;
+ 
+ 	if (PageUptodate(page))
+ 		return;
+ 
+-	BUG_ON(page->index);
+-	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	BUG_ON(!inline_data_within_block(inode, iomap, size));
+ 
+ 	addr = kmap_atomic(page);
+-	memcpy(addr, iomap->inline_data, size);
+-	memset(addr + size, 0, PAGE_SIZE - size);
++	memcpy(addr + poff, iomap->inline_data, size);
++	memset(addr + poff + size, 0, bsize - size);
+ 	kunmap_atomic(addr);
+-	SetPageUptodate(page);
++}
++
++static void
++iomap_read_inline_data(struct inode *inode, struct page *page,
++		struct iomap *iomap)
++{
++	unsigned int poff = offset_in_page(iomap->offset);
++	unsigned int bsize = i_blocksize(inode);
++
++	__iomap_read_inline_data(inode, page, iomap);
++	iomap_set_range_uptodate(page, poff, bsize);
+ }
+ 
+ static loff_t
+@@ -292,11 +315,8 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	unsigned poff, plen;
+ 	sector_t sector;
+ 
+-	if (iomap->type == IOMAP_INLINE) {
+-		WARN_ON_ONCE(pos);
++	if (iomap->type == IOMAP_INLINE)
+ 		iomap_read_inline_data(inode, page, iomap);
+-		return PAGE_SIZE;
+-	}
+ 
+ 	/* zero post-eof blocks as the page may be mapped */
+ 	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
+@@ -637,6 +657,11 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len,
+ 	if (PageUptodate(page))
+ 		return 0;
+ 
++	if (iomap->type == IOMAP_INLINE) {
++		iomap_read_inline_data(inode, page, iomap);
++		return 0;
++	}
++
+ 	do {
+ 		iomap_adjust_read_range(inode, iop, &block_start,
+ 				block_end - block_start, &poff, &plen);
+@@ -682,9 +707,7 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+ 		goto out_no_page;
+ 	}
+ 
+-	if (iomap->type == IOMAP_INLINE)
+-		iomap_read_inline_data(inode, page, iomap);
+-	else if (iomap->flags & IOMAP_F_BUFFER_HEAD)
++	if (iomap->flags & IOMAP_F_BUFFER_HEAD)
+ 		status = __block_write_begin_int(page, pos, len, NULL, iomap);
+ 	else
+ 		status = __iomap_write_begin(inode, pos, len, page, iomap);
+@@ -761,11 +784,11 @@ iomap_write_end_inline(struct inode *inode, struct page *page,
+ {
+ 	void *addr;
+ 
+-	WARN_ON_ONCE(!PageUptodate(page));
+-	BUG_ON(pos + copied > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	BUG_ON(!inline_data_within_block(inode, iomap, pos + copied));
+ 
+ 	addr = kmap_atomic(page);
+-	memcpy(iomap->inline_data + pos, addr + pos, copied);
++	memcpy(iomap->inline_data + offset_in_block(pos, inode),
++	       addr + offset_in_page(pos), copied);
+ 	kunmap_atomic(addr);
+ 
+ 	mark_inode_dirty(inode);
+@@ -1064,7 +1087,7 @@ iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
+ 		const struct iomap_ops *ops)
+ {
+ 	unsigned int blocksize = i_blocksize(inode);
+-	unsigned int off = pos & (blocksize - 1);
++	unsigned int off = offset_in_block(pos, inode);
+ 
+ 	/* Block boundary? Nothing to do */
+ 	if (!off)
+@@ -1772,21 +1795,26 @@ iomap_dio_inline_actor(struct inode *inode, loff_t pos, loff_t length,
+ 	struct iov_iter *iter = dio->submit.iter;
+ 	size_t copied;
+ 
+-	BUG_ON(pos + length > PAGE_SIZE - offset_in_page(iomap->inline_data));
++	BUG_ON(!inline_data_within_block(inode, iomap, pos + length));
+ 
+ 	if (dio->flags & IOMAP_DIO_WRITE) {
+ 		loff_t size = inode->i_size;
+ 
+ 		if (pos > size)
+-			memset(iomap->inline_data + size, 0, pos - size);
+-		copied = copy_from_iter(iomap->inline_data + pos, length, iter);
++			memset(iomap->inline_data +
++			       offset_in_block(size, inode), 0, pos - size);
++		copied = copy_from_iter(iomap->inline_data +
++					offset_in_block(pos, inode),
++					length, iter);
+ 		if (copied) {
+ 			if (pos + copied > size)
+ 				i_size_write(inode, pos + copied);
+ 			mark_inode_dirty(inode);
+ 		}
+ 	} else {
+-		copied = copy_to_iter(iomap->inline_data + pos, length, iter);
++		copied = copy_to_iter(iomap->inline_data +
++				      offset_in_block(pos, inode),
++				      length, iter);
+ 	}
+ 	dio->size += copied;
+ 	return copied;
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 2103b94cb1bf..a8a60dd2fdc0 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -131,6 +131,9 @@ static inline struct iomap_page *to_iomap_page(struct page *page)
+ 	return NULL;
+ }
+ 
++void __iomap_read_inline_data(struct inode *inode, struct page *page,
++		struct iomap *iomap);
++
+ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+ 		const struct iomap_ops *ops);
+ int iomap_readpage(struct page *page, const struct iomap_ops *ops);
+-- 
+2.20.1
 
-Regards,
-Michael Wang
-
-On 2019/7/3 上午11:26, 王贇 wrote:
-> During our torturing on numa stuff, we found problems like:
-> 
->   * missing per-cgroup information about the per-node execution status
->   * missing per-cgroup information about the numa locality
-> 
-> That is when we have a cpu cgroup running with bunch of tasks, no good
-> way to tell how it's tasks are dealing with numa.
-> 
-> The first two patches are trying to complete the missing pieces, but
-> more problems appeared after monitoring these status:
-> 
->   * tasks not always running on the preferred numa node
->   * tasks from same cgroup running on different nodes
-> 
-> The task numa group handler will always check if tasks are sharing pages
-> and try to pack them into a single numa group, so they will have chance to
-> settle down on the same node, but this failed in some cases:
-> 
->   * workloads share page caches rather than share mappings
->   * workloads got too many wakeup across nodes
-> 
-> Since page caches are not traced by numa balancing, there are no way to
-> realize such kind of relationship, and when there are too many wakeup,
-> task will be drag from the preferred node and then migrate back by numa
-> balancing, repeatedly.
-> 
-> Here the third patch try to address the first issue, we could now give hint
-> to kernel about the relationship of tasks, and pack them into single numa
-> group.
-> 
-> And the forth patch introduced numa cling, which try to address the wakup
-> issue, now we try to make task stay on the preferred node on wakeup in fast
-> path, in order to address the unbalancing risk, we monitoring the numa
-> migration failure ratio, and pause numa cling when it reach the specified
-> degree.
-> 
-> Michael Wang (4):
->   numa: introduce per-cgroup numa balancing locality statistic
->   numa: append per-node execution info in memory.numa_stat
->   numa: introduce numa group per task group
->   numa: introduce numa cling feature
-> 
->  include/linux/memcontrol.h   |  37 ++++
->  include/linux/sched.h        |   8 +-
->  include/linux/sched/sysctl.h |   3 +
->  kernel/sched/core.c          |  37 ++++
->  kernel/sched/debug.c         |   7 +
->  kernel/sched/fair.c          | 455 ++++++++++++++++++++++++++++++++++++++++++-
->  kernel/sched/sched.h         |  14 ++
->  kernel/sysctl.c              |   9 +
->  mm/memcontrol.c              |  66 +++++++
->  9 files changed, 628 insertions(+), 8 deletions(-)
-> 
