@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89A1B65998
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 16:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C33C7659CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 16:59:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729163AbfGKO6g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jul 2019 10:58:36 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2216 "EHLO huawei.com"
+        id S1728922AbfGKO7z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jul 2019 10:59:55 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2217 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729146AbfGKO6f (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:58:35 -0400
+        id S1729150AbfGKO6h (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Jul 2019 10:58:37 -0400
 Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4CD2E833F8E734B98CA2;
+        by Forcepoint Email with ESMTP id 5C0D93D75B48E1E60CE8;
         Thu, 11 Jul 2019 22:58:33 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 11 Jul
- 2019 22:58:23 +0800
+ 2019 22:58:25 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
         Li Guifu <bluce.liguifu@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 08/24] erofs: add namei functions
-Date:   Thu, 11 Jul 2019 22:57:39 +0800
-Message-ID: <20190711145755.33908-9-gaoxiang25@huawei.com>
+Subject: [PATCH v2 09/24] erofs: support tracepoint
+Date:   Thu, 11 Jul 2019 22:57:40 +0800
+Message-ID: <20190711145755.33908-10-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190711145755.33908-1-gaoxiang25@huawei.com>
 References: <20190711145755.33908-1-gaoxiang25@huawei.com>
@@ -45,266 +45,262 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This commit adds functions that transfer names to inodes.
+Add basic tracepoints for ->readpage{,s}, ->lookup,
+->destroy_inode, fill_inode and map_blocks.
 
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- fs/erofs/namei.c | 246 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 246 insertions(+)
- create mode 100644 fs/erofs/namei.c
+ include/trace/events/erofs.h | 241 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 241 insertions(+)
+ create mode 100644 include/trace/events/erofs.h
 
-diff --git a/fs/erofs/namei.c b/fs/erofs/namei.c
+diff --git a/include/trace/events/erofs.h b/include/trace/events/erofs.h
 new file mode 100644
-index 000000000000..7665d3603503
+index 000000000000..188c28e48289
 --- /dev/null
-+++ b/fs/erofs/namei.c
-@@ -0,0 +1,246 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * linux/fs/erofs/namei.c
-+ *
-+ * Copyright (C) 2017-2018 HUAWEI, Inc.
-+ *             http://www.huawei.com/
-+ * Created by Gao Xiang <gaoxiang25@huawei.com>
-+ */
-+#include "internal.h"
++++ b/include/trace/events/erofs.h
+@@ -0,0 +1,241 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM erofs
 +
-+#include <trace/events/erofs.h>
++#if !defined(_TRACE_EROFS_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_EROFS_H
 +
-+struct erofs_qstr {
-+	const unsigned char *name;
-+	const unsigned char *end;
-+};
++#include <linux/tracepoint.h>
 +
-+/* based on the end of qn is accurate and it must have the trailing '\0' */
-+static inline int dirnamecmp(const struct erofs_qstr *qn,
-+			     const struct erofs_qstr *qd,
-+			     unsigned int *matched)
-+{
-+	unsigned int i = *matched;
++#define show_dev(dev)		MAJOR(dev), MINOR(dev)
++#define show_dev_nid(entry)	show_dev(entry->dev), entry->nid
 +
-+	/*
-+	 * on-disk error, let's only BUG_ON in the debugging mode.
-+	 * otherwise, it will return 1 to just skip the invalid name
-+	 * and go on (in consideration of the lookup performance).
-+	 */
-+	DBG_BUGON(qd->name > qd->end);
++#define show_file_type(type)						\
++	__print_symbolic(type,						\
++		{ 0,		"FILE" },				\
++		{ 1,		"DIR" })
 +
-+	/* qd could not have trailing '\0' */
-+	/* However it is absolutely safe if < qd->end */
-+	while (qd->name + i < qd->end && qd->name[i] != '\0') {
-+		if (qn->name[i] != qd->name[i]) {
-+			*matched = i;
-+			return qn->name[i] > qd->name[i] ? 1 : -1;
-+		}
-+		++i;
-+	}
-+	*matched = i;
-+	/* See comments in __d_alloc on the terminating NUL character */
-+	return qn->name[i] == '\0' ? 0 : 1;
-+}
++#define show_map_flags(flags) __print_flags(flags, "|",	\
++	{ EROFS_GET_BLOCKS_RAW,	"RAW" })
 +
-+#define nameoff_from_disk(off, sz)	(le16_to_cpu(off) & ((sz) - 1))
++#define show_mflags(flags) __print_flags(flags, "",	\
++	{ EROFS_MAP_MAPPED,	"M" },			\
++	{ EROFS_MAP_META,	"I" })
 +
-+static struct erofs_dirent *find_target_dirent(struct erofs_qstr *name,
-+					       u8 *data,
-+					       unsigned int dirblksize,
-+					       const int ndirents)
-+{
-+	int head, back;
-+	unsigned int startprfx, endprfx;
-+	struct erofs_dirent *const de = (struct erofs_dirent *)data;
++TRACE_EVENT(erofs_lookup,
 +
-+	/* since the 1st dirent has been evaluated previously */
-+	head = 1;
-+	back = ndirents - 1;
-+	startprfx = endprfx = 0;
++	TP_PROTO(struct inode *dir, struct dentry *dentry, unsigned int flags),
 +
-+	while (head <= back) {
-+		const int mid = head + (back - head) / 2;
-+		const int nameoff = nameoff_from_disk(de[mid].nameoff,
-+						      dirblksize);
-+		unsigned int matched = min(startprfx, endprfx);
-+		struct erofs_qstr dname = {
-+			.name = data + nameoff,
-+			.end = unlikely(mid >= ndirents - 1) ?
-+				data + dirblksize :
-+				data + nameoff_from_disk(de[mid + 1].nameoff,
-+							 dirblksize)
-+		};
++	TP_ARGS(dir, dentry, flags),
 +
-+		/* string comparison without already matched prefix */
-+		int ret = dirnamecmp(name, &dname, &matched);
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,	nid	)
++		__field(const char *,	name	)
++		__field(unsigned int,	flags	)
++	),
 +
-+		if (unlikely(!ret)) {
-+			return de + mid;
-+		} else if (ret > 0) {
-+			head = mid + 1;
-+			startprfx = matched;
-+		} else {
-+			back = mid - 1;
-+			endprfx = matched;
-+		}
-+	}
-+	return ERR_PTR(-ENOENT);
-+}
++	TP_fast_assign(
++		__entry->dev	= dir->i_sb->s_dev;
++		__entry->nid	= EROFS_V(dir)->nid;
++		__entry->name	= dentry->d_name.name;
++		__entry->flags	= flags;
++	),
 +
-+static struct page *find_target_block_classic(struct inode *dir,
-+					      struct erofs_qstr *name,
-+					      int *_ndirents)
-+{
-+	unsigned int startprfx, endprfx;
-+	int head, back;
-+	struct address_space *const mapping = dir->i_mapping;
-+	struct page *candidate = ERR_PTR(-ENOENT);
++	TP_printk("dev = (%d,%d), pnid = %llu, name:%s, flags:%x",
++		show_dev_nid(__entry),
++		__entry->name,
++		__entry->flags)
++);
 +
-+	startprfx = endprfx = 0;
-+	head = 0;
-+	back = inode_datablocks(dir) - 1;
++TRACE_EVENT(erofs_fill_inode,
++	TP_PROTO(struct inode *inode, int isdir),
++	TP_ARGS(inode, isdir),
 +
-+	while (head <= back) {
-+		const int mid = head + (back - head) / 2;
-+		struct page *page = read_mapping_page(mapping, mid, NULL);
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,	nid	)
++		__field(erofs_blk_t,	blkaddr )
++		__field(unsigned int,	ofs	)
++		__field(int,		isdir	)
++	),
 +
-+		if (!IS_ERR(page)) {
-+			struct erofs_dirent *de = kmap_atomic(page);
-+			const int nameoff = nameoff_from_disk(de->nameoff,
-+							      EROFS_BLKSIZ);
-+			const int ndirents = nameoff / sizeof(*de);
-+			int diff;
-+			unsigned int matched;
-+			struct erofs_qstr dname;
++	TP_fast_assign(
++		__entry->dev		= inode->i_sb->s_dev;
++		__entry->nid		= EROFS_V(inode)->nid;
++		__entry->blkaddr	= erofs_blknr(iloc(EROFS_I_SB(inode), __entry->nid));
++		__entry->ofs		= erofs_blkoff(iloc(EROFS_I_SB(inode), __entry->nid));
++		__entry->isdir		= isdir;
++	),
 +
-+			if (unlikely(!ndirents)) {
-+				DBG_BUGON(1);
-+				kunmap_atomic(de);
-+				put_page(page);
-+				page = ERR_PTR(-EIO);
-+				goto out;
-+			}
++	TP_printk("dev = (%d,%d), nid = %llu, blkaddr %u ofs %u, isdir %d",
++		  show_dev_nid(__entry),
++		  __entry->blkaddr, __entry->ofs,
++		  __entry->isdir)
++);
 +
-+			matched = min(startprfx, endprfx);
++TRACE_EVENT(erofs_readpage,
 +
-+			dname.name = (u8 *)de + nameoff;
-+			if (ndirents == 1)
-+				dname.end = (u8 *)de + EROFS_BLKSIZ;
-+			else
-+				dname.end = (u8 *)de +
-+					nameoff_from_disk(de[1].nameoff,
-+							  EROFS_BLKSIZ);
++	TP_PROTO(struct page *page, bool raw),
 +
-+			/* string comparison without already matched prefix */
-+			diff = dirnamecmp(name, &dname, &matched);
-+			kunmap_atomic(de);
++	TP_ARGS(page, raw),
 +
-+			if (unlikely(!diff)) {
-+				*_ndirents = 0;
-+				goto out;
-+			} else if (diff > 0) {
-+				head = mid + 1;
-+				startprfx = matched;
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,    nid     )
++		__field(int,		dir	)
++		__field(pgoff_t,	index	)
++		__field(int,		uptodate)
++		__field(bool,		raw	)
++	),
 +
-+				if (!IS_ERR(candidate))
-+					put_page(candidate);
-+				candidate = page;
-+				*_ndirents = ndirents;
-+			} else {
-+				put_page(page);
++	TP_fast_assign(
++		__entry->dev	= page->mapping->host->i_sb->s_dev;
++		__entry->nid	= EROFS_V(page->mapping->host)->nid;
++		__entry->dir	= S_ISDIR(page->mapping->host->i_mode);
++		__entry->index	= page->index;
++		__entry->uptodate = PageUptodate(page);
++		__entry->raw = raw;
++	),
 +
-+				back = mid - 1;
-+				endprfx = matched;
-+			}
-+			continue;
-+		}
-+out:		/* free if the candidate is valid */
-+		if (!IS_ERR(candidate))
-+			put_page(candidate);
-+		return page;
-+	}
-+	return candidate;
-+}
++	TP_printk("dev = (%d,%d), nid = %llu, %s, index = %lu, uptodate = %d "
++		"raw = %d",
++		show_dev_nid(__entry),
++		show_file_type(__entry->dir),
++		(unsigned long)__entry->index,
++		__entry->uptodate,
++		__entry->raw)
++);
 +
-+int erofs_namei(struct inode *dir,
-+		struct qstr *name,
-+		erofs_nid_t *nid, unsigned int *d_type)
-+{
-+	int ndirents;
-+	struct page *page;
-+	void *data;
-+	struct erofs_dirent *de;
-+	struct erofs_qstr qn;
++TRACE_EVENT(erofs_readpages,
 +
-+	if (unlikely(!dir->i_size))
-+		return -ENOENT;
++	TP_PROTO(struct inode *inode, struct page *page, unsigned int nrpage,
++		bool raw),
 +
-+	qn.name = name->name;
-+	qn.end = name->name + name->len;
++	TP_ARGS(inode, page, nrpage, raw),
 +
-+	ndirents = 0;
-+	page = find_target_block_classic(dir, &qn, &ndirents);
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,	nid	)
++		__field(pgoff_t,	start	)
++		__field(unsigned int,	nrpage	)
++		__field(bool,		raw	)
++	),
 +
-+	if (IS_ERR(page))
-+		return PTR_ERR(page);
++	TP_fast_assign(
++		__entry->dev	= inode->i_sb->s_dev;
++		__entry->nid	= EROFS_V(inode)->nid;
++		__entry->start	= page->index;
++		__entry->nrpage	= nrpage;
++		__entry->raw	= raw;
++	),
 +
-+	data = kmap_atomic(page);
-+	/* the target page has been mapped */
-+	if (ndirents)
-+		de = find_target_dirent(&qn, data, EROFS_BLKSIZ, ndirents);
-+	else
-+		de = (struct erofs_dirent *)data;
++	TP_printk("dev = (%d,%d), nid = %llu, start = %lu nrpage = %u raw = %d",
++		show_dev_nid(__entry),
++		(unsigned long)__entry->start,
++		__entry->nrpage,
++		__entry->raw)
++);
 +
-+	if (!IS_ERR(de)) {
-+		*nid = le64_to_cpu(de->nid);
-+		*d_type = de->file_type;
-+	}
++DECLARE_EVENT_CLASS(erofs__map_blocks_enter,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned int flags),
 +
-+	kunmap_atomic(data);
-+	put_page(page);
++	TP_ARGS(inode, map, flags),
 +
-+	return PTR_ERR_OR_ZERO(de);
-+}
++	TP_STRUCT__entry(
++		__field(	dev_t,		dev		)
++		__field(	erofs_nid_t,	nid		)
++		__field(	erofs_off_t,	la		)
++		__field(	u64,		llen		)
++		__field(	unsigned int,	flags		)
++	),
 +
-+/* NOTE: i_mutex is already held by vfs */
-+static struct dentry *erofs_lookup(struct inode *dir,
-+				   struct dentry *dentry,
-+				   unsigned int flags)
-+{
-+	int err;
-+	erofs_nid_t nid;
-+	unsigned int d_type;
-+	struct inode *inode;
++	TP_fast_assign(
++		__entry->dev    = inode->i_sb->s_dev;
++		__entry->nid    = EROFS_V(inode)->nid;
++		__entry->la	= map->m_la;
++		__entry->llen	= map->m_llen;
++		__entry->flags	= flags;
++	),
 +
-+	DBG_BUGON(!d_really_is_negative(dentry));
-+	/* dentry must be unhashed in lookup, no need to worry about */
-+	DBG_BUGON(!d_unhashed(dentry));
++	TP_printk("dev = (%d,%d), nid = %llu, la %llu llen %llu flags %s",
++		  show_dev_nid(__entry),
++		  __entry->la, __entry->llen,
++		  __entry->flags ? show_map_flags(__entry->flags) : "NULL")
++);
 +
-+	trace_erofs_lookup(dir, dentry, flags);
++DEFINE_EVENT(erofs__map_blocks_enter, erofs_map_blocks_flatmode_enter,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned flags),
 +
-+	/* file name exceeds fs limit */
-+	if (unlikely(dentry->d_name.len > EROFS_NAME_LEN))
-+		return ERR_PTR(-ENAMETOOLONG);
++	TP_ARGS(inode, map, flags)
++);
 +
-+	/* false uninitialized warnings on gcc 4.8.x */
-+	err = erofs_namei(dir, &dentry->d_name, &nid, &d_type);
++DECLARE_EVENT_CLASS(erofs__map_blocks_exit,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned int flags, int ret),
 +
-+	if (err == -ENOENT) {
-+		/* negative dentry */
-+		inode = NULL;
-+	} else if (unlikely(err)) {
-+		inode = ERR_PTR(err);
-+	} else {
-+		debugln("%s, %s (nid %llu) found, d_type %u", __func__,
-+			dentry->d_name.name, nid, d_type);
-+		inode = erofs_iget(dir->i_sb, nid, d_type == EROFS_FT_DIR);
-+	}
-+	return d_splice_alias(inode, dentry);
-+}
++	TP_ARGS(inode, map, flags, ret),
 +
-+const struct inode_operations erofs_dir_iops = {
-+	.lookup = erofs_lookup,
-+	.getattr = erofs_getattr,
-+};
++	TP_STRUCT__entry(
++		__field(	dev_t,		dev		)
++		__field(	erofs_nid_t,	nid		)
++		__field(        unsigned int,   flags           )
++		__field(	erofs_off_t,	la		)
++		__field(	erofs_off_t,	pa		)
++		__field(	u64,		llen		)
++		__field(	u64,		plen		)
++		__field(        unsigned int,	mflags		)
++		__field(	int,		ret		)
++	),
 +
++	TP_fast_assign(
++		__entry->dev    = inode->i_sb->s_dev;
++		__entry->nid    = EROFS_V(inode)->nid;
++		__entry->flags	= flags;
++		__entry->la	= map->m_la;
++		__entry->pa	= map->m_pa;
++		__entry->llen	= map->m_llen;
++		__entry->plen	= map->m_plen;
++		__entry->mflags	= map->m_flags;
++		__entry->ret	= ret;
++	),
++
++	TP_printk("dev = (%d,%d), nid = %llu, flags %s "
++		  "la %llu pa %llu llen %llu plen %llu mflags %s ret %d",
++		  show_dev_nid(__entry),
++		  __entry->flags ? show_map_flags(__entry->flags) : "NULL",
++		  __entry->la, __entry->pa, __entry->llen, __entry->plen,
++		  show_mflags(__entry->mflags), __entry->ret)
++);
++
++DEFINE_EVENT(erofs__map_blocks_exit, erofs_map_blocks_flatmode_exit,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned flags, int ret),
++
++	TP_ARGS(inode, map, flags, ret)
++);
++
++TRACE_EVENT(erofs_destroy_inode,
++	TP_PROTO(struct inode *inode),
++
++	TP_ARGS(inode),
++
++	TP_STRUCT__entry(
++		__field(	dev_t,		dev		)
++		__field(	erofs_nid_t,	nid		)
++	),
++
++	TP_fast_assign(
++		__entry->dev	= inode->i_sb->s_dev;
++		__entry->nid	= EROFS_V(inode)->nid;
++	),
++
++	TP_printk("dev = (%d,%d), nid = %llu", show_dev_nid(__entry))
++);
++
++#endif /* _TRACE_EROFS_H */
++
++ /* This part must be outside protection */
++#include <trace/define_trace.h>
 -- 
 2.17.1
 
