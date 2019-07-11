@@ -2,95 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF0EB64F51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 01:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 092D96500A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 03:59:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbfGJXmj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Jul 2019 19:42:39 -0400
-Received: from sonic303-21.consmr.mail.ir2.yahoo.com ([77.238.178.202]:36735
-        "EHLO sonic303-21.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727220AbfGJXmj (ORCPT
+        id S1727943AbfGKB70 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Jul 2019 21:59:26 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37033 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727687AbfGKB70 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Jul 2019 19:42:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1562802156; bh=dk97VOnEirqZGW/C4jJZaUVdSBxy5Zj+0GzwIPvKK30=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=NWn4mMA7TRvb2AsUI6USWmjL+jWMNY8SqXPCPB0Zmdx1gPg1zll4t29tc1oNPXsyhhe2gwAujgi9pD6oa3djsb/wbjN4www/vlwUFTA7C3i8XhqeFJ71zQgVSClmPa5o3VnSm1VBoGz8tjT8TV0VfcazeSyrajNUNL3fiMTDV7EY7qvFc2dEQ6GZw85WPJ6/zhqS3gNX6Fw2CXHoJNokY+mkwEbKHXO5OvNBMSHVh9JICdDzbmzD7QvKmMEFe1Lt9E3xPZnO+CjluBqHOeBR2lxJIK/MQZ+g+GHaKpz6ZaxJkyDlAYE0UbsAU/JIYgeEYO1cNIESs/Qhd+G3WrHbAg==
-X-YMail-OSG: E3F8to0VM1lxsh9FADTaRfvpLst1eRzWVhrH9QDugxBepJ04eijm0ZXK2CQjq_z
- d3J5gTj6JVk93_wRbN4ZvIquLkVgCq0Uac4N2w7NV082cSbr6sz1GBRIofvl0ZSK1C8fKPsWhSV4
- bbBvnWiV4Y315tKvAxulQL9klAarfYafa8XGnzJMwqWzRggrM1Pe7yEfAHghy6dYYTOORhEuSDO.
- A30ELrUL67WOdUbA00HhBanaUN0cyCpc0i65Td.71IZGm6t9qjbO5HMIz2Z.bTAiU0tNi77MSBSA
- bQs4_VVnQbxhs0m5PCYf8TgqDTUg58oEZTpddrzTrmdoxiFhAWzn42gOwpgIV0pwJL.q9Ta.iBNd
- 09zxBa.fg98h2zyrjc3VtKef1LbJhMTHzK74zE8swopH7KNyPaXzd6qKgkcwPAdXxJrlJibcEcBc
- Jbnsel8_iXN0c3ZeCXJgDxKhC4eQPt9MN0TedlzcYR7ezt51Q2lVZaRlyMcx81ikxn1KfhsUSLR7
- QDRyQQ4i6rrdgYWYBkB8B_kuxfc8Hv4UQo_Lpc2OnevRCyN0IY2sowUiV0nG5y.cEq7hElf3vq.N
- 6PQdt7s6CfnFUXqcigYIWc.W.pDTmlcytRc2BLZpJmpsdCuYzJQJ1UiuKkjYyhaPxjZqk4agPLLk
- FxzV6ODxHtY2y96snE1fb2FMiAnFNQIJjj0qEIAbjENER.hz1ZmziKA7ThVjW3qjKCP85U8Skrt_
- 2GU67NHAejgJn9QLLLXQRjcEI0GqXB92cA10lTPWQeMWJPLD5HtBWjoVGR7RaIiJJtIak_iPjN_e
- skGfkmMPl2M5yYK7vVDjHvIRQyXsdHSJmEBfbJHrzysULmQC7fLoBcrj7dlUH1KMcwRw.4x4R7FW
- 1QjvII.Bm9rMWUyriE6DO6gHc9kWgdKQnPmtcNE4eZzwaZG0Y1V7kR.1F_dk3VQfjzouhAG.3KfL
- RMAJ4VYpFuH9Q1J6I744jHTRW.y95iIBwuCrH0eD1FlDVsu4KYB_U5j4dcsyKPGXv4dGGJiJJyH4
- p8NrdkQVqS9lMZNMxDDxoms8BAqhHjtwiWYsi0wQxTNg06JjcXnLQzLQkZ30HEfyHv16ZbE1BEnI
- CfNADe.qah45J5tXIGDCFF7fTh9Mx5Gt9DWnZGl5JQ8UY1fW_K9M1.haRcFzJZ2FNHRYkBQHiMGp
- hpHXVXvj9a5zybkrdIoM47yocnP7YYgoh6ozLGJOljn5h
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ir2.yahoo.com with HTTP; Wed, 10 Jul 2019 23:42:36 +0000
-Received: by smtp404.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d9e0da08a84931d992641df66c776383;
-          Wed, 10 Jul 2019 23:42:31 +0000 (UTC)
-Subject: Re: [RFC PATCH] iomap: generalize IOMAP_INLINE to cover tail-packing
- case
-To:     =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>
-Cc:     Chao Yu <yuchao0@huawei.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Gao Xiang <gaoxiang25@huawei.com>, chao@kernel.org
-References: <20190703075502.79782-1-yuchao0@huawei.com>
- <CAHpGcM+s77hKMXo=66nWNF7YKa3qhLY9bZrdb4-Lkspyg2CCDw@mail.gmail.com>
- <39944e50-5888-f900-1954-91be2b12ea5b@huawei.com>
- <CAHpGcMJ_wPJf8KtF3xMP_28pe4Vq4XozFtmd2EuZ+RTqZKQxLA@mail.gmail.com>
-From:   Gao Xiang <hsiangkao@aol.com>
-Message-ID: <1506e523-109d-7253-ee4b-961c4264781d@aol.com>
-Date:   Thu, 11 Jul 2019 07:42:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 10 Jul 2019 21:59:26 -0400
+Received: by mail-lj1-f194.google.com with SMTP id z28so4068617ljn.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jul 2019 18:59:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=NiaFfYJ216nYjgBrBY5JKQAHNiRjdATog8sl2JxZW+g=;
+        b=MQOzZI79mvoiVs1sgBWHfqE+YJM9b7M05jQpHMpAAyRFe0Cs7GZ1SKjYmbrPj6ztHM
+         B7Jmo2E1tOKxmtYLHAeJfiv0Yw5iWNpJ6su3Aywbxq++FWe46hRTt1FaTYFdrs51gDai
+         Fc+1NUhQh/izklmNT0WE5mkHqoWlVg+hybjs0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=NiaFfYJ216nYjgBrBY5JKQAHNiRjdATog8sl2JxZW+g=;
+        b=Ydx//b7w4vEGh8rh60/pyTY/TxDmm22vTdVoBl1wruGNumQw3iSz8noNHVG9ZNejXu
+         zwM4GgkjGez2O7mtwgdPAoKK7xTll17EoedNsdxZ2E/68lCVAX7FKvjlV8A9GGjPK1WB
+         rMlkdNoD2FLN3Jc8BwLDb24yFzWuHnIK7jUIuCAJ5YYxGt5v+8UqTuyr/hMiHQbLZoJ0
+         CxsTsHx5G7jSwQbB4ll2Kf4zSp59oFB16fRSLSK0chxd5/vsvCETtxkV1aZObbUhjDmj
+         jYAPsybk/06HUypNDFYGs29zDiGxjFfX6vA+rDb27ohWtej37FSwY46Qcpg9R8GFC2Hc
+         V+nw==
+X-Gm-Message-State: APjAAAUWLmY2egJCAJAyHDtKXCicLU6BGqGKMmDhA+UbCF5fFSBXFszC
+        Cnfwq2vtgwGS3rArQGW5UTTclFJESBE=
+X-Google-Smtp-Source: APXvYqxQhquEFgFUyx7j2bqzSgsi6Dzz3gEFWdh0uCmE4fQfStO6KAPbdOenuBOC7W9CQMzly0WsnQ==
+X-Received: by 2002:a05:651c:21c:: with SMTP id y28mr683474ljn.187.1562810363581;
+        Wed, 10 Jul 2019 18:59:23 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id f24sm606141lfk.72.2019.07.10.18.59.21
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Jul 2019 18:59:22 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id s19so2892069lfb.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jul 2019 18:59:21 -0700 (PDT)
+X-Received: by 2002:ac2:4839:: with SMTP id 25mr355474lft.79.1562810361547;
+ Wed, 10 Jul 2019 18:59:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHpGcMJ_wPJf8KtF3xMP_28pe4Vq4XozFtmd2EuZ+RTqZKQxLA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <28477.1562362239@warthog.procyon.org.uk> <CAHk-=wjxoeMJfeBahnWH=9zShKp2bsVy527vo3_y8HfOdhwAAw@mail.gmail.com>
+ <20190710194620.GA83443@gmail.com> <20190710201552.GB83443@gmail.com>
+In-Reply-To: <20190710201552.GB83443@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 10 Jul 2019 18:59:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com>
+Message-ID: <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, linux-nfs@vger.kernel.org,
+        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Jul 10, 2019 at 1:15 PM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> Also worth noting that the key ACL patches were only in linux-next for 9 days
+> before the pull request was sent.
 
-At 2019/7/11 ??????5:50, Andreas Gr??nbacher Wrote:
-> At this point, can I ask how important this packing mechanism is to
-> you? I can see a point in implementing inline files, which help
-> because there tends to be a large number of very small files. But for
-> not-so-small files, is saving an extra block really worth the trouble,
-> especially given how cheap storage has become?
+Yes. I was not entirely happy with the whole key subsystem situation.
+See my concerns in
 
-I would try to answer the above. I think there are several advantages by
-using tail-end packing inline:
-1) It is more cache-friendly. Considering a file "A" accessed by user
-now or recently, we
-?????? tend to (1) get more data about "A" (2) leave more data about "A"
-according to LRU-like assumption
-?????? because it is more likely to be used than the metadata of some other
-files "X", especially for files whose
-?????? tail-end block is relatively small enough (less than a threshold,
-e.g. < 100B just for example);
+  https://lore.kernel.org/lkml/CAHk-=wjEowdfG7v_4ttu3xhf9gqopj1+q1nGG86+mGfGDTEBBg@mail.gmail.com/
 
-2) for directories files, tail-end packing will boost up those traversal
-performance;
+for more. That was before I realized it was buggy.
 
-3) I think tail-end packing is a more generic inline, it saves I/Os for
-generic cases not just to
-?????? save the storage space;
+So it really would be good to have more people involved, and more
+structure to the keys development (and, I suspect, much else under
+security/)
 
-"is saving an extra block really worth the trouble" I dont understand
-what exact the trouble is...
+Anyway, since it does seem like David is offline, I've just reverted
+this from my tree, and will be continuing my normal merge window pull
+requests (the other issues I have seen have fixes in their respective
+trees).
 
-
-Thanks,
-Gao Xiang
-
+                 Linus
