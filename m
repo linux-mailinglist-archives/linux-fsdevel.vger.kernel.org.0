@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00F0F659DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 17:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84893659D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 17:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728848AbfGKPAP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jul 2019 11:00:15 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40228 "EHLO huawei.com"
+        id S1729096AbfGKO60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jul 2019 10:58:26 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2211 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729077AbfGKO61 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jul 2019 10:58:27 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 54FF5440A8B4D1905726;
+        id S1729078AbfGKO60 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Jul 2019 10:58:26 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2E9C11A828FB160758A4;
         Thu, 11 Jul 2019 22:58:23 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 11 Jul
- 2019 22:58:15 +0800
+ 2019 22:58:16 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
         Li Guifu <bluce.liguifu@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 03/24] erofs: add super block operations
-Date:   Thu, 11 Jul 2019 22:57:34 +0800
-Message-ID: <20190711145755.33908-4-gaoxiang25@huawei.com>
+Subject: [PATCH v2 04/24] erofs: add raw address_space operations
+Date:   Thu, 11 Jul 2019 22:57:35 +0800
+Message-ID: <20190711145755.33908-5-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190711145755.33908-1-gaoxiang25@huawei.com>
 References: <20190711145755.33908-1-gaoxiang25@huawei.com>
@@ -45,523 +45,410 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This commit adds erofs super block operations, including (u)mount,
-remount_fs, show_options, statfs, in addition to some private
-icache management functions.
+This commit adds functions for meta and raw data, and also
+provides address_space_operations for raw data access.
 
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- fs/erofs/super.c | 502 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 502 insertions(+)
- create mode 100644 fs/erofs/super.c
+ fs/erofs/data.c | 390 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 390 insertions(+)
+ create mode 100644 fs/erofs/data.c
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
 new file mode 100644
-index 000000000000..d83e55bdd4a8
+index 000000000000..1a818abeee3d
 --- /dev/null
-+++ b/fs/erofs/super.c
-@@ -0,0 +1,502 @@
++++ b/fs/erofs/data.c
+@@ -0,0 +1,390 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * linux/fs/erofs/super.c
++ * linux/fs/erofs/data.c
 + *
 + * Copyright (C) 2017-2018 HUAWEI, Inc.
 + *             http://www.huawei.com/
 + * Created by Gao Xiang <gaoxiang25@huawei.com>
 + */
-+#include <linux/module.h>
-+#include <linux/buffer_head.h>
-+#include <linux/statfs.h>
-+#include <linux/parser.h>
-+#include <linux/seq_file.h>
 +#include "internal.h"
++#include <linux/prefetch.h>
 +
-+#define CREATE_TRACE_POINTS
 +#include <trace/events/erofs.h>
 +
-+static struct kmem_cache *erofs_inode_cachep __read_mostly;
-+
-+static void init_once(void *ptr)
++static inline void read_endio(struct bio *bio)
 +{
-+	struct erofs_vnode *vi = ptr;
++	struct super_block *const sb = bio->bi_private;
++	struct bio_vec *bvec;
++	blk_status_t err = bio->bi_status;
++	struct bvec_iter_all iter_all;
 +
-+	inode_init_once(&vi->vfs_inode);
-+}
-+
-+static int __init erofs_init_inode_cache(void)
-+{
-+	erofs_inode_cachep = kmem_cache_create("erofs_inode",
-+					       sizeof(struct erofs_vnode), 0,
-+					       SLAB_RECLAIM_ACCOUNT,
-+					       init_once);
-+
-+	return erofs_inode_cachep ? 0 : -ENOMEM;
-+}
-+
-+static void erofs_exit_inode_cache(void)
-+{
-+	kmem_cache_destroy(erofs_inode_cachep);
-+}
-+
-+static struct inode *alloc_inode(struct super_block *sb)
-+{
-+	struct erofs_vnode *vi =
-+		kmem_cache_alloc(erofs_inode_cachep, GFP_KERNEL);
-+
-+	if (!vi)
-+		return NULL;
-+
-+	/* zero out everything except vfs_inode */
-+	memset(vi, 0, offsetof(struct erofs_vnode, vfs_inode));
-+	return &vi->vfs_inode;
-+}
-+
-+static void free_inode(struct inode *inode)
-+{
-+	struct erofs_vnode *vi = EROFS_V(inode);
-+
-+	/* be careful RCU symlink path (see ext4_inode_info->i_data)! */
-+	if (is_inode_fast_symlink(inode))
-+		kfree(inode->i_link);
-+
-+	kmem_cache_free(erofs_inode_cachep, vi);
-+}
-+
-+static bool check_layout_compatibility(struct super_block *sb,
-+				       struct erofs_super_block *layout)
-+{
-+	const unsigned int requirements = le32_to_cpu(layout->requirements);
-+
-+	EROFS_SB(sb)->requirements = requirements;
-+
-+	/* check if current kernel meets all mandatory requirements */
-+	if (requirements & (~EROFS_ALL_REQUIREMENTS)) {
-+		errln("unidentified requirements %x, please upgrade kernel version",
-+		      requirements & ~EROFS_ALL_REQUIREMENTS);
-+		return false;
-+	}
-+	return true;
-+}
-+
-+static int superblock_read(struct super_block *sb)
-+{
-+	struct erofs_sb_info *sbi;
-+	struct buffer_head *bh;
-+	struct erofs_super_block *layout;
-+	unsigned int blkszbits;
-+	int ret;
-+
-+	bh = sb_bread(sb, 0);
-+
-+	if (!bh) {
-+		errln("cannot read erofs superblock");
-+		return -EIO;
++	if (time_to_inject(EROFS_SB(sb), FAULT_READ_IO)) {
++		erofs_show_injection_info(FAULT_READ_IO);
++		err = BLK_STS_IOERR;
 +	}
 +
-+	sbi = EROFS_SB(sb);
-+	layout = (struct erofs_super_block *)((u8 *)bh->b_data
-+		 + EROFS_SUPER_OFFSET);
++	bio_for_each_segment_all(bvec, bio, iter_all) {
++		struct page *page = bvec->bv_page;
 +
-+	ret = -EINVAL;
-+	if (le32_to_cpu(layout->magic) != EROFS_SUPER_MAGIC_V1) {
-+		errln("cannot find valid erofs superblock");
-+		goto out;
++		/* page is already locked */
++		DBG_BUGON(PageUptodate(page));
++
++		if (unlikely(err))
++			SetPageError(page);
++		else
++			SetPageUptodate(page);
++
++		unlock_page(page);
++		/* page could be reclaimed now */
 +	}
-+
-+	blkszbits = layout->blkszbits;
-+	/* 9(512 bytes) + LOG_SECTORS_PER_BLOCK == LOG_BLOCK_SIZE */
-+	if (unlikely(blkszbits != LOG_BLOCK_SIZE)) {
-+		errln("blksize %u isn't supported on this platform",
-+		      1 << blkszbits);
-+		goto out;
-+	}
-+
-+	if (!check_layout_compatibility(sb, layout))
-+		goto out;
-+
-+	sbi->blocks = le32_to_cpu(layout->blocks);
-+	sbi->meta_blkaddr = le32_to_cpu(layout->meta_blkaddr);
-+	sbi->islotbits = ffs(sizeof(struct erofs_inode_v1)) - 1;
-+	sbi->root_nid = le16_to_cpu(layout->root_nid);
-+	sbi->inos = le64_to_cpu(layout->inos);
-+
-+	sbi->build_time = le64_to_cpu(layout->build_time);
-+	sbi->build_time_nsec = le32_to_cpu(layout->build_time_nsec);
-+
-+	memcpy(&sb->s_uuid, layout->uuid, sizeof(layout->uuid));
-+	memcpy(sbi->volume_name, layout->volume_name,
-+	       sizeof(layout->volume_name));
-+
-+	ret = 0;
-+out:
-+	brelse(bh);
-+	return ret;
++	bio_put(bio);
 +}
 +
-+#ifdef CONFIG_EROFS_FAULT_INJECTION
-+const char *erofs_fault_name[FAULT_MAX] = {
-+	[FAULT_KMALLOC]		= "kmalloc",
-+	[FAULT_READ_IO]		= "read IO error",
-+};
-+
-+static void __erofs_build_fault_attr(struct erofs_sb_info *sbi,
-+				     unsigned int rate)
++/* prio -- true is used for dir */
++struct page *__erofs_get_meta_page(struct super_block *sb,
++				   erofs_blk_t blkaddr, bool prio, bool nofail)
 +{
-+	struct erofs_fault_info *ffi = &sbi->fault_info;
-+
-+	if (rate) {
-+		atomic_set(&ffi->inject_ops, 0);
-+		ffi->inject_rate = rate;
-+		ffi->inject_type = (1 << FAULT_MAX) - 1;
-+	} else {
-+		memset(ffi, 0, sizeof(struct erofs_fault_info));
-+	}
-+
-+	set_opt(sbi, FAULT_INJECTION);
-+}
-+
-+static int erofs_build_fault_attr(struct erofs_sb_info *sbi,
-+				  substring_t *args)
-+{
-+	int rate = 0;
-+
-+	if (args->from && match_int(args, &rate))
-+		return -EINVAL;
-+
-+	__erofs_build_fault_attr(sbi, rate);
-+	return 0;
-+}
-+
-+static unsigned int erofs_get_fault_rate(struct erofs_sb_info *sbi)
-+{
-+	return sbi->fault_info.inject_rate;
-+}
-+#else
-+static void __erofs_build_fault_attr(struct erofs_sb_info *sbi,
-+				     unsigned int rate)
-+{
-+}
-+
-+static int erofs_build_fault_attr(struct erofs_sb_info *sbi,
-+				  substring_t *args)
-+{
-+	infoln("fault_injection options not supported");
-+	return 0;
-+}
-+
-+static unsigned int erofs_get_fault_rate(struct erofs_sb_info *sbi)
-+{
-+	return 0;
-+}
-+#endif
-+
-+/* set up default EROFS parameters */
-+static void default_options(struct erofs_sb_info *sbi)
-+{
-+}
-+
-+enum {
-+	Opt_fault_injection,
-+	Opt_err
-+};
-+
-+static match_table_t erofs_tokens = {
-+	{Opt_fault_injection, "fault_injection=%u"},
-+	{Opt_err, NULL}
-+};
-+
-+static int parse_options(struct super_block *sb, char *options)
-+{
-+	substring_t args[MAX_OPT_ARGS];
-+	char *p;
++	struct inode *const bd_inode = sb->s_bdev->bd_inode;
++	struct address_space *const mapping = bd_inode->i_mapping;
++	/* prefer retrying in the allocator to blindly looping below */
++	const gfp_t gfp = mapping_gfp_constraint(mapping, ~__GFP_FS) |
++		(nofail ? __GFP_NOFAIL : 0);
++	unsigned int io_retries = nofail ? EROFS_IO_MAX_RETRIES_NOFAIL : 0;
++	struct page *page;
 +	int err;
 +
-+	if (!options)
-+		return 0;
++repeat:
++	page = find_or_create_page(mapping, blkaddr, gfp);
++	if (unlikely(!page)) {
++		DBG_BUGON(nofail);
++		return ERR_PTR(-ENOMEM);
++	}
++	DBG_BUGON(!PageLocked(page));
 +
-+	while ((p = strsep(&options, ","))) {
-+		int token;
++	if (!PageUptodate(page)) {
++		struct bio *bio;
 +
-+		if (!*p)
-+			continue;
++		bio = erofs_grab_bio(sb, blkaddr, 1, sb, read_endio, nofail);
++		if (IS_ERR(bio)) {
++			DBG_BUGON(nofail);
++			err = PTR_ERR(bio);
++			goto err_out;
++		}
 +
-+		args[0].to = args[0].from = NULL;
-+		token = match_token(p, erofs_tokens, args);
++		err = bio_add_page(bio, page, PAGE_SIZE, 0);
++		if (unlikely(err != PAGE_SIZE)) {
++			err = -EFAULT;
++			goto err_out;
++		}
 +
-+		switch (token) {
-+		case Opt_fault_injection:
-+			err = erofs_build_fault_attr(EROFS_SB(sb), args);
-+			if (err)
-+				return err;
-+			break;
++		__submit_bio(bio, REQ_OP_READ,
++			     REQ_META | (prio ? REQ_PRIO : 0));
 +
-+		default:
-+			errln("Unrecognized mount option \"%s\" or missing value", p);
-+			return -EINVAL;
++		lock_page(page);
++
++		/* this page has been truncated by others */
++		if (unlikely(page->mapping != mapping)) {
++unlock_repeat:
++			unlock_page(page);
++			put_page(page);
++			goto repeat;
++		}
++
++		/* more likely a read error */
++		if (unlikely(!PageUptodate(page))) {
++			if (io_retries) {
++				--io_retries;
++				goto unlock_repeat;
++			}
++			err = -EIO;
++			goto err_out;
 +		}
 +	}
-+	return 0;
++	return page;
++
++err_out:
++	unlock_page(page);
++	put_page(page);
++	return ERR_PTR(err);
 +}
 +
-+static int erofs_read_super(struct super_block *sb,
-+			    const char *dev_name,
-+			    void *data, int silent)
++static int erofs_map_blocks_flatmode(struct inode *inode,
++				     struct erofs_map_blocks *map,
++				     int flags)
 +{
-+	struct inode *inode;
-+	struct erofs_sb_info *sbi;
-+	int err = -EINVAL;
++	int err = 0;
++	erofs_blk_t nblocks, lastblk;
++	u64 offset = map->m_la;
++	struct erofs_vnode *vi = EROFS_V(inode);
 +
-+	infoln("read_super, device -> %s", dev_name);
-+	infoln("options -> %s", (char *)data);
++	trace_erofs_map_blocks_flatmode_enter(inode, map, flags);
 +
-+	if (unlikely(!sb_set_blocksize(sb, EROFS_BLKSIZ))) {
-+		errln("failed to set erofs blksize");
-+		goto err;
++	nblocks = DIV_ROUND_UP(inode->i_size, PAGE_SIZE);
++	lastblk = nblocks - is_inode_flat_inline(inode);
++
++	if (unlikely(offset >= inode->i_size)) {
++		/* leave out-of-bound access unmapped */
++		map->m_flags = 0;
++		map->m_plen = 0;
++		goto out;
 +	}
 +
-+	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
-+	if (unlikely(!sbi)) {
-+		err = -ENOMEM;
-+		goto err;
-+	}
-+	sb->s_fs_info = sbi;
++	/* there is no hole in flatmode */
++	map->m_flags = EROFS_MAP_MAPPED;
 +
-+	err = superblock_read(sb);
-+	if (err)
-+		goto err_sbread;
++	if (offset < blknr_to_addr(lastblk)) {
++		map->m_pa = blknr_to_addr(vi->raw_blkaddr) + map->m_la;
++		map->m_plen = blknr_to_addr(lastblk) - offset;
++	} else if (is_inode_flat_inline(inode)) {
++		/* 2 - inode inline B: inode, [xattrs], inline last blk... */
++		struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
 +
-+	sb->s_magic = EROFS_SUPER_MAGIC;
-+	sb->s_flags |= SB_RDONLY | SB_NOATIME;
-+	sb->s_maxbytes = MAX_LFS_FILESIZE;
-+	sb->s_time_gran = 1;
++		map->m_pa = iloc(sbi, vi->nid) + vi->inode_isize +
++			vi->xattr_isize + erofs_blkoff(map->m_la);
++		map->m_plen = inode->i_size - offset;
 +
-+	sb->s_op = &erofs_sops;
++		/* inline data should locate in one meta block */
++		if (erofs_blkoff(map->m_pa) + map->m_plen > PAGE_SIZE) {
++			DBG_BUGON(1);
++			err = -EIO;
++			goto err_out;
++		}
 +
-+	/* set erofs default mount options */
-+	default_options(sbi);
-+
-+	err = parse_options(sb, data);
-+	if (err)
-+		goto err_parseopt;
-+
-+	if (!silent)
-+		infoln("root inode @ nid %llu", ROOT_NID(sbi));
-+
-+	/* get the root inode */
-+	inode = erofs_iget(sb, ROOT_NID(sbi), true);
-+	if (IS_ERR(inode)) {
-+		err = PTR_ERR(inode);
-+		goto err_iget;
++		map->m_flags |= EROFS_MAP_META;
++	} else {
++		errln("internal error @ nid: %llu (size %llu), m_la 0x%llx",
++		      vi->nid, inode->i_size, map->m_la);
++		DBG_BUGON(1);
++		err = -EIO;
++		goto err_out;
 +	}
 +
-+	if (!S_ISDIR(inode->i_mode)) {
-+		errln("rootino(nid %llu) is not a directory(i_mode %o)",
-+		      ROOT_NID(sbi), inode->i_mode);
-+		err = -EINVAL;
-+		iput(inode);
-+		goto err_iget;
-+	}
++out:
++	map->m_llen = map->m_plen;
 +
-+	sb->s_root = d_make_root(inode);
-+	if (!sb->s_root) {
-+		err = -ENOMEM;
-+		goto err_iget;
-+	}
-+
-+	/* save the device name to sbi */
-+	sbi->dev_name = __getname();
-+	if (!sbi->dev_name) {
-+		err = -ENOMEM;
-+		goto err_devname;
-+	}
-+
-+	snprintf(sbi->dev_name, PATH_MAX, "%s", dev_name);
-+	sbi->dev_name[PATH_MAX - 1] = '\0';
-+
-+	if (!silent)
-+		infoln("mounted on %s with opts: %s.", dev_name,
-+		       (char *)data);
-+	return 0;
-+	/*
-+	 * please add a label for each exit point and use
-+	 * the following name convention, thus new features
-+	 * can be integrated easily without renaming labels.
-+	 */
-+err_devname:
-+	dput(sb->s_root);
-+	sb->s_root = NULL;
-+err_iget:
-+err_parseopt:
-+err_sbread:
-+	sb->s_fs_info = NULL;
-+	kfree(sbi);
-+err:
++err_out:
++	trace_erofs_map_blocks_flatmode_exit(inode, map, flags, 0);
 +	return err;
++}
++
++int erofs_map_blocks(struct inode *inode,
++		     struct erofs_map_blocks *map, int flags)
++{
++	if (is_inode_layout_compression(inode))
++		return -ENOTSUPP;
++
++	return erofs_map_blocks_flatmode(inode, map, flags);
++}
++
++static inline struct bio *erofs_read_raw_page(struct bio *bio,
++					      struct address_space *mapping,
++					      struct page *page,
++					      erofs_off_t *last_block,
++					      unsigned int nblocks,
++					      bool ra)
++{
++	struct inode *const inode = mapping->host;
++	struct super_block *const sb = inode->i_sb;
++	erofs_off_t current_block = (erofs_off_t)page->index;
++	int err;
++
++	DBG_BUGON(!nblocks);
++
++	if (PageUptodate(page)) {
++		err = 0;
++		goto has_updated;
++	}
++
++	if (cleancache_get_page(page) == 0) {
++		err = 0;
++		SetPageUptodate(page);
++		goto has_updated;
++	}
++
++	/* note that for readpage case, bio also equals to NULL */
++	if (bio &&
++	    /* not continuous */
++	    *last_block + 1 != current_block) {
++submit_bio_retry:
++		__submit_bio(bio, REQ_OP_READ, 0);
++		bio = NULL;
++	}
++
++	if (!bio) {
++		struct erofs_map_blocks map = {
++			.m_la = blknr_to_addr(current_block),
++		};
++		erofs_blk_t blknr;
++		unsigned int blkoff;
++
++		err = erofs_map_blocks(inode, &map, EROFS_GET_BLOCKS_RAW);
++		if (unlikely(err))
++			goto err_out;
++
++		/* zero out the holed page */
++		if (unlikely(!(map.m_flags & EROFS_MAP_MAPPED))) {
++			zero_user_segment(page, 0, PAGE_SIZE);
++			SetPageUptodate(page);
++
++			/* imply err = 0, see erofs_map_blocks */
++			goto has_updated;
++		}
++
++		/* for RAW access mode, m_plen must be equal to m_llen */
++		DBG_BUGON(map.m_plen != map.m_llen);
++
++		blknr = erofs_blknr(map.m_pa);
++		blkoff = erofs_blkoff(map.m_pa);
++
++		/* deal with inline page */
++		if (map.m_flags & EROFS_MAP_META) {
++			void *vsrc, *vto;
++			struct page *ipage;
++
++			DBG_BUGON(map.m_plen > PAGE_SIZE);
++
++			ipage = erofs_get_meta_page(inode->i_sb, blknr, 0);
++
++			if (IS_ERR(ipage)) {
++				err = PTR_ERR(ipage);
++				goto err_out;
++			}
++
++			vsrc = kmap_atomic(ipage);
++			vto = kmap_atomic(page);
++			memcpy(vto, vsrc + blkoff, map.m_plen);
++			memset(vto + map.m_plen, 0, PAGE_SIZE - map.m_plen);
++			kunmap_atomic(vto);
++			kunmap_atomic(vsrc);
++			flush_dcache_page(page);
++
++			SetPageUptodate(page);
++			/* TODO: could we unlock the page earlier? */
++			unlock_page(ipage);
++			put_page(ipage);
++
++			/* imply err = 0, see erofs_map_blocks */
++			goto has_updated;
++		}
++
++		/* pa must be block-aligned for raw reading */
++		DBG_BUGON(erofs_blkoff(map.m_pa));
++
++		/* max # of continuous pages */
++		if (nblocks > DIV_ROUND_UP(map.m_plen, PAGE_SIZE))
++			nblocks = DIV_ROUND_UP(map.m_plen, PAGE_SIZE);
++		if (nblocks > BIO_MAX_PAGES)
++			nblocks = BIO_MAX_PAGES;
++
++		bio = erofs_grab_bio(sb, blknr, nblocks, sb,
++				     read_endio, false);
++		if (IS_ERR(bio)) {
++			err = PTR_ERR(bio);
++			bio = NULL;
++			goto err_out;
++		}
++	}
++
++	err = bio_add_page(bio, page, PAGE_SIZE, 0);
++	/* out of the extent or bio is full */
++	if (err < PAGE_SIZE)
++		goto submit_bio_retry;
++
++	*last_block = current_block;
++
++	/* shift in advance in case of it followed by too many gaps */
++	if (bio->bi_iter.bi_size >= bio->bi_max_vecs * PAGE_SIZE) {
++		/* err should reassign to 0 after submitting */
++		err = 0;
++		goto submit_bio_out;
++	}
++
++	return bio;
++
++err_out:
++	/* for sync reading, set page error immediately */
++	if (!ra) {
++		SetPageError(page);
++		ClearPageUptodate(page);
++	}
++has_updated:
++	unlock_page(page);
++
++	/* if updated manually, continuous pages has a gap */
++	if (bio)
++submit_bio_out:
++		__submit_bio(bio, REQ_OP_READ, 0);
++
++	return unlikely(err) ? ERR_PTR(err) : NULL;
 +}
 +
 +/*
-+ * could be triggered after deactivate_locked_super()
-+ * is called, thus including umount and failed to initialize.
++ * since we dont have write or truncate flows, so no inode
++ * locking needs to be held at the moment.
 + */
-+static void erofs_put_super(struct super_block *sb)
++static int erofs_raw_access_readpage(struct file *file, struct page *page)
 +{
-+	struct erofs_sb_info *sbi = EROFS_SB(sb);
++	erofs_off_t last_block;
++	struct bio *bio;
 +
-+	/* for cases which are failed in "read_super" */
-+	if (!sbi)
-+		return;
++	trace_erofs_readpage(page, true);
 +
-+	WARN_ON(sb->s_magic != EROFS_SUPER_MAGIC);
++	bio = erofs_read_raw_page(NULL, page->mapping,
++				  page, &last_block, 1, false);
 +
-+	infoln("unmounted for %s", sbi->dev_name);
-+	__putname(sbi->dev_name);
++	if (IS_ERR(bio))
++		return PTR_ERR(bio);
 +
-+	kfree(sbi);
-+	sb->s_fs_info = NULL;
++	DBG_BUGON(bio);	/* since we have only one bio -- must be NULL */
++	return 0;
 +}
 +
++static int erofs_raw_access_readpages(struct file *filp,
++				      struct address_space *mapping,
++				      struct list_head *pages,
++				      unsigned int nr_pages)
++{
++	erofs_off_t last_block;
++	struct bio *bio = NULL;
++	gfp_t gfp = readahead_gfp_mask(mapping);
++	struct page *page = list_last_entry(pages, struct page, lru);
 +
-+struct erofs_mount_private {
-+	const char *dev_name;
-+	char *options;
++	trace_erofs_readpages(mapping->host, page, nr_pages, true);
++
++	for (; nr_pages; --nr_pages) {
++		page = list_entry(pages->prev, struct page, lru);
++
++		prefetchw(&page->flags);
++		list_del(&page->lru);
++
++		if (!add_to_page_cache_lru(page, mapping, page->index, gfp)) {
++			bio = erofs_read_raw_page(bio, mapping, page,
++						  &last_block, nr_pages, true);
++
++			/* all the page errors are ignored when readahead */
++			if (IS_ERR(bio)) {
++				pr_err("%s, readahead error at page %lu of nid %llu\n",
++				       __func__, page->index,
++				       EROFS_V(mapping->host)->nid);
++
++				bio = NULL;
++			}
++		}
++
++		/* pages could still be locked */
++		put_page(page);
++	}
++	DBG_BUGON(!list_empty(pages));
++
++	/* the rare case (end in gaps) */
++	if (unlikely(bio))
++		__submit_bio(bio, REQ_OP_READ, 0);
++	return 0;
++}
++
++/* for uncompressed (aligned) files and raw access for other files */
++const struct address_space_operations erofs_raw_access_aops = {
++	.readpage = erofs_raw_access_readpage,
++	.readpages = erofs_raw_access_readpages,
 +};
-+
-+/* support mount_bdev() with options */
-+static int erofs_fill_super(struct super_block *sb,
-+			    void *_priv, int silent)
-+{
-+	struct erofs_mount_private *priv = _priv;
-+
-+	return erofs_read_super(sb, priv->dev_name,
-+		priv->options, silent);
-+}
-+
-+static struct dentry *erofs_mount(
-+	struct file_system_type *fs_type, int flags,
-+	const char *dev_name, void *data)
-+{
-+	struct erofs_mount_private priv = {
-+		.dev_name = dev_name,
-+		.options = data
-+	};
-+
-+	return mount_bdev(fs_type, flags, dev_name,
-+		&priv, erofs_fill_super);
-+}
-+
-+static void erofs_kill_sb(struct super_block *sb)
-+{
-+	kill_block_super(sb);
-+}
-+
-+static struct file_system_type erofs_fs_type = {
-+	.owner          = THIS_MODULE,
-+	.name           = "erofs",
-+	.mount          = erofs_mount,
-+	.kill_sb        = erofs_kill_sb,
-+	.fs_flags       = FS_REQUIRES_DEV,
-+};
-+MODULE_ALIAS_FS("erofs");
-+
-+static int __init erofs_module_init(void)
-+{
-+	int err;
-+
-+	erofs_check_ondisk_layout_definitions();
-+	infoln("initializing erofs " EROFS_VERSION);
-+
-+	err = erofs_init_inode_cache();
-+	if (err)
-+		goto icache_err;
-+
-+	err = register_filesystem(&erofs_fs_type);
-+	if (err)
-+		goto fs_err;
-+
-+	infoln("successfully to initialize erofs");
-+	return 0;
-+
-+fs_err:
-+	erofs_exit_inode_cache();
-+icache_err:
-+	return err;
-+}
-+
-+static void __exit erofs_module_exit(void)
-+{
-+	unregister_filesystem(&erofs_fs_type);
-+	erofs_exit_inode_cache();
-+	infoln("successfully finalize erofs");
-+}
-+
-+/* get filesystem statistics */
-+static int erofs_statfs(struct dentry *dentry, struct kstatfs *buf)
-+{
-+	struct super_block *sb = dentry->d_sb;
-+	struct erofs_sb_info *sbi = EROFS_SB(sb);
-+	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
-+
-+	buf->f_type = sb->s_magic;
-+	buf->f_bsize = EROFS_BLKSIZ;
-+	buf->f_blocks = sbi->blocks;
-+	buf->f_bfree = buf->f_bavail = 0;
-+
-+	buf->f_files = ULLONG_MAX;
-+	buf->f_ffree = ULLONG_MAX - sbi->inos;
-+
-+	buf->f_namelen = EROFS_NAME_LEN;
-+
-+	buf->f_fsid.val[0] = (u32)id;
-+	buf->f_fsid.val[1] = (u32)(id >> 32);
-+	return 0;
-+}
-+
-+static int erofs_show_options(struct seq_file *seq, struct dentry *root)
-+{
-+	struct erofs_sb_info *sbi __maybe_unused = EROFS_SB(root->d_sb);
-+
-+	if (test_opt(sbi, FAULT_INJECTION))
-+		seq_printf(seq, ",fault_injection=%u",
-+			   erofs_get_fault_rate(sbi));
-+	return 0;
-+}
-+
-+static int erofs_remount(struct super_block *sb, int *flags, char *data)
-+{
-+	struct erofs_sb_info *sbi = EROFS_SB(sb);
-+	unsigned int org_mnt_opt = sbi->mount_opt;
-+	unsigned int org_inject_rate = erofs_get_fault_rate(sbi);
-+	int err;
-+
-+	DBG_BUGON(!sb_rdonly(sb));
-+	err = parse_options(sb, data);
-+	if (err)
-+		goto out;
-+
-+	*flags |= SB_RDONLY;
-+	return 0;
-+out:
-+	__erofs_build_fault_attr(sbi, org_inject_rate);
-+	sbi->mount_opt = org_mnt_opt;
-+
-+	return err;
-+}
-+
-+const struct super_operations erofs_sops = {
-+	.put_super = erofs_put_super,
-+	.alloc_inode = alloc_inode,
-+	.free_inode = free_inode,
-+	.statfs = erofs_statfs,
-+	.show_options = erofs_show_options,
-+	.remount_fs = erofs_remount,
-+};
-+
-+module_init(erofs_module_init);
-+module_exit(erofs_module_exit);
-+
-+MODULE_DESCRIPTION("Enhanced ROM File System");
-+MODULE_AUTHOR("Gao Xiang, Chao Yu, Miao Xie, CONSUMER BG, HUAWEI Inc.");
-+MODULE_LICENSE("GPL");
 +
 -- 
 2.17.1
