@@ -2,94 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B29816579C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 15:07:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A08E1657E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2019 15:28:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728440AbfGKNHC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jul 2019 09:07:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45256 "EHLO
+        id S1728344AbfGKN2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jul 2019 09:28:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49064 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbfGKNHC (ORCPT
+        with ESMTP id S1727956AbfGKN2j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jul 2019 09:07:02 -0400
+        Thu, 11 Jul 2019 09:28:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uB6GvQipfUImhV08891dUYAhTGVxS2/sDJOSj04yG0k=; b=Ls2Xv81qZlTY6bZagVazu/EV3
-        OyTqTWL9owsatConf5VKPWEgaJeQgkwvg9BpoQDKlBBAePe0mDMdtQlIvHcgxxbV5B5VxCzBpAKzk
-        l+JIGoEy5D/JaC/GJgvEopWxjHmDnuRU9UmoUvt/nMCGh36rSsyp12pfQ3GwXEL+b0ayEsW1xty27
-        xrLYvZQWjGHO1eqbFsgG+YHxH4/gzXr6eTnxAuj+gvE4s+Crxf8VddahxG+1402WOWkELwETJKxac
-        QV+Hc9KSnrPGJrA+j8aUTT5erv/uNIWm2acZnQIO7SZnwix9mNBE8XcTy9BigtkNd5oUEWyICIs9y
-        cRyz0Qavw==;
+         bh=qQDTG34nBen/nM9O8f+a+MBGBH0+G5+6en1FIsdsBzQ=; b=W+v4En8WpGKHHhb5uk9cn5YEj
+        gMBk1sMls9oDVSUMnffjOdYoC42wy0L2mrdb8o+2nRCt3WJcfJWdpJmZdwFH7zES2pWupJCUFZdpd
+        +I0ZEZ52/7VuJmRzXFkuCHrqNnocufRvwVqTWFL84Zv2FBGtFMXone6sHQPuWsD3NHowMNRs2z0f7
+        EEm1jKIO9RQ8O8rAIcVGKaJlZ7YjDe4dFqP6S38khRcqg/4f/fhU2/h5XGx35pJ4tyHd/WIhuiZAS
+        fepWgCd+ombLf62ZVAnnAYieZTutsx+4AKG4jD7zCntmeAryEPk4KQ+vNqva9zXi8VGg4PP5+X3Ao
+        VyIPQLmeg==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hlYmf-0004Px-QH; Thu, 11 Jul 2019 13:06:49 +0000
-Date:   Thu, 11 Jul 2019 06:06:49 -0700
+        id 1hlZ7k-0002ft-Fx; Thu, 11 Jul 2019 13:28:36 +0000
+Date:   Thu, 11 Jul 2019 06:28:36 -0700
 From:   Matthew Wilcox <willy@infradead.org>
-To:     Gao Xiang <hsiangkao@aol.com>
-Cc:     Andreas =?iso-8859-1?Q?Gr=FCnbacher?= 
-        <andreas.gruenbacher@gmail.com>, Chao Yu <yuchao0@huawei.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Gao Xiang <gaoxiang25@huawei.com>, chao@kernel.org
-Subject: Re: [RFC PATCH] iomap: generalize IOMAP_INLINE to cover tail-packing
- case
-Message-ID: <20190711130649.GQ32320@bombadil.infradead.org>
-References: <20190703075502.79782-1-yuchao0@huawei.com>
- <CAHpGcM+s77hKMXo=66nWNF7YKa3qhLY9bZrdb4-Lkspyg2CCDw@mail.gmail.com>
- <39944e50-5888-f900-1954-91be2b12ea5b@huawei.com>
- <CAHpGcMJ_wPJf8KtF3xMP_28pe4Vq4XozFtmd2EuZ+RTqZKQxLA@mail.gmail.com>
- <1506e523-109d-7253-ee4b-961c4264781d@aol.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Boaz Harrosh <openosd@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+Message-ID: <20190711132836.GR32320@bombadil.infradead.org>
+References: <CAPcyv4iPNz=oJyc_EoE-mC11=gyBzwMKbmj1ZY_Yna54=cC=Mg@mail.gmail.com>
+ <20190704032728.GK1729@bombadil.infradead.org>
+ <20190704165450.GH31037@quack2.suse.cz>
+ <20190704191407.GM1729@bombadil.infradead.org>
+ <CAPcyv4gUiDw8Ma9mvbW5BamQtGZxWVuvBW7UrOLa2uijrXUWaw@mail.gmail.com>
+ <20190705191004.GC32320@bombadil.infradead.org>
+ <CAPcyv4jVARa38Qc4NjQ04wJ4ZKJ6On9BbJgoL95wQqU-p-Xp_w@mail.gmail.com>
+ <20190710190204.GB14701@quack2.suse.cz>
+ <20190711030855.GO32320@bombadil.infradead.org>
+ <20190711074859.GA8727@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1506e523-109d-7253-ee4b-961c4264781d@aol.com>
+In-Reply-To: <20190711074859.GA8727@quack2.suse.cz>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 11, 2019 at 07:42:20AM +0800, Gao Xiang wrote:
+On Thu, Jul 11, 2019 at 09:48:59AM +0200, Jan Kara wrote:
+> On Wed 10-07-19 20:08:55, Matthew Wilcox wrote:
+> > On Wed, Jul 10, 2019 at 09:02:04PM +0200, Jan Kara wrote:
+> > > @@ -848,7 +853,7 @@ static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
+> > >  	if (unlikely(dax_is_locked(entry))) {
+> > >  		void *old_entry = entry;
+> > >  
+> > > -		entry = get_unlocked_entry(xas);
+> > > +		entry = get_unlocked_entry(xas, 0);
+> > >  
+> > >  		/* Entry got punched out / reallocated? */
+> > >  		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
+> > 
+> > I'm not sure about this one.  Are we sure there will never be a dirty
+> > PMD entry?  Even if we can't create one today, it feels like a bit of
+> > a landmine to leave for someone who creates one in the future.
 > 
-> At 2019/7/11 ??????5:50, Andreas Gr??nbacher Wrote:
-> > At this point, can I ask how important this packing mechanism is to
-> > you? I can see a point in implementing inline files, which help
-> > because there tends to be a large number of very small files. But for
-> > not-so-small files, is saving an extra block really worth the trouble,
-> > especially given how cheap storage has become?
-> 
-> I would try to answer the above. I think there are several advantages by
-> using tail-end packing inline:
-> 1) It is more cache-friendly. Considering a file "A" accessed by user
-> now or recently, we
-> ?????? tend to (1) get more data about "A" (2) leave more data about "A"
-> according to LRU-like assumption
-> ?????? because it is more likely to be used than the metadata of some other
-> files "X", especially for files whose
-> ?????? tail-end block is relatively small enough (less than a threshold,
-> e.g. < 100B just for example);
-> 
-> 2) for directories files, tail-end packing will boost up those traversal
-> performance;
-> 
-> 3) I think tail-end packing is a more generic inline, it saves I/Os for
-> generic cases not just to
-> ?????? save the storage space;
-> 
-> "is saving an extra block really worth the trouble" I dont understand
-> what exact the trouble is...
+> I was thinking about this but dax_writeback_one() doesn't really care what
+> entry it gets. Yes, in theory it could get a PMD when previously there was
+> PTE or vice-versa but we check that PFN's match and if they really do
+> match, there's no harm in doing the flushing whatever entry we got back...
+> And the checks are simpler this way.
 
-"the trouble" is adding code complexity and additional things to test.
+That's fair.  I'll revert this part to the way you had it.
 
-I'm not sure you really understood Andreas' question.  He's saying that he
-understands the performance and space gain from packing short files
-(eg files less than 100 bytes).  But how many files are there between
-4096 and 4196 bytes in size, let alone between 8192 and 8292, 12384 and
-12484 ...
-
-Is optimising for _those_ files worth it?
+I actually want to get rid of the PFN match check too; it doesn't really
+buy us much.  We already check whether the TOWRITE bit is set, and that
+should accomplish the same thing.
