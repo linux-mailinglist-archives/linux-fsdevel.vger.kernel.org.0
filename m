@@ -2,123 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AC7166C4B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 14:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B79866E1B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 14:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfGLMNA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jul 2019 08:13:00 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:49784 "EHLO mx2.mailbox.org"
+        id S1729426AbfGLMcG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jul 2019 08:32:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726601AbfGLMNA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:13:00 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        id S1729423AbfGLMcF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:32:05 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id F1641A117C;
-        Fri, 12 Jul 2019 14:12:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id P6ek3O6D-xUo; Fri, 12 Jul 2019 14:12:48 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 22:12:01 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v9 04/10] namei: split out nd->dfd handling to
- dirfd_path_init
-Message-ID: <20190712121201.ouhwqgeszfq44t33@yavin>
-References: <20190706145737.5299-1-cyphar@cyphar.com>
- <20190706145737.5299-5-cyphar@cyphar.com>
- <20190712042050.GH17978@ZenIV.linux.org.uk>
- <20190712120743.mka3vl5t4zndc5wj@yavin>
+        by mail.kernel.org (Postfix) with ESMTPSA id AE2E22166E;
+        Fri, 12 Jul 2019 12:32:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562934724;
+        bh=Ehpl1vJOgxVSnX4bYZNqCygosiLCPAzhduos+K0Cvcs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oXrz1fTnt1KaEQMh+Q8Hn0NmD0OiJj+r/sOdGvV92qMZ1BMMj7G4zUuYvhtvnqr+3
+         kS8VqdwUiqJ2XmdhvCC2o2w3vc4rj1AvQntNLW/jCyKnHvToIHNf6e/9x+8tJvqFW4
+         6Td1m8OCjn2PT7kZgKXXKEFuaH38ZYF7ysjmE3Jg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Liu Yiding <liuyd.fnst@cn.fujitsu.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.2 11/61] block: fix .bi_size overflow
+Date:   Fri, 12 Jul 2019 14:19:24 +0200
+Message-Id: <20190712121621.228131224@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
+References: <20190712121620.632595223@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="37fzaqczvbcmjfqh"
-Content-Disposition: inline
-In-Reply-To: <20190712120743.mka3vl5t4zndc5wj@yavin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+From: Ming Lei <ming.lei@redhat.com>
 
---37fzaqczvbcmjfqh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+commit 79d08f89bb1b5c2c1ff90d9bb95497ab9e8aa7e0 upstream.
 
-On 2019-07-12, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > On Sun, Jul 07, 2019 at 12:57:31AM +1000, Aleksa Sarai wrote:
-> > > Previously, path_init's handling of *at(dfd, ...) was only done once,
-> > > but with LOOKUP_BENEATH (and LOOKUP_IN_ROOT) we have to parse the
-> > > initial nd->path at different times (before or after absolute path
-> > > handling) depending on whether we have been asked to scope resolution
-> > > within a root.
-> >=20
-> > >  	if (*s =3D=3D '/') {
-> > > -		set_root(nd);
-> > > -		if (likely(!nd_jump_root(nd)))
-> > > -			return s;
-> > > -		return ERR_PTR(-ECHILD);
-> >=20
-> > > +		if (likely(!nd->root.mnt))
-> > > +			set_root(nd);
-> >=20
-> > How can we get there with non-NULL nd->root.mnt, when LOOKUP_ROOT case
-> > has been already handled by that point?
->=20
-> Yup, you're completely right. I will remove the
->   if (!nd->root.mnt)
-> in the next version.
+'bio->bi_iter.bi_size' is 'unsigned int', which at most hold 4G - 1
+bytes.
 
-Ah sorry, there is a reason for it -- later in the series the
-LOOKUP_BENEATH case means that you might end up with a non-NULL
-nd->root.mnt. If you want, I can move the addition of the conditional to
-later in the series (it was easier to split the patch by-hunk back when
-you originally asked me to split out dirfd_path_init()).
+Before 07173c3ec276 ("block: enable multipage bvecs"), one bio can
+include very limited pages, and usually at most 256, so the fs bio
+size won't be bigger than 1M bytes most of times.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+Since we support multi-page bvec, in theory one fs bio really can
+be added > 1M pages, especially in case of hugepage, or big writeback
+with too many dirty pages. Then there is chance in which .bi_size
+is overflowed.
 
---37fzaqczvbcmjfqh
-Content-Type: application/pgp-signature; name="signature.asc"
+Fixes this issue by using bio_full() to check if the added segment may
+overflow .bi_size.
 
------BEGIN PGP SIGNATURE-----
+Cc: Liu Yiding <liuyd.fnst@cn.fujitsu.com>
+Cc: kernel test robot <rong.a.chen@intel.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: linux-xfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Fixes: 07173c3ec276 ("block: enable multipage bvecs")
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSh5DgAKCRCdlLljIbnQ
-EktsAQC+xy1gwgzkK07JhvJgn8Q1pT79AOQ14p3p2Zp9thYafQD9FEgBMo7bE+TU
-IjLN9tnpuJF+ybsPFaA/VNK4FHH0igw=
-=ZC2p
------END PGP SIGNATURE-----
+---
+ block/bio.c         |   10 +++++-----
+ fs/iomap.c          |    2 +-
+ fs/xfs/xfs_aops.c   |    2 +-
+ include/linux/bio.h |   18 ++++++++++++++++--
+ 4 files changed, 23 insertions(+), 9 deletions(-)
 
---37fzaqczvbcmjfqh--
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -731,7 +731,7 @@ static int __bio_add_pc_page(struct requ
+ 		}
+ 	}
+ 
+-	if (bio_full(bio))
++	if (bio_full(bio, len))
+ 		return 0;
+ 
+ 	if (bio->bi_phys_segments >= queue_max_segments(q))
+@@ -807,7 +807,7 @@ void __bio_add_page(struct bio *bio, str
+ 	struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt];
+ 
+ 	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
+-	WARN_ON_ONCE(bio_full(bio));
++	WARN_ON_ONCE(bio_full(bio, len));
+ 
+ 	bv->bv_page = page;
+ 	bv->bv_offset = off;
+@@ -834,7 +834,7 @@ int bio_add_page(struct bio *bio, struct
+ 	bool same_page = false;
+ 
+ 	if (!__bio_try_merge_page(bio, page, len, offset, &same_page)) {
+-		if (bio_full(bio))
++		if (bio_full(bio, len))
+ 			return 0;
+ 		__bio_add_page(bio, page, len, offset);
+ 	}
+@@ -922,7 +922,7 @@ static int __bio_iov_iter_get_pages(stru
+ 			if (same_page)
+ 				put_page(page);
+ 		} else {
+-			if (WARN_ON_ONCE(bio_full(bio)))
++			if (WARN_ON_ONCE(bio_full(bio, len)))
+                                 return -EINVAL;
+ 			__bio_add_page(bio, page, len, offset);
+ 		}
+@@ -966,7 +966,7 @@ int bio_iov_iter_get_pages(struct bio *b
+ 			ret = __bio_iov_bvec_add_pages(bio, iter);
+ 		else
+ 			ret = __bio_iov_iter_get_pages(bio, iter);
+-	} while (!ret && iov_iter_count(iter) && !bio_full(bio));
++	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
+ 
+ 	if (iov_iter_bvec_no_ref(iter))
+ 		bio_set_flag(bio, BIO_NO_PAGE_REF);
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -333,7 +333,7 @@ iomap_readpage_actor(struct inode *inode
+ 	if (iop)
+ 		atomic_inc(&iop->read_count);
+ 
+-	if (!ctx->bio || !is_contig || bio_full(ctx->bio)) {
++	if (!ctx->bio || !is_contig || bio_full(ctx->bio, plen)) {
+ 		gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
+ 		int nr_vecs = (length + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -782,7 +782,7 @@ xfs_add_to_ioend(
+ 		atomic_inc(&iop->write_count);
+ 
+ 	if (!merged) {
+-		if (bio_full(wpc->ioend->io_bio))
++		if (bio_full(wpc->ioend->io_bio, len))
+ 			xfs_chain_bio(wpc->ioend, wbc, bdev, sector);
+ 		bio_add_page(wpc->ioend->io_bio, page, len, poff);
+ 	}
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -102,9 +102,23 @@ static inline void *bio_data(struct bio
+ 	return NULL;
+ }
+ 
+-static inline bool bio_full(struct bio *bio)
++/**
++ * bio_full - check if the bio is full
++ * @bio:	bio to check
++ * @len:	length of one segment to be added
++ *
++ * Return true if @bio is full and one segment with @len bytes can't be
++ * added to the bio, otherwise return false
++ */
++static inline bool bio_full(struct bio *bio, unsigned len)
+ {
+-	return bio->bi_vcnt >= bio->bi_max_vecs;
++	if (bio->bi_vcnt >= bio->bi_max_vecs)
++		return true;
++
++	if (bio->bi_iter.bi_size > UINT_MAX - len)
++		return true;
++
++	return false;
+ }
+ 
+ static inline bool bio_next_segment(const struct bio *bio,
+
+
