@@ -2,185 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B79866E1B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 14:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8E1666EFB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 14:42:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729426AbfGLMcG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jul 2019 08:32:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49504 "EHLO mail.kernel.org"
+        id S1727402AbfGLMUm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jul 2019 08:20:42 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:28646 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729423AbfGLMcF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:32:05 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727377AbfGLMUl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:20:41 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE2E22166E;
-        Fri, 12 Jul 2019 12:32:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562934724;
-        bh=Ehpl1vJOgxVSnX4bYZNqCygosiLCPAzhduos+K0Cvcs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oXrz1fTnt1KaEQMh+Q8Hn0NmD0OiJj+r/sOdGvV92qMZ1BMMj7G4zUuYvhtvnqr+3
-         kS8VqdwUiqJ2XmdhvCC2o2w3vc4rj1AvQntNLW/jCyKnHvToIHNf6e/9x+8tJvqFW4
-         6Td1m8OCjn2PT7kZgKXXKEFuaH38ZYF7ysjmE3Jg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Yiding <liuyd.fnst@cn.fujitsu.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.2 11/61] block: fix .bi_size overflow
-Date:   Fri, 12 Jul 2019 14:19:24 +0200
-Message-Id: <20190712121621.228131224@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190712121620.632595223@linuxfoundation.org>
-References: <20190712121620.632595223@linuxfoundation.org>
-User-Agent: quilt/0.66
+        by mx2.mailbox.org (Postfix) with ESMTPS id 2AA0EA217D;
+        Fri, 12 Jul 2019 14:20:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id Fg_RUaFCSZVH; Fri, 12 Jul 2019 14:20:26 +0200 (CEST)
+Date:   Fri, 12 Jul 2019 22:20:17 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 01/10] namei: obey trailing magic-link DAC permissions
+Message-ID: <20190712122017.xkowq2cjreylpotm@yavin>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-2-cyphar@cyphar.com>
+ <20190712041454.GG17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zhpexfjxcruxolbk"
+Content-Disposition: inline
+In-Reply-To: <20190712041454.GG17978@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
 
-commit 79d08f89bb1b5c2c1ff90d9bb95497ab9e8aa7e0 upstream.
+--zhpexfjxcruxolbk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-'bio->bi_iter.bi_size' is 'unsigned int', which at most hold 4G - 1
-bytes.
+On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Sun, Jul 07, 2019 at 12:57:28AM +1000, Aleksa Sarai wrote:
+> > @@ -514,7 +516,14 @@ static void set_nameidata(struct nameidata *p, int=
+ dfd, struct filename *name)
+> >  	p->stack =3D p->internal;
+> >  	p->dfd =3D dfd;
+> >  	p->name =3D name;
+> > -	p->total_link_count =3D old ? old->total_link_count : 0;
+> > +	p->total_link_count =3D 0;
+> > +	p->acc_mode =3D 0;
+> > +	p->opath_mask =3D FMODE_PATH_READ | FMODE_PATH_WRITE;
+> > +	if (old) {
+> > +		p->total_link_count =3D old->total_link_count;
+> > +		p->acc_mode =3D old->acc_mode;
+> > +		p->opath_mask =3D old->opath_mask;
+> > +	}
+>=20
+> Huh?  Could somebody explain why traversals of NFS4 referrals should inhe=
+rit
+> ->acc_mode and ->opath_mask?
 
-Before 07173c3ec276 ("block: enable multipage bvecs"), one bio can
-include very limited pages, and usually at most 256, so the fs bio
-size won't be bigger than 1M bytes most of times.
+I'll be honest -- I don't understand what set_nameidata() did so I just
+did what I thought would be an obvious change (to just copy the
+contents). I thought it was related to some aspect of the symlink stack
+handling.
 
-Since we support multi-page bvec, in theory one fs bio really can
-be added > 1M pages, especially in case of hugepage, or big writeback
-with too many dirty pages. Then there is chance in which .bi_size
-is overflowed.
+In that case, should they both be set to 0 on set_nameidata()? This will
+mean that fd re-opening (or magic-link opening) through a
+set_nameidata() would always fail.
 
-Fixes this issue by using bio_full() to check if the added segment may
-overflow .bi_size.
+> >  static __always_inline
+> > -const char *get_link(struct nameidata *nd)
+> > +const char *get_link(struct nameidata *nd, bool trailing)
+> >  {
+> >  	struct saved *last =3D nd->stack + nd->depth - 1;
+> >  	struct dentry *dentry =3D last->link.dentry;
+> > @@ -1081,6 +1134,44 @@ const char *get_link(struct nameidata *nd)
+> >  		} else {
+> >  			res =3D get(dentry, inode, &last->done);
+> >  		}
+> > +		/* If we just jumped it was because of a magic-link. */
+> > +		if (unlikely(nd->flags & LOOKUP_JUMPED)) {
+> [...]
+> In any case, this "bool trailing" is completely wrong; whether that
+> check belongs in trailing_symlink() or (some of) its callers, putting
+> it into get_link() is a mistake, forced by kludgy check for procfs-style
+> symlinks.
 
-Cc: Liu Yiding <liuyd.fnst@cn.fujitsu.com>
-Cc: kernel test robot <rong.a.chen@intel.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: linux-xfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Fixes: 07173c3ec276 ("block: enable multipage bvecs")
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The error path for LOOKUP_JUMPED comes from the old O_BENEATH patchset,
+but all of the "bool trailing" logic is definitely my gaff (I was
+quietly hoping you'd have a much better solution than the whole
+get_link() thing -- it definitely felt very kludgey to write).
 
----
- block/bio.c         |   10 +++++-----
- fs/iomap.c          |    2 +-
- fs/xfs/xfs_aops.c   |    2 +-
- include/linux/bio.h |   18 ++++++++++++++++--
- 4 files changed, 23 insertions(+), 9 deletions(-)
+I will work on the suggestion in your follow-up email. Thanks!
 
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -731,7 +731,7 @@ static int __bio_add_pc_page(struct requ
- 		}
- 	}
- 
--	if (bio_full(bio))
-+	if (bio_full(bio, len))
- 		return 0;
- 
- 	if (bio->bi_phys_segments >= queue_max_segments(q))
-@@ -807,7 +807,7 @@ void __bio_add_page(struct bio *bio, str
- 	struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt];
- 
- 	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
--	WARN_ON_ONCE(bio_full(bio));
-+	WARN_ON_ONCE(bio_full(bio, len));
- 
- 	bv->bv_page = page;
- 	bv->bv_offset = off;
-@@ -834,7 +834,7 @@ int bio_add_page(struct bio *bio, struct
- 	bool same_page = false;
- 
- 	if (!__bio_try_merge_page(bio, page, len, offset, &same_page)) {
--		if (bio_full(bio))
-+		if (bio_full(bio, len))
- 			return 0;
- 		__bio_add_page(bio, page, len, offset);
- 	}
-@@ -922,7 +922,7 @@ static int __bio_iov_iter_get_pages(stru
- 			if (same_page)
- 				put_page(page);
- 		} else {
--			if (WARN_ON_ONCE(bio_full(bio)))
-+			if (WARN_ON_ONCE(bio_full(bio, len)))
-                                 return -EINVAL;
- 			__bio_add_page(bio, page, len, offset);
- 		}
-@@ -966,7 +966,7 @@ int bio_iov_iter_get_pages(struct bio *b
- 			ret = __bio_iov_bvec_add_pages(bio, iter);
- 		else
- 			ret = __bio_iov_iter_get_pages(bio, iter);
--	} while (!ret && iov_iter_count(iter) && !bio_full(bio));
-+	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
- 
- 	if (iov_iter_bvec_no_ref(iter))
- 		bio_set_flag(bio, BIO_NO_PAGE_REF);
---- a/fs/iomap.c
-+++ b/fs/iomap.c
-@@ -333,7 +333,7 @@ iomap_readpage_actor(struct inode *inode
- 	if (iop)
- 		atomic_inc(&iop->read_count);
- 
--	if (!ctx->bio || !is_contig || bio_full(ctx->bio)) {
-+	if (!ctx->bio || !is_contig || bio_full(ctx->bio, plen)) {
- 		gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
- 		int nr_vecs = (length + PAGE_SIZE - 1) >> PAGE_SHIFT;
- 
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -782,7 +782,7 @@ xfs_add_to_ioend(
- 		atomic_inc(&iop->write_count);
- 
- 	if (!merged) {
--		if (bio_full(wpc->ioend->io_bio))
-+		if (bio_full(wpc->ioend->io_bio, len))
- 			xfs_chain_bio(wpc->ioend, wbc, bdev, sector);
- 		bio_add_page(wpc->ioend->io_bio, page, len, poff);
- 	}
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -102,9 +102,23 @@ static inline void *bio_data(struct bio
- 	return NULL;
- }
- 
--static inline bool bio_full(struct bio *bio)
-+/**
-+ * bio_full - check if the bio is full
-+ * @bio:	bio to check
-+ * @len:	length of one segment to be added
-+ *
-+ * Return true if @bio is full and one segment with @len bytes can't be
-+ * added to the bio, otherwise return false
-+ */
-+static inline bool bio_full(struct bio *bio, unsigned len)
- {
--	return bio->bi_vcnt >= bio->bi_max_vecs;
-+	if (bio->bi_vcnt >= bio->bi_max_vecs)
-+		return true;
-+
-+	if (bio->bi_iter.bi_size > UINT_MAX - len)
-+		return true;
-+
-+	return false;
- }
- 
- static inline bool bio_next_segment(const struct bio *bio,
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
+--zhpexfjxcruxolbk
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSh6/QAKCRCdlLljIbnQ
+EjDMAQCLRtfrI0y8gA2T7fw18G0cU799E+TMMczEIjU79f+8jQD/UcfSgUsZT0h6
+7dVpliYNzOl4Uou0Y4Kln5It6iq5aAc=
+=74oH
+-----END PGP SIGNATURE-----
+
+--zhpexfjxcruxolbk--
