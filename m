@@ -2,86 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 852DB66AC6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 12:10:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA5E366B32
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 12:58:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfGLKKd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jul 2019 06:10:33 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:34277 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726002AbfGLKKd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jul 2019 06:10:33 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R681e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TWhPUDd_1562926224;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TWhPUDd_1562926224)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 12 Jul 2019 18:10:25 +0800
-Subject: Re: [PATCH 1/4] numa: introduce per-cgroup numa balancing locality,
- statistic
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        Mel Gorman <mgorman@suse.de>, riel@surriel.com
-References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
- <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
- <3ac9b43a-cc80-01be-0079-df008a71ce4b@linux.alibaba.com>
- <20190711134754.GD3402@hirez.programming.kicks-ass.net>
- <b027f9cc-edd2-840c-3829-176a1e298446@linux.alibaba.com>
- <20190712075815.GN3402@hirez.programming.kicks-ass.net>
- <37474414-1a54-8e3a-60df-eb7e5e1cc1ed@linux.alibaba.com>
- <20190712094214.GR3402@hirez.programming.kicks-ass.net>
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Message-ID: <f8020f92-045e-d515-360b-faf9a149ab80@linux.alibaba.com>
-Date:   Fri, 12 Jul 2019 18:10:24 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        id S1726945AbfGLK6N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jul 2019 06:58:13 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:42972 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726050AbfGLK6N (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Jul 2019 06:58:13 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 648AF5427E;
+        Fri, 12 Jul 2019 12:58:07 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id la_RnxBryad0; Fri, 12 Jul 2019 12:57:56 +0200 (CEST)
+Date:   Fri, 12 Jul 2019 20:57:45 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        David Drysdale <drysdale@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 05/10] namei: O_BENEATH-style path resolution flags
+Message-ID: <20190712105745.nruaftgeat6irhzr@yavin>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-6-cyphar@cyphar.com>
+ <20190712043341.GI17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20190712094214.GR3402@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="f3oogwkmh2sysq6o"
+Content-Disposition: inline
+In-Reply-To: <20190712043341.GI17978@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+--f3oogwkmh2sysq6o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2019/7/12 下午5:42, Peter Zijlstra wrote:
-> On Fri, Jul 12, 2019 at 05:11:25PM +0800, 王贇 wrote:
->>
->>
->> On 2019/7/12 下午3:58, Peter Zijlstra wrote:
->> [snip]
->>>>>
->>>>> Then our task t1 should be accounted to B (as you do), but also to A and
->>>>> R.
->>>>
->>>> I get the point but not quite sure about this...
->>>>
->>>> Not like pages there are no hierarchical limitation on locality, also tasks
->>>
->>> You can use cpusets to affect that.
->>
->> Could you please give more detail on this?
-> 
-> Documentation/cgroup-v1/cpusets.txt
-> 
-> Look for mems_allowed.
+On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Sun, Jul 07, 2019 at 12:57:32AM +1000, Aleksa Sarai wrote:
+> > @@ -1442,8 +1464,11 @@ static int follow_dotdot_rcu(struct nameidata *n=
+d)
+> >  	struct inode *inode =3D nd->inode;
+> > =20
+> >  	while (1) {
+> > -		if (path_equal(&nd->path, &nd->root))
+> > +		if (path_equal(&nd->path, &nd->root)) {
+> > +			if (unlikely(nd->flags & LOOKUP_BENEATH))
+> > +				return -EXDEV;
+>=20
+> > @@ -1468,6 +1493,8 @@ static int follow_dotdot_rcu(struct nameidata *nd)
+> >  				return -ECHILD;
+> >  			if (&mparent->mnt =3D=3D nd->path.mnt)
+> >  				break;
+> > +			if (unlikely(nd->flags & LOOKUP_XDEV))
+> > +				return -EXDEV;
+> >  			/* we know that mountpoint was pinned */
+> >  			nd->path.dentry =3D mountpoint;
+> >  			nd->path.mnt =3D &mparent->mnt;
+> > @@ -1482,6 +1509,8 @@ static int follow_dotdot_rcu(struct nameidata *nd)
+> >  			return -ECHILD;
+> >  		if (!mounted)
+> >  			break;
+> > +		if (unlikely(nd->flags & LOOKUP_XDEV))
+> > +			return -EXDEV;
+>=20
+> Are you sure these failure exits in follow_dotdot_rcu() won't give
+> suprious hard errors?
 
-This is the attribute belong to cpuset cgroup isn't it?
+I could switch to -ECHILD for the *_rcu() checks if you'd prefer that.
+Though, I'd have (probably naively) thought that you'd have already
+gotten -ECHILD from the seqlock checks if there was a race during ".."
+handling.
 
-Forgive me but I have no idea on how to combined this
-with memory cgroup's locality hierarchical update...
-parent memory cgroup do not have influence on mems_allowed
-to it's children, correct?
+> > +	if (unlikely(nd->flags & LOOKUP_BENEATH)) {
+> > +		error =3D dirfd_path_init(nd);
+> > +		if (unlikely(error))
+> > +			return ERR_PTR(error);
+> > +		nd->root =3D nd->path;
+> > +		if (!(nd->flags & LOOKUP_RCU))
+> > +			path_get(&nd->root);
+> > +	}
+> >  	if (*s =3D=3D '/') {
+> >  		if (likely(!nd->root.mnt))
+> >  			set_root(nd);
+> > @@ -2350,9 +2400,11 @@ static const char *path_init(struct nameidata *n=
+d, unsigned flags)
+> >  			s =3D ERR_PTR(error);
+> >  		return s;
+> >  	}
+> > -	error =3D dirfd_path_init(nd);
+> > -	if (unlikely(error))
+> > -		return ERR_PTR(error);
+> > +	if (likely(!nd->path.mnt)) {
+>=20
+> Is that a weird way of saying "if we hadn't already called dirfd_path_ini=
+t()"?
 
-What about we just account the locality status of child
-memory group into it's ancestors?
+Yes. I did it to be more consistent with the other "have we got the
+root" checks elsewhere. Is there another way you'd prefer I do it?
 
-Regards,
-Michael Wang
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-> 
+--f3oogwkmh2sysq6o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXShnpgAKCRCdlLljIbnQ
+EgLTAP4nuVmi0292tyCAkB4Di0UUtazb2EsZPgKq9s2vRoyuFAD/UKONDBSK3VN9
+06Id1xrmV0JIYJSqOIdF2oJIncJ8ZwI=
+=5hbR
+-----END PGP SIGNATURE-----
+
+--f3oogwkmh2sysq6o--
