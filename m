@@ -2,90 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2D40664E2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 05:17:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6904B664F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 05:29:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729228AbfGLDRg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jul 2019 23:17:36 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:60155 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728899AbfGLDRg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jul 2019 23:17:36 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TWfas.h_1562901451;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TWfas.h_1562901451)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 12 Jul 2019 11:17:32 +0800
-Subject: Re: [PATCH 2/4] numa: append per-node execution info in
- memory.numa_stat
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        Mel Gorman <mgorman@suse.de>, riel@surriel.com
-References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
- <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
- <825ebaf0-9f71-bbe1-f054-7fa585d61af1@linux.alibaba.com>
- <20190711134527.GC3402@hirez.programming.kicks-ass.net>
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Message-ID: <e0c38e99-7a01-7a84-2030-6cb963452e81@linux.alibaba.com>
-Date:   Fri, 12 Jul 2019 11:17:31 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        id S1729281AbfGLD3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jul 2019 23:29:49 -0400
+Received: from namei.org ([65.99.196.166]:34804 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728955AbfGLD3t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Jul 2019 23:29:49 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x6C3TXIY022499;
+        Fri, 12 Jul 2019 03:29:33 GMT
+Date:   Fri, 12 Jul 2019 13:29:32 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     Aaron Goidel <acgoide@tycho.nsa.gov>, paul@paul-moore.com,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
+        amir73il@gmail.com, sds@tycho.nsa.gov, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] fanotify, inotify, dnotify, security: add security
+ hook for fs notifications
+In-Reply-To: <4fd98c88-61a6-a155-5028-db22a778d3c1@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1907121327150.22212@namei.org>
+References: <20190710133403.855-1-acgoide@tycho.nsa.gov> <4fd98c88-61a6-a155-5028-db22a778d3c1@schaufler-ca.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190711134527.GC3402@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, 10 Jul 2019, Casey Schaufler wrote:
 
-
-On 2019/7/11 下午9:45, Peter Zijlstra wrote:
-> On Wed, Jul 03, 2019 at 11:29:15AM +0800, 王贇 wrote:
+> On 7/10/2019 6:34 AM, Aaron Goidel wrote:
 > 
->> +++ b/include/linux/memcontrol.h
->> @@ -190,6 +190,7 @@ enum memcg_numa_locality_interval {
->>
->>  struct memcg_stat_numa {
->>  	u64 locality[NR_NL_INTERVAL];
->> +	u64 exectime;
+> > Furthermore, fanotify watches grant more power to
+> > an application in the form of permission events. While notification events
+> > are solely, unidirectional (i.e. they only pass information to the
+> > receiving application), permission events are blocking. Permission events
+> > make a request to the receiving application which will then reply with a
+> > decision as to whether or not that action may be completed.
 > 
-> Maybe call the field jiffies, because that's what it counts.
+> You're not saying why this is an issue.
 
-Sure, will be in next version.
+Also in the description, please explain the issues with read and write 
+notifications and why a simple 'read' permission is not adequate.
 
-Regards,
-Michael Wang
 
-> 
->>  };
->>
->>  #endif
->> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->> index 2edf3f5ac4b9..d5f48365770f 100644
->> --- a/mm/memcontrol.c
->> +++ b/mm/memcontrol.c
->> @@ -3575,6 +3575,18 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
->>  		seq_printf(m, " %u", jiffies_to_msecs(sum));
->>  	}
->>  	seq_putc(m, '\n');
->> +
->> +	seq_puts(m, "exectime");
->> +	for_each_online_node(nr) {
->> +		int cpu;
->> +		u64 sum = 0;
->> +
->> +		for_each_cpu(cpu, cpumask_of_node(nr))
->> +			sum += per_cpu(memcg->stat_numa->exectime, cpu);
->> +
->> +		seq_printf(m, " %llu", jiffies_to_msecs(sum));
->> +	}
->> +	seq_putc(m, '\n');
->>  #endif
->>
->>  	return 0;
+-- 
+James Morris
+<jmorris@namei.org>
+
