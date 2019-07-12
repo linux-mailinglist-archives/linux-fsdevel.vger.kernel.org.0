@@ -2,101 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82B2166BF5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 14:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F73266C1F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 14:08:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbfGLMAG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jul 2019 08:00:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48810 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727011AbfGLMAF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:00:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 73731AEAF;
-        Fri, 12 Jul 2019 12:00:04 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 114EA1E4340; Fri, 12 Jul 2019 14:00:04 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 14:00:04 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Boaz Harrosh <boaz@plexistor.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 3/3] xfs: Fix stale data exposure when readahead races
- with hole punch
-Message-ID: <20190712120004.GB24009@quack2.suse.cz>
-References: <20190711140012.1671-1-jack@suse.cz>
- <20190711140012.1671-4-jack@suse.cz>
- <CAOQ4uxh-xpwgF-wQf1ozaZ3yg8nWuBvSyLr_ZFQpkA=coW1dxA@mail.gmail.com>
- <20190711154917.GW1404256@magnolia>
+        id S1727018AbfGLMIJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jul 2019 08:08:09 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:27932 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726466AbfGLMII (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:08:08 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 9E9DDA1FD8;
+        Fri, 12 Jul 2019 14:08:02 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id vunrqErDeJEg; Fri, 12 Jul 2019 14:07:58 +0200 (CEST)
+Date:   Fri, 12 Jul 2019 22:07:43 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 04/10] namei: split out nd->dfd handling to
+ dirfd_path_init
+Message-ID: <20190712120743.mka3vl5t4zndc5wj@yavin>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-5-cyphar@cyphar.com>
+ <20190712042050.GH17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d4v7lkh6hn3fnrr5"
 Content-Disposition: inline
-In-Reply-To: <20190711154917.GW1404256@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190712042050.GH17978@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 11-07-19 08:49:17, Darrick J. Wong wrote:
-> On Thu, Jul 11, 2019 at 06:28:54PM +0300, Amir Goldstein wrote:
-> > > +{
-> > > +       struct xfs_inode *ip = XFS_I(file_inode(file));
-> > > +       int ret;
-> > > +
-> > > +       /* Readahead needs protection from hole punching and similar ops */
-> > > +       if (advice == POSIX_FADV_WILLNEED)
-> > > +               xfs_ilock(ip, XFS_IOLOCK_SHARED);
-> 
-> It's good to fix this race, but at the same time I wonder what's the
-> impact to processes writing to one part of a file waiting on IOLOCK_EXCL
-> while readahead holds IOLOCK_SHARED?
-> 
-> (bluh bluh range locks ftw bluh bluh)
 
-Yeah, with range locks this would have less impact. Also note that we hold
-the lock only during page setup and IO submission. IO itself will already
-happen without IOLOCK, only under page lock. But that's enough to stop the
-race.
+--d4v7lkh6hn3fnrr5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Do we need a lock for DONTNEED?  I think the answer is that you have to
-> lock the page to drop it and that will protect us from <myriad punch and
-> truncate spaghetti> ... ?
+On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Sun, Jul 07, 2019 at 12:57:31AM +1000, Aleksa Sarai wrote:
+> > Previously, path_init's handling of *at(dfd, ...) was only done once,
+> > but with LOOKUP_BENEATH (and LOOKUP_IN_ROOT) we have to parse the
+> > initial nd->path at different times (before or after absolute path
+> > handling) depending on whether we have been asked to scope resolution
+> > within a root.
+>=20
+> >  	if (*s =3D=3D '/') {
+> > -		set_root(nd);
+> > -		if (likely(!nd_jump_root(nd)))
+> > -			return s;
+> > -		return ERR_PTR(-ECHILD);
+>=20
+> > +		if (likely(!nd->root.mnt))
+> > +			set_root(nd);
+>=20
+> How can we get there with non-NULL nd->root.mnt, when LOOKUP_ROOT case
+> has been already handled by that point?
 
-Yeah, DONTNEED is just page writeback + invalidate. So page lock is enough
-to protect from anything bad. Essentially we need IOLOCK only to protect
-the places that creates new pages in page cache.
+Yup, you're completely right. I will remove the
+  if (!nd->root.mnt)
+in the next version.
 
-> > > +       ret = generic_fadvise(file, start, end, advice);
-> > > +       if (advice == POSIX_FADV_WILLNEED)
-> > > +               xfs_iunlock(ip, XFS_IOLOCK_SHARED);
-> 
-> Maybe it'd be better to do:
-> 
-> 	int	lockflags = 0;
-> 
-> 	if (advice == POSIX_FADV_WILLNEED) {
-> 		lockflags = XFS_IOLOCK_SHARED;
-> 		xfs_ilock(ip, lockflags);
-> 	}
-> 
-> 	ret = generic_fadvise(file, start, end, advice);
-> 
-> 	if (lockflags)
-> 		xfs_iunlock(ip, lockflags);
-> 
-> Just in case we some day want more or different types of inode locks?
 
-OK, will do. Just I'll get to testing this only after I return from
-vacation.
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-								Honza
+--d4v7lkh6hn3fnrr5
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSh4CgAKCRCdlLljIbnQ
+EmXbAP9tX+q7bWxunLL4KxbGY/ld+vFqPXrdHyJAsnYXD1QLXwEAosmgLN7YU35t
+LUn9+NWS+cu0VbO4qtSioBcFwh5cpwA=
+=zvz5
+-----END PGP SIGNATURE-----
+
+--d4v7lkh6hn3fnrr5--
