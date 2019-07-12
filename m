@@ -2,111 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65605669FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 11:35:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CA6266A32
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 11:42:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbfGLJfq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jul 2019 05:35:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33582 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725987AbfGLJfq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jul 2019 05:35:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 116FDAC1C;
-        Fri, 12 Jul 2019 09:35:45 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C913E1E43CA; Fri, 12 Jul 2019 11:35:44 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 11:35:44 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc:     "Steven J. Magnani" <steve.magnani@digidescorp.com>,
-        "Steven J . Magnani" <steve@digidescorp.com>,
-        Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] udf: refactor VRS descriptor identification
-Message-ID: <20190712093544.GE906@quack2.suse.cz>
-References: <20190711133852.16887-1-steve@digidescorp.com>
- <20190711181521.fqsbatc2oslo2v5t@pali>
+        id S1726428AbfGLJma (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jul 2019 05:42:30 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:32904 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfGLJma (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Jul 2019 05:42:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=8/S1+jX16TzxOOIxU/bRAzwTmHAX9u5kySICahCztRc=; b=mSrNEGprNQlxAb5b94YQqMyPMz
+        kO0qgKwAjdYbQbt4ZLUYljy7WNvo98DtdOjLMkwQcC+18PUw+zCus/8lHAlhzfenlvKk3/Z2vY4/9
+        poGaxdm1lKQXL+ObIt2v7JWeRaLtiqVQcLZdQ1GMpReUW8AmwLtxny/yVm2355jnSfECJcJqkElr0
+        efFJMK0rpeOmHiLR4LtJhRb00cGecEEyJHgZct4gLmv1Qhuko/MvaUi4iuh7hx96d+cEh7LTSKMrR
+        vq7hEteI36agAuTFdorAWUAocaMJg+9QtIMY2HCGkgtIpARgexlahUx3JF76qIbmqIXKBArIUAa4D
+        0F/wsyBQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hls4F-0004Df-KT; Fri, 12 Jul 2019 09:42:15 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4236020120CB1; Fri, 12 Jul 2019 11:42:14 +0200 (CEST)
+Date:   Fri, 12 Jul 2019 11:42:14 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        Mel Gorman <mgorman@suse.de>, riel@surriel.com
+Subject: Re: [PATCH 1/4] numa: introduce per-cgroup numa balancing locality,
+ statistic
+Message-ID: <20190712094214.GR3402@hirez.programming.kicks-ass.net>
+References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
+ <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
+ <3ac9b43a-cc80-01be-0079-df008a71ce4b@linux.alibaba.com>
+ <20190711134754.GD3402@hirez.programming.kicks-ass.net>
+ <b027f9cc-edd2-840c-3829-176a1e298446@linux.alibaba.com>
+ <20190712075815.GN3402@hirez.programming.kicks-ass.net>
+ <37474414-1a54-8e3a-60df-eb7e5e1cc1ed@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190711181521.fqsbatc2oslo2v5t@pali>
+In-Reply-To: <37474414-1a54-8e3a-60df-eb7e5e1cc1ed@linux.alibaba.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 11-07-19 20:15:21, Pali Roh�r  wrote:
-> On Thursday 11 July 2019 08:38:51 Steven J. Magnani wrote:
-> > --- a/fs/udf/super.c	2019-07-10 18:57:41.192852154 -0500
-> > +++ b/fs/udf/super.c	2019-07-10 20:47:50.438352500 -0500
-> > @@ -685,16 +685,62 @@ out_unlock:
-> >  	return error;
-> >  }
-> >  
-> > -/* Check Volume Structure Descriptors (ECMA 167 2/9.1) */
-> > -/* We also check any "CD-ROM Volume Descriptor Set" (ECMA 167 2/8.3.1) */
-> > -static loff_t udf_check_vsd(struct super_block *sb)
-> > +static int identify_vsd(const struct volStructDesc *vsd)
-> > +{
-> > +	int vsd_id = 0;
-> > +
-> > +	if (!strncmp(vsd->stdIdent, VSD_STD_ID_CD001, VSD_STD_ID_LEN)) {
+On Fri, Jul 12, 2019 at 05:11:25PM +0800, 王贇 wrote:
 > 
-> Hi! You probably want to use memcmp() instead of strncmp().
-
-There's no difference in functionality but I agree it makes more sense.
-I'll modify the patch. Thanks for review!
-
-								Honza
-
 > 
-> > +		switch (vsd->structType) {
-> > +		case 0:
-> > +			udf_debug("ISO9660 Boot Record found\n");
-> > +			break;
-> > +		case 1:
-> > +			udf_debug("ISO9660 Primary Volume Descriptor found\n");
-> > +			break;
-> > +		case 2:
-> > +			udf_debug("ISO9660 Supplementary Volume Descriptor found\n");
-> > +			break;
-> > +		case 3:
-> > +			udf_debug("ISO9660 Volume Partition Descriptor found\n");
-> > +			break;
-> > +		case 255:
-> > +			udf_debug("ISO9660 Volume Descriptor Set Terminator found\n");
-> > +			break;
-> > +		default:
-> > +			udf_debug("ISO9660 VRS (%u) found\n", vsd->structType);
-> > +			break;
-> > +		}
-> > +	} else if (!strncmp(vsd->stdIdent, VSD_STD_ID_BEA01, VSD_STD_ID_LEN))
-> > +		vsd_id = 1;
-> > +	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_NSR02, VSD_STD_ID_LEN))
-> > +		vsd_id = 2;
-> > +	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_NSR03, VSD_STD_ID_LEN))
-> > +		vsd_id = 3;
-> > +	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_BOOT2, VSD_STD_ID_LEN))
-> > +		; /* vsd_id = 0 */
-> > +	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_CDW02, VSD_STD_ID_LEN))
-> > +		; /* vsd_id = 0 */
-> > +	else {
-> > +		/* TEA01 or invalid id : end of volume recognition area */
-> > +		vsd_id = 255;
-> > +	}
-> > +
-> > +	return vsd_id;
-> > +}
+> On 2019/7/12 下午3:58, Peter Zijlstra wrote:
+> [snip]
+> >>>
+> >>> Then our task t1 should be accounted to B (as you do), but also to A and
+> >>> R.
+> >>
+> >> I get the point but not quite sure about this...
+> >>
+> >> Not like pages there are no hierarchical limitation on locality, also tasks
+> > 
+> > You can use cpusets to affect that.
 > 
-> -- 
-> Pali Roh�r
-> pali.rohar@gmail.com
+> Could you please give more detail on this?
 
+Documentation/cgroup-v1/cpusets.txt
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Look for mems_allowed.
