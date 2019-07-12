@@ -2,238 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8507E66813
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 10:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C89E66859
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 10:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbfGLIAZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jul 2019 04:00:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36336 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726047AbfGLIAZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jul 2019 04:00:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5DFFFAF83;
-        Fri, 12 Jul 2019 08:00:23 +0000 (UTC)
-Date:   Fri, 12 Jul 2019 10:00:22 +0200
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH RFC] fs: New zonefs file system
-Message-ID: <20190712080022.GA16276@x250.microfocus.com>
-References: <20190712030017.14321-1-damien.lemoal@wdc.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190712030017.14321-1-damien.lemoal@wdc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726073AbfGLIRw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jul 2019 04:17:52 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:44132 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfGLIRv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Jul 2019 04:17:51 -0400
+Received: by mail-pg1-f201.google.com with SMTP id a21so5278038pgh.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jul 2019 01:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=UvKno1DQ1En2T0BAydqL8aKwWtOHxHpLOB0ZXuFETLs=;
+        b=JtlStr7snNzmz5ulMB5eP37s7rbgIx50z+AVGP2t2WlEdfRbEZO8W2XTT3bE3WZnLv
+         keBpChTguji20fGG9MZtiJLfIGuGAQMR0xBWsqfAPNv7xBwu2S4omSfLGIwdCobd9HG0
+         xEIx+MC/l52zarabPfgQ095HslgbhlLi4Z2VOa7yRbXGn1OMnhIjlbG9wufHRgT48Rw8
+         N31KLcKdJR3xIPKj8X7rcKFfr9bJzXFefGvAJSqFErU5ciZBVgJrNxh12tyuyphu+Fd0
+         ntbZjblO4lofJT/rrUQvPdmmolFfkVV45QPFi2V3CSuuX8nBjrc2V4ynCPPNIkIg5MTd
+         4B0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=UvKno1DQ1En2T0BAydqL8aKwWtOHxHpLOB0ZXuFETLs=;
+        b=MxXYokPS13gfjwOhxM37OEBfXzntNPonTkT35TdJIj18qeGDu5IMFuIzAcR+OsYgPt
+         KwutEB1YlKXwHdghfghGPI8vvTaMbfih7ilMVqc/k/EBndCa0X8NdFcPAJnC+bDI4MXJ
+         KBAEKY7ioT0Mzy81/olnvXiq3gEnT8trW5q1smwTiAHhU3b1MaRJdXMYitNZwafPWoRD
+         R/3uSdBh0DZRYN3Dx4ecGhh51v5vGzjDY0cFA4B8gRJfnNM6TjnqAI4vgngSs/5SUIzo
+         Z6fJwBiDpzGjWexIPgVCnYMI3BTVfHbR1pVTSw9NM04dso/kNhThqfGX4AcDe6g/fs+6
+         VwBQ==
+X-Gm-Message-State: APjAAAUgizipZ3y/APCLNIrT1nKR6lwtiDpOQ4pRZBvTwjK74FnRRUs7
+        iEv8SJm/30NgrVZ+49XaZhvBjZs5pXyl1jclgbtmNQ==
+X-Google-Smtp-Source: APXvYqwxVjSSyLsmH5X5K9D5aFhrhgELvG+6tDMdeYJeUGZ3SfBpCQBrCaJmP5g1KYNhq+xNRut9+ZtuWUgQ3Ro3jfxY+Q==
+X-Received: by 2002:a65:5348:: with SMTP id w8mr9232476pgr.176.1562919470178;
+ Fri, 12 Jul 2019 01:17:50 -0700 (PDT)
+Date:   Fri, 12 Jul 2019 01:17:26 -0700
+Message-Id: <20190712081744.87097-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+Subject: [PATCH v9 00/18] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
+        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
+        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
+        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
+        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
+        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Iurii Zaikin <yzaikin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 12:00:17PM +0900, Damien Le Moal wrote:
+## TL;DR
 
-Hi Daminen,
+This new patch set only contains a very minor change to address a sparse
+warning in the PROC SYSCTL KUnit test. Otherwise this patchset is
+identical to the previous.
 
-Thanks for submitting zonefs.
+As I mentioned in the previous patchset, all patches now have acks and
+reviews.
 
-Please find my first few comments, I'll have a second look later as well.
+## Background
 
-[...]
+This patch set proposes KUnit, a lightweight unit testing and mocking
+framework for the Linux kernel.
 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> ---
->  fs/Kconfig                 |    2 +
->  fs/Makefile                |    1 +
->  fs/zonefs/Kconfig          |    9 +
->  fs/zonefs/Makefile         |    4 +
->  fs/zonefs/super.c          | 1004 ++++++++++++++++++++++++++++++++++++
->  fs/zonefs/zonefs.h         |  190 +++++++
->  include/uapi/linux/magic.h |    1 +
->  7 files changed, 1211 insertions(+)
->  create mode 100644 fs/zonefs/Kconfig
->  create mode 100644 fs/zonefs/Makefile
->  create mode 100644 fs/zonefs/super.c
->  create mode 100644 fs/zonefs/zonefs.h
+Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+it does not require installing the kernel on a test machine or in a VM
+(however, KUnit still allows you to run tests on test machines or in VMs
+if you want[1]) and does not require tests to be written in userspace
+running on a host kernel. Additionally, KUnit is fast: From invocation
+to completion KUnit can run several dozen tests in about a second.
+Currently, the entire KUnit test suite for KUnit runs in under a second
+from the initial invocation (build time excluded).
 
-It'll probably be good to add yourself as a maitainer in MAINTAINERS, so
-people see there's a go-to person for patches. Also a list (fsdevel@) and a
-git tree won't harm.
+KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+Googletest/Googlemock for C++. KUnit provides facilities for defining
+unit test cases, grouping related test cases into test suites, providing
+common infrastructure for running tests, mocking, spying, and much more.
 
-> 
-> diff --git a/fs/Kconfig b/fs/Kconfig
-> index f1046cf6ad85..e48cc0e0efbb 100644
-> --- a/fs/Kconfig
-> +++ b/fs/Kconfig
-> @@ -41,6 +41,7 @@ source "fs/ocfs2/Kconfig"
->  source "fs/btrfs/Kconfig"
->  source "fs/nilfs2/Kconfig"
->  source "fs/f2fs/Kconfig"
-> +source "fs/zonefs/Kconfig"
->  
->  config FS_DAX
->  	bool "Direct Access (DAX) support"
-> @@ -262,6 +263,7 @@ source "fs/romfs/Kconfig"
->  source "fs/pstore/Kconfig"
->  source "fs/sysv/Kconfig"
->  source "fs/ufs/Kconfig"
-> +source "fs/ufs/Kconfig"
->  
+### What's so special about unit testing?
 
-This hunk looks wrong.
+A unit test is supposed to test a single unit of code in isolation,
+hence the name. There should be no dependencies outside the control of
+the test; this means no external dependencies, which makes tests orders
+of magnitudes faster. Likewise, since there are no external dependencies,
+there are no hoops to jump through to run the tests. Additionally, this
+makes unit tests deterministic: a failing unit test always indicates a
+problem. Finally, because unit tests necessarily have finer granularity,
+they are able to test all code paths easily solving the classic problem
+of difficulty in exercising error handling code.
 
->  endif # MISC_FILESYSTEMS
->  
+### Is KUnit trying to replace other testing frameworks for the kernel?
 
-[...]
+No. Most existing tests for the Linux kernel are end-to-end tests, which
+have their place. A well tested system has lots of unit tests, a
+reasonable number of integration tests, and some end-to-end tests. KUnit
+is just trying to address the unit test space which is currently not
+being addressed.
 
-> +	/*
-> +	 * Note: The first zone contains the super block: skip it.
-> +	 */
+### More information on KUnit
 
-I know I've been advocating for having on-disk metadata, but do we really
-sacrifice a whole zone per default? I thought we'll have on-disk metadata
-optional (I might be completely off the track here and need more coffee to
-wake up though).
+There is a bunch of documentation near the end of this patch set that
+describes how to use KUnit and best practices for writing unit tests.
+For convenience I am hosting the compiled docs here[2].
 
-> +	end = zones + sbi->s_nr_zones[ZONEFS_ZTYPE_ALL];
-> +	for (zone = &zones[1]; zone < end; zone = next) {
+Additionally for convenience, I have applied these patches to a
+branch[3]. The repo may be cloned with:
+git clone https://kunit.googlesource.com/linux
+This patchset is on the kunit/rfc/v5.2/v9 branch.
 
-[...]
+## Changes Since Last Version
 
-> +
-> +	/* Set defaults */
-> +	sbi->s_uid = GLOBAL_ROOT_UID;
-> +	sbi->s_gid = GLOBAL_ROOT_GID;
-> +	sbi->s_perm = S_IRUSR | S_IWUSR | S_IRGRP; /* 0640 */
-> +
-> +
-> +	ret = zonefs_read_super(sb);
-> +	if (ret)
-> +		return ret;
+Like I said in the TL;DR, there is only one minor change since the
+previous revision. That change only affects patch 17/18; it addresses a
+sparse warning in the PROC SYSCTL unit test.
 
-That would be cool to be controllable via a mount option and have it:
-	sbi->s_uid = opt.uid;
-	sbi->s_gid = opt.gid;
-	sbi->s_perm = opt.mode;
+Thanks to Masahiro for applying previous patches to a branch in his
+kbuild tree and running sparse and other static analysis tools against
+my patches.
 
-or pass these mount options to zonefs_read_super() and they can be set after
-the feature validation.
+[1] https://google.github.io/kunit-docs/third_party/kernel/docs/usage.html#kunit-on-non-uml-architectures
+[2] https://google.github.io/kunit-docs/third_party/kernel/docs/
+[3] https://kunit.googlesource.com/linux/+/kunit/rfc/v5.2/v9
 
-> +
-> +	zones = zonefs_get_zone_info(sb);
-> +	if (IS_ERR(zones))
-> +		return PTR_ERR(zones);
-> +
-> +	pr_info("zonefs: Mounting %s, %u zones",
-> +		sb->s_id, sbi->s_nr_zones[ZONEFS_ZTYPE_ALL]);
-> +
-> +	/* Create root directory inode */
-> +	ret = -ENOMEM;
-> +	inode = new_inode(sb);
-> +	if (!inode)
-> +		goto out;
-
-Nit: please add a blank line after the goto.
-
-> +	inode->i_ino = get_next_ino();
-> +	inode->i_mode = S_IFDIR | 0755;
-> +	inode->i_ctime = inode->i_mtime = inode->i_atime = current_time(inode);
-> +	inode->i_op = &simple_dir_inode_operations;
-> +	inode->i_fop = &simple_dir_operations;
-> +	inode->i_size = sizeof(struct dentry) * 2;
-> +	set_nlink(inode, 2);
-
-Nit: please add a blank line here as well.
-
-> +	sb->s_root = d_make_root(inode);
-> +	if (!sb->s_root)
-> +		goto out;
-
-[...]
-
-> +/*
-> + * Maximum length of file names: this only needs to be large enough to fit
-> + * the zone group directory names and a decimal value of the start sector of
-> + * the zones for file names. 16 characterse is plenty.
-                           characters ^
-
-[...]
-
-> +struct zonefs_super {
-> +
-> +	/* Magic number */
-> +	__le32		s_magic;		/*    4 */
-> +
-> +	/* Metadata version number */
-> +	__le32		s_version;		/*    8 */
-> +
-> +	/* Features */
-> +	__le64		s_features;		/*   16 */
-> +
-> +	/* 128-bit uuid */
-> +	__u8		s_uuid[16];		/*   32 */
-> +
-> +	/* UID/GID to use for files */
-> +	__le32		s_uid;			/*   36 */
-> +	__le32		s_gid;			/*   40 */
-> +
-> +	/* File permissions */
-> +	__le32		s_perm;			/*   44 */
-> +
-> +	/* Padding to 4K */
-> +	__u8		s_reserved[4052];	/* 4096 */
-> +
-> +} __attribute__ ((packed));
-
-I'm not sure the (end)offset comments are of any value here, it's nothing that
-can't be obtained from pahole or gdb (or even by hand).
-
-> +
-> +/*
-> + * Metadata version.
-> + */
-> +#define ZONEFS_VERSION	1
-> +
-> +/*
-> + * Feature flags.
-> + */
-> +enum zonefs_features {
-> +	/*
-> +	 * Use a zone start sector value as file name.
-> +	 */
-> +	ZONEFS_F_STARTSECT_NAME,
-> +	/*
-> +	 * Aggregate contiguous conventional zones into a single file.
-> +	 */
-> +	ZONEFS_F_AGRCNV,
-> +	/*
-> +	 * Use super block specified UID for files instead of default.
-> +	 */
-> +	ZONEFS_F_UID,
-> +	/*
-> +	 * Use super block specified GID for files instead of default.
-> +	 */
-> +	ZONEFS_F_GID,
-> +	/*
-> +	 * Use super block specified file permissions instead of default 640.
-> +	 */
-> +	ZONEFS_F_PERM,
-> +};
-
-I'd rather not write the uid, gid, permissions and startsect name to the
-superblock but have it controllable via a mount option. Just write the feature
-to the superblock so we know we _can_ control this per mount.
-
-Byte,
-	Johannes
 -- 
-Johannes Thumshirn                            SUSE Labs Filesystems
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+2.22.0.410.gd8fdbe21b5-goog
+
