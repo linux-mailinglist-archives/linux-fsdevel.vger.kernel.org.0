@@ -2,68 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8259A669F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 11:34:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65605669FC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 11:35:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbfGLJem (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jul 2019 05:34:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33144 "EHLO mx1.suse.de"
+        id S1726449AbfGLJfq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jul 2019 05:35:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33582 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725987AbfGLJel (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jul 2019 05:34:41 -0400
+        id S1725987AbfGLJfq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Jul 2019 05:35:46 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 42A7CB008;
-        Fri, 12 Jul 2019 09:34:39 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 116FDAC1C;
+        Fri, 12 Jul 2019 09:35:45 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 9B4D21E43CA; Fri, 12 Jul 2019 11:34:38 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 11:34:38 +0200
+        id C913E1E43CA; Fri, 12 Jul 2019 11:35:44 +0200 (CEST)
+Date:   Fri, 12 Jul 2019 11:35:44 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Steve Magnani <steve.magnani@digidescorp.com>
-Cc:     Jan Kara <jack@suse.cz>,
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     "Steven J. Magnani" <steve.magnani@digidescorp.com>,
         "Steven J . Magnani" <steve@digidescorp.com>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
         Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] udf: support 2048-byte spacing of VRS descriptors
- on 4K media
-Message-ID: <20190712093438.GD906@quack2.suse.cz>
+Subject: Re: [PATCH v2 1/2] udf: refactor VRS descriptor identification
+Message-ID: <20190712093544.GE906@quack2.suse.cz>
 References: <20190711133852.16887-1-steve@digidescorp.com>
- <20190711133852.16887-2-steve@digidescorp.com>
- <20190711150436.GA2449@quack2.suse.cz>
- <6abea3a8-53da-f7ed-33f5-a9ecfd386c56@digidescorp.com>
+ <20190711181521.fqsbatc2oslo2v5t@pali>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <6abea3a8-53da-f7ed-33f5-a9ecfd386c56@digidescorp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190711181521.fqsbatc2oslo2v5t@pali>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 11-07-19 10:56:52, Steve Magnani wrote:
-> On 7/11/19 10:04 AM, Jan Kara wrote:
-> > Thanks for the patches! I've added them to my tree and somewhat simplified
-> > the logic since we don't really care about nsr 2 vs 3 or whether we
-> > actually saw BEA or not. Everything seems to work fine for me but I'd
-> > appreciate if you could doublecheck - the result is pushed out to
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_next
-> > 
-> Tested-by: Steven J. Magnani <steve@digidescorp.com>
+On Thu 11-07-19 20:15:21, Pali Rohár  wrote:
+> On Thursday 11 July 2019 08:38:51 Steven J. Magnani wrote:
+> > --- a/fs/udf/super.c	2019-07-10 18:57:41.192852154 -0500
+> > +++ b/fs/udf/super.c	2019-07-10 20:47:50.438352500 -0500
+> > @@ -685,16 +685,62 @@ out_unlock:
+> >  	return error;
+> >  }
+> >  
+> > -/* Check Volume Structure Descriptors (ECMA 167 2/9.1) */
+> > -/* We also check any "CD-ROM Volume Descriptor Set" (ECMA 167 2/8.3.1) */
+> > -static loff_t udf_check_vsd(struct super_block *sb)
+> > +static int identify_vsd(const struct volStructDesc *vsd)
+> > +{
+> > +	int vsd_id = 0;
+> > +
+> > +	if (!strncmp(vsd->stdIdent, VSD_STD_ID_CD001, VSD_STD_ID_LEN)) {
 > 
-> The rework is more permissive than what you had suggested initially
-> (conditioning acceptance of a noncompliant NSR on a preceding BEA).
-> I had also tried to code the original so that a malformed 2048-byte
-> interval VRS would not be accepted. But the simplifications do make
-> the code easier to follow...
+> Hi! You probably want to use memcmp() instead of strncmp().
 
-Yeah, it's simpler to follow and we do this check just to see whether this
-may be a valid UDF media before doing more expensive probing. So I don't
-think that the code being more permissive matters. Thanks for testing!
+There's no difference in functionality but I agree it makes more sense.
+I'll modify the patch. Thanks for review!
 
 								Honza
+
+> 
+> > +		switch (vsd->structType) {
+> > +		case 0:
+> > +			udf_debug("ISO9660 Boot Record found\n");
+> > +			break;
+> > +		case 1:
+> > +			udf_debug("ISO9660 Primary Volume Descriptor found\n");
+> > +			break;
+> > +		case 2:
+> > +			udf_debug("ISO9660 Supplementary Volume Descriptor found\n");
+> > +			break;
+> > +		case 3:
+> > +			udf_debug("ISO9660 Volume Partition Descriptor found\n");
+> > +			break;
+> > +		case 255:
+> > +			udf_debug("ISO9660 Volume Descriptor Set Terminator found\n");
+> > +			break;
+> > +		default:
+> > +			udf_debug("ISO9660 VRS (%u) found\n", vsd->structType);
+> > +			break;
+> > +		}
+> > +	} else if (!strncmp(vsd->stdIdent, VSD_STD_ID_BEA01, VSD_STD_ID_LEN))
+> > +		vsd_id = 1;
+> > +	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_NSR02, VSD_STD_ID_LEN))
+> > +		vsd_id = 2;
+> > +	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_NSR03, VSD_STD_ID_LEN))
+> > +		vsd_id = 3;
+> > +	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_BOOT2, VSD_STD_ID_LEN))
+> > +		; /* vsd_id = 0 */
+> > +	else if (!strncmp(vsd->stdIdent, VSD_STD_ID_CDW02, VSD_STD_ID_LEN))
+> > +		; /* vsd_id = 0 */
+> > +	else {
+> > +		/* TEA01 or invalid id : end of volume recognition area */
+> > +		vsd_id = 255;
+> > +	}
+> > +
+> > +	return vsd_id;
+> > +}
+> 
+> -- 
+> Pali Rohár
+> pali.rohar@gmail.com
+
+
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
