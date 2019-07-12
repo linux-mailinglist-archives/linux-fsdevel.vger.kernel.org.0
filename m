@@ -2,56 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6904B664F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 05:29:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A208366529
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 05:43:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbfGLD3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Jul 2019 23:29:49 -0400
-Received: from namei.org ([65.99.196.166]:34804 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728955AbfGLD3t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Jul 2019 23:29:49 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x6C3TXIY022499;
-        Fri, 12 Jul 2019 03:29:33 GMT
-Date:   Fri, 12 Jul 2019 13:29:32 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-cc:     Aaron Goidel <acgoide@tycho.nsa.gov>, paul@paul-moore.com,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
-        amir73il@gmail.com, sds@tycho.nsa.gov, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fanotify, inotify, dnotify, security: add security
- hook for fs notifications
-In-Reply-To: <4fd98c88-61a6-a155-5028-db22a778d3c1@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1907121327150.22212@namei.org>
-References: <20190710133403.855-1-acgoide@tycho.nsa.gov> <4fd98c88-61a6-a155-5028-db22a778d3c1@schaufler-ca.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1729498AbfGLDnW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Jul 2019 23:43:22 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:46903 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729293AbfGLDnV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 11 Jul 2019 23:43:21 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TWfco61_1562902997;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TWfco61_1562902997)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 12 Jul 2019 11:43:18 +0800
+Subject: Re: [PATCH 1/4] numa: introduce per-cgroup numa balancing locality,
+ statistic
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        Mel Gorman <mgorman@suse.de>, riel@surriel.com
+References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
+ <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
+ <3ac9b43a-cc80-01be-0079-df008a71ce4b@linux.alibaba.com>
+ <20190711134754.GD3402@hirez.programming.kicks-ass.net>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <b027f9cc-edd2-840c-3829-176a1e298446@linux.alibaba.com>
+Date:   Fri, 12 Jul 2019 11:43:17 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190711134754.GD3402@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 10 Jul 2019, Casey Schaufler wrote:
 
-> On 7/10/2019 6:34 AM, Aaron Goidel wrote:
+
+On 2019/7/11 下午9:47, Peter Zijlstra wrote:
+[snip]
+>> +	rcu_read_lock();
+>> +	memcg = mem_cgroup_from_task(p);
+>> +	if (idx != -1)
+>> +		this_cpu_inc(memcg->stat_numa->locality[idx]);
 > 
-> > Furthermore, fanotify watches grant more power to
-> > an application in the form of permission events. While notification events
-> > are solely, unidirectional (i.e. they only pass information to the
-> > receiving application), permission events are blocking. Permission events
-> > make a request to the receiving application which will then reply with a
-> > decision as to whether or not that action may be completed.
+> I thought cgroups were supposed to be hierarchical. That is, if we have:
 > 
-> You're not saying why this is an issue.
+>           R
+> 	 / \
+> 	 A
+> 	/\
+> 	  B
+> 	  \
+> 	   t1
+> 
+> Then our task t1 should be accounted to B (as you do), but also to A and
+> R.
 
-Also in the description, please explain the issues with read and write 
-notifications and why a simple 'read' permission is not adequate.
+I get the point but not quite sure about this...
 
+Not like pages there are no hierarchical limitation on locality, also tasks
+running in a particular group have no influence to others, not to mention the
+extra overhead, does it really meaningful to account the stuff hierarchically?
 
--- 
-James Morris
-<jmorris@namei.org>
+Regards,
+Michael Wang
 
+> 
+>> +	rcu_read_unlock();
+>> +}
+>> +#endif
