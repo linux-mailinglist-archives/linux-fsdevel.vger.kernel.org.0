@@ -2,81 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B5EC666E4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 08:20:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2942466711
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 08:36:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725889AbfGLGUc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jul 2019 02:20:32 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:48829 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725562AbfGLGUc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jul 2019 02:20:32 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45lN8F2HD4z9s4Y;
-        Fri, 12 Jul 2019 16:20:29 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1562912429;
-        bh=kOAbaMX8FlsTSm7oTq0mdhFEoLZ2DXr62rCz0QjP/SM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=bEmpV3q8U9nxIYHUivDoFRMuLSZkz3J3dxpZxyqOKzxX5S/CuInMzSTlAng9Ewp5z
-         vAJndwYRclJJUFDVrkWzd+kBGH1wY6LbQ6cmmcBinSWq6Cfv4mT/Rt+f5VvYSQHfJA
-         JlHWYx8zZeeGXabBw6gZlG9ZJ87W0uBpiVBMhkS4MJ5Im/N4DUtyQcjO4ePHqPuVId
-         NOKLGz2vukRZ4tfEJsTmStlsotXcXQqplazVuJyvfIAzfzdK/VZMqODLq+aFqnPSjt
-         Fbd1zzZWXefXTSR2H0fM9EB5BL4dhezPVjYqg+zC4qi/0PEL2b8KZqJ5b1gaB7obdy
-         xBteUwbEbXMLg==
-Date:   Fri, 12 Jul 2019 16:20:27 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     akpm@linux-foundation.org
-Cc:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org
-Subject: Re: mmotm 2019-07-11-21-41 uploaded
-Message-ID: <20190712162027.7ca31722@canb.auug.org.au>
-In-Reply-To: <20190712044154.fiMaFQ0RD%akpm@linux-foundation.org>
-References: <20190712044154.fiMaFQ0RD%akpm@linux-foundation.org>
+        id S1725889AbfGLGgu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jul 2019 02:36:50 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33532 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725562AbfGLGgu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Jul 2019 02:36:50 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlpAI-0006Xe-68; Fri, 12 Jul 2019 06:36:18 +0000
+Date:   Fri, 12 Jul 2019 07:36:18 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 01/10] namei: obey trailing magic-link DAC permissions
+Message-ID: <20190712063617.GJ17978@ZenIV.linux.org.uk>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-2-cyphar@cyphar.com>
+ <20190712041454.GG17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/P.802fFMgzhFjtLGcQJfXOl"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190712041454.GG17978@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/P.802fFMgzhFjtLGcQJfXOl
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 12, 2019 at 05:14:54AM +0100, Al Viro wrote:
 
-Hi Andrew,
+> That's not quite guaranteed (it is possible to bind a symlink on top
+> of a regular file, and you will get LOOKUP_JUMPED on the entry into
+> trailing_symlink() when looking the result up).  Moreover, why bother
+> with LOOKUP_JUMPED here?  See that
+> 	nd->last_type = LAST_BIND;
+> several lines prior?  That's precisely to be able to recognize those
+> suckers.
 
-On Thu, 11 Jul 2019 21:41:54 -0700 akpm@linux-foundation.org wrote:
->
-> * mm-migrate-remove-unused-mode-argument.patch
+... except that this won't work these days (once upon a time it used
+to, but that had been a long time ago).  However, that doesn't change
+the fact that the test is really wrong.  So let's do it right:
 
-I had to remove the hunk of this patch that updates fs/iomap.c which
-should not exist in your tree by this point.
+* set a new flag along with LOOKUP_JUMPED in nd_jump_link()
+* clear it in get_link() right before
+	res = READ_ONCE(inode->i_link);
+* check it in trailing_symlink() (or callers thereof)
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/P.802fFMgzhFjtLGcQJfXOl
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0oJqwACgkQAVBC80lX
-0GwVTAf/UvvmoZmrwsW2LgtazMmufzEJPjW7/PDntLDpJeOsZWcsWol9S2I3nzHs
-jNBwtvSQRhUoaZOLIiu4YxV9vTMlEfs8XtbRX3yzhTjg2B/Sb+c4xgfYTON0Ww7F
-+McHuE/oiXLaOoiAFfsVVsyUSjlrf8Cs8Ko6gOOONLnvVyZzhiUmLVbCd0EmxwSQ
-tB0GjW69nes1pMK356u8aApMhM9qIYJI88AZ6WcjN/AlZgAHdu1LGMTvd9LhdrFR
-bpUUfIG1vbp0YvjSa5ztKTBHuB9ATQxULkk/1UyGyMbEmfM9TG1mbdn4K2eTQWWu
-oMiSR91cGEtvuEC3/vmPaerfsFLY7A==
-=77BJ
------END PGP SIGNATURE-----
-
---Sig_/P.802fFMgzhFjtLGcQJfXOl--
+The rest of comments stand, AFAICS.
