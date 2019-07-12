@@ -2,81 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84B3F669BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 11:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CCBB669A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 11:11:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbfGLJN5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jul 2019 05:13:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54274 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726138AbfGLJN5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jul 2019 05:13:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 93769AC63;
-        Fri, 12 Jul 2019 09:13:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3D21A1E43CB; Thu, 11 Jul 2019 17:41:11 +0200 (CEST)
-Date:   Thu, 11 Jul 2019 17:41:11 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Boaz Harrosh <openosd@gmail.com>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dax: Fix missed PMD wakeups
-Message-ID: <20190711154111.GA29284@quack2.suse.cz>
-References: <20190704165450.GH31037@quack2.suse.cz>
- <20190704191407.GM1729@bombadil.infradead.org>
- <CAPcyv4gUiDw8Ma9mvbW5BamQtGZxWVuvBW7UrOLa2uijrXUWaw@mail.gmail.com>
- <20190705191004.GC32320@bombadil.infradead.org>
- <CAPcyv4jVARa38Qc4NjQ04wJ4ZKJ6On9BbJgoL95wQqU-p-Xp_w@mail.gmail.com>
- <20190710190204.GB14701@quack2.suse.cz>
- <20190710201539.GN32320@bombadil.infradead.org>
- <20190710202647.GA7269@quack2.suse.cz>
- <20190711141350.GS32320@bombadil.infradead.org>
- <20190711152550.GT32320@bombadil.infradead.org>
+        id S1726284AbfGLJLb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jul 2019 05:11:31 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:58282 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725989AbfGLJLa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 12 Jul 2019 05:11:30 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R621e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TWh00oy_1562922685;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TWh00oy_1562922685)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 12 Jul 2019 17:11:25 +0800
+Subject: Re: [PATCH 1/4] numa: introduce per-cgroup numa balancing locality,
+ statistic
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        Mel Gorman <mgorman@suse.de>, riel@surriel.com
+References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
+ <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
+ <3ac9b43a-cc80-01be-0079-df008a71ce4b@linux.alibaba.com>
+ <20190711134754.GD3402@hirez.programming.kicks-ass.net>
+ <b027f9cc-edd2-840c-3829-176a1e298446@linux.alibaba.com>
+ <20190712075815.GN3402@hirez.programming.kicks-ass.net>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <37474414-1a54-8e3a-60df-eb7e5e1cc1ed@linux.alibaba.com>
+Date:   Fri, 12 Jul 2019 17:11:25 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190711152550.GT32320@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190712075815.GN3402@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 11-07-19 08:25:50, Matthew Wilcox wrote:
-> On Thu, Jul 11, 2019 at 07:13:50AM -0700, Matthew Wilcox wrote:
-> > However, the XA_RETRY_ENTRY might be a good choice.  It doesn't normally
-> > appear in an XArray (it may appear if you're looking at a deleted node,
-> > but since we're holding the lock, we can't see deleted nodes).
+
+
+On 2019/7/12 下午3:58, Peter Zijlstra wrote:
+[snip]
+>>>
+>>> Then our task t1 should be accounted to B (as you do), but also to A and
+>>> R.
+>>
+>> I get the point but not quite sure about this...
+>>
+>> Not like pages there are no hierarchical limitation on locality, also tasks
 > 
-...
+> You can use cpusets to affect that.
 
-> @@ -254,7 +267,7 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
->  static void put_unlocked_entry(struct xa_state *xas, void *entry)
->  {
->  	/* If we were the only waiter woken, wake the next one */
-> -	if (entry)
-> +	if (entry && dax_is_conflict(entry))
+Could you please give more detail on this?
 
-This should be !dax_is_conflict(entry)...
+> 
+>> running in a particular group have no influence to others, not to mention the
+>> extra overhead, does it really meaningful to account the stuff hierarchically?
+> 
+> AFAIU it's a requirement of cgroups to be hierarchical. All our other
+> cgroup accounting is like that.
 
->  		dax_wake_entry(xas, entry, false);
->  }
+Ok, should respect the convention :-)
 
-Otherwise the patch looks good to me so feel free to add:
+Regards,
+Michael Wang
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-once you fix this.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
