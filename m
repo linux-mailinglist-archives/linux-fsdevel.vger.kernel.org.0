@@ -2,77 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E364067630
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 23:26:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3BEC67654
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 23:56:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbfGLVZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jul 2019 17:25:59 -0400
-Received: from kich.slackware.pl ([193.218.152.244]:45170 "EHLO
-        kich.slackware.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727994AbfGLVZ7 (ORCPT
+        id S1727687AbfGLV4F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jul 2019 17:56:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58346 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727362AbfGLV4F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jul 2019 17:25:59 -0400
-X-Greylist: delayed 534 seconds by postgrey-1.27 at vger.kernel.org; Fri, 12 Jul 2019 17:25:58 EDT
-Received: from kich.toxcorp.com (kich.toxcorp.com [193.218.152.244])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: shasta@toxcorp.com)
-        by kich.slackware.pl (Postfix) with ESMTPSA id A8A09C1;
-        Fri, 12 Jul 2019 23:17:03 +0200 (CEST)
-Date:   Fri, 12 Jul 2019 23:17:03 +0200 (CEST)
-From:   Jakub Jankowski <shasta@toxcorp.com>
-To:     Alexey Izbyshev <izbyshev@ispras.ru>,
+        Fri, 12 Jul 2019 17:56:05 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6CLqfpX016894
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jul 2019 17:56:04 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tq0fw4nwq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jul 2019 17:56:04 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Fri, 12 Jul 2019 22:56:02 +0100
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 12 Jul 2019 22:55:57 +0100
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6CLtupx10814168
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 12 Jul 2019 21:55:56 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 95FB3AE062;
+        Fri, 12 Jul 2019 21:55:56 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0522EAE05F;
+        Fri, 12 Jul 2019 21:55:51 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.135.203])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Fri, 12 Jul 2019 21:55:51 +0000 (GMT)
+References: <20190712053631.9814-1-bauerman@linux.ibm.com> <20190712053631.9814-4-bauerman@linux.ibm.com> <20190712150912.3097215e.pasic@linux.ibm.com>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Halil Pasic <pasic@linux.ibm.com>
+Cc:     x86@kernel.org, iommu@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Alexey Dobriyan <adobriyan@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
-cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        security@kernel.org
-Subject: Re: [PATCH] proc: Fix uninitialized byte read in get_mm_cmdline()
-In-Reply-To: <3de2d71b-37be-6238-7fd8-0a40c9b94a98@ispras.ru>
-Message-ID: <alpine.LNX.2.21.1907122312190.8869@kich.toxcorp.com>
-References: <20190712160913.17727-1-izbyshev@ispras.ru> <20190712163625.GF21989@redhat.com> <20190712174632.GA3175@avx2> <3de2d71b-37be-6238-7fd8-0a40c9b94a98@ispras.ru>
-User-Agent: Alpine 2.21 (LNX 202 2017-01-01)
+        Mike Anderson <andmike@linux.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        "Lendacky\, Thomas" <thomas.lendacky@amd.com>
+Subject: Re: [PATCH 3/3] fs/core/vmcore: Move sev_active() reference to x86 arch code
+In-reply-to: <20190712150912.3097215e.pasic@linux.ibm.com>
+Date:   Fri, 12 Jul 2019 18:55:47 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 19071221-2213-0000-0000-000003ADCDAE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011417; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01231280; UDB=6.00648610; IPR=6.01012564;
+ MB=3.00027695; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-12 21:56:01
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19071221-2214-0000-0000-00005F35B676
+Message-Id: <87tvbqgboc.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-12_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907120224
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-07-12, Alexey Izbyshev wrote:
 
-> On 7/12/19 8:46 PM, Alexey Dobriyan wrote:
->> The proper fix to all /proc/*/cmdline problems is to revert
+[ Cc'ing Tom Lendacky which I forgot to do earlier. Sorry about that. ]
+
+Hello Halil,
+
+Thanks for the quick review.
+
+Halil Pasic <pasic@linux.ibm.com> writes:
+
+> On Fri, 12 Jul 2019 02:36:31 -0300
+> Thiago Jung Bauermann <bauerman@linux.ibm.com> wrote:
+>
+>> Secure Encrypted Virtualization is an x86-specific feature, so it shouldn't
+>> appear in generic kernel code because it forces non-x86 architectures to
+>> define the sev_active() function, which doesn't make a lot of sense.
+>
+> sev_active() might be just bad (too specific) name for a general
+> concept. s390 code defines it drives the right behavior in
+> kernel/dma/direct.c (which uses it).
+
+I thought about that but couldn't put my finger on a general concept.
+Is it "guest with memory inaccessible to the host"?
+
+Since your proposed definiton for force_dma_unencrypted() is simply to
+make it equivalent to sev_active(), I thought it was more
+straightforward to make each arch define force_dma_unencrypted()
+directly.
+
+Also, does sev_active() drive the right behavior for s390 in
+elfcorehdr_read() as well?
+
+>> To solve this problem, add an x86 elfcorehdr_read() function to override
+>> the generic weak implementation. To do that, it's necessary to make
+>> read_from_oldmem() public so that it can be used outside of vmcore.c.
 >>
->> 	f5b65348fd77839b50e79bc0a5e536832ea52d8d
->> 	proc: fix missing final NUL in get_mm_cmdline() rewrite
->>
->> 	5ab8271899658042fabc5ae7e6a99066a210bc0e
->> 	fs/proc: simplify and clarify get_mm_cmdline() function
->>
-> Should this be interpreted as an actual suggestion to revert the patches,
-> fix the conflicts, test and submit them, or is this more like thinking out
-> loud? In the former case, will it be OK for long term branches?
+>> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+>> ---
+>>  arch/x86/kernel/crash_dump_64.c |  5 +++++
+>>  fs/proc/vmcore.c                |  8 ++++----
+>>  include/linux/crash_dump.h      | 14 ++++++++++++++
+>>  include/linux/mem_encrypt.h     |  1 -
+>>  4 files changed, 23 insertions(+), 5 deletions(-)
 >
-> get_mm_cmdline() does seem easier to read for me before 5ab8271899658042.
-> But it also has different semantics in corner cases, for example:
->
-> - If there is no NUL at arg_end-1, it reads only the first string in
-> the combined arg/env block, and doesn't terminate it with NUL.
->
-> - If there is any problem with access_remote_vm() or copy_to_user(),
-> it returns -EFAULT even if some data were copied to userspace.
->
-> On the other hand, 5ab8271899658042 was merged not too long ago (about a year),
-> so it's possible that the current semantics isn't heavily relied upon.
+> Does not seem to apply to today's or yesterdays master.
 
-I posted this (corner?) case ~3 months ago, unfortunately it wasn't picked 
-up by anyone: https://lkml.org/lkml/2019/4/5/825
-You can treat it as another datapoint in this discussion.
+It assumes the presence of the two patches I mentioned in the cover
+letter. Only one of them is in master.
 
+I hadn't realized the s390 virtio patches were on their way to upstream.
+I was keeping an eye on the email thread but didn't see they were picked
+up in the s390 pull request. I'll add a new patch to this series making
+the corresponding changes to s390's <asm/mem_encrypt.h> as well.
 
-Regards,
-  Jakub
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
 
--- 
-Jakub Jankowski|shasta@toxcorp.com|https://toxcorp.com/
