@@ -2,94 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED1296656E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 06:03:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CAE26657C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2019 06:15:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbfGLED3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 12 Jul 2019 00:03:29 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:46834 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725268AbfGLED3 (ORCPT
+        id S1727970AbfGLEPg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 12 Jul 2019 00:15:36 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:60074 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727061AbfGLEPg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 12 Jul 2019 00:03:29 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TWfcT1L_1562904203;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TWfcT1L_1562904203)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 12 Jul 2019 12:03:24 +0800
-Subject: Re: [PATCH 3/4] numa: introduce numa group per task group
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        Mel Gorman <mgorman@suse.de>, riel@surriel.com
-References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
- <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
- <93cf9333-2f9a-ca1e-a4a6-54fc388d1673@linux.alibaba.com>
- <20190711141038.GE3402@hirez.programming.kicks-ass.net>
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Message-ID: <50a5ae9e-6dbd-51b6-a374-1b0e45588abf@linux.alibaba.com>
-Date:   Fri, 12 Jul 2019 12:03:23 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        Fri, 12 Jul 2019 00:15:36 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hlmxT-000330-0Q; Fri, 12 Jul 2019 04:14:55 +0000
+Date:   Fri, 12 Jul 2019 05:14:54 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 01/10] namei: obey trailing magic-link DAC permissions
+Message-ID: <20190712041454.GG17978@ZenIV.linux.org.uk>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-2-cyphar@cyphar.com>
 MIME-Version: 1.0
-In-Reply-To: <20190711141038.GE3402@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190706145737.5299-2-cyphar@cyphar.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sun, Jul 07, 2019 at 12:57:28AM +1000, Aleksa Sarai wrote:
 
+> @@ -514,7 +516,14 @@ static void set_nameidata(struct nameidata *p, int dfd, struct filename *name)
+>  	p->stack = p->internal;
+>  	p->dfd = dfd;
+>  	p->name = name;
+> -	p->total_link_count = old ? old->total_link_count : 0;
+> +	p->total_link_count = 0;
+> +	p->acc_mode = 0;
+> +	p->opath_mask = FMODE_PATH_READ | FMODE_PATH_WRITE;
+> +	if (old) {
+> +		p->total_link_count = old->total_link_count;
+> +		p->acc_mode = old->acc_mode;
+> +		p->opath_mask = old->opath_mask;
+> +	}
 
-On 2019/7/11 下午10:10, Peter Zijlstra wrote:
-> On Wed, Jul 03, 2019 at 11:32:32AM +0800, 王贇 wrote:
->> By tracing numa page faults, we recognize tasks sharing the same page,
->> and try pack them together into a single numa group.
->>
->> However when two task share lot's of cache pages while not much
->> anonymous pages, since numa balancing do not tracing cache page, they
->> have no chance to join into the same group.
->>
->> While tracing cache page cost too much, we could use some hints from
-> 
-> I forgot; where again do we skip shared pages? task_numa_work() doesn't
-> seem to skip file vmas.
+Huh?  Could somebody explain why traversals of NFS4 referrals should inherit
+->acc_mode and ->opath_mask?
 
-That's the page cache generated by file read/write, rather than the pages
-for file mapping, pages of memory to support IO also won't be considered as
-shared between tasks since they don't belong to any particular task, but may
-serving multiples.
+>  static __always_inline
+> -const char *get_link(struct nameidata *nd)
+> +const char *get_link(struct nameidata *nd, bool trailing)
+>  {
+>  	struct saved *last = nd->stack + nd->depth - 1;
+>  	struct dentry *dentry = last->link.dentry;
+> @@ -1081,6 +1134,44 @@ const char *get_link(struct nameidata *nd)
+>  		} else {
+>  			res = get(dentry, inode, &last->done);
+>  		}
+> +		/* If we just jumped it was because of a magic-link. */
+> +		if (unlikely(nd->flags & LOOKUP_JUMPED)) {
 
-> 
->> userland and cpu cgroup could be a good one.
->>
->> This patch introduced new entry 'numa_group' for cpu cgroup, by echo
->> non-zero into the entry, we can now force all the tasks of this cgroup
->> to join the same numa group serving for task group.
->>
->> In this way tasks are more likely to settle down on the same node, to
->> share closer cpu cache and gain benefit from NUMA on both file/anonymous
->> pages.
->>
->> Besides, when multiple cgroup enabled numa group, they will be able to
->> exchange task location by utilizing numa migration, in this way they
->> could achieve single node settle down without breaking load balance.
-> 
-> I dislike cgroup only interfaces; it there really nothing else we could
-> use for this?
+That's not quite guaranteed (it is possible to bind a symlink on top
+of a regular file, and you will get LOOKUP_JUMPED on the entry into
+trailing_symlink() when looking the result up).  Moreover, why bother
+with LOOKUP_JUMPED here?  See that
+	nd->last_type = LAST_BIND;
+several lines prior?  That's precisely to be able to recognize those
+suckers.
 
-Me too... while at this moment that's the best approach we have got, we also
-tried to use separately module to handle these automatically, but this need
-a very good understanding of the system, configuration and workloads which
-only known by the owner.
+And _that_ would've avoided another piece of ugliness - your LOOKUP_JUMPED
+kludge forces you to handle that cra^Wsclero^Wvaluable security hardening
+in get_link(), instead of trailing_symlink() where you apparently want
+it to be.  Simply because nd_jump_root() done later in get_link() will set
+LOOKUP_JUMPED for absolute symlinks, confusing your test.
 
-So maybe just providing the functionality and leave the choice to user is not
-that bad?
+Moreover, I'm not sure that trailing_symlink() is the right place for
+that either - I would be rather tempted to fold do_o_path() into
+path_openat(), inline path_lookupat() there (as in
+        s = path_init(nd, flags);
 
-Regards,
-Michael Wang
+        while (!(error = link_path_walk(s, nd))
+                && ((error = lookup_last(nd)) > 0)) {
+                s = trailing_symlink(nd);
+        }
+        if (!error)
+                error = complete_walk(nd);
+        if (!error && nd->flags & LOOKUP_DIRECTORY)
+                if (!d_can_lookup(nd->path.dentry))
+                        error = -ENOTDIR;
+        if (!error) {
+                audit_inode(nd->name, nd->path.dentry, 0);
+                error = vfs_open(&nd->path, file);
+        }
+        terminate_walk(nd);
+- we don't need LOOKUP_DOWN there) and then we only care about the
+two callers of trailing_symlink() that are in path_openat().  Which
+is where you have your ->acc_mode and ->opath_mask without the need
+to dump them into nameidata.  Or to bring that mess into the
+things like stat(2) et.al. - it simply doesn't belong there.
 
-> 
+In any case, this "bool trailing" is completely wrong; whether that
+check belongs in trailing_symlink() or (some of) its callers, putting
+it into get_link() is a mistake, forced by kludgy check for procfs-style
+symlinks.
