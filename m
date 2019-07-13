@@ -2,44 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50DE66786F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jul 2019 06:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AC8267877
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jul 2019 06:48:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfGMEqV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Jul 2019 00:46:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55796 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725936AbfGMEqU (ORCPT
+        id S1726274AbfGMEss (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Jul 2019 00:48:48 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59636 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725916AbfGMEss (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Jul 2019 00:46:20 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6D4fnFd114200
-        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Jul 2019 00:46:19 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tq5mjvb61-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Jul 2019 00:46:19 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Sat, 13 Jul 2019 05:46:18 +0100
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 13 Jul 2019 05:46:14 +0100
+        Sat, 13 Jul 2019 00:48:48 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6D4fZp4026480;
+        Sat, 13 Jul 2019 00:46:22 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tq1q2u582-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 13 Jul 2019 00:46:21 -0400
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x6D4ffCu026806;
+        Sat, 13 Jul 2019 00:46:21 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tq1q2u57n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 13 Jul 2019 00:46:21 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x6D4iqn0000754;
+        Sat, 13 Jul 2019 04:46:20 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma04dal.us.ibm.com with ESMTP id 2tq6x68fyu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 13 Jul 2019 04:46:20 +0000
 Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6D4kCkY29688306
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6D4kIXr51118506
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 13 Jul 2019 04:46:13 GMT
+        Sat, 13 Jul 2019 04:46:18 GMT
 Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D8489BE054;
-        Sat, 13 Jul 2019 04:46:12 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 12943BE054;
+        Sat, 13 Jul 2019 04:46:18 +0000 (GMT)
 Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 60987BE04F;
-        Sat, 13 Jul 2019 04:46:08 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 46E68BE04F;
+        Sat, 13 Jul 2019 04:46:13 +0000 (GMT)
 Received: from morokweng.localdomain.com (unknown [9.85.135.203])
         by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Sat, 13 Jul 2019 04:46:08 +0000 (GMT)
+        Sat, 13 Jul 2019 04:46:13 +0000 (GMT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     x86@kernel.org
 Cc:     iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
@@ -56,26 +62,19 @@ Cc:     iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
         Mike Anderson <andmike@linux.ibm.com>,
         Ram Pai <linuxram@us.ibm.com>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH 1/3] x86,s390: Move ARCH_HAS_MEM_ENCRYPT definition to arch/Kconfig
-Date:   Sat, 13 Jul 2019 01:45:52 -0300
+Subject: [PATCH 2/3] DMA mapping: Move SME handling to x86-specific files
+Date:   Sat, 13 Jul 2019 01:45:53 -0300
+Message-Id: <20190713044554.28719-3-bauerman@linux.ibm.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190713044554.28719-1-bauerman@linux.ibm.com>
 References: <20190713044554.28719-1-bauerman@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 19071304-0012-0000-0000-0000174F2919
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011418; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01231409; UDB=6.00648690; IPR=6.01012701;
- MB=3.00027699; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-13 04:46:18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071304-0013-0000-0000-0000580BA0FB
-Message-Id: <20190713044554.28719-2-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-13_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=38 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1907130055
@@ -84,62 +83,136 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-powerpc is also going to use this feature, so put it in a generic location.
+Secure Memory Encryption is an x86-specific feature, so it shouldn't appear
+in generic kernel code.
+
+In DMA mapping code, Christoph Hellwig mentioned that "There is no reason
+why we should have a special debug printk just for one specific reason why
+there is a requirement for a large DMA mask.", so we just remove
+dma_check_mask().
+
+In SWIOTLB code, there's no need to mention which memory encryption feature
+is active, so just use a more generic warning. Besides, other architectures
+will have different names for similar technology.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/Kconfig      | 3 +++
- arch/s390/Kconfig | 3 ---
- arch/x86/Kconfig  | 4 +---
- 3 files changed, 4 insertions(+), 6 deletions(-)
+ arch/s390/include/asm/mem_encrypt.h |  4 +---
+ arch/x86/include/asm/mem_encrypt.h  | 10 ++++++++++
+ include/linux/mem_encrypt.h         | 14 +-------------
+ kernel/dma/mapping.c                |  8 --------
+ kernel/dma/swiotlb.c                |  3 +--
+ 5 files changed, 13 insertions(+), 26 deletions(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index c47b328eada0..4ef3499d4480 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -927,6 +927,9 @@ config LOCK_EVENT_COUNTS
- 	  the chance of application behavior change because of timing
- 	  differences. The counts are reported via debugfs.
+diff --git a/arch/s390/include/asm/mem_encrypt.h b/arch/s390/include/asm/mem_encrypt.h
+index 3eb018508190..ff813a56bc30 100644
+--- a/arch/s390/include/asm/mem_encrypt.h
++++ b/arch/s390/include/asm/mem_encrypt.h
+@@ -4,9 +4,7 @@
  
-+config ARCH_HAS_MEM_ENCRYPT
-+	bool
+ #ifndef __ASSEMBLY__
+ 
+-#define sme_me_mask	0ULL
+-
+-static inline bool sme_active(void) { return false; }
++static inline bool mem_encrypt_active(void) { return false; }
+ extern bool sev_active(void);
+ 
+ int set_memory_encrypted(unsigned long addr, int numpages);
+diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
+index 0c196c47d621..848ce43b9040 100644
+--- a/arch/x86/include/asm/mem_encrypt.h
++++ b/arch/x86/include/asm/mem_encrypt.h
+@@ -92,6 +92,16 @@ early_set_memory_encrypted(unsigned long vaddr, unsigned long size) { return 0;
+ 
+ extern char __start_bss_decrypted[], __end_bss_decrypted[], __start_bss_decrypted_unused[];
+ 
++static inline bool mem_encrypt_active(void)
++{
++	return sme_me_mask;
++}
 +
- source "kernel/gcov/Kconfig"
++static inline u64 sme_get_me_mask(void)
++{
++	return sme_me_mask;
++}
++
+ #endif	/* __ASSEMBLY__ */
  
- source "scripts/gcc-plugins/Kconfig"
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 5d8570ed6cab..f820e631bf89 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -1,7 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--config ARCH_HAS_MEM_ENCRYPT
--        def_bool y
+ #endif	/* __X86_MEM_ENCRYPT_H__ */
+diff --git a/include/linux/mem_encrypt.h b/include/linux/mem_encrypt.h
+index 470bd53a89df..0c5b0ff9eb29 100644
+--- a/include/linux/mem_encrypt.h
++++ b/include/linux/mem_encrypt.h
+@@ -18,23 +18,11 @@
+ 
+ #else	/* !CONFIG_ARCH_HAS_MEM_ENCRYPT */
+ 
+-#define sme_me_mask	0ULL
 -
- config MMU
- 	def_bool y
+-static inline bool sme_active(void) { return false; }
++static inline bool mem_encrypt_active(void) { return false; }
+ static inline bool sev_active(void) { return false; }
  
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index c9f331bb538b..5d3295f2df94 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -68,6 +68,7 @@ config X86
- 	select ARCH_HAS_FORTIFY_SOURCE
- 	select ARCH_HAS_GCOV_PROFILE_ALL
- 	select ARCH_HAS_KCOV			if X86_64
-+	select ARCH_HAS_MEM_ENCRYPT
- 	select ARCH_HAS_MEMBARRIER_SYNC_CORE
- 	select ARCH_HAS_PMEM_API		if X86_64
- 	select ARCH_HAS_PTE_SPECIAL
-@@ -1520,9 +1521,6 @@ config X86_CPA_STATISTICS
- 	  helps to determine the effectiveness of preserving large and huge
- 	  page mappings when mapping protections are changed.
+ #endif	/* CONFIG_ARCH_HAS_MEM_ENCRYPT */
  
--config ARCH_HAS_MEM_ENCRYPT
--	def_bool y
+-static inline bool mem_encrypt_active(void)
+-{
+-	return sme_me_mask;
+-}
 -
- config AMD_MEM_ENCRYPT
- 	bool "AMD Secure Memory Encryption (SME) support"
- 	depends on X86_64 && CPU_SUP_AMD
-
+-static inline u64 sme_get_me_mask(void)
+-{
+-	return sme_me_mask;
+-}
+-
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
+ /*
+  * The __sme_set() and __sme_clr() macros are useful for adding or removing
+diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+index f7afdadb6770..b53fc7ec4914 100644
+--- a/kernel/dma/mapping.c
++++ b/kernel/dma/mapping.c
+@@ -291,12 +291,6 @@ void dma_free_attrs(struct device *dev, size_t size, void *cpu_addr,
+ }
+ EXPORT_SYMBOL(dma_free_attrs);
+ 
+-static inline void dma_check_mask(struct device *dev, u64 mask)
+-{
+-	if (sme_active() && (mask < (((u64)sme_get_me_mask() << 1) - 1)))
+-		dev_warn(dev, "SME is active, device will require DMA bounce buffers\n");
+-}
+-
+ int dma_supported(struct device *dev, u64 mask)
+ {
+ 	const struct dma_map_ops *ops = get_dma_ops(dev);
+@@ -321,7 +315,6 @@ int dma_set_mask(struct device *dev, u64 mask)
+ 		return -EIO;
+ 
+ 	arch_dma_set_mask(dev, mask);
+-	dma_check_mask(dev, mask);
+ 	*dev->dma_mask = mask;
+ 	return 0;
+ }
+@@ -333,7 +326,6 @@ int dma_set_coherent_mask(struct device *dev, u64 mask)
+ 	if (!dma_supported(dev, mask))
+ 		return -EIO;
+ 
+-	dma_check_mask(dev, mask);
+ 	dev->coherent_dma_mask = mask;
+ 	return 0;
+ }
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index 62fa5a82a065..e52401f94e91 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -459,8 +459,7 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+ 		panic("Can not allocate SWIOTLB buffer earlier and can't now provide you with the DMA bounce buffer");
+ 
+ 	if (mem_encrypt_active())
+-		pr_warn_once("%s is active and system is using DMA bounce buffers\n",
+-			     sme_active() ? "SME" : "SEV");
++		pr_warn_once("Memory encryption is active and system is using DMA bounce buffers\n");
+ 
+ 	mask = dma_get_seg_boundary(hwdev);
+ 
