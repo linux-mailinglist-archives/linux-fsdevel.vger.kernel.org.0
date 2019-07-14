@@ -2,237 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BFCC680F4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2019 21:11:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DDDE68123
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2019 22:17:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbfGNTL1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Jul 2019 15:11:27 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40682 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728125AbfGNTL0 (ORCPT
+        id S1728801AbfGNURk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Jul 2019 16:17:40 -0400
+Received: from sonic304-23.consmr.mail.ir2.yahoo.com ([77.238.179.148]:34378
+        "EHLO sonic304-23.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728371AbfGNURk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Jul 2019 15:11:26 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p184so6417374pfp.7;
-        Sun, 14 Jul 2019 12:11:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=wTnR4jFSZHgDyQlzGAnxJLHPwWt9ff7eR4/YXCAXskI=;
-        b=J6HG5WoHErAl5v76PYLUAOefrG8S1mG5ji2ajAmi5iUq3zdhofWNi8R7FD/ZClvCkS
-         YZRIbPxD9g4+z4/DKU3BnFzdBGd4B6hqacPQJCYiMAyTsjeQD0VnMRdVjMwT5iXX3Wf8
-         K+dbgDP1QPuW9rFsXWNsx8mrnpo7er2XDn6BWvY/4l765HNnJzRdfTLFd1FC4ox/btui
-         ANCUJV2jLkQANmaHn5GDebVXYHTnQ3iJntGgl9m+NUdNzEI4foq7AImezy1e0F0aWScj
-         VTeFTRsX3XhDhFo4Vbx8wmcHarhMhRhIWCsne9M3/awdd48pqQRhjBDTphYabLqRYTaO
-         N99A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wTnR4jFSZHgDyQlzGAnxJLHPwWt9ff7eR4/YXCAXskI=;
-        b=nxQSYNkJOc1wNLQfY3X+GYLn1XTJHbnHvpHezIMjxbmj9yrF6+X8kB/RTLnENrkqir
-         1Wz1tSz1piYmZHhb+87mllrR8q7xMmYUofc+5guLbqBI898cTipGLjhIbg7U9I4LrMi9
-         IWPlfPS/RA4vZfJQf4PQeZxdf4SAMso4UkJpbz2sqJ4BtXWvLgoqNtkdxqoxV3gxqyBj
-         vd+0m0kM7h27A44pVnuE5VlKey9No9yfBVWxtLHOu8XhweEPNGtkBBu/bl/K1DhVXh1m
-         t9hDZw8IdsZKIFcdUeIdtuSpogOVOy7PjzEYTULEhS1/rjM9qxX4jNXir6WgYlExRNFV
-         mq7w==
-X-Gm-Message-State: APjAAAUNo9lh8RxDvrDCJnAHngqRI1Tp7f4eV7551CFuidqB3os5QXEK
-        3whkAA3LmtzPBPeaua6RiPu906NLj2s=
-X-Google-Smtp-Source: APXvYqyoHwB+daqurf2TSePudMpL8bWbCxyh/0egoU2EbeU8TkfMkMtKnPM0Ke06j90ArJCf2o75Kg==
-X-Received: by 2002:a63:bf01:: with SMTP id v1mr22482786pgf.278.1563131484751;
-        Sun, 14 Jul 2019 12:11:24 -0700 (PDT)
-Received: from bharath12345-Inspiron-5559 ([103.110.42.34])
-        by smtp.gmail.com with ESMTPSA id m6sm15239358pfb.151.2019.07.14.12.11.22
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 14 Jul 2019 12:11:24 -0700 (PDT)
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     akpm@linux-foundation.org, ira.weiny@intel.com, jhubbard@nvidia.com
-Cc:     Bharath Vedartham <linux.bhar@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Sun, 14 Jul 2019 16:17:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1563135457; bh=56HhVaYrGJR6MKwMAHA5oXMmLrE4kBnjCe5YrgJnE0Q=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=sxa1IwEU7eor3oDsNszfggOWP57K1Y0xmPk5qfjzHi2J4X6TpELj0cq88IIMlZeVVUHCnf3BuAynuKNX8OOBxmUu0e3myq7TnZG5w27KlpsxTqexu/fjrq4xfJI1Nvnzh8FQwaqpA2SGC02bR0KYlsu3s3QxVeY5OI/9A4o5lwN0YKxNlMziV/iDc1Om/+gsocNVcmdfInXhYce89EPd9DI8hy/ZJ9OSuSR61VJADAzb0Qwgix/N2Pxggl5aJ/KIhYZm/aRBDrFR4PXPT24eOjDuFwf/tdepbG4fg0+8k2xILzlsK5js6PxAKI8chFfus3Eq9sn38w4hVVY+EGpOig==
+X-YMail-OSG: 5f5JlG0VM1nEWdED4kc1O5vDYV1TBMbik3rr6xHjhcOE0YrkOxozeOqftS2pMA8
+ uw1GF3zBCAy3dSmGgFvmalRWSNS5ifsJZK0ahvVX1e2li8eSn.7_wP_iChD0o79Sc9BOw1jvBiBo
+ 3wrA4r70efi_UHxnQZEve68AyHtK349bIU875z9q.ssyngPfhfQNL7poB8814er2SE2dx793dddW
+ X5xSFSYDX72RUdAE5Iqz_bGbUUQOVgsbGugtpAMJIo0Fwy1vvX3sYPm3nc4M68.q.AV_IPIg9lil
+ QSSdvCmoZpMydj8N6VYq6Mfewly5EtIfNmMRBNW5AYzKtRED2s0lIruwoMoJQ1yo70ZrexRjJLwr
+ qEBiwPMwgVSxLte9u8INfUcaPyhBbCqNPGmpb9bQ52KSpXrYoEEGAJXbUxWvfK4A0rC48Kotvwv5
+ F8ci6VsS0qkJHLPsH9D1zK.LAQA63epbHgOzSAMa.ZmsI7Za.YYss_swumkilNXlvMyEh7pevYtW
+ eljhaJTLyIQhMBhU3sdSPe7KgYWx4o6JJKmG0wlS5Cj6RO6Hbz61oGi0VqJB2V1SYjjtsLQgooDV
+ RkGqrMpC9LD4jg7dt.KJqHw.r153K8GhRhbyC1ofu_wUqO4_mQvB8aCraTQoz7dVed4jqXel60N7
+ gY3fW_Lakfd4rPYvBoZHLN_8IAV6M9AnrpAa0Ay1vYZ7C37lGxhUmWsHhdtNd.0tk9pXWKf5aaQu
+ 5iACGLixi0Gd7zmgQnKmkMpHvkSyfyQFWbME9wKy0jJoQJMhbM1xafy9bmLUL8f.ZxXRNxHTS1Nf
+ _Evb4foUrDqJKca.Xccl9DX5vUKayfvhGfAxiMq.efxZGjw3XjGGgm8tHTKdsU_yIswx6M.ksTM3
+ UilyGVCJnnqd1oFZmSitLxLckDaSZ.iwcEXICBTTI_S5fsfcwpWQSxVJlVGaJ2OPVlJvoXQ97oIX
+ CM3fMzYb3q0iUSEzALZp33xpajR.gvJMEJhI99qLXcMClCRxtTjShcKiVSrgSdWOD_oDcNNb.G7n
+ 3IAovnPSWyOmtHeuGZ_28GXZhoRfmTrORKCT3Z89hJbGKcTc7sK0T2pVaDQiFFgjc66ssP1LrpoK
+ 2nQPbQo3h0LAvxdtMhMYRahH8dU9_6Odjjlhf8KjhYqOJEn5ifOdINwY.VndlIApGFPNsQcBb72h
+ vJ_f62vLvQ5tqOgG_JUBI9hMqlfBUcWKWGHOecLuIpwP9JUwPsLqMC4SWd4s-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ir2.yahoo.com with HTTP; Sun, 14 Jul 2019 20:17:37 +0000
+Received: by smtp403.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a912500c5590c551bd3365812827a21d;
+          Sun, 14 Jul 2019 20:17:34 +0000 (UTC)
+Subject: Re: [PATCH v2 00/24] erofs: promote erofs from staging
+To:     Pavel Machek <pavel@ucw.cz>, Gao Xiang <gaoxiang25@huawei.com>
+Cc:     devel@driverdev.osuosl.org, Theodore Ts'o <tytso@mit.edu>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        Miao Xie <miaoxie@huawei.com>, linux-erofs@lists.ozlabs.org,
+        LKML <linux-kernel@vger.kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Enrico Weigelt <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Matt Sickler <Matt.Sickler@daktronics.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        YueHaibing <yuehaibing@huawei.com>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        kvm@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        xdp-newbies@vger.kernel.org
-Subject: [PATCH] mm/gup: Use put_user_page*() instead of put_page*()
-Date:   Mon, 15 Jul 2019 00:38:34 +0530
-Message-Id: <1563131456-11488-1-git-send-email-linux.bhar@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20190711145755.33908-1-gaoxiang25@huawei.com>
+ <20190714104940.GA1282@xo-6d-61-c0.localdomain>
+From:   Gao Xiang <hsiangkao@aol.com>
+Message-ID: <63b9eaca-5d4b-0fe2-c861-7531977a5b48@aol.com>
+Date:   Mon, 15 Jul 2019 04:17:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20190714104940.GA1282@xo-6d-61-c0.localdomain>
+Content-Type: text/plain; charset=gbk
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch converts all call sites of get_user_pages
-to use put_user_page*() instead of put_page*() functions to
-release reference to gup pinned pages.
+Hi Pavel,
 
-This is a bunch of trivial conversions which is a part of an effort
-by John Hubbard to solve issues with gup pinned pages and 
-filesystem writeback.
+On 2019/7/14 18:49, Pavel Machek Wrote:
+> On Thu 2019-07-11 22:57:31, Gao Xiang wrote:
+>> Changelog from v1:
+>>  o resend the whole filesystem into a patchset suggested by Greg;
+>>  o code is more cleaner, especially for decompression frontend.
+>>
+>> --8<----------
+>>
+>> Hi,
+>>
+>> EROFS file system has been in Linux-staging for about a year.
+>> It has been proved to be stable enough to move out of staging
+>> by 10+ millions of HUAWEI Android mobile phones on the market
+>> from EMUI 9.0.1, and it was promoted as one of the key features
+>> of EMUI 9.1 [1], including P30(pro).
+> 
+> Ok, maybe it is ready to be moved to kernel proper, but as git can
+> do moves, would it be better to do it as one commit?
+> 
+> Separate patches are still better for review, I guess.
 
-The issue is more clearly described in John Hubbard's patch[1] where
-put_user_page*() functions are introduced.
+Thanks for you reply. Either form is OK for me... The first step could
+be that I hope someone could kindly take some time to look into these
+patches... :)
 
-Currently put_user_page*() simply does put_page but future implementations
-look to change that once treewide change of put_page callsites to 
-put_user_page*() is finished.
+The patch v2 is slightly different for the current code in the staging
+tree since I did some code cleanup these days (mainly renaming / moving,
+including rename unzip_vle.{c,h} to zdata.{c,h} and some confusing
+structure names and clean up internal.h...). No functional chance and I
+can submit cleanup patches to staging as well if doing moves by git...
 
-The lwn article describing the issue with gup pinned pages and filesystem 
-writeback [2].
+Thanks,
+Gao Xiang
 
-This patch has been tested by building and booting the kernel as I don't
-have the required hardware to test the device drivers.
-
-I did not modify gpu/drm drivers which use release_pages instead of
-put_page() to release reference of gup pinned pages as I am not clear
-whether release_pages and put_page are interchangable. 
-
-[1] https://lkml.org/lkml/2019/3/26/1396
-
-[2] https://lwn.net/Articles/784574/
-
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
----
- drivers/media/v4l2-core/videobuf-dma-sg.c | 3 +--
- drivers/misc/sgi-gru/grufault.c           | 2 +-
- drivers/staging/kpc2000/kpc_dma/fileops.c | 4 +---
- drivers/vfio/vfio_iommu_type1.c           | 2 +-
- fs/io_uring.c                             | 7 +++----
- mm/gup_benchmark.c                        | 6 +-----
- net/xdp/xdp_umem.c                        | 7 +------
- 7 files changed, 9 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
-index 66a6c6c..d6eeb43 100644
---- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-+++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-@@ -349,8 +349,7 @@ int videobuf_dma_free(struct videobuf_dmabuf *dma)
- 	BUG_ON(dma->sglen);
- 
- 	if (dma->pages) {
--		for (i = 0; i < dma->nr_pages; i++)
--			put_page(dma->pages[i]);
-+		put_user_pages(dma->pages, dma->nr_pages);
- 		kfree(dma->pages);
- 		dma->pages = NULL;
- 	}
-diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
-index 4b713a8..61b3447 100644
---- a/drivers/misc/sgi-gru/grufault.c
-+++ b/drivers/misc/sgi-gru/grufault.c
-@@ -188,7 +188,7 @@ static int non_atomic_pte_lookup(struct vm_area_struct *vma,
- 	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0, &page, NULL) <= 0)
- 		return -EFAULT;
- 	*paddr = page_to_phys(page);
--	put_page(page);
-+	put_user_page(page);
- 	return 0;
- }
- 
-diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kpc2000/kpc_dma/fileops.c
-index 6166587..26dceed 100644
---- a/drivers/staging/kpc2000/kpc_dma/fileops.c
-+++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
-@@ -198,9 +198,7 @@ int  kpc_dma_transfer(struct dev_private_data *priv, struct kiocb *kcb, unsigned
- 	sg_free_table(&acd->sgt);
-  err_dma_map_sg:
-  err_alloc_sg_table:
--	for (i = 0 ; i < acd->page_count ; i++){
--		put_page(acd->user_pages[i]);
--	}
-+	put_user_pages(acd->user_pages, acd->page_count);
-  err_get_user_pages:
- 	kfree(acd->user_pages);
-  err_alloc_userpages:
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index add34ad..c491524 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -369,7 +369,7 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
- 		 */
- 		if (ret > 0 && vma_is_fsdax(vmas[0])) {
- 			ret = -EOPNOTSUPP;
--			put_page(page[0]);
-+			put_user_page(page[0]);
- 		}
- 	}
- 	up_read(&mm->mmap_sem);
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4ef62a4..b4a4549 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2694,10 +2694,9 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
- 			 * if we did partial map, or found file backed vmas,
- 			 * release any pages we did get
- 			 */
--			if (pret > 0) {
--				for (j = 0; j < pret; j++)
--					put_page(pages[j]);
--			}
-+			if (pret > 0)
-+				put_user_pages(pages, pret);
-+
- 			if (ctx->account_mem)
- 				io_unaccount_mem(ctx->user, nr_pages);
- 			kvfree(imu->bvec);
-diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
-index 7dd602d..15fc7a2 100644
---- a/mm/gup_benchmark.c
-+++ b/mm/gup_benchmark.c
-@@ -76,11 +76,7 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
- 	gup->size = addr - gup->addr;
- 
- 	start_time = ktime_get();
--	for (i = 0; i < nr_pages; i++) {
--		if (!pages[i])
--			break;
--		put_page(pages[i]);
--	}
-+	put_user_pages(pages, nr_pages);
- 	end_time = ktime_get();
- 	gup->put_delta_usec = ktime_us_delta(end_time, start_time);
- 
-diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
-index 9c6de4f..6103e19 100644
---- a/net/xdp/xdp_umem.c
-+++ b/net/xdp/xdp_umem.c
-@@ -173,12 +173,7 @@ static void xdp_umem_unpin_pages(struct xdp_umem *umem)
- {
- 	unsigned int i;
- 
--	for (i = 0; i < umem->npgs; i++) {
--		struct page *page = umem->pgs[i];
--
--		set_page_dirty_lock(page);
--		put_page(page);
--	}
-+	put_user_pages_dirty_lock(umem->pgs, umem->npgs);
- 
- 	kfree(umem->pgs);
- 	umem->pgs = NULL;
--- 
-1.8.3.1
-
+> 							Pavel
+> 
