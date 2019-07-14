@@ -2,106 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3A2867B21
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jul 2019 17:59:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7D0867C97
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2019 03:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbfGMP7b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 13 Jul 2019 11:59:31 -0400
-Received: from 072-190-080-237.res.spectrum.com ([72.190.80.237]:39621 "EHLO
-        trixbox1.localdomain" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727638AbfGMP7b (ORCPT
+        id S1728035AbfGNBRu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 13 Jul 2019 21:17:50 -0400
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:45286 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727983AbfGNBRu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 13 Jul 2019 11:59:31 -0400
-X-Greylist: delayed 7120 seconds by postgrey-1.27 at vger.kernel.org; Sat, 13 Jul 2019 11:59:30 EDT
-Received: from Shop01 (trixbox1.localdomain [127.0.0.1])
-        by trixbox1.localdomain (Postfix) with SMTP id 3B55638788F4;
-        Sat, 13 Jul 2019 09:00:11 -0500 (CDT)
-Received: from [131.241.72.253] by Shop01 with SMTP; Sat, 13 Jul 2019 17:57:18 +0400
-Message-ID: <a50z$7-p4--bhw-$$1e$c4$$4@uwhcbhb>
-From:   "CYBER GATES LTD" <gameza@taekwondo.com>
-Reply-To: "CYBER GATES LTD" <gameza@taekwondo.com>
-To:     20050516132745.GA23430@frasco.org.uk
-Subject: FRESH & NEW EMAIL LEADS TOOLS, RDP,EMAILS, SPYWARES, SMTP, MAILER, CVV
-Date:   Sat, 13 Jul 19 17:57:18 GMT
-X-Mailer: Microsoft Outlook, Build 10.0.2616
+        Sat, 13 Jul 2019 21:17:50 -0400
+Received: by mail-lj1-f177.google.com with SMTP id m23so12721935lje.12
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Jul 2019 18:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f/ZbMKpaeDfR0c6CluIR2RGEThcJc265Nfb8zCnn6MQ=;
+        b=JFAS9tE4paeCtL/HDO7+w783I/1T0SiLhmNcOpTVr2Heh5JE7iPzUXsY4VP8KwcaKM
+         vJSrnpHsO4JGdgNhGCw7jHJlrdrLuxe4RT9O3WBDvxWv1nJ1lG1Jl8Vaz51tC0c8rjCR
+         ewi9P8bFkO1yo+gtxWxrpgluzYMFNaW7/h1r8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f/ZbMKpaeDfR0c6CluIR2RGEThcJc265Nfb8zCnn6MQ=;
+        b=n2RlWio7CG2A1GggETa82fw2ho2zp6vo/q97kKgAZwcNAm5A9JkyY88vInJcLPLpv6
+         rjdB1LKkqckT7q4afFTKdcxKBl1qbq/EJN808ggHuwfoyhZvLe0WlLB2kxSn3IrWmJ0y
+         GouvY79TyhpyZfOQFmesPP/ca4Hss1ui3OP3MFqVzreU//VzMuDE6DgcZlLSYTsF7aku
+         OGDs2nebT0mYfgDJ32bUzs7wqOVCuVI6dcVCUVO7WDz9xRtwKVI1inHgFxG49bacpHTM
+         5Gv17repPoDotRZBMtQOgFirgJvxzh23Ir//HQAgjm9Fw8SHR7MIf8Gt9n3KTC4otLAU
+         h9XA==
+X-Gm-Message-State: APjAAAV+1eDqickFpGRuL/Pxh1/BYS0LEhkgXwg1anJ+vWV33dnmPaeu
+        84IPdRXHPOSkkVAGQQv9OmCzROOpnbQ=
+X-Google-Smtp-Source: APXvYqwRb3NreHxZL/uVo5quLF/MJ7LYHvWHN967+8g514n91iC+3y309s0HInMGhxMCzO8nUXln6g==
+X-Received: by 2002:a2e:89c8:: with SMTP id c8mr10130361ljk.70.1563067067273;
+        Sat, 13 Jul 2019 18:17:47 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id s24sm2247252lje.58.2019.07.13.18.17.45
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sat, 13 Jul 2019 18:17:46 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id m8so12752488lji.7
+        for <linux-fsdevel@vger.kernel.org>; Sat, 13 Jul 2019 18:17:45 -0700 (PDT)
+X-Received: by 2002:a2e:9ec9:: with SMTP id h9mr9461591ljk.90.1563067065731;
+ Sat, 13 Jul 2019 18:17:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="F8.E37.A6_8ACA"
-X-Priority: 3
-X-MSMail-Priority: Normal
+References: <20190712180205.GA5347@magnolia> <CAHk-=wiK8_nYEM2B8uvPELdUziFhp_+DqPN=cNSharQqpBZ6qg@mail.gmail.com>
+ <20190713040728.GB5347@magnolia>
+In-Reply-To: <20190713040728.GB5347@magnolia>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 13 Jul 2019 18:17:30 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgEsUC1uLdYCX6rxGxRcgzKS64e3Y8h5HVLvnpGSj5pJA@mail.gmail.com>
+Message-ID: <CAHk-=wgEsUC1uLdYCX6rxGxRcgzKS64e3Y8h5HVLvnpGSj5pJA@mail.gmail.com>
+Subject: Re: [GIT PULL] xfs: new features for 5.3
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jul 12, 2019 at 9:07 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+>
+> Doh, it turns out I was merging against the same HEAD as my last two
+> pull requests because I forgot to re-pull.  Sorry about that.  It's been
+> too long of a week. :/
 
---F8.E37.A6_8ACA
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+Heh, no problem, I was just surprised when my merge result didn't
+match expectations.
 
-DEAR CUSTOMERS
-We are happy to inform you about our new SMTP SERVER
-today I would like to introduce you to a page that provides services for U=
-NLIMITED SENDER
-We offer all the services that you desire now? 15x Domain Inbox SMTP  
-please check  http://www.cybergatesltd.net/index.php?route=3Dproduct/produ=
-ct&product_id=3D458
+As mentioned, it wasn't like the conflict was complicated, only unexpected.
 
-    Unlimited SMTP (Cheap and Inbox)
-    Unlimited PHP Mailer (Cheap and Inbox)
-    Unlimited WebMail Sever ( Cheap And Inbox)
-    RDP With AMS 4.3 (Warranty Full Time and On Sales)
-    Email Leads (New and Fresh)
-    Unlimited Cpanel Hosting (Use For Scampage, botnet,etc...)
-    VPN
-    Linux Root
-    Hacking Tools
-    zeus trojan Hacking
-    ScamPage
-    CVV,
-    BANK LOGINS,
-    DATING SITES LOGIN
-    SPYWARES
-    ETC
-
-Top Services  http://www.cybergatesltd.net
-To impress the customers, so we decided to discout  price all products wit=
-h 10% discount code: http://www.cybergatesltd.net
-
-You can see more
-Sale OFF 10% All Product
-How can I enter discount code?
-We also have 100 RDP WITH AMS program discounts to customers
-Click here to Order Now, be quick, limited    http://www.cybergatesltd.net=
-/index.php?route=3Dproduct/category&path=3D93
-Why is trusted by our customers?
-We always provide the best service for our customers, we guarantee custome=
-rs will be happy to have what they want, the first priority is to treat ou=
-r customers as god
-How to Order?
-Payment Method?
-We accept payment Via PerfectMoney
-We will try to accept multiple payment gateways to serve customers better
-Deliver
-We Delivered Via Email Within 0-2 hour
-You have any questions Other?
-Click here for see more //
-http://www.cybergatesltd.net/index.php?route=3D=
-product/category&path=3D59
-Are you ready to experience?
-READY TO GET STARTED?
-With us, you will not be disappointed, currently on the market there are m=
-any scam sites, selling quality goods, come to us, we will show you, Our s=
-ervice is best
-Customer Care Services
-Thank you for choosing cyber gates Store!
-chat with the admin for more information
-Perfect Money payments will be accepted using our LIVE CHAT payment proces=
-sor. 
-
-skype( skytunnel1 
-chat ( rsmtp@yahoo.com
-www.cybergatesltd.net
-
---F8.E37.A6_8ACA--
-
+                     Linus
