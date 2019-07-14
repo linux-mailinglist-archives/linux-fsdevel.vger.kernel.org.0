@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2004367DFA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2019 09:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECF4C67E90
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2019 12:31:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbfGNHLs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Jul 2019 03:11:48 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:26500 "EHLO mx1.mailbox.org"
+        id S1728218AbfGNKba (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Jul 2019 06:31:30 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:28908 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728164AbfGNHLr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Jul 2019 03:11:47 -0400
+        id S1728009AbfGNKba (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 14 Jul 2019 06:31:30 -0400
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
         (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id E49974EC6D;
-        Sun, 14 Jul 2019 09:11:42 +0200 (CEST)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 9FD654DF84;
+        Sun, 14 Jul 2019 12:31:24 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id so9n73IONPC7; Sun, 14 Jul 2019 09:11:17 +0200 (CEST)
-Date:   Sun, 14 Jul 2019 17:11:02 +1000
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id JHLEpiHFM8dg; Sun, 14 Jul 2019 12:31:19 +0200 (CEST)
+Date:   Sun, 14 Jul 2019 20:31:04 +1000
 From:   Aleksa Sarai <cyphar@cyphar.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Jeff Layton <jlayton@kernel.org>,
@@ -29,17 +29,17 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         David Howells <dhowells@redhat.com>,
         Shuah Khan <shuah@kernel.org>,
         Shuah Khan <skhan@linuxfoundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
         Christian Brauner <christian@brauner.io>,
+        David Drysdale <drysdale@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Eric Biederman <ebiederm@xmission.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexei Starovoitov <ast@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
         Chanho Min <chanho.min@lge.com>,
         Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
         containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
         linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
@@ -49,110 +49,109 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
         linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v9 01/10] namei: obey trailing magic-link DAC permissions
-Message-ID: <20190714071102.gsc3kqpakz7chqt6@yavin>
+Subject: Re: [PATCH v9 05/10] namei: O_BENEATH-style path resolution flags
+Message-ID: <20190714100825.umyql5op6cxhmpqa@yavin>
 References: <20190706145737.5299-1-cyphar@cyphar.com>
- <20190706145737.5299-2-cyphar@cyphar.com>
- <20190712041454.GG17978@ZenIV.linux.org.uk>
- <20190712122017.xkowq2cjreylpotm@yavin>
- <20190712131005.GM17978@ZenIV.linux.org.uk>
+ <20190706145737.5299-6-cyphar@cyphar.com>
+ <20190712043341.GI17978@ZenIV.linux.org.uk>
+ <20190712105745.nruaftgeat6irhzr@yavin>
+ <20190712123924.GK17978@ZenIV.linux.org.uk>
+ <20190712125552.GL17978@ZenIV.linux.org.uk>
+ <20190712132553.GN17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gghwwblfl4frle37"
+        protocol="application/pgp-signature"; boundary="kaevdj3q3yxfna5u"
 Content-Disposition: inline
-In-Reply-To: <20190712131005.GM17978@ZenIV.linux.org.uk>
+In-Reply-To: <20190712132553.GN17978@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---gghwwblfl4frle37
+--kaevdj3q3yxfna5u
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Fri, Jul 12, 2019 at 10:20:17PM +1000, Aleksa Sarai wrote:
-> > On 2019-07-12, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > > On Sun, Jul 07, 2019 at 12:57:28AM +1000, Aleksa Sarai wrote:
-> > > > @@ -514,7 +516,14 @@ static void set_nameidata(struct nameidata *p,=
- int dfd, struct filename *name)
-> > > >  	p->stack =3D p->internal;
-> > > >  	p->dfd =3D dfd;
-> > > >  	p->name =3D name;
-> > > > -	p->total_link_count =3D old ? old->total_link_count : 0;
-> > > > +	p->total_link_count =3D 0;
-> > > > +	p->acc_mode =3D 0;
-> > > > +	p->opath_mask =3D FMODE_PATH_READ | FMODE_PATH_WRITE;
-> > > > +	if (old) {
-> > > > +		p->total_link_count =3D old->total_link_count;
-> > > > +		p->acc_mode =3D old->acc_mode;
-> > > > +		p->opath_mask =3D old->opath_mask;
-> > > > +	}
+> On Fri, Jul 12, 2019 at 01:55:52PM +0100, Al Viro wrote:
+> > On Fri, Jul 12, 2019 at 01:39:24PM +0100, Al Viro wrote:
+> > > On Fri, Jul 12, 2019 at 08:57:45PM +1000, Aleksa Sarai wrote:
 > > >=20
-> > > Huh?  Could somebody explain why traversals of NFS4 referrals should =
-inherit
-> > > ->acc_mode and ->opath_mask?
+> > > > > > @@ -2350,9 +2400,11 @@ static const char *path_init(struct name=
+idata *nd, unsigned flags)
+> > > > > >  			s =3D ERR_PTR(error);
+> > > > > >  		return s;
+> > > > > >  	}
+> > > > > > -	error =3D dirfd_path_init(nd);
+> > > > > > -	if (unlikely(error))
+> > > > > > -		return ERR_PTR(error);
+> > > > > > +	if (likely(!nd->path.mnt)) {
+> > > > >=20
+> > > > > Is that a weird way of saying "if we hadn't already called dirfd_=
+path_init()"?
+> > > >=20
+> > > > Yes. I did it to be more consistent with the other "have we got the
+> > > > root" checks elsewhere. Is there another way you'd prefer I do it?
+> > >=20
+> > > "Have we got the root" checks are inevitable evil; here you are makin=
+g the
+> > > control flow in a single function hard to follow.
+> > >=20
+> > > I *think* what you are doing is
+> > > 	absolute pathname, no LOOKUP_BENEATH:
+> > > 		set_root
+> > > 		error =3D nd_jump_root(nd)
+> > > 	else
+> > > 		error =3D dirfd_path_init(nd)
+> > > 	return unlikely(error) ? ERR_PTR(error) : s;
+> > > which should be a lot easier to follow (not to mention shorter), but =
+I might
+> > > be missing something in all of that.
 > >=20
-> > I'll be honest -- I don't understand what set_nameidata() did so I just
-> > did what I thought would be an obvious change (to just copy the
-> > contents). I thought it was related to some aspect of the symlink stack
-> > handling.
+> > PS: if that's what's going on, I would be tempted to turn the entire
+> > path_init() part into this:
+> > 	if (flags & LOOKUP_BENEATH)
+> > 		while (*s =3D=3D '/')
+> > 			s++;
+> > in the very beginning (plus the handling of nd_jump_root() prototype
+> > change, but that belongs with nd_jump_root() change itself, obviously).
+> > Again, I might be missing something here...
 >=20
-> No.  It's handling of (very rare) nested pathwalk.  The only case I can t=
-hink
-> of is handling of NFS4 referrals - they are triggered by ->d_automount()
-> and include NFS4 mount.  Which does internal pathwalk of its own, to get
-> to the root of subtree being automounted.
->=20
-> NFS has its own recursion protection on that path (no deeper nesting than
-> one level of referral traversals), but there some nesting is inevitable;
-> we do get another nameidata instance on stack.  And for nd_jump_link() we
-> need to keep track of the innermost one.
->=20
-> For symlinks nothing of that sort happens - they are dealt with on the sa=
-me
-> struct nameidata.  ->total_link_count copying is there for one reason onl=
-y -
-> we want the total amount of symlinks traversed during the pathwalk (inclu=
-ding
-> the referral processing, etc.) to count towards MAXSYMLINKS check.  It co=
-uld've
-> been moved from nameidata to task_struct, but it's cheaper to handle it t=
-hat
-> way.
->=20
-> Again, nesting is *rare*.
+> Argh... I am, at that - you have setting path->root (and grabbing it)
+> in LOOKUP_BENEATH cases and you do it after dirfd_path_init().  So
+> how about
+> 	if (flags & LOOKUP_BENEATH)
+> 		while (*s =3D=3D '/')
+> 			s++;
 
-Thanks for the explanation, much appreciated. I will drop the old->...
-copying hunk.
+I can do this for LOOKUP_IN_ROOT, but currently the semantics for
+LOOKUP_BENEATH is that absolute paths will return -EXDEV
+indiscriminately (nd_jump_root() errors out with LOOKUP_BENEATH). To be
+honest, the check could actually just be:
 
-> > In that case, should they both be set to 0 on set_nameidata()? This will
-> > mean that fd re-opening (or magic-link opening) through a
-> > set_nameidata() would always fail.
->=20
-> Huh?  set_nameidata() is done for *all* instances - it's pretty much the
-> constructor of that object (and restore_nameidata() - a destructor).
-> Everything goes through it.
+  if (flags & LOOKUP_BENEATH)
+    if (*s =3D=3D '/')
+	  return ERR_PTR(-EXDEV);
 
-Sorry, I meant to drop the copy-from-old logic -- not set it to zero
-explicitly in set_nameidata().
+(Though we'd still need -EXDEV in nd_jump_root() for obvious reasons.)
 
-> And again, I'm not sure we want these fields in nameidata - IMO they belo=
-ng
-> in open_flags.  Things like e.g. stat() don't need them at all.
+The logic being that an absolute path means that the resolution starts
+out without being "beneath" the starting point -- thus violating the
+contract of LOOKUP_BENEATH. And since the "handle absolute paths like
+they're scoped to the root" is only implemented for LOOKUP_IN_ROOT, I'd
+think it's a bit odd to have LOOKUP_BENEATH do it too for absolute
+paths.
 
-Yup, I'll work up a version that does the consolidation you mentioned
-in your other mail.
+I'll be honest, this patchset is more confusing to both of us because of
+LOOKUP_BENEATH -- I've only kept it since it was part of the original
+patchset (O_BENEATH). Personally I think more people will be far more
+interested in LOOKUP_IN_ROOT. Does anyone mind if I drop the
+LOOKUP_BENEATH parts of this series, and only keep LOOKUP_NO_* and
+LOOKUP_IN_ROOT?
 
-> Incidentally, O_PATH opening of symlinks combined with subsequent procfs
-> symlink traversals is worth testing - that's where the things get subtle
-> and that's where it's easy to get in trouble on modifications.
-
-I have some self-tests of a symlink-to-a-magic-link in the last patch of
-the series. Did you mean something even more chained like a symlink to a
-/proc/self/fd/$n of an O_NOFOLLOW|O_PATH of a symlink?
+I make a change as you outlined for LOOKUP_IN_ROOT, though.
 
 --=20
 Aleksa Sarai
@@ -160,15 +159,15 @@ Senior Software Engineer (Containers)
 SUSE Linux GmbH
 <https://www.cyphar.com/>
 
---gghwwblfl4frle37
+--kaevdj3q3yxfna5u
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSrVgAAKCRCdlLljIbnQ
-EupPAQDpi9m99/xBGy4or9AS/LoRkr4tSLDlWlOsdCn0tZ52WAEAqoZwgZWyT46F
-mjKoRQeNjgtDk5jRNWbrwkJAMPXy2AE=
-=GnH+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSsEZQAKCRCdlLljIbnQ
+EnUcAP0UIrWhoFUdmcGKVnbHflUGk+2uDxtG83hk6KmhY14aGgD/bIuyNZSByUo2
+62tn/pqpuWfU42XocRvuCvKllOoWpgc=
+=3x3j
 -----END PGP SIGNATURE-----
 
---gghwwblfl4frle37--
+--kaevdj3q3yxfna5u--
