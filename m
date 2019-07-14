@@ -2,21 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C077F67CE9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2019 06:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 105D567DE4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2019 09:01:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725790AbfGNEAa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 14 Jul 2019 00:00:30 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:34994 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725283AbfGNEAa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 14 Jul 2019 00:00:30 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hmVej-000695-Co; Sun, 14 Jul 2019 03:58:41 +0000
-Date:   Sun, 14 Jul 2019 04:58:33 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Aleksa Sarai <cyphar@cyphar.com>
+        id S1726783AbfGNHBe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 14 Jul 2019 03:01:34 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:35424 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726368AbfGNHBe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 14 Jul 2019 03:01:34 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id DAD124EEE5;
+        Sun, 14 Jul 2019 09:01:28 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id 83Wg7f6TIzf1; Sun, 14 Jul 2019 09:01:20 +0200 (CEST)
+Date:   Sun, 14 Jul 2019 17:00:29 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Jeff Layton <jlayton@kernel.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -42,11 +48,9 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
         linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org,
-        rgb@redhat.com, paul@paul-moore.com, raven@themaw.net,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
 Subject: Re: [PATCH v9 05/10] namei: O_BENEATH-style path resolution flags
-Message-ID: <20190714035826.GQ17978@ZenIV.linux.org.uk>
+Message-ID: <20190714070029.m53etvm3y4etidxt@yavin>
 References: <20190706145737.5299-1-cyphar@cyphar.com>
  <20190706145737.5299-6-cyphar@cyphar.com>
  <20190712043341.GI17978@ZenIV.linux.org.uk>
@@ -57,136 +61,108 @@ References: <20190706145737.5299-1-cyphar@cyphar.com>
  <20190712150026.GO17978@ZenIV.linux.org.uk>
  <20190713024153.GA3817@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="33fhorotybcq4qkp"
 Content-Disposition: inline
 In-Reply-To: <20190713024153.GA3817@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 13, 2019 at 03:41:53AM +0100, Al Viro wrote:
+
+--33fhorotybcq4qkp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 2019-07-13, Al Viro <viro@zeniv.linux.org.uk> wrote:
 > On Fri, Jul 12, 2019 at 04:00:26PM +0100, Al Viro wrote:
 > > On Fri, Jul 12, 2019 at 02:25:53PM +0100, Al Viro wrote:
-> > 
+> >=20
 > > > 	if (flags & LOOKUP_BENEATH) {
-> > > 		nd->root = nd->path;
+> > > 		nd->root =3D nd->path;
 > > > 		if (!(flags & LOOKUP_RCU))
 > > > 			path_get(&nd->root);
 > > > 		else
-> > > 			nd->root_seq = nd->seq;
-> > 
+> > > 			nd->root_seq =3D nd->seq;
+> >=20
 > > BTW, this assignment is needed for LOOKUP_RCU case.  Without it
 > > you are pretty much guaranteed that lazy pathwalk will fail,
 > > when it comes to complete_walk().
-> > 
+> >=20
 > > Speaking of which, what would happen if LOOKUP_ROOT/LOOKUP_BENEATH
 > > combination would someday get passed?
-> 
+>=20
 > I don't understand what's going on with ->r_seq in there - your
 > call of path_is_under() is after having (re-)sampled rename_lock,
 > but if that was the only .. in there, who's going to recheck
 > the value?  For that matter, what's to guarantee that the thing
 > won't get moved just as you are returning from handle_dots()?
-> 
+>=20
 > IOW, what does LOOKUP_IN_ROOT guarantee for caller (openat2())?
 
-Sigh...  Usual effects of trying to document things:
+I tried to explain this in the commit message for "namei: aggressively
+check for nd->root escape on ".." resolution", but I probably could've
+explained it better.
 
-1) LOOKUP_NO_EVAL looks bogus.  It had been introduced by commit 57d4657716ac
-(audit: ignore fcaps on umount) and AFAICS it's crap.  It is set in
-ksys_umount() and nowhere else.  It's ignored by everything except
-filename_mountpoint().  The thing is, call graph for filename_mountpoint()
-is
-	filename_mountpoint()
-		<- user_path_mountpoint_at()
-			<- ksys_umount()
-		<- kern_path_mountpoint()
-			<- autofs_dev_ioctl_ismountpoint()
-			<- find_autofs_mount()
-				<- autofs_dev_ioctl_open_mountpoint()
-				<- autofs_dev_ioctl_requester()
-				<- autofs_dev_ioctl_ismountpoint()
-In other words, that flag is basically "was filename_mountpoint()
-been called by umount(2) or has it come from an autofs ioctl?".
-And looking at the rationale in that commit, autofs ioctls need
-it just as much as umount(2) does.  Why is it not set for those
-as well?  And why is it conditional at all?
+The basic property being guaranteed by LOOKUP_IN_ROOT is that it will
+not result in resolution of a path component which was not inside the
+root of the dirfd tree at some point during resolution (and that all
+absolute symlink and ".." resolution will be done relative to the
+dirfd). This may smell slightly of chroot(2), because unfortunately it
+is a similar concept -- the reason for this is to allow for a more
+efficient way to safely resolve paths inside a rootfs than spawning a
+separate process to then pass back the fd to the caller.
 
-1b) ... because audit_inode() wants LOOKUP_... as the last argument,
-only to remap it into AUDIT_..., that's why.  So audit needs something
-guaranteed not to conflict with LOOKUP_PARENT (another flag getting
-remapped).  So why do we bother with remapping those, anyway?  Let's look
-at the callers:
+We don't want to do a path_is_under() check for every ".." (otherwise
+lookups have a quadratic slowdown when doing many ".."s), so I instead
+only do a check after a rename or a mount (which are the only operations
+which could change what ".." points to). And since we do the
+path_is_under() check if m_seq or r_seq need a retry, we can re-take
+them[+].
 
-fs/namei.c:933: audit_inode(nd->name, nd->stack[0].link.dentry, 0);
-fs/namei.c:2353:                audit_inode(name, path->dentry, flags & LOOKUP_PARENT);
-fs/namei.c:2394:                audit_inode(name, parent->dentry, LOOKUP_PARENT);
-fs/namei.c:2721:                audit_inode(name, path->dentry, flags & LOOKUP_NO_EVAL);
-fs/namei.c:3302:                audit_inode(nd->name, dir, LOOKUP_PARENT);
-fs/namei.c:3336:                audit_inode(nd->name, file->f_path.dentry, 0);
-fs/namei.c:3371:        audit_inode(nd->name, path.dentry, 0);
-fs/namei.c:3389:        audit_inode(nd->name, nd->path.dentry, 0);
-fs/namei.c:3490:        audit_inode(nd->name, child, 0);
-fs/namei.c:3509:                audit_inode(nd->name, path.dentry, 0);
-ipc/mqueue.c:788:       audit_inode(name, dentry, 0);
+The main reason why I don't re-check path_is_under() after handle_dots()
+is that there is no way to be sure that a racing rename didn't happen
+after your last path_is_under() check. The rename could happen after the
+syscall returns, after all.
 
-In all but two of those we have a nice constant value - 0 or AUDIT_INODE_PARENT.
-One of two exceptions is in filename_mountpoint(), and there we want
-unconditional AUDIT_INODE_NOEVAL (see above).  What of the other?  It's
-        if (likely(!retval))
-                audit_inode(name, path->dentry, flags & LOOKUP_PARENT);
-in filename_lookup().  And that is bogus as well.  filename_lookupat() would
-better *NOT* get LOOKUP_PARENT in flags.  And it doesn't - not since
-commit 8bcb77fabd7c (namei: split off filename_lookupat() with LOOKUP_PARENT)
-back in 2015.  In filename_parentat() introduced there we have
-                audit_inode(name, parent->dentry, LOOKUP_PARENT);
-and at the same point the call in filename_lookupat() should've become
-                audit_inode(name, path->dentry, 0);
-It hadn't; my fault.  And after fixing that everything becomes nice and
-unconditional - the last argument of audit_inode() is always an AUDIT_...
-constant or zero.  Moving AUDIT_... definitions outside of ifdef on
-CONFIG_AUDITSYSCALL, getting rid of remapping in audit_inode() and
-passing the right values in 3 callers that don't pass 0 and LOOKUP_NO_EVAL
-can go to hell.
+So, the main purpose of the check is to make sure that a ".."s after a
+rename doesn't result in an escape. If the rename happens after we've
+traversed through a ".." that means that the ".." was inside the root in
+the first place (a root ".." is handled by follow_dotdot). If the rename
+happens after we've gone through handle_dots() and there is no
+subsequent ".." then to userspace it looks identical to the rename
+occurring after the syscall has returned. If there is a subsequent ".."
+after a racing rename then we may have moved into a path that wasn't
+path_is_under() and so we have to check it.
 
-Any objections from audit folks?
+The only way I could see you could solve the race completely is if you
+had a way for userspace to lock things from being able to be renamed (or
+MS_MOVE'd). And that feels like a really bad idea to me.
 
-2) comment in namei.h is seriously out of sync with reality.  To quote:
- *  - follow links at the end
-OK, that's LOOKUP_FOLLOW (1)
- *  - require a directory
-... and LOOKUP_DIRECTORY (2)
- *  - ending slashes ok even for nonexistent files
-... used to be about LOOKUP_CONTINUE (eight years dead now)
- *  - internal "there are more path components" flag
-... LOOKUP_PARENT (16)
- *  - dentry cache is untrusted; force a real lookup
-... LOOKUP_REVAL (32)
- *  - suppress terminal automount
-... used to be LOOKUP_NO_AUTOMOUNT (128), except that it's been
-replaced with LOOKUP_AUTOMOUNT (at 4) almost eight years ago.  And
-the meaning of LOOKUP_AUTOMOUNT is opposite to the comment,
-of course.
- *  - skip revalidation
-... LOOKUP_NO_REVAL (128)
- *  - don't fetch xattrs on audit_inode
-... and that's about soon-to-be dead LOOKUP_NO_EVAL (256)
+[+]: You asked why don't I re-take m_seq. The reason is that I don't
+	 fully understand all the other m_seq checks being done during
+	 resolution, and we aren't definitely doing them all in
+	 handle_dots(). So I assumed re-taking it could result in me
+	 breaking RCU-walk which obviously would be bad. Since I am the only
+	 thing using nd->r_seq, I can re-take it without issue.
 
-Note that LOOKUP_RCU (at 64) is quietly skipped and so's the tail
-of the list.  If not for "suppress terminal automount" bit, I wouldn't
-really care, but that one makes for a really nasty trap for readers.
-I'm going to convert that to (accurate) comments next to actual defines...
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-3) while looking through LOOKUP_AUTOMOUNT users,
-in aa_bind_mount() we have
-        error = kern_path(dev_name, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT, &old_path);
-matching do_loopback(), while tomoyo_mount_acl() has
-                if (!dev_name || kern_path(dev_name, LOOKUP_FOLLOW, &path)) {
-And yes, that *is* hit on mount --bind.  As well as on new mounts, where
-apparmor (and bdev_lookup()) has plain LOOKUP_FOLLOW.
+--33fhorotybcq4qkp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-->sb_mount() is garbage by design (not the least because of the need to
-have pathname lookups in the first place, as well as having to duplicate the
-demultiplexing parts of do_mount() without fucking it up)...
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXSrTCAAKCRCdlLljIbnQ
+EpwpAQD9KgKhzC1YZRQyynlFOIyKp8VXEUfhiNokL0RBBx4G5AD7BovFdb8KzxSf
+QrrP/0Vq6p6AFs4sMQbjc9M6I/5gzQ8=
+=fUib
+-----END PGP SIGNATURE-----
+
+--33fhorotybcq4qkp--
