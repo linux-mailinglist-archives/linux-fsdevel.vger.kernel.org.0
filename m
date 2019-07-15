@@ -2,95 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5E0C69641
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 17:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C67E696FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 17:08:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388787AbfGOPD2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jul 2019 11:03:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388226AbfGOOJO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:09:14 -0400
-Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1541206B8;
-        Mon, 15 Jul 2019 14:09:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199753;
-        bh=hpTUL1n6ca/sLrxuDcdi0iMWrpYvhUX7CzDXpyVWs9U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vdSSI9N3Rjp00M2i3BCwoDqiE5V/eSzOh0i6w4aDf9WoEZAm+3W8KFIi/fMoCEA+p
-         eaLLhY2DoAB2BqgLdXxRMw7DwSiCbyibraXD5HOKtdZI/DDBYGEAYnV2CyS3th9K41
-         8TA9mYXZas9K/0oJHXF+K3U5kgX1CefFVEncarJY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 096/219] blkcg, writeback: dead memcgs shouldn't contribute to writeback ownership arbitration
-Date:   Mon, 15 Jul 2019 10:01:37 -0400
-Message-Id: <20190715140341.6443-96-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
-References: <20190715140341.6443-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+        id S1733179AbfGOPHt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jul 2019 11:07:49 -0400
+Received: from mail.thorholdings.com ([201.218.124.195]:49048 "EHLO
+        m2.gbcinfo.top" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730529AbfGOPHs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Jul 2019 11:07:48 -0400
+To:     linux-fsdevel@vger.kernel.org
+From:   Martin Winkler <info@m2.gbcinfo.top>
+Subject: Nachricht
+Date:   Mon, 15 Jul 2019 10:07:48 -0500
+Message-ID: <20190715_150748_025051.info@m2.gbcinfo.top>
+X-Mailer: WEBMAIL
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+Sehr geehrte Damen und Herren,
 
-[ Upstream commit 6631142229005e1b1c311a09efe9fb3cfdac8559 ]
+nach unserem Besuch Ihrer Homepage möchten wir Ihnen ein Angebot von Produkten vorstellen, das Ihnen ermöglichen wird, den Verkauf Ihrer Produkte sowie Dienstleistungen deutlich zu erhöhen.
 
-wbc_account_io() collects information on cgroup ownership of writeback
-pages to determine which cgroup should own the inode.  Pages can stay
-associated with dead memcgs but we want to avoid attributing IOs to
-dead blkcgs as much as possible as the association is likely to be
-stale.  However, currently, pages associated with dead memcgs
-contribute to the accounting delaying and/or confusing the
-arbitration.
+Die Datenbanken der Firmen sind in für Sie interessante und relevante Zielgruppen untergliedert.
 
-Fix it by ignoring pages associated with dead memcgs.
+Die Firmenangaben beinhalten: Name der Firma, Ansprechpartner, E-mail Adresse, Tel. + Fax-Nr., PLZ, Ort, Straße etc.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/fs-writeback.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+--
+1. Gesamtpaket 2019 DE 1 Mio. Firmenadressen ( 1 457 620 ) - 190 EUR ( bis zum 15.07.2019 )
+2. Gesamtpaket 2019 DE,AT,CH ( 1 747 921 ) - 240 EUR ( bis zum 15.07.2019 )
+--
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index b16645b417d9..bd9474e82f38 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -714,6 +714,7 @@ void wbc_detach_inode(struct writeback_control *wbc)
- void wbc_account_io(struct writeback_control *wbc, struct page *page,
- 		    size_t bytes)
- {
-+	struct cgroup_subsys_state *css;
- 	int id;
- 
- 	/*
-@@ -725,7 +726,12 @@ void wbc_account_io(struct writeback_control *wbc, struct page *page,
- 	if (!wbc->wb)
- 		return;
- 
--	id = mem_cgroup_css_from_page(page)->id;
-+	css = mem_cgroup_css_from_page(page);
-+	/* dead cgroups shouldn't contribute to inode ownership arbitration */
-+	if (!(css->flags & CSS_ONLINE))
-+		return;
-+
-+	id = css->id;
- 
- 	if (id == wbc->wb_id) {
- 		wbc->wb_bytes += bytes;
--- 
-2.20.1
+Die Verwendungsmöglichkeiten der Datenbanken sind praktisch unbegrenzt und Sie können durch Verwendung der von uns entwickelten
+Programme des personalisierten Versendens von Angeboten u.ä. mittels E-mailing bzw. Fax effektive und sichere Werbekampagnen damit durchführen.
+
+Bitte informieren Sie sich über die weiteren Details einmal unverbindlich auf unseren Webseiten:
+
+http://www.dbconnectmarketing.net/?p=1
+
+Mit freundlichen Grüßen
+Martin Winkler
 
