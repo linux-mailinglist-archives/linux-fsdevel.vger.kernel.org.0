@@ -2,189 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75E8469969
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 18:54:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B498969A28
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 19:49:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731487AbfGOQyR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jul 2019 12:54:17 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35249 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731452AbfGOQyQ (ORCPT
+        id S1731850AbfGORtx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jul 2019 13:49:53 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:57880 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731731AbfGORtx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jul 2019 12:54:16 -0400
-Received: by mail-pf1-f195.google.com with SMTP id u14so7704406pfn.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2019 09:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ys4uOVKl6GGxj9issQsvhgYSxfR11pboh5SjeQpl28Y=;
-        b=cXm/r65PHJswk7kkQcxenSxmFOzYQ6XS4N9Xzcs0KGDvnjb2FlHcUqHrC6j1rgP8re
-         G/a84sV7igbIAbAZo5GifS61rqKQY7zSOBCrRYx+38QNbfKMZTXVY6Z2HdPNV8z2DjJu
-         zJxn5jKPiOzZzdAzSkqtU+R1e7ucg99w4CjxQ1X1oMO3WCevi3O2EVZm6GUyq7JZWBmt
-         ySOGSuP65tVAYMaosPyQPL2IdYyGn97+ifjBVlNfZEEAoihQTLXyDUhV+9aLShixVxgW
-         8oZKgwsytjm4hRnit3OOWmU8+qQw4rRdoCCXliC1nCyeLRFZlAfjTtYxRuYpw3ksFnTn
-         exuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ys4uOVKl6GGxj9issQsvhgYSxfR11pboh5SjeQpl28Y=;
-        b=pKFVONUkeHkfKctdLwVFMdvoHujaOlKAuJiJ1fNEOCiksndLTnq48pUKKU8I6NexBi
-         uyXLC8EHIzuZtKSxzgGW2h2N/Bu+JG/S07Q5jBObuW1mwcc7HU82tbN2VmNtv3UxQbm8
-         9TG6gDnuygT6ciXBfwor78N1HwmNoG/PbkXZjnIgHAsSntL5ul/Zri0I7+UgfIVY3Exe
-         1EiKQervukjHTPfnrMtCXP1QIM5Eou6IYVpfH9/COC8YheS9LKC7TJnaMRlbSqyQrIeL
-         CJbmIJeIjw+p3rVZ+jUNDTUogo9iGQQaTrUSlOh1Tdbs942AxP+s5fQm8UY2nZwhuXBv
-         nLsA==
-X-Gm-Message-State: APjAAAVO97oUfVNF37hKWPaPjwz0ZZonZxO7MI/c0tQ0OeYp4vp9Fnio
-        6/+p2w05PbeWzXRS/4H5bcRTX9ol2hU=
-X-Google-Smtp-Source: APXvYqwqZNF5nN611U1lr13X7qBiuon8gT4/5O5bb2Bkqw8X+KAzgfpVSGcZ6geyuwo2ahbpJIDw8A==
-X-Received: by 2002:a17:90a:cb97:: with SMTP id a23mr29737776pju.67.1563209656202;
-        Mon, 15 Jul 2019 09:54:16 -0700 (PDT)
-Received: from [192.168.1.136] (c-67-169-41-205.hsd1.ca.comcast.net. [67.169.41.205])
-        by smtp.gmail.com with ESMTPSA id a3sm23586265pje.3.2019.07.15.09.54.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 09:54:15 -0700 (PDT)
-Message-ID: <1563209654.2741.39.camel@dubeyko.com>
-Subject: Re: [PATCH RFC] fs: New zonefs file system
-From:   Viacheslav Dubeyko <slava@dubeyko.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.de>,
-        Ting Yao <d201577678@hust.edu.cn>
-Date:   Mon, 15 Jul 2019 09:54:14 -0700
-In-Reply-To: <BYAPR04MB5816F3DE20A3C82B82192B94E7F20@BYAPR04MB5816.namprd04.prod.outlook.com>
-References: <20190712030017.14321-1-damien.lemoal@wdc.com>
-         <1562951415.2741.18.camel@dubeyko.com>
-         <BYAPR04MB5816F3DE20A3C82B82192B94E7F20@BYAPR04MB5816.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 15 Jul 2019 13:49:53 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6FHmmLU134133;
+        Mon, 15 Jul 2019 17:49:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=B6htXR3znKx93gY7VoYtlgcbmPH0gXSazDVgPAlyFW0=;
+ b=pxEvN7ltirRqHKQaXF/q1MS6UPJ4MrY2O7vNEdlIDjnPrCUi1BnzeosuYXWD/hJekwbC
+ LQmecNeDr2EcTzwSEdMhZ151vJmL7UkBfIwhIK2yxrtSYjhpaYbfVzzObY2fVDWG4LJh
+ msA1093tWWA+XD92cRM+qn7dsBeEURDwKtfCVl0hq1sTYcta1wKw4UkF4BYvlCn5itjh
+ 85KhHV2v212O8nHsLgsciIAA+ZqrJWyC8XoeIP0EgHQdQeT8F912lbEvE/OVwIu6DEe9
+ Z5F4nFNVPu4aGyzPC8/pc4NkMVTP8dXX8Q3HW7gHNoD5Zb2su6djAolGPk4a0eOQb8B7 TA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2tq6qtg393-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Jul 2019 17:49:46 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6FHm1qB164151;
+        Mon, 15 Jul 2019 17:49:46 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2tq4dtev9v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Jul 2019 17:49:46 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6FHnjlO004249;
+        Mon, 15 Jul 2019 17:49:45 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 15 Jul 2019 10:49:45 -0700
+Date:   Mon, 15 Jul 2019 10:49:44 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 00/11] iomap: regroup code by functional area
+Message-ID: <20190715174944.GC6147@magnolia>
+References: <156200051933.1790352.5147420943973755350.stgit@magnolia>
+ <20190708184652.GB20670@infradead.org>
+ <20190709164952.GT1404256@magnolia>
+ <20190709181214.GA31130@infradead.org>
+ <20190715164307.GA6176@magnolia>
+ <20190715165012.GA32624@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190715165012.GA32624@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9319 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=985
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907150207
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9319 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907150207
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2019-07-12 at 22:56 +0000, Damien Le Moal wrote:
-> On 2019/07/13 2:10, Viacheslav Dubeyko wrote:
-> > 
-> > On Fri, 2019-07-12 at 12:00 +0900, Damien Le Moal wrote:
+On Mon, Jul 15, 2019 at 09:50:13AM -0700, Christoph Hellwig wrote:
+> On Mon, Jul 15, 2019 at 09:43:07AM -0700, Darrick J. Wong wrote:
+> > On Tue, Jul 09, 2019 at 11:12:14AM -0700, Christoph Hellwig wrote:
+> > > I looked over it and while some of the small files seem very tiny
+> > > they are reasonably split.
 > > > 
-> > > zonefs is a very simple file system exposing each zone of a zoned
-> > > block device as a file. This is intended to simplify
-> > > implementation 
-> > As far as I can see, a zone usually is pretty big in size (for
-> > example,
-> > 256MB). But [1, 2] showed that about 60% of files on a file system
-> > volume has size about 4KB - 128KB. Also [3] showed that modern
-> > application uses a very complex files' structures that are updated
-> > in
-> > random order. Moreover, [4] showed that 90% of all files are not
-> > used
-> > after initial creation, those that are used are normally short-
-> > lived,
-> > and that if a file is not used in some manner the day after it is
-> > created, it will probably never be used; 1% of all files are used
-> > daily.
+> > > What rather annoys me is the page.c/read.c/write.c split.  All these
+> > > really belong mostly together, except maybe the super highlevel
+> > > write code that then either calls into the buffer_head vs iomap_page
+> > > based code.  By keeping them together we can eliminate most of
+> > > iomap_internal.h and once the writeback code moves also keep
+> > > iomap_page private to that bigger read.c file.
 > > 
-> > It sounds for me that mostly this approach will lead to waste of
-> > zones'
-> > space. Also, the necessity to update data of the same file will be
-> > resulted in frequent moving of files' data from one zone to another
-> > one. If we are talking about SSDs then it sounds like quick and
-> > easy
-> > way to kill this device fast.
+> > <nod> I think it makes sense to combine them into a single read_write.c
+> > file or something.
+> 
+> page.c or buffered-io.c seems like sensible names to me.
+
+buffered-io.c it is then.
+
+> > >  - some of the copyrights for the small files seem totally wrong.
+> > >    e.g. all the swapfile code was written by you, so it should not have
+> > >    my or rh copyright notices on it
 > > 
-> > Do you have in mind some special use-case?
-> As the commit message mentions, zonefs is not a traditional file
-> system by any
-> mean and much closer to a raw block device access interface than
-> anything else.
-> This is the entire point of this exercise: allow replacing the raw
-> block device
-> accesses with the easier to use file system API. Raw block device
-> access is also
-> file API so one could argue that this is nonsense. What I mean here
-> is that by
-> abstracting zones with files, the user does not need to do the zone
-> configuration discovery with ioctl(BLKREPORTZONES), does not need to
-> do explicit
-> zone resets with ioctl(BLKRESETZONE), does not have to "start from
-> one sector
-> and write sequentially from there" management for write() calls (i.e.
-> seeks),
-> etc. This is all replaced with the file abstraction: directory entry
-> list
-> replace zone information, truncate() replace zone reset, file current
-> position
-> replaces the application zone write pointer management.
+> > Will fix the swapfile code.
 > 
-> This simplifies implementing support of applications for zoned block
-> devices,
-> but only in cases where said applications:
-> 1) Operate with large files
-> 2) have no or only minimal need for random writes
-> 
-> A perfect match for this as mentioned in the commit message are LSM-
-> tree based
-> applications such as LevelDB or RocksDB. Other examples, related,
-> include
-> Bluestore distributed object store which uses RocksDB but still has a
-> bluefs
-> layer that could be replaced with zonefs.
-> 
-> As an illustration of this, Ting Yao of Huazhong University of
-> Science and
-> Technology (China) and her team modified LevelDB to work with zonefs.
-> The early
-> prototype code is on github here: https://github.com/PDS-Lab/GearDB/t
-> ree/zonefs
-> 
-> LSM-Tree applications typically operate on large files, in the same
-> range as
-> zoned block device zone size (e.g. 256 MB or so). While this is
-> generally a
-> parameter that can be changed, the use of zonefs and zoned block
-> device forces
-> using the zone size as the SSTable file maximum size. This can have
-> an impact on
-> the DB performance depending on the device type, but that is another
-> discussion.
-> The point here is the code simplifications that zonefs allows.
-> 
-> For more general purpose use cases (small files, lots of random
-> modifications),
-> we already have the dm-zoned device mapper and f2fs support and we
-> are also
-> currently working on btrfs support. These solutions are in my opinion
-> more
-> appropriate than zonefs to address the points you raised.
-> 
+> Please also look over the other files, a few of them should probably
+> be just me (e.g. fiemap) and some have other authors (seek is mostly
+> Andreas with a few later bits from me).
 
-Sounds pretty reasonable. But I still have two worries.
+<nod> I'll edit the copyrights on fiemap.c.  I'm less sure about making
+edits to seek.c because I don't know if Andreas has copyright ownership
+or if RH slurped all that up -- the commits are from his @redhat.com
+email.  I was about to resend the series so I'll cc him on it.
 
-First of all, even modest file system could contain about 100K files on
-a volume. So, if our zone is 256 MB then we need in 24 TB storage
-device for 100K files. Even if we consider some special use-case of
-database, for example, then it's pretty easy to imagine the creation a
-lot of files. So, are we ready to provide such huge storage devices
-(especially, for the case of SSDs)?
-
-Secondly, the allocation scheme is too simplified for my taste and it
-could create a significant fragmentation of a volume. Again, 256 MB is
-pretty big size. So, I assume that, mostly, it will be allocated only
-one zone at first for a created file. If file grows then it means that
-it will need to allocate the two contigous zones and to move the file's
-content. Finally, it sounds for me that it is possible to create a lot
-of holes and to achieve the volume state when it exists a lot of free
-space but files will be unable to grow and it will be impossible to add
-a new data on the volume. Have you made an estimation of the suggested
-allocation scheme?
-
-Thanks,
-Viacheslav Dubeyko.
-
+--D
