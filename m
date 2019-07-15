@@ -2,146 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A8AC69967
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 18:54:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75E8469969
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 18:54:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731252AbfGOQyM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jul 2019 12:54:12 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33086 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729533AbfGOQyL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jul 2019 12:54:11 -0400
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id DF8A4F5A9A65B8C0C267;
-        Mon, 15 Jul 2019 17:54:09 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 15 Jul
- 2019 17:54:04 +0100
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-To:     Rob Landley <rob@landley.net>, <hpa@zytor.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>
-CC:     Mimi Zohar <zohar@linux.ibm.com>, <viro@zeniv.linux.org.uk>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
-        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
-        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
-        <kamensky@cisco.com>, <arnd@arndb.de>, <james.w.mcmechan@gmail.com>
-References: <20190523121803.21638-1-roberto.sassu@huawei.com>
- <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
- <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
- <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
- <1561909199.3985.33.camel@linux.ibm.com>
- <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
- <1561991485.4067.14.camel@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
-Date:   Mon, 15 Jul 2019 18:54:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <1561991485.4067.14.camel@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+        id S1731487AbfGOQyR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jul 2019 12:54:17 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35249 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731452AbfGOQyQ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Jul 2019 12:54:16 -0400
+Received: by mail-pf1-f195.google.com with SMTP id u14so7704406pfn.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2019 09:54:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Ys4uOVKl6GGxj9issQsvhgYSxfR11pboh5SjeQpl28Y=;
+        b=cXm/r65PHJswk7kkQcxenSxmFOzYQ6XS4N9Xzcs0KGDvnjb2FlHcUqHrC6j1rgP8re
+         G/a84sV7igbIAbAZo5GifS61rqKQY7zSOBCrRYx+38QNbfKMZTXVY6Z2HdPNV8z2DjJu
+         zJxn5jKPiOzZzdAzSkqtU+R1e7ucg99w4CjxQ1X1oMO3WCevi3O2EVZm6GUyq7JZWBmt
+         ySOGSuP65tVAYMaosPyQPL2IdYyGn97+ifjBVlNfZEEAoihQTLXyDUhV+9aLShixVxgW
+         8oZKgwsytjm4hRnit3OOWmU8+qQw4rRdoCCXliC1nCyeLRFZlAfjTtYxRuYpw3ksFnTn
+         exuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Ys4uOVKl6GGxj9issQsvhgYSxfR11pboh5SjeQpl28Y=;
+        b=pKFVONUkeHkfKctdLwVFMdvoHujaOlKAuJiJ1fNEOCiksndLTnq48pUKKU8I6NexBi
+         uyXLC8EHIzuZtKSxzgGW2h2N/Bu+JG/S07Q5jBObuW1mwcc7HU82tbN2VmNtv3UxQbm8
+         9TG6gDnuygT6ciXBfwor78N1HwmNoG/PbkXZjnIgHAsSntL5ul/Zri0I7+UgfIVY3Exe
+         1EiKQervukjHTPfnrMtCXP1QIM5Eou6IYVpfH9/COC8YheS9LKC7TJnaMRlbSqyQrIeL
+         CJbmIJeIjw+p3rVZ+jUNDTUogo9iGQQaTrUSlOh1Tdbs942AxP+s5fQm8UY2nZwhuXBv
+         nLsA==
+X-Gm-Message-State: APjAAAVO97oUfVNF37hKWPaPjwz0ZZonZxO7MI/c0tQ0OeYp4vp9Fnio
+        6/+p2w05PbeWzXRS/4H5bcRTX9ol2hU=
+X-Google-Smtp-Source: APXvYqwqZNF5nN611U1lr13X7qBiuon8gT4/5O5bb2Bkqw8X+KAzgfpVSGcZ6geyuwo2ahbpJIDw8A==
+X-Received: by 2002:a17:90a:cb97:: with SMTP id a23mr29737776pju.67.1563209656202;
+        Mon, 15 Jul 2019 09:54:16 -0700 (PDT)
+Received: from [192.168.1.136] (c-67-169-41-205.hsd1.ca.comcast.net. [67.169.41.205])
+        by smtp.gmail.com with ESMTPSA id a3sm23586265pje.3.2019.07.15.09.54.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2019 09:54:15 -0700 (PDT)
+Message-ID: <1563209654.2741.39.camel@dubeyko.com>
+Subject: Re: [PATCH RFC] fs: New zonefs file system
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.de>,
+        Ting Yao <d201577678@hust.edu.cn>
+Date:   Mon, 15 Jul 2019 09:54:14 -0700
+In-Reply-To: <BYAPR04MB5816F3DE20A3C82B82192B94E7F20@BYAPR04MB5816.namprd04.prod.outlook.com>
+References: <20190712030017.14321-1-damien.lemoal@wdc.com>
+         <1562951415.2741.18.camel@dubeyko.com>
+         <BYAPR04MB5816F3DE20A3C82B82192B94E7F20@BYAPR04MB5816.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rob, Peter, Arvind, did you have the chance to have a look at this
-version of the patch set?
-
-Thanks
-
-Roberto
-
-
-On 7/1/2019 4:31 PM, Mimi Zohar wrote:
-> On Mon, 2019-07-01 at 16:42 +0300, Roberto Sassu wrote:
->> On 6/30/2019 6:39 PM, Mimi Zohar wrote:
->>> On Wed, 2019-06-26 at 10:15 +0200, Roberto Sassu wrote:
->>>> On 6/3/2019 8:32 PM, Rob Landley wrote:
->>>>> On 6/3/19 4:31 AM, Roberto Sassu wrote:
->>>>>>> This patch set aims at solving the following use case: appraise files from
->>>>>>> the initial ram disk. To do that, IMA checks the signature/hash from the
->>>>>>> security.ima xattr. Unfortunately, this use case cannot be implemented
->>>>>>> currently, as the CPIO format does not support xattrs.
->>>>>>>
->>>>>>> This proposal consists in including file metadata as additional files named
->>>>>>> METADATA!!!, for each file added to the ram disk. The CPIO parser in the
->>>>>>> kernel recognizes these special files from the file name, and calls the
->>>>>>> appropriate parser to add metadata to the previously extracted file. It has
->>>>>>> been proposed to use bit 17:16 of the file mode as a way to recognize files
->>>>>>> with metadata, but both the kernel and the cpio tool declare the file mode
->>>>>>> as unsigned short.
->>>>>>
->>>>>> Any opinion on this patch set?
->>>>>>
->>>>>> Thanks
->>>>>>
->>>>>> Roberto
->>>>>
->>>>> Sorry, I've had the window open since you posted it but haven't gotten around to
->>>>> it. I'll try to build it later today.
->>>>>
->>>>> It does look interesting, and I have no objections to the basic approach. I
->>>>> should be able to add support to toybox cpio over a weekend once I've got the
->>>>> kernel doing it to test against.
->>>>
->>>> Ok.
->>>>
->>>> Let me give some instructions so that people can test this patch set.
->>>>
->>>> To add xattrs to the ram disk embedded in the kernel it is sufficient
->>>> to set CONFIG_INITRAMFS_FILE_METADATA="xattr" and
->>>> CONFIG_INITRAMFS_SOURCE="<file with xattr>" in the kernel configuration.
->>>>
->>>> To add xattrs to the external ram disk, it is necessary to patch cpio:
->>>>
->>>> https://github.com/euleros/cpio/commit/531cabc88e9ecdc3231fad6e4856869baa9a91ef
->>>> (xattr-v1 branch)
->>>>
->>>> and dracut:
->>>>
->>>> https://github.com/euleros/dracut/commit/a2dee56ea80495c2c1871bc73186f7b00dc8bf3b
->>>> (digest-lists branch)
->>>>
->>>> The same modification can be done for mkinitramfs (add '-e xattr' to the
->>>> cpio command line).
->>>>
->>>> To simplify the test, it would be sufficient to replace only the cpio
->>>> binary and the dracut script with the modified versions. For dracut, the
->>>> patch should be applied to the local dracut (after it has been renamed
->>>> to dracut.sh).
->>>>
->>>> Then, run:
->>>>
->>>> dracut -e xattr -I <file with xattr> (add -f to overwrite the ram disk)
->>>>
->>>> Xattrs can be seen by stopping the boot process for example by adding
->>>> rd.break to the kernel command line.
->>>
->>> A simple way of testing, without needing any changes other than the
->>> kernel patches, is to save the dracut temporary directory by supplying
->>> "--keep" on the dracut command line, calling
->>> usr/gen_initramfs_list.sh, followed by usr/gen_init_cpio with the "-e
->>> xattr" option.
->>
->> Alternatively, follow the instructions to create the embedded ram disk
->> with xattrs, and use the existing external ram disk created with dracut
->> to check if xattrs are created.
+On Fri, 2019-07-12 at 22:56 +0000, Damien Le Moal wrote:
+> On 2019/07/13 2:10, Viacheslav Dubeyko wrote:
+> > 
+> > On Fri, 2019-07-12 at 12:00 +0900, Damien Le Moal wrote:
+> > > 
+> > > zonefs is a very simple file system exposing each zone of a zoned
+> > > block device as a file. This is intended to simplify
+> > > implementation 
+> > As far as I can see, a zone usually is pretty big in size (for
+> > example,
+> > 256MB). But [1, 2] showed that about 60% of files on a file system
+> > volume has size about 4KB - 128KB. Also [3] showed that modern
+> > application uses a very complex files' structures that are updated
+> > in
+> > random order. Moreover, [4] showed that 90% of all files are not
+> > used
+> > after initial creation, those that are used are normally short-
+> > lived,
+> > and that if a file is not used in some manner the day after it is
+> > created, it will probably never be used; 1% of all files are used
+> > daily.
+> > 
+> > It sounds for me that mostly this approach will lead to waste of
+> > zones'
+> > space. Also, the necessity to update data of the same file will be
+> > resulted in frequent moving of files' data from one zone to another
+> > one. If we are talking about SSDs then it sounds like quick and
+> > easy
+> > way to kill this device fast.
+> > 
+> > Do you have in mind some special use-case?
+> As the commit message mentions, zonefs is not a traditional file
+> system by any
+> mean and much closer to a raw block device access interface than
+> anything else.
+> This is the entire point of this exercise: allow replacing the raw
+> block device
+> accesses with the easier to use file system API. Raw block device
+> access is also
+> file API so one could argue that this is nonsense. What I mean here
+> is that by
+> abstracting zones with files, the user does not need to do the zone
+> configuration discovery with ioctl(BLKREPORTZONES), does not need to
+> do explicit
+> zone resets with ioctl(BLKRESETZONE), does not have to "start from
+> one sector
+> and write sequentially from there" management for write() calls (i.e.
+> seeks),
+> etc. This is all replaced with the file abstraction: directory entry
+> list
+> replace zone information, truncate() replace zone reset, file current
+> position
+> replaces the application zone write pointer management.
 > 
-> True, but this alternative is for those who normally use dracut to
-> create an initramfs, but don't want to update cpio or dracut.
+> This simplifies implementing support of applications for zoned block
+> devices,
+> but only in cases where said applications:
+> 1) Operate with large files
+> 2) have no or only minimal need for random writes
 > 
-> Mimi
+> A perfect match for this as mentioned in the commit message are LSM-
+> tree based
+> applications such as LevelDB or RocksDB. Other examples, related,
+> include
+> Bluestore distributed object store which uses RocksDB but still has a
+> bluefs
+> layer that could be replaced with zonefs.
+> 
+> As an illustration of this, Ting Yao of Huazhong University of
+> Science and
+> Technology (China) and her team modified LevelDB to work with zonefs.
+> The early
+> prototype code is on github here: https://github.com/PDS-Lab/GearDB/t
+> ree/zonefs
+> 
+> LSM-Tree applications typically operate on large files, in the same
+> range as
+> zoned block device zone size (e.g. 256 MB or so). While this is
+> generally a
+> parameter that can be changed, the use of zonefs and zoned block
+> device forces
+> using the zone size as the SSTable file maximum size. This can have
+> an impact on
+> the DB performance depending on the device type, but that is another
+> discussion.
+> The point here is the code simplifications that zonefs allows.
+> 
+> For more general purpose use cases (small files, lots of random
+> modifications),
+> we already have the dm-zoned device mapper and f2fs support and we
+> are also
+> currently working on btrfs support. These solutions are in my opinion
+> more
+> appropriate than zonefs to address the points you raised.
 > 
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+Sounds pretty reasonable. But I still have two worries.
+
+First of all, even modest file system could contain about 100K files on
+a volume. So, if our zone is 256 MB then we need in 24 TB storage
+device for 100K files. Even if we consider some special use-case of
+database, for example, then it's pretty easy to imagine the creation a
+lot of files. So, are we ready to provide such huge storage devices
+(especially, for the case of SSDs)?
+
+Secondly, the allocation scheme is too simplified for my taste and it
+could create a significant fragmentation of a volume. Again, 256 MB is
+pretty big size. So, I assume that, mostly, it will be allocated only
+one zone at first for a created file. If file grows then it means that
+it will need to allocate the two contigous zones and to move the file's
+content. Finally, it sounds for me that it is possible to create a lot
+of holes and to achieve the volume state when it exists a lot of free
+space but files will be unable to grow and it will be impossible to add
+a new data on the volume. Have you made an estimation of the suggested
+allocation scheme?
+
+Thanks,
+Viacheslav Dubeyko.
+
