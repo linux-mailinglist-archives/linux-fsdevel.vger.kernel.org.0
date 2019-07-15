@@ -2,68 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A520A6889D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 14:10:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C4E468B21
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 15:40:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729974AbfGOMKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jul 2019 08:10:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59806 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729827AbfGOMKb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jul 2019 08:10:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1D765AF0B;
-        Mon, 15 Jul 2019 12:10:30 +0000 (UTC)
-Date:   Mon, 15 Jul 2019 14:10:25 +0200
-From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, keescook@chromium.org,
-        hannes@cmpxchg.org, vdavydov.dev@gmail.com, mcgrof@kernel.org,
-        mhocko@kernel.org, linux-mm@kvack.org,
-        Ingo Molnar <mingo@redhat.com>, riel@surriel.com,
-        Mel Gorman <mgorman@suse.de>, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] numa: introduce per-cgroup numa balancing locality,
- statistic
-Message-ID: <20190715121025.GN9035@blackbody.suse.cz>
-References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
- <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
- <3ac9b43a-cc80-01be-0079-df008a71ce4b@linux.alibaba.com>
- <20190711134754.GD3402@hirez.programming.kicks-ass.net>
- <b027f9cc-edd2-840c-3829-176a1e298446@linux.alibaba.com>
- <20190712075815.GN3402@hirez.programming.kicks-ass.net>
- <37474414-1a54-8e3a-60df-eb7e5e1cc1ed@linux.alibaba.com>
- <20190712094214.GR3402@hirez.programming.kicks-ass.net>
- <f8020f92-045e-d515-360b-faf9a149ab80@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f8020f92-045e-d515-360b-faf9a149ab80@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731084AbfGONix (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jul 2019 09:38:53 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55509 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730517AbfGONiw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:38:52 -0400
+Received: by mail-wm1-f67.google.com with SMTP id a15so15210192wmj.5;
+        Mon, 15 Jul 2019 06:38:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=G0qrvSOgvQ6yK2rmDZbEXEOEVLwb2sXgjUX4/QpRTUM=;
+        b=YJGgtSA7qdI6JnxPZWXZ6fSdBUEo1por2dydSgOvVeWb6sdhGCg1FIluTDB30o4c/a
+         6QAe4MwiENh+zaFguimXDdmi5IJnH1E0Siaax/96si7k7nar/L2bNhtmGLXMZ/KJbvtn
+         DRTS0IqzQsxIYDXNRH6j+oter8esDUvZse7MkJNt4KDv4Aet55D6tFinwY2RWVtOKMBu
+         cYTvQ0T7BBKXH2KlzTjLlLgRLWtotjyX7InmkTTmymEyYKDYwKLX+8dLzSNsWqF4oSr4
+         ZoRpzKrEy16cYtgZ3Foes4ojz14hWcafTud6RFHiaFJtBlV3p7BcRDJ48efDupHwYSQC
+         IlKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=G0qrvSOgvQ6yK2rmDZbEXEOEVLwb2sXgjUX4/QpRTUM=;
+        b=XwhSoePLDIFLTZuWOi23qxMGdQ52bQ1bgJ1/R8BTM2lCC8w15lG0Lu/StsSd+RGRRb
+         LdQx7sVX4IE27j6uxPIpsWAcZlIIHakL5lTbtrYbG745h2MleLB3ZheVRFaY0qoaHp1R
+         8FK6chqPMB2sEpLw3+xT92W5PTLeP6+uu8V9fXb/3mjncpMRNBEBZdVPYjLGNHO3YhTi
+         7ywqJt91OjJY+GaugcaEbrkK6sDs1HUh571AdZvDgdXGGzZ+CmG7gjALMa2EEaLcezPe
+         oZCGZVnCJOjLY9cRIp+vqU6m/gIWQ701OIW8+kC0IYy5uze6FSNmu7px/rTF4P4QHApX
+         u4UA==
+X-Gm-Message-State: APjAAAXxKrDpgaBHAg7Vwm17wk57mjUtv/EaY9kljCdKj65kEgSR1i3u
+        BCTEaH+GgscXvfXsRYh+q9I=
+X-Google-Smtp-Source: APXvYqwXqTMClxMel7/FgiVQ3ov8D+2z7O0Ekjwg5niB2eVa5v9G0uzg0XYRMtAsBTxqcG/ex2S6yA==
+X-Received: by 2002:a1c:eb17:: with SMTP id j23mr26006087wmh.151.1563197930640;
+        Mon, 15 Jul 2019 06:38:50 -0700 (PDT)
+Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
+        by smtp.gmail.com with ESMTPSA id s15sm4058250wrw.21.2019.07.15.06.38.49
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 15 Jul 2019 06:38:50 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [PATCH 1/4] ovl: support [S|G]ETFLAGS ioctl for directories
+Date:   Mon, 15 Jul 2019 16:38:36 +0300
+Message-Id: <20190715133839.9878-2-amir73il@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190715133839.9878-1-amir73il@gmail.com>
+References: <20190715133839.9878-1-amir73il@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Yun.
+[S|G]ETFLAGS and FS[S|G]ETXATTR ioctls are applicable to both files and
+directories, so add ioctl operations to dir as well.
 
-On Fri, Jul 12, 2019 at 06:10:24PM +0800, 王贇  <yun.wang@linux.alibaba.com> wrote:
-> Forgive me but I have no idea on how to combined this
-> with memory cgroup's locality hierarchical update...
-> parent memory cgroup do not have influence on mems_allowed
-> to it's children, correct?
-I'd recommend to look at the v2 of the cpuset controller that implements
-the hierarchical behavior among configured memory node sets.
+ifdef away compat ioctl implementation to conform to standard practice.
 
-(My comment would better fit to 
-    [PATCH 3/4] numa: introduce numa group per task group
-IIUC, you could use cpuset controller to constraint memory nodes.)
+With this change, xfstest generic/079 which tests these ioctls on files
+and directories passes.
 
-For the second part (accessing numa statistics, i.e. this patch), I
-wonder wheter this information wouldn't be better presented under the
-cpuset controller too.
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/overlayfs/file.c      | 10 ++++++----
+ fs/overlayfs/overlayfs.h |  2 ++
+ fs/overlayfs/readdir.c   |  4 ++++
+ 3 files changed, 12 insertions(+), 4 deletions(-)
 
-HTH,
-Michal
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index e235a635d9ec..c6426e4d3f1f 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -502,7 +502,7 @@ static long ovl_ioctl_set_fsxflags(struct file *file, unsigned int cmd,
+ 				   ovl_fsxflags_to_iflags(fa.fsx_xflags));
+ }
+ 
+-static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+ 	long ret;
+ 
+@@ -527,8 +527,8 @@ static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	return ret;
+ }
+ 
+-static long ovl_compat_ioctl(struct file *file, unsigned int cmd,
+-			     unsigned long arg)
++#ifdef CONFIG_COMPAT
++long ovl_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+ 	switch (cmd) {
+ 	case FS_IOC32_GETFLAGS:
+@@ -545,6 +545,7 @@ static long ovl_compat_ioctl(struct file *file, unsigned int cmd,
+ 
+ 	return ovl_ioctl(file, cmd, arg);
+ }
++#endif
+ 
+ enum ovl_copyop {
+ 	OVL_COPY,
+@@ -646,8 +647,9 @@ const struct file_operations ovl_file_operations = {
+ 	.fallocate	= ovl_fallocate,
+ 	.fadvise	= ovl_fadvise,
+ 	.unlocked_ioctl	= ovl_ioctl,
++#ifdef CONFIG_COMPAT
+ 	.compat_ioctl	= ovl_compat_ioctl,
+-
++#endif
+ 	.copy_file_range	= ovl_copy_file_range,
+ 	.remap_file_range	= ovl_remap_file_range,
+ };
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 6934bcf030f0..7c94cc3521cb 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -416,6 +416,8 @@ struct dentry *ovl_create_temp(struct dentry *workdir, struct ovl_cattr *attr);
+ 
+ /* file.c */
+ extern const struct file_operations ovl_file_operations;
++long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
++long ovl_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+ 
+ /* copy_up.c */
+ int ovl_copy_up(struct dentry *dentry);
+diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+index 47a91c9733a5..eff8fbfccc7c 100644
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -907,6 +907,10 @@ const struct file_operations ovl_dir_operations = {
+ 	.llseek		= ovl_dir_llseek,
+ 	.fsync		= ovl_dir_fsync,
+ 	.release	= ovl_dir_release,
++	.unlocked_ioctl	= ovl_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl	= ovl_compat_ioctl,
++#endif
+ };
+ 
+ int ovl_check_empty_dir(struct dentry *dentry, struct list_head *list)
+-- 
+2.17.1
+
