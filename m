@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDCC969475
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 16:51:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5E0C69641
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 17:03:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403950AbfGOObg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jul 2019 10:31:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45676 "EHLO mail.kernel.org"
+        id S2388787AbfGOPD2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jul 2019 11:03:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403943AbfGOObf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:31:35 -0400
+        id S2388226AbfGOOJO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:09:14 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D89A320868;
-        Mon, 15 Jul 2019 14:31:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1541206B8;
+        Mon, 15 Jul 2019 14:09:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563201095;
-        bh=yNqL6Fwvy8VR+6wU/izz4NQcOTQLAiWdIbalRu3rH9s=;
+        s=default; t=1563199753;
+        bh=hpTUL1n6ca/sLrxuDcdi0iMWrpYvhUX7CzDXpyVWs9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CAIoq7W+eYhyg0r+ma9yCyUdUHv1ZQmgSeI3LgANMTCFT0FMaE2SX8XjPI+0U4Pgr
-         9Gy6RxrWJLAk63Qzv2xyB3ecU1f2ZgdK0RAXuf9OxovfGYiYeZW4z40r464++P/t6g
-         GJt0pNmj1+TxFWJ7Wt9Nb/RMOnWI0p9sggmXgjJY=
+        b=vdSSI9N3Rjp00M2i3BCwoDqiE5V/eSzOh0i6w4aDf9WoEZAm+3W8KFIi/fMoCEA+p
+         eaLLhY2DoAB2BqgLdXxRMw7DwSiCbyibraXD5HOKtdZI/DDBYGEAYnV2CyS3th9K41
+         8TA9mYXZas9K/0oJHXF+K3U5kgX1CefFVEncarJY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 050/105] blkcg, writeback: dead memcgs shouldn't contribute to writeback ownership arbitration
-Date:   Mon, 15 Jul 2019 10:27:44 -0400
-Message-Id: <20190715142839.9896-50-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 096/219] blkcg, writeback: dead memcgs shouldn't contribute to writeback ownership arbitration
+Date:   Mon, 15 Jul 2019 10:01:37 -0400
+Message-Id: <20190715140341.6443-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715142839.9896-1-sashal@kernel.org>
-References: <20190715142839.9896-1-sashal@kernel.org>
+In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
+References: <20190715140341.6443-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -66,10 +66,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 4d561ee08d05..9e8fde348d61 100644
+index b16645b417d9..bd9474e82f38 100644
 --- a/fs/fs-writeback.c
 +++ b/fs/fs-writeback.c
-@@ -721,6 +721,7 @@ void wbc_detach_inode(struct writeback_control *wbc)
+@@ -714,6 +714,7 @@ void wbc_detach_inode(struct writeback_control *wbc)
  void wbc_account_io(struct writeback_control *wbc, struct page *page,
  		    size_t bytes)
  {
@@ -77,7 +77,7 @@ index 4d561ee08d05..9e8fde348d61 100644
  	int id;
  
  	/*
-@@ -732,7 +733,12 @@ void wbc_account_io(struct writeback_control *wbc, struct page *page,
+@@ -725,7 +726,12 @@ void wbc_account_io(struct writeback_control *wbc, struct page *page,
  	if (!wbc->wb)
  		return;
  
