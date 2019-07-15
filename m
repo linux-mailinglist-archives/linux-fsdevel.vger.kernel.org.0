@@ -2,96 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA3569D28
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 22:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9223A69D3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2019 23:04:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731054AbfGOUvD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 15 Jul 2019 16:51:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729640AbfGOUvC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:51:02 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB55B2145D;
-        Mon, 15 Jul 2019 20:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563223861;
-        bh=6m3JRkZe4W2eR9x3TEB42iTGm06AKnl0iKV7troXRVI=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=EwqhqpJU1AH9O3azv7tLQPtK6CGIx5+N25Vfxpts0j2Zu9LzI8K3EVF6FF7FMlJqe
-         HqZdyATMk1hx4CfnLLeNhVn8jZBCw/KN0Ip/RXuDu+/ZJV8+T7LRYZFf0rRh6wit2r
-         FZCr9nMrPp9Qn2lqNejmYhOwnPlNfDt+4lLfsG/0=
-Content-Type: text/plain; charset="utf-8"
+        id S1732636AbfGOVEo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 15 Jul 2019 17:04:44 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35602 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732452AbfGOVEn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 15 Jul 2019 17:04:43 -0400
+Received: by mail-lj1-f196.google.com with SMTP id x25so17730654ljh.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2019 14:04:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nMdAH6nTLDrGvTqGSOAbQkcOJz7RylQFzwai+/2x5Kg=;
+        b=C00/OWh9vq2MRiQn1E4VUuP+O+05mZjNiBnTBYE91LA3zA6l01Y3ZAFqD2sa2HJkYA
+         h5J92fYmst8NEM4kbY7z9ANwjGbMbqg3KDgovAqdXLcZH01wV9eGew+ThGgGmvphgmAD
+         MxCVdar45y7UYA1DDtDoQVv8dYq4cWtZjZQ6/WT8LjTbkRr544wt+KFFducPNhPYqfvf
+         wvewvBAHmtMQ3UdggObhYJdHU1TEreaMfaoyjsOy6hYFNOwCZ9YqhCLMTU3973yjiSJE
+         Yi+PlsVJ+lpWQCfj+ktNFR7xMaZJmXQJhqz9OR+Yp0H3xtV8sPxtgsA5H5qa8lTtOAmU
+         09Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nMdAH6nTLDrGvTqGSOAbQkcOJz7RylQFzwai+/2x5Kg=;
+        b=LlHlJ6Z4acAJ73gSP6xgKwOMPRhAm++rKbmlkr9wanERkqz5nPmbfF50GSWrK7nnPQ
+         ffGxRtI8enV2ZveHAKOgEl/SCmZAKBXnYsrSHFmFBiun0qkfXscet6gi07TU9T6mblNO
+         EVFTWbezzIO4YE9z08rJTqmqYAqKIssvlFPVHr54CaQilgQhPztoIVSnuqwRADnjOktQ
+         mTPV4teLh49J++9IWRSRG3hqiDAiKGQkArU4DT9zTGELQGL1n46FrmLgmhd5TTIfdidx
+         nm4HkqE6W8jA4BwyeRd+ySl54It5tiI4OlNLHoNXEqQvnhu+VKq2bp8v3a46j4WONcRW
+         Q9mw==
+X-Gm-Message-State: APjAAAUjFjYNz0RFci43/UVt5PJwGtQuZXnEwbbnZgMZ4R2qHnaR7nWY
+        PDUDasMiWqkwWa70oO//y0cX26yerh/3qPLRxA==
+X-Google-Smtp-Source: APXvYqx7xtowySesa4+9lw6Ozl7JVLEqOjJfTZIHvPqefLlVsTXkwA71CsctPNus3iiABl3+IN2es94OlE7TcFEpzio=
+X-Received: by 2002:a2e:5bdd:: with SMTP id m90mr14605368lje.46.1563224680729;
+ Mon, 15 Jul 2019 14:04:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFd5g45iHnMLOGQbXwzX6F74pkQGKBCSufkpYPOcw_iNSeiQKg@mail.gmail.com>
-References: <20190712081744.87097-1-brendanhiggins@google.com> <20190712081744.87097-3-brendanhiggins@google.com> <20190715202425.CE64C20665@mail.kernel.org> <CAFd5g45iHnMLOGQbXwzX6F74pkQGKBCSufkpYPOcw_iNSeiQKg@mail.gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Subject: Re: [PATCH v9 02/18] kunit: test: add test resource management API
-User-Agent: alot/0.8.1
-Date:   Mon, 15 Jul 2019 13:51:00 -0700
-Message-Id: <20190715205101.AB55B2145D@mail.kernel.org>
+References: <cover.1554732921.git.rgb@redhat.com> <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
+ <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+ <20190529153427.GB8959@cisco> <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
+ <20190529222835.GD8959@cisco> <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
+ <20190530170913.GA16722@mail.hallyn.com> <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
+ <20190708180558.5bar6ripag3sdadl@madcap2.tricolour.ca>
+In-Reply-To: <20190708180558.5bar6ripag3sdadl@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 15 Jul 2019 17:04:29 -0400
+Message-ID: <CAHC9VhRTT7JWqNnynvK04wKerjc-3UJ6R1uPtjCAPVr_tW-7MA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Tycho Andersen <tycho@tycho.ws>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        ebiederm@xmission.com, nhorman@tuxdriver.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quoting Brendan Higgins (2019-07-15 13:30:22)
-> On Mon, Jul 15, 2019 at 1:24 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On Mon, Jul 8, 2019 at 2:06 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2019-05-30 15:29, Paul Moore wrote:
+
+...
+
+> > [REMINDER: It is an "*audit* container ID" and not a general
+> > "container ID" ;)  Smiley aside, I'm not kidding about that part.]
 > >
-> > Quoting Brendan Higgins (2019-07-12 01:17:28)
-> > > diff --git a/kunit/test.c b/kunit/test.c
-> > > index 571e4c65deb5c..f165c9d8e10b0 100644
->=20
-> > One solution would be to piggyback on all the existing devres allocation
-> > logic we already have and make each struct kunit a device that we pass
-> > into the devres functions. A far simpler solution would be to just
-> > copy/paste what devres does and use a spinlock and an allocation
-> > function that takes GFP flags.
->=20
-> Yeah, that's what I did originally, but I thought from the discussion
-> on patch 01 that you thought a spinlock was overkill for struct kunit.
-> I take it you only meant in that initial patch?
+> > I'm not interested in supporting/merging something that isn't useful;
+> > if this doesn't work for your use case then we need to figure out what
+> > would work.  It sounds like nested containers are much more common in
+> > the lxc world, can you elaborate a bit more on this?
+> >
+> > As far as the possible solutions you mention above, I'm not sure I
+> > like the per-userns audit container IDs, I'd much rather just emit the
+> > necessary tracking information via the audit record stream and let the
+> > log analysis tools figure it out.  However, the bigger question is how
+> > to limit (re)setting the audit container ID when you are in a non-init
+> > userns.  For reasons already mentioned, using capable() is a non
+> > starter for everything but the initial userns, and using ns_capable()
+> > is equally poor as it essentially allows any userns the ability to
+> > munge it's audit container ID (obviously not good).  It appears we
+> > need a different method for controlling access to the audit container
+> > ID.
+>
+> We're not quite ready yet for multiple audit daemons and possibly not
+> yet for audit namespaces, but this is starting to look a lot like the
+> latter.
 
-Correct. I was only talking about the success bit in there.
+A few quick comments on audit namespaces: the audit container ID is
+not envisioned as a new namespace (even in nested form) and neither do
+I consider running multiple audit daemons to be a new namespace.
 
+From my perspective we create namespaces to allow us to redefine a
+global resource for some subset of the system, e.g. providing a unique
+/tmp for some number of processes on the system.  While it may be
+tempting to think of the audit container ID as something we could
+"namespace", especially when multiple audit daemons are concerned, in
+some ways this would be counter productive; the audit container ID is
+intended to be a global ID that can be used to associate audit event
+records with a "container" where the "container" is defined by an
+orchestrator outside the audit subsystem.  The global nature of the
+audit container ID allows us to maintain a sane(ish) view of the
+system in the audit log, if we were to "namespace" the audit container
+ID such that the value was no longer guaranteed to be unique
+throughout the system, we would need to additionally track the audit
+namespace along with the audit container ID which starts to border on
+insanity IMHO.
+
+> If we can't trust ns_capable() then why are we passing on
+> CAP_AUDIT_CONTROL?  It is being passed down and not stripped purposely
+> by the orchestrator/engine.  If ns_capable() isn't inherited how is it
+> gained otherwise?  Can it be inserted by cotainer image?  I think the
+> answer is "no".  Either we trust ns_capable() or we have audit
+> namespaces (recommend based on user namespace) (or both).
+
+My thinking is that since ns_capable() checks the credentials with
+respect to the current user namespace we can't rely on it to control
+access since it would be possible for a privileged process running
+inside an unprivileged container to manipulate the audit container ID
+(containerized process has CAP_AUDIT_CONTROL, e.g. running as root in
+the container, while the container itself does not).
+
+> At this point I would say we are at an impasse unless we trust
+> ns_capable() or we implement audit namespaces.
+
+I'm not sure how we can trust ns_capable(), but if you can think of a
+way I would love to hear it.  I'm also not sure how namespacing audit
+is helpful (see my above comments), but if you think it is please
+explain.
+
+> I don't think another mechanism to trust nested orchestrators/engines
+> will buy us anything.
+>
+> Am I missing something?
+
+Based on your questions/comments above it looks like your
+understanding of ns_capable() does not match mine; if I'm thinking
+about ns_capable() incorrectly, please educate me.
+
+-- 
+paul moore
+www.paul-moore.com
