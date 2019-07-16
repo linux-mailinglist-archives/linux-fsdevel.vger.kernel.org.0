@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBE946ABCB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2019 17:30:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 450346ABDD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2019 17:34:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387847AbfGPPaD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jul 2019 11:30:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33784 "EHLO mail.kernel.org"
+        id S2387886AbfGPPeC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jul 2019 11:34:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725926AbfGPPaD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jul 2019 11:30:03 -0400
+        id S1725926AbfGPPeB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Jul 2019 11:34:01 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49E292054F;
-        Tue, 16 Jul 2019 15:30:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CB182054F;
+        Tue, 16 Jul 2019 15:34:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563291002;
-        bh=Q8O6F/yaThVCvHW/cVKsV5tCbDe9BryORGQ4CN6Um0g=;
+        s=default; t=1563291240;
+        bh=V4ev/UU39RHvFkNjkPsY3SOAdIqI9PBECtJV0Q6gb5E=;
         h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=hmrRtRBTdm4kxBE8EvPPH4y/b/PKD8OaIKtKYc/eioDNf3b02pnbucEOFC99AWMzc
-         pk0CyxfUyQZeYOCLsyuxQzfqzfUvbYo5Iph+PD8JRiCTu/ejPd29269kFVfk3dJjt8
-         RJKmoux8/+m7uHXASWdbqf+lDk0usxb/6cFDsSio=
+        b=OI5X53OX1byrP6tlrUCjRpeJ1oQOTnBd5OqI0zkPlySCP8J7YdSPWzyzurB0yXcW5
+         tojB8NLHwRsWz19d2LLzm7R0Y/GV+eoAx6B2iENKbOicQFlEaTQrErT0xo7BH5fqoh
+         gpLKApR/IyGssgFicaQIy6L8qsIKeBP/gh0ZNKpo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFd5g44_axVHNMBzxSURQB_-R+Rif7cZcg7PyZ_SS+5hcy5jZA@mail.gmail.com>
-References: <20190712081744.87097-1-brendanhiggins@google.com> <20190712081744.87097-5-brendanhiggins@google.com> <20190715221554.8417320665@mail.kernel.org> <CAFd5g47ikJmA0uGoavAFsh+hQvDmgsOi26tyii0612R=rt7iiw@mail.gmail.com> <CAFd5g44_axVHNMBzxSURQB_-R+Rif7cZcg7PyZ_SS+5hcy5jZA@mail.gmail.com>
+In-Reply-To: <CAFd5g47y4vDB2P=EsGN8305LGeQPCTveNs-Jd5-=6K-XKY==CA@mail.gmail.com>
+References: <20190712081744.87097-1-brendanhiggins@google.com> <20190712081744.87097-4-brendanhiggins@google.com> <20190715204356.4E3F92145D@mail.kernel.org> <CAFd5g47481sRaez=yEJN4_ghiXZbxayk1Y04tAZpuzPLsmnhKg@mail.gmail.com> <20190715220407.0030420665@mail.kernel.org> <CAFd5g44bE0F=wq_fOAnxFTtoOyx1dUshhDAkKWr5hX9ipJ4Sxw@mail.gmail.com> <CAFd5g47y4vDB2P=EsGN8305LGeQPCTveNs-Jd5-=6K-XKY==CA@mail.gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Brendan Higgins <brendanhiggins@google.com>
 Cc:     Frank Rowand <frowand.list@gmail.com>,
@@ -67,96 +67,63 @@ Cc:     Frank Rowand <frowand.list@gmail.com>,
         Richard Weinberger <richard@nod.at>,
         David Rientjes <rientjes@google.com>,
         Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Subject: Re: [PATCH v9 04/18] kunit: test: add kunit_stream a std::stream like logger
+Subject: Re: [PATCH v9 03/18] kunit: test: add string_stream a std::stream like string builder
 User-Agent: alot/0.8.1
-Date:   Tue, 16 Jul 2019 08:30:01 -0700
-Message-Id: <20190716153002.49E292054F@mail.kernel.org>
+Date:   Tue, 16 Jul 2019 08:33:59 -0700
+Message-Id: <20190716153400.5CB182054F@mail.kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quoting Brendan Higgins (2019-07-16 01:37:34)
-> On Tue, Jul 16, 2019 at 12:57 AM Brendan Higgins
+Quoting Brendan Higgins (2019-07-15 15:43:20)
+> On Mon, Jul 15, 2019 at 3:11 PM Brendan Higgins
 > <brendanhiggins@google.com> wrote:
 > >
-> > On Mon, Jul 15, 2019 at 3:15 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > On Mon, Jul 15, 2019 at 3:04 PM Stephen Boyd <sboyd@kernel.org> wrote:
 > > >
-> > > Quoting Brendan Higgins (2019-07-12 01:17:30)
-> > > > diff --git a/include/kunit/kunit-stream.h b/include/kunit/kunit-str=
-eam.h
-> > > > new file mode 100644
-> > > > index 0000000000000..a7b53eabf6be4
-> > > > --- /dev/null
-> > > > +++ b/include/kunit/kunit-stream.h
-> > > > +/**
-> > > > + * struct kunit_stream - a std::stream style string builder.
-> > > > + *
-> > > > + * A std::stream style string builder. Allows messages to be built=
- up and
-> > > > + * printed all at once.
-> > > > + */
-> > > > +struct kunit_stream {
-> > > > +       /* private: internal use only. */
-> > > > +       struct kunit *test;
-> > > > +       const char *level;
+> > > Quoting Brendan Higgins (2019-07-15 14:11:50)
+> > > > On Mon, Jul 15, 2019 at 1:43 PM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+> > > > >
+> > > > > I also wonder if it would be better to just have a big slop buffe=
+r of a
+> > > > > 4K page or something so that we almost never have to allocate any=
+thing
+> > > > > with a string_stream and we can just rely on a reader consuming d=
+ata
+> > > > > while writers are writing. That might work out better, but I don'=
+t quite
+> > > > > understand the use case for the string stream.
+> > > >
+> > > > That makes sense, but might that also waste memory since we will
+> > > > almost never need that much memory?
 > > >
-> > > Is the level changed? See my comment below, but I wonder if this whole
-> > > struct can go away and the wrappers can just operate on 'struct
-> > > string_stream' instead.
+> > > Why do we care? These are unit tests.
 > >
-> > I was inclined to agree with you when I first read your comment, but
-> > then I thought about the case that someone wants to add in a debug
-> > message (of which I currently have none). I think under most
-> > circumstances a user of kunit_stream would likely want to pick a
-> > default verbosity that maybe I should provide, but may still want
-> > different verbosity levels.
+> > Agreed.
 > >
-> > The main reason I want to keep the types separate, string_stream vs.
-> > kunit_stream, is that they are intended to be used differently.
-> > string_stream is just a generic string builder. If you are using that,
-> > you are expecting to see someone building the string at some point and
-> > then doing something interesting with it. kunit_stream really tells
-> > you specifically that KUnit is putting together a message to
-> > communicate something to a user of KUnit. It is really used in a very
-> > specific way, and I wouldn't want to generalize its usage beyond how
-> > it is currently used. I think in order to preserve the author's
-> > intention it adds clarity to keep the types separate regardless of how
-> > similar they might be in reality.
-
-You may want to add some of these reasons to the commit text.
-
-> > > > +
-> > > > +       if (!string_stream_is_empty(stream->internal_stream)) {
-> > > > +               kunit_err(stream->test,
-> > > > +                         "End of test case reached with uncommitte=
-d stream entries\n");
-> > > > +               kunit_stream_commit(stream);
-> > > > +       }
-> > > > +}
-> > > > +
-> > >
-> > > Nitpick: Drop this extra newline.
+> > > Having allocations in here makes
+> > > things more complicated, whereas it would be simpler to have a pointer
+> > > and a spinlock operating on a chunk of memory that gets flushed out
+> > > periodically.
 > >
-> > Oops, nice catch.
+> > I am not so sure. I have to have the logic to allocate memory in some
+> > case no matter what (what if I need more memory that my preallocated
+> > chuck?). I think it is simpler to always request an allocation than to
+> > only sometimes request an allocation.
 >=20
-> Not super important, but I don't want you to think that I am ignoring
-> you. I think you must have unintentionally deleted the last function
-> in this file, or maybe you are referring to something that I am just
-> not seeing, but I don't see the extra newline here.
+> Another even simpler alternative might be to just allocate memory
+> using kunit_kmalloc as we need it and just let the kunit_resource code
+> handle cleaning it all up when the test case finishes.
 
-No worries. Sorry for the noise.
+Sure, sounds like a nice way to avoid duplicating similar logic to
+maintain a list of things to free later.
 
-> > property of the input, it may or may not be enough information on its
-> > own for the expectation to fail, but we want to share the result of
-> > the property check with the user regardless, BUT only if the
-> > expectation as a whole fails.
-> >
-> > Hence, we can have multiple `struct kunit_stream`s associated with a
-> > `struct kunit` active at any given time.
+>=20
+> What do you think?
 
-Makes sense. I wasn't sure if there were more than one stream associated
-with a test. Sounds like there are many to one so it can't just be a
-member of the test. This could be documented somewhere so this question
-doesn't come up again.
+If you go the allocation route then you'll need to have the flags to
+know what context you're in to allocate appropriately. Does that mean
+all the string operations will now take GFP flags?
 
