@@ -2,272 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12C5F6B096
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2019 22:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B64806B137
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2019 23:40:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbfGPUqh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jul 2019 16:46:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42240 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728575AbfGPUqg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jul 2019 16:46:36 -0400
-Received: from localhost (unknown [104.132.1.68])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFE272145D;
-        Tue, 16 Jul 2019 20:46:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563309995;
-        bh=hf1kHilRo2b86FKLdptr/FM84ElXk/6EL+6g3vp0Hjg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RRTxJiHNC+o/fh1xF0OFHblVJbQAxWfGn2Wd23Cj+bdMMwzaUlxNJ+PDUZaHsDfMG
-         xOU2DsQcoVXmqjc96P5VB1FRo8b5cMJdrxjFh8smu4X7GUdGtANYCuaoAR2/XsCP76
-         6AWgXNkNkpVr9qBRwoON4W+Sol6kLtmV71Q1QUrY=
-Date:   Tue, 16 Jul 2019 13:46:34 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     Chao Yu <yuchao0@huawei.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/2] f2fs: include charset encoding information in the
- superblock
-Message-ID: <20190716204634.GB99092@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190711204556.120381-1-drosen@google.com>
+        id S2387691AbfGPVjd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jul 2019 17:39:33 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40082 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728947AbfGPVjd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Jul 2019 17:39:33 -0400
+Received: by mail-lf1-f66.google.com with SMTP id b17so14832162lff.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jul 2019 14:39:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UEoPNCG4kcJsbXvvedTVI/oUGPgfgDGC69R8YkpN0Ls=;
+        b=E/8ikrwAfufbeGPzCfXxpn5EWxAfgLdy6LHVoRbFXYE9RhSrT+fCW/Ym0WBFnLVgpW
+         6eknLnGyCQrub7C+oH2iB/3f89aqw/gEyuWoo9sMXXD1lgoKI/evg2UIhXk69H2wbB8W
+         gBxoGQuij1gb1iyR95rQw/C8tqo7SbwCJcSPs2g6BA53k9qfo3IoqUoApxcsPMMsLYs+
+         fbB5qmrjBhLFCO4IrMKKA++ei7tfjIrtjqwlLB9q9YGyuC3urVN/8I/CF1zxnWHvLmkT
+         JHSkdhSFe+zled5GOpaKiAju6oSKwU0EPnFIWV879EhYNYZt26KZKzjjM+atv4cMxtPQ
+         ZcJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UEoPNCG4kcJsbXvvedTVI/oUGPgfgDGC69R8YkpN0Ls=;
+        b=KuySl0BrJH8soLqXXihXCvkUNFvY9m0H4CkrmPie5wbFgZT6Y6bYbGVK2IurlAOo4P
+         hTGhMA8T9NEBArqgtA1r/bq69je1YFcyM5P1RKv5VGUszfbOoVnk4+ozbMqNeZ4HofcH
+         XDOe6ZFXtlM3hyDtiHZ1gM3tIATA4kqcsfSVYLirg/hRH0r2rq7QnlbuZKv9aFtHvHNn
+         3XY1XmpaD7iuD4rHW/DYXWUGWOc0fun69Rde3k+/EkYxBLaQt/tUhKd7BWzFTPkTzKJL
+         z76s/H+4KkROqgsSxi8r9LN4SSS9T1dgJ9JdRZrQD9aBWoShohnWxCBg3FPz099y3gkV
+         xlYg==
+X-Gm-Message-State: APjAAAWPtKEnYK6D7EL+mNBQr0CpHjewEcTD51tLkQI8l6bFgFvOltIV
+        asJ7Hb/kW+HgtwiuCxa7B1LmIkLVcgBkcH1dtg==
+X-Google-Smtp-Source: APXvYqxVWwwG619v+YKQRDGT+YX+qm23m31n4KUpCUeLscpXJaA+UAUtNCEiDZTilTsw6kcSugeGwveeG28ePWlfYQw=
+X-Received: by 2002:a19:8093:: with SMTP id b141mr16328818lfd.137.1563313170619;
+ Tue, 16 Jul 2019 14:39:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190711204556.120381-1-drosen@google.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+References: <cover.1554732921.git.rgb@redhat.com> <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
+ <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+ <20190708175105.7zb6mikjw2wmnwln@madcap2.tricolour.ca> <CAHC9VhRFeCFSCn=m6wgDK2tXBN1euc2+bw8o=CfNwptk8t=j7A@mail.gmail.com>
+ <20190716193828.xvm67iv5jyypvvxp@madcap2.tricolour.ca>
+In-Reply-To: <20190716193828.xvm67iv5jyypvvxp@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 16 Jul 2019 17:39:19 -0400
+Message-ID: <CAHC9VhTFW44gMMey8NnJzAeVxObwKhTgXcnt09q-7DtkFUiMCA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Daniel,
+On Tue, Jul 16, 2019 at 3:38 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2019-07-15 16:38, Paul Moore wrote:
+> > On Mon, Jul 8, 2019 at 1:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2019-05-29 11:29, Paul Moore wrote:
+> >
+> > ...
+> >
+> > > > The idea is that only container orchestrators should be able to
+> > > > set/modify the audit container ID, and since setting the audit
+> > > > container ID can have a significant effect on the records captured
+> > > > (and their routing to multiple daemons when we get there) modifying
+> > > > the audit container ID is akin to modifying the audit configuration
+> > > > which is why it is gated by CAP_AUDIT_CONTROL.  The current thinking
+> > > > is that you would only change the audit container ID from one
+> > > > set/inherited value to another if you were nesting containers, in
+> > > > which case the nested container orchestrator would need to be granted
+> > > > CAP_AUDIT_CONTROL (which everyone to date seems to agree is a workable
+> > > > compromise).  We did consider allowing for a chain of nested audit
+> > > > container IDs, but the implications of doing so are significant
+> > > > (implementation mess, runtime cost, etc.) so we are leaving that out
+> > > > of this effort.
+> > >
+> > > We had previously discussed the idea of restricting
+> > > orchestrators/engines from only being able to set the audit container
+> > > identifier on their own descendants, but it was discarded.  I've added a
+> > > check to ensure this is now enforced.
+> >
+> > When we weren't allowing nested orchestrators it wasn't necessary, but
+> > with the move to support nesting I believe this will be a requirement.
+> > We might also need/want to restrict audit container ID changes if a
+> > descendant is acting as a container orchestrator and managing one or
+> > more audit container IDs; although I'm less certain of the need for
+> > this.
+>
+> I was of the opinion it was necessary before with single-layer parallel
+> orchestrators/engines.
 
-Could you please rebase you patch set?
-e.g., f2fs_msg() was replaced with f2fs_err|info|...
+One of the many things we've disagreed on, but it doesn't really
+matter at this point.
 
-On 07/11, Daniel Rosenberg wrote:
-> Add charset encoding to f2fs to support casefolding. It is modeled after
-> the same feature introduced in commit c83ad55eaa91 ("ext4: include charset
-> encoding information in the superblock")
-> 
-> Currently this is not compatible with encryption, similar to the current
-> ext4 imlpementation. This will change in the future.
-> 
-> >From the ext4 patch:
-> """
-> The s_encoding field stores a magic number indicating the encoding
-> format and version used globally by file and directory names in the
-> filesystem.  The s_encoding_flags defines policies for using the charset
-> encoding, like how to handle invalid sequences.  The magic number is
-> mapped to the exact charset table, but the mapping is specific to ext4.
-> Since we don't have any commitment to support old encodings, the only
-> encoding I am supporting right now is utf8-12.1.0.
-> 
-> The current implementation prevents the user from enabling encoding and
-> per-directory encryption on the same filesystem at the same time.  The
-> incompatibility between these features lies in how we do efficient
-> directory searches when we cannot be sure the encryption of the user
-> provided fname will match the actual hash stored in the disk without
-> decrypting every directory entry, because of normalization cases.  My
-> quickest solution is to simply block the concurrent use of these
-> features for now, and enable it later, once we have a better solution.
-> """
-> 
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> ---
->  fs/f2fs/f2fs.h          |  6 +++
->  fs/f2fs/super.c         | 81 +++++++++++++++++++++++++++++++++++++++++
->  include/linux/f2fs_fs.h |  9 ++++-
->  3 files changed, 95 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 06b89a9862ab2..0e101f699eccd 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -150,6 +150,7 @@ struct f2fs_mount_info {
->  #define F2FS_FEATURE_LOST_FOUND		0x0200
->  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
->  #define F2FS_FEATURE_SB_CHKSUM		0x0800
-> +#define F2FS_FEATURE_CASEFOLD		0x1000
->  
->  #define __F2FS_HAS_FEATURE(raw_super, mask)				\
->  	((raw_super->feature & cpu_to_le32(mask)) != 0)
-> @@ -1162,6 +1163,10 @@ struct f2fs_sb_info {
->  	int valid_super_block;			/* valid super block no */
->  	unsigned long s_flag;				/* flags for sbi */
->  	struct mutex writepages;		/* mutex for writepages() */
-> +#ifdef CONFIG_UNICODE
-> +	struct unicode_map *s_encoding;
-> +	__u16 s_encoding_flags;
-> +#endif
->  
->  #ifdef CONFIG_BLK_DEV_ZONED
->  	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
-> @@ -3565,6 +3570,7 @@ F2FS_FEATURE_FUNCS(quota_ino, QUOTA_INO);
->  F2FS_FEATURE_FUNCS(inode_crtime, INODE_CRTIME);
->  F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
->  F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
-> +F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
->  
->  #ifdef CONFIG_BLK_DEV_ZONED
->  static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 6b959bbb336a3..a346f5a01370b 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -23,6 +23,7 @@
->  #include <linux/f2fs_fs.h>
->  #include <linux/sysfs.h>
->  #include <linux/quota.h>
-> +#include <linux/unicode.h>
->  
->  #include "f2fs.h"
->  #include "node.h"
-> @@ -211,6 +212,36 @@ void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...)
->  	va_end(args);
->  }
->  
-> +#ifdef CONFIG_UNICODE
-> +static const struct f2fs_sb_encodings {
-> +	__u16 magic;
-> +	char *name;
-> +	char *version;
-> +} f2fs_sb_encoding_map[] = {
-> +	{F2FS_ENC_UTF8_12_1, "utf8", "12.1.0"},
-> +};
-> +
-> +static int f2fs_sb_read_encoding(const struct f2fs_super_block *sb,
-> +				 const struct f2fs_sb_encodings **encoding,
-> +				 __u16 *flags)
-> +{
-> +	__u16 magic = le16_to_cpu(sb->s_encoding);
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(f2fs_sb_encoding_map); i++)
-> +		if (magic == f2fs_sb_encoding_map[i].magic)
-> +			break;
-> +
-> +	if (i >= ARRAY_SIZE(f2fs_sb_encoding_map))
-> +		return -EINVAL;
-> +
-> +	*encoding = &f2fs_sb_encoding_map[i];
-> +	*flags = le16_to_cpu(sb->s_encoding_flags);
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
->  static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
->  {
->  	block_t limit = (sbi->user_block_count << 1) / 1000;
-> @@ -812,6 +843,13 @@ static int parse_options(struct super_block *sb, char *options)
->  		return -EINVAL;
->  	}
->  #endif
-> +#ifndef CONFIG_UNICODE
-> +	if (f2fs_sb_has_casefold(sbi)) {
-> +		f2fs_msg(sb, KERN_ERR,
-> +			"Filesystem with casefold feature cannot be mounted without CONFIG_UNICODE");
-> +		return -EINVAL;
-> +	}
-> +#endif
->  
->  	if (F2FS_IO_SIZE_BITS(sbi) && !test_opt(sbi, LFS)) {
->  		f2fs_msg(sb, KERN_ERR,
-> @@ -1110,6 +1148,9 @@ static void f2fs_put_super(struct super_block *sb)
->  	destroy_percpu_info(sbi);
->  	for (i = 0; i < NR_PAGE_TYPE; i++)
->  		kvfree(sbi->write_io[i]);
-> +#ifdef CONFIG_UNICODE
-> +	utf8_unload(sbi->s_encoding);
-> +#endif
->  	kvfree(sbi);
->  }
->  
-> @@ -3157,6 +3198,42 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  	sb->s_maxbytes = sbi->max_file_blocks <<
->  				le32_to_cpu(raw_super->log_blocksize);
->  	sb->s_max_links = F2FS_LINK_MAX;
-> +#ifdef CONFIG_UNICODE
-> +	if (f2fs_sb_has_casefold(sbi) && !sbi->s_encoding) {
-> +		const struct f2fs_sb_encodings *encoding_info;
-> +		struct unicode_map *encoding;
-> +		__u16 encoding_flags;
-> +
-> +		if (f2fs_sb_has_encrypt(sbi)) {
-> +			f2fs_msg(sb, KERN_ERR,
-> +				 "Can't mount with encoding and encryption");
-> +			goto free_options;
-> +		}
-> +
-> +		if (f2fs_sb_read_encoding(raw_super, &encoding_info,
-> +					  &encoding_flags)) {
-> +			f2fs_msg(sb, KERN_ERR,
-> +				 "Encoding requested by superblock is unknown");
-> +			goto free_options;
-> +		}
-> +
-> +		encoding = utf8_load(encoding_info->version);
-> +		if (IS_ERR(encoding)) {
-> +			f2fs_msg(sb, KERN_ERR,
-> +				 "can't mount with superblock charset: %s-%s "
-> +				 "not supported by the kernel. flags: 0x%x.",
-> +				 encoding_info->name, encoding_info->version,
-> +				 encoding_flags);
-> +			goto free_options;
-> +		}
-> +		f2fs_msg(sb, KERN_INFO, "Using encoding defined by superblock: "
-> +			 "%s-%s with flags 0x%hx", encoding_info->name,
-> +			 encoding_info->version?:"\b", encoding_flags);
-> +
-> +		sbi->s_encoding = encoding;
-> +		sbi->s_encoding_flags = encoding_flags;
-> +	}
-> +#endif
->  
->  #ifdef CONFIG_QUOTA
->  	sb->dq_op = &f2fs_quota_operations;
-> @@ -3511,6 +3588,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  free_bio_info:
->  	for (i = 0; i < NR_PAGE_TYPE; i++)
->  		kvfree(sbi->write_io[i]);
-> +
-> +#ifdef CONFIG_UNICODE
-> +	utf8_unload(sbi->s_encoding);
-> +#endif
->  free_options:
->  #ifdef CONFIG_QUOTA
->  	for (i = 0; i < MAXQUOTAS; i++)
-> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-> index 65559900d4d76..b7c9c7f721339 100644
-> --- a/include/linux/f2fs_fs.h
-> +++ b/include/linux/f2fs_fs.h
-> @@ -36,6 +36,11 @@
->  
->  #define F2FS_MAX_QUOTAS		3
->  
-> +#define F2FS_ENC_UTF8_12_1	1
-> +#define F2FS_ENC_STRICT_MODE_FL	(1 << 0)
-> +#define f2fs_has_strict_mode(sbi) \
-> +	(sbi->s_encoding_flags & F2FS_ENC_STRICT_MODE_FL)
-> +
->  #define F2FS_IO_SIZE(sbi)	(1 << F2FS_OPTION(sbi).write_io_size_bits) /* Blocks */
->  #define F2FS_IO_SIZE_KB(sbi)	(1 << (F2FS_OPTION(sbi).write_io_size_bits + 2)) /* KB */
->  #define F2FS_IO_SIZE_BYTES(sbi)	(1 << (F2FS_OPTION(sbi).write_io_size_bits + 12)) /* B */
-> @@ -109,7 +114,9 @@ struct f2fs_super_block {
->  	struct f2fs_device devs[MAX_DEVICES];	/* device list */
->  	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
->  	__u8 hot_ext_count;		/* # of hot file extension */
-> -	__u8 reserved[310];		/* valid reserved region */
-> +	__le16  s_encoding;		/* Filename charset encoding */
-> +	__le16  s_encoding_flags;	/* Filename charset encoding flags */
-> +	__u8 reserved[306];		/* valid reserved region */
->  	__le32 crc;			/* checksum of superblock */
->  } __packed;
->  
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
+> > > I've also added a check to ensure that a process can't set its own audit
+> > > container identifier ...
+> >
+> > What does this protect against, or what problem does this solve?
+> > Considering how easy it is to fork/exec, it seems like this could be
+> > trivially bypassed.
+>
+> Well, for starters, it would remove one layer of nesting.  It would
+> separate the functional layers of processes.
+
+This doesn't seem like something we need to protect against, what's
+the harm?  My opinion at this point is that we should only add
+restrictions to protect against problematic or dangerous situations; I
+don't believe one extra layer of nesting counts as either.
+
+Perhaps the container folks on the To/CC line can comment on this?  If
+there is a valid reason for this restriction, great, let's do it,
+otherwise it seems like an unnecessary hard coded policy to me.
+
+> Other than that, it seems
+> like a gut feeling that it is just wrong to allow it.  It seems like a
+> layer violation that one container orchestrator/engine could set its own
+> audit container identifier and then set its children as well.  It would
+> be its own parent.
+
+I suspect you are right that the current crop of container engines
+won't do this, but who knows what we'll be doing with "containers" 5,
+or even 10, years from now.  With that in mind, let me ask the
+question again: is allowing an orchestrator the ability to set its own
+audit container ID problematic and/or dangerous?
+
+> It would make it harder to verify adherance to descendancy and inheritance rules.
+
+The audit log should contain all the information needed to track that,
+right?  If it doesn't, then I think we have a problem with the
+information we are logging.  Right?
+
+> > > ... and that if the identifier is already set, then the
+> > > orchestrator/engine must be in a descendant user namespace from the
+> > > orchestrator that set the previously inherited audit container
+> > > identifier.
+> >
+> > You lost me here ... although I don't like the idea of relying on X
+> > namespace inheritance for a hard coded policy on setting the audit
+> > container ID; we've worked hard to keep this independent of any
+> > definition of a "container" and it would sadden me greatly if we had
+> > to go back on that.
+>
+> This would seem to be the one concession I'm reluctantly making to try
+> to solve this nested container orchestrator/engine challenge.
+
+As I said, you lost me on this - how does this help?  A more detailed
+explanation of how this helps resolve the nesting problem would be
+useful.
+
+> Would backing off on that descendant user namespace requirement and only
+> require that a nested audit container identifier only be permitted on a
+> descendant task be sufficient?  It may for this use case, but I suspect
+> not for additional audit daemons (we're not there yet) and message
+> routing to those daemons.
+>
+> The one difference here is that it does not depend on this if the audit
+> container identifier has not already been set.
+
+-- 
+paul moore
+www.paul-moore.com
