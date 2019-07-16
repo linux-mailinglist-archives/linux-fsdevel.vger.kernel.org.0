@@ -2,152 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21ED36AF5B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2019 20:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4EA96AFF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2019 21:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388521AbfGPS4H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jul 2019 14:56:07 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39001 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388385AbfGPS4H (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jul 2019 14:56:07 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f17so5560122pfn.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jul 2019 11:56:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZybekRt/woJPUqImfzbAl3ncwjUgoXdjZVOXaEHk8I8=;
-        b=j9eLSBzu7vGeOp+9v4PjjMY8Y60gIHirQjt/95JgwPIeMch+f2SZ4m2BcsmqzLNPnA
-         y6mKbUvfRgB58Dd24aP06L/LHkjitHNk2jtHnbwOvIcJMeUwKyAY7Zj3rZzVz85nZG+R
-         H6nYqq0HtuMcKgj4ph8KvSOJ57XFS8xQJyN4O9EfZBueGH2zgw2CSiJKxHwffHaRiCZU
-         F2ZM5rxXlitmIEXm2ndwKKQaLdsI3EeFpaR3+KwtG2rjkMO/QifOGpG1dhcUu5Cz8T3g
-         tXwTsXzmF1fc22PaEHeit7cbJ2ZXrz0nkagsUOfmTF+46/GQqdl6HnMMZCq90oDQiUGy
-         RAXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZybekRt/woJPUqImfzbAl3ncwjUgoXdjZVOXaEHk8I8=;
-        b=M5vm2gNw0uuupNZobbsqa98z+zdEgVcsudqxDZnSvxkj0Ena7kgWwkk7mvh/yAMfDB
-         BETtk6nt4B31rvkQu0WpB1TThso3LmZW+VLUpG0dJNibc2moWTNddJ+YPdU2ag8894l3
-         AsFJoWtB7gz6tA6M87cYGODzRxUODdoLVSaE/s5FzLc1rtaJnU75LbEJktGY5IbFNhGH
-         4HzvvKGQwBcy14VQg7VCrONIjJDWLipllWKNlhoQcpMAcfEzFI7X+oQOuEZb7KCWwDya
-         pWm4fbQ1Ud1lW3lud+HyeZXFHy9n0dONUcQTO9V+kB3Yyg6Q7ZzlHwIsAKYqW12APvkA
-         G9RA==
-X-Gm-Message-State: APjAAAWD0hZMevuddlsb6Tl0j5XEe23sxlNoUSwoEeicvsjQfOJQB6V7
-        sQm2TlMHeDWBuQZu7shGH8LHkdcmjXTRJ8/QxVHNbg==
-X-Google-Smtp-Source: APXvYqwkl9ifterOK2ove6KXh9jZEcTxm4XlxkMBt5KD+9P3zl/wFtgkQs2T9gGivENnFOevPZS3P3oa9+3ivqemHYQ=
-X-Received: by 2002:a63:205f:: with SMTP id r31mr35946123pgm.159.1563303365863;
- Tue, 16 Jul 2019 11:56:05 -0700 (PDT)
+        id S2388650AbfGPTip (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jul 2019 15:38:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52422 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726213AbfGPTip (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Jul 2019 15:38:45 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2FDCA3092647;
+        Tue, 16 Jul 2019 19:38:43 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-14.phx2.redhat.com [10.3.112.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CB95E60C44;
+        Tue, 16 Jul 2019 19:38:31 +0000 (UTC)
+Date:   Tue, 16 Jul 2019 15:38:28 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+Message-ID: <20190716193828.xvm67iv5jyypvvxp@madcap2.tricolour.ca>
+References: <cover.1554732921.git.rgb@redhat.com>
+ <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
+ <20190529145742.GA8959@cisco>
+ <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+ <20190708175105.7zb6mikjw2wmnwln@madcap2.tricolour.ca>
+ <CAHC9VhRFeCFSCn=m6wgDK2tXBN1euc2+bw8o=CfNwptk8t=j7A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190712081744.87097-1-brendanhiggins@google.com>
- <20190712081744.87097-4-brendanhiggins@google.com> <20190715204356.4E3F92145D@mail.kernel.org>
- <CAFd5g47481sRaez=yEJN4_ghiXZbxayk1Y04tAZpuzPLsmnhKg@mail.gmail.com>
- <20190715220407.0030420665@mail.kernel.org> <CAFd5g44bE0F=wq_fOAnxFTtoOyx1dUshhDAkKWr5hX9ipJ4Sxw@mail.gmail.com>
- <CAFd5g47y4vDB2P=EsGN8305LGeQPCTveNs-Jd5-=6K-XKY==CA@mail.gmail.com> <20190716153400.5CB182054F@mail.kernel.org>
-In-Reply-To: <20190716153400.5CB182054F@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 16 Jul 2019 11:55:54 -0700
-Message-ID: <CAFd5g47Nawp7V8=hetgBQWzWqmEyAz1GtWWwMrb9k=CCR33inQ@mail.gmail.com>
-Subject: Re: [PATCH v9 03/18] kunit: test: add string_stream a std::stream
- like string builder
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRFeCFSCn=m6wgDK2tXBN1euc2+bw8o=CfNwptk8t=j7A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 16 Jul 2019 19:38:44 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 8:34 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Brendan Higgins (2019-07-15 15:43:20)
-> > On Mon, Jul 15, 2019 at 3:11 PM Brendan Higgins
-> > <brendanhiggins@google.com> wrote:
-> > >
-> > > On Mon, Jul 15, 2019 at 3:04 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > >
-> > > > Quoting Brendan Higgins (2019-07-15 14:11:50)
-> > > > > On Mon, Jul 15, 2019 at 1:43 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > > > >
-> > > > > > I also wonder if it would be better to just have a big slop buffer of a
-> > > > > > 4K page or something so that we almost never have to allocate anything
-> > > > > > with a string_stream and we can just rely on a reader consuming data
-> > > > > > while writers are writing. That might work out better, but I don't quite
-> > > > > > understand the use case for the string stream.
-> > > > >
-> > > > > That makes sense, but might that also waste memory since we will
-> > > > > almost never need that much memory?
-> > > >
-> > > > Why do we care? These are unit tests.
-> > >
-> > > Agreed.
-> > >
-> > > > Having allocations in here makes
-> > > > things more complicated, whereas it would be simpler to have a pointer
-> > > > and a spinlock operating on a chunk of memory that gets flushed out
-> > > > periodically.
-> > >
-> > > I am not so sure. I have to have the logic to allocate memory in some
-> > > case no matter what (what if I need more memory that my preallocated
-> > > chuck?). I think it is simpler to always request an allocation than to
-> > > only sometimes request an allocation.
+On 2019-07-15 16:38, Paul Moore wrote:
+> On Mon, Jul 8, 2019 at 1:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2019-05-29 11:29, Paul Moore wrote:
+> 
+> ...
+> 
+> > > The idea is that only container orchestrators should be able to
+> > > set/modify the audit container ID, and since setting the audit
+> > > container ID can have a significant effect on the records captured
+> > > (and their routing to multiple daemons when we get there) modifying
+> > > the audit container ID is akin to modifying the audit configuration
+> > > which is why it is gated by CAP_AUDIT_CONTROL.  The current thinking
+> > > is that you would only change the audit container ID from one
+> > > set/inherited value to another if you were nesting containers, in
+> > > which case the nested container orchestrator would need to be granted
+> > > CAP_AUDIT_CONTROL (which everyone to date seems to agree is a workable
+> > > compromise).  We did consider allowing for a chain of nested audit
+> > > container IDs, but the implications of doing so are significant
+> > > (implementation mess, runtime cost, etc.) so we are leaving that out
+> > > of this effort.
 > >
-> > Another even simpler alternative might be to just allocate memory
-> > using kunit_kmalloc as we need it and just let the kunit_resource code
-> > handle cleaning it all up when the test case finishes.
->
-> Sure, sounds like a nice way to avoid duplicating similar logic to
-> maintain a list of things to free later.
+> > We had previously discussed the idea of restricting
+> > orchestrators/engines from only being able to set the audit container
+> > identifier on their own descendants, but it was discarded.  I've added a
+> > check to ensure this is now enforced.
+> 
+> When we weren't allowing nested orchestrators it wasn't necessary, but
+> with the move to support nesting I believe this will be a requirement.
+> We might also need/want to restrict audit container ID changes if a
+> descendant is acting as a container orchestrator and managing one or
+> more audit container IDs; although I'm less certain of the need for
+> this.
 
-I think I will go that route for now.
+I was of the opinion it was necessary before with single-layer parallel
+orchestrators/engines.
 
-> >
-> > What do you think?
->
-> If you go the allocation route then you'll need to have the flags to
-> know what context you're in to allocate appropriately. Does that mean
-> all the string operations will now take GFP flags?
+> > I've also added a check to ensure that a process can't set its own audit
+> > container identifier ...
+> 
+> What does this protect against, or what problem does this solve?
+> Considering how easy it is to fork/exec, it seems like this could be
+> trivially bypassed.
 
-We could set the GFP flags in the constructor, store them in a field,
-and then just reuse them.
+Well, for starters, it would remove one layer of nesting.  It would
+separate the functional layers of processes.  Other than that, it seems
+like a gut feeling that it is just wrong to allow it.  It seems like a
+layer violation that one container orchestrator/engine could set its own
+audit container identifier and then set its children as well.  It would
+be its own parent.  It would make it harder to verify adherance to
+descendancy and inheritance rules.
 
-Thanks!
+> > ... and that if the identifier is already set, then the
+> > orchestrator/engine must be in a descendant user namespace from the
+> > orchestrator that set the previously inherited audit container
+> > identifier.
+> 
+> You lost me here ... although I don't like the idea of relying on X
+> namespace inheritance for a hard coded policy on setting the audit
+> container ID; we've worked hard to keep this independent of any
+> definition of a "container" and it would sadden me greatly if we had
+> to go back on that.
+
+This would seem to be the one concession I'm reluctantly making to try
+to solve this nested container orchestrator/engine challenge.
+
+Would backing off on that descendant user namespace requirement and only
+require that a nested audit container identifier only be permitted on a
+descendant task be sufficient?  It may for this use case, but I suspect
+not for additional audit daemons (we're not there yet) and message
+routing to those daemons.
+
+The one difference here is that it does not depend on this if the audit
+container identifier has not already been set.
+
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
