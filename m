@@ -2,26 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 568FA6B187
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 00:04:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD4946B263
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 01:31:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbfGPWDi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jul 2019 18:03:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48882 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728434AbfGPWDh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jul 2019 18:03:37 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 657075C3;
-        Tue, 16 Jul 2019 22:03:36 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-14.phx2.redhat.com [10.3.112.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 66EB71D5;
-        Tue, 16 Jul 2019 22:03:23 +0000 (UTC)
-Date:   Tue, 16 Jul 2019 18:03:20 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
+        id S2389129AbfGPXa2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jul 2019 19:30:28 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42544 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389120AbfGPXa2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Jul 2019 19:30:28 -0400
+Received: by mail-lf1-f67.google.com with SMTP id s19so14969810lfb.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jul 2019 16:30:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YWcpEc5FvGUxMrkeRiB0cnwgYS5TPs4Urt5+gPVZDh8=;
+        b=kfuVXg1GBNwcOoznZPvryqh6/i2XrbBE6hkmVUMgSZi+LTGFCMeiia9P0u53fqR03S
+         Db8ww5cz17ZFCZKlTuva1FUSo3Y2oMZofZ8fP/h1fLivURlC81chU7PWbmPju7Admx1Z
+         0vNl1Znw/JxnQbaEB3qodZy91u3UJcA/kBkF3/fop+D+uNxeIU9ClEdXjFRvVywlejx8
+         DnAqQwuvXO4VpPWfxjCThhbeKljqILhPjFnODqbpRq1N11o4FSdml1BI7L1b7dz9y+YP
+         fYw1lfsvEQejaiRHp3kfd9vzzpXxhC6v4ipIrx4uMBDRiXoRA77MJ55m7j30qsm5olyc
+         8AKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YWcpEc5FvGUxMrkeRiB0cnwgYS5TPs4Urt5+gPVZDh8=;
+        b=rU2eNdM6CflE1yhFOoTL7ctz9CGMNfq7wOG5q1F+aSCNj7sWZxt4UTt0Vlve7lJade
+         ssckhJyZLU6tGUBuBcKo4rEoYBkNgjeV4L9xVFMoLrp4bTFmrLAPodzG6yhJrDC3770k
+         NNe7qSobT3ExPrB6n9jmyLfuHEVBMQKaIzfgY2G3XCpm+0ixLRHtfM89ii+b3BRThArn
+         fOn7LXV/D9I6olo4/IQ/H1qmdfgzP50XC32dSZTBDHZHgCew7ocrq8av5klJGueHnRx7
+         +ZBs7qrtzI0p4jjeFH/gTFQKPCZwBHJGJIfkm6yW6rh7ExzIShL/zwsz1BlwXN8EnAFj
+         xxpQ==
+X-Gm-Message-State: APjAAAWyccKmTMQuX7ybJyjLETU2Wt8OO8pg3iuv3iR1Knvnc/iRzpGc
+        5M9Mp+/rhCi3sJGUZl6w1oyTnEMP7K1q97dIsw==
+X-Google-Smtp-Source: APXvYqxz39ngK72ytLQXqEXgHBnS7WXBpZpi6vOwRoyqlsR7YPmTcb6oeRneK/RtXK9BLw25UxnyGGXWi29uMJ0dI9o=
+X-Received: by 2002:ac2:4109:: with SMTP id b9mr14480083lfi.31.1563319826317;
+ Tue, 16 Jul 2019 16:30:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+ <20190529153427.GB8959@cisco> <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
+ <20190529222835.GD8959@cisco> <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
+ <20190530170913.GA16722@mail.hallyn.com> <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
+ <20190708180558.5bar6ripag3sdadl@madcap2.tricolour.ca> <CAHC9VhRTT7JWqNnynvK04wKerjc-3UJ6R1uPtjCAPVr_tW-7MA@mail.gmail.com>
+ <20190716220320.sotbfqplgdructg7@madcap2.tricolour.ca>
+In-Reply-To: <20190716220320.sotbfqplgdructg7@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 16 Jul 2019 19:30:15 -0400
+Message-ID: <CAHC9VhScHizB2r5q3T5s0P3jkYdvzBPPudDksosYFp_TO7W9-Q@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+To:     Richard Guy Briggs <rgb@redhat.com>
 Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
         Tycho Andersen <tycho@tycho.ws>,
         containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
@@ -31,148 +63,81 @@ Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
         sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
         simo@redhat.com, Eric Paris <eparis@parisplace.org>,
         ebiederm@xmission.com, nhorman@tuxdriver.com
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-Message-ID: <20190716220320.sotbfqplgdructg7@madcap2.tricolour.ca>
-References: <20190529145742.GA8959@cisco>
- <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
- <20190529153427.GB8959@cisco>
- <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
- <20190529222835.GD8959@cisco>
- <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
- <20190530170913.GA16722@mail.hallyn.com>
- <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
- <20190708180558.5bar6ripag3sdadl@madcap2.tricolour.ca>
- <CAHC9VhRTT7JWqNnynvK04wKerjc-3UJ6R1uPtjCAPVr_tW-7MA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRTT7JWqNnynvK04wKerjc-3UJ6R1uPtjCAPVr_tW-7MA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 16 Jul 2019 22:03:36 +0000 (UTC)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-07-15 17:04, Paul Moore wrote:
-> On Mon, Jul 8, 2019 at 2:06 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2019-05-30 15:29, Paul Moore wrote:
-> 
-> ...
-> 
-> > > [REMINDER: It is an "*audit* container ID" and not a general
-> > > "container ID" ;)  Smiley aside, I'm not kidding about that part.]
-> > >
-> > > I'm not interested in supporting/merging something that isn't useful;
-> > > if this doesn't work for your use case then we need to figure out what
-> > > would work.  It sounds like nested containers are much more common in
-> > > the lxc world, can you elaborate a bit more on this?
-> > >
-> > > As far as the possible solutions you mention above, I'm not sure I
-> > > like the per-userns audit container IDs, I'd much rather just emit the
-> > > necessary tracking information via the audit record stream and let the
-> > > log analysis tools figure it out.  However, the bigger question is how
-> > > to limit (re)setting the audit container ID when you are in a non-init
-> > > userns.  For reasons already mentioned, using capable() is a non
-> > > starter for everything but the initial userns, and using ns_capable()
-> > > is equally poor as it essentially allows any userns the ability to
-> > > munge it's audit container ID (obviously not good).  It appears we
-> > > need a different method for controlling access to the audit container
-> > > ID.
+On Tue, Jul 16, 2019 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2019-07-15 17:04, Paul Moore wrote:
+> > On Mon, Jul 8, 2019 at 2:06 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+
+...
+
+> > > If we can't trust ns_capable() then why are we passing on
+> > > CAP_AUDIT_CONTROL?  It is being passed down and not stripped purposely
+> > > by the orchestrator/engine.  If ns_capable() isn't inherited how is it
+> > > gained otherwise?  Can it be inserted by cotainer image?  I think the
+> > > answer is "no".  Either we trust ns_capable() or we have audit
+> > > namespaces (recommend based on user namespace) (or both).
 > >
-> > We're not quite ready yet for multiple audit daemons and possibly not
-> > yet for audit namespaces, but this is starting to look a lot like the
-> > latter.
-> 
-> A few quick comments on audit namespaces: the audit container ID is
-> not envisioned as a new namespace (even in nested form) and neither do
-> I consider running multiple audit daemons to be a new namespace.
+> > My thinking is that since ns_capable() checks the credentials with
+> > respect to the current user namespace we can't rely on it to control
+> > access since it would be possible for a privileged process running
+> > inside an unprivileged container to manipulate the audit container ID
+> > (containerized process has CAP_AUDIT_CONTROL, e.g. running as root in
+> > the container, while the container itself does not).
+>
+> What makes an unprivileged container unprivileged?  "root", or "CAP_*"?
 
-I can picture either one.
+My understanding is that when most people refer to an unprivileged
+container they are referring to a container run without capabilities
+or a container run by a user other than root.  I'm sure there are
+better definitions out there, by folks much smarter than me on these
+things, but that's my working definition.
 
-> From my perspective we create namespaces to allow us to redefine a
-> global resource for some subset of the system, e.g. providing a unique
-> /tmp for some number of processes on the system.  While it may be
-> tempting to think of the audit container ID as something we could
-> "namespace", especially when multiple audit daemons are concerned, in
-> some ways this would be counter productive; the audit container ID is
-> intended to be a global ID that can be used to associate audit event
-> records with a "container" where the "container" is defined by an
-> orchestrator outside the audit subsystem.  The global nature of the
-> audit container ID allows us to maintain a sane(ish) view of the
-> system in the audit log, if we were to "namespace" the audit container
-> ID such that the value was no longer guaranteed to be unique
-> throughout the system, we would need to additionally track the audit
-> namespace along with the audit container ID which starts to border on
-> insanity IMHO.
+> If CAP_AUDIT_CONTROL is granted, does "root" matter?
 
-Understood.  And mostly agree.  Any audit namespace would have to be a
-hybrid anyways, since only the init one would have full access to audit
-resources.  All the others would be somewhat neutered.  And in the case
-of checking for previous usage of a contid, if it was not already in use
-in the hypothetical audit namespace but was in use elsewhere in the
-system and we blocked its usage in this namespace, it would leak that
-information by blocking it.
+Our discussions here have been about capabilities, not UIDs.  The only
+reason root might matter is that it generally has the full capability
+set.
 
-I saw it as a way of permitting layering with the natural descendancy
-structure showing that hierarchy.  The potential flaw with my reasoning
-is that a parent could exit and its children would get re-parented onto
-its next ancestor, so the intermediate task with an intermediate contid
-would break that contid documentation chain.
+> Does it matter what user namespace it is in?
 
-> > If we can't trust ns_capable() then why are we passing on
-> > CAP_AUDIT_CONTROL?  It is being passed down and not stripped purposely
-> > by the orchestrator/engine.  If ns_capable() isn't inherited how is it
-> > gained otherwise?  Can it be inserted by cotainer image?  I think the
-> > answer is "no".  Either we trust ns_capable() or we have audit
-> > namespaces (recommend based on user namespace) (or both).
-> 
-> My thinking is that since ns_capable() checks the credentials with
-> respect to the current user namespace we can't rely on it to control
-> access since it would be possible for a privileged process running
-> inside an unprivileged container to manipulate the audit container ID
-> (containerized process has CAP_AUDIT_CONTROL, e.g. running as root in
-> the container, while the container itself does not).
+What likely matters is what check is called: capable() or
+ns_capable().  Those can yield very different results.
 
-What makes an unprivileged container unprivileged?  "root", or "CAP_*"?
+> I understand that root is *gained* in an
+> unprivileged user namespace, but capabilities are inherited or permitted
+> and that process either has it or it doesn't and an unprivileged user
+> namespace can't gain a capability that has been rescinded.  Different
+> subsystems use the userid or capabilities or both to determine
+> privileges.
 
-If CAP_AUDIT_CONTROL is granted, does "root" matter?  Does it matter
-what user namespace it is in?  I understand that root is *gained* in an
-unprivileged user namespace, but capabilities are inherited or permitted
-and that process either has it or it doesn't and an unprivileged user
-namespace can't gain a capability that has been rescinded.  Different
-subsystems use the userid or capabilities or both to determine
-privileges.  In this case, is the userid relevant?
+Once again, I believe the important thing to focus on here is
+capable() vs ns_capable().  We can't safely rely on ns_capable() for
+the audit container ID policy since that is easily met inside the
+container regardless of the process' creds which started the
+container.
 
-> > At this point I would say we are at an impasse unless we trust
-> > ns_capable() or we implement audit namespaces.
-> 
-> I'm not sure how we can trust ns_capable(), but if you can think of a
-> way I would love to hear it.  I'm also not sure how namespacing audit
-> is helpful (see my above comments), but if you think it is please
-> explain.
+> In this case, is the userid relevant?
 
-So if we are not namespacing, why do we not trust capabilities?
+We don't do UID checks, we do capability checks, so yes, the UID is irrelevant.
 
-> > I don't think another mechanism to trust nested orchestrators/engines
-> > will buy us anything.
+> > > At this point I would say we are at an impasse unless we trust
+> > > ns_capable() or we implement audit namespaces.
 > >
-> > Am I missing something?
-> 
-> Based on your questions/comments above it looks like your
-> understanding of ns_capable() does not match mine; if I'm thinking
-> about ns_capable() incorrectly, please educate me.
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
+> > I'm not sure how we can trust ns_capable(), but if you can think of a
+> > way I would love to hear it.  I'm also not sure how namespacing audit
+> > is helpful (see my above comments), but if you think it is please
+> > explain.
+>
+> So if we are not namespacing, why do we not trust capabilities?
 
-- RGB
+We can trust capable(CAP_AUDIT_CONTROL) for enforcing audit container
+ID policy, we can not trust ns_capable(CAP_AUDIT_CONTROL).
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+-- 
+paul moore
+www.paul-moore.com
