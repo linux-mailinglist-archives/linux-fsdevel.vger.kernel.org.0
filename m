@@ -2,137 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D18DD6ACA2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2019 18:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A54AB6AD24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2019 18:51:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730437AbfGPQ0b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jul 2019 12:26:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34184 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725926AbfGPQ0b (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jul 2019 12:26:31 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 18AB887620;
-        Tue, 16 Jul 2019 16:26:30 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-14.phx2.redhat.com [10.3.112.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A40625C28D;
-        Tue, 16 Jul 2019 16:26:19 +0000 (UTC)
-Date:   Tue, 16 Jul 2019 12:26:16 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>, nhorman@tuxdriver.com,
-        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-Message-ID: <20190716162616.7kgvqbqxn4icqyb3@madcap2.tricolour.ca>
-References: <20190529222835.GD8959@cisco>
- <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
- <20190530170913.GA16722@mail.hallyn.com>
- <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
- <20190530212900.GC5739@cisco>
- <CAHC9VhT5HPt9rCJoDutdvA3r1Y1GOHfpXe2eJ54atNC1=Vd8LA@mail.gmail.com>
- <20190708181237.5poheliito7zpvmc@madcap2.tricolour.ca>
- <CAHC9VhT0V+xi_6nAR5TsM2vs34LbgMeO=-W+MS_kqiXRRzneZQ@mail.gmail.com>
- <20190716153705.xx7dwrhliny5amut@madcap2.tricolour.ca>
- <CAHC9VhTaLqCo8rmAaySJQB+Pf-580=3mvX1rPmtEeb9o5Uy9Qg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTaLqCo8rmAaySJQB+Pf-580=3mvX1rPmtEeb9o5Uy9Qg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 16 Jul 2019 16:26:30 +0000 (UTC)
+        id S2387949AbfGPQvZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jul 2019 12:51:25 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46807 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730431AbfGPQvZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 16 Jul 2019 12:51:25 -0400
+Received: by mail-pl1-f196.google.com with SMTP id c2so10384509plz.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jul 2019 09:51:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=H1MMtwRFdYpRw2iY5883a8MvJnSffRu+XIbwx55RYbA=;
+        b=nh65VsfT32/nfMrwIz6x2klAFGxrY5FOoyVAaO3Rz5FHfOpdOvyAkWGqPHqikvXZjZ
+         iPqh+7kDObcojPnRj2ZGeY0k1zSaoVJWm9ZVcZcYtNDxGOmTlQ+GftcWecJWs8Jp2X9E
+         rhDtgb9VIn1q9vIVDVA7IWgE+kFwoeG/IRLyoSX0Yhybh4HnjUmDvhnvbApz+TkkH/X9
+         eT9/H9SVHMcQCqoj9lcqTiAfs/uHvxo02ee8xe3HEc9zIkvdosS8AfE0Zxq1KTL4Ng4M
+         tEET6hpfo2QnJrKJl81um7KnIDSZE/0Dg9n53Wp96xnBMEiDyvET/ugNeKl5nPDMt/rD
+         0FNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=H1MMtwRFdYpRw2iY5883a8MvJnSffRu+XIbwx55RYbA=;
+        b=HDZhI4SIJAEcJo8oPKi83LgdC0fEsyi6iHl3FfI+HwmjbyziPLcPoXMUNHj72IyHzV
+         ikTGorl6t/LsTobxNGWEf6HXGiFN8G1A7b7PSU8HSBbsbYEF0f0k13ChnNITocK3rNfH
+         Hj4TL91HWSA3zr/QB2rlhfjZF1ThFDnpTndzNG/c4yCi5OAAm10i2q9Uc+s53dpeGkPl
+         uJjyFKlZUNcVeJy2MvNxgxcgqm54V6tiVLDGP3l9U9+oQ93UV/rRHluf5IN/oFQV51mH
+         ZSvpRI8IVoUX+sBi3oYX4AtdMXISfKkrPlnlI+IohwYOo+9tZ1DFKRXdYthcZ0z4xfqc
+         kxfg==
+X-Gm-Message-State: APjAAAWCS91LBCZ77eLvfGFGg6U4l/EufRpSluakRqMpoOmiRAExwUrY
+        TS1aaJVcbUhPXbzvWWty7v8=
+X-Google-Smtp-Source: APXvYqythLz8AQCH1UQA8Z/aR9yGXtb1L5pCTf0hfkkW5HTxE5QKbaiZ0JvYIYXqNIAXV4drVojjVg==
+X-Received: by 2002:a17:902:44f:: with SMTP id 73mr37395143ple.192.1563295884431;
+        Tue, 16 Jul 2019 09:51:24 -0700 (PDT)
+Received: from [192.168.1.136] (c-67-169-41-205.hsd1.ca.comcast.net. [67.169.41.205])
+        by smtp.gmail.com with ESMTPSA id r15sm22872819pfh.121.2019.07.16.09.51.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Jul 2019 09:51:23 -0700 (PDT)
+Message-ID: <1563295882.2741.49.camel@dubeyko.com>
+Subject: Re: [PATCH RFC] fs: New zonefs file system
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.de>,
+        Ting Yao <d201577678@hust.edu.cn>
+Date:   Tue, 16 Jul 2019 09:51:22 -0700
+In-Reply-To: <BYAPR04MB58168662947D0573419EAD0FE7CF0@BYAPR04MB5816.namprd04.prod.outlook.com>
+References: <20190712030017.14321-1-damien.lemoal@wdc.com>
+         <1562951415.2741.18.camel@dubeyko.com>
+         <BYAPR04MB5816F3DE20A3C82B82192B94E7F20@BYAPR04MB5816.namprd04.prod.outlook.com>
+         <1563209654.2741.39.camel@dubeyko.com>
+         <BYAPR04MB58168662947D0573419EAD0FE7CF0@BYAPR04MB5816.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-07-16 12:08, Paul Moore wrote:
-> On Tue, Jul 16, 2019 at 11:37 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2019-07-15 17:09, Paul Moore wrote:
-> > > On Mon, Jul 8, 2019 at 2:12 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > On 2019-05-30 19:26, Paul Moore wrote:
-> > >
-> > > ...
-> > >
-> > > > > I like the creativity, but I worry that at some point these
-> > > > > limitations are going to be raised (limits have a funny way of doing
-> > > > > that over time) and we will be in trouble.  I say "trouble" because I
-> > > > > want to be able to quickly do an audit container ID comparison and
-> > > > > we're going to pay a penalty for these larger values (we'll need this
-> > > > > when we add multiple auditd support and the requisite record routing).
-> > > > >
-> > > > > Thinking about this makes me also realize we probably need to think a
-> > > > > bit longer about audit container ID conflicts between orchestrators.
-> > > > > Right now we just take the value that is given to us by the
-> > > > > orchestrator, but if we want to allow multiple container orchestrators
-> > > > > to work without some form of cooperation in userspace (I think we have
-> > > > > to assume the orchestrators will not talk to each other) we likely
-> > > > > need to have some way to block reuse of an audit container ID.  We
-> > > > > would either need to prevent the orchestrator from explicitly setting
-> > > > > an audit container ID to a currently in use value, or instead generate
-> > > > > the audit container ID in the kernel upon an event triggered by the
-> > > > > orchestrator (e.g. a write to a /proc file).  I suspect we should
-> > > > > start looking at the idr code, I think we will need to make use of it.
-> > > >
-> > > > To address this, I'd suggest that it is enforced to only allow the
-> > > > setting of descendants and to maintain a master list of audit container
-> > > > identifiers (with a hash table if necessary later) that includes the
-> > > > container owner.
-> > >
-> > > We're discussing the audit container ID management policy elsewhere in
-> > > this thread so I won't comment on that here, but I did want to say
-> > > that we will likely need something better than a simple list of audit
-> > > container IDs from the start.  It's common for systems to have
-> > > thousands of containers now (or multiple thousands), which tells me
-> > > that a list is a poor choice.  You mentioned a hash table, so I would
-> > > suggest starting with that over the list for the initial patchset.
-> >
-> > I saw that as an internal incremental improvement that did not affect
-> > the API, so I wanted to keep things a bit simpler (as you've requested
-> > in the past) to get this going, and add that enhancement later.
+On Mon, 2019-07-15 at 23:53 +0000, Damien Le Moal wrote:
+> On 2019/07/16 1:54, Viacheslav Dubeyko wrote:
+> [...]
+> > 
+> > > 
+> > > > 
+> > > > Do you have in mind some special use-case?
+> > > As the commit message mentions, zonefs is not a traditional file
+> > > system by any
+> > > mean and much closer to a raw block device access interface than
+> > > anything else.
+> > > This is the entire point of this exercise: allow replacing the
+> > > raw
+> > > block device
+> > > accesses with the easier to use file system API. Raw block device
+> > > access is also
+> > > file API so one could argue that this is nonsense. What I mean
+> > > here
+> > > is that by
+> > > abstracting zones with files, the user does not need to do the
+> > > zone
+> > > configuration discovery with ioctl(BLKREPORTZONES), does not need
+> > > to
+> > > do explicit
+> > > zone resets with ioctl(BLKRESETZONE), does not have to "start
+> > > from
+> > > one sector
+> > > and write sequentially from there" management for write() calls
+> > > (i.e.
+> > > seeks),
+> > > etc. This is all replaced with the file abstraction: directory
+> > > entry
+> > > list
+> > > replace zone information, truncate() replace zone reset, file
+> > > current
+> > > position
+> > > replaces the application zone write pointer management.
+> > > 
+> > > This simplifies implementing support of applications for zoned
+> > > block
+> > > devices,
+> > > but only in cases where said applications:
+> > > 1) Operate with large files
+> > > 2) have no or only minimal need for random writes
+> > > 
+> > > A perfect match for this as mentioned in the commit message are
+> > > LSM-
+> > > tree based
+> > > applications such as LevelDB or RocksDB. Other examples, related,
+> > > include
+> > > Bluestore distributed object store which uses RocksDB but still
+> > > has a
+> > > bluefs
+> > > layer that could be replaced with zonefs.
+> > > 
+> > > As an illustration of this, Ting Yao of Huazhong University of
+> > > Science and
+> > > Technology (China) and her team modified LevelDB to work with
+> > > zonefs.
+> > > The early
+> > > prototype code is on github here: https://github.com/PDS-Lab/Gear
+> > > DB/t
+> > > ree/zonefs
+> > > 
+> > > LSM-Tree applications typically operate on large files, in the
+> > > same
+> > > range as
+> > > zoned block device zone size (e.g. 256 MB or so). While this is
+> > > generally a
+> > > parameter that can be changed, the use of zonefs and zoned block
+> > > device forces
+> > > using the zone size as the SSTable file maximum size. This can
+> > > have
+> > > an impact on
+> > > the DB performance depending on the device type, but that is
+> > > another
+> > > discussion.
+> > > The point here is the code simplifications that zonefs allows.
+> > > 
+> > > For more general purpose use cases (small files, lots of random
+> > > modifications),
+> > > we already have the dm-zoned device mapper and f2fs support and
+> > > we
+> > > are also
+> > > currently working on btrfs support. These solutions are in my
+> > > opinion
+> > > more
+> > > appropriate than zonefs to address the points you raised.
+> > > 
+> > Sounds pretty reasonable. But I still have two worries.
+> > 
+> > First of all, even modest file system could contain about 100K
+> > files on
+> > a volume. So, if our zone is 256 MB then we need in 24 TB storage
+> > device for 100K files. Even if we consider some special use-case of
+> > database, for example, then it's pretty easy to imagine the
+> > creation a
+> > lot of files. So, are we ready to provide such huge storage devices
+> > (especially, for the case of SSDs)?
+> The small file use case you are describing is not zonefs target use
+> case. It
+> does not make any sense to discuss small files in the context of
+> zonefs. If
+> small file is the use case needed for an application, then a "normal"
+> file
+> system should be use such as f2fs or btrfs (zoned block device
+> support is being
+> worked on, see patches posted on btrfs list).
 > 
-> In general a simple approach is a good way to start when the
-> problem/use-case is not very well understood; in other words, don't
-> spend a lot of time/effort optimizing something you don't yet
-> understand.  In this case we know that people want to deploy a *lot*
-> of containers on a single system so we should design the data
-> structures appropriately.  A list is simply not a good fit here, I
-> believe/hope you know that too.
-
-Yes, I knew that, which is why I alluded to a hash table...
-
-> > I'll start working on it now.  The hash table would simply point to
-> > lists anyways unless you can recommend a better approach.
+> As mentioned previously, zonefs goal is to represent zones of a zoned
+> block
+> device with files, thus providing a simple abstraction one file ==
+> one zone and
+> simplifying application implementation. And this means that the only
+> sensible
+> use case for zonefs is applications using large container like files.
+> LSM-tree
+> based applications being a very good match in this respect.
 > 
-> I assume when you say "point to lists" you are talking about using
-> lists for the hash buckets?  If so, yes that should be fine at this
-> point.  In general if the per-bucket lists become a bottleneck we can
-> look at the size of the table (or make it tunable) or even use a
-> different approach entirely.  Ultimately the data store is an
-> implementation detail private to the audit subsystem in the kernel so
-> we should be able to change it as necessary without breaking anything.
 
-Yes, this is what I had in mind.  It would be tunable either by a macro
-or a config option, so the exact value isn't a critical implementation
-detail that can be easily tuned as we gain experience with it.  And yes,
-the intent was that it was a non-user-perceivable implementation choice
-other than performace metrics.
 
-> paul moore
+I am talking not about file size but about number of files on the
+volume here. I meant that file system could easily contain about
+100,000 files on the volume. So, if every file uses 256 MB zone then
+100,000 files need in 24 TB volume.
 
-- RGB
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+> > 
+> > Secondly, the allocation scheme is too simplified for my taste and
+> > it
+> > could create a significant fragmentation of a volume. Again, 256 MB
+> > is
+> > pretty big size. So, I assume that, mostly, it will be allocated
+> > only
+> > one zone at first for a created file. If file grows then it means
+> > that
+> > it will need to allocate the two contigous zones and to move the
+> > file's
+> > content. Finally, it sounds for me that it is possible to create a
+> > lot
+> > of holes and to achieve the volume state when it exists a lot of
+> > free
+> > space but files will be unable to grow and it will be impossible to
+> > add
+> > a new data on the volume. Have you made an estimation of the
+> > suggested
+> > allocation scheme?
+> What do you mean allocation scheme ? There is none ! one file == one
+> zone and
+> all files are fully provisioned and allocated on mount. zonefs does
+> not allow
+> the creation of files and there is no dynamic "block allocation".
+> Again, please
+> do not consider zonefs as a normal file system. It is closer to a raw
+> block
+> device interface than to a fully featured file system.
+> 
+
+OK. It sounds that a file cannot grow beyond the allocated number of
+contigous zone(s) during the mount operation. Am I correct? But if a
+file is needed to be resized what can be done in such case? Should it
+need to re-mount the file system?
+
+By the way, does this approach provides the way to use the device's
+internal parallelism? What should anybody take into account for
+exploiting the device's internal parallelism?
+
+Thanks,
+Viacheslav Dubeyko.
+
