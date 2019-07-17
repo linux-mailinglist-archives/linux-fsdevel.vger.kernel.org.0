@@ -2,102 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5BC26B59A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 06:38:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C62C96B5AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 07:00:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbfGQEie (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jul 2019 00:38:34 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:54889 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbfGQEid (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jul 2019 00:38:33 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45pPfG6TYLz9s3l;
-        Wed, 17 Jul 2019 14:38:30 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1563338311;
-        bh=7o9BO0ADmmnMeCw0wqmCaRTFN+ZKwypcAxGKZdpgnH8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=X5ODQmuVyLfNoIKGCLu+tlRTXrGFI1NzAdzDXi+dNhzYhZ52JAHiH6ajzlN3GeRg+
-         Oh3H2hbICg2tzXiMQQZdmIv42dQDjvuHTUyMtlqc69Vc8yesT0CUZ46RQyfzh4clUd
-         XgeoS0OeA5BkcUogkbmMZGz57c/XmTDI/MBih8AHpPtK4DDNX4jvJqFtz/aZauPbs7
-         VWfrGCAWtflRWAGnrNqLtRAEtDuahMn7MdXBWbus65jHa59P4brEIR5wKDgqSyX6NS
-         Aw1LO7WJ7bWRN2F5kMB+cqyK0zmR6U+/ZTZGPOCdQGa0RZMH8XcEojfGZbuDf8rA3l
-         Ac2SrTUUrLbYg==
-Date:   Wed, 17 Jul 2019 14:38:30 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org
-Subject: Re: mmotm 2019-07-16-17-14 uploaded
-Message-ID: <20190717143830.7f7c3097@canb.auug.org.au>
-In-Reply-To: <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
-References: <20190717001534.83sL1%akpm@linux-foundation.org>
-        <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
+        id S1726734AbfGQE7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jul 2019 00:59:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50388 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfGQE7C (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jul 2019 00:59:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=b4mrzusAw4iT5psfLneDDFEiUNUZ9oNkgSeJ+kbUh0Q=; b=cBx+b466rNFuMfUCRhrar3rJm
+        0f2lbvOUf3KBA+pfIO0rUrp2Ngzgtuxv82ighuc9NXtVuwTF+24c2LQTR4cQBLrxovuvp/qtY3zb5
+        XSmB7iy96BAhJXjKx0+mghyNao37NkiFLPaAPErcyEdHKJpFWv6BTmUmGjVwaQpBWMAfsQnckYUyp
+        yCWL7Re+VsFxCf7LD/3OxMgebmbKLKOy59mZrsktb/wEP3GblnGZj278ZsozGnkpVxTypLrF2WB5r
+        HZhn6Rvi4cXARUNY5kmcjp8C3DFaE2T1864naiFQ6g2g18XzcNLj7Uzwl/I9WXbeIYIcX4Tp+KGgl
+        nrDD8PwWQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hnc1t-0001tW-Kb; Wed, 17 Jul 2019 04:59:01 +0000
+Date:   Tue, 16 Jul 2019 21:59:01 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     hch@infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, agruenba@redhat.com
+Subject: Re: [PATCH 1/9] iomap: start moving code to fs/iomap/
+Message-ID: <20190717045901.GA7113@infradead.org>
+References: <156321356040.148361.7463881761568794395.stgit@magnolia>
+ <156321356685.148361.4004787941003993925.stgit@magnolia>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <156321356685.148361.4004787941003993925.stgit@magnolia>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 15, 2019 at 10:59:26AM -0700, Darrick J. Wong wrote:
+> @@ -0,0 +1,7 @@
+> +# SPDX-License-Identifier: GPL-2.0-or-newer
+> +#
+> +# Copyright (c) 2019 Oracle.
+> +# All Rights Reserved.
+> +#
+> +
+> +ccflags-y += -I $(srctree)/$(src)/..
 
-Hi Randy,
-
-On Tue, 16 Jul 2019 20:50:11 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
-te:
->
-> drivers/gpu/drm/amd/amdgpu/Kconfig contains this (from linux-next.patch):
->=20
-> --- a/drivers/gpu/drm/amd/amdgpu/Kconfig~linux-next
-> +++ a/drivers/gpu/drm/amd/amdgpu/Kconfig
-> @@ -27,7 +27,12 @@ config DRM_AMDGPU_CIK
->  config DRM_AMDGPU_USERPTR
->  	bool "Always enable userptr write support"
->  	depends on DRM_AMDGPU
-> +<<<<<<< HEAD
->  	depends on HMM_MIRROR
-> +=3D=3D=3D=3D=3D=3D=3D
-> +	depends on ARCH_HAS_HMM
-> +	select HMM_MIRROR
-> +>>>>>>> linux-next/akpm-base =20
->  	help
->  	  This option selects CONFIG_HMM and CONFIG_HMM_MIRROR if it
->  	  isn't already selected to enabled full userptr support.
->=20
-> which causes a lot of problems.
-
-Luckily, I don't apply that patch (I instead merge the actual
-linux-next tree at that point) so this does not affect the linux-next
-included version of mmotm.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0upkYACgkQAVBC80lX
-0GxY4Af+Oq4/F8H+zsaZlffvr9kWxLnnkP6seTpuCtjL3Lrao+6kmrHwvRxWXRmb
-DqfVHihQ1LhaVW8VoP1GycoXaKBcQn0goSb15YVCUh/GPRhYnatbaUFZwk+ktGmq
-k6ln30+yEY2kKT0FzWwX8dovVmwJ1UCQY1D0wCVMItQB58CerSX4mnmZWinA6lfO
-NEX3APGd2tviTSbBhvy3O8GsCtLGmyX4WWT+TRWJqOZnHeuPLTsIDjDUCAhab/y6
-SY6uOswYK1uKKBRJu7ATwmaJP2DMV2rm6Ueq+XH9Mx/sw19RG2Nji8/EoDhQ1WRh
-Yc0S0HXamFnMIevXgk9IgqtFYoCrvA==
-=eNFs
------END PGP SIGNATURE-----
-
---Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m--
+Is this for the fs/internal.h include?  Can't we just include that
+using #include "../internal.h" ?
