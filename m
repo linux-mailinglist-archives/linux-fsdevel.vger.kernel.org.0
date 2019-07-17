@@ -2,99 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77D226B510
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 05:39:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 180E76B526
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 05:50:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbfGQDj6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jul 2019 23:39:58 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45485 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728029AbfGQDj6 (ORCPT
+        id S1728953AbfGQDuP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jul 2019 23:50:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37252 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728029AbfGQDuP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jul 2019 23:39:58 -0400
-Received: by mail-ot1-f67.google.com with SMTP id x21so23448237otq.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jul 2019 20:39:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fQmhXD8ET32ay8TVgJJ0C1kgjcC1NnaxI9Qm/EBOdig=;
-        b=bvRfaO1YBsDMsUlDUUMCtTlYZqLd5XT8jtz6vKXq315gt59VA4QSHyLm4vRek1Ici/
-         AY4ddzg9xmO0luI6xy4JXvesSLxuVHyFkYTqcKR9/OdhpdsIsMaiGGU3/7lVa/vy8aLg
-         kfYGzmdQR60nxqD7X3FbjO+NfJ64RCD51WgRxmylDsgk3CmzaWwX6nt1F4HPUDKfhx1k
-         IIoIjuv/UQhkcLBM+SIckRYRt/4pign8uhZEjVFUzxza9WKueKXGxyqbalrddQ5b9CsL
-         sd1Y5jJ/jwDL3722blXche5FL9YfuLLe0bWciMhd6k2CyFn1tExVqrp5PGNkLTbTwKyC
-         fCjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fQmhXD8ET32ay8TVgJJ0C1kgjcC1NnaxI9Qm/EBOdig=;
-        b=e2RkCEg1oosXZ3uboVysABohs+7HaIgClqPb7Q6qgLFcwWEcfhtJ7cETygMCHAg03R
-         tci6Bed153KjwSzwhxga2PpXORBRMpvLXkP80JP//hkVDf8liB7RsSrIpB6VfDJ7JW32
-         mVMRIxa8Nwfw6Ih7BcpORHWBeQQzmnJMTtd3FxHFoI7GIWC7El2ECVNycNTvmAQo0HUV
-         /ASEmvAk5lDFAxyHpYQ2+pbOWwZJTFT6by0rQVcDOrMqcp5aVq9vSYC3Fm+TFRrfwXGY
-         ODx2YfuRiUcqIvVLDOKK7BCf59s43JzE689rUoOiRdVY9SqFfpsTTEu2fw+4aBa4i1Gz
-         Qw/w==
-X-Gm-Message-State: APjAAAWUOMuh4Era4qmRcgVB3JJFiEBpkteH6ii9hzG0jun2EREOO8N5
-        uFYN0QhDjbsvR4Ze5rY4GZNVLJJ67LkQZ9+oLBX/+Q==
-X-Google-Smtp-Source: APXvYqzfeOGf5vw9dfMRZyRJyKUlcfLJm3DVjzR9MkVP/uGpxjLNl3ZXQKG6aUWp8HK3mCMsfaZNDcsAPgzlEmORx3s=
-X-Received: by 2002:a9d:470d:: with SMTP id a13mr27103492otf.126.1563334797431;
- Tue, 16 Jul 2019 20:39:57 -0700 (PDT)
+        Tue, 16 Jul 2019 23:50:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LRyB1JKPo1g9viozQbn+8G4YzmKA4nqslPwu0uoBl1E=; b=swMFO0oK0G+l+YUUlFZXG0x6y
+        cKnODAhceBjMyRkEWsnSyoMTW8b6HsRXZO2blKLfhvtoX7Uc6r+tgXFU+wbZYn1WHxjYymZ5HOwDM
+        0qMq+aj5fOUmxHMdimh3JCFhu0oZtLwoVEAuTfFchx1BnpL5sPfwtu0lbHDXche91qHIGWvFYtoCd
+        lpUZj0XRztKsPIB6+QwXKBvVZcAj0t1iJFOIbkk0rka0l2HRnTzKD7loQlUQxv28OgdK28u8txI7h
+        lkDAyFnpqJTyXRZ7rXJ555r2TKmdVnOK2Vje34oiDBTh03FKATcyXBhMWmJaWX4oAUWVgl/5ezm1L
+        5Paiqsa9g==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hnaxK-0003P0-QH; Wed, 17 Jul 2019 03:50:14 +0000
+Subject: Re: mmotm 2019-07-16-17-14 uploaded
+To:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+References: <20190717001534.83sL1%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
+Date:   Tue, 16 Jul 2019 20:50:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190704165450.GH31037@quack2.suse.cz> <20190704191407.GM1729@bombadil.infradead.org>
- <CAPcyv4gUiDw8Ma9mvbW5BamQtGZxWVuvBW7UrOLa2uijrXUWaw@mail.gmail.com>
- <20190705191004.GC32320@bombadil.infradead.org> <CAPcyv4jVARa38Qc4NjQ04wJ4ZKJ6On9BbJgoL95wQqU-p-Xp_w@mail.gmail.com>
- <20190710190204.GB14701@quack2.suse.cz> <20190710201539.GN32320@bombadil.infradead.org>
- <20190710202647.GA7269@quack2.suse.cz> <20190711141350.GS32320@bombadil.infradead.org>
- <20190711152550.GT32320@bombadil.infradead.org> <20190711154111.GA29284@quack2.suse.cz>
-In-Reply-To: <20190711154111.GA29284@quack2.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 16 Jul 2019 20:39:46 -0700
-Message-ID: <CAPcyv4hA+44EHpGN9F5eQD5Y_AuyPTKmovNWvccAFGhF_O2JMg@mail.gmail.com>
-Subject: Re: [PATCH] dax: Fix missed PMD wakeups
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Boaz Harrosh <openosd@gmail.com>,
-        stable <stable@vger.kernel.org>,
-        Robert Barror <robert.barror@intel.com>,
-        Seema Pandit <seema.pandit@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190717001534.83sL1%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 2:14 AM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 11-07-19 08:25:50, Matthew Wilcox wrote:
-> > On Thu, Jul 11, 2019 at 07:13:50AM -0700, Matthew Wilcox wrote:
-> > > However, the XA_RETRY_ENTRY might be a good choice.  It doesn't normally
-> > > appear in an XArray (it may appear if you're looking at a deleted node,
-> > > but since we're holding the lock, we can't see deleted nodes).
-> >
-> ...
->
-> > @@ -254,7 +267,7 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
-> >  static void put_unlocked_entry(struct xa_state *xas, void *entry)
-> >  {
-> >       /* If we were the only waiter woken, wake the next one */
-> > -     if (entry)
-> > +     if (entry && dax_is_conflict(entry))
->
-> This should be !dax_is_conflict(entry)...
->
-> >               dax_wake_entry(xas, entry, false);
-> >  }
->
-> Otherwise the patch looks good to me so feel free to add:
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
+On 7/16/19 5:15 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2019-07-16-17-14 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
 
-Looks good, and passes the test case. Now pushed out to
-libnvdimm-for-next for v5.3 inclusion:
+drivers/gpu/drm/amd/amdgpu/Kconfig contains this (from linux-next.patch):
 
-https://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git/commit/?h=libnvdimm-for-next&id=23c84eb7837514e16d79ed6d849b13745e0ce688
+--- a/drivers/gpu/drm/amd/amdgpu/Kconfig~linux-next
++++ a/drivers/gpu/drm/amd/amdgpu/Kconfig
+@@ -27,7 +27,12 @@ config DRM_AMDGPU_CIK
+ config DRM_AMDGPU_USERPTR
+ 	bool "Always enable userptr write support"
+ 	depends on DRM_AMDGPU
++<<<<<<< HEAD
+ 	depends on HMM_MIRROR
++=======
++	depends on ARCH_HAS_HMM
++	select HMM_MIRROR
++>>>>>>> linux-next/akpm-base
+ 	help
+ 	  This option selects CONFIG_HMM and CONFIG_HMM_MIRROR if it
+ 	  isn't already selected to enabled full userptr support.
+
+which causes a lot of problems.
+
+
+-- 
+~Randy
