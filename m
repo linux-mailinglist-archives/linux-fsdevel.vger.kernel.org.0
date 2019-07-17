@@ -2,640 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 449026B9CC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 12:11:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D253E6BC80
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 14:40:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbfGQKLY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jul 2019 06:11:24 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53108 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725893AbfGQKLX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jul 2019 06:11:23 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5A2F473B75445A6791A7;
-        Wed, 17 Jul 2019 18:11:19 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 17 Jul
- 2019 18:11:17 +0800
-Subject: Re: [PATCH v2 2/2] f2fs: Support case-insensitive file name lookups
-To:     Daniel Rosenberg <drosen@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <kernel-team@android.com>
-References: <20190717031408.114104-1-drosen@google.com>
- <20190717031408.114104-3-drosen@google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <cbaf59d4-0bd3-6980-4750-fbab14941bdb@huawei.com>
-Date:   Wed, 17 Jul 2019 18:11:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726898AbfGQMkF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jul 2019 08:40:05 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46208 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbfGQMkE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jul 2019 08:40:04 -0400
+Received: by mail-qt1-f194.google.com with SMTP id h21so23069400qtn.13;
+        Wed, 17 Jul 2019 05:40:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Q+81HBhn1TUwxu9S0B9qtFUuISibjz0/U9PrqDWTTnk=;
+        b=XcmxneGOy+2RXDL2AYuXAVZJAiyeHolR4ac1SzJQlQzwrwi+HqWSYoPkVqq9Vqmqg1
+         FqUghmpMcUzFuf3FSS4kllx0urGVacAPOsHEEssg1IcCrdVZRwWcHQ0thUX6C1t4cJoL
+         vOVr8CY1w5fJWuX4PjxWH/3qfPYVDkhrsa+FNQHmIYdGekpn15GeZDeuiy9HipKh7sJh
+         AHKocRO3yKYaTZLEjMvmeWDl1D3ocNZt0VWgNuaxapMwQPRA6H6V64dvA6mG81cJSpNL
+         aeJplonp1P4C/Vlc9tUcpxA5HCVp2ra7Vj9yw/aq7skHSfLh4Z2PuuHUmlIKQ9cKj5Od
+         nTqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q+81HBhn1TUwxu9S0B9qtFUuISibjz0/U9PrqDWTTnk=;
+        b=nePew7iNL2rzy9UMLP4LX5YR99RKvQ9nCGtbuiO8mgZ36CimFI5C7KqlQ57RTC1Pj0
+         SZMppOl8Ec+Tfya1NRLXFK6xfXxS3BXj6TjvST75k6w2l9rEZS51iYX2tJFo3vagU2Qv
+         zIXJtb8ws59Kr0x0V3EloJlI2qy0VL2zx+YGBhd7nJiePxo5tCNn1/oy9HUCwOik1Y6h
+         brKsVJ+EtB9WbX61PAtOkNc5Q/defhjWNfw4Yck4YktI+DxbrbpmvBZ0eozstZjhlJPh
+         phmrLWKZKmVWTN23CWb0Bbkdu4xI9P/ItBYwpyfdRvpVDei18YKlTTEsYXsqvwt2olrv
+         t/tQ==
+X-Gm-Message-State: APjAAAV2Atavfk9+NHMNpEg3rW+OaTvh6TiHcaP7dkQXr4hokv7RxVPr
+        IFXGeph5SSEH/VvinsFYTAk=
+X-Google-Smtp-Source: APXvYqzbfxutvFrMV7t1nPl0gN0Fy5aGVu/YO7Xv3MDir0s1nCKm8BxCu8WphxvR5dCLt5lXuy+aag==
+X-Received: by 2002:aed:33e6:: with SMTP id v93mr27856811qtd.157.1563367202971;
+        Wed, 17 Jul 2019 05:40:02 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.11])
+        by smtp.gmail.com with ESMTPSA id y67sm11220164qkd.40.2019.07.17.05.40.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 17 Jul 2019 05:40:02 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id E255440340; Wed, 17 Jul 2019 09:39:59 -0300 (-03)
+Date:   Wed, 17 Jul 2019 09:39:59 -0300
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, rth@twiddle.net,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org,
+        tony.luck@intel.com, fenghua.yu@intel.com, geert@linux-m68k.org,
+        monstr@monstr.eu, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, James.Bottomley@hansenpartnership.com,
+        deller@gmx.de, benh@kernel.crashing.org, paulus@samba.org,
+        mpe@ellerman.id.au, heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, luto@kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, peterz@infradead.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, dhowells@redhat.com, firoz.khan@linaro.org,
+        stefan@agner.ch, schwidefsky@de.ibm.com, axboe@kernel.dk,
+        christian@brauner.io, hare@suse.com, deepa.kernel@gmail.com,
+        tycho@tycho.ws, kim.phillips@arm.com, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] tools: Add fchmodat4
+Message-ID: <20190717123959.GB24063@kernel.org>
+References: <20190717012719.5524-1-palmer@sifive.com>
+ <20190717012719.5524-5-palmer@sifive.com>
 MIME-Version: 1.0
-In-Reply-To: <20190717031408.114104-3-drosen@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190717012719.5524-5-palmer@sifive.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Daniel,
+Em Tue, Jul 16, 2019 at 06:27:19PM -0700, Palmer Dabbelt escreveu:
+> I'm not sure why it's necessary to add this explicitly to tools/ as well
+> as arch/, but there were a few instances of fspick in here so I blindly
+> added fchmodat4 in the same fashion.
 
-On 2019/7/17 11:14, Daniel Rosenberg wrote:
-> Modeled after commit b886ee3e778e ("ext4: Support case-insensitive file
-> name lookups")
-> 
-> """
-> This patch implements the actual support for case-insensitive file name
-> lookups in f2fs, based on the feature bit and the encoding stored in the
-> superblock.
-> 
-> A filesystem that has the casefold feature set is able to configure
-> directories with the +F (F2FS_CASEFOLD_FL) attribute, enabling lookups
-> to succeed in that directory in a case-insensitive fashion, i.e: match
-> a directory entry even if the name used by userspace is not a byte per
-> byte match with the disk name, but is an equivalent case-insensitive
-> version of the Unicode string.  This operation is called a
-> case-insensitive file name lookup.
-> 
-> The feature is configured as an inode attribute applied to directories
-> and inherited by its children.  This attribute can only be enabled on
-> empty directories for filesystems that support the encoding feature,
-> thus preventing collision of file names that only differ by case.
-> 
-> * dcache handling:
-> 
-> For a +F directory, F2Fs only stores the first equivalent name dentry
-> used in the dcache. This is done to prevent unintentional duplication of
-> dentries in the dcache, while also allowing the VFS code to quickly find
-> the right entry in the cache despite which equivalent string was used in
-> a previous lookup, without having to resort to ->lookup().
-> 
-> d_hash() of casefolded directories is implemented as the hash of the
-> casefolded string, such that we always have a well-known bucket for all
-> the equivalencies of the same string. d_compare() uses the
-> utf8_strncasecmp() infrastructure, which handles the comparison of
-> equivalent, same case, names as well.
-> 
-> For now, negative lookups are not inserted in the dcache, since they
-> would need to be invalidated anyway, because we can't trust missing file
-> dentries.  This is bad for performance but requires some leveraging of
-> the vfs layer to fix.  We can live without that for now, and so does
-> everyone else.
-> 
-> * on-disk data:
-> 
-> Despite using a specific version of the name as the internal
-> representation within the dcache, the name stored and fetched from the
-> disk is a byte-per-byte match with what the user requested, making this
-> implementation 'name-preserving'. i.e. no actual information is lost
-> when writing to storage.
-> 
-> DX is supported by modifying the hashes used in +F directories to make
-> them case/encoding-aware.  The new disk hashes are calculated as the
-> hash of the full casefolded string, instead of the string directly.
-> This allows us to efficiently search for file names in the htree without
-> requiring the user to provide an exact name.
-> 
-> * Dealing with invalid sequences:
-> 
-> By default, when a invalid UTF-8 sequence is identified, ext4 will treat
-> it as an opaque byte sequence, ignoring the encoding and reverting to
-> the old behavior for that unique file.  This means that case-insensitive
-> file name lookup will not work only for that file.  An optional bit can
-> be set in the superblock telling the filesystem code and userspace tools
-> to enforce the encoding.  When that optional bit is set, any attempt to
-> create a file name using an invalid UTF-8 sequence will fail and return
-> an error to userspace.
-> 
-> * Normalization algorithm:
-> 
-> The UTF-8 algorithms used to compare strings in f2fs is implemented
-> in fs/unicode, and is based on a previous version developed by
-> SGI.  It implements the Canonical decomposition (NFD) algorithm
-> described by the Unicode specification 12.1, or higher, combined with
-> the elimination of ignorable code points (NFDi) and full
-> case-folding (CF) as documented in fs/unicode/utf8_norm.c.
-> 
-> NFD seems to be the best normalization method for F2FS because:
-> 
->   - It has a lower cost than NFC/NFKC (which requires
->     decomposing to NFD as an intermediary step)
->   - It doesn't eliminate important semantic meaning like
->     compatibility decompositions.
-> 
-> Although:
-> 
-> - This implementation is not completely linguistic accurate, because
-> different languages have conflicting rules, which would require the
-> specialization of the filesystem to a given locale, which brings all
-> sorts of problems for removable media and for users who use more than
-> one language.
-> """
-> 
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+The copies in tools/ for these specific files are used to generate a
+syscall table used by 'perf trace', and we don't/can't access files
+outside of tools/ to build tools/perf/, so we grab a copy and have
+checks in place to warn perf developers when those copies get out of
+sync.
+
+Its not required that kernel developers update anything in tools, you're
+welcomed to do so if you wish tho.
+
+Thanks,
+
+- Arnaldo
+ 
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 > ---
->  fs/f2fs/dir.c    | 133 ++++++++++++++++++++++++++++++++++++++++++-----
->  fs/f2fs/f2fs.h   |  18 +++++--
->  fs/f2fs/file.c   |  10 +++-
->  fs/f2fs/hash.c   |  34 +++++++++++-
->  fs/f2fs/inline.c |   6 +--
->  fs/f2fs/inode.c  |   4 +-
->  fs/f2fs/namei.c  |  21 ++++++++
->  fs/f2fs/super.c  |   5 ++
->  8 files changed, 208 insertions(+), 23 deletions(-)
+>  tools/include/uapi/asm-generic/unistd.h           | 4 +++-
+>  tools/perf/arch/x86/entry/syscalls/syscall_64.tbl | 1 +
+>  2 files changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index 85a1528f319f2..4d5eea2db1657 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -8,6 +8,7 @@
->  #include <linux/fs.h>
->  #include <linux/f2fs_fs.h>
->  #include <linux/sched/signal.h>
-> +#include <linux/unicode.h>
->  #include "f2fs.h"
->  #include "node.h"
->  #include "acl.h"
-> @@ -81,7 +82,8 @@ static unsigned long dir_block_index(unsigned int level,
->  	return bidx;
->  }
+> diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+> index a87904daf103..36232ea94956 100644
+> --- a/tools/include/uapi/asm-generic/unistd.h
+> +++ b/tools/include/uapi/asm-generic/unistd.h
+> @@ -844,9 +844,11 @@ __SYSCALL(__NR_fsconfig, sys_fsconfig)
+>  __SYSCALL(__NR_fsmount, sys_fsmount)
+>  #define __NR_fspick 433
+>  __SYSCALL(__NR_fspick, sys_fspick)
+> +#define __NR_fchmodat4 434
+> +__SYSCALL(__NR_fchmodat4, sys_fchmodat4)
 >  
-> -static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
-> +static struct f2fs_dir_entry *find_in_block(struct inode *dir,
-> +				struct page *dentry_page,
->  				struct fscrypt_name *fname,
->  				f2fs_hash_t namehash,
->  				int *max_slots,
-> @@ -94,20 +96,56 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
->  	dentry_blk = (struct f2fs_dentry_block *)page_address(dentry_page);
->  
->  	make_dentry_ptr_block(NULL, &d, dentry_blk);
-
-We can pass dir to make_dentry_ptr_block(dir, ...), then in
-f2fs_find_target_dentry() we use d->inode, so that it can avoid one redundant
-parameter.
-
-> -	de = f2fs_find_target_dentry(fname, namehash, max_slots, &d);
-> +	de = f2fs_find_target_dentry(dir, fname, namehash, max_slots, &d);
->  	if (de)
->  		*res_page = dentry_page;
->  
->  	return de;
->  }
->  
-> -struct f2fs_dir_entry *f2fs_find_target_dentry(struct fscrypt_name *fname,
-> -			f2fs_hash_t namehash, int *max_slots,
-> -			struct f2fs_dentry_ptr *d)
-> +#ifdef CONFIG_UNICODE
-> +/*
-> + * Test whether a case-insensitive directory entry matches the filename
-> + * being searched for.
-> + *
-> + * Returns: 0 if the directory entry matches, more than 0 if it
-> + * doesn't match or less than zero on error.
-> + */
-> +int f2fs_ci_compare(const struct inode *parent, const struct qstr *name,
-> +		    const struct qstr *entry)
-> +{
-> +	const struct f2fs_sb_info *sbi = F2FS_SB(parent->i_sb);
-> +	const struct unicode_map *um = sbi->s_encoding;
-> +	int ret;
-> +
-> +	ret = utf8_strncasecmp(um, name, entry);
-> +	if (ret < 0) {
-> +		/* Handle invalid character sequence as either an error
-> +		 * or as an opaque byte sequence.
-> +		 */
-> +		if (f2fs_has_strict_mode(sbi))
-> +			return -EINVAL;
-> +
-> +		if (name->len != entry->len)
-> +			return 1;
-> +
-> +		return !!memcmp(name->name, entry->name, name->len);
-> +	}
-> +
-> +	return ret;
-> +}
-> +#endif
-> +
-> +struct f2fs_dir_entry *f2fs_find_target_dentry(const struct inode *parent,
-> +			struct fscrypt_name *fname, f2fs_hash_t namehash,
-> +			int *max_slots, struct f2fs_dentry_ptr *d)
->  {
->  	struct f2fs_dir_entry *de;
->  	unsigned long bit_pos = 0;
->  	int max_len = 0;
-> +#ifdef CONFIG_UNICODE
-> +	struct qstr entry;
-> +#endif
->  
->  	if (max_slots)
->  		*max_slots = 0;
-> @@ -119,16 +157,29 @@ struct f2fs_dir_entry *f2fs_find_target_dentry(struct fscrypt_name *fname,
->  		}
->  
->  		de = &d->dentry[bit_pos];
-> +#ifdef CONFIG_UNICODE
-> +		entry.name = d->filename[bit_pos];
-> +		entry.len = de->name_len;
-> +#endif
->  
->  		if (unlikely(!de->name_len)) {
->  			bit_pos++;
->  			continue;
->  		}
-> +		if (de->hash_code == namehash) {
-> +#ifdef CONFIG_UNICODE
-> +			if (F2FS_SB(parent->i_sb)->s_encoding &&
-> +					IS_CASEFOLDED(parent) &&
-> +					!f2fs_ci_compare(parent,
-> +						fname->usr_fname, &entry))
-> +				goto found;
->  
-> -		if (de->hash_code == namehash &&
-> -		    fscrypt_match_name(fname, d->filename[bit_pos],
-> -				       le16_to_cpu(de->name_len)))
-> -			goto found;
-> +#endif
-> +			if (de->hash_code == namehash &&
-
-It's redundant here.
-
-> +				fscrypt_match_name(fname, d->filename[bit_pos],
-> +						le16_to_cpu(de->name_len)))
-> +				goto found;
-> +		}
->  
->  		if (max_slots && max_len > *max_slots)
->  			*max_slots = max_len;
-> @@ -157,7 +208,7 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
->  	struct f2fs_dir_entry *de = NULL;
->  	bool room = false;
->  	int max_slots;
-> -	f2fs_hash_t namehash = f2fs_dentry_hash(&name, fname);
-> +	f2fs_hash_t namehash = f2fs_dentry_hash(dir, &name, fname);
->  
->  	nbucket = dir_buckets(level, F2FS_I(dir)->i_dir_level);
->  	nblock = bucket_blocks(level);
-> @@ -179,8 +230,8 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
->  			}
->  		}
->  
-> -		de = find_in_block(dentry_page, fname, namehash, &max_slots,
-> -								res_page);
-> +		de = find_in_block(dir, dentry_page, fname, namehash,
-> +							&max_slots, res_page);
->  		if (de)
->  			break;
->  
-> @@ -246,10 +297,18 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
->  struct f2fs_dir_entry *f2fs_find_entry(struct inode *dir,
->  			const struct qstr *child, struct page **res_page)
->  {
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
->  	struct f2fs_dir_entry *de = NULL;
->  	struct fscrypt_name fname;
->  	int err;
->  
-> +#ifdef CONFIG_UNICODE
-> +	if (f2fs_has_strict_mode(sbi) && IS_CASEFOLDED(dir) &&
-> +			utf8_validate(sbi->s_encoding, child)) {
-> +		*res_page = ERR_PTR(-EINVAL);
-> +		return NULL;
-> +	}
-> +#endif
->  	err = fscrypt_setup_filename(dir, child, 1, &fname);
->  	if (err) {
->  		if (err == -ENOENT)
-> @@ -504,7 +563,7 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
->  
->  	level = 0;
->  	slots = GET_DENTRY_SLOTS(new_name->len);
-> -	dentry_hash = f2fs_dentry_hash(new_name, NULL);
-> +	dentry_hash = f2fs_dentry_hash(dir, new_name, NULL);
->  
->  	current_depth = F2FS_I(dir)->i_current_depth;
->  	if (F2FS_I(dir)->chash == dentry_hash) {
-> @@ -943,3 +1002,51 @@ const struct file_operations f2fs_dir_operations = {
->  	.compat_ioctl   = f2fs_compat_ioctl,
->  #endif
->  };
-> +
-> +#ifdef CONFIG_UNICODE
-> +static int f2fs_d_compare(const struct dentry *dentry, unsigned int len,
-> +			  const char *str, const struct qstr *name)
-> +{
-> +	struct qstr qstr = {.name = str, .len = len };
-> +
-> +	if (!IS_CASEFOLDED(dentry->d_parent->d_inode)) {
-> +		if (len != name->len)
-> +			return -1;
-> +		return memcmp(str, name, len);
-> +	}
-> +
-> +	return f2fs_ci_compare(dentry->d_parent->d_inode, name, &qstr);
-> +}
-> +
-> +static int f2fs_d_hash(const struct dentry *dentry, struct qstr *str)
-> +{
-> +	const struct f2fs_sb_info *sbi = F2FS_SB(dentry->d_sb);
-> +	const struct unicode_map *um = sbi->s_encoding;
-> +	unsigned char *norm;
-> +	int len, ret = 0;
-> +
-> +	if (!IS_CASEFOLDED(dentry->d_inode))
-> +		return 0;
-> +
-> +	norm = kmalloc(PATH_MAX, GFP_ATOMIC);
-
-f2fs_kmalloc()
-
-> +	if (!norm)
-> +		return -ENOMEM;
-> +
-> +	len = utf8_casefold(um, str, norm, PATH_MAX);
-> +	if (len < 0) {
-> +		if (f2fs_has_strict_mode(sbi))
-> +			ret = -EINVAL;
-> +		goto out;
-> +	}
-> +	str->hash = full_name_hash(dentry, norm, len);
-> +out:
-> +	kfree(norm);
-
-kvfree()
-
-> +	return ret;
-> +}
-> +
-> +const struct dentry_operations f2fs_dentry_ops = {
-> +	.d_hash = f2fs_d_hash,
-> +	.d_compare = f2fs_d_compare,
-> +};
-> +#endif
-> +
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index c6c7904572d0d..500906108937c 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2364,10 +2364,12 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
->  #define F2FS_INDEX_FL			0x00001000 /* hash-indexed directory */
->  #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
->  #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
-> +#define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
->  
->  /* Flags that should be inherited by new inodes from their parent. */
->  #define F2FS_FL_INHERITED (F2FS_SYNC_FL | F2FS_NODUMP_FL | F2FS_NOATIME_FL | \
-> -			   F2FS_DIRSYNC_FL | F2FS_PROJINHERIT_FL)
-> +			   F2FS_DIRSYNC_FL | F2FS_PROJINHERIT_FL | \
-> +			   F2FS_CASEFOLD_FL)
-
-We need to add one more entry f2fs_fsflags_map[] to map F2FS_CASEFOLD_FL to
-FS_CASEFOLD_FL correctly and adapt F2FS_GETTABLE_FS_FL/F2FS_SETTABLE_FS_FL as well.
-
->  
->  /* Flags that are appropriate for regular files (all but dir-specific ones). */
->  #define F2FS_REG_FLMASK		(~(F2FS_DIRSYNC_FL | F2FS_PROJINHERIT_FL))
-> @@ -2930,11 +2932,16 @@ int f2fs_update_extension_list(struct f2fs_sb_info *sbi, const char *name,
->  							bool hot, bool set);
->  struct dentry *f2fs_get_parent(struct dentry *child);
->  
-> +extern int f2fs_ci_compare(const struct inode *parent,
-> +			   const struct qstr *name,
-> +			   const struct qstr *entry);
-> +
->  /*
->   * dir.c
->   */
->  unsigned char f2fs_get_de_type(struct f2fs_dir_entry *de);
-> -struct f2fs_dir_entry *f2fs_find_target_dentry(struct fscrypt_name *fname,
-> +struct f2fs_dir_entry *f2fs_find_target_dentry(const struct inode *parent,
-> +			struct fscrypt_name *fname,
->  			f2fs_hash_t namehash, int *max_slots,
->  			struct f2fs_dentry_ptr *d);
->  int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
-> @@ -2993,8 +3000,8 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi);
->  /*
->   * hash.c
->   */
-> -f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info,
-> -				struct fscrypt_name *fname);
-> +f2fs_hash_t f2fs_dentry_hash(const struct inode *dir,
-> +		const struct qstr *name_info, struct fscrypt_name *fname);
+>  #undef __NR_syscalls
+> -#define __NR_syscalls 434
+> +#define __NR_syscalls 435
 >  
 >  /*
->   * node.c
-> @@ -3437,6 +3444,9 @@ static inline void f2fs_destroy_root_stats(void) { }
->  #endif
+>   * 32 bit systems traditionally used different
+> diff --git a/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl b/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
+> index b4e6f9e6204a..b92d5b195e66 100644
+> --- a/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -355,6 +355,7 @@
+>  431	common	fsconfig		__x64_sys_fsconfig
+>  432	common	fsmount			__x64_sys_fsmount
+>  433	common	fspick			__x64_sys_fspick
+> +434	common	fchmodat4		__x64_sys_fchmodat4
 >  
->  extern const struct file_operations f2fs_dir_operations;
-> +#ifdef CONFIG_UNICODE
-> +extern const struct dentry_operations f2fs_dentry_ops;
-> +#endif
->  extern const struct file_operations f2fs_file_operations;
->  extern const struct inode_operations f2fs_file_inode_operations;
->  extern const struct address_space_operations f2fs_dblock_aops;
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index f8d46df8fa9ee..9bdef3aa38eab 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1660,7 +1660,16 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
->  		return -EPERM;
->  
->  	oldflags = fi->i_flags;
-> +	if ((iflags ^ oldflags) & F2FS_CASEFOLD_FL) {
-> +		if (!f2fs_sb_has_casefold(F2FS_I_SB(inode)))
-> +			return -EOPNOTSUPP;
-> +
-> +		if (!S_ISDIR(inode->i_mode))
-> +			return -ENOTDIR;
->  
-> +		if (!f2fs_empty_dir(inode))
-> +			return -ENOTEMPTY;
-> +	}
->  	if ((iflags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
->  		if (!capable(CAP_LINUX_IMMUTABLE))
->  			return -EPERM;
-> @@ -1671,7 +1680,6 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
->  		set_inode_flag(inode, FI_PROJ_INHERIT);
->  	else
->  		clear_inode_flag(inode, FI_PROJ_INHERIT);
-> -
+>  #
+>  # x32-specific system call numbers start at 512 to avoid cache impact
+> -- 
+> 2.21.0
 
-Unneeded removal...
+-- 
 
->  	inode->i_ctime = current_time(inode);
->  	f2fs_set_inode_flags(inode);
->  	f2fs_mark_inode_dirty_sync(inode, true);
-> diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c
-> index cc82f142f811f..f5b8e02bde049 100644
-> --- a/fs/f2fs/hash.c
-> +++ b/fs/f2fs/hash.c
-> @@ -14,6 +14,7 @@
->  #include <linux/f2fs_fs.h>
->  #include <linux/cryptohash.h>
->  #include <linux/pagemap.h>
-> +#include <linux/unicode.h>
->  
->  #include "f2fs.h"
->  
-> @@ -67,7 +68,7 @@ static void str2hashbuf(const unsigned char *msg, size_t len,
->  		*buf++ = pad;
->  }
->  
-> -f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info,
-> +static f2fs_hash_t __f2fs_dentry_hash(const struct qstr *name_info,
->  				struct fscrypt_name *fname)
->  {
->  	__u32 hash;
-> @@ -103,3 +104,34 @@ f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info,
->  	f2fs_hash = cpu_to_le32(hash & ~F2FS_HASH_COL_BIT);
->  	return f2fs_hash;
->  }
-> +
-> +f2fs_hash_t f2fs_dentry_hash(const struct inode *dir,
-> +		const struct qstr *name_info, struct fscrypt_name *fname)
-> +{
-> +#ifdef CONFIG_UNICODE
-> +	const struct unicode_map *um = F2FS_SB(dir->i_sb)->s_encoding;
-> +	int r, dlen;
-> +	unsigned char *buff;
-> +	struct qstr *folded;
-> +
-> +	if (name_info->len && IS_CASEFOLDED(dir)) {
-> +		buff = kzalloc(sizeof(char) * PATH_MAX, GFP_KERNEL);
-
-f2fs_kzalloc()
-
-> +		if (!buff)
-> +			return -ENOMEM;
-> +
-> +		dlen = utf8_casefold(um, name_info, buff, PATH_MAX);
-> +		if (dlen < 0) {
-> +			kfree(buff);
-> +			goto opaque_seq;
-> +		}
-> +		folded->name = buff;
-> +		folded->len = dlen;
-> +		r = __f2fs_dentry_hash(folded, fname);
-> +
-> +		kfree(buff);
-
-kvfree()
-
-> +		return r;
-> +	}
-> +opaque_seq:
-> +#endif
-> +	return __f2fs_dentry_hash(name_info, fname);
-> +}
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index 3613efca8c00c..7cff67af4fadb 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -320,12 +320,12 @@ struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
->  		return NULL;
->  	}
->  
-> -	namehash = f2fs_dentry_hash(&name, fname);
-> +	namehash = f2fs_dentry_hash(dir, &name, fname);
->  
->  	inline_dentry = inline_data_addr(dir, ipage);
->  
->  	make_dentry_ptr_inline(dir, &d, inline_dentry);
-> -	de = f2fs_find_target_dentry(fname, namehash, NULL, &d);
-> +	de = f2fs_find_target_dentry(dir, fname, namehash, NULL, &d);
-
-We don't need to pass @dir, try using d->inode in f2fs_find_target_dentry()
-
->  	unlock_page(ipage);
->  	if (de)
->  		*res_page = ipage;
-> @@ -580,7 +580,7 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
->  
->  	f2fs_wait_on_page_writeback(ipage, NODE, true, true);
->  
-> -	name_hash = f2fs_dentry_hash(new_name, NULL);
-> +	name_hash = f2fs_dentry_hash(dir, new_name, NULL);
->  	f2fs_update_dentry(ino, mode, &d, new_name, name_hash, bit_pos);
->  
->  	set_page_dirty(ipage);
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index a33d7a849b2df..9a1f0d6616577 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -46,9 +46,11 @@ void f2fs_set_inode_flags(struct inode *inode)
->  		new_fl |= S_DIRSYNC;
->  	if (file_is_encrypt(inode))
->  		new_fl |= S_ENCRYPTED;
-> +	if (flags & F2FS_CASEFOLD_FL)
-> +		new_fl |= S_CASEFOLD;
->  	inode_set_flags(inode, new_fl,
->  			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|
-> -			S_ENCRYPTED);
-> +			S_ENCRYPTED|S_CASEFOLD);
->  }
->  
->  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index c5b99042e6f2b..727de2f8620f2 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -489,6 +489,17 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
->  		goto out_iput;
->  	}
->  out_splice:
-> +#ifdef CONFIG_UNICODE
-> +	if (!inode && IS_CASEFOLDED(dir)) {
-> +		/* Eventually we want to call d_add_ci(dentry, NULL)
-> +		 * for negative dentries in the encoding case as
-> +		 * well.  For now, prevent the negative dentry
-> +		 * from being cached.
-> +		 */
-> +		trace_f2fs_lookup_end(dir, dentry, ino, err);
-> +		return NULL;
-> +	}
-> +#endif
->  	new = d_splice_alias(inode, dentry);
->  	err = PTR_ERR_OR_ZERO(new);
->  	trace_f2fs_lookup_end(dir, dentry, ino, err);
-> @@ -537,6 +548,16 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
->  		goto fail;
->  	}
->  	f2fs_delete_entry(de, page, dir, inode);
-> +#ifdef CONFIG_UNICODE
-> +	/* VFS negative dentries are incompatible with Encoding and
-> +	 * Case-insensitiveness. Eventually we'll want avoid
-> +	 * invalidating the dentries here, alongside with returning the
-> +	 * negative dentries at f2fs_lookup(), when it is  better
-> +	 * supported by the VFS for the CI case.
-> +	 */
-> +	if (IS_CASEFOLDED(dir))
-> +		d_invalidate(dentry);
-> +#endif
->  	f2fs_unlock_op(sbi);
->  
->  	if (IS_DIRSYNC(dir))
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 7927071ef5e95..edc8482a43604 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -3397,6 +3397,11 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  		goto free_node_inode;
->  	}
->  
-> +#ifdef CONFIG_UNICODE
-> +	if (sbi->s_encoding)
-> +		sb->s_d_op = &f2fs_dentry_ops;
-> +#endif
-> +
->  	sb->s_root = d_make_root(root); /* allocate root dentry */
->  	if (!sb->s_root) {
->  		err = -ENOMEM;
-> 
+- Arnaldo
