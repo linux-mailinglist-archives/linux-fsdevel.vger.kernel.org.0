@@ -2,75 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EB9A6BC86
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 14:44:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9EDD6BCBF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 15:08:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbfGQMoc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jul 2019 08:44:32 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33580 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbfGQMoc (ORCPT
+        id S1726452AbfGQNIS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jul 2019 09:08:18 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39430 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbfGQNIS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jul 2019 08:44:32 -0400
-Received: by mail-ot1-f65.google.com with SMTP id q20so24824370otl.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jul 2019 05:44:31 -0700 (PDT)
+        Wed, 17 Jul 2019 09:08:18 -0400
+Received: by mail-wm1-f67.google.com with SMTP id u25so11738836wmc.4;
+        Wed, 17 Jul 2019 06:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=h2yLsvzismF8aSznQ40gS7iVeJd2FnjlYb1X34YBrA8=;
+        b=hTIrJmKdb4eBexEx/Rfsp2Pg7LnciIrsWX1mLz99xre2zIlgoiZaRCMFERkDAw8DDI
+         5SSzeqshErtNi7bSc3tgUmHN3HPsgCWWlvGsy5P/jXXVo0NoNhymFSNuVUOA4bwJMwQq
+         MtK+PW3Kf6jxpRM6/m4vtBsrRPTyXrgx/CfumOVFW75rvSeMeoGDLotXbLZ4dZj9XvW8
+         zdFqWe7FC1i2CMy81xtbA8AfUzcU8z4KSd/Vr3Dpsm935/ni2Spayq5xnOomWsic77dq
+         G/PfZx5IhgH+2aj5ZUt9rXZNbq+d9eLIiBIHkaNMX3oLc2RTPfkQ84cO11KPR8XNTi+r
+         Hnlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=33PekZZX1s4b2ZllhlMgDgDyRoxO59g4JGmElbfr7Vw=;
-        b=HwKBiNrbnGITLUc+ee7u3PxhekbrS6BcCHaI3D3hEoYxukhNQl+vRi20DR+8K9Y3kj
-         jU177ep+yKqGxRAUKLE7Yg9tKM4aRDQfxzl2XXy8zrctZGdWJcSctGtiafAIcdk7vim0
-         0v4lRWBcMbyVPpPTKuzBMbavXV4gkCYwwVXU1AD3gxNbST4qCo0swN9cFw60nm9/xVlp
-         g0ascT2GhxS9ZMGeQLtW2G0oRIKcP/P/v1MDRKvAAvNDKskMIqpAvEe4NcEMHWuZcmzG
-         hmFYmL5uBWHyqOgzsqQ6wxpQuBf6/4C6+S0SPldPqDy92JuL44rP/VRNzCoxzIlfglAg
-         gGbA==
-X-Gm-Message-State: APjAAAWRDJdUDLCOgb//y7upEQxgrdu6/g5xs4lgPMX5fH+otZPb0toW
-        JiCGSnBoN+3/YATYqVDmLdGxDWA9hOl6xZQchLmwXA==
-X-Google-Smtp-Source: APXvYqxTboKktRDuhxOsaQEmorwPS3R3wx8c0OouH7uGXFFPrpKfocRMCEVwVcgh6Xhf9YhtXgbqZlv20udAQTRmdNI=
-X-Received: by 2002:a9d:2c47:: with SMTP id f65mr29976162otb.185.1563367471220;
- Wed, 17 Jul 2019 05:44:31 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=h2yLsvzismF8aSznQ40gS7iVeJd2FnjlYb1X34YBrA8=;
+        b=O1e78+1J2f40rNBND+xZyUcC3m3V8AwikoMYItnpKQr22vdoVUePEX1gPcIsPzLDRF
+         quwPWEU9mEhkQ3C/t43TALj/yJfZ22rTmDc19+kZn352qwjtXJBzoYDPjVh0e8CWyuIB
+         VJ98Ue2AyFQpSVFMJ0nv9THVXR7DX/bCcdI8LCYXepO8+Ni5sLagLtvj124xPjoS8TYX
+         fJ8DHGsZG+M8nTu3o2mOl1mN8d1ChFC+YXOLmAwGuQam4mpNo4bF2z49p6Qn7fbU+Yfw
+         iz3CSAvQ7GqTKljuxw3jTVe6++1tIuy/sxNly4YjI4fCCG5m+gbLDHqF9+X/WP0FZ4qh
+         4fDA==
+X-Gm-Message-State: APjAAAXtsvPN2Iboe5msYUSDqHsIRdgStBMbDIp+OrqwVt85C7TSNwYJ
+        ZyEDyeo077APxs+3FFhiC+/nXYEUVIk=
+X-Google-Smtp-Source: APXvYqwizHNDm7V2q4Zl8PfRLV8uyVMUdooEDkuQU8R8qdODhQ4UauaxynjAA3/s6qsYZwd+jj1eJQ==
+X-Received: by 2002:a1c:9a53:: with SMTP id c80mr34774771wme.173.1563368895160;
+        Wed, 17 Jul 2019 06:08:15 -0700 (PDT)
+Received: from [10.43.17.52] (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id n12sm24739515wmc.24.2019.07.17.06.08.13
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Jul 2019 06:08:14 -0700 (PDT)
+Subject: Re: [RFC PATCH v6 0/1] Add dm verity root hash pkcs7 sig validation.
+To:     Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
+Cc:     ebiggers@google.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, jmorris@namei.org,
+        Scott Shell <SCOTTSH@microsoft.com>,
+        Nazmus Sakib <mdsakib@microsoft.com>, mpatocka@redhat.com
+References: <20190701181958.6493-1-jaskarankhurana@linux.microsoft.com>
+ <MN2PR21MB12008A962D4DD8662B3614508AF20@MN2PR21MB1200.namprd21.prod.outlook.com>
+ <alpine.LRH.2.21.1907121025510.66082@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+ <395efa90-65d8-d832-3e2b-2b8ee3794688@gmail.com>
+ <alpine.LRH.2.21.1907161035490.121213@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+From:   Milan Broz <gmazyland@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <bdcd7d7c-92fc-11af-7924-9bd0e184b427@gmail.com>
+Date:   Wed, 17 Jul 2019 15:08:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <156321356040.148361.7463881761568794395.stgit@magnolia>
- <156321358581.148361.8774330141606166898.stgit@magnolia> <20190717050118.GD7113@infradead.org>
-In-Reply-To: <20190717050118.GD7113@infradead.org>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Wed, 17 Jul 2019 14:44:20 +0200
-Message-ID: <CAHc6FU7A3U1FZXwXfvJRL1FazUu=zfJ4=AwpggNG5QWvsywt2A@mail.gmail.com>
-Subject: Re: [PATCH 4/9] iomap: move the SEEK_HOLE code into a separate file
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.LRH.2.21.1907161035490.121213@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 17 Jul 2019 at 07:01, Christoph Hellwig <hch@infradead.org> wrote:
-> > diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
-> > new file mode 100644
-> > index 000000000000..0c36bef46522
-> > --- /dev/null
-> > +++ b/fs/iomap/seek.c
-> > @@ -0,0 +1,214 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2010 Red Hat, Inc.
-> > + * Copyright (c) 2016-2018 Christoph Hellwig.
-> > + */
->
-> This looks a little odd.  There is nothing in here from Daves original
-> iomap prototype.  It did start out with code from Andreas though which
-> might or might not be RH copyright.  So we'll need Andreas and/or RH
-> legal to chime in.
+Hi,
 
-That code should be Copyright (C) 2017 Red Hat, Inc.
+On 16/07/2019 20:08, Jaskaran Singh Khurana wrote:
+>>> Could you please provide feedback on this v6 version.
+>>
+>> Hi,
+>>
+>> I am ok with the v6 patch; I think Mike will return to it in 5.4 reviews.
+>>
+> 
+> Thanks for the help and also for reviewing this patch. Could you please 
+> add Reviewed-by/Tested-by tag to the patch.
 
-> Otherwise looks good:
->
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+ok, you can add
+Tested-and-Reviewed-by: Milan Broz <gmazyland@gmail.com>
+
+or just use the version on my git, I already updated few lines because
+of recent kernel changes, mainly the revert of keyring changes, tested patch is here
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/mbroz/linux.git/commit/?h=dm-cryptsetup&id=266f7c9c74b23e4cb2e67ceb813dd707061c1641
+...
+
+> The steps and workflow is correct. I will send the cryptsetup changes for 
+> review.
+
+ok, I'll probably try to use our existing userspace libcryptsetup API to avoid introducing new calls,
+but that is not important for now - the kernel bits must be in the mainline kernel first.
 
 Thanks,
-Andreas
+Milan
