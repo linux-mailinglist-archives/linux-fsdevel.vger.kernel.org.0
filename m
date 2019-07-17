@@ -2,89 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD83F6B4D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 05:04:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EC696B4E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 05:14:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728662AbfGQDDQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 16 Jul 2019 23:03:16 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52610 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728541AbfGQDDQ (ORCPT
+        id S1728123AbfGQDOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 16 Jul 2019 23:14:36 -0400
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:41475 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728035AbfGQDOg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 16 Jul 2019 23:03:16 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hnaDa-0008R1-HC; Wed, 17 Jul 2019 03:02:58 +0000
-Date:   Wed, 17 Jul 2019 04:02:58 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Rich Felker <dalias@libc.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, rth@twiddle.net,
-        ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org,
-        tony.luck@intel.com, fenghua.yu@intel.com, geert@linux-m68k.org,
-        monstr@monstr.eu, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, James.Bottomley@hansenpartnership.com,
-        deller@gmx.de, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
-        davem@davemloft.net, luto@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        peterz@infradead.org, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, dhowells@redhat.com, firoz.khan@linaro.org,
-        stefan@agner.ch, schwidefsky@de.ibm.com, axboe@kernel.dk,
-        christian@brauner.io, hare@suse.com, deepa.kernel@gmail.com,
-        tycho@tycho.ws, kim.phillips@arm.com, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-arch@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 2/4] Add fchmodat4(), a new syscall
-Message-ID: <20190717030258.GT17978@ZenIV.linux.org.uk>
-References: <20190717012719.5524-1-palmer@sifive.com>
- <20190717012719.5524-3-palmer@sifive.com>
- <20190717024046.GI1506@brightrain.aerifal.cx>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190717024046.GI1506@brightrain.aerifal.cx>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Tue, 16 Jul 2019 23:14:36 -0400
+Received: by mail-pf1-f201.google.com with SMTP id q14so13632047pff.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jul 2019 20:14:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=UEDqcbhewLjuqENwZ85B/xbrNZKpwQFH/0eCwyVdkGc=;
+        b=MEXCEEEPk/KuaWu/bxTbcr5Sv+ljjVJ5OJVxaekxPizc/h96zVyZZfexEYA9SVYpCV
+         mjNK6v82DvgDgHKwdyC4kOKNH2VJ/VJDJ+Y8EGV/S4OPONugktXp7uenWF6BpIWIsCSn
+         gk3QV/pTD0f1Ot1c4jFr0WyU7r3ZDFKJwWEsD3c0beg4TGWOT/qN2B8YjkmGYp7ZfOmq
+         VZNWdX98/zP1yYpmKExnU7XInexP5ArSxTe3Q8MMV4Xbp5bv4dbT2Sr0GFZ3Fhvphn9r
+         fMeA8QrxkD9RtLezfb49TUuBcKK3TcBeIUT8g6TVdU4YZSjYdoI3P20T9kvbW+psLYnL
+         0yeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=UEDqcbhewLjuqENwZ85B/xbrNZKpwQFH/0eCwyVdkGc=;
+        b=tTT+bEuqNIk7ROBuimWoc5GlQ8XBpFWkdlQdWBQ2LdBZ8jjFQ8pGxUmw91XUKFSzic
+         AXfU8U3pMiCAcBFtswHe90lKDYnQDGJ/HNBmiyLuNVW0eKbFH8N2t3cmcJWe2Itmxnf/
+         nNHBBt9KREy4e+0ptATTTWjbh1TblGFImlyY/mtUs1IZHxDBtCYDgroygT04QJc+aKZX
+         bD+NZpqLVrluhlFa33NjAVS/yWEbPZ1H/Ut7aaMAt0vEwp2nLbFzIvyeFSwim8xbHAbI
+         kifoI61Nksi31Pg8AlCd34aqktdBoe1X6ZCJmiafbCl5Ck1PiUgNXprtNp5y4hloBvk3
+         SYfw==
+X-Gm-Message-State: APjAAAXKn9hLRk7ozXg58xstHukm1g9Ufj2hLNGUINh2tuBsDUbN4673
+        hJ4Spj4sTjHFQtoTg6y0za4MTWtK/Ow=
+X-Google-Smtp-Source: APXvYqx7EouYm/UBart6k3P8SNvF4Tt8Vrp1xqHYavJUzIKt18aw8pMHkXoYXAv17A98VxuiVijQcGClnME=
+X-Received: by 2002:a65:55c7:: with SMTP id k7mr6163284pgs.305.1563333275476;
+ Tue, 16 Jul 2019 20:14:35 -0700 (PDT)
+Date:   Tue, 16 Jul 2019 20:14:06 -0700
+Message-Id: <20190717031408.114104-1-drosen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
+Subject: [PATCH v2 0/2] Casefolding in F2FS
+From:   Daniel Rosenberg <drosen@google.com>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@android.com,
+        Daniel Rosenberg <drosen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 10:40:46PM -0400, Rich Felker wrote:
-> On Tue, Jul 16, 2019 at 06:27:17PM -0700, Palmer Dabbelt wrote:
-> > man 3p says that fchmodat() takes a flags argument, but the Linux
-> > syscall does not.  There doesn't appear to be a good userspace
-> > workaround for this issue but the implementation in the kernel is pretty
-> > straight-forward.  The specific use case where the missing flags came up
-> > was WRT a fuse filesystem implemenation, but the functionality is pretty
-> > generic so I'm assuming there would be other use cases.
-> 
-> Note that we do have a workaround in musl libc with O_PATH and
-> /proc/self/fd, but a syscall that allows a proper fix with the ugly
-> workaround only in the fallback path for old kernels will be much
-> appreciated!
-> 
-> What about also doing a new SYS_faccessat4 with working AT_EACCESS
-> flag? The workaround we have to do for it is far worse.
+These patches are largely based on the casefolding patches for ext4
+v2: Rebased patches again master, changed f2fs_msg to f2fs_info/f2fs_err
 
-Umm...  That's doable, but getting into the "don't switch creds unless
-needed" territory.  I'll need to play with that a bit and see what
-gives a tolerable variant...
+Daniel Rosenberg (2):
+  f2fs: include charset encoding information in the superblock
+  f2fs: Support case-insensitive file name lookups
 
-What of this part wrt AT_EACCESS?
-        if (!issecure(SECURE_NO_SETUID_FIXUP)) {
-                /* Clear the capabilities if we switch to a non-root user */
-                kuid_t root_uid = make_kuid(override_cred->user_ns, 0);
-                if (!uid_eq(override_cred->uid, root_uid))
-                        cap_clear(override_cred->cap_effective);
-                else
-                        override_cred->cap_effective =
-                                override_cred->cap_permitted;
-        }
+ fs/f2fs/dir.c           | 133 ++++++++++++++++++++++++++++++++++++----
+ fs/f2fs/f2fs.h          |  24 ++++++--
+ fs/f2fs/file.c          |  10 ++-
+ fs/f2fs/hash.c          |  34 +++++++++-
+ fs/f2fs/inline.c        |   6 +-
+ fs/f2fs/inode.c         |   4 +-
+ fs/f2fs/namei.c         |  21 +++++++
+ fs/f2fs/super.c         |  86 ++++++++++++++++++++++++++
+ include/linux/f2fs_fs.h |   9 ++-
+ 9 files changed, 303 insertions(+), 24 deletions(-)
+
+-- 
+2.22.0.510.g264f2c817a-goog
+
