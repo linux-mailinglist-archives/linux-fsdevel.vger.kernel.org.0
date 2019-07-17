@@ -2,105 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C2066BE9D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 16:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 227886BEA5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 16:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbfGQOxr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jul 2019 10:53:47 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45544 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbfGQOxr (ORCPT
+        id S1727637AbfGQO4A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jul 2019 10:56:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45824 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbfGQO4A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jul 2019 10:53:47 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6HEmVMa110128;
-        Wed, 17 Jul 2019 14:53:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=TZykMoFd4AOJBT4fCUlgegRKNvBfCOB/CMQ+3AdJlVM=;
- b=Ecog8whliIzvdAC9aPX2wXtFI35LgP9Qas9u8QMWVda0SgfXtz754evNhMhhiBosigXw
- Ryziqvfol40TK185oX/GyCGluJWozI+XeAjy+zP3iWYjZRC7yZbKcBBcUxBnPdrJ+8C6
- o8EKnI33oPWia0vTN0dGTGOa86vbYNQ4bmckHjlzD3gKehY8XuNSmcwefED/22KxxMnN
- uEyAxAqqhv+yxyRlSpXnYBzOMiixBHEOD3RT8Hl7tMlaJGlRrrMBoEUTzP6xjBSj8dcL
- GcGrl/COZeBt7Qbin3px1iE8Zfrs3BNpXgl734aKTt8tBO1F5TSME3Zb6et55zd2BEs0 cg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2tq7xr3aat-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Jul 2019 14:53:37 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6HEmTdJ053370;
-        Wed, 17 Jul 2019 14:53:37 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2tq4dujrxk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Jul 2019 14:53:37 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6HEragr021074;
-        Wed, 17 Jul 2019 14:53:36 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 17 Jul 2019 14:53:36 +0000
-Date:   Wed, 17 Jul 2019 07:53:35 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 4/9] iomap: move the SEEK_HOLE code into a separate file
-Message-ID: <20190717145335.GD7093@magnolia>
-References: <156321356040.148361.7463881761568794395.stgit@magnolia>
- <156321358581.148361.8774330141606166898.stgit@magnolia>
- <20190717050118.GD7113@infradead.org>
- <CAHc6FU7A3U1FZXwXfvJRL1FazUu=zfJ4=AwpggNG5QWvsywt2A@mail.gmail.com>
+        Wed, 17 Jul 2019 10:56:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Hqyv4zXqfJWvsDUEBnkw44GnKu9JuXe0Tjma2P25hIA=; b=PHYffguA8Do4AfdhPOYF0/QtR
+        EBq7JI6/Gk9l93jsR/Cf9s2z+BbMdIBQ8GHui9bYZGDTSOqKeEPo/kvRMc4XhyPbZg2VeZDfN0uuq
+        foSMg9eo7rjoTJo418aje2TXH7SjtLzXIp0/024YtEiakXEukBeaFPEnJuwj6ksU8Uy4EjPlMD80D
+        10Yefa9I8t2ANsgEGs7aA+mZbNIoVtd1UaJV1sHNPVep8F7ZoTA2S8w8riTU21Nv3hQZMregOi8uN
+        KYjnbu21XWjjfu/mQuFe0rj+2NdprGxL/TaghcjCuL/dek6+vevJsl/qY6XeyUxY0yxdGeIopMHvg
+        K3FHAlAig==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hnlLb-0006dc-4A; Wed, 17 Jul 2019 14:55:59 +0000
+Subject: Re: mmotm 2019-07-16-17-14 uploaded
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+References: <20190717001534.83sL1%akpm@linux-foundation.org>
+ <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
+ <20190717143830.7f7c3097@canb.auug.org.au>
+ <a9d0f937-ef61-1d25-f539-96a20b7f8037@infradead.org>
+ <072ca048-493c-a079-f931-17517663bc09@infradead.org>
+ <20190717180424.320fecea@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a1179bac-204d-110e-327f-845e9b09a7ab@infradead.org>
+Date:   Wed, 17 Jul 2019 07:55:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHc6FU7A3U1FZXwXfvJRL1FazUu=zfJ4=AwpggNG5QWvsywt2A@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907170174
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907170174
+In-Reply-To: <20190717180424.320fecea@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 02:44:20PM +0200, Andreas Gruenbacher wrote:
-> On Wed, 17 Jul 2019 at 07:01, Christoph Hellwig <hch@infradead.org> wrote:
-> > > diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
-> > > new file mode 100644
-> > > index 000000000000..0c36bef46522
-> > > --- /dev/null
-> > > +++ b/fs/iomap/seek.c
-> > > @@ -0,0 +1,214 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Copyright (C) 2010 Red Hat, Inc.
-> > > + * Copyright (c) 2016-2018 Christoph Hellwig.
-> > > + */
-> >
-> > This looks a little odd.  There is nothing in here from Daves original
-> > iomap prototype.  It did start out with code from Andreas though which
-> > might or might not be RH copyright.  So we'll need Andreas and/or RH
-> > legal to chime in.
+On 7/17/19 1:04 AM, Stephen Rothwell wrote:
+> Hi Randy,
 > 
-> That code should be Copyright (C) 2017 Red Hat, Inc.
-
-Ok, fixed.
-
---D
-
-> > Otherwise looks good:
-> >
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> On Tue, 16 Jul 2019 23:21:48 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> drivers/dma-buf/dma-buf.c:
+>> <<<<<<< HEAD
+>> =======
+>> #include <linux/pseudo_fs.h>
+>>>>>>>>> linux-next/akpm-base  
 > 
-> Thanks,
-> Andreas
+> I can't imagine what went wrong, but you can stop now :-)
+> 
+> $ grep '<<< HEAD' linux-next.patch | wc -l
+> 1473
+
+Yes, I did the grep also, decided to give up.
+
+> I must try to find the emails where Andrew and I discussed the
+> methodology used to produce the linux-next.patch from a previous
+> linux-next tree.
+
+
+
+-- 
+~Randy
