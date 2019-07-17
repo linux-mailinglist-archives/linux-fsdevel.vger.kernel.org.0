@@ -2,50 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC5DF6B5C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 07:05:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8C016B5E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2019 07:26:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726069AbfGQFFw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jul 2019 01:05:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50624 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfGQFFw (ORCPT
+        id S1725893AbfGQF0g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jul 2019 01:26:36 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:57886 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbfGQF0g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jul 2019 01:05:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=u07mpxIq6n4P5jfzGpWVKhHRL
-        kiVqsJOdeAu3JcorirlSkA0wP12tBVO9Dr6UBRSw3PtaTuaWKbbv4LCl7sXFbsAfTeXQ29+MPymT+
-        oD5TkFp16u2iBHW5YhRNekJV/cPDMhBmR2hWzm9wGJT0hlaDaMOiQ4qy2sdnOkUvUlQfB7FYoMm7Y
-        01OprpzYMkWkFMB7S0tl6bQKV/U8RHlrzLHfCQ3TNrGzrLNLp+3GABt0x6FbLGXd9Gtt7fXkw6b2L
-        cFut82ALBnL4FTXvalNbVNcdZoKBA7UU2O+wSFRsXT51ZzbdXXYeF1Yf9YCRkxgpPFMs+nzmwpE4C
-        g/V6okkJw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hnc8V-0004lU-VV; Wed, 17 Jul 2019 05:05:51 +0000
-Date:   Tue, 16 Jul 2019 22:05:51 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     hch@infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agruenba@redhat.com
-Subject: Re: [PATCH 9/9] iomap: move internal declarations into fs/iomap/
-Message-ID: <20190717050551.GI7113@infradead.org>
+        Wed, 17 Jul 2019 01:26:36 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6H5Nn6d195628;
+        Wed, 17 Jul 2019 05:26:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=7Mqeu+q9XRNb38h+UJByUWeJBB24xXhRpmyFlmaDRv4=;
+ b=ylVjWYf2eLBUlAHyjD/JOsnFKuaHrzTm38FcFAs9nVoxIAHaBnyLC+kUpmnkkyWx5G1y
+ pBGoC0nSPowDnoIgWnnowfhni7jCDJqzP797XHJ+I8k4vV5PcUIFTqW9lXxWuMNFNnqd
+ EeD64fUia8cCIhk7ejsC0oDaJJ5PETImtDsDrez+njtUN4nz0PRTuOVpy7pRfVe70Law
+ ys5JBlV5xJSdZFE+g2J9GQNMFEkgcAaIAmFaxevm/n5CVayCgjggADm+NYaFIT10stah
+ MPfU4K0oY7o7z/VNu5+WtySS2QMNzQJDiJMldqidxLvmjkF3hPM6NeWC1M9RV+COV1MY LA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2tq6qtrb5n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Jul 2019 05:26:17 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6H5N8Mf027038;
+        Wed, 17 Jul 2019 05:26:16 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2tsctwru4f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Jul 2019 05:26:16 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6H5QEIH007644;
+        Wed, 17 Jul 2019 05:26:15 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Jul 2019 05:26:14 +0000
+Date:   Tue, 16 Jul 2019 22:26:13 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        agruenba@redhat.com
+Subject: Re: [PATCH 1/9] iomap: start moving code to fs/iomap/
+Message-ID: <20190717052613.GA7093@magnolia>
 References: <156321356040.148361.7463881761568794395.stgit@magnolia>
- <156321361878.148361.6616574884425585291.stgit@magnolia>
+ <156321356685.148361.4004787941003993925.stgit@magnolia>
+ <20190717045901.GA7113@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <156321361878.148361.6616574884425585291.stgit@magnolia>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190717045901.GA7113@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907170065
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907170066
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
+On Tue, Jul 16, 2019 at 09:59:01PM -0700, Christoph Hellwig wrote:
+> On Mon, Jul 15, 2019 at 10:59:26AM -0700, Darrick J. Wong wrote:
+> > @@ -0,0 +1,7 @@
+> > +# SPDX-License-Identifier: GPL-2.0-or-newer
+> > +#
+> > +# Copyright (c) 2019 Oracle.
+> > +# All Rights Reserved.
+> > +#
+> > +
+> > +ccflags-y += -I $(srctree)/$(src)/..
+> 
+> Is this for the fs/internal.h include?  Can't we just include that
+> using #include "../internal.h" ?
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Er... yes, it would seem so.
+
+--D
