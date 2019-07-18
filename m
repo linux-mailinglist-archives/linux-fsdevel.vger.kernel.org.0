@@ -2,195 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D086C370
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 01:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6350D6C3DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 02:46:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731219AbfGQXGN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jul 2019 19:06:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728133AbfGQXGN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jul 2019 19:06:13 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16EA021783;
-        Wed, 17 Jul 2019 23:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563404771;
-        bh=NUNe0BXmq1hgXW1PTVVIXnYofgWyfdyqpPJM1v29GvU=;
-        h=Date:From:To:Subject:From;
-        b=L4Ortp1ycCSi9EuCOel7rHp4XI6x5jalJlvS3yWg7evKvz+OVROtfpfBTWk9Msp8e
-         ApNskNz4LeTR4eFFbYrsKntqvp90ipB/IXf2xEIvlKxUD7VR8nI/BfCb8/TWrs0b/E
-         37TYdT0xw8da+B2f/6GOMsX19K1Eg0mQ+5gvPtK8=
-Date:   Wed, 17 Jul 2019 16:06:10 -0700
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2019-07-17-16-05 uploaded
-Message-ID: <20190717230610.zvRfipNL4%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S1728127AbfGRAqY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jul 2019 20:46:24 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:33050 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727541AbfGRAqY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jul 2019 20:46:24 -0400
+Received: from jaskaran-Intel-Server-Board-S1200V3RPS-UEFI-Development-Kit.corp.microsoft.com (unknown [131.107.160.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 8CCBF20B7185;
+        Wed, 17 Jul 2019 17:46:22 -0700 (PDT)
+From:   Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+To:     gmazyland@gmail.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
+        dm-devel@redhat.com, jmorris@namei.org, scottsh@microsoft.com,
+        mdsakib@microsoft.com, mpatocka@redhat.com, ebiggers@google.com
+Subject: [RFC PATCH v7 0/1] Add dm verity root hash pkcs7 sig validation. 
+Date:   Wed, 17 Jul 2019 17:46:14 -0700
+Message-Id: <20190718004615.16818-1-jaskarankhurana@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2019-07-17-16-05 has been uploaded to
+This patch set adds in-kernel pkcs7 signature checking for the roothash
+of
+the dm-verity hash tree.
+The verification is to support cases where the roothash is not secured
+by
+Trusted Boot, UEFI Secureboot or similar technologies.
+One of the use cases for this is for dm-verity volumes mounted after
+boot,
+the root hash provided during the creation of the dm-verity volume has
+to
+be secure and thus in-kernel validation implemented here will be used
+before we trust the root hash and allow the block device to be created.
 
-   http://www.ozlabs.org/~akpm/mmotm/
+Why we are doing validation in the Kernel?
+------------------------------------------
+The reason is to still be secure in cases where the attacker is able to
+compromise the user mode application in which case the user mode
+validation
+could not have been trusted.
+The root hash signature validation in the kernel along with existing
+dm-verity implementation gives a higher level of confidence in the
+executable code or the protected data. Before allowing the creation of
+the device mapper block device the kernel code will check that the
+detached
+pkcs7 signature passed to it validates the roothash and the signature is
+trusted by builtin keys set at kernel creation. The kernel should be
+secured using Verified boot, UEFI Secure Boot or similar technologies so
+we
+can trust it.
 
-mmotm-readme.txt says
+What about attacker mounting non dm-verity volumes to run executable code?
+--------------------------------------------------------------------------
+This verification can be used to have a security architecture where a
+LSM
+can enforce this verification for all the volumes and by doing this it
+can
+ensure that all executable code runs from signed and trusted dm-verity
+volumes.
 
-README for mm-of-the-moment:
+Further patches will be posted that build on this and enforce this
+verification based on policy for all the volumes on the system.
 
-http://www.ozlabs.org/~akpm/mmotm/
+Kernel commandline parameter require_signatures will indicate whether to
+force (for all dm verity volumes) roothash signature verification.
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+How are these changes tested?
+-----------------------------
 
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+Build time steps:
+----------------
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG needs to be turned on in .config.
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+Add the certificate(pubic key) that will be used to check whether to trust
+the signature of the roothash in a PEM-encoded file to the 
+CONFIG_SYSTEM_TRUSTED_KEYS (example step 1) and step 2) below).
+
+When formatting the fs for verity we need to save and sign the roothash, the 
+signature would be used in verification by the kernel later when we create dm
+verity block device on the test machine/kernel.
+
+Dump the roothash returned by veritysetup format in a text file,
+say roothash.txt and then sign using the openssl command (see below).
+
+1) openssl req -x509 -newkey rsa:1024 -keyout ca_key.pem -out ca.pem -nodes
+   -days 365 -set_serial 01 -subj /CN=example.com
+2) In .config add the certificate as CONFIG_SYSTEM_TRUSTED_KEYS="path/ca.pem"
+3) veritysetup format <fs> <hashdev>, this will return the ROOT_HASH.
+4) Use the roothash returned in step 3) and save it to a file for reference and
+   signing.
+   echo -n <ROOT_HASH> > roothash.txt
+5) openssl smime -sign -nocerts -noattr -binary -in <roothash.txt> 
+   -inkey ca_key.pem -signer ca.pem -outform der -out sign.txt
+
+Kernel Commandline:
+-------------------
+
+To enforce the signatures for all dm verity volumes specify the
+dm_verity.require_signatures=1 on the kernel commandline.
+
+Steps on the test kernel/machine:
+---------------------------------
+
+After the kernel boots try to create device mapper block device by providing
+the roothash and the roothash signature which will be validated by the kernel.
+
+To pass the roothash signature to dm-verity, veritysetup part of
+cryptsetup library was modified to take a optional root-hash-sig parameter.
+
+Use the signature file from above step as a parameter to veritysetup.
+The changes for veritysetup are in a topic branch for now at:
+https://github.com/jaskarankhurana/veritysetup/tree/veritysetup_add_sig
+
+veritysetup open  <data_device> <name> <hash_device> <root_hash>
+ --root-hash-sig=<root_hash_pkcs7_detached_sig>
+
+OR
+--
+We could also use a unpatched veritysetup to test this.
+
+Steps are shown as an example below :
+(The roothash and signature will be obtained from steps 1 to 5 above)
+
+eg:
+NAME=test
+DEV=/dev/sdc
+DEV_HASH=/dev/sdd
+ROOT_HASH=778fccab393842688c9af89cfd0c5cde69377cbe21ed439109ec856f2aa8a423
+SIGN_NAME=verity:$NAME
+SIGN=sign.txt
+# load signature to keyring
+keyctl padd user $SIGN_NAME @u <$SIGN
+
+# add device-mapper table, now with sighed root hash optional argument
+dmsetup create -r $NAME --table "$TABLE 2 root_hash_sig_key_desc $SIGN_NAME"
+dmsetup table $NAME
+
+# cleanup
+dmsetup remove $NAME
+keyctl clear @u
+
+Changelog:
+---------
+
+v7
+  - Changes to patch header to add steps that can help test this.
+  - Use the rebased version of the patch that was tested by Milan Broz from his
+    tree.
+
+v6
+  - Address comments from Milan Broz and Eric Biggers on v5.
+
+  - Keep the verification code under config DM_VERITY_VERIFY_ROOTHASH_SIG.
+
+  - Change the command line parameter to requires_signatures(bool) which will
+    force root hash to be signed and trusted if specified.
+
+  - Fix the signature not being present in verity_status. Merged the
+    https://git.kernel.org/pub/scm/linux/kernel/git/mbroz/linux.git/commit/?h=dm-cryptsetup&id=a26c10806f5257e255b6a436713127e762935ad3
+    made by Milan Broz and tested it.
+
+v5 (since previous):
+  - Code review feedback given by Milan Broz.
+  - Remove the Kconfig for root hash verification and instead add a
+    commandline parameter(dm_verity.verify_sig) that determines whether
+to
+    check or enforce root hash signature validation.
+  - Fixed a small issue when dm-verity was built sepaerately as a
+    module.
+  - Added the openssl commandline that can be used to sign the roothash
+    in the cover letter.
+
+v4:
+  - Code review feedback given by Milan Broz.
+  - Add documentation about the root hash signature parameter.
+  - Bump up the dm-verity target version.
+  - Provided way to sign and test with veritysetup in cover letter.
+
+v3:
+  - Code review feedback given by Sasha Levin.
+  - Removed EXPORT_SYMBOL_GPL since this was not required.
+  - Removed "This file is released under the GPLv2" since we have SPDX
+    identifier.
+  - Inside verity_verify_root_hash changed EINVAL to ENOKEY when the key
+    descriptor is not specified but due to force option being set it is
+    expected.
+  - Moved CONFIG check to inside verity_verify_get_sig_from_key.
+     (Did not move the sig_opts_cleanup to inside verity_dtr as the
+     sig_opts do not need to be allocated for the entire duration the
+block
+     device is active unlike the verity structure, note verity_dtr is
+     called      only if verity_ctr fails or after the lifetime of the
+     block device.)
+
+v2:
+  - Code review feedback to pass the signature binary blob as a key that
+    can be looked up in the kernel and be used to verify the roothash.
+    [Suggested by Milan Broz]
+  - Made the code related change suggested in review of v1.
+    [Suggested by Balbir Singh]
+
+v1:
+  - Add kconfigs to control dm-verity root has signature verification
+    and
+    use the signature if specified to verify the root hash.
 
 
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
+Jaskaran Khurana (1):
+  Add dm verity root hash pkcs7 sig validation.
 
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+ .../admin-guide/device-mapper/verity.rst      |   7 +
+ drivers/md/Kconfig                            |  12 ++
+ drivers/md/Makefile                           |   5 +
+ drivers/md/dm-verity-target.c                 |  43 +++++-
+ drivers/md/dm-verity-verify-sig.c             | 133 ++++++++++++++++++
+ drivers/md/dm-verity-verify-sig.h             |  60 ++++++++
+ drivers/md/dm-verity.h                        |   2 +
+ 7 files changed, 257 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/md/dm-verity-verify-sig.c
+ create mode 100644 drivers/md/dm-verity-verify-sig.h
 
+-- 
+2.17.1
 
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 5.2:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* mm-hmm-fix-bad-subpage-pointer-in-try_to_unmap_one.patch
-* docs-signal-fix-a-kernel-doc-markup.patch
-* revert-kmemleak-allow-to-coexist-with-fault-injection.patch
-* ocfs2-remove-set-but-not-used-variable-last_hash.patch
-* ocfs2-clear-zero-in-unaligned-direct-io.patch
-* ocfs2-clear-zero-in-unaligned-direct-io-checkpatch-fixes.patch
-* ocfs2-wait-for-recovering-done-after-direct-unlock-request.patch
-* ocfs2-checkpoint-appending-truncate-log-transaction-before-flushing.patch
-* ramfs-support-o_tmpfile.patch
-  mm.patch
-* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* mm-memory_hotplug-simplify-and-fix-check_hotplug_memory_range.patch
-* s390x-mm-fail-when-an-altmap-is-used-for-arch_add_memory.patch
-* s390x-mm-implement-arch_remove_memory.patch
-* arm64-mm-add-temporary-arch_remove_memory-implementation.patch
-* drivers-base-memory-pass-a-block_id-to-init_memory_block.patch
-* drivers-base-memory-pass-a-block_id-to-init_memory_block-fix.patch
-* mm-memory_hotplug-allow-arch_remove_pages-without-config_memory_hotremove.patch
-* mm-memory_hotplug-create-memory-block-devices-after-arch_add_memory.patch
-* mm-memory_hotplug-drop-mhp_memblock_api.patch
-* mm-memory_hotplug-remove-memory-block-devices-before-arch_remove_memory.patch
-* mm-memory_hotplug-make-unregister_memory_block_under_nodes-never-fail.patch
-* mm-memory_hotplug-remove-zone-parameter-from-sparse_remove_one_section.patch
-* mm-sparse-set-section-nid-for-hot-add-memory.patch
-* mm-sparse-fix-memory-leak-of-sparsemap_buf-in-aliged-memory.patch
-* mm-sparse-fix-memory-leak-of-sparsemap_buf-in-aliged-memory-fix.patch
-* mm-sparse-fix-align-without-power-of-2-in-sparse_buffer_alloc.patch
-* mm-mempolicy-make-the-behavior-consistent-when-mpol_mf_move-and-mpol_mf_strict-were-specified.patch
-* mm-mempolicy-handle-vma-with-unmovable-pages-mapped-correctly-in-mbind.patch
-* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill.patch
-* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill-fix.patch
-* mm-thp-make-transhuge_vma_suitable-available-for-anonymous-thp.patch
-* mm-thp-make-transhuge_vma_suitable-available-for-anonymous-thp-fix.patch
-* mm-thp-make-transhuge_vma_suitable-available-for-anonymous-thp-v4.patch
-* mm-thp-fix-false-negative-of-shmem-vmas-thp-eligibility.patch
-* mm-proportional-memorylowmin-reclaim.patch
-* mm-make-memoryemin-the-baseline-for-utilisation-determination.patch
-* mm-make-memoryemin-the-baseline-for-utilisation-determination-fix.patch
-* mm-vmscan-remove-unused-lru_pages-argument.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* lib-genallocc-export-symbol-addr_in_gen_pool.patch
-* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr.patch
-* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr-fix.patch
-* lib-fix-possible-incorrect-result-from-rational-fractions-helper.patch
-* checkpatch-added-warnings-in-favor-of-strscpy.patch
-* checkpatch-dont-interpret-stack-dumps-as-commit-ids.patch
-* checkpatch-fix-something.patch
-* fat-add-nobarrier-to-workaround-the-strange-behavior-of-device.patch
-* coredump-split-pipe-command-whitespace-before-expanding-template.patch
-* aio-simplify-read_events.patch
-* resource-fix-locking-in-find_next_iomem_res.patch
-* resource-fix-locking-in-find_next_iomem_res-fix.patch
-* resource-avoid-unnecessary-lookups-in-find_next_iomem_res.patch
-* ipc-consolidate-all-xxxctl_down-functions.patch
-  linux-next.patch
-  linux-next-git-rejects.patch
-  diff-sucks.patch
-* pinctrl-fix-pxa2xxc-build-warnings.patch
-* mm-section-numbers-use-the-type-unsigned-long.patch
-* mm-section-numbers-use-the-type-unsigned-long-fix.patch
-* mm-section-numbers-use-the-type-unsigned-long-v3.patch
-* drivers-base-memory-use-unsigned-long-for-block-ids.patch
-* mm-make-register_mem_sect_under_node-static.patch
-* mm-memory_hotplug-rename-walk_memory_range-and-pass-startsize-instead-of-pfns.patch
-* mm-memory_hotplug-move-and-simplify-walk_memory_blocks.patch
-* drivers-base-memoryc-get-rid-of-find_memory_block_hinted.patch
-* drivers-base-memoryc-get-rid-of-find_memory_block_hinted-v3.patch
-* drivers-base-memoryc-get-rid-of-find_memory_block_hinted-v3-fix.patch
-* mm-sparsemem-introduce-struct-mem_section_usage.patch
-* mm-sparsemem-introduce-a-section_is_early-flag.patch
-* mm-sparsemem-add-helpers-track-active-portions-of-a-section-at-boot.patch
-* mm-hotplug-prepare-shrink_zone-pgdat_span-for-sub-section-removal.patch
-* mm-hotplug-prepare-shrink_zone-pgdat_span-for-sub-section-removal-fix.patch
-* mm-sparsemem-convert-kmalloc_section_memmap-to-populate_section_memmap.patch
-* mm-hotplug-kill-is_dev_zone-usage-in-__remove_pages.patch
-* mm-kill-is_dev_zone-helper.patch
-* mm-sparsemem-prepare-for-sub-section-ranges.patch
-* mm-sparsemem-support-sub-section-hotplug.patch
-* mm-sparsemem-support-sub-section-hotplug-fix.patch
-* mm-sparsemem-support-sub-section-hotplug-fix-fix.patch
-* mm-document-zone_device-memory-model-implications.patch
-* mm-document-zone_device-memory-model-implications-fix.patch
-* mm-devm_memremap_pages-enable-sub-section-remap.patch
-* libnvdimm-pfn-fix-fsdax-mode-namespace-info-block-zero-fields.patch
-* libnvdimm-pfn-stop-padding-pmem-namespaces-to-section-alignment.patch
-* mm-sparsemem-cleanup-section-number-data-types.patch
-* mm-sparsemem-cleanup-section-number-data-types-fix.patch
-* mm-migrate-remove-unused-mode-argument.patch
-* proc-sysctl-add-shared-variables-for-range-check.patch
-* proc-sysctl-add-shared-variables-for-range-check-fix-2.patch
-* proc-sysctl-add-shared-variables-for-range-check-fix-2-fix.patch
-* proc-sysctl-add-shared-variables-for-range-check-fix-3.patch
-* proc-sysctl-add-shared-variables-for-range-check-fix-4.patch
-* drivers-tty-serial-sh-scic-suppress-warning.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
