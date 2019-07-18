@@ -2,54 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 458C56D34A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 19:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 662FE6D3BF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 20:20:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbfGRR5A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 13:57:00 -0400
-Received: from verein.lst.de ([213.95.11.211]:33070 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726715AbfGRR47 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 13:56:59 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id C28C468B02; Thu, 18 Jul 2019 19:56:55 +0200 (CEST)
-Date:   Thu, 18 Jul 2019 19:56:55 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>
-Subject: Re: [PATCH v3 4/6] x86,s390/mm: Move sme_active() and sme_me_mask
- to x86-specific header
-Message-ID: <20190718175655.GA361@lst.de>
-References: <20190718032858.28744-1-bauerman@linux.ibm.com> <20190718032858.28744-5-bauerman@linux.ibm.com> <cf48e778-130a-df2a-d94b-170bd85d692c@amd.com>
+        id S2390494AbfGRSTs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 14:19:48 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45545 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbfGRSTs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Jul 2019 14:19:48 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m23so28241793lje.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2019 11:19:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gepmqZ8N/IE1dD9ivKS4WqYoEjZkViTT4tcrJbEnbOk=;
+        b=hz94MbDILZQNajQa2trZ7qSP+dksrJ1mAn7+S56JhO9w6m2RoO+0OT5YlB/RoWVZsm
+         b6VzRDPrYK6DWpUJo2nniO3XvejJMPKKxgv6OvnMr/AqDX/Q+A97QqUJ3nnZY+EcO0B5
+         fNB3N40k3vyszAKIDXrJNNSSZ9MG6v37aATJA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gepmqZ8N/IE1dD9ivKS4WqYoEjZkViTT4tcrJbEnbOk=;
+        b=ia9z6O1ktgarrQmMI1B1hQ06KsbfiDYgSg2K6gHh9tWPfQcuNw26uib99ycGFsrn9f
+         aAqMGzp00ZeZgRLtbbhpmxoNxrD03smzCG6jllPyaiFVr13Pl3EdMW/c9VPcgsNZgK9n
+         XVlV5oHXMX2L6gi63NqqB7YRzuQojdmPFO2AnmCrmOpC6ASGnmasHVpLmK5oGSJLTLpa
+         8zzKDAmLp07p2r9o8iKSMa3u1CaWiWJV9+IS9pI8IgQRbcvBavHBOCevFFkUQJ5SdrEG
+         6XEe02+Xidk0WDEhhANUDiF3ZN1BWJJorjglTGcxy16RUW5gqYL2cIBmt42RS3MGYbz6
+         aMcQ==
+X-Gm-Message-State: APjAAAU70CqsryydyGnFEebTJwEo37Ls2krQ1c5iUAg6e6VkzMldB9XS
+        hjiGciXUb0d8FDRvO2mhiw5pNubIlOc=
+X-Google-Smtp-Source: APXvYqyLjMuX4xyBVU51qYZhP6zxz4NTvvqSQDRk9CwX1UJSe7NxO39LfLYyff4vKfL9t8gtlpehbA==
+X-Received: by 2002:a2e:2b9d:: with SMTP id r29mr25068844ljr.181.1563473986103;
+        Thu, 18 Jul 2019 11:19:46 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id s21sm5276480ljm.28.2019.07.18.11.19.44
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Jul 2019 11:19:45 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id h28so19881179lfj.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2019 11:19:44 -0700 (PDT)
+X-Received: by 2002:ac2:4839:: with SMTP id 25mr21790208lft.79.1563473984522;
+ Thu, 18 Jul 2019 11:19:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cf48e778-130a-df2a-d94b-170bd85d692c@amd.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20190718161824.GE7093@magnolia>
+In-Reply-To: <20190718161824.GE7093@magnolia>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 18 Jul 2019 11:19:28 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whewBiKzpsO73Y38SAPSktxD6gUuEr2ANC8Z_3JPiqk3w@mail.gmail.com>
+Message-ID: <CAHk-=whewBiKzpsO73Y38SAPSktxD6gUuEr2ANC8Z_3JPiqk3w@mail.gmail.com>
+Subject: Re: [GIT PULL] xfs: cleanups for 5.3
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 05:42:18PM +0000, Lendacky, Thomas wrote:
-> You may want to try and build the out-of-tree nvidia driver just to be
-> sure you can remove the EXPORT_SYMBOL(). But I believe that was related
-> to the DMA mask check, which now removed, may no longer be a problem.
+On Thu, Jul 18, 2019 at 9:18 AM Darrick J. Wong <djwong@kernel.org> wrote:
+>
+> Please let me know if you run into anything weird, I promise I drank two
+> cups of coffee this time around. :)
 
-Out of tree driver simply don't matter for kernel development decisions.
+Apparently two cups is just the right amount.
+
+                 Linus
