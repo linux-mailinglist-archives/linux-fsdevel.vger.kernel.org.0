@@ -2,45 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A69176D0BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 17:11:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 476FC6D100
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 17:22:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbfGRPKk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 11:10:40 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:40739 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727623AbfGRPKk (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 11:10:40 -0400
-Received: by mail-qk1-f195.google.com with SMTP id s145so20722123qke.7;
-        Thu, 18 Jul 2019 08:10:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1XVWuLALNboPCBpMHvtA7g3CoUrKrF0vBnrtFanWPT4=;
-        b=uNMGyKFpiV5/NdDwnLap3nQ/K1Tm9DD+6GyGcMY2Qe78+LIG0HJg8gvmpe7KNtScX+
-         ocmxdsLFnmQHavB02uUnWdITNtvdgZUVV6gjGYtzUgUyL101bx2COA+P5GJEB8nUL/si
-         xX9VNpjurF/YIH8K4pRbOmNUfp2t9ascXvvzAmN8JqbF3LGUnbcVvWG+r/eY7BW6dDbE
-         knTCE31c6j90B4zJPTKfVo0AfaPijfILaJmhBbuGf3nOxfSRW+FIerwKGcN9G9c7h1J9
-         QljEyAaRfwsTvFKIQO0h8Zsw7fzxHGQhpcH2zj+Ff7MPOAMzDxkNBXC9D6swUqj3HG9E
-         SpRA==
-X-Gm-Message-State: APjAAAV7gMkfUYn5o8N51yJkmd6XGejNnOOrLcYFBcHIhSrSlqqUt1Gw
-        lGoO9EV8UtrmkKPQlogNaMSLihSIjegnFCVtbl4=
-X-Google-Smtp-Source: APXvYqz91qO2K9L71FiuX0Gt08O/27FhYjsXqzcDsg9SyRt3LsdEPpT+LHh0f5YfOz5Tbuae6UqhheF6pLTx7yCHlYU=
-X-Received: by 2002:a37:ad12:: with SMTP id f18mr30435448qkm.3.1563462638194;
- Thu, 18 Jul 2019 08:10:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190706145737.5299-1-cyphar@cyphar.com> <20190706145737.5299-9-cyphar@cyphar.com>
-In-Reply-To: <20190706145737.5299-9-cyphar@cyphar.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 18 Jul 2019 17:10:21 +0200
-Message-ID: <CAK8P3a33rGhPDFfRBAQyLTMG_WoEgX_toDgWR2O7rSwxKsZG+w@mail.gmail.com>
-Subject: Re: [PATCH v9 08/10] open: openat2(2) syscall
-To:     Aleksa Sarai <cyphar@cyphar.com>
+        id S1727994AbfGRPWV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 11:22:21 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:9384 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726040AbfGRPWV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Jul 2019 11:22:21 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id A31DB4DF37;
+        Thu, 18 Jul 2019 17:22:15 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id xmIYYji9PWVu; Thu, 18 Jul 2019 17:22:09 +0200 (CEST)
+Date:   Fri, 19 Jul 2019 01:21:23 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Jeff Layton <jlayton@kernel.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
         Shuah Khan <shuah@kernel.org>,
         Shuah Khan <skhan@linuxfoundation.org>,
@@ -55,103 +41,135 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Chanho Min <chanho.min@lge.com>,
         Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org,
-        sparclinux <sparclinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 08/10] open: openat2(2) syscall
+Message-ID: <20190718152123.m33t44dapy6y4nwy@yavin>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-9-cyphar@cyphar.com>
+ <845e4364-685f-343b-46fb-c418766dce3e@rasmusvillemoes.dk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x55cx7xfpotu25go"
+Content-Disposition: inline
+In-Reply-To: <845e4364-685f-343b-46fb-c418766dce3e@rasmusvillemoes.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 6, 2019 at 5:00 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
 
-> diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-> index 9e7704e44f6d..1703d048c141 100644
-> --- a/arch/alpha/kernel/syscalls/syscall.tbl
-> +++ b/arch/alpha/kernel/syscalls/syscall.tbl
-> @@ -461,6 +461,7 @@
->  530    common  getegid                         sys_getegid
->  531    common  geteuid                         sys_geteuid
->  532    common  getppid                         sys_getppid
-> +533    common  openat2                         sys_openat2
->  # all other architectures have common numbers for new syscall, alpha
->  # is the exception.
->  534    common  pidfd_send_signal               sys_pidfd_send_signal
+--x55cx7xfpotu25go
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My plan here was to add new syscalls in the same order as everwhere else,
-just with the number 110 higher. In the long run, I hope we can automate
-this.
+On 2019-07-18, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
+> On 06/07/2019 16.57, Aleksa Sarai wrote:
+> > --- a/fs/open.c
+> > +++ b/fs/open.c
+> > @@ -928,24 +928,32 @@ struct file *open_with_fake_path(const struct pat=
+h *path, int flags,
+> >  }
+> >  EXPORT_SYMBOL(open_with_fake_path);
+> > =20
+> > -static inline int build_open_flags(int flags, umode_t mode, struct ope=
+n_flags *op)
+> > +static inline int build_open_flags(struct open_how how, struct open_fl=
+ags *op)
+> >  {
+>=20
+> How does passing such a huge struct by value affect code generation?
+> Does gcc actually inline the function (and does it even inline the old
+> one given that it's already non-trivial and has more than one caller).
 
-> diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-> index aaf479a9e92d..4ad262698396 100644
-> --- a/arch/arm/tools/syscall.tbl
-> +++ b/arch/arm/tools/syscall.tbl
-> @@ -447,3 +447,4 @@
->  431    common  fsconfig                        sys_fsconfig
->  432    common  fsmount                         sys_fsmount
->  433    common  fspick                          sys_fspick
-> +434    common  openat2                         sys_openat2
+I'm not sure, but I'll just do what you suggested with passing a const
+reference and just copying the few fields that actually are touched by
+this function.
 
-434 is already used in linux-next, I suggest you use 437 (Palmer
-just submitted fchmodat4, which could become 436).
+> > =20
+> > diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+> > index 2868ae6c8fc1..e59917292213 100644
+> > --- a/include/linux/fcntl.h
+> > +++ b/include/linux/fcntl.h
+> > @@ -4,13 +4,26 @@
+> > =20
+> >  #include <uapi/linux/fcntl.h>
+> > =20
+> > -/* list of all valid flags for the open/openat flags argument: */
+> > +/* Should open_how.mode be set for older syscalls wrappers? */
+> > +#define OPENHOW_MODE(flags, mode) \
+> > +	(((flags) | (O_CREAT | __O_TMPFILE)) ? (mode) : 0)
+> > +
+>=20
+> Typo: (((flags) & (O_CREAT | __O_TMPFILE)) ? (mode) : 0)
 
-> +/**
-> + * Arguments for how openat2(2) should open the target path. If @extra is zero,
-> + * then openat2(2) is identical to openat(2).
-> + *
-> + * @flags: O_* flags (unknown flags ignored).
-> + * @mode: O_CREAT file mode (ignored otherwise).
-> + * @upgrade_mask: restrict how the O_PATH may be re-opened (ignored otherwise).
-> + * @resolve: RESOLVE_* flags (-EINVAL on unknown flags).
-> + * @reserved: reserved for future extensions, must be zeroed.
-> + */
-> +struct open_how {
-> +       __u32 flags;
-> +       union {
-> +               __u16 mode;
-> +               __u16 upgrade_mask;
-> +       };
-> +       __u16 resolve;
-> +       __u64 reserved[7]; /* must be zeroed */
-> +};
+Yup, thanks. I'm not sure why my tests passed on v9 with this bug (they
+didn't pass in my v10-draft until I fixed this bug earlier today).
 
-We can have system calls with up to six arguments on all architectures, so
-this could still be done more conventionally without the indirection: like
+>=20
+> > +/**
+> > + * Arguments for how openat2(2) should open the target path. If @extra=
+ is zero,
+> > + * then openat2(2) is identical to openat(2).
+> > + *
+> > + * @flags: O_* flags (unknown flags ignored).
+> > + * @mode: O_CREAT file mode (ignored otherwise).
+>=20
+> should probably say "O_CREAT/O_TMPFILE file mode".
 
-long openat2(int dfd, const char __user * filename, int flags, mode_t
-mode_mask, __u16 resolve);
+:+1:
 
-In fact, that seems similar enough to the existing openat() that I think
-you could also just add the fifth argument to the existing call when
-a newly defined flag is set, similarly to how we only use the 'mode'
-argument when O_CREAT or O_TMPFILE are set.
+> > + * @upgrade_mask: restrict how the O_PATH may be re-opened (ignored ot=
+herwise).
+> > + * @resolve: RESOLVE_* flags (-EINVAL on unknown flags).
+> > + * @reserved: reserved for future extensions, must be zeroed.
+> > + */
+> > +struct open_how {
+> > +	__u32 flags;
+> > +	union {
+> > +		__u16 mode;
+> > +		__u16 upgrade_mask;
+> > +	};
+> > +	__u16 resolve;
+>=20
+> So mode and upgrade_mask are naturally u16 aka mode_t. And yes, they
+> probably never need to be used together, so the union works. That then
+> makes the next member 2-byte aligned, so using a u16 for the resolve
+> flags brings us to an 8-byte boundary, and 11 unused flag bits should be
+> enough for a while. But it seems a bit artificial to cram all this
+> together and then add 56 bytes of reserved space.
 
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
+I will happily admit that padding to 64 bytes is probably _very_ extreme
+(I picked it purely because it's the size of a cache-line so anything
+bigger makes even less sense). I was hoping someone would suggest a
+better size once I posted the patchset, since I couldn't think of a good
+answer myself.
 
-This file seems to lack a declaration for the system call, which means it
-will cause a build failure on some architectures, e.g. arch/arc/kernel/sys.c:
+Do you have any suggestions for a better layout or padding size?
 
-#define __SYSCALL(nr, call) [nr] = (call),
-void *sys_call_table[NR_syscalls] = {
-        [0 ... NR_syscalls-1] = sys_ni_syscall,
-#include <asm/unistd.h>
-};
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-        Arnd
+--x55cx7xfpotu25go
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXTCOcAAKCRCdlLljIbnQ
+EllZAP4qSUDEVdU4aP8+s9uysbQoCi6l463vJM+jdHxpJ66OfQEAxlI5lXwcL6G0
+jPCtI0Vs5LI5kpJuE2k98ol8BVMyZAg=
+=2lKS
+-----END PGP SIGNATURE-----
+
+--x55cx7xfpotu25go--
