@@ -2,118 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9257C6D55E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 21:48:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB8D26D67A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 23:32:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391729AbfGRTrZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 15:47:25 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17194 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2391709AbfGRTrZ (ORCPT
+        id S2391450AbfGRVaJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 17:30:09 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35212 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728014AbfGRVaJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:47:25 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6IJijhl036564
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2019 15:47:24 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ttusu0dgp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2019 15:47:23 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 18 Jul 2019 20:47:23 +0100
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 18 Jul 2019 20:47:18 +0100
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6IJlHl035455434
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Jul 2019 19:47:17 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 35C1EAE064;
-        Thu, 18 Jul 2019 19:47:17 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B8940AE05C;
-        Thu, 18 Jul 2019 19:47:13 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.186.82])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Thu, 18 Jul 2019 19:47:13 +0000 (GMT)
-References: <20190712053631.9814-1-bauerman@linux.ibm.com> <20190712053631.9814-3-bauerman@linux.ibm.com> <alpine.DEB.2.21.1907121806160.1788@nanos.tec.linutronix.de>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     x86@kernel.org, iommu@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>
-Subject: Re: [PATCH 2/3] DMA mapping: Move SME handling to x86-specific files
-In-reply-to: <alpine.DEB.2.21.1907121806160.1788@nanos.tec.linutronix.de>
-Date:   Thu, 18 Jul 2019 16:47:09 -0300
+        Thu, 18 Jul 2019 17:30:09 -0400
+Received: by mail-qk1-f196.google.com with SMTP id r21so21732487qke.2;
+        Thu, 18 Jul 2019 14:30:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gXA3fCzwUc7S8+pRMyyFoXYQ6Lxj2094nm3NP6Me1pg=;
+        b=uCH2vUxrfcr6142uAaV9WcXORBKH/D7E4P4NiRuyJaE8kui154F7hapgGZCVK4V5oV
+         h1KnYS8zB5WGcRW0yhYqz6ThOCVt0oV80LAGfoSFKRtZfNXUcqq4Vkc98WyzSf5MEfhC
+         ChJWDCasnRmyjbS9ZdJ1VIkfY5G1MVa9zaR2pgCczj6oOHsD73sgibeBSKVPZopGXvDM
+         xY7mk5kdPJ2hzmYK77+wvt1X8GlX5DuOJeI7mCZMAvHFwnVsvpfPZ56B86qqTVg8XPES
+         7Uk5MUGfBIJqa4SUJOhaEv7m8ueBN492aEPpsSidYIuqRP6htYAWtO8+oyTfmZ0jeCe8
+         JWVw==
+X-Gm-Message-State: APjAAAVWFgTKNxdz5VJMuDG74/oEsWc7zg83gF05rrI4hZNlp1YwqMUs
+        1xmowdKoxZ9t80vjXWPDDaUz1du0yDU5c5Rfqb8=
+X-Google-Smtp-Source: APXvYqwAnwmqNY3PBxWPuNJix5kLy4PEG765j1QyxyCKOemfTtTG+YSbK8sHn1TSB6/emkF2O/3aVUhdKFw2Cxuzrg4=
+X-Received: by 2002:a37:5f45:: with SMTP id t66mr32747316qkb.286.1563485406992;
+ Thu, 18 Jul 2019 14:30:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19071819-2213-0000-0000-000003B2DB12
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011453; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01234063; UDB=6.00650301; IPR=6.01015390;
- MB=3.00027784; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-18 19:47:21
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071819-2214-0000-0000-00005F4C56EA
-Message-Id: <878ssv3z2a.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-18_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907180202
+References: <20190706145737.5299-1-cyphar@cyphar.com> <20190706145737.5299-9-cyphar@cyphar.com>
+ <CAK8P3a33rGhPDFfRBAQyLTMG_WoEgX_toDgWR2O7rSwxKsZG+w@mail.gmail.com> <20190718161231.xcno272nvqpln3wj@yavin>
+In-Reply-To: <20190718161231.xcno272nvqpln3wj@yavin>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 18 Jul 2019 23:29:50 +0200
+Message-ID: <CAK8P3a3MiYK4bJiA3G_m5H-TpfN5__--b+=szsJBhG7_it+NQg@mail.gmail.com>
+Subject: Re: [PATCH v9 08/10] open: openat2(2) syscall
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org,
+        sparclinux <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-Thomas Gleixner <tglx@linutronix.de> writes:
-
-> On Fri, 12 Jul 2019, Thiago Jung Bauermann wrote:
->> diff --git a/include/linux/mem_encrypt.h b/include/linux/mem_encrypt.h
->> index b310a9c18113..f2e399fb626b 100644
->> --- a/include/linux/mem_encrypt.h
->> +++ b/include/linux/mem_encrypt.h
->> @@ -21,23 +21,11 @@
->>  
->>  #else	/* !CONFIG_ARCH_HAS_MEM_ENCRYPT */
->>  
->> -#define sme_me_mask	0ULL
->> -
->> -static inline bool sme_active(void) { return false; }
->>  static inline bool sev_active(void) { return false; }
+On Thu, Jul 18, 2019 at 6:12 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+> On 2019-07-18, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Sat, Jul 6, 2019 at 5:00 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+> >
+> > In fact, that seems similar enough to the existing openat() that I think
+> > you could also just add the fifth argument to the existing call when
+> > a newly defined flag is set, similarly to how we only use the 'mode'
+> > argument when O_CREAT or O_TMPFILE are set.
 >
-> You want to move out sev_active as well, the only relevant thing is
-> mem_encrypt_active(). Everything SME/SEV is an architecture detail.
-
-I'm sure you saw it. I addressed sev_active in a separate patch.
-
-Thanks for reviewing this series!
-
->> +static inline bool mem_encrypt_active(void) { return false; }
+> I considered doing this (and even had a preliminary version of it), but
+> I discovered that I was not in favour of this idea -- once I started to
+> write tests using it -- for a few reasons:
 >
-> Thanks,
+>   1. It doesn't really allow for clean extension for a future 6th
+>          argument (because you are using up O_* flags to signify "use the
+>          next argument", and O_* flags don't give -EINVAL if they're
+>          unknown). Now, yes you can do the on-start runtime check that
+>          everyone does -- but I've never really liked having to do it.
 >
-> 	tglx
+>          Having reserved padding for later extensions (that is actually
+>          checked and gives -EINVAL) matches more modern syscall designs.
+>
+>   2. I really was hoping that the variadic openat(2) could be done away
+>      using this union setup (Linus said he didn't like it, and suggested
+>          using something like 'struct stat' as an argument for openat(2) --
+>          though personally I am not sure I would personally like to use an
+>          interface like that).
+>
+>   3. In order to avoid wasting a syscall argument for mode/mask you need
+>          to either have something like your suggested mode_mask (which makes
+>          the syscall arguments less consistent) or have some sort of
+>          mode-like argument that is treated specially (which is really awful
+>          on multiple levels -- this one I also tried and even wrote my
+>          original tests using). And in both cases, the shims for
+>          open{,at}(2) are somewhat less clean.
 
+These are all good reasons, thanks for providing the background.
 
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+> All of that being said, I'd be happy to switch to whatever you think
+> makes the most sense. As long as it's possible to get an O_PATH with
+> RESOLVE_IN_ROOT set, I'm happy.
 
+I don't feel I should be in charge of making the decision. I'd still
+prefer avoiding the indirect argument structure because
+
+4. it's inconsistent with most other syscalls
+
+5. you get the same problem with seccomp and strace that
+   clone3() has -- these and others only track the register
+   arguments by default.
+
+6. copying the structure adds a small overhead compared to
+   passing registers
+
+7. the calling conventions may be inconvenient for  a user space
+   library, so you end up with different prototypes for the low-level
+   syscall and the libc abstraction.
+
+I don't see any of the above seven points as a showstopper
+either way, so I hope someone else has a strong opinion
+and can make the decision easier for you.
+
+In the meantime just keep what you have, so you don't have
+to change it multiple times.
+
+       Arnd
