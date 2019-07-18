@@ -2,101 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8304A6CFAA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 16:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E938D6CFB3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 16:31:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390317AbfGRO2J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 10:28:09 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:47056 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbfGRO2I (ORCPT
+        id S1727866AbfGROaQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 10:30:16 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37522 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbfGROaQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 10:28:08 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6IENx2Y044084;
-        Thu, 18 Jul 2019 14:27:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=J9r9JlAuxE2aGKKJvVgk3Ep1Ee4jBkvxOBZiuSQLEgw=;
- b=rqBRRSXbS0tG1LrKio7DzJPy/LyEfaplc/ky1grlZEUhSaEYkIHbfVC2e6AilMFy7K4H
- DiOhnnKdvUHXgpjmB2yK9pHJJhxaw4q7ArWho7WHqzREa7hB6G9X9jBMTO1UIAEw15CF
- fyAOf9p/H9jQJhaUNsfVzdcL/mP/fNSX9z/Wgc4vivGnthkeb8D0lfqlPEC92bIXEbdh
- d7GZ4CTsG1WrbdI+MAtNYh0qZc600PTRsXOAVi6Va8QWyNEJDYG/VwuYEvSJ+XI2O4Jd
- mUkgGDcWjkN0m1wXgEXmW2s9AouGGIuRTXHKmXCivyI2gLQrW81RHWNBTgGmVRIzokH4 WQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2tq7xr96vf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Jul 2019 14:27:35 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6IEMo2N041534;
-        Thu, 18 Jul 2019 14:25:34 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2ttc8fm6na-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Jul 2019 14:25:33 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6IEPQMX020269;
-        Thu, 18 Jul 2019 14:25:26 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 18 Jul 2019 14:25:26 +0000
-Date:   Thu, 18 Jul 2019 07:25:25 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH] iomap: hide iomap_sector with CONFIG_BLOCK=n
-Message-ID: <20190718142525.GE7116@magnolia>
-References: <20190718125509.775525-1-arnd@arndb.de>
- <20190718125703.GA28332@lst.de>
- <CAK8P3a2k3ddUD-b+OskpDfAkm6KGAGAOBabkXk3Uek1dShTiUA@mail.gmail.com>
- <20190718130835.GA28520@lst.de>
+        Thu, 18 Jul 2019 10:30:16 -0400
+Received: by mail-qk1-f195.google.com with SMTP id d15so20588087qkl.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2019 07:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jjmJCNJRGOhllI8UevhEezWy1jhS3nYRGQxeSWHjEqQ=;
+        b=UTEKW/lQw1+YfnPZ90S0KbWWY8Wf+Rufpf+WlEgKiDHOHtf7HrKB83Bjoy8ag66hfO
+         6MEeXVjU8MnY7PYY4RwzoAQ3hb3OZLC5SmYHPlDFCJ9/XcnZV0V5s1UC+pDevIW9Du7u
+         WmxuQm1ZgMKRAio5Ii5xne72QhjVM+oE+ZM646Z6YLs2vTQ5P/95rMA/07sWtgyUOw2h
+         1rm2g3x7RY3qk7h1uYXaihYrKv2/nw+UG8zP5AHcSOx8zX6gGJ1IkOVYET8QR92ep1B0
+         oxQFc2EAkLrtehUI7WEnsZikIYEQNhggfHRYPQjfmT12HvL9xJN/58xty7YWcw3RsBbB
+         m7sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jjmJCNJRGOhllI8UevhEezWy1jhS3nYRGQxeSWHjEqQ=;
+        b=I/tkiZ7wRLtlfQskFYnqGKttQKz0j1SghqstHWcYFvi9/K2RP9dXniH+KYaO6qqfm8
+         XJw0GymMeRqzCC01ZGiqtmxoPmQwVYDbXo6beRpnKULosz1kjBC0oQUJ7+2xK9T8qU5Q
+         5Gh8yejl86wkfeHwizHsvwJgEZlhw7qB9pi6mVPiIRt++wnqpX52W89cWWeWFfipSxEz
+         Nlm1GEEvJq0O0GyCyAtTnw+248yYLSC/tbKcgVUgnJabMvRBMOXuXrgj6I3Jefjm+n0K
+         B7SmMC5RKaXZ+shEIRGxCRwIwfXgJ7osJPaT/KT8/7xq4FzV4w6vLSlrcGqFJo70Ry1t
+         kBGQ==
+X-Gm-Message-State: APjAAAWqgoYwMCwfMyJRId2Ts6fZTcVW4+ftxUc86GDB7HPwk9vZW69r
+        Mz6pNCL1CUAlgbfq+F1pM+a8iHPE4iuLhZ9nV2SO6g==
+X-Google-Smtp-Source: APXvYqyH3Tq2IZ4Y34U+Coq0W2cVWZFn0bZvr00HyTwOSwv4wauHuS/tecT7SIuKu7ysKawZSqDgTIAA4/cnpxUome4=
+X-Received: by 2002:a37:a742:: with SMTP id q63mr29771140qke.421.1563460215307;
+ Thu, 18 Jul 2019 07:30:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190718130835.GA28520@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9321 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907180150
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9321 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907180150
+References: <20190515192715.18000-1-vgoyal@redhat.com> <20190515192715.18000-19-vgoyal@redhat.com>
+ <20190717192725.25c3d146.pasic@linux.ibm.com> <20190718131532.GA13883@redhat.com>
+In-Reply-To: <20190718131532.GA13883@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 18 Jul 2019 07:30:03 -0700
+Message-ID: <CAPcyv4i+2nKJYqkbrdm3hWcjaMYkCKUxqLBq96HOZe6xOZzGGg@mail.gmail.com>
+Subject: Re: [PATCH v2 18/30] virtio_fs, dax: Set up virtio_fs dax_device
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Halil Pasic <pasic@linux.ibm.com>,
+        Collin Walling <walling@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Sebastian Ott <sebott@linux.ibm.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Steven Whitehouse <swhiteho@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 03:08:35PM +0200, Christoph Hellwig wrote:
-> On Thu, Jul 18, 2019 at 03:03:15PM +0200, Arnd Bergmann wrote:
-> > The inclusion comes from the recently added header check in commit
-> > c93a0368aaa2 ("kbuild: do not create wrappers for header-test-y").
-> > 
-> > This just tries to include every header by itself to see if there are build
-> > failures from missing indirect includes. We probably don't want to
-> > add an exception for iomap.h there.
-> 
-> I very much disagree with that check.  We don't need to make every
-> header compilable with a setup where it should not be included.
+On Thu, Jul 18, 2019 at 6:15 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Wed, Jul 17, 2019 at 07:27:25PM +0200, Halil Pasic wrote:
+> > On Wed, 15 May 2019 15:27:03 -0400
+> > Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > > From: Stefan Hajnoczi <stefanha@redhat.com>
+> > >
+> > > Setup a dax device.
+> > >
+> > > Use the shm capability to find the cache entry and map it.
+> > >
+> > > The DAX window is accessed by the fs/dax.c infrastructure and must have
+> > > struct pages (at least on x86).  Use devm_memremap_pages() to map the
+> > > DAX window PCI BAR and allocate struct page.
+> > >
+> >
+> > Sorry for being this late. I don't see any more recent version so I will
+> > comment here.
+> >
+> > I'm trying to figure out how is this supposed to work on s390. My concern
+> > is, that on s390 PCI memory needs to be accessed by special
+> > instructions. This is taken care of by the stuff defined in
+> > arch/s390/include/asm/io.h. E.g. we 'override' __raw_writew so it uses
+> > the appropriate s390 instruction. However if the code does not use the
+> > linux abstractions for accessing PCI memory, but assumes it can be
+> > accessed like RAM, we have a problem.
+> >
+> > Looking at this patch, it seems to me, that we might end up with exactly
+> > the case described. For example AFAICT copy_to_iter() (3) resolves to
+> > the function in lib/iov_iter.c which does not seem to cater for s390
+> > oddities.
+> >
+> > I didn't have the time to investigate this properly, and since virtio-fs
+> > is virtual, we may be able to get around what is otherwise a
+> > limitation on s390. My understanding of these areas is admittedly
+> > shallow, and since I'm not sure I'll have much more time to
+> > invest in the near future I decided to raise concern.
+> >
+> > Any opinions?
+>
+> Hi Halil,
+>
+> I don't understand s390 and how PCI works there as well. Is there any
+> other transport we can use there to map IO memory directly and access
+> using DAX?
+>
+> BTW, is DAX supported for s390.
+>
+> I am also hoping somebody who knows better can chip in. Till that time,
+> we could still use virtio-fs on s390 without DAX.
 
-Seconded, unless there's some scenario where someone needs iomap when
-CONFIG_BLOCK=n (???)
-
---D
-
-> That being said if you feel this is worth fixing I'd rather define
-> SECTOR_SIZE/SECTOR_SHIFT unconditionally.
+s390 has so-called "limited" dax support, see CONFIG_FS_DAX_LIMITED.
+In practice that means that support for PTE_DEVMAP is missing which
+means no get_user_pages() support for dax mappings. Effectively it's
+only useful for execute-in-place as operations like fork() and ptrace
+of dax mappings will fail.
