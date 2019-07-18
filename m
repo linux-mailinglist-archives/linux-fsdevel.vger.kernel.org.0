@@ -2,176 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 327386D705
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 01:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA0BF6D721
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 01:09:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391700AbfGRXDB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 19:03:01 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:11611 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728524AbfGRXDB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 19:03:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1563490980; x=1595026980;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=ock0+kbA/AdU6ryh9QeT0HyVvIfkPCXilFpp7F+Vzog=;
-  b=KEk2qk4KvN/H6fXjO/EcESdqDHOG7Ri2S7BHBL40zPRAnZp30w9jdCAB
-   1ZbvFsA+QPh2oJl6cCrYzM6nzOuFR3xxoY2mazOGJG7dZWBJ0zuBACYoB
-   Grzrd2NmiZVMdRKXi3wpGedoYR9XFOX2iQzw9CxO2emFg5tHr5hqKqe8w
-   l7lfBmz3zq5DMtCziSmIuyZ/JtmcpS9zCdr5X18YISca2Qlf5UmuR1Ibv
-   7bNexiPw+V0xSsqKhSR/0rTq5DcXNICgZhavOzaW6VZ8tcHQW+z8VC2Ug
-   HRYsPumSa/llUlsq8P+s+XRa3KSjP318OOO48n0LtccPPS80EMo55jkXJ
-   w==;
-IronPort-SDR: AkRNWGFeLOTIfPS/VZgVhsnsNxsTwB4K4CuIElViHdaPmHxcxfACq4F3Y2THUzXbpLGaAyLT2q
- OhFCDHERYmjflPw825eyMUn3nfGVPiNz1wHAqy/XbTfqUL2KjRI+xpn6wCVeTJdB/CpBoawe0n
- srnAIl82eXNuqm71cj8avyhxug0wuvM8eFv9OqJxfHTuePrZAVc3N/R43UTcSiSLOr4gT0J8Cv
- iZdAN5gPEx+aRHBgIYzs6FOvUchPJbn3nZBGMkXWVllVTmfmSwFkOa3BZROHdnlP9oxV/E91Wi
- uvk=
-X-IronPort-AV: E=Sophos;i="5.64,279,1559491200"; 
-   d="scan'208";a="219875140"
-Received: from mail-by2nam03lp2056.outbound.protection.outlook.com (HELO NAM03-BY2-obe.outbound.protection.outlook.com) ([104.47.42.56])
-  by ob1.hgst.iphmx.com with ESMTP; 19 Jul 2019 07:02:44 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EEtzcHLbAlxLg0Z9zv/+629lsao7v6Fi3Js1SevpvTjDjWCUQrpwU8R3Zj5O7WjV6h0iW+MUYOj4FjsRUuXGnyJi0X2mFHRyI6sYVnDSb4yjstE4/E1Q/O/mbpYZeMV3EDJT7VN/ZyT3w9ec4SDZ/M5EFt0tb+Xg2cVry4RDDd61IinPZYG3TrY5git5rsXXvUne9l+uSR8STCvIHQl9eXjYvHtgMPiL+wI3zQ9dWw4sTeYsU7AgIZ/tahw/prCC9a0TChdmzMh7hYwGFPft4MlVl2pFCqMxK9tlK27+j7M3uh5GkJbi3dt+iumyuRML22QD0bpjcE3wZcy+ozlPCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m2jdTyYxz5U3ISxCWcKbN5anLdLDjOGm9Pqo9/1OGSM=;
- b=DPELpb1yS9cpBJxBqC4cVI3bm2bWFmJ1qgrRqcE2aHV6ilp6q2ODVq9naRlVLoLChd/PD2OjwufQWdffPAvcMEPzALJ06fqTKQjQ4lyfPSpYahYhXUoiGXJDdeByPqLxwSgXG65A1d7iwcqvjyvK1i2D8Dmbn4wv69d6tBSuiQ1/aJHfiSoirmEcFBRj2WqRhjFb/wE8+H0qc647+gsGvnm0QOxaA9O9ZPjG4DibgYFC4dnRxReod53nDSTztg9sh8jiPkWcNJsKeFtu9MvTbQMTDh80zCGulIJuND/6P8icjuPEIGcM4t1YrXreq870C4VNyHd+kIogly0pw0ChNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=wdc.com;dmarc=pass action=none header.from=wdc.com;dkim=pass
- header.d=wdc.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m2jdTyYxz5U3ISxCWcKbN5anLdLDjOGm9Pqo9/1OGSM=;
- b=i717TmK3N4u6jk5AyKfT2tokQnV13upMsvtYtxU/msVjRvxKtQBZsLiXULvldgXZwOGK7ussRXMcEkm2ETyNnPpauRyg4jLQxunYjvV9RmWWV5er+tpVcsgULCfwAEWfeEUWAjxncpmaHpFfNebFzOsOFYrhh+S4KbzQ1kAgv7w=
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
- BYAPR04MB6038.namprd04.prod.outlook.com (20.178.233.160) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.12; Thu, 18 Jul 2019 23:02:43 +0000
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::65a9:db0a:646d:eb1e]) by BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::65a9:db0a:646d:eb1e%6]) with mapi id 15.20.2073.012; Thu, 18 Jul 2019
- 23:02:43 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Jeff Moyer <jmoyer@redhat.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.de>,
-        Ting Yao <d201577678@hust.edu.cn>
-Subject: Re: [PATCH RFC] fs: New zonefs file system
-Thread-Topic: [PATCH RFC] fs: New zonefs file system
-Thread-Index: AQHVOF31k+9+55ZdEkmKABdH1mzidg==
-Date:   Thu, 18 Jul 2019 23:02:43 +0000
-Message-ID: <BYAPR04MB5816B59932372E2D97330308E7C80@BYAPR04MB5816.namprd04.prod.outlook.com>
-References: <20190712030017.14321-1-damien.lemoal@wdc.com>
- <x49zhlbe8li.fsf@segfault.boston.devel.redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Damien.LeMoal@wdc.com; 
-x-originating-ip: [60.117.181.124]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 08a2ac96-dc73-494f-9375-08d70bd40abd
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB6038;
-x-ms-traffictypediagnostic: BYAPR04MB6038:
-x-microsoft-antispam-prvs: <BYAPR04MB60386885888F57CB8AE548E5E7C80@BYAPR04MB6038.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 01026E1310
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(136003)(376002)(39860400002)(396003)(346002)(189003)(199004)(6436002)(2906002)(478600001)(6246003)(71190400001)(71200400001)(52536014)(66946007)(74316002)(8676002)(66476007)(25786009)(81166006)(81156014)(76116006)(91956017)(86362001)(14454004)(66446008)(64756008)(66556008)(8936002)(256004)(14444005)(4326008)(3846002)(6116002)(53546011)(26005)(54906003)(316002)(9686003)(99286004)(446003)(33656002)(68736007)(53936002)(186003)(229853002)(102836004)(486006)(6506007)(7696005)(5660300002)(7736002)(6916009)(66066001)(476003)(55016002)(305945005)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB6038;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: drzx3/6DWkgzds8rswmkSSl4/j3iUT0XLZ48+PfkbtDm6nai0e1IU2gV/oGfvIJl2aB6ZVOaNFBQfcYguOlptyToi/1Cw8CxvZbil0/7h+axokPAJejLNO4PnLaqKZdLOb6EEedo6g8NBnmmP5Yi0iHvg3qxtgRMnwNTlFNeAWi1Fm2B/Hh94q9BSwagh2TCl6o4jLElumfkgU+esc9LcB/oHxMsE+yUBS5KFP1DNeAmxHL8h7FcAJ14oH16vtcISyP+Y0NCdYNBjUw6C7TbxIM/cJ1kXAPuUPB+aFeaG7ydZ0jDuHwPneYtvEiiUr5LnOF9v7+qTsYOT79SORWS2cuL8i9POn+Gn1pzbOSaljeLYp+5wSYN8oki6MOiQUk6nOdIvFM6eVfz8Jt4CkzplHEVyMvCKFLrX07/9gtS2I4=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08a2ac96-dc73-494f-9375-08d70bd40abd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2019 23:02:43.5983
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Damien.LeMoal@wdc.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB6038
+        id S1728505AbfGRXIw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 19:08:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50126 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728072AbfGRXIw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Jul 2019 19:08:52 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.64])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4804121019;
+        Thu, 18 Jul 2019 23:08:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563491331;
+        bh=l41XHqfhQXRWpJRimWubsDCtliFI/buN2e5R5tXe1pQ=;
+        h=Date:From:To:Subject:From;
+        b=RXudblfJ6N6q3NSsicM6rKkZmK/AxczRHVASO9nc9JOTZICedbGeaArhLNuJ6hE97
+         tcS/A26xycdAt+OsHMsVmh2kGRPPKeucVuQiZAYKfW3OUOVfwEoOilkUIRfDRVsSOg
+         U2pBXyRhr03JP7GfQ+yM6saIlevejBvtIyHKVw/s=
+Date:   Thu, 18 Jul 2019 16:08:50 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject:  mmotm 2019-07-18-16-08 uploaded
+Message-ID: <20190718230850.aurae%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.10
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jeff,=0A=
-=0A=
-On 2019/07/18 23:11, Jeff Moyer wrote:=0A=
-> Hi, Damien,=0A=
-> =0A=
-> Did you consider creating a shared library?  I bet that would also=0A=
-> ease application adoption for the use cases you're interested in, and=0A=
-> would have similar performance.=0A=
-> =0A=
-> -Jeff=0A=
-=0A=
-Yes, it would, but to a lesser extent since system calls would need to be=
-=0A=
-replaced with library calls. Earlier work on LevelDB by Ting used the libra=
-ry=0A=
-approach with libzbc, not quite a "libzonefs" but close enough. Working wit=
-h=0A=
-LevelDB code gave me the idea for zonefs. Compared to a library, the added=
-=0A=
-benefits are that specific language bindings are not a problem and further=
-=0A=
-simplify the code changes needed to support zoned block devices. In the cas=
-e of=0A=
-LevelDB for instance, C++ is used and file accesses are using streams, whic=
-h=0A=
-makes using a library a little difficult, and necessitates more changes jus=
-t for=0A=
-the internal application API itself. The needed changes spread beyond the d=
-evice=0A=
-access API.=0A=
-=0A=
-This is I think the main advantage of this simple in-kernel FS over a libra=
-ry:=0A=
-the developer can focus on zone block device specific needs (write sequenti=
-al=0A=
-pattern and garbage collection) and forget about the device access parts as=
- the=0A=
-standard system calls API can be used.=0A=
-=0A=
-Another approach I considered is using FUSE, but went for a regular (albeit=
-=0A=
-simple) in-kernel approach due to performance concerns. While any differenc=
-e in=0A=
-performance for SMR HDDs would probably not be noticeable, performance woul=
-d=0A=
-likely be lower for upcoming NVMe zonenamespace devices compared to the=0A=
-in-kernel approach.=0A=
-=0A=
-But granted, most of the arguments I can put forward for an in-kernel FS=0A=
-solution vs a user shared library solution are mostly subjective. I think t=
-hough=0A=
-that having support directly provided by the kernel brings zoned block devi=
-ces=0A=
-into the "mainstream storage options" rather than having them perceived as=
-=0A=
-fringe solutions that need additional libraries to work correctly. Zoned bl=
-ock=0A=
-devices are not going away and may in fact become more mainstream as=0A=
-implementing higher capacities more and more depends on the sequential writ=
-e=0A=
-interface.=0A=
-=0A=
-Best regards.=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+The mm-of-the-moment snapshot 2019-07-18-16-08 has been uploaded to
+
+   http://www.ozlabs.org/~akpm/mmotm/
+
+mmotm-readme.txt says
+
+README for mm-of-the-moment:
+
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 5.2:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* mm-memory_hotplug-simplify-and-fix-check_hotplug_memory_range.patch
+* s390x-mm-fail-when-an-altmap-is-used-for-arch_add_memory.patch
+* s390x-mm-implement-arch_remove_memory.patch
+* arm64-mm-add-temporary-arch_remove_memory-implementation.patch
+* drivers-base-memory-pass-a-block_id-to-init_memory_block.patch
+* mm-memory_hotplug-allow-arch_remove_pages-without-config_memory_hotremove.patch
+* mm-memory_hotplug-create-memory-block-devices-after-arch_add_memory.patch
+* mm-memory_hotplug-drop-mhp_memblock_api.patch
+* mm-memory_hotplug-remove-memory-block-devices-before-arch_remove_memory.patch
+* mm-memory_hotplug-make-unregister_memory_block_under_nodes-never-fail.patch
+* mm-memory_hotplug-remove-zone-parameter-from-sparse_remove_one_section.patch
+* mm-sparse-set-section-nid-for-hot-add-memory.patch
+* mm-thp-make-transhuge_vma_suitable-available-for-anonymous-thp.patch
+* mm-thp-fix-false-negative-of-shmem-vmas-thp-eligibility.patch
+* resource-fix-locking-in-find_next_iomem_res.patch
+* resource-avoid-unnecessary-lookups-in-find_next_iomem_res.patch
+* mm-section-numbers-use-the-type-unsigned-long.patch
+* drivers-base-memory-use-unsigned-long-for-block-ids.patch
+* mm-make-register_mem_sect_under_node-static.patch
+* mm-memory_hotplug-rename-walk_memory_range-and-pass-startsize-instead-of-pfns.patch
+* mm-memory_hotplug-move-and-simplify-walk_memory_blocks.patch
+* drivers-base-memoryc-get-rid-of-find_memory_block_hinted.patch
+* mm-sparsemem-introduce-struct-mem_section_usage.patch
+* mm-sparsemem-introduce-a-section_is_early-flag.patch
+* mm-sparsemem-add-helpers-track-active-portions-of-a-section-at-boot.patch
+* mm-hotplug-prepare-shrink_zone-pgdat_span-for-sub-section-removal.patch
+* mm-sparsemem-convert-kmalloc_section_memmap-to-populate_section_memmap.patch
+* mm-hotplug-kill-is_dev_zone-usage-in-__remove_pages.patch
+* mm-kill-is_dev_zone-helper.patch
+* mm-sparsemem-prepare-for-sub-section-ranges.patch
+* mm-sparsemem-support-sub-section-hotplug.patch
+* mm-document-zone_device-memory-model-implications.patch
+* mm-devm_memremap_pages-enable-sub-section-remap.patch
+* libnvdimm-pfn-fix-fsdax-mode-namespace-info-block-zero-fields.patch
+* libnvdimm-pfn-stop-padding-pmem-namespaces-to-section-alignment.patch
+* mm-sparsemem-cleanup-section-number-data-types.patch
+* mm-migrate-remove-unused-mode-argument.patch
+* proc-sysctl-add-shared-variables-for-range-check.patch
+* riscv-fix-build-break-after-macro-to-function-conversion-in-generic-cacheflushh.patch
+* mm-hmm-fix-bad-subpage-pointer-in-try_to_unmap_one.patch
+* docs-signal-fix-a-kernel-doc-markup.patch
+* revert-kmemleak-allow-to-coexist-with-fault-injection.patch
+* ocfs2-remove-set-but-not-used-variable-last_hash.patch
+* mm-vmscan-check-if-mem-cgroup-is-disabled-or-not-before-calling-memcg-slab-shrinker.patch
+* mm-migrate-fix-reference-check-race-between-__find_get_block-and-migration.patch
+* mm-balloon_compaction-avoid-duplicate-page-removal.patch
+* balloon-fix-up-comments.patch
+* mm-compaction-avoid-100%-cpu-usage-during-compaction-when-a-task-is-killed.patch
+* ocfs2-clear-zero-in-unaligned-direct-io.patch
+* ocfs2-clear-zero-in-unaligned-direct-io-checkpatch-fixes.patch
+* ocfs2-wait-for-recovering-done-after-direct-unlock-request.patch
+* ocfs2-checkpoint-appending-truncate-log-transaction-before-flushing.patch
+* ramfs-support-o_tmpfile.patch
+  mm.patch
+* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* mm-sparse-fix-memory-leak-of-sparsemap_buf-in-aliged-memory.patch
+* mm-sparse-fix-memory-leak-of-sparsemap_buf-in-aliged-memory-fix.patch
+* mm-sparse-fix-align-without-power-of-2-in-sparse_buffer_alloc.patch
+* mm-mempolicy-make-the-behavior-consistent-when-mpol_mf_move-and-mpol_mf_strict-were-specified.patch
+* mm-mempolicy-handle-vma-with-unmovable-pages-mapped-correctly-in-mbind.patch
+* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill.patch
+* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill-fix.patch
+* mm-proportional-memorylowmin-reclaim.patch
+* mm-make-memoryemin-the-baseline-for-utilisation-determination.patch
+* mm-make-memoryemin-the-baseline-for-utilisation-determination-fix.patch
+* mm-vmscan-remove-unused-lru_pages-argument.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* lib-genallocc-export-symbol-addr_in_gen_pool.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr-fix.patch
+* lib-fix-possible-incorrect-result-from-rational-fractions-helper.patch
+* checkpatch-added-warnings-in-favor-of-strscpy.patch
+* checkpatch-dont-interpret-stack-dumps-as-commit-ids.patch
+* checkpatch-fix-something.patch
+* fat-add-nobarrier-to-workaround-the-strange-behavior-of-device.patch
+* coredump-split-pipe-command-whitespace-before-expanding-template.patch
+* aio-simplify-read_events.patch
+* ipc-consolidate-all-xxxctl_down-functions.patch
+  linux-next.patch
+  linux-next-rejects.patch
+  diff-sucks.patch
+* pinctrl-fix-pxa2xxc-build-warnings.patch
+* drivers-tty-serial-sh-scic-suppress-warning.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
