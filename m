@@ -2,110 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54DB06CE6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 15:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 264AC6CE85
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 15:03:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbfGRNBf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 09:01:35 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52282 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726513AbfGRNBf (ORCPT
+        id S2390486AbfGRNDf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 09:03:35 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45863 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390481AbfGRNDe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 09:01:35 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6ICvhC9108417
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2019 09:01:34 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ttqje4k14-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2019 09:01:33 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Thu, 18 Jul 2019 14:01:31 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 18 Jul 2019 14:01:26 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6ID1O1I46399696
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Jul 2019 13:01:24 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3CC511C04C;
-        Thu, 18 Jul 2019 13:01:24 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B18911C04A;
-        Thu, 18 Jul 2019 13:01:24 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.224.219])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 18 Jul 2019 13:01:24 +0000 (GMT)
-Date:   Thu, 18 Jul 2019 15:01:23 +0200
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>, x86@kernel.org,
-        iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>
-Subject: Re: [PATCH v3 6/6] s390/mm: Remove sev_active() function
-In-Reply-To: <20190718084456.GE24562@lst.de>
-References: <20190718032858.28744-1-bauerman@linux.ibm.com>
-        <20190718032858.28744-7-bauerman@linux.ibm.com>
-        <20190718084456.GE24562@lst.de>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        Thu, 18 Jul 2019 09:03:34 -0400
+Received: by mail-qt1-f195.google.com with SMTP id x22so22132278qtp.12;
+        Thu, 18 Jul 2019 06:03:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Lb5k3Q5zQv7ZLYwKsi5srpJUcaAhZ2VH3/ijP9EHPxI=;
+        b=bJZUe2Q4TPeH0V6Mu45JwPPUVuQzsLbVcT5whNJqDcId54bdTKAvznV94DL75HArIn
+         ImDqGrCKqr7DU6uOcEBlKeV++Dl/051kiLMksb5sGpK1d9Jw7rL2Y4z2vRl7hrbqO7ji
+         fLwVlvjC/mdjdzc+7FP4FMHX+3/oULVuUOwhO3ZlkX/fdW5iqB0SNA9/LHYNWL8ouhdc
+         IraIPpxtjBzEHlQh0Ye4SrdGKTIkWCx3Cd17rhzMC8JOcWyVZ3b0snfZup0XEoXavIUZ
+         4/x4Gb0b21xs5p5EU+wN/3bFV2mZp/7ZTKFQME/ziwg+LH0LDnzKInK33zKwptDSPpM0
+         eaCQ==
+X-Gm-Message-State: APjAAAWDonUdkXTV5MHL2PA2UK1cX7/2wuHsfZ3rrLNbCOIZXe7yBEu4
+        NfdiGJtgGCnIsUny82NwsbX7YtK+q9JcKRkkckQ=
+X-Google-Smtp-Source: APXvYqz9nIctHx6Rxddq8cesuADplI3Y1SDM5MUlVUyjc8+t0YSaOlsFqe0AC18MyfvhBpwKa4Wro3+CjshsGETrsVs=
+X-Received: by 2002:aed:33a4:: with SMTP id v33mr31403781qtd.18.1563455013554;
+ Thu, 18 Jul 2019 06:03:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19071813-0028-0000-0000-00000385B410
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071813-0029-0000-0000-00002445DDD0
-Message-Id: <20190718150123.4230a00c.pasic@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-18_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=994 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907180135
+References: <20190718125509.775525-1-arnd@arndb.de> <20190718125703.GA28332@lst.de>
+In-Reply-To: <20190718125703.GA28332@lst.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 18 Jul 2019 15:03:15 +0200
+Message-ID: <CAK8P3a2k3ddUD-b+OskpDfAkm6KGAGAOBabkXk3Uek1dShTiUA@mail.gmail.com>
+Subject: Re: [PATCH] iomap: hide iomap_sector with CONFIG_BLOCK=n
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jani Nikula <jani.nikula@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 18 Jul 2019 10:44:56 +0200
-Christoph Hellwig <hch@lst.de> wrote:
+On Thu, Jul 18, 2019 at 2:57 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> On Thu, Jul 18, 2019 at 02:55:01PM +0200, Arnd Bergmann wrote:
+> > When CONFIG_BLOCK is disabled, SECTOR_SHIFT is unknown:
+> >
+> > In file included from <built-in>:3:
+> > include/linux/iomap.h:76:48: error: use of undeclared identifier 'SECTOR_SHIFT'
+> >         return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
+> >
+> > Since there are no callers in this case, just hide the function in
+> > the same ifdef.
+> >
+> > Fixes: db074436f421 ("iomap: move the direct IO code into a separate file")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Can we just not include iomap.c when CONFIG_BLOCK is not set?
+> Which file do you see this with?
 
-> > -/* are we a protected virtualization guest? */
-> > -bool sev_active(void)
-> > -{
-> > -	return is_prot_virt_guest();
-> > -}
-> > -
-> >  bool force_dma_unencrypted(struct device *dev)
-> >  {
-> > -	return sev_active();
-> > +	return is_prot_virt_guest();
-> >  }
-> 
-> Do we want to keep the comment for force_dma_unencrypted?
+The inclusion comes from the recently added header check in commit
+c93a0368aaa2 ("kbuild: do not create wrappers for header-test-y").
 
-Yes we do. With the comment transferred:
+This just tries to include every header by itself to see if there are build
+failures from missing indirect includes. We probably don't want to
+add an exception for iomap.h there.
 
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-
-> 
-> Otherwise looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-
+      Arnd
