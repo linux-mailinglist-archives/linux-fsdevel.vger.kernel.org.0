@@ -2,91 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6E916C3FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 03:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C38956C6AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 05:18:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbfGRBEx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jul 2019 21:04:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39312 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbfGRBEx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jul 2019 21:04:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yL1QRBLgiuTEBo6M7mFjYzXgwvS+vJNgmxYl0NAvUEs=; b=mHmwAYFl8MnzVDFln77SJazjT
-        oG5816qIGlCpjSZhs/9XnQCOfSYlwVtXYOW5HMdXYm9LbZGcySnZMcwgB8bWSqJhJCXVwCtDUZsZb
-        iNl4jnQcWmBPS+dsT066VquHLTdR5nKRHs9iME5jtjDoWpnlMazXXDnEEQkEi/RHfLnPY+1HGDvY2
-        g1UNFh1LjyLbhELEYprPFOlU3PsIU+LLzZ9aBaavDDE3oQdrkmDXC/6QIDexd6G0U3ybh7xi3vDvF
-        RLXXYYXPnZKT9p1q9XVbL4vVv5yyBIBZBBrBDya9VpZqy4ZDKz0D7qTmyDdbJzpZ3IxfMdv7wCKBI
-        AG37BwH1w==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hnuql-0002QV-HP; Thu, 18 Jul 2019 01:04:47 +0000
-Subject: Re: [RFC PATCH v7 1/1] Add dm verity root hash pkcs7 sig validation.
-To:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
-        gmazyland@gmail.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, jmorris@namei.org, scottsh@microsoft.com,
-        mdsakib@microsoft.com, mpatocka@redhat.com, ebiggers@google.com
-References: <20190718004615.16818-1-jaskarankhurana@linux.microsoft.com>
- <20190718004615.16818-2-jaskarankhurana@linux.microsoft.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d057b88f-0a21-0843-1212-af46f67343a2@infradead.org>
-Date:   Wed, 17 Jul 2019 18:04:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2389828AbfGRDSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jul 2019 23:18:31 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:39012 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389508AbfGRDSa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:18:30 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id F35D54FE71;
+        Thu, 18 Jul 2019 05:18:23 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id nZ38r1RPFd3K; Thu, 18 Jul 2019 05:18:14 +0200 (CEST)
+Date:   Thu, 18 Jul 2019 13:17:29 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        David Drysdale <drysdale@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 05/10] namei: O_BENEATH-style path resolution flags
+Message-ID: <20190718031729.scehpjydhuxgxqjy@yavin>
+References: <20190706145737.5299-6-cyphar@cyphar.com>
+ <20190712043341.GI17978@ZenIV.linux.org.uk>
+ <20190712105745.nruaftgeat6irhzr@yavin>
+ <20190712123924.GK17978@ZenIV.linux.org.uk>
+ <20190712125552.GL17978@ZenIV.linux.org.uk>
+ <20190712132553.GN17978@ZenIV.linux.org.uk>
+ <20190712150026.GO17978@ZenIV.linux.org.uk>
+ <20190713024153.GA3817@ZenIV.linux.org.uk>
+ <20190714070029.m53etvm3y4etidxt@yavin>
+ <20190714143623.GR17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20190718004615.16818-2-jaskarankhurana@linux.microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z4aw3kgjubxi6rqg"
+Content-Disposition: inline
+In-Reply-To: <20190714143623.GR17978@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-Just a couple of minor nits:
 
-On 7/17/19 5:46 PM, Jaskaran Khurana wrote:
-> diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-> index 3834332f4963..c2b04d226c90 100644
-> --- a/drivers/md/Kconfig
-> +++ b/drivers/md/Kconfig
-> @@ -490,6 +490,18 @@ config DM_VERITY
->  
->  	  If unsure, say N.
->  
-> +config DM_VERITY_VERIFY_ROOTHASH_SIG
-> +	def_bool n
+--z4aw3kgjubxi6rqg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It already defaults to n, so we usually try to omit that (don't repeat it).
+On 2019-07-14, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Sun, Jul 14, 2019 at 05:00:29PM +1000, Aleksa Sarai wrote:
+> > The basic property being guaranteed by LOOKUP_IN_ROOT is that it will
+> > not result in resolution of a path component which was not inside the
+> > root of the dirfd tree at some point during resolution (and that all
+> > absolute symlink and ".." resolution will be done relative to the
+> > dirfd). This may smell slightly of chroot(2), because unfortunately it
+> > is a similar concept -- the reason for this is to allow for a more
+> > efficient way to safely resolve paths inside a rootfs than spawning a
+> > separate process to then pass back the fd to the caller.
+>=20
+> IDGI...  If attacker can modify your subtree, you have already lost -
+> after all, they can make anything appear inside that tree just before
+> your syscall is made and bring it back out immediately afterwards.
+> And if they can't, what is the race you are trying to protect against?
+> Confused...
 
-> +	bool "Verity data device root hash signature verification support"
-> +	depends on DM_VERITY
-> +	select SYSTEM_DATA_VERIFICATION
-> +	  help
+I'll be honest, this code mostly exists because Jann Horn said that it
+was necessary in order for this interface to be safe against those kinds
+of attacks. Though, it's also entirely possible I just am
+mis-remembering the attack scenario he described when I posted v1 of
+this series last year.
 
-"help" should only be indented by one tab (and not the extra 2 spaces).
+The use-case I need this functionality for (as do other container
+runtimes) is one where you are trying to safely interact with a
+directory tree that is a (malicious) container's root filesystem -- so
+the container won't be able to move the directory tree root, nor can
+they move things outside the rootfs into it (or the reverse). Users
+dealing with FTP, web, or file servers probably have similar
+requirements.
 
-> +	  The device mapper target created by DM-VERITY can be validated if the
-> +	  pre-generated tree of cryptographic checksums passed has a pkcs#7
-> +	  signature file that can validate the roothash of the tree.
-> +
-> +	  If unsure, say N.
-> +
->  config DM_VERITY_FEC
->  	bool "Verity forward error correction support"
->  	depends on DM_VERITY
+There is an obvious race condition if you allow the attacker to move the
+root (I give an example and test-case of it in the last patch in the
+series), and given that it is fairly trivial to defend against I don't
+see the downside in including it? But it's obviously your call -- and
+maybe Jann Horn can explain the reasoning behind this much better than I
+can.
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-thanks.
--- 
-~Randy
+--z4aw3kgjubxi6rqg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXS/kxgAKCRCdlLljIbnQ
+Eo0/AQD7a5jDbww9O+NZeirpVja2r3Y2CFcg1rTXSOeRjy321gEAoJhiO3HmSR50
+nG/Ogapy7jTKDSyCcC7BfUZDZSz67go=
+=wzlY
+-----END PGP SIGNATURE-----
+
+--z4aw3kgjubxi6rqg--
