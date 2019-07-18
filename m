@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 338FD6CB24
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 10:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9460E6CB2B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 10:45:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbfGRIoS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 04:44:18 -0400
-Received: from verein.lst.de ([213.95.11.211]:57873 "EHLO verein.lst.de"
+        id S2389627AbfGRIpA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 04:45:00 -0400
+Received: from verein.lst.de ([213.95.11.211]:57902 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726649AbfGRIoS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 04:44:18 -0400
+        id S1726482AbfGRIo7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Jul 2019 04:44:59 -0400
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id D492968B05; Thu, 18 Jul 2019 10:44:16 +0200 (CEST)
-Date:   Thu, 18 Jul 2019 10:44:16 +0200
+        id BEB5068B05; Thu, 18 Jul 2019 10:44:57 +0200 (CEST)
+Date:   Thu, 18 Jul 2019 10:44:56 +0200
 From:   Christoph Hellwig <hch@lst.de>
 To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
 Cc:     x86@kernel.org, iommu@lists.linux-foundation.org,
@@ -30,35 +30,33 @@ Cc:     x86@kernel.org, iommu@lists.linux-foundation.org,
         Halil Pasic <pasic@linux.ibm.com>,
         Mike Anderson <andmike@linux.ibm.com>,
         Ram Pai <linuxram@us.ibm.com>
-Subject: Re: [PATCH v3 5/6] fs/core/vmcore: Move sev_active() reference to
- x86 arch code
-Message-ID: <20190718084416.GD24562@lst.de>
-References: <20190718032858.28744-1-bauerman@linux.ibm.com> <20190718032858.28744-6-bauerman@linux.ibm.com>
+Subject: Re: [PATCH v3 6/6] s390/mm: Remove sev_active() function
+Message-ID: <20190718084456.GE24562@lst.de>
+References: <20190718032858.28744-1-bauerman@linux.ibm.com> <20190718032858.28744-7-bauerman@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190718032858.28744-6-bauerman@linux.ibm.com>
+In-Reply-To: <20190718032858.28744-7-bauerman@linux.ibm.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 12:28:57AM -0300, Thiago Jung Bauermann wrote:
-> Secure Encrypted Virtualization is an x86-specific feature, so it shouldn't
-> appear in generic kernel code because it forces non-x86 architectures to
-> define the sev_active() function, which doesn't make a lot of sense.
-> 
-> To solve this problem, add an x86 elfcorehdr_read() function to override
-> the generic weak implementation. To do that, it's necessary to make
-> read_from_oldmem() public so that it can be used outside of vmcore.c.
-> 
-> Also, remove the export for sev_active() since it's only used in files that
-> won't be built as modules.
+> -/* are we a protected virtualization guest? */
+> -bool sev_active(void)
+> -{
+> -	return is_prot_virt_guest();
+> -}
+> -
+>  bool force_dma_unencrypted(struct device *dev)
+>  {
+> -	return sev_active();
+> +	return is_prot_virt_guest();
+>  }
 
-I have to say I find the __weak overrides of the vmcore files very
-confusing and which we'd have a better scheme there.  But as this fits
-into that scheme and allows to remove the AMD SME vs SEV knowledge from
-the core I'm fine with it.
+Do we want to keep the comment for force_dma_unencrypted?
+
+Otherwise looks good:
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
