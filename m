@@ -2,167 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D6BE6C3EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 02:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2450D6C3F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 02:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731292AbfGRAwH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jul 2019 20:52:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49296 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727557AbfGRAwG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jul 2019 20:52:06 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D39253179B56;
-        Thu, 18 Jul 2019 00:52:00 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-14.phx2.redhat.com [10.3.112.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CCA60544F3;
-        Thu, 18 Jul 2019 00:51:48 +0000 (UTC)
-Date:   Wed, 17 Jul 2019 20:51:45 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        ebiederm@xmission.com, nhorman@tuxdriver.com
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-Message-ID: <20190718005145.eshekqfr3navqqiy@madcap2.tricolour.ca>
-References: <20190529153427.GB8959@cisco>
- <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
- <20190529222835.GD8959@cisco>
- <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
- <20190530170913.GA16722@mail.hallyn.com>
- <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
- <20190708180558.5bar6ripag3sdadl@madcap2.tricolour.ca>
- <CAHC9VhRTT7JWqNnynvK04wKerjc-3UJ6R1uPtjCAPVr_tW-7MA@mail.gmail.com>
- <20190716220320.sotbfqplgdructg7@madcap2.tricolour.ca>
- <CAHC9VhScHizB2r5q3T5s0P3jkYdvzBPPudDksosYFp_TO7W9-Q@mail.gmail.com>
+        id S1727792AbfGRA5W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jul 2019 20:57:22 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:63643 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727658AbfGRA5W (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 17 Jul 2019 20:57:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1563411441; x=1594947441;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=kxiKYewJW54cIVQdinVMDKjB0Q6BFMBRoxJw15d0cyM=;
+  b=YnAo5CubIMUt11POdEFbeErzDyiqk0f+lxtR0HOhkAU3p2LhT5DmjYuB
+   luCtA24jv7HPlZuL3zG4ymkK7Cj2/4/akAQWpfrvK/WdEwUYBk1aagr8C
+   fMIZJCjR7x9oMiG34LSOPjXQRG4ur8nrMeNaQoPoZTWY4jKUfUOEJWTLw
+   snxUTfKgsJJv/WqLn3O5qZfrvJZSK963asALljdotGFcY3DgoY5dc5WOs
+   IHhrc5KIsVhvAK+P51SHC6qRw+dR5DSQxj9DbgZaIF4R8YepfjiOfyoMN
+   KlFEpO29rdX6MQn6uOBM/1rByK7jOmkvyXKriYRxkMjZiWcLS5TjwllyK
+   g==;
+IronPort-SDR: BnjeOcDz/IciCdtwaUrUNEr3eoe9evqFeleJJEm2eSgbRSFqyFuAWpQhtK+soVKJhQApilVSaT
+ 7i6JwkERgS6/GP8mWn0hiblb8c+6nBuVI++zI/7LBd631Qn3CogAYD8AMFkgWn451E4QPl8c1I
+ msr9TV08WG5RGPjSk7Bmn5o6IEWXmiqr57roPN9ywUrvNcg6Tg1IvjadVEWahoA2sWuKDEARQ1
+ z/RQzYHNHEOmJAc0HUvpGO4XC04nBFxhdmOpXshFrWjsvn6TDb1lxrn4RU34N+NEtIyWOp3VlV
+ mf8=
+X-IronPort-AV: E=Sophos;i="5.64,276,1559491200"; 
+   d="scan'208";a="219774117"
+Received: from mail-co1nam04lp2057.outbound.protection.outlook.com (HELO NAM04-CO1-obe.outbound.protection.outlook.com) ([104.47.45.57])
+  by ob1.hgst.iphmx.com with ESMTP; 18 Jul 2019 08:57:20 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DuDu+ws02eHMnunfCSr0+/o/+3zYKbcFX3GwkBgZjEyiu9vbRMMORPWXX7HqA03oHhnwObwZhD86BxPIGuD9yydeoUMAbjgnIH2qWKehktjRWC6HkrWcOssaGSUfVUOVjjpmlNHKVO9fDkjWWrazgXIM5JWgjtIV5Xgv9G3D5mIA/eiskdc4IJKOuy6DCmt8fT9dLYGQp04Q4MMFh0ZSKTgxNNZ+xaABekQ7cNsxjWQl6fE84qYvaVDZH5RnNtygN0wqsNM6nlE3XqiMmEGem/qLvI0aYvOis/RkSZVzeziDaPonll8nqrN3udEI4Ugzu5oUOf8uqJ7mPDsWmUmBLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kxiKYewJW54cIVQdinVMDKjB0Q6BFMBRoxJw15d0cyM=;
+ b=OK4eQAFLmu5XhuNNs519U+CK8JseAEF0AmKmaMHvSUGMO1XdLcJiBEavezL4CADDF/ONSVB5eW6onSq1uoOfQ1ZWmhqPqh7kX7hKYqr+PuDl481ug+g+uQpr190RrpDT9SkpQqgiGgURgvPrCtSuJ1gTFmFhXNh4Ux48mj7knpj4QvswwBISLflqGt1NX68wjlsJ2Dyr4jGyDvqP61Wg+c5szdUWI/Zo5/iwqf7C3ehpRXsG2Z/SsOSs76z7c6CwcbsTHA2UPtYLxDrb+B24reI/xQnvonglM4HEjtU9hz54oqfpgN0zLvjiThTtk8wHurUoGhYSmTJ36VKmn+calA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=wdc.com;dmarc=pass action=none header.from=wdc.com;dkim=pass
+ header.d=wdc.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kxiKYewJW54cIVQdinVMDKjB0Q6BFMBRoxJw15d0cyM=;
+ b=rXUiCO7Anjf9XqLRPlro3gS4k6677f6sY9U8q4PjGFWxArEHqszgvW0vosM37QblAKqTK94Cdw34jc9LFDTr4Ju0RNtppV+xhqm1S3AYgGWaPtokRO0OTS+YAYT/7OKv8NBXseYWrEy9qbHEMStJ6gUOXZH/XG/ytTPvnZDiWv4=
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
+ BYAPR04MB4791.namprd04.prod.outlook.com (52.135.240.86) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2073.14; Thu, 18 Jul 2019 00:57:20 +0000
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::65a9:db0a:646d:eb1e]) by BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::65a9:db0a:646d:eb1e%6]) with mapi id 15.20.2073.012; Thu, 18 Jul 2019
+ 00:57:20 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Viacheslav Dubeyko <slava@dubeyko.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+CC:     Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.de>,
+        Ting Yao <d201577678@hust.edu.cn>
+Subject: Re: [PATCH RFC] fs: New zonefs file system
+Thread-Topic: [PATCH RFC] fs: New zonefs file system
+Thread-Index: AQHVOF31k+9+55ZdEkmKABdH1mzidg==
+Date:   Thu, 18 Jul 2019 00:57:19 +0000
+Message-ID: <BYAPR04MB5816F5F607F5061AD53499F5E7C80@BYAPR04MB5816.namprd04.prod.outlook.com>
+References: <20190712030017.14321-1-damien.lemoal@wdc.com>
+ <1562951415.2741.18.camel@dubeyko.com>
+ <BYAPR04MB5816F3DE20A3C82B82192B94E7F20@BYAPR04MB5816.namprd04.prod.outlook.com>
+ <1563209654.2741.39.camel@dubeyko.com>
+ <BYAPR04MB58168662947D0573419EAD0FE7CF0@BYAPR04MB5816.namprd04.prod.outlook.com>
+ <1563295882.2741.49.camel@dubeyko.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [199.255.47.12]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 511ed224-3f7a-4da1-d343-08d70b1ae2f3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB4791;
+x-ms-traffictypediagnostic: BYAPR04MB4791:
+x-microsoft-antispam-prvs: <BYAPR04MB4791AC91B888B6EDB21FCA5BE7C80@BYAPR04MB4791.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 01026E1310
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(346002)(366004)(396003)(39860400002)(136003)(199004)(189003)(52314003)(6436002)(256004)(7736002)(14444005)(305945005)(3846002)(6116002)(4326008)(53936002)(9686003)(55016002)(14454004)(8936002)(110136005)(316002)(8676002)(476003)(6246003)(71200400001)(86362001)(66556008)(81166006)(486006)(54906003)(71190400001)(64756008)(66476007)(66446008)(66946007)(186003)(26005)(52536014)(53546011)(76176011)(6506007)(102836004)(81156014)(33656002)(7696005)(99286004)(5660300002)(2501003)(2201001)(229853002)(66066001)(478600001)(68736007)(74316002)(76116006)(91956017)(2906002)(25786009)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4791;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: SXm0hWIAJDsjEi/vT3p2QmXhsNEs7GqsYuwwL1XEf0HPHK6lmC2hOAMCuEf8fN6Fi0a/5GataWEt7PUveuE8upxzAmQSP0rjqezvxva3Xfpcsrf74cgqOeIiIfp66AgQGOqdDtlC8ydxKr2KqwGOJSq0YfGlUcigNOtksMw//N/UyyTKogLxOfF5xi7hHVcDUn8sA7nopGD/Ek+IQSiqQxkcMkgXTuekVuNLfu2P3hNsQX1uE8E02hCR9fVvs1Kim1haGKh8iGLX6rVxzbwnVBzbrorbYqMDgYyIckqRxcF+GtOb5kWd7eRpjGI8P7K/bOxyk0AcKG9Erw9kLCkFFVgrNuHsLnIlKjYsJxaSaWVs1worq3cyhejawgTqdxTes6gbloaMS9HM6A8joQd9pQ4NUIBNIdJ4RS+3B6ybtks=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhScHizB2r5q3T5s0P3jkYdvzBPPudDksosYFp_TO7W9-Q@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 18 Jul 2019 00:52:06 +0000 (UTC)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 511ed224-3f7a-4da1-d343-08d70b1ae2f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2019 00:57:19.8431
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Damien.LeMoal@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4791
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019-07-16 19:30, Paul Moore wrote:
-> On Tue, Jul 16, 2019 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2019-07-15 17:04, Paul Moore wrote:
-> > > On Mon, Jul 8, 2019 at 2:06 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> 
-> ...
-> 
-> > > > If we can't trust ns_capable() then why are we passing on
-> > > > CAP_AUDIT_CONTROL?  It is being passed down and not stripped purposely
-> > > > by the orchestrator/engine.  If ns_capable() isn't inherited how is it
-> > > > gained otherwise?  Can it be inserted by cotainer image?  I think the
-> > > > answer is "no".  Either we trust ns_capable() or we have audit
-> > > > namespaces (recommend based on user namespace) (or both).
-> > >
-> > > My thinking is that since ns_capable() checks the credentials with
-> > > respect to the current user namespace we can't rely on it to control
-> > > access since it would be possible for a privileged process running
-> > > inside an unprivileged container to manipulate the audit container ID
-> > > (containerized process has CAP_AUDIT_CONTROL, e.g. running as root in
-> > > the container, while the container itself does not).
-> >
-> > What makes an unprivileged container unprivileged?  "root", or "CAP_*"?
-> 
-> My understanding is that when most people refer to an unprivileged
-> container they are referring to a container run without capabilities
-> or a container run by a user other than root.  I'm sure there are
-> better definitions out there, by folks much smarter than me on these
-> things, but that's my working definition.
-
-Close enough to my understanding...
-
-> > If CAP_AUDIT_CONTROL is granted, does "root" matter?
-> 
-> Our discussions here have been about capabilities, not UIDs.  The only
-> reason root might matter is that it generally has the full capability
-> set.
-
-Good, that's my understanding.
-
-> > Does it matter what user namespace it is in?
-> 
-> What likely matters is what check is called: capable() or
-> ns_capable().  Those can yield very different results.
-
-Ok, I finally found what I was looking for to better understand the
-challenge with trusting ns_capable().  Sorry for being so dense and slow
-on this one.  I thought I had gone through the code carefully enough,
-but this time I finally found it.  set_cred_user_ns() sets a full set of
-capabilities rather than inheriting them from the parent user_ns, called
-from userns_install() or create_userns().  Even if the container
-orchestrator/engine restricts those capabilities on its own containers,
-they could easily unshare a userns and get a full set unless it also
-restricted CAP_SYS_ADMIN, which is used too many other places to be
-practical to restrict.
-
-> > I understand that root is *gained* in an
-> > unprivileged user namespace, but capabilities are inherited or permitted
-> > and that process either has it or it doesn't and an unprivileged user
-> > namespace can't gain a capability that has been rescinded.  Different
-> > subsystems use the userid or capabilities or both to determine
-> > privileges.
-> 
-> Once again, I believe the important thing to focus on here is
-> capable() vs ns_capable().  We can't safely rely on ns_capable() for
-> the audit container ID policy since that is easily met inside the
-> container regardless of the process' creds which started the
-> container.
-
-Agreed.
-
-> > In this case, is the userid relevant?
-> 
-> We don't do UID checks, we do capability checks, so yes, the UID is irrelevant.
-
-Agreed.
-
-> > > > At this point I would say we are at an impasse unless we trust
-> > > > ns_capable() or we implement audit namespaces.
-> > >
-> > > I'm not sure how we can trust ns_capable(), but if you can think of a
-> > > way I would love to hear it.  I'm also not sure how namespacing audit
-> > > is helpful (see my above comments), but if you think it is please
-> > > explain.
-> >
-> > So if we are not namespacing, why do we not trust capabilities?
-> 
-> We can trust capable(CAP_AUDIT_CONTROL) for enforcing audit container
-> ID policy, we can not trust ns_capable(CAP_AUDIT_CONTROL).
-
-Ok.  So does a process in a non-init user namespace have two (or more)
-sets of capabilities stored in creds, one in the init_user_ns, and one
-in current_user_ns?  Or does it get stripped of all its capabilities in
-init_user_ns once it has its own set in current_user_ns?  If the former,
-then we can use capable().  If the latter, we need another mechanism, as
-you have suggested might be needed.
-
-If some random unprivileged user wants to fire up a container
-orchestrator/engine in his own user namespace, then audit needs to be
-namespaced.  Can we safely discard this scenario for now?  That user can
-use a VM.
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Slava,=0A=
+=0A=
+On 2019/07/17 1:51, Viacheslav Dubeyko wrote:=0A=
+>> As mentioned previously, zonefs goal is to represent zones of a zoned=0A=
+>> block=0A=
+>> device with files, thus providing a simple abstraction one file =3D=3D=
+=0A=
+>> one zone and=0A=
+>> simplifying application implementation. And this means that the only=0A=
+>> sensible=0A=
+>> use case for zonefs is applications using large container like files.=0A=
+>> LSM-tree=0A=
+>> based applications being a very good match in this respect.=0A=
+>>=0A=
+> =0A=
+> =0A=
+> I am talking not about file size but about number of files on the=0A=
+> volume here. I meant that file system could easily contain about=0A=
+> 100,000 files on the volume. So, if every file uses 256 MB zone then=0A=
+> 100,000 files need in 24 TB volume.=0A=
+=0A=
+zonefs provides a different representation of the raw device. It is not=0A=
+abstracting it. One file is one zone. So if the use case needs more files, =
+then=0A=
+another device model must be used (higher capacity or smaller zone size). I=
+t is=0A=
+as simple as that.=0A=
+=0A=
+>> What do you mean allocation scheme ? There is none ! one file =3D=3D one=
+=0A=
+>> zone and=0A=
+>> all files are fully provisioned and allocated on mount. zonefs does=0A=
+>> not allow=0A=
+>> the creation of files and there is no dynamic "block allocation".=0A=
+>> Again, please=0A=
+>> do not consider zonefs as a normal file system. It is closer to a raw=0A=
+>> block=0A=
+>> device interface than to a fully featured file system.=0A=
+>>=0A=
+> =0A=
+> OK. It sounds that a file cannot grow beyond the allocated number of=0A=
+> contigous zone(s) during the mount operation. Am I correct? But if a=0A=
+> file is needed to be resized what can be done in such case? Should it=0A=
+> need to re-mount the file system?=0A=
+=0A=
+In the case of sequential zone files, one file always represents a single z=
+one.=0A=
+In the case of conventional zones, the default behavior is the same, and=0A=
+optionally one file can be a set of contiguous conventional zones. And a re=
+mount=0A=
+can switch between one conventional zone per file or aggregated conventiona=
+l=0A=
+zones files. Conventional zone files have a fixed size set to the zone size=
+.=0A=
+These files cannot be truncated. For sequential zone files, only truncation=
+ to 0=0A=
+is possible. That is equivalent to doing a zone reset.=0A=
+=0A=
+A remount will not allow resizing the maximum size of files because that is=
+=0A=
+determine by the device zone size, which is fixed and cannot be changed.=0A=
+=0A=
+> By the way, does this approach provides the way to use the device's=0A=
+> internal parallelism? What should anybody take into account for=0A=
+> exploiting the device's internal parallelism?=0A=
+=0A=
+zonefs uses the standard BIO interface which does not have any provision fo=
+r=0A=
+exposing HW specific parallel resources. So no, there is no such feature=0A=
+implemented. Zoned block devices are for now SMR HDDs only anyway, and HDDs=
+ are=0A=
+have no parallelism.=0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
