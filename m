@@ -2,79 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04D146D04C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 16:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A69176D0BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 17:11:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390541AbfGROtC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 10:49:02 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40105 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727685AbfGROtC (ORCPT
+        id S1727781AbfGRPKk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 11:10:40 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:40739 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727623AbfGRPKk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 10:49:02 -0400
-Received: by mail-qt1-f194.google.com with SMTP id a15so27440143qtn.7;
-        Thu, 18 Jul 2019 07:49:01 -0700 (PDT)
+        Thu, 18 Jul 2019 11:10:40 -0400
+Received: by mail-qk1-f195.google.com with SMTP id s145so20722123qke.7;
+        Thu, 18 Jul 2019 08:10:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lmArtbMu3sH1yAvRJHLIrPo6/n/cdKCsdBCmd5C2IQ8=;
-        b=mSN6ncgMFo/8r5zIY/lyYALuPXEcATDLCzexMTZDwpsMfCi3W9C2Sb2w1r8zYXyaNQ
-         VHxRRn+5RdOhbcejU44W9PO1/vJxujEQjGD3LG0BHyvk1QTIcqCh9wUSJtjb44ObQHT6
-         HSoPPdBcxJVqCscuYAVe3PENyxDNXGOus7HgO/UjX/guEb72QL/Y/7qaEJlC554N9ij6
-         gBrFm+W20tT4E4CBJysKqRmLEzU8N6QNvB5fh/PvgnZEsaj3erMVtAD4nTKvJ3atGoDJ
-         5AbkHZ9wrC+wyaKj9NSc4NUfS+jva6kAmktW8Zy3ZoGS8L1gQD075ZVzUh4YfVrO9SSd
-         UGGg==
-X-Gm-Message-State: APjAAAVOAFWmxhyCXNGCZAgIKA3RIDDxzij76aLklLerCReKZtnGhekX
-        w5Q+qQGPTA7AIbK6wN8d1VQtOwqmUxY5HPQxeV8=
-X-Google-Smtp-Source: APXvYqyGTHPe5PQabqcn621tJ6BN0Z+rTWvQOrhBq6i3Ye7JuAJJMajo35a5aTa4MEeNTV7DL/W1Kw/ZK6MtC+9UODk=
-X-Received: by 2002:a0c:ba2c:: with SMTP id w44mr32963580qvf.62.1563461340817;
- Thu, 18 Jul 2019 07:49:00 -0700 (PDT)
+        bh=1XVWuLALNboPCBpMHvtA7g3CoUrKrF0vBnrtFanWPT4=;
+        b=uNMGyKFpiV5/NdDwnLap3nQ/K1Tm9DD+6GyGcMY2Qe78+LIG0HJg8gvmpe7KNtScX+
+         ocmxdsLFnmQHavB02uUnWdITNtvdgZUVV6gjGYtzUgUyL101bx2COA+P5GJEB8nUL/si
+         xX9VNpjurF/YIH8K4pRbOmNUfp2t9ascXvvzAmN8JqbF3LGUnbcVvWG+r/eY7BW6dDbE
+         knTCE31c6j90B4zJPTKfVo0AfaPijfILaJmhBbuGf3nOxfSRW+FIerwKGcN9G9c7h1J9
+         QljEyAaRfwsTvFKIQO0h8Zsw7fzxHGQhpcH2zj+Ff7MPOAMzDxkNBXC9D6swUqj3HG9E
+         SpRA==
+X-Gm-Message-State: APjAAAV7gMkfUYn5o8N51yJkmd6XGejNnOOrLcYFBcHIhSrSlqqUt1Gw
+        lGoO9EV8UtrmkKPQlogNaMSLihSIjegnFCVtbl4=
+X-Google-Smtp-Source: APXvYqz91qO2K9L71FiuX0Gt08O/27FhYjsXqzcDsg9SyRt3LsdEPpT+LHh0f5YfOz5Tbuae6UqhheF6pLTx7yCHlYU=
+X-Received: by 2002:a37:ad12:: with SMTP id f18mr30435448qkm.3.1563462638194;
+ Thu, 18 Jul 2019 08:10:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190718125509.775525-1-arnd@arndb.de> <20190718125703.GA28332@lst.de>
- <CAK8P3a2k3ddUD-b+OskpDfAkm6KGAGAOBabkXk3Uek1dShTiUA@mail.gmail.com> <20190718130835.GA28520@lst.de>
-In-Reply-To: <20190718130835.GA28520@lst.de>
+References: <20190706145737.5299-1-cyphar@cyphar.com> <20190706145737.5299-9-cyphar@cyphar.com>
+In-Reply-To: <20190706145737.5299-9-cyphar@cyphar.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 18 Jul 2019 16:48:44 +0200
-Message-ID: <CAK8P3a1W03RiWmUmgprAODeUBXZOF-OUyCBJKmufadpKivbQWg@mail.gmail.com>
-Subject: Re: [PATCH] iomap: hide iomap_sector with CONFIG_BLOCK=n
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
+Date:   Thu, 18 Jul 2019 17:10:21 +0200
+Message-ID: <CAK8P3a33rGhPDFfRBAQyLTMG_WoEgX_toDgWR2O7rSwxKsZG+w@mail.gmail.com>
+Subject: Re: [PATCH v9 08/10] open: openat2(2) syscall
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-ia64@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jani Nikula <jani.nikula@intel.com>
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org,
+        sparclinux <sparclinux@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 3:08 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Thu, Jul 18, 2019 at 03:03:15PM +0200, Arnd Bergmann wrote:
-> > The inclusion comes from the recently added header check in commit
-> > c93a0368aaa2 ("kbuild: do not create wrappers for header-test-y").
-> >
-> > This just tries to include every header by itself to see if there are build
-> > failures from missing indirect includes. We probably don't want to
-> > add an exception for iomap.h there.
->
-> I very much disagree with that check.  We don't need to make every
-> header compilable with a setup where it should not be included.
+On Sat, Jul 6, 2019 at 5:00 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
 
-I do like the extra check there, and it did not seem to need too many
-fixes to get it working in the first place.
+> diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+> index 9e7704e44f6d..1703d048c141 100644
+> --- a/arch/alpha/kernel/syscalls/syscall.tbl
+> +++ b/arch/alpha/kernel/syscalls/syscall.tbl
+> @@ -461,6 +461,7 @@
+>  530    common  getegid                         sys_getegid
+>  531    common  geteuid                         sys_geteuid
+>  532    common  getppid                         sys_getppid
+> +533    common  openat2                         sys_openat2
+>  # all other architectures have common numbers for new syscall, alpha
+>  # is the exception.
+>  534    common  pidfd_send_signal               sys_pidfd_send_signal
 
-> That being said if you feel this is worth fixing I'd rather define
-> SECTOR_SIZE/SECTOR_SHIFT unconditionally.
+My plan here was to add new syscalls in the same order as everwhere else,
+just with the number 110 higher. In the long run, I hope we can automate
+this.
 
-I'll give that a try and send a replacement patch after build testing
-succeeds for a number of randconfig builds.
+> diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+> index aaf479a9e92d..4ad262698396 100644
+> --- a/arch/arm/tools/syscall.tbl
+> +++ b/arch/arm/tools/syscall.tbl
+> @@ -447,3 +447,4 @@
+>  431    common  fsconfig                        sys_fsconfig
+>  432    common  fsmount                         sys_fsmount
+>  433    common  fspick                          sys_fspick
+> +434    common  openat2                         sys_openat2
 
-      Arnd
+434 is already used in linux-next, I suggest you use 437 (Palmer
+just submitted fchmodat4, which could become 436).
+
+> +/**
+> + * Arguments for how openat2(2) should open the target path. If @extra is zero,
+> + * then openat2(2) is identical to openat(2).
+> + *
+> + * @flags: O_* flags (unknown flags ignored).
+> + * @mode: O_CREAT file mode (ignored otherwise).
+> + * @upgrade_mask: restrict how the O_PATH may be re-opened (ignored otherwise).
+> + * @resolve: RESOLVE_* flags (-EINVAL on unknown flags).
+> + * @reserved: reserved for future extensions, must be zeroed.
+> + */
+> +struct open_how {
+> +       __u32 flags;
+> +       union {
+> +               __u16 mode;
+> +               __u16 upgrade_mask;
+> +       };
+> +       __u16 resolve;
+> +       __u64 reserved[7]; /* must be zeroed */
+> +};
+
+We can have system calls with up to six arguments on all architectures, so
+this could still be done more conventionally without the indirection: like
+
+long openat2(int dfd, const char __user * filename, int flags, mode_t
+mode_mask, __u16 resolve);
+
+In fact, that seems similar enough to the existing openat() that I think
+you could also just add the fifth argument to the existing call when
+a newly defined flag is set, similarly to how we only use the 'mode'
+argument when O_CREAT or O_TMPFILE are set.
+
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+
+This file seems to lack a declaration for the system call, which means it
+will cause a build failure on some architectures, e.g. arch/arc/kernel/sys.c:
+
+#define __SYSCALL(nr, call) [nr] = (call),
+void *sys_call_table[NR_syscalls] = {
+        [0 ... NR_syscalls-1] = sys_ni_syscall,
+#include <asm/unistd.h>
+};
+
+        Arnd
