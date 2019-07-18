@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6350D6C3DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 02:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 103D06C3D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2019 02:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbfGRAqY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 17 Jul 2019 20:46:24 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:33050 "EHLO
+        id S1729988AbfGRAqZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 17 Jul 2019 20:46:25 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:33060 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727541AbfGRAqY (ORCPT
+        with ESMTP id S1727773AbfGRAqZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 17 Jul 2019 20:46:24 -0400
+        Wed, 17 Jul 2019 20:46:25 -0400
 Received: from jaskaran-Intel-Server-Board-S1200V3RPS-UEFI-Development-Kit.corp.microsoft.com (unknown [131.107.160.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 8CCBF20B7185;
+        by linux.microsoft.com (Postfix) with ESMTPSA id B3B5920B7187;
         Wed, 17 Jul 2019 17:46:22 -0700 (PDT)
 From:   Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
 To:     gmazyland@gmail.com
@@ -22,216 +22,466 @@ Cc:     linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, agk@redhat.com, snitzer@redhat.com,
         dm-devel@redhat.com, jmorris@namei.org, scottsh@microsoft.com,
         mdsakib@microsoft.com, mpatocka@redhat.com, ebiggers@google.com
-Subject: [RFC PATCH v7 0/1] Add dm verity root hash pkcs7 sig validation. 
-Date:   Wed, 17 Jul 2019 17:46:14 -0700
-Message-Id: <20190718004615.16818-1-jaskarankhurana@linux.microsoft.com>
+Subject: [RFC PATCH v7 1/1] Add dm verity root hash pkcs7 sig validation. 
+Date:   Wed, 17 Jul 2019 17:46:15 -0700
+Message-Id: <20190718004615.16818-2-jaskarankhurana@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190718004615.16818-1-jaskarankhurana@linux.microsoft.com>
+References: <20190718004615.16818-1-jaskarankhurana@linux.microsoft.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch set adds in-kernel pkcs7 signature checking for the roothash
-of
-the dm-verity hash tree.
-The verification is to support cases where the roothash is not secured
-by
+The verification is to support cases where the roothash is not secured by
 Trusted Boot, UEFI Secureboot or similar technologies.
-One of the use cases for this is for dm-verity volumes mounted after
-boot,
-the root hash provided during the creation of the dm-verity volume has
-to
+One of the use cases for this is for dm-verity volumes mounted after boot,
+the root hash provided during the creation of the dm-verity volume has to
 be secure and thus in-kernel validation implemented here will be used
 before we trust the root hash and allow the block device to be created.
 
-Why we are doing validation in the Kernel?
-------------------------------------------
-The reason is to still be secure in cases where the attacker is able to
-compromise the user mode application in which case the user mode
-validation
-could not have been trusted.
-The root hash signature validation in the kernel along with existing
-dm-verity implementation gives a higher level of confidence in the
-executable code or the protected data. Before allowing the creation of
-the device mapper block device the kernel code will check that the
-detached
-pkcs7 signature passed to it validates the roothash and the signature is
-trusted by builtin keys set at kernel creation. The kernel should be
-secured using Verified boot, UEFI Secure Boot or similar technologies so
-we
-can trust it.
+The signature being provided for verification must verify the root hash and
+must be trusted by the builtin keyring for verification to succeed.
 
-What about attacker mounting non dm-verity volumes to run executable code?
---------------------------------------------------------------------------
-This verification can be used to have a security architecture where a
-LSM
-can enforce this verification for all the volumes and by doing this it
-can
-ensure that all executable code runs from signed and trusted dm-verity
-volumes.
+The hash is added as a key of type "user" and the description is passed to the
+kernel so it can look it up and use it for verification.
 
-Further patches will be posted that build on this and enforce this
-verification based on policy for all the volumes on the system.
+Adds CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG which can be turned on if root hash
+verification is needed.
 
-Kernel commandline parameter require_signatures will indicate whether to
-force (for all dm verity volumes) roothash signature verification.
+Kernel commandline parameter require_signatures will indicate whether to force
+(for all dm verity volumes) roothash signature verification.
 
-How are these changes tested?
------------------------------
-
-Build time steps:
-----------------
-
-CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG needs to be turned on in .config.
-
-Add the certificate(pubic key) that will be used to check whether to trust
-the signature of the roothash in a PEM-encoded file to the 
-CONFIG_SYSTEM_TRUSTED_KEYS (example step 1) and step 2) below).
-
-When formatting the fs for verity we need to save and sign the roothash, the 
-signature would be used in verification by the kernel later when we create dm
-verity block device on the test machine/kernel.
-
-Dump the roothash returned by veritysetup format in a text file,
-say roothash.txt and then sign using the openssl command (see below).
-
-1) openssl req -x509 -newkey rsa:1024 -keyout ca_key.pem -out ca.pem -nodes
-   -days 365 -set_serial 01 -subj /CN=example.com
-2) In .config add the certificate as CONFIG_SYSTEM_TRUSTED_KEYS="path/ca.pem"
-3) veritysetup format <fs> <hashdev>, this will return the ROOT_HASH.
-4) Use the roothash returned in step 3) and save it to a file for reference and
-   signing.
-   echo -n <ROOT_HASH> > roothash.txt
-5) openssl smime -sign -nocerts -noattr -binary -in <roothash.txt> 
-   -inkey ca_key.pem -signer ca.pem -outform der -out sign.txt
-
-Kernel Commandline:
--------------------
-
-To enforce the signatures for all dm verity volumes specify the
-dm_verity.require_signatures=1 on the kernel commandline.
-
-Steps on the test kernel/machine:
----------------------------------
-
-After the kernel boots try to create device mapper block device by providing
-the roothash and the roothash signature which will be validated by the kernel.
-
-To pass the roothash signature to dm-verity, veritysetup part of
-cryptsetup library was modified to take a optional root-hash-sig parameter.
-
-Use the signature file from above step as a parameter to veritysetup.
-The changes for veritysetup are in a topic branch for now at:
-https://github.com/jaskarankhurana/veritysetup/tree/veritysetup_add_sig
-
-veritysetup open  <data_device> <name> <hash_device> <root_hash>
- --root-hash-sig=<root_hash_pkcs7_detached_sig>
-
-OR
---
-We could also use a unpatched veritysetup to test this.
-
-Steps are shown as an example below :
-(The roothash and signature will be obtained from steps 1 to 5 above)
-
-eg:
-NAME=test
-DEV=/dev/sdc
-DEV_HASH=/dev/sdd
-ROOT_HASH=778fccab393842688c9af89cfd0c5cde69377cbe21ed439109ec856f2aa8a423
-SIGN_NAME=verity:$NAME
-SIGN=sign.txt
-# load signature to keyring
-keyctl padd user $SIGN_NAME @u <$SIGN
-
-# add device-mapper table, now with sighed root hash optional argument
-dmsetup create -r $NAME --table "$TABLE 2 root_hash_sig_key_desc $SIGN_NAME"
-dmsetup table $NAME
-
-# cleanup
-dmsetup remove $NAME
-keyctl clear @u
-
-Changelog:
----------
-
-v7
-  - Changes to patch header to add steps that can help test this.
-  - Use the rebased version of the patch that was tested by Milan Broz from his
-    tree.
-
-v6
-  - Address comments from Milan Broz and Eric Biggers on v5.
-
-  - Keep the verification code under config DM_VERITY_VERIFY_ROOTHASH_SIG.
-
-  - Change the command line parameter to requires_signatures(bool) which will
-    force root hash to be signed and trusted if specified.
-
-  - Fix the signature not being present in verity_status. Merged the
-    https://git.kernel.org/pub/scm/linux/kernel/git/mbroz/linux.git/commit/?h=dm-cryptsetup&id=a26c10806f5257e255b6a436713127e762935ad3
-    made by Milan Broz and tested it.
-
-v5 (since previous):
-  - Code review feedback given by Milan Broz.
-  - Remove the Kconfig for root hash verification and instead add a
-    commandline parameter(dm_verity.verify_sig) that determines whether
-to
-    check or enforce root hash signature validation.
-  - Fixed a small issue when dm-verity was built sepaerately as a
-    module.
-  - Added the openssl commandline that can be used to sign the roothash
-    in the cover letter.
-
-v4:
-  - Code review feedback given by Milan Broz.
-  - Add documentation about the root hash signature parameter.
-  - Bump up the dm-verity target version.
-  - Provided way to sign and test with veritysetup in cover letter.
-
-v3:
-  - Code review feedback given by Sasha Levin.
-  - Removed EXPORT_SYMBOL_GPL since this was not required.
-  - Removed "This file is released under the GPLv2" since we have SPDX
-    identifier.
-  - Inside verity_verify_root_hash changed EINVAL to ENOKEY when the key
-    descriptor is not specified but due to force option being set it is
-    expected.
-  - Moved CONFIG check to inside verity_verify_get_sig_from_key.
-     (Did not move the sig_opts_cleanup to inside verity_dtr as the
-     sig_opts do not need to be allocated for the entire duration the
-block
-     device is active unlike the verity structure, note verity_dtr is
-     called      only if verity_ctr fails or after the lifetime of the
-     block device.)
-
-v2:
-  - Code review feedback to pass the signature binary blob as a key that
-    can be looked up in the kernel and be used to verify the roothash.
-    [Suggested by Milan Broz]
-  - Made the code related change suggested in review of v1.
-    [Suggested by Balbir Singh]
-
-v1:
-  - Add kconfigs to control dm-verity root has signature verification
-    and
-    use the signature if specified to verify the root hash.
-
-
-Jaskaran Khurana (1):
-  Add dm verity root hash pkcs7 sig validation.
-
- .../admin-guide/device-mapper/verity.rst      |   7 +
- drivers/md/Kconfig                            |  12 ++
- drivers/md/Makefile                           |   5 +
- drivers/md/dm-verity-target.c                 |  43 +++++-
- drivers/md/dm-verity-verify-sig.c             | 133 ++++++++++++++++++
- drivers/md/dm-verity-verify-sig.h             |  60 ++++++++
- drivers/md/dm-verity.h                        |   2 +
- 7 files changed, 257 insertions(+), 5 deletions(-)
+Signed-off-by: Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+Tested-and-Reviewed-by: Milan Broz <gmazyland@gmail.com>
+---
+ Documentation/admin-guide/device-mapper/verity.rst |   7 ++
+ drivers/md/Kconfig                                 |  12 ++
+ drivers/md/Makefile                                |   4 +
+ drivers/md/dm-verity-target.c                      |  43 ++++++-
+ drivers/md/dm-verity-verify-sig.c                  | 133 +++++++++++++++++++++
+ drivers/md/dm-verity-verify-sig.h                  |  60 ++++++++++
+ drivers/md/dm-verity.h                             |   2 +
+ 7 files changed, 256 insertions(+), 5 deletions(-)
  create mode 100644 drivers/md/dm-verity-verify-sig.c
  create mode 100644 drivers/md/dm-verity-verify-sig.h
 
+diff --git a/Documentation/admin-guide/device-mapper/verity.rst b/Documentation/admin-guide/device-mapper/verity.rst
+index a4d1c1476d72..bb02caa45289 100644
+--- a/Documentation/admin-guide/device-mapper/verity.rst
++++ b/Documentation/admin-guide/device-mapper/verity.rst
+@@ -125,6 +125,13 @@ check_at_most_once
+     blocks, and a hash block will not be verified any more after all the data
+     blocks it covers have been verified anyway.
+ 
++root_hash_sig_key_desc <key_description>
++    This is the description of the USER_KEY that the kernel will lookup to get
++    the pkcs7 signature of the roothash. The pkcs7 signature is used to validate
++    the root hash during the creation of the device mapper block device.
++    Verification of roothash depends on the config DM_VERITY_VERIFY_ROOTHASH_SIG
++    being set in the kernel.
++
+ Theory of operation
+ ===================
+ 
+diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
+index 3834332f4963..c2b04d226c90 100644
+--- a/drivers/md/Kconfig
++++ b/drivers/md/Kconfig
+@@ -490,6 +490,18 @@ config DM_VERITY
+ 
+ 	  If unsure, say N.
+ 
++config DM_VERITY_VERIFY_ROOTHASH_SIG
++	def_bool n
++	bool "Verity data device root hash signature verification support"
++	depends on DM_VERITY
++	select SYSTEM_DATA_VERIFICATION
++	  help
++	  The device mapper target created by DM-VERITY can be validated if the
++	  pre-generated tree of cryptographic checksums passed has a pkcs#7
++	  signature file that can validate the roothash of the tree.
++
++	  If unsure, say N.
++
+ config DM_VERITY_FEC
+ 	bool "Verity forward error correction support"
+ 	depends on DM_VERITY
+diff --git a/drivers/md/Makefile b/drivers/md/Makefile
+index be7a6eb92abc..0d922335335c 100644
+--- a/drivers/md/Makefile
++++ b/drivers/md/Makefile
+@@ -81,3 +81,7 @@ endif
+ ifeq ($(CONFIG_DM_VERITY_FEC),y)
+ dm-verity-objs			+= dm-verity-fec.o
+ endif
++
++ifeq ($(CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG),y)
++dm-verity-objs			+= dm-verity-verify-sig.o
++endif
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index ea24ff0612e3..4fb33e7562c5 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -15,7 +15,7 @@
+ 
+ #include "dm-verity.h"
+ #include "dm-verity-fec.h"
+-
++#include "dm-verity-verify-sig.h"
+ #include <linux/module.h>
+ #include <linux/reboot.h>
+ 
+@@ -33,7 +33,8 @@
+ #define DM_VERITY_OPT_IGN_ZEROES	"ignore_zero_blocks"
+ #define DM_VERITY_OPT_AT_MOST_ONCE	"check_at_most_once"
+ 
+-#define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC)
++#define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC + \
++					 DM_VERITY_ROOT_HASH_VERIFICATION_OPTS)
+ 
+ static unsigned dm_verity_prefetch_cluster = DM_VERITY_DEFAULT_PREFETCH_SIZE;
+ 
+@@ -713,6 +714,8 @@ static void verity_status(struct dm_target *ti, status_type_t type,
+ 			args++;
+ 		if (v->validated_blocks)
+ 			args++;
++		if (v->signature_key_desc)
++			args += DM_VERITY_ROOT_HASH_VERIFICATION_OPTS;
+ 		if (!args)
+ 			return;
+ 		DMEMIT(" %u", args);
+@@ -734,6 +737,9 @@ static void verity_status(struct dm_target *ti, status_type_t type,
+ 		if (v->validated_blocks)
+ 			DMEMIT(" " DM_VERITY_OPT_AT_MOST_ONCE);
+ 		sz = verity_fec_status_table(v, sz, result, maxlen);
++		if (v->signature_key_desc)
++			DMEMIT(" " DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG_KEY
++				" %s", v->signature_key_desc);
+ 		break;
+ 	}
+ }
+@@ -799,6 +805,8 @@ static void verity_dtr(struct dm_target *ti)
+ 
+ 	verity_fec_dtr(v);
+ 
++	kfree(v->signature_key_desc);
++
+ 	kfree(v);
+ }
+ 
+@@ -854,7 +862,8 @@ out:
+ 	return r;
+ }
+ 
+-static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
++static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
++				 struct dm_verity_sig_opts *verify_args)
+ {
+ 	int r;
+ 	unsigned argc;
+@@ -903,6 +912,14 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
+ 			if (r)
+ 				return r;
+ 			continue;
++		} else if (verity_verify_is_sig_opt_arg(arg_name)) {
++			r = verity_verify_sig_parse_opt_args(as, v,
++							     verify_args,
++							     &argc, arg_name);
++			if (r)
++				return r;
++			continue;
++
+ 		}
+ 
+ 		ti->error = "Unrecognized verity feature request";
+@@ -929,6 +946,7 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
+ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ {
+ 	struct dm_verity *v;
++	struct dm_verity_sig_opts verify_args = {0};
+ 	struct dm_arg_set as;
+ 	unsigned int num;
+ 	unsigned long long num_ll;
+@@ -936,6 +954,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	int i;
+ 	sector_t hash_position;
+ 	char dummy;
++	char *root_hash_digest_to_validate;
+ 
+ 	v = kzalloc(sizeof(struct dm_verity), GFP_KERNEL);
+ 	if (!v) {
+@@ -1069,6 +1088,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 		r = -EINVAL;
+ 		goto bad;
+ 	}
++	root_hash_digest_to_validate = argv[8];
+ 
+ 	if (strcmp(argv[9], "-")) {
+ 		v->salt_size = strlen(argv[9]) / 2;
+@@ -1094,11 +1114,20 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 		as.argc = argc;
+ 		as.argv = argv;
+ 
+-		r = verity_parse_opt_args(&as, v);
++		r = verity_parse_opt_args(&as, v, &verify_args);
+ 		if (r < 0)
+ 			goto bad;
+ 	}
+ 
++	/* Root hash signature is  a optional parameter*/
++	r = verity_verify_root_hash(root_hash_digest_to_validate,
++				    strlen(root_hash_digest_to_validate),
++				    verify_args.sig,
++				    verify_args.sig_size);
++	if (r < 0) {
++		ti->error = "Root hash verification failed";
++		goto bad;
++	}
+ 	v->hash_per_block_bits =
+ 		__fls((1 << v->hash_dev_block_bits) / v->digest_size);
+ 
+@@ -1164,9 +1193,13 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	ti->per_io_data_size = roundup(ti->per_io_data_size,
+ 				       __alignof__(struct dm_verity_io));
+ 
++	verity_verify_sig_opts_cleanup(&verify_args);
++
+ 	return 0;
+ 
+ bad:
++
++	verity_verify_sig_opts_cleanup(&verify_args);
+ 	verity_dtr(ti);
+ 
+ 	return r;
+@@ -1174,7 +1207,7 @@ bad:
+ 
+ static struct target_type verity_target = {
+ 	.name		= "verity",
+-	.version	= {1, 4, 0},
++	.version	= {1, 5, 0},
+ 	.module		= THIS_MODULE,
+ 	.ctr		= verity_ctr,
+ 	.dtr		= verity_dtr,
+diff --git a/drivers/md/dm-verity-verify-sig.c b/drivers/md/dm-verity-verify-sig.c
+new file mode 100644
+index 000000000000..614e43db93aa
+--- /dev/null
++++ b/drivers/md/dm-verity-verify-sig.c
+@@ -0,0 +1,133 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2019 Microsoft Corporation.
++ *
++ * Author:  Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
++ *
++ */
++#include <linux/device-mapper.h>
++#include <linux/verification.h>
++#include <keys/user-type.h>
++#include <linux/module.h>
++#include "dm-verity.h"
++#include "dm-verity-verify-sig.h"
++
++#define DM_VERITY_VERIFY_ERR(s) DM_VERITY_ROOT_HASH_VERIFICATION " " s
++
++static bool require_signatures;
++module_param(require_signatures, bool, false);
++MODULE_PARM_DESC(require_signatures,
++		"Verify the roothash of dm-verity hash tree");
++
++#define DM_VERITY_IS_SIG_FORCE_ENABLED() \
++	(require_signatures != false)
++
++bool verity_verify_is_sig_opt_arg(const char *arg_name)
++{
++	return (!strcasecmp(arg_name,
++			    DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG_KEY));
++}
++
++static int verity_verify_get_sig_from_key(const char *key_desc,
++					struct dm_verity_sig_opts *sig_opts)
++{
++	struct key *key;
++	const struct user_key_payload *ukp;
++	int ret = 0;
++
++	key = request_key(&key_type_user,
++			key_desc, NULL);
++	if (IS_ERR(key))
++		return PTR_ERR(key);
++
++	down_read(&key->sem);
++
++	ukp = user_key_payload_locked(key);
++	if (!ukp) {
++		ret = -EKEYREVOKED;
++		goto end;
++	}
++
++	sig_opts->sig = kmalloc(ukp->datalen, GFP_KERNEL);
++	if (!sig_opts->sig) {
++		ret = -ENOMEM;
++		goto end;
++	}
++	sig_opts->sig_size = ukp->datalen;
++
++	memcpy(sig_opts->sig, ukp->data, sig_opts->sig_size);
++
++end:
++	up_read(&key->sem);
++	key_put(key);
++
++	return ret;
++}
++
++int verity_verify_sig_parse_opt_args(struct dm_arg_set *as,
++				     struct dm_verity *v,
++				     struct dm_verity_sig_opts *sig_opts,
++				     unsigned int *argc,
++				     const char *arg_name)
++{
++	struct dm_target *ti = v->ti;
++	int ret = 0;
++	const char *sig_key = NULL;
++
++	if (!*argc) {
++		ti->error = DM_VERITY_VERIFY_ERR("Signature key not specified");
++		return -EINVAL;
++	}
++
++	sig_key = dm_shift_arg(as);
++	(*argc)--;
++
++	ret = verity_verify_get_sig_from_key(sig_key, sig_opts);
++	if (ret < 0)
++		ti->error = DM_VERITY_VERIFY_ERR("Invalid key specified");
++
++	v->signature_key_desc = kstrdup(sig_key, GFP_KERNEL);
++	if (!v->signature_key_desc)
++		return -ENOMEM;
++
++	return ret;
++}
++
++/*
++ * verify_verify_roothash - Verify the root hash of the verity hash device
++ *			     using builtin trusted keys.
++ *
++ * @root_hash: For verity, the roothash/data to be verified.
++ * @root_hash_len: Size of the roothash/data to be verified.
++ * @sig_data: The trusted signature that verifies the roothash/data.
++ * @sig_len: Size of the signature.
++ *
++ */
++int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
++			    const void *sig_data, size_t sig_len)
++{
++	int ret;
++
++	if (!root_hash || root_hash_len == 0)
++		return -EINVAL;
++
++	if (!sig_data  || sig_len == 0) {
++		if (DM_VERITY_IS_SIG_FORCE_ENABLED())
++			return -ENOKEY;
++		else
++			return 0;
++	}
++
++	ret = verify_pkcs7_signature(root_hash, root_hash_len, sig_data,
++				sig_len, NULL, VERIFYING_UNSPECIFIED_SIGNATURE,
++				NULL, NULL);
++
++	return ret;
++}
++
++void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
++{
++	kfree(sig_opts->sig);
++	sig_opts->sig = NULL;
++	sig_opts->sig_size = 0;
++}
+diff --git a/drivers/md/dm-verity-verify-sig.h b/drivers/md/dm-verity-verify-sig.h
+new file mode 100644
+index 000000000000..19b1547aa741
+--- /dev/null
++++ b/drivers/md/dm-verity-verify-sig.h
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2019 Microsoft Corporation.
++ *
++ * Author:  Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
++ *
++ */
++#ifndef DM_VERITY_SIG_VERIFICATION_H
++#define DM_VERITY_SIG_VERIFICATION_H
++
++#define DM_VERITY_ROOT_HASH_VERIFICATION "DM Verity Sig Verification"
++#define DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG_KEY "root_hash_sig_key_desc"
++
++struct dm_verity_sig_opts {
++	unsigned int sig_size;
++	u8 *sig;
++};
++
++#ifdef CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG
++
++#define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 2
++
++int verity_verify_root_hash(const void *data, size_t data_len,
++			    const void *sig_data, size_t sig_len);
++bool verity_verify_is_sig_opt_arg(const char *arg_name);
++
++int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
++				    struct dm_verity_sig_opts *sig_opts,
++				    unsigned int *argc, const char *arg_name);
++
++void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts);
++
++#else
++
++#define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 0
++
++int verity_verify_root_hash(const void *data, size_t data_len,
++			    const void *sig_data, size_t sig_len)
++{
++	return 0;
++}
++
++bool verity_verify_is_sig_opt_arg(const char *arg_name)
++{
++	return false;
++}
++
++int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
++				    struct dm_verity_sig_opts *sig_opts,
++				    unsigned int *argc, const char *arg_name)
++{
++	return -EINVAL;
++}
++
++void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
++{
++}
++
++#endif /* CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG */
++#endif /* DM_VERITY_SIG_VERIFICATION_H */
+diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
+index eeaf940aef6d..641b9e3a399b 100644
+--- a/drivers/md/dm-verity.h
++++ b/drivers/md/dm-verity.h
+@@ -63,6 +63,8 @@ struct dm_verity {
+ 
+ 	struct dm_verity_fec *fec;	/* forward error correction */
+ 	unsigned long *validated_blocks; /* bitset blocks validated */
++
++	char *signature_key_desc; /* signature keyring reference */
+ };
+ 
+ struct dm_verity_io {
 -- 
-2.17.1
+cgit 1.2-0.3.lf.el7
 
