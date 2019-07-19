@@ -2,107 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C35F6D96A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 05:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9D2D6D96C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 05:44:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726072AbfGSDnW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 23:43:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726055AbfGSDnW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:43:22 -0400
-Received: from localhost (p91006-ipngnfx01marunouchi.tokyo.ocn.ne.jp [153.156.43.6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C959F2184E;
-        Fri, 19 Jul 2019 03:43:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563507801;
-        bh=HrhZEcSQN51KrMKglwqRrsI7E3xr0hfIM76XucbZx14=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ONSgg6eG0qjUubfHx/upW/n7ZzF0rISIrx3M1JZezpE4qOCH/Lf0l4vUANH5zTV3j
-         H6KAhSFBU/qvFzAJbfVnIEgME7//1ByAI1I8+SiwNAKmx+FmrLmO8pPulV3xNHJvUy
-         Cezf9XIDjEsLNGSrrF/1dS85E8+n7shWLJfyruHU=
-Date:   Fri, 19 Jul 2019 12:43:18 +0900
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Liu Bo <bo.liu@linux.alibaba.com>, stable <stable@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Peng Tao <tao.peng@linux.alibaba.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH] mm: fix livelock caused by iterating multi order entry
-Message-ID: <20190719034318.GA7886@kroah.com>
-References: <1563495160-25647-1-git-send-email-bo.liu@linux.alibaba.com>
- <CAPcyv4jR3vscppooTFBEU=Kp4CNVfthNNz1pV6jxwyg2bmdBjg@mail.gmail.com>
+        id S1726112AbfGSDoW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 23:44:22 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:56554 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbfGSDoV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:44:21 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hoJoh-0007PZ-CO; Fri, 19 Jul 2019 03:44:19 +0000
+Date:   Fri, 19 Jul 2019 04:44:19 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [git pull] vfs.git work.mount0
+Message-ID: <20190719034419.GX17978@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4jR3vscppooTFBEU=Kp4CNVfthNNz1pV6jxwyg2bmdBjg@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 07:53:42PM -0700, Dan Williams wrote:
-> [ add Sasha for -stable advice ]
-> 
-> On Thu, Jul 18, 2019 at 5:13 PM Liu Bo <bo.liu@linux.alibaba.com> wrote:
-> >
-> > The livelock can be triggerred in the following pattern,
-> >
-> >         while (index < end && pagevec_lookup_entries(&pvec, mapping, index,
-> >                                 min(end - index, (pgoff_t)PAGEVEC_SIZE),
-> >                                 indices)) {
-> >                 ...
-> >                 for (i = 0; i < pagevec_count(&pvec); i++) {
-> >                         index = indices[i];
-> >                         ...
-> >                 }
-> >                 index++; /* BUG */
-> >         }
-> >
-> > multi order exceptional entry is not specially considered in
-> > invalidate_inode_pages2_range() and it ended up with a livelock because
-> > both index 0 and index 1 finds the same pmd, but this pmd is binded to
-> > index 0, so index is set to 0 again.
-> >
-> > This introduces a helper to take the pmd entry's length into account when
-> > deciding the next index.
-> >
-> > Note that there're other users of the above pattern which doesn't need to
-> > fix,
-> >
-> > - dax_layout_busy_page
-> > It's been fixed in commit d7782145e1ad
-> > ("filesystem-dax: Fix dax_layout_busy_page() livelock")
-> >
-> > - truncate_inode_pages_range
-> > This won't loop forever since the exceptional entries are immediately
-> > removed from radix tree after the search.
-> >
-> > Fixes: 642261a ("dax: add struct iomap based DAX PMD support")
-> > Cc: <stable@vger.kernel.org> since 4.9 to 4.19
-> > Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-> > ---
-> >
-> > The problem is gone after commit f280bf092d48 ("page cache: Convert
-> > find_get_entries to XArray"), but since xarray seems too new to backport
-> > to 4.19, I made this fix based on radix tree implementation.
-> 
-> I think in this situation, since mainline does not need this change
-> and the bug has been buried under a major refactoring, is to send a
-> backport directly against the v4.19 kernel. Include notes about how it
-> replaces the fix that was inadvertently contained in f280bf092d48
-> ("page cache: Convert find_get_entries to XArray"). Do you have a test
-> case that you can include in the changelog?
+	The first part of mount updates.  It's messier than I'd like;
+the branch itself merges with a couple of trivial conflicts, but there
+are two filesystems that have grown the need of update while in
+separate branches.  I can do backmerges for those two (dmabuf and
+vmballon), but fixups required are rather trivial.  Not sure what
+would be the best way to deal with that; it could be folded into
+the merge commit, but...
 
-Yes, I need a _TON_ of documentation, and signed off by from all of the
-developers involved in this part of the kernel, before I can take this
-not-in-mainline patch.
+	Anyway, I'd pushed the proposed conflict resolution into
+#merge-candidate, with followups in separate commit on top of the
+merge; folding that into the merge itself is trivial.  Up to you.
+FWIW, the fixup itself (as had been done in -next) amounts to
+ drivers/dma-buf/dma-buf.c  | 14 +++++++++-----
+ drivers/misc/vmw_balloon.c | 14 ++++----------
+ 2 files changed, 13 insertions(+), 15 deletions(-)
+and it's basically conversions of two pseudo-filesystems to
+init_pseudo().
 
-thanks,
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-greg k-h
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount0
+
+for you to fetch changes up to 037f11b4752f717201143a1dc5d6acf3cb71ddfa:
+
+  mnt_init(): call shmem_init() unconditionally (2019-07-04 22:01:59 -0400)
+
+----------------------------------------------------------------
+Al Viro (25):
+      drm: don't bother with super_operations and dentry_operations
+      cxl: don't bother with dentry_operations
+      cxlflash: don't bother with dentry_operations
+      balloon: don't bother with dentry_operations
+      zsmalloc: don't bother with dentry_operations
+      unexport simple_dname()
+      mount_pseudo(): drop 'name' argument, switch to d_make_root()
+      no need to protect against put_user_ns(NULL)
+      start massaging the checks in sget_...(): move to sget_userns()
+      consolidate the capability checks in sget_{fc,userns}()
+      move the capability checks from sget_userns() to legacy_get_tree()
+      legacy_get_tree(): pass fc->user_ns to mount_capable()
+      switch mount_capable() to fs_context
+      mqueue: set ->user_ns before ->get_tree()
+      procfs: set ->user_ns before calling ->get_tree()
+      cpuset: move mount -t cpuset logics into cgroup.c
+      move mount_capable() calls to vfs_get_tree()
+      move mount_capable() further out
+      fold mount_pseudo_xattr() into pseudo_fs_get_tree()
+      convenience helper get_tree_nodev()
+      convenience helper: get_tree_single()
+      init_rootfs(): don't bother with init_ramfs_fs()
+      don't bother with registering rootfs
+      constify ksys_mount() string arguments
+      mnt_init(): call shmem_init() unconditionally
+
+Dan Williams (1):
+      device-dax: Drop register_filesystem()
+
+David Howells (37):
+      z3fold: don't bother with dentry_operations
+      vfs: Convert rpc_pipefs to use the new mount API
+      vfs: Convert nfsctl to use the new mount API
+      vfs: Kill mount_ns()
+      vfs: Fix refcounting of filenames in fs_parser
+      vfs: Provide sb->s_iflags settings in fs_context struct
+      vfs: Provide a mount_pseudo-replacement for the new mount API
+      vfs: Convert aio to use the new mount API
+      vfs: Convert anon_inodes to use the new mount API
+      vfs: Convert bdev to use the new mount API
+      vfs: Convert nsfs to use the new mount API
+      vfs: Convert pipe to use the new mount API
+      vfs: Convert zsmalloc to use the new mount API
+      zsfold: Convert zsfold to use the new mount API
+      vfs: Convert sockfs to use the new mount API
+      vfs: Convert dax to use the new mount API
+      vfs: Convert drm to use the new mount API
+      vfs: Convert ia64 perfmon to use the new mount API
+      vfs: Convert cxl to use the new mount API
+      vfs: Convert ocxlflash to use the new mount API
+      vfs: Convert virtio_balloon to use the new mount API
+      vfs: Convert btrfs_test to use the new mount API
+      vfs: Use sget_fc() for pseudo-filesystems
+      vfs: Kill sget_userns()
+      vfs: Convert binfmt_misc to use the new mount API
+      vfs: Convert configfs to use the new mount API
+      vfs: Convert efivarfs to use the new mount API
+      vfs: Convert qib_fs/ipathfs to use the new mount API
+      vfs: Convert ibmasmfs to use the new mount API
+      vfs: Convert oprofilefs to use the new mount API
+      vfs: Convert gadgetfs to use the new mount API
+      vfs: Convert xenfs to use the new mount API
+      vfs: Convert openpromfs to use the new mount API
+      vfs: Convert apparmorfs to use the new mount API
+      vfs: Convert securityfs to use the new mount API
+      vfs: Convert selinuxfs to use the new mount API
+      vfs: Convert smackfs to use the new mount API
+
+ arch/ia64/kernel/perfmon.c             |  17 ++--
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c |   3 +-
+ drivers/base/devtmpfs.c                |   3 +-
+ drivers/dax/super.c                    |  23 +++--
+ drivers/gpu/drm/drm_drv.c              |  20 +----
+ drivers/infiniband/hw/qib/qib_fs.c     |  26 ++++--
+ drivers/misc/cxl/api.c                 |  13 +--
+ drivers/misc/ibmasm/ibmasmfs.c         |  21 +++--
+ drivers/oprofile/oprofilefs.c          |  20 +++--
+ drivers/scsi/cxlflash/ocxl_hw.c        |  23 +----
+ drivers/usb/gadget/legacy/inode.c      |  21 +++--
+ drivers/virtio/virtio_balloon.c        |  13 +--
+ drivers/xen/xenfs/super.c              |  21 +++--
+ fs/aio.c                               |  16 ++--
+ fs/anon_inodes.c                       |  13 +--
+ fs/binfmt_misc.c                       |  20 +++--
+ fs/block_dev.c                         |  17 ++--
+ fs/btrfs/tests/btrfs-tests.c           |  15 ++--
+ fs/configfs/mount.c                    |  20 +++--
+ fs/d_path.c                            |   1 -
+ fs/efivarfs/super.c                    |  25 +++---
+ fs/fs_parser.c                         |   1 +
+ fs/fsopen.c                            |   2 +
+ fs/fuse/control.c                      |   2 +-
+ fs/hugetlbfs/inode.c                   |   2 +-
+ fs/internal.h                          |   3 +
+ fs/libfs.c                             |  82 ++++++++++--------
+ fs/namespace.c                         |  15 ++--
+ fs/nfsd/nfsctl.c                       |  33 ++++++--
+ fs/nsfs.c                              |  16 ++--
+ fs/openpromfs/inode.c                  |  20 +++--
+ fs/pipe.c                              |  15 ++--
+ fs/proc/root.c                         |   7 +-
+ fs/ramfs/inode.c                       |   6 +-
+ fs/super.c                             | 148 ++++++++++-----------------------
+ fs/sysfs/mount.c                       |   3 +-
+ include/linux/dcache.h                 |   1 -
+ include/linux/fs.h                     |  21 -----
+ include/linux/fs_context.h             |   7 ++
+ include/linux/init.h                   |   5 +-
+ include/linux/pseudo_fs.h              |  16 ++++
+ include/linux/ramfs.h                  |   1 -
+ include/linux/syscalls.h               |   4 +-
+ include/uapi/linux/magic.h             |   1 +
+ init/do_mounts.c                       |  24 +-----
+ init/main.c                            |   1 -
+ ipc/mqueue.c                           |   9 +-
+ kernel/cgroup/cgroup.c                 |  50 ++++++++++-
+ kernel/cgroup/cpuset.c                 |  61 +-------------
+ mm/shmem.c                             |   4 -
+ mm/z3fold.c                            |  14 ++--
+ mm/zsmalloc.c                          |  12 +--
+ net/socket.c                           |  16 ++--
+ net/sunrpc/rpc_pipe.c                  |  34 ++++++--
+ security/apparmor/apparmorfs.c         |  20 +++--
+ security/inode.c                       |  21 +++--
+ security/selinux/selinuxfs.c           |  20 +++--
+ security/smack/smackfs.c               |  34 +++++---
+ 58 files changed, 566 insertions(+), 516 deletions(-)
+ create mode 100644 include/linux/pseudo_fs.h
