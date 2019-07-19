@@ -2,117 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71F606D903
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 04:20:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F21816D8FE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 04:20:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbfGSCUQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 22:20:16 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:43943 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfGSCUP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 22:20:15 -0400
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x6J2Jpp4017092;
-        Fri, 19 Jul 2019 11:19:52 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x6J2Jpp4017092
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1563502792;
-        bh=+sM+seELdRIbsaJZCOpd5FOhzKDSjUglYwxZ8lI5IpY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=yxdGOC7h01PMpNWjoMFR3aQrxdO5yDDJLqCQxGqYKM6FyzHzHe91A5yhUiQzTtC5W
-         OlkeTRP7/BRNJnUGwcPzjaWgw0Y8FtbF/VIdBp5O4He1W3hx03o1jNHI5vAXShBa5/
-         psBH6zqbnPp4rzO4C0XrCs+JS7Er0Aor0txupQa1HbJETPRryqrOCI8UXwOWcORW7h
-         N5JpaSSV8JMV18LyNxdwf3GjcV4agFAuKGt/jpH3G5YdlsW31L6DiN3Q87HfFDm66U
-         AaA1V0sSYtyun5RVb2udp1ivpRNod9qlbye1bCdr1oyoOylv4/Itr2zwClhNrP/TWI
-         Z3MuMVng0jBsg==
-X-Nifty-SrcIP: [209.85.217.42]
-Received: by mail-vs1-f42.google.com with SMTP id r3so20521282vsr.13;
-        Thu, 18 Jul 2019 19:19:52 -0700 (PDT)
-X-Gm-Message-State: APjAAAWy8L7BDABd3H+NF9OTfcef+czhAs+m9vW7YQdj1eA8xI6WKlcR
-        Wp3Eo27DK6lM1A/u6z8Sdjw33ifsShVJL/Tf+ys=
-X-Google-Smtp-Source: APXvYqybBFz/HOYZeKsR6BcR2USXMe1xocX0bGf4StjrIgG6+mNOvEm2C5Vhfm1+zxBz6YSUHwPKd+7SVqirj8eqr8g=
-X-Received: by 2002:a67:f495:: with SMTP id o21mr31554842vsn.54.1563502790950;
- Thu, 18 Jul 2019 19:19:50 -0700 (PDT)
+        id S1726665AbfGSCTy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 22:19:54 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:20468 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726067AbfGSCTx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 18 Jul 2019 22:19:53 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id A6C4F507D6;
+        Fri, 19 Jul 2019 04:19:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id rthfEAqSrQty; Fri, 19 Jul 2019 04:19:37 +0200 (CEST)
+Date:   Fri, 19 Jul 2019 12:19:31 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 08/10] open: openat2(2) syscall
+Message-ID: <20190719021931.ypwvcvp3imbgjjx6@yavin>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-9-cyphar@cyphar.com>
+ <20190719015933.GA18022@altlinux.org>
 MIME-Version: 1.0
-References: <20190718125509.775525-1-arnd@arndb.de> <20190718125703.GA28332@lst.de>
- <CAK8P3a2k3ddUD-b+OskpDfAkm6KGAGAOBabkXk3Uek1dShTiUA@mail.gmail.com>
- <20190718130835.GA28520@lst.de> <20190718142525.GE7116@magnolia>
-In-Reply-To: <20190718142525.GE7116@magnolia>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 19 Jul 2019 11:19:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASN5d_ppx6wJSm+fcf9HiX9i6zX4fxiR5_WuF6QUOExXQ@mail.gmail.com>
-Message-ID: <CAK7LNASN5d_ppx6wJSm+fcf9HiX9i6zX4fxiR5_WuF6QUOExXQ@mail.gmail.com>
-Subject: Re: [PATCH] iomap: hide iomap_sector with CONFIG_BLOCK=n
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jani Nikula <jani.nikula@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="g4nevyq6aunc32xc"
+Content-Disposition: inline
+In-Reply-To: <20190719015933.GA18022@altlinux.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi.
 
-On Thu, Jul 18, 2019 at 11:28 PM Darrick J. Wong
-<darrick.wong@oracle.com> wrote:
->
-> On Thu, Jul 18, 2019 at 03:08:35PM +0200, Christoph Hellwig wrote:
-> > On Thu, Jul 18, 2019 at 03:03:15PM +0200, Arnd Bergmann wrote:
-> > > The inclusion comes from the recently added header check in commit
-> > > c93a0368aaa2 ("kbuild: do not create wrappers for header-test-y").
-> > >
-> > > This just tries to include every header by itself to see if there are build
-> > > failures from missing indirect includes. We probably don't want to
-> > > add an exception for iomap.h there.
-> >
-> > I very much disagree with that check.  We don't need to make every
-> > header compilable with a setup where it should not be included.
->
-> Seconded, unless there's some scenario where someone needs iomap when
-> CONFIG_BLOCK=n (???)
+--g4nevyq6aunc32xc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I agree.
+On 2019-07-19, Dmitry V. Levin <ldv@altlinux.org> wrote:
+> On Sun, Jul 07, 2019 at 12:57:35AM +1000, Aleksa Sarai wrote:
+> [...]
+> > +/**
+> > + * Arguments for how openat2(2) should open the target path. If @extra=
+ is zero,
+> > + * then openat2(2) is identical to openat(2).
+> > + *
+> > + * @flags: O_* flags (unknown flags ignored).
+>=20
+> What was the rationale for implementing this semantics?
+> Ignoring unknown flags makes potential extension of this new interface
+> problematic.  This has bitten us many times already, so ...
 
-There is no situation that iomap.h is included when CONFIG_BLOCK=n.
-So, it is pointless to surround offending code with #ifdef
-just for the purpose of satisfying the header-test.
+I am mirroring the semantics of open(2) and openat(2).
 
+To be clear, I am in favour of doing it -- and it would definitely be
+possible to implement it with -EINVAL (you would just mask off
+~VALID_OPEN_FLAGS for the older syscalls). But Linus' response to my
+point about (the lack of) -EINVAL for unknown open(2) flags gave me the
+impression he would be against this idea (though I might be
+misunderstanding the point he was making).
 
-I started to think
-compiling all headers is more painful than useful.
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
+--g4nevyq6aunc32xc
+Content-Type: application/pgp-signature; name="signature.asc"
 
-MW is closing, so I am thinking of disabling it for now
-to take time to re-think.
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXTEorwAKCRCdlLljIbnQ
+Eop3AQDsS+JxsKMay74AdwHvqjPK3crvN47y0krPsv6vGBsWhQD/f+ChPlnwx226
+SbxKk/nCjHvnDSJga0WPUznn7tBxUQQ=
+=7H8a
+-----END PGP SIGNATURE-----
 
-diff --git a/init/Kconfig b/init/Kconfig
-index bd7d650d4a99..cbb31d134f7e 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -111,6 +111,7 @@ config HEADER_TEST
- config KERNEL_HEADER_TEST
-        bool "Compile test kernel headers"
-        depends on HEADER_TEST
-+       depends on BROKEN
-        help
-          Headers in include/ are used to build external moduls.
-          Compile test them to ensure they are self-contained, i.e.
-
-
-
-Maybe, we should compile-test headers
-only when it is reasonable to do so.
-
--- 
-Best Regards
-Masahiro Yamada
+--g4nevyq6aunc32xc--
