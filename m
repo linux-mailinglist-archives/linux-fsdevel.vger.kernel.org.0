@@ -2,112 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE3486D7D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 02:37:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83EA56D8A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 03:59:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbfGSAg7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 20:36:59 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38635 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726262AbfGSAg6 (ORCPT
+        id S1726243AbfGSB7j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 21:59:39 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:55986 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfGSB7j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:36:58 -0400
-Received: by mail-pl1-f194.google.com with SMTP id az7so14708142plb.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2019 17:36:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OnU2jQx1H+2VCBHEGo1995LVw57aSop7IIeZNBH89nc=;
-        b=PIBTVtTqR6+ev2CTE/DKLURMWifMrFafD1Q/T4svlXBkiVuxjUkHCnMG1lfswD8T5o
-         SgX5fQFN3SxryUwTHj74wUzFhGQ40vKyiFtztJTX7ZpRVQ8NC3wNSUUhYHSB5LpPv/kn
-         zkCO5VB1D2Jbem/fs7JWp0gL+rpoTsp8TsJSEQvoOaBgrKd9oSJuvDg3q2bbbJpfNcT1
-         1Jsr6KcydEMbUD0wO5fliFID/VjPvBFec+xMzAl1JpYwvngWXGClZ4pztq8Ot2oAO6p7
-         g300dx6bwoNHVv6bq/1oq4pooVSrXDJzv/hvMSv0TAOOn31teG9WAuJs1KTQ9/UFaqg+
-         MroQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OnU2jQx1H+2VCBHEGo1995LVw57aSop7IIeZNBH89nc=;
-        b=L3FPicJsOorcUmJunILMDYi/FV1xWESsx9Xv8MAlR8NmB6pMPJVp2H8U6D/+evQU5C
-         e0AcLuTGhvgawqQ28OVG4P4ElWEMLHDJvSwjcNEIAGvjHIXtckRRH3vsS09DJsIotiM2
-         QJyq6BWeYMYgrt8g4g4yc4lpRa3zNF7J5N6BaUz9L1iE5rSebhFluRoHAjC32U3kNclD
-         7z7sQ+lQwES0C2q4JDbMc9GVdq9yk2xOKBi6K6UOW8eoDaUYhzdfv9mYo+is7xqtxoY3
-         MC73U1ZAnvfyssFszzSfO1YYTkUz//X208pCDiMUUpg0CYKZ1JFISBwwEF5xWCwuMxE2
-         FnaA==
-X-Gm-Message-State: APjAAAUCtm2Uh59WxKXDHc8sPE24NXgoLQXeeVW+Z+IIQRjVnMSCdrd9
-        Z4fVYIJKtGzihv3ZbaEIsE3Q3hhAp/4=
-X-Google-Smtp-Source: APXvYqxCMvNQL956cnE+p4k3mnSVCs+/HR7epvTt3H3ohlGcfLW7nf/6SFkkyRx2IsDwIHxlAocz9A==
-X-Received: by 2002:a17:902:9688:: with SMTP id n8mr52272137plp.227.1563496617905;
-        Thu, 18 Jul 2019 17:36:57 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id r6sm53800797pjb.22.2019.07.18.17.36.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 17:36:57 -0700 (PDT)
-Date:   Thu, 18 Jul 2019 17:36:55 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Benjamin LaHaise <ben@communityfibre.ca>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] aio: Support read/write with non-iter file-ops
-Message-ID: <20190719003655.GO30636@minitux>
-References: <20190718231054.8175-1-bjorn.andersson@linaro.org>
- <20190718231751.GV17978@ZenIV.linux.org.uk>
- <20190718234352.GN30636@minitux>
- <20190718235616.GM29731@kvack.org>
+        Thu, 18 Jul 2019 21:59:39 -0400
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 492A272CA65;
+        Fri, 19 Jul 2019 04:59:34 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 3B39E7CC774; Fri, 19 Jul 2019 04:59:34 +0300 (MSK)
+Date:   Fri, 19 Jul 2019 04:59:34 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v9 08/10] open: openat2(2) syscall
+Message-ID: <20190719015933.GA18022@altlinux.org>
+References: <20190706145737.5299-1-cyphar@cyphar.com>
+ <20190706145737.5299-9-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="huq684BweRXVnRxX"
 Content-Disposition: inline
-In-Reply-To: <20190718235616.GM29731@kvack.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190706145737.5299-9-cyphar@cyphar.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 18 Jul 16:56 PDT 2019, Benjamin LaHaise wrote:
 
-> On Thu, Jul 18, 2019 at 04:43:52PM -0700, Bjorn Andersson wrote:
-> > On Thu 18 Jul 16:17 PDT 2019, Al Viro wrote:
-> > 
-> > > On Thu, Jul 18, 2019 at 04:10:54PM -0700, Bjorn Andersson wrote:
-> > > > Implement a wrapper for aio_read()/write() to allow async IO on files
-> > > > not implementing the iter version of read/write, such as sysfs. This
-> > > > mimics how readv/writev uses non-iter ops in do_loop_readv_writev().
-> > > 
-> > > IDGI.  How would that IO manage to be async?  And what's the point
-> > > using aio in such situations in the first place?
-> > 
-> > The point is that an application using aio to submit io operations on a
-> > set of files, can use the same mechanism to read/write files that
-> > happens to be implemented by driver only implementing read/write (not
-> > read_iter/write_iter) in the registered file_operations struct, such as
-> > kernfs.
-> > 
-> > In this particular case I have a sysfs file that is accessing hardware
-> > and hence will block for a while and using this patch I can io_submit()
-> > a write and handle the completion of this in my normal event loop.
-> > 
-> > 
-> > Each individual io operation will be just as synchronous as the current
-> > iter-based mechanism - for the drivers that implement that.
-> 
-> Just adding the fops is not enough.  I have patches floating around at
-> Solace that add thread based fallbacks for files that don't have an aio
-> read / write implementation, but I'm not working on that code any more.
+--huq684BweRXVnRxX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My bad. Took another look and now I see the bigger picture of how this
-is currently implemented and why just adding the fops would defeat the
-purpose of the api.
+On Sun, Jul 07, 2019 at 12:57:35AM +1000, Aleksa Sarai wrote:
+[...]
+> +/**
+> + * Arguments for how openat2(2) should open the target path. If @extra i=
+s zero,
+> + * then openat2(2) is identical to openat(2).
+> + *
+> + * @flags: O_* flags (unknown flags ignored).
 
-Sorry for the noise.
+What was the rationale for implementing this semantics?
+Ignoring unknown flags makes potential extension of this new interface
+problematic.  This has bitten us many times already, so ...
 
-> The thread based methods were quite useful in applications that had a need
-> for using other kernel infrastructure in their main event loops.
-> 
+> + * @mode: O_CREAT file mode (ignored otherwise).
+> + * @upgrade_mask: restrict how the O_PATH may be re-opened (ignored othe=
+rwise).
+> + * @resolve: RESOLVE_* flags (-EINVAL on unknown flags).
 
-Yes indeed.
+=2E.. could you consider implementing this (-EINVAL on unknown flags) seman=
+tics
+for @flags as well, please?
 
-Regards,
-Bjorn
+
+--=20
+ldv
+
+--huq684BweRXVnRxX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJdMSQFAAoJEAVFT+BVnCUIuaAP/3pgUoQA466F6S8jYN6F/icf
+oiQHExdeO3ruxRdNl1gi7af0RxQCiprfNIoD7KQyWSnyUyUm0Cdd7PzpEKXuumQi
+pN6ZTEO2bQeSs7AjCNpLrTgKcuOo/pZbNN7InAHKLB7k2xKKeBbdaVypgGiAEDjT
+JK+4s+8JcJoSg+d69G428QP2qpoHyIZJ5437gYv5rJbL9BRihwwvWF2OQ4TXrd6I
+YnyxPFRRZnfiN3HNbNlJjtMgt5g0AisLuahpJaDMq0NaXnBOosDm9jBAhVOX0CSB
+LUNByCygXeBKv9VuyrO4KnLXS3ORGfK38SDGqz3kFYy1quNRAGKgOXPnGXfb2xbZ
+bRCqyuxkSUOIfLKA6q9jnqO9RoUeOtLglFUT/5JpixTaoxSFN3Y6GlJFcnw+cVm+
+oWH4A/IoST68FCfbOMff976O36pakuWbsVGVsdv384OEHfWaf7c10P9EQc3fhgF3
+JoeY5ht9R1k8HWNOlCuCeHfTwSyLG3T/TROuZYtz65RdPemuuPSPERr+GzOtO9Fn
++wQmK99JlE3nhoyv5CmtqCmMQWhYZedqjbjs5wIq7tjalerg6TakNMmhzTGz5l8T
+i+3EfyMHhEtwq+2YNhdaPEmjfdBzyI3stxtEkURya0BnCgbYsP2mTIP8UbLGDqsY
+EJZiRtPRFfVoePwqT8Ux
+=zLLc
+-----END PGP SIGNATURE-----
+
+--huq684BweRXVnRxX--
