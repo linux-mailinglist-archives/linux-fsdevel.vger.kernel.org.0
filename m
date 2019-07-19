@@ -2,50 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E11C46DBBD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 06:11:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 267406DE42
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 06:27:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388291AbfGSELH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jul 2019 00:11:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45824 "EHLO mail.kernel.org"
+        id S1733052AbfGSE1a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jul 2019 00:27:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388247AbfGSELC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:11:02 -0400
+        id S1729157AbfGSEG4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:06:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40BAD218E2;
-        Fri, 19 Jul 2019 04:11:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30AB6218A6;
+        Fri, 19 Jul 2019 04:06:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509461;
-        bh=wG5lX/CmKxmM9lBvxU1b+LV4/KVMw8c0YZm9V9g76q8=;
+        s=default; t=1563509215;
+        bh=mjpXVKodQX07mlOxhWXJOjjSgftRWp5qKcdqRVQpF+c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QqlFVXuCq2blgMWRQXBBzRFLC7papAXjacFjfBiG6SebuMHzGuCQZX8wjK6diEj47
-         vEY2cE8FfOEmKRF3p2zFwE1U1mf/zQ1EMXabmGjaTzIPhbO77yd6l3sJaskc/IsbDZ
-         tNeRRs0hPea8OunPV6R1z7eCGKqvAXt0G+6x0774=
+        b=Rq++uQhSfs3SRs5LVZs+ZkgCKbxfGxA7mS8hwh0D7/6ErrmhfBh0ZspYZ+hJfrGv3
+         mIzPq01kInkP6FZKH3GzDXBrEKEpRh5jkaILuLdMWQq6JOCIhaI8VlHz3IO09mjN/Z
+         RJ6ioQ5GqCts683vPRuoq3/YEiSd1QZXMatN7JvQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Roman Gushchin <guro@fb.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
+Cc:     Shakeel Butt <shakeelb@google.com>, Roman Gushchin <guro@fb.com>,
+        Jan Kara <jack@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
         Michal Hocko <mhocko@suse.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-        Oleg Nesterov <oleg@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 099/101] proc: use down_read_killable mmap_sem for /proc/pid/maps
-Date:   Fri, 19 Jul 2019 00:07:30 -0400
-Message-Id: <20190719040732.17285-99-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 131/141] memcg, fsnotify: no oom-kill for remote memcg charging
+Date:   Fri, 19 Jul 2019 00:02:36 -0400
+Message-Id: <20190719040246.15945-131-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
-References: <20190719040732.17285-1-sashal@kernel.org>
+In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
+References: <20190719040246.15945-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -54,68 +48,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Shakeel Butt <shakeelb@google.com>
 
-[ Upstream commit 8a713e7df3352b8d9392476e9cf29e4e185dac32 ]
+[ Upstream commit ec165450968b26298bd1c373de37b0ab6d826b33 ]
 
-Do not remain stuck forever if something goes wrong.  Using a killable
-lock permits cleanup of stuck tasks and simplifies investigation.
+Commit d46eb14b735b ("fs: fsnotify: account fsnotify metadata to
+kmemcg") added remote memcg charging for fanotify and inotify event
+objects.  The aim was to charge the memory to the listener who is
+interested in the events but without triggering the OOM killer.
+Otherwise there would be security concerns for the listener.
 
-This function is also used for /proc/pid/smaps.
+At the time, oom-kill trigger was not in the charging path.  A parallel
+work added the oom-kill back to charging path i.e.  commit 29ef680ae7c2
+("memcg, oom: move out_of_memory back to the charge path").  So to not
+trigger oom-killer in the remote memcg, explicitly add
+__GFP_RETRY_MAYFAIL to the fanotigy and inotify event allocations.
 
-Link: http://lkml.kernel.org/r/156007493160.3335.14447544314127417266.stgit@buzz
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Link: http://lkml.kernel.org/r/20190514212259.156585-2-shakeelb@google.com
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
 Reviewed-by: Roman Gushchin <guro@fb.com>
-Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
-Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Michal Koutný <mkoutny@suse.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Jan Kara <jack@suse.cz>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/proc/task_mmu.c   | 6 +++++-
- fs/proc/task_nommu.c | 6 +++++-
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ fs/notify/fanotify/fanotify.c        | 5 ++++-
+ fs/notify/inotify/inotify_fsnotify.c | 8 ++++++--
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 195fbbaf77d4..71aba44c4fa6 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -166,7 +166,11 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
- 	if (!mm || !mmget_not_zero(mm))
- 		return NULL;
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 8c286f8228e5..d5db722ac272 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -288,10 +288,13 @@ struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 	/*
+ 	 * For queues with unlimited length lost events are not expected and
+ 	 * can possibly have security implications. Avoid losing events when
+-	 * memory is short.
++	 * memory is short. For the limited size queues, avoid OOM killer in the
++	 * target monitoring memcg as it may have security repercussion.
+ 	 */
+ 	if (group->max_events == UINT_MAX)
+ 		gfp |= __GFP_NOFAIL;
++	else
++		gfp |= __GFP_RETRY_MAYFAIL;
  
--	down_read(&mm->mmap_sem);
-+	if (down_read_killable(&mm->mmap_sem)) {
-+		mmput(mm);
-+		return ERR_PTR(-EINTR);
-+	}
-+
- 	hold_task_mempolicy(priv);
- 	priv->tail_vma = get_gate_vma(mm);
+ 	/* Whoever is interested in the event, pays for the allocation. */
+ 	memalloc_use_memcg(group->memcg);
+diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+index ff30abd6a49b..ca1a9dfff0b5 100644
+--- a/fs/notify/inotify/inotify_fsnotify.c
++++ b/fs/notify/inotify/inotify_fsnotify.c
+@@ -99,9 +99,13 @@ int inotify_handle_event(struct fsnotify_group *group,
+ 	i_mark = container_of(inode_mark, struct inotify_inode_mark,
+ 			      fsn_mark);
  
-diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
-index 0b63d68dedb2..5161894a6d62 100644
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -211,7 +211,11 @@ static void *m_start(struct seq_file *m, loff_t *pos)
- 	if (!mm || !mmget_not_zero(mm))
- 		return NULL;
+-	/* Whoever is interested in the event, pays for the allocation. */
++	/*
++	 * Whoever is interested in the event, pays for the allocation. Do not
++	 * trigger OOM killer in the target monitoring memcg as it may have
++	 * security repercussion.
++	 */
+ 	memalloc_use_memcg(group->memcg);
+-	event = kmalloc(alloc_len, GFP_KERNEL_ACCOUNT);
++	event = kmalloc(alloc_len, GFP_KERNEL_ACCOUNT | __GFP_RETRY_MAYFAIL);
+ 	memalloc_unuse_memcg();
  
--	down_read(&mm->mmap_sem);
-+	if (down_read_killable(&mm->mmap_sem)) {
-+		mmput(mm);
-+		return ERR_PTR(-EINTR);
-+	}
-+
- 	/* start from the Nth VMA */
- 	for (p = rb_first(&mm->mm_rb); p; p = rb_next(p))
- 		if (n-- == 0)
+ 	if (unlikely(!event)) {
 -- 
 2.20.1
 
