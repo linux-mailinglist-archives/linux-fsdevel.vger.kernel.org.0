@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5F1B6DBF4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 06:12:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D7776DBB0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 06:11:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732885AbfGSEMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jul 2019 00:12:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45526 "EHLO mail.kernel.org"
+        id S2388311AbfGSEKt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jul 2019 00:10:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388249AbfGSEKp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:10:45 -0400
+        id S1733222AbfGSEKs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:10:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B1B421873;
-        Fri, 19 Jul 2019 04:10:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4711121872;
+        Fri, 19 Jul 2019 04:10:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509444;
-        bh=Fd/iL7k9ygEDKTPyKwsLZ60pZjcdmHPKdB8B+q4aVFQ=;
+        s=default; t=1563509447;
+        bh=EzPUVEC/oFT42yy6j6XbqollbJFdknDHxSMxt1qNWZs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sTozd/R7hY/A7Edx9cFkZMuWZdvJhoDLPUYpbmJ50TRAl1aHSdQHNdzBSV4sE7I14
-         z/AzK2O9VixSD5JhtRiACuJcHGnbJ/1hImxhxjKRo5sNOlabvjrYxTRJM0hAYZKsRs
-         YE3YDXWqJIslh1sF82JDWj7RWXWsyuUNdgn1BFw0=
+        b=UDF40KjVhPMT3xfkRsNQb7zzLbtjAO7r+u9qoiGVT4v5ZNqgiL+KzRmYD6f99gkyP
+         FmjKP71it1il+KSe9wfGpkm+0/Rl89QdOACD6J5/RW0Nz/m5T7pHRQkkyq/fco5w8j
+         pEdPCTcw3xroGCp4ETpvsOEPO9l+rLl1hM8vM6Gk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
@@ -38,9 +38,9 @@ Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 094/101] proc: use down_read_killable mmap_sem for /proc/pid/smaps_rollup
-Date:   Fri, 19 Jul 2019 00:07:25 -0400
-Message-Id: <20190719040732.17285-94-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 095/101] proc: use down_read_killable mmap_sem for /proc/pid/pagemap
+Date:   Fri, 19 Jul 2019 00:07:26 -0400
+Message-Id: <20190719040732.17285-95-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
@@ -56,12 +56,12 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-[ Upstream commit a26a97815548574213fd37f29b4b78ccc6d9ed20 ]
+[ Upstream commit ad80b932c57d85fd6377f97f359b025baf179a87 ]
 
 Do not remain stuck forever if something goes wrong.  Using a killable
 lock permits cleanup of stuck tasks and simplifies investigation.
 
-Link: http://lkml.kernel.org/r/156007493429.3335.14666825072272692455.stgit@buzz
+Link: http://lkml.kernel.org/r/156007493638.3335.4872164955523928492.stgit@buzz
 Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Reviewed-by: Roman Gushchin <guro@fb.com>
 Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
@@ -76,36 +76,24 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/proc/task_mmu.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/proc/task_mmu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index c5819baee35c..b2010055180e 100644
+index b2010055180e..74965e17ffd5 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -826,7 +826,10 @@ static int show_smaps_rollup(struct seq_file *m, void *v)
- 
- 	memset(&mss, 0, sizeof(mss));
- 
--	down_read(&mm->mmap_sem);
-+	ret = down_read_killable(&mm->mmap_sem);
-+	if (ret)
-+		goto out_put_mm;
-+
- 	hold_task_mempolicy(priv);
- 
- 	for (vma = priv->mm->mmap; vma; vma = vma->vm_next) {
-@@ -843,8 +846,9 @@ static int show_smaps_rollup(struct seq_file *m, void *v)
- 
- 	release_task_mempolicy(priv);
- 	up_read(&mm->mmap_sem);
--	mmput(mm);
- 
-+out_put_mm:
-+	mmput(mm);
- out_put_task:
- 	put_task_struct(priv->task);
- 	priv->task = NULL;
+@@ -1535,7 +1535,9 @@ static ssize_t pagemap_read(struct file *file, char __user *buf,
+ 		/* overflow ? */
+ 		if (end < start_vaddr || end > end_vaddr)
+ 			end = end_vaddr;
+-		down_read(&mm->mmap_sem);
++		ret = down_read_killable(&mm->mmap_sem);
++		if (ret)
++			goto out_free;
+ 		ret = walk_page_range(start_vaddr, end, &pagemap_walk);
+ 		up_read(&mm->mmap_sem);
+ 		start_vaddr = end;
 -- 
 2.20.1
 
