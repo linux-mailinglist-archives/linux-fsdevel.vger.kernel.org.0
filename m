@@ -2,91 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A49B06D758
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 01:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBCA56D78A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 02:03:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbfGRXn4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 18 Jul 2019 19:43:56 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44218 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbfGRXnz (ORCPT
+        id S1726075AbfGSADa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 18 Jul 2019 20:03:30 -0400
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:40981 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfGSAD3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 18 Jul 2019 19:43:55 -0400
-Received: by mail-pg1-f193.google.com with SMTP id i18so13589904pgl.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2019 16:43:55 -0700 (PDT)
+        Thu, 18 Jul 2019 20:03:29 -0400
+Received: by mail-qt1-f201.google.com with SMTP id e39so25887000qte.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2019 17:03:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MQwS96V3LHC/Rllb6kfS8urt8Dwxl4rqynJ2jowTCiU=;
-        b=CbKqei8CHSTARxahiWTl1FNQCrYm6g/pivGuc6BHyoNtkefajUa5vaq98Ltbgg5oxs
-         1JpjsDap9F5JWR+W3YAdGvvK6FJhByZfrrb2Bx9j947sJQg6HoFNYJhRuNH7wR6PqeaK
-         3Hq7SW/khR68/fak2pme92Si/S8q94ZaUWGRQDIt8/Xcy6WzQdTk2haBDcUFslzRTIzg
-         plFUbL7NRAO2G1hnMye5xRiJbk3Jr6HJTkCYK3KY/ghz3Sbvuu0/LfZgtprRmRrYLJ43
-         r66L/8sYbUtlbXwNQcLT1hK6zStKv9lu3TuE5TF6WPH0pUqIczffKZTZ0RvkvBcIA2zS
-         bi5w==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=9DEv8u8NV9GsQdpVG3YSkd6Fwchyp0Tmy7aGf7fvO/A=;
+        b=jlECP3AShHax5jtmkNgXohpyfl7vU5w7VHrgYsRWrEm2m4hlw/rYhIrWcKnQsgM/dy
+         OZKUI6y+AIE/8YlhSPji2idKxN0l15EnM8rzrdMLZV0TLJnOlEsSZXi2fPES3upK7XOP
+         P6Fu8zpLaXcgEM3opBWpKQlDf9WiVxWgEuUtKWlVO+u6rMYKgmPr9aRAZf59izPvrH50
+         P2eNvCymoJmAshBV+K5iW9R/VnFb0MSoMnaF9QL2N6ZCJF1ZEOrMKEF0NoPv34W3YyUn
+         QvkwFcFGXXB2EJ8HkYnTFjdiARmGNnuoUjeWQCsOvq9hLKU7Q6n//i3scNYe1DmFLOqQ
+         8r6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MQwS96V3LHC/Rllb6kfS8urt8Dwxl4rqynJ2jowTCiU=;
-        b=gZgjO3V5x4blK9OvTj4ZFTnVWMbvcY/cImP4QhzTtXnjiVXC/zRx3HNreaqFnQHVL0
-         rKQH1TcRnf3YImbrbiH3lhQhc2qEVmcUlhF8CanPaonCWC0b8caH/NkFCpLnElBAvVEw
-         pomi2d6JLsUNMbv0Kh0eDGstuAc++j4QBI55HcC58kWCQfj/V42NblIhPA8t666vP/w2
-         4tSf+6gY/FnTx5w4WpeNb5be67kDvpj0kSrM6LYSqRmediehtdjCo25QCJ8s+ZXmmSiE
-         13UbeqBe/+zt6ye2uGzM3JOy3bdllLaI63ttnR2j/WKSkcQmZbL8sHrnXPpzBjKOYvfu
-         sLBQ==
-X-Gm-Message-State: APjAAAXrCjvk3XkuWWb/w+NTTHg5+Bc9fvLWjHv3rHygvMyb772c9667
-        d0xXz5uCqAvgbcJwp7Boq37cRx1iUSQ=
-X-Google-Smtp-Source: APXvYqwHkjOWTjO83aPwBiWV00djXldoneDG1ERTJDHEsy/WGnatPttuvjK+Q2+igzdU4zEhqa03Ag==
-X-Received: by 2002:a17:90a:db42:: with SMTP id u2mr54275822pjx.48.1563493435068;
-        Thu, 18 Jul 2019 16:43:55 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h6sm26955305pfb.20.2019.07.18.16.43.53
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 16:43:54 -0700 (PDT)
-Date:   Thu, 18 Jul 2019 16:43:52 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Benjamin LaHaise <bcrl@kvack.org>, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] aio: Support read/write with non-iter file-ops
-Message-ID: <20190718234352.GN30636@minitux>
-References: <20190718231054.8175-1-bjorn.andersson@linaro.org>
- <20190718231751.GV17978@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190718231751.GV17978@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=9DEv8u8NV9GsQdpVG3YSkd6Fwchyp0Tmy7aGf7fvO/A=;
+        b=WIKIXFlMVNktdOgi/UEuZSVD3WB0QgqcLzjiDAFLWlA1IUvgHCp/sDjFpvNsHMxugb
+         /SwRDY4KRX2U6a5KXmbaAAMZkIiOwNMQx98TvWx5w8bjNeq5y1/3SEAqfgG7QS9RcblI
+         ury2D7s7Hl9+lbtvy5xg8Ue+1BJ8LgAjvhkSJo8nZzlc96p4BeHuimJYa9nTlSix5+dg
+         FQ/PRzSaPT3EJ94NoK40CXczQpkfL1po8iVyFWnQunE5P34cG+y4gJJIoRU/iOQPGboF
+         sB+rN+yxBD6yhnXgMw6XniVia/nhANOFrNiQ3w745Su+BZk/TKJYBO4iyUfZNjSW/4Xh
+         zq4g==
+X-Gm-Message-State: APjAAAW5y8n3ELnrIi7O+1RuF27mVjwzML7WxMOVU+lGsZmV0Zs180HQ
+        82qz/2Afa6adPk16JjpUnsRLKu6Di9o=
+X-Google-Smtp-Source: APXvYqwRtX2YZ4Wg80vezuYYq+k1K3TfOAWAb15xfWjTiHcPsAy8V60Fafp8iP5EMk8uQaIB6Ld5vnGMWuw=
+X-Received: by 2002:ac8:2642:: with SMTP id v2mr32821422qtv.333.1563494608664;
+ Thu, 18 Jul 2019 17:03:28 -0700 (PDT)
+Date:   Thu, 18 Jul 2019 17:03:20 -0700
+Message-Id: <20190719000322.106163-1-drosen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
+Subject: [PATCH v3 0/2] Casefolding in F2FS
+From:   Daniel Rosenberg <drosen@google.com>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@android.com,
+        Daniel Rosenberg <drosen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 18 Jul 16:17 PDT 2019, Al Viro wrote:
+These patches are largely based on the casefolding patches for ext4
 
-> On Thu, Jul 18, 2019 at 04:10:54PM -0700, Bjorn Andersson wrote:
-> > Implement a wrapper for aio_read()/write() to allow async IO on files
-> > not implementing the iter version of read/write, such as sysfs. This
-> > mimics how readv/writev uses non-iter ops in do_loop_readv_writev().
-> 
-> IDGI.  How would that IO manage to be async?  And what's the point
-> using aio in such situations in the first place?
+v3: Addressed feedback, apart from F2FS_CASEFOLD_FL/FS_CASEFOLD_FL
+    Added sysfs file "encoding" to see the encoding set on a filesystem
+v2: Rebased patches again master, changed f2fs_msg to f2fs_info/f2fs_err
 
-The point is that an application using aio to submit io operations on a
-set of files, can use the same mechanism to read/write files that
-happens to be implemented by driver only implementing read/write (not
-read_iter/write_iter) in the registered file_operations struct, such as
-kernfs.
+Daniel Rosenberg (2):
+  f2fs: include charset encoding information in the superblock
+  f2fs: Support case-insensitive file name lookups
 
-In this particular case I have a sysfs file that is accessing hardware
-and hence will block for a while and using this patch I can io_submit()
-a write and handle the completion of this in my normal event loop.
+ fs/f2fs/dir.c           | 126 ++++++++++++++++++++++++++++++++++++----
+ fs/f2fs/f2fs.h          |  21 ++++++-
+ fs/f2fs/file.c          |   9 +++
+ fs/f2fs/hash.c          |  35 ++++++++++-
+ fs/f2fs/inline.c        |   4 +-
+ fs/f2fs/inode.c         |   4 +-
+ fs/f2fs/namei.c         |  21 +++++++
+ fs/f2fs/super.c         | 100 +++++++++++++++++++++++++++++++
+ fs/f2fs/sysfs.c         |  23 ++++++++
+ include/linux/f2fs_fs.h |   9 ++-
+ 10 files changed, 334 insertions(+), 18 deletions(-)
 
+-- 
+2.22.0.657.g960e92d24f-goog
 
-Each individual io operation will be just as synchronous as the current
-iter-based mechanism - for the drivers that implement that.
-
-Regards,
-Bjorn
