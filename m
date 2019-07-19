@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D1F26DBB2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 06:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E11C46DBBD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 06:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732695AbfGSEKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jul 2019 00:10:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45634 "EHLO mail.kernel.org"
+        id S2388291AbfGSELH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jul 2019 00:11:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388332AbfGSEKw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:10:52 -0400
+        id S2388247AbfGSELC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:11:02 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 223A82189E;
-        Fri, 19 Jul 2019 04:10:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40BAD218E2;
+        Fri, 19 Jul 2019 04:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509451;
-        bh=JxqT6ro9G7vyps/aHyUhXw055o076Ewuos64EvizGmM=;
+        s=default; t=1563509461;
+        bh=wG5lX/CmKxmM9lBvxU1b+LV4/KVMw8c0YZm9V9g76q8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i2Q7+UcEQtvsMScjxXO+QAylVtpL5rD/1QAGxpj0ndQiKYEre+3DH0Y8rreFEajRn
-         brEBii+FXQImhj6y+okZOIA2AJG0rGCGelFaOTl3jONbo/KpwMycEFHm1hA9PdUy4D
-         +GlzM8YyWhFQaJxmPvgVakw2BKGzB1U0NEK+bhrY=
+        b=QqlFVXuCq2blgMWRQXBBzRFLC7papAXjacFjfBiG6SebuMHzGuCQZX8wjK6diEj47
+         vEY2cE8FfOEmKRF3p2zFwE1U1mf/zQ1EMXabmGjaTzIPhbO77yd6l3sJaskc/IsbDZ
+         tNeRRs0hPea8OunPV6R1z7eCGKqvAXt0G+6x0774=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
@@ -38,9 +38,9 @@ Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 096/101] proc: use down_read_killable mmap_sem for /proc/pid/clear_refs
-Date:   Fri, 19 Jul 2019 00:07:27 -0400
-Message-Id: <20190719040732.17285-96-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 099/101] proc: use down_read_killable mmap_sem for /proc/pid/maps
+Date:   Fri, 19 Jul 2019 00:07:30 -0400
+Message-Id: <20190719040732.17285-99-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
@@ -56,14 +56,14 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-[ Upstream commit c46038017fbdcac627b670c9d4176f1d0c2f5fa3 ]
+[ Upstream commit 8a713e7df3352b8d9392476e9cf29e4e185dac32 ]
 
 Do not remain stuck forever if something goes wrong.  Using a killable
 lock permits cleanup of stuck tasks and simplifies investigation.
 
-Replace the only unkillable mmap_sem lock in clear_refs_write().
+This function is also used for /proc/pid/smaps.
 
-Link: http://lkml.kernel.org/r/156007493826.3335.5424884725467456239.stgit@buzz
+Link: http://lkml.kernel.org/r/156007493160.3335.14447544314127417266.stgit@buzz
 Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Reviewed-by: Roman Gushchin <guro@fb.com>
 Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
@@ -78,25 +78,44 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/proc/task_mmu.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/proc/task_mmu.c   | 6 +++++-
+ fs/proc/task_nommu.c | 6 +++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 74965e17ffd5..195fbbaf77d4 100644
+index 195fbbaf77d4..71aba44c4fa6 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -1131,7 +1131,10 @@ static ssize_t clear_refs_write(struct file *file, const char __user *buf,
- 			goto out_mm;
- 		}
+@@ -166,7 +166,11 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
+ 	if (!mm || !mmget_not_zero(mm))
+ 		return NULL;
  
--		down_read(&mm->mmap_sem);
-+		if (down_read_killable(&mm->mmap_sem)) {
-+			count = -EINTR;
-+			goto out_mm;
-+		}
- 		tlb_gather_mmu(&tlb, mm, 0, -1);
- 		if (type == CLEAR_REFS_SOFT_DIRTY) {
- 			for (vma = mm->mmap; vma; vma = vma->vm_next) {
+-	down_read(&mm->mmap_sem);
++	if (down_read_killable(&mm->mmap_sem)) {
++		mmput(mm);
++		return ERR_PTR(-EINTR);
++	}
++
+ 	hold_task_mempolicy(priv);
+ 	priv->tail_vma = get_gate_vma(mm);
+ 
+diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+index 0b63d68dedb2..5161894a6d62 100644
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -211,7 +211,11 @@ static void *m_start(struct seq_file *m, loff_t *pos)
+ 	if (!mm || !mmget_not_zero(mm))
+ 		return NULL;
+ 
+-	down_read(&mm->mmap_sem);
++	if (down_read_killable(&mm->mmap_sem)) {
++		mmput(mm);
++		return ERR_PTR(-EINTR);
++	}
++
+ 	/* start from the Nth VMA */
+ 	for (p = rb_first(&mm->mm_rb); p; p = rb_next(p))
+ 		if (n-- == 0)
 -- 
 2.20.1
 
