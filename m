@@ -2,124 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E66F76E82B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 17:47:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 442ED6E85A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2019 18:00:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbfGSPrU convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 19 Jul 2019 11:47:20 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44482 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727876AbfGSPrU (ORCPT
+        id S1730525AbfGSQAw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 19 Jul 2019 12:00:52 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:58713 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727927AbfGSQAw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 19 Jul 2019 11:47:20 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6JFkkmS088176
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jul 2019 11:47:19 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tuf10w6nb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jul 2019 11:47:19 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Fri, 19 Jul 2019 16:47:18 +0100
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 19 Jul 2019 16:47:12 +0100
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6JFlBQD50725154
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Jul 2019 15:47:11 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D8EBAAE05C;
-        Fri, 19 Jul 2019 15:47:11 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8ABCAAE05F;
-        Fri, 19 Jul 2019 15:47:07 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.190.209])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Fri, 19 Jul 2019 15:47:07 +0000 (GMT)
-References: <20190718032858.28744-1-bauerman@linux.ibm.com> <20190718032858.28744-6-bauerman@linux.ibm.com> <4a07bf75-b516-c81b-da7a-4b323e6d7e52@amd.com> <c85ae8ff-3b7b-88bf-6b6a-c41b159c9cc2@redhat.com>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     lijiang <lijiang@redhat.com>
-Cc:     "Lendacky\, Thomas" <Thomas.Lendacky@amd.com>,
-        "x86\@kernel.org" <x86@kernel.org>,
-        "iommu\@lists.linux-foundation.org" 
-        <iommu@lists.linux-foundation.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linuxppc-dev\@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390\@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>, Baoquan He <bhe@redhat.com>
-Subject: Re: [PATCH v3 5/6] fs/core/vmcore: Move sev_active() reference to x86 arch code
-In-reply-to: <c85ae8ff-3b7b-88bf-6b6a-c41b159c9cc2@redhat.com>
-Date:   Fri, 19 Jul 2019 12:47:03 -0300
+        Fri, 19 Jul 2019 12:00:52 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hoVJR-0000DQ-Q5; Fri, 19 Jul 2019 10:00:49 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hoVJF-00007t-01; Fri, 19 Jul 2019 10:00:49 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Tycho Andersen <tycho@tycho.ws>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        nhorman@tuxdriver.com
+References: <20190529153427.GB8959@cisco>
+        <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
+        <20190529222835.GD8959@cisco>
+        <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
+        <20190530170913.GA16722@mail.hallyn.com>
+        <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
+        <20190708180558.5bar6ripag3sdadl@madcap2.tricolour.ca>
+        <CAHC9VhRTT7JWqNnynvK04wKerjc-3UJ6R1uPtjCAPVr_tW-7MA@mail.gmail.com>
+        <20190716220320.sotbfqplgdructg7@madcap2.tricolour.ca>
+        <CAHC9VhScHizB2r5q3T5s0P3jkYdvzBPPudDksosYFp_TO7W9-Q@mail.gmail.com>
+        <20190718005145.eshekqfr3navqqiy@madcap2.tricolour.ca>
+        <CAHC9VhTYV02ws3QcezER5cY+Xt+tExcJEO-dumTDx=FXGFh3nw@mail.gmail.com>
+Date:   Fri, 19 Jul 2019 11:00:24 -0500
+In-Reply-To: <CAHC9VhTYV02ws3QcezER5cY+Xt+tExcJEO-dumTDx=FXGFh3nw@mail.gmail.com>
+        (Paul Moore's message of "Thu, 18 Jul 2019 17:52:58 -0400")
+Message-ID: <87muhadnfr.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 19071915-0072-0000-0000-0000044B1EEB
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011457; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01234458; UDB=6.00650541; IPR=6.01015790;
- MB=3.00027801; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-19 15:47:17
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071915-0073-0000-0000-00004CBB738B
-Message-Id: <87h87igh6w.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-19_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907190172
+Content-Type: text/plain
+X-XM-SPF: eid=1hoVJF-00007t-01;;;mid=<87muhadnfr.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18MlRZOnz5KekqSTfqL1FafpgF6dgr4Jq4=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4999]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Paul Moore <paul@paul-moore.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 12445 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 3.0 (0.0%), b_tie_ro: 2.0 (0.0%), parse: 1.79
+        (0.0%), extract_message_metadata: 20 (0.2%), get_uri_detail_list: 3.3
+        (0.0%), tests_pri_-1000: 13 (0.1%), tests_pri_-950: 1.51 (0.0%),
+        tests_pri_-900: 1.26 (0.0%), tests_pri_-90: 34 (0.3%), check_bayes: 31
+        (0.3%), b_tokenize: 10 (0.1%), b_tok_get_all: 9 (0.1%), b_comp_prob: 6
+        (0.0%), b_tok_touch_all: 2.6 (0.0%), b_finish: 0.85 (0.0%),
+        tests_pri_0: 380 (3.1%), check_dkim_signature: 1.03 (0.0%),
+        check_dkim_adsp: 3.3 (0.0%), poll_dns_idle: 11972 (96.2%),
+        tests_pri_10: 2.1 (0.0%), tests_pri_500: 11982 (96.3%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Paul Moore <paul@paul-moore.com> writes:
 
-Hello Lianbo,
-
-lijiang <lijiang@redhat.com> writes:
-
-> 在 2019年07月19日 01:47, Lendacky, Thomas 写道:
->> On 7/17/19 10:28 PM, Thiago Jung Bauermann wrote:
->>> Secure Encrypted Virtualization is an x86-specific feature, so it shouldn't
->>> appear in generic kernel code because it forces non-x86 architectures to
->>> define the sev_active() function, which doesn't make a lot of sense.
->>>
->>> To solve this problem, add an x86 elfcorehdr_read() function to override
->>> the generic weak implementation. To do that, it's necessary to make
->>> read_from_oldmem() public so that it can be used outside of vmcore.c.
->>>
->>> Also, remove the export for sev_active() since it's only used in files that
->>> won't be built as modules.
->>>
->>> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
->> 
->> Adding Lianbo and Baoquan, who recently worked on this, for their review.
->> 
+> On Wed, Jul 17, 2019 at 8:52 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>> On 2019-07-16 19:30, Paul Moore wrote:
 >
-> This change looks good to me.
+> ...
 >
-> Reviewed-by: Lianbo Jiang <lijiang@redhat.com>
+>> > We can trust capable(CAP_AUDIT_CONTROL) for enforcing audit container
+>> > ID policy, we can not trust ns_capable(CAP_AUDIT_CONTROL).
+>>
+>> Ok.  So does a process in a non-init user namespace have two (or more)
+>> sets of capabilities stored in creds, one in the init_user_ns, and one
+>> in current_user_ns?  Or does it get stripped of all its capabilities in
+>> init_user_ns once it has its own set in current_user_ns?  If the former,
+>> then we can use capable().  If the latter, we need another mechanism, as
+>> you have suggested might be needed.
+>
+> Unfortunately I think the problem is that ultimately we need to allow
+> any container orchestrator that has been given privileges to manage
+> the audit container ID to also grant that privilege to any of the
+> child process/containers it manages.  I don't believe we can do that
+> with capabilities based on the code I've looked at, and the
+> discussions I've had, but if you find a way I would leave to hear it.
 
-Thanks for your review!
+>> If some random unprivileged user wants to fire up a container
+>> orchestrator/engine in his own user namespace, then audit needs to be
+>> namespaced.  Can we safely discard this scenario for now?
+>
+> I think the only time we want to allow a container orchestrator to
+> manage the audit container ID is if it has been granted that privilege
+> by someone who has that privilege already.  In the zero-container, or
+> single-level of containers, case this is relatively easy, and we can
+> accomplish it using CAP_AUDIT_CONTROL as the privilege.  If we start
+> nesting container orchestrators it becomes more complicated as we need
+> to be able to support granting and inheriting this privilege in a
+> manner; this is why I suggested a new mechanism *may* be necessary.
 
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
 
+Let me segway a bit and see if I can get this conversation out of the
+rut it seems to have drifted into.
+
+Unprivileged containers and nested containers exist today and are going
+to become increasingly common.  Let that be a given.
+
+As I recall the interesting thing for audit to log is actions by
+privileged processes.  Audit can log more but generally configuring
+logging by of the actions of unprivileged users is effectively a self
+DOS.
+
+So I think the initial implementation can safely ignore actions of
+nested containers and unprivileged containers because you don't care
+about their actions. 
+
+If we start allow running audit in a container then we need to deal with
+all of the nesting issues but until then I don't think you folks care.
+
+Or am I wrong.  Do the requirements for securely auditing things from
+the kernel care about the actions of unprivileged users?
+
+Eric
