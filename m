@@ -2,46 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FFA86FF25
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 14:00:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 446F86FF3F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 14:08:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbfGVMAm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jul 2019 08:00:42 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35610 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728266AbfGVMAl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:00:41 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6MBvLXV068692
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jul 2019 08:00:41 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2twcct114h-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jul 2019 08:00:40 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Mon, 22 Jul 2019 13:00:35 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 22 Jul 2019 13:00:31 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6MC0TvB49938454
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Jul 2019 12:00:29 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BAD5511C058;
-        Mon, 22 Jul 2019 12:00:28 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3ABBC11C04A;
-        Mon, 22 Jul 2019 12:00:28 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.116])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 22 Jul 2019 12:00:28 +0000 (GMT)
+        id S1730005AbfGVMIL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jul 2019 08:08:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59310 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730208AbfGVMIJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Jul 2019 08:08:09 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 58B74309B145;
+        Mon, 22 Jul 2019 12:08:08 +0000 (UTC)
+Received: from [10.36.116.75] (ovpn-116-75.ams2.redhat.com [10.36.116.75])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 24F945C548;
+        Mon, 22 Jul 2019 12:08:02 +0000 (UTC)
 Subject: Re: [PATCH v2 18/30] virtio_fs, dax: Set up virtio_fs dax_device
-To:     Cornelia Huck <cohuck@redhat.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
 Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Vivek Goyal <vgoyal@redhat.com>,
@@ -55,8 +35,7 @@ Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Steven Whitehouse <swhiteho@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Hildenbrand <david@redhat.com>
+        Heiko Carstens <heiko.carstens@de.ibm.com>
 References: <20190515192715.18000-1-vgoyal@redhat.com>
  <20190515192715.18000-19-vgoyal@redhat.com>
  <20190717192725.25c3d146.pasic@linux.ibm.com>
@@ -66,214 +45,205 @@ References: <20190515192715.18000-1-vgoyal@redhat.com>
  <20190722105630.GC3035@work-vm>
  <cc96a4a7-ab24-ef2c-a210-dce0966e34c5@de.ibm.com>
  <20190722134317.39b148ce.cohuck@redhat.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
+ <b8239073-4c40-0ce6-2576-9d71ca0b1c18@de.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Mon, 22 Jul 2019 14:00:28 +0200
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <f7426953-8892-9f02-3f85-9f97cd12100b@redhat.com>
+Date:   Mon, 22 Jul 2019 14:08:02 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190722134317.39b148ce.cohuck@redhat.com>
+In-Reply-To: <b8239073-4c40-0ce6-2576-9d71ca0b1c18@de.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19072212-4275-0000-0000-0000034F8A2A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19072212-4276-0000-0000-0000385FAB37
-Message-Id: <b8239073-4c40-0ce6-2576-9d71ca0b1c18@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-22_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907220143
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 22 Jul 2019 12:08:08 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 22.07.19 13:43, Cornelia Huck wrote:
-> On Mon, 22 Jul 2019 13:20:18 +0200
-> Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+On 22.07.19 14:00, Christian Borntraeger wrote:
 > 
->> On 22.07.19 12:56, Dr. David Alan Gilbert wrote:
->>> * Christian Borntraeger (borntraeger@de.ibm.com) wrote:  
->>>>
->>>>
->>>> On 18.07.19 16:30, Dan Williams wrote:  
->>>>> On Thu, Jul 18, 2019 at 6:15 AM Vivek Goyal <vgoyal@redhat.com> wrote:  
->>>>>>
->>>>>> On Wed, Jul 17, 2019 at 07:27:25PM +0200, Halil Pasic wrote:  
->>>>>>> On Wed, 15 May 2019 15:27:03 -0400
->>>>>>> Vivek Goyal <vgoyal@redhat.com> wrote:
->>>>>>>  
->>>>>>>> From: Stefan Hajnoczi <stefanha@redhat.com>
->>>>>>>>
->>>>>>>> Setup a dax device.
->>>>>>>>
->>>>>>>> Use the shm capability to find the cache entry and map it.
->>>>>>>>
->>>>>>>> The DAX window is accessed by the fs/dax.c infrastructure and must have
->>>>>>>> struct pages (at least on x86).  Use devm_memremap_pages() to map the
->>>>>>>> DAX window PCI BAR and allocate struct page.
->>>>>>>>  
->>>>>>>
->>>>>>> Sorry for being this late. I don't see any more recent version so I will
->>>>>>> comment here.
->>>>>>>
->>>>>>> I'm trying to figure out how is this supposed to work on s390. My concern
->>>>>>> is, that on s390 PCI memory needs to be accessed by special
->>>>>>> instructions. This is taken care of by the stuff defined in
->>>>>>> arch/s390/include/asm/io.h. E.g. we 'override' __raw_writew so it uses
->>>>>>> the appropriate s390 instruction. However if the code does not use the
->>>>>>> linux abstractions for accessing PCI memory, but assumes it can be
->>>>>>> accessed like RAM, we have a problem.
->>>>>>>
->>>>>>> Looking at this patch, it seems to me, that we might end up with exactly
->>>>>>> the case described. For example AFAICT copy_to_iter() (3) resolves to
->>>>>>> the function in lib/iov_iter.c which does not seem to cater for s390
->>>>>>> oddities.
->>>>>>>
->>>>>>> I didn't have the time to investigate this properly, and since virtio-fs
->>>>>>> is virtual, we may be able to get around what is otherwise a
->>>>>>> limitation on s390. My understanding of these areas is admittedly
->>>>>>> shallow, and since I'm not sure I'll have much more time to
->>>>>>> invest in the near future I decided to raise concern.
->>>>>>>
->>>>>>> Any opinions?  
->>>>>>
->>>>>> Hi Halil,
->>>>>>
->>>>>> I don't understand s390 and how PCI works there as well. Is there any
->>>>>> other transport we can use there to map IO memory directly and access
->>>>>> using DAX?
->>>>>>
->>>>>> BTW, is DAX supported for s390.
->>>>>>
->>>>>> I am also hoping somebody who knows better can chip in. Till that time,
->>>>>> we could still use virtio-fs on s390 without DAX.  
+> 
+> On 22.07.19 13:43, Cornelia Huck wrote:
+>> On Mon, 22 Jul 2019 13:20:18 +0200
+>> Christian Borntraeger <borntraeger@de.ibm.com> wrote:
+>>
+>>> On 22.07.19 12:56, Dr. David Alan Gilbert wrote:
+>>>> * Christian Borntraeger (borntraeger@de.ibm.com) wrote:  
 >>>>>
->>>>> s390 has so-called "limited" dax support, see CONFIG_FS_DAX_LIMITED.
->>>>> In practice that means that support for PTE_DEVMAP is missing which
->>>>> means no get_user_pages() support for dax mappings. Effectively it's
->>>>> only useful for execute-in-place as operations like fork() and ptrace
->>>>> of dax mappings will fail.  
->>>>
->>>>
->>>> This is only true for the dcssblk device driver (drivers/s390/block/dcssblk.c
->>>> and arch/s390/mm/extmem.c). 
->>>>
->>>> For what its worth, the dcssblk looks to Linux like normal memory (just above the
->>>> previously detected memory) that can be used like normal memory. In previous time
->>>> we even had struct pages for this memory - this was removed long ago (when it was
->>>> still xip) to reduce the memory footprint for large dcss blocks and small memory
->>>> guests.
->>>> Can the CONFIG_FS_DAX_LIMITED go away if we have struct pages for that memory?
->>>>
->>>> Now some observations: 
->>>> - dcssblk is z/VM only (not KVM)
->>>> - Setting CONFIG_FS_DAX_LIMITED globally as a Kconfig option depending on wether
->>>>   a device driver is compiled in or not seems not flexible enough in case if you
->>>>   have device driver that does have struct pages and another one that doesn't
->>>> - I do not see a reason why we should not be able to map anything from QEMU
->>>>   into the guest real memory via an additional KVM memory slot. 
->>>>   We would need to handle that in the guest somehow (and not as a PCI bar),
->>>>   register this with struct pages etc.
+>>>>>
+>>>>> On 18.07.19 16:30, Dan Williams wrote:  
+>>>>>> On Thu, Jul 18, 2019 at 6:15 AM Vivek Goyal <vgoyal@redhat.com> wrote:  
+>>>>>>>
+>>>>>>> On Wed, Jul 17, 2019 at 07:27:25PM +0200, Halil Pasic wrote:  
+>>>>>>>> On Wed, 15 May 2019 15:27:03 -0400
+>>>>>>>> Vivek Goyal <vgoyal@redhat.com> wrote:
+>>>>>>>>  
+>>>>>>>>> From: Stefan Hajnoczi <stefanha@redhat.com>
+>>>>>>>>>
+>>>>>>>>> Setup a dax device.
+>>>>>>>>>
+>>>>>>>>> Use the shm capability to find the cache entry and map it.
+>>>>>>>>>
+>>>>>>>>> The DAX window is accessed by the fs/dax.c infrastructure and must have
+>>>>>>>>> struct pages (at least on x86).  Use devm_memremap_pages() to map the
+>>>>>>>>> DAX window PCI BAR and allocate struct page.
+>>>>>>>>>  
+>>>>>>>>
+>>>>>>>> Sorry for being this late. I don't see any more recent version so I will
+>>>>>>>> comment here.
+>>>>>>>>
+>>>>>>>> I'm trying to figure out how is this supposed to work on s390. My concern
+>>>>>>>> is, that on s390 PCI memory needs to be accessed by special
+>>>>>>>> instructions. This is taken care of by the stuff defined in
+>>>>>>>> arch/s390/include/asm/io.h. E.g. we 'override' __raw_writew so it uses
+>>>>>>>> the appropriate s390 instruction. However if the code does not use the
+>>>>>>>> linux abstractions for accessing PCI memory, but assumes it can be
+>>>>>>>> accessed like RAM, we have a problem.
+>>>>>>>>
+>>>>>>>> Looking at this patch, it seems to me, that we might end up with exactly
+>>>>>>>> the case described. For example AFAICT copy_to_iter() (3) resolves to
+>>>>>>>> the function in lib/iov_iter.c which does not seem to cater for s390
+>>>>>>>> oddities.
+>>>>>>>>
+>>>>>>>> I didn't have the time to investigate this properly, and since virtio-fs
+>>>>>>>> is virtual, we may be able to get around what is otherwise a
+>>>>>>>> limitation on s390. My understanding of these areas is admittedly
+>>>>>>>> shallow, and since I'm not sure I'll have much more time to
+>>>>>>>> invest in the near future I decided to raise concern.
+>>>>>>>>
+>>>>>>>> Any opinions?  
+>>>>>>>
+>>>>>>> Hi Halil,
+>>>>>>>
+>>>>>>> I don't understand s390 and how PCI works there as well. Is there any
+>>>>>>> other transport we can use there to map IO memory directly and access
+>>>>>>> using DAX?
+>>>>>>>
+>>>>>>> BTW, is DAX supported for s390.
+>>>>>>>
+>>>>>>> I am also hoping somebody who knows better can chip in. Till that time,
+>>>>>>> we could still use virtio-fs on s390 without DAX.  
+>>>>>>
+>>>>>> s390 has so-called "limited" dax support, see CONFIG_FS_DAX_LIMITED.
+>>>>>> In practice that means that support for PTE_DEVMAP is missing which
+>>>>>> means no get_user_pages() support for dax mappings. Effectively it's
+>>>>>> only useful for execute-in-place as operations like fork() and ptrace
+>>>>>> of dax mappings will fail.  
+>>>>>
+>>>>>
+>>>>> This is only true for the dcssblk device driver (drivers/s390/block/dcssblk.c
+>>>>> and arch/s390/mm/extmem.c). 
+>>>>>
+>>>>> For what its worth, the dcssblk looks to Linux like normal memory (just above the
+>>>>> previously detected memory) that can be used like normal memory. In previous time
+>>>>> we even had struct pages for this memory - this was removed long ago (when it was
+>>>>> still xip) to reduce the memory footprint for large dcss blocks and small memory
+>>>>> guests.
+>>>>> Can the CONFIG_FS_DAX_LIMITED go away if we have struct pages for that memory?
+>>>>>
+>>>>> Now some observations: 
+>>>>> - dcssblk is z/VM only (not KVM)
+>>>>> - Setting CONFIG_FS_DAX_LIMITED globally as a Kconfig option depending on wether
+>>>>>   a device driver is compiled in or not seems not flexible enough in case if you
+>>>>>   have device driver that does have struct pages and another one that doesn't
+>>>>> - I do not see a reason why we should not be able to map anything from QEMU
+>>>>>   into the guest real memory via an additional KVM memory slot. 
+>>>>>   We would need to handle that in the guest somehow (and not as a PCI bar),
+>>>>>   register this with struct pages etc.
+>>
+>> You mean for ccw, right? I don't think we want pci to behave
+>> differently than everywhere else.
 > 
-> You mean for ccw, right? I don't think we want pci to behave
-> differently than everywhere else.
-
-Yes for virtio-ccw. We would need to have a look at how virtio-ccw can create a memory
-mapping with struct pages, so that DAX will work.(Dan, it is just struct pages that 
-you need, correct?)
-
-
+> Yes for virtio-ccw. We would need to have a look at how virtio-ccw can create a memory
+> mapping with struct pages, so that DAX will work.(Dan, it is just struct pages that 
+> you need, correct?)
 > 
->>>> - we must then look how we can create the link between the guest memory and the
->>>>   virtio-fs driver. For virtio-ccw we might be able to add a new ccw command or
->>>>   whatever. Maybe we could also piggy-back on some memory hotplug work from David
->>>>   Hildenbrand (add cc).
+> 
+>>
+>>>>> - we must then look how we can create the link between the guest memory and the
+>>>>>   virtio-fs driver. For virtio-ccw we might be able to add a new ccw command or
+>>>>>   whatever. Maybe we could also piggy-back on some memory hotplug work from David
+>>>>>   Hildenbrand (add cc).
+>>>>>
+>>>>> Regarding limitations on the platform:
+>>>>> - while we do have PCI, the virtio devices are usually plugged via the ccw bus.
+>>>>>   That implies no PCI bars. I assume you use those PCI bars only to implicitely 
+>>>>>   have the location of the shared memory
+>>>>>   Correct?  
 >>>>
->>>> Regarding limitations on the platform:
->>>> - while we do have PCI, the virtio devices are usually plugged via the ccw bus.
->>>>   That implies no PCI bars. I assume you use those PCI bars only to implicitely 
->>>>   have the location of the shared memory
->>>>   Correct?  
+>>>> Right.  
 >>>
->>> Right.  
->>
->> So in essence we just have to provide a vm_get_shm_region callback in the virtio-ccw
->> guest code?
->>
->> How many regions do we have to support? One region per device? Or many?
->> Even if we need more, this should be possible with a 2 new CCWs, e.g READ_SHM_BASE(id)
->> and READ_SHM_SIZE(id)
-> 
-> I'd just add a single CCW with a control block containing id and size.
-> 
-> The main issue is where we put those regions, and what happens if we
-> use both virtio-pci and virtio-ccw on the same machine.
-
-Then these 2 devices should get independent memory regions that are added in an
-independent (but still exclusive) way.
-> 
->>
->>
->>>   
->>>> - no real memory mapped I/O. Instead there are instructions that work on the mmio.
->>>>   As I understand things, this is of no concern regarding virtio-fs as you do not
->>>>   need mmio in the sense that a memory access of the guest to such an address 
->>>>   triggers an exit. You just need the shared memory as a mean to have the data
->>>>   inside the guest. Any notification is done via normal virtqueue mechanisms
->>>>   Correct?  
+>>> So in essence we just have to provide a vm_get_shm_region callback in the virtio-ccw
+>>> guest code?
 >>>
->>> Yep.  
+>>> How many regions do we have to support? One region per device? Or many?
+>>> Even if we need more, this should be possible with a 2 new CCWs, e.g READ_SHM_BASE(id)
+>>> and READ_SHM_SIZE(id)
 >>
+>> I'd just add a single CCW with a control block containing id and size.
+>>
+>> The main issue is where we put those regions, and what happens if we
+>> use both virtio-pci and virtio-ccw on the same machine.
 > 
+> Then these 2 devices should get independent memory regions that are added in an
+> independent (but still exclusive) way.
 
+I remember that one discussion was who dictates the physical address
+mapping. If I'm not wrong, PCI bars can be mapped freely by the guest
+intot he address space. So it would not just be querying the start+size.
+Unless we want a pre-determined mapping (which might make more sense for
+s390x).
+
+-- 
+
+Thanks,
+
+David / dhildenb
