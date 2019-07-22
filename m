@@ -2,143 +2,344 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA4C370583
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 18:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0968B705C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 18:53:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbfGVQfI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jul 2019 12:35:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46106 "EHLO mail.kernel.org"
+        id S1731009AbfGVQxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jul 2019 12:53:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728270AbfGVQfI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jul 2019 12:35:08 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730144AbfGVQxu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Jul 2019 12:53:50 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 441972190F;
-        Mon, 22 Jul 2019 16:35:05 +0000 (UTC)
-Date:   Mon, 22 Jul 2019 12:35:02 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Gao Xiang <hsiangkao@aol.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>, devel@driverdev.osuosl.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Matthew Wilcox <willy@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>, Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Miao Xie <miaoxie@huawei.com>, linux-erofs@lists.ozlabs.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 9183221738;
+        Mon, 22 Jul 2019 16:53:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563814428;
+        bh=2udSrc+gcNgR6qEJEYAc7kkKyzArxe8UTaAxcjScRCo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xGtrwWxqQqZVeK2kQd5kQZppjKeKeeWI8twZPn/2AR02blKw2f2gnP9Uqlw0ZMPfD
+         AyXrQrfX8IxCRbDVjEagVonL3bpL9qe8nCfEdBldycRn0GmyFVANa01E1lOsk9Zr72
+         XNd6Z9jaj3+5nNDOreqGi6YWo02CZjeRHYKFntmU=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v3 12/24] erofs: introduce tagged pointer
-Message-ID: <20190722123502.328cecb6@gandalf.local.home>
-In-Reply-To: <0c2cdd4f-8fe7-6084-9c2d-c2e475e6806e@aol.com>
-References: <20190722025043.166344-1-gaoxiang25@huawei.com>
-        <20190722025043.166344-13-gaoxiang25@huawei.com>
-        <CAOQ4uxh04gwbM4yFaVpWHVwmJ4BJo4bZaU8A4_NQh2bO_xCHJg@mail.gmail.com>
-        <39fad3ab-c295-5f6f-0a18-324acab2f69e@huawei.com>
-        <CAOQ4uxgo5kvgoEn7SbuwF9+B1W9Qg1-2jSUm5+iKZdT6-wDEog@mail.gmail.com>
-        <20190722104048.463397a0@gandalf.local.home>
-        <0c2cdd4f-8fe7-6084-9c2d-c2e475e6806e@aol.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Subject: [PATCH v7 00/17] fs-verity: read-only file-based authenticity protection
+Date:   Mon, 22 Jul 2019 09:50:44 -0700
+Message-Id: <20190722165101.12840-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 22 Jul 2019 23:33:53 +0800
-Gao Xiang <hsiangkao@aol.com> wrote:
+Hello,
 
-> Hi Steven,
-> 
-> On 2019/7/22 ????10:40, Steven Rostedt wrote:
-> >>> and I'm not sure Al could accept __fdget conversion (I just wanted to give a example then...)
-> >>>
-> >>> Therefore, I tend to keep silence and just promote EROFS... some better ideas?...
-> >>>    
-> >> Writing example conversion patches to demonstrate cleaner code
-> >> and perhaps reduce LOC seems the best way.  
-> > Yes, I would be more interested in seeing patches that clean up the
-> > code than just talking about it.
-> >   
-> 
-> I guess that is related to me, though I didn't plan to promote
-> a generic tagged pointer implementation in this series...
+This is a redesigned version of the fs-verity patchset, implementing
+Ted's suggestion to build the Merkle tree in the kernel
+(https://lore.kernel.org/linux-fsdevel/20190207031101.GA7387@mit.edu/).
+This greatly simplifies the UAPI, since the verity metadata no longer
+needs to be transferred to the kernel.  Now to enable fs-verity on a
+file, one simply calls FS_IOC_ENABLE_VERITY, passing it this structure:
 
-I don't expect you to either.
+	struct fsverity_enable_arg {
+		__u32 version;
+		__u32 hash_algorithm;
+		__u32 block_size;
+		__u32 salt_size;
+		__u64 salt_ptr;
+		__u32 sig_size;
+		__u32 __reserved1;
+		__u64 sig_ptr;
+		__u64 __reserved2[11];
+	};
 
-> 
-> I try to describe what erofs met and my own implementation,
-> assume that we have 3 tagged pointers, a, b, c, and one
-> potential user only (no need to ACCESS_ONCE).
-> 
-> One way is
-> 
-> #define A_MASK		1
-> #define B_MASK		1
-> #define C_MASK		3
-> 
-> /* now we have 3 mask there, A, B, C is simple,
->    the real name could be long... */
-> 
-> void *a;
-> void *b;
-> void *c;		/* and some pointers */
-> 
-> In order to decode the tag, we have to
-> 	((unsigned long)a & A_MASK)
-> 
-> to decode the ptr, we have to
-> 	((unsigned long)a & ~A_MASK)
-> 
-> In order to fold the tagged pointer...
-> 	(void *)((unsigned long)a | tag)
+The filesystem then builds the file's Merkle tree and stores it in a
+filesystem-specific location associated with the file.  Afterwards,
+FS_IOC_MEASURE_VERITY can be used to retrieve the file measurement
+("root hash").  The way the file measurement is computed is also
+effectively part of the API (it has to be), but it's logically
+independent of where/how the filesystem stores the Merkle tree.
 
-And you need a way to clear the flag.
+The API is fully documented in Documentation/filesystems/fsverity.rst,
+along with other aspects of fs-verity.  I also added an FAQ section that
+answers frequently asked questions about fs-verity, e.g. why isn't it
+all at the VFS level, why isn't it part of IMA, why does the Merkle tree
+need to be stored on-disk, etc.
 
-> 
-> You can see the only meaning of these masks is the bitlength of tags,
-> but there are many masks (or we have to do open-coded a & 3,
-> if bitlength is changed, we have to fix them all)...
-> 
-> therefore my approach is
-> 
-> typedef tagptr1_t ta;	/* tagptr type a with 1-bit tag */
-> typedef tagptr1_t tb;	/* tagptr type b with 1-bit tag */
-> typedef tagptr2_t tc;	/* tagptr type c with 2-bit tag */
-> 
-> and ta a; tb b; tc c;
-> 
-> the type will represent its bitlength of tags and we can use ta, tb, tc
-> to avoid masks or open-coded bitlength.
-> 
-> In order to decode the tag, we can
-> 	tagptr_unfold_tags(a)
-> 
-> In order to decode the ptr, we can
-> 	tagptr_unfold_ptr(a)
-> 
-> In order to fold the tagged pointer...
-> 	a = tagptr_fold(ta, ptr, tag)
-> 
-> 
-> ACCESS_ONCE stuff is another thing... If my approach seems cleaner,
-> we could move to include/linux later after EROFS stuffs is done...
-> Or I could use a better tagptr approach later if any...
+Overview
+--------
 
-Looking at the ring buffer code, it may be a bit too complex to try to
-use a generic infrastructure. Look at rb_head_page_set(), where it does
-a cmpxchg to set or clear the flags and then tests the previous flags
-to know what actions need to be done.
+This patchset implements fs-verity for ext4 and f2fs.  fs-verity is
+similar to dm-verity, but implemented on a per-file basis: a Merkle tree
+is used to measure (hash) a read-only file's data as it is paged in.
+ext4 and f2fs hide this Merkle tree beyond the end of the file, but
+other filesystems can implement it differently if desired.
 
-The ring buffer tag code was added in 2009, the rtmutex tag code was
-added in 2006. It's been 10 years before we needed another tag
-operation. I'm not sure we benefit from making this generic.
+In general, fs-verity is intended for use on writable filesystems;
+dm-verity is still recommended on read-only ones.
 
--- Steve
+Similar to fscrypt, most of the code is in fs/verity/, and not too many
+filesystem-specific changes are needed.  The Merkle tree is built by the
+filesystem when the FS_IOC_ENABLE_VERITY ioctl is executed.
+
+fs-verity provides a file measurement (hash) in constant time and
+verifies data on-demand.  Thus, it is useful for efficiently verifying
+the authenticity of large files of which only a small portion may be
+accessed, such as Android application package (APK) files.  It may also
+be useful in "audit" use cases where file hashes are logged.
+
+fs-verity can also provide better protection against malicious disks
+than an ahead-of-time hash, since fs-verity re-verifies data each time
+it's paged in.  Note, however, that any authenticity guarantee is still
+dependent on verification of the file measurement and other relevant
+metadata in a way that makes sense for the overall system; fs-verity is
+only a tool to help with this.
+
+This patchset doesn't include IMA support for fs-verity file
+measurements.  This is planned and we'd like to collaborate with the IMA
+maintainers.  Although fs-verity can be used on its own without IMA,
+fs-verity is primarily a lower level feature (think of it as a way of
+hashing a file), so some users may still need IMA's policy mechanism.
+However, an optional in-kernel signature verification mechanism within
+fs-verity itself is also included.
+
+This patchset is based on v5.3-rc1.  It can also be found in git at tag
+fsverity_2019-07-22 of:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+
+fs-verity has a userspace utility:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/fsverity-utils.git
+
+xfstests for fs-verity can be found at branch "fsverity" of:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git
+
+fs-verity is supported by f2fs-tools v1.11.0+ and e2fsprogs v1.45.2+.
+
+Examples of setting up fs-verity protected files can be found in the
+README.md file of fsverity-utils.
+
+Other useful references include:
+
+  - Documentation/filesystems/fsverity.rst, added by the first patch.
+
+  - LWN coverage of v3 patchset: https://lwn.net/Articles/790185/
+
+  - LWN coverage of v2 patchset: https://lwn.net/Articles/775872/
+
+  - LWN coverage of v1 patchset: https://lwn.net/Articles/763729/
+
+  - Presentation at Linux Security Summit North America 2018:
+      - Slides: https://schd.ws/hosted_files/lssna18/af/fs-verity%20slide%20deck.pdf
+      - Video: https://www.youtube.com/watch?v=Aw5h6aBhu6M
+      (This corresponded to the v1 patchset; changes have been made since then.)
+
+  - LWN coverage of LSFMM 2018 discussion: https://lwn.net/Articles/752614/
+
+Changed since v6:
+
+  - Don't hold the inode lock for the whole FS_IOC_ENABLE_VERITY ioctl,
+    and make it fail with EBUSY if it's already executing.
+
+  - Use ENOPKG rather than ENOENT for the case where the selected hash
+    algorithm isn't supported by the crypto API.
+
+  - Fixed use-after-free in ext4_mpage_readpages() in the unlikely case
+    that allocating the bio_post_read_ctx fails.
+
+  - Rebased onto v5.3-rc1, resolved conflicts in f2fs, and converted the
+    require_signatures sysctl to use the new shared limit variables.
+
+Changed since v5:
+
+  - Switched to using detached signatures.  This simplifies the
+    signature verification code considerably.
+
+  - On f2fs, forbid enabling verity on files that have atomic or
+    volatile writes pending.
+
+  - Initialize quotas before evicting inline data.
+
+  - Prevent writing verity metadata beyond s_maxbytes.
+
+  - Switched from truncate_inode_pages() to invalidate_inode_pages2()
+    (fixes FS_IOC_ENABLE_VERITY on ext4 with data=journal)
+
+  - Always truncate the verity metadata if there's an error writing it,
+    even if the error doesn't occur until ->end_enable_verity().
+
+  - Updated the ext4 on-disk format documentation.
+
+  - A few minor cleanups.
+
+Changed since v4:
+
+  - Made ext4 and f2fs store the verity metadata beginning at a 64K
+    aligned boundary, to be ready for architectures with 64K pages.
+
+  - Made ext4 store the verity descriptor size in the file data stream,
+    so that no xattr is needed.
+
+  - Added support for empty files.
+
+  - A few minor cleanups.
+
+Changed since v3:
+
+  - The FS_IOC_GETFLAGS ioctl now returns the verity flag.
+
+  - Fixed setting i_verity_info too early.
+
+  - Restored pagecache invalidation in FS_IOC_ENABLE_VERITY.
+
+  - Fixed truncation of fsverity_enable_arg::hash_algorithm.
+
+  - Reject empty files for both open and enable, not just enable.
+
+  - Added a couple more FAQ entries to the documentation.
+
+  - A few minor cleanups.
+
+  - Rebased onto v5.2-rc3.
+
+Changed since v2:
+
+  - Large redesign: the Merkle tree is now built by
+    FS_IOC_ENABLE_VERITY, rather than being provided by userspace.  The
+    fsverity_operations provide an interface for filesystems to read and
+    write the Merkle tree from/to a filesystem-specific location.
+
+  - Lot of refactoring, cleanups, and documentation improvements.
+
+  - Many simplifications, such as simplifying the fsverity_descriptor
+    format, dropping CRC-32 support, and limiting the salt size.
+
+  - ext4 and f2fs now store an xattr that gives the location of the
+    fsverity_descriptor, so loading it is more straightforward.
+
+  - f2fs no longer counts the verity metadata in the on-disk i_size,
+    making it consistent with ext4.
+
+  - Replaced the filesystem-specific fs-verity kconfig options with
+    CONFIG_FS_VERITY.
+
+  - Replaced the filesystem-specific verity bit checks with IS_VERITY().
+
+Changed since v1:
+
+  - Added documentation file.
+
+  - Require write permission for FS_IOC_ENABLE_VERITY, rather than
+    CAP_SYS_ADMIN.
+
+  - Eliminated dependency on CONFIG_BLOCK and clarified that filesystems
+    can verify a page at a time rather than a bio at a time.
+
+  - Fixed conditions for verifying holes.
+
+  - ext4 now only allows fs-verity on extent-based files.
+
+  - Eliminated most of the assumptions that the verity metadata is
+    stored beyond EOF, in case filesystems want to do things
+    differently.
+
+  - Other cleanups.
+
+Eric Biggers (17):
+  fs-verity: add a documentation file
+  fs-verity: add MAINTAINERS file entry
+  fs-verity: add UAPI header
+  fs: uapi: define verity bit for FS_IOC_GETFLAGS
+  fs-verity: add Kconfig and the helper functions for hashing
+  fs-verity: add inode and superblock fields
+  fs-verity: add the hook for file ->open()
+  fs-verity: add the hook for file ->setattr()
+  fs-verity: add data verification hooks for ->readpages()
+  fs-verity: implement FS_IOC_ENABLE_VERITY ioctl
+  fs-verity: implement FS_IOC_MEASURE_VERITY ioctl
+  fs-verity: add SHA-512 support
+  fs-verity: support builtin file signatures
+  ext4: add basic fs-verity support
+  ext4: add fs-verity read support
+  ext4: update on-disk format documentation for fs-verity
+  f2fs: add fs-verity support
+
+ Documentation/filesystems/ext4/inodes.rst   |   6 +-
+ Documentation/filesystems/ext4/overview.rst |   1 +
+ Documentation/filesystems/ext4/super.rst    |   2 +
+ Documentation/filesystems/ext4/verity.rst   |  41 ++
+ Documentation/filesystems/fsverity.rst      | 726 ++++++++++++++++++++
+ Documentation/filesystems/index.rst         |   1 +
+ Documentation/ioctl/ioctl-number.rst        |   1 +
+ MAINTAINERS                                 |  12 +
+ fs/Kconfig                                  |   2 +
+ fs/Makefile                                 |   1 +
+ fs/ext4/Makefile                            |   1 +
+ fs/ext4/ext4.h                              |  23 +-
+ fs/ext4/file.c                              |   4 +
+ fs/ext4/inode.c                             |  48 +-
+ fs/ext4/ioctl.c                             |  12 +
+ fs/ext4/readpage.c                          | 208 +++++-
+ fs/ext4/super.c                             |  18 +-
+ fs/ext4/sysfs.c                             |   6 +
+ fs/ext4/verity.c                            | 367 ++++++++++
+ fs/f2fs/Makefile                            |   1 +
+ fs/f2fs/data.c                              |  72 +-
+ fs/f2fs/f2fs.h                              |  20 +-
+ fs/f2fs/file.c                              |  43 +-
+ fs/f2fs/inode.c                             |   5 +-
+ fs/f2fs/super.c                             |   3 +
+ fs/f2fs/sysfs.c                             |  11 +
+ fs/f2fs/verity.c                            | 247 +++++++
+ fs/f2fs/xattr.h                             |   2 +
+ fs/verity/Kconfig                           |  55 ++
+ fs/verity/Makefile                          |  10 +
+ fs/verity/enable.c                          | 369 ++++++++++
+ fs/verity/fsverity_private.h                | 185 +++++
+ fs/verity/hash_algs.c                       | 280 ++++++++
+ fs/verity/init.c                            |  61 ++
+ fs/verity/measure.c                         |  57 ++
+ fs/verity/open.c                            | 356 ++++++++++
+ fs/verity/signature.c                       | 157 +++++
+ fs/verity/verify.c                          | 281 ++++++++
+ include/linux/fs.h                          |  11 +
+ include/linux/fsverity.h                    | 211 ++++++
+ include/uapi/linux/fs.h                     |   1 +
+ include/uapi/linux/fsverity.h               |  40 ++
+ 42 files changed, 3897 insertions(+), 61 deletions(-)
+ create mode 100644 Documentation/filesystems/ext4/verity.rst
+ create mode 100644 Documentation/filesystems/fsverity.rst
+ create mode 100644 fs/ext4/verity.c
+ create mode 100644 fs/f2fs/verity.c
+ create mode 100644 fs/verity/Kconfig
+ create mode 100644 fs/verity/Makefile
+ create mode 100644 fs/verity/enable.c
+ create mode 100644 fs/verity/fsverity_private.h
+ create mode 100644 fs/verity/hash_algs.c
+ create mode 100644 fs/verity/init.c
+ create mode 100644 fs/verity/measure.c
+ create mode 100644 fs/verity/open.c
+ create mode 100644 fs/verity/signature.c
+ create mode 100644 fs/verity/verify.c
+ create mode 100644 include/linux/fsverity.h
+ create mode 100644 include/uapi/linux/fsverity.h
+
+-- 
+2.22.0
 
