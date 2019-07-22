@@ -2,96 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F00EA70284
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 16:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CEAB70347
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 17:13:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbfGVOkw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jul 2019 10:40:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725795AbfGVOkw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jul 2019 10:40:52 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5BD32190D;
-        Mon, 22 Jul 2019 14:40:49 +0000 (UTC)
-Date:   Mon, 22 Jul 2019 10:40:48 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
+        id S1728030AbfGVPNC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jul 2019 11:13:02 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:49668 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727343AbfGVPNA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Jul 2019 11:13:00 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-99.corp.google.com [104.133.0.99] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x6MFCQsi029018
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Jul 2019 11:12:27 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 4D51E4202F5; Mon, 22 Jul 2019 11:12:26 -0400 (EDT)
+Date:   Mon, 22 Jul 2019 11:12:26 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     dsterba@suse.cz, Gao Xiang <gaoxiang25@huawei.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Theodore Ts'o" <tytso@mit.edu>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        LKML <linux-kernel@vger.kernel.org>,
         linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
         Miao Xie <miaoxie@huawei.com>,
         Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, Ingo Molnar <mingo@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v3 12/24] erofs: introduce tagged pointer
-Message-ID: <20190722104048.463397a0@gandalf.local.home>
-In-Reply-To: <CAOQ4uxgo5kvgoEn7SbuwF9+B1W9Qg1-2jSUm5+iKZdT6-wDEog@mail.gmail.com>
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v3 23/24] erofs: introduce cached decompression
+Message-ID: <20190722151226.GC5172@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Gao Xiang <hsiangkao@aol.com>, dsterba@suse.cz,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
+        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>, Fang Wei <fangwei1@huawei.com>
 References: <20190722025043.166344-1-gaoxiang25@huawei.com>
-        <20190722025043.166344-13-gaoxiang25@huawei.com>
-        <CAOQ4uxh04gwbM4yFaVpWHVwmJ4BJo4bZaU8A4_NQh2bO_xCHJg@mail.gmail.com>
-        <39fad3ab-c295-5f6f-0a18-324acab2f69e@huawei.com>
-        <CAOQ4uxgo5kvgoEn7SbuwF9+B1W9Qg1-2jSUm5+iKZdT6-wDEog@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+ <20190722025043.166344-24-gaoxiang25@huawei.com>
+ <20190722101818.GN20977@twin.jikos.cz>
+ <41f1659a-0d16-4316-34fc-335b7d142d5c@aol.com>
+ <20190722132513.GA5172@mit.edu>
+ <db672675-c471-5bc8-af15-91c1859e9008@aol.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <db672675-c471-5bc8-af15-91c1859e9008@aol.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 22 Jul 2019 09:16:22 +0300
-Amir Goldstein <amir73il@gmail.com> wrote:
+On Mon, Jul 22, 2019 at 10:16:44PM +0800, Gao Xiang wrote:
+> OK, I will give a try. One point I think is how to deal with the case
+> if there is already cached information when remounting as well as you said.
+>
+> As the first step, maybe the mount option can be defined as
+> allowing/forbiding caching from now on, which can be refined later.
 
-> CC kernel/trace maintainers for RB_PAGE_HEAD/RB_PAGE_UPDATE
-> and kernel/locking maintainers for RT_MUTEX_HAS_WAITERS
+Yes; possible solutions include ignoring the issue (assuming that
+cached data structures that "shouldn't" be in the cache given the new
+cache strategy will fall out of the cache over time), forcibly
+flushing the cache when the caching strategy has changed, and of
+course, forbidding caching strategy change at remount time.
 
-Interesting.
+Cheers,
 
-> 
-> > (Is there some use scenerios in overlayfs and fanotify?...)  
-> 
-> We had one in overlayfs once. It is gone now.
-> 
-> >
-> > and I'm not sure Al could accept __fdget conversion (I just wanted to give a example then...)
-> >
-> > Therefore, I tend to keep silence and just promote EROFS... some better ideas?...
-> >  
-> 
-> Writing example conversion patches to demonstrate cleaner code
-> and perhaps reduce LOC seems the best way.
-
-Yes, I would be more interested in seeing patches that clean up the
-code than just talking about it.
-
-> 
-> Also pointing out that fixing potential bugs in one implementation is preferred
-> to having to patch all copied implementations.
-> 
-> I wonder if tagptr_unfold_tags() doesn't need READ_ONCE() as per:
-> 1be5d4fa0af3 locking/rtmutex: Use READ_ONCE() in rt_mutex_owner()
-> 
-> rb_list_head() doesn't have READ_ONCE()
-
-Hmm, even if the compiler decided to reread the data, it would still
-need to clear the extra bits wouldn't it? Or am I missing something?
-
--- Steve
-
-> Nor does hlist_bl_first() and BPF_MAP_PTR().
-> 
-> Are those all safe due to safe call sites? or potentially broken?
-
+					- Ted
