@@ -2,84 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AABF6F812
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 05:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64CD86F891
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 06:39:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbfGVDoy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Jul 2019 23:44:54 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:44419 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726106AbfGVDoy (ORCPT
+        id S1726716AbfGVEjk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jul 2019 00:39:40 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:34710 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbfGVEjk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Jul 2019 23:44:54 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TXSDwvJ_1563767088;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TXSDwvJ_1563767088)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 22 Jul 2019 11:44:49 +0800
-Subject: Re: [PATCH 4/4] numa: introduce numa cling feature
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        Mel Gorman <mgorman@suse.de>, riel@surriel.com
-References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
- <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
- <9a440936-1e5d-d3bb-c795-ef6f9839a021@linux.alibaba.com>
- <20190711142728.GF3402@hirez.programming.kicks-ass.net>
- <82f42063-ce51-dd34-ba95-5b32ee733de7@linux.alibaba.com>
- <20190712075318.GM3402@hirez.programming.kicks-ass.net>
- <0a5066be-ac10-5dce-c0a6-408725bc0784@linux.alibaba.com>
-Message-ID: <c85b5868-150f-7114-18cd-a5e9cd55f406@linux.alibaba.com>
-Date:   Mon, 22 Jul 2019 11:44:48 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        Mon, 22 Jul 2019 00:39:40 -0400
+Received: by mail-yw1-f67.google.com with SMTP id q128so15435671ywc.1;
+        Sun, 21 Jul 2019 21:39:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OMqsPQOjQqPIEBmD3EIh4Qtw05vaz+UOfW4nYOJHTL4=;
+        b=t/VUEFE9R2TvEBxbMNvsYCoL2WZYdDc0V4kRWpaHd/rCAxdQIa436PxuYFihm/ifDL
+         H5FDSOR4DAcsJfHRaXAU2y1fOgiHivBPZDcNU+NKvX/KOFe0+TIojO7yzrLOaCpfSgyH
+         8w8H1swbhb7jAhafPPfws0q8ehyTp/OIOqdO5fSa9w6TNw/A3QFZcpZ7zIQOcFFirqf3
+         rRY81Z8vai/trJWZwFmj3nqB2pLuwZujCtzdqgYaUFY39SgnBtvz0FEizNU7qvcPe1iZ
+         9Cd4RFJF9WGz6EuAuJQeCzPQRQ2HfRrXe7rRYmw/vjWiISrRX9vt1y7X3WVeck0H9Ayf
+         1UGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OMqsPQOjQqPIEBmD3EIh4Qtw05vaz+UOfW4nYOJHTL4=;
+        b=NEPa6hHNRQdxAqyHmFex++84zd5bg/a2MmgFt+4fiq/a0EwbUe1N3qU/NcLlQxjasj
+         YpYwlupQWTnM2xr7864s7iNZQreVL1P9NE/oJmBLhAJJO2NARKu6J946FfBkmTDsV5FH
+         MrEQfOxUZuYyAJ/tSVp//elG75nCGJkxlSmrryA9Y6bUJOwZd1Z103Ed+41IqY4Qii5+
+         7rM90Y+43Q36q2e08Qj1/FzjLl5Du+i2lcdzPf0irDJT6PF4lvB28pTeWVWTNFTgl3lV
+         EQ7nIIVthKORXQSr2g9iZA5DSJdTvPYM4WEK2h0nXgnQrEMaWziGdrqGqDQ20RhGYKW4
+         A+cw==
+X-Gm-Message-State: APjAAAUv3g1CWTIpOvfZ8V4Cs1vZm7jCWr5sUKmkxmDwH/Cfflt9nVsz
+        XTKA297oFdvdnawE5D6NfNebluBDuB0nPaxuaZQ=
+X-Google-Smtp-Source: APXvYqw2nuO6UwixpRbfaNpk9MK1Ao8/qBkIZzg+dLv0cDdjoBg3WbnEO02wQKi8/VMw4pkqKPvLqF4+21jZlLPQ/AY=
+X-Received: by 2002:a81:50d5:: with SMTP id e204mr39589702ywb.379.1563770379165;
+ Sun, 21 Jul 2019 21:39:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <0a5066be-ac10-5dce-c0a6-408725bc0784@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190722025043.166344-1-gaoxiang25@huawei.com> <20190722025043.166344-13-gaoxiang25@huawei.com>
+In-Reply-To: <20190722025043.166344-13-gaoxiang25@huawei.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 22 Jul 2019 07:39:27 +0300
+Message-ID: <CAOQ4uxh04gwbM4yFaVpWHVwmJ4BJo4bZaU8A4_NQh2bO_xCHJg@mail.gmail.com>
+Subject: Re: [PATCH v3 12/24] erofs: introduce tagged pointer
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Jul 22, 2019 at 5:54 AM Gao Xiang <gaoxiang25@huawei.com> wrote:
+>
+> Currently kernel has scattered tagged pointer usages
+> hacked by hand in plain code, without a unique and
+> portable functionset to highlight the tagged pointer
+> itself and wrap these hacked code in order to clean up
+> all over meaningless magic masks.
+>
+> This patch introduces simple generic methods to fold
+> tags into a pointer integer. Currently it supports
+> the last n bits of the pointer for tags, which can be
+> selected by users.
+>
+> In addition, it will also be used for the upcoming EROFS
+> filesystem, which heavily uses tagged pointer pproach
+>  to reduce extra memory allocation.
+>
+> Link: https://en.wikipedia.org/wiki/Tagged_pointer
 
+Well, it won't do much good for other kernel users in fs/erofs/ ;-)
 
-On 2019/7/12 下午4:58, 王贇 wrote:
-[snip]
-> 
-> I see, we should not override the decision of select_idle_sibling().
-> 
-> Actually the original design we try to achieve is:
-> 
->   let wake affine select the target
->   try find idle sibling of target
->   if got one
-> 	pick it
->   else if task cling to prev
-> 	pick prev
-> 
-> That is to consider wake affine superior to numa cling.
-> 
-> But after rethinking maybe this is not necessary, since numa cling is
-> also some kind of strong wake affine hint, actually maybe even a better
-> one to filter out the bad cases.
-> 
-> I'll try change @target instead and give a retest then.
+I think now would be a right time to promote this facility to
+include/linux as you initially proposed.
+I don't recall you got any objections. No ACKs either, but I think
+that was the good kind of silence (?)
 
-We now leave select_idle_sibling() untouched, instead prevent numa swap
-with task cling to dst, and stop wake affine when curr & prev cpu are on
-different node and wakee cling to prev.
+You might want to post the __fdget conversion patch [1] as a
+bonus patch on top of your series.
 
-Retesting show a even better results, benchmark like dbench also show 1%~5%
-improvement, not stable but always improved now :-)
+Thanks,
+Amir.
 
-Regards,
-Michael Wang
-
-> 
-> Regards,
-> Michael Wang
-> 
+[1] https://lore.kernel.org/linux-fsdevel/1530543233-65279-2-git-send-email-gaoxiang25@huawei.com/
