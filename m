@@ -2,58 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A65C570A72
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 22:13:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7404A70B77
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 23:32:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbfGVUNk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jul 2019 16:13:40 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41112 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728133AbfGVUNk (ORCPT
+        id S1732695AbfGVVcT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jul 2019 17:32:19 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44061 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728016AbfGVVcS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jul 2019 16:13:40 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x15so7843650pgg.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jul 2019 13:13:39 -0700 (PDT)
+        Mon, 22 Jul 2019 17:32:18 -0400
+Received: by mail-pf1-f193.google.com with SMTP id t16so17966697pfe.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jul 2019 14:32:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        d=joelfernandes.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=MBGXoEQOWEoS+pbE8WDgU6eaM9JwlPKYmsQ8uHe+ttk=;
-        b=mgvA6dvVpsSaAJwSrYoBJ8sO2zK9oMVEl920BIbYhhvZFMXbxZ63GL01SDviu+rqrx
-         wBW2IycmqAZWic5EYWRq0K5401vu4EJh7ECzEeZpfwNUZnUQUCQQpJi708i6pY65DF5u
-         EZS1vBkRR7DbQnsULHXCpZvzdvYiHduNLzt7My/NTa4Iow8ojUpcpwQRlQVYiSFTdiUZ
-         YEcxq0BqA6GfZgnv76apux2buXziZb4c0q5rBykIekW/Y4+wkgmlVA2qu3hiGskCO7XY
-         Dgv3dj1PeNR2Xv5033GQQQA7u54BCDoZIvD62U8CKBQ7iJK3G6RtKWAVXQcLt8AXl0pk
-         PLPQ==
+        bh=5EUBKEkEYUrECI+Cyg/rrvCPQbLH7/NVI8PTWn91MEY=;
+        b=E/T6TquqnjxiArq6x8UhVOJNi11uNjNSnwAngmTiQXN3a2syDSyprsW+rhlZETd8m8
+         prqn7Qs6K74dz/WID5slxvukGJWtWVOTqjM8DbEVp+fmQjo7uFJk1wfTqYFreSYaIClE
+         uriORiXevVMV+X5ek7HdxCoFmQLhAntn8TYtk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=MBGXoEQOWEoS+pbE8WDgU6eaM9JwlPKYmsQ8uHe+ttk=;
-        b=MPHwSGdrGhpIsS/o96JBxHRh5/R0UmyVPB9cE6xAUOiLacFXi5hpRe3Z5ED/91xL7y
-         Kl8yvGo1OcINk/wFicVyUR1EIPxElRxU07NcU4D76Aav8YeEVz56MgEc83D5lq54kO9R
-         r8UhaA9OwQyurrgtaDRZovQ1K1EucxrhQgZDdYgR9E6tbKUeJOb2ehGcQqKfdqMB40Pt
-         76ZkHob2ZaTQ8AhcABsQMQYdYdrwqImYDzQc7qaDXhYOQeujc5rNcYlfjzPUtZHFuHn2
-         kBFk7+fhQIbKAF9YSVTI27Axsq+U0aVbSAKapp9FfzalBFIOcRvvyeVCKeXOiSOhMkdd
-         vMcg==
-X-Gm-Message-State: APjAAAU01saLQpB/55wGK6y6MCHNlTfJYSCOW9vlc6S8ndo6/ePUN9gl
-        OYZXc7w5yumpVq0paGKnQ/E=
-X-Google-Smtp-Source: APXvYqw/Um+g/iT+9qb/uPFGojm/jNklGnE7v4+XD0EyF+itpqQx1L3l0yRsC/Xzq9vpOqzw8+BjBA==
-X-Received: by 2002:a17:90a:e397:: with SMTP id b23mr78935506pjz.117.1563826419241;
-        Mon, 22 Jul 2019 13:13:39 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::3:c914])
-        by smtp.gmail.com with ESMTPSA id 137sm50328560pfz.112.2019.07.22.13.13.38
+        bh=5EUBKEkEYUrECI+Cyg/rrvCPQbLH7/NVI8PTWn91MEY=;
+        b=A5OV880OVAwseRg0kt2EeByZsjpsjoIl2QxHAJu1nt56kx1AEiwGdYIMoqjqz3+6b0
+         rvOthJMYV1zs7L+LnknIyf3qaTpltn1V7JVvpe9m6qc3DPCe97MVYDeZx/TKW42accK2
+         f7TYm/30N+51h4WbG7tvC3XDlqQA1bYMV77sAkZq4nQpLLuxfF3WSjHl87w9mO+HAocY
+         +Edj/Wnadq+hlX3uqDDVhWLihWqsjstR0R+Aew5QQ3/aJv88Oim0q0yaiLS09l2P/EhR
+         YDgz6e2hyzsfak9QLHFhqpJaxqC424lrMSrqZiGkriVnXZi/y+0M8BS4eVSmRH262zOF
+         kFvg==
+X-Gm-Message-State: APjAAAUHAP/P+sY9OPrdzC3EZXp+o/4/HUcPpoT3ErrkhwIi2YyARlIL
+        N2gKVZHtNkOhK++nHcmJs5M=
+X-Google-Smtp-Source: APXvYqynAOfnrO/JgAM4UwXrY8K4C2lO2ZC8FkcSA1CoCMUuFmkrkCErApqNS0U/jNT03i6Ak1KChg==
+X-Received: by 2002:a62:82c2:: with SMTP id w185mr2351928pfd.202.1563831137758;
+        Mon, 22 Jul 2019 14:32:17 -0700 (PDT)
+Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id i14sm65202333pfk.0.2019.07.22.14.32.13
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 13:13:38 -0700 (PDT)
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] psi: annotate refault stalls from IO submission
-Date:   Mon, 22 Jul 2019 16:13:37 -0400
-Message-Id: <20190722201337.19180-1-hannes@cmpxchg.org>
-X-Mailer: git-send-email 2.22.0
+        Mon, 22 Jul 2019 14:32:16 -0700 (PDT)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        vdavydov.dev@gmail.com, Brendan Gregg <bgregg@netflix.com>,
+        kernel-team@android.com, Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        carmenjackson@google.com, Christian Hansen <chansen3@cisco.com>,
+        Colin Ian King <colin.king@canonical.com>, dancol@google.com,
+        David Howells <dhowells@redhat.com>, fmayer@google.com,
+        joaodias@google.com, joelaf@google.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@google.com,
+        minchan@kernel.org, namhyung@google.com, sspatil@google.com,
+        surenb@google.com, Thomas Gleixner <tglx@linutronix.de>,
+        timmurray@google.com, tkjos@google.com,
+        Vlastimil Babka <vbabka@suse.cz>, wvw@google.com
+Subject: [PATCH v1 1/2] mm/page_idle: Add support for per-pid page_idle using virtual indexing
+Date:   Mon, 22 Jul 2019 17:32:04 -0400
+Message-Id: <20190722213205.140845-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -61,362 +75,545 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-psi tracks the time tasks wait for refaulting pages to become
-uptodate, but it does not track the time spent submitting the IO. The
-submission part can be significant if backing storage is contended or
-when cgroup throttling (io.latency) is in effect - a lot of time is
-spent in submit_bio(). In that case, we underreport memory pressure.
+The page_idle tracking feature currently requires looking up the pagemap
+for a process followed by interacting with /sys/kernel/mm/page_idle.
+This is quite cumbersome and can be error-prone too. If between
+accessing the per-PID pagemap and the global page_idle bitmap, if
+something changes with the page then the information is not accurate.
+More over looking up PFN from pagemap in Android devices is not
+supported by unprivileged process and requires SYS_ADMIN and gives 0 for
+the PFN.
 
-Annotate the submit_bio() paths (or the indirection through readpage)
-for refaults and swapin to get proper psi coverage of delays there.
+This patch adds support to directly interact with page_idle tracking at
+the PID level by introducing a /proc/<pid>/page_idle file. This
+eliminates the need for userspace to calculate the mapping of the page.
+It follows the exact same semantics as the global
+/sys/kernel/mm/page_idle, however it is easier to use for some usecases
+where looking up PFN is not needed and also does not require SYS_ADMIN.
+It ended up simplifying userspace code, solving the security issue
+mentioned and works quite well. SELinux does not need to be turned off
+since no pagemap look up is needed.
 
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+In Android, we are using this for the heap profiler (heapprofd) which
+profiles and pin points code paths which allocates and leaves memory
+idle for long periods of time.
+
+Documentation material:
+The idle page tracking API for virtual address indexing using virtual page
+frame numbers (VFN) is located at /proc/<pid>/page_idle. It is a bitmap
+that follows the same semantics as /sys/kernel/mm/page_idle/bitmap
+except that it uses virtual instead of physical frame numbers.
+
+This idle page tracking API can be simpler to use than physical address
+indexing, since the pagemap for a process does not need to be looked up
+to mark or read a page's idle bit. It is also more accurate than
+physical address indexing since in physical address indexing, address
+space changes can occur between reading the pagemap and reading the
+bitmap. In virtual address indexing, the process's mmap_sem is held for
+the duration of the access.
+
+Cc: vdavydov.dev@gmail.com
+Cc: Brendan Gregg <bgregg@netflix.com>
+Cc: kernel-team@android.com
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
 ---
- fs/btrfs/extent_io.c | 14 ++++++++++++--
- fs/ext4/readpage.c   |  9 +++++++++
- fs/f2fs/data.c       |  8 ++++++++
- fs/mpage.c           |  9 +++++++++
- mm/filemap.c         | 20 ++++++++++++++++++++
- mm/page_io.c         | 11 ++++++++---
- mm/readahead.c       | 24 +++++++++++++++++++++++-
- 7 files changed, 89 insertions(+), 6 deletions(-)
+Internal review -> v1:
+Fixes from Suren.
+Corrections to change log, docs (Florian, Sandeep)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 1eb671c16ff1..2d2b3239965a 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -13,6 +13,7 @@
- #include <linux/pagevec.h>
- #include <linux/prefetch.h>
- #include <linux/cleancache.h>
-+#include <linux/psi.h>
- #include "extent_io.h"
- #include "extent_map.h"
- #include "ctree.h"
-@@ -4267,6 +4268,9 @@ int extent_readpages(struct address_space *mapping, struct list_head *pages,
- 	struct extent_io_tree *tree = &BTRFS_I(mapping->host)->io_tree;
- 	int nr = 0;
- 	u64 prev_em_start = (u64)-1;
-+	int ret = 0;
-+	bool refault = false;
-+	unsigned long pflags;
+ fs/proc/base.c            |   3 +
+ fs/proc/internal.h        |   1 +
+ fs/proc/task_mmu.c        |  57 +++++++
+ include/linux/page_idle.h |   4 +
+ mm/page_idle.c            | 305 +++++++++++++++++++++++++++++++++-----
+ 5 files changed, 330 insertions(+), 40 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 77eb628ecc7f..a58dd74606e9 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3021,6 +3021,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ 	REG("smaps",      S_IRUGO, proc_pid_smaps_operations),
+ 	REG("smaps_rollup", S_IRUGO, proc_pid_smaps_rollup_operations),
+ 	REG("pagemap",    S_IRUSR, proc_pagemap_operations),
++#ifdef CONFIG_IDLE_PAGE_TRACKING
++	REG("page_idle", S_IRUSR|S_IWUSR, proc_page_idle_operations),
++#endif
+ #endif
+ #ifdef CONFIG_SECURITY
+ 	DIR("attr",       S_IRUGO|S_IXUGO, proc_attr_dir_inode_operations, proc_attr_dir_operations),
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index cd0c8d5ce9a1..bc9371880c63 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -293,6 +293,7 @@ extern const struct file_operations proc_pid_smaps_operations;
+ extern const struct file_operations proc_pid_smaps_rollup_operations;
+ extern const struct file_operations proc_clear_refs_operations;
+ extern const struct file_operations proc_pagemap_operations;
++extern const struct file_operations proc_page_idle_operations;
  
- 	while (!list_empty(pages)) {
- 		u64 contig_end = 0;
-@@ -4281,6 +4285,10 @@ int extent_readpages(struct address_space *mapping, struct list_head *pages,
- 				put_page(page);
- 				break;
- 			}
-+			if (PageWorkingset(page) && !refault) {
-+				psi_memstall_enter(&pflags);
-+				refault = true;
-+			}
- 
- 			pagepool[nr++] = page;
- 			contig_end = page_offset(page) + PAGE_SIZE - 1;
-@@ -4301,8 +4309,10 @@ int extent_readpages(struct address_space *mapping, struct list_head *pages,
- 		free_extent_map(em_cached);
- 
- 	if (bio)
--		return submit_one_bio(bio, 0, bio_flags);
--	return 0;
-+		ret = submit_one_bio(bio, 0, bio_flags);
-+	if (refault)
-+		psi_memstall_leave(&pflags);
+ extern unsigned long task_vsize(struct mm_struct *);
+ extern unsigned long task_statm(struct mm_struct *,
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 4d2b860dbc3f..11ccc53da38e 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -1642,6 +1642,63 @@ const struct file_operations proc_pagemap_operations = {
+ 	.open		= pagemap_open,
+ 	.release	= pagemap_release,
+ };
++
++#ifdef CONFIG_IDLE_PAGE_TRACKING
++static ssize_t proc_page_idle_read(struct file *file, char __user *buf,
++				   size_t count, loff_t *ppos)
++{
++	int ret;
++	struct task_struct *tsk = get_proc_task(file_inode(file));
++
++	if (!tsk)
++		return -EINVAL;
++	ret = page_idle_proc_read(file, buf, count, ppos, tsk);
++	put_task_struct(tsk);
 +	return ret;
- }
- 
- /*
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index c916017db334..f28385900b64 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -44,6 +44,7 @@
- #include <linux/backing-dev.h>
- #include <linux/pagevec.h>
- #include <linux/cleancache.h>
-+#include <linux/psi.h>
- 
- #include "ext4.h"
- 
-@@ -116,6 +117,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 	int length;
- 	unsigned relative_block = 0;
- 	struct ext4_map_blocks map;
-+	bool refault = false;
-+	unsigned long pflags;
- 
- 	map.m_pblk = 0;
- 	map.m_lblk = 0;
-@@ -134,6 +137,10 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 			if (add_to_page_cache_lru(page, mapping, page->index,
- 				  readahead_gfp_mask(mapping)))
- 				goto next_page;
-+			if (PageWorkingset(page) && !refault) {
-+				psi_memstall_enter(&pflags);
-+				refault = true;
-+			}
- 		}
- 
- 		if (page_has_buffers(page))
-@@ -291,5 +298,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 	BUG_ON(pages && !list_empty(pages));
- 	if (bio)
- 		submit_bio(bio);
-+	if (refault)
-+		psi_memstall_leave(&pflags);
- 	return 0;
- }
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 2d0a1a97d3fd..fe9c34247be4 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1699,6 +1699,8 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 	sector_t last_block_in_bio = 0;
- 	struct inode *inode = mapping->host;
- 	struct f2fs_map_blocks map;
-+	bool refault = false;
-+	unsigned long pflags;
- 	int ret = 0;
- 
- 	map.m_pblk = 0;
-@@ -1720,6 +1722,10 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 						  page_index(page),
- 						  readahead_gfp_mask(mapping)))
- 				goto next_page;
-+			if (PageWorkingset(page) && !refault) {
-+				psi_memstall_enter(&pflags);
-+				refault = true;
-+			}
- 		}
- 
- 		ret = f2fs_read_single_page(inode, page, nr_pages, &map, &bio,
-@@ -1736,6 +1742,8 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 	BUG_ON(pages && !list_empty(pages));
- 	if (bio)
- 		__submit_bio(F2FS_I_SB(inode), bio, DATA);
-+	if (refault)
-+		psi_memstall_leave(&pflags);
- 	return pages ? 0 : ret;
- }
- 
-diff --git a/fs/mpage.c b/fs/mpage.c
-index 436a85260394..f4ef57f1ea06 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -30,6 +30,7 @@
- #include <linux/backing-dev.h>
- #include <linux/pagevec.h>
- #include <linux/cleancache.h>
-+#include <linux/psi.h>
- #include "internal.h"
- 
- /*
-@@ -389,6 +390,8 @@ mpage_readpages(struct address_space *mapping, struct list_head *pages,
- 		.get_block = get_block,
- 		.is_readahead = true,
- 	};
-+	bool refault = false;
-+	unsigned long pflags;
- 	unsigned page_idx;
- 
- 	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
-@@ -404,10 +407,16 @@ mpage_readpages(struct address_space *mapping, struct list_head *pages,
- 			args.bio = do_mpage_readpage(&args);
- 		}
- 		put_page(page);
-+		if (PageWorkingset(page) && !refault) {
-+			psi_memstall_enter(&pflags);
-+			refault = true;
-+		}
- 	}
- 	BUG_ON(!list_empty(pages));
- 	if (args.bio)
- 		mpage_bio_submit(REQ_OP_READ, REQ_RAHEAD, args.bio);
-+	if (refault)
-+		psi_memstall_leave(&pflags);
- 	return 0;
- }
- EXPORT_SYMBOL(mpage_readpages);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 8129eaa5f257..667fbd3f7eb2 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2009,6 +2009,8 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		pgoff_t end_index;
- 		loff_t isize;
- 		unsigned long nr, ret;
-+		unsigned long pflags;
-+		bool refault;
- 
- 		cond_resched();
- find_page:
-@@ -2157,9 +2159,17 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		 * PG_error will be set again if readpage fails.
- 		 */
- 		ClearPageError(page);
++}
 +
-+		refault = PageWorkingset(page);
-+		if (refault)
-+			psi_memstall_enter(&pflags);
++static ssize_t proc_page_idle_write(struct file *file, const char __user *buf,
++				 size_t count, loff_t *ppos)
++{
++	int ret;
++	struct task_struct *tsk = get_proc_task(file_inode(file));
 +
- 		/* Start the actual read. The read will unlock the page. */
- 		error = mapping->a_ops->readpage(filp, page);
++	if (!tsk)
++		return -EINVAL;
++	ret = page_idle_proc_write(file, (char __user *)buf, count, ppos, tsk);
++	put_task_struct(tsk);
++	return ret;
++}
++
++static int proc_page_idle_open(struct inode *inode, struct file *file)
++{
++	struct mm_struct *mm;
++
++	mm = proc_mem_open(inode, PTRACE_MODE_READ);
++	if (IS_ERR(mm))
++		return PTR_ERR(mm);
++	file->private_data = mm;
++	return 0;
++}
++
++static int proc_page_idle_release(struct inode *inode, struct file *file)
++{
++	struct mm_struct *mm = file->private_data;
++
++	if (mm)
++		mmdrop(mm);
++	return 0;
++}
++
++const struct file_operations proc_page_idle_operations = {
++	.llseek		= mem_lseek, /* borrow this */
++	.read		= proc_page_idle_read,
++	.write		= proc_page_idle_write,
++	.open		= proc_page_idle_open,
++	.release	= proc_page_idle_release,
++};
++#endif /* CONFIG_IDLE_PAGE_TRACKING */
++
+ #endif /* CONFIG_PROC_PAGE_MONITOR */
  
-+		if (refault)
-+			psi_memstall_leave(&pflags);
-+
- 		if (unlikely(error)) {
- 			if (error == AOP_TRUNCATED_PAGE) {
- 				put_page(page);
-@@ -2753,11 +2763,14 @@ static struct page *do_read_cache_page(struct address_space *mapping,
- 				void *data,
- 				gfp_t gfp)
+ #ifdef CONFIG_NUMA
+diff --git a/include/linux/page_idle.h b/include/linux/page_idle.h
+index 1e894d34bdce..f1bc2640d85e 100644
+--- a/include/linux/page_idle.h
++++ b/include/linux/page_idle.h
+@@ -106,6 +106,10 @@ static inline void clear_page_idle(struct page *page)
+ }
+ #endif /* CONFIG_64BIT */
+ 
++ssize_t page_idle_proc_write(struct file *file,
++	char __user *buf, size_t count, loff_t *ppos, struct task_struct *tsk);
++ssize_t page_idle_proc_read(struct file *file,
++	char __user *buf, size_t count, loff_t *ppos, struct task_struct *tsk);
+ #else /* !CONFIG_IDLE_PAGE_TRACKING */
+ 
+ static inline bool page_is_young(struct page *page)
+diff --git a/mm/page_idle.c b/mm/page_idle.c
+index 295512465065..874a60c41fef 100644
+--- a/mm/page_idle.c
++++ b/mm/page_idle.c
+@@ -11,6 +11,7 @@
+ #include <linux/mmu_notifier.h>
+ #include <linux/page_ext.h>
+ #include <linux/page_idle.h>
++#include <linux/sched/mm.h>
+ 
+ #define BITMAP_CHUNK_SIZE	sizeof(u64)
+ #define BITMAP_CHUNK_BITS	(BITMAP_CHUNK_SIZE * BITS_PER_BYTE)
+@@ -28,15 +29,12 @@
+  *
+  * This function tries to get a user memory page by pfn as described above.
+  */
+-static struct page *page_idle_get_page(unsigned long pfn)
++static struct page *page_idle_get_page(struct page *page_in)
  {
-+	bool refault = false;
  	struct page *page;
- 	int err;
- repeat:
- 	page = find_get_page(mapping, index);
- 	if (!page) {
-+		unsigned long pflags;
-+
- 		page = __page_cache_alloc(gfp);
- 		if (!page)
- 			return ERR_PTR(-ENOMEM);
-@@ -2770,12 +2783,19 @@ static struct page *do_read_cache_page(struct address_space *mapping,
- 			return ERR_PTR(err);
- 		}
+ 	pg_data_t *pgdat;
  
-+		refault = PageWorkingset(page);
- filler:
-+		if (refault)
-+			psi_memstall_enter(&pflags);
-+
- 		if (filler)
- 			err = filler(data, page);
- 		else
- 			err = mapping->a_ops->readpage(data, page);
- 
-+		if (refault)
-+			psi_memstall_leave(&pflags);
-+
- 		if (err < 0) {
- 			put_page(page);
- 			return ERR_PTR(err);
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 24ee600f9131..e878e9559015 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -24,6 +24,7 @@
- #include <linux/blkdev.h>
- #include <linux/uio.h>
- #include <linux/sched/task.h>
-+#include <linux/psi.h>
- #include <asm/pgtable.h>
- 
- static struct bio *get_swap_bio(gfp_t gfp_flags,
-@@ -354,10 +355,14 @@ int swap_readpage(struct page *page, bool synchronous)
- 	struct swap_info_struct *sis = page_swap_info(page);
- 	blk_qc_t qc;
- 	struct gendisk *disk;
-+	unsigned long pflags;
- 
- 	VM_BUG_ON_PAGE(!PageSwapCache(page) && !synchronous, page);
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	VM_BUG_ON_PAGE(PageUptodate(page), page);
-+
-+	psi_memstall_enter(&pflags);
-+
- 	if (frontswap_load(page) == 0) {
- 		SetPageUptodate(page);
- 		unlock_page(page);
-@@ -371,7 +376,7 @@ int swap_readpage(struct page *page, bool synchronous)
- 		ret = mapping->a_ops->readpage(swap_file, page);
- 		if (!ret)
- 			count_vm_event(PSWPIN);
--		return ret;
-+		goto out;
- 	}
- 
- 	ret = bdev_read_page(sis->bdev, swap_page_sector(page), page);
-@@ -382,7 +387,7 @@ int swap_readpage(struct page *page, bool synchronous)
- 		}
- 
- 		count_vm_event(PSWPIN);
--		return 0;
-+		goto out;
- 	}
- 
- 	ret = 0;
-@@ -416,8 +421,8 @@ int swap_readpage(struct page *page, bool synchronous)
- 	}
- 	__set_current_state(TASK_RUNNING);
- 	bio_put(bio);
+-	if (!pfn_valid(pfn))
+-		return NULL;
 -
- out:
-+	psi_memstall_leave(&pflags);
- 	return ret;
+-	page = pfn_to_page(pfn);
++	page = page_in;
+ 	if (!page || !PageLRU(page) ||
+ 	    !get_page_unless_zero(page))
+ 		return NULL;
+@@ -51,6 +49,15 @@ static struct page *page_idle_get_page(unsigned long pfn)
+ 	return page;
  }
  
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 2fe72cd29b47..a89522a053ce 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -22,6 +22,7 @@
- #include <linux/mm_inline.h>
- #include <linux/blk-cgroup.h>
- #include <linux/fadvise.h>
-+#include <linux/psi.h>
- 
- #include "internal.h"
- 
-@@ -92,6 +93,9 @@ int read_cache_pages(struct address_space *mapping, struct list_head *pages,
- 	int ret = 0;
- 
- 	while (!list_empty(pages)) {
-+		unsigned long pflags;
-+		bool refault;
++static struct page *page_idle_get_page_pfn(unsigned long pfn)
++{
 +
- 		page = lru_to_page(pages);
- 		list_del(&page->lru);
- 		if (add_to_page_cache_lru(page, mapping, page->index,
-@@ -101,7 +105,15 @@ int read_cache_pages(struct address_space *mapping, struct list_head *pages,
++	if (!pfn_valid(pfn))
++		return NULL;
++
++	return page_idle_get_page(pfn_to_page(pfn));
++}
++
+ static bool page_idle_clear_pte_refs_one(struct page *page,
+ 					struct vm_area_struct *vma,
+ 					unsigned long addr, void *arg)
+@@ -118,6 +125,47 @@ static void page_idle_clear_pte_refs(struct page *page)
+ 		unlock_page(page);
+ }
+ 
++/* Helper to get the start and end frame given a pos and count */
++static int page_idle_get_frames(loff_t pos, size_t count, struct mm_struct *mm,
++				unsigned long *start, unsigned long *end)
++{
++	unsigned long max_frame;
++
++	/* If an mm is not given, assume we want physical frames */
++	max_frame = mm ? (mm->task_size >> PAGE_SHIFT) : max_pfn;
++
++	if (pos % BITMAP_CHUNK_SIZE || count % BITMAP_CHUNK_SIZE)
++		return -EINVAL;
++
++	*start = pos * BITS_PER_BYTE;
++	if (*start >= max_frame)
++		return -ENXIO;
++
++	*end = *start + count * BITS_PER_BYTE;
++	if (*end > max_frame)
++		*end = max_frame;
++	return 0;
++}
++
++static bool page_really_idle(struct page *page)
++{
++	if (!page)
++		return false;
++
++	if (page_is_idle(page)) {
++		/*
++		 * The page might have been referenced via a
++		 * pte, in which case it is not idle. Clear
++		 * refs and recheck.
++		 */
++		page_idle_clear_pte_refs(page);
++		if (page_is_idle(page))
++			return true;
++	}
++
++	return false;
++}
++
+ static ssize_t page_idle_bitmap_read(struct file *file, struct kobject *kobj,
+ 				     struct bin_attribute *attr, char *buf,
+ 				     loff_t pos, size_t count)
+@@ -125,35 +173,21 @@ static ssize_t page_idle_bitmap_read(struct file *file, struct kobject *kobj,
+ 	u64 *out = (u64 *)buf;
+ 	struct page *page;
+ 	unsigned long pfn, end_pfn;
+-	int bit;
+-
+-	if (pos % BITMAP_CHUNK_SIZE || count % BITMAP_CHUNK_SIZE)
+-		return -EINVAL;
+-
+-	pfn = pos * BITS_PER_BYTE;
+-	if (pfn >= max_pfn)
+-		return 0;
++	int bit, ret;
+ 
+-	end_pfn = pfn + count * BITS_PER_BYTE;
+-	if (end_pfn > max_pfn)
+-		end_pfn = max_pfn;
++	ret = page_idle_get_frames(pos, count, NULL, &pfn, &end_pfn);
++	if (ret == -ENXIO)
++		return 0;  /* Reads beyond max_pfn do nothing */
++	else if (ret)
++		return ret;
+ 
+ 	for (; pfn < end_pfn; pfn++) {
+ 		bit = pfn % BITMAP_CHUNK_BITS;
+ 		if (!bit)
+ 			*out = 0ULL;
+-		page = page_idle_get_page(pfn);
+-		if (page) {
+-			if (page_is_idle(page)) {
+-				/*
+-				 * The page might have been referenced via a
+-				 * pte, in which case it is not idle. Clear
+-				 * refs and recheck.
+-				 */
+-				page_idle_clear_pte_refs(page);
+-				if (page_is_idle(page))
+-					*out |= 1ULL << bit;
+-			}
++		page = page_idle_get_page_pfn(pfn);
++		if (page && page_really_idle(page)) {
++			*out |= 1ULL << bit;
+ 			put_page(page);
  		}
- 		put_page(page);
+ 		if (bit == BITMAP_CHUNK_BITS - 1)
+@@ -170,23 +204,16 @@ static ssize_t page_idle_bitmap_write(struct file *file, struct kobject *kobj,
+ 	const u64 *in = (u64 *)buf;
+ 	struct page *page;
+ 	unsigned long pfn, end_pfn;
+-	int bit;
++	int bit, ret;
  
-+		refault = PageWorkingset(page);
-+		if (refault)
-+			psi_memstall_enter(&pflags);
+-	if (pos % BITMAP_CHUNK_SIZE || count % BITMAP_CHUNK_SIZE)
+-		return -EINVAL;
+-
+-	pfn = pos * BITS_PER_BYTE;
+-	if (pfn >= max_pfn)
+-		return -ENXIO;
+-
+-	end_pfn = pfn + count * BITS_PER_BYTE;
+-	if (end_pfn > max_pfn)
+-		end_pfn = max_pfn;
++	ret = page_idle_get_frames(pos, count, NULL, &pfn, &end_pfn);
++	if (ret)
++		return ret;
+ 
+ 	for (; pfn < end_pfn; pfn++) {
+ 		bit = pfn % BITMAP_CHUNK_BITS;
+ 		if ((*in >> bit) & 1) {
+-			page = page_idle_get_page(pfn);
++			page = page_idle_get_page_pfn(pfn);
+ 			if (page) {
+ 				page_idle_clear_pte_refs(page);
+ 				set_page_idle(page);
+@@ -224,10 +251,208 @@ struct page_ext_operations page_idle_ops = {
+ };
+ #endif
+ 
++/*  page_idle tracking for /proc/<pid>/page_idle */
 +
- 		ret = filler(data, page);
++static DEFINE_SPINLOCK(idle_page_list_lock);
++struct list_head idle_page_list;
 +
-+		if (refault)
-+			psi_memstall_leave(&pflags);
++struct page_node {
++	struct page *page;
++	unsigned long addr;
++	struct list_head list;
++};
 +
- 		if (unlikely(ret)) {
- 			read_cache_pages_invalidate_pages(mapping, pages);
- 			break;
-@@ -132,8 +144,18 @@ static int read_pages(struct address_space *mapping, struct file *filp,
- 	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
- 		struct page *page = lru_to_page(pages);
- 		list_del(&page->lru);
--		if (!add_to_page_cache_lru(page, mapping, page->index, gfp))
-+		if (!add_to_page_cache_lru(page, mapping, page->index, gfp)) {
-+			bool refault = PageWorkingset(page);
-+			unsigned long pflags;
++struct page_idle_proc_priv {
++	unsigned long start_addr;
++	char *buffer;
++	int write;
++};
 +
-+			if (refault)
-+				psi_memstall_enter(&pflags);
++static void add_page_idle_list(struct page *page,
++			       unsigned long addr, struct mm_walk *walk)
++{
++	struct page *page_get;
++	struct page_node *pn;
++	int bit;
++	unsigned long frames;
++	struct page_idle_proc_priv *priv = walk->private;
++	u64 *chunk = (u64 *)priv->buffer;
 +
- 			mapping->a_ops->readpage(filp, page);
++	if (priv->write) {
++		/* Find whether this page was asked to be marked */
++		frames = (addr - priv->start_addr) >> PAGE_SHIFT;
++		bit = frames % BITMAP_CHUNK_BITS;
++		chunk = &chunk[frames / BITMAP_CHUNK_BITS];
++		if (((*chunk >> bit) & 1) == 0)
++			return;
++	}
 +
-+			if (refault)
-+				psi_memstall_leave(&pflags);
++	page_get = page_idle_get_page(page);
++	if (!page_get)
++		return;
++
++	pn = kmalloc(sizeof(*pn), GFP_ATOMIC);
++	if (!pn)
++		return;
++
++	pn->page = page_get;
++	pn->addr = addr;
++	list_add(&pn->list, &idle_page_list);
++}
++
++static int pte_page_idle_proc_range(pmd_t *pmd, unsigned long addr,
++				    unsigned long end,
++				    struct mm_walk *walk)
++{
++	struct vm_area_struct *vma = walk->vma;
++	pte_t *pte;
++	spinlock_t *ptl;
++	struct page *page;
++
++	ptl = pmd_trans_huge_lock(pmd, vma);
++	if (ptl) {
++		if (pmd_present(*pmd)) {
++			page = follow_trans_huge_pmd(vma, addr, pmd,
++						     FOLL_DUMP|FOLL_WRITE);
++			if (!IS_ERR_OR_NULL(page))
++				add_page_idle_list(page, addr, walk);
 +		}
- 		put_page(page);
- 	}
- 	ret = 0;
++		spin_unlock(ptl);
++		return 0;
++	}
++
++	if (pmd_trans_unstable(pmd))
++		return 0;
++
++	pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
++	for (; addr != end; pte++, addr += PAGE_SIZE) {
++		if (!pte_present(*pte))
++			continue;
++
++		page = vm_normal_page(vma, addr, *pte);
++		if (page)
++			add_page_idle_list(page, addr, walk);
++	}
++
++	pte_unmap_unlock(pte - 1, ptl);
++	return 0;
++}
++
++ssize_t page_idle_proc_generic(struct file *file, char __user *ubuff,
++			       size_t count, loff_t *pos,
++			       struct task_struct *tsk, int write)
++{
++	int ret;
++	char *buffer;
++	u64 *out;
++	unsigned long start_addr, end_addr, start_frame, end_frame;
++	struct mm_struct *mm = file->private_data;
++	struct mm_walk walk = { .pmd_entry = pte_page_idle_proc_range, };
++	struct page_node *cur, *next;
++	struct page_idle_proc_priv priv;
++	bool walk_error = false;
++
++	if (!mm || !mmget_not_zero(mm))
++		return -EINVAL;
++
++	if (count > PAGE_SIZE)
++		count = PAGE_SIZE;
++
++	buffer = kzalloc(PAGE_SIZE, GFP_KERNEL);
++	if (!buffer) {
++		ret = -ENOMEM;
++		goto out_mmput;
++	}
++	out = (u64 *)buffer;
++
++	if (write && copy_from_user(buffer, ubuff, count)) {
++		ret = -EFAULT;
++		goto out;
++	}
++
++	ret = page_idle_get_frames(*pos, count, mm, &start_frame, &end_frame);
++	if (ret)
++		goto out;
++
++	start_addr = (start_frame << PAGE_SHIFT);
++	end_addr = (end_frame << PAGE_SHIFT);
++	priv.buffer = buffer;
++	priv.start_addr = start_addr;
++	priv.write = write;
++	walk.private = &priv;
++	walk.mm = mm;
++
++	down_read(&mm->mmap_sem);
++
++	/*
++	 * Protects the idle_page_list which is needed because
++	 * walk_page_vma() holds ptlock which deadlocks with
++	 * page_idle_clear_pte_refs(). So we have to collect all
++	 * pages first, and then call page_idle_clear_pte_refs().
++	 */
++	spin_lock(&idle_page_list_lock);
++	ret = walk_page_range(start_addr, end_addr, &walk);
++	if (ret)
++		walk_error = true;
++
++	list_for_each_entry_safe(cur, next, &idle_page_list, list) {
++		int bit, index;
++		unsigned long off;
++		struct page *page = cur->page;
++
++		if (unlikely(walk_error))
++			goto remove_page;
++
++		if (write) {
++			page_idle_clear_pte_refs(page);
++			set_page_idle(page);
++		} else {
++			if (page_really_idle(page)) {
++				off = ((cur->addr) >> PAGE_SHIFT) - start_frame;
++				bit = off % BITMAP_CHUNK_BITS;
++				index = off / BITMAP_CHUNK_BITS;
++				out[index] |= 1ULL << bit;
++			}
++		}
++remove_page:
++		put_page(page);
++		list_del(&cur->list);
++		kfree(cur);
++	}
++	spin_unlock(&idle_page_list_lock);
++
++	if (!write && !walk_error)
++		ret = copy_to_user(ubuff, buffer, count);
++
++	up_read(&mm->mmap_sem);
++out:
++	kfree(buffer);
++out_mmput:
++	mmput(mm);
++	if (!ret)
++		ret = count;
++	return ret;
++
++}
++
++ssize_t page_idle_proc_read(struct file *file, char __user *ubuff,
++			    size_t count, loff_t *pos, struct task_struct *tsk)
++{
++	return page_idle_proc_generic(file, ubuff, count, pos, tsk, 0);
++}
++
++ssize_t page_idle_proc_write(struct file *file, char __user *ubuff,
++			     size_t count, loff_t *pos, struct task_struct *tsk)
++{
++	return page_idle_proc_generic(file, ubuff, count, pos, tsk, 1);
++}
++
+ static int __init page_idle_init(void)
+ {
+ 	int err;
+ 
++	INIT_LIST_HEAD(&idle_page_list);
++
+ 	err = sysfs_create_group(mm_kobj, &page_idle_attr_group);
+ 	if (err) {
+ 		pr_err("page_idle: register sysfs failed\n");
 -- 
-2.22.0
-
+2.22.0.657.g960e92d24f-goog
