@@ -2,75 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D9396F7F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 05:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AABF6F812
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 05:44:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbfGVD35 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Jul 2019 23:29:57 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2694 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727860AbfGVD35 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Jul 2019 23:29:57 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8B5CF8303BF188C45117;
-        Mon, 22 Jul 2019 11:29:55 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 22 Jul
- 2019 11:29:48 +0800
-Subject: Re: [PATCH v3 01/24] erofs: add on-disk layout
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-References: <20190722025043.166344-1-gaoxiang25@huawei.com>
- <20190722025043.166344-2-gaoxiang25@huawei.com>
- <20190722132616.60edd141@canb.auug.org.au>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <b1ff773b-eb15-9fdc-77aa-f7446471a1d4@huawei.com>
-Date:   Mon, 22 Jul 2019 11:29:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1728067AbfGVDoy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Jul 2019 23:44:54 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:44419 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726106AbfGVDoy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 21 Jul 2019 23:44:54 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TXSDwvJ_1563767088;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TXSDwvJ_1563767088)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 22 Jul 2019 11:44:49 +0800
+Subject: Re: [PATCH 4/4] numa: introduce numa cling feature
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mcgrof@kernel.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        Mel Gorman <mgorman@suse.de>, riel@surriel.com
+References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
+ <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
+ <9a440936-1e5d-d3bb-c795-ef6f9839a021@linux.alibaba.com>
+ <20190711142728.GF3402@hirez.programming.kicks-ass.net>
+ <82f42063-ce51-dd34-ba95-5b32ee733de7@linux.alibaba.com>
+ <20190712075318.GM3402@hirez.programming.kicks-ass.net>
+ <0a5066be-ac10-5dce-c0a6-408725bc0784@linux.alibaba.com>
+Message-ID: <c85b5868-150f-7114-18cd-a5e9cd55f406@linux.alibaba.com>
+Date:   Mon, 22 Jul 2019 11:44:48 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190722132616.60edd141@canb.auug.org.au>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+In-Reply-To: <0a5066be-ac10-5dce-c0a6-408725bc0784@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Stephen,
 
-On 2019/7/22 11:26, Stephen Rothwell wrote:
-> Hi Gao,
+
+On 2019/7/12 下午4:58, 王贇 wrote:
+[snip]
 > 
-> On Mon, 22 Jul 2019 10:50:20 +0800 Gao Xiang <gaoxiang25@huawei.com> wrote:
->>
->> diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
->> new file mode 100644
->> index 000000000000..e418725abfd6
->> --- /dev/null
->> +++ b/fs/erofs/erofs_fs.h
->> @@ -0,0 +1,316 @@
->> +/* SPDX-License-Identifier: GPL-2.0 OR Apache-2.0 */
+> I see, we should not override the decision of select_idle_sibling().
 > 
-> I think the preferred tag is now GPL-2.0-only (assuming that is what is
-> intended).
+> Actually the original design we try to achieve is:
+> 
+>   let wake affine select the target
+>   try find idle sibling of target
+>   if got one
+> 	pick it
+>   else if task cling to prev
+> 	pick prev
+> 
+> That is to consider wake affine superior to numa cling.
+> 
+> But after rethinking maybe this is not necessary, since numa cling is
+> also some kind of strong wake affine hint, actually maybe even a better
+> one to filter out the bad cases.
+> 
+> I'll try change @target instead and give a retest then.
 
-OK, GPL-2.0-only is much better.
-I will change these tags in the next version :)
+We now leave select_idle_sibling() untouched, instead prevent numa swap
+with task cling to dst, and stop wake affine when curr & prev cpu are on
+different node and wakee cling to prev.
 
-Thanks,
-Gao Xiang
+Retesting show a even better results, benchmark like dbench also show 1%~5%
+improvement, not stable but always improved now :-)
 
+Regards,
+Michael Wang
+
+> 
+> Regards,
+> Michael Wang
 > 
