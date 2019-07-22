@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AAF16F790
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 04:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09DB46F74C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2019 04:51:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728734AbfGVCvG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 21 Jul 2019 22:51:06 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38442 "EHLO huawei.com"
+        id S1728766AbfGVCvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 21 Jul 2019 22:51:11 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:38438 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728718AbfGVCvG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 21 Jul 2019 22:51:06 -0400
+        id S1728360AbfGVCvI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 21 Jul 2019 22:51:08 -0400
 Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 96089897D014893929C1;
+        by Forcepoint Email with ESMTP id 8E30B4174BEAA07DEBDB;
         Mon, 22 Jul 2019 10:51:03 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 22 Jul
- 2019 10:50:52 +0800
+ 2019 10:50:54 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,10 +31,12 @@ CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
         Li Guifu <bluce.liguifu@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v3 00/24] erofs: promote erofs from staging
-Date:   Mon, 22 Jul 2019 10:50:19 +0800
-Message-ID: <20190722025043.166344-1-gaoxiang25@huawei.com>
+Subject: [PATCH v3 01/24] erofs: add on-disk layout
+Date:   Mon, 22 Jul 2019 10:50:20 +0800
+Message-ID: <20190722025043.166344-2-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190722025043.166344-1-gaoxiang25@huawei.com>
+References: <20190722025043.166344-1-gaoxiang25@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.140.130.215]
@@ -44,173 +46,352 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Changelog from v2:
- o kill sbi->dev_name and clean up all failure handling in
-   fill_super() suggested by Al.
-   Note that the initialzation of managed_cache is now moved
-   after s_root is assigned since it's more preferred to iput()
-   in .put_super() and all inodes should be evicted before
-   the end of generic_shutdown_super(sb);
+This commit adds the on-disk layout header file of erofs.
+On-disk format is compatible with erofs-staging added in 4.19.
 
- o fold in the following staging patches (and thanks):
-   staging: erofs:converting all 'unsigned' to 'unsigned int'
-   staging: erofs: Remove function erofs_kill_sb()
-    - However it was revoked due to erofs_kill_sb reused...
-   staging: erofs: avoid opened loop codes
-   staging: erofs: support bmap
+In addition, add EROFS_SUPER_MAGIC_V1 to magic.h.
 
- o move EROFS_SUPER_MAGIC_V1 from linux/fs/erofs/erofs_fs.h to
-   include/uapi/linux/magic.h for userspace utilities.
-
-This patchset is slightly different from what it is in the staging
-tree since I move/rename compression/shrinker stuffes and do more
-cleanup in patchset v2 for better review, complete code are also
-available at:
- https://git.kernel.org/pub/scm/linux/kernel/git/xiang/linux.git/tree/fs/erofs?h=erofs-outofstaging
-
-Changelog from v1:
- o resend the whole filesystem into a patchset suggested by Greg;
- o code is more cleaner, especially for decompression frontend.
-
---8<----------
-
-Hi,
-
-EROFS file system has been in Linux-staging for about a year.
-It has been proved to be stable enough to move out of staging
-by 10+ millions of HUAWEI Android mobile phones on the market
-from EMUI 9.0.1, and it was promoted as one of the key features
-of EMUI 9.1 [1], including P30(pro).
-
-EROFS is a read-only file system designed to save extra storage
-space with guaranteed end-to-end performance by applying
-fixed-size output compression, inplace I/O and decompression
-inplace technologies [2] to Linux filesystem.
-
-In our observation, EROFS is one of the fastest Linux compression
-filesystem using buffered I/O in the world. It will support
-direct I/O in the future if needed. EROFS even has better read
-performance in a large CR range compared with generic uncompressed
-file systems with proper CPU-storage combination, which is
-a reason why EROFS can be landed to speed up mobile phone
-performance, and which can be probably used for other use cases
-such as LiveCD and Docker image as well.
-
-Currently EROFS supports 4k LZ4 fixed-size output compression
-since LZ4 is the fastest widely-used decompression solution in
-the world and 4k leads to unnoticable read amplification for
-the worst case. More compression algorithms and cluster sizes
-could be added later, which depends on the real requirement.
-
-More information about EROFS itself are available at:
- Documentation/filesystems/erofs.txt
- https://kccncosschn19eng.sched.com/event/Nru2/erofs-an-introduction-and-our-smartphone-practice-xiang-gao-huawei
-
-erofs-utils (mainly mkfs.erofs now) is available at
-git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
-
-Preliminary iomap support has been pending in EROFS mailing
-list by Chao Yu. The key issue is that current iomap doesn't
-support tail-end packing inline data yet, it should be
-resolved later.
-
-Thanks to many contributors in the last year, the code is more
-clean and improved. We hope EROFS can be used in wider use cases
-so let's promote erofs out of staging and enhance it more actively.
-
-Share comments about EROFS! We think EROFS is useful to
-community as a part of Linux upstream.
-
-Thank you very much,
-Gao Xiang
-
-[1] http://web.archive.org/web/20190627021241/https://consumer.huawei.com/en/emui/
-[2] https://lore.kernel.org/lkml/20190624072258.28362-1-hsiangkao@aol.com/
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Chao Yu <yuchao0@huawei.com>
-Cc: Miao Xie <miaoxie@huawei.com>
-Cc: Li Guifu <bluce.liguifu@huawei.com>
-Cc: Fang Wei <fangwei1@huawei.com>
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-
-Gao Xiang (24):
-  erofs: add on-disk layout
-  erofs: add erofs in-memory stuffs
-  erofs: add super block operations
-  erofs: add raw address_space operations
-  erofs: add inode operations
-  erofs: support special inode
-  erofs: add directory operations
-  erofs: add namei functions
-  erofs: support tracepoint
-  erofs: update Kconfig and Makefile
-  erofs: introduce xattr & posixacl support
-  erofs: introduce tagged pointer
-  erofs: add compression indexes support
-  erofs: introduce superblock registration
-  erofs: introduce erofs shrinker
-  erofs: introduce workstation for decompression
-  erofs: introduce per-CPU buffers implementation
-  erofs: introduce pagevec for decompression subsystem
-  erofs: add erofs_allocpage()
-  erofs: introduce generic decompression backend
-  erofs: introduce LZ4 decompression inplace
-  erofs: introduce the decompression frontend
-  erofs: introduce cached decompression
-  erofs: add document
-
- Documentation/filesystems/erofs.txt |  211 ++++
- fs/Kconfig                          |    1 +
- fs/Makefile                         |    1 +
- fs/erofs/Kconfig                    |  154 +++
- fs/erofs/Makefile                   |   11 +
- fs/erofs/compress.h                 |   89 ++
- fs/erofs/data.c                     |  423 ++++++++
- fs/erofs/decompressor.c             |  329 ++++++
- fs/erofs/dir.c                      |  147 +++
- fs/erofs/erofs_fs.h                 |  316 ++++++
- fs/erofs/inode.c                    |  326 ++++++
- fs/erofs/internal.h                 |  566 +++++++++++
- fs/erofs/namei.c                    |  250 +++++
- fs/erofs/super.c                    |  555 +++++++++++
- fs/erofs/tagptr.h                   |  110 ++
- fs/erofs/utils.c                    |  416 ++++++++
- fs/erofs/xattr.c                    |  700 +++++++++++++
- fs/erofs/xattr.h                    |   93 ++
- fs/erofs/zdata.c                    | 1440 +++++++++++++++++++++++++++
- fs/erofs/zdata.h                    |  201 ++++
- fs/erofs/zmap.c                     |  462 +++++++++
- fs/erofs/zpvec.h                    |  159 +++
- include/trace/events/erofs.h        |  256 +++++
- include/uapi/linux/magic.h          |    1 +
- 24 files changed, 7217 insertions(+)
- create mode 100644 Documentation/filesystems/erofs.txt
- create mode 100644 fs/erofs/Kconfig
- create mode 100644 fs/erofs/Makefile
- create mode 100644 fs/erofs/compress.h
- create mode 100644 fs/erofs/data.c
- create mode 100644 fs/erofs/decompressor.c
- create mode 100644 fs/erofs/dir.c
+---
+ fs/erofs/erofs_fs.h        | 316 +++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/magic.h |   1 +
+ 2 files changed, 317 insertions(+)
  create mode 100644 fs/erofs/erofs_fs.h
- create mode 100644 fs/erofs/inode.c
- create mode 100644 fs/erofs/internal.h
- create mode 100644 fs/erofs/namei.c
- create mode 100644 fs/erofs/super.c
- create mode 100644 fs/erofs/tagptr.h
- create mode 100644 fs/erofs/utils.c
- create mode 100644 fs/erofs/xattr.c
- create mode 100644 fs/erofs/xattr.h
- create mode 100644 fs/erofs/zdata.c
- create mode 100644 fs/erofs/zdata.h
- create mode 100644 fs/erofs/zmap.c
- create mode 100644 fs/erofs/zpvec.h
- create mode 100644 include/trace/events/erofs.h
 
+diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
+new file mode 100644
+index 000000000000..e418725abfd6
+--- /dev/null
++++ b/fs/erofs/erofs_fs.h
+@@ -0,0 +1,316 @@
++/* SPDX-License-Identifier: GPL-2.0 OR Apache-2.0 */
++/*
++ * linux/fs/erofs/erofs_fs.h
++ *
++ * Copyright (C) 2017-2018 HUAWEI, Inc.
++ *             http://www.huawei.com/
++ * Created by Gao Xiang <gaoxiang25@huawei.com>
++ */
++#ifndef __EROFS_FS_H
++#define __EROFS_FS_H
++
++/* Enhanced(Extended) ROM File System */
++#define EROFS_SUPER_OFFSET      1024
++
++/*
++ * Any bits that aren't in EROFS_ALL_REQUIREMENTS should be
++ * incompatible with this kernel version.
++ */
++#define EROFS_REQUIREMENT_LZ4_0PADDING	0x00000001
++#define EROFS_ALL_REQUIREMENTS		0
++
++struct erofs_super_block {
++/*  0 */__le32 magic;           /* in the little endian */
++/*  4 */__le32 checksum;        /* crc32c(super_block) */
++/*  8 */__le32 features;        /* (aka. feature_compat) */
++/* 12 */__u8 blkszbits;         /* support block_size == PAGE_SIZE only */
++/* 13 */__u8 reserved;
++
++/* 14 */__le16 root_nid;
++/* 16 */__le64 inos;            /* total valid ino # (== f_files - f_favail) */
++
++/* 24 */__le64 build_time;      /* inode v1 time derivation */
++/* 32 */__le32 build_time_nsec;
++/* 36 */__le32 blocks;          /* used for statfs */
++/* 40 */__le32 meta_blkaddr;
++/* 44 */__le32 xattr_blkaddr;
++/* 48 */__u8 uuid[16];          /* 128-bit uuid for volume */
++/* 64 */__u8 volume_name[16];   /* volume name */
++/* 80 */__le32 requirements;    /* (aka. feature_incompat) */
++
++/* 84 */__u8 reserved2[44];
++} __packed;                     /* 128 bytes */
++
++/*
++ * erofs inode data mapping:
++ * 0 - inode plain without inline data A:
++ * inode, [xattrs], ... | ... | no-holed data
++ * 1 - inode VLE compression B (legacy):
++ * inode, [xattrs], extents ... | ...
++ * 2 - inode plain with inline data C:
++ * inode, [xattrs], last_inline_data, ... | ... | no-holed data
++ * 3 - inode compression D:
++ * inode, [xattrs], map_header, extents ... | ...
++ * 4~7 - reserved
++ */
++enum {
++	EROFS_INODE_FLAT_PLAIN,
++	EROFS_INODE_FLAT_COMPRESSION_LEGACY,
++	EROFS_INODE_FLAT_INLINE,
++	EROFS_INODE_FLAT_COMPRESSION,
++	EROFS_INODE_LAYOUT_MAX
++};
++
++static bool erofs_inode_is_data_compressed(unsigned int datamode)
++{
++	if (datamode == EROFS_INODE_FLAT_COMPRESSION)
++		return true;
++	return datamode == EROFS_INODE_FLAT_COMPRESSION_LEGACY;
++}
++
++/* bit definitions of inode i_advise */
++#define EROFS_I_VERSION_BITS            1
++#define EROFS_I_DATA_MAPPING_BITS       3
++
++#define EROFS_I_VERSION_BIT             0
++#define EROFS_I_DATA_MAPPING_BIT        1
++
++struct erofs_inode_v1 {
++/*  0 */__le16 i_advise;
++
++/* 1 header + n-1 * 4 bytes inline xattr to keep continuity */
++/*  2 */__le16 i_xattr_icount;
++/*  4 */__le16 i_mode;
++/*  6 */__le16 i_nlink;
++/*  8 */__le32 i_size;
++/* 12 */__le32 i_reserved;
++/* 16 */union {
++		/* file total compressed blocks for data mapping 1 */
++		__le32 compressed_blocks;
++		__le32 raw_blkaddr;
++
++		/* for device files, used to indicate old/new device # */
++		__le32 rdev;
++	} i_u __packed;
++/* 20 */__le32 i_ino;           /* only used for 32-bit stat compatibility */
++/* 24 */__le16 i_uid;
++/* 26 */__le16 i_gid;
++/* 28 */__le32 i_reserved2;
++} __packed;
++
++/* 32 bytes on-disk inode */
++#define EROFS_INODE_LAYOUT_V1   0
++/* 64 bytes on-disk inode */
++#define EROFS_INODE_LAYOUT_V2   1
++
++struct erofs_inode_v2 {
++/*  0 */__le16 i_advise;
++
++/* 1 header + n-1 * 4 bytes inline xattr to keep continuity */
++/*  2 */__le16 i_xattr_icount;
++/*  4 */__le16 i_mode;
++/*  6 */__le16 i_reserved;
++/*  8 */__le64 i_size;
++/* 16 */union {
++		/* file total compressed blocks for data mapping 1 */
++		__le32 compressed_blocks;
++		__le32 raw_blkaddr;
++
++		/* for device files, used to indicate old/new device # */
++		__le32 rdev;
++	} i_u __packed;
++
++	/* only used for 32-bit stat compatibility */
++/* 20 */__le32 i_ino;
++
++/* 24 */__le32 i_uid;
++/* 28 */__le32 i_gid;
++/* 32 */__le64 i_ctime;
++/* 40 */__le32 i_ctime_nsec;
++/* 44 */__le32 i_nlink;
++/* 48 */__u8   i_reserved2[16];
++} __packed;                     /* 64 bytes */
++
++#define EROFS_MAX_SHARED_XATTRS         (128)
++/* h_shared_count between 129 ... 255 are special # */
++#define EROFS_SHARED_XATTR_EXTENT       (255)
++
++/*
++ * inline xattrs (n == i_xattr_icount):
++ * erofs_xattr_ibody_header(1) + (n - 1) * 4 bytes
++ *          12 bytes           /                   \
++ *                            /                     \
++ *                           /-----------------------\
++ *                           |  erofs_xattr_entries+ |
++ *                           +-----------------------+
++ * inline xattrs must starts in erofs_xattr_ibody_header,
++ * for read-only fs, no need to introduce h_refcount
++ */
++struct erofs_xattr_ibody_header {
++	__le32 h_reserved;
++	__u8   h_shared_count;
++	__u8   h_reserved2[7];
++	__le32 h_shared_xattrs[0];      /* shared xattr id array */
++} __packed;
++
++/* Name indexes */
++#define EROFS_XATTR_INDEX_USER              1
++#define EROFS_XATTR_INDEX_POSIX_ACL_ACCESS  2
++#define EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT 3
++#define EROFS_XATTR_INDEX_TRUSTED           4
++#define EROFS_XATTR_INDEX_LUSTRE            5
++#define EROFS_XATTR_INDEX_SECURITY          6
++
++/* xattr entry (for both inline & shared xattrs) */
++struct erofs_xattr_entry {
++	__u8   e_name_len;      /* length of name */
++	__u8   e_name_index;    /* attribute name index */
++	__le16 e_value_size;    /* size of attribute value */
++	/* followed by e_name and e_value */
++	char   e_name[0];       /* attribute name */
++} __packed;
++
++#define ondisk_xattr_ibody_size(count)	({\
++	u32 __count = le16_to_cpu(count); \
++	((__count) == 0) ? 0 : \
++	sizeof(struct erofs_xattr_ibody_header) + \
++		sizeof(__u32) * ((__count) - 1); })
++
++#define EROFS_XATTR_ALIGN(size) round_up(size, sizeof(struct erofs_xattr_entry))
++#define EROFS_XATTR_ENTRY_SIZE(entry) EROFS_XATTR_ALIGN( \
++	sizeof(struct erofs_xattr_entry) + \
++	(entry)->e_name_len + le16_to_cpu((entry)->e_value_size))
++
++/* available compression algorithm types */
++enum {
++	Z_EROFS_COMPRESSION_LZ4,
++	Z_EROFS_COMPRESSION_MAX
++};
++
++/*
++ * bit 0 : COMPACTED_2B indexes (0 - off; 1 - on)
++ *  e.g. for 4k logical cluster size,      4B        if compacted 2B is off;
++ *                                  (4B) + 2B + (4B) if compacted 2B is on.
++ */
++#define Z_EROFS_ADVISE_COMPACTED_2B_BIT         0
++
++#define Z_EROFS_ADVISE_COMPACTED_2B     (1 << Z_EROFS_ADVISE_COMPACTED_2B_BIT)
++
++struct z_erofs_map_header {
++	__le32	h_reserved1;
++	__le16	h_advise;
++	/*
++	 * bit 0-3 : algorithm type of head 1 (logical cluster type 01);
++	 * bit 4-7 : algorithm type of head 2 (logical cluster type 11).
++	 */
++	__u8	h_algorithmtype;
++	/*
++	 * bit 0-2 : logical cluster bits - 12, e.g. 0 for 4096;
++	 * bit 3-4 : (physical - logical) cluster bits of head 1:
++	 *       For example, if logical clustersize = 4096, 1 for 8192.
++	 * bit 5-7 : (physical - logical) cluster bits of head 2.
++	 */
++	__u8	h_clusterbits;
++};
++
++#define Z_EROFS_VLE_LEGACY_HEADER_PADDING       8
++
++/*
++ * Z_EROFS Variable-sized Logical Extent cluster type:
++ *    0 - literal (uncompressed) cluster
++ *    1 - compressed cluster (for the head logical cluster)
++ *    2 - compressed cluster (for the other logical clusters)
++ *
++ * In detail,
++ *    0 - literal (uncompressed) cluster,
++ *        di_advise = 0
++ *        di_clusterofs = the literal data offset of the cluster
++ *        di_blkaddr = the blkaddr of the literal cluster
++ *
++ *    1 - compressed cluster (for the head logical cluster)
++ *        di_advise = 1
++ *        di_clusterofs = the decompressed data offset of the cluster
++ *        di_blkaddr = the blkaddr of the compressed cluster
++ *
++ *    2 - compressed cluster (for the other logical clusters)
++ *        di_advise = 2
++ *        di_clusterofs =
++ *           the decompressed data offset in its own head cluster
++ *        di_u.delta[0] = distance to its corresponding head cluster
++ *        di_u.delta[1] = distance to its corresponding tail cluster
++ *                (di_advise could be 0, 1 or 2)
++ */
++enum {
++	Z_EROFS_VLE_CLUSTER_TYPE_PLAIN,
++	Z_EROFS_VLE_CLUSTER_TYPE_HEAD,
++	Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD,
++	Z_EROFS_VLE_CLUSTER_TYPE_RESERVED,
++	Z_EROFS_VLE_CLUSTER_TYPE_MAX
++};
++
++#define Z_EROFS_VLE_DI_CLUSTER_TYPE_BITS        2
++#define Z_EROFS_VLE_DI_CLUSTER_TYPE_BIT         0
++
++struct z_erofs_vle_decompressed_index {
++	__le16 di_advise;
++	/* where to decompress in the head cluster */
++	__le16 di_clusterofs;
++
++	union {
++		/* for the head cluster */
++		__le32 blkaddr;
++		/*
++		 * for the rest clusters
++		 * eg. for 4k page-sized cluster, maximum 4K*64k = 256M)
++		 * [0] - pointing to the head cluster
++		 * [1] - pointing to the tail cluster
++		 */
++		__le16 delta[2];
++	} di_u __packed;		/* 8 bytes */
++} __packed;
++
++#define Z_EROFS_VLE_LEGACY_INDEX_ALIGN(size) \
++	(round_up(size, sizeof(struct z_erofs_vle_decompressed_index)) + \
++	 sizeof(struct z_erofs_map_header) + Z_EROFS_VLE_LEGACY_HEADER_PADDING)
++
++/* dirent sorts in alphabet order, thus we can do binary search */
++struct erofs_dirent {
++	__le64 nid;     /*  0, node number */
++	__le16 nameoff; /*  8, start offset of file name */
++	__u8 file_type; /* 10, file type */
++	__u8 reserved;  /* 11, reserved */
++} __packed;
++
++/* file types used in inode_info->flags */
++enum {
++	EROFS_FT_UNKNOWN,
++	EROFS_FT_REG_FILE,
++	EROFS_FT_DIR,
++	EROFS_FT_CHRDEV,
++	EROFS_FT_BLKDEV,
++	EROFS_FT_FIFO,
++	EROFS_FT_SOCK,
++	EROFS_FT_SYMLINK,
++	EROFS_FT_MAX
++};
++
++#define EROFS_NAME_LEN      255
++
++/* check the EROFS on-disk layout strictly at compile time */
++static inline void erofs_check_ondisk_layout_definitions(void)
++{
++	BUILD_BUG_ON(sizeof(struct erofs_super_block) != 128);
++	BUILD_BUG_ON(sizeof(struct erofs_inode_v1) != 32);
++	BUILD_BUG_ON(sizeof(struct erofs_inode_v2) != 64);
++	BUILD_BUG_ON(sizeof(struct erofs_xattr_ibody_header) != 12);
++	BUILD_BUG_ON(sizeof(struct erofs_xattr_entry) != 4);
++	BUILD_BUG_ON(sizeof(struct z_erofs_map_header) != 8);
++	BUILD_BUG_ON(sizeof(struct z_erofs_vle_decompressed_index) != 8);
++	BUILD_BUG_ON(sizeof(struct erofs_dirent) != 12);
++
++	BUILD_BUG_ON(BIT(Z_EROFS_VLE_DI_CLUSTER_TYPE_BITS) <
++		     Z_EROFS_VLE_CLUSTER_TYPE_MAX - 1);
++}
++
++#endif
++
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index f8c00045d537..2e236666a03e 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -19,6 +19,7 @@
+ #define SQUASHFS_MAGIC		0x73717368
+ #define ECRYPTFS_SUPER_MAGIC	0xf15f
+ #define EFS_SUPER_MAGIC		0x414A53
++#define EROFS_SUPER_MAGIC_V1	0xE0F5E1E2
+ #define EXT2_SUPER_MAGIC	0xEF53
+ #define EXT3_SUPER_MAGIC	0xEF53
+ #define XENFS_SUPER_MAGIC	0xabba1974
 -- 
 2.17.1
 
