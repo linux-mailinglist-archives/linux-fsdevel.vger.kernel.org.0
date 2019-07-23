@@ -2,149 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F033371845
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 14:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E66B8718A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 14:49:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729933AbfGWMab (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jul 2019 08:30:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45866 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726438AbfGWMaa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jul 2019 08:30:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6BAE3AD7B;
-        Tue, 23 Jul 2019 12:30:28 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 3BB05DA7D5; Tue, 23 Jul 2019 14:31:05 +0200 (CEST)
-Date:   Tue, 23 Jul 2019 14:31:05 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Gao Xiang <hsiangkao@aol.com>
-Cc:     dsterba@suse.cz, Gao Xiang <gaoxiang25@huawei.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v3 23/24] erofs: introduce cached decompression
-Message-ID: <20190723123104.GB2868@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Gao Xiang <hsiangkao@aol.com>,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
-        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>, Fang Wei <fangwei1@huawei.com>
-References: <20190722025043.166344-1-gaoxiang25@huawei.com>
- <20190722025043.166344-24-gaoxiang25@huawei.com>
- <20190722101818.GN20977@twin.jikos.cz>
- <41f1659a-0d16-4316-34fc-335b7d142d5c@aol.com>
+        id S1730526AbfGWMth (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jul 2019 08:49:37 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:46850 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726186AbfGWMth (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Jul 2019 08:49:37 -0400
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 1C2922E14BD;
+        Tue, 23 Jul 2019 15:49:33 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id fmQPnrek3M-nWNePTP1;
+        Tue, 23 Jul 2019 15:49:33 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1563886173; bh=zurua77u+0xi6TbhWif5eKYYbACOpA6ckuYdIyXtbcw=;
+        h=Message-ID:Date:To:From:Subject;
+        b=SxAiEfbMTe6g9rgjKAYpYyEw55A0/Cpf/8g/VkVC2mITNAE9pvdqSLU2VYWVp8Lkl
+         0Pbz4BSHklhJhaDSvJbL/2kwJxymf9bSMWsd/Qj9XGAs1qI+mLpTe+FsKgU2gWpDM7
+         PWIgws5dlKgyWtMCh/8WPswvwbcAOiLtGgIAc8wg=
+Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:38b3:1cdf:ad1a:1fe1])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id TrvRdaTa6V-nW6KTqe5;
+        Tue, 23 Jul 2019 15:49:32 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] mm/backing-dev: show state of all bdi_writeback in debugfs
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Tue, 23 Jul 2019 15:49:32 +0300
+Message-ID: <156388617236.3608.2194886130557491278.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <41f1659a-0d16-4316-34fc-335b7d142d5c@aol.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 06:58:59PM +0800, Gao Xiang wrote:
-> On 2019/7/22 ????6:18, David Sterba wrote:
-> > On Mon, Jul 22, 2019 at 10:50:42AM +0800, Gao Xiang wrote:
-> >> +choice
-> >> +	prompt "EROFS Data Decompression mode"
-> >> +	depends on EROFS_FS_ZIP
-> >> +	default EROFS_FS_ZIP_CACHE_READAROUND
-> >> +	help
-> >> +	  EROFS supports three options for decompression.
-> >> +	  "In-place I/O Only" consumes the minimum memory
-> >> +	  with lowest random read.
-> >> +
-> >> +	  "Cached Decompression for readaround" consumes
-> >> +	  the maximum memory with highest random read.
-> >> +
-> >> +	  If unsure, select "Cached Decompression for readaround"
-> >> +
-> >> +config EROFS_FS_ZIP_CACHE_DISABLED
-> >> +	bool "In-place I/O Only"
-> >> +	help
-> >> +	  Read compressed data into page cache and do in-place
-> >> +	  I/O decompression directly.
-> >> +
-> >> +config EROFS_FS_ZIP_CACHE_READAHEAD
-> >> +	bool "Cached Decompression for readahead"
-> >> +	help
-> >> +	  For each request, it caches the last compressed page
-> >> +	  for further reading.
-> >> +	  It still does in-place I/O for the rest compressed pages.
-> >> +
-> >> +config EROFS_FS_ZIP_CACHE_READAROUND
-> >> +	bool "Cached Decompression for readaround"
-> >> +	help
-> >> +	  For each request, it caches the both end compressed pages
-> >> +	  for further reading.
-> >> +	  It still does in-place I/O for the rest compressed pages.
-> >> +
-> >> +	  Recommended for performance priority.
-> > 
-> > The number of individual Kconfig options is quite high, are you sure you
-> > need them to be split like that?
-> 
-> You mean the above? these are 3 cache strategies, which impact the
-> runtime memory consumption and performance. I tend to leave the above
-> as it-is...
+Currently /sys/kernel/debug/bdi/$maj:$min/stats shows only root bdi wb.
+With CONFIG_CGROUP_WRITEBACK=y there is one for each memory cgroup.
 
-No, I mean all Kconfig options, they're scattered over several patches,
-best seen in the checked out branch. The cache strategies are actually
-just one config option (choice).
+This patch shows here state of each bdi_writeback in form:
 
-> I'm not sure vm_map_ram() is always better than vmap() for all
-> platforms (it has noticeable performance impact). However that
-> seems true for my test machines (x86-64, arm64).
-> 
-> If vm_map_ram() is always the optimal choice compared with vmap(),
-> I will remove vmap() entirely, that is OK. But I am not sure for
-> every platforms though.
+<global state>
 
-You can select the implementation by platform, I don't know what are the
-criteria like cpu type etc, but I expect it's something that can be
-determined at module load time. Eventually a module parameter can be the
-the way to set it.
+Id: 1
+Cgroup: /
+<root wb state>
 
-> > And so on. I'd suggest to go through all the options and reconsider them
-> > to be built-in, or runtime settings. Debugging features like the fault
-> > injections could be useful on non-debugging builds too, so a separate
-> > option is fine, otherwise grouping other debugging options under the
-> > main EROFS_FS_DEBUG would look more logical.
-> 
-> The remaining one is EROFS_FS_CLUSTER_PAGE_LIMIT. It impacts the total
-> size of z_erofs_pcluster structure. It's a hard limit, and should be
-> configured as small as possible. I can remove it right now since multi-block
-> compression is not available now. However, it will be added again after
-> multi-block compression is supported.
-> 
-> So, How about leave it right now and use the default value?
+Id: xxx
+Cgroup: /path
+<cgroup wb state>
 
-From the Kconfig and build-time settings perspective I think it's
-misplaced. This affects testing, you'd have to rebuild and reinstall the
-module to test any change, while it's "just" a number that can be either
-module parameter, sysfs knob, mount option or special ioctl.
+Id: yyy
+Cgroup: /path2
+<cgroup wb state>
 
-But I may be wrong, EROFS is a special purpose filesystem, so the
-fine-grained build options might make sense (eg. due to smaller code).
-The question should be how does each option affect typical production
-build targets. Fewer is IMHO better.
+...
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ mm/backing-dev.c |  106 +++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 93 insertions(+), 13 deletions(-)
+
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index e8e89158adec..3e752c4bafaf 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -45,7 +45,7 @@ static void bdi_debug_init(void)
+ static int bdi_debug_stats_show(struct seq_file *m, void *v)
+ {
+ 	struct backing_dev_info *bdi = m->private;
+-	struct bdi_writeback *wb = &bdi->wb;
++	struct bdi_writeback *wb = v;
+ 	unsigned long background_thresh;
+ 	unsigned long dirty_thresh;
+ 	unsigned long wb_thresh;
+@@ -65,43 +65,123 @@ static int bdi_debug_stats_show(struct seq_file *m, void *v)
+ 			nr_dirty_time++;
+ 	spin_unlock(&wb->list_lock);
+ 
+-	global_dirty_limits(&background_thresh, &dirty_thresh);
+-	wb_thresh = wb_calc_thresh(wb, dirty_thresh);
+-
+ #define K(x) ((x) << (PAGE_SHIFT - 10))
++
++	/* global state */
++	if (wb == &bdi->wb) {
++		global_dirty_limits(&background_thresh, &dirty_thresh);
++		wb_thresh = wb_calc_thresh(wb, dirty_thresh);
++		seq_printf(m,
++			   "BdiDirtyThresh:     %10lu kB\n"
++			   "DirtyThresh:        %10lu kB\n"
++			   "BackgroundThresh:   %10lu kB\n"
++			   "bdi_list:           %10u\n",
++			   K(wb_thresh),
++			   K(dirty_thresh),
++			   K(background_thresh),
++			   !list_empty(&bdi->bdi_list));
++	}
++
++	/* cgroup header */
++#ifdef CONFIG_CGROUP_WRITEBACK
++	if (bdi->capabilities & BDI_CAP_CGROUP_WRITEBACK) {
++		size_t buflen, len;
++		char *buf;
++
++		seq_printf(m, "\nId: %d\nCgroup: ", wb->memcg_css->id);
++		buflen = seq_get_buf(m, &buf);
++		if (buf) {
++			len = cgroup_path(wb->memcg_css->cgroup, buf, buflen);
++			seq_commit(m, len <= buflen ? len : -1);
++			seq_putc(m, '\n');
++		}
++	}
++#endif /* CONFIG_CGROUP_WRITEBACK */
++
+ 	seq_printf(m,
+ 		   "BdiWriteback:       %10lu kB\n"
+ 		   "BdiReclaimable:     %10lu kB\n"
+-		   "BdiDirtyThresh:     %10lu kB\n"
+-		   "DirtyThresh:        %10lu kB\n"
+-		   "BackgroundThresh:   %10lu kB\n"
+ 		   "BdiDirtied:         %10lu kB\n"
+ 		   "BdiWritten:         %10lu kB\n"
+ 		   "BdiWriteBandwidth:  %10lu kBps\n"
++		   "BdiAvgWriteBwidth:  %10lu kBps\n"
+ 		   "b_dirty:            %10lu\n"
+ 		   "b_io:               %10lu\n"
+ 		   "b_more_io:          %10lu\n"
+ 		   "b_dirty_time:       %10lu\n"
+-		   "bdi_list:           %10u\n"
+ 		   "state:              %10lx\n",
+ 		   (unsigned long) K(wb_stat(wb, WB_WRITEBACK)),
+ 		   (unsigned long) K(wb_stat(wb, WB_RECLAIMABLE)),
+-		   K(wb_thresh),
+-		   K(dirty_thresh),
+-		   K(background_thresh),
+ 		   (unsigned long) K(wb_stat(wb, WB_DIRTIED)),
+ 		   (unsigned long) K(wb_stat(wb, WB_WRITTEN)),
+ 		   (unsigned long) K(wb->write_bandwidth),
++		   (unsigned long) K(wb->avg_write_bandwidth),
+ 		   nr_dirty,
+ 		   nr_io,
+ 		   nr_more_io,
+ 		   nr_dirty_time,
+-		   !list_empty(&bdi->bdi_list), bdi->wb.state);
++		   wb->state);
+ #undef K
+ 
+ 	return 0;
+ }
+-DEFINE_SHOW_ATTRIBUTE(bdi_debug_stats);
++
++static void *bdi_debug_stats_start(struct seq_file *m, loff_t *ppos)
++{
++	struct backing_dev_info *bdi = m->private;
++	struct bdi_writeback *wb;
++	loff_t pos = *ppos;
++
++	rcu_read_lock();
++	list_for_each_entry_rcu(wb, &bdi->wb_list, bdi_node)
++		if (pos-- == 0)
++			return wb;
++	return NULL;
++}
++
++static void *bdi_debug_stats_next(struct seq_file *m, void *v, loff_t *ppos)
++{
++	struct backing_dev_info *bdi = m->private;
++	struct bdi_writeback *wb = v;
++
++	list_for_each_entry_continue_rcu(wb, &bdi->wb_list, bdi_node) {
++		++*ppos;
++		return wb;
++	}
++	return NULL;
++}
++
++static void bdi_debug_stats_stop(struct seq_file *m, void *v)
++{
++	rcu_read_unlock();
++}
++
++static const struct seq_operations bdi_debug_stats_seq_ops = {
++	.start	= bdi_debug_stats_start,
++	.next	= bdi_debug_stats_next,
++	.stop	= bdi_debug_stats_stop,
++	.show	= bdi_debug_stats_show,
++};
++
++static int bdi_debug_stats_open(struct inode *inode, struct file *file)
++{
++	struct seq_file *m;
++	int ret;
++
++	ret = seq_open(file, &bdi_debug_stats_seq_ops);
++	if (!ret) {
++		m = file->private_data;
++		m->private = inode->i_private;
++	}
++	return ret;
++}
++
++static const struct file_operations bdi_debug_stats_fops = {
++	.open		= bdi_debug_stats_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= seq_release,
++};
+ 
+ static void bdi_debug_register(struct backing_dev_info *bdi, const char *name)
+ {
+
