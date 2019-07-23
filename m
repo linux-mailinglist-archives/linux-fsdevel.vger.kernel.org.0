@@ -2,199 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C99F71935
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 15:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3075719A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 15:45:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390233AbfGWNad (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jul 2019 09:30:33 -0400
-Received: from sonic302-20.consmr.mail.ir2.yahoo.com ([87.248.110.83]:42210
-        "EHLO sonic302-20.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727924AbfGWNac (ORCPT
+        id S2390312AbfGWNpy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jul 2019 09:45:54 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59826 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbfGWNpy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jul 2019 09:30:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1563888627; bh=c4EtERWmOlLnToAQZFFQ0tgD2PCoHHVP3KPET20i2Rc=; h=Subject:To:References:From:Cc:Date:In-Reply-To:From:Subject; b=hOJdM8Gt6pVCW6YyQ4XNXehelrl4JV9ErwYmtuxtnPNLyirHGF5FIg+8u7bp/3smfRPf0K2JXSfR3pQbMzzIzRzTW2sL80QGy3UPQOKTgxFtRcHaIoBey3zgH5d71CCHRi+mIWYiblGE0DCqQVLvdQq3LCDHY93VQ67jiZvuyKotHSxQv/lYoqJCG+zHqgl0hMQJkc3QVfrGAurWMF4pOPAogiYikej6rNV1KwvOFFmyXR6XLyl/3pNGPMMkegjjU0EFMCV657rZMgO1g4szXJTivxt+mPopzZ3S9xygr3dtBfNYg5p/V7sx7Kx6MmN7ih0m4zH/CrkwA09aHKn/vQ==
-X-YMail-OSG: VoRN6A4VM1l4MgAqDai7A20BNgPpLNGiGMptXZ7gTvP5UI0rOPzpRWwlssVYXrV
- b2E9kl3T.Wep2Eta6JYh71obWB5nE_4KkNvxKwBYubwNj4qjqO3N0c_hjVcXuUmO.X3eRDMXlHan
- Jw.EBIKmd2apV8D9AeKyU2.vJ01GnaXNGTinjm5bXnwVwy8bwbNq7Lex6fEACpIMtr.dr9qwiw85
- AHsRu5PbYo.kV280ouRr0Cl2QbdJkNJAMAXhcd_Od0Ni5YOCMgLKuZRcFKN2W6Yr2BP4YFBiU5Z5
- K81E29DdBVU2oYN1pmyRHKkb_yPZfY4g_lJHOiKBEHA7b2_bCsTcsD1LcOOo9h495WONkuK8U6hh
- eXFhX_fZEcKJbPAWiGy2eejGfgAuGqXiQi0eG7FsXcSaHEa62haLXZXljFwbT.iz26WmW6.kysxp
- CzzT2DvIvEHT97cNsz5JpvB90wjzL68rAzFuximpb4SbxOSGylB_cMGY9r.Sexz8YeWTK3yF4Wjy
- ayyWk4zcBkqMlGIvdAbkopbDjwYBlf.UPb7jxF477PR598s4IoMIl.ZDw3MxPM717lpjK2EK7TjD
- dp85PXh5Io0twhxdXxLRXLaoM3jSqLuaHsg7XmrhZlD6aDeY7I2DXkvXJfRre6.ci_.rCENk7jmK
- er5H47j3qzn3xCY01rW8IeuXTpPlr8Jy8Ut7D2kNBVUPOPUJN.RLvDONW8iDxbYymQFMY_cS0fJ2
- jGOStknuyGmgUD5mxxZFPyNf.3tNXpYGOUsy7yNOQBWcqqT5Eqgf0gXcBClWL5TJ7nXsG9mXStz4
- SAfLWLcxGbdbvMaLk2oAFYGH5LqygXQNgipBJpaK0NVXMT7bf8hPkMJZPsx5Z499AwPqZQyR07J2
- Bmw3hEEuTC6s9lWwaQsAmUJMj9zDak6btygzElH64_KOYHbJy2QdIcxKPQ2YQ.fP6a.Llx56wYJ8
- ccgYJ7auCAxfuoF6tBokKZBReZn49XZ8trDUAekir3LmKEFuz7QnkTEA6JvQQHW31y0t4.5C9SSz
- HmYM5kRIBKhuPmnnbKj7LKzimeUIQZeRTFj.7Yvis6BNMrl4PuUJIpbPcJl1lRjUKorm0ZlrX2O6
- pherF28Haf5FWhVQo6Lmt_qs6S4RLYJDZYiOSs6OYLP6Lt788lwG9UBc8fIO1VC.MaHyos4iIeKB
- zzgYB_t4KlbsOTz2q3BpQ84Pqtde6eV6iJ4Yk4mkly0e.aNinRnDY
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ir2.yahoo.com with HTTP; Tue, 23 Jul 2019 13:30:27 +0000
-Received: by smtp426.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 2f2ae19cf287ab3910bb19c095c0ecd7;
-          Tue, 23 Jul 2019 13:30:22 +0000 (UTC)
-Subject: Re: [PATCH v3 23/24] erofs: introduce cached decompression
-To:     dsterba@suse.cz
-References: <20190722025043.166344-1-gaoxiang25@huawei.com>
- <20190722025043.166344-24-gaoxiang25@huawei.com>
- <20190722101818.GN20977@twin.jikos.cz>
- <41f1659a-0d16-4316-34fc-335b7d142d5c@aol.com>
- <20190723123104.GB2868@twin.jikos.cz>
-From:   Gao Xiang <hsiangkao@aol.com>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Message-ID: <b623d1bc-7cb5-e466-10e1-bb3bfefcae10@aol.com>
-Date:   Tue, 23 Jul 2019 21:30:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Tue, 23 Jul 2019 09:45:54 -0400
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x6NDjRP2042320;
+        Tue, 23 Jul 2019 22:45:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Tue, 23 Jul 2019 22:45:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x6NDjQiU042312
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 23 Jul 2019 22:45:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts
+ around
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-security-module@vger.kernel.org
+References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
+ <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
+ <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
+ <20190708131831.GT17978@ZenIV.linux.org.uk> <874l3wo3gq.fsf@xmission.com>
+ <20190708180132.GU17978@ZenIV.linux.org.uk>
+ <20190708202124.GX17978@ZenIV.linux.org.uk> <87pnmkhxoy.fsf@xmission.com>
+ <5802b8b1-f734-1670-f83b-465eda133936@i-love.sakura.ne.jp>
+ <1698ec76-f56c-1e65-2f11-318c0ed225bb@i-love.sakura.ne.jp>
+ <e75d4a66-cfcf-2ce8-e82a-fdc80f01723d@canonical.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <7eb7378e-2eb8-c1ba-4e1f-ea8f5611f42b@i-love.sakura.ne.jp>
+Date:   Tue, 23 Jul 2019 22:45:29 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190723123104.GB2868@twin.jikos.cz>
-Content-Type: text/plain; charset=gbk
+In-Reply-To: <e75d4a66-cfcf-2ce8-e82a-fdc80f01723d@canonical.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Al, will you send this patch to 5.3-rcX via vfs.git tree?
 
-
-On 2019/7/23 ????8:31, David Sterba wrote:
-> On Mon, Jul 22, 2019 at 06:58:59PM +0800, Gao Xiang wrote:
->> On 2019/7/22 ????6:18, David Sterba wrote:
->>> On Mon, Jul 22, 2019 at 10:50:42AM +0800, Gao Xiang wrote:
->>>> +choice
->>>> +	prompt "EROFS Data Decompression mode"
->>>> +	depends on EROFS_FS_ZIP
->>>> +	default EROFS_FS_ZIP_CACHE_READAROUND
->>>> +	help
->>>> +	  EROFS supports three options for decompression.
->>>> +	  "In-place I/O Only" consumes the minimum memory
->>>> +	  with lowest random read.
->>>> +
->>>> +	  "Cached Decompression for readaround" consumes
->>>> +	  the maximum memory with highest random read.
->>>> +
->>>> +	  If unsure, select "Cached Decompression for readaround"
->>>> +
->>>> +config EROFS_FS_ZIP_CACHE_DISABLED
->>>> +	bool "In-place I/O Only"
->>>> +	help
->>>> +	  Read compressed data into page cache and do in-place
->>>> +	  I/O decompression directly.
->>>> +
->>>> +config EROFS_FS_ZIP_CACHE_READAHEAD
->>>> +	bool "Cached Decompression for readahead"
->>>> +	help
->>>> +	  For each request, it caches the last compressed page
->>>> +	  for further reading.
->>>> +	  It still does in-place I/O for the rest compressed pages.
->>>> +
->>>> +config EROFS_FS_ZIP_CACHE_READAROUND
->>>> +	bool "Cached Decompression for readaround"
->>>> +	help
->>>> +	  For each request, it caches the both end compressed pages
->>>> +	  for further reading.
->>>> +	  It still does in-place I/O for the rest compressed pages.
->>>> +
->>>> +	  Recommended for performance priority.
+On 2019/07/23 13:16, John Johansen wrote:
+> On 7/22/19 3:12 AM, Tetsuo Handa wrote:
+>> I did not see AppArmor patch for this problem in 5.3-rc1. 
+>> John, are you OK with this patch for 5.2-stable and 5.3 ?
+>>
+> yes, I have some larger mount rework and clean-up to do and an apparmor
+> patch for this is waiting on that. Looking at the thread I am wondering
+> where my previous reply is, probably lost in a mail client crash, I have
+> had a few of those lately.
+> 
+> Acked-by: John Johansen <john.johansen@canonical.com>
+> 
+> 
+>> On 2019/07/09 19:51, Tetsuo Handa wrote:
+>>> For now, can we apply this patch for 5.2-stable ?
 >>>
->>> The number of individual Kconfig options is quite high, are you sure you
->>> need them to be split like that?
+>>>
+>>> >From dd62fab0592e02580fd5a34222a2d11bfc179f61 Mon Sep 17 00:00:00 2001
+>>> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>>> Date: Tue, 9 Jul 2019 19:05:49 +0900
+>>> Subject: [PATCH] LSM: Disable move_mount() syscall when TOMOYO or AppArmor is enabled.
+>>>
+>>> Commit 2db154b3ea8e14b0 ("vfs: syscall: Add move_mount(2) to move mounts
+>>> around") introduced security_move_mount() LSM hook, but we missed that
+>>> TOMOYO and AppArmor did not implement hooks for checking move_mount(2).
+>>> For pathname based access controls like TOMOYO and AppArmor, unchecked
+>>> mount manipulation is not acceptable. Therefore, until TOMOYO and AppArmor
+>>> implement hooks, in order to avoid unchecked mount manipulation, pretend
+>>> as if move_mount(2) is unavailable when either TOMOYO or AppArmor is
+>>> enabled.
+>>>
+>>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>>> Fixes: 2db154b3ea8e14b0 ("vfs: syscall: Add move_mount(2) to move mounts around")
+>>> Cc: stable@vger.kernel.org # 5.2
+>>> ---
+>>>  include/linux/lsm_hooks.h | 6 ++++++
+>>>  security/apparmor/lsm.c   | 1 +
+>>>  security/tomoyo/tomoyo.c  | 1 +
+>>>  3 files changed, 8 insertions(+)
+>>>
+>>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>>> index 47f58cf..cd411b7 100644
+>>> --- a/include/linux/lsm_hooks.h
+>>> +++ b/include/linux/lsm_hooks.h
+>>> @@ -2142,4 +2142,10 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+>>>  
+>>>  extern int lsm_inode_alloc(struct inode *inode);
+>>>  
+>>> +static inline int no_move_mount(const struct path *from_path,
+>>> +				const struct path *to_path)
+>>> +{
+>>> +	return -ENOSYS;
+>>> +}
+>>> +
+>>>  #endif /* ! __LINUX_LSM_HOOKS_H */
+>>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+>>> index ec3a928..5cdf63b 100644
+>>> --- a/security/apparmor/lsm.c
+>>> +++ b/security/apparmor/lsm.c
+>>> @@ -1158,6 +1158,7 @@ struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_after_init = {
+>>>  	LSM_HOOK_INIT(capable, apparmor_capable),
+>>>  
+>>>  	LSM_HOOK_INIT(sb_mount, apparmor_sb_mount),
+>>> +	LSM_HOOK_INIT(move_mount, no_move_mount),
+>>>  	LSM_HOOK_INIT(sb_umount, apparmor_sb_umount),
+>>>  	LSM_HOOK_INIT(sb_pivotroot, apparmor_sb_pivotroot),
+>>>  
+>>> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+>>> index 716c92e..be1b1a1 100644
+>>> --- a/security/tomoyo/tomoyo.c
+>>> +++ b/security/tomoyo/tomoyo.c
+>>> @@ -558,6 +558,7 @@ static void tomoyo_task_free(struct task_struct *task)
+>>>  	LSM_HOOK_INIT(path_chown, tomoyo_path_chown),
+>>>  	LSM_HOOK_INIT(path_chroot, tomoyo_path_chroot),
+>>>  	LSM_HOOK_INIT(sb_mount, tomoyo_sb_mount),
+>>> +	LSM_HOOK_INIT(move_mount, no_move_mount),
+>>>  	LSM_HOOK_INIT(sb_umount, tomoyo_sb_umount),
+>>>  	LSM_HOOK_INIT(sb_pivotroot, tomoyo_sb_pivotroot),
+>>>  	LSM_HOOK_INIT(socket_bind, tomoyo_socket_bind),
+>>>
 >>
->> You mean the above? these are 3 cache strategies, which impact the
->> runtime memory consumption and performance. I tend to leave the above
->> as it-is...
 > 
-> No, I mean all Kconfig options, they're scattered over several patches,
-> best seen in the checked out branch. The cache strategies are actually
-> just one config option (choice).
-
-I will change the cache strategy at runtime as Ted suggested.
-The cost is actually that erofs will always need a managed_cache inode
-even though users just use in-place IO for their products.
-
-However, I notice that using separated Kconfig will make test harder,
-so that it leads to more bugs, that is what I really care about.
-
-Therefore I think making it at runtime is OK for me.
-
 > 
->> I'm not sure vm_map_ram() is always better than vmap() for all
->> platforms (it has noticeable performance impact). However that
->> seems true for my test machines (x86-64, arm64).
->>
->> If vm_map_ram() is always the optimal choice compared with vmap(),
->> I will remove vmap() entirely, that is OK. But I am not sure for
->> every platforms though.
-> 
-> You can select the implementation by platform, I don't know what are the
-> criteria like cpu type etc, but I expect it's something that can be
-> determined at module load time. Eventually a module parameter can be the
-> the way to set it.
 
-OK, module parameter makes sense for me, and the overhead may be
-unnoticeable. I think it is fine to me.
-
-> 
->>> And so on. I'd suggest to go through all the options and reconsider them
->>> to be built-in, or runtime settings. Debugging features like the fault
->>> injections could be useful on non-debugging builds too, so a separate
->>> option is fine, otherwise grouping other debugging options under the
->>> main EROFS_FS_DEBUG would look more logical.
->>
->> The remaining one is EROFS_FS_CLUSTER_PAGE_LIMIT. It impacts the total
->> size of z_erofs_pcluster structure. It's a hard limit, and should be
->> configured as small as possible. I can remove it right now since multi-block
->> compression is not available now. However, it will be added again after
->> multi-block compression is supported.
->>
->> So, How about leave it right now and use the default value?
-> 
-> From the Kconfig and build-time settings perspective I think it's
-> misplaced. This affects testing, you'd have to rebuild and reinstall the
-> module to test any change, while it's "just" a number that can be either
-> module parameter, sysfs knob, mount option or special ioctl.
-> 
-> But I may be wrong, EROFS is a special purpose filesystem, so the
-> fine-grained build options might make sense (eg. due to smaller code).
-> The question should be how does each option affect typical production
-> build targets. Fewer is IMHO better.
-I have to admit, EROFS still has some special stuffs now (since we still
-have some TODO), However, I don't think EROFS cannot be effectively used
-for many productive uses right now.
-
-Considering that using linux-staging stuff is dangerous / unsuitable for
-most of companies, out of staging is better...
-
-And we still have to improve it to be more generic by time like what other fses do
-(IMO, writing a generic compression fs is not hard, many fses are there.
-I need to think more carefully in case of some performance loss which is out of
-too straight-forward generic code)...
-
-To be more specific, as for EROFS_FS_CLUSTER_PAGE_LIMIT...
-
-In the long term, I can introduce "struct biovec_slab"-like to erofs as
-in block/bio.c to support variable-sized z_erofs_pcluster.
-
-In the short term, I think EROFS_FS_CLUSTER_PAGE_LIMIT can be better set to
-the default value. It is a hard uplimit of the structure z_erofs_pcluster,
-which will greatly impact the memory consumption...
-
-Even if EROFS_FS_CLUSTER_PAGE_LIMIT is removed in the later Linux version
-by introducing biovec_slab-like stuff, I think it will have little influence
-to users? so I think that is a minor thing? Or I misunderstand something?
-
-Thanks,
-Gao Xiang
