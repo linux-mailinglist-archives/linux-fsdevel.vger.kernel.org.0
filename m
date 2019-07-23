@@ -2,174 +2,267 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 818B97105B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 06:16:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14FAC71142
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 07:36:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfGWEQ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jul 2019 00:16:57 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35771 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbfGWEQ5 (ORCPT
+        id S1728494AbfGWFg0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jul 2019 01:36:26 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39639 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfGWFg0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jul 2019 00:16:57 -0400
-Received: from static-50-53-33-191.bvtn.or.frontiernet.net ([50.53.33.191] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1hpmEP-0004Sk-3Z; Tue, 23 Jul 2019 04:16:53 +0000
-Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts
- around
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-security-module@vger.kernel.org
-References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
- <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
- <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
- <20190708131831.GT17978@ZenIV.linux.org.uk> <874l3wo3gq.fsf@xmission.com>
- <20190708180132.GU17978@ZenIV.linux.org.uk>
- <20190708202124.GX17978@ZenIV.linux.org.uk> <87pnmkhxoy.fsf@xmission.com>
- <5802b8b1-f734-1670-f83b-465eda133936@i-love.sakura.ne.jp>
- <1698ec76-f56c-1e65-2f11-318c0ed225bb@i-love.sakura.ne.jp>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <e75d4a66-cfcf-2ce8-e82a-fdc80f01723d@canonical.com>
-Date:   Mon, 22 Jul 2019 21:16:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 23 Jul 2019 01:36:26 -0400
+Received: by mail-io1-f66.google.com with SMTP id f4so79239571ioh.6;
+        Mon, 22 Jul 2019 22:36:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bRU0cjTa08e/p52b5y5nL1d1323iBABGlPTDO+DIpBA=;
+        b=Fo+PsHO+KeG2xguakssGRc9y0fjr346kbBonhdR0hVOwFanbliNTu3z57vxrCFdv7U
+         js2idgS+JYPYcmmzv3iOfGpENdtQsosuzOIHYhf0LkYzE8f4J1RxA3dYlvCWwIlt4KrF
+         4Wle9otalLel1zwVctP7Q2MUsMnRihsrwPut6L+wxiksAA8yr6odEwjspo8Du9r0mJA5
+         Glsqy/ALsKnGHTTq0LU3zyCKUc+BTRnoh7Gfh7NtEA6mhkv9ZCJPzUIX26x6xemN6O28
+         D+uS0/OzSd7pKtp5syda3uv09ciKhDPoE4Jpbx9U48FaQP8XlOVRJqqCIW3hVKe7src1
+         +sqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=bRU0cjTa08e/p52b5y5nL1d1323iBABGlPTDO+DIpBA=;
+        b=cbX1JU46ZHvo7KBcwVJR4TZyRouL7GoeMsOSxw0GEsZUxX98BbUgHUdBjemuNVR0sm
+         OIO/0BHVG0UaamJoUNU2mZIug+nxsoTtsMFazqibScJAfbmS1DNVDcLlSTcwG1/+M+eI
+         2RcjFhvNJZonMn5QArhPHtS6JLkgXsohTK9bSyQGSAlWQxUzKH5a+gZ22ftN2QZLO+5a
+         UCR9+R9JfIF/uzV6nAEx/yI2l1mvg+K6696LyQEdFPsRKp0CzDFTqn1JNAc/jMzHFM9P
+         5+hFJX3WnAtYuORS4+F79xqkxdJawlrcUhtHlT4eKehdsu040bMg9KNwx5k1RveLBgVl
+         U86w==
+X-Gm-Message-State: APjAAAXBRzxFDNiXTl7JCBh3+JRkt5vZtHrysHl8WKAqg2v3/DbSNK5a
+        3jsYcSzob0pwugUkqJQDlXszGFiJ4i7LAw==
+X-Google-Smtp-Source: APXvYqxFkJlJ3+KNQOIj+07cH8QWvYl/FT+kn4CDCosOb9uy1SYTIHF/ObIqKy6C/2OjP7zV7VUJcA==
+X-Received: by 2002:a02:7121:: with SMTP id n33mr75368393jac.19.1563860185255;
+        Mon, 22 Jul 2019 22:36:25 -0700 (PDT)
+Received: from sultan-box.localdomain (ip-174-149-195-86.englco.spcsdns.net. [174.149.195.86])
+        by smtp.gmail.com with ESMTPSA id l2sm29874615ioh.20.2019.07.22.22.36.23
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 22 Jul 2019 22:36:24 -0700 (PDT)
+From:   Sultan Alsawaf <sultan@kerneltoast.com>
+X-Google-Original-From: Sultan Alsawaf
+Cc:     Sultan Alsawaf <sultan@kerneltoast.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mbcache: Speed up cache entry creation
+Date:   Mon, 22 Jul 2019 23:35:49 -0600
+Message-Id: <20190723053549.14465-1-sultan@kerneltoast.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <1698ec76-f56c-1e65-2f11-318c0ed225bb@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/22/19 3:12 AM, Tetsuo Handa wrote:
-> I did not see AppArmor patch for this problem in 5.3-rc1. 
-> John, are you OK with this patch for 5.2-stable and 5.3 ?
-> 
-yes, I have some larger mount rework and clean-up to do and an apparmor
-patch for this is waiting on that. Looking at the thread I am wondering
-where my previous reply is, probably lost in a mail client crash, I have
-had a few of those lately.
+From: Sultan Alsawaf <sultan@kerneltoast.com>
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+In order to prevent redundant entry creation by racing against itself,
+mb_cache_entry_create scans through a hash-list of all current entries
+in order to see if another allocation for the requested new entry has
+been made. Furthermore, it allocates memory for a new entry before
+scanning through this hash-list, which results in that allocated memory
+being discarded when the requested new entry is already present.
 
+Speed up cache entry creation by keeping a small linked list of
+requested new entries in progress, and scanning through that first
+instead of the large hash-list. And don't allocate memory for a new
+entry until it's known that the allocated memory will be used.
 
-> On 2019/07/09 19:51, Tetsuo Handa wrote:
->> For now, can we apply this patch for 5.2-stable ?
->>
->>
->> >From dd62fab0592e02580fd5a34222a2d11bfc179f61 Mon Sep 17 00:00:00 2001
->> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Date: Tue, 9 Jul 2019 19:05:49 +0900
->> Subject: [PATCH] LSM: Disable move_mount() syscall when TOMOYO or AppArmor is enabled.
->>
->> Commit 2db154b3ea8e14b0 ("vfs: syscall: Add move_mount(2) to move mounts
->> around") introduced security_move_mount() LSM hook, but we missed that
->> TOMOYO and AppArmor did not implement hooks for checking move_mount(2).
->> For pathname based access controls like TOMOYO and AppArmor, unchecked
->> mount manipulation is not acceptable. Therefore, until TOMOYO and AppArmor
->> implement hooks, in order to avoid unchecked mount manipulation, pretend
->> as if move_mount(2) is unavailable when either TOMOYO or AppArmor is
->> enabled.
->>
->> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Fixes: 2db154b3ea8e14b0 ("vfs: syscall: Add move_mount(2) to move mounts around")
->> Cc: stable@vger.kernel.org # 5.2
->> ---
->>  include/linux/lsm_hooks.h | 6 ++++++
->>  security/apparmor/lsm.c   | 1 +
->>  security/tomoyo/tomoyo.c  | 1 +
->>  3 files changed, 8 insertions(+)
->>
->> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->> index 47f58cf..cd411b7 100644
->> --- a/include/linux/lsm_hooks.h
->> +++ b/include/linux/lsm_hooks.h
->> @@ -2142,4 +2142,10 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
->>  
->>  extern int lsm_inode_alloc(struct inode *inode);
->>  
->> +static inline int no_move_mount(const struct path *from_path,
->> +				const struct path *to_path)
->> +{
->> +	return -ENOSYS;
->> +}
->> +
->>  #endif /* ! __LINUX_LSM_HOOKS_H */
->> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->> index ec3a928..5cdf63b 100644
->> --- a/security/apparmor/lsm.c
->> +++ b/security/apparmor/lsm.c
->> @@ -1158,6 +1158,7 @@ struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_after_init = {
->>  	LSM_HOOK_INIT(capable, apparmor_capable),
->>  
->>  	LSM_HOOK_INIT(sb_mount, apparmor_sb_mount),
->> +	LSM_HOOK_INIT(move_mount, no_move_mount),
->>  	LSM_HOOK_INIT(sb_umount, apparmor_sb_umount),
->>  	LSM_HOOK_INIT(sb_pivotroot, apparmor_sb_pivotroot),
->>  
->> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
->> index 716c92e..be1b1a1 100644
->> --- a/security/tomoyo/tomoyo.c
->> +++ b/security/tomoyo/tomoyo.c
->> @@ -558,6 +558,7 @@ static void tomoyo_task_free(struct task_struct *task)
->>  	LSM_HOOK_INIT(path_chown, tomoyo_path_chown),
->>  	LSM_HOOK_INIT(path_chroot, tomoyo_path_chroot),
->>  	LSM_HOOK_INIT(sb_mount, tomoyo_sb_mount),
->> +	LSM_HOOK_INIT(move_mount, no_move_mount),
->>  	LSM_HOOK_INIT(sb_umount, tomoyo_sb_umount),
->>  	LSM_HOOK_INIT(sb_pivotroot, tomoyo_sb_pivotroot),
->>  	LSM_HOOK_INIT(socket_bind, tomoyo_socket_bind),
->>
-> 
+Signed-off-by: Sultan Alsawaf <sultan@kerneltoast.com>
+---
+ fs/mbcache.c | 82 ++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 57 insertions(+), 25 deletions(-)
+
+diff --git a/fs/mbcache.c b/fs/mbcache.c
+index 97c54d3a2227..289f3664061e 100644
+--- a/fs/mbcache.c
++++ b/fs/mbcache.c
+@@ -25,9 +25,14 @@
+  * size hash table is used for fast key lookups.
+  */
+ 
++struct mb_bucket {
++	struct hlist_bl_head hash;
++	struct list_head req_list;
++};
++
+ struct mb_cache {
+ 	/* Hash table of entries */
+-	struct hlist_bl_head	*c_hash;
++	struct mb_bucket	*c_bucket;
+ 	/* log2 of hash table size */
+ 	int			c_bucket_bits;
+ 	/* Maximum entries in cache to avoid degrading hash too much */
+@@ -42,15 +47,21 @@ struct mb_cache {
+ 	struct work_struct	c_shrink_work;
+ };
+ 
++struct mb_cache_req {
++	struct list_head lnode;
++	u32 key;
++	u64 value;
++};
++
+ static struct kmem_cache *mb_entry_cache;
+ 
+ static unsigned long mb_cache_shrink(struct mb_cache *cache,
+ 				     unsigned long nr_to_scan);
+ 
+-static inline struct hlist_bl_head *mb_cache_entry_head(struct mb_cache *cache,
+-							u32 key)
++static inline struct mb_bucket *mb_cache_entry_bucket(struct mb_cache *cache,
++						      u32 key)
+ {
+-	return &cache->c_hash[hash_32(key, cache->c_bucket_bits)];
++	return &cache->c_bucket[hash_32(key, cache->c_bucket_bits)];
+ }
+ 
+ /*
+@@ -77,6 +88,8 @@ int mb_cache_entry_create(struct mb_cache *cache, gfp_t mask, u32 key,
+ 	struct mb_cache_entry *entry, *dup;
+ 	struct hlist_bl_node *dup_node;
+ 	struct hlist_bl_head *head;
++	struct mb_cache_req *tmp_req, req;
++	struct mb_bucket *bucket;
+ 
+ 	/* Schedule background reclaim if there are too many entries */
+ 	if (cache->c_entry_count >= cache->c_max_entries)
+@@ -85,9 +98,33 @@ int mb_cache_entry_create(struct mb_cache *cache, gfp_t mask, u32 key,
+ 	if (cache->c_entry_count >= 2*cache->c_max_entries)
+ 		mb_cache_shrink(cache, SYNC_SHRINK_BATCH);
+ 
++	bucket = mb_cache_entry_bucket(cache, key);
++	head = &bucket->hash;
++	hlist_bl_lock(head);
++	list_for_each_entry(tmp_req, &bucket->req_list, lnode) {
++		if (tmp_req->key == key && tmp_req->value == value) {
++			hlist_bl_unlock(head);
++			return -EBUSY;
++		}
++	}
++	hlist_bl_for_each_entry(dup, dup_node, head, e_hash_list) {
++		if (dup->e_key == key && dup->e_value == value) {
++			hlist_bl_unlock(head);
++			return -EBUSY;
++		}
++	}
++	req.key = key;
++	req.value = value;
++	list_add(&req.lnode, &bucket->req_list);
++	hlist_bl_unlock(head);
++
+ 	entry = kmem_cache_alloc(mb_entry_cache, mask);
+-	if (!entry)
++	if (!entry) {
++		hlist_bl_lock(head);
++		list_del(&req.lnode);
++		hlist_bl_unlock(head);
+ 		return -ENOMEM;
++	}
+ 
+ 	INIT_LIST_HEAD(&entry->e_list);
+ 	/* One ref for hash, one ref returned */
+@@ -96,15 +133,9 @@ int mb_cache_entry_create(struct mb_cache *cache, gfp_t mask, u32 key,
+ 	entry->e_value = value;
+ 	entry->e_reusable = reusable;
+ 	entry->e_referenced = 0;
+-	head = mb_cache_entry_head(cache, key);
++
+ 	hlist_bl_lock(head);
+-	hlist_bl_for_each_entry(dup, dup_node, head, e_hash_list) {
+-		if (dup->e_key == key && dup->e_value == value) {
+-			hlist_bl_unlock(head);
+-			kmem_cache_free(mb_entry_cache, entry);
+-			return -EBUSY;
+-		}
+-	}
++	list_del(&req.lnode);
+ 	hlist_bl_add_head(&entry->e_hash_list, head);
+ 	hlist_bl_unlock(head);
+ 
+@@ -133,7 +164,7 @@ static struct mb_cache_entry *__entry_find(struct mb_cache *cache,
+ 	struct hlist_bl_node *node;
+ 	struct hlist_bl_head *head;
+ 
+-	head = mb_cache_entry_head(cache, key);
++	head = &mb_cache_entry_bucket(cache, key)->hash;
+ 	hlist_bl_lock(head);
+ 	if (entry && !hlist_bl_unhashed(&entry->e_hash_list))
+ 		node = entry->e_hash_list.next;
+@@ -202,7 +233,7 @@ struct mb_cache_entry *mb_cache_entry_get(struct mb_cache *cache, u32 key,
+ 	struct hlist_bl_head *head;
+ 	struct mb_cache_entry *entry;
+ 
+-	head = mb_cache_entry_head(cache, key);
++	head = &mb_cache_entry_bucket(cache, key)->hash;
+ 	hlist_bl_lock(head);
+ 	hlist_bl_for_each_entry(entry, node, head, e_hash_list) {
+ 		if (entry->e_key == key && entry->e_value == value) {
+@@ -230,7 +261,7 @@ void mb_cache_entry_delete(struct mb_cache *cache, u32 key, u64 value)
+ 	struct hlist_bl_head *head;
+ 	struct mb_cache_entry *entry;
+ 
+-	head = mb_cache_entry_head(cache, key);
++	head = &mb_cache_entry_bucket(cache, key)->hash;
+ 	hlist_bl_lock(head);
+ 	hlist_bl_for_each_entry(entry, node, head, e_hash_list) {
+ 		if (entry->e_key == key && entry->e_value == value) {
+@@ -300,7 +331,7 @@ static unsigned long mb_cache_shrink(struct mb_cache *cache,
+ 		 * from under us.
+ 		 */
+ 		spin_unlock(&cache->c_list_lock);
+-		head = mb_cache_entry_head(cache, entry->e_key);
++		head = &mb_cache_entry_bucket(cache, entry->e_key)->hash;
+ 		hlist_bl_lock(head);
+ 		if (!hlist_bl_unhashed(&entry->e_hash_list)) {
+ 			hlist_bl_del_init(&entry->e_hash_list);
+@@ -354,21 +385,22 @@ struct mb_cache *mb_cache_create(int bucket_bits)
+ 	cache->c_max_entries = bucket_count << 4;
+ 	INIT_LIST_HEAD(&cache->c_list);
+ 	spin_lock_init(&cache->c_list_lock);
+-	cache->c_hash = kmalloc_array(bucket_count,
+-				      sizeof(struct hlist_bl_head),
+-				      GFP_KERNEL);
+-	if (!cache->c_hash) {
++	cache->c_bucket = kmalloc_array(bucket_count, sizeof(*cache->c_bucket),
++					GFP_KERNEL);
++	if (!cache->c_bucket) {
+ 		kfree(cache);
+ 		goto err_out;
+ 	}
+-	for (i = 0; i < bucket_count; i++)
+-		INIT_HLIST_BL_HEAD(&cache->c_hash[i]);
++	for (i = 0; i < bucket_count; i++) {
++		INIT_HLIST_BL_HEAD(&cache->c_bucket[i].hash);
++		INIT_LIST_HEAD(&cache->c_bucket[i].req_list);
++	}
+ 
+ 	cache->c_shrink.count_objects = mb_cache_count;
+ 	cache->c_shrink.scan_objects = mb_cache_scan;
+ 	cache->c_shrink.seeks = DEFAULT_SEEKS;
+ 	if (register_shrinker(&cache->c_shrink)) {
+-		kfree(cache->c_hash);
++		kfree(cache->c_bucket);
+ 		kfree(cache);
+ 		goto err_out;
+ 	}
+@@ -409,7 +441,7 @@ void mb_cache_destroy(struct mb_cache *cache)
+ 		WARN_ON(atomic_read(&entry->e_refcnt) != 1);
+ 		mb_cache_entry_put(cache, entry);
+ 	}
+-	kfree(cache->c_hash);
++	kfree(cache->c_bucket);
+ 	kfree(cache);
+ }
+ EXPORT_SYMBOL(mb_cache_destroy);
+-- 
+2.22.0
 
