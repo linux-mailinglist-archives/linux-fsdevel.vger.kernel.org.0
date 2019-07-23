@@ -2,85 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF7A97227E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 00:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 380C0722D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 01:07:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732042AbfGWWgZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jul 2019 18:36:25 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45533 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727172AbfGWWgZ (ORCPT
+        id S1726271AbfGWXGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jul 2019 19:06:53 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:54148 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726220AbfGWXGx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jul 2019 18:36:25 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r1so19838439pfq.12;
-        Tue, 23 Jul 2019 15:36:24 -0700 (PDT)
+        Tue, 23 Jul 2019 19:06:53 -0400
+Received: by mail-pg1-f202.google.com with SMTP id t18so16975432pgu.20
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2019 16:06:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zNouKbF6UyPadfEdFSK5fRF7G6CWHnxRN1FzAl+dNYs=;
-        b=SdQIiqD4fkEQwr9X83RCA6yuwNBY1uChpKnXh3cAh+UZV7T/q90T66/ebWnSWzMdU1
-         4ZhW4dn/MufMU2L+7JiJDj0tARsd7/JfDcK7Kqqk3vaKGtlGIJNFTFOKuIVEJ0tJg6HV
-         nJBlNrJlbG4z+e88LPyvn8BrL/xxUJQuiugCiM1POSvapwm84nYrkEXh/Mp5F/0QCKHD
-         T4d7iSWVbnhNQvkYjTIxXZMgF9DK7sKqcgjD1ReNDbfobnDjlowVaYpWEDPDMZN2xhW7
-         pis75BozdMnhMsLgEScEd3kHzIXXtW8zbGK+ErLn5nFgdmWdRJBTzk0v8ZxIrsyj4e4i
-         052A==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=ypAciFLqcuJHhZlJfd3b9E/UNSP51lkN8ppY3+9yiV0=;
+        b=WQ3iNnYoSyu7xtrItLgp020OuxDdO2/iRV2uuk27rT/z0T/Ivgp2t0qpnjUQnutvGO
+         Kht4XkxfyI82pAf7iBAmzpAh3bma+GsOP/lWEILbL8XGZCUWOfR+zOJEZO+LCwqW1+0J
+         re12tXsPG1ZGIxtefWTTHZ0rmoSeptTv50oNwbBi/yxdBR8eGzy6vE71M02BrWaMSa2m
+         Wz74TCUFRRT36yUx5zDCm4LFO0AviBkQ0V64+68mNDKlBkz8NiEXI6tSXKyDDGRXxRym
+         +gBXn/6aa1ixajprqf1Gcl0vH57WykEURFDVSYksJJH5tW7lbed6XcGlVblOav8mCxix
+         p45A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zNouKbF6UyPadfEdFSK5fRF7G6CWHnxRN1FzAl+dNYs=;
-        b=lHezlGNQMLc06neDrlGeTu2C9jbKyLlRxOt/jlocy7Ycj217XlmUrHARZX9aeXleEW
-         1kGxfVrJ7+jlTgCBw8NBQgXy0lWSseNAAnrIXIw6l512r2/0oHMOntQRWcYjKt6wfL7l
-         FiSR8oMGA9qWzePUJovI8kK9fzoIS7jrBTETtXvhewGWg85ACeBb6Hl5S2EyWmiPfi+Z
-         6oqdKwmCOyNWa90AtbeWArqpQ+PObcT0v2e7gu50LriO0I/VwqbvBXSDcuMK+qXwwrDN
-         Vw6rVfu9kzVjR1K1qr/FM91leZgIPflK24v8Uk+a8uSNwgMJJamfya41YjTriPBW4uiB
-         SnTA==
-X-Gm-Message-State: APjAAAX+/XJDj4/9ssO2+FBrD/azA2l/bo2ooefm6EC1z6RC4394YTFP
-        ziDYOIDV2k/saph/qSLV3LU=
-X-Google-Smtp-Source: APXvYqziGHn+6jGrdziu5cLb9QnyDXXK2JmIkImwr7M2iRolvR/fyo5r25/cJX4zAbOa2Ux1/H46Dw==
-X-Received: by 2002:a62:5883:: with SMTP id m125mr7941308pfb.248.1563921384228;
-        Tue, 23 Jul 2019 15:36:24 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::2:2287])
-        by smtp.gmail.com with ESMTPSA id w132sm45870833pfd.78.2019.07.23.15.36.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Jul 2019 15:36:23 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 15:36:21 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Konstantin Khlebnikov <koct9i@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, Cgroups <cgroups@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH] mm/backing-dev: show state of all bdi_writeback in
- debugfs
-Message-ID: <20190723223621.GF696309@devbig004.ftw2.facebook.com>
-References: <156388617236.3608.2194886130557491278.stgit@buzz>
- <20190723130729.522976a1f075d748fc946ff6@linux-foundation.org>
- <CALYGNiMw_9MKxfCxq9QsXi3PbwQMwKmLufQqUnhYdt8C+sR2rA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALYGNiMw_9MKxfCxq9QsXi3PbwQMwKmLufQqUnhYdt8C+sR2rA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=ypAciFLqcuJHhZlJfd3b9E/UNSP51lkN8ppY3+9yiV0=;
+        b=Kismrg7Cif5eE4nfJnGzNTqfO4zujPcwFCB3Hj5fsHE8qBduRJUjQRvoBYVxz3eeYc
+         lSJicx02tJzN/kW7OfUCHlJZtnZP4QRqWQT5TabRb7j20lwnf585znP/Ap765GmuDVR2
+         jlwMkFxzsOVwT0hrA5g/SeOKaXjh+lYVY0g8BDC7W/eQ/a4BjaqjvIYkieK9Aho78O6c
+         fmIiFoNHk4c1DJoffaksG7uauuSvQy6D2EcEe8LieVGPAMdOMPHY+xfk9YuzhTbi/XMU
+         ptkY5MZcup78ySNhxceTwEH7kOogbSgjLxeNJgn7VHxAUFsafhoEz+i71pAikMECxZTv
+         vcTg==
+X-Gm-Message-State: APjAAAU7sLmyZqhuJvTPVgr04uRDW5+sGNA/vGTKaZkiQDthFiHwcUVk
+        inOJIcD5KsDqO13VqlxKzE43Up2TwEA=
+X-Google-Smtp-Source: APXvYqwz+0x7RONeJbKjUnRXjeymxUnQSwmgLwpHeeoqm1M6i5wivZrMYqkPk7JDlsvHSKoQHeWXu8isL0I=
+X-Received: by 2002:a63:1c22:: with SMTP id c34mr78125523pgc.56.1563923212254;
+ Tue, 23 Jul 2019 16:06:52 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 16:05:26 -0700
+Message-Id: <20190723230529.251659-1-drosen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
+Subject: [PATCH v4 0/3] Casefolding in F2FS
+From:   Daniel Rosenberg <drosen@google.com>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 12:24:41AM +0300, Konstantin Khlebnikov wrote:
-> Debugging such dynamic structure with gdb is a pain.
+These patches are largely based on the casefolding patches for ext4
 
-Use drgn.  It's a lot better than hard coding these debug features
-into the kernel.
+v4: Added FS_CASEFOLD_FL flag, added documentation that escaped the last
+    format-patch, moved setting dentry ops to f2fs_setup_casefold
+v3: Addressed feedback, apart from F2FS_CASEFOLD_FL/FS_CASEFOLD_FL
+    Added sysfs file "encoding" to see the encoding set on a filesystem
+v2: Rebased patches again master, changed f2fs_msg to f2fs_info/f2fs_err
 
-  https://github.com/osandov/drgn
+Daniel Rosenberg (3):
+  fs: Reserve flag for casefolding
+  f2fs: include charset encoding information in the superblock
+  f2fs: Support case-insensitive file name lookups
 
-Thanks.
+ Documentation/ABI/testing/sysfs-fs-f2fs |   7 ++
+ Documentation/filesystems/f2fs.txt      |   3 +
+ fs/f2fs/dir.c                           | 126 ++++++++++++++++++++++--
+ fs/f2fs/f2fs.h                          |  21 +++-
+ fs/f2fs/file.c                          |  16 ++-
+ fs/f2fs/hash.c                          |  35 ++++++-
+ fs/f2fs/inline.c                        |   4 +-
+ fs/f2fs/inode.c                         |   4 +-
+ fs/f2fs/namei.c                         |  21 ++++
+ fs/f2fs/super.c                         |  96 ++++++++++++++++++
+ fs/f2fs/sysfs.c                         |  23 +++++
+ include/linux/f2fs_fs.h                 |   9 +-
+ include/uapi/linux/fs.h                 |   1 +
+ tools/include/uapi/linux/fs.h           |   1 +
+ 14 files changed, 347 insertions(+), 20 deletions(-)
 
 -- 
-tejun
+2.22.0.657.g960e92d24f-goog
+
