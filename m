@@ -2,65 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D04E371B75
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 17:20:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA4C971CA6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 18:16:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730500AbfGWPUJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jul 2019 11:20:09 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46271 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbfGWPUJ (ORCPT
+        id S1730252AbfGWQQX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jul 2019 12:16:23 -0400
+Received: from UCOL19PA34.eemsg.mail.mil ([214.24.24.194]:29763 "EHLO
+        UCOL19PA34.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728180AbfGWQQW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jul 2019 11:20:09 -0400
-Received: by mail-pg1-f193.google.com with SMTP id k189so554222pgk.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2019 08:20:08 -0700 (PDT)
+        Tue, 23 Jul 2019 12:16:22 -0400
+X-EEMSG-check-017: 612692|UCOL19PA34_ESA_OUT01.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.64,299,1559520000"; 
+   d="scan'208";a="612692"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by UCOL19PA34.eemsg.mail.mil with ESMTP; 23 Jul 2019 16:16:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sMqaj6SGuLc8j2Ie/pnfPLRSqGInfw4Z/fscLy0d0hE=;
-        b=JalB773CKhMYQbon3eAFra8DgLUptwg6nV5QM/M4iWOmo6Mz9JDKYfqPvuyvbVA5M2
-         HJU8Mue5IR0ltMqCnRe4dpOUw53cybld7HYaNbRYmCvK7kgpAkEQ8y5cKyYTlHsFPVIh
-         EK5NdezKFepLPOR9+dqVstDY+f2n9BfberTkCNno914PUYfvbVv/2JIt6qXwyawA0nqM
-         WzwJ/SAtFy/IYy1YcR+tipCJUJy6zOv4496FsEkj47uJkNoeXbV/8U0vqkSG8l8dBYW4
-         QKIWaxcGhl+HcsXIMnM4qSNqIcxme/oBt5HXSX4rA3/hqmBo4Hh+BKHiqmU8Ufomt94J
-         7X0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sMqaj6SGuLc8j2Ie/pnfPLRSqGInfw4Z/fscLy0d0hE=;
-        b=PxPoaiqHuCX21NT+VR0ulc/QRhTZB0dMsW5BGJCsAb+naxOosDwRIY4claR5HgsXj8
-         cdPES/vFlt+Bkf6Ym64psLhxnczU/RAV5BRV6ylZ/ku8wshN0bzBgihNcoIGqyY1e8nU
-         wiZCAhn5VHR2loyz+1n16NijOE9HI7bwYjyq88W8CUo4U8ffyjyd4Jqa6Xi5Ckd069wb
-         JE0jwQvcdQIigvz0ohjcGSIkQVkvx6oDwkSuoQsP3BuZrwKwiSFBQJYnqZE14NKebn2T
-         0LykxAyTMb2AcJlLLLIYLFBKoJKV7RXdxNbjJtMAbNks6g/gpzs9hjAwJ85HyI23tHPC
-         Zo9A==
-X-Gm-Message-State: APjAAAW7jGgZdXAv1qg/llTK5Efcgf60D0TtX1M0gR3rQrsI0ewXc9f7
-        PHR04F47SLCkdtXYnK5N1Ao=
-X-Google-Smtp-Source: APXvYqymCR57kpY7Y+rT9jru5QurmeRERrc+/cqlKX6J3Cv+ot5V12N25HQTM41/Wjppk6XDAufdmQ==
-X-Received: by 2002:a63:f452:: with SMTP id p18mr51184567pgk.373.1563895208235;
-        Tue, 23 Jul 2019 08:20:08 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id p20sm64809458pgj.47.2019.07.23.08.20.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Jul 2019 08:20:07 -0700 (PDT)
-Subject: Re: EIO with io_uring O_DIRECT writes on ext4
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     linux-block@vger.kernel.org,
-        Aarushi Mehta <mehta.aaru20@gmail.com>,
-        Julia Suvorova <jusual@mail.ru>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-References: <20190723080701.GA3198@stefanha-x1.localdomain>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9a13c3b9-ecf2-6ba7-f0fb-c59a1e1539f3@kernel.dk>
-Date:   Tue, 23 Jul 2019 09:20:05 -0600
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1563898568; x=1595434568;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=VzouGgOn7bxXwD7qWHawlSBqaPeVOs5RApSCI+ZHzBI=;
+  b=YnYL2f0+4Z/nKFePQ+QUZEaS1/B9K1SpYEhEld2+XjmPJ3mhmFI0lZZu
+   p1+UF79ya38n7LY6RzqvTrHuU1Gt1bLPIGDdmC8US+no/YGYK42l+880F
+   t4gMCkOJ/osOaZJHuCXNpl2d5hjn9YaPISgJI57lbNpozNenhO9en7qY6
+   /Swe5v9+eUS9kJT+8Yz2bHjnS7l9Ip05fM1lZaYrA/olPlBAkX2cneESj
+   kvcOdwE/eInIJbGJA/DpYzkPUn/vWlElvcPLknx8Gw97qoFbNVJzQc8Lb
+   Drbx4rOIqp3OBEk3BXeQZpH7U/fpthszw1UcqRK9isnmGpRUQS/BDKCL+
+   A==;
+X-IronPort-AV: E=Sophos;i="5.64,299,1559520000"; 
+   d="scan'208";a="26002930"
+IronPort-PHdr: =?us-ascii?q?9a23=3A8rDe7RNExpsWrz4t0Dgl6mtUPXoX/o7sNwtQ0K?=
+ =?us-ascii?q?IMzox0K//7pcbcNUDSrc9gkEXOFd2Cra4d0ayJ4+uxCSQp2tWoiDg6aptCVh?=
+ =?us-ascii?q?sI2409vjcLJ4q7M3D9N+PgdCcgHc5PBxdP9nC/NlVJSo6lPwWB6nK94iQPFR?=
+ =?us-ascii?q?rhKAF7Ovr6GpLIj8Swyuu+54Dfbx9HiTagf79+Nhe7oAbeusQSgoZpN7o8xA?=
+ =?us-ascii?q?bOrnZUYepd2HlmJUiUnxby58ew+IBs/iFNsP8/9MBOTLv3cb0gQbNXEDopPW?=
+ =?us-ascii?q?Y15Nb2tRbYVguA+mEcUmQNnRVWBQXO8Qz3UY3wsiv+sep9xTWaMMjrRr06RT?=
+ =?us-ascii?q?iu86FmQwLzhSwZKzA27n3Yis1ojKJavh2hoQB/w5XJa42RLfZyY7/Rcc8fSW?=
+ =?us-ascii?q?dHUMlRTShBCZ6iYYUJAeQKIOJUo5D9qlYKqBezAxSnCuHyxT9SnnL4wLM00+?=
+ =?us-ascii?q?ohHw/F0gIvEd0Bv3bIo9v6L6oSTeK4wbPUwTnfYf5b2zHw45XIfBA7pvGMWK?=
+ =?us-ascii?q?p9fNbLxkk1EAPFiEibp43iPzOUy+sCrWyb5PdnWO21l2EnpAZxojmyycgykY?=
+ =?us-ascii?q?TJmoIUxUzE9SV+2oo1I8a4R1Rhbd6rF5tQqTiXOo1rSc0hW2FloDs2x7IJtJ?=
+ =?us-ascii?q?KhfCUG1Y4rywDQZvCZaYSE/xTuX/uLLzhinnJqYre/ig638Uin1+LzSNG50E?=
+ =?us-ascii?q?1PripZitnMsW0N1wDL5siHVPR9+kCh1C6T1w/J8OFEIF00lbHBJ549wr8/ip?=
+ =?us-ascii?q?oTsUPZEi/whEr2l7OZel8h+uip7+TrerTmppmCOI9okgzyL6sjl8OlDek4Lw?=
+ =?us-ascii?q?QCRXaX9Oui2LH54EH1WLBKgec3kqndvpDaP8MbpquhDgBPzokj5BG/Dza739?=
+ =?us-ascii?q?sGhnQHMFJEdw6Hj4juIV3OJuv4Au2lj1Sjlzdr2ejKPqf9DZXVMnjDjLDhcK?=
+ =?us-ascii?q?5n5E5ZyQoz19JS6pxVCrEFO//zVUrxu8bZDh89KQC73+HnCNBl3IMERW2PGr?=
+ =?us-ascii?q?OZML/VsVKQ/uIgOfSMZIsOtTblMfcl+vrugWY8mV8aeqmpx4UYZGqkEfRhJk?=
+ =?us-ascii?q?WTeWDsjcsZEWcWogo+S/TniEacXj5XZnayWb885z4gBYK4AofMWJqtjKaC3C?=
+ =?us-ascii?q?ilBJ1WYH5JClSWHXfvbYWEVO8GaDiOLc95jjwESb+hRpcl1RGvsg/61rVmIv?=
+ =?us-ascii?q?PP+iIGqZ3jycJ15+zPlRAy7DB0CsOd3HyQT2FwgGwFXCE23K9hrkxn0FuD0r?=
+ =?us-ascii?q?Z3g+ZeFdNN4/NFSAA6NYTTz+ZiEdD9RhrBfsuVSFahWtimBTAxTtQsw94Bek?=
+ =?us-ascii?q?p9Fc6igQ3d0Cq0HbAVk6eGBII78q3CxXj9PcV9xGjc1KknkVYmRtFDNWq8hq?=
+ =?us-ascii?q?5w7wLTHZLGk12Fl6a2cqQRxDPC9GeEzWuAok5YVApwUb7eUHAFeETZsNT56V?=
+ =?us-ascii?q?neT7O0FbsnNQ5Bw9aYKqRWct3pkUlGRPD7NdTceW2+h2SwCA2TxrORd4rlZX?=
+ =?us-ascii?q?8R0zncCUIciQAc4W6GNRQiBiemu2/eDjluFVX1Y0P28Ol+s2i2TkkuwAGPcU?=
+ =?us-ascii?q?Jh1qC5+hkPhfyTU/kTxK4LuD89qzVoG1awx9bWC9uGpwp8c6RQeNA970ld1W?=
+ =?us-ascii?q?LfqQN9OoetL75thlEAaQR7pUDu2AttCoVGj8cqqGkmzA1oKaKXgxt9cGax2J?=
+ =?us-ascii?q?HqcpLQLmXp4B2ubeaC01TfyonN+6Mn5/ExqlGltwasQBkM6XJihvBcyXyarr?=
+ =?us-ascii?q?rNDQYfVdqlW0048Bl2qpnGcyI94MXSznQqPq6q5GyRk+k1Dfcon07zN+xUN7?=
+ =?us-ascii?q?mJQUqrTpwX?=
+X-IPAS-Result: =?us-ascii?q?A2BqCgBGMjdd/wHyM5BmHQEBBQEHBQGBZ4FtKoE+ATIqh?=
+ =?us-ascii?q?B2SFlABAQEGgQktiWKRFwkBAQEBAQEBAQE0AQIBAYRAAoJOIzgTAQMBAQEEA?=
+ =?us-ascii?q?QEBAQUBAWyFKoI6KQGCZwECAyMEET8CEAsYAgIfBwICVwYNBgIBAYJfP4F3F?=
+ =?us-ascii?q?Kp8fzOFR4MxgUiBDCiLXxd4gQeBOIJrPodPglgEjkWGLJVyCYIblAYGG4Ith?=
+ =?us-ascii?q?yWEDIospxQhgVgrCAIYCCEPgyeBEoFnjikjAzCBBgEBjl4BAQ?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 23 Jul 2019 16:16:08 +0000
+Received: from moss-callisto.infosec.tycho.ncsc.mil (moss-callisto [192.168.25.136])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x6NGG404027057;
+        Tue, 23 Jul 2019 12:16:04 -0400
+Subject: Re: [Non-DoD Source] Re: [RFC PATCH v2] fanotify, inotify, dnotify,
+ security: add security hook for fs notifications
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20190718143042.11059-1-acgoide@tycho.nsa.gov>
+ <CAOQ4uxjCR76nbV_Lmoegaq6NqovWZD-XWEVS-X3e=BtDdjKkXQ@mail.gmail.com>
+From:   Aaron Goidel <acgoide@tycho.nsa.gov>
+Message-ID: <c74ad814-f188-37c6-9b3a-51178b538a2b@tycho.nsa.gov>
+Date:   Tue, 23 Jul 2019 12:16:04 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190723080701.GA3198@stefanha-x1.localdomain>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <CAOQ4uxjCR76nbV_Lmoegaq6NqovWZD-XWEVS-X3e=BtDdjKkXQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -68,59 +100,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/23/19 2:07 AM, Stefan Hajnoczi wrote:
-> Hi,
-> io_uring O_DIRECT writes can fail with EIO on ext4.  Please see the
-> function graph trace from Linux 5.3.0-rc1 below for details.  It was
-> produced with the following qemu-io command (using Aarushi's QEMU
-> patches from https://github.com/rooshm/qemu/commits/io_uring):
+On 7/18/19 12:16 PM, Amir Goldstein wrote:
+> On Thu, Jul 18, 2019 at 5:31 PM Aaron Goidel <acgoide@tycho.nsa.gov> wrote:
+>>
+>> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+>> index a90bb19dcfa2..9e3137badb6b 100644
+>> --- a/fs/notify/fanotify/fanotify_user.c
+>> +++ b/fs/notify/fanotify/fanotify_user.c
+>> @@ -528,9 +528,10 @@ static const struct file_operations fanotify_fops = {
+>>   };
+>>
+>>   static int fanotify_find_path(int dfd, const char __user *filename,
+>> -                             struct path *path, unsigned int flags)
+>> +                             struct path *path, unsigned int flags, __u64 mask)
+>>   {
+>>          int ret;
+>> +       unsigned int mark_type;
+>>
+>>          pr_debug("%s: dfd=%d filename=%p flags=%x\n", __func__,
+>>                   dfd, filename, flags);
+>> @@ -567,8 +568,30 @@ static int fanotify_find_path(int dfd, const char __user *filename,
+>>
+>>          /* you can only watch an inode if you have read permissions on it */
+>>          ret = inode_permission(path->dentry->d_inode, MAY_READ);
+>> +       if (ret) {
+>> +               path_put(path);
+>> +               goto out;
+>> +       }
+>> +
+>> +       switch (flags & FANOTIFY_MARK_TYPE_BITS) {
+>> +       case FAN_MARK_MOUNT:
+>> +               mark_type = FSNOTIFY_OBJ_TYPE_VFSMOUNT;
+>> +               break;
+>> +       case FAN_MARK_FILESYSTEM:
+>> +               mark_type = FSNOTIFY_OBJ_TYPE_SB;
+>> +               break;
+>> +       case FAN_MARK_INODE:
+>> +               mark_type = FSNOTIFY_OBJ_TYPE_INODE;
+>> +               break;
+>> +       default:
+>> +               ret = -EINVAL;
+>> +               goto out;
+>> +       }
+>> +
+>> +       ret = security_inode_notify(path->dentry->d_inode, mask, mark_type);
 > 
->    $ qemu-io --cache=none --aio=io_uring --format=qcow2 -c 'writev -P 185 131072 65536' tests/qemu-iotests/scratch/test.qcow2
+> If you prefer 3 hooks security_{inode,mount,sb}_notify()
+> please place them in fanotify_add_{inode,mount,sb}_mark().
 > 
-> This issue is specific to ext4.  XFS and the underlying LVM logical
-> volume both work.
+> If you prefer single hook with path argument, please pass path
+> down to fanotify_add_mark() and call security_path_notify() from there,
+> where you already have the object type argument.
 > 
-> The storage configuration is an LVM logical volume (device-mapper linear
-> target), on top of LUKS, on top of a SATA disk.  The logical volume's
-> request_queue does not have mq_ops and this causes
-> generic_make_request_checks() to fail:
-> 
->    if ((bio->bi_opf & REQ_NOWAIT) && !queue_is_mq(q))
->            goto not_supported;
-> 
-> I guess this could be worked around by deferring the request to the
-> io_uring work queue to avoid REQ_NOWAIT.  But XFS handles this fine so
-> how can io_uring.c detect this case cleanly or is there a bug in ext4?
+I'm not clear on why you want me to move the hook call down to 
+fanotify_add_mark(). I'd prefer to keep it adjacent to the existing 
+inode_permission() call so that all the security checking occurs from 
+one place. Moving it down requires adding a path arg to that entire call 
+chain, even though it wouldn't otherwise be needed. And that raises the 
+question of whether to continue passing the mnt_sb, mnt, or inode 
+separately or just extract all those from the path inside of 
+fanotify_add_*_mark().
 
-I actually think it's XFS that's broken here, it's not passing down
-the IOCB_NOWAIT -> IOMAP_NOWAIT -> REQ_NOWAIT. This means we lose that
-important request bit, and we just block instead of triggering the
-not_supported case.
-
-Outside of that, that case needs similar treatment to what I did for
-the EAGAIN case here:
-
-http://git.kernel.dk/cgit/linux-block/commit/?h=for-linus&id=893a1c97205a3ece0cbb3f571a3b972080f3b4c7
-
-It was a big mistake to pass back these values in an async fashion,
-and it also means that some accounting in other drivers are broken
-as we can get completions without the bio actually being submitted.
-This was fixed for just the EAGAIN case here:
-
-http://git.kernel.dk/cgit/linux-block/commit/?h=for-linus&id=c9b3007feca018d3f7061f5d5a14cb00766ffe9b
-
-but that's still broken for EOPNOTSUPP.
-
-tldr is that we should pass these errors back sync, and it was a
-mistake to EVER try and do that through ->bi_end_io(). That behavior
-was introduced by:
-
-http://git.kernel.dk/cgit/linux-block/commit/?h=for-linus&id=03a07c92a9ed9938d828ca7f1d11b8bc63a7bb89
-
-I'll add a patch on top of my for-linus branch that makes us handle
-the EOPNOTSUPP case similarly. You are right that in those cases we
-should just punt to the async worker internally.
+It also seems to destroy the parallelism with fanotify_remove_*_mark(). 
+I also don't see any real benefit in splitting into three separate 
+hooks, especially as some security modules will want the path or inode 
+even for the mount or superblock cases, since they may have no relevant 
+security information for vfsmounts or superblocks.
 
 -- 
-Jens Axboe
-
+Aaron
