@@ -2,620 +2,293 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E361B71441
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 10:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAE3A71556
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 11:38:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbfGWInq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jul 2019 04:43:46 -0400
-Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:40934 "EHLO
-        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727076AbfGWInq (ORCPT
+        id S1728303AbfGWJiA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jul 2019 05:38:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32726 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727440AbfGWJiA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jul 2019 04:43:46 -0400
-Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
-        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 287D02E14A8;
-        Tue, 23 Jul 2019 11:43:40 +0300 (MSK)
-Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
-        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 6g9JfPN1os-hbNm51pw;
-        Tue, 23 Jul 2019 11:43:40 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1563871420; bh=kJjDfW2jbWun5ntculbfawTZ5djmL30Et1L76no3MsM=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=yUNWJ4kKUrADsQhRS7ZBT7v7MO1HGsNkMCN5V9lBj9tdC/Z4gnmyy2jR3NPldiDoO
-         VoUYgzEX3dDipPoib2M9yfMjROOYBeoDy04iG457OISqwgfY2N7Wb9GF4Cf78m4ccw
-         aBaKAjO63/G+Sg2OCoToKpjxhDBrqFL/lsyX3rno=
-Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:38b3:1cdf:ad1a:1fe1])
-        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id CsOBXfodge-hbI8TO1x;
-        Tue, 23 Jul 2019 11:43:37 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH v1 1/2] mm/page_idle: Add support for per-pid page_idle
- using virtual indexing
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org
-Cc:     vdavydov.dev@gmail.com, Brendan Gregg <bgregg@netflix.com>,
-        kernel-team@android.com, Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        carmenjackson@google.com, Christian Hansen <chansen3@cisco.com>,
-        Colin Ian King <colin.king@canonical.com>, dancol@google.com,
-        David Howells <dhowells@redhat.com>, fmayer@google.com,
-        joaodias@google.com, joelaf@google.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, minchan@google.com,
-        minchan@kernel.org, namhyung@google.com, sspatil@google.com,
-        surenb@google.com, Thomas Gleixner <tglx@linutronix.de>,
-        timmurray@google.com, tkjos@google.com,
-        Vlastimil Babka <vbabka@suse.cz>, wvw@google.com
-References: <20190722213205.140845-1-joel@joelfernandes.org>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <01568524-ed97-36c9-61f7-e95084658f5b@yandex-team.ru>
-Date:   Tue, 23 Jul 2019 11:43:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 23 Jul 2019 05:38:00 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6N9a2sl019116
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2019 05:37:58 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2twvatrc9x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2019 05:37:37 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
+        Tue, 23 Jul 2019 10:37:31 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 23 Jul 2019 10:37:28 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6N9bR9954198280
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Jul 2019 09:37:27 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BECC511C05C;
+        Tue, 23 Jul 2019 09:37:27 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AA17F11C04C;
+        Tue, 23 Jul 2019 09:37:26 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.124.35.181])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 23 Jul 2019 09:37:26 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.ibm.com>
+Cc:     lkp@01.org, linux-ext4@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: 402b1b327a: BUG:unable_to_handle_page_fault_for_address
+Date:   Tue, 23 Jul 2019 15:08:57 +0530
+Organization: IBM
+In-Reply-To: <20190626085800.GD7221@shao2-debian>
+References: <20190626085800.GD7221@shao2-debian>
 MIME-Version: 1.0
-In-Reply-To: <20190722213205.140845-1-joel@joelfernandes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 19072309-0028-0000-0000-000003870CBC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19072309-0029-0000-0000-000024474417
+Message-Id: <3752190.lVsyvYfFkZ@localhost.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-23_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907230090
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 23.07.2019 0:32, Joel Fernandes (Google) wrote:
-> The page_idle tracking feature currently requires looking up the pagemap
-> for a process followed by interacting with /sys/kernel/mm/page_idle.
-> This is quite cumbersome and can be error-prone too. If between
-> accessing the per-PID pagemap and the global page_idle bitmap, if
-> something changes with the page then the information is not accurate.
-> More over looking up PFN from pagemap in Android devices is not
-> supported by unprivileged process and requires SYS_ADMIN and gives 0 for
-> the PFN.
-> 
-> This patch adds support to directly interact with page_idle tracking at
-> the PID level by introducing a /proc/<pid>/page_idle file. This
-> eliminates the need for userspace to calculate the mapping of the page.
-> It follows the exact same semantics as the global
-> /sys/kernel/mm/page_idle, however it is easier to use for some usecases
-> where looking up PFN is not needed and also does not require SYS_ADMIN.
-> It ended up simplifying userspace code, solving the security issue
-> mentioned and works quite well. SELinux does not need to be turned off
-> since no pagemap look up is needed.
-> 
-> In Android, we are using this for the heap profiler (heapprofd) which
-> profiles and pin points code paths which allocates and leaves memory
-> idle for long periods of time.
-> 
-> Documentation material:
-> The idle page tracking API for virtual address indexing using virtual page
-> frame numbers (VFN) is located at /proc/<pid>/page_idle. It is a bitmap
-> that follows the same semantics as /sys/kernel/mm/page_idle/bitmap
-> except that it uses virtual instead of physical frame numbers.
-> 
-> This idle page tracking API can be simpler to use than physical address
-> indexing, since the pagemap for a process does not need to be looked up
-> to mark or read a page's idle bit. It is also more accurate than
-> physical address indexing since in physical address indexing, address
-> space changes can occur between reading the pagemap and reading the
-> bitmap. In virtual address indexing, the process's mmap_sem is held for
-> the duration of the access.
+On Wednesday, June 26, 2019 2:28:00 PM IST kernel test robot wrote:
 
-Maybe integrate this into existing interface: /proc/pid/clear_refs and
-/proc/pid/pagemap ?
+Hi Ted & Eric,
 
-I.e.  echo X > /proc/pid/clear_refs clears reference bits in ptes and
-marks pages idle only for pages mapped in this process.
-And idle bit in /proc/pid/pagemap tells that page is still idle in this process.
-This is faster - we don't need to walk whole rmap for that.
+The subpage encryption patchset assumes that bio->bi_private and
+bh->b_private is set to NULL when reading data for non-encrypted regular
+files. However, there are instances that have come up where this
+assumption does not hold good.
 
+1. In Btrfs, write_dev_supers() sets bh->b_private to 'struct
+   btrfs_device' pointer and submits the buffer head for a write
+   operation.
+   1. In the btrfs/146 test, the write operation fails and hence the
+      kernel clears the BH_Uptodate flag.
+   2. A read operation initiated later will submit the buffer head to
+      the block layer. During endio processing, "read callbacks" state
+      machine is initiated because bh->b_private is set to a non-NULL
+      value.
+   3. This results in the following call trace,
+      ,----
+      | [  255.588689] BUG: unable to handle page fault for address: ffffffffb5f7e399
+      | [  255.591659] #PF: supervisor read access in kernel mode
+      | [  255.593967] #PF: error_code(0x0000) - not-present page
+      | [  255.596113] PGD 465026067 P4D 465026067 PUD 465027063 PMD 0
+      | [  255.598007] Oops: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
+      | [  255.599646] CPU: 8 PID: 0 Comm: swapper/8 Not tainted 5.2.0-rc2-00023-gb98a16901
+      | [  255.602229] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-4
+      | [  255.604998] RIP: 0010:read_callbacks+0xf0/0x190
+      | [  255.606479] Code: e0 04 49 03 47 58 45 85 f6 75 87 8b 50 0c 44 89 e9 89 d3 81 eb
+      | [  255.612608] RSP: 0018:ffff941343338e70 EFLAGS: 00010286
+      | [  255.614316] RAX: 0000000000000329 RBX: ffffffffb5f7e391 RCX: 0000000000000329
+      | [  255.616678] RDX: 000000009396fc38 RSI: 0000000000000001 RDI: ffff8cd792e16f98
+      | [  255.619030] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+      | [  255.621350] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8cd79396fbd8
+      | [  255.623725] R13: 0000000000001000 R14: 0000000000000329 R15: ffff8cd78fa507c0
+      | [  255.626046] FS:  0000000000000000(0000) GS:ffff8cd79dc00000(0000) knlGS:00000000
+      | [  255.628740] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+      | [  255.630632] CR2: ffffffffb5f7e399 CR3: 0000000615f3a000 CR4: 00000000000006e0
+      | [  255.633004] Call Trace:
+      | [  255.633839]  <IRQ>
+      | [  255.634531]  read_callbacks_end_bh+0x1b/0x40
+      | [  255.635963]  __end_buffer_async_read+0x18/0x60
+      | [  255.637454]  end_bio_bh_io_sync+0x26/0x40
+      | [  255.638803]  clone_endio+0x90/0x180
+      | [  255.639989]  blk_update_request+0x8f/0x360
+      | [  255.641340]  blk_mq_end_request+0x1a/0x120
+      | [  255.642685]  blk_done_softirq+0x8d/0xc0
+      | [  255.644098]  __do_softirq+0xcc/0x3fe
+      | [  255.645029]  irq_exit+0xbb/0xc0
+      | [  255.645755]  call_function_single_interrupt+0xf/0x20
+      | [  255.646896]  </IRQ>
+      `----
+
+2. Another instance is when a metadata block with BH_Uptodate set and
+   also part of the in-memory JBD list undergoes the following,
+   1. A sync() syscall is invoked by the userspace and the write
+      operation on the metadata block is initiated.
+   2. Due to an I/O failure, the BH_Uptodate flag is cleared by
+      end_buffer_async_write(). The bh->b_private member would be
+      pointing to a journal head structure.
+   3. In such a case, a read opertion invoked on the block mapped by the buffer
+      head will initiate a read from the disk since the buffer head is
+      missing the BH_Uptodate flag. E.g. On my test machine, I see the
+      following,
+      ,----
+      | probe-bcache 5185 [008] 230.484959: probe:submit_bh: (ffffffffb845c180) b_private=0xffff8b6b3e1fc008 b_bdev=0xffff8b701c41e1c0 b_state=2279596 bh_x64=0xffff8b6b3a8b86e8 op_u32=0
+      | 		    ffffffffb845c181 submit_bh+0x1
+      | ([kernel.kallsyms]) ffffffffb845a6fc block_read_full_page+0x29c
+      | ([kernel.kallsyms]) ffffffffb845d9c5 blkdev_readpage+0x25
+      | ([kernel.kallsyms]) ffffffffb83a1e84 generic_file_read_iter+0x684
+      | ([kernel.kallsyms]) ffffffffb8415679 new_sync_read+0x109
+      | ([kernel.kallsyms]) ffffffffb841807c vfs_read+0x8c
+      | ([kernel.kallsyms]) ffffffffb84185f4 ksys_pread64+0x74
+      | ([kernel.kallsyms]) ffffffffb8202720 do_syscall_64+0x50
+      | ([kernel.kallsyms]) ffffffffb9000081 entry_SYSCALL_64_after_hwframe+0x49
+      | ([kernel.kallsyms]) 7f2512ae0637
+      | __libc_pread+0x17 (/lib/x86_64-linux-gnu/libc-2.27.so) 7ffd65bb6e4d
+      | [unknown] ([unknown])
+      `----
+
+   4. After the read I/O request is submitted, end_buffer_async_read()
+      will find a non-NULL value at bh->b_private. Due to the non-NULL
+      bh->b_private value, this function initiates "read callbacks"
+      state machine.
+   This scenario was seen when executing generic/475 test case.
+
+The first case can be handled by setting a NULL value to the bh->b_private
+member in the write operation's endio function. However I don't see a method
+to disassociate the journal head from the buffer head for the second case
+described above.
+
+Hence I propose that we introduce new flags (one each for bio and
+buffer_head structures) to track if the payload needs further processing
+(e.g. decryption). Please let me know your thoughts on this.
+
+> FYI, we noticed the following commit (built with gcc-7):
 > 
-> Cc: vdavydov.dev@gmail.com
-> Cc: Brendan Gregg <bgregg@netflix.com>
-> Cc: kernel-team@android.com
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> commit: 402b1b327a0b0e8fd23d5866b9585ccc2380f199 ("Add decryption support for sub-pagesized blocks")
+> https://git.kernel.org/cgit/linux/kernel/git/ebiggers/linux.git wip-subpage-encryption
 > 
-> ---
-> Internal review -> v1:
-> Fixes from Suren.
-> Corrections to change log, docs (Florian, Sandeep)
+> in testcase: xfstests
+> with following parameters:
 > 
->   fs/proc/base.c            |   3 +
->   fs/proc/internal.h        |   1 +
->   fs/proc/task_mmu.c        |  57 +++++++
->   include/linux/page_idle.h |   4 +
->   mm/page_idle.c            | 305 +++++++++++++++++++++++++++++++++-----
->   5 files changed, 330 insertions(+), 40 deletions(-)
+> 	disk: 6HDD
+> 	fs: btrfs
+> 	test: btrfs-group1
 > 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 77eb628ecc7f..a58dd74606e9 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -3021,6 +3021,9 @@ static const struct pid_entry tgid_base_stuff[] = {
->   	REG("smaps",      S_IRUGO, proc_pid_smaps_operations),
->   	REG("smaps_rollup", S_IRUGO, proc_pid_smaps_rollup_operations),
->   	REG("pagemap",    S_IRUSR, proc_pagemap_operations),
-> +#ifdef CONFIG_IDLE_PAGE_TRACKING
-> +	REG("page_idle", S_IRUSR|S_IWUSR, proc_page_idle_operations),
-> +#endif
->   #endif
->   #ifdef CONFIG_SECURITY
->   	DIR("attr",       S_IRUGO|S_IXUGO, proc_attr_dir_inode_operations, proc_attr_dir_operations),
-> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-> index cd0c8d5ce9a1..bc9371880c63 100644
-> --- a/fs/proc/internal.h
-> +++ b/fs/proc/internal.h
-> @@ -293,6 +293,7 @@ extern const struct file_operations proc_pid_smaps_operations;
->   extern const struct file_operations proc_pid_smaps_rollup_operations;
->   extern const struct file_operations proc_clear_refs_operations;
->   extern const struct file_operations proc_pagemap_operations;
-> +extern const struct file_operations proc_page_idle_operations;
->   
->   extern unsigned long task_vsize(struct mm_struct *);
->   extern unsigned long task_statm(struct mm_struct *,
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 4d2b860dbc3f..11ccc53da38e 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1642,6 +1642,63 @@ const struct file_operations proc_pagemap_operations = {
->   	.open		= pagemap_open,
->   	.release	= pagemap_release,
->   };
-> +
-> +#ifdef CONFIG_IDLE_PAGE_TRACKING
-> +static ssize_t proc_page_idle_read(struct file *file, char __user *buf,
-> +				   size_t count, loff_t *ppos)
-> +{
-> +	int ret;
-> +	struct task_struct *tsk = get_proc_task(file_inode(file));
-> +
-> +	if (!tsk)
-> +		return -EINVAL;
-> +	ret = page_idle_proc_read(file, buf, count, ppos, tsk);
-> +	put_task_struct(tsk);
-> +	return ret;
-> +}
-> +
-> +static ssize_t proc_page_idle_write(struct file *file, const char __user *buf,
-> +				 size_t count, loff_t *ppos)
-> +{
-> +	int ret;
-> +	struct task_struct *tsk = get_proc_task(file_inode(file));
-> +
-> +	if (!tsk)
-> +		return -EINVAL;
-> +	ret = page_idle_proc_write(file, (char __user *)buf, count, ppos, tsk);
-> +	put_task_struct(tsk);
-> +	return ret;
-> +}
-> +
-> +static int proc_page_idle_open(struct inode *inode, struct file *file)
-> +{
-> +	struct mm_struct *mm;
-> +
-> +	mm = proc_mem_open(inode, PTRACE_MODE_READ);
-> +	if (IS_ERR(mm))
-> +		return PTR_ERR(mm);
-> +	file->private_data = mm;
-> +	return 0;
-> +}
-> +
-> +static int proc_page_idle_release(struct inode *inode, struct file *file)
-> +{
-> +	struct mm_struct *mm = file->private_data;
-> +
-> +	if (mm)
-> +		mmdrop(mm);
-> +	return 0;
-> +}
-> +
-> +const struct file_operations proc_page_idle_operations = {
-> +	.llseek		= mem_lseek, /* borrow this */
-> +	.read		= proc_page_idle_read,
-> +	.write		= proc_page_idle_write,
-> +	.open		= proc_page_idle_open,
-> +	.release	= proc_page_idle_release,
-> +};
-> +#endif /* CONFIG_IDLE_PAGE_TRACKING */
-> +
->   #endif /* CONFIG_PROC_PAGE_MONITOR */
->   
->   #ifdef CONFIG_NUMA
-> diff --git a/include/linux/page_idle.h b/include/linux/page_idle.h
-> index 1e894d34bdce..f1bc2640d85e 100644
-> --- a/include/linux/page_idle.h
-> +++ b/include/linux/page_idle.h
-> @@ -106,6 +106,10 @@ static inline void clear_page_idle(struct page *page)
->   }
->   #endif /* CONFIG_64BIT */
->   
-> +ssize_t page_idle_proc_write(struct file *file,
-> +	char __user *buf, size_t count, loff_t *ppos, struct task_struct *tsk);
-> +ssize_t page_idle_proc_read(struct file *file,
-> +	char __user *buf, size_t count, loff_t *ppos, struct task_struct *tsk);
->   #else /* !CONFIG_IDLE_PAGE_TRACKING */
->   
->   static inline bool page_is_young(struct page *page)
-> diff --git a/mm/page_idle.c b/mm/page_idle.c
-> index 295512465065..874a60c41fef 100644
-> --- a/mm/page_idle.c
-> +++ b/mm/page_idle.c
-> @@ -11,6 +11,7 @@
->   #include <linux/mmu_notifier.h>
->   #include <linux/page_ext.h>
->   #include <linux/page_idle.h>
-> +#include <linux/sched/mm.h>
->   
->   #define BITMAP_CHUNK_SIZE	sizeof(u64)
->   #define BITMAP_CHUNK_BITS	(BITMAP_CHUNK_SIZE * BITS_PER_BYTE)
-> @@ -28,15 +29,12 @@
->    *
->    * This function tries to get a user memory page by pfn as described above.
->    */
-> -static struct page *page_idle_get_page(unsigned long pfn)
-> +static struct page *page_idle_get_page(struct page *page_in)
->   {
->   	struct page *page;
->   	pg_data_t *pgdat;
->   
-> -	if (!pfn_valid(pfn))
-> -		return NULL;
-> -
-> -	page = pfn_to_page(pfn);
-> +	page = page_in;
->   	if (!page || !PageLRU(page) ||
->   	    !get_page_unless_zero(page))
->   		return NULL;
-> @@ -51,6 +49,15 @@ static struct page *page_idle_get_page(unsigned long pfn)
->   	return page;
->   }
->   
-> +static struct page *page_idle_get_page_pfn(unsigned long pfn)
-> +{
-> +
-> +	if (!pfn_valid(pfn))
-> +		return NULL;
-> +
-> +	return page_idle_get_page(pfn_to_page(pfn));
-> +}
-> +
->   static bool page_idle_clear_pte_refs_one(struct page *page,
->   					struct vm_area_struct *vma,
->   					unsigned long addr, void *arg)
-> @@ -118,6 +125,47 @@ static void page_idle_clear_pte_refs(struct page *page)
->   		unlock_page(page);
->   }
->   
-> +/* Helper to get the start and end frame given a pos and count */
-> +static int page_idle_get_frames(loff_t pos, size_t count, struct mm_struct *mm,
-> +				unsigned long *start, unsigned long *end)
-> +{
-> +	unsigned long max_frame;
-> +
-> +	/* If an mm is not given, assume we want physical frames */
-> +	max_frame = mm ? (mm->task_size >> PAGE_SHIFT) : max_pfn;
-> +
-> +	if (pos % BITMAP_CHUNK_SIZE || count % BITMAP_CHUNK_SIZE)
-> +		return -EINVAL;
-> +
-> +	*start = pos * BITS_PER_BYTE;
-> +	if (*start >= max_frame)
-> +		return -ENXIO;
-> +
-> +	*end = *start + count * BITS_PER_BYTE;
-> +	if (*end > max_frame)
-> +		*end = max_frame;
-> +	return 0;
-> +}
-> +
-> +static bool page_really_idle(struct page *page)
-> +{
-> +	if (!page)
-> +		return false;
-> +
-> +	if (page_is_idle(page)) {
-> +		/*
-> +		 * The page might have been referenced via a
-> +		 * pte, in which case it is not idle. Clear
-> +		 * refs and recheck.
-> +		 */
-> +		page_idle_clear_pte_refs(page);
-> +		if (page_is_idle(page))
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->   static ssize_t page_idle_bitmap_read(struct file *file, struct kobject *kobj,
->   				     struct bin_attribute *attr, char *buf,
->   				     loff_t pos, size_t count)
-> @@ -125,35 +173,21 @@ static ssize_t page_idle_bitmap_read(struct file *file, struct kobject *kobj,
->   	u64 *out = (u64 *)buf;
->   	struct page *page;
->   	unsigned long pfn, end_pfn;
-> -	int bit;
-> -
-> -	if (pos % BITMAP_CHUNK_SIZE || count % BITMAP_CHUNK_SIZE)
-> -		return -EINVAL;
-> -
-> -	pfn = pos * BITS_PER_BYTE;
-> -	if (pfn >= max_pfn)
-> -		return 0;
-> +	int bit, ret;
->   
-> -	end_pfn = pfn + count * BITS_PER_BYTE;
-> -	if (end_pfn > max_pfn)
-> -		end_pfn = max_pfn;
-> +	ret = page_idle_get_frames(pos, count, NULL, &pfn, &end_pfn);
-> +	if (ret == -ENXIO)
-> +		return 0;  /* Reads beyond max_pfn do nothing */
-> +	else if (ret)
-> +		return ret;
->   
->   	for (; pfn < end_pfn; pfn++) {
->   		bit = pfn % BITMAP_CHUNK_BITS;
->   		if (!bit)
->   			*out = 0ULL;
-> -		page = page_idle_get_page(pfn);
-> -		if (page) {
-> -			if (page_is_idle(page)) {
-> -				/*
-> -				 * The page might have been referenced via a
-> -				 * pte, in which case it is not idle. Clear
-> -				 * refs and recheck.
-> -				 */
-> -				page_idle_clear_pte_refs(page);
-> -				if (page_is_idle(page))
-> -					*out |= 1ULL << bit;
-> -			}
-> +		page = page_idle_get_page_pfn(pfn);
-> +		if (page && page_really_idle(page)) {
-> +			*out |= 1ULL << bit;
->   			put_page(page);
->   		}
->   		if (bit == BITMAP_CHUNK_BITS - 1)
-> @@ -170,23 +204,16 @@ static ssize_t page_idle_bitmap_write(struct file *file, struct kobject *kobj,
->   	const u64 *in = (u64 *)buf;
->   	struct page *page;
->   	unsigned long pfn, end_pfn;
-> -	int bit;
-> +	int bit, ret;
->   
-> -	if (pos % BITMAP_CHUNK_SIZE || count % BITMAP_CHUNK_SIZE)
-> -		return -EINVAL;
-> -
-> -	pfn = pos * BITS_PER_BYTE;
-> -	if (pfn >= max_pfn)
-> -		return -ENXIO;
-> -
-> -	end_pfn = pfn + count * BITS_PER_BYTE;
-> -	if (end_pfn > max_pfn)
-> -		end_pfn = max_pfn;
-> +	ret = page_idle_get_frames(pos, count, NULL, &pfn, &end_pfn);
-> +	if (ret)
-> +		return ret;
->   
->   	for (; pfn < end_pfn; pfn++) {
->   		bit = pfn % BITMAP_CHUNK_BITS;
->   		if ((*in >> bit) & 1) {
-> -			page = page_idle_get_page(pfn);
-> +			page = page_idle_get_page_pfn(pfn);
->   			if (page) {
->   				page_idle_clear_pte_refs(page);
->   				set_page_idle(page);
-> @@ -224,10 +251,208 @@ struct page_ext_operations page_idle_ops = {
->   };
->   #endif
->   
-> +/*  page_idle tracking for /proc/<pid>/page_idle */
-> +
-> +static DEFINE_SPINLOCK(idle_page_list_lock);
-> +struct list_head idle_page_list;
-> +
-> +struct page_node {
-> +	struct page *page;
-> +	unsigned long addr;
-> +	struct list_head list;
-> +};
-> +
-> +struct page_idle_proc_priv {
-> +	unsigned long start_addr;
-> +	char *buffer;
-> +	int write;
-> +};
-> +
-> +static void add_page_idle_list(struct page *page,
-> +			       unsigned long addr, struct mm_walk *walk)
-> +{
-> +	struct page *page_get;
-> +	struct page_node *pn;
-> +	int bit;
-> +	unsigned long frames;
-> +	struct page_idle_proc_priv *priv = walk->private;
-> +	u64 *chunk = (u64 *)priv->buffer;
-> +
-> +	if (priv->write) {
-> +		/* Find whether this page was asked to be marked */
-> +		frames = (addr - priv->start_addr) >> PAGE_SHIFT;
-> +		bit = frames % BITMAP_CHUNK_BITS;
-> +		chunk = &chunk[frames / BITMAP_CHUNK_BITS];
-> +		if (((*chunk >> bit) & 1) == 0)
-> +			return;
-> +	}
-> +
-> +	page_get = page_idle_get_page(page);
-> +	if (!page_get)
-> +		return;
-> +
-> +	pn = kmalloc(sizeof(*pn), GFP_ATOMIC);
-> +	if (!pn)
-> +		return;
-> +
-> +	pn->page = page_get;
-> +	pn->addr = addr;
-> +	list_add(&pn->list, &idle_page_list);
-> +}
-> +
-> +static int pte_page_idle_proc_range(pmd_t *pmd, unsigned long addr,
-> +				    unsigned long end,
-> +				    struct mm_walk *walk)
-> +{
-> +	struct vm_area_struct *vma = walk->vma;
-> +	pte_t *pte;
-> +	spinlock_t *ptl;
-> +	struct page *page;
-> +
-> +	ptl = pmd_trans_huge_lock(pmd, vma);
-> +	if (ptl) {
-> +		if (pmd_present(*pmd)) {
-> +			page = follow_trans_huge_pmd(vma, addr, pmd,
-> +						     FOLL_DUMP|FOLL_WRITE);
-> +			if (!IS_ERR_OR_NULL(page))
-> +				add_page_idle_list(page, addr, walk);
-> +		}
-> +		spin_unlock(ptl);
-> +		return 0;
-> +	}
-> +
-> +	if (pmd_trans_unstable(pmd))
-> +		return 0;
-> +
-> +	pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
-> +	for (; addr != end; pte++, addr += PAGE_SIZE) {
-> +		if (!pte_present(*pte))
-> +			continue;
-> +
-> +		page = vm_normal_page(vma, addr, *pte);
-> +		if (page)
-> +			add_page_idle_list(page, addr, walk);
-> +	}
-> +
-> +	pte_unmap_unlock(pte - 1, ptl);
-> +	return 0;
-> +}
-> +
-> +ssize_t page_idle_proc_generic(struct file *file, char __user *ubuff,
-> +			       size_t count, loff_t *pos,
-> +			       struct task_struct *tsk, int write)
-> +{
-> +	int ret;
-> +	char *buffer;
-> +	u64 *out;
-> +	unsigned long start_addr, end_addr, start_frame, end_frame;
-> +	struct mm_struct *mm = file->private_data;
-> +	struct mm_walk walk = { .pmd_entry = pte_page_idle_proc_range, };
-> +	struct page_node *cur, *next;
-> +	struct page_idle_proc_priv priv;
-> +	bool walk_error = false;
-> +
-> +	if (!mm || !mmget_not_zero(mm))
-> +		return -EINVAL;
-> +
-> +	if (count > PAGE_SIZE)
-> +		count = PAGE_SIZE;
-> +
-> +	buffer = kzalloc(PAGE_SIZE, GFP_KERNEL);
-> +	if (!buffer) {
-> +		ret = -ENOMEM;
-> +		goto out_mmput;
-> +	}
-> +	out = (u64 *)buffer;
-> +
-> +	if (write && copy_from_user(buffer, ubuff, count)) {
-> +		ret = -EFAULT;
-> +		goto out;
-> +	}
-> +
-> +	ret = page_idle_get_frames(*pos, count, mm, &start_frame, &end_frame);
-> +	if (ret)
-> +		goto out;
-> +
-> +	start_addr = (start_frame << PAGE_SHIFT);
-> +	end_addr = (end_frame << PAGE_SHIFT);
-> +	priv.buffer = buffer;
-> +	priv.start_addr = start_addr;
-> +	priv.write = write;
-> +	walk.private = &priv;
-> +	walk.mm = mm;
-> +
-> +	down_read(&mm->mmap_sem);
-> +
-> +	/*
-> +	 * Protects the idle_page_list which is needed because
-> +	 * walk_page_vma() holds ptlock which deadlocks with
-> +	 * page_idle_clear_pte_refs(). So we have to collect all
-> +	 * pages first, and then call page_idle_clear_pte_refs().
-> +	 */
-> +	spin_lock(&idle_page_list_lock);
-> +	ret = walk_page_range(start_addr, end_addr, &walk);
-> +	if (ret)
-> +		walk_error = true;
-> +
-> +	list_for_each_entry_safe(cur, next, &idle_page_list, list) {
-> +		int bit, index;
-> +		unsigned long off;
-> +		struct page *page = cur->page;
-> +
-> +		if (unlikely(walk_error))
-> +			goto remove_page;
-> +
-> +		if (write) {
-> +			page_idle_clear_pte_refs(page);
-> +			set_page_idle(page);
-> +		} else {
-> +			if (page_really_idle(page)) {
-> +				off = ((cur->addr) >> PAGE_SHIFT) - start_frame;
-> +				bit = off % BITMAP_CHUNK_BITS;
-> +				index = off / BITMAP_CHUNK_BITS;
-> +				out[index] |= 1ULL << bit;
-> +			}
-> +		}
-> +remove_page:
-> +		put_page(page);
-> +		list_del(&cur->list);
-> +		kfree(cur);
-> +	}
-> +	spin_unlock(&idle_page_list_lock);
-> +
-> +	if (!write && !walk_error)
-> +		ret = copy_to_user(ubuff, buffer, count);
-> +
-> +	up_read(&mm->mmap_sem);
-> +out:
-> +	kfree(buffer);
-> +out_mmput:
-> +	mmput(mm);
-> +	if (!ret)
-> +		ret = count;
-> +	return ret;
-> +
-> +}
-> +
-> +ssize_t page_idle_proc_read(struct file *file, char __user *ubuff,
-> +			    size_t count, loff_t *pos, struct task_struct *tsk)
-> +{
-> +	return page_idle_proc_generic(file, ubuff, count, pos, tsk, 0);
-> +}
-> +
-> +ssize_t page_idle_proc_write(struct file *file, char __user *ubuff,
-> +			     size_t count, loff_t *pos, struct task_struct *tsk)
-> +{
-> +	return page_idle_proc_generic(file, ubuff, count, pos, tsk, 1);
-> +}
-> +
->   static int __init page_idle_init(void)
->   {
->   	int err;
->   
-> +	INIT_LIST_HEAD(&idle_page_list);
-> +
->   	err = sysfs_create_group(mm_kobj, &page_idle_attr_group);
->   	if (err) {
->   		pr_err("page_idle: register sysfs failed\n");
+> test-description: xfstests is a regression test suite for xfs and other files ystems.
+> test-url: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
 > 
+> 
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> +-------------------------------------------------------+------------+------------+
+> |                                                       | 31d0610be3 | 402b1b327a |
+> +-------------------------------------------------------+------------+------------+
+> | boot_successes                                        | 1          | 0          |
+> | boot_failures                                         | 43         | 40         |
+> | BUG:kernel_reboot-without-warning_in_test_stage       | 41         | 31         |
+> | BUG:kernel_NULL_pointer_dereference,address           | 2          | 2          |
+> | Oops:#[##]                                            | 2          | 7          |
+> | RIP:raid#_sse21_gen_syndrome[raid#_pq]                | 2          | 2          |
+> | Kernel_panic-not_syncing:Fatal_exception              | 2          | 2          |
+> | BUG:unable_to_handle_page_fault_for_address           | 0          | 5          |
+> | RIP:read_callbacks                                    | 0          | 5          |
+> | RIP:native_safe_halt                                  | 0          | 5          |
+> | Kernel_panic-not_syncing:Fatal_exception_in_interrupt | 0          | 5          |
+> | BUG:soft_lockup-CPU##stuck_for#s                      | 0          | 1          |
+> | RIP:__do_softirq                                      | 0          | 1          |
+> | RIP:clear_page_rep                                    | 0          | 1          |
+> | Kernel_panic-not_syncing:softlockup:hung_tasks        | 0          | 1          |
+> | BUG:kernel_hang_in_boot_stage                         | 0          | 1          |
+> +-------------------------------------------------------+------------+------------+
+> 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kernel test robot <rong.a.chen@intel.com>
+> 
+> 
+> [ 1439.695830] BUG: unable to handle page fault for address: 0000000003fffe53
+> [ 1439.702109] #PF: supervisor read access in kernel mode
+> [ 1439.705572] #PF: error_code(0x0000) - not-present page
+> [ 1439.709289] PGD 0 P4D 0 
+> [ 1439.711570] Oops: 0000 [#1] SMP PTI
+> [ 1439.714095] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.2.0-rc2-00022-g402b1b3 #1
+> [ 1439.717917] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [ 1439.722137] RIP: 0010:read_callbacks+0x102/0x170
+> [ 1439.725031] Code: 48 c1 e3 06 48 03 18 eb 80 48 8b 35 a8 9c dd 01 4c 89 e7 e8 20 2c f0 ff 4c 89 ff 5b 5d 41 5c 41 5d 41 5e 41 5f e9 be 8b 12 00 <48> 8b 53 08 48 8d 42 ff 83 e2 01 48 0f 44 c3 f0 80 20 fb f0 80 4b
+> [ 1439.733926] RSP: 0018:ffffb279c06cce58 EFLAGS: 00010282
+> [ 1439.736950] RAX: 0000000000000598 RBX: 0000000003fffe4b RCX: 0000000000000598
+> [ 1439.740608] RDX: 00000000bd464770 RSI: 0000000000000001 RDI: ffff9a68bae02c00
+> [ 1439.744285] RBP: 0000000000000000 R08: 0000000000033850 R09: ffffffffc04738dd
+> [ 1439.747933] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9a68bd6d0a20
+> [ 1439.751612] R13: 0000000000001000 R14: 0000000000000598 R15: ffff9a68bfcf5498
+> [ 1439.755564] FS:  0000000000000000(0000) GS:ffff9a697fd00000(0000) knlGS:0000000000000000
+> [ 1439.761896] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 1439.769318] CR2: 0000000003fffe53 CR3: 000000007c628000 CR4: 00000000000406e0
+> [ 1439.777936] Call Trace:
+> [ 1439.788378]  <IRQ>
+> [ 1439.790308]  read_callbacks_end_bh+0x1b/0x40
+> [ 1439.793087]  __end_buffer_async_read+0x18/0x60
+> [ 1439.795949]  end_bio_bh_io_sync+0x26/0x40
+> [ 1439.798726]  clone_endio+0x90/0x180 [dm_mod]
+> [ 1439.801543]  blk_update_request+0x78/0x300
+> [ 1439.804197]  blk_mq_end_request+0x1a/0x120
+> [ 1439.806903]  blk_done_softirq+0xa1/0xd0
+> [ 1439.809404]  __do_softirq+0xe3/0x311
+> [ 1439.811862]  irq_exit+0xdd/0xf0
+> [ 1439.814164]  call_function_single_interrupt+0xf/0x20
+> [ 1439.817082]  </IRQ>
+> [ 1439.819030] RIP: 0010:native_safe_halt+0xe/0x10
+> [ 1439.821795] Code: eb bd 90 90 90 90 90 90 90 90 90 90 e9 07 00 00 00 0f 00 2d 56 de 5a 00 f4 c3 66 90 e9 07 00 00 00 0f 00 2d 46 de 5a 00 fb f4 <c3> 90 66 66 66 66 90 41 55 41 54 55 53 e8 f0 03 6c ff 65 8b 2d 19
+> [ 1439.830746] RSP: 0018:ffffb279c0697eb8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff04
+> [ 1439.834651] RAX: ffffffffbc85c1d0 RBX: 0000000000000001 RCX: 0000000000000000
+> [ 1439.838373] RDX: 0000000000000001 RSI: 0000000000000087 RDI: 0000000000000001
+> [ 1439.842157] RBP: 0000000000000001 R08: 000002a24abd49ba R09: ffff9a697ffd3328
+> [ 1439.845956] R10: 0000000000000000 R11: 0000000000000b20 R12: 0000000000000000
+> [ 1439.849750] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> [ 1439.853563]  ? __sched_text_end+0x7/0x7
+> [ 1439.856261]  default_idle+0x1c/0x160
+> [ 1439.858875]  do_idle+0x1c4/0x280
+> [ 1439.861363]  cpu_startup_entry+0x19/0x20
+> [ 1439.864171]  start_secondary+0x184/0x1d0
+> [ 1439.867043]  secondary_startup_64+0xb6/0xc0
+> [ 1439.869803] Modules linked in: ext4 mbcache jbd2 btrfs xor zstd_decompress zstd_compress raid6_pq libcrc32c dm_flakey dm_mod sr_mod cdrom sg ata_generic pata_acpi bochs_drm ttm crct10dif_pclmul crc32_pclmul drm_kms_helper crc32c_intel ghash_clmulni_intel ppdev snd_pcm syscopyarea snd_timer sysfillrect sysimgblt snd fb_sys_fops drm aesni_intel crypto_simd ata_piix soundcore cryptd glue_helper joydev pcspkr serio_raw libata parport_pc i2c_piix4 parport floppy ip_tables [last unloaded: xor]
+> [ 1439.890150] CR2: 0000000003fffe53
+> [ 1439.892797] ---[ end trace 762467852b11b149 ]---
+> 
+> 
+> To reproduce:
+> 
+>         # build kernel
+> 	cd linux
+> 	cp config-5.2.0-rc2-00022-g402b1b3 .config
+> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 olddefconfig
+> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 prepare
+> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 modules_prepare
+> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 SHELL=/bin/bash
+> 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 bzImage
+> 
+> 
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         find lib/ | cpio -o -H newc --quiet | gzip > modules.cgz
+> 	bin/lkp qemu -k <bzImage> -m modules.cgz job-script # job-script is attached in this email
+> 
+> 
+> 
+> 
+> Thanks,
+> Rong Chen
+> 
+> 
+
+
+-- 
+chandan
+
+
+
