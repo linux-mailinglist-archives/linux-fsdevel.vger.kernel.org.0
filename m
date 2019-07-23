@@ -2,104 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C476E72316
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 01:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B6DE7233D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 02:00:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfGWXae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jul 2019 19:30:34 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50106 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbfGWXad (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jul 2019 19:30:33 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hq4Ea-00010p-D2; Tue, 23 Jul 2019 23:30:16 +0000
-Date:   Wed, 24 Jul 2019 00:30:16 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     James Morris <jmorris@namei.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 02/10] vfs: syscall: Add move_mount(2) to move mounts
- around
-Message-ID: <20190723233016.GD1131@ZenIV.linux.org.uk>
-References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
- <155059611887.17079.12991580316407924257.stgit@warthog.procyon.org.uk>
- <c5b901ca-c243-bf80-91be-a794c4433415@I-love.SAKURA.ne.jp>
- <20190708131831.GT17978@ZenIV.linux.org.uk>
- <874l3wo3gq.fsf@xmission.com>
- <20190708180132.GU17978@ZenIV.linux.org.uk>
- <20190708202124.GX17978@ZenIV.linux.org.uk>
- <alpine.LRH.2.21.1907240744080.16974@namei.org>
+        id S1727422AbfGWX76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jul 2019 19:59:58 -0400
+Received: from mga04.intel.com ([192.55.52.120]:34173 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726527AbfGWX76 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Jul 2019 19:59:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 16:59:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,300,1559545200"; 
+   d="scan'208";a="369081710"
+Received: from pgsmsx104.gar.corp.intel.com ([10.221.44.91])
+  by fmsmga006.fm.intel.com with ESMTP; 23 Jul 2019 16:59:55 -0700
+Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.46]) by
+ PGSMSX104.gar.corp.intel.com ([169.254.3.64]) with mapi id 14.03.0439.000;
+ Wed, 24 Jul 2019 07:59:54 +0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "songliubraving@fb.com" <songliubraving@fb.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "hdanton@sina.com" <hdanton@sina.com>,
+        "kernel-team@fb.com" <kernel-team@fb.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>
+Subject: Re: [PATCH v9 5/6] mm,thp: add read-only THP support for
+ (non-shmem) FS
+Thread-Topic: [PATCH v9 5/6] mm,thp: add read-only THP support for
+ (non-shmem) FS
+Thread-Index: AQHVKurXe0zlPpLJvUiiyeP9CKzbqKbYiXyA
+Date:   Tue, 23 Jul 2019 23:59:54 +0000
+Message-ID: <1563926391.8456.1.camel@intel.com>
+References: <20190625001246.685563-1-songliubraving@fb.com>
+         <20190625001246.685563-6-songliubraving@fb.com>
+In-Reply-To: <20190625001246.685563-6-songliubraving@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.254.182.119]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <90FB8C841C327D44B3083EA689DE73AE@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.1907240744080.16974@namei.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 07:45:07AM +1000, James Morris wrote:
-> On Mon, 8 Jul 2019, Al Viro wrote:
-> 
-> > On Mon, Jul 08, 2019 at 07:01:32PM +0100, Al Viro wrote:
-> > > On Mon, Jul 08, 2019 at 12:12:21PM -0500, Eric W. Biederman wrote:
-> > > 
-> > > > Al you do realize that the TOCTOU you are talking about comes the system
-> > > > call API.  TOMOYO can only be faulted for not playing in their own
-> > > > sandbox and not reaching out and fixing the vfs implementation details.
-> > 
-> > PS: the fact that mount(2) has been overloaded to hell and back (including
-> > MS_MOVE, which goes back to v2.5.0.5) predates the introduction of ->sb_mount()
-> > and LSM in general (2.5.27).  MS_BIND is 2.4.0-test9pre2.
-> > 
-> > In all the years since the introduction of ->sb_mount() I've seen zero
-> > questions from LSM folks regarding a sane place for those checks.  What I have
-> > seen was "we want it immediately upon the syscall entry, let the module
-> > figure out what to do" in reply to several times I tried to tell them "folks,
-> > it's called in a bad place; you want the checks applied to objects, not to
-> > raw string arguments".
-> > 
-> > As it is, we have easily bypassable checks on mount(2) (by way of ->sb_mount();
-> > there are other hooks also in the game for remounts and new mounts).
-> 
-> What are your recommendations for placing these checks?
-
-For MS_MOVE: do_move_mount(), after lock_mount(), when the mount tree is stable
-and pathnames are resolved.
-For MS_BIND: do_loopback(), ditto.
-Incidentally, for pivot_root(2) I would also suggest moving that past the
-lock_mount(), for the same reasons.
-For propagation flag changes: do_change_type(), after namespace_lock().
-For per-mount flag changes: do_reconfigure_mnt(), possibly after having
-grabbed ->s_umount.
-For fs remount: IMO it should be handled purely in ->sb_remount().
-
-For new mount: really depends upon the filesystem type, I'm afraid.  There's
-nothing type-independent that can be done - in the best case you can say
-"no mounting block filesystems from that device"; note that for NFS the
-meaning of the argument is entirely different and you *can* have something
-like foo.local.org: as a name of symlink (or directory), so blanket "you can
-mount foo.local.org:/srv/nfs/blah" is asking for trouble -
-mount -t ext4 foo.local.org:/srv/nfs/blah /mnt can bloody well end up
-successfully mounting a very untrusted usb disk.
-
-Note, BTW, that things like cramfs can be given
-	* mtd:mtd_device_name
-	* mtd<decimal number>
-	* block device pathname
-The last one needs to be resolved/canonicalized/whatnot.
-The other two must *NOT* - there's nothing to stop the
-attacker from ln -s /dev/mtdblock0 ./mtd12 and confusing
-the fsck out of your LSM (it would assume that we are
-trying to get mtd0 when in reality it'll mount mtd12).
-
-The rules really need to be type-dependent; ->sb_set_mnt_opts() has the
-state after the fs has been initialized to work with, but anything trying
-to stop the attempt to set the damn thing up in the first place (as
-current ->sb_mount() would) must be called from the inside of individual
-->get_tree()/->mount() instance (or a helper used by such).
+T24gTW9uLCAyMDE5LTA2LTI0IGF0IDE3OjEyIC0wNzAwLCBTb25nIExpdSB3cm90ZToNCj4gVGhp
+cyBwYXRjaCBpcyAoaG9wZWZ1bGx5KSB0aGUgZmlyc3Qgc3RlcCB0byBlbmFibGUgVEhQIGZvciBu
+b24tc2htZW0NCj4gZmlsZXN5c3RlbXMuDQo+IA0KPiBUaGlzIHBhdGNoIGVuYWJsZXMgYW4gYXBw
+bGljYXRpb24gdG8gcHV0IHBhcnQgb2YgaXRzIHRleHQgc2VjdGlvbnMgdG8gVEhQDQo+IHZpYSBt
+YWR2aXNlLCBmb3IgZXhhbXBsZToNCj4gDQo+ICAgICBtYWR2aXNlKCh2b2lkICopMHg2MDAwMDAs
+IDB4MjAwMDAwLCBNQURWX0hVR0VQQUdFKTsNCj4gDQo+IFdlIHRyaWVkIHRvIHJldXNlIHRoZSBs
+b2dpYyBmb3IgVEhQIG9uIHRtcGZzLg0KPiANCj4gQ3VycmVudGx5LCB3cml0ZSBpcyBub3Qgc3Vw
+cG9ydGVkIGZvciBub24tc2htZW0gVEhQLiBraHVnZXBhZ2VkIHdpbGwgb25seQ0KPiBwcm9jZXNz
+IHZtYSB3aXRoIFZNX0RFTllXUklURS4gc3lzX21tYXAoKSBpZ25vcmVzIFZNX0RFTllXUklURSBy
+ZXF1ZXN0cw0KPiAoc2VlIGtzeXNfbW1hcF9wZ29mZikuIFRoZSBvbmx5IHdheSB0byBjcmVhdGUg
+dm1hIHdpdGggVk1fREVOWVdSSVRFIGlzDQo+IGV4ZWN2ZSgpLiBUaGlzIHJlcXVpcmVtZW50IGxp
+bWl0cyBub24tc2htZW0gVEhQIHRvIHRleHQgc2VjdGlvbnMuDQo+IA0KPiBUaGUgbmV4dCBwYXRj
+aCB3aWxsIGhhbmRsZSB3cml0ZXMsIHdoaWNoIHdvdWxkIG9ubHkgaGFwcGVuIHdoZW4gdGhlIGFs
+bA0KPiB0aGUgdm1hcyB3aXRoIFZNX0RFTllXUklURSBhcmUgdW5tYXBwZWQuDQo+IA0KPiBBbiBF
+WFBFUklNRU5UQUwgY29uZmlnLCBSRUFEX09OTFlfVEhQX0ZPUl9GUywgaXMgYWRkZWQgdG8gZ2F0
+ZSB0aGlzDQo+IGZlYXR1cmUuDQo+IA0KPiBBY2tlZC1ieTogUmlrIHZhbiBSaWVsIDxyaWVsQHN1
+cnJpZWwuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBTb25nIExpdSA8c29uZ2xpdWJyYXZpbmdAZmIu
+Y29tPg0KPiAtLS0NCj4gIG1tL0tjb25maWcgICAgICB8IDExICsrKysrKw0KPiAgbW0vZmlsZW1h
+cC5jICAgIHwgIDQgKy0tDQo+ICBtbS9raHVnZXBhZ2VkLmMgfCA5NCArKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tDQo+ICBtbS9ybWFwLmMgICAgICAgfCAx
+MiArKysrLS0tDQo+ICA0IGZpbGVzIGNoYW5nZWQsIDEwMCBpbnNlcnRpb25zKCspLCAyMSBkZWxl
+dGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9tbS9LY29uZmlnIGIvbW0vS2NvbmZpZw0KPiBp
+bmRleCBmMGM3NmJhNDc2OTUuLjBhOGZkNTg5NDA2ZCAxMDA2NDQNCj4gLS0tIGEvbW0vS2NvbmZp
+Zw0KPiArKysgYi9tbS9LY29uZmlnDQo+IEBAIC03NjIsNiArNzYyLDE3IEBAIGNvbmZpZyBHVVBf
+QkVOQ0hNQVJLDQo+ICANCj4gIAkgIFNlZSB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy92bS9ndXBf
+YmVuY2htYXJrLmMNCj4gIA0KPiArY29uZmlnIFJFQURfT05MWV9USFBfRk9SX0ZTDQo+ICsJYm9v
+bCAiUmVhZC1vbmx5IFRIUCBmb3IgZmlsZXN5c3RlbXMgKEVYUEVSSU1FTlRBTCkiDQo+ICsJZGVw
+ZW5kcyBvbiBUUkFOU1BBUkVOVF9IVUdFX1BBR0VDQUNIRSAmJiBTSE1FTQ0KDQpIaSwNCg0KTWF5
+YmUgYSBzdHVwaWQgcXVlc3Rpb24gc2luY2UgSSBhbSBuZXcsIGJ1dCB3aHkgZG9lcyBpdCBkZXBl
+bmQgb24gU0hNRU0/DQoNClRoYW5rcywNCi1LYWk=
