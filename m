@@ -2,125 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 124AD70DB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 01:54:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E4C870DD8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2019 02:03:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387440AbfGVXyN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jul 2019 19:54:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47124 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731007AbfGVXyM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jul 2019 19:54:12 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06C1320840;
-        Mon, 22 Jul 2019 23:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563839651;
-        bh=7riE0sVQmQS5QgS4pP9ptPUvfmyCxgbuxcUzFNIX2L8=;
-        h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
-        b=lMfzRRCskgjYJCyPlokQPKY6jX+VpgCrEwPkMIQvRxf8iOB5wgrS9PjXaN0wjtfWh
-         RiuaqfDlvSUHC1e16Pk0GMsnB1H5f28N5075BUdTFeSOe4/ZlQbTkjJF0oMcqI6dyP
-         T+b1BFHi89keU/CNeTzd05/B7YC7Rqku9pnyKVeY=
-Content-Type: text/plain; charset="utf-8"
+        id S1727820AbfGWADj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jul 2019 20:03:39 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:55849 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727643AbfGWADj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Jul 2019 20:03:39 -0400
+Received: from dread.disaster.area (pa49-195-139-63.pa.nsw.optusnet.com.au [49.195.139.63])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 4C6C843B788;
+        Tue, 23 Jul 2019 10:03:33 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hpiGA-0001mL-5I; Tue, 23 Jul 2019 10:02:26 +1000
+Date:   Tue, 23 Jul 2019 10:02:26 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] psi: annotate refault stalls from IO submission
+Message-ID: <20190723000226.GV7777@dread.disaster.area>
+References: <20190722201337.19180-1-hannes@cmpxchg.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFd5g45hdCxEavSxirr0un_uLzo5Z-J4gHRA06qjzcQrTzmjVg@mail.gmail.com>
-References: <20190712081744.87097-1-brendanhiggins@google.com> <CAFd5g47ikJmA0uGoavAFsh+hQvDmgsOi26tyii0612R=rt7iiw@mail.gmail.com> <CAFd5g44_axVHNMBzxSURQB_-R+Rif7cZcg7PyZ_SS+5hcy5jZA@mail.gmail.com> <20190716175021.9CA412173C@mail.kernel.org> <CAFd5g453vXeSUCZenCk_CzJ-8a1ym9RaPo0NVF=FujF9ac-5Ag@mail.gmail.com> <20190718175024.C3EC421019@mail.kernel.org> <CAFd5g46a7C1+R6ZcE_SkqaYqgrH5Rx3M=X7orFyaMgFLDbeYYA@mail.gmail.com> <20190719000834.GA3228@google.com> <20190722200347.261D3218C9@mail.kernel.org> <CAFd5g45hdCxEavSxirr0un_uLzo5Z-J4gHRA06qjzcQrTzmjVg@mail.gmail.com>
-Subject: Re: [PATCH v9 04/18] kunit: test: add kunit_stream a std::stream like logger
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 22 Jul 2019 16:54:10 -0700
-Message-Id: <20190722235411.06C1320840@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190722201337.19180-1-hannes@cmpxchg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0 cx=a_idp_d
+        a=fNT+DnnR6FjB+3sUuX8HHA==:117 a=fNT+DnnR6FjB+3sUuX8HHA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=0o9FgrsRnhwA:10
+        a=ufHFDILaAAAA:8 a=7-415B0cAAAA:8 a=o-jcnmsilH93K4pHmdQA:9
+        a=EdKfoW5OtvoDdtON:21 a=SJvZlBx9A85TV0R8:21 a=CjuIK1q_8ugA:10
+        a=ZmIg1sZ3JBWsdXgziEIF:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quoting Brendan Higgins (2019-07-22 15:30:49)
-> On Mon, Jul 22, 2019 at 1:03 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> >
-> > What's the calling context of the assertions and expectations? I still
-> > don't like the fact that string stream needs to allocate buffers and
-> > throw them into a list somewhere because the calling context matters
-> > there.
->=20
-> The calling context is the same as before, which is anywhere.
+On Mon, Jul 22, 2019 at 04:13:37PM -0400, Johannes Weiner wrote:
+> psi tracks the time tasks wait for refaulting pages to become
+> uptodate, but it does not track the time spent submitting the IO. The
+> submission part can be significant if backing storage is contended or
+> when cgroup throttling (io.latency) is in effect - a lot of time is
+> spent in submit_bio(). In that case, we underreport memory pressure.
+> 
+> Annotate the submit_bio() paths (or the indirection through readpage)
+> for refaults and swapin to get proper psi coverage of delays there.
+> 
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> ---
+>  fs/btrfs/extent_io.c | 14 ++++++++++++--
+>  fs/ext4/readpage.c   |  9 +++++++++
+>  fs/f2fs/data.c       |  8 ++++++++
+>  fs/mpage.c           |  9 +++++++++
+>  mm/filemap.c         | 20 ++++++++++++++++++++
+>  mm/page_io.c         | 11 ++++++++---
+>  mm/readahead.c       | 24 +++++++++++++++++++++++-
+>  7 files changed, 89 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> index 1eb671c16ff1..2d2b3239965a 100644
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/pagevec.h>
+>  #include <linux/prefetch.h>
+>  #include <linux/cleancache.h>
+> +#include <linux/psi.h>
+>  #include "extent_io.h"
+>  #include "extent_map.h"
+>  #include "ctree.h"
+> @@ -4267,6 +4268,9 @@ int extent_readpages(struct address_space *mapping, struct list_head *pages,
+>  	struct extent_io_tree *tree = &BTRFS_I(mapping->host)->io_tree;
+>  	int nr = 0;
+>  	u64 prev_em_start = (u64)-1;
+> +	int ret = 0;
+> +	bool refault = false;
+> +	unsigned long pflags;
+>  
+>  	while (!list_empty(pages)) {
+>  		u64 contig_end = 0;
+> @@ -4281,6 +4285,10 @@ int extent_readpages(struct address_space *mapping, struct list_head *pages,
+>  				put_page(page);
+>  				break;
+>  			}
+> +			if (PageWorkingset(page) && !refault) {
+> +				psi_memstall_enter(&pflags);
+> +				refault = true;
+> +			}
+>  
+>  			pagepool[nr++] = page;
+>  			contig_end = page_offset(page) + PAGE_SIZE - 1;
+> @@ -4301,8 +4309,10 @@ int extent_readpages(struct address_space *mapping, struct list_head *pages,
+>  		free_extent_map(em_cached);
+>  
+>  	if (bio)
+> -		return submit_one_bio(bio, 0, bio_flags);
+> -	return 0;
+> +		ret = submit_one_bio(bio, 0, bio_flags);
+> +	if (refault)
+> +		psi_memstall_leave(&pflags);
+> +	return ret;
 
-Ok. That's concerning then.
+This all seems extremely fragile to me. Sprinkling magic,
+undocumented pixie dust through the IO paths to account for
+something nobody can actually determine is working correctly is a
+bad idea.  People are going to break this without knowing it, nobody
+is going to notice because there are no regression tests for it,
+and this will all end up in frustration for users because it
+constantly gets broken and doesn't work reliably.
 
->=20
-> > I'd prefer we just wrote directly to the console/log via printk
-> > instead. That way things are simple because we use the existing
-> > buffering path of printk, but maybe there's some benefit to the string
-> > stream that I don't see? Right now it looks like it builds a string and
-> > then dumps it to printk so I'm sort of lost what the benefit is over
-> > just writing directly with printk.
->=20
-> It's just buffering it so the whole string gets printed uninterrupted.
-> If we were to print out piecemeal to printk, couldn't we have another
-> call to printk come in causing it to garble the KUnit message we are
-> in the middle of printing?
+e.g. If this is needed around all calls to ->readpage(), then please
+write a readpage wrapper function and convert all the callers to use
+that wrapper.
 
-Yes, printing piecemeal by calling printk many times could lead to
-interleaving of messages if something else comes in such as an interrupt
-printing something. Printk has some support to hold "records" but I'm
-not sure how that would work here because KERN_CONT talks about only
-being used early on in boot code. I haven't looked at printk in detail
-though so maybe I'm all wrong and KERN_CONT just works?
+Even better: If this memstall and "refault" check is needed to
+account for bio submission blocking, then page cache iteration is
+the wrong place to be doing this check. It should be done entirely
+in the bio code when adding pages to the bio because we'll only ever
+be doing page cache read IO on page cache misses. i.e. this isn't
+dependent on adding a new page to the LRU or not - if we add a new
+page then we are going to be doing IO and so this does not require
+magic pixie dust at the page cache iteration level
 
-Can printk be called once with whatever is in the struct? Otherwise if
-this is about making printk into a structured log then maybe printk
-isn't the proper solution anyway. Maybe a dev interface should be used
-instead that can handle starting and stopping tests (via ioctl) in
-addition to reading test results, records, etc. with read() and a
-clearing of the records. Then the seqfile API works naturally. All of
-this is a bit premature, but it looks like you're going down the path of
-making something akin to ftrace that stores binary formatted
-assertion/expectation records in a lockless ring buffer that then
-formats those records when the user asks for them.
+e.g. bio_add_page_memstall() can do the working set check and then
+set a flag on the bio to say it contains a memstall page. Then on
+submission of the bio the memstall condition can be cleared.
 
-I can imagine someone wanting to write unit tests that check conditions
-from a simulated hardirq context via irq works (a driver mock
-framework?), so this doesn't seem far off.
+Cheers,
 
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
