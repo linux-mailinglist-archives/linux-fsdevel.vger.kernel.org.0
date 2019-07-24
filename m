@@ -2,176 +2,293 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52F07732D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 17:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7934473487
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 19:02:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbfGXPe7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jul 2019 11:34:59 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33098 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726846AbfGXPe7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jul 2019 11:34:59 -0400
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id A977B46866255EF82649;
-        Wed, 24 Jul 2019 16:34:56 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 24 Jul
- 2019 16:34:48 +0100
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Rob Landley <rob@landley.net>, <hpa@zytor.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>
-CC:     Mimi Zohar <zohar@linux.ibm.com>, <viro@zeniv.linux.org.uk>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
-        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
-        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
-        <kamensky@cisco.com>, <arnd@arndb.de>, <james.w.mcmechan@gmail.com>
-References: <20190523121803.21638-1-roberto.sassu@huawei.com>
- <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
- <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
- <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
- <1561909199.3985.33.camel@linux.ibm.com>
- <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
- <1561991485.4067.14.camel@linux.ibm.com>
- <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
-Message-ID: <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
-Date:   Wed, 24 Jul 2019 17:34:53 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1727212AbfGXRCy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jul 2019 13:02:54 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35743 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbfGXRCy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Jul 2019 13:02:54 -0400
+Received: by mail-wr1-f67.google.com with SMTP id y4so47796677wrm.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2019 10:02:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xa1NsVFGv/xJPIO0X4IJ6zOPEp6fe9IF2hXjxaPByDM=;
+        b=ZnA7QKjx1Nj94L2MD0v8H1r0upuLZ8ncB4dDrGl2s54FmPYqfaJuMqGvPFLXWReTPZ
+         QsIzwrD+Abhwfcs7l/3HNd/Y8f99RjG8P2Xn94oyaMlpB9js/JuYbGZUH9SBCBFJT+JT
+         bibTCCVhewcCAil7qzMnNTa1+8Ia36mf6iQZRHLi5LsgQZWInNnGtkwrlEYkqasVOwRL
+         Obd7qSjNGWGIX9KEXoMblzrQzgH3Sb+853Py8oDgOSxpZ4sinDQKY8wr5IvkYyXs35jm
+         p+hlslRCCBHgQ/cD2cPnfigm2dDnj6l6rRdvxlIl6O4JmWaCToe4JCtIBGh9ZhZfwjjJ
+         7OSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xa1NsVFGv/xJPIO0X4IJ6zOPEp6fe9IF2hXjxaPByDM=;
+        b=K16jN/W1gVXQ270+uF3LeNGCay1AUMUDgmtGwUGM4RQgKtgDbq6t5WZ/bdrS6M4RkL
+         TfaY1MSa1fOrLzLaPeCg1/o6QJLS7RjFivgH9OW9rnfEnpBmm/oSl4hdbAdYZHSPaHLY
+         085nnDxcVg6mCSnoQncTsaPGocou0kIFlOpgIuAno5nYVhOdFApkOHVOdC/9Uv+S9N3H
+         xKQfDG/+WrE8JYn7pFOsin9EPnlmmZbnTWr2qzFj0tfpC8jqPIzS2huq7hs3P3JleDqQ
+         dAfPfoD+u5ylP2wtV/h4uXNEkDt4X+AWkUB7OtWry8/oW//SPu88zPAGOZe6TWMemSqq
+         zyJw==
+X-Gm-Message-State: APjAAAXsKPOfkNYiAyhCTijjAL7/CI8b1wpFJpWGZCt+MnEoaj23Fplu
+        vF1fMEj1drGvGaSif4yV6MjHGlKZTF6PonRReo6PC4zhuS1eUGWgYKOosDSUvd4nKBRXewVjWgD
+        RK86aEtv37xFosPNjjB6NeN82zJO1508Ht//uIrTaZP3GuZtQ4m2CO2GKIhzYpLBgAIeUbaRnQG
+        /CuZV4ezYRHT5r3wLeYe7Z9NONcMxp5YrXnK8s
+X-Google-Smtp-Source: APXvYqw6eRkGSuqhH3NK7HbDeM6wI4vyBoZ3jV624hq6Ly6BW+HRAwJR9DzcwAM2arpbBEyuqf5RYg==
+X-Received: by 2002:adf:fe09:: with SMTP id n9mr93333801wrr.41.1563987771295;
+        Wed, 24 Jul 2019 10:02:51 -0700 (PDT)
+Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id j10sm80605867wrd.26.2019.07.24.10.02.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 10:02:50 -0700 (PDT)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] hung_task: Allow printing warnings every check interval
+Date:   Wed, 24 Jul 2019 18:02:49 +0100
+Message-Id: <20190724170249.9644-1-dima@arista.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-CLOUD-SEC-AV-Info: arista,google_mail,monitor
+X-CLOUD-SEC-AV-Sent: true
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Is there anything I didn't address in this patch set, that is delaying
-the review? I would appreciate if you can give me a feedback, positive
-or negative.
+Hung task detector has one timeout and has two associated actions on it:
+- issuing warnings with names and stacks of blocked tasks
+- panic()
 
-Thanks a lot!
+We want switches to panic (and reboot) if there's a task
+in uninterruptible sleep for some minutes - at that moment something
+ugly has happened and the box needs a reboot.
+But we also want to detect conditions that are "out of range"
+or approaching the point of failure. Under such conditions we want
+to issue an "early warning" of an impending failure, minutes before
+the switch is going to panic.
 
-Roberto
+Those "early warnings" serve a purpose while monitoring the network
+infrastructure. Those are also valuable on post-mortem analysis, when
+the logs from userspace applications aren't enough.
+Furthermore, we have a test pool of long-running duts that are
+constantly under close to real-world load for weeks. And such early
+warnings allowed to figure out some bottle necks without much engineer
+work intervention.
 
+There are also not yet upstream patches for other kinds of "early
+warnings" as prints whenever a mutex/semaphore is released after being
+held for long time, but those patches are much more intricate and have
+their runtime cost.
 
-On 7/15/2019 6:54 PM, Roberto Sassu wrote:
-> Rob, Peter, Arvind, did you have the chance to have a look at this
-> version of the patch set?
-> 
-> Thanks
-> 
-> Roberto
-> 
-> 
-> On 7/1/2019 4:31 PM, Mimi Zohar wrote:
->> On Mon, 2019-07-01 at 16:42 +0300, Roberto Sassu wrote:
->>> On 6/30/2019 6:39 PM, Mimi Zohar wrote:
->>>> On Wed, 2019-06-26 at 10:15 +0200, Roberto Sassu wrote:
->>>>> On 6/3/2019 8:32 PM, Rob Landley wrote:
->>>>>> On 6/3/19 4:31 AM, Roberto Sassu wrote:
->>>>>>>> This patch set aims at solving the following use case: appraise 
->>>>>>>> files from
->>>>>>>> the initial ram disk. To do that, IMA checks the signature/hash 
->>>>>>>> from the
->>>>>>>> security.ima xattr. Unfortunately, this use case cannot be 
->>>>>>>> implemented
->>>>>>>> currently, as the CPIO format does not support xattrs.
->>>>>>>>
->>>>>>>> This proposal consists in including file metadata as additional 
->>>>>>>> files named
->>>>>>>> METADATA!!!, for each file added to the ram disk. The CPIO 
->>>>>>>> parser in the
->>>>>>>> kernel recognizes these special files from the file name, and 
->>>>>>>> calls the
->>>>>>>> appropriate parser to add metadata to the previously extracted 
->>>>>>>> file. It has
->>>>>>>> been proposed to use bit 17:16 of the file mode as a way to 
->>>>>>>> recognize files
->>>>>>>> with metadata, but both the kernel and the cpio tool declare the 
->>>>>>>> file mode
->>>>>>>> as unsigned short.
->>>>>>>
->>>>>>> Any opinion on this patch set?
->>>>>>>
->>>>>>> Thanks
->>>>>>>
->>>>>>> Roberto
->>>>>>
->>>>>> Sorry, I've had the window open since you posted it but haven't 
->>>>>> gotten around to
->>>>>> it. I'll try to build it later today.
->>>>>>
->>>>>> It does look interesting, and I have no objections to the basic 
->>>>>> approach. I
->>>>>> should be able to add support to toybox cpio over a weekend once 
->>>>>> I've got the
->>>>>> kernel doing it to test against.
->>>>>
->>>>> Ok.
->>>>>
->>>>> Let me give some instructions so that people can test this patch set.
->>>>>
->>>>> To add xattrs to the ram disk embedded in the kernel it is sufficient
->>>>> to set CONFIG_INITRAMFS_FILE_METADATA="xattr" and
->>>>> CONFIG_INITRAMFS_SOURCE="<file with xattr>" in the kernel 
->>>>> configuration.
->>>>>
->>>>> To add xattrs to the external ram disk, it is necessary to patch cpio:
->>>>>
->>>>> https://github.com/euleros/cpio/commit/531cabc88e9ecdc3231fad6e4856869baa9a91ef 
->>>>>
->>>>> (xattr-v1 branch)
->>>>>
->>>>> and dracut:
->>>>>
->>>>> https://github.com/euleros/dracut/commit/a2dee56ea80495c2c1871bc73186f7b00dc8bf3b 
->>>>>
->>>>> (digest-lists branch)
->>>>>
->>>>> The same modification can be done for mkinitramfs (add '-e xattr' 
->>>>> to the
->>>>> cpio command line).
->>>>>
->>>>> To simplify the test, it would be sufficient to replace only the cpio
->>>>> binary and the dracut script with the modified versions. For 
->>>>> dracut, the
->>>>> patch should be applied to the local dracut (after it has been renamed
->>>>> to dracut.sh).
->>>>>
->>>>> Then, run:
->>>>>
->>>>> dracut -e xattr -I <file with xattr> (add -f to overwrite the ram 
->>>>> disk)
->>>>>
->>>>> Xattrs can be seen by stopping the boot process for example by adding
->>>>> rd.break to the kernel command line.
->>>>
->>>> A simple way of testing, without needing any changes other than the
->>>> kernel patches, is to save the dracut temporary directory by supplying
->>>> "--keep" on the dracut command line, calling
->>>> usr/gen_initramfs_list.sh, followed by usr/gen_init_cpio with the "-e
->>>> xattr" option.
->>>
->>> Alternatively, follow the instructions to create the embedded ram disk
->>> with xattrs, and use the existing external ram disk created with dracut
->>> to check if xattrs are created.
->>
->> True, but this alternative is for those who normally use dracut to
->> create an initramfs, but don't want to update cpio or dracut.
->>
->> Mimi
->>
-> 
+It seems rather easy to add printing tasks and their stacks for
+notification and debugging purposes into hung task detector without
+complicating the code or major cost (prints are with KERN_INFO loglevel
+and so don't go on console, only into dmesg log).
 
+Since commit a2e514453861 ("kernel/hung_task.c: allow to set checking
+interval separately from timeout") it's possible to set checking
+interval for hung task detector with `hung_task_check_interval_secs`.
+
+Provide `hung_task_interval_warnings` sysctl that allows printing
+hung tasks every detection interval. It's not ratelimited, so the root
+should be cautious configuring it.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: Vasiliy Khoruzhick <vasilykh@arista.com>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ Documentation/admin-guide/sysctl/kernel.rst | 20 ++++++++-
+ include/linux/sched/sysctl.h                |  1 +
+ kernel/hung_task.c                          | 50 ++++++++++++++-------
+ kernel/sysctl.c                             |  8 ++++
+ 4 files changed, 62 insertions(+), 17 deletions(-)
+
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index 032c7cd3cede..2e36620ec1e4 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -45,6 +45,7 @@ show up in /proc/sys/kernel:
+ - hung_task_timeout_secs
+ - hung_task_check_interval_secs
+ - hung_task_warnings
++- hung_task_interval_warnings
+ - hyperv_record_panic_msg
+ - kexec_load_disabled
+ - kptr_restrict
+@@ -383,14 +384,29 @@ Possible values to set are in range {0..LONG_MAX/HZ}.
+ hung_task_warnings:
+ ===================
+ 
+-The maximum number of warnings to report. During a check interval
+-if a hung task is detected, this value is decreased by 1.
++The maximum number of warnings to report. If after timeout a hung
++task is present, this value is decreased by 1 every check interval,
++producing a warning.
+ When this value reaches 0, no more warnings will be reported.
+ This file shows up if CONFIG_DETECT_HUNG_TASK is enabled.
+ 
+ -1: report an infinite number of warnings.
+ 
+ 
++hung_task_interval_warnings:
++===================
++
++The same as hung_task_warnings, but set the number of interval
++warnings to be issued about detected hung tasks during check
++interval. That will produce warnings *before* the timeout happens.
++If a hung task is detected during check interval, this value is
++decreased by 1. When this value reaches 0, only timeout warnings
++will be reported.
++This file shows up if CONFIG_DETECT_HUNG_TASK is enabled.
++
++-1: report an infinite number of check interval warnings.
++
++
+ hyperv_record_panic_msg:
+ ========================
+ 
+diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+index d4f6215ee03f..89f55e914673 100644
+--- a/include/linux/sched/sysctl.h
++++ b/include/linux/sched/sysctl.h
+@@ -12,6 +12,7 @@ extern unsigned int  sysctl_hung_task_panic;
+ extern unsigned long sysctl_hung_task_timeout_secs;
+ extern unsigned long sysctl_hung_task_check_interval_secs;
+ extern int sysctl_hung_task_warnings;
++extern int sysctl_hung_task_interval_warnings;
+ extern int proc_dohung_task_timeout_secs(struct ctl_table *table, int write,
+ 					 void __user *buffer,
+ 					 size_t *lenp, loff_t *ppos);
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 14a625c16cb3..cd971eef8226 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -49,6 +49,7 @@ unsigned long __read_mostly sysctl_hung_task_timeout_secs = CONFIG_DEFAULT_HUNG_
+ unsigned long __read_mostly sysctl_hung_task_check_interval_secs;
+ 
+ int __read_mostly sysctl_hung_task_warnings = 10;
++int __read_mostly sysctl_hung_task_interval_warnings;
+ 
+ static int __read_mostly did_panic;
+ static bool hung_task_show_lock;
+@@ -85,6 +86,34 @@ static struct notifier_block panic_block = {
+ 	.notifier_call = hung_task_panic,
+ };
+ 
++static void hung_task_warning(struct task_struct *t, bool timeout)
++{
++	const char *loglevel = timeout ? KERN_ERR : KERN_INFO;
++	const char *path;
++	int *warnings;
++
++	if (timeout) {
++		warnings = &sysctl_hung_task_warnings;
++		path = "hung_task_timeout_secs";
++	} else {
++		warnings = &sysctl_hung_task_interval_warnings;
++		path = "hung_task_interval_secs";
++	}
++
++	if (*warnings > 0)
++		--*warnings;
++
++	printk("%sINFO: task %s:%d blocked for more than %ld seconds.\n",
++	       loglevel, t->comm, t->pid, (jiffies - t->last_switch_time) / HZ);
++	printk("%s      %s %s %.*s\n",
++		loglevel, print_tainted(), init_utsname()->release,
++		(int)strcspn(init_utsname()->version, " "),
++		init_utsname()->version);
++	printk("%s\"echo 0 > /proc/sys/kernel/%s\" disables this message.\n",
++		loglevel, path);
++	sched_show_task(t);
++}
++
+ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ {
+ 	unsigned long switch_count = t->nvcsw + t->nivcsw;
+@@ -109,6 +138,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 		t->last_switch_time = jiffies;
+ 		return;
+ 	}
++	if (sysctl_hung_task_interval_warnings)
++		hung_task_warning(t, false);
++
+ 	if (time_is_after_jiffies(t->last_switch_time + timeout * HZ))
+ 		return;
+ 
+@@ -120,22 +152,10 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 		hung_task_call_panic = true;
+ 	}
+ 
+-	/*
+-	 * Ok, the task did not get scheduled for more than 2 minutes,
+-	 * complain:
+-	 */
+ 	if (sysctl_hung_task_warnings) {
+-		if (sysctl_hung_task_warnings > 0)
+-			sysctl_hung_task_warnings--;
+-		pr_err("INFO: task %s:%d blocked for more than %ld seconds.\n",
+-		       t->comm, t->pid, (jiffies - t->last_switch_time) / HZ);
+-		pr_err("      %s %s %.*s\n",
+-			print_tainted(), init_utsname()->release,
+-			(int)strcspn(init_utsname()->version, " "),
+-			init_utsname()->version);
+-		pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
+-			" disables this message.\n");
+-		sched_show_task(t);
++		/* Don't print warings twice */
++		if (!sysctl_hung_task_interval_warnings)
++			hung_task_warning(t, true);
+ 		hung_task_show_lock = true;
+ 	}
+ 
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 078950d9605b..f12888971d66 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1147,6 +1147,14 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_dointvec_minmax,
+ 		.extra1		= &neg_one,
+ 	},
++	{
++		.procname	= "hung_task_interval_warnings",
++		.data		= &sysctl_hung_task_interval_warnings,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &neg_one,
++	},
+ #endif
+ #ifdef CONFIG_RT_MUTEXES
+ 	{
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+2.22.0
+
