@@ -2,127 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6184F725A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 06:01:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46E387268F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 06:27:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725826AbfGXEBX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jul 2019 00:01:23 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33747 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbfGXEBX (ORCPT
+        id S1725919AbfGXEZW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jul 2019 00:25:22 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39785 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfGXEZW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jul 2019 00:01:23 -0400
-Received: by mail-ot1-f66.google.com with SMTP id q20so46368150otl.0;
-        Tue, 23 Jul 2019 21:01:22 -0700 (PDT)
+        Wed, 24 Jul 2019 00:25:22 -0400
+Received: by mail-pf1-f195.google.com with SMTP id f17so16235614pfn.6;
+        Tue, 23 Jul 2019 21:25:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=czbKIXOb/Go0XhMRs2MEN6VnTG6u3MuZundQHh6fuSE=;
+        b=drt6EjFdosCAcMEHtdm6+Wwi0M6mSxOzFkxqawZr6IPXLSVzqb/W29XJdPWwpIC0hK
+         6O36OujVLFyXEay6jApmdcKGKaFf8ZHrynwkSnL37TGZQHVi5dSIejM/BVPUxQ7VV65S
+         fWBfNJcl5fT06CyStqADu0QhfKQgev+DV1jB/43XtDAQrRVBT4D8hAHyS32+/jE194Ee
+         9IJK8BdynnPV24hoHobSOouQX3yA4+C8Ogba9Jjmu1EUBDg3exofJAkPMZ4BVkwyR1FN
+         DpKTuGd8V6acalOBWqjEaikoQcAKX4Ix3w6DkaRL7W59P9w2XZ6f+kz4iv47D5f4dYHi
+         ARbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bP783P8vHL5hvGQlKfl7m6itu22DJvCAUy0AE7ISvs8=;
-        b=qPCplhanET8r4/AEG8Z1Oez4ly5YfbYj4GLsdIxHRcXyBhdG7qQv5tKVda6VGFN0wM
-         LJaApJvBC6njyvQQ26dUfFIGfAa4vXbHJr/SUhX7M5c+FMhApEdRPvqja9R/m6LxFDm+
-         yKVg2f1U/YJYDx7MEYh/VGa7M5ltkg+9Di8c0Vajc17XVxihzTho2liR5JBp+FixCxbR
-         WAeCZZtU8kBlKjfQrXum+zoAgO0yG5Qad+JbgaQKSWpcn0k6ij1L/NNuPAk6Os1CTRjl
-         qeHQDP5fNQyzjlhO/y5TArPmVp7XeBX7a0LuwRLHNclhdyVLcv2nqixDMLS2jqsJNDq8
-         ZJDA==
-X-Gm-Message-State: APjAAAUXPEUH2/O4zOb6jE9CY/uFmx5lhEztqsAumI/++guoPL29vbhO
-        u4T60dvV0g6vIXdk3rUTsbOi2qCteQU=
-X-Google-Smtp-Source: APXvYqzjQnT/DOSjKiboa1+pO2X26nHpVVkku+OAM/CDAP5PrqN95J4LDbJVoBS0zVwaEYQxeDcYCQ==
-X-Received: by 2002:a9d:5ed:: with SMTP id 100mr6248811otd.105.1563940881828;
-        Tue, 23 Jul 2019 21:01:21 -0700 (PDT)
-Received: from sultan-box.localdomain ([192.111.140.132])
-        by smtp.gmail.com with ESMTPSA id v65sm15464278oig.51.2019.07.23.21.01.20
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=czbKIXOb/Go0XhMRs2MEN6VnTG6u3MuZundQHh6fuSE=;
+        b=Rw/FoVxyf7G530+xTrSsfsezIOn56PVIzMdw5uSPJCWXG7DRQtalifYk5M5c9+EhLv
+         O52MtOven3BP6beICwYTanQ0SvpycyZFDGwo9811B3Y1AGpN76gSsI9DOmv379PCYhu4
+         7vgpaOHAMwvR7+caYQplJ/QN4562GuqHgXHmGmeOD1mr7GEUx2UPNPHuvM+vKj1ZOltD
+         5lIi3g5wdyyg5VXhNRFKtXwPdCJCtcI5DZPXB9bHENHHqOTH7oiODHFRqVpNky+ZabI/
+         swUXb9D6Rr4k1/OPeyJngqfX64qAOVmdwUP/Vj9E1oFRW4BAndYbEcAhIS+jNSAT/WaS
+         I9ww==
+X-Gm-Message-State: APjAAAVN1VhOyoqLz9R6b2/m+bXT5auNuPEOYanYrK8iQ4AVv+nB3sZ2
+        iWqUG7k5/DG8qXrtoPw3DpQ=
+X-Google-Smtp-Source: APXvYqwbbPiJvrG7YMdt1a1WYUqGY2Z5kAsIWFPe6nz2zmmLERZ6mi3tyMsrNzYm3HTPDg7yUokVfw==
+X-Received: by 2002:a65:6288:: with SMTP id f8mr74189986pgv.292.1563942321242;
+        Tue, 23 Jul 2019 21:25:21 -0700 (PDT)
+Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
+        by smtp.gmail.com with ESMTPSA id a15sm34153364pgw.3.2019.07.23.21.25.19
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 21:01:21 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 22:01:18 -0600
-From:   Sultan Alsawaf <sultan@kerneltoast.com>
-To:     Andreas Dilger <adilger@dilger.ca>
+        Tue, 23 Jul 2019 21:25:20 -0700 (PDT)
+From:   john.hubbard@gmail.com
+X-Google-Original-From: jhubbard@nvidia.com
+To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mbcache: Speed up cache entry creation
-Message-ID: <20190724040118.GA31214@sultan-box.localdomain>
-References: <20190723053549.14465-1-sultan@kerneltoast.com>
- <5EDDA127-031C-4F16-9B9B-8DBC94C7E471@dilger.ca>
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net,
+        virtualization@lists.linux-foundation.org,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 00/12] block/bio, fs: convert put_page() to put_user_page*()
+Date:   Tue, 23 Jul 2019 21:25:06 -0700
+Message-Id: <20190724042518.14363-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5EDDA127-031C-4F16-9B9B-8DBC94C7E471@dilger.ca>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=UTF-8
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 10:56:05AM -0600, Andreas Dilger wrote:
-> Do you have any kind of performance metrics that show this is an actual
-> improvement in performance?  This would be either macro-level benchmarks
-> (e.g. fio, but this seems unlikely to show any benefit), or micro-level
-> measurements (e.g. flame graph) that show a net reduction in CPU cycles,
-> lock contention, etc. in this part of the code.
+From: John Hubbard <jhubbard@nvidia.com>
 
-Hi Andreas,
+Hi,
 
-Here are some basic micro-benchmark results:
+This is mostly Jerome's work, converting the block/bio and related areas
+to call put_user_page*() instead of put_page(). Because I've changed
+Jerome's patches, in some cases significantly, I'd like to get his
+feedback before we actually leave him listed as the author (he might
+want to disown some or all of these).
 
-Before:
-[    3.162896] mb_cache_entry_create: AVG cycles: 75
-[    3.054701] mb_cache_entry_create: AVG cycles: 78
-[    3.152321] mb_cache_entry_create: AVG cycles: 77
+I added a new patch, in order to make this work with Christoph Hellwig's
+recent overhaul to bio_release_pages(): "block: bio_release_pages: use
+flags arg instead of bool".
 
-After:
-[    3.043380] mb_cache_entry_create: AVG cycles: 68
-[    3.194321] mb_cache_entry_create: AVG cycles: 71
-[    3.038100] mb_cache_entry_create: AVG cycles: 69
+I've started the series with a patch that I've posted in another
+series ("mm/gup: add make_dirty arg to put_user_pages_dirty_lock()"[1]),
+because I'm not sure which of these will go in first, and this allows each
+to stand alone.
 
-The performance difference is probably more drastic when free memory is low,
-since an unnecessary call to kmem_cache_alloc() can result in a long wait for
-pages to be freed.
+Testing: not much beyond build and boot testing has been done yet. And
+I'm not set up to even exercise all of it (especially the IB parts) at
+run time.
 
-The micro-benchmark code is attached.
+Anyway, changes here are:
 
-Thanks,
-Sultan
----
-diff --git a/fs/mbcache.c b/fs/mbcache.c
-index 289f3664061e..e0f22ff8fab8 100644
---- a/fs/mbcache.c
-+++ b/fs/mbcache.c
-@@ -82,7 +82,7 @@ static inline struct mb_bucket *mb_cache_entry_bucket(struct mb_cache *cache,
-  * -EBUSY if entry with the same key and value already exists in cache.
-  * Otherwise 0 is returned.
-  */
--int mb_cache_entry_create(struct mb_cache *cache, gfp_t mask, u32 key,
-+static int __mb_cache_entry_create(struct mb_cache *cache, gfp_t mask, u32 key,
- 			  u64 value, bool reusable)
- {
- 	struct mb_cache_entry *entry, *dup;
-@@ -148,6 +148,29 @@ int mb_cache_entry_create(struct mb_cache *cache, gfp_t mask, u32 key,
- 
- 	return 0;
- }
-+
-+int mb_cache_entry_create(struct mb_cache *cache, gfp_t mask, u32 key,
-+			  u64 value, bool reusable)
-+{
-+	static unsigned long count, sum;
-+	static DEFINE_MUTEX(lock);
-+	volatile cycles_t start, delta;
-+	int ret;
-+
-+	mutex_lock(&lock);
-+	local_irq_disable();
-+	start = get_cycles();
-+	ret = __mb_cache_entry_create(cache, mask, key, value, reusable);
-+	delta = get_cycles() - start;
-+	local_irq_enable();
-+
-+	sum += delta;
-+	if (++count == 1000)
-+		printk("%s: AVG cycles: %lu\n", __func__, sum / count);
-+	mutex_unlock(&lock);
-+
-+	return ret;
-+}
- EXPORT_SYMBOL(mb_cache_entry_create);
- 
- void __mb_cache_entry_free(struct mb_cache_entry *entry)
+* Store, in the iov_iter, a "came from gup (get_user_pages)" parameter.
+  Then, use the new iov_iter_get_pages_use_gup() to retrieve it when
+  it is time to release the pages. That allows choosing between put_page()
+  and put_user_page*().
+
+* Pass in one more piece of information to bio_release_pages: a "from_gup"
+  parameter. Similar use as above.
+
+* Change the block layer, and several file systems, to use
+  put_user_page*().
+
+[1] https://lore.kernel.org/r/20190724012606.25844-2-jhubbard@nvidia.com
+    And please note the correction email that I posted as a follow-up,
+    if you're looking closely at that patch. :) The fixed version is
+    included here.
+
+John Hubbard (3):
+  mm/gup: add make_dirty arg to put_user_pages_dirty_lock()
+  block: bio_release_pages: use flags arg instead of bool
+  fs/ceph: fix a build warning: returning a value from void function
+
+Jérôme Glisse (9):
+  iov_iter: add helper to test if an iter would use GUP v2
+  block: bio_release_pages: convert put_page() to put_user_page*()
+  block_dev: convert put_page() to put_user_page*()
+  fs/nfs: convert put_page() to put_user_page*()
+  vhost-scsi: convert put_page() to put_user_page*()
+  fs/cifs: convert put_page() to put_user_page*()
+  fs/fuse: convert put_page() to put_user_page*()
+  fs/ceph: convert put_page() to put_user_page*()
+  9p/net: convert put_page() to put_user_page*()
+
+ block/bio.c                                |  81 ++++++++++++---
+ drivers/infiniband/core/umem.c             |   5 +-
+ drivers/infiniband/hw/hfi1/user_pages.c    |   5 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c |   5 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c   |   5 +-
+ drivers/infiniband/sw/siw/siw_mem.c        |   8 +-
+ drivers/vhost/scsi.c                       |  13 ++-
+ fs/block_dev.c                             |  22 +++-
+ fs/ceph/debugfs.c                          |   2 +-
+ fs/ceph/file.c                             |  62 ++++++++---
+ fs/cifs/cifsglob.h                         |   3 +
+ fs/cifs/file.c                             |  22 +++-
+ fs/cifs/misc.c                             |  19 +++-
+ fs/direct-io.c                             |   2 +-
+ fs/fuse/dev.c                              |  22 +++-
+ fs/fuse/file.c                             |  53 +++++++---
+ fs/nfs/direct.c                            |  10 +-
+ include/linux/bio.h                        |  22 +++-
+ include/linux/mm.h                         |   5 +-
+ include/linux/uio.h                        |  11 ++
+ mm/gup.c                                   | 115 +++++++++------------
+ net/9p/trans_common.c                      |  14 ++-
+ net/9p/trans_common.h                      |   3 +-
+ net/9p/trans_virtio.c                      |  18 +++-
+ 24 files changed, 357 insertions(+), 170 deletions(-)
+
+-- 
+2.22.0
+
