@@ -2,169 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 714977290E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 09:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75B2C72987
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 10:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726038AbfGXHbb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jul 2019 03:31:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52770 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725851AbfGXHbb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jul 2019 03:31:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 12D7EAEF8;
-        Wed, 24 Jul 2019 07:31:28 +0000 (UTC)
-Date:   Wed, 24 Jul 2019 09:31:25 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@google.com>,
-        David Rientjes <rientjes@google.com>,
-        kunit-dev@googlegroups.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        wfg@linux.intel.com, Greg KH <gregkh@linuxfoundation.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Richard Weinberger <richard@nod.at>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Timothy Bird <Tim.Bird@sony.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v9 04/18] kunit: test: add kunit_stream a std::stream
- like logger
-Message-ID: <20190724073125.xyzfywctrcvg6fmh@pathway.suse.cz>
-References: <CAFd5g47ikJmA0uGoavAFsh+hQvDmgsOi26tyii0612R=rt7iiw@mail.gmail.com>
- <CAFd5g44_axVHNMBzxSURQB_-R+Rif7cZcg7PyZ_SS+5hcy5jZA@mail.gmail.com>
- <20190716175021.9CA412173C@mail.kernel.org>
- <CAFd5g453vXeSUCZenCk_CzJ-8a1ym9RaPo0NVF=FujF9ac-5Ag@mail.gmail.com>
- <20190718175024.C3EC421019@mail.kernel.org>
- <CAFd5g46a7C1+R6ZcE_SkqaYqgrH5Rx3M=X7orFyaMgFLDbeYYA@mail.gmail.com>
- <20190719000834.GA3228@google.com>
- <20190722200347.261D3218C9@mail.kernel.org>
- <CAFd5g45hdCxEavSxirr0un_uLzo5Z-J4gHRA06qjzcQrTzmjVg@mail.gmail.com>
- <20190722235411.06C1320840@mail.kernel.org>
+        id S1725882AbfGXIII (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jul 2019 04:08:08 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36219 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbfGXIII (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Jul 2019 04:08:08 -0400
+Received: by mail-qk1-f196.google.com with SMTP id g18so33107607qkl.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2019 01:08:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=/MFYQFzENwHk5G46kOvOVKTzaxjp4jXpKM7WypPWBDc=;
+        b=Nhzy9AzVS0KSK0Xg9KN9bhUaRnRGluMjXgnDkQ4yrYC2HE+JNwhUq65X2pzq+Kdti/
+         G7brW544C7c8cn333l7AKguxZ6OGHb4G61jTwi12YB/WlWc274wwW3IjpUnZsVo5UMbD
+         jClktlUx3l2yvesLtFsZBUr04vpNK0zntQWid2mZNktYZpaZJDTiU2cIfQMD0oknVrfc
+         gqBtM2oB459pCTTWV64X1lVgIWgIzuS0CF/zrvQI5xoW1obtphlQHnUXZagatZuNyLF0
+         bk660kmucWKxUKD6RyDFjz8MlERx5UZ2rBYAO0QEd52cFeQ+WZNniGb2aNnZ9n9wZOZH
+         6W/A==
+X-Gm-Message-State: APjAAAWpGDOeq7v/2KcM4056LrQa8/eZle0lJLEQnXmVfqme1bnxT+L2
+        phaOOGhF8AkgxZohCPNpKWGY/g==
+X-Google-Smtp-Source: APXvYqyqOJ7xj5WyBSGnSKw6r+fHzKSSQgggyWILPC/N5KbhyvrIGi3wpGDnO2q6i0xNWsrtSCd37A==
+X-Received: by 2002:a05:620a:31b:: with SMTP id s27mr17648521qkm.264.1563955687250;
+        Wed, 24 Jul 2019 01:08:07 -0700 (PDT)
+Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
+        by smtp.gmail.com with ESMTPSA id t26sm23203051qtc.95.2019.07.24.01.07.58
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 01:08:06 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 04:07:55 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     john.hubbard@gmail.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net,
+        virtualization@lists.linux-foundation.org,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Subject: Re: [PATCH 07/12] vhost-scsi: convert put_page() to put_user_page*()
+Message-ID: <20190724040745-mutt-send-email-mst@kernel.org>
+References: <20190724042518.14363-1-jhubbard@nvidia.com>
+ <20190724042518.14363-8-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190722235411.06C1320840@mail.kernel.org>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190724042518.14363-8-jhubbard@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 2019-07-22 16:54:10, Stephen Boyd wrote:
-> Quoting Brendan Higgins (2019-07-22 15:30:49)
-> > On Mon, Jul 22, 2019 at 1:03 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > >
-> > > What's the calling context of the assertions and expectations? I still
-> > > don't like the fact that string stream needs to allocate buffers and
-> > > throw them into a list somewhere because the calling context matters
-> > > there.
-> > 
-> > The calling context is the same as before, which is anywhere.
+On Tue, Jul 23, 2019 at 09:25:13PM -0700, john.hubbard@gmail.com wrote:
+> From: Jérôme Glisse <jglisse@redhat.com>
 > 
-> Ok. That's concerning then.
+> For pages that were retained via get_user_pages*(), release those pages
+> via the new put_user_page*() routines, instead of via put_page().
 > 
-> > 
-> > > I'd prefer we just wrote directly to the console/log via printk
-> > > instead. That way things are simple because we use the existing
-> > > buffering path of printk, but maybe there's some benefit to the string
-> > > stream that I don't see? Right now it looks like it builds a string and
-> > > then dumps it to printk so I'm sort of lost what the benefit is over
-> > > just writing directly with printk.
-> > 
-> > It's just buffering it so the whole string gets printed uninterrupted.
-> > If we were to print out piecemeal to printk, couldn't we have another
-> > call to printk come in causing it to garble the KUnit message we are
-> > in the middle of printing?
+> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+> ("mm: introduce put_user_page*(), placeholder versions").
 > 
-> Yes, printing piecemeal by calling printk many times could lead to
-> interleaving of messages if something else comes in such as an interrupt
-> printing something. Printk has some support to hold "records" but I'm
-> not sure how that would work here because KERN_CONT talks about only
-> being used early on in boot code. I haven't looked at printk in detail
-> though so maybe I'm all wrong and KERN_CONT just works?
+> Changes from Jérôme's original patch:
+> 
+> * Changed a WARN_ON to a BUG_ON.
+> 
+> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> Cc: virtualization@lists.linux-foundation.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-block@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Johannes Thumshirn <jthumshirn@suse.de>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Ming Lei <ming.lei@redhat.com>
+> Cc: Dave Chinner <david@fromorbit.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Boaz Harrosh <boaz@plexistor.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> Cc: Jason Wang <jasowang@redhat.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Stefan Hajnoczi <stefanha@redhat.com>
 
-KERN_CONT does not guarantee that the message will get printed
-together. The pieces get interleaved with messages printed in
-parallel.
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-Note that KERN_CONT was originally really meant to be used only during
-boot. It was later used more widely and ended in the best effort category.
-
-There were several attempts to make it more reliable. But it was
-always either too complicated or error prone or both.
-
-You need to use your own buffering if you rely want perfect output.
-The question is if it is really worth the complexity. Also note that
-any buffering reduces the chance that the messages will reach
-the console.
-
-BTW: There is a work in progress on a lockless printk ring buffer.
-It will make printk() more secure regarding deadlocks. But it might
-make transparent handling of continuous lines even more tricky.
-
-I guess that local buffering, before calling printk(), will be
-even more important then. Well, it might really force us to create
-an API for it.
-
-
-> Can printk be called once with whatever is in the struct? Otherwise if
-> this is about making printk into a structured log then maybe printk
-> isn't the proper solution anyway. Maybe a dev interface should be used
-> instead that can handle starting and stopping tests (via ioctl) in
-> addition to reading test results, records, etc. with read() and a
-> clearing of the records. Then the seqfile API works naturally. All of
-> this is a bit premature, but it looks like you're going down the path of
-> making something akin to ftrace that stores binary formatted
-> assertion/expectation records in a lockless ring buffer that then
-> formats those records when the user asks for them.
-
-IMHO, ftrace postpones the text formatting primary because it does not
-not want to slow down the traced code more than necessary. It is yet
-another layer and there should be some strong reason for it.
-
-> I can imagine someone wanting to write unit tests that check conditions
-> from a simulated hardirq context via irq works (a driver mock
-> framework?), so this doesn't seem far off.
-
-Note that stroring the messages into the printk log is basically safe in any
-context. It uses temporary per-CPU buffers for recursive messages and
-in NMI. The only problem is panic() when some CPU gets stuck with the
-lock taken. This will get solved by the lockless ringbuffer. Also
-the temporary buffers will not be necessary any longer.
-
-Much bigger problems are with consoles. There are many of them. It
-means a lot of code and more locks involved, including scheduler
-locks. Note that console lock is a semaphore.
-
-Best Regards,
-Petr
+> ---
+>  drivers/vhost/scsi.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+> index a9caf1bc3c3e..282565ab5e3f 100644
+> --- a/drivers/vhost/scsi.c
+> +++ b/drivers/vhost/scsi.c
+> @@ -329,11 +329,11 @@ static void vhost_scsi_release_cmd(struct se_cmd *se_cmd)
+>  
+>  	if (tv_cmd->tvc_sgl_count) {
+>  		for (i = 0; i < tv_cmd->tvc_sgl_count; i++)
+> -			put_page(sg_page(&tv_cmd->tvc_sgl[i]));
+> +			put_user_page(sg_page(&tv_cmd->tvc_sgl[i]));
+>  	}
+>  	if (tv_cmd->tvc_prot_sgl_count) {
+>  		for (i = 0; i < tv_cmd->tvc_prot_sgl_count; i++)
+> -			put_page(sg_page(&tv_cmd->tvc_prot_sgl[i]));
+> +			put_user_page(sg_page(&tv_cmd->tvc_prot_sgl[i]));
+>  	}
+>  
+>  	vhost_scsi_put_inflight(tv_cmd->inflight);
+> @@ -630,6 +630,13 @@ vhost_scsi_map_to_sgl(struct vhost_scsi_cmd *cmd,
+>  	size_t offset;
+>  	unsigned int npages = 0;
+>  
+> +	/*
+> +	 * Here in all cases we should have an IOVEC which use GUP. If that is
+> +	 * not the case then we will wrongly call put_user_page() and the page
+> +	 * refcount will go wrong (this is in vhost_scsi_release_cmd())
+> +	 */
+> +	WARN_ON(!iov_iter_get_pages_use_gup(iter));
+> +
+>  	bytes = iov_iter_get_pages(iter, pages, LONG_MAX,
+>  				VHOST_SCSI_PREALLOC_UPAGES, &offset);
+>  	/* No pages were pinned */
+> @@ -681,7 +688,7 @@ vhost_scsi_iov_to_sgl(struct vhost_scsi_cmd *cmd, bool write,
+>  			while (p < sg) {
+>  				struct page *page = sg_page(p++);
+>  				if (page)
+> -					put_page(page);
+> +					put_user_page(page);
+>  			}
+>  			return ret;
+>  		}
+> -- 
+> 2.22.0
