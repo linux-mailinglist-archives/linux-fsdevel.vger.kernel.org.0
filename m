@@ -2,99 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 743DC72824
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 08:18:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 714977290E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 09:31:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbfGXGR7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jul 2019 02:17:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55090 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfGXGR6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jul 2019 02:17:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=1Xa50e3c+n/XgLreEXAZzM1/Dusmqf3jal/tdBSMEUY=; b=gGQOCJFzwPHRaT0Y5VpwBtWJoQ
-        7N90/JQMzvZNdlZpfiJ/+4M5wIFkAFW6SLRu80CqjgQtsuC25Bn72Ra55U98FUrqDgFJii1g2Pk+v
-        XPvWZXVP7/4TvQIWdHMJJsTBcEyaiNbtoPg+JOyeFN2/iHN+j8DiH//YTyjVYst2eZdJNW8GDmmaH
-        1tpuC3lNNf/w0GceJkPRPaBB6JdiZZSZVJOlr+inma1SfS2sXWO/g3eKnofUKFN7B7pQL3769+3TW
-        jCOEK61cTU+A0p4axGitNuC4cMeg/ZDpW3Ry+2Ff0HYkYs0+KxmpPcvICLo1Gula2Bgy/8Zw4ackm
-        7GUAhyFw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqAb0-0007QP-TP; Wed, 24 Jul 2019 06:17:50 +0000
-Date:   Tue, 23 Jul 2019 23:17:50 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     john.hubbard@gmail.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, samba-technical@lists.samba.org,
-        v9fs-developer@lists.sourceforge.net,
-        virtualization@lists.linux-foundation.org,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 00/12] block/bio, fs: convert put_page() to
- put_user_page*()
-Message-ID: <20190724061750.GA19397@infradead.org>
-References: <20190724042518.14363-1-jhubbard@nvidia.com>
+        id S1726038AbfGXHbb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jul 2019 03:31:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52770 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725851AbfGXHbb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Jul 2019 03:31:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 12D7EAEF8;
+        Wed, 24 Jul 2019 07:31:28 +0000 (UTC)
+Date:   Wed, 24 Jul 2019 09:31:25 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@google.com>,
+        David Rientjes <rientjes@google.com>,
+        kunit-dev@googlegroups.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
+        wfg@linux.intel.com, Greg KH <gregkh@linuxfoundation.org>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Richard Weinberger <richard@nod.at>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Timothy Bird <Tim.Bird@sony.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v9 04/18] kunit: test: add kunit_stream a std::stream
+ like logger
+Message-ID: <20190724073125.xyzfywctrcvg6fmh@pathway.suse.cz>
+References: <CAFd5g47ikJmA0uGoavAFsh+hQvDmgsOi26tyii0612R=rt7iiw@mail.gmail.com>
+ <CAFd5g44_axVHNMBzxSURQB_-R+Rif7cZcg7PyZ_SS+5hcy5jZA@mail.gmail.com>
+ <20190716175021.9CA412173C@mail.kernel.org>
+ <CAFd5g453vXeSUCZenCk_CzJ-8a1ym9RaPo0NVF=FujF9ac-5Ag@mail.gmail.com>
+ <20190718175024.C3EC421019@mail.kernel.org>
+ <CAFd5g46a7C1+R6ZcE_SkqaYqgrH5Rx3M=X7orFyaMgFLDbeYYA@mail.gmail.com>
+ <20190719000834.GA3228@google.com>
+ <20190722200347.261D3218C9@mail.kernel.org>
+ <CAFd5g45hdCxEavSxirr0un_uLzo5Z-J4gHRA06qjzcQrTzmjVg@mail.gmail.com>
+ <20190722235411.06C1320840@mail.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190724042518.14363-1-jhubbard@nvidia.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190722235411.06C1320840@mail.kernel.org>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 09:25:06PM -0700, john.hubbard@gmail.com wrote:
-> * Store, in the iov_iter, a "came from gup (get_user_pages)" parameter.
->   Then, use the new iov_iter_get_pages_use_gup() to retrieve it when
->   it is time to release the pages. That allows choosing between put_page()
->   and put_user_page*().
+On Mon 2019-07-22 16:54:10, Stephen Boyd wrote:
+> Quoting Brendan Higgins (2019-07-22 15:30:49)
+> > On Mon, Jul 22, 2019 at 1:03 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > >
+> > > What's the calling context of the assertions and expectations? I still
+> > > don't like the fact that string stream needs to allocate buffers and
+> > > throw them into a list somewhere because the calling context matters
+> > > there.
+> > 
+> > The calling context is the same as before, which is anywhere.
 > 
-> * Pass in one more piece of information to bio_release_pages: a "from_gup"
->   parameter. Similar use as above.
+> Ok. That's concerning then.
 > 
-> * Change the block layer, and several file systems, to use
->   put_user_page*().
+> > 
+> > > I'd prefer we just wrote directly to the console/log via printk
+> > > instead. That way things are simple because we use the existing
+> > > buffering path of printk, but maybe there's some benefit to the string
+> > > stream that I don't see? Right now it looks like it builds a string and
+> > > then dumps it to printk so I'm sort of lost what the benefit is over
+> > > just writing directly with printk.
+> > 
+> > It's just buffering it so the whole string gets printed uninterrupted.
+> > If we were to print out piecemeal to printk, couldn't we have another
+> > call to printk come in causing it to garble the KUnit message we are
+> > in the middle of printing?
+> 
+> Yes, printing piecemeal by calling printk many times could lead to
+> interleaving of messages if something else comes in such as an interrupt
+> printing something. Printk has some support to hold "records" but I'm
+> not sure how that would work here because KERN_CONT talks about only
+> being used early on in boot code. I haven't looked at printk in detail
+> though so maybe I'm all wrong and KERN_CONT just works?
 
-I think we can do this in a simple and better way.  We have 5 ITER_*
-types.  Of those ITER_DISCARD as the name suggests never uses pages, so
-we can skip handling it.  ITER_PIPE is rejected іn the direct I/O path,
-which leaves us with three.
+KERN_CONT does not guarantee that the message will get printed
+together. The pieces get interleaved with messages printed in
+parallel.
 
-Out of those ITER_BVEC needs a user page reference, so we want to call
-put_user_page* on it.  ITER_BVEC always already has page reference,
-which means in the block direct I/O path path we alread don't take
-a page reference.  We should extent that handling to all other calls
-of iov_iter_get_pages / iov_iter_get_pages_alloc.  I think we should
-just reject ITER_KVEC for direct I/O as well as we have no users and
-it is rather pointless.  Alternatively if we see a use for it the
-callers should always have a life page reference anyway (or might
-be on kmalloc memory), so we really should not take a reference either.
+Note that KERN_CONT was originally really meant to be used only during
+boot. It was later used more widely and ended in the best effort category.
 
-In other words:  the only time we should ever have to put a page in
-this patch is when they are user pages.  We'll need to clean up
-various bits of code for that, but that can be done gradually before
-even getting to the actual put_user_pages conversion.
+There were several attempts to make it more reliable. But it was
+always either too complicated or error prone or both.
+
+You need to use your own buffering if you rely want perfect output.
+The question is if it is really worth the complexity. Also note that
+any buffering reduces the chance that the messages will reach
+the console.
+
+BTW: There is a work in progress on a lockless printk ring buffer.
+It will make printk() more secure regarding deadlocks. But it might
+make transparent handling of continuous lines even more tricky.
+
+I guess that local buffering, before calling printk(), will be
+even more important then. Well, it might really force us to create
+an API for it.
+
+
+> Can printk be called once with whatever is in the struct? Otherwise if
+> this is about making printk into a structured log then maybe printk
+> isn't the proper solution anyway. Maybe a dev interface should be used
+> instead that can handle starting and stopping tests (via ioctl) in
+> addition to reading test results, records, etc. with read() and a
+> clearing of the records. Then the seqfile API works naturally. All of
+> this is a bit premature, but it looks like you're going down the path of
+> making something akin to ftrace that stores binary formatted
+> assertion/expectation records in a lockless ring buffer that then
+> formats those records when the user asks for them.
+
+IMHO, ftrace postpones the text formatting primary because it does not
+not want to slow down the traced code more than necessary. It is yet
+another layer and there should be some strong reason for it.
+
+> I can imagine someone wanting to write unit tests that check conditions
+> from a simulated hardirq context via irq works (a driver mock
+> framework?), so this doesn't seem far off.
+
+Note that stroring the messages into the printk log is basically safe in any
+context. It uses temporary per-CPU buffers for recursive messages and
+in NMI. The only problem is panic() when some CPU gets stuck with the
+lock taken. This will get solved by the lockless ringbuffer. Also
+the temporary buffers will not be necessary any longer.
+
+Much bigger problems are with consoles. There are many of them. It
+means a lot of code and more locks involved, including scheduler
+locks. Note that console lock is a semaphore.
+
+Best Regards,
+Petr
