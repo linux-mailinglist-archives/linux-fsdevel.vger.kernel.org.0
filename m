@@ -2,20 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 203D3727C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 08:04:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 086E1727D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 08:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725919AbfGXGEe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jul 2019 02:04:34 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:37863 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfGXGEe (ORCPT
+        id S1726439AbfGXGFm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jul 2019 02:05:42 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:41695 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfGXGFi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jul 2019 02:04:34 -0400
+        Wed, 24 Jul 2019 02:05:38 -0400
+X-Originating-IP: 79.86.19.127
 Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
         (Authenticated sender: alex@ghiti.fr)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id B5FF6200008;
-        Wed, 24 Jul 2019 06:04:26 +0000 (UTC)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 7E8472000C;
+        Wed, 24 Jul 2019 06:05:32 +0000 (UTC)
 From:   Alexandre Ghiti <alex@ghiti.fr>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Christoph Hellwig <hch@lst.de>,
@@ -34,9 +35,9 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH REBASE v4 05/14] arm64, mm: Make randomization selected by generic topdown mmap layout
-Date:   Wed, 24 Jul 2019 01:58:41 -0400
-Message-Id: <20190724055850.6232-6-alex@ghiti.fr>
+Subject: [PATCH REBASE v4 06/14] arm: Properly account for stack randomization and stack guard gap
+Date:   Wed, 24 Jul 2019 01:58:42 -0400
+Message-Id: <20190724055850.6232-7-alex@ghiti.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190724055850.6232-1-alex@ghiti.fr>
 References: <20190724055850.6232-1-alex@ghiti.fr>
@@ -47,96 +48,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This commits selects ARCH_HAS_ELF_RANDOMIZE when an arch uses the generic
-topdown mmap layout functions so that this security feature is on by
-default.
-Note that this commit also removes the possibility for arm64 to have elf
-randomization and no MMU: without MMU, the security added by randomization
-is worth nothing.
+This commit takes care of stack randomization and stack guard gap when
+computing mmap base address and checks if the task asked for randomization.
+This fixes the problem uncovered and not fixed for arm here:
+https://lkml.kernel.org/r/20170622200033.25714-1-riel@redhat.com
 
 Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 Acked-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/Kconfig                |  1 +
- arch/arm64/Kconfig          |  1 -
- arch/arm64/kernel/process.c |  8 --------
- mm/util.c                   | 11 +++++++++--
- 4 files changed, 10 insertions(+), 11 deletions(-)
+ arch/arm/mm/mmap.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index a0bb6fa4d381..d4c1f0551dfe 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -705,6 +705,7 @@ config HAVE_ARCH_COMPAT_MMAP_BASES
- config ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
- 	bool
- 	depends on MMU
-+	select ARCH_HAS_ELF_RANDOMIZE
+diff --git a/arch/arm/mm/mmap.c b/arch/arm/mm/mmap.c
+index f866870db749..bff3d00bda5b 100644
+--- a/arch/arm/mm/mmap.c
++++ b/arch/arm/mm/mmap.c
+@@ -18,8 +18,9 @@
+ 	 (((pgoff)<<PAGE_SHIFT) & (SHMLBA-1)))
  
- config HAVE_COPY_THREAD_TLS
- 	bool
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 14a194e63458..399f595ef852 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -16,7 +16,6 @@ config ARM64
- 	select ARCH_HAS_DMA_MMAP_PGPROT
- 	select ARCH_HAS_DMA_PREP_COHERENT
- 	select ARCH_HAS_ACPI_TABLE_UPGRADE if ACPI
--	select ARCH_HAS_ELF_RANDOMIZE
- 	select ARCH_HAS_FAST_MULTIPLIER
- 	select ARCH_HAS_FORTIFY_SOURCE
- 	select ARCH_HAS_GCOV_PROFILE_ALL
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index 6a869d9f304f..3f59d0d1632e 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -524,14 +524,6 @@ unsigned long arch_align_stack(unsigned long sp)
- 	return sp & ~0xf;
- }
- 
--unsigned long arch_randomize_brk(struct mm_struct *mm)
--{
--	if (is_compat_task())
--		return randomize_page(mm->brk, SZ_32M);
--	else
--		return randomize_page(mm->brk, SZ_1G);
--}
--
- /*
-  * Called from setup_new_exec() after (COMPAT_)SET_PERSONALITY.
-  */
-diff --git a/mm/util.c b/mm/util.c
-index 0781e5575cb3..16f1e56e2996 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -321,7 +321,15 @@ unsigned long randomize_stack_top(unsigned long stack_top)
- }
- 
- #ifdef CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
--#ifdef CONFIG_ARCH_HAS_ELF_RANDOMIZE
-+unsigned long arch_randomize_brk(struct mm_struct *mm)
-+{
-+	/* Is the current task 32bit ? */
-+	if (!IS_ENABLED(CONFIG_64BIT) || is_compat_task())
-+		return randomize_page(mm->brk, SZ_32M);
-+
-+	return randomize_page(mm->brk, SZ_1G);
-+}
-+
- unsigned long arch_mmap_rnd(void)
- {
- 	unsigned long rnd;
-@@ -335,7 +343,6 @@ unsigned long arch_mmap_rnd(void)
- 
- 	return rnd << PAGE_SHIFT;
- }
--#endif /* CONFIG_ARCH_HAS_ELF_RANDOMIZE */
+ /* gap between mmap and stack */
+-#define MIN_GAP (128*1024*1024UL)
+-#define MAX_GAP ((TASK_SIZE)/6*5)
++#define MIN_GAP		(128*1024*1024UL)
++#define MAX_GAP		((TASK_SIZE)/6*5)
++#define STACK_RND_MASK	(0x7ff >> (PAGE_SHIFT - 12))
  
  static int mmap_is_legacy(struct rlimit *rlim_stack)
  {
+@@ -35,6 +36,15 @@ static int mmap_is_legacy(struct rlimit *rlim_stack)
+ static unsigned long mmap_base(unsigned long rnd, struct rlimit *rlim_stack)
+ {
+ 	unsigned long gap = rlim_stack->rlim_cur;
++	unsigned long pad = stack_guard_gap;
++
++	/* Account for stack randomization if necessary */
++	if (current->flags & PF_RANDOMIZE)
++		pad += (STACK_RND_MASK << PAGE_SHIFT);
++
++	/* Values close to RLIM_INFINITY can overflow. */
++	if (gap + pad > gap)
++		gap += pad;
+ 
+ 	if (gap < MIN_GAP)
+ 		gap = MIN_GAP;
 -- 
 2.20.1
 
