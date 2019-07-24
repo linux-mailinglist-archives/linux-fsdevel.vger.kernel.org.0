@@ -2,196 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56F8273EF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 22:28:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F7D3741FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 01:23:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388953AbfGXU2w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jul 2019 16:28:52 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38158 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389017AbfGXTeA (ORCPT
+        id S1729697AbfGXXX0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jul 2019 19:23:26 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2928 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfGXXX0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:34:00 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f5so12890660pgu.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2019 12:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=c620Z7QmNN4xuzBoT0I523KlXKmQArPqXiiSBk5DJAo=;
-        b=aJRIeg6pq323ryehRW15NWh/H46jxm2+UlXPt/GAp+gGlXsdiD5tuwNAzwSOlQjvte
-         kAf7yvLfhsa31LbfvzoQxal4db/+ND5t3sCE3KQ0cK1D2FNrEMSsUF10lD+va5+XCjZF
-         82tS1vs8G8RyiJ9FtkZUoim+/k0zp6iCqhTGk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c620Z7QmNN4xuzBoT0I523KlXKmQArPqXiiSBk5DJAo=;
-        b=U8d6TuY9dhhfcmdQiy8GNkjXp4B1sBMNUftfwJqsAsrGZwRW6ag6LbyeS4sK3t+Xz1
-         swdNqwdsQNvOong/KcPFl3xpm/8BZjG2dWrNGe4MARWejEaMKEIDSeHZv09EI8/Pb8If
-         DBEA7PFpzHBrcEEkqXqvmh96ClKZX5xMX7U4o+k9WdKr+DhaVzwiW3V8d0yvZZ+uwiyV
-         umRh03hq/yajxq5HM5/CTPXV5639EPueBH4lsgYnB39SDVhM0KculOWsPIze/T1grWDz
-         NBH46Kl0kBVtb+2a6egKPS/Uk69JBbb02rMPut2tVKG5Du/sMBttlxhX0WosOaXYMVVx
-         lfiQ==
-X-Gm-Message-State: APjAAAVeGehf16R1QC4PGOyTNGk9o3mt83+3ME9wugTuNPEqpOmulgY9
-        8ksTojJEhTD2I4TBAFkpWgI=
-X-Google-Smtp-Source: APXvYqxRZo6EdKy/Ij4HPNmhe7JYCvmAq8gwdkPC9eWWevt48AruaweG4iMi6+eWocFY2nBwaDK8/g==
-X-Received: by 2002:a17:90a:2190:: with SMTP id q16mr86312060pjc.23.1563996839453;
-        Wed, 24 Jul 2019 12:33:59 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id i124sm87050514pfe.61.2019.07.24.12.33.58
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 12:33:58 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 15:33:57 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, vdavydov.dev@gmail.com,
-        Brendan Gregg <bgregg@netflix.com>, kernel-team@android.com,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, carmenjackson@google.com,
-        Christian Hansen <chansen3@cisco.com>,
-        Colin Ian King <colin.king@canonical.com>, dancol@google.com,
-        David Howells <dhowells@redhat.com>, fmayer@google.com,
-        joaodias@google.com, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, minchan@google.com,
-        minchan@kernel.org, namhyung@google.com, sspatil@google.com,
-        surenb@google.com, Thomas Gleixner <tglx@linutronix.de>,
-        timmurray@google.com, tkjos@google.com,
-        Vlastimil Babka <vbabka@suse.cz>, wvw@google.com
-Subject: Re: [PATCH v1 1/2] mm/page_idle: Add support for per-pid page_idle
- using virtual indexing
-Message-ID: <20190724193357.GB21829@google.com>
-References: <20190722213205.140845-1-joel@joelfernandes.org>
- <20190722150639.27641c63b003dd04e187fd96@linux-foundation.org>
+        Wed, 24 Jul 2019 19:23:26 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d38e8730000>; Wed, 24 Jul 2019 16:23:31 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 24 Jul 2019 16:23:23 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 24 Jul 2019 16:23:23 -0700
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 24 Jul
+ 2019 23:23:22 +0000
+Subject: Re: [PATCH 00/12] block/bio, fs: convert put_page() to
+ put_user_page*()
+To:     Christoph Hellwig <hch@infradead.org>, <john.hubbard@gmail.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <ceph-devel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <samba-technical@lists.samba.org>,
+        <v9fs-developer@lists.sourceforge.net>,
+        <virtualization@lists.linux-foundation.org>
+References: <20190724042518.14363-1-jhubbard@nvidia.com>
+ <20190724061750.GA19397@infradead.org>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <17f12f3d-981e-a717-c8e5-bfbbfb7ec1a3@nvidia.com>
+Date:   Wed, 24 Jul 2019 16:23:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190722150639.27641c63b003dd04e187fd96@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190724061750.GA19397@infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564010611; bh=U/byz8o3kezigETW8hWUjg+JqkNm/y0Q4UHjAnDVaRI=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=POKycPna3sFHaptSpPG8JFNhdv+KWPJt4Fqq7qra/U5uujHxVhga0mA2hyYe3oLWO
+         rvMjdBQgQaYdhe3tYVq3xzWzC7PXLH9gVg6v6GfrdnHKhzPSXOdrUzDa4Sfy+FpWme
+         AYx8XN4QHijtxUQThz9jDsFglp/BwmD6wmVyo2Ou4HoX36ySg8r0DnnWDfRMrkzmXC
+         XvSXsG7L9llJHump4bjV4yoH02Li7EYgdYhEFhGR3d1oO3a9DGx7nb70VEc+guaDrP
+         BAn4DIKE83X0lqImHCnmIIbgjVMdzz9Q4ePUhHR77cnRWD+JGehn4V8I2IYZgTvKbn
+         0ENu9Hbk0xmXw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 03:06:39PM -0700, Andrew Morton wrote:
-[snip] 
-> > +	*end = *start + count * BITS_PER_BYTE;
-> > +	if (*end > max_frame)
-> > +		*end = max_frame;
-> > +	return 0;
-> > +}
-> > +
-> >
-> > ...
-> >
-> > +static void add_page_idle_list(struct page *page,
-> > +			       unsigned long addr, struct mm_walk *walk)
-> > +{
-> > +	struct page *page_get;
-> > +	struct page_node *pn;
-> > +	int bit;
-> > +	unsigned long frames;
-> > +	struct page_idle_proc_priv *priv = walk->private;
-> > +	u64 *chunk = (u64 *)priv->buffer;
-> > +
-> > +	if (priv->write) {
-> > +		/* Find whether this page was asked to be marked */
-> > +		frames = (addr - priv->start_addr) >> PAGE_SHIFT;
-> > +		bit = frames % BITMAP_CHUNK_BITS;
-> > +		chunk = &chunk[frames / BITMAP_CHUNK_BITS];
-> > +		if (((*chunk >> bit) & 1) == 0)
-> > +			return;
-> > +	}
-> > +
-> > +	page_get = page_idle_get_page(page);
-> > +	if (!page_get)
-> > +		return;
-> > +
-> > +	pn = kmalloc(sizeof(*pn), GFP_ATOMIC);
-> 
-> I'm not liking this GFP_ATOMIC.  If I'm reading the code correctly,
-> userspace can ask for an arbitrarily large number of GFP_ATOMIC
-> allocations by doing a large read.  This can potentially exhaust page
-> reserves which things like networking Rx interrupts need and can make
-> this whole feature less reliable.
+On 7/23/19 11:17 PM, Christoph Hellwig wrote:
+> On Tue, Jul 23, 2019 at 09:25:06PM -0700, john.hubbard@gmail.com wrote:
+>> * Store, in the iov_iter, a "came from gup (get_user_pages)" parameter.
+>>   Then, use the new iov_iter_get_pages_use_gup() to retrieve it when
+>>   it is time to release the pages. That allows choosing between put_page=
+()
+>>   and put_user_page*().
+>>
+>> * Pass in one more piece of information to bio_release_pages: a "from_gu=
+p"
+>>   parameter. Similar use as above.
+>>
+>> * Change the block layer, and several file systems, to use
+>>   put_user_page*().
+>=20
+> I think we can do this in a simple and better way.  We have 5 ITER_*
+> types.  Of those ITER_DISCARD as the name suggests never uses pages, so
+> we can skip handling it.  ITER_PIPE is rejected =D1=96n the direct I/O pa=
+th,
+> which leaves us with three.
+>=20
+> Out of those ITER_BVEC needs a user page reference, so we want to call
 
-For the revision, I will pre-allocate the page nodes in advance so it does
-not need to do this. Diff on top of this patch is below. Let me know any
-comments, thanks.
+               ^ ITER_IOVEC, I hope. Otherwise I'm hopeless lost. :)
 
-Btw, I also dropped the idle_page_list_lock by putting the idle_page_list
-list_head on the stack instead of heap.
----8<-----------------------
+> put_user_page* on it.  ITER_BVEC always already has page reference,
+> which means in the block direct I/O path path we alread don't take
+> a page reference.  We should extent that handling to all other calls
+> of iov_iter_get_pages / iov_iter_get_pages_alloc.  I think we should
+> just reject ITER_KVEC for direct I/O as well as we have no users and
+> it is rather pointless.  Alternatively if we see a use for it the
+> callers should always have a life page reference anyway (or might
+> be on kmalloc memory), so we really should not take a reference either.
+>=20
+> In other words:  the only time we should ever have to put a page in
+> this patch is when they are user pages.  We'll need to clean up
+> various bits of code for that, but that can be done gradually before
+> even getting to the actual put_user_pages conversion.
+>=20
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: [PATCH] mm/page_idle: Avoid need for GFP_ATOMIC
+Sounds great. I'm part way into it and it doesn't look too bad. The main
+question is where to scatter various checks and assertions, to keep
+the kvecs out of direct I/0. Or at least keep the gups away from=20
+direct I/0.
 
-GFP_ATOMIC can harm allocations does by other allocations that are in
-need of reserves and the like. Pre-allocate the nodes list so that
-spinlocked region can just use it.
 
-Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- mm/page_idle.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/mm/page_idle.c b/mm/page_idle.c
-index 874a60c41fef..b9c790721f16 100644
---- a/mm/page_idle.c
-+++ b/mm/page_idle.c
-@@ -266,6 +266,10 @@ struct page_idle_proc_priv {
- 	unsigned long start_addr;
- 	char *buffer;
- 	int write;
-+
-+	/* Pre-allocate and provide nodes to add_page_idle_list() */
-+	struct page_node *page_nodes;
-+	int cur_page_node;
- };
- 
- static void add_page_idle_list(struct page *page,
-@@ -291,10 +295,7 @@ static void add_page_idle_list(struct page *page,
- 	if (!page_get)
- 		return;
- 
--	pn = kmalloc(sizeof(*pn), GFP_ATOMIC);
--	if (!pn)
--		return;
--
-+	pn = &(priv->page_nodes[priv->cur_page_node++]);
- 	pn->page = page_get;
- 	pn->addr = addr;
- 	list_add(&pn->list, &idle_page_list);
-@@ -379,6 +380,15 @@ ssize_t page_idle_proc_generic(struct file *file, char __user *ubuff,
- 	priv.buffer = buffer;
- 	priv.start_addr = start_addr;
- 	priv.write = write;
-+
-+	priv.cur_page_node = 0;
-+	priv.page_nodes = kzalloc(sizeof(struct page_node) * (end_frame - start_frame),
-+				  GFP_KERNEL);
-+	if (!priv.page_nodes) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
- 	walk.private = &priv;
- 	walk.mm = mm;
- 
-@@ -425,6 +435,7 @@ ssize_t page_idle_proc_generic(struct file *file, char __user *ubuff,
- 		ret = copy_to_user(ubuff, buffer, count);
- 
- 	up_read(&mm->mmap_sem);
-+	kfree(priv.page_nodes);
- out:
- 	kfree(buffer);
- out_mmput:
--- 
-2.22.0.657.g960e92d24f-goog
-
+thanks,
+--=20
+John Hubbard
+NVIDIA
