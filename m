@@ -2,120 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B03BD72819
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 08:14:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 743DC72824
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2019 08:18:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbfGXGOV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jul 2019 02:14:21 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:51479 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfGXGOV (ORCPT
+        id S1726067AbfGXGR7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jul 2019 02:17:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55090 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfGXGR6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jul 2019 02:14:21 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id D50ADE0004;
-        Wed, 24 Jul 2019 06:14:14 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
+        Wed, 24 Jul 2019 02:17:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=1Xa50e3c+n/XgLreEXAZzM1/Dusmqf3jal/tdBSMEUY=; b=gGQOCJFzwPHRaT0Y5VpwBtWJoQ
+        7N90/JQMzvZNdlZpfiJ/+4M5wIFkAFW6SLRu80CqjgQtsuC25Bn72Ra55U98FUrqDgFJii1g2Pk+v
+        XPvWZXVP7/4TvQIWdHMJJsTBcEyaiNbtoPg+JOyeFN2/iHN+j8DiH//YTyjVYst2eZdJNW8GDmmaH
+        1tpuC3lNNf/w0GceJkPRPaBB6JdiZZSZVJOlr+inma1SfS2sXWO/g3eKnofUKFN7B7pQL3769+3TW
+        jCOEK61cTU+A0p4axGitNuC4cMeg/ZDpW3Ry+2Ff0HYkYs0+KxmpPcvICLo1Gula2Bgy/8Zw4ackm
+        7GUAhyFw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqAb0-0007QP-TP; Wed, 24 Jul 2019 06:17:50 +0000
+Date:   Tue, 23 Jul 2019 23:17:50 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     john.hubbard@gmail.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH REBASE v4 14/14] riscv: Make mmap allocation top-down by default
-Date:   Wed, 24 Jul 2019 01:58:50 -0400
-Message-Id: <20190724055850.6232-15-alex@ghiti.fr>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190724055850.6232-1-alex@ghiti.fr>
-References: <20190724055850.6232-1-alex@ghiti.fr>
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net,
+        virtualization@lists.linux-foundation.org,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 00/12] block/bio, fs: convert put_page() to
+ put_user_page*()
+Message-ID: <20190724061750.GA19397@infradead.org>
+References: <20190724042518.14363-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190724042518.14363-1-jhubbard@nvidia.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In order to avoid wasting user address space by using bottom-up mmap
-allocation scheme, prefer top-down scheme when possible.
+On Tue, Jul 23, 2019 at 09:25:06PM -0700, john.hubbard@gmail.com wrote:
+> * Store, in the iov_iter, a "came from gup (get_user_pages)" parameter.
+>   Then, use the new iov_iter_get_pages_use_gup() to retrieve it when
+>   it is time to release the pages. That allows choosing between put_page()
+>   and put_user_page*().
+> 
+> * Pass in one more piece of information to bio_release_pages: a "from_gup"
+>   parameter. Similar use as above.
+> 
+> * Change the block layer, and several file systems, to use
+>   put_user_page*().
 
-Before:
-root@qemuriscv64:~# cat /proc/self/maps
-00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
-00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
-00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
-00018000-00039000 rw-p 00000000 00:00 0          [heap]
-1555556000-155556d000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
-155556d000-155556e000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
-155556e000-155556f000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
-155556f000-1555570000 rw-p 00000000 00:00 0
-1555570000-1555572000 r-xp 00000000 00:00 0      [vdso]
-1555574000-1555576000 rw-p 00000000 00:00 0
-1555576000-1555674000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
-1555674000-1555678000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
-1555678000-155567a000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
-155567a000-15556a0000 rw-p 00000000 00:00 0
-3fffb90000-3fffbb1000 rw-p 00000000 00:00 0      [stack]
+I think we can do this in a simple and better way.  We have 5 ITER_*
+types.  Of those ITER_DISCARD as the name suggests never uses pages, so
+we can skip handling it.  ITER_PIPE is rejected іn the direct I/O path,
+which leaves us with three.
 
-After:
-root@qemuriscv64:~# cat /proc/self/maps
-00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
-00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
-00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
-2de81000-2dea2000 rw-p 00000000 00:00 0          [heap]
-3ff7eb6000-3ff7ed8000 rw-p 00000000 00:00 0
-3ff7ed8000-3ff7fd6000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
-3ff7fd6000-3ff7fda000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
-3ff7fda000-3ff7fdc000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
-3ff7fdc000-3ff7fe2000 rw-p 00000000 00:00 0
-3ff7fe4000-3ff7fe6000 r-xp 00000000 00:00 0      [vdso]
-3ff7fe6000-3ff7ffd000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
-3ff7ffd000-3ff7ffe000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
-3ff7ffe000-3ff7fff000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
-3ff7fff000-3ff8000000 rw-p 00000000 00:00 0
-3fff888000-3fff8a9000 rw-p 00000000 00:00 0      [stack]
+Out of those ITER_BVEC needs a user page reference, so we want to call
+put_user_page* on it.  ITER_BVEC always already has page reference,
+which means in the block direct I/O path path we alread don't take
+a page reference.  We should extent that handling to all other calls
+of iov_iter_get_pages / iov_iter_get_pages_alloc.  I think we should
+just reject ITER_KVEC for direct I/O as well as we have no users and
+it is rather pointless.  Alternatively if we see a use for it the
+callers should always have a life page reference anyway (or might
+be on kmalloc memory), so we really should not take a reference either.
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Kees Cook <keescook@chromium.org>
----
- arch/riscv/Kconfig | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 59a4727ecd6c..6a63973873fd 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -54,6 +54,17 @@ config RISCV
- 	select EDAC_SUPPORT
- 	select ARCH_HAS_GIGANTIC_PAGE
- 	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
-+	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
-+	select HAVE_ARCH_MMAP_RND_BITS
-+
-+config ARCH_MMAP_RND_BITS_MIN
-+	default 18
-+
-+# max bits determined by the following formula:
-+#  VA_BITS - PAGE_SHIFT - 3
-+config ARCH_MMAP_RND_BITS_MAX
-+	default 33 if 64BIT # SV48 based
-+	default 18
- 
- config MMU
- 	def_bool y
--- 
-2.20.1
-
+In other words:  the only time we should ever have to put a page in
+this patch is when they are user pages.  We'll need to clean up
+various bits of code for that, but that can be done gradually before
+even getting to the actual put_user_pages conversion.
