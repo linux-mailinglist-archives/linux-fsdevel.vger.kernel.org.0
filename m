@@ -2,43 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99C777578C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 21:05:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3E8D7579D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 21:11:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfGYTFw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 15:05:52 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35167 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbfGYTFw (ORCPT
+        id S1726618AbfGYTLb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 15:11:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33104 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbfGYTLa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 15:05:52 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j19so14313098otq.2;
-        Thu, 25 Jul 2019 12:05:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Vw35ctnHAyiweCYFIr8Q5tQ1sCTMUrzhYWyZVMQ2srE=;
-        b=PfoBHShhlyrT2DkUHewHf0gjDwYJ6MWQCgL3warjeUrra/7DhqZN+5v40UA2hu2Q9J
-         goQvRrNZUSB6Q0H0nmF9cBD5+iZohXVb+2UxFOo5E1hR+gxkxOl5XaFP0dgPHRjcLPs1
-         nSx9xplYcuBw6NB96XrgErw/vxIB+qDm6uL2srJYG0Iu2hdheYEYfA7o67orzqwmLZl8
-         kY/qO38Tp15EWHneKN3SqykJCTF5qJnpAW6Tbeb4p+sxijOHZSpNRrWQwx3anEOyiZg1
-         8gXj3hKuyQGJiOZAFsLDL1ssQ7KrwCu9PUeBiENubKIvaib/FMgxJxSt7htoDalXxLso
-         GF+w==
-X-Gm-Message-State: APjAAAWL4bIqu9CJ1/UeQIOz78or3rKv5B6BTD0/bAd2gtRY6l0AZe2j
-        zkn1TuiWFiyyQn8M5rvoBag=
-X-Google-Smtp-Source: APXvYqxh1xWV9l7hAx0RUdcnZmU1/Ak8tJk9mtOSSnUmKXjlKYymH3LgZ+g4WSGFfklKTPeVE93P7A==
-X-Received: by 2002:a9d:7:: with SMTP id 7mr68886666ota.248.1564081550962;
-        Thu, 25 Jul 2019 12:05:50 -0700 (PDT)
-Received: from [192.168.1.114] (162-195-240-247.lightspeed.sntcca.sbcglobal.net. [162.195.240.247])
-        by smtp.gmail.com with ESMTPSA id u16sm16785232otk.46.2019.07.25.12.05.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 12:05:50 -0700 (PDT)
-Subject: Re: [PATCH v6 02/16] chardev: introduce cdev_get_by_path()
-To:     Matthew Wilcox <willy@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jens Axboe <axboe@fb.com>,
+        Thu, 25 Jul 2019 15:11:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NZgArJ4A0rpRQ2joOKkTtaW1dVOFPQo4qCltbvtRjM0=; b=k6oy9kzv+K54qnV0e8oy+G/G+
+        1D2KwDE/vwlTF/3p+8yfyLo5EYeB5rWN7JTp/UCF5yw8ni5L76UvzuQp7ukje5XUPRDiX+Odgz5sf
+        PN9Rjw8eL0qYyLSCy/nX6alOZy3oFHlWDt3MTE2kyU86O0PL6nuQkDXJS0CJoC0ffOVm0pkVe5687
+        LXpoSDmF4mHpFgp8FtWIewV7cTVpNEFVJLLm9Ivg00/D4nuJSBcsX1vgCAkyGoiSPyFFFO1tqGYIN
+        9g9HwW+d/0J0Zy7HB6HtHV+biDDu/DX7tsSA1TbElJ0S/I3CaP/9v477akFFDlHppKjEsbuOq2Wsg
+        DmLS72UuQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqj9B-0005NS-Ma; Thu, 25 Jul 2019 19:11:25 +0000
+Date:   Thu, 25 Jul 2019 12:11:25 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Sagi Grimberg <sagi@grimberg.me>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jens Axboe <axboe@fb.com>,
         Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
         linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
         Stephen Bates <sbates@raithlin.com>,
@@ -47,6 +39,8 @@ Cc:     Jens Axboe <axboe@fb.com>,
         linux-fsdevel@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
         Logan Gunthorpe <logang@deltatee.com>,
         Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v6 02/16] chardev: introduce cdev_get_by_path()
+Message-ID: <20190725191124.GE30641@bombadil.infradead.org>
 References: <20190725172335.6825-1-logang@deltatee.com>
  <20190725172335.6825-3-logang@deltatee.com>
  <20190725174032.GA27818@kroah.com>
@@ -55,34 +49,33 @@ References: <20190725172335.6825-1-logang@deltatee.com>
  <da0eacb7-3738-ddf3-8c61-7ffc61aa41f4@deltatee.com>
  <20190725182701.GA11547@kroah.com>
  <20190725190024.GD30641@bombadil.infradead.org>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <27943e06-a503-162e-356b-abb9e106ab2e@grimberg.me>
-Date:   Thu, 25 Jul 2019 12:05:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ <27943e06-a503-162e-356b-abb9e106ab2e@grimberg.me>
 MIME-Version: 1.0
-In-Reply-To: <20190725190024.GD30641@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27943e06-a503-162e-356b-abb9e106ab2e@grimberg.me>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
->>> NVMe-OF is configured using configfs. The target is specified by the
->>> user writing a path to a configfs attribute. This is the way it works
->>> today but with blkdev_get_by_path()[1]. For the passthru code, we need
->>> to get a nvme_ctrl instead of a block_device, but the principal is the same.
->>
->> Why isn't a fd being passed in there instead of a random string?
+On Thu, Jul 25, 2019 at 12:05:29PM -0700, Sagi Grimberg wrote:
 > 
-> I suppose we could echo a string of the file descriptor number there,
-> and look up the fd in the process' file descriptor table ...
+> > > > NVMe-OF is configured using configfs. The target is specified by the
+> > > > user writing a path to a configfs attribute. This is the way it works
+> > > > today but with blkdev_get_by_path()[1]. For the passthru code, we need
+> > > > to get a nvme_ctrl instead of a block_device, but the principal is the same.
+> > > 
+> > > Why isn't a fd being passed in there instead of a random string?
+> > 
+> > I suppose we could echo a string of the file descriptor number there,
+> > and look up the fd in the process' file descriptor table ...
+> 
+> Assuming that there is a open handle somewhere out there...
 
-Assuming that there is a open handle somewhere out there...
-
-> I'll get my coat.
-
-Grab mine too..
+Well, that's how we'd know that the application echoing /dev/nvme3 into
+configfs actually has permission to access /dev/nvme3.  Think about
+containers, for example.  It's not exactly safe to mount configfs in a
+non-root container since it can access any NVMe device in the system,
+not just ones which it's been given permission to access.  Right?
