@@ -2,23 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CBD8757C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 21:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E0DD757D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 21:26:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfGYTYg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 15:24:36 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:42362 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726604AbfGYTYf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 15:24:35 -0400
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hqjLk-0003sJ-99; Thu, 25 Jul 2019 13:24:25 -0600
-To:     Matthew Wilcox <willy@infradead.org>,
-        Sagi Grimberg <sagi@grimberg.me>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1726731AbfGYT0Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 15:26:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39936 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726597AbfGYT0Y (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Jul 2019 15:26:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BvJfAiV7y1bt1QsTdKGqKWc9bBWeOKVa3Zdi7n7uICU=; b=GEemGIEUXmry2MJXAjVXQDGF0
+        XF3FT3klB2ey0oBCEDsN72DpYlo8141rse50i45Eq6a3jFCCwbCg/eIV5t7Gc6uAT7VBxVGGD4F0F
+        RtMsUtkuhKTWfBA6VXNvNjfMfjcF7qbl3/Rxc9VSt62GWBO23HCrbN0lwsC+1KyfQAP5IPGEhUnYj
+        KO8yzpJig7ZG3LTI+Zo7V+1yfmcHeh2Wu1xA5q20foCnUJ038vvLBBQfXSoSYEKKFFwXniYYsO9kH
+        3pOKNvyV6Em7Vnc+UT0DoTTSdy9kTa7a39bhtEgVbkuuk+GgFMEEV+2BhwO9e1PIAocHYP+mQ6Tl/
+        vp7uGtzFg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqjNZ-0002S1-WB; Thu, 25 Jul 2019 19:26:18 +0000
+Date:   Thu, 25 Jul 2019 12:26:17 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Sagi Grimberg <sagi@grimberg.me>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jens Axboe <axboe@fb.com>,
         Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
         linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
@@ -27,8 +39,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
         Christoph Hellwig <hch@lst.de>
-References: <20190725172335.6825-1-logang@deltatee.com>
- <20190725172335.6825-3-logang@deltatee.com>
+Subject: Re: [PATCH v6 02/16] chardev: introduce cdev_get_by_path()
+Message-ID: <20190725192613.GF30641@bombadil.infradead.org>
+References: <20190725172335.6825-3-logang@deltatee.com>
  <20190725174032.GA27818@kroah.com>
  <682ff89f-04e0-7a94-5aeb-895ac65ee7c9@deltatee.com>
  <20190725180816.GA32305@kroah.com>
@@ -37,68 +50,23 @@ References: <20190725172335.6825-1-logang@deltatee.com>
  <20190725190024.GD30641@bombadil.infradead.org>
  <27943e06-a503-162e-356b-abb9e106ab2e@grimberg.me>
  <20190725191124.GE30641@bombadil.infradead.org>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <425dd2ac-333d-a8c4-ce49-870c8dadf436@deltatee.com>
-Date:   Thu, 25 Jul 2019 13:24:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ <425dd2ac-333d-a8c4-ce49-870c8dadf436@deltatee.com>
 MIME-Version: 1.0
-In-Reply-To: <20190725191124.GE30641@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, kbusch@kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, Chaitanya.Kulkarni@wdc.com, axboe@fb.com, gregkh@linuxfoundation.org, sagi@grimberg.me, willy@infradead.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH v6 02/16] chardev: introduce cdev_get_by_path()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <425dd2ac-333d-a8c4-ce49-870c8dadf436@deltatee.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Jul 25, 2019 at 01:24:22PM -0600, Logan Gunthorpe wrote:
+> >> Assuming that there is a open handle somewhere out there...
+> 
+> Yes, that would be a step backwards from an interface. The user would
+> then need a special process to open the fd and pass it through configfs.
+> They couldn't just do it with basic bash commands.
 
-
-On 2019-07-25 1:11 p.m., Matthew Wilcox wrote:
-> On Thu, Jul 25, 2019 at 12:05:29PM -0700, Sagi Grimberg wrote:
->>
->>>>> NVMe-OF is configured using configfs. The target is specified by the
->>>>> user writing a path to a configfs attribute. This is the way it works
->>>>> today but with blkdev_get_by_path()[1]. For the passthru code, we need
->>>>> to get a nvme_ctrl instead of a block_device, but the principal is the same.
->>>>
->>>> Why isn't a fd being passed in there instead of a random string?
->>>
->>> I suppose we could echo a string of the file descriptor number there,
->>> and look up the fd in the process' file descriptor table ...
->>
->> Assuming that there is a open handle somewhere out there...
-
-Yes, that would be a step backwards from an interface. The user would
-then need a special process to open the fd and pass it through configfs.
-They couldn't just do it with basic bash commands.
-
-> Well, that's how we'd know that the application echoing /dev/nvme3 into
-> configfs actually has permission to access /dev/nvme3.  
-
-It's the kernel that's accessing the device so it has permission. root
-permission is required to configure the kernel.
-
-> Think about
-> containers, for example.  It's not exactly safe to mount configfs in a
-> non-root container since it can access any NVMe device in the system,
-> not just ones which it's been given permission to access.  Right?
-
-I don't think it really makes any sense to talk about NVMe-of and
-containers. Though, if we did it would be solely on the configuration
-interface so that users inside a container might be able to configure a
-new target for resources they can see and they'd have to have their own
-view into configfs....
-
-Logan
+echo 3 3</dev/nvme3 >/configfs/foor/bar/whatever
 
