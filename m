@@ -2,194 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7389F748E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 10:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7620749F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 11:34:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389272AbfGYIQA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 04:16:00 -0400
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:34888 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388497AbfGYIQA (ORCPT
+        id S2390566AbfGYJeD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 05:34:03 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:41402 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390557AbfGYJeC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 04:16:00 -0400
-Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id CEA9A2E1546;
-        Thu, 25 Jul 2019 11:15:55 +0300 (MSK)
-Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
-        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id BHFOVffvkF-FsBKYq39;
-        Thu, 25 Jul 2019 11:15:55 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1564042555; bh=mqwyPL/Kvi4FlMJZMuuGgTLVmBANLSvlAgU95QJvMKg=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=yg2Z6Kv3kAo5EaGGy3G9RVrs92O5ikWA9VmdX0QpVDDSlO0VlBwqkO2pAkbukBQnn
-         J5OizK5Zp+57pK6J+mXCnOSs2NZMLzr+oqr3vj3KLBzIx55idigsymckEWqbyt6bei
-         kw1JkUxfveSV9/6Vmj8g1+t1A7++FSfjCZ7y2NpI=
-Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:38b3:1cdf:ad1a:1fe1])
-        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id QkVcPTjsve-FrIap0Me;
-        Thu, 25 Jul 2019 11:15:54 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH v1 1/2] mm/page_idle: Add support for per-pid page_idle
- using virtual indexing
-To:     Joel Fernandes <joel@joelfernandes.org>,
-        Minchan Kim <minchan@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, vdavydov.dev@gmail.com,
-        Brendan Gregg <bgregg@netflix.com>, kernel-team@android.com,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        carmenjackson@google.com, Christian Hansen <chansen3@cisco.com>,
-        Colin Ian King <colin.king@canonical.com>, dancol@google.com,
-        David Howells <dhowells@redhat.com>, fmayer@google.com,
-        joaodias@google.com, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, namhyung@google.com,
-        sspatil@google.c
-References: <20190722213205.140845-1-joel@joelfernandes.org>
- <20190723061358.GD128252@google.com> <20190723142049.GC104199@google.com>
- <20190724042842.GA39273@google.com> <20190724141052.GB9945@google.com>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <c116f836-5a72-c6e6-498f-a904497ef557@yandex-team.ru>
-Date:   Thu, 25 Jul 2019 11:15:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 25 Jul 2019 05:34:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1564047242; x=1595583242;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qUsOCDuXs+5QzRo+S0HO5zYWPQstgieQYtuT5P7Orqw=;
+  b=hy2/1u074YF68Rm1gNfcBwUwAvvm/UNzIW5b1k/SUBt06NGV+NIkt2JF
+   tHL1//vwza1yG+5LI2RdqRB+RVHluSEqTjmFNoeR2N59JHlaVGtR96de3
+   NXBb5QzAEGhKY8s0DHP0QdvNPmStExlcdY5+vZfC6+31FZ0EtLo9d71LA
+   gZX28BFa4sG7A1TgSAcF590vHm95Ev2MlYerFY9ZYmd3WzDBuJWgEvPuM
+   HPj+sjqVozfT+x+fDrLeaZ2juR2qmnbhOZU2TiEPhrHE0oI46Iqv8WAfe
+   TJadCR+hB2zeE7ouiEL36xjiE1YDoL+r7qnv76tk4Db/vb6j/NzW2995T
+   w==;
+IronPort-SDR: PMG0JJBjX/CfWnbE0QqzMgCTkv6PFW2++Y5gvRHYQ7arRsm+wzDiD6x9PagPsa02BnIfnkQPIy
+ xvKJWbHPWSrFSamrrhKWfI2+hds+My9y9+O1S+3mS6ZOvkfg4X9TJJfwr3bAVvzi7T9dasKlK+
+ F84aKk9+ZdnzcCAUmFEgwP7HESlf1RlaguLizDBX2uALnCe4uLnvOVxtGIo/z5wxjakaLac2q1
+ gDdkKDrAY9zxZwWm6AZJSuSyZjoPa6DSJJZfFmQBSP5Qkmy2goXeQZk7qvxJZWli0SuEMzN3Wy
+ gz4=
+X-IronPort-AV: E=Sophos;i="5.64,306,1559491200"; 
+   d="scan'208";a="118718899"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Jul 2019 17:34:01 +0800
+IronPort-SDR: vlqaeLX+7jKxqVgCDzdeJX8wPBYOLwoAr2f6LfQ4alFHWias5mfJ+6P3Om3fQhxWb1LZv4/dN9
+ vJHgw5LrbfNJpaTpOL3VtMzp5cuSVUkQN/vU1myiP4oso3Kj4OqvxFGUFTQuDndR6d1RZh5oRw
+ NbM4VpMqSaIVyE36xx6nE7OVwR2XZSUj2TFt60YS+F8ejVTerpOWjOMw2LA0qQUuo7kw8AdnLS
+ BzshEW6gk9sbkRskYOP8nM+LPU4L5SQ11b9y/NW5hXTSsbTS5apkuy2Md1DCS3p5lQ3vKos65c
+ ja2WKrEpcb1o8MrLTdeiAK7z
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 25 Jul 2019 02:32:12 -0700
+IronPort-SDR: BQxM+7SVLejzr93XUQnPHDQSzbG+QoRfGmF1y+cm/KleY1GKgyyFrSB+rF2y30+rWl0T1cwvMp
+ Ym5toaQOA0gk9hLQF6d07+ugBsqTMxEP0MoF4BwotEltBsGC9CX2icOVxmaPC1ZHXwL/sSFZQa
+ 7dk4sXgNkfwAia1VA6mcnugJq/HfCADnd5gSK0oHCjooguJT4JX7N/EH4Hfb9ohC9Z/Ttfe05T
+ /piWp/+msz7NaEj26WsJNDMHxNVt1FsOa4ynoC8tYODKdRNrxxblSrUIa+ATM7n+T/1ZUdHy+E
+ V6o=
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+  by uls-op-cesaip01.wdc.com with ESMTP; 25 Jul 2019 02:33:59 -0700
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Masato Suzuki <masato.suzuki@wdc.com>
+Subject: [PATCH] ext4: Fix deadlock on page reclaim
+Date:   Thu, 25 Jul 2019 18:33:58 +0900
+Message-Id: <20190725093358.30679-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190724141052.GB9945@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 24.07.2019 17:10, Joel Fernandes wrote:> On Wed, Jul 24, 2019 at 01:28:42PM +0900, Minchan Kim wrote:
- >> On Tue, Jul 23, 2019 at 10:20:49AM -0400, Joel Fernandes wrote:
- >>> On Tue, Jul 23, 2019 at 03:13:58PM +0900, Minchan Kim wrote:
- >>>> Hi Joel,
- >>>>
- >>>> On Mon, Jul 22, 2019 at 05:32:04PM -0400, Joel Fernandes (Google) wrote:
- >>>>> The page_idle tracking feature currently requires looking up the pagemap
- >>>>> for a process followed by interacting with /sys/kernel/mm/page_idle.
- >>>>> This is quite cumbersome and can be error-prone too. If between
- >>>>
- >>>> cumbersome: That's the fair tradeoff between idle page tracking and
- >>>> clear_refs because idle page tracking could check even though the page
- >>>> is not mapped.
- >>>
- >>> It is fair tradeoff, but could be made simpler. The userspace code got
- >>> reduced by a good amount as well.
- >>>
- >>>> error-prone: What's the error?
- >>>
- >>> We see in normal Android usage, that some of the times pages appear not to be
- >>> idle even when they really are idle. Reproducing this is a bit unpredictable
- >>> and happens at random occasions. With this new interface, we are seeing this
- >>> happen much much lesser.
- >>
- >> I don't know how you did test. Maybe that could be contributed by
- >> swapping out or shared pages touched by other processes or some kernel
- >> behavior not to keep access bit of their operation.
- >
- > It could be something along these lines is my thinking as well. So we know
- > its already has issues due to what you mentioned, I am not sure what else
- > needs investigation?
- >
- >> Please investigate more what's the root cause. That would be important
- >> point to justify for the patch motivation.
- >
- > The motivation is security. I am dropping the 'accuracy' factor I mentioned
- > from the patch description since it created a lot of confusion.
-If you are tracking idle working set for one process you could use degrading
-'accuracy' for good - just don't walk page rmap and play only with access
-bits in one process. Foreign access could be detected with arbitrary delay,
-but this does not important if main goal is heap profiling.
+In ext4_[da_]write_begin(), grab_cache_page_write_begin() is being
+called without GFP_NOFS set for the context. This is considered adequate
+as any eventual memory reclaim triggered by a page allocation is being
+done before the transaction handle for the write operation is started.
 
- >
- >>>>> More over looking up PFN from pagemap in Android devices is not
- >>>>> supported by unprivileged process and requires SYS_ADMIN and gives 0 for
- >>>>> the PFN.
- >>>>>
- >>>>> This patch adds support to directly interact with page_idle tracking at
- >>>>> the PID level by introducing a /proc/<pid>/page_idle file. This
- >>>>> eliminates the need for userspace to calculate the mapping of the page.
- >>>>> It follows the exact same semantics as the global
- >>>>> /sys/kernel/mm/page_idle, however it is easier to use for some usecases
- >>>>> where looking up PFN is not needed and also does not require SYS_ADMIN.
- >>>>
- >>>> Ah, so the primary goal is to provide convinience interface and it would
- >>>> help accurary, too. IOW, accuracy is not your main goal?
- >>>
- >>> There are a couple of primary goals: Security, conveience and also solving
- >>> the accuracy/reliability problem we are seeing. Do keep in mind looking up
- >>> PFN has security implications. The PFN field in pagemap is zeroed if the user
- >>> does not have CAP_SYS_ADMIN.
- >>
- >> Myaybe you don't need PFN. is it?
- >
- > With the traditional idle tracking, PFN is needed which has the mentioned
- > security issues. This patch solves it. And the interface is identical and
- > familiar to the existing page_idle bitmap interface.
- >
- >>>>> In Android, we are using this for the heap profiler (heapprofd) which
- >>>>> profiles and pin points code paths which allocates and leaves memory
- >>>>> idle for long periods of time.
- >>>>
- >>>> So the goal is to detect idle pages with idle memory tracking?
- >>>
- >>> Isn't that what idle memory tracking does?
- >>
- >> To me, it's rather misleading. Please read motivation section in document.
- >> The feature would be good to detect workingset pages, not idle pages
- >> because workingset pages are never freed, swapped out and even we could
- >> count on newly allocated pages.
- >>
- >> Motivation
- >> ==========
- >>
- >> The idle page tracking feature allows to track which memory pages are being
- >> accessed by a workload and which are idle. This information can be useful for
- >> estimating the workload's working set size, which, in turn, can be taken into
- >> account when configuring the workload parameters, setting memory cgroup limits,
- >> or deciding where to place the workload within a compute cluster.
- >
- > As we discussed by chat, we could collect additional metadata to check if
- > pages were swapped or freed ever since the time we marked them as idle.
- > However this can be incremental improvement.
- >
- >>>> It couldn't work well because such idle pages could finally swap out and
- >>>> lose every flags of the page descriptor which is working mechanism of
- >>>> idle page tracking. It should have named "workingset page tracking",
- >>>> not "idle page tracking".
- >>>
- >>> The heap profiler that uses page-idle tracking is not to measure working set,
- >>> but to look for pages that are idle for long periods of time.
- >>
- >> It's important part. Please include it in the description so that people
- >> understands what's the usecase. As I said above, if it aims for finding
- >> idle pages durting the period, current idle page tracking feature is not
- >> good ironically.
- >
- > Ok, I will mention.
- >
- >>> Thanks for bringing up the swapping corner case..  Perhaps we can improve
- >>> the heap profiler to detect this by looking at bits 0-4 in pagemap. While it
- >>
- >> Yeb, that could work but it could add overhead again what you want to remove?
- >> Even, userspace should keep metadata to identify that page was already swapped
- >> in last period or newly swapped in new period.
- >
- > Yep.
-Between samples page could be read from swap and swapped out back multiple times.
-For tracking this swap ptes could be marked with idle bit too.
-I believe it's not so hard to find free bit for this.
+However, with the following setup:
 
-Refault\swapout will automatically clear this bit in pte even if
-page goes nowhere stays if swap-cache.
+* fo creating and writing files on XFS
+* XFS file system on top of dm-zoned target device
+* dm-zoned target created on tcmu-runner emulated ZBC disk
+* emulated ZBC disk backend file on ext4
+* ext4 file system on regular SATA SSD
 
+A deadlock was observed under the heavy file write workload generated
+using fio. The deadlock is clearly apparent from the backtrace of the
+tcmu-runner handler task backtrace:
 
+tcmu-runner call Trace:
+wait_for_completion+0x12c/0x170		<-- deadlock (see below text)
+xfs_buf_iowait+0x39/0x1c0 [xfs]
+__xfs_buf_submit+0x118/0x2e0 [xfs]	<-- XFS issues writes to
+				            dm-zoned device, which in
+					    turn will issue writes to
+					    the emulated ZBC device
+					    handled by tcmu-runner.
+xfs_bwrite+0x25/0x60 [xfs]
+xfs_reclaim_inode+0x303/0x330 [xfs]
+xfs_reclaim_inodes_ag+0x223/0x450 [xfs]
+xfs_reclaim_inodes_nr+0x31/0x40 [xfs]	<-- Absence of GFP_NOFS allows
+					    reclaim to call in XFS
+					    reclaim for the XFS file
+					    system on the emulated
+					    device
+super_cache_scan+0x153/0x1a0
+do_shrink_slab+0x17b/0x3c0
+shrink_slab+0x170/0x2c0
+shrink_node+0x1d6/0x4a0
+do_try_to_free_pages+0xdb/0x3c0
+try_to_free_pages+0x112/0x2e0		<-- Page reclaim triggers
+__alloc_pages_slowpath+0x422/0x1020
+__alloc_pages_nodemask+0x37f/0x400
+pagecache_get_page+0xb4/0x390
+grab_cache_page_write_begin+0x1d/0x40
+ext4_da_write_begin+0xd6/0x530
+generic_perform_write+0xc2/0x1e0
+__generic_file_write_iter+0xf9/0x1d0
+ext4_file_write_iter+0xc6/0x3b0
+new_sync_write+0x12d/0x1d0
+vfs_write+0xdb/0x1d0
+ksys_pwrite64+0x65/0xa0		<-- tcmu-runner ZBC handler writes to
+				    the backend file in response to
+				    dm-zoned target write IO
+
+When XFS reclaim issues write IOs to the dm-zoned target device,
+dm-zoned issue write IOs to the tcmu-runner emulated device. However,
+the tcmu ZBC handler is singled threaded and blocked waiting for the
+completion of the started pwrite() call and so does not process the
+newly issued write IOs necessary to complete page reclaim. The system
+is in a deadlocked state. This problem is 100% reproducible, the
+deadlock happening after fio running for a few minutes.
+
+A similar deadlock was also observed for read operations into the ext4
+backend file on page cache miss trigering a page allocation and page
+reclaim. Switching the tcmu emulated ZBC disk backend file from an ext4
+file to an XFS file, none of these deadlocks are observed.
+
+Fix this problem by removing __GFP_FS from ext4 inode mapping gfp_mask.
+The code used for this fix is borrowed from XFS xfs_setup_inode(). The
+inode mapping gfp_mask initialization is added to ext4_set_aops().
+
+Reported-by: Masato Suzuki <masato.suzuki@wdc.com>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ fs/ext4/inode.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 420fe3deed39..f882929037df 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1292,8 +1292,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+ 	 * grab_cache_page_write_begin() can take a long time if the
+ 	 * system is thrashing due to memory pressure, or if the page
+ 	 * is being written back.  So grab it first before we start
+-	 * the transaction handle.  This also allows us to allocate
+-	 * the page (if needed) without using GFP_NOFS.
++	 * the transaction handle.
+ 	 */
+ retry_grab:
+ 	page = grab_cache_page_write_begin(mapping, index, flags);
+@@ -3084,8 +3083,7 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+ 	 * grab_cache_page_write_begin() can take a long time if the
+ 	 * system is thrashing due to memory pressure, or if the page
+ 	 * is being written back.  So grab it first before we start
+-	 * the transaction handle.  This also allows us to allocate
+-	 * the page (if needed) without using GFP_NOFS.
++	 * the transaction handle.
+ 	 */
+ retry_grab:
+ 	page = grab_cache_page_write_begin(mapping, index, flags);
+@@ -4003,6 +4001,8 @@ static const struct address_space_operations ext4_dax_aops = {
+ 
+ void ext4_set_aops(struct inode *inode)
+ {
++	gfp_t gfp_mask;
++
+ 	switch (ext4_inode_journal_mode(inode)) {
+ 	case EXT4_INODE_ORDERED_DATA_MODE:
+ 	case EXT4_INODE_WRITEBACK_DATA_MODE:
+@@ -4019,6 +4019,14 @@ void ext4_set_aops(struct inode *inode)
+ 		inode->i_mapping->a_ops = &ext4_da_aops;
+ 	else
+ 		inode->i_mapping->a_ops = &ext4_aops;
++
++	/*
++	 * Ensure all page cache allocations are done from GFP_NOFS context to
++	 * prevent direct reclaim recursion back into the filesystem and blowing
++	 * stacks or deadlocking.
++	 */
++	gfp_mask = mapping_gfp_mask(inode->i_mapping);
++	mapping_set_gfp_mask(inode->i_mapping, (gfp_mask & ~(__GFP_FS)));
+ }
+ 
+ static int __ext4_block_zero_page_range(handle_t *handle,
+-- 
+2.21.0
 
