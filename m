@@ -2,43 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3F4B7580D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 21:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7D6A75821
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 21:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbfGYThS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 15:37:18 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41066 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbfGYThR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 15:37:17 -0400
-Received: by mail-ot1-f67.google.com with SMTP id o101so52854476ota.8;
-        Thu, 25 Jul 2019 12:37:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bRrEPEVgexSO2qJ+xF9O3stEIjJPqaaPVCD0SdqrQlc=;
-        b=SzzCyXiRNMP1N7slHOmSIjmirJZq0/SQSw320vDtStVJePkzFcEjrJe+mVSye8yAbA
-         UwCpIAUADMP8/NNbqcnUPBC24p7EhRX3KUrBJ9ZFeki4GDTEms9FWTdnF9LWdyvZ1d0N
-         HeGOBE0P0WmnXw1bGPcXO1LmzkzRCUjmLPxi6AWXLtKSxl2b4uYLOdGDq2QR6Vqd4cMP
-         /y9+ISJDb5n2ZQIucrVO0Imv/OXaLWiqv9gYIYUy9TqkALc/hCqRujnPIvfJVM+BwZwh
-         7f3WzeIdD3HJwmLKsepG0MXP1s2tNAdHoLwXckgUPe+NQ8cDHD3z6pDYZKEgw4SXgX0N
-         gGNA==
-X-Gm-Message-State: APjAAAWB/w1ehXI/hosYWPXZ7g483oR7sSO+rQ2p7qJ2cchSQ7zcbKDE
-        QjkFtI9ds6yIgfLBgrEQusY=
-X-Google-Smtp-Source: APXvYqz9bV6QeYb15MSNKNxP2VfnI+u9Ca2BFAT2KloajK/flSPNHX4CrsZFsKbSXnU3PDj2zYBIPQ==
-X-Received: by 2002:a9d:7a4e:: with SMTP id z14mr40017650otm.258.1564083436737;
-        Thu, 25 Jul 2019 12:37:16 -0700 (PDT)
-Received: from [192.168.1.114] (162-195-240-247.lightspeed.sntcca.sbcglobal.net. [162.195.240.247])
-        by smtp.gmail.com with ESMTPSA id w22sm16304470otp.73.2019.07.25.12.37.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 12:37:16 -0700 (PDT)
-Subject: Re: [PATCH v6 02/16] chardev: introduce cdev_get_by_path()
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        id S1726319AbfGYTla (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 15:41:30 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:42782 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726230AbfGYTla (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Jul 2019 15:41:30 -0400
+Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hqjc6-0004BV-00; Thu, 25 Jul 2019 13:41:18 -0600
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sagi Grimberg <sagi@grimberg.me>
+Cc:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>,
         Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
@@ -56,22 +36,36 @@ References: <20190725172335.6825-1-logang@deltatee.com>
  <a3262a7f-b78e-05ba-cda3-a7587946bd91@deltatee.com>
  <5951e0f5-cc90-f3de-0083-088fecfd43bb@grimberg.me>
  <20190725193415.GA12117@kroah.com>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <966fa988-de56-effe-dd52-3515ee83629c@grimberg.me>
-Date:   Thu, 25 Jul 2019 12:37:11 -0700
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <77a3e81d-2542-6782-0fc1-1d25bcc75598@deltatee.com>
+Date:   Thu, 25 Jul 2019 13:41:16 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
 In-Reply-To: <20190725193415.GA12117@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.80.180
+X-SA-Exim-Rcpt-To: viro@zeniv.linux.org.uk, sbates@raithlin.com, maxg@mellanox.com, Chaitanya.Kulkarni@wdc.com, axboe@fb.com, kbusch@kernel.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, sagi@grimberg.me, gregkh@linuxfoundation.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v6 02/16] chardev: introduce cdev_get_by_path()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+
+On 2019-07-25 1:34 p.m., Greg Kroah-Hartman wrote:
+> On Thu, Jul 25, 2019 at 12:02:30PM -0700, Sagi Grimberg wrote:
+>>
 >>>>>> Why do you have a "string" within the kernel and are not using the
 >>>>>> normal open() call from userspace on the character device node on the
 >>>>>> filesystem in your namespace/mount/whatever?
@@ -97,5 +91,14 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 > device node and away it goes?  What if you give it a "wrong" one?  Char
 > devices are very different from block devices this way.
 
-We could condition any configfs operation on capable(CAP_NET_ADMIN) to
-close that hole for now..
+Well the permission question is no different from the block-device case
+we already have. The user has to be root to configure a target so it has
+access to the block/char device. Containers and NVMe-of are really not
+designed to mix and would take a lot of work to make this make any sense
+(And that's way out of scope of what I'm trying to do here and doesn't
+change the need for a the cdev_get_by_path()).
+
+If the user specifies a non-nvme char device, it is rejected by the code
+in nvme_ctrl_get_by_path() when it compares the fops. See patch 4.
+
+Logan
