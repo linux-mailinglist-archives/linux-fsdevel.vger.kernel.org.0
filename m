@@ -2,199 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F5BF758C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 22:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E13C2758D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 22:28:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbfGYUV2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 16:21:28 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33621 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbfGYUVZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 16:21:25 -0400
-Received: by mail-pf1-f194.google.com with SMTP id g2so23308994pfq.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2019 13:21:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t0Cra5QTZMEsQQCWtg/IrgmE1EkzXk2wzdHi6GNLFH4=;
-        b=icwWCIiUgBV1wHTICVJ8PDBYNM56j1SL56zOuqzadtL/FTJftG29M/5i37umQn5pat
-         98vgN9o4wCCUl6zlUntg1M2/HAqBcuf46VrRvHnBderCK2JzVC1N/QGeaiGfSXK9s4n5
-         D6RwN5DHnLXKOq4Ny6b8fOnc2KVD7SZxUUSdcyUfbAIVnumy+pkl0n1aZfxPSnWyIL72
-         hfdMtqkGubCbZVDRysKpCuE9QGl7AC7BSboaOfM49zJPp3eOwApBz0fXZ3/p4ovL/zBt
-         OQN9pJSLbaG8HsrL0EiinQXd3Ip1iSW8gF7p8zWj9INScAI2FFyHb72jeSzAyZtgcUhN
-         wuPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t0Cra5QTZMEsQQCWtg/IrgmE1EkzXk2wzdHi6GNLFH4=;
-        b=V7vsIbAAMOm7r5/vB7Ns4QjlZXy/ryXsRn2FCGl4aCzUUi2gXw1gq8qJcT5GobOm/5
-         QZdrDZKcIXGs1draZCDd2qStZIOUZ2m2xFe6vTbJKvTiFMV+9gjDb+lqPB3HiP6ReIWO
-         Kv4wi4Xe1vLTygukRy2ptfSvcynClP2F+JrFJU3NTJnuUOMnTOXAoh/MmJhqLPLRBh5D
-         iEXNnKqGeBLvuiy6eCyY+8urdkyDgf1HNFtnh5YPl6gOOf935XW87ypWMc4aAd3ULcBN
-         p7nbsEn9Ybe/RxjYrRIAVaHDXuHAnShwzBMIAuDO+ljdGotaqdxl1ayYR60cZ5+Bxphp
-         s9aw==
-X-Gm-Message-State: APjAAAVeu05QT0fpIBnQOi0fLPI42Ex3wI+p/TSjqFYkwj8NQ6QVNHPJ
-        BktAx9Uc9UfKJMW+bjwG4uZ8AkH6M47LOlXwWeC+FA==
-X-Google-Smtp-Source: APXvYqxzvrolA8VKWhh/PCWTspZ6X1ImHyHFsNde4xNXJqWmdb4kpAbmdfPWVY+GfuBUC1O9mftgHi7aVHIiE4jBL10=
-X-Received: by 2002:a63:b919:: with SMTP id z25mr87114130pge.201.1564086083398;
- Thu, 25 Jul 2019 13:21:23 -0700 (PDT)
+        id S1726623AbfGYU2l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 16:28:41 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:43716 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725819AbfGYU2l (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Jul 2019 16:28:41 -0400
+Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hqkLl-0005E4-Ra; Thu, 25 Jul 2019 14:28:30 -0600
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Stephen Bates <sbates@raithlin.com>
+References: <20190725172335.6825-1-logang@deltatee.com>
+ <20190725172335.6825-5-logang@deltatee.com>
+ <20190725175023.GA30641@bombadil.infradead.org>
+ <da58f91e-6cfa-02e0-dd89-3cfa23764a0e@deltatee.com>
+ <20190725195835.GA7317@localhost.localdomain>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <5dd6a41d-21c4-cf8d-a81d-271549de6763@deltatee.com>
+Date:   Thu, 25 Jul 2019 14:28:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <CAFd5g47ikJmA0uGoavAFsh+hQvDmgsOi26tyii0612R=rt7iiw@mail.gmail.com>
- <CAFd5g44_axVHNMBzxSURQB_-R+Rif7cZcg7PyZ_SS+5hcy5jZA@mail.gmail.com>
- <20190716175021.9CA412173C@mail.kernel.org> <CAFd5g453vXeSUCZenCk_CzJ-8a1ym9RaPo0NVF=FujF9ac-5Ag@mail.gmail.com>
- <20190718175024.C3EC421019@mail.kernel.org> <CAFd5g46a7C1+R6ZcE_SkqaYqgrH5Rx3M=X7orFyaMgFLDbeYYA@mail.gmail.com>
- <20190719000834.GA3228@google.com> <20190722200347.261D3218C9@mail.kernel.org>
- <CAFd5g45hdCxEavSxirr0un_uLzo5Z-J4gHRA06qjzcQrTzmjVg@mail.gmail.com>
- <20190722235411.06C1320840@mail.kernel.org> <20190724073125.xyzfywctrcvg6fmh@pathway.suse.cz>
-In-Reply-To: <20190724073125.xyzfywctrcvg6fmh@pathway.suse.cz>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 25 Jul 2019 13:21:12 -0700
-Message-ID: <CAFd5g47v3Mr4GEGOjqyYy9Jwwm+ow7ypbu9j88rxEN06QCzdxQ@mail.gmail.com>
-Subject: Re: [PATCH v9 04/18] kunit: test: add kunit_stream a std::stream like logger
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Jeff Dike <jdike@addtoit.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@google.com>,
-        David Rientjes <rientjes@google.com>,
-        kunit-dev@googlegroups.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        wfg@linux.intel.com, Greg KH <gregkh@linuxfoundation.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Richard Weinberger <richard@nod.at>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Timothy Bird <Tim.Bird@sony.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190725195835.GA7317@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.80.180
+X-SA-Exim-Rcpt-To: sbates@raithlin.com, maxg@mellanox.com, Chaitanya.Kulkarni@wdc.com, axboe@fb.com, sagi@grimberg.me, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, willy@infradead.org, kbusch@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v6 04/16] nvme-core: introduce nvme_get_by_path()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 12:31 AM Petr Mladek <pmladek@suse.com> wrote:
->
-> On Mon 2019-07-22 16:54:10, Stephen Boyd wrote:
-> > Quoting Brendan Higgins (2019-07-22 15:30:49)
-> > > On Mon, Jul 22, 2019 at 1:03 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > >
-> > > >
-> > > > What's the calling context of the assertions and expectations? I still
-> > > > don't like the fact that string stream needs to allocate buffers and
-> > > > throw them into a list somewhere because the calling context matters
-> > > > there.
-> > >
-> > > The calling context is the same as before, which is anywhere.
-> >
-> > Ok. That's concerning then.
-> >
-> > >
-> > > > I'd prefer we just wrote directly to the console/log via printk
-> > > > instead. That way things are simple because we use the existing
-> > > > buffering path of printk, but maybe there's some benefit to the string
-> > > > stream that I don't see? Right now it looks like it builds a string and
-> > > > then dumps it to printk so I'm sort of lost what the benefit is over
-> > > > just writing directly with printk.
-> > >
-> > > It's just buffering it so the whole string gets printed uninterrupted.
-> > > If we were to print out piecemeal to printk, couldn't we have another
-> > > call to printk come in causing it to garble the KUnit message we are
-> > > in the middle of printing?
-> >
-> > Yes, printing piecemeal by calling printk many times could lead to
-> > interleaving of messages if something else comes in such as an interrupt
-> > printing something. Printk has some support to hold "records" but I'm
-> > not sure how that would work here because KERN_CONT talks about only
-> > being used early on in boot code. I haven't looked at printk in detail
-> > though so maybe I'm all wrong and KERN_CONT just works?
->
-> KERN_CONT does not guarantee that the message will get printed
-> together. The pieces get interleaved with messages printed in
-> parallel.
->
-> Note that KERN_CONT was originally really meant to be used only during
-> boot. It was later used more widely and ended in the best effort category.
->
-> There were several attempts to make it more reliable. But it was
-> always either too complicated or error prone or both.
->
-> You need to use your own buffering if you rely want perfect output.
-> The question is if it is really worth the complexity. Also note that
-> any buffering reduces the chance that the messages will reach
-> the console.
 
-Seems like that settles it then. Thanks!
 
-> BTW: There is a work in progress on a lockless printk ring buffer.
-> It will make printk() more secure regarding deadlocks. But it might
-> make transparent handling of continuous lines even more tricky.
->
-> I guess that local buffering, before calling printk(), will be
-> even more important then. Well, it might really force us to create
-> an API for it.
+On 2019-07-25 1:58 p.m., Keith Busch wrote:
+> On Thu, Jul 25, 2019 at 11:54:18AM -0600, Logan Gunthorpe wrote:
+>>
+>>
+>> On 2019-07-25 11:50 a.m., Matthew Wilcox wrote:
+>>> On Thu, Jul 25, 2019 at 11:23:23AM -0600, Logan Gunthorpe wrote:
+>>>> nvme_get_by_path() is analagous to blkdev_get_by_path() except it
+>>>> gets a struct nvme_ctrl from the path to its char dev (/dev/nvme0).
+>>>>
+>>>> The purpose of this function is to support NVMe-OF target passthru.
+>>>
+>>> I can't find anywhere that you use this in this patchset.
+>>>
+>>
+>> Oh sorry, the commit message is out of date the function was actually
+>> called nvme_ctrl_get_by_path() and it's used in Patch 10.
+> 
+> Instead of by path, could we have configfs take something else, like
+> the unique controller instance or serial number? I know that's different
+> than how we handle blocks and files, but that way nvme core can lookup
+> the cooresponding controller without adding new cdev dependencies.
 
-Cool! Can you CC me on that discussion?
+Well the previous version of the patchset just used the ctrl name
+("nvme1") and looped through all the controllers to find a match. But
+this sucks because of the inconsistency and the fact that the name can
+change if hardware changes and the number changes. Allowing the user to
+make use of standard udev rules seems important to me.
 
-> > Can printk be called once with whatever is in the struct? Otherwise if
-> > this is about making printk into a structured log then maybe printk
-> > isn't the proper solution anyway. Maybe a dev interface should be used
-> > instead that can handle starting and stopping tests (via ioctl) in
-> > addition to reading test results, records, etc. with read() and a
-> > clearing of the records. Then the seqfile API works naturally. All of
-> > this is a bit premature, but it looks like you're going down the path of
-> > making something akin to ftrace that stores binary formatted
-> > assertion/expectation records in a lockless ring buffer that then
-> > formats those records when the user asks for them.
->
-> IMHO, ftrace postpones the text formatting primary because it does not
-> not want to slow down the traced code more than necessary. It is yet
-> another layer and there should be some strong reason for it.
+Logan
 
-Noted. Yeah, I would prefer avoiding printing out the info at a separate time.
-
-> > I can imagine someone wanting to write unit tests that check conditions
-> > from a simulated hardirq context via irq works (a driver mock
-> > framework?), so this doesn't seem far off.
->
-> Note that stroring the messages into the printk log is basically safe in any
-> context. It uses temporary per-CPU buffers for recursive messages and
-> in NMI. The only problem is panic() when some CPU gets stuck with the
-> lock taken. This will get solved by the lockless ringbuffer. Also
-> the temporary buffers will not be necessary any longer.
-
-Sure, I think Stephen's concern is all the supporting code that is
-involved. Not printk specifically. It just means a lot more of KUnit
-has to be IRQ safe.
-
-> Much bigger problems are with consoles. There are many of them. It
-> means a lot of code and more locks involved, including scheduler
-> locks. Note that console lock is a semaphore.
-
-That shouldn't affect us though, right? As long as we continue to use
-the printk interface?
