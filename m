@@ -2,108 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7189D75BA7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 01:51:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31ACE75BB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 01:55:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbfGYXvS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 19:51:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49406 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbfGYXvR (ORCPT
+        id S1727036AbfGYXzY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 19:55:24 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:57542 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbfGYXzX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 19:51:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dnWpmDquviv2T4rhOaKwfYrYkAK4O04dPwOKTktYaOs=; b=thhM7y8KKCymntW36Aear/ueL
-        3yz70nHaio9xlpXUE8ytrM21+KRWlKYUO2me8Mk/zwg4dNq8qcIbXPODdZ3avIukc6wI4Du1LVxJo
-        8d1pMsg8sILIf8rByVRmAQ97UlVSAGve0hNP8Dta041us0ooVAroMXcDN5q2rfpeqs8Cagem+5I4q
-        y3hKbtksNNtRMWUff6W/Ox/dcr02eeOTKMs0+Ppw+OF5ZS/b0lmJgEWJ4IJSBnI5xhrF1wuSURU26
-        3xH6xb2WP2EIEfqSnTrwl6B7YDyLh/Av21TfBdp1uc+nk3LC460dz8qRyPdxcv9fhXcA2E7WtL7xm
-        XkQJkJjEA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqnW0-0005yk-GJ; Thu, 25 Jul 2019 23:51:16 +0000
-Subject: Re: mmotm 2019-07-24-21-39 uploaded (mm/memcontrol)
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Chris Down <chris@chrisdown.name>
-References: <20190725044010.4tE0dhrji%akpm@linux-foundation.org>
- <4831a203-8853-27d7-1996-280d34ea824f@infradead.org>
- <20190725163959.3d759a7f37ba40bb7f75244e@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <704b25d9-08bd-8418-f6b3-d8ba4c4cecfa@infradead.org>
-Date:   Thu, 25 Jul 2019 16:51:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 25 Jul 2019 19:55:23 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqnZe-0004a0-QJ; Thu, 25 Jul 2019 23:55:02 +0000
+Date:   Fri, 26 Jul 2019 00:55:02 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        Stephen Bates <sbates@raithlin.com>,
+        linux-block@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v6 02/16] chardev: introduce cdev_get_by_path()
+Message-ID: <20190725235502.GJ1131@ZenIV.linux.org.uk>
+References: <20190725172335.6825-3-logang@deltatee.com>
+ <20190725174032.GA27818@kroah.com>
+ <682ff89f-04e0-7a94-5aeb-895ac65ee7c9@deltatee.com>
+ <20190725180816.GA32305@kroah.com>
+ <da0eacb7-3738-ddf3-8c61-7ffc61aa41f4@deltatee.com>
+ <20190725182701.GA11547@kroah.com>
+ <20190725190024.GD30641@bombadil.infradead.org>
+ <27943e06-a503-162e-356b-abb9e106ab2e@grimberg.me>
+ <20190725191124.GE30641@bombadil.infradead.org>
+ <425dd2ac-333d-a8c4-ce49-870c8dadf436@deltatee.com>
 MIME-Version: 1.0
-In-Reply-To: <20190725163959.3d759a7f37ba40bb7f75244e@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <425dd2ac-333d-a8c4-ce49-870c8dadf436@deltatee.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/25/19 4:39 PM, Andrew Morton wrote:
-> On Thu, 25 Jul 2019 15:02:59 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+On Thu, Jul 25, 2019 at 01:24:22PM -0600, Logan Gunthorpe wrote:
 > 
->> On 7/24/19 9:40 PM, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2019-07-24-21-39 has been uploaded to
->>>
->>>    http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>>
->>> You will need quilt to apply these patches to the latest Linus release (5.x
->>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->>> http://ozlabs.org/~akpm/mmotm/series
->>>
->>
->> on i386:
->>
->> ld: mm/memcontrol.o: in function `mem_cgroup_handle_over_high':
->> memcontrol.c:(.text+0x6235): undefined reference to `__udivdi3'
 > 
-> Thanks.  This?
-
-
-Yes, that works.  Thanks.
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-
-> --- a/mm/memcontrol.c~mm-throttle-allocators-when-failing-reclaim-over-memoryhigh-fix-fix
-> +++ a/mm/memcontrol.c
-> @@ -2414,8 +2414,9 @@ void mem_cgroup_handle_over_high(void)
->  	 */
->  	clamped_high = max(high, 1UL);
->  
-> -	overage = ((u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT)
-> -		/ clamped_high;
-> +	overage = (u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT;
-> +	do_div(overage, clamped_high);
-> +
->  	penalty_jiffies = ((u64)overage * overage * HZ)
->  		>> (MEMCG_DELAY_PRECISION_SHIFT + MEMCG_DELAY_SCALING_SHIFT);
->  
-> _
+> On 2019-07-25 1:11 p.m., Matthew Wilcox wrote:
+> > On Thu, Jul 25, 2019 at 12:05:29PM -0700, Sagi Grimberg wrote:
+> >>
+> >>>>> NVMe-OF is configured using configfs. The target is specified by the
+> >>>>> user writing a path to a configfs attribute. This is the way it works
+> >>>>> today but with blkdev_get_by_path()[1]. For the passthru code, we need
+> >>>>> to get a nvme_ctrl instead of a block_device, but the principal is the same.
+> >>>>
+> >>>> Why isn't a fd being passed in there instead of a random string?
+> >>>
+> >>> I suppose we could echo a string of the file descriptor number there,
+> >>> and look up the fd in the process' file descriptor table ...
+> >>
+> >> Assuming that there is a open handle somewhere out there...
 > 
+> Yes, that would be a step backwards from an interface. The user would
+> then need a special process to open the fd and pass it through configfs.
+> They couldn't just do it with basic bash commands.
 
+First of all, they can, but... WTF not have filp_open() done right there?
+Yes, by name.  With permission checks done.  And pick your object from the
+sodding struct file you'll get.
 
--- 
-~Randy
+What's the problem?  Why do you need cdev lookups, etc., when you are
+dealing with files under your full control?  Just open them and use
+->private_data or whatever you set in ->open() to access the damn thing.
+All there is to it...
