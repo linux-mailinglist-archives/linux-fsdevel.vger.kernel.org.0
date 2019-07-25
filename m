@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1FF175573
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 19:24:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4908C75580
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 19:24:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391160AbfGYRX4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 13:23:56 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:39754 "EHLO ale.deltatee.com"
+        id S2391240AbfGYRYT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 13:24:19 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:39736 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391148AbfGYRXz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 13:23:55 -0400
+        id S2391129AbfGYRXy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Jul 2019 13:23:54 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1hqhSw-0001Ja-5R; Thu, 25 Jul 2019 11:23:54 -0600
+        id 1hqhSw-0001Jc-8e; Thu, 25 Jul 2019 11:23:53 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1hqhSw-0001nZ-0T; Thu, 25 Jul 2019 11:23:42 -0600
+        id 1hqhSw-0001nc-3Q; Thu, 25 Jul 2019 11:23:42 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
@@ -29,8 +29,8 @@ Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
         Stephen Bates <sbates@raithlin.com>,
         Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu, 25 Jul 2019 11:23:30 -0600
-Message-Id: <20190725172335.6825-12-logang@deltatee.com>
+Date:   Thu, 25 Jul 2019 11:23:31 -0600
+Message-Id: <20190725172335.6825-13-logang@deltatee.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190725172335.6825-1-logang@deltatee.com>
 References: <20190725172335.6825-1-logang@deltatee.com>
@@ -41,10 +41,10 @@ X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
-        autolearn_force=no version=3.4.2
-Subject: [PATCH v6 11/16] nvmet-core: allow one host per passthru-ctrl
+X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
+        version=3.4.2
+Subject: [PATCH v6 12/16] nvmet-core: don't check the data len for pt-ctrl
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -54,136 +54,45 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 
-This patch rejects any new connection to the passthru-ctrl if this
-controller is already connected to host. At the time of allocating the
-controller we check if the subsys associated with the passthru ctrl is
-already connected to the host.
+Right now, data_len is calculated before the transfer len after we
+parse the command, With passthru interface we allow VUCs (Vendor-Unique
+Commands). In order to make the code simple and compact, instead of
+assigning the data len or each VUC in the command parse function
+just use the transfer len as it is. This may result in error if expected
+data_len != transfer_len.
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 [logang@deltatee.com:
-   * drop the overide of the target cntlid with the passthru cntlid;
-     this seemed like a really bad idea especially in the presence of
-     mixed systems as you could end up with two ctrlrs with the same
-     cntlid
-   * push the check to ensure only one ctrlr per subsys into
-     functions in passthru-cmd.c to avoid excess inline #ifdefs
-]
+   * added definition of VUC to the commit message and comment
+   * use nvmet_req_passthru_ctrl() helper seeing we can't dereference
+     subsys->passthru_ctrl if CONFIG_NVME_TARGET_PASSTHRU is not set]
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 ---
- drivers/nvme/target/core.c            |  6 +++++
- drivers/nvme/target/io-cmd-passthru.c | 32 +++++++++++++++++++++++++++
- drivers/nvme/target/nvmet.h           | 10 +++++++++
- 3 files changed, 48 insertions(+)
+ drivers/nvme/target/core.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
-index 2e75968af7f4..9e92486e2ee9 100644
+index 9e92486e2ee9..77660dfc6c8f 100644
 --- a/drivers/nvme/target/core.c
 +++ b/drivers/nvme/target/core.c
-@@ -13,6 +13,7 @@
- #define CREATE_TRACE_POINTS
- #include "trace.h"
+@@ -942,7 +942,16 @@ EXPORT_SYMBOL_GPL(nvmet_req_uninit);
  
-+#include "../host/nvme.h"
- #include "nvmet.h"
- 
- struct workqueue_struct *buffered_io_wq;
-@@ -1278,6 +1279,10 @@ u16 nvmet_alloc_ctrl(const char *subsysnqn, const char *hostnqn,
- 	if (!ctrl->sqs)
- 		goto out_free_cqs;
- 
-+	ret = nvmet_passthru_alloc_ctrl(subsys);
-+	if (ret)
-+		goto out_free_sqs;
-+
- 	ret = ida_simple_get(&cntlid_ida,
- 			     NVME_CNTLID_MIN, NVME_CNTLID_MAX,
- 			     GFP_KERNEL);
-@@ -1341,6 +1346,7 @@ static void nvmet_ctrl_free(struct kref *ref)
- 	flush_work(&ctrl->async_event_work);
- 	cancel_work_sync(&ctrl->fatal_err_work);
- 
-+	nvmet_passthru_ctrl_free(subsys);
- 	ida_simple_remove(&cntlid_ida, ctrl->cntlid);
- 
- 	kfree(ctrl->sqs);
-diff --git a/drivers/nvme/target/io-cmd-passthru.c b/drivers/nvme/target/io-cmd-passthru.c
-index 9ddcdb8415fc..aefdd534cb4a 100644
---- a/drivers/nvme/target/io-cmd-passthru.c
-+++ b/drivers/nvme/target/io-cmd-passthru.c
-@@ -104,6 +104,38 @@ void nvmet_passthru_subsys_free(struct nvmet_subsys *subsys)
- 	mutex_unlock(&subsys->lock);
- }
- 
-+int nvmet_passthru_alloc_ctrl(struct nvmet_subsys *subsys)
-+{
+ void nvmet_req_execute(struct nvmet_req *req)
+ {
+-	if (unlikely(req->data_len != req->transfer_len)) {
 +	/*
-+	 * Check here if this subsystem is already connected to the passthru
-+	 * ctrl. We allow only one target ctrl for one passthru subsystem.
++	 * data_len is calculated before the transfer len after we parse
++	 * the command, With passthru interface we allow VUC (Vendor-Unique
++	 * Commands)'s. In order to make the code simple and compact,
++	 * instead of assinging the dala len for each VUC in the command
++	 * parse function just use the transfer len as it is. This may
++	 * result in error if expected data_len != transfer_len.
 +	 */
-+
-+	mutex_lock(&subsys->lock);
-+
-+	if (!subsys->passthru_ctrl)
-+		goto out;
-+
-+	if (subsys->passthru_connected) {
-+		mutex_unlock(&subsys->lock);
-+		return -ENODEV;
-+	}
-+
-+	subsys->passthru_connected = true;
-+
-+out:
-+	mutex_unlock(&subsys->lock);
-+
-+	return 0;
-+}
-+
-+void nvmet_passthru_ctrl_free(struct nvmet_subsys *subsys)
-+{
-+	mutex_lock(&subsys->lock);
-+	subsys->passthru_connected = false;
-+	mutex_unlock(&subsys->lock);
-+}
-+
- static void nvmet_passthru_req_complete(struct nvmet_req *req,
- 		struct request *rq, u16 status)
- {
-diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-index aff4db03269d..004949b6b666 100644
---- a/drivers/nvme/target/nvmet.h
-+++ b/drivers/nvme/target/nvmet.h
-@@ -231,6 +231,7 @@ struct nvmet_subsys {
- #ifdef CONFIG_NVME_TARGET_PASSTHRU
- 	struct nvme_ctrl	*passthru_ctrl;
- 	char			*passthru_ctrl_path;
-+	bool			passthru_connected;
- #endif /* CONFIG_NVME_TARGET_PASSTHRU */
- };
- 
-@@ -513,6 +514,8 @@ void nvmet_passthru_destroy(void);
- void nvmet_passthru_subsys_free(struct nvmet_subsys *subsys);
- int nvmet_passthru_ctrl_enable(struct nvmet_subsys *subsys);
- void nvmet_passthru_ctrl_disable(struct nvmet_subsys *subsys);
-+int nvmet_passthru_alloc_ctrl(struct nvmet_subsys *subsys);
-+void nvmet_passthru_ctrl_free(struct nvmet_subsys *subsys);
- u16 nvmet_parse_passthru_cmd(struct nvmet_req *req);
- 
- static inline
-@@ -536,6 +539,13 @@ static inline void nvmet_passthru_subsys_free(struct nvmet_subsys *subsys)
- static inline void nvmet_passthru_ctrl_disable(struct nvmet_subsys *subsys)
- {
- }
-+static inline int nvmet_passthru_alloc_ctrl(struct nvmet_subsys *subsys)
-+{
-+	return 0;
-+}
-+static inline void nvmet_passthru_ctrl_free(struct nvmet_subsys *subsys)
-+{
-+}
- static inline u16 nvmet_parse_passthru_cmd(struct nvmet_req *req)
- {
- 	return 0;
++	if (!(req->sq->ctrl && nvmet_req_passthru_ctrl(req)) &&
++	    unlikely(req->data_len != req->transfer_len)) {
+ 		req->error_loc = offsetof(struct nvme_common_command, dptr);
+ 		nvmet_req_complete(req, NVME_SC_SGL_INVALID_DATA | NVME_SC_DNR);
+ 	} else
 -- 
 2.20.1
 
