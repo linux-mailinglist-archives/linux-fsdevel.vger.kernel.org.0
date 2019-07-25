@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7E6674610
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 07:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 307B8746D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 08:09:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387449AbfGYFsv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 01:48:51 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:58705 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbfGYFsv (ORCPT
+        id S1728840AbfGYGJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 02:09:20 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:40071 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726325AbfGYGJU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:48:51 -0400
+        Thu, 25 Jul 2019 02:09:20 -0400
 X-Originating-IP: 81.250.144.103
 Received: from [10.30.1.20] (lneuilly-657-1-5-103.w81-250.abo.wanadoo.fr [81.250.144.103])
         (Authenticated sender: alex@ghiti.fr)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 83A0560002;
-        Thu, 25 Jul 2019 05:48:44 +0000 (UTC)
-Subject: Re: [PATCH REBASE v4 05/14] arm64, mm: Make randomization selected by
- generic topdown mmap layout
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 761F0E0008;
+        Thu, 25 Jul 2019 06:09:11 +0000 (UTC)
+Subject: Re: [PATCH REBASE v4 12/14] mips: Replace arch specific way to
+ determine 32bit task with generic version
 To:     Luis Chamberlain <mcgrof@kernel.org>
 Cc:     Albert Ou <aou@eecs.berkeley.edu>,
         Kees Cook <keescook@chromium.org>,
@@ -36,15 +36,15 @@ Cc:     Albert Ou <aou@eecs.berkeley.edu>,
         linux-mips@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
         linux-arm-kernel@lists.infradead.org
 References: <20190724055850.6232-1-alex@ghiti.fr>
- <20190724055850.6232-6-alex@ghiti.fr>
- <20190724171123.GV19023@42.do-not-panic.com>
+ <20190724055850.6232-13-alex@ghiti.fr>
+ <20190724171648.GW19023@42.do-not-panic.com>
 From:   Alexandre Ghiti <alex@ghiti.fr>
-Message-ID: <8dd7b018-7f17-0018-0fcf-d0257976d275@ghiti.fr>
-Date:   Thu, 25 Jul 2019 07:48:44 +0200
+Message-ID: <17fa5d60-2417-70cb-36b0-203b30b27624@ghiti.fr>
+Date:   Thu, 25 Jul 2019 08:09:11 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190724171123.GV19023@42.do-not-panic.com>
+In-Reply-To: <20190724171648.GW19023@42.do-not-panic.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: fr
@@ -53,46 +53,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/24/19 7:11 PM, Luis Chamberlain wrote:
-> On Wed, Jul 24, 2019 at 01:58:41AM -0400, Alexandre Ghiti wrote:
->> diff --git a/mm/util.c b/mm/util.c
->> index 0781e5575cb3..16f1e56e2996 100644
->> --- a/mm/util.c
->> +++ b/mm/util.c
->> @@ -321,7 +321,15 @@ unsigned long randomize_stack_top(unsigned long stack_top)
->>   }
+On 7/24/19 7:16 PM, Luis Chamberlain wrote:
+> On Wed, Jul 24, 2019 at 01:58:48AM -0400, Alexandre Ghiti wrote:
+>> Mips uses TASK_IS_32BIT_ADDR to determine if a task is 32bit, but
+>> this define is mips specific and other arches do not have it: instead,
+>> use !IS_ENABLED(CONFIG_64BIT) || is_compat_task() condition.
+>>
+>> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>> ---
+>>   arch/mips/mm/mmap.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
+>> index faa5aa615389..d4eafbb82789 100644
+>> --- a/arch/mips/mm/mmap.c
+>> +++ b/arch/mips/mm/mmap.c
+>> @@ -17,6 +17,7 @@
+>>   #include <linux/sched/signal.h>
+>>   #include <linux/sched/mm.h>
+>>   #include <linux/sizes.h>
+>> +#include <linux/compat.h>
 >>   
->>   #ifdef CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
->> -#ifdef CONFIG_ARCH_HAS_ELF_RANDOMIZE
->> +unsigned long arch_randomize_brk(struct mm_struct *mm)
->> +{
->> +	/* Is the current task 32bit ? */
+>>   unsigned long shm_align_mask = PAGE_SIZE - 1;	/* Sane caches */
+>>   EXPORT_SYMBOL(shm_align_mask);
+>> @@ -191,7 +192,7 @@ static inline unsigned long brk_rnd(void)
+>>   
+>>   	rnd = rnd << PAGE_SHIFT;
+>>   	/* 32MB for 32bit, 1GB for 64bit */
+>> -	if (TASK_IS_32BIT_ADDR)
 >> +	if (!IS_ENABLED(CONFIG_64BIT) || is_compat_task())
->> +		return randomize_page(mm->brk, SZ_32M);
->> +
->> +	return randomize_page(mm->brk, SZ_1G);
->> +}
->> +
->>   unsigned long arch_mmap_rnd(void)
->>   {
->>   	unsigned long rnd;
->> @@ -335,7 +343,6 @@ unsigned long arch_mmap_rnd(void)
->>   
->>   	return rnd << PAGE_SHIFT;
->>   }
-> So arch_randomize_brk is no longer ifdef'd around
-> CONFIG_ARCH_HAS_ELF_RANDOMIZE either and yet the header
-> still has it. Is that intentional?
->
+>>   		rnd = rnd & SZ_32M;
+>>   	else
+>>   		rnd = rnd & SZ_1G;
+>> -- 
+> Since there are at least two users why not just create an inline for
+> this which describes what we are looking for and remove the comments?
 
-Yes, CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT selects 
-CONFIG_ARCH_HAS_ELF_RANDOMIZE, that's what's new about v4: the generic
-functions proposed in this series come with elf randomization.
 
+Actually this is a preparatory patch, this will get merged with the 
+generic version in the next patch.
 
 Alex
 
 
+>
 >    Luis
 >
 > _______________________________________________
