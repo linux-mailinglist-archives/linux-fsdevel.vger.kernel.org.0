@@ -2,91 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5E3D74D8B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 13:51:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 203AD74D96
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 13:54:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729352AbfGYLux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 07:50:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbfGYLux (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 07:50:53 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F478229F9;
-        Thu, 25 Jul 2019 11:50:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564055452;
-        bh=lwTJPGPBO29LVdbB8De87KFPeekZCN4ZY7JPRWWWHhE=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=I12g6neBh1MSkPKhwUky9LOYVn1xzVT3t+MiyxNF+zVDzqzi3tk7WqWfSKQuTf5gC
-         /ZUbsDT9Twod3CQp1y0LQGuCukbn0vpSwO/1+tP/mBT5y4fEPA/owmZM6kByzeavOc
-         CzfY5/0Q9UYBT75lnn+GnSXBDYZAEhK6wxia7vFg=
-Message-ID: <342087bebc5d1eebadafcda02de067294441cd0d.camel@kernel.org>
-Subject: Re: [PATCH 1/1] locks: Fix procfs output for file leases
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Pavel Begunkov (Silence)" <asml.silence@gmail.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 25 Jul 2019 07:50:50 -0400
-In-Reply-To: <68a58eb885e32c1d7be0b4a531709ba2f33a758e.1563988369.git.asml.silence@gmail.com>
-References: <68a58eb885e32c1d7be0b4a531709ba2f33a758e.1563988369.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1729403AbfGYLyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 07:54:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55668 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbfGYLyp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Jul 2019 07:54:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Vft2ETrgGQMFjnBPVXnK+szXAKyWSwkuzQojY/OB7mk=; b=L1ggSMImEzygnsESy11qvIbQD
+        qW34SLS9Z6cvIvcVNgL99uNJUh0dqkIO5BPDr41LX/WyBOfrnAnOXpiHBTIyTTHEPAFRM7zfw1Kt7
+        JHhZjMhgQrxFBxKfbMqAT5zx1RI9GrLS//QQ0Ykp5uGtsg/Y0m9DScZjRv7GM6tngHHTowdVpNANh
+        n8Q4A4FYHvCdfOHYGyTbEAslF3ZdNNVHDcCS68O9tAH9xOc4tk7HcXkaaei2iv/HJ5HOGWjbEesrA
+        kkfZnUKVHMAcuaEqK+bffCLSBU2KhN+F3EoRtItQ3hj4rpiWL2Nfmd96uaJ5fMmgBZXYZvWMqAOi6
+        IN+Iskzng==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqcKY-0004Ea-Uf; Thu, 25 Jul 2019 11:54:42 +0000
+Date:   Thu, 25 Jul 2019 04:54:42 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Masato Suzuki <masato.suzuki@wdc.com>
+Subject: Re: [PATCH] ext4: Fix deadlock on page reclaim
+Message-ID: <20190725115442.GA15733@infradead.org>
+References: <20190725093358.30679-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725093358.30679-1-damien.lemoal@wdc.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2019-07-24 at 20:16 +0300, Pavel Begunkov (Silence) wrote:
-> From: Pavel Begunkov <asml.silence@gmail.com>
-> 
-> Since commit 778fc546f749c588aa2f ("locks: fix tracking of inprogress
-> lease breaks"), leases break don't change @fl_type but modifies
-> @fl_flags. However, procfs's part haven't been updated.
-> 
-> Previously, for a breaking lease the target type was printed (see
-> target_leasetype()), as returns fcntl(F_GETLEASE). But now it's always
-> "READ", as F_UNLCK no longer means "breaking". Unlike the previous
-> one, this behaviour don't provide a complete description of the lease.
-> 
-> There are /proc/pid/fdinfo/ outputs for a lease (the same for READ and
-> WRITE) breaked by O_WRONLY.
-> -- before:
-> lock:   1: LEASE  BREAKING  READ  2558 08:03:815793 0 EOF
-> -- after:
-> lock:   1: LEASE  BREAKING  UNLCK  2558 08:03:815793 0 EOF
-> 
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  fs/locks.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 686eae21daf6..24d1db632f6c 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2784,10 +2784,10 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
->  			       ? (fl->fl_type & LOCK_WRITE) ? "RW   " : "READ "
->  			       : (fl->fl_type & LOCK_WRITE) ? "WRITE" : "NONE ");
->  	} else {
-> -		seq_printf(f, "%s ",
-> -			       (lease_breaking(fl))
-> -			       ? (fl->fl_type == F_UNLCK) ? "UNLCK" : "READ "
-> -			       : (fl->fl_type == F_WRLCK) ? "WRITE" : "READ ");
-> +		int type = IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
+On Thu, Jul 25, 2019 at 06:33:58PM +0900, Damien Le Moal wrote:
+> +	gfp_t gfp_mask;
 > +
-> +		seq_printf(f, "%s ", (type == F_WRLCK) ? "WRITE" :
-> +				     (type == F_RDLCK) ? "READ" : "UNLCK");
->  	}
->  	if (inode) {
->  		/* userspace relies on this representation of dev_t */
+>  	switch (ext4_inode_journal_mode(inode)) {
+>  	case EXT4_INODE_ORDERED_DATA_MODE:
+>  	case EXT4_INODE_WRITEBACK_DATA_MODE:
+> @@ -4019,6 +4019,14 @@ void ext4_set_aops(struct inode *inode)
+>  		inode->i_mapping->a_ops = &ext4_da_aops;
+>  	else
+>  		inode->i_mapping->a_ops = &ext4_aops;
+> +
+> +	/*
+> +	 * Ensure all page cache allocations are done from GFP_NOFS context to
+> +	 * prevent direct reclaim recursion back into the filesystem and blowing
+> +	 * stacks or deadlocking.
+> +	 */
+> +	gfp_mask = mapping_gfp_mask(inode->i_mapping);
+> +	mapping_set_gfp_mask(inode->i_mapping, (gfp_mask & ~(__GFP_FS)));
 
-Thanks! Merged for v5.4.
--- 
-Jeff Layton <jlayton@kernel.org>
+This looks like something that could hit every file systems, so
+shouldn't we fix this in common code?  We could also look into
+just using memalloc_nofs_save for the page cache allocation path
+instead of the per-mapping gfp_mask.
 
+>  }
+>  
+>  static int __ext4_block_zero_page_range(handle_t *handle,
+> -- 
+> 2.21.0
+> 
+---end quoted text---
