@@ -2,118 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B43D74354
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 04:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4181F7446C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 06:25:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389181AbfGYCdR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jul 2019 22:33:17 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:59362 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388369AbfGYCdR (ORCPT
+        id S1727988AbfGYEYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 00:24:01 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:43875 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726806AbfGYEYB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jul 2019 22:33:17 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TXkJoVQ_1564021990;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TXkJoVQ_1564021990)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 25 Jul 2019 10:33:11 +0800
-Subject: Re: [PATCH v2 0/4] per-cgroup numa suite
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-To:     Peter Zijlstra <peterz@infradead.org>, hannes@cmpxchg.org,
-        mhocko@kernel.org, vdavydov.dev@gmail.com,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mcgrof@kernel.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        Hillf Danton <hdanton@sina.com>
-References: <209d247e-c1b2-3235-2722-dd7c1f896483@linux.alibaba.com>
- <60b59306-5e36-e587-9145-e90657daec41@linux.alibaba.com>
- <65c1987f-bcce-2165-8c30-cf8cf3454591@linux.alibaba.com>
-Message-ID: <2203b828-1458-5fec-f4f6-353f51091e2a@linux.alibaba.com>
-Date:   Thu, 25 Jul 2019 10:33:10 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        Thu, 25 Jul 2019 00:24:01 -0400
+Received: by mail-io1-f70.google.com with SMTP id q26so53453112ioi.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2019 21:24:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=4ykhyuiBMEbxqBLsBHdyDvPAOtbB9E2k09FumAP9piY=;
+        b=uBO3Zlpxouhoc1rwVT6zDmkiNdApdTz8RJORMWJAA23umYYKbh3RcPtFT0qg2Kwlcn
+         aE8mwcMhb5GrXXJRjFBV4f7/19xWHJhB6cM4R2fvfc5Ppw2X9/se7yM3+9pl9yp+FLJ2
+         dSxyixhCM1sWWmM2QNe8+ZZA5YVfrjqy7io6DKEKuvAyB/q94X6KK6rlhSyg6ozOO31e
+         pTPFrUxVl2UzckN18MnOxfYTwlBiE2KMPWn/W0prbuGu2PqMO1u8A9g2Vq/A5sR/21GZ
+         EtH5YpvtNmufvHFGVtIr9TDH1fRqvpMzdrRh9iQV1+tX0i2Vut2LX9cyKwNJYOsH8QO+
+         ms3g==
+X-Gm-Message-State: APjAAAUBFCHiocupJFBoYVDXjBZf9q0QjkBPKPaowOlqwf8rH5kWfkg3
+        Sa4OhmYPJ9Mg5N2qdmw01iu75mNeO/FUmPBS0LeJHFLynTCa
+X-Google-Smtp-Source: APXvYqzisP9svwAdUk2M7vpsY1nwZNJ9MmjI4tHYq0ELgBH3s/kK/fffQN/IDt9aWlEkMTECMVVjYMhh99FscjT9fYsgt99Ef1Bm
 MIME-Version: 1.0
-In-Reply-To: <65c1987f-bcce-2165-8c30-cf8cf3454591@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a5d:94d0:: with SMTP id y16mr43188529ior.123.1564028640346;
+ Wed, 24 Jul 2019 21:24:00 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 21:24:00 -0700
+In-Reply-To: <0000000000004a3a63058e722b94@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000086c732058e79cb59@google.com>
+Subject: Re: WARNING in ovl_real_fdget_meta
+From:   syzbot <syzbot+032bc63605089a199d30@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, bfields@fieldses.org, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Peter
+syzbot has bisected this bug to:
 
-Now we have all these stuff in cpu cgroup, with the new statistic
-folks should be able to estimate their per-cgroup workloads on
-numa platform, and numa group + cling would help to address the
-issue when their workloads can't be settled on one node.
+commit 387e3746d01c34457d6a73688acd90428725070b
+Author: Amir Goldstein <amir73il@gmail.com>
+Date:   Fri Jun 7 14:24:38 2019 +0000
 
-How do you think about this version :-)
+     locks: eliminate false positive conflicts for write lease
 
-Regards,
-Michael Wang
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a79594600000
+start commit:   c6dd78fc Merge branch 'x86-urgent-for-linus' of git://git...
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=17a79594600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a79594600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c8985c08e1f9727
+dashboard link: https://syzkaller.appspot.com/bug?extid=032bc63605089a199d30
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15855334600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17fcc4c8600000
 
-On 2019/7/16 上午11:38, 王贇 wrote:
-> During our torturing on numa stuff, we found problems like:
-> 
->   * missing per-cgroup information about the per-node execution status
->   * missing per-cgroup information about the numa locality
-> 
-> That is when we have a cpu cgroup running with bunch of tasks, no good
-> way to tell how it's tasks are dealing with numa.
-> 
-> The first two patches are trying to complete the missing pieces, but
-> more problems appeared after monitoring these status:
-> 
->   * tasks not always running on the preferred numa node
->   * tasks from same cgroup running on different nodes
-> 
-> The task numa group handler will always check if tasks are sharing pages
-> and try to pack them into a single numa group, so they will have chance to
-> settle down on the same node, but this failed in some cases:
-> 
->   * workloads share page caches rather than share mappings
->   * workloads got too many wakeup across nodes
-> 
-> Since page caches are not traced by numa balancing, there are no way to
-> realize such kind of relationship, and when there are too many wakeup,
-> task will be drag from the preferred node and then migrate back by numa
-> balancing, repeatedly.
-> 
-> Here the third patch try to address the first issue, we could now give hint
-> to kernel about the relationship of tasks, and pack them into single numa
-> group.
-> 
-> And the forth patch introduced numa cling, which try to address the wakup
-> issue, now we try to make task stay on the preferred node on wakeup in fast
-> path, in order to address the unbalancing risk, we monitoring the numa
-> migration failure ratio, and pause numa cling when it reach the specified
-> degree.
-> 
-> Since v1:
->   * move statistics from memory cgroup into cpu group
->   * statistics now accounting in hierarchical way
->   * locality now accounted into 8 regions equally
->   * numa cling no longer override select_idle_sibling, instead we
->     prevent numa swap migration with tasks cling to dst-node, also
->     prevent wake affine to drag tasks away which already cling to
->     prev-cpu
->   * other refine on comments and names
-> 
-> Michael Wang (4):
->   v2 numa: introduce per-cgroup numa balancing locality statistic
->   v2 numa: append per-node execution time in cpu.numa_stat
->   v2 numa: introduce numa group per task group
->   v4 numa: introduce numa cling feature
-> 
->  include/linux/sched.h        |   8 +-
->  include/linux/sched/sysctl.h |   3 +
->  kernel/sched/core.c          |  85 ++++++++
->  kernel/sched/debug.c         |   7 +
->  kernel/sched/fair.c          | 510 ++++++++++++++++++++++++++++++++++++++++++-
->  kernel/sched/sched.h         |  41 ++++
->  kernel/sysctl.c              |   9 +
->  7 files changed, 651 insertions(+), 12 deletions(-)
-> 
+Reported-by: syzbot+032bc63605089a199d30@syzkaller.appspotmail.com
+Fixes: 387e3746d01c ("locks: eliminate false positive conflicts for write  
+lease")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
