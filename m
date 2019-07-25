@@ -2,33 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3E8D7579D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 21:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CBD8757C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2019 21:24:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfGYTLb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 15:11:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33104 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbfGYTLa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 15:11:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NZgArJ4A0rpRQ2joOKkTtaW1dVOFPQo4qCltbvtRjM0=; b=k6oy9kzv+K54qnV0e8oy+G/G+
-        1D2KwDE/vwlTF/3p+8yfyLo5EYeB5rWN7JTp/UCF5yw8ni5L76UvzuQp7ukje5XUPRDiX+Odgz5sf
-        PN9Rjw8eL0qYyLSCy/nX6alOZy3oFHlWDt3MTE2kyU86O0PL6nuQkDXJS0CJoC0ffOVm0pkVe5687
-        LXpoSDmF4mHpFgp8FtWIewV7cTVpNEFVJLLm9Ivg00/D4nuJSBcsX1vgCAkyGoiSPyFFFO1tqGYIN
-        9g9HwW+d/0J0Zy7HB6HtHV+biDDu/DX7tsSA1TbElJ0S/I3CaP/9v477akFFDlHppKjEsbuOq2Wsg
-        DmLS72UuQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqj9B-0005NS-Ma; Thu, 25 Jul 2019 19:11:25 +0000
-Date:   Thu, 25 Jul 2019 12:11:25 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Sagi Grimberg <sagi@grimberg.me>
+        id S1726674AbfGYTYg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 15:24:36 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:42362 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726604AbfGYTYf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Jul 2019 15:24:35 -0400
+Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hqjLk-0003sJ-99; Thu, 25 Jul 2019 13:24:25 -0600
+To:     Matthew Wilcox <willy@infradead.org>,
+        Sagi Grimberg <sagi@grimberg.me>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jens Axboe <axboe@fb.com>,
         Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
@@ -37,10 +26,7 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-block@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v6 02/16] chardev: introduce cdev_get_by_path()
-Message-ID: <20190725191124.GE30641@bombadil.infradead.org>
 References: <20190725172335.6825-1-logang@deltatee.com>
  <20190725172335.6825-3-logang@deltatee.com>
  <20190725174032.GA27818@kroah.com>
@@ -50,32 +36,69 @@ References: <20190725172335.6825-1-logang@deltatee.com>
  <20190725182701.GA11547@kroah.com>
  <20190725190024.GD30641@bombadil.infradead.org>
  <27943e06-a503-162e-356b-abb9e106ab2e@grimberg.me>
+ <20190725191124.GE30641@bombadil.infradead.org>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <425dd2ac-333d-a8c4-ce49-870c8dadf436@deltatee.com>
+Date:   Thu, 25 Jul 2019 13:24:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27943e06-a503-162e-356b-abb9e106ab2e@grimberg.me>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190725191124.GE30641@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.80.180
+X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, kbusch@kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, Chaitanya.Kulkarni@wdc.com, axboe@fb.com, gregkh@linuxfoundation.org, sagi@grimberg.me, willy@infradead.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v6 02/16] chardev: introduce cdev_get_by_path()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 12:05:29PM -0700, Sagi Grimberg wrote:
-> 
-> > > > NVMe-OF is configured using configfs. The target is specified by the
-> > > > user writing a path to a configfs attribute. This is the way it works
-> > > > today but with blkdev_get_by_path()[1]. For the passthru code, we need
-> > > > to get a nvme_ctrl instead of a block_device, but the principal is the same.
-> > > 
-> > > Why isn't a fd being passed in there instead of a random string?
-> > 
-> > I suppose we could echo a string of the file descriptor number there,
-> > and look up the fd in the process' file descriptor table ...
-> 
-> Assuming that there is a open handle somewhere out there...
 
-Well, that's how we'd know that the application echoing /dev/nvme3 into
-configfs actually has permission to access /dev/nvme3.  Think about
-containers, for example.  It's not exactly safe to mount configfs in a
-non-root container since it can access any NVMe device in the system,
-not just ones which it's been given permission to access.  Right?
+
+On 2019-07-25 1:11 p.m., Matthew Wilcox wrote:
+> On Thu, Jul 25, 2019 at 12:05:29PM -0700, Sagi Grimberg wrote:
+>>
+>>>>> NVMe-OF is configured using configfs. The target is specified by the
+>>>>> user writing a path to a configfs attribute. This is the way it works
+>>>>> today but with blkdev_get_by_path()[1]. For the passthru code, we need
+>>>>> to get a nvme_ctrl instead of a block_device, but the principal is the same.
+>>>>
+>>>> Why isn't a fd being passed in there instead of a random string?
+>>>
+>>> I suppose we could echo a string of the file descriptor number there,
+>>> and look up the fd in the process' file descriptor table ...
+>>
+>> Assuming that there is a open handle somewhere out there...
+
+Yes, that would be a step backwards from an interface. The user would
+then need a special process to open the fd and pass it through configfs.
+They couldn't just do it with basic bash commands.
+
+> Well, that's how we'd know that the application echoing /dev/nvme3 into
+> configfs actually has permission to access /dev/nvme3.  
+
+It's the kernel that's accessing the device so it has permission. root
+permission is required to configure the kernel.
+
+> Think about
+> containers, for example.  It's not exactly safe to mount configfs in a
+> non-root container since it can access any NVMe device in the system,
+> not just ones which it's been given permission to access.  Right?
+
+I don't think it really makes any sense to talk about NVMe-of and
+containers. Though, if we did it would be solely on the configuration
+interface so that users inside a container might be able to configure a
+new target for resources they can see and they'd have to have their own
+view into configfs....
+
+Logan
+
