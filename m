@@ -2,204 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 551BD77299
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 22:15:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B38A772A5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 22:17:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfGZUP1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jul 2019 16:15:27 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42890 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfGZUP1 (ORCPT
+        id S1727398AbfGZURQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jul 2019 16:17:16 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39483 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbfGZURP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jul 2019 16:15:27 -0400
-Received: by mail-io1-f68.google.com with SMTP id e20so76929970iob.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2019 13:15:27 -0700 (PDT)
+        Fri, 26 Jul 2019 16:17:15 -0400
+Received: by mail-pg1-f193.google.com with SMTP id u17so25270631pgi.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2019 13:17:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=9WyyFtGDa/oI2K0SoorWyGV62gLsK5AqqZUD+AVwi30=;
-        b=Fb1/iCLjf/NTOtNNhbSpzOTh2HSJi8m3cogsN6IlhBqqXfIsc8b6/c5d54iSoV9tf2
-         4IXGW09arBQ1PLR9BDnrrDFFZeThGRlGJb1zcCHOBX/uSTmXUxjsHC5Wtn6a5v+3nRf1
-         oJ+3ikPkGPiZj3GBLWuU4dq/hVwWrnpaCbKsm+AtPr1gurUkCfgxi0HX4Wk1tLHikQWj
-         wT6aPzheIXgs4SsO5mbwNoQsUAkKQE6saF99TaAMGMeKeDLlNQIkXR1NdUvfX7qT7FYa
-         eTNtjQNzwfQ9/SFfxUX4M5xnr2uLMMhN3nt8caAvX1DdPVHS/1ToO3yYaSeHBD04DYMw
-         oJSw==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=j/IRcBqVskGgCakuPtG7Hutcm/XW9ghuXgQa4VWoPlM=;
+        b=LK/US9WbkyS77sGoAMWZy8gc2tGLtDUIhGi4KMKrm9oXRfVinKUyR1ssB6V7E0lSPF
+         t/FBIGuDdkXVBs+1IGdLW0u4vU7EhC8ye6/SumBvlCByTHKDzSPQANwc2+Cz5KG93322
+         DxJth4doKg55yaBKLnxxhquhCyOPSzH0DfcrLstq3TIPdIfoqLAhdPV2sW/jW5uOEgZh
+         9dNoVlQg4Fd0RgDO2d3e7R3Sc/NQM7WAwGpOyVBMibzfmrm1SxYT0p4MtOVewLloU9/U
+         dg8autDLELzhHkbhQ0F+N69b27WnOJG4toZ032w1oSfL/RGxxCMWWcFDcxTzJ3oZGhWY
+         RzmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=9WyyFtGDa/oI2K0SoorWyGV62gLsK5AqqZUD+AVwi30=;
-        b=oUAfUQqHEdMb+E7a0aSkggwoLexsouWgZfdFekl3b9mp0MA9WYIlcCvZgUMcpoL5ni
-         hJP8ooQD3A02AzX36Y/wgWqfuGRQ/IQGpSBh5e3kPtxpTcrDCaldP8xu+4FNNhsRb91g
-         l8KbDHT6xvGMFxzJBxtnawGV3FIOIB11WB2d0mVaUDSVnou1qhGBtD+gs0fJz25rid66
-         eKtYlS6xbVs2XPUGqI9/1QtcMMEuDbnJABfZbLB18xhc/dkENra+u0RkSSoOKtjuuU41
-         0Pobbb679rCDj2l7/EBHZ3s6e5/rrLpbhgsFlvJero2bQ11xLRgyzTYEtxDGXEQinhoy
-         Uinw==
-X-Gm-Message-State: APjAAAUZ0ypUH+eHPZDNFmImAYutVJmSAyQWvtMiwdXIlszMKjjW9LYn
-        2K8l/yEg4+iCSsa6fFpwFnoY2g==
-X-Google-Smtp-Source: APXvYqzsqQtosoZzCBtwEUSq2JCLj43JNgQACq9apPNl9xsQbwBsE8qGPx2yPCPSFW8euGk6L+kJ2A==
-X-Received: by 2002:a02:5185:: with SMTP id s127mr28951962jaa.44.1564172126478;
-        Fri, 26 Jul 2019 13:15:26 -0700 (PDT)
-Received: from localhost (67-0-24-96.albq.qwest.net. [67.0.24.96])
-        by smtp.gmail.com with ESMTPSA id a8sm40604193ioh.29.2019.07.26.13.15.25
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j/IRcBqVskGgCakuPtG7Hutcm/XW9ghuXgQa4VWoPlM=;
+        b=hmtBKWTdOAucC0JmWLx6l9knoOWV5yKTiQYRK8/tEUK49qrB09vSI1XFHEV87UgHoJ
+         9lsQBU+8XlABFMXfg8Kzx6LIWkUW93UT+tx6POi92Dvk8Ku47GDtYyzqKKEzcy/tO1fp
+         nVOX8ThZC5Odp1jpVDpzqkiSFvwozLtIiLiyfDxiLsK4lwOdCl9+223P4d+gwBoHBwtC
+         4WeiKJ/XzDXlxfWPAt6XTVR5/3yZTjFX0kIBOfsntu7SGJA4cyyvTNhwUm1Kz0nfzgSn
+         SeTdNpGhWfbMtgLmnVvTbhI0VO4HFa+p5OW/u95e4PBpFhEQIWCl0iFcFmAng58asuwh
+         OOKg==
+X-Gm-Message-State: APjAAAU4q5FOk0E/pXmyXA2AJYJp+F1d6j5JJKHoNPLlmAJoq+9bP4H0
+        ppoyUry0E1CNSgNBKBQsOPJ62w==
+X-Google-Smtp-Source: APXvYqwxUiBPlc83U36uwiE/oXy5nDvLjq7p224Nm5j2u8JgOtNcB6axsTT2TqGR7rpxgANLPkrqZg==
+X-Received: by 2002:a17:90a:220a:: with SMTP id c10mr101547847pje.33.1564172234495;
+        Fri, 26 Jul 2019 13:17:14 -0700 (PDT)
+Received: from sspatil-workstation.mtv.corp.google.com ([2620:15c:211:0:fb21:5c58:d6bc:4bef])
+        by smtp.gmail.com with ESMTPSA id s185sm80459064pgs.67.2019.07.26.13.17.11
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 26 Jul 2019 13:15:25 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 13:15:24 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Alexandre Ghiti <alex@ghiti.fr>
-cc:     linux-arm-kernel@lists.infradead.org,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Paul Burton <paul.burton@mips.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-fsdevel@vger.kernel.org,
+        Fri, 26 Jul 2019 13:17:12 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 13:17:10 -0700
+From:   sspatil@google.com
+To:     joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+        adobriyan@gmail.com, akpm@linux-foundation.org, bgregg@netflix.com,
+        chansen3@cisco.com, dancol@google.com, fmayer@google.com,
+        joaodias@google.com, joelaf@google.com, corbet@lwn.net,
+        keescook@chromium.org, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+        rppt@linux.ibm.com, minchan@kernel.org, namhyung@google.com,
+        guro@fb.com, sfr@canb.auug.org.au, surenb@google.com,
+        tkjos@google.com, vdavydov.dev@gmail.com, vbabka@suse.cz,
+        wvw@google.com, sspatil+mutt@google.com
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-mips@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        linux-riscv@lists.infradead.org,
-        Daniel Cashman <dcashman@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH REBASE v4 14/14] riscv: Make mmap allocation top-down by
- default
-In-Reply-To: <6b2b45a5-0ac4-db73-8f50-ab182a0cb621@ghiti.fr>
-Message-ID: <alpine.DEB.2.21.9999.1907261310490.26670@viisi.sifive.com>
-References: <20190724055850.6232-1-alex@ghiti.fr> <20190724055850.6232-15-alex@ghiti.fr> <alpine.DEB.2.21.9999.1907251655310.32766@viisi.sifive.com> <6b2b45a5-0ac4-db73-8f50-ab182a0cb621@ghiti.fr>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, joaodias@google.com, joelaf@google.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@kernel.org,
+        namhyung@google.com, Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        tkjos@google.com, Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, wvw@google.com
+Subject: Re: [PATCH v3 2/2] doc: Update documentation for page_idle virtual
+ address indexing
+Message-ID: <20190726201710.GA144547@google.com>
+References: <20190726152319.134152-1-joel@joelfernandes.org>
+ <20190726152319.134152-2-joel@joelfernandes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190726152319.134152-2-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 26 Jul 2019, Alexandre Ghiti wrote:
+Thanks Joel, just a couple of nits for the doc inline below. Other than that,
 
-> On 7/26/19 2:20 AM, Paul Walmsley wrote:
-> > 
-> > On Wed, 24 Jul 2019, Alexandre Ghiti wrote:
-> > 
-> > > In order to avoid wasting user address space by using bottom-up mmap
-> > > allocation scheme, prefer top-down scheme when possible.
-> > > 
-> > > Before:
-> > > root@qemuriscv64:~# cat /proc/self/maps
-> > > 00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
-> > > 00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
-> > > 00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
-> > > 00018000-00039000 rw-p 00000000 00:00 0          [heap]
-> > > 1555556000-155556d000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
-> > > 155556d000-155556e000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
-> > > 155556e000-155556f000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
-> > > 155556f000-1555570000 rw-p 00000000 00:00 0
-> > > 1555570000-1555572000 r-xp 00000000 00:00 0      [vdso]
-> > > 1555574000-1555576000 rw-p 00000000 00:00 0
-> > > 1555576000-1555674000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
-> > > 1555674000-1555678000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
-> > > 1555678000-155567a000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
-> > > 155567a000-15556a0000 rw-p 00000000 00:00 0
-> > > 3fffb90000-3fffbb1000 rw-p 00000000 00:00 0      [stack]
-> > > 
-> > > After:
-> > > root@qemuriscv64:~# cat /proc/self/maps
-> > > 00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
-> > > 00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
-> > > 00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
-> > > 2de81000-2dea2000 rw-p 00000000 00:00 0          [heap]
-> > > 3ff7eb6000-3ff7ed8000 rw-p 00000000 00:00 0
-> > > 3ff7ed8000-3ff7fd6000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
-> > > 3ff7fd6000-3ff7fda000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
-> > > 3ff7fda000-3ff7fdc000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
-> > > 3ff7fdc000-3ff7fe2000 rw-p 00000000 00:00 0
-> > > 3ff7fe4000-3ff7fe6000 r-xp 00000000 00:00 0      [vdso]
-> > > 3ff7fe6000-3ff7ffd000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
-> > > 3ff7ffd000-3ff7ffe000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
-> > > 3ff7ffe000-3ff7fff000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
-> > > 3ff7fff000-3ff8000000 rw-p 00000000 00:00 0
-> > > 3fff888000-3fff8a9000 rw-p 00000000 00:00 0      [stack]
-> > > 
-> > > Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > > ---
-> > >   arch/riscv/Kconfig | 11 +++++++++++
-> > >   1 file changed, 11 insertions(+)
-> > > 
-> > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > > index 59a4727ecd6c..6a63973873fd 100644
-> > > --- a/arch/riscv/Kconfig
-> > > +++ b/arch/riscv/Kconfig
-> > > @@ -54,6 +54,17 @@ config RISCV
-> > >   	select EDAC_SUPPORT
-> > >   	select ARCH_HAS_GIGANTIC_PAGE
-> > >   	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
-> > > +	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
-> > > +	select HAVE_ARCH_MMAP_RND_BITS
-> > > +
-> > > +config ARCH_MMAP_RND_BITS_MIN
-> > > +	default 18
-> > Could you help me understand the rationale behind this constant?
+Reviewed-by: Sandeep Patil <sspatil@google.com>
+
+I'll plan on making changes to Android to use this instead of the pagemap +
+page_idle. I think it will also be considerably faster.
+
+On Fri, Jul 26, 2019 at 11:23:19AM -0400, Joel Fernandes (Google) wrote:
+> This patch updates the documentation with the new page_idle tracking
+> feature which uses virtual address indexing.
 > 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+>  .../admin-guide/mm/idle_page_tracking.rst     | 43 ++++++++++++++++---
+>  1 file changed, 36 insertions(+), 7 deletions(-)
 > 
-> Indeed, I took that from arm64 code and I did not think enough about it: 
-> that's great you spotted this because that's a way too large value for 
-> 32 bits as it would, at minimum, make mmap random offset go up to 1GB 
-> (18 + 12), which is a big hole for this small address space :)
+> diff --git a/Documentation/admin-guide/mm/idle_page_tracking.rst b/Documentation/admin-guide/mm/idle_page_tracking.rst
+> index df9394fb39c2..1eeac78c94a7 100644
+> --- a/Documentation/admin-guide/mm/idle_page_tracking.rst
+> +++ b/Documentation/admin-guide/mm/idle_page_tracking.rst
+> @@ -19,10 +19,14 @@ It is enabled by CONFIG_IDLE_PAGE_TRACKING=y.
+>  
+>  User API
+>  ========
+> +There are 2 ways to access the idle page tracking API. One uses physical
+> +address indexing, another uses a simpler virtual address indexing scheme.
+>  
+> -The idle page tracking API is located at ``/sys/kernel/mm/page_idle``.
+> -Currently, it consists of the only read-write file,
+> -``/sys/kernel/mm/page_idle/bitmap``.
+> +Physical address indexing
+> +-------------------------
+> +The idle page tracking API for physical address indexing using page frame
+> +numbers (PFN) is located at ``/sys/kernel/mm/page_idle``.  Currently, it
+> +consists of the only read-write file, ``/sys/kernel/mm/page_idle/bitmap``.
+>  
+>  The file implements a bitmap where each bit corresponds to a memory page. The
+>  bitmap is represented by an array of 8-byte integers, and the page at PFN #i is
+> @@ -74,6 +78,31 @@ See :ref:`Documentation/admin-guide/mm/pagemap.rst <pagemap>` for more
+>  information about ``/proc/pid/pagemap``, ``/proc/kpageflags``, and
+>  ``/proc/kpagecgroup``.
+>  
+> +Virtual address indexing
+> +------------------------
+> +The idle page tracking API for virtual address indexing using virtual page
+> +frame numbers (VFN) is located at ``/proc/<pid>/page_idle``. It is a bitmap
+> +that follows the same semantics as ``/sys/kernel/mm/page_idle/bitmap``
+> +except that it uses virtual instead of physical frame numbers.
+> +
+> +This idle page tracking API does not need deal with PFN so it does not require
+
+s/need//
+
+> +prior lookups of ``pagemap`` in order to find if page is idle or not. This is
+
+s/in order to find if page is idle or not//
+
+> +an advantage on some systems where looking up PFN is considered a security
+> +issue.  Also in some cases, this interface could be slightly more reliable to
+> +use than physical address indexing, since in physical address indexing, address
+> +space changes can occur between reading the ``pagemap`` and reading the
+> +``bitmap``, while in virtual address indexing, the process's ``mmap_sem`` is
+> +held for the duration of the access.
+> +
+> +To estimate the amount of pages that are not used by a workload one should:
+> +
+> + 1. Mark all the workload's pages as idle by setting corresponding bits in
+> +    ``/proc/<pid>/page_idle``.
+> +
+> + 2. Wait until the workload accesses its working set.
+> +
+> + 3. Read ``/proc/<pid>/page_idle`` and count the number of bits set.
+> +
+>  .. _impl_details:
+>  
+>  Implementation Details
+> @@ -99,10 +128,10 @@ When a dirty page is written to swap or disk as a result of memory reclaim or
+>  exceeding the dirty memory limit, it is not marked referenced.
+>  
+>  The idle memory tracking feature adds a new page flag, the Idle flag. This flag
+> -is set manually, by writing to ``/sys/kernel/mm/page_idle/bitmap`` (see the
+> -:ref:`User API <user_api>`
+> -section), and cleared automatically whenever a page is referenced as defined
+> -above.
+> +is set manually, by writing to ``/sys/kernel/mm/page_idle/bitmap`` for physical
+> +addressing or by writing to ``/proc/<pid>/page_idle`` for virtual
+> +addressing (see the :ref:`User API <user_api>` section), and cleared
+> +automatically whenever a page is referenced as defined above.
+>  
+>  When a page is marked idle, the Accessed bit must be cleared in all PTEs it is
+>  mapped to, otherwise we will not be able to detect accesses to the page coming
+> -- 
+> 2.22.0.709.g102302147b-goog
 > 
-> arm and mips propose 8 as default value for 32bits systems which is 1MB offset
-> at minimum.
-
-8 seems like a fine minimum for Sv32.
-
-> > > +
-> > > +# max bits determined by the following formula:
-> > > +#  VA_BITS - PAGE_SHIFT - 3
-> > I realize that these lines are probably copied from arch/arm64/Kconfig.
-> > But the rationale behind the "- 3" is not immediately obvious.  This
-> > apparently originates from commit 8f0d3aa9de57 ("arm64: mm: support
-> > ARCH_MMAP_RND_BITS"). Can you provide any additional context here?
+> -- 
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
 > 
-> 
-> The formula comes from commit d07e22597d1d ("mm: mmap: add new /proc 
-> tunable for mmap_base ASLR"), where the author states that "generally a 
-> 3-4 bits less than the number of bits in the user-space accessible 
-> virtual address space [allows to] give the greatest flexibility without 
-> generating an invalid mmap_base address".
-> 
-> In practice, that limits the mmap random offset to at maximum 1/8 (for - 
-> 3) of the total address space.
-
-OK.
-
-> > > +config ARCH_MMAP_RND_BITS_MAX
-> > > +	default 33 if 64BIT # SV48 based
-> > The rationale here is clear for Sv48, per the above formula:
-> > 
-> >     (48 - 12 - 3) = 33
-> > 
-> > > +	default 18
-> > However, here it is less clear to me.  For Sv39, shouldn't this be
-> > 
-> >     (39 - 12 - 3) = 24
-> > 
-> > ?  And what about Sv32?
-> 
-> 
-> You're right. Is there a way to distinguish between sv39 and sv48 here ?
-
-This patch has just been posted:
-
-https://lore.kernel.org/linux-riscv/alpine.DEB.2.21.9999.1907261259420.26670@viisi.sifive.com/T/#u
-
-Assuming there are no negative comments, we'll plan to send it upstream 
-during v5.3-rc.  Your patch should be able to set different minimums and 
-maximums based on the value of CONFIG_RISCV_VM_SV*
-
-
-- Paul
