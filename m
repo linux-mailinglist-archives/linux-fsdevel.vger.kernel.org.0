@@ -2,138 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 790D575EF6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 08:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E63475F61
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 08:57:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbfGZGXt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jul 2019 02:23:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34110 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725864AbfGZGXs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jul 2019 02:23:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 32631AFCF;
-        Fri, 26 Jul 2019 06:23:46 +0000 (UTC)
-Subject: Re: [PATCH v6 00/16] nvmet: add target passthru commands support
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>
-References: <20190725172335.6825-1-logang@deltatee.com>
-From:   Hannes Reinecke <hare@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
- 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
- azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <1f202de3-1122-f4a3-debd-0d169f545047@suse.de>
-Date:   Fri, 26 Jul 2019 08:23:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726067AbfGZG5s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jul 2019 02:57:48 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:33052 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfGZG5p (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Jul 2019 02:57:45 -0400
+Received: by mail-yb1-f195.google.com with SMTP id c202so17953682ybf.0;
+        Thu, 25 Jul 2019 23:57:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ra3fpxWHFvLtRMMiUd9OFJua+AjFjAkm9k/vwnBYkKk=;
+        b=VyohNN1DhYTQ0+iW4429cNqwM4zP8mMpsqJJWhXJxwiAHA1Kqu5KbFN4ZZqCAcq6f1
+         HntDKKVZZcM/yjZfgudVx5jGIfpHL8Z2m8xAX/5iaNODDzLYALhHWuA5sOhAA3GF7E9q
+         FlSEnsjrYDFbqc+9iu7OF7KUwYqHNyskA+z1eOPXRXOtJSLxv58ZAjm1jIIKwGNb1D3w
+         gCZlZ7JiuCixjg5eaushQNBARWmGyT8N/rcvs/3/gnrlzeBLJs/xYPj+PXlP7jZlf2GO
+         PnkQn9q1DLvAlH0Be0VdE5eW9pymaUOTYqDwAgm23RqtZBLtjih7jihc0SxPdgwAMdy9
+         HgFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ra3fpxWHFvLtRMMiUd9OFJua+AjFjAkm9k/vwnBYkKk=;
+        b=pU3zdR5BWUy3BTmafY1HQ0JtaTFqQBOJP219JRYynYWNJGaEr1WnTN+CAUg7x614gh
+         B7yXdQpaM0L+3iYr6YVeVJxtwFkHHr6gjWdOd12p9Fd268BMjlMTUgksuRmZcM8JhyUe
+         8945qNBrJ9EGS1JrfOC+/xZioOXhGJSkOkhqFA72VjUxBWlD5adjFssl44nJ2YPoX9Vc
+         6esddW2oPF/9K9/vVw7+zp9E0FIzjFowE3M3uYXnvib6DMmdq8luYhvsFuTALxH6MeZC
+         +foSZ6EDilolwFBV+yVhPb2sZj5ZDoAmTlsLUxGKNOV+1EcZfXq1QYuj9r8EghmB4puV
+         bpFQ==
+X-Gm-Message-State: APjAAAVaj7phsbnJJlJVJi1SLxnZ1bq22FcHZLkDfY7teS2uLbTZpkDc
+        leDG5sA0zf46FS7njeYWAipG3OpJfuCoMWwvZcCjDBSW
+X-Google-Smtp-Source: APXvYqwbJ5BQE3yQlkGcySgvRgVFiEZb+YkhRLN8KUrLAeKhUhckEbkNXOsgbB4H0H+8Z068E7aBqNkYnf+SpcAoZj0=
+X-Received: by 2002:a25:9a08:: with SMTP id x8mr55700016ybn.439.1564124264773;
+ Thu, 25 Jul 2019 23:57:44 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190725172335.6825-1-logang@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190715133839.9878-1-amir73il@gmail.com> <20190715133839.9878-2-amir73il@gmail.com>
+In-Reply-To: <20190715133839.9878-2-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 26 Jul 2019 09:57:33 +0300
+Message-ID: <CAOQ4uxhRgL2sMok7xsAZN6cZXSfoPxx=O8ADE=72+Ta3hGoLbw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ovl: support [S|G]ETFLAGS ioctl for directories
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Logan,
+On Mon, Jul 15, 2019 at 4:38 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> [S|G]ETFLAGS and FS[S|G]ETXATTR ioctls are applicable to both files and
+> directories, so add ioctl operations to dir as well.
+>
+> ifdef away compat ioctl implementation to conform to standard practice.
+>
+> With this change, xfstest generic/079 which tests these ioctls on files
+> and directories passes.
+>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/overlayfs/file.c      | 10 ++++++----
+>  fs/overlayfs/overlayfs.h |  2 ++
+>  fs/overlayfs/readdir.c   |  4 ++++
+>  3 files changed, 12 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> index e235a635d9ec..c6426e4d3f1f 100644
+> --- a/fs/overlayfs/file.c
+> +++ b/fs/overlayfs/file.c
+> @@ -502,7 +502,7 @@ static long ovl_ioctl_set_fsxflags(struct file *file, unsigned int cmd,
+>                                    ovl_fsxflags_to_iflags(fa.fsx_xflags));
+>  }
+>
+> -static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> +long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  {
+>         long ret;
+>
+> @@ -527,8 +527,8 @@ static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>         return ret;
+>  }
+>
+> -static long ovl_compat_ioctl(struct file *file, unsigned int cmd,
+> -                            unsigned long arg)
+> +#ifdef CONFIG_COMPAT
+> +long ovl_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  {
+>         switch (cmd) {
+>         case FS_IOC32_GETFLAGS:
+> @@ -545,6 +545,7 @@ static long ovl_compat_ioctl(struct file *file, unsigned int cmd,
+>
+>         return ovl_ioctl(file, cmd, arg);
+>  }
+> +#endif
+>
+>  enum ovl_copyop {
+>         OVL_COPY,
+> @@ -646,8 +647,9 @@ const struct file_operations ovl_file_operations = {
+>         .fallocate      = ovl_fallocate,
+>         .fadvise        = ovl_fadvise,
+>         .unlocked_ioctl = ovl_ioctl,
+> +#ifdef CONFIG_COMPAT
+>         .compat_ioctl   = ovl_compat_ioctl,
+> -
+> +#endif
+>         .copy_file_range        = ovl_copy_file_range,
+>         .remap_file_range       = ovl_remap_file_range,
+>  };
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 6934bcf030f0..7c94cc3521cb 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -416,6 +416,8 @@ struct dentry *ovl_create_temp(struct dentry *workdir, struct ovl_cattr *attr);
+>
+>  /* file.c */
+>  extern const struct file_operations ovl_file_operations;
+> +long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+> +long ovl_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+>
+>  /* copy_up.c */
+>  int ovl_copy_up(struct dentry *dentry);
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index 47a91c9733a5..eff8fbfccc7c 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -907,6 +907,10 @@ const struct file_operations ovl_dir_operations = {
+>         .llseek         = ovl_dir_llseek,
+>         .fsync          = ovl_dir_fsync,
+>         .release        = ovl_dir_release,
+> +       .unlocked_ioctl = ovl_ioctl,
+> +#ifdef CONFIG_COMPAT
+> +       .compat_ioctl   = ovl_compat_ioctl,
+> +#endif
+>  };
+>
 
-On 7/25/19 7:23 PM, Logan Gunthorpe wrote:
-> Hi,
-> 
-> Chaitainya has asked us to take on these patches as we have an
-> interest in getting them into upstream. To that end, we've done
-> a large amount of testing, bug fixes and cleanup.
-> 
-> Passthru support for nvmet allows users to export an entire
-> NVMe controller through NVMe-oF. When exported in this way (as opposed
-> to exporting each namespace as a block device), all the NVMe commands
-> are passed to the given controller unmodified, including most admin
-> commands and Vendor Unique Commands (VUCs). A passthru target will
-> expose all namespaces for a given device to the remote host.
-> 
-In general I'm very much in favour of this, yet there are some issues
-which I'm not quite clear about.
+Big self NACK!!!
 
-> There are three major non-bugfix changes that we've done to the series:
-> 
-> 1) Instead of using a seperate special passthru subsystem in
->    configfs simply add a passthru directory that's analogous to
->    the existing namespace directories. The directories have
->    very similar attributes to namespaces but are mutually exclusive.
->    If a user enables a namespaces, they can't then enable
->    passthru controller and vice versa. This simplifies the code
->    required to implement passthru configfs and IMO creates a much
->    clearer and uniform interface.
-> 
-How do you handle subsystem naming?
-If you enable the 'passthru' device, the (nvmet) subsystem (and its
-name) is already created. Yet the passthru device will have its own
-internal subsystem naming, so if you're not extra careful you'll end up
-with a nvmet subsystem which doesn't have any relationship with the
-passthru subsystem, making addressing etc ... tricky.
-Any thoughts about that?
+Cannot call ovl_ioctl => ovl_real_ioctl => ovl_real_fdget with a directory.
+If we do this need to implement ovl_dir_ioctl and refactor the ioctl helpers.
 
-Similarly: how do you propose to handle multipath devices?
-Any NVMe with several paths will be enabling NVMe multipathing
-automatically, presenting you with a single multipathed namespace.
-How will these devices be treated?
-Will the multipathed namespace be used for passthru?
-
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke		   Teamlead Storage & Networking
-hare@suse.de			               +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG Nürnberg)
+Sorry,
+Amir.
