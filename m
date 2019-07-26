@@ -2,70 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B9A875C34
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 02:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DEEA75C7B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 03:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbfGZAzg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 20:55:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49872 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbfGZAzg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 20:55:36 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC8ED2238C;
-        Fri, 26 Jul 2019 00:55:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564102535;
-        bh=o4hVED1DnXPhi52FO0wtBGwbvoqHLkWraSNdRFbEhmA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=L5uUd3GhpWzXG8NZ5VAfPLAogGQnqmrSDtJ2WoGzo4kODsjexGjl2plEX8UF4CwuW
-         oU0gaoBumTXP+a5Fx+/RYg+bzmTeV7Qn9p0BT20Auw6fp70moUvLzgdHDbXgB4eoWy
-         x3mw2X6mVGMx2Db5jEYPWqqxyerg3w7sEzNMLtn4=
-Date:   Thu, 25 Jul 2019 17:55:33 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Alexandre Ghiti <alex@ghiti.fr>, Albert Ou <aou@eecs.berkeley.edu>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Paul Burton <paul.burton@mips.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
+        id S1725887AbfGZBYS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 21:24:18 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:12796 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725808AbfGZBYS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Jul 2019 21:24:18 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d3a563e0000>; Thu, 25 Jul 2019 18:24:14 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 25 Jul 2019 18:24:17 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 25 Jul 2019 18:24:17 -0700
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 26 Jul
+ 2019 01:24:16 +0000
+Subject: Re: [PATCH 00/12] block/bio, fs: convert put_page() to
+ put_user_page*()
+To:     Bob Liu <bob.liu@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Christoph Hellwig <hch@lst.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH REBASE v4 11/14] mips: Adjust brk randomization offset
- to fit generic version
-Message-Id: <20190725175533.f9fcc5139a9575560be7f679@linux-foundation.org>
-In-Reply-To: <201907251259.09E0101@keescook>
-References: <20190724055850.6232-1-alex@ghiti.fr>
-        <20190724055850.6232-12-alex@ghiti.fr>
-        <1ba4061a-c026-3b9e-cd91-3ed3a26fce1b@ghiti.fr>
-        <201907251259.09E0101@keescook>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <ceph-devel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <samba-technical@lists.samba.org>,
+        <v9fs-developer@lists.sourceforge.net>,
+        <virtualization@lists.linux-foundation.org>
+References: <20190724042518.14363-1-jhubbard@nvidia.com>
+ <8621066c-e242-c449-eb04-4f2ce6867140@oracle.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <88864b91-516d-9774-f4ca-b45927ac4556@nvidia.com>
+Date:   Thu, 25 Jul 2019 18:24:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <8621066c-e242-c449-eb04-4f2ce6867140@oracle.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564104254; bh=QKXKINFukbwLIIsnFYM0gxF2tKYcHndEGgwougXKa7I=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=PQnzJX5xz5ikEiwrLKM8WsALivZ88h6rrpD5As08defMJIkdP+u4c4qNjj9VJ4tt7
+         nwv4lirmE3zmhFpqjjtQZ51fomZqIx7+Z5K/hIMgtkne3B/lAraavguLY6SA4HXRUi
+         W4SUZZlps8N4rFxPowCNQkldeoVK/fBECjRShYxjtzJx8yvDnyDgvLG3XjCMQgN0HE
+         j0RlPZtSamPdX7GpRyHeIVO0klar+OAGzPGoJx+oiz7wZ/GbisDHnJkR/hoyBrvfQa
+         +HuyKaWvKrWvHxopvgEQcRa8uv0hWn0N0u4M8vDDfrnuUHyPlJZxMytFt1GB3uPYBU
+         1cdZ+M2GXGeqw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 25 Jul 2019 13:00:33 -0700 Kees Cook <keescook@chromium.org> wrote:
-
-> > I have just noticed that this patch is wrong, do you want me to send
-> > another version of the entire series or is the following diff enough ?
-> > This mistake gets fixed anyway in patch 13/14 when it gets merged with the
-> > generic version.
+On 7/24/19 5:41 PM, Bob Liu wrote:
+> On 7/24/19 12:25 PM, john.hubbard@gmail.com wrote:
+>> From: John Hubbard <jhubbard@nvidia.com>
+>>
+>> Hi,
+>>
+>> This is mostly Jerome's work, converting the block/bio and related areas
+>> to call put_user_page*() instead of put_page(). Because I've changed
+>> Jerome's patches, in some cases significantly, I'd like to get his
+>> feedback before we actually leave him listed as the author (he might
+>> want to disown some or all of these).
+>>
 > 
-> While I can't speak for Andrew, I'd say, since you've got Paul and
-> Luis's Acks to add now, I'd say go ahead and respin with the fix and the
-> Acks added.
+> Could you add some background to the commit log for people don't have the context..
+> Why this converting? What's the main differences?
+> 
 
-Yes please.   After attending to Paul's questions on [14/14].
+Hi Bob,
+
+1. Many of the patches have a blurb like this:
+
+For pages that were retained via get_user_pages*(), release those pages
+via the new put_user_page*() routines, instead of via put_page().
+
+This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+("mm: introduce put_user_page*(), placeholder versions").
+
+...and if you look at that commit, you'll find several pages of
+information in its commit description, which should address your point.
+
+2. This whole series has to be re-worked, as per the other feedback thread.
+So I'll keep your comment in mind when I post a new series.
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
