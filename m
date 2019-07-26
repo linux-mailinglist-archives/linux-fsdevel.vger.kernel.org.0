@@ -2,97 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B7D875F84
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 09:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EF9276076
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 10:12:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbfGZHNx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jul 2019 03:13:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46442 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725864AbfGZHNx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jul 2019 03:13:53 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAE3D21852;
-        Fri, 26 Jul 2019 07:13:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564125232;
-        bh=VrTKOPYQ4HevC0cVrTz5SGKbFtEejWwaJ8pBbPkg/j0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=huB1ORI4N12VUC0fNW6uNLHOn5vLfWYsWaRC+/e3+uBS4MBhu+NXCvAz2Tj+aExM0
-         cNbramMdyLsieqUEcwnT0gsWasve8Q33uTxStleFq9aiEtuV/RQT3XsYj9eePkyFpp
-         ZqxmsodmlPazTR0Ka52GZ7RJRe8oFIg/+sBS0eWk=
-Date:   Fri, 26 Jul 2019 09:13:49 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sagi Grimberg <sagi@grimberg.me>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Stephen Bates <sbates@raithlin.com>,
-        linux-block@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v6 02/16] chardev: introduce cdev_get_by_path()
-Message-ID: <20190726071349.GA16265@kroah.com>
-References: <682ff89f-04e0-7a94-5aeb-895ac65ee7c9@deltatee.com>
- <20190725180816.GA32305@kroah.com>
- <da0eacb7-3738-ddf3-8c61-7ffc61aa41f4@deltatee.com>
- <20190725182701.GA11547@kroah.com>
- <20190725190024.GD30641@bombadil.infradead.org>
- <27943e06-a503-162e-356b-abb9e106ab2e@grimberg.me>
- <20190725191124.GE30641@bombadil.infradead.org>
- <425dd2ac-333d-a8c4-ce49-870c8dadf436@deltatee.com>
- <20190725235502.GJ1131@ZenIV.linux.org.uk>
- <7f48a40c-6e0f-2545-a939-45fc10862dfd@grimberg.me>
+        id S1726026AbfGZIMH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jul 2019 04:12:07 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:36390 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbfGZIMG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Jul 2019 04:12:06 -0400
+Received: by mail-yb1-f195.google.com with SMTP id d9so12928163ybf.3;
+        Fri, 26 Jul 2019 01:12:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vmBpjNDhJwUDOB0lGmNRoTPfd43L0Sn4ODcKKKUbOmM=;
+        b=mIALu21ZBeMXuckck4xlGcqV9AA5UQ4bsUW7TTl4SJTo7Z95P3nxecL1tpeK8LkKpQ
+         XkEglqpnOkS8WsdxKo0LoFuq9wNGDmaXYUUoO858XFBkFdLuu2rQ1uTYqEIUEOTIdcGh
+         rb3fJPBFd0ZLNN38fLZEPgTBuaUeLeHUXj+dH+87bdKzttkdn9/GwX3qqwNT8wr8Blax
+         5ASCuJLfXaQuDrvqHMNS0ve4I5rZx6wzJg9qKLX0DSUTPiBnMQrlDIUT1T35ewlOpNhH
+         2iHxu/7QscjUkvwiEuWK2PeGC8YZQF46Ef7VDsh3lsmE/epticltMbQDARWic8ribhVD
+         ZHlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vmBpjNDhJwUDOB0lGmNRoTPfd43L0Sn4ODcKKKUbOmM=;
+        b=Q7aAZa/VukAzvUEQpQzfbFdf3Y6eO/4HAL7/FlHvdYZs5VjH+urhSWxihmqp73DnVC
+         J9bMspgImd+Wk6g3EHsN+fJnzYUFoAE8vFmlutflwfdyja5rJkwPoWZJZwZrX+6Ai1uu
+         AuTJoWJ3gGLQkWc9Wic4/eg9MqYF+YytoXouBW3F7VFyYIAxWgT0G2v2qFDgqNWcY0Ia
+         c1l3/BveJIxbOyK41PqNZONHm+Oe3EiFIMt5i9il3BDBkg/ECNCGdewab9i+pBk/R66r
+         dcgugr3Ql9wsd/E0MnnMJwAhmnbRwgSi4qpCdGdIFYrGu/fa11f4dCqaFHbPR0ntDn8R
+         c9XA==
+X-Gm-Message-State: APjAAAUCcc6jnyV9JClcekewhgladQC/DV0lTvguwY92If0jOhJx4Cch
+        eZKYZGzMsCtIZC9R+XIYKzUxJh1QVGBiGaBmdYg=
+X-Google-Smtp-Source: APXvYqztY8eFq1kaRFQkHIwcfLnV6ZCxgmid8Dna5//7nQoy5ay57jl3phP+eytBDrll6njHguTUS152WRnfUKBvdEo=
+X-Received: by 2002:a25:c486:: with SMTP id u128mr57822964ybf.428.1564128725840;
+ Fri, 26 Jul 2019 01:12:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f48a40c-6e0f-2545-a939-45fc10862dfd@grimberg.me>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <0000000000004a3a63058e722b94@google.com> <00000000000086c732058e79cb59@google.com>
+In-Reply-To: <00000000000086c732058e79cb59@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 26 Jul 2019 11:11:54 +0300
+Message-ID: <CAOQ4uxhAi6sqBR2219ZvzX7izeF_RezN+VKRrHiQ04P=t0uiOg@mail.gmail.com>
+Subject: Re: WARNING in ovl_real_fdget_meta
+To:     syzbot <syzbot+032bc63605089a199d30@syzkaller.appspotmail.com>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 09:29:40PM -0700, Sagi Grimberg wrote:
-> 
-> > > > > > > > NVMe-OF is configured using configfs. The target is specified by the
-> > > > > > > > user writing a path to a configfs attribute. This is the way it works
-> > > > > > > > today but with blkdev_get_by_path()[1]. For the passthru code, we need
-> > > > > > > > to get a nvme_ctrl instead of a block_device, but the principal is the same.
-> > > > > > > 
-> > > > > > > Why isn't a fd being passed in there instead of a random string?
-> > > > > > 
-> > > > > > I suppose we could echo a string of the file descriptor number there,
-> > > > > > and look up the fd in the process' file descriptor table ...
-> > > > > 
-> > > > > Assuming that there is a open handle somewhere out there...
-> > > 
-> > > Yes, that would be a step backwards from an interface. The user would
-> > > then need a special process to open the fd and pass it through configfs.
-> > > They couldn't just do it with basic bash commands.
-> > 
-> > First of all, they can, but... WTF not have filp_open() done right there?
-> > Yes, by name.  With permission checks done.  And pick your object from the
-> > sodding struct file you'll get.
-> > 
-> > What's the problem?  Why do you need cdev lookups, etc., when you are
-> > dealing with files under your full control?  Just open them and use
-> > ->private_data or whatever you set in ->open() to access the damn thing.
-> > All there is to it...
-> Oh this is so much simpler. There is really no point in using anything
-> else. Just need to remember to compare f->f_op to what we expect to make
-> sure that it is indeed the same device class.
+On Thu, Jul 25, 2019 at 7:24 AM syzbot
+<syzbot+032bc63605089a199d30@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has bisected this bug to:
+>
+> commit 387e3746d01c34457d6a73688acd90428725070b
+> Author: Amir Goldstein <amir73il@gmail.com>
+> Date:   Fri Jun 7 14:24:38 2019 +0000
+>
+>      locks: eliminate false positive conflicts for write lease
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a79594600000
+> start commit:   c6dd78fc Merge branch 'x86-urgent-for-linus' of git://git...
+> git tree:       upstream
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=17a79594600000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13a79594600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3c8985c08e1f9727
+> dashboard link: https://syzkaller.appspot.com/bug?extid=032bc63605089a199d30
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15855334600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17fcc4c8600000
+>
+> Reported-by: syzbot+032bc63605089a199d30@syzkaller.appspotmail.com
+> Fixes: 387e3746d01c ("locks: eliminate false positive conflicts for write
+> lease")
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-That is good, that solves the "/dev/random/" issue I was talking about
-earlier as well.
+The repro:
+#{"repeat":true,"procs":1,"sandbox":"none","fault_call":-1,"cgroups":true,"close_fds":true,"tmpdir":true}
+mkdir(&(0x7f0000000100)='./file0\x00', 0x0)
+mkdirat$cgroup_root(0xffffffffffffff9c,
+&(0x7f0000000000)='./cgroup.net/syz1\x00', 0x1ff)
+mount$fuse(0x20000000, &(0x7f0000000140)='./file0\x00', 0x0, 0x1004, 0x0)
+mount$overlay(0x400000, &(0x7f0000000100)='./file0\x00',
+&(0x7f00000001c0)='overlay\x00', 0x0,
+&(0x7f0000000040)=ANY=[@ANYBLOB=',lowerdir=.:file0'])
+r0 = open(&(0x7f0000000500)='./file0\x00', 0x0, 0x0)
+r1 = openat$cgroup_procs(r0, &(0x7f00000004c0)='cgroup.procs\x00', 0x48, 0x0)
+dup3(r1, r0, 0x0)
+fcntl$setlease(r0, 0x400, 0x1)
+lseek(r0, 0x4, 0x0)
 
-Odds are you all can do the same for the blockdev interface as well.
+I though we would stop these family of overlapping layers fuzzers with:
+146d62e5a586 ("ovl: detect overlapping layers")
 
-thanks,
+But syzbot got the upper hand, because we do not check for overlapping layers
+that cross fs boundary. Not sure if we should (?).
 
-greg k-h
+./ is a tmpfs dir and ./file0/ is some kind of fuse mount (?)
+then after one cycle, ./file0/ itself is an overlapping overlay mount
+(lowerdir=./:./file0/)
+and after another cycle, ./file0/ is a nested overlapping overlayfs mount.
+Fine. Whatever.
+
+What I don't understand is if dup3 succeeds r0 should not be an overlayfs fd
+and even if dup3 fails r0 should be an overlayfs directory fd (./file0/), so how
+the hell did we get to ovl_llseek => ... ovl_change_flags() with this repro??
+
+There is not a single regular file in this test.
+
+Thanks,
+Amir.
