@@ -2,154 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E63475F61
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 08:57:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B7D875F84
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 09:14:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbfGZG5s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jul 2019 02:57:48 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:33052 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfGZG5p (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jul 2019 02:57:45 -0400
-Received: by mail-yb1-f195.google.com with SMTP id c202so17953682ybf.0;
-        Thu, 25 Jul 2019 23:57:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ra3fpxWHFvLtRMMiUd9OFJua+AjFjAkm9k/vwnBYkKk=;
-        b=VyohNN1DhYTQ0+iW4429cNqwM4zP8mMpsqJJWhXJxwiAHA1Kqu5KbFN4ZZqCAcq6f1
-         HntDKKVZZcM/yjZfgudVx5jGIfpHL8Z2m8xAX/5iaNODDzLYALhHWuA5sOhAA3GF7E9q
-         FlSEnsjrYDFbqc+9iu7OF7KUwYqHNyskA+z1eOPXRXOtJSLxv58ZAjm1jIIKwGNb1D3w
-         gCZlZ7JiuCixjg5eaushQNBARWmGyT8N/rcvs/3/gnrlzeBLJs/xYPj+PXlP7jZlf2GO
-         PnkQn9q1DLvAlH0Be0VdE5eW9pymaUOTYqDwAgm23RqtZBLtjih7jihc0SxPdgwAMdy9
-         HgFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ra3fpxWHFvLtRMMiUd9OFJua+AjFjAkm9k/vwnBYkKk=;
-        b=pU3zdR5BWUy3BTmafY1HQ0JtaTFqQBOJP219JRYynYWNJGaEr1WnTN+CAUg7x614gh
-         B7yXdQpaM0L+3iYr6YVeVJxtwFkHHr6gjWdOd12p9Fd268BMjlMTUgksuRmZcM8JhyUe
-         8945qNBrJ9EGS1JrfOC+/xZioOXhGJSkOkhqFA72VjUxBWlD5adjFssl44nJ2YPoX9Vc
-         6esddW2oPF/9K9/vVw7+zp9E0FIzjFowE3M3uYXnvib6DMmdq8luYhvsFuTALxH6MeZC
-         +foSZ6EDilolwFBV+yVhPb2sZj5ZDoAmTlsLUxGKNOV+1EcZfXq1QYuj9r8EghmB4puV
-         bpFQ==
-X-Gm-Message-State: APjAAAVaj7phsbnJJlJVJi1SLxnZ1bq22FcHZLkDfY7teS2uLbTZpkDc
-        leDG5sA0zf46FS7njeYWAipG3OpJfuCoMWwvZcCjDBSW
-X-Google-Smtp-Source: APXvYqwbJ5BQE3yQlkGcySgvRgVFiEZb+YkhRLN8KUrLAeKhUhckEbkNXOsgbB4H0H+8Z068E7aBqNkYnf+SpcAoZj0=
-X-Received: by 2002:a25:9a08:: with SMTP id x8mr55700016ybn.439.1564124264773;
- Thu, 25 Jul 2019 23:57:44 -0700 (PDT)
+        id S1726067AbfGZHNx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jul 2019 03:13:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46442 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725864AbfGZHNx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Jul 2019 03:13:53 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAE3D21852;
+        Fri, 26 Jul 2019 07:13:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564125232;
+        bh=VrTKOPYQ4HevC0cVrTz5SGKbFtEejWwaJ8pBbPkg/j0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=huB1ORI4N12VUC0fNW6uNLHOn5vLfWYsWaRC+/e3+uBS4MBhu+NXCvAz2Tj+aExM0
+         cNbramMdyLsieqUEcwnT0gsWasve8Q33uTxStleFq9aiEtuV/RQT3XsYj9eePkyFpp
+         ZqxmsodmlPazTR0Ka52GZ7RJRe8oFIg/+sBS0eWk=
+Date:   Fri, 26 Jul 2019 09:13:49 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sagi Grimberg <sagi@grimberg.me>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        Stephen Bates <sbates@raithlin.com>,
+        linux-block@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v6 02/16] chardev: introduce cdev_get_by_path()
+Message-ID: <20190726071349.GA16265@kroah.com>
+References: <682ff89f-04e0-7a94-5aeb-895ac65ee7c9@deltatee.com>
+ <20190725180816.GA32305@kroah.com>
+ <da0eacb7-3738-ddf3-8c61-7ffc61aa41f4@deltatee.com>
+ <20190725182701.GA11547@kroah.com>
+ <20190725190024.GD30641@bombadil.infradead.org>
+ <27943e06-a503-162e-356b-abb9e106ab2e@grimberg.me>
+ <20190725191124.GE30641@bombadil.infradead.org>
+ <425dd2ac-333d-a8c4-ce49-870c8dadf436@deltatee.com>
+ <20190725235502.GJ1131@ZenIV.linux.org.uk>
+ <7f48a40c-6e0f-2545-a939-45fc10862dfd@grimberg.me>
 MIME-Version: 1.0
-References: <20190715133839.9878-1-amir73il@gmail.com> <20190715133839.9878-2-amir73il@gmail.com>
-In-Reply-To: <20190715133839.9878-2-amir73il@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 26 Jul 2019 09:57:33 +0300
-Message-ID: <CAOQ4uxhRgL2sMok7xsAZN6cZXSfoPxx=O8ADE=72+Ta3hGoLbw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] ovl: support [S|G]ETFLAGS ioctl for directories
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7f48a40c-6e0f-2545-a939-45fc10862dfd@grimberg.me>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 4:38 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> [S|G]ETFLAGS and FS[S|G]ETXATTR ioctls are applicable to both files and
-> directories, so add ioctl operations to dir as well.
->
-> ifdef away compat ioctl implementation to conform to standard practice.
->
-> With this change, xfstest generic/079 which tests these ioctls on files
-> and directories passes.
->
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/overlayfs/file.c      | 10 ++++++----
->  fs/overlayfs/overlayfs.h |  2 ++
->  fs/overlayfs/readdir.c   |  4 ++++
->  3 files changed, 12 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index e235a635d9ec..c6426e4d3f1f 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -502,7 +502,7 @@ static long ovl_ioctl_set_fsxflags(struct file *file, unsigned int cmd,
->                                    ovl_fsxflags_to_iflags(fa.fsx_xflags));
->  }
->
-> -static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> +long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  {
->         long ret;
->
-> @@ -527,8 +527,8 @@ static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->         return ret;
->  }
->
-> -static long ovl_compat_ioctl(struct file *file, unsigned int cmd,
-> -                            unsigned long arg)
-> +#ifdef CONFIG_COMPAT
-> +long ovl_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  {
->         switch (cmd) {
->         case FS_IOC32_GETFLAGS:
-> @@ -545,6 +545,7 @@ static long ovl_compat_ioctl(struct file *file, unsigned int cmd,
->
->         return ovl_ioctl(file, cmd, arg);
->  }
-> +#endif
->
->  enum ovl_copyop {
->         OVL_COPY,
-> @@ -646,8 +647,9 @@ const struct file_operations ovl_file_operations = {
->         .fallocate      = ovl_fallocate,
->         .fadvise        = ovl_fadvise,
->         .unlocked_ioctl = ovl_ioctl,
-> +#ifdef CONFIG_COMPAT
->         .compat_ioctl   = ovl_compat_ioctl,
-> -
-> +#endif
->         .copy_file_range        = ovl_copy_file_range,
->         .remap_file_range       = ovl_remap_file_range,
->  };
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 6934bcf030f0..7c94cc3521cb 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -416,6 +416,8 @@ struct dentry *ovl_create_temp(struct dentry *workdir, struct ovl_cattr *attr);
->
->  /* file.c */
->  extern const struct file_operations ovl_file_operations;
-> +long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-> +long ovl_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
->
->  /* copy_up.c */
->  int ovl_copy_up(struct dentry *dentry);
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index 47a91c9733a5..eff8fbfccc7c 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -907,6 +907,10 @@ const struct file_operations ovl_dir_operations = {
->         .llseek         = ovl_dir_llseek,
->         .fsync          = ovl_dir_fsync,
->         .release        = ovl_dir_release,
-> +       .unlocked_ioctl = ovl_ioctl,
-> +#ifdef CONFIG_COMPAT
-> +       .compat_ioctl   = ovl_compat_ioctl,
-> +#endif
->  };
->
+On Thu, Jul 25, 2019 at 09:29:40PM -0700, Sagi Grimberg wrote:
+> 
+> > > > > > > > NVMe-OF is configured using configfs. The target is specified by the
+> > > > > > > > user writing a path to a configfs attribute. This is the way it works
+> > > > > > > > today but with blkdev_get_by_path()[1]. For the passthru code, we need
+> > > > > > > > to get a nvme_ctrl instead of a block_device, but the principal is the same.
+> > > > > > > 
+> > > > > > > Why isn't a fd being passed in there instead of a random string?
+> > > > > > 
+> > > > > > I suppose we could echo a string of the file descriptor number there,
+> > > > > > and look up the fd in the process' file descriptor table ...
+> > > > > 
+> > > > > Assuming that there is a open handle somewhere out there...
+> > > 
+> > > Yes, that would be a step backwards from an interface. The user would
+> > > then need a special process to open the fd and pass it through configfs.
+> > > They couldn't just do it with basic bash commands.
+> > 
+> > First of all, they can, but... WTF not have filp_open() done right there?
+> > Yes, by name.  With permission checks done.  And pick your object from the
+> > sodding struct file you'll get.
+> > 
+> > What's the problem?  Why do you need cdev lookups, etc., when you are
+> > dealing with files under your full control?  Just open them and use
+> > ->private_data or whatever you set in ->open() to access the damn thing.
+> > All there is to it...
+> Oh this is so much simpler. There is really no point in using anything
+> else. Just need to remember to compare f->f_op to what we expect to make
+> sure that it is indeed the same device class.
 
-Big self NACK!!!
+That is good, that solves the "/dev/random/" issue I was talking about
+earlier as well.
 
-Cannot call ovl_ioctl => ovl_real_ioctl => ovl_real_fdget with a directory.
-If we do this need to implement ovl_dir_ioctl and refactor the ioctl helpers.
+Odds are you all can do the same for the blockdev interface as well.
 
-Sorry,
-Amir.
+thanks,
+
+greg k-h
