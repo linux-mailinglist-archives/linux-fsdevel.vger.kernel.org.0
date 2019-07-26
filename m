@@ -2,187 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45FB8764CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 13:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1263764FE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 14:00:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbfGZLsQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jul 2019 07:48:16 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:51067 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbfGZLsP (ORCPT
+        id S1726823AbfGZMAI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jul 2019 08:00:08 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33168 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfGZMAH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jul 2019 07:48:15 -0400
-X-Originating-IP: 81.250.144.103
-Received: from [10.30.1.20] (lneuilly-657-1-5-103.w81-250.abo.wanadoo.fr [81.250.144.103])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 3CAE81BF207;
-        Fri, 26 Jul 2019 11:48:08 +0000 (UTC)
-Subject: Re: [PATCH REBASE v4 14/14] riscv: Make mmap allocation top-down by
- default
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Paul Burton <paul.burton@mips.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mips@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        linux-riscv@lists.infradead.org,
-        Daniel Cashman <dcashman@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
-References: <20190724055850.6232-1-alex@ghiti.fr>
- <20190724055850.6232-15-alex@ghiti.fr>
- <alpine.DEB.2.21.9999.1907251655310.32766@viisi.sifive.com>
-From:   Alexandre Ghiti <alex@ghiti.fr>
-Message-ID: <6b2b45a5-0ac4-db73-8f50-ab182a0cb621@ghiti.fr>
-Date:   Fri, 26 Jul 2019 13:48:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 26 Jul 2019 08:00:07 -0400
+Received: by mail-pf1-f196.google.com with SMTP id g2so24432319pfq.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2019 05:00:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=oI0R97fuUqdE0I/gmsxQ15AS3vPjppH94eLX72HdVQw=;
+        b=PuesO2NFf6GdG9qQn54lobuItpHnil0Wxxng8M67UvgTIIUysJoYXduIe4MvOkNTWl
+         OD4IWjiPDRDl+PdwxuwHyZJicwWd+0Qz0y+plyrJH1lLkOiDpjByvUNQ5Mi2y2Ewt+wt
+         IqO0vcW6eTRmFG5agc4tOof+Mk5d025MsBWGOgTBC1O0pOvkFQ8WtjRdC5EWLIT+aisZ
+         Oyp5gvdFlR+5oy1OaY29wW3PM1F6X3NCA0mlegY0IW2zvbvCH/k5MKs0ccqp0i3Q+C+u
+         ac3AX9K4mQz6WngyWKlIezz3G7LfWxMOBqHbCb8+1RlfYkym4jij9kuyTpci1T2l4u9V
+         TKOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=oI0R97fuUqdE0I/gmsxQ15AS3vPjppH94eLX72HdVQw=;
+        b=PmkiBxfd5W9+aezp1gH67F3MArNz+KNTIy/cd5Cr+EDS0c6AhwVDkwjjFEdDnwC5EU
+         7838diEhVBZlIJTW28FtLyAFNt80oO9LmiZXBRIbzPos8aJPle79+DM1pJGvOrDKKxNo
+         2H/CcQVP4OhccIYJdO/jzwhYD67IJOGqn5BQ0UxGAtx6LKp41hsl8d6p/WJE/iS7if0Q
+         lAiyjhXMJSb+eHaZ8GaGywJe942yhCfg3/NH47MQd8n6NbAwlSrtNPWEnhRUgAPZQD8+
+         dDV4jl4JRYKuvj1RhknGYMYAQaliS+k0xkPusbboJhVGpRRhfUTzC+wTOrCk4+Ttp0ft
+         PEGA==
+X-Gm-Message-State: APjAAAVM0vaUdjRvgP2oAx/S0oWXJFIRwpC8+oARU6jnorS7oAeJzA3M
+        bxOZFiMhqQpm9ADTNh8XX8Y=
+X-Google-Smtp-Source: APXvYqx819gN2+zWvFVhXTwxqLv7So4wMoGBA003enGDBW04aZp+5++DAbdRI7GEgDudVXrIf/T1zQ==
+X-Received: by 2002:a17:90a:71ca:: with SMTP id m10mr44092840pjs.27.1564142406990;
+        Fri, 26 Jul 2019 05:00:06 -0700 (PDT)
+Received: from brauner.io ([172.58.30.217])
+        by smtp.gmail.com with ESMTPSA id q1sm62253913pfg.84.2019.07.26.05.00.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 26 Jul 2019 05:00:06 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 13:59:59 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Regression in 5.3 for some FS_USERNS_MOUNT (aka
+ user-namespace-mountable) filesystems
+Message-ID: <20190726115956.ifj5j4apn3tmwk64@brauner.io>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.9999.1907251655310.32766@viisi.sifive.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: fr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/26/19 2:20 AM, Paul Walmsley wrote:
-> Hi Alexandre,
->
-> I have a few questions about this patch.  Sorry to be dense here ...
->
-> On Wed, 24 Jul 2019, Alexandre Ghiti wrote:
->
->> In order to avoid wasting user address space by using bottom-up mmap
->> allocation scheme, prefer top-down scheme when possible.
->>
->> Before:
->> root@qemuriscv64:~# cat /proc/self/maps
->> 00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
->> 00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
->> 00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
->> 00018000-00039000 rw-p 00000000 00:00 0          [heap]
->> 1555556000-155556d000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
->> 155556d000-155556e000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
->> 155556e000-155556f000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
->> 155556f000-1555570000 rw-p 00000000 00:00 0
->> 1555570000-1555572000 r-xp 00000000 00:00 0      [vdso]
->> 1555574000-1555576000 rw-p 00000000 00:00 0
->> 1555576000-1555674000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
->> 1555674000-1555678000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
->> 1555678000-155567a000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
->> 155567a000-15556a0000 rw-p 00000000 00:00 0
->> 3fffb90000-3fffbb1000 rw-p 00000000 00:00 0      [stack]
->>
->> After:
->> root@qemuriscv64:~# cat /proc/self/maps
->> 00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
->> 00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
->> 00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
->> 2de81000-2dea2000 rw-p 00000000 00:00 0          [heap]
->> 3ff7eb6000-3ff7ed8000 rw-p 00000000 00:00 0
->> 3ff7ed8000-3ff7fd6000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
->> 3ff7fd6000-3ff7fda000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
->> 3ff7fda000-3ff7fdc000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
->> 3ff7fdc000-3ff7fe2000 rw-p 00000000 00:00 0
->> 3ff7fe4000-3ff7fe6000 r-xp 00000000 00:00 0      [vdso]
->> 3ff7fe6000-3ff7ffd000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
->> 3ff7ffd000-3ff7ffe000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
->> 3ff7ffe000-3ff7fff000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
->> 3ff7fff000-3ff8000000 rw-p 00000000 00:00 0
->> 3fff888000-3fff8a9000 rw-p 00000000 00:00 0      [stack]
->>
->> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
->> Reviewed-by: Christoph Hellwig <hch@lst.de>
->> Reviewed-by: Kees Cook <keescook@chromium.org>
->> ---
->>   arch/riscv/Kconfig | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->> index 59a4727ecd6c..6a63973873fd 100644
->> --- a/arch/riscv/Kconfig
->> +++ b/arch/riscv/Kconfig
->> @@ -54,6 +54,17 @@ config RISCV
->>   	select EDAC_SUPPORT
->>   	select ARCH_HAS_GIGANTIC_PAGE
->>   	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
->> +	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
->> +	select HAVE_ARCH_MMAP_RND_BITS
->> +
->> +config ARCH_MMAP_RND_BITS_MIN
->> +	default 18
-> Could you help me understand the rationale behind this constant?
+Hey everyone,
 
+We have another mount api regression. With current 5.3-rc1 it is not
+possible anymore to mount filesystems that have FS_USERNS_MOUNT set and
+their fs_context's global member set to true. At least sysfs is
+affected, likely also cgroup{2}fs.
 
-Indeed, I took that from arm64 code and I did not think enough about it: 
-that's
-great you spotted this because that's a way too large value for 32 bits 
-as it would,
-at minimum, make mmap random offset go up to 1GB (18 + 12), which is a 
-big hole for
-this small address space :)
+The commit that introduced the regression is:
 
-arm and mips propose 8 as default value for 32bits systems which is 1MB 
-offset at minimum.
+commit 0ce0cf12fc4c6a089717ff613d76457052cf4303
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Sun May 12 15:42:48 2019 -0400
 
+    consolidate the capability checks in sget_{fc,userns}()
 
->
->> +
->> +# max bits determined by the following formula:
->> +#  VA_BITS - PAGE_SHIFT - 3
-> I realize that these lines are probably copied from arch/arm64/Kconfig.
-> But the rationale behind the "- 3" is not immediately obvious.  This
-> apparently originates from commit 8f0d3aa9de57 ("arm64: mm: support
-> ARCH_MMAP_RND_BITS"). Can you provide any additional context here?
+    ... into a common helper - mount_capable(type, userns)
 
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-The formula comes from commit d07e22597d1d ("mm: mmap: add new /proc tunable
-for mmap_base ASLR"), where the author states that "generally a 3-4 bits 
-less than the
-number of bits in the user-space accessible virtual address space 
-[allows to] give the greatest
-flexibility without generating an invalid mmap_base address".
+mount_capable() will select the user namespace in which to check for
+CAP_SYS_ADMIN based on the global property of the filesystem's
+fs_context.
 
-In practice, that limits the mmap random offset to at maximum 1/8 (for - 
-3) of the total address space.
+Since sysfs has global set to true mount_capable() will check for
+CAP_SYS_ADMIN in init_user_ns and fail the mount with EPERM for any
+non-init userns root. The same check is present in sget_fc().
 
+To me it looks like that global is overriding FS_USERNS_MOUNT which
+seems odd. Afaict, there are two ways to fix this:
+- remove global from sysfs
+- remove the global check from mount_capable() and possibly sget_fc()
 
->
->> +config ARCH_MMAP_RND_BITS_MAX
->> +	default 33 if 64BIT # SV48 based
-> The rationale here is clear for Sv48, per the above formula:
->
->     (48 - 12 - 3) = 33
->
->> +	default 18
-> However, here it is less clear to me.  For Sv39, shouldn't this be
->
->     (39 - 12 - 3) = 24
->
-> ?  And what about Sv32?
+The latter feels more correct but I'm not sure *why* that global thing
+got introduced. Seems there could be an additional flag on affected
+filesystems instead of this "global" thing. But not sure.
 
+I can whip up a patch in case that does make sense.
+And it would probably be a good thing if we had some sort of test (if
+there isn't one already) so that this doesn't happen again. It could be
+as simple as:
 
-You're right. Is there a way to distinguish between sv39 and sv48 here ?
+unshare -U -m --map-root -n
+mkdir whatever
+mount -t sysfs sysfs ./whatever
 
-Thanks Paul,
-
-Alex
-
->   
->
-> - Paul
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Thanks!
+Christian
