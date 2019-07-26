@@ -2,111 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF4A76486
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 13:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45FB8764CF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 13:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726026AbfGZLao (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jul 2019 07:30:44 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:58716 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbfGZLao (ORCPT
+        id S1726539AbfGZLsQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jul 2019 07:48:16 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:51067 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbfGZLsP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jul 2019 07:30:44 -0400
-Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x6QBU0JI005258;
-        Fri, 26 Jul 2019 20:30:00 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
- Fri, 26 Jul 2019 20:30:00 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x6QBTrHb005193
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 26 Jul 2019 20:30:00 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] hung_task: Allow printing warnings every check interval
-To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Fri, 26 Jul 2019 07:48:15 -0400
+X-Originating-IP: 81.250.144.103
+Received: from [10.30.1.20] (lneuilly-657-1-5-103.w81-250.abo.wanadoo.fr [81.250.144.103])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 3CAE81BF207;
+        Fri, 26 Jul 2019 11:48:08 +0000 (UTC)
+Subject: Re: [PATCH REBASE v4 14/14] riscv: Make mmap allocation top-down by
+ default
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Paul Burton <paul.burton@mips.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Hogan <jhogan@kernel.org>, linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20190724170249.9644-1-dima@arista.com>
- <2964b430-63d6-e172-84e2-cb269cf43443@i-love.sakura.ne.jp>
- <aa151251-d271-1e65-1cae-0d9da9764d56@arista.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <9a919c32-4e0e-ca1b-887f-c329543913d3@i-love.sakura.ne.jp>
-Date:   Fri, 26 Jul 2019 20:29:52 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        linux-mips@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-riscv@lists.infradead.org,
+        Daniel Cashman <dcashman@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+References: <20190724055850.6232-1-alex@ghiti.fr>
+ <20190724055850.6232-15-alex@ghiti.fr>
+ <alpine.DEB.2.21.9999.1907251655310.32766@viisi.sifive.com>
+From:   Alexandre Ghiti <alex@ghiti.fr>
+Message-ID: <6b2b45a5-0ac4-db73-8f50-ab182a0cb621@ghiti.fr>
+Date:   Fri, 26 Jul 2019 13:48:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <aa151251-d271-1e65-1cae-0d9da9764d56@arista.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <alpine.DEB.2.21.9999.1907251655310.32766@viisi.sifive.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: fr
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2019/07/25 23:25, Dmitry Safonov wrote:
-> Yes, also current distributions already using the counter to print
-> warnings number of times and then silently ignore. I.e., on my Arch
-> Linux setup:
-> hung_task_warnings:10
+On 7/26/19 2:20 AM, Paul Walmsley wrote:
+> Hi Alexandre,
+>
+> I have a few questions about this patch.  Sorry to be dense here ...
+>
+> On Wed, 24 Jul 2019, Alexandre Ghiti wrote:
+>
+>> In order to avoid wasting user address space by using bottom-up mmap
+>> allocation scheme, prefer top-down scheme when possible.
+>>
+>> Before:
+>> root@qemuriscv64:~# cat /proc/self/maps
+>> 00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
+>> 00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
+>> 00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
+>> 00018000-00039000 rw-p 00000000 00:00 0          [heap]
+>> 1555556000-155556d000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
+>> 155556d000-155556e000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
+>> 155556e000-155556f000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
+>> 155556f000-1555570000 rw-p 00000000 00:00 0
+>> 1555570000-1555572000 r-xp 00000000 00:00 0      [vdso]
+>> 1555574000-1555576000 rw-p 00000000 00:00 0
+>> 1555576000-1555674000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
+>> 1555674000-1555678000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
+>> 1555678000-155567a000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
+>> 155567a000-15556a0000 rw-p 00000000 00:00 0
+>> 3fffb90000-3fffbb1000 rw-p 00000000 00:00 0      [stack]
+>>
+>> After:
+>> root@qemuriscv64:~# cat /proc/self/maps
+>> 00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
+>> 00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
+>> 00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
+>> 2de81000-2dea2000 rw-p 00000000 00:00 0          [heap]
+>> 3ff7eb6000-3ff7ed8000 rw-p 00000000 00:00 0
+>> 3ff7ed8000-3ff7fd6000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
+>> 3ff7fd6000-3ff7fda000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
+>> 3ff7fda000-3ff7fdc000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
+>> 3ff7fdc000-3ff7fe2000 rw-p 00000000 00:00 0
+>> 3ff7fe4000-3ff7fe6000 r-xp 00000000 00:00 0      [vdso]
+>> 3ff7fe6000-3ff7ffd000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
+>> 3ff7ffd000-3ff7ffe000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
+>> 3ff7ffe000-3ff7fff000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
+>> 3ff7fff000-3ff8000000 rw-p 00000000 00:00 0
+>> 3fff888000-3fff8a9000 rw-p 00000000 00:00 0      [stack]
+>>
+>> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>> ---
+>>   arch/riscv/Kconfig | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> index 59a4727ecd6c..6a63973873fd 100644
+>> --- a/arch/riscv/Kconfig
+>> +++ b/arch/riscv/Kconfig
+>> @@ -54,6 +54,17 @@ config RISCV
+>>   	select EDAC_SUPPORT
+>>   	select ARCH_HAS_GIGANTIC_PAGE
+>>   	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
+>> +	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
+>> +	select HAVE_ARCH_MMAP_RND_BITS
+>> +
+>> +config ARCH_MMAP_RND_BITS_MIN
+>> +	default 18
+> Could you help me understand the rationale behind this constant?
 
-You can propose changing the default value of hung_task_warnings to -1.
 
-Current patch might be inconvenient because printk() from hung_task_warning(t, false)
-fails to go to consoles when that "t" was blocked for more than "timeout" seconds, for
+Indeed, I took that from arm64 code and I did not think enough about it: 
+that's
+great you spotted this because that's a way too large value for 32 bits 
+as it would,
+at minimum, make mmap random offset go up to 1GB (18 + 12), which is a 
+big hole for
+this small address space :)
 
-	if (sysctl_hung_task_panic) {
-		console_verbose();
-		hung_task_show_lock = true;
-		hung_task_call_panic = true;
-	}
+arm and mips propose 8 as default value for 32bits systems which is 1MB 
+offset at minimum.
 
-path which is intended to force printk() to go to consoles is ignored by
 
-	/* Don't print warings twice */
-	if (!sysctl_hung_task_interval_warnings)
-		hung_task_warning(t, true);
+>
+>> +
+>> +# max bits determined by the following formula:
+>> +#  VA_BITS - PAGE_SHIFT - 3
+> I realize that these lines are probably copied from arch/arm64/Kconfig.
+> But the rationale behind the "- 3" is not immediately obvious.  This
+> apparently originates from commit 8f0d3aa9de57 ("arm64: mm: support
+> ARCH_MMAP_RND_BITS"). Can you provide any additional context here?
 
-when panic() should be called. (The vmcore would contain the printk() output which
-was not sent to consoles if kdump is configured. But vmcore is not always available.)
 
-> Yes, that's why it's disabled by default (=0).
-> I tend to agree that printing with KERN_DEBUG may be better, but in my
-> point of view the patch isn't enough justification for patching
-> sched_show_task() and show_stack().
+The formula comes from commit d07e22597d1d ("mm: mmap: add new /proc tunable
+for mmap_base ASLR"), where the author states that "generally a 3-4 bits 
+less than the
+number of bits in the user-space accessible virtual address space 
+[allows to] give the greatest
+flexibility without generating an invalid mmap_base address".
 
-You can propose sched_show_task_log_lvl() and show_stack_log_lvl() like show_trace_log_lvl().
+In practice, that limits the mmap random offset to at maximum 1/8 (for - 
+3) of the total address space.
 
-I think that sysctl_hung_task_interval_warnings should not be decremented automatically.
-I guess that that variable should become a boolean which controls whether to report threads
-(with KERN_DEBUG level) which was blocked for more than sysctl_hung_task_check_interval_secs
-seconds (or a tristate which also controls whether the report should be sent to consoles
-(because KERN_DEBUG level likely prevents sending to consoles)), and
-hung_task_warning(t, false) should be called like
 
-	if (time_is_after_jiffies(t->last_switch_time + timeout * HZ)) {
-		if (sysctl_hung_task_interval_warnings)
-			hung_task_warning(t, false);
-		return;
-	}
+>
+>> +config ARCH_MMAP_RND_BITS_MAX
+>> +	default 33 if 64BIT # SV48 based
+> The rationale here is clear for Sv48, per the above formula:
+>
+>     (48 - 12 - 3) = 33
+>
+>> +	default 18
+> However, here it is less clear to me.  For Sv39, shouldn't this be
+>
+>     (39 - 12 - 3) = 24
+>
+> ?  And what about Sv32?
 
-rather than
 
-	if (sysctl_hung_task_interval_warnings)
-		hung_task_warning(t, false);
-	if (time_is_after_jiffies(t->last_switch_time + timeout * HZ))
-		return;
+You're right. Is there a way to distinguish between sv39 and sv48 here ?
 
-.
+Thanks Paul,
 
+Alex
+
+>   
+>
+> - Paul
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
