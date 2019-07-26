@@ -2,115 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1263764FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 14:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C38BB766A5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 14:54:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfGZMAI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jul 2019 08:00:08 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33168 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfGZMAH (ORCPT
+        id S1727233AbfGZMye (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jul 2019 08:54:34 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38261 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbfGZMyY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jul 2019 08:00:07 -0400
-Received: by mail-pf1-f196.google.com with SMTP id g2so24432319pfq.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2019 05:00:07 -0700 (PDT)
+        Fri, 26 Jul 2019 08:54:24 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f5so15938322pgu.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2019 05:54:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=oI0R97fuUqdE0I/gmsxQ15AS3vPjppH94eLX72HdVQw=;
-        b=PuesO2NFf6GdG9qQn54lobuItpHnil0Wxxng8M67UvgTIIUysJoYXduIe4MvOkNTWl
-         OD4IWjiPDRDl+PdwxuwHyZJicwWd+0Qz0y+plyrJH1lLkOiDpjByvUNQ5Mi2y2Ewt+wt
-         IqO0vcW6eTRmFG5agc4tOof+Mk5d025MsBWGOgTBC1O0pOvkFQ8WtjRdC5EWLIT+aisZ
-         Oyp5gvdFlR+5oy1OaY29wW3PM1F6X3NCA0mlegY0IW2zvbvCH/k5MKs0ccqp0i3Q+C+u
-         ac3AX9K4mQz6WngyWKlIezz3G7LfWxMOBqHbCb8+1RlfYkym4jij9kuyTpci1T2l4u9V
-         TKOw==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1CV30Ulmhw3UVs5wZJSfxlQX22PQyu6508MpeQYH9hA=;
+        b=gQuH0RicdNOowMPYfbO1oCrLPCJQ7RG5vRhySY5uKbNmTPgJ9gjJhxIQlgovgpa61j
+         /fesyTgUhfC6NkYtNzLPj9OFsHLRlFOnE6bQDcY/2tkHHiMxdFrnqXA8ZynuSTScFhap
+         MsVrgmBpEcAREpwym2Gd4zS7Og3lnANQ201d0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=oI0R97fuUqdE0I/gmsxQ15AS3vPjppH94eLX72HdVQw=;
-        b=PmkiBxfd5W9+aezp1gH67F3MArNz+KNTIy/cd5Cr+EDS0c6AhwVDkwjjFEdDnwC5EU
-         7838diEhVBZlIJTW28FtLyAFNt80oO9LmiZXBRIbzPos8aJPle79+DM1pJGvOrDKKxNo
-         2H/CcQVP4OhccIYJdO/jzwhYD67IJOGqn5BQ0UxGAtx6LKp41hsl8d6p/WJE/iS7if0Q
-         lAiyjhXMJSb+eHaZ8GaGywJe942yhCfg3/NH47MQd8n6NbAwlSrtNPWEnhRUgAPZQD8+
-         dDV4jl4JRYKuvj1RhknGYMYAQaliS+k0xkPusbboJhVGpRRhfUTzC+wTOrCk4+Ttp0ft
-         PEGA==
-X-Gm-Message-State: APjAAAVM0vaUdjRvgP2oAx/S0oWXJFIRwpC8+oARU6jnorS7oAeJzA3M
-        bxOZFiMhqQpm9ADTNh8XX8Y=
-X-Google-Smtp-Source: APXvYqx819gN2+zWvFVhXTwxqLv7So4wMoGBA003enGDBW04aZp+5++DAbdRI7GEgDudVXrIf/T1zQ==
-X-Received: by 2002:a17:90a:71ca:: with SMTP id m10mr44092840pjs.27.1564142406990;
-        Fri, 26 Jul 2019 05:00:06 -0700 (PDT)
-Received: from brauner.io ([172.58.30.217])
-        by smtp.gmail.com with ESMTPSA id q1sm62253913pfg.84.2019.07.26.05.00.02
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1CV30Ulmhw3UVs5wZJSfxlQX22PQyu6508MpeQYH9hA=;
+        b=is/DkbFIBiO1OZGvmWrWhLMSBL8WYRSRhQZR4YKY8yrJPjGLwubO8IaIC1XPFo0Sml
+         vMpeqXbha0DXZ69sBQGjnil8nL+KaVjWJJ7O9Jy0Fv1yOoxDWEqGLe0dcMbpl2zmuOqe
+         dzpkMPmjdZwgKEN45HbpTMAFVsi2QBmWsjSrYRHitow6Sov5j36FkbfsIlPKNv+ZuAAa
+         3mehB4jRXzPDJ1TH9yBKw3pKwaM3B/es30Hvh3dHwTUae0HKxi2noKMinB5V2jLNKi8z
+         059nQ51s779XLPzk5UZjVGkkyccgtAG+L6tXDHWVqRhkLIwr4qPMIexcqOz1qyu80+8W
+         SFPQ==
+X-Gm-Message-State: APjAAAUm6L1nF9p4qNnrtYCpVN6FRAfPwK00VHppDfLY0bwyimVFvkMI
+        brBsapS7GWnNHFY+vslcf4k=
+X-Google-Smtp-Source: APXvYqzilkkbU1jvUSqJ7GWTJJgame/K3EOovYUFU8dAxa/kz5mkVmVgYiB/rX3VOXqDrSKNafzHjQ==
+X-Received: by 2002:a63:ee0c:: with SMTP id e12mr92603350pgi.184.1564145663513;
+        Fri, 26 Jul 2019 05:54:23 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id o129sm23051451pfg.1.2019.07.26.05.54.22
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 26 Jul 2019 05:00:06 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 13:59:59 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Fri, 26 Jul 2019 05:54:22 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 08:54:21 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
+        vdavydov.dev@gmail.com, Brendan Gregg <bgregg@netflix.com>,
+        kernel-team@android.com, Alexey Dobriyan <adobriyan@gmail.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Regression in 5.3 for some FS_USERNS_MOUNT (aka
- user-namespace-mountable) filesystems
-Message-ID: <20190726115956.ifj5j4apn3tmwk64@brauner.io>
+        Andrew Morton <akpm@linux-foundation.org>,
+        carmenjackson@google.com, Christian Hansen <chansen3@cisco.com>,
+        Colin Ian King <colin.king@canonical.com>, dancol@google.com,
+        David Howells <dhowells@redhat.com>, fmayer@google.com,
+        joaodias@google.com, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, namhyung@google.com,
+        sspatil@google.com
+Subject: Re: [PATCH v1 1/2] mm/page_idle: Add support for per-pid page_idle
+ using virtual indexing
+Message-ID: <20190726125421.GA103959@google.com>
+References: <20190722213205.140845-1-joel@joelfernandes.org>
+ <20190723061358.GD128252@google.com>
+ <20190723142049.GC104199@google.com>
+ <20190724042842.GA39273@google.com>
+ <20190724141052.GB9945@google.com>
+ <c116f836-5a72-c6e6-498f-a904497ef557@yandex-team.ru>
+ <20190726000654.GB66718@google.com>
+ <9cba9acb-9451-a53e-278d-92f7b66ae20b@yandex-team.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+In-Reply-To: <9cba9acb-9451-a53e-278d-92f7b66ae20b@yandex-team.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hey everyone,
+On Fri, Jul 26, 2019 at 02:16:20PM +0300, Konstantin Khlebnikov wrote:
+> On 26.07.2019 3:06, Joel Fernandes wrote:
+> > On Thu, Jul 25, 2019 at 11:15:53AM +0300, Konstantin Khlebnikov wrote:
+> > [snip]
+> > > > > > Thanks for bringing up the swapping corner case..  Perhaps we can improve
+> > > > > > the heap profiler to detect this by looking at bits 0-4 in pagemap. While it
+> > > > > 
+> > > > > Yeb, that could work but it could add overhead again what you want to remove?
+> > > > > Even, userspace should keep metadata to identify that page was already swapped
+> > > > > in last period or newly swapped in new period.
+> > > > 
+> > > > Yep.
+> > > Between samples page could be read from swap and swapped out back multiple times.
+> > > For tracking this swap ptes could be marked with idle bit too.
+> > > I believe it's not so hard to find free bit for this.
+> > > 
+> > > Refault\swapout will automatically clear this bit in pte even if
+> > > page goes nowhere stays if swap-cache.
+> > 
+> > Could you clarify more about your idea? Do you mean swapout will clear the new
+> > idle swap-pte bit if the page was accessed just before the swapout? >
+> > Instead, I thought of using is_swap_pte() to detect if the PTE belong to a
+> > page that was swapped. And if so, then assume the page was idle. Sure we
+> > would miss data that the page was accessed before the swap out in the
+> > sampling window, however if the page was swapped out, then it is likely idle
+> > anyway.
+> 
+> 
+> I mean page might be in swap when you mark pages idle and
+> then been accessed and swapped back before second pass.
+> 
+> I propose marking swap pte with idle bit which will be automatically
+> cleared by following swapin/swapout pair:
+> 
+> page alloc -> install page pte
+> page swapout -> install swap entry in pte
+> mark vm idle -> set swap-idle bit in swap pte
+> access/swapin -> install page pte (clear page idle if set)
+> page swapout -> install swap entry in pte (without swap idle bit)
+> scan vm idle -> see swap entry without idle bit -> page has been accessed since marking idle
+> 
+> One bit in pte is enough for tracking. This does not needs any propagation for
+> idle bits between page and swap, or marking pages as idle in swap cache.
 
-We have another mount api regression. With current 5.3-rc1 it is not
-possible anymore to mount filesystems that have FS_USERNS_MOUNT set and
-their fs_context's global member set to true. At least sysfs is
-affected, likely also cgroup{2}fs.
+Ok I see the case you are referring to now. This can be a follow-up patch to
+address the case, because.. the limitation you mentioned is also something
+inherrent in the (traditional) physical page_idle tracking if that were used.
+The reason being, after swapping, the PTE is not mapped to any page so there
+is nothing to mark as idle. So if the page gets swapped out and in in the
+meanwhile, then you would run into the same issue.
 
-The commit that introduced the regression is:
+But yes, we should certainly address it in the future. I just want to keep
+things simple at the moment. I will make a note about your suggestion but you
+are welcomed to write a patch for it on top of my patch. I am about to send
+another revision shortly for futhre review.
 
-commit 0ce0cf12fc4c6a089717ff613d76457052cf4303
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Sun May 12 15:42:48 2019 -0400
+thanks,
 
-    consolidate the capability checks in sget_{fc,userns}()
+ - Joel
 
-    ... into a common helper - mount_capable(type, userns)
-
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-mount_capable() will select the user namespace in which to check for
-CAP_SYS_ADMIN based on the global property of the filesystem's
-fs_context.
-
-Since sysfs has global set to true mount_capable() will check for
-CAP_SYS_ADMIN in init_user_ns and fail the mount with EPERM for any
-non-init userns root. The same check is present in sget_fc().
-
-To me it looks like that global is overriding FS_USERNS_MOUNT which
-seems odd. Afaict, there are two ways to fix this:
-- remove global from sysfs
-- remove the global check from mount_capable() and possibly sget_fc()
-
-The latter feels more correct but I'm not sure *why* that global thing
-got introduced. Seems there could be an additional flag on affected
-filesystems instead of this "global" thing. But not sure.
-
-I can whip up a patch in case that does make sense.
-And it would probably be a good thing if we had some sort of test (if
-there isn't one already) so that this doesn't happen again. It could be
-as simple as:
-
-unshare -U -m --map-root -n
-mkdir whatever
-mount -t sysfs sysfs ./whatever
-
-Thanks!
-Christian
