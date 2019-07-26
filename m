@@ -2,185 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D46275BE3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 02:07:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BDB75C03
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 02:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfGZAG6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jul 2019 20:06:58 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40117 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726942AbfGZAG6 (ORCPT
+        id S1727021AbfGZAUy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jul 2019 20:20:54 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45632 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbfGZAUx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jul 2019 20:06:58 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w10so23833631pgj.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2019 17:06:57 -0700 (PDT)
+        Thu, 25 Jul 2019 20:20:53 -0400
+Received: by mail-io1-f65.google.com with SMTP id g20so101116693ioc.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2019 17:20:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LX3WgT6XIyZ+DazVbDL+JemkgQ8O0fcebqlsSSEdmGM=;
-        b=QsvMTHeLg8602rHTa5Q9ZHCQQM9SabYqubgXZOIYbiLd17mnqreKieXa1uwtQ54iam
-         GK3VgRhF3/tKHNucJ5sfjCd/qYyDQvoJVlk94JB4k21B1AIuxwzgWVWZgsL3FyNKjiBD
-         ulsn5EXL/bfFAQ3/1QUigwK0s18crxSGp+SuU=
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=wVoyay7NO1Taf0v9T8BEjNVHV5CQV4op2+u8nOtjKhg=;
+        b=jToOEjgrbrybRXQICjzzQLCzC6a+oGnvytylhhSA9uxtg6WnH51O9ifLdSV6bfGMfa
+         q8niV4muBTTLsVTSbcEIiUpVX+Amr5OSrKkakw3SIsgJ8wNsZyQBOkBDr2dbL5g7FM01
+         G/XkE2FByaeoL8V88ESwf2TAB2YZjUSsL0fYgL45Wj4T/V0LKEidele78SCI55EuL/J/
+         sYl0p5itnLMSTOYg3+6E06sl9nRstqfUkqQp7Rox6hXNDgUyeGkR886lLScN+95mjm/T
+         aOi3Bf5eztl/MGmlss1eZVgOtDl8Lkje5E83dmFr4AAMVpQxweZF/aXyNxTquIa66KkV
+         3ymw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LX3WgT6XIyZ+DazVbDL+JemkgQ8O0fcebqlsSSEdmGM=;
-        b=eQ+UL4zFc/BqtOYv6EsyS+LMtPaqtCJLts1TBi13v7VqIlizcMy7epAOhNKlq4im02
-         xHg6aKSKSgtT2e1C5+N/FchsAaYGqb06lbICZJSA78x9f/KVxcWvf82VHfIRpT0JkhkE
-         /9W7onWQu2dBTcQbTxu1PmNe44K0S7Ag7FZbiHltW1HHHJSEs5Sa3jIB1+eqjolUBJDq
-         Rs2AvX/cEQYzlFj3MuaMn7zHPVORRcFhiL8s99NxbZUnRCPs4Bw/E7YLbKFbcZhvkwnR
-         2ImlaqRtIOj3sMG/rHxVNo9fXE98sWpeKqpv66PIre6HOkxubOVNBkge1IC6F/miXvbg
-         mq7w==
-X-Gm-Message-State: APjAAAVa3YK6CQdLju2oDLO3zxQPeAawG5QgakobJGRwX93Oa05e3Kk5
-        i2W+KqQCHzooYixxrlTkSfs=
-X-Google-Smtp-Source: APXvYqynq4GHcctnGxdvrjEr2VgQvO3199IKeDONR22HjODvLIe8AO5rXpZgJfVmZIRQ9psLB00K5A==
-X-Received: by 2002:aa7:8106:: with SMTP id b6mr19230834pfi.5.1564099617036;
-        Thu, 25 Jul 2019 17:06:57 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id a3sm50932747pfl.145.2019.07.25.17.06.55
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=wVoyay7NO1Taf0v9T8BEjNVHV5CQV4op2+u8nOtjKhg=;
+        b=RnAYNXHwZCqzXgeBPho0+HRo/6Et3Gf/2vJSv+4NMWA/b6RHx34ouVc/rgYMR+5vm4
+         uuIJNG/em0vJpCFATss/X9ub5+jUJZlOBDZFpqoHQRwVXvTCjEOXn6nkZU/i43sNXYHT
+         //1Y6xNOHPmRGtD2tjNYrAQ4ge9BZ4WoG6+EjUYkxVTbEVUukPz1zkR1u1jwDEkQnTS/
+         hafN4g6o00pnLmq2AjUwNLCUByqLZvIyztNEvHpBWk3S9ElUmwV5GYrl/cg3lEptHw4A
+         ubPxLqHbjFiPF2Ij/GKD4rC5VZOpKoPnIG08vbl30oSiOPs5MlGM6WyMnddWO1jOQL2z
+         j0pw==
+X-Gm-Message-State: APjAAAU2u9bvcV2L2DOzJCiiYzvFTy8d28nsd1qW9WWZawZQjClbeiCt
+        U7WioqhieejZ1DpnZPEMiTiclw==
+X-Google-Smtp-Source: APXvYqwip5nwThbcgJqNtgafvdfTP5pQ2Oo0kmQagV/oOYV3+6lQkCabaIgCA6ODx3NeYEb64i78TA==
+X-Received: by 2002:a6b:f80e:: with SMTP id o14mr15217081ioh.1.1564100452408;
+        Thu, 25 Jul 2019 17:20:52 -0700 (PDT)
+Received: from localhost (67-0-24-96.albq.qwest.net. [67.0.24.96])
+        by smtp.gmail.com with ESMTPSA id 20sm54026778iog.62.2019.07.25.17.20.50
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 17:06:56 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 20:06:54 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
-        vdavydov.dev@gmail.com, Brendan Gregg <bgregg@netflix.com>,
-        kernel-team@android.com, Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        carmenjackson@google.com, Christian Hansen <chansen3@cisco.com>,
-        Colin Ian King <colin.king@canonical.com>, dancol@google.com,
-        David Howells <dhowells@redhat.com>, fmayer@google.com,
-        joaodias@google.com, Jonathan Corbet <corbet@lwn.net>,
+        Thu, 25 Jul 2019 17:20:51 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 17:20:50 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Alexandre Ghiti <alex@ghiti.fr>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Cashman <dcashman@google.com>,
         Kees Cook <keescook@chromium.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, namhyung@google.com,
-        sspatil@google.c
-Subject: Re: [PATCH v1 1/2] mm/page_idle: Add support for per-pid page_idle
- using virtual indexing
-Message-ID: <20190726000654.GB66718@google.com>
-References: <20190722213205.140845-1-joel@joelfernandes.org>
- <20190723061358.GD128252@google.com>
- <20190723142049.GC104199@google.com>
- <20190724042842.GA39273@google.com>
- <20190724141052.GB9945@google.com>
- <c116f836-5a72-c6e6-498f-a904497ef557@yandex-team.ru>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Paul Burton <paul.burton@mips.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Hogan <jhogan@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH REBASE v4 14/14] riscv: Make mmap allocation top-down by
+ default
+In-Reply-To: <20190724055850.6232-15-alex@ghiti.fr>
+Message-ID: <alpine.DEB.2.21.9999.1907251655310.32766@viisi.sifive.com>
+References: <20190724055850.6232-1-alex@ghiti.fr> <20190724055850.6232-15-alex@ghiti.fr>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c116f836-5a72-c6e6-498f-a904497ef557@yandex-team.ru>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 11:15:53AM +0300, Konstantin Khlebnikov wrote:
-[snip]
-> >>> Thanks for bringing up the swapping corner case..  Perhaps we can improve
-> >>> the heap profiler to detect this by looking at bits 0-4 in pagemap. While it
-> >>
-> >> Yeb, that could work but it could add overhead again what you want to remove?
-> >> Even, userspace should keep metadata to identify that page was already swapped
-> >> in last period or newly swapped in new period.
-> >
-> > Yep.
-> Between samples page could be read from swap and swapped out back multiple times.
-> For tracking this swap ptes could be marked with idle bit too.
-> I believe it's not so hard to find free bit for this.
+Hi Alexandre,
+
+I have a few questions about this patch.  Sorry to be dense here ...
+
+On Wed, 24 Jul 2019, Alexandre Ghiti wrote:
+
+> In order to avoid wasting user address space by using bottom-up mmap
+> allocation scheme, prefer top-down scheme when possible.
 > 
-> Refault\swapout will automatically clear this bit in pte even if
-> page goes nowhere stays if swap-cache.
+> Before:
+> root@qemuriscv64:~# cat /proc/self/maps
+> 00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
+> 00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
+> 00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
+> 00018000-00039000 rw-p 00000000 00:00 0          [heap]
+> 1555556000-155556d000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
+> 155556d000-155556e000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
+> 155556e000-155556f000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
+> 155556f000-1555570000 rw-p 00000000 00:00 0
+> 1555570000-1555572000 r-xp 00000000 00:00 0      [vdso]
+> 1555574000-1555576000 rw-p 00000000 00:00 0
+> 1555576000-1555674000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
+> 1555674000-1555678000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
+> 1555678000-155567a000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
+> 155567a000-15556a0000 rw-p 00000000 00:00 0
+> 3fffb90000-3fffbb1000 rw-p 00000000 00:00 0      [stack]
+> 
+> After:
+> root@qemuriscv64:~# cat /proc/self/maps
+> 00010000-00016000 r-xp 00000000 fe:00 6389       /bin/cat.coreutils
+> 00016000-00017000 r--p 00005000 fe:00 6389       /bin/cat.coreutils
+> 00017000-00018000 rw-p 00006000 fe:00 6389       /bin/cat.coreutils
+> 2de81000-2dea2000 rw-p 00000000 00:00 0          [heap]
+> 3ff7eb6000-3ff7ed8000 rw-p 00000000 00:00 0
+> 3ff7ed8000-3ff7fd6000 r-xp 00000000 fe:00 7187   /lib/libc-2.28.so
+> 3ff7fd6000-3ff7fda000 r--p 000fd000 fe:00 7187   /lib/libc-2.28.so
+> 3ff7fda000-3ff7fdc000 rw-p 00101000 fe:00 7187   /lib/libc-2.28.so
+> 3ff7fdc000-3ff7fe2000 rw-p 00000000 00:00 0
+> 3ff7fe4000-3ff7fe6000 r-xp 00000000 00:00 0      [vdso]
+> 3ff7fe6000-3ff7ffd000 r-xp 00000000 fe:00 7193   /lib/ld-2.28.so
+> 3ff7ffd000-3ff7ffe000 r--p 00016000 fe:00 7193   /lib/ld-2.28.so
+> 3ff7ffe000-3ff7fff000 rw-p 00017000 fe:00 7193   /lib/ld-2.28.so
+> 3ff7fff000-3ff8000000 rw-p 00000000 00:00 0
+> 3fff888000-3fff8a9000 rw-p 00000000 00:00 0      [stack]
+> 
+> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> ---
+>  arch/riscv/Kconfig | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 59a4727ecd6c..6a63973873fd 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -54,6 +54,17 @@ config RISCV
+>  	select EDAC_SUPPORT
+>  	select ARCH_HAS_GIGANTIC_PAGE
+>  	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
+> +	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
+> +	select HAVE_ARCH_MMAP_RND_BITS
+> +
+> +config ARCH_MMAP_RND_BITS_MIN
+> +	default 18
 
-Could you clarify more about your idea? Do you mean swapout will clear the new
-idle swap-pte bit if the page was accessed just before the swapout?
+Could you help me understand the rationale behind this constant?
 
-Instead, I thought of using is_swap_pte() to detect if the PTE belong to a
-page that was swapped. And if so, then assume the page was idle. Sure we
-would miss data that the page was accessed before the swap out in the
-sampling window, however if the page was swapped out, then it is likely idle
-anyway.
+> +
+> +# max bits determined by the following formula:
+> +#  VA_BITS - PAGE_SHIFT - 3
 
-My current patch was just reporting swapped out pages as non-idle (idle bit
-not set) which is wrong as Minchan pointed. So I added below patch on top of
-this patch (still testing..) :
+I realize that these lines are probably copied from arch/arm64/Kconfig.  
+But the rationale behind the "- 3" is not immediately obvious.  This 
+apparently originates from commit 8f0d3aa9de57 ("arm64: mm: support 
+ARCH_MMAP_RND_BITS"). Can you provide any additional context here?
 
-thanks,
+> +config ARCH_MMAP_RND_BITS_MAX
+> +	default 33 if 64BIT # SV48 based
 
- - Joel
----8<-----------------------
+The rationale here is clear for Sv48, per the above formula:
 
-diff --git a/mm/page_idle.c b/mm/page_idle.c
-index 3667ed9cc904..46c2dd18cca8 100644
---- a/mm/page_idle.c
-+++ b/mm/page_idle.c
-@@ -271,10 +271,14 @@ struct page_idle_proc_priv {
- 	struct list_head *idle_page_list;
- };
+   (48 - 12 - 3) = 33
+
+> +	default 18
+
+However, here it is less clear to me.  For Sv39, shouldn't this be
+
+   (39 - 12 - 3) = 24
+
+?  And what about Sv32?
  
-+/*
-+ * Add a page to the idle page list.
-+ * page can also be NULL if pte was not present or swapped.
-+ */
- static void add_page_idle_list(struct page *page,
- 			       unsigned long addr, struct mm_walk *walk)
- {
--	struct page *page_get;
-+	struct page *page_get = NULL;
- 	struct page_node *pn;
- 	int bit;
- 	unsigned long frames;
-@@ -290,9 +294,11 @@ static void add_page_idle_list(struct page *page,
- 			return;
- 	}
- 
--	page_get = page_idle_get_page(page);
--	if (!page_get)
--		return;
-+	if (page) {
-+		page_get = page_idle_get_page(page);
-+		if (!page_get)
-+			return;
-+	}
- 
- 	pn = &(priv->page_nodes[priv->cur_page_node++]);
- 	pn->page = page_get;
-@@ -326,6 +332,15 @@ static int pte_page_idle_proc_range(pmd_t *pmd, unsigned long addr,
- 
- 	pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
- 	for (; addr != end; pte++, addr += PAGE_SIZE) {
-+		/*
-+		 * We add swapped pages to the idle_page_list so that we can
-+		 * reported to userspace that they are idle.
-+		 */
-+		if (is_swap_pte(*pte)) {
-+			add_page_idle_list(NULL, addr, walk);
-+			continue;
-+		}
-+
- 		if (!pte_present(*pte))
- 			continue;
- 
-@@ -413,10 +428,12 @@ ssize_t page_idle_proc_generic(struct file *file, char __user *ubuff,
- 			goto remove_page;
- 
- 		if (write) {
--			page_idle_clear_pte_refs(page);
--			set_page_idle(page);
-+			if (page) {
-+				page_idle_clear_pte_refs(page);
-+				set_page_idle(page);
-+			}
- 		} else {
--			if (page_really_idle(page)) {
-+			if (!page || page_really_idle(page)) {
- 				off = ((cur->addr) >> PAGE_SHIFT) - start_frame;
- 				bit = off % BITMAP_CHUNK_BITS;
- 				index = off / BITMAP_CHUNK_BITS;
--- 
-2.22.0.709.g102302147b-goog
 
+- Paul
