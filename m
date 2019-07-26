@@ -2,148 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F3B76321
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 12:07:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40F9B7643E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2019 13:16:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbfGZKHC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jul 2019 06:07:02 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:40440 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbfGZKHB (ORCPT
+        id S1726855AbfGZLQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jul 2019 07:16:28 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:37836 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725953AbfGZLQ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jul 2019 06:07:01 -0400
-Received: by mail-yb1-f195.google.com with SMTP id j6so10911233ybm.7;
-        Fri, 26 Jul 2019 03:07:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+L/PTQ5WefhhdGJICPJZTWREq0FzbcuJty7GGMjdHkY=;
-        b=VCSujiP21xYdy1ahpgC2+dtBp0wr/0BcqKSe0AyyDa7PJ/965UyFMFXClC2mfLFgdh
-         7eP6Oa/iHbhqLOKFabXsBfbS9JYT/Zl6e678J4G04tv0S2jALsqqDqr/cob7t+YQHVKp
-         eJXA4h4Ytfwc+lTDzl8cmEUcKkjRLBon17tBkbFNpvpBRzzdVqhT4OlmtlhrgnzlFdIm
-         jgh/vl20N+VXetQSRMzcutCOjSJL3LJFqC8i1Hg+rm9YQiwU2viX7FLxsMGryPYwQQ8j
-         9P9Pvqs0setZ1hmzfdXqM/4gv7XXVG5FHIiLOLepvtgMkKzG5ROyBvZ/1qpZSaANLir/
-         58Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+L/PTQ5WefhhdGJICPJZTWREq0FzbcuJty7GGMjdHkY=;
-        b=HW7W4MzEvCgnB3ZN+hRHBiQnedctpiiyFxvJY6JbcXhxAp7xyrJt9YO2R8Mz/avxg2
-         RF0JOfK+VLe/Wru9psmbK3MuLcA6eepaCAwJphScXg4aupyNrjYZEbqk18Vd8AqoADaM
-         ++LAcfS1TogDedFr9VF0JRLfrEsrMpnR2LQiCob5HCvV3Iv8MY+37dZjPxun7WE4v2F+
-         PkM1qyi5nsmgSvKbTMfjvV+STi0ByFzNOdLn2ANjenG00vGBbgHORWPTwMXepIwbDhHL
-         S8lD7Fz/RWRt87+xht7dfZaupaCuMYp6rfoj6gx2QKBQbtHhoHMu5MZkZG4Z6IJ8zSMN
-         ph4Q==
-X-Gm-Message-State: APjAAAXIBaRjttCm4HoN+vk6fxg31aVu8yC+ESCd6j9sMSsScVOC6iYS
-        0zyGnBB39fizKeiawlzyBi+tTlxQb5I625iVyQM=
-X-Google-Smtp-Source: APXvYqwtGACaDY+AapAm+Wv/BOPD5Rnehn08Yr74B0c+I+jtRM5nQVUAvFIqqMFPNG69TtvPmBICsA0wdkx6WsfhCNA=
-X-Received: by 2002:a25:7683:: with SMTP id r125mr56699420ybc.144.1564135620396;
- Fri, 26 Jul 2019 03:07:00 -0700 (PDT)
+        Fri, 26 Jul 2019 07:16:27 -0400
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 3998E2E0B10;
+        Fri, 26 Jul 2019 14:16:23 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id jtgl0cVK3U-GLNGEp2n;
+        Fri, 26 Jul 2019 14:16:23 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1564139783; bh=ecwFC3fgXFrOWyG9ohvQQEeG7yd0wdelvg82Hk6eDDo=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=nXCB8f2mA72AK22inribUdeAvInMoGaGhDsBuAZjGmmM4hrqaBbywNFVKpV41OPyG
+         AYUfWwnLk39G30OJBeO5YcN/PQ5yq981pXG1Q1GJv8ETRhInUCv1DI3FPrdeE0HseW
+         F/QCK72cDUk+Fr/LcXRIYG2ccu4U0Lxp4GdrZobE=
+Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:38b3:1cdf:ad1a:1fe1])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id PWLMWYfpFd-GK6SXEm5;
+        Fri, 26 Jul 2019 14:16:21 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH v1 1/2] mm/page_idle: Add support for per-pid page_idle
+ using virtual indexing
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
+        vdavydov.dev@gmail.com, Brendan Gregg <bgregg@netflix.com>,
+        kernel-team@android.com, Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        carmenjackson@google.com, Christian Hansen <chansen3@cisco.com>,
+        Colin Ian King <colin.king@canonical.com>, dancol@google.com,
+        David Howells <dhowells@redhat.com>, fmayer@google.com,
+        joaodias@google.com, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, namhyung@google.com,
+        sspatil@google.com
+References: <20190722213205.140845-1-joel@joelfernandes.org>
+ <20190723061358.GD128252@google.com> <20190723142049.GC104199@google.com>
+ <20190724042842.GA39273@google.com> <20190724141052.GB9945@google.com>
+ <c116f836-5a72-c6e6-498f-a904497ef557@yandex-team.ru>
+ <20190726000654.GB66718@google.com>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <9cba9acb-9451-a53e-278d-92f7b66ae20b@yandex-team.ru>
+Date:   Fri, 26 Jul 2019 14:16:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <0000000000004a3a63058e722b94@google.com> <00000000000086c732058e79cb59@google.com>
- <CAOQ4uxhAi6sqBR2219ZvzX7izeF_RezN+VKRrHiQ04P=t0uiOg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhAi6sqBR2219ZvzX7izeF_RezN+VKRrHiQ04P=t0uiOg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 26 Jul 2019 13:06:48 +0300
-Message-ID: <CAOQ4uxhRWzjY=RcgFtFZL4VUg7Y8EyRa2eaWuqtVOHDZWWO1PQ@mail.gmail.com>
-Subject: Re: WARNING in ovl_real_fdget_meta
-To:     syzbot <syzbot+032bc63605089a199d30@syzkaller.appspotmail.com>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190726000654.GB66718@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 11:11 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Thu, Jul 25, 2019 at 7:24 AM syzbot
-> <syzbot+032bc63605089a199d30@syzkaller.appspotmail.com> wrote:
-> >
-> > syzbot has bisected this bug to:
-> >
-> > commit 387e3746d01c34457d6a73688acd90428725070b
-> > Author: Amir Goldstein <amir73il@gmail.com>
-> > Date:   Fri Jun 7 14:24:38 2019 +0000
-> >
-> >      locks: eliminate false positive conflicts for write lease
-> >
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a79594600000
-> > start commit:   c6dd78fc Merge branch 'x86-urgent-for-linus' of git://git...
-> > git tree:       upstream
-> > final crash:    https://syzkaller.appspot.com/x/report.txt?x=17a79594600000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=13a79594600000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3c8985c08e1f9727
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=032bc63605089a199d30
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15855334600000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17fcc4c8600000
-> >
-> > Reported-by: syzbot+032bc63605089a199d30@syzkaller.appspotmail.com
-> > Fixes: 387e3746d01c ("locks: eliminate false positive conflicts for write
-> > lease")
-> >
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
->
-> The repro:
-> #{"repeat":true,"procs":1,"sandbox":"none","fault_call":-1,"cgroups":true,"close_fds":true,"tmpdir":true}
-> mkdir(&(0x7f0000000100)='./file0\x00', 0x0)
-> mkdirat$cgroup_root(0xffffffffffffff9c,
-> &(0x7f0000000000)='./cgroup.net/syz1\x00', 0x1ff)
-> mount$fuse(0x20000000, &(0x7f0000000140)='./file0\x00', 0x0, 0x1004, 0x0)
-> mount$overlay(0x400000, &(0x7f0000000100)='./file0\x00',
-> &(0x7f00000001c0)='overlay\x00', 0x0,
-> &(0x7f0000000040)=ANY=[@ANYBLOB=',lowerdir=.:file0'])
-> r0 = open(&(0x7f0000000500)='./file0\x00', 0x0, 0x0)
-> r1 = openat$cgroup_procs(r0, &(0x7f00000004c0)='cgroup.procs\x00', 0x48, 0x0)
-> dup3(r1, r0, 0x0)
-> fcntl$setlease(r0, 0x400, 0x1)
-> lseek(r0, 0x4, 0x0)
->
-> I though we would stop these family of overlapping layers fuzzers with:
-> 146d62e5a586 ("ovl: detect overlapping layers")
->
-> But syzbot got the upper hand, because we do not check for overlapping layers
-> that cross fs boundary. Not sure if we should (?).
+On 26.07.2019 3:06, Joel Fernandes wrote:
+> On Thu, Jul 25, 2019 at 11:15:53AM +0300, Konstantin Khlebnikov wrote:
+> [snip]
+>>>>> Thanks for bringing up the swapping corner case..  Perhaps we can improve
+>>>>> the heap profiler to detect this by looking at bits 0-4 in pagemap. While it
+>>>>
+>>>> Yeb, that could work but it could add overhead again what you want to remove?
+>>>> Even, userspace should keep metadata to identify that page was already swapped
+>>>> in last period or newly swapped in new period.
+>>>
+>>> Yep.
+>> Between samples page could be read from swap and swapped out back multiple times.
+>> For tracking this swap ptes could be marked with idle bit too.
+>> I believe it's not so hard to find free bit for this.
+>>
+>> Refault\swapout will automatically clear this bit in pte even if
+>> page goes nowhere stays if swap-cache.
+> 
+> Could you clarify more about your idea? Do you mean swapout will clear the new
+> idle swap-pte bit if the page was accessed just before the swapout? >
+> Instead, I thought of using is_swap_pte() to detect if the PTE belong to a
+> page that was swapped. And if so, then assume the page was idle. Sure we
+> would miss data that the page was accessed before the swap out in the
+> sampling window, however if the page was swapped out, then it is likely idle
+> anyway.
 
-No, we shouldn't care about that.
-overlayfs doesn't follow cross-fs in underlying layers.
 
->
-> ./ is a tmpfs dir and ./file0/ is some kind of fuse mount (?)
-> then after one cycle, ./file0/ itself is an overlapping overlay mount
-> (lowerdir=./:./file0/)
-> and after another cycle, ./file0/ is a nested overlapping overlayfs mount.
-> Fine. Whatever.
+I mean page might be in swap when you mark pages idle and
+then been accessed and swapped back before second pass.
 
-But damage can still be created if a lower overlayfs layer
-overlaps with the another nested overlay lower underlying layer.
-It actually shouldn't be too hard to add a guard also on the
-nested overlay lower underlying layer inode.
+I propose marking swap pte with idle bit which will be automatically
+cleared by following swapin/swapout pair:
 
->
-> What I don't understand is if dup3 succeeds r0 should not be an overlayfs fd
-> and even if dup3 fails r0 should be an overlayfs directory fd (./file0/), so how
-> the hell did we get to ovl_llseek => ... ovl_change_flags() with this repro??
->
-> There is not a single regular file in this test.
->
+page alloc -> install page pte
+page swapout -> install swap entry in pte
+mark vm idle -> set swap-idle bit in swap pte
+access/swapin -> install page pte (clear page idle if set)
+page swapout -> install swap entry in pte (without swap idle bit)
+scan vm idle -> see swap entry without idle bit -> page has been accessed since marking idle
 
-I was wrong here of course.
-./file0/cgroup.procs is a regular overlayfs file (I was confused by the name)
-which is later also exposed at ./file0/file0/cgroup.procs in the nested
-overlay mount.
+One bit in pte is enough for tracking. This does not needs any propagation for
+idle bits between page and swap, or marking pages as idle in swap cache.
 
-Still not sure about the rest of the way to ovl_change_flags() failure,
-but I think I'll try to block this new syzbot overlap attack.
-
-Thanks,
-Amir.
+> 
+> My current patch was just reporting swapped out pages as non-idle (idle bit
+> not set) which is wrong as Minchan pointed. So I added below patch on top of
+> this patch (still testing..) :
+> 
+> thanks,
+> 
+>   - Joel
+> ---8<-----------------------
+> 
+> diff --git a/mm/page_idle.c b/mm/page_idle.c
+> index 3667ed9cc904..46c2dd18cca8 100644
+> --- a/mm/page_idle.c
+> +++ b/mm/page_idle.c
+> @@ -271,10 +271,14 @@ struct page_idle_proc_priv {
+>   	struct list_head *idle_page_list;
+>   };
+>   
+> +/*
+> + * Add a page to the idle page list.
+> + * page can also be NULL if pte was not present or swapped.
+> + */
+>   static void add_page_idle_list(struct page *page,
+>   			       unsigned long addr, struct mm_walk *walk)
+>   {
+> -	struct page *page_get;
+> +	struct page *page_get = NULL;
+>   	struct page_node *pn;
+>   	int bit;
+>   	unsigned long frames;
+> @@ -290,9 +294,11 @@ static void add_page_idle_list(struct page *page,
+>   			return;
+>   	}
+>   
+> -	page_get = page_idle_get_page(page);
+> -	if (!page_get)
+> -		return;
+> +	if (page) {
+> +		page_get = page_idle_get_page(page);
+> +		if (!page_get)
+> +			return;
+> +	}
+>   
+>   	pn = &(priv->page_nodes[priv->cur_page_node++]);
+>   	pn->page = page_get;
+> @@ -326,6 +332,15 @@ static int pte_page_idle_proc_range(pmd_t *pmd, unsigned long addr,
+>   
+>   	pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+>   	for (; addr != end; pte++, addr += PAGE_SIZE) {
+> +		/*
+> +		 * We add swapped pages to the idle_page_list so that we can
+> +		 * reported to userspace that they are idle.
+> +		 */
+> +		if (is_swap_pte(*pte)) {
+> +			add_page_idle_list(NULL, addr, walk);
+> +			continue;
+> +		}
+> +
+>   		if (!pte_present(*pte))
+>   			continue;
+>   
+> @@ -413,10 +428,12 @@ ssize_t page_idle_proc_generic(struct file *file, char __user *ubuff,
+>   			goto remove_page;
+>   
+>   		if (write) {
+> -			page_idle_clear_pte_refs(page);
+> -			set_page_idle(page);
+> +			if (page) {
+> +				page_idle_clear_pte_refs(page);
+> +				set_page_idle(page);
+> +			}
+>   		} else {
+> -			if (page_really_idle(page)) {
+> +			if (!page || page_really_idle(page)) {
+>   				off = ((cur->addr) >> PAGE_SHIFT) - start_frame;
+>   				bit = off % BITMAP_CHUNK_BITS;
+>   				index = off / BITMAP_CHUNK_BITS;
+> 
