@@ -2,121 +2,416 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3EE07757F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 02:50:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5822775AB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 03:41:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbfG0Auv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jul 2019 20:50:51 -0400
-Received: from mail-eopbgr670118.outbound.protection.outlook.com ([40.107.67.118]:15561
-        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726115AbfG0Auv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jul 2019 20:50:51 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hDL0GPGoAt5jwBcS5qhFLIXPx1iuoO81vFNH7sqIHO7I3PpQfja4HE8eeIol1jNuK3EHm9KCFz4VQ4EnffYx4KrygyJ97HQ8QjoaGr2sJhnPsXJpFo5mz4d1UUVa8g8HawZ5gUaYFNEnok/Iv1yfN2M0XiPQBToSArCDbQ6rdWSbehXa7wLB+HCn5Sl4TX67XHyRYvtysL+xX0BtmcYlqH8MomcrHTYNzaqJ2TWdrT1uyMzxapZFrcITLl37Si0guZ4kdok2ibdq+I5ARf32zYbpjV26nWQpPgf8siChGP9zah9UTADgObHS7sWKUfGNcIlWDXpLiEugz6tjm5Ka3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oBL/cfZU67UAjyjQf19QLEXMeq5tpyg9CtAdvVo7uRY=;
- b=OOrznP/zEaRDkz73UCVRCDIVoJlAC3b3MKw/Tiixaxp/81VUdxHU4rCGvUcuqR39+sOHn9kvaOXPlLEh4rkuPn4OlWT/zjwkQQckFL6kJMIGhdLaImOaeeLuNZ3IcEyHUaDIlHz5oDsJvxO0qz8bdEcGy+zWsKkpu25RE4lO63FLH7xqr9U/blXH1KQpPhLCoVV27Jndk3NBncXzsic3R9eTDnp15mIxssDe01Q6b3ZVlBhA7JgKgG4gydmyIJS6vaxF9fUg33u4MATQUv3HT9I9lZwKzmpDpfdjvKDNB9l4+BcjqpzFQ+hu7aXmHN93shjverD/l36hDUtPfObPSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=raithlin.com;dmarc=pass action=none
- header.from=raithlin.com;dkim=pass header.d=raithlin.com;arc=none
+        id S1726757AbfG0Bky (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jul 2019 21:40:54 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45984 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbfG0Bky (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Jul 2019 21:40:54 -0400
+Received: by mail-pg1-f194.google.com with SMTP id o13so25531341pgp.12;
+        Fri, 26 Jul 2019 18:40:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=raithlin.onmicrosoft.com; s=selector1-raithlin-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oBL/cfZU67UAjyjQf19QLEXMeq5tpyg9CtAdvVo7uRY=;
- b=mUG2Meu8I68UTq3PRH8mUyI1fY7UMDXxCloxNYsvLyFY/hiIdnFcDeVdXe/ESYb0JAa8jVKcyXpSTI+DYiQEcaYSfiGFSfcifbpEOhNyNzd4aNiw1QSVgf853gJ4832AtR0wyTXxpfGIRLArH4l3FqtpmTd3BjrltWKdwYnlLKE=
-Received: from QB1PR01MB3937.CANPRD01.PROD.OUTLOOK.COM (52.132.85.210) by
- QB1PR01MB2820.CANPRD01.PROD.OUTLOOK.COM (52.132.88.204) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.10; Sat, 27 Jul 2019 00:50:48 +0000
-Received: from QB1PR01MB3937.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::d844:70e8:aae4:ca85]) by QB1PR01MB3937.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::d844:70e8:aae4:ca85%7]) with mapi id 15.20.2115.005; Sat, 27 Jul 2019
- 00:50:48 +0000
-From:   "Stephen  Bates" <sbates@raithlin.com>
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Hannes Reinecke <hare@suse.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
-        Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>
-Subject: Re: [PATCH v6 00/16] nvmet: add target passthru commands support
-Thread-Topic: [PATCH v6 00/16] nvmet: add target passthru commands support
-Thread-Index: AQHVQw3IQVh0BKtYjkypaXMSRrkqHabcbz+AgACz7QCAAFeXAIAABIIAgAAKKoCAAA+UAP//ljCA
-Date:   Sat, 27 Jul 2019 00:50:47 +0000
-Message-ID: <6DF00EEF-5A9D-49C9-A27C-BE34E594D9A9@raithlin.com>
-References: <20190725172335.6825-1-logang@deltatee.com>
- <1f202de3-1122-f4a3-debd-0d169f545047@suse.de>
- <8fd8813f-f8e1-2139-13bf-b0635a03bc30@deltatee.com>
- <175fa142-4815-ee48-82a4-18eb411db1ae@grimberg.me>
- <76f617b9-1137-48b6-f10d-bfb1be2301df@deltatee.com>
- <e166c392-1548-f0bb-02bc-ced3dd85f301@grimberg.me>
- <1260e01c-6731-52f7-ae83-0b90e0345c68@deltatee.com>
-In-Reply-To: <1260e01c-6731-52f7-ae83-0b90e0345c68@deltatee.com>
-Accept-Language: en-CA, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.1b.0.190715
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sbates@raithlin.com; 
-x-originating-ip: [70.65.228.192]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b6d6e56c-6d2b-4a61-e552-08d7122c770c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:QB1PR01MB2820;
-x-ms-traffictypediagnostic: QB1PR01MB2820:
-x-microsoft-antispam-prvs: <QB1PR01MB282002FBBE5ED18932BACF31AAC30@QB1PR01MB2820.CANPRD01.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 01110342A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(136003)(39830400003)(376002)(346002)(189003)(199004)(7416002)(71200400001)(66066001)(486006)(476003)(14444005)(256004)(36756003)(71190400001)(68736007)(6116002)(3846002)(2906002)(5660300002)(6486002)(6246003)(4326008)(8676002)(8936002)(6512007)(33656002)(81166006)(81156014)(86362001)(229853002)(66556008)(66446008)(64756008)(186003)(6436002)(25786009)(53936002)(76176011)(54906003)(99286004)(110136005)(2201001)(26005)(58126008)(508600001)(66476007)(316002)(305945005)(6506007)(446003)(102836004)(11346002)(91956017)(2616005)(14454004)(2501003)(76116006)(7736002)(66946007);DIR:OUT;SFP:1102;SCL:1;SRVR:QB1PR01MB2820;H:QB1PR01MB3937.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: raithlin.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: e302ioJzCrvCYDXPNJWM8jHBDGGEUk6XCuoNHAUt8wuHFaJ4p0ztVUR8u632yjxTOL+XRqeE3QtWp8Kh2pKXA1UJcU0lIeRp9c8u0sulonhpaMbnpUdBYv1TOFeb7hMcpD0bZ5K53rZasTHELsyCO7eY516S1mVlooc/n9PAp4Tm5mOvIqwzzsJK6sFl2XFB6TZZ5Td+65876MG8hFpx8/+7zk02MC3/IkAmQKevOZiwEK2NoD+N0nQxce4MMImSjGKEcl+vvWhtj3ZU5Wg2VhjVsckbKnS0y25lZTCTJMhu1lN9/pFITJVWoq9o8MMeXbTLUZr9oAoA4cNNNl5O7mw3bCcsodjd77IqKRjJyWPPZweAk6cXRGowhjfoswSNxwtqDxpLJAH9IMhM/dhrmvprIUdh/+AjzauIkvxpdx0=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9CF894C0CB972D469006E91CBAAD11BF@CANPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=gK35F/yyyAGVAhDCeXp9WzvvG/sG2XiEcs/uV4YadWQ=;
+        b=LFVyyOjfNHS5klS8qdwlzS4nlK50X8hlkagr8LMzc/jV9zfcPf4cOen+5zHp4Tqm+p
+         qDI6j9lBnC+tgufQduGMWfWJA5ZNNv1Zf7/dibwt7LKluGEjk85yTQBeeTxXFXj6nbYV
+         NT3q35KGzXjUKF6B2+cCK5t65hrg0ok5w6KpWbHMHlrBlJ0YC+c0apMVvixIu+Kw4295
+         jmsN2sbEdyTRYqU0UWPsk40yMYuDK/xW2q817rNs/Zup4cLvopBeVDczhLmFOlgtuDSF
+         AN04Ei7iPrlm6VdrHjVV/ARocEADLTQHgQo1+0mhRgvXBpqJSQv+aaLejP7VGpgJoriB
+         O1cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=gK35F/yyyAGVAhDCeXp9WzvvG/sG2XiEcs/uV4YadWQ=;
+        b=qZgEYpXJ6BIy5VhMtxveddgTPwtWiGvEfh9AydsEzwfnSdXkFA2H05fubJu+UQ+ctO
+         YTjF6V8vYhG5ai2p9O/tSLJ+meG7UnorjYUYMdYjMC8ityIx7tloNJXq9ZeTUuLUDxTe
+         e+iAQoTq95XSjOvkVBaW7mTcHh63LEWIintdRab02r9gie+4eTd6gVFSmD5kSSXtjgCL
+         1bvz7B9W/zXh2pKGdYVNSAqcH0c7OEQ2K36AQ0hj3VWLcwneTi+KGAAbao8yrvTXiZzn
+         u5VvYu42mYP9iaNT7VOqfGw//JogT+drx1e4QFJ1/Fpsf+RbtJTh4rhGQuQOuBm180Is
+         2hQw==
+X-Gm-Message-State: APjAAAXpRHSJ6PhY99+tuire7vAy3fYoNqK+UuFDzaElgMCv4c7qTwYg
+        gasdg9BZHSnbsjAnoJGQgb4=
+X-Google-Smtp-Source: APXvYqzzDzj6NQHlQ79JDLA4ABdSdbB/e7wCK4Qm80OR/rDXBPszVKWLf1Y0e+y3qWjFWx3BKK2zzg==
+X-Received: by 2002:a63:5754:: with SMTP id h20mr53429148pgm.195.1564191652726;
+        Fri, 26 Jul 2019 18:40:52 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::2:2eeb])
+        by smtp.gmail.com with ESMTPSA id t26sm42188028pgu.43.2019.07.26.18.40.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Jul 2019 18:40:51 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 18:40:50 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v10 06/10] bpf,landlock: Add a new map type:
+ inode
+Message-ID: <20190727014048.3czy3n2hi6hfdy3m@ast-mbp.dhcp.thefacebook.com>
+References: <20190721213116.23476-1-mic@digikod.net>
+ <20190721213116.23476-7-mic@digikod.net>
 MIME-Version: 1.0
-X-OriginatorOrg: raithlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6d6e56c-6d2b-4a61-e552-08d7122c770c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2019 00:50:48.0170
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sbates@raithlin.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: QB1PR01MB2820
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190721213116.23476-7-mic@digikod.net>
+User-Agent: NeoMutt/20180223
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBUaGlzIGlzIGRpZmZlcmVudCBmcm9tIG11bHRpcGF0aCBvbiBzYXkgYSBtdWx0aS1jb250cm9s
-bGVyIFBDSSBkZXZpY2UNCj4gYW5kIHRyeWluZyB0byBleHBvc2UgYm90aCB0aG9zZSBjb250cm9s
-bGVycyB0aHJvdWdoIHBhc3N0aHJ1LiB0aGlzIGlzDQo+IHdoZXJlIHRoZSBwcm9ibGVtcyB3ZSBh
-cmUgZGlzY3Vzc2luZyBjb21lIHVwLg0KDQpJICp0aGluayogdGhlcmUgaXMgc29tZSBjb25mdXNp
-b24uIEkgKnRoaW5rKiBTYWdpIGlzIHRhbGtpbmcgYWJvdXQgbmV0d29yayBtdWx0aS1wYXRoIChp
-LmUuIHRoZSBhYmlsaXR5IGZvciB0aGUgaG9zdCB0byBjb25uZWN0IHRvIGEgY29udHJvbGxlciBv
-biB0aGUgdGFyZ2V0IHZpYSB0d28gZGlmZmVyZW50IG5ldHdvcmsgcGF0aHMgdGhhdCBmYWlsLW92
-ZXIgYXMgbmVlZGVkKS4gSSAqdGhpbmsqIExvZ2FuIGlzIHRhbGtpbmcgYWJvdXQgbXVsdGktcG9y
-dCBQQ0llIE5WTWUgZGV2aWNlcyB0aGF0IGFsbG93IG5hbWVzcGFjZXMgdG8gYmUgYWNjZXNzZWQg
-dmlhIG1vcmUgdGhhbiBvbmUgY29udHJvbGxlciBvdmVyIFBDSWUgKGR1YWwtcG9ydCBOVk1lIFNT
-RHMgYmVpbmcgdGhlIG1vc3Qgb2J2aW91cyBleGFtcGxlIG9mIHRoaXMgdG9kYXkpLg0KDQo+IEJ1
-dCBpdCdzIHRoZSBtdWx0aXBhdGggdGhyb3VnaCBkaWZmZXJlbnQgcG9ydHMgdGhhdA0KPiAgc2Vl
-bXMgaW1wb3J0YW50IGZvciBmYWJyaWNzLiBpZS4gSWYgSSBoYXZlIGEgaG9zdCB3aXRoIGEgcGF0
-aCB0aHJvdWdoDQo+ICBSRE1BIGFuZCBhIHBhdGggdGhyb3VnaCBUQ1AgdGhleSBzaG91bGQgYm90
-aCB3b3JrIGFuZCBhbGxvdyBmYWlsIG92ZXIuDQoNClllcywgb3IgZXZlbiB0d28gcGF0aHMgdGhh
-dCBhcmUgYm90aCBSRE1BIG9yIGJvdGggVENQIGJ1dCB3aGljaCB0YWtlIGEgZGlmZmVyZW50IHBh
-dGggdGhyb3VnaCB0aGUgbmV0d29yayBmcm9tIGhvc3QgdG8gdGFyZ2V0Lg0KDQo+IE91ciByZWFs
-LXdvcmxkIHVzZSBjYXNlIGlzIHRvIHN1cHBvcnQgb3VyIFBDSSBkZXZpY2Ugd2hpY2ggaGFzIGEg
-YnVuY2gNCj4gb2YgdmVuZG9yIHVuaXF1ZSBjb21tYW5kcyBhbmQgaXNuJ3QgbGlrZWx5IHRvIHN1
-cHBvcnQgbXVsdGlwbGUNCj4gY29udHJvbGxlcnMgaW4gdGhlIGZvcmVzZWVhYmxlIGZ1dHVyZS4N
-Cg0KSSB0aGluayBzb2x2aW5nIHBhc3N0aHJ1IGZvciBzaW5nbGUtcG9ydCBQQ0llIGNvbnRyb2xs
-ZXJzIHdvdWxkIGJlIGEgZ29vZCBzdGFydC4NCg0KU3RlcGhlbg0KDQo=
+On Sun, Jul 21, 2019 at 11:31:12PM +0200, Mickaël Salaün wrote:
+> FIXME: 64-bits in the doc
+> 
+> This new map store arbitrary values referenced by inode keys.  The map
+> can be updated from user space with file descriptor pointing to inodes
+> tied to a file system.  From an eBPF (Landlock) program point of view,
+> such a map is read-only and can only be used to retrieved a value tied
+> to a given inode.  This is useful to recognize an inode tagged by user
+> space, without access right to this inode (i.e. no need to have a write
+> access to this inode).
+> 
+> Add dedicated BPF functions to handle this type of map:
+> * bpf_inode_htab_map_update_elem()
+> * bpf_inode_htab_map_lookup_elem()
+> * bpf_inode_htab_map_delete_elem()
+> 
+> This new map require a dedicated helper inode_map_lookup_elem() because
+> of the key which is a pointer to an opaque data (only provided by the
+> kernel).  This act like a (physical or cryptographic) key, which is why
+> it is also not allowed to get the next key.
+> 
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+
+there are too many things to comment on.
+Let's do this patch.
+
+imo inode_map concept is interesting, but see below...
+
+> +
+> +	/*
+> +	 * Limit number of entries in an inode map to the maximum number of
+> +	 * open files for the current process. The maximum number of file
+> +	 * references (including all inode maps) for a process is then
+> +	 * (RLIMIT_NOFILE - 1) * RLIMIT_NOFILE. If the process' RLIMIT_NOFILE
+> +	 * is 0, then any entry update is forbidden.
+> +	 *
+> +	 * An eBPF program can inherit all the inode map FD. The worse case is
+> +	 * to fill a bunch of arraymaps, create an eBPF program, close the
+> +	 * inode map FDs, and start again. The maximum number of inode map
+> +	 * entries can then be close to RLIMIT_NOFILE^3.
+> +	 */
+> +	if (attr->max_entries > rlimit(RLIMIT_NOFILE))
+> +		return -EMFILE;
+
+rlimit is checked, but no fd are consumed.
+Once created such inode map_fd can be passed to a different process.
+map_fd can be pinned into bpffs.
+etc.
+what the value of the check?
+
+> +
+> +	/* decorelate UAPI from kernel API */
+> +	attr->key_size = sizeof(struct inode *);
+> +
+> +	return htab_map_alloc_check(attr);
+> +}
+> +
+> +static void inode_htab_put_key(void *key)
+> +{
+> +	struct inode **inode = key;
+> +
+> +	if ((*inode)->i_state & I_FREEING)
+> +		return;
+
+checking the state without take a lock? isn't it racy?
+
+> +	iput(*inode);
+> +}
+> +
+> +/* called from syscall or (never) from eBPF program */
+> +static int map_get_next_no_key(struct bpf_map *map, void *key, void *next_key)
+> +{
+> +	/* do not leak a file descriptor */
+
+what this comment suppose to mean?
+
+> +	return -ENOTSUPP;
+> +}
+> +
+> +/* must call iput(inode) after this call */
+> +static struct inode *inode_from_fd(int ufd, bool check_access)
+> +{
+> +	struct inode *ret;
+> +	struct fd f;
+> +	int deny;
+> +
+> +	f = fdget(ufd);
+> +	if (unlikely(!f.file))
+> +		return ERR_PTR(-EBADF);
+> +	/* TODO?: add this check when called from an eBPF program too (already
+> +	* checked by the LSM parent hooks anyway) */
+> +	if (unlikely(IS_PRIVATE(file_inode(f.file)))) {
+> +		ret = ERR_PTR(-EINVAL);
+> +		goto put_fd;
+> +	}
+> +	/* check if the FD is tied to a mount point */
+> +	/* TODO?: add this check when called from an eBPF program too */
+> +	if (unlikely(f.file->f_path.mnt->mnt_flags & MNT_INTERNAL)) {
+> +		ret = ERR_PTR(-EINVAL);
+> +		goto put_fd;
+> +	}
+
+a bunch of TODOs do not inspire confidence.
+
+> +	if (check_access) {
+> +		/*
+> +		* must be allowed to access attributes from this file to then
+> +		* be able to compare an inode to its map entry
+> +		*/
+> +		deny = security_inode_getattr(&f.file->f_path);
+> +		if (deny) {
+> +			ret = ERR_PTR(deny);
+> +			goto put_fd;
+> +		}
+> +	}
+> +	ret = file_inode(f.file);
+> +	ihold(ret);
+> +
+> +put_fd:
+> +	fdput(f);
+> +	return ret;
+> +}
+> +
+> +/*
+> + * The key is a FD when called from a syscall, but an inode address when called
+> + * from an eBPF program.
+> + */
+> +
+> +/* called from syscall */
+> +int bpf_inode_fd_htab_map_lookup_elem(struct bpf_map *map, int *key, void *value)
+> +{
+> +	void *ptr;
+> +	struct inode *inode;
+> +	int ret;
+> +
+> +	/* check inode access */
+> +	inode = inode_from_fd(*key, true);
+> +	if (IS_ERR(inode))
+> +		return PTR_ERR(inode);
+> +
+> +	rcu_read_lock();
+> +	ptr = htab_map_lookup_elem(map, &inode);
+> +	iput(inode);
+> +	if (IS_ERR(ptr)) {
+> +		ret = PTR_ERR(ptr);
+> +	} else if (!ptr) {
+> +		ret = -ENOENT;
+> +	} else {
+> +		ret = 0;
+> +		copy_map_value(map, value, ptr);
+> +	}
+> +	rcu_read_unlock();
+> +	return ret;
+> +}
+> +
+> +/* called from kernel */
+
+wrong comment?
+kernel side cannot call it, right?
+
+> +int bpf_inode_ptr_locked_htab_map_delete_elem(struct bpf_map *map,
+> +		struct inode **key, bool remove_in_inode)
+> +{
+> +	if (remove_in_inode)
+> +		landlock_inode_remove_map(*key, map);
+> +	return htab_map_delete_elem(map, key);
+> +}
+> +
+> +/* called from syscall */
+> +int bpf_inode_fd_htab_map_delete_elem(struct bpf_map *map, int *key)
+> +{
+> +	struct inode *inode;
+> +	int ret;
+> +
+> +	/* do not check inode access (similar to directory check) */
+> +	inode = inode_from_fd(*key, false);
+> +	if (IS_ERR(inode))
+> +		return PTR_ERR(inode);
+> +	ret = bpf_inode_ptr_locked_htab_map_delete_elem(map, &inode, true);
+> +	iput(inode);
+> +	return ret;
+> +}
+> +
+> +/* called from syscall */
+> +int bpf_inode_fd_htab_map_update_elem(struct bpf_map *map, int *key, void *value,
+> +		u64 map_flags)
+> +{
+> +	struct inode *inode;
+> +	int ret;
+> +
+> +	WARN_ON_ONCE(!rcu_read_lock_held());
+> +
+> +	/* check inode access */
+> +	inode = inode_from_fd(*key, true);
+> +	if (IS_ERR(inode))
+> +		return PTR_ERR(inode);
+> +	ret = htab_map_update_elem(map, &inode, value, map_flags);
+> +	if (!ret)
+> +		ret = landlock_inode_add_map(inode, map);
+> +	iput(inode);
+> +	return ret;
+> +}
+> +
+> +static void inode_htab_map_free(struct bpf_map *map)
+> +{
+> +	struct bpf_htab *htab = container_of(map, struct bpf_htab, map);
+> +	struct hlist_nulls_node *n;
+> +	struct hlist_nulls_head *head;
+> +	struct htab_elem *l;
+> +	int i;
+> +
+> +	for (i = 0; i < htab->n_buckets; i++) {
+> +		head = select_bucket(htab, i);
+> +		hlist_nulls_for_each_entry_safe(l, n, head, hash_node) {
+> +			landlock_inode_remove_map(*((struct inode **)l->key), map);
+> +		}
+> +	}
+> +	htab_map_free(map);
+> +}
+
+user space can delete the map.
+that will trigger inode_htab_map_free() which will call
+landlock_inode_remove_map().
+which will simply itereate the list and delete from the list.
+
+While in parallel inode can be destoyed and hook_inode_free_security()
+will be called.
+I think nothing that protects from this race.
+
+> +
+> +/*
+> + * We need a dedicated helper to deal with inode maps because the key is a
+> + * pointer to an opaque data, only provided by the kernel.  This really act
+> + * like a (physical or cryptographic) key, which is why it is also not allowed
+> + * to get the next key with map_get_next_key().
+
+inode pointer is like cryptographic key? :)
+
+> + */
+> +BPF_CALL_2(bpf_inode_map_lookup_elem, struct bpf_map *, map, void *, key)
+> +{
+> +	WARN_ON_ONCE(!rcu_read_lock_held());
+> +	return (unsigned long)htab_map_lookup_elem(map, &key);
+> +}
+> +
+> +const struct bpf_func_proto bpf_inode_map_lookup_elem_proto = {
+> +	.func		= bpf_inode_map_lookup_elem,
+> +	.gpl_only	= false,
+> +	.pkt_access	= true,
+
+pkt_access ? :)
+
+> +	.ret_type	= RET_PTR_TO_MAP_VALUE_OR_NULL,
+> +	.arg1_type	= ARG_CONST_MAP_PTR,
+> +	.arg2_type	= ARG_PTR_TO_INODE,
+> +};
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index b2a8cb14f28e..e46441c42b68 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -801,6 +801,8 @@ static int map_lookup_elem(union bpf_attr *attr)
+>  	} else if (map->map_type == BPF_MAP_TYPE_QUEUE ||
+>  		   map->map_type == BPF_MAP_TYPE_STACK) {
+>  		err = map->ops->map_peek_elem(map, value);
+> +	} else if (map->map_type == BPF_MAP_TYPE_INODE) {
+> +		err = bpf_inode_fd_htab_map_lookup_elem(map, key, value);
+>  	} else {
+>  		rcu_read_lock();
+>  		if (map->ops->map_lookup_elem_sys_only)
+> @@ -951,6 +953,10 @@ static int map_update_elem(union bpf_attr *attr)
+>  	} else if (map->map_type == BPF_MAP_TYPE_QUEUE ||
+>  		   map->map_type == BPF_MAP_TYPE_STACK) {
+>  		err = map->ops->map_push_elem(map, value, attr->flags);
+> +	} else if (map->map_type == BPF_MAP_TYPE_INODE) {
+> +		rcu_read_lock();
+> +		err = bpf_inode_fd_htab_map_update_elem(map, key, value, attr->flags);
+> +		rcu_read_unlock();
+>  	} else {
+>  		rcu_read_lock();
+>  		err = map->ops->map_update_elem(map, key, value, attr->flags);
+> @@ -1006,7 +1012,10 @@ static int map_delete_elem(union bpf_attr *attr)
+>  	preempt_disable();
+>  	__this_cpu_inc(bpf_prog_active);
+>  	rcu_read_lock();
+> -	err = map->ops->map_delete_elem(map, key);
+> +	if (map->map_type == BPF_MAP_TYPE_INODE)
+> +		err = bpf_inode_fd_htab_map_delete_elem(map, key);
+> +	else
+> +		err = map->ops->map_delete_elem(map, key);
+>  	rcu_read_unlock();
+>  	__this_cpu_dec(bpf_prog_active);
+>  	preempt_enable();
+> @@ -1018,6 +1027,22 @@ static int map_delete_elem(union bpf_attr *attr)
+>  	return err;
+>  }
+>  
+> +int bpf_inode_ptr_unlocked_htab_map_delete_elem(struct bpf_map *map,
+> +						struct inode **key, bool remove_in_inode)
+> +{
+> +	int err;
+> +
+> +	preempt_disable();
+> +	__this_cpu_inc(bpf_prog_active);
+> +	rcu_read_lock();
+> +	err = bpf_inode_ptr_locked_htab_map_delete_elem(map, key, remove_in_inode);
+> +	rcu_read_unlock();
+> +	__this_cpu_dec(bpf_prog_active);
+> +	preempt_enable();
+> +	maybe_wait_bpf_programs(map);
+
+if that function was actually doing synchronize_rcu() the consequences
+would have been unpleasant. Fortunately it's a nop in this case.
+Please read the code carefully before copy-paste.
+Also what do you think the reason of bpf_prog_active above?
+What is the reason of rcu_read_lock above?
+
+I think the patch set needs to shrink at least in half to be reviewable.
+The way you tie seccomp and lsm is probably the biggest obstacle
+than any of the bugs above.
+Can you drop seccomp ? and do it as normal lsm ?
+
