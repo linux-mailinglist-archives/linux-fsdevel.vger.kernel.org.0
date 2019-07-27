@@ -2,71 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DA6F77AB7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 19:16:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B232E77BDC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 22:40:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387910AbfG0RQ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jul 2019 13:16:58 -0400
-Received: from dcvr.yhbt.net ([64.71.152.64]:60662 "EHLO dcvr.yhbt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387823AbfG0RQ6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jul 2019 13:16:58 -0400
-Received: from localhost (dcvr.yhbt.net [127.0.0.1])
-        by dcvr.yhbt.net (Postfix) with ESMTP id E65BA1F462;
-        Sat, 27 Jul 2019 17:16:57 +0000 (UTC)
-Date:   Sat, 27 Jul 2019 17:16:57 +0000
-From:   Eric Wong <e@80x24.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Roman Penyaev <rpenyaev@suse.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Azat Khuzhin <azat@libevent.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/14] epoll: support pollable epoll from userspace
-Message-ID: <20190727171657.cisalgn3wfs5opyi@dcvr>
-References: <20190611145458.9540-1-rpenyaev@suse.de>
- <20190726162208.0a9a244d41d9384fb94d9210@linux-foundation.org>
+        id S2388351AbfG0UkY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jul 2019 16:40:24 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36903 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387893AbfG0UkY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 27 Jul 2019 16:40:24 -0400
+Received: from callcc.thunk.org (96-72-84-49-static.hfc.comcastbusiness.net [96.72.84.49] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x6RKdtcc013261
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 27 Jul 2019 16:39:57 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id B45954202F5; Sat, 27 Jul 2019 16:39:54 -0400 (EDT)
+Date:   Sat, 27 Jul 2019 16:39:54 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v7 10/17] fs-verity: implement FS_IOC_ENABLE_VERITY ioctl
+Message-ID: <20190727203954.GB1499@mit.edu>
+References: <20190722165101.12840-1-ebiggers@kernel.org>
+ <20190722165101.12840-11-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190726162208.0a9a244d41d9384fb94d9210@linux-foundation.org>
+In-Reply-To: <20190722165101.12840-11-ebiggers@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Andrew Morton <akpm@linux-foundation.org> wrote:
-> On Tue, 11 Jun 2019 16:54:44 +0200 Roman Penyaev <rpenyaev@suse.de> wrote:
-> > In order to measure polling from userspace libevent was modified [1] and
-> > bench_http benchmark (client and server) was used:
-> > 
-> >  o EPOLLET, original epoll:
-> > 
-> >     20000 requests in 0.551306 sec. (36277.49 throughput)
-> >     Each took about 5.54 msec latency
-> >     1600000bytes read. 0 errors.
-> > 
-> >  o EPOLLET + polling from userspace:
-> > 
-> >     20000 requests in 0.475585 sec. (42053.47 throughput)
-> >     Each took about 4.78 msec latency
-> >     1600000bytes read. 0 errors.
+On Mon, Jul 22, 2019 at 09:50:54AM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> It would be useful to include some words which describe the
-> significance of this to real-world userspace.  If a real application is
-> sped up 0.000000001% then this isn't very exciting ;)
+> Add a function for filesystems to call to implement the
+> FS_IOC_ENABLE_VERITY ioctl.  This ioctl enables fs-verity on a file.
+> 
+> See the "FS_IOC_ENABLE_VERITY" section of
+> Documentation/filesystems/fsverity.rst for the documentation.
+> 
+> Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Agreed.  I've put my wfcqueue changes from years back on hold
-because I couldn't show a meaningful improvement in real-world
-cases: https://lore.kernel.org/lkml/20130401183118.GA9968@dcvr.yhbt.net/
+Looks good.  You can add:
 
-Roman's changes have me interested in seeing how my previous
-changes would stack up (no UAPI changes required).
-I've been looking for time to forward port my wfcqueue work
-to the current kernel (but public-inbox takes priority;
-not that I have much time for that).
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 
-On the userspace side; I'm not sure any widely-used open source
-project is really impacted by epoll performance...
-Most everybody seems to use level-trigger :<
+						- Ted
