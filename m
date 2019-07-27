@@ -2,228 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E9C2775D0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 04:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16453775EF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 04:23:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbfG0CAm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jul 2019 22:00:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726115AbfG0CAl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jul 2019 22:00:41 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C83D021721;
-        Sat, 27 Jul 2019 02:00:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564192840;
-        bh=eocXck03GHQIk/hNB7RnYiyfUeapaR8oyLrNQREir7I=;
-        h=Date:From:To:Subject:From;
-        b=a0BC4ZdH7ac6YTk70U5wJUTtdsr98BAUDHtOnkv4jMT09SYHfagiIvBDBA8/51Po4
-         X4he54pwqIAiOa+PRN8DBMUE7zJOVImbeDpEV8WKYu0VlcA8Fvkb03DYucV2llmfhR
-         3MLnl5cjzDZdqrRyGlrn9Ov8VuGd3aD3J4qSkbkY=
-Date:   Fri, 26 Jul 2019 19:00:39 -0700
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2019-07-26-19-00 uploaded
-Message-ID: <20190727020039.N6neVVHva%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S1728086AbfG0CXu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jul 2019 22:23:50 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:50082 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728033AbfG0CXt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Jul 2019 22:23:49 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hrCN7-0003zA-HP; Sat, 27 Jul 2019 02:23:45 +0000
+Date:   Sat, 27 Jul 2019 03:23:45 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christian Brauner <christian@brauner.io>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: Regression in 5.3 for some FS_USERNS_MOUNT (aka
+ user-namespace-mountable) filesystems
+Message-ID: <20190727022345.GN1131@ZenIV.linux.org.uk>
+References: <20190726115956.ifj5j4apn3tmwk64@brauner.io>
+ <CAHk-=wgK254RkZg9oAv+Wt4V9zqYJMm3msTofvTUfA9dJw6piQ@mail.gmail.com>
+ <20190726232220.GM1131@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190726232220.GM1131@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2019-07-26-19-00 has been uploaded to
+On Sat, Jul 27, 2019 at 12:22:20AM +0100, Al Viro wrote:
+> On Fri, Jul 26, 2019 at 03:47:02PM -0700, Linus Torvalds wrote:
+> 
+> > Of course, then later on, commit 20284ab7427f ("switch mount_capable()
+> > to fs_context") drops that argument entirely, and hardcodes the
+> > decision to look at fc->global.
+> > 
+> > But that fc->global decision wasn't there originally, and is incorrect
+> > since it breaks existing users.
+> > 
+> > What gets much more confusing about this is that the two different
+> > users then moved around. The sget_userns() case got moved to
+> > legacy_get_tree(), and then joined together in vfs_get_tree(), and
+> > then split and moved out to do_new_mount() and vfs_fsconfig_locked().
+> > 
+> > And that "joined together into vfs_get_tree()" must be wrong, because
+> > the two cases used two different namespace rules. The sget_userns()
+> > case *did* have that "global" flag check, while the sget_fc() did not.
+> > 
+> > Messy. Al?
+> 
+> Digging through that mess...  It's my fuckup, and we obviously need to
+> restore the old behaviour, but I really hope to manage that with
+> checks _not_ in superblock allocator ;-/
 
-   http://www.ozlabs.org/~akpm/mmotm/
+It shouldn't have looked at fc->global for those checks.  In any cases.
+sget_fc() should indeed have been passing fc->user_ns, not userns.
+And as for sget_userns(), by the time of 20284ab7427f
+its checks had been moved to legacy_get_tree().  In form of
+	if (!mount_capable(fc->fs_type, fc->user_ns))
+as it bloody well ought to.
 
-mmotm-readme.txt says
+So the first mistake (wrong argument passed to mount_capable() by sget_fc()
+in 0ce0cf12fc4c) has been completed by 20284ab7427f - that conversion was,
+actually, an equivalent transformation (callers of legacy_get_tree() never
+have fc->global set, so it's all the same).  However, the bug introduced in
+the earlier commit was now spelled out in mount_capable() itself.
 
-README for mm-of-the-moment:
+IOW, the minimal fix should be as below.  In principle, I'm not against
+Eric's "add a method instead of setting FS_USERNS_MOUNT", but note that
+in *all* cases the instances of his method end up being equivalent to
+	return ns_capable(fc->user_ns, CAP_SYS_ADMIN) ? 0 : -EPERM;
 
-http://www.ozlabs.org/~akpm/mmotm/
+Anyway, AFAICS the regression fix should be simply this:
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+Unbreak mount_capable()
 
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+In "consolidate the capability checks in sget_{fc,userns}())" the
+wrong argument had been passed to mount_capable() by sget_fc().
+That mistake had been further obscured later, when switching
+mount_capable() to fs_context has moved the calculation of
+bogus argument from sget_fc() to mount_capable() itself.  It
+should've been fc->user_ns all along.
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+Screwed-up-by: Al Viro <viro@zeniv.linux.org.uk>
+Reported-by: Christian Brauner <christian@brauner.io>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/fs/super.c b/fs/super.c
+index 113c58f19425..5960578a4076 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -478,13 +478,10 @@ EXPORT_SYMBOL(generic_shutdown_super);
+ 
+ bool mount_capable(struct fs_context *fc)
+ {
+-	struct user_namespace *user_ns = fc->global ? &init_user_ns
+-						    : fc->user_ns;
+-
+ 	if (!(fc->fs_type->fs_flags & FS_USERNS_MOUNT))
+ 		return capable(CAP_SYS_ADMIN);
+ 	else
+-		return ns_capable(user_ns, CAP_SYS_ADMIN);
++		return ns_capable(fc->user_ns, CAP_SYS_ADMIN);
+ }
+ 
+ /**
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 5.3-rc1:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* docs-signal-fix-a-kernel-doc-markup.patch
-* revert-kmemleak-allow-to-coexist-with-fault-injection.patch
-* ocfs2-remove-set-but-not-used-variable-last_hash.patch
-* mm-vmscan-check-if-mem-cgroup-is-disabled-or-not-before-calling-memcg-slab-shrinker.patch
-* mm-migrate-fix-reference-check-race-between-__find_get_block-and-migration.patch
-* mm-compaction-avoid-100%-cpu-usage-during-compaction-when-a-task-is-killed.patch
-* kasan-remove-clang-version-check-for-kasan_stack.patch
-* ubsan-build-ubsanc-more-conservatively.patch
-* page-flags-prioritize-kasan-bits-over-last-cpuid.patch
-* page-flags-prioritize-kasan-bits-over-last-cpuid-fix.patch
-* coredump-split-pipe-command-whitespace-before-expanding-template.patch
-* mm-migrate-initialize-pud_entry-in-migrate_vma.patch
-* mm-hotplug-remove-unneeded-return-for-void-function.patch
-* cgroup-kselftest-relax-fs_spec-checks.patch
-* asm-generic-fix-wtype-limits-compiler-warnings.patch
-* asm-generic-fix-wtype-limits-compiler-warnings-fix.patch
-* asm-generic-fix-wtype-limits-compiler-warnings-v2.patch
-* test_meminit-use-gfp_atomic-in-rcu-critical-section.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* mm-document-zone-device-struct-page-field-usage.patch
-* mm-hmm-fix-zone_device-anon-page-mapping-reuse.patch
-* mm-hmm-fix-bad-subpage-pointer-in-try_to_unmap_one.patch
-* mm-hmm-fix-bad-subpage-pointer-in-try_to_unmap_one-v3.patch
-* acpi-scan-acquire-device_hotplug_lock-in-acpi_scan_init.patch
-* mm-mempolicy-make-the-behavior-consistent-when-mpol_mf_move-and-mpol_mf_strict-were-specified.patch
-* mm-mempolicy-make-the-behavior-consistent-when-mpol_mf_move-and-mpol_mf_strict-were-specified-v4.patch
-* mm-mempolicy-handle-vma-with-unmovable-pages-mapped-correctly-in-mbind.patch
-* mm-mempolicy-handle-vma-with-unmovable-pages-mapped-correctly-in-mbind-v4.patch
-* mm-z3foldc-fix-z3fold_destroy_pool-ordering.patch
-* mm-z3foldc-fix-z3fold_destroy_pool-race-condition.patch
-* kbuild-clean-compressed-initramfs-image.patch
-* ocfs2-use-jbd2_inode-dirty-range-scoping.patch
-* jbd2-remove-jbd2_journal_inode_add_.patch
-* ocfs2-clear-zero-in-unaligned-direct-io.patch
-* ocfs2-clear-zero-in-unaligned-direct-io-checkpatch-fixes.patch
-* ocfs2-wait-for-recovering-done-after-direct-unlock-request.patch
-* ocfs2-checkpoint-appending-truncate-log-transaction-before-flushing.patch
-* ramfs-support-o_tmpfile.patch
-  mm.patch
-* mm-slab-extend-slab-shrink-to-shrink-all-memcg-caches.patch
-* mm-slab-move-memcg_cache_params-structure-to-mm-slabh.patch
-* memremap-move-from-kernel-to-mm.patch
-* mm-page_poison-fix-a-typo-in-a-comment.patch
-* mm-rmapc-remove-set-but-not-used-variable-cstart.patch
-* mm-introduce-page_size.patch
-* mm-introduce-page_shift.patch
-* mm-introduce-page_shift-fix.patch
-* mm-introduce-compound_nr.patch
-* mm-replace-list_move_tail-with-add_page_to_lru_list_tail.patch
-* mm-filemap-rewrite-mapping_needs_writeback-in-less-fancy-manner.patch
-* mm-throttle-allocators-when-failing-reclaim-over-memoryhigh.patch
-* mm-throttle-allocators-when-failing-reclaim-over-memoryhigh-fix.patch
-* mm-throttle-allocators-when-failing-reclaim-over-memoryhigh-fix-fix.patch
-* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
-* mm-gup-add-make_dirty-arg-to-put_user_pages_dirty_lock.patch
-* drivers-gpu-drm-via-convert-put_page-to-put_user_page.patch
-* net-xdp-convert-put_page-to-put_user_page.patch
-* mm-remove-redundant-assignment-of-entry.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* mm-memory_hotplug-remove-move_pfn_range.patch
-* mm-memory_hotplug-remove-move_pfn_range-fix.patch
-* drivers-base-nodec-simplify-unregister_memory_block_under_nodes.patch
-* mm-sparse-fix-memory-leak-of-sparsemap_buf-in-aliged-memory.patch
-* mm-sparse-fix-memory-leak-of-sparsemap_buf-in-aliged-memory-fix.patch
-* mm-sparse-fix-align-without-power-of-2-in-sparse_buffer_alloc.patch
-* mm-vmalloc-do-not-keep-unpurged-areas-in-the-busy-tree.patch
-* mm-vmalloc-modify-struct-vmap_area-to-reduce-its-size.patch
-* mm-compaction-clear-total_migratefree_scanned-before-scanning-a-new-zone.patch
-* mm-compaction-clear-total_migratefree_scanned-before-scanning-a-new-zone-fix.patch
-* mm-compaction-clear-total_migratefree_scanned-before-scanning-a-new-zone-fix-fix.patch
-* mm-compaction-clear-total_migratefree_scanned-before-scanning-a-new-zone-fix-2.patch
-* mm-compaction-clear-total_migratefree_scanned-before-scanning-a-new-zone-fix-2-fix.patch
-* mm-oom-avoid-printk-iteration-under-rcu.patch
-* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
-* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill.patch
-* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill-fix.patch
-* mm-move-memcmp_pages-and-pages_identical.patch
-* uprobe-use-original-page-when-all-uprobes-are-removed.patch
-* mm-thp-introduce-foll_split_pmd.patch
-* uprobe-use-foll_split_pmd-instead-of-foll_split.patch
-* psi-annotate-refault-stalls-from-io-submission.patch
-* psi-annotate-refault-stalls-from-io-submission-fix.patch
-* psi-annotate-refault-stalls-from-io-submission-fix-2.patch
-* mm-introduce-madv_cold.patch
-* mm-change-pageref_reclaim_clean-with-page_refreclaim.patch
-* mm-account-nr_isolated_xxx-in-_lru_page.patch
-* mm-introduce-madv_pageout.patch
-* mm-factor-out-common-parts-between-madv_cold-and-madv_pageout.patch
-* zpool-add-malloc_support_movable-to-zpool_driver.patch
-* zswap-use-movable-memory-if-zpool-support-allocate-movable-memory.patch
-* mm-proportional-memorylowmin-reclaim.patch
-* mm-make-memoryemin-the-baseline-for-utilisation-determination.patch
-* mm-make-memoryemin-the-baseline-for-utilisation-determination-fix.patch
-* mm-vmscan-remove-unused-lru_pages-argument.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* hung_task-allow-printing-warnings-every-check-interval.patch
-* rbtree-sync-up-the-tools-copy-of-the-code-with-the-main-one.patch
-* augmented-rbtree-add-comments-for-rb_declare_callbacks-macro.patch
-* augmented-rbtree-add-new-rb_declare_callbacks_max-macro.patch
-* augmented-rbtree-add-new-rb_declare_callbacks_max-macro-fix.patch
-* augmented-rbtree-add-new-rb_declare_callbacks_max-macro-fix-2.patch
-* augmented-rbtree-rework-the-rb_declare_callbacks-macro-definition.patch
-* lib-genallocc-export-symbol-addr_in_gen_pool.patch
-* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr.patch
-* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr-fix.patch
-* string-add-stracpy-and-stracpy_pad-mechanisms.patch
-* kernel-doc-core-api-include-stringh-into-core-api.patch
-* kernel-doc-core-api-include-stringh-into-core-api-v2.patch
-* writeback-fix-wstringop-truncation-warnings.patch
-* strscpy-reject-buffer-sizes-larger-than-int_max.patch
-* lib-fix-possible-incorrect-result-from-rational-fractions-helper.patch
-* checkpatch-dont-interpret-stack-dumps-as-commit-ids.patch
-* checkpatch-improve-spdx-license-checking.patch
-* checkpatchpl-warn-on-invalid-commit-id.patch
-* checkpatch-add-_notifier_head-as-var-definition.patch
-* fat-add-nobarrier-to-workaround-the-strange-behavior-of-device.patch
-* cpumask-nicer-for_each_cpumask_and-signature.patch
-* kexec-bail-out-upon-sigkill-when-allocating-memory.patch
-* aio-simplify-read_events.patch
-* kgdb-dont-use-a-notifier-to-enter-kgdb-at-panic-call-directly.patch
-* ipc-consolidate-all-xxxctl_down-functions.patch
-  linux-next.patch
-  linux-next-git-rejects.patch
-  diff-sucks.patch
-* pinctrl-fix-pxa2xxc-build-warnings.patch
-* mm-treewide-clarify-pgtable_page_ctordtor-naming.patch
-* drivers-tty-serial-sh-scic-suppress-warning.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
