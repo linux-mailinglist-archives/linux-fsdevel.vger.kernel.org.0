@@ -2,416 +2,228 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5822775AB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 03:41:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E9C2775D0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 04:00:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfG0Bky (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jul 2019 21:40:54 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45984 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbfG0Bky (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jul 2019 21:40:54 -0400
-Received: by mail-pg1-f194.google.com with SMTP id o13so25531341pgp.12;
-        Fri, 26 Jul 2019 18:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=gK35F/yyyAGVAhDCeXp9WzvvG/sG2XiEcs/uV4YadWQ=;
-        b=LFVyyOjfNHS5klS8qdwlzS4nlK50X8hlkagr8LMzc/jV9zfcPf4cOen+5zHp4Tqm+p
-         qDI6j9lBnC+tgufQduGMWfWJA5ZNNv1Zf7/dibwt7LKluGEjk85yTQBeeTxXFXj6nbYV
-         NT3q35KGzXjUKF6B2+cCK5t65hrg0ok5w6KpWbHMHlrBlJ0YC+c0apMVvixIu+Kw4295
-         jmsN2sbEdyTRYqU0UWPsk40yMYuDK/xW2q817rNs/Zup4cLvopBeVDczhLmFOlgtuDSF
-         AN04Ei7iPrlm6VdrHjVV/ARocEADLTQHgQo1+0mhRgvXBpqJSQv+aaLejP7VGpgJoriB
-         O1cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=gK35F/yyyAGVAhDCeXp9WzvvG/sG2XiEcs/uV4YadWQ=;
-        b=qZgEYpXJ6BIy5VhMtxveddgTPwtWiGvEfh9AydsEzwfnSdXkFA2H05fubJu+UQ+ctO
-         YTjF6V8vYhG5ai2p9O/tSLJ+meG7UnorjYUYMdYjMC8ityIx7tloNJXq9ZeTUuLUDxTe
-         e+iAQoTq95XSjOvkVBaW7mTcHh63LEWIintdRab02r9gie+4eTd6gVFSmD5kSSXtjgCL
-         1bvz7B9W/zXh2pKGdYVNSAqcH0c7OEQ2K36AQ0hj3VWLcwneTi+KGAAbao8yrvTXiZzn
-         u5VvYu42mYP9iaNT7VOqfGw//JogT+drx1e4QFJ1/Fpsf+RbtJTh4rhGQuQOuBm180Is
-         2hQw==
-X-Gm-Message-State: APjAAAXpRHSJ6PhY99+tuire7vAy3fYoNqK+UuFDzaElgMCv4c7qTwYg
-        gasdg9BZHSnbsjAnoJGQgb4=
-X-Google-Smtp-Source: APXvYqzzDzj6NQHlQ79JDLA4ABdSdbB/e7wCK4Qm80OR/rDXBPszVKWLf1Y0e+y3qWjFWx3BKK2zzg==
-X-Received: by 2002:a63:5754:: with SMTP id h20mr53429148pgm.195.1564191652726;
-        Fri, 26 Jul 2019 18:40:52 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::2:2eeb])
-        by smtp.gmail.com with ESMTPSA id t26sm42188028pgu.43.2019.07.26.18.40.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Jul 2019 18:40:51 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 18:40:50 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v10 06/10] bpf,landlock: Add a new map type:
- inode
-Message-ID: <20190727014048.3czy3n2hi6hfdy3m@ast-mbp.dhcp.thefacebook.com>
-References: <20190721213116.23476-1-mic@digikod.net>
- <20190721213116.23476-7-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190721213116.23476-7-mic@digikod.net>
-User-Agent: NeoMutt/20180223
+        id S1727474AbfG0CAm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jul 2019 22:00:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52688 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726115AbfG0CAl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Jul 2019 22:00:41 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C83D021721;
+        Sat, 27 Jul 2019 02:00:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564192840;
+        bh=eocXck03GHQIk/hNB7RnYiyfUeapaR8oyLrNQREir7I=;
+        h=Date:From:To:Subject:From;
+        b=a0BC4ZdH7ac6YTk70U5wJUTtdsr98BAUDHtOnkv4jMT09SYHfagiIvBDBA8/51Po4
+         X4he54pwqIAiOa+PRN8DBMUE7zJOVImbeDpEV8WKYu0VlcA8Fvkb03DYucV2llmfhR
+         3MLnl5cjzDZdqrRyGlrn9Ov8VuGd3aD3J4qSkbkY=
+Date:   Fri, 26 Jul 2019 19:00:39 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject:  mmotm 2019-07-26-19-00 uploaded
+Message-ID: <20190727020039.N6neVVHva%akpm@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 21, 2019 at 11:31:12PM +0200, Mickaël Salaün wrote:
-> FIXME: 64-bits in the doc
-> 
-> This new map store arbitrary values referenced by inode keys.  The map
-> can be updated from user space with file descriptor pointing to inodes
-> tied to a file system.  From an eBPF (Landlock) program point of view,
-> such a map is read-only and can only be used to retrieved a value tied
-> to a given inode.  This is useful to recognize an inode tagged by user
-> space, without access right to this inode (i.e. no need to have a write
-> access to this inode).
-> 
-> Add dedicated BPF functions to handle this type of map:
-> * bpf_inode_htab_map_update_elem()
-> * bpf_inode_htab_map_lookup_elem()
-> * bpf_inode_htab_map_delete_elem()
-> 
-> This new map require a dedicated helper inode_map_lookup_elem() because
-> of the key which is a pointer to an opaque data (only provided by the
-> kernel).  This act like a (physical or cryptographic) key, which is why
-> it is also not allowed to get the next key.
-> 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+The mm-of-the-moment snapshot 2019-07-26-19-00 has been uploaded to
 
-there are too many things to comment on.
-Let's do this patch.
+   http://www.ozlabs.org/~akpm/mmotm/
 
-imo inode_map concept is interesting, but see below...
+mmotm-readme.txt says
 
-> +
-> +	/*
-> +	 * Limit number of entries in an inode map to the maximum number of
-> +	 * open files for the current process. The maximum number of file
-> +	 * references (including all inode maps) for a process is then
-> +	 * (RLIMIT_NOFILE - 1) * RLIMIT_NOFILE. If the process' RLIMIT_NOFILE
-> +	 * is 0, then any entry update is forbidden.
-> +	 *
-> +	 * An eBPF program can inherit all the inode map FD. The worse case is
-> +	 * to fill a bunch of arraymaps, create an eBPF program, close the
-> +	 * inode map FDs, and start again. The maximum number of inode map
-> +	 * entries can then be close to RLIMIT_NOFILE^3.
-> +	 */
-> +	if (attr->max_entries > rlimit(RLIMIT_NOFILE))
-> +		return -EMFILE;
+README for mm-of-the-moment:
 
-rlimit is checked, but no fd are consumed.
-Once created such inode map_fd can be passed to a different process.
-map_fd can be pinned into bpffs.
-etc.
-what the value of the check?
+http://www.ozlabs.org/~akpm/mmotm/
 
-> +
-> +	/* decorelate UAPI from kernel API */
-> +	attr->key_size = sizeof(struct inode *);
-> +
-> +	return htab_map_alloc_check(attr);
-> +}
-> +
-> +static void inode_htab_put_key(void *key)
-> +{
-> +	struct inode **inode = key;
-> +
-> +	if ((*inode)->i_state & I_FREEING)
-> +		return;
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-checking the state without take a lock? isn't it racy?
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
 
-> +	iput(*inode);
-> +}
-> +
-> +/* called from syscall or (never) from eBPF program */
-> +static int map_get_next_no_key(struct bpf_map *map, void *key, void *next_key)
-> +{
-> +	/* do not leak a file descriptor */
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
-what this comment suppose to mean?
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
 
-> +	return -ENOTSUPP;
-> +}
-> +
-> +/* must call iput(inode) after this call */
-> +static struct inode *inode_from_fd(int ufd, bool check_access)
-> +{
-> +	struct inode *ret;
-> +	struct fd f;
-> +	int deny;
-> +
-> +	f = fdget(ufd);
-> +	if (unlikely(!f.file))
-> +		return ERR_PTR(-EBADF);
-> +	/* TODO?: add this check when called from an eBPF program too (already
-> +	* checked by the LSM parent hooks anyway) */
-> +	if (unlikely(IS_PRIVATE(file_inode(f.file)))) {
-> +		ret = ERR_PTR(-EINVAL);
-> +		goto put_fd;
-> +	}
-> +	/* check if the FD is tied to a mount point */
-> +	/* TODO?: add this check when called from an eBPF program too */
-> +	if (unlikely(f.file->f_path.mnt->mnt_flags & MNT_INTERNAL)) {
-> +		ret = ERR_PTR(-EINVAL);
-> +		goto put_fd;
-> +	}
 
-a bunch of TODOs do not inspire confidence.
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
 
-> +	if (check_access) {
-> +		/*
-> +		* must be allowed to access attributes from this file to then
-> +		* be able to compare an inode to its map entry
-> +		*/
-> +		deny = security_inode_getattr(&f.file->f_path);
-> +		if (deny) {
-> +			ret = ERR_PTR(deny);
-> +			goto put_fd;
-> +		}
-> +	}
-> +	ret = file_inode(f.file);
-> +	ihold(ret);
-> +
-> +put_fd:
-> +	fdput(f);
-> +	return ret;
-> +}
-> +
-> +/*
-> + * The key is a FD when called from a syscall, but an inode address when called
-> + * from an eBPF program.
-> + */
-> +
-> +/* called from syscall */
-> +int bpf_inode_fd_htab_map_lookup_elem(struct bpf_map *map, int *key, void *value)
-> +{
-> +	void *ptr;
-> +	struct inode *inode;
-> +	int ret;
-> +
-> +	/* check inode access */
-> +	inode = inode_from_fd(*key, true);
-> +	if (IS_ERR(inode))
-> +		return PTR_ERR(inode);
-> +
-> +	rcu_read_lock();
-> +	ptr = htab_map_lookup_elem(map, &inode);
-> +	iput(inode);
-> +	if (IS_ERR(ptr)) {
-> +		ret = PTR_ERR(ptr);
-> +	} else if (!ptr) {
-> +		ret = -ENOENT;
-> +	} else {
-> +		ret = 0;
-> +		copy_map_value(map, value, ptr);
-> +	}
-> +	rcu_read_unlock();
-> +	return ret;
-> +}
-> +
-> +/* called from kernel */
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
 
-wrong comment?
-kernel side cannot call it, right?
 
-> +int bpf_inode_ptr_locked_htab_map_delete_elem(struct bpf_map *map,
-> +		struct inode **key, bool remove_in_inode)
-> +{
-> +	if (remove_in_inode)
-> +		landlock_inode_remove_map(*key, map);
-> +	return htab_map_delete_elem(map, key);
-> +}
-> +
-> +/* called from syscall */
-> +int bpf_inode_fd_htab_map_delete_elem(struct bpf_map *map, int *key)
-> +{
-> +	struct inode *inode;
-> +	int ret;
-> +
-> +	/* do not check inode access (similar to directory check) */
-> +	inode = inode_from_fd(*key, false);
-> +	if (IS_ERR(inode))
-> +		return PTR_ERR(inode);
-> +	ret = bpf_inode_ptr_locked_htab_map_delete_elem(map, &inode, true);
-> +	iput(inode);
-> +	return ret;
-> +}
-> +
-> +/* called from syscall */
-> +int bpf_inode_fd_htab_map_update_elem(struct bpf_map *map, int *key, void *value,
-> +		u64 map_flags)
-> +{
-> +	struct inode *inode;
-> +	int ret;
-> +
-> +	WARN_ON_ONCE(!rcu_read_lock_held());
-> +
-> +	/* check inode access */
-> +	inode = inode_from_fd(*key, true);
-> +	if (IS_ERR(inode))
-> +		return PTR_ERR(inode);
-> +	ret = htab_map_update_elem(map, &inode, value, map_flags);
-> +	if (!ret)
-> +		ret = landlock_inode_add_map(inode, map);
-> +	iput(inode);
-> +	return ret;
-> +}
-> +
-> +static void inode_htab_map_free(struct bpf_map *map)
-> +{
-> +	struct bpf_htab *htab = container_of(map, struct bpf_htab, map);
-> +	struct hlist_nulls_node *n;
-> +	struct hlist_nulls_head *head;
-> +	struct htab_elem *l;
-> +	int i;
-> +
-> +	for (i = 0; i < htab->n_buckets; i++) {
-> +		head = select_bucket(htab, i);
-> +		hlist_nulls_for_each_entry_safe(l, n, head, hash_node) {
-> +			landlock_inode_remove_map(*((struct inode **)l->key), map);
-> +		}
-> +	}
-> +	htab_map_free(map);
-> +}
 
-user space can delete the map.
-that will trigger inode_htab_map_free() which will call
-landlock_inode_remove_map().
-which will simply itereate the list and delete from the list.
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
 
-While in parallel inode can be destoyed and hook_inode_free_security()
-will be called.
-I think nothing that protects from this race.
+A git copy of this tree is available at
 
-> +
-> +/*
-> + * We need a dedicated helper to deal with inode maps because the key is a
-> + * pointer to an opaque data, only provided by the kernel.  This really act
-> + * like a (physical or cryptographic) key, which is why it is also not allowed
-> + * to get the next key with map_get_next_key().
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
 
-inode pointer is like cryptographic key? :)
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
 
-> + */
-> +BPF_CALL_2(bpf_inode_map_lookup_elem, struct bpf_map *, map, void *, key)
-> +{
-> +	WARN_ON_ONCE(!rcu_read_lock_held());
-> +	return (unsigned long)htab_map_lookup_elem(map, &key);
-> +}
-> +
-> +const struct bpf_func_proto bpf_inode_map_lookup_elem_proto = {
-> +	.func		= bpf_inode_map_lookup_elem,
-> +	.gpl_only	= false,
-> +	.pkt_access	= true,
 
-pkt_access ? :)
+This mmotm tree contains the following patches against 5.3-rc1:
+(patches marked "*" will be included in linux-next)
 
-> +	.ret_type	= RET_PTR_TO_MAP_VALUE_OR_NULL,
-> +	.arg1_type	= ARG_CONST_MAP_PTR,
-> +	.arg2_type	= ARG_PTR_TO_INODE,
-> +};
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index b2a8cb14f28e..e46441c42b68 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -801,6 +801,8 @@ static int map_lookup_elem(union bpf_attr *attr)
->  	} else if (map->map_type == BPF_MAP_TYPE_QUEUE ||
->  		   map->map_type == BPF_MAP_TYPE_STACK) {
->  		err = map->ops->map_peek_elem(map, value);
-> +	} else if (map->map_type == BPF_MAP_TYPE_INODE) {
-> +		err = bpf_inode_fd_htab_map_lookup_elem(map, key, value);
->  	} else {
->  		rcu_read_lock();
->  		if (map->ops->map_lookup_elem_sys_only)
-> @@ -951,6 +953,10 @@ static int map_update_elem(union bpf_attr *attr)
->  	} else if (map->map_type == BPF_MAP_TYPE_QUEUE ||
->  		   map->map_type == BPF_MAP_TYPE_STACK) {
->  		err = map->ops->map_push_elem(map, value, attr->flags);
-> +	} else if (map->map_type == BPF_MAP_TYPE_INODE) {
-> +		rcu_read_lock();
-> +		err = bpf_inode_fd_htab_map_update_elem(map, key, value, attr->flags);
-> +		rcu_read_unlock();
->  	} else {
->  		rcu_read_lock();
->  		err = map->ops->map_update_elem(map, key, value, attr->flags);
-> @@ -1006,7 +1012,10 @@ static int map_delete_elem(union bpf_attr *attr)
->  	preempt_disable();
->  	__this_cpu_inc(bpf_prog_active);
->  	rcu_read_lock();
-> -	err = map->ops->map_delete_elem(map, key);
-> +	if (map->map_type == BPF_MAP_TYPE_INODE)
-> +		err = bpf_inode_fd_htab_map_delete_elem(map, key);
-> +	else
-> +		err = map->ops->map_delete_elem(map, key);
->  	rcu_read_unlock();
->  	__this_cpu_dec(bpf_prog_active);
->  	preempt_enable();
-> @@ -1018,6 +1027,22 @@ static int map_delete_elem(union bpf_attr *attr)
->  	return err;
->  }
->  
-> +int bpf_inode_ptr_unlocked_htab_map_delete_elem(struct bpf_map *map,
-> +						struct inode **key, bool remove_in_inode)
-> +{
-> +	int err;
-> +
-> +	preempt_disable();
-> +	__this_cpu_inc(bpf_prog_active);
-> +	rcu_read_lock();
-> +	err = bpf_inode_ptr_locked_htab_map_delete_elem(map, key, remove_in_inode);
-> +	rcu_read_unlock();
-> +	__this_cpu_dec(bpf_prog_active);
-> +	preempt_enable();
-> +	maybe_wait_bpf_programs(map);
-
-if that function was actually doing synchronize_rcu() the consequences
-would have been unpleasant. Fortunately it's a nop in this case.
-Please read the code carefully before copy-paste.
-Also what do you think the reason of bpf_prog_active above?
-What is the reason of rcu_read_lock above?
-
-I think the patch set needs to shrink at least in half to be reviewable.
-The way you tie seccomp and lsm is probably the biggest obstacle
-than any of the bugs above.
-Can you drop seccomp ? and do it as normal lsm ?
-
+  origin.patch
+* docs-signal-fix-a-kernel-doc-markup.patch
+* revert-kmemleak-allow-to-coexist-with-fault-injection.patch
+* ocfs2-remove-set-but-not-used-variable-last_hash.patch
+* mm-vmscan-check-if-mem-cgroup-is-disabled-or-not-before-calling-memcg-slab-shrinker.patch
+* mm-migrate-fix-reference-check-race-between-__find_get_block-and-migration.patch
+* mm-compaction-avoid-100%-cpu-usage-during-compaction-when-a-task-is-killed.patch
+* kasan-remove-clang-version-check-for-kasan_stack.patch
+* ubsan-build-ubsanc-more-conservatively.patch
+* page-flags-prioritize-kasan-bits-over-last-cpuid.patch
+* page-flags-prioritize-kasan-bits-over-last-cpuid-fix.patch
+* coredump-split-pipe-command-whitespace-before-expanding-template.patch
+* mm-migrate-initialize-pud_entry-in-migrate_vma.patch
+* mm-hotplug-remove-unneeded-return-for-void-function.patch
+* cgroup-kselftest-relax-fs_spec-checks.patch
+* asm-generic-fix-wtype-limits-compiler-warnings.patch
+* asm-generic-fix-wtype-limits-compiler-warnings-fix.patch
+* asm-generic-fix-wtype-limits-compiler-warnings-v2.patch
+* test_meminit-use-gfp_atomic-in-rcu-critical-section.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* mm-document-zone-device-struct-page-field-usage.patch
+* mm-hmm-fix-zone_device-anon-page-mapping-reuse.patch
+* mm-hmm-fix-bad-subpage-pointer-in-try_to_unmap_one.patch
+* mm-hmm-fix-bad-subpage-pointer-in-try_to_unmap_one-v3.patch
+* acpi-scan-acquire-device_hotplug_lock-in-acpi_scan_init.patch
+* mm-mempolicy-make-the-behavior-consistent-when-mpol_mf_move-and-mpol_mf_strict-were-specified.patch
+* mm-mempolicy-make-the-behavior-consistent-when-mpol_mf_move-and-mpol_mf_strict-were-specified-v4.patch
+* mm-mempolicy-handle-vma-with-unmovable-pages-mapped-correctly-in-mbind.patch
+* mm-mempolicy-handle-vma-with-unmovable-pages-mapped-correctly-in-mbind-v4.patch
+* mm-z3foldc-fix-z3fold_destroy_pool-ordering.patch
+* mm-z3foldc-fix-z3fold_destroy_pool-race-condition.patch
+* kbuild-clean-compressed-initramfs-image.patch
+* ocfs2-use-jbd2_inode-dirty-range-scoping.patch
+* jbd2-remove-jbd2_journal_inode_add_.patch
+* ocfs2-clear-zero-in-unaligned-direct-io.patch
+* ocfs2-clear-zero-in-unaligned-direct-io-checkpatch-fixes.patch
+* ocfs2-wait-for-recovering-done-after-direct-unlock-request.patch
+* ocfs2-checkpoint-appending-truncate-log-transaction-before-flushing.patch
+* ramfs-support-o_tmpfile.patch
+  mm.patch
+* mm-slab-extend-slab-shrink-to-shrink-all-memcg-caches.patch
+* mm-slab-move-memcg_cache_params-structure-to-mm-slabh.patch
+* memremap-move-from-kernel-to-mm.patch
+* mm-page_poison-fix-a-typo-in-a-comment.patch
+* mm-rmapc-remove-set-but-not-used-variable-cstart.patch
+* mm-introduce-page_size.patch
+* mm-introduce-page_shift.patch
+* mm-introduce-page_shift-fix.patch
+* mm-introduce-compound_nr.patch
+* mm-replace-list_move_tail-with-add_page_to_lru_list_tail.patch
+* mm-filemap-rewrite-mapping_needs_writeback-in-less-fancy-manner.patch
+* mm-throttle-allocators-when-failing-reclaim-over-memoryhigh.patch
+* mm-throttle-allocators-when-failing-reclaim-over-memoryhigh-fix.patch
+* mm-throttle-allocators-when-failing-reclaim-over-memoryhigh-fix-fix.patch
+* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
+* mm-gup-add-make_dirty-arg-to-put_user_pages_dirty_lock.patch
+* drivers-gpu-drm-via-convert-put_page-to-put_user_page.patch
+* net-xdp-convert-put_page-to-put_user_page.patch
+* mm-remove-redundant-assignment-of-entry.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* mm-memory_hotplug-remove-move_pfn_range.patch
+* mm-memory_hotplug-remove-move_pfn_range-fix.patch
+* drivers-base-nodec-simplify-unregister_memory_block_under_nodes.patch
+* mm-sparse-fix-memory-leak-of-sparsemap_buf-in-aliged-memory.patch
+* mm-sparse-fix-memory-leak-of-sparsemap_buf-in-aliged-memory-fix.patch
+* mm-sparse-fix-align-without-power-of-2-in-sparse_buffer_alloc.patch
+* mm-vmalloc-do-not-keep-unpurged-areas-in-the-busy-tree.patch
+* mm-vmalloc-modify-struct-vmap_area-to-reduce-its-size.patch
+* mm-compaction-clear-total_migratefree_scanned-before-scanning-a-new-zone.patch
+* mm-compaction-clear-total_migratefree_scanned-before-scanning-a-new-zone-fix.patch
+* mm-compaction-clear-total_migratefree_scanned-before-scanning-a-new-zone-fix-fix.patch
+* mm-compaction-clear-total_migratefree_scanned-before-scanning-a-new-zone-fix-2.patch
+* mm-compaction-clear-total_migratefree_scanned-before-scanning-a-new-zone-fix-2-fix.patch
+* mm-oom-avoid-printk-iteration-under-rcu.patch
+* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
+* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill.patch
+* mm-oom_killer-add-task-uid-to-info-message-on-an-oom-kill-fix.patch
+* mm-move-memcmp_pages-and-pages_identical.patch
+* uprobe-use-original-page-when-all-uprobes-are-removed.patch
+* mm-thp-introduce-foll_split_pmd.patch
+* uprobe-use-foll_split_pmd-instead-of-foll_split.patch
+* psi-annotate-refault-stalls-from-io-submission.patch
+* psi-annotate-refault-stalls-from-io-submission-fix.patch
+* psi-annotate-refault-stalls-from-io-submission-fix-2.patch
+* mm-introduce-madv_cold.patch
+* mm-change-pageref_reclaim_clean-with-page_refreclaim.patch
+* mm-account-nr_isolated_xxx-in-_lru_page.patch
+* mm-introduce-madv_pageout.patch
+* mm-factor-out-common-parts-between-madv_cold-and-madv_pageout.patch
+* zpool-add-malloc_support_movable-to-zpool_driver.patch
+* zswap-use-movable-memory-if-zpool-support-allocate-movable-memory.patch
+* mm-proportional-memorylowmin-reclaim.patch
+* mm-make-memoryemin-the-baseline-for-utilisation-determination.patch
+* mm-make-memoryemin-the-baseline-for-utilisation-determination-fix.patch
+* mm-vmscan-remove-unused-lru_pages-argument.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* hung_task-allow-printing-warnings-every-check-interval.patch
+* rbtree-sync-up-the-tools-copy-of-the-code-with-the-main-one.patch
+* augmented-rbtree-add-comments-for-rb_declare_callbacks-macro.patch
+* augmented-rbtree-add-new-rb_declare_callbacks_max-macro.patch
+* augmented-rbtree-add-new-rb_declare_callbacks_max-macro-fix.patch
+* augmented-rbtree-add-new-rb_declare_callbacks_max-macro-fix-2.patch
+* augmented-rbtree-rework-the-rb_declare_callbacks-macro-definition.patch
+* lib-genallocc-export-symbol-addr_in_gen_pool.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr.patch
+* lib-genallocc-rename-addr_in_gen_pool-to-gen_pool_has_addr-fix.patch
+* string-add-stracpy-and-stracpy_pad-mechanisms.patch
+* kernel-doc-core-api-include-stringh-into-core-api.patch
+* kernel-doc-core-api-include-stringh-into-core-api-v2.patch
+* writeback-fix-wstringop-truncation-warnings.patch
+* strscpy-reject-buffer-sizes-larger-than-int_max.patch
+* lib-fix-possible-incorrect-result-from-rational-fractions-helper.patch
+* checkpatch-dont-interpret-stack-dumps-as-commit-ids.patch
+* checkpatch-improve-spdx-license-checking.patch
+* checkpatchpl-warn-on-invalid-commit-id.patch
+* checkpatch-add-_notifier_head-as-var-definition.patch
+* fat-add-nobarrier-to-workaround-the-strange-behavior-of-device.patch
+* cpumask-nicer-for_each_cpumask_and-signature.patch
+* kexec-bail-out-upon-sigkill-when-allocating-memory.patch
+* aio-simplify-read_events.patch
+* kgdb-dont-use-a-notifier-to-enter-kgdb-at-panic-call-directly.patch
+* ipc-consolidate-all-xxxctl_down-functions.patch
+  linux-next.patch
+  linux-next-git-rejects.patch
+  diff-sucks.patch
+* pinctrl-fix-pxa2xxc-build-warnings.patch
+* mm-treewide-clarify-pgtable_page_ctordtor-naming.patch
+* drivers-tty-serial-sh-scic-suppress-warning.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
