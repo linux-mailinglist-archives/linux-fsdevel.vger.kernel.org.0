@@ -2,100 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADA10778F7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 15:33:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FCA177933
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 16:21:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387673AbfG0Nd1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jul 2019 09:33:27 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34279 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387603AbfG0Nd1 (ORCPT
+        id S2387673AbfG0OVd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jul 2019 10:21:33 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44695 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727589AbfG0OVd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jul 2019 09:33:27 -0400
-Received: by mail-ot1-f66.google.com with SMTP id n5so58185366otk.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jul 2019 06:33:26 -0700 (PDT)
+        Sat, 27 Jul 2019 10:21:33 -0400
+Received: by mail-pf1-f194.google.com with SMTP id t16so25815363pfe.11;
+        Sat, 27 Jul 2019 07:21:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=y63nlDdoReiitfVEZgVBo7xRRyCxoDD8AEYgo5/VomM=;
+        b=T+UzIYi/1THcC8I6GGTQVftBbmYmneEqyzoZFaOOV0bsgkD4/yotJY+aT39yhYMbKU
+         hP7XuGXa26yH/rd2Nj/oFrTDYEcp5JUuY3kmmuDDU7fPuMGddkQghGbGlfTO+H8pKvVB
+         pSe3h0PTMAUsbiz2LBWk2Z19ayzMznrnydOiG1Hn9M1yV6yTmgyr6pygeBUIKivIxRkK
+         AslNgkHOQWvuyAhddym0LYgEWCybK94ah26A3c+j6bFoy1BFojsB3uQ/zIoW1PPLaFzG
+         iRc8ls7OCAbEHg78NFqB9lL8kFZRs8DzukHcVHBv38OGkga6Mp045UeW3iThwjfRKg8C
+         KTCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8pKsm0Glo5GvWJ2FgAFUVIAU/XUG0KKO3Gz3Fqbr57A=;
-        b=T0I7XaQIc0/iThEhKyKs1FTnZjdaKBO2cH/gmGwwNZfizPt0zfvmtKgMO3bDeUMGJ9
-         2eL+FOIfXJs7eJPMlNqqyvRo7AE7tTXZ9t2wwK5mhvxXYqpZhI9I9nfOxO0mlJRR9X8+
-         dsINBarTbfBYbig5BRo+tfVQ4XZZVPj1lwaU/EKd89WDg3y15AlcfaeDCgSHK7JYnQHz
-         IaqkqWS1+MRMOoj8qmjJ3Wxks5//eCwgg7q3Db5V6gd2EKvyZa7J2HNvgmWxz8ovGl1p
-         4JGyyhXIJxXNi2K6tCL5rYmVDPGJdPUkNiHqTmFC4RabQOX7dtMra46c2cOSUh/xIT8U
-         Z3oQ==
-X-Gm-Message-State: APjAAAV70gX/9MfvpuLqCjuV81KGgxr/uqfcqpJS1ycuE4LnbmbFhIfQ
-        o+nwA8ALLLlApJyX/CK1rKRENP7nhxz6LAqsPANGMQ==
-X-Google-Smtp-Source: APXvYqyAbW1b8uSXlX1kLfH6Wz3b/HKGqixPASzcQcxCPj1SJ/ze1kYlHQlYZ5Gx2uUiwFUm8rQ2kx+E3q/bIM3MDzo=
-X-Received: by 2002:a9d:7a90:: with SMTP id l16mr22763240otn.297.1564234406426;
- Sat, 27 Jul 2019 06:33:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190722095024.19075-1-hch@lst.de> <20190726233753.GD2166993@magnolia>
-In-Reply-To: <20190726233753.GD2166993@magnolia>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Sat, 27 Jul 2019 15:33:14 +0200
-Message-ID: <CAHc6FU7L52soLiRafnOiTsaMYp4X_NmjjimpMMzdaoSH_afT+A@mail.gmail.com>
-Subject: Re: lift the xfs writepage code into iomap v3
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=y63nlDdoReiitfVEZgVBo7xRRyCxoDD8AEYgo5/VomM=;
+        b=gN+7gHPGpGXMgQIf2fTdVCCcQGyIYxFDwD1LgnM3Z6HSzmNp7Ty4C9fsV25Co/EifC
+         /vcsQXY+K3cTSNQDtunfZEhcteRZk64oTogBH93bfyIUX+pKyd4/d6LIPSE/BobsIpLy
+         F17XCo0vs1NpiH65BQgHUFYgXbucZcdrpYVHGkYLntXzm6GW6FfCcaNkmqT0aNSARQHJ
+         +ZUdgWvTvzu4m5uIetTc/EMNnQ11bFd1dO7PMbl9wxHe1UR2If/rpPxQkp7LR4azXGpX
+         uYeQPaptwQzF+fRUGYNqApt0hGi1vH5iK9lFgn5SIObeRuytR9ODNU/fNcU+KvCgaTWf
+         vDRA==
+X-Gm-Message-State: APjAAAUnertKEz0DK3+KUTjeUIURivcKM0sHPfg18wzHzSQtsk57ygpB
+        RSqX0jfz0ETgmkqxsBrCWCY=
+X-Google-Smtp-Source: APXvYqwImUJ0RccHZPsxX4PaZHY9X78k754oNQpfDLf2SEuy6uSlyklXeLtGbLK7+kjMFAkrLZ0G0A==
+X-Received: by 2002:a65:5cca:: with SMTP id b10mr98493196pgt.365.1564237291919;
+        Sat, 27 Jul 2019 07:21:31 -0700 (PDT)
+Received: from localhost.localdomain (36-238-206-183.dynamic-ip.hinet.net. [36.238.206.183])
+        by smtp.googlemail.com with ESMTPSA id c8sm63671109pjq.2.2019.07.27.07.21.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 27 Jul 2019 07:21:31 -0700 (PDT)
+From:   Pei Hsuan Hung <afcidk@gmail.com>
+Cc:     afcidk@gmail.com, trivial@kernel.org,
+        Russell Currey <ruscur@russell.cc>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] Fix typo reigster to register
+Date:   Sat, 27 Jul 2019 22:21:09 +0800
+Message-Id: <20190727142111.20039-1-afcidk@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 27 Jul 2019 at 01:38, Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> On Mon, Jul 23, 2019 at 11:50:12AM +0200, Christoph Hellwig wrote:
-> > Hi all,
-> >
-> > this series cleans up the xfs writepage code and then lifts it to
-> > fs/iomap.c so that it could be use by other file system.  I've been
-> > wanting to this for a while so that I could eventually convert gfs2
-> > over to it, but I never got to it.  Now Damien has a new zonefs
-> > file system for semi-raw access to zoned block devices that would
-> > like to use the iomap code instead of reinventing it, so I finally
-> > had to do the work.
->
-> Hmm... I don't like how there are xfs changes mixed in with the iomap
-> changes, because were I to take this series as-is then I'd have to
-> commit both to adding iomap writeback code /and/ converting xfs at the
-> same time.
->
-> I think I'd be more comfortable creating a branch to merge the changes
-> to list.h and fs/iomap/, and then gfs2/zonefs/xfs can sprout their own
-> branches from there to do whatever conversions are necessary.
->
-> To me what that means is splitting patch 7 into 7a which does the iomap
-> changes and 7b which does the xfs changes.  To get there, I'd create a
-> iomap-writeback branch containing:
->
-> 1 7a 8 9 10 11 12
->
-> and then a new xfs-iomap-writeback branch containing:
->
-> 2 4 7b
->
-> This eliminates the need for patches 3, 5, and 6, though the cost is
-> that it's less clear from the history that we did some reorganizing of
-> the xfs writeback code and then moved it over to iomap.  OTOH, I also
-> see this as a way to lower risk because if some patch in the
-> xfs-iomap-writeback branch shakes loose a bug that doesn't affect gfs2
-> or zonedfs we don't have to hold them up.
->
-> I'll try to restructure this series along those lines and report back
-> how it went.
+Signed-off-by: Pei Hsuan Hung <afcidk@gmail.com>
+Cc: trivial@kernel.org
+---
+ arch/powerpc/kernel/eeh.c                           | 2 +-
+ arch/powerpc/platforms/cell/spufs/switch.c          | 4 ++--
+ drivers/extcon/extcon-rt8973a.c                     | 2 +-
+ drivers/gpu/drm/arm/malidp_regs.h                   | 2 +-
+ drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.h | 2 +-
+ drivers/scsi/lpfc/lpfc_hbadisc.c                    | 4 ++--
+ fs/userfaultfd.c                                    | 2 +-
+ 7 files changed, 9 insertions(+), 9 deletions(-)
 
-Keeping the infrastructure changes in separate commits would certainly
-make the patches easier to work with for me. Keeping the commits
-interleaved should be fine though: patch "iomap: zero newly allocated
-mapped blocks" depends on "xfs: set IOMAP_F_NEW more carefully", so a
-pure infrastructure branch without "xfs: set IOMAP_F_NEW more
-carefully" probably wouldn't be correct.
+diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+index c0e4b73191f3..d75c9c24ec4d 100644
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -1030,7 +1030,7 @@ int __init eeh_ops_register(struct eeh_ops *ops)
+ }
+ 
+ /**
+- * eeh_ops_unregister - Unreigster platform dependent EEH operations
++ * eeh_ops_unregister - Unregister platform dependent EEH operations
+  * @name: name of EEH platform operations
+  *
+  * Unregister the platform dependent EEH operation callback
+diff --git a/arch/powerpc/platforms/cell/spufs/switch.c b/arch/powerpc/platforms/cell/spufs/switch.c
+index 5c3f5d088c3b..9548a086937b 100644
+--- a/arch/powerpc/platforms/cell/spufs/switch.c
++++ b/arch/powerpc/platforms/cell/spufs/switch.c
+@@ -574,7 +574,7 @@ static inline void save_mfc_rag(struct spu_state *csa, struct spu *spu)
+ {
+ 	/* Save, Step 38:
+ 	 *     Save RA_GROUP_ID register and the
+-	 *     RA_ENABLE reigster in the CSA.
++	 *     RA_ENABLE register in the CSA.
+ 	 */
+ 	csa->priv1.resource_allocation_groupID_RW =
+ 		spu_resource_allocation_groupID_get(spu);
+@@ -1227,7 +1227,7 @@ static inline void restore_mfc_rag(struct spu_state *csa, struct spu *spu)
+ {
+ 	/* Restore, Step 29:
+ 	 *     Restore RA_GROUP_ID register and the
+-	 *     RA_ENABLE reigster from the CSA.
++	 *     RA_ENABLE register from the CSA.
+ 	 */
+ 	spu_resource_allocation_groupID_set(spu,
+ 			csa->priv1.resource_allocation_groupID_RW);
+diff --git a/drivers/extcon/extcon-rt8973a.c b/drivers/extcon/extcon-rt8973a.c
+index 40c07f4d656e..e75c03792398 100644
+--- a/drivers/extcon/extcon-rt8973a.c
++++ b/drivers/extcon/extcon-rt8973a.c
+@@ -270,7 +270,7 @@ static int rt8973a_muic_get_cable_type(struct rt8973a_muic_info *info)
+ 	}
+ 	cable_type = adc & RT8973A_REG_ADC_MASK;
+ 
+-	/* Read Device 1 reigster to identify correct cable type */
++	/* Read Device 1 register to identify correct cable type */
+ 	ret = regmap_read(info->regmap, RT8973A_REG_DEV1, &dev1);
+ 	if (ret) {
+ 		dev_err(info->dev, "failed to read DEV1 register\n");
+diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp_regs.h
+index 993031542fa1..0d81b34a4212 100644
+--- a/drivers/gpu/drm/arm/malidp_regs.h
++++ b/drivers/gpu/drm/arm/malidp_regs.h
+@@ -145,7 +145,7 @@
+ #define     MALIDP_SE_COEFFTAB_DATA_MASK	0x3fff
+ #define     MALIDP_SE_SET_COEFFTAB_DATA(x) \
+ 		((x) & MALIDP_SE_COEFFTAB_DATA_MASK)
+-/* Enhance coeffents reigster offset */
++/* Enhance coeffents register offset */
+ #define MALIDP_SE_IMAGE_ENH			0x3C
+ /* ENH_LIMITS offset 0x0 */
+ #define     MALIDP_SE_ENH_LOW_LEVEL		24
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.h b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.h
+index 99c6f7eefd85..d03c8f12a15c 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.h
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.h
+@@ -58,7 +58,7 @@ struct fw_priv {
+ 	/* 0x81: PCI-AP, 01:PCIe, 02: 92S-U,
+ 	 * 0x82: USB-AP, 0x12: 72S-U, 03:SDIO */
+ 	u8 hci_sel;
+-	/* the same value as reigster value  */
++	/* the same value as register value  */
+ 	u8 chip_version;
+ 	/* customer  ID low byte */
+ 	u8 customer_id_0;
+diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
+index 28ecaa7fc715..9e116bd79836 100644
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
+@@ -6551,7 +6551,7 @@ lpfc_sli4_unregister_fcf(struct lpfc_hba *phba)
+  * lpfc_unregister_fcf_rescan - Unregister currently registered fcf and rescan
+  * @phba: Pointer to hba context object.
+  *
+- * This function unregisters the currently reigstered FCF. This function
++ * This function unregisters the currently registered FCF. This function
+  * also tries to find another FCF for discovery by rescan the HBA FCF table.
+  */
+ void
+@@ -6609,7 +6609,7 @@ lpfc_unregister_fcf_rescan(struct lpfc_hba *phba)
+  * lpfc_unregister_fcf - Unregister the currently registered fcf record
+  * @phba: Pointer to hba context object.
+  *
+- * This function just unregisters the currently reigstered FCF. It does not
++ * This function just unregisters the currently registered FCF. It does not
+  * try to find another FCF for discovery.
+  */
+ void
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index ccbdbd62f0d8..612dc1240f90 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -267,7 +267,7 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
+ #endif /* CONFIG_HUGETLB_PAGE */
+ 
+ /*
+- * Verify the pagetables are still not ok after having reigstered into
++ * Verify the pagetables are still not ok after having registered into
+  * the fault_pending_wqh to avoid userland having to UFFDIO_WAKE any
+  * userfault that has already been resolved, if userfaultfd_read and
+  * UFFDIO_COPY|ZEROPAGE are being run simultaneously on two different
+-- 
+2.17.1
 
-Thanks,
-Andreas
