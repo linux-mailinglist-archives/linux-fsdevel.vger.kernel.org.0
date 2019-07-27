@@ -2,130 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9562A77869
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 13:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C0A77873
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 13:30:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbfG0LUa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jul 2019 07:20:30 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:43290 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfG0LU3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jul 2019 07:20:29 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hrKkV-0001FM-Fn; Sat, 27 Jul 2019 05:20:27 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hrKkU-0002QG-KR; Sat, 27 Jul 2019 05:20:27 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-References: <20190726115956.ifj5j4apn3tmwk64@brauner.io>
-        <CAHk-=wgK254RkZg9oAv+Wt4V9zqYJMm3msTofvTUfA9dJw6piQ@mail.gmail.com>
-        <20190726232220.GM1131@ZenIV.linux.org.uk>
-        <878sskqp7p.fsf@xmission.com>
-        <20190727022826.GO1131@ZenIV.linux.org.uk>
-Date:   Sat, 27 Jul 2019 06:20:18 -0500
-In-Reply-To: <20190727022826.GO1131@ZenIV.linux.org.uk> (Al Viro's message of
-        "Sat, 27 Jul 2019 03:28:26 +0100")
-Message-ID: <87h877pvv1.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        id S1728816AbfG0Lak (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jul 2019 07:30:40 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2786 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725975AbfG0Lak (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 27 Jul 2019 07:30:40 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 867ABBE4E37CE37330B8;
+        Sat, 27 Jul 2019 19:30:38 +0800 (CST)
+Received: from huawei.com (10.175.113.25) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Sat, 27 Jul 2019
+ 19:30:29 +0800
+From:   Cheng Jian <cj.chengjian@huawei.com>
+To:     <cj.chengjian@huawei.com>, <xiexiuqi@huawei.com>,
+        <viro@zeniv.linux.org.uk>, <houtao1@huawei.com>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] epoll: optimize epmutex in ep_free and eventpoll_release_file
+Date:   Sat, 27 Jul 2019 19:35:42 +0800
+Message-ID: <20190727113542.162213-1-cj.chengjian@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1hrKkU-0002QG-KR;;;mid=<87h877pvv1.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+Vq3Lzknntv8YcPI8xoS/ElyuyKem99zY=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Al Viro <viro@zeniv.linux.org.uk>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 394 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 3.0 (0.8%), b_tie_ro: 2.1 (0.5%), parse: 1.09
-        (0.3%), extract_message_metadata: 13 (3.3%), get_uri_detail_list: 2.0
-        (0.5%), tests_pri_-1000: 7 (1.7%), tests_pri_-950: 1.26 (0.3%),
-        tests_pri_-900: 1.04 (0.3%), tests_pri_-90: 22 (5.5%), check_bayes: 20
-        (5.1%), b_tokenize: 6 (1.6%), b_tok_get_all: 7 (1.8%), b_comp_prob:
-        2.2 (0.6%), b_tok_touch_all: 2.7 (0.7%), b_finish: 0.64 (0.2%),
-        tests_pri_0: 333 (84.5%), check_dkim_signature: 0.49 (0.1%),
-        check_dkim_adsp: 3.5 (0.9%), poll_dns_idle: 0.50 (0.1%), tests_pri_10:
-        2.2 (0.6%), tests_pri_500: 8 (1.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: Regression in 5.3 for some FS_USERNS_MOUNT (aka user-namespace-mountable) filesystems
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+We are optimizing the Request-Per-Second of nginx http server,
+and we found that acquiring epmutex in eventpoll_release_file()
+will become a bottleneck under the one-request-per-connection
+scenario.
 
-> On Fri, Jul 26, 2019 at 07:46:18PM -0500, Eric W. Biederman wrote:
->
->> If someone had bothered to actually look at how I was proposing to clean
->> things up before the new mount api we would already have that.  Sigh.
->> 
->> You should be able to get away with something like this which moves the
->> checks earlier and makes things clearer.  My old patch against the pre
->> new mount api code.
->
-> Check your instances of ->permission(); AFAICS in all cases it's (in
-> current terms)
-> 	return ns_capable(fc->user_ns, CAP_SYS_ADMIN) ? 0 : -EPERM;
+Optimize the epmutex with a smaller granularity. Introduce
+an ref-counter to eventpoll and free eventpoll by rcu, using rcu
+and list_first_or_null_rcu() to iterate file->f_ep_links instead
+of epmutex.
 
+The following are some details of the scenario:
 
-Yes.  Because I refactored all of the logic to be in terms of current
-before we even get to the filesystem.  The idea is on a per filesystem
-basis to know which namespaces for the filesystem will be selected
-and to check those.
+HTTP server (nginx):
+	* under ARM64 with 64 cores
+	* 64 worker processes, each worker is binded to a specific CPU
+	* keepalive_requests = 1 in nginx.conf: nginx will close the
+	  connection fd after a reply is send
+HTTP client[benchmark] (wrk):
+	* under x86-64 with 48 cores
+	* 16 threads, 64 connections per-thread
 
-Since all that version of the patch converts is the old API we know
-from only looking at current what needs to be checked.
+Before the patch, the RPS measured by wrk is ~220K, after applying
+the patch the RPS is ~240K. We also measure the overhead of
+eventpoll_release_file() and its children by perf: 29% before and
+2% after.
 
-> In principle I like killing FS_USERNS_MOUNT flag, but when a method
-> is always either NULL or exact same function...
+Link : https://lkml.org/lkml/2017/10/28/81
 
-Either you are being dramatic or you read the patch much too quickly.
+Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
+Signed-off-by: Hou Tao <houtao1@huawei.com>
+---
+ fs/eventpoll.c | 106 ++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 92 insertions(+), 14 deletions(-)
 
-userns_mount_permission covers the common case of FS_USERNS_MOUNT.
-Then there are the cases where you need to know how the filesystem is
-going to map current into the filesystem that will be mounted.  Those
-are: proc_mount_permission, sysfs_mount_permission,
-mqueue_mount_permission, cgroup_mount_permission,
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index d7f1f5011fac..dc81f1c4fbaa 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -38,6 +38,7 @@
+ #include <linux/compat.h>
+ #include <linux/rculist.h>
+ #include <net/busy_poll.h>
++#include <linux/refcount.h>
+ 
+ /*
+  * LOCKING:
+@@ -225,6 +226,11 @@ struct eventpoll {
+ 	/* used to track busy poll napi_id */
+ 	unsigned int napi_id;
+ #endif
++
++	/* used to ensure the validity of eventpoll when release file */
++	refcount_t ref;
++	/* used to free itself */
++	struct rcu_head rcu;
+ };
+ 
+ /* Wait structure used by the poll hooks */
+@@ -809,6 +815,32 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
+ 	return 0;
+ }
+ 
++static void ep_rcu_free(struct rcu_head *head)
++{
++	struct eventpoll *ep = container_of(head, struct eventpoll, rcu);
++
++	kfree(ep);
++}
++
++static void eventpoll_put_ep(struct eventpoll *ep)
++{
++	if (refcount_dec_and_test(&ep->ref)) {
++		mutex_destroy(&ep->mtx);
++		free_uid(ep->user);
++		wakeup_source_unregister(ep->ws);
++
++		call_rcu(&ep->rcu, ep_rcu_free);
++	}
++}
++
++static struct eventpoll *eventpoll_get_ep(struct eventpoll *ep)
++{
++	if (refcount_inc_not_zero(&ep->ref))
++		return ep;
++	else
++		return NULL;
++}
++
+ static void ep_free(struct eventpoll *ep)
+ {
+ 	struct rb_node *rbp;
+@@ -826,11 +858,11 @@ static void ep_free(struct eventpoll *ep)
+ 	 * anymore. The only hit might come from eventpoll_release_file() but
+ 	 * holding "epmutex" is sufficient here.
+ 	 */
+-	mutex_lock(&epmutex);
+ 
+ 	/*
+ 	 * Walks through the whole tree by unregistering poll callbacks.
+ 	 */
++	mutex_lock(&ep->mtx);
+ 	for (rbp = rb_first_cached(&ep->rbr); rbp; rbp = rb_next(rbp)) {
+ 		epi = rb_entry(rbp, struct epitem, rbn);
+ 
+@@ -846,7 +878,6 @@ static void ep_free(struct eventpoll *ep)
+ 	 * We do not need to lock ep->mtx, either, we only do it to prevent
+ 	 * a lockdep warning.
+ 	 */
+-	mutex_lock(&ep->mtx);
+ 	while ((rbp = rb_first_cached(&ep->rbr)) != NULL) {
+ 		epi = rb_entry(rbp, struct epitem, rbn);
+ 		ep_remove(ep, epi);
+@@ -854,11 +885,19 @@ static void ep_free(struct eventpoll *ep)
+ 	}
+ 	mutex_unlock(&ep->mtx);
+ 
+-	mutex_unlock(&epmutex);
+-	mutex_destroy(&ep->mtx);
+-	free_uid(ep->user);
+-	wakeup_source_unregister(ep->ws);
+-	kfree(ep);
++	/*
++	 * ep will not been added to visited_list, because ep_ctrl()
++	 * can not get its reference and can not reference it by the
++	 * corresponding epitem. The only possible operation is list_del_init,
++	 * so it's OK to use list_empty_careful() here.
++	 */
++	if (!list_empty_careful(&ep->visited_list_link)) {
++		mutex_lock(&epmutex);
++		list_del_init(&ep->visited_list_link);
++		mutex_unlock(&epmutex);
++	}
++
++	eventpoll_put_ep(ep);
+ }
+ 
+ static int ep_eventpoll_release(struct inode *inode, struct file *file)
+@@ -985,7 +1024,7 @@ static const struct file_operations eventpoll_fops = {
+ void eventpoll_release_file(struct file *file)
+ {
+ 	struct eventpoll *ep;
+-	struct epitem *epi, *next;
++	struct epitem *epi;
+ 
+ 	/*
+ 	 * We don't want to get "file->f_lock" because it is not
+@@ -1000,14 +1039,51 @@ void eventpoll_release_file(struct file *file)
+ 	 *
+ 	 * Besides, ep_remove() acquires the lock, so we can't hold it here.
+ 	 */
+-	mutex_lock(&epmutex);
+-	list_for_each_entry_safe(epi, next, &file->f_ep_links, fllink) {
+-		ep = epi->ep;
++	rcu_read_lock();
++	while (true) {
++		epi = list_first_or_null_rcu(&file->f_ep_links,
++				struct epitem, fllink);
++		if (!epi)
++			break;
++
++		ep = eventpoll_get_ep(epi->ep);
++		/* Current epi had been removed by ep_free() */
++		if (!ep)
++			continue;
++		rcu_read_unlock();
++
+ 		mutex_lock_nested(&ep->mtx, 0);
+-		ep_remove(ep, epi);
++		/*
++		 * If rb_first_cached() returns NULL, it means that
++		 * the current epi had been removed by ep_free().
++		 * To prevent epi from double-freeing, check the
++		 * condition before invoking ep_remove().
++		 * If eventpoll_release_file() frees epi firstly,
++		 * the epi will not be freed again because the epi
++		 * must have been removed from ep->rbr when ep_free()
++		 * is invoked.
++		 */
++		if (rb_first_cached(&ep->rbr))
++			ep_remove(ep, epi);
+ 		mutex_unlock(&ep->mtx);
++
++		eventpoll_put_ep(ep);
++
++		rcu_read_lock();
++	}
++	rcu_read_unlock();
++
++	/*
++	 * The file can not been added to tfile_check_list again, because
++	 * (1) refcnt has been zero, ep_ctrl() can no longer get its reference
++	 * (2) related ep items have been removed, ep_loop_check_proc() can not
++	 *     get the file by ep->rbr.
++	 */
++	if (!list_empty_careful(&file->f_tfile_llink)) {
++		mutex_lock(&epmutex);
++		list_del_init(&file->f_tfile_llink);
++		mutex_unlock(&epmutex);
+ 	}
+-	mutex_unlock(&epmutex);
+ }
+ 
+ static int ep_alloc(struct eventpoll **pep)
+@@ -1030,6 +1106,8 @@ static int ep_alloc(struct eventpoll **pep)
+ 	ep->rbr = RB_ROOT_CACHED;
+ 	ep->ovflist = EP_UNACTIVE_PTR;
+ 	ep->user = user;
++	INIT_LIST_HEAD(&ep->visited_list_link);
++	refcount_set(&ep->ref, 1);
+ 
+ 	*pep = ep;
+ 
+@@ -2018,7 +2096,7 @@ static int ep_loop_check(struct eventpoll *ep, struct file *file)
+ 	list_for_each_entry_safe(ep_cur, ep_next, &visited_list,
+ 							visited_list_link) {
+ 		ep_cur->visited = 0;
+-		list_del(&ep_cur->visited_list_link);
++		list_del_init(&ep_cur->visited_list_link);
+ 	}
+ 	return ret;
+ }
+-- 
+2.20.1
 
-So yes I agree the function of interest is always capable in some form,
-we just need the filesystem specific logic to check to see if we will
-have capable over the filesystem that will be mounted.
-
-I don't doubt that the new mount api has added a few new complexities.
-
-*Shrug*  I have done my best to keep it simple, and to help avoid
-breaking changes.   When you never post your patches for public review,
-and don't take any feedback it is difficult to give help.
-
-Eric
