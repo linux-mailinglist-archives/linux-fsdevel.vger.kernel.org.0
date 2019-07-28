@@ -2,65 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B232E77BDC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2019 22:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4872777C88
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jul 2019 02:36:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388351AbfG0UkY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jul 2019 16:40:24 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:36903 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387893AbfG0UkY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jul 2019 16:40:24 -0400
-Received: from callcc.thunk.org (96-72-84-49-static.hfc.comcastbusiness.net [96.72.84.49] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x6RKdtcc013261
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 27 Jul 2019 16:39:57 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id B45954202F5; Sat, 27 Jul 2019 16:39:54 -0400 (EDT)
-Date:   Sat, 27 Jul 2019 16:39:54 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v7 10/17] fs-verity: implement FS_IOC_ENABLE_VERITY ioctl
-Message-ID: <20190727203954.GB1499@mit.edu>
-References: <20190722165101.12840-1-ebiggers@kernel.org>
- <20190722165101.12840-11-ebiggers@kernel.org>
+        id S1727363AbfG1Ag0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jul 2019 20:36:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53908 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726044AbfG1Ag0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 27 Jul 2019 20:36:26 -0400
+Received: from [192.168.0.101] (unknown [180.111.32.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32516205C9;
+        Sun, 28 Jul 2019 00:36:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564274185;
+        bh=3QcKMWyvud9E/WuCoeT08n9lTblApc1uZ21h4kx9PhU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=rGgP1an4Xkc81fP263JRufM8BgqKjlDC3mlNL3lmt272CzPVdK4B9dyJWB3gSxqBq
+         TPkB8mhv9GqJLzn4sNEveW25kMW4/kt2NSjMLJ2CYmkWgYjnvwdRLMLcs29BKyzIXT
+         085dg8hYsKwLZUBAzE/J6C1Xc1SmUEMJVJUGd+64=
+Subject: Re: [f2fs-dev] [PATCH v4 1/3] fs: Reserve flag for casefolding
+To:     Daniel Rosenberg <drosen@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-doc@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@android.com
+References: <20190723230529.251659-1-drosen@google.com>
+ <20190723230529.251659-2-drosen@google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <056a12d4-d787-9a3d-9ad4-4d1136b2a197@kernel.org>
+Date:   Sun, 28 Jul 2019 08:36:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190722165101.12840-11-ebiggers@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190723230529.251659-2-drosen@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 09:50:54AM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On 2019-7-24 7:05, Daniel Rosenberg via Linux-f2fs-devel wrote:
+> In preparation for including the casefold feature within f2fs, elevate
+> the EXT4_CASEFOLD_FL flag to FS_CASEFOLD_FL.
 > 
-> Add a function for filesystems to call to implement the
-> FS_IOC_ENABLE_VERITY ioctl.  This ioctl enables fs-verity on a file.
-> 
-> See the "FS_IOC_ENABLE_VERITY" section of
-> Documentation/filesystems/fsverity.rst for the documentation.
-> 
-> Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Daniel Rosenberg <drosen@google.com>
 
-Looks good.  You can add:
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-
-						- Ted
+Thanks,
