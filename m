@@ -2,88 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28EE378108
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jul 2019 21:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BFF878112
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jul 2019 21:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbfG1TT3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Jul 2019 15:19:29 -0400
-Received: from mail-io1-f50.google.com ([209.85.166.50]:37163 "EHLO
-        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbfG1TT2 (ORCPT
+        id S1726220AbfG1TYq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Jul 2019 15:24:46 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:43451 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726105AbfG1TYp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Jul 2019 15:19:28 -0400
-Received: by mail-io1-f50.google.com with SMTP id q22so5741359iog.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jul 2019 12:19:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digidescorp.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=CxXi1gGsI1ogOoMQUEQarvFA0NFQX+Sndydm64MaxuM=;
-        b=X0v0dAhRdiAwtjL9qbpc30qf/af1cChojG14950jCegSEWJLYjFHbkzwW7mFGWOgha
-         CF5+Wie8PV1iohmaOd+yiOArRCIrrAJ206qm0IvIKzD1Z9965Dr1eqUW+bK8MGAqbj2+
-         lZgO1nVHkM20H7lM9ZvFu5uSK9ae2zXfO/E9A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CxXi1gGsI1ogOoMQUEQarvFA0NFQX+Sndydm64MaxuM=;
-        b=fSFDiU7XbuI8mavO740Jixl8nAjQcF6XKHY47UsNFRL/kVCVjhVeSwcXyLKzsyX4IW
-         Udzou8gpu70Pbl9lNyKgmulXFxkfwZJna+PzZ6LZov+jqA2uB5fkewiYWIon+kJH8aAD
-         9Jxu5B1C7J4pE8bqG+I4nd/FCcbtEu9pSgK/rb21FBCTsyk56p9Jw+K6wJyUcadiz5mv
-         FMglvpJO1vfdcZ+N1d978Vd6+T3S6noYfMkXsxD7zcP/hUMVuIrjrBorHxsgxRNfJAJy
-         ouAambAhqIGbzJpZNuoWf6y5KHWI88Xj2xf9xx6yQCc9vtpI3MpDNaZE/VtIw8wLpcAE
-         2O9A==
-X-Gm-Message-State: APjAAAXI+7jUmMBunWWD8p5eULuYOhDdIiZ9j6Vo8ufDMrCB7beZZO1M
-        1iUmwU5qnvKJdZ6hJvQ2MiNpyg==
-X-Google-Smtp-Source: APXvYqzV3WAWM4GYL2Pt+2FnH9ArFneYwzPusoPmHXlF60eUekoYCHhQiQKwqoTMS0hvpsChN+IkQA==
-X-Received: by 2002:a5d:9c46:: with SMTP id 6mr40067114iof.6.1564341568028;
-        Sun, 28 Jul 2019 12:19:28 -0700 (PDT)
-Received: from teton.8.8.8.8 ([50.73.98.161])
-        by smtp.googlemail.com with ESMTPSA id q13sm52974886ioh.36.2019.07.28.12.19.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 28 Jul 2019 12:19:27 -0700 (PDT)
-From:   Steve Magnani <steve.magnani@digidescorp.com>
-X-Google-Original-From: Steve Magnani <steve@digidescorp.com>
-To:     Jan Kara <jack@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Steve Magnani <steve@digidescorp.com>
-Subject: [PATCH] udf: prevent allocation beyond UDF partition
-Date:   Sun, 28 Jul 2019 14:19:12 -0500
-Message-Id: <1564341552-129750-1-git-send-email-steve@digidescorp.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 28 Jul 2019 15:24:45 -0400
+Received: from callcc.thunk.org (96-72-102-169-static.hfc.comcastbusiness.net [96.72.102.169] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x6SJONer007423
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 28 Jul 2019 15:24:24 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 5848D4202F5; Sun, 28 Jul 2019 15:24:17 -0400 (EDT)
+Date:   Sun, 28 Jul 2019 15:24:17 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
+        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
+        Paul Crowley <paulcrowley@google.com>,
+        Satya Tangirala <satyat@google.com>
+Subject: Re: [PATCH v7 07/16] fscrypt: add FS_IOC_REMOVE_ENCRYPTION_KEY ioctl
+Message-ID: <20190728192417.GG6088@mit.edu>
+References: <20190726224141.14044-1-ebiggers@kernel.org>
+ <20190726224141.14044-8-ebiggers@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190726224141.14044-8-ebiggers@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The UDF bitmap allocation code assumes that a recorded 
-Unallocated Space Bitmap is compliant with ECMA-167 4/13,
-which requires that pad bytes between the end of the bitmap 
-and the end of a logical block are all zero.
+On Fri, Jul 26, 2019 at 03:41:32PM -0700, Eric Biggers wrote:
+> +	fscrypt_warn(NULL,
+> +		     "%s: %zu inodes still busy after removing key with description %*phN, including ino %lu (%s)",
 
-When a recorded bitmap does not comply with this requirement,
-for example one padded with FF to the block boundary instead
-of 00, the allocator may "allocate" blocks that are outside
-the UDF partition extent. This can result in UDF volume descriptors
-being overwritten by file data or by partition-level descriptors,
-and in extreme cases, even in scribbling on a subsequent disk partition.
+nit: s/inodes/inode(s)/
 
-Add a check that the block selected by the allocator actually
-resides within the UDF partition extent.
+> +
+> +/*
+> + * Try to remove an fscrypt master encryption key.  If other users have also
+> + * added the key, we'll remove the current user's usage of the key, then return
+> + * -EUSERS.  Otherwise we'll continue on and try to actually remove the key.
 
-Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
+Nit: this should be moved to patch #11
 
---- a/fs/udf/balloc.c	2019-07-26 11:35:28.249563705 -0500
-+++ b/fs/udf/balloc.c	2019-07-28 13:11:25.061431597 -0500
-@@ -325,6 +325,13 @@ got_block:
- 	newblock = bit + (block_group << (sb->s_blocksize_bits + 3)) -
- 		(sizeof(struct spaceBitmapDesc) << 3);
- 
-+	if (newblock >= sbi->s_partmaps[partition].s_partition_len) {
-+		/* Ran off the end of the bitmap,
-+		 * and bits following are non-compliant (not all zero)
-+		 */
-+		goto error_return;
-+	}
-+
- 	if (!udf_clear_bit(bit, bh->b_data)) {
- 		udf_debug("bit already cleared for block %d\n", bit);
- 		goto repeat;
+Also, perror(EUSERS) will display "Too many users" which is going to
+be confusing.  I understand why you chose this; we would like to
+distinguish between there are still inodes using this key, and there
+are other users using this key.
+
+Do we really need to return EUSERS in this case?  It's actually not an
+*error* that other users are using the key.  After all, the unlink(2)
+system call doesn't return an advisory error when you delete a file
+which has other hard links.  And an application which does care about
+this detail can always call FS_IOC_ENCRYPTION_KEY_STATUS() and check
+user_count.
+
+Other than these nits, looks good.  Feel free to add:
+
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+
+						- Ted
