@@ -2,81 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45ECD7909A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 18:17:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D57407933C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 20:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387401AbfG2QR2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jul 2019 12:17:28 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:58892 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728367AbfG2QR2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:17:28 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hs8Ks-0001XX-8O; Mon, 29 Jul 2019 10:17:18 -0600
-To:     Sagi Grimberg <sagi@grimberg.me>,
-        Stephen Bates <sbates@raithlin.com>,
-        Hannes Reinecke <hare@suse.de>,
+        id S2387621AbfG2Sku (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jul 2019 14:40:50 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37144 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388194AbfG2Sku (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Jul 2019 14:40:50 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 19so28463147pfa.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2019 11:40:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=c9/8Rh/PmNBtDsfSlxlvjUW0TMBITRO0xXOaucnIy5U=;
+        b=PeN3CR/RrBeup8lLCBs5nka7WEvkCupyNAq3N8jkyLq/xAzLtJEHAp56OY0y5NVThD
+         g8NHwDxK43zbbZ2jQiPCAH0TENtoqQeBWG3xf0TI8ngZ/x4q4rPfDBDlubAxlz530z0g
+         DhUk1LjmjvbEDvqwpQiM1tr4T+IJHh+1PeBNWE5CGaWJTkT8lCYmiBYN2XHI53CruEWi
+         dXJYK2U45WlrwTbBEMP+SC0Kt94vP8vclG7HEMO4m2atI0Uv6iwv5M882dUpE7A1tWeX
+         X1RPCT57K1v9QLZBTB6kcfAT/b1NphSHID1IpaJJMf5PG48NU3jG5sGcTM9Q4wSHbINq
+         E0Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=c9/8Rh/PmNBtDsfSlxlvjUW0TMBITRO0xXOaucnIy5U=;
+        b=UPeXNW/aGIaa3sWDxiF+s90OHvvrXjutvWkdU+Ez15dTF+S7Gmh5UMYOz8Rs0Jmcrr
+         SNRk7cdwMi8Et+4bhMnJHdvE9SEa4mIqdmJxLOx7L/WJimMZo7Fq62sv2j1weo8258oX
+         XOGfhFpLBa3rBOYnvJTy3hkx1fHj1UC9Z3DspLDTfD4Q1/TYpHjOunCFx+WWx0O/iQ0L
+         Cu1WxzqcH6LYrWXeofLzwkUTyNKcjICpg0jEcJ4SWq/szWnrl+l7qEvcADxc/pFRXNSb
+         1oHpx/FNjvjFU+q/Uo1ozYwmY5Nwe/Xp5mDb79TLcz6upnBXpAHr4l4ACQFAo3xwXuFU
+         LjuA==
+X-Gm-Message-State: APjAAAUfZa/4Eg4bNFkoTpKdX/iJdK7LaY27TwbhsfF9wMl9b3/etrIf
+        JCboHD9z2Qh9VfZmROZKHwk=
+X-Google-Smtp-Source: APXvYqxzI7UBorBe7dvBc479FfdDUU3sYfR2Td6Y2nUJ+ymPSy/TnW+y++V3ZtwnGFQIRRQesqjyxA==
+X-Received: by 2002:a17:90a:9a95:: with SMTP id e21mr12916257pjp.98.1564425649638;
+        Mon, 29 Jul 2019 11:40:49 -0700 (PDT)
+Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id h16sm67151345pfo.34.2019.07.29.11.40.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Jul 2019 11:40:48 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <3D2360FA-AD48-48AE-B1CE-D1CF58C1B8AB@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_D99D7753-DBA9-49E5-A7C2-D04048D1DD65";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH] ext4: Fix deadlock on page reclaim
+Date:   Mon, 29 Jul 2019 12:40:44 -0600
+In-Reply-To: <BYAPR04MB58162929012135E47C68923AE7C30@BYAPR04MB5816.namprd04.prod.outlook.com>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
-        Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>
-References: <20190725172335.6825-1-logang@deltatee.com>
- <1f202de3-1122-f4a3-debd-0d169f545047@suse.de>
- <8fd8813f-f8e1-2139-13bf-b0635a03bc30@deltatee.com>
- <175fa142-4815-ee48-82a4-18eb411db1ae@grimberg.me>
- <76f617b9-1137-48b6-f10d-bfb1be2301df@deltatee.com>
- <e166c392-1548-f0bb-02bc-ced3dd85f301@grimberg.me>
- <1260e01c-6731-52f7-ae83-0b90e0345c68@deltatee.com>
- <6DF00EEF-5A9D-49C9-A27C-BE34E594D9A9@raithlin.com>
- <322df1b1-dbba-2018-44da-c108336f8d55@grimberg.me>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <f4e551fe-f081-26d2-5a6a-46f826640189@deltatee.com>
-Date:   Mon, 29 Jul 2019 10:17:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <322df1b1-dbba-2018-44da-c108336f8d55@grimberg.me>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: maxg@mellanox.com, Chaitanya.Kulkarni@wdc.com, axboe@fb.com, kbusch@kernel.org, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, hare@suse.de, sbates@raithlin.com, sagi@grimberg.me
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH v6 00/16] nvmet: add target passthru commands support
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Masato Suzuki <masato.suzuki@wdc.com>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+References: <20190725093358.30679-1-damien.lemoal@wdc.com>
+ <20190725115442.GA15733@infradead.org>
+ <20190726224423.GE7777@dread.disaster.area> <20190726225508.GA13729@mit.edu>
+ <BYAPR04MB58162929012135E47C68923AE7C30@BYAPR04MB5816.namprd04.prod.outlook.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+--Apple-Mail=_D99D7753-DBA9-49E5-A7C2-D04048D1DD65
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-On 2019-07-29 10:15 a.m., Sagi Grimberg wrote:
-> 
->>> This is different from multipath on say a multi-controller PCI device
->>> and trying to expose both those controllers through passthru. this is
->>> where the problems we are discussing come up.
->>
->> I *think* there is some confusion. I *think* Sagi is talking about network multi-path (i.e. the ability for the host to connect to a controller on the target via two different network paths that fail-over as needed). I *think* Logan is talking about multi-port PCIe NVMe devices that allow namespaces to be accessed via more than one controller over PCIe (dual-port NVMe SSDs being the most obvious example of this today).
-> 
-> Yes, I was referring to fabrics multipathing which is somewhat
-> orthogonal to the backend pci multipathing (unless I'm missing
-> something).
+On Jul 26, 2019, at 8:59 PM, Damien Le Moal <damien.lemoal@wdc.com> =
+wrote:
+>=20
+> On 2019/07/27 7:55, Theodore Y. Ts'o wrote:
+>> On Sat, Jul 27, 2019 at 08:44:23AM +1000, Dave Chinner wrote:
+>>>>=20
+>>>> This looks like something that could hit every file systems, so
+>>>> shouldn't we fix this in common code?  We could also look into
+>>>> just using memalloc_nofs_save for the page cache allocation path
+>>>> instead of the per-mapping gfp_mask.
+>>>=20
+>>> I think it has to be the entire IO path - any allocation from the
+>>> underlying filesystem could recurse into the top level filesystem
+>>> and then deadlock if the memory reclaim submits IO or blocks on
+>>> IO completion from the upper filesystem. That's a bloody big hammer
+>>> for something that is only necessary when there are stacked
+>>> filesystems like this....
+>>=20
+>> Yeah.... that's why using memalloc_nofs_save() probably makes the =
+most
+>> sense, and dm_zoned should use that before it calls into ext4.
+>=20
+> Unfortunately, with this particular setup, that will not solve the =
+problem.
+> dm-zoned submit BIOs to its backend drive in response to XFS activity. =
+The
+> requests for these BIOs are passed along to the kernel tcmu HBA and =
+end up in
+> that HBA command ring. The commands themselves are read from the ring =
+and
+> executed by the tcmu-runner user process which executes them doing
+> pread()/pwrite() to the ext4 file. The tcmu-runner process being a =
+different
+> context than the dm-zoned worker thread issuing the BIO,
+> memalloc_nofs_save/restore() calls in dm-zoned will have no effect.
 
-Yes, so if we focus on the fabrics multipathing, the only issue I see is
-that only one controller can be connected to a passthru target (I
-believe this was at your request) so two paths simply cannot exist to
-begin with. I can easily remove that restriction.
+One way to handle this is to pass on PF_MEMALLOC/memalloc_nofs_save =
+state
+in the BIO so that the worker thread will also get the correct behaviour
+when it is processing this IO submission.
 
-Logan
+> We tried a simpler setup using loopback mount (XFS used directly in an =
+ext4
+> file) and running the same workload. We failed to recreate a similar =
+deadlock in
+> this case, but I am strongly suspecting that it can happen too. It is =
+simply
+> much harder to hit because the IO path from XFS to ext4 is all =
+in-kernel and
+> asynchronous, whereas tcmu-runner ZBC handler is a synchronous QD=3D1 =
+path for IOs
+> which makes it relatively easy to get inter-dependent writes or =
+read+write
+> queued back-to-back and create the deadlock.
+>=20
+> So back to Dave's point, we may be needing the big-hammer solution in =
+the case
+> of stacked file systems, while a non-stack setups do not necessarily =
+need it
+> (that is for the FS to decide). But I do not see how to implement this =
+big
+> hammer conditionally. How can a file system tell if it is at the top =
+of the
+> stack (big hammer not needed) or lower than the top level (big hammer =
+needed) ?
+>=20
+> One simple hack would be an fcntl() or mount option to tell the FS to =
+use
+> GFP_NOFS unconditionally, but avoiding the bug would mean making sure =
+that the
+> applications or system setup is correct. So not so safe.
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_D99D7753-DBA9-49E5-A7C2-D04048D1DD65
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl0/PawACgkQcqXauRfM
+H+B1KA//WBsbz6WuzLRUPgCl0u9LuehEbAVHADxQwJMap50KpEmWoLkqvGDyrvdi
+GhPRIq/RIYDZ6nPyy1w5I7EZBunEh4d/T5VdCEMgkcphxElvgjD2SJABQ5hRwonu
+C7lHXTW2sgjWRzbDS3xuM7AyqvYcsWgwtRIW+zdCSdV/nYjW40cZb33XxsEoi9iQ
+MQlE0iAjXIuDd7o3cU/XhxdpGVIJRqtrwchjZX4ThEkjzpo/mqh4oh1H9li8iWPy
+wYhbgMuCkZSOtDvthw3zhtjZ79/eQZ2FPiM67imBSxBDVbCkQtkUja2K3SG6Phnq
+rwuTIwytd4NaVssP5JU+3Opxym6ngGkEPSqQob75MssgcktQFyEhrzffMNl47Gxa
+eB+kfJ1rjQjNow+wTGbmkBm+HoB/T3ArL9il7XfrsR8l0KL0YJ5Kruen2LUPlSIG
+JR8tfziVfOhxP5bQyguOjtvXES9WbiCB+So86ed56YjBCsZf/+wmGaTxSYeTnXQQ
+i68JJLEYRnyMRl7PeQL3V303w1Yp3PSXHXUHDZ70FYS6SJ1Kv2NSJt2kn0lkMe0w
+Vw2KzWCehPM2qTC0WyQHdScds48QEUs6XVX9oTcV/1TH0ynUj9fneEWA3TybxYNR
+YUvWQL8gTeyfmxHabewi0lrxwFQ6zvcXbZ1Vp3sjkqcK4ZmuFwo=
+=PPZf
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_D99D7753-DBA9-49E5-A7C2-D04048D1DD65--
