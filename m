@@ -2,162 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E689279B36
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 23:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4C5079B54
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 23:42:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388680AbfG2Vgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jul 2019 17:36:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41758 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729233AbfG2Vgq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:36:46 -0400
-Received: from gmail.com (unknown [104.132.1.77])
+        id S2388300AbfG2Vmj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jul 2019 17:42:39 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42736 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727681AbfG2Vmi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Jul 2019 17:42:38 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 08EF38EE128;
+        Mon, 29 Jul 2019 14:42:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1564436558;
+        bh=O9+94053nXIdaYjX0KWz3Uph5DqmEC5747H6+EU/Zj4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=lHLpYWO34joaWpbbHUhSuzCeIS+wzLPt/o74sdOPpx/41Uwx9X+LCpSavRxIQLAmS
+         GLtxTKlvIqHG34IA+ti/PeDOb4qmIWbvG7PMgBTtkvJ87tJeUu3JH7H70BpJimBUbs
+         Vq44Zx03MEmLllgHt1oMT30KL5EcjHaTsW99PNUM=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 5Z_AzM2cI4iM; Mon, 29 Jul 2019 14:42:37 -0700 (PDT)
+Received: from jarvis.lan (unknown [50.35.71.147])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3134206DD;
-        Mon, 29 Jul 2019 21:36:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564436205;
-        bh=TX+BUd/guqwyoeacac9QLEXtuFVcDeFmoEBcFE7Jlvs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jD8Jnz4w2d/CDG/Z/3YlRqtkdLhxpObgwJdxi+Ax0luiHhhyo9+08+EsgXn/7x9/N
-         pQ9vDwUsnuiFEqv17OuzZLCulrv96MKSIsHyRteY8dNbXkAmsFdsw8kNnOJWEM5DkI
-         Iw2xUea2rleBmw8pmpttvm/5QAVIGC5ceyRxE15c=
-Date:   Mon, 29 Jul 2019 14:36:43 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 5319E8EE116;
+        Mon, 29 Jul 2019 14:42:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1564436557;
+        bh=O9+94053nXIdaYjX0KWz3Uph5DqmEC5747H6+EU/Zj4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=XBkskcBS+6ULfJ0Mmli/fO9I4Gh6vlIYhaMvx29RfACbNfsJHrN2Vg9eEb8GBTKfZ
+         L0mqQVtElU/FyAX9I84kahiqjaV7j4AqSdTvv35kvCXsh+HgK0jtpTDtFzLL6rJMHZ
+         oJ/v0RFNO74FKRJTPQjojHnhiruRm+54OdND5jTU=
+Message-ID: <1564436554.12726.38.camel@HansenPartnership.com>
+Subject: Re: [PATCH v7 09/16] fscrypt: add an HKDF-SHA512 implementation
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Eric Biggers <ebiggers@kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>
 Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
         linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
         Paul Crowley <paulcrowley@google.com>,
         Satya Tangirala <satyat@google.com>
-Subject: Re: [PATCH v7 16/16] fscrypt: document the new ioctls and policy
- version
-Message-ID: <20190729213642.GI169027@gmail.com>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
-        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
-        Paul Crowley <paulcrowley@google.com>,
-        Satya Tangirala <satyat@google.com>
+Date:   Mon, 29 Jul 2019 14:42:34 -0700
+In-Reply-To: <20190729202951.GG169027@gmail.com>
 References: <20190726224141.14044-1-ebiggers@kernel.org>
- <20190726224141.14044-17-ebiggers@kernel.org>
- <20190729020009.GA3863@mit.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729020009.GA3863@mit.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+         <20190726224141.14044-10-ebiggers@kernel.org>
+         <20190728193949.GI6088@mit.edu> <20190729202951.GG169027@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 28, 2019 at 10:00:09PM -0400, Theodore Y. Ts'o wrote:
-> On Fri, Jul 26, 2019 at 03:41:41PM -0700, Eric Biggers wrote:
-> > +- The kernel cannot magically wipe copies of the master key(s) that
-> > +  userspace might have as well.  Therefore, userspace must wipe all
-> > +  copies of the master key(s) it makes as well.  Naturally, the same
-> > +  also applies to all higher levels in the key hierarchy.  Userspace
-> > +  should also follow other security precautions such as mlock()ing
-> > +  memory containing keys to prevent it from being swapped out.
+On Mon, 2019-07-29 at 13:29 -0700, Eric Biggers wrote:
+> On Sun, Jul 28, 2019 at 03:39:49PM -0400, Theodore Y. Ts'o wrote:
+> > On Fri, Jul 26, 2019 at 03:41:34PM -0700, Eric Biggers wrote:
+> > > From: Eric Biggers <ebiggers@google.com>
+[...]
+> > > HKDF solves all the above problems.
+> > > 
+> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > 
+> > Unless I missed something there's nothing here which is fscrypt
+> > specific.  Granted that it's somewhat unlikely that someone would
+> > want to implement (the very bloated) IKE from IPSEC in the kernel,
+> > I wonder if there might be other users of HKDF, and whether this
+> > would be better placed in lib/ or crypto/ instead of fs/crypto?
 > 
-> Normally, shouldn't userspace have wiped all copies of the master key
-> after they have called ADD_KEY?  Why should they be left hanging
-> around?  Waiting until REMOVE_KEY to remove other copies of the master
-> key seems.... late.
-
-Correct, normally userspace should wipe its copy of the key immediately after
-adding it to the kernel.  I'll clarify that here.
-
+> This is standard HKDF-SHA512; only the choice of parameters is
+> fscrypt-specific. So it could indeed use a common implementation of
+> HKDF if one were available.
 > 
-> > +- In general, decrypted contents and filenames in the kernel VFS
-> > +  caches are freed but not wiped.  Therefore, portions thereof may be
-> > +  recoverable from freed memory, even after the corresponding key(s)
-> > +  were wiped.  To partially solve this, you can set
-> > +  CONFIG_PAGE_POISONING=y in your kernel config and add page_poison=1
-> > +  to your kernel command line.  However, this has a performance cost.
+> However, I don't think there are any other HKDF users in the kernel
+> currently.
+
+Well, I'm still trying to add the TPM ones, but they're based on SP800-
+108 for arbitrary keys and SP800-56A for elliptic curve ones.  These
+are similar to the RFC5869 except that they do extract/expand in a
+single operation.  Plus, of course, the TPM mandates we use the name
+algorithm (usually sha256, which is what I hardcoded) as the hash.
+
+Note: since you don't use the extract step either in your
+implementation, effectively you're equivalent to SP800-108 as well. 
+This is effectively the same reason as the TPM: we need deterministic
+keys, so we've nowhere to get the salt from that would persist.
+
+> Also, while there was a patch to support HKDF via the crypto_rng API,
+> there was no consensus about whether this was actually the best way
+> to add KDF support:
+> https://lore.kernel.org/linux-crypto/2423373.Zd5ThvQH5g@positron.chro
+> nox.de
 > 
-> ... and even this won't help if you have swap configured....
-
-Yes, but that's a larger issue.  Unencrypted data can be written to swap and
-then be recovered from disk offline.  This has nothing to do with whether the
-key is ever removed on-line or not.  So swap really could use its own mention
-somewhere else, maybe in the "Offline attacks" section.
-
+> So for now, to avoid unnecessarily blocking this patchset I think we
+> should just go with this implementation in fs/crypto/.  It can always
+> be changed later, once we decide on the best way to add KDFs to the
+> crypto API.
 > 
-> > +v1 encryption policies have some weaknesses with respect to online
-> > +attacks:
-> > +
-> > +- There is no verification that the provided master key is correct.
-> > +  Consequently, malicious users can associate the wrong key with
-> > +  encrypted files, even files to which they have only read-only
-> > +  access.
-> 
-> Yes, but they won't be able to trick other users into using that
-> incorrect key.  With the old interface, it gets written into the
-> user's session keyring, which won't get used by another user.  And
-> with the newer interface, only root is allowed to set v1 key.
-> 
+> [To be clear: this patch already uses "hmac(sha512)" from the crypto
+> API.  It's only the actual HKDF part that we're talking about here.
 
-As mentioned in a previous reply, they *can* trick other users into using that
-incorrect key, by opening files using that incorrect key.  The incorrect key is
-then cached for everyone.  (This assumes the other users have at least read
-access to the file.  If it's mode 0700, this won't work.)
+Right, once you have the hmac + hash available, the rest is easy, so
+this is what we have for the TPM KDFa:
 
-> > +Master keys should be pseudorandom, i.e. indistinguishable from random
-> > +bytestrings of the same length.  This implies that users **must not**
-> > +directly use a password as a master key, zero-pad a shorter key, or
-> > +repeat a shorter key.
-> 
-> These paragraphs starts a bit funny, since we first say "should" in
-> the first sentence, and then it's followed up by "**must not**" in the
-> second sentence.  Basically, they *could* do this, but it would just
-> weaken the security of the system significantly.
-> 
-> At the very least, we should explain the basis of the recommendation.
+static void KDFa(u8 *key, int keylen, const char *label, u8 *u,
+		 u8 *v, int bytes, u8 *out)
+{
+	u32 counter;
+	const __be32 bits = cpu_to_be32(bytes * 8);
 
-I think we should go with "must" instead of "should".
+	for (counter = 1; bytes > 0; bytes -= SHA256_DIGEST_SIZE, counter++,
+		     out += SHA256_DIGEST_SIZE) {
+		SHASH_DESC_ON_STACK(desc, sha256_hash);
+		__be32 c = cpu_to_be32(counter);
 
-Basically the point of this paragraph is to explain that the API takes a real
-cryptographic key of the full given length.
+		hmac_init(desc, key, keylen);
+		crypto_shash_update(desc, (u8 *)&c, sizeof(c));
+		crypto_shash_update(desc, label, strlen(label)+1);
+		crypto_shash_update(desc, u, SHA256_DIGEST_SIZE);
+		crypto_shash_update(desc, v, SHA256_DIGEST_SIZE);
+		crypto_shash_update(desc, (u8 *)&bits, sizeof(bits));
+		hmac_final(desc, key, keylen, out);
+	}
+}
 
-Otherwise the security guarantees for the algorithms the master key may be used
-in (AES-128-ECB KDF, HKDF-SHA512, or Adiantum) aren't guaranteed to hold.
+I honestly think these things are so simplistic with the correct hmac
+that it would make it more confusing to try to produce a general KDF
+than it would simply to hard code them where we need them.
 
-One can argue about how much of a problem this actually is, like how unsalted
-HKDF on a key with unevenly distributed entropy is *probably* fine in practice
-(and much better than the AES-128-ECB KDF).  But the security proof for unsalted
-HKDF actually still assumes a pseudorandom key.  It's only randomly salted HKDF
-that doesn't.
+James
 
-I'd strongly prefer to go with *must* for things that are necessary for the
-security proofs or cryptanalysis to apply, even if they *might* still be "good
-enough" in practice.
 
-I'll try to find a better way to word this paragraph.
-
-> 
-> > +The KDF used for a particular master key differs depending on whether
-> > +the key is used for v1 encryption policies or for v2 encryption
-> > +policies.  Users **must not** use the same key for both v1 and v2
-> > +encryption policies.
-> 
-> "Must not" seems a bit strong.  If they do, and a v1 per-file key and
-> nonce leaks out, then the encryption key will be compromised.  So the
-> strength of the key will be limited by the weaknesses of the v1
-> scheme.  But it's not like using a that was originally meant for v1,
-> and then using it for v2, causes any additional weakness.  Right?
-> 
-
-Probably, but we don't know for sure.  It's theoretically possible that
-cryptanalysis of two cryptographic primitives A and B, where they are each given
-the same key, could be much easier than attacking A or B individually.
-
-So again, I'd prefer to go with *must not* for things where there is no theory
-of cryptography that says it is okay, even if *probably* someone could get away
-with doing it in practice.
-
-- Eric
