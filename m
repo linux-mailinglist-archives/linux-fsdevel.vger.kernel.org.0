@@ -2,142 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2EA978280
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 01:51:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABA5C782AF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 02:08:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbfG1Xv1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Jul 2019 19:51:27 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:59525 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726183AbfG1Xv0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Jul 2019 19:51:26 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45xfjQ2Q0wz9sBt;
-        Mon, 29 Jul 2019 09:51:22 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564357883;
-        bh=+Sm3w908JcE82ssAs1nSzuDW2v9mYsOQgWyC71ct+r4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LUBMGnGhZiyd6A2n9SjLJbgB1fX/qq4quPY2rR4fx4UmSVL1hnCt2zwGGwF1vmeCY
-         IIpWjYeDbHhu4LjuA2lXj32tosi0nKjOQOQYvBZk+mHFcLDWe1S+H1MCo8U8F8PnbT
-         yPPrQW5jkM8pM6Xn5d4nDh4KkpRRL1c2rViyharlscFJF47Ftytd2S1VdaU/FjgzUh
-         NRhCPjtu9+cfX/+XW8X12/JlWrmBRUZtfj+m/op4PeC1ycKzwK9u0qbsLKnJfp/4mm
-         D1OfW6lxvooS3/QAIt4AZiaq9Kensk+7vVygKTDuccbp1TGTxtdVgyY0SbcLRdsz/q
-         XhHyx1knsyguA==
-Date:   Mon, 29 Jul 2019 09:51:21 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Chris Down <chris@chrisdown.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org
-Subject: Re: mmotm 2019-07-24-21-39 uploaded (mm/memcontrol)
-Message-ID: <20190729095121.080c1a93@canb.auug.org.au>
-In-Reply-To: <20190727101608.GA1740@chrisdown.name>
-References: <20190725044010.4tE0dhrji%akpm@linux-foundation.org>
-        <4831a203-8853-27d7-1996-280d34ea824f@infradead.org>
-        <20190725163959.3d759a7f37ba40bb7f75244e@linux-foundation.org>
-        <20190727034205.GA10843@archlinux-threadripper>
-        <20190726211952.757a63db5271d516faa7eaac@linux-foundation.org>
-        <20190727101608.GA1740@chrisdown.name>
+        id S1726422AbfG2AIa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Jul 2019 20:08:30 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:41306 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbfG2AIa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 28 Jul 2019 20:08:30 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6T07EFJ051956;
+        Mon, 29 Jul 2019 00:08:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=1Xbfu53Ww+9Z+XNOFW2PofuFqfEK+HKRB6513qm7i5Y=;
+ b=tYyC/bS8yk5A4Rgyi3odQeC+rThpG7kZYc9fOlzrTmkjCxQl9ts582umcexy7zj7Ts8J
+ knNzh9ry4/9OWmxqKoHxJlFYlkwL7REjLLG71x6W9ZX0cOBenLPYAHKGyNsZ9gfX0fT2
+ PpqvkECfJCP6lrByktB9s/LY5z4pgPghB4ZWdw5Fy2TTCOcCM05pvScdtTBsZEBrfBLG
+ Sj215QeUv90xHqGsR7frNhT4zgy1Bg/fcJ/JqcZQp0LieLZMKj6cUX7nNtUmu2niI332
+ kZvUL3auUknYIxUjRY2RN463dr2jCbyH09bIiWEK8fZRD1bhH1oNm9bAJ8SsSUIa7WFk EQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2u0ejp47uw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Jul 2019 00:08:09 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6T02Y0B035038;
+        Mon, 29 Jul 2019 00:06:09 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2u0ee3mfyd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Jul 2019 00:06:09 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6T0625R028613;
+        Mon, 29 Jul 2019 00:06:02 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 29 Jul 2019 00:06:02 +0000
+Date:   Sun, 28 Jul 2019 17:06:03 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: lift the xfs writepage code into iomap v3
+Message-ID: <20190729000603.GL1561054@magnolia>
+References: <20190722095024.19075-1-hch@lst.de>
+ <20190726233753.GD2166993@magnolia>
+ <CAHc6FU7L52soLiRafnOiTsaMYp4X_NmjjimpMMzdaoSH_afT+A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/zy3Q_OmUUHqfTfaZG9i6x+B";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHc6FU7L52soLiRafnOiTsaMYp4X_NmjjimpMMzdaoSH_afT+A@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9332 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907280302
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9332 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907280302
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/zy3Q_OmUUHqfTfaZG9i6x+B
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Sat, 27 Jul 2019 11:16:08 +0100 Chris Down <chris@chrisdown.name> wrote:
->
-> u64 division: truly the gift that keeps on giving. Thanks Andrew for foll=
-owing=20
-> up on these.
->=20
-> Andrew Morton writes:
-> >Ah.
+On Sat, Jul 27, 2019 at 03:33:14PM +0200, Andreas Gruenbacher wrote:
+> On Sat, 27 Jul 2019 at 01:38, Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > On Mon, Jul 23, 2019 at 11:50:12AM +0200, Christoph Hellwig wrote:
+> > > Hi all,
+> > >
+> > > this series cleans up the xfs writepage code and then lifts it to
+> > > fs/iomap.c so that it could be use by other file system.  I've been
+> > > wanting to this for a while so that I could eventually convert gfs2
+> > > over to it, but I never got to it.  Now Damien has a new zonefs
+> > > file system for semi-raw access to zoned block devices that would
+> > > like to use the iomap code instead of reinventing it, so I finally
+> > > had to do the work.
 > >
-> >It's rather unclear why that u64 cast is there anyway.  We're dealing
-> >with ulongs all over this code.  The below will suffice. =20
->=20
-> This place in particular uses u64 to make sure we don't overflow when lef=
-t=20
-> shifting, since the numbers can get pretty big (and that's somewhat neede=
-d due=20
-> to the need for high precision when calculating the penalty jiffies). It'=
-s ok=20
-> if the output after division is an unsigned long, just the intermediate s=
-teps=20
-> need to have enough precision.
->=20
-> >Chris, please take a look?
+> > Hmm... I don't like how there are xfs changes mixed in with the iomap
+> > changes, because were I to take this series as-is then I'd have to
+> > commit both to adding iomap writeback code /and/ converting xfs at the
+> > same time.
 > >
-> >--- a/mm/memcontrol.c~mm-throttle-allocators-when-failing-reclaim-over-m=
-emoryhigh-fix-fix-fix
-> >+++ a/mm/memcontrol.c
-> >@@ -2415,7 +2415,7 @@ void mem_cgroup_handle_over_high(void)
-> > 	clamped_high =3D max(high, 1UL);
+> > I think I'd be more comfortable creating a branch to merge the changes
+> > to list.h and fs/iomap/, and then gfs2/zonefs/xfs can sprout their own
+> > branches from there to do whatever conversions are necessary.
 > >
-> > 	overage =3D (u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT;
-> >-	do_div(overage, clamped_high);
-> >+	overage /=3D clamped_high; =20
->=20
-> I think this isn't going to work because left shifting by=20
-> MEMCG_DELAY_PRECISION_SHIFT can make the number bigger than ULONG_MAX, wh=
-ich=20
-> may cause wraparound -- we need to retain the u64 until we divide.
->=20
-> Maybe div_u64 will satisfy both ARM and i386? ie.
->=20
-> diff --git mm/memcontrol.c mm/memcontrol.c
-> index 5c7b9facb0eb..e12a47e96154 100644
-> --- mm/memcontrol.c
-> +++ mm/memcontrol.c
-> @@ -2419,8 +2419,8 @@ void mem_cgroup_handle_over_high(void)
->          */
->         clamped_high =3D max(high, 1UL);
-> =20
-> -       overage =3D (u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT;
-> -       do_div(overage, clamped_high);
-> +       overage =3D div_u64((u64)(usage - high) << MEMCG_DELAY_PRECISION_=
-SHIFT,
-> +                         clamped_high);
-> =20
->         penalty_jiffies =3D ((u64)overage * overage * HZ)
->                 >> (MEMCG_DELAY_PRECISION_SHIFT + MEMCG_DELAY_SCALING_SHI=
-FT); =20
+> > To me what that means is splitting patch 7 into 7a which does the iomap
+> > changes and 7b which does the xfs changes.  To get there, I'd create a
+> > iomap-writeback branch containing:
+> >
+> > 1 7a 8 9 10 11 12
+> >
+> > and then a new xfs-iomap-writeback branch containing:
+> >
+> > 2 4 7b
+> >
+> > This eliminates the need for patches 3, 5, and 6, though the cost is
+> > that it's less clear from the history that we did some reorganizing of
+> > the xfs writeback code and then moved it over to iomap.  OTOH, I also
+> > see this as a way to lower risk because if some patch in the
+> > xfs-iomap-writeback branch shakes loose a bug that doesn't affect gfs2
+> > or zonedfs we don't have to hold them up.
+> >
+> > I'll try to restructure this series along those lines and report back
+> > how it went.
+> 
+> Keeping the infrastructure changes in separate commits would certainly
+> make the patches easier to work with for me. Keeping the commits
+> interleaved should be fine though: patch "iomap: zero newly allocated
+> mapped blocks" depends on "xfs: set IOMAP_F_NEW more carefully", so a
+> pure infrastructure branch without "xfs: set IOMAP_F_NEW more
+> carefully" probably wouldn't be correct.
 
-I have applied this to the akpm-current tree in linux-next today.
+<nod> In the end I went with:
 
---=20
-Cheers,
-Stephen Rothwell
+iomap: 1 7a 8 9 10 11 12
 
---Sig_/zy3Q_OmUUHqfTfaZG9i6x+B
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+and then atop that:
 
------BEGIN PGP SIGNATURE-----
+xfs: 2 4 3 5 6 7b
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0+NPkACgkQAVBC80lX
-0GwSggf/R3ZZuH5LliVhgCqbaBSFe93KVSxKonReOK3mTFha+qmnk8vOnjMxHn6E
-LnMnA3mI7jJZw/uHTSE/ccUfWIGgJ/nWKU8M2iCuVQwChcocbVaf6TTViNwSZRAy
-0hgehpDyAN/LuS8hPxNHre02xDtx4faKRkUUPLUuFC6wXycQ6UoLFoccYNQWKbuB
-Xdm5vGFxSwgNkwi/wGWZnkikoBMIOseFvqDP7SevW2NAQdST9LIoXY2t5RXTcNDh
-O6E3TpOOXH+GP00uphn+21GLF4AGZLgajZrTdv2v/pkzSfW1qI/hdfkuHb1bOCnx
-SFymgmdpe6PfoqnBr01hSGHc22TskQ==
-=DFTr
------END PGP SIGNATURE-----
+Because xfs can merge the refactoring in patches 2 & 4 without needing
+to take patches 3-7b.  Will retest overnight with -rc2 (now that scsi
+works again <cough>).
 
---Sig_/zy3Q_OmUUHqfTfaZG9i6x+B--
+--D
+
+> Thanks,
+> Andreas
