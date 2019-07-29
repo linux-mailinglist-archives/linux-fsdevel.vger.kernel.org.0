@@ -2,100 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4A3478E84
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 16:57:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7030678EF8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 17:19:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387693AbfG2O5o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jul 2019 10:57:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52696 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726281AbfG2O5o (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:57:44 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 866603007C58;
-        Mon, 29 Jul 2019 14:57:43 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BD32C60C5F;
-        Mon, 29 Jul 2019 14:57:42 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     <viro@zeniv.linux.org.uk>, "zhangyi \(F\)" <yi.zhang@huawei.com>
-Cc:     <linux-aio@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bcrl@kvack.org>,
-        <wangkefeng.wang@huawei.com>
-Subject: Re: [PATCH] aio: add timeout validity check for io_[p]getevents
-References: <1564039289-7672-1-git-send-email-yi.zhang@huawei.com>
-        <x49imrqb2e5.fsf@segfault.boston.devel.redhat.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Mon, 29 Jul 2019 10:57:41 -0400
-In-Reply-To: <x49imrqb2e5.fsf@segfault.boston.devel.redhat.com> (Jeff Moyer's
-        message of "Thu, 25 Jul 2019 10:43:46 -0400")
-Message-ID: <x49y30gnb16.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S2387957AbfG2PTF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jul 2019 11:19:05 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:39492 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387874AbfG2PTE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Jul 2019 11:19:04 -0400
+Received: by mail-ot1-f68.google.com with SMTP id r21so56888018otq.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2019 08:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rCT6H9w7mRPFe9tLjSH6a/cwajZAI16F1Mz9k4S0jwo=;
+        b=bw8SQC4b3IVQPpG8+lymx/5VvfWVb17DQbUIblaNzQ+DivE/9bZrLa1es+hytSIsb4
+         st4IVP90+jBqEINN4yoCPm61vk9e/iayOi66FNlhn5dYMF3FkwdxXmRS9QBPg3jZ/EBI
+         1/zEryAVLcFGSYfWtnkGzTIacI0eDBEQI3LL2MJwDFGuXVFaoLNEvv7HU4DOrtwcyX3c
+         8BoKKJMt1wbDx1ZPmjpdztw6bJ+1/eFNc+39XbtVdYu3o5Zp2RLdaBT9RRza5m3Xo+CG
+         XWE9Km4WBRApykf0CL9lWcPxOvhP4EisuNC6Ehj9bIcJ/nbDXkwpossXNQEbG2s8wOKw
+         coIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rCT6H9w7mRPFe9tLjSH6a/cwajZAI16F1Mz9k4S0jwo=;
+        b=GY7OhOX+1jRlJA/XCWRMqgbwfL0puOcb0to2PAUV+/ZV2kqG+TYa5UBbCfPtQK0qFy
+         kARJzYbrm/JcD+qKk16fBNnOTkKwNhdP6MlseP8zdYezPcJMBzY4TQCsBDvkcT672uys
+         vFWQ4H8HIh9aTTOifyWJoRdRIDh6AeT9plEfbukmahET46ApTpOYFatVSrUK3G/pNpd1
+         K4C/5Sq+HhCa673N9LeMLR2Lkqeux3L390IPAUJPmtB7XFzcwgW8vF9fldm4ozLmOQnD
+         NfxeB8u1uGLg4cNMdBF8pLYMfcAerAHTh64MWn7yVd/Sqw1KZS//JFJeM9X2xe762gls
+         RJeQ==
+X-Gm-Message-State: APjAAAXdswuxHUa3b0GU712gj5A3n6KzosNpcNNF30yfm3hSm4h2eJki
+        NOBFYTAj8HxrwPsahxxpJH0tZEUuupW9+uG4rTl5wA==
+X-Google-Smtp-Source: APXvYqxYWAjs7eLjr+8klpuvyVa2e+dzwHIBnTZXXBRs/ed3hhF2B01PvzuOFqm6GTJEk7S3DAaC0Ry44CTuealvMbg=
+X-Received: by 2002:a9d:470d:: with SMTP id a13mr80213537otf.126.1564413543911;
+ Mon, 29 Jul 2019 08:19:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 29 Jul 2019 14:57:43 +0000 (UTC)
+References: <CAPcyv4gUiDw8Ma9mvbW5BamQtGZxWVuvBW7UrOLa2uijrXUWaw@mail.gmail.com>
+ <20190705191004.GC32320@bombadil.infradead.org> <CAPcyv4jVARa38Qc4NjQ04wJ4ZKJ6On9BbJgoL95wQqU-p-Xp_w@mail.gmail.com>
+ <20190710190204.GB14701@quack2.suse.cz> <20190710201539.GN32320@bombadil.infradead.org>
+ <20190710202647.GA7269@quack2.suse.cz> <20190711141350.GS32320@bombadil.infradead.org>
+ <20190711152550.GT32320@bombadil.infradead.org> <20190711154111.GA29284@quack2.suse.cz>
+ <CAPcyv4hA+44EHpGN9F5eQD5Y_AuyPTKmovNWvccAFGhF_O2JMg@mail.gmail.com> <20190729120228.GC17833@quack2.suse.cz>
+In-Reply-To: <20190729120228.GC17833@quack2.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 29 Jul 2019 08:18:52 -0700
+Message-ID: <CAPcyv4hMJnMYAW=qcZWcadMoofgsnoQ66Xk5O6ZpxKCK4Yfr5g@mail.gmail.com>
+Subject: Re: [PATCH] dax: Fix missed PMD wakeups
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Boaz Harrosh <openosd@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Robert Barror <robert.barror@intel.com>,
+        Seema Pandit <seema.pandit@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al, can you take this through your tree?
+On Mon, Jul 29, 2019 at 5:02 AM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 16-07-19 20:39:46, Dan Williams wrote:
+> > On Fri, Jul 12, 2019 at 2:14 AM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Thu 11-07-19 08:25:50, Matthew Wilcox wrote:
+> > > > On Thu, Jul 11, 2019 at 07:13:50AM -0700, Matthew Wilcox wrote:
+> > > > > However, the XA_RETRY_ENTRY might be a good choice.  It doesn't normally
+> > > > > appear in an XArray (it may appear if you're looking at a deleted node,
+> > > > > but since we're holding the lock, we can't see deleted nodes).
+> > > >
+> > > ...
+> > >
+> > > > @@ -254,7 +267,7 @@ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
+> > > >  static void put_unlocked_entry(struct xa_state *xas, void *entry)
+> > > >  {
+> > > >       /* If we were the only waiter woken, wake the next one */
+> > > > -     if (entry)
+> > > > +     if (entry && dax_is_conflict(entry))
+> > >
+> > > This should be !dax_is_conflict(entry)...
+> > >
+> > > >               dax_wake_entry(xas, entry, false);
+> > > >  }
+> > >
+> > > Otherwise the patch looks good to me so feel free to add:
+> > >
+> > > Reviewed-by: Jan Kara <jack@suse.cz>
+> >
+> > Looks good, and passes the test case. Now pushed out to
+> > libnvdimm-for-next for v5.3 inclusion:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git/commit/?h=libnvdimm-for-next&id=23c84eb7837514e16d79ed6d849b13745e0ce688
+>
+> Thanks for picking up the patch but you didn't apply the fix I've mentioned
+> above. So put_unlocked_entry() is not waking up anybody anymore... Since
+> this got already to Linus' tree, I guess a separate fixup patch is needed
+> (attached).
 
-Thanks,
-Jeff
+Sigh, indeed. I think what happened is I applied the fixup locally,
+tested it, and then later reapplied the patch from the list as I was
+integrating the new automatic "Link:" generation script that has been
+proposed on the ksummit list.
 
-Jeff Moyer <jmoyer@redhat.com> writes:
+I'll get this pushed immediately.
 
-> "zhangyi (F)" <yi.zhang@huawei.com> writes:
->
->> io_[p]getevents syscall should return -EINVAL if if timeout is out of
->> range, add this validity check.
->>
->> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
->> ---
->>  fs/aio.c | 11 +++++++++--
->>  1 file changed, 9 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/aio.c b/fs/aio.c
->> index 01e0fb9..dd967a0 100644
->> --- a/fs/aio.c
->> +++ b/fs/aio.c
->> @@ -2031,10 +2031,17 @@ static long do_io_getevents(aio_context_t ctx_id,
->>  		struct io_event __user *events,
->>  		struct timespec64 *ts)
->>  {
->> -	ktime_t until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
->> -	struct kioctx *ioctx = lookup_ioctx(ctx_id);
->> +	ktime_t until = KTIME_MAX;
->> +	struct kioctx *ioctx = NULL;
->>  	long ret = -EINVAL;
->>  
->> +	if (ts) {
->> +		if (!timespec64_valid(ts))
->> +			return ret;
->> +		until = timespec64_to_ktime(*ts);
->> +	}
->> +
->> +	ioctx = lookup_ioctx(ctx_id);
->>  	if (likely(ioctx)) {
->>  		if (likely(min_nr <= nr && min_nr >= 0))
->>  			ret = read_events(ioctx, min_nr, nr, events, until);
->
-> Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
->
-> The previous suggestion[1] of fixing the helpers never materialized, so
-> let's just get this fixed, already.
->
-> -Jeff
->
-> [1] https://marc.info/?l=linux-fsdevel&m=152209450618587&w=2
->
-> --
-> To unsubscribe, send a message with 'unsubscribe linux-aio' in
-> the body to majordomo@kvack.org.  For more info on Linux AIO,
-> see: http://www.kvack.org/aio/
-> Don't email: <a href=mailto:"aart@kvack.org">aart@kvack.org</a>
+Lesson learned: no manual local fixups, ask for resends to always be
+able to pull the exact contents from the list.
