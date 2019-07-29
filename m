@@ -2,128 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D22B479A35
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 22:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D98A079A7D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 22:57:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387531AbfG2Uqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jul 2019 16:46:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48640 "EHLO mail.kernel.org"
+        id S1729600AbfG2U5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jul 2019 16:57:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37004 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729079AbfG2Uqb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:46:31 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729405AbfG2U5i (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Jul 2019 16:57:38 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D6B0206A2;
-        Mon, 29 Jul 2019 20:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564433190;
-        bh=DNMh2YRc0dQISTUq/gkVxZiJ3MfUwE+LBvvMLd0sx0w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K79oGysDbp1R9KcVqj1mKpfGB23D0dx9KzJwL1URFJI/8PotFaTXB1QXv/9jPmJ5e
-         cd4dzd2ixOf8QsiHSDEd5r1iJBny2qYoC0vd1z0wpsTIbfCpr52p94FTMkHI78oJ2t
-         NisulN2mchZN4cYXAX27Nu925MXHkVW50WusaYRo=
-Date:   Mon, 29 Jul 2019 13:46:28 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
-        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
-        Paul Crowley <paulcrowley@google.com>,
-        Satya Tangirala <satyat@google.com>
-Subject: Re: [PATCH v7 10/16] fscrypt: v2 encryption policy support
-Message-ID: <20190729204627.GH169027@gmail.com>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
-        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
-        Paul Crowley <paulcrowley@google.com>,
-        Satya Tangirala <satyat@google.com>
-References: <20190726224141.14044-1-ebiggers@kernel.org>
- <20190726224141.14044-11-ebiggers@kernel.org>
- <20190728211730.GK6088@mit.edu>
+        by mx1.redhat.com (Postfix) with ESMTPS id 40047C060204;
+        Mon, 29 Jul 2019 20:57:37 +0000 (UTC)
+Received: from redhat.com (ovpn-112-31.rdu2.redhat.com [10.10.112.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1D8C65C219;
+        Mon, 29 Jul 2019 20:57:24 +0000 (UTC)
+Date:   Mon, 29 Jul 2019 16:57:21 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net,
+        virtualization@lists.linux-foundation.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Minwoo Im <minwoo.im.dev@gmail.com>
+Subject: Re: [PATCH 03/12] block: bio_release_pages: use flags arg instead of
+ bool
+Message-ID: <20190729205721.GB3760@redhat.com>
+References: <20190724042518.14363-1-jhubbard@nvidia.com>
+ <20190724042518.14363-4-jhubbard@nvidia.com>
+ <20190724053053.GA18330@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190728211730.GK6088@mit.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190724053053.GA18330@infradead.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 29 Jul 2019 20:57:38 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 28, 2019 at 05:17:30PM -0400, Theodore Y. Ts'o wrote:
-> On Fri, Jul 26, 2019 at 03:41:35PM -0700, Eric Biggers wrote:
-> > @@ -319,6 +329,31 @@ int fscrypt_ioctl_add_key(struct file *filp, void __user *_uarg)
-> >  	if (!capable(CAP_SYS_ADMIN))
-> >  		goto out_wipe_secret;
-> >  
-> > +	if (arg.key_spec.type != FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR) {
+On Tue, Jul 23, 2019 at 10:30:53PM -0700, Christoph Hellwig wrote:
+> On Tue, Jul 23, 2019 at 09:25:09PM -0700, john.hubbard@gmail.com wrote:
+> > From: John Hubbard <jhubbard@nvidia.com>
+> > 
+> > In commit d241a95f3514 ("block: optionally mark pages dirty in
+> > bio_release_pages"), new "bool mark_dirty" argument was added to
+> > bio_release_pages.
+> > 
+> > In upcoming work, another bool argument (to indicate that the pages came
+> > from get_user_pages) is going to be added. That's one bool too many,
+> > because it's not desirable have calls of the form:
 > 
-> This should be "== FSCRYPT_KEY_SPEC_TYPE_INDENTIFIER" instead.  That's
-> because you use the identifier part of the union:
-> 
-> > +		/* Calculate the key identifier and return it to userspace. */
-> > +		err = fscrypt_hkdf_expand(&secret.hkdf,
-> > +					  HKDF_CONTEXT_KEY_IDENTIFIER,
-> > +					  NULL, 0, arg.key_spec.u.identifier,
-> 
-> If we ever add a new key specifier type, and alternative in the union,
-> this is going to come back to bite us.
+> All pages releases by bio_release_pages should come from
+> get_get_user_pages, so I don't really see the point here.
 
-Well, I did it this way because the next patch changes the code to:
+No they do not all comes from GUP for see various callers
+of bio_check_pages_dirty() for instance iomap_dio_zero()
 
-	if (arg.key_spec.type == FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR) {
-		...
-	} else {
-		...
-	}
+I have carefully tracked down all this and i did not do
+anyconvertion just for the fun of it :)
 
-We already validated that it's either TYPE_DESCRIPTOR or TYPE_IDENTIFIER.
-
-But I guess to be more clear I'll just make it handle the default case again.
-
-	switch (arg.key_spec.type) {
-	case FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR:
-		...
-		break;
-	case FSCRYPT_KEY_SPEC_TYPE_IDENTIFIER:
-		...
-		break;
-	default:
-		err = -EINVAL;
-		break;
-	}
-
-> 
-> > +	if (policy->version == FSCRYPT_POLICY_V1) {
-> > +		/*
-> > +		 * The original encryption policy version provided no way of
-> > +		 * verifying that the correct master key was supplied, which was
-> > +		 * insecure in scenarios where multiple users have access to the
-> > +		 * same encrypted files (even just read-only access).
-> 
-> Which scenario do you have in mind?  With read-only access, Alice can
-> fetch the encryption policy for a directory, and introduce a key with
-> the same descriptor, but the "wrong" key, but that's only going to
-> affect Alice's use of the key.  It won't affect what key is used by
-> Bob, since Alice doesn't have write access to Bob's keyrings.
-> 
-> If what you mean is the risk when there is a single global
-> filesystem-specific keyring, where Alice could introduce a "wrong" key
-> identified with a specific descriptor, then sure, Alice could trick
-> Bob into encrypting his data with the wrong key (one known to Alice).
-> But we don't allow keys usable by V1 policies to be used in the
-> filesystem-specific keyring, do we?
-> 
-
-The scenario is that Alice lists the directory with the wrong key, then Bob
-lists the directory too and gets the wrong filenames.  This happens because the
-inode, fscrypt_info, dentry cache, page cache, etc. are the same for everyone.
-Bob's key is never looked up because the inode already has a key cached.
-
-This also applies to regular files and symlinks.
-
-- Eric
+Cheers,
+Jérôme
