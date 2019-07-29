@@ -2,88 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D98A079A7D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 22:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E689279B36
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2019 23:36:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729600AbfG2U5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jul 2019 16:57:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37004 "EHLO mx1.redhat.com"
+        id S2388680AbfG2Vgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jul 2019 17:36:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729405AbfG2U5i (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:57:38 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729233AbfG2Vgq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Jul 2019 17:36:46 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 40047C060204;
-        Mon, 29 Jul 2019 20:57:37 +0000 (UTC)
-Received: from redhat.com (ovpn-112-31.rdu2.redhat.com [10.10.112.31])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1D8C65C219;
-        Mon, 29 Jul 2019 20:57:24 +0000 (UTC)
-Date:   Mon, 29 Jul 2019 16:57:21 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, samba-technical@lists.samba.org,
-        v9fs-developer@lists.sourceforge.net,
-        virtualization@lists.linux-foundation.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        Minwoo Im <minwoo.im.dev@gmail.com>
-Subject: Re: [PATCH 03/12] block: bio_release_pages: use flags arg instead of
- bool
-Message-ID: <20190729205721.GB3760@redhat.com>
-References: <20190724042518.14363-1-jhubbard@nvidia.com>
- <20190724042518.14363-4-jhubbard@nvidia.com>
- <20190724053053.GA18330@infradead.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id C3134206DD;
+        Mon, 29 Jul 2019 21:36:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564436205;
+        bh=TX+BUd/guqwyoeacac9QLEXtuFVcDeFmoEBcFE7Jlvs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jD8Jnz4w2d/CDG/Z/3YlRqtkdLhxpObgwJdxi+Ax0luiHhhyo9+08+EsgXn/7x9/N
+         pQ9vDwUsnuiFEqv17OuzZLCulrv96MKSIsHyRteY8dNbXkAmsFdsw8kNnOJWEM5DkI
+         Iw2xUea2rleBmw8pmpttvm/5QAVIGC5ceyRxE15c=
+Date:   Mon, 29 Jul 2019 14:36:43 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
+        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
+        Paul Crowley <paulcrowley@google.com>,
+        Satya Tangirala <satyat@google.com>
+Subject: Re: [PATCH v7 16/16] fscrypt: document the new ioctls and policy
+ version
+Message-ID: <20190729213642.GI169027@gmail.com>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-api@vger.kernel.org,
+        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
+        Paul Crowley <paulcrowley@google.com>,
+        Satya Tangirala <satyat@google.com>
+References: <20190726224141.14044-1-ebiggers@kernel.org>
+ <20190726224141.14044-17-ebiggers@kernel.org>
+ <20190729020009.GA3863@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190724053053.GA18330@infradead.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 29 Jul 2019 20:57:38 +0000 (UTC)
+In-Reply-To: <20190729020009.GA3863@mit.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 10:30:53PM -0700, Christoph Hellwig wrote:
-> On Tue, Jul 23, 2019 at 09:25:09PM -0700, john.hubbard@gmail.com wrote:
-> > From: John Hubbard <jhubbard@nvidia.com>
-> > 
-> > In commit d241a95f3514 ("block: optionally mark pages dirty in
-> > bio_release_pages"), new "bool mark_dirty" argument was added to
-> > bio_release_pages.
-> > 
-> > In upcoming work, another bool argument (to indicate that the pages came
-> > from get_user_pages) is going to be added. That's one bool too many,
-> > because it's not desirable have calls of the form:
+On Sun, Jul 28, 2019 at 10:00:09PM -0400, Theodore Y. Ts'o wrote:
+> On Fri, Jul 26, 2019 at 03:41:41PM -0700, Eric Biggers wrote:
+> > +- The kernel cannot magically wipe copies of the master key(s) that
+> > +  userspace might have as well.  Therefore, userspace must wipe all
+> > +  copies of the master key(s) it makes as well.  Naturally, the same
+> > +  also applies to all higher levels in the key hierarchy.  Userspace
+> > +  should also follow other security precautions such as mlock()ing
+> > +  memory containing keys to prevent it from being swapped out.
 > 
-> All pages releases by bio_release_pages should come from
-> get_get_user_pages, so I don't really see the point here.
+> Normally, shouldn't userspace have wiped all copies of the master key
+> after they have called ADD_KEY?  Why should they be left hanging
+> around?  Waiting until REMOVE_KEY to remove other copies of the master
+> key seems.... late.
 
-No they do not all comes from GUP for see various callers
-of bio_check_pages_dirty() for instance iomap_dio_zero()
+Correct, normally userspace should wipe its copy of the key immediately after
+adding it to the kernel.  I'll clarify that here.
 
-I have carefully tracked down all this and i did not do
-anyconvertion just for the fun of it :)
+> 
+> > +- In general, decrypted contents and filenames in the kernel VFS
+> > +  caches are freed but not wiped.  Therefore, portions thereof may be
+> > +  recoverable from freed memory, even after the corresponding key(s)
+> > +  were wiped.  To partially solve this, you can set
+> > +  CONFIG_PAGE_POISONING=y in your kernel config and add page_poison=1
+> > +  to your kernel command line.  However, this has a performance cost.
+> 
+> ... and even this won't help if you have swap configured....
 
-Cheers,
-Jérôme
+Yes, but that's a larger issue.  Unencrypted data can be written to swap and
+then be recovered from disk offline.  This has nothing to do with whether the
+key is ever removed on-line or not.  So swap really could use its own mention
+somewhere else, maybe in the "Offline attacks" section.
+
+> 
+> > +v1 encryption policies have some weaknesses with respect to online
+> > +attacks:
+> > +
+> > +- There is no verification that the provided master key is correct.
+> > +  Consequently, malicious users can associate the wrong key with
+> > +  encrypted files, even files to which they have only read-only
+> > +  access.
+> 
+> Yes, but they won't be able to trick other users into using that
+> incorrect key.  With the old interface, it gets written into the
+> user's session keyring, which won't get used by another user.  And
+> with the newer interface, only root is allowed to set v1 key.
+> 
+
+As mentioned in a previous reply, they *can* trick other users into using that
+incorrect key, by opening files using that incorrect key.  The incorrect key is
+then cached for everyone.  (This assumes the other users have at least read
+access to the file.  If it's mode 0700, this won't work.)
+
+> > +Master keys should be pseudorandom, i.e. indistinguishable from random
+> > +bytestrings of the same length.  This implies that users **must not**
+> > +directly use a password as a master key, zero-pad a shorter key, or
+> > +repeat a shorter key.
+> 
+> These paragraphs starts a bit funny, since we first say "should" in
+> the first sentence, and then it's followed up by "**must not**" in the
+> second sentence.  Basically, they *could* do this, but it would just
+> weaken the security of the system significantly.
+> 
+> At the very least, we should explain the basis of the recommendation.
+
+I think we should go with "must" instead of "should".
+
+Basically the point of this paragraph is to explain that the API takes a real
+cryptographic key of the full given length.
+
+Otherwise the security guarantees for the algorithms the master key may be used
+in (AES-128-ECB KDF, HKDF-SHA512, or Adiantum) aren't guaranteed to hold.
+
+One can argue about how much of a problem this actually is, like how unsalted
+HKDF on a key with unevenly distributed entropy is *probably* fine in practice
+(and much better than the AES-128-ECB KDF).  But the security proof for unsalted
+HKDF actually still assumes a pseudorandom key.  It's only randomly salted HKDF
+that doesn't.
+
+I'd strongly prefer to go with *must* for things that are necessary for the
+security proofs or cryptanalysis to apply, even if they *might* still be "good
+enough" in practice.
+
+I'll try to find a better way to word this paragraph.
+
+> 
+> > +The KDF used for a particular master key differs depending on whether
+> > +the key is used for v1 encryption policies or for v2 encryption
+> > +policies.  Users **must not** use the same key for both v1 and v2
+> > +encryption policies.
+> 
+> "Must not" seems a bit strong.  If they do, and a v1 per-file key and
+> nonce leaks out, then the encryption key will be compromised.  So the
+> strength of the key will be limited by the weaknesses of the v1
+> scheme.  But it's not like using a that was originally meant for v1,
+> and then using it for v2, causes any additional weakness.  Right?
+> 
+
+Probably, but we don't know for sure.  It's theoretically possible that
+cryptanalysis of two cryptographic primitives A and B, where they are each given
+the same key, could be much easier than attacking A or B individually.
+
+So again, I'd prefer to go with *must not* for things where there is no theory
+of cryptography that says it is okay, even if *probably* someone could get away
+with doing it in practice.
+
+- Eric
