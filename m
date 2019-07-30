@@ -2,206 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6587D79ED7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 04:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D6679F9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2019 05:50:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731408AbfG3CoC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jul 2019 22:44:02 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42885 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730921AbfG3CoC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jul 2019 22:44:02 -0400
-Received: by mail-pl1-f193.google.com with SMTP id ay6so28299715plb.9;
-        Mon, 29 Jul 2019 19:44:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Lic9FsBbFIhilgJH9jdHsI1bCHTQauGCm3mQSU4XvTM=;
-        b=VmG+Y5P5Dh2me3MuRE5xoeE8+31ZRDRtvUDuryelSgr1QOdkF5UR4sfAhfawGrnF4o
-         5z+N42GmX4JOKqZ419NY+2NeE03748lWU8fiklu8RZ45CTP6kfm07+wnuBPZD0l/m5eZ
-         sj/oDPdL0HQ6u9F5Hg+63dtbGim4BW6TYSL7dMhLzzjxpFh+aeB4uJjvYW9ZLnsBn1Cy
-         S4n5cNVSOCaep4vWkFG9oDjODxzzuZwA+Rwztr0UpO+gASp2OxeVjMX2U1or+lSZLknx
-         AtwaNIAqMlMZm2/n9t8nvsT0txtyJvMaBHXwN6XKLSfsykgh1nxG6imehh5Pjy7OYhtV
-         6rtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Lic9FsBbFIhilgJH9jdHsI1bCHTQauGCm3mQSU4XvTM=;
-        b=MGCGuaf42flvV47oOQOprayfWaepHmMAz5AdtuIVy5/R/CBOl8p04A/aDV2M9c/3sN
-         sdgUyzNqIrkkUvVBM/obK/CEbvnVVg7VDH52JjoSZmCI7bSUGDn0ZARt/DpcCUP8iGIX
-         HTu+93xzhZ1/aYP11LKtHSEXXYz1ksYvgPVlNP6nj71/BqJ9RftLMOAYMRfJygSqyC3K
-         SRQV3LhGXsN/3474I0n1kBm0itbnj0XVWy34fKENhkh64dqjmdVrEBMn2nIB6n0d9HiV
-         ICdNS0ktwpiIt8CIhtcmBpHYKHAbC0p/7pdAwTgbQuEa+uUVO1FrcjcoRpBFDP4Hn6uP
-         ZKGQ==
-X-Gm-Message-State: APjAAAVCzmiabYYOl2MGCIYGXcTNA9KZwZhV4zzwd+Y7ZjjfLl2KqsZI
-        6tXTR12NMRq5tINPLqrNIz4=
-X-Google-Smtp-Source: APXvYqzNN+4+CjaPSeMWQ2/PLSQRyBZtcEjOJ6XJ3AsKOmbbAHM9cei4O5VqaExHC48K6xXqNKYu5w==
-X-Received: by 2002:a17:902:1107:: with SMTP id d7mr11773332pla.184.1564454641476;
-        Mon, 29 Jul 2019 19:44:01 -0700 (PDT)
-Received: from localhost.localdomain (220-128-162-163.HINET-IP.hinet.net. [220.128.162.163])
-        by smtp.googlemail.com with ESMTPSA id v185sm70944442pfb.14.2019.07.29.19.43.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 19:44:01 -0700 (PDT)
-From:   Pei-Hsuan Hung <afcidk@gmail.com>
-Cc:     Pei-Hsuan Hung <afcidk@gmail.com>, trivial@kernel.org,
-        Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2] Fix typo reigster to register
-Date:   Tue, 30 Jul 2019 10:42:32 +0800
-Message-Id: <20190730024235.26273-1-afcidk@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <liviu.dudau@arm.com>
-References: <liviu.dudau@arm.com>
-To:     unlisted-recipients:; (no To-header on input)
+        id S1728089AbfG3Dt7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jul 2019 23:49:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727993AbfG3Dt7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Jul 2019 23:49:59 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67F442087F;
+        Tue, 30 Jul 2019 03:49:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564458598;
+        bh=37PshnNHyTKSRD1vHLM/mJAILgIXCFD7cY7PYklafH4=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=BReYm/C3ktVX5tD52hjP5uATbZkaxNIsgtF8PEyxF2W4G9kZVs0hq5YsqX0Ly4UUH
+         y7FAN4MpQgm1vbNxeNaS2aP2/RrdawE0C8+W3njVDnWC61FvSbJUagMZ+XCmucrWRS
+         fT8HOlKnxh8QhWaFepCPOwYUfaHYOOQx1AA4oKLM=
+Date:   Mon, 29 Jul 2019 20:49:56 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] KEYS: Replace uid/gid/perm permissions checking with
+ an ACL
+Message-ID: <20190730034956.GB1966@sol.localdomain>
+Mail-Followup-To: David Howells <dhowells@redhat.com>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <155862710003.24863.11807972177275927370.stgit@warthog.procyon.org.uk>
+ <155862710731.24863.14013725058582750710.stgit@warthog.procyon.org.uk>
+ <20190710011559.GA7973@sol.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710011559.GA7973@sol.localdomain>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Pei-Hsuan Hung <afcidk@gmail.com>
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-Cc: trivial@kernel.org
----
-Hi Liviu, thanks for your reply.
-This patch is generated by a script so at first I didn't notice there is
-also a typo in the word coefficient. I've fixed the typo in this
-version.
+Hi David,
 
- arch/powerpc/kernel/eeh.c                           | 2 +-
- arch/powerpc/platforms/cell/spufs/switch.c          | 4 ++--
- drivers/extcon/extcon-rt8973a.c                     | 2 +-
- drivers/gpu/drm/arm/malidp_regs.h                   | 2 +-
- drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.h | 2 +-
- drivers/scsi/lpfc/lpfc_hbadisc.c                    | 2 +-
- fs/userfaultfd.c                                    | 2 +-
- 7 files changed, 8 insertions(+), 8 deletions(-)
+On Tue, Jul 09, 2019 at 06:16:01PM -0700, Eric Biggers wrote:
+> On Thu, May 23, 2019 at 04:58:27PM +0100, David Howells wrote:
+> > Replace the uid/gid/perm permissions checking on a key with an ACL to allow
+> > the SETATTR and SEARCH permissions to be split.  This will also allow a
+> > greater range of subjects to represented.
+> > 
+> 
+> This patch broke 'keyctl new_session', and hence broke all the fscrypt tests:
+> 
+> $ keyctl new_session
+> keyctl_session_to_parent: Permission denied
+> 
+> Output of 'keyctl show' is
+> 
+> $ keyctl show
+> Session Keyring
+>  605894913 --alswrv      0     0  keyring: _ses
+>  189223103 ----s-rv      0     0   \_ user: invocation_id
+> 
+> - Eric
 
-diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
-index c0e4b73191f3..d75c9c24ec4d 100644
---- a/arch/powerpc/kernel/eeh.c
-+++ b/arch/powerpc/kernel/eeh.c
-@@ -1030,7 +1030,7 @@ int __init eeh_ops_register(struct eeh_ops *ops)
- }
- 
- /**
-- * eeh_ops_unregister - Unreigster platform dependent EEH operations
-+ * eeh_ops_unregister - Unregister platform dependent EEH operations
-  * @name: name of EEH platform operations
-  *
-  * Unregister the platform dependent EEH operation callback
-diff --git a/arch/powerpc/platforms/cell/spufs/switch.c b/arch/powerpc/platforms/cell/spufs/switch.c
-index 5c3f5d088c3b..9548a086937b 100644
---- a/arch/powerpc/platforms/cell/spufs/switch.c
-+++ b/arch/powerpc/platforms/cell/spufs/switch.c
-@@ -574,7 +574,7 @@ static inline void save_mfc_rag(struct spu_state *csa, struct spu *spu)
- {
- 	/* Save, Step 38:
- 	 *     Save RA_GROUP_ID register and the
--	 *     RA_ENABLE reigster in the CSA.
-+	 *     RA_ENABLE register in the CSA.
- 	 */
- 	csa->priv1.resource_allocation_groupID_RW =
- 		spu_resource_allocation_groupID_get(spu);
-@@ -1227,7 +1227,7 @@ static inline void restore_mfc_rag(struct spu_state *csa, struct spu *spu)
- {
- 	/* Restore, Step 29:
- 	 *     Restore RA_GROUP_ID register and the
--	 *     RA_ENABLE reigster from the CSA.
-+	 *     RA_ENABLE register from the CSA.
- 	 */
- 	spu_resource_allocation_groupID_set(spu,
- 			csa->priv1.resource_allocation_groupID_RW);
-diff --git a/drivers/extcon/extcon-rt8973a.c b/drivers/extcon/extcon-rt8973a.c
-index 40c07f4d656e..e75c03792398 100644
---- a/drivers/extcon/extcon-rt8973a.c
-+++ b/drivers/extcon/extcon-rt8973a.c
-@@ -270,7 +270,7 @@ static int rt8973a_muic_get_cable_type(struct rt8973a_muic_info *info)
- 	}
- 	cable_type = adc & RT8973A_REG_ADC_MASK;
- 
--	/* Read Device 1 reigster to identify correct cable type */
-+	/* Read Device 1 register to identify correct cable type */
- 	ret = regmap_read(info->regmap, RT8973A_REG_DEV1, &dev1);
- 	if (ret) {
- 		dev_err(info->dev, "failed to read DEV1 register\n");
-diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp_regs.h
-index 993031542fa1..9b4f95d8ccec 100644
---- a/drivers/gpu/drm/arm/malidp_regs.h
-+++ b/drivers/gpu/drm/arm/malidp_regs.h
-@@ -145,7 +145,7 @@
- #define     MALIDP_SE_COEFFTAB_DATA_MASK	0x3fff
- #define     MALIDP_SE_SET_COEFFTAB_DATA(x) \
- 		((x) & MALIDP_SE_COEFFTAB_DATA_MASK)
--/* Enhance coeffents reigster offset */
-+/* Enhance coefficients register offset */
- #define MALIDP_SE_IMAGE_ENH			0x3C
- /* ENH_LIMITS offset 0x0 */
- #define     MALIDP_SE_ENH_LOW_LEVEL		24
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.h b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.h
-index 99c6f7eefd85..d03c8f12a15c 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/fw.h
-@@ -58,7 +58,7 @@ struct fw_priv {
- 	/* 0x81: PCI-AP, 01:PCIe, 02: 92S-U,
- 	 * 0x82: USB-AP, 0x12: 72S-U, 03:SDIO */
- 	u8 hci_sel;
--	/* the same value as reigster value  */
-+	/* the same value as register value  */
- 	u8 chip_version;
- 	/* customer  ID low byte */
- 	u8 customer_id_0;
-diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-index 28ecaa7fc715..42b125602d72 100644
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -6551,7 +6551,7 @@ lpfc_sli4_unregister_fcf(struct lpfc_hba *phba)
-  * lpfc_unregister_fcf_rescan - Unregister currently registered fcf and rescan
-  * @phba: Pointer to hba context object.
-  *
-- * This function unregisters the currently reigstered FCF. This function
-+ * This function unregisters the currently registered FCF. This function
-  * also tries to find another FCF for discovery by rescan the HBA FCF table.
-  */
- void
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index ccbdbd62f0d8..612dc1240f90 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -267,7 +267,7 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
- #endif /* CONFIG_HUGETLB_PAGE */
- 
- /*
-- * Verify the pagetables are still not ok after having reigstered into
-+ * Verify the pagetables are still not ok after having registered into
-  * the fault_pending_wqh to avoid userland having to UFFDIO_WAKE any
-  * userfault that has already been resolved, if userfaultfd_read and
-  * UFFDIO_COPY|ZEROPAGE are being run simultaneously on two different
--- 
-2.17.1
+This bug is still present in next-20190729.
 
+- Eric
